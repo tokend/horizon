@@ -1,0 +1,85 @@
+package resource
+
+import (
+	"fmt"
+
+	"bullioncoin.githost.io/development/go/amount"
+	"bullioncoin.githost.io/development/go/xdr"
+	"bullioncoin.githost.io/development/horizon/db2/core"
+	"bullioncoin.githost.io/development/horizon/httpx"
+	"bullioncoin.githost.io/development/horizon/render/hal"
+	"golang.org/x/net/context"
+)
+
+// Populate fills out the resource's fields
+func (this *Account) Populate(
+	ctx context.Context,
+	ca core.Account,
+	cs []core.Signer,
+	cb []core.Balance,
+	cl *core.Limits,
+	cp []core.ExchangePolicies,
+	demurragePeriod int64,
+) (err error) {
+	this.ID = ca.AccountID
+	this.AccountID = ca.AccountID
+	this.BlockReasons = ca.BlockReasons
+	this.IsBlocked = ca.BlockReasons > 0
+	this.AccountTypeI = ca.AccountType
+	this.AccountType = xdr.AccountType(ca.AccountType).String()
+
+	this.Referrer = ca.Referrer
+	this.ShareForReferrer = amount.String(int64(ca.ShareForReferrer))
+	this.CreatedAt = ca.CreatedAt
+
+	if ca.Name != nil {
+		this.ExchangeData = &ExchangeData{
+			Name:          *ca.Name,
+			RequireReview: *ca.RequireReview,
+		}
+	}
+
+	if cp != nil {
+		for _, corePolicies := range cp {
+			var policies ExchangePolicies
+			policies.Asset = corePolicies.Asset
+			policies.Policies.PopulateForExchange(corePolicies)
+			this.ExchangePolicies = append(this.ExchangePolicies, policies)
+		}
+	}
+
+	this.Thresholds.Populate(ca)
+
+	this.Balances = make([]Balance, len(cb))
+	for index, balance := range cb {
+		err := this.Balances[index].Populate(balance, demurragePeriod)
+		if err != nil {
+			return err
+		}
+	}
+
+	// populate signers
+	this.Signers.Populate(cs)
+	if cl != nil {
+		this.Limits.Populate(*cl)
+	}
+
+	this.Policies.Populate(ca.Policies)
+
+	if ca.Statistics != nil {
+		this.Statistics.Populate(*ca.Statistics)
+	}
+
+	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
+	self := fmt.Sprintf("/accounts/%s", ca.AccountID)
+	this.Links.Self = lb.Link(self)
+	this.Links.Transactions = lb.PagedLink(self, "transactions")
+	this.Links.Operations = lb.PagedLink(self, "operations")
+	this.Links.Payments = lb.PagedLink(self, "payments")
+
+	return
+}
+
+func (a Account) PagingToken() string {
+	return a.ID
+}
