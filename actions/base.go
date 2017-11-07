@@ -12,9 +12,9 @@ import (
 	"encoding/json"
 	"errors"
 
-	"bullioncoin.githost.io/development/horizon/render"
-	"bullioncoin.githost.io/development/horizon/render/problem"
-	"bullioncoin.githost.io/development/horizon/render/sse"
+	"gitlab.com/distributed_lab/tokend/horizon/render"
+	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
+	"gitlab.com/distributed_lab/tokend/horizon/render/sse"
 	"github.com/zenazn/goji/web"
 	"golang.org/x/net/context"
 )

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/resource"
+	"gitlab.com/distributed_lab/tokend/horizon/resource"
 )
 
 func TestAccountActions_Show(t *testing.T) {

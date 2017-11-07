@@ -6,7 +6,7 @@ import (
 
 	"bullioncoin.githost.io/development/go/strkey"
 	"bullioncoin.githost.io/development/go/xdr"
-	"bullioncoin.githost.io/development/horizon/utf8"
+	"gitlab.com/distributed_lab/tokend/horizon/utf8"
 	"github.com/guregu/null"
 	sq "github.com/lann/squirrel"
 )

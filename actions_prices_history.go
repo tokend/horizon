@@ -3,11 +3,11 @@ package horizon
 import (
 	"time"
 
-	"bullioncoin.githost.io/development/horizon/db2/history"
-	"bullioncoin.githost.io/development/horizon/render/hal"
-	"bullioncoin.githost.io/development/horizon/render/problem"
-	"bullioncoin.githost.io/development/horizon/render/sse"
-	"bullioncoin.githost.io/development/horizon/resource"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
+	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
+	"gitlab.com/distributed_lab/tokend/horizon/render/sse"
+	"gitlab.com/distributed_lab/tokend/horizon/resource"
 )
 
 type PricesHistoryAction struct {

@@ -3,10 +3,10 @@ package reap
 import (
 	"time"
 
-	"bullioncoin.githost.io/development/horizon/errors"
-	"bullioncoin.githost.io/development/horizon/ledger"
-	"bullioncoin.githost.io/development/horizon/log"
-	"bullioncoin.githost.io/development/horizon/toid"
+	"gitlab.com/distributed_lab/tokend/horizon/errors"
+	"gitlab.com/distributed_lab/tokend/horizon/ledger"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/toid"
 )
 
 // DeleteUnretainedHistory removes all data associated with unretained ledgers.

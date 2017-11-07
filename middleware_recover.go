@@ -3,8 +3,8 @@ package horizon
 import (
 	"net/http"
 
-	"bullioncoin.githost.io/development/horizon/errors"
-	"bullioncoin.githost.io/development/horizon/render/problem"
+	"gitlab.com/distributed_lab/tokend/horizon/errors"
+	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
 	gctx "github.com/goji/context"
 	"github.com/zenazn/goji/web"
 )

@@ -5,10 +5,10 @@ import (
 
 	"bullioncoin.githost.io/development/go/amount"
 	"bullioncoin.githost.io/development/go/xdr"
-	"bullioncoin.githost.io/development/horizon/db2/core"
-	"bullioncoin.githost.io/development/horizon/db2/history"
-	"bullioncoin.githost.io/development/horizon/ingest/participants"
-	"bullioncoin.githost.io/development/horizon/resource/operations"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/ingest/participants"
+	"gitlab.com/distributed_lab/tokend/horizon/resource/operations"
 )
 
 // Run starts an attempt to ingest the range of ledgers specified in this

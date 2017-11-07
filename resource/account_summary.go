@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"bullioncoin.githost.io/development/go/amount"
-	"bullioncoin.githost.io/development/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
 )
 
 type AccountSummary struct {

@@ -1,9 +1,9 @@
 package horizon
 
 import (
-	"bullioncoin.githost.io/development/horizon/ledger"
-	"bullioncoin.githost.io/development/horizon/render/hal"
-	"bullioncoin.githost.io/development/horizon/resource"
+	"gitlab.com/distributed_lab/tokend/horizon/ledger"
+	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
+	"gitlab.com/distributed_lab/tokend/horizon/resource"
 )
 
 // RootAction provides a summary of the horizon instance and links to various

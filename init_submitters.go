@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"bullioncoin.githost.io/development/api/log"
-	"bullioncoin.githost.io/development/horizon/db2/core"
-	"bullioncoin.githost.io/development/horizon/db2/history"
-	hTxsub "bullioncoin.githost.io/development/horizon/txsub"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	hTxsub "gitlab.com/distributed_lab/tokend/horizon/txsub"
 	"gitlab.com/distributed_lab/corer"
 	"gitlab.com/distributed_lab/txsub"
 )

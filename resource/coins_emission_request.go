@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"bullioncoin.githost.io/development/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
 )
 
 type CoinsEmissionRequest struct {

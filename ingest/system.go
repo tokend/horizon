@@ -1,11 +1,11 @@
 package ingest
 
 import (
-	"bullioncoin.githost.io/development/horizon/db2/core"
-	"bullioncoin.githost.io/development/horizon/db2/history"
-	"bullioncoin.githost.io/development/horizon/errors"
-	"bullioncoin.githost.io/development/horizon/ledger"
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/errors"
+	"gitlab.com/distributed_lab/tokend/horizon/ledger"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	err2 "github.com/pkg/errors"
 )
 

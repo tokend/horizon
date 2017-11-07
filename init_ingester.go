@@ -2,7 +2,7 @@ package horizon
 
 import (
 	"bullioncoin.githost.io/development/api/log"
-	"bullioncoin.githost.io/development/horizon/ingest"
+	"gitlab.com/distributed_lab/tokend/horizon/ingest"
 )
 
 func initIngester(app *App) {

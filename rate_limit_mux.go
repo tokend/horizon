@@ -8,7 +8,7 @@ import (
 
 	"bullioncoin.githost.io/development/api/log"
 	"bullioncoin.githost.io/development/go/signcontrol"
-	"bullioncoin.githost.io/development/horizon/render/problem"
+	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
 	"github.com/zenazn/goji/web"
 	"gopkg.in/throttled/throttled.v2"
 	"gopkg.in/throttled/throttled.v2/store/memstore"

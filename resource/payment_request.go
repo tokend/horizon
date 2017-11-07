@@ -1,8 +1,8 @@
 package resource
 
 import (
-	"bullioncoin.githost.io/development/horizon/db2/history"
-	"bullioncoin.githost.io/development/horizon/resource/operations"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/resource/operations"
 	"strconv"
 	"time"
 )

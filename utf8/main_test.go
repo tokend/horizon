@@ -1,7 +1,7 @@
 package utf8
 
 import (
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 	"testing"
 )
 

@@ -1,6 +1,6 @@
 package operations
 
-import "bullioncoin.githost.io/development/horizon/resource/base"
+import "gitlab.com/distributed_lab/tokend/horizon/resource/base"
 
 type ManageForfeitRequest struct {
 	Base

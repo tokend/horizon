@@ -3,11 +3,11 @@ package horizon
 import (
 	"strconv"
 
-	"bullioncoin.githost.io/development/horizon/db2"
-	"bullioncoin.githost.io/development/horizon/db2/core"
-	"bullioncoin.githost.io/development/horizon/render/hal"
-	"bullioncoin.githost.io/development/horizon/render/problem"
-	"bullioncoin.githost.io/development/horizon/resource"
+	"gitlab.com/distributed_lab/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
+	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
+	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
+	"gitlab.com/distributed_lab/tokend/horizon/resource"
 	"github.com/go-errors/errors"
 )
 

@@ -8,14 +8,14 @@ import (
 	"strconv"
 
 	"bullioncoin.githost.io/development/go/xdr"
-	"bullioncoin.githost.io/development/horizon/db2"
-	"bullioncoin.githost.io/development/horizon/db2/history"
-	"bullioncoin.githost.io/development/horizon/ledger"
-	"bullioncoin.githost.io/development/horizon/render/hal"
-	"bullioncoin.githost.io/development/horizon/render/problem"
-	"bullioncoin.githost.io/development/horizon/render/sse"
-	"bullioncoin.githost.io/development/horizon/resource"
-	"bullioncoin.githost.io/development/horizon/toid"
+	"gitlab.com/distributed_lab/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/ledger"
+	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
+	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
+	"gitlab.com/distributed_lab/tokend/horizon/render/sse"
+	"gitlab.com/distributed_lab/tokend/horizon/resource"
+	"gitlab.com/distributed_lab/tokend/horizon/toid"
 	"github.com/pkg/errors"
 )
 

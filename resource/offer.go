@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"bullioncoin.githost.io/development/horizon/db2/core"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
 	"strconv"
 )
 

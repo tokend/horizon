@@ -1,8 +1,8 @@
 package history
 
 import (
-	"bullioncoin.githost.io/development/horizon/db2"
-	"bullioncoin.githost.io/development/horizon/toid"
+	"gitlab.com/distributed_lab/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/tokend/horizon/toid"
 	sq "github.com/lann/squirrel"
 )
 

@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	influx "github.com/influxdata/influxdb/client/v2"
 	"github.com/rcrowley/go-metrics"
 )

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"log"
 
-	"bullioncoin.githost.io/development/horizon/config"
-	hlog "bullioncoin.githost.io/development/horizon/log"
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/config"
+	hlog "gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 	"github.com/PuerkitoBio/throttled"
 )
 

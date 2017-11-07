@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 	"github.com/PuerkitoBio/throttled"
 	. "github.com/smartystreets/goconvey/convey"
 )

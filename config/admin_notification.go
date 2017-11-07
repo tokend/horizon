@@ -4,7 +4,7 @@ import (
 	"html/template"
 
 	"bullioncoin.githost.io/development/go/amount"
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 )
 
 type AdminNotification struct {

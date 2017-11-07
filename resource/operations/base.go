@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"bullioncoin.githost.io/development/horizon/db2/history"
-	"bullioncoin.githost.io/development/horizon/httpx"
-	"bullioncoin.githost.io/development/horizon/render/hal"
-	"bullioncoin.githost.io/development/horizon/resource/base"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/httpx"
+	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
+	"gitlab.com/distributed_lab/tokend/horizon/resource/base"
 	"golang.org/x/net/context"
 )
 

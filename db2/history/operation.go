@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"bullioncoin.githost.io/development/go/xdr"
-	"bullioncoin.githost.io/development/horizon/db2"
+	"gitlab.com/distributed_lab/tokend/horizon/db2"
 	"github.com/go-errors/errors"
 	"github.com/guregu/null"
 )

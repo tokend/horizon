@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 )
 
 type HTTPT struct {

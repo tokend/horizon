@@ -7,9 +7,9 @@ import (
 
 	"bullioncoin.githost.io/development/go/amount"
 	"bullioncoin.githost.io/development/go/xdr"
-	"bullioncoin.githost.io/development/horizon/db2/core"
-	"bullioncoin.githost.io/development/horizon/db2/history"
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 )
 
 type LedgerPricePoint struct {

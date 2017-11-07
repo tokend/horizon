@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	gctx "github.com/goji/context"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"

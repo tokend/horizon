@@ -3,8 +3,8 @@ package horizon
 import (
 	"net/http"
 
-	"bullioncoin.githost.io/development/horizon/context/requestid"
-	"bullioncoin.githost.io/development/horizon/httpx"
+	"gitlab.com/distributed_lab/tokend/horizon/context/requestid"
+	"gitlab.com/distributed_lab/tokend/horizon/httpx"
 	gctx "github.com/goji/context"
 	"github.com/zenazn/goji/web"
 	"golang.org/x/net/context"

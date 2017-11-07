@@ -1,8 +1,8 @@
 package horizon
 
 import (
-	"bullioncoin.githost.io/development/horizon/log"
-	"bullioncoin.githost.io/development/horizon/notificator"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/notificator"
 )
 
 func initNotificator(app *App) {

@@ -1,7 +1,7 @@
 package test
 
 import (
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	"github.com/sirupsen/logrus"
 )
 

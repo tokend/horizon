@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/resource/operations"
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/resource/operations"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 )
 
 func TestOperationActions_Index(t *testing.T) {

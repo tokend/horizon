@@ -9,9 +9,9 @@ import (
 
 	"bullioncoin.githost.io/development/go/amount"
 	"bullioncoin.githost.io/development/go/xdr"
-	"bullioncoin.githost.io/development/horizon/db2"
-	"bullioncoin.githost.io/development/horizon/db2/core"
-	"bullioncoin.githost.io/development/horizon/db2/history"
+	"gitlab.com/distributed_lab/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
 )
 
 // ForOperation returns all the participating accounts from the

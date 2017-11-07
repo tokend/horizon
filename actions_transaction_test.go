@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/resource"
-	"bullioncoin.githost.io/development/horizon/txsub"
-	"bullioncoin.githost.io/development/horizon/txsub/sequence"
+	"gitlab.com/distributed_lab/tokend/horizon/resource"
+	"gitlab.com/distributed_lab/tokend/horizon/txsub"
+	"gitlab.com/distributed_lab/tokend/horizon/txsub/sequence"
 )
 
 func TestTransactionActions_Show(t *testing.T) {

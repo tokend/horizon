@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"bullioncoin.githost.io/development/go/signcontrol"
-	"bullioncoin.githost.io/development/horizon/render/problem"
+	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
 	"github.com/zenazn/goji/web"
 )
 

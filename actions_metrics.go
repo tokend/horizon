@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"bullioncoin.githost.io/development/horizon/render/hal"
+	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
 	"github.com/rcrowley/go-metrics"
 )
 

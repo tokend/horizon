@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 )
 
 // InitFn is a function that contributes to the initialization of an App struct

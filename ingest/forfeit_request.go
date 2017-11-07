@@ -3,7 +3,7 @@ package ingest
 import (
 	"bullioncoin.githost.io/development/go/amount"
 	"bullioncoin.githost.io/development/go/xdr"
-	"bullioncoin.githost.io/development/horizon/resource/base"
+	"gitlab.com/distributed_lab/tokend/horizon/resource/base"
 )
 
 func manageForfeitRequestToForfeitTimes(result xdr.ManageForfeitRequestResult) []base.ForfeitItem {

@@ -7,7 +7,7 @@ package cache
 import (
 	"time"
 
-	"bullioncoin.githost.io/development/horizon/db2/core"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
 	cache "github.com/patrickmn/go-cache"
 )
 

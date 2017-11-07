@@ -3,7 +3,7 @@ package reap
 import (
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 )
 
 func TestDeleteUnretainedHistory(t *testing.T) {

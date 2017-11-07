@@ -3,7 +3,7 @@ package horizon
 import (
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 )
 
 func TestAppInit(t *testing.T) {

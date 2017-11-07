@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 )
 
 func TestLedgerQueries(t *testing.T) {

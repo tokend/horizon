@@ -5,8 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/context/requestid"
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/context/requestid"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 	ge "github.com/go-errors/errors"
 	. "github.com/smartystreets/goconvey/convey"
 	"golang.org/x/net/context"

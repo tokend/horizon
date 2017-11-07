@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"bullioncoin.githost.io/development/api/log"
-	"bullioncoin.githost.io/development/horizon/corer"
+	"gitlab.com/distributed_lab/tokend/horizon/corer"
 )
 
 func initCoreConnector(app *App) {

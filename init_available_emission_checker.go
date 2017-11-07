@@ -3,8 +3,8 @@ package horizon
 import (
 	"time"
 
-	"bullioncoin.githost.io/development/horizon/errors"
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/errors"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 )
 
 func notifyForAsset(app *App, asset string) error {

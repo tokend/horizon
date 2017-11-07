@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"bullioncoin.githost.io/development/horizon/db2/history/schema"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/history/schema"
 	"github.com/spf13/cobra"
 )
 

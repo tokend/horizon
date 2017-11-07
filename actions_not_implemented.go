@@ -1,6 +1,6 @@
 package horizon
 
-import "bullioncoin.githost.io/development/horizon/render/problem"
+import "gitlab.com/distributed_lab/tokend/horizon/render/problem"
 
 // NotImplementedAction renders a NotImplemented prblem
 type NotImplementedAction struct {

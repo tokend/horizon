@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"bullioncoin.githost.io/development/go/xdr"
-	"bullioncoin.githost.io/development/horizon/render/problem"
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 	"github.com/zenazn/goji/web"
 )
 

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/resource"
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/resource"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 )
 
 func TestRootAction(t *testing.T) {

@@ -3,7 +3,7 @@ package horizon
 import (
 	"time"
 
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	"github.com/multiplay/go-slack/chat"
 	"github.com/multiplay/go-slack/lrhook"
 	"github.com/sirupsen/logrus"

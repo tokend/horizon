@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"bullioncoin.githost.io/development/horizon/reap"
+	"gitlab.com/distributed_lab/tokend/horizon/reap"
 )
 
 func initReaper(app *App) {

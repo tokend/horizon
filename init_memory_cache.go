@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"bullioncoin.githost.io/development/horizon/cache"
+	"gitlab.com/distributed_lab/tokend/horizon/cache"
 )
 
 func initMemoryCache(app *App) {

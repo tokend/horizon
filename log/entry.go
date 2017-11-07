@@ -1,7 +1,7 @@
 package log
 
 import (
-	"bullioncoin.githost.io/development/horizon/errors"
+	"gitlab.com/distributed_lab/tokend/horizon/errors"
 	"gitlab.com/distributed_lab/logan"
 )
 

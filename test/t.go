@@ -1,8 +1,8 @@
 package test
 
 import (
-	"bullioncoin.githost.io/development/horizon/db2"
-	"bullioncoin.githost.io/development/horizon/ledger"
+	"gitlab.com/distributed_lab/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/tokend/horizon/ledger"
 )
 
 // CoreRepo returns a db2.Repo instance pointing at the stellar core test database

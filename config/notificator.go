@@ -1,7 +1,7 @@
 package config
 
 import (
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	"net/url"
 )
 

@@ -1,8 +1,8 @@
 package horizon
 
 import (
-	"bullioncoin.githost.io/development/horizon/render/hal"
-	"bullioncoin.githost.io/development/horizon/resource"
+	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
+	"gitlab.com/distributed_lab/tokend/horizon/resource"
 )
 
 type KdfParamsAction struct {

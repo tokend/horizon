@@ -3,7 +3,7 @@ package sqx
 import (
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 	sq "github.com/lann/squirrel"
 )
 

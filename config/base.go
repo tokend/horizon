@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"bullioncoin.githost.io/development/horizon/assets"
+	"gitlab.com/distributed_lab/tokend/horizon/assets"
 
 	"github.com/spf13/viper"
 )

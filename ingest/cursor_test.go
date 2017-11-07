@@ -3,7 +3,7 @@ package ingest
 import (
 	"testing"
 
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 )
 
 func TestCursor(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"bullioncoin.githost.io/development/go/hash"
-	"bullioncoin.githost.io/development/horizon/config"
-	"bullioncoin.githost.io/development/horizon/log"
+	"gitlab.com/distributed_lab/tokend/horizon/config"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	"github.com/go-errors/errors"
 	"gitlab.com/distributed_lab/notificator"
 )

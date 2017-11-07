@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"bullioncoin.githost.io/development/go/network"
-	"bullioncoin.githost.io/development/horizon/test"
+	"gitlab.com/distributed_lab/tokend/horizon/test"
 )
 
 func TestValidation(t *testing.T) {

@@ -5,7 +5,7 @@ package history
 import (
 	"time"
 
-	"bullioncoin.githost.io/development/horizon/db2"
+	"gitlab.com/distributed_lab/tokend/horizon/db2"
 )
 
 // EffectType is the numeric type for an effect, used as the `type` field in the

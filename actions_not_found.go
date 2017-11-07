@@ -1,6 +1,6 @@
 package horizon
 
-import "bullioncoin.githost.io/development/horizon/render/problem"
+import "gitlab.com/distributed_lab/tokend/horizon/render/problem"
 
 // NotFoundAction renders a 404 response
 type NotFoundAction struct {

@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"bullioncoin.githost.io/development/go/xdr"
-	"bullioncoin.githost.io/development/horizon/db2/core"
-	"bullioncoin.githost.io/development/horizon/toid"
+	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
+	"gitlab.com/distributed_lab/tokend/horizon/toid"
 )
 
 // InLedger returns true if the cursor is on a ledger.

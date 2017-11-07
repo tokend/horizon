@@ -4,8 +4,8 @@ import (
 	"log"
 	"runtime"
 
-	"bullioncoin.githost.io/development/horizon"
-	"bullioncoin.githost.io/development/horizon/config"
+	"gitlab.com/distributed_lab/tokend/horizon"
+	"gitlab.com/distributed_lab/tokend/horizon/config"
 	"github.com/spf13/cobra"
 )
 
