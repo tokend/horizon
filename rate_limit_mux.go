@@ -6,7 +6,7 @@ import (
 	"math"
 	"strconv"
 
-	"bullioncoin.githost.io/development/api/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	"bullioncoin.githost.io/development/go/signcontrol"
 	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
 	"github.com/zenazn/goji/web"

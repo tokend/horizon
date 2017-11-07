@@ -6,13 +6,12 @@ import (
 	"net/http/httputil"
 	"regexp"
 
-	"bullioncoin.githost.io/development/api/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	"bullioncoin.githost.io/development/go/signcontrol"
 	"bullioncoin.githost.io/development/go/xdr"
 	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
 	"github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
-	"github.com/sebest/xff"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
 )
@@ -62,7 +61,6 @@ func initWebMiddleware(app *App) {
 	r.Use(UpstreamMiddleware)
 	r.Use(middleware.RequestID)
 	r.Use(contextMiddleware(app.ctx))
-	r.Use(xff.Handler)
 	r.Use(LoggerMiddleware)
 	r.Use(requestMetricsMiddleware)
 	r.Use(RecoverMiddleware)

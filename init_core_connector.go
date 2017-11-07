@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	"bullioncoin.githost.io/development/api/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 	"gitlab.com/distributed_lab/tokend/horizon/corer"
 )
 

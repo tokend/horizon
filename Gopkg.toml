@@ -1,0 +1,154 @@
+
+# Gopkg.toml example
+#
+# Refer to https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md
+# for detailed Gopkg.toml documentation.
+#
+# required = ["github.com/user/thing/cmd/thing"]
+# ignored = ["github.com/user/project/pkgX", "bitbucket.org/user/project/pkgA/pkgY"]
+#
+# [[constraint]]
+#   name = "github.com/user/project"
+#   version = "1.0.0"
+#
+# [[constraint]]
+#   name = "github.com/user/project2"
+#   branch = "dev"
+#   source = "github.com/myfork/project2"
+#
+# [[override]]
+#  name = "github.com/x/y"
+#  version = "2.4.0"
+
+
+[[constraint]]
+  branch = "default"
+  name = "bitbucket.org/ww/goautoneg"
+
+[[constraint]]
+  branch = "dev"
+  name = "bullioncoin.githost.io/development/go"
+
+[[constraint]]
+  name = "github.com/asaskevich/govalidator"
+  version = "7.0.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/cheekybits/genny"
+
+[[constraint]]
+  name = "github.com/garyburd/redigo"
+  version = "1.2.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/go-errors/errors"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/goji/context"
+
+[[constraint]]
+  name = "github.com/guregu/null"
+  version = "3.2.0"
+
+[[constraint]]
+  name = "github.com/influxdata/influxdb"
+  version = "1.3.7"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/jmoiron/sqlx"
+
+[[constraint]]
+  name = "github.com/lann/squirrel"
+  version = "1.0.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/lib/pq"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/multiplay/go-slack"
+
+[[constraint]]
+  name = "github.com/patrickmn/go-cache"
+  version = "2.1.0"
+
+[[constraint]]
+  name = "github.com/pkg/errors"
+  version = "0.8.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/rcrowley/go-metrics"
+
+[[constraint]]
+  name = "github.com/rs/cors"
+  version = "1.2.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/rubenv/sql-migrate"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/sebest/xff"
+
+[[constraint]]
+  name = "github.com/sirupsen/logrus"
+  version = "1.0.3"
+
+[[constraint]]
+  name = "github.com/smartystreets/goconvey"
+  version = "1.6.3"
+
+[[constraint]]
+  name = "github.com/spf13/cobra"
+  version = "0.0.1"
+
+[[constraint]]
+  name = "github.com/spf13/viper"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/stretchr/testify"
+  version = "1.1.4"
+
+[[constraint]]
+  name = "github.com/zenazn/goji"
+  version = "1.0.0"
+
+[[constraint]]
+  branch = "master"
+  name = "gitlab.com/distributed_lab/corer"
+
+[[constraint]]
+  name = "gitlab.com/distributed_lab/logan"
+  version = "0.92.0"
+
+[[constraint]]
+  branch = "master"
+  name = "gitlab.com/distributed_lab/notificator"
+
+[[constraint]]
+  branch = "master"
+  name = "gitlab.com/distributed_lab/txsub"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/net"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/time"
+
+[[constraint]]
+  name = "gopkg.in/throttled/throttled.v2"
+  version = "2.0.3"
+
+[[constraint]]
+  name = "gopkg.in/tylerb/graceful.v1"
+  version = "1.2.15"

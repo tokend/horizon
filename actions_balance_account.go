@@ -3,7 +3,7 @@ package horizon
 import (
 	"database/sql"
 
-	"bullioncoin.githost.io/development/api/render/hal"
+	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
 	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
 	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
 	"gitlab.com/distributed_lab/tokend/horizon/render/problem"

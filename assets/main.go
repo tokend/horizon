@@ -7,7 +7,7 @@ import (
 
 	"fmt"
 
-	"bullioncoin.githost.io/development/api/log"
+	"gitlab.com/distributed_lab/tokend/horizon/log"
 )
 
 //go:generate go-bindata -ignore .+\.go$ -pkg assets -o bindata.go ./...
