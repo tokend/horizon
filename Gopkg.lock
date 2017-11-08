@@ -8,12 +8,6 @@
   revision = "75cd24fc2f2c2a2088577d12123ddee5f54e0675"
 
 [[projects]]
-  branch = "dev"
-  name = "bullioncoin.githost.io/development/go"
-  packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "ccaf521a42324a45bb9cee267773e6738f224102"
-
-[[projects]]
   branch = "master"
   name = "github.com/agl/ed25519"
   packages = [".","edwards25519"]
@@ -46,8 +40,8 @@
 [[projects]]
   name = "github.com/garyburd/redigo"
   packages = ["internal","redis"]
-  revision = "34a326de1fea52965fa5ad664d3fc7163dd4b0a1"
-  version = "v1.2.0"
+  revision = "47dc60e71eed504e3ef8e77ee3c6fe720f3be57f"
+  version = "v1.3.0"
 
 [[projects]]
   branch = "master"
@@ -197,13 +191,7 @@
   branch = "master"
   name = "github.com/rubenv/sql-migrate"
   packages = [".","sqlparse"]
-  revision = "79fe99e24311fa42469fb2ca23eb3f8f065e6155"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/sebest/xff"
-  packages = ["."]
-  revision = "6c115e0ffa35d6a2e3f7a9e797c9cf07f0da4b9f"
+  revision = "27ebce5b74e63a71c82d93a37f5ce0a8e1e42714"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
@@ -303,15 +291,21 @@
 
 [[projects]]
   branch = "master"
+  name = "gitlab.com/tokend/go"
+  packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
+  revision = "81d3de1647f7e531356b0a02955e98b60e343f8e"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "687d4b818545e443c8ba223cbef20b1721afd4db"
+  revision = "6a293f2d4b14b8e6d3f0539e383f6d0d30fce3fd"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","http2","http2/hpack","idna","lex/httplex"]
-  revision = "01c190206fbdffa42f334f4b2bf2220f50e64920"
+  revision = "a337091b0525af65de94df2eb7e98bd9962dcbe2"
 
 [[projects]]
   branch = "master"
@@ -358,6 +352,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a10c34573793b26b7a171e8e7923f691d93f6899f7cb055b4659d8fdfefd5dd1"
+  inputs-digest = "f6585aa66eadcc32cce548c51172433771da694190fd2ce5a3ddf618ae7fb790"
   solver-name = "gps-cdcl"
   solver-version = 1

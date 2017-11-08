@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type AccountPolicyType struct {

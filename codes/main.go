@@ -3,7 +3,7 @@
 package codes
 
 import (
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"github.com/go-errors/errors"
 	"gitlab.com/distributed_lab/logan"
 )

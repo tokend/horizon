@@ -1,8 +1,8 @@
 package ingest
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
 	sq "github.com/lann/squirrel"
 	"github.com/pkg/errors"
 )

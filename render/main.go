@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"bitbucket.org/ww/goautoneg"
-	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/log"
 	"golang.org/x/net/context"
 )
 

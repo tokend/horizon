@@ -1,6 +1,6 @@
 package test
 
-import "gitlab.com/distributed_lab/tokend/horizon/test/scenarious"
+import "gitlab.com/tokend/horizon/test/scenarious"
 
 func loadScenario(scenarioName string, includeHorizon bool) {
 	stellarCorePath := scenarioName + "-core.sql"

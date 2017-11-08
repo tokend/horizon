@@ -11,13 +11,13 @@ import (
 
 	"time"
 
-	"bullioncoin.githost.io/development/go/amount"
-	"bullioncoin.githost.io/development/go/strkey"
-	"bullioncoin.githost.io/development/go/xdr"
-	"gitlab.com/distributed_lab/tokend/horizon/db2"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
-	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
-	"gitlab.com/distributed_lab/tokend/horizon/utils"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/strkey"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/utils"
 )
 
 const (

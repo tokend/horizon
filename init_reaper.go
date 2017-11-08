@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/reap"
+	"gitlab.com/tokend/horizon/reap"
 )
 
 func initReaper(app *App) {

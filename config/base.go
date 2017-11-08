@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"gitlab.com/distributed_lab/tokend/horizon/assets"
+	"gitlab.com/tokend/horizon/assets"
 
 	"github.com/spf13/viper"
 )

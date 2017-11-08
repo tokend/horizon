@@ -1,7 +1,7 @@
 package config
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/log"
 	"net/url"
 )
 

@@ -3,8 +3,8 @@ package config
 import (
 	"html/template"
 
-	"bullioncoin.githost.io/development/go/amount"
-	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/horizon/log"
 )
 
 type AdminNotification struct {

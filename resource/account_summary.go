@@ -3,8 +3,8 @@ package resource
 import (
 	"time"
 
-	"bullioncoin.githost.io/development/go/amount"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 type AccountSummary struct {

@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"time"
 
-	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/log"
 	"github.com/garyburd/redigo/redis"
 )
 

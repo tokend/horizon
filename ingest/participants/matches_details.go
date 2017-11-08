@@ -1,7 +1,7 @@
 package participants
 
 import (
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type MatchesDetails struct {

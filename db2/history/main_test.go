@@ -1,7 +1,7 @@
 package history
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/test"
+	"gitlab.com/tokend/horizon/test"
 	"testing"
 )
 

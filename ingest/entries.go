@@ -1,6 +1,6 @@
 package ingest
 
-import "bullioncoin.githost.io/development/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 func (is *Session) operationChanges(changes xdr.LedgerEntryChanges) error {
 	for i := range changes {

@@ -1,8 +1,8 @@
 package horizon
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/log"
-	"gitlab.com/distributed_lab/tokend/horizon/notificator"
+	"gitlab.com/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/notificator"
 )
 
 func initNotificator(app *App) {

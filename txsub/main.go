@@ -1,8 +1,8 @@
 package txsub
 
 import (
-	"bullioncoin.githost.io/development/go/build"
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/build"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/txsub"
 )

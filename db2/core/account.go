@@ -3,7 +3,7 @@ package core
 import (
 	"time"
 
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Account is a row of data from the `accounts` table

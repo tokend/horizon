@@ -1,7 +1,7 @@
 package config
 
 import (
-	"bullioncoin.githost.io/development/go/keypair"
+	"gitlab.com/tokend/go/keypair"
 	"errors"
 )
 

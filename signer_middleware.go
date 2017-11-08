@@ -3,8 +3,8 @@ package horizon
 import (
 	"net/http"
 
-	"bullioncoin.githost.io/development/go/signcontrol"
-	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/horizon/render/problem"
 	"github.com/zenazn/goji/web"
 )
 

@@ -6,9 +6,9 @@ import (
 	"math"
 	"strconv"
 
-	"gitlab.com/distributed_lab/tokend/horizon/log"
-	"bullioncoin.githost.io/development/go/signcontrol"
-	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/log"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/horizon/render/problem"
 	"github.com/zenazn/goji/web"
 	"gopkg.in/throttled/throttled.v2"
 	"gopkg.in/throttled/throttled.v2/store/memstore"

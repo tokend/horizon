@@ -3,8 +3,8 @@ package cache
 import (
 	"fmt"
 
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
 	"github.com/patrickmn/go-cache"
 )
 

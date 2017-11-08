@@ -1,10 +1,10 @@
 package horizon
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
-	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
-	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
-	"gitlab.com/distributed_lab/tokend/horizon/resource"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/resource"
 )
 
 // CoinsEmissionRequestShowAction returns a coins emission request based upon the provided

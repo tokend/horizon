@@ -7,9 +7,9 @@ import (
 
 	"time"
 
-	"gitlab.com/distributed_lab/tokend/horizon/context/requestid"
-	"gitlab.com/distributed_lab/tokend/horizon/log"
-	"gitlab.com/distributed_lab/tokend/horizon/utils"
+	"gitlab.com/tokend/horizon/context/requestid"
+	"gitlab.com/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/utils"
 	"github.com/go-errors/errors"
 	"golang.org/x/net/context"
 )
@@ -145,7 +145,7 @@ var (
 		Detail: "An error occurred while processing this request.  This is usually due " +
 			"to a bug within the server software.  Trying this request again may " +
 			"succeed if the bug is transient, otherwise please report this issue " +
-			"to the issue tracker at: https://gitlab.com/distributed_lab/tokend/horizon/issues." +
+			"to the issue tracker at: https://gitlab.com/tokend/horizon/issues." +
 			" Please include this response in your issue.",
 	}
 

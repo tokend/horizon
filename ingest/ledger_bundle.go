@@ -1,9 +1,9 @@
 package ingest
 
 import (
-	"bullioncoin.githost.io/development/go/amount"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
 	"strconv"
 	"time"
 )

@@ -1,8 +1,8 @@
 package ingest
 
 import (
-	"bullioncoin.githost.io/development/go/xdr"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationResult *xdr.OperationResultTr) (int, uint64) {

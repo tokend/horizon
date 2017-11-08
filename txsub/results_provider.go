@@ -6,9 +6,9 @@ import (
 	"bytes"
 	"encoding/base64"
 
-	"bullioncoin.githost.io/development/go/xdr"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/txsub"
 	"golang.org/x/net/context"

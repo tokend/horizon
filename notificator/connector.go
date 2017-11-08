@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	"bullioncoin.githost.io/development/go/hash"
-	"gitlab.com/distributed_lab/tokend/horizon/config"
-	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/tokend/go/hash"
+	"gitlab.com/tokend/horizon/config"
+	"gitlab.com/tokend/horizon/log"
 	"github.com/go-errors/errors"
 	"gitlab.com/distributed_lab/notificator"
 )

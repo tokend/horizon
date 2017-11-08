@@ -1,7 +1,7 @@
 package ingest
 
 import (
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"github.com/pkg/errors"
 )
 

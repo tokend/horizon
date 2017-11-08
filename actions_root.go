@@ -1,9 +1,9 @@
 package horizon
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/ledger"
-	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
-	"gitlab.com/distributed_lab/tokend/horizon/resource"
+	"gitlab.com/tokend/horizon/ledger"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/resource"
 )
 
 // RootAction provides a summary of the horizon instance and links to various

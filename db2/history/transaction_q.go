@@ -1,8 +1,8 @@
 package history
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/db2"
-	"gitlab.com/distributed_lab/tokend/horizon/toid"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/toid"
 	sq "github.com/lann/squirrel"
 )
 

@@ -3,8 +3,8 @@ package participants
 import (
 	"encoding/json"
 
-	"bullioncoin.githost.io/development/go/amount"
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type Match struct {

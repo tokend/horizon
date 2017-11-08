@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"gitlab.com/distributed_lab/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2"
 	migrate "github.com/rubenv/sql-migrate"
 )
 

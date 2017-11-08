@@ -3,10 +3,10 @@ package reap
 import (
 	"time"
 
-	"gitlab.com/distributed_lab/tokend/horizon/errors"
-	"gitlab.com/distributed_lab/tokend/horizon/ledger"
-	"gitlab.com/distributed_lab/tokend/horizon/log"
-	"gitlab.com/distributed_lab/tokend/horizon/toid"
+	"gitlab.com/tokend/horizon/errors"
+	"gitlab.com/tokend/horizon/ledger"
+	"gitlab.com/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/toid"
 )
 
 // DeleteUnretainedHistory removes all data associated with unretained ledgers.

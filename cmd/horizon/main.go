@@ -4,8 +4,8 @@ import (
 	"log"
 	"runtime"
 
-	"gitlab.com/distributed_lab/tokend/horizon"
-	"gitlab.com/distributed_lab/tokend/horizon/config"
+	"gitlab.com/tokend/horizon"
+	"gitlab.com/tokend/horizon/config"
 	"github.com/spf13/cobra"
 )
 

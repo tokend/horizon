@@ -1,6 +1,6 @@
 package horizon
 
-import "gitlab.com/distributed_lab/tokend/horizon/render/problem"
+import "gitlab.com/tokend/horizon/render/problem"
 
 // NotFoundAction renders a 404 response
 type NotFoundAction struct {

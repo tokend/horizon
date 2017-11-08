@@ -1,7 +1,7 @@
 package base
 
 import (
-	"bullioncoin.githost.io/development/go/amount"
+	"gitlab.com/tokend/go/amount"
 )
 
 type ForfeitItem struct {

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"gitlab.com/distributed_lab/tokend/horizon/test"
+	"gitlab.com/tokend/horizon/test"
 )
 
 func TestLedgerQueries(t *testing.T) {

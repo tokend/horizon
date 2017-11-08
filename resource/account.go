@@ -3,11 +3,11 @@ package resource
 import (
 	"fmt"
 
-	"bullioncoin.githost.io/development/go/amount"
-	"bullioncoin.githost.io/development/go/xdr"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
-	"gitlab.com/distributed_lab/tokend/horizon/httpx"
-	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/httpx"
+	"gitlab.com/tokend/horizon/render/hal"
 	"golang.org/x/net/context"
 )
 

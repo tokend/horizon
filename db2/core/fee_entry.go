@@ -1,7 +1,7 @@
 package core
 
 import (
-	"bullioncoin.githost.io/development/go/hash"
+	"gitlab.com/tokend/go/hash"
 	"database/sql"
 	"encoding/hex"
 	"fmt"

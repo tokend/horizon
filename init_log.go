@@ -3,7 +3,7 @@ package horizon
 import (
 	"time"
 
-	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/log"
 	"github.com/multiplay/go-slack/chat"
 	"github.com/multiplay/go-slack/lrhook"
 	"github.com/sirupsen/logrus"

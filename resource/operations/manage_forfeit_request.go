@@ -1,6 +1,6 @@
 package operations
 
-import "gitlab.com/distributed_lab/tokend/horizon/resource/base"
+import "gitlab.com/tokend/horizon/resource/base"
 
 type ManageForfeitRequest struct {
 	Base

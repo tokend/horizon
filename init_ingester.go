@@ -1,8 +1,8 @@
 package horizon
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/log"
-	"gitlab.com/distributed_lab/tokend/horizon/ingest"
+	"gitlab.com/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/ingest"
 )
 
 func initIngester(app *App) {

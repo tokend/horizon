@@ -1,8 +1,8 @@
 package resource
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
-	"gitlab.com/distributed_lab/tokend/horizon/resource/operations"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/resource/operations"
 	"strconv"
 	"time"
 )

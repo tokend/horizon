@@ -3,7 +3,7 @@ package history
 import (
 	"encoding/json"
 
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"github.com/go-errors/errors"
 )
 

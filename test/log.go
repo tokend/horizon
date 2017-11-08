@@ -1,7 +1,7 @@
 package test
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/log"
 	"github.com/sirupsen/logrus"
 )
 

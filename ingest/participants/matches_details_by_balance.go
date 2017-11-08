@@ -1,6 +1,6 @@
 package participants
 
-import "bullioncoin.githost.io/development/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 type MatchesDetailsByBalance struct {
 	Details map[string]*MatchesDetails

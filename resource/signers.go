@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 type Signers struct {

@@ -3,7 +3,7 @@ package core
 import (
 	"database/sql"
 
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	sq "github.com/lann/squirrel"
 )
 

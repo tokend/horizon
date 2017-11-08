@@ -6,11 +6,11 @@ package ingest
 import (
 	"sync"
 
-	"gitlab.com/distributed_lab/tokend/horizon/corer"
-	"gitlab.com/distributed_lab/tokend/horizon/db2"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
-	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/corer"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/log"
 	sq "github.com/lann/squirrel"
 	"github.com/rcrowley/go-metrics"
 )

@@ -3,8 +3,8 @@ package ingest
 import (
 	"testing"
 
-	"bullioncoin.githost.io/development/go/network"
-	"gitlab.com/distributed_lab/tokend/horizon/test"
+	"gitlab.com/tokend/go/network"
+	"gitlab.com/tokend/horizon/test"
 )
 
 func TestValidation(t *testing.T) {

@@ -1,8 +1,8 @@
 package resource
 
 import (
-	"bullioncoin.githost.io/development/go/xdr"
-	"gitlab.com/distributed_lab/tokend/horizon/codes"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/codes"
 )
 
 // TransactionResultCodes represent a summary of result codes returned from

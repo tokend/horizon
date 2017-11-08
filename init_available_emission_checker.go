@@ -3,8 +3,8 @@ package horizon
 import (
 	"time"
 
-	"gitlab.com/distributed_lab/tokend/horizon/errors"
-	"gitlab.com/distributed_lab/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/errors"
+	"gitlab.com/tokend/horizon/log"
 )
 
 func notifyForAsset(app *App, asset string) error {

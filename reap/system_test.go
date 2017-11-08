@@ -3,7 +3,7 @@ package reap
 import (
 	"testing"
 
-	"gitlab.com/distributed_lab/tokend/horizon/test"
+	"gitlab.com/tokend/horizon/test"
 )
 
 func TestDeleteUnretainedHistory(t *testing.T) {

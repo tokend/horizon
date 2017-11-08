@@ -3,11 +3,11 @@ package horizon
 import (
 	"time"
 
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
-	"gitlab.com/distributed_lab/tokend/horizon/render/hal"
-	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
-	"gitlab.com/distributed_lab/tokend/horizon/render/sse"
-	"gitlab.com/distributed_lab/tokend/horizon/resource"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/render/sse"
+	"gitlab.com/tokend/horizon/resource"
 )
 
 type PricesHistoryAction struct {

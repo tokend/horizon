@@ -3,7 +3,7 @@ package history
 import (
 	"time"
 
-	"gitlab.com/distributed_lab/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2"
 	"github.com/guregu/null"
 )
 

@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 func (this *HistoryAccount) Populate(row history.Account) {

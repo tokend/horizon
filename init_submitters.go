@@ -5,10 +5,10 @@ import (
 
 	"time"
 
-	"gitlab.com/distributed_lab/tokend/horizon/log"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history"
-	hTxsub "gitlab.com/distributed_lab/tokend/horizon/txsub"
+	"gitlab.com/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
+	hTxsub "gitlab.com/tokend/horizon/txsub"
 	"gitlab.com/distributed_lab/corer"
 	"gitlab.com/distributed_lab/txsub"
 )

@@ -12,9 +12,9 @@ import (
 	"encoding/json"
 	"errors"
 
-	"gitlab.com/distributed_lab/tokend/horizon/render"
-	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
-	"gitlab.com/distributed_lab/tokend/horizon/render/sse"
+	"gitlab.com/tokend/horizon/render"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/render/sse"
 	"github.com/zenazn/goji/web"
 	"golang.org/x/net/context"
 )

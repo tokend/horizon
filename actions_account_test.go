@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"gitlab.com/distributed_lab/tokend/horizon/resource"
+	"gitlab.com/tokend/horizon/resource"
 )
 
 func TestAccountActions_Show(t *testing.T) {

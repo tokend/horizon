@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"gitlab.com/distributed_lab/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core"
 	"github.com/stretchr/testify/require"
 	"math"
 	"testing"

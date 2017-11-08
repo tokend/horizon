@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"testing"
 
-	"gitlab.com/distributed_lab/tokend/horizon/resource"
-	"gitlab.com/distributed_lab/tokend/horizon/txsub"
-	"gitlab.com/distributed_lab/tokend/horizon/txsub/sequence"
+	"gitlab.com/tokend/horizon/resource"
+	"gitlab.com/tokend/horizon/txsub"
+	"gitlab.com/tokend/horizon/txsub/sequence"
 )
 
 func TestTransactionActions_Show(t *testing.T) {

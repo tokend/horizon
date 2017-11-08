@@ -3,7 +3,7 @@ package ingest
 import (
 	"fmt"
 
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	sq "github.com/lann/squirrel"
 )
 

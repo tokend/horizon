@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 
-	"gitlab.com/distributed_lab/tokend/horizon/render/problem"
-	"gitlab.com/distributed_lab/tokend/horizon/test"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/test"
 	"github.com/stretchr/testify/assert"
 )
 

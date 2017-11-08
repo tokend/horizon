@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"gitlab.com/distributed_lab/tokend/horizon/db2/history/schema"
+	"gitlab.com/tokend/horizon/db2/history/schema"
 	"github.com/spf13/cobra"
 )
 

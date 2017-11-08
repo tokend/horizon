@@ -3,7 +3,7 @@ package core
 import (
 	"testing"
 
-	"gitlab.com/distributed_lab/tokend/horizon/test"
+	"gitlab.com/tokend/horizon/test"
 )
 
 func TestLatestLedger(t *testing.T) {

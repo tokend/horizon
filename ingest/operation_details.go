@@ -3,8 +3,8 @@ package ingest
 import (
 	"fmt"
 
-	"bullioncoin.githost.io/development/go/amount"
-	"bullioncoin.githost.io/development/go/xdr"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
