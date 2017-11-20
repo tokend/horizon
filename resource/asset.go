@@ -3,24 +3,16 @@ package resource
 import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/resource/base"
 )
 
 type Asset struct {
 	Code       string           `json:"code"`
-	Token      string           `json:"token"`
-	AssetForms []base.AssetForm `json:"asset_forms"`
 	Policies
 }
 
 func (a *Asset) Populate(asset *core.Asset) {
 	a.Code = asset.Code
 	a.Policies.Populate(*asset)
-	a.Token = asset.Token
-	a.AssetForms = make([]base.AssetForm, len(asset.AssetForms))
-	for i := range asset.AssetForms {
-		a.AssetForms[i].PopulateFromXdr(asset.AssetForms[i])
-	}
 }
 
 type AssetPair struct {

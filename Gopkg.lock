@@ -290,10 +290,10 @@
   revision = "425042624985b3c3bab7f6f3ad7a0d1c6eb3d0ac"
 
 [[projects]]
-  branch = "master"
+  branch = "xdr_update"
   name = "gitlab.com/tokend/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "81d3de1647f7e531356b0a02955e98b60e343f8e"
+  revision = "19ff1131c8ffc3dd26387f502c40fe07f8a15603"
 
 [[projects]]
   branch = "master"
@@ -352,6 +352,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f6585aa66eadcc32cce548c51172433771da694190fd2ce5a3ddf618ae7fb790"
+  inputs-digest = "a68dabe5c0d8618b365c3ef625ce00b180e8301ddd2527fe219a260923c9adad"
   solver-name = "gps-cdcl"
   solver-version = 1

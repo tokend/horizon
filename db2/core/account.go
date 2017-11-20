@@ -16,6 +16,5 @@ type Account struct {
 	ShareForReferrer xdr.Int64      `db:"share_for_referrer"`
 	Policies         int32          `db:"policies"`
 	CreatedAt        time.Time      `db:"created_at"`
-	ExchangeData
 	*Statistics
 }

@@ -105,15 +105,11 @@ func initWebActions(app *App) {
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
-		xdr.OperationTypeDemurrage,
 		xdr.OperationTypeReviewCoinsEmissionRequest,
 		xdr.OperationTypeManageCoinsEmissionRequest,
 		xdr.OperationTypeManageForfeitRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
-	}
-	accountTypesExchange := []xdr.AccountType{
-		xdr.AccountTypeExchange,
 	}
 
 	r := app.web.router
@@ -145,10 +141,6 @@ func initWebActions(app *App) {
 	// order book
 	r.Get("/order_book", &OrderBookAction{})
 	r.Get("/trades", &TradesAction{})
-
-	r.Get("/exchanges", &AccountIndexAction{
-		Types: accountTypesExchange,
-	})
 
 	r.Get("/trusts/:balance_id", &BalanceTrustsAction{})
 
@@ -268,7 +260,7 @@ func init() {
 		"web.init",
 		initWeb,
 		"app-context", "notificator", "stellarCoreInfo", "memory_cache",
-		"demurrage", "available_emission_checker",
+		"available_emission_checker",
 	)
 
 	appInit.Add(

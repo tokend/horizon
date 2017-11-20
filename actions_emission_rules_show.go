@@ -1,12 +1,10 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
-	"gitlab.com/tokend/horizon/utils"
 )
 
 // This file contains the actions:
@@ -71,21 +69,4 @@ func (action *EmissionRulesShowAction) loadData() {
 		action.Err = &problem.NotFound
 		return
 	}
-
-	action.Fees, err = action.CoreQ().FeesByTypeAssetAccount(int(xdr.FeeTypeEmissionFee), asset.Token, int64(xdr.EmissionFeeTypeSecondaryMarket), action.Account)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to load fee by asset and type")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	action.Fees = utils.FillFeeGaps(action.Fees, core.FeeEntry{
-		FeeType:     int(xdr.FeeTypeEmissionFee),
-		Asset:       asset.Token,
-		Fixed:       0,
-		Percent:     0,
-		Subtype:     int64(xdr.EmissionFeeTypeSecondaryMarket),
-		AccountType: -1,
-	})
-
 }

@@ -11,11 +11,6 @@ import (
 	"golang.org/x/net/context"
 )
 
-type ExchangeData struct {
-	Name          string `json:"name"`
-	RequireReview bool   `json:"require_review"`
-}
-
 // Account is the summary of an account
 type Account struct {
 	Links struct {
@@ -36,11 +31,9 @@ type Account struct {
 	Thresholds           AccountThresholds  `json:"thresholds"`
 	Flags                AccountFlags       `json:"flags"`
 	Balances             []Balance          `json:"balances"`
-	ExchangePolicies     []ExchangePolicies `json:"exchange_policies,omitempty"`
 	Signers
 	Limits           `json:"limits"`
 	Statistics       `json:"statistics"`
-	ExchangeData     *ExchangeData   `json:"exchange_data,omitempty"`
 	Referrer         string          `json:"referrer"`
 	ShareForReferrer string          `json:"share_for_referrer"`
 	Policies         AccountPolicies `json:"policies"`
@@ -68,8 +61,6 @@ type BalancePublic struct {
 	BalanceID    string `json:"balance_id"`
 	AccountID    string `json:"account_id"`
 	Asset        string `json:"asset"`
-	ExchangeName string `json:"exchange_name"`
-	ExchangeID   string `json:"exchange_id"`
 }
 
 // Balance represents an account's holdings for a single currency type
@@ -78,10 +69,6 @@ type Balance struct {
 	Balance                  string    `json:"balance,omitempty"`
 	Locked                   string    `json:"locked,omitempty"`
 	RequireReview            bool      `json:"require_review"`
-	StorageFee               string    `json:"storage_fee,omitempty"`
-	FeesPaid                 string    `json:"fees_paid"`
-	StorageFeeLastCalculated time.Time `json:"storage_fee_last_calculated"`
-	StorageFeeTime           time.Time `json:"storage_fee_time,omitempty"`
 	IncentivePerCoin         string    `json:"incentive_per_coin"`
 }
 

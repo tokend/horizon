@@ -224,8 +224,6 @@ func String(code interface{}) (string, error) {
 			return OpLineFull, nil
 		case xdr.ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidReference:
 			return "invalid_reference", nil
-		case xdr.ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestNotAllowedByExchangePolicy:
-			return OpExchangePolicyViolated, nil
 		}
 
 	case xdr.ReviewCoinsEmissionRequestResultCode:
@@ -290,21 +288,6 @@ func String(code interface{}) (string, error) {
 		case xdr.ManageAccountResultCodeManageAccountTypeMismatch:
 			return "type_mismatch", nil
 		}
-	case xdr.ForfeitResultCode:
-		switch code {
-		case xdr.ForfeitResultCodeForfeitSuccess:
-			return OpSuccess, nil
-		case xdr.ForfeitResultCodeForfeitMalformed:
-			return OpMalformed, nil
-		case xdr.ForfeitResultCodeForfeitBalanceNotFound:
-			return OpBalanceNotFound, nil
-		case xdr.ForfeitResultCodeForfeitUnderfunded:
-			return OpUnderfunded, nil
-		case xdr.ForfeitResultCodeForfeitStatsOverflow:
-			return OpStatsOverflow, nil
-		case xdr.ForfeitResultCodeForfeitLimitsExceeded:
-			return OpLimitsExceeded, nil
-		}
 	case xdr.ManageForfeitRequestResultCode:
 		switch code {
 		case xdr.ManageForfeitRequestResultCodeManageForfeitRequestSuccess:
@@ -325,8 +308,6 @@ func String(code interface{}) (string, error) {
 			return "op_reviewer_not_found", nil
 		case xdr.ManageForfeitRequestResultCodeManageForfeitRequestInvalidDetails:
 			return "op_invalid_details", nil
-		case xdr.ManageForfeitRequestResultCodeManageForfeitRequestBalanceRequiresReview:
-			return "op_exchange_requires_review_request_with_reviewer_not_available", nil
 		}
 
 	case xdr.RecoverResultCode:
@@ -353,15 +334,10 @@ func String(code interface{}) (string, error) {
 			return "op_destination_not_found", nil
 		case xdr.ManageBalanceResultCodeManageBalanceAlreadyExists:
 			return OpAlreadyExists, nil
-		case xdr.ManageBalanceResultCodeManageBalanceAnotherExchange:
-			return "op_another_exchange", nil
 		case xdr.ManageBalanceResultCodeManageBalanceAssetNotFound:
 			return OpAssetNotFound, nil
 		case xdr.ManageBalanceResultCodeManageBalanceInvalidAsset:
 			return "op_invalid_asset", nil
-		case xdr.ManageBalanceResultCodeManageBalanceNotAllowedByExchangePolicy:
-			return OpExchangePolicyViolated, nil
-
 		}
 	case xdr.ReviewPaymentRequestResultCode:
 		switch code {
@@ -371,8 +347,6 @@ func String(code interface{}) (string, error) {
 			return OpRequestNotFound, nil
 		case xdr.ReviewPaymentRequestResultCodeReviewPaymentRequestLineFull:
 			return OpLineFull, nil
-		case xdr.ReviewPaymentRequestResultCodeReviewPaymentDemurrageRejectionNotAllowed:
-			return "demurrage_rejection_not_allowed", nil
 		}
 
 	case xdr.ManageAssetResultCode:
@@ -385,26 +359,6 @@ func String(code interface{}) (string, error) {
 			return OpAlreadyExists, nil
 		case xdr.ManageAssetResultCodeManageAssetMalformed:
 			return OpMalformed, nil
-		case xdr.ManageAssetResultCodeManageAssetTokenAlreadyExists:
-			return "op_token_already_exists", nil
-		case xdr.ManageAssetResultCodeManageAssetTokenTokenAlredySet:
-			return "op_asset_token_already_set", nil
-		}
-
-	case xdr.DemurrageResultCode:
-		switch code {
-		case xdr.DemurrageResultCodeDemurrageSuccess:
-			return OpSuccess, nil
-		case xdr.DemurrageResultCodeDemurrageAssetNotFound:
-			return OpAssetNotFound, nil
-		case xdr.DemurrageResultCodeDemurrageInvalidAsset:
-			return "op_invalid_asset", nil
-		case xdr.DemurrageResultCodeDemurrageNotRequired:
-			return OpDemurrageNotRequired, nil
-		case xdr.DemurrageResultCodeDemurrageStatsOverflow:
-			return OpStatsOverflow, nil
-		case xdr.DemurrageResultCodeDemurrageLimitsExceeded:
-			return OpLimitsExceeded, nil
 		}
 
 	case xdr.UploadPreemissionsResultCode:
@@ -489,8 +443,6 @@ func String(code interface{}) (string, error) {
 			return "op_pair_not_traded", nil
 		case xdr.ManageOfferResultCodeManageOfferBalanceNotFound:
 			return "balance_not_found", nil
-		case xdr.ManageOfferResultCodeManageOfferRequiresReview:
-			return "op_requiers_review", nil
 		case xdr.ManageOfferResultCodeManageOfferUnderfunded:
 			return OpUnderfunded, nil
 		case xdr.ManageOfferResultCodeManageOfferCrossSelf:
@@ -507,8 +459,6 @@ func String(code interface{}) (string, error) {
 			return "op_not_found", nil
 		case xdr.ManageOfferResultCodeManageOfferInvalidPercentFee:
 			return "op_invalid_percent_fee", nil
-		case xdr.ManageOfferResultCodeManageOfferDirectBuyNotAllowed:
-			return "op_offer_direct_buy_not_allowed", nil
 		case xdr.ManageOfferResultCodeManageOfferInsuffisientPrice:
 			return "op_offer_insuffisient_price", nil
 		}
@@ -559,8 +509,6 @@ func ForOperationResult(opr xdr.OperationResult) (string, error) {
 		ic = ir.MustSetFeesResult().Code
 	case xdr.OperationTypeManageAccount:
 		ic = ir.MustManageAccountResult().Code
-	case xdr.OperationTypeForfeit:
-		ic = ir.MustForfeitResult().Code
 	case xdr.OperationTypeManageForfeitRequest:
 		ic = ir.MustManageForfeitRequestResult().Code
 	case xdr.OperationTypeRecover:
@@ -571,8 +519,6 @@ func ForOperationResult(opr xdr.OperationResult) (string, error) {
 		ic = ir.MustReviewPaymentRequestResult().Code
 	case xdr.OperationTypeManageAsset:
 		ic = ir.MustManageAssetResult().Code
-	case xdr.OperationTypeDemurrage:
-		ic = ir.MustDemurrageResult().Code
 	case xdr.OperationTypeUploadPreemissions:
 		ic = ir.MustUploadPreemissionsResult().Code
 	case xdr.OperationTypeSetLimits:

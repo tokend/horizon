@@ -36,7 +36,6 @@ func (action *CoinsEmissionRequestIndexAction) JSON() {
 		action.loadParams,
 		action.checkAllowed,
 		action.loadRecords,
-		action.loadExchangeNames,
 		action.loadPage,
 		func() {
 			hal.Render(action.W, action.Page)
@@ -120,35 +119,6 @@ func (action *CoinsEmissionRequestIndexAction) loadRecords() {
 		action.Log.WithError(err).Error("failed to get emission requests")
 		action.Err = &problem.ServerError
 		return
-	}
-}
-
-func (action *CoinsEmissionRequestIndexAction) loadExchangeNames() {
-	exchanges := map[string]string{}
-	for i := range action.Records {
-		// if exchange name is empty set it's ID
-		exchanges[action.Records[i].Issuer] = action.Records[i].Issuer
-	}
-
-	// load all exchanges
-	for exchangeKey := range exchanges {
-		exchangeName, err := action.CoreQ().ExchangeName(exchangeKey)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to get exchange name")
-			action.Err = &problem.ServerError
-			return
-		}
-
-		if exchangeName == nil {
-			continue
-		}
-
-		exchanges[exchangeKey] = *exchangeName
-	}
-
-	// populate names
-	for i := range action.Records {
-		action.Records[i].ExchangeName = exchanges[action.Records[i].Issuer]
 	}
 }
 

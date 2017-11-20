@@ -92,7 +92,7 @@ func (action *HistoryOperationShowAction) loadRecord() {
 		action.ID: {},
 	}
 	switch action.Record.Type {
-	case xdr.OperationTypeManageOffer, xdr.OperationTypeDemurrage:
+	case xdr.OperationTypeManageOffer:
 		// workaround for load participants
 		action.IsAdmin = true
 		action.LoadParticipants("", action.Participants)

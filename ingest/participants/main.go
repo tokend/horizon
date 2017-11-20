@@ -5,9 +5,6 @@ package participants
 import (
 	"fmt"
 
-	"time"
-
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
@@ -76,18 +73,10 @@ func ForOperation(
 	case xdr.OperationTypeManageAccount:
 		manageAccountOp := op.Body.MustManageAccountOp()
 		result = append(result, Participant{manageAccountOp.Account, nil, nil})
-	case xdr.OperationTypeForfeit:
-		balance := op.Body.MustForfeitOp().Balance
-		accountID, err := getAccountIDByBalance(q, balance.AsString())
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, Participant{*accountID, &balance, nil})
 	case xdr.OperationTypeManageForfeitRequest:
 		manageForfeitRequestOp := op.Body.MustManageForfeitRequestOp()
 		sourceParticipant.BalanceID = &manageForfeitRequestOp.Balance
-		manageForfeitRequestResult := opResult.MustManageForfeitRequestResult()
-		result = append(result, Participant{manageForfeitRequestResult.ForfeitRequestDetails.Exchange, nil, nil})
+		result = append(result, Participant{manageForfeitRequestOp.Reviewer, nil, nil})
 	case xdr.OperationTypeRecover:
 		result = append(result, Participant{op.Body.MustRecoverOp().Account, nil, nil})
 	case xdr.OperationTypeManageBalance:
@@ -96,19 +85,7 @@ func ForOperation(
 	case xdr.OperationTypeReviewPaymentRequest:
 	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAsset:
-	// the only direct participant is the source_account
-	case xdr.OperationTypeDemurrage:
-		demurrageOp := op.Body.MustDemurrageOp()
-		demurrageResult := opResult.MustDemurrageResult()
-		for _, balanceDemurrage := range demurrageResult.DemurrageInfo.Demurrages {
-			details := map[string]interface{}{}
-			details["amount"] = amount.String(int64(balanceDemurrage.Amount))
-			details["asset"] = demurrageOp.Asset
-			details["period_to"] = time.Unix(ledger.CloseTime, 0).UTC()
-			details["period_from"] = time.Unix(ledger.CloseTime, 0).Add(time.Duration(-int64(balanceDemurrage.Period)) * time.Second).UTC()
-			tmpBalance := balanceDemurrage.Balance
-			result = append(result, Participant{balanceDemurrage.Account, &tmpBalance, &details})
-		}
+	// the only direct participant is the source_accountWWW
 	case xdr.OperationTypeUploadPreemissions:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeSetLimits:
@@ -140,7 +117,7 @@ func ForOperation(
 			break
 		}
 		sourceParticipant.BalanceID = &manageInvoiceOp.ReceiverBalance
-		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.MustManageInvoiceResult().Success.SenderBalance, nil})
+		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.ManageInvoiceResult.Success.SenderBalance, nil})
 	default:
 		err = fmt.Errorf("Unknown operation type: %s", op.Body.Type)
 	}

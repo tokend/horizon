@@ -1,7 +1,5 @@
 package operations
 
-import "gitlab.com/tokend/horizon/resource/base"
-
 type ManageForfeitRequest struct {
 	Base
 	Action      int32              `json:"action"`
@@ -9,7 +7,5 @@ type ManageForfeitRequest struct {
 	Amount      string             `json:"amount"`
 	Asset       string             `json:"asset"`
 	UserDetails string             `json:"user_details,omitempty"`
-	Items       []base.ForfeitItem `json:"items"`
-	FixedFee    string             `json:"fixed_fee"`
-	PercentFee  string             `json:"percent_fee"`
+	TotalFee	string			   `json:"total_fee"`
 }

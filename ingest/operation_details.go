@@ -18,7 +18,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustCreateAccountOp()
 		details["funder"] = source.Address()
 		details["account"] = op.Destination.Address()
-		details["account_type"] = int32(op.Details.AccountType)
+		details["account_type"] = int32(op.AccountType)
 		if op.Referrer != nil {
 			details["referrer"] = (*op.Referrer).Address()
 		}
@@ -98,35 +98,17 @@ func (is *Session) operationDetails() map[string]interface{} {
 			}
 		}
 
-		if op.StorageFeePeriod != nil {
-			details["storage_fee_period"] = int64(*op.StorageFeePeriod)
-		}
-
-		if op.PayoutsPeriod != nil {
-			details["payout_period"] = int64(*op.PayoutsPeriod)
-		}
-
 	case xdr.OperationTypeManageAccount:
 		op := c.Operation().Body.MustManageAccountOp()
 		details["account"] = op.Account.Address()
 		details["block_reasons_to_add"] = op.BlockReasonsToAdd
 		details["block_reasons_to_remove"] = op.BlockReasonsToRemove
-	case xdr.OperationTypeForfeit:
-		op := c.Operation().Body.MustForfeitOp()
-		details["target"] = op.Balance.AsString()
-		details["amount"] = amount.String(int64(op.Amount))
 	case xdr.OperationTypeManageForfeitRequest:
 		op := c.Operation().Body.MustManageForfeitRequestOp()
-		opResult := c.OperationResult().MustManageForfeitRequestResult()
 		details["amount"] = amount.String(int64(op.Amount))
-		details["asset"] = opResult.ForfeitRequestDetails.Asset
 		details["balance"] = op.Balance.AsString()
 		details["user_details"] = op.Details
-		details["items"] = manageForfeitRequestToForfeitTimes(opResult)
-		if opResult.ForfeitRequestDetails.Ext.Fees != nil {
-			details["fixed_fee"] = amount.String(int64(opResult.ForfeitRequestDetails.Ext.Fees.FixedFee))
-			details["percent_fee"] = amount.String(int64(opResult.ForfeitRequestDetails.Ext.Fees.PercentFee))
-		}
+		details["total_fee"] = op.TotalFee
 	case xdr.OperationTypeRecover:
 		op := c.Operation().Body.MustRecoverOp()
 		details["account"] = op.Account.Address()
@@ -148,9 +130,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustManageAssetOp()
 		details["code"] = op.Code
 		details["action"] = op.Action
-	case xdr.OperationTypeDemurrage:
-		opResult := c.OperationResult().MustDemurrageResult()
-		details["quantity"] = len(opResult.DemurrageInfo.Demurrages)
 	case xdr.OperationTypeUploadPreemissions:
 		op := c.Operation().Body.MustUploadPreemissionsOp()
 		details["quantity"] = len(op.PreEmissions)
@@ -188,7 +167,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["amount"] = amount.String(int64(op.Amount))
 		details["price"] = amount.String(int64(op.Price))
 		details["fee"] = amount.String(int64(op.Fee))
-		details["is_direct"] = op.IsDirect
 		details["offer_id"] = op.OfferId
 		details["is_deleted"] = int64(op.OfferId) != 0
 	case xdr.OperationTypeManageInvoice:

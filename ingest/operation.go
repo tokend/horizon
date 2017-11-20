@@ -17,15 +17,12 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 			paymentResponse = operationResult.MustDirectDebitResult().MustSuccess().PaymentResponse
 		}
 
-		if len(paymentResponse.Exchanges) > 0 {
-			state = history.PENDING
-		}
 		operationIdentifier = uint64(paymentResponse.PaymentId)
 		return state, operationIdentifier
 	case xdr.OperationTypeManageForfeitRequest:
 		state = history.PENDING
 		manageRequestResult := operationResult.MustManageForfeitRequestResult()
-		operationIdentifier = uint64(manageRequestResult.ForfeitRequestDetails.PaymentId)
+		operationIdentifier = uint64(manageRequestResult.Success.PaymentId)
 		return state, operationIdentifier
 	case xdr.OperationTypeManageInvoice:
 		manageInvoiceOp := op.Body.MustManageInvoiceOp()
@@ -74,8 +71,6 @@ func (is *Session) operation() {
 	switch is.Cursor.OperationType() {
 	case xdr.OperationTypeReviewCoinsEmissionRequest:
 		is.processReviewEmissionRequest(*is.Cursor.Operation(), *is.Cursor.OperationResult())
-	case xdr.OperationTypeForfeit:
-		is.processForfeit(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
 	case xdr.OperationTypeManageForfeitRequest:
 		is.processManageForfeitRequest(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
 	case xdr.OperationTypePayment:
@@ -84,8 +79,6 @@ func (is *Session) operation() {
 	case xdr.OperationTypeReviewPaymentRequest:
 		is.updateIngestedPaymentRequest(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount())
 		is.updateIngestedPayment(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
-	case xdr.OperationTypeDemurrage:
-		is.processDemurrage(*is.Cursor.OperationResult())
 	case xdr.OperationTypeDirectDebit:
 		opDirectDebit := is.Cursor.Operation().Body.MustDirectDebitOp()
 		is.processPayment(opDirectDebit.PaymentOp,

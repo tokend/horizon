@@ -22,7 +22,6 @@ CREATE TABLE history_balances (
     balance_id character varying(56) NOT NULL,
     asset character varying(4) NOT NULL,
     account_id character varying(56) NOT NULL,
-    exchange_id character varying(56) NOT NULL,
     kyc jsonb NOT NULL
 );
 
@@ -214,7 +213,6 @@ ALTER SEQUENCE history_operations_identifier_seq OWNED BY history_operations.ide
 CREATE TABLE history_payment_requests (
     id bigint NOT NULL,
     payment_id bigint NOT NULL,
-    exchange character varying(64) NOT NULL,
     accepted boolean,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,

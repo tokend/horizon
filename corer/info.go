@@ -18,8 +18,6 @@ type Info struct {
 	TxExpirationPeriod int64 `json:"tx_expiration_period"`
 	// WithdrawalDetailsMaxLength - max length of details field for withdrawal operation
 	WithdrawalDetailsMaxLength int64 `json:"withdrawal_details_max_length"`
-	// DemurragePeriod - frequency of demurrage been charged
-	DemurragePeriod int64 `json:"demurrage_period"`
 	// Array of the base assets
 	BaseAssets []string `json:"base_assets"`
 
@@ -29,8 +27,6 @@ type Info struct {
 	CommissionAccountID string `json:"commission_account_id"`
 	// OperationalAccountID - account ID of operational account
 	OperationalAccountID string `json:"operational_account_id"`
-	// StorageFeeManageAccountID - account ID of account which stores fees charged by demurrage op
-	StorageFeeManageAccountID string `json:"storage_fee_manager_account_id"`
 
 	// MasterAccountIDXDR - masterAccountID parsed into xdr.AccountID
 	MasterAccountIDXDR xdr.AccountId `json:"-"`
@@ -65,10 +61,6 @@ func (i *Info) validate() error {
 
 	if i.TxExpirationPeriod <= 0 {
 		return errorProvider("TxExpirationPeriod")
-	}
-
-	if i.DemurragePeriod <= 0 {
-		return errorProvider("DemurragePeriod")
 	}
 
 	if i.WithdrawalDetailsMaxLength <= 0 {
