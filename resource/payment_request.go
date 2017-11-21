@@ -9,7 +9,6 @@ import (
 
 type PaymentRequest struct {
 	PT             string                 `json:"paging_token"`
-	Exchange       string                 `json:"exchange"`
 	PaymentID      string                 `json:"payment_id"`
 	PaymentState   uint32                 `json:"payment_state"`
 	Accepted       *bool                  `json:"accepted"`
@@ -24,7 +23,6 @@ type PaymentRequest struct {
 // Populate fills out the resource's fields
 func (request *PaymentRequest) Populate(row *history.PaymentRequest) error {
 	request.PT = strconv.FormatInt(row.ID, 10)
-	request.Exchange = row.Exchange
 	request.PaymentID = strconv.FormatUint(row.PaymentID, 10)
 	if row.PaymentState != nil {
 		request.PaymentState = *row.PaymentState

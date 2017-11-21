@@ -13,7 +13,6 @@ import (
 func (ingest *Ingestion) InsertPaymentRequest(
 	ledger *core.LedgerHeader,
 	paymentID uint64,
-	exchange string,
 	details interface{},
 	accepted *bool,
 	requestType xdr.RequestType,
@@ -26,7 +25,6 @@ func (ingest *Ingestion) InsertPaymentRequest(
 
 	sql := ingest.payment_requests.Values(
 		paymentID,
-		exchange,
 		accepted,
 		djson,
 		ledgerCloseTime,
@@ -45,13 +43,12 @@ func (ingest *Ingestion) InsertPaymentRequest(
 func (ingest *Ingestion) UpdatePaymentRequest(
 	ledger *core.LedgerHeader,
 	paymentID uint64,
-	exchange string,
 	accept bool,
 ) error {
 	sql := sq.Update("history_payment_requests").SetMap(sq.Eq{
 		"accepted":   accept,
 		"updated_at": time.Unix(ledger.CloseTime, 0),
-	}).Where("payment_id = ?", paymentID).Where("exchange = ?", exchange)
+	}).Where("payment_id = ?", paymentID)
 
 	_, err := ingest.DB.Exec(sql)
 	if err != nil {

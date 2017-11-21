@@ -12,7 +12,6 @@ import (
 
 type PaymentRequestIndexAction struct {
 	Action
-	ExchangeFilter string
 	BalanceFilter  string
 	AccountFilter  string
 	StateFilter    int32
@@ -67,12 +66,10 @@ func (action *PaymentRequestIndexAction) loadParams() {
 	action.ValidateCursorAsDefault()
 	action.BalanceFilter = action.GetString("target_balance")
 	action.AccountFilter = action.GetString("target_account")
-	action.ExchangeFilter = action.GetString("exchange")
 	action.StateFilter = action.GetInt32("state")
 	action.PagingParams = action.GetPageQuery()
 	action.Page.Filters = map[string]string{
 		"state":          strconv.FormatInt(int64(action.StateFilter), 10),
-		"exchange":       action.ExchangeFilter,
 		"target_balance": action.BalanceFilter,
 		"target_account": action.AccountFilter,
 	}
@@ -89,10 +86,6 @@ func (action *PaymentRequestIndexAction) loadRecords() {
 
 	if action.BalanceFilter != "" {
 		requests.ForBalance(action.BalanceFilter)
-	}
-
-	if action.ExchangeFilter != "" {
-		requests.ForExchange(action.ExchangeFilter)
 	}
 
 	if action.StateFilter > 0 {
@@ -134,5 +127,5 @@ func (action *PaymentRequestIndexAction) loadPage() {
 }
 
 func (action *PaymentRequestIndexAction) checkAllowed() {
-	action.IsAllowed(action.AccountFilter, action.ExchangeFilter)
+	action.IsAllowed(action.AccountFilter)
 }

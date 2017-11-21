@@ -7,7 +7,7 @@ import (
 	"regexp"
 
 	"gitlab.com/tokend/horizon/log"
-	"gitlab.com/tokend/go/signcontrol"
+	//"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/render/problem"
 	"github.com/rcrowley/go-metrics"
@@ -101,7 +101,7 @@ const (
 // provided app.  All route registration should be implemented here.
 func initWebActions(app *App) {
 	apiProxy := httputil.NewSingleHostReverseProxy(app.config.APIBackend)
-	keychainProxy := httputil.NewSingleHostReverseProxy(app.config.KeychainBackend)
+	//keychainProxy := httputil.NewSingleHostReverseProxy(app.config.KeychainBackend)
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
@@ -222,12 +222,13 @@ func initWebActions(app *App) {
 
 		// checking if request is signed and deciding on proper handler
 		// (we rely on SignatureValidator middleware here)
-		signer := r.Header.Get(signcontrol.PublicKeyHeader)
-		if signer != "" {
-			TransactionCreateAction{}.ServeHTTPC(c, w, r)
-		} else {
-			apiProxy.ServeHTTP(w, r)
-		}
+
+		//signer := r.Header.Get(signcontrol.PublicKeyHeader)
+		//if signer != "" {
+		TransactionCreateAction{}.ServeHTTPC(c, w, r)
+		//} else {
+		//	apiProxy.ServeHTTP(w, r)
+		//}
 	}))
 
 	r.Get("/accounts/:account_id/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
@@ -241,11 +242,11 @@ func initWebActions(app *App) {
 		}
 	}))
 
-	r.Handle(regexp.MustCompile(`^/users/\w+/keys`), func() func(web.C, http.ResponseWriter, *http.Request) {
-		return func(c web.C, w http.ResponseWriter, r *http.Request) {
-			keychainProxy.ServeHTTP(w, r)
-		}
-	}())
+	//r.Handle(regexp.MustCompile(`^/users/\w+/keys`), func() func(web.C, http.ResponseWriter, *http.Request) {
+	//	return func(c web.C, w http.ResponseWriter, r *http.Request) {
+	//		keychainProxy.ServeHTTP(w, r)
+	//	}
+	//}())
 
 	// proxy pass every request horizon could not handle to API
 	r.Handle(regexp.MustCompile(`^.*`), func() func(web.C, http.ResponseWriter, *http.Request) {

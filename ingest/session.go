@@ -289,7 +289,6 @@ func (is *Session) processManageForfeitRequest(operation xdr.Operation, source x
 	is.Err = is.Ingestion.InsertPaymentRequest(
 		is.Cursor.Ledger(),
 		uint64(manageRequestResult.Success.PaymentId),
-		manageRequestOp.Reviewer.Address(),
 		details,
 		nil,
 		xdr.RequestTypeRequestTypeRedeem,
@@ -346,7 +345,6 @@ func (is *Session) updateIngestedPaymentRequest(operation xdr.Operation, source 
 	is.Err = is.Ingestion.UpdatePaymentRequest(
 		is.Cursor.Ledger(),
 		uint64(reviewPaymentOp.PaymentId),
-		source.Address(),
 		reviewPaymentOp.Accept,
 	)
 	if is.Err != nil {

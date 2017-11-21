@@ -293,7 +293,7 @@
   branch = "xdr_update"
   name = "gitlab.com/tokend/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "19ff1131c8ffc3dd26387f502c40fe07f8a15603"
+  revision = "1feefaddb585205ff15db015325502e7877d3dc9"
 
 [[projects]]
   branch = "master"

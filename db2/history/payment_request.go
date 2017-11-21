@@ -13,7 +13,6 @@ type PaymentRequest struct {
 	db2.TotalOrderID
 	PaymentID     uint64      `db:"payment_id"`
 	PaymentState  *uint32     `db:"state"`
-	Exchange      string      `db:"exchange"`
 	Accepted      *bool       `db:"accepted"`
 	DetailsString null.String `db:"details"`
 	CreatedAt     time.Time   `db:"created_at"`
