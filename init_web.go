@@ -71,7 +71,7 @@ func initWebMiddleware(app *App) {
 		c := cors.New(cors.Options{
 			AllowedOrigins:   []string{"*"},
 			AllowedHeaders:   []string{"*"},
-			AllowedMethods:   []string{"GET", "POST", "DELETE", "PATCH"},
+			AllowedMethods:   []string{"GET", "POST", "DELETE", "PATCH", "PUT"},
 			AllowCredentials: true,
 		})
 
