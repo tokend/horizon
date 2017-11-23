@@ -35,7 +35,6 @@ build:
     - master
     - staging
     - dev
-    - feature/ci
 
 delivery:dev:
   image: shebgregor/alpine-rsync-git
@@ -46,7 +45,6 @@ delivery:dev:
     - master
     - staging
     - dev
-    - feature/ci
 
 deploy:dev:
   image: shebgregor/alpine-rsync-git
@@ -56,4 +54,3 @@ deploy:dev:
     - curl -X POST http://$HOST_DEV:8842/CjUwUQjuiw_QCnB5Mg0K0Q
   only:
     - dev
-    - feature/ci
