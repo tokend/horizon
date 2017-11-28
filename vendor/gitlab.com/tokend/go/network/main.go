@@ -43,7 +43,7 @@ func HashTransaction(tx *xdr.Transaction, passphrase string) ([32]byte, error) {
 		return [32]byte{}, errors.Wrap(err, "fprint network id failed")
 	}
 
-	_, err = xdr.Marshal(&txBytes, xdr.EnvelopeTypeEnvelopeTypeTx)
+	_, err = xdr.Marshal(&txBytes, xdr.EnvelopeTypeTx)
 	if err != nil {
 		return [32]byte{}, errors.Wrap(err, "marshal type failed")
 	}

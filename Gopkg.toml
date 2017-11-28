@@ -130,7 +130,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[constraint]]
-  branch = "xdr_update"
+  branch = "master"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

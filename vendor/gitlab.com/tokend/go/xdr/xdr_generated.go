@@ -1,47 +1,48 @@
 // Package xdr is generated from:
 //
-//  xdr/raw/Stellar-ledger-entries-account-limits.x
-//  xdr/raw/Stellar-ledger-entries-account-type-limits.x
-//  xdr/raw/Stellar-ledger-entries-account.x
-//  xdr/raw/Stellar-ledger-entries-asset-pair.x
-//  xdr/raw/Stellar-ledger-entries-asset.x
-//  xdr/raw/Stellar-ledger-entries-balance.x
-//  xdr/raw/Stellar-ledger-entries-coins-emission-request.x
-//  xdr/raw/Stellar-ledger-entries-fee.x
-//  xdr/raw/Stellar-ledger-entries-invoice.x
 //  xdr/raw/Stellar-ledger-entries-offer.x
-//  xdr/raw/Stellar-ledger-entries-payment-request.x
-//  xdr/raw/Stellar-ledger-entries-reference.x
-//  xdr/raw/Stellar-ledger-entries-statistics.x
-//  xdr/raw/Stellar-ledger-entries.x
-//  xdr/raw/Stellar-ledger.x
-//  xdr/raw/Stellar-operation-create-account.x
 //  xdr/raw/Stellar-operation-direct-debit.x
-//  xdr/raw/Stellar-operation-manage-account.x
-//  xdr/raw/Stellar-operation-manage-asset-pair.x
-//  xdr/raw/Stellar-operation-manage-asset.x
-//  xdr/raw/Stellar-operation-manage-balance.x
 //  xdr/raw/Stellar-operation-manage-coins-emission-request.x
-//  xdr/raw/Stellar-operation-manage-forfeit-request.x
-//  xdr/raw/Stellar-operation-manage-invoice.x
 //  xdr/raw/Stellar-operation-manage-offer.x
+//  xdr/raw/Stellar-ledger-entries-fee.x
+//  xdr/raw/Stellar-ledger-entries-reference.x
+//  xdr/raw/Stellar-operation-upload-preemissions.x
+//  xdr/raw/Stellar-ledger-entries-account-type-limits.x
+//  xdr/raw/Stellar-ledger-entries-invoice.x
+//  xdr/raw/Stellar-SCP.x
+//  xdr/raw/Stellar-ledger.x
+//  xdr/raw/Stellar-ledger-entries-balance.x
+//  xdr/raw/Stellar-overlay.x
+//  xdr/raw/Stellar-operation-create-account.x
+//  xdr/raw/Stellar-operation-manage-account.x
+//  xdr/raw/Stellar-transaction.x
+//  xdr/raw/Stellar-ledger-entries-payment-request.x
+//  xdr/raw/Stellar-operation-manage-asset.x
+//  xdr/raw/Stellar-operation-manage-asset-pair.x
+//  xdr/raw/Stellar-ledger-entries-asset.x
+//  xdr/raw/Stellar-operation-set-fees.x
+//  xdr/raw/Stellar-operation-manage-balance.x
+//  xdr/raw/Stellar-operation-review-payment-request.x
+//  xdr/raw/Stellar-types.x
+//  xdr/raw/Stellar-operation-manage-invoice.x
+//  xdr/raw/Stellar-ledger-entries-coins-emission-request.x
+//  xdr/raw/Stellar-ledger-entries-account-limits.x
 //  xdr/raw/Stellar-operation-payment.x
 //  xdr/raw/Stellar-operation-recover.x
-//  xdr/raw/Stellar-operation-review-coins-emission-request.x
-//  xdr/raw/Stellar-operation-review-payment-request.x
-//  xdr/raw/Stellar-operation-set-fees.x
-//  xdr/raw/Stellar-operation-set-limits.x
+//  xdr/raw/Stellar-operation-manage-forfeit-request.x
+//  xdr/raw/Stellar-ledger-entries-account.x
 //  xdr/raw/Stellar-operation-set-options.x
-//  xdr/raw/Stellar-operation-upload-preemissions.x
-//  xdr/raw/Stellar-overlay.x
-//  xdr/raw/Stellar-SCP.x
-//  xdr/raw/Stellar-transaction.x
-//  xdr/raw/Stellar-types.x
+//  xdr/raw/Stellar-operation-review-coins-emission-request.x
+//  xdr/raw/Stellar-ledger-entries-statistics.x
+//  xdr/raw/Stellar-operation-set-limits.x
+//  xdr/raw/Stellar-ledger-entries-asset-pair.x
+//  xdr/raw/Stellar-ledger-entries.x
 //
 // DO NOT EDIT or your changes may be overwritten
 package xdr
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -58,1414 +59,6 @@ func Unmarshal(r io.Reader, v interface{}) (int, error) {
 func Marshal(w io.Writer, v interface{}) (int, error) {
 	// delegate to xdr package's Marshal
 	return xdr.Marshal(w, v)
-}
-
-// AccountLimitsEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type AccountLimitsEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountLimitsEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountLimitsEntryExt
-func (u AccountLimitsEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountLimitsEntryExt creates a new  AccountLimitsEntryExt.
-func NewAccountLimitsEntryExt(v LedgerVersion, value interface{}) (result AccountLimitsEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountLimitsEntry is an XDR Struct defines as:
-//
-//   struct AccountLimitsEntry
-//    {
-//        AccountID accountID;
-//        Limits limits;
-//
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type AccountLimitsEntry struct {
-	AccountId AccountId             `json:"accountID,omitempty"`
-	Limits    Limits                `json:"limits,omitempty"`
-	Ext       AccountLimitsEntryExt `json:"ext,omitempty"`
-}
-
-// AccountTypeLimitsEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type AccountTypeLimitsEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountTypeLimitsEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountTypeLimitsEntryExt
-func (u AccountTypeLimitsEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountTypeLimitsEntryExt creates a new  AccountTypeLimitsEntryExt.
-func NewAccountTypeLimitsEntryExt(v LedgerVersion, value interface{}) (result AccountTypeLimitsEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountTypeLimitsEntry is an XDR Struct defines as:
-//
-//   struct AccountTypeLimitsEntry
-//    {
-//    	AccountType accountType;
-//        Limits limits;
-//
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type AccountTypeLimitsEntry struct {
-	AccountType AccountType               `json:"accountType,omitempty"`
-	Limits      Limits                    `json:"limits,omitempty"`
-	Ext         AccountTypeLimitsEntryExt `json:"ext,omitempty"`
-}
-
-// SignerType is an XDR Enum defines as:
-//
-//   enum SignerType
-//    {
-//    	SIGNER_READER = 1,                  // can only read data from API and Horizon
-//    	SIGNER_NOT_VERIFIED_ACC_MANAGER = 2,// can manage not verified account and block/unblock general
-//    	SIGNER_GENERAL_ACC_MANAGER = 4,     // allowed to create account, block/unblock, change limits for particular general account
-//    	SIGNER_DIRECT_DEBIT_OPERATOR = 8, // allowed to perform direct debit operation
-//    	SIGNER_ASSET_MANAGER = 16, // allowed to create assets/asset pairs and update policies, set fees
-//    	SIGNER_ASSET_RATE_MANAGER = 32, // allowed to set physical asset price
-//    	SIGNER_BALANCE_MANAGER = 64, // allowed to create balances, spend assets from balances
-//    	SIGNER_EMISSION_MANAGER = 128, // allowed to make emission requests, review emission, upload preemission
-//    	SIGNER_INVOICE_MANAGER = 256, // allowed to create payment requests to other accounts
-//    	SIGNER_PAYMENT_OPERATOR = 512, // allowed to review payment requests
-//    	SIGNER_LIMITS_MANAGER = 1024, // allowed to change limits
-//    	SIGNER_ACCOUNT_MANAGER = 2048, // allowed to add/delete signers and trust
-//    	SIGNER_COMMISSION_BALANCE_MANAGER  = 4096,// allowed to spend from commission balances
-//    	SIGNER_OPERATIONAL_BALANCE_MANAGER = 8192 // allowed to spend from operational balances
-//    };
-//
-type SignerType int32
-
-const (
-	SignerTypeSignerReader                    SignerType = 1
-	SignerTypeSignerNotVerifiedAccManager     SignerType = 2
-	SignerTypeSignerGeneralAccManager         SignerType = 4
-	SignerTypeSignerDirectDebitOperator       SignerType = 8
-	SignerTypeSignerAssetManager              SignerType = 16
-	SignerTypeSignerAssetRateManager          SignerType = 32
-	SignerTypeSignerBalanceManager            SignerType = 64
-	SignerTypeSignerEmissionManager           SignerType = 128
-	SignerTypeSignerInvoiceManager            SignerType = 256
-	SignerTypeSignerPaymentOperator           SignerType = 512
-	SignerTypeSignerLimitsManager             SignerType = 1024
-	SignerTypeSignerAccountManager            SignerType = 2048
-	SignerTypeSignerCommissionBalanceManager  SignerType = 4096
-	SignerTypeSignerOperationalBalanceManager SignerType = 8192
-)
-
-var SignerTypeAll = []SignerType{
-	SignerTypeSignerReader,
-	SignerTypeSignerNotVerifiedAccManager,
-	SignerTypeSignerGeneralAccManager,
-	SignerTypeSignerDirectDebitOperator,
-	SignerTypeSignerAssetManager,
-	SignerTypeSignerAssetRateManager,
-	SignerTypeSignerBalanceManager,
-	SignerTypeSignerEmissionManager,
-	SignerTypeSignerInvoiceManager,
-	SignerTypeSignerPaymentOperator,
-	SignerTypeSignerLimitsManager,
-	SignerTypeSignerAccountManager,
-	SignerTypeSignerCommissionBalanceManager,
-	SignerTypeSignerOperationalBalanceManager,
-}
-
-var signerTypeMap = map[int32]string{
-	1:    "SignerTypeSignerReader",
-	2:    "SignerTypeSignerNotVerifiedAccManager",
-	4:    "SignerTypeSignerGeneralAccManager",
-	8:    "SignerTypeSignerDirectDebitOperator",
-	16:   "SignerTypeSignerAssetManager",
-	32:   "SignerTypeSignerAssetRateManager",
-	64:   "SignerTypeSignerBalanceManager",
-	128:  "SignerTypeSignerEmissionManager",
-	256:  "SignerTypeSignerInvoiceManager",
-	512:  "SignerTypeSignerPaymentOperator",
-	1024: "SignerTypeSignerLimitsManager",
-	2048: "SignerTypeSignerAccountManager",
-	4096: "SignerTypeSignerCommissionBalanceManager",
-	8192: "SignerTypeSignerOperationalBalanceManager",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for SignerType
-func (e SignerType) ValidEnum(v int32) bool {
-	_, ok := signerTypeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e SignerType) String() string {
-	name, _ := signerTypeMap[int32(e)]
-	return name
-}
-
-func (e SignerType) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// SignerExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//    	case SIGNER_NAME:
-//    		string256 name;
-//        }
-//
-type SignerExt struct {
-	V    LedgerVersion `json:"v,omitempty"`
-	Name *String256    `json:"name,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SignerExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SignerExt
-func (u SignerExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	case LedgerVersionSignerName:
-		return "Name", true
-	}
-	return "-", false
-}
-
-// NewSignerExt creates a new  SignerExt.
-func NewSignerExt(v LedgerVersion, value interface{}) (result SignerExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	case LedgerVersionSignerName:
-		tv, ok := value.(String256)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be String256")
-			return
-		}
-		result.Name = &tv
-	}
-	return
-}
-
-// MustName retrieves the Name value from the union,
-// panicing if the value is not set.
-func (u SignerExt) MustName() String256 {
-	val, ok := u.GetName()
-
-	if !ok {
-		panic("arm Name is not set")
-	}
-
-	return val
-}
-
-// GetName retrieves the Name value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u SignerExt) GetName() (result String256, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.V))
-
-	if armName == "Name" {
-		result = *u.Name
-		ok = true
-	}
-
-	return
-}
-
-// Signer is an XDR Struct defines as:
-//
-//   struct Signer
-//    {
-//        AccountID pubKey;
-//        uint32 weight; // really only need 1byte
-//    	uint32 signerType;
-//    	uint32 identity;
-//
-//    	 // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//    	case SIGNER_NAME:
-//    		string256 name;
-//        }
-//        ext;
-//    };
-//
-type Signer struct {
-	PubKey     AccountId `json:"pubKey,omitempty"`
-	Weight     Uint32    `json:"weight,omitempty"`
-	SignerType Uint32    `json:"signerType,omitempty"`
-	Identity   Uint32    `json:"identity,omitempty"`
-	Ext        SignerExt `json:"ext,omitempty"`
-}
-
-// TrustEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type TrustEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u TrustEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of TrustEntryExt
-func (u TrustEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewTrustEntryExt creates a new  TrustEntryExt.
-func NewTrustEntryExt(v LedgerVersion, value interface{}) (result TrustEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// TrustEntry is an XDR Struct defines as:
-//
-//   struct TrustEntry
-//    {
-//        AccountID allowedAccount;
-//        BalanceID balanceToUse;
-//
-//    	 // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type TrustEntry struct {
-	AllowedAccount AccountId     `json:"allowedAccount,omitempty"`
-	BalanceToUse   BalanceId     `json:"balanceToUse,omitempty"`
-	Ext            TrustEntryExt `json:"ext,omitempty"`
-}
-
-// LimitsExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type LimitsExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u LimitsExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of LimitsExt
-func (u LimitsExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewLimitsExt creates a new  LimitsExt.
-func NewLimitsExt(v LedgerVersion, value interface{}) (result LimitsExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// Limits is an XDR Struct defines as:
-//
-//   struct Limits
-//    {
-//        int64 dailyOut;
-//    	int64 weeklyOut;
-//    	int64 monthlyOut;
-//        int64 annualOut;
-//
-//    	 // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//
-//    };
-//
-type Limits struct {
-	DailyOut   Int64     `json:"dailyOut,omitempty"`
-	WeeklyOut  Int64     `json:"weeklyOut,omitempty"`
-	MonthlyOut Int64     `json:"monthlyOut,omitempty"`
-	AnnualOut  Int64     `json:"annualOut,omitempty"`
-	Ext        LimitsExt `json:"ext,omitempty"`
-}
-
-// AccountPolicies is an XDR Enum defines as:
-//
-//   enum AccountPolicies
-//    {
-//    	NO_PERMISSIONS = 0,
-//    	ALLOW_TO_CREATE_USER_VIA_API = 1
-//    };
-//
-type AccountPolicies int32
-
-const (
-	AccountPoliciesNoPermissions           AccountPolicies = 0
-	AccountPoliciesAllowToCreateUserViaApi AccountPolicies = 1
-)
-
-var AccountPoliciesAll = []AccountPolicies{
-	AccountPoliciesNoPermissions,
-	AccountPoliciesAllowToCreateUserViaApi,
-}
-
-var accountPoliciesMap = map[int32]string{
-	0: "AccountPoliciesNoPermissions",
-	1: "AccountPoliciesAllowToCreateUserViaApi",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for AccountPolicies
-func (e AccountPolicies) ValidEnum(v int32) bool {
-	_, ok := accountPoliciesMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e AccountPolicies) String() string {
-	name, _ := accountPoliciesMap[int32(e)]
-	return name
-}
-
-func (e AccountPolicies) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// AccountType is an XDR Enum defines as:
-//
-//   enum AccountType
-//    {
-//    	OPERATIONAL = 1,       // operational account of the system
-//    	GENERAL = 2,           // general account can perform payments, setoptions, be source account for tx, etc.
-//    	COMMISSION = 3,        // commission account
-//    	MASTER = 4,            // master account
-//        NOT_VERIFIED = 5
-//    };
-//
-type AccountType int32
-
-const (
-	AccountTypeOperational AccountType = 1
-	AccountTypeGeneral     AccountType = 2
-	AccountTypeCommission  AccountType = 3
-	AccountTypeMaster      AccountType = 4
-	AccountTypeNotVerified AccountType = 5
-)
-
-var AccountTypeAll = []AccountType{
-	AccountTypeOperational,
-	AccountTypeGeneral,
-	AccountTypeCommission,
-	AccountTypeMaster,
-	AccountTypeNotVerified,
-}
-
-var accountTypeMap = map[int32]string{
-	1: "AccountTypeOperational",
-	2: "AccountTypeGeneral",
-	3: "AccountTypeCommission",
-	4: "AccountTypeMaster",
-	5: "AccountTypeNotVerified",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for AccountType
-func (e AccountType) ValidEnum(v int32) bool {
-	_, ok := accountTypeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e AccountType) String() string {
-	name, _ := accountTypeMap[int32(e)]
-	return name
-}
-
-func (e AccountType) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// BlockReasons is an XDR Enum defines as:
-//
-//   enum BlockReasons
-//    {
-//    	RECOVERY_REQUEST = 1,
-//    	KYC_UPDATE = 2,
-//    	SUSPICIOUS_BEHAVIOR = 4
-//    };
-//
-type BlockReasons int32
-
-const (
-	BlockReasonsRecoveryRequest    BlockReasons = 1
-	BlockReasonsKycUpdate          BlockReasons = 2
-	BlockReasonsSuspiciousBehavior BlockReasons = 4
-)
-
-var BlockReasonsAll = []BlockReasons{
-	BlockReasonsRecoveryRequest,
-	BlockReasonsKycUpdate,
-	BlockReasonsSuspiciousBehavior,
-}
-
-var blockReasonsMap = map[int32]string{
-	1: "BlockReasonsRecoveryRequest",
-	2: "BlockReasonsKycUpdate",
-	4: "BlockReasonsSuspiciousBehavior",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for BlockReasons
-func (e BlockReasons) ValidEnum(v int32) bool {
-	_, ok := blockReasonsMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e BlockReasons) String() string {
-	name, _ := blockReasonsMap[int32(e)]
-	return name
-}
-
-func (e BlockReasons) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// AccountEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//    	case ACCOUNT_POLICIES:
-//    		int32 policies;
-//        }
-//
-type AccountEntryExt struct {
-	V        LedgerVersion `json:"v,omitempty"`
-	Policies *Int32        `json:"policies,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountEntryExt
-func (u AccountEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	case LedgerVersionAccountPolicies:
-		return "Policies", true
-	}
-	return "-", false
-}
-
-// NewAccountEntryExt creates a new  AccountEntryExt.
-func NewAccountEntryExt(v LedgerVersion, value interface{}) (result AccountEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	case LedgerVersionAccountPolicies:
-		tv, ok := value.(Int32)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be Int32")
-			return
-		}
-		result.Policies = &tv
-	}
-	return
-}
-
-// MustPolicies retrieves the Policies value from the union,
-// panicing if the value is not set.
-func (u AccountEntryExt) MustPolicies() Int32 {
-	val, ok := u.GetPolicies()
-
-	if !ok {
-		panic("arm Policies is not set")
-	}
-
-	return val
-}
-
-// GetPolicies retrieves the Policies value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountEntryExt) GetPolicies() (result Int32, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.V))
-
-	if armName == "Policies" {
-		result = *u.Policies
-		ok = true
-	}
-
-	return
-}
-
-// AccountEntry is an XDR Struct defines as:
-//
-//   struct AccountEntry
-//    {
-//        AccountID accountID;      // master public key for this account
-//
-//        // fields used for signatures
-//        // thresholds stores unsigned bytes: [weight of master|low|medium|high]
-//        Thresholds thresholds;
-//
-//        Signer signers<>; // possible signers for this account
-//        Limits* limits;
-//
-//    	uint32 blockReasons;
-//        AccountType accountType; // type of the account
-//
-//        // Referral marketing
-//        AccountID* referrer;     // parent account
-//        int64 shareForReferrer; // share of fee to pay parent
-//
-//        // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//    	case ACCOUNT_POLICIES:
-//    		int32 policies;
-//        }
-//        ext;
-//    };
-//
-type AccountEntry struct {
-	AccountId        AccountId       `json:"accountID,omitempty"`
-	Thresholds       Thresholds      `json:"thresholds,omitempty"`
-	Signers          []Signer        `json:"signers,omitempty"`
-	Limits           *Limits         `json:"limits,omitempty"`
-	BlockReasons     Uint32          `json:"blockReasons,omitempty"`
-	AccountType      AccountType     `json:"accountType,omitempty"`
-	Referrer         *AccountId      `json:"referrer,omitempty"`
-	ShareForReferrer Int64           `json:"shareForReferrer,omitempty"`
-	Ext              AccountEntryExt `json:"ext,omitempty"`
-}
-
-// AssetPairPolicy is an XDR Enum defines as:
-//
-//   enum AssetPairPolicy
-//    {
-//    	ASSET_PAIR_TRADEABLE = 1, // if not set pair can not be traided
-//    	ASSET_PAIR_PHYSICAL_PRICE_RESTRICTION = 2, // if set, then prices for new offers must be greater then physical price with correction
-//    	ASSET_PAIR_CURRENT_PRICE_RESTRICTION = 4 // if set, then price for new offers must be in interval of (1 +- maxPriceStep)*currentPrice
-//    };
-//
-type AssetPairPolicy int32
-
-const (
-	AssetPairPolicyAssetPairTradeable                AssetPairPolicy = 1
-	AssetPairPolicyAssetPairPhysicalPriceRestriction AssetPairPolicy = 2
-	AssetPairPolicyAssetPairCurrentPriceRestriction  AssetPairPolicy = 4
-)
-
-var AssetPairPolicyAll = []AssetPairPolicy{
-	AssetPairPolicyAssetPairTradeable,
-	AssetPairPolicyAssetPairPhysicalPriceRestriction,
-	AssetPairPolicyAssetPairCurrentPriceRestriction,
-}
-
-var assetPairPolicyMap = map[int32]string{
-	1: "AssetPairPolicyAssetPairTradeable",
-	2: "AssetPairPolicyAssetPairPhysicalPriceRestriction",
-	4: "AssetPairPolicyAssetPairCurrentPriceRestriction",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for AssetPairPolicy
-func (e AssetPairPolicy) ValidEnum(v int32) bool {
-	_, ok := assetPairPolicyMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e AssetPairPolicy) String() string {
-	name, _ := assetPairPolicyMap[int32(e)]
-	return name
-}
-
-func (e AssetPairPolicy) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// AssetPairEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type AssetPairEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AssetPairEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AssetPairEntryExt
-func (u AssetPairEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAssetPairEntryExt creates a new  AssetPairEntryExt.
-func NewAssetPairEntryExt(v LedgerVersion, value interface{}) (result AssetPairEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AssetPairEntry is an XDR Struct defines as:
-//
-//   struct AssetPairEntry
-//    {
-//        AssetCode base;
-//    	AssetCode quote;
-//
-//        int64 currentPrice;
-//        int64 physicalPrice;
-//
-//    	int64 physicalPriceCorrection; // correction of physical price in percents. If physical price is set and restriction by physical price set, mininal price for offer for this pair will be physicalPrice * physicalPriceCorrection
-//    	int64 maxPriceStep; // max price step in percent. User is allowed to set offer with price < (1 - maxPriceStep)*currentPrice and > (1 + maxPriceStep)*currentPrice
-//
-//
-//    	int32 policies;
-//
-//        // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type AssetPairEntry struct {
-	Base                    AssetCode         `json:"base,omitempty"`
-	Quote                   AssetCode         `json:"quote,omitempty"`
-	CurrentPrice            Int64             `json:"currentPrice,omitempty"`
-	PhysicalPrice           Int64             `json:"physicalPrice,omitempty"`
-	PhysicalPriceCorrection Int64             `json:"physicalPriceCorrection,omitempty"`
-	MaxPriceStep            Int64             `json:"maxPriceStep,omitempty"`
-	Policies                Int32             `json:"policies,omitempty"`
-	Ext                     AssetPairEntryExt `json:"ext,omitempty"`
-}
-
-// AssetPolicy is an XDR Enum defines as:
-//
-//   enum AssetPolicy
-//    {
-//    	ASSET_TRANSFERABLE = 1,
-//        ASSET_EMITTABLE_PRIMARY = 2,
-//        ASSET_EMITTABLE_SECONDARY = 4
-//    };
-//
-type AssetPolicy int32
-
-const (
-	AssetPolicyAssetTransferable       AssetPolicy = 1
-	AssetPolicyAssetEmittablePrimary   AssetPolicy = 2
-	AssetPolicyAssetEmittableSecondary AssetPolicy = 4
-)
-
-var AssetPolicyAll = []AssetPolicy{
-	AssetPolicyAssetTransferable,
-	AssetPolicyAssetEmittablePrimary,
-	AssetPolicyAssetEmittableSecondary,
-}
-
-var assetPolicyMap = map[int32]string{
-	1: "AssetPolicyAssetTransferable",
-	2: "AssetPolicyAssetEmittablePrimary",
-	4: "AssetPolicyAssetEmittableSecondary",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for AssetPolicy
-func (e AssetPolicy) ValidEnum(v int32) bool {
-	_, ok := assetPolicyMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e AssetPolicy) String() string {
-	name, _ := assetPolicyMap[int32(e)]
-	return name
-}
-
-func (e AssetPolicy) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// AssetEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type AssetEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AssetEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AssetEntryExt
-func (u AssetEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAssetEntryExt creates a new  AssetEntryExt.
-func NewAssetEntryExt(v LedgerVersion, value interface{}) (result AssetEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AssetEntry is an XDR Struct defines as:
-//
-//   struct AssetEntry
-//    {
-//        AssetCode code;
-//        int32 policies;
-//
-//        // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type AssetEntry struct {
-	Code     AssetCode     `json:"code,omitempty"`
-	Policies Int32         `json:"policies,omitempty"`
-	Ext      AssetEntryExt `json:"ext,omitempty"`
-}
-
-// BalanceEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type BalanceEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u BalanceEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of BalanceEntryExt
-func (u BalanceEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewBalanceEntryExt creates a new  BalanceEntryExt.
-func NewBalanceEntryExt(v LedgerVersion, value interface{}) (result BalanceEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// BalanceEntry is an XDR Struct defines as:
-//
-//   struct BalanceEntry
-//    {
-//        BalanceID balanceID;
-//        AssetCode asset;
-//        AccountID accountID;
-//        int64 amount;
-//        int64 locked;
-//
-//        // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type BalanceEntry struct {
-	BalanceId BalanceId       `json:"balanceID,omitempty"`
-	Asset     AssetCode       `json:"asset,omitempty"`
-	AccountId AccountId       `json:"accountID,omitempty"`
-	Amount    Int64           `json:"amount,omitempty"`
-	Locked    Int64           `json:"locked,omitempty"`
-	Ext       BalanceEntryExt `json:"ext,omitempty"`
-}
-
-// CoinsEmissionRequestEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type CoinsEmissionRequestEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u CoinsEmissionRequestEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of CoinsEmissionRequestEntryExt
-func (u CoinsEmissionRequestEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewCoinsEmissionRequestEntryExt creates a new  CoinsEmissionRequestEntryExt.
-func NewCoinsEmissionRequestEntryExt(v LedgerVersion, value interface{}) (result CoinsEmissionRequestEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// CoinsEmissionRequestEntry is an XDR Struct defines as:
-//
-//   struct CoinsEmissionRequestEntry
-//    {
-//    	uint64 requestID;
-//        string64 reference;
-//        BalanceID receiver;
-//    	AccountID issuer;
-//        int64 amount;
-//        AssetCode asset;
-//    	bool isApproved;
-//
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type CoinsEmissionRequestEntry struct {
-	RequestId  Uint64                       `json:"requestID,omitempty"`
-	Reference  String64                     `json:"reference,omitempty"`
-	Receiver   BalanceId                    `json:"receiver,omitempty"`
-	Issuer     AccountId                    `json:"issuer,omitempty"`
-	Amount     Int64                        `json:"amount,omitempty"`
-	Asset      AssetCode                    `json:"asset,omitempty"`
-	IsApproved bool                         `json:"isApproved,omitempty"`
-	Ext        CoinsEmissionRequestEntryExt `json:"ext,omitempty"`
-}
-
-// CoinsEmissionEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type CoinsEmissionEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u CoinsEmissionEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of CoinsEmissionEntryExt
-func (u CoinsEmissionEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewCoinsEmissionEntryExt creates a new  CoinsEmissionEntryExt.
-func NewCoinsEmissionEntryExt(v LedgerVersion, value interface{}) (result CoinsEmissionEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// CoinsEmissionEntry is an XDR Struct defines as:
-//
-//   struct CoinsEmissionEntry
-//    {
-//    	string64 serialNumber;
-//        int64 amount;
-//        AssetCode asset;
-//
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type CoinsEmissionEntry struct {
-	SerialNumber String64              `json:"serialNumber,omitempty"`
-	Amount       Int64                 `json:"amount,omitempty"`
-	Asset        AssetCode             `json:"asset,omitempty"`
-	Ext          CoinsEmissionEntryExt `json:"ext,omitempty"`
-}
-
-// FeeType is an XDR Enum defines as:
-//
-//   enum FeeType
-//    {
-//        PAYMENT_FEE = 0,
-//        REFERRAL_FEE = 1,
-//    	OFFER_FEE = 2,
-//        FORFEIT_FEE = 3,
-//        EMISSION_FEE = 4
-//    };
-//
-type FeeType int32
-
-const (
-	FeeTypePaymentFee  FeeType = 0
-	FeeTypeReferralFee FeeType = 1
-	FeeTypeOfferFee    FeeType = 2
-	FeeTypeForfeitFee  FeeType = 3
-	FeeTypeEmissionFee FeeType = 4
-)
-
-var FeeTypeAll = []FeeType{
-	FeeTypePaymentFee,
-	FeeTypeReferralFee,
-	FeeTypeOfferFee,
-	FeeTypeForfeitFee,
-	FeeTypeEmissionFee,
-}
-
-var feeTypeMap = map[int32]string{
-	0: "FeeTypePaymentFee",
-	1: "FeeTypeReferralFee",
-	2: "FeeTypeOfferFee",
-	3: "FeeTypeForfeitFee",
-	4: "FeeTypeEmissionFee",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for FeeType
-func (e FeeType) ValidEnum(v int32) bool {
-	_, ok := feeTypeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e FeeType) String() string {
-	name, _ := feeTypeMap[int32(e)]
-	return name
-}
-
-func (e FeeType) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// EmissionFeeType is an XDR Enum defines as:
-//
-//   enum EmissionFeeType
-//    {
-//    	PRIMARY_MARKET = 1,
-//    	SECONDARY_MARKET = 2
-//    };
-//
-type EmissionFeeType int32
-
-const (
-	EmissionFeeTypePrimaryMarket   EmissionFeeType = 1
-	EmissionFeeTypeSecondaryMarket EmissionFeeType = 2
-)
-
-var EmissionFeeTypeAll = []EmissionFeeType{
-	EmissionFeeTypePrimaryMarket,
-	EmissionFeeTypeSecondaryMarket,
-}
-
-var emissionFeeTypeMap = map[int32]string{
-	1: "EmissionFeeTypePrimaryMarket",
-	2: "EmissionFeeTypeSecondaryMarket",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for EmissionFeeType
-func (e EmissionFeeType) ValidEnum(v int32) bool {
-	_, ok := emissionFeeTypeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e EmissionFeeType) String() string {
-	name, _ := emissionFeeTypeMap[int32(e)]
-	return name
-}
-
-func (e EmissionFeeType) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// FeeEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type FeeEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u FeeEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of FeeEntryExt
-func (u FeeEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewFeeEntryExt creates a new  FeeEntryExt.
-func NewFeeEntryExt(v LedgerVersion, value interface{}) (result FeeEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// FeeEntry is an XDR Struct defines as:
-//
-//   struct FeeEntry
-//    {
-//        FeeType feeType;
-//        AssetCode asset;
-//        int64 fixedFee; // fee paid for operation
-//    	int64 percentFee; // percent of transfer amount to be charged
-//
-//        AccountID* accountID;
-//        AccountType* accountType;
-//        int64 subtype; // for example, different withdrawals — bars or coins
-//
-//        int64 lowerBound;
-//        int64 upperBound;
-//
-//        Hash hash;
-//
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//
-//    };
-//
-type FeeEntry struct {
-	FeeType     FeeType      `json:"feeType,omitempty"`
-	Asset       AssetCode    `json:"asset,omitempty"`
-	FixedFee    Int64        `json:"fixedFee,omitempty"`
-	PercentFee  Int64        `json:"percentFee,omitempty"`
-	AccountId   *AccountId   `json:"accountID,omitempty"`
-	AccountType *AccountType `json:"accountType,omitempty"`
-	Subtype     Int64        `json:"subtype,omitempty"`
-	LowerBound  Int64        `json:"lowerBound,omitempty"`
-	UpperBound  Int64        `json:"upperBound,omitempty"`
-	Hash        Hash         `json:"hash,omitempty"`
-	Ext         FeeEntryExt  `json:"ext,omitempty"`
-}
-
-// InvoiceState is an XDR Enum defines as:
-//
-//   enum InvoiceState
-//    {
-//        INVOICE_NEEDS_PAYMENT = 0,
-//        INVOICE_NEEDS_PAYMENT_REVIEW = 1
-//    };
-//
-type InvoiceState int32
-
-const (
-	InvoiceStateInvoiceNeedsPayment       InvoiceState = 0
-	InvoiceStateInvoiceNeedsPaymentReview InvoiceState = 1
-)
-
-var InvoiceStateAll = []InvoiceState{
-	InvoiceStateInvoiceNeedsPayment,
-	InvoiceStateInvoiceNeedsPaymentReview,
-}
-
-var invoiceStateMap = map[int32]string{
-	0: "InvoiceStateInvoiceNeedsPayment",
-	1: "InvoiceStateInvoiceNeedsPaymentReview",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for InvoiceState
-func (e InvoiceState) ValidEnum(v int32) bool {
-	_, ok := invoiceStateMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e InvoiceState) String() string {
-	name, _ := invoiceStateMap[int32(e)]
-	return name
-}
-
-func (e InvoiceState) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// InvoiceEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type InvoiceEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u InvoiceEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of InvoiceEntryExt
-func (u InvoiceEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewInvoiceEntryExt creates a new  InvoiceEntryExt.
-func NewInvoiceEntryExt(v LedgerVersion, value interface{}) (result InvoiceEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// InvoiceEntry is an XDR Struct defines as:
-//
-//   struct InvoiceEntry
-//    {
-//        uint64 invoiceID;
-//        AccountID receiverAccount;
-//        BalanceID receiverBalance;
-//    	AccountID sender;
-//        int64 amount;
-//
-//        InvoiceState state;
-//
-//        // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type InvoiceEntry struct {
-	InvoiceId       Uint64          `json:"invoiceID,omitempty"`
-	ReceiverAccount AccountId       `json:"receiverAccount,omitempty"`
-	ReceiverBalance BalanceId       `json:"receiverBalance,omitempty"`
-	Sender          AccountId       `json:"sender,omitempty"`
-	Amount          Int64           `json:"amount,omitempty"`
-	State           InvoiceState    `json:"state,omitempty"`
-	Ext             InvoiceEntryExt `json:"ext,omitempty"`
 }
 
 // OfferEntryExt is an XDR NestedUnion defines as:
@@ -1553,57 +146,7 @@ type OfferEntry struct {
 	Ext          OfferEntryExt `json:"ext,omitempty"`
 }
 
-// RequestType is an XDR Enum defines as:
-//
-//   enum RequestType
-//    {
-//        REQUEST_TYPE_SALE = 0,
-//        REQUEST_TYPE_WITHDRAWAL = 1,
-//        REQUEST_TYPE_REDEEM = 2,
-//        REQUEST_TYPE_PAYMENT = 3
-//    };
-//
-type RequestType int32
-
-const (
-	RequestTypeRequestTypeSale       RequestType = 0
-	RequestTypeRequestTypeWithdrawal RequestType = 1
-	RequestTypeRequestTypeRedeem     RequestType = 2
-	RequestTypeRequestTypePayment    RequestType = 3
-)
-
-var RequestTypeAll = []RequestType{
-	RequestTypeRequestTypeSale,
-	RequestTypeRequestTypeWithdrawal,
-	RequestTypeRequestTypeRedeem,
-	RequestTypeRequestTypePayment,
-}
-
-var requestTypeMap = map[int32]string{
-	0: "RequestTypeRequestTypeSale",
-	1: "RequestTypeRequestTypeWithdrawal",
-	2: "RequestTypeRequestTypeRedeem",
-	3: "RequestTypeRequestTypePayment",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for RequestType
-func (e RequestType) ValidEnum(v int32) bool {
-	_, ok := requestTypeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e RequestType) String() string {
-	name, _ := requestTypeMap[int32(e)]
-	return name
-}
-
-func (e RequestType) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// PaymentRequestEntryExt is an XDR NestedUnion defines as:
+// DirectDebitOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
@@ -1611,19 +154,19 @@ func (e RequestType) MarshalJSON() ([]byte, error) {
 //            void;
 //        }
 //
-type PaymentRequestEntryExt struct {
+type DirectDebitOpExt struct {
 	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u PaymentRequestEntryExt) SwitchFieldName() string {
+func (u DirectDebitOpExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentRequestEntryExt
-func (u PaymentRequestEntryExt) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of DirectDebitOpExt
+func (u DirectDebitOpExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
@@ -1631,8 +174,8 @@ func (u PaymentRequestEntryExt) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewPaymentRequestEntryExt creates a new  PaymentRequestEntryExt.
-func NewPaymentRequestEntryExt(v LedgerVersion, value interface{}) (result PaymentRequestEntryExt, err error) {
+// NewDirectDebitOpExt creates a new  DirectDebitOpExt.
+func NewDirectDebitOpExt(v LedgerVersion, value interface{}) (result DirectDebitOpExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
@@ -1641,21 +184,217 @@ func NewPaymentRequestEntryExt(v LedgerVersion, value interface{}) (result Payme
 	return
 }
 
-// PaymentRequestEntry is an XDR Struct defines as:
+// DirectDebitOp is an XDR Struct defines as:
 //
-//   struct PaymentRequestEntry
+//   struct DirectDebitOp
 //    {
-//        uint64 paymentID;
-//        BalanceID sourceBalance;
-//        BalanceID* destinationBalance;
-//        int64 sourceSend;
-//        int64 sourceSendUniversal;
-//        int64 destinationReceive;
+//        AccountID from;
+//        PaymentOp paymentOp;
+//    	 // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
 //
-//        uint64 createdAt;
+type DirectDebitOp struct {
+	From      AccountId        `json:"from,omitempty"`
+	PaymentOp PaymentOp        `json:"paymentOp,omitempty"`
+	Ext       DirectDebitOpExt `json:"ext,omitempty"`
+}
+
+// DirectDebitResultCode is an XDR Enum defines as:
 //
-//        uint64* invoiceID;
+//   enum DirectDebitResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0, // payment successfuly completed
 //
+//        // codes considered as "failure" for the operation
+//        MALFORMED = -1,       // bad input
+//        UNDERFUNDED = -2,     // not enough funds in source account
+//        LINE_FULL = -3,       // destination would go above their limit
+//    	FEE_MISMATCHED = -4,   // fee is not equal to expected fee
+//        BALANCE_NOT_FOUND = -5, // destination balance not found
+//        BALANCE_ACCOUNT_MISMATCHED = -6,
+//        BALANCE_ASSETS_MISMATCHED = -7,
+//    	SRC_BALANCE_NOT_FOUND = -8, // source balance not found
+//        REFERENCE_DUPLICATION = -9,
+//        STATS_OVERFLOW = -10,
+//        LIMITS_EXCEEDED = -11,
+//        NOT_ALLOWED_BY_ASSET_POLICY = -12,
+//        NO_TRUST = -13
+//    };
+//
+type DirectDebitResultCode int32
+
+const (
+	DirectDebitResultCodeSuccess                  DirectDebitResultCode = 0
+	DirectDebitResultCodeMalformed                DirectDebitResultCode = -1
+	DirectDebitResultCodeUnderfunded              DirectDebitResultCode = -2
+	DirectDebitResultCodeLineFull                 DirectDebitResultCode = -3
+	DirectDebitResultCodeFeeMismatched            DirectDebitResultCode = -4
+	DirectDebitResultCodeBalanceNotFound          DirectDebitResultCode = -5
+	DirectDebitResultCodeBalanceAccountMismatched DirectDebitResultCode = -6
+	DirectDebitResultCodeBalanceAssetsMismatched  DirectDebitResultCode = -7
+	DirectDebitResultCodeSrcBalanceNotFound       DirectDebitResultCode = -8
+	DirectDebitResultCodeReferenceDuplication     DirectDebitResultCode = -9
+	DirectDebitResultCodeStatsOverflow            DirectDebitResultCode = -10
+	DirectDebitResultCodeLimitsExceeded           DirectDebitResultCode = -11
+	DirectDebitResultCodeNotAllowedByAssetPolicy  DirectDebitResultCode = -12
+	DirectDebitResultCodeNoTrust                  DirectDebitResultCode = -13
+)
+
+var DirectDebitResultCodeAll = []DirectDebitResultCode{
+	DirectDebitResultCodeSuccess,
+	DirectDebitResultCodeMalformed,
+	DirectDebitResultCodeUnderfunded,
+	DirectDebitResultCodeLineFull,
+	DirectDebitResultCodeFeeMismatched,
+	DirectDebitResultCodeBalanceNotFound,
+	DirectDebitResultCodeBalanceAccountMismatched,
+	DirectDebitResultCodeBalanceAssetsMismatched,
+	DirectDebitResultCodeSrcBalanceNotFound,
+	DirectDebitResultCodeReferenceDuplication,
+	DirectDebitResultCodeStatsOverflow,
+	DirectDebitResultCodeLimitsExceeded,
+	DirectDebitResultCodeNotAllowedByAssetPolicy,
+	DirectDebitResultCodeNoTrust,
+}
+
+var directDebitResultCodeMap = map[int32]string{
+	0:   "DirectDebitResultCodeSuccess",
+	-1:  "DirectDebitResultCodeMalformed",
+	-2:  "DirectDebitResultCodeUnderfunded",
+	-3:  "DirectDebitResultCodeLineFull",
+	-4:  "DirectDebitResultCodeFeeMismatched",
+	-5:  "DirectDebitResultCodeBalanceNotFound",
+	-6:  "DirectDebitResultCodeBalanceAccountMismatched",
+	-7:  "DirectDebitResultCodeBalanceAssetsMismatched",
+	-8:  "DirectDebitResultCodeSrcBalanceNotFound",
+	-9:  "DirectDebitResultCodeReferenceDuplication",
+	-10: "DirectDebitResultCodeStatsOverflow",
+	-11: "DirectDebitResultCodeLimitsExceeded",
+	-12: "DirectDebitResultCodeNotAllowedByAssetPolicy",
+	-13: "DirectDebitResultCodeNoTrust",
+}
+
+var directDebitResultCodeShortMap = map[int32]string{
+	0:   "success",
+	-1:  "malformed",
+	-2:  "underfunded",
+	-3:  "line_full",
+	-4:  "fee_mismatched",
+	-5:  "balance_not_found",
+	-6:  "balance_account_mismatched",
+	-7:  "balance_assets_mismatched",
+	-8:  "src_balance_not_found",
+	-9:  "reference_duplication",
+	-10: "stats_overflow",
+	-11: "limits_exceeded",
+	-12: "not_allowed_by_asset_policy",
+	-13: "no_trust",
+}
+
+var directDebitResultCodeRevMap = map[string]int32{
+	"DirectDebitResultCodeSuccess":                  0,
+	"DirectDebitResultCodeMalformed":                -1,
+	"DirectDebitResultCodeUnderfunded":              -2,
+	"DirectDebitResultCodeLineFull":                 -3,
+	"DirectDebitResultCodeFeeMismatched":            -4,
+	"DirectDebitResultCodeBalanceNotFound":          -5,
+	"DirectDebitResultCodeBalanceAccountMismatched": -6,
+	"DirectDebitResultCodeBalanceAssetsMismatched":  -7,
+	"DirectDebitResultCodeSrcBalanceNotFound":       -8,
+	"DirectDebitResultCodeReferenceDuplication":     -9,
+	"DirectDebitResultCodeStatsOverflow":            -10,
+	"DirectDebitResultCodeLimitsExceeded":           -11,
+	"DirectDebitResultCodeNotAllowedByAssetPolicy":  -12,
+	"DirectDebitResultCodeNoTrust":                  -13,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for DirectDebitResultCode
+func (e DirectDebitResultCode) ValidEnum(v int32) bool {
+	_, ok := directDebitResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e DirectDebitResultCode) String() string {
+	name, _ := directDebitResultCodeMap[int32(e)]
+	return name
+}
+
+func (e DirectDebitResultCode) ShortString() string {
+	name, _ := directDebitResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e DirectDebitResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *DirectDebitResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := directDebitResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = DirectDebitResultCode(value)
+	return nil
+}
+
+// DirectDebitSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type DirectDebitSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u DirectDebitSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of DirectDebitSuccessExt
+func (u DirectDebitSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewDirectDebitSuccessExt creates a new  DirectDebitSuccessExt.
+func NewDirectDebitSuccessExt(v LedgerVersion, value interface{}) (result DirectDebitSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// DirectDebitSuccess is an XDR Struct defines as:
+//
+//   struct DirectDebitSuccess {
+//    	PaymentResponse paymentResponse;
 //    	// reserved for future use
 //        union switch (LedgerVersion v)
 //        {
@@ -1665,16 +404,1545 @@ func NewPaymentRequestEntryExt(v LedgerVersion, value interface{}) (result Payme
 //        ext;
 //    };
 //
-type PaymentRequestEntry struct {
-	PaymentId           Uint64                 `json:"paymentID,omitempty"`
-	SourceBalance       BalanceId              `json:"sourceBalance,omitempty"`
-	DestinationBalance  *BalanceId             `json:"destinationBalance,omitempty"`
-	SourceSend          Int64                  `json:"sourceSend,omitempty"`
-	SourceSendUniversal Int64                  `json:"sourceSendUniversal,omitempty"`
-	DestinationReceive  Int64                  `json:"destinationReceive,omitempty"`
-	CreatedAt           Uint64                 `json:"createdAt,omitempty"`
-	InvoiceId           *Uint64                `json:"invoiceID,omitempty"`
-	Ext                 PaymentRequestEntryExt `json:"ext,omitempty"`
+type DirectDebitSuccess struct {
+	PaymentResponse PaymentResponse       `json:"paymentResponse,omitempty"`
+	Ext             DirectDebitSuccessExt `json:"ext,omitempty"`
+}
+
+// DirectDebitResult is an XDR Union defines as:
+//
+//   union DirectDebitResult switch (DirectDebitResultCode code)
+//    {
+//    case SUCCESS:
+//        DirectDebitSuccess success;
+//    default:
+//        void;
+//    };
+//
+type DirectDebitResult struct {
+	Code    DirectDebitResultCode `json:"code,omitempty"`
+	Success *DirectDebitSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u DirectDebitResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of DirectDebitResult
+func (u DirectDebitResult) ArmForSwitch(sw int32) (string, bool) {
+	switch DirectDebitResultCode(sw) {
+	case DirectDebitResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewDirectDebitResult creates a new  DirectDebitResult.
+func NewDirectDebitResult(code DirectDebitResultCode, value interface{}) (result DirectDebitResult, err error) {
+	result.Code = code
+	switch DirectDebitResultCode(code) {
+	case DirectDebitResultCodeSuccess:
+		tv, ok := value.(DirectDebitSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be DirectDebitSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u DirectDebitResult) MustSuccess() DirectDebitSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u DirectDebitResult) GetSuccess() (result DirectDebitSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// ManageCoinsEmissionRequestAction is an XDR Enum defines as:
+//
+//   enum ManageCoinsEmissionRequestAction
+//    {
+//        CREATE = 0,
+//        DELETE = 1
+//    };
+//
+type ManageCoinsEmissionRequestAction int32
+
+const (
+	ManageCoinsEmissionRequestActionCreate ManageCoinsEmissionRequestAction = 0
+	ManageCoinsEmissionRequestActionDelete ManageCoinsEmissionRequestAction = 1
+)
+
+var ManageCoinsEmissionRequestActionAll = []ManageCoinsEmissionRequestAction{
+	ManageCoinsEmissionRequestActionCreate,
+	ManageCoinsEmissionRequestActionDelete,
+}
+
+var manageCoinsEmissionRequestActionMap = map[int32]string{
+	0: "ManageCoinsEmissionRequestActionCreate",
+	1: "ManageCoinsEmissionRequestActionDelete",
+}
+
+var manageCoinsEmissionRequestActionShortMap = map[int32]string{
+	0: "create",
+	1: "delete",
+}
+
+var manageCoinsEmissionRequestActionRevMap = map[string]int32{
+	"ManageCoinsEmissionRequestActionCreate": 0,
+	"ManageCoinsEmissionRequestActionDelete": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageCoinsEmissionRequestAction
+func (e ManageCoinsEmissionRequestAction) ValidEnum(v int32) bool {
+	_, ok := manageCoinsEmissionRequestActionMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageCoinsEmissionRequestAction) String() string {
+	name, _ := manageCoinsEmissionRequestActionMap[int32(e)]
+	return name
+}
+
+func (e ManageCoinsEmissionRequestAction) ShortString() string {
+	name, _ := manageCoinsEmissionRequestActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManageCoinsEmissionRequestAction) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageCoinsEmissionRequestAction) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageCoinsEmissionRequestActionRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageCoinsEmissionRequestAction(value)
+	return nil
+}
+
+// ManageCoinsEmissionRequestOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageCoinsEmissionRequestOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageCoinsEmissionRequestOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageCoinsEmissionRequestOpExt
+func (u ManageCoinsEmissionRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageCoinsEmissionRequestOpExt creates a new  ManageCoinsEmissionRequestOpExt.
+func NewManageCoinsEmissionRequestOpExt(v LedgerVersion, value interface{}) (result ManageCoinsEmissionRequestOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageCoinsEmissionRequestOp is an XDR Struct defines as:
+//
+//   struct ManageCoinsEmissionRequestOp
+//    {
+//    	// 0=create a new request, otherwise edit an existing offer
+//        ManageCoinsEmissionRequestAction action;
+//    	uint64 requestID;
+//        int64 amount;        // amount being issued. if set to 0, delete the offer
+//        BalanceID receiver;
+//        AssetCode asset;
+//        string64 reference;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageCoinsEmissionRequestOp struct {
+	Action    ManageCoinsEmissionRequestAction `json:"action,omitempty"`
+	RequestId Uint64                           `json:"requestID,omitempty"`
+	Amount    Int64                            `json:"amount,omitempty"`
+	Receiver  BalanceId                        `json:"receiver,omitempty"`
+	Asset     AssetCode                        `json:"asset,omitempty"`
+	Reference String64                         `json:"reference,omitempty"`
+	Ext       ManageCoinsEmissionRequestOpExt  `json:"ext,omitempty"`
+}
+
+// ManageCoinsEmissionRequestResultCode is an XDR Enum defines as:
+//
+//   enum ManageCoinsEmissionRequestResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        INVALID_AMOUNT = -1,      // amount is negative
+//    	INVALID_REQUEST_ID = -2, // not 0 for delete etc
+//    	NOT_FOUND = -3,           // failed to find emission request with such ID
+//    	ALREADY_REVIEWED = -4,    // emission request have been already reviewed - can't edit
+//        ASSET_NOT_FOUND = -5,
+//        BALANCE_NOT_FOUND = -6,
+//        ASSET_MISMATCH = -7,
+//        INVALID_ASSET = -8,
+//        REFERENCE_DUPLICATION = -9,
+//        LINE_FULL = -10,
+//        INVALID_REFERENCE = -11
+//    };
+//
+type ManageCoinsEmissionRequestResultCode int32
+
+const (
+	ManageCoinsEmissionRequestResultCodeSuccess              ManageCoinsEmissionRequestResultCode = 0
+	ManageCoinsEmissionRequestResultCodeInvalidAmount        ManageCoinsEmissionRequestResultCode = -1
+	ManageCoinsEmissionRequestResultCodeInvalidRequestId     ManageCoinsEmissionRequestResultCode = -2
+	ManageCoinsEmissionRequestResultCodeNotFound             ManageCoinsEmissionRequestResultCode = -3
+	ManageCoinsEmissionRequestResultCodeAlreadyReviewed      ManageCoinsEmissionRequestResultCode = -4
+	ManageCoinsEmissionRequestResultCodeAssetNotFound        ManageCoinsEmissionRequestResultCode = -5
+	ManageCoinsEmissionRequestResultCodeBalanceNotFound      ManageCoinsEmissionRequestResultCode = -6
+	ManageCoinsEmissionRequestResultCodeAssetMismatch        ManageCoinsEmissionRequestResultCode = -7
+	ManageCoinsEmissionRequestResultCodeInvalidAsset         ManageCoinsEmissionRequestResultCode = -8
+	ManageCoinsEmissionRequestResultCodeReferenceDuplication ManageCoinsEmissionRequestResultCode = -9
+	ManageCoinsEmissionRequestResultCodeLineFull             ManageCoinsEmissionRequestResultCode = -10
+	ManageCoinsEmissionRequestResultCodeInvalidReference     ManageCoinsEmissionRequestResultCode = -11
+)
+
+var ManageCoinsEmissionRequestResultCodeAll = []ManageCoinsEmissionRequestResultCode{
+	ManageCoinsEmissionRequestResultCodeSuccess,
+	ManageCoinsEmissionRequestResultCodeInvalidAmount,
+	ManageCoinsEmissionRequestResultCodeInvalidRequestId,
+	ManageCoinsEmissionRequestResultCodeNotFound,
+	ManageCoinsEmissionRequestResultCodeAlreadyReviewed,
+	ManageCoinsEmissionRequestResultCodeAssetNotFound,
+	ManageCoinsEmissionRequestResultCodeBalanceNotFound,
+	ManageCoinsEmissionRequestResultCodeAssetMismatch,
+	ManageCoinsEmissionRequestResultCodeInvalidAsset,
+	ManageCoinsEmissionRequestResultCodeReferenceDuplication,
+	ManageCoinsEmissionRequestResultCodeLineFull,
+	ManageCoinsEmissionRequestResultCodeInvalidReference,
+}
+
+var manageCoinsEmissionRequestResultCodeMap = map[int32]string{
+	0:   "ManageCoinsEmissionRequestResultCodeSuccess",
+	-1:  "ManageCoinsEmissionRequestResultCodeInvalidAmount",
+	-2:  "ManageCoinsEmissionRequestResultCodeInvalidRequestId",
+	-3:  "ManageCoinsEmissionRequestResultCodeNotFound",
+	-4:  "ManageCoinsEmissionRequestResultCodeAlreadyReviewed",
+	-5:  "ManageCoinsEmissionRequestResultCodeAssetNotFound",
+	-6:  "ManageCoinsEmissionRequestResultCodeBalanceNotFound",
+	-7:  "ManageCoinsEmissionRequestResultCodeAssetMismatch",
+	-8:  "ManageCoinsEmissionRequestResultCodeInvalidAsset",
+	-9:  "ManageCoinsEmissionRequestResultCodeReferenceDuplication",
+	-10: "ManageCoinsEmissionRequestResultCodeLineFull",
+	-11: "ManageCoinsEmissionRequestResultCodeInvalidReference",
+}
+
+var manageCoinsEmissionRequestResultCodeShortMap = map[int32]string{
+	0:   "success",
+	-1:  "invalid_amount",
+	-2:  "invalid_request_id",
+	-3:  "not_found",
+	-4:  "already_reviewed",
+	-5:  "asset_not_found",
+	-6:  "balance_not_found",
+	-7:  "asset_mismatch",
+	-8:  "invalid_asset",
+	-9:  "reference_duplication",
+	-10: "line_full",
+	-11: "invalid_reference",
+}
+
+var manageCoinsEmissionRequestResultCodeRevMap = map[string]int32{
+	"ManageCoinsEmissionRequestResultCodeSuccess":              0,
+	"ManageCoinsEmissionRequestResultCodeInvalidAmount":        -1,
+	"ManageCoinsEmissionRequestResultCodeInvalidRequestId":     -2,
+	"ManageCoinsEmissionRequestResultCodeNotFound":             -3,
+	"ManageCoinsEmissionRequestResultCodeAlreadyReviewed":      -4,
+	"ManageCoinsEmissionRequestResultCodeAssetNotFound":        -5,
+	"ManageCoinsEmissionRequestResultCodeBalanceNotFound":      -6,
+	"ManageCoinsEmissionRequestResultCodeAssetMismatch":        -7,
+	"ManageCoinsEmissionRequestResultCodeInvalidAsset":         -8,
+	"ManageCoinsEmissionRequestResultCodeReferenceDuplication": -9,
+	"ManageCoinsEmissionRequestResultCodeLineFull":             -10,
+	"ManageCoinsEmissionRequestResultCodeInvalidReference":     -11,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageCoinsEmissionRequestResultCode
+func (e ManageCoinsEmissionRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := manageCoinsEmissionRequestResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageCoinsEmissionRequestResultCode) String() string {
+	name, _ := manageCoinsEmissionRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageCoinsEmissionRequestResultCode) ShortString() string {
+	name, _ := manageCoinsEmissionRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageCoinsEmissionRequestResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageCoinsEmissionRequestResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageCoinsEmissionRequestResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageCoinsEmissionRequestResultCode(value)
+	return nil
+}
+
+// ManageCoinsEmissionRequestResultManageRequestInfoExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//
+type ManageCoinsEmissionRequestResultManageRequestInfoExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageCoinsEmissionRequestResultManageRequestInfoExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageCoinsEmissionRequestResultManageRequestInfoExt
+func (u ManageCoinsEmissionRequestResultManageRequestInfoExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageCoinsEmissionRequestResultManageRequestInfoExt creates a new  ManageCoinsEmissionRequestResultManageRequestInfoExt.
+func NewManageCoinsEmissionRequestResultManageRequestInfoExt(v LedgerVersion, value interface{}) (result ManageCoinsEmissionRequestResultManageRequestInfoExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageCoinsEmissionRequestResultManageRequestInfo is an XDR NestedStruct defines as:
+//
+//   struct {
+//            uint64 requestID;
+//            bool fulfilled;
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//        }
+//
+type ManageCoinsEmissionRequestResultManageRequestInfo struct {
+	RequestId Uint64                                               `json:"requestID,omitempty"`
+	Fulfilled bool                                                 `json:"fulfilled,omitempty"`
+	Ext       ManageCoinsEmissionRequestResultManageRequestInfoExt `json:"ext,omitempty"`
+}
+
+// ManageCoinsEmissionRequestResult is an XDR Union defines as:
+//
+//   union ManageCoinsEmissionRequestResult switch (ManageCoinsEmissionRequestResultCode code)
+//    {
+//    case SUCCESS:
+//        struct {
+//            uint64 requestID;
+//            bool fulfilled;
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//        } manageRequestInfo;
+//    default:
+//        void;
+//    };
+//
+type ManageCoinsEmissionRequestResult struct {
+	Code              ManageCoinsEmissionRequestResultCode               `json:"code,omitempty"`
+	ManageRequestInfo *ManageCoinsEmissionRequestResultManageRequestInfo `json:"manageRequestInfo,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageCoinsEmissionRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageCoinsEmissionRequestResult
+func (u ManageCoinsEmissionRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageCoinsEmissionRequestResultCode(sw) {
+	case ManageCoinsEmissionRequestResultCodeSuccess:
+		return "ManageRequestInfo", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageCoinsEmissionRequestResult creates a new  ManageCoinsEmissionRequestResult.
+func NewManageCoinsEmissionRequestResult(code ManageCoinsEmissionRequestResultCode, value interface{}) (result ManageCoinsEmissionRequestResult, err error) {
+	result.Code = code
+	switch ManageCoinsEmissionRequestResultCode(code) {
+	case ManageCoinsEmissionRequestResultCodeSuccess:
+		tv, ok := value.(ManageCoinsEmissionRequestResultManageRequestInfo)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageCoinsEmissionRequestResultManageRequestInfo")
+			return
+		}
+		result.ManageRequestInfo = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustManageRequestInfo retrieves the ManageRequestInfo value from the union,
+// panicing if the value is not set.
+func (u ManageCoinsEmissionRequestResult) MustManageRequestInfo() ManageCoinsEmissionRequestResultManageRequestInfo {
+	val, ok := u.GetManageRequestInfo()
+
+	if !ok {
+		panic("arm ManageRequestInfo is not set")
+	}
+
+	return val
+}
+
+// GetManageRequestInfo retrieves the ManageRequestInfo value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageCoinsEmissionRequestResult) GetManageRequestInfo() (result ManageCoinsEmissionRequestResultManageRequestInfo, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "ManageRequestInfo" {
+		result = *u.ManageRequestInfo
+		ok = true
+	}
+
+	return
+}
+
+// ManageOfferOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageOfferOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageOfferOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageOfferOpExt
+func (u ManageOfferOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageOfferOpExt creates a new  ManageOfferOpExt.
+func NewManageOfferOpExt(v LedgerVersion, value interface{}) (result ManageOfferOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageOfferOp is an XDR Struct defines as:
+//
+//   struct ManageOfferOp
+//    {
+//        BalanceID baseBalance; // balance for base asset
+//    	BalanceID quoteBalance; // balance for quote asset
+//    	bool isBuy;
+//        int64 amount; // if set to 0, delete the offer
+//        int64 price;  // price of base asset in terms of quote
+//
+//        int64 fee;
+//
+//        // 0=create a new offer, otherwise edit an existing offer
+//        uint64 offerID;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageOfferOp struct {
+	BaseBalance  BalanceId        `json:"baseBalance,omitempty"`
+	QuoteBalance BalanceId        `json:"quoteBalance,omitempty"`
+	IsBuy        bool             `json:"isBuy,omitempty"`
+	Amount       Int64            `json:"amount,omitempty"`
+	Price        Int64            `json:"price,omitempty"`
+	Fee          Int64            `json:"fee,omitempty"`
+	OfferId      Uint64           `json:"offerID,omitempty"`
+	Ext          ManageOfferOpExt `json:"ext,omitempty"`
+}
+
+// ManageOfferResultCode is an XDR Enum defines as:
+//
+//   enum ManageOfferResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        MALFORMED = -1,     // generated offer would be invalid
+//        PAIR_NOT_TRADED = -2, // it's not allowed to trage with this pair
+//        BALANCE_NOT_FOUND = -3,  // does not own balance for buying or selling
+//        UNDERFUNDED = -4,    // doesn't hold what it's trying to sell
+//        CROSS_SELF = -5,     // would cross an offer from the same user
+//    	OFFER_OVERFLOW = -6,
+//    	ASSET_PAIR_NOT_TRADABLE = -7,
+//    	PHYSICAL_PRICE_RESTRICTION = -8, // offer price violates physical price restriction
+//    	CURRENT_PRICE_RESTRICTION = -9,
+//        NOT_FOUND = -10, // offerID does not match an existing offer
+//        INVALID_PERCENT_FEE = -11,
+//    	INSUFFICIENT_PRICE = -12
+//    };
+//
+type ManageOfferResultCode int32
+
+const (
+	ManageOfferResultCodeSuccess                  ManageOfferResultCode = 0
+	ManageOfferResultCodeMalformed                ManageOfferResultCode = -1
+	ManageOfferResultCodePairNotTraded            ManageOfferResultCode = -2
+	ManageOfferResultCodeBalanceNotFound          ManageOfferResultCode = -3
+	ManageOfferResultCodeUnderfunded              ManageOfferResultCode = -4
+	ManageOfferResultCodeCrossSelf                ManageOfferResultCode = -5
+	ManageOfferResultCodeOfferOverflow            ManageOfferResultCode = -6
+	ManageOfferResultCodeAssetPairNotTradable     ManageOfferResultCode = -7
+	ManageOfferResultCodePhysicalPriceRestriction ManageOfferResultCode = -8
+	ManageOfferResultCodeCurrentPriceRestriction  ManageOfferResultCode = -9
+	ManageOfferResultCodeNotFound                 ManageOfferResultCode = -10
+	ManageOfferResultCodeInvalidPercentFee        ManageOfferResultCode = -11
+	ManageOfferResultCodeInsufficientPrice        ManageOfferResultCode = -12
+)
+
+var ManageOfferResultCodeAll = []ManageOfferResultCode{
+	ManageOfferResultCodeSuccess,
+	ManageOfferResultCodeMalformed,
+	ManageOfferResultCodePairNotTraded,
+	ManageOfferResultCodeBalanceNotFound,
+	ManageOfferResultCodeUnderfunded,
+	ManageOfferResultCodeCrossSelf,
+	ManageOfferResultCodeOfferOverflow,
+	ManageOfferResultCodeAssetPairNotTradable,
+	ManageOfferResultCodePhysicalPriceRestriction,
+	ManageOfferResultCodeCurrentPriceRestriction,
+	ManageOfferResultCodeNotFound,
+	ManageOfferResultCodeInvalidPercentFee,
+	ManageOfferResultCodeInsufficientPrice,
+}
+
+var manageOfferResultCodeMap = map[int32]string{
+	0:   "ManageOfferResultCodeSuccess",
+	-1:  "ManageOfferResultCodeMalformed",
+	-2:  "ManageOfferResultCodePairNotTraded",
+	-3:  "ManageOfferResultCodeBalanceNotFound",
+	-4:  "ManageOfferResultCodeUnderfunded",
+	-5:  "ManageOfferResultCodeCrossSelf",
+	-6:  "ManageOfferResultCodeOfferOverflow",
+	-7:  "ManageOfferResultCodeAssetPairNotTradable",
+	-8:  "ManageOfferResultCodePhysicalPriceRestriction",
+	-9:  "ManageOfferResultCodeCurrentPriceRestriction",
+	-10: "ManageOfferResultCodeNotFound",
+	-11: "ManageOfferResultCodeInvalidPercentFee",
+	-12: "ManageOfferResultCodeInsufficientPrice",
+}
+
+var manageOfferResultCodeShortMap = map[int32]string{
+	0:   "success",
+	-1:  "malformed",
+	-2:  "pair_not_traded",
+	-3:  "balance_not_found",
+	-4:  "underfunded",
+	-5:  "cross_self",
+	-6:  "offer_overflow",
+	-7:  "asset_pair_not_tradable",
+	-8:  "physical_price_restriction",
+	-9:  "current_price_restriction",
+	-10: "not_found",
+	-11: "invalid_percent_fee",
+	-12: "insufficient_price",
+}
+
+var manageOfferResultCodeRevMap = map[string]int32{
+	"ManageOfferResultCodeSuccess":                  0,
+	"ManageOfferResultCodeMalformed":                -1,
+	"ManageOfferResultCodePairNotTraded":            -2,
+	"ManageOfferResultCodeBalanceNotFound":          -3,
+	"ManageOfferResultCodeUnderfunded":              -4,
+	"ManageOfferResultCodeCrossSelf":                -5,
+	"ManageOfferResultCodeOfferOverflow":            -6,
+	"ManageOfferResultCodeAssetPairNotTradable":     -7,
+	"ManageOfferResultCodePhysicalPriceRestriction": -8,
+	"ManageOfferResultCodeCurrentPriceRestriction":  -9,
+	"ManageOfferResultCodeNotFound":                 -10,
+	"ManageOfferResultCodeInvalidPercentFee":        -11,
+	"ManageOfferResultCodeInsufficientPrice":        -12,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageOfferResultCode
+func (e ManageOfferResultCode) ValidEnum(v int32) bool {
+	_, ok := manageOfferResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageOfferResultCode) String() string {
+	name, _ := manageOfferResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageOfferResultCode) ShortString() string {
+	name, _ := manageOfferResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageOfferResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageOfferResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageOfferResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageOfferResultCode(value)
+	return nil
+}
+
+// ManageOfferEffect is an XDR Enum defines as:
+//
+//   enum ManageOfferEffect
+//    {
+//        CREATED = 0,
+//        UPDATED = 1,
+//        DELETED = 2
+//    };
+//
+type ManageOfferEffect int32
+
+const (
+	ManageOfferEffectCreated ManageOfferEffect = 0
+	ManageOfferEffectUpdated ManageOfferEffect = 1
+	ManageOfferEffectDeleted ManageOfferEffect = 2
+)
+
+var ManageOfferEffectAll = []ManageOfferEffect{
+	ManageOfferEffectCreated,
+	ManageOfferEffectUpdated,
+	ManageOfferEffectDeleted,
+}
+
+var manageOfferEffectMap = map[int32]string{
+	0: "ManageOfferEffectCreated",
+	1: "ManageOfferEffectUpdated",
+	2: "ManageOfferEffectDeleted",
+}
+
+var manageOfferEffectShortMap = map[int32]string{
+	0: "created",
+	1: "updated",
+	2: "deleted",
+}
+
+var manageOfferEffectRevMap = map[string]int32{
+	"ManageOfferEffectCreated": 0,
+	"ManageOfferEffectUpdated": 1,
+	"ManageOfferEffectDeleted": 2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageOfferEffect
+func (e ManageOfferEffect) ValidEnum(v int32) bool {
+	_, ok := manageOfferEffectMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageOfferEffect) String() string {
+	name, _ := manageOfferEffectMap[int32(e)]
+	return name
+}
+
+func (e ManageOfferEffect) ShortString() string {
+	name, _ := manageOfferEffectShortMap[int32(e)]
+	return name
+}
+
+func (e ManageOfferEffect) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageOfferEffect) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageOfferEffectRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageOfferEffect(value)
+	return nil
+}
+
+// ClaimOfferAtomExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ClaimOfferAtomExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ClaimOfferAtomExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ClaimOfferAtomExt
+func (u ClaimOfferAtomExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewClaimOfferAtomExt creates a new  ClaimOfferAtomExt.
+func NewClaimOfferAtomExt(v LedgerVersion, value interface{}) (result ClaimOfferAtomExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ClaimOfferAtom is an XDR Struct defines as:
+//
+//   struct ClaimOfferAtom
+//    {
+//        // emitted to identify the offer
+//        AccountID bAccountID; // Account that owns the offer
+//        uint64 offerID;
+//    	int64 baseAmount;
+//    	int64 quoteAmount;
+//    	int64 bFeePaid;
+//    	int64 aFeePaid;
+//    	BalanceID baseBalance;
+//    	BalanceID quoteBalance;
+//
+//    	int64 currentPrice;
+//
+//    	union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ClaimOfferAtom struct {
+	BAccountId   AccountId         `json:"bAccountID,omitempty"`
+	OfferId      Uint64            `json:"offerID,omitempty"`
+	BaseAmount   Int64             `json:"baseAmount,omitempty"`
+	QuoteAmount  Int64             `json:"quoteAmount,omitempty"`
+	BFeePaid     Int64             `json:"bFeePaid,omitempty"`
+	AFeePaid     Int64             `json:"aFeePaid,omitempty"`
+	BaseBalance  BalanceId         `json:"baseBalance,omitempty"`
+	QuoteBalance BalanceId         `json:"quoteBalance,omitempty"`
+	CurrentPrice Int64             `json:"currentPrice,omitempty"`
+	Ext          ClaimOfferAtomExt `json:"ext,omitempty"`
+}
+
+// ManageOfferSuccessResultOffer is an XDR NestedUnion defines as:
+//
+//   union switch (ManageOfferEffect effect)
+//        {
+//        case CREATED:
+//        case UPDATED:
+//            OfferEntry offer;
+//        default:
+//            void;
+//        }
+//
+type ManageOfferSuccessResultOffer struct {
+	Effect ManageOfferEffect `json:"effect,omitempty"`
+	Offer  *OfferEntry       `json:"offer,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageOfferSuccessResultOffer) SwitchFieldName() string {
+	return "Effect"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageOfferSuccessResultOffer
+func (u ManageOfferSuccessResultOffer) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageOfferEffect(sw) {
+	case ManageOfferEffectCreated:
+		return "Offer", true
+	case ManageOfferEffectUpdated:
+		return "Offer", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageOfferSuccessResultOffer creates a new  ManageOfferSuccessResultOffer.
+func NewManageOfferSuccessResultOffer(effect ManageOfferEffect, value interface{}) (result ManageOfferSuccessResultOffer, err error) {
+	result.Effect = effect
+	switch ManageOfferEffect(effect) {
+	case ManageOfferEffectCreated:
+		tv, ok := value.(OfferEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be OfferEntry")
+			return
+		}
+		result.Offer = &tv
+	case ManageOfferEffectUpdated:
+		tv, ok := value.(OfferEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be OfferEntry")
+			return
+		}
+		result.Offer = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustOffer retrieves the Offer value from the union,
+// panicing if the value is not set.
+func (u ManageOfferSuccessResultOffer) MustOffer() OfferEntry {
+	val, ok := u.GetOffer()
+
+	if !ok {
+		panic("arm Offer is not set")
+	}
+
+	return val
+}
+
+// GetOffer retrieves the Offer value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageOfferSuccessResultOffer) GetOffer() (result OfferEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Effect))
+
+	if armName == "Offer" {
+		result = *u.Offer
+		ok = true
+	}
+
+	return
+}
+
+// ManageOfferSuccessResultExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageOfferSuccessResultExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageOfferSuccessResultExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageOfferSuccessResultExt
+func (u ManageOfferSuccessResultExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageOfferSuccessResultExt creates a new  ManageOfferSuccessResultExt.
+func NewManageOfferSuccessResultExt(v LedgerVersion, value interface{}) (result ManageOfferSuccessResultExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageOfferSuccessResult is an XDR Struct defines as:
+//
+//   struct ManageOfferSuccessResult
+//    {
+//
+//        // offers that got claimed while creating this offer
+//        ClaimOfferAtom offersClaimed<>;
+//    	AssetCode baseAsset;
+//    	AssetCode quoteAsset;
+//
+//        union switch (ManageOfferEffect effect)
+//        {
+//        case CREATED:
+//        case UPDATED:
+//            OfferEntry offer;
+//        default:
+//            void;
+//        }
+//        offer;
+//
+//    	union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageOfferSuccessResult struct {
+	OffersClaimed []ClaimOfferAtom              `json:"offersClaimed,omitempty"`
+	BaseAsset     AssetCode                     `json:"baseAsset,omitempty"`
+	QuoteAsset    AssetCode                     `json:"quoteAsset,omitempty"`
+	Offer         ManageOfferSuccessResultOffer `json:"offer,omitempty"`
+	Ext           ManageOfferSuccessResultExt   `json:"ext,omitempty"`
+}
+
+// ManageOfferResultPhysicalPriceRestrictionExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//
+type ManageOfferResultPhysicalPriceRestrictionExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageOfferResultPhysicalPriceRestrictionExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageOfferResultPhysicalPriceRestrictionExt
+func (u ManageOfferResultPhysicalPriceRestrictionExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageOfferResultPhysicalPriceRestrictionExt creates a new  ManageOfferResultPhysicalPriceRestrictionExt.
+func NewManageOfferResultPhysicalPriceRestrictionExt(v LedgerVersion, value interface{}) (result ManageOfferResultPhysicalPriceRestrictionExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageOfferResultPhysicalPriceRestriction is an XDR NestedStruct defines as:
+//
+//   struct {
+//    		int64 physicalPrice;
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	}
+//
+type ManageOfferResultPhysicalPriceRestriction struct {
+	PhysicalPrice Int64                                        `json:"physicalPrice,omitempty"`
+	Ext           ManageOfferResultPhysicalPriceRestrictionExt `json:"ext,omitempty"`
+}
+
+// ManageOfferResultCurrentPriceRestrictionExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//
+type ManageOfferResultCurrentPriceRestrictionExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageOfferResultCurrentPriceRestrictionExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageOfferResultCurrentPriceRestrictionExt
+func (u ManageOfferResultCurrentPriceRestrictionExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageOfferResultCurrentPriceRestrictionExt creates a new  ManageOfferResultCurrentPriceRestrictionExt.
+func NewManageOfferResultCurrentPriceRestrictionExt(v LedgerVersion, value interface{}) (result ManageOfferResultCurrentPriceRestrictionExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageOfferResultCurrentPriceRestriction is an XDR NestedStruct defines as:
+//
+//   struct {
+//    		int64 currentPrice;
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	}
+//
+type ManageOfferResultCurrentPriceRestriction struct {
+	CurrentPrice Int64                                       `json:"currentPrice,omitempty"`
+	Ext          ManageOfferResultCurrentPriceRestrictionExt `json:"ext,omitempty"`
+}
+
+// ManageOfferResult is an XDR Union defines as:
+//
+//   union ManageOfferResult switch (ManageOfferResultCode code)
+//    {
+//    case SUCCESS:
+//        ManageOfferSuccessResult success;
+//    case PHYSICAL_PRICE_RESTRICTION:
+//    	struct {
+//    		int64 physicalPrice;
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	} physicalPriceRestriction;
+//    case CURRENT_PRICE_RESTRICTION:
+//    	struct {
+//    		int64 currentPrice;
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	} currentPriceRestriction;
+//
+//    default:
+//        void;
+//    };
+//
+type ManageOfferResult struct {
+	Code                     ManageOfferResultCode                      `json:"code,omitempty"`
+	Success                  *ManageOfferSuccessResult                  `json:"success,omitempty"`
+	PhysicalPriceRestriction *ManageOfferResultPhysicalPriceRestriction `json:"physicalPriceRestriction,omitempty"`
+	CurrentPriceRestriction  *ManageOfferResultCurrentPriceRestriction  `json:"currentPriceRestriction,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageOfferResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageOfferResult
+func (u ManageOfferResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageOfferResultCode(sw) {
+	case ManageOfferResultCodeSuccess:
+		return "Success", true
+	case ManageOfferResultCodePhysicalPriceRestriction:
+		return "PhysicalPriceRestriction", true
+	case ManageOfferResultCodeCurrentPriceRestriction:
+		return "CurrentPriceRestriction", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageOfferResult creates a new  ManageOfferResult.
+func NewManageOfferResult(code ManageOfferResultCode, value interface{}) (result ManageOfferResult, err error) {
+	result.Code = code
+	switch ManageOfferResultCode(code) {
+	case ManageOfferResultCodeSuccess:
+		tv, ok := value.(ManageOfferSuccessResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageOfferSuccessResult")
+			return
+		}
+		result.Success = &tv
+	case ManageOfferResultCodePhysicalPriceRestriction:
+		tv, ok := value.(ManageOfferResultPhysicalPriceRestriction)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageOfferResultPhysicalPriceRestriction")
+			return
+		}
+		result.PhysicalPriceRestriction = &tv
+	case ManageOfferResultCodeCurrentPriceRestriction:
+		tv, ok := value.(ManageOfferResultCurrentPriceRestriction)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageOfferResultCurrentPriceRestriction")
+			return
+		}
+		result.CurrentPriceRestriction = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageOfferResult) MustSuccess() ManageOfferSuccessResult {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageOfferResult) GetSuccess() (result ManageOfferSuccessResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// MustPhysicalPriceRestriction retrieves the PhysicalPriceRestriction value from the union,
+// panicing if the value is not set.
+func (u ManageOfferResult) MustPhysicalPriceRestriction() ManageOfferResultPhysicalPriceRestriction {
+	val, ok := u.GetPhysicalPriceRestriction()
+
+	if !ok {
+		panic("arm PhysicalPriceRestriction is not set")
+	}
+
+	return val
+}
+
+// GetPhysicalPriceRestriction retrieves the PhysicalPriceRestriction value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageOfferResult) GetPhysicalPriceRestriction() (result ManageOfferResultPhysicalPriceRestriction, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "PhysicalPriceRestriction" {
+		result = *u.PhysicalPriceRestriction
+		ok = true
+	}
+
+	return
+}
+
+// MustCurrentPriceRestriction retrieves the CurrentPriceRestriction value from the union,
+// panicing if the value is not set.
+func (u ManageOfferResult) MustCurrentPriceRestriction() ManageOfferResultCurrentPriceRestriction {
+	val, ok := u.GetCurrentPriceRestriction()
+
+	if !ok {
+		panic("arm CurrentPriceRestriction is not set")
+	}
+
+	return val
+}
+
+// GetCurrentPriceRestriction retrieves the CurrentPriceRestriction value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageOfferResult) GetCurrentPriceRestriction() (result ManageOfferResultCurrentPriceRestriction, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "CurrentPriceRestriction" {
+		result = *u.CurrentPriceRestriction
+		ok = true
+	}
+
+	return
+}
+
+// FeeType is an XDR Enum defines as:
+//
+//   enum FeeType
+//    {
+//        PAYMENT_FEE = 0,
+//        REFERRAL_FEE = 1,
+//    	OFFER_FEE = 2,
+//        FORFEIT_FEE = 3,
+//        EMISSION_FEE = 4
+//    };
+//
+type FeeType int32
+
+const (
+	FeeTypePaymentFee  FeeType = 0
+	FeeTypeReferralFee FeeType = 1
+	FeeTypeOfferFee    FeeType = 2
+	FeeTypeForfeitFee  FeeType = 3
+	FeeTypeEmissionFee FeeType = 4
+)
+
+var FeeTypeAll = []FeeType{
+	FeeTypePaymentFee,
+	FeeTypeReferralFee,
+	FeeTypeOfferFee,
+	FeeTypeForfeitFee,
+	FeeTypeEmissionFee,
+}
+
+var feeTypeMap = map[int32]string{
+	0: "FeeTypePaymentFee",
+	1: "FeeTypeReferralFee",
+	2: "FeeTypeOfferFee",
+	3: "FeeTypeForfeitFee",
+	4: "FeeTypeEmissionFee",
+}
+
+var feeTypeShortMap = map[int32]string{
+	0: "payment_fee",
+	1: "referral_fee",
+	2: "offer_fee",
+	3: "forfeit_fee",
+	4: "emission_fee",
+}
+
+var feeTypeRevMap = map[string]int32{
+	"FeeTypePaymentFee":  0,
+	"FeeTypeReferralFee": 1,
+	"FeeTypeOfferFee":    2,
+	"FeeTypeForfeitFee":  3,
+	"FeeTypeEmissionFee": 4,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for FeeType
+func (e FeeType) ValidEnum(v int32) bool {
+	_, ok := feeTypeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e FeeType) String() string {
+	name, _ := feeTypeMap[int32(e)]
+	return name
+}
+
+func (e FeeType) ShortString() string {
+	name, _ := feeTypeShortMap[int32(e)]
+	return name
+}
+
+func (e FeeType) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *FeeType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := feeTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = FeeType(value)
+	return nil
+}
+
+// EmissionFeeType is an XDR Enum defines as:
+//
+//   enum EmissionFeeType
+//    {
+//    	PRIMARY_MARKET = 1,
+//    	SECONDARY_MARKET = 2
+//    };
+//
+type EmissionFeeType int32
+
+const (
+	EmissionFeeTypePrimaryMarket   EmissionFeeType = 1
+	EmissionFeeTypeSecondaryMarket EmissionFeeType = 2
+)
+
+var EmissionFeeTypeAll = []EmissionFeeType{
+	EmissionFeeTypePrimaryMarket,
+	EmissionFeeTypeSecondaryMarket,
+}
+
+var emissionFeeTypeMap = map[int32]string{
+	1: "EmissionFeeTypePrimaryMarket",
+	2: "EmissionFeeTypeSecondaryMarket",
+}
+
+var emissionFeeTypeShortMap = map[int32]string{
+	1: "primary_market",
+	2: "secondary_market",
+}
+
+var emissionFeeTypeRevMap = map[string]int32{
+	"EmissionFeeTypePrimaryMarket":   1,
+	"EmissionFeeTypeSecondaryMarket": 2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for EmissionFeeType
+func (e EmissionFeeType) ValidEnum(v int32) bool {
+	_, ok := emissionFeeTypeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e EmissionFeeType) String() string {
+	name, _ := emissionFeeTypeMap[int32(e)]
+	return name
+}
+
+func (e EmissionFeeType) ShortString() string {
+	name, _ := emissionFeeTypeShortMap[int32(e)]
+	return name
+}
+
+func (e EmissionFeeType) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *EmissionFeeType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := emissionFeeTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = EmissionFeeType(value)
+	return nil
+}
+
+// FeeEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type FeeEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u FeeEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of FeeEntryExt
+func (u FeeEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewFeeEntryExt creates a new  FeeEntryExt.
+func NewFeeEntryExt(v LedgerVersion, value interface{}) (result FeeEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// FeeEntry is an XDR Struct defines as:
+//
+//   struct FeeEntry
+//    {
+//        FeeType feeType;
+//        AssetCode asset;
+//        int64 fixedFee; // fee paid for operation
+//    	int64 percentFee; // percent of transfer amount to be charged
+//
+//        AccountID* accountID;
+//        AccountType* accountType;
+//        int64 subtype; // for example, different withdrawals — bars or coins
+//
+//        int64 lowerBound;
+//        int64 upperBound;
+//
+//        Hash hash;
+//
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//
+//    };
+//
+type FeeEntry struct {
+	FeeType     FeeType      `json:"feeType,omitempty"`
+	Asset       AssetCode    `json:"asset,omitempty"`
+	FixedFee    Int64        `json:"fixedFee,omitempty"`
+	PercentFee  Int64        `json:"percentFee,omitempty"`
+	AccountId   *AccountId   `json:"accountID,omitempty"`
+	AccountType *AccountType `json:"accountType,omitempty"`
+	Subtype     Int64        `json:"subtype,omitempty"`
+	LowerBound  Int64        `json:"lowerBound,omitempty"`
+	UpperBound  Int64        `json:"upperBound,omitempty"`
+	Hash        Hash         `json:"hash,omitempty"`
+	Ext         FeeEntryExt  `json:"ext,omitempty"`
 }
 
 // ReferenceEntryExt is an XDR NestedUnion defines as:
@@ -1737,27 +2005,27 @@ type ReferenceEntry struct {
 	Ext       ReferenceEntryExt `json:"ext,omitempty"`
 }
 
-// StatisticsEntryExt is an XDR NestedUnion defines as:
+// PreEmissionExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
 //
-type StatisticsEntryExt struct {
+type PreEmissionExt struct {
 	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u StatisticsEntryExt) SwitchFieldName() string {
+func (u PreEmissionExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of StatisticsEntryExt
-func (u StatisticsEntryExt) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of PreEmissionExt
+func (u PreEmissionExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
@@ -1765,8 +2033,8 @@ func (u StatisticsEntryExt) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewStatisticsEntryExt creates a new  StatisticsEntryExt.
-func NewStatisticsEntryExt(v LedgerVersion, value interface{}) (result StatisticsEntryExt, err error) {
+// NewPreEmissionExt creates a new  PreEmissionExt.
+func NewPreEmissionExt(v LedgerVersion, value interface{}) (result PreEmissionExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
@@ -1775,18 +2043,506 @@ func NewStatisticsEntryExt(v LedgerVersion, value interface{}) (result Statistic
 	return
 }
 
-// StatisticsEntry is an XDR Struct defines as:
+// PreEmission is an XDR Struct defines as:
 //
-//   struct StatisticsEntry
+//   struct PreEmission
 //    {
-//    	AccountID accountID;
+//        string64 serialNumber;
+//        AssetCode asset;
+//        int64 amount;
+//        DecoratedSignature signatures<20>;
+//    	// reserved for future use
+//    	union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//    	ext;
+//    };
 //
-//    	int64 dailyOutcome;
-//    	int64 weeklyOutcome;
-//    	int64 monthlyOutcome;
-//    	int64 annualOutcome;
+type PreEmission struct {
+	SerialNumber String64             `json:"serialNumber,omitempty"`
+	Asset        AssetCode            `json:"asset,omitempty"`
+	Amount       Int64                `json:"amount,omitempty"`
+	Signatures   []DecoratedSignature `json:"signatures,omitempty" xdrmaxsize:"20"`
+	Ext          PreEmissionExt       `json:"ext,omitempty"`
+}
+
+// UploadPreemissionsOpExt is an XDR NestedUnion defines as:
 //
-//    	int64 updatedAt;
+//   union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//
+type UploadPreemissionsOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u UploadPreemissionsOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of UploadPreemissionsOpExt
+func (u UploadPreemissionsOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewUploadPreemissionsOpExt creates a new  UploadPreemissionsOpExt.
+func NewUploadPreemissionsOpExt(v LedgerVersion, value interface{}) (result UploadPreemissionsOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// UploadPreemissionsOp is an XDR Struct defines as:
+//
+//   struct UploadPreemissionsOp
+//    {
+//        PreEmission preEmissions<>;
+//    	// reserved for future use
+//    	union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//    	ext;
+//    };
+//
+type UploadPreemissionsOp struct {
+	PreEmissions []PreEmission           `json:"preEmissions,omitempty"`
+	Ext          UploadPreemissionsOpExt `json:"ext,omitempty"`
+}
+
+// UploadPreemissionsResultCode is an XDR Enum defines as:
+//
+//   enum UploadPreemissionsResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        MALFORMED = -1,
+//        SERIAL_DUPLICATION = -2,    // serial is already used
+//        MALFORMED_PREEMISSIONS = -3, // if pre-emissions has empty signatures or zero amount etc
+//        ASSET_NOT_FOUND = -4,
+//        LINE_FULL = -5
+//    };
+//
+type UploadPreemissionsResultCode int32
+
+const (
+	UploadPreemissionsResultCodeSuccess               UploadPreemissionsResultCode = 0
+	UploadPreemissionsResultCodeMalformed             UploadPreemissionsResultCode = -1
+	UploadPreemissionsResultCodeSerialDuplication     UploadPreemissionsResultCode = -2
+	UploadPreemissionsResultCodeMalformedPreemissions UploadPreemissionsResultCode = -3
+	UploadPreemissionsResultCodeAssetNotFound         UploadPreemissionsResultCode = -4
+	UploadPreemissionsResultCodeLineFull              UploadPreemissionsResultCode = -5
+)
+
+var UploadPreemissionsResultCodeAll = []UploadPreemissionsResultCode{
+	UploadPreemissionsResultCodeSuccess,
+	UploadPreemissionsResultCodeMalformed,
+	UploadPreemissionsResultCodeSerialDuplication,
+	UploadPreemissionsResultCodeMalformedPreemissions,
+	UploadPreemissionsResultCodeAssetNotFound,
+	UploadPreemissionsResultCodeLineFull,
+}
+
+var uploadPreemissionsResultCodeMap = map[int32]string{
+	0:  "UploadPreemissionsResultCodeSuccess",
+	-1: "UploadPreemissionsResultCodeMalformed",
+	-2: "UploadPreemissionsResultCodeSerialDuplication",
+	-3: "UploadPreemissionsResultCodeMalformedPreemissions",
+	-4: "UploadPreemissionsResultCodeAssetNotFound",
+	-5: "UploadPreemissionsResultCodeLineFull",
+}
+
+var uploadPreemissionsResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "malformed",
+	-2: "serial_duplication",
+	-3: "malformed_preemissions",
+	-4: "asset_not_found",
+	-5: "line_full",
+}
+
+var uploadPreemissionsResultCodeRevMap = map[string]int32{
+	"UploadPreemissionsResultCodeSuccess":               0,
+	"UploadPreemissionsResultCodeMalformed":             -1,
+	"UploadPreemissionsResultCodeSerialDuplication":     -2,
+	"UploadPreemissionsResultCodeMalformedPreemissions": -3,
+	"UploadPreemissionsResultCodeAssetNotFound":         -4,
+	"UploadPreemissionsResultCodeLineFull":              -5,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for UploadPreemissionsResultCode
+func (e UploadPreemissionsResultCode) ValidEnum(v int32) bool {
+	_, ok := uploadPreemissionsResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e UploadPreemissionsResultCode) String() string {
+	name, _ := uploadPreemissionsResultCodeMap[int32(e)]
+	return name
+}
+
+func (e UploadPreemissionsResultCode) ShortString() string {
+	name, _ := uploadPreemissionsResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e UploadPreemissionsResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *UploadPreemissionsResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := uploadPreemissionsResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = UploadPreemissionsResultCode(value)
+	return nil
+}
+
+// UploadPreemissionsResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//
+type UploadPreemissionsResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u UploadPreemissionsResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of UploadPreemissionsResultSuccessExt
+func (u UploadPreemissionsResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewUploadPreemissionsResultSuccessExt creates a new  UploadPreemissionsResultSuccessExt.
+func NewUploadPreemissionsResultSuccessExt(v LedgerVersion, value interface{}) (result UploadPreemissionsResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// UploadPreemissionsResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct {
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	}
+//
+type UploadPreemissionsResultSuccess struct {
+	Ext UploadPreemissionsResultSuccessExt `json:"ext,omitempty"`
+}
+
+// UploadPreemissionsResult is an XDR Union defines as:
+//
+//   union UploadPreemissionsResult switch (UploadPreemissionsResultCode code)
+//    {
+//    case SUCCESS:
+//        struct {
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	} success;
+//    default:
+//        void;
+//    };
+//
+type UploadPreemissionsResult struct {
+	Code    UploadPreemissionsResultCode     `json:"code,omitempty"`
+	Success *UploadPreemissionsResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u UploadPreemissionsResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of UploadPreemissionsResult
+func (u UploadPreemissionsResult) ArmForSwitch(sw int32) (string, bool) {
+	switch UploadPreemissionsResultCode(sw) {
+	case UploadPreemissionsResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewUploadPreemissionsResult creates a new  UploadPreemissionsResult.
+func NewUploadPreemissionsResult(code UploadPreemissionsResultCode, value interface{}) (result UploadPreemissionsResult, err error) {
+	result.Code = code
+	switch UploadPreemissionsResultCode(code) {
+	case UploadPreemissionsResultCodeSuccess:
+		tv, ok := value.(UploadPreemissionsResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be UploadPreemissionsResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u UploadPreemissionsResult) MustSuccess() UploadPreemissionsResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u UploadPreemissionsResult) GetSuccess() (result UploadPreemissionsResultSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// AccountTypeLimitsEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AccountTypeLimitsEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AccountTypeLimitsEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AccountTypeLimitsEntryExt
+func (u AccountTypeLimitsEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAccountTypeLimitsEntryExt creates a new  AccountTypeLimitsEntryExt.
+func NewAccountTypeLimitsEntryExt(v LedgerVersion, value interface{}) (result AccountTypeLimitsEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AccountTypeLimitsEntry is an XDR Struct defines as:
+//
+//   struct AccountTypeLimitsEntry
+//    {
+//    	AccountType accountType;
+//        Limits limits;
+//
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AccountTypeLimitsEntry struct {
+	AccountType AccountType               `json:"accountType,omitempty"`
+	Limits      Limits                    `json:"limits,omitempty"`
+	Ext         AccountTypeLimitsEntryExt `json:"ext,omitempty"`
+}
+
+// InvoiceState is an XDR Enum defines as:
+//
+//   enum InvoiceState
+//    {
+//        INVOICE_NEEDS_PAYMENT = 0,
+//        INVOICE_NEEDS_PAYMENT_REVIEW = 1
+//    };
+//
+type InvoiceState int32
+
+const (
+	InvoiceStateInvoiceNeedsPayment       InvoiceState = 0
+	InvoiceStateInvoiceNeedsPaymentReview InvoiceState = 1
+)
+
+var InvoiceStateAll = []InvoiceState{
+	InvoiceStateInvoiceNeedsPayment,
+	InvoiceStateInvoiceNeedsPaymentReview,
+}
+
+var invoiceStateMap = map[int32]string{
+	0: "InvoiceStateInvoiceNeedsPayment",
+	1: "InvoiceStateInvoiceNeedsPaymentReview",
+}
+
+var invoiceStateShortMap = map[int32]string{
+	0: "invoice_needs_payment",
+	1: "invoice_needs_payment_review",
+}
+
+var invoiceStateRevMap = map[string]int32{
+	"InvoiceStateInvoiceNeedsPayment":       0,
+	"InvoiceStateInvoiceNeedsPaymentReview": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for InvoiceState
+func (e InvoiceState) ValidEnum(v int32) bool {
+	_, ok := invoiceStateMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e InvoiceState) String() string {
+	name, _ := invoiceStateMap[int32(e)]
+	return name
+}
+
+func (e InvoiceState) ShortString() string {
+	name, _ := invoiceStateShortMap[int32(e)]
+	return name
+}
+
+func (e InvoiceState) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *InvoiceState) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := invoiceStateRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = InvoiceState(value)
+	return nil
+}
+
+// InvoiceEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type InvoiceEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u InvoiceEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of InvoiceEntryExt
+func (u InvoiceEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewInvoiceEntryExt creates a new  InvoiceEntryExt.
+func NewInvoiceEntryExt(v LedgerVersion, value interface{}) (result InvoiceEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// InvoiceEntry is an XDR Struct defines as:
+//
+//   struct InvoiceEntry
+//    {
+//        uint64 invoiceID;
+//        AccountID receiverAccount;
+//        BalanceID receiverBalance;
+//    	AccountID sender;
+//        int64 amount;
+//
+//        InvoiceState state;
 //
 //        // reserved for future use
 //        union switch (LedgerVersion v)
@@ -1797,885 +2553,463 @@ func NewStatisticsEntryExt(v LedgerVersion, value interface{}) (result Statistic
 //        ext;
 //    };
 //
-type StatisticsEntry struct {
-	AccountId      AccountId          `json:"accountID,omitempty"`
-	DailyOutcome   Int64              `json:"dailyOutcome,omitempty"`
-	WeeklyOutcome  Int64              `json:"weeklyOutcome,omitempty"`
-	MonthlyOutcome Int64              `json:"monthlyOutcome,omitempty"`
-	AnnualOutcome  Int64              `json:"annualOutcome,omitempty"`
-	UpdatedAt      Int64              `json:"updatedAt,omitempty"`
-	Ext            StatisticsEntryExt `json:"ext,omitempty"`
+type InvoiceEntry struct {
+	InvoiceId       Uint64          `json:"invoiceID,omitempty"`
+	ReceiverAccount AccountId       `json:"receiverAccount,omitempty"`
+	ReceiverBalance BalanceId       `json:"receiverBalance,omitempty"`
+	Sender          AccountId       `json:"sender,omitempty"`
+	Amount          Int64           `json:"amount,omitempty"`
+	State           InvoiceState    `json:"state,omitempty"`
+	Ext             InvoiceEntryExt `json:"ext,omitempty"`
 }
 
-// ThresholdIndexes is an XDR Enum defines as:
+// Value is an XDR Typedef defines as:
 //
-//   enum ThresholdIndexes
+//   typedef opaque Value<>;
+//
+type Value []byte
+
+// ScpBallot is an XDR Struct defines as:
+//
+//   struct SCPBallot
 //    {
-//        THRESHOLD_MASTER_WEIGHT = 0,
-//        THRESHOLD_LOW = 1,
-//        THRESHOLD_MED = 2,
-//        THRESHOLD_HIGH = 3
+//        uint32 counter; // n
+//        Value value;    // x
 //    };
 //
-type ThresholdIndexes int32
-
-const (
-	ThresholdIndexesThresholdMasterWeight ThresholdIndexes = 0
-	ThresholdIndexesThresholdLow          ThresholdIndexes = 1
-	ThresholdIndexesThresholdMed          ThresholdIndexes = 2
-	ThresholdIndexesThresholdHigh         ThresholdIndexes = 3
-)
-
-var ThresholdIndexesAll = []ThresholdIndexes{
-	ThresholdIndexesThresholdMasterWeight,
-	ThresholdIndexesThresholdLow,
-	ThresholdIndexesThresholdMed,
-	ThresholdIndexesThresholdHigh,
+type ScpBallot struct {
+	Counter Uint32 `json:"counter,omitempty"`
+	Value   Value  `json:"value,omitempty"`
 }
 
-var thresholdIndexesMap = map[int32]string{
-	0: "ThresholdIndexesThresholdMasterWeight",
-	1: "ThresholdIndexesThresholdLow",
-	2: "ThresholdIndexesThresholdMed",
-	3: "ThresholdIndexesThresholdHigh",
+// ScpStatementType is an XDR Enum defines as:
+//
+//   enum SCPStatementType
+//    {
+//        PREPARE = 0,
+//        CONFIRM = 1,
+//        EXTERNALIZE = 2,
+//        NOMINATE = 3
+//    };
+//
+type ScpStatementType int32
+
+const (
+	ScpStatementTypePrepare     ScpStatementType = 0
+	ScpStatementTypeConfirm     ScpStatementType = 1
+	ScpStatementTypeExternalize ScpStatementType = 2
+	ScpStatementTypeNominate    ScpStatementType = 3
+)
+
+var ScpStatementTypeAll = []ScpStatementType{
+	ScpStatementTypePrepare,
+	ScpStatementTypeConfirm,
+	ScpStatementTypeExternalize,
+	ScpStatementTypeNominate,
+}
+
+var scpStatementTypeMap = map[int32]string{
+	0: "ScpStatementTypePrepare",
+	1: "ScpStatementTypeConfirm",
+	2: "ScpStatementTypeExternalize",
+	3: "ScpStatementTypeNominate",
+}
+
+var scpStatementTypeShortMap = map[int32]string{
+	0: "prepare",
+	1: "confirm",
+	2: "externalize",
+	3: "nominate",
+}
+
+var scpStatementTypeRevMap = map[string]int32{
+	"ScpStatementTypePrepare":     0,
+	"ScpStatementTypeConfirm":     1,
+	"ScpStatementTypeExternalize": 2,
+	"ScpStatementTypeNominate":    3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ThresholdIndexes
-func (e ThresholdIndexes) ValidEnum(v int32) bool {
-	_, ok := thresholdIndexesMap[v]
+// the Enum interface for ScpStatementType
+func (e ScpStatementType) ValidEnum(v int32) bool {
+	_, ok := scpStatementTypeMap[v]
 	return ok
 }
 
 // String returns the name of `e`
-func (e ThresholdIndexes) String() string {
-	name, _ := thresholdIndexesMap[int32(e)]
+func (e ScpStatementType) String() string {
+	name, _ := scpStatementTypeMap[int32(e)]
 	return name
 }
 
-func (e ThresholdIndexes) MarshalJSON() ([]byte, error) {
+func (e ScpStatementType) ShortString() string {
+	name, _ := scpStatementTypeShortMap[int32(e)]
+	return name
+}
+
+func (e ScpStatementType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
 }
 
-// LedgerEntryType is an XDR Enum defines as:
+func (e *ScpStatementType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := scpStatementTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ScpStatementType(value)
+	return nil
+}
+
+// ScpNomination is an XDR Struct defines as:
 //
-//   enum LedgerEntryType
+//   struct SCPNomination
 //    {
-//        ACCOUNT = 0,
-//    	COINS_EMISSION_REQUEST = 1,
-//        FEE = 2,
-//        COINS_EMISSION = 3,
-//        BALANCE = 4,
-//        PAYMENT_REQUEST = 5,
-//        ASSET = 6,
-//        REFERENCE_ENTRY = 7,
-//        ACCOUNT_TYPE_LIMITS = 8,
-//        STATISTICS = 9,
-//        TRUST = 10,
-//        ACCOUNT_LIMITS = 11,
-//    	ASSET_PAIR = 12,
-//    	OFFER_ENTRY = 13,
-//        INVOICE = 14
+//        Hash quorumSetHash; // D
+//        Value votes<>;      // X
+//        Value accepted<>;   // Y
 //    };
 //
-type LedgerEntryType int32
-
-const (
-	LedgerEntryTypeAccount              LedgerEntryType = 0
-	LedgerEntryTypeCoinsEmissionRequest LedgerEntryType = 1
-	LedgerEntryTypeFee                  LedgerEntryType = 2
-	LedgerEntryTypeCoinsEmission        LedgerEntryType = 3
-	LedgerEntryTypeBalance              LedgerEntryType = 4
-	LedgerEntryTypePaymentRequest       LedgerEntryType = 5
-	LedgerEntryTypeAsset                LedgerEntryType = 6
-	LedgerEntryTypeReferenceEntry       LedgerEntryType = 7
-	LedgerEntryTypeAccountTypeLimits    LedgerEntryType = 8
-	LedgerEntryTypeStatistics           LedgerEntryType = 9
-	LedgerEntryTypeTrust                LedgerEntryType = 10
-	LedgerEntryTypeAccountLimits        LedgerEntryType = 11
-	LedgerEntryTypeAssetPair            LedgerEntryType = 12
-	LedgerEntryTypeOfferEntry           LedgerEntryType = 13
-	LedgerEntryTypeInvoice              LedgerEntryType = 14
-)
-
-var LedgerEntryTypeAll = []LedgerEntryType{
-	LedgerEntryTypeAccount,
-	LedgerEntryTypeCoinsEmissionRequest,
-	LedgerEntryTypeFee,
-	LedgerEntryTypeCoinsEmission,
-	LedgerEntryTypeBalance,
-	LedgerEntryTypePaymentRequest,
-	LedgerEntryTypeAsset,
-	LedgerEntryTypeReferenceEntry,
-	LedgerEntryTypeAccountTypeLimits,
-	LedgerEntryTypeStatistics,
-	LedgerEntryTypeTrust,
-	LedgerEntryTypeAccountLimits,
-	LedgerEntryTypeAssetPair,
-	LedgerEntryTypeOfferEntry,
-	LedgerEntryTypeInvoice,
+type ScpNomination struct {
+	QuorumSetHash Hash    `json:"quorumSetHash,omitempty"`
+	Votes         []Value `json:"votes,omitempty"`
+	Accepted      []Value `json:"accepted,omitempty"`
 }
 
-var ledgerEntryTypeMap = map[int32]string{
-	0:  "LedgerEntryTypeAccount",
-	1:  "LedgerEntryTypeCoinsEmissionRequest",
-	2:  "LedgerEntryTypeFee",
-	3:  "LedgerEntryTypeCoinsEmission",
-	4:  "LedgerEntryTypeBalance",
-	5:  "LedgerEntryTypePaymentRequest",
-	6:  "LedgerEntryTypeAsset",
-	7:  "LedgerEntryTypeReferenceEntry",
-	8:  "LedgerEntryTypeAccountTypeLimits",
-	9:  "LedgerEntryTypeStatistics",
-	10: "LedgerEntryTypeTrust",
-	11: "LedgerEntryTypeAccountLimits",
-	12: "LedgerEntryTypeAssetPair",
-	13: "LedgerEntryTypeOfferEntry",
-	14: "LedgerEntryTypeInvoice",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for LedgerEntryType
-func (e LedgerEntryType) ValidEnum(v int32) bool {
-	_, ok := ledgerEntryTypeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e LedgerEntryType) String() string {
-	name, _ := ledgerEntryTypeMap[int32(e)]
-	return name
-}
-
-func (e LedgerEntryType) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// LedgerEntryData is an XDR NestedUnion defines as:
+// ScpStatementPrepare is an XDR NestedStruct defines as:
 //
-//   union switch (LedgerEntryType type)
+//   struct
+//            {
+//                Hash quorumSetHash;       // D
+//                SCPBallot ballot;         // b
+//                SCPBallot* prepared;      // p
+//                SCPBallot* preparedPrime; // p'
+//                uint32 nC;                // c.n
+//                uint32 nH;                // h.n
+//            }
+//
+type ScpStatementPrepare struct {
+	QuorumSetHash Hash       `json:"quorumSetHash,omitempty"`
+	Ballot        ScpBallot  `json:"ballot,omitempty"`
+	Prepared      *ScpBallot `json:"prepared,omitempty"`
+	PreparedPrime *ScpBallot `json:"preparedPrime,omitempty"`
+	NC            Uint32     `json:"nC,omitempty"`
+	NH            Uint32     `json:"nH,omitempty"`
+}
+
+// ScpStatementConfirm is an XDR NestedStruct defines as:
+//
+//   struct
+//            {
+//                SCPBallot ballot;   // b
+//                uint32 nPrepared;   // p.n
+//                uint32 nCommit;     // c.n
+//                uint32 nH;          // h.n
+//                Hash quorumSetHash; // D
+//            }
+//
+type ScpStatementConfirm struct {
+	Ballot        ScpBallot `json:"ballot,omitempty"`
+	NPrepared     Uint32    `json:"nPrepared,omitempty"`
+	NCommit       Uint32    `json:"nCommit,omitempty"`
+	NH            Uint32    `json:"nH,omitempty"`
+	QuorumSetHash Hash      `json:"quorumSetHash,omitempty"`
+}
+
+// ScpStatementExternalize is an XDR NestedStruct defines as:
+//
+//   struct
+//            {
+//                SCPBallot commit;         // c
+//                uint32 nH;                // h.n
+//                Hash commitQuorumSetHash; // D used before EXTERNALIZE
+//            }
+//
+type ScpStatementExternalize struct {
+	Commit              ScpBallot `json:"commit,omitempty"`
+	NH                  Uint32    `json:"nH,omitempty"`
+	CommitQuorumSetHash Hash      `json:"commitQuorumSetHash,omitempty"`
+}
+
+// ScpStatementPledges is an XDR NestedUnion defines as:
+//
+//   union switch (SCPStatementType type)
 //        {
-//        case ACCOUNT:
-//            AccountEntry account;
-//    	case COINS_EMISSION_REQUEST:
-//    		CoinsEmissionRequestEntry coinsEmissionRequest;
-//        case FEE:
-//            FeeEntry feeState;
-//        case COINS_EMISSION:
-//    		CoinsEmissionEntry coinsEmission;
-//        case BALANCE:
-//            BalanceEntry balance;
-//        case PAYMENT_REQUEST:
-//            PaymentRequestEntry paymentRequest;
-//        case ASSET:
-//            AssetEntry asset;
-//        case REFERENCE_ENTRY:
-//            ReferenceEntry payment;
-//        case ACCOUNT_TYPE_LIMITS:
-//            AccountTypeLimitsEntry accountTypeLimits;
-//        case STATISTICS:
-//            StatisticsEntry stats;
-//        case TRUST:
-//            TrustEntry trust;
-//        case ACCOUNT_LIMITS:
-//            AccountLimitsEntry accountLimits;
-//    	case ASSET_PAIR:
-//    		AssetPairEntry assetPair;
-//    	case OFFER_ENTRY:
-//    		OfferEntry offer;
-//        case INVOICE:
-//            InvoiceEntry invoice;
+//        case PREPARE:
+//            struct
+//            {
+//                Hash quorumSetHash;       // D
+//                SCPBallot ballot;         // b
+//                SCPBallot* prepared;      // p
+//                SCPBallot* preparedPrime; // p'
+//                uint32 nC;                // c.n
+//                uint32 nH;                // h.n
+//            } prepare;
+//        case CONFIRM:
+//            struct
+//            {
+//                SCPBallot ballot;   // b
+//                uint32 nPrepared;   // p.n
+//                uint32 nCommit;     // c.n
+//                uint32 nH;          // h.n
+//                Hash quorumSetHash; // D
+//            } confirm;
+//        case EXTERNALIZE:
+//            struct
+//            {
+//                SCPBallot commit;         // c
+//                uint32 nH;                // h.n
+//                Hash commitQuorumSetHash; // D used before EXTERNALIZE
+//            } externalize;
+//        case NOMINATE:
+//            SCPNomination nominate;
 //        }
 //
-type LedgerEntryData struct {
-	Type                 LedgerEntryType            `json:"type,omitempty"`
-	Account              *AccountEntry              `json:"account,omitempty"`
-	CoinsEmissionRequest *CoinsEmissionRequestEntry `json:"coinsEmissionRequest,omitempty"`
-	FeeState             *FeeEntry                  `json:"feeState,omitempty"`
-	CoinsEmission        *CoinsEmissionEntry        `json:"coinsEmission,omitempty"`
-	Balance              *BalanceEntry              `json:"balance,omitempty"`
-	PaymentRequest       *PaymentRequestEntry       `json:"paymentRequest,omitempty"`
-	Asset                *AssetEntry                `json:"asset,omitempty"`
-	Payment              *ReferenceEntry            `json:"payment,omitempty"`
-	AccountTypeLimits    *AccountTypeLimitsEntry    `json:"accountTypeLimits,omitempty"`
-	Stats                *StatisticsEntry           `json:"stats,omitempty"`
-	Trust                *TrustEntry                `json:"trust,omitempty"`
-	AccountLimits        *AccountLimitsEntry        `json:"accountLimits,omitempty"`
-	AssetPair            *AssetPairEntry            `json:"assetPair,omitempty"`
-	Offer                *OfferEntry                `json:"offer,omitempty"`
-	Invoice              *InvoiceEntry              `json:"invoice,omitempty"`
+type ScpStatementPledges struct {
+	Type        ScpStatementType         `json:"type,omitempty"`
+	Prepare     *ScpStatementPrepare     `json:"prepare,omitempty"`
+	Confirm     *ScpStatementConfirm     `json:"confirm,omitempty"`
+	Externalize *ScpStatementExternalize `json:"externalize,omitempty"`
+	Nominate    *ScpNomination           `json:"nominate,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u LedgerEntryData) SwitchFieldName() string {
+func (u ScpStatementPledges) SwitchFieldName() string {
 	return "Type"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of LedgerEntryData
-func (u LedgerEntryData) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerEntryType(sw) {
-	case LedgerEntryTypeAccount:
-		return "Account", true
-	case LedgerEntryTypeCoinsEmissionRequest:
-		return "CoinsEmissionRequest", true
-	case LedgerEntryTypeFee:
-		return "FeeState", true
-	case LedgerEntryTypeCoinsEmission:
-		return "CoinsEmission", true
-	case LedgerEntryTypeBalance:
-		return "Balance", true
-	case LedgerEntryTypePaymentRequest:
-		return "PaymentRequest", true
-	case LedgerEntryTypeAsset:
-		return "Asset", true
-	case LedgerEntryTypeReferenceEntry:
-		return "Payment", true
-	case LedgerEntryTypeAccountTypeLimits:
-		return "AccountTypeLimits", true
-	case LedgerEntryTypeStatistics:
-		return "Stats", true
-	case LedgerEntryTypeTrust:
-		return "Trust", true
-	case LedgerEntryTypeAccountLimits:
-		return "AccountLimits", true
-	case LedgerEntryTypeAssetPair:
-		return "AssetPair", true
-	case LedgerEntryTypeOfferEntry:
-		return "Offer", true
-	case LedgerEntryTypeInvoice:
-		return "Invoice", true
+// the value for an instance of ScpStatementPledges
+func (u ScpStatementPledges) ArmForSwitch(sw int32) (string, bool) {
+	switch ScpStatementType(sw) {
+	case ScpStatementTypePrepare:
+		return "Prepare", true
+	case ScpStatementTypeConfirm:
+		return "Confirm", true
+	case ScpStatementTypeExternalize:
+		return "Externalize", true
+	case ScpStatementTypeNominate:
+		return "Nominate", true
 	}
 	return "-", false
 }
 
-// NewLedgerEntryData creates a new  LedgerEntryData.
-func NewLedgerEntryData(aType LedgerEntryType, value interface{}) (result LedgerEntryData, err error) {
+// NewScpStatementPledges creates a new  ScpStatementPledges.
+func NewScpStatementPledges(aType ScpStatementType, value interface{}) (result ScpStatementPledges, err error) {
 	result.Type = aType
-	switch LedgerEntryType(aType) {
-	case LedgerEntryTypeAccount:
-		tv, ok := value.(AccountEntry)
+	switch ScpStatementType(aType) {
+	case ScpStatementTypePrepare:
+		tv, ok := value.(ScpStatementPrepare)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountEntry")
+			err = fmt.Errorf("invalid value, must be ScpStatementPrepare")
 			return
 		}
-		result.Account = &tv
-	case LedgerEntryTypeCoinsEmissionRequest:
-		tv, ok := value.(CoinsEmissionRequestEntry)
+		result.Prepare = &tv
+	case ScpStatementTypeConfirm:
+		tv, ok := value.(ScpStatementConfirm)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be CoinsEmissionRequestEntry")
+			err = fmt.Errorf("invalid value, must be ScpStatementConfirm")
 			return
 		}
-		result.CoinsEmissionRequest = &tv
-	case LedgerEntryTypeFee:
-		tv, ok := value.(FeeEntry)
+		result.Confirm = &tv
+	case ScpStatementTypeExternalize:
+		tv, ok := value.(ScpStatementExternalize)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be FeeEntry")
+			err = fmt.Errorf("invalid value, must be ScpStatementExternalize")
 			return
 		}
-		result.FeeState = &tv
-	case LedgerEntryTypeCoinsEmission:
-		tv, ok := value.(CoinsEmissionEntry)
+		result.Externalize = &tv
+	case ScpStatementTypeNominate:
+		tv, ok := value.(ScpNomination)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be CoinsEmissionEntry")
+			err = fmt.Errorf("invalid value, must be ScpNomination")
 			return
 		}
-		result.CoinsEmission = &tv
-	case LedgerEntryTypeBalance:
-		tv, ok := value.(BalanceEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be BalanceEntry")
-			return
-		}
-		result.Balance = &tv
-	case LedgerEntryTypePaymentRequest:
-		tv, ok := value.(PaymentRequestEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be PaymentRequestEntry")
-			return
-		}
-		result.PaymentRequest = &tv
-	case LedgerEntryTypeAsset:
-		tv, ok := value.(AssetEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AssetEntry")
-			return
-		}
-		result.Asset = &tv
-	case LedgerEntryTypeReferenceEntry:
-		tv, ok := value.(ReferenceEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ReferenceEntry")
-			return
-		}
-		result.Payment = &tv
-	case LedgerEntryTypeAccountTypeLimits:
-		tv, ok := value.(AccountTypeLimitsEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountTypeLimitsEntry")
-			return
-		}
-		result.AccountTypeLimits = &tv
-	case LedgerEntryTypeStatistics:
-		tv, ok := value.(StatisticsEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be StatisticsEntry")
-			return
-		}
-		result.Stats = &tv
-	case LedgerEntryTypeTrust:
-		tv, ok := value.(TrustEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be TrustEntry")
-			return
-		}
-		result.Trust = &tv
-	case LedgerEntryTypeAccountLimits:
-		tv, ok := value.(AccountLimitsEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountLimitsEntry")
-			return
-		}
-		result.AccountLimits = &tv
-	case LedgerEntryTypeAssetPair:
-		tv, ok := value.(AssetPairEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AssetPairEntry")
-			return
-		}
-		result.AssetPair = &tv
-	case LedgerEntryTypeOfferEntry:
-		tv, ok := value.(OfferEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be OfferEntry")
-			return
-		}
-		result.Offer = &tv
-	case LedgerEntryTypeInvoice:
-		tv, ok := value.(InvoiceEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be InvoiceEntry")
-			return
-		}
-		result.Invoice = &tv
+		result.Nominate = &tv
 	}
 	return
 }
 
-// MustAccount retrieves the Account value from the union,
+// MustPrepare retrieves the Prepare value from the union,
 // panicing if the value is not set.
-func (u LedgerEntryData) MustAccount() AccountEntry {
-	val, ok := u.GetAccount()
+func (u ScpStatementPledges) MustPrepare() ScpStatementPrepare {
+	val, ok := u.GetPrepare()
 
 	if !ok {
-		panic("arm Account is not set")
+		panic("arm Prepare is not set")
 	}
 
 	return val
 }
 
-// GetAccount retrieves the Account value from the union,
+// GetPrepare retrieves the Prepare value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetAccount() (result AccountEntry, ok bool) {
+func (u ScpStatementPledges) GetPrepare() (result ScpStatementPrepare, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "Account" {
-		result = *u.Account
+	if armName == "Prepare" {
+		result = *u.Prepare
 		ok = true
 	}
 
 	return
 }
 
-// MustCoinsEmissionRequest retrieves the CoinsEmissionRequest value from the union,
+// MustConfirm retrieves the Confirm value from the union,
 // panicing if the value is not set.
-func (u LedgerEntryData) MustCoinsEmissionRequest() CoinsEmissionRequestEntry {
-	val, ok := u.GetCoinsEmissionRequest()
+func (u ScpStatementPledges) MustConfirm() ScpStatementConfirm {
+	val, ok := u.GetConfirm()
 
 	if !ok {
-		panic("arm CoinsEmissionRequest is not set")
+		panic("arm Confirm is not set")
 	}
 
 	return val
 }
 
-// GetCoinsEmissionRequest retrieves the CoinsEmissionRequest value from the union,
+// GetConfirm retrieves the Confirm value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetCoinsEmissionRequest() (result CoinsEmissionRequestEntry, ok bool) {
+func (u ScpStatementPledges) GetConfirm() (result ScpStatementConfirm, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "CoinsEmissionRequest" {
-		result = *u.CoinsEmissionRequest
+	if armName == "Confirm" {
+		result = *u.Confirm
 		ok = true
 	}
 
 	return
 }
 
-// MustFeeState retrieves the FeeState value from the union,
+// MustExternalize retrieves the Externalize value from the union,
 // panicing if the value is not set.
-func (u LedgerEntryData) MustFeeState() FeeEntry {
-	val, ok := u.GetFeeState()
+func (u ScpStatementPledges) MustExternalize() ScpStatementExternalize {
+	val, ok := u.GetExternalize()
 
 	if !ok {
-		panic("arm FeeState is not set")
+		panic("arm Externalize is not set")
 	}
 
 	return val
 }
 
-// GetFeeState retrieves the FeeState value from the union,
+// GetExternalize retrieves the Externalize value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetFeeState() (result FeeEntry, ok bool) {
+func (u ScpStatementPledges) GetExternalize() (result ScpStatementExternalize, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "FeeState" {
-		result = *u.FeeState
+	if armName == "Externalize" {
+		result = *u.Externalize
 		ok = true
 	}
 
 	return
 }
 
-// MustCoinsEmission retrieves the CoinsEmission value from the union,
+// MustNominate retrieves the Nominate value from the union,
 // panicing if the value is not set.
-func (u LedgerEntryData) MustCoinsEmission() CoinsEmissionEntry {
-	val, ok := u.GetCoinsEmission()
+func (u ScpStatementPledges) MustNominate() ScpNomination {
+	val, ok := u.GetNominate()
 
 	if !ok {
-		panic("arm CoinsEmission is not set")
+		panic("arm Nominate is not set")
 	}
 
 	return val
 }
 
-// GetCoinsEmission retrieves the CoinsEmission value from the union,
+// GetNominate retrieves the Nominate value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetCoinsEmission() (result CoinsEmissionEntry, ok bool) {
+func (u ScpStatementPledges) GetNominate() (result ScpNomination, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "CoinsEmission" {
-		result = *u.CoinsEmission
+	if armName == "Nominate" {
+		result = *u.Nominate
 		ok = true
 	}
 
 	return
 }
 
-// MustBalance retrieves the Balance value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustBalance() BalanceEntry {
-	val, ok := u.GetBalance()
-
-	if !ok {
-		panic("arm Balance is not set")
-	}
-
-	return val
-}
-
-// GetBalance retrieves the Balance value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetBalance() (result BalanceEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Balance" {
-		result = *u.Balance
-		ok = true
-	}
-
-	return
-}
-
-// MustPaymentRequest retrieves the PaymentRequest value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustPaymentRequest() PaymentRequestEntry {
-	val, ok := u.GetPaymentRequest()
-
-	if !ok {
-		panic("arm PaymentRequest is not set")
-	}
-
-	return val
-}
-
-// GetPaymentRequest retrieves the PaymentRequest value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetPaymentRequest() (result PaymentRequestEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "PaymentRequest" {
-		result = *u.PaymentRequest
-		ok = true
-	}
-
-	return
-}
-
-// MustAsset retrieves the Asset value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustAsset() AssetEntry {
-	val, ok := u.GetAsset()
-
-	if !ok {
-		panic("arm Asset is not set")
-	}
-
-	return val
-}
-
-// GetAsset retrieves the Asset value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetAsset() (result AssetEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Asset" {
-		result = *u.Asset
-		ok = true
-	}
-
-	return
-}
-
-// MustPayment retrieves the Payment value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustPayment() ReferenceEntry {
-	val, ok := u.GetPayment()
-
-	if !ok {
-		panic("arm Payment is not set")
-	}
-
-	return val
-}
-
-// GetPayment retrieves the Payment value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetPayment() (result ReferenceEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Payment" {
-		result = *u.Payment
-		ok = true
-	}
-
-	return
-}
-
-// MustAccountTypeLimits retrieves the AccountTypeLimits value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustAccountTypeLimits() AccountTypeLimitsEntry {
-	val, ok := u.GetAccountTypeLimits()
-
-	if !ok {
-		panic("arm AccountTypeLimits is not set")
-	}
-
-	return val
-}
-
-// GetAccountTypeLimits retrieves the AccountTypeLimits value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetAccountTypeLimits() (result AccountTypeLimitsEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "AccountTypeLimits" {
-		result = *u.AccountTypeLimits
-		ok = true
-	}
-
-	return
-}
-
-// MustStats retrieves the Stats value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustStats() StatisticsEntry {
-	val, ok := u.GetStats()
-
-	if !ok {
-		panic("arm Stats is not set")
-	}
-
-	return val
-}
-
-// GetStats retrieves the Stats value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetStats() (result StatisticsEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Stats" {
-		result = *u.Stats
-		ok = true
-	}
-
-	return
-}
-
-// MustTrust retrieves the Trust value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustTrust() TrustEntry {
-	val, ok := u.GetTrust()
-
-	if !ok {
-		panic("arm Trust is not set")
-	}
-
-	return val
-}
-
-// GetTrust retrieves the Trust value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetTrust() (result TrustEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Trust" {
-		result = *u.Trust
-		ok = true
-	}
-
-	return
-}
-
-// MustAccountLimits retrieves the AccountLimits value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustAccountLimits() AccountLimitsEntry {
-	val, ok := u.GetAccountLimits()
-
-	if !ok {
-		panic("arm AccountLimits is not set")
-	}
-
-	return val
-}
-
-// GetAccountLimits retrieves the AccountLimits value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetAccountLimits() (result AccountLimitsEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "AccountLimits" {
-		result = *u.AccountLimits
-		ok = true
-	}
-
-	return
-}
-
-// MustAssetPair retrieves the AssetPair value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustAssetPair() AssetPairEntry {
-	val, ok := u.GetAssetPair()
-
-	if !ok {
-		panic("arm AssetPair is not set")
-	}
-
-	return val
-}
-
-// GetAssetPair retrieves the AssetPair value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetAssetPair() (result AssetPairEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "AssetPair" {
-		result = *u.AssetPair
-		ok = true
-	}
-
-	return
-}
-
-// MustOffer retrieves the Offer value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustOffer() OfferEntry {
-	val, ok := u.GetOffer()
-
-	if !ok {
-		panic("arm Offer is not set")
-	}
-
-	return val
-}
-
-// GetOffer retrieves the Offer value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetOffer() (result OfferEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Offer" {
-		result = *u.Offer
-		ok = true
-	}
-
-	return
-}
-
-// MustInvoice retrieves the Invoice value from the union,
-// panicing if the value is not set.
-func (u LedgerEntryData) MustInvoice() InvoiceEntry {
-	val, ok := u.GetInvoice()
-
-	if !ok {
-		panic("arm Invoice is not set")
-	}
-
-	return val
-}
-
-// GetInvoice retrieves the Invoice value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerEntryData) GetInvoice() (result InvoiceEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Invoice" {
-		result = *u.Invoice
-		ok = true
-	}
-
-	return
-}
-
-// LedgerEntryExt is an XDR NestedUnion defines as:
+// ScpStatement is an XDR Struct defines as:
 //
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type LedgerEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u LedgerEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of LedgerEntryExt
-func (u LedgerEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewLedgerEntryExt creates a new  LedgerEntryExt.
-func NewLedgerEntryExt(v LedgerVersion, value interface{}) (result LedgerEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// LedgerEntry is an XDR Struct defines as:
-//
-//   struct LedgerEntry
+//   struct SCPStatement
 //    {
-//        uint32 lastModifiedLedgerSeq; // ledger the LedgerEntry was last changed
+//        NodeID nodeID;    // v
+//        uint64 slotIndex; // i
 //
-//        union switch (LedgerEntryType type)
+//        union switch (SCPStatementType type)
 //        {
-//        case ACCOUNT:
-//            AccountEntry account;
-//    	case COINS_EMISSION_REQUEST:
-//    		CoinsEmissionRequestEntry coinsEmissionRequest;
-//        case FEE:
-//            FeeEntry feeState;
-//        case COINS_EMISSION:
-//    		CoinsEmissionEntry coinsEmission;
-//        case BALANCE:
-//            BalanceEntry balance;
-//        case PAYMENT_REQUEST:
-//            PaymentRequestEntry paymentRequest;
-//        case ASSET:
-//            AssetEntry asset;
-//        case REFERENCE_ENTRY:
-//            ReferenceEntry payment;
-//        case ACCOUNT_TYPE_LIMITS:
-//            AccountTypeLimitsEntry accountTypeLimits;
-//        case STATISTICS:
-//            StatisticsEntry stats;
-//        case TRUST:
-//            TrustEntry trust;
-//        case ACCOUNT_LIMITS:
-//            AccountLimitsEntry accountLimits;
-//    	case ASSET_PAIR:
-//    		AssetPairEntry assetPair;
-//    	case OFFER_ENTRY:
-//    		OfferEntry offer;
-//        case INVOICE:
-//            InvoiceEntry invoice;
+//        case PREPARE:
+//            struct
+//            {
+//                Hash quorumSetHash;       // D
+//                SCPBallot ballot;         // b
+//                SCPBallot* prepared;      // p
+//                SCPBallot* preparedPrime; // p'
+//                uint32 nC;                // c.n
+//                uint32 nH;                // h.n
+//            } prepare;
+//        case CONFIRM:
+//            struct
+//            {
+//                SCPBallot ballot;   // b
+//                uint32 nPrepared;   // p.n
+//                uint32 nCommit;     // c.n
+//                uint32 nH;          // h.n
+//                Hash quorumSetHash; // D
+//            } confirm;
+//        case EXTERNALIZE:
+//            struct
+//            {
+//                SCPBallot commit;         // c
+//                uint32 nH;                // h.n
+//                Hash commitQuorumSetHash; // D used before EXTERNALIZE
+//            } externalize;
+//        case NOMINATE:
+//            SCPNomination nominate;
 //        }
-//        data;
-//
-//        // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
+//        pledges;
 //    };
 //
-type LedgerEntry struct {
-	LastModifiedLedgerSeq Uint32          `json:"lastModifiedLedgerSeq,omitempty"`
-	Data                  LedgerEntryData `json:"data,omitempty"`
-	Ext                   LedgerEntryExt  `json:"ext,omitempty"`
+type ScpStatement struct {
+	NodeId    NodeId              `json:"nodeID,omitempty"`
+	SlotIndex Uint64              `json:"slotIndex,omitempty"`
+	Pledges   ScpStatementPledges `json:"pledges,omitempty"`
 }
 
-// EnvelopeType is an XDR Enum defines as:
+// ScpEnvelope is an XDR Struct defines as:
 //
-//   enum EnvelopeType
+//   struct SCPEnvelope
 //    {
-//        ENVELOPE_TYPE_SCP = 1,
-//        ENVELOPE_TYPE_TX = 2,
-//        ENVELOPE_TYPE_AUTH = 3
+//        SCPStatement statement;
+//        Signature signature;
 //    };
 //
-type EnvelopeType int32
-
-const (
-	EnvelopeTypeEnvelopeTypeScp  EnvelopeType = 1
-	EnvelopeTypeEnvelopeTypeTx   EnvelopeType = 2
-	EnvelopeTypeEnvelopeTypeAuth EnvelopeType = 3
-)
-
-var EnvelopeTypeAll = []EnvelopeType{
-	EnvelopeTypeEnvelopeTypeScp,
-	EnvelopeTypeEnvelopeTypeTx,
-	EnvelopeTypeEnvelopeTypeAuth,
+type ScpEnvelope struct {
+	Statement ScpStatement `json:"statement,omitempty"`
+	Signature Signature    `json:"signature,omitempty"`
 }
 
-var envelopeTypeMap = map[int32]string{
-	1: "EnvelopeTypeEnvelopeTypeScp",
-	2: "EnvelopeTypeEnvelopeTypeTx",
-	3: "EnvelopeTypeEnvelopeTypeAuth",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for EnvelopeType
-func (e EnvelopeType) ValidEnum(v int32) bool {
-	_, ok := envelopeTypeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e EnvelopeType) String() string {
-	name, _ := envelopeTypeMap[int32(e)]
-	return name
-}
-
-func (e EnvelopeType) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
+// ScpQuorumSet is an XDR Struct defines as:
+//
+//   struct SCPQuorumSet
+//    {
+//        uint32 threshold;
+//        PublicKey validators<>;
+//        SCPQuorumSet innerSets<>;
+//    };
+//
+type ScpQuorumSet struct {
+	Threshold  Uint32         `json:"threshold,omitempty"`
+	Validators []PublicKey    `json:"validators,omitempty"`
+	InnerSets  []ScpQuorumSet `json:"innerSets,omitempty"`
 }
 
 // UpgradeType is an XDR Typedef defines as:
@@ -2848,33 +3182,47 @@ type LedgerHeader struct {
 //
 //   enum LedgerUpgradeType
 //    {
-//        LEDGER_UPGRADE_VERSION = 1,
-//        LEDGER_UPGRADE_MAX_TX_SET_SIZE = 2,
-//        LEDGER_UPGRADE_ISSUANCE_KEYS = 3,
-//        LEDGER_UPGRADE_TX_EXPIRATION_PERIOD = 4
+//        VERSION = 1,
+//        MAX_TX_SET_SIZE = 2,
+//        ISSUANCE_KEYS = 3,
+//        TX_EXPIRATION_PERIOD = 4
 //    };
 //
 type LedgerUpgradeType int32
 
 const (
-	LedgerUpgradeTypeLedgerUpgradeVersion            LedgerUpgradeType = 1
-	LedgerUpgradeTypeLedgerUpgradeMaxTxSetSize       LedgerUpgradeType = 2
-	LedgerUpgradeTypeLedgerUpgradeIssuanceKeys       LedgerUpgradeType = 3
-	LedgerUpgradeTypeLedgerUpgradeTxExpirationPeriod LedgerUpgradeType = 4
+	LedgerUpgradeTypeVersion            LedgerUpgradeType = 1
+	LedgerUpgradeTypeMaxTxSetSize       LedgerUpgradeType = 2
+	LedgerUpgradeTypeIssuanceKeys       LedgerUpgradeType = 3
+	LedgerUpgradeTypeTxExpirationPeriod LedgerUpgradeType = 4
 )
 
 var LedgerUpgradeTypeAll = []LedgerUpgradeType{
-	LedgerUpgradeTypeLedgerUpgradeVersion,
-	LedgerUpgradeTypeLedgerUpgradeMaxTxSetSize,
-	LedgerUpgradeTypeLedgerUpgradeIssuanceKeys,
-	LedgerUpgradeTypeLedgerUpgradeTxExpirationPeriod,
+	LedgerUpgradeTypeVersion,
+	LedgerUpgradeTypeMaxTxSetSize,
+	LedgerUpgradeTypeIssuanceKeys,
+	LedgerUpgradeTypeTxExpirationPeriod,
 }
 
 var ledgerUpgradeTypeMap = map[int32]string{
-	1: "LedgerUpgradeTypeLedgerUpgradeVersion",
-	2: "LedgerUpgradeTypeLedgerUpgradeMaxTxSetSize",
-	3: "LedgerUpgradeTypeLedgerUpgradeIssuanceKeys",
-	4: "LedgerUpgradeTypeLedgerUpgradeTxExpirationPeriod",
+	1: "LedgerUpgradeTypeVersion",
+	2: "LedgerUpgradeTypeMaxTxSetSize",
+	3: "LedgerUpgradeTypeIssuanceKeys",
+	4: "LedgerUpgradeTypeTxExpirationPeriod",
+}
+
+var ledgerUpgradeTypeShortMap = map[int32]string{
+	1: "version",
+	2: "max_tx_set_size",
+	3: "issuance_keys",
+	4: "tx_expiration_period",
+}
+
+var ledgerUpgradeTypeRevMap = map[string]int32{
+	"LedgerUpgradeTypeVersion":            1,
+	"LedgerUpgradeTypeMaxTxSetSize":       2,
+	"LedgerUpgradeTypeIssuanceKeys":       3,
+	"LedgerUpgradeTypeTxExpirationPeriod": 4,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -2890,21 +3238,42 @@ func (e LedgerUpgradeType) String() string {
 	return name
 }
 
+func (e LedgerUpgradeType) ShortString() string {
+	name, _ := ledgerUpgradeTypeShortMap[int32(e)]
+	return name
+}
+
 func (e LedgerUpgradeType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *LedgerUpgradeType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := ledgerUpgradeTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = LedgerUpgradeType(value)
+	return nil
 }
 
 // LedgerUpgrade is an XDR Union defines as:
 //
 //   union LedgerUpgrade switch (LedgerUpgradeType type)
 //    {
-//    case LEDGER_UPGRADE_VERSION:
+//    case VERSION:
 //        uint32 newLedgerVersion; // update ledgerVersion
-//    case LEDGER_UPGRADE_MAX_TX_SET_SIZE:
+//    case MAX_TX_SET_SIZE:
 //        uint32 newMaxTxSetSize; // update maxTxSetSize
-//    case LEDGER_UPGRADE_ISSUANCE_KEYS:
+//    case ISSUANCE_KEYS:
 //        PublicKey newIssuanceKeys<>;
-//    case LEDGER_UPGRADE_TX_EXPIRATION_PERIOD:
+//    case TX_EXPIRATION_PERIOD:
 //        int64 newTxExpirationPeriod;
 //    };
 //
@@ -2926,13 +3295,13 @@ func (u LedgerUpgrade) SwitchFieldName() string {
 // the value for an instance of LedgerUpgrade
 func (u LedgerUpgrade) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerUpgradeType(sw) {
-	case LedgerUpgradeTypeLedgerUpgradeVersion:
+	case LedgerUpgradeTypeVersion:
 		return "NewLedgerVersion", true
-	case LedgerUpgradeTypeLedgerUpgradeMaxTxSetSize:
+	case LedgerUpgradeTypeMaxTxSetSize:
 		return "NewMaxTxSetSize", true
-	case LedgerUpgradeTypeLedgerUpgradeIssuanceKeys:
+	case LedgerUpgradeTypeIssuanceKeys:
 		return "NewIssuanceKeys", true
-	case LedgerUpgradeTypeLedgerUpgradeTxExpirationPeriod:
+	case LedgerUpgradeTypeTxExpirationPeriod:
 		return "NewTxExpirationPeriod", true
 	}
 	return "-", false
@@ -2942,28 +3311,28 @@ func (u LedgerUpgrade) ArmForSwitch(sw int32) (string, bool) {
 func NewLedgerUpgrade(aType LedgerUpgradeType, value interface{}) (result LedgerUpgrade, err error) {
 	result.Type = aType
 	switch LedgerUpgradeType(aType) {
-	case LedgerUpgradeTypeLedgerUpgradeVersion:
+	case LedgerUpgradeTypeVersion:
 		tv, ok := value.(Uint32)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be Uint32")
 			return
 		}
 		result.NewLedgerVersion = &tv
-	case LedgerUpgradeTypeLedgerUpgradeMaxTxSetSize:
+	case LedgerUpgradeTypeMaxTxSetSize:
 		tv, ok := value.(Uint32)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be Uint32")
 			return
 		}
 		result.NewMaxTxSetSize = &tv
-	case LedgerUpgradeTypeLedgerUpgradeIssuanceKeys:
+	case LedgerUpgradeTypeIssuanceKeys:
 		tv, ok := value.([]PublicKey)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be []PublicKey")
 			return
 		}
 		result.NewIssuanceKeys = &tv
-	case LedgerUpgradeTypeLedgerUpgradeTxExpirationPeriod:
+	case LedgerUpgradeTypeTxExpirationPeriod:
 		tv, ok := value.(Int64)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be Int64")
@@ -4615,6 +4984,16 @@ var bucketEntryTypeMap = map[int32]string{
 	1: "BucketEntryTypeDeadentry",
 }
 
+var bucketEntryTypeShortMap = map[int32]string{
+	0: "liveentry",
+	1: "deadentry",
+}
+
+var bucketEntryTypeRevMap = map[string]int32{
+	"BucketEntryTypeLiveentry": 0,
+	"BucketEntryTypeDeadentry": 1,
+}
+
 // ValidEnum validates a proposed value for this enum.  Implements
 // the Enum interface for BucketEntryType
 func (e BucketEntryType) ValidEnum(v int32) bool {
@@ -4628,8 +5007,29 @@ func (e BucketEntryType) String() string {
 	return name
 }
 
+func (e BucketEntryType) ShortString() string {
+	name, _ := bucketEntryTypeShortMap[int32(e)]
+	return name
+}
+
 func (e BucketEntryType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *BucketEntryType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := bucketEntryTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = BucketEntryType(value)
+	return nil
 }
 
 // BucketEntry is an XDR Union defines as:
@@ -5055,33 +5455,47 @@ func (u ScpHistoryEntry) GetV0() (result ScpHistoryEntryV0, ok bool) {
 //
 //   enum LedgerEntryChangeType
 //    {
-//        LEDGER_ENTRY_CREATED = 0, // entry was added to the ledger
-//        LEDGER_ENTRY_UPDATED = 1, // entry was modified in the ledger
-//        LEDGER_ENTRY_REMOVED = 2, // entry was removed from the ledger
-//        LEDGER_ENTRY_STATE = 3    // value of the entry
+//        CREATED = 0, // entry was added to the ledger
+//        UPDATED = 1, // entry was modified in the ledger
+//        REMOVED = 2, // entry was removed from the ledger
+//        STATE = 3    // value of the entry
 //    };
 //
 type LedgerEntryChangeType int32
 
 const (
-	LedgerEntryChangeTypeLedgerEntryCreated LedgerEntryChangeType = 0
-	LedgerEntryChangeTypeLedgerEntryUpdated LedgerEntryChangeType = 1
-	LedgerEntryChangeTypeLedgerEntryRemoved LedgerEntryChangeType = 2
-	LedgerEntryChangeTypeLedgerEntryState   LedgerEntryChangeType = 3
+	LedgerEntryChangeTypeCreated LedgerEntryChangeType = 0
+	LedgerEntryChangeTypeUpdated LedgerEntryChangeType = 1
+	LedgerEntryChangeTypeRemoved LedgerEntryChangeType = 2
+	LedgerEntryChangeTypeState   LedgerEntryChangeType = 3
 )
 
 var LedgerEntryChangeTypeAll = []LedgerEntryChangeType{
-	LedgerEntryChangeTypeLedgerEntryCreated,
-	LedgerEntryChangeTypeLedgerEntryUpdated,
-	LedgerEntryChangeTypeLedgerEntryRemoved,
-	LedgerEntryChangeTypeLedgerEntryState,
+	LedgerEntryChangeTypeCreated,
+	LedgerEntryChangeTypeUpdated,
+	LedgerEntryChangeTypeRemoved,
+	LedgerEntryChangeTypeState,
 }
 
 var ledgerEntryChangeTypeMap = map[int32]string{
-	0: "LedgerEntryChangeTypeLedgerEntryCreated",
-	1: "LedgerEntryChangeTypeLedgerEntryUpdated",
-	2: "LedgerEntryChangeTypeLedgerEntryRemoved",
-	3: "LedgerEntryChangeTypeLedgerEntryState",
+	0: "LedgerEntryChangeTypeCreated",
+	1: "LedgerEntryChangeTypeUpdated",
+	2: "LedgerEntryChangeTypeRemoved",
+	3: "LedgerEntryChangeTypeState",
+}
+
+var ledgerEntryChangeTypeShortMap = map[int32]string{
+	0: "created",
+	1: "updated",
+	2: "removed",
+	3: "state",
+}
+
+var ledgerEntryChangeTypeRevMap = map[string]int32{
+	"LedgerEntryChangeTypeCreated": 0,
+	"LedgerEntryChangeTypeUpdated": 1,
+	"LedgerEntryChangeTypeRemoved": 2,
+	"LedgerEntryChangeTypeState":   3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -5097,21 +5511,42 @@ func (e LedgerEntryChangeType) String() string {
 	return name
 }
 
+func (e LedgerEntryChangeType) ShortString() string {
+	name, _ := ledgerEntryChangeTypeShortMap[int32(e)]
+	return name
+}
+
 func (e LedgerEntryChangeType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *LedgerEntryChangeType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := ledgerEntryChangeTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = LedgerEntryChangeType(value)
+	return nil
 }
 
 // LedgerEntryChange is an XDR Union defines as:
 //
 //   union LedgerEntryChange switch (LedgerEntryChangeType type)
 //    {
-//    case LEDGER_ENTRY_CREATED:
+//    case CREATED:
 //        LedgerEntry created;
-//    case LEDGER_ENTRY_UPDATED:
+//    case UPDATED:
 //        LedgerEntry updated;
-//    case LEDGER_ENTRY_REMOVED:
+//    case REMOVED:
 //        LedgerKey removed;
-//    case LEDGER_ENTRY_STATE:
+//    case STATE:
 //        LedgerEntry state;
 //    };
 //
@@ -5133,13 +5568,13 @@ func (u LedgerEntryChange) SwitchFieldName() string {
 // the value for an instance of LedgerEntryChange
 func (u LedgerEntryChange) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerEntryChangeType(sw) {
-	case LedgerEntryChangeTypeLedgerEntryCreated:
+	case LedgerEntryChangeTypeCreated:
 		return "Created", true
-	case LedgerEntryChangeTypeLedgerEntryUpdated:
+	case LedgerEntryChangeTypeUpdated:
 		return "Updated", true
-	case LedgerEntryChangeTypeLedgerEntryRemoved:
+	case LedgerEntryChangeTypeRemoved:
 		return "Removed", true
-	case LedgerEntryChangeTypeLedgerEntryState:
+	case LedgerEntryChangeTypeState:
 		return "State", true
 	}
 	return "-", false
@@ -5149,28 +5584,28 @@ func (u LedgerEntryChange) ArmForSwitch(sw int32) (string, bool) {
 func NewLedgerEntryChange(aType LedgerEntryChangeType, value interface{}) (result LedgerEntryChange, err error) {
 	result.Type = aType
 	switch LedgerEntryChangeType(aType) {
-	case LedgerEntryChangeTypeLedgerEntryCreated:
+	case LedgerEntryChangeTypeCreated:
 		tv, ok := value.(LedgerEntry)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be LedgerEntry")
 			return
 		}
 		result.Created = &tv
-	case LedgerEntryChangeTypeLedgerEntryUpdated:
+	case LedgerEntryChangeTypeUpdated:
 		tv, ok := value.(LedgerEntry)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be LedgerEntry")
 			return
 		}
 		result.Updated = &tv
-	case LedgerEntryChangeTypeLedgerEntryRemoved:
+	case LedgerEntryChangeTypeRemoved:
 		tv, ok := value.(LedgerKey)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be LedgerKey")
 			return
 		}
 		result.Removed = &tv
-	case LedgerEntryChangeTypeLedgerEntryState:
+	case LedgerEntryChangeTypeState:
 		tv, ok := value.(LedgerEntry)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be LedgerEntry")
@@ -5367,173 +5802,7 @@ func (u TransactionMeta) GetOperations() (result []OperationMeta, ok bool) {
 	return
 }
 
-// CreateAccountOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//    	case ACCOUNT_POLICIES:
-//    		uint32 policies;
-//        }
-//
-type CreateAccountOpExt struct {
-	V        LedgerVersion `json:"v,omitempty"`
-	Policies *Uint32       `json:"policies,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u CreateAccountOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of CreateAccountOpExt
-func (u CreateAccountOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	case LedgerVersionAccountPolicies:
-		return "Policies", true
-	}
-	return "-", false
-}
-
-// NewCreateAccountOpExt creates a new  CreateAccountOpExt.
-func NewCreateAccountOpExt(v LedgerVersion, value interface{}) (result CreateAccountOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	case LedgerVersionAccountPolicies:
-		tv, ok := value.(Uint32)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be Uint32")
-			return
-		}
-		result.Policies = &tv
-	}
-	return
-}
-
-// MustPolicies retrieves the Policies value from the union,
-// panicing if the value is not set.
-func (u CreateAccountOpExt) MustPolicies() Uint32 {
-	val, ok := u.GetPolicies()
-
-	if !ok {
-		panic("arm Policies is not set")
-	}
-
-	return val
-}
-
-// GetPolicies retrieves the Policies value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u CreateAccountOpExt) GetPolicies() (result Uint32, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.V))
-
-	if armName == "Policies" {
-		result = *u.Policies
-		ok = true
-	}
-
-	return
-}
-
-// CreateAccountOp is an XDR Struct defines as:
-//
-//   struct CreateAccountOp
-//    {
-//        AccountID destination; // account to create
-//        AccountID* referrer;     // parent account
-//    	AccountType accountType;
-//
-//    	 // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//    	case ACCOUNT_POLICIES:
-//    		uint32 policies;
-//        }
-//        ext;
-//    };
-//
-type CreateAccountOp struct {
-	Destination AccountId          `json:"destination,omitempty"`
-	Referrer    *AccountId         `json:"referrer,omitempty"`
-	AccountType AccountType        `json:"accountType,omitempty"`
-	Ext         CreateAccountOpExt `json:"ext,omitempty"`
-}
-
-// CreateAccountResultCode is an XDR Enum defines as:
-//
-//   enum CreateAccountResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        CREATE_ACCOUNT_SUCCESS = 0, // account was created
-//
-//        // codes considered as "failure" for the operation
-//        CREATE_ACCOUNT_MALFORMED = -1,       // invalid destination
-//    	CREATE_ACCOUNT_ACCOUNT_TYPE_MISMATCHED = -2, // account already exist and change of account type is not allowed
-//    	CREATE_ACCOUNT_TYPE_NOT_ALLOWED = -3, // master or commission account types are not allowed
-//        CREATE_ACCOUNT_NAME_DUPLICATION = -4,
-//        CREATE_ACCOUNT_REFERRER_NOT_FOUND = -5,
-//    	CREATE_ACCOUNT_INVALID_ACCOUNT_VERSION = -6 // if account version is higher than ledger version
-//    };
-//
-type CreateAccountResultCode int32
-
-const (
-	CreateAccountResultCodeCreateAccountSuccess               CreateAccountResultCode = 0
-	CreateAccountResultCodeCreateAccountMalformed             CreateAccountResultCode = -1
-	CreateAccountResultCodeCreateAccountAccountTypeMismatched CreateAccountResultCode = -2
-	CreateAccountResultCodeCreateAccountTypeNotAllowed        CreateAccountResultCode = -3
-	CreateAccountResultCodeCreateAccountNameDuplication       CreateAccountResultCode = -4
-	CreateAccountResultCodeCreateAccountReferrerNotFound      CreateAccountResultCode = -5
-	CreateAccountResultCodeCreateAccountInvalidAccountVersion CreateAccountResultCode = -6
-)
-
-var CreateAccountResultCodeAll = []CreateAccountResultCode{
-	CreateAccountResultCodeCreateAccountSuccess,
-	CreateAccountResultCodeCreateAccountMalformed,
-	CreateAccountResultCodeCreateAccountAccountTypeMismatched,
-	CreateAccountResultCodeCreateAccountTypeNotAllowed,
-	CreateAccountResultCodeCreateAccountNameDuplication,
-	CreateAccountResultCodeCreateAccountReferrerNotFound,
-	CreateAccountResultCodeCreateAccountInvalidAccountVersion,
-}
-
-var createAccountResultCodeMap = map[int32]string{
-	0:  "CreateAccountResultCodeCreateAccountSuccess",
-	-1: "CreateAccountResultCodeCreateAccountMalformed",
-	-2: "CreateAccountResultCodeCreateAccountAccountTypeMismatched",
-	-3: "CreateAccountResultCodeCreateAccountTypeNotAllowed",
-	-4: "CreateAccountResultCodeCreateAccountNameDuplication",
-	-5: "CreateAccountResultCodeCreateAccountReferrerNotFound",
-	-6: "CreateAccountResultCodeCreateAccountInvalidAccountVersion",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for CreateAccountResultCode
-func (e CreateAccountResultCode) ValidEnum(v int32) bool {
-	_, ok := createAccountResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e CreateAccountResultCode) String() string {
-	name, _ := createAccountResultCodeMap[int32(e)]
-	return name
-}
-
-func (e CreateAccountResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// CreateAccountSuccessExt is an XDR NestedUnion defines as:
+// BalanceEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
@@ -5541,19 +5810,19 @@ func (e CreateAccountResultCode) MarshalJSON() ([]byte, error) {
 //            void;
 //        }
 //
-type CreateAccountSuccessExt struct {
+type BalanceEntryExt struct {
 	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u CreateAccountSuccessExt) SwitchFieldName() string {
+func (u BalanceEntryExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of CreateAccountSuccessExt
-func (u CreateAccountSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of BalanceEntryExt
+func (u BalanceEntryExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
@@ -5561,8 +5830,8 @@ func (u CreateAccountSuccessExt) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewCreateAccountSuccessExt creates a new  CreateAccountSuccessExt.
-func NewCreateAccountSuccessExt(v LedgerVersion, value interface{}) (result CreateAccountSuccessExt, err error) {
+// NewBalanceEntryExt creates a new  BalanceEntryExt.
+func NewBalanceEntryExt(v LedgerVersion, value interface{}) (result BalanceEntryExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
@@ -5571,3537 +5840,16 @@ func NewCreateAccountSuccessExt(v LedgerVersion, value interface{}) (result Crea
 	return
 }
 
-// CreateAccountSuccess is an XDR Struct defines as:
+// BalanceEntry is an XDR Struct defines as:
 //
-//   struct CreateAccountSuccess
-//    {
-//    	int64 referrerFee;
-//    	 // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type CreateAccountSuccess struct {
-	ReferrerFee Int64                   `json:"referrerFee,omitempty"`
-	Ext         CreateAccountSuccessExt `json:"ext,omitempty"`
-}
-
-// CreateAccountResult is an XDR Union defines as:
-//
-//   union CreateAccountResult switch (CreateAccountResultCode code)
-//    {
-//    case CREATE_ACCOUNT_SUCCESS:
-//        CreateAccountSuccess success;
-//    default:
-//        void;
-//    };
-//
-type CreateAccountResult struct {
-	Code    CreateAccountResultCode `json:"code,omitempty"`
-	Success *CreateAccountSuccess   `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u CreateAccountResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of CreateAccountResult
-func (u CreateAccountResult) ArmForSwitch(sw int32) (string, bool) {
-	switch CreateAccountResultCode(sw) {
-	case CreateAccountResultCodeCreateAccountSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewCreateAccountResult creates a new  CreateAccountResult.
-func NewCreateAccountResult(code CreateAccountResultCode, value interface{}) (result CreateAccountResult, err error) {
-	result.Code = code
-	switch CreateAccountResultCode(code) {
-	case CreateAccountResultCodeCreateAccountSuccess:
-		tv, ok := value.(CreateAccountSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be CreateAccountSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u CreateAccountResult) MustSuccess() CreateAccountSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u CreateAccountResult) GetSuccess() (result CreateAccountSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// DirectDebitOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type DirectDebitOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u DirectDebitOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of DirectDebitOpExt
-func (u DirectDebitOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewDirectDebitOpExt creates a new  DirectDebitOpExt.
-func NewDirectDebitOpExt(v LedgerVersion, value interface{}) (result DirectDebitOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// DirectDebitOp is an XDR Struct defines as:
-//
-//   struct DirectDebitOp
-//    {
-//        AccountID from;
-//        PaymentOp paymentOp;
-//    	 // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type DirectDebitOp struct {
-	From      AccountId        `json:"from,omitempty"`
-	PaymentOp PaymentOp        `json:"paymentOp,omitempty"`
-	Ext       DirectDebitOpExt `json:"ext,omitempty"`
-}
-
-// DirectDebitResultCode is an XDR Enum defines as:
-//
-//   enum DirectDebitResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        DIRECT_DEBIT_SUCCESS = 0, // payment successfuly completed
-//
-//        // codes considered as "failure" for the operation
-//        DIRECT_DEBIT_MALFORMED = -1,       // bad input
-//        DIRECT_DEBIT_UNDERFUNDED = -2,     // not enough funds in source account
-//        DIRECT_DEBIT_LINE_FULL = -3,       // destination would go above their limit
-//    	DIRECT_DEBIT_FEE_MISMATCHED = -4,   // fee is not equal to expected fee
-//        DIRECT_DEBIT_BALANCE_NOT_FOUND = -5, // destination balance not found
-//        DIRECT_DEBIT_BALANCE_ACCOUNT_MISMATCHED = -6,
-//        DIRECT_DEBIT_BALANCE_ASSETS_MISMATCHED = -7,
-//    	DIRECT_DEBIT_SRC_BALANCE_NOT_FOUND = -8, // source balance not found
-//        DIRECT_DEBIT_REFERENCE_DUPLICATION = -9,
-//        DIRECT_DEBIT_STATS_OVERFLOW = -10,
-//        DIRECT_DEBIT_LIMITS_EXCEEDED = -11,
-//        DIRECT_DEBIT_NOT_ALLOWED_BY_ASSET_POLICY = -12,
-//        DIRECT_DEBIT_NO_TRUST = -13
-//    };
-//
-type DirectDebitResultCode int32
-
-const (
-	DirectDebitResultCodeDirectDebitSuccess                  DirectDebitResultCode = 0
-	DirectDebitResultCodeDirectDebitMalformed                DirectDebitResultCode = -1
-	DirectDebitResultCodeDirectDebitUnderfunded              DirectDebitResultCode = -2
-	DirectDebitResultCodeDirectDebitLineFull                 DirectDebitResultCode = -3
-	DirectDebitResultCodeDirectDebitFeeMismatched            DirectDebitResultCode = -4
-	DirectDebitResultCodeDirectDebitBalanceNotFound          DirectDebitResultCode = -5
-	DirectDebitResultCodeDirectDebitBalanceAccountMismatched DirectDebitResultCode = -6
-	DirectDebitResultCodeDirectDebitBalanceAssetsMismatched  DirectDebitResultCode = -7
-	DirectDebitResultCodeDirectDebitSrcBalanceNotFound       DirectDebitResultCode = -8
-	DirectDebitResultCodeDirectDebitReferenceDuplication     DirectDebitResultCode = -9
-	DirectDebitResultCodeDirectDebitStatsOverflow            DirectDebitResultCode = -10
-	DirectDebitResultCodeDirectDebitLimitsExceeded           DirectDebitResultCode = -11
-	DirectDebitResultCodeDirectDebitNotAllowedByAssetPolicy  DirectDebitResultCode = -12
-	DirectDebitResultCodeDirectDebitNoTrust                  DirectDebitResultCode = -13
-)
-
-var DirectDebitResultCodeAll = []DirectDebitResultCode{
-	DirectDebitResultCodeDirectDebitSuccess,
-	DirectDebitResultCodeDirectDebitMalformed,
-	DirectDebitResultCodeDirectDebitUnderfunded,
-	DirectDebitResultCodeDirectDebitLineFull,
-	DirectDebitResultCodeDirectDebitFeeMismatched,
-	DirectDebitResultCodeDirectDebitBalanceNotFound,
-	DirectDebitResultCodeDirectDebitBalanceAccountMismatched,
-	DirectDebitResultCodeDirectDebitBalanceAssetsMismatched,
-	DirectDebitResultCodeDirectDebitSrcBalanceNotFound,
-	DirectDebitResultCodeDirectDebitReferenceDuplication,
-	DirectDebitResultCodeDirectDebitStatsOverflow,
-	DirectDebitResultCodeDirectDebitLimitsExceeded,
-	DirectDebitResultCodeDirectDebitNotAllowedByAssetPolicy,
-	DirectDebitResultCodeDirectDebitNoTrust,
-}
-
-var directDebitResultCodeMap = map[int32]string{
-	0:   "DirectDebitResultCodeDirectDebitSuccess",
-	-1:  "DirectDebitResultCodeDirectDebitMalformed",
-	-2:  "DirectDebitResultCodeDirectDebitUnderfunded",
-	-3:  "DirectDebitResultCodeDirectDebitLineFull",
-	-4:  "DirectDebitResultCodeDirectDebitFeeMismatched",
-	-5:  "DirectDebitResultCodeDirectDebitBalanceNotFound",
-	-6:  "DirectDebitResultCodeDirectDebitBalanceAccountMismatched",
-	-7:  "DirectDebitResultCodeDirectDebitBalanceAssetsMismatched",
-	-8:  "DirectDebitResultCodeDirectDebitSrcBalanceNotFound",
-	-9:  "DirectDebitResultCodeDirectDebitReferenceDuplication",
-	-10: "DirectDebitResultCodeDirectDebitStatsOverflow",
-	-11: "DirectDebitResultCodeDirectDebitLimitsExceeded",
-	-12: "DirectDebitResultCodeDirectDebitNotAllowedByAssetPolicy",
-	-13: "DirectDebitResultCodeDirectDebitNoTrust",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for DirectDebitResultCode
-func (e DirectDebitResultCode) ValidEnum(v int32) bool {
-	_, ok := directDebitResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e DirectDebitResultCode) String() string {
-	name, _ := directDebitResultCodeMap[int32(e)]
-	return name
-}
-
-func (e DirectDebitResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// DirectDebitSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type DirectDebitSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u DirectDebitSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of DirectDebitSuccessExt
-func (u DirectDebitSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewDirectDebitSuccessExt creates a new  DirectDebitSuccessExt.
-func NewDirectDebitSuccessExt(v LedgerVersion, value interface{}) (result DirectDebitSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// DirectDebitSuccess is an XDR Struct defines as:
-//
-//   struct DirectDebitSuccess {
-//    	PaymentResponse paymentResponse;
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type DirectDebitSuccess struct {
-	PaymentResponse PaymentResponse       `json:"paymentResponse,omitempty"`
-	Ext             DirectDebitSuccessExt `json:"ext,omitempty"`
-}
-
-// DirectDebitResult is an XDR Union defines as:
-//
-//   union DirectDebitResult switch (DirectDebitResultCode code)
-//    {
-//    case DIRECT_DEBIT_SUCCESS:
-//        DirectDebitSuccess success;
-//    default:
-//        void;
-//    };
-//
-type DirectDebitResult struct {
-	Code    DirectDebitResultCode `json:"code,omitempty"`
-	Success *DirectDebitSuccess   `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u DirectDebitResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of DirectDebitResult
-func (u DirectDebitResult) ArmForSwitch(sw int32) (string, bool) {
-	switch DirectDebitResultCode(sw) {
-	case DirectDebitResultCodeDirectDebitSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewDirectDebitResult creates a new  DirectDebitResult.
-func NewDirectDebitResult(code DirectDebitResultCode, value interface{}) (result DirectDebitResult, err error) {
-	result.Code = code
-	switch DirectDebitResultCode(code) {
-	case DirectDebitResultCodeDirectDebitSuccess:
-		tv, ok := value.(DirectDebitSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be DirectDebitSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u DirectDebitResult) MustSuccess() DirectDebitSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u DirectDebitResult) GetSuccess() (result DirectDebitSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ManageAccountOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageAccountOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageAccountOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageAccountOpExt
-func (u ManageAccountOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageAccountOpExt creates a new  ManageAccountOpExt.
-func NewManageAccountOpExt(v LedgerVersion, value interface{}) (result ManageAccountOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageAccountOp is an XDR Struct defines as:
-//
-//   struct ManageAccountOp
-//    {
-//        AccountID account; // account to manage
-//        AccountType accountType;
-//        uint32 blockReasonsToAdd;
-//        uint32 blockReasonsToRemove;
-//    	 // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageAccountOp struct {
-	Account              AccountId          `json:"account,omitempty"`
-	AccountType          AccountType        `json:"accountType,omitempty"`
-	BlockReasonsToAdd    Uint32             `json:"blockReasonsToAdd,omitempty"`
-	BlockReasonsToRemove Uint32             `json:"blockReasonsToRemove,omitempty"`
-	Ext                  ManageAccountOpExt `json:"ext,omitempty"`
-}
-
-// ManageAccountResultCode is an XDR Enum defines as:
-//
-//   enum ManageAccountResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        MANAGE_ACCOUNT_SUCCESS = 0, // account was created
-//
-//        // codes considered as "failure" for the operation
-//        MANAGE_ACCOUNT_NOT_FOUND = -1,         // account does not exists
-//        MANAGE_ACCOUNT_MALFORMED = -2,
-//    	MANAGE_ACCOUNT_NOT_ALLOWED = -3,         // manage account operation is not allowed on this account
-//        MANAGE_ACCOUNT_TYPE_MISMATCH = -4
-//    };
-//
-type ManageAccountResultCode int32
-
-const (
-	ManageAccountResultCodeManageAccountSuccess      ManageAccountResultCode = 0
-	ManageAccountResultCodeManageAccountNotFound     ManageAccountResultCode = -1
-	ManageAccountResultCodeManageAccountMalformed    ManageAccountResultCode = -2
-	ManageAccountResultCodeManageAccountNotAllowed   ManageAccountResultCode = -3
-	ManageAccountResultCodeManageAccountTypeMismatch ManageAccountResultCode = -4
-)
-
-var ManageAccountResultCodeAll = []ManageAccountResultCode{
-	ManageAccountResultCodeManageAccountSuccess,
-	ManageAccountResultCodeManageAccountNotFound,
-	ManageAccountResultCodeManageAccountMalformed,
-	ManageAccountResultCodeManageAccountNotAllowed,
-	ManageAccountResultCodeManageAccountTypeMismatch,
-}
-
-var manageAccountResultCodeMap = map[int32]string{
-	0:  "ManageAccountResultCodeManageAccountSuccess",
-	-1: "ManageAccountResultCodeManageAccountNotFound",
-	-2: "ManageAccountResultCodeManageAccountMalformed",
-	-3: "ManageAccountResultCodeManageAccountNotAllowed",
-	-4: "ManageAccountResultCodeManageAccountTypeMismatch",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageAccountResultCode
-func (e ManageAccountResultCode) ValidEnum(v int32) bool {
-	_, ok := manageAccountResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageAccountResultCode) String() string {
-	name, _ := manageAccountResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ManageAccountResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageAccountSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageAccountSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageAccountSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageAccountSuccessExt
-func (u ManageAccountSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageAccountSuccessExt creates a new  ManageAccountSuccessExt.
-func NewManageAccountSuccessExt(v LedgerVersion, value interface{}) (result ManageAccountSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageAccountSuccess is an XDR Struct defines as:
-//
-//   struct ManageAccountSuccess {
-//    	uint32 blockReasons;
-//     // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageAccountSuccess struct {
-	BlockReasons Uint32                  `json:"blockReasons,omitempty"`
-	Ext          ManageAccountSuccessExt `json:"ext,omitempty"`
-}
-
-// ManageAccountResult is an XDR Union defines as:
-//
-//   union ManageAccountResult switch (ManageAccountResultCode code)
-//    {
-//    case MANAGE_ACCOUNT_SUCCESS:
-//        ManageAccountSuccess success;
-//    default:
-//        void;
-//    };
-//
-type ManageAccountResult struct {
-	Code    ManageAccountResultCode `json:"code,omitempty"`
-	Success *ManageAccountSuccess   `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageAccountResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageAccountResult
-func (u ManageAccountResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ManageAccountResultCode(sw) {
-	case ManageAccountResultCodeManageAccountSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewManageAccountResult creates a new  ManageAccountResult.
-func NewManageAccountResult(code ManageAccountResultCode, value interface{}) (result ManageAccountResult, err error) {
-	result.Code = code
-	switch ManageAccountResultCode(code) {
-	case ManageAccountResultCodeManageAccountSuccess:
-		tv, ok := value.(ManageAccountSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageAccountSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u ManageAccountResult) MustSuccess() ManageAccountSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageAccountResult) GetSuccess() (result ManageAccountSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ManageAssetPairAction is an XDR Enum defines as:
-//
-//   enum ManageAssetPairAction
-//    {
-//        MANAGE_ASSET_PAIR_CREATE = 0,
-//        MANAGE_ASSET_PAIR_UPDATE_PRICE = 1,
-//        MANAGE_ASSET_PAIR_UPDATE_POLICIES = 2
-//    };
-//
-type ManageAssetPairAction int32
-
-const (
-	ManageAssetPairActionManageAssetPairCreate         ManageAssetPairAction = 0
-	ManageAssetPairActionManageAssetPairUpdatePrice    ManageAssetPairAction = 1
-	ManageAssetPairActionManageAssetPairUpdatePolicies ManageAssetPairAction = 2
-)
-
-var ManageAssetPairActionAll = []ManageAssetPairAction{
-	ManageAssetPairActionManageAssetPairCreate,
-	ManageAssetPairActionManageAssetPairUpdatePrice,
-	ManageAssetPairActionManageAssetPairUpdatePolicies,
-}
-
-var manageAssetPairActionMap = map[int32]string{
-	0: "ManageAssetPairActionManageAssetPairCreate",
-	1: "ManageAssetPairActionManageAssetPairUpdatePrice",
-	2: "ManageAssetPairActionManageAssetPairUpdatePolicies",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageAssetPairAction
-func (e ManageAssetPairAction) ValidEnum(v int32) bool {
-	_, ok := manageAssetPairActionMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageAssetPairAction) String() string {
-	name, _ := manageAssetPairActionMap[int32(e)]
-	return name
-}
-
-func (e ManageAssetPairAction) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageAssetPairOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageAssetPairOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageAssetPairOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageAssetPairOpExt
-func (u ManageAssetPairOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageAssetPairOpExt creates a new  ManageAssetPairOpExt.
-func NewManageAssetPairOpExt(v LedgerVersion, value interface{}) (result ManageAssetPairOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageAssetPairOp is an XDR Struct defines as:
-//
-//   struct ManageAssetPairOp
-//    {
-//        ManageAssetPairAction action;
-//    	AssetCode base;
-//    	AssetCode quote;
-//
-//        int64 physicalPrice;
-//
-//    	int64 physicalPriceCorrection; // correction of physical price in percents. If physical price is set and restriction by physical price set, mininal price for offer for this pair will be physicalPrice * physicalPriceCorrection
-//    	int64 maxPriceStep;
-//
-//    	int32 policies;
-//
-//    	 // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageAssetPairOp struct {
-	Action                  ManageAssetPairAction `json:"action,omitempty"`
-	Base                    AssetCode             `json:"base,omitempty"`
-	Quote                   AssetCode             `json:"quote,omitempty"`
-	PhysicalPrice           Int64                 `json:"physicalPrice,omitempty"`
-	PhysicalPriceCorrection Int64                 `json:"physicalPriceCorrection,omitempty"`
-	MaxPriceStep            Int64                 `json:"maxPriceStep,omitempty"`
-	Policies                Int32                 `json:"policies,omitempty"`
-	Ext                     ManageAssetPairOpExt  `json:"ext,omitempty"`
-}
-
-// ManageAssetPairResultCode is an XDR Enum defines as:
-//
-//   enum ManageAssetPairResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        MANAGE_ASSET_PAIR_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//    	MANAGE_ASSET_PAIR_NOT_FOUND = -1,           // failed to find asset with such code
-//    	MANAGE_ASSET_PAIR_ALREADY_EXISTS = -2,
-//        MANAGE_ASSET_PAIR_MALFORMED = -3,
-//    	MANAGE_ASSET_PAIR_INVALID_ASSET = -4,
-//    	MANAGE_ASSET_PAIR_INVALID_ACTION = -5,
-//    	MANAGE_ASSET_PAIR_INVALID_POLICIES = -6,
-//    	MANAGE_ASSET_PAIR_ASSET_NOT_FOUND = -7
-//    };
-//
-type ManageAssetPairResultCode int32
-
-const (
-	ManageAssetPairResultCodeManageAssetPairSuccess         ManageAssetPairResultCode = 0
-	ManageAssetPairResultCodeManageAssetPairNotFound        ManageAssetPairResultCode = -1
-	ManageAssetPairResultCodeManageAssetPairAlreadyExists   ManageAssetPairResultCode = -2
-	ManageAssetPairResultCodeManageAssetPairMalformed       ManageAssetPairResultCode = -3
-	ManageAssetPairResultCodeManageAssetPairInvalidAsset    ManageAssetPairResultCode = -4
-	ManageAssetPairResultCodeManageAssetPairInvalidAction   ManageAssetPairResultCode = -5
-	ManageAssetPairResultCodeManageAssetPairInvalidPolicies ManageAssetPairResultCode = -6
-	ManageAssetPairResultCodeManageAssetPairAssetNotFound   ManageAssetPairResultCode = -7
-)
-
-var ManageAssetPairResultCodeAll = []ManageAssetPairResultCode{
-	ManageAssetPairResultCodeManageAssetPairSuccess,
-	ManageAssetPairResultCodeManageAssetPairNotFound,
-	ManageAssetPairResultCodeManageAssetPairAlreadyExists,
-	ManageAssetPairResultCodeManageAssetPairMalformed,
-	ManageAssetPairResultCodeManageAssetPairInvalidAsset,
-	ManageAssetPairResultCodeManageAssetPairInvalidAction,
-	ManageAssetPairResultCodeManageAssetPairInvalidPolicies,
-	ManageAssetPairResultCodeManageAssetPairAssetNotFound,
-}
-
-var manageAssetPairResultCodeMap = map[int32]string{
-	0:  "ManageAssetPairResultCodeManageAssetPairSuccess",
-	-1: "ManageAssetPairResultCodeManageAssetPairNotFound",
-	-2: "ManageAssetPairResultCodeManageAssetPairAlreadyExists",
-	-3: "ManageAssetPairResultCodeManageAssetPairMalformed",
-	-4: "ManageAssetPairResultCodeManageAssetPairInvalidAsset",
-	-5: "ManageAssetPairResultCodeManageAssetPairInvalidAction",
-	-6: "ManageAssetPairResultCodeManageAssetPairInvalidPolicies",
-	-7: "ManageAssetPairResultCodeManageAssetPairAssetNotFound",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageAssetPairResultCode
-func (e ManageAssetPairResultCode) ValidEnum(v int32) bool {
-	_, ok := manageAssetPairResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageAssetPairResultCode) String() string {
-	name, _ := manageAssetPairResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ManageAssetPairResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageAssetPairSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageAssetPairSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageAssetPairSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageAssetPairSuccessExt
-func (u ManageAssetPairSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageAssetPairSuccessExt creates a new  ManageAssetPairSuccessExt.
-func NewManageAssetPairSuccessExt(v LedgerVersion, value interface{}) (result ManageAssetPairSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageAssetPairSuccess is an XDR Struct defines as:
-//
-//   struct ManageAssetPairSuccess
-//    {
-//    	int64 currentPrice;
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageAssetPairSuccess struct {
-	CurrentPrice Int64                     `json:"currentPrice,omitempty"`
-	Ext          ManageAssetPairSuccessExt `json:"ext,omitempty"`
-}
-
-// ManageAssetPairResult is an XDR Union defines as:
-//
-//   union ManageAssetPairResult switch (ManageAssetPairResultCode code)
-//    {
-//    case MANAGE_ASSET_PAIR_SUCCESS:
-//        ManageAssetPairSuccess success;
-//    default:
-//        void;
-//    };
-//
-type ManageAssetPairResult struct {
-	Code    ManageAssetPairResultCode `json:"code,omitempty"`
-	Success *ManageAssetPairSuccess   `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageAssetPairResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageAssetPairResult
-func (u ManageAssetPairResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ManageAssetPairResultCode(sw) {
-	case ManageAssetPairResultCodeManageAssetPairSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewManageAssetPairResult creates a new  ManageAssetPairResult.
-func NewManageAssetPairResult(code ManageAssetPairResultCode, value interface{}) (result ManageAssetPairResult, err error) {
-	result.Code = code
-	switch ManageAssetPairResultCode(code) {
-	case ManageAssetPairResultCodeManageAssetPairSuccess:
-		tv, ok := value.(ManageAssetPairSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageAssetPairSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u ManageAssetPairResult) MustSuccess() ManageAssetPairSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageAssetPairResult) GetSuccess() (result ManageAssetPairSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ManageAssetAction is an XDR Enum defines as:
-//
-//   enum ManageAssetAction
-//    {
-//        MANAGE_ASSET_CREATE = 0,
-//        MANAGE_ASSET_UPDATE_POLICIES = 1
-//    };
-//
-type ManageAssetAction int32
-
-const (
-	ManageAssetActionManageAssetCreate         ManageAssetAction = 0
-	ManageAssetActionManageAssetUpdatePolicies ManageAssetAction = 1
-)
-
-var ManageAssetActionAll = []ManageAssetAction{
-	ManageAssetActionManageAssetCreate,
-	ManageAssetActionManageAssetUpdatePolicies,
-}
-
-var manageAssetActionMap = map[int32]string{
-	0: "ManageAssetActionManageAssetCreate",
-	1: "ManageAssetActionManageAssetUpdatePolicies",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageAssetAction
-func (e ManageAssetAction) ValidEnum(v int32) bool {
-	_, ok := manageAssetActionMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageAssetAction) String() string {
-	name, _ := manageAssetActionMap[int32(e)]
-	return name
-}
-
-func (e ManageAssetAction) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageAssetOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageAssetOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageAssetOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageAssetOpExt
-func (u ManageAssetOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageAssetOpExt creates a new  ManageAssetOpExt.
-func NewManageAssetOpExt(v LedgerVersion, value interface{}) (result ManageAssetOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageAssetOp is an XDR Struct defines as:
-//
-//   struct ManageAssetOp
-//    {
-//        ManageAssetAction action;
-//    	AssetCode code;
-//
-//        int32 policies;
-//
-//    	 // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageAssetOp struct {
-	Action   ManageAssetAction `json:"action,omitempty"`
-	Code     AssetCode         `json:"code,omitempty"`
-	Policies Int32             `json:"policies,omitempty"`
-	Ext      ManageAssetOpExt  `json:"ext,omitempty"`
-}
-
-// ManageAssetResultCode is an XDR Enum defines as:
-//
-//   enum ManageAssetResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        MANAGE_ASSET_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//    	MANAGE_ASSET_NOT_FOUND = -1,           // failed to find asset with such code
-//    	MANAGE_ASSET_ALREADY_EXISTS = -2,
-//        MANAGE_ASSET_MALFORMED = -3
-//    };
-//
-type ManageAssetResultCode int32
-
-const (
-	ManageAssetResultCodeManageAssetSuccess       ManageAssetResultCode = 0
-	ManageAssetResultCodeManageAssetNotFound      ManageAssetResultCode = -1
-	ManageAssetResultCodeManageAssetAlreadyExists ManageAssetResultCode = -2
-	ManageAssetResultCodeManageAssetMalformed     ManageAssetResultCode = -3
-)
-
-var ManageAssetResultCodeAll = []ManageAssetResultCode{
-	ManageAssetResultCodeManageAssetSuccess,
-	ManageAssetResultCodeManageAssetNotFound,
-	ManageAssetResultCodeManageAssetAlreadyExists,
-	ManageAssetResultCodeManageAssetMalformed,
-}
-
-var manageAssetResultCodeMap = map[int32]string{
-	0:  "ManageAssetResultCodeManageAssetSuccess",
-	-1: "ManageAssetResultCodeManageAssetNotFound",
-	-2: "ManageAssetResultCodeManageAssetAlreadyExists",
-	-3: "ManageAssetResultCodeManageAssetMalformed",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageAssetResultCode
-func (e ManageAssetResultCode) ValidEnum(v int32) bool {
-	_, ok := manageAssetResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageAssetResultCode) String() string {
-	name, _ := manageAssetResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ManageAssetResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageAssetSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageAssetSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageAssetSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageAssetSuccessExt
-func (u ManageAssetSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageAssetSuccessExt creates a new  ManageAssetSuccessExt.
-func NewManageAssetSuccessExt(v LedgerVersion, value interface{}) (result ManageAssetSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageAssetSuccess is an XDR Struct defines as:
-//
-//   struct ManageAssetSuccess
-//    {
-//        // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageAssetSuccess struct {
-	Ext ManageAssetSuccessExt `json:"ext,omitempty"`
-}
-
-// ManageAssetResult is an XDR Union defines as:
-//
-//   union ManageAssetResult switch (ManageAssetResultCode code)
-//    {
-//    case MANAGE_ASSET_SUCCESS:
-//        ManageAssetSuccess success;
-//    default:
-//        void;
-//    };
-//
-type ManageAssetResult struct {
-	Code    ManageAssetResultCode `json:"code,omitempty"`
-	Success *ManageAssetSuccess   `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageAssetResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageAssetResult
-func (u ManageAssetResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ManageAssetResultCode(sw) {
-	case ManageAssetResultCodeManageAssetSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewManageAssetResult creates a new  ManageAssetResult.
-func NewManageAssetResult(code ManageAssetResultCode, value interface{}) (result ManageAssetResult, err error) {
-	result.Code = code
-	switch ManageAssetResultCode(code) {
-	case ManageAssetResultCodeManageAssetSuccess:
-		tv, ok := value.(ManageAssetSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageAssetSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u ManageAssetResult) MustSuccess() ManageAssetSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageAssetResult) GetSuccess() (result ManageAssetSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ManageBalanceAction is an XDR Enum defines as:
-//
-//   enum ManageBalanceAction
-//    {
-//        MANAGE_BALANCE_CREATE = 0,
-//        MANAGE_BALANCE_DELETE = 1
-//    };
-//
-type ManageBalanceAction int32
-
-const (
-	ManageBalanceActionManageBalanceCreate ManageBalanceAction = 0
-	ManageBalanceActionManageBalanceDelete ManageBalanceAction = 1
-)
-
-var ManageBalanceActionAll = []ManageBalanceAction{
-	ManageBalanceActionManageBalanceCreate,
-	ManageBalanceActionManageBalanceDelete,
-}
-
-var manageBalanceActionMap = map[int32]string{
-	0: "ManageBalanceActionManageBalanceCreate",
-	1: "ManageBalanceActionManageBalanceDelete",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageBalanceAction
-func (e ManageBalanceAction) ValidEnum(v int32) bool {
-	_, ok := manageBalanceActionMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageBalanceAction) String() string {
-	name, _ := manageBalanceActionMap[int32(e)]
-	return name
-}
-
-func (e ManageBalanceAction) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageBalanceOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageBalanceOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageBalanceOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageBalanceOpExt
-func (u ManageBalanceOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageBalanceOpExt creates a new  ManageBalanceOpExt.
-func NewManageBalanceOpExt(v LedgerVersion, value interface{}) (result ManageBalanceOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageBalanceOp is an XDR Struct defines as:
-//
-//   struct ManageBalanceOp
+//   struct BalanceEntry
 //    {
 //        BalanceID balanceID;
-//        ManageBalanceAction action;
-//        AccountID destination;
 //        AssetCode asset;
-//    	union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageBalanceOp struct {
-	BalanceId   BalanceId           `json:"balanceID,omitempty"`
-	Action      ManageBalanceAction `json:"action,omitempty"`
-	Destination AccountId           `json:"destination,omitempty"`
-	Asset       AssetCode           `json:"asset,omitempty"`
-	Ext         ManageBalanceOpExt  `json:"ext,omitempty"`
-}
-
-// ManageBalanceResultCode is an XDR Enum defines as:
-//
-//   enum ManageBalanceResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        MANAGE_BALANCE_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//        MANAGE_BALANCE_MALFORMED = -1,       // invalid destination
-//        MANAGE_BALANCE_NOT_FOUND = -2,
-//        MANAGE_BALANCE_DESTINATION_NOT_FOUND = -3,
-//        MANAGE_BALANCE_ALREADY_EXISTS = -4,
-//        MANAGE_BALANCE_ASSET_NOT_FOUND = -5,
-//        MANAGE_BALANCE_INVALID_ASSET = -6
-//    };
-//
-type ManageBalanceResultCode int32
-
-const (
-	ManageBalanceResultCodeManageBalanceSuccess             ManageBalanceResultCode = 0
-	ManageBalanceResultCodeManageBalanceMalformed           ManageBalanceResultCode = -1
-	ManageBalanceResultCodeManageBalanceNotFound            ManageBalanceResultCode = -2
-	ManageBalanceResultCodeManageBalanceDestinationNotFound ManageBalanceResultCode = -3
-	ManageBalanceResultCodeManageBalanceAlreadyExists       ManageBalanceResultCode = -4
-	ManageBalanceResultCodeManageBalanceAssetNotFound       ManageBalanceResultCode = -5
-	ManageBalanceResultCodeManageBalanceInvalidAsset        ManageBalanceResultCode = -6
-)
-
-var ManageBalanceResultCodeAll = []ManageBalanceResultCode{
-	ManageBalanceResultCodeManageBalanceSuccess,
-	ManageBalanceResultCodeManageBalanceMalformed,
-	ManageBalanceResultCodeManageBalanceNotFound,
-	ManageBalanceResultCodeManageBalanceDestinationNotFound,
-	ManageBalanceResultCodeManageBalanceAlreadyExists,
-	ManageBalanceResultCodeManageBalanceAssetNotFound,
-	ManageBalanceResultCodeManageBalanceInvalidAsset,
-}
-
-var manageBalanceResultCodeMap = map[int32]string{
-	0:  "ManageBalanceResultCodeManageBalanceSuccess",
-	-1: "ManageBalanceResultCodeManageBalanceMalformed",
-	-2: "ManageBalanceResultCodeManageBalanceNotFound",
-	-3: "ManageBalanceResultCodeManageBalanceDestinationNotFound",
-	-4: "ManageBalanceResultCodeManageBalanceAlreadyExists",
-	-5: "ManageBalanceResultCodeManageBalanceAssetNotFound",
-	-6: "ManageBalanceResultCodeManageBalanceInvalidAsset",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageBalanceResultCode
-func (e ManageBalanceResultCode) ValidEnum(v int32) bool {
-	_, ok := manageBalanceResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageBalanceResultCode) String() string {
-	name, _ := manageBalanceResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ManageBalanceResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageBalanceSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageBalanceSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageBalanceSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageBalanceSuccessExt
-func (u ManageBalanceSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageBalanceSuccessExt creates a new  ManageBalanceSuccessExt.
-func NewManageBalanceSuccessExt(v LedgerVersion, value interface{}) (result ManageBalanceSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageBalanceSuccess is an XDR Struct defines as:
-//
-//   struct ManageBalanceSuccess {
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageBalanceSuccess struct {
-	Ext ManageBalanceSuccessExt `json:"ext,omitempty"`
-}
-
-// ManageBalanceResult is an XDR Union defines as:
-//
-//   union ManageBalanceResult switch (ManageBalanceResultCode code)
-//    {
-//    case MANAGE_BALANCE_SUCCESS:
-//        ManageBalanceSuccess success;
-//    default:
-//        void;
-//    };
-//
-type ManageBalanceResult struct {
-	Code    ManageBalanceResultCode `json:"code,omitempty"`
-	Success *ManageBalanceSuccess   `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageBalanceResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageBalanceResult
-func (u ManageBalanceResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ManageBalanceResultCode(sw) {
-	case ManageBalanceResultCodeManageBalanceSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewManageBalanceResult creates a new  ManageBalanceResult.
-func NewManageBalanceResult(code ManageBalanceResultCode, value interface{}) (result ManageBalanceResult, err error) {
-	result.Code = code
-	switch ManageBalanceResultCode(code) {
-	case ManageBalanceResultCodeManageBalanceSuccess:
-		tv, ok := value.(ManageBalanceSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageBalanceSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u ManageBalanceResult) MustSuccess() ManageBalanceSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageBalanceResult) GetSuccess() (result ManageBalanceSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ManageCoinsEmissionRequestAction is an XDR Enum defines as:
-//
-//   enum ManageCoinsEmissionRequestAction
-//    {
-//        MANAGE_COINS_EMISSION_REQUEST_CREATE = 0,
-//        MANAGE_COINS_EMISSION_REQUEST_DELETE = 1
-//    };
-//
-type ManageCoinsEmissionRequestAction int32
-
-const (
-	ManageCoinsEmissionRequestActionManageCoinsEmissionRequestCreate ManageCoinsEmissionRequestAction = 0
-	ManageCoinsEmissionRequestActionManageCoinsEmissionRequestDelete ManageCoinsEmissionRequestAction = 1
-)
-
-var ManageCoinsEmissionRequestActionAll = []ManageCoinsEmissionRequestAction{
-	ManageCoinsEmissionRequestActionManageCoinsEmissionRequestCreate,
-	ManageCoinsEmissionRequestActionManageCoinsEmissionRequestDelete,
-}
-
-var manageCoinsEmissionRequestActionMap = map[int32]string{
-	0: "ManageCoinsEmissionRequestActionManageCoinsEmissionRequestCreate",
-	1: "ManageCoinsEmissionRequestActionManageCoinsEmissionRequestDelete",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageCoinsEmissionRequestAction
-func (e ManageCoinsEmissionRequestAction) ValidEnum(v int32) bool {
-	_, ok := manageCoinsEmissionRequestActionMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageCoinsEmissionRequestAction) String() string {
-	name, _ := manageCoinsEmissionRequestActionMap[int32(e)]
-	return name
-}
-
-func (e ManageCoinsEmissionRequestAction) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageCoinsEmissionRequestOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageCoinsEmissionRequestOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageCoinsEmissionRequestOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageCoinsEmissionRequestOpExt
-func (u ManageCoinsEmissionRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageCoinsEmissionRequestOpExt creates a new  ManageCoinsEmissionRequestOpExt.
-func NewManageCoinsEmissionRequestOpExt(v LedgerVersion, value interface{}) (result ManageCoinsEmissionRequestOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageCoinsEmissionRequestOp is an XDR Struct defines as:
-//
-//   struct ManageCoinsEmissionRequestOp
-//    {
-//    	// 0=create a new request, otherwise edit an existing offer
-//        ManageCoinsEmissionRequestAction action;
-//    	uint64 requestID;
-//        int64 amount;        // amount being issued. if set to 0, delete the offer
-//        BalanceID receiver;
-//        AssetCode asset;
-//        string64 reference;
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageCoinsEmissionRequestOp struct {
-	Action    ManageCoinsEmissionRequestAction `json:"action,omitempty"`
-	RequestId Uint64                           `json:"requestID,omitempty"`
-	Amount    Int64                            `json:"amount,omitempty"`
-	Receiver  BalanceId                        `json:"receiver,omitempty"`
-	Asset     AssetCode                        `json:"asset,omitempty"`
-	Reference String64                         `json:"reference,omitempty"`
-	Ext       ManageCoinsEmissionRequestOpExt  `json:"ext,omitempty"`
-}
-
-// ManageCoinsEmissionRequestResultCode is an XDR Enum defines as:
-//
-//   enum ManageCoinsEmissionRequestResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        MANAGE_COINS_EMISSION_REQUEST_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//        MANAGE_COINS_EMISSION_REQUEST_INVALID_AMOUNT = -1,      // amount is negative
-//    	MANAGE_COINS_EMISSION_REQUEST_INVALID_REQUEST_ID = -2, // not 0 for delete etc
-//    	MANAGE_COINS_EMISSION_REQUEST_NOT_FOUND = -3,           // failed to find emission request with such ID
-//    	MANAGE_COINS_EMISSION_REQUEST_ALREADY_REVIEWED = -4,    // emission request have been already reviewed - can't edit
-//        MANAGE_COINS_EMISSION_REQUEST_ASSET_NOT_FOUND = -5,
-//        MANAGE_COINS_EMISSION_REQUEST_BALANCE_NOT_FOUND = -6,
-//        MANAGE_COINS_EMISSION_REQUEST_ASSET_MISMATCH = -7,
-//        MANAGE_COINS_EMISSION_REQUEST_INVALID_ASSET = -8,
-//        MANAGE_COINS_EMISSION_REQUEST_REFERENCE_DUPLICATION = -9,
-//        MANAGE_COINS_EMISSION_REQUEST_LINE_FULL = -10,
-//        MANAGE_COINS_EMISSION_REQUEST_INVALID_REFERENCE = -11
-//    };
-//
-type ManageCoinsEmissionRequestResultCode int32
-
-const (
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestSuccess              ManageCoinsEmissionRequestResultCode = 0
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidAmount        ManageCoinsEmissionRequestResultCode = -1
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidRequestId     ManageCoinsEmissionRequestResultCode = -2
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestNotFound             ManageCoinsEmissionRequestResultCode = -3
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestAlreadyReviewed      ManageCoinsEmissionRequestResultCode = -4
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestAssetNotFound        ManageCoinsEmissionRequestResultCode = -5
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestBalanceNotFound      ManageCoinsEmissionRequestResultCode = -6
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestAssetMismatch        ManageCoinsEmissionRequestResultCode = -7
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidAsset         ManageCoinsEmissionRequestResultCode = -8
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestReferenceDuplication ManageCoinsEmissionRequestResultCode = -9
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestLineFull             ManageCoinsEmissionRequestResultCode = -10
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidReference     ManageCoinsEmissionRequestResultCode = -11
-)
-
-var ManageCoinsEmissionRequestResultCodeAll = []ManageCoinsEmissionRequestResultCode{
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestSuccess,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidAmount,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidRequestId,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestNotFound,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestAlreadyReviewed,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestAssetNotFound,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestBalanceNotFound,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestAssetMismatch,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidAsset,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestReferenceDuplication,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestLineFull,
-	ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidReference,
-}
-
-var manageCoinsEmissionRequestResultCodeMap = map[int32]string{
-	0:   "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestSuccess",
-	-1:  "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidAmount",
-	-2:  "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidRequestId",
-	-3:  "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestNotFound",
-	-4:  "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestAlreadyReviewed",
-	-5:  "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestAssetNotFound",
-	-6:  "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestBalanceNotFound",
-	-7:  "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestAssetMismatch",
-	-8:  "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidAsset",
-	-9:  "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestReferenceDuplication",
-	-10: "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestLineFull",
-	-11: "ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestInvalidReference",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageCoinsEmissionRequestResultCode
-func (e ManageCoinsEmissionRequestResultCode) ValidEnum(v int32) bool {
-	_, ok := manageCoinsEmissionRequestResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageCoinsEmissionRequestResultCode) String() string {
-	name, _ := manageCoinsEmissionRequestResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ManageCoinsEmissionRequestResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageCoinsEmissionRequestResultManageRequestInfoExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//
-type ManageCoinsEmissionRequestResultManageRequestInfoExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageCoinsEmissionRequestResultManageRequestInfoExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageCoinsEmissionRequestResultManageRequestInfoExt
-func (u ManageCoinsEmissionRequestResultManageRequestInfoExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageCoinsEmissionRequestResultManageRequestInfoExt creates a new  ManageCoinsEmissionRequestResultManageRequestInfoExt.
-func NewManageCoinsEmissionRequestResultManageRequestInfoExt(v LedgerVersion, value interface{}) (result ManageCoinsEmissionRequestResultManageRequestInfoExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageCoinsEmissionRequestResultManageRequestInfo is an XDR NestedStruct defines as:
-//
-//   struct {
-//            uint64 requestID;
-//            bool fulfilled;
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//        }
-//
-type ManageCoinsEmissionRequestResultManageRequestInfo struct {
-	RequestId Uint64                                               `json:"requestID,omitempty"`
-	Fulfilled bool                                                 `json:"fulfilled,omitempty"`
-	Ext       ManageCoinsEmissionRequestResultManageRequestInfoExt `json:"ext,omitempty"`
-}
-
-// ManageCoinsEmissionRequestResult is an XDR Union defines as:
-//
-//   union ManageCoinsEmissionRequestResult switch (ManageCoinsEmissionRequestResultCode code)
-//    {
-//    case MANAGE_COINS_EMISSION_REQUEST_SUCCESS:
-//        struct {
-//            uint64 requestID;
-//            bool fulfilled;
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//        } manageRequestInfo;
-//    default:
-//        void;
-//    };
-//
-type ManageCoinsEmissionRequestResult struct {
-	Code              ManageCoinsEmissionRequestResultCode               `json:"code,omitempty"`
-	ManageRequestInfo *ManageCoinsEmissionRequestResultManageRequestInfo `json:"manageRequestInfo,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageCoinsEmissionRequestResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageCoinsEmissionRequestResult
-func (u ManageCoinsEmissionRequestResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ManageCoinsEmissionRequestResultCode(sw) {
-	case ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestSuccess:
-		return "ManageRequestInfo", true
-	default:
-		return "", true
-	}
-}
-
-// NewManageCoinsEmissionRequestResult creates a new  ManageCoinsEmissionRequestResult.
-func NewManageCoinsEmissionRequestResult(code ManageCoinsEmissionRequestResultCode, value interface{}) (result ManageCoinsEmissionRequestResult, err error) {
-	result.Code = code
-	switch ManageCoinsEmissionRequestResultCode(code) {
-	case ManageCoinsEmissionRequestResultCodeManageCoinsEmissionRequestSuccess:
-		tv, ok := value.(ManageCoinsEmissionRequestResultManageRequestInfo)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageCoinsEmissionRequestResultManageRequestInfo")
-			return
-		}
-		result.ManageRequestInfo = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustManageRequestInfo retrieves the ManageRequestInfo value from the union,
-// panicing if the value is not set.
-func (u ManageCoinsEmissionRequestResult) MustManageRequestInfo() ManageCoinsEmissionRequestResultManageRequestInfo {
-	val, ok := u.GetManageRequestInfo()
-
-	if !ok {
-		panic("arm ManageRequestInfo is not set")
-	}
-
-	return val
-}
-
-// GetManageRequestInfo retrieves the ManageRequestInfo value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageCoinsEmissionRequestResult) GetManageRequestInfo() (result ManageCoinsEmissionRequestResultManageRequestInfo, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "ManageRequestInfo" {
-		result = *u.ManageRequestInfo
-		ok = true
-	}
-
-	return
-}
-
-// ManageForfeitRequestOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageForfeitRequestOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageForfeitRequestOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageForfeitRequestOpExt
-func (u ManageForfeitRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageForfeitRequestOpExt creates a new  ManageForfeitRequestOpExt.
-func NewManageForfeitRequestOpExt(v LedgerVersion, value interface{}) (result ManageForfeitRequestOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageForfeitRequestOp is an XDR Struct defines as:
-//
-//   struct ManageForfeitRequestOp
-//    {
-//        BalanceID balance;
+//        AccountID accountID;
 //        int64 amount;
-//    	int64 totalFee;
-//        string details<>;
-//    	AccountID reviewer;
+//        int64 locked;
 //
-//    	union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//
-//    };
-//
-type ManageForfeitRequestOp struct {
-	Balance  BalanceId                 `json:"balance,omitempty"`
-	Amount   Int64                     `json:"amount,omitempty"`
-	TotalFee Int64                     `json:"totalFee,omitempty"`
-	Details  string                    `json:"details,omitempty"`
-	Reviewer AccountId                 `json:"reviewer,omitempty"`
-	Ext      ManageForfeitRequestOpExt `json:"ext,omitempty"`
-}
-
-// ManageForfeitRequestResultCode is an XDR Enum defines as:
-//
-//   enum ManageForfeitRequestResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        MANAGE_FORFEIT_REQUEST_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//    	MANAGE_FORFEIT_REQUEST_UNDERFUNDED = -1,
-//        MANAGE_FORFEIT_REQUEST_INVALID_AMOUNT = -2,
-//        MANAGE_FORFEIT_REQUEST_LINE_FULL = -3,
-//        MANAGE_FORFEIT_REQUEST_BALANCE_MISMATCH = -4,
-//        MANAGE_FORFEIT_REQUEST_STATS_OVERFLOW = -5,
-//        MANAGE_FORFEIT_REQUEST_LIMITS_EXCEEDED = -6,
-//        MANAGE_FORFEIT_REQUEST_REVIEWER_NOT_FOUND = -7,
-//        MANAGE_FORFEIT_REQUEST_INVALID_DETAILS = -8,
-//    	MANAGE_FORFEIT_REQUEST_FEE_MISMATCH = -9 // fee is not equal to expected fee
-//    };
-//
-type ManageForfeitRequestResultCode int32
-
-const (
-	ManageForfeitRequestResultCodeManageForfeitRequestSuccess          ManageForfeitRequestResultCode = 0
-	ManageForfeitRequestResultCodeManageForfeitRequestUnderfunded      ManageForfeitRequestResultCode = -1
-	ManageForfeitRequestResultCodeManageForfeitRequestInvalidAmount    ManageForfeitRequestResultCode = -2
-	ManageForfeitRequestResultCodeManageForfeitRequestLineFull         ManageForfeitRequestResultCode = -3
-	ManageForfeitRequestResultCodeManageForfeitRequestBalanceMismatch  ManageForfeitRequestResultCode = -4
-	ManageForfeitRequestResultCodeManageForfeitRequestStatsOverflow    ManageForfeitRequestResultCode = -5
-	ManageForfeitRequestResultCodeManageForfeitRequestLimitsExceeded   ManageForfeitRequestResultCode = -6
-	ManageForfeitRequestResultCodeManageForfeitRequestReviewerNotFound ManageForfeitRequestResultCode = -7
-	ManageForfeitRequestResultCodeManageForfeitRequestInvalidDetails   ManageForfeitRequestResultCode = -8
-	ManageForfeitRequestResultCodeManageForfeitRequestFeeMismatch      ManageForfeitRequestResultCode = -9
-)
-
-var ManageForfeitRequestResultCodeAll = []ManageForfeitRequestResultCode{
-	ManageForfeitRequestResultCodeManageForfeitRequestSuccess,
-	ManageForfeitRequestResultCodeManageForfeitRequestUnderfunded,
-	ManageForfeitRequestResultCodeManageForfeitRequestInvalidAmount,
-	ManageForfeitRequestResultCodeManageForfeitRequestLineFull,
-	ManageForfeitRequestResultCodeManageForfeitRequestBalanceMismatch,
-	ManageForfeitRequestResultCodeManageForfeitRequestStatsOverflow,
-	ManageForfeitRequestResultCodeManageForfeitRequestLimitsExceeded,
-	ManageForfeitRequestResultCodeManageForfeitRequestReviewerNotFound,
-	ManageForfeitRequestResultCodeManageForfeitRequestInvalidDetails,
-	ManageForfeitRequestResultCodeManageForfeitRequestFeeMismatch,
-}
-
-var manageForfeitRequestResultCodeMap = map[int32]string{
-	0:  "ManageForfeitRequestResultCodeManageForfeitRequestSuccess",
-	-1: "ManageForfeitRequestResultCodeManageForfeitRequestUnderfunded",
-	-2: "ManageForfeitRequestResultCodeManageForfeitRequestInvalidAmount",
-	-3: "ManageForfeitRequestResultCodeManageForfeitRequestLineFull",
-	-4: "ManageForfeitRequestResultCodeManageForfeitRequestBalanceMismatch",
-	-5: "ManageForfeitRequestResultCodeManageForfeitRequestStatsOverflow",
-	-6: "ManageForfeitRequestResultCodeManageForfeitRequestLimitsExceeded",
-	-7: "ManageForfeitRequestResultCodeManageForfeitRequestReviewerNotFound",
-	-8: "ManageForfeitRequestResultCodeManageForfeitRequestInvalidDetails",
-	-9: "ManageForfeitRequestResultCodeManageForfeitRequestFeeMismatch",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageForfeitRequestResultCode
-func (e ManageForfeitRequestResultCode) ValidEnum(v int32) bool {
-	_, ok := manageForfeitRequestResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageForfeitRequestResultCode) String() string {
-	name, _ := manageForfeitRequestResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ManageForfeitRequestResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageForfeitRequestResultSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//                {
-//                case EMPTY_VERSION:
-//                    void;
-//                }
-//
-type ManageForfeitRequestResultSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageForfeitRequestResultSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageForfeitRequestResultSuccessExt
-func (u ManageForfeitRequestResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageForfeitRequestResultSuccessExt creates a new  ManageForfeitRequestResultSuccessExt.
-func NewManageForfeitRequestResultSuccessExt(v LedgerVersion, value interface{}) (result ManageForfeitRequestResultSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageForfeitRequestResultSuccess is an XDR NestedStruct defines as:
-//
-//   struct
-//            {
-//                uint64 paymentID;
-//
-//                union switch (LedgerVersion v)
-//                {
-//                case EMPTY_VERSION:
-//                    void;
-//                }
-//                ext;
-//            }
-//
-type ManageForfeitRequestResultSuccess struct {
-	PaymentId Uint64                               `json:"paymentID,omitempty"`
-	Ext       ManageForfeitRequestResultSuccessExt `json:"ext,omitempty"`
-}
-
-// ManageForfeitRequestResult is an XDR Union defines as:
-//
-//   union ManageForfeitRequestResult switch (ManageForfeitRequestResultCode code)
-//    {
-//        case MANAGE_FORFEIT_REQUEST_SUCCESS:
-//            struct
-//            {
-//                uint64 paymentID;
-//
-//                union switch (LedgerVersion v)
-//                {
-//                case EMPTY_VERSION:
-//                    void;
-//                }
-//                ext;
-//            } success;
-//        default:
-//            void;
-//    };
-//
-type ManageForfeitRequestResult struct {
-	Code    ManageForfeitRequestResultCode     `json:"code,omitempty"`
-	Success *ManageForfeitRequestResultSuccess `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageForfeitRequestResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageForfeitRequestResult
-func (u ManageForfeitRequestResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ManageForfeitRequestResultCode(sw) {
-	case ManageForfeitRequestResultCodeManageForfeitRequestSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewManageForfeitRequestResult creates a new  ManageForfeitRequestResult.
-func NewManageForfeitRequestResult(code ManageForfeitRequestResultCode, value interface{}) (result ManageForfeitRequestResult, err error) {
-	result.Code = code
-	switch ManageForfeitRequestResultCode(code) {
-	case ManageForfeitRequestResultCodeManageForfeitRequestSuccess:
-		tv, ok := value.(ManageForfeitRequestResultSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageForfeitRequestResultSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u ManageForfeitRequestResult) MustSuccess() ManageForfeitRequestResultSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageForfeitRequestResult) GetSuccess() (result ManageForfeitRequestResultSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ManageInvoiceOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageInvoiceOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageInvoiceOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageInvoiceOpExt
-func (u ManageInvoiceOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageInvoiceOpExt creates a new  ManageInvoiceOpExt.
-func NewManageInvoiceOpExt(v LedgerVersion, value interface{}) (result ManageInvoiceOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageInvoiceOp is an XDR Struct defines as:
-//
-//   struct ManageInvoiceOp
-//    {
-//        BalanceID receiverBalance;
-//    	AccountID sender;
-//        int64 amount; // if set to 0, delete the invoice
-//
-//        // 0=create a new invoice, otherwise edit an existing invoice
-//        uint64 invoiceID;
-//
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageInvoiceOp struct {
-	ReceiverBalance BalanceId          `json:"receiverBalance,omitempty"`
-	Sender          AccountId          `json:"sender,omitempty"`
-	Amount          Int64              `json:"amount,omitempty"`
-	InvoiceId       Uint64             `json:"invoiceID,omitempty"`
-	Ext             ManageInvoiceOpExt `json:"ext,omitempty"`
-}
-
-// ManageInvoiceResultCode is an XDR Enum defines as:
-//
-//   enum ManageInvoiceResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        MANAGE_INVOICE_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//        MANAGE_INVOICE_MALFORMED = -1,
-//        MANAGE_INVOICE_BALANCE_NOT_FOUND = -2,
-//    	MANAGE_INVOICE_OVERFLOW = -3,
-//
-//        MANAGE_INVOICE_NOT_FOUND = -4,
-//        MANAGE_INVOICE_TOO_MANY_INVOICES = -5,
-//        MANAGE_INVOICE_CAN_NOT_DELETE_IN_PROGRESS = -6
-//    };
-//
-type ManageInvoiceResultCode int32
-
-const (
-	ManageInvoiceResultCodeManageInvoiceSuccess                ManageInvoiceResultCode = 0
-	ManageInvoiceResultCodeManageInvoiceMalformed              ManageInvoiceResultCode = -1
-	ManageInvoiceResultCodeManageInvoiceBalanceNotFound        ManageInvoiceResultCode = -2
-	ManageInvoiceResultCodeManageInvoiceOverflow               ManageInvoiceResultCode = -3
-	ManageInvoiceResultCodeManageInvoiceNotFound               ManageInvoiceResultCode = -4
-	ManageInvoiceResultCodeManageInvoiceTooManyInvoices        ManageInvoiceResultCode = -5
-	ManageInvoiceResultCodeManageInvoiceCanNotDeleteInProgress ManageInvoiceResultCode = -6
-)
-
-var ManageInvoiceResultCodeAll = []ManageInvoiceResultCode{
-	ManageInvoiceResultCodeManageInvoiceSuccess,
-	ManageInvoiceResultCodeManageInvoiceMalformed,
-	ManageInvoiceResultCodeManageInvoiceBalanceNotFound,
-	ManageInvoiceResultCodeManageInvoiceOverflow,
-	ManageInvoiceResultCodeManageInvoiceNotFound,
-	ManageInvoiceResultCodeManageInvoiceTooManyInvoices,
-	ManageInvoiceResultCodeManageInvoiceCanNotDeleteInProgress,
-}
-
-var manageInvoiceResultCodeMap = map[int32]string{
-	0:  "ManageInvoiceResultCodeManageInvoiceSuccess",
-	-1: "ManageInvoiceResultCodeManageInvoiceMalformed",
-	-2: "ManageInvoiceResultCodeManageInvoiceBalanceNotFound",
-	-3: "ManageInvoiceResultCodeManageInvoiceOverflow",
-	-4: "ManageInvoiceResultCodeManageInvoiceNotFound",
-	-5: "ManageInvoiceResultCodeManageInvoiceTooManyInvoices",
-	-6: "ManageInvoiceResultCodeManageInvoiceCanNotDeleteInProgress",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageInvoiceResultCode
-func (e ManageInvoiceResultCode) ValidEnum(v int32) bool {
-	_, ok := manageInvoiceResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageInvoiceResultCode) String() string {
-	name, _ := manageInvoiceResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ManageInvoiceResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageInvoiceSuccessResultExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageInvoiceSuccessResultExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageInvoiceSuccessResultExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageInvoiceSuccessResultExt
-func (u ManageInvoiceSuccessResultExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageInvoiceSuccessResultExt creates a new  ManageInvoiceSuccessResultExt.
-func NewManageInvoiceSuccessResultExt(v LedgerVersion, value interface{}) (result ManageInvoiceSuccessResultExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageInvoiceSuccessResult is an XDR Struct defines as:
-//
-//   struct ManageInvoiceSuccessResult
-//    {
-//    	uint64 invoiceID;
-//    	AssetCode asset;
-//    	BalanceID senderBalance;
-//
-//    	union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageInvoiceSuccessResult struct {
-	InvoiceId     Uint64                        `json:"invoiceID,omitempty"`
-	Asset         AssetCode                     `json:"asset,omitempty"`
-	SenderBalance BalanceId                     `json:"senderBalance,omitempty"`
-	Ext           ManageInvoiceSuccessResultExt `json:"ext,omitempty"`
-}
-
-// ManageInvoiceResult is an XDR Union defines as:
-//
-//   union ManageInvoiceResult switch (ManageInvoiceResultCode code)
-//    {
-//    case MANAGE_INVOICE_SUCCESS:
-//        ManageInvoiceSuccessResult success;
-//    default:
-//        void;
-//    };
-//
-type ManageInvoiceResult struct {
-	Code    ManageInvoiceResultCode     `json:"code,omitempty"`
-	Success *ManageInvoiceSuccessResult `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageInvoiceResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageInvoiceResult
-func (u ManageInvoiceResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ManageInvoiceResultCode(sw) {
-	case ManageInvoiceResultCodeManageInvoiceSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewManageInvoiceResult creates a new  ManageInvoiceResult.
-func NewManageInvoiceResult(code ManageInvoiceResultCode, value interface{}) (result ManageInvoiceResult, err error) {
-	result.Code = code
-	switch ManageInvoiceResultCode(code) {
-	case ManageInvoiceResultCodeManageInvoiceSuccess:
-		tv, ok := value.(ManageInvoiceSuccessResult)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageInvoiceSuccessResult")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u ManageInvoiceResult) MustSuccess() ManageInvoiceSuccessResult {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageInvoiceResult) GetSuccess() (result ManageInvoiceSuccessResult, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ManageOfferOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageOfferOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageOfferOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageOfferOpExt
-func (u ManageOfferOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageOfferOpExt creates a new  ManageOfferOpExt.
-func NewManageOfferOpExt(v LedgerVersion, value interface{}) (result ManageOfferOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageOfferOp is an XDR Struct defines as:
-//
-//   struct ManageOfferOp
-//    {
-//        BalanceID baseBalance; // balance for base asset
-//    	BalanceID quoteBalance; // balance for quote asset
-//    	bool isBuy;
-//        int64 amount; // if set to 0, delete the offer
-//        int64 price;  // price of base asset in terms of quote
-//
-//        int64 fee;
-//
-//        // 0=create a new offer, otherwise edit an existing offer
-//        uint64 offerID;
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageOfferOp struct {
-	BaseBalance  BalanceId        `json:"baseBalance,omitempty"`
-	QuoteBalance BalanceId        `json:"quoteBalance,omitempty"`
-	IsBuy        bool             `json:"isBuy,omitempty"`
-	Amount       Int64            `json:"amount,omitempty"`
-	Price        Int64            `json:"price,omitempty"`
-	Fee          Int64            `json:"fee,omitempty"`
-	OfferId      Uint64           `json:"offerID,omitempty"`
-	Ext          ManageOfferOpExt `json:"ext,omitempty"`
-}
-
-// ManageOfferResultCode is an XDR Enum defines as:
-//
-//   enum ManageOfferResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        MANAGE_OFFER_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//        MANAGE_OFFER_MALFORMED = -1,     // generated offer would be invalid
-//        MANAGE_OFFER_PAIR_NOT_TRADED = -2, // it's not allowed to trage with this pair
-//        MANAGE_OFFER_BALANCE_NOT_FOUND = -3,  // does not own balance for buying or selling
-//        MANAGE_OFFER_UNDERFUNDED = -4,    // doesn't hold what it's trying to sell
-//        MANAGE_OFFER_CROSS_SELF = -5,     // would cross an offer from the same user
-//    	MANAGE_OFFER_OVERFLOW = -6,
-//    	MANAGE_OFFER_ASSET_PAIR_NOT_TRADABLE = -7,
-//    	MANAGE_OFFER_PHYSICAL_PRICE_RESTRICTION = -8, // offer price violates physical price restriction
-//    	MAANGE_OFFER_CURRENT_PRICE_RESTRICTION = -9,
-//        MANAGE_OFFER_NOT_FOUND = -10, // offerID does not match an existing offer
-//        MANAGE_OFFER_INVALID_PERCENT_FEE = -11,
-//    	MANAGE_OFFER_INSUFFISIENT_PRICE = -12
-//    };
-//
-type ManageOfferResultCode int32
-
-const (
-	ManageOfferResultCodeManageOfferSuccess                  ManageOfferResultCode = 0
-	ManageOfferResultCodeManageOfferMalformed                ManageOfferResultCode = -1
-	ManageOfferResultCodeManageOfferPairNotTraded            ManageOfferResultCode = -2
-	ManageOfferResultCodeManageOfferBalanceNotFound          ManageOfferResultCode = -3
-	ManageOfferResultCodeManageOfferUnderfunded              ManageOfferResultCode = -4
-	ManageOfferResultCodeManageOfferCrossSelf                ManageOfferResultCode = -5
-	ManageOfferResultCodeManageOfferOverflow                 ManageOfferResultCode = -6
-	ManageOfferResultCodeManageOfferAssetPairNotTradable     ManageOfferResultCode = -7
-	ManageOfferResultCodeManageOfferPhysicalPriceRestriction ManageOfferResultCode = -8
-	ManageOfferResultCodeMaangeOfferCurrentPriceRestriction  ManageOfferResultCode = -9
-	ManageOfferResultCodeManageOfferNotFound                 ManageOfferResultCode = -10
-	ManageOfferResultCodeManageOfferInvalidPercentFee        ManageOfferResultCode = -11
-	ManageOfferResultCodeManageOfferInsuffisientPrice        ManageOfferResultCode = -12
-)
-
-var ManageOfferResultCodeAll = []ManageOfferResultCode{
-	ManageOfferResultCodeManageOfferSuccess,
-	ManageOfferResultCodeManageOfferMalformed,
-	ManageOfferResultCodeManageOfferPairNotTraded,
-	ManageOfferResultCodeManageOfferBalanceNotFound,
-	ManageOfferResultCodeManageOfferUnderfunded,
-	ManageOfferResultCodeManageOfferCrossSelf,
-	ManageOfferResultCodeManageOfferOverflow,
-	ManageOfferResultCodeManageOfferAssetPairNotTradable,
-	ManageOfferResultCodeManageOfferPhysicalPriceRestriction,
-	ManageOfferResultCodeMaangeOfferCurrentPriceRestriction,
-	ManageOfferResultCodeManageOfferNotFound,
-	ManageOfferResultCodeManageOfferInvalidPercentFee,
-	ManageOfferResultCodeManageOfferInsuffisientPrice,
-}
-
-var manageOfferResultCodeMap = map[int32]string{
-	0:   "ManageOfferResultCodeManageOfferSuccess",
-	-1:  "ManageOfferResultCodeManageOfferMalformed",
-	-2:  "ManageOfferResultCodeManageOfferPairNotTraded",
-	-3:  "ManageOfferResultCodeManageOfferBalanceNotFound",
-	-4:  "ManageOfferResultCodeManageOfferUnderfunded",
-	-5:  "ManageOfferResultCodeManageOfferCrossSelf",
-	-6:  "ManageOfferResultCodeManageOfferOverflow",
-	-7:  "ManageOfferResultCodeManageOfferAssetPairNotTradable",
-	-8:  "ManageOfferResultCodeManageOfferPhysicalPriceRestriction",
-	-9:  "ManageOfferResultCodeMaangeOfferCurrentPriceRestriction",
-	-10: "ManageOfferResultCodeManageOfferNotFound",
-	-11: "ManageOfferResultCodeManageOfferInvalidPercentFee",
-	-12: "ManageOfferResultCodeManageOfferInsuffisientPrice",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageOfferResultCode
-func (e ManageOfferResultCode) ValidEnum(v int32) bool {
-	_, ok := manageOfferResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageOfferResultCode) String() string {
-	name, _ := manageOfferResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ManageOfferResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ManageOfferEffect is an XDR Enum defines as:
-//
-//   enum ManageOfferEffect
-//    {
-//        MANAGE_OFFER_CREATED = 0,
-//        MANAGE_OFFER_UPDATED = 1,
-//        MANAGE_OFFER_DELETED = 2
-//    };
-//
-type ManageOfferEffect int32
-
-const (
-	ManageOfferEffectManageOfferCreated ManageOfferEffect = 0
-	ManageOfferEffectManageOfferUpdated ManageOfferEffect = 1
-	ManageOfferEffectManageOfferDeleted ManageOfferEffect = 2
-)
-
-var ManageOfferEffectAll = []ManageOfferEffect{
-	ManageOfferEffectManageOfferCreated,
-	ManageOfferEffectManageOfferUpdated,
-	ManageOfferEffectManageOfferDeleted,
-}
-
-var manageOfferEffectMap = map[int32]string{
-	0: "ManageOfferEffectManageOfferCreated",
-	1: "ManageOfferEffectManageOfferUpdated",
-	2: "ManageOfferEffectManageOfferDeleted",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageOfferEffect
-func (e ManageOfferEffect) ValidEnum(v int32) bool {
-	_, ok := manageOfferEffectMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageOfferEffect) String() string {
-	name, _ := manageOfferEffectMap[int32(e)]
-	return name
-}
-
-func (e ManageOfferEffect) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ClaimOfferAtomExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ClaimOfferAtomExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ClaimOfferAtomExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ClaimOfferAtomExt
-func (u ClaimOfferAtomExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewClaimOfferAtomExt creates a new  ClaimOfferAtomExt.
-func NewClaimOfferAtomExt(v LedgerVersion, value interface{}) (result ClaimOfferAtomExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ClaimOfferAtom is an XDR Struct defines as:
-//
-//   struct ClaimOfferAtom
-//    {
-//        // emitted to identify the offer
-//        AccountID bAccountID; // Account that owns the offer
-//        uint64 offerID;
-//    	int64 baseAmount;
-//    	int64 quoteAmount;
-//    	int64 bFeePaid;
-//    	int64 aFeePaid;
-//    	BalanceID baseBalance;
-//    	BalanceID quoteBalance;
-//
-//    	int64 currentPrice;
-//
-//    	union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ClaimOfferAtom struct {
-	BAccountId   AccountId         `json:"bAccountID,omitempty"`
-	OfferId      Uint64            `json:"offerID,omitempty"`
-	BaseAmount   Int64             `json:"baseAmount,omitempty"`
-	QuoteAmount  Int64             `json:"quoteAmount,omitempty"`
-	BFeePaid     Int64             `json:"bFeePaid,omitempty"`
-	AFeePaid     Int64             `json:"aFeePaid,omitempty"`
-	BaseBalance  BalanceId         `json:"baseBalance,omitempty"`
-	QuoteBalance BalanceId         `json:"quoteBalance,omitempty"`
-	CurrentPrice Int64             `json:"currentPrice,omitempty"`
-	Ext          ClaimOfferAtomExt `json:"ext,omitempty"`
-}
-
-// ManageOfferSuccessResultOffer is an XDR NestedUnion defines as:
-//
-//   union switch (ManageOfferEffect effect)
-//        {
-//        case MANAGE_OFFER_CREATED:
-//        case MANAGE_OFFER_UPDATED:
-//            OfferEntry offer;
-//        default:
-//            void;
-//        }
-//
-type ManageOfferSuccessResultOffer struct {
-	Effect ManageOfferEffect `json:"effect,omitempty"`
-	Offer  *OfferEntry       `json:"offer,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageOfferSuccessResultOffer) SwitchFieldName() string {
-	return "Effect"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageOfferSuccessResultOffer
-func (u ManageOfferSuccessResultOffer) ArmForSwitch(sw int32) (string, bool) {
-	switch ManageOfferEffect(sw) {
-	case ManageOfferEffectManageOfferCreated:
-		return "Offer", true
-	case ManageOfferEffectManageOfferUpdated:
-		return "Offer", true
-	default:
-		return "", true
-	}
-}
-
-// NewManageOfferSuccessResultOffer creates a new  ManageOfferSuccessResultOffer.
-func NewManageOfferSuccessResultOffer(effect ManageOfferEffect, value interface{}) (result ManageOfferSuccessResultOffer, err error) {
-	result.Effect = effect
-	switch ManageOfferEffect(effect) {
-	case ManageOfferEffectManageOfferCreated:
-		tv, ok := value.(OfferEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be OfferEntry")
-			return
-		}
-		result.Offer = &tv
-	case ManageOfferEffectManageOfferUpdated:
-		tv, ok := value.(OfferEntry)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be OfferEntry")
-			return
-		}
-		result.Offer = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustOffer retrieves the Offer value from the union,
-// panicing if the value is not set.
-func (u ManageOfferSuccessResultOffer) MustOffer() OfferEntry {
-	val, ok := u.GetOffer()
-
-	if !ok {
-		panic("arm Offer is not set")
-	}
-
-	return val
-}
-
-// GetOffer retrieves the Offer value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageOfferSuccessResultOffer) GetOffer() (result OfferEntry, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Effect))
-
-	if armName == "Offer" {
-		result = *u.Offer
-		ok = true
-	}
-
-	return
-}
-
-// ManageOfferSuccessResultExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ManageOfferSuccessResultExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageOfferSuccessResultExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageOfferSuccessResultExt
-func (u ManageOfferSuccessResultExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageOfferSuccessResultExt creates a new  ManageOfferSuccessResultExt.
-func NewManageOfferSuccessResultExt(v LedgerVersion, value interface{}) (result ManageOfferSuccessResultExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageOfferSuccessResult is an XDR Struct defines as:
-//
-//   struct ManageOfferSuccessResult
-//    {
-//
-//        // offers that got claimed while creating this offer
-//        ClaimOfferAtom offersClaimed<>;
-//    	AssetCode baseAsset;
-//    	AssetCode quoteAsset;
-//
-//        union switch (ManageOfferEffect effect)
-//        {
-//        case MANAGE_OFFER_CREATED:
-//        case MANAGE_OFFER_UPDATED:
-//            OfferEntry offer;
-//        default:
-//            void;
-//        }
-//        offer;
-//
-//    	union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ManageOfferSuccessResult struct {
-	OffersClaimed []ClaimOfferAtom              `json:"offersClaimed,omitempty"`
-	BaseAsset     AssetCode                     `json:"baseAsset,omitempty"`
-	QuoteAsset    AssetCode                     `json:"quoteAsset,omitempty"`
-	Offer         ManageOfferSuccessResultOffer `json:"offer,omitempty"`
-	Ext           ManageOfferSuccessResultExt   `json:"ext,omitempty"`
-}
-
-// ManageOfferResultPhysicalPriceRestrictionExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//
-type ManageOfferResultPhysicalPriceRestrictionExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageOfferResultPhysicalPriceRestrictionExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageOfferResultPhysicalPriceRestrictionExt
-func (u ManageOfferResultPhysicalPriceRestrictionExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageOfferResultPhysicalPriceRestrictionExt creates a new  ManageOfferResultPhysicalPriceRestrictionExt.
-func NewManageOfferResultPhysicalPriceRestrictionExt(v LedgerVersion, value interface{}) (result ManageOfferResultPhysicalPriceRestrictionExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageOfferResultPhysicalPriceRestriction is an XDR NestedStruct defines as:
-//
-//   struct {
-//    		int64 physicalPrice;
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	}
-//
-type ManageOfferResultPhysicalPriceRestriction struct {
-	PhysicalPrice Int64                                        `json:"physicalPrice,omitempty"`
-	Ext           ManageOfferResultPhysicalPriceRestrictionExt `json:"ext,omitempty"`
-}
-
-// ManageOfferResultCurrentPriceRestrictionExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//
-type ManageOfferResultCurrentPriceRestrictionExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageOfferResultCurrentPriceRestrictionExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageOfferResultCurrentPriceRestrictionExt
-func (u ManageOfferResultCurrentPriceRestrictionExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewManageOfferResultCurrentPriceRestrictionExt creates a new  ManageOfferResultCurrentPriceRestrictionExt.
-func NewManageOfferResultCurrentPriceRestrictionExt(v LedgerVersion, value interface{}) (result ManageOfferResultCurrentPriceRestrictionExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ManageOfferResultCurrentPriceRestriction is an XDR NestedStruct defines as:
-//
-//   struct {
-//    		int64 currentPrice;
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	}
-//
-type ManageOfferResultCurrentPriceRestriction struct {
-	CurrentPrice Int64                                       `json:"currentPrice,omitempty"`
-	Ext          ManageOfferResultCurrentPriceRestrictionExt `json:"ext,omitempty"`
-}
-
-// ManageOfferResult is an XDR Union defines as:
-//
-//   union ManageOfferResult switch (ManageOfferResultCode code)
-//    {
-//    case MANAGE_OFFER_SUCCESS:
-//        ManageOfferSuccessResult success;
-//    case MANAGE_OFFER_PHYSICAL_PRICE_RESTRICTION:
-//    	struct {
-//    		int64 physicalPrice;
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	} physicalPriceRestriction;
-//    case MAANGE_OFFER_CURRENT_PRICE_RESTRICTION:
-//    	struct {
-//    		int64 currentPrice;
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	} currentPriceRestriction;
-//
-//    default:
-//        void;
-//    };
-//
-type ManageOfferResult struct {
-	Code                     ManageOfferResultCode                      `json:"code,omitempty"`
-	Success                  *ManageOfferSuccessResult                  `json:"success,omitempty"`
-	PhysicalPriceRestriction *ManageOfferResultPhysicalPriceRestriction `json:"physicalPriceRestriction,omitempty"`
-	CurrentPriceRestriction  *ManageOfferResultCurrentPriceRestriction  `json:"currentPriceRestriction,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ManageOfferResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ManageOfferResult
-func (u ManageOfferResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ManageOfferResultCode(sw) {
-	case ManageOfferResultCodeManageOfferSuccess:
-		return "Success", true
-	case ManageOfferResultCodeManageOfferPhysicalPriceRestriction:
-		return "PhysicalPriceRestriction", true
-	case ManageOfferResultCodeMaangeOfferCurrentPriceRestriction:
-		return "CurrentPriceRestriction", true
-	default:
-		return "", true
-	}
-}
-
-// NewManageOfferResult creates a new  ManageOfferResult.
-func NewManageOfferResult(code ManageOfferResultCode, value interface{}) (result ManageOfferResult, err error) {
-	result.Code = code
-	switch ManageOfferResultCode(code) {
-	case ManageOfferResultCodeManageOfferSuccess:
-		tv, ok := value.(ManageOfferSuccessResult)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageOfferSuccessResult")
-			return
-		}
-		result.Success = &tv
-	case ManageOfferResultCodeManageOfferPhysicalPriceRestriction:
-		tv, ok := value.(ManageOfferResultPhysicalPriceRestriction)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageOfferResultPhysicalPriceRestriction")
-			return
-		}
-		result.PhysicalPriceRestriction = &tv
-	case ManageOfferResultCodeMaangeOfferCurrentPriceRestriction:
-		tv, ok := value.(ManageOfferResultCurrentPriceRestriction)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ManageOfferResultCurrentPriceRestriction")
-			return
-		}
-		result.CurrentPriceRestriction = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u ManageOfferResult) MustSuccess() ManageOfferSuccessResult {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageOfferResult) GetSuccess() (result ManageOfferSuccessResult, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// MustPhysicalPriceRestriction retrieves the PhysicalPriceRestriction value from the union,
-// panicing if the value is not set.
-func (u ManageOfferResult) MustPhysicalPriceRestriction() ManageOfferResultPhysicalPriceRestriction {
-	val, ok := u.GetPhysicalPriceRestriction()
-
-	if !ok {
-		panic("arm PhysicalPriceRestriction is not set")
-	}
-
-	return val
-}
-
-// GetPhysicalPriceRestriction retrieves the PhysicalPriceRestriction value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageOfferResult) GetPhysicalPriceRestriction() (result ManageOfferResultPhysicalPriceRestriction, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "PhysicalPriceRestriction" {
-		result = *u.PhysicalPriceRestriction
-		ok = true
-	}
-
-	return
-}
-
-// MustCurrentPriceRestriction retrieves the CurrentPriceRestriction value from the union,
-// panicing if the value is not set.
-func (u ManageOfferResult) MustCurrentPriceRestriction() ManageOfferResultCurrentPriceRestriction {
-	val, ok := u.GetCurrentPriceRestriction()
-
-	if !ok {
-		panic("arm CurrentPriceRestriction is not set")
-	}
-
-	return val
-}
-
-// GetCurrentPriceRestriction retrieves the CurrentPriceRestriction value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageOfferResult) GetCurrentPriceRestriction() (result ManageOfferResultCurrentPriceRestriction, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "CurrentPriceRestriction" {
-		result = *u.CurrentPriceRestriction
-		ok = true
-	}
-
-	return
-}
-
-// InvoiceReferenceExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type InvoiceReferenceExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u InvoiceReferenceExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of InvoiceReferenceExt
-func (u InvoiceReferenceExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewInvoiceReferenceExt creates a new  InvoiceReferenceExt.
-func NewInvoiceReferenceExt(v LedgerVersion, value interface{}) (result InvoiceReferenceExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// InvoiceReference is an XDR Struct defines as:
-//
-//   struct InvoiceReference {
-//        uint64 invoiceID;
-//        bool accept;
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type InvoiceReference struct {
-	InvoiceId Uint64              `json:"invoiceID,omitempty"`
-	Accept    bool                `json:"accept,omitempty"`
-	Ext       InvoiceReferenceExt `json:"ext,omitempty"`
-}
-
-// FeeDataExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type FeeDataExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u FeeDataExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of FeeDataExt
-func (u FeeDataExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewFeeDataExt creates a new  FeeDataExt.
-func NewFeeDataExt(v LedgerVersion, value interface{}) (result FeeDataExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// FeeData is an XDR Struct defines as:
-//
-//   struct FeeData {
-//        int64 paymentFee;
-//        int64 fixedFee;
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type FeeData struct {
-	PaymentFee Int64      `json:"paymentFee,omitempty"`
-	FixedFee   Int64      `json:"fixedFee,omitempty"`
-	Ext        FeeDataExt `json:"ext,omitempty"`
-}
-
-// PaymentFeeDataExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type PaymentFeeDataExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u PaymentFeeDataExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentFeeDataExt
-func (u PaymentFeeDataExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewPaymentFeeDataExt creates a new  PaymentFeeDataExt.
-func NewPaymentFeeDataExt(v LedgerVersion, value interface{}) (result PaymentFeeDataExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// PaymentFeeData is an XDR Struct defines as:
-//
-//   struct PaymentFeeData {
-//        FeeData sourceFee;
-//        FeeData destinationFee;
-//        bool sourcePaysForDest;    // if true source account pays fee, else destination
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type PaymentFeeData struct {
-	SourceFee         FeeData           `json:"sourceFee,omitempty"`
-	DestinationFee    FeeData           `json:"destinationFee,omitempty"`
-	SourcePaysForDest bool              `json:"sourcePaysForDest,omitempty"`
-	Ext               PaymentFeeDataExt `json:"ext,omitempty"`
-}
-
-// PaymentOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type PaymentOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u PaymentOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentOpExt
-func (u PaymentOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewPaymentOpExt creates a new  PaymentOpExt.
-func NewPaymentOpExt(v LedgerVersion, value interface{}) (result PaymentOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// PaymentOp is an XDR Struct defines as:
-//
-//   struct PaymentOp
-//    {
-//        BalanceID sourceBalanceID;
-//        BalanceID destinationBalanceID;
-//        int64 amount;          // amount they end up with
-//
-//        PaymentFeeData feeData;
-//
-//        string256 subject;
-//        string64 reference;
-//
-//        InvoiceReference* invoiceReference;
-//
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type PaymentOp struct {
-	SourceBalanceId      BalanceId         `json:"sourceBalanceID,omitempty"`
-	DestinationBalanceId BalanceId         `json:"destinationBalanceID,omitempty"`
-	Amount               Int64             `json:"amount,omitempty"`
-	FeeData              PaymentFeeData    `json:"feeData,omitempty"`
-	Subject              String256         `json:"subject,omitempty"`
-	Reference            String64          `json:"reference,omitempty"`
-	InvoiceReference     *InvoiceReference `json:"invoiceReference,omitempty"`
-	Ext                  PaymentOpExt      `json:"ext,omitempty"`
-}
-
-// PaymentResultCode is an XDR Enum defines as:
-//
-//   enum PaymentResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        PAYMENT_SUCCESS = 0, // payment successfuly completed
-//
-//        // codes considered as "failure" for the operation
-//        PAYMENT_MALFORMED = -1,       // bad input
-//        PAYMENT_UNDERFUNDED = -2,     // not enough funds in source account
-//        PAYMENT_LINE_FULL = -3,       // destination would go above their limit
-//    	PAYMENT_FEE_MISMATCHED = -4,   // fee is not equal to expected fee
-//        PAYMENT_BALANCE_NOT_FOUND = -5, // destination balance not found
-//        PAYMENT_BALANCE_ACCOUNT_MISMATCHED = -6,
-//        PAYMENT_BALANCE_ASSETS_MISMATCHED = -7,
-//    	PAYMENT_SRC_BALANCE_NOT_FOUND = -8, // source balance not found
-//        PAYMENT_REFERENCE_DUPLICATION = -9,
-//        PAYMENT_STATS_OVERFLOW = -10,
-//        PAYMENT_LIMITS_EXCEEDED = -11,
-//        PAYMENT_NOT_ALLOWED_BY_ASSET_POLICY = -12,
-//        PAYMENT_INVOICE_NOT_FOUND = -13,
-//        PAYMENT_INVOICE_WRONG_AMOUNT = -14,
-//        PAYMENT_INVOICE_BALANCE_MISMATCH = -15,
-//        PAYMENT_INVOICE_ACCOUNT_MISMATCH = -16,
-//        PAYMENT_INVOICE_ALREADY_PAID = -17
-//    };
-//
-type PaymentResultCode int32
-
-const (
-	PaymentResultCodePaymentSuccess                  PaymentResultCode = 0
-	PaymentResultCodePaymentMalformed                PaymentResultCode = -1
-	PaymentResultCodePaymentUnderfunded              PaymentResultCode = -2
-	PaymentResultCodePaymentLineFull                 PaymentResultCode = -3
-	PaymentResultCodePaymentFeeMismatched            PaymentResultCode = -4
-	PaymentResultCodePaymentBalanceNotFound          PaymentResultCode = -5
-	PaymentResultCodePaymentBalanceAccountMismatched PaymentResultCode = -6
-	PaymentResultCodePaymentBalanceAssetsMismatched  PaymentResultCode = -7
-	PaymentResultCodePaymentSrcBalanceNotFound       PaymentResultCode = -8
-	PaymentResultCodePaymentReferenceDuplication     PaymentResultCode = -9
-	PaymentResultCodePaymentStatsOverflow            PaymentResultCode = -10
-	PaymentResultCodePaymentLimitsExceeded           PaymentResultCode = -11
-	PaymentResultCodePaymentNotAllowedByAssetPolicy  PaymentResultCode = -12
-	PaymentResultCodePaymentInvoiceNotFound          PaymentResultCode = -13
-	PaymentResultCodePaymentInvoiceWrongAmount       PaymentResultCode = -14
-	PaymentResultCodePaymentInvoiceBalanceMismatch   PaymentResultCode = -15
-	PaymentResultCodePaymentInvoiceAccountMismatch   PaymentResultCode = -16
-	PaymentResultCodePaymentInvoiceAlreadyPaid       PaymentResultCode = -17
-)
-
-var PaymentResultCodeAll = []PaymentResultCode{
-	PaymentResultCodePaymentSuccess,
-	PaymentResultCodePaymentMalformed,
-	PaymentResultCodePaymentUnderfunded,
-	PaymentResultCodePaymentLineFull,
-	PaymentResultCodePaymentFeeMismatched,
-	PaymentResultCodePaymentBalanceNotFound,
-	PaymentResultCodePaymentBalanceAccountMismatched,
-	PaymentResultCodePaymentBalanceAssetsMismatched,
-	PaymentResultCodePaymentSrcBalanceNotFound,
-	PaymentResultCodePaymentReferenceDuplication,
-	PaymentResultCodePaymentStatsOverflow,
-	PaymentResultCodePaymentLimitsExceeded,
-	PaymentResultCodePaymentNotAllowedByAssetPolicy,
-	PaymentResultCodePaymentInvoiceNotFound,
-	PaymentResultCodePaymentInvoiceWrongAmount,
-	PaymentResultCodePaymentInvoiceBalanceMismatch,
-	PaymentResultCodePaymentInvoiceAccountMismatch,
-	PaymentResultCodePaymentInvoiceAlreadyPaid,
-}
-
-var paymentResultCodeMap = map[int32]string{
-	0:   "PaymentResultCodePaymentSuccess",
-	-1:  "PaymentResultCodePaymentMalformed",
-	-2:  "PaymentResultCodePaymentUnderfunded",
-	-3:  "PaymentResultCodePaymentLineFull",
-	-4:  "PaymentResultCodePaymentFeeMismatched",
-	-5:  "PaymentResultCodePaymentBalanceNotFound",
-	-6:  "PaymentResultCodePaymentBalanceAccountMismatched",
-	-7:  "PaymentResultCodePaymentBalanceAssetsMismatched",
-	-8:  "PaymentResultCodePaymentSrcBalanceNotFound",
-	-9:  "PaymentResultCodePaymentReferenceDuplication",
-	-10: "PaymentResultCodePaymentStatsOverflow",
-	-11: "PaymentResultCodePaymentLimitsExceeded",
-	-12: "PaymentResultCodePaymentNotAllowedByAssetPolicy",
-	-13: "PaymentResultCodePaymentInvoiceNotFound",
-	-14: "PaymentResultCodePaymentInvoiceWrongAmount",
-	-15: "PaymentResultCodePaymentInvoiceBalanceMismatch",
-	-16: "PaymentResultCodePaymentInvoiceAccountMismatch",
-	-17: "PaymentResultCodePaymentInvoiceAlreadyPaid",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for PaymentResultCode
-func (e PaymentResultCode) ValidEnum(v int32) bool {
-	_, ok := paymentResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e PaymentResultCode) String() string {
-	name, _ := paymentResultCodeMap[int32(e)]
-	return name
-}
-
-func (e PaymentResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// PaymentResponseExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type PaymentResponseExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u PaymentResponseExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentResponseExt
-func (u PaymentResponseExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewPaymentResponseExt creates a new  PaymentResponseExt.
-func NewPaymentResponseExt(v LedgerVersion, value interface{}) (result PaymentResponseExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// PaymentResponse is an XDR Struct defines as:
-//
-//   struct PaymentResponse {
-//        AccountID destination;
-//        uint64 paymentID;
-//        AssetCode asset;
 //        // reserved for future use
 //        union switch (LedgerVersion v)
 //        {
@@ -9111,2152 +5859,66 @@ func NewPaymentResponseExt(v LedgerVersion, value interface{}) (result PaymentRe
 //        ext;
 //    };
 //
-type PaymentResponse struct {
-	Destination AccountId          `json:"destination,omitempty"`
-	PaymentId   Uint64             `json:"paymentID,omitempty"`
-	Asset       AssetCode          `json:"asset,omitempty"`
-	Ext         PaymentResponseExt `json:"ext,omitempty"`
-}
-
-// PaymentResult is an XDR Union defines as:
-//
-//   union PaymentResult switch (PaymentResultCode code)
-//    {
-//    case PAYMENT_SUCCESS:
-//        PaymentResponse paymentResponse;
-//    default:
-//        void;
-//    };
-//
-type PaymentResult struct {
-	Code            PaymentResultCode `json:"code,omitempty"`
-	PaymentResponse *PaymentResponse  `json:"paymentResponse,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u PaymentResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentResult
-func (u PaymentResult) ArmForSwitch(sw int32) (string, bool) {
-	switch PaymentResultCode(sw) {
-	case PaymentResultCodePaymentSuccess:
-		return "PaymentResponse", true
-	default:
-		return "", true
-	}
-}
-
-// NewPaymentResult creates a new  PaymentResult.
-func NewPaymentResult(code PaymentResultCode, value interface{}) (result PaymentResult, err error) {
-	result.Code = code
-	switch PaymentResultCode(code) {
-	case PaymentResultCodePaymentSuccess:
-		tv, ok := value.(PaymentResponse)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be PaymentResponse")
-			return
-		}
-		result.PaymentResponse = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustPaymentResponse retrieves the PaymentResponse value from the union,
-// panicing if the value is not set.
-func (u PaymentResult) MustPaymentResponse() PaymentResponse {
-	val, ok := u.GetPaymentResponse()
-
-	if !ok {
-		panic("arm PaymentResponse is not set")
-	}
-
-	return val
-}
-
-// GetPaymentResponse retrieves the PaymentResponse value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u PaymentResult) GetPaymentResponse() (result PaymentResponse, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "PaymentResponse" {
-		result = *u.PaymentResponse
-		ok = true
-	}
-
-	return
-}
-
-// RecoverOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type RecoverOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u RecoverOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of RecoverOpExt
-func (u RecoverOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewRecoverOpExt creates a new  RecoverOpExt.
-func NewRecoverOpExt(v LedgerVersion, value interface{}) (result RecoverOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// RecoverOp is an XDR Struct defines as:
-//
-//   struct RecoverOp
-//    {
-//        AccountID account;
-//        PublicKey oldSigner;
-//        PublicKey newSigner;
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type RecoverOp struct {
-	Account   AccountId    `json:"account,omitempty"`
-	OldSigner PublicKey    `json:"oldSigner,omitempty"`
-	NewSigner PublicKey    `json:"newSigner,omitempty"`
-	Ext       RecoverOpExt `json:"ext,omitempty"`
-}
-
-// RecoverResultCode is an XDR Enum defines as:
-//
-//   enum RecoverResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        RECOVER_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//
-//        RECOVER_MALFORMED = -1,
-//        RECOVER_OLD_SIGNER_NOT_FOUND = -2,
-//        RECOVER_SIGNER_ALREADY_EXISTS = -3
-//    };
-//
-type RecoverResultCode int32
-
-const (
-	RecoverResultCodeRecoverSuccess             RecoverResultCode = 0
-	RecoverResultCodeRecoverMalformed           RecoverResultCode = -1
-	RecoverResultCodeRecoverOldSignerNotFound   RecoverResultCode = -2
-	RecoverResultCodeRecoverSignerAlreadyExists RecoverResultCode = -3
-)
-
-var RecoverResultCodeAll = []RecoverResultCode{
-	RecoverResultCodeRecoverSuccess,
-	RecoverResultCodeRecoverMalformed,
-	RecoverResultCodeRecoverOldSignerNotFound,
-	RecoverResultCodeRecoverSignerAlreadyExists,
-}
-
-var recoverResultCodeMap = map[int32]string{
-	0:  "RecoverResultCodeRecoverSuccess",
-	-1: "RecoverResultCodeRecoverMalformed",
-	-2: "RecoverResultCodeRecoverOldSignerNotFound",
-	-3: "RecoverResultCodeRecoverSignerAlreadyExists",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for RecoverResultCode
-func (e RecoverResultCode) ValidEnum(v int32) bool {
-	_, ok := recoverResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e RecoverResultCode) String() string {
-	name, _ := recoverResultCodeMap[int32(e)]
-	return name
-}
-
-func (e RecoverResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// RecoverResultSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//
-type RecoverResultSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u RecoverResultSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of RecoverResultSuccessExt
-func (u RecoverResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewRecoverResultSuccessExt creates a new  RecoverResultSuccessExt.
-func NewRecoverResultSuccessExt(v LedgerVersion, value interface{}) (result RecoverResultSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// RecoverResultSuccess is an XDR NestedStruct defines as:
-//
-//   struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	}
-//
-type RecoverResultSuccess struct {
-	Ext RecoverResultSuccessExt `json:"ext,omitempty"`
-}
-
-// RecoverResult is an XDR Union defines as:
-//
-//   union RecoverResult switch (RecoverResultCode code)
-//    {
-//    case RECOVER_SUCCESS:
-//        struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	} success;
-//    default:
-//        void;
-//    };
-//
-type RecoverResult struct {
-	Code    RecoverResultCode     `json:"code,omitempty"`
-	Success *RecoverResultSuccess `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u RecoverResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of RecoverResult
-func (u RecoverResult) ArmForSwitch(sw int32) (string, bool) {
-	switch RecoverResultCode(sw) {
-	case RecoverResultCodeRecoverSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewRecoverResult creates a new  RecoverResult.
-func NewRecoverResult(code RecoverResultCode, value interface{}) (result RecoverResult, err error) {
-	result.Code = code
-	switch RecoverResultCode(code) {
-	case RecoverResultCodeRecoverSuccess:
-		tv, ok := value.(RecoverResultSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be RecoverResultSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u RecoverResult) MustSuccess() RecoverResultSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u RecoverResult) GetSuccess() (result RecoverResultSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ReviewCoinsEmissionRequestOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ReviewCoinsEmissionRequestOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ReviewCoinsEmissionRequestOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ReviewCoinsEmissionRequestOpExt
-func (u ReviewCoinsEmissionRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewReviewCoinsEmissionRequestOpExt creates a new  ReviewCoinsEmissionRequestOpExt.
-func NewReviewCoinsEmissionRequestOpExt(v LedgerVersion, value interface{}) (result ReviewCoinsEmissionRequestOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ReviewCoinsEmissionRequestOp is an XDR Struct defines as:
-//
-//   struct ReviewCoinsEmissionRequestOp
-//    {
-//    	CoinsEmissionRequestEntry request;  // request to be reviewed
-//    	bool approve;
-//    	string64 reason;
-//    	// reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ReviewCoinsEmissionRequestOp struct {
-	Request CoinsEmissionRequestEntry       `json:"request,omitempty"`
-	Approve bool                            `json:"approve,omitempty"`
-	Reason  String64                        `json:"reason,omitempty"`
-	Ext     ReviewCoinsEmissionRequestOpExt `json:"ext,omitempty"`
-}
-
-// ReviewCoinsEmissionRequestResultCode is an XDR Enum defines as:
-//
-//   enum ReviewCoinsEmissionRequestResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        REVIEW_COINS_EMISSION_REQUEST_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//        REVIEW_COINS_EMISSION_REQUEST_INVALID_REASON = -1,        // reason must be null if approving
-//    	REVIEW_COINS_EMISSION_REQUEST_NOT_FOUND = -2,             // failed to find emission request with such ID
-//    	REVIEW_COINS_EMISSION_REQUEST_NOT_EQUAL = -3,             // stored emission request is not equal to request provided in op
-//    	REVIEW_COINS_EMISSION_REQUEST_ALREADY_REVIEWED = -4,      // emission request have been already reviewed
-//    	REVIEW_COINS_EMISSION_REQUEST_MALFORMED = -5,             // emission request is malformed
-//        REVIEW_COINS_EMISSION_REQUEST_NOT_ENOUGH_PREEMISSIONS = -6,    // serial is already used in another review
-//    	REVIEW_COINS_EMISSION_REQUEST_LINE_FULL = -9,             // balance will overflow
-//        REVIEW_COINS_EMISSION_REQUEST_ASSET_NOT_FOUND = -10,
-//        REVIEW_COINS_EMISSION_REQUEST_BALANCE_NOT_FOUND = -11,
-//    	REVIEW_COINS_EMISSION_REQUEST_REFERENCE_DUPLICATION = -12
-//    };
-//
-type ReviewCoinsEmissionRequestResultCode int32
-
-const (
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestSuccess               ReviewCoinsEmissionRequestResultCode = 0
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestInvalidReason         ReviewCoinsEmissionRequestResultCode = -1
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestNotFound              ReviewCoinsEmissionRequestResultCode = -2
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestNotEqual              ReviewCoinsEmissionRequestResultCode = -3
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestAlreadyReviewed       ReviewCoinsEmissionRequestResultCode = -4
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestMalformed             ReviewCoinsEmissionRequestResultCode = -5
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestNotEnoughPreemissions ReviewCoinsEmissionRequestResultCode = -6
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestLineFull              ReviewCoinsEmissionRequestResultCode = -9
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestAssetNotFound         ReviewCoinsEmissionRequestResultCode = -10
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestBalanceNotFound       ReviewCoinsEmissionRequestResultCode = -11
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestReferenceDuplication  ReviewCoinsEmissionRequestResultCode = -12
-)
-
-var ReviewCoinsEmissionRequestResultCodeAll = []ReviewCoinsEmissionRequestResultCode{
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestSuccess,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestInvalidReason,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestNotFound,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestNotEqual,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestAlreadyReviewed,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestMalformed,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestNotEnoughPreemissions,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestLineFull,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestAssetNotFound,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestBalanceNotFound,
-	ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestReferenceDuplication,
-}
-
-var reviewCoinsEmissionRequestResultCodeMap = map[int32]string{
-	0:   "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestSuccess",
-	-1:  "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestInvalidReason",
-	-2:  "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestNotFound",
-	-3:  "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestNotEqual",
-	-4:  "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestAlreadyReviewed",
-	-5:  "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestMalformed",
-	-6:  "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestNotEnoughPreemissions",
-	-9:  "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestLineFull",
-	-10: "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestAssetNotFound",
-	-11: "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestBalanceNotFound",
-	-12: "ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestReferenceDuplication",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ReviewCoinsEmissionRequestResultCode
-func (e ReviewCoinsEmissionRequestResultCode) ValidEnum(v int32) bool {
-	_, ok := reviewCoinsEmissionRequestResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ReviewCoinsEmissionRequestResultCode) String() string {
-	name, _ := reviewCoinsEmissionRequestResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ReviewCoinsEmissionRequestResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ReviewCoinsEmissionRequestResultSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//
-type ReviewCoinsEmissionRequestResultSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ReviewCoinsEmissionRequestResultSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ReviewCoinsEmissionRequestResultSuccessExt
-func (u ReviewCoinsEmissionRequestResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewReviewCoinsEmissionRequestResultSuccessExt creates a new  ReviewCoinsEmissionRequestResultSuccessExt.
-func NewReviewCoinsEmissionRequestResultSuccessExt(v LedgerVersion, value interface{}) (result ReviewCoinsEmissionRequestResultSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ReviewCoinsEmissionRequestResultSuccess is an XDR NestedStruct defines as:
-//
-//   struct {
-//    		uint64 requestID;
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	}
-//
-type ReviewCoinsEmissionRequestResultSuccess struct {
-	RequestId Uint64                                     `json:"requestID,omitempty"`
-	Ext       ReviewCoinsEmissionRequestResultSuccessExt `json:"ext,omitempty"`
-}
-
-// ReviewCoinsEmissionRequestResult is an XDR Union defines as:
-//
-//   union ReviewCoinsEmissionRequestResult switch (ReviewCoinsEmissionRequestResultCode code)
-//    {
-//    case REVIEW_COINS_EMISSION_REQUEST_SUCCESS:
-//    	struct {
-//    		uint64 requestID;
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	} success;
-//    default:
-//        void;
-//    };
-//
-type ReviewCoinsEmissionRequestResult struct {
-	Code    ReviewCoinsEmissionRequestResultCode     `json:"code,omitempty"`
-	Success *ReviewCoinsEmissionRequestResultSuccess `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ReviewCoinsEmissionRequestResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ReviewCoinsEmissionRequestResult
-func (u ReviewCoinsEmissionRequestResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ReviewCoinsEmissionRequestResultCode(sw) {
-	case ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewReviewCoinsEmissionRequestResult creates a new  ReviewCoinsEmissionRequestResult.
-func NewReviewCoinsEmissionRequestResult(code ReviewCoinsEmissionRequestResultCode, value interface{}) (result ReviewCoinsEmissionRequestResult, err error) {
-	result.Code = code
-	switch ReviewCoinsEmissionRequestResultCode(code) {
-	case ReviewCoinsEmissionRequestResultCodeReviewCoinsEmissionRequestSuccess:
-		tv, ok := value.(ReviewCoinsEmissionRequestResultSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ReviewCoinsEmissionRequestResultSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u ReviewCoinsEmissionRequestResult) MustSuccess() ReviewCoinsEmissionRequestResultSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ReviewCoinsEmissionRequestResult) GetSuccess() (result ReviewCoinsEmissionRequestResultSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ReviewPaymentRequestOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//
-type ReviewPaymentRequestOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ReviewPaymentRequestOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ReviewPaymentRequestOpExt
-func (u ReviewPaymentRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewReviewPaymentRequestOpExt creates a new  ReviewPaymentRequestOpExt.
-func NewReviewPaymentRequestOpExt(v LedgerVersion, value interface{}) (result ReviewPaymentRequestOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ReviewPaymentRequestOp is an XDR Struct defines as:
-//
-//   struct ReviewPaymentRequestOp
-//    {
-//        uint64 paymentID;
-//
-//    	bool accept;
-//        string256* rejectReason;
-//    	// reserved for future use
-//    	union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//    	ext;
-//    };
-//
-type ReviewPaymentRequestOp struct {
-	PaymentId    Uint64                    `json:"paymentID,omitempty"`
-	Accept       bool                      `json:"accept,omitempty"`
-	RejectReason *String256                `json:"rejectReason,omitempty"`
-	Ext          ReviewPaymentRequestOpExt `json:"ext,omitempty"`
-}
-
-// ReviewPaymentRequestResultCode is an XDR Enum defines as:
-//
-//   enum ReviewPaymentRequestResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        REVIEW_PAYMENT_REQUEST_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//    	REVIEW_PAYMENT_REQUEST_NOT_FOUND = -1,           // failed to find Recovery request with such ID
-//        REVIEW_PAYMENT_REQUEST_LINE_FULL = -2
-//    };
-//
-type ReviewPaymentRequestResultCode int32
-
-const (
-	ReviewPaymentRequestResultCodeReviewPaymentRequestSuccess  ReviewPaymentRequestResultCode = 0
-	ReviewPaymentRequestResultCodeReviewPaymentRequestNotFound ReviewPaymentRequestResultCode = -1
-	ReviewPaymentRequestResultCodeReviewPaymentRequestLineFull ReviewPaymentRequestResultCode = -2
-)
-
-var ReviewPaymentRequestResultCodeAll = []ReviewPaymentRequestResultCode{
-	ReviewPaymentRequestResultCodeReviewPaymentRequestSuccess,
-	ReviewPaymentRequestResultCodeReviewPaymentRequestNotFound,
-	ReviewPaymentRequestResultCodeReviewPaymentRequestLineFull,
-}
-
-var reviewPaymentRequestResultCodeMap = map[int32]string{
-	0:  "ReviewPaymentRequestResultCodeReviewPaymentRequestSuccess",
-	-1: "ReviewPaymentRequestResultCodeReviewPaymentRequestNotFound",
-	-2: "ReviewPaymentRequestResultCodeReviewPaymentRequestLineFull",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ReviewPaymentRequestResultCode
-func (e ReviewPaymentRequestResultCode) ValidEnum(v int32) bool {
-	_, ok := reviewPaymentRequestResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ReviewPaymentRequestResultCode) String() string {
-	name, _ := reviewPaymentRequestResultCodeMap[int32(e)]
-	return name
-}
-
-func (e ReviewPaymentRequestResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// PaymentState is an XDR Enum defines as:
-//
-//   enum PaymentState
-//    {
-//        PAYMENT_PENDING = 0,
-//        PAYMENT_PROCESSED = 1,
-//        PAYMENT_REJECTED = 2
-//    };
-//
-type PaymentState int32
-
-const (
-	PaymentStatePaymentPending   PaymentState = 0
-	PaymentStatePaymentProcessed PaymentState = 1
-	PaymentStatePaymentRejected  PaymentState = 2
-)
-
-var PaymentStateAll = []PaymentState{
-	PaymentStatePaymentPending,
-	PaymentStatePaymentProcessed,
-	PaymentStatePaymentRejected,
-}
-
-var paymentStateMap = map[int32]string{
-	0: "PaymentStatePaymentPending",
-	1: "PaymentStatePaymentProcessed",
-	2: "PaymentStatePaymentRejected",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for PaymentState
-func (e PaymentState) ValidEnum(v int32) bool {
-	_, ok := paymentStateMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e PaymentState) String() string {
-	name, _ := paymentStateMap[int32(e)]
-	return name
-}
-
-func (e PaymentState) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ReviewPaymentResponseExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//
-type ReviewPaymentResponseExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ReviewPaymentResponseExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ReviewPaymentResponseExt
-func (u ReviewPaymentResponseExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewReviewPaymentResponseExt creates a new  ReviewPaymentResponseExt.
-func NewReviewPaymentResponseExt(v LedgerVersion, value interface{}) (result ReviewPaymentResponseExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ReviewPaymentResponse is an XDR Struct defines as:
-//
-//   struct ReviewPaymentResponse {
-//        PaymentState state;
-//
-//        uint64* relatedInvoiceID;
-//    	// reserved for future use
-//    	union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//    	ext;
-//    };
-//
-type ReviewPaymentResponse struct {
-	State            PaymentState             `json:"state,omitempty"`
-	RelatedInvoiceId *Uint64                  `json:"relatedInvoiceID,omitempty"`
-	Ext              ReviewPaymentResponseExt `json:"ext,omitempty"`
-}
-
-// ReviewPaymentRequestResult is an XDR Union defines as:
-//
-//   union ReviewPaymentRequestResult switch (ReviewPaymentRequestResultCode code)
-//    {
-//    case REVIEW_PAYMENT_REQUEST_SUCCESS:
-//        ReviewPaymentResponse reviewPaymentResponse;
-//    default:
-//        void;
-//    };
-//
-type ReviewPaymentRequestResult struct {
-	Code                  ReviewPaymentRequestResultCode `json:"code,omitempty"`
-	ReviewPaymentResponse *ReviewPaymentResponse         `json:"reviewPaymentResponse,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ReviewPaymentRequestResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ReviewPaymentRequestResult
-func (u ReviewPaymentRequestResult) ArmForSwitch(sw int32) (string, bool) {
-	switch ReviewPaymentRequestResultCode(sw) {
-	case ReviewPaymentRequestResultCodeReviewPaymentRequestSuccess:
-		return "ReviewPaymentResponse", true
-	default:
-		return "", true
-	}
-}
-
-// NewReviewPaymentRequestResult creates a new  ReviewPaymentRequestResult.
-func NewReviewPaymentRequestResult(code ReviewPaymentRequestResultCode, value interface{}) (result ReviewPaymentRequestResult, err error) {
-	result.Code = code
-	switch ReviewPaymentRequestResultCode(code) {
-	case ReviewPaymentRequestResultCodeReviewPaymentRequestSuccess:
-		tv, ok := value.(ReviewPaymentResponse)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ReviewPaymentResponse")
-			return
-		}
-		result.ReviewPaymentResponse = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustReviewPaymentResponse retrieves the ReviewPaymentResponse value from the union,
-// panicing if the value is not set.
-func (u ReviewPaymentRequestResult) MustReviewPaymentResponse() ReviewPaymentResponse {
-	val, ok := u.GetReviewPaymentResponse()
-
-	if !ok {
-		panic("arm ReviewPaymentResponse is not set")
-	}
-
-	return val
-}
-
-// GetReviewPaymentResponse retrieves the ReviewPaymentResponse value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ReviewPaymentRequestResult) GetReviewPaymentResponse() (result ReviewPaymentResponse, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "ReviewPaymentResponse" {
-		result = *u.ReviewPaymentResponse
-		ok = true
-	}
-
-	return
-}
-
-// SetFeesOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//
-type SetFeesOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SetFeesOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SetFeesOpExt
-func (u SetFeesOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewSetFeesOpExt creates a new  SetFeesOpExt.
-func NewSetFeesOpExt(v LedgerVersion, value interface{}) (result SetFeesOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// SetFeesOp is an XDR Struct defines as:
-//
-//   struct SetFeesOp
-//        {
-//            FeeEntry* fee;
-//    		bool isDelete;
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//        };
-//
-type SetFeesOp struct {
-	Fee      *FeeEntry    `json:"fee,omitempty"`
-	IsDelete bool         `json:"isDelete,omitempty"`
-	Ext      SetFeesOpExt `json:"ext,omitempty"`
-}
-
-// SetFeesResultCode is an XDR Enum defines as:
-//
-//   enum SetFeesResultCode
-//        {
-//            // codes considered as "success" for the operation
-//            SET_FEES_SUCCESS = 0,
-//
-//            // codes considered as "failure" for the operation
-//            SET_FEES_INVALID_AMOUNT = -1,      // amount is negative
-//    		SET_FEES_INVALID_FEE_TYPE = -2,     // operation type is invalid
-//            SET_FEES_ASSET_NOT_FOUND = -3,
-//            SET_FEES_INVALID_ASSET = -4,
-//            SET_FEES_MALFORMED = -5,
-//    		SET_FEES_MALFORMED_RANGE = -6,
-//    		SET_FEES_RANGE_OVERLAP = -7,
-//    		SET_FEES_NOT_FOUND = -8,
-//    		SET_FEES_SUB_TYPE_NOT_EXIST = -9
-//        };
-//
-type SetFeesResultCode int32
-
-const (
-	SetFeesResultCodeSetFeesSuccess         SetFeesResultCode = 0
-	SetFeesResultCodeSetFeesInvalidAmount   SetFeesResultCode = -1
-	SetFeesResultCodeSetFeesInvalidFeeType  SetFeesResultCode = -2
-	SetFeesResultCodeSetFeesAssetNotFound   SetFeesResultCode = -3
-	SetFeesResultCodeSetFeesInvalidAsset    SetFeesResultCode = -4
-	SetFeesResultCodeSetFeesMalformed       SetFeesResultCode = -5
-	SetFeesResultCodeSetFeesMalformedRange  SetFeesResultCode = -6
-	SetFeesResultCodeSetFeesRangeOverlap    SetFeesResultCode = -7
-	SetFeesResultCodeSetFeesNotFound        SetFeesResultCode = -8
-	SetFeesResultCodeSetFeesSubTypeNotExist SetFeesResultCode = -9
-)
-
-var SetFeesResultCodeAll = []SetFeesResultCode{
-	SetFeesResultCodeSetFeesSuccess,
-	SetFeesResultCodeSetFeesInvalidAmount,
-	SetFeesResultCodeSetFeesInvalidFeeType,
-	SetFeesResultCodeSetFeesAssetNotFound,
-	SetFeesResultCodeSetFeesInvalidAsset,
-	SetFeesResultCodeSetFeesMalformed,
-	SetFeesResultCodeSetFeesMalformedRange,
-	SetFeesResultCodeSetFeesRangeOverlap,
-	SetFeesResultCodeSetFeesNotFound,
-	SetFeesResultCodeSetFeesSubTypeNotExist,
-}
-
-var setFeesResultCodeMap = map[int32]string{
-	0:  "SetFeesResultCodeSetFeesSuccess",
-	-1: "SetFeesResultCodeSetFeesInvalidAmount",
-	-2: "SetFeesResultCodeSetFeesInvalidFeeType",
-	-3: "SetFeesResultCodeSetFeesAssetNotFound",
-	-4: "SetFeesResultCodeSetFeesInvalidAsset",
-	-5: "SetFeesResultCodeSetFeesMalformed",
-	-6: "SetFeesResultCodeSetFeesMalformedRange",
-	-7: "SetFeesResultCodeSetFeesRangeOverlap",
-	-8: "SetFeesResultCodeSetFeesNotFound",
-	-9: "SetFeesResultCodeSetFeesSubTypeNotExist",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for SetFeesResultCode
-func (e SetFeesResultCode) ValidEnum(v int32) bool {
-	_, ok := setFeesResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e SetFeesResultCode) String() string {
-	name, _ := setFeesResultCodeMap[int32(e)]
-	return name
-}
-
-func (e SetFeesResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// SetFeesResultSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    				{
-//    				case EMPTY_VERSION:
-//    					void;
-//    				}
-//
-type SetFeesResultSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SetFeesResultSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SetFeesResultSuccessExt
-func (u SetFeesResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewSetFeesResultSuccessExt creates a new  SetFeesResultSuccessExt.
-func NewSetFeesResultSuccessExt(v LedgerVersion, value interface{}) (result SetFeesResultSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// SetFeesResultSuccess is an XDR NestedStruct defines as:
-//
-//   struct {
-//    				// reserved for future use
-//    				union switch (LedgerVersion v)
-//    				{
-//    				case EMPTY_VERSION:
-//    					void;
-//    				}
-//    				ext;
-//    			}
-//
-type SetFeesResultSuccess struct {
-	Ext SetFeesResultSuccessExt `json:"ext,omitempty"`
-}
-
-// SetFeesResult is an XDR Union defines as:
-//
-//   union SetFeesResult switch (SetFeesResultCode code)
-//        {
-//            case SET_FEES_SUCCESS:
-//                struct {
-//    				// reserved for future use
-//    				union switch (LedgerVersion v)
-//    				{
-//    				case EMPTY_VERSION:
-//    					void;
-//    				}
-//    				ext;
-//    			} success;
-//            default:
-//                void;
-//        };
-//
-type SetFeesResult struct {
-	Code    SetFeesResultCode     `json:"code,omitempty"`
-	Success *SetFeesResultSuccess `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SetFeesResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SetFeesResult
-func (u SetFeesResult) ArmForSwitch(sw int32) (string, bool) {
-	switch SetFeesResultCode(sw) {
-	case SetFeesResultCodeSetFeesSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewSetFeesResult creates a new  SetFeesResult.
-func NewSetFeesResult(code SetFeesResultCode, value interface{}) (result SetFeesResult, err error) {
-	result.Code = code
-	switch SetFeesResultCode(code) {
-	case SetFeesResultCodeSetFeesSuccess:
-		tv, ok := value.(SetFeesResultSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be SetFeesResultSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u SetFeesResult) MustSuccess() SetFeesResultSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u SetFeesResult) GetSuccess() (result SetFeesResultSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// SetLimitsOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//
-type SetLimitsOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SetLimitsOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SetLimitsOpExt
-func (u SetLimitsOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewSetLimitsOpExt creates a new  SetLimitsOpExt.
-func NewSetLimitsOpExt(v LedgerVersion, value interface{}) (result SetLimitsOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// SetLimitsOp is an XDR Struct defines as:
-//
-//   struct SetLimitsOp
-//    {
-//        AccountID* account;
-//        AccountType* accountType;
-//
-//        Limits limits;
-//    	// reserved for future use
-//    	union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//    	ext;
-//    };
-//
-type SetLimitsOp struct {
-	Account     *AccountId     `json:"account,omitempty"`
-	AccountType *AccountType   `json:"accountType,omitempty"`
-	Limits      Limits         `json:"limits,omitempty"`
-	Ext         SetLimitsOpExt `json:"ext,omitempty"`
-}
-
-// SetLimitsResultCode is an XDR Enum defines as:
-//
-//   enum SetLimitsResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        SET_LIMITS_SUCCESS = 0,
-//        // codes considered as "failure" for the operation
-//        SET_LIMITS_MALFORMED = -1
-//    };
-//
-type SetLimitsResultCode int32
-
-const (
-	SetLimitsResultCodeSetLimitsSuccess   SetLimitsResultCode = 0
-	SetLimitsResultCodeSetLimitsMalformed SetLimitsResultCode = -1
-)
-
-var SetLimitsResultCodeAll = []SetLimitsResultCode{
-	SetLimitsResultCodeSetLimitsSuccess,
-	SetLimitsResultCodeSetLimitsMalformed,
-}
-
-var setLimitsResultCodeMap = map[int32]string{
-	0:  "SetLimitsResultCodeSetLimitsSuccess",
-	-1: "SetLimitsResultCodeSetLimitsMalformed",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for SetLimitsResultCode
-func (e SetLimitsResultCode) ValidEnum(v int32) bool {
-	_, ok := setLimitsResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e SetLimitsResultCode) String() string {
-	name, _ := setLimitsResultCodeMap[int32(e)]
-	return name
-}
-
-func (e SetLimitsResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// SetLimitsResultSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//
-type SetLimitsResultSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SetLimitsResultSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SetLimitsResultSuccessExt
-func (u SetLimitsResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewSetLimitsResultSuccessExt creates a new  SetLimitsResultSuccessExt.
-func NewSetLimitsResultSuccessExt(v LedgerVersion, value interface{}) (result SetLimitsResultSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// SetLimitsResultSuccess is an XDR NestedStruct defines as:
-//
-//   struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	}
-//
-type SetLimitsResultSuccess struct {
-	Ext SetLimitsResultSuccessExt `json:"ext,omitempty"`
-}
-
-// SetLimitsResult is an XDR Union defines as:
-//
-//   union SetLimitsResult switch (SetLimitsResultCode code)
-//    {
-//    case SET_LIMITS_SUCCESS:
-//        struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	} success;
-//    default:
-//        void;
-//    };
-//
-type SetLimitsResult struct {
-	Code    SetLimitsResultCode     `json:"code,omitempty"`
-	Success *SetLimitsResultSuccess `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SetLimitsResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SetLimitsResult
-func (u SetLimitsResult) ArmForSwitch(sw int32) (string, bool) {
-	switch SetLimitsResultCode(sw) {
-	case SetLimitsResultCodeSetLimitsSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewSetLimitsResult creates a new  SetLimitsResult.
-func NewSetLimitsResult(code SetLimitsResultCode, value interface{}) (result SetLimitsResult, err error) {
-	result.Code = code
-	switch SetLimitsResultCode(code) {
-	case SetLimitsResultCodeSetLimitsSuccess:
-		tv, ok := value.(SetLimitsResultSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be SetLimitsResultSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u SetLimitsResult) MustSuccess() SetLimitsResultSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u SetLimitsResult) GetSuccess() (result SetLimitsResultSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// ManageTrustAction is an XDR Enum defines as:
-//
-//   enum ManageTrustAction
-//    {
-//        TRUST_ADD = 0,
-//        TRUST_REMOVE = 1
-//    };
-//
-type ManageTrustAction int32
-
-const (
-	ManageTrustActionTrustAdd    ManageTrustAction = 0
-	ManageTrustActionTrustRemove ManageTrustAction = 1
-)
-
-var ManageTrustActionAll = []ManageTrustAction{
-	ManageTrustActionTrustAdd,
-	ManageTrustActionTrustRemove,
-}
-
-var manageTrustActionMap = map[int32]string{
-	0: "ManageTrustActionTrustAdd",
-	1: "ManageTrustActionTrustRemove",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ManageTrustAction
-func (e ManageTrustAction) ValidEnum(v int32) bool {
-	_, ok := manageTrustActionMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ManageTrustAction) String() string {
-	name, _ := manageTrustActionMap[int32(e)]
-	return name
-}
-
-func (e ManageTrustAction) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// TrustDataExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//
-type TrustDataExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u TrustDataExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of TrustDataExt
-func (u TrustDataExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewTrustDataExt creates a new  TrustDataExt.
-func NewTrustDataExt(v LedgerVersion, value interface{}) (result TrustDataExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// TrustData is an XDR Struct defines as:
-//
-//   struct TrustData {
-//        TrustEntry trust;
-//        ManageTrustAction action;
-//    	// reserved for future use
-//    	union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//    	ext;
-//    };
-//
-type TrustData struct {
-	Trust  TrustEntry        `json:"trust,omitempty"`
-	Action ManageTrustAction `json:"action,omitempty"`
-	Ext    TrustDataExt      `json:"ext,omitempty"`
-}
-
-// SetOptionsOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//
-type SetOptionsOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SetOptionsOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SetOptionsOpExt
-func (u SetOptionsOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewSetOptionsOpExt creates a new  SetOptionsOpExt.
-func NewSetOptionsOpExt(v LedgerVersion, value interface{}) (result SetOptionsOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// SetOptionsOp is an XDR Struct defines as:
-//
-//   struct SetOptionsOp
-//    {
-//        // account threshold manipulation
-//        uint32* masterWeight; // weight of the master account
-//        uint32* lowThreshold;
-//        uint32* medThreshold;
-//        uint32* highThreshold;
-//
-//        // Add, update or remove a signer for the account
-//        // signer is deleted if the weight is 0
-//        Signer* signer;
-//
-//        TrustData* trustData;
-//    	// reserved for future use
-//    	union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//    	ext;
-//
-//    };
-//
-type SetOptionsOp struct {
-	MasterWeight  *Uint32         `json:"masterWeight,omitempty"`
-	LowThreshold  *Uint32         `json:"lowThreshold,omitempty"`
-	MedThreshold  *Uint32         `json:"medThreshold,omitempty"`
-	HighThreshold *Uint32         `json:"highThreshold,omitempty"`
-	Signer        *Signer         `json:"signer,omitempty"`
-	TrustData     *TrustData      `json:"trustData,omitempty"`
-	Ext           SetOptionsOpExt `json:"ext,omitempty"`
-}
-
-// SetOptionsResultCode is an XDR Enum defines as:
-//
-//   enum SetOptionsResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        SET_OPTIONS_SUCCESS = 0,
-//        // codes considered as "failure" for the operation
-//        SET_OPTIONS_TOO_MANY_SIGNERS = -1, // max number of signers already reached
-//        SET_OPTIONS_THRESHOLD_OUT_OF_RANGE = -2, // bad value for weight/threshold
-//        SET_OPTIONS_BAD_SIGNER = -3,             // signer cannot be masterkey
-//        SET_OPTIONS_BALANCE_NOT_FOUND = -4,
-//        SET_OPTIONS_TRUST_MALFORMED = -5,
-//    	SET_OPTIONS_TRUST_TOO_MANY = -6,
-//    	SET_OPTIONS_INVALID_SIGNER_VERSION = -7 // if signer version is higher than ledger version
-//    };
-//
-type SetOptionsResultCode int32
-
-const (
-	SetOptionsResultCodeSetOptionsSuccess              SetOptionsResultCode = 0
-	SetOptionsResultCodeSetOptionsTooManySigners       SetOptionsResultCode = -1
-	SetOptionsResultCodeSetOptionsThresholdOutOfRange  SetOptionsResultCode = -2
-	SetOptionsResultCodeSetOptionsBadSigner            SetOptionsResultCode = -3
-	SetOptionsResultCodeSetOptionsBalanceNotFound      SetOptionsResultCode = -4
-	SetOptionsResultCodeSetOptionsTrustMalformed       SetOptionsResultCode = -5
-	SetOptionsResultCodeSetOptionsTrustTooMany         SetOptionsResultCode = -6
-	SetOptionsResultCodeSetOptionsInvalidSignerVersion SetOptionsResultCode = -7
-)
-
-var SetOptionsResultCodeAll = []SetOptionsResultCode{
-	SetOptionsResultCodeSetOptionsSuccess,
-	SetOptionsResultCodeSetOptionsTooManySigners,
-	SetOptionsResultCodeSetOptionsThresholdOutOfRange,
-	SetOptionsResultCodeSetOptionsBadSigner,
-	SetOptionsResultCodeSetOptionsBalanceNotFound,
-	SetOptionsResultCodeSetOptionsTrustMalformed,
-	SetOptionsResultCodeSetOptionsTrustTooMany,
-	SetOptionsResultCodeSetOptionsInvalidSignerVersion,
-}
-
-var setOptionsResultCodeMap = map[int32]string{
-	0:  "SetOptionsResultCodeSetOptionsSuccess",
-	-1: "SetOptionsResultCodeSetOptionsTooManySigners",
-	-2: "SetOptionsResultCodeSetOptionsThresholdOutOfRange",
-	-3: "SetOptionsResultCodeSetOptionsBadSigner",
-	-4: "SetOptionsResultCodeSetOptionsBalanceNotFound",
-	-5: "SetOptionsResultCodeSetOptionsTrustMalformed",
-	-6: "SetOptionsResultCodeSetOptionsTrustTooMany",
-	-7: "SetOptionsResultCodeSetOptionsInvalidSignerVersion",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for SetOptionsResultCode
-func (e SetOptionsResultCode) ValidEnum(v int32) bool {
-	_, ok := setOptionsResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e SetOptionsResultCode) String() string {
-	name, _ := setOptionsResultCodeMap[int32(e)]
-	return name
-}
-
-func (e SetOptionsResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// SetOptionsResultSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//
-type SetOptionsResultSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SetOptionsResultSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SetOptionsResultSuccessExt
-func (u SetOptionsResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewSetOptionsResultSuccessExt creates a new  SetOptionsResultSuccessExt.
-func NewSetOptionsResultSuccessExt(v LedgerVersion, value interface{}) (result SetOptionsResultSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// SetOptionsResultSuccess is an XDR NestedStruct defines as:
-//
-//   struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	}
-//
-type SetOptionsResultSuccess struct {
-	Ext SetOptionsResultSuccessExt `json:"ext,omitempty"`
-}
-
-// SetOptionsResult is an XDR Union defines as:
-//
-//   union SetOptionsResult switch (SetOptionsResultCode code)
-//    {
-//    case SET_OPTIONS_SUCCESS:
-//        struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	} success;
-//    default:
-//        void;
-//    };
-//
-type SetOptionsResult struct {
-	Code    SetOptionsResultCode     `json:"code,omitempty"`
-	Success *SetOptionsResultSuccess `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SetOptionsResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SetOptionsResult
-func (u SetOptionsResult) ArmForSwitch(sw int32) (string, bool) {
-	switch SetOptionsResultCode(sw) {
-	case SetOptionsResultCodeSetOptionsSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewSetOptionsResult creates a new  SetOptionsResult.
-func NewSetOptionsResult(code SetOptionsResultCode, value interface{}) (result SetOptionsResult, err error) {
-	result.Code = code
-	switch SetOptionsResultCode(code) {
-	case SetOptionsResultCodeSetOptionsSuccess:
-		tv, ok := value.(SetOptionsResultSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be SetOptionsResultSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u SetOptionsResult) MustSuccess() SetOptionsResultSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u SetOptionsResult) GetSuccess() (result SetOptionsResultSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// PreEmissionExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//
-type PreEmissionExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u PreEmissionExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PreEmissionExt
-func (u PreEmissionExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewPreEmissionExt creates a new  PreEmissionExt.
-func NewPreEmissionExt(v LedgerVersion, value interface{}) (result PreEmissionExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// PreEmission is an XDR Struct defines as:
-//
-//   struct PreEmission
-//    {
-//        string64 serialNumber;
-//        AssetCode asset;
-//        int64 amount;
-//        DecoratedSignature signatures<20>;
-//    	// reserved for future use
-//    	union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//    	ext;
-//    };
-//
-type PreEmission struct {
-	SerialNumber String64             `json:"serialNumber,omitempty"`
-	Asset        AssetCode            `json:"asset,omitempty"`
-	Amount       Int64                `json:"amount,omitempty"`
-	Signatures   []DecoratedSignature `json:"signatures,omitempty" xdrmaxsize:"20"`
-	Ext          PreEmissionExt       `json:"ext,omitempty"`
-}
-
-// UploadPreemissionsOpExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//
-type UploadPreemissionsOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u UploadPreemissionsOpExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of UploadPreemissionsOpExt
-func (u UploadPreemissionsOpExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewUploadPreemissionsOpExt creates a new  UploadPreemissionsOpExt.
-func NewUploadPreemissionsOpExt(v LedgerVersion, value interface{}) (result UploadPreemissionsOpExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// UploadPreemissionsOp is an XDR Struct defines as:
-//
-//   struct UploadPreemissionsOp
-//    {
-//        PreEmission preEmissions<>;
-//    	// reserved for future use
-//    	union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//    	ext;
-//    };
-//
-type UploadPreemissionsOp struct {
-	PreEmissions []PreEmission           `json:"preEmissions,omitempty"`
-	Ext          UploadPreemissionsOpExt `json:"ext,omitempty"`
-}
-
-// UploadPreemissionsResultCode is an XDR Enum defines as:
-//
-//   enum UploadPreemissionsResultCode
-//    {
-//        // codes considered as "success" for the operation
-//        UPLOAD_PREEMISSIONS_SUCCESS = 0,
-//
-//        // codes considered as "failure" for the operation
-//        UPLOAD_PREEMISSIONS_MALFORMED = -1,
-//        UPLOAD_PREEMISSIONS_SERIAL_DUPLICATION = -2,    // serial is already used
-//        UPLOAD_PREEMISSIONS_MALFORMED_PREEMISSIONS = -3, // if pre-emissions has empty signatures or zero amount etc
-//        UPLOAD_PREEMISSIONS_ASSET_NOT_FOUND = -4,
-//        UPLOAD_PREEMISSIONS_LINE_FULL = -5
-//    };
-//
-type UploadPreemissionsResultCode int32
-
-const (
-	UploadPreemissionsResultCodeUploadPreemissionsSuccess               UploadPreemissionsResultCode = 0
-	UploadPreemissionsResultCodeUploadPreemissionsMalformed             UploadPreemissionsResultCode = -1
-	UploadPreemissionsResultCodeUploadPreemissionsSerialDuplication     UploadPreemissionsResultCode = -2
-	UploadPreemissionsResultCodeUploadPreemissionsMalformedPreemissions UploadPreemissionsResultCode = -3
-	UploadPreemissionsResultCodeUploadPreemissionsAssetNotFound         UploadPreemissionsResultCode = -4
-	UploadPreemissionsResultCodeUploadPreemissionsLineFull              UploadPreemissionsResultCode = -5
-)
-
-var UploadPreemissionsResultCodeAll = []UploadPreemissionsResultCode{
-	UploadPreemissionsResultCodeUploadPreemissionsSuccess,
-	UploadPreemissionsResultCodeUploadPreemissionsMalformed,
-	UploadPreemissionsResultCodeUploadPreemissionsSerialDuplication,
-	UploadPreemissionsResultCodeUploadPreemissionsMalformedPreemissions,
-	UploadPreemissionsResultCodeUploadPreemissionsAssetNotFound,
-	UploadPreemissionsResultCodeUploadPreemissionsLineFull,
-}
-
-var uploadPreemissionsResultCodeMap = map[int32]string{
-	0:  "UploadPreemissionsResultCodeUploadPreemissionsSuccess",
-	-1: "UploadPreemissionsResultCodeUploadPreemissionsMalformed",
-	-2: "UploadPreemissionsResultCodeUploadPreemissionsSerialDuplication",
-	-3: "UploadPreemissionsResultCodeUploadPreemissionsMalformedPreemissions",
-	-4: "UploadPreemissionsResultCodeUploadPreemissionsAssetNotFound",
-	-5: "UploadPreemissionsResultCodeUploadPreemissionsLineFull",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for UploadPreemissionsResultCode
-func (e UploadPreemissionsResultCode) ValidEnum(v int32) bool {
-	_, ok := uploadPreemissionsResultCodeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e UploadPreemissionsResultCode) String() string {
-	name, _ := uploadPreemissionsResultCodeMap[int32(e)]
-	return name
-}
-
-func (e UploadPreemissionsResultCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// UploadPreemissionsResultSuccessExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//
-type UploadPreemissionsResultSuccessExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u UploadPreemissionsResultSuccessExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of UploadPreemissionsResultSuccessExt
-func (u UploadPreemissionsResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewUploadPreemissionsResultSuccessExt creates a new  UploadPreemissionsResultSuccessExt.
-func NewUploadPreemissionsResultSuccessExt(v LedgerVersion, value interface{}) (result UploadPreemissionsResultSuccessExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// UploadPreemissionsResultSuccess is an XDR NestedStruct defines as:
-//
-//   struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	}
-//
-type UploadPreemissionsResultSuccess struct {
-	Ext UploadPreemissionsResultSuccessExt `json:"ext,omitempty"`
-}
-
-// UploadPreemissionsResult is an XDR Union defines as:
-//
-//   union UploadPreemissionsResult switch (UploadPreemissionsResultCode code)
-//    {
-//    case UPLOAD_PREEMISSIONS_SUCCESS:
-//        struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case EMPTY_VERSION:
-//    			void;
-//    		}
-//    		ext;
-//    	} success;
-//    default:
-//        void;
-//    };
-//
-type UploadPreemissionsResult struct {
-	Code    UploadPreemissionsResultCode     `json:"code,omitempty"`
-	Success *UploadPreemissionsResultSuccess `json:"success,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u UploadPreemissionsResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of UploadPreemissionsResult
-func (u UploadPreemissionsResult) ArmForSwitch(sw int32) (string, bool) {
-	switch UploadPreemissionsResultCode(sw) {
-	case UploadPreemissionsResultCodeUploadPreemissionsSuccess:
-		return "Success", true
-	default:
-		return "", true
-	}
-}
-
-// NewUploadPreemissionsResult creates a new  UploadPreemissionsResult.
-func NewUploadPreemissionsResult(code UploadPreemissionsResultCode, value interface{}) (result UploadPreemissionsResult, err error) {
-	result.Code = code
-	switch UploadPreemissionsResultCode(code) {
-	case UploadPreemissionsResultCodeUploadPreemissionsSuccess:
-		tv, ok := value.(UploadPreemissionsResultSuccess)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be UploadPreemissionsResultSuccess")
-			return
-		}
-		result.Success = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustSuccess retrieves the Success value from the union,
-// panicing if the value is not set.
-func (u UploadPreemissionsResult) MustSuccess() UploadPreemissionsResultSuccess {
-	val, ok := u.GetSuccess()
-
-	if !ok {
-		panic("arm Success is not set")
-	}
-
-	return val
-}
-
-// GetSuccess retrieves the Success value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u UploadPreemissionsResult) GetSuccess() (result UploadPreemissionsResultSuccess, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "Success" {
-		result = *u.Success
-		ok = true
-	}
-
-	return
+type BalanceEntry struct {
+	BalanceId BalanceId       `json:"balanceID,omitempty"`
+	Asset     AssetCode       `json:"asset,omitempty"`
+	AccountId AccountId       `json:"accountID,omitempty"`
+	Amount    Int64           `json:"amount,omitempty"`
+	Locked    Int64           `json:"locked,omitempty"`
+	Ext       BalanceEntryExt `json:"ext,omitempty"`
 }
 
 // ErrorCode is an XDR Enum defines as:
 //
 //   enum ErrorCode
 //    {
-//        ERR_MISC = 0, // Unspecific error
-//        ERR_DATA = 1, // Malformed data
-//        ERR_CONF = 2, // Misconfiguration error
-//        ERR_AUTH = 3, // Authentication failure
-//        ERR_LOAD = 4  // System overloaded
+//        MISC = 0, // Unspecific error
+//        DATA = 1, // Malformed data
+//        CONF = 2, // Misconfiguration error
+//        AUTH = 3, // Authentication failure
+//        LOAD = 4  // System overloaded
 //    };
 //
 type ErrorCode int32
 
 const (
-	ErrorCodeErrMisc ErrorCode = 0
-	ErrorCodeErrData ErrorCode = 1
-	ErrorCodeErrConf ErrorCode = 2
-	ErrorCodeErrAuth ErrorCode = 3
-	ErrorCodeErrLoad ErrorCode = 4
+	ErrorCodeMisc ErrorCode = 0
+	ErrorCodeData ErrorCode = 1
+	ErrorCodeConf ErrorCode = 2
+	ErrorCodeAuth ErrorCode = 3
+	ErrorCodeLoad ErrorCode = 4
 )
 
 var ErrorCodeAll = []ErrorCode{
-	ErrorCodeErrMisc,
-	ErrorCodeErrData,
-	ErrorCodeErrConf,
-	ErrorCodeErrAuth,
-	ErrorCodeErrLoad,
+	ErrorCodeMisc,
+	ErrorCodeData,
+	ErrorCodeConf,
+	ErrorCodeAuth,
+	ErrorCodeLoad,
 }
 
 var errorCodeMap = map[int32]string{
-	0: "ErrorCodeErrMisc",
-	1: "ErrorCodeErrData",
-	2: "ErrorCodeErrConf",
-	3: "ErrorCodeErrAuth",
-	4: "ErrorCodeErrLoad",
+	0: "ErrorCodeMisc",
+	1: "ErrorCodeData",
+	2: "ErrorCodeConf",
+	3: "ErrorCodeAuth",
+	4: "ErrorCodeLoad",
+}
+
+var errorCodeShortMap = map[int32]string{
+	0: "misc",
+	1: "data",
+	2: "conf",
+	3: "auth",
+	4: "load",
+}
+
+var errorCodeRevMap = map[string]int32{
+	"ErrorCodeMisc": 0,
+	"ErrorCodeData": 1,
+	"ErrorCodeConf": 2,
+	"ErrorCodeAuth": 3,
+	"ErrorCodeLoad": 4,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -11272,8 +5934,29 @@ func (e ErrorCode) String() string {
 	return name
 }
 
+func (e ErrorCode) ShortString() string {
+	name, _ := errorCodeShortMap[int32(e)]
+	return name
+}
+
 func (e ErrorCode) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ErrorCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := errorCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ErrorCode(value)
+	return nil
 }
 
 // Error is an XDR Struct defines as:
@@ -11369,6 +6052,16 @@ var ipAddrTypeMap = map[int32]string{
 	1: "IpAddrTypeIPv6",
 }
 
+var ipAddrTypeShortMap = map[int32]string{
+	0: "i_pv4",
+	1: "i_pv6",
+}
+
+var ipAddrTypeRevMap = map[string]int32{
+	"IpAddrTypeIPv4": 0,
+	"IpAddrTypeIPv6": 1,
+}
+
 // ValidEnum validates a proposed value for this enum.  Implements
 // the Enum interface for IpAddrType
 func (e IpAddrType) ValidEnum(v int32) bool {
@@ -11382,8 +6075,29 @@ func (e IpAddrType) String() string {
 	return name
 }
 
+func (e IpAddrType) ShortString() string {
+	name, _ := ipAddrTypeShortMap[int32(e)]
+	return name
+}
+
 func (e IpAddrType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *IpAddrType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := ipAddrTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = IpAddrType(value)
+	return nil
 }
 
 // PeerAddressIp is an XDR NestedUnion defines as:
@@ -11590,6 +6304,38 @@ var messageTypeMap = map[int32]string{
 	13: "MessageTypeHello",
 }
 
+var messageTypeShortMap = map[int32]string{
+	0:  "error_msg",
+	2:  "auth",
+	3:  "dont_have",
+	4:  "get_peers",
+	5:  "peers",
+	6:  "get_tx_set",
+	7:  "tx_set",
+	8:  "transaction",
+	9:  "get_scp_quorumset",
+	10: "scp_quorumset",
+	11: "scp_message",
+	12: "get_scp_state",
+	13: "hello",
+}
+
+var messageTypeRevMap = map[string]int32{
+	"MessageTypeErrorMsg":        0,
+	"MessageTypeAuth":            2,
+	"MessageTypeDontHave":        3,
+	"MessageTypeGetPeers":        4,
+	"MessageTypePeers":           5,
+	"MessageTypeGetTxSet":        6,
+	"MessageTypeTxSet":           7,
+	"MessageTypeTransaction":     8,
+	"MessageTypeGetScpQuorumset": 9,
+	"MessageTypeScpQuorumset":    10,
+	"MessageTypeScpMessage":      11,
+	"MessageTypeGetScpState":     12,
+	"MessageTypeHello":           13,
+}
+
 // ValidEnum validates a proposed value for this enum.  Implements
 // the Enum interface for MessageType
 func (e MessageType) ValidEnum(v int32) bool {
@@ -11603,8 +6349,29 @@ func (e MessageType) String() string {
 	return name
 }
 
+func (e MessageType) ShortString() string {
+	name, _ := messageTypeShortMap[int32(e)]
+	return name
+}
+
 func (e MessageType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *MessageType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := messageTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = MessageType(value)
+	return nil
 }
 
 // DontHave is an XDR Struct defines as:
@@ -12109,10 +6876,10 @@ func (u StellarMessage) GetGetScpLedgerSeq() (result Uint32, ok bool) {
 // AuthenticatedMessageV0 is an XDR NestedStruct defines as:
 //
 //   struct
-//    {
-//       uint64 sequence;
-//       StellarMessage message;
-//       HmacSha256Mac mac;
+//        {
+//            uint64 sequence;
+//            StellarMessage message;
+//            HmacSha256Mac mac;
 //        }
 //
 type AuthenticatedMessageV0 struct {
@@ -12127,10 +6894,10 @@ type AuthenticatedMessageV0 struct {
 //    {
 //    case EMPTY_VERSION:
 //        struct
-//    {
-//       uint64 sequence;
-//       StellarMessage message;
-//       HmacSha256Mac mac;
+//        {
+//            uint64 sequence;
+//            StellarMessage message;
+//            HmacSha256Mac mac;
 //        } v0;
 //    };
 //
@@ -12195,418 +6962,593 @@ func (u AuthenticatedMessage) GetV0() (result AuthenticatedMessageV0, ok bool) {
 	return
 }
 
-// Value is an XDR Typedef defines as:
+// CreateAccountOpExt is an XDR NestedUnion defines as:
 //
-//   typedef opaque Value<>;
-//
-type Value []byte
-
-// ScpBallot is an XDR Struct defines as:
-//
-//   struct SCPBallot
-//    {
-//        uint32 counter; // n
-//        Value value;    // x
-//    };
-//
-type ScpBallot struct {
-	Counter Uint32 `json:"counter,omitempty"`
-	Value   Value  `json:"value,omitempty"`
-}
-
-// ScpStatementType is an XDR Enum defines as:
-//
-//   enum SCPStatementType
-//    {
-//        SCP_ST_PREPARE = 0,
-//        SCP_ST_CONFIRM = 1,
-//        SCP_ST_EXTERNALIZE = 2,
-//        SCP_ST_NOMINATE = 3
-//    };
-//
-type ScpStatementType int32
-
-const (
-	ScpStatementTypeScpStPrepare     ScpStatementType = 0
-	ScpStatementTypeScpStConfirm     ScpStatementType = 1
-	ScpStatementTypeScpStExternalize ScpStatementType = 2
-	ScpStatementTypeScpStNominate    ScpStatementType = 3
-)
-
-var ScpStatementTypeAll = []ScpStatementType{
-	ScpStatementTypeScpStPrepare,
-	ScpStatementTypeScpStConfirm,
-	ScpStatementTypeScpStExternalize,
-	ScpStatementTypeScpStNominate,
-}
-
-var scpStatementTypeMap = map[int32]string{
-	0: "ScpStatementTypeScpStPrepare",
-	1: "ScpStatementTypeScpStConfirm",
-	2: "ScpStatementTypeScpStExternalize",
-	3: "ScpStatementTypeScpStNominate",
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ScpStatementType
-func (e ScpStatementType) ValidEnum(v int32) bool {
-	_, ok := scpStatementTypeMap[v]
-	return ok
-}
-
-// String returns the name of `e`
-func (e ScpStatementType) String() string {
-	name, _ := scpStatementTypeMap[int32(e)]
-	return name
-}
-
-func (e ScpStatementType) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + e.String() + "\""), nil
-}
-
-// ScpNomination is an XDR Struct defines as:
-//
-//   struct SCPNomination
-//    {
-//        Hash quorumSetHash; // D
-//        Value votes<>;      // X
-//        Value accepted<>;   // Y
-//    };
-//
-type ScpNomination struct {
-	QuorumSetHash Hash    `json:"quorumSetHash,omitempty"`
-	Votes         []Value `json:"votes,omitempty"`
-	Accepted      []Value `json:"accepted,omitempty"`
-}
-
-// ScpStatementPrepare is an XDR NestedStruct defines as:
-//
-//   struct
-//            {
-//                Hash quorumSetHash;       // D
-//                SCPBallot ballot;         // b
-//                SCPBallot* prepared;      // p
-//                SCPBallot* preparedPrime; // p'
-//                uint32 nC;                // c.n
-//                uint32 nH;                // h.n
-//            }
-//
-type ScpStatementPrepare struct {
-	QuorumSetHash Hash       `json:"quorumSetHash,omitempty"`
-	Ballot        ScpBallot  `json:"ballot,omitempty"`
-	Prepared      *ScpBallot `json:"prepared,omitempty"`
-	PreparedPrime *ScpBallot `json:"preparedPrime,omitempty"`
-	NC            Uint32     `json:"nC,omitempty"`
-	NH            Uint32     `json:"nH,omitempty"`
-}
-
-// ScpStatementConfirm is an XDR NestedStruct defines as:
-//
-//   struct
-//            {
-//                SCPBallot ballot;   // b
-//                uint32 nPrepared;   // p.n
-//                uint32 nCommit;     // c.n
-//                uint32 nH;          // h.n
-//                Hash quorumSetHash; // D
-//            }
-//
-type ScpStatementConfirm struct {
-	Ballot        ScpBallot `json:"ballot,omitempty"`
-	NPrepared     Uint32    `json:"nPrepared,omitempty"`
-	NCommit       Uint32    `json:"nCommit,omitempty"`
-	NH            Uint32    `json:"nH,omitempty"`
-	QuorumSetHash Hash      `json:"quorumSetHash,omitempty"`
-}
-
-// ScpStatementExternalize is an XDR NestedStruct defines as:
-//
-//   struct
-//            {
-//                SCPBallot commit;         // c
-//                uint32 nH;                // h.n
-//                Hash commitQuorumSetHash; // D used before EXTERNALIZE
-//            }
-//
-type ScpStatementExternalize struct {
-	Commit              ScpBallot `json:"commit,omitempty"`
-	NH                  Uint32    `json:"nH,omitempty"`
-	CommitQuorumSetHash Hash      `json:"commitQuorumSetHash,omitempty"`
-}
-
-// ScpStatementPledges is an XDR NestedUnion defines as:
-//
-//   union switch (SCPStatementType type)
+//   union switch (LedgerVersion v)
 //        {
-//        case SCP_ST_PREPARE:
-//            struct
-//            {
-//                Hash quorumSetHash;       // D
-//                SCPBallot ballot;         // b
-//                SCPBallot* prepared;      // p
-//                SCPBallot* preparedPrime; // p'
-//                uint32 nC;                // c.n
-//                uint32 nH;                // h.n
-//            } prepare;
-//        case SCP_ST_CONFIRM:
-//            struct
-//            {
-//                SCPBallot ballot;   // b
-//                uint32 nPrepared;   // p.n
-//                uint32 nCommit;     // c.n
-//                uint32 nH;          // h.n
-//                Hash quorumSetHash; // D
-//            } confirm;
-//        case SCP_ST_EXTERNALIZE:
-//            struct
-//            {
-//                SCPBallot commit;         // c
-//                uint32 nH;                // h.n
-//                Hash commitQuorumSetHash; // D used before EXTERNALIZE
-//            } externalize;
-//        case SCP_ST_NOMINATE:
-//            SCPNomination nominate;
+//        case EMPTY_VERSION:
+//            void;
 //        }
 //
-type ScpStatementPledges struct {
-	Type        ScpStatementType         `json:"type,omitempty"`
-	Prepare     *ScpStatementPrepare     `json:"prepare,omitempty"`
-	Confirm     *ScpStatementConfirm     `json:"confirm,omitempty"`
-	Externalize *ScpStatementExternalize `json:"externalize,omitempty"`
-	Nominate    *ScpNomination           `json:"nominate,omitempty"`
+type CreateAccountOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u ScpStatementPledges) SwitchFieldName() string {
-	return "Type"
+func (u CreateAccountOpExt) SwitchFieldName() string {
+	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ScpStatementPledges
-func (u ScpStatementPledges) ArmForSwitch(sw int32) (string, bool) {
-	switch ScpStatementType(sw) {
-	case ScpStatementTypeScpStPrepare:
-		return "Prepare", true
-	case ScpStatementTypeScpStConfirm:
-		return "Confirm", true
-	case ScpStatementTypeScpStExternalize:
-		return "Externalize", true
-	case ScpStatementTypeScpStNominate:
-		return "Nominate", true
+// the value for an instance of CreateAccountOpExt
+func (u CreateAccountOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
 	}
 	return "-", false
 }
 
-// NewScpStatementPledges creates a new  ScpStatementPledges.
-func NewScpStatementPledges(aType ScpStatementType, value interface{}) (result ScpStatementPledges, err error) {
-	result.Type = aType
-	switch ScpStatementType(aType) {
-	case ScpStatementTypeScpStPrepare:
-		tv, ok := value.(ScpStatementPrepare)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ScpStatementPrepare")
-			return
-		}
-		result.Prepare = &tv
-	case ScpStatementTypeScpStConfirm:
-		tv, ok := value.(ScpStatementConfirm)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ScpStatementConfirm")
-			return
-		}
-		result.Confirm = &tv
-	case ScpStatementTypeScpStExternalize:
-		tv, ok := value.(ScpStatementExternalize)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ScpStatementExternalize")
-			return
-		}
-		result.Externalize = &tv
-	case ScpStatementTypeScpStNominate:
-		tv, ok := value.(ScpNomination)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ScpNomination")
-			return
-		}
-		result.Nominate = &tv
+// NewCreateAccountOpExt creates a new  CreateAccountOpExt.
+func NewCreateAccountOpExt(v LedgerVersion, value interface{}) (result CreateAccountOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
 	}
 	return
 }
 
-// MustPrepare retrieves the Prepare value from the union,
-// panicing if the value is not set.
-func (u ScpStatementPledges) MustPrepare() ScpStatementPrepare {
-	val, ok := u.GetPrepare()
-
-	if !ok {
-		panic("arm Prepare is not set")
-	}
-
-	return val
-}
-
-// GetPrepare retrieves the Prepare value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ScpStatementPledges) GetPrepare() (result ScpStatementPrepare, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Prepare" {
-		result = *u.Prepare
-		ok = true
-	}
-
-	return
-}
-
-// MustConfirm retrieves the Confirm value from the union,
-// panicing if the value is not set.
-func (u ScpStatementPledges) MustConfirm() ScpStatementConfirm {
-	val, ok := u.GetConfirm()
-
-	if !ok {
-		panic("arm Confirm is not set")
-	}
-
-	return val
-}
-
-// GetConfirm retrieves the Confirm value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ScpStatementPledges) GetConfirm() (result ScpStatementConfirm, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Confirm" {
-		result = *u.Confirm
-		ok = true
-	}
-
-	return
-}
-
-// MustExternalize retrieves the Externalize value from the union,
-// panicing if the value is not set.
-func (u ScpStatementPledges) MustExternalize() ScpStatementExternalize {
-	val, ok := u.GetExternalize()
-
-	if !ok {
-		panic("arm Externalize is not set")
-	}
-
-	return val
-}
-
-// GetExternalize retrieves the Externalize value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ScpStatementPledges) GetExternalize() (result ScpStatementExternalize, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Externalize" {
-		result = *u.Externalize
-		ok = true
-	}
-
-	return
-}
-
-// MustNominate retrieves the Nominate value from the union,
-// panicing if the value is not set.
-func (u ScpStatementPledges) MustNominate() ScpNomination {
-	val, ok := u.GetNominate()
-
-	if !ok {
-		panic("arm Nominate is not set")
-	}
-
-	return val
-}
-
-// GetNominate retrieves the Nominate value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ScpStatementPledges) GetNominate() (result ScpNomination, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Nominate" {
-		result = *u.Nominate
-		ok = true
-	}
-
-	return
-}
-
-// ScpStatement is an XDR Struct defines as:
+// CreateAccountOp is an XDR Struct defines as:
 //
-//   struct SCPStatement
+//   struct CreateAccountOp
 //    {
-//        NodeID nodeID;    // v
-//        uint64 slotIndex; // i
+//        AccountID destination; // account to create
+//        AccountID* referrer;     // parent account
+//    	AccountType accountType;
 //
-//        union switch (SCPStatementType type)
+//    	uint32 policies; //account policies for the account
+//
+//    	 // reserved for future use
+//        union switch (LedgerVersion v)
 //        {
-//        case SCP_ST_PREPARE:
-//            struct
-//            {
-//                Hash quorumSetHash;       // D
-//                SCPBallot ballot;         // b
-//                SCPBallot* prepared;      // p
-//                SCPBallot* preparedPrime; // p'
-//                uint32 nC;                // c.n
-//                uint32 nH;                // h.n
-//            } prepare;
-//        case SCP_ST_CONFIRM:
-//            struct
-//            {
-//                SCPBallot ballot;   // b
-//                uint32 nPrepared;   // p.n
-//                uint32 nCommit;     // c.n
-//                uint32 nH;          // h.n
-//                Hash quorumSetHash; // D
-//            } confirm;
-//        case SCP_ST_EXTERNALIZE:
-//            struct
-//            {
-//                SCPBallot commit;         // c
-//                uint32 nH;                // h.n
-//                Hash commitQuorumSetHash; // D used before EXTERNALIZE
-//            } externalize;
-//        case SCP_ST_NOMINATE:
-//            SCPNomination nominate;
+//        case EMPTY_VERSION:
+//            void;
 //        }
-//        pledges;
+//        ext;
 //    };
 //
-type ScpStatement struct {
-	NodeId    NodeId              `json:"nodeID,omitempty"`
-	SlotIndex Uint64              `json:"slotIndex,omitempty"`
-	Pledges   ScpStatementPledges `json:"pledges,omitempty"`
+type CreateAccountOp struct {
+	Destination AccountId          `json:"destination,omitempty"`
+	Referrer    *AccountId         `json:"referrer,omitempty"`
+	AccountType AccountType        `json:"accountType,omitempty"`
+	Policies    Uint32             `json:"policies,omitempty"`
+	Ext         CreateAccountOpExt `json:"ext,omitempty"`
 }
 
-// ScpEnvelope is an XDR Struct defines as:
+// CreateAccountResultCode is an XDR Enum defines as:
 //
-//   struct SCPEnvelope
+//   enum CreateAccountResultCode
 //    {
-//        SCPStatement statement;
-//        Signature signature;
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0, // account was created
+//
+//        // codes considered as "failure" for the operation
+//        MALFORMED = -1,       // invalid destination
+//    	ACCOUNT_TYPE_MISMATCHED = -2, // account already exist and change of account type is not allowed
+//    	TYPE_NOT_ALLOWED = -3, // master or commission account types are not allowed
+//        NAME_DUPLICATION = -4,
+//        REFERRER_NOT_FOUND = -5,
+//    	INVALID_ACCOUNT_VERSION = -6 // if account version is higher than ledger version
 //    };
 //
-type ScpEnvelope struct {
-	Statement ScpStatement `json:"statement,omitempty"`
-	Signature Signature    `json:"signature,omitempty"`
+type CreateAccountResultCode int32
+
+const (
+	CreateAccountResultCodeSuccess               CreateAccountResultCode = 0
+	CreateAccountResultCodeMalformed             CreateAccountResultCode = -1
+	CreateAccountResultCodeAccountTypeMismatched CreateAccountResultCode = -2
+	CreateAccountResultCodeTypeNotAllowed        CreateAccountResultCode = -3
+	CreateAccountResultCodeNameDuplication       CreateAccountResultCode = -4
+	CreateAccountResultCodeReferrerNotFound      CreateAccountResultCode = -5
+	CreateAccountResultCodeInvalidAccountVersion CreateAccountResultCode = -6
+)
+
+var CreateAccountResultCodeAll = []CreateAccountResultCode{
+	CreateAccountResultCodeSuccess,
+	CreateAccountResultCodeMalformed,
+	CreateAccountResultCodeAccountTypeMismatched,
+	CreateAccountResultCodeTypeNotAllowed,
+	CreateAccountResultCodeNameDuplication,
+	CreateAccountResultCodeReferrerNotFound,
+	CreateAccountResultCodeInvalidAccountVersion,
 }
 
-// ScpQuorumSet is an XDR Struct defines as:
+var createAccountResultCodeMap = map[int32]string{
+	0:  "CreateAccountResultCodeSuccess",
+	-1: "CreateAccountResultCodeMalformed",
+	-2: "CreateAccountResultCodeAccountTypeMismatched",
+	-3: "CreateAccountResultCodeTypeNotAllowed",
+	-4: "CreateAccountResultCodeNameDuplication",
+	-5: "CreateAccountResultCodeReferrerNotFound",
+	-6: "CreateAccountResultCodeInvalidAccountVersion",
+}
+
+var createAccountResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "malformed",
+	-2: "account_type_mismatched",
+	-3: "type_not_allowed",
+	-4: "name_duplication",
+	-5: "referrer_not_found",
+	-6: "invalid_account_version",
+}
+
+var createAccountResultCodeRevMap = map[string]int32{
+	"CreateAccountResultCodeSuccess":               0,
+	"CreateAccountResultCodeMalformed":             -1,
+	"CreateAccountResultCodeAccountTypeMismatched": -2,
+	"CreateAccountResultCodeTypeNotAllowed":        -3,
+	"CreateAccountResultCodeNameDuplication":       -4,
+	"CreateAccountResultCodeReferrerNotFound":      -5,
+	"CreateAccountResultCodeInvalidAccountVersion": -6,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CreateAccountResultCode
+func (e CreateAccountResultCode) ValidEnum(v int32) bool {
+	_, ok := createAccountResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e CreateAccountResultCode) String() string {
+	name, _ := createAccountResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CreateAccountResultCode) ShortString() string {
+	name, _ := createAccountResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CreateAccountResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *CreateAccountResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := createAccountResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = CreateAccountResultCode(value)
+	return nil
+}
+
+// CreateAccountSuccessExt is an XDR NestedUnion defines as:
 //
-//   struct SCPQuorumSet
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateAccountSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateAccountSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateAccountSuccessExt
+func (u CreateAccountSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateAccountSuccessExt creates a new  CreateAccountSuccessExt.
+func NewCreateAccountSuccessExt(v LedgerVersion, value interface{}) (result CreateAccountSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateAccountSuccess is an XDR Struct defines as:
+//
+//   struct CreateAccountSuccess
 //    {
-//        uint32 threshold;
-//        PublicKey validators<>;
-//        SCPQuorumSet innerSets<>;
+//    	int64 referrerFee;
+//    	 // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
 //    };
 //
-type ScpQuorumSet struct {
-	Threshold  Uint32         `json:"threshold,omitempty"`
-	Validators []PublicKey    `json:"validators,omitempty"`
-	InnerSets  []ScpQuorumSet `json:"innerSets,omitempty"`
+type CreateAccountSuccess struct {
+	ReferrerFee Int64                   `json:"referrerFee,omitempty"`
+	Ext         CreateAccountSuccessExt `json:"ext,omitempty"`
+}
+
+// CreateAccountResult is an XDR Union defines as:
+//
+//   union CreateAccountResult switch (CreateAccountResultCode code)
+//    {
+//    case SUCCESS:
+//        CreateAccountSuccess success;
+//    default:
+//        void;
+//    };
+//
+type CreateAccountResult struct {
+	Code    CreateAccountResultCode `json:"code,omitempty"`
+	Success *CreateAccountSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateAccountResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateAccountResult
+func (u CreateAccountResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CreateAccountResultCode(sw) {
+	case CreateAccountResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewCreateAccountResult creates a new  CreateAccountResult.
+func NewCreateAccountResult(code CreateAccountResultCode, value interface{}) (result CreateAccountResult, err error) {
+	result.Code = code
+	switch CreateAccountResultCode(code) {
+	case CreateAccountResultCodeSuccess:
+		tv, ok := value.(CreateAccountSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateAccountSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u CreateAccountResult) MustSuccess() CreateAccountSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreateAccountResult) GetSuccess() (result CreateAccountSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// ManageAccountOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageAccountOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountOpExt
+func (u ManageAccountOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAccountOpExt creates a new  ManageAccountOpExt.
+func NewManageAccountOpExt(v LedgerVersion, value interface{}) (result ManageAccountOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAccountOp is an XDR Struct defines as:
+//
+//   struct ManageAccountOp
+//    {
+//        AccountID account; // account to manage
+//        AccountType accountType;
+//        uint32 blockReasonsToAdd;
+//        uint32 blockReasonsToRemove;
+//    	 // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageAccountOp struct {
+	Account              AccountId          `json:"account,omitempty"`
+	AccountType          AccountType        `json:"accountType,omitempty"`
+	BlockReasonsToAdd    Uint32             `json:"blockReasonsToAdd,omitempty"`
+	BlockReasonsToRemove Uint32             `json:"blockReasonsToRemove,omitempty"`
+	Ext                  ManageAccountOpExt `json:"ext,omitempty"`
+}
+
+// ManageAccountResultCode is an XDR Enum defines as:
+//
+//   enum ManageAccountResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0, // account was created
+//
+//        // codes considered as "failure" for the operation
+//        NOT_FOUND = -1,         // account does not exists
+//        MALFORMED = -2,
+//    	NOT_ALLOWED = -3,         // manage account operation is not allowed on this account
+//        TYPE_MISMATCH = -4
+//    };
+//
+type ManageAccountResultCode int32
+
+const (
+	ManageAccountResultCodeSuccess      ManageAccountResultCode = 0
+	ManageAccountResultCodeNotFound     ManageAccountResultCode = -1
+	ManageAccountResultCodeMalformed    ManageAccountResultCode = -2
+	ManageAccountResultCodeNotAllowed   ManageAccountResultCode = -3
+	ManageAccountResultCodeTypeMismatch ManageAccountResultCode = -4
+)
+
+var ManageAccountResultCodeAll = []ManageAccountResultCode{
+	ManageAccountResultCodeSuccess,
+	ManageAccountResultCodeNotFound,
+	ManageAccountResultCodeMalformed,
+	ManageAccountResultCodeNotAllowed,
+	ManageAccountResultCodeTypeMismatch,
+}
+
+var manageAccountResultCodeMap = map[int32]string{
+	0:  "ManageAccountResultCodeSuccess",
+	-1: "ManageAccountResultCodeNotFound",
+	-2: "ManageAccountResultCodeMalformed",
+	-3: "ManageAccountResultCodeNotAllowed",
+	-4: "ManageAccountResultCodeTypeMismatch",
+}
+
+var manageAccountResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+	-2: "malformed",
+	-3: "not_allowed",
+	-4: "type_mismatch",
+}
+
+var manageAccountResultCodeRevMap = map[string]int32{
+	"ManageAccountResultCodeSuccess":      0,
+	"ManageAccountResultCodeNotFound":     -1,
+	"ManageAccountResultCodeMalformed":    -2,
+	"ManageAccountResultCodeNotAllowed":   -3,
+	"ManageAccountResultCodeTypeMismatch": -4,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageAccountResultCode
+func (e ManageAccountResultCode) ValidEnum(v int32) bool {
+	_, ok := manageAccountResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageAccountResultCode) String() string {
+	name, _ := manageAccountResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountResultCode) ShortString() string {
+	name, _ := manageAccountResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageAccountResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageAccountResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageAccountResultCode(value)
+	return nil
+}
+
+// ManageAccountSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageAccountSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountSuccessExt
+func (u ManageAccountSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAccountSuccessExt creates a new  ManageAccountSuccessExt.
+func NewManageAccountSuccessExt(v LedgerVersion, value interface{}) (result ManageAccountSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAccountSuccess is an XDR Struct defines as:
+//
+//   struct ManageAccountSuccess {
+//    	uint32 blockReasons;
+//     // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageAccountSuccess struct {
+	BlockReasons Uint32                  `json:"blockReasons,omitempty"`
+	Ext          ManageAccountSuccessExt `json:"ext,omitempty"`
+}
+
+// ManageAccountResult is an XDR Union defines as:
+//
+//   union ManageAccountResult switch (ManageAccountResultCode code)
+//    {
+//    case SUCCESS:
+//        ManageAccountSuccess success;
+//    default:
+//        void;
+//    };
+//
+type ManageAccountResult struct {
+	Code    ManageAccountResultCode `json:"code,omitempty"`
+	Success *ManageAccountSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountResult
+func (u ManageAccountResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageAccountResultCode(sw) {
+	case ManageAccountResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageAccountResult creates a new  ManageAccountResult.
+func NewManageAccountResult(code ManageAccountResultCode, value interface{}) (result ManageAccountResult, err error) {
+	result.Code = code
+	switch ManageAccountResultCode(code) {
+	case ManageAccountResultCodeSuccess:
+		tv, ok := value.(ManageAccountSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageAccountSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageAccountResult) MustSuccess() ManageAccountSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAccountResult) GetSuccess() (result ManageAccountSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
 }
 
 // OperationBody is an XDR NestedUnion defines as:
@@ -13400,6 +8342,22 @@ var memoTypeMap = map[int32]string{
 	4: "MemoTypeMemoReturn",
 }
 
+var memoTypeShortMap = map[int32]string{
+	0: "memo_none",
+	1: "memo_text",
+	2: "memo_id",
+	3: "memo_hash",
+	4: "memo_return",
+}
+
+var memoTypeRevMap = map[string]int32{
+	"MemoTypeMemoNone":   0,
+	"MemoTypeMemoText":   1,
+	"MemoTypeMemoId":     2,
+	"MemoTypeMemoHash":   3,
+	"MemoTypeMemoReturn": 4,
+}
+
 // ValidEnum validates a proposed value for this enum.  Implements
 // the Enum interface for MemoType
 func (e MemoType) ValidEnum(v int32) bool {
@@ -13413,8 +8371,29 @@ func (e MemoType) String() string {
 	return name
 }
 
+func (e MemoType) ShortString() string {
+	name, _ := memoTypeShortMap[int32(e)]
+	return name
+}
+
 func (e MemoType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *MemoType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := memoTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = MemoType(value)
+	return nil
 }
 
 // Memo is an XDR Union defines as:
@@ -13755,6 +8734,30 @@ var operationResultCodeMap = map[int32]string{
 	-8: "OperationResultCodeOpBadAuthExtra",
 }
 
+var operationResultCodeShortMap = map[int32]string{
+	0:  "op_inner",
+	-1: "op_bad_auth",
+	-2: "op_no_account",
+	-3: "op_not_allowed",
+	-4: "op_account_blocked",
+	-5: "op_no_counterparty",
+	-6: "op_counterparty_blocked",
+	-7: "op_counterparty_wrong_type",
+	-8: "op_bad_auth_extra",
+}
+
+var operationResultCodeRevMap = map[string]int32{
+	"OperationResultCodeOpInner":                 0,
+	"OperationResultCodeOpBadAuth":               -1,
+	"OperationResultCodeOpNoAccount":             -2,
+	"OperationResultCodeOpNotAllowed":            -3,
+	"OperationResultCodeOpAccountBlocked":        -4,
+	"OperationResultCodeOpNoCounterparty":        -5,
+	"OperationResultCodeOpCounterpartyBlocked":   -6,
+	"OperationResultCodeOpCounterpartyWrongType": -7,
+	"OperationResultCodeOpBadAuthExtra":          -8,
+}
+
 // ValidEnum validates a proposed value for this enum.  Implements
 // the Enum interface for OperationResultCode
 func (e OperationResultCode) ValidEnum(v int32) bool {
@@ -13768,8 +8771,29 @@ func (e OperationResultCode) String() string {
 	return name
 }
 
+func (e OperationResultCode) ShortString() string {
+	name, _ := operationResultCodeShortMap[int32(e)]
+	return name
+}
+
 func (e OperationResultCode) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *OperationResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := operationResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = OperationResultCode(value)
+	return nil
 }
 
 // OperationResultTr is an XDR NestedUnion defines as:
@@ -14647,6 +9671,34 @@ var transactionResultCodeMap = map[int32]string{
 	-10: "TransactionResultCodeTxDuplication",
 }
 
+var transactionResultCodeShortMap = map[int32]string{
+	0:   "tx_success",
+	-1:  "tx_failed",
+	-2:  "tx_too_early",
+	-3:  "tx_too_late",
+	-4:  "tx_missing_operation",
+	-5:  "tx_bad_auth",
+	-6:  "tx_no_account",
+	-7:  "tx_bad_auth_extra",
+	-8:  "tx_internal_error",
+	-9:  "tx_account_blocked",
+	-10: "tx_duplication",
+}
+
+var transactionResultCodeRevMap = map[string]int32{
+	"TransactionResultCodeTxSuccess":          0,
+	"TransactionResultCodeTxFailed":           -1,
+	"TransactionResultCodeTxTooEarly":         -2,
+	"TransactionResultCodeTxTooLate":          -3,
+	"TransactionResultCodeTxMissingOperation": -4,
+	"TransactionResultCodeTxBadAuth":          -5,
+	"TransactionResultCodeTxNoAccount":        -6,
+	"TransactionResultCodeTxBadAuthExtra":     -7,
+	"TransactionResultCodeTxInternalError":    -8,
+	"TransactionResultCodeTxAccountBlocked":   -9,
+	"TransactionResultCodeTxDuplication":      -10,
+}
+
 // ValidEnum validates a proposed value for this enum.  Implements
 // the Enum interface for TransactionResultCode
 func (e TransactionResultCode) ValidEnum(v int32) bool {
@@ -14660,8 +9712,29 @@ func (e TransactionResultCode) String() string {
 	return name
 }
 
+func (e TransactionResultCode) ShortString() string {
+	name, _ := transactionResultCodeShortMap[int32(e)]
+	return name
+}
+
 func (e TransactionResultCode) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *TransactionResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := transactionResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = TransactionResultCode(value)
+	return nil
 }
 
 // TransactionResultResult is an XDR NestedUnion defines as:
@@ -14817,6 +9890,2096 @@ type TransactionResult struct {
 	Ext        TransactionResultExt    `json:"ext,omitempty"`
 }
 
+// RequestType is an XDR Enum defines as:
+//
+//   enum RequestType
+//    {
+//        REQUEST_TYPE_SALE = 0,
+//        REQUEST_TYPE_WITHDRAWAL = 1,
+//        REQUEST_TYPE_REDEEM = 2,
+//        REQUEST_TYPE_PAYMENT = 3
+//    };
+//
+type RequestType int32
+
+const (
+	RequestTypeRequestTypeSale       RequestType = 0
+	RequestTypeRequestTypeWithdrawal RequestType = 1
+	RequestTypeRequestTypeRedeem     RequestType = 2
+	RequestTypeRequestTypePayment    RequestType = 3
+)
+
+var RequestTypeAll = []RequestType{
+	RequestTypeRequestTypeSale,
+	RequestTypeRequestTypeWithdrawal,
+	RequestTypeRequestTypeRedeem,
+	RequestTypeRequestTypePayment,
+}
+
+var requestTypeMap = map[int32]string{
+	0: "RequestTypeRequestTypeSale",
+	1: "RequestTypeRequestTypeWithdrawal",
+	2: "RequestTypeRequestTypeRedeem",
+	3: "RequestTypeRequestTypePayment",
+}
+
+var requestTypeShortMap = map[int32]string{
+	0: "request_type_sale",
+	1: "request_type_withdrawal",
+	2: "request_type_redeem",
+	3: "request_type_payment",
+}
+
+var requestTypeRevMap = map[string]int32{
+	"RequestTypeRequestTypeSale":       0,
+	"RequestTypeRequestTypeWithdrawal": 1,
+	"RequestTypeRequestTypeRedeem":     2,
+	"RequestTypeRequestTypePayment":    3,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for RequestType
+func (e RequestType) ValidEnum(v int32) bool {
+	_, ok := requestTypeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e RequestType) String() string {
+	name, _ := requestTypeMap[int32(e)]
+	return name
+}
+
+func (e RequestType) ShortString() string {
+	name, _ := requestTypeShortMap[int32(e)]
+	return name
+}
+
+func (e RequestType) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *RequestType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := requestTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = RequestType(value)
+	return nil
+}
+
+// PaymentRequestEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type PaymentRequestEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u PaymentRequestEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of PaymentRequestEntryExt
+func (u PaymentRequestEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewPaymentRequestEntryExt creates a new  PaymentRequestEntryExt.
+func NewPaymentRequestEntryExt(v LedgerVersion, value interface{}) (result PaymentRequestEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// PaymentRequestEntry is an XDR Struct defines as:
+//
+//   struct PaymentRequestEntry
+//    {
+//        uint64 paymentID;
+//        BalanceID sourceBalance;
+//        BalanceID* destinationBalance;
+//        int64 sourceSend;
+//        int64 sourceSendUniversal;
+//        int64 destinationReceive;
+//
+//        uint64 createdAt;
+//
+//        uint64* invoiceID;
+//
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type PaymentRequestEntry struct {
+	PaymentId           Uint64                 `json:"paymentID,omitempty"`
+	SourceBalance       BalanceId              `json:"sourceBalance,omitempty"`
+	DestinationBalance  *BalanceId             `json:"destinationBalance,omitempty"`
+	SourceSend          Int64                  `json:"sourceSend,omitempty"`
+	SourceSendUniversal Int64                  `json:"sourceSendUniversal,omitempty"`
+	DestinationReceive  Int64                  `json:"destinationReceive,omitempty"`
+	CreatedAt           Uint64                 `json:"createdAt,omitempty"`
+	InvoiceId           *Uint64                `json:"invoiceID,omitempty"`
+	Ext                 PaymentRequestEntryExt `json:"ext,omitempty"`
+}
+
+// ManageAssetAction is an XDR Enum defines as:
+//
+//   enum ManageAssetAction
+//    {
+//        CREATE = 0,
+//        UPDATE_POLICIES = 1
+//    };
+//
+type ManageAssetAction int32
+
+const (
+	ManageAssetActionCreate         ManageAssetAction = 0
+	ManageAssetActionUpdatePolicies ManageAssetAction = 1
+)
+
+var ManageAssetActionAll = []ManageAssetAction{
+	ManageAssetActionCreate,
+	ManageAssetActionUpdatePolicies,
+}
+
+var manageAssetActionMap = map[int32]string{
+	0: "ManageAssetActionCreate",
+	1: "ManageAssetActionUpdatePolicies",
+}
+
+var manageAssetActionShortMap = map[int32]string{
+	0: "create",
+	1: "update_policies",
+}
+
+var manageAssetActionRevMap = map[string]int32{
+	"ManageAssetActionCreate":         0,
+	"ManageAssetActionUpdatePolicies": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageAssetAction
+func (e ManageAssetAction) ValidEnum(v int32) bool {
+	_, ok := manageAssetActionMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageAssetAction) String() string {
+	name, _ := manageAssetActionMap[int32(e)]
+	return name
+}
+
+func (e ManageAssetAction) ShortString() string {
+	name, _ := manageAssetActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManageAssetAction) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageAssetAction) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageAssetActionRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageAssetAction(value)
+	return nil
+}
+
+// ManageAssetOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageAssetOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAssetOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAssetOpExt
+func (u ManageAssetOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAssetOpExt creates a new  ManageAssetOpExt.
+func NewManageAssetOpExt(v LedgerVersion, value interface{}) (result ManageAssetOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAssetOp is an XDR Struct defines as:
+//
+//   struct ManageAssetOp
+//    {
+//        ManageAssetAction action;
+//    	AssetCode code;
+//
+//        int32 policies;
+//
+//    	 // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageAssetOp struct {
+	Action   ManageAssetAction `json:"action,omitempty"`
+	Code     AssetCode         `json:"code,omitempty"`
+	Policies Int32             `json:"policies,omitempty"`
+	Ext      ManageAssetOpExt  `json:"ext,omitempty"`
+}
+
+// ManageAssetResultCode is an XDR Enum defines as:
+//
+//   enum ManageAssetResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//    	NOT_FOUND = -1,           // failed to find asset with such code
+//    	ALREADY_EXISTS = -2,
+//        MALFORMED = -3
+//    };
+//
+type ManageAssetResultCode int32
+
+const (
+	ManageAssetResultCodeSuccess       ManageAssetResultCode = 0
+	ManageAssetResultCodeNotFound      ManageAssetResultCode = -1
+	ManageAssetResultCodeAlreadyExists ManageAssetResultCode = -2
+	ManageAssetResultCodeMalformed     ManageAssetResultCode = -3
+)
+
+var ManageAssetResultCodeAll = []ManageAssetResultCode{
+	ManageAssetResultCodeSuccess,
+	ManageAssetResultCodeNotFound,
+	ManageAssetResultCodeAlreadyExists,
+	ManageAssetResultCodeMalformed,
+}
+
+var manageAssetResultCodeMap = map[int32]string{
+	0:  "ManageAssetResultCodeSuccess",
+	-1: "ManageAssetResultCodeNotFound",
+	-2: "ManageAssetResultCodeAlreadyExists",
+	-3: "ManageAssetResultCodeMalformed",
+}
+
+var manageAssetResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+	-2: "already_exists",
+	-3: "malformed",
+}
+
+var manageAssetResultCodeRevMap = map[string]int32{
+	"ManageAssetResultCodeSuccess":       0,
+	"ManageAssetResultCodeNotFound":      -1,
+	"ManageAssetResultCodeAlreadyExists": -2,
+	"ManageAssetResultCodeMalformed":     -3,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageAssetResultCode
+func (e ManageAssetResultCode) ValidEnum(v int32) bool {
+	_, ok := manageAssetResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageAssetResultCode) String() string {
+	name, _ := manageAssetResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageAssetResultCode) ShortString() string {
+	name, _ := manageAssetResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageAssetResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageAssetResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageAssetResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageAssetResultCode(value)
+	return nil
+}
+
+// ManageAssetSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageAssetSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAssetSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAssetSuccessExt
+func (u ManageAssetSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAssetSuccessExt creates a new  ManageAssetSuccessExt.
+func NewManageAssetSuccessExt(v LedgerVersion, value interface{}) (result ManageAssetSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAssetSuccess is an XDR Struct defines as:
+//
+//   struct ManageAssetSuccess
+//    {
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageAssetSuccess struct {
+	Ext ManageAssetSuccessExt `json:"ext,omitempty"`
+}
+
+// ManageAssetResult is an XDR Union defines as:
+//
+//   union ManageAssetResult switch (ManageAssetResultCode code)
+//    {
+//    case SUCCESS:
+//        ManageAssetSuccess success;
+//    default:
+//        void;
+//    };
+//
+type ManageAssetResult struct {
+	Code    ManageAssetResultCode `json:"code,omitempty"`
+	Success *ManageAssetSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAssetResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAssetResult
+func (u ManageAssetResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageAssetResultCode(sw) {
+	case ManageAssetResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageAssetResult creates a new  ManageAssetResult.
+func NewManageAssetResult(code ManageAssetResultCode, value interface{}) (result ManageAssetResult, err error) {
+	result.Code = code
+	switch ManageAssetResultCode(code) {
+	case ManageAssetResultCodeSuccess:
+		tv, ok := value.(ManageAssetSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageAssetSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageAssetResult) MustSuccess() ManageAssetSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAssetResult) GetSuccess() (result ManageAssetSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// ManageAssetPairAction is an XDR Enum defines as:
+//
+//   enum ManageAssetPairAction
+//    {
+//        CREATE = 0,
+//        UPDATE_PRICE = 1,
+//        UPDATE_POLICIES = 2
+//    };
+//
+type ManageAssetPairAction int32
+
+const (
+	ManageAssetPairActionCreate         ManageAssetPairAction = 0
+	ManageAssetPairActionUpdatePrice    ManageAssetPairAction = 1
+	ManageAssetPairActionUpdatePolicies ManageAssetPairAction = 2
+)
+
+var ManageAssetPairActionAll = []ManageAssetPairAction{
+	ManageAssetPairActionCreate,
+	ManageAssetPairActionUpdatePrice,
+	ManageAssetPairActionUpdatePolicies,
+}
+
+var manageAssetPairActionMap = map[int32]string{
+	0: "ManageAssetPairActionCreate",
+	1: "ManageAssetPairActionUpdatePrice",
+	2: "ManageAssetPairActionUpdatePolicies",
+}
+
+var manageAssetPairActionShortMap = map[int32]string{
+	0: "create",
+	1: "update_price",
+	2: "update_policies",
+}
+
+var manageAssetPairActionRevMap = map[string]int32{
+	"ManageAssetPairActionCreate":         0,
+	"ManageAssetPairActionUpdatePrice":    1,
+	"ManageAssetPairActionUpdatePolicies": 2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageAssetPairAction
+func (e ManageAssetPairAction) ValidEnum(v int32) bool {
+	_, ok := manageAssetPairActionMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageAssetPairAction) String() string {
+	name, _ := manageAssetPairActionMap[int32(e)]
+	return name
+}
+
+func (e ManageAssetPairAction) ShortString() string {
+	name, _ := manageAssetPairActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManageAssetPairAction) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageAssetPairAction) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageAssetPairActionRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageAssetPairAction(value)
+	return nil
+}
+
+// ManageAssetPairOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageAssetPairOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAssetPairOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAssetPairOpExt
+func (u ManageAssetPairOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAssetPairOpExt creates a new  ManageAssetPairOpExt.
+func NewManageAssetPairOpExt(v LedgerVersion, value interface{}) (result ManageAssetPairOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAssetPairOp is an XDR Struct defines as:
+//
+//   struct ManageAssetPairOp
+//    {
+//        ManageAssetPairAction action;
+//    	AssetCode base;
+//    	AssetCode quote;
+//
+//        int64 physicalPrice;
+//
+//    	int64 physicalPriceCorrection; // correction of physical price in percents. If physical price is set and restriction by physical price set, mininal price for offer for this pair will be physicalPrice * physicalPriceCorrection
+//    	int64 maxPriceStep;
+//
+//    	int32 policies;
+//
+//    	 // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageAssetPairOp struct {
+	Action                  ManageAssetPairAction `json:"action,omitempty"`
+	Base                    AssetCode             `json:"base,omitempty"`
+	Quote                   AssetCode             `json:"quote,omitempty"`
+	PhysicalPrice           Int64                 `json:"physicalPrice,omitempty"`
+	PhysicalPriceCorrection Int64                 `json:"physicalPriceCorrection,omitempty"`
+	MaxPriceStep            Int64                 `json:"maxPriceStep,omitempty"`
+	Policies                Int32                 `json:"policies,omitempty"`
+	Ext                     ManageAssetPairOpExt  `json:"ext,omitempty"`
+}
+
+// ManageAssetPairResultCode is an XDR Enum defines as:
+//
+//   enum ManageAssetPairResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//    	NOT_FOUND = -1,           // failed to find asset with such code
+//    	ALREADY_EXISTS = -2,
+//        MALFORMED = -3,
+//    	INVALID_ASSET = -4,
+//    	INVALID_ACTION = -5,
+//    	INVALID_POLICIES = -6,
+//    	ASSET_NOT_FOUND = -7
+//    };
+//
+type ManageAssetPairResultCode int32
+
+const (
+	ManageAssetPairResultCodeSuccess         ManageAssetPairResultCode = 0
+	ManageAssetPairResultCodeNotFound        ManageAssetPairResultCode = -1
+	ManageAssetPairResultCodeAlreadyExists   ManageAssetPairResultCode = -2
+	ManageAssetPairResultCodeMalformed       ManageAssetPairResultCode = -3
+	ManageAssetPairResultCodeInvalidAsset    ManageAssetPairResultCode = -4
+	ManageAssetPairResultCodeInvalidAction   ManageAssetPairResultCode = -5
+	ManageAssetPairResultCodeInvalidPolicies ManageAssetPairResultCode = -6
+	ManageAssetPairResultCodeAssetNotFound   ManageAssetPairResultCode = -7
+)
+
+var ManageAssetPairResultCodeAll = []ManageAssetPairResultCode{
+	ManageAssetPairResultCodeSuccess,
+	ManageAssetPairResultCodeNotFound,
+	ManageAssetPairResultCodeAlreadyExists,
+	ManageAssetPairResultCodeMalformed,
+	ManageAssetPairResultCodeInvalidAsset,
+	ManageAssetPairResultCodeInvalidAction,
+	ManageAssetPairResultCodeInvalidPolicies,
+	ManageAssetPairResultCodeAssetNotFound,
+}
+
+var manageAssetPairResultCodeMap = map[int32]string{
+	0:  "ManageAssetPairResultCodeSuccess",
+	-1: "ManageAssetPairResultCodeNotFound",
+	-2: "ManageAssetPairResultCodeAlreadyExists",
+	-3: "ManageAssetPairResultCodeMalformed",
+	-4: "ManageAssetPairResultCodeInvalidAsset",
+	-5: "ManageAssetPairResultCodeInvalidAction",
+	-6: "ManageAssetPairResultCodeInvalidPolicies",
+	-7: "ManageAssetPairResultCodeAssetNotFound",
+}
+
+var manageAssetPairResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+	-2: "already_exists",
+	-3: "malformed",
+	-4: "invalid_asset",
+	-5: "invalid_action",
+	-6: "invalid_policies",
+	-7: "asset_not_found",
+}
+
+var manageAssetPairResultCodeRevMap = map[string]int32{
+	"ManageAssetPairResultCodeSuccess":         0,
+	"ManageAssetPairResultCodeNotFound":        -1,
+	"ManageAssetPairResultCodeAlreadyExists":   -2,
+	"ManageAssetPairResultCodeMalformed":       -3,
+	"ManageAssetPairResultCodeInvalidAsset":    -4,
+	"ManageAssetPairResultCodeInvalidAction":   -5,
+	"ManageAssetPairResultCodeInvalidPolicies": -6,
+	"ManageAssetPairResultCodeAssetNotFound":   -7,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageAssetPairResultCode
+func (e ManageAssetPairResultCode) ValidEnum(v int32) bool {
+	_, ok := manageAssetPairResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageAssetPairResultCode) String() string {
+	name, _ := manageAssetPairResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageAssetPairResultCode) ShortString() string {
+	name, _ := manageAssetPairResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageAssetPairResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageAssetPairResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageAssetPairResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageAssetPairResultCode(value)
+	return nil
+}
+
+// ManageAssetPairSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageAssetPairSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAssetPairSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAssetPairSuccessExt
+func (u ManageAssetPairSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAssetPairSuccessExt creates a new  ManageAssetPairSuccessExt.
+func NewManageAssetPairSuccessExt(v LedgerVersion, value interface{}) (result ManageAssetPairSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAssetPairSuccess is an XDR Struct defines as:
+//
+//   struct ManageAssetPairSuccess
+//    {
+//    	int64 currentPrice;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageAssetPairSuccess struct {
+	CurrentPrice Int64                     `json:"currentPrice,omitempty"`
+	Ext          ManageAssetPairSuccessExt `json:"ext,omitempty"`
+}
+
+// ManageAssetPairResult is an XDR Union defines as:
+//
+//   union ManageAssetPairResult switch (ManageAssetPairResultCode code)
+//    {
+//    case SUCCESS:
+//        ManageAssetPairSuccess success;
+//    default:
+//        void;
+//    };
+//
+type ManageAssetPairResult struct {
+	Code    ManageAssetPairResultCode `json:"code,omitempty"`
+	Success *ManageAssetPairSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAssetPairResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAssetPairResult
+func (u ManageAssetPairResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageAssetPairResultCode(sw) {
+	case ManageAssetPairResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageAssetPairResult creates a new  ManageAssetPairResult.
+func NewManageAssetPairResult(code ManageAssetPairResultCode, value interface{}) (result ManageAssetPairResult, err error) {
+	result.Code = code
+	switch ManageAssetPairResultCode(code) {
+	case ManageAssetPairResultCodeSuccess:
+		tv, ok := value.(ManageAssetPairSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageAssetPairSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageAssetPairResult) MustSuccess() ManageAssetPairSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAssetPairResult) GetSuccess() (result ManageAssetPairSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// AssetPolicy is an XDR Enum defines as:
+//
+//   enum AssetPolicy
+//    {
+//    	TRANSFERABLE = 1,
+//        EMITTABLE_PRIMARY = 2,
+//        EMITTABLE_SECONDARY = 4
+//    };
+//
+type AssetPolicy int32
+
+const (
+	AssetPolicyTransferable       AssetPolicy = 1
+	AssetPolicyEmittablePrimary   AssetPolicy = 2
+	AssetPolicyEmittableSecondary AssetPolicy = 4
+)
+
+var AssetPolicyAll = []AssetPolicy{
+	AssetPolicyTransferable,
+	AssetPolicyEmittablePrimary,
+	AssetPolicyEmittableSecondary,
+}
+
+var assetPolicyMap = map[int32]string{
+	1: "AssetPolicyTransferable",
+	2: "AssetPolicyEmittablePrimary",
+	4: "AssetPolicyEmittableSecondary",
+}
+
+var assetPolicyShortMap = map[int32]string{
+	1: "transferable",
+	2: "emittable_primary",
+	4: "emittable_secondary",
+}
+
+var assetPolicyRevMap = map[string]int32{
+	"AssetPolicyTransferable":       1,
+	"AssetPolicyEmittablePrimary":   2,
+	"AssetPolicyEmittableSecondary": 4,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for AssetPolicy
+func (e AssetPolicy) ValidEnum(v int32) bool {
+	_, ok := assetPolicyMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e AssetPolicy) String() string {
+	name, _ := assetPolicyMap[int32(e)]
+	return name
+}
+
+func (e AssetPolicy) ShortString() string {
+	name, _ := assetPolicyShortMap[int32(e)]
+	return name
+}
+
+func (e AssetPolicy) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *AssetPolicy) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := assetPolicyRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = AssetPolicy(value)
+	return nil
+}
+
+// AssetEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AssetEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AssetEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AssetEntryExt
+func (u AssetEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAssetEntryExt creates a new  AssetEntryExt.
+func NewAssetEntryExt(v LedgerVersion, value interface{}) (result AssetEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AssetEntry is an XDR Struct defines as:
+//
+//   struct AssetEntry
+//    {
+//        AssetCode code;
+//        int32 policies;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AssetEntry struct {
+	Code     AssetCode     `json:"code,omitempty"`
+	Policies Int32         `json:"policies,omitempty"`
+	Ext      AssetEntryExt `json:"ext,omitempty"`
+}
+
+// SetFeesOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//
+type SetFeesOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SetFeesOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SetFeesOpExt
+func (u SetFeesOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewSetFeesOpExt creates a new  SetFeesOpExt.
+func NewSetFeesOpExt(v LedgerVersion, value interface{}) (result SetFeesOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// SetFeesOp is an XDR Struct defines as:
+//
+//   struct SetFeesOp
+//        {
+//            FeeEntry* fee;
+//    		bool isDelete;
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//        };
+//
+type SetFeesOp struct {
+	Fee      *FeeEntry    `json:"fee,omitempty"`
+	IsDelete bool         `json:"isDelete,omitempty"`
+	Ext      SetFeesOpExt `json:"ext,omitempty"`
+}
+
+// SetFeesResultCode is an XDR Enum defines as:
+//
+//   enum SetFeesResultCode
+//        {
+//            // codes considered as "success" for the operation
+//            SUCCESS = 0,
+//
+//            // codes considered as "failure" for the operation
+//            INVALID_AMOUNT = -1,      // amount is negative
+//    		INVALID_FEE_TYPE = -2,     // operation type is invalid
+//            ASSET_NOT_FOUND = -3,
+//            INVALID_ASSET = -4,
+//            MALFORMED = -5,
+//    		MALFORMED_RANGE = -6,
+//    		RANGE_OVERLAP = -7,
+//    		NOT_FOUND = -8,
+//    		SUB_TYPE_NOT_EXIST = -9
+//        };
+//
+type SetFeesResultCode int32
+
+const (
+	SetFeesResultCodeSuccess         SetFeesResultCode = 0
+	SetFeesResultCodeInvalidAmount   SetFeesResultCode = -1
+	SetFeesResultCodeInvalidFeeType  SetFeesResultCode = -2
+	SetFeesResultCodeAssetNotFound   SetFeesResultCode = -3
+	SetFeesResultCodeInvalidAsset    SetFeesResultCode = -4
+	SetFeesResultCodeMalformed       SetFeesResultCode = -5
+	SetFeesResultCodeMalformedRange  SetFeesResultCode = -6
+	SetFeesResultCodeRangeOverlap    SetFeesResultCode = -7
+	SetFeesResultCodeNotFound        SetFeesResultCode = -8
+	SetFeesResultCodeSubTypeNotExist SetFeesResultCode = -9
+)
+
+var SetFeesResultCodeAll = []SetFeesResultCode{
+	SetFeesResultCodeSuccess,
+	SetFeesResultCodeInvalidAmount,
+	SetFeesResultCodeInvalidFeeType,
+	SetFeesResultCodeAssetNotFound,
+	SetFeesResultCodeInvalidAsset,
+	SetFeesResultCodeMalformed,
+	SetFeesResultCodeMalformedRange,
+	SetFeesResultCodeRangeOverlap,
+	SetFeesResultCodeNotFound,
+	SetFeesResultCodeSubTypeNotExist,
+}
+
+var setFeesResultCodeMap = map[int32]string{
+	0:  "SetFeesResultCodeSuccess",
+	-1: "SetFeesResultCodeInvalidAmount",
+	-2: "SetFeesResultCodeInvalidFeeType",
+	-3: "SetFeesResultCodeAssetNotFound",
+	-4: "SetFeesResultCodeInvalidAsset",
+	-5: "SetFeesResultCodeMalformed",
+	-6: "SetFeesResultCodeMalformedRange",
+	-7: "SetFeesResultCodeRangeOverlap",
+	-8: "SetFeesResultCodeNotFound",
+	-9: "SetFeesResultCodeSubTypeNotExist",
+}
+
+var setFeesResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "invalid_amount",
+	-2: "invalid_fee_type",
+	-3: "asset_not_found",
+	-4: "invalid_asset",
+	-5: "malformed",
+	-6: "malformed_range",
+	-7: "range_overlap",
+	-8: "not_found",
+	-9: "sub_type_not_exist",
+}
+
+var setFeesResultCodeRevMap = map[string]int32{
+	"SetFeesResultCodeSuccess":         0,
+	"SetFeesResultCodeInvalidAmount":   -1,
+	"SetFeesResultCodeInvalidFeeType":  -2,
+	"SetFeesResultCodeAssetNotFound":   -3,
+	"SetFeesResultCodeInvalidAsset":    -4,
+	"SetFeesResultCodeMalformed":       -5,
+	"SetFeesResultCodeMalformedRange":  -6,
+	"SetFeesResultCodeRangeOverlap":    -7,
+	"SetFeesResultCodeNotFound":        -8,
+	"SetFeesResultCodeSubTypeNotExist": -9,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for SetFeesResultCode
+func (e SetFeesResultCode) ValidEnum(v int32) bool {
+	_, ok := setFeesResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e SetFeesResultCode) String() string {
+	name, _ := setFeesResultCodeMap[int32(e)]
+	return name
+}
+
+func (e SetFeesResultCode) ShortString() string {
+	name, _ := setFeesResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e SetFeesResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *SetFeesResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := setFeesResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = SetFeesResultCode(value)
+	return nil
+}
+
+// SetFeesResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    				{
+//    				case EMPTY_VERSION:
+//    					void;
+//    				}
+//
+type SetFeesResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SetFeesResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SetFeesResultSuccessExt
+func (u SetFeesResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewSetFeesResultSuccessExt creates a new  SetFeesResultSuccessExt.
+func NewSetFeesResultSuccessExt(v LedgerVersion, value interface{}) (result SetFeesResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// SetFeesResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct {
+//    				// reserved for future use
+//    				union switch (LedgerVersion v)
+//    				{
+//    				case EMPTY_VERSION:
+//    					void;
+//    				}
+//    				ext;
+//    			}
+//
+type SetFeesResultSuccess struct {
+	Ext SetFeesResultSuccessExt `json:"ext,omitempty"`
+}
+
+// SetFeesResult is an XDR Union defines as:
+//
+//   union SetFeesResult switch (SetFeesResultCode code)
+//        {
+//            case SUCCESS:
+//                struct {
+//    				// reserved for future use
+//    				union switch (LedgerVersion v)
+//    				{
+//    				case EMPTY_VERSION:
+//    					void;
+//    				}
+//    				ext;
+//    			} success;
+//            default:
+//                void;
+//        };
+//
+type SetFeesResult struct {
+	Code    SetFeesResultCode     `json:"code,omitempty"`
+	Success *SetFeesResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SetFeesResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SetFeesResult
+func (u SetFeesResult) ArmForSwitch(sw int32) (string, bool) {
+	switch SetFeesResultCode(sw) {
+	case SetFeesResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewSetFeesResult creates a new  SetFeesResult.
+func NewSetFeesResult(code SetFeesResultCode, value interface{}) (result SetFeesResult, err error) {
+	result.Code = code
+	switch SetFeesResultCode(code) {
+	case SetFeesResultCodeSuccess:
+		tv, ok := value.(SetFeesResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SetFeesResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u SetFeesResult) MustSuccess() SetFeesResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SetFeesResult) GetSuccess() (result SetFeesResultSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// ManageBalanceAction is an XDR Enum defines as:
+//
+//   enum ManageBalanceAction
+//    {
+//        CREATE = 0,
+//        DELETE = 1
+//    };
+//
+type ManageBalanceAction int32
+
+const (
+	ManageBalanceActionCreate ManageBalanceAction = 0
+	ManageBalanceActionDelete ManageBalanceAction = 1
+)
+
+var ManageBalanceActionAll = []ManageBalanceAction{
+	ManageBalanceActionCreate,
+	ManageBalanceActionDelete,
+}
+
+var manageBalanceActionMap = map[int32]string{
+	0: "ManageBalanceActionCreate",
+	1: "ManageBalanceActionDelete",
+}
+
+var manageBalanceActionShortMap = map[int32]string{
+	0: "create",
+	1: "delete",
+}
+
+var manageBalanceActionRevMap = map[string]int32{
+	"ManageBalanceActionCreate": 0,
+	"ManageBalanceActionDelete": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageBalanceAction
+func (e ManageBalanceAction) ValidEnum(v int32) bool {
+	_, ok := manageBalanceActionMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageBalanceAction) String() string {
+	name, _ := manageBalanceActionMap[int32(e)]
+	return name
+}
+
+func (e ManageBalanceAction) ShortString() string {
+	name, _ := manageBalanceActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManageBalanceAction) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageBalanceAction) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageBalanceActionRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageBalanceAction(value)
+	return nil
+}
+
+// ManageBalanceOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageBalanceOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageBalanceOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageBalanceOpExt
+func (u ManageBalanceOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageBalanceOpExt creates a new  ManageBalanceOpExt.
+func NewManageBalanceOpExt(v LedgerVersion, value interface{}) (result ManageBalanceOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageBalanceOp is an XDR Struct defines as:
+//
+//   struct ManageBalanceOp
+//    {
+//        BalanceID balanceID;
+//        ManageBalanceAction action;
+//        AccountID destination;
+//        AssetCode asset;
+//    	union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageBalanceOp struct {
+	BalanceId   BalanceId           `json:"balanceID,omitempty"`
+	Action      ManageBalanceAction `json:"action,omitempty"`
+	Destination AccountId           `json:"destination,omitempty"`
+	Asset       AssetCode           `json:"asset,omitempty"`
+	Ext         ManageBalanceOpExt  `json:"ext,omitempty"`
+}
+
+// ManageBalanceResultCode is an XDR Enum defines as:
+//
+//   enum ManageBalanceResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        MALFORMED = -1,       // invalid destination
+//        NOT_FOUND = -2,
+//        DESTINATION_NOT_FOUND = -3,
+//        ALREADY_EXISTS = -4,
+//        ASSET_NOT_FOUND = -5,
+//        INVALID_ASSET = -6
+//    };
+//
+type ManageBalanceResultCode int32
+
+const (
+	ManageBalanceResultCodeSuccess             ManageBalanceResultCode = 0
+	ManageBalanceResultCodeMalformed           ManageBalanceResultCode = -1
+	ManageBalanceResultCodeNotFound            ManageBalanceResultCode = -2
+	ManageBalanceResultCodeDestinationNotFound ManageBalanceResultCode = -3
+	ManageBalanceResultCodeAlreadyExists       ManageBalanceResultCode = -4
+	ManageBalanceResultCodeAssetNotFound       ManageBalanceResultCode = -5
+	ManageBalanceResultCodeInvalidAsset        ManageBalanceResultCode = -6
+)
+
+var ManageBalanceResultCodeAll = []ManageBalanceResultCode{
+	ManageBalanceResultCodeSuccess,
+	ManageBalanceResultCodeMalformed,
+	ManageBalanceResultCodeNotFound,
+	ManageBalanceResultCodeDestinationNotFound,
+	ManageBalanceResultCodeAlreadyExists,
+	ManageBalanceResultCodeAssetNotFound,
+	ManageBalanceResultCodeInvalidAsset,
+}
+
+var manageBalanceResultCodeMap = map[int32]string{
+	0:  "ManageBalanceResultCodeSuccess",
+	-1: "ManageBalanceResultCodeMalformed",
+	-2: "ManageBalanceResultCodeNotFound",
+	-3: "ManageBalanceResultCodeDestinationNotFound",
+	-4: "ManageBalanceResultCodeAlreadyExists",
+	-5: "ManageBalanceResultCodeAssetNotFound",
+	-6: "ManageBalanceResultCodeInvalidAsset",
+}
+
+var manageBalanceResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "malformed",
+	-2: "not_found",
+	-3: "destination_not_found",
+	-4: "already_exists",
+	-5: "asset_not_found",
+	-6: "invalid_asset",
+}
+
+var manageBalanceResultCodeRevMap = map[string]int32{
+	"ManageBalanceResultCodeSuccess":             0,
+	"ManageBalanceResultCodeMalformed":           -1,
+	"ManageBalanceResultCodeNotFound":            -2,
+	"ManageBalanceResultCodeDestinationNotFound": -3,
+	"ManageBalanceResultCodeAlreadyExists":       -4,
+	"ManageBalanceResultCodeAssetNotFound":       -5,
+	"ManageBalanceResultCodeInvalidAsset":        -6,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageBalanceResultCode
+func (e ManageBalanceResultCode) ValidEnum(v int32) bool {
+	_, ok := manageBalanceResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageBalanceResultCode) String() string {
+	name, _ := manageBalanceResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageBalanceResultCode) ShortString() string {
+	name, _ := manageBalanceResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageBalanceResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageBalanceResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageBalanceResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageBalanceResultCode(value)
+	return nil
+}
+
+// ManageBalanceSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageBalanceSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageBalanceSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageBalanceSuccessExt
+func (u ManageBalanceSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageBalanceSuccessExt creates a new  ManageBalanceSuccessExt.
+func NewManageBalanceSuccessExt(v LedgerVersion, value interface{}) (result ManageBalanceSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageBalanceSuccess is an XDR Struct defines as:
+//
+//   struct ManageBalanceSuccess {
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageBalanceSuccess struct {
+	Ext ManageBalanceSuccessExt `json:"ext,omitempty"`
+}
+
+// ManageBalanceResult is an XDR Union defines as:
+//
+//   union ManageBalanceResult switch (ManageBalanceResultCode code)
+//    {
+//    case SUCCESS:
+//        ManageBalanceSuccess success;
+//    default:
+//        void;
+//    };
+//
+type ManageBalanceResult struct {
+	Code    ManageBalanceResultCode `json:"code,omitempty"`
+	Success *ManageBalanceSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageBalanceResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageBalanceResult
+func (u ManageBalanceResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageBalanceResultCode(sw) {
+	case ManageBalanceResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageBalanceResult creates a new  ManageBalanceResult.
+func NewManageBalanceResult(code ManageBalanceResultCode, value interface{}) (result ManageBalanceResult, err error) {
+	result.Code = code
+	switch ManageBalanceResultCode(code) {
+	case ManageBalanceResultCodeSuccess:
+		tv, ok := value.(ManageBalanceSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageBalanceSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageBalanceResult) MustSuccess() ManageBalanceSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageBalanceResult) GetSuccess() (result ManageBalanceSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// ReviewPaymentRequestOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//
+type ReviewPaymentRequestOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ReviewPaymentRequestOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ReviewPaymentRequestOpExt
+func (u ReviewPaymentRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewReviewPaymentRequestOpExt creates a new  ReviewPaymentRequestOpExt.
+func NewReviewPaymentRequestOpExt(v LedgerVersion, value interface{}) (result ReviewPaymentRequestOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ReviewPaymentRequestOp is an XDR Struct defines as:
+//
+//   struct ReviewPaymentRequestOp
+//    {
+//        uint64 paymentID;
+//
+//    	bool accept;
+//        string256* rejectReason;
+//    	// reserved for future use
+//    	union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//    	ext;
+//    };
+//
+type ReviewPaymentRequestOp struct {
+	PaymentId    Uint64                    `json:"paymentID,omitempty"`
+	Accept       bool                      `json:"accept,omitempty"`
+	RejectReason *String256                `json:"rejectReason,omitempty"`
+	Ext          ReviewPaymentRequestOpExt `json:"ext,omitempty"`
+}
+
+// ReviewPaymentRequestResultCode is an XDR Enum defines as:
+//
+//   enum ReviewPaymentRequestResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//    	NOT_FOUND = -1,           // failed to find Recovery request with such ID
+//        LINE_FULL = -2
+//    };
+//
+type ReviewPaymentRequestResultCode int32
+
+const (
+	ReviewPaymentRequestResultCodeSuccess  ReviewPaymentRequestResultCode = 0
+	ReviewPaymentRequestResultCodeNotFound ReviewPaymentRequestResultCode = -1
+	ReviewPaymentRequestResultCodeLineFull ReviewPaymentRequestResultCode = -2
+)
+
+var ReviewPaymentRequestResultCodeAll = []ReviewPaymentRequestResultCode{
+	ReviewPaymentRequestResultCodeSuccess,
+	ReviewPaymentRequestResultCodeNotFound,
+	ReviewPaymentRequestResultCodeLineFull,
+}
+
+var reviewPaymentRequestResultCodeMap = map[int32]string{
+	0:  "ReviewPaymentRequestResultCodeSuccess",
+	-1: "ReviewPaymentRequestResultCodeNotFound",
+	-2: "ReviewPaymentRequestResultCodeLineFull",
+}
+
+var reviewPaymentRequestResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+	-2: "line_full",
+}
+
+var reviewPaymentRequestResultCodeRevMap = map[string]int32{
+	"ReviewPaymentRequestResultCodeSuccess":  0,
+	"ReviewPaymentRequestResultCodeNotFound": -1,
+	"ReviewPaymentRequestResultCodeLineFull": -2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ReviewPaymentRequestResultCode
+func (e ReviewPaymentRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := reviewPaymentRequestResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ReviewPaymentRequestResultCode) String() string {
+	name, _ := reviewPaymentRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ReviewPaymentRequestResultCode) ShortString() string {
+	name, _ := reviewPaymentRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ReviewPaymentRequestResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ReviewPaymentRequestResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := reviewPaymentRequestResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ReviewPaymentRequestResultCode(value)
+	return nil
+}
+
+// PaymentState is an XDR Enum defines as:
+//
+//   enum PaymentState
+//    {
+//        PENDING = 0,
+//        PROCESSED = 1,
+//        REJECTED = 2
+//    };
+//
+type PaymentState int32
+
+const (
+	PaymentStatePending   PaymentState = 0
+	PaymentStateProcessed PaymentState = 1
+	PaymentStateRejected  PaymentState = 2
+)
+
+var PaymentStateAll = []PaymentState{
+	PaymentStatePending,
+	PaymentStateProcessed,
+	PaymentStateRejected,
+}
+
+var paymentStateMap = map[int32]string{
+	0: "PaymentStatePending",
+	1: "PaymentStateProcessed",
+	2: "PaymentStateRejected",
+}
+
+var paymentStateShortMap = map[int32]string{
+	0: "pending",
+	1: "processed",
+	2: "rejected",
+}
+
+var paymentStateRevMap = map[string]int32{
+	"PaymentStatePending":   0,
+	"PaymentStateProcessed": 1,
+	"PaymentStateRejected":  2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for PaymentState
+func (e PaymentState) ValidEnum(v int32) bool {
+	_, ok := paymentStateMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e PaymentState) String() string {
+	name, _ := paymentStateMap[int32(e)]
+	return name
+}
+
+func (e PaymentState) ShortString() string {
+	name, _ := paymentStateShortMap[int32(e)]
+	return name
+}
+
+func (e PaymentState) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *PaymentState) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := paymentStateRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = PaymentState(value)
+	return nil
+}
+
+// ReviewPaymentResponseExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//
+type ReviewPaymentResponseExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ReviewPaymentResponseExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ReviewPaymentResponseExt
+func (u ReviewPaymentResponseExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewReviewPaymentResponseExt creates a new  ReviewPaymentResponseExt.
+func NewReviewPaymentResponseExt(v LedgerVersion, value interface{}) (result ReviewPaymentResponseExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ReviewPaymentResponse is an XDR Struct defines as:
+//
+//   struct ReviewPaymentResponse {
+//        PaymentState state;
+//
+//        uint64* relatedInvoiceID;
+//    	// reserved for future use
+//    	union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//    	ext;
+//    };
+//
+type ReviewPaymentResponse struct {
+	State            PaymentState             `json:"state,omitempty"`
+	RelatedInvoiceId *Uint64                  `json:"relatedInvoiceID,omitempty"`
+	Ext              ReviewPaymentResponseExt `json:"ext,omitempty"`
+}
+
+// ReviewPaymentRequestResult is an XDR Union defines as:
+//
+//   union ReviewPaymentRequestResult switch (ReviewPaymentRequestResultCode code)
+//    {
+//    case SUCCESS:
+//        ReviewPaymentResponse reviewPaymentResponse;
+//    default:
+//        void;
+//    };
+//
+type ReviewPaymentRequestResult struct {
+	Code                  ReviewPaymentRequestResultCode `json:"code,omitempty"`
+	ReviewPaymentResponse *ReviewPaymentResponse         `json:"reviewPaymentResponse,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ReviewPaymentRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ReviewPaymentRequestResult
+func (u ReviewPaymentRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ReviewPaymentRequestResultCode(sw) {
+	case ReviewPaymentRequestResultCodeSuccess:
+		return "ReviewPaymentResponse", true
+	default:
+		return "", true
+	}
+}
+
+// NewReviewPaymentRequestResult creates a new  ReviewPaymentRequestResult.
+func NewReviewPaymentRequestResult(code ReviewPaymentRequestResultCode, value interface{}) (result ReviewPaymentRequestResult, err error) {
+	result.Code = code
+	switch ReviewPaymentRequestResultCode(code) {
+	case ReviewPaymentRequestResultCodeSuccess:
+		tv, ok := value.(ReviewPaymentResponse)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ReviewPaymentResponse")
+			return
+		}
+		result.ReviewPaymentResponse = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustReviewPaymentResponse retrieves the ReviewPaymentResponse value from the union,
+// panicing if the value is not set.
+func (u ReviewPaymentRequestResult) MustReviewPaymentResponse() ReviewPaymentResponse {
+	val, ok := u.GetReviewPaymentResponse()
+
+	if !ok {
+		panic("arm ReviewPaymentResponse is not set")
+	}
+
+	return val
+}
+
+// GetReviewPaymentResponse retrieves the ReviewPaymentResponse value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewPaymentRequestResult) GetReviewPaymentResponse() (result ReviewPaymentResponse, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "ReviewPaymentResponse" {
+		result = *u.ReviewPaymentResponse
+		ok = true
+	}
+
+	return
+}
+
 // Hash is an XDR Typedef defines as:
 //
 //   typedef opaque Hash[32];
@@ -14874,6 +12037,14 @@ var cryptoKeyTypeMap = map[int32]string{
 	0: "CryptoKeyTypeKeyTypeEd25519",
 }
 
+var cryptoKeyTypeShortMap = map[int32]string{
+	0: "key_type_ed25519",
+}
+
+var cryptoKeyTypeRevMap = map[string]int32{
+	"CryptoKeyTypeKeyTypeEd25519": 0,
+}
+
 // ValidEnum validates a proposed value for this enum.  Implements
 // the Enum interface for CryptoKeyType
 func (e CryptoKeyType) ValidEnum(v int32) bool {
@@ -14887,15 +12058,36 @@ func (e CryptoKeyType) String() string {
 	return name
 }
 
+func (e CryptoKeyType) ShortString() string {
+	name, _ := cryptoKeyTypeShortMap[int32(e)]
+	return name
+}
+
 func (e CryptoKeyType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *CryptoKeyType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := cryptoKeyTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = CryptoKeyType(value)
+	return nil
 }
 
 // PublicKeyType is an XDR Enum defines as:
 //
 //   enum PublicKeyType
 //    {
-//    	PUBLIC_KEY_TYPE_ED25519 = KEY_TYPE_ED25519
+//    	PUBLIC_KEY_TYPE_ED25519 = 0
 //    };
 //
 type PublicKeyType int32
@@ -14912,6 +12104,14 @@ var publicKeyTypeMap = map[int32]string{
 	0: "PublicKeyTypePublicKeyTypeEd25519",
 }
 
+var publicKeyTypeShortMap = map[int32]string{
+	0: "public_key_type_ed25519",
+}
+
+var publicKeyTypeRevMap = map[string]int32{
+	"PublicKeyTypePublicKeyTypeEd25519": 0,
+}
+
 // ValidEnum validates a proposed value for this enum.  Implements
 // the Enum interface for PublicKeyType
 func (e PublicKeyType) ValidEnum(v int32) bool {
@@ -14925,8 +12125,29 @@ func (e PublicKeyType) String() string {
 	return name
 }
 
+func (e PublicKeyType) ShortString() string {
+	name, _ := publicKeyTypeShortMap[int32(e)]
+	return name
+}
+
 func (e PublicKeyType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *PublicKeyType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := publicKeyTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = PublicKeyType(value)
+	return nil
 }
 
 // PublicKey is an XDR Union defines as:
@@ -15001,45 +12222,29 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 // LedgerVersion is an XDR Enum defines as:
 //
 //   enum LedgerVersion {
-//    	EMPTY_VERSION = 0,
-//    	IMPROVED_STATS_CALCULATION = 4,
-//    	EMISSION_REQUEST_BALANCE_ID = 5,
-//    	SIGNER_NAME = 6,
-//    	ACCOUNT_POLICIES = 7,
-//    	IMPROVED_TRANSFER_FEES_CALC = 8,
-//    	USE_IMPROVED_SIGNATURE_CHECK = 9
+//    	EMPTY_VERSION = 0
 //    };
 //
 type LedgerVersion int32
 
 const (
-	LedgerVersionEmptyVersion              LedgerVersion = 0
-	LedgerVersionImprovedStatsCalculation  LedgerVersion = 4
-	LedgerVersionEmissionRequestBalanceId  LedgerVersion = 5
-	LedgerVersionSignerName                LedgerVersion = 6
-	LedgerVersionAccountPolicies           LedgerVersion = 7
-	LedgerVersionImprovedTransferFeesCalc  LedgerVersion = 8
-	LedgerVersionUseImprovedSignatureCheck LedgerVersion = 9
+	LedgerVersionEmptyVersion LedgerVersion = 0
 )
 
 var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionEmptyVersion,
-	LedgerVersionImprovedStatsCalculation,
-	LedgerVersionEmissionRequestBalanceId,
-	LedgerVersionSignerName,
-	LedgerVersionAccountPolicies,
-	LedgerVersionImprovedTransferFeesCalc,
-	LedgerVersionUseImprovedSignatureCheck,
 }
 
 var ledgerVersionMap = map[int32]string{
 	0: "LedgerVersionEmptyVersion",
-	4: "LedgerVersionImprovedStatsCalculation",
-	5: "LedgerVersionEmissionRequestBalanceId",
-	6: "LedgerVersionSignerName",
-	7: "LedgerVersionAccountPolicies",
-	8: "LedgerVersionImprovedTransferFeesCalc",
-	9: "LedgerVersionUseImprovedSignatureCheck",
+}
+
+var ledgerVersionShortMap = map[int32]string{
+	0: "empty_version",
+}
+
+var ledgerVersionRevMap = map[string]int32{
+	"LedgerVersionEmptyVersion": 0,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -15055,8 +12260,29 @@ func (e LedgerVersion) String() string {
 	return name
 }
 
+func (e LedgerVersion) ShortString() string {
+	name, _ := ledgerVersionShortMap[int32(e)]
+	return name
+}
+
 func (e LedgerVersion) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *LedgerVersion) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := ledgerVersionRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = LedgerVersion(value)
+	return nil
 }
 
 // Signature is an XDR Typedef defines as:
@@ -15383,6 +12609,48 @@ var operationTypeMap = map[int32]string{
 	17: "OperationTypeManageInvoice",
 }
 
+var operationTypeShortMap = map[int32]string{
+	0:  "create_account",
+	1:  "payment",
+	2:  "set_options",
+	3:  "manage_coins_emission_request",
+	4:  "review_coins_emission_request",
+	5:  "set_fees",
+	6:  "manage_account",
+	7:  "manage_forfeit_request",
+	8:  "recover",
+	9:  "manage_balance",
+	10: "review_payment_request",
+	11: "manage_asset",
+	12: "upload_preemissions",
+	13: "set_limits",
+	14: "direct_debit",
+	15: "manage_asset_pair",
+	16: "manage_offer",
+	17: "manage_invoice",
+}
+
+var operationTypeRevMap = map[string]int32{
+	"OperationTypeCreateAccount":              0,
+	"OperationTypePayment":                    1,
+	"OperationTypeSetOptions":                 2,
+	"OperationTypeManageCoinsEmissionRequest": 3,
+	"OperationTypeReviewCoinsEmissionRequest": 4,
+	"OperationTypeSetFees":                    5,
+	"OperationTypeManageAccount":              6,
+	"OperationTypeManageForfeitRequest":       7,
+	"OperationTypeRecover":                    8,
+	"OperationTypeManageBalance":              9,
+	"OperationTypeReviewPaymentRequest":       10,
+	"OperationTypeManageAsset":                11,
+	"OperationTypeUploadPreemissions":         12,
+	"OperationTypeSetLimits":                  13,
+	"OperationTypeDirectDebit":                14,
+	"OperationTypeManageAssetPair":            15,
+	"OperationTypeManageOffer":                16,
+	"OperationTypeManageInvoice":              17,
+}
+
 // ValidEnum validates a proposed value for this enum.  Implements
 // the Enum interface for OperationType
 func (e OperationType) ValidEnum(v int32) bool {
@@ -15396,8 +12664,29 @@ func (e OperationType) String() string {
 	return name
 }
 
+func (e OperationType) ShortString() string {
+	name, _ := operationTypeShortMap[int32(e)]
+	return name
+}
+
 func (e OperationType) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *OperationType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := operationTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = OperationType(value)
+	return nil
 }
 
 // DecoratedSignature is an XDR Struct defines as:
@@ -15411,6 +12700,4611 @@ func (e OperationType) MarshalJSON() ([]byte, error) {
 type DecoratedSignature struct {
 	Hint      SignatureHint `json:"hint,omitempty"`
 	Signature Signature     `json:"signature,omitempty"`
+}
+
+// ManageInvoiceOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageInvoiceOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageInvoiceOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageInvoiceOpExt
+func (u ManageInvoiceOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageInvoiceOpExt creates a new  ManageInvoiceOpExt.
+func NewManageInvoiceOpExt(v LedgerVersion, value interface{}) (result ManageInvoiceOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageInvoiceOp is an XDR Struct defines as:
+//
+//   struct ManageInvoiceOp
+//    {
+//        BalanceID receiverBalance;
+//    	AccountID sender;
+//        int64 amount; // if set to 0, delete the invoice
+//
+//        // 0=create a new invoice, otherwise edit an existing invoice
+//        uint64 invoiceID;
+//
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageInvoiceOp struct {
+	ReceiverBalance BalanceId          `json:"receiverBalance,omitempty"`
+	Sender          AccountId          `json:"sender,omitempty"`
+	Amount          Int64              `json:"amount,omitempty"`
+	InvoiceId       Uint64             `json:"invoiceID,omitempty"`
+	Ext             ManageInvoiceOpExt `json:"ext,omitempty"`
+}
+
+// ManageInvoiceResultCode is an XDR Enum defines as:
+//
+//   enum ManageInvoiceResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        MALFORMED = -1,
+//        BALANCE_NOT_FOUND = -2,
+//    	INVOICE_OVERFLOW = -3,
+//
+//        NOT_FOUND = -4,
+//        TOO_MANY_INVOICES = -5,
+//        CAN_NOT_DELETE_IN_PROGRESS = -6
+//    };
+//
+type ManageInvoiceResultCode int32
+
+const (
+	ManageInvoiceResultCodeSuccess                ManageInvoiceResultCode = 0
+	ManageInvoiceResultCodeMalformed              ManageInvoiceResultCode = -1
+	ManageInvoiceResultCodeBalanceNotFound        ManageInvoiceResultCode = -2
+	ManageInvoiceResultCodeInvoiceOverflow        ManageInvoiceResultCode = -3
+	ManageInvoiceResultCodeNotFound               ManageInvoiceResultCode = -4
+	ManageInvoiceResultCodeTooManyInvoices        ManageInvoiceResultCode = -5
+	ManageInvoiceResultCodeCanNotDeleteInProgress ManageInvoiceResultCode = -6
+)
+
+var ManageInvoiceResultCodeAll = []ManageInvoiceResultCode{
+	ManageInvoiceResultCodeSuccess,
+	ManageInvoiceResultCodeMalformed,
+	ManageInvoiceResultCodeBalanceNotFound,
+	ManageInvoiceResultCodeInvoiceOverflow,
+	ManageInvoiceResultCodeNotFound,
+	ManageInvoiceResultCodeTooManyInvoices,
+	ManageInvoiceResultCodeCanNotDeleteInProgress,
+}
+
+var manageInvoiceResultCodeMap = map[int32]string{
+	0:  "ManageInvoiceResultCodeSuccess",
+	-1: "ManageInvoiceResultCodeMalformed",
+	-2: "ManageInvoiceResultCodeBalanceNotFound",
+	-3: "ManageInvoiceResultCodeInvoiceOverflow",
+	-4: "ManageInvoiceResultCodeNotFound",
+	-5: "ManageInvoiceResultCodeTooManyInvoices",
+	-6: "ManageInvoiceResultCodeCanNotDeleteInProgress",
+}
+
+var manageInvoiceResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "malformed",
+	-2: "balance_not_found",
+	-3: "invoice_overflow",
+	-4: "not_found",
+	-5: "too_many_invoices",
+	-6: "can_not_delete_in_progress",
+}
+
+var manageInvoiceResultCodeRevMap = map[string]int32{
+	"ManageInvoiceResultCodeSuccess":                0,
+	"ManageInvoiceResultCodeMalformed":              -1,
+	"ManageInvoiceResultCodeBalanceNotFound":        -2,
+	"ManageInvoiceResultCodeInvoiceOverflow":        -3,
+	"ManageInvoiceResultCodeNotFound":               -4,
+	"ManageInvoiceResultCodeTooManyInvoices":        -5,
+	"ManageInvoiceResultCodeCanNotDeleteInProgress": -6,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageInvoiceResultCode
+func (e ManageInvoiceResultCode) ValidEnum(v int32) bool {
+	_, ok := manageInvoiceResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageInvoiceResultCode) String() string {
+	name, _ := manageInvoiceResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageInvoiceResultCode) ShortString() string {
+	name, _ := manageInvoiceResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageInvoiceResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageInvoiceResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageInvoiceResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageInvoiceResultCode(value)
+	return nil
+}
+
+// ManageInvoiceSuccessResultExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageInvoiceSuccessResultExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageInvoiceSuccessResultExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageInvoiceSuccessResultExt
+func (u ManageInvoiceSuccessResultExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageInvoiceSuccessResultExt creates a new  ManageInvoiceSuccessResultExt.
+func NewManageInvoiceSuccessResultExt(v LedgerVersion, value interface{}) (result ManageInvoiceSuccessResultExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageInvoiceSuccessResult is an XDR Struct defines as:
+//
+//   struct ManageInvoiceSuccessResult
+//    {
+//    	uint64 invoiceID;
+//    	AssetCode asset;
+//    	BalanceID senderBalance;
+//
+//    	union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageInvoiceSuccessResult struct {
+	InvoiceId     Uint64                        `json:"invoiceID,omitempty"`
+	Asset         AssetCode                     `json:"asset,omitempty"`
+	SenderBalance BalanceId                     `json:"senderBalance,omitempty"`
+	Ext           ManageInvoiceSuccessResultExt `json:"ext,omitempty"`
+}
+
+// ManageInvoiceResult is an XDR Union defines as:
+//
+//   union ManageInvoiceResult switch (ManageInvoiceResultCode code)
+//    {
+//    case SUCCESS:
+//        ManageInvoiceSuccessResult success;
+//    default:
+//        void;
+//    };
+//
+type ManageInvoiceResult struct {
+	Code    ManageInvoiceResultCode     `json:"code,omitempty"`
+	Success *ManageInvoiceSuccessResult `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageInvoiceResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageInvoiceResult
+func (u ManageInvoiceResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageInvoiceResultCode(sw) {
+	case ManageInvoiceResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageInvoiceResult creates a new  ManageInvoiceResult.
+func NewManageInvoiceResult(code ManageInvoiceResultCode, value interface{}) (result ManageInvoiceResult, err error) {
+	result.Code = code
+	switch ManageInvoiceResultCode(code) {
+	case ManageInvoiceResultCodeSuccess:
+		tv, ok := value.(ManageInvoiceSuccessResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageInvoiceSuccessResult")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageInvoiceResult) MustSuccess() ManageInvoiceSuccessResult {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageInvoiceResult) GetSuccess() (result ManageInvoiceSuccessResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// CoinsEmissionRequestEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CoinsEmissionRequestEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CoinsEmissionRequestEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CoinsEmissionRequestEntryExt
+func (u CoinsEmissionRequestEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCoinsEmissionRequestEntryExt creates a new  CoinsEmissionRequestEntryExt.
+func NewCoinsEmissionRequestEntryExt(v LedgerVersion, value interface{}) (result CoinsEmissionRequestEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CoinsEmissionRequestEntry is an XDR Struct defines as:
+//
+//   struct CoinsEmissionRequestEntry
+//    {
+//    	uint64 requestID;
+//        string64 reference;
+//        BalanceID receiver;
+//    	AccountID issuer;
+//        int64 amount;
+//        AssetCode asset;
+//    	bool isApproved;
+//
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CoinsEmissionRequestEntry struct {
+	RequestId  Uint64                       `json:"requestID,omitempty"`
+	Reference  String64                     `json:"reference,omitempty"`
+	Receiver   BalanceId                    `json:"receiver,omitempty"`
+	Issuer     AccountId                    `json:"issuer,omitempty"`
+	Amount     Int64                        `json:"amount,omitempty"`
+	Asset      AssetCode                    `json:"asset,omitempty"`
+	IsApproved bool                         `json:"isApproved,omitempty"`
+	Ext        CoinsEmissionRequestEntryExt `json:"ext,omitempty"`
+}
+
+// CoinsEmissionEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CoinsEmissionEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CoinsEmissionEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CoinsEmissionEntryExt
+func (u CoinsEmissionEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCoinsEmissionEntryExt creates a new  CoinsEmissionEntryExt.
+func NewCoinsEmissionEntryExt(v LedgerVersion, value interface{}) (result CoinsEmissionEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CoinsEmissionEntry is an XDR Struct defines as:
+//
+//   struct CoinsEmissionEntry
+//    {
+//    	string64 serialNumber;
+//        int64 amount;
+//        AssetCode asset;
+//
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CoinsEmissionEntry struct {
+	SerialNumber String64              `json:"serialNumber,omitempty"`
+	Amount       Int64                 `json:"amount,omitempty"`
+	Asset        AssetCode             `json:"asset,omitempty"`
+	Ext          CoinsEmissionEntryExt `json:"ext,omitempty"`
+}
+
+// AccountLimitsEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AccountLimitsEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AccountLimitsEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AccountLimitsEntryExt
+func (u AccountLimitsEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAccountLimitsEntryExt creates a new  AccountLimitsEntryExt.
+func NewAccountLimitsEntryExt(v LedgerVersion, value interface{}) (result AccountLimitsEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AccountLimitsEntry is an XDR Struct defines as:
+//
+//   struct AccountLimitsEntry
+//    {
+//        AccountID accountID;
+//        Limits limits;
+//
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AccountLimitsEntry struct {
+	AccountId AccountId             `json:"accountID,omitempty"`
+	Limits    Limits                `json:"limits,omitempty"`
+	Ext       AccountLimitsEntryExt `json:"ext,omitempty"`
+}
+
+// InvoiceReferenceExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type InvoiceReferenceExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u InvoiceReferenceExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of InvoiceReferenceExt
+func (u InvoiceReferenceExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewInvoiceReferenceExt creates a new  InvoiceReferenceExt.
+func NewInvoiceReferenceExt(v LedgerVersion, value interface{}) (result InvoiceReferenceExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// InvoiceReference is an XDR Struct defines as:
+//
+//   struct InvoiceReference {
+//        uint64 invoiceID;
+//        bool accept;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type InvoiceReference struct {
+	InvoiceId Uint64              `json:"invoiceID,omitempty"`
+	Accept    bool                `json:"accept,omitempty"`
+	Ext       InvoiceReferenceExt `json:"ext,omitempty"`
+}
+
+// FeeDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type FeeDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u FeeDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of FeeDataExt
+func (u FeeDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewFeeDataExt creates a new  FeeDataExt.
+func NewFeeDataExt(v LedgerVersion, value interface{}) (result FeeDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// FeeData is an XDR Struct defines as:
+//
+//   struct FeeData {
+//        int64 paymentFee;
+//        int64 fixedFee;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type FeeData struct {
+	PaymentFee Int64      `json:"paymentFee,omitempty"`
+	FixedFee   Int64      `json:"fixedFee,omitempty"`
+	Ext        FeeDataExt `json:"ext,omitempty"`
+}
+
+// PaymentFeeDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type PaymentFeeDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u PaymentFeeDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of PaymentFeeDataExt
+func (u PaymentFeeDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewPaymentFeeDataExt creates a new  PaymentFeeDataExt.
+func NewPaymentFeeDataExt(v LedgerVersion, value interface{}) (result PaymentFeeDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// PaymentFeeData is an XDR Struct defines as:
+//
+//   struct PaymentFeeData {
+//        FeeData sourceFee;
+//        FeeData destinationFee;
+//        bool sourcePaysForDest;    // if true source account pays fee, else destination
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type PaymentFeeData struct {
+	SourceFee         FeeData           `json:"sourceFee,omitempty"`
+	DestinationFee    FeeData           `json:"destinationFee,omitempty"`
+	SourcePaysForDest bool              `json:"sourcePaysForDest,omitempty"`
+	Ext               PaymentFeeDataExt `json:"ext,omitempty"`
+}
+
+// PaymentOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type PaymentOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u PaymentOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of PaymentOpExt
+func (u PaymentOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewPaymentOpExt creates a new  PaymentOpExt.
+func NewPaymentOpExt(v LedgerVersion, value interface{}) (result PaymentOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// PaymentOp is an XDR Struct defines as:
+//
+//   struct PaymentOp
+//    {
+//        BalanceID sourceBalanceID;
+//        BalanceID destinationBalanceID;
+//        int64 amount;          // amount they end up with
+//
+//        PaymentFeeData feeData;
+//
+//        string256 subject;
+//        string64 reference;
+//
+//        InvoiceReference* invoiceReference;
+//
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type PaymentOp struct {
+	SourceBalanceId      BalanceId         `json:"sourceBalanceID,omitempty"`
+	DestinationBalanceId BalanceId         `json:"destinationBalanceID,omitempty"`
+	Amount               Int64             `json:"amount,omitempty"`
+	FeeData              PaymentFeeData    `json:"feeData,omitempty"`
+	Subject              String256         `json:"subject,omitempty"`
+	Reference            String64          `json:"reference,omitempty"`
+	InvoiceReference     *InvoiceReference `json:"invoiceReference,omitempty"`
+	Ext                  PaymentOpExt      `json:"ext,omitempty"`
+}
+
+// PaymentResultCode is an XDR Enum defines as:
+//
+//   enum PaymentResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0, // payment successfuly completed
+//
+//        // codes considered as "failure" for the operation
+//        MALFORMED = -1,       // bad input
+//        UNDERFUNDED = -2,     // not enough funds in source account
+//        LINE_FULL = -3,       // destination would go above their limit
+//    	FEE_MISMATCHED = -4,   // fee is not equal to expected fee
+//        BALANCE_NOT_FOUND = -5, // destination balance not found
+//        BALANCE_ACCOUNT_MISMATCHED = -6,
+//        BALANCE_ASSETS_MISMATCHED = -7,
+//    	SRC_BALANCE_NOT_FOUND = -8, // source balance not found
+//        REFERENCE_DUPLICATION = -9,
+//        STATS_OVERFLOW = -10,
+//        LIMITS_EXCEEDED = -11,
+//        NOT_ALLOWED_BY_ASSET_POLICY = -12,
+//        INVOICE_NOT_FOUND = -13,
+//        INVOICE_WRONG_AMOUNT = -14,
+//        INVOICE_BALANCE_MISMATCH = -15,
+//        INVOICE_ACCOUNT_MISMATCH = -16,
+//        INVOICE_ALREADY_PAID = -17
+//    };
+//
+type PaymentResultCode int32
+
+const (
+	PaymentResultCodeSuccess                  PaymentResultCode = 0
+	PaymentResultCodeMalformed                PaymentResultCode = -1
+	PaymentResultCodeUnderfunded              PaymentResultCode = -2
+	PaymentResultCodeLineFull                 PaymentResultCode = -3
+	PaymentResultCodeFeeMismatched            PaymentResultCode = -4
+	PaymentResultCodeBalanceNotFound          PaymentResultCode = -5
+	PaymentResultCodeBalanceAccountMismatched PaymentResultCode = -6
+	PaymentResultCodeBalanceAssetsMismatched  PaymentResultCode = -7
+	PaymentResultCodeSrcBalanceNotFound       PaymentResultCode = -8
+	PaymentResultCodeReferenceDuplication     PaymentResultCode = -9
+	PaymentResultCodeStatsOverflow            PaymentResultCode = -10
+	PaymentResultCodeLimitsExceeded           PaymentResultCode = -11
+	PaymentResultCodeNotAllowedByAssetPolicy  PaymentResultCode = -12
+	PaymentResultCodeInvoiceNotFound          PaymentResultCode = -13
+	PaymentResultCodeInvoiceWrongAmount       PaymentResultCode = -14
+	PaymentResultCodeInvoiceBalanceMismatch   PaymentResultCode = -15
+	PaymentResultCodeInvoiceAccountMismatch   PaymentResultCode = -16
+	PaymentResultCodeInvoiceAlreadyPaid       PaymentResultCode = -17
+)
+
+var PaymentResultCodeAll = []PaymentResultCode{
+	PaymentResultCodeSuccess,
+	PaymentResultCodeMalformed,
+	PaymentResultCodeUnderfunded,
+	PaymentResultCodeLineFull,
+	PaymentResultCodeFeeMismatched,
+	PaymentResultCodeBalanceNotFound,
+	PaymentResultCodeBalanceAccountMismatched,
+	PaymentResultCodeBalanceAssetsMismatched,
+	PaymentResultCodeSrcBalanceNotFound,
+	PaymentResultCodeReferenceDuplication,
+	PaymentResultCodeStatsOverflow,
+	PaymentResultCodeLimitsExceeded,
+	PaymentResultCodeNotAllowedByAssetPolicy,
+	PaymentResultCodeInvoiceNotFound,
+	PaymentResultCodeInvoiceWrongAmount,
+	PaymentResultCodeInvoiceBalanceMismatch,
+	PaymentResultCodeInvoiceAccountMismatch,
+	PaymentResultCodeInvoiceAlreadyPaid,
+}
+
+var paymentResultCodeMap = map[int32]string{
+	0:   "PaymentResultCodeSuccess",
+	-1:  "PaymentResultCodeMalformed",
+	-2:  "PaymentResultCodeUnderfunded",
+	-3:  "PaymentResultCodeLineFull",
+	-4:  "PaymentResultCodeFeeMismatched",
+	-5:  "PaymentResultCodeBalanceNotFound",
+	-6:  "PaymentResultCodeBalanceAccountMismatched",
+	-7:  "PaymentResultCodeBalanceAssetsMismatched",
+	-8:  "PaymentResultCodeSrcBalanceNotFound",
+	-9:  "PaymentResultCodeReferenceDuplication",
+	-10: "PaymentResultCodeStatsOverflow",
+	-11: "PaymentResultCodeLimitsExceeded",
+	-12: "PaymentResultCodeNotAllowedByAssetPolicy",
+	-13: "PaymentResultCodeInvoiceNotFound",
+	-14: "PaymentResultCodeInvoiceWrongAmount",
+	-15: "PaymentResultCodeInvoiceBalanceMismatch",
+	-16: "PaymentResultCodeInvoiceAccountMismatch",
+	-17: "PaymentResultCodeInvoiceAlreadyPaid",
+}
+
+var paymentResultCodeShortMap = map[int32]string{
+	0:   "success",
+	-1:  "malformed",
+	-2:  "underfunded",
+	-3:  "line_full",
+	-4:  "fee_mismatched",
+	-5:  "balance_not_found",
+	-6:  "balance_account_mismatched",
+	-7:  "balance_assets_mismatched",
+	-8:  "src_balance_not_found",
+	-9:  "reference_duplication",
+	-10: "stats_overflow",
+	-11: "limits_exceeded",
+	-12: "not_allowed_by_asset_policy",
+	-13: "invoice_not_found",
+	-14: "invoice_wrong_amount",
+	-15: "invoice_balance_mismatch",
+	-16: "invoice_account_mismatch",
+	-17: "invoice_already_paid",
+}
+
+var paymentResultCodeRevMap = map[string]int32{
+	"PaymentResultCodeSuccess":                  0,
+	"PaymentResultCodeMalformed":                -1,
+	"PaymentResultCodeUnderfunded":              -2,
+	"PaymentResultCodeLineFull":                 -3,
+	"PaymentResultCodeFeeMismatched":            -4,
+	"PaymentResultCodeBalanceNotFound":          -5,
+	"PaymentResultCodeBalanceAccountMismatched": -6,
+	"PaymentResultCodeBalanceAssetsMismatched":  -7,
+	"PaymentResultCodeSrcBalanceNotFound":       -8,
+	"PaymentResultCodeReferenceDuplication":     -9,
+	"PaymentResultCodeStatsOverflow":            -10,
+	"PaymentResultCodeLimitsExceeded":           -11,
+	"PaymentResultCodeNotAllowedByAssetPolicy":  -12,
+	"PaymentResultCodeInvoiceNotFound":          -13,
+	"PaymentResultCodeInvoiceWrongAmount":       -14,
+	"PaymentResultCodeInvoiceBalanceMismatch":   -15,
+	"PaymentResultCodeInvoiceAccountMismatch":   -16,
+	"PaymentResultCodeInvoiceAlreadyPaid":       -17,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for PaymentResultCode
+func (e PaymentResultCode) ValidEnum(v int32) bool {
+	_, ok := paymentResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e PaymentResultCode) String() string {
+	name, _ := paymentResultCodeMap[int32(e)]
+	return name
+}
+
+func (e PaymentResultCode) ShortString() string {
+	name, _ := paymentResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e PaymentResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *PaymentResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := paymentResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = PaymentResultCode(value)
+	return nil
+}
+
+// PaymentResponseExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type PaymentResponseExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u PaymentResponseExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of PaymentResponseExt
+func (u PaymentResponseExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewPaymentResponseExt creates a new  PaymentResponseExt.
+func NewPaymentResponseExt(v LedgerVersion, value interface{}) (result PaymentResponseExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// PaymentResponse is an XDR Struct defines as:
+//
+//   struct PaymentResponse {
+//        AccountID destination;
+//        uint64 paymentID;
+//        AssetCode asset;
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type PaymentResponse struct {
+	Destination AccountId          `json:"destination,omitempty"`
+	PaymentId   Uint64             `json:"paymentID,omitempty"`
+	Asset       AssetCode          `json:"asset,omitempty"`
+	Ext         PaymentResponseExt `json:"ext,omitempty"`
+}
+
+// PaymentResult is an XDR Union defines as:
+//
+//   union PaymentResult switch (PaymentResultCode code)
+//    {
+//    case SUCCESS:
+//        PaymentResponse paymentResponse;
+//    default:
+//        void;
+//    };
+//
+type PaymentResult struct {
+	Code            PaymentResultCode `json:"code,omitempty"`
+	PaymentResponse *PaymentResponse  `json:"paymentResponse,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u PaymentResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of PaymentResult
+func (u PaymentResult) ArmForSwitch(sw int32) (string, bool) {
+	switch PaymentResultCode(sw) {
+	case PaymentResultCodeSuccess:
+		return "PaymentResponse", true
+	default:
+		return "", true
+	}
+}
+
+// NewPaymentResult creates a new  PaymentResult.
+func NewPaymentResult(code PaymentResultCode, value interface{}) (result PaymentResult, err error) {
+	result.Code = code
+	switch PaymentResultCode(code) {
+	case PaymentResultCodeSuccess:
+		tv, ok := value.(PaymentResponse)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be PaymentResponse")
+			return
+		}
+		result.PaymentResponse = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustPaymentResponse retrieves the PaymentResponse value from the union,
+// panicing if the value is not set.
+func (u PaymentResult) MustPaymentResponse() PaymentResponse {
+	val, ok := u.GetPaymentResponse()
+
+	if !ok {
+		panic("arm PaymentResponse is not set")
+	}
+
+	return val
+}
+
+// GetPaymentResponse retrieves the PaymentResponse value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u PaymentResult) GetPaymentResponse() (result PaymentResponse, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "PaymentResponse" {
+		result = *u.PaymentResponse
+		ok = true
+	}
+
+	return
+}
+
+// RecoverOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RecoverOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RecoverOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RecoverOpExt
+func (u RecoverOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRecoverOpExt creates a new  RecoverOpExt.
+func NewRecoverOpExt(v LedgerVersion, value interface{}) (result RecoverOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RecoverOp is an XDR Struct defines as:
+//
+//   struct RecoverOp
+//    {
+//        AccountID account;
+//        PublicKey oldSigner;
+//        PublicKey newSigner;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type RecoverOp struct {
+	Account   AccountId    `json:"account,omitempty"`
+	OldSigner PublicKey    `json:"oldSigner,omitempty"`
+	NewSigner PublicKey    `json:"newSigner,omitempty"`
+	Ext       RecoverOpExt `json:"ext,omitempty"`
+}
+
+// RecoverResultCode is an XDR Enum defines as:
+//
+//   enum RecoverResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//
+//        MALFORMED = -1,
+//        OLD_SIGNER_NOT_FOUND = -2,
+//        SIGNER_ALREADY_EXISTS = -3
+//    };
+//
+type RecoverResultCode int32
+
+const (
+	RecoverResultCodeSuccess             RecoverResultCode = 0
+	RecoverResultCodeMalformed           RecoverResultCode = -1
+	RecoverResultCodeOldSignerNotFound   RecoverResultCode = -2
+	RecoverResultCodeSignerAlreadyExists RecoverResultCode = -3
+)
+
+var RecoverResultCodeAll = []RecoverResultCode{
+	RecoverResultCodeSuccess,
+	RecoverResultCodeMalformed,
+	RecoverResultCodeOldSignerNotFound,
+	RecoverResultCodeSignerAlreadyExists,
+}
+
+var recoverResultCodeMap = map[int32]string{
+	0:  "RecoverResultCodeSuccess",
+	-1: "RecoverResultCodeMalformed",
+	-2: "RecoverResultCodeOldSignerNotFound",
+	-3: "RecoverResultCodeSignerAlreadyExists",
+}
+
+var recoverResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "malformed",
+	-2: "old_signer_not_found",
+	-3: "signer_already_exists",
+}
+
+var recoverResultCodeRevMap = map[string]int32{
+	"RecoverResultCodeSuccess":             0,
+	"RecoverResultCodeMalformed":           -1,
+	"RecoverResultCodeOldSignerNotFound":   -2,
+	"RecoverResultCodeSignerAlreadyExists": -3,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for RecoverResultCode
+func (e RecoverResultCode) ValidEnum(v int32) bool {
+	_, ok := recoverResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e RecoverResultCode) String() string {
+	name, _ := recoverResultCodeMap[int32(e)]
+	return name
+}
+
+func (e RecoverResultCode) ShortString() string {
+	name, _ := recoverResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e RecoverResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *RecoverResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := recoverResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = RecoverResultCode(value)
+	return nil
+}
+
+// RecoverResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//
+type RecoverResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RecoverResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RecoverResultSuccessExt
+func (u RecoverResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRecoverResultSuccessExt creates a new  RecoverResultSuccessExt.
+func NewRecoverResultSuccessExt(v LedgerVersion, value interface{}) (result RecoverResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RecoverResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct {
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	}
+//
+type RecoverResultSuccess struct {
+	Ext RecoverResultSuccessExt `json:"ext,omitempty"`
+}
+
+// RecoverResult is an XDR Union defines as:
+//
+//   union RecoverResult switch (RecoverResultCode code)
+//    {
+//    case SUCCESS:
+//        struct {
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	} success;
+//    default:
+//        void;
+//    };
+//
+type RecoverResult struct {
+	Code    RecoverResultCode     `json:"code,omitempty"`
+	Success *RecoverResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RecoverResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RecoverResult
+func (u RecoverResult) ArmForSwitch(sw int32) (string, bool) {
+	switch RecoverResultCode(sw) {
+	case RecoverResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewRecoverResult creates a new  RecoverResult.
+func NewRecoverResult(code RecoverResultCode, value interface{}) (result RecoverResult, err error) {
+	result.Code = code
+	switch RecoverResultCode(code) {
+	case RecoverResultCodeSuccess:
+		tv, ok := value.(RecoverResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RecoverResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u RecoverResult) MustSuccess() RecoverResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u RecoverResult) GetSuccess() (result RecoverResultSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// ManageForfeitRequestOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageForfeitRequestOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageForfeitRequestOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageForfeitRequestOpExt
+func (u ManageForfeitRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageForfeitRequestOpExt creates a new  ManageForfeitRequestOpExt.
+func NewManageForfeitRequestOpExt(v LedgerVersion, value interface{}) (result ManageForfeitRequestOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageForfeitRequestOp is an XDR Struct defines as:
+//
+//   struct ManageForfeitRequestOp
+//    {
+//        BalanceID balance;
+//        int64 amount;
+//    	int64 totalFee;
+//        string details<>;
+//    	AccountID reviewer;
+//
+//    	union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//
+//    };
+//
+type ManageForfeitRequestOp struct {
+	Balance  BalanceId                 `json:"balance,omitempty"`
+	Amount   Int64                     `json:"amount,omitempty"`
+	TotalFee Int64                     `json:"totalFee,omitempty"`
+	Details  string                    `json:"details,omitempty"`
+	Reviewer AccountId                 `json:"reviewer,omitempty"`
+	Ext      ManageForfeitRequestOpExt `json:"ext,omitempty"`
+}
+
+// ManageForfeitRequestResultCode is an XDR Enum defines as:
+//
+//   enum ManageForfeitRequestResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//    	UNDERFUNDED = -1,
+//        INVALID_AMOUNT = -2,
+//        LINE_FULL = -3,
+//        BALANCE_MISMATCH = -4,
+//        STATS_OVERFLOW = -5,
+//        LIMITS_EXCEEDED = -6,
+//        REVIEWER_NOT_FOUND = -7,
+//        INVALID_DETAILS = -8,
+//    	FEE_MISMATCH = -9 // fee is not equal to expected fee
+//    };
+//
+type ManageForfeitRequestResultCode int32
+
+const (
+	ManageForfeitRequestResultCodeSuccess          ManageForfeitRequestResultCode = 0
+	ManageForfeitRequestResultCodeUnderfunded      ManageForfeitRequestResultCode = -1
+	ManageForfeitRequestResultCodeInvalidAmount    ManageForfeitRequestResultCode = -2
+	ManageForfeitRequestResultCodeLineFull         ManageForfeitRequestResultCode = -3
+	ManageForfeitRequestResultCodeBalanceMismatch  ManageForfeitRequestResultCode = -4
+	ManageForfeitRequestResultCodeStatsOverflow    ManageForfeitRequestResultCode = -5
+	ManageForfeitRequestResultCodeLimitsExceeded   ManageForfeitRequestResultCode = -6
+	ManageForfeitRequestResultCodeReviewerNotFound ManageForfeitRequestResultCode = -7
+	ManageForfeitRequestResultCodeInvalidDetails   ManageForfeitRequestResultCode = -8
+	ManageForfeitRequestResultCodeFeeMismatch      ManageForfeitRequestResultCode = -9
+)
+
+var ManageForfeitRequestResultCodeAll = []ManageForfeitRequestResultCode{
+	ManageForfeitRequestResultCodeSuccess,
+	ManageForfeitRequestResultCodeUnderfunded,
+	ManageForfeitRequestResultCodeInvalidAmount,
+	ManageForfeitRequestResultCodeLineFull,
+	ManageForfeitRequestResultCodeBalanceMismatch,
+	ManageForfeitRequestResultCodeStatsOverflow,
+	ManageForfeitRequestResultCodeLimitsExceeded,
+	ManageForfeitRequestResultCodeReviewerNotFound,
+	ManageForfeitRequestResultCodeInvalidDetails,
+	ManageForfeitRequestResultCodeFeeMismatch,
+}
+
+var manageForfeitRequestResultCodeMap = map[int32]string{
+	0:  "ManageForfeitRequestResultCodeSuccess",
+	-1: "ManageForfeitRequestResultCodeUnderfunded",
+	-2: "ManageForfeitRequestResultCodeInvalidAmount",
+	-3: "ManageForfeitRequestResultCodeLineFull",
+	-4: "ManageForfeitRequestResultCodeBalanceMismatch",
+	-5: "ManageForfeitRequestResultCodeStatsOverflow",
+	-6: "ManageForfeitRequestResultCodeLimitsExceeded",
+	-7: "ManageForfeitRequestResultCodeReviewerNotFound",
+	-8: "ManageForfeitRequestResultCodeInvalidDetails",
+	-9: "ManageForfeitRequestResultCodeFeeMismatch",
+}
+
+var manageForfeitRequestResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "underfunded",
+	-2: "invalid_amount",
+	-3: "line_full",
+	-4: "balance_mismatch",
+	-5: "stats_overflow",
+	-6: "limits_exceeded",
+	-7: "reviewer_not_found",
+	-8: "invalid_details",
+	-9: "fee_mismatch",
+}
+
+var manageForfeitRequestResultCodeRevMap = map[string]int32{
+	"ManageForfeitRequestResultCodeSuccess":          0,
+	"ManageForfeitRequestResultCodeUnderfunded":      -1,
+	"ManageForfeitRequestResultCodeInvalidAmount":    -2,
+	"ManageForfeitRequestResultCodeLineFull":         -3,
+	"ManageForfeitRequestResultCodeBalanceMismatch":  -4,
+	"ManageForfeitRequestResultCodeStatsOverflow":    -5,
+	"ManageForfeitRequestResultCodeLimitsExceeded":   -6,
+	"ManageForfeitRequestResultCodeReviewerNotFound": -7,
+	"ManageForfeitRequestResultCodeInvalidDetails":   -8,
+	"ManageForfeitRequestResultCodeFeeMismatch":      -9,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageForfeitRequestResultCode
+func (e ManageForfeitRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := manageForfeitRequestResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageForfeitRequestResultCode) String() string {
+	name, _ := manageForfeitRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageForfeitRequestResultCode) ShortString() string {
+	name, _ := manageForfeitRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageForfeitRequestResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageForfeitRequestResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageForfeitRequestResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageForfeitRequestResultCode(value)
+	return nil
+}
+
+// ManageForfeitRequestResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//                {
+//                case EMPTY_VERSION:
+//                    void;
+//                }
+//
+type ManageForfeitRequestResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageForfeitRequestResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageForfeitRequestResultSuccessExt
+func (u ManageForfeitRequestResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageForfeitRequestResultSuccessExt creates a new  ManageForfeitRequestResultSuccessExt.
+func NewManageForfeitRequestResultSuccessExt(v LedgerVersion, value interface{}) (result ManageForfeitRequestResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageForfeitRequestResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct
+//            {
+//                uint64 paymentID;
+//
+//                union switch (LedgerVersion v)
+//                {
+//                case EMPTY_VERSION:
+//                    void;
+//                }
+//                ext;
+//            }
+//
+type ManageForfeitRequestResultSuccess struct {
+	PaymentId Uint64                               `json:"paymentID,omitempty"`
+	Ext       ManageForfeitRequestResultSuccessExt `json:"ext,omitempty"`
+}
+
+// ManageForfeitRequestResult is an XDR Union defines as:
+//
+//   union ManageForfeitRequestResult switch (ManageForfeitRequestResultCode code)
+//    {
+//        case SUCCESS:
+//            struct
+//            {
+//                uint64 paymentID;
+//
+//                union switch (LedgerVersion v)
+//                {
+//                case EMPTY_VERSION:
+//                    void;
+//                }
+//                ext;
+//            } success;
+//        default:
+//            void;
+//    };
+//
+type ManageForfeitRequestResult struct {
+	Code    ManageForfeitRequestResultCode     `json:"code,omitempty"`
+	Success *ManageForfeitRequestResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageForfeitRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageForfeitRequestResult
+func (u ManageForfeitRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageForfeitRequestResultCode(sw) {
+	case ManageForfeitRequestResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageForfeitRequestResult creates a new  ManageForfeitRequestResult.
+func NewManageForfeitRequestResult(code ManageForfeitRequestResultCode, value interface{}) (result ManageForfeitRequestResult, err error) {
+	result.Code = code
+	switch ManageForfeitRequestResultCode(code) {
+	case ManageForfeitRequestResultCodeSuccess:
+		tv, ok := value.(ManageForfeitRequestResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageForfeitRequestResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageForfeitRequestResult) MustSuccess() ManageForfeitRequestResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageForfeitRequestResult) GetSuccess() (result ManageForfeitRequestResultSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// SignerType is an XDR Enum defines as:
+//
+//   enum SignerType
+//    {
+//    	READER = 1,                  // can only read data from API and Horizon
+//    	NOT_VERIFIED_ACC_MANAGER = 2,// can manage not verified account and block/unblock general
+//    	GENERAL_ACC_MANAGER = 4,     // allowed to create account, block/unblock, change limits for particular general account
+//    	DIRECT_DEBIT_OPERATOR = 8, // allowed to perform direct debit operation
+//    	ASSET_MANAGER = 16, // allowed to create assets/asset pairs and update policies, set fees
+//    	ASSET_RATE_MANAGER = 32, // allowed to set physical asset price
+//    	BALANCE_MANAGER = 64, // allowed to create balances, spend assets from balances
+//    	EMISSION_MANAGER = 128, // allowed to make emission requests, review emission, upload preemission
+//    	INVOICE_MANAGER = 256, // allowed to create payment requests to other accounts
+//    	PAYMENT_OPERATOR = 512, // allowed to review payment requests
+//    	LIMITS_MANAGER = 1024, // allowed to change limits
+//    	ACCOUNT_MANAGER = 2048, // allowed to add/delete signers and trust
+//    	COMMISSION_BALANCE_MANAGER  = 4096,// allowed to spend from commission balances
+//    	OPERATIONAL_BALANCE_MANAGER = 8192 // allowed to spend from operational balances
+//    };
+//
+type SignerType int32
+
+const (
+	SignerTypeReader                    SignerType = 1
+	SignerTypeNotVerifiedAccManager     SignerType = 2
+	SignerTypeGeneralAccManager         SignerType = 4
+	SignerTypeDirectDebitOperator       SignerType = 8
+	SignerTypeAssetManager              SignerType = 16
+	SignerTypeAssetRateManager          SignerType = 32
+	SignerTypeBalanceManager            SignerType = 64
+	SignerTypeEmissionManager           SignerType = 128
+	SignerTypeInvoiceManager            SignerType = 256
+	SignerTypePaymentOperator           SignerType = 512
+	SignerTypeLimitsManager             SignerType = 1024
+	SignerTypeAccountManager            SignerType = 2048
+	SignerTypeCommissionBalanceManager  SignerType = 4096
+	SignerTypeOperationalBalanceManager SignerType = 8192
+)
+
+var SignerTypeAll = []SignerType{
+	SignerTypeReader,
+	SignerTypeNotVerifiedAccManager,
+	SignerTypeGeneralAccManager,
+	SignerTypeDirectDebitOperator,
+	SignerTypeAssetManager,
+	SignerTypeAssetRateManager,
+	SignerTypeBalanceManager,
+	SignerTypeEmissionManager,
+	SignerTypeInvoiceManager,
+	SignerTypePaymentOperator,
+	SignerTypeLimitsManager,
+	SignerTypeAccountManager,
+	SignerTypeCommissionBalanceManager,
+	SignerTypeOperationalBalanceManager,
+}
+
+var signerTypeMap = map[int32]string{
+	1:    "SignerTypeReader",
+	2:    "SignerTypeNotVerifiedAccManager",
+	4:    "SignerTypeGeneralAccManager",
+	8:    "SignerTypeDirectDebitOperator",
+	16:   "SignerTypeAssetManager",
+	32:   "SignerTypeAssetRateManager",
+	64:   "SignerTypeBalanceManager",
+	128:  "SignerTypeEmissionManager",
+	256:  "SignerTypeInvoiceManager",
+	512:  "SignerTypePaymentOperator",
+	1024: "SignerTypeLimitsManager",
+	2048: "SignerTypeAccountManager",
+	4096: "SignerTypeCommissionBalanceManager",
+	8192: "SignerTypeOperationalBalanceManager",
+}
+
+var signerTypeShortMap = map[int32]string{
+	1:    "reader",
+	2:    "not_verified_acc_manager",
+	4:    "general_acc_manager",
+	8:    "direct_debit_operator",
+	16:   "asset_manager",
+	32:   "asset_rate_manager",
+	64:   "balance_manager",
+	128:  "emission_manager",
+	256:  "invoice_manager",
+	512:  "payment_operator",
+	1024: "limits_manager",
+	2048: "account_manager",
+	4096: "commission_balance_manager",
+	8192: "operational_balance_manager",
+}
+
+var signerTypeRevMap = map[string]int32{
+	"SignerTypeReader":                    1,
+	"SignerTypeNotVerifiedAccManager":     2,
+	"SignerTypeGeneralAccManager":         4,
+	"SignerTypeDirectDebitOperator":       8,
+	"SignerTypeAssetManager":              16,
+	"SignerTypeAssetRateManager":          32,
+	"SignerTypeBalanceManager":            64,
+	"SignerTypeEmissionManager":           128,
+	"SignerTypeInvoiceManager":            256,
+	"SignerTypePaymentOperator":           512,
+	"SignerTypeLimitsManager":             1024,
+	"SignerTypeAccountManager":            2048,
+	"SignerTypeCommissionBalanceManager":  4096,
+	"SignerTypeOperationalBalanceManager": 8192,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for SignerType
+func (e SignerType) ValidEnum(v int32) bool {
+	_, ok := signerTypeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e SignerType) String() string {
+	name, _ := signerTypeMap[int32(e)]
+	return name
+}
+
+func (e SignerType) ShortString() string {
+	name, _ := signerTypeShortMap[int32(e)]
+	return name
+}
+
+func (e SignerType) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *SignerType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := signerTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = SignerType(value)
+	return nil
+}
+
+// SignerExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type SignerExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SignerExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SignerExt
+func (u SignerExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewSignerExt creates a new  SignerExt.
+func NewSignerExt(v LedgerVersion, value interface{}) (result SignerExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// Signer is an XDR Struct defines as:
+//
+//   struct Signer
+//    {
+//        AccountID pubKey;
+//        uint32 weight; // really only need 1byte
+//    	uint32 signerType;
+//    	uint32 identity;
+//    	string256 name;
+//
+//    	 // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type Signer struct {
+	PubKey     AccountId `json:"pubKey,omitempty"`
+	Weight     Uint32    `json:"weight,omitempty"`
+	SignerType Uint32    `json:"signerType,omitempty"`
+	Identity   Uint32    `json:"identity,omitempty"`
+	Name       String256 `json:"name,omitempty"`
+	Ext        SignerExt `json:"ext,omitempty"`
+}
+
+// TrustEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type TrustEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u TrustEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of TrustEntryExt
+func (u TrustEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewTrustEntryExt creates a new  TrustEntryExt.
+func NewTrustEntryExt(v LedgerVersion, value interface{}) (result TrustEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// TrustEntry is an XDR Struct defines as:
+//
+//   struct TrustEntry
+//    {
+//        AccountID allowedAccount;
+//        BalanceID balanceToUse;
+//
+//    	 // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type TrustEntry struct {
+	AllowedAccount AccountId     `json:"allowedAccount,omitempty"`
+	BalanceToUse   BalanceId     `json:"balanceToUse,omitempty"`
+	Ext            TrustEntryExt `json:"ext,omitempty"`
+}
+
+// LimitsExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type LimitsExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u LimitsExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of LimitsExt
+func (u LimitsExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewLimitsExt creates a new  LimitsExt.
+func NewLimitsExt(v LedgerVersion, value interface{}) (result LimitsExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// Limits is an XDR Struct defines as:
+//
+//   struct Limits
+//    {
+//        int64 dailyOut;
+//    	int64 weeklyOut;
+//    	int64 monthlyOut;
+//        int64 annualOut;
+//
+//    	 // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//
+//    };
+//
+type Limits struct {
+	DailyOut   Int64     `json:"dailyOut,omitempty"`
+	WeeklyOut  Int64     `json:"weeklyOut,omitempty"`
+	MonthlyOut Int64     `json:"monthlyOut,omitempty"`
+	AnnualOut  Int64     `json:"annualOut,omitempty"`
+	Ext        LimitsExt `json:"ext,omitempty"`
+}
+
+// AccountPolicies is an XDR Enum defines as:
+//
+//   enum AccountPolicies
+//    {
+//    	NO_PERMISSIONS = 0,
+//    	ALLOW_TO_CREATE_USER_VIA_API = 1
+//    };
+//
+type AccountPolicies int32
+
+const (
+	AccountPoliciesNoPermissions           AccountPolicies = 0
+	AccountPoliciesAllowToCreateUserViaApi AccountPolicies = 1
+)
+
+var AccountPoliciesAll = []AccountPolicies{
+	AccountPoliciesNoPermissions,
+	AccountPoliciesAllowToCreateUserViaApi,
+}
+
+var accountPoliciesMap = map[int32]string{
+	0: "AccountPoliciesNoPermissions",
+	1: "AccountPoliciesAllowToCreateUserViaApi",
+}
+
+var accountPoliciesShortMap = map[int32]string{
+	0: "no_permissions",
+	1: "allow_to_create_user_via_api",
+}
+
+var accountPoliciesRevMap = map[string]int32{
+	"AccountPoliciesNoPermissions":           0,
+	"AccountPoliciesAllowToCreateUserViaApi": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for AccountPolicies
+func (e AccountPolicies) ValidEnum(v int32) bool {
+	_, ok := accountPoliciesMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e AccountPolicies) String() string {
+	name, _ := accountPoliciesMap[int32(e)]
+	return name
+}
+
+func (e AccountPolicies) ShortString() string {
+	name, _ := accountPoliciesShortMap[int32(e)]
+	return name
+}
+
+func (e AccountPolicies) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *AccountPolicies) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := accountPoliciesRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = AccountPolicies(value)
+	return nil
+}
+
+// AccountType is an XDR Enum defines as:
+//
+//   enum AccountType
+//    {
+//    	OPERATIONAL = 1,       // operational account of the system
+//    	GENERAL = 2,           // general account can perform payments, setoptions, be source account for tx, etc.
+//    	COMMISSION = 3,        // commission account
+//    	MASTER = 4,            // master account
+//        NOT_VERIFIED = 5
+//    };
+//
+type AccountType int32
+
+const (
+	AccountTypeOperational AccountType = 1
+	AccountTypeGeneral     AccountType = 2
+	AccountTypeCommission  AccountType = 3
+	AccountTypeMaster      AccountType = 4
+	AccountTypeNotVerified AccountType = 5
+)
+
+var AccountTypeAll = []AccountType{
+	AccountTypeOperational,
+	AccountTypeGeneral,
+	AccountTypeCommission,
+	AccountTypeMaster,
+	AccountTypeNotVerified,
+}
+
+var accountTypeMap = map[int32]string{
+	1: "AccountTypeOperational",
+	2: "AccountTypeGeneral",
+	3: "AccountTypeCommission",
+	4: "AccountTypeMaster",
+	5: "AccountTypeNotVerified",
+}
+
+var accountTypeShortMap = map[int32]string{
+	1: "operational",
+	2: "general",
+	3: "commission",
+	4: "master",
+	5: "not_verified",
+}
+
+var accountTypeRevMap = map[string]int32{
+	"AccountTypeOperational": 1,
+	"AccountTypeGeneral":     2,
+	"AccountTypeCommission":  3,
+	"AccountTypeMaster":      4,
+	"AccountTypeNotVerified": 5,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for AccountType
+func (e AccountType) ValidEnum(v int32) bool {
+	_, ok := accountTypeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e AccountType) String() string {
+	name, _ := accountTypeMap[int32(e)]
+	return name
+}
+
+func (e AccountType) ShortString() string {
+	name, _ := accountTypeShortMap[int32(e)]
+	return name
+}
+
+func (e AccountType) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *AccountType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := accountTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = AccountType(value)
+	return nil
+}
+
+// BlockReasons is an XDR Enum defines as:
+//
+//   enum BlockReasons
+//    {
+//    	RECOVERY_REQUEST = 1,
+//    	KYC_UPDATE = 2,
+//    	SUSPICIOUS_BEHAVIOR = 3
+//    };
+//
+type BlockReasons int32
+
+const (
+	BlockReasonsRecoveryRequest    BlockReasons = 1
+	BlockReasonsKycUpdate          BlockReasons = 2
+	BlockReasonsSuspiciousBehavior BlockReasons = 3
+)
+
+var BlockReasonsAll = []BlockReasons{
+	BlockReasonsRecoveryRequest,
+	BlockReasonsKycUpdate,
+	BlockReasonsSuspiciousBehavior,
+}
+
+var blockReasonsMap = map[int32]string{
+	1: "BlockReasonsRecoveryRequest",
+	2: "BlockReasonsKycUpdate",
+	3: "BlockReasonsSuspiciousBehavior",
+}
+
+var blockReasonsShortMap = map[int32]string{
+	1: "recovery_request",
+	2: "kyc_update",
+	3: "suspicious_behavior",
+}
+
+var blockReasonsRevMap = map[string]int32{
+	"BlockReasonsRecoveryRequest":    1,
+	"BlockReasonsKycUpdate":          2,
+	"BlockReasonsSuspiciousBehavior": 3,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for BlockReasons
+func (e BlockReasons) ValidEnum(v int32) bool {
+	_, ok := blockReasonsMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e BlockReasons) String() string {
+	name, _ := blockReasonsMap[int32(e)]
+	return name
+}
+
+func (e BlockReasons) ShortString() string {
+	name, _ := blockReasonsShortMap[int32(e)]
+	return name
+}
+
+func (e BlockReasons) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *BlockReasons) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := blockReasonsRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = BlockReasons(value)
+	return nil
+}
+
+// AccountEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AccountEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AccountEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AccountEntryExt
+func (u AccountEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAccountEntryExt creates a new  AccountEntryExt.
+func NewAccountEntryExt(v LedgerVersion, value interface{}) (result AccountEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AccountEntry is an XDR Struct defines as:
+//
+//   struct AccountEntry
+//    {
+//        AccountID accountID;      // master public key for this account
+//
+//        // fields used for signatures
+//        // thresholds stores unsigned bytes: [weight of master|low|medium|high]
+//        Thresholds thresholds;
+//
+//        Signer signers<>; // possible signers for this account
+//        Limits* limits;
+//
+//    	uint32 blockReasons;
+//        AccountType accountType; // type of the account
+//
+//        // Referral marketing
+//        AccountID* referrer;     // parent account
+//        int64 shareForReferrer; // share of fee to pay parent
+//
+//        int32 policies;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AccountEntry struct {
+	AccountId        AccountId       `json:"accountID,omitempty"`
+	Thresholds       Thresholds      `json:"thresholds,omitempty"`
+	Signers          []Signer        `json:"signers,omitempty"`
+	Limits           *Limits         `json:"limits,omitempty"`
+	BlockReasons     Uint32          `json:"blockReasons,omitempty"`
+	AccountType      AccountType     `json:"accountType,omitempty"`
+	Referrer         *AccountId      `json:"referrer,omitempty"`
+	ShareForReferrer Int64           `json:"shareForReferrer,omitempty"`
+	Policies         Int32           `json:"policies,omitempty"`
+	Ext              AccountEntryExt `json:"ext,omitempty"`
+}
+
+// ManageTrustAction is an XDR Enum defines as:
+//
+//   enum ManageTrustAction
+//    {
+//        TRUST_ADD = 0,
+//        TRUST_REMOVE = 1
+//    };
+//
+type ManageTrustAction int32
+
+const (
+	ManageTrustActionTrustAdd    ManageTrustAction = 0
+	ManageTrustActionTrustRemove ManageTrustAction = 1
+)
+
+var ManageTrustActionAll = []ManageTrustAction{
+	ManageTrustActionTrustAdd,
+	ManageTrustActionTrustRemove,
+}
+
+var manageTrustActionMap = map[int32]string{
+	0: "ManageTrustActionTrustAdd",
+	1: "ManageTrustActionTrustRemove",
+}
+
+var manageTrustActionShortMap = map[int32]string{
+	0: "trust_add",
+	1: "trust_remove",
+}
+
+var manageTrustActionRevMap = map[string]int32{
+	"ManageTrustActionTrustAdd":    0,
+	"ManageTrustActionTrustRemove": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageTrustAction
+func (e ManageTrustAction) ValidEnum(v int32) bool {
+	_, ok := manageTrustActionMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ManageTrustAction) String() string {
+	name, _ := manageTrustActionMap[int32(e)]
+	return name
+}
+
+func (e ManageTrustAction) ShortString() string {
+	name, _ := manageTrustActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManageTrustAction) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ManageTrustAction) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := manageTrustActionRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ManageTrustAction(value)
+	return nil
+}
+
+// TrustDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//
+type TrustDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u TrustDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of TrustDataExt
+func (u TrustDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewTrustDataExt creates a new  TrustDataExt.
+func NewTrustDataExt(v LedgerVersion, value interface{}) (result TrustDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// TrustData is an XDR Struct defines as:
+//
+//   struct TrustData {
+//        TrustEntry trust;
+//        ManageTrustAction action;
+//    	// reserved for future use
+//    	union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//    	ext;
+//    };
+//
+type TrustData struct {
+	Trust  TrustEntry        `json:"trust,omitempty"`
+	Action ManageTrustAction `json:"action,omitempty"`
+	Ext    TrustDataExt      `json:"ext,omitempty"`
+}
+
+// SetOptionsOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//
+type SetOptionsOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SetOptionsOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SetOptionsOpExt
+func (u SetOptionsOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewSetOptionsOpExt creates a new  SetOptionsOpExt.
+func NewSetOptionsOpExt(v LedgerVersion, value interface{}) (result SetOptionsOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// SetOptionsOp is an XDR Struct defines as:
+//
+//   struct SetOptionsOp
+//    {
+//        // account threshold manipulation
+//        uint32* masterWeight; // weight of the master account
+//        uint32* lowThreshold;
+//        uint32* medThreshold;
+//        uint32* highThreshold;
+//
+//        // Add, update or remove a signer for the account
+//        // signer is deleted if the weight is 0
+//        Signer* signer;
+//
+//        TrustData* trustData;
+//    	// reserved for future use
+//    	union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//    	ext;
+//
+//    };
+//
+type SetOptionsOp struct {
+	MasterWeight  *Uint32         `json:"masterWeight,omitempty"`
+	LowThreshold  *Uint32         `json:"lowThreshold,omitempty"`
+	MedThreshold  *Uint32         `json:"medThreshold,omitempty"`
+	HighThreshold *Uint32         `json:"highThreshold,omitempty"`
+	Signer        *Signer         `json:"signer,omitempty"`
+	TrustData     *TrustData      `json:"trustData,omitempty"`
+	Ext           SetOptionsOpExt `json:"ext,omitempty"`
+}
+
+// SetOptionsResultCode is an XDR Enum defines as:
+//
+//   enum SetOptionsResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//        // codes considered as "failure" for the operation
+//        TOO_MANY_SIGNERS = -1, // max number of signers already reached
+//        THRESHOLD_OUT_OF_RANGE = -2, // bad value for weight/threshold
+//        BAD_SIGNER = -3,             // signer cannot be masterkey
+//        BALANCE_NOT_FOUND = -4,
+//        TRUST_MALFORMED = -5,
+//    	TRUST_TOO_MANY = -6,
+//    	INVALID_SIGNER_VERSION = -7 // if signer version is higher than ledger version
+//    };
+//
+type SetOptionsResultCode int32
+
+const (
+	SetOptionsResultCodeSuccess              SetOptionsResultCode = 0
+	SetOptionsResultCodeTooManySigners       SetOptionsResultCode = -1
+	SetOptionsResultCodeThresholdOutOfRange  SetOptionsResultCode = -2
+	SetOptionsResultCodeBadSigner            SetOptionsResultCode = -3
+	SetOptionsResultCodeBalanceNotFound      SetOptionsResultCode = -4
+	SetOptionsResultCodeTrustMalformed       SetOptionsResultCode = -5
+	SetOptionsResultCodeTrustTooMany         SetOptionsResultCode = -6
+	SetOptionsResultCodeInvalidSignerVersion SetOptionsResultCode = -7
+)
+
+var SetOptionsResultCodeAll = []SetOptionsResultCode{
+	SetOptionsResultCodeSuccess,
+	SetOptionsResultCodeTooManySigners,
+	SetOptionsResultCodeThresholdOutOfRange,
+	SetOptionsResultCodeBadSigner,
+	SetOptionsResultCodeBalanceNotFound,
+	SetOptionsResultCodeTrustMalformed,
+	SetOptionsResultCodeTrustTooMany,
+	SetOptionsResultCodeInvalidSignerVersion,
+}
+
+var setOptionsResultCodeMap = map[int32]string{
+	0:  "SetOptionsResultCodeSuccess",
+	-1: "SetOptionsResultCodeTooManySigners",
+	-2: "SetOptionsResultCodeThresholdOutOfRange",
+	-3: "SetOptionsResultCodeBadSigner",
+	-4: "SetOptionsResultCodeBalanceNotFound",
+	-5: "SetOptionsResultCodeTrustMalformed",
+	-6: "SetOptionsResultCodeTrustTooMany",
+	-7: "SetOptionsResultCodeInvalidSignerVersion",
+}
+
+var setOptionsResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "too_many_signers",
+	-2: "threshold_out_of_range",
+	-3: "bad_signer",
+	-4: "balance_not_found",
+	-5: "trust_malformed",
+	-6: "trust_too_many",
+	-7: "invalid_signer_version",
+}
+
+var setOptionsResultCodeRevMap = map[string]int32{
+	"SetOptionsResultCodeSuccess":              0,
+	"SetOptionsResultCodeTooManySigners":       -1,
+	"SetOptionsResultCodeThresholdOutOfRange":  -2,
+	"SetOptionsResultCodeBadSigner":            -3,
+	"SetOptionsResultCodeBalanceNotFound":      -4,
+	"SetOptionsResultCodeTrustMalformed":       -5,
+	"SetOptionsResultCodeTrustTooMany":         -6,
+	"SetOptionsResultCodeInvalidSignerVersion": -7,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for SetOptionsResultCode
+func (e SetOptionsResultCode) ValidEnum(v int32) bool {
+	_, ok := setOptionsResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e SetOptionsResultCode) String() string {
+	name, _ := setOptionsResultCodeMap[int32(e)]
+	return name
+}
+
+func (e SetOptionsResultCode) ShortString() string {
+	name, _ := setOptionsResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e SetOptionsResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *SetOptionsResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := setOptionsResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = SetOptionsResultCode(value)
+	return nil
+}
+
+// SetOptionsResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//
+type SetOptionsResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SetOptionsResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SetOptionsResultSuccessExt
+func (u SetOptionsResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewSetOptionsResultSuccessExt creates a new  SetOptionsResultSuccessExt.
+func NewSetOptionsResultSuccessExt(v LedgerVersion, value interface{}) (result SetOptionsResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// SetOptionsResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct {
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	}
+//
+type SetOptionsResultSuccess struct {
+	Ext SetOptionsResultSuccessExt `json:"ext,omitempty"`
+}
+
+// SetOptionsResult is an XDR Union defines as:
+//
+//   union SetOptionsResult switch (SetOptionsResultCode code)
+//    {
+//    case SUCCESS:
+//        struct {
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	} success;
+//    default:
+//        void;
+//    };
+//
+type SetOptionsResult struct {
+	Code    SetOptionsResultCode     `json:"code,omitempty"`
+	Success *SetOptionsResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SetOptionsResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SetOptionsResult
+func (u SetOptionsResult) ArmForSwitch(sw int32) (string, bool) {
+	switch SetOptionsResultCode(sw) {
+	case SetOptionsResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewSetOptionsResult creates a new  SetOptionsResult.
+func NewSetOptionsResult(code SetOptionsResultCode, value interface{}) (result SetOptionsResult, err error) {
+	result.Code = code
+	switch SetOptionsResultCode(code) {
+	case SetOptionsResultCodeSuccess:
+		tv, ok := value.(SetOptionsResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SetOptionsResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u SetOptionsResult) MustSuccess() SetOptionsResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SetOptionsResult) GetSuccess() (result SetOptionsResultSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// ReviewCoinsEmissionRequestOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ReviewCoinsEmissionRequestOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ReviewCoinsEmissionRequestOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ReviewCoinsEmissionRequestOpExt
+func (u ReviewCoinsEmissionRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewReviewCoinsEmissionRequestOpExt creates a new  ReviewCoinsEmissionRequestOpExt.
+func NewReviewCoinsEmissionRequestOpExt(v LedgerVersion, value interface{}) (result ReviewCoinsEmissionRequestOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ReviewCoinsEmissionRequestOp is an XDR Struct defines as:
+//
+//   struct ReviewCoinsEmissionRequestOp
+//    {
+//    	CoinsEmissionRequestEntry request;  // request to be reviewed
+//    	bool approve;
+//    	string64 reason;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ReviewCoinsEmissionRequestOp struct {
+	Request CoinsEmissionRequestEntry       `json:"request,omitempty"`
+	Approve bool                            `json:"approve,omitempty"`
+	Reason  String64                        `json:"reason,omitempty"`
+	Ext     ReviewCoinsEmissionRequestOpExt `json:"ext,omitempty"`
+}
+
+// ReviewCoinsEmissionRequestResultCode is an XDR Enum defines as:
+//
+//   enum ReviewCoinsEmissionRequestResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        INVALID_REASON = -1,        // reason must be null if approving
+//    	NOT_FOUND = -2,             // failed to find emission request with such ID
+//    	NOT_EQUAL = -3,             // stored emission request is not equal to request provided in op
+//    	ALREADY_REVIEWED = -4,      // emission request have been already reviewed
+//    	MALFORMED = -5,             // emission request is malformed
+//        NOT_ENOUGH_PREEMISSIONS = -6,    // serial is already used in another review
+//    	LINE_FULL = -9,             // balance will overflow
+//        ASSET_NOT_FOUND = -10,
+//        BALANCE_NOT_FOUND = -11,
+//    	REFERENCE_DUPLICATION = -12
+//    };
+//
+type ReviewCoinsEmissionRequestResultCode int32
+
+const (
+	ReviewCoinsEmissionRequestResultCodeSuccess               ReviewCoinsEmissionRequestResultCode = 0
+	ReviewCoinsEmissionRequestResultCodeInvalidReason         ReviewCoinsEmissionRequestResultCode = -1
+	ReviewCoinsEmissionRequestResultCodeNotFound              ReviewCoinsEmissionRequestResultCode = -2
+	ReviewCoinsEmissionRequestResultCodeNotEqual              ReviewCoinsEmissionRequestResultCode = -3
+	ReviewCoinsEmissionRequestResultCodeAlreadyReviewed       ReviewCoinsEmissionRequestResultCode = -4
+	ReviewCoinsEmissionRequestResultCodeMalformed             ReviewCoinsEmissionRequestResultCode = -5
+	ReviewCoinsEmissionRequestResultCodeNotEnoughPreemissions ReviewCoinsEmissionRequestResultCode = -6
+	ReviewCoinsEmissionRequestResultCodeLineFull              ReviewCoinsEmissionRequestResultCode = -9
+	ReviewCoinsEmissionRequestResultCodeAssetNotFound         ReviewCoinsEmissionRequestResultCode = -10
+	ReviewCoinsEmissionRequestResultCodeBalanceNotFound       ReviewCoinsEmissionRequestResultCode = -11
+	ReviewCoinsEmissionRequestResultCodeReferenceDuplication  ReviewCoinsEmissionRequestResultCode = -12
+)
+
+var ReviewCoinsEmissionRequestResultCodeAll = []ReviewCoinsEmissionRequestResultCode{
+	ReviewCoinsEmissionRequestResultCodeSuccess,
+	ReviewCoinsEmissionRequestResultCodeInvalidReason,
+	ReviewCoinsEmissionRequestResultCodeNotFound,
+	ReviewCoinsEmissionRequestResultCodeNotEqual,
+	ReviewCoinsEmissionRequestResultCodeAlreadyReviewed,
+	ReviewCoinsEmissionRequestResultCodeMalformed,
+	ReviewCoinsEmissionRequestResultCodeNotEnoughPreemissions,
+	ReviewCoinsEmissionRequestResultCodeLineFull,
+	ReviewCoinsEmissionRequestResultCodeAssetNotFound,
+	ReviewCoinsEmissionRequestResultCodeBalanceNotFound,
+	ReviewCoinsEmissionRequestResultCodeReferenceDuplication,
+}
+
+var reviewCoinsEmissionRequestResultCodeMap = map[int32]string{
+	0:   "ReviewCoinsEmissionRequestResultCodeSuccess",
+	-1:  "ReviewCoinsEmissionRequestResultCodeInvalidReason",
+	-2:  "ReviewCoinsEmissionRequestResultCodeNotFound",
+	-3:  "ReviewCoinsEmissionRequestResultCodeNotEqual",
+	-4:  "ReviewCoinsEmissionRequestResultCodeAlreadyReviewed",
+	-5:  "ReviewCoinsEmissionRequestResultCodeMalformed",
+	-6:  "ReviewCoinsEmissionRequestResultCodeNotEnoughPreemissions",
+	-9:  "ReviewCoinsEmissionRequestResultCodeLineFull",
+	-10: "ReviewCoinsEmissionRequestResultCodeAssetNotFound",
+	-11: "ReviewCoinsEmissionRequestResultCodeBalanceNotFound",
+	-12: "ReviewCoinsEmissionRequestResultCodeReferenceDuplication",
+}
+
+var reviewCoinsEmissionRequestResultCodeShortMap = map[int32]string{
+	0:   "success",
+	-1:  "invalid_reason",
+	-2:  "not_found",
+	-3:  "not_equal",
+	-4:  "already_reviewed",
+	-5:  "malformed",
+	-6:  "not_enough_preemissions",
+	-9:  "line_full",
+	-10: "asset_not_found",
+	-11: "balance_not_found",
+	-12: "reference_duplication",
+}
+
+var reviewCoinsEmissionRequestResultCodeRevMap = map[string]int32{
+	"ReviewCoinsEmissionRequestResultCodeSuccess":               0,
+	"ReviewCoinsEmissionRequestResultCodeInvalidReason":         -1,
+	"ReviewCoinsEmissionRequestResultCodeNotFound":              -2,
+	"ReviewCoinsEmissionRequestResultCodeNotEqual":              -3,
+	"ReviewCoinsEmissionRequestResultCodeAlreadyReviewed":       -4,
+	"ReviewCoinsEmissionRequestResultCodeMalformed":             -5,
+	"ReviewCoinsEmissionRequestResultCodeNotEnoughPreemissions": -6,
+	"ReviewCoinsEmissionRequestResultCodeLineFull":              -9,
+	"ReviewCoinsEmissionRequestResultCodeAssetNotFound":         -10,
+	"ReviewCoinsEmissionRequestResultCodeBalanceNotFound":       -11,
+	"ReviewCoinsEmissionRequestResultCodeReferenceDuplication":  -12,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ReviewCoinsEmissionRequestResultCode
+func (e ReviewCoinsEmissionRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := reviewCoinsEmissionRequestResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ReviewCoinsEmissionRequestResultCode) String() string {
+	name, _ := reviewCoinsEmissionRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ReviewCoinsEmissionRequestResultCode) ShortString() string {
+	name, _ := reviewCoinsEmissionRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ReviewCoinsEmissionRequestResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ReviewCoinsEmissionRequestResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := reviewCoinsEmissionRequestResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ReviewCoinsEmissionRequestResultCode(value)
+	return nil
+}
+
+// ReviewCoinsEmissionRequestResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//
+type ReviewCoinsEmissionRequestResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ReviewCoinsEmissionRequestResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ReviewCoinsEmissionRequestResultSuccessExt
+func (u ReviewCoinsEmissionRequestResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewReviewCoinsEmissionRequestResultSuccessExt creates a new  ReviewCoinsEmissionRequestResultSuccessExt.
+func NewReviewCoinsEmissionRequestResultSuccessExt(v LedgerVersion, value interface{}) (result ReviewCoinsEmissionRequestResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ReviewCoinsEmissionRequestResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct {
+//    		uint64 requestID;
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	}
+//
+type ReviewCoinsEmissionRequestResultSuccess struct {
+	RequestId Uint64                                     `json:"requestID,omitempty"`
+	Ext       ReviewCoinsEmissionRequestResultSuccessExt `json:"ext,omitempty"`
+}
+
+// ReviewCoinsEmissionRequestResult is an XDR Union defines as:
+//
+//   union ReviewCoinsEmissionRequestResult switch (ReviewCoinsEmissionRequestResultCode code)
+//    {
+//    case SUCCESS:
+//    	struct {
+//    		uint64 requestID;
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	} success;
+//    default:
+//        void;
+//    };
+//
+type ReviewCoinsEmissionRequestResult struct {
+	Code    ReviewCoinsEmissionRequestResultCode     `json:"code,omitempty"`
+	Success *ReviewCoinsEmissionRequestResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ReviewCoinsEmissionRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ReviewCoinsEmissionRequestResult
+func (u ReviewCoinsEmissionRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ReviewCoinsEmissionRequestResultCode(sw) {
+	case ReviewCoinsEmissionRequestResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewReviewCoinsEmissionRequestResult creates a new  ReviewCoinsEmissionRequestResult.
+func NewReviewCoinsEmissionRequestResult(code ReviewCoinsEmissionRequestResultCode, value interface{}) (result ReviewCoinsEmissionRequestResult, err error) {
+	result.Code = code
+	switch ReviewCoinsEmissionRequestResultCode(code) {
+	case ReviewCoinsEmissionRequestResultCodeSuccess:
+		tv, ok := value.(ReviewCoinsEmissionRequestResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ReviewCoinsEmissionRequestResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ReviewCoinsEmissionRequestResult) MustSuccess() ReviewCoinsEmissionRequestResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewCoinsEmissionRequestResult) GetSuccess() (result ReviewCoinsEmissionRequestResultSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// StatisticsEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type StatisticsEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u StatisticsEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of StatisticsEntryExt
+func (u StatisticsEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewStatisticsEntryExt creates a new  StatisticsEntryExt.
+func NewStatisticsEntryExt(v LedgerVersion, value interface{}) (result StatisticsEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// StatisticsEntry is an XDR Struct defines as:
+//
+//   struct StatisticsEntry
+//    {
+//    	AccountID accountID;
+//
+//    	int64 dailyOutcome;
+//    	int64 weeklyOutcome;
+//    	int64 monthlyOutcome;
+//    	int64 annualOutcome;
+//
+//    	int64 updatedAt;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type StatisticsEntry struct {
+	AccountId      AccountId          `json:"accountID,omitempty"`
+	DailyOutcome   Int64              `json:"dailyOutcome,omitempty"`
+	WeeklyOutcome  Int64              `json:"weeklyOutcome,omitempty"`
+	MonthlyOutcome Int64              `json:"monthlyOutcome,omitempty"`
+	AnnualOutcome  Int64              `json:"annualOutcome,omitempty"`
+	UpdatedAt      Int64              `json:"updatedAt,omitempty"`
+	Ext            StatisticsEntryExt `json:"ext,omitempty"`
+}
+
+// SetLimitsOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//
+type SetLimitsOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SetLimitsOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SetLimitsOpExt
+func (u SetLimitsOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewSetLimitsOpExt creates a new  SetLimitsOpExt.
+func NewSetLimitsOpExt(v LedgerVersion, value interface{}) (result SetLimitsOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// SetLimitsOp is an XDR Struct defines as:
+//
+//   struct SetLimitsOp
+//    {
+//        AccountID* account;
+//        AccountType* accountType;
+//
+//        Limits limits;
+//    	// reserved for future use
+//    	union switch (LedgerVersion v)
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//    	ext;
+//    };
+//
+type SetLimitsOp struct {
+	Account     *AccountId     `json:"account,omitempty"`
+	AccountType *AccountType   `json:"accountType,omitempty"`
+	Limits      Limits         `json:"limits,omitempty"`
+	Ext         SetLimitsOpExt `json:"ext,omitempty"`
+}
+
+// SetLimitsResultCode is an XDR Enum defines as:
+//
+//   enum SetLimitsResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//        // codes considered as "failure" for the operation
+//        MALFORMED = -1
+//    };
+//
+type SetLimitsResultCode int32
+
+const (
+	SetLimitsResultCodeSuccess   SetLimitsResultCode = 0
+	SetLimitsResultCodeMalformed SetLimitsResultCode = -1
+)
+
+var SetLimitsResultCodeAll = []SetLimitsResultCode{
+	SetLimitsResultCodeSuccess,
+	SetLimitsResultCodeMalformed,
+}
+
+var setLimitsResultCodeMap = map[int32]string{
+	0:  "SetLimitsResultCodeSuccess",
+	-1: "SetLimitsResultCodeMalformed",
+}
+
+var setLimitsResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "malformed",
+}
+
+var setLimitsResultCodeRevMap = map[string]int32{
+	"SetLimitsResultCodeSuccess":   0,
+	"SetLimitsResultCodeMalformed": -1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for SetLimitsResultCode
+func (e SetLimitsResultCode) ValidEnum(v int32) bool {
+	_, ok := setLimitsResultCodeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e SetLimitsResultCode) String() string {
+	name, _ := setLimitsResultCodeMap[int32(e)]
+	return name
+}
+
+func (e SetLimitsResultCode) ShortString() string {
+	name, _ := setLimitsResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e SetLimitsResultCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *SetLimitsResultCode) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := setLimitsResultCodeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = SetLimitsResultCode(value)
+	return nil
+}
+
+// SetLimitsResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//
+type SetLimitsResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SetLimitsResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SetLimitsResultSuccessExt
+func (u SetLimitsResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewSetLimitsResultSuccessExt creates a new  SetLimitsResultSuccessExt.
+func NewSetLimitsResultSuccessExt(v LedgerVersion, value interface{}) (result SetLimitsResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// SetLimitsResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct {
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	}
+//
+type SetLimitsResultSuccess struct {
+	Ext SetLimitsResultSuccessExt `json:"ext,omitempty"`
+}
+
+// SetLimitsResult is an XDR Union defines as:
+//
+//   union SetLimitsResult switch (SetLimitsResultCode code)
+//    {
+//    case SUCCESS:
+//        struct {
+//    		// reserved for future use
+//    		union switch (LedgerVersion v)
+//    		{
+//    		case EMPTY_VERSION:
+//    			void;
+//    		}
+//    		ext;
+//    	} success;
+//    default:
+//        void;
+//    };
+//
+type SetLimitsResult struct {
+	Code    SetLimitsResultCode     `json:"code,omitempty"`
+	Success *SetLimitsResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SetLimitsResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SetLimitsResult
+func (u SetLimitsResult) ArmForSwitch(sw int32) (string, bool) {
+	switch SetLimitsResultCode(sw) {
+	case SetLimitsResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewSetLimitsResult creates a new  SetLimitsResult.
+func NewSetLimitsResult(code SetLimitsResultCode, value interface{}) (result SetLimitsResult, err error) {
+	result.Code = code
+	switch SetLimitsResultCode(code) {
+	case SetLimitsResultCodeSuccess:
+		tv, ok := value.(SetLimitsResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SetLimitsResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u SetLimitsResult) MustSuccess() SetLimitsResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SetLimitsResult) GetSuccess() (result SetLimitsResultSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// AssetPairPolicy is an XDR Enum defines as:
+//
+//   enum AssetPairPolicy
+//    {
+//    	TRADEABLE = 1, // if not set pair can not be traided
+//    	PHYSICAL_PRICE_RESTRICTION = 2, // if set, then prices for new offers must be greater then physical price with correction
+//    	CURRENT_PRICE_RESTRICTION = 4 // if set, then price for new offers must be in interval of (1 +- maxPriceStep)*currentPrice
+//    };
+//
+type AssetPairPolicy int32
+
+const (
+	AssetPairPolicyTradeable                AssetPairPolicy = 1
+	AssetPairPolicyPhysicalPriceRestriction AssetPairPolicy = 2
+	AssetPairPolicyCurrentPriceRestriction  AssetPairPolicy = 4
+)
+
+var AssetPairPolicyAll = []AssetPairPolicy{
+	AssetPairPolicyTradeable,
+	AssetPairPolicyPhysicalPriceRestriction,
+	AssetPairPolicyCurrentPriceRestriction,
+}
+
+var assetPairPolicyMap = map[int32]string{
+	1: "AssetPairPolicyTradeable",
+	2: "AssetPairPolicyPhysicalPriceRestriction",
+	4: "AssetPairPolicyCurrentPriceRestriction",
+}
+
+var assetPairPolicyShortMap = map[int32]string{
+	1: "tradeable",
+	2: "physical_price_restriction",
+	4: "current_price_restriction",
+}
+
+var assetPairPolicyRevMap = map[string]int32{
+	"AssetPairPolicyTradeable":                1,
+	"AssetPairPolicyPhysicalPriceRestriction": 2,
+	"AssetPairPolicyCurrentPriceRestriction":  4,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for AssetPairPolicy
+func (e AssetPairPolicy) ValidEnum(v int32) bool {
+	_, ok := assetPairPolicyMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e AssetPairPolicy) String() string {
+	name, _ := assetPairPolicyMap[int32(e)]
+	return name
+}
+
+func (e AssetPairPolicy) ShortString() string {
+	name, _ := assetPairPolicyShortMap[int32(e)]
+	return name
+}
+
+func (e AssetPairPolicy) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *AssetPairPolicy) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := assetPairPolicyRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = AssetPairPolicy(value)
+	return nil
+}
+
+// AssetPairEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AssetPairEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AssetPairEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AssetPairEntryExt
+func (u AssetPairEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAssetPairEntryExt creates a new  AssetPairEntryExt.
+func NewAssetPairEntryExt(v LedgerVersion, value interface{}) (result AssetPairEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AssetPairEntry is an XDR Struct defines as:
+//
+//   struct AssetPairEntry
+//    {
+//        AssetCode base;
+//    	AssetCode quote;
+//
+//        int64 currentPrice;
+//        int64 physicalPrice;
+//
+//    	int64 physicalPriceCorrection; // correction of physical price in percents. If physical price is set and restriction by physical price set, mininal price for offer for this pair will be physicalPrice * physicalPriceCorrection
+//    	int64 maxPriceStep; // max price step in percent. User is allowed to set offer with price < (1 - maxPriceStep)*currentPrice and > (1 + maxPriceStep)*currentPrice
+//
+//
+//    	int32 policies;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AssetPairEntry struct {
+	Base                    AssetCode         `json:"base,omitempty"`
+	Quote                   AssetCode         `json:"quote,omitempty"`
+	CurrentPrice            Int64             `json:"currentPrice,omitempty"`
+	PhysicalPrice           Int64             `json:"physicalPrice,omitempty"`
+	PhysicalPriceCorrection Int64             `json:"physicalPriceCorrection,omitempty"`
+	MaxPriceStep            Int64             `json:"maxPriceStep,omitempty"`
+	Policies                Int32             `json:"policies,omitempty"`
+	Ext                     AssetPairEntryExt `json:"ext,omitempty"`
+}
+
+// ThresholdIndexes is an XDR Enum defines as:
+//
+//   enum ThresholdIndexes
+//    {
+//        MASTER_WEIGHT = 0,
+//        LOW = 1,
+//        MED = 2,
+//        HIGH = 3
+//    };
+//
+type ThresholdIndexes int32
+
+const (
+	ThresholdIndexesMasterWeight ThresholdIndexes = 0
+	ThresholdIndexesLow          ThresholdIndexes = 1
+	ThresholdIndexesMed          ThresholdIndexes = 2
+	ThresholdIndexesHigh         ThresholdIndexes = 3
+)
+
+var ThresholdIndexesAll = []ThresholdIndexes{
+	ThresholdIndexesMasterWeight,
+	ThresholdIndexesLow,
+	ThresholdIndexesMed,
+	ThresholdIndexesHigh,
+}
+
+var thresholdIndexesMap = map[int32]string{
+	0: "ThresholdIndexesMasterWeight",
+	1: "ThresholdIndexesLow",
+	2: "ThresholdIndexesMed",
+	3: "ThresholdIndexesHigh",
+}
+
+var thresholdIndexesShortMap = map[int32]string{
+	0: "master_weight",
+	1: "low",
+	2: "med",
+	3: "high",
+}
+
+var thresholdIndexesRevMap = map[string]int32{
+	"ThresholdIndexesMasterWeight": 0,
+	"ThresholdIndexesLow":          1,
+	"ThresholdIndexesMed":          2,
+	"ThresholdIndexesHigh":         3,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ThresholdIndexes
+func (e ThresholdIndexes) ValidEnum(v int32) bool {
+	_, ok := thresholdIndexesMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e ThresholdIndexes) String() string {
+	name, _ := thresholdIndexesMap[int32(e)]
+	return name
+}
+
+func (e ThresholdIndexes) ShortString() string {
+	name, _ := thresholdIndexesShortMap[int32(e)]
+	return name
+}
+
+func (e ThresholdIndexes) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *ThresholdIndexes) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := thresholdIndexesRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = ThresholdIndexes(value)
+	return nil
+}
+
+// LedgerEntryType is an XDR Enum defines as:
+//
+//   enum LedgerEntryType
+//    {
+//        ACCOUNT = 0,
+//    	COINS_EMISSION_REQUEST = 1,
+//        FEE = 2,
+//        COINS_EMISSION = 3,
+//        BALANCE = 4,
+//        PAYMENT_REQUEST = 5,
+//        ASSET = 6,
+//        REFERENCE_ENTRY = 7,
+//        ACCOUNT_TYPE_LIMITS = 8,
+//        STATISTICS = 9,
+//        TRUST = 10,
+//        ACCOUNT_LIMITS = 11,
+//    	ASSET_PAIR = 12,
+//    	OFFER_ENTRY = 13,
+//        INVOICE = 14
+//    };
+//
+type LedgerEntryType int32
+
+const (
+	LedgerEntryTypeAccount              LedgerEntryType = 0
+	LedgerEntryTypeCoinsEmissionRequest LedgerEntryType = 1
+	LedgerEntryTypeFee                  LedgerEntryType = 2
+	LedgerEntryTypeCoinsEmission        LedgerEntryType = 3
+	LedgerEntryTypeBalance              LedgerEntryType = 4
+	LedgerEntryTypePaymentRequest       LedgerEntryType = 5
+	LedgerEntryTypeAsset                LedgerEntryType = 6
+	LedgerEntryTypeReferenceEntry       LedgerEntryType = 7
+	LedgerEntryTypeAccountTypeLimits    LedgerEntryType = 8
+	LedgerEntryTypeStatistics           LedgerEntryType = 9
+	LedgerEntryTypeTrust                LedgerEntryType = 10
+	LedgerEntryTypeAccountLimits        LedgerEntryType = 11
+	LedgerEntryTypeAssetPair            LedgerEntryType = 12
+	LedgerEntryTypeOfferEntry           LedgerEntryType = 13
+	LedgerEntryTypeInvoice              LedgerEntryType = 14
+)
+
+var LedgerEntryTypeAll = []LedgerEntryType{
+	LedgerEntryTypeAccount,
+	LedgerEntryTypeCoinsEmissionRequest,
+	LedgerEntryTypeFee,
+	LedgerEntryTypeCoinsEmission,
+	LedgerEntryTypeBalance,
+	LedgerEntryTypePaymentRequest,
+	LedgerEntryTypeAsset,
+	LedgerEntryTypeReferenceEntry,
+	LedgerEntryTypeAccountTypeLimits,
+	LedgerEntryTypeStatistics,
+	LedgerEntryTypeTrust,
+	LedgerEntryTypeAccountLimits,
+	LedgerEntryTypeAssetPair,
+	LedgerEntryTypeOfferEntry,
+	LedgerEntryTypeInvoice,
+}
+
+var ledgerEntryTypeMap = map[int32]string{
+	0:  "LedgerEntryTypeAccount",
+	1:  "LedgerEntryTypeCoinsEmissionRequest",
+	2:  "LedgerEntryTypeFee",
+	3:  "LedgerEntryTypeCoinsEmission",
+	4:  "LedgerEntryTypeBalance",
+	5:  "LedgerEntryTypePaymentRequest",
+	6:  "LedgerEntryTypeAsset",
+	7:  "LedgerEntryTypeReferenceEntry",
+	8:  "LedgerEntryTypeAccountTypeLimits",
+	9:  "LedgerEntryTypeStatistics",
+	10: "LedgerEntryTypeTrust",
+	11: "LedgerEntryTypeAccountLimits",
+	12: "LedgerEntryTypeAssetPair",
+	13: "LedgerEntryTypeOfferEntry",
+	14: "LedgerEntryTypeInvoice",
+}
+
+var ledgerEntryTypeShortMap = map[int32]string{
+	0:  "account",
+	1:  "coins_emission_request",
+	2:  "fee",
+	3:  "coins_emission",
+	4:  "balance",
+	5:  "payment_request",
+	6:  "asset",
+	7:  "reference_entry",
+	8:  "account_type_limits",
+	9:  "statistics",
+	10: "trust",
+	11: "account_limits",
+	12: "asset_pair",
+	13: "offer_entry",
+	14: "invoice",
+}
+
+var ledgerEntryTypeRevMap = map[string]int32{
+	"LedgerEntryTypeAccount":              0,
+	"LedgerEntryTypeCoinsEmissionRequest": 1,
+	"LedgerEntryTypeFee":                  2,
+	"LedgerEntryTypeCoinsEmission":        3,
+	"LedgerEntryTypeBalance":              4,
+	"LedgerEntryTypePaymentRequest":       5,
+	"LedgerEntryTypeAsset":                6,
+	"LedgerEntryTypeReferenceEntry":       7,
+	"LedgerEntryTypeAccountTypeLimits":    8,
+	"LedgerEntryTypeStatistics":           9,
+	"LedgerEntryTypeTrust":                10,
+	"LedgerEntryTypeAccountLimits":        11,
+	"LedgerEntryTypeAssetPair":            12,
+	"LedgerEntryTypeOfferEntry":           13,
+	"LedgerEntryTypeInvoice":              14,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for LedgerEntryType
+func (e LedgerEntryType) ValidEnum(v int32) bool {
+	_, ok := ledgerEntryTypeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e LedgerEntryType) String() string {
+	name, _ := ledgerEntryTypeMap[int32(e)]
+	return name
+}
+
+func (e LedgerEntryType) ShortString() string {
+	name, _ := ledgerEntryTypeShortMap[int32(e)]
+	return name
+}
+
+func (e LedgerEntryType) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *LedgerEntryType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := ledgerEntryTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = LedgerEntryType(value)
+	return nil
+}
+
+// LedgerEntryData is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerEntryType type)
+//        {
+//        case ACCOUNT:
+//            AccountEntry account;
+//    	case COINS_EMISSION_REQUEST:
+//    		CoinsEmissionRequestEntry coinsEmissionRequest;
+//        case FEE:
+//            FeeEntry feeState;
+//        case COINS_EMISSION:
+//    		CoinsEmissionEntry coinsEmission;
+//        case BALANCE:
+//            BalanceEntry balance;
+//        case PAYMENT_REQUEST:
+//            PaymentRequestEntry paymentRequest;
+//        case ASSET:
+//            AssetEntry asset;
+//        case REFERENCE_ENTRY:
+//            ReferenceEntry payment;
+//        case ACCOUNT_TYPE_LIMITS:
+//            AccountTypeLimitsEntry accountTypeLimits;
+//        case STATISTICS:
+//            StatisticsEntry stats;
+//        case TRUST:
+//            TrustEntry trust;
+//        case ACCOUNT_LIMITS:
+//            AccountLimitsEntry accountLimits;
+//    	case ASSET_PAIR:
+//    		AssetPairEntry assetPair;
+//    	case OFFER_ENTRY:
+//    		OfferEntry offer;
+//        case INVOICE:
+//            InvoiceEntry invoice;
+//        }
+//
+type LedgerEntryData struct {
+	Type                 LedgerEntryType            `json:"type,omitempty"`
+	Account              *AccountEntry              `json:"account,omitempty"`
+	CoinsEmissionRequest *CoinsEmissionRequestEntry `json:"coinsEmissionRequest,omitempty"`
+	FeeState             *FeeEntry                  `json:"feeState,omitempty"`
+	CoinsEmission        *CoinsEmissionEntry        `json:"coinsEmission,omitempty"`
+	Balance              *BalanceEntry              `json:"balance,omitempty"`
+	PaymentRequest       *PaymentRequestEntry       `json:"paymentRequest,omitempty"`
+	Asset                *AssetEntry                `json:"asset,omitempty"`
+	Payment              *ReferenceEntry            `json:"payment,omitempty"`
+	AccountTypeLimits    *AccountTypeLimitsEntry    `json:"accountTypeLimits,omitempty"`
+	Stats                *StatisticsEntry           `json:"stats,omitempty"`
+	Trust                *TrustEntry                `json:"trust,omitempty"`
+	AccountLimits        *AccountLimitsEntry        `json:"accountLimits,omitempty"`
+	AssetPair            *AssetPairEntry            `json:"assetPair,omitempty"`
+	Offer                *OfferEntry                `json:"offer,omitempty"`
+	Invoice              *InvoiceEntry              `json:"invoice,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u LedgerEntryData) SwitchFieldName() string {
+	return "Type"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of LedgerEntryData
+func (u LedgerEntryData) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerEntryType(sw) {
+	case LedgerEntryTypeAccount:
+		return "Account", true
+	case LedgerEntryTypeCoinsEmissionRequest:
+		return "CoinsEmissionRequest", true
+	case LedgerEntryTypeFee:
+		return "FeeState", true
+	case LedgerEntryTypeCoinsEmission:
+		return "CoinsEmission", true
+	case LedgerEntryTypeBalance:
+		return "Balance", true
+	case LedgerEntryTypePaymentRequest:
+		return "PaymentRequest", true
+	case LedgerEntryTypeAsset:
+		return "Asset", true
+	case LedgerEntryTypeReferenceEntry:
+		return "Payment", true
+	case LedgerEntryTypeAccountTypeLimits:
+		return "AccountTypeLimits", true
+	case LedgerEntryTypeStatistics:
+		return "Stats", true
+	case LedgerEntryTypeTrust:
+		return "Trust", true
+	case LedgerEntryTypeAccountLimits:
+		return "AccountLimits", true
+	case LedgerEntryTypeAssetPair:
+		return "AssetPair", true
+	case LedgerEntryTypeOfferEntry:
+		return "Offer", true
+	case LedgerEntryTypeInvoice:
+		return "Invoice", true
+	}
+	return "-", false
+}
+
+// NewLedgerEntryData creates a new  LedgerEntryData.
+func NewLedgerEntryData(aType LedgerEntryType, value interface{}) (result LedgerEntryData, err error) {
+	result.Type = aType
+	switch LedgerEntryType(aType) {
+	case LedgerEntryTypeAccount:
+		tv, ok := value.(AccountEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountEntry")
+			return
+		}
+		result.Account = &tv
+	case LedgerEntryTypeCoinsEmissionRequest:
+		tv, ok := value.(CoinsEmissionRequestEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CoinsEmissionRequestEntry")
+			return
+		}
+		result.CoinsEmissionRequest = &tv
+	case LedgerEntryTypeFee:
+		tv, ok := value.(FeeEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be FeeEntry")
+			return
+		}
+		result.FeeState = &tv
+	case LedgerEntryTypeCoinsEmission:
+		tv, ok := value.(CoinsEmissionEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CoinsEmissionEntry")
+			return
+		}
+		result.CoinsEmission = &tv
+	case LedgerEntryTypeBalance:
+		tv, ok := value.(BalanceEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be BalanceEntry")
+			return
+		}
+		result.Balance = &tv
+	case LedgerEntryTypePaymentRequest:
+		tv, ok := value.(PaymentRequestEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be PaymentRequestEntry")
+			return
+		}
+		result.PaymentRequest = &tv
+	case LedgerEntryTypeAsset:
+		tv, ok := value.(AssetEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AssetEntry")
+			return
+		}
+		result.Asset = &tv
+	case LedgerEntryTypeReferenceEntry:
+		tv, ok := value.(ReferenceEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ReferenceEntry")
+			return
+		}
+		result.Payment = &tv
+	case LedgerEntryTypeAccountTypeLimits:
+		tv, ok := value.(AccountTypeLimitsEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountTypeLimitsEntry")
+			return
+		}
+		result.AccountTypeLimits = &tv
+	case LedgerEntryTypeStatistics:
+		tv, ok := value.(StatisticsEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be StatisticsEntry")
+			return
+		}
+		result.Stats = &tv
+	case LedgerEntryTypeTrust:
+		tv, ok := value.(TrustEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be TrustEntry")
+			return
+		}
+		result.Trust = &tv
+	case LedgerEntryTypeAccountLimits:
+		tv, ok := value.(AccountLimitsEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountLimitsEntry")
+			return
+		}
+		result.AccountLimits = &tv
+	case LedgerEntryTypeAssetPair:
+		tv, ok := value.(AssetPairEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AssetPairEntry")
+			return
+		}
+		result.AssetPair = &tv
+	case LedgerEntryTypeOfferEntry:
+		tv, ok := value.(OfferEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be OfferEntry")
+			return
+		}
+		result.Offer = &tv
+	case LedgerEntryTypeInvoice:
+		tv, ok := value.(InvoiceEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be InvoiceEntry")
+			return
+		}
+		result.Invoice = &tv
+	}
+	return
+}
+
+// MustAccount retrieves the Account value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustAccount() AccountEntry {
+	val, ok := u.GetAccount()
+
+	if !ok {
+		panic("arm Account is not set")
+	}
+
+	return val
+}
+
+// GetAccount retrieves the Account value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetAccount() (result AccountEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Account" {
+		result = *u.Account
+		ok = true
+	}
+
+	return
+}
+
+// MustCoinsEmissionRequest retrieves the CoinsEmissionRequest value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustCoinsEmissionRequest() CoinsEmissionRequestEntry {
+	val, ok := u.GetCoinsEmissionRequest()
+
+	if !ok {
+		panic("arm CoinsEmissionRequest is not set")
+	}
+
+	return val
+}
+
+// GetCoinsEmissionRequest retrieves the CoinsEmissionRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetCoinsEmissionRequest() (result CoinsEmissionRequestEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CoinsEmissionRequest" {
+		result = *u.CoinsEmissionRequest
+		ok = true
+	}
+
+	return
+}
+
+// MustFeeState retrieves the FeeState value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustFeeState() FeeEntry {
+	val, ok := u.GetFeeState()
+
+	if !ok {
+		panic("arm FeeState is not set")
+	}
+
+	return val
+}
+
+// GetFeeState retrieves the FeeState value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetFeeState() (result FeeEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "FeeState" {
+		result = *u.FeeState
+		ok = true
+	}
+
+	return
+}
+
+// MustCoinsEmission retrieves the CoinsEmission value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustCoinsEmission() CoinsEmissionEntry {
+	val, ok := u.GetCoinsEmission()
+
+	if !ok {
+		panic("arm CoinsEmission is not set")
+	}
+
+	return val
+}
+
+// GetCoinsEmission retrieves the CoinsEmission value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetCoinsEmission() (result CoinsEmissionEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CoinsEmission" {
+		result = *u.CoinsEmission
+		ok = true
+	}
+
+	return
+}
+
+// MustBalance retrieves the Balance value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustBalance() BalanceEntry {
+	val, ok := u.GetBalance()
+
+	if !ok {
+		panic("arm Balance is not set")
+	}
+
+	return val
+}
+
+// GetBalance retrieves the Balance value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetBalance() (result BalanceEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Balance" {
+		result = *u.Balance
+		ok = true
+	}
+
+	return
+}
+
+// MustPaymentRequest retrieves the PaymentRequest value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustPaymentRequest() PaymentRequestEntry {
+	val, ok := u.GetPaymentRequest()
+
+	if !ok {
+		panic("arm PaymentRequest is not set")
+	}
+
+	return val
+}
+
+// GetPaymentRequest retrieves the PaymentRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetPaymentRequest() (result PaymentRequestEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "PaymentRequest" {
+		result = *u.PaymentRequest
+		ok = true
+	}
+
+	return
+}
+
+// MustAsset retrieves the Asset value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustAsset() AssetEntry {
+	val, ok := u.GetAsset()
+
+	if !ok {
+		panic("arm Asset is not set")
+	}
+
+	return val
+}
+
+// GetAsset retrieves the Asset value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetAsset() (result AssetEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Asset" {
+		result = *u.Asset
+		ok = true
+	}
+
+	return
+}
+
+// MustPayment retrieves the Payment value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustPayment() ReferenceEntry {
+	val, ok := u.GetPayment()
+
+	if !ok {
+		panic("arm Payment is not set")
+	}
+
+	return val
+}
+
+// GetPayment retrieves the Payment value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetPayment() (result ReferenceEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Payment" {
+		result = *u.Payment
+		ok = true
+	}
+
+	return
+}
+
+// MustAccountTypeLimits retrieves the AccountTypeLimits value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustAccountTypeLimits() AccountTypeLimitsEntry {
+	val, ok := u.GetAccountTypeLimits()
+
+	if !ok {
+		panic("arm AccountTypeLimits is not set")
+	}
+
+	return val
+}
+
+// GetAccountTypeLimits retrieves the AccountTypeLimits value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetAccountTypeLimits() (result AccountTypeLimitsEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AccountTypeLimits" {
+		result = *u.AccountTypeLimits
+		ok = true
+	}
+
+	return
+}
+
+// MustStats retrieves the Stats value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustStats() StatisticsEntry {
+	val, ok := u.GetStats()
+
+	if !ok {
+		panic("arm Stats is not set")
+	}
+
+	return val
+}
+
+// GetStats retrieves the Stats value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetStats() (result StatisticsEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Stats" {
+		result = *u.Stats
+		ok = true
+	}
+
+	return
+}
+
+// MustTrust retrieves the Trust value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustTrust() TrustEntry {
+	val, ok := u.GetTrust()
+
+	if !ok {
+		panic("arm Trust is not set")
+	}
+
+	return val
+}
+
+// GetTrust retrieves the Trust value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetTrust() (result TrustEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Trust" {
+		result = *u.Trust
+		ok = true
+	}
+
+	return
+}
+
+// MustAccountLimits retrieves the AccountLimits value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustAccountLimits() AccountLimitsEntry {
+	val, ok := u.GetAccountLimits()
+
+	if !ok {
+		panic("arm AccountLimits is not set")
+	}
+
+	return val
+}
+
+// GetAccountLimits retrieves the AccountLimits value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetAccountLimits() (result AccountLimitsEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AccountLimits" {
+		result = *u.AccountLimits
+		ok = true
+	}
+
+	return
+}
+
+// MustAssetPair retrieves the AssetPair value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustAssetPair() AssetPairEntry {
+	val, ok := u.GetAssetPair()
+
+	if !ok {
+		panic("arm AssetPair is not set")
+	}
+
+	return val
+}
+
+// GetAssetPair retrieves the AssetPair value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetAssetPair() (result AssetPairEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AssetPair" {
+		result = *u.AssetPair
+		ok = true
+	}
+
+	return
+}
+
+// MustOffer retrieves the Offer value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustOffer() OfferEntry {
+	val, ok := u.GetOffer()
+
+	if !ok {
+		panic("arm Offer is not set")
+	}
+
+	return val
+}
+
+// GetOffer retrieves the Offer value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetOffer() (result OfferEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Offer" {
+		result = *u.Offer
+		ok = true
+	}
+
+	return
+}
+
+// MustInvoice retrieves the Invoice value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustInvoice() InvoiceEntry {
+	val, ok := u.GetInvoice()
+
+	if !ok {
+		panic("arm Invoice is not set")
+	}
+
+	return val
+}
+
+// GetInvoice retrieves the Invoice value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetInvoice() (result InvoiceEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Invoice" {
+		result = *u.Invoice
+		ok = true
+	}
+
+	return
+}
+
+// LedgerEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type LedgerEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u LedgerEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of LedgerEntryExt
+func (u LedgerEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewLedgerEntryExt creates a new  LedgerEntryExt.
+func NewLedgerEntryExt(v LedgerVersion, value interface{}) (result LedgerEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// LedgerEntry is an XDR Struct defines as:
+//
+//   struct LedgerEntry
+//    {
+//        uint32 lastModifiedLedgerSeq; // ledger the LedgerEntry was last changed
+//
+//        union switch (LedgerEntryType type)
+//        {
+//        case ACCOUNT:
+//            AccountEntry account;
+//    	case COINS_EMISSION_REQUEST:
+//    		CoinsEmissionRequestEntry coinsEmissionRequest;
+//        case FEE:
+//            FeeEntry feeState;
+//        case COINS_EMISSION:
+//    		CoinsEmissionEntry coinsEmission;
+//        case BALANCE:
+//            BalanceEntry balance;
+//        case PAYMENT_REQUEST:
+//            PaymentRequestEntry paymentRequest;
+//        case ASSET:
+//            AssetEntry asset;
+//        case REFERENCE_ENTRY:
+//            ReferenceEntry payment;
+//        case ACCOUNT_TYPE_LIMITS:
+//            AccountTypeLimitsEntry accountTypeLimits;
+//        case STATISTICS:
+//            StatisticsEntry stats;
+//        case TRUST:
+//            TrustEntry trust;
+//        case ACCOUNT_LIMITS:
+//            AccountLimitsEntry accountLimits;
+//    	case ASSET_PAIR:
+//    		AssetPairEntry assetPair;
+//    	case OFFER_ENTRY:
+//    		OfferEntry offer;
+//        case INVOICE:
+//            InvoiceEntry invoice;
+//        }
+//        data;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type LedgerEntry struct {
+	LastModifiedLedgerSeq Uint32          `json:"lastModifiedLedgerSeq,omitempty"`
+	Data                  LedgerEntryData `json:"data,omitempty"`
+	Ext                   LedgerEntryExt  `json:"ext,omitempty"`
+}
+
+// EnvelopeType is an XDR Enum defines as:
+//
+//   enum EnvelopeType
+//    {
+//        SCP = 1,
+//        TX = 2,
+//        AUTH = 3
+//    };
+//
+type EnvelopeType int32
+
+const (
+	EnvelopeTypeScp  EnvelopeType = 1
+	EnvelopeTypeTx   EnvelopeType = 2
+	EnvelopeTypeAuth EnvelopeType = 3
+)
+
+var EnvelopeTypeAll = []EnvelopeType{
+	EnvelopeTypeScp,
+	EnvelopeTypeTx,
+	EnvelopeTypeAuth,
+}
+
+var envelopeTypeMap = map[int32]string{
+	1: "EnvelopeTypeScp",
+	2: "EnvelopeTypeTx",
+	3: "EnvelopeTypeAuth",
+}
+
+var envelopeTypeShortMap = map[int32]string{
+	1: "scp",
+	2: "tx",
+	3: "auth",
+}
+
+var envelopeTypeRevMap = map[string]int32{
+	"EnvelopeTypeScp":  1,
+	"EnvelopeTypeTx":   2,
+	"EnvelopeTypeAuth": 3,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for EnvelopeType
+func (e EnvelopeType) ValidEnum(v int32) bool {
+	_, ok := envelopeTypeMap[v]
+	return ok
+}
+
+// String returns the name of `e`
+func (e EnvelopeType) String() string {
+	name, _ := envelopeTypeMap[int32(e)]
+	return name
+}
+
+func (e EnvelopeType) ShortString() string {
+	name, _ := envelopeTypeShortMap[int32(e)]
+	return name
+}
+
+func (e EnvelopeType) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + e.String() + "\""), nil
+}
+
+func (e *EnvelopeType) UnmarshalJSON(d []byte) error {
+	var raw string
+	err := json.Unmarshal(d, &raw)
+	if err != nil {
+		return err
+	}
+
+	value, ok := envelopeTypeRevMap[raw]
+	if !ok {
+		return fmt.Errorf("unexpected json value: %s", raw)
+	}
+
+	*e = EnvelopeType(value)
+	return nil
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")

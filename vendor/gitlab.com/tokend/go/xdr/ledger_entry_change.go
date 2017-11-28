@@ -11,15 +11,15 @@ func (change *LedgerEntryChange) EntryType() LedgerEntryType {
 // in `change`.
 func (change *LedgerEntryChange) LedgerKey() LedgerKey {
 	switch change.Type {
-	case LedgerEntryChangeTypeLedgerEntryCreated:
+	case LedgerEntryChangeTypeCreated:
 		change := change.MustCreated()
 		return change.LedgerKey()
-	case LedgerEntryChangeTypeLedgerEntryRemoved:
+	case LedgerEntryChangeTypeRemoved:
 		return change.MustRemoved()
-	case LedgerEntryChangeTypeLedgerEntryUpdated:
+	case LedgerEntryChangeTypeUpdated:
 		change := change.MustUpdated()
 		return change.LedgerKey()
-	case LedgerEntryChangeTypeLedgerEntryState:
+	case LedgerEntryChangeTypeState:
 		change := change.MustState()
 		return change.LedgerKey()
 	default:
