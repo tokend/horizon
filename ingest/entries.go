@@ -7,11 +7,11 @@ func (is *Session) operationChanges(changes xdr.LedgerEntryChanges) error {
 		var err error
 
 		switch changes[i].Type {
-		case xdr.LedgerEntryChangeTypeLedgerEntryCreated:
+		case xdr.LedgerEntryChangeTypeCreated:
 			err = is.operationCreatedEntry(changes[i].Created)
-		case xdr.LedgerEntryChangeTypeLedgerEntryRemoved:
+		case xdr.LedgerEntryChangeTypeRemoved:
 			err = is.operationDeletedEntry(changes[i].Removed)
-		case xdr.LedgerEntryChangeTypeLedgerEntryUpdated:
+		case xdr.LedgerEntryChangeTypeUpdated:
 			err = is.operationUpdatedEntry(changes[i].Updated)
 		default:
 			// nothing to do here
