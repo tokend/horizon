@@ -20,7 +20,6 @@ type PaymentRequestsQI interface {
 	Page(page db2.PageQuery) PaymentRequestsQI
 	ForAccount(accountId string) PaymentRequestsQI
 	ForBalance(balanceId string) PaymentRequestsQI
-	ForExchange(aid string) PaymentRequestsQI
 	ForState(state *bool) PaymentRequestsQI
 	ForfeitsOnly() PaymentRequestsQI
 	PaymentsOnly() PaymentRequestsQI
@@ -62,11 +61,6 @@ func (q *PaymentRequestsQ) ForAccount(accountId string) PaymentRequestsQI {
 	q.sql = q.sql.Where("(hpr.details->>'from' = ? OR hpr.details->>'to' = ?)",
 		accountId, accountId)
 
-	return q
-}
-
-func (q *PaymentRequestsQ) ForExchange(accountId string) PaymentRequestsQI {
-	q.sql = q.sql.Where("hpr.exchange = ?", accountId)
 	return q
 }
 

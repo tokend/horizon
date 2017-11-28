@@ -78,9 +78,3 @@ func safeBase64Scan(src, dest interface{}) error {
 
 	return SafeUnmarshalBase64(val, dest)
 }
-
-type AssetForms []AssetForm
-
-func (t *AssetForms) Scan(src interface{}) error {
-	return safeBase64Scan(src, t)
-}

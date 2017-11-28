@@ -3,8 +3,6 @@ package horizon
 import (
 	"time"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -23,7 +21,6 @@ type AccountShowAction struct {
 	CoreSigners []core.Signer
 	CoreLimits  core.Limits
 	Balances    []core.Balance
-	Policies    []core.ExchangePolicies
 	Resource    resource.Account
 }
 
@@ -50,16 +47,6 @@ func (action *AccountShowAction) checkAllowed() {
 	action.IsAllowed(action.Address)
 }
 
-func getTokenBalance(balances []core.Balance, token string) int64 {
-	for i := range balances {
-		if balances[i].Asset == token {
-			return int64(balances[i].Amount)
-		}
-	}
-
-	return 0
-}
-
 func (action *AccountShowAction) loadBalances() {
 	var balances []core.Balance
 	err := action.CoreQ().
@@ -83,30 +70,6 @@ func (action *AccountShowAction) loadBalances() {
 			continue
 		}
 
-		if asset.Token == "" {
-			action.Balances = append(action.Balances, balances[i])
-			continue
-		}
-
-		coinsInCirculation, err := action.CachedQ().MustCoinsInCirculationForAsset(action.App.CoreInfo.MasterAccountID, asset.Token)
-		if err != nil {
-			action.Err = &problem.ServerError
-			action.Log.WithError(err).Error("Failed to load coins in circulation")
-			return
-		}
-
-		holdingTokens := getTokenBalance(balances, asset.Token)
-		if coinsInCirculation.Amount == 0 || holdingTokens == 0 {
-			action.Balances = append(action.Balances, balances[i])
-			continue
-		}
-
-		incentive, isOverflow := amount.BigDivide(holdingTokens, 100*amount.One, coinsInCirculation.Amount, amount.ROUND_DOWN)
-		if isOverflow {
-			incentive = 0
-		}
-
-		balances[i].IncentivePerCoin = incentive
 		action.Balances = append(action.Balances, balances[i])
 	}
 }
@@ -140,16 +103,6 @@ func (action *AccountShowAction) loadRecord() {
 	}
 
 	action.CoreLimits, err = action.CoreQ().LimitsForAccount(action.CoreRecord.AccountID, action.CoreRecord.AccountType)
-
-	if xdr.AccountType(action.CoreRecord.AccountType) == xdr.AccountTypeExchange {
-		err = action.CoreQ().
-			PoliciesByExchangeID(&action.Policies, action.Address)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to get policies for exchange")
-			action.Err = &problem.ServerError
-			return
-		}
-	}
 }
 
 func (action *AccountShowAction) loadResource() {
@@ -159,8 +112,6 @@ func (action *AccountShowAction) loadResource() {
 		action.CoreSigners,
 		action.Balances,
 		&action.CoreLimits,
-		action.Policies,
-		action.App.CoreInfo.DemurragePeriod,
 	)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to populate account response")

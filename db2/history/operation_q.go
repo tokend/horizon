@@ -25,7 +25,6 @@ type OperationsQI interface {
 	ForAccountType(accountType int32) OperationsQI
 	ForBalance(bid string) OperationsQI
 	ForAsset(asset string) OperationsQI
-	ForExchange(exchangeID string) OperationsQI
 	ForTypes(opTypes []xdr.OperationType) OperationsQI
 	ForTx(txhash string) OperationsQI
 	ForReference(reference string) OperationsQI
@@ -135,16 +134,6 @@ func (q *OperationsQ) ForAsset(asset string) OperationsQI {
 	}
 
 	q.sql = q.sql.Where("hb.asset = ?", asset)
-
-	return q
-}
-
-func (q *OperationsQ) ForExchange(exchangeID string) OperationsQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("hb.exchange_id = ?", exchangeID)
 
 	return q
 }

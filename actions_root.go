@@ -22,7 +22,6 @@ func (action *RootAction) JSON() {
 	res.CommissionAccountID = action.App.CoreInfo.CommissionAccountID
 	res.MasterAccountID = action.App.CoreInfo.MasterAccountID
 	res.OperationalAccountID = action.App.CoreInfo.OperationalAccountID
-	res.StorageFeeAccountID = action.App.CoreInfo.StorageFeeManageAccountID
 	res.MasterExchangeName = action.App.CoreInfo.MasterExchangeName
 	res.TxExpirationPeriod = action.App.CoreInfo.TxExpirationPeriod
 

@@ -75,7 +75,6 @@ func (is *Session) ingestLedger() {
 		systemAccounts := []string{
 			is.CoreInfo.MasterAccountID,
 			is.CoreInfo.CommissionAccountID,
-			is.CoreInfo.StorageFeeManageAccountID,
 			is.CoreInfo.OperationalAccountID,
 		}
 		for _, address := range systemAccounts {
@@ -96,8 +95,7 @@ func (is *Session) ingestLedger() {
 						continue
 					}
 					created, is.Err = is.Ingestion.tryIngestBalance(
-						balance.BalanceID, balance.Asset, balance.AccountID,
-						balance.ExchangeID, balance.ExchangeName)
+						balance.BalanceID, balance.Asset, balance.AccountID)
 					if is.Err != nil {
 						return
 					}
@@ -268,40 +266,6 @@ func (is *Session) ingestTransactionParticipants() {
 
 }
 
-func (is *Session) processForfeit(operation xdr.Operation, source xdr.AccountId, result xdr.OperationResultTr) {
-	if is.Err != nil {
-		return
-	}
-	forfeitOp := operation.Body.ForfeitOp
-	state := true
-	paymentId := result.ForfeitResult.MustSuccess().PaymentId
-
-	details := operations.BasePayment{
-		FromBalance:           forfeitOp.Balance.AsString(),
-		ToBalance:             "",
-		From:                  source.Address(),
-		To:                    "",
-		Amount:                amount.String(int64(forfeitOp.Amount)),
-		SourcePaymentFee:      amount.String(0),
-		DestinationPaymentFee: amount.String(0),
-		SourceFixedFee:        amount.String(0),
-		DestinationFixedFee:   amount.String(0),
-		SourcePaysForDest:     false,
-	}
-
-	is.Err = is.Ingestion.InsertPaymentRequest(
-		is.Cursor.Ledger(),
-		uint64(paymentId),
-		source.Address(),
-		details,
-		&state,
-		forfeitOp.Type,
-	)
-	if is.Err != nil {
-		return
-	}
-}
-
 func (is *Session) processManageForfeitRequest(operation xdr.Operation, source xdr.AccountId, result xdr.OperationResultTr) {
 	if is.Err != nil {
 		return
@@ -321,12 +285,10 @@ func (is *Session) processManageForfeitRequest(operation xdr.Operation, source x
 		DestinationFixedFee:   amount.String(0),
 		SourcePaysForDest:     false,
 		UserDetails:           manageRequestOp.Details,
-		Items:                 manageForfeitRequestToForfeitTimes(manageRequestResult),
 	}
 	is.Err = is.Ingestion.InsertPaymentRequest(
 		is.Cursor.Ledger(),
-		uint64(manageRequestResult.ForfeitRequestDetails.PaymentId),
-		manageRequestResult.ForfeitRequestDetails.Exchange.Address(),
+		uint64(manageRequestResult.Success.PaymentId),
 		details,
 		nil,
 		xdr.RequestTypeRequestTypeRedeem,
@@ -344,54 +306,12 @@ func (is *Session) processPayment(paymentOp xdr.PaymentOp, source xdr.AccountId,
 
 	invoiceReference := paymentOp.InvoiceReference
 	if invoiceReference != nil {
-		if invoiceReference.Accept && len(result.Exchanges) == 0 {
+		if invoiceReference.Accept {
 			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.SUCCESS, nil)
 		} else if !invoiceReference.Accept {
 			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.REJECTED, nil)
 		}
 	}
-
-	if len(result.Exchanges) == 0 {
-		return
-	}
-	for _, exchange := range result.Exchanges {
-		details := operations.BasePayment{
-			FromBalance:           paymentOp.SourceBalanceId.AsString(),
-			ToBalance:             paymentOp.DestinationBalanceId.AsString(),
-			From:                  source.Address(),
-			To:                    result.Destination.Address(),
-			Amount:                amount.String(int64(paymentOp.Amount)),
-			SourcePaymentFee:      amount.String(int64(paymentOp.FeeData.SourceFee.PaymentFee)),
-			DestinationPaymentFee: amount.String(int64(paymentOp.FeeData.DestinationFee.PaymentFee)),
-			SourceFixedFee:        amount.String(int64(paymentOp.FeeData.SourceFee.PaymentFee)),
-			DestinationFixedFee:   amount.String(int64(paymentOp.FeeData.DestinationFee.PaymentFee)),
-			SourcePaysForDest:     paymentOp.FeeData.SourcePaysForDest,
-		}
-		is.Err = is.Ingestion.InsertPaymentRequest(
-			is.Cursor.Ledger(),
-			uint64(result.PaymentId),
-			exchange.Address(),
-			details,
-			nil,
-			xdr.RequestTypeRequestTypePayment,
-		)
-
-		if is.Err != nil {
-			return
-		}
-
-	}
-}
-
-func (is *Session) processDemurrage(result xdr.OperationResultTr) {
-	if is.Err != nil {
-		return
-	}
-	opResult := result.MustDemurrageResult()
-	if len(opResult.DemurrageInfo.PaymentRequests) == 0 {
-		return
-	}
-	is.Err = is.Ingestion.InsertPaymentRequests(opResult.DemurrageInfo.PaymentRequests)
 }
 
 func (is *Session) processReviewEmissionRequest(operation xdr.Operation, result xdr.OperationResultTr) {
@@ -425,7 +345,6 @@ func (is *Session) updateIngestedPaymentRequest(operation xdr.Operation, source 
 	is.Err = is.Ingestion.UpdatePaymentRequest(
 		is.Cursor.Ledger(),
 		uint64(reviewPaymentOp.PaymentId),
-		source.Address(),
 		reviewPaymentOp.Accept,
 	)
 	if is.Err != nil {

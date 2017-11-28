@@ -367,7 +367,7 @@ func (action *Action) LoadParticipants(ownerAccountID string, participants map[i
 	// needs filter
 	if !action.IsAdmin && !action.SkipCheck {
 		for _, opParticipants := range participants {
-			if opParticipants.OpType != xdr.OperationTypeDemurrage && opParticipants.OpType != xdr.OperationTypeManageOffer {
+			if opParticipants.OpType != xdr.OperationTypeManageOffer {
 				continue
 			}
 			filteredParticipants := []*history.Participant{}

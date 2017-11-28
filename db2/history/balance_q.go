@@ -15,7 +15,6 @@ type BalancesQ struct {
 
 type BalancesQI interface {
 	ForAccount(aid string) BalancesQI
-	ForExchange(eid string) BalancesQI
 	ForAsset(asset string) BalancesQI
 	Page(page db2.PageQuery) BalancesQI
 	Select(dest interface{}) error
@@ -39,16 +38,6 @@ func (q *BalancesQ) ForAccount(aid string) BalancesQI {
 	}
 
 	q.sql = q.sql.Where("hb.account_id = ?", aid)
-
-	return q
-}
-
-func (q *BalancesQ) ForExchange(eid string) BalancesQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("hb.exchange_id = ?", eid)
 
 	return q
 }

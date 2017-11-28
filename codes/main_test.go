@@ -71,13 +71,6 @@ func TestCodes(t *testing.T) {
 			So(result, ShouldNotBeBlank)
 		}
 	})
-	Convey("ForfeitResultCode", t, func() {
-		for _, code := range xdr.ForfeitResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
-		}
-	})
 	Convey("ManageForfeitRequestResultCode", t, func() {
 		for _, code := range xdr.ManageForfeitRequestResultCodeAll {
 			result, err := String(code)
@@ -108,13 +101,6 @@ func TestCodes(t *testing.T) {
 	})
 	Convey("ManageAssetResultCode", t, func() {
 		for _, code := range xdr.ManageAssetResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
-		}
-	})
-	Convey("DemurrageResultCode", t, func() {
-		for _, code := range xdr.DemurrageResultCodeAll {
 			result, err := String(code)
 			So(err, ShouldBeNil)
 			So(result, ShouldNotBeBlank)

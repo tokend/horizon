@@ -22,8 +22,7 @@ func balanceUpdated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to get balance")
 		}
-		_, err = is.Ingestion.tryIngestBalance(
-			b.BalanceID, b.Asset, b.AccountID, b.ExchangeID, b.ExchangeName)
+		_, err = is.Ingestion.tryIngestBalance(b.BalanceID, b.Asset, b.AccountID)
 		if err != nil {
 			return errors.Wrap(err, "failed to ingest balance")
 		}
@@ -42,26 +41,9 @@ func balanceCreated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.New("Expected balance not to be nil")
 	}
 
-	exchangeName := is.CoreInfo.MasterExchangeName
-	if !balance.Exchange.Equals(is.CoreInfo.MasterAccountIDXDR) {
-		exchangeNameP, err := is.Ingestion.CoreQ.ExchangeName(balance.Exchange.Address())
-		if err != nil {
-			is.log.WithError(err).Error("Failed to get exchange name")
-			return err
-		}
-
-		if exchangeNameP == nil {
-			err = errors.New("Expected exchange name not to be nil")
-			is.log.WithError(err).Error("Failed to get exchange name")
-			return err
-		}
-
-		exchangeName = *exchangeNameP
-	}
-
-	_, err := is.Ingestion.tryIngestBalance(
-		balance.BalanceId.AsString(), string(balance.Asset),
-		balance.AccountId.Address(), balance.Exchange.Address(), exchangeName)
+	_, err := is.Ingestion.tryIngestBalance(balance.BalanceId.AsString(),
+		string(balance.Asset),
+		balance.AccountId.Address())
 	if err != nil {
 		return errors.Wrap(err, "failed to ingest balance")
 	}
@@ -73,12 +55,11 @@ func balanceCreated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 }
 
 func (ingest *Ingestion) tryIngestBalance(
-	balanceID, asset, accountID, exchangeID, exchangeName string) (bool, error) {
+	balanceID, asset, accountID string) (bool, error) {
 	result, err := ingest.DB.ExecRaw(`
-		insert into history_balances (
-			balance_id, asset, account_id, exchange_id, exchange_name)
-		values ($1, $2, $3, $4, $5) on conflict do nothing`,
-		balanceID, asset, accountID, exchangeID, exchangeName)
+		insert into history_balances (balance_id, asset, account_id)
+		values ($1, $2, $3) on conflict do nothing`,
+		balanceID, asset, accountID)
 	if err != nil {
 		return false, err
 	}

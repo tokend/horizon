@@ -1,20 +1,16 @@
 package core
 
 import (
-	"gitlab.com/tokend/go/xdr"
 	sq "github.com/lann/squirrel"
 )
 
 type Asset struct {
 	Code       string         `db:"code"`
 	Policies   int32          `db:"policies"`
-	Token      string         `db:"token"`
-	AssetForms xdr.AssetForms `db:"forms"`
 }
 
 func (a *Asset) IsVisibleForUser(account *Account) bool {
-	isAccountAllowedToSeeTokens := account.Policies&int32(xdr.AccountPoliciesAllowToTransferTokens) == int32(xdr.AccountPoliciesAllowToTransferTokens)
-	return isAccountAllowedToSeeTokens || a.Code == "XAAU" || a.Code == "USD" || a.Code == "XAAG"
+	return a.Code == "XAAU" || a.Code == "USD" || a.Code == "XAAG"
 }
 
 func (q *Q) Assets() ([]Asset, error) {
@@ -35,4 +31,4 @@ func (q *Q) AssetByCode(code string) (*Asset, error) {
 	return &result, err
 }
 
-var selectAsset = sq.Select("a.code, a.policies, a.token, a.forms").From("asset a")
+var selectAsset = sq.Select("a.code, a.policies").From("asset a")

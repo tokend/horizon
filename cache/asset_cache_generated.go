@@ -7,8 +7,8 @@ package cache
 import (
 	"time"
 
-	"gitlab.com/tokend/horizon/db2/core"
 	cache "github.com/patrickmn/go-cache"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 type CoreAssetCache struct {

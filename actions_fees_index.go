@@ -75,9 +75,6 @@ func (action *FeesAllAction) loadData() {
 		return
 	}
 
-	action.Response.PayoutPeriod = int64(ledgerHeader.Data.PayoutsPeriod)
-	action.Response.StorageFeePeriod = int64(ledgerHeader.Data.StorageFeePeriod)
-
 	q := action.CoreQ().FeeEntries()
 	// for the overview we need to return all the fee rules we have, so we just ignore filters
 	if !action.IsOverview {
@@ -135,16 +132,12 @@ func feesContainsType(feeType int, entries []resource.FeeEntry) bool {
 func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries []resource.FeeEntry) []resource.FeeEntry {
 	for _, feeType := range xdr.FeeTypeAll {
 
-		isAmountRangeSupported := feeType != xdr.FeeTypeReferralFee && feeType != xdr.FeeTypeStorageFee
+		isAmountRangeSupported := feeType != xdr.FeeTypeReferralFee
 		if !isAmountRangeSupported && feesContainsType(int(feeType), entries) {
 			continue
 		}
 
 		switch feeType {
-		case xdr.FeeTypeForfeitFee:
-			for _, subType := range asset.AssetForms {
-				entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), int64(subType.Unit)))
-			}
 		case xdr.FeeTypeEmissionFee:
 			for _, subType := range xdr.EmissionFeeTypeAll {
 				entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), int64(subType)))

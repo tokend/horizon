@@ -1,8 +1,6 @@
 package base
 
 import (
-	"time"
-
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history"
 	"github.com/go-errors/errors"
@@ -18,13 +16,6 @@ type ManageOfferEffects struct {
 	BaseAmount     string `json:"base_amount"`
 	QuoteAmount    string `json:"quote_amount"`
 	Price          string `json:"price"`
-}
-
-type DemurrageEffects struct {
-	Asset      string    `json:"asset"`
-	Amount     string    `json:"amount"`
-	PeriodFrom time.Time `json:"period_from"`
-	PeriodTo   time.Time `json:"period_to"`
 }
 
 type Participant struct {
@@ -55,9 +46,6 @@ func (f *Participant) Populate(p *history.Participant, opType xdr.OperationType,
 func (f *Participant) PopulateEffects(p *history.Participant, opType xdr.OperationType) error {
 	var err error
 	switch opType {
-	case xdr.OperationTypeDemurrage:
-		f.Effects = DemurrageEffects{}
-		err = p.UnmarshalEffects(&f.Effects)
 	case xdr.OperationTypeManageOffer:
 		f.Effects = MatchEffects{}
 		err = p.UnmarshalEffects(&f.Effects)

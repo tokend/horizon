@@ -55,14 +55,6 @@ func (q *AccountQ) ForTypes(types []xdr.AccountType) AccountQI {
 	if q.Err != nil {
 		return q
 	}
-
-	for _, t := range types {
-		if t == xdr.AccountTypeExchange {
-			// master is our secret exchange
-			types = append(types, xdr.AccountTypeMaster)
-			break
-		}
-	}
 	q.sql = q.sql.Where(sq.Eq{"account_type": types})
 	return q
 }
@@ -126,9 +118,6 @@ var selectAccount = sq.Select(
 	"a.block_reasons",
 	"a.referrer",
 	"a.share_for_referrer",
-	"ex.name",
-	"ex.require_review",
 	"a.policies",
 	"a.created_at",
-).From("accounts a").
-	LeftJoin("exchanges ex ON a.accountid=ex.account_id")
+).From("accounts a")

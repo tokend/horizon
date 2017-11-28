@@ -293,7 +293,7 @@
   branch = "master"
   name = "gitlab.com/tokend/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "81d3de1647f7e531356b0a02955e98b60e343f8e"
+  revision = "d5f8cf68875d7f103349ea8aafbf2099ce800a35"
 
 [[projects]]
   branch = "master"

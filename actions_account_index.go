@@ -54,8 +54,6 @@ func (action *AccountIndexAction) loadPage() {
 			[]core.Signer{},
 			[]core.Balance{},
 			nil,
-			nil,
-			action.App.CoreInfo.DemurragePeriod,
 		)
 		if err != nil {
 			action.Log.WithError(err).WithField("account", record.AccountID).

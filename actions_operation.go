@@ -105,7 +105,6 @@ func (action *OperationIndexAction) loadParams() {
 	action.AccountTypeFilter = action.GetInt32("account_type")
 	action.BalanceFilter = action.GetString("balance_id")
 	action.AssetFilter = action.GetString("asset")
-	action.ExchangeFilter = action.GetString("exchange_id")
 	action.TransactionFilter = action.GetString("tx_id")
 	action.ReferenceFilter = action.GetString("reference")
 	action.SinceFilter = action.TryGetTime("since")
@@ -147,7 +146,6 @@ func (action *OperationIndexAction) loadParams() {
 		"account_type": fmt.Sprintf("%d", action.AccountTypeFilter),
 		"balance_id":   action.BalanceFilter,
 		"asset":        action.AssetFilter,
-		"exchange_id":  action.ExchangeFilter,
 		"tx_id":        action.TransactionFilter,
 		"reference":    action.ReferenceFilter,
 	}
@@ -191,10 +189,6 @@ func (action *OperationIndexAction) loadRecords() {
 
 	if action.AssetFilter != "" {
 		ops.ForAsset(action.AssetFilter)
-	}
-
-	if action.ExchangeFilter != "" {
-		ops.ForExchange(action.ExchangeFilter)
 	}
 
 	if action.TransactionFilter != "" {

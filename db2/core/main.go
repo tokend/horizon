@@ -9,11 +9,6 @@ import (
 	sq "github.com/lann/squirrel"
 )
 
-type ExchangeData struct {
-	Name          *string
-	RequireReview *bool `db:"require_review"`
-}
-
 // LedgerHeader is row of data from the `ledgerheaders` table
 type LedgerHeader struct {
 	LedgerHash     string           `db:"ledgerhash"`
@@ -47,7 +42,6 @@ func (q *Q) GetRepo() *db2.Repo {
 
 type QInterface interface {
 	GetRepo() *db2.Repo
-	ExchangeName(addy string) (*string, error)
 	// DEPRECATED
 	LedgerHeaderBySequence(dest interface{}, seq int32) error
 	// DEPRECATED
@@ -56,8 +50,6 @@ type QInterface interface {
 	LatestLedger(dest interface{}) error
 	// DEPRECATED
 	SignersByAddress(dest interface{}, addy string) error
-	// DEPRECATED
-	PoliciesByExchangeID(dest interface{}, addy string) error
 	// DEPRECATED
 	BalancesByAddress(dest interface{}, addy string) error
 	// DEPRECATED

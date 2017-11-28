@@ -50,10 +50,6 @@ func (action *BalanceIndexAction) loadRecords() {
 		balances.ForAccount(action.AccountFilter)
 	}
 
-	if action.ExchangeFilter != "" {
-		balances.ForExchange(action.ExchangeFilter)
-	}
-
 	if action.Asset != "" {
 		balances.ForAsset(action.Asset)
 	}

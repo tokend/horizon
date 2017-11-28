@@ -18,8 +18,6 @@ func (this *Account) Populate(
 	cs []core.Signer,
 	cb []core.Balance,
 	cl *core.Limits,
-	cp []core.ExchangePolicies,
-	demurragePeriod int64,
 ) (err error) {
 	this.ID = ca.AccountID
 	this.AccountID = ca.AccountID
@@ -31,28 +29,11 @@ func (this *Account) Populate(
 	this.Referrer = ca.Referrer
 	this.ShareForReferrer = amount.String(int64(ca.ShareForReferrer))
 	this.CreatedAt = ca.CreatedAt
-
-	if ca.Name != nil {
-		this.ExchangeData = &ExchangeData{
-			Name:          *ca.Name,
-			RequireReview: *ca.RequireReview,
-		}
-	}
-
-	if cp != nil {
-		for _, corePolicies := range cp {
-			var policies ExchangePolicies
-			policies.Asset = corePolicies.Asset
-			policies.Policies.PopulateForExchange(corePolicies)
-			this.ExchangePolicies = append(this.ExchangePolicies, policies)
-		}
-	}
-
 	this.Thresholds.Populate(ca)
 
 	this.Balances = make([]Balance, len(cb))
 	for index, balance := range cb {
-		err := this.Balances[index].Populate(balance, demurragePeriod)
+		err := this.Balances[index].Populate(balance)
 		if err != nil {
 			return err
 		}

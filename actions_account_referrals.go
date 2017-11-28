@@ -75,8 +75,6 @@ func (action *AccountReferralsAction) loadResource() {
 			[]core.Signer{},
 			action.Balances[record.AccountID],
 			nil,
-			nil,
-			action.App.CoreInfo.DemurragePeriod,
 		)
 		if err != nil {
 			action.Log.WithError(err).WithField("account", record.AccountID).

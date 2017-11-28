@@ -4,59 +4,15 @@ import (
 	"encoding/json"
 	"time"
 
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/horizon/resource/operations"
 	sq "github.com/lann/squirrel"
 )
-
-func (ingest *Ingestion) InsertPaymentRequests(
-	requestsInfo []xdr.PaymentRequestInfo,
-) error {
-	sql := ingest.payment_requests
-	for _, requestInfo := range requestsInfo {
-		details := operations.BasePayment{
-			FromBalance:           requestInfo.PaymentRequest.SourceBalance.AsString(),
-			ToBalance:             requestInfo.PaymentRequest.DestinationBalance.AsString(),
-			From:                  requestInfo.Source.Address(),
-			To:                    requestInfo.Destination.Address(),
-			Amount:                amount.String(int64(requestInfo.PaymentRequest.SourceSend)),
-			SourcePaymentFee:      amount.String(0),
-			DestinationPaymentFee: amount.String(0),
-			SourceFixedFee:        amount.String(0),
-			DestinationFixedFee:   amount.String(0),
-			SourcePaysForDest:     false,
-		}
-		djson, err := json.Marshal(details)
-		if err != nil {
-			return err
-		}
-
-		sql = sql.Values(
-			requestInfo.PaymentRequest.PaymentId,
-			requestInfo.PaymentRequest.Exchange.Address(),
-			nil,
-			djson,
-			time.Now().UTC(),
-			time.Now().UTC(),
-			xdr.RequestTypeRequestTypePayment,
-		)
-	}
-
-	_, err := ingest.DB.Exec(sql)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func (ingest *Ingestion) InsertPaymentRequest(
 	ledger *core.LedgerHeader,
 	paymentID uint64,
-	exchange string,
 	details interface{},
 	accepted *bool,
 	requestType xdr.RequestType,
@@ -69,7 +25,6 @@ func (ingest *Ingestion) InsertPaymentRequest(
 
 	sql := ingest.payment_requests.Values(
 		paymentID,
-		exchange,
 		accepted,
 		djson,
 		ledgerCloseTime,
@@ -88,13 +43,12 @@ func (ingest *Ingestion) InsertPaymentRequest(
 func (ingest *Ingestion) UpdatePaymentRequest(
 	ledger *core.LedgerHeader,
 	paymentID uint64,
-	exchange string,
 	accept bool,
 ) error {
 	sql := sq.Update("history_payment_requests").SetMap(sq.Eq{
 		"accepted":   accept,
 		"updated_at": time.Unix(ledger.CloseTime, 0),
-	}).Where("payment_id = ?", paymentID).Where("exchange = ?", exchange)
+	}).Where("payment_id = ?", paymentID)
 
 	_, err := ingest.DB.Exec(sql)
 	if err != nil {
