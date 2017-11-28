@@ -208,6 +208,7 @@ func (action *TransactionCreateAction) loadResult() {
 				"envelope_xdr": action.TX,
 			},
 		}
+		return
 	}
 
 	action.Result = action.App.submitter.Submit(action.Ctx, envelopeInfo)
