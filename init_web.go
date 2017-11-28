@@ -130,6 +130,7 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:id/referrals", &AccountReferralsAction{})
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
 	r.Get("/accounts/:id/summary", &AccountSummaryAction{})
+	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
 	r.Get("/accounts/:account_id/signers/:id", &SignerShowAction{})
 	r.Get("/accounts/:account_id/operations", &OperationIndexAction{}, 1)
 	r.Get("/accounts/:account_id/payments", &OperationIndexAction{
