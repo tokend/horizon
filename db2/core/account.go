@@ -3,7 +3,7 @@ package core
 import (
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 // Account is a row of data from the `accounts` table

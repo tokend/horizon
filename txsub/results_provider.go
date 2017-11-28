@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"encoding/base64"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/distributed_lab/logan"

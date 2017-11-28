@@ -3,8 +3,8 @@ package resource
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/httpx"
 	"gitlab.com/swarmfund/horizon/render/hal"

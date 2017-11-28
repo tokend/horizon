@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"strings"
 
-	"gitlab.com/tokend/go/signcontrol"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/signcontrol"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/actions"
 	"gitlab.com/swarmfund/horizon/cache"
 	"gitlab.com/swarmfund/horizon/db2"
@@ -379,28 +379,4 @@ func (action *Action) LoadParticipants(ownerAccountID string, participants map[i
 			opParticipants.Participants = filteredParticipants
 		}
 	}
-}
-
-func (action *Action) obtainCoinsInCirculation() (map[string]int64, error) {
-	coinsAmountInfo := make(map[string]int64)
-	assets, err := action.CoreQ().Assets()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load assets")
-	}
-
-	amounts, err := action.CoreQ().CoinsInCirculation(action.App.CoreInfo.MasterAccountID)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get coins in circulation")
-	}
-
-	for _, amount := range amounts {
-		coinsAmountInfo[amount.Asset] = amount.Amount
-	}
-
-	for _, asset := range assets {
-		if _, ok := coinsAmountInfo[asset.Code]; !ok {
-			coinsAmountInfo[asset.Code] = 0
-		}
-	}
-	return coinsAmountInfo, nil
 }

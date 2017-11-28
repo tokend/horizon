@@ -121,7 +121,6 @@ type Ingestion struct {
 	transaction_participants sq.InsertBuilder
 	operations               sq.InsertBuilder
 	operation_participants   sq.InsertBuilder
-	emission_requests        sq.InsertBuilder
 	recovery_requests        sq.InsertBuilder
 	payment_requests         sq.InsertBuilder
 	balances                 sq.InsertBuilder

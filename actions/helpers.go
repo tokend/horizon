@@ -11,9 +11,9 @@ import (
 
 	"time"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/strkey"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/go/strkey"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/problem"

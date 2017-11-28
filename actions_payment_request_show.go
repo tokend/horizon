@@ -8,7 +8,7 @@ import (
 	"gitlab.com/swarmfund/horizon/resource"
 )
 
-// PaymentRequestShowAction returns a coins emission request based upon the provided
+// PaymentRequestShowAction returns a payment request based upon the provided
 // id
 type PaymentRequestShowAction struct {
 	Action

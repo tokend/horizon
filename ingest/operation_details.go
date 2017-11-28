@@ -3,8 +3,8 @@ package ingest
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -63,20 +63,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["signer_type"] = op.Signer.SignerType
 			details["signer_identity"] = op.Signer.Identity
 		}
-	case xdr.OperationTypeManageCoinsEmissionRequest:
-		op := c.Operation().Body.MustManageCoinsEmissionRequestOp()
-		opResult := c.OperationResult().MustManageCoinsEmissionRequestResult()
-		details["request_id"] = opResult.ManageRequestInfo.RequestId
-		details["fulfilled"] = opResult.ManageRequestInfo.Fulfilled
-		details["amount"] = amount.String(int64(op.Amount))
-		details["asset"] = string(op.Asset)
-	case xdr.OperationTypeReviewCoinsEmissionRequest:
-		op := c.Operation().Body.MustReviewCoinsEmissionRequestOp()
-		details["amount"] = amount.String(int64(op.Request.Amount))
-		details["issuer"] = op.Request.Issuer.Address()
-		details["approved"] = op.Approve
-		details["reason"] = string(op.Reason)
-		details["asset"] = string(op.Request.Asset)
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 		if op.Fee != nil {
@@ -126,13 +112,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.RejectReason != nil {
 			details["reject_reason"] = *op.RejectReason
 		}
-	case xdr.OperationTypeManageAsset:
-		op := c.Operation().Body.MustManageAssetOp()
-		details["code"] = op.Code
-		details["action"] = op.Action
-	case xdr.OperationTypeUploadPreemissions:
-		op := c.Operation().Body.MustUploadPreemissionsOp()
-		details["quantity"] = len(op.PreEmissions)
 	case xdr.OperationTypeSetLimits:
 		op := c.Operation().Body.MustSetLimitsOp()
 		details["account_type"] = op.AccountType

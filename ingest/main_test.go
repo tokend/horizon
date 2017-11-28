@@ -3,7 +3,7 @@ package ingest
 import (
 	"testing"
 
-	"gitlab.com/tokend/go/network"
+	"gitlab.com/swarmfund/go/network"
 	"gitlab.com/swarmfund/horizon/test"
 )
 

@@ -1,16 +1,15 @@
 package notificator
 
 import (
-	"bytes"
 	"encoding/base64"
 	"fmt"
 	"time"
 
-	"gitlab.com/tokend/go/hash"
-	"gitlab.com/swarmfund/horizon/config"
-	"gitlab.com/swarmfund/horizon/log"
 	"github.com/go-errors/errors"
 	"gitlab.com/distributed_lab/notificator"
+	"gitlab.com/swarmfund/go/hash"
+	"gitlab.com/swarmfund/horizon/config"
+	"gitlab.com/swarmfund/horizon/log"
 )
 
 const (
@@ -62,43 +61,6 @@ func (c *Connector) SendTFA(walletID string, phone string, otp string) (*time.Du
 	}
 
 	return nil, nil
-}
-
-func (c *Connector) SendLowAvailableEmissions(email, asset string) error {
-	letter := Letter{
-		Header: "BullionCoin Admin Notification",
-	}
-
-	letter.Body = fmt.Sprintf(`Asset %s has low emission. Upload more presigned emissions.`, asset)
-
-	var buff bytes.Buffer
-	err := c.conf.AdminNotification.Template.Execute(&buff, letter)
-	if err != nil {
-		log.WithField("err", err.Error()).Error("failed to render template")
-		return err
-	}
-
-	payload := &notificator.EmailRequestPayload{
-		Destination: email,
-		Subject:     letter.Header,
-		Message:     buff.String(),
-	}
-
-	response, err := c.notificator.Send(NotificatorTypeAdminNotification, email, payload)
-	if err != nil {
-		c.log.WithError(err).Error("Failed to SendLowAvailableEmissions")
-		return err
-	}
-
-	if !response.IsSuccess() {
-		if retryIn := response.RetryIn(); retryIn != nil {
-			return nil
-		}
-		c.log.WithField("response", response).Warn("Low Available Emissions notification not accepted")
-		return errors.New("Low Available Emissions notification not accepted")
-	}
-
-	return nil
 }
 
 func (c *Connector) send(requestType int, token string, payload notificator.Payload) error {

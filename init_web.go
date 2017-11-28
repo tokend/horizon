@@ -7,8 +7,8 @@ import (
 	"regexp"
 
 	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/tokend/go/signcontrol"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/signcontrol"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
@@ -105,8 +105,6 @@ func initWebActions(app *App) {
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
-		xdr.OperationTypeReviewCoinsEmissionRequest,
-		xdr.OperationTypeManageCoinsEmissionRequest,
 		xdr.OperationTypeManageForfeitRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
@@ -133,7 +131,6 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 
-	r.Get("/accounts/:account_id/emission_rules", &EmissionRulesShowAction{})
 	r.Get("/accounts/:account_id/forfeit_request", &ForfeitRequestAction{})
 
 	// offers
@@ -166,11 +163,6 @@ func initWebActions(app *App) {
 	})
 	r.Get("/operations/:id", &OperationShowAction{})
 
-	// coins emission requests actions
-	r.Get("/coins_emission_requests", &CoinsEmissionRequestIndexAction{})
-	r.Get("/coins_emission_requests/:id", &CoinsEmissionRequestShowAction{})
-	r.Get("/check_pre_emission/:serial_number", &CheckPreEmissionAction{})
-
 	r.Get("/payment_requests", &PaymentRequestIndexAction{})
 	r.Get("/forfeit_requests", &PaymentRequestIndexAction{
 		OnlyForfeits: true,
@@ -184,8 +176,6 @@ func initWebActions(app *App) {
 		IsOverview: true,
 	})
 	r.Get("/fees/:fee_type", &FeesShowAction{})
-
-	r.Get("/coins_amount_info", &CoinsAmountInfoAction{})
 
 	// Values
 	r.Get("/prices/history", &PricesHistoryAction{})
@@ -261,7 +251,6 @@ func init() {
 		"web.init",
 		initWeb,
 		"app-context", "notificator", "stellarCoreInfo", "memory_cache",
-		"available_emission_checker",
 	)
 
 	appInit.Add(

@@ -3,35 +3,13 @@ package operations
 import (
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/resource/base"
 	"golang.org/x/net/context"
 )
 
-// TypeNames maps from operation type to the string used to represent that type
-// in horizon's JSON responses
-var TypeNames = map[xdr.OperationType]string{
-	xdr.OperationTypeCreateAccount:              "create_account",
-	xdr.OperationTypePayment:                    "payment",
-	xdr.OperationTypeSetOptions:                 "set_options",
-	xdr.OperationTypeManageCoinsEmissionRequest: "manage_coins_emission_request",
-	xdr.OperationTypeReviewCoinsEmissionRequest: "review_coins_emission_request",
-	xdr.OperationTypeSetFees:                    "set_fees",
-	xdr.OperationTypeManageAccount:              "manage_account",
-	xdr.OperationTypeManageForfeitRequest:       "manage_forfeit_request",
-	xdr.OperationTypeRecover:                    "recover",
-	xdr.OperationTypeManageBalance:              "manage_balance",
-	xdr.OperationTypeReviewPaymentRequest:       "review_payment_request",
-	xdr.OperationTypeManageAsset:                "manage_asset",
-	xdr.OperationTypeUploadPreemissions:         "upload_pre-emissions",
-	xdr.OperationTypeSetLimits:                  "set_limits",
-	xdr.OperationTypeDirectDebit:                "direct_debit",
-	xdr.OperationTypeManageAssetPair:            "manage_asset_pair",
-	xdr.OperationTypeManageOffer:                "manage_offer",
-	xdr.OperationTypeManageInvoice:              "manage_invoice",
-}
 
 // New creates a new operation resource, finding the appropriate type to use
 // based upon the row's type.
@@ -72,18 +50,6 @@ func New(
 		err = row.UnmarshalDetails(&e)
 		if public {
 			e.SignerKey = ""
-		}
-		result = e
-	case xdr.OperationTypeManageCoinsEmissionRequest:
-		e := ManageCoinsEmissionRequest{Base: base}
-		err = row.UnmarshalDetails(&e)
-		result = e
-	case xdr.OperationTypeReviewCoinsEmissionRequest:
-		e := ReviewCoinsEmissionRequest{Base: base}
-		err = row.UnmarshalDetails(&e)
-		if public {
-			e.Reason = ""
-			e.Issuer = ""
 		}
 		result = e
 	case xdr.OperationTypeSetFees:

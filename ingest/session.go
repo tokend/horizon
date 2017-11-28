@@ -3,8 +3,8 @@ package ingest
 import (
 	"time"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
@@ -311,29 +311,6 @@ func (is *Session) processPayment(paymentOp xdr.PaymentOp, source xdr.AccountId,
 		} else if !invoiceReference.Accept {
 			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.REJECTED, nil)
 		}
-	}
-}
-
-func (is *Session) processReviewEmissionRequest(operation xdr.Operation, result xdr.OperationResultTr) {
-	if is.Err != nil {
-		return
-	}
-
-	reviewRequestOp := operation.Body.ReviewCoinsEmissionRequestOp
-	if reviewRequestOp.Approve {
-		is.Err = is.Ingestion.ApproveEmissionRequestUpdate(
-			is.Cursor.Ledger(),
-			uint64(reviewRequestOp.Request.RequestId),
-		)
-	} else {
-		is.Err = is.Ingestion.RejectEmissionRequestUpdate(
-			is.Cursor.Ledger(),
-			uint64(reviewRequestOp.Request.RequestId),
-			string(reviewRequestOp.Reason),
-		)
-	}
-	if is.Err != nil {
-		return
 	}
 }
 

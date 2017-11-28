@@ -3,7 +3,7 @@ package horizon
 import (
 	"database/sql"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/ledger"
 	"gitlab.com/swarmfund/horizon/render/hal"
@@ -137,14 +137,7 @@ func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries
 			continue
 		}
 
-		switch feeType {
-		case xdr.FeeTypeEmissionFee:
-			for _, subType := range xdr.EmissionFeeTypeAll {
-				entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), int64(subType)))
-			}
-		default:
-			entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), int64(0)))
-		}
+		entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), int64(0)))
 	}
 
 	return entries

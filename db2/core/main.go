@@ -3,7 +3,7 @@
 package core
 
 import (
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
@@ -78,19 +78,9 @@ type QInterface interface {
 	Assets() ([]Asset, error)
 	AssetByCode(code string) (*Asset, error)
 
-	AvailableEmissions(masterAccountID string) ([]AssetAmount, error)
-
-	EmissionRequestByExchangeAndRef(exchange, reference string) (*bool, error)
-
-	CoinsInCirculation(masterAccountID string) ([]AssetAmount, error)
-	// tries not load number of coins in circulation, returns error if fails to load
-	MustCoinsInCirculationForAsset(masterAccountID, asset string) (AssetAmount, error)
-	AssetStats(masterAccountID string) ([]AssetStat, error)
-
 	// accounts helper
 	Accounts() AccountQI
 
-	CoinsEmissions() *CoinsEmissionQ
 	Trusts() *TrustQ
 	Offers() *OfferQ
 	OrderBook() *OrderBookQ

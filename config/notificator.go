@@ -8,7 +8,6 @@ import (
 type Notificator struct {
 	*Base
 	Endpoint          string
-	AdminNotification AdminNotification
 	Secret            string
 	Public            string
 }
@@ -18,8 +17,6 @@ func (n *Notificator) DefineConfigStructure() {
 	n.bindEnv("secret")
 	n.bindEnv("public")
 
-	n.AdminNotification.Base = NewBase(n.Base, "admin_notification")
-	n.AdminNotification.DefineConfigStructure()
 }
 
 func (n *Notificator) Init() error {
@@ -35,11 +32,6 @@ func (n *Notificator) Init() error {
 	}
 
 	n.Public, err = n.getNonEmptyString("public")
-	if err != nil {
-		return err
-	}
-
-	err = n.AdminNotification.Init()
 	if err != nil {
 		return err
 	}

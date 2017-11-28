@@ -3,7 +3,7 @@
 package codes
 
 import (
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"github.com/go-errors/errors"
 	"gitlab.com/distributed_lab/logan"
 )
@@ -42,10 +42,6 @@ func ForOperationResult(opr xdr.OperationResult) (string, error) {
 		ic = ir.MustPaymentResult().Code
 	case xdr.OperationTypeSetOptions:
 		ic = ir.MustSetOptionsResult().Code
-	case xdr.OperationTypeManageCoinsEmissionRequest:
-		ic = ir.MustManageCoinsEmissionRequestResult().Code
-	case xdr.OperationTypeReviewCoinsEmissionRequest:
-		ic = ir.MustReviewCoinsEmissionRequestResult().Code
 	case xdr.OperationTypeSetFees:
 		ic = ir.MustSetFeesResult().Code
 	case xdr.OperationTypeManageAccount:
@@ -60,8 +56,6 @@ func ForOperationResult(opr xdr.OperationResult) (string, error) {
 		ic = ir.MustReviewPaymentRequestResult().Code
 	case xdr.OperationTypeManageAsset:
 		ic = ir.MustManageAssetResult().Code
-	case xdr.OperationTypeUploadPreemissions:
-		ic = ir.MustUploadPreemissionsResult().Code
 	case xdr.OperationTypeSetLimits:
 		ic = ir.MustSetLimitsResult().Code
 	case xdr.OperationTypeDirectDebit:
@@ -72,6 +66,12 @@ func ForOperationResult(opr xdr.OperationResult) (string, error) {
 		ic = ir.MustManageOfferResult().Code
 	case xdr.OperationTypeManageInvoice:
 		ic = ir.MustManageInvoiceResult().Code
+	case xdr.OperationTypeReviewRequest:
+		ic = ir.MustReviewRequestResult().Code
+	case xdr.OperationTypeCreatePreissuanceRequest:
+		ic = ir.MustCreatePreIssuanceRequestResult().Code
+	case xdr.OperationTypeCreateIssuanceRequest:
+		ic = ir.MustCreateIssuanceRequestResult().Code
 	}
 
 	return String(ic)

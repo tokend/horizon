@@ -7,6 +7,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/garyburd/redigo/redis"
+	"github.com/rcrowley/go-metrics"
+	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/swarmfund/horizon/cache"
 	"gitlab.com/swarmfund/horizon/config"
 	"gitlab.com/swarmfund/horizon/corer"
@@ -19,10 +22,6 @@ import (
 	"gitlab.com/swarmfund/horizon/notificator"
 	"gitlab.com/swarmfund/horizon/reap"
 	"gitlab.com/swarmfund/horizon/render/sse"
-	"github.com/garyburd/redigo/redis"
-	"github.com/pkg/errors"
-	"github.com/rcrowley/go-metrics"
-	"gitlab.com/distributed_lab/txsub"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
 	"gopkg.in/tylerb/graceful.v1"
@@ -288,19 +287,4 @@ func (a *App) run() {
 			return
 		}
 	}
-}
-
-func (a *App) obtainAvailableEmissions() (map[string]int64, error) {
-	result := make(map[string]int64)
-
-	emissions, err := a.CoreQ().AvailableEmissions(a.CoreInfo.MasterAccountID)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get core emissions")
-	}
-
-	for _, emission := range emissions {
-		result[emission.Asset] = emission.Amount
-	}
-
-	return result, nil
 }

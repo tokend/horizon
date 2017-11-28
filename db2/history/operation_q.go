@@ -3,7 +3,7 @@ package history
 import (
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	sq "github.com/lann/squirrel"
 )

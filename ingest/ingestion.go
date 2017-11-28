@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
@@ -35,10 +35,6 @@ func (ingest *Ingestion) Clear(start int64, end int64) error {
 		return err
 	}
 	err = clear(start, end, "history_ledgers", "id")
-	if err != nil {
-		return err
-	}
-	err = clear(start, end, "history_emission_requests", "id")
 	if err != nil {
 		return err
 	}
@@ -306,18 +302,6 @@ func (ingest *Ingestion) createInsertBuilders() {
 	)
 
 	ingest.priceHistory = sq.Insert("history_price").Columns("base_asset", "quote_asset", "timestamp", "price")
-
-	ingest.emission_requests = sq.Insert("history_emission_requests").Columns(
-		"request_id",
-		"reference",
-		"issuer",
-		"receiver",
-		"amount",
-		"asset",
-		"approved",
-		"created_at",
-		"updated_at",
-	)
 
 	ingest.payment_requests = sq.Insert("history_payment_requests").Columns(
 		"payment_id",

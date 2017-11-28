@@ -50,11 +50,6 @@ func (this *Base) Populate(
 }
 
 func (this *Base) populateType(row history.Operation) {
-	var ok bool
 	this.TypeI = int32(row.Type)
-	this.Type, ok = TypeNames[row.Type]
-
-	if !ok {
-		this.Type = "unknown"
-	}
+	this.Type = row.Type.ShortString()
 }

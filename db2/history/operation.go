@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"github.com/go-errors/errors"
 	"github.com/guregu/null"

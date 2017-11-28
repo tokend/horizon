@@ -1,7 +1,7 @@
 package ingest
 
 import (
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
@@ -69,8 +69,6 @@ func (is *Session) operation() {
 
 	is.ingestOperationParticipants()
 	switch is.Cursor.OperationType() {
-	case xdr.OperationTypeReviewCoinsEmissionRequest:
-		is.processReviewEmissionRequest(*is.Cursor.Operation(), *is.Cursor.OperationResult())
 	case xdr.OperationTypeManageForfeitRequest:
 		is.processManageForfeitRequest(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
 	case xdr.OperationTypePayment:

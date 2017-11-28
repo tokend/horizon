@@ -3,7 +3,7 @@ package corer
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 // Info -- response for /info request

@@ -88,18 +88,6 @@ func (action *PaymentRequestIndexAction) loadRecords() {
 		requests.ForBalance(action.BalanceFilter)
 	}
 
-	if action.StateFilter > 0 {
-		if action.StateFilter == REQUEST_APPROVED {
-			state := true
-			requests.ForState(&state)
-		} else if action.StateFilter == REQUEST_REJECTED {
-			state := false
-			requests.ForState(&state)
-		} else if action.StateFilter == REQUEST_PENDING {
-			requests.ForState(nil)
-		}
-	}
-
 	if action.OnlyForfeits {
 		requests.ForfeitsOnly()
 	}

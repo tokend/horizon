@@ -5,7 +5,7 @@ package participants
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -27,7 +27,6 @@ func ForOperation(
 	opResult xdr.OperationResultTr,
 	ledger *core.LedgerHeader,
 ) (result []Participant, err error) {
-	q := history.Q{Repo: DB}
 	sourceParticipant := &Participant{}
 	if op.SourceAccount != nil {
 		sourceParticipant.AccountID = *op.SourceAccount
@@ -50,24 +49,6 @@ func ForOperation(
 		sourceParticipant.BalanceID = &paymentOp.SourceBalanceId
 	case xdr.OperationTypeSetOptions:
 	// the only direct participant is the source_account
-	case xdr.OperationTypeManageCoinsEmissionRequest:
-		if !opResult.MustManageCoinsEmissionRequestResult().ManageRequestInfo.Fulfilled {
-			break
-		}
-
-		balance := op.Body.MustManageCoinsEmissionRequestOp().Receiver
-		accountID, err := getAccountIDByBalance(q, balance.AsString())
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, Participant{*accountID, &balance, nil})
-	case xdr.OperationTypeReviewCoinsEmissionRequest:
-		balance := op.Body.MustReviewCoinsEmissionRequestOp().Request.Receiver
-		accountID, err := getAccountIDByBalance(q, balance.AsString())
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, Participant{*accountID, &balance, nil})
 	case xdr.OperationTypeSetFees:
 	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAccount:
@@ -86,8 +67,6 @@ func ForOperation(
 	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAsset:
 	// the only direct participant is the source_accountWWW
-	case xdr.OperationTypeUploadPreemissions:
-		// the only direct participant is the source_account
 	case xdr.OperationTypeSetLimits:
 		setLimitsOp := op.Body.MustSetLimitsOp()
 		if setLimitsOp.Account != nil {
