@@ -370,12 +370,12 @@ func (is *Session) updateIngestedPayment(operation xdr.Operation, source xdr.Acc
 	}
 
 	state := reviewPaymentResponse.State
-	if state == xdr.PaymentStatePaymentPending {
+	if state == xdr.PaymentStatePending {
 		return
 	}
 	is.Err = is.Ingestion.UpdatePayment(
 		reviewPaymentOp.PaymentId,
-		state == xdr.PaymentStatePaymentProcessed,
+		state == xdr.PaymentStateProcessed,
 		reviewPaymentOp.RejectReason,
 	)
 	if is.Err != nil {

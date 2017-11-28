@@ -221,13 +221,13 @@ func forChanges(
 		var account *xdr.AccountId
 
 		switch c.Type {
-		case xdr.LedgerEntryChangeTypeLedgerEntryCreated:
+		case xdr.LedgerEntryChangeTypeCreated:
 			account = forLedgerEntry(c.MustCreated())
-		case xdr.LedgerEntryChangeTypeLedgerEntryRemoved:
+		case xdr.LedgerEntryChangeTypeRemoved:
 			account = forLedgerKey(c.MustRemoved())
-		case xdr.LedgerEntryChangeTypeLedgerEntryUpdated:
+		case xdr.LedgerEntryChangeTypeUpdated:
 			account = forLedgerEntry(c.MustUpdated())
-		case xdr.LedgerEntryChangeTypeLedgerEntryState:
+		case xdr.LedgerEntryChangeTypeState:
 			account = forLedgerEntry(c.MustState())
 		default:
 			err = fmt.Errorf("Unknown change type: %s", c.Type)
