@@ -10,7 +10,7 @@ type Asset struct {
 }
 
 func (a *Asset) IsVisibleForUser(account *Account) bool {
-	return a.Code == "XAAU" || a.Code == "USD" || a.Code == "XAAG"
+	return true
 }
 
 func (q *Q) Assets() ([]Asset, error) {
