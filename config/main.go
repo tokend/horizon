@@ -53,16 +53,12 @@ type Config struct {
 	// enable on dev only
 	CORSEnabled bool
 
-	Notificator Notificator
 	TFA         TFA
 	Core        Core
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.Base = NewBase(nil, "")
-
-	c.Notificator.Base = NewBase(c.Base, "notificator")
-	c.Notificator.DefineConfigStructure()
 
 	c.TFA.Base = NewBase(c.Base, "tfa")
 	c.TFA.DefineConfigStructure()
@@ -150,11 +146,6 @@ func (c *Config) Init() error {
 	c.SkipCheck = c.getBool("sign_check_skip")
 
 	c.RedisURL = c.getString("redis_url")
-
-	err = c.Notificator.Init()
-	if err != nil {
-		return err
-	}
 
 	c.TFA.Init()
 

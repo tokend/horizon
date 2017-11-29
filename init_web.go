@@ -250,7 +250,7 @@ func init() {
 	appInit.Add(
 		"web.init",
 		initWeb,
-		"app-context", "notificator", "stellarCoreInfo", "memory_cache",
+		"app-context", "stellarCoreInfo", "memory_cache",
 	)
 
 	appInit.Add(

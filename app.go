@@ -19,7 +19,6 @@ import (
 	"gitlab.com/swarmfund/horizon/ingest"
 	"gitlab.com/swarmfund/horizon/ledger"
 	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/swarmfund/horizon/notificator"
 	"gitlab.com/swarmfund/horizon/reap"
 	"gitlab.com/swarmfund/horizon/render/sse"
 	"golang.org/x/net/context"
@@ -46,7 +45,6 @@ type App struct {
 	CoreInfo       *corer.Info
 	horizonVersion string
 	cacheProvider  *cache.Provider
-	notificator    *notificator.Connector
 	CoreConnector  *corer.Connector
 
 	// metrics
@@ -150,10 +148,6 @@ func (a *App) CoreRepo(ctx context.Context) *db2.Repo {
 // returned repo is bound to `ctx`.
 func (a *App) HistoryRepo(ctx context.Context) *db2.Repo {
 	return &db2.Repo{DB: a.historyQ.GetRepo().DB, Ctx: ctx}
-}
-
-func (action *Action) Notificator() *notificator.Connector {
-	return action.App.notificator
 }
 
 // IsHistoryStale returns true if the latest history ledger is more than
