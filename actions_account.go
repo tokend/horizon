@@ -33,7 +33,6 @@ func (action *AccountShowAction) JSON() {
 		action.loadBalances,
 		action.loadResource,
 		func() {
-			action.Resource.IncentivePerCoinExpiresAt = time.Date(2017, 10, 1, 0, 0, 0, 0, time.UTC).Unix()
 			hal.Render(action.W, action.Resource)
 		},
 	)
