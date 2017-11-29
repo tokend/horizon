@@ -279,21 +279,15 @@
 
 [[projects]]
   branch = "master"
-  name = "gitlab.com/distributed_lab/notificator"
-  packages = ["."]
-  revision = "939a613db2add16474a15d5058867fdb7252f1df"
-
-[[projects]]
-  branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
   packages = ["."]
   revision = "425042624985b3c3bab7f6f3ad7a0d1c6eb3d0ac"
 
 [[projects]]
-  branch = "master"
+  branch = "feature/reviewable_request"
   name = "gitlab.com/swarmfund/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "d5f8cf68875d7f103349ea8aafbf2099ce800a35"
+  revision = "bba1270bd2de1f20ec9c802250e05bbf6ce1a5ae"
 
 [[projects]]
   branch = "master"
@@ -352,6 +346,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f6585aa66eadcc32cce548c51172433771da694190fd2ce5a3ddf618ae7fb790"
+  inputs-digest = "9f25229f642c8fee312d7d91e012cb883085c865ce151ad2f575bde7dbd165ad"
   solver-name = "gps-cdcl"
   solver-version = 1
