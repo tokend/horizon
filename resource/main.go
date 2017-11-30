@@ -37,7 +37,6 @@ type Account struct {
 	Referrer         string          `json:"referrer"`
 	ShareForReferrer string          `json:"share_for_referrer"`
 	Policies         AccountPolicies `json:"policies"`
-	CreatedAt        time.Time       `json:"created_at"`
 }
 
 // AccountFlags represents the state of an account's flags
