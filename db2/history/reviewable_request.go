@@ -4,16 +4,6 @@ import (
 	"gitlab.com/swarmfund/go/xdr"
 )
 
-type ReviewableRequestState int
-
-const (
-	ReviewableRequestStatePending ReviewableRequestState = iota + 1
-	ReviewableRequestStateCanceled
-	ReviewableRequestStateApproved
-	ReviewableRequestStateRejected
-	ReviewableRequestStatePermanentlyRejected
-)
-
 // Represents Reviewable request
 type ReviewableRequest struct {
 	ID           uint64                    `db:"id"`

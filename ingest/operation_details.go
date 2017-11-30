@@ -3,9 +3,9 @@ package ingest
 import (
 	"fmt"
 
+	"encoding/hex"
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
-	"encoding/hex"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -164,6 +164,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["request_hash"] = hex.EncodeToString(op.RequestHash[:])
 		details["request_id"] = uint64(op.RequestId)
 		details["request_type"] = int32(op.RequestType)
+	case xdr.OperationTypeManageAsset:
+		op := c.Operation().Body.MustManageAssetOp()
+		details["request_id"] = uint64(op.RequestId)
+		details["action"] = int32(op.Request.Action)
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

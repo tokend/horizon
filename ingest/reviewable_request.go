@@ -60,7 +60,7 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.Rev
 	}
 
 	state := history.ReviewableRequestStatePending
-	if string(request.RejectReason) == "" {
+	if string(request.RejectReason) != "" {
 		state = history.ReviewableRequestStateRejected
 	}
 
@@ -82,7 +82,7 @@ func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRe
 		Code:                 string(request.Code),
 		Description:          string(request.Description),
 		ExternalResourceLink: string(request.ExternalResourceLink),
-		Policies:             uint32(request.Policies),
+		Policies:             int32(request.Policies),
 		Name:                 string(request.Name),
 		PreIssuedAssetSigner: request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:    amount.StringU(uint64(request.MaxIssuanceAmount)),
@@ -94,7 +94,7 @@ func getAssetUpdate(request *xdr.AssetUpdateRequest) history.AssetUpdateRequest 
 		Code:                 string(request.Code),
 		Description:          string(request.Description),
 		ExternalResourceLink: string(request.ExternalResourceLink),
-		Policies:             uint32(request.Policies),
+		Policies:             int32(request.Policies),
 	}
 }
 

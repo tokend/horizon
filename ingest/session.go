@@ -206,6 +206,24 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 	}
 }
 
+func (is *Session) processManageAsset(op *xdr.ManageAssetOp) {
+	if is.Err != nil {
+		return
+	}
+
+	if op.Request.Action != xdr.ManageAssetActionCancelAssetRequest {
+		return
+	}
+
+	err := is.Cursor.HistoryQ().ReviewableRequests().Cancel(uint64(op.RequestId))
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to cancel reviewable request", map[string]interface{} {
+			"request_id": uint64(op.RequestId),
+		})
+		return
+	}
+}
+
 func (is *Session) ingestOperationParticipants() {
 	if is.Err != nil {
 		return

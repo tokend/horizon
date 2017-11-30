@@ -186,6 +186,9 @@ func initWebActions(app *App) {
 	r.Get("/balances/:balance_id/asset", &BalanceAssetAction{})
 	r.Get("/balances/:balance_id/account", &BalanceAccountAction{})
 
+	// Reviewable Request actions
+	r.Get("/requests/:id", &ReviewableRequestShowAction{})
+
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// legacy constraints:
 		// * not signed POST /transactions should trigger TFA flow if needed
