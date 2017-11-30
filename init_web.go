@@ -10,6 +10,7 @@ import (
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
+	"gitlab.com/swarmfund/go/signcontrol"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
@@ -212,14 +213,13 @@ func initWebActions(app *App) {
 
 		// checking if request is signed and deciding on proper handler
 		// (we rely on SignatureValidator middleware here)
-		// TODO DO NOT COMMIT ME
 		TransactionCreateAction{}.ServeHTTPC(c, w, r)
-		/*signer := r.Header.Get(signcontrol.PublicKeyHeader)
+		signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" {
 
 		} else {
 			apiProxy.ServeHTTP(w, r)
-		}*/
+		}
 	}))
 
 	r.Get("/accounts/:account_id/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
