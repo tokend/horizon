@@ -119,5 +119,4 @@ var selectAccount = sq.Select(
 	"a.referrer",
 	"a.share_for_referrer",
 	"a.policies",
-	"a.created_at",
 ).From("accounts a")
