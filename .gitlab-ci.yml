@@ -27,7 +27,7 @@ build:
     - cp -rf ./* $GOPATH/src/$APP_PATH
     - cd $GOPATH/src/$APP_PATH
     - go build -o bin/horizon -a gitlab.com/swarmfund/horizon/cmd/horizon
-    - cp -rf ./bin/ /builds/tokend/horizon/bin/
+    - cp -rf ./bin/ /builds/swarmfund/horizon/bin/
   artifacts:
       expire_in: 1 week
       paths:
