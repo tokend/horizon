@@ -119,7 +119,6 @@
 
 [[constraint]]
   name = "gitlab.com/distributed_lab/logan"
-  version = "0.92.0"
 
 [[constraint]]
   branch = "master"
