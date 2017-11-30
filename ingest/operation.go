@@ -87,6 +87,8 @@ func (is *Session) operation() {
 	case xdr.OperationTypeManageInvoice:
 		is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
 			is.Cursor.OperationResult().MustManageInvoiceResult())
+	case xdr.OperationTypeReviewRequest:
+		is.processReviewRequest(is.Cursor.Operation().Body.MustReviewRequestOp())
 
 	}
 }

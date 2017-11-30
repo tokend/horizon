@@ -5,6 +5,7 @@ import (
 
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
+	"encoding/hex"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -156,6 +157,13 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["sender"] = op.Sender.Address()
 		details["invoice_id"] = opResult.Success.InvoiceId
 		details["asset"] = string(opResult.Success.Asset)
+	case xdr.OperationTypeReviewRequest:
+		op := c.Operation().Body.MustReviewRequestOp()
+		details["action"] = int32(op.Action)
+		details["reason"] = string(op.Reason)
+		details["request_hash"] = hex.EncodeToString(op.RequestHash[:])
+		details["request_id"] = uint64(op.RequestId)
+		details["request_type"] = int32(op.RequestType)
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

@@ -1,12 +1,9 @@
 package ingest
 
 import (
-	"time"
-
+	"github.com/pkg/errors"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
-	"github.com/lann/squirrel"
-	"github.com/pkg/errors"
 )
 
 func balanceUpdated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -22,7 +19,7 @@ func balanceUpdated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to get balance")
 		}
-		_, err = is.Ingestion.tryIngestBalance(b.BalanceID, b.Asset, b.AccountID)
+		_, err = is.Ingestion.TryIngestBalance(b.BalanceID, b.Asset, b.AccountID)
 		if err != nil {
 			return errors.Wrap(err, "failed to ingest balance")
 		}
@@ -30,7 +27,7 @@ func balanceUpdated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 
 	amount := balance.Amount + balance.Locked
 
-	return is.Ingestion.tryIngestBalanceUpdate(
+	return is.Ingestion.TryIngestBalanceUpdate(
 		balance.BalanceId.AsString(), int64(amount), is.Cursor.Ledger().CloseTime,
 	)
 }
@@ -41,7 +38,7 @@ func balanceCreated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.New("Expected balance not to be nil")
 	}
 
-	_, err := is.Ingestion.tryIngestBalance(balance.BalanceId.AsString(),
+	_, err := is.Ingestion.TryIngestBalance(balance.BalanceId.AsString(),
 		string(balance.Asset),
 		balance.AccountId.Address())
 	if err != nil {
@@ -52,32 +49,4 @@ func balanceCreated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.Wrap(err, "failed to updated balance")
 	}
 	return nil
-}
-
-func (ingest *Ingestion) tryIngestBalance(
-	balanceID, asset, accountID string) (bool, error) {
-	result, err := ingest.DB.ExecRaw(`
-		insert into history_balances (balance_id, asset, account_id)
-		values ($1, $2, $3) on conflict do nothing`,
-		balanceID, asset, accountID)
-	if err != nil {
-		return false, err
-	}
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return false, errors.Wrap(err, "failed to get rows affected")
-	}
-	return rows > 0, nil
-}
-
-func (ingest *Ingestion) tryIngestBalanceUpdate(
-	balanceID string, amount, closeTime int64) error {
-	_, err := ingest.DB.Exec(squirrel.
-		Insert("history_balance_updates").
-		SetMap(map[string]interface{}{
-			"balance_id": balanceID,
-			"amount":     amount,
-			"updated_at": time.Unix(closeTime, 0).UTC(),
-		}))
-	return err
 }

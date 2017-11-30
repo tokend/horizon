@@ -6,6 +6,7 @@ import (
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/toid"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // InLedger returns true if the cursor is on a ledger.
@@ -61,11 +62,7 @@ func (c *Cursor) LedgerSequence() int32 {
 // NextLedger advances `c` to the next ledger in the iteration, loading a new
 // LedgerBundle from the core database. Returns false if an error occurs or
 // the iteration is complete.
-func (c *Cursor) NextLedger() bool {
-	if c.Err != nil {
-		return false
-	}
-
+func (c *Cursor) NextLedger() (bool, error) {
 	if c.lg == 0 {
 		c.lg = c.FirstLedger
 	} else {
@@ -75,14 +72,14 @@ func (c *Cursor) NextLedger() bool {
 	if c.lg > c.LastLedger {
 		c.data = nil
 		c.lg = 0
-		return false
+		return false, nil
 	}
 
 	c.data = &LedgerBundle{Sequence: c.lg}
 	start := time.Now()
-	c.Err = c.data.Load(c.CoreQ(), c.HistoryQ())
-	if c.Err != nil {
-		return false
+	err := c.data.Load(c.CoreQ(), c.HistoryQ())
+	if err != nil {
+		return false, errors.Wrap(err, "failed to load ledger data")
 	}
 
 	if c.Metrics != nil {
@@ -92,15 +89,12 @@ func (c *Cursor) NextLedger() bool {
 	c.tx = -1
 	c.op = -1
 
-	return true
+	return true, nil
 }
 
 // NextOp advances `c` to the next operation in the current transaction.  Returns
 // false if the current transaction has nothing left to visit.
 func (c *Cursor) NextOp() bool {
-	if c.Err != nil {
-		return false
-	}
 	c.op++
 	return c.op < len(c.Operations())
 }
@@ -108,9 +102,6 @@ func (c *Cursor) NextOp() bool {
 // NextTx advances `c` to the next transaction in the current ledger.  Returns
 // false if the current ledger has no transactions left to visit.
 func (c *Cursor) NextTx() bool {
-	if c.Err != nil {
-		return false
-	}
 	c.tx++
 	c.op = -1
 	return c.tx < len(c.data.Transactions)

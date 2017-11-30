@@ -9,7 +9,7 @@ CREATE TABLE reviewable_request (
   request_type  INT           NOT NULL,
   request_state INT           NOT NULL,
   hash          CHARACTER(64) NOT NULL,
-  body          jsonb         NOT NULL,
+  details          jsonb         NOT NULL,
   PRIMARY KEY (id)
 );
 

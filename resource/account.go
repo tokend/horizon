@@ -28,7 +28,6 @@ func (this *Account) Populate(
 
 	this.Referrer = ca.Referrer
 	this.ShareForReferrer = amount.String(int64(ca.ShareForReferrer))
-	this.CreatedAt = ca.CreatedAt
 	this.Thresholds.Populate(ca)
 
 	this.Balances = make([]Balance, len(cb))

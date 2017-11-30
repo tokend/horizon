@@ -62,6 +62,16 @@ type QInterface interface {
 	LastPrice(base, quote string) (*PricePoint, error)
 
 	Trades() TradesQI
+
+	// ReviewableRequests - provides builder of request to access reviewable requests
+	ReviewableRequests() ReviewableRequestQI
+}
+
+// ReviewableRequests - provides builder of request to access reviewable requests
+func (q *Q) ReviewableRequests() ReviewableRequestQI {
+	return &ReviewableRequestQ{
+		parent: q,
+	}
 }
 
 // ElderLedger loads the oldest ledger known to the history database

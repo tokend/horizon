@@ -3,10 +3,10 @@
 package core
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2"
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2"
 )
 
 // LedgerHeader is row of data from the `ledgerheaders` table
@@ -16,6 +16,7 @@ type LedgerHeader struct {
 	BucketListHash string           `db:"bucketlisthash"`
 	CloseTime      int64            `db:"closetime"`
 	Sequence       uint32           `db:"ledgerseq"`
+	Version        uint64           `db:"version"`
 	Data           xdr.LedgerHeader `db:"data"`
 }
 

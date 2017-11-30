@@ -6,13 +6,13 @@ package ingest
 import (
 	"sync"
 
+	"github.com/rcrowley/go-metrics"
 	"gitlab.com/swarmfund/horizon/corer"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/log"
-	sq "github.com/lann/squirrel"
-	"github.com/rcrowley/go-metrics"
+	"gitlab.com/swarmfund/horizon/ingest/ingestion"
 )
 
 const (
@@ -41,9 +41,6 @@ type Cursor struct {
 
 	Metrics *IngesterMetrics
 
-	// Err is the error that caused this iteration to fail, if any.
-	Err error
-
 	lg   int32
 	tx   int
 	op   int
@@ -56,17 +53,6 @@ func (c *Cursor) CoreQ() core.QInterface {
 
 func (c *Cursor) HistoryQ() history.QInterface {
 	return &history.Q{Repo: c.HistoryDB}
-}
-
-// EffectIngestion is a helper struct to smooth the ingestion of effects.  this
-// struct will track what the correct operation to use and order to use when
-// adding effects into an ingestion.
-type EffectIngestion struct {
-	Dest        *Ingestion
-	OperationID int64
-	err         error
-	added       int
-	parent      *Ingestion
 }
 
 // LedgerBundle represents a single ledger's worth of novelty created by one
@@ -107,32 +93,13 @@ type IngesterMetrics struct {
 	LoadLedgerTimer   metrics.Timer
 }
 
-// Ingestion receives write requests from a Session
-type Ingestion struct {
-	// DB is the sql repo to be used for writing any rows into the horizon
-	// database.
-	DB     *db2.Repo
-	CoreDB *db2.Repo
 
-	CoreQ core.QInterface
-
-	ledgers                  sq.InsertBuilder
-	transactions             sq.InsertBuilder
-	transaction_participants sq.InsertBuilder
-	operations               sq.InsertBuilder
-	operation_participants   sq.InsertBuilder
-	recovery_requests        sq.InsertBuilder
-	payment_requests         sq.InsertBuilder
-	balances                 sq.InsertBuilder
-	trades                   sq.InsertBuilder
-	priceHistory             sq.InsertBuilder
-}
 
 // Session represents a single attempt at ingesting data into the history
 // database.
 type Session struct {
 	Cursor    *Cursor
-	Ingestion *Ingestion
+	Ingestion *ingestion.Ingestion
 
 	CoreInfo *corer.Info
 
@@ -187,10 +154,11 @@ func NewSession(paranoid bool, first, last int32, i *System) *Session {
 
 	return &Session{
 		Paranoid: paranoid,
-		Ingestion: &Ingestion{
+		Ingestion: &ingestion.Ingestion{
 			DB:     hdb,
 			CoreDB: coredb,
 			CoreQ:  core.NewQ(coredb),
+			HistoryQ: &history.Q{ Repo: hdb},
 		},
 
 		Cursor: &Cursor{

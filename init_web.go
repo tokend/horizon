@@ -6,14 +6,13 @@ import (
 	"net/http/httputil"
 	"regexp"
 
-	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/swarmfund/go/signcontrol"
-	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/swarmfund/horizon/render/problem"
 	"github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
+	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/swarmfund/horizon/render/problem"
 )
 
 // Web contains the http server related fields for horizon: the router,
@@ -213,12 +212,14 @@ func initWebActions(app *App) {
 
 		// checking if request is signed and deciding on proper handler
 		// (we rely on SignatureValidator middleware here)
-		signer := r.Header.Get(signcontrol.PublicKeyHeader)
+		// TODO DO NOT COMMIT ME
+		TransactionCreateAction{}.ServeHTTPC(c, w, r)
+		/*signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" {
-			TransactionCreateAction{}.ServeHTTPC(c, w, r)
+
 		} else {
 			apiProxy.ServeHTTP(w, r)
-		}
+		}*/
 	}))
 
 	r.Get("/accounts/:account_id/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {

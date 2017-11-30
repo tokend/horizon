@@ -1,8 +1,6 @@
 package core
 
 import (
-	"time"
-
 	"gitlab.com/swarmfund/go/xdr"
 )
 
@@ -15,6 +13,5 @@ type Account struct {
 	Referrer         string         `db:"referrer"`
 	ShareForReferrer xdr.Int64      `db:"share_for_referrer"`
 	Policies         int32          `db:"policies"`
-	CreatedAt        time.Time      `db:"created_at"`
 	*Statistics
 }
