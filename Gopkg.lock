@@ -287,7 +287,7 @@
   branch = "feature/reviewable_request"
   name = "gitlab.com/swarmfund/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "bba1270bd2de1f20ec9c802250e05bbf6ce1a5ae"
+  revision = "7363fa5653ab97e921078e7b05ab1001e96c40c7"
 
 [[projects]]
   branch = "master"
