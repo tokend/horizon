@@ -213,10 +213,9 @@ func initWebActions(app *App) {
 
 		// checking if request is signed and deciding on proper handler
 		// (we rely on SignatureValidator middleware here)
-		TransactionCreateAction{}.ServeHTTPC(c, w, r)
 		signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" {
-
+			TransactionCreateAction{}.ServeHTTPC(c, w, r)
 		} else {
 			apiProxy.ServeHTTP(w, r)
 		}
