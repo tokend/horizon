@@ -104,7 +104,7 @@ func (ingest *Ingestion) Operation(
 	details map[string]interface{},
 	ledgerCloseTime int64,
 	identifier uint64,
-	state int,
+	state history.OperationState,
 ) error {
 	djson, err := json.Marshal(details)
 	if err != nil {

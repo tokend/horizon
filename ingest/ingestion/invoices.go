@@ -5,11 +5,12 @@ import (
 
 	"gitlab.com/swarmfund/go/xdr"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
 func (ingest *Ingestion) UpdateInvoice(
 	invoiceID xdr.Uint64,
-	state int,
+	state history.OperationState,
 	rejectReason *xdr.String256,
 ) error {
 	if rejectReason != nil {

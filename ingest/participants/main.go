@@ -98,7 +98,14 @@ func ForOperation(
 		sourceParticipant.BalanceID = &manageInvoiceOp.ReceiverBalance
 		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.ManageInvoiceResult.Success.SenderBalance, nil})
 	case xdr.OperationTypeReviewRequest:
-	// the only direct participant is the source_account
+		// the only direct participant is the source_account
+	case xdr.OperationTypeCreatePreissuanceRequest:
+		// the only direct participant is the source_account
+	case xdr.OperationTypeCreateIssuanceRequest:
+		manageIssuanceRequest := op.Body.MustCreateIssuanceRequestOp()
+		manageIssuanceResult := opResult.MustCreateIssuanceRequestResult()
+		result = append(result, Participant{manageIssuanceResult.MustSuccess().Receiver,
+		&manageIssuanceRequest.Request.Receiver, nil})
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

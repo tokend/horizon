@@ -7,6 +7,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/toid"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"database/sql"
 )
 
 // InLedger returns true if the cursor is on a ledger.
@@ -78,6 +79,10 @@ func (c *Cursor) NextLedger() (bool, error) {
 	c.data = &LedgerBundle{Sequence: c.lg}
 	start := time.Now()
 	err := c.data.Load(c.CoreQ(), c.HistoryQ())
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
+
 	if err != nil {
 		return false, errors.Wrap(err, "failed to load ledger data")
 	}

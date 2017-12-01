@@ -63,9 +63,9 @@ func (ingest *Ingestion) UpdatePayment(
 	accept bool,
 	rejectReason *xdr.String256,
 ) error {
-	state := history.SUCCESS
+	state := history.OperationStateSuccess
 	if !accept {
-		state = history.REJECTED
+		state = history.OperationStateRejected
 	}
 
 	if rejectReason != nil {

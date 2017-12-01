@@ -176,8 +176,36 @@ func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.Manag
 	if op.InvoiceId == 0 || op.Amount != 0 {
 		return
 	}
-	is.Ingestion.UpdateInvoice(op.InvoiceId, history.CANCELED, nil)
+	is.Ingestion.UpdateInvoice(op.InvoiceId, history.OperationStateCanceled, nil)
 
+}
+
+func (is *Session) approve(op xdr.ReviewRequestOp) error {
+	err := is.Cursor.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
+	if err != nil {
+		return errors.Wrap(err, "failed to approve reviewable request")
+	}
+
+	err = is.Ingestion.UpdatePayment(op.RequestId, true, nil)
+	if err != nil {
+		return errors.Wrap(err, "failed to approve operation")
+	}
+
+	return nil
+}
+
+func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
+	err := is.Cursor.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
+	if err != nil {
+		return errors.Wrap(err, "failed to permanently reject request")
+	}
+
+	err = is.Ingestion.UpdatePayment(op.RequestId, false, nil)
+	if err != nil {
+		return errors.Wrap(err, "failed to permanently reject operation")
+	}
+
+	return nil
 }
 
 func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
@@ -188,9 +216,9 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 	var err error
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
-		err = is.Cursor.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
+		err = is.approve(op)
 	case xdr.ReviewRequestOpActionPermanentReject:
-		err = is.Cursor.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
+		err = is.permanentReject(op)
 	case xdr.ReviewRequestOpActionReject:
 		return
 	default:
@@ -345,9 +373,9 @@ func (is *Session) processPayment(paymentOp xdr.PaymentOp, source xdr.AccountId,
 	invoiceReference := paymentOp.InvoiceReference
 	if invoiceReference != nil {
 		if invoiceReference.Accept {
-			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.SUCCESS, nil)
+			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.OperationStateSuccess, nil)
 		} else if !invoiceReference.Accept {
-			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.REJECTED, nil)
+			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.OperationStateRejected, nil)
 		}
 	}
 }
@@ -377,10 +405,10 @@ func (is *Session) updateIngestedPayment(operation xdr.Operation, source xdr.Acc
 	if reviewPaymentResponse.RelatedInvoiceId != nil {
 		if reviewPaymentOp.Accept {
 			is.Ingestion.UpdateInvoice(*reviewPaymentResponse.RelatedInvoiceId,
-				history.SUCCESS, nil)
+				history.OperationStateSuccess, nil)
 		} else {
 			is.Ingestion.UpdateInvoice(*reviewPaymentResponse.RelatedInvoiceId,
-				history.FAILED, reviewPaymentOp.RejectReason)
+				history.OperationStateFailed, reviewPaymentOp.RejectReason)
 		}
 	}
 

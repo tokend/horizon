@@ -168,6 +168,15 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
 		details["action"] = int32(op.Request.Action)
+	case xdr.OperationTypeCreatePreissuanceRequest:
+		// no details needed
+	case xdr.OperationTypeCreateIssuanceRequest:
+		op := c.Operation().Body.MustCreateIssuanceRequestOp()
+		details["reference"] = string(op.Reference)
+		details["amount"] = amount.StringU(uint64(op.Request.Amount))
+		details["asset"] = string(op.Request.Asset)
+		details["balance_id"] = op.Request.Receiver.AsString()
+
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
