@@ -8,7 +8,7 @@ type Asset struct {
 	Code                 string `db:"code"`
 	Policies             int32  `db:"policies"`
 	Owner                string `db:"owner"`
-	AvailableForIssuance int64  `db:"available_for_issuance"`
+	AvailableForIssuance int64  `db:"available_for_issueance"`
 }
 
 func (a *Asset) IsVisibleForUser(account *Account) bool {
@@ -33,4 +33,4 @@ func (q *Q) AssetByCode(code string) (*Asset, error) {
 	return &result, err
 }
 
-var selectAsset = sq.Select("a.code, a.policies, a.owner, a.available_for_issuance").From("asset a")
+var selectAsset = sq.Select("a.code, a.policies, a.owner, a.available_for_issueance").From("asset a")
