@@ -15,21 +15,21 @@ type shortStr interface {
 	ShortString() string
 }
 
-//String returns the appropriate string representation of the provided result code
-func String(rawCode interface{}) (string, error) {
+//opCodeToString returns the appropriate string representation of the provided result code
+func opCodeToString(rawCode interface{}) (string, error) {
 	code, ok := rawCode.(shortStr)
 	if !ok {
 		return "", ErrUnknownCode
 	}
 
-	return code.ShortString(), nil
+	return "op_" + code.ShortString(), nil
 }
 
 // ForOperationResult returns the strong represtation used by horizon for the
 // error code `opr`
 func ForOperationResult(opr xdr.OperationResult) (string, error) {
 	if opr.Code != xdr.OperationResultCodeOpInner {
-		return String(opr.Code)
+		return opCodeToString(opr.Code)
 	}
 
 	ir := opr.MustTr()
@@ -74,15 +74,11 @@ func ForOperationResult(opr xdr.OperationResult) (string, error) {
 		ic = ir.MustCreateIssuanceRequestResult().Code
 	}
 
-	return String(ic)
+	return opCodeToString(ic)
 }
 
 func ForTxResult(txResult xdr.TransactionResult) (txResultCode string, opResultCodes []string, err error) {
-	txResultCode, err = String(txResult.Result.Code)
-	if err != nil {
-		err = logan.Wrap(err, "Failed to convert to string tx result code")
-		return
-	}
+	txResultCode = txResult.Result.Code.ShortString()
 
 	if txResult.Result.Results == nil {
 		return
