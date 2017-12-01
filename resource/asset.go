@@ -6,12 +6,16 @@ import (
 )
 
 type Asset struct {
-	Code       string           `json:"code"`
+	Code                 string `json:"code"`
+	Owner                string `json:"owner"`
+	AvailableForIssuance string `json:"available_for_issuance"`
 	Policies
 }
 
 func (a *Asset) Populate(asset *core.Asset) {
 	a.Code = asset.Code
+	a.Owner = asset.Owner
+	a.AvailableForIssuance = amount.String(asset.AvailableForIssuance)
 	a.Policies.Populate(*asset)
 }
 
