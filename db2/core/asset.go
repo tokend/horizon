@@ -8,7 +8,7 @@ type Asset struct {
 	Code                 string `db:"code"`
 	Policies             int32  `db:"policies"`
 	Owner                string `db:"owner"`
-	AvailableForIssuance int64  `db:"available_for_issuance"`
+	AvailableForIssuance int64  `db:"available_for_issueance"`
 }
 
 func (a *Asset) IsVisibleForUser(account *Account) bool {
