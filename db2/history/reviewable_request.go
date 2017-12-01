@@ -2,11 +2,12 @@ package history
 
 import (
 	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2"
 )
 
 // Represents Reviewable request
 type ReviewableRequest struct {
-	ID           uint64                    `db:"id"`
+	db2.TotalOrderID
 	Requestor    string                    `db:"requestor"`
 	Reviewer     string                    `db:"reviewer"`
 	Reference    *string                   `db:"reference"`

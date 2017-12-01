@@ -1,14 +1,15 @@
 package reviewablerequest
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"strconv"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // Represents Reviewable request
 type ReviewableRequest struct {
 	ID           string   `json:"id"`
+	PT           string   `json:"paging_token"`
 	Requestor    string   `json:"requestor"`
 	Reviewer     string   `json:"reviewer"`
 	Reference    *string  `json:"reference"`
@@ -19,7 +20,8 @@ type ReviewableRequest struct {
 }
 
 func (r *ReviewableRequest) Populate(request *history.ReviewableRequest) error {
-	r.ID = strconv.FormatUint(request.ID, 10)
+	r.ID = strconv.FormatInt(request.ID, 10)
+	r.PT = request.PagingToken()
 	r.Requestor = request.Requestor
 	r.Reviewer = request.Reviewer
 	r.Reference = request.Reference
@@ -33,4 +35,8 @@ func (r *ReviewableRequest) Populate(request *history.ReviewableRequest) error {
 	}
 
 	return nil
+}
+
+func (r *ReviewableRequest) PagingToken() string {
+	return r.PT
 }

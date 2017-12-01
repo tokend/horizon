@@ -97,8 +97,10 @@ func ForOperation(
 		}
 		sourceParticipant.BalanceID = &manageInvoiceOp.ReceiverBalance
 		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.ManageInvoiceResult.Success.SenderBalance, nil})
+	case xdr.OperationTypeReviewRequest:
+	// the only direct participant is the source_account
 	default:
-		err = fmt.Errorf("Unknown operation type: %s", op.Body.Type)
+		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
 
 	if sourceParticipant != nil {

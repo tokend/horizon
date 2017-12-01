@@ -71,6 +71,7 @@ type QInterface interface {
 func (q *Q) ReviewableRequests() ReviewableRequestQI {
 	return &ReviewableRequestQ{
 		parent: q,
+		sql:    selectReviewableRequest,
 	}
 }
 

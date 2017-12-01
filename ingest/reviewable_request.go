@@ -6,6 +6,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
@@ -65,7 +66,9 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.Rev
 	}
 
 	return &history.ReviewableRequest{
-		ID:           uint64(request.RequestId),
+		TotalOrderID: db2.TotalOrderID{
+			ID: int64(request.RequestId),
+		},
 		Requestor:    request.Requestor.Address(),
 		Reviewer:     request.Reviewer.Address(),
 		Reference:    reference,
@@ -79,7 +82,7 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.Rev
 
 func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRequest {
 	return history.AssetCreationRequest{
-		Code:                 string(request.Code),
+		Asset:                 string(request.Code),
 		Description:          string(request.Description),
 		ExternalResourceLink: string(request.ExternalResourceLink),
 		Policies:             int32(request.Policies),
@@ -91,7 +94,7 @@ func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRe
 
 func getAssetUpdate(request *xdr.AssetUpdateRequest) history.AssetUpdateRequest {
 	return history.AssetUpdateRequest{
-		Code:                 string(request.Code),
+		Asset:                 string(request.Code),
 		Description:          string(request.Description),
 		ExternalResourceLink: string(request.ExternalResourceLink),
 		Policies:             int32(request.Policies),

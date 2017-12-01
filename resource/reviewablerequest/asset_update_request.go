@@ -16,7 +16,7 @@ type AssetUpdateRequest struct {
 }
 
 func (r *AssetUpdateRequest) Populate(histRequest history.AssetUpdateRequest) {
-	r.Code = histRequest.Code
+	r.Code = histRequest.Asset
 	r.Description = histRequest.Description
 	r.ExternalResourceLink = histRequest.ExternalResourceLink
 	r.Policies = base.FlagFromXdrAssetPolicy(histRequest.Policies, xdr.AssetPolicyAll)

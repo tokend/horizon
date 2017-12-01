@@ -262,6 +262,14 @@ func (action RateLimitExceededAction) ServeHTTPC(c web.C, w http.ResponseWriter,
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action ReviewableRequestIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "ReviewableRequestIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action ReviewableRequestShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
