@@ -3,12 +3,13 @@ package ingest
 import (
 	"time"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
 	"gitlab.com/swarmfund/horizon/resource/operations"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // Run starts an attempt to ingest the range of ledgers specified in this
@@ -21,7 +22,18 @@ func (is *Session) Run() {
 
 	defer is.Ingestion.Rollback()
 
-	for is.Cursor.NextLedger() {
+	for {
+		isNextLegerLoaded, err := is.Cursor.NextLedger()
+		if err != nil {
+			is.Err = errors.Wrap(err, "failed to load next ledger")
+			return
+		}
+
+		if !isNextLegerLoaded {
+			break
+		}
+
+
 		if is.Err != nil {
 			return
 		}
@@ -78,7 +90,7 @@ func (is *Session) ingestLedger() {
 			is.CoreInfo.OperationalAccountID,
 		}
 		for _, address := range systemAccounts {
-			_, is.Err = is.Ingestion.tryIngestAccount(address)
+			_, is.Err = is.Ingestion.TryIngestAccount(address)
 			if is.Err != nil {
 				return
 			}
@@ -94,7 +106,7 @@ func (is *Session) ingestLedger() {
 					if asset != balance.Asset {
 						continue
 					}
-					created, is.Err = is.Ingestion.tryIngestBalance(
+					created, is.Err = is.Ingestion.TryIngestBalance(
 						balance.BalanceID, balance.Asset, balance.AccountID)
 					if is.Err != nil {
 						return
@@ -106,7 +118,7 @@ func (is *Session) ingestLedger() {
 
 					// we can't always reliably determine balance amount,
 					// zero is just safe default (hopefully)
-					is.Err = is.Ingestion.tryIngestBalanceUpdate(
+					is.Err = is.Ingestion.TryIngestBalanceUpdate(
 						balance.BalanceID, 0, is.Cursor.Ledger().CloseTime,
 					)
 					if is.Err != nil {
@@ -143,16 +155,10 @@ func (is *Session) priceHistory() {
 		return
 	}
 
-	if len(priceHistory) == 0 {
-		return
+	err = is.Ingestion.StorePricePoints(priceHistory)
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to store price points")
 	}
-
-	q := is.Ingestion.priceHistory
-	for _, price := range priceHistory {
-		q = q.Values(price.BaseAsset, price.QuoteAsset, price.Timestamp, price.Price)
-	}
-
-	_, is.Err = is.Ingestion.DB.Exec(q)
 }
 
 func (is *Session) manageOffer(source xdr.AccountId, result xdr.ManageOfferResult) {
@@ -160,19 +166,7 @@ func (is *Session) manageOffer(source xdr.AccountId, result xdr.ManageOfferResul
 		return
 	}
 
-	if result.Success == nil || len(result.Success.OffersClaimed) == 0 {
-		return
-	}
-
-	q := is.Ingestion.trades
-	for i := range result.Success.OffersClaimed {
-		claimed := result.Success.OffersClaimed[i]
-		q = q.Values(string(result.Success.BaseAsset),
-			string(result.Success.QuoteAsset), int64(claimed.BaseAmount),
-			int64(claimed.QuoteAmount), int64(claimed.CurrentPrice), time.Unix(is.Cursor.Ledger().CloseTime, 0).UTC())
-	}
-
-	_, is.Err = is.Ingestion.DB.Exec(q)
+	is.Err = is.Ingestion.StoreTrades(source, result, is.Cursor.Ledger().CloseTime)
 }
 
 func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.ManageInvoiceResult) {
@@ -182,8 +176,80 @@ func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.Manag
 	if op.InvoiceId == 0 || op.Amount != 0 {
 		return
 	}
-	is.Ingestion.UpdateInvoice(op.InvoiceId, history.CANCELED, nil)
+	is.Ingestion.UpdateInvoice(op.InvoiceId, history.OperationStateCanceled, nil)
 
+}
+
+func (is *Session) approve(op xdr.ReviewRequestOp) error {
+	err := is.Cursor.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
+	if err != nil {
+		return errors.Wrap(err, "failed to approve reviewable request")
+	}
+
+	err = is.Ingestion.UpdatePayment(op.RequestId, true, nil)
+	if err != nil {
+		return errors.Wrap(err, "failed to approve operation")
+	}
+
+	return nil
+}
+
+func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
+	err := is.Cursor.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
+	if err != nil {
+		return errors.Wrap(err, "failed to permanently reject request")
+	}
+
+	err = is.Ingestion.UpdatePayment(op.RequestId, false, nil)
+	if err != nil {
+		return errors.Wrap(err, "failed to permanently reject operation")
+	}
+
+	return nil
+}
+
+func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
+	if is.Err != nil {
+		return
+	}
+
+	var err error
+	switch op.Action {
+	case xdr.ReviewRequestOpActionApprove:
+		err = is.approve(op)
+	case xdr.ReviewRequestOpActionPermanentReject:
+		err = is.permanentReject(op)
+	case xdr.ReviewRequestOpActionReject:
+		return
+	default:
+		err = errors.From(errors.New("Unexpected review request action"), map[string]interface{}{
+			"action_type": op.Action,
+		})
+	}
+
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to process review request", map[string]interface{}{
+			"request_id": uint64(op.RequestId),
+		})
+	}
+}
+
+func (is *Session) processManageAsset(op *xdr.ManageAssetOp) {
+	if is.Err != nil {
+		return
+	}
+
+	if op.Request.Action != xdr.ManageAssetActionCancelAssetRequest {
+		return
+	}
+
+	err := is.Cursor.HistoryQ().ReviewableRequests().Cancel(uint64(op.RequestId))
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to cancel reviewable request", map[string]interface{} {
+			"request_id": uint64(op.RequestId),
+		})
+		return
+	}
 }
 
 func (is *Session) ingestOperationParticipants() {
@@ -307,33 +373,10 @@ func (is *Session) processPayment(paymentOp xdr.PaymentOp, source xdr.AccountId,
 	invoiceReference := paymentOp.InvoiceReference
 	if invoiceReference != nil {
 		if invoiceReference.Accept {
-			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.SUCCESS, nil)
+			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.OperationStateSuccess, nil)
 		} else if !invoiceReference.Accept {
-			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.REJECTED, nil)
+			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.OperationStateRejected, nil)
 		}
-	}
-}
-
-func (is *Session) processReviewEmissionRequest(operation xdr.Operation, result xdr.OperationResultTr) {
-	if is.Err != nil {
-		return
-	}
-
-	reviewRequestOp := operation.Body.ReviewCoinsEmissionRequestOp
-	if reviewRequestOp.Approve {
-		is.Err = is.Ingestion.ApproveEmissionRequestUpdate(
-			is.Cursor.Ledger(),
-			uint64(reviewRequestOp.Request.RequestId),
-		)
-	} else {
-		is.Err = is.Ingestion.RejectEmissionRequestUpdate(
-			is.Cursor.Ledger(),
-			uint64(reviewRequestOp.Request.RequestId),
-			string(reviewRequestOp.Reason),
-		)
-	}
-	if is.Err != nil {
-		return
 	}
 }
 
@@ -362,10 +405,10 @@ func (is *Session) updateIngestedPayment(operation xdr.Operation, source xdr.Acc
 	if reviewPaymentResponse.RelatedInvoiceId != nil {
 		if reviewPaymentOp.Accept {
 			is.Ingestion.UpdateInvoice(*reviewPaymentResponse.RelatedInvoiceId,
-				history.SUCCESS, nil)
+				history.OperationStateSuccess, nil)
 		} else {
 			is.Ingestion.UpdateInvoice(*reviewPaymentResponse.RelatedInvoiceId,
-				history.FAILED, reviewPaymentOp.RejectReason)
+				history.OperationStateFailed, reviewPaymentOp.RejectReason)
 		}
 	}
 

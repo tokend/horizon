@@ -3,8 +3,8 @@ package participants
 import (
 	"encoding/json"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 type Match struct {

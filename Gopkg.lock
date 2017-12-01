@@ -269,31 +269,25 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/corer"
   packages = ["."]
-  revision = "c379e0e1fad2b83654437a6764ac1ce7bd1c0660"
+  revision = "cbfb465258955230864e0a76aba0ff2738000782"
 
 [[projects]]
   name = "gitlab.com/distributed_lab/logan"
-  packages = ["."]
-  revision = "8c83a803a9fe3fc0c9e428ae0b31c8f29210ac31"
-  version = "v0.092"
-
-[[projects]]
-  branch = "master"
-  name = "gitlab.com/distributed_lab/notificator"
-  packages = ["."]
-  revision = "939a613db2add16474a15d5058867fdb7252f1df"
+  packages = [".","v3","v3/errors","v3/fields"]
+  revision = "b8cfbf0cdfb9c7185cd426c24babaac54dcfbb82"
+  version = "v3.0"
 
 [[projects]]
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
   packages = ["."]
-  revision = "425042624985b3c3bab7f6f3ad7a0d1c6eb3d0ac"
+  revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
   branch = "master"
-  name = "gitlab.com/tokend/go"
+  name = "gitlab.com/swarmfund/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "d5f8cf68875d7f103349ea8aafbf2099ce800a35"
+  revision = "6d9d6235498b324b296fa8bc5d801ea57376dbd3"
 
 [[projects]]
   branch = "master"
@@ -352,6 +346,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f6585aa66eadcc32cce548c51172433771da694190fd2ce5a3ddf618ae7fb790"
+  inputs-digest = "07a95359aae9f13a39a1f1d389c80b429aa7abf0d905b06ea7b4ad3a0142ae20"
   solver-name = "gps-cdcl"
   solver-version = 1

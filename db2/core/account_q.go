@@ -3,7 +3,7 @@ package core
 import (
 	"database/sql"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	sq "github.com/lann/squirrel"
 )
 
@@ -119,5 +119,4 @@ var selectAccount = sq.Select(
 	"a.referrer",
 	"a.share_for_referrer",
 	"a.policies",
-	"a.created_at",
 ).From("accounts a")

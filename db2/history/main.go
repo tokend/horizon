@@ -51,11 +51,6 @@ type QInterface interface {
 	Transactions() TransactionsQI
 	TransactionByHash(dest interface{}, hash string) error
 
-	// Emissions
-	CoinsEmissionRequestByRequestID(dest interface{}, requestID string) error
-	CoinsEmissionRequestByReference(dest interface{}, reference string) error
-	CoinsEmissionRequests() CoinsEmissionRequestsQI
-
 	PaymentRequestByID(dest interface{}, requestID uint64) error
 	PaymentRequestByPaymentID(dest interface{}, requestID uint64) error
 	PaymentRequests() PaymentRequestsQI
@@ -67,6 +62,17 @@ type QInterface interface {
 	LastPrice(base, quote string) (*PricePoint, error)
 
 	Trades() TradesQI
+
+	// ReviewableRequests - provides builder of request to access reviewable requests
+	ReviewableRequests() ReviewableRequestQI
+}
+
+// ReviewableRequests - provides builder of request to access reviewable requests
+func (q *Q) ReviewableRequests() ReviewableRequestQI {
+	return &ReviewableRequestQ{
+		parent: q,
+		sql:    selectReviewableRequest,
+	}
 }
 
 // ElderLedger loads the oldest ledger known to the history database

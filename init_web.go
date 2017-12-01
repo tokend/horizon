@@ -6,14 +6,14 @@ import (
 	"net/http/httputil"
 	"regexp"
 
-	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/tokend/go/signcontrol"
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/render/problem"
 	"github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
+	"gitlab.com/swarmfund/go/signcontrol"
+	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/swarmfund/horizon/render/problem"
 )
 
 // Web contains the http server related fields for horizon: the router,
@@ -105,8 +105,6 @@ func initWebActions(app *App) {
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
-		xdr.OperationTypeReviewCoinsEmissionRequest,
-		xdr.OperationTypeManageCoinsEmissionRequest,
 		xdr.OperationTypeManageForfeitRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
@@ -133,7 +131,6 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 
-	r.Get("/accounts/:account_id/emission_rules", &EmissionRulesShowAction{})
 	r.Get("/accounts/:account_id/forfeit_request", &ForfeitRequestAction{})
 
 	// offers
@@ -166,11 +163,6 @@ func initWebActions(app *App) {
 	})
 	r.Get("/operations/:id", &OperationShowAction{})
 
-	// coins emission requests actions
-	r.Get("/coins_emission_requests", &CoinsEmissionRequestIndexAction{})
-	r.Get("/coins_emission_requests/:id", &CoinsEmissionRequestShowAction{})
-	r.Get("/check_pre_emission/:serial_number", &CheckPreEmissionAction{})
-
 	r.Get("/payment_requests", &PaymentRequestIndexAction{})
 	r.Get("/forfeit_requests", &PaymentRequestIndexAction{
 		OnlyForfeits: true,
@@ -185,8 +177,6 @@ func initWebActions(app *App) {
 	})
 	r.Get("/fees/:fee_type", &FeesShowAction{})
 
-	r.Get("/coins_amount_info", &CoinsAmountInfoAction{})
-
 	// Values
 	r.Get("/prices/history", &PricesHistoryAction{})
 	r.Get("/assets", &AssetsAllAction{})
@@ -196,6 +186,10 @@ func initWebActions(app *App) {
 	r.Get("/balances", &BalanceIndexAction{})
 	r.Get("/balances/:balance_id/asset", &BalanceAssetAction{})
 	r.Get("/balances/:balance_id/account", &BalanceAccountAction{})
+
+	// Reviewable Request actions
+	r.Get("/requests/:id", &ReviewableRequestShowAction{})
+	r.Get("/requests", &ReviewableRequestIndexAction{})
 
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// legacy constraints:
@@ -224,7 +218,7 @@ func initWebActions(app *App) {
 		// checking if request is signed and deciding on proper handler
 		// (we rely on SignatureValidator middleware here)
 		signer := r.Header.Get(signcontrol.PublicKeyHeader)
-		if signer != "" {
+		if signer != "" || app.config.DisableAPISubmit {
 			TransactionCreateAction{}.ServeHTTPC(c, w, r)
 		} else {
 			apiProxy.ServeHTTP(w, r)
@@ -260,8 +254,7 @@ func init() {
 	appInit.Add(
 		"web.init",
 		initWeb,
-		"app-context", "notificator", "stellarCoreInfo", "memory_cache",
-		"available_emission_checker",
+		"app-context", "stellarCoreInfo", "memory_cache",
 	)
 
 	appInit.Add(

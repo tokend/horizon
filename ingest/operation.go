@@ -1,12 +1,12 @@
 package ingest
 
 import (
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
-func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationResult *xdr.OperationResultTr) (int, uint64) {
-	state := history.SUCCESS
+func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationResult *xdr.OperationResultTr) (history.OperationState, uint64) {
+	state := history.OperationStateSuccess
 	operationIdentifier := uint64(0)
 	switch opType {
 	case xdr.OperationTypePayment, xdr.OperationTypeDirectDebit:
@@ -20,7 +20,7 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 		operationIdentifier = uint64(paymentResponse.PaymentId)
 		return state, operationIdentifier
 	case xdr.OperationTypeManageForfeitRequest:
-		state = history.PENDING
+		state = history.OperationStatePending
 		manageRequestResult := operationResult.MustManageForfeitRequestResult()
 		operationIdentifier = uint64(manageRequestResult.Success.PaymentId)
 		return state, operationIdentifier
@@ -30,10 +30,17 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 			return state, operationIdentifier
 		}
 
-		state = history.PENDING
+		state = history.OperationStatePending
 		manageInvoiceResult := operationResult.MustManageInvoiceResult()
 		operationIdentifier = uint64(manageInvoiceResult.Success.InvoiceId)
 		return state, operationIdentifier
+	case xdr.OperationTypeCreateIssuanceRequest:
+		createIssuanceRequestResult := operationResult.MustCreateIssuanceRequestResult()
+		state = history.OperationStatePending
+		if createIssuanceRequestResult.Success.Fulfilled {
+			state = history.OperationStateSuccess
+		}
+		return state, uint64(createIssuanceRequestResult.Success.RequestId)
 	default:
 		return state, operationIdentifier
 	}
@@ -69,8 +76,6 @@ func (is *Session) operation() {
 
 	is.ingestOperationParticipants()
 	switch is.Cursor.OperationType() {
-	case xdr.OperationTypeReviewCoinsEmissionRequest:
-		is.processReviewEmissionRequest(*is.Cursor.Operation(), *is.Cursor.OperationResult())
 	case xdr.OperationTypeManageForfeitRequest:
 		is.processManageForfeitRequest(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
 	case xdr.OperationTypePayment:
@@ -89,6 +94,9 @@ func (is *Session) operation() {
 	case xdr.OperationTypeManageInvoice:
 		is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
 			is.Cursor.OperationResult().MustManageInvoiceResult())
-
+	case xdr.OperationTypeReviewRequest:
+		is.processReviewRequest(is.Cursor.Operation().Body.MustReviewRequestOp())
+	case xdr.OperationTypeManageAsset:
+		is.processManageAsset(is.Cursor.Operation().Body.ManageAssetOp)
 	}
 }

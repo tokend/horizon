@@ -1,22 +1,15 @@
 package ingest
 
 import (
-	"errors"
 	"strconv"
 	"time"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/swarmfund/horizon/ingest/ingestion"
 )
-
-type LedgerPricePoint struct {
-	BaseAsset  string
-	QuoteAsset string
-	history.PricePoint
-}
 
 type assetPairPriceKey struct {
 	BaseAsset  string
@@ -55,8 +48,8 @@ func (h *PriceHistoryProvider) Put(base, quote string, price int64) {
 	h.prices[newAssetPairPriceKey(base, quote)] = price
 }
 
-func (h *PriceHistoryProvider) ToPricePoints() ([]LedgerPricePoint, error) {
-	result := make([]LedgerPricePoint, 0, len(h.prices))
+func (h *PriceHistoryProvider) ToPricePoints() ([]ingestion.LedgerPricePoint, error) {
+	result := make([]ingestion.LedgerPricePoint, 0, len(h.prices))
 
 	for assetPair, pricePoint := range h.prices {
 		price, err := strconv.ParseFloat(amount.String(pricePoint), 64)
@@ -65,7 +58,7 @@ func (h *PriceHistoryProvider) ToPricePoints() ([]LedgerPricePoint, error) {
 			return nil, err
 		}
 
-		result = append(result, LedgerPricePoint{
+		result = append(result, ingestion.LedgerPricePoint{
 			BaseAsset:  assetPair.BaseAsset,
 			QuoteAsset: assetPair.QuoteAsset,
 			PricePoint: history.PricePoint{
@@ -76,14 +69,4 @@ func (h *PriceHistoryProvider) ToPricePoints() ([]LedgerPricePoint, error) {
 	}
 
 	return result, nil
-}
-
-func assetPairUpdated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
-	apEntry := ledgerEntry.Data.AssetPair
-	if apEntry == nil {
-		return errors.New("expected assetPair not to be nil")
-	}
-
-	is.Cursor.PriceHistoryProvider().Put(string(apEntry.Base), string(apEntry.Quote), int64(apEntry.CurrentPrice))
-	return nil
 }

@@ -1,7 +1,7 @@
 package participants
 
 import (
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 type MatchesDetails struct {

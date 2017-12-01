@@ -3,8 +3,9 @@ package ingest
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
+	"encoding/hex"
+	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -63,20 +64,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["signer_type"] = op.Signer.SignerType
 			details["signer_identity"] = op.Signer.Identity
 		}
-	case xdr.OperationTypeManageCoinsEmissionRequest:
-		op := c.Operation().Body.MustManageCoinsEmissionRequestOp()
-		opResult := c.OperationResult().MustManageCoinsEmissionRequestResult()
-		details["request_id"] = opResult.ManageRequestInfo.RequestId
-		details["fulfilled"] = opResult.ManageRequestInfo.Fulfilled
-		details["amount"] = amount.String(int64(op.Amount))
-		details["asset"] = string(op.Asset)
-	case xdr.OperationTypeReviewCoinsEmissionRequest:
-		op := c.Operation().Body.MustReviewCoinsEmissionRequestOp()
-		details["amount"] = amount.String(int64(op.Request.Amount))
-		details["issuer"] = op.Request.Issuer.Address()
-		details["approved"] = op.Approve
-		details["reason"] = string(op.Reason)
-		details["asset"] = string(op.Request.Asset)
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 		if op.Fee != nil {
@@ -126,13 +113,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.RejectReason != nil {
 			details["reject_reason"] = *op.RejectReason
 		}
-	case xdr.OperationTypeManageAsset:
-		op := c.Operation().Body.MustManageAssetOp()
-		details["code"] = op.Code
-		details["action"] = op.Action
-	case xdr.OperationTypeUploadPreemissions:
-		op := c.Operation().Body.MustUploadPreemissionsOp()
-		details["quantity"] = len(op.PreEmissions)
 	case xdr.OperationTypeSetLimits:
 		op := c.Operation().Body.MustSetLimitsOp()
 		details["account_type"] = op.AccountType
@@ -177,6 +157,26 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["sender"] = op.Sender.Address()
 		details["invoice_id"] = opResult.Success.InvoiceId
 		details["asset"] = string(opResult.Success.Asset)
+	case xdr.OperationTypeReviewRequest:
+		op := c.Operation().Body.MustReviewRequestOp()
+		details["action"] = int32(op.Action)
+		details["reason"] = string(op.Reason)
+		details["request_hash"] = hex.EncodeToString(op.RequestHash[:])
+		details["request_id"] = uint64(op.RequestId)
+		details["request_type"] = int32(op.RequestType)
+	case xdr.OperationTypeManageAsset:
+		op := c.Operation().Body.MustManageAssetOp()
+		details["request_id"] = uint64(op.RequestId)
+		details["action"] = int32(op.Request.Action)
+	case xdr.OperationTypeCreatePreissuanceRequest:
+		// no details needed
+	case xdr.OperationTypeCreateIssuanceRequest:
+		op := c.Operation().Body.MustCreateIssuanceRequestOp()
+		details["reference"] = string(op.Reference)
+		details["amount"] = amount.StringU(uint64(op.Request.Amount))
+		details["asset"] = string(op.Request.Asset)
+		details["balance_id"] = op.Request.Receiver.AsString()
+
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

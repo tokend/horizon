@@ -1,6 +1,6 @@
 package participants
 
-import "gitlab.com/tokend/go/xdr"
+import "gitlab.com/swarmfund/go/xdr"
 
 type MatchesDetailsByBalance struct {
 	Details map[string]*MatchesDetails

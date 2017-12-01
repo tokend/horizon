@@ -1,9 +1,7 @@
 package core
 
 import (
-	"time"
-
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 // Account is a row of data from the `accounts` table
@@ -15,6 +13,5 @@ type Account struct {
 	Referrer         string         `db:"referrer"`
 	ShareForReferrer xdr.Int64      `db:"share_for_referrer"`
 	Policies         int32          `db:"policies"`
-	CreatedAt        time.Time      `db:"created_at"`
 	*Statistics
 }

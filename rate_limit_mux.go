@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/swarmfund/go/signcontrol"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"github.com/zenazn/goji/web"
 	"gopkg.in/throttled/throttled.v2"

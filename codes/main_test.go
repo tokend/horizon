@@ -3,7 +3,7 @@ package codes
 import (
 	"testing"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -38,20 +38,6 @@ func TestCodes(t *testing.T) {
 	})
 	Convey("SetOptionsResultCode", t, func() {
 		for _, code := range xdr.SetOptionsResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
-		}
-	})
-	Convey("ManageCoinsEmissionRequestResultCode", t, func() {
-		for _, code := range xdr.ManageCoinsEmissionRequestResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
-		}
-	})
-	Convey("ReviewCoinsEmissionRequestResultCode", t, func() {
-		for _, code := range xdr.ReviewCoinsEmissionRequestResultCodeAll {
 			result, err := String(code)
 			So(err, ShouldBeNil)
 			So(result, ShouldNotBeBlank)
@@ -101,13 +87,6 @@ func TestCodes(t *testing.T) {
 	})
 	Convey("ManageAssetResultCode", t, func() {
 		for _, code := range xdr.ManageAssetResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
-		}
-	})
-	Convey("UploadPreemissionsResultCode", t, func() {
-		for _, code := range xdr.UploadPreemissionsResultCodeAll {
 			result, err := String(code)
 			So(err, ShouldBeNil)
 			So(result, ShouldNotBeBlank)

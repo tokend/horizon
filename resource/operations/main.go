@@ -1,37 +1,11 @@
 package operations
 
 import (
-	"time"
-
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/resource/base"
 	"golang.org/x/net/context"
 )
-
-// TypeNames maps from operation type to the string used to represent that type
-// in horizon's JSON responses
-var TypeNames = map[xdr.OperationType]string{
-	xdr.OperationTypeCreateAccount:              "create_account",
-	xdr.OperationTypePayment:                    "payment",
-	xdr.OperationTypeSetOptions:                 "set_options",
-	xdr.OperationTypeManageCoinsEmissionRequest: "manage_coins_emission_request",
-	xdr.OperationTypeReviewCoinsEmissionRequest: "review_coins_emission_request",
-	xdr.OperationTypeSetFees:                    "set_fees",
-	xdr.OperationTypeManageAccount:              "manage_account",
-	xdr.OperationTypeManageForfeitRequest:       "manage_forfeit_request",
-	xdr.OperationTypeRecover:                    "recover",
-	xdr.OperationTypeManageBalance:              "manage_balance",
-	xdr.OperationTypeReviewPaymentRequest:       "review_payment_request",
-	xdr.OperationTypeManageAsset:                "manage_asset",
-	xdr.OperationTypeUploadPreemissions:         "upload_pre-emissions",
-	xdr.OperationTypeSetLimits:                  "set_limits",
-	xdr.OperationTypeDirectDebit:                "direct_debit",
-	xdr.OperationTypeManageAssetPair:            "manage_asset_pair",
-	xdr.OperationTypeManageOffer:                "manage_offer",
-	xdr.OperationTypeManageInvoice:              "manage_invoice",
-}
 
 // New creates a new operation resource, finding the appropriate type to use
 // based upon the row's type.
@@ -72,18 +46,6 @@ func New(
 		err = row.UnmarshalDetails(&e)
 		if public {
 			e.SignerKey = ""
-		}
-		result = e
-	case xdr.OperationTypeManageCoinsEmissionRequest:
-		e := ManageCoinsEmissionRequest{Base: base}
-		err = row.UnmarshalDetails(&e)
-		result = e
-	case xdr.OperationTypeReviewCoinsEmissionRequest:
-		e := ReviewCoinsEmissionRequest{Base: base}
-		err = row.UnmarshalDetails(&e)
-		if public {
-			e.Reason = ""
-			e.Issuer = ""
 		}
 		result = e
 	case xdr.OperationTypeSetFees:
@@ -130,32 +92,15 @@ func New(
 		e := ManageAssetPair{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
+	case xdr.OperationTypeCreateIssuanceRequest:
+		e := CreateIssuanceRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
 	default:
 		result = base
 	}
 
 	return
-}
-
-// Base represents the common attributes of an operation resource
-type Base struct {
-	Links struct {
-		Self        hal.Link `json:"self"`
-		Transaction hal.Link `json:"transaction"`
-		Succeeds    hal.Link `json:"succeeds"`
-		Precedes    hal.Link `json:"precedes"`
-	} `json:"_links"`
-
-	ID              string             `json:"id"`
-	PT              string             `json:"paging_token"`
-	TransactionID   string             `json:"transaction_id"`
-	SourceAccount   string             `json:"source_account,omitempty"`
-	Type            string             `json:"type"`
-	TypeI           int32              `json:"type_i"`
-	State           int32              `json:"state"`
-	Identifier      string             `json:"identifier"`
-	LedgerCloseTime time.Time          `json:"ledger_close_time"`
-	Participants    []base.Participant `json:"participants,omitempty"`
 }
 
 // CreateAccount is the json resource representing a single operation whose type
@@ -169,18 +114,18 @@ type CreateAccount struct {
 }
 
 type BasePayment struct {
-	From                  string             `json:"from,omitempty"`
-	To                    string             `json:"to,omitempty"`
-	FromBalance           string             `json:"from_balance,omitempty"`
-	ToBalance             string             `json:"to_balance,omitempty"`
-	Amount                string             `json:"amount"`
-	UserDetails           string             `json:"user_details,omitempty"`
-	Asset                 string             `json:"asset"`
-	SourcePaymentFee      string             `json:"source_payment_fee"`
-	DestinationPaymentFee string             `json:"destination_payment_fee"`
-	SourceFixedFee        string             `json:"source_fixed_fee"`
-	DestinationFixedFee   string             `json:"destination_fixed_fee"`
-	SourcePaysForDest     bool               `json:"source_pays_for_dest"`
+	From                  string `json:"from,omitempty"`
+	To                    string `json:"to,omitempty"`
+	FromBalance           string `json:"from_balance,omitempty"`
+	ToBalance             string `json:"to_balance,omitempty"`
+	Amount                string `json:"amount"`
+	UserDetails           string `json:"user_details,omitempty"`
+	Asset                 string `json:"asset"`
+	SourcePaymentFee      string `json:"source_payment_fee"`
+	DestinationPaymentFee string `json:"destination_payment_fee"`
+	SourceFixedFee        string `json:"source_fixed_fee"`
+	DestinationFixedFee   string `json:"destination_fixed_fee"`
+	SourcePaysForDest     bool   `json:"source_pays_for_dest"`
 }
 
 // Payment is the json resource representing a single operation whose type is
@@ -233,7 +178,7 @@ type Fee struct {
 
 type SetFees struct {
 	Base
-	Fee              *Fee   `json:"fee"`
+	Fee *Fee `json:"fee"`
 }
 
 type ManagerOffer struct {

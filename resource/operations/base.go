@@ -9,7 +9,30 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/resource/base"
 	"golang.org/x/net/context"
+	"time"
 )
+
+// Base represents the common attributes of an operation resource
+type Base struct {
+	Links struct {
+		Self        hal.Link `json:"self"`
+		Transaction hal.Link `json:"transaction"`
+		Succeeds    hal.Link `json:"succeeds"`
+		Precedes    hal.Link `json:"precedes"`
+	} `json:"_links"`
+
+	ID              string             `json:"id"`
+	PT              string             `json:"paging_token"`
+	TransactionID   string             `json:"transaction_id"`
+	SourceAccount   string             `json:"source_account,omitempty"`
+	Type            string             `json:"type"`
+	TypeI           int32              `json:"type_i"`
+	StateI          int32              `json:"state_i"`
+	State           string             `json:"state"`
+	Identifier      string             `json:"identifier"`
+	LedgerCloseTime time.Time          `json:"ledger_close_time"`
+	Participants    []base.Participant `json:"participants,omitempty"`
+}
 
 // PagingToken implements hal.Pageable
 func (this Base) PagingToken() string {
@@ -27,7 +50,8 @@ func (this *Base) Populate(
 	this.populateType(row)
 	this.LedgerCloseTime = row.LedgerCloseTime
 	this.Participants = make([]base.Participant, len(participants))
-	this.State = int32(row.State)
+	this.StateI = int32(row.State)
+	this.State= row.State.String()
 	this.Identifier = strconv.FormatInt(row.Identifier, 10)
 	for i := range participants {
 		err := this.Participants[i].Populate(participants[i], row.Type, public)
@@ -50,11 +74,6 @@ func (this *Base) Populate(
 }
 
 func (this *Base) populateType(row history.Operation) {
-	var ok bool
 	this.TypeI = int32(row.Type)
-	this.Type, ok = TypeNames[row.Type]
-
-	if !ok {
-		this.Type = "unknown"
-	}
+	this.Type = row.Type.ShortString()
 }

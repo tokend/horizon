@@ -119,7 +119,6 @@
 
 [[constraint]]
   name = "gitlab.com/distributed_lab/logan"
-  version = "0.92.0"
 
 [[constraint]]
   branch = "master"
@@ -131,7 +130,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "gitlab.com/tokend/go"
+  name = "gitlab.com/swarmfund/go"
 
 [[constraint]]
   branch = "master"

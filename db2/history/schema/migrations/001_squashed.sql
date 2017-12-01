@@ -46,43 +46,6 @@ ALTER SEQUENCE history_balances_id_seq OWNED BY history_balances.id;
 
 
 --
--- Name: history_emission_requests; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE history_emission_requests (
-    issuer character varying(64) NOT NULL,
-    amount character varying(64) NOT NULL,
-    approved boolean,
-    preemissions jsonb,
-    reason character varying(64) DEFAULT NULL::character varying,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    receiver character varying(64) DEFAULT ''::character varying NOT NULL,
-    asset character varying(6) DEFAULT ''::character varying NOT NULL,
-    request_id bigint NOT NULL
-);
-
-
---
--- Name: history_emission_requests_request_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE history_emission_requests_request_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: history_emission_requests_request_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE history_emission_requests_request_id_seq OWNED BY history_emission_requests.request_id;
-
-
---
 -- Name: history_forfeit_requests; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -318,14 +281,6 @@ CREATE TABLE history_transactions (
 --
 
 ALTER TABLE ONLY history_balances ALTER COLUMN id SET DEFAULT nextval('history_balances_id_seq'::regclass);
-
-
---
--- Name: history_emission_requests request_id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY history_emission_requests ALTER COLUMN request_id SET DEFAULT nextval('history_emission_requests_request_id_seq'::regclass);
-
 
 --
 -- Name: history_forfeit_requests id; Type: DEFAULT; Schema: public; Owner: postgres
@@ -568,7 +523,6 @@ CREATE UNIQUE INDEX index_history_transactions_on_id ON history_transactions USI
 
 drop table history_accounts cascade;
 drop table history_balances cascade;
-drop table history_emission_requests cascade;
 drop table history_forfeit_requests cascade;
 drop table history_ledgers cascade;
 drop table history_operation_participants cascade;

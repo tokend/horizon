@@ -10,7 +10,7 @@ import (
 type PaymentRequest struct {
 	PT             string                 `json:"paging_token"`
 	PaymentID      string                 `json:"payment_id"`
-	PaymentState   uint32                 `json:"payment_state"`
+	PaymentState   history.OperationState `json:"payment_state"`
 	Accepted       *bool                  `json:"accepted"`
 	CreatedAt      time.Time              `json:"created_at"`
 	UpdatedAt      time.Time              `json:"updated_at"`
@@ -28,11 +28,11 @@ func (request *PaymentRequest) Populate(row *history.PaymentRequest) error {
 		request.PaymentState = *row.PaymentState
 	} else {
 		if row.Accepted == nil {
-			request.PaymentState = history.PENDING
+			request.PaymentState = history.OperationStatePending
 		} else if *row.Accepted {
-			request.PaymentState = history.SUCCESS
+			request.PaymentState = history.OperationStateSuccess
 		} else {
-			request.PaymentState = history.REJECTED
+			request.PaymentState = history.OperationStateRejected
 		}
 	}
 	request.Accepted = row.Accepted

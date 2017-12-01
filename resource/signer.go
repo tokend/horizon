@@ -1,21 +1,17 @@
 package resource
 
 import (
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/swarmfund/horizon/resource/base"
 )
-
-type SignerType struct {
-	Name  string `json:"name"`
-	Value int32  `json:"value"`
-}
 
 // Signer represents one of an account's signers.
 type Signer struct {
 	PublicKey      string       `json:"public_key"`
 	Weight         int32        `json:"weight"`
 	SignerTypeI    int32        `json:"signer_type_i"`
-	SignerTypes    []SignerType `json:"signer_types"`
+	SignerTypes    []base.Flag `json:"signer_types"`
 	SignerIdentity int32        `json:"signer_identity"`
 	SignerName     string       `json:"signer_name"`
 }
@@ -32,12 +28,5 @@ func (s *Signer) populate(publicKey string, weight, rawSignerType, identity int3
 	s.SignerTypeI = rawSignerType
 	s.SignerIdentity = identity
 	s.SignerName = name
-	for _, signerType := range xdr.SignerTypeAll {
-		if (int32(signerType) & s.SignerTypeI) != 0 {
-			s.SignerTypes = append(s.SignerTypes, SignerType{
-				Value: int32(signerType),
-				Name:  signerType.String(),
-			})
-		}
-	}
+	s.SignerTypes = base.FlagFromXdrSignerType(rawSignerType, xdr.SignerTypeAll)
 }

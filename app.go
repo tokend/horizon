@@ -7,6 +7,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/garyburd/redigo/redis"
+	"github.com/rcrowley/go-metrics"
+	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/swarmfund/horizon/cache"
 	"gitlab.com/swarmfund/horizon/config"
 	"gitlab.com/swarmfund/horizon/corer"
@@ -16,13 +19,8 @@ import (
 	"gitlab.com/swarmfund/horizon/ingest"
 	"gitlab.com/swarmfund/horizon/ledger"
 	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/swarmfund/horizon/notificator"
 	"gitlab.com/swarmfund/horizon/reap"
 	"gitlab.com/swarmfund/horizon/render/sse"
-	"github.com/garyburd/redigo/redis"
-	"github.com/pkg/errors"
-	"github.com/rcrowley/go-metrics"
-	"gitlab.com/distributed_lab/txsub"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
 	"gopkg.in/tylerb/graceful.v1"
@@ -47,7 +45,6 @@ type App struct {
 	CoreInfo       *corer.Info
 	horizonVersion string
 	cacheProvider  *cache.Provider
-	notificator    *notificator.Connector
 	CoreConnector  *corer.Connector
 
 	// metrics
@@ -151,10 +148,6 @@ func (a *App) CoreRepo(ctx context.Context) *db2.Repo {
 // returned repo is bound to `ctx`.
 func (a *App) HistoryRepo(ctx context.Context) *db2.Repo {
 	return &db2.Repo{DB: a.historyQ.GetRepo().DB, Ctx: ctx}
-}
-
-func (action *Action) Notificator() *notificator.Connector {
-	return action.App.notificator
 }
 
 // IsHistoryStale returns true if the latest history ledger is more than
@@ -288,19 +281,4 @@ func (a *App) run() {
 			return
 		}
 	}
-}
-
-func (a *App) obtainAvailableEmissions() (map[string]int64, error) {
-	result := make(map[string]int64)
-
-	emissions, err := a.CoreQ().AvailableEmissions(a.CoreInfo.MasterAccountID)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get core emissions")
-	}
-
-	for _, emission := range emissions {
-		result[emission.Asset] = emission.Amount
-	}
-
-	return result, nil
 }

@@ -1,6 +1,6 @@
 package ingest
 
-import "gitlab.com/tokend/go/xdr"
+import "gitlab.com/swarmfund/go/xdr"
 
 func (is *Session) operationChanges(changes xdr.LedgerEntryChanges) error {
 	for i := range changes {
@@ -54,15 +54,14 @@ func (is *Session) operationUpdatedEntry(ledgerEntry *xdr.LedgerEntry) error {
 }
 
 var creationHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerEntry *xdr.LedgerEntry) error{
-	xdr.LedgerEntryTypeBalance:              balanceCreated,
-	xdr.LedgerEntryTypeCoinsEmissionRequest: emissionRequestCreated,
+	xdr.LedgerEntryTypeBalance:           balanceCreated,
+	xdr.LedgerEntryTypeReviewableRequest: reviewableRequestCreate,
 }
 
-var deletionHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerKey *xdr.LedgerKey) error{
-	xdr.LedgerEntryTypeCoinsEmissionRequest: emissionRequestDeleted,
-}
+var deletionHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerKey *xdr.LedgerKey) error{}
 
 var updateHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerKey *xdr.LedgerEntry) error{
-	xdr.LedgerEntryTypeAssetPair: assetPairUpdated,
-	xdr.LedgerEntryTypeBalance:   balanceUpdated,
+	xdr.LedgerEntryTypeAssetPair:         assetPairUpdated,
+	xdr.LedgerEntryTypeBalance:           balanceUpdated,
+	xdr.LedgerEntryTypeReviewableRequest: reviewableRequestUpdate,
 }

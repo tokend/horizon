@@ -41,28 +41,25 @@ type Config struct {
 	// determining a "retention duration", each ledger roughly corresponds to 10
 	// seconds of real time.
 	HistoryRetentionCount uint
-
 	// StaleThreshold represents the number of ledgers a history database may be
 	// out-of-date by before horizon begins to respond with an error to history
 	// requests.
 	StaleThreshold uint
-
 	//For developing without signatures
 	SkipCheck bool
-
 	// enable on dev only
 	CORSEnabled bool
+	// DisableAPISubmit tell horizon to not use API for transaction submission
+	// for dev purposes only, works well with SkipCheck enabled
+	// pending transactions and transaction 2fa will be disabled as well.
+	DisableAPISubmit bool
 
-	Notificator Notificator
 	TFA         TFA
 	Core        Core
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.Base = NewBase(nil, "")
-
-	c.Notificator.Base = NewBase(c.Base, "notificator")
-	c.Notificator.DefineConfigStructure()
 
 	c.TFA.Base = NewBase(c.Base, "tfa")
 	c.TFA.DefineConfigStructure()
@@ -106,6 +103,8 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 
 	c.bindEnv("cors_enabled")
 	c.bindEnv("hostname")
+
+	c.bindEnv("disable_api_submit")
 }
 
 func (c *Config) Init() error {
@@ -151,11 +150,6 @@ func (c *Config) Init() error {
 
 	c.RedisURL = c.getString("redis_url")
 
-	err = c.Notificator.Init()
-	if err != nil {
-		return err
-	}
-
 	c.TFA.Init()
 
 	err = c.Core.Init()
@@ -192,5 +186,8 @@ func (c *Config) Init() error {
 			return errors.Wrap(err, "failed to get hostname")
 		}
 	}
+
+	c.DisableAPISubmit = c.getBool("disable_api_submit")
+
 	return nil
 }

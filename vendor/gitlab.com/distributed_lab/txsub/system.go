@@ -6,7 +6,8 @@ import (
 	"time"
 
 	"github.com/rcrowley/go-metrics"
-	"gitlab.com/distributed_lab/logan"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // System represents a completely configured transaction submission system.
@@ -71,7 +72,7 @@ func (sys *System) submit(ctx context.Context, info *EnvelopeInfo) <-chan Result
 
 	err := sys.Pending.Add(ctx, info.ContentHash, resultListener)
 	if err != nil {
-		return sendResult(resultListener, Result{Err: logan.Wrap(err, "Failed to add tx to pending queue")})
+		return sendResult(resultListener, Result{Err: errors.Wrap(err, "Failed to add tx to pending queue")})
 	}
 
 	return resultListener
@@ -131,7 +132,7 @@ func (sys *System) Tick(ctx context.Context) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			err := logan.FromPanic(rec)
+			err := errors.FromPanic(rec)
 			sys.Log.WithStack(err).WithError(err).Error("tx sub tick failed")
 		}
 	}()
@@ -178,7 +179,7 @@ func (sys *System) Init() {
 		}
 
 		if sys.Log == nil {
-			sys.Log = logan.NewWithLevel(logan.ErrorLevel).WithField("service", "txsub.system")
+			sys.Log = logan.New().Level(logan.ErrorLevel).WithField("service", "txsub.system")
 		}
 	})
 }

@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"testing"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/test"
 	"github.com/zenazn/goji/web"

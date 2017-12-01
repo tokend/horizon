@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 type AccountPolicyType struct {

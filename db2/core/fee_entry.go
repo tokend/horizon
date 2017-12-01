@@ -1,7 +1,7 @@
 package core
 
 import (
-	"gitlab.com/tokend/go/hash"
+	"gitlab.com/swarmfund/go/hash"
 	"database/sql"
 	"encoding/hex"
 	"fmt"

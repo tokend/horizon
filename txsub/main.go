@@ -1,8 +1,8 @@
 package txsub
 
 import (
-	"gitlab.com/tokend/go/build"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/go/build"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/txsub"
 )
