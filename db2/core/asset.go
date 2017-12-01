@@ -33,4 +33,4 @@ func (q *Q) AssetByCode(code string) (*Asset, error) {
 	return &result, err
 }
 
-var selectAsset = sq.Select("a.code, a.policies, a.owner, a.available_for_issueance").From("asset a")
+var selectAsset = sq.Select("a.code, a.policies, a.owner, a.available_for_issuance").From("asset a")
