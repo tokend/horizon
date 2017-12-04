@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
@@ -15,7 +16,7 @@ type ReviewableRequestIndexAction struct {
 	Requestor    string
 	Asset        string
 	State        *int64
-	Type         *int64
+	TypeMask     *uint64
 	Records      []history.ReviewableRequest
 	PagingParams db2.PageQuery
 	Page         hal.Page
@@ -40,7 +41,7 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 	action.Reviewer = action.GetString("reviewer")
 	action.Requestor = action.GetString("requestor")
 	action.State = action.GetOptionalInt64("state")
-	action.Type = action.GetOptionalInt64("type")
+	action.TypeMask = action.GetOptionalUint64("type_mask")
 	action.Asset = action.GetString("asset")
 }
 
@@ -67,8 +68,8 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 		q = q.ForState(*action.State)
 	}
 
-	if action.Type != nil {
-		q = q.ForType(*action.Type)
+	if action.TypeMask != nil {
+		q = q.ForTypes(parseRequestTypeMask(*action.TypeMask))
 	}
 
 	q = q.Page(action.PagingParams)
@@ -94,4 +95,16 @@ func (action *ReviewableRequestIndexAction) loadPage() {
 	action.Page.Cursor = action.PagingParams.Cursor
 	action.Page.Order = action.PagingParams.Order
 	action.Page.PopulateLinks()
+}
+
+func parseRequestTypeMask(mask uint64) []xdr.ReviewableRequestType {
+	result := make([]xdr.ReviewableRequestType, 0, len(xdr.ReviewableRequestTypeAll))
+	var val uint64
+	for _, requestType := range xdr.ReviewableRequestTypeAll {
+		val = 2 << uint64(xdr.ReviewableRequestTypeAssetUpdate)
+		if mask&val == val {
+			result = append(result, requestType)
+		}
+	}
+	return result
 }

@@ -187,6 +187,27 @@ func (base *Base) GetOptionalInt64(name string) *int64 {
 	return &asI64
 }
 
+func (base *Base) GetOptionalUint64(name string) *uint64 {
+	if base.Err != nil {
+		return nil
+	}
+
+	asStr := base.GetString(name)
+
+	if asStr == "" {
+		return nil
+	}
+
+	asU64, err := strconv.ParseUint(asStr, 10, 64)
+
+	if err != nil {
+		base.SetInvalidField(name, err)
+		return nil
+	}
+
+	return &asU64
+}
+
 // GetInt32 retrieves an int32 from the action parameter of the given name.
 // Populates err if the value is not a valid int32
 func (base *Base) GetInt32(name string) int32 {
