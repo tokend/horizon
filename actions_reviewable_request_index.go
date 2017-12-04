@@ -98,15 +98,10 @@ func (action *ReviewableRequestIndexAction) loadPage() {
 }
 
 func parseRequestTypeMask(mask uint64) []xdr.ReviewableRequestType {
-	maskList := map[xdr.ReviewableRequestType]uint64{
-		xdr.ReviewableRequestTypeAssetCreate:       2 << uint64(xdr.ReviewableRequestTypeAssetCreate),
-		xdr.ReviewableRequestTypeAssetUpdate:       2 << uint64(xdr.ReviewableRequestTypeAssetUpdate),
-		xdr.ReviewableRequestTypePreIssuanceCreate: 2 << uint64(xdr.ReviewableRequestTypePreIssuanceCreate),
-		xdr.ReviewableRequestTypeIssuanceCreate:    2 << uint64(xdr.ReviewableRequestTypeIssuanceCreate),
-	}
-
-	result := make([]xdr.ReviewableRequestType, 0, len(maskList))
-	for requestType, val := range maskList {
+	result := make([]xdr.ReviewableRequestType, 0, len(xdr.ReviewableRequestTypeAll))
+	var val uint64
+	for _, requestType := range xdr.ReviewableRequestTypeAll {
+		val = 2 << uint64(xdr.ReviewableRequestTypeAssetUpdate)
 		if mask&val == val {
 			result = append(result, requestType)
 		}
