@@ -70,10 +70,18 @@ func (action AssetPairsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *htt
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action AssetsAllAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action AssetsIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AssetsAllAction")
+	action.Log = action.Log.WithField("action", "AssetsIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action AssetsShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "AssetsShowAction")
 	ap.Execute(&action)
 }
 

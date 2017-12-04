@@ -6,13 +6,13 @@ import (
 	"gitlab.com/swarmfund/horizon/resource"
 )
 
-type AssetsAllAction struct {
+type AssetsIndexAction struct {
 	Action
 	Owner string
 	Assets []resource.Asset
 }
 
-func (action *AssetsAllAction) JSON() {
+func (action *AssetsIndexAction) JSON() {
 	action.Do(
 		action.loadParams,
 		action.loadData,
@@ -22,11 +22,11 @@ func (action *AssetsAllAction) JSON() {
 	)
 }
 
-func (action *AssetsAllAction) loadParams() {
+func (action *AssetsIndexAction) loadParams() {
 	action.Owner = action.GetString("owner")
 }
 
-func (action *AssetsAllAction) loadData() {
+func (action *AssetsIndexAction) loadData() {
 	assetsQ := action.CoreQ().Assets()
 	if action.Owner != "" {
 		assetsQ = assetsQ.ForOwner(action.Owner)

@@ -177,9 +177,10 @@ func initWebActions(app *App) {
 	})
 	r.Get("/fees/:fee_type", &FeesShowAction{})
 
-	// Values
+	// assets
 	r.Get("/prices/history", &PricesHistoryAction{})
-	r.Get("/assets", &AssetsAllAction{})
+	r.Get("/assets", &AssetsIndexAction{})
+	r.Get("/assets/:code", &AssetsShowAction{})
 	r.Get("/asset_pairs", &AssetPairsAction{})
 
 	// balances
