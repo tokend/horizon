@@ -7,7 +7,7 @@ package base
 import "gitlab.com/swarmfund/go/xdr"
 
 func FlagFromXdrAssetPolicy(mask int32, allFlags []xdr.AssetPolicy) []Flag {
-	var result []Flag
+	result := []Flag{}
 	for _, flagValue := range allFlags {
 		flagValueAsInt := int32(flagValue)
 		if (flagValueAsInt & mask) == flagValueAsInt {

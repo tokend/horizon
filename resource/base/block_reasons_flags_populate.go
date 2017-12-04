@@ -6,7 +6,7 @@ package base
 
 import "gitlab.com/swarmfund/go/xdr"
 
-func FlagFromXdrSignerType(mask int32, allFlags []xdr.SignerType) []Flag {
+func FlagFromXdrBlockReasons(mask int32, allFlags []xdr.BlockReasons) []Flag {
 	result := []Flag{}
 	for _, flagValue := range allFlags {
 		flagValueAsInt := int32(flagValue)

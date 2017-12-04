@@ -8,6 +8,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/httpx"
 	"gitlab.com/swarmfund/horizon/render/hal"
+	"gitlab.com/swarmfund/horizon/resource/base"
 	"golang.org/x/net/context"
 )
 
@@ -21,7 +22,8 @@ func (this *Account) Populate(
 ) (err error) {
 	this.ID = ca.AccountID
 	this.AccountID = ca.AccountID
-	this.BlockReasons = ca.BlockReasons
+	this.BlockReasonsI = ca.BlockReasons
+	this.BlockReasons = base.FlagFromXdrBlockReasons(ca.BlockReasons, xdr.BlockReasonsAll)
 	this.IsBlocked = ca.BlockReasons > 0
 	this.AccountTypeI = ca.AccountType
 	this.AccountType = xdr.AccountType(ca.AccountType).String()

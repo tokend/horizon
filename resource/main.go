@@ -7,6 +7,7 @@ import (
 
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
+	"gitlab.com/swarmfund/horizon/resource/base"
 	"gitlab.com/swarmfund/horizon/resource/operations"
 	"golang.org/x/net/context"
 )
@@ -21,28 +22,22 @@ type Account struct {
 	} `json:"_links"`
 
 	HistoryAccount
-	IsBlocked            bool               `json:"is_blocked"`
-	BlockReasons         int32              `json:"block_reasons"`
-	IsRequireReview      bool               `json:"is_require_review"`
-	AccountTypeI         int32              `json:"account_type_i"`
-	AccountType          string             `json:"account_type"`
-	InflationDestination string             `json:"inflation_destination,omitempty"`
-	HomeDomain           string             `json:"home_domain,omitempty"`
-	Thresholds           AccountThresholds  `json:"thresholds"`
-	Flags                AccountFlags       `json:"flags"`
-	Balances             []Balance          `json:"balances"`
+	IsBlocked            bool              `json:"is_blocked"`
+	BlockReasonsI        int32             `json:"block_reasons_i"`
+	BlockReasons         []base.Flag       `json:"block_reasons"`
+	IsRequireReview      bool              `json:"is_require_review"`
+	AccountTypeI         int32             `json:"account_type_i"`
+	AccountType          string            `json:"account_type"`
+	InflationDestination string            `json:"inflation_destination,omitempty"`
+	HomeDomain           string            `json:"home_domain,omitempty"`
+	Thresholds           AccountThresholds `json:"thresholds"`
+	Balances             []Balance         `json:"balances"`
 	Signers
 	Limits           `json:"limits"`
 	Statistics       `json:"statistics"`
 	Referrer         string          `json:"referrer"`
 	ShareForReferrer string          `json:"share_for_referrer"`
 	Policies         AccountPolicies `json:"policies"`
-}
-
-// AccountFlags represents the state of an account's flags
-type AccountFlags struct {
-	AuthRequired  bool `json:"auth_required"`
-	AuthRevocable bool `json:"auth_revocable"`
 }
 
 // AccountThresholds represents an accounts "thresholds", the numerical values
@@ -54,19 +49,19 @@ type AccountThresholds struct {
 }
 
 type BalancePublic struct {
-	ID           string `json:"id,omitempty"`
-	BalanceID    string `json:"balance_id"`
-	AccountID    string `json:"account_id"`
-	Asset        string `json:"asset"`
+	ID        string `json:"id,omitempty"`
+	BalanceID string `json:"balance_id"`
+	AccountID string `json:"account_id"`
+	Asset     string `json:"asset"`
 }
 
 // Balance represents an account's holdings for a single currency type
 type Balance struct {
 	BalancePublic
-	Balance                  string    `json:"balance,omitempty"`
-	Locked                   string    `json:"locked,omitempty"`
-	RequireReview            bool      `json:"require_review"`
-	IncentivePerCoin         string    `json:"incentive_per_coin"`
+	Balance          string `json:"balance,omitempty"`
+	Locked           string `json:"locked,omitempty"`
+	RequireReview    bool   `json:"require_review"`
+	IncentivePerCoin string `json:"incentive_per_coin"`
 }
 
 // HistoryAccount is a simple resource, used for the account collection actions.
