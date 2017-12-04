@@ -29,7 +29,7 @@ func opCodeToString(rawCode interface{}) (string, error) {
 // error code `opr`
 func ForOperationResult(opr xdr.OperationResult) (string, error) {
 	if opr.Code != xdr.OperationResultCodeOpInner {
-		return opCodeToString(opr.Code)
+		return opr.Code.ShortString(), nil
 	}
 
 	ir := opr.MustTr()

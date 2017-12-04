@@ -8,11 +8,13 @@ import (
 
 type AssetsAllAction struct {
 	Action
+	Owner string
 	Assets []resource.Asset
 }
 
 func (action *AssetsAllAction) JSON() {
 	action.Do(
+		action.loadParams,
 		action.loadData,
 		func() {
 			hal.Render(action.W, action.Assets)
@@ -20,8 +22,17 @@ func (action *AssetsAllAction) JSON() {
 	)
 }
 
+func (action *AssetsAllAction) loadParams() {
+	action.Owner = action.GetString("owner")
+}
+
 func (action *AssetsAllAction) loadData() {
-	assets, err := action.CoreQ().Assets()
+	assetsQ := action.CoreQ().Assets()
+	if action.Owner != "" {
+		assetsQ = assetsQ.ForOwner(action.Owner)
+	}
+
+	assets, err := assetsQ.Select()
 	if err != nil {
 		action.Err = &problem.ServerError
 		action.Log.WithStack(err).WithError(err).Error("Could not get asset from the database")

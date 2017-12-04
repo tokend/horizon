@@ -107,7 +107,7 @@ func (action *FeesAllAction) loadData() {
 		return
 	}
 
-	assets, err := action.CoreQ().Assets()
+	assets, err := action.CoreQ().Assets().Select()
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to load assets")
 		action.Err = &problem.ServerError

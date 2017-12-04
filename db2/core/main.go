@@ -76,11 +76,10 @@ type QInterface interface {
 	// tries to load account limits, if not found returns nil, nil
 	LimitsByAddress(addy string) (*AccountLimits, error)
 
-	Assets() ([]Asset, error)
-	AssetByCode(code string) (*Asset, error)
-
-	// accounts helper
+	// Accounts - creates new accounts query helper
 	Accounts() AccountQI
+	// Assets - creates new assets query helper
+	Assets() AssetQI
 
 	Trusts() *TrustQ
 	Offers() *OfferQ
@@ -162,4 +161,11 @@ func (q *Q) ElderLedger(dest *int32) error {
 // LatestLedger loads the latest known ledger
 func (q *Q) LatestLedger(dest interface{}) error {
 	return q.GetRaw(dest, `SELECT COALESCE(MAX(ledgerseq), 0) FROM ledgerheaders`)
+}
+
+func (q *Q) Assets() AssetQI {
+	return &assetQ{
+		parent: q,
+		sql: selectAsset,
+	}
 }

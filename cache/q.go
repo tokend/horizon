@@ -33,7 +33,7 @@ func (q *Q) MustAssetByCode(code string) (core.Asset, error) {
 		return asset, nil
 	}
 
-	asset, err := q.coreQ.AssetByCode(code)
+	asset, err := q.coreQ.Assets().ByCode(code)
 	if err != nil {
 		return core.Asset{}, err
 	}
