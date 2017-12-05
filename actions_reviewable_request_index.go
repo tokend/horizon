@@ -101,7 +101,7 @@ func parseRequestTypeMask(mask uint64) []xdr.ReviewableRequestType {
 	result := make([]xdr.ReviewableRequestType, 0, len(xdr.ReviewableRequestTypeAll))
 	var val uint64
 	for _, requestType := range xdr.ReviewableRequestTypeAll {
-		val = 2 << uint64(xdr.ReviewableRequestTypeAssetUpdate)
+		val = 1 << uint64(requestType)
 		if mask&val == val {
 			result = append(result, requestType)
 		}
