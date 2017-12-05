@@ -43,6 +43,14 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 	action.State = action.GetOptionalInt64("state")
 	action.TypeMask = action.GetOptionalUint64("type_mask")
 	action.Asset = action.GetString("asset")
+
+	action.Page.Filters = map[string]string{
+		"reviewer":  action.Reviewer,
+		"requestor": action.Requestor,
+		"state":     action.GetString("state"),
+		"type_mask": action.GetString("type_mask"),
+		"asset":     action.Asset,
+	}
 }
 
 func (action *ReviewableRequestIndexAction) checkAllowed() {
@@ -101,7 +109,7 @@ func parseRequestTypeMask(mask uint64) []xdr.ReviewableRequestType {
 	result := make([]xdr.ReviewableRequestType, 0, len(xdr.ReviewableRequestTypeAll))
 	var val uint64
 	for _, requestType := range xdr.ReviewableRequestTypeAll {
-		val = 2 << uint64(xdr.ReviewableRequestTypeAssetUpdate)
+		val = 1 << uint64(requestType)
 		if mask&val == val {
 			result = append(result, requestType)
 		}

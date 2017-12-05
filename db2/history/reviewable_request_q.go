@@ -201,6 +201,10 @@ func (q *ReviewableRequestQ) ForTypes(requestTypes []xdr.ReviewableRequestType) 
 		return q
 	}
 
+	if len(requestTypes) == 0 {
+		return q
+	}
+
 	query, values := sqx.InForReviewableRequestTypes("request_type", requestTypes...)
 
 	q.sql = q.sql.Where(query, values...)
