@@ -25,7 +25,7 @@ func InForReviewableRequestTypes(columnName string, values...xdr.ReviewableReque
 		rawValues[i] = int32(values[i])
 	}
 
-	return In(columnName, rawValues)
+	return In(columnName, rawValues...)
 }
 
 // Returns statement and params of it for SQL IN.
