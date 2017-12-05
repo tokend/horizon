@@ -43,6 +43,14 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 	action.State = action.GetOptionalInt64("state")
 	action.TypeMask = action.GetOptionalUint64("type_mask")
 	action.Asset = action.GetString("asset")
+
+	action.Page.Filters = map[string]string{
+		"reviewer":  action.Reviewer,
+		"requestor": action.Requestor,
+		"state":     action.GetString("state"),
+		"type_mask": action.GetString("type_mask"),
+		"asset":     action.Asset,
+	}
 }
 
 func (action *ReviewableRequestIndexAction) checkAllowed() {
