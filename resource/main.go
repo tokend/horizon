@@ -7,38 +7,9 @@ import (
 
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/resource/base"
 	"gitlab.com/swarmfund/horizon/resource/operations"
 	"golang.org/x/net/context"
 )
-
-// Account is the summary of an account
-type Account struct {
-	Links struct {
-		Self         hal.Link `json:"self"`
-		Transactions hal.Link `json:"transactions"`
-		Operations   hal.Link `json:"operations"`
-		Payments     hal.Link `json:"payments"`
-	} `json:"_links"`
-
-	HistoryAccount
-	IsBlocked            bool              `json:"is_blocked"`
-	BlockReasonsI        int32             `json:"block_reasons_i"`
-	BlockReasons         []base.Flag       `json:"block_reasons"`
-	IsRequireReview      bool              `json:"is_require_review"`
-	AccountTypeI         int32             `json:"account_type_i"`
-	AccountType          string            `json:"account_type"`
-	InflationDestination string            `json:"inflation_destination,omitempty"`
-	HomeDomain           string            `json:"home_domain,omitempty"`
-	Thresholds           AccountThresholds `json:"thresholds"`
-	Balances             []Balance         `json:"balances"`
-	Signers
-	Limits           `json:"limits"`
-	Statistics       `json:"statistics"`
-	Referrer         string          `json:"referrer"`
-	ShareForReferrer string          `json:"share_for_referrer"`
-	Policies         AccountPolicies `json:"policies"`
-}
 
 // AccountThresholds represents an accounts "thresholds", the numerical values
 // needed to satisfy the authorization of a given operation.

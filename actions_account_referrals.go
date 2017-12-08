@@ -69,19 +69,8 @@ func (action *AccountReferralsAction) loadBalances() {
 func (action *AccountReferralsAction) loadResource() {
 	for _, record := range action.Records {
 		var r resource.Account
-		err := r.Populate(
-			action.Ctx,
-			record,
-			[]core.Signer{},
-			action.Balances[record.AccountID],
-			nil,
-		)
-		if err != nil {
-			action.Log.WithError(err).WithField("account", record.AccountID).
-				Error("failed to populate resources")
-			action.Err = &problem.ServerError
-			return
-		}
+		r.Populate(action.Ctx, record)
+		r.SetBalances(action.Balances[record.AccountID])
 		action.Page.Add(r)
 	}
 	action.Page.PopulateLinks()

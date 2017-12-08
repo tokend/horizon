@@ -3,13 +3,12 @@ package ingest
 import (
 	"time"
 
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
 	"gitlab.com/swarmfund/horizon/resource/operations"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // Run starts an attempt to ingest the range of ledgers specified in this
@@ -32,7 +31,6 @@ func (is *Session) Run() {
 		if !isNextLegerLoaded {
 			break
 		}
-
 
 		if is.Err != nil {
 			return
@@ -80,10 +78,8 @@ func (is *Session) ingestLedger() {
 		return
 	}
 
-	// if this is ledger 1 or we are in paranoid mode,
-	// create default system accounts and ingest their balances:
-	// master, commission, storageFeeManage and operational
-	if is.Paranoid || is.Cursor.LedgerSequence() == 1 {
+	// ingest accounts from genesis block
+	if is.Cursor.LedgerSequence() == 1 {
 		systemAccounts := []string{
 			is.CoreInfo.MasterAccountID,
 			is.CoreInfo.CommissionAccountID,
@@ -93,39 +89,6 @@ func (is *Session) ingestLedger() {
 			_, is.Err = is.Ingestion.TryIngestAccount(address)
 			if is.Err != nil {
 				return
-			}
-			balances := []core.Balance{}
-			is.Err = is.Ingestion.CoreQ.BalancesByAddress(&balances, address)
-			if is.Err != nil {
-				return
-			}
-			var created bool
-			for _, balance := range balances {
-
-				for _, asset := range is.CoreInfo.BaseAssets {
-					if asset != balance.Asset {
-						continue
-					}
-					created, is.Err = is.Ingestion.TryIngestBalance(
-						balance.BalanceID, balance.Asset, balance.AccountID)
-					if is.Err != nil {
-						return
-					}
-					if !created {
-						// balance already existed, expecting updates to exist too
-						continue
-					}
-
-					// we can't always reliably determine balance amount,
-					// zero is just safe default (hopefully)
-					is.Err = is.Ingestion.TryIngestBalanceUpdate(
-						balance.BalanceID, 0, is.Cursor.Ledger().CloseTime,
-					)
-					if is.Err != nil {
-						return
-					}
-					break
-				}
 			}
 		}
 	}
@@ -245,7 +208,7 @@ func (is *Session) processManageAsset(op *xdr.ManageAssetOp) {
 
 	err := is.Cursor.HistoryQ().ReviewableRequests().Cancel(uint64(op.RequestId))
 	if err != nil {
-		is.Err = errors.Wrap(err, "failed to cancel reviewable request", map[string]interface{} {
+		is.Err = errors.Wrap(err, "failed to cancel reviewable request", map[string]interface{}{
 			"request_id": uint64(op.RequestId),
 		})
 		return

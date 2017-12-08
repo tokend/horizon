@@ -12,7 +12,3 @@ type Asset struct {
 	MaxIssuanceAmount    uint64 `db:"max_issuance_amount"`
 	Issued               uint64 `db:"issued"`
 }
-
-func (a *Asset) IsVisibleForUser(account *Account) bool {
-	return true
-}

@@ -131,12 +131,6 @@ func feesContainsType(feeType int, entries []resource.FeeEntry) bool {
 
 func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries []resource.FeeEntry) []resource.FeeEntry {
 	for _, feeType := range xdr.FeeTypeAll {
-
-		isAmountRangeSupported := feeType != xdr.FeeTypeReferralFee
-		if !isAmountRangeSupported && feesContainsType(int(feeType), entries) {
-			continue
-		}
-
 		entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), int64(0)))
 	}
 

@@ -12,54 +12,59 @@ import (
 	"golang.org/x/net/context"
 )
 
+// Account is the summary of an account
+type Account struct {
+	Links struct {
+		Self         hal.Link `json:"self"`
+		Transactions hal.Link `json:"transactions"`
+		Operations   hal.Link `json:"operations"`
+		Payments     hal.Link `json:"payments"`
+	} `json:"_links"`
+
+	HistoryAccount
+	IsBlocked     bool              `json:"is_blocked"`
+	BlockReasonsI int32             `json:"block_reasons_i"`
+	BlockReasons  []base.Flag       `json:"block_reasons"`
+	AccountTypeI  int32             `json:"account_type_i"`
+	AccountType   string            `json:"account_type"`
+	Thresholds    AccountThresholds `json:"thresholds"`
+	Balances      []Balance         `json:"balances"`
+	Signers
+	Limits                 `json:"limits"`
+	Statistics             `json:"statistics"`
+	Referrer               string                    `json:"referrer"`
+	ShareForReferrer       string                    `json:"share_for_referrer"`
+	Policies               AccountPolicies           `json:"policies"`
+	ExternalSystemAccounts []ExternalSystemAccountID `json:"external_system_accounts"`
+}
+
 // Populate fills out the resource's fields
-func (this *Account) Populate(
-	ctx context.Context,
-	ca core.Account,
-	cs []core.Signer,
-	cb []core.Balance,
-	cl *core.Limits,
-) (err error) {
-	this.ID = ca.AccountID
-	this.AccountID = ca.AccountID
-	this.BlockReasonsI = ca.BlockReasons
-	this.BlockReasons = base.FlagFromXdrBlockReasons(ca.BlockReasons, xdr.BlockReasonsAll)
-	this.IsBlocked = ca.BlockReasons > 0
-	this.AccountTypeI = ca.AccountType
-	this.AccountType = xdr.AccountType(ca.AccountType).String()
-
-	this.Referrer = ca.Referrer
-	this.ShareForReferrer = amount.String(int64(ca.ShareForReferrer))
-	this.Thresholds.Populate(ca)
-
-	this.Balances = make([]Balance, len(cb))
-	for index, balance := range cb {
-		err := this.Balances[index].Populate(balance)
-		if err != nil {
-			return err
-		}
-	}
-
-	// populate signers
-	this.Signers.Populate(cs)
-	if cl != nil {
-		this.Limits.Populate(*cl)
-	}
-
-	this.Policies.Populate(ca.Policies)
-
-	if ca.Statistics != nil {
-		this.Statistics.Populate(*ca.Statistics)
-	}
-
+func (a *Account) Populate(ctx context.Context, ca core.Account) {
+	a.ID = ca.AccountID
+	a.AccountID = ca.AccountID
+	a.BlockReasonsI = ca.BlockReasons
+	a.BlockReasons = base.FlagFromXdrBlockReasons(ca.BlockReasons, xdr.BlockReasonsAll)
+	a.IsBlocked = ca.BlockReasons > 0
+	a.AccountTypeI = ca.AccountType
+	a.AccountType = xdr.AccountType(ca.AccountType).String()
+	a.Referrer = ca.Referrer
+	a.ShareForReferrer = amount.String(int64(ca.ShareForReferrer))
+	a.Thresholds.Populate(ca)
+	a.Policies.Populate(ca.Policies)
 	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
 	self := fmt.Sprintf("/accounts/%s", ca.AccountID)
-	this.Links.Self = lb.Link(self)
-	this.Links.Transactions = lb.PagedLink(self, "transactions")
-	this.Links.Operations = lb.PagedLink(self, "operations")
-	this.Links.Payments = lb.PagedLink(self, "payments")
+	a.Links.Self = lb.Link(self)
+	a.Links.Transactions = lb.PagedLink(self, "transactions")
+	a.Links.Operations = lb.PagedLink(self, "operations")
+	a.Links.Payments = lb.PagedLink(self, "payments")
+	a.Statistics.Populate(*ca.Statistics)
+}
 
-	return
+func (a *Account) SetBalances(balances []core.Balance) {
+	a.Balances = make([]Balance, len(balances))
+	for i := range balances {
+		a.Balances[i].Populate(balances[i])
+	}
 }
 
 func (a Account) PagingToken() string {
