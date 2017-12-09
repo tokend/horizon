@@ -3,7 +3,6 @@ package resource
 import (
 	"fmt"
 
-	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/httpx"
@@ -32,8 +31,6 @@ type Account struct {
 	Signers
 	Limits                 `json:"limits"`
 	Statistics             `json:"statistics"`
-	Referrer               string                    `json:"referrer"`
-	ShareForReferrer       string                    `json:"share_for_referrer"`
 	Policies               AccountPolicies           `json:"policies"`
 	ExternalSystemAccounts []ExternalSystemAccountID `json:"external_system_accounts"`
 }
@@ -47,8 +44,6 @@ func (a *Account) Populate(ctx context.Context, ca core.Account) {
 	a.IsBlocked = ca.BlockReasons > 0
 	a.AccountTypeI = ca.AccountType
 	a.AccountType = xdr.AccountType(ca.AccountType).String()
-	a.Referrer = ca.Referrer
-	a.ShareForReferrer = amount.String(int64(ca.ShareForReferrer))
 	a.Thresholds.Populate(ca)
 	a.Policies.Populate(ca.Policies)
 	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
