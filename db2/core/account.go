@@ -10,8 +10,6 @@ type Account struct {
 	Thresholds       xdr.Thresholds `db:"thresholds"`
 	AccountType      int32          `db:"account_type"`
 	BlockReasons     int32          `db:"block_reasons"`
-	Referrer         string         `db:"referrer"`
-	ShareForReferrer xdr.Int64      `db:"share_for_referrer"`
 	Policies         int32          `db:"policies"`
 	*Statistics
 }
