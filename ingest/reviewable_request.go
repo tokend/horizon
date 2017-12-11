@@ -89,6 +89,7 @@ func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRe
 		Name:                 string(request.Name),
 		PreIssuedAssetSigner: request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:    amount.StringU(uint64(request.MaxIssuanceAmount)),
+		LogoID:				  string(request.LogoId),
 	}
 }
 
@@ -98,6 +99,7 @@ func getAssetUpdate(request *xdr.AssetUpdateRequest) history.AssetUpdateRequest 
 		Description:          string(request.Description),
 		ExternalResourceLink: string(request.ExternalResourceLink),
 		Policies:             int32(request.Policies),
+		LogoID:				  string(request.LogoId),
 	}
 }
 
