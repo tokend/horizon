@@ -10,7 +10,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeSetOptions:               func(ir xdr.OperationResultTr) interface{} { return ir.MustSetOptionsResult().Code },
 	xdr.OperationTypeSetFees:                  func(ir xdr.OperationResultTr) interface{} { return ir.MustSetFeesResult().Code },
 	xdr.OperationTypeManageAccount:            func(ir xdr.OperationResultTr) interface{} { return ir.MustManageAccountResult().Code },
-	xdr.OperationTypeManageForfeitRequest:     func(ir xdr.OperationResultTr) interface{} { return ir.MustManageForfeitRequestResult().Code },
+	xdr.OperationTypeCreateWithdrawalRequest:  func(ir xdr.OperationResultTr) interface{} { return ir.MustCreateWithdrawalRequestResult().Code },
 	xdr.OperationTypeRecover:                  func(ir xdr.OperationResultTr) interface{} { return ir.MustRecoverResult().Code },
 	xdr.OperationTypeManageBalance:            func(ir xdr.OperationResultTr) interface{} { return ir.MustManageBalanceResult().Code },
 	xdr.OperationTypeReviewPaymentRequest:     func(ir xdr.OperationResultTr) interface{} { return ir.MustReviewPaymentRequestResult().Code },

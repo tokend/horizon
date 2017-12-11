@@ -63,11 +63,11 @@ func New(
 			e.Account = ""
 		}
 		result = e
-	case xdr.OperationTypeManageForfeitRequest:
-		e := ManageForfeitRequest{Base: base}
+	case xdr.OperationTypeCreateWithdrawalRequest:
+		e := CreateWithdrawalRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
 		if public {
-			e.UserDetails = ""
+			e.ExternalDetails = ""
 		}
 		result = e
 	case xdr.OperationTypeSetLimits:

@@ -19,10 +19,10 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 
 		operationIdentifier = uint64(paymentResponse.PaymentId)
 		return state, operationIdentifier
-	case xdr.OperationTypeManageForfeitRequest:
+	case xdr.OperationTypeCreateWithdrawalRequest:
 		state = history.OperationStatePending
-		manageRequestResult := operationResult.MustManageForfeitRequestResult()
-		operationIdentifier = uint64(manageRequestResult.Success.PaymentId)
+		manageRequestResult := operationResult.MustCreateWithdrawalRequestResult()
+		operationIdentifier = uint64(manageRequestResult.Success.RequestId)
 		return state, operationIdentifier
 	case xdr.OperationTypeManageInvoice:
 		manageInvoiceOp := op.Body.MustManageInvoiceOp()
@@ -76,8 +76,6 @@ func (is *Session) operation() {
 
 	is.ingestOperationParticipants()
 	switch is.Cursor.OperationType() {
-	case xdr.OperationTypeManageForfeitRequest:
-		is.processManageForfeitRequest(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
 	case xdr.OperationTypePayment:
 		is.processPayment(is.Cursor.Operation().Body.MustPaymentOp(), is.Cursor.OperationSourceAccount(),
 			*is.Cursor.OperationResult().MustPaymentResult().PaymentResponse)
