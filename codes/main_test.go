@@ -7,129 +7,111 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func checkCode(t *testing.T, code interface{}) {
+	opCode, err := opCodeToString(code)
+	So(err, ShouldBeNil)
+	So(opCode, ShouldNotBeBlank)
+	message := getMessage(opCode)
+	if message == "" {
+		t.Errorf("Expected message not to be blanck for %s", opCode)
+	}
+}
+
 func TestCodes(t *testing.T) {
 	Convey("TransactionResultCode", t, func() {
 		for _, code := range xdr.TransactionResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			message := getMessage(code.ShortString())
+			if message == "" {
+				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
+			}
 		}
 	})
 	Convey("OperationResultCode", t, func() {
 		for _, code := range xdr.OperationResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			message := getMessage(code.ShortString())
+			if message == "" {
+				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
+			}
 		}
 	})
 	Convey("CreateAccountResultCode", t, func() {
 		for _, code := range xdr.CreateAccountResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 	Convey("PaymentResultCode", t, func() {
 		for _, code := range xdr.PaymentResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 	Convey("SetOptionsResultCode", t, func() {
 		for _, code := range xdr.SetOptionsResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 	Convey("SetFeesResultCode", t, func() {
 		for _, code := range xdr.SetFeesResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 	Convey("ManageAccountResultCode", t, func() {
 		for _, code := range xdr.ManageAccountResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 	Convey("ManageForfeitRequestResultCode", t, func() {
 		for _, code := range xdr.ManageForfeitRequestResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 	Convey("RecoverResultCode", t, func() {
 		for _, code := range xdr.RecoverResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 	Convey("ManageBalanceResultCode", t, func() {
 		for _, code := range xdr.ManageBalanceResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 	Convey("ReviewPaymentRequestResultCode", t, func() {
 		for _, code := range xdr.ReviewPaymentRequestResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 	Convey("ManageAssetResultCode", t, func() {
 		for _, code := range xdr.ManageAssetResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 
 	Convey("SetLimits", t, func() {
 		for _, code := range xdr.SetLimitsResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 
 	Convey("DirectDebit", t, func() {
 		for _, code := range xdr.DirectDebitResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 
 	Convey("ManageAssetPair", t, func() {
 		for _, code := range xdr.ManageAssetPairResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 
 	Convey("ManageOffer", t, func() {
 		for _, code := range xdr.ManageOfferResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 
 	Convey("ManageInvoice", t, func() {
 		for _, code := range xdr.ManageInvoiceResultCodeAll {
-			result, err := String(code)
-			So(err, ShouldBeNil)
-			So(result, ShouldNotBeBlank)
+			checkCode(t, code)
 		}
 	})
 }
