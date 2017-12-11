@@ -42,7 +42,7 @@ func ForOperationResult(opr xdr.OperationResult) (string, string, error) {
 	return opCode, getMessage(opCode), err
 }
 
-func ForTxResult(txResult xdr.TransactionResult) (txResultCode string, opResultCodes []string, err error) {
+func ForTxResult(txResult xdr.TransactionResult) (txResultCode string, opResultCodes []string, messages []string, err error) {
 	txResultCode = txResult.Result.Code.ShortString()
 
 	if txResult.Result.Results == nil {
@@ -51,8 +51,9 @@ func ForTxResult(txResult xdr.TransactionResult) (txResultCode string, opResultC
 
 	opResults := txResult.Result.MustResults()
 	opResultCodes = make([]string, len(opResults))
+	messages = make([]string, len(opResults))
 	for i := range opResults {
-		opResultCodes[i], _, err = ForOperationResult(opResults[i])
+		opResultCodes[i], opResultCodes[i], err = ForOperationResult(opResults[i])
 		if err != nil {
 			err = logan.Wrap(err, "Failed to convert to string op result")
 			return

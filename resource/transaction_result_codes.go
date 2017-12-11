@@ -10,11 +10,12 @@ import (
 type TransactionResultCodes struct {
 	TransactionCode string   `json:"transaction"`
 	OperationCodes  []string `json:"operations,omitempty"`
+	Messages        []string `json:"messages"`
 }
 
 // NewTransactionResultCodes creates tx result codes from xdr result
 func NewTransactionResultCodes(txResult xdr.TransactionResult) (*TransactionResultCodes, error) {
-	txResultCode, opResultCodes, err := codes.ForTxResult(txResult)
+	txResultCode, opResultCodes, messages, err := codes.ForTxResult(txResult)
 	if err != nil {
 		return nil, err
 	}
@@ -22,5 +23,6 @@ func NewTransactionResultCodes(txResult xdr.TransactionResult) (*TransactionResu
 	return &TransactionResultCodes{
 		TransactionCode: txResultCode,
 		OperationCodes:  opResultCodes,
+		Messages: messages,
 	}, nil
 }
