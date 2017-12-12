@@ -7,9 +7,8 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func checkCode(t *testing.T, code interface{}) {
-	opCode, err := opCodeToString(code)
-	So(err, ShouldBeNil)
+func checkCode(t *testing.T, code shortStr) {
+	opCode := opCodeToString(code)
 	So(opCode, ShouldNotBeBlank)
 	message := getMessage(opCode)
 	if message == "" {
@@ -59,8 +58,8 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
-	Convey("ManageForfeitRequestResultCode", t, func() {
-		for _, code := range xdr.ManageForfeitRequestResultCodeAll {
+	Convey("CreateWithdrawalRequestResultCode", t, func() {
+		for _, code := range xdr.CreateWithdrawalRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})

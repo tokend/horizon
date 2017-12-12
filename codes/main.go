@@ -3,9 +3,8 @@
 package codes
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 // ErrUnknownCode is returned when an unexepcted value is provided to `String`
@@ -16,13 +15,8 @@ type shortStr interface {
 }
 
 //opCodeToString returns the appropriate string representation of the provided result code
-func opCodeToString(rawCode interface{}) (string, error) {
-	code, ok := rawCode.(shortStr)
-	if !ok {
-		return "", ErrUnknownCode
-	}
-
-	return "op_" + code.ShortString(), nil
+func opCodeToString(codeProvider shortStr) string {
+	return "op_" + codeProvider.ShortString()
 }
 
 // ForOperationResult returns the strong represtation used by horizon for the
@@ -35,11 +29,14 @@ func ForOperationResult(opr xdr.OperationResult) (string, string, error) {
 	ir := opr.MustTr()
 	ic, ok := codeProviders[ir.Type]
 	if !ok {
-		return "", "", errors.Wrap(ErrUnknownCode, "failed to get code provider")
+		return "", "", errors.Wrap(ErrUnknownCode, "failed to get code provider", map[string]interface{}{
+			"type": ir.Type.String(),
+		})
 	}
 
-	opCode, err := opCodeToString(ic)
-	return opCode, getMessage(opCode), err
+	code := ic(ir)
+	opCode := opCodeToString(code)
+	return opCode, getMessage(opCode), nil
 }
 
 func ForTxResult(txResult xdr.TransactionResult) (txResultCode string, opResultCodes []string, messages []string, err error) {
@@ -55,7 +52,7 @@ func ForTxResult(txResult xdr.TransactionResult) (txResultCode string, opResultC
 	for i := range opResults {
 		opResultCodes[i], opResultCodes[i], err = ForOperationResult(opResults[i])
 		if err != nil {
-			err = logan.Wrap(err, "Failed to convert to string op result")
+			err = errors.Wrap(err, "Failed to convert to string op result")
 			return
 		}
 	}
