@@ -106,7 +106,7 @@ func initWebActions(app *App) {
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
 		xdr.OperationTypeCreateIssuanceRequest,
-		xdr.OperationTypeManageForfeitRequest,
+		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
 	}

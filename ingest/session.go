@@ -4,11 +4,9 @@ import (
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
-	"gitlab.com/swarmfund/horizon/resource/operations"
 )
 
 // Run starts an attempt to ingest the range of ledgers specified in this
@@ -293,39 +291,6 @@ func (is *Session) ingestTransactionParticipants() {
 		return
 	}
 
-}
-
-func (is *Session) processManageForfeitRequest(operation xdr.Operation, source xdr.AccountId, result xdr.OperationResultTr) {
-	if is.Err != nil {
-		return
-	}
-	manageRequestOp := operation.Body.ManageForfeitRequestOp
-	manageRequestResult := result.MustManageForfeitRequestResult()
-
-	details := operations.BasePayment{
-		FromBalance:           manageRequestOp.Balance.AsString(),
-		ToBalance:             "",
-		From:                  source.Address(),
-		To:                    "",
-		Amount:                amount.String(int64(manageRequestOp.Amount)),
-		SourcePaymentFee:      amount.String(0),
-		DestinationPaymentFee: amount.String(0),
-		SourceFixedFee:        amount.String(0),
-		DestinationFixedFee:   amount.String(0),
-		SourcePaysForDest:     false,
-		UserDetails:           manageRequestOp.Details,
-	}
-	is.Err = is.Ingestion.InsertPaymentRequest(
-		is.Cursor.Ledger(),
-		uint64(manageRequestResult.Success.PaymentId),
-		details,
-		nil,
-		xdr.RequestTypeRequestTypeRedeem,
-	)
-
-	if is.Err != nil {
-		return
-	}
 }
 
 func (is *Session) processPayment(paymentOp xdr.PaymentOp, source xdr.AccountId, result xdr.PaymentResponse) {
