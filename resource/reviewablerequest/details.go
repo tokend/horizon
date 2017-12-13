@@ -1,8 +1,8 @@
 package reviewablerequest
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 // Details - provides specific for request type details.
@@ -13,6 +13,7 @@ type Details struct {
 	AssetUpdate       *AssetUpdateRequest   `json:"asset_update,omitempty"`
 	PreIssuanceCreate *PreIssuanceRequest   `json:"pre_issuance_create,omitempty"`
 	IssuanceCreate    *IssuanceRequest      `json:"issuance_create,omitempty"`
+	Withdrawal        *WithdrawalRequest    `json:"withdraw,omitempty"`
 }
 
 func (d *Details) PopulateFromRawJSON(requestType xdr.ReviewableRequestType, rawJSON []byte) error {
@@ -34,11 +35,14 @@ func (d *Details) PopulateSpecificRequest(requestType xdr.ReviewableRequestType,
 		d.AssetUpdate = new(AssetUpdateRequest)
 		return d.AssetUpdate.PopulateFromRawJsonHistory(rawJSON)
 	case xdr.ReviewableRequestTypePreIssuanceCreate:
-		d.IssuanceCreate = new(IssuanceRequest)
-		return d.IssuanceCreate.PopulateFromRawJsonHistory(rawJSON)
-	case xdr.ReviewableRequestTypeIssuanceCreate:
 		d.PreIssuanceCreate = new(PreIssuanceRequest)
 		return d.PreIssuanceCreate.PopulateFromRawJsonHistory(rawJSON)
+	case xdr.ReviewableRequestTypeIssuanceCreate:
+		d.IssuanceCreate = new(IssuanceRequest)
+		return d.IssuanceCreate.PopulateFromRawJsonHistory(rawJSON)
+	case xdr.ReviewableRequestTypeWithdraw:
+		d.Withdrawal = new(WithdrawalRequest)
+		return d.Withdrawal.PopulateFromRawJsonHistory(rawJSON)
 	default:
 		return errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),

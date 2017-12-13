@@ -54,10 +54,9 @@ func ForOperation(
 	case xdr.OperationTypeManageAccount:
 		manageAccountOp := op.Body.MustManageAccountOp()
 		result = append(result, Participant{manageAccountOp.Account, nil, nil})
-	case xdr.OperationTypeManageForfeitRequest:
-		manageForfeitRequestOp := op.Body.MustManageForfeitRequestOp()
-		sourceParticipant.BalanceID = &manageForfeitRequestOp.Balance
-		result = append(result, Participant{manageForfeitRequestOp.Reviewer, nil, nil})
+	case xdr.OperationTypeCreateWithdrawalRequest:
+		createWithdrawalRequest := op.Body.MustCreateWithdrawalRequestOp()
+		sourceParticipant.BalanceID = &createWithdrawalRequest.Request.Balance
 	case xdr.OperationTypeRecover:
 		result = append(result, Participant{op.Body.MustRecoverOp().Account, nil, nil})
 	case xdr.OperationTypeManageBalance:
