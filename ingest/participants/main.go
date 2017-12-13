@@ -62,7 +62,7 @@ func ForOperation(
 		result = append(result, Participant{op.Body.MustRecoverOp().Account, nil, nil})
 	case xdr.OperationTypeManageBalance:
 		manageBalanceOp := op.Body.MustManageBalanceOp()
-		result = append(result, Participant{manageBalanceOp.Destination, &manageBalanceOp.BalanceId, nil})
+		result = append(result, Participant{manageBalanceOp.Destination, nil, nil})
 	case xdr.OperationTypeReviewPaymentRequest:
 	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAsset:
