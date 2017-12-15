@@ -284,10 +284,10 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "master"
+  branch = "feature/balanceID_auto_generating"
   name = "gitlab.com/swarmfund/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "17d5ed7a4e0f2c070498f6ad6ec7bda3b0d36d94"
+  revision = "12f71c0f8a15f3ec8c8948bfd811517555a20a45"
 
 [[projects]]
   branch = "master"
@@ -346,6 +346,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2bf0a23db49010e2db8a350843591f27086a55a2a4f531f959d5ff136494f031"
+  inputs-digest = "06968f65057d0c7b8c95aded26bec49b5a9b58c334a91555d84eeefe911a19df"
   solver-name = "gps-cdcl"
   solver-version = 1
