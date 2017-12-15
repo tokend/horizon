@@ -16,6 +16,7 @@ type AssetCreationRequest struct {
 	Name                 string      `json:"name"`
 	PreIssuedAssetSigner string      `json:"pre_issued_asset_signer"`
 	MaxIssuanceAmount    string      `json:"max_issuance_amount"`
+	LogoID				 string 	 `json:"logo_id"`
 }
 
 func (r *AssetCreationRequest) Populate(histRequest history.AssetCreationRequest) {
@@ -26,6 +27,7 @@ func (r *AssetCreationRequest) Populate(histRequest history.AssetCreationRequest
 	r.Name = histRequest.Name
 	r.PreIssuedAssetSigner = histRequest.PreIssuedAssetSigner
 	r.MaxIssuanceAmount = histRequest.MaxIssuanceAmount
+	r.LogoID = histRequest.LogoID
 }
 
 func (r *AssetCreationRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
