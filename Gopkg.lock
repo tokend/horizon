@@ -273,7 +273,7 @@
 
 [[projects]]
   name = "gitlab.com/distributed_lab/logan"
-  packages = [".","v3","v3/errors","v3/fields"]
+  packages = [".","v2/errors","v2/fields","v3","v3/errors","v3/fields"]
   revision = "b8cfbf0cdfb9c7185cd426c24babaac54dcfbb82"
   version = "v3.0"
 
@@ -287,7 +287,7 @@
   branch = "master"
   name = "gitlab.com/swarmfund/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "6d9d6235498b324b296fa8bc5d801ea57376dbd3"
+  revision = "17d5ed7a4e0f2c070498f6ad6ec7bda3b0d36d94"
 
 [[projects]]
   branch = "master"
@@ -346,6 +346,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "07a95359aae9f13a39a1f1d389c80b429aa7abf0d905b06ea7b4ad3a0142ae20"
+  inputs-digest = "2bf0a23db49010e2db8a350843591f27086a55a2a4f531f959d5ff136494f031"
   solver-name = "gps-cdcl"
   solver-version = 1

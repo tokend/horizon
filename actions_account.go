@@ -17,10 +17,6 @@ import (
 type AccountShowAction struct {
 	Action
 	Address     string
-	CoreRecord  *core.Account
-	CoreSigners []core.Signer
-	CoreLimits  core.Limits
-	Balances    []core.Balance
 	Resource    resource.Account
 }
 
@@ -30,8 +26,9 @@ func (action *AccountShowAction) JSON() {
 		action.loadParams,
 		action.checkAllowed,
 		action.loadRecord,
+		action.loadLimits,
 		action.loadBalances,
-		action.loadResource,
+		action.loadExternalSystemAccountIDs,
 		func() {
 			hal.Render(action.W, action.Resource)
 		},
@@ -46,36 +43,8 @@ func (action *AccountShowAction) checkAllowed() {
 	action.IsAllowed(action.Address)
 }
 
-func (action *AccountShowAction) loadBalances() {
-	var balances []core.Balance
-	err := action.CoreQ().
-		BalancesByAddress(&balances, action.Address)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to get balances for account")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	for i := range balances {
-		assetCode := balances[i].Asset
-		asset, err := action.CachedQ().MustAssetByCode(assetCode)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to load asset")
-			action.Err = &problem.ServerError
-			return
-		}
-
-		if !action.IsAdmin && !asset.IsVisibleForUser(action.CoreRecord) {
-			continue
-		}
-
-		action.Balances = append(action.Balances, balances[i])
-	}
-}
-
 func (action *AccountShowAction) loadRecord() {
-	var err error
-	action.CoreRecord, err = action.CoreQ().
+	coreRecord, err := action.CoreQ().
 		Accounts().
 		ForAddresses(action.Address).
 		WithStatistics().
@@ -87,34 +56,59 @@ func (action *AccountShowAction) loadRecord() {
 		return
 	}
 
-	if action.CoreRecord == nil {
+	if coreRecord == nil {
 		action.Err = &problem.NotFound
 		return
 	}
 
-	action.CoreRecord.Statistics.ClearObsolete(time.Now().UTC())
+	coreRecord.Statistics.ClearObsolete(time.Now().UTC())
 
-	action.CoreSigners, err = action.GetSigners(action.CoreRecord)
+	action.Resource.Populate(action.Ctx, *coreRecord)
+
+	signers, err := action.GetSigners(coreRecord)
 	if err != nil {
-		action.Log.WithError(err).Error("Failed to get signers for account")
+		action.Log.WithError(err).Error("Failed to get signers")
 		action.Err = &problem.ServerError
 		return
 	}
 
-	action.CoreLimits, err = action.CoreQ().LimitsForAccount(action.CoreRecord.AccountID, action.CoreRecord.AccountType)
+	action.Resource.Signers.Populate(signers)
 }
 
-func (action *AccountShowAction) loadResource() {
-	err := action.Resource.Populate(
-		action.Ctx,
-		*action.CoreRecord,
-		action.CoreSigners,
-		action.Balances,
-		&action.CoreLimits,
-	)
+func (action *AccountShowAction) loadLimits() {
+	limits, err := action.CoreQ().LimitsForAccount(action.Address, action.Resource.AccountTypeI)
 	if err != nil {
-		action.Log.WithError(err).Error("Failed to populate account response")
+		action.Log.WithError(err).Error("Failed to load limits for account")
 		action.Err = &problem.ServerError
 		return
+	}
+
+	action.Resource.Limits.Populate(limits)
+}
+
+func (action *AccountShowAction) loadBalances() {
+	var balances []core.Balance
+	err := action.CoreQ().
+		BalancesByAddress(&balances, action.Address)
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to get balances for account")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	action.Resource.SetBalances(balances)
+}
+
+func (action *AccountShowAction) loadExternalSystemAccountIDs() {
+	exSysIDs, err := action.CoreQ().ExternalSystemAccountID().ForAccount(action.Address).Select()
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to load external system account ids")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	action.Resource.ExternalSystemAccounts = make([]resource.ExternalSystemAccountID, len(exSysIDs))
+	for i := range exSysIDs {
+		action.Resource.ExternalSystemAccounts[i].Populate(exSysIDs[i])
 	}
 }

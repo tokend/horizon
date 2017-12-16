@@ -82,22 +82,24 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.Rev
 
 func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRequest {
 	return history.AssetCreationRequest{
-		Asset:                 string(request.Code),
+		Asset:                string(request.Code),
 		Description:          string(request.Description),
 		ExternalResourceLink: string(request.ExternalResourceLink),
 		Policies:             int32(request.Policies),
 		Name:                 string(request.Name),
 		PreIssuedAssetSigner: request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:    amount.StringU(uint64(request.MaxIssuanceAmount)),
+		LogoID:               string(request.LogoId),
 	}
 }
 
 func getAssetUpdate(request *xdr.AssetUpdateRequest) history.AssetUpdateRequest {
 	return history.AssetUpdateRequest{
-		Asset:                 string(request.Code),
+		Asset:                string(request.Code),
 		Description:          string(request.Description),
 		ExternalResourceLink: string(request.ExternalResourceLink),
 		Policies:             int32(request.Policies),
+		LogoID:               string(request.LogoId),
 	}
 }
 
@@ -123,6 +125,18 @@ func getIssuanceRequest(request *xdr.IssuanceRequest) history.IssuanceRequest {
 	}
 }
 
+func getWithdrawalRequest(request *xdr.WithdrawalRequest) history.WithdrawalRequest {
+	return history.WithdrawalRequest{
+		BalanceID:       request.Balance.AsString(),
+		Amount:          amount.StringU(uint64(request.Amount)),
+		FixedFee:        amount.StringU(uint64(request.Fee.Fixed)),
+		PercentFee:      amount.StringU(uint64(request.Fee.Percent)),
+		ExternalDetails: request.ExternalDetails,
+		DestAssetCode:   string(request.Details.AutoConversion.DestAsset),
+		DestAssetAmount: amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
+	}
+}
+
 func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, error) {
 	var rawDetails interface{}
 	var err error
@@ -138,6 +152,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, 
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get pre issuance request")
 		}
+	case xdr.ReviewableRequestTypeWithdraw:
+		rawDetails = getWithdrawalRequest(body.WithdrawalRequest)
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

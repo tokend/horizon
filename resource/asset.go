@@ -16,6 +16,7 @@ type Asset struct {
 	MaxIssuanceAmount    string `json:"max_issuance_amount"`
 	Issued               string `json:"issued"`
 	Policies
+	LogoID 				 string `json:"logo_id"`
 }
 
 func (a *Asset) Populate(asset *core.Asset) {
@@ -29,6 +30,7 @@ func (a *Asset) Populate(asset *core.Asset) {
 	a.MaxIssuanceAmount = amount.StringU(asset.MaxIssuanceAmount)
 	a.Issued = amount.StringU(asset.Issued)
 	a.Policies.Populate(*asset)
+	a.LogoID = asset.LogoID
 }
 
 type AssetPair struct {

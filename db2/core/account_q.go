@@ -16,8 +16,6 @@ type AccountQI interface {
 	ForTypes(types []xdr.AccountType) AccountQI
 	// joins statistics
 	WithStatistics() AccountQI
-	// filters by referrer
-	ForReferrer(referrer string) AccountQI
 	// performs select with specified filters
 	Select(destination interface{}) error
 	// filters by account ids
@@ -75,15 +73,6 @@ func (q *AccountQ) WithStatistics() AccountQI {
 	return q
 }
 
-func (q *AccountQ) ForReferrer(referrer string) AccountQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("referrer = ?", referrer)
-	return q
-}
-
 func (q *AccountQ) Select(destination interface{}) error {
 	if q.Err != nil {
 		return q.Err
@@ -116,7 +105,5 @@ var selectAccount = sq.Select(
 	"a.thresholds",
 	"a.account_type",
 	"a.block_reasons",
-	"a.referrer",
-	"a.share_for_referrer",
 	"a.policies",
 ).From("accounts a")

@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"encoding/hex"
+
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/utf8"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -20,9 +22,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["funder"] = source.Address()
 		details["account"] = op.Destination.Address()
 		details["account_type"] = int32(op.AccountType)
-		if op.Referrer != nil {
-			details["referrer"] = (*op.Referrer).Address()
-		}
 	case xdr.OperationTypePayment:
 		op := c.Operation().Body.MustPaymentOp()
 		opResult := c.OperationResult().MustPaymentResult()
@@ -90,12 +89,16 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["account"] = op.Account.Address()
 		details["block_reasons_to_add"] = op.BlockReasonsToAdd
 		details["block_reasons_to_remove"] = op.BlockReasonsToRemove
-	case xdr.OperationTypeManageForfeitRequest:
-		op := c.Operation().Body.MustManageForfeitRequestOp()
-		details["amount"] = amount.String(int64(op.Amount))
-		details["balance"] = op.Balance.AsString()
-		details["user_details"] = op.Details
-		details["total_fee"] = op.TotalFee
+	case xdr.OperationTypeCreateWithdrawalRequest:
+		op := c.Operation().Body.MustCreateWithdrawalRequestOp()
+		request := op.Request
+		details["amount"] = amount.StringU(uint64(request.Amount))
+		details["balance"] = request.Balance.AsString()
+		details["fee_fixed"] = amount.StringU(uint64(request.Fee.Fixed))
+		details["fee_percent"] = amount.StringU(uint64(request.Fee.Percent))
+		details["external_details"] = request.ExternalDetails
+		details["dest_asset"] = request.Details.AutoConversion.DestAsset
+		details["dest_amount"] = amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount))
 	case xdr.OperationTypeRecover:
 		op := c.Operation().Body.MustRecoverOp()
 		details["account"] = op.Account.Address()
@@ -163,7 +166,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["reason"] = string(op.Reason)
 		details["request_hash"] = hex.EncodeToString(op.RequestHash[:])
 		details["request_id"] = uint64(op.RequestId)
-		details["request_type"] = int32(op.RequestType)
+		details["request_type"] = int32(op.RequestDetails.RequestType)
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
@@ -172,7 +175,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// no details needed
 	case xdr.OperationTypeCreateIssuanceRequest:
 		op := c.Operation().Body.MustCreateIssuanceRequestOp()
-		details["reference"] = string(op.Reference)
+		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
 		details["asset"] = string(op.Request.Asset)
 		details["balance_id"] = op.Request.Receiver.AsString()

@@ -87,6 +87,9 @@ type QInterface interface {
 
 	AssetPair(base, quote string) (*AssetPair, error)
 	AssetPairs() ([]AssetPair, error)
+
+	// ExternalSystemAccountID - returns builder to access external system account IDs
+	ExternalSystemAccountID() ExternalSystemAccountIDQI
 }
 
 // PriceLevel represents an aggregation of offers to trade at a certain
@@ -166,6 +169,14 @@ func (q *Q) LatestLedger(dest interface{}) error {
 func (q *Q) Assets() AssetQI {
 	return &assetQ{
 		parent: q,
-		sql: selectAsset,
+		sql:    selectAsset,
+	}
+}
+
+// ExternalSystemAccountID - returns builder to access external system account IDs
+func (q *Q) ExternalSystemAccountID() ExternalSystemAccountIDQI {
+	return &externalSystemAccountIDQ{
+		parent: q,
+		sql:    selectExternalSystemAccountIDs,
 	}
 }

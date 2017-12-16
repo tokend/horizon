@@ -105,7 +105,8 @@ func initWebActions(app *App) {
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
-		xdr.OperationTypeManageForfeitRequest,
+		xdr.OperationTypeCreateIssuanceRequest,
+		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
 	}
@@ -121,7 +122,6 @@ func initWebActions(app *App) {
 
 	// account actions
 	r.Get("/accounts/:id", &AccountShowAction{})
-	r.Get("/accounts/:id/referrals", &AccountReferralsAction{})
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
 	r.Get("/accounts/:id/summary", &AccountSummaryAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})

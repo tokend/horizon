@@ -82,7 +82,7 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 		"request_state": request.RequestState,
 		"hash":          request.Hash,
 		"details":       request.Details,
-	})
+	}).Where("id = ?", request.ID)
 
 	_, err := q.parent.Exec(query)
 	return err

@@ -48,19 +48,7 @@ func (action *AccountIndexAction) loadRecords() {
 func (action *AccountIndexAction) loadPage() {
 	for _, record := range action.Records {
 		var r resource.Account
-		err := r.Populate(
-			action.Ctx,
-			record,
-			[]core.Signer{},
-			[]core.Balance{},
-			nil,
-		)
-		if err != nil {
-			action.Log.WithError(err).WithField("account", record.AccountID).
-				Error("failed to populate resources")
-			action.Err = &problem.ServerError
-			return
-		}
+		r.Populate(action.Ctx, record)
 		action.Page.Add(r)
 	}
 	action.Page.BaseURL = action.BaseURL()

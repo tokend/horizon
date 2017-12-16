@@ -25,7 +25,6 @@ func New(
 		if public {
 			e.Funder = ""
 			e.Account = ""
-			e.Referrer = nil
 		}
 		result = e
 	case xdr.OperationTypePayment:
@@ -64,11 +63,11 @@ func New(
 			e.Account = ""
 		}
 		result = e
-	case xdr.OperationTypeManageForfeitRequest:
-		e := ManageForfeitRequest{Base: base}
+	case xdr.OperationTypeCreateWithdrawalRequest:
+		e := CreateWithdrawalRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
 		if public {
-			e.UserDetails = ""
+			e.ExternalDetails = ""
 		}
 		result = e
 	case xdr.OperationTypeSetLimits:
@@ -110,7 +109,6 @@ type CreateAccount struct {
 	Funder      string  `json:"funder,omitempty"`
 	Account     string  `json:"account,omitempty"`
 	AccountType int32   `json:"account_type"`
-	Referrer    *string `json:"referrer,omitempty"`
 }
 
 type BasePayment struct {

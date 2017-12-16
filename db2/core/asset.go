@@ -11,8 +11,5 @@ type Asset struct {
 	ExternalResourceLink string `db:"external_resource_link"`
 	MaxIssuanceAmount    uint64 `db:"max_issuance_amount"`
 	Issued               uint64 `db:"issued"`
-}
-
-func (a *Asset) IsVisibleForUser(account *Account) bool {
-	return true
+	LogoID				 string `db:"logo_id"`
 }

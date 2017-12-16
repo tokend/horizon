@@ -66,4 +66,4 @@ func (q *assetQ) Select() ([]Asset, error) {
 }
 
 var selectAsset = sq.Select("a.code, a.owner, a.name, a.preissued_asset_signer, a.description, a.external_resource_link," +
-	"a.max_issuance_amount, a.available_for_issueance, a.issued, a.policies").From("asset a")
+	"a.max_issuance_amount, a.available_for_issueance, a.issued, a.policies, a.logo_id").From("asset a")
