@@ -60,6 +60,7 @@ deploy:staging:
     - curl -X POST http://$HOST_STAGING:8842/CjUwUQjuiw_QCnB5Mg0K0Q
   only:
     - staging
+  when: manual
   environment:
     name: staging
     url: https://staging.api.sun.swarm.fund
