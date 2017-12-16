@@ -50,7 +50,7 @@ func ForTxResult(txResult xdr.TransactionResult) (txResultCode string, opResultC
 	opResultCodes = make([]string, len(opResults))
 	messages = make([]string, len(opResults))
 	for i := range opResults {
-		opResultCodes[i], opResultCodes[i], err = ForOperationResult(opResults[i])
+		opResultCodes[i], messages[i], err = ForOperationResult(opResults[i])
 		if err != nil {
 			err = errors.Wrap(err, "Failed to convert to string op result")
 			return
