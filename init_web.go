@@ -131,8 +131,6 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 
-	r.Get("/accounts/:account_id/forfeit_request", &ForfeitRequestAction{})
-
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})
 
@@ -182,6 +180,7 @@ func initWebActions(app *App) {
 	r.Get("/assets", &AssetsIndexAction{})
 	r.Get("/assets/:code", &AssetsShowAction{})
 	r.Get("/asset_pairs", &AssetPairsAction{})
+	r.Get("/asset_pairs/convert", &AssetPairsConverterAction{})
 
 	// balances
 	r.Get("/balances", &BalanceIndexAction{})

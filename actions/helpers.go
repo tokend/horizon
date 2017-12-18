@@ -379,7 +379,7 @@ func (base *Base) GetAmount(name string) int64 {
 		return 0
 	}
 
-	return int64(result)
+	return result
 }
 
 // SetInvalidField establishes an error response triggered by an invalid
