@@ -13,6 +13,7 @@ type AssetUpdateRequest struct {
 	Description          string `json:"description"`
 	ExternalResourceLink string `json:"external_resource_link"`
 	Policies             []base.Flag `json:"policies"`
+	LogoID				 string `json:"logo_id"`
 }
 
 func (r *AssetUpdateRequest) Populate(histRequest history.AssetUpdateRequest) {
@@ -20,6 +21,7 @@ func (r *AssetUpdateRequest) Populate(histRequest history.AssetUpdateRequest) {
 	r.Description = histRequest.Description
 	r.ExternalResourceLink = histRequest.ExternalResourceLink
 	r.Policies = base.FlagFromXdrAssetPolicy(histRequest.Policies, xdr.AssetPolicyAll)
+	r.LogoID = histRequest.LogoID;
 }
 
 func (r *AssetUpdateRequest) PopulateFromRawJsonHistory(rawJson []byte) error {

@@ -14,6 +14,7 @@ type WithdrawalRequest struct {
 	ExternalDetails string `json:"external_details"`
 	DestAssetCode   string `json:"dest_asset_code"`
 	DestAssetAmount string `json:"dest_asset_amount"`
+	ReviewerDetails map[string]interface{} `json:"reviewer_details"`
 }
 
 func (r *WithdrawalRequest) Populate(histRequest history.WithdrawalRequest) {
@@ -24,7 +25,7 @@ func (r *WithdrawalRequest) Populate(histRequest history.WithdrawalRequest) {
 	r.ExternalDetails = histRequest.ExternalDetails
 	r.DestAssetCode = histRequest.DestAssetCode
 	r.DestAssetAmount = histRequest.DestAssetAmount
-
+	r.ReviewerDetails = histRequest.ReviewerDetails
 }
 
 func (r *WithdrawalRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
