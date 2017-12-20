@@ -119,9 +119,10 @@ func getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (history.PreIssuance
 
 func getIssuanceRequest(request *xdr.IssuanceRequest) history.IssuanceRequest {
 	return history.IssuanceRequest{
-		Asset:    string(request.Asset),
-		Amount:   amount.StringU(uint64(request.Amount)),
-		Receiver: request.Receiver.AsString(),
+		Asset:           string(request.Asset),
+		Amount:          amount.StringU(uint64(request.Amount)),
+		Receiver:        request.Receiver.AsString(),
+		ExternalDetails: request.ExternalDetails,
 	}
 }
 

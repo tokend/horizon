@@ -24,7 +24,6 @@ func (r *WithdrawalRequest) Populate(histRequest history.WithdrawalRequest) {
 	r.ExternalDetails = histRequest.ExternalDetails
 	r.DestAssetCode = histRequest.DestAssetCode
 	r.DestAssetAmount = histRequest.DestAssetAmount
-
 }
 
 func (r *WithdrawalRequest) PopulateFromRawJsonHistory(rawJson []byte) error {

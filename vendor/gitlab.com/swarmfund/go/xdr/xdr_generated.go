@@ -3153,6 +3153,7 @@ func NewReviewableRequestEntryExt(v LedgerVersion, value interface{}) (result Re
 //    	string256 rejectReason;
 //    	AccountID reviewer;
 //    	string64* reference; // reference for request which will act as an unique key for the request (will reject request with the same reference from same requestor)
+//    	int64 createdAt; // when request was created
 //
 //    	union switch (ReviewableRequestType type) {
 //    		case ASSET_CREATE:
@@ -3183,6 +3184,7 @@ type ReviewableRequestEntry struct {
 	RejectReason String256                  `json:"rejectReason,omitempty"`
 	Reviewer     AccountId                  `json:"reviewer,omitempty"`
 	Reference    *String64                  `json:"reference,omitempty"`
+	CreatedAt    Int64                      `json:"createdAt,omitempty"`
 	Body         ReviewableRequestEntryBody `json:"body,omitempty"`
 	Ext          ReviewableRequestEntryExt  `json:"ext,omitempty"`
 }
@@ -7681,7 +7683,8 @@ type CreateIssuanceRequestOp struct {
 //    	NO_COUNTERPARTY = -4,
 //    	NOT_AUTHORIZED = -5,
 //    	EXCEEDS_MAX_ISSUANCE_AMOUNT = -6,
-//    	RECEIVER_FULL_LINE = -7
+//    	RECEIVER_FULL_LINE = -7,
+//    	INVALID_EXTERNAL_DETAILS = -8 // external details size exceeds max allowed
 //    };
 //
 type CreateIssuanceRequestResultCode int32
@@ -7695,6 +7698,7 @@ const (
 	CreateIssuanceRequestResultCodeNotAuthorized            CreateIssuanceRequestResultCode = -5
 	CreateIssuanceRequestResultCodeExceedsMaxIssuanceAmount CreateIssuanceRequestResultCode = -6
 	CreateIssuanceRequestResultCodeReceiverFullLine         CreateIssuanceRequestResultCode = -7
+	CreateIssuanceRequestResultCodeInvalidExternalDetails   CreateIssuanceRequestResultCode = -8
 )
 
 var CreateIssuanceRequestResultCodeAll = []CreateIssuanceRequestResultCode{
@@ -7706,6 +7710,7 @@ var CreateIssuanceRequestResultCodeAll = []CreateIssuanceRequestResultCode{
 	CreateIssuanceRequestResultCodeNotAuthorized,
 	CreateIssuanceRequestResultCodeExceedsMaxIssuanceAmount,
 	CreateIssuanceRequestResultCodeReceiverFullLine,
+	CreateIssuanceRequestResultCodeInvalidExternalDetails,
 }
 
 var createIssuanceRequestResultCodeMap = map[int32]string{
@@ -7717,6 +7722,7 @@ var createIssuanceRequestResultCodeMap = map[int32]string{
 	-5: "CreateIssuanceRequestResultCodeNotAuthorized",
 	-6: "CreateIssuanceRequestResultCodeExceedsMaxIssuanceAmount",
 	-7: "CreateIssuanceRequestResultCodeReceiverFullLine",
+	-8: "CreateIssuanceRequestResultCodeInvalidExternalDetails",
 }
 
 var createIssuanceRequestResultCodeShortMap = map[int32]string{
@@ -7728,6 +7734,7 @@ var createIssuanceRequestResultCodeShortMap = map[int32]string{
 	-5: "not_authorized",
 	-6: "exceeds_max_issuance_amount",
 	-7: "receiver_full_line",
+	-8: "invalid_external_details",
 }
 
 var createIssuanceRequestResultCodeRevMap = map[string]int32{
@@ -7739,6 +7746,7 @@ var createIssuanceRequestResultCodeRevMap = map[string]int32{
 	"CreateIssuanceRequestResultCodeNotAuthorized":            -5,
 	"CreateIssuanceRequestResultCodeExceedsMaxIssuanceAmount": -6,
 	"CreateIssuanceRequestResultCodeReceiverFullLine":         -7,
+	"CreateIssuanceRequestResultCodeInvalidExternalDetails":   -8,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -8341,7 +8349,10 @@ type CreateWithdrawalRequestOp struct {
 //    	CONVERSION_OVERFLOW = -7, // overflow during converting source asset to dest asset
 //    	CONVERTED_AMOUNT_MISMATCHED = -8, // expected converted amount passed by user, does not match calculated
 //    	BALANCE_LOCK_OVERFLOW = -9, // overflow while tried to lock amount
-//    	UNDERFUNDED = -10 // insufficient balance to perform operation
+//    	UNDERFUNDED = -10, // insufficient balance to perform operation
+//    	INVALID_UNIVERSAL_AMOUNT = -11, // non-zero universal amount
+//    	STATS_OVERFLOW = -12, // statistics overflowed by the operation
+//        LIMITS_EXCEEDED = -13 // withdraw exceeds limits for source account
 //    };
 //
 type CreateWithdrawalRequestResultCode int32
@@ -8358,6 +8369,9 @@ const (
 	CreateWithdrawalRequestResultCodeConvertedAmountMismatched     CreateWithdrawalRequestResultCode = -8
 	CreateWithdrawalRequestResultCodeBalanceLockOverflow           CreateWithdrawalRequestResultCode = -9
 	CreateWithdrawalRequestResultCodeUnderfunded                   CreateWithdrawalRequestResultCode = -10
+	CreateWithdrawalRequestResultCodeInvalidUniversalAmount        CreateWithdrawalRequestResultCode = -11
+	CreateWithdrawalRequestResultCodeStatsOverflow                 CreateWithdrawalRequestResultCode = -12
+	CreateWithdrawalRequestResultCodeLimitsExceeded                CreateWithdrawalRequestResultCode = -13
 )
 
 var CreateWithdrawalRequestResultCodeAll = []CreateWithdrawalRequestResultCode{
@@ -8372,6 +8386,9 @@ var CreateWithdrawalRequestResultCodeAll = []CreateWithdrawalRequestResultCode{
 	CreateWithdrawalRequestResultCodeConvertedAmountMismatched,
 	CreateWithdrawalRequestResultCodeBalanceLockOverflow,
 	CreateWithdrawalRequestResultCodeUnderfunded,
+	CreateWithdrawalRequestResultCodeInvalidUniversalAmount,
+	CreateWithdrawalRequestResultCodeStatsOverflow,
+	CreateWithdrawalRequestResultCodeLimitsExceeded,
 }
 
 var createWithdrawalRequestResultCodeMap = map[int32]string{
@@ -8386,6 +8403,9 @@ var createWithdrawalRequestResultCodeMap = map[int32]string{
 	-8:  "CreateWithdrawalRequestResultCodeConvertedAmountMismatched",
 	-9:  "CreateWithdrawalRequestResultCodeBalanceLockOverflow",
 	-10: "CreateWithdrawalRequestResultCodeUnderfunded",
+	-11: "CreateWithdrawalRequestResultCodeInvalidUniversalAmount",
+	-12: "CreateWithdrawalRequestResultCodeStatsOverflow",
+	-13: "CreateWithdrawalRequestResultCodeLimitsExceeded",
 }
 
 var createWithdrawalRequestResultCodeShortMap = map[int32]string{
@@ -8400,6 +8420,9 @@ var createWithdrawalRequestResultCodeShortMap = map[int32]string{
 	-8:  "converted_amount_mismatched",
 	-9:  "balance_lock_overflow",
 	-10: "underfunded",
+	-11: "invalid_universal_amount",
+	-12: "stats_overflow",
+	-13: "limits_exceeded",
 }
 
 var createWithdrawalRequestResultCodeRevMap = map[string]int32{
@@ -8414,6 +8437,9 @@ var createWithdrawalRequestResultCodeRevMap = map[string]int32{
 	"CreateWithdrawalRequestResultCodeConvertedAmountMismatched":     -8,
 	"CreateWithdrawalRequestResultCodeBalanceLockOverflow":           -9,
 	"CreateWithdrawalRequestResultCodeUnderfunded":                   -10,
+	"CreateWithdrawalRequestResultCodeInvalidUniversalAmount":        -11,
+	"CreateWithdrawalRequestResultCodeStatsOverflow":                 -12,
+	"CreateWithdrawalRequestResultCodeLimitsExceeded":                -13,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -13405,11 +13431,69 @@ type WithdrawalDetails struct {
 	Ext             WithdrawalDetailsExt `json:"ext,omitempty"`
 }
 
+// IssuanceDetailsExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type IssuanceDetailsExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u IssuanceDetailsExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of IssuanceDetailsExt
+func (u IssuanceDetailsExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewIssuanceDetailsExt creates a new  IssuanceDetailsExt.
+func NewIssuanceDetailsExt(v LedgerVersion, value interface{}) (result IssuanceDetailsExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// IssuanceDetails is an XDR Struct defines as:
+//
+//   struct IssuanceDetails {
+//    	string externalDetails<>;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type IssuanceDetails struct {
+	ExternalDetails string             `json:"externalDetails,omitempty"`
+	Ext             IssuanceDetailsExt `json:"ext,omitempty"`
+}
+
 // ReviewRequestOpRequestDetails is an XDR NestedUnion defines as:
 //
 //   union switch(ReviewableRequestType requestType) {
 //    	case WITHDRAW:
 //    		WithdrawalDetails withdrawal;
+//    	case ISSUANCE_CREATE:
+//    		IssuanceDetails issuance;
 //    	default:
 //    		void;
 //    	}
@@ -13417,6 +13501,7 @@ type WithdrawalDetails struct {
 type ReviewRequestOpRequestDetails struct {
 	RequestType ReviewableRequestType `json:"requestType,omitempty"`
 	Withdrawal  *WithdrawalDetails    `json:"withdrawal,omitempty"`
+	Issuance    *IssuanceDetails      `json:"issuance,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -13431,6 +13516,8 @@ func (u ReviewRequestOpRequestDetails) ArmForSwitch(sw int32) (string, bool) {
 	switch ReviewableRequestType(sw) {
 	case ReviewableRequestTypeWithdraw:
 		return "Withdrawal", true
+	case ReviewableRequestTypeIssuanceCreate:
+		return "Issuance", true
 	default:
 		return "", true
 	}
@@ -13447,6 +13534,13 @@ func NewReviewRequestOpRequestDetails(requestType ReviewableRequestType, value i
 			return
 		}
 		result.Withdrawal = &tv
+	case ReviewableRequestTypeIssuanceCreate:
+		tv, ok := value.(IssuanceDetails)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be IssuanceDetails")
+			return
+		}
+		result.Issuance = &tv
 	default:
 		// void
 	}
@@ -13472,6 +13566,31 @@ func (u ReviewRequestOpRequestDetails) GetWithdrawal() (result WithdrawalDetails
 
 	if armName == "Withdrawal" {
 		result = *u.Withdrawal
+		ok = true
+	}
+
+	return
+}
+
+// MustIssuance retrieves the Issuance value from the union,
+// panicing if the value is not set.
+func (u ReviewRequestOpRequestDetails) MustIssuance() IssuanceDetails {
+	val, ok := u.GetIssuance()
+
+	if !ok {
+		panic("arm Issuance is not set")
+	}
+
+	return val
+}
+
+// GetIssuance retrieves the Issuance value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewRequestOpRequestDetails) GetIssuance() (result IssuanceDetails, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "Issuance" {
+		result = *u.Issuance
 		ok = true
 	}
 
@@ -13525,6 +13644,8 @@ func NewReviewRequestOpExt(v LedgerVersion, value interface{}) (result ReviewReq
 //    	union switch(ReviewableRequestType requestType) {
 //    	case WITHDRAW:
 //    		WithdrawalDetails withdrawal;
+//    	case ISSUANCE_CREATE:
+//    		IssuanceDetails issuance;
 //    	default:
 //    		void;
 //    	} requestDetails;
@@ -16326,7 +16447,6 @@ func NewPreIssuanceRequestExt(v LedgerVersion, value interface{}) (result PreIss
 // PreIssuanceRequest is an XDR Struct defines as:
 //
 //   struct PreIssuanceRequest {
-//
 //    	AssetCode asset;
 //    	uint64 amount;
 //    	DecoratedSignature signature;
@@ -16393,6 +16513,7 @@ func NewIssuanceRequestExt(v LedgerVersion, value interface{}) (result IssuanceR
 //    	AssetCode asset;
 //    	uint64 amount;
 //    	BalanceID receiver;
+//    	string externalDetails<>; // details of the issuance (External system id, etc.)
 //    	// reserved for future use
 //        union switch (LedgerVersion v)
 //        {
@@ -16403,10 +16524,11 @@ func NewIssuanceRequestExt(v LedgerVersion, value interface{}) (result IssuanceR
 //    };
 //
 type IssuanceRequest struct {
-	Asset    AssetCode          `json:"asset,omitempty"`
-	Amount   Uint64             `json:"amount,omitempty"`
-	Receiver BalanceId          `json:"receiver,omitempty"`
-	Ext      IssuanceRequestExt `json:"ext,omitempty"`
+	Asset           AssetCode          `json:"asset,omitempty"`
+	Amount          Uint64             `json:"amount,omitempty"`
+	Receiver        BalanceId          `json:"receiver,omitempty"`
+	ExternalDetails string             `json:"externalDetails,omitempty"`
+	Ext             IssuanceRequestExt `json:"ext,omitempty"`
 }
 
 // WithdrawalType is an XDR Enum defines as:
@@ -16667,6 +16789,7 @@ func NewWithdrawalRequestExt(v LedgerVersion, value interface{}) (result Withdra
 //   struct WithdrawalRequest {
 //    	BalanceID balance; // balance id from which withdrawal will be performed
 //        uint64 amount; // amount to be withdrawn
+//        uint64 universalAmount; // amount in stats asset
 //    	Fee fee; // expected fee to be paid
 //        string externalDetails<>; // details of the withdrawal (External system id, etc.)
 //    	union switch (WithdrawalType withdrawalType) {
@@ -16685,6 +16808,7 @@ func NewWithdrawalRequestExt(v LedgerVersion, value interface{}) (result Withdra
 type WithdrawalRequest struct {
 	Balance         BalanceId                `json:"balance,omitempty"`
 	Amount          Uint64                   `json:"amount,omitempty"`
+	UniversalAmount Uint64                   `json:"universalAmount,omitempty"`
 	Fee             Fee                      `json:"fee,omitempty"`
 	ExternalDetails string                   `json:"externalDetails,omitempty"`
 	Details         WithdrawalRequestDetails `json:"details,omitempty"`

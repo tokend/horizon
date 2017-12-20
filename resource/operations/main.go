@@ -94,6 +94,9 @@ func New(
 	case xdr.OperationTypeCreateIssuanceRequest:
 		e := CreateIssuanceRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
+		if public {
+			e.ExternalDetails = ""
+		}
 		result = e
 	default:
 		result = base
