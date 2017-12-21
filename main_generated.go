@@ -286,6 +286,22 @@ func (action RootAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Requ
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action SaleIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SaleIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action SaleShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SaleShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action SignerShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)

@@ -179,7 +179,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
 		details["asset"] = string(op.Request.Asset)
 		details["balance_id"] = op.Request.Receiver.AsString()
-
+	case xdr.OperationTypeCreateSaleRequest:
+		// no details needed
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

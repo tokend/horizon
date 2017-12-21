@@ -80,7 +80,12 @@ func (action *WithdrawalIndexAction) loadRecord() {
 func (action *WithdrawalIndexAction) loadPage() {
 	for i := range action.Records {
 		var res reviewablerequest.ReviewableRequest
-		res.Populate(&action.Records[i])
+		err := res.Populate(&action.Records[i])
+		if err != nil {
+			action.Log.WithError(err).Error("Failed to populate reviewable request")
+			action.Err = &problem.ServerError
+			return
+		}
 		action.Page.Add(&res)
 	}
 

@@ -105,6 +105,8 @@ func ForOperation(
 		manageIssuanceResult := opResult.MustCreateIssuanceRequestResult()
 		result = append(result, Participant{manageIssuanceResult.MustSuccess().Receiver,
 		&manageIssuanceRequest.Request.Receiver, nil})
+	case xdr.OperationTypeCreateSaleRequest:
+		// the only direct participant is the source_account
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
