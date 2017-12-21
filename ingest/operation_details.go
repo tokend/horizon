@@ -106,7 +106,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["new_signer"] = op.NewSigner
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
-		details["balance_id"] = op.BalanceId
 		details["destination"] = op.Destination
 		details["action"] = op.Action
 	case xdr.OperationTypeReviewPaymentRequest:
