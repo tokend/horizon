@@ -9,21 +9,19 @@ import (
 	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
 )
 
-// ReviewableRequestIndexAction renders slice of reviewable requests
-type ReviewableRequestIndexAction struct {
+// WithdrawalIndexAction renders slice of reviewable requests
+type WithdrawalIndexAction struct {
 	Action
-	Reviewer     string
-	Requestor    string
-	Asset        string
+	DestAsset    string
+	Requester    string
 	State        *int64
-	TypeMask     *uint64
 	Records      []history.ReviewableRequest
 	PagingParams db2.PageQuery
 	Page         hal.Page
 }
 
 // JSON is a method for actions.JSON
-func (action *ReviewableRequestIndexAction) JSON() {
+func (action *WithdrawalIndexAction) JSON() {
 	action.Do(
 		action.EnsureHistoryFreshness,
 		action.loadParams,
@@ -36,48 +34,37 @@ func (action *ReviewableRequestIndexAction) JSON() {
 	)
 }
 
-func (action *ReviewableRequestIndexAction) loadParams() {
+func (action *WithdrawalIndexAction) loadParams() {
 	action.PagingParams = action.GetPageQuery()
-	action.Reviewer = action.GetString("reviewer")
-	action.Requestor = action.GetString("requestor")
+	action.DestAsset = action.GetString("to_asset")
 	action.State = action.GetOptionalInt64("state")
-	action.TypeMask = action.GetOptionalUint64("type_mask")
-	action.Asset = action.GetString("asset")
-
+	action.Requester = action.GetString("requester")
 	action.Page.Filters = map[string]string{
-		"reviewer":  action.Reviewer,
-		"requestor": action.Requestor,
+		"to_asset":  action.DestAsset,
 		"state":     action.GetString("state"),
-		"type_mask": action.GetString("type_mask"),
-		"asset":     action.Asset,
+		"requester": action.Requester,
 	}
 }
 
-func (action *ReviewableRequestIndexAction) checkAllowed() {
-	action.IsAllowed(action.Requestor, action.Reviewer)
+func (action *WithdrawalIndexAction) checkAllowed() {
+	action.IsAllowed("")
 }
 
-func (action *ReviewableRequestIndexAction) loadRecord() {
-	q := action.HistoryQ().ReviewableRequests()
+func (action *WithdrawalIndexAction) loadRecord() {
+	q := action.HistoryQ().
+		ReviewableRequests().
+		ForType(int64(xdr.ReviewableRequestTypeWithdraw))
 
-	if action.Reviewer != "" {
-		q = q.ForReviewer(action.Reviewer)
+	if action.DestAsset != "" {
+		q = q.ForDestAsset(action.DestAsset)
 	}
 
-	if action.Requestor != "" {
-		q = q.ForRequestor(action.Requestor)
-	}
-
-	if action.Asset != "" {
-		q = q.ForAsset(action.Asset)
+	if action.Requester != "" {
+		q = q.ForRequestor(action.Requester)
 	}
 
 	if action.State != nil {
 		q = q.ForState(*action.State)
-	}
-
-	if action.TypeMask != nil {
-		q = q.ForTypes(parseRequestTypeMask(*action.TypeMask))
 	}
 
 	q = q.Page(action.PagingParams)
@@ -90,7 +77,7 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 	}
 }
 
-func (action *ReviewableRequestIndexAction) loadPage() {
+func (action *WithdrawalIndexAction) loadPage() {
 	for i := range action.Records {
 		var res reviewablerequest.ReviewableRequest
 		err := res.Populate(&action.Records[i])
@@ -108,16 +95,4 @@ func (action *ReviewableRequestIndexAction) loadPage() {
 	action.Page.Cursor = action.PagingParams.Cursor
 	action.Page.Order = action.PagingParams.Order
 	action.Page.PopulateLinks()
-}
-
-func parseRequestTypeMask(mask uint64) []xdr.ReviewableRequestType {
-	result := make([]xdr.ReviewableRequestType, 0, len(xdr.ReviewableRequestTypeAll))
-	var val uint64
-	for _, requestType := range xdr.ReviewableRequestTypeAll {
-		val = 1 << uint64(requestType)
-		if mask&val == val {
-			result = append(result, requestType)
-		}
-	}
-	return result
 }

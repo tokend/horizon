@@ -8,6 +8,7 @@ import (
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"time"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -81,30 +82,45 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.Rev
 }
 
 func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose
+	_ = json.Unmarshal([]byte(request.Details), &details)
+	description, _ := details["description"].(string)
+	externalResourceLink, _ := details["external_resource_link"].(string)
+	name, _ := details["name"].(string)
+	logoID, _ := details["logo_id"].(string)
 	return history.AssetCreationRequest{
 		Asset:                string(request.Code),
-		Description:          string(request.Description),
-		ExternalResourceLink: string(request.ExternalResourceLink),
+		Description:          description,
+		ExternalResourceLink: externalResourceLink,
 		Policies:             int32(request.Policies),
-		Name:                 string(request.Name),
+		Name:                 name,
 		PreIssuedAssetSigner: request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:    amount.StringU(uint64(request.MaxIssuanceAmount)),
-		LogoID:               string(request.LogoId),
+		LogoID:               logoID,
 	}
 }
 
 func getAssetUpdate(request *xdr.AssetUpdateRequest) history.AssetUpdateRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose
+	_ = json.Unmarshal([]byte(request.Details), &details)
+	description, _ := details["description"].(string)
+	externalResourceLink, _ := details["external_resource_link"].(string)
+	name, _ := details["name"].(string)
+	logoID, _ := details["logo_id"].(string)
 	return history.AssetUpdateRequest{
 		Asset:                string(request.Code),
-		Description:          string(request.Description),
-		ExternalResourceLink: string(request.ExternalResourceLink),
+		Name:                 name,
+		Description:          description,
+		ExternalResourceLink: externalResourceLink,
 		Policies:             int32(request.Policies),
-		LogoID:               string(request.LogoId),
+		LogoID:               logoID,
 	}
 }
 
 func getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (history.PreIssuanceRequest, error) {
-	signature, err := xdr.MarshalBase64(request.Amount)
+	signature, err := xdr.MarshalBase64(request.Signature)
 	if err != nil {
 		return history.PreIssuanceRequest{}, errors.Wrap(err, "failed to marshal signature")
 	}
@@ -131,9 +147,25 @@ func getWithdrawalRequest(request *xdr.WithdrawalRequest) history.WithdrawalRequ
 		Amount:          amount.StringU(uint64(request.Amount)),
 		FixedFee:        amount.StringU(uint64(request.Fee.Fixed)),
 		PercentFee:      amount.StringU(uint64(request.Fee.Percent)),
-		ExternalDetails: request.ExternalDetails,
+		ExternalDetails: string(request.ExternalDetails),
 		DestAssetCode:   string(request.Details.AutoConversion.DestAsset),
 		DestAssetAmount: amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
+	}
+}
+
+func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.Details), &details)
+	return history.SaleRequest{
+		BaseAsset:  string(request.BaseAsset),
+		QuoteAsset: string(request.QuoteAsset),
+		StartTime:  time.Unix(int64(request.StartTime), 0).UTC(),
+		EndTime:    time.Unix(int64(request.EndTime), 0).UTC(),
+		Price:      amount.StringU(uint64(request.Price)),
+		SoftCap:    amount.StringU(uint64(request.SoftCap)),
+		HardCap:    amount.StringU(uint64(request.HardCap)),
+		Details:    details,
 	}
 }
 
@@ -154,6 +186,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, 
 		}
 	case xdr.ReviewableRequestTypeWithdraw:
 		rawDetails = getWithdrawalRequest(body.WithdrawalRequest)
+	case xdr.ReviewableRequestTypeSale:
+		rawDetails = getSaleRequest(body.SaleCreationRequest)
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

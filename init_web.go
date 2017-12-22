@@ -190,6 +190,11 @@ func initWebActions(app *App) {
 	// Reviewable Request actions
 	r.Get("/requests/:id", &ReviewableRequestShowAction{})
 	r.Get("/requests", &ReviewableRequestIndexAction{})
+	r.Get("/request/withdrawals", &WithdrawalIndexAction{})
+
+	// Sales actions
+	r.Get("/sales/:id", &SaleShowAction{})
+	r.Get("/sales", &SaleIndexAction{})
 
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// legacy constraints:

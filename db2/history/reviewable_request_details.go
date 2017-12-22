@@ -1,5 +1,7 @@
 package history
 
+import "time"
+
 type AssetCreationRequest struct {
 	Asset                string `json:"asset"`
 	Description          string `json:"description"`
@@ -13,6 +15,7 @@ type AssetCreationRequest struct {
 
 type AssetUpdateRequest struct {
 	Asset                string `json:"asset"`
+	Name                 string `json:"name"`
 	Description          string `json:"description"`
 	ExternalResourceLink string `json:"external_resource_link"`
 	Policies             int32  `json:"policies"`
@@ -41,4 +44,15 @@ type WithdrawalRequest struct {
 	DestAssetCode   string                 `json:"dest_asset_code"`
 	DestAssetAmount string                 `json:"dest_asset_amount"`
 	ReviewerDetails map[string]interface{} `json:"reviewer_details"`
+}
+
+type SaleRequest struct {
+	BaseAsset  string                 `json:"base_asset"`
+	QuoteAsset string                 `json:"quote_asset"`
+	StartTime  time.Time              `json:"start_time"`
+	EndTime    time.Time              `json:"end_time"`
+	Price      string                 `json:"price"`
+	SoftCap    string                 `json:"soft_cap"`
+	HardCap    string                 `json:"hard_cap"`
+	Details    map[string]interface{} `json:"details"`
 }

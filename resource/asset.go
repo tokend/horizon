@@ -23,14 +23,17 @@ func (a *Asset) Populate(asset *core.Asset) {
 	a.Code = asset.Code
 	a.Owner = asset.Owner
 	a.AvailableForIssuance = amount.StringU(asset.AvailableForIssuance)
-	a.Name = asset.Name
+
 	a.PreissuedAssetSigner = asset.PreissuedAssetSigner
-	a.Description = asset.Description
-	a.ExternalResourceLink = asset.ExternalResourceLink
+
 	a.MaxIssuanceAmount = amount.StringU(asset.MaxIssuanceAmount)
 	a.Issued = amount.StringU(asset.Issued)
 	a.Policies.Populate(*asset)
-	a.LogoID = asset.LogoID
+	details := asset.GetDetails()
+	a.Name = details.Name
+	a.LogoID = details.LogoID
+	a.Description = details.Description
+	a.ExternalResourceLink = details.ExternalResourceLink
 }
 
 type AssetPair struct {

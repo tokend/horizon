@@ -106,7 +106,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["new_signer"] = op.NewSigner
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
-		details["balance_id"] = op.BalanceId
 		details["destination"] = op.Destination
 		details["action"] = op.Action
 	case xdr.OperationTypeReviewPaymentRequest:
@@ -179,7 +178,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
 		details["asset"] = string(op.Request.Asset)
 		details["balance_id"] = op.Request.Receiver.AsString()
-
+	case xdr.OperationTypeCreateSaleRequest:
+		// no details needed
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
