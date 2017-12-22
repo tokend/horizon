@@ -113,4 +113,16 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
+
+	Convey("Withdrawal", t, func() {
+		for _, code := range xdr.CreateWithdrawalRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Create sale", t, func() {
+		for _, code := range xdr.CreateSaleCreationRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
 }

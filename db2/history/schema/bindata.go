@@ -16,6 +16,7 @@
 // migrations/015_account_type.sql
 // migrations/016_balance_updates_index.sql
 // migrations/017_reviewable_request.sql
+// migrations/018_sale.sql
 // DO NOT EDIT!
 
 package schema
@@ -178,7 +179,7 @@ func migrations001_squashedSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "migrations/001_squashed.sql", size: 14675, mode: os.FileMode(438), modTime: time.Unix(1511895155, 0)}
+	info := bindataFileInfo{name: "migrations/001_squashed.sql", size: 14675, mode: os.FileMode(438), modTime: time.Unix(1512143622, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -318,7 +319,7 @@ func migrations009_use_long_assetsSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "migrations/009_use_long_assets.sql", size: 213, mode: os.FileMode(438), modTime: time.Unix(1511895194, 0)}
+	info := bindataFileInfo{name: "migrations/009_use_long_assets.sql", size: 213, mode: os.FileMode(438), modTime: time.Unix(1512143622, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -398,7 +399,27 @@ func migrations017_reviewable_requestSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "migrations/017_reviewable_request.sql", size: 495, mode: os.FileMode(438), modTime: time.Unix(1512040981, 0)}
+	info := bindataFileInfo{name: "migrations/017_reviewable_request.sql", size: 495, mode: os.FileMode(438), modTime: time.Unix(1512143622, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _migrations018_saleSql = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\x94\x92\xdf\x6a\xf2\x30\x1c\x86\xcf\x03\xb9\x87\xdf\x61\xcb\xa7\xe0\x37\xd8\x4e\x64\x42\xac\xd9\x0c\x5a\x95\x18\x87\x1e\x95\xcc\x66\x33\xa0\x8d\x4b\x22\xc2\xae\x7e\x54\xfb\x6f\x0a\xe2\x72\x96\xe4\x79\x12\xf2\xe6\x6d\xb7\xe1\xdf\x4e\x7f\x5a\xe9\x15\x2c\xf6\x18\x61\x14\x71\x4a\x04\x05\x41\xfa\x63\x0a\x4e\x6e\x15\x46\x01\x46\x00\x3a\x85\x7a\xf4\xd9\x2b\x9b\x88\x72\x36\x99\x0a\x98\x2c\xc6\x63\x88\x86\x34\x1a\x41\xa0\x53\xe8\x3d\x43\x27\x6c\xe5\x9e\x39\x66\xca\x26\x85\xfd\x46\x78\x34\x24\x3c\x78\x7c\x0a\x1b\xde\x89\x7b\x97\x4e\x25\xd2\x39\xe5\x1b\xdc\xff\x6b\xee\xeb\x60\x7c\x05\xde\xe0\x9c\x97\xd6\x27\x5e\xef\x14\x00\x08\x16\xd3\xb9\x20\xf1\x0c\x8e\xda\x6f\xcc\xc1\xc3\x69\xe3\xdb\x64\xea\xb7\xa5\xb2\xb4\x74\xfe\x60\xed\xad\x5e\xab\x2a\x8d\x45\x4c\x39\x8b\x82\x87\x4e\xab\x13\x5e\x65\x73\x46\x7b\x65\x3a\xce\x7c\xf8\x64\x2d\xf7\x77\x98\x15\x5a\x67\xbb\x91\x36\xbd\xd3\xae\xd0\xda\x5e\x1f\xac\x55\x59\x71\xfd\x6d\xbb\x89\xd6\x07\xa4\xca\x4b\xbd\x75\xe7\x67\x0b\xba\x14\x75\x41\x2e\xbf\xc2\x57\xf1\x34\x7a\x73\xc9\xcd\x38\x8b\x09\x5f\xc1\x88\xae\xf2\x12\x85\x18\x85\xdd\xbc\x92\xcd\x92\x0e\xcc\x31\xcb\xd7\x06\x7c\x3a\x2b\x4a\xca\x5e\x80\x2e\xd9\x5c\xcc\x4f\x75\xed\x62\xf4\x13\x00\x00\xff\xff\x98\xfb\x27\x87\xd5\x02\x00\x00")
+
+func migrations018_saleSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations018_saleSql,
+		"migrations/018_sale.sql",
+	)
+}
+
+func migrations018_saleSql() (*asset, error) {
+	bytes, err := migrations018_saleSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/018_sale.sql", size: 725, mode: os.FileMode(438), modTime: time.Unix(1513880163, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -471,6 +492,7 @@ var _bindata = map[string]func() (*asset, error){
 	"migrations/015_account_type.sql": migrations015_account_typeSql,
 	"migrations/016_balance_updates_index.sql": migrations016_balance_updates_indexSql,
 	"migrations/017_reviewable_request.sql": migrations017_reviewable_requestSql,
+	"migrations/018_sale.sql": migrations018_saleSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -530,6 +552,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"015_account_type.sql": &bintree{migrations015_account_typeSql, map[string]*bintree{}},
 		"016_balance_updates_index.sql": &bintree{migrations016_balance_updates_indexSql, map[string]*bintree{}},
 		"017_reviewable_request.sql": &bintree{migrations017_reviewable_requestSql, map[string]*bintree{}},
+		"018_sale.sql": &bintree{migrations018_saleSql, map[string]*bintree{}},
 	}},
 }}
 

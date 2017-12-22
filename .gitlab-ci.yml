@@ -49,7 +49,10 @@ deploy:dev:
     - curl -X POST http://$HOST_DEV:8842/CjUwUQjuiw_QCnB5Mg0K0Q
   only:
     - dev
-
+  environment:
+    name: dev
+    url: http://18.195.18.3:8000
+    
 deploy:staging:
   stage: deploy
   script:

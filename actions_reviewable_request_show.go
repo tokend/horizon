@@ -23,7 +23,12 @@ func (action *ReviewableRequestShowAction) JSON() {
 		action.checkAllowed,
 		func() {
 			var res reviewablerequest.ReviewableRequest
-			res.Populate(action.Record)
+			err := res.Populate(action.Record)
+			if err != nil {
+				action.Log.WithError(err).Error("Failed to populate reviewable request")
+				action.Err = &problem.ServerError
+				return
+			}
 			hal.Render(action.W, res)
 		},
 	)

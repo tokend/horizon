@@ -1,6 +1,9 @@
 package core
 
-import sq "github.com/lann/squirrel"
+import (
+	"github.com/go-errors/errors"
+	"gitlab.com/swarmfund/go/amount"
+)
 
 type AssetPair struct {
 	BaseAsset               string `db:"base"`
@@ -12,23 +15,18 @@ type AssetPair struct {
 	Policies                int32  `db:"policies"`
 }
 
-func (q *Q) AssetPairs() ([]AssetPair, error) {
-	sql := selectAssetPair
-	var assetPairs []AssetPair
-	err := q.Select(&assetPairs, sql)
-	return assetPairs, err
-}
-
-// returns nil, if not found
-func (q *Q) AssetPair(base, quote string) (*AssetPair, error) {
-	sql := selectAssetPair.Where("base = ? AND quote = ?", base, quote)
-	var result AssetPair
-	err := q.Get(&result, sql)
-	if q.Repo.NoRows(err) {
-		return nil, nil
+// ConvertToDestAsset - converts specified amount to dest asset using current price,
+// returns false - if failed
+func (pair AssetPair) ConvertToDestAsset(destCode string, amountToConvert int64) (int64, bool, error) {
+	if pair.CurrentPrice == 0 {
+		return 0, false, errors.New("Price is invalid")
 	}
 
-	return &result, err
-}
+	if pair.QuoteAsset == destCode {
+		result, isOverflow := amount.BigDivide(amountToConvert, pair.CurrentPrice, amount.One, amount.ROUND_DOWN)
+		return result, !isOverflow, nil
+	}
 
-var selectAssetPair = sq.Select("a.base, a.quote, a.current_price, a.physical_price, a.physical_price_correction, a.max_price_step, a.policies").From("asset_pair a")
+	result, isOverflow := amount.BigDivide(amountToConvert, amount.One, pair.CurrentPrice, amount.ROUND_DOWN)
+	return result, !isOverflow, nil
+}

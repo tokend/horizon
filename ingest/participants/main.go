@@ -61,7 +61,9 @@ func ForOperation(
 		result = append(result, Participant{op.Body.MustRecoverOp().Account, nil, nil})
 	case xdr.OperationTypeManageBalance:
 		manageBalanceOp := op.Body.MustManageBalanceOp()
-		result = append(result, Participant{manageBalanceOp.Destination, nil, nil})
+		if sourceParticipant.AccountID.Address() != manageBalanceOp.Destination.Address() {
+			result = append(result, Participant{manageBalanceOp.Destination, nil, nil})
+		}
 	case xdr.OperationTypeReviewPaymentRequest:
 	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAsset:
@@ -105,6 +107,8 @@ func ForOperation(
 		manageIssuanceResult := opResult.MustCreateIssuanceRequestResult()
 		result = append(result, Participant{manageIssuanceResult.MustSuccess().Receiver,
 		&manageIssuanceRequest.Request.Receiver, nil})
+	case xdr.OperationTypeCreateSaleRequest:
+		// the only direct participant is the source_account
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

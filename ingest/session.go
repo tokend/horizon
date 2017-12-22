@@ -141,20 +141,6 @@ func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.Manag
 
 }
 
-func (is *Session) approve(op xdr.ReviewRequestOp) error {
-	err := is.Cursor.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
-	if err != nil {
-		return errors.Wrap(err, "failed to approve reviewable request")
-	}
-
-	err = is.Ingestion.UpdatePayment(op.RequestId, true, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to approve operation")
-	}
-
-	return nil
-}
-
 func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
 	err := is.Cursor.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
 	if err != nil {
@@ -167,32 +153,6 @@ func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
 	}
 
 	return nil
-}
-
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
-	if is.Err != nil {
-		return
-	}
-
-	var err error
-	switch op.Action {
-	case xdr.ReviewRequestOpActionApprove:
-		err = is.approve(op)
-	case xdr.ReviewRequestOpActionPermanentReject:
-		err = is.permanentReject(op)
-	case xdr.ReviewRequestOpActionReject:
-		return
-	default:
-		err = errors.From(errors.New("Unexpected review request action"), map[string]interface{}{
-			"action_type": op.Action,
-		})
-	}
-
-	if err != nil {
-		is.Err = errors.Wrap(err, "failed to process review request", map[string]interface{}{
-			"request_id": uint64(op.RequestId),
-		})
-	}
 }
 
 func (is *Session) processManageAsset(op *xdr.ManageAssetOp) {

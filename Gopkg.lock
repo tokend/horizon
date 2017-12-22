@@ -284,10 +284,10 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/issuance_request_details"
+  branch = "master"
   name = "gitlab.com/swarmfund/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "c04921a070c8f3ca300222c9c91bb5d0ac18fc88"
+  revision = "e7074e87e64f38f959a7798e0916a2cf6fc0bce4"
 
 [[projects]]
   branch = "master"
@@ -346,6 +346,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0ff2ac0ae638d4f63241b8ea12c382f19214ad1f4a5fa6fc7ea2443ac5ba2a19"
+  inputs-digest = "2bf0a23db49010e2db8a350843591f27086a55a2a4f531f959d5ff136494f031"
   solver-name = "gps-cdcl"
   solver-version = 1
