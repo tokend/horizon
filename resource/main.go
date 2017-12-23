@@ -11,14 +11,6 @@ import (
 	"golang.org/x/net/context"
 )
 
-// AccountThresholds represents an accounts "thresholds", the numerical values
-// needed to satisfy the authorization of a given operation.
-type AccountThresholds struct {
-	LowThreshold  byte `json:"low_threshold"`
-	MedThreshold  byte `json:"med_threshold"`
-	HighThreshold byte `json:"high_threshold"`
-}
-
 type BalancePublic struct {
 	ID        string `json:"id,omitempty"`
 	BalanceID string `json:"balance_id"`
@@ -41,29 +33,6 @@ type HistoryAccount struct {
 	ID        string `json:"id,omitempty"`
 	PT        string `json:"paging_token,omitempty"`
 	AccountID string `json:"account_id"`
-}
-
-// Ledger represents a single closed ledger
-type Ledger struct {
-	Links struct {
-		Self         hal.Link `json:"self"`
-		Transactions hal.Link `json:"transactions"`
-		Operations   hal.Link `json:"operations"`
-		Payments     hal.Link `json:"payments"`
-	} `json:"_links"`
-	ID               string    `json:"id"`
-	PT               string    `json:"paging_token"`
-	Hash             string    `json:"hash"`
-	PrevHash         string    `json:"prev_hash,omitempty"`
-	Sequence         int32     `json:"sequence"`
-	TransactionCount int32     `json:"transaction_count"`
-	OperationCount   int32     `json:"operation_count"`
-	ClosedAt         time.Time `json:"closed_at"`
-	TotalCoins       string    `json:"total_coins"`
-	FeePool          string    `json:"fee_pool"`
-	BaseFee          int32     `json:"base_fee"`
-	BaseReserve      string    `json:"base_reserve"`
-	MaxTxSetSize     int32     `json:"max_tx_set_size"`
 }
 
 // Transaction represents a single, successful transaction

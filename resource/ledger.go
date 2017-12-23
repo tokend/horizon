@@ -2,6 +2,7 @@ package resource
 
 import (
 	"fmt"
+	"time"
 
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -9,6 +10,29 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"golang.org/x/net/context"
 )
+
+// Ledger represents a single closed ledger
+type Ledger struct {
+	Links struct {
+		Self         hal.Link `json:"self"`
+		Transactions hal.Link `json:"transactions"`
+		Operations   hal.Link `json:"operations"`
+		Payments     hal.Link `json:"payments"`
+	} `json:"_links"`
+	ID               string    `json:"id"`
+	PT               string    `json:"paging_token"`
+	Hash             string    `json:"hash"`
+	PrevHash         string    `json:"prev_hash,omitempty"`
+	Sequence         int32     `json:"sequence"`
+	TransactionCount int32     `json:"transaction_count"`
+	OperationCount   int32     `json:"operation_count"`
+	ClosedAt         time.Time `json:"closed_at"`
+	TotalCoins       string    `json:"total_coins"`
+	FeePool          string    `json:"fee_pool"`
+	BaseFee          int32     `json:"base_fee"`
+	BaseReserve      string    `json:"base_reserve"`
+	MaxTxSetSize     int32     `json:"max_tx_set_size"`
+}
 
 func (this *Ledger) Populate(ctx context.Context, row history.Ledger) {
 	this.ID = row.LedgerHash
