@@ -2,6 +2,7 @@ package resource
 
 import (
 	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 )
 
@@ -19,4 +20,11 @@ func (s *Limits) Populate(row core.Limits) {
 	s.WeeklyOut = amount.String(row.WeeklyOut)
 	s.MonthlyOut = amount.String(row.MonthlyOut)
 	s.AnnualOut = amount.String(row.AnnualOut)
+}
+
+func (s *Limits) FromXDR(row xdr.Limits) {
+	s.DailyOut = amount.String(int64(row.DailyOut))
+	s.WeeklyOut = amount.String(int64(row.WeeklyOut))
+	s.MonthlyOut = amount.String(int64(row.MonthlyOut))
+	s.AnnualOut = amount.String(int64(row.AnnualOut))
 }

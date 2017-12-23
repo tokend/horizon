@@ -8,12 +8,12 @@ import (
 
 // Signer represents one of an account's signers.
 type Signer struct {
-	PublicKey      string       `json:"public_key"`
-	Weight         int32        `json:"weight"`
-	SignerTypeI    int32        `json:"signer_type_i"`
+	PublicKey      string      `json:"public_key"`
+	Weight         int32       `json:"weight"`
+	SignerTypeI    int32       `json:"signer_type_i"`
 	SignerTypes    []base.Flag `json:"signer_types"`
-	SignerIdentity int32        `json:"signer_identity"`
-	SignerName     string       `json:"signer_name"`
+	SignerIdentity int32       `json:"signer_identity"`
+	SignerName     string      `json:"signer_name"`
 }
 
 // Populate fills out the fields of the signer, using one of an account's
@@ -29,4 +29,14 @@ func (s *Signer) populate(publicKey string, weight, rawSignerType, identity int3
 	s.SignerIdentity = identity
 	s.SignerName = name
 	s.SignerTypes = base.FlagFromXdrSignerType(rawSignerType, xdr.SignerTypeAll)
+}
+
+func (s *Signer) FromXDR(xSigner xdr.Signer) {
+	s.PublicKey = xSigner.PubKey.Address()
+	s.Weight = int32(xSigner.Weight)
+	s.SignerTypeI = int32(xSigner.SignerType)
+	s.SignerIdentity = int32(xSigner.Identity)
+	s.SignerName = string(xSigner.Name)
+	s.SignerTypes = base.FlagFromXdrSignerType(s.SignerTypeI, xdr.SignerTypeAll)
+
 }

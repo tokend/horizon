@@ -1,11 +1,19 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
-func (this *AccountThresholds) Populate(row core.Account) {
-	this.LowThreshold = row.Thresholds[1]
-	this.MedThreshold = row.Thresholds[2]
-	this.HighThreshold = row.Thresholds[3]
+// AccountThresholds represents an accounts "thresholds", the numerical values
+// needed to satisfy the authorization of a given operation.
+type AccountThresholds struct {
+	LowThreshold  byte `json:"low_threshold"`
+	MedThreshold  byte `json:"med_threshold"`
+	HighThreshold byte `json:"high_threshold"`
+}
+
+func (this *AccountThresholds) Populate(thresholds xdr.Thresholds) {
+	this.LowThreshold = thresholds[1]
+	this.MedThreshold = thresholds[2]
+	this.HighThreshold = thresholds[3]
 }
