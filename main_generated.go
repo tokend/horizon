@@ -1,8 +1,9 @@
 package horizon
 
 import (
-	"github.com/zenazn/goji/web"
 	"net/http"
+
+	"github.com/zenazn/goji/web"
 )
 
 // ServeHTTPC is a method for web.Handler
@@ -154,6 +155,14 @@ func (action KdfParamsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "KdfParamsAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action LedgerChangesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "LedgerChangesAction")
 	ap.Execute(&action)
 }
 
