@@ -43,11 +43,12 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 	action.Reviewer = action.GetString("reviewer")
 	action.Requestor = action.GetString("requestor")
 	action.State = action.GetOptionalInt64("state")
+	action.Page.Filters = map[string]string{}
 	for key := range action.RequestSpecificFilters {
 		action.RequestSpecificFilters[key] = action.GetString(key)
+		action.Page.Filters[key] = action.RequestSpecificFilters[key]
 	}
 
-	action.Page.Filters = action.RequestSpecificFilters
 	action.Page.Filters["reviewer"] = action.Reviewer
 	action.Page.Filters["requestor"] = action.Requestor
 	action.Page.Filters["state"] = action.GetString("state")
