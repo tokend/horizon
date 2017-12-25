@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"encoding/hex"
+	"encoding/json"
 
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
@@ -96,7 +97,12 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["balance"] = request.Balance.AsString()
 		details["fee_fixed"] = amount.StringU(uint64(request.Fee.Fixed))
 		details["fee_percent"] = amount.StringU(uint64(request.Fee.Percent))
-		details["external_details"] = request.ExternalDetails
+
+		var externalDetails map[string]interface{}
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(request.ExternalDetails), &externalDetails)
+		details["external_details"] = externalDetails
+
 		details["dest_asset"] = request.Details.AutoConversion.DestAsset
 		details["dest_amount"] = amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount))
 	case xdr.OperationTypeRecover:
@@ -178,7 +184,11 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
 		details["asset"] = string(op.Request.Asset)
 		details["balance_id"] = op.Request.Receiver.AsString()
-		details["external_details"] = op.Request.ExternalDetails
+
+		var externalDetails map[string]interface{}
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(op.Request.ExternalDetails), &externalDetails)
+		details["external_details"] = externalDetails
 	case xdr.OperationTypeCreateSaleRequest:
 		// no details needed
 	default:
