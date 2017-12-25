@@ -62,6 +62,14 @@ func (action AssetPairsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *htt
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action AssetPairsConverterAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "AssetPairsConverterAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action AssetsIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
@@ -122,14 +130,6 @@ func (action FeesShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "FeesShowAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action ForfeitRequestAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "ForfeitRequestAction")
 	ap.Execute(&action)
 }
 
@@ -286,6 +286,22 @@ func (action RootAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Requ
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action SaleIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SaleIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action SaleShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SaleShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action SignerShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
@@ -330,5 +346,13 @@ func (action TransactionShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "TransactionShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action WithdrawalIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "WithdrawalIndexAction")
 	ap.Execute(&action)
 }

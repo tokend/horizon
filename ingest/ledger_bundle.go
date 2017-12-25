@@ -40,7 +40,7 @@ func (lb *LedgerBundle) Load(coreQ core.QInterface, historyQ history.QInterface)
 }
 
 func getAssetPairs(coreQ core.QInterface, historyQ history.QInterface) (assetPairs []core.AssetPair, err error) {
-	assetPairs, err = coreQ.AssetPairs()
+	assetPairs, err = coreQ.AssetPairs().Select()
 	if err != nil {
 		return assetPairs, err
 	}

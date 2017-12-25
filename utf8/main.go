@@ -3,12 +3,15 @@ package utf8
 
 import (
 	"bytes"
+	"strings"
 	"unicode/utf8"
 )
 
 // Scrub ensures that a given string is valid utf-8, replacing any invalid byte
 // sequences with the utf-8 replacement character.
 func Scrub(in string) string {
+	// drop nil bytes
+	in = strings.Replace(in, "\u0000", "", -1)
 
 	// First check validity using the stdlib, returning if the string is already
 	// valid

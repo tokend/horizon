@@ -371,6 +371,10 @@ func (base *Base) GetAccountID(name string) (result xdr.AccountId) {
 // the string at the provided name in accordance with the stellar client
 // conventions
 func (base *Base) GetAmount(name string) int64 {
+	if base.Err != nil {
+		return 0
+	}
+
 	var err error
 	result, err := amount.Parse(base.GetString(name))
 
@@ -379,7 +383,7 @@ func (base *Base) GetAmount(name string) int64 {
 		return 0
 	}
 
-	return int64(result)
+	return result
 }
 
 // SetInvalidField establishes an error response triggered by an invalid

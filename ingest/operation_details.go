@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"encoding/hex"
+
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/utf8"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -104,7 +106,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["new_signer"] = op.NewSigner
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
-		details["balance_id"] = op.BalanceId
 		details["destination"] = op.Destination
 		details["action"] = op.Action
 	case xdr.OperationTypeReviewPaymentRequest:
@@ -173,11 +174,12 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// no details needed
 	case xdr.OperationTypeCreateIssuanceRequest:
 		op := c.Operation().Body.MustCreateIssuanceRequestOp()
-		details["reference"] = string(op.Reference)
+		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
 		details["asset"] = string(op.Request.Asset)
 		details["balance_id"] = op.Request.Receiver.AsString()
-
+	case xdr.OperationTypeCreateSaleRequest:
+		// no details needed
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

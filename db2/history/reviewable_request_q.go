@@ -2,8 +2,8 @@ package history
 
 import (
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
 )
 
@@ -31,6 +31,8 @@ type ReviewableRequestQI interface {
 	ForType(requestType int64) ReviewableRequestQI
 	// ForAsset - filters requests by asset
 	ForAsset(asset string) ReviewableRequestQI
+	// ForDestAsset - filters requests by `dest_asset_code`.
+	ForDestAsset(asset string) ReviewableRequestQI
 	// ForTypes - filters requests by request type
 	ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI
 	// Page specifies the paging constraints for the query being built by `q`.
@@ -192,6 +194,16 @@ func (q *ReviewableRequestQ) ForAsset(asset string) ReviewableRequestQI {
 	}
 
 	q.sql = q.sql.Where("details->>'asset' = ?", asset)
+	return q
+}
+
+// ForDestAsset - filters requests by `dest_asset_code`.
+func (q *ReviewableRequestQ) ForDestAsset(asset string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details ->> 'dest_asset_code' = ?", asset)
 	return q
 }
 
