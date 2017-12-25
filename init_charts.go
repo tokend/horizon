@@ -31,7 +31,6 @@ func initCharts(app *App) {
 			errors.Wrap(err, "Unable to select")
 		}
 		for _, record := range records {
-			//record.LedgerCloseTime ---!!! достает время закрыя леджера,нужно для point::time
 			curs.Cursor = record.PagingToken()
 
 			assetChanges, err := process(record.TxMeta)
