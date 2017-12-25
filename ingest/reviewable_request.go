@@ -134,21 +134,27 @@ func getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (history.PreIssuance
 }
 
 func getIssuanceRequest(request *xdr.IssuanceRequest) history.IssuanceRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.ExternalDetails), &details)
 	return history.IssuanceRequest{
 		Asset:           string(request.Asset),
 		Amount:          amount.StringU(uint64(request.Amount)),
 		Receiver:        request.Receiver.AsString(),
-		ExternalDetails: request.ExternalDetails,
+		ExternalDetails: details,
 	}
 }
 
 func getWithdrawalRequest(request *xdr.WithdrawalRequest) history.WithdrawalRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.ExternalDetails), &details)
 	return history.WithdrawalRequest{
 		BalanceID:       request.Balance.AsString(),
 		Amount:          amount.StringU(uint64(request.Amount)),
 		FixedFee:        amount.StringU(uint64(request.Fee.Fixed)),
 		PercentFee:      amount.StringU(uint64(request.Fee.Percent)),
-		ExternalDetails: string(request.ExternalDetails),
+		ExternalDetails: details,
 		DestAssetCode:   string(request.Details.AutoConversion.DestAsset),
 		DestAssetAmount: amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
 	}

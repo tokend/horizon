@@ -2,8 +2,8 @@ package operations
 
 type CreateIssuanceRequest struct {
 	Base
-	Reference       string `json:"reference"`
-	Amount          string `json:"amount"`
-	Asset           string `json:"asset"`
-	ExternalDetails string `json:"external_details"`
+	Reference       string                 `json:"reference"`
+	Amount          string                 `json:"amount"`
+	Asset           string                 `json:"asset"`
+	ExternalDetails map[string]interface{} `json:"external_details"`
 }

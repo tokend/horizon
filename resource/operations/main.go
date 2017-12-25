@@ -67,7 +67,7 @@ func New(
 		e := CreateWithdrawalRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
 		if public {
-			e.ExternalDetails = ""
+			e.ExternalDetails = nil
 		}
 		result = e
 	case xdr.OperationTypeSetLimits:
@@ -95,7 +95,7 @@ func New(
 		e := CreateIssuanceRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
 		if public {
-			e.ExternalDetails = ""
+			e.ExternalDetails = nil
 		}
 		result = e
 	default:
@@ -109,9 +109,9 @@ func New(
 // is CreateAccount.
 type CreateAccount struct {
 	Base
-	Funder      string  `json:"funder,omitempty"`
-	Account     string  `json:"account,omitempty"`
-	AccountType int32   `json:"account_type"`
+	Funder      string `json:"funder,omitempty"`
+	Account     string `json:"account,omitempty"`
+	AccountType int32  `json:"account_type"`
 }
 
 type BasePayment struct {

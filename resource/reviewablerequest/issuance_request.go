@@ -10,7 +10,7 @@ type IssuanceRequest struct {
 	Asset    string `json:"asset"`
 	Amount   string `json:"amount"`
 	Receiver string `json:"receiver"`
-	ExternalDetails string `json:"external_details"`
+	ExternalDetails map[string]interface{} `json:"external_details"`
 }
 
 func (r *IssuanceRequest) Populate(histRequest history.IssuanceRequest) {
