@@ -5,6 +5,7 @@ import (
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
+	"fmt"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -29,14 +30,12 @@ type ReviewableRequestQI interface {
 	ForState(state int64) ReviewableRequestQI
 	// ForType - filters requests by type
 	ForType(requestType int64) ReviewableRequestQI
-	// ForAsset - filters requests by asset
-	ForAsset(asset string) ReviewableRequestQI
-	// ForDestAsset - filters requests by `dest_asset_code`.
-	ForDestAsset(asset string) ReviewableRequestQI
 	// ForTypes - filters requests by request type
 	ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI
 	// Page specifies the paging constraints for the query being built by `q`.
 	Page(page db2.PageQuery) ReviewableRequestQI
+	// ByDetails - filters by specified key value from the details. Note: do not pass key passed by user
+	ByDetails(key, value string) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
 	Select() ([]ReviewableRequest, error)
 }
@@ -187,23 +186,13 @@ func (q *ReviewableRequestQ) ForType(requestType int64) ReviewableRequestQI {
 	return q
 }
 
-// ForAsset - filters requests by asset
-func (q *ReviewableRequestQ) ForAsset(asset string) ReviewableRequestQI {
+// ByDetails - filters by specified key value from the details. Note: do not pass key passed by user
+func (q *ReviewableRequestQ) ByDetails(key, value string) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
 	}
 
-	q.sql = q.sql.Where("details->>'asset' = ?", asset)
-	return q
-}
-
-// ForDestAsset - filters requests by `dest_asset_code`.
-func (q *ReviewableRequestQ) ForDestAsset(asset string) ReviewableRequestQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("details ->> 'dest_asset_code' = ?", asset)
+	q.sql = q.sql.Where(fmt.Sprintf("details->>'%s' = ?", key), value)
 	return q
 }
 

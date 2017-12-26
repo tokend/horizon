@@ -14,7 +14,7 @@ type Details struct {
 	PreIssuanceCreate *PreIssuanceRequest   `json:"pre_issuance_create,omitempty"`
 	IssuanceCreate    *IssuanceRequest      `json:"issuance_create,omitempty"`
 	Withdrawal        *WithdrawalRequest    `json:"withdraw,omitempty"`
-	Sale              *SaleCreationRequest  `json:"sale"`
+	Sale              *SaleCreationRequest  `json:"sale,omitempty"`
 }
 
 func (d *Details) PopulateFromRawJSON(requestType xdr.ReviewableRequestType, rawJSON []byte) error {
