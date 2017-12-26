@@ -9,6 +9,7 @@ import (
 type BasePage struct {
 	BaseURL  *url.URL `json:"-"`
 	Embedded struct {
+		Meta    *PageMeta  `json:"meta,omitempty"`
 		Records []Pageable `json:"records"`
 	} `json:"_embedded"`
 }
