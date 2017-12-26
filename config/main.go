@@ -24,7 +24,7 @@ type Config struct {
 	RedisURL               string
 	LogLevel               logrus.Level
 	LogToJSON              bool
-	SlowQueryBound         time.Duration
+	SlowQueryBound         *time.Duration
 
 	APIBackend      *url.URL
 	KeychainBackend *url.URL
@@ -132,7 +132,7 @@ func (c *Config) Init() error {
 
 	c.RedisURL = c.getString("redis_url")
 
-	c.SlowQueryBound, err = c.getTimeDurationWithDefault("slow_query_bound", 250*time.Millisecond)
+	c.SlowQueryBound, err = c.getOptionalTDuration("slow_query_bound")
 	if err != nil {
 		return err
 	}

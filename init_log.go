@@ -32,8 +32,10 @@ func initLog(app *App) {
 		h := lrhook.New(cfg, app.config.SlackWebhook.String())
 		log.DefaultLogger.Logger.Hooks.Add(h)
 	}
+	if app.config.SlowQueryBound != nil {
+		log.SlowQueryBound = *app.config.SlowQueryBound
+	}
 
-	log.SlowQueryBound = app.config.SlowQueryBound
 }
 
 func init() {

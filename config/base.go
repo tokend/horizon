@@ -112,12 +112,13 @@ func (c *Base) getTimeDuration(name string) (time.Duration, error) {
 	return time.ParseDuration(rawDur)
 }
 
-func (c *Base) getTimeDurationWithDefault(name string, t time.Duration) (time.Duration, error) {
+func (c *Base) getOptionalTDuration(name string) (*time.Duration, error) {
 	rawDur := viper.GetString(c.getFieldName(name))
 	if rawDur == "" {
-		return t, nil
+		return nil, nil
 	}
-	return time.ParseDuration(rawDur)
+	tDur, err := time.ParseDuration(rawDur)
+	return &tDur, err
 }
 func (c *Base) getTemplate(name string) *template.Template {
 	return assets.Templates.Lookup(name)
