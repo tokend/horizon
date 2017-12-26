@@ -85,19 +85,12 @@ func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRe
 	var details map[string]interface{}
 	// error is ignored on purpose
 	_ = json.Unmarshal([]byte(request.Details), &details)
-	description, _ := details["description"].(string)
-	externalResourceLink, _ := details["external_resource_link"].(string)
-	name, _ := details["name"].(string)
-	logoID, _ := details["logo_id"].(string)
 	return history.AssetCreationRequest{
 		Asset:                string(request.Code),
-		Description:          description,
-		ExternalResourceLink: externalResourceLink,
 		Policies:             int32(request.Policies),
-		Name:                 name,
 		PreIssuedAssetSigner: request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:    amount.StringU(uint64(request.MaxIssuanceAmount)),
-		LogoID:               logoID,
+		Details:              details,
 	}
 }
 
@@ -105,17 +98,10 @@ func getAssetUpdate(request *xdr.AssetUpdateRequest) history.AssetUpdateRequest 
 	var details map[string]interface{}
 	// error is ignored on purpose
 	_ = json.Unmarshal([]byte(request.Details), &details)
-	description, _ := details["description"].(string)
-	externalResourceLink, _ := details["external_resource_link"].(string)
-	name, _ := details["name"].(string)
-	logoID, _ := details["logo_id"].(string)
 	return history.AssetUpdateRequest{
-		Asset:                string(request.Code),
-		Name:                 name,
-		Description:          description,
-		ExternalResourceLink: externalResourceLink,
-		Policies:             int32(request.Policies),
-		LogoID:               logoID,
+		Asset:    string(request.Code),
+		Policies: int32(request.Policies),
+		Details:  details,
 	}
 }
 

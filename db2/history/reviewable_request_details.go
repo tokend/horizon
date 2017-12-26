@@ -4,22 +4,16 @@ import "time"
 
 type AssetCreationRequest struct {
 	Asset                string `json:"asset"`
-	Description          string `json:"description"`
-	ExternalResourceLink string `json:"external_resource_link"`
 	Policies             int32  `json:"policies"`
-	Name                 string `json:"name"`
 	PreIssuedAssetSigner string `json:"pre_issued_asset_signer"`
 	MaxIssuanceAmount    string `json:"max_issuance_amount"`
-	LogoID               string `json:"logo_id"`
+	Details map[string]interface{} `json:"details"`
 }
 
 type AssetUpdateRequest struct {
 	Asset                string `json:"asset"`
-	Name                 string `json:"name"`
-	Description          string `json:"description"`
-	ExternalResourceLink string `json:"external_resource_link"`
 	Policies             int32  `json:"policies"`
-	LogoID               string `json:"logo_id"`
+	Details map[string]interface{} `json:"details"`
 }
 
 type PreIssuanceRequest struct {
