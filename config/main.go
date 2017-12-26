@@ -5,6 +5,8 @@ import (
 
 	"os"
 
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -22,6 +24,7 @@ type Config struct {
 	RedisURL               string
 	LogLevel               logrus.Level
 	LogToJSON              bool
+	SlowQueryBound         time.Duration
 
 	APIBackend      *url.URL
 	KeychainBackend *url.URL
@@ -54,8 +57,8 @@ type Config struct {
 	// pending transactions and transaction 2fa will be disabled as well.
 	DisableAPISubmit bool
 
-	TFA         TFA
-	Core        Core
+	TFA  TFA
+	Core Core
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
@@ -82,6 +85,7 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.bindEnv("redis_url")
 	c.bindEnv("log_level")
 	c.bindEnv("log_to_json")
+	c.bindEnv("slow_query_bound")
 
 	c.bindEnv("tls_cert")
 	c.bindEnv("tls_key")
@@ -127,6 +131,11 @@ func (c *Config) Init() error {
 	}
 
 	c.RedisURL = c.getString("redis_url")
+
+	c.SlowQueryBound, err = c.getTimeDurationWithDefault("slow_query_bound", 250*time.Millisecond)
+	if err != nil {
+		return err
+	}
 
 	c.LogToJSON = c.getBool("log_to_json")
 	c.LogLevel, err = logrus.ParseLevel(c.getString("log_level"))
