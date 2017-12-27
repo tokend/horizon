@@ -3,12 +3,13 @@ package ingest
 import (
 	"encoding/hex"
 	"encoding/json"
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"time"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -17,7 +18,7 @@ func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.New("expected reviewable request not to be nil")
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest)
+	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
 	if err != nil {
 		return errors.Wrap(err, "failed to convert reviewable request")
 	}
@@ -36,7 +37,7 @@ func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.New("expected reviewable request not to be nil")
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest)
+	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
 	if err != nil {
 		return errors.Wrap(err, "failed to convert reviewable request")
 	}
@@ -49,7 +50,7 @@ func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 	return nil
 }
 
-func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.ReviewableRequest, error) {
+func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTime time.Time) (*history.ReviewableRequest, error) {
 	var reference *string
 	if request.Reference != nil {
 		reference = new(string)
@@ -78,6 +79,8 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.Rev
 		RequestState: state,
 		Hash:         hex.EncodeToString(request.Hash[:]),
 		Details:      details,
+		CreatedAt:    time.Unix(int64(request.CreatedAt), 0).UTC(),
+		UpdatedAt:    ledgerCloseTime,
 	}, nil
 }
 
