@@ -3,17 +3,18 @@ package history
 import "time"
 
 type AssetCreationRequest struct {
-	Asset                string `json:"asset"`
-	Policies             int32  `json:"policies"`
-	PreIssuedAssetSigner string `json:"pre_issued_asset_signer"`
-	MaxIssuanceAmount    string `json:"max_issuance_amount"`
-	Details map[string]interface{} `json:"details"`
+	Asset                  string                 `json:"asset"`
+	Policies               int32                  `json:"policies"`
+	PreIssuedAssetSigner   string                 `json:"pre_issued_asset_signer"`
+	MaxIssuanceAmount      string                 `json:"max_issuance_amount"`
+	InitialPreissuedAmount string                 `json:"initial_preissued_amount"`
+	Details                map[string]interface{} `json:"details"`
 }
 
 type AssetUpdateRequest struct {
-	Asset                string `json:"asset"`
-	Policies             int32  `json:"policies"`
-	Details map[string]interface{} `json:"details"`
+	Asset    string                 `json:"asset"`
+	Policies int32                  `json:"policies"`
+	Details  map[string]interface{} `json:"details"`
 }
 
 type PreIssuanceRequest struct {

@@ -89,11 +89,12 @@ func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRe
 	// error is ignored on purpose
 	_ = json.Unmarshal([]byte(request.Details), &details)
 	return history.AssetCreationRequest{
-		Asset:                string(request.Code),
-		Policies:             int32(request.Policies),
-		PreIssuedAssetSigner: request.PreissuedAssetSigner.Address(),
-		MaxIssuanceAmount:    amount.StringU(uint64(request.MaxIssuanceAmount)),
-		Details:              details,
+		Asset:                  string(request.Code),
+		Policies:               int32(request.Policies),
+		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
+		MaxIssuanceAmount:      amount.StringU(uint64(request.MaxIssuanceAmount)),
+		InitialPreissuedAmount: amount.StringU(uint64(request.InitialPreissuedAmount)),
+		Details:                details,
 	}
 }
 
