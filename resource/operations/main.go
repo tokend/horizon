@@ -106,9 +106,9 @@ func New(
 // is CreateAccount.
 type CreateAccount struct {
 	Base
-	Funder      string  `json:"funder,omitempty"`
-	Account     string  `json:"account,omitempty"`
-	AccountType int32   `json:"account_type"`
+	Funder      string `json:"funder,omitempty"`
+	Account     string `json:"account,omitempty"`
+	AccountType int32  `json:"account_type"`
 }
 
 type BasePayment struct {
