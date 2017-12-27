@@ -1,11 +1,12 @@
 package history
 
 import (
+	"fmt"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
-	"fmt"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -234,4 +235,4 @@ func (q *ReviewableRequestQ) Select() ([]ReviewableRequest, error) {
 }
 
 var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason", "request_type", "request_state", "hash",
-	"details").From("reviewable_request")
+	"details", "created_at", "updated_at").From("reviewable_request")
