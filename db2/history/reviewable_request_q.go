@@ -1,11 +1,12 @@
 package history
 
 import (
+	"fmt"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
-	"fmt"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -52,18 +53,19 @@ func (q *ReviewableRequestQ) Insert(request ReviewableRequest) error {
 		return q.Err
 	}
 
-	query := sq.Insert("reviewable_request").Columns("id", "requestor", "reviewer", "reference", "reject_reason",
-		"request_type", "request_state", "hash", "details").Values(
-		request.ID,
-		request.Requestor,
-		request.Reviewer,
-		request.Reference,
-		request.RejectReason,
-		request.RequestType,
-		request.RequestState,
-		request.Hash,
-		request.Details,
-	)
+	query := sq.Insert("reviewable_request").SetMap(map[string]interface{}{
+		"id":            request.ID,
+		"requestor":     request.Requestor,
+		"reviewer":      request.Reviewer,
+		"reference":     request.Reference,
+		"reject_reason": request.RejectReason,
+		"request_type":  request.RequestType,
+		"request_state": request.RequestState,
+		"hash":          request.Hash,
+		"details":       request.Details,
+		"created_at":    request.CreatedAt,
+		"updated_at":    request.UpdatedAt,
+	})
 
 	_, err := q.parent.Exec(query)
 	return err
@@ -83,6 +85,7 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 		"request_state": request.RequestState,
 		"hash":          request.Hash,
 		"details":       request.Details,
+		"updated_at":    request.UpdatedAt,
 	}).Where("id = ?", request.ID)
 
 	_, err := q.parent.Exec(query)
@@ -234,4 +237,4 @@ func (q *ReviewableRequestQ) Select() ([]ReviewableRequest, error) {
 }
 
 var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason", "request_type", "request_state", "hash",
-	"details").From("reviewable_request")
+	"details", "created_at", "updated_at").From("reviewable_request")
