@@ -1,15 +1,24 @@
 package horizon
 
 import (
+	"time"
+
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/charts"
 	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"fmt"
-	"github.com/pkg/errors"
 )
 
 func initCharts(app *App) {
+
+	var histogram charts.Histogram
+
+	hourDuration := time.Hour * 24
+
+	histogram = *charts.NewHistogram(hourDuration, 24)
+
 	historyStorage := charts.TxHistoryStorage{
 		TxHistory: app.HistoryQ().Transactions(),
 	}
@@ -20,36 +29,31 @@ func initCharts(app *App) {
 		Limit:  1,
 	}
 
-	var (
-		records     []history.Transaction
-		ledgerEntry []xdr.LedgerEntry
-	)
+	var records []history.Transaction
 
 	for {
 		err := historyStorage.TxHistory.Page(curs).Select(&records)
 		if err != nil {
-			errors.Wrap(err, "Unable to select")
+			logrus.WithError(err).Error("Unable to select")
+			return
 		}
 		for _, record := range records {
 			curs.Cursor = record.PagingToken()
 
 			assetChanges, err := process(record.TxMeta)
 			if err != nil {
-				errors.Wrap(err, "Unable to parse ledgerEntry")
+				logrus.WithError(err).Error("Unable to parse ledgerEntry")
+				return
 			}
 
-			for _, issued := range assetChanges{
-				historyStorage.Run(uint64(issued.Issued), record.LedgerCloseTime)
+			for _, issued := range assetChanges {
+				histogram.Run(uint64(issued.Issued), record.LedgerCloseTime)
 			}
 		}
 
 		if len(records) == 0 {
 			break
 		}
-	}
-
-	for _, ledger := range ledgerEntry {
-		fmt.Println(ledger.Data.ReviewableRequest.CreatedAt)
 	}
 }
 
