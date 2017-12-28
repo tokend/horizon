@@ -1,33 +1,30 @@
 package reviewablerequest
 
 import (
+	"encoding/json"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/resource/base"
-	"gitlab.com/swarmfund/go/xdr"
-	"encoding/json"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type AssetCreationRequest struct {
-	Code                 string      `json:"code"`
-	Description          string      `json:"description"`
-	ExternalResourceLink string      `json:"external_resource_link"`
-	Policies             []base.Flag `json:"policies"`
-	Name                 string      `json:"name"`
-	PreIssuedAssetSigner string      `json:"pre_issued_asset_signer"`
-	MaxIssuanceAmount    string      `json:"max_issuance_amount"`
-	LogoID				 string 	 `json:"logo_id"`
+	Code                   string                 `json:"code"`
+	Policies               []base.Flag            `json:"policies"`
+	PreIssuedAssetSigner   string                 `json:"pre_issued_asset_signer"`
+	MaxIssuanceAmount      string                 `json:"max_issuance_amount"`
+	InitialPreissuedAmount string                 `json:"initial_preissued_amount"`
+	Details                map[string]interface{} `json:"details"`
 }
 
 func (r *AssetCreationRequest) Populate(histRequest history.AssetCreationRequest) {
 	r.Code = histRequest.Asset
-	r.Description = histRequest.Description
-	r.ExternalResourceLink = histRequest.ExternalResourceLink
 	r.Policies = base.FlagFromXdrAssetPolicy(histRequest.Policies, xdr.AssetPolicyAll)
-	r.Name = histRequest.Name
 	r.PreIssuedAssetSigner = histRequest.PreIssuedAssetSigner
 	r.MaxIssuanceAmount = histRequest.MaxIssuanceAmount
-	r.LogoID = histRequest.LogoID
+	r.InitialPreissuedAmount = histRequest.InitialPreissuedAmount
+	r.Details = histRequest.Details
 }
 
 func (r *AssetCreationRequest) PopulateFromRawJsonHistory(rawJson []byte) error {

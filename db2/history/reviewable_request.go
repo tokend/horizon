@@ -1,6 +1,8 @@
 package history
 
 import (
+	"time"
+
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 )
@@ -16,4 +18,6 @@ type ReviewableRequest struct {
 	RequestState ReviewableRequestState    `db:"request_state"`
 	Hash         string                    `db:"hash"`
 	Details      []byte                    `db:"details"`
+	CreatedAt    time.Time                 `db:"created_at"`
+	UpdatedAt    time.Time                 `db:"updated_at"`
 }
