@@ -5,10 +5,10 @@ import (
 	"html/template"
 	"net/url"
 	"strings"
-
-	"gitlab.com/swarmfund/horizon/assets"
+	"time"
 
 	"github.com/spf13/viper"
+	"gitlab.com/swarmfund/horizon/assets"
 )
 
 const (
@@ -107,6 +107,19 @@ func (c *Base) getBool(name string) bool {
 	return viper.GetBool(c.getFieldName(name))
 }
 
+func (c *Base) getTimeDuration(name string) (time.Duration, error) {
+	rawDur := viper.GetString(c.getFieldName(name))
+	return time.ParseDuration(rawDur)
+}
+
+func (c *Base) getOptionalTDuration(name string) (*time.Duration, error) {
+	rawDur := viper.GetString(c.getFieldName(name))
+	if rawDur == "" {
+		return nil, nil
+	}
+	tDur, err := time.ParseDuration(rawDur)
+	return &tDur, err
+}
 func (c *Base) getTemplate(name string) *template.Template {
 	return assets.Templates.Lookup(name)
 }

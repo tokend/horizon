@@ -5,14 +5,15 @@ package ingest
 
 import (
 	"sync"
+	"time"
 
 	"github.com/rcrowley/go-metrics"
 	"gitlab.com/swarmfund/horizon/corer"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/ingest/ingestion"
+	"gitlab.com/swarmfund/horizon/log"
 )
 
 const (
@@ -55,6 +56,10 @@ func (c *Cursor) HistoryQ() history.QInterface {
 	return &history.Q{Repo: c.HistoryDB}
 }
 
+func (c *Cursor) LedgerCloseTime() time.Time {
+	return time.Unix(int64(c.data.Header.CloseTime), 0).UTC()
+}
+
 // LedgerBundle represents a single ledger's worth of novelty created by one
 // ledger close
 type LedgerBundle struct {
@@ -92,8 +97,6 @@ type IngesterMetrics struct {
 	IngestLedgerTimer metrics.Timer
 	LoadLedgerTimer   metrics.Timer
 }
-
-
 
 // Session represents a single attempt at ingesting data into the history
 // database.
@@ -155,10 +158,10 @@ func NewSession(paranoid bool, first, last int32, i *System) *Session {
 	return &Session{
 		Paranoid: paranoid,
 		Ingestion: &ingestion.Ingestion{
-			DB:     hdb,
-			CoreDB: coredb,
-			CoreQ:  core.NewQ(coredb),
-			HistoryQ: &history.Q{ Repo: hdb},
+			DB:       hdb,
+			CoreDB:   coredb,
+			CoreQ:    core.NewQ(coredb),
+			HistoryQ: &history.Q{Repo: hdb},
 		},
 
 		Cursor: &Cursor{

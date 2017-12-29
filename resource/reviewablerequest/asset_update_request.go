@@ -1,27 +1,23 @@
 package reviewablerequest
 
 import (
-	"gitlab.com/swarmfund/horizon/resource/base"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/go/xdr"
 	"encoding/json"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/resource/base"
 )
 
 type AssetUpdateRequest struct {
-	Code                 string `json:"code"`
-	Description          string `json:"description"`
-	ExternalResourceLink string `json:"external_resource_link"`
-	Policies             []base.Flag `json:"policies"`
-	LogoID				 string `json:"logo_id"`
+	Code     string                 `json:"code"`
+	Policies []base.Flag            `json:"policies"`
+	Details  map[string]interface{} `json:"details"`
 }
 
 func (r *AssetUpdateRequest) Populate(histRequest history.AssetUpdateRequest) {
 	r.Code = histRequest.Asset
-	r.Description = histRequest.Description
-	r.ExternalResourceLink = histRequest.ExternalResourceLink
 	r.Policies = base.FlagFromXdrAssetPolicy(histRequest.Policies, xdr.AssetPolicyAll)
-	r.LogoID = histRequest.LogoID;
+	r.Details = histRequest.Details
 }
 
 func (r *AssetUpdateRequest) PopulateFromRawJsonHistory(rawJson []byte) error {

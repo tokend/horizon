@@ -1,9 +1,11 @@
 package reviewablerequest
 
 import (
+	"strconv"
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"strconv"
 )
 
 // Represents Reviewable request
@@ -16,6 +18,8 @@ type ReviewableRequest struct {
 	RejectReason string   `json:"reject_reason"`
 	Hash         string   `json:"hash"`
 	Details      *Details `json:"details"`
+	CreatedAt    string   `json:"created_at"`
+	UpdatedAt    string   `json:"updated_at"`
 	RequestState
 }
 
@@ -28,6 +32,9 @@ func (r *ReviewableRequest) Populate(request *history.ReviewableRequest) error {
 	r.RejectReason = request.RejectReason
 	r.RequestState.Populate(request.RequestState)
 	r.Hash = request.Hash
+	r.CreatedAt = request.CreatedAt.Format(time.RFC3339)
+	r.UpdatedAt = request.UpdatedAt.Format(time.RFC3339)
+
 	r.Details = new(Details)
 	err := r.Details.PopulateFromRawJSON(request.RequestType, request.Details)
 	if err != nil {

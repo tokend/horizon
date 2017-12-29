@@ -3,6 +3,9 @@ package horizon
 import (
 	"net/http"
 
+	"github.com/go-errors/errors"
+	"gitlab.com/distributed_lab/logan"
+	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -11,9 +14,6 @@ import (
 	"gitlab.com/swarmfund/horizon/render/sse"
 	"gitlab.com/swarmfund/horizon/resource"
 	txsubHelper "gitlab.com/swarmfund/horizon/txsub"
-	"github.com/go-errors/errors"
-	"gitlab.com/distributed_lab/logan"
-	"gitlab.com/distributed_lab/txsub"
 )
 
 // This file contains the actions:
@@ -30,6 +30,7 @@ type TransactionIndexAction struct {
 	BalanceFilter string
 	PagingParams  db2.PageQuery
 	Records       []history.Transaction
+	MetaLedger    history.Ledger
 	Page          hal.Page
 }
 
@@ -96,7 +97,27 @@ func (action *TransactionIndexAction) loadRecords() {
 		txs.ForLedger(action.LedgerFilter)
 	}
 
-	action.Err = txs.Page(action.PagingParams).Select(&action.Records)
+	// memorize ledger sequence before select to prevent data race
+	latestLedger := int32(action.App.historyLatestLedgerGauge.Value())
+
+	err := txs.Page(action.PagingParams).Select(&action.Records)
+	if err != nil {
+		action.Log.WithError(err).Error("failed to get transactions")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	if uint64(len(action.Records)) == action.PagingParams.Limit {
+		// we fetched full page, probably there is something ahead
+		latestLedger = action.Records[len(action.Records)-1].LedgerSequence
+	}
+
+	// load ledger close time
+	if err := action.HistoryQ().LedgerBySequence(&action.MetaLedger, latestLedger); err != nil {
+		action.Log.WithError(err).Error("failed to get ledger")
+		action.Err = &problem.ServerError
+		return
+	}
 }
 
 func (action *TransactionIndexAction) loadPage() {
@@ -104,6 +125,13 @@ func (action *TransactionIndexAction) loadPage() {
 		var res resource.Transaction
 		res.Populate(action.Ctx, record)
 		action.Page.Add(res)
+	}
+
+	action.Page.Embedded.Meta = &hal.PageMeta{
+		LatestLedger: &hal.LatestLedgerMeta{
+			Sequence: action.MetaLedger.Sequence,
+			ClosedAt: action.MetaLedger.ClosedAt,
+		},
 	}
 
 	action.Page.BaseURL = action.BaseURL()
