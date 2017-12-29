@@ -73,7 +73,7 @@ func (q *saleQ) ForName(name string) SalesQ {
 		return q
 	}
 
-	q.sql = q.sql.Where("details::jsonb ->> 'name' ilike ?", fmt.Sprint("%", name, "%"))
+	q.sql = q.sql.Where("details ->> 'name' ilike ?", fmt.Sprint("%", name, "%"))
 	return q
 }
 
