@@ -3,6 +3,8 @@ package history
 import (
 	"time"
 
+	"fmt"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -71,7 +73,7 @@ func (q *saleQ) ForName(name string) SalesQ {
 		return q
 	}
 
-	q.sql = q.sql.Where("to_json(details::text) ->> 'name' = ?", name)
+	q.sql = q.sql.Where("details::jsonb ->> 'name' ilike ?", fmt.Sprint("%", name, "%"))
 	return q
 }
 
