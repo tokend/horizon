@@ -2,86 +2,63 @@ package charts
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
 	"time"
 )
 
 func TestHistogram_Shift(t *testing.T) {
-	var histogram Histogram
-	var insertValue [24]point
+	h := NewHistogram(time.Hour, 6)
 
-	//create values
-	for i := 0; i < len(insertValue); i++ {
-		insertValue[i].value = rand.Uint64()
-
-		randomTime := rand.Int63n(time.Now().Unix()-94608000) + 94608000
-		randomNow := time.Unix(randomTime, 0)
-
-		insertValue[i].time = randomNow
+	durations := []time.Duration{
+		5 * time.Minute, 15 * time.Minute, 25 * time.Minute,
+		35 * time.Minute, 45 * time.Minute, 55 * time.Minute,
 	}
 
-	for i := 0; i < len(insertValue); i++ {
-		timeInterval = append(timeInterval, insertValue[i])
+	values := []uint64{1, 0, 0, 3, 0, 5}
+
+	for i := range durations {
+		h.timeInterval[i].value = values[i]
+		h.timeInterval[i].time = time.Now().Add(-durations[i])
 	}
 
-	fmt.Println("Before: ", timeInterval)
+	fmt.Println("Before: ", h.timeInterval)
 
-	histogram.Shift()
-
-	fmt.Println("After: ", timeInterval)
+	h.shift()
+	fmt.Println("After: ", h.timeInterval)
 }
 
 func TestRender(t *testing.T) {
-	var insertValue [10]point
 
-	//insert random time
-	for i := 0; i < len(insertValue); i++ {
+	h := NewHistogram(time.Hour, 6)
 
-		randomTime := rand.Int63n(time.Now().Unix()-94608000) + 94608000
-		randomNow := time.Unix(randomTime, 0)
-
-		insertValue[i].time = randomNow
+	durations := []time.Duration{
+		5 * time.Minute, 15 * time.Minute, 25 * time.Minute,
+		35 * time.Minute, 45 * time.Minute, 55 * time.Minute,
 	}
 
-	var temp []uint64
-	//input values: 0, 1, 0, 0, 3, 0 , 5, 5, 0, 2
-	temp = append(temp, 0, 1, 0, 0, 3, 0, 5, 5, 0, 2)
+	values := []uint64{1, 0, 0, 3, 0, 5}
 
-	for i := 0; i < len(insertValue); i++ {
-		insertValue[i].value = temp[i]
-
+	for i := range durations {
+		h.timeInterval[i].value = values[i]
+		h.timeInterval[i].time = time.Now().Add(-durations[i])
 	}
 
-	for i := 0; i < len(insertValue); i++ {
-		timeInterval = append(timeInterval, insertValue[i])
-	}
-
-	fmt.Println("Before render():", timeInterval)
-
-	render()
-	// output: 0, 1, 1, 1, 3, 3, 5, 5, 5, 2
-	fmt.Println("After render():", timeInterval)
+	fmt.Println("Before render ", h.timeInterval)
+	h.render()
+	fmt.Println("After render ", h.timeInterval)
 }
 
 func TestInsert(t *testing.T) {
-	//var histogram Histogram
 
 	hourDuration := time.Hour
 
-	histogram := NewHistogram(hourDuration, 60)
+	h := NewHistogram(hourDuration, 60)
 
-	points := []time.Duration{1 * time.Minute, 2 * time.Hour, 3 * time.Minute}
+	points := []time.Duration{1 * time.Minute, 2 * time.Hour,
+		3 * time.Minute, 4 * time.Minute, 5 * time.Minute}
 
 	for i, point := range points {
-		histogram.Run(uint64(i), time.Now().Add(-point))
-		fmt.Println(timeInterval)
+		h.Run(uint64(i), time.Now().Add(-point))
+		fmt.Println(h.timeInterval)
 	}
-
-	//minT := histogram.MaxBorderTime.Add(-histogram.Interval)
-	//
-	//fmt.Println("Before insert: ", timeInterval)
-	//
-	////timeInterval.insert(value, insertValue[0].time, minT, histogram.Interval)
-	//fmt.Println("After insert: ", timeInterval)
 }

@@ -3,101 +3,97 @@ package charts
 import (
 	"time"
 
-	"fmt"
-
 	"gitlab.com/swarmfund/horizon/db2/history"
 )
-
-type Histogram struct {
-	Interval      time.Duration
-	Count         uint64
-	MaxBorderTime time.Time
-}
-
-func NewHistogram(duration time.Duration, count uint64) *Histogram {
-	histogram := Histogram{
-		Interval:      duration,
-		Count:         count,
-		MaxBorderTime: time.Now(),
-	}
-
-	timeInterval = make(timeIntervals, histogram.Count)
-
-	return &histogram
-}
-
-func (h *Histogram) Shift() {
-	timeInterval = timeInterval[1:]
-
-	var p point
-	timeInterval = append(timeInterval, p)
-}
-
-func Ticker(histogram *Histogram) {
-	intervalPiece := int64(histogram.Interval) / int64(histogram.Count)
-
-	ticker := time.NewTicker(time.Duration(intervalPiece))
-	go func() {
-		for ; ; <-ticker.C {
-			histogram.Shift()
-			histogram.MaxBorderTime.Add(time.Duration(intervalPiece))
-		}
-	}()
-}
-
-func (histogram *Histogram) Run(entryValue uint64, txTime time.Time) {
-	minT := histogram.MaxBorderTime.Add(-histogram.Interval)
-
-	if txTime.After(minT) && txTime.Before(histogram.MaxBorderTime) {
-
-		n := int64(histogram.Interval) / int64(histogram.Count)
-		timeInterval.insert(entryValue, txTime, minT, time.Duration(n))
-	}
-}
 
 type point struct {
 	time  time.Time
 	value uint64
 }
 
-type timeIntervals []point
+type Histogram struct {
+	Interval      time.Duration
+	Count         uint64
+	MaxBorderTime time.Time
+	timeInterval  []point
+}
 
-var timeInterval timeIntervals
+func NewHistogram(duration time.Duration, count uint64) *Histogram {
+	h := Histogram{
+		Interval:      duration,
+		Count:         count,
+		MaxBorderTime: time.Now(),
+	}
 
-func (ti *timeIntervals) insert(
+	h.timeInterval = make([]point, h.Count)
+
+	return &h
+}
+
+func (h *Histogram) shift() {
+	h.timeInterval = h.timeInterval[1:]
+
+	var p point
+	h.timeInterval = append(h.timeInterval, p)
+}
+
+func (h *Histogram) Ticker() {
+	intervalPiece := int64(h.Interval) / int64(h.Count)
+
+	ticker := time.NewTicker(time.Duration(intervalPiece))
+	go func() {
+		for ; ; <-ticker.C {
+			h.shift()
+			h.MaxBorderTime.Add(time.Duration(intervalPiece))
+		}
+	}()
+}
+
+func (h *Histogram) Run(entryValue uint64, txTime time.Time) {
+	minT := h.MaxBorderTime.Add(-h.Interval)
+
+	if txTime.After(minT) && txTime.Before(h.MaxBorderTime) {
+
+		n := int64(h.Interval) / int64(h.Count)
+		h.insert(entryValue, txTime, minT, time.Duration(n))
+	}
+}
+
+func (h *Histogram) insert(
 	entryValue uint64,
 	txTime, minT time.Time, interval time.Duration,
 ) {
 	insertIndex := txTime.Sub(minT) / interval
-	fmt.Println("DIFF = ", int64(txTime.Sub(minT)), int64(interval))
 
 	insertData := point{
 		time:  txTime,
 		value: entryValue,
 	}
 
-	timeInterval.findMiddle(insertIndex, insertData)
+	h.findAverage(insertIndex, insertData)
 }
 
-func (ti *timeIntervals) findMiddle(insertIndex time.Duration, insertData point) {
-	if timeInterval[insertIndex].value != 0 {
-		insertData.value = (timeInterval[insertIndex].value + insertData.value) / 2
+func (h *Histogram) findAverage(insertIndex time.Duration, insertData point) {
+
+	if !h.timeInterval[insertIndex].time.IsZero() {
+		insertData.value = (h.timeInterval[insertIndex].value + insertData.value) / 2
 	}
+
 	p := point{
 		insertData.time, insertData.value,
 	}
 
-	timeInterval[insertIndex] = p
+	h.timeInterval[insertIndex] = p
 }
 
 type TxHistoryStorage struct {
 	TxHistory history.TransactionsQI
 }
 
-func render() {
-	for i := 1; i < len(timeInterval); i++ {
-		if timeInterval[i].value == 0 {
-			timeInterval[i] = timeInterval[i-1]
+func (h *Histogram) render() {
+	for i := 1; i < len(h.timeInterval); i++ {
+		if h.timeInterval[i].value == 0 {
+			h.timeInterval[i] = h.timeInterval[i-1]
 		}
 	}
 }
