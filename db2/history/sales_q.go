@@ -71,7 +71,7 @@ func (q *saleQ) ForName(name string) SalesQ {
 		return q
 	}
 
-	q.sql = q.sql.Where("details  ->> 'name' = ?", name)
+	q.sql = q.sql.Where("to_json(details::text) ->> 'name' = ?", name)
 	return q
 }
 
