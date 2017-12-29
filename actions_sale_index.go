@@ -1,12 +1,13 @@
 package horizon
 
 import (
+	"time"
+
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"time"
 )
 
 // SaleIndexAction renders slice of reviewable requests
@@ -15,6 +16,7 @@ type SaleIndexAction struct {
 	Owner        string
 	BaseAsset    string
 	OpenOnly     bool
+	Name         string
 	Records      []history.Sale
 	PagingParams db2.PageQuery
 	Page         hal.Page
@@ -38,10 +40,12 @@ func (action *SaleIndexAction) loadParams() {
 	action.Owner = action.GetString("owner")
 	action.BaseAsset = action.GetString("base_asset")
 	action.OpenOnly = action.GetBool("open_only")
+	action.Name = action.GetString("name")
 
 	action.Page.Filters = map[string]string{
 		"owner":      action.Owner,
 		"base_asset": action.BaseAsset,
+		"name":       action.Name,
 		"open_only":  action.GetString("open_only"),
 	}
 }
@@ -55,6 +59,10 @@ func (action *SaleIndexAction) loadRecord() {
 
 	if action.BaseAsset != "" {
 		q = q.ForBaseAsset(action.BaseAsset)
+	}
+
+	if action.Name != "" {
+		q = q.ForName(action.Name)
 	}
 
 	if action.OpenOnly {
