@@ -1,6 +1,8 @@
 package history
 
 import (
+	"fmt"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
@@ -29,14 +31,12 @@ type ReviewableRequestQI interface {
 	ForState(state int64) ReviewableRequestQI
 	// ForType - filters requests by type
 	ForType(requestType int64) ReviewableRequestQI
-	// ForAsset - filters requests by asset
-	ForAsset(asset string) ReviewableRequestQI
-	// ForDestAsset - filters requests by `dest_asset_code`.
-	ForDestAsset(asset string) ReviewableRequestQI
 	// ForTypes - filters requests by request type
 	ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI
 	// Page specifies the paging constraints for the query being built by `q`.
 	Page(page db2.PageQuery) ReviewableRequestQI
+	// ByDetails - filters by specified key value from the details. Note: do not pass key passed by user
+	ByDetails(key, value string) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
 	Select() ([]ReviewableRequest, error)
 }
@@ -53,18 +53,19 @@ func (q *ReviewableRequestQ) Insert(request ReviewableRequest) error {
 		return q.Err
 	}
 
-	query := sq.Insert("reviewable_request").Columns("id", "requestor", "reviewer", "reference", "reject_reason",
-		"request_type", "request_state", "hash", "details").Values(
-		request.ID,
-		request.Requestor,
-		request.Reviewer,
-		request.Reference,
-		request.RejectReason,
-		request.RequestType,
-		request.RequestState,
-		request.Hash,
-		request.Details,
-	)
+	query := sq.Insert("reviewable_request").SetMap(map[string]interface{}{
+		"id":            request.ID,
+		"requestor":     request.Requestor,
+		"reviewer":      request.Reviewer,
+		"reference":     request.Reference,
+		"reject_reason": request.RejectReason,
+		"request_type":  request.RequestType,
+		"request_state": request.RequestState,
+		"hash":          request.Hash,
+		"details":       request.Details,
+		"created_at":    request.CreatedAt,
+		"updated_at":    request.UpdatedAt,
+	})
 
 	_, err := q.parent.Exec(query)
 	return err
@@ -84,6 +85,7 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 		"request_state": request.RequestState,
 		"hash":          request.Hash,
 		"details":       request.Details,
+		"updated_at":    request.UpdatedAt,
 	}).Where("id = ?", request.ID)
 
 	_, err := q.parent.Exec(query)
@@ -187,23 +189,13 @@ func (q *ReviewableRequestQ) ForType(requestType int64) ReviewableRequestQI {
 	return q
 }
 
-// ForAsset - filters requests by asset
-func (q *ReviewableRequestQ) ForAsset(asset string) ReviewableRequestQI {
+// ByDetails - filters by specified key value from the details. Note: do not pass key passed by user
+func (q *ReviewableRequestQ) ByDetails(key, value string) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
 	}
 
-	q.sql = q.sql.Where("details->>'asset' = ?", asset)
-	return q
-}
-
-// ForDestAsset - filters requests by `dest_asset_code`.
-func (q *ReviewableRequestQ) ForDestAsset(asset string) ReviewableRequestQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("details ->> 'dest_asset_code' = ?", asset)
+	q.sql = q.sql.Where(fmt.Sprintf("details->>'%s' = ?", key), value)
 	return q
 }
 
@@ -245,4 +237,4 @@ func (q *ReviewableRequestQ) Select() ([]ReviewableRequest, error) {
 }
 
 var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason", "request_type", "request_state", "hash",
-	"details").From("reviewable_request")
+	"details", "created_at", "updated_at").From("reviewable_request")

@@ -3,12 +3,13 @@ package ingest
 import (
 	"encoding/hex"
 	"encoding/json"
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"time"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -17,7 +18,7 @@ func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.New("expected reviewable request not to be nil")
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest)
+	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
 	if err != nil {
 		return errors.Wrap(err, "failed to convert reviewable request")
 	}
@@ -36,7 +37,7 @@ func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.New("expected reviewable request not to be nil")
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest)
+	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
 	if err != nil {
 		return errors.Wrap(err, "failed to convert reviewable request")
 	}
@@ -49,7 +50,7 @@ func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 	return nil
 }
 
-func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.ReviewableRequest, error) {
+func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTime time.Time) (*history.ReviewableRequest, error) {
 	var reference *string
 	if request.Reference != nil {
 		reference = new(string)
@@ -78,6 +79,8 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.Rev
 		RequestState: state,
 		Hash:         hex.EncodeToString(request.Hash[:]),
 		Details:      details,
+		CreatedAt:    time.Unix(int64(request.CreatedAt), 0).UTC(),
+		UpdatedAt:    ledgerCloseTime,
 	}, nil
 }
 
@@ -85,19 +88,13 @@ func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRe
 	var details map[string]interface{}
 	// error is ignored on purpose
 	_ = json.Unmarshal([]byte(request.Details), &details)
-	description, _ := details["description"].(string)
-	externalResourceLink, _ := details["external_resource_link"].(string)
-	name, _ := details["name"].(string)
-	logoID, _ := details["logo_id"].(string)
 	return history.AssetCreationRequest{
-		Asset:                string(request.Code),
-		Description:          description,
-		ExternalResourceLink: externalResourceLink,
-		Policies:             int32(request.Policies),
-		Name:                 name,
-		PreIssuedAssetSigner: request.PreissuedAssetSigner.Address(),
-		MaxIssuanceAmount:    amount.StringU(uint64(request.MaxIssuanceAmount)),
-		LogoID:               logoID,
+		Asset:                  string(request.Code),
+		Policies:               int32(request.Policies),
+		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
+		MaxIssuanceAmount:      amount.StringU(uint64(request.MaxIssuanceAmount)),
+		InitialPreissuedAmount: amount.StringU(uint64(request.InitialPreissuedAmount)),
+		Details:                details,
 	}
 }
 
@@ -105,17 +102,10 @@ func getAssetUpdate(request *xdr.AssetUpdateRequest) history.AssetUpdateRequest 
 	var details map[string]interface{}
 	// error is ignored on purpose
 	_ = json.Unmarshal([]byte(request.Details), &details)
-	description, _ := details["description"].(string)
-	externalResourceLink, _ := details["external_resource_link"].(string)
-	name, _ := details["name"].(string)
-	logoID, _ := details["logo_id"].(string)
 	return history.AssetUpdateRequest{
-		Asset:                string(request.Code),
-		Name:                 name,
-		Description:          description,
-		ExternalResourceLink: externalResourceLink,
-		Policies:             int32(request.Policies),
-		LogoID:               logoID,
+		Asset:    string(request.Code),
+		Policies: int32(request.Policies),
+		Details:  details,
 	}
 }
 

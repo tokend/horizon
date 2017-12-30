@@ -44,7 +44,7 @@ func (a *Account) Populate(ctx context.Context, ca core.Account) {
 	a.IsBlocked = ca.BlockReasons > 0
 	a.AccountTypeI = ca.AccountType
 	a.AccountType = xdr.AccountType(ca.AccountType).String()
-	a.Thresholds.Populate(ca)
+	a.Thresholds.Populate(ca.Thresholds)
 	a.Policies.Populate(ca.Policies)
 	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
 	self := fmt.Sprintf("/accounts/%s", ca.AccountID)
