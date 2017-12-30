@@ -3,6 +3,7 @@ package ingest
 import (
 	"time"
 
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -122,12 +123,12 @@ func (is *Session) priceHistory() {
 	}
 }
 
-func (is *Session) manageOffer(source xdr.AccountId, result xdr.ManageOfferResult) {
+func (is *Session) storeTrades(orderBookID uint64, result xdr.ManageOfferSuccessResult) {
 	if is.Err != nil {
 		return
 	}
 
-	is.Err = is.Ingestion.StoreTrades(source, result, is.Cursor.Ledger().CloseTime)
+	is.Err = is.Ingestion.StoreTrades(orderBookID, result, is.Cursor.Ledger().CloseTime)
 }
 
 func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.ManageInvoiceResult) {
@@ -153,6 +154,24 @@ func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
 	}
 
 	return nil
+}
+
+func (is *Session) handleCheckSaleState(result xdr.CheckSaleStateSuccess) {
+	if is.Err != nil {
+		return
+	}
+
+	state := history.SaleStateClosed
+	if result.Effect.Effect == xdr.CheckSaleStateEffectCanceled {
+		state = history.SaleStateCanceled
+	}
+
+	err := is.Cursor.HistoryQ().Sales().SetState(uint64(result.SaleId), state)
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to set state", logan.F{"sale_id": uint64(result.SaleId)})
+		return
+	}
+
 }
 
 func (is *Session) processManageAsset(op *xdr.ManageAssetOp) {

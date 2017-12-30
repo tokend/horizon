@@ -97,6 +97,8 @@ const (
 	IsSignedValue      = "1"
 )
 
+var RootAct = &RootAction{}
+
 // initWebActions installs the routing configuration of horizon onto the
 // provided app.  All route registration should be implemented here.
 func initWebActions(app *App) {
@@ -109,10 +111,11 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
+		xdr.OperationTypeCheckSaleState,
 	}
 
 	r := app.web.router
-	r.Get("/", &RootAction{})
+	r.Get("/", RootAct)
 	r.Get("/metrics", &MetricsAction{})
 
 	// ledger actions

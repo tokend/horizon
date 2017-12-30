@@ -6,6 +6,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+	"strconv"
 )
 
 type TradesAction struct {
@@ -13,6 +14,7 @@ type TradesAction struct {
 	BaseAsset    string
 	QuoteAsset   string
 	PagingParams db2.PageQuery
+	OrderBookID uint64
 
 	Trades []history.Trades
 	Page   hal.Page
@@ -32,15 +34,17 @@ func (action *TradesAction) JSON() {
 func (action *TradesAction) loadParams() {
 	action.BaseAsset = action.GetNonEmptyString("base_asset")
 	action.QuoteAsset = action.GetNonEmptyString("quote_asset")
+	action.OrderBookID = action.GetUInt64("order_book_id")
 	action.PagingParams = action.GetPageQuery()
 	action.Page.Filters = map[string]string{
 		"base_asset":  action.BaseAsset,
 		"quote_asset": action.QuoteAsset,
+		"order_book_id": strconv.FormatUint(action.OrderBookID, 10),
 	}
 }
 
 func (action *TradesAction) loadRecords() {
-	err := action.HistoryQ().Trades().ForPair(action.BaseAsset, action.QuoteAsset).Page(action.PagingParams).Select(&action.Trades)
+	err := action.HistoryQ().Trades().ForOrderBook(action.OrderBookID).ForPair(action.BaseAsset, action.QuoteAsset).Page(action.PagingParams).Select(&action.Trades)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get trades")
 		action.Err = &problem.ServerError
