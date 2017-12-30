@@ -67,7 +67,7 @@ func New(
 		e := CreateWithdrawalRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
 		if public {
-			e.ExternalDetails = ""
+			e.ExternalDetails = nil
 		}
 		result = e
 	case xdr.OperationTypeSetLimits:
@@ -94,6 +94,9 @@ func New(
 	case xdr.OperationTypeCreateIssuanceRequest:
 		e := CreateIssuanceRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
+		if public {
+			e.ExternalDetails = nil
+		}
 		result = e
 	default:
 		result = base
