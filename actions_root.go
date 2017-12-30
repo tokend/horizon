@@ -9,13 +9,11 @@ import (
 // RootAction provides a summary of the horizon instance and links to various
 // useful endpoints
 type RootAction struct {
-	counter []int
 	Action
 }
 
 // JSON renders the json response for RootAction
 func (action *RootAction) JSON() {
-	action.counter = append(action.counter, 2)
 	action.App.UpdateStellarCoreInfo()
 
 	var res resource.Root
@@ -27,6 +25,5 @@ func (action *RootAction) JSON() {
 	res.MasterExchangeName = action.App.CoreInfo.MasterExchangeName
 	res.TxExpirationPeriod = action.App.CoreInfo.TxExpirationPeriod
 
-	action.Log.Error(action.counter)
 	hal.Render(action.W, res)
 }

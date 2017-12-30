@@ -18,6 +18,7 @@
 // migrations/017_reviewable_request.sql
 // migrations/018_sale.sql
 // migrations/019_add_timestamps_2_reviewable_req.sql
+// migrations/020_alter_sales_details.sql
 // DO NOT EDIT!
 
 package schema
@@ -100,7 +101,7 @@ func migrations0010_tradesSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "migrations/0010_trades.sql", size: 449, mode: os.FileMode(438), modTime: time.Unix(1514560128, 0)}
+	info := bindataFileInfo{name: "migrations/0010_trades.sql", size: 449, mode: os.FileMode(438), modTime: time.Unix(1514643850, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -445,6 +446,26 @@ func migrations019_add_timestamps_2_reviewable_reqSql() (*asset, error) {
 	return a, nil
 }
 
+var _migrations020_alter_sales_detailsSql = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xd2\xd5\x55\xd0\xce\xcd\x4c\x2f\x4a\x2c\x49\x55\x08\x2d\xe0\xe5\x72\xf4\x09\x71\x0d\x52\x08\x71\x74\xf2\x71\x55\x28\x4e\xcc\x49\x55\x80\x08\x38\xfb\xfb\x84\xfa\xfa\x29\xa4\xa4\x96\x24\x66\xe6\x14\x2b\x84\x44\x06\xb8\x2a\x64\x15\xe7\xe7\x25\x29\x84\x06\x7b\xfa\xb9\x2b\x94\xe4\xc7\x83\xb9\x1a\x50\x15\x56\x56\x20\xae\xa6\x35\x2f\x17\x2f\x17\xb2\x15\x2e\xf9\xe5\x79\x24\x59\x52\x92\x5a\x51\x62\xcd\xcb\x05\x08\x00\x00\xff\xff\xe9\x93\x6f\x92\xa7\x00\x00\x00")
+
+func migrations020_alter_sales_detailsSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations020_alter_sales_detailsSql,
+		"migrations/020_alter_sales_details.sql",
+	)
+}
+
+func migrations020_alter_sales_detailsSql() (*asset, error) {
+	bytes, err := migrations020_alter_sales_detailsSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/020_alter_sales_details.sql", size: 167, mode: os.FileMode(438), modTime: time.Unix(1514643972, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 // Asset loads and returns the asset for the given name.
 // It returns an error if the asset could not be found or
 // could not be loaded.
@@ -515,6 +536,7 @@ var _bindata = map[string]func() (*asset, error){
 	"migrations/017_reviewable_request.sql": migrations017_reviewable_requestSql,
 	"migrations/018_sale.sql": migrations018_saleSql,
 	"migrations/019_add_timestamps_2_reviewable_req.sql": migrations019_add_timestamps_2_reviewable_reqSql,
+	"migrations/020_alter_sales_details.sql": migrations020_alter_sales_detailsSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -576,6 +598,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"017_reviewable_request.sql": &bintree{migrations017_reviewable_requestSql, map[string]*bintree{}},
 		"018_sale.sql": &bintree{migrations018_saleSql, map[string]*bintree{}},
 		"019_add_timestamps_2_reviewable_req.sql": &bintree{migrations019_add_timestamps_2_reviewable_reqSql, map[string]*bintree{}},
+		"020_alter_sales_details.sql": &bintree{migrations020_alter_sales_detailsSql, map[string]*bintree{}},
 	}},
 }}
 
