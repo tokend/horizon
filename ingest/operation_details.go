@@ -193,6 +193,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["external_details"] = externalDetails
 	case xdr.OperationTypeCreateSaleRequest:
 		// no details needed
+	case xdr.OperationTypeCheckSaleState:
+		// no details needed
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

@@ -291,6 +291,7 @@ func (ingest *Ingestion) createInsertBuilders() {
 	)
 
 	ingest.trades = sq.Insert("history_trades").Columns(
+		"order_book_id",
 		"base_asset",
 		"quote_asset",
 		"base_amount",

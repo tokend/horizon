@@ -88,7 +88,8 @@ func ForOperation(
 	case xdr.OperationTypeManageOffer:
 		manageOfferOp := op.Body.MustManageOfferOp()
 		manageOfferResult := opResult.MustManageOfferResult()
-		result = addManageOfferParticipants(result, sourceParticipant.AccountID, manageOfferOp, manageOfferResult)
+		result = addMatchParticipants(result, sourceParticipant.AccountID, manageOfferOp.BaseBalance,
+			manageOfferOp.QuoteBalance, manageOfferOp.IsBuy, manageOfferResult.Success)
 		sourceParticipant = nil
 	case xdr.OperationTypeManageInvoice:
 		manageInvoiceOp := op.Body.MustManageInvoiceOp()
@@ -106,9 +107,18 @@ func ForOperation(
 		manageIssuanceRequest := op.Body.MustCreateIssuanceRequestOp()
 		manageIssuanceResult := opResult.MustCreateIssuanceRequestResult()
 		result = append(result, Participant{manageIssuanceResult.MustSuccess().Receiver,
-		&manageIssuanceRequest.Request.Receiver, nil})
+			&manageIssuanceRequest.Request.Receiver, nil})
 	case xdr.OperationTypeCreateSaleRequest:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeCheckSaleState:
+		manageOfferResult := opResult.MustCheckSaleStateResult()
+		saleClosed := manageOfferResult.Success.Effect.SaleClosed
+		if saleClosed == nil {
+			break
+		}
+		result = addMatchParticipants(result, saleClosed.SaleOwner, saleClosed.SaleBaseBalance,
+			saleClosed.SaleQuoteBalance, false, &saleClosed.SaleDetails)
+		sourceParticipant = nil
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
@@ -119,22 +129,22 @@ func ForOperation(
 	return
 }
 
-func addManageOfferParticipants(participants []Participant, sourceID xdr.AccountId, op xdr.ManageOfferOp, result xdr.ManageOfferResult) []Participant {
-	if result.Success == nil || len(result.Success.OffersClaimed) == 0 {
+func addMatchParticipants(participants []Participant, offerSourceID xdr.AccountId, baseBalanceID xdr.BalanceId,
+	quoteBalanceID xdr.BalanceId, isBuy bool, result *xdr.ManageOfferSuccessResult) []Participant {
+	if result == nil || len(result.OffersClaimed) == 0 {
 		return participants
 	}
 
 	matchesByBalance := NewMatchesDetailsByBalance()
 
-	for _, offerClaimed := range result.Success.OffersClaimed {
+	for _, offerClaimed := range result.OffersClaimed {
 
 		claimedOfferMatch := NewMatch(offerClaimed.BaseAmount, offerClaimed.QuoteAmount, offerClaimed.BFeePaid, offerClaimed.CurrentPrice)
-		matchesByBalance.Add(offerClaimed.BAccountId, offerClaimed.BaseBalance, result.Success.BaseAsset, result.Success.QuoteAsset, !op.IsBuy, claimedOfferMatch)
-		matchesByBalance.Add(offerClaimed.BAccountId, offerClaimed.QuoteBalance, result.Success.BaseAsset, result.Success.QuoteAsset, !op.IsBuy, claimedOfferMatch)
+		matchesByBalance.Add(offerClaimed.BAccountId, []xdr.BalanceId{offerClaimed.BaseBalance, offerClaimed.QuoteBalance},
+			result.BaseAsset, result.QuoteAsset, !isBuy, claimedOfferMatch)
 
 		offerMatch := NewMatch(offerClaimed.BaseAmount, offerClaimed.QuoteAmount, offerClaimed.AFeePaid, offerClaimed.CurrentPrice)
-		matchesByBalance.Add(sourceID, op.BaseBalance, result.Success.BaseAsset, result.Success.QuoteAsset, op.IsBuy, offerMatch)
-		matchesByBalance.Add(sourceID, op.QuoteBalance, result.Success.BaseAsset, result.Success.QuoteAsset, op.IsBuy, offerMatch)
+		matchesByBalance.Add(offerSourceID, []xdr.BalanceId{baseBalanceID, quoteBalanceID}, result.BaseAsset, result.QuoteAsset, isBuy, offerMatch)
 
 	}
 

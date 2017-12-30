@@ -110,6 +110,14 @@ var messages = map[string]string{
 	"op_exceeds_max_issuance_amount":            "Maximal issuance amount will be exceeded after issuance",
 	"op_receiver_full_line":                     "Total funds of receiver will exceed UINT64_MAX after issuance",
 	"op_fee_exceeds_amount":                     "Fee is more than amount to issue",
+	"op_order_book_does_not_exists":             "Specified IO does not exists or already closed",
+	"op_sale_is_not_started_yet":                "IO has not been started yet",
+	"op_sale_already_ended":                     "IO already ended",
+	"op_order_violates_hard_cap":                "Offer violates hard cap restriction of the IO",
+	"op_cant_participate_own_sale":              "Can not participate in the own IO",
+	"op_asset_mismatched":                       "Assets mismatched",
+	"op_price_does_not_match":                   "Prices does not match",
+	"op_insufficient_preissued":                 "Insufficient amount of tokens available for issuance",
 }
 
 func getMessage(rawCode string) string {

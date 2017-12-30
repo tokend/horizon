@@ -19,6 +19,7 @@ type OffersAction struct {
 	IsBuy        *bool
 	PagingParams db2.PageQuery
 	OfferID      string
+	OrderBookID uint64
 
 	CoreRecords []core.Offer
 	Page        hal.Page
@@ -42,6 +43,7 @@ func (action *OffersAction) loadParams() {
 	action.QuoteAsset = action.GetString("quote_asset")
 	action.IsBuy = action.GetOptionalBool("is_buy")
 	action.OfferID = action.GetString("offer_id")
+	action.OrderBookID = action.GetUInt64("order_book_id")
 	if (action.BaseAsset == "") != (action.QuoteAsset == "") {
 		action.SetInvalidField("base_asset", errors.New("base and quote assets must be both set or both not set"))
 		return
@@ -51,6 +53,7 @@ func (action *OffersAction) loadParams() {
 		"offer_id":    action.OfferID,
 		"base_asset":  action.BaseAsset,
 		"quote_asset": action.QuoteAsset,
+		"order_book_id": strconv.FormatUint(action.OrderBookID, 10),
 	}
 
 	if action.IsBuy != nil {
@@ -63,7 +66,7 @@ func (action *OffersAction) checkAllowed() {
 }
 
 func (action *OffersAction) loadRecords() {
-	q := action.CoreQ().Offers().ForAccount(action.AccountID)
+	q := action.CoreQ().Offers().ForAccount(action.AccountID).ForOrderBookID(action.OrderBookID)
 	if action.BaseAsset != "" {
 		q.ForAssets(action.BaseAsset, action.QuoteAsset)
 	}
