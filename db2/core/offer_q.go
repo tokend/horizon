@@ -36,6 +36,15 @@ func (q *OfferQ) ForAccount(accountID string) *OfferQ {
 	return q
 }
 
+func (q *OfferQ) ForOrderBookID(orderBookID uint64) *OfferQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("order_book_id = ?", orderBookID)
+	return q
+}
+
 func (q *OfferQ) ForAssets(base, quote string) *OfferQ {
 	if q.Err != nil {
 		return q

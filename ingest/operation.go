@@ -88,7 +88,8 @@ func (is *Session) operation() {
 			opDirectDebit.From,
 			is.Cursor.OperationResult().MustDirectDebitResult().MustSuccess().PaymentResponse)
 	case xdr.OperationTypeManageOffer:
-		is.manageOffer(is.Cursor.OperationSourceAccount(), is.Cursor.OperationResult().MustManageOfferResult())
+		is.storeTrades(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OrderBookId),
+			 *is.Cursor.OperationResult().MustManageOfferResult().Success)
 	case xdr.OperationTypeManageInvoice:
 		is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
 			is.Cursor.OperationResult().MustManageInvoiceResult())
@@ -96,5 +97,12 @@ func (is *Session) operation() {
 		is.processReviewRequest(is.Cursor.Operation().Body.MustReviewRequestOp())
 	case xdr.OperationTypeManageAsset:
 		is.processManageAsset(is.Cursor.Operation().Body.ManageAssetOp)
+	case xdr.OperationTypeCheckSaleState:
+		success := *is.Cursor.OperationResult().MustCheckSaleStateResult().Success
+		is.handleCheckSaleState(success)
+		if success.Effect.Effect == xdr.CheckSaleStateEffectClosed {
+			closed := success.Effect.SaleClosed
+			is.storeTrades(uint64(success.SaleId), closed.SaleDetails)
+		}
 	}
 }

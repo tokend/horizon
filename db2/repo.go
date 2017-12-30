@@ -6,10 +6,10 @@ import (
 	"reflect"
 	"time"
 
-	"gitlab.com/swarmfund/horizon/log"
 	"github.com/go-errors/errors"
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/swarmfund/horizon/log"
 	"golang.org/x/net/context"
 )
 
@@ -259,12 +259,19 @@ func (r *Repo) conn() Conn {
 }
 
 func (r *Repo) log(typ string, start time.Time, query string, args []interface{}) {
-	log.
+	dur := time.Since(start)
+	lEntry := log.
 		Ctx(r.logCtx()).
-		WithField("args", args).
-		WithField("sql", query).
-		WithField("dur", time.Since(start).String()).
-		Debugf("sql: %s", typ)
+		WithFields(log.F{
+			"args": args,
+			"sql":  query,
+			"dur":  dur.String(),
+		})
+	lEntry.Debugf("sql: %s", typ)
+
+	if dur > log.SlowQueryBound {
+		lEntry.Warningf("too slow sql: %s", typ)
+	}
 }
 
 func (r *Repo) logBegin() {
