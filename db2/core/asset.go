@@ -1,6 +1,10 @@
 package core
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2"
+)
 
 type Asset struct {
 	Code                 string `db:"code"`
@@ -14,16 +18,12 @@ type Asset struct {
 	Details              []byte `db:"details"`
 }
 
-type AssetDetails struct {
-	Name                 string `json:"name"`
-	Description          string `json:"description"`
-	ExternalResourceLink string `json:"external_resource_link"`
-	LogoID               string `json:"logo_id"`
-}
+func (a Asset) GetDetails() (db2.Details, error) {
+	var result db2.Details
+	err := json.Unmarshal(a.Details, &result)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to unmarshal asset details")
+	}
 
-func (a Asset) GetDetails() AssetDetails {
-	var result AssetDetails
-	// error is ignored on purpose
-	_ = json.Unmarshal(a.Details, &result)
-	return result
+	return result, nil
 }

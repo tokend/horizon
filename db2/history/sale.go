@@ -1,6 +1,7 @@
 package history
 
 import (
+	"gitlab.com/swarmfund/horizon/db2"
 	"time"
 )
 
@@ -15,6 +16,6 @@ type Sale struct {
 	SoftCap    uint64      `db:"soft_cap"`
 	HardCap    uint64      `db:"hard_cap"`
 	CurrentCap uint64      `db:"current_cap"`
-	Details    SaleDetails `db:"details"`
+	Details    db2.Details `db:"details"`
 	State      SaleState   `db:"state"`
 }
