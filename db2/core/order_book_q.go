@@ -31,6 +31,16 @@ func (q *OrderBookQ) ForAssets(base, quote string) *OrderBookQ {
 	return q
 }
 
+// ForOrderBookID - filters offers by order book id
+func (q *OrderBookQ) ForOrderBookID(orderBookID uint64) *OrderBookQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("order_book_id = ?", orderBookID)
+	return q
+}
+
 func (q *OrderBookQ) Direction(isBuy bool) *OrderBookQ {
 	if q.Err != nil {
 		return q

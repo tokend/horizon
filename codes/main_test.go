@@ -12,7 +12,7 @@ func checkCode(t *testing.T, code shortStr) {
 	So(opCode, ShouldNotBeBlank)
 	message := getMessage(opCode)
 	if message == "" {
-		t.Errorf("Expected message not to be blanck for %s", opCode)
+		t.Errorf("Expected message not to be blank for %s", opCode)
 	}
 }
 
@@ -60,6 +60,11 @@ func TestCodes(t *testing.T) {
 	})
 	Convey("CreateWithdrawalRequestResultCode", t, func() {
 		for _, code := range xdr.CreateWithdrawalRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+	Convey("CreateIssuanceRequestResultCode", t, func() {
+		for _, code := range xdr.CreateIssuanceRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})

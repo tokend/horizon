@@ -1,11 +1,14 @@
 package history
 
 import (
+	"time"
+
+	"fmt"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
-	"time"
 )
 
 type SalesQ interface {
@@ -15,6 +18,8 @@ type SalesQ interface {
 	ForOwner(ownerID string) SalesQ
 	// ForBaseAsset - filters by base asset
 	ForBaseAsset(baseAsset string) SalesQ
+	// ForName - filters by `name` field in the `details` json.
+	ForName(baseAsset string) SalesQ
 	// Open - selects only open sales
 	Open(now time.Time) SalesQ
 	// Insert - inserts new sale
@@ -59,6 +64,16 @@ func (q *saleQ) ForBaseAsset(baseAsset string) SalesQ {
 	}
 
 	q.sql = q.sql.Where("base_asset = ?", baseAsset)
+	return q
+}
+
+// ForName - filters by `name` field in the `details` json.
+func (q *saleQ) ForName(name string) SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details ->> 'name' ilike ?", fmt.Sprint("%", name, "%"))
 	return q
 }
 

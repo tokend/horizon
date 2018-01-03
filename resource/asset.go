@@ -9,14 +9,11 @@ type Asset struct {
 	Code                 string `json:"code"`
 	Owner                string `json:"owner"`
 	AvailableForIssuance string `json:"available_for_issuance"`
-	Name                 string `json:"name"`
 	PreissuedAssetSigner string `json:"preissued_asset_signer"`
-	Description          string `json:"description"`
-	ExternalResourceLink string `json:"external_resource_link"`
 	MaxIssuanceAmount    string `json:"max_issuance_amount"`
 	Issued               string `json:"issued"`
 	Policies
-	LogoID 				 string `json:"logo_id"`
+	Details map[string]interface{} `json:"details"`
 }
 
 func (a *Asset) Populate(asset *core.Asset) {
@@ -29,11 +26,7 @@ func (a *Asset) Populate(asset *core.Asset) {
 	a.MaxIssuanceAmount = amount.StringU(asset.MaxIssuanceAmount)
 	a.Issued = amount.StringU(asset.Issued)
 	a.Policies.Populate(*asset)
-	details := asset.GetDetails()
-	a.Name = details.Name
-	a.LogoID = details.LogoID
-	a.Description = details.Description
-	a.ExternalResourceLink = details.ExternalResourceLink
+	a.Details, _ = asset.GetDetails()
 }
 
 type AssetPair struct {

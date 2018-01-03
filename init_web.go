@@ -109,6 +109,7 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
+		xdr.OperationTypeCheckSaleState,
 	}
 
 	r := app.web.router

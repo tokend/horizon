@@ -6,6 +6,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"time"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2"
 )
 
 func saleCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -39,7 +40,7 @@ func saleUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 }
 
 func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
-	var saleDetails history.SaleDetails
+	var saleDetails db2.Details
 	_ = json.Unmarshal([]byte(raw.Details), &saleDetails)
 
 	return &history.Sale{

@@ -49,6 +49,9 @@ func (f *Participant) PopulateEffects(p *history.Participant, opType xdr.Operati
 	case xdr.OperationTypeManageOffer:
 		f.Effects = MatchEffects{}
 		err = p.UnmarshalEffects(&f.Effects)
+	case xdr.OperationTypeCheckSaleState:
+		f.Effects = MatchEffects{}
+		err = p.UnmarshalEffects(&f.Effects)
 	default:
 		err = errors.New("Unexpected effects type")
 	}
