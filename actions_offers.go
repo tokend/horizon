@@ -3,12 +3,12 @@ package horizon
 import (
 	"strconv"
 
+	"github.com/go-errors/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"github.com/go-errors/errors"
 )
 
 type OffersAction struct {
@@ -19,7 +19,7 @@ type OffersAction struct {
 	IsBuy        *bool
 	PagingParams db2.PageQuery
 	OfferID      string
-	OrderBookID uint64
+	OrderBookID  *uint64
 
 	CoreRecords []core.Offer
 	Page        hal.Page
@@ -43,17 +43,17 @@ func (action *OffersAction) loadParams() {
 	action.QuoteAsset = action.GetString("quote_asset")
 	action.IsBuy = action.GetOptionalBool("is_buy")
 	action.OfferID = action.GetString("offer_id")
-	action.OrderBookID = action.GetUInt64("order_book_id")
+	action.OrderBookID = action.GetOptionalUint64("order_book_id")
 	if (action.BaseAsset == "") != (action.QuoteAsset == "") {
 		action.SetInvalidField("base_asset", errors.New("base and quote assets must be both set or both not set"))
 		return
 	}
 	action.PagingParams = action.GetPageQuery()
 	action.Page.Filters = map[string]string{
-		"offer_id":    action.OfferID,
-		"base_asset":  action.BaseAsset,
-		"quote_asset": action.QuoteAsset,
-		"order_book_id": strconv.FormatUint(action.OrderBookID, 10),
+		"offer_id":      action.OfferID,
+		"base_asset":    action.BaseAsset,
+		"quote_asset":   action.QuoteAsset,
+		"order_book_id": action.GetString("order_book_id"),
 	}
 
 	if action.IsBuy != nil {
@@ -66,22 +66,24 @@ func (action *OffersAction) checkAllowed() {
 }
 
 func (action *OffersAction) loadRecords() {
-	q := action.CoreQ().Offers().ForAccount(action.AccountID).ForOrderBookID(action.OrderBookID)
+	q := action.CoreQ().Offers().ForAccount(action.AccountID)
 	if action.BaseAsset != "" {
-		q.ForAssets(action.BaseAsset, action.QuoteAsset)
+		q = q.ForAssets(action.BaseAsset, action.QuoteAsset)
 	}
 
 	if action.IsBuy != nil {
-		q.IsBuy(*action.IsBuy)
+		q = q.IsBuy(*action.IsBuy)
 	}
 
 	if action.OfferID != "" {
-		q.ForOfferID(action.OfferID)
+		q = q.ForOfferID(action.OfferID)
 	}
 
-	q = q.Page(action.PagingParams)
+	if action.OrderBookID != nil {
+		q = q.ForOrderBookID(*action.OrderBookID)
+	}
 
-	err := q.Select(&action.CoreRecords)
+	err := q.Page(action.PagingParams).Select(&action.CoreRecords)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get offers from core DB")
 		action.Err = &problem.ServerError
