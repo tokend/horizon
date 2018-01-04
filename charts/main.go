@@ -22,31 +22,36 @@ func NewHistogram(duration time.Duration, count uint64) *Histogram {
 	h := Histogram{
 		Interval:      duration,
 		Count:         count,
-		MaxBorderTime: time.Now(),
+		MaxBorderTime: time.Now().UTC(),
 	}
 
 	h.timeInterval = make([]point, h.Count)
+	for i := time.Duration(count); i > 0; i-- {
+		h.timeInterval[i-1].time = h.MaxBorderTime.Add(-1 * (i - 1) * h.bucketLength())
+	}
+
+	go h.Ticker()
 
 	return &h
 }
 
+func (h *Histogram) bucketLength() time.Duration {
+	return h.Interval / time.Duration(h.Count)
+}
+
 func (h *Histogram) shift() {
 	h.timeInterval = h.timeInterval[1:]
-
-	var p point
-	h.timeInterval = append(h.timeInterval, p)
+	h.timeInterval = append(h.timeInterval, point{
+		time: time.Now().UTC(),
+	})
 }
 
 func (h *Histogram) Ticker() {
-	intervalPiece := int64(h.Interval) / int64(h.Count)
-
-	ticker := time.NewTicker(time.Duration(intervalPiece))
-	go func() {
-		for ; ; <-ticker.C {
-			h.shift()
-			h.MaxBorderTime.Add(time.Duration(intervalPiece))
-		}
-	}()
+	ticker := time.NewTicker(h.bucketLength())
+	for ; ; <-ticker.C {
+		h.shift()
+		h.MaxBorderTime.Add(h.bucketLength())
+	}
 }
 
 func (h *Histogram) Run(entryValue uint64, txTime time.Time) {
@@ -90,10 +95,22 @@ type TxHistoryStorage struct {
 	TxHistory history.TransactionsQI
 }
 
-func (h *Histogram) render() {
+type Point struct {
+	Timestamp time.Time `json:"timestamp"`
+	Value     int64     `json:"value"`
+}
+
+func (h *Histogram) Render() []Point {
+	points := make([]Point, 0, h.Count-1)
 	for i := 1; i < len(h.timeInterval); i++ {
+		value := int64(h.timeInterval[i].value)
 		if h.timeInterval[i].value == 0 {
-			h.timeInterval[i] = h.timeInterval[i-1]
+			value = int64(h.timeInterval[i-1].value)
 		}
+		points = append(points, Point{
+			Timestamp: h.timeInterval[i].time,
+			Value:     value,
+		})
 	}
+	return points
 }
