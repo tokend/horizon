@@ -98,7 +98,7 @@ func NewMetaListener(log *log.Entry, txq history.TransactionsQI) *MetaListener {
 		txq: txq,
 		cursor: db2.PageQuery{
 			Cursor: "",
-			Order:  "desc",
+			Order:  "asc",
 			Limit:  200,
 		},
 	}
@@ -109,9 +109,8 @@ func (l *MetaListener) Subscribe(subscriber Subscriber) {
 }
 
 func (l *MetaListener) Init() error {
-	var records []history.Transaction
-
 	for {
+		var records []history.Transaction
 		err := l.txq.Page(l.cursor).Select(&records)
 		if err != nil {
 			return errors.Wrap(err, "failed to get records")
@@ -155,9 +154,8 @@ func (l *MetaListener) Run() {
 		ticker.Stop()
 	}()
 
-	var records []history.Transaction
-
 	for ; ; <-ticker.C {
+		var records []history.Transaction
 		err := l.txq.Page(l.cursor).Select(&records)
 		if err != nil {
 			l.log.WithError(err).Error("failed to get records")
