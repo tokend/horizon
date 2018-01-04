@@ -72,14 +72,14 @@ func (c *Charts) Set(name string, ts time.Time, value int64) {
 	if !ok {
 		histograms = make(map[string]*charts.Histogram)
 		histograms["hour"] = charts.NewHistogram(1*time.Hour, 360)
-		//histograms["day"] = charts.NewHistogram(24*time.Hour, 360)
-		//histograms["month"] = charts.NewHistogram(30*24*time.Hour, 360)
-		//histograms["year"] = charts.NewHistogram(365*24*time.Hour, 360)
+		histograms["day"] = charts.NewHistogram(24*time.Hour, 360)
+		histograms["month"] = charts.NewHistogram(30*24*time.Hour, 360)
+		histograms["year"] = charts.NewHistogram(365*24*time.Hour, 360)
 		c.histograms[name] = histograms
 	}
 
 	for _, histogram := range histograms {
-		histogram.Run(uint64(value), ts)
+		histogram.Run(value, ts)
 	}
 }
 
