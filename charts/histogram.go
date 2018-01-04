@@ -1,6 +1,7 @@
 package charts
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -46,16 +47,20 @@ func (h *Histogram) Run(value int64, ts time.Time) {
 }
 
 func (h *Histogram) Render() []Point {
-	points := make([]Point, 0, h.Count-1)
+	points := make([]Point, h.Count)
 	for i := 1; i < len(h.points); i++ {
+		fmt.Println(h.points[i])
 		value := int64(h.points[i].Value)
 		if h.points[i].Value == 0 {
-			value = int64(h.points[i-1].Value)
+			fmt.Println("zero", i)
+			value = int64(points[i-1].Value)
 		}
-		points = append(points, Point{
+		fmt.Println("value", value)
+		points[i] = Point{
 			Timestamp: h.points[i].Timestamp,
 			Value:     value,
-		})
+		}
 	}
-	return points
+	fmt.Println(points)
+	return points[2:]
 }
