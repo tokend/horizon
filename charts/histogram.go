@@ -18,12 +18,6 @@ func NewHistogram(duration time.Duration, count int64) *Histogram {
 		Count:    count,
 	}
 
-	now := time.Now().UTC()
-	h.points = make([]Point, h.Count)
-	for i := int64(1); i <= count; i++ {
-		h.points[count-i].Timestamp = now.Add(-1 * time.Duration(i) * h.bucketLength())
-	}
-
 	go h.Ticker()
 
 	return &h
@@ -70,6 +64,7 @@ func (h *Histogram) Render() []Point {
 			Value:     value,
 		})
 	}
+	points[len(points)-1].Timestamp = time.Now().UTC()
 
 	return points
 }
