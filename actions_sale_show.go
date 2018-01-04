@@ -50,8 +50,12 @@ func (action *SaleShowAction) loadRecord() {
 	}
 
 	action.offers = make([]core.Offer, 0)
-	err = action.CoreQ().
-		Offers().
+	err = action.CoreQ().Offers().
 		ForOrderBookID(action.Record.ID).
 		Select(&action.offers)
+	if err != nil {
+		action.Log.WithError(err).WithField("sale_id", action.Record.ID).Error("failed to load offers for sale")
+		action.Err = &problem.ServerError
+		return
+	}
 }

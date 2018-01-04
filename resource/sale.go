@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"fmt"
+	"math"
 	"math/big"
 	"strconv"
 	"time"
@@ -51,6 +53,10 @@ func (s *Sale) Populate(h *history.Sale) {
 }
 
 func (s *Sale) PopulateStatistic(offers []core.Offer) {
+	if len(offers) == 0 {
+		return
+	}
+
 	sum := big.NewInt(0)
 	uniqueInvestors := make(map[string]bool)
 	for _, offer := range offers {
@@ -61,7 +67,7 @@ func (s *Sale) PopulateStatistic(offers []core.Offer) {
 	quantity := len(uniqueInvestors)
 	average := sum.Div(sum, big.NewInt(int64(quantity)))
 
-	averageStr := average.String()
+	averageStr := fmt.Sprintf("%d", math.MaxInt64)
 	if average.IsInt64() {
 		averageStr = amount.String(average.Int64())
 	}
