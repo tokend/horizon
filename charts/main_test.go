@@ -1,11 +1,6 @@
 package charts
 
-import (
-	"fmt"
-	"testing"
-	"time"
-)
-
+/*
 func TestHistogram_Shift(t *testing.T) {
 	h := NewHistogram(time.Hour, 6)
 
@@ -62,3 +57,4 @@ func TestInsert(t *testing.T) {
 		fmt.Println(h.timeInterval)
 	}
 }
+*/
