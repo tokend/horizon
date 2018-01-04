@@ -178,6 +178,7 @@ func initWebActions(app *App) {
 	r.Get("/fees/:fee_type", &FeesShowAction{})
 
 	// assets
+	r.Get("/charts/:code", &ChartsAction{})
 	r.Get("/prices/history", &PricesHistoryAction{})
 	r.Get("/assets", &AssetsIndexAction{})
 	r.Get("/assets/:code", &AssetsShowAction{})
@@ -192,37 +193,35 @@ func initWebActions(app *App) {
 	// Reviewable Request actions
 	r.Get("/requests/:id", &ReviewableRequestShowAction{})
 	r.Get("/request/assets", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string {
+		RequestSpecificFilters: map[string]string{
 			"asset": "",
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAssetCreate, xdr.ReviewableRequestTypeAssetUpdate},
 	})
 	r.Get("/request/preissuances", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string {
+		RequestSpecificFilters: map[string]string{
 			"asset": "",
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypePreIssuanceCreate},
 	})
 	r.Get("/request/issuances", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string {
+		RequestSpecificFilters: map[string]string{
 			"asset": "",
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeIssuanceCreate},
 	})
 	r.Get("/request/withdrawals", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string {
+		RequestSpecificFilters: map[string]string{
 			"dest_asset_code": "",
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string {
+		RequestSpecificFilters: map[string]string{
 			"base_asset": "",
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
-
-
 
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
