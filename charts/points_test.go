@@ -9,13 +9,35 @@ import (
 
 func TestPoints_Shift(t *testing.T) {
 	points := Points{
-		{time.Time{}.Add(1), 1},
-		{time.Time{}.Add(2), 2},
-		{time.Time{}.Add(3), 3},
+		{time.Unix(1, 0), 1},
+		{time.Unix(2, 0), 2},
+		{time.Unix(3, 0), 3},
 	}
 	l := len(points)
 	points.Shift()
 	assert.Len(t, points, l)
 	assert.EqualValues(t, 0, points[l-1].Value)
-	assert.InEpsilon(t, time.Now().UTC().Unix(), points[l-1].Timestamp.Unix(), 1)
+	assert.Equal(t, time.Unix(4, 0), points[l-1].Timestamp)
+}
+
+func TestNewPointsPanics(t *testing.T) {
+	cases := []struct {
+		name   string
+		count  uint
+		bucket time.Duration
+	}{
+		{"invalid count", 1, 10},
+		{"negative duration", 2, -10},
+		{"zero duration", 2, 0},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			for i := uint(0); i < 2; i++ {
+				assert.Panics(t, func() {
+					NewPoints(tc.count, tc.bucket, time.Now())
+				})
+			}
+		})
+	}
 }
