@@ -42,8 +42,8 @@ func (p Points) Last() Point {
 }
 
 func (p Points) Insert(idx int, value int64) {
-	if p[idx].Value != 0 {
-		value = (p[idx].Value + value) / 2
+	if p[idx].Value != nil {
+		value = (*p[idx].Value + value) / 2
 	}
-	p[idx].Value = value
+	p[idx].Value = &value
 }

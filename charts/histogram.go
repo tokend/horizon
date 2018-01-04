@@ -7,7 +7,7 @@ import (
 type Histogram struct {
 	duration time.Duration
 	points   Points
-	preceded Point
+	preceded *Point
 }
 
 func NewHistogram(duration time.Duration, count uint) *Histogram {
@@ -37,22 +37,33 @@ func (h *Histogram) Run(value int64, ts time.Time) {
 	}
 	if idx < 0 {
 		// storing latest value before first interval value
-		if ts.After(h.preceded.Timestamp) {
-			h.preceded = Point{ts, value}
+		if h.preceded == nil || ts.After(h.preceded.Timestamp) {
+			h.preceded = &Point{ts, &value}
 		}
 	}
 }
 
+// Render fills missing buckets with previously known values
+// Guaranteed to return non-nil values
 func (h *Histogram) Render() []Point {
+	var zero int64 = 0
 	points := make([]Point, 0, len(h.points))
 	for idx, point := range h.points {
 		value := point.Value
-		if value == 0 {
+		if value == nil {
 			if idx == 0 {
-				value = h.preceded.Value
+				if h.preceded != nil {
+					value = h.preceded.Value
+				} else {
+					value = &zero
+				}
 			} else {
 				value = points[idx-1].Value
 			}
+		}
+		if value == nil {
+			// marks issue with data provider layer
+			panic("no initial value has been set")
 		}
 		points = append(points, Point{
 			Timestamp: point.Timestamp,

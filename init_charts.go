@@ -19,6 +19,18 @@ func initCharts(app *App) {
 
 	app.charts = NewCharts()
 
+	// sales initial value
+	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
+		if change.Type != xdr.LedgerEntryChangeTypeCreated {
+			return
+		}
+		if change.Created.Data.Type != xdr.LedgerEntryTypeSale {
+			return
+		}
+		data := change.Created.Data.Sale
+		app.charts.Set(string(data.BaseAsset), ts, int64(data.CurrentCap))
+	})
+
 	// sales current cap charts
 	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
 		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
