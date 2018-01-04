@@ -41,3 +41,11 @@ func TestNewPointsPanics(t *testing.T) {
 		})
 	}
 }
+
+func TestNewPoints(t *testing.T) {
+	base := time.Unix(1337, 0)
+	points := NewPoints(3, 1*time.Second, base)
+	assert.Len(t, points, 3)
+	assert.True(t, points[2].Timestamp.After(base))
+	assert.Equal(t, points[2].Timestamp, base.Add(1*time.Second))
+}

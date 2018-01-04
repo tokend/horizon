@@ -47,7 +47,7 @@ func (action *ChartsAction) renderResource() {
 		for _, point := range points {
 			action.Resource[key] = append(action.Resource[key], resource.Point{
 				Timestamp: point.Timestamp,
-				Value:     amount.String(point.Value),
+				Value:     amount.String(*point.Value),
 			})
 		}
 	}
