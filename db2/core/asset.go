@@ -15,6 +15,7 @@ type Asset struct {
 	MaxIssuanceAmount    uint64 `db:"max_issuance_amount"`
 	Issued               uint64 `db:"issued"`
 	LockedIssuance       uint64 `db:"locked_issuance"`
+	PendingIssuance      uint64 `db:"pending_issuance"`
 	Details              []byte `db:"details"`
 }
 
