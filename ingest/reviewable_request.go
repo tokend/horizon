@@ -23,7 +23,7 @@ func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.Wrap(err, "failed to convert reviewable request")
 	}
 
-	err = is.Ingestion.HistoryQ.ReviewableRequests().Insert(*histReviewableRequest)
+	err = is.Ingestion.HistoryQ().ReviewableRequests().Insert(*histReviewableRequest)
 	if err != nil {
 		return errors.Wrap(err, "failed to create reviewable request")
 	}
@@ -42,7 +42,7 @@ func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.Wrap(err, "failed to convert reviewable request")
 	}
 
-	err = is.Ingestion.HistoryQ.ReviewableRequests().Update(*histReviewableRequest)
+	err = is.Ingestion.HistoryQ().ReviewableRequests().Update(*histReviewableRequest)
 	if err != nil {
 		return errors.Wrap(err, "failed to update reviewable request")
 	}

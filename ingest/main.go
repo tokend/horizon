@@ -11,7 +11,6 @@ import (
 	"gitlab.com/swarmfund/horizon/corer"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ingest/ingestion"
 	"gitlab.com/swarmfund/horizon/log"
 )
@@ -38,7 +37,6 @@ type Cursor struct {
 	LastLedger int32
 	// DB is the stellar-core db that data is ingested from.
 	CoreDB    *db2.Repo
-	HistoryDB *db2.Repo
 
 	Metrics *IngesterMetrics
 
@@ -52,10 +50,6 @@ func (c *Cursor) CoreQ() core.QInterface {
 	return &core.Q{Repo: c.CoreDB}
 }
 
-func (c *Cursor) HistoryQ() history.QInterface {
-	return &history.Q{Repo: c.HistoryDB}
-}
-
 func (c *Cursor) LedgerCloseTime() time.Time {
 	return time.Unix(int64(c.data.Header.CloseTime), 0).UTC()
 }
@@ -67,7 +61,6 @@ type LedgerBundle struct {
 	Header              core.LedgerHeader
 	TransactionFees     []core.TransactionFee
 	Transactions        []core.Transaction
-	HistoryPriceProvide *PriceHistoryProvider
 }
 
 // System represents the data ingestion subsystem of horizon.
@@ -160,15 +153,12 @@ func NewSession(paranoid bool, first, last int32, i *System) *Session {
 		Ingestion: &ingestion.Ingestion{
 			DB:       hdb,
 			CoreDB:   coredb,
-			CoreQ:    core.NewQ(coredb),
-			HistoryQ: &history.Q{Repo: hdb},
 		},
 
 		Cursor: &Cursor{
 			FirstLedger: first,
 			LastLedger:  last,
 			CoreDB:      i.CoreDB,
-			HistoryDB:   i.HorizonDB,
 			Metrics:     &i.Metrics,
 		},
 		CoreConnector: i.CoreConnector,

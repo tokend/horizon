@@ -62,7 +62,6 @@ var creationHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerEntry *xd
 var deletionHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerKey *xdr.LedgerKey) error{}
 
 var updateHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerKey *xdr.LedgerEntry) error{
-	xdr.LedgerEntryTypeAssetPair:         assetPairUpdated,
 	xdr.LedgerEntryTypeBalance:           balanceUpdated,
 	xdr.LedgerEntryTypeReviewableRequest: reviewableRequestUpdate,
 	xdr.LedgerEntryTypeSale:              saleUpdate,

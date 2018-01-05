@@ -34,10 +34,6 @@ func (c *Cursor) Ledger() *core.LedgerHeader {
 	return &c.data.Header
 }
 
-func (c *Cursor) PriceHistoryProvider() *PriceHistoryProvider {
-	return c.data.HistoryPriceProvide
-}
-
 // LedgerID returns the current ledger's id, as used by the history system.
 func (c *Cursor) LedgerID() int64 {
 	return toid.New(c.lg, 0, 0).ToInt64()
@@ -78,7 +74,7 @@ func (c *Cursor) NextLedger() (bool, error) {
 
 	c.data = &LedgerBundle{Sequence: c.lg}
 	start := time.Now()
-	err := c.data.Load(c.CoreQ(), c.HistoryQ())
+	err := c.data.Load(c.CoreQ())
 	if err == sql.ErrNoRows {
 		return false, nil
 	}

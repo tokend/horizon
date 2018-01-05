@@ -96,7 +96,6 @@ func (is *Session) ingestLedger() {
 		is.ingestTransaction()
 	}
 
-	is.priceHistory()
 
 	is.Ingested++
 	if is.Metrics != nil {
@@ -104,23 +103,6 @@ func (is *Session) ingestLedger() {
 	}
 
 	return
-}
-
-func (is *Session) priceHistory() {
-	if is.Err != nil {
-		return
-	}
-
-	priceHistory, err := is.Cursor.PriceHistoryProvider().ToPricePoints()
-	if err != nil {
-		is.Err = err
-		return
-	}
-
-	err = is.Ingestion.StorePricePoints(priceHistory)
-	if err != nil {
-		is.Err = errors.Wrap(err, "failed to store price points")
-	}
 }
 
 func (is *Session) storeTrades(orderBookID uint64, result xdr.ManageOfferSuccessResult) {
@@ -143,7 +125,7 @@ func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.Manag
 }
 
 func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
-	err := is.Cursor.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
+	err := is.Ingestion.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
 	if err != nil {
 		return errors.Wrap(err, "failed to permanently reject request")
 	}
@@ -166,7 +148,7 @@ func (is *Session) handleCheckSaleState(result xdr.CheckSaleStateSuccess) {
 		state = history.SaleStateCanceled
 	}
 
-	err := is.Cursor.HistoryQ().Sales().SetState(uint64(result.SaleId), state)
+	err := is.Ingestion.HistoryQ().Sales().SetState(uint64(result.SaleId), state)
 	if err != nil {
 		is.Err = errors.Wrap(err, "failed to set state", logan.F{"sale_id": uint64(result.SaleId)})
 		return
@@ -183,7 +165,7 @@ func (is *Session) processManageAsset(op *xdr.ManageAssetOp) {
 		return
 	}
 
-	err := is.Cursor.HistoryQ().ReviewableRequests().Cancel(uint64(op.RequestId))
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Cancel(uint64(op.RequestId))
 	if err != nil {
 		is.Err = errors.Wrap(err, "failed to cancel reviewable request", map[string]interface{}{
 			"request_id": uint64(op.RequestId),
