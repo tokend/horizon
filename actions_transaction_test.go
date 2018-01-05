@@ -2,12 +2,9 @@ package horizon
 
 import (
 	"encoding/json"
-	"net/url"
 	"testing"
 
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/swarmfund/horizon/txsub"
-	"gitlab.com/swarmfund/horizon/txsub/sequence"
 )
 
 func TestTransactionActions_Show(t *testing.T) {
@@ -76,24 +73,4 @@ func TestTransactionActions_Index(t *testing.T) {
 	if ht.Assert.Equal(200, w.Code) {
 		ht.Assert.PageOf(2, w.Body)
 	}
-}
-
-func TestTransactionActions_Post(t *testing.T) {
-	ht := StartHTTPTest(t, "base")
-	defer ht.Finish()
-
-	form := url.Values{"tx": []string{"AAAAAGL8HQvQkbK2HA3WVjRrKmjX00fG8sLI7m0ERwJW/AX3AAAAZAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAArqN6LeOagjxMaUP96Bzfs9e0corNZXzBWJkFoK7kvkwAAAAAO5rKAAAAAAAAAAABVvwF9wAAAECDzqvkQBQoNAJifPRXDoLhvtycT3lFPCQ51gkdsFHaBNWw05S/VhW0Xgkr0CBPE4NaFV2Kmcs3ZwLmib4TRrML"}}
-
-	// existing transaction
-	w := ht.Post("/transactions", form)
-	ht.Assert.Equal(200, w.Code)
-
-	// sequence buffer full
-	ht.App.submitter.Results = &txsub.MockResultProvider{
-		Results: []txsub.Result{
-			{Err: sequence.ErrNoMoreRoom},
-		},
-	}
-	w = ht.Post("/transactions", form)
-	ht.Assert.Equal(503, w.Code)
 }

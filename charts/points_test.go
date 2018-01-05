@@ -8,15 +8,17 @@ import (
 )
 
 func TestPoints_Shift(t *testing.T) {
+	ts := [3]int64{1, 2, 3}
+
 	points := Points{
-		{time.Unix(1, 0), 1},
-		{time.Unix(2, 0), 2},
-		{time.Unix(3, 0), 3},
+		{time.Unix(1, 0), &ts[0]},
+		{time.Unix(2, 0), &ts[1]},
+		{time.Unix(3, 0), &ts[2]},
 	}
 	l := len(points)
 	points.Shift()
 	assert.Len(t, points, l)
-	assert.EqualValues(t, 0, points[l-1].Value)
+	assert.EqualValues(t, (*int64)(nil), points[l-1].Value)
 	assert.Equal(t, time.Unix(4, 0), points[l-1].Timestamp)
 }
 
