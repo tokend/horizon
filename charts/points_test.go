@@ -18,7 +18,7 @@ func TestPoints_Shift(t *testing.T) {
 	l := len(points)
 	points.Shift()
 	assert.Len(t, points, l)
-	assert.EqualValues(t, (*int64)(nil), points[l-1].Value)
+	assert.Nil(t, points[l-1].Value)
 	assert.Equal(t, time.Unix(4, 0), points[l-1].Timestamp)
 }
 
