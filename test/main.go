@@ -9,12 +9,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	hlog "gitlab.com/swarmfund/horizon/log"
-	tdb "gitlab.com/swarmfund/horizon/test/db"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	hlog "gitlab.com/swarmfund/horizon/log"
 	"golang.org/x/net/context"
 )
 
@@ -59,34 +58,6 @@ func ContextWithLogBuffer() (context.Context, *bytes.Buffer) {
 
 }
 
-// Database returns a connection to the horizon test database
-//
-// DEPRECATED:  use `Horizon()` from test/db package
-func Database() *sqlx.DB {
-	return tdb.Horizon()
-}
-
-// DatabaseURL returns the database connection the url any test
-// use when connecting to the history/horizon database
-//
-// DEPRECATED:  use `HorizonURL()` from test/db package
-func DatabaseURL() string {
-	return tdb.HorizonURL()
-}
-
-// LoadScenario populates the test databases with pre-created scenarios.  Each
-// scenario is in the scenarios subfolder of this package and are a pair of
-// sql files, one per database.
-func LoadScenario(scenarioName string) {
-	loadScenario(scenarioName, true)
-}
-
-// LoadScenarioWithoutHorizon populates the test Stellar core database a with
-// pre-created scenario.  Unlike `LoadScenario`, this
-func LoadScenarioWithoutHorizon(scenarioName string) {
-	loadScenario(scenarioName, false)
-}
-
 // OverrideLogger sets the default logger used by horizon to `l`.  This is used
 // by the testing system so that we can collect output from logs during test
 // runs.  Panics if the logger is already overridden.
@@ -126,27 +97,10 @@ func Start(t *testing.T) *T {
 	OverrideLogger(result.Logger)
 
 	result.Ctx = hlog.Set(context.Background(), result.Logger)
-	result.HorizonDB = Database()
-	result.CoreDB = StellarCoreDatabase()
 	result.Assert = assert.New(t)
 	result.Require = require.New(t)
 
 	return result
-}
-
-// StellarCoreDatabase returns a connection to the stellar core test database
-//
-// DEPRECATED:  use `StellarCore()` from test/db package
-func StellarCoreDatabase() *sqlx.DB {
-	return tdb.StellarCore()
-}
-
-// StellarCoreDatabaseURL returns the database connection the url any test
-// use when connecting to the stellar-core database
-//
-// DEPRECATED:  use `StellarCoreURL()` from test/db package
-func StellarCoreDatabaseURL() string {
-	return tdb.StellarCoreURL()
 }
 
 var oldDefault *hlog.Entry = nil
