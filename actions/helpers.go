@@ -369,7 +369,7 @@ func (base *Base) GetAccountID(name string) (result xdr.AccountId) {
 
 // GetAmount returns a native amount (i.e. 64-bit integer) by parsing
 // the string at the provided name in accordance with the stellar client
-// conventions
+// conventions.
 func (base *Base) GetAmount(name string) int64 {
 	if base.Err != nil {
 		return 0
@@ -384,6 +384,23 @@ func (base *Base) GetAmount(name string) int64 {
 	}
 
 	return result
+}
+
+// GetOptionalAmount returns a pointer of native amount (i.e. 64-bit integer) by parsing
+// the string at the provided name in accordance with the stellar client
+// conventions.
+func (base *Base) GetOptionalAmount(name string) *int64 {
+	if base.Err != nil {
+		return nil
+	}
+
+	result := base.GetAmount(name)
+	if base.Err != nil {
+		base.Err = nil
+		return nil
+	}
+
+	return &result
 }
 
 // SetInvalidField establishes an error response triggered by an invalid
