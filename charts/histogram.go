@@ -21,10 +21,21 @@ func NewHistogram(duration time.Duration, count uint) *Histogram {
 	return &h
 }
 
+// Shift moves head one duration forward
+func (h *Histogram) Shift() {
+	h.preceded = &Point{
+		Timestamp: h.points.Last().Timestamp,
+		Value:     h.points.Last().Value,
+	}
+	shifted := append(h.points[1:], Point{Timestamp: h.points.Last().Timestamp.Add(h.points.BucketDuration())})
+	copy(h.points, shifted)
+}
+
 func (h *Histogram) Ticker() {
 	ticker := time.NewTicker(h.points.BucketDuration())
-	for ; ; <-ticker.C {
-		h.points.Shift()
+	for {
+		<-ticker.C
+		h.Shift()
 	}
 }
 

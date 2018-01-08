@@ -27,12 +27,6 @@ func NewPoints(count uint, bucket time.Duration, base time.Time) Points {
 	return points
 }
 
-// Shift moves head one duration forward
-func (p Points) Shift() {
-	shifted := append(p[1:], Point{Timestamp: p.Last().Timestamp.Add(p.BucketDuration())})
-	copy(p, shifted)
-}
-
 func (p Points) BucketDuration() time.Duration {
 	return p[1].Timestamp.Sub(p[0].Timestamp)
 }
@@ -42,8 +36,5 @@ func (p Points) Last() Point {
 }
 
 func (p Points) Insert(idx int, value int64) {
-	if p[idx].Value != nil {
-		value = (*p[idx].Value + value) / 2
-	}
 	p[idx].Value = &value
 }
