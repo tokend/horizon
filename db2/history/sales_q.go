@@ -31,12 +31,12 @@ type SalesQ interface {
 	// NearlyFunded is selects all sales in which the `current_cap`
 	// is filled by more than a percentBound of the `soft_cap`.
 	NearlyFunded(percentBound int64) SalesQ
-
 	// OrderByEndTime is set ordering by `end_time`.
 	OrderByEndTime() SalesQ
 	// OrderByCurrentCap is set ordering by `current_cap`.
 	OrderByCurrentCap(desc bool) SalesQ
-
+	// OrderByPopularity is merge with quantity of the
+	// unique investors for each sale, and sort sales by quantity.
 	OrderByPopularity(values db2.OrderBooksInvestors) SalesQ
 	// Insert - inserts new sale
 	Insert(sale Sale) error
@@ -273,7 +273,8 @@ func (q *saleQ) OrderByCurrentCap(desc bool) SalesQ {
 	return q
 }
 
-// OrderByPopularity is
+// OrderByPopularity is merge with quantity of the unique investors for each sale,
+// and sort sales by quantity.
 func (q *saleQ) OrderByPopularity(values db2.OrderBooksInvestors) SalesQ {
 	if q.Err != nil {
 		return q

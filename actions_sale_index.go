@@ -1,9 +1,8 @@
 package horizon
 
 import (
-	"time"
-
 	"fmt"
+	"time"
 
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -74,7 +73,6 @@ func (action *SaleIndexAction) loadParams() {
 		"reached_soft_cap": action.GetString("reached_soft_cap"),
 		"goal_value":       action.GetString("goal_value"),
 	}
-	fmt.Println("Collect queries")
 }
 
 func (action *SaleIndexAction) loadRecord() {
