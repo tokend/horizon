@@ -120,31 +120,33 @@ func TestHistogram_Run(t *testing.T) {
 		points:   points,
 		preceded: nil,
 	}
-	fmt.Println(h)
 
-	h.Run(10, time.Now().Add(-time.Minute))
-
-	fmt.Println(h)
+	for i := range h.points {
+		h.Run(int64(i), time.Now().Add(-durations[i]))
+		assert.Equal(t, int64(i), *h.points[i].Value)
+	}
 }
 
-func TestPoints_Shift(t *testing.T) {
-	ts := [3]int64{1, 2, 3}
-
-	points := Points{
-		{time.Unix(1, 0), &ts[0]},
-		{time.Unix(2, 0), &ts[1]},
-		{time.Unix(3, 0), &ts[2]},
-	}
-
+func TestGetIndex(t *testing.T) {
+	/*
+		1)задать гистрограмму
+		2)убедиться:
+			*возвращает правильный индекс
+			*сэттит значение в средину
+			*сэттит значение в nil
+	*/
+	points := NewPoints(6, time.Hour/time.Duration(6), time.Now().UTC())
 	h := Histogram{
-		duration: 3 * time.Second,
+		duration: time.Hour,
 		points:   points,
-		preceded: nil,
 	}
-	l := len(h.points)
 
-	h.Shift()
-	assert.Len(t, h.points, l)
-	assert.Nil(t, h.points[l-1].Value)
-	assert.Equal(t, time.Unix(4, 0), points[l-1].Timestamp)
+	//h.getIndex()
+}
+
+func TestNewHistogram(t *testing.T) {
+	h := NewHistogram(time.Hour, 60)
+
+	assert.Equal(t, time.Hour, h.duration)
+	assert.Equal(t, 60, len(h.points))
 }
