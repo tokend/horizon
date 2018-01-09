@@ -2,13 +2,8 @@ package operations
 
 import (
 	"fmt"
-	"time"
 
-	"database/sql"
-
-	"github.com/guregu/null"
 	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"golang.org/x/net/context"
@@ -19,17 +14,6 @@ import (
 func New(
 	ctx context.Context, row history.Operation, participants []*history.Participant, public bool,
 ) (result hal.Pageable, err error) {
-
-	// test
-
-	op := history.Operation{
-		TotalOrderID:     db2.TotalOrderID{ID: 231928242177},
-		TransactionID:    231928242176,
-		TransactionHash:  "",
-		ApplicationOrder: 1, Type: 0,
-		DetailsString: null.String{NullString: sql.NullString{String: "{\"funder\": \"GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636\", \"account\": \"GBCADUBIWUSO5HZF7YZUC42Z6DWSCJH2GQQUEJH6HD6OE4TSYU46F7XT\", \"account_type\": 2}", Valid: true}}, LedgerCloseTime: time.Time{wall: 0x0, ext: 63649884624, loc: (*time.Location)(0xc4200d5aa0)}, SourceAccount: "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
-		State:      2,
-		Identifier: 0}
 
 	fmt.Printf("%#v\n", row)
 	fmt.Printf("%#v\n", participants)

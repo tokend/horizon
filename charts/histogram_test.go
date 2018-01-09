@@ -20,8 +20,9 @@ func TestRender(t *testing.T) {
 	}
 
 	p := make(Points, 6)
+	base := time.Now()
 	for i, d := range durations {
-		p[i].Timestamp = time.Now().Add(-d)
+		p[i].Timestamp = base.Add(-d)
 		if i != 2 && i != 3 {
 			p[i].Value = &inputVal[i]
 		}
@@ -51,9 +52,9 @@ func TestHistogram_Render(t *testing.T) {
 
 	p := make(Points, 6)
 
-	//var input int64 = 1
+	base := time.Now()
 	for i, d := range durations {
-		p[i].Timestamp = time.Now().Add(-d)
+		p[i].Timestamp = base.Add(-d)
 	}
 
 	h := Histogram{
@@ -72,6 +73,7 @@ func TestHistogram_Render(t *testing.T) {
 }
 
 func TestHistogram_Render2(t *testing.T) {
+	base := time.Now()
 	inputVal := []int64{0, 1, 1, 1, 1, 1}
 
 	durations := []time.Duration{
@@ -81,14 +83,14 @@ func TestHistogram_Render2(t *testing.T) {
 
 	points := make(Points, 6)
 	for i, d := range durations {
-		points[i].Timestamp = time.Now().Add(-d)
+		points[i].Timestamp = base.Add(-d)
 		if i >= 1 {
 			points[i].Value = &inputVal[i]
 		}
 	}
 
 	point := Point{
-		Timestamp: time.Now().Add(-durations[0]),
+		Timestamp: base.Add(-durations[0]),
 		Value:     &inputVal[1],
 	}
 
@@ -105,6 +107,7 @@ func TestHistogram_Render2(t *testing.T) {
 }
 
 func TestHistogram_Run(t *testing.T) {
+	base := time.Now()
 	durations := []time.Duration{
 		5 * time.Minute, 15 * time.Minute, 25 * time.Minute,
 		35 * time.Minute, 45 * time.Minute, 55 * time.Minute,
@@ -112,7 +115,7 @@ func TestHistogram_Run(t *testing.T) {
 
 	points := make(Points, 6)
 	for i, d := range durations {
-		points[i].Timestamp = time.Now().Add(-d)
+		points[i].Timestamp = base.Add(-d)
 	}
 
 	h := Histogram{
@@ -122,26 +125,51 @@ func TestHistogram_Run(t *testing.T) {
 	}
 
 	for i := range h.points {
-		h.Run(int64(i), time.Now().Add(-durations[i]))
+		h.Run(int64(i), base.Add(-durations[i]))
 		assert.Equal(t, int64(i), *h.points[i].Value)
 	}
 }
 
 func TestGetIndex(t *testing.T) {
-	/*
-		1)задать гистрограмму
-		2)убедиться:
-			*возвращает правильный индекс
-			*сэттит значение в средину
-			*сэттит значение в nil
-	*/
-	points := NewPoints(6, time.Hour/time.Duration(6), time.Now().UTC())
+
+	base := time.Now()
+
+	ts := []time.Duration{
+		5 * time.Minute, 15 * time.Minute, 25 * time.Minute,
+		35 * time.Minute, 45 * time.Minute, 55 * time.Minute,
+	}
+
+	points := make(Points, 6)
+	for i, t := range ts {
+		points[i].Timestamp = base.Add(-t)
+	}
+
 	h := Histogram{
 		duration: time.Hour,
 		points:   points,
 	}
 
-	//h.getIndex()
+	cases := []struct {
+		expectedIdx int
+		actualIdx   int
+	}{
+		{
+			expectedIdx: 0,
+			actualIdx:   h.getIndex(base.Add(-ts[0])),
+		},
+		{
+			expectedIdx: 2,
+			actualIdx:   h.getIndex(base.Add(-ts[2])),
+		},
+		{
+			expectedIdx: 5,
+			actualIdx:   h.getIndex(base.Add(-ts[5])),
+		},
+	}
+
+	for _, c := range cases {
+		assert.Equal(t, c.expectedIdx, c.actualIdx)
+	}
 }
 
 func TestNewHistogram(t *testing.T) {

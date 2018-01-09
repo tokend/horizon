@@ -25,11 +25,10 @@ func (h *Histogram) Ticker() {
 	ticker := time.NewTicker(h.points.BucketDuration())
 	for {
 		<-ticker.C
-		//возвращает поинт, после чего
-		preceded := h.points.Shift()
+		cut := h.points.Shift()
 
-		if h.points.Last().Timestamp.After(preceded.Timestamp) {
-			h.preceded = &preceded
+		if h.preceded.Timestamp.After(cut.Timestamp) {
+			h.preceded = &cut
 		}
 	}
 }
