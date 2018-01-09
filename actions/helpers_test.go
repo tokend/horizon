@@ -7,10 +7,9 @@ import (
 	"net/url"
 	"testing"
 
-	"gitlab.com/swarmfund/go/xdr"
+	"github.com/zenazn/goji/web"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/test"
-	"github.com/zenazn/goji/web"
 )
 
 func TestGetAccountID(t *testing.T) {
@@ -24,52 +23,6 @@ func TestGetAccountID(t *testing.T) {
 		"GBRPYHIL2CI3FNQ4BXLFMNDLFJUNPU2HY3ZMFSHONUCEOASW7QC7OX2H",
 		aid.Address(),
 	)
-}
-
-func TestGetAsset(t *testing.T) {
-	tt := test.Start(t)
-	defer tt.Finish()
-	action := makeTestAction()
-
-	ts := action.GetAsset("native_")
-	if tt.Assert.NoError(action.Err) {
-		tt.Assert.Equal(xdr.AssetTypeAssetTypeNative, ts.Type)
-	}
-
-	ts = action.GetAsset("4_")
-	if tt.Assert.NoError(action.Err) {
-		tt.Assert.Equal(xdr.AssetTypeAssetTypeCreditAlphanum4, ts.Type)
-	}
-
-	ts = action.GetAsset("12_")
-	if tt.Assert.NoError(action.Err) {
-		tt.Assert.Equal(xdr.AssetTypeAssetTypeCreditAlphanum12, ts.Type)
-	}
-
-	// bad path
-	action.GetAsset("cursor")
-	tt.Assert.Error(action.Err)
-}
-
-func TestGetAssetType(t *testing.T) {
-	tt := test.Start(t)
-	defer tt.Finish()
-	action := makeTestAction()
-
-	ts := action.GetAssetType("native_asset_type")
-	if tt.Assert.NoError(action.Err) {
-		tt.Assert.Equal(xdr.AssetTypeAssetTypeNative, ts)
-	}
-
-	ts = action.GetAssetType("4_asset_type")
-	if tt.Assert.NoError(action.Err) {
-		tt.Assert.Equal(xdr.AssetTypeAssetTypeCreditAlphanum4, ts)
-	}
-
-	ts = action.GetAssetType("12_asset_type")
-	if tt.Assert.NoError(action.Err) {
-		tt.Assert.Equal(xdr.AssetTypeAssetTypeCreditAlphanum12, ts)
-	}
 }
 
 func TestGetInt32(t *testing.T) {
