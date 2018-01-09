@@ -14,7 +14,7 @@ import (
 func initCharts(app *App) {
 	listener := NewMetaListener(
 		log.WithField("service", "chart-listener"),
-		app.HistoryQ().Transactions(),
+		app.HistoryQ().Transactions,
 	)
 
 	app.charts = NewCharts()
@@ -100,11 +100,11 @@ type Subscriber func(time.Time, xdr.LedgerEntryChange)
 type MetaListener struct {
 	log         *log.Entry
 	cursor      db2.PageQuery
-	txq         history.TransactionsQI
+	txq         func() history.TransactionsQI
 	subscribers []Subscriber
 }
 
-func NewMetaListener(log *log.Entry, txq history.TransactionsQI) *MetaListener {
+func NewMetaListener(log *log.Entry, txq func() history.TransactionsQI) *MetaListener {
 	return &MetaListener{
 		log: log,
 		txq: txq,
@@ -123,7 +123,7 @@ func (l *MetaListener) Subscribe(subscriber Subscriber) {
 func (l *MetaListener) Init() error {
 	for {
 		var records []history.Transaction
-		err := l.txq.Page(l.cursor).Select(&records)
+		err := l.txq().Page(l.cursor).Select(&records)
 		if err != nil {
 			return errors.Wrap(err, "failed to get records")
 		}
@@ -168,7 +168,7 @@ func (l *MetaListener) Run() {
 
 	for ; ; <-ticker.C {
 		var records []history.Transaction
-		err := l.txq.Page(l.cursor).Select(&records)
+		err := l.txq().Page(l.cursor).Select(&records)
 		if err != nil {
 			l.log.WithError(err).Error("failed to get records")
 			continue
