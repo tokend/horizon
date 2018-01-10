@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/guregu/null"
+	sq "github.com/lann/squirrel"
+	"github.com/pkg/errors"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
-	"github.com/guregu/null"
-	sq "github.com/lann/squirrel"
-	"github.com/pkg/errors"
 )
 
 // Clear removes data from the ledger
@@ -197,7 +197,7 @@ func (ingest *Ingestion) Transaction(
 		ingest.formatTimeBounds(tx.Envelope.Tx.TimeBounds),
 		tx.MemoType(),
 		tx.Memo(),
-		time.Unix(ledger.CloseTime, 0),
+		time.Unix(ledger.CloseTime, 0).UTC(),
 	)
 
 	_, err := ingest.DB.Exec(sql)
@@ -291,6 +291,7 @@ func (ingest *Ingestion) createInsertBuilders() {
 	)
 
 	ingest.trades = sq.Insert("history_trades").Columns(
+		"order_book_id",
 		"base_asset",
 		"quote_asset",
 		"base_amount",

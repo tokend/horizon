@@ -56,12 +56,13 @@ func (is *Session) operationUpdatedEntry(ledgerEntry *xdr.LedgerEntry) error {
 var creationHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerEntry *xdr.LedgerEntry) error{
 	xdr.LedgerEntryTypeBalance:           balanceCreated,
 	xdr.LedgerEntryTypeReviewableRequest: reviewableRequestCreate,
+	xdr.LedgerEntryTypeSale:              saleCreate,
 }
 
 var deletionHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerKey *xdr.LedgerKey) error{}
 
 var updateHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerKey *xdr.LedgerEntry) error{
-	xdr.LedgerEntryTypeAssetPair:         assetPairUpdated,
 	xdr.LedgerEntryTypeBalance:           balanceUpdated,
 	xdr.LedgerEntryTypeReviewableRequest: reviewableRequestUpdate,
+	xdr.LedgerEntryTypeSale:              saleUpdate,
 }

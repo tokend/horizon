@@ -109,6 +109,7 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
+		xdr.OperationTypeCheckSaleState,
 	}
 
 	r := app.web.router
@@ -131,8 +132,6 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:account_id/payments", &OperationIndexAction{
 		Types: operationTypesPayment,
 	})
-
-	r.Get("/accounts/:account_id/forfeit_request", &ForfeitRequestAction{})
 
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})
@@ -179,10 +178,12 @@ func initWebActions(app *App) {
 	r.Get("/fees/:fee_type", &FeesShowAction{})
 
 	// assets
+	r.Get("/charts/:code", &ChartsAction{})
 	r.Get("/prices/history", &PricesHistoryAction{})
 	r.Get("/assets", &AssetsIndexAction{})
 	r.Get("/assets/:code", &AssetsShowAction{})
 	r.Get("/asset_pairs", &AssetPairsAction{})
+	r.Get("/asset_pairs/convert", &AssetPairsConverterAction{})
 
 	// balances
 	r.Get("/balances", &BalanceIndexAction{})
@@ -191,7 +192,40 @@ func initWebActions(app *App) {
 
 	// Reviewable Request actions
 	r.Get("/requests/:id", &ReviewableRequestShowAction{})
-	r.Get("/requests", &ReviewableRequestIndexAction{})
+	r.Get("/request/assets", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]string{
+			"asset": "",
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAssetCreate, xdr.ReviewableRequestTypeAssetUpdate},
+	})
+	r.Get("/request/preissuances", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]string{
+			"asset": "",
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypePreIssuanceCreate},
+	})
+	r.Get("/request/issuances", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]string{
+			"asset": "",
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeIssuanceCreate},
+	})
+	r.Get("/request/withdrawals", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]string{
+			"dest_asset_code": "",
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw},
+	})
+	r.Get("/request/sales", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]string{
+			"base_asset": "",
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
+	})
+
+	// Sales actions
+	r.Get("/sales/:id", &SaleShowAction{})
+	r.Get("/sales", &SaleIndexAction{})
 
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// legacy constraints:

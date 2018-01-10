@@ -42,7 +42,7 @@ func (q *assetQ) ByCode(code string) (*Asset, error) {
 }
 
 // ForOwner - filters assets by owner
-func (q *assetQ) ForOwner(ownerID string) (AssetQI) {
+func (q *assetQ) ForOwner(ownerID string) AssetQI {
 	if q.Err != nil {
 		return q
 	}
@@ -50,6 +50,7 @@ func (q *assetQ) ForOwner(ownerID string) (AssetQI) {
 	q.sql = q.sql.Where("a.owner = ?", ownerID)
 	return q
 }
+
 // Select - selects assets for specified filter
 func (q *assetQ) Select() ([]Asset, error) {
 	if q.Err != nil {
@@ -65,5 +66,5 @@ func (q *assetQ) Select() ([]Asset, error) {
 	return result, nil
 }
 
-var selectAsset = sq.Select("a.code, a.owner, a.name, a.preissued_asset_signer, a.description, a.external_resource_link," +
-	"a.max_issuance_amount, a.available_for_issueance, a.issued, a.policies, a.logo_id").From("asset a")
+var selectAsset = sq.Select("a.code, a.owner, a.preissued_asset_signer, a.details," +
+	"a.max_issuance_amount, a.available_for_issueance, a.issued, a.policies,  a.pending_issuance").From("asset a")

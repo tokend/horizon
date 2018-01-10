@@ -14,10 +14,12 @@ type ReviewableRequestIndexAction struct {
 	Action
 	Reviewer     string
 	Requestor    string
-	Asset        string
 	State        *int64
-	TypeMask     *uint64
 	Records      []history.ReviewableRequest
+
+	RequestTypes []xdr.ReviewableRequestType
+	RequestSpecificFilters map[string]string
+
 	PagingParams db2.PageQuery
 	Page         hal.Page
 }
@@ -41,16 +43,15 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 	action.Reviewer = action.GetString("reviewer")
 	action.Requestor = action.GetString("requestor")
 	action.State = action.GetOptionalInt64("state")
-	action.TypeMask = action.GetOptionalUint64("type_mask")
-	action.Asset = action.GetString("asset")
-
-	action.Page.Filters = map[string]string{
-		"reviewer":  action.Reviewer,
-		"requestor": action.Requestor,
-		"state":     action.GetString("state"),
-		"type_mask": action.GetString("type_mask"),
-		"asset":     action.Asset,
+	action.Page.Filters = map[string]string{}
+	for key := range action.RequestSpecificFilters {
+		action.RequestSpecificFilters[key] = action.GetString(key)
+		action.Page.Filters[key] = action.RequestSpecificFilters[key]
 	}
+
+	action.Page.Filters["reviewer"] = action.Reviewer
+	action.Page.Filters["requestor"] = action.Requestor
+	action.Page.Filters["state"] = action.GetString("state")
 }
 
 func (action *ReviewableRequestIndexAction) checkAllowed() {
@@ -68,19 +69,19 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 		q = q.ForRequestor(action.Requestor)
 	}
 
-	if action.Asset != "" {
-		q = q.ForAsset(action.Asset)
-	}
-
 	if action.State != nil {
 		q = q.ForState(*action.State)
 	}
 
-	if action.TypeMask != nil {
-		q = q.ForTypes(parseRequestTypeMask(*action.TypeMask))
+	for key, value := range action.RequestSpecificFilters {
+		if value == "" {
+			continue
+		}
+
+		q = q.ByDetails(key, value)
 	}
 
-	q = q.Page(action.PagingParams)
+	q = q.ForTypes(action.RequestTypes).Page(action.PagingParams)
 	var err error
 	action.Records, err = q.Select()
 	if err != nil {
@@ -93,7 +94,12 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 func (action *ReviewableRequestIndexAction) loadPage() {
 	for i := range action.Records {
 		var res reviewablerequest.ReviewableRequest
-		res.Populate(&action.Records[i])
+		err := res.Populate(&action.Records[i])
+		if err != nil {
+			action.Log.WithError(err).Error("Failed to populate reviewable request")
+			action.Err = &problem.ServerError
+			return
+		}
 		action.Page.Add(&res)
 	}
 
@@ -103,16 +109,4 @@ func (action *ReviewableRequestIndexAction) loadPage() {
 	action.Page.Cursor = action.PagingParams.Cursor
 	action.Page.Order = action.PagingParams.Order
 	action.Page.PopulateLinks()
-}
-
-func parseRequestTypeMask(mask uint64) []xdr.ReviewableRequestType {
-	result := make([]xdr.ReviewableRequestType, 0, len(xdr.ReviewableRequestTypeAll))
-	var val uint64
-	for _, requestType := range xdr.ReviewableRequestTypeAll {
-		val = 1 << uint64(requestType)
-		if mask&val == val {
-			result = append(result, requestType)
-		}
-	}
-	return result
 }

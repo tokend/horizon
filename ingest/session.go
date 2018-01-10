@@ -3,6 +3,7 @@ package ingest
 import (
 	"time"
 
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -95,7 +96,6 @@ func (is *Session) ingestLedger() {
 		is.ingestTransaction()
 	}
 
-	is.priceHistory()
 
 	is.Ingested++
 	if is.Metrics != nil {
@@ -105,29 +105,12 @@ func (is *Session) ingestLedger() {
 	return
 }
 
-func (is *Session) priceHistory() {
+func (is *Session) storeTrades(orderBookID uint64, result xdr.ManageOfferSuccessResult) {
 	if is.Err != nil {
 		return
 	}
 
-	priceHistory, err := is.Cursor.PriceHistoryProvider().ToPricePoints()
-	if err != nil {
-		is.Err = err
-		return
-	}
-
-	err = is.Ingestion.StorePricePoints(priceHistory)
-	if err != nil {
-		is.Err = errors.Wrap(err, "failed to store price points")
-	}
-}
-
-func (is *Session) manageOffer(source xdr.AccountId, result xdr.ManageOfferResult) {
-	if is.Err != nil {
-		return
-	}
-
-	is.Err = is.Ingestion.StoreTrades(source, result, is.Cursor.Ledger().CloseTime)
+	is.Err = is.Ingestion.StoreTrades(orderBookID, result, is.Cursor.Ledger().CloseTime)
 }
 
 func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.ManageInvoiceResult) {
@@ -141,22 +124,8 @@ func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.Manag
 
 }
 
-func (is *Session) approve(op xdr.ReviewRequestOp) error {
-	err := is.Cursor.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
-	if err != nil {
-		return errors.Wrap(err, "failed to approve reviewable request")
-	}
-
-	err = is.Ingestion.UpdatePayment(op.RequestId, true, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to approve operation")
-	}
-
-	return nil
-}
-
 func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
-	err := is.Cursor.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
+	err := is.Ingestion.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
 	if err != nil {
 		return errors.Wrap(err, "failed to permanently reject request")
 	}
@@ -169,30 +138,22 @@ func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
 	return nil
 }
 
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
+func (is *Session) handleCheckSaleState(result xdr.CheckSaleStateSuccess) {
 	if is.Err != nil {
 		return
 	}
 
-	var err error
-	switch op.Action {
-	case xdr.ReviewRequestOpActionApprove:
-		err = is.approve(op)
-	case xdr.ReviewRequestOpActionPermanentReject:
-		err = is.permanentReject(op)
-	case xdr.ReviewRequestOpActionReject:
-		return
-	default:
-		err = errors.From(errors.New("Unexpected review request action"), map[string]interface{}{
-			"action_type": op.Action,
-		})
+	state := history.SaleStateClosed
+	if result.Effect.Effect == xdr.CheckSaleStateEffectCanceled {
+		state = history.SaleStateCanceled
 	}
 
+	err := is.Ingestion.HistoryQ().Sales().SetState(uint64(result.SaleId), state)
 	if err != nil {
-		is.Err = errors.Wrap(err, "failed to process review request", map[string]interface{}{
-			"request_id": uint64(op.RequestId),
-		})
+		is.Err = errors.Wrap(err, "failed to set state", logan.F{"sale_id": uint64(result.SaleId)})
+		return
 	}
+
 }
 
 func (is *Session) processManageAsset(op *xdr.ManageAssetOp) {
@@ -204,7 +165,7 @@ func (is *Session) processManageAsset(op *xdr.ManageAssetOp) {
 		return
 	}
 
-	err := is.Cursor.HistoryQ().ReviewableRequests().Cancel(uint64(op.RequestId))
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Cancel(uint64(op.RequestId))
 	if err != nil {
 		is.Err = errors.Wrap(err, "failed to cancel reviewable request", map[string]interface{}{
 			"request_id": uint64(op.RequestId),

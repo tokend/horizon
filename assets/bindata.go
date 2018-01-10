@@ -68,7 +68,7 @@ func (fi bindataFileInfo) Sys() interface{} {
 	return nil
 }
 
-var _templatesAdmin_notificationHtml = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xaa\xae\x56\xd0\x73\xca\x4f\xa9\x54\xa8\xad\x05\x04\x00\x00\xff\xff\x6d\x43\xfb\x0a\x0b\x00\x00\x00")
+var _templatesAdmin_notificationHtml = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xaa\xae\x56\xd0\x73\xca\x4f\xa9\x54\xa8\xad\x05\x04\x00\x00\xff\xff\x6d\x43\xfb\x0a\x0b\x00\x00\x00")
 
 func templatesAdmin_notificationHtmlBytes() ([]byte, error) {
 	return bindataRead(
@@ -83,7 +83,7 @@ func templatesAdmin_notificationHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/admin_notification.html", size: 11, mode: os.FileMode(438), modTime: time.Unix(1511894108, 0)}
+	info := bindataFileInfo{name: "templates/admin_notification.html", size: 11, mode: os.FileMode(420), modTime: time.Unix(1512059782, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

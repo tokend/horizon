@@ -3,6 +3,8 @@ package ingest
 import (
 	"encoding/hex"
 	"encoding/json"
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
@@ -16,12 +18,12 @@ func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.New("expected reviewable request not to be nil")
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest)
+	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
 	if err != nil {
 		return errors.Wrap(err, "failed to convert reviewable request")
 	}
 
-	err = is.Ingestion.HistoryQ.ReviewableRequests().Insert(*histReviewableRequest)
+	err = is.Ingestion.HistoryQ().ReviewableRequests().Insert(*histReviewableRequest)
 	if err != nil {
 		return errors.Wrap(err, "failed to create reviewable request")
 	}
@@ -35,12 +37,12 @@ func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.New("expected reviewable request not to be nil")
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest)
+	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
 	if err != nil {
 		return errors.Wrap(err, "failed to convert reviewable request")
 	}
 
-	err = is.Ingestion.HistoryQ.ReviewableRequests().Update(*histReviewableRequest)
+	err = is.Ingestion.HistoryQ().ReviewableRequests().Update(*histReviewableRequest)
 	if err != nil {
 		return errors.Wrap(err, "failed to update reviewable request")
 	}
@@ -48,7 +50,7 @@ func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 	return nil
 }
 
-func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.ReviewableRequest, error) {
+func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTime time.Time) (*history.ReviewableRequest, error) {
 	var reference *string
 	if request.Reference != nil {
 		reference = new(string)
@@ -77,34 +79,38 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry) (*history.Rev
 		RequestState: state,
 		Hash:         hex.EncodeToString(request.Hash[:]),
 		Details:      details,
+		CreatedAt:    time.Unix(int64(request.CreatedAt), 0).UTC(),
+		UpdatedAt:    ledgerCloseTime,
 	}, nil
 }
 
 func getAssetCreation(request *xdr.AssetCreationRequest) history.AssetCreationRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose
+	_ = json.Unmarshal([]byte(request.Details), &details)
 	return history.AssetCreationRequest{
-		Asset:                string(request.Code),
-		Description:          string(request.Description),
-		ExternalResourceLink: string(request.ExternalResourceLink),
-		Policies:             int32(request.Policies),
-		Name:                 string(request.Name),
-		PreIssuedAssetSigner: request.PreissuedAssetSigner.Address(),
-		MaxIssuanceAmount:    amount.StringU(uint64(request.MaxIssuanceAmount)),
-		LogoID:               string(request.LogoId),
+		Asset:                  string(request.Code),
+		Policies:               int32(request.Policies),
+		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
+		MaxIssuanceAmount:      amount.StringU(uint64(request.MaxIssuanceAmount)),
+		InitialPreissuedAmount: amount.StringU(uint64(request.InitialPreissuedAmount)),
+		Details:                details,
 	}
 }
 
 func getAssetUpdate(request *xdr.AssetUpdateRequest) history.AssetUpdateRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose
+	_ = json.Unmarshal([]byte(request.Details), &details)
 	return history.AssetUpdateRequest{
-		Asset:                string(request.Code),
-		Description:          string(request.Description),
-		ExternalResourceLink: string(request.ExternalResourceLink),
-		Policies:             int32(request.Policies),
-		LogoID:               string(request.LogoId),
+		Asset:    string(request.Code),
+		Policies: int32(request.Policies),
+		Details:  details,
 	}
 }
 
 func getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (history.PreIssuanceRequest, error) {
-	signature, err := xdr.MarshalBase64(request.Amount)
+	signature, err := xdr.MarshalBase64(request.Signature)
 	if err != nil {
 		return history.PreIssuanceRequest{}, errors.Wrap(err, "failed to marshal signature")
 	}
@@ -118,22 +124,45 @@ func getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (history.PreIssuance
 }
 
 func getIssuanceRequest(request *xdr.IssuanceRequest) history.IssuanceRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.ExternalDetails), &details)
 	return history.IssuanceRequest{
-		Asset:    string(request.Asset),
-		Amount:   amount.StringU(uint64(request.Amount)),
-		Receiver: request.Receiver.AsString(),
+		Asset:           string(request.Asset),
+		Amount:          amount.StringU(uint64(request.Amount)),
+		Receiver:        request.Receiver.AsString(),
+		ExternalDetails: details,
 	}
 }
 
 func getWithdrawalRequest(request *xdr.WithdrawalRequest) history.WithdrawalRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.ExternalDetails), &details)
 	return history.WithdrawalRequest{
 		BalanceID:       request.Balance.AsString(),
 		Amount:          amount.StringU(uint64(request.Amount)),
 		FixedFee:        amount.StringU(uint64(request.Fee.Fixed)),
 		PercentFee:      amount.StringU(uint64(request.Fee.Percent)),
-		ExternalDetails: request.ExternalDetails,
+		ExternalDetails: details,
 		DestAssetCode:   string(request.Details.AutoConversion.DestAsset),
 		DestAssetAmount: amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
+	}
+}
+
+func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.Details), &details)
+	return history.SaleRequest{
+		BaseAsset:  string(request.BaseAsset),
+		QuoteAsset: string(request.QuoteAsset),
+		StartTime:  time.Unix(int64(request.StartTime), 0).UTC(),
+		EndTime:    time.Unix(int64(request.EndTime), 0).UTC(),
+		Price:      amount.StringU(uint64(request.Price)),
+		SoftCap:    amount.StringU(uint64(request.SoftCap)),
+		HardCap:    amount.StringU(uint64(request.HardCap)),
+		Details:    details,
 	}
 }
 
@@ -154,6 +183,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, 
 		}
 	case xdr.ReviewableRequestTypeWithdraw:
 		rawDetails = getWithdrawalRequest(body.WithdrawalRequest)
+	case xdr.ReviewableRequestTypeSale:
+		rawDetails = getSaleRequest(body.SaleCreationRequest)
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

@@ -3,10 +3,10 @@ package horizon
 import (
 	"time"
 
-	"gitlab.com/swarmfund/horizon/log"
 	"github.com/multiplay/go-slack/chat"
 	"github.com/multiplay/go-slack/lrhook"
 	"github.com/sirupsen/logrus"
+	"gitlab.com/swarmfund/horizon/log"
 	"golang.org/x/time/rate"
 )
 
@@ -32,6 +32,10 @@ func initLog(app *App) {
 		h := lrhook.New(cfg, app.config.SlackWebhook.String())
 		log.DefaultLogger.Logger.Hooks.Add(h)
 	}
+	if app.config.SlowQueryBound != nil {
+		log.SlowQueryBound = *app.config.SlowQueryBound
+	}
+
 }
 
 func init() {

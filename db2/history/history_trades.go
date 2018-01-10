@@ -4,6 +4,7 @@ import "time"
 
 type Trades struct {
 	ID          int64     `db:"id"`
+	OrderBookID uint64    `db:"order_book_id"`
 	BaseAsset   string    `db:"base_asset"`
 	QuoteAsset  string    `db:"quote_asset"`
 	BaseAmount  int64     `db:"base_amount"`

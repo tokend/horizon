@@ -20,7 +20,7 @@ func NewMatchesDetailsByBalance() *MatchesDetailsByBalance {
 	}
 }
 
-func (m *MatchesDetailsByBalance) Add(source xdr.AccountId, balance xdr.BalanceId, baseAsset, quoteAsset xdr.AssetCode, isBuy bool, match *Match) {
+func (m *MatchesDetailsByBalance) add(source xdr.AccountId, balance xdr.BalanceId, baseAsset, quoteAsset xdr.AssetCode, isBuy bool, match *Match) {
 	matches, ok := m.Details[balance.AsString()]
 	if !ok {
 		matches = NewMatchesDetails(source, balance, string(baseAsset), string(quoteAsset), isBuy)
@@ -28,4 +28,10 @@ func (m *MatchesDetailsByBalance) Add(source xdr.AccountId, balance xdr.BalanceI
 	}
 
 	matches.Add(match)
+}
+
+func (m *MatchesDetailsByBalance) Add(source xdr.AccountId, balance []xdr.BalanceId, baseAsset, quoteAsset xdr.AssetCode, isBuy bool, match *Match) {
+	for i := range balance {
+		m.add(source, balance[i], baseAsset, quoteAsset, isBuy, match)
+	}
 }

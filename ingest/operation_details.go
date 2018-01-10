@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"encoding/hex"
+	"encoding/json"
 
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
@@ -96,7 +97,12 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["balance"] = request.Balance.AsString()
 		details["fee_fixed"] = amount.StringU(uint64(request.Fee.Fixed))
 		details["fee_percent"] = amount.StringU(uint64(request.Fee.Percent))
-		details["external_details"] = request.ExternalDetails
+
+		var externalDetails map[string]interface{}
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(request.ExternalDetails), &externalDetails)
+		details["external_details"] = externalDetails
+
 		details["dest_asset"] = request.Details.AutoConversion.DestAsset
 		details["dest_amount"] = amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount))
 	case xdr.OperationTypeRecover:
@@ -106,7 +112,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["new_signer"] = op.NewSigner
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
-		details["balance_id"] = op.BalanceId
 		details["destination"] = op.Destination
 		details["action"] = op.Action
 	case xdr.OperationTypeReviewPaymentRequest:
@@ -175,11 +180,21 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// no details needed
 	case xdr.OperationTypeCreateIssuanceRequest:
 		op := c.Operation().Body.MustCreateIssuanceRequestOp()
+		details["fee_fixed"] = amount.StringU(uint64(op.Request.Fee.Fixed))
+		details["fee_percent"] = amount.StringU(uint64(op.Request.Fee.Percent))
 		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
 		details["asset"] = string(op.Request.Asset)
 		details["balance_id"] = op.Request.Receiver.AsString()
 
+		var externalDetails map[string]interface{}
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(op.Request.ExternalDetails), &externalDetails)
+		details["external_details"] = externalDetails
+	case xdr.OperationTypeCreateSaleRequest:
+		// no details needed
+	case xdr.OperationTypeCheckSaleState:
+		// no details needed
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

@@ -15,7 +15,7 @@ func (b *BalancePublic) Populate(balance history.Balance) {
 func (b *Balance) Populate(balance core.Balance) {
 	b.BalanceID = balance.BalanceID
 	b.AccountID = balance.AccountID
-	b.Balance = amount.String(balance.Amount + balance.Locked)
+	b.Balance = amount.String(balance.Amount)
 	b.Locked = amount.String(balance.Locked)
 	b.Asset = balance.Asset
 	b.IncentivePerCoin = amount.String(balance.IncentivePerCoin)

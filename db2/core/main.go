@@ -85,8 +85,8 @@ type QInterface interface {
 	Offers() *OfferQ
 	OrderBook() *OrderBookQ
 
-	AssetPair(base, quote string) (*AssetPair, error)
-	AssetPairs() ([]AssetPair, error)
+	// AssetPairs - creates new asset pair query helper
+	AssetPairs() AssetPairsQ
 
 	// ExternalSystemAccountID - returns builder to access external system account IDs
 	ExternalSystemAccountID() ExternalSystemAccountIDQI
@@ -178,5 +178,13 @@ func (q *Q) ExternalSystemAccountID() ExternalSystemAccountIDQI {
 	return &externalSystemAccountIDQ{
 		parent: q,
 		sql:    selectExternalSystemAccountIDs,
+	}
+}
+
+// AssetPairs - creates new asset pair query helper
+func (q *Q) AssetPairs() AssetPairsQ {
+	return &assetPairQ{
+		parent: q,
+		sql:    selectAssetPair,
 	}
 }
