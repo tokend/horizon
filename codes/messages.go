@@ -118,6 +118,10 @@ var messages = map[string]string{
 	"op_asset_mismatched":                       "Assets mismatched",
 	"op_price_does_not_match":                   "Prices does not match",
 	"op_insufficient_preissued":                 "Insufficient amount of tokens available for issuance",
+	"op_not_verified_cannot_have_policies":      "Not verified account can not have policies",
+	"op_price_is_invalid":                       "Price is invalid in some way",
+	"op_update_is_not_allowed":                  "Update is not allowed",
+	"op_sale_is_not_active":                     "IO is not active",
 }
 
 func getMessage(rawCode string) string {
