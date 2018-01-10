@@ -24,13 +24,13 @@ type SalesQ interface {
 	Open(now time.Time) SalesQ
 	// Upcoming - selects only upcoming sales.
 	Upcoming(now time.Time) SalesQ
-	// GoalValue - selects all sales in which the `current_cap` is above bound.
-	GoalValue(bound int64) SalesQ
+	// CollectedValueBound - selects all sales in which the `current_cap` is above bound.
+	CollectedValueBound(bound int64) SalesQ
 	// ReachedSoftCap - selects all sales in which the `current_cap` is above `soft_cap`.
 	ReachedSoftCap() SalesQ
-	// NearlyFunded is selects all sales in which the `current_cap`
+	// SoftCapPercentGot is selects all sales in which the `current_cap`
 	// is filled by more than a percentBound of the `soft_cap`.
-	NearlyFunded(percentBound int64) SalesQ
+	SoftCapPercentGot(percentBound int64) SalesQ
 	// OrderByEndTime is set ordering by `end_time`.
 	OrderByEndTime() SalesQ
 	// OrderByCurrentCap is set ordering by `current_cap`.
@@ -113,8 +113,8 @@ func (q *saleQ) Upcoming(now time.Time) SalesQ {
 	return q
 }
 
-// GoalValue - selects all sales in which the `current_cap` is above bound.
-func (q *saleQ) GoalValue(bound int64) SalesQ {
+// CollectedValueBound - selects all sales in which the `current_cap` is above bound.
+func (q *saleQ) CollectedValueBound(bound int64) SalesQ {
 	if q.Err != nil {
 		return q
 	}
@@ -133,8 +133,8 @@ func (q *saleQ) ReachedSoftCap() SalesQ {
 	return q
 }
 
-// NearlyFunded is selects all sales in which the `current_cap` is filled by more than a percentBound of the `soft_cap`.
-func (q *saleQ) NearlyFunded(percentBound int64) SalesQ {
+// SoftCapPercentGot is selects all sales in which the `current_cap` is filled by more than a percentBound of the `soft_cap`.
+func (q *saleQ) SoftCapPercentGot(percentBound int64) SalesQ {
 	if q.Err != nil {
 		return q
 	}

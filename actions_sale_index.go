@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"errors"
+
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
@@ -23,18 +25,18 @@ const (
 // SaleIndexAction renders slice of reviewable requests
 type SaleIndexAction struct {
 	Action
-	Owner          string
-	BaseAsset      string
-	OpenOnly       bool
-	Upcoming       bool
-	ReachedSoftCap bool
-	NearlyFunded   *int64
-	GoalValue      *int64
-	SortType       *int64
-	Name           string
-	Records        []history.Sale
-	PagingParams   db2.PageQuery
-	Page           hal.Page
+	Owner               string
+	BaseAsset           string
+	OpenOnly            bool
+	Upcoming            bool
+	ReachedSoftCap      bool
+	SoftCapPercentGot   *int64
+	CollectedValueBound *int64
+	SortType            *int64
+	Name                string
+	Records             []history.Sale
+	PagingParams        db2.PageQuery
+	Page                hal.Page
 }
 
 // JSON is a method for actions.JSON
@@ -54,24 +56,31 @@ func (action *SaleIndexAction) loadParams() {
 	action.PagingParams = action.GetPageQuery()
 	action.Owner = action.GetString("owner")
 	action.BaseAsset = action.GetString("base_asset")
-	action.OpenOnly = action.GetBool("open_only")
 	action.Name = action.GetString("name")
 
-	action.NearlyFunded = action.GetOptionalInt64("nearly_funded")
+	action.OpenOnly = action.GetBool("open_only")
 	action.Upcoming = action.GetBool("upcoming")
 	action.ReachedSoftCap = action.GetBool("reached_soft_cap")
-	action.GoalValue = action.GetOptionalAmount("goal_value")
-	action.SortType = action.GetOptionalInt64("sort_by")
 
+	action.SoftCapPercentGot = action.GetOptionalInt64("scap_percent_got")
+	action.CollectedValueBound = action.GetOptionalAmount("collected_value_bound")
+
+	if action.SoftCapPercentGot != nil && action.ReachedSoftCap {
+		action.SetInvalidField("filters",
+			errors.New("scap_percent_got and reached_soft_cap are both installed, only one must be set, they exclude each other"))
+		return
+	}
+
+	action.SortType = action.GetOptionalInt64("sort_by")
 	action.Page.Filters = map[string]string{
-		"owner":            action.Owner,
-		"base_asset":       action.BaseAsset,
-		"name":             action.Name,
-		"open_only":        action.GetString("open_only"),
-		"nearly_funded":    action.GetString("nearly_funded"),
-		"upcoming":         action.GetString("upcoming"),
-		"reached_soft_cap": action.GetString("reached_soft_cap"),
-		"goal_value":       action.GetString("goal_value"),
+		"owner":                 action.Owner,
+		"base_asset":            action.BaseAsset,
+		"name":                  action.Name,
+		"open_only":             action.GetString("open_only"),
+		"scap_percent_got":      action.GetString("scap_percent_got"),
+		"upcoming":              action.GetString("upcoming"),
+		"reached_soft_cap":      action.GetString("reached_soft_cap"),
+		"collected_value_bound": action.GetString("collected_value_bound"),
 	}
 }
 
@@ -98,16 +107,16 @@ func (action *SaleIndexAction) loadRecord() {
 		q = q.Upcoming(time.Now().UTC())
 	}
 
-	if action.NearlyFunded != nil && !action.ReachedSoftCap {
-		q = q.NearlyFunded(*action.NearlyFunded)
+	if action.SoftCapPercentGot != nil {
+		q = q.SoftCapPercentGot(*action.SoftCapPercentGot)
 	}
 
-	if action.ReachedSoftCap && action.NearlyFunded == nil {
+	if action.ReachedSoftCap {
 		q = q.ReachedSoftCap()
 	}
 
-	if action.GoalValue != nil {
-		q = q.GoalValue(*action.GoalValue)
+	if action.CollectedValueBound != nil {
+		q = q.CollectedValueBound(*action.CollectedValueBound)
 	}
 
 	sortBy := SortTypeDefaultPage

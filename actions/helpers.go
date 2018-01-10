@@ -394,12 +394,16 @@ func (base *Base) GetOptionalAmount(name string) *int64 {
 		return nil
 	}
 
-	result := base.GetAmount(name)
-	if base.Err != nil {
-		base.Err = nil
+	str := base.GetString(name)
+	if str == "" {
 		return nil
 	}
 
+	result, err := amount.Parse(str)
+	if err != nil {
+		base.SetInvalidField(name, err)
+		return nil
+	}
 	return &result
 }
 
