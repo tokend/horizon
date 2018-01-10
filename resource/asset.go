@@ -12,6 +12,7 @@ type Asset struct {
 	PreissuedAssetSigner string `json:"preissued_asset_signer"`
 	MaxIssuanceAmount    string `json:"max_issuance_amount"`
 	Issued               string `json:"issued"`
+	PendingIssuance      string `json:"pending_issuance"`
 	Policies
 	Details map[string]interface{} `json:"details"`
 }
@@ -19,12 +20,13 @@ type Asset struct {
 func (a *Asset) Populate(asset *core.Asset) {
 	a.Code = asset.Code
 	a.Owner = asset.Owner
-	a.AvailableForIssuance = amount.StringU(asset.AvailableForIssuance)
-
 	a.PreissuedAssetSigner = asset.PreissuedAssetSigner
 
+	a.AvailableForIssuance = amount.StringU(asset.AvailableForIssuance)
 	a.MaxIssuanceAmount = amount.StringU(asset.MaxIssuanceAmount)
+	a.PendingIssuance = amount.StringU(asset.PendingIssuance)
 	a.Issued = amount.StringU(asset.Issued)
+
 	a.Policies.Populate(*asset)
 	a.Details, _ = asset.GetDetails()
 }

@@ -3,7 +3,6 @@ package ingestion
 import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
@@ -13,9 +12,6 @@ type Ingestion struct {
 	// database.
 	DB     *db2.Repo
 	CoreDB *db2.Repo
-
-	CoreQ    core.QInterface
-	HistoryQ history.QInterface
 
 	ledgers                  sq.InsertBuilder
 	transactions             sq.InsertBuilder
@@ -27,4 +23,8 @@ type Ingestion struct {
 	balances                 sq.InsertBuilder
 	trades                   sq.InsertBuilder
 	priceHistory             sq.InsertBuilder
+}
+
+func (i *Ingestion) HistoryQ() history.QInterface {
+	return &history.Q{Repo: i.DB}
 }
