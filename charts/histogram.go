@@ -27,7 +27,7 @@ func (h *Histogram) Ticker() {
 		<-ticker.C
 		cut := h.points.Shift()
 
-		if h.preceded.Timestamp.After(cut.Timestamp) {
+		if cut.Value != nil && cut.Timestamp.After(h.preceded.Timestamp) {
 			h.preceded = &cut
 		}
 	}
