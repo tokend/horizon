@@ -8,15 +8,17 @@ import (
 )
 
 func TestPoints_Shift(t *testing.T) {
+	ts := [3]int64{1, 2, 3}
+
 	points := Points{
-		{time.Unix(1, 0), 1},
-		{time.Unix(2, 0), 2},
-		{time.Unix(3, 0), 3},
+		{time.Unix(1, 0), &ts[0]},
+		{time.Unix(2, 0), &ts[1]},
+		{time.Unix(3, 0), &ts[2]},
 	}
 	l := len(points)
 	points.Shift()
 	assert.Len(t, points, l)
-	assert.EqualValues(t, 0, points[l-1].Value)
+	assert.Nil(t, points[l-1].Value)
 	assert.Equal(t, time.Unix(4, 0), points[l-1].Timestamp)
 }
 
@@ -48,4 +50,26 @@ func TestNewPoints(t *testing.T) {
 	assert.Len(t, points, 3)
 	assert.True(t, points[2].Timestamp.After(base))
 	assert.Equal(t, points[2].Timestamp, base.Add(1*time.Second))
+	assert.Equal(t, points[1].Timestamp, base)
+}
+
+//insert in not nil element
+func TestPoints_Insert(t *testing.T) {
+
+	inputVal := []int64{1, 1, 1, 1, 2, 1}
+
+	durations := []time.Duration{
+		5 * time.Minute, 15 * time.Minute, 25 * time.Minute,
+		35 * time.Minute, 45 * time.Minute, 55 * time.Minute,
+	}
+
+	//p = 1, 1, 0, 2, 1
+	p := make(Points, 6)
+	for i, d := range durations {
+		p[i].Timestamp = time.Now().Add(-d)
+		p[i].Value = &inputVal[i]
+	}
+
+	p.Insert(2, 11)
+	assert.EqualValues(t, 11, *p[2].Value)
 }
