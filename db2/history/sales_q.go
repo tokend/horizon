@@ -279,11 +279,9 @@ func (q *saleQ) OrderByPopularity(values db2.OrderBooksInvestors) SalesQ {
 	}
 	q.sql = q.sql.Join(
 		fmt.Sprintf(
-			`(select column1 as order_book_id, column2 as quantity
-			from (values %s) as foo
-			) as merged on id = merged.order_book_id`,
+			"(values %s) as investors_count(order_book_id, quantity) on id = investors_count.order_book_id",
 			values.String()),
-	).OrderBy("merged.quantity DESC")
+	).OrderBy("investors_count.quantity DESC")
 
 	return q
 }
