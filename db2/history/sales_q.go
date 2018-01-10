@@ -26,11 +26,9 @@ type SalesQ interface {
 	Upcoming(now time.Time) SalesQ
 	// CollectedValueBound - selects all sales in which the `current_cap` is above bound.
 	CollectedValueBound(bound int64) SalesQ
-	// ReachedSoftCap - selects all sales in which the `current_cap` is above `soft_cap`.
-	ReachedSoftCap() SalesQ
-	// SoftCapPercentGot is selects all sales in which the `current_cap`
+	// CurrentSoftCapsRatio is selects all sales in which the `current_cap`
 	// is filled by more than a percentBound of the `soft_cap`.
-	SoftCapPercentGot(percentBound int64) SalesQ
+	CurrentSoftCapsRatio(percentBound int64) SalesQ
 	// OrderByEndTime is set ordering by `end_time`.
 	OrderByEndTime() SalesQ
 	// OrderByCurrentCap is set ordering by `current_cap`.
@@ -133,14 +131,14 @@ func (q *saleQ) ReachedSoftCap() SalesQ {
 	return q
 }
 
-// SoftCapPercentGot is selects all sales in which the `current_cap` is filled by more than a percentBound of the `soft_cap`.
-func (q *saleQ) SoftCapPercentGot(percentBound int64) SalesQ {
+// CurrentSoftCapsRatio is selects all sales in which the `current_cap` is filled by more than a percentBound of the `soft_cap`.
+func (q *saleQ) CurrentSoftCapsRatio(percentBound int64) SalesQ {
 	if q.Err != nil {
 		return q
 	}
 
 	q.sql = q.sql.
-		Where("soft_cap > current_cap AND div((current_cap * 100 ), soft_cap)  > ?", percentBound)
+		Where("div((current_cap * 100 ), soft_cap) > ?", percentBound)
 
 	return q
 }
