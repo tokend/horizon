@@ -50,4 +50,26 @@ func TestNewPoints(t *testing.T) {
 	assert.Len(t, points, 3)
 	assert.True(t, points[2].Timestamp.After(base))
 	assert.Equal(t, points[2].Timestamp, base.Add(1*time.Second))
+	assert.Equal(t, points[1].Timestamp, base)
+}
+
+//insert in not nil element
+func TestPoints_Insert(t *testing.T) {
+
+	inputVal := []int64{1, 1, 1, 1, 2, 1}
+
+	durations := []time.Duration{
+		5 * time.Minute, 15 * time.Minute, 25 * time.Minute,
+		35 * time.Minute, 45 * time.Minute, 55 * time.Minute,
+	}
+
+	//p = 1, 1, 0, 2, 1
+	p := make(Points, 6)
+	for i, d := range durations {
+		p[i].Timestamp = time.Now().Add(-d)
+		p[i].Value = &inputVal[i]
+	}
+
+	p.Insert(2, 11)
+	assert.EqualValues(t, 11, *p[2].Value)
 }

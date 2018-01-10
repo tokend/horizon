@@ -23,14 +23,24 @@ func NewHistogram(duration time.Duration, count uint) *Histogram {
 
 func (h *Histogram) Ticker() {
 	ticker := time.NewTicker(h.points.BucketDuration())
-	for ; ; <-ticker.C {
-		h.points.Shift()
+	for {
+		<-ticker.C
+		cut := h.points.Shift()
+
+		if cut.Value != nil && cut.Timestamp.After(h.preceded.Timestamp) {
+			h.preceded = &cut
+		}
 	}
 }
 
-func (h *Histogram) Run(value int64, ts time.Time) {
+func (h Histogram) getIndex(ts time.Time) int {
 	offset := h.points.Last().Timestamp.Sub(ts)
-	idx := len(h.points) - int(offset/h.points.BucketDuration())
+	idx := len(h.points) - int(offset/h.points.BucketDuration()) - 1
+	return idx
+}
+
+func (h *Histogram) Run(value int64, ts time.Time) {
+	idx := h.getIndex(ts)
 	if idx >= 0 && idx < len(h.points) {
 		// point fits into interval
 		h.points.Insert(idx, value)

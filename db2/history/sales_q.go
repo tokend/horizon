@@ -83,7 +83,7 @@ func (q *saleQ) Open(now time.Time) SalesQ {
 		return q
 	}
 
-	q.sql = q.sql.Where("state = ? AND end_time <= ?", SaleStateOpen, now)
+	q.sql = q.sql.Where("state = ? AND end_time >= ?", SaleStateOpen, now)
 	return q
 }
 
