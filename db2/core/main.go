@@ -185,6 +185,6 @@ func (q *Q) ExternalSystemAccountID() ExternalSystemAccountIDQI {
 func (q *Q) AssetPairs() AssetPairsQ {
 	return &assetPairQ{
 		parent: q,
-		sql: selectAssetPair,
+		sql:    selectAssetPair,
 	}
 }

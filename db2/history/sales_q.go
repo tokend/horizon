@@ -22,6 +22,20 @@ type SalesQ interface {
 	ForName(baseAsset string) SalesQ
 	// Open - selects only open sales
 	Open(now time.Time) SalesQ
+	// Upcoming - selects only upcoming sales.
+	Upcoming(now time.Time) SalesQ
+	// CollectedValueBound - selects all sales in which the `current_cap` is above bound.
+	CollectedValueBound(bound int64) SalesQ
+	// CurrentSoftCapsRatio is selects all sales in which the `current_cap`
+	// is filled by more than a percentBound of the `soft_cap`.
+	CurrentSoftCapsRatio(percentBound int64) SalesQ
+	// OrderByEndTime is set ordering by `end_time`.
+	OrderByEndTime() SalesQ
+	// OrderByCurrentCap is set ordering by `current_cap`.
+	OrderByCurrentCap(desc bool) SalesQ
+	// OrderByPopularity is merge with quantity of the
+	// unique investors for each sale, and sort sales by quantity.
+	OrderByPopularity(values db2.OrderBooksInvestors) SalesQ
 	// Insert - inserts new sale
 	Insert(sale Sale) error
 	// Update - updates existing sale
@@ -87,6 +101,48 @@ func (q *saleQ) Open(now time.Time) SalesQ {
 	return q
 }
 
+// Upcoming - selects only upcoming sales.
+func (q *saleQ) Upcoming(now time.Time) SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("start_time > ?", now)
+	return q
+}
+
+// CollectedValueBound - selects all sales in which the `current_cap` is above bound.
+func (q *saleQ) CollectedValueBound(bound int64) SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("current_cap >= ?", bound)
+	return q
+}
+
+// ReachedSoftCap - selects all sales in which the `current_cap` is above `soft_cap`.
+func (q *saleQ) ReachedSoftCap() SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("current_cap > soft_cap")
+	return q
+}
+
+// CurrentSoftCapsRatio is selects all sales in which the `current_cap` is filled by more than a percentBound of the `soft_cap`.
+func (q *saleQ) CurrentSoftCapsRatio(percentBound int64) SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.
+		Where("div((current_cap * 100 ), soft_cap) > ?", percentBound)
+
+	return q
+}
+
 // ByID - selects sale by specified id. Returns nil, nil if not found
 func (q *saleQ) ByID(saleID uint64) (*Sale, error) {
 	if q.Err != nil {
@@ -109,10 +165,16 @@ func (q *saleQ) ByID(saleID uint64) (*Sale, error) {
 
 // Insert - inserts new sale
 func (q *saleQ) Insert(sale Sale) error {
-	sql := sq.Insert("sale").Columns("id", "owner_id", "base_asset", "quote_asset", "start_time", "end_time",
-		"price", "soft_cap", "hard_cap",
-		"current_cap", "details", "state").Values(sale.ID, sale.OwnerID, sale.BaseAsset, sale.QuoteAsset, sale.StartTime, sale.EndTime,
-		sale.Price, sale.SoftCap, sale.HardCap, sale.CurrentCap, sale.Details, sale.State)
+	sql := sq.Insert("sale").
+		Columns(
+			"id", "owner_id", "base_asset", "quote_asset", "start_time", "end_time",
+			"price", "soft_cap", "hard_cap", "current_cap", "details", "state",
+		).
+		Values(
+			sale.ID, sale.OwnerID, sale.BaseAsset, sale.QuoteAsset, sale.StartTime, sale.EndTime,
+			sale.Price, sale.SoftCap, sale.HardCap, sale.CurrentCap, sale.Details, sale.State,
+		)
+
 	_, err := q.parent.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert sale")
@@ -182,6 +244,45 @@ func (q *saleQ) Page(page db2.PageQuery) SalesQ {
 	}
 
 	q.sql, q.Err = page.ApplyTo(q.sql, "sale.id")
+	return q
+}
+
+// OrderByEndTime is set ordering by `end_time`.
+func (q *saleQ) OrderByEndTime() SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.OrderBy("end_time ASC")
+	return q
+}
+
+// OrderByCurrentCap is set ordering by `current_cap`.
+func (q *saleQ) OrderByCurrentCap(desc bool) SalesQ {
+	if q.Err != nil {
+		return q
+	}
+	order := "ASC"
+	if desc {
+		order = "DESC"
+	}
+	q.sql = q.sql.OrderBy(fmt.Sprintf("current_cap %s", order))
+
+	return q
+}
+
+// OrderByPopularity is merge with quantity of the unique investors for each sale,
+// and sort sales by quantity.
+func (q *saleQ) OrderByPopularity(values db2.OrderBooksInvestors) SalesQ {
+	if q.Err != nil {
+		return q
+	}
+	q.sql = q.sql.Join(
+		fmt.Sprintf(
+			"(values %s) as investors_count(order_book_id, quantity) on id = investors_count.order_book_id",
+			values.String()),
+	).OrderBy("investors_count.quantity DESC")
+
 	return q
 }
 
