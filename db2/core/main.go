@@ -80,6 +80,8 @@ type QInterface interface {
 	Accounts() AccountQI
 	// Assets - creates new assets query helper
 	Assets() AssetQI
+	// Balances - creates new balances query builder
+	Balances() BalancesQI
 
 	Trusts() *TrustQ
 	Offers() *OfferQ

@@ -31,8 +31,10 @@ type Sale struct {
 }
 
 type SaleStatistics struct {
-	Investors     int    `json:"investors"`
-	AverageAmount string `json:"average_amount"`
+	Balances       int    `json:"balances"`
+	AverageBalance string `json:"average_balance"`
+	Investors      int    `json:"investors"`
+	AverageAmount  string `json:"average_amount"`
 }
 
 func (s *Sale) Populate(h *history.Sale) {
@@ -52,7 +54,21 @@ func (s *Sale) Populate(h *history.Sale) {
 	s.State.Value = int32(h.State)
 }
 
-func (s *Sale) PopulateStatistic(offers []core.Offer) {
+func (s *Sale) PopulateBalanceStat(balances []core.Balance) {
+	if len(balances) == 0 {
+		return
+	}
+	sum := big.NewInt(0)
+	for _, balance := range balances {
+		sum = sum.Add(sum, big.NewInt(balance.Amount))
+	}
+
+	quantity := len(balances)
+	s.Statistics.Balances = quantity
+	s.Statistics.AverageBalance = divToAmountStr(sum, quantity)
+}
+
+func (s *Sale) PopulateOfferStat(offers []core.Offer) {
 	if len(offers) == 0 {
 		return
 	}
@@ -65,14 +81,17 @@ func (s *Sale) PopulateStatistic(offers []core.Offer) {
 	}
 
 	quantity := len(uniqueInvestors)
-	average := sum.Div(sum, big.NewInt(int64(quantity)))
+	s.Statistics.Investors = quantity
+	s.Statistics.AverageAmount = divToAmountStr(sum, quantity)
+}
 
-	averageStr := fmt.Sprintf("%d", math.MaxInt64)
-	if average.IsInt64() {
-		averageStr = amount.String(average.Int64())
+func divToAmountStr(sum *big.Int, quantity int) string {
+	result := sum.Div(sum, big.NewInt(int64(quantity)))
+	resultStr := fmt.Sprintf("%d", math.MaxInt64)
+	if result.IsInt64() {
+		resultStr = amount.String(result.Int64())
 	}
-
-	s.Statistics = SaleStatistics{Investors: quantity, AverageAmount: averageStr}
+	return resultStr
 }
 
 // PagingToken implementation for hal.Pageable

@@ -14,6 +14,7 @@ type SaleShowAction struct {
 	RequestID uint64
 	Record    *history.Sale
 	offers    []core.Offer
+	balances  []core.Balance
 }
 
 // JSON is a method for actions.JSON
@@ -25,7 +26,9 @@ func (action *SaleShowAction) JSON() {
 		func() {
 			var res resource.Sale
 			res.Populate(action.Record)
-			res.PopulateStatistic(action.offers)
+			res.PopulateOfferStat(action.offers)
+			res.PopulateBalanceStat(action.balances)
+
 			hal.Render(action.W, res)
 		},
 	)
@@ -39,7 +42,9 @@ func (action *SaleShowAction) loadRecord() {
 	var err error
 	action.Record, err = action.HistoryQ().Sales().ByID(action.RequestID)
 	if err != nil {
-		action.Log.WithError(err).WithField("request_id", action.RequestID).Error("failed to load sale")
+		action.Log.WithError(err).
+			WithField("request_id", action.RequestID).
+			Error("failed to load sale")
 		action.Err = &problem.ServerError
 		return
 	}
@@ -51,10 +56,21 @@ func (action *SaleShowAction) loadRecord() {
 
 	action.offers = make([]core.Offer, 0)
 	err = action.CoreQ().Offers().
-		ForOrderBookID(action.Record.ID).
-		Select(&action.offers)
+		ForOrderBookID(action.Record.ID).Select(&action.offers)
 	if err != nil {
-		action.Log.WithError(err).WithField("sale_id", action.Record.ID).Error("failed to load offers for sale")
+		action.Log.WithError(err).
+			WithField("sale_id", action.Record.ID).
+			Error("failed to load offers for sale")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	action.balances, err = action.CoreQ().Balances().
+		ByAsset(action.Record.BaseAsset).Select()
+	if err != nil {
+		action.Log.WithError(err).
+			WithField("sale_id", action.Record.ID).
+			Error("failed to load base asset balances for sale")
 		action.Err = &problem.ServerError
 		return
 	}
