@@ -64,6 +64,11 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["signer_type"] = op.Signer.SignerType
 			details["signer_identity"] = op.Signer.Identity
 		}
+
+		if op.UpdateKycData != nil {
+			details["updateKYC_data"] = op.UpdateKycData.DataKyc
+		}
+
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 		if op.Fee != nil {

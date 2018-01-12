@@ -166,6 +166,12 @@ func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
 	}
 }
 
+func getUpdateKYCRequest(request *xdr.UpdateKycRequest) history.UpdateKYCRequest {
+	return history.UpdateKYCRequest{
+		KYCData: string(request.DataKyc),
+	}
+}
+
 func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, error) {
 	var rawDetails interface{}
 	var err error
@@ -185,6 +191,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, 
 		rawDetails = getWithdrawalRequest(body.WithdrawalRequest)
 	case xdr.ReviewableRequestTypeSale:
 		rawDetails = getSaleRequest(body.SaleCreationRequest)
+	case xdr.ReviewableRequestTypeUpdateKyc:
+		rawDetails = getUpdateKYCRequest(body.UpdateKycRequest)
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),
