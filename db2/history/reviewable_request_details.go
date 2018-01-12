@@ -52,3 +52,7 @@ type SaleRequest struct {
 	HardCap    string                 `json:"hard_cap"`
 	Details    map[string]interface{} `json:"details"`
 }
+
+type LimitsUpdateRequest struct {
+	DocumentHash string `json:"document_hash"`
+}

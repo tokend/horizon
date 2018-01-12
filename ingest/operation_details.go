@@ -64,6 +64,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["signer_type"] = op.Signer.SignerType
 			details["signer_identity"] = op.Signer.Identity
 		}
+
+		if op.LimitsUpdateRequestData != nil {
+			details["limits_update_request_document_hash"] = op.LimitsUpdateRequestData.DocumentHash
+		}
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 		if op.Fee != nil {
