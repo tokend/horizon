@@ -31,10 +31,8 @@ type Sale struct {
 }
 
 type SaleStatistics struct {
-	Balances       int    `json:"balances"`
-	AverageBalance string `json:"average_balance"`
-	Investors      int    `json:"investors"`
-	AverageAmount  string `json:"average_amount"`
+	Investors     int    `json:"investors"`
+	AverageAmount string `json:"average_amount"`
 }
 
 func (s *Sale) Populate(h *history.Sale) {
@@ -54,30 +52,20 @@ func (s *Sale) Populate(h *history.Sale) {
 	s.State.Value = int32(h.State)
 }
 
-func (s *Sale) PopulateBalanceStat(balances []core.Balance) {
-	if len(balances) == 0 {
+func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) {
+	if len(offers) == 0 && len(balances) == 0 {
 		return
 	}
-	sum := big.NewInt(0)
-	for _, balance := range balances {
-		sum = sum.Add(sum, big.NewInt(balance.Amount))
-	}
-
-	quantity := len(balances)
-	s.Statistics.Balances = quantity
-	s.Statistics.AverageBalance = divToAmountStr(sum, quantity)
-}
-
-func (s *Sale) PopulateOfferStat(offers []core.Offer) {
-	if len(offers) == 0 {
-		return
-	}
-
 	sum := big.NewInt(0)
 	uniqueInvestors := make(map[string]bool)
 	for _, offer := range offers {
 		sum = sum.Add(sum, big.NewInt(offer.QuoteAmount))
 		uniqueInvestors[offer.OwnerID] = true
+	}
+
+	for _, balance := range balances {
+		sum = sum.Add(sum, big.NewInt(balance.Amount))
+		uniqueInvestors[balance.AccountID] = true
 	}
 
 	quantity := len(uniqueInvestors)

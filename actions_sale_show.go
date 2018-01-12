@@ -26,8 +26,7 @@ func (action *SaleShowAction) JSON() {
 		func() {
 			var res resource.Sale
 			res.Populate(action.Record)
-			res.PopulateOfferStat(action.offers)
-			res.PopulateBalanceStat(action.balances)
+			res.PopulateStat(action.offers, action.balances)
 
 			hal.Render(action.W, res)
 		},
