@@ -92,6 +92,7 @@ var selectOffer = sq.Select(
 	"o.base_amount",
 	"o.quote_amount",
 	"o.price",
+	"o.fee",
 	"o.base_balance_id",
 	"o.quote_balance_id",
 	"o.created_at",
