@@ -8,5 +8,6 @@ type Offer struct {
 	IsBuy          bool   `db:"is_buy"`
 	BaseBalanceID  string `db:"base_balance_id"`
 	QuoteBalanceID string `db:"quote_balance_id"`
+	Fee            uint64 `db:"fee"`
 	OrderBookEntry
 }
