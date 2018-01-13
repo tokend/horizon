@@ -2,6 +2,7 @@ package core
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/swarmfund/horizon/db2"
 )
 
 type OrderBookQ struct {
@@ -63,4 +64,17 @@ func (q *OrderBookQ) Select(dest interface{}) error {
 
 	q.Err = q.parent.Select(dest, q.sql)
 	return q.Err
+}
+
+// InvestorsCount returns quantity of the unique investors for each order book.
+func (q *OrderBookQ) InvestorsCount() (db2.OrderBooksInvestors, error) {
+	dest := make([]db2.OrderBookInvestors, 0)
+
+	query := sq.Select("o.order_book_id, count(*) as quantity").
+		From("(SELECT DISTINCT owner_id, order_book_id from offer) AS o").
+		GroupBy("o.order_book_id").
+		OrderBy("quantity DESC")
+
+	err := q.parent.Select(&dest, query)
+	return dest, err
 }

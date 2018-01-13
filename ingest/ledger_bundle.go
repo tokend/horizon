@@ -5,11 +5,10 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"strconv"
-	"time"
 )
 
 // Load runs queries against `core` to fill in the records of the bundle.
-func (lb *LedgerBundle) Load(coreQ core.QInterface, historyQ history.QInterface) error {
+func (lb *LedgerBundle) Load(coreQ core.QInterface) error {
 
 	// Load Header
 	err := coreQ.LedgerHeaderBySequence(&lb.Header, lb.Sequence)
@@ -27,14 +26,6 @@ func (lb *LedgerBundle) Load(coreQ core.QInterface, historyQ history.QInterface)
 	if err != nil {
 		return err
 	}
-
-	assetPairs, err := getAssetPairs(coreQ, historyQ)
-	if err != nil {
-		return err
-	}
-
-	lb.HistoryPriceProvide = new(PriceHistoryProvider)
-	lb.HistoryPriceProvide.Init(assetPairs, time.Unix(lb.Header.CloseTime, 0).UTC())
 
 	return nil
 }
