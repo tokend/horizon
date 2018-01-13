@@ -1,8 +1,6 @@
 package operations
 
 import (
-	"fmt"
-
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
@@ -12,20 +10,26 @@ import (
 // New creates a new operation resource, finding the appropriate type to use
 // based upon the row's type.
 func New(
-	ctx context.Context, row history.Operation, participants []*history.Participant, public bool,
+	ctx context.Context, row history.Operation,
+	participants []*history.Participant, public bool,
 ) (result hal.Pageable, err error) {
 
-	fmt.Printf("%#v\n", row)
-	fmt.Printf("%#v\n", participants)
 	base := Base{}
 	err = base.Populate(ctx, row, participants, public)
 	if err != nil {
 		return
 	}
+
 	switch row.Type {
 	case xdr.OperationTypeCreateAccount:
-		e := CreateAccount{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details()
+		e := CreateAccount{
+			Base:        base,
+			Funder:      d.CreateAccount.Funder,
+			Account:     d.CreateAccount.Account,
+			AccountType: d.CreateAccount.AccountType,
+		}
+		//err = row.UnmarshalDetails(&e)
 		if public {
 			e.Funder = ""
 			e.Account = ""
