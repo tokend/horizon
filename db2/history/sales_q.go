@@ -277,11 +277,11 @@ func (q *saleQ) OrderByPopularity(values db2.OrderBooksInvestors) SalesQ {
 	if q.Err != nil {
 		return q
 	}
-	q.sql = q.sql.Join(
+	q.sql = q.sql.LeftJoin(
 		fmt.Sprintf(
 			"(values %s) as investors_count(order_book_id, quantity) on id = investors_count.order_book_id",
 			values.String()),
-	).OrderBy("investors_count.quantity DESC")
+	).OrderBy("investors_count.quantity DESC NULLS LAST")
 
 	return q
 }
