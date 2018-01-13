@@ -64,8 +64,11 @@ func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) {
 	}
 
 	for _, balance := range balances {
-		sum = sum.Add(sum, big.NewInt(balance.Amount))
 		uniqueInvestors[balance.AccountID] = true
+		if balance.Amount == 0 {
+			continue
+		}
+		sum = sum.Add(sum, big.NewInt(balance.Amount))
 	}
 
 	quantity := len(uniqueInvestors)
