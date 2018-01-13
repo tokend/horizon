@@ -22,12 +22,13 @@ func NewHistogram(duration time.Duration, count uint) *Histogram {
 }
 
 func (h *Histogram) Ticker() {
+	// intentionally no defer, no way to recover with proper state
 	ticker := time.NewTicker(h.points.BucketDuration())
 	for {
 		<-ticker.C
 		cut := h.points.Shift()
 
-		if cut.Value != nil && cut.Timestamp.After(h.preceded.Timestamp) {
+		if cut.Value != nil && (h.preceded == nil || cut.Timestamp.After(h.preceded.Timestamp)) {
 			h.preceded = &cut
 		}
 	}
