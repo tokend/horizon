@@ -102,6 +102,7 @@ func (q *AccountQ) First() (*Account, error) {
 
 var selectAccount = sq.Select(
 	"a.accountid",
+	"a.recoveryid",
 	"a.thresholds",
 	"a.account_type",
 	"a.block_reasons",
