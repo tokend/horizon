@@ -47,7 +47,7 @@ func getParticipants() []*history.Participant {
 			Mobile:      "38012123456" + fmt.Sprintf("%v", i),
 			Details:     []byte{1, 2, 3, 4, 5, byte(i)},
 			UserType:    "general",
-			Effects:     nil, //TODO ask about it
+			Effects:     nil,
 		}
 	}
 	return participants
@@ -58,66 +58,269 @@ func TestNew(t *testing.T) {
 	ctx := context.TODO()
 	participants := getParticipants()
 
-	operation := getOperation(xdr.OperationTypeCreateAccount, `{"funder": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636", "account": "GBCADUBIWUSO5HZF7YZUC42Z6DWSCJH2GQQUEJH6HD6OE4TSYU46F7XT", "account_type": 2}`)
-
-	result, err := New(ctx, operation, participants, false)
-	if err != nil {
-		t.Fatal(err)
+	cases := []struct {
+		name      string
+		operation history.Operation
+		expected  string
+	}{
+		{
+			name: "OperationTypeCreateAccount",
+			operation: getOperation(xdr.OperationTypeCreateAccount, `{
+				"funder": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+				"account": "GBCADUBIWUSO5HZF7YZUC42Z6DWSCJH2GQQUEJH6HD6OE4TSYU46F7XT",
+				"account_type": 2}`,
+			),
+			expected: `{
+				 "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "create_account",
+			  "type_i": 0,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "funder": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "account": "GBCADUBIWUSO5HZF7YZUC42Z6DWSCJH2GQQUEJH6HD6OE4TSYU46F7XT",
+			  "account_type": 2
+			}`,
+		},
+		{
+			name: "OperationTypePayment",
+			operation: getOperation(xdr.OperationTypePayment, `{
+				"to": "GANVIVPOJ2Q7DTIYJJJSP5X64BZYFBGPQO4EXMBEOY6LT5CRJZ6PGC27",
+				"from": "GA2ZQVZKQJUF3B3KSNXGAWVV2PEFBD4KCDRSCSFWD2CCVSGZ35S6K4P5",
+				"asset": "SUN",
+				"amount": "2.0691",
+				"subject": "Test Staging\nPlease work well",
+				"reference": "",
+				"to_balance": "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
+				"from_balance": "BDF6UAXEOJLKTDRBCEUJRGVNNSLGZGRRGCXQYOIZ4F25AED57OGFEZIX",
+				"source_fixed_fee": "0.0000",
+				"source_payment_fee": "0.0000",
+				"source_pays_for_dest": true,
+				"destination_fixed_fee": "0.0000",
+				"destination_payment_fee": "0.0000"
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "payment",
+			  "type_i": 1,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "from": "GA2ZQVZKQJUF3B3KSNXGAWVV2PEFBD4KCDRSCSFWD2CCVSGZ35S6K4P5",
+			  "to": "GANVIVPOJ2Q7DTIYJJJSP5X64BZYFBGPQO4EXMBEOY6LT5CRJZ6PGC27",
+			  "from_balance": "BDF6UAXEOJLKTDRBCEUJRGVNNSLGZGRRGCXQYOIZ4F25AED57OGFEZIX",
+			  "to_balance": "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
+			  "amount": "2.0691",
+			  "asset": "SUN",
+			  "source_payment_fee": "0.0000",
+			  "destination_payment_fee": "0.0000",
+			  "source_fixed_fee": "0.0000",
+			  "destination_fixed_fee": "0.0000",
+			  "source_pays_for_dest": true,
+			  "subject": "Test Staging\nPlease work well",
+			  "qasset": ""
+			}`,
+		},
+		{
+			name: "OperationTypeSetOptions",
+			operation: getOperation(xdr.OperationTypeSetOptions, `{
+				  "home_domain": "test.com",
+				  "inflation_dest": "0.0000",
+				  "master_key_weight": 1,
+				  "signer_key": "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
+				  "signer_weight": 1,
+				  "signer_type": 1,
+				  "signer_identity": 1,
+				  "set_flags": [
+					1,
+					1,
+					1
+				  ],
+				  "set_flags_s": [
+					"test0",
+					"test1",
+					"test2"
+				  ],
+				  "clear_flags": [
+					1,
+					1,
+					1
+				  ],
+				  "clear_flags_s": [
+					"test0",
+					"test1",
+					"test2"
+				  ],
+				  "low_threshold": 1,
+				  "med_threshold": 1,
+				  "high_threshold": 1
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "set_options",
+			  "type_i": 2,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "home_domain": "test.com",
+			  "inflation_dest": "0.0000",
+			  "master_key_weight": 1,
+			  "signer_key": "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
+			  "signer_weight": 1,
+			  "signer_type": 1,
+			  "signer_identity": 1,
+			  "set_flags": [
+				1,
+				1,
+				1
+			  ],
+			  "set_flags_s": [
+				"test0",
+				"test1",
+				"test2"
+			  ],
+			  "clear_flags": [
+				1,
+				1,
+				1
+			  ],
+			  "clear_flags_s": [
+				"test0",
+				"test1",
+				"test2"
+			  ],
+			  "low_threshold": 1,
+			  "med_threshold": 1,
+			  "high_threshold": 1
+			}`,
+		},
 	}
 
-	marshalRes, err := json.Marshal(result)
-	if err != nil {
-		t.Fatal(err)
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			result, err := New(ctx, c.operation, participants, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			marshalRes, err := json.Marshal(result)
+			if err != nil {
+				t.Fatal(err)
+			}
+			assert.JSONEq(t, c.expected, string(marshalRes))
+		})
 	}
-
-	expected := `{
-		 "_links": {
-		"self": {
-		  "href": "/operations/231928242177"
-		},
-		"transaction": {
-		  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
-		},
-		"succeeds": {
-		  "href": "/effects?order=desc&cursor=231928242177"
-		},
-		"precedes": {
-		  "href": "/effects?order=asc&cursor=231928242177"
-		}
-	  },
-	  "id": "231928242177",
-	  "paging_token": "231928242177",
-	  "transaction_id": "231928242176",
-	  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
-	  "type": "create_account",
-	  "type_i": 0,
-	  "state_i": 2,
-	  "state": "success",
-	  "identifier": "4",
-	  "ledger_close_time": "2018-01-11T13:51:15Z",
-	  "participants": [
-		{
-		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		  "email": "email0@test.com",
-		  "nickname": "Nickname0"
-		},
-		{
-		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		  "email": "email1@test.com",
-		  "nickname": "Nickname1"
-		},
-		{
-		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		  "email": "email2@test.com",
-		  "nickname": "Nickname2"
-		}
-	  ],
-	  "funder": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
-	  "account": "GBCADUBIWUSO5HZF7YZUC42Z6DWSCJH2GQQUEJH6HD6OE4TSYU46F7XT",
-	  "account_type": 2
-	}`
-	assert.JSONEq(t, expected, string(marshalRes))
 }

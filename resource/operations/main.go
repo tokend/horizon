@@ -29,15 +29,33 @@ func New(
 			Account:     d.CreateAccount.Account,
 			AccountType: d.CreateAccount.AccountType,
 		}
-		//err = row.UnmarshalDetails(&e)
 		if public {
 			e.Funder = ""
 			e.Account = ""
 		}
 		result = e
 	case xdr.OperationTypePayment:
-		e := Payment{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details()
+		e := Payment{
+			Base: base,
+			BasePayment: BasePayment{
+				From:                  d.Payment.BasePayment.From,
+				To:                    d.Payment.BasePayment.To,
+				FromBalance:           d.Payment.BasePayment.FromBalance,
+				ToBalance:             d.Payment.BasePayment.ToBalance,
+				Amount:                d.Payment.BasePayment.Amount,
+				UserDetails:           d.Payment.BasePayment.UserDetails,
+				Asset:                 d.Payment.BasePayment.Asset,
+				SourcePaymentFee:      d.Payment.BasePayment.SourcePaymentFee,
+				DestinationPaymentFee: d.Payment.BasePayment.DestinationPaymentFee,
+				SourceFixedFee:        d.Payment.BasePayment.SourceFixedFee,
+				DestinationFixedFee:   d.Payment.BasePayment.DestinationFixedFee,
+				SourcePaysForDest:     d.Payment.BasePayment.SourcePaysForDest,
+			},
+			Subject:   d.Payment.Subject,
+			Reference: d.Payment.Reference,
+			Asset:     d.Payment.Asset,
+		}
 		if public {
 			e.UserDetails = ""
 			e.From = ""
@@ -49,8 +67,24 @@ func New(
 		}
 		result = e
 	case xdr.OperationTypeSetOptions:
-		e := SetOptions{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details()
+		e := SetOptions{
+			Base:            base,
+			HomeDomain:      d.SetOptions.HomeDomain,
+			InflationDest:   d.SetOptions.InflationDest,
+			MasterKeyWeight: d.SetOptions.MasterKeyWeight,
+			SignerKey:       d.SetOptions.SignerKey,
+			SignerWeight:    d.SetOptions.SignerWeight,
+			SignerType:      d.SetOptions.SignerType,
+			SignerIdentity:  d.SetOptions.SignerIdentity,
+			SetFlags:        d.SetOptions.SetFlags,
+			SetFlagsS:       d.SetOptions.SetFlagsS,
+			ClearFlags:      d.SetOptions.ClearFlags,
+			ClearFlagsS:     d.SetOptions.ClearFlagsS,
+			LowThreshold:    d.SetOptions.LowThreshold,
+			MedThreshold:    d.SetOptions.MedThreshold,
+			HighThreshold:   d.SetOptions.HighThreshold,
+		}
 		if public {
 			e.SignerKey = ""
 		}

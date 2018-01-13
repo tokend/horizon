@@ -29,6 +29,8 @@ type Operation struct {
 type OperationDetails struct {
 	Type          xdr.OperationType
 	CreateAccount *CreateAccountDetails
+	Payment       *PaymentDetails
+	SetOptions    *SetOptionsDetails
 }
 
 func (o *Operation) Details() OperationDetails {
@@ -42,7 +44,18 @@ func (o *Operation) Details() OperationDetails {
 		if err != nil {
 			err = errors.Wrap(err, "Error unmarshal operation details")
 		}
-
+		return result
+	case xdr.OperationTypePayment:
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.Payment)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
+		return result
+	case xdr.OperationTypeSetOptions:
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetOptions)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
 		return result
 	default:
 		panic("Invalid operation type")
@@ -53,6 +66,49 @@ type CreateAccountDetails struct {
 	Funder      string `json:"funder,omitempty"`
 	Account     string `json:"account,omitempty"`
 	AccountType int32  `json:"account_type"`
+}
+
+type BasePayment struct {
+	From                  string `json:"from,omitempty"`
+	To                    string `json:"to,omitempty"`
+	FromBalance           string `json:"from_balance,omitempty"`
+	ToBalance             string `json:"to_balance,omitempty"`
+	Amount                string `json:"amount"`
+	UserDetails           string `json:"user_details,omitempty"`
+	Asset                 string `json:"asset"`
+	SourcePaymentFee      string `json:"source_payment_fee"`
+	DestinationPaymentFee string `json:"destination_payment_fee"`
+	SourceFixedFee        string `json:"source_fixed_fee"`
+	DestinationFixedFee   string `json:"destination_fixed_fee"`
+	SourcePaysForDest     bool   `json:"source_pays_for_dest"`
+}
+
+// Payment is the json resource representing a single operation whose type is
+// Payment.
+type PaymentDetails struct {
+	BasePayment
+	Subject   string `json:"subject,omitempty"`
+	Reference string `json:"reference,omitempty"`
+	Asset     string `json:"qasset"`
+}
+type SetOptionsDetails struct {
+	HomeDomain    string `json:"home_domain,omitempty"`
+	InflationDest string `json:"inflation_dest,omitempty"`
+
+	MasterKeyWeight *int   `json:"master_key_weight,omitempty"`
+	SignerKey       string `json:"signer_key,omitempty"`
+	SignerWeight    *int   `json:"signer_weight,omitempty"`
+	SignerType      *int   `json:"signer_type,omitempty"`
+	SignerIdentity  *int   `json:"signer_identity,omitempty"`
+
+	SetFlags    []int    `json:"set_flags,omitempty"`
+	SetFlagsS   []string `json:"set_flags_s,omitempty"`
+	ClearFlags  []int    `json:"clear_flags,omitempty"`
+	ClearFlagsS []string `json:"clear_flags_s,omitempty"`
+
+	LowThreshold  *int `json:"low_threshold,omitempty"`
+	MedThreshold  *int `json:"med_threshold,omitempty"`
+	HighThreshold *int `json:"high_threshold,omitempty"`
 }
 
 // UnmarshalDetails unmarshals the details of this operation into `dest`
