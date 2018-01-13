@@ -66,7 +66,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		}
 
 		if op.LimitsUpdateRequestData != nil {
-			details["limits_update_request_document_hash"] = op.LimitsUpdateRequestData.DocumentHash
+			details["limits_update_request_document_hash"] = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
 		}
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
@@ -109,11 +109,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		details["dest_asset"] = request.Details.AutoConversion.DestAsset
 		details["dest_amount"] = amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount))
-	case xdr.OperationTypeRecover:
-		op := c.Operation().Body.MustRecoverOp()
-		details["account"] = op.Account.Address()
-		details["old_signer"] = op.OldSigner
-		details["new_signer"] = op.NewSigner
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
 		details["destination"] = op.Destination
