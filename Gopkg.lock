@@ -287,7 +287,7 @@
   branch = "master"
   name = "gitlab.com/swarmfund/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "2c5f6e04420d02ddea8888e1eff47fc9a470121f"
+  revision = "b270d013146de4986e81d3acb022a040af58a9e7"
 
 [[projects]]
   branch = "master"
@@ -346,6 +346,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2bf0a23db49010e2db8a350843591f27086a55a2a4f531f959d5ff136494f031"
+  inputs-digest = "328e5daa691ff1c0aedda641000180f7e6a67250ebf70de6cf8fdcf54fff84e5"
   solver-name = "gps-cdcl"
   solver-version = 1

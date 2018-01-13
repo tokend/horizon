@@ -35,7 +35,7 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 }
 
 func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp) error {
-	err := is.Cursor.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
 	if err != nil {
 		return errors.Wrap(err, "failed to approve reviewable request")
 	}
@@ -59,7 +59,7 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp) error {
 
 func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.WithdrawalDetails) error {
 	fields := logan.Field("request_id", requestID)
-	request, err := is.Ingestion.HistoryQ.ReviewableRequests().ByID(requestID)
+	request, err := is.Ingestion.HistoryQ().ReviewableRequests().ByID(requestID)
 	if err != nil {
 		return errors.Wrap(err, "failed to load reviewable request by id", fields)
 	}
@@ -93,7 +93,7 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 		return errors.Wrap(err, "failed to marhsal withdrawal details", fields)
 	}
 
-	err = is.Ingestion.HistoryQ.ReviewableRequests().Update(*request)
+	err = is.Ingestion.HistoryQ().ReviewableRequests().Update(*request)
 	if err != nil {
 		return errors.Wrap(err, "failed to update withdrawal request", fields)
 	}

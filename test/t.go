@@ -33,20 +33,6 @@ func (t *T) HorizonRepo() *db2.Repo {
 	}
 }
 
-// Scenario loads the named sql scenario into the database
-func (t *T) Scenario(name string) *T {
-	LoadScenario(name)
-	t.UpdateLedgerState()
-	return t
-}
-
-// ScenarioWithoutHorizon loads the named sql scenario into the database
-func (t *T) ScenarioWithoutHorizon(name string) *T {
-	LoadScenarioWithoutHorizon(name)
-	t.UpdateLedgerState()
-	return t
-}
-
 // UpdateLedgerState updates the cached ledger state (or panicing on failure).
 func (t *T) UpdateLedgerState() {
 	var next ledger.State

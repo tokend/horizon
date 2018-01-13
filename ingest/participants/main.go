@@ -57,8 +57,6 @@ func ForOperation(
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		createWithdrawalRequest := op.Body.MustCreateWithdrawalRequestOp()
 		sourceParticipant.BalanceID = &createWithdrawalRequest.Request.Balance
-	case xdr.OperationTypeRecover:
-		result = append(result, Participant{op.Body.MustRecoverOp().Account, nil, nil})
 	case xdr.OperationTypeManageBalance:
 		manageBalanceOp := op.Body.MustManageBalanceOp()
 		if sourceParticipant.AccountID.Address() != manageBalanceOp.Destination.Address() {

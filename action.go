@@ -340,6 +340,14 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 		Identity:   0,
 	})
 
+	signers = append(signers, core.Signer{
+		Accountid: account.RecoveryID,
+		Publickey: account.RecoveryID,
+		Weight:    255,
+		SignerType: action.getMasterSignerType(),
+		Identity:	0,
+	})
+
 	return signers, nil
 }
 

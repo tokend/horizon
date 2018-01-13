@@ -15,7 +15,7 @@ func balanceUpdated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 	if is.Paranoid {
 		// seems like we have partial history, ensuring balance exists
 		var b core.Balance
-		err := is.Ingestion.CoreQ.BalanceByID(&b, balance.BalanceId.AsString())
+		err := is.Cursor.CoreQ().BalanceByID(&b, balance.BalanceId.AsString())
 		if err != nil {
 			return errors.Wrap(err, "failed to get balance")
 		}
