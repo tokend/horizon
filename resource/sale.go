@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -52,9 +54,9 @@ func (s *Sale) Populate(h *history.Sale) {
 	s.State.Value = int32(h.State)
 }
 
-func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) {
+func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance, assetPair *core.AssetPair) error {
 	if len(offers) == 0 && len(balances) == 0 {
-		return
+		return nil
 	}
 	sum := big.NewInt(0)
 	uniqueInvestors := make(map[string]bool)
@@ -63,17 +65,41 @@ func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) {
 		uniqueInvestors[offer.OwnerID] = true
 	}
 
+	balanceSum := big.NewInt(0)
 	for _, balance := range balances {
 		uniqueInvestors[balance.AccountID] = true
 		if balance.Amount == 0 {
 			continue
 		}
-		sum = sum.Add(sum, big.NewInt(balance.Amount))
+		balanceSum = balanceSum.Add(balanceSum, big.NewInt(balance.Amount))
 	}
+
+	balanceSumConverted, isConverted, err := assetPair.ConvertToDestAsset(s.QuoteAsset, balanceSum.Int64())
+	if err != nil {
+		return errors.Wrap(err,
+			"failed to convert balance summary",
+			logan.F{
+				"from":  assetPair.BaseAsset,
+				"to":    assetPair.QuoteAsset,
+				"price": assetPair.CurrentPrice,
+			})
+	}
+
+	if !isConverted {
+		return errors.Wrap(
+			errors.New("failed to convert due to overflow"), "",
+			logan.F{
+				"from":  assetPair.BaseAsset,
+				"to":    assetPair.QuoteAsset,
+				"price": assetPair.CurrentPrice,
+			})
+	}
+	sum = sum.Add(sum, big.NewInt(balanceSumConverted))
 
 	quantity := len(uniqueInvestors)
 	s.Statistics.Investors = quantity
 	s.Statistics.AverageAmount = divToAmountStr(sum, quantity)
+	return nil
 }
 
 func divToAmountStr(sum *big.Int, quantity int) string {

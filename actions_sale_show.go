@@ -15,6 +15,8 @@ type SaleShowAction struct {
 	Record    *history.Sale
 	offers    []core.Offer
 	balances  []core.Balance
+	assetPair *core.AssetPair
+	result    resource.Sale
 }
 
 // JSON is a method for actions.JSON
@@ -23,12 +25,9 @@ func (action *SaleShowAction) JSON() {
 		action.EnsureHistoryFreshness,
 		action.loadParams,
 		action.loadRecord,
+		action.populateResult,
 		func() {
-			var res resource.Sale
-			res.Populate(action.Record)
-			res.PopulateStat(action.offers, action.balances)
-
-			hal.Render(action.W, res)
+			hal.Render(action.W, action.result)
 		},
 	)
 }
@@ -70,6 +69,30 @@ func (action *SaleShowAction) loadRecord() {
 		action.Log.WithError(err).
 			WithField("sale_id", action.Record.ID).
 			Error("failed to load base asset balances for sale")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	action.assetPair, err = action.CoreQ().AssetPairs().
+		ByCode(action.Record.BaseAsset, action.Record.QuoteAsset)
+	if err != nil {
+		action.Log.WithError(err).
+			WithField("sale_id", action.Record.ID).
+			WithField("base", action.Record.BaseAsset).
+			WithField("quote", action.Record.QuoteAsset).
+			Error("failed to load asset pair for sale")
+		action.Err = &problem.ServerError
+		return
+	}
+}
+
+func (action *SaleShowAction) populateResult() {
+	action.result.Populate(action.Record)
+	err := action.result.PopulateStat(action.offers, action.balances, action.assetPair)
+	if err != nil {
+		action.Log.WithError(err).
+			WithField("request_id", action.RequestID).
+			Error("failed to populate stat for sale")
 		action.Err = &problem.ServerError
 		return
 	}
