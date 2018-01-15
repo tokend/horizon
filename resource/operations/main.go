@@ -139,13 +139,22 @@ func New(
 			e.ExternalDetails = nil
 		}
 		result = e
-	case xdr.OperationTypeSetLimits:
+	case xdr.OperationTypeSetLimits: //TODO add fields to SetLimits{}
+		//d := row.Details().SetLimits
 		e := SetLimits{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
 	case xdr.OperationTypeManageInvoice:
-		e := ManageInvoice{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details().ManageInvoice
+		e := ManageInvoice{
+			Base:            base,
+			Amount:          d.Amount,
+			ReceiverBalance: d.ReceiverBalance,
+			Sender:          d.Sender,
+			InvoiceID:       d.InvoiceID,
+			RejectReason:    d.RejectReason,
+			Asset:           d.Asset,
+		}
 		if public {
 			e.ReceiverBalance = ""
 			e.Sender = ""
@@ -153,16 +162,39 @@ func New(
 		}
 		result = e
 	case xdr.OperationTypeManageOffer:
-		e := ManagerOffer{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details().ManagerOffer
+		e := ManagerOffer{
+			Base:      base,
+			IsBuy:     d.IsBuy,
+			Amount:    d.Amount,
+			Price:     d.Price,
+			Fee:       d.Fee,
+			OfferId:   d.OfferId,
+			IsDeleted: d.IsDeleted,
+		}
 		result = e
 	case xdr.OperationTypeManageAssetPair:
-		e := ManageAssetPair{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details().ManageAssetPair
+		e := ManageAssetPair{
+			Base:                    base,
+			BaseAsset:               d.BaseAsset,
+			QuoteAsset:              d.QuoteAsset,
+			PhysicalPrice:           d.PhysicalPrice,
+			PhysicalPriceCorrection: d.PhysicalPriceCorrection,
+			MaxPriceStep:            d.MaxPriceStep,
+		}
 		result = e
 	case xdr.OperationTypeCreateIssuanceRequest:
-		e := CreateIssuanceRequest{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details().CreateIssuanceRequest
+		e := CreateIssuanceRequest{
+			Base:            base,
+			Reference:       d.Reference,
+			Amount:          d.Amount,
+			Asset:           d.Asset,
+			FeeFixed:        d.FeeFixed,
+			FeePercent:      d.FeePercent,
+			ExternalDetails: d.ExternalDetails,
+		}
 		if public {
 			e.ExternalDetails = nil
 		}

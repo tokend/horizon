@@ -34,6 +34,11 @@ type OperationDetails struct {
 	SetFees                 *SetFeesDetails
 	ManageAccount           *ManageAccountDetails
 	CreateWithdrawalRequest *CreateWithdrawalRequestDetails
+	SetLimits               *SetLimitsDetails
+	ManageInvoice           *ManageInvoiceDetails
+	ManagerOffer            *ManagerOfferDetails
+	ManageAssetPair         *ManageAssetPairDetails
+	CreateIssuanceRequest   *CreateIssuanceRequestDetails
 }
 
 func (o *Operation) Details() OperationDetails {
@@ -78,6 +83,36 @@ func (o *Operation) Details() OperationDetails {
 		return result
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.CreateWithdrawalRequest)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
+		return result
+	case xdr.OperationTypeSetLimits:
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetLimits)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
+		return result
+	case xdr.OperationTypeManageInvoice:
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManageInvoice)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
+		return result
+	case xdr.OperationTypeManageOffer:
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManagerOffer)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
+		return result
+	case xdr.OperationTypeManageAssetPair:
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManageAssetPair)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
+		return result
+	case xdr.OperationTypeCreateIssuanceRequest:
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.CreateIssuanceRequest)
 		if err != nil {
 			err = errors.Wrap(err, "Error unmarshal operation details")
 		}
@@ -166,6 +201,43 @@ type CreateWithdrawalRequestDetails struct {
 	ExternalDetails map[string]interface{} `json:"external_details"`
 	DestAsset       string                 `json:"dest_asset"`
 	DestAmount      string                 `json:"dest_amount"`
+}
+
+type SetLimitsDetails struct{}
+
+type ManageInvoiceDetails struct {
+	Amount          string  `json:"amount"`
+	ReceiverBalance string  `json:"receiver_balance,omitempty"`
+	Sender          string  `json:"sender,omitempty"`
+	InvoiceID       int64   `json:"invoice_id"`
+	RejectReason    *string `json:"reject_reason,omitempty"`
+	Asset           string  `json:"asset"`
+}
+
+type ManagerOfferDetails struct {
+	IsBuy     bool   `json:"is_buy"`
+	Amount    string `json:"amount"`
+	Price     string `json:"price"`
+	Fee       string `json:"fee"`
+	OfferId   int64  `json:"offer_id"`
+	IsDeleted bool   `json:"is_deleted"`
+}
+
+type ManageAssetPairDetails struct {
+	BaseAsset               string `json:"base_asset"`
+	QuoteAsset              string `json:"quote_asset"`
+	PhysicalPrice           string `json:"physical_price"`
+	PhysicalPriceCorrection string `json:"physical_price_correction"`
+	MaxPriceStep            string `json:"max_price_step"`
+}
+
+type CreateIssuanceRequestDetails struct {
+	Reference       string                 `json:"reference"`
+	Amount          string                 `json:"amount"`
+	Asset           string                 `json:"asset"`
+	FeeFixed        string                 `json:"fee_fixed"`
+	FeePercent      string                 `json:"fee_percent"`
+	ExternalDetails map[string]interface{} `json:"external_details"`
 }
 
 // UnmarshalDetails unmarshals the details of this operation into `dest`
