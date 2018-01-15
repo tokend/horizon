@@ -7,6 +7,7 @@ import (
 
 	"github.com/guregu/null"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 )
@@ -50,19 +51,19 @@ func (o *Operation) Details() OperationDetails {
 	case xdr.OperationTypeCreateAccount:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.CreateAccount)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypePayment:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.Payment)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypeSetOptions:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetOptions)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypeSetFees:
@@ -72,49 +73,49 @@ func (o *Operation) Details() OperationDetails {
 
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetFees)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypeManageAccount:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManageAccount)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.CreateWithdrawalRequest)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypeSetLimits:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetLimits)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypeManageInvoice:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManageInvoice)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypeManageOffer:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManagerOffer)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypeManageAssetPair:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManageAssetPair)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	case xdr.OperationTypeCreateIssuanceRequest:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.CreateIssuanceRequest)
 		if err != nil {
-			err = errors.Wrap(err, "Error unmarshal operation details")
+			logrus.WithError(err).Errorf("Error unmarshal operation details")
 		}
 		return result
 	default:
