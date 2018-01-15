@@ -3,6 +3,8 @@ package horizon
 import (
 	"time"
 
+	"fmt"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/charts"
@@ -18,6 +20,18 @@ func initCharts(app *App) {
 	)
 
 	app.charts = NewCharts()
+
+	// asset prices
+	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
+		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
+			return
+		}
+		if change.Updated.Data.Type != xdr.LedgerEntryTypeAssetPair {
+			return
+		}
+		data := change.Updated.Data.AssetPair
+		app.charts.Set(fmt.Sprintf("%s-%s", data.Base, data.Quote), ts, int64(data.CurrentPrice))
+	})
 
 	// sales initial value
 	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
