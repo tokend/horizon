@@ -182,6 +182,7 @@ func initWebActions(app *App) {
 	r.Get("/prices/history", &PricesHistoryAction{})
 	r.Get("/assets", &AssetsIndexAction{})
 	r.Get("/assets/:code", &AssetsShowAction{})
+	r.Get("/assets/:code/holders", &AssetHoldersShowAction{})
 	r.Get("/asset_pairs", &AssetPairsAction{})
 	r.Get("/asset_pairs/convert", &AssetPairsConverterAction{})
 

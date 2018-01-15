@@ -21,6 +21,8 @@ type BalancesQI interface {
 	ByAsset(asset string) BalancesQI
 	// ByAsset filters `balances` by account address.
 	ByAddress(address string) BalancesQI
+	// NonZero select `balances` only with positive `amount` OR `locked` value.
+	NonZero() BalancesQI
 	Select() ([]Balance, error)
 }
 
@@ -46,6 +48,15 @@ func (q *BalancesQ) ByAsset(asset string) BalancesQI {
 	}
 
 	q.sql = q.sql.Where("ba.asset = ?", asset)
+	return q
+}
+
+func (q *BalancesQ) NonZero() BalancesQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("(ba.amount > 0 OR ba.locked > 0)")
 	return q
 }
 
