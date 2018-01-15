@@ -64,7 +64,7 @@ func TestNew(t *testing.T) {
 		expected  string
 	}{
 		{
-			name: "OperationTypeCreateAccount",
+			name: "CreateAccount",
 			operation: getOperation(xdr.OperationTypeCreateAccount, `{
 				"funder": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
 				"account": "GBCADUBIWUSO5HZF7YZUC42Z6DWSCJH2GQQUEJH6HD6OE4TSYU46F7XT",
@@ -121,7 +121,7 @@ func TestNew(t *testing.T) {
 			}`,
 		},
 		{
-			name: "OperationTypePayment",
+			name: "Payment",
 			operation: getOperation(xdr.OperationTypePayment, `{
 				"to": "GANVIVPOJ2Q7DTIYJJJSP5X64BZYFBGPQO4EXMBEOY6LT5CRJZ6PGC27",
 				"from": "GA2ZQVZKQJUF3B3KSNXGAWVV2PEFBD4KCDRSCSFWD2CCVSGZ35S6K4P5",
@@ -198,7 +198,7 @@ func TestNew(t *testing.T) {
 			}`,
 		},
 		{
-			name: "OperationTypeSetOptions",
+			name: "SetOptions",
 			operation: getOperation(xdr.OperationTypeSetOptions, `{
 				  "home_domain": "test.com",
 				  "inflation_dest": "0.0000",
@@ -308,6 +308,257 @@ func TestNew(t *testing.T) {
 			  "high_threshold": 1
 			}`,
 		},
+		{
+			name: "SetFees",
+			operation: getOperation(xdr.OperationTypeSetFees, `{"fee":{
+				"asset_code": "SUN",
+				"fixed_fee": "0.0000",
+				"percent_fee": "0.0000",
+				"fee_type": 1,
+				"account_id": "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
+				"account_type": 1,
+				"subtype": 		1,
+				"lower_bound": 123,
+				"upper_bound": 12345
+			}}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "set_fees",
+			  "type_i": 5,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "fee": {
+				"asset_code": "SUN",
+				"fixed_fee": "0.0000",
+				"percent_fee": "0.0000",
+				"fee_type": 1,
+				"account_id": "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
+				"account_type": 1,
+				"subtype": 1,
+				"lower_bound": 123,
+				"upper_bound": 12345
+			  }
+			}`,
+		},
+		{
+			name: "ManageAccount",
+			operation: getOperation(xdr.OperationTypeManageAccount, `{
+				"account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+				"block_reasons_to_add": 1,
+  				"BlockReasonsToRemove": 1
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "manage_account",
+			  "type_i": 6,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+			  "block_reasons_to_add": 1
+			}`,
+		},
+		//{
+		//	name: "ManageAccount2",
+		//	operation: getOperation(xdr.OperationTypeManageAccount, `{
+		//		"account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+		//		"BlockReasonsToRemove": 1
+		//	}`),
+		//	expected: `{
+		//	  "_links": {
+		//		"self": {
+		//		  "href": "/operations/231928242177"
+		//		},
+		//		"transaction": {
+		//		  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+		//		},
+		//		"succeeds": {
+		//		  "href": "/effects?order=desc&cursor=231928242177"
+		//		},
+		//		"precedes": {
+		//		  "href": "/effects?order=asc&cursor=231928242177"
+		//		}
+		//	  },
+		//	  "id": "231928242177",
+		//	  "paging_token": "231928242177",
+		//	  "transaction_id": "231928242176",
+		//	  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+		//	  "type": "manage_account",
+		//	  "type_i": 6,
+		//	  "state_i": 2,
+		//	  "state": "success",
+		//	  "identifier": "4",
+		//	  "ledger_close_time": "2018-01-11T13:51:15Z",
+		//	  "participants": [
+		//		{
+		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+		//		  "email": "email0@test.com",
+		//		  "nickname": "Nickname0"
+		//		},
+		//		{
+		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+		//		  "email": "email1@test.com",
+		//		  "nickname": "Nickname1"
+		//		},
+		//		{
+		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+		//		  "email": "email2@test.com",
+		//		  "nickname": "Nickname2"
+		//		}
+		//	  ],
+		//	  "account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+		//	  "BlockReasonsToRemove": 1
+		//	}`,
+		//},
+		{
+			name: "CreateWithdrawalRequest",
+			operation: getOperation(xdr.OperationTypeCreateWithdrawalRequest, `{
+				"amount": "1000.00",
+				"balance": "BANTYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+				"fee_fixed": "0.0000",
+				"fee_percent": "0.0000",
+				"external_details": {
+					"a": "some external details"
+				},
+				"dest_asset": "SUN",
+				"dest_amount": "1000.00"
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "create_withdrawal_request",
+			  "type_i": 7,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "amount": "1000.00",
+			  "balance": "BANTYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+			  "fee_fixed": "0.0000",
+			  "fee_percent": "0.0000",
+			  "external_details": {
+				"a": "some external details"
+			  },
+			  "dest_asset": "SUN",
+			  "dest_amount": "1000.00"
+			}`,
+		},
 	}
 
 	for _, c := range cases {
@@ -320,6 +571,7 @@ func TestNew(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+			fmt.Println(c.name, string(marshalRes))
 			assert.JSONEq(t, c.expected, string(marshalRes))
 		})
 	}

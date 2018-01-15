@@ -27,10 +27,13 @@ type Operation struct {
 }
 
 type OperationDetails struct {
-	Type          xdr.OperationType
-	CreateAccount *CreateAccountDetails
-	Payment       *PaymentDetails
-	SetOptions    *SetOptionsDetails
+	Type                    xdr.OperationType
+	CreateAccount           *CreateAccountDetails
+	Payment                 *PaymentDetails
+	SetOptions              *SetOptionsDetails
+	SetFees                 *SetFeesDetails
+	ManageAccount           *ManageAccountDetails
+	CreateWithdrawalRequest *CreateWithdrawalRequestDetails
 }
 
 func (o *Operation) Details() OperationDetails {
@@ -53,6 +56,28 @@ func (o *Operation) Details() OperationDetails {
 		return result
 	case xdr.OperationTypeSetOptions:
 		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetOptions)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
+		return result
+	case xdr.OperationTypeSetFees:
+		result.SetFees = &SetFeesDetails{
+			Fee: &FeeDetails{},
+		}
+
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetFees)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
+		return result
+	case xdr.OperationTypeManageAccount:
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManageAccount)
+		if err != nil {
+			err = errors.Wrap(err, "Error unmarshal operation details")
+		}
+		return result
+	case xdr.OperationTypeCreateWithdrawalRequest:
+		err := json.Unmarshal([]byte(o.DetailsString.String), &result.CreateWithdrawalRequest)
 		if err != nil {
 			err = errors.Wrap(err, "Error unmarshal operation details")
 		}
@@ -111,17 +136,48 @@ type SetOptionsDetails struct {
 	HighThreshold *int `json:"high_threshold,omitempty"`
 }
 
+type FeeDetails struct {
+	AssetCode   string `json:"asset_code"`
+	FixedFee    string `json:"fixed_fee"`
+	PercentFee  string `json:"percent_fee"`
+	FeeType     int64  `json:"fee_type"`
+	AccountID   string `json:"account_id,omitempty"`
+	AccountType int64  `json:"account_type"`
+	Subtype     int64  `json:"subtype"`
+	LowerBound  int64  `json:"lower_bound"`
+	UpperBound  int64  `json:"upper_bound"`
+}
+
+type SetFeesDetails struct {
+	Fee *FeeDetails `json:"fee"`
+}
+
+type ManageAccountDetails struct {
+	Account              string `json:"account,omitempty"`
+	BlockReasonsToAdd    uint32 `json:"block_reasons_to_add,omitempty"`
+	BlockReasonsToRemove uint32 `json:"block_reasons_to_remove,omitempty"`
+}
+
+type CreateWithdrawalRequestDetails struct {
+	Amount          string                 `json:"amount"`
+	Balance         string                 `json:"balance"`
+	FeeFixed        string                 `json:"fee_fixed"`
+	FeePercent      string                 `json:"fee_percent"`
+	ExternalDetails map[string]interface{} `json:"external_details"`
+	DestAsset       string                 `json:"dest_asset"`
+	DestAmount      string                 `json:"dest_amount"`
+}
+
 // UnmarshalDetails unmarshals the details of this operation into `dest`
 //DEPRECATED
 func (r *Operation) UnmarshalDetails(dest interface{}) error {
 	if !r.DetailsString.Valid {
 		return nil
 	}
-
 	err := json.Unmarshal([]byte(r.DetailsString.String), &dest)
 	if err != nil {
-		err = errors.Wrap(err, "Error unmarshal operation details")
+		return errors.Wrap(err, "Error unmarshal operation details")
 	}
 
-	return err
+	return nil
 }

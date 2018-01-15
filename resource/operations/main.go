@@ -22,12 +22,12 @@ func New(
 
 	switch row.Type {
 	case xdr.OperationTypeCreateAccount:
-		d := row.Details()
+		d := row.Details().CreateAccount
 		e := CreateAccount{
 			Base:        base,
-			Funder:      d.CreateAccount.Funder,
-			Account:     d.CreateAccount.Account,
-			AccountType: d.CreateAccount.AccountType,
+			Funder:      d.Funder,
+			Account:     d.Account,
+			AccountType: d.AccountType,
 		}
 		if public {
 			e.Funder = ""
@@ -35,26 +35,26 @@ func New(
 		}
 		result = e
 	case xdr.OperationTypePayment:
-		d := row.Details()
+		d := row.Details().Payment
 		e := Payment{
 			Base: base,
 			BasePayment: BasePayment{
-				From:                  d.Payment.BasePayment.From,
-				To:                    d.Payment.BasePayment.To,
-				FromBalance:           d.Payment.BasePayment.FromBalance,
-				ToBalance:             d.Payment.BasePayment.ToBalance,
-				Amount:                d.Payment.BasePayment.Amount,
-				UserDetails:           d.Payment.BasePayment.UserDetails,
-				Asset:                 d.Payment.BasePayment.Asset,
-				SourcePaymentFee:      d.Payment.BasePayment.SourcePaymentFee,
-				DestinationPaymentFee: d.Payment.BasePayment.DestinationPaymentFee,
-				SourceFixedFee:        d.Payment.BasePayment.SourceFixedFee,
-				DestinationFixedFee:   d.Payment.BasePayment.DestinationFixedFee,
-				SourcePaysForDest:     d.Payment.BasePayment.SourcePaysForDest,
+				From:                  d.BasePayment.From,
+				To:                    d.BasePayment.To,
+				FromBalance:           d.BasePayment.FromBalance,
+				ToBalance:             d.BasePayment.ToBalance,
+				Amount:                d.BasePayment.Amount,
+				UserDetails:           d.BasePayment.UserDetails,
+				Asset:                 d.BasePayment.Asset,
+				SourcePaymentFee:      d.BasePayment.SourcePaymentFee,
+				DestinationPaymentFee: d.BasePayment.DestinationPaymentFee,
+				SourceFixedFee:        d.BasePayment.SourceFixedFee,
+				DestinationFixedFee:   d.BasePayment.DestinationFixedFee,
+				SourcePaysForDest:     d.BasePayment.SourcePaysForDest,
 			},
-			Subject:   d.Payment.Subject,
-			Reference: d.Payment.Reference,
-			Asset:     d.Payment.Asset,
+			Subject:   d.Subject,
+			Reference: d.Reference,
+			Asset:     d.Asset,
 		}
 		if public {
 			e.UserDetails = ""
@@ -67,31 +67,44 @@ func New(
 		}
 		result = e
 	case xdr.OperationTypeSetOptions:
-		d := row.Details()
+		d := row.Details().SetOptions
 		e := SetOptions{
 			Base:            base,
-			HomeDomain:      d.SetOptions.HomeDomain,
-			InflationDest:   d.SetOptions.InflationDest,
-			MasterKeyWeight: d.SetOptions.MasterKeyWeight,
-			SignerKey:       d.SetOptions.SignerKey,
-			SignerWeight:    d.SetOptions.SignerWeight,
-			SignerType:      d.SetOptions.SignerType,
-			SignerIdentity:  d.SetOptions.SignerIdentity,
-			SetFlags:        d.SetOptions.SetFlags,
-			SetFlagsS:       d.SetOptions.SetFlagsS,
-			ClearFlags:      d.SetOptions.ClearFlags,
-			ClearFlagsS:     d.SetOptions.ClearFlagsS,
-			LowThreshold:    d.SetOptions.LowThreshold,
-			MedThreshold:    d.SetOptions.MedThreshold,
-			HighThreshold:   d.SetOptions.HighThreshold,
+			HomeDomain:      d.HomeDomain,
+			InflationDest:   d.InflationDest,
+			MasterKeyWeight: d.MasterKeyWeight,
+			SignerKey:       d.SignerKey,
+			SignerWeight:    d.SignerWeight,
+			SignerType:      d.SignerType,
+			SignerIdentity:  d.SignerIdentity,
+			SetFlags:        d.SetFlags,
+			SetFlagsS:       d.SetFlagsS,
+			ClearFlags:      d.ClearFlags,
+			ClearFlagsS:     d.ClearFlagsS,
+			LowThreshold:    d.LowThreshold,
+			MedThreshold:    d.MedThreshold,
+			HighThreshold:   d.HighThreshold,
 		}
 		if public {
 			e.SignerKey = ""
 		}
 		result = e
 	case xdr.OperationTypeSetFees:
-		e := SetFees{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details().SetFees
+		e := SetFees{
+			Base: base,
+			Fee: &Fee{
+				AssetCode:   d.Fee.AssetCode,
+				FixedFee:    d.Fee.FixedFee,
+				PercentFee:  d.Fee.PercentFee,
+				FeeType:     d.Fee.FeeType,
+				AccountID:   d.Fee.AccountID,
+				AccountType: d.Fee.AccountType,
+				Subtype:     d.Fee.Subtype,
+				LowerBound:  d.Fee.LowerBound,
+				UpperBound:  d.Fee.UpperBound,
+			},
+		}
 		if public {
 			if e.Fee != nil {
 				e.Fee.AccountID = ""
@@ -99,15 +112,29 @@ func New(
 		}
 		result = e
 	case xdr.OperationTypeManageAccount:
-		e := ManageAccount{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details().ManageAccount
+		e := ManageAccount{
+			Base:                 base,
+			Account:              d.Account,
+			BlockReasonsToAdd:    d.BlockReasonsToAdd,
+			BlockReasonsToRemove: d.BlockReasonsToRemove,
+		}
 		if public {
 			e.Account = ""
 		}
 		result = e
 	case xdr.OperationTypeCreateWithdrawalRequest:
-		e := CreateWithdrawalRequest{Base: base}
-		err = row.UnmarshalDetails(&e)
+		d := row.Details().CreateWithdrawalRequest
+		e := CreateWithdrawalRequest{
+			Base:            base,
+			Amount:          d.Amount,
+			Balance:         d.Balance,
+			FeeFixed:        d.FeeFixed,
+			FeePercent:      d.FeePercent,
+			ExternalDetails: d.ExternalDetails,
+			DestAsset:       d.DestAsset,
+			DestAmount:      d.DestAmount,
+		}
 		if public {
 			e.ExternalDetails = nil
 		}
