@@ -1,9 +1,5 @@
 package core
 
-import (
-	sq "github.com/lann/squirrel"
-)
-
 type Balance struct {
 	BalanceID string `db:"balance_id"`
 	AccountID string `db:"account_id"`
@@ -14,20 +10,14 @@ type Balance struct {
 	IncentivePerCoin int64
 }
 
+// DEPRECATED
 func (q *Q) BalancesByAddress(dest interface{}, addy string) error {
 	sql := selectBalance.Where("ba.account_id = ?", addy)
 	return q.Select(dest, sql)
 }
 
+// DEPRECATED
 func (q *Q) BalanceByID(dest interface{}, bid string) error {
 	sql := selectBalance.Where("ba.balance_id = ?", bid)
 	return q.Get(dest, sql)
 }
-
-var selectBalance = sq.Select(
-	"ba.balance_id",
-	"ba.account_id",
-	"ba.asset",
-	"ba.amount",
-	"ba.locked",
-).From("balance ba")
