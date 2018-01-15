@@ -222,6 +222,11 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
+	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]string {
+			"document_hash": "",
+		},
+	})
 
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
