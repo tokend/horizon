@@ -51,6 +51,7 @@ type AssetHoldersShowAction struct {
 func (action *AssetHoldersShowAction) JSON() {
 	action.Do(
 		action.loadParams,
+		action.checkIsAllowed,
 		action.loadData,
 		func() {
 			hal.Render(action.W, action.balances)
@@ -62,16 +63,15 @@ func (action *AssetHoldersShowAction) loadParams() {
 	action.code = action.GetNonEmptyString("code")
 }
 
+func (action *AssetHoldersShowAction) checkIsAllowed() {
+	action.isAllowed("")
+}
+
 func (action *AssetHoldersShowAction) loadData() {
 	balances, err := action.CoreQ().Balances().ByAsset(action.code).NonZero().Select()
 	if err != nil {
 		action.Err = &problem.ServerError
 		action.Log.WithStack(err).WithError(err).Error("Failed to load asset by code")
-		return
-	}
-
-	if len(balances) == 0 {
-		action.Err = &problem.NotFound
 		return
 	}
 
