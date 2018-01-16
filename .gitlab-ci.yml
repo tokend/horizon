@@ -44,7 +44,7 @@ delivery:
     - staging
     - dev
 
-delivery:prod
+delivery:prod:
   stage: delivery
   script:
     - rsync bin/horizon ubuntu@$HOST_DEV:artifacts/horizon/${CI_COMMIT_SHA:0:8}/
