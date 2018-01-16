@@ -213,6 +213,9 @@ func (action *TransactionCreateAction) loadTX() {
 }
 
 func (action *TransactionCreateAction) checkAllowed() {
+	if action.App.config.DisableAPISubmit {
+		return
+	}
 	action.isAllowed("")
 }
 
