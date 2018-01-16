@@ -72,6 +72,7 @@ func (action *OrderBookAction) loadRecords() {
 		var result resource.OrderBookEntry
 		result.Populate(&action.CoreRecords[i].OrderBookEntry, action.BaseAsset, action.QuoteAsset, action.IsBuy)
 		if action.IsAdmin {
+			result.OfferID = action.CoreRecords[i].OfferID
 			result.OwnerID = action.CoreRecords[i].OwnerID
 		}
 		action.Page.Add(&result)
