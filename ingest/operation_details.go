@@ -145,41 +145,64 @@ func (is *Session) operationDetails() interface{} {
 			Action:      int32(op.Action),
 		}
 
+		return operationDetails
 	case xdr.OperationTypeReviewPaymentRequest:
 		op := c.Operation().Body.MustReviewPaymentRequestOp()
-		details["payment_id"] = op.PaymentId
-		details["accept"] = op.Accept
-		if op.RejectReason != nil {
-			details["reject_reason"] = *op.RejectReason
+
+		operationDetails.Type = xdr.OperationTypeReviewPaymentRequest
+
+		operationDetails.ReviewPaymentRequest = &history.ReviewPaymentRequestDetails{
+			PaymentID:    int64(op.PaymentId),
+			Accept:       op.Accept,
+			RejectReason: string(*op.RejectReason),
 		}
+
+		return operationDetails
 	case xdr.OperationTypeSetLimits:
 		op := c.Operation().Body.MustSetLimitsOp()
+
+		operationDetails.Type = xdr.OperationTypeSetLimits
+
 		details["account_type"] = op.AccountType
 		details["account"] = op.Account
 	case xdr.OperationTypeDirectDebit:
 		op := c.Operation().Body.MustDirectDebitOp().PaymentOp
 		opResult := c.OperationResult().MustDirectDebitResult().MustSuccess()
-		details["from"] = source.Address()
-		details["to"] = opResult.PaymentResponse.Destination.Address()
-		details["from_balance"] = op.SourceBalanceId.AsString()
-		details["to_balance"] = op.DestinationBalanceId.AsString()
-		details["amount"] = amount.String(int64(op.Amount))
-		details["source_payment_fee"] = amount.String(int64(op.FeeData.SourceFee.PaymentFee))
-		details["destination_payment_fee"] = amount.String(int64(op.FeeData.DestinationFee.PaymentFee))
-		details["source_fixed_fee"] = amount.String(int64(op.FeeData.SourceFee.FixedFee))
-		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
-		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
-		details["subject"] = op.Subject
-		details["reference"] = op.Reference
-		details["asset"] = opResult.PaymentResponse.Asset
+
+		operationDetails.Type = xdr.OperationTypeDirectDebit
+
+		operationDetails.DirectDebit = &history.DirectDebitDetails{
+			From:                  source.Address(),
+			To:                    opResult.PaymentResponse.Destination.Address(),
+			FromBalance:           op.SourceBalanceId.AsString(),
+			ToBalance:             op.DestinationBalanceId.AsString(),
+			Amount:                amount.String(int64(op.Amount)),
+			SourcePaymentFee:      amount.String(int64(op.FeeData.SourceFee.PaymentFee)),
+			DestinationPaymentFee: amount.String(int64(op.FeeData.DestinationFee.PaymentFee)),
+			SourceFixedFee:        amount.String(int64(op.FeeData.SourceFee.FixedFee)),
+			DestinationFixedFee:   amount.String(int64(op.FeeData.DestinationFee.FixedFee)),
+			SourcePaysForDest:     op.FeeData.SourcePaysForDest,
+			Subject:               string(op.Subject),
+			Reference:             string(op.Reference),
+			AssetCode:             string(opResult.PaymentResponse.Asset),
+		}
+
+		return operationDetails
 	case xdr.OperationTypeManageAssetPair:
 		op := c.Operation().Body.MustManageAssetPairOp()
-		details["base_asset"] = op.Base
-		details["quote_asset"] = op.Quote
-		details["physical_price"] = amount.String(int64(op.PhysicalPrice))
-		details["physical_price_correction"] = amount.String(int64(op.PhysicalPriceCorrection))
-		details["max_price_step"] = amount.String(int64(op.MaxPriceStep))
-		details["policies_i"] = int32(op.Policies)
+
+		operationDetails.Type = xdr.OperationTypeManageAssetPair
+
+		operationDetails.ManageAssetPair = &history.ManageAssetPairDetails{
+			BaseAsset:               string(op.Base),
+			QuoteAsset:              string(op.Quote),
+			PhysicalPrice:           amount.String(int64(op.PhysicalPrice)),
+			PhysicalPriceCorrection: amount.String(int64(op.PhysicalPriceCorrection)),
+			MaxPriceStep:            amount.String(int64(op.MaxPriceStep)),
+			Policies:                int32(op.Policies),
+		}
+
+		return operationDetails
 	case xdr.OperationTypeManageOffer:
 		op := c.Operation().Body.ManageOfferOp
 		details["is_buy"] = op.IsBuy

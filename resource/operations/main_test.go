@@ -665,6 +665,152 @@ func TestNew(t *testing.T) {
 			  "action": 123
 			}`,
 		},
+		{
+			name: "ReviewPaymentRequest",
+			operation: getOperation(xdr.OperationTypeReviewPaymentRequest, `{
+			  "type": {
+				"int": 10,
+				"string": "review_payment_request"
+			  },
+			  "review_payment_request": {
+				"payment_id": 1,
+				"accept": true,
+				"reject_reason": "Some reject reason"
+			  }
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "review_payment_request",
+			  "type_i": 10,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "payment_id": 1,
+			  "accept": true,
+			  "reject_reason": "Some reject reason"
+			}`,
+		},
+		{
+			name: "DirectDebit",
+			operation: getOperation(xdr.OperationTypeDirectDebit, `{
+			  "type": {
+				"int": 0,
+				"string": "create_account"
+			  },
+			  "direct_debit": {
+				"from": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+				"to": "TWOAHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+				"from_balance": "ONETYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+				"to_balance": "TWOTYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+				"amount": "1000.00",
+				"source_payment_fee": "0.0000",
+				"destination_payment_fee": "0.0000",
+				"source_fixed_fee": "0.0000",
+				"destination_fixed_fee": "0.0000",
+				"source_pays_for_dest": true,
+				"subject": "Some subject",
+				"reference": "Some reference",
+				"asset": "SUN"
+			  }
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "direct_debit",
+			  "type_i": 14,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "from": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+			  "to": "TWOAHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+			  "from_balance": "ONETYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+			  "to_balance": "TWOTYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+			  "amount": "1000.00",
+			  "source_payment_fee": "0.0000",
+			  "destination_payment_fee": "0.0000",
+			  "source_fixed_fee": "0.0000",
+			  "destination_fixed_fee": "0.0000",
+			  "source_pays_for_dest": true,
+			  "subject": "Some subject",
+			  "reference": "Some reference",
+			  "asset": "SUN"
+			}`,
+		},
 		//{
 		//	name: "ManageInvoice",
 		//	operation: getOperation(xdr.OperationTypeManageInvoice, `{
@@ -789,67 +935,75 @@ func TestNew(t *testing.T) {
 		//	  "is_deleted": false
 		//	}`,
 		//},
-		//{
-		//	name: "ManageAssetPair",
-		//	operation: getOperation(xdr.OperationTypeManageAssetPair, `{
-		//	  "base_asset": "ETH",
-		//	  "quote_asset": "SUN",
-		//	  "max_price_step": "0.0000",
-		//	  "physical_price": "1326.0000",
-		//	  "physical_price_correction": "0.0000"
-		//	}`),
-		//	expected: `{
-		//	  "_links": {
-		//		"self": {
-		//		  "href": "/operations/231928242177"
-		//		},
-		//		"transaction": {
-		//		  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
-		//		},
-		//		"succeeds": {
-		//		  "href": "/effects?order=desc&cursor=231928242177"
-		//		},
-		//		"precedes": {
-		//		  "href": "/effects?order=asc&cursor=231928242177"
-		//		}
-		//	  },
-		//	  "id": "231928242177",
-		//	  "paging_token": "231928242177",
-		//	  "transaction_id": "231928242176",
-		//	  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
-		//	  "type": "manage_asset_pair",
-		//	  "type_i": 15,
-		//	  "state_i": 2,
-		//	  "state": "success",
-		//	  "identifier": "4",
-		//	  "ledger_close_time": "2018-01-11T13:51:15Z",
-		//	  "participants": [
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		//		  "email": "email0@test.com",
-		//		  "nickname": "Nickname0"
-		//		},
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		//		  "email": "email1@test.com",
-		//		  "nickname": "Nickname1"
-		//		},
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		//		  "email": "email2@test.com",
-		//		  "nickname": "Nickname2"
-		//		}
-		//	  ],
-		//	  "base_asset": "ETH",
-		//	  "quote_asset": "SUN",
-		//	  "physical_price": "1326.0000",
-		//	  "physical_price_correction": "0.0000",
-		//	  "max_price_step": "0.0000"
-		//	}`,
-		//},
+		{
+			name: "ManageAssetPair",
+			operation: getOperation(xdr.OperationTypeManageAssetPair, `{
+			  "type": {
+				"int": 15,
+				"string": "manage_asset_pair"
+			  },
+			  "manage_asset_pair": {
+				"base_asset": "ETH",
+				"quote_asset": "SUN",
+				"physical_price": "0.0000",
+				"physical_price_correction": "1326.0000",
+				"max_price_step": "0.0000",
+				"policies_i": 1
+			  }
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "manage_asset_pair",
+			  "type_i": 15,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "base_asset": "ETH",
+			  "quote_asset": "SUN",
+			  "physical_price": "0.0000",
+			  "physical_price_correction": "1326.0000",
+			  "max_price_step": "0.0000",
+			  "policies_i": 1
+			}`,
+		},
 		//{
 		//	name: "CreateIssuanceRequest",
 		//	operation: getOperation(xdr.OperationTypeCreateIssuanceRequest, `{
@@ -929,6 +1083,8 @@ func TestNew(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
+			fmt.Println(c.name, string(marshalRes))
 
 			assert.JSONEq(t, c.expected, string(marshalRes))
 		})

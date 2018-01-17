@@ -36,7 +36,9 @@ type OperationDetails struct {
 	ManageAccount           *ManageAccountDetails           `json:"manage_account,omitempty"`
 	CreateWithdrawalRequest *CreateWithdrawalRequestDetails `json:"create_withdrawal_request,omitempty"`
 	ManageBalance           *ManageBalanceDetails           `json:"manage_balance,omitempty"`
+	ReviewPaymentRequest    *ReviewPaymentRequestDetails    `json:"review_payment_request,omitempty"`
 	SetLimits               *SetLimitsDetails               `json:"set_limits,omitempty"`
+	DirectDebit             *DirectDebitDetails             `json:"direct_debit,omitempty"`
 	ManageInvoice           *ManageInvoiceDetails           `json:"manage_invoice,omitempty"`
 	ManagerOffer            *ManagerOfferDetails            `json:"manager_offer,omitempty"`
 	ManageAssetPair         *ManageAssetPairDetails         `json:"manage_asset_pair,omitempty"`
@@ -141,6 +143,11 @@ type ManageBalanceDetails struct {
 	Action      int32  `json:"action"`
 }
 
+type ReviewPaymentRequestDetails struct {
+	PaymentID    int64  `json:"payment_id"`
+	Accept       bool   `json:"accept"`
+	RejectReason string `json:"reject_reason"`
+}
 type SetLimitsDetails struct{}
 
 type ManageInvoiceDetails struct {
@@ -167,6 +174,7 @@ type ManageAssetPairDetails struct {
 	PhysicalPrice           string `json:"physical_price"`
 	PhysicalPriceCorrection string `json:"physical_price_correction"`
 	MaxPriceStep            string `json:"max_price_step"`
+	Policies                int32  `json:"policies_i"`
 }
 
 type CreateIssuanceRequestDetails struct {
@@ -176,6 +184,22 @@ type CreateIssuanceRequestDetails struct {
 	FeeFixed        string                 `json:"fee_fixed"`
 	FeePercent      string                 `json:"fee_percent"`
 	ExternalDetails map[string]interface{} `json:"external_details"`
+}
+
+type DirectDebitDetails struct {
+	From                  string `json:"from"`
+	To                    string `json:"to"`
+	FromBalance           string `json:"from_balance"`
+	ToBalance             string `json:"to_balance"`
+	Amount                string `json:"amount"`
+	SourcePaymentFee      string `json:"source_payment_fee"`
+	DestinationPaymentFee string `json:"destination_payment_fee"`
+	SourceFixedFee        string `json:"source_fixed_fee"`
+	DestinationFixedFee   string `json:"destination_fixed_fee"`
+	SourcePaysForDest     bool   `json:"source_pays_for_dest"`
+	Subject               string `json:"subject"`
+	Reference             string `json:"reference"`
+	AssetCode             string `json:"asset"`
 }
 
 // UnmarshalDetails unmarshals the details of this operation into `dest`

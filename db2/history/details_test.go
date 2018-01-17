@@ -5,8 +5,6 @@ import (
 
 	"encoding/json"
 
-	"fmt"
-
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/swarmfund/go/xdr"
 )
@@ -257,6 +255,98 @@ func TestOperation_Details(t *testing.T) {
 			  }
 			}`,
 		},
+		{
+			name: "ReviewPaymentRequest",
+			details: OperationDetails{
+				Type: xdr.OperationTypeReviewPaymentRequest,
+				ReviewPaymentRequest: &ReviewPaymentRequestDetails{
+					PaymentID:    1,
+					Accept:       true,
+					RejectReason: "Some reject reason",
+				},
+			},
+			expectedDetails: `{
+			  "type": {
+				"int": 10,
+				"string": "review_payment_request"
+			  },
+			  "review_payment_request": {
+				"payment_id": 1,
+				"accept": true,
+				"reject_reason": "Some reject reason"
+			  }
+			}`,
+		},
+		{
+			name: "DirectDebit",
+			details: OperationDetails{
+				Type: 0,
+				DirectDebit: &DirectDebitDetails{
+					From:                  "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+					To:                    "TWOAHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+					FromBalance:           "ONETYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+					ToBalance:             "TWOTYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+					Amount:                "1000.00",
+					SourcePaymentFee:      "0.0000",
+					DestinationPaymentFee: "0.0000",
+					SourceFixedFee:        "0.0000",
+					DestinationFixedFee:   "0.0000",
+					SourcePaysForDest:     true,
+					Subject:               "Some subject",
+					Reference:             "Some reference",
+					AssetCode:             "SUN",
+				},
+			},
+			expectedDetails: `{
+			  "type": {
+				"int": 0,
+				"string": "create_account"
+			  },
+			  "direct_debit": {
+				"from": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+				"to": "TWOAHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+				"from_balance": "ONETYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+				"to_balance": "TWOTYPGNNSC64NSULLOBI2MOEUHQXJTNPUIFMCM4N7JXRX5",
+				"amount": "1000.00",
+				"source_payment_fee": "0.0000",
+				"destination_payment_fee": "0.0000",
+				"source_fixed_fee": "0.0000",
+				"destination_fixed_fee": "0.0000",
+				"source_pays_for_dest": true,
+				"subject": "Some subject",
+				"reference": "Some reference",
+				"asset": "SUN"
+			  }
+			}`,
+		},
+		{
+			name: "ManageAssetPair",
+			details: OperationDetails{
+				Type: xdr.OperationTypeManageAssetPair,
+				ManageAssetPair: &ManageAssetPairDetails{
+					BaseAsset:               "ETH",
+					QuoteAsset:              "SUN",
+					PhysicalPrice:           "0.0000",
+					PhysicalPriceCorrection: "1326.0000",
+					MaxPriceStep:            "0.0000",
+					Policies:                1,
+				},
+			},
+			expectedDetails: `{
+			  "type": {
+				"int": 15,
+				"string": "manage_asset_pair"
+			  },
+			  "manage_asset_pair": {
+				"base_asset": "ETH",
+				"quote_asset": "SUN",
+				"physical_price": "0.0000",
+				"physical_price_correction": "1326.0000",
+				"max_price_step": "0.0000",
+				"policies_i": 1
+			  }
+			}`,
+		},
 	}
 
 	for _, c := range cases {
@@ -265,8 +355,6 @@ func TestOperation_Details(t *testing.T) {
 			if err != nil {
 				panic(err)
 			}
-
-			fmt.Println(c.name, string(jsonDetails))
 
 			assert.JSONEq(t, c.expectedDetails, string(jsonDetails))
 

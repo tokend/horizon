@@ -153,11 +153,54 @@ func New(
 		}
 		result = e
 
+	case xdr.OperationTypeReviewPaymentRequest:
+		d := row.Details().ReviewPaymentRequest
+
+		e := ReviewPaymentRequest{
+			Base:         base,
+			PaymentID:    d.PaymentID,
+			Accept:       d.Accept,
+			RejectReason: d.RejectReason,
+		}
+
+		result = e
+
 	case xdr.OperationTypeSetLimits: //TODO add fields to SetLimits{}
 		//d := row.Details().SetLimits
 		e := SetLimits{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
+
+	case xdr.OperationTypeDirectDebit:
+		d := row.Details().DirectDebit
+		e := DirectDebit{
+			Base:                  base,
+			From:                  d.From,
+			To:                    d.To,
+			FromBalance:           d.FromBalance,
+			ToBalance:             d.ToBalance,
+			Amount:                d.Amount,
+			SourcePaymentFee:      d.SourcePaymentFee,
+			DestinationPaymentFee: d.DestinationPaymentFee,
+			SourceFixedFee:        d.SourceFixedFee,
+			DestinationFixedFee:   d.DestinationFixedFee,
+			SourcePaysForDest:     d.SourcePaysForDest,
+			Subject:               d.Subject,
+			Reference:             d.Reference,
+			AssetCode:             d.AssetCode,
+		}
+
+		if public {
+			e.From = ""
+			e.To = ""
+			e.FromBalance = ""
+			e.ToBalance = ""
+			e.Subject = ""
+			e.Reference = ""
+		}
+
+		result = e
+
 	case xdr.OperationTypeManageInvoice:
 		d := row.Details().ManageInvoice
 		e := ManageInvoice{
@@ -196,6 +239,7 @@ func New(
 			PhysicalPrice:           d.PhysicalPrice,
 			PhysicalPriceCorrection: d.PhysicalPriceCorrection,
 			MaxPriceStep:            d.MaxPriceStep,
+			Policies:                d.Policies,
 		}
 		result = e
 	case xdr.OperationTypeCreateIssuanceRequest:
@@ -311,4 +355,28 @@ type ManageBalance struct {
 	Base
 	Destination string `json:"destination"`
 	Action      int32  `json:"action"`
+}
+
+type ReviewPaymentRequest struct {
+	Base
+	PaymentID    int64  `json:"payment_id"`
+	Accept       bool   `json:"accept"`
+	RejectReason string `json:"reject_reason"`
+}
+
+type DirectDebit struct {
+	Base
+	From                  string `json:"from"`
+	To                    string `json:"to"`
+	FromBalance           string `json:"from_balance"`
+	ToBalance             string `json:"to_balance"`
+	Amount                string `json:"amount"`
+	SourcePaymentFee      string `json:"source_payment_fee"`
+	DestinationPaymentFee string `json:"destination_payment_fee"`
+	SourceFixedFee        string `json:"source_fixed_fee"`
+	DestinationFixedFee   string `json:"destination_fixed_fee"`
+	SourcePaysForDest     bool   `json:"source_pays_for_dest"`
+	Subject               string `json:"subject"`
+	Reference             string `json:"reference"`
+	AssetCode             string `json:"asset"`
 }
