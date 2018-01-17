@@ -8,111 +8,143 @@ import (
 
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
 // for ingestion into a history_operation row
-func (is *Session) operationDetails() map[string]interface{} {
+func (is *Session) operationDetails() interface{} {
 	details := map[string]interface{}{}
 	c := is.Cursor
 	source := c.OperationSourceAccount()
+
+	operationDetails := history.OperationDetails{}
 	switch c.OperationType() {
 	case xdr.OperationTypeCreateAccount:
 		op := c.Operation().Body.MustCreateAccountOp()
-		details["funder"] = source.Address()
-		details["account"] = op.Destination.Address()
-		details["account_type"] = int32(op.AccountType)
+
+		operationDetails.Type = xdr.OperationTypeCreateAccount
+
+		operationDetails.CreateAccount = &history.CreateAccountDetails{
+			Funder:      source.Address(),
+			Account:     op.Destination.Address(),
+			AccountType: int32(op.AccountType),
+		}
+		return operationDetails
 	case xdr.OperationTypePayment:
 		op := c.Operation().Body.MustPaymentOp()
 		opResult := c.OperationResult().MustPaymentResult()
-		details["from"] = source.Address()
-		details["to"] = opResult.PaymentResponse.Destination.Address()
-		details["from_balance"] = op.SourceBalanceId.AsString()
-		details["to_balance"] = op.DestinationBalanceId.AsString()
-		details["amount"] = amount.String(int64(op.Amount))
-		details["source_payment_fee"] = amount.String(int64(op.FeeData.SourceFee.PaymentFee))
-		details["destination_payment_fee"] = amount.String(int64(op.FeeData.DestinationFee.PaymentFee))
-		details["source_fixed_fee"] = amount.String(int64(op.FeeData.SourceFee.FixedFee))
-		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
-		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
-		details["subject"] = op.Subject
-		details["reference"] = op.Reference
-		details["asset"] = opResult.PaymentResponse.Asset
+
+		operationDetails.Type = xdr.OperationTypePayment
+
+		operationDetails.Payment = &history.PaymentDetails{
+			BasePayment: history.BasePayment{
+				From:                  source.Address(),
+				To:                    opResult.PaymentResponse.Destination.Address(),
+				FromBalance:           op.SourceBalanceId.AsString(),
+				ToBalance:             op.DestinationBalanceId.AsString(),
+				Amount:                amount.String(int64(op.Amount)),
+				Asset:                 string(opResult.PaymentResponse.Asset),
+				SourcePaymentFee:      amount.String(int64(op.FeeData.SourceFee.PaymentFee)),
+				DestinationPaymentFee: amount.String(int64(op.FeeData.DestinationFee.PaymentFee)),
+				SourceFixedFee:        amount.String(int64(op.FeeData.SourceFee.FixedFee)),
+				DestinationFixedFee:   amount.String(int64(op.FeeData.DestinationFee.FixedFee)),
+				SourcePaysForDest:     op.FeeData.SourcePaysForDest,
+			},
+			Subject:    string(op.Subject),
+			Reference:  string(op.Reference),
+			QuoteAsset: string(opResult.PaymentResponse.Asset),
+		}
+
+		return operationDetails
 	case xdr.OperationTypeSetOptions:
 		op := c.Operation().Body.MustSetOptionsOp()
 
-		if op.MasterWeight != nil {
-			details["master_key_weight"] = *op.MasterWeight
+		operationDetails.Type = xdr.OperationTypeSetOptions
+
+		operationDetails.SetOptions = &history.SetOptionsDetails{
+			HomeDomain:                      "",
+			InflationDest:                   "",
+			MasterKeyWeight:                 uint32(*op.MasterWeight),
+			SignerKey:                       op.Signer.PubKey.Address(),
+			SignerWeight:                    uint32(op.Signer.Weight),
+			SignerType:                      uint32(op.Signer.SignerType),
+			SignerIdentity:                  uint32(op.Signer.Identity),
+			SetFlags:                        nil,
+			SetFlagsS:                       nil,
+			ClearFlags:                      nil,
+			ClearFlagsS:                     nil,
+			LowThreshold:                    uint32(*op.LowThreshold),
+			MedThreshold:                    uint32(*op.MedThreshold),
+			HighThreshold:                   uint32(*op.HighThreshold),
+			LimitsUpdateRequestDocumentHash: hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:]),
 		}
 
-		if op.LowThreshold != nil {
-			details["low_threshold"] = *op.LowThreshold
-		}
-
-		if op.MedThreshold != nil {
-			details["med_threshold"] = *op.MedThreshold
-		}
-
-		if op.HighThreshold != nil {
-			details["high_threshold"] = *op.HighThreshold
-		}
-
-		if op.Signer != nil {
-			details["signer_key"] = op.Signer.PubKey.Address()
-			details["signer_weight"] = op.Signer.Weight
-			details["signer_type"] = op.Signer.SignerType
-			details["signer_identity"] = op.Signer.Identity
-		}
-
-		if op.LimitsUpdateRequestData != nil {
-			details["limits_update_request_document_hash"] = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
-		}
+		return operationDetails
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
-		if op.Fee != nil {
-			accountID := ""
-			if op.Fee.AccountId != nil {
-				accountID = op.Fee.AccountId.Address()
-			}
-			accountType := op.Fee.AccountType
-			details["fee"] = map[string]interface{}{
-				"asset_code":   string(op.Fee.Asset),
-				"fixed_fee":    amount.String(int64(op.Fee.FixedFee)),
-				"percent_fee":  amount.String(int64(op.Fee.PercentFee)),
-				"fee_type":     int64(op.Fee.FeeType),
-				"account_id":   accountID,
-				"account_type": accountType,
-				"subtype":      int64(op.Fee.Subtype),
-				"lower_bound":  int64(op.Fee.LowerBound),
-				"upper_bound":  int64(op.Fee.UpperBound),
-			}
+
+		operationDetails.Type = xdr.OperationTypeSetFees
+
+		operationDetails.SetFees = &history.SetFeesDetails{
+			Fee: &history.FeeDetails{
+				AssetCode:   string(op.Fee.Asset),
+				FixedFee:    amount.String(int64(op.Fee.FixedFee)),
+				PercentFee:  amount.String(int64(op.Fee.PercentFee)),
+				FeeType:     int64(op.Fee.FeeType),
+				AccountID:   op.Fee.AccountId.Address(),
+				AccountType: int64(*op.Fee.AccountType), //ask about type int 64/32
+				Subtype:     int64(op.Fee.Subtype),
+				LowerBound:  int64(op.Fee.LowerBound),
+				UpperBound:  int64(op.Fee.UpperBound),
+			},
 		}
 
+		return operationDetails
 	case xdr.OperationTypeManageAccount:
 		op := c.Operation().Body.MustManageAccountOp()
-		details["account"] = op.Account.Address()
-		details["block_reasons_to_add"] = op.BlockReasonsToAdd
-		details["block_reasons_to_remove"] = op.BlockReasonsToRemove
+
+		operationDetails.Type = xdr.OperationTypeManageAccount
+
+		operationDetails.ManageAccount = &history.ManageAccountDetails{
+			Account:              op.Account.Address(),
+			BlockReasonsToAdd:    uint32(op.BlockReasonsToAdd),
+			BlockReasonsToRemove: uint32(op.BlockReasonsToRemove),
+		}
+
+		return operationDetails
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		op := c.Operation().Body.MustCreateWithdrawalRequestOp()
 		request := op.Request
-		details["amount"] = amount.StringU(uint64(request.Amount))
-		details["balance"] = request.Balance.AsString()
-		details["fee_fixed"] = amount.StringU(uint64(request.Fee.Fixed))
-		details["fee_percent"] = amount.StringU(uint64(request.Fee.Percent))
+
+		operationDetails.Type = xdr.OperationTypeCreateWithdrawalRequest
 
 		var externalDetails map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
 		_ = json.Unmarshal([]byte(request.ExternalDetails), &externalDetails)
-		details["external_details"] = externalDetails
 
-		details["dest_asset"] = request.Details.AutoConversion.DestAsset
-		details["dest_amount"] = amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount))
+		operationDetails.CreateWithdrawalRequest = &history.CreateWithdrawalRequestDetails{
+			Amount:          amount.StringU(uint64(request.Amount)),
+			Balance:         request.Balance.AsString(),
+			FeeFixed:        amount.StringU(uint64(request.Fee.Fixed)),
+			FeePercent:      amount.StringU(uint64(request.Fee.Percent)),
+			ExternalDetails: externalDetails, //TODO change to type string
+			DestAsset:       string(request.Details.AutoConversion.DestAsset),
+			DestAmount:      amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
+		}
+
+		return operationDetails
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
-		details["destination"] = op.Destination
-		details["action"] = op.Action
+		operationDetails.Type = xdr.OperationTypeManageBalance
+
+		//added new struct in resource/main.go and in OperationDetails
+		operationDetails.ManageBalance = &history.ManageBalanceDetails{
+			Destination: op.Destination.Address(),
+			Action:      int32(op.Action),
+		}
+
 	case xdr.OperationTypeReviewPaymentRequest:
 		op := c.Operation().Body.MustReviewPaymentRequestOp()
 		details["payment_id"] = op.PaymentId

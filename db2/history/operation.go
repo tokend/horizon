@@ -28,18 +28,19 @@ type Operation struct {
 }
 
 type OperationDetails struct {
-	Type                    xdr.OperationType
-	CreateAccount           *CreateAccountDetails
-	Payment                 *PaymentDetails
-	SetOptions              *SetOptionsDetails
-	SetFees                 *SetFeesDetails
-	ManageAccount           *ManageAccountDetails
-	CreateWithdrawalRequest *CreateWithdrawalRequestDetails
-	SetLimits               *SetLimitsDetails
-	ManageInvoice           *ManageInvoiceDetails
-	ManagerOffer            *ManagerOfferDetails
-	ManageAssetPair         *ManageAssetPairDetails
-	CreateIssuanceRequest   *CreateIssuanceRequestDetails
+	Type                    xdr.OperationType               `json:"type"`
+	CreateAccount           *CreateAccountDetails           `json:"create_account,omitempty"`
+	Payment                 *PaymentDetails                 `json:"payment,omitempty"`
+	SetOptions              *SetOptionsDetails              `json:"set_options,omitempty"`
+	SetFees                 *SetFeesDetails                 `json:"set_fees,omitempty"`
+	ManageAccount           *ManageAccountDetails           `json:"manage_account,omitempty"`
+	CreateWithdrawalRequest *CreateWithdrawalRequestDetails `json:"create_withdrawal_request,omitempty"`
+	ManageBalance           *ManageBalanceDetails           `json:"manage_balance,omitempty"`
+	SetLimits               *SetLimitsDetails               `json:"set_limits,omitempty"`
+	ManageInvoice           *ManageInvoiceDetails           `json:"manage_invoice,omitempty"`
+	ManagerOffer            *ManagerOfferDetails            `json:"manager_offer,omitempty"`
+	ManageAssetPair         *ManageAssetPairDetails         `json:"manage_asset_pair,omitempty"`
+	CreateIssuanceRequest   *CreateIssuanceRequestDetails   `json:"create_issuance_request,omitempty"`
 }
 
 func (o *Operation) Details() OperationDetails {
@@ -47,80 +48,11 @@ func (o *Operation) Details() OperationDetails {
 		Type: o.Type,
 	}
 
-	switch result.Type {
-	case xdr.OperationTypeCreateAccount:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.CreateAccount)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypePayment:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.Payment)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypeSetOptions:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetOptions)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypeSetFees:
-		result.SetFees = &SetFeesDetails{
-			Fee: &FeeDetails{},
-		}
-
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetFees)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypeManageAccount:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManageAccount)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypeCreateWithdrawalRequest:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.CreateWithdrawalRequest)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypeSetLimits:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.SetLimits)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypeManageInvoice:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManageInvoice)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypeManageOffer:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManagerOffer)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypeManageAssetPair:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.ManageAssetPair)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	case xdr.OperationTypeCreateIssuanceRequest:
-		err := json.Unmarshal([]byte(o.DetailsString.String), &result.CreateIssuanceRequest)
-		if err != nil {
-			logrus.WithError(err).Errorf("Error unmarshal operation details")
-		}
-		return result
-	default:
-		panic("Invalid operation type")
+	err := json.Unmarshal([]byte(o.DetailsString.String), &result)
+	if err != nil {
+		logrus.WithError(err).Errorf("Error unmarshal operation details")
 	}
+	return result
 }
 
 type CreateAccountDetails struct {
@@ -135,7 +67,6 @@ type BasePayment struct {
 	FromBalance           string `json:"from_balance,omitempty"`
 	ToBalance             string `json:"to_balance,omitempty"`
 	Amount                string `json:"amount"`
-	UserDetails           string `json:"user_details,omitempty"`
 	Asset                 string `json:"asset"`
 	SourcePaymentFee      string `json:"source_payment_fee"`
 	DestinationPaymentFee string `json:"destination_payment_fee"`
@@ -148,28 +79,29 @@ type BasePayment struct {
 // Payment.
 type PaymentDetails struct {
 	BasePayment
-	Subject   string `json:"subject,omitempty"`
-	Reference string `json:"reference,omitempty"`
-	Asset     string `json:"qasset"`
+	Subject    string `json:"subject,omitempty"`
+	Reference  string `json:"reference,omitempty"`
+	QuoteAsset string `json:"qasset"`
 }
 type SetOptionsDetails struct {
 	HomeDomain    string `json:"home_domain,omitempty"`
 	InflationDest string `json:"inflation_dest,omitempty"`
 
-	MasterKeyWeight *int   `json:"master_key_weight,omitempty"`
+	MasterKeyWeight uint32 `json:"master_key_weight,omitempty"`
 	SignerKey       string `json:"signer_key,omitempty"`
-	SignerWeight    *int   `json:"signer_weight,omitempty"`
-	SignerType      *int   `json:"signer_type,omitempty"`
-	SignerIdentity  *int   `json:"signer_identity,omitempty"`
+	SignerWeight    uint32 `json:"signer_weight,omitempty"`
+	SignerType      uint32 `json:"signer_type,omitempty"`
+	SignerIdentity  uint32 `json:"signer_identity,omitempty"`
 
 	SetFlags    []int    `json:"set_flags,omitempty"`
 	SetFlagsS   []string `json:"set_flags_s,omitempty"`
 	ClearFlags  []int    `json:"clear_flags,omitempty"`
 	ClearFlagsS []string `json:"clear_flags_s,omitempty"`
 
-	LowThreshold  *int `json:"low_threshold,omitempty"`
-	MedThreshold  *int `json:"med_threshold,omitempty"`
-	HighThreshold *int `json:"high_threshold,omitempty"`
+	LowThreshold                    uint32 `json:"low_threshold,omitempty"`
+	MedThreshold                    uint32 `json:"med_threshold,omitempty"`
+	HighThreshold                   uint32 `json:"high_threshold,omitempty"`
+	LimitsUpdateRequestDocumentHash string `json:"limits_update_request_document_hash,omitempty"`
 }
 
 type FeeDetails struct {
@@ -202,6 +134,11 @@ type CreateWithdrawalRequestDetails struct {
 	ExternalDetails map[string]interface{} `json:"external_details"`
 	DestAsset       string                 `json:"dest_asset"`
 	DestAmount      string                 `json:"dest_amount"`
+}
+
+type ManageBalanceDetails struct {
+	Destination string `json:"destination"`
+	Action      int32  `json:"action"`
 }
 
 type SetLimitsDetails struct{}

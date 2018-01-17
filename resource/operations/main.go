@@ -44,7 +44,6 @@ func New(
 				FromBalance:           d.BasePayment.FromBalance,
 				ToBalance:             d.BasePayment.ToBalance,
 				Amount:                d.BasePayment.Amount,
-				UserDetails:           d.BasePayment.UserDetails,
 				Asset:                 d.BasePayment.Asset,
 				SourcePaymentFee:      d.BasePayment.SourcePaymentFee,
 				DestinationPaymentFee: d.BasePayment.DestinationPaymentFee,
@@ -52,12 +51,11 @@ func New(
 				DestinationFixedFee:   d.BasePayment.DestinationFixedFee,
 				SourcePaysForDest:     d.BasePayment.SourcePaysForDest,
 			},
-			Subject:   d.Subject,
-			Reference: d.Reference,
-			Asset:     d.Asset,
+			Subject:    d.Subject,
+			Reference:  d.Reference,
+			QuoteAsset: d.QuoteAsset,
 		}
 		if public {
-			e.UserDetails = ""
 			e.From = ""
 			e.To = ""
 			e.FromBalance = ""
@@ -69,21 +67,22 @@ func New(
 	case xdr.OperationTypeSetOptions:
 		d := row.Details().SetOptions
 		e := SetOptions{
-			Base:            base,
-			HomeDomain:      d.HomeDomain,
-			InflationDest:   d.InflationDest,
-			MasterKeyWeight: d.MasterKeyWeight,
-			SignerKey:       d.SignerKey,
-			SignerWeight:    d.SignerWeight,
-			SignerType:      d.SignerType,
-			SignerIdentity:  d.SignerIdentity,
-			SetFlags:        d.SetFlags,
-			SetFlagsS:       d.SetFlagsS,
-			ClearFlags:      d.ClearFlags,
-			ClearFlagsS:     d.ClearFlagsS,
-			LowThreshold:    d.LowThreshold,
-			MedThreshold:    d.MedThreshold,
-			HighThreshold:   d.HighThreshold,
+			Base:                            base,
+			HomeDomain:                      d.HomeDomain,
+			InflationDest:                   d.InflationDest,
+			MasterKeyWeight:                 d.MasterKeyWeight,
+			SignerKey:                       d.SignerKey,
+			SignerWeight:                    d.SignerWeight,
+			SignerType:                      d.SignerType,
+			SignerIdentity:                  d.SignerIdentity,
+			SetFlags:                        d.SetFlags,
+			SetFlagsS:                       d.SetFlagsS,
+			ClearFlags:                      d.ClearFlags,
+			ClearFlagsS:                     d.ClearFlagsS,
+			LowThreshold:                    d.LowThreshold,
+			MedThreshold:                    d.MedThreshold,
+			HighThreshold:                   d.HighThreshold,
+			LimitsUpdateRequestDocumentHash: d.LimitsUpdateRequestDocumentHash,
 		}
 		if public {
 			e.SignerKey = ""
@@ -139,6 +138,21 @@ func New(
 			e.ExternalDetails = nil
 		}
 		result = e
+
+	case xdr.OperationTypeManageBalance:
+		d := row.Details().ManageBalance
+
+		e := ManageBalance{
+			Base:        base,
+			Destination: d.Destination,
+			Action:      d.Action,
+		}
+
+		if public {
+			e.Destination = ""
+		}
+		result = e
+
 	case xdr.OperationTypeSetLimits: //TODO add fields to SetLimits{}
 		//d := row.Details().SetLimits
 		e := SetLimits{Base: base}
@@ -221,7 +235,6 @@ type BasePayment struct {
 	FromBalance           string `json:"from_balance,omitempty"`
 	ToBalance             string `json:"to_balance,omitempty"`
 	Amount                string `json:"amount"`
-	UserDetails           string `json:"user_details,omitempty"`
 	Asset                 string `json:"asset"`
 	SourcePaymentFee      string `json:"source_payment_fee"`
 	DestinationPaymentFee string `json:"destination_payment_fee"`
@@ -235,9 +248,9 @@ type BasePayment struct {
 type Payment struct {
 	Base
 	BasePayment
-	Subject   string `json:"subject,omitempty"`
-	Reference string `json:"reference,omitempty"`
-	Asset     string `json:"qasset"`
+	Subject    string `json:"subject,omitempty"`
+	Reference  string `json:"reference,omitempty"`
+	QuoteAsset string `json:"qasset"`
 }
 
 // SetOptions is the json resource representing a single operation whose type is
@@ -247,20 +260,21 @@ type SetOptions struct {
 	HomeDomain    string `json:"home_domain,omitempty"`
 	InflationDest string `json:"inflation_dest,omitempty"`
 
-	MasterKeyWeight *int   `json:"master_key_weight,omitempty"`
+	MasterKeyWeight uint32 `json:"master_key_weight,omitempty"`
 	SignerKey       string `json:"signer_key,omitempty"`
-	SignerWeight    *int   `json:"signer_weight,omitempty"`
-	SignerType      *int   `json:"signer_type,omitempty"`
-	SignerIdentity  *int   `json:"signer_identity,omitempty"`
+	SignerWeight    uint32 `json:"signer_weight,omitempty"`
+	SignerType      uint32 `json:"signer_type,omitempty"`
+	SignerIdentity  uint32 `json:"signer_identity,omitempty"`
 
 	SetFlags    []int    `json:"set_flags,omitempty"`
 	SetFlagsS   []string `json:"set_flags_s,omitempty"`
 	ClearFlags  []int    `json:"clear_flags,omitempty"`
 	ClearFlagsS []string `json:"clear_flags_s,omitempty"`
 
-	LowThreshold  *int `json:"low_threshold,omitempty"`
-	MedThreshold  *int `json:"med_threshold,omitempty"`
-	HighThreshold *int `json:"high_threshold,omitempty"`
+	LowThreshold                    uint32 `json:"low_threshold,omitempty"`
+	MedThreshold                    uint32 `json:"med_threshold,omitempty"`
+	HighThreshold                   uint32 `json:"high_threshold,omitempty"`
+	LimitsUpdateRequestDocumentHash string `json:"limits_update_request_document_hash,omitempty"`
 }
 
 //SetFees is the json resource representing a single operation whose type
@@ -291,4 +305,10 @@ type ManagerOffer struct {
 	Fee       string `json:"fee"`
 	OfferId   int64  `json:"offer_id"`
 	IsDeleted bool   `json:"is_deleted"`
+}
+
+type ManageBalance struct {
+	Base
+	Destination string `json:"destination"`
+	Action      int32  `json:"action"`
 }
