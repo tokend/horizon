@@ -130,4 +130,10 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
+
+	Convey("Review request", t, func() {
+		for _, code := range xdr.ReviewRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
 }
