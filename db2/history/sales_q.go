@@ -9,6 +9,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/swarmfund/horizon/db2/sqx"
 )
 
 type SalesQ interface {
@@ -18,6 +19,8 @@ type SalesQ interface {
 	ForOwner(ownerID string) SalesQ
 	// ForBaseAsset - filters by base asset
 	ForBaseAsset(baseAsset string) SalesQ
+	// ForBaseAssets - filters by base assets
+	ForBaseAssets(baseAssets ...string) SalesQ
 	// ForName - filters by `name` field in the `details` json.
 	ForName(baseAsset string) SalesQ
 	// Open - selects only open sales
@@ -283,6 +286,17 @@ func (q *saleQ) OrderByPopularity(values db2.OrderBooksInvestors) SalesQ {
 			values.String()),
 	).OrderBy("investors_count.quantity DESC NULLS LAST")
 
+	return q
+}
+
+// ForBaseAssets - filters by base assets
+func (q *saleQ) ForBaseAssets(baseAssets ...string) SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	query, values := sqx.InForString("base_asset", baseAssets...)
+	q.sql = q.sql.Where(query, values...)
 	return q
 }
 

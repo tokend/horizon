@@ -7,7 +7,6 @@ type Balance struct {
 	Amount    int64  `db:"amount"`
 	Locked    int64  `db:"locked"`
 
-	IncentivePerCoin int64
 }
 
 // DEPRECATED
