@@ -94,7 +94,7 @@ func (is *Session) operationDetails() interface{} {
 				PercentFee:  amount.String(int64(op.Fee.PercentFee)),
 				FeeType:     int64(op.Fee.FeeType),
 				AccountID:   op.Fee.AccountId.Address(),
-				AccountType: int64(*op.Fee.AccountType), //ask about type int 64/32
+				AccountType: int32(*op.Fee.AccountType),
 				Subtype:     int64(op.Fee.Subtype),
 				LowerBound:  int64(op.Fee.LowerBound),
 				UpperBound:  int64(op.Fee.UpperBound),

@@ -114,7 +114,7 @@ type FeeDetails struct {
 	PercentFee  string `json:"percent_fee"`
 	FeeType     int64  `json:"fee_type"`
 	AccountID   string `json:"account_id,omitempty"`
-	AccountType int64  `json:"account_type"`
+	AccountType int32  `json:"account_type"`
 	Subtype     int64  `json:"subtype"`
 	LowerBound  int64  `json:"lower_bound"`
 	UpperBound  int64  `json:"upper_bound"`
