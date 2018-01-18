@@ -811,67 +811,73 @@ func TestNew(t *testing.T) {
 			  "asset": "SUN"
 			}`,
 		},
-		//{
-		//	name: "ManageInvoice",
-		//	operation: getOperation(xdr.OperationTypeManageInvoice, `{
-		//		"amount": "1000.00",
-		//		"receiver_balance": "GBPBGYUANKZJWTFREEKMHEGSXZDFZJ6KSEMTHTR3AK3XSB2W3Y2FOL2B",
-		//		"sender": "GAAB7JPFE4MSSF6Y7JIPKFK5KNITTOJM7VS5OZWQKK3KETTBU74JEOFW",
-		//		"invoice_id": 1,
-		//		"asset": "SUN"
-		//	}`),
-		//	expected: `{
-		//	  "_links": {
-		//		"self": {
-		//		  "href": "/operations/231928242177"
-		//		},
-		//		"transaction": {
-		//		  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
-		//		},
-		//		"succeeds": {
-		//		  "href": "/effects?order=desc&cursor=231928242177"
-		//		},
-		//		"precedes": {
-		//		  "href": "/effects?order=asc&cursor=231928242177"
-		//		}
-		//	  },
-		//	  "id": "231928242177",
-		//	  "paging_token": "231928242177",
-		//	  "transaction_id": "231928242176",
-		//	  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
-		//	  "type": "manage_invoice",
-		//	  "type_i": 17,
-		//	  "state_i": 2,
-		//	  "state": "success",
-		//	  "identifier": "4",
-		//	  "ledger_close_time": "2018-01-11T13:51:15Z",
-		//	  "participants": [
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		//		  "email": "email0@test.com",
-		//		  "nickname": "Nickname0"
-		//		},
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		//		  "email": "email1@test.com",
-		//		  "nickname": "Nickname1"
-		//		},
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		//		  "email": "email2@test.com",
-		//		  "nickname": "Nickname2"
-		//		}
-		//	  ],
-		//	  "amount": "1000.00",
-		//	  "receiver_balance": "GBPBGYUANKZJWTFREEKMHEGSXZDFZJ6KSEMTHTR3AK3XSB2W3Y2FOL2B",
-		//	  "sender": "GAAB7JPFE4MSSF6Y7JIPKFK5KNITTOJM7VS5OZWQKK3KETTBU74JEOFW",
-		//	  "invoice_id": 1,
-		//	  "asset": "SUN"
-		//	}`,
-		//},
+		{
+			name: "ManageInvoice",
+			operation: getOperation(xdr.OperationTypeManageInvoice, `{
+			  "type": {
+				"int": 17,
+				"string": "manage_invoice"
+			  },
+			  "manage_invoice": {
+				"amount": "1000.00",
+				"receiver_balance": "GBPBGYUANKZJWTFREEKMHEGSXZDFZJ6KSEMTHTR3AK3XSB2W3Y2FOL2B",
+				"sender": "GAAB7JPFE4MSSF6Y7JIPKFK5KNITTOJM7VS5OZWQKK3KETTBU74JEOFW",
+				"invoice_id": 1,
+				"asset": "SUN"
+			  }
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "manage_invoice",
+			  "type_i": 17,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "amount": "1000.00",
+			  "receiver_balance": "GBPBGYUANKZJWTFREEKMHEGSXZDFZJ6KSEMTHTR3AK3XSB2W3Y2FOL2B",
+			  "sender": "GAAB7JPFE4MSSF6Y7JIPKFK5KNITTOJM7VS5OZWQKK3KETTBU74JEOFW",
+			  "invoice_id": 1,
+			  "asset": "SUN"
+			}`,
+		},
 		{
 			name: "ManageOffer",
 			operation: getOperation(xdr.OperationTypeManageOffer, `{

@@ -455,6 +455,33 @@ func TestOperation_Details(t *testing.T) {
 			  }
 			}`,
 		},
+		{
+			name: "ManageInvoice",
+			details: OperationDetails{
+				Type: xdr.OperationTypeManageInvoice,
+				ManageInvoice: &ManageInvoiceDetails{
+					Amount:          "1000.00",
+					ReceiverBalance: "GBPBGYUANKZJWTFREEKMHEGSXZDFZJ6KSEMTHTR3AK3XSB2W3Y2FOL2B",
+					Sender:          "GAAB7JPFE4MSSF6Y7JIPKFK5KNITTOJM7VS5OZWQKK3KETTBU74JEOFW",
+					InvoiceID:       1,
+					RejectReason:    nil,
+					Asset:           "SUN",
+				},
+			},
+			expectedDetails: `{
+			  "type": {
+				"int": 17,
+				"string": "manage_invoice"
+			  },
+			  "manage_invoice": {
+				"amount": "1000.00",
+				"receiver_balance": "GBPBGYUANKZJWTFREEKMHEGSXZDFZJ6KSEMTHTR3AK3XSB2W3Y2FOL2B",
+				"sender": "GAAB7JPFE4MSSF6Y7JIPKFK5KNITTOJM7VS5OZWQKK3KETTBU74JEOFW",
+				"invoice_id": 1,
+				"asset": "SUN"
+			  }
+			}`,
+		},
 	}
 
 	for _, c := range cases {
