@@ -129,7 +129,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[constraint]]
-  branch = "master"
+  branch = "dev"
   name = "gitlab.com/swarmfund/go"
 
 [[constraint]]
