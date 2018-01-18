@@ -40,9 +40,11 @@ type OperationDetails struct {
 	SetLimits               *SetLimitsDetails               `json:"set_limits,omitempty"`
 	DirectDebit             *DirectDebitDetails             `json:"direct_debit,omitempty"`
 	ManageInvoice           *ManageInvoiceDetails           `json:"manage_invoice,omitempty"`
+	ManageAsset             *ManageAssetDetails             `json:"manage_asset,omitempty"`
 	ManagerOffer            *ManagerOfferDetails            `json:"manager_offer,omitempty"`
 	ManageAssetPair         *ManageAssetPairDetails         `json:"manage_asset_pair,omitempty"`
 	CreateIssuanceRequest   *CreateIssuanceRequestDetails   `json:"create_issuance_request,omitempty"`
+	ReviewRequest           *ReviewRequestDetails           `json:"review_request,omitempty"`
 }
 
 func (o *Operation) Details() OperationDetails {
@@ -154,7 +156,7 @@ type ManageInvoiceDetails struct {
 	Amount          string  `json:"amount"`
 	ReceiverBalance string  `json:"receiver_balance,omitempty"`
 	Sender          string  `json:"sender,omitempty"`
-	InvoiceID       int64   `json:"invoice_id"`
+	InvoiceID       uint64  `json:"invoice_id"`
 	RejectReason    *string `json:"reject_reason,omitempty"`
 	Asset           string  `json:"asset"`
 }
@@ -164,7 +166,7 @@ type ManagerOfferDetails struct {
 	Amount    string `json:"amount"`
 	Price     string `json:"price"`
 	Fee       string `json:"fee"`
-	OfferId   int64  `json:"offer_id"`
+	OfferId   uint64 `json:"offer_id"`
 	IsDeleted bool   `json:"is_deleted"`
 }
 
@@ -184,6 +186,7 @@ type CreateIssuanceRequestDetails struct {
 	FeeFixed        string                 `json:"fee_fixed"`
 	FeePercent      string                 `json:"fee_percent"`
 	ExternalDetails map[string]interface{} `json:"external_details"`
+	BalanceID       string                 `json:"balance_id"`
 }
 
 type DirectDebitDetails struct {
@@ -200,6 +203,19 @@ type DirectDebitDetails struct {
 	Subject               string `json:"subject"`
 	Reference             string `json:"reference"`
 	AssetCode             string `json:"asset"`
+}
+
+type ManageAssetDetails struct {
+	RequestID uint64 `json:"request_id"`
+	Action    int32  `json:"action"`
+}
+
+type ReviewRequestDetails struct {
+	Action      int32  `json:"action"`
+	Reason      string `json:"reason"`
+	RequestHash string `json:"request_hash"`
+	RequestID   uint64 `json:"request_id"`
+	RequestType int32  `json:"request_type"`
 }
 
 // UnmarshalDetails unmarshals the details of this operation into `dest`

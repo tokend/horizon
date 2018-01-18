@@ -64,14 +64,14 @@ func (is *Session) operationDetails() interface{} {
 		operationDetails.Type = xdr.OperationTypeSetOptions
 
 		operationDetails.SetOptions = &history.SetOptionsDetails{
-			HomeDomain:                      "",
+			HomeDomain:                      "", //TODO Delete or set this fields
 			InflationDest:                   "",
 			MasterKeyWeight:                 uint32(*op.MasterWeight),
 			SignerKey:                       op.Signer.PubKey.Address(),
 			SignerWeight:                    uint32(op.Signer.Weight),
 			SignerType:                      uint32(op.Signer.SignerType),
 			SignerIdentity:                  uint32(op.Signer.Identity),
-			SetFlags:                        nil,
+			SetFlags:                        nil, //TODO Delete or set this fields
 			SetFlagsS:                       nil,
 			ClearFlags:                      nil,
 			ClearFlagsS:                     nil,
@@ -129,7 +129,7 @@ func (is *Session) operationDetails() interface{} {
 			Balance:         request.Balance.AsString(),
 			FeeFixed:        amount.StringU(uint64(request.Fee.Fixed)),
 			FeePercent:      amount.StringU(uint64(request.Fee.Percent)),
-			ExternalDetails: externalDetails, //TODO change to type string
+			ExternalDetails: externalDetails,
 			DestAsset:       string(request.Details.AutoConversion.DestAsset),
 			DestAmount:      amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
 		}
@@ -205,46 +205,82 @@ func (is *Session) operationDetails() interface{} {
 		return operationDetails
 	case xdr.OperationTypeManageOffer:
 		op := c.Operation().Body.ManageOfferOp
-		details["is_buy"] = op.IsBuy
-		details["amount"] = amount.String(int64(op.Amount))
-		details["price"] = amount.String(int64(op.Price))
-		details["fee"] = amount.String(int64(op.Fee))
-		details["offer_id"] = op.OfferId
-		details["is_deleted"] = int64(op.OfferId) != 0
+
+		operationDetails.Type = xdr.OperationTypeManageOffer
+
+		operationDetails.ManagerOffer = &history.ManagerOfferDetails{
+			IsBuy:     op.IsBuy,
+			Amount:    amount.String(int64(op.Amount)),
+			Price:     amount.String(int64(op.Price)),
+			Fee:       amount.String(int64(op.Fee)),
+			OfferId:   uint64(op.OfferId),
+			IsDeleted: int64(op.OfferId) != 0,
+		}
+
+		return operationDetails
 	case xdr.OperationTypeManageInvoice:
 		op := c.Operation().Body.MustManageInvoiceOp()
 		opResult := c.OperationResult().MustManageInvoiceResult()
-		details["amount"] = amount.String(int64(op.Amount))
-		details["receiver_balance"] = op.ReceiverBalance.AsString()
-		details["sender"] = op.Sender.Address()
-		details["invoice_id"] = opResult.Success.InvoiceId
-		details["asset"] = string(opResult.Success.Asset)
+
+		operationDetails.Type = xdr.OperationTypeManageInvoice
+
+		operationDetails.ManageInvoice = &history.ManageInvoiceDetails{
+			Amount:          amount.String(int64(op.Amount)),
+			ReceiverBalance: op.ReceiverBalance.AsString(),
+			Sender:          op.Sender.Address(),
+			InvoiceID:       uint64(opResult.Success.InvoiceId),
+			RejectReason:    nil, //TODO Delete or set this field
+			Asset:           string(opResult.Success.Asset),
+		}
+
+		return operationDetails
 	case xdr.OperationTypeReviewRequest:
 		op := c.Operation().Body.MustReviewRequestOp()
-		details["action"] = int32(op.Action)
-		details["reason"] = string(op.Reason)
-		details["request_hash"] = hex.EncodeToString(op.RequestHash[:])
-		details["request_id"] = uint64(op.RequestId)
-		details["request_type"] = int32(op.RequestDetails.RequestType)
+
+		operationDetails.Type = xdr.OperationTypeReviewRequest
+
+		operationDetails.ReviewRequest = &history.ReviewRequestDetails{
+			Action:      int32(op.Action),
+			Reason:      string(op.Reason),
+			RequestHash: hex.EncodeToString(op.RequestHash[:]),
+			RequestID:   uint64(op.RequestId),
+			RequestType: int32(op.RequestDetails.RequestType),
+		}
+
+		return operationDetails
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
-		details["request_id"] = uint64(op.RequestId)
-		details["action"] = int32(op.Request.Action)
+
+		operationDetails.Type = xdr.OperationTypeManageAsset
+
+		operationDetails.ManageAsset = &history.ManageAssetDetails{
+			RequestID: uint64(op.RequestId),
+			Action:    int32(op.Request.Action),
+		}
+
+		return operationDetails
 	case xdr.OperationTypeCreatePreissuanceRequest:
 		// no details needed
 	case xdr.OperationTypeCreateIssuanceRequest:
 		op := c.Operation().Body.MustCreateIssuanceRequestOp()
-		details["fee_fixed"] = amount.StringU(uint64(op.Request.Fee.Fixed))
-		details["fee_percent"] = amount.StringU(uint64(op.Request.Fee.Percent))
-		details["reference"] = utf8.Scrub(string(op.Reference))
-		details["amount"] = amount.StringU(uint64(op.Request.Amount))
-		details["asset"] = string(op.Request.Asset)
-		details["balance_id"] = op.Request.Receiver.AsString()
+
+		operationDetails.Type = xdr.OperationTypeCreateIssuanceRequest
 
 		var externalDetails map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
 		_ = json.Unmarshal([]byte(op.Request.ExternalDetails), &externalDetails)
-		details["external_details"] = externalDetails
+
+		operationDetails.CreateIssuanceRequest = &history.CreateIssuanceRequestDetails{
+			Reference:       utf8.Scrub(string(op.Reference)),
+			Amount:          amount.StringU(uint64(op.Request.Amount)),
+			Asset:           string(op.Request.Asset),
+			FeeFixed:        amount.StringU(uint64(op.Request.Fee.Fixed)),
+			FeePercent:      amount.StringU(uint64(op.Request.Fee.Percent)),
+			BalanceID:       op.Request.Receiver.AsString(),
+			ExternalDetails: externalDetails,
+		}
+
+		return operationDetails
 	case xdr.OperationTypeCreateSaleRequest:
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:

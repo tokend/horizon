@@ -872,69 +872,75 @@ func TestNew(t *testing.T) {
 		//	  "asset": "SUN"
 		//	}`,
 		//},
-		//{
-		//	name: "ManageOffer",
-		//	operation: getOperation(xdr.OperationTypeManageOffer, `{
-		//	  "fee": "0.0000",
-		//	  "price": "2.5500",
-		//	  "amount": "7.8431",
-		//	  "is_buy": true,
-		//	  "offer_id": 1,
-		//	  "is_deleted": false
-		//	}`),
-		//	expected: `{
-		//	  "_links": {
-		//		"self": {
-		//		  "href": "/operations/231928242177"
-		//		},
-		//		"transaction": {
-		//		  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
-		//		},
-		//		"succeeds": {
-		//		  "href": "/effects?order=desc&cursor=231928242177"
-		//		},
-		//		"precedes": {
-		//		  "href": "/effects?order=asc&cursor=231928242177"
-		//		}
-		//	  },
-		//	  "id": "231928242177",
-		//	  "paging_token": "231928242177",
-		//	  "transaction_id": "231928242176",
-		//	  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
-		//	  "type": "manage_offer",
-		//	  "type_i": 16,
-		//	  "state_i": 2,
-		//	  "state": "success",
-		//	  "identifier": "4",
-		//	  "ledger_close_time": "2018-01-11T13:51:15Z",
-		//	  "participants": [
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		//		  "email": "email0@test.com",
-		//		  "nickname": "Nickname0"
-		//		},
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		//		  "email": "email1@test.com",
-		//		  "nickname": "Nickname1"
-		//		},
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		//		  "email": "email2@test.com",
-		//		  "nickname": "Nickname2"
-		//		}
-		//	  ],
-		//	  "is_buy": true,
-		//	  "amount": "7.8431",
-		//	  "price": "2.5500",
-		//	  "fee": "0.0000",
-		//	  "offer_id": 1,
-		//	  "is_deleted": false
-		//	}`,
-		//},
+		{
+			name: "ManageOffer",
+			operation: getOperation(xdr.OperationTypeManageOffer, `{
+			  "type": {
+				"int": 16,
+				"string": "manage_offer"
+			  },
+			  "manager_offer": {
+				"is_buy": true,
+				"amount": "7.8431",
+				"price": "2.5500",
+				"fee": "0.0000",
+				"offer_id": 1,
+				"is_deleted": false
+			  }
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "manage_offer",
+			  "type_i": 16,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "is_buy": true,
+			  "amount": "7.8431",
+			  "price": "2.5500",
+			  "fee": "0.0000",
+			  "offer_id": 1,
+			  "is_deleted": false
+			}`,
+		},
 		{
 			name: "ManageAssetPair",
 			operation: getOperation(xdr.OperationTypeManageAssetPair, `{
@@ -1004,73 +1010,209 @@ func TestNew(t *testing.T) {
 			  "policies_i": 1
 			}`,
 		},
-		//{
-		//	name: "CreateIssuanceRequest",
-		//	operation: getOperation(xdr.OperationTypeCreateIssuanceRequest, `{
-		//	  "reference": "GAA6HKHWQWKWOPSQBIBLJZWWRSTHI7PBFINXYIURHZB7SVDU7AXSQU6K",
-		//	  "amount": "1000.00",
-		//	  "asset": "SUN",
-		//	  "fee_fixed": "0.0000",
-		//	  "fee_percent": "0.0000",
-		//	  "external_details": {
-		//		"a": "some external details"
-		//	  }
-		//	}`),
-		//	expected: `{
-		//	  "_links": {
-		//		"self": {
-		//		  "href": "/operations/231928242177"
-		//		},
-		//		"transaction": {
-		//		  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
-		//		},
-		//		"succeeds": {
-		//		  "href": "/effects?order=desc&cursor=231928242177"
-		//		},
-		//		"precedes": {
-		//		  "href": "/effects?order=asc&cursor=231928242177"
-		//		}
-		//	  },
-		//	  "id": "231928242177",
-		//	  "paging_token": "231928242177",
-		//	  "transaction_id": "231928242176",
-		//	  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
-		//	  "type": "create_issuance_request",
-		//	  "type_i": 3,
-		//	  "state_i": 2,
-		//	  "state": "success",
-		//	  "identifier": "4",
-		//	  "ledger_close_time": "2018-01-11T13:51:15Z",
-		//	  "participants": [
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
-		//		  "email": "email0@test.com",
-		//		  "nickname": "Nickname0"
-		//		},
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
-		//		  "email": "email1@test.com",
-		//		  "nickname": "Nickname1"
-		//		},
-		//		{
-		//		  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		//		  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
-		//		  "email": "email2@test.com",
-		//		  "nickname": "Nickname2"
-		//		}
-		//	  ],
-		//	  "reference": "GAA6HKHWQWKWOPSQBIBLJZWWRSTHI7PBFINXYIURHZB7SVDU7AXSQU6K",
-		//	  "amount": "1000.00",
-		//	  "asset": "SUN",
-		//	  "fee_fixed": "0.0000",
-		//	  "fee_percent": "0.0000",
-		//	  "external_details": {
-		//		"a": "some external details"
-		//	  }
-		//	}`,
-		//},
+		{
+			name: "CreateIssuanceRequest",
+			operation: getOperation(xdr.OperationTypeCreateIssuanceRequest, `{
+			  "type": {
+				"int": 3,
+				"string": "create_issuance_request"
+			  },
+			  "create_issuance_request": {
+				"reference": "GAA6HKHWQWKWOPSQBIBLJZWWRSTHI7PBFINXYIURHZB7SVDU7AXSQU6K",
+				"amount": "1000.00",
+				"asset": "SUN",
+				"fee_fixed": "0.0000",
+				"fee_percent": "0.0000",
+				"balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+				"external_details": {
+				  "a": "some external details"
+				}
+			  }
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "create_issuance_request",
+			  "type_i": 3,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "reference": "GAA6HKHWQWKWOPSQBIBLJZWWRSTHI7PBFINXYIURHZB7SVDU7AXSQU6K",
+			  "amount": "1000.00",
+			  "asset": "SUN",
+			  "fee_fixed": "0.0000",
+			  "fee_percent": "0.0000",
+			  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+			  "external_details": {
+				"a": "some external details"
+			  }
+			}`,
+		},
+		{
+			name: "ManageAsset",
+			operation: getOperation(xdr.OperationTypeManageAsset, `{
+			  "type": {
+				"int": 11,
+				"string": "manage_asset"
+			  },
+			  "manage_asset": {
+				"request_id": 123,
+				"action": 1234
+			  }
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "manage_asset",
+			  "type_i": 11,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "request_id": 123,
+			  "action": 1234
+			}`,
+		},
+		{
+			name: "ReviewRequest",
+			operation: getOperation(xdr.OperationTypeReviewRequest, `{
+			  "type": {
+				"int": 18,
+				"string": "review_request"
+			  },
+			  "review_request": {
+				"action": 123,
+				"reason": "Some reason",
+				"request_hash": "07997422f6829dbd8f625520133e9c93afc67d673a00c9a23a2de51cb1848271",
+				"request_id": 1,
+				"request_type": 2
+			  }
+			}`),
+			expected: `{
+			  "_links": {
+				"self": {
+				  "href": "/operations/231928242177"
+				},
+				"transaction": {
+				  "href": "/transactions/73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd"
+				},
+				"succeeds": {
+				  "href": "/effects?order=desc&cursor=231928242177"
+				},
+				"precedes": {
+				  "href": "/effects?order=asc&cursor=231928242177"
+				}
+			  },
+			  "id": "231928242177",
+			  "paging_token": "231928242177",
+			  "transaction_id": "231928242176",
+			  "source_account": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
+			  "type": "review_request",
+			  "type_i": 18,
+			  "state_i": 2,
+			  "state": "success",
+			  "identifier": "4",
+			  "ledger_close_time": "2018-01-11T13:51:15Z",
+			  "participants": [
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB630",
+				  "email": "email0@test.com",
+				  "nickname": "Nickname0"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB631",
+				  "email": "email1@test.com",
+				  "nickname": "Nickname1"
+				},
+				{
+				  "account_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB632",
+				  "email": "email2@test.com",
+				  "nickname": "Nickname2"
+				}
+			  ],
+			  "action": 123,
+			  "reason": "Some reason",
+			  "request_hash": "07997422f6829dbd8f625520133e9c93afc67d673a00c9a23a2de51cb1848271",
+			  "request_id": 1,
+			  "request_type": 2
+			}`,
+		},
 	}
 
 	for _, c := range cases {
@@ -1083,8 +1225,6 @@ func TestNew(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-
-			fmt.Println(c.name, string(marshalRes))
 
 			assert.JSONEq(t, c.expected, string(marshalRes))
 		})

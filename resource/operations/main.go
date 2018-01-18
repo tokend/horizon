@@ -218,6 +218,18 @@ func New(
 			e.RejectReason = nil
 		}
 		result = e
+
+	case xdr.OperationTypeManageAsset:
+		d := row.Details().ManageAsset
+
+		e := ManageAsset{
+			Base:      base,
+			RequestID: d.RequestID,
+			Action:    d.Action,
+		}
+
+		result = e
+
 	case xdr.OperationTypeManageOffer:
 		d := row.Details().ManagerOffer
 		e := ManagerOffer{
@@ -252,10 +264,24 @@ func New(
 			FeeFixed:        d.FeeFixed,
 			FeePercent:      d.FeePercent,
 			ExternalDetails: d.ExternalDetails,
+			BalanceID:       d.BalanceID,
 		}
 		if public {
 			e.ExternalDetails = nil
 		}
+		result = e
+	case xdr.OperationTypeReviewRequest:
+		d := row.Details().ReviewRequest
+
+		e := ReviewRequest{
+			Base:        base,
+			Action:      d.Action,
+			Reason:      d.Reason,
+			RequestHash: d.RequestHash,
+			RequestID:   d.RequestID,
+			RequestType: d.RequestType,
+		}
+
 		result = e
 	default:
 		result = base
@@ -347,7 +373,7 @@ type ManagerOffer struct {
 	Amount    string `json:"amount"`
 	Price     string `json:"price"`
 	Fee       string `json:"fee"`
-	OfferId   int64  `json:"offer_id"`
+	OfferId   uint64 `json:"offer_id"`
 	IsDeleted bool   `json:"is_deleted"`
 }
 
@@ -379,4 +405,19 @@ type DirectDebit struct {
 	Subject               string `json:"subject"`
 	Reference             string `json:"reference"`
 	AssetCode             string `json:"asset"`
+}
+
+type ManageAsset struct {
+	Base
+	RequestID uint64 `json:"request_id"`
+	Action    int32  `json:"action"`
+}
+
+type ReviewRequest struct {
+	Base
+	Action      int32  `json:"action"`
+	Reason      string `json:"reason"`
+	RequestHash string `json:"request_hash"`
+	RequestID   uint64 `json:"request_id"`
+	RequestType int32  `json:"request_type"`
 }

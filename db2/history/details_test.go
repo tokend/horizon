@@ -347,6 +347,114 @@ func TestOperation_Details(t *testing.T) {
 			  }
 			}`,
 		},
+		{
+			name: "ManageOffer",
+			details: OperationDetails{
+				Type: xdr.OperationTypeManageOffer,
+				ManagerOffer: &ManagerOfferDetails{
+					IsBuy:     true,
+					Amount:    "7.8431",
+					Price:     "2.5500",
+					Fee:       "0.0000",
+					OfferId:   1,
+					IsDeleted: false,
+				},
+			},
+			expectedDetails: `{
+			  "type": {
+				"int": 16,
+				"string": "manage_offer"
+			  },
+			  "manager_offer": {
+				"is_buy": true,
+				"amount": "7.8431",
+				"price": "2.5500",
+				"fee": "0.0000",
+				"offer_id": 1,
+				"is_deleted": false
+			  }
+			}`,
+		},
+		{
+			name: "CreateIssuanceRequest",
+			details: OperationDetails{
+				Type: xdr.OperationTypeCreateIssuanceRequest,
+				CreateIssuanceRequest: &CreateIssuanceRequestDetails{
+					Reference:  "GAA6HKHWQWKWOPSQBIBLJZWWRSTHI7PBFINXYIURHZB7SVDU7AXSQU6K",
+					Amount:     "1000.00",
+					Asset:      "SUN",
+					FeeFixed:   "0.0000",
+					FeePercent: "0.0000",
+					BalanceID:  "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+					ExternalDetails: map[string]interface{}{
+						"a": "some external details",
+					},
+				},
+			},
+			expectedDetails: `{
+			  "type": {
+				"int": 3,
+				"string": "create_issuance_request"
+			  },
+			  "create_issuance_request": {
+				"reference": "GAA6HKHWQWKWOPSQBIBLJZWWRSTHI7PBFINXYIURHZB7SVDU7AXSQU6K",
+				"amount": "1000.00",
+				"asset": "SUN",
+				"fee_fixed": "0.0000",
+				"fee_percent": "0.0000",
+				"balance_id": "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB",
+				"external_details": {
+				  "a": "some external details"
+				}
+			  }
+			}`,
+		},
+		{
+			name: "ManageAsset",
+			details: OperationDetails{
+				Type: xdr.OperationTypeManageAsset,
+				ManageAsset: &ManageAssetDetails{
+					RequestID: 123,
+					Action:    1234,
+				},
+			},
+			expectedDetails: `{
+			  "type": {
+				"int": 11,
+				"string": "manage_asset"
+			  },
+			  "manage_asset": {
+				"request_id": 123,
+				"action": 1234
+			  }
+			}`,
+		},
+		{
+			name: "ReviewRequest",
+			details: OperationDetails{
+				Type: xdr.OperationTypeReviewRequest,
+				ReviewRequest: &ReviewRequestDetails{
+					Action:      123,
+					Reason:      "Some reason",
+					RequestHash: "07997422f6829dbd8f625520133e9c93afc67d673a00c9a23a2de51cb1848271",
+					RequestID:   1,
+					RequestType: 2,
+				},
+			},
+			expectedDetails: `{
+			  "type": {
+				"int": 18,
+				"string": "review_request"
+			  },
+			  "review_request": {
+				"action": 123,
+				"reason": "Some reason",
+				"request_hash": "07997422f6829dbd8f625520133e9c93afc67d673a00c9a23a2de51cb1848271",
+				"request_id": 1,
+				"request_type": 2
+			  }
+			}`,
+		},
 	}
 
 	for _, c := range cases {
@@ -357,7 +465,6 @@ func TestOperation_Details(t *testing.T) {
 			}
 
 			assert.JSONEq(t, c.expectedDetails, string(jsonDetails))
-
 		})
 	}
 }
