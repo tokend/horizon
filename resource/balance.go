@@ -18,8 +18,7 @@ func (b *Balance) Populate(balance core.Balance) {
 	b.Balance = amount.String(balance.Amount)
 	b.Locked = amount.String(balance.Locked)
 	b.Asset = balance.Asset
-	b.IncentivePerCoin = amount.String(balance.IncentivePerCoin)
-}
+	}
 
 func (balance BalancePublic) PagingToken() string {
 	return balance.ID

@@ -9,6 +9,7 @@ import (
 
 type OrderBookEntry struct {
 	PT      string `json:"paging_token"`
+	OfferID uint64 `json:"offer_id,omitempty"`
 	OwnerID string `json:"owner_id,omitempty"`
 	OfferData
 }
