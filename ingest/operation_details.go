@@ -59,20 +59,12 @@ func (is *Session) operationDetails() interface{} {
 		op := c.Operation().Body.MustSetOptionsOp()
 
 		operationDetails.SetOptions = &history.SetOptionsDetails{
-			HomeDomain:                      "", //TODO Delete or set this fields
-			InflationDest:                   "",
-			MasterKeyWeight:                 uint32(*op.MasterWeight),
-			SignerKey:                       op.Signer.PubKey.Address(),
-			SignerWeight:                    uint32(op.Signer.Weight),
-			SignerType:                      uint32(op.Signer.SignerType),
-			SignerIdentity:                  uint32(op.Signer.Identity),
-			SetFlags:                        nil, //TODO Delete or set this fields
-			SetFlagsS:                       nil,
-			ClearFlags:                      nil,
-			ClearFlagsS:                     nil,
-			LowThreshold:                    uint32(*op.LowThreshold),
-			MedThreshold:                    uint32(*op.MedThreshold),
-			HighThreshold:                   uint32(*op.HighThreshold),
+			MasterKeyWeight: uint32(*op.MasterWeight),
+			SignerKey:       op.Signer.PubKey.Address(),
+			LowThreshold:    uint32(*op.LowThreshold),
+			MedThreshold:    uint32(*op.MedThreshold),
+			HighThreshold:   uint32(*op.HighThreshold),
+
 			LimitsUpdateRequestDocumentHash: hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:]),
 		}
 

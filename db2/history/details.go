@@ -51,20 +51,8 @@ type PaymentDetails struct {
 	QuoteAsset string `json:"qasset"`
 }
 type SetOptionsDetails struct {
-	HomeDomain    string `json:"home_domain,omitempty"`
-	InflationDest string `json:"inflation_dest,omitempty"`
-
-	MasterKeyWeight uint32 `json:"master_key_weight"`
-	SignerKey       string `json:"signer_key,omitempty"`
-	SignerWeight    uint32 `json:"signer_weight,omitempty"`
-	SignerType      uint32 `json:"signer_type,omitempty"`
-	SignerIdentity  uint32 `json:"signer_identity,omitempty"`
-
-	SetFlags    []int    `json:"set_flags,omitempty"`
-	SetFlagsS   []string `json:"set_flags_s,omitempty"`
-	ClearFlags  []int    `json:"clear_flags,omitempty"`
-	ClearFlagsS []string `json:"clear_flags_s,omitempty"`
-
+	MasterKeyWeight                 uint32 `json:"master_key_weight"`
+	SignerKey                       string `json:"signer_key,omitempty"`
 	LowThreshold                    uint32 `json:"low_threshold,omitempty"`
 	MedThreshold                    uint32 `json:"med_threshold,omitempty"`
 	HighThreshold                   uint32 `json:"high_threshold,omitempty"`

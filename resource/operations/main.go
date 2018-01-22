@@ -68,24 +68,12 @@ func New(
 		d := row.Details().SetOptions
 		e := SetOptions{
 			Base:                            base,
-			HomeDomain:                      d.HomeDomain,
-			InflationDest:                   d.InflationDest,
 			MasterKeyWeight:                 d.MasterKeyWeight,
 			SignerKey:                       d.SignerKey,
-			SignerWeight:                    d.SignerWeight,
-			SignerType:                      d.SignerType,
-			SignerIdentity:                  d.SignerIdentity,
-			SetFlags:                        d.SetFlags,
-			SetFlagsS:                       d.SetFlagsS,
-			ClearFlags:                      d.ClearFlags,
-			ClearFlagsS:                     d.ClearFlagsS,
 			LowThreshold:                    d.LowThreshold,
 			MedThreshold:                    d.MedThreshold,
 			HighThreshold:                   d.HighThreshold,
 			LimitsUpdateRequestDocumentHash: d.LimitsUpdateRequestDocumentHash,
-		}
-		if public {
-			e.SignerKey = ""
 		}
 		result = e
 	case xdr.OperationTypeSetFees:
@@ -325,20 +313,8 @@ type Payment struct {
 // SetOptions.
 type SetOptions struct {
 	Base
-	HomeDomain    string `json:"home_domain,omitempty"`
-	InflationDest string `json:"inflation_dest,omitempty"`
-
-	MasterKeyWeight uint32 `json:"master_key_weight"`
-	SignerKey       string `json:"signer_key,omitempty"`
-	SignerWeight    uint32 `json:"signer_weight,omitempty"`
-	SignerType      uint32 `json:"signer_type,omitempty"`
-	SignerIdentity  uint32 `json:"signer_identity,omitempty"`
-
-	SetFlags    []int    `json:"set_flags,omitempty"`
-	SetFlagsS   []string `json:"set_flags_s,omitempty"`
-	ClearFlags  []int    `json:"clear_flags,omitempty"`
-	ClearFlagsS []string `json:"clear_flags_s,omitempty"`
-
+	MasterKeyWeight                 uint32 `json:"master_key_weight"`
+	SignerKey                       string `json:"signer_key,omitempty"`
 	LowThreshold                    uint32 `json:"low_threshold,omitempty"`
 	MedThreshold                    uint32 `json:"med_threshold,omitempty"`
 	HighThreshold                   uint32 `json:"high_threshold,omitempty"`

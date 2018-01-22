@@ -32,8 +32,7 @@ func (o *Operation) Details() OperationDetails {
 		Type: o.Type,
 	}
 
-	err := json.Unmarshal([]byte(o.DetailsString.String), &result)
-	if err != nil {
+	if err := json.Unmarshal([]byte(o.DetailsString.String), &result); err != nil {
 		logrus.WithError(err).Errorf("Error unmarshal operation details")
 	}
 	return result

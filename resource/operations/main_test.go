@@ -214,33 +214,8 @@ func TestNew(t *testing.T) {
 				"string": "set_options"
 			  },
 			  "set_options": {
-				"home_domain": "test.com",
-				"inflation_dest": "0.0000",
 				"master_key_weight": 1,
 				"signer_key": "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
-				"signer_weight": 1,
-				"signer_type": 1,
-				"signer_identity": 1,
-				"set_flags": [
-				  1,
-				  1,
-				  1
-				],
-				"set_flags_s": [
-				  "test0",
-				  "test1",
-				  "test2"
-				],
-				"clear_flags": [
-				  1,
-				  1,
-				  1
-				],
-				"clear_flags_s": [
-				  "test0",
-				  "test1",
-				  "test2"
-				],
 				"low_threshold": 1,
 				"med_threshold": 1,
 				"high_threshold": 1,
@@ -292,37 +267,12 @@ func TestNew(t *testing.T) {
 				  "nickname": "Nickname2"
 				}
 			  ],
-			  "home_domain": "test.com",
-			  "inflation_dest": "0.0000",
 			  "master_key_weight": 1,
 			  "signer_key": "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
-			  "signer_weight": 1,
-			  "signer_type": 1,
-			  "signer_identity": 1,
-			  "set_flags": [
-				1,
-				1,
-				1
-			  ],
-			  "set_flags_s": [
-				"test0",
-				"test1",
-				"test2"
-			  ],
-			  "clear_flags": [
-				1,
-				1,
-				1
-			  ],
-			  "clear_flags_s": [
-				"test0",
-				"test1",
-				"test2"
-			  ],
 			  "low_threshold": 1,
 			  "med_threshold": 1,
 			  "high_threshold": 1,
-   			  "limits_update_request_document_hash": "07997422f6829dbd8f625520133e9c93afc67d673a00c9a23a2de51cb1848271"
+			  "limits_update_request_document_hash": "07997422f6829dbd8f625520133e9c93afc67d673a00c9a23a2de51cb1848271"
 			}`,
 		},
 		{
