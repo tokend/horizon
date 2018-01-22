@@ -214,7 +214,6 @@ func New(
 		if public {
 			e.ReceiverBalance = ""
 			e.Sender = ""
-			e.RejectReason = nil
 		}
 		result = e
 
