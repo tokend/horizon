@@ -54,7 +54,7 @@ type SetOptionsDetails struct {
 	HomeDomain    string `json:"home_domain,omitempty"`
 	InflationDest string `json:"inflation_dest,omitempty"`
 
-	MasterKeyWeight uint32 `json:"master_key_weight,omitempty"`
+	MasterKeyWeight uint32 `json:"master_key_weight"`
 	SignerKey       string `json:"signer_key,omitempty"`
 	SignerWeight    uint32 `json:"signer_weight,omitempty"`
 	SignerType      uint32 `json:"signer_type,omitempty"`
