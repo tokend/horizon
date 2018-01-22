@@ -58,14 +58,28 @@ func (is *Session) operationDetails() interface{} {
 	case xdr.OperationTypeSetOptions:
 		op := c.Operation().Body.MustSetOptionsOp()
 
-		operationDetails.SetOptions = &history.SetOptionsDetails{
-			MasterKeyWeight: uint32(*op.MasterWeight),
-			SignerKey:       op.Signer.PubKey.Address(),
-			LowThreshold:    uint32(*op.LowThreshold),
-			MedThreshold:    uint32(*op.MedThreshold),
-			HighThreshold:   uint32(*op.HighThreshold),
+		if op.MasterWeight != nil {
+			operationDetails.SetOptions.MasterKeyWeight = (*uint32)(op.MasterWeight)
+		}
 
-			LimitsUpdateRequestDocumentHash: hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:]),
+		if op.LowThreshold != nil {
+			operationDetails.SetOptions.LowThreshold = (*uint32)(op.LowThreshold)
+		}
+
+		if op.MedThreshold != nil {
+			operationDetails.SetOptions.MedThreshold = (*uint32)(op.MedThreshold)
+		}
+
+		if op.HighThreshold != nil {
+			operationDetails.SetOptions.HighThreshold = (*uint32)(op.HighThreshold)
+		}
+
+		if op.Signer != nil {
+			operationDetails.SetOptions.SignerKey = op.Signer.PubKey.Address()
+		}
+
+		if op.LimitsUpdateRequestData != nil {
+			operationDetails.SetOptions.LimitsUpdateRequestDocumentHash = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
 		}
 
 		return operationDetails

@@ -313,12 +313,12 @@ type Payment struct {
 // SetOptions.
 type SetOptions struct {
 	Base
-	MasterKeyWeight                 uint32 `json:"master_key_weight"`
-	SignerKey                       string `json:"signer_key,omitempty"`
-	LowThreshold                    uint32 `json:"low_threshold,omitempty"`
-	MedThreshold                    uint32 `json:"med_threshold,omitempty"`
-	HighThreshold                   uint32 `json:"high_threshold,omitempty"`
-	LimitsUpdateRequestDocumentHash string `json:"limits_update_request_document_hash,omitempty"`
+	MasterKeyWeight                 *uint32 `json:"master_key_weight"`
+	SignerKey                       string  `json:"signer_key,omitempty"`
+	LowThreshold                    *uint32 `json:"low_threshold,omitempty"`
+	MedThreshold                    *uint32 `json:"med_threshold,omitempty"`
+	HighThreshold                   *uint32 `json:"high_threshold,omitempty"`
+	LimitsUpdateRequestDocumentHash string  `json:"limits_update_request_document_hash,omitempty"`
 }
 
 //SetFees is the json resource representing a single operation whose type
