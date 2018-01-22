@@ -15,6 +15,7 @@ type Asset struct {
 	PendingIssuance      string `json:"pending_issuance"`
 	Policies
 	Details map[string]interface{} `json:"details"`
+	Sales   []Sale                 `json:"sales,omitempty"`
 }
 
 func (a *Asset) Populate(asset *core.Asset) {

@@ -18,6 +18,10 @@ func (r OrderBookInvestors) String() string {
 
 func (r OrderBooksInvestors) String() string {
 	var res string
+	if len(r) == 0 {
+		return "(0,0)"
+	}
+
 	for _, v := range r {
 		res += fmt.Sprintf("%s,", v)
 	}
