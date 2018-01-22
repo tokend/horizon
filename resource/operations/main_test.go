@@ -9,7 +9,6 @@ import (
 
 	"fmt"
 
-	"github.com/guregu/null"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
@@ -21,13 +20,19 @@ func getOperation(opType xdr.OperationType, details string) history.Operation {
 	if err != nil {
 		panic(err)
 	}
+
+	var operationDetails history.OperationDetails
+	if err := json.Unmarshal([]byte(string(details)), &operationDetails); err != nil {
+		panic(err)
+	}
+
 	return history.Operation{
 		TotalOrderID:     db2.TotalOrderID{ID: 231928242177},
 		TransactionID:    231928242176,
 		TransactionHash:  "73559b4bda9057acc6566da0e3f0e2a7eab6f7742df9ffe86a3a5cef6ef081cd",
 		ApplicationOrder: 1,
 		Type:             opType,
-		DetailsString:    null.NewString(details, true),
+		Details:          operationDetails,
 		LedgerCloseTime:  ts,
 		SourceAccount:    "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB636",
 		State:            2,
