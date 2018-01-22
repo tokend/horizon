@@ -35,8 +35,6 @@ func (is *Session) operationDetails() interface{} {
 		op := c.Operation().Body.MustPaymentOp()
 		opResult := c.OperationResult().MustPaymentResult()
 
-		operationDetails.Type = xdr.OperationTypePayment
-
 		operationDetails.Payment = &history.PaymentDetails{
 			BasePayment: history.BasePayment{
 				From:                  source.Address(),
@@ -60,8 +58,6 @@ func (is *Session) operationDetails() interface{} {
 	case xdr.OperationTypeSetOptions:
 		op := c.Operation().Body.MustSetOptionsOp()
 
-		operationDetails.Type = xdr.OperationTypeSetOptions
-
 		operationDetails.SetOptions = &history.SetOptionsDetails{
 			HomeDomain:                      "", //TODO Delete or set this fields
 			InflationDest:                   "",
@@ -84,8 +80,6 @@ func (is *Session) operationDetails() interface{} {
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 
-		operationDetails.Type = xdr.OperationTypeSetFees
-
 		operationDetails.SetFees = &history.SetFeesDetails{
 			Fee: &history.FeeDetails{
 				AssetCode:   string(op.Fee.Asset),
@@ -104,8 +98,6 @@ func (is *Session) operationDetails() interface{} {
 	case xdr.OperationTypeManageAccount:
 		op := c.Operation().Body.MustManageAccountOp()
 
-		operationDetails.Type = xdr.OperationTypeManageAccount
-
 		operationDetails.ManageAccount = &history.ManageAccountDetails{
 			Account:              op.Account.Address(),
 			BlockReasonsToAdd:    uint32(op.BlockReasonsToAdd),
@@ -116,8 +108,6 @@ func (is *Session) operationDetails() interface{} {
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		op := c.Operation().Body.MustCreateWithdrawalRequestOp()
 		request := op.Request
-
-		operationDetails.Type = xdr.OperationTypeCreateWithdrawalRequest
 
 		var externalDetails map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
@@ -136,7 +126,6 @@ func (is *Session) operationDetails() interface{} {
 		return operationDetails
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
-		operationDetails.Type = xdr.OperationTypeManageBalance
 
 		//added new struct in resource/main.go and in OperationDetails
 		operationDetails.ManageBalance = &history.ManageBalanceDetails{
@@ -147,8 +136,6 @@ func (is *Session) operationDetails() interface{} {
 		return operationDetails
 	case xdr.OperationTypeReviewPaymentRequest:
 		op := c.Operation().Body.MustReviewPaymentRequestOp()
-
-		operationDetails.Type = xdr.OperationTypeReviewPaymentRequest
 
 		operationDetails.ReviewPaymentRequest = &history.ReviewPaymentRequestDetails{
 			PaymentID:    int64(op.PaymentId),
@@ -167,8 +154,6 @@ func (is *Session) operationDetails() interface{} {
 	case xdr.OperationTypeDirectDebit:
 		op := c.Operation().Body.MustDirectDebitOp().PaymentOp
 		opResult := c.OperationResult().MustDirectDebitResult().MustSuccess()
-
-		operationDetails.Type = xdr.OperationTypeDirectDebit
 
 		operationDetails.DirectDebit = &history.DirectDebitDetails{
 			From:                  source.Address(),
@@ -190,8 +175,6 @@ func (is *Session) operationDetails() interface{} {
 	case xdr.OperationTypeManageAssetPair:
 		op := c.Operation().Body.MustManageAssetPairOp()
 
-		operationDetails.Type = xdr.OperationTypeManageAssetPair
-
 		operationDetails.ManageAssetPair = &history.ManageAssetPairDetails{
 			BaseAsset:               string(op.Base),
 			QuoteAsset:              string(op.Quote),
@@ -204,8 +187,6 @@ func (is *Session) operationDetails() interface{} {
 		return operationDetails
 	case xdr.OperationTypeManageOffer:
 		op := c.Operation().Body.ManageOfferOp
-
-		operationDetails.Type = xdr.OperationTypeManageOffer
 
 		operationDetails.ManagerOffer = &history.ManagerOfferDetails{
 			IsBuy:     op.IsBuy,
@@ -221,22 +202,17 @@ func (is *Session) operationDetails() interface{} {
 		op := c.Operation().Body.MustManageInvoiceOp()
 		opResult := c.OperationResult().MustManageInvoiceResult()
 
-		operationDetails.Type = xdr.OperationTypeManageInvoice
-
 		operationDetails.ManageInvoice = &history.ManageInvoiceDetails{
 			Amount:          amount.String(int64(op.Amount)),
 			ReceiverBalance: op.ReceiverBalance.AsString(),
 			Sender:          op.Sender.Address(),
 			InvoiceID:       uint64(opResult.Success.InvoiceId),
-			RejectReason:    nil, //TODO Delete or set this field
 			Asset:           string(opResult.Success.Asset),
 		}
 
 		return operationDetails
 	case xdr.OperationTypeReviewRequest:
 		op := c.Operation().Body.MustReviewRequestOp()
-
-		operationDetails.Type = xdr.OperationTypeReviewRequest
 
 		operationDetails.ReviewRequest = &history.ReviewRequestDetails{
 			Action:      int32(op.Action),
@@ -250,8 +226,6 @@ func (is *Session) operationDetails() interface{} {
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 
-		operationDetails.Type = xdr.OperationTypeManageAsset
-
 		operationDetails.ManageAsset = &history.ManageAssetDetails{
 			RequestID: uint64(op.RequestId),
 			Action:    int32(op.Request.Action),
@@ -262,8 +236,6 @@ func (is *Session) operationDetails() interface{} {
 		// no details needed
 	case xdr.OperationTypeCreateIssuanceRequest:
 		op := c.Operation().Body.MustCreateIssuanceRequestOp()
-
-		operationDetails.Type = xdr.OperationTypeCreateIssuanceRequest
 
 		var externalDetails map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error

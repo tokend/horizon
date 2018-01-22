@@ -209,7 +209,6 @@ func New(
 			ReceiverBalance: d.ReceiverBalance,
 			Sender:          d.Sender,
 			InvoiceID:       d.InvoiceID,
-			RejectReason:    d.RejectReason,
 			Asset:           d.Asset,
 		}
 		if public {
