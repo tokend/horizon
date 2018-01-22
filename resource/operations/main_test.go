@@ -40,14 +40,11 @@ func getParticipants() []*history.Participant {
 	for i := range participants {
 		participants[i] = &history.Participant{
 			OperationID: int64(1234567 + i),
-			AccountID:   "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB63" + fmt.Sprintf("%v", i),
-			BalanceID:   "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB63" + fmt.Sprintf("%v", i),
-			Nickname:    "Nickname" + fmt.Sprintf("%v", i),
-			Email:       "email" + fmt.Sprintf("%v", i) + "@test.com",
-			Mobile:      "38012123456" + fmt.Sprintf("%v", i),
-			Details:     []byte{1, 2, 3, 4, 5, byte(i)},
-			UserType:    "general",
-			Effects:     nil,
+			AccountID:   fmt.Sprintf("%s%v", "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB63", i),
+			BalanceID:   fmt.Sprintf("%s%v", "GD7AHJHCDSQI6LVMEJEE2FTNCA2LJQZ4R64GUI3PWANSVEO4GEOWB63", i),
+			Nickname:    fmt.Sprintf("%s%v", "Nickname", i),
+			Email:       fmt.Sprintf("%s%v%s", "email", i, "@test.com"),
+			Mobile:      fmt.Sprintf("%s%v", "38012123456", i),
 		}
 	}
 	return participants
