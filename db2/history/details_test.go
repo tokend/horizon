@@ -68,11 +68,12 @@ func TestOperation_Details(t *testing.T) {
 			details: OperationDetails{
 				Type: xdr.OperationTypeSetOptions,
 				SetOptions: &SetOptionsDetails{
-					MasterKeyWeight: &temp,
-					SignerKey:       "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
-					LowThreshold:    &temp,
-					MedThreshold:    &temp,
-					HighThreshold:   &temp,
+					MasterKeyWeight:                 &temp,
+					SignerKey:                       "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
+					LowThreshold:                    &temp,
+					MedThreshold:                    &temp,
+					HighThreshold:                   &temp,
+					LimitsUpdateRequestDocumentHash: "07997422f6829dbd8f625520133e9c93afc67d673a00c9a23a2de51cb1848271",
 				},
 			},
 			expectedDetails: `{
@@ -85,7 +86,8 @@ func TestOperation_Details(t *testing.T) {
 				"signer_key": "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
 				"low_threshold": 1,
 				"med_threshold": 1,
-				"high_threshold": 1
+				"high_threshold": 1,
+				"limits_update_request_document_hash": "07997422f6829dbd8f625520133e9c93afc67d673a00c9a23a2de51cb1848271"
 			  }
 			}`,
 		},
