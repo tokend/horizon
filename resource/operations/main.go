@@ -67,13 +67,12 @@ func New(
 	case xdr.OperationTypeSetOptions:
 		d := row.Details().SetOptions
 		e := SetOptions{
-			Base:                            base,
-			MasterKeyWeight:                 d.MasterKeyWeight,
-			SignerKey:                       d.SignerKey,
-			LowThreshold:                    d.LowThreshold,
-			MedThreshold:                    d.MedThreshold,
-			HighThreshold:                   d.HighThreshold,
-			LimitsUpdateRequestDocumentHash: d.LimitsUpdateRequestDocumentHash,
+			Base:            base,
+			MasterKeyWeight: d.MasterKeyWeight,
+			SignerKey:       d.SignerKey,
+			LowThreshold:    d.LowThreshold,
+			MedThreshold:    d.MedThreshold,
+			HighThreshold:   d.HighThreshold,
 		}
 		result = e
 	case xdr.OperationTypeSetFees:
@@ -313,12 +312,11 @@ type Payment struct {
 // SetOptions.
 type SetOptions struct {
 	Base
-	MasterKeyWeight                 *uint32 `json:"master_key_weight"`
-	SignerKey                       string  `json:"signer_key,omitempty"`
-	LowThreshold                    *uint32 `json:"low_threshold,omitempty"`
-	MedThreshold                    *uint32 `json:"med_threshold,omitempty"`
-	HighThreshold                   *uint32 `json:"high_threshold,omitempty"`
-	LimitsUpdateRequestDocumentHash string  `json:"limits_update_request_document_hash,omitempty"`
+	MasterKeyWeight *uint32 `json:"master_key_weight"`
+	SignerKey       string  `json:"signer_key,omitempty"`
+	LowThreshold    *uint32 `json:"low_threshold,omitempty"`
+	MedThreshold    *uint32 `json:"med_threshold,omitempty"`
+	HighThreshold   *uint32 `json:"high_threshold,omitempty"`
 }
 
 //SetFees is the json resource representing a single operation whose type

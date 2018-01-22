@@ -78,10 +78,6 @@ func (is *Session) operationDetails() interface{} {
 			operationDetails.SetOptions.SignerKey = op.Signer.PubKey.Address()
 		}
 
-		if op.LimitsUpdateRequestData != nil {
-			operationDetails.SetOptions.LimitsUpdateRequestDocumentHash = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
-		}
-
 		return operationDetails
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
