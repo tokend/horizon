@@ -19,13 +19,12 @@ func (is *Session) operationDetails() interface{} {
 	c := is.Cursor
 	source := c.OperationSourceAccount()
 
-	operationDetails := history.OperationDetails{}
-	switch c.OperationType() {
+	operationDetails := history.OperationDetails{
+		Type: c.OperationType(),
+	}
+	switch operationDetails.Type {
 	case xdr.OperationTypeCreateAccount:
 		op := c.Operation().Body.MustCreateAccountOp()
-
-		operationDetails.Type = xdr.OperationTypeCreateAccount
-
 		operationDetails.CreateAccount = &history.CreateAccountDetails{
 			Funder:      source.Address(),
 			Account:     op.Destination.Address(),
