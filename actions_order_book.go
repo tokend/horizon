@@ -24,6 +24,7 @@ type OrderBookAction struct {
 func (action *OrderBookAction) JSON() {
 	action.Do(
 		action.loadParams,
+		action.checkIsSigned,
 		action.loadRecords,
 		func() {
 			hal.Render(action.W, action.Page)
@@ -41,6 +42,12 @@ func (action *OrderBookAction) loadParams() {
 		"quote_asset":   action.QuoteAsset,
 		"is_buy":        strconv.FormatBool(action.IsBuy),
 		"order_book_id": action.GetString("order_book_id"),
+	}
+}
+
+func (action *OrderBookAction) checkIsSigned() {
+	if action.Signer != "" {
+		action.isAllowed(action.Signer)
 	}
 }
 
@@ -65,6 +72,7 @@ func (action *OrderBookAction) loadRecords() {
 		var result resource.OrderBookEntry
 		result.Populate(&action.CoreRecords[i].OrderBookEntry, action.BaseAsset, action.QuoteAsset, action.IsBuy)
 		if action.IsAdmin {
+			result.OfferID = action.CoreRecords[i].OfferID
 			result.OwnerID = action.CoreRecords[i].OwnerID
 		}
 		action.Page.Add(&result)

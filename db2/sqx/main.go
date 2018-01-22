@@ -29,6 +29,16 @@ func InForReviewableRequestTypes(columnName string, values...xdr.ReviewableReque
 }
 
 // Returns statement and params of it for SQL IN.
+func InForString(columnName string, values ...string) (string, []interface{}) {
+	rawValues := make([]interface{}, len(values))
+	for i := range values {
+		rawValues[i] = values[i]
+	}
+
+	return In(columnName, rawValues...)
+}
+
+// Returns statement and params of it for SQL IN.
 func In(columnName string, values...interface{}) (string, []interface{}) {
 	params := make([]string, len(values))
 	for i := range values {
