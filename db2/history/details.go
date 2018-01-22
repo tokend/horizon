@@ -1,6 +1,11 @@
 package history
 
-import "gitlab.com/swarmfund/go/xdr"
+import (
+	"encoding/json"
+	"fmt"
+
+	"gitlab.com/swarmfund/go/xdr"
+)
 
 type OperationDetails struct {
 	Type                    xdr.OperationType               `json:"type"`
@@ -20,6 +25,19 @@ type OperationDetails struct {
 	ManageAssetPair         *ManageAssetPairDetails         `json:"manage_asset_pair,omitempty"`
 	CreateIssuanceRequest   *CreateIssuanceRequestDetails   `json:"create_issuance_request,omitempty"`
 	ReviewRequest           *ReviewRequestDetails           `json:"review_request,omitempty"`
+}
+
+func (o *OperationDetails) Scan(value interface{}) error {
+	if value == nil {
+		return nil
+	}
+
+	switch v := value.(type) {
+	case []byte:
+		return json.Unmarshal(v, &o)
+	default:
+		return fmt.Errorf("unsupported Scan from type %T", v)
+	}
 }
 
 type CreateAccountDetails struct {
@@ -101,7 +119,10 @@ type ReviewPaymentRequestDetails struct {
 	Accept       bool   `json:"accept"`
 	RejectReason string `json:"reject_reason"`
 }
-type SetLimitsDetails struct{}
+type SetLimitsDetails struct {
+	AccountType *int32 `json:"account_type"`
+	Account     string `json:"account"`
+}
 
 type ManageInvoiceDetails struct {
 	Amount          string `json:"amount"`

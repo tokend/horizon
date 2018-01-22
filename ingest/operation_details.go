@@ -14,8 +14,7 @@ import (
 
 // operationDetails returns the details regarding the current operation, suitable
 // for ingestion into a history_operation row
-func (is *Session) operationDetails() interface{} {
-	details := map[string]interface{}{}
+func (is *Session) operationDetails() history.OperationDetails {
 	c := is.Cursor
 	source := c.OperationSourceAccount()
 
@@ -30,7 +29,6 @@ func (is *Session) operationDetails() interface{} {
 			Account:     op.Destination.Address(),
 			AccountType: int32(op.AccountType),
 		}
-		return operationDetails
 	case xdr.OperationTypePayment:
 		op := c.Operation().Body.MustPaymentOp()
 		opResult := c.OperationResult().MustPaymentResult()
@@ -53,8 +51,6 @@ func (is *Session) operationDetails() interface{} {
 			Reference:  string(op.Reference),
 			QuoteAsset: string(opResult.PaymentResponse.Asset),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeSetOptions:
 		op := c.Operation().Body.MustSetOptionsOp()
 
@@ -81,8 +77,6 @@ func (is *Session) operationDetails() interface{} {
 		if op.LimitsUpdateRequestData != nil {
 			operationDetails.SetOptions.LimitsUpdateRequestDocumentHash = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
 		}
-
-		return operationDetails
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 
@@ -106,8 +100,6 @@ func (is *Session) operationDetails() interface{} {
 				},
 			}
 		}
-
-		return operationDetails
 	case xdr.OperationTypeManageAccount:
 		op := c.Operation().Body.MustManageAccountOp()
 
@@ -116,8 +108,6 @@ func (is *Session) operationDetails() interface{} {
 			BlockReasonsToAdd:    uint32(op.BlockReasonsToAdd),
 			BlockReasonsToRemove: uint32(op.BlockReasonsToRemove),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		op := c.Operation().Body.MustCreateWithdrawalRequestOp()
 		request := op.Request
@@ -135,8 +125,6 @@ func (is *Session) operationDetails() interface{} {
 			DestAsset:       string(request.Details.AutoConversion.DestAsset),
 			DestAmount:      amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
 
@@ -145,8 +133,6 @@ func (is *Session) operationDetails() interface{} {
 			Destination: op.Destination.Address(),
 			Action:      int32(op.Action),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeReviewPaymentRequest:
 		op := c.Operation().Body.MustReviewPaymentRequestOp()
 
@@ -155,15 +141,11 @@ func (is *Session) operationDetails() interface{} {
 			Accept:       op.Accept,
 			RejectReason: string(*op.RejectReason),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeSetLimits:
 		op := c.Operation().Body.MustSetLimitsOp()
 
-		operationDetails.Type = xdr.OperationTypeSetLimits
-
-		details["account_type"] = op.AccountType
-		details["account"] = op.Account
+		operationDetails.SetLimits.AccountType = (*int32)(op.AccountType)
+		operationDetails.SetLimits.Account = op.Account.Address()
 	case xdr.OperationTypeDirectDebit:
 		op := c.Operation().Body.MustDirectDebitOp().PaymentOp
 		opResult := c.OperationResult().MustDirectDebitResult().MustSuccess()
@@ -183,8 +165,6 @@ func (is *Session) operationDetails() interface{} {
 			Reference:             string(op.Reference),
 			AssetCode:             string(opResult.PaymentResponse.Asset),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeManageAssetPair:
 		op := c.Operation().Body.MustManageAssetPairOp()
 
@@ -196,8 +176,6 @@ func (is *Session) operationDetails() interface{} {
 			MaxPriceStep:            amount.String(int64(op.MaxPriceStep)),
 			Policies:                int32(op.Policies),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeManageOffer:
 		op := c.Operation().Body.ManageOfferOp
 
@@ -209,8 +187,6 @@ func (is *Session) operationDetails() interface{} {
 			OfferId:   uint64(op.OfferId),
 			IsDeleted: int64(op.OfferId) != 0,
 		}
-
-		return operationDetails
 	case xdr.OperationTypeManageInvoice:
 		op := c.Operation().Body.MustManageInvoiceOp()
 		opResult := c.OperationResult().MustManageInvoiceResult()
@@ -222,8 +198,6 @@ func (is *Session) operationDetails() interface{} {
 			InvoiceID:       uint64(opResult.Success.InvoiceId),
 			Asset:           string(opResult.Success.Asset),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeReviewRequest:
 		op := c.Operation().Body.MustReviewRequestOp()
 
@@ -234,8 +208,6 @@ func (is *Session) operationDetails() interface{} {
 			RequestID:   uint64(op.RequestId),
 			RequestType: int32(op.RequestDetails.RequestType),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 
@@ -243,8 +215,6 @@ func (is *Session) operationDetails() interface{} {
 			RequestID: uint64(op.RequestId),
 			Action:    int32(op.Request.Action),
 		}
-
-		return operationDetails
 	case xdr.OperationTypeCreatePreissuanceRequest:
 		// no details needed
 	case xdr.OperationTypeCreateIssuanceRequest:
@@ -263,8 +233,6 @@ func (is *Session) operationDetails() interface{} {
 			BalanceID:       op.Request.Receiver.AsString(),
 			ExternalDetails: externalDetails,
 		}
-
-		return operationDetails
 	case xdr.OperationTypeCreateSaleRequest:
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:
@@ -272,5 +240,5 @@ func (is *Session) operationDetails() interface{} {
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
-	return details
+	return operationDetails
 }
