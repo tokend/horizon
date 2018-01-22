@@ -86,18 +86,25 @@ func (is *Session) operationDetails() interface{} {
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 
-		operationDetails.SetFees = &history.SetFeesDetails{
-			Fee: &history.FeeDetails{
-				AssetCode:   string(op.Fee.Asset),
-				FixedFee:    amount.String(int64(op.Fee.FixedFee)),
-				PercentFee:  amount.String(int64(op.Fee.PercentFee)),
-				FeeType:     int64(op.Fee.FeeType),
-				AccountID:   op.Fee.AccountId.Address(),
-				AccountType: int32(*op.Fee.AccountType),
-				Subtype:     int64(op.Fee.Subtype),
-				LowerBound:  int64(op.Fee.LowerBound),
-				UpperBound:  int64(op.Fee.UpperBound),
-			},
+		if op.Fee != nil {
+			accountID := ""
+			if op.Fee.AccountId != nil {
+				accountID = op.Fee.AccountId.Address()
+			}
+
+			operationDetails.SetFees = &history.SetFeesDetails{
+				Fee: &history.FeeDetails{
+					AssetCode:   string(op.Fee.Asset),
+					FixedFee:    amount.String(int64(op.Fee.FixedFee)),
+					PercentFee:  amount.String(int64(op.Fee.PercentFee)),
+					FeeType:     int64(op.Fee.FeeType),
+					AccountID:   accountID,
+					AccountType: int32(*op.Fee.AccountType),
+					Subtype:     int64(op.Fee.Subtype),
+					LowerBound:  int64(op.Fee.LowerBound),
+					UpperBound:  int64(op.Fee.UpperBound),
+				},
+			}
 		}
 
 		return operationDetails
