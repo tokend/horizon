@@ -98,7 +98,7 @@ func (q *ReviewableRequestQ) ByID(requestID uint64) (*ReviewableRequest, error) 
 		return nil, q.Err
 	}
 
-	query := selectReviewableRequest.Where("id = ?", requestID)
+	query := q.sql.Where("id = ?", requestID)
 
 	var result ReviewableRequest
 	err := q.parent.Get(&result, query)
