@@ -32,14 +32,15 @@ type IssuanceRequest struct {
 }
 
 type WithdrawalRequest struct {
-	BalanceID       string                 `json:"balance_id"`
-	Amount          string                 `json:"amount"`
-	FixedFee        string                 `json:"fixed_fee"`
-	PercentFee      string                 `json:"percent_fee"`
-	ExternalDetails map[string]interface{} `json:"external_details"`
-	DestAssetCode   string                 `json:"dest_asset_code"`
-	DestAssetAmount string                 `json:"dest_asset_amount"`
-	ReviewerDetails map[string]interface{} `json:"reviewer_details"`
+	BalanceID              string                 `json:"balance_id"`
+	Amount                 string                 `json:"amount"`
+	FixedFee               string                 `json:"fixed_fee"`
+	PercentFee             string                 `json:"percent_fee"`
+	ExternalDetails        map[string]interface{} `json:"external_details"`
+	DestAssetCode          string                 `json:"dest_asset_code"`
+	DestAssetAmount        string                 `json:"dest_asset_amount"`
+	ReviewerDetails        map[string]interface{} `json:"reviewer_details"`
+	PreConfirmationDetails map[string]interface{} `json:"pre_confirmation_details"`
 }
 
 type SaleRequest struct {
@@ -51,4 +52,8 @@ type SaleRequest struct {
 	SoftCap    string                 `json:"soft_cap"`
 	HardCap    string                 `json:"hard_cap"`
 	Details    map[string]interface{} `json:"details"`
+}
+
+type LimitsUpdateRequest struct {
+	DocumentHash string `json:"document_hash"`
 }

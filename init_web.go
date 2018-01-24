@@ -217,7 +217,7 @@ func initWebActions(app *App) {
 		RequestSpecificFilters: map[string]string{
 			"dest_asset_code": "",
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw, xdr.ReviewableRequestTypeTwoStepWithdrawal},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
 		RequestSpecificFilters: map[string]string{
@@ -225,12 +225,20 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
+	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]string{
+			"document_hash": "",
+		},
+	})
 
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
 	r.Get("/sales", &SaleIndexAction{})
 
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
+		// DISCLAIMER: while following is true, it does not currently applies
+		// API does not accept transactions make sure DisableAPISubmit is set to true
+		//
 		// legacy constraints:
 		// * not signed POST /transactions should trigger TFA flow if needed
 		// * not signed POST /transactions should eventually make network submission
