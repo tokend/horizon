@@ -92,11 +92,6 @@ func New(
 				UpperBound:  d.Fee.UpperBound,
 			},
 		}
-		if public {
-			if e.Fee != nil {
-				e.Fee.AccountID = ""
-			}
-		}
 		result = e
 	case xdr.OperationTypeManageAccount:
 		d := row.GetDetails().ManageAccount
@@ -323,15 +318,15 @@ type SetOptions struct {
 // is SetFees.
 
 type Fee struct {
-	AssetCode   string `json:"asset_code"`
-	FixedFee    string `json:"fixed_fee"`
-	PercentFee  string `json:"percent_fee"`
-	FeeType     int64  `json:"fee_type"`
-	AccountID   string `json:"account_id,omitempty"`
-	AccountType int32  `json:"account_type"`
-	Subtype     int64  `json:"subtype"`
-	LowerBound  int64  `json:"lower_bound"`
-	UpperBound  int64  `json:"upper_bound"`
+	AssetCode   string  `json:"asset_code"`
+	FixedFee    string  `json:"fixed_fee"`
+	PercentFee  string  `json:"percent_fee"`
+	FeeType     int64   `json:"fee_type"`
+	AccountID   *string `json:"account_id,omitempty"`
+	AccountType *int32  `json:"account_type"`
+	Subtype     int64   `json:"subtype"`
+	LowerBound  int64   `json:"lower_bound"`
+	UpperBound  int64   `json:"upper_bound"`
 }
 
 type SetFees struct {
@@ -357,9 +352,9 @@ type ManageBalance struct {
 
 type ReviewPaymentRequest struct {
 	Base
-	PaymentID    int64  `json:"payment_id"`
-	Accept       bool   `json:"accept"`
-	RejectReason string `json:"reject_reason"`
+	PaymentID    int64   `json:"payment_id"`
+	Accept       bool    `json:"accept"`
+	RejectReason *string `json:"reject_reason"`
 }
 
 type DirectDebit struct {

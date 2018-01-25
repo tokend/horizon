@@ -81,9 +81,15 @@ func (is *Session) operationDetails() history.OperationDetails {
 		op := c.Operation().Body.MustSetFeesOp()
 
 		if op.Fee != nil {
-			accountID := ""
+			var accountID *string
 			if op.Fee.AccountId != nil {
-				accountID = op.Fee.AccountId.Address()
+				t := op.Fee.AccountId.Address()
+				accountID = &t
+			}
+
+			var accountType *int32
+			if op.Fee.AccountType != nil {
+				accountType = (*int32)(op.Fee.AccountType)
 			}
 
 			operationDetails.SetFees = &history.SetFeesDetails{
@@ -93,7 +99,7 @@ func (is *Session) operationDetails() history.OperationDetails {
 					PercentFee:  amount.String(int64(op.Fee.PercentFee)),
 					FeeType:     int64(op.Fee.FeeType),
 					AccountID:   accountID,
-					AccountType: int32(*op.Fee.AccountType),
+					AccountType: accountType,
 					Subtype:     int64(op.Fee.Subtype),
 					LowerBound:  int64(op.Fee.LowerBound),
 					UpperBound:  int64(op.Fee.UpperBound),
@@ -136,15 +142,25 @@ func (is *Session) operationDetails() history.OperationDetails {
 	case xdr.OperationTypeReviewPaymentRequest:
 		op := c.Operation().Body.MustReviewPaymentRequestOp()
 
+		var rejectReason *string
+		if op.RejectReason != nil {
+			rejectReason = (*string)(op.RejectReason)
+		}
+
 		operationDetails.ReviewPaymentRequest = &history.ReviewPaymentRequestDetails{
 			PaymentID:    int64(op.PaymentId),
 			Accept:       op.Accept,
-			RejectReason: string(*op.RejectReason),
+			RejectReason: rejectReason,
 		}
 	case xdr.OperationTypeSetLimits:
 		op := c.Operation().Body.MustSetLimitsOp()
 
-		operationDetails.SetLimits.AccountType = (*int32)(op.AccountType)
+		var accountType *int32
+		if op.AccountType != nil {
+			accountType = (*int32)(op.AccountType)
+		}
+
+		operationDetails.SetLimits.AccountType = accountType
 		operationDetails.SetLimits.Account = op.Account.Address()
 	case xdr.OperationTypeDirectDebit:
 		op := c.Operation().Body.MustDirectDebitOp().PaymentOp
