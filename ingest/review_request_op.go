@@ -35,6 +35,11 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 }
 
 func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp) error {
+	// approval of two step withdrawal leads to update of request to withdrawal
+	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeTwoStepWithdrawal {
+		return nil
+	}
+
 	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
 	if err != nil {
 		return errors.Wrap(err, "failed to approve reviewable request")

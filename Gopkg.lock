@@ -349,18 +349,8 @@
 [[projects]]
   branch = "master"
   name = "gitlab.com/swarmfund/go"
-  packages = [
-    "amount",
-    "build",
-    "crc16",
-    "hash",
-    "keypair",
-    "network",
-    "signcontrol",
-    "strkey",
-    "xdr"
-  ]
-  revision = "28ba62ca87337aeca85c149d1280ec00c89e39c5"
+  packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
+  revision = "504f88d57f8e23e3eba75c825fd02ed2b9214a30"
 
 [[projects]]
   branch = "master"
@@ -392,26 +382,7 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
-  packages = [
-    "cases",
-    "collate",
-    "collate/build",
-    "internal",
-    "internal/colltab",
-    "internal/gen",
-    "internal/tag",
-    "internal/triegen",
-    "internal/ucd",
-    "language",
-    "runes",
-    "secure/bidirule",
-    "transform",
-    "unicode/bidi",
-    "unicode/cldr",
-    "unicode/norm",
-    "unicode/rangetable",
-    "width"
-  ]
+  packages = ["cases","collate","collate/build","internal","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","runes","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable","width"]
   revision = "88f656faf3f37f690df1a32515b479415e1a6769"
 
 [[projects]]

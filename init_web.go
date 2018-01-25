@@ -217,7 +217,7 @@ func initWebActions(app *App) {
 		RequestSpecificFilters: map[string]string{
 			"dest_asset_code": "",
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw, xdr.ReviewableRequestTypeTwoStepWithdrawal},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
 		RequestSpecificFilters: map[string]string{
