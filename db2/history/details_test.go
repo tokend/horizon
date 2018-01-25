@@ -11,9 +11,7 @@ import (
 
 func TestOperation_Details(t *testing.T) {
 	var temp uint32 = 1
-	address := "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7"
-	accountType := int32(1)
-	rejectReason := "Some reject reason"
+
 	//todo add CreateAccount Marshal test
 	cases := []struct {
 		name            string
@@ -103,8 +101,8 @@ func TestOperation_Details(t *testing.T) {
 						FixedFee:    "0.0000",
 						PercentFee:  "0.0000",
 						FeeType:     1,
-						AccountID:   &address,
-						AccountType: &accountType,
+						AccountID:   "BA2UC6DJILEGPIHAPQFAVPGGGA7BF5PDJLB6WXHIOYO3RJZ3QIPRTEN7",
+						AccountType: 1,
 						Subtype:     1,
 						LowerBound:  123,
 						UpperBound:  12345,
@@ -232,7 +230,7 @@ func TestOperation_Details(t *testing.T) {
 				ReviewPaymentRequest: &ReviewPaymentRequestDetails{
 					PaymentID:    1,
 					Accept:       true,
-					RejectReason: &rejectReason,
+					RejectReason: "Some reject reason",
 				},
 			},
 			expectedDetails: `{
