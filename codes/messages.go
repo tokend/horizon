@@ -137,6 +137,7 @@ var messages = map[string]string{
 	"op_external_sys_id_exists":                      "External system account ID already exists",
 	"op_limits_update_request_reference_duplication": "Such request already exists",
 	"op_invalid_pre_confirmation_details":            "Invalid pre confirmation details",
+	"op_requires_kyc":								  "Operation counterparty must have KYC",
 }
 
 func getMessage(rawCode string) string {
