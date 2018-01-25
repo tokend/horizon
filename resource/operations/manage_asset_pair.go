@@ -7,5 +7,4 @@ type ManageAssetPair struct {
 	PhysicalPrice           string `json:"physical_price"`
 	PhysicalPriceCorrection string `json:"physical_price_correction"`
 	MaxPriceStep            string `json:"max_price_step"`
-	Policies                int32  `json:"policies_i"`
 }
