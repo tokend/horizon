@@ -5,8 +5,7 @@ import (
 
 	"time"
 
-	"github.com/go-errors/errors"
-	"github.com/guregu/null"
+	"github.com/sirupsen/logrus"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 )
@@ -18,23 +17,25 @@ type Operation struct {
 	TransactionHash  string            `db:"transaction_hash"`
 	ApplicationOrder int32             `db:"application_order"`
 	Type             xdr.OperationType `db:"type"`
-	DetailsString    null.String       `db:"details"`
+	Details          OperationDetails  `db:"details"`
 	LedgerCloseTime  time.Time         `db:"ledger_close_time"`
 	SourceAccount    string            `db:"source_account"`
 	State            OperationState    `db:"state"`
 	Identifier       int64             `db:"identifier"`
 }
 
-// UnmarshalDetails unmarshals the details of this operation into `dest`
-func (r *Operation) UnmarshalDetails(dest interface{}) error {
-	if !r.DetailsString.Valid {
-		return nil
+func (o *Operation) GetDetails() OperationDetails {
+	result := OperationDetails{
+		Type: o.Type,
 	}
 
-	err := json.Unmarshal([]byte(r.DetailsString.String), &dest)
+	details, err := json.Marshal(o.Details)
 	if err != nil {
-		err = errors.Wrap(err, 1)
+		logrus.WithError(err).Errorf("Error marshal operation details")
 	}
 
-	return err
+	if err := json.Unmarshal(details, &result); err != nil {
+		logrus.WithError(err).Errorf("Error unmarshal operation details")
+	}
+	return result
 }

@@ -101,7 +101,7 @@ func (ingest *Ingestion) Operation(
 	order int32,
 	source xdr.AccountId,
 	typ xdr.OperationType,
-	details map[string]interface{},
+	details history.OperationDetails,
 	ledgerCloseTime int64,
 	identifier uint64,
 	state history.OperationState,
