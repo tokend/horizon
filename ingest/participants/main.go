@@ -114,8 +114,12 @@ func ForOperation(
 		if saleClosed == nil {
 			break
 		}
-		result = addMatchParticipants(result, saleClosed.SaleOwner, saleClosed.SaleBaseBalance,
-			saleClosed.SaleQuoteBalance, false, &saleClosed.SaleDetails)
+
+		for i := range saleClosed.Results {
+			result = addMatchParticipants(result, saleClosed.SaleOwner, saleClosed.Results[i].SaleBaseBalance,
+				saleClosed.Results[i].SaleQuoteBalance, false, &saleClosed.Results[i].SaleDetails)
+		}
+
 		sourceParticipant = nil
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)

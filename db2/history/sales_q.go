@@ -170,12 +170,12 @@ func (q *saleQ) ByID(saleID uint64) (*Sale, error) {
 func (q *saleQ) Insert(sale Sale) error {
 	sql := sq.Insert("sale").
 		Columns(
-			"id", "owner_id", "base_asset", "quote_asset", "start_time", "end_time",
-			"price", "soft_cap", "hard_cap", "current_cap", "details", "state",
+			"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time",
+			"quote_assets", "soft_cap", "hard_cap", "current_cap", "details", "state",
 		).
 		Values(
-			sale.ID, sale.OwnerID, sale.BaseAsset, sale.QuoteAsset, sale.StartTime, sale.EndTime,
-			sale.Price, sale.SoftCap, sale.HardCap, sale.CurrentCap, sale.Details, sale.State,
+			sale.ID, sale.OwnerID, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
+			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.CurrentCap, sale.Details, sale.State,
 		)
 
 	_, err := q.parent.Exec(sql)
@@ -189,17 +189,17 @@ func (q *saleQ) Insert(sale Sale) error {
 // Update - updates existing sale
 func (q *saleQ) Update(sale Sale) error {
 	sql := sq.Update("sale").SetMap(map[string]interface{}{
-		"owner_id":    sale.OwnerID,
-		"base_asset":  sale.BaseAsset,
-		"quote_asset": sale.QuoteAsset,
-		"start_time":  sale.StartTime,
-		"end_time":    sale.EndTime,
-		"price":       sale.Price,
-		"soft_cap":    sale.SoftCap,
-		"hard_cap":    sale.HardCap,
-		"current_cap": sale.CurrentCap,
-		"details":     sale.Details,
-		"state":       sale.State,
+		"owner_id":            sale.OwnerID,
+		"base_asset":          sale.BaseAsset,
+		"default_quote_asset": sale.DefaultQuoteAsset,
+		"start_time":          sale.StartTime,
+		"end_time":            sale.EndTime,
+		"quote_assets":        sale.QuoteAssets,
+		"soft_cap":            sale.SoftCap,
+		"hard_cap":            sale.HardCap,
+		"current_cap":         sale.CurrentCap,
+		"details":             sale.Details,
+		"state":               sale.State,
 	}).Where("id = ?", sale.ID)
 
 	_, err := q.parent.Exec(sql)
@@ -301,5 +301,5 @@ func (q *saleQ) ForBaseAssets(baseAssets ...string) SalesQ {
 }
 
 var selectSales = sq.Select(
-	"id", "owner_id", "base_asset", "quote_asset", "start_time", "end_time", "price", "soft_cap", "hard_cap",
-	"current_cap", "details", "state").From("sale")
+	"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time", "quote_assets", "soft_cap", "hard_cap",
+	 "details", "state").From("sale")

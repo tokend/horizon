@@ -15,7 +15,6 @@ type SaleShowAction struct {
 	Record    *history.Sale
 	offers    []core.Offer
 	balances  []core.Balance
-	assetPair *core.AssetPair
 	result    resource.Sale
 }
 
@@ -72,23 +71,11 @@ func (action *SaleShowAction) loadRecord() {
 		action.Err = &problem.ServerError
 		return
 	}
-
-	action.assetPair, err = action.CoreQ().AssetPairs().
-		ByCode(action.Record.BaseAsset, action.Record.QuoteAsset)
-	if err != nil {
-		action.Log.WithError(err).
-			WithField("sale_id", action.Record.ID).
-			WithField("base", action.Record.BaseAsset).
-			WithField("quote", action.Record.QuoteAsset).
-			Error("failed to load asset pair for sale")
-		action.Err = &problem.ServerError
-		return
-	}
 }
 
 func (action *SaleShowAction) populateResult() {
 	action.result.Populate(action.Record)
-	err := action.result.PopulateStat(action.offers, action.balances, action.assetPair)
+	err := action.result.PopulateStat(action.offers, action.balances)
 	if err != nil {
 		action.Log.WithError(err).
 			WithField("request_id", action.RequestID).

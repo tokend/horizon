@@ -42,7 +42,8 @@ func initCharts(app *App) {
 			return
 		}
 		data := change.Created.Data.Sale
-		app.charts.Set(string(data.BaseAsset), ts, int64(data.CurrentCap))
+		// TODO fix me
+		app.charts.Set(string(data.BaseAsset), ts, int64(-2))
 	})
 
 	// sales current cap charts
@@ -54,7 +55,7 @@ func initCharts(app *App) {
 			return
 		}
 		data := change.Updated.Data.Sale
-		app.charts.Set(string(data.BaseAsset), ts, int64(data.CurrentCap))
+		app.charts.Set(string(data.BaseAsset), ts, int64(-1))
 	})
 
 	// sun issued
