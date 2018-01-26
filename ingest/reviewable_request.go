@@ -154,21 +154,27 @@ func getWithdrawalRequest(request *xdr.WithdrawalRequest) history.WithdrawalRequ
 	}
 }
 
-
-
 func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
+	var quoteAssets []history.SaleQuoteAsset
+	for i := range request.QuoteAssets {
+		quoteAssets = append(quoteAssets, history.SaleQuoteAsset{
+			Price:      amount.StringU(uint64(request.QuoteAssets[i].Price)),
+			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
+		})
+	}
+
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.Details), &details)
 	return history.SaleRequest{
-		BaseAsset:  string(request.BaseAsset),
-		QuoteAsset: string(request.QuoteAsset),
-		StartTime:  time.Unix(int64(request.StartTime), 0).UTC(),
-		EndTime:    time.Unix(int64(request.EndTime), 0).UTC(),
-		Price:      amount.StringU(uint64(request.Price)),
-		SoftCap:    amount.StringU(uint64(request.SoftCap)),
-		HardCap:    amount.StringU(uint64(request.HardCap)),
-		Details:    details,
+		BaseAsset:         string(request.BaseAsset),
+		DefaultQuoteAsset: string(request.DefaultQuoteAsset),
+		StartTime:         time.Unix(int64(request.StartTime), 0).UTC(),
+		EndTime:           time.Unix(int64(request.EndTime), 0).UTC(),
+		SoftCap:           amount.StringU(uint64(request.SoftCap)),
+		HardCap:           amount.StringU(uint64(request.HardCap)),
+		Details:           details,
+		QuoteAssets:       quoteAssets,
 	}
 }
 
