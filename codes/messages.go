@@ -129,7 +129,7 @@ var messages = map[string]string{
 	"op_asset_does_not_exists":                       "Asset does not exist",
 	"op_max_issuance_amount_exceeded":                "Max issuance amount exceeded",
 	"op_insufficient_available_for_issuance_amount":  "Insufficient available for issuance amount",
-	"op_full_line":                                   "Can't fund balance - total funds exceed UINT64_MAX",
+	"op_full_line":                                   "Can't fund balance - total funds exceed system limit",
 	"op_base_asset_does_not_exists":                  "Base asset does not exist",
 	"op_hard_cap_will_exceed_max_issuance":           "Hard cap will exceed max issuance",
 	"op_insufficient_preissued_for_hard_cap":         "Insufficient amount of tokens available for hard cap",
@@ -137,6 +137,7 @@ var messages = map[string]string{
 	"op_external_sys_id_exists":                      "External system account ID already exists",
 	"op_limits_update_request_reference_duplication": "Such request already exists",
 	"op_invalid_pre_confirmation_details":            "Invalid pre confirmation details",
+	"op_requires_kyc":                                "You or your counterpary need to complete KYC to use specified asset",
 }
 
 func getMessage(rawCode string) string {

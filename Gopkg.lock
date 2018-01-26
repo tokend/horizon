@@ -287,7 +287,7 @@
   branch = "master"
   name = "gitlab.com/swarmfund/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "504f88d57f8e23e3eba75c825fd02ed2b9214a30"
+  revision = "0bdb2124f336f2f2de71730f702ddbb43a938fb2"
 
 [[projects]]
   branch = "master"
@@ -310,7 +310,7 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
-  packages = ["cases","collate","collate/build","internal","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","runes","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable","width"]
+  packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
   revision = "88f656faf3f37f690df1a32515b479415e1a6769"
 
 [[projects]]
@@ -346,6 +346,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6dbaadcbff8ec1d607b446a1bd41b486bbedab6123419cee8189438f3ec918e6"
+  inputs-digest = "328e5daa691ff1c0aedda641000180f7e6a67250ebf70de6cf8fdcf54fff84e5"
   solver-name = "gps-cdcl"
   solver-version = 1

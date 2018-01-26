@@ -7,8 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -20,21 +18,19 @@ type Sale struct {
 	ID         string                 `json:"id"`
 	OwnerID    string                 `json:"owner_id"`
 	BaseAsset  string                 `json:"base_asset"`
-	QuoteAsset string                 `json:"quote_asset"`
+	DefaultQuoteAsset string                 `json:"default_quote_asset"`
 	StartTime  time.Time              `json:"start_time"`
 	EndTime    time.Time              `json:"end_time"`
-	Price      string                 `json:"price"`
 	SoftCap    string                 `json:"soft_cap"`
 	HardCap    string                 `json:"hard_cap"`
-	CurrentCap string                 `json:"current_cap"`
 	Details    map[string]interface{} `json:"details"`
 	State      base.Flag              `json:"state"`
 	Statistics SaleStatistics         `json:"statistics"`
+	QuoteAssets map[string]interface{} `json:"quote_assets"`
 }
 
 type SaleStatistics struct {
 	Investors     int    `json:"investors"`
-	AverageAmount string `json:"average_amount"`
 }
 
 func (s *Sale) Populate(h *history.Sale) {
@@ -42,19 +38,18 @@ func (s *Sale) Populate(h *history.Sale) {
 	s.ID = strconv.FormatUint(h.ID, 10)
 	s.OwnerID = h.OwnerID
 	s.BaseAsset = h.BaseAsset
-	s.QuoteAsset = h.QuoteAsset
+	s.DefaultQuoteAsset = h.DefaultQuoteAsset
 	s.StartTime = h.StartTime
 	s.EndTime = h.EndTime
-	s.Price = amount.StringU(h.Price)
 	s.SoftCap = amount.StringU(h.SoftCap)
 	s.HardCap = amount.StringU(h.HardCap)
-	s.CurrentCap = amount.StringU(h.CurrentCap)
 	s.Details = h.Details
 	s.State.Name = h.State.String()
 	s.State.Value = int32(h.State)
+	s.QuoteAssets = h.QuoteAssets
 }
 
-func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance, assetPair *core.AssetPair) error {
+func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) error {
 	if len(offers) == 0 && len(balances) == 0 {
 		return nil
 	}
@@ -74,31 +69,8 @@ func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance, assetP
 		balanceSum = balanceSum.Add(balanceSum, big.NewInt(balance.Amount))
 	}
 
-	balanceSumConverted, isConverted, err := assetPair.ConvertToDestAsset(s.QuoteAsset, balanceSum.Int64())
-	if err != nil {
-		return errors.Wrap(err,
-			"failed to convert balance summary",
-			logan.F{
-				"from":  assetPair.BaseAsset,
-				"to":    assetPair.QuoteAsset,
-				"price": assetPair.CurrentPrice,
-			})
-	}
-
-	if !isConverted {
-		return errors.Wrap(
-			errors.New("failed to convert due to overflow"), "",
-			logan.F{
-				"from":  assetPair.BaseAsset,
-				"to":    assetPair.QuoteAsset,
-				"price": assetPair.CurrentPrice,
-			})
-	}
-	sum = sum.Add(sum, big.NewInt(balanceSumConverted))
-
 	quantity := len(uniqueInvestors)
 	s.Statistics.Investors = quantity
-	s.Statistics.AverageAmount = divToAmountStr(sum, quantity)
 	return nil
 }
 
