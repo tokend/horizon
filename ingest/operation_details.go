@@ -179,8 +179,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// no details needed
 	case xdr.OperationTypeCreateIssuanceRequest:
 		op := c.Operation().Body.MustCreateIssuanceRequestOp()
-		details["fee_fixed"] = amount.StringU(uint64(op.Request.Fee.Fixed))
-		details["fee_percent"] = amount.StringU(uint64(op.Request.Fee.Percent))
+		opResult := c.OperationResult().MustCreateIssuanceRequestResult().MustSuccess()
+		details["fee_fixed"] = amount.StringU(uint64(opResult.Fee.Fixed))
+		details["fee_percent"] = amount.StringU(uint64(opResult.Fee.Percent))
 		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
 		details["asset"] = string(op.Request.Asset)
