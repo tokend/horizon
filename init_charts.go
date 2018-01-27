@@ -74,6 +74,10 @@ func initCharts(app *App) {
 	})
 
 	// sun issued
+	prevIssued := map[string]*int64 {
+		"ETH": nil,
+		"BTC": nil,
+	}
 	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
 		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
 			return
@@ -82,10 +86,27 @@ func initCharts(app *App) {
 			return
 		}
 		data := change.Updated.Data.Asset
-		if string(data.Code) != "SUN" {
+		code := string(data.Code)
+		if _, ok := prevIssued[code]; !ok {
 			return
 		}
-		app.charts.Set("SUN", ts, int64(data.Issued))
+
+		issued := int64(data.Issued)
+		prevIssued[code] = &issued
+		logger := log.WithField("listener", "sales_current_cap")
+		converter, err := exchange.NewConverter(app.CoreQ())
+		if err != nil {
+			logger.WithError(err).Error("Failed to init converter")
+			return
+		}
+
+		totalIssued, err := convertMap(prevIssued, "SUN", converter)
+		if err != nil {
+			logger.WithError(err).Error("Failed to convert map of ETH BTC to SUN")
+			return
+		}
+
+		app.charts.Set("SUN", ts, totalIssued)
 	})
 
 	if err := listener.Init(); err != nil {
@@ -214,6 +235,31 @@ func (l *MetaListener) Run() {
 
 func init() {
 	appInit.Add("swarm_horizon", initCharts, "horizon-db")
+}
+
+func convertMap(data map[string]*int64, destAsset string, converter *exchange.Converter) (int64, error) {
+	var result int64
+	for key, value := range data {
+		if value == nil {
+			continue
+		}
+
+		converted, err := converter.TryToConvertWithOneHop(*value, key, destAsset)
+		if err != nil || converted == nil {
+			if err == nil {
+				err = errors.New("failed to find path to convert asset")
+			}
+			return 0, errors.Wrap(err, "failed to convert asset")
+		}
+
+		var ok bool
+		result, ok = amount.SafePositiveSum(result, *converted)
+		if !ok {
+			return 0, errors.New("overflow on conversion")
+		}
+	}
+
+	return result, nil
 }
 
 
