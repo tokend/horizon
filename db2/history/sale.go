@@ -20,8 +20,8 @@ type Sale struct {
 	Details           db2.Details `db:"details"`
 	State             SaleState   `db:"state"`
 	QuoteAssets       QuoteAssets `db:"quote_assets"`
-	BaseCurrentCap    string      `db:"base_current_cap"`
-	BaseHardCap       string      `db:"base_hard_cap"`
+	BaseCurrentCap    int64      `db:"base_current_cap"`
+	BaseHardCap       int64      `db:"base_hard_cap"`
 }
 
 type QuoteAssets struct {

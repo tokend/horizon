@@ -50,8 +50,8 @@ func (s *Sale) Populate(h *history.Sale) {
 	s.State.Name = h.State.String()
 	s.State.Value = int32(h.State)
 	s.QuoteAssets = h.QuoteAssets
-	s.BaseHardCap = h.BaseHardCap
-	s.BaseCurrentCap = h.BaseCurrentCap
+	s.BaseHardCap = amount.String(h.BaseHardCap)
+	s.BaseCurrentCap = amount.String(h.BaseCurrentCap)
 	s.CurrentCap = h.CurrentCap
 }
 
