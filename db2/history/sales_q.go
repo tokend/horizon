@@ -132,11 +132,13 @@ func (q *saleQ) Insert(sale Sale) error {
 	sql := sq.Insert("sale").
 		Columns(
 			"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time",
-			"quote_assets", "soft_cap", "hard_cap", "current_cap", "details", "state",
+			"quote_assets", "soft_cap", "hard_cap", "details", "state", "base_current_cap",
+			"base_hard_cap",
 		).
 		Values(
 			sale.ID, sale.OwnerID, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
-			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.CurrentCap, sale.Details, sale.State,
+			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.Details, sale.State,
+			sale.BaseCurrentCap, sale.BaseHardCap,
 		)
 
 	_, err := q.parent.Exec(sql)
@@ -158,11 +160,10 @@ func (q *saleQ) Update(sale Sale) error {
 		"quote_assets":        sale.QuoteAssets,
 		"soft_cap":            sale.SoftCap,
 		"hard_cap":            sale.HardCap,
-		"current_cap":         sale.CurrentCap,
 		"details":             sale.Details,
 		"state":               sale.State,
-		"base_hard_cap": sale.BaseHardCap,
-		"base_current_cap": sale.BaseCurrentCap,
+		"base_hard_cap":       sale.BaseHardCap,
+		"base_current_cap":    sale.BaseCurrentCap,
 	}).Where("id = ?", sale.ID)
 
 	_, err := q.parent.Exec(sql)
@@ -265,4 +266,4 @@ func (q *saleQ) ForBaseAssets(baseAssets ...string) SalesQ {
 
 var selectSales = sq.Select(
 	"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time", "quote_assets", "soft_cap", "hard_cap",
-	 "details", "state", "base_hard_cap", "base_current_cap").From("sale")
+	"details", "state", "base_hard_cap", "base_current_cap").From("sale")

@@ -21,6 +21,7 @@
 // migrations/020_alter_sales_details.sql
 // migrations/021_sale_quote_assets.sql
 // migrations/022_sale_quote_assets.sql
+// migrations/023_sale_current_cap.sql
 // DO NOT EDIT!
 
 package schema
@@ -508,6 +509,26 @@ func migrations022_sale_quote_assetsSql() (*asset, error) {
 	return a, nil
 }
 
+var _migrations023_sale_current_capSql = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\x6c\xcb\xc1\x0a\xc2\x20\x1c\x07\xe0\xbb\xe0\x3b\xfc\x8e\x1b\x35\x90\xae\xa3\xc0\xd4\x28\xfa\x4f\x43\xf4\x1c\x32\x24\x82\x5a\xc3\x16\xbd\xfe\xae\x3b\xec\xfe\x7d\x4d\x83\xcd\xfb\xf9\x28\x69\xca\x88\x23\x67\x92\x82\xf1\x08\xf2\x48\x06\xdf\xf4\xca\xd0\xde\xdd\xa0\x1c\xc5\xce\xa2\xff\x95\x92\x87\xe9\xde\xa7\xb1\xe5\x8c\xb3\x65\xd6\x9f\xff\xb0\xd2\xa5\xd6\x2b\x1b\x36\x76\xc6\x5f\x54\xb5\x13\x5b\x51\xc3\xba\x00\x1b\x89\xa0\xce\x46\x5d\x51\x2d\xe5\x61\x0f\x51\x43\x9b\x93\x8c\x14\x20\x5a\xce\xe6\x00\x00\x00\xff\xff\xf8\x20\xae\x9a\xb3\x00\x00\x00")
+
+func migrations023_sale_current_capSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations023_sale_current_capSql,
+		"migrations/023_sale_current_cap.sql",
+	)
+}
+
+func migrations023_sale_current_capSql() (*asset, error) {
+	bytes, err := migrations023_sale_current_capSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/023_sale_current_cap.sql", size: 179, mode: os.FileMode(438), modTime: time.Unix(1517064978, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 // Asset loads and returns the asset for the given name.
 // It returns an error if the asset could not be found or
 // could not be loaded.
@@ -581,6 +602,7 @@ var _bindata = map[string]func() (*asset, error){
 	"migrations/020_alter_sales_details.sql": migrations020_alter_sales_detailsSql,
 	"migrations/021_sale_quote_assets.sql": migrations021_sale_quote_assetsSql,
 	"migrations/022_sale_quote_assets.sql": migrations022_sale_quote_assetsSql,
+	"migrations/023_sale_current_cap.sql": migrations023_sale_current_capSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -645,6 +667,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"020_alter_sales_details.sql": &bintree{migrations020_alter_sales_detailsSql, map[string]*bintree{}},
 		"021_sale_quote_assets.sql": &bintree{migrations021_sale_quote_assetsSql, map[string]*bintree{}},
 		"022_sale_quote_assets.sql": &bintree{migrations022_sale_quote_assetsSql, map[string]*bintree{}},
+		"023_sale_current_cap.sql": &bintree{migrations023_sale_current_capSql, map[string]*bintree{}},
 	}},
 }}
 
