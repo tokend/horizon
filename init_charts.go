@@ -11,6 +11,8 @@ import (
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/swarmfund/horizon/exchange"
+	"gitlab.com/swarmfund/go/amount"
 )
 
 func initCharts(app *App) {
@@ -42,8 +44,7 @@ func initCharts(app *App) {
 			return
 		}
 		data := change.Created.Data.Sale
-		// TODO fix me
-		app.charts.Set(string(data.BaseAsset), ts, int64(-2))
+		app.charts.Set(string(data.BaseAsset), ts, int64(0))
 	})
 
 	// sales current cap charts
@@ -55,7 +56,21 @@ func initCharts(app *App) {
 			return
 		}
 		data := change.Updated.Data.Sale
-		app.charts.Set(string(data.BaseAsset), ts, int64(-1))
+		// TODO: fix me
+		logger := log.WithField("listener", "sales_current_cap")
+		converter, err := exchange.NewConverter(app.CoreQ())
+		if err != nil {
+			logger.WithError(err).Error("Failed to init converter")
+			return
+		}
+
+		cupInQuote, err := getCurrentCapInDefaultQuoteForEntry(*data, converter)
+		if err != nil {
+			logger.WithError(err).Error("Failed to convert")
+			return
+		}
+
+		app.charts.Set(string(data.BaseAsset), ts, cupInQuote)
 	})
 
 	// sun issued
@@ -74,10 +89,10 @@ func initCharts(app *App) {
 	})
 
 	if err := listener.Init(); err != nil {
-		//panic(errors.Wrap(err, "failed to init chart listener"))
+		panic(errors.Wrap(err, "failed to init chart listener"))
 	}
 
-	//go listener.Run()
+	go listener.Run()
 }
 
 type Charts struct {
@@ -200,3 +215,28 @@ func (l *MetaListener) Run() {
 func init() {
 	appInit.Add("swarm_horizon", initCharts, "horizon-db")
 }
+
+
+func getCurrentCapInDefaultQuoteForEntry(sale xdr.SaleEntry, converter *exchange.Converter) (int64, error) {
+	totalCapInDefaultQuoteAsset := int64(0)
+	for _, quoteAsset := range sale.QuoteAssets {
+		currentCapInDefaultQuoteAsset, err := converter.TryToConvertWithOneHop(int64(quoteAsset.CurrentCap),
+			string(quoteAsset.QuoteAsset), string(sale.DefaultQuoteAsset))
+		if err != nil {
+			return 0, errors.Wrap(err, "failed to convert current cap to default quote asset")
+		}
+
+		if currentCapInDefaultQuoteAsset == nil {
+			return 0, errors.New("failed to convert to current cap: no path found")
+		}
+
+		var isOk bool
+		totalCapInDefaultQuoteAsset, isOk = amount.SafePositiveSum(totalCapInDefaultQuoteAsset, *currentCapInDefaultQuoteAsset)
+		if !isOk {
+			return 0, errors.New("failed to find total cap in default quote asset: overflow")
+		}
+	}
+
+	return totalCapInDefaultQuoteAsset, nil
+}
+
