@@ -2,6 +2,7 @@ package core
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/swarmfund/horizon/db2/sqx"
 )
 
 // AssetPairsQ is a helper interface to aid in configuring queries that loads
@@ -9,6 +10,8 @@ import (
 type AssetPairsQ interface {
 	// ByCode returns nil, if asset pair not found
 	ByCode(base, quote string) (*AssetPair, error)
+	// ForAssets loads pairs where baseAsset in baseAssets and quoteAsset in quoteAssets
+	ForAssets(baseAssets, quoteAssets []string) (AssetPairsQ)
 	// Select - selects all assets pairs with specified filters
 	Select() ([]AssetPair, error)
 }
@@ -45,6 +48,17 @@ func (q *assetPairQ) ByCode(base, quote string) (*AssetPair, error) {
 	}
 
 	return &result, err
+}
+
+// ForAssets loads pairs where baseAsset in baseAssets and quoteAsset in quoteAssets
+func (q *assetPairQ) ForAssets(baseAssets, quoteAssets []string) (AssetPairsQ) {
+	if q.Err != nil {
+		return q
+	}
+	baseAssetQuery, baseAssetParams := sqx.InForString("base", baseAssets...)
+	quoteAssetQuery, quoteAssetParams := sqx.InForString("quote", quoteAssets...)
+	q.sql = q.sql.Where(baseAssetQuery, baseAssetParams...).Where(quoteAssetQuery, quoteAssetParams...)
+	return q
 }
 
 var selectAssetPair = sq.Select("a.base, a.quote, a.current_price, a.physical_price, a.physical_price_correction, a.max_price_step, a.policies").From("asset_pair a")

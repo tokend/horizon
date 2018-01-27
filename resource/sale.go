@@ -14,23 +14,26 @@ import (
 )
 
 type Sale struct {
-	PT         string                 `json:"paging_token"`
-	ID         string                 `json:"id"`
-	OwnerID    string                 `json:"owner_id"`
-	BaseAsset  string                 `json:"base_asset"`
+	PT                string                 `json:"paging_token"`
+	ID                string                 `json:"id"`
+	OwnerID           string                 `json:"owner_id"`
+	BaseAsset         string                 `json:"base_asset"`
 	DefaultQuoteAsset string                 `json:"default_quote_asset"`
-	StartTime  time.Time              `json:"start_time"`
-	EndTime    time.Time              `json:"end_time"`
-	SoftCap    string                 `json:"soft_cap"`
-	HardCap    string                 `json:"hard_cap"`
-	Details    map[string]interface{} `json:"details"`
-	State      base.Flag              `json:"state"`
-	Statistics SaleStatistics         `json:"statistics"`
-	QuoteAssets map[string]interface{} `json:"quote_assets"`
+	StartTime         time.Time              `json:"start_time"`
+	EndTime           time.Time              `json:"end_time"`
+	SoftCap           string                 `json:"soft_cap"`
+	HardCap           string                 `json:"hard_cap"`
+	Details           map[string]interface{} `json:"details"`
+	State             base.Flag              `json:"state"`
+	Statistics        SaleStatistics         `json:"statistics"`
+	QuoteAssets       history.QuoteAssets    `json:"quote_assets"`
+	BaseHardCap       string                 `json:"base_hard_cap"`
+	BaseCurrentCap    string                 `json:"base_current_cap"`
+	CurrentCap        string                 `json:"current_cap"`
 }
 
 type SaleStatistics struct {
-	Investors     int    `json:"investors"`
+	Investors int `json:"investors"`
 }
 
 func (s *Sale) Populate(h *history.Sale) {
@@ -47,6 +50,9 @@ func (s *Sale) Populate(h *history.Sale) {
 	s.State.Name = h.State.String()
 	s.State.Value = int32(h.State)
 	s.QuoteAssets = h.QuoteAssets
+	s.BaseHardCap = h.BaseHardCap
+	s.BaseCurrentCap = h.BaseCurrentCap
+	s.CurrentCap = h.CurrentCap
 }
 
 func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) error {

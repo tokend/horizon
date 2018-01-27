@@ -2,35 +2,24 @@ package db2
 
 import (
 	"database/sql/driver"
-	"encoding/json"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type Details map[string]interface{}
 
 func (r Details) Value() (driver.Value, error) {
-	data, err := json.Marshal(r)
+	result, err := DriverValue(r)
 	if err != nil {
-		return nil, errors.New("failed to marshal sale details")
+		return nil, errors.Wrap(err, "failed to marshal details")
 	}
 
-	return data, nil
+	return result, nil
 }
 
 func (r *Details) Scan(src interface{}) error {
-	var data []byte
-	switch rawData := src.(type) {
-	case []byte:
-		data = rawData
-	case string:
-		data = []byte(rawData)
-	default:
-		return errors.New("Unexpected type for details")
-	}
-
-	err := json.Unmarshal(data, r)
+	err := DriveScan(src, r)
 	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal details")
+		return errors.Wrap(err, "failed to scan details")
 	}
 
 	return nil

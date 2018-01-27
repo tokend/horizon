@@ -25,6 +25,8 @@ type Balance struct {
 	Locked        string `json:"locked,omitempty"`
 	RequireReview bool   `json:"require_review"`
 	AssetDetails  *Asset `json:"asset_details,omitempty"`
+	ConvertedBalance string `json:"converted_balance,omitempty"`
+	ConvertedLocked string `json:"converted_locked,omitempty"`
 }
 
 // HistoryAccount is a simple resource, used for the account collection actions.

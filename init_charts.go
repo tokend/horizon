@@ -74,10 +74,10 @@ func initCharts(app *App) {
 	})
 
 	if err := listener.Init(); err != nil {
-		panic(errors.Wrap(err, "failed to init chart listener"))
+		//panic(errors.Wrap(err, "failed to init chart listener"))
 	}
 
-	go listener.Run()
+	//go listener.Run()
 }
 
 type Charts struct {
