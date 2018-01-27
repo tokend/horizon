@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/pkg/errors"
+	"github.com/zenazn/goji/web"
 	"gitlab.com/swarmfund/go/signcontrol"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/actions"
@@ -17,8 +19,6 @@ import (
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/toid"
-	"github.com/pkg/errors"
-	"github.com/zenazn/goji/web"
 )
 
 // Action is the "base type" for all actions in horizon.  It provides
@@ -73,6 +73,7 @@ func (action *Action) IsAllowed(ownersOfData ...string) {
 func (action *Action) isAllowed(ownerOfData string) {
 	//return if develop mode without signatures is used
 	if action.App.config.SkipCheck {
+		action.IsAdmin = true
 		return
 	}
 
@@ -338,6 +339,14 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 		Weight:     int32(account.Thresholds[0]),
 		SignerType: action.getMasterSignerType(),
 		Identity:   0,
+	})
+
+	signers = append(signers, core.Signer{
+		Accountid: account.RecoveryID,
+		Publickey: account.RecoveryID,
+		Weight:    255,
+		SignerType: action.getMasterSignerType(),
+		Identity:	0,
 	})
 
 	return signers, nil

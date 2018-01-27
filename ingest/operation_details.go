@@ -64,6 +64,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["signer_type"] = op.Signer.SignerType
 			details["signer_identity"] = op.Signer.Identity
 		}
+
+		if op.LimitsUpdateRequestData != nil {
+			details["limits_update_request_document_hash"] = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
+		}
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 		if op.Fee != nil {
@@ -105,11 +109,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		details["dest_asset"] = request.Details.AutoConversion.DestAsset
 		details["dest_amount"] = amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount))
-	case xdr.OperationTypeRecover:
-		op := c.Operation().Body.MustRecoverOp()
-		details["account"] = op.Account.Address()
-		details["old_signer"] = op.OldSigner
-		details["new_signer"] = op.NewSigner
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
 		details["destination"] = op.Destination
@@ -180,8 +179,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// no details needed
 	case xdr.OperationTypeCreateIssuanceRequest:
 		op := c.Operation().Body.MustCreateIssuanceRequestOp()
-		details["fee_fixed"] = amount.StringU(uint64(op.Request.Fee.Fixed))
-		details["fee_percent"] = amount.StringU(uint64(op.Request.Fee.Percent))
+		opResult := c.OperationResult().MustCreateIssuanceRequestResult().MustSuccess()
+		details["fee_fixed"] = amount.StringU(uint64(opResult.Fee.Fixed))
+		details["fee_percent"] = amount.StringU(uint64(opResult.Fee.Percent))
 		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
 		details["asset"] = string(op.Request.Asset)

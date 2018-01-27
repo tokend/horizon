@@ -3,6 +3,7 @@ package core
 import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2/sqx"
 )
 
 // AssetQI is a helper interface to aid in configuring queries that loads
@@ -12,6 +13,10 @@ type AssetQI interface {
 	ByCode(assetCode string) (*Asset, error)
 	// ForOwner - filters assets by owner
 	ForOwner(owner string) AssetQI
+	// ForCodes - filters assets by code
+	ForCodes(codes []string) AssetQI
+	// ForPolicy -returns assets with specified policy
+	ForPolicy(policy uint32) AssetQI
 	// Select - selects assets for specified filter
 	Select() ([]Asset, error)
 }
@@ -48,6 +53,26 @@ func (q *assetQ) ForOwner(ownerID string) AssetQI {
 	}
 
 	q.sql = q.sql.Where("a.owner = ?", ownerID)
+	return q
+}
+
+func (q *assetQ) ForPolicy(policy uint32) AssetQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("a.policies & ? = ?", policy, policy)
+	return q
+}
+
+// ForCodes - filters assets by code
+func (q *assetQ) ForCodes(codes []string) AssetQI {
+	if q.Err != nil {
+		return q
+	}
+
+	query, values := sqx.InForString("code", codes...)
+	q.sql = q.sql.Where(query, values...)
 	return q
 }
 

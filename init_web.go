@@ -127,6 +127,11 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
 	r.Get("/accounts/:id/summary", &AccountSummaryAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
+	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{
+		// TODO: fix me
+		ConvertToAsset: "SUN",
+	})
+
 	r.Get("/accounts/:account_id/signers/:id", &SignerShowAction{})
 	r.Get("/accounts/:account_id/operations", &OperationIndexAction{}, 1)
 	r.Get("/accounts/:account_id/payments", &OperationIndexAction{
@@ -182,6 +187,7 @@ func initWebActions(app *App) {
 	r.Get("/prices/history", &PricesHistoryAction{})
 	r.Get("/assets", &AssetsIndexAction{})
 	r.Get("/assets/:code", &AssetsShowAction{})
+	r.Get("/assets/:code/holders", &AssetHoldersShowAction{})
 	r.Get("/asset_pairs", &AssetPairsAction{})
 	r.Get("/asset_pairs/convert", &AssetPairsConverterAction{})
 
@@ -214,7 +220,7 @@ func initWebActions(app *App) {
 		RequestSpecificFilters: map[string]string{
 			"dest_asset_code": "",
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw, xdr.ReviewableRequestTypeTwoStepWithdrawal},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
 		RequestSpecificFilters: map[string]string{
@@ -222,12 +228,20 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
+	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]string{
+			"document_hash": "",
+		},
+	})
 
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
 	r.Get("/sales", &SaleIndexAction{})
 
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
+		// DISCLAIMER: while following is true, it does not currently applies
+		// API does not accept transactions make sure DisableAPISubmit is set to true
+		//
 		// legacy constraints:
 		// * not signed POST /transactions should trigger TFA flow if needed
 		// * not signed POST /transactions should eventually make network submission

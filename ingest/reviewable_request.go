@@ -139,30 +139,48 @@ func getWithdrawalRequest(request *xdr.WithdrawalRequest) history.WithdrawalRequ
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.ExternalDetails), &details)
+
+	var preConfirmationDetails map[string]interface{}
+	_ = json.Unmarshal([]byte(request.PreConfirmationDetails), &preConfirmationDetails)
 	return history.WithdrawalRequest{
-		BalanceID:       request.Balance.AsString(),
-		Amount:          amount.StringU(uint64(request.Amount)),
-		FixedFee:        amount.StringU(uint64(request.Fee.Fixed)),
-		PercentFee:      amount.StringU(uint64(request.Fee.Percent)),
-		ExternalDetails: details,
-		DestAssetCode:   string(request.Details.AutoConversion.DestAsset),
-		DestAssetAmount: amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
+		BalanceID:              request.Balance.AsString(),
+		Amount:                 amount.StringU(uint64(request.Amount)),
+		FixedFee:               amount.StringU(uint64(request.Fee.Fixed)),
+		PercentFee:             amount.StringU(uint64(request.Fee.Percent)),
+		ExternalDetails:        details,
+		DestAssetCode:          string(request.Details.AutoConversion.DestAsset),
+		DestAssetAmount:        amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
+		PreConfirmationDetails: preConfirmationDetails,
 	}
 }
 
 func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
+	var quoteAssets []history.SaleQuoteAsset
+	for i := range request.QuoteAssets {
+		quoteAssets = append(quoteAssets, history.SaleQuoteAsset{
+			Price:      amount.StringU(uint64(request.QuoteAssets[i].Price)),
+			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
+		})
+	}
+
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.Details), &details)
 	return history.SaleRequest{
-		BaseAsset:  string(request.BaseAsset),
-		QuoteAsset: string(request.QuoteAsset),
-		StartTime:  time.Unix(int64(request.StartTime), 0).UTC(),
-		EndTime:    time.Unix(int64(request.EndTime), 0).UTC(),
-		Price:      amount.StringU(uint64(request.Price)),
-		SoftCap:    amount.StringU(uint64(request.SoftCap)),
-		HardCap:    amount.StringU(uint64(request.HardCap)),
-		Details:    details,
+		BaseAsset:         string(request.BaseAsset),
+		DefaultQuoteAsset: string(request.DefaultQuoteAsset),
+		StartTime:         time.Unix(int64(request.StartTime), 0).UTC(),
+		EndTime:           time.Unix(int64(request.EndTime), 0).UTC(),
+		SoftCap:           amount.StringU(uint64(request.SoftCap)),
+		HardCap:           amount.StringU(uint64(request.HardCap)),
+		Details:           details,
+		QuoteAssets:       quoteAssets,
+	}
+}
+
+func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) history.LimitsUpdateRequest {
+	return history.LimitsUpdateRequest{
+		DocumentHash: hex.EncodeToString(request.DocumentHash[:]),
 	}
 }
 
@@ -185,6 +203,10 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, 
 		rawDetails = getWithdrawalRequest(body.WithdrawalRequest)
 	case xdr.ReviewableRequestTypeSale:
 		rawDetails = getSaleRequest(body.SaleCreationRequest)
+	case xdr.ReviewableRequestTypeLimitsUpdate:
+		rawDetails = getLimitsUpdateRequest(body.LimitsUpdateRequest)
+	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
+		rawDetails = getWithdrawalRequest(body.TwoStepWithdrawalRequest)
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

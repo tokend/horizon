@@ -57,8 +57,6 @@ func ForOperation(
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		createWithdrawalRequest := op.Body.MustCreateWithdrawalRequestOp()
 		sourceParticipant.BalanceID = &createWithdrawalRequest.Request.Balance
-	case xdr.OperationTypeRecover:
-		result = append(result, Participant{op.Body.MustRecoverOp().Account, nil, nil})
 	case xdr.OperationTypeManageBalance:
 		manageBalanceOp := op.Body.MustManageBalanceOp()
 		if sourceParticipant.AccountID.Address() != manageBalanceOp.Destination.Address() {
@@ -116,8 +114,12 @@ func ForOperation(
 		if saleClosed == nil {
 			break
 		}
-		result = addMatchParticipants(result, saleClosed.SaleOwner, saleClosed.SaleBaseBalance,
-			saleClosed.SaleQuoteBalance, false, &saleClosed.SaleDetails)
+
+		for i := range saleClosed.Results {
+			result = addMatchParticipants(result, saleClosed.SaleOwner, saleClosed.Results[i].SaleBaseBalance,
+				saleClosed.Results[i].SaleQuoteBalance, false, &saleClosed.Results[i].SaleDetails)
+		}
+
 		sourceParticipant = nil
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
