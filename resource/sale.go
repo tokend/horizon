@@ -68,10 +68,10 @@ func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) error 
 
 	balanceSum := big.NewInt(0)
 	for _, balance := range balances {
-		uniqueInvestors[balance.AccountID] = true
 		if balance.Amount == 0 {
 			continue
 		}
+		uniqueInvestors[balance.AccountID] = true
 		balanceSum = balanceSum.Add(balanceSum, big.NewInt(balance.Amount))
 	}
 
