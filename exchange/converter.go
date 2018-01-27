@@ -62,12 +62,12 @@ func (c *Converter) convertWithMaxPath(amount int64, fromAsset, toAsset string, 
 	converted := false
 	var result int64
 	for _, fromPair := range fromPairs {
-		hopAmount, isOverflow, err := fromPair.ConvertFromSourceAsset(fromAsset, amount)
+		hopAmount, isConverted, err := fromPair.ConvertFromSourceAsset(fromAsset, amount)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert from asset to hop asset")
 		}
 
-		if isOverflow {
+		if !isConverted {
 			continue
 		}
 
