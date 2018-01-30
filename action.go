@@ -328,6 +328,14 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 		return nil, err
 	}
 
+	signers = append(signers, core.Signer{
+		Accountid: account.RecoveryID,
+		Publickey: account.RecoveryID,
+		Weight:    255,
+		SignerType: action.getMasterSignerType(),
+		Identity:	0,
+	})
+
 	// is master key allowed
 	if account.Thresholds[0] <= 0 {
 		return signers, nil
@@ -339,14 +347,6 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 		Weight:     int32(account.Thresholds[0]),
 		SignerType: action.getMasterSignerType(),
 		Identity:   0,
-	})
-
-	signers = append(signers, core.Signer{
-		Accountid: account.RecoveryID,
-		Publickey: account.RecoveryID,
-		Weight:    255,
-		SignerType: action.getMasterSignerType(),
-		Identity:	0,
 	})
 
 	return signers, nil
