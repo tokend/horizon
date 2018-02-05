@@ -6,13 +6,13 @@ import (
 	"fmt"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/charts"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/exchange"
-	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/horizon/log"
 )
 
 func initCharts(app *App) {
@@ -22,6 +22,18 @@ func initCharts(app *App) {
 	)
 
 	app.charts = NewCharts()
+
+	// asset price initial value
+	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
+		if change.Type != xdr.LedgerEntryChangeTypeCreated {
+			return
+		}
+		if change.Created.Data.Type != xdr.LedgerEntryTypeAssetPair {
+			return
+		}
+		data := change.Created.Data.AssetPair
+		app.charts.Set(fmt.Sprintf("%s-%s", data.Base, data.Quote), ts, int64(data.CurrentPrice))
+	})
 
 	// asset prices
 	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
@@ -74,7 +86,7 @@ func initCharts(app *App) {
 	})
 
 	// sun issued
-	prevIssued := map[string]*int64 {
+	prevIssued := map[string]*int64{
 		"ETH": nil,
 		"BTC": nil,
 	}
@@ -262,7 +274,6 @@ func convertMap(data map[string]*int64, destAsset string, converter *exchange.Co
 	return result, nil
 }
 
-
 func getCurrentCapInDefaultQuoteForEntry(sale xdr.SaleEntry, converter *exchange.Converter) (int64, error) {
 	totalCapInDefaultQuoteAsset := int64(0)
 	for _, quoteAsset := range sale.QuoteAssets {
@@ -285,4 +296,3 @@ func getCurrentCapInDefaultQuoteForEntry(sale xdr.SaleEntry, converter *exchange
 
 	return totalCapInDefaultQuoteAsset, nil
 }
-
