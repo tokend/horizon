@@ -95,9 +95,11 @@ func TestLoadPairsWithBaseAssets(t *testing.T) {
 
 	Convey("General test for loadPairsWithBaseAssets", t, func() {
 		Convey("Success to load with base assets", func() {
-			assetPairs := getAssetPairsHelper("SUN", "BTC", 1000)
-			q.On("GetAssetPairsForCodes", []string{"SUN0"}, []string{"SUN0", "SUN1", "SUN2"}).Return(assetPairs, nil).Once()
-			q.On("GetAssetPairsForCodes", []string{"SUN0", "SUN1", "SUN2"}, []string{"SUN0"}).Return(assetPairs, nil).Once()
+			directPairs := getAssetPairsHelper("SUN", "BTC", 1000)
+			q.On("GetAssetPairsForCodes", []string{"SUN0"}, []string{"SUN0", "SUN1", "SUN2"}).Return(directPairs, nil).Once()
+
+			reversePairs := getAssetPairsHelper("BTC", "SUN", 1000)
+			q.On("GetAssetPairsForCodes", []string{"SUN0", "SUN1", "SUN2"}, []string{"SUN0"}).Return(reversePairs, nil).Once()
 
 			assetPairs, err := converter.loadPairsWithBaseAssets("SUN0")
 
@@ -336,7 +338,6 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 				assert.Equal(t, expectedErr, errors.Cause(err))
 			})
 			Convey("When from asset == to asset", func() {
-
 				fromAsset, toAsset = "SUN0", "SUN0"
 
 				res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
