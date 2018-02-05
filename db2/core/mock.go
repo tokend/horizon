@@ -17,7 +17,8 @@ func (q *CoreQMock) AccountTypeLimits() AccountTypeLimitsQI {
 }
 
 func (q *CoreQMock) BalanceByID(dest interface{}, bid string) error {
-	return nil
+	args := q.Called(dest, bid)
+	return args.Error(0)
 }
 
 func (q *CoreQMock) Balances() BalancesQI {
@@ -30,11 +31,13 @@ func (q *CoreQMock) BalancesByAddress(dest interface{}, addy string) error {
 }
 
 func (q *CoreQMock) FeesByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account) ([]FeeEntry, error) {
-	return nil, nil
+	args := q.Called(feeType, asset, subtype, account)
+	return args.Get(0).([]FeeEntry), args.Error(1)
 }
 
 func (q *CoreQMock) LimitsByAccountType(accountType int32) (*AccountTypeLimits, error) {
-	return nil, nil
+	args := q.Called(accountType)
+	return args.Get(0).(*AccountTypeLimits), args.Error(1)
 }
 
 func (q *CoreQMock) ExternalSystemAccountID() ExternalSystemAccountIDQI {
@@ -49,22 +52,27 @@ func (q *CoreQMock) LimitsForAccount(accountID string, accountType int32) (Limit
 }
 
 func (q *CoreQMock) Offers() *OfferQ {
-	return nil
+	args := q.Called()
+	return args.Get(0).(*OfferQ)
 }
 
 func (q *CoreQMock) OrderBook() *OrderBookQ {
-	return nil
+	args := q.Called()
+	return args.Get(0).(*OrderBookQ)
 }
 func (q *CoreQMock) Trusts() *TrustQ {
-	return nil
+	args := q.Called()
+	return args.Get(0).(*TrustQ)
 }
 
 func (q *CoreQMock) LimitsByAddress(addy string) (*AccountLimits, error) {
-	return nil, nil
+	args := q.Called(addy)
+	return args.Get(0).(*AccountLimits), args.Error(1)
 }
 
 func (q *CoreQMock) FeeByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account, amount int64) (*FeeEntry, error) {
-	return nil, nil
+	args := q.Called(feeType, asset)
+	return args.Get(0).(*FeeEntry), args.Error(1)
 }
 
 func (q *CoreQMock) AssetPairs() AssetPairsQ {
