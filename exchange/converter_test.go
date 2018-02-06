@@ -84,7 +84,7 @@ func TestNewConverterConverter(t *testing.T) {
 	})
 }
 
-func TestLoadPairsWithBaseAssets(t *testing.T) {
+func TestConverter_loadPairsWithBaseAssets(t *testing.T) {
 	var q assetProviderQMock
 	defer q.AssertExpectations(t)
 
@@ -132,6 +132,17 @@ func TestLoadPairsWithBaseAssets(t *testing.T) {
 				assert.Error(t, err)
 				assert.Nil(t, assetPairs)
 				assert.Equal(t, expectedErr, errors.Cause(err))
+			})
+			Convey("If no rows in qsl table", func() {
+				var emptyDirectPairs, emptyReversePairs []core.AssetPair
+				q.On("GetAssetPairsForCodes", []string{"SUN0"}, []string{"SUN0", "SUN1", "SUN2"}).Return(emptyDirectPairs, nil).Once()
+
+				q.On("GetAssetPairsForCodes", []string{"SUN0", "SUN1", "SUN2"}, []string{"SUN0"}).Return(emptyReversePairs, nil).Once()
+
+				assetPairs, err := converter.loadPairsWithBaseAssets("SUN0")
+
+				assert.NoError(t, err)
+				assert.Nil(t, assetPairs)
 			})
 		})
 	})
