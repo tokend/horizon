@@ -27,15 +27,8 @@ type SalesQ interface {
 	Open(now time.Time) SalesQ
 	// Upcoming - selects only upcoming sales.
 	Upcoming(now time.Time) SalesQ
-	// CollectedValueBound - selects all sales in which the `current_cap` is above bound.
-	CollectedValueBound(bound int64) SalesQ
-	// CurrentSoftCapsRatio is selects all sales in which the `current_cap`
-	// is filled by more than a percentBound of the `soft_cap`.
-	CurrentSoftCapsRatio(percentBound int64) SalesQ
 	// OrderByEndTime is set ordering by `end_time`.
 	OrderByEndTime() SalesQ
-	// OrderByCurrentCap is set ordering by `current_cap`.
-	OrderByCurrentCap(desc bool) SalesQ
 	// OrderByPopularity is merge with quantity of the
 	// unique investors for each sale, and sort sales by quantity.
 	OrderByPopularity(values db2.OrderBooksInvestors) SalesQ
@@ -114,38 +107,6 @@ func (q *saleQ) Upcoming(now time.Time) SalesQ {
 	return q
 }
 
-// CollectedValueBound - selects all sales in which the `current_cap` is above bound.
-func (q *saleQ) CollectedValueBound(bound int64) SalesQ {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("current_cap >= ?", bound)
-	return q
-}
-
-// ReachedSoftCap - selects all sales in which the `current_cap` is above `soft_cap`.
-func (q *saleQ) ReachedSoftCap() SalesQ {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("current_cap > soft_cap")
-	return q
-}
-
-// CurrentSoftCapsRatio is selects all sales in which the `current_cap` is filled by more than a percentBound of the `soft_cap`.
-func (q *saleQ) CurrentSoftCapsRatio(percentBound int64) SalesQ {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.
-		Where("div((current_cap * 100 ), soft_cap) > ?", percentBound)
-
-	return q
-}
-
 // ByID - selects sale by specified id. Returns nil, nil if not found
 func (q *saleQ) ByID(saleID uint64) (*Sale, error) {
 	if q.Err != nil {
@@ -171,11 +132,13 @@ func (q *saleQ) Insert(sale Sale) error {
 	sql := sq.Insert("sale").
 		Columns(
 			"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time",
-			"quote_assets", "soft_cap", "hard_cap", "current_cap", "details", "state",
+			"quote_assets", "soft_cap", "hard_cap", "details", "state", "base_current_cap",
+			"base_hard_cap",
 		).
 		Values(
 			sale.ID, sale.OwnerID, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
-			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.CurrentCap, sale.Details, sale.State,
+			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.Details, sale.State,
+			sale.BaseCurrentCap, sale.BaseHardCap,
 		)
 
 	_, err := q.parent.Exec(sql)
@@ -197,9 +160,10 @@ func (q *saleQ) Update(sale Sale) error {
 		"quote_assets":        sale.QuoteAssets,
 		"soft_cap":            sale.SoftCap,
 		"hard_cap":            sale.HardCap,
-		"current_cap":         sale.CurrentCap,
 		"details":             sale.Details,
 		"state":               sale.State,
+		"base_hard_cap":       sale.BaseHardCap,
+		"base_current_cap":    sale.BaseCurrentCap,
 	}).Where("id = ?", sale.ID)
 
 	_, err := q.parent.Exec(sql)
@@ -302,4 +266,4 @@ func (q *saleQ) ForBaseAssets(baseAssets ...string) SalesQ {
 
 var selectSales = sq.Select(
 	"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time", "quote_assets", "soft_cap", "hard_cap",
-	 "details", "state").From("sale")
+	"details", "state", "base_hard_cap", "base_current_cap").From("sale")

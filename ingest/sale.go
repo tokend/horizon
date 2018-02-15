@@ -41,13 +41,13 @@ func saleUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 }
 
 func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
-	var quoteAssets []interface{}
+	var quoteAssets []history.QuoteAsset
 	for i := range raw.QuoteAssets {
-		quoteAssets = append(quoteAssets, map[string]interface{}{
-			"asset":            raw.QuoteAssets[i].QuoteAsset,
-			"price":            amount.StringU(uint64(raw.QuoteAssets[i].Price)),
-			"quote_balance_id": raw.QuoteAssets[i].QuoteBalance.AsString(),
-			"current_cap":      amount.StringU(uint64(raw.QuoteAssets[i].CurrentCap)),
+		quoteAssets = append(quoteAssets, history.QuoteAsset{
+			Asset:          string(raw.QuoteAssets[i].QuoteAsset),
+			Price:          amount.StringU(uint64(raw.QuoteAssets[i].Price)),
+			QuoteBalanceID: raw.QuoteAssets[i].QuoteBalance.AsString(),
+			CurrentCap:     amount.StringU(uint64(raw.QuoteAssets[i].CurrentCap)),
 		})
 	}
 
@@ -64,9 +64,11 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		SoftCap:           uint64(raw.SoftCap),
 		HardCap:           uint64(raw.HardCap),
 		Details:           saleDetails,
-		QuoteAssets: map[string]interface{}{
-			"quote_assets": quoteAssets,
+		QuoteAssets: history.QuoteAssets{
+			QuoteAssets: quoteAssets,
 		},
-		State: history.SaleStateOpen,
+		BaseCurrentCap: int64(raw.CurrentCapInBase),
+		BaseHardCap:    int64(raw.HardCapInBase),
+		State:          history.SaleStateOpen,
 	}, nil
 }

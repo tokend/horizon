@@ -15,6 +15,8 @@ type AssetQI interface {
 	ForOwner(owner string) AssetQI
 	// ForCodes - filters assets by code
 	ForCodes(codes []string) AssetQI
+	// ForPolicy -returns assets with specified policy
+	ForPolicy(policy uint32) AssetQI
 	// Select - selects assets for specified filter
 	Select() ([]Asset, error)
 }
@@ -51,6 +53,15 @@ func (q *assetQ) ForOwner(ownerID string) AssetQI {
 	}
 
 	q.sql = q.sql.Where("a.owner = ?", ownerID)
+	return q
+}
+
+func (q *assetQ) ForPolicy(policy uint32) AssetQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("a.policies & ? = ?", policy, policy)
 	return q
 }
 

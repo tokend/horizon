@@ -20,6 +20,8 @@
 // migrations/019_add_timestamps_2_reviewable_req.sql
 // migrations/020_alter_sales_details.sql
 // migrations/021_sale_quote_assets.sql
+// migrations/022_sale_quote_assets.sql
+// migrations/023_sale_current_cap.sql
 // DO NOT EDIT!
 
 package schema
@@ -482,7 +484,47 @@ func migrations021_sale_quote_assetsSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "migrations/021_sale_quote_assets.sql", size: 456, mode: os.FileMode(438), modTime: time.Unix(1516978659, 0)}
+	info := bindataFileInfo{name: "migrations/021_sale_quote_assets.sql", size: 456, mode: os.FileMode(438), modTime: time.Unix(1516986500, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _migrations022_sale_quote_assetsSql = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xd2\xd5\x55\xd0\xce\xcd\x4c\x2f\x4a\x2c\x49\x55\x08\x2d\xe0\xe5\x72\xf4\x09\x71\x0d\x52\x08\x71\x74\xf2\x71\x55\x28\x4e\xcc\x49\x55\x70\x74\x71\x51\x70\xf6\xf7\x09\xf5\xf5\x53\x48\x4a\x2c\x4e\x8d\x4f\x2e\x2d\x2a\x4a\xcd\x2b\x89\x4f\x4e\x2c\x50\xf0\x0b\xf5\x75\x0d\xf2\x74\xd6\x30\x32\xd0\x31\xd0\x54\xf0\xf3\x0f\x51\xf0\x0b\xf5\xf1\x51\x70\x71\x75\x73\x0c\xf5\x09\x51\x30\xb0\x26\xc2\xbc\x8c\xc4\xa2\x14\x62\x0d\xe3\xe5\x42\x76\xae\x4b\x7e\x79\x1e\x16\x0b\x5c\x82\xfc\x03\x70\xb9\x18\x9b\x83\x30\xd4\xc3\x5c\x64\xcd\xcb\x05\x08\x00\x00\xff\xff\x50\x74\x2c\x8c\x1e\x01\x00\x00")
+
+func migrations022_sale_quote_assetsSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations022_sale_quote_assetsSql,
+		"migrations/022_sale_quote_assets.sql",
+	)
+}
+
+func migrations022_sale_quote_assetsSql() (*asset, error) {
+	bytes, err := migrations022_sale_quote_assetsSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/022_sale_quote_assets.sql", size: 286, mode: os.FileMode(438), modTime: time.Unix(1517057228, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _migrations023_sale_current_capSql = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\x6c\xcb\xc1\x0a\xc2\x20\x1c\x07\xe0\xbb\xe0\x3b\xfc\x8e\x1b\x35\x90\xae\xa3\xc0\xd4\x28\xfa\x4f\x43\xf4\x1c\x32\x24\x82\x5a\xc3\x16\xbd\xfe\xae\x3b\xec\xfe\x7d\x4d\x83\xcd\xfb\xf9\x28\x69\xca\x88\x23\x67\x92\x82\xf1\x08\xf2\x48\x06\xdf\xf4\xca\xd0\xde\xdd\xa0\x1c\xc5\xce\xa2\xff\x95\x92\x87\xe9\xde\xa7\xb1\xe5\x8c\xb3\x65\xd6\x9f\xff\xb0\xd2\xa5\xd6\x2b\x1b\x36\x76\xc6\x5f\x54\xb5\x13\x5b\x51\xc3\xba\x00\x1b\x89\xa0\xce\x46\x5d\x51\x2d\xe5\x61\x0f\x51\x43\x9b\x93\x8c\x14\x20\x5a\xce\xe6\x00\x00\x00\xff\xff\xf8\x20\xae\x9a\xb3\x00\x00\x00")
+
+func migrations023_sale_current_capSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations023_sale_current_capSql,
+		"migrations/023_sale_current_cap.sql",
+	)
+}
+
+func migrations023_sale_current_capSql() (*asset, error) {
+	bytes, err := migrations023_sale_current_capSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/023_sale_current_cap.sql", size: 179, mode: os.FileMode(438), modTime: time.Unix(1517064978, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -559,6 +601,8 @@ var _bindata = map[string]func() (*asset, error){
 	"migrations/019_add_timestamps_2_reviewable_req.sql": migrations019_add_timestamps_2_reviewable_reqSql,
 	"migrations/020_alter_sales_details.sql": migrations020_alter_sales_detailsSql,
 	"migrations/021_sale_quote_assets.sql": migrations021_sale_quote_assetsSql,
+	"migrations/022_sale_quote_assets.sql": migrations022_sale_quote_assetsSql,
+	"migrations/023_sale_current_cap.sql": migrations023_sale_current_capSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -622,6 +666,8 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"019_add_timestamps_2_reviewable_req.sql": &bintree{migrations019_add_timestamps_2_reviewable_reqSql, map[string]*bintree{}},
 		"020_alter_sales_details.sql": &bintree{migrations020_alter_sales_detailsSql, map[string]*bintree{}},
 		"021_sale_quote_assets.sql": &bintree{migrations021_sale_quote_assetsSql, map[string]*bintree{}},
+		"022_sale_quote_assets.sql": &bintree{migrations022_sale_quote_assetsSql, map[string]*bintree{}},
+		"023_sale_current_cap.sql": &bintree{migrations023_sale_current_capSql, map[string]*bintree{}},
 	}},
 }}
 

@@ -6,12 +6,16 @@ import (
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/swarmfund/horizon/exchange"
+	"github.com/go-errors/errors"
+	"gitlab.com/swarmfund/go/amount"
 )
 
 type AccountDetailedBalancesAction struct {
 	Action
 
 	AccountID string
+	ConvertToAsset string
 
 	Balances []core.Balance
 	Assets []core.Asset
@@ -88,6 +92,14 @@ func (action *AccountDetailedBalancesAction) loadSales() {
 }
 
 func (action *AccountDetailedBalancesAction) loadResource() {
+	converter, err := exchange.NewConverter(action.CoreQ())
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to init converter")
+		action.Err = &problem.ServerError
+		return
+	}
+
+
 	for _, record := range action.Balances {
 		var r resource.Balance
 		r.Populate(record)
@@ -100,8 +112,37 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 
 		r.AssetDetails = asset
 		r.AssetDetails.Sales = findAllSalesForAsset(asset.Code, action.Sales)
+
+		r.ConvertedBalance, err = convertAmount(record.Amount, r.Asset, action.ConvertToAsset, converter)
+		if err != nil {
+			action.Log.WithError(err).Error("Failed to convert balance")
+			action.Err = &problem.ServerError
+			return
+		}
+
+		r.ConvertedLocked, err = convertAmount(record.Amount, r.Asset, action.ConvertToAsset, converter)
+		if err != nil {
+			action.Log.WithError(err).Error("failed to convert locked amount")
+			action.Err = &problem.ServerError
+			return
+		}
+
+
 		action.Resource = append(action.Resource, r)
 	}
+}
+
+func convertAmount(balance int64, fromAsset, toAsset string, converter *exchange.Converter) (string, error) {
+	convertedAmount, err := converter.TryToConvertWithOneHop(balance, fromAsset, toAsset)
+	if err != nil || convertedAmount == nil {
+		if err == nil {
+			err = errors.New("failed to find path to convert balance amount")
+		}
+
+		return "", err
+	}
+
+	return amount.String(*convertedAmount), nil
 }
 
 func findAssetByAssetCode(code string, assets []core.Asset) *resource.Asset {

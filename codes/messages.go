@@ -138,7 +138,7 @@ var messages = map[string]string{
 	"op_limits_update_request_reference_duplication": "Such request already exists",
 	"op_invalid_pre_confirmation_details":            "Invalid pre confirmation details",
 	"op_requires_kyc":                                "You or your counterpary need to complete KYC to use specified asset",
-	"op_requestor_is_blocked":						  "Can't review request from blocked account",
+	"op_requestor_is_blocked":                        "Requestor is blocked",
 }
 
 func getMessage(rawCode string) string {
