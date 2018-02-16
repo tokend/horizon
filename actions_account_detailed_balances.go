@@ -120,7 +120,7 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 			return
 		}
 
-		r.ConvertedLocked, err = convertAmount(record.Amount, r.Asset, action.ConvertToAsset, converter)
+		r.ConvertedLocked, err = convertAmount(record.Locked, r.Asset, action.ConvertToAsset, converter)
 		if err != nil {
 			action.Log.WithError(err).Error("failed to convert locked amount")
 			action.Err = &problem.ServerError
