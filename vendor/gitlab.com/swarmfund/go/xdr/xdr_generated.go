@@ -671,7 +671,7 @@ type AccountTypeLimitsEntry struct {
 //    	ASSET_MANAGER = 16, // allowed to create assets/asset pairs and update policies, set fees
 //    	ASSET_RATE_MANAGER = 32, // allowed to set physical asset price
 //    	BALANCE_MANAGER = 64, // allowed to create balances, spend assets from balances
-//    	ISSUANCE_MANAGER = 128, // allowed to make preissuance request
+//    	ISSUANCE_MANAGER = 128, // allowed to make preissuance request, review issuance
 //    	INVOICE_MANAGER = 256, // allowed to create payment requests to other accounts
 //    	PAYMENT_OPERATOR = 512, // allowed to review payment requests
 //    	LIMITS_MANAGER = 1024, // allowed to change limits
@@ -680,11 +680,7 @@ type AccountTypeLimitsEntry struct {
 //    	OPERATIONAL_BALANCE_MANAGER = 8192, // allowed to spend from operational balances
 //    	EVENTS_CHECKER = 16384, // allow to check and trigger events
 //    	EXCHANGE_ACC_MANAGER = 32768, // can manage exchange account
-//    	SYNDICATE_ACC_MANAGER = 65536, // can manage syndicate account
-//    	USER_ASSET_MANAGER = 131072, // can review sale, asset creation/update requests
-//    	USER_ISSUANCE_MANAGER = 262144, // can review pre-issuance/issuance requests
-//    	WITHDRAW_MANAGER = 524288, // can review withdraw requests
-//    	FEES_MANAGER = 1048576 // can set fee
+//    	SYNDICATE_ACC_MANAGER = 65536 // can manage syndicate account
 //    };
 //
 type SignerType int32
@@ -707,10 +703,6 @@ const (
 	SignerTypeEventsChecker             SignerType = 16384
 	SignerTypeExchangeAccManager        SignerType = 32768
 	SignerTypeSyndicateAccManager       SignerType = 65536
-	SignerTypeUserAssetManager          SignerType = 131072
-	SignerTypeUserIssuanceManager       SignerType = 262144
-	SignerTypeWithdrawManager           SignerType = 524288
-	SignerTypeFeesManager               SignerType = 1048576
 )
 
 var SignerTypeAll = []SignerType{
@@ -731,58 +723,46 @@ var SignerTypeAll = []SignerType{
 	SignerTypeEventsChecker,
 	SignerTypeExchangeAccManager,
 	SignerTypeSyndicateAccManager,
-	SignerTypeUserAssetManager,
-	SignerTypeUserIssuanceManager,
-	SignerTypeWithdrawManager,
-	SignerTypeFeesManager,
 }
 
 var signerTypeMap = map[int32]string{
-	1:       "SignerTypeReader",
-	2:       "SignerTypeNotVerifiedAccManager",
-	4:       "SignerTypeGeneralAccManager",
-	8:       "SignerTypeDirectDebitOperator",
-	16:      "SignerTypeAssetManager",
-	32:      "SignerTypeAssetRateManager",
-	64:      "SignerTypeBalanceManager",
-	128:     "SignerTypeIssuanceManager",
-	256:     "SignerTypeInvoiceManager",
-	512:     "SignerTypePaymentOperator",
-	1024:    "SignerTypeLimitsManager",
-	2048:    "SignerTypeAccountManager",
-	4096:    "SignerTypeCommissionBalanceManager",
-	8192:    "SignerTypeOperationalBalanceManager",
-	16384:   "SignerTypeEventsChecker",
-	32768:   "SignerTypeExchangeAccManager",
-	65536:   "SignerTypeSyndicateAccManager",
-	131072:  "SignerTypeUserAssetManager",
-	262144:  "SignerTypeUserIssuanceManager",
-	524288:  "SignerTypeWithdrawManager",
-	1048576: "SignerTypeFeesManager",
+	1:     "SignerTypeReader",
+	2:     "SignerTypeNotVerifiedAccManager",
+	4:     "SignerTypeGeneralAccManager",
+	8:     "SignerTypeDirectDebitOperator",
+	16:    "SignerTypeAssetManager",
+	32:    "SignerTypeAssetRateManager",
+	64:    "SignerTypeBalanceManager",
+	128:   "SignerTypeIssuanceManager",
+	256:   "SignerTypeInvoiceManager",
+	512:   "SignerTypePaymentOperator",
+	1024:  "SignerTypeLimitsManager",
+	2048:  "SignerTypeAccountManager",
+	4096:  "SignerTypeCommissionBalanceManager",
+	8192:  "SignerTypeOperationalBalanceManager",
+	16384: "SignerTypeEventsChecker",
+	32768: "SignerTypeExchangeAccManager",
+	65536: "SignerTypeSyndicateAccManager",
 }
 
 var signerTypeShortMap = map[int32]string{
-	1:       "reader",
-	2:       "not_verified_acc_manager",
-	4:       "general_acc_manager",
-	8:       "direct_debit_operator",
-	16:      "asset_manager",
-	32:      "asset_rate_manager",
-	64:      "balance_manager",
-	128:     "issuance_manager",
-	256:     "invoice_manager",
-	512:     "payment_operator",
-	1024:    "limits_manager",
-	2048:    "account_manager",
-	4096:    "commission_balance_manager",
-	8192:    "operational_balance_manager",
-	16384:   "events_checker",
-	32768:   "exchange_acc_manager",
-	65536:   "syndicate_acc_manager",
-	131072:  "user_asset_manager",
-	262144:  "user_issuance_manager",
-	524288:  "withdraw_manager",
-	1048576: "fees_manager",
+	1:     "reader",
+	2:     "not_verified_acc_manager",
+	4:     "general_acc_manager",
+	8:     "direct_debit_operator",
+	16:    "asset_manager",
+	32:    "asset_rate_manager",
+	64:    "balance_manager",
+	128:   "issuance_manager",
+	256:   "invoice_manager",
+	512:   "payment_operator",
+	1024:  "limits_manager",
+	2048:  "account_manager",
+	4096:  "commission_balance_manager",
+	8192:  "operational_balance_manager",
+	16384: "events_checker",
+	32768: "exchange_acc_manager",
+	65536: "syndicate_acc_manager",
 }
 
 var signerTypeRevMap = map[string]int32{
@@ -803,10 +783,6 @@ var signerTypeRevMap = map[string]int32{
 	"SignerTypeEventsChecker":             16384,
 	"SignerTypeExchangeAccManager":        32768,
 	"SignerTypeSyndicateAccManager":       65536,
-	"SignerTypeUserAssetManager":          131072,
-	"SignerTypeUserIssuanceManager":       262144,
-	"SignerTypeWithdrawManager":           524288,
-	"SignerTypeFeesManager":               1048576,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -21367,9 +21343,7 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //
 //   enum LedgerVersion {
 //    	EMPTY_VERSION = 0,
-//    	PASS_EXTERNAL_SYS_ACC_ID_IN_CREATE_ACC = 1,
-//    	DETAILED_LEDGER_CHANGES = 2, // write all ledger changes to transaction meta in txhistory
-//    	NEW_SIGNER_TYPES = 3 // use more comprehensive list of signer types
+//    	PASS_EXTERNAL_SYS_ACC_ID_IN_CREATE_ACC = 1
 //    };
 //
 type LedgerVersion int32
@@ -21377,36 +21351,26 @@ type LedgerVersion int32
 const (
 	LedgerVersionEmptyVersion                    LedgerVersion = 0
 	LedgerVersionPassExternalSysAccIdInCreateAcc LedgerVersion = 1
-	LedgerVersionDetailedLedgerChanges           LedgerVersion = 2
-	LedgerVersionNewSignerTypes                  LedgerVersion = 3
 )
 
 var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionEmptyVersion,
 	LedgerVersionPassExternalSysAccIdInCreateAcc,
-	LedgerVersionDetailedLedgerChanges,
-	LedgerVersionNewSignerTypes,
 }
 
 var ledgerVersionMap = map[int32]string{
 	0: "LedgerVersionEmptyVersion",
 	1: "LedgerVersionPassExternalSysAccIdInCreateAcc",
-	2: "LedgerVersionDetailedLedgerChanges",
-	3: "LedgerVersionNewSignerTypes",
 }
 
 var ledgerVersionShortMap = map[int32]string{
 	0: "empty_version",
 	1: "pass_external_sys_acc_id_in_create_acc",
-	2: "detailed_ledger_changes",
-	3: "new_signer_types",
 }
 
 var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionEmptyVersion":                    0,
 	"LedgerVersionPassExternalSysAccIdInCreateAcc": 1,
-	"LedgerVersionDetailedLedgerChanges":           2,
-	"LedgerVersionNewSignerTypes":                  3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
