@@ -89,7 +89,7 @@ func (action *SaleShowAction) populateTotalCurrentCap() error {
 		return errors.Wrap(err, "failed to init converter")
 	}
 
-	totalCapInDefaultQuoteAsset, err := getCurrentCapInDefaultQuote(action.Record, converter)
+	totalCapInDefaultQuoteAsset, err := getCurrentCapInDefaultQuote(*action.Record, converter)
 	if err != nil {
 		return errors.Wrap(err, "failed to get current cap in default quote asset")
 	}
@@ -136,7 +136,25 @@ func (action *SaleShowAction) populateResult() {
 	}
 }
 
-func getCurrentCapInDefaultQuote(sale *history.Sale, converter *exchange.Converter) (int64, error) {
+func selectSalesWithCurrentCap(q history.SalesQ, converter *exchange.Converter) ([]history.Sale, error) {
+	result, err := q.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load sales")
+	}
+
+	for i := range result {
+		currentCapInDefaultQuote, err := getCurrentCapInDefaultQuote(result[i], converter)
+		if err != nil {
+			return nil ,errors.Wrap(err, "failed to calculate current cap in default quote")
+		}
+
+		result[i].CurrentCap = amount.String(currentCapInDefaultQuote)
+	}
+
+	return result, nil
+}
+
+func getCurrentCapInDefaultQuote(sale history.Sale, converter *exchange.Converter) (int64, error) {
 	totalCapInDefaultQuoteAsset := int64(0)
 	for _, quoteAsset := range sale.QuoteAssets.QuoteAssets {
 		currentCap, err := amount.Parse(quoteAsset.CurrentCap)

@@ -10,7 +10,6 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/exchange"
-	"gitlab.com/swarmfund/go/amount"
 )
 
 type Sort int64
@@ -114,14 +113,6 @@ func (action *SaleIndexAction) loadRecord() {
 		return
 	}
 
-	var err error
-	action.Records, err = q.Select()
-	if err != nil {
-		action.Log.WithError(err).Error("failed to load sales")
-		action.Err = &problem.ServerError
-		return
-	}
-
 	converter, err := exchange.NewConverter(action.CoreQ())
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to init converter")
@@ -129,15 +120,11 @@ func (action *SaleIndexAction) loadRecord() {
 		return
 	}
 
-	for i := range action.Records {
-		currentCapInDefault, err := getCurrentCapInDefaultQuote(&action.Records[i], converter)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to get current cap in default quote")
-			action.Err = &problem.ServerError
-			return
-		}
-
-		action.Records[i].CurrentCap = amount.String(currentCapInDefault)
+	action.Records, err = selectSalesWithCurrentCap(q, converter)
+	if err != nil {
+		action.Log.WithError(err).Error("failed to load sales")
+		action.Err = &problem.ServerError
+		return
 	}
 }
 
