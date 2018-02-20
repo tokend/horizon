@@ -13,6 +13,7 @@ import (
 
 type AccountDetailedBalancesAction struct {
 	Action
+	converter *exchange.Converter
 
 	AccountID string
 	ConvertToAsset string
@@ -33,6 +34,7 @@ func (action *AccountDetailedBalancesAction) JSON() {
 		action.loadBalances,
 		action.groupBalancesByAsset,
 		action.loadAssets,
+		action.createConverter,
 		action.loadSales,
 		action.loadResource,
 		func () {
@@ -81,9 +83,19 @@ func (action *AccountDetailedBalancesAction) loadAssets() {
 	}
 }
 
+func (action *AccountDetailedBalancesAction) createConverter() {
+	var err error
+	action.converter, err = exchange.NewConverter(action.CoreQ())
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to init converter")
+		action.Err = &problem.ServerError
+		return
+	}
+}
+
 func (action *AccountDetailedBalancesAction) loadSales() {
 	var err error
-	action.Sales, err = action.HistoryQ().Sales().ForBaseAssets(action.AssetCodes...).Select()
+	action.Sales, err = selectSalesWithCurrentCap(action.HistoryQ().Sales().ForBaseAssets(action.AssetCodes...), action.converter)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to load sales")
 		action.Err = &problem.ServerError
@@ -92,14 +104,6 @@ func (action *AccountDetailedBalancesAction) loadSales() {
 }
 
 func (action *AccountDetailedBalancesAction) loadResource() {
-	converter, err := exchange.NewConverter(action.CoreQ())
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to init converter")
-		action.Err = &problem.ServerError
-		return
-	}
-
-
 	for _, record := range action.Balances {
 		var r resource.Balance
 		r.Populate(record)
@@ -113,7 +117,8 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 		r.AssetDetails = asset
 		r.AssetDetails.Sales = findAllSalesForAsset(asset.Code, action.Sales)
 
-		r.ConvertedBalance, err = convertAmount(record.Amount, r.Asset, action.ConvertToAsset, converter)
+		var err error
+		r.ConvertedBalance, err = convertAmount(record.Amount, r.Asset, action.ConvertToAsset, action.converter)
 		if err != nil {
 			action.Log.WithError(err).Error("Failed to convert balance")
 			action.Err = &problem.ServerError

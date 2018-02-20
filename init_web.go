@@ -84,7 +84,7 @@ func initWebMiddleware(app *App) {
 }
 
 const (
-	levelLow int = 1 << (1 * iota)
+	levelLow      int = 1 << (1 * iota)
 	levelMid
 	levelHigh
 	levelCritical
@@ -237,6 +237,7 @@ func initWebActions(app *App) {
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
 	r.Get("/sales", &SaleIndexAction{})
+	r.Get("/core_sales", &CoreSalesAction{})
 
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// DISCLAIMER: while following is true, it does not currently applies
