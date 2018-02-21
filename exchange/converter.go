@@ -1,24 +1,44 @@
 package exchange
 
 import (
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2/core"
 )
 
-type Converter struct {
-	coreQ core.QInterface
-	baseAssets []string
+type assetProvider interface {
+	GetAssetsForPolicy(policy uint32) ([]core.Asset, error)
+	GetAssetPairsForCodes(baseAssets []string, quoteAssets []string) ([]core.AssetPair, error)
 }
 
-func NewConverter(coreQ core.QInterface) (*Converter, error) {
-	baseAssets, err := coreQ.Assets().ForPolicy(uint32(xdr.AssetPolicyBaseAsset)).Select()
+type Converter struct {
+	assetProvider assetProvider
+	baseAssets    []string
+}
+
+type assetProviderImpl struct {
+	q core.QInterface
+}
+
+func (p assetProviderImpl) GetAssetsForPolicy(policy uint32) ([]core.Asset, error) {
+	return p.q.Assets().ForPolicy(policy).Select()
+}
+func (p assetProviderImpl) GetAssetPairsForCodes(baseAssets []string, quoteAssets []string) ([]core.AssetPair, error) {
+	return p.q.AssetPairs().ForAssets(baseAssets, quoteAssets).Select()
+}
+
+func NewConverter(q core.QInterface) (*Converter, error) {
+	return newConverter(assetProviderImpl{q: q})
+}
+
+func newConverter(assetProvider assetProvider) (*Converter, error) {
+	baseAssets, err := assetProvider.GetAssetsForPolicy(uint32(xdr.AssetPolicyBaseAsset))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load base assets")
 	}
 
 	result := &Converter{
-		coreQ: coreQ,
+		assetProvider: assetProvider,
 	}
 
 	for i := range baseAssets {
@@ -29,12 +49,13 @@ func NewConverter(coreQ core.QInterface) (*Converter, error) {
 }
 
 func (c *Converter) loadPairsWithBaseAssets(asset string) ([]core.AssetPair, error) {
-	direct, err := c.coreQ.AssetPairs().ForAssets([]string{asset}, c.baseAssets).Select()
+
+	direct, err := c.assetProvider.GetAssetPairsForCodes([]string{asset}, c.baseAssets)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load direct asset pairs")
 	}
 
-	reverse, err := c.coreQ.AssetPairs().ForAssets(c.baseAssets, []string{asset}).Select()
+	reverse, err := c.assetProvider.GetAssetPairsForCodes(c.baseAssets, []string{asset})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load reverse asset pairs")
 	}
@@ -43,7 +64,7 @@ func (c *Converter) loadPairsWithBaseAssets(asset string) ([]core.AssetPair, err
 }
 
 func (c *Converter) tryLoadDirect(fromAsset, toAsset string) (*core.AssetPair, error) {
-	pairs, err := c.coreQ.AssetPairs().ForAssets([]string{fromAsset, toAsset}, []string{fromAsset, toAsset}).Select()
+	pairs, err := c.assetProvider.GetAssetPairsForCodes([]string{fromAsset, toAsset}, []string{fromAsset, toAsset})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load direct asset pairs")
 	}
