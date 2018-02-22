@@ -1,25 +1,26 @@
 package horizon
 
 import (
+	"github.com/go-errors/errors"
+	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/exchange"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/exchange"
-	"github.com/go-errors/errors"
-	"gitlab.com/swarmfund/go/amount"
 )
 
 type AccountDetailedBalancesAction struct {
 	Action
+	converter *exchange.Converter
 
-	AccountID string
+	AccountID      string
 	ConvertToAsset string
 
 	Balances []core.Balance
-	Assets []core.Asset
-	Sales []history.Sale
+	Assets   []core.Asset
+	Sales    []history.Sale
 
 	AssetCodes []string
 
@@ -33,9 +34,10 @@ func (action *AccountDetailedBalancesAction) JSON() {
 		action.loadBalances,
 		action.groupBalancesByAsset,
 		action.loadAssets,
+		action.createConverter,
 		action.loadSales,
 		action.loadResource,
-		func () {
+		func() {
 			hal.Render(action.W, action.Resource)
 		},
 	)
@@ -81,9 +83,19 @@ func (action *AccountDetailedBalancesAction) loadAssets() {
 	}
 }
 
+func (action *AccountDetailedBalancesAction) createConverter() {
+	var err error
+	action.converter, err = exchange.NewConverter(action.CoreQ())
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to init converter")
+		action.Err = &problem.ServerError
+		return
+	}
+}
+
 func (action *AccountDetailedBalancesAction) loadSales() {
 	var err error
-	action.Sales, err = action.HistoryQ().Sales().ForBaseAssets(action.AssetCodes...).Select()
+	action.Sales, err = selectSalesWithCurrentCap(action.HistoryQ().Sales().ForBaseAssets(action.AssetCodes...), action.converter)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to load sales")
 		action.Err = &problem.ServerError
@@ -92,14 +104,6 @@ func (action *AccountDetailedBalancesAction) loadSales() {
 }
 
 func (action *AccountDetailedBalancesAction) loadResource() {
-	converter, err := exchange.NewConverter(action.CoreQ())
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to init converter")
-		action.Err = &problem.ServerError
-		return
-	}
-
-
 	for _, record := range action.Balances {
 		var r resource.Balance
 		r.Populate(record)
@@ -113,20 +117,20 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 		r.AssetDetails = asset
 		r.AssetDetails.Sales = findAllSalesForAsset(asset.Code, action.Sales)
 
-		r.ConvertedBalance, err = convertAmount(record.Amount, r.Asset, action.ConvertToAsset, converter)
+		var err error
+		r.ConvertedBalance, err = convertAmount(record.Amount, r.Asset, action.ConvertToAsset, action.converter)
 		if err != nil {
 			action.Log.WithError(err).Error("Failed to convert balance")
 			action.Err = &problem.ServerError
 			return
 		}
 
-		r.ConvertedLocked, err = convertAmount(record.Amount, r.Asset, action.ConvertToAsset, converter)
+		r.ConvertedLocked, err = convertAmount(record.Locked, r.Asset, action.ConvertToAsset, action.converter)
 		if err != nil {
 			action.Log.WithError(err).Error("failed to convert locked amount")
 			action.Err = &problem.ServerError
 			return
 		}
-
 
 		action.Resource = append(action.Resource, r)
 	}
@@ -173,5 +177,3 @@ func findAllSalesForAsset(code string, sales []history.Sale) []resource.Sale {
 
 	return result
 }
-
-

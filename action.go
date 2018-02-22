@@ -305,9 +305,24 @@ func (action *Action) IsAccountSigner(accountId, signer string) *bool {
 	return isSigner
 }
 
+func getSystemAccountTypes() []xdr.AccountType {
+	return []xdr.AccountType{xdr.AccountTypeOperational, xdr.AccountTypeCommission, xdr.AccountTypeMaster}
+}
+
+func isSystemAccount(accountType int32) bool {
+	sysAccountTypes := getSystemAccountTypes()
+	for _, sysAccountType := range sysAccountTypes {
+		if accountType == int32(sysAccountType) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
-	// commission is managed by master account signers
-	if account.AccountType == int32(xdr.AccountTypeCommission) {
+	// all system accounts are managed by master account signers
+	if isSystemAccount(account.AccountType) && account.AccountType != int32(xdr.AccountTypeMaster) {
 		masterAccount, err := action.CoreQ().Accounts().ByAddress(action.App.CoreInfo.MasterAccountID)
 		if err != nil || masterAccount == nil {
 			if err == nil {
@@ -328,6 +343,17 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 		return nil, err
 	}
 
+	if !isSystemAccount(account.AccountType) {
+		// add recovery signer
+		signers = append(signers, core.Signer{
+			Accountid:  account.RecoveryID,
+			Publickey:  account.RecoveryID,
+			Weight:     255,
+			SignerType: action.getMasterSignerType(),
+			Identity:   0,
+		})
+	}
+
 	// is master key allowed
 	if account.Thresholds[0] <= 0 {
 		return signers, nil
@@ -339,14 +365,6 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 		Weight:     int32(account.Thresholds[0]),
 		SignerType: action.getMasterSignerType(),
 		Identity:   0,
-	})
-
-	signers = append(signers, core.Signer{
-		Accountid: account.RecoveryID,
-		Publickey: account.RecoveryID,
-		Weight:    255,
-		SignerType: action.getMasterSignerType(),
-		Identity:	0,
 	})
 
 	return signers, nil
