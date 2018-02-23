@@ -139,6 +139,7 @@ var messages = map[string]string{
 	"op_invalid_pre_confirmation_details":            "Invalid pre confirmation details",
 	"op_requires_kyc":                                "You or your counterpary need to complete KYC to use specified asset",
 	"op_requestor_is_blocked":                        "Requestor is blocked",
+	"op_version_is_not_supported_yet":                "Version of this operation is not supported yet",
 }
 
 func getMessage(rawCode string) string {
