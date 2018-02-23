@@ -1,26 +1,26 @@
 package horizon
 
 import (
+	"github.com/go-errors/errors"
+	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/exchange"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/exchange"
-	"github.com/go-errors/errors"
-	"gitlab.com/swarmfund/go/amount"
 )
 
 type AccountDetailedBalancesAction struct {
 	Action
 	converter *exchange.Converter
 
-	AccountID string
+	AccountID      string
 	ConvertToAsset string
 
 	Balances []core.Balance
-	Assets []core.Asset
-	Sales []history.Sale
+	Assets   []core.Asset
+	Sales    []history.Sale
 
 	AssetCodes []string
 
@@ -37,7 +37,7 @@ func (action *AccountDetailedBalancesAction) JSON() {
 		action.createConverter,
 		action.loadSales,
 		action.loadResource,
-		func () {
+		func() {
 			hal.Render(action.W, action.Resource)
 		},
 	)
@@ -132,7 +132,6 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 			return
 		}
 
-
 		action.Resource = append(action.Resource, r)
 	}
 }
@@ -178,5 +177,3 @@ func findAllSalesForAsset(code string, sales []history.Sale) []resource.Sale {
 
 	return result
 }
-
-
