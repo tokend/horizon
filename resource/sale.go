@@ -30,6 +30,7 @@ type Sale struct {
 	BaseHardCap       string                 `json:"base_hard_cap"`
 	BaseCurrentCap    string                 `json:"base_current_cap"`
 	CurrentCap        string                 `json:"current_cap"`
+	SaleType          base.Flag              `json:"sale_type"`
 }
 
 type SaleStatistics struct {
@@ -53,6 +54,8 @@ func (s *Sale) Populate(h *history.Sale) {
 	s.BaseHardCap = amount.String(h.BaseHardCap)
 	s.BaseCurrentCap = amount.String(h.BaseCurrentCap)
 	s.CurrentCap = h.CurrentCap
+	s.SaleType.Name = h.SaleType.ShortString()
+	s.SaleType.Value = int32(h.SaleType)
 }
 
 func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) error {
