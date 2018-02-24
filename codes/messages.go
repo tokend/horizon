@@ -140,6 +140,8 @@ var messages = map[string]string{
 	"op_requires_kyc":                                "You or your counterpary need to complete KYC to use specified asset",
 	"op_requestor_is_blocked":                        "Requestor is blocked",
 	"op_version_is_not_supported_yet":                "Version of this operation is not supported yet",
+	"op_balance_already_exists":                      "Balance already exists",
+	"op_no_available_id":                             "No available external system account id for binding",
 }
 
 func getMessage(rawCode string) string {
