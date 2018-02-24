@@ -121,6 +121,10 @@ func ForOperation(
 		}
 
 		sourceParticipant = nil
+	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
+		// the only direct participant is the source_account
+	case xdr.OperationTypeBindExternalSystemAccountId:
+		// the only direct participant is the source_account
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

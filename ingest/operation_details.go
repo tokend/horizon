@@ -195,6 +195,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:
 		// no details needed
+	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
+		// no details needed
+	case xdr.OperationTypeBindExternalSystemAccountId:
+		// no details needed
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
