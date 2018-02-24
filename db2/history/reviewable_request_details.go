@@ -1,6 +1,9 @@
 package history
 
-import "time"
+import (
+	"gitlab.com/swarmfund/go/xdr"
+	"time"
+)
 
 type AssetCreationRequest struct {
 	Asset                  string                 `json:"asset"`
@@ -52,6 +55,7 @@ type SaleRequest struct {
 	HardCap           string                 `json:"hard_cap"`
 	Details           map[string]interface{} `json:"details"`
 	QuoteAssets       []SaleQuoteAsset       `json:"quote_assets"`
+	SaleType          xdr.SaleType           `json:"sale_type"`
 }
 
 type SaleQuoteAsset struct {

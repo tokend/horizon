@@ -183,6 +183,12 @@ func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.Details), &details)
+
+	saleType := xdr.SaleTypeBasicSale
+	if request.Ext.SaleTypeExt != nil {
+		saleType = request.Ext.SaleTypeExt.TypedSale.SaleType
+	}
+
 	return history.SaleRequest{
 		BaseAsset:         string(request.BaseAsset),
 		DefaultQuoteAsset: string(request.DefaultQuoteAsset),
@@ -192,6 +198,7 @@ func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
 		HardCap:           amount.StringU(uint64(request.HardCap)),
 		Details:           details,
 		QuoteAssets:       quoteAssets,
+		SaleType:          saleType,
 	}
 }
 
