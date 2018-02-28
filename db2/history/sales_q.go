@@ -133,12 +133,12 @@ func (q *saleQ) Insert(sale Sale) error {
 		Columns(
 			"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time",
 			"quote_assets", "soft_cap", "hard_cap", "details", "state", "base_current_cap",
-			"base_hard_cap",
+			"base_hard_cap, sale_type",
 		).
 		Values(
 			sale.ID, sale.OwnerID, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
 			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.Details, sale.State,
-			sale.BaseCurrentCap, sale.BaseHardCap,
+			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType,
 		)
 
 	_, err := q.parent.Exec(sql)
@@ -164,6 +164,7 @@ func (q *saleQ) Update(sale Sale) error {
 		"state":               sale.State,
 		"base_hard_cap":       sale.BaseHardCap,
 		"base_current_cap":    sale.BaseCurrentCap,
+		"sale_type": sale.SaleType,
 	}).Where("id = ?", sale.ID)
 
 	_, err := q.parent.Exec(sql)
@@ -266,4 +267,4 @@ func (q *saleQ) ForBaseAssets(baseAssets ...string) SalesQ {
 
 var selectSales = sq.Select(
 	"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time", "quote_assets", "soft_cap", "hard_cap",
-	"details", "state", "base_hard_cap", "base_current_cap").From("sale")
+	"details", "state", "base_hard_cap", "base_current_cap, sale_type").From("sale")

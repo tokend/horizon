@@ -54,6 +54,11 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	var saleDetails db2.Details
 	_ = json.Unmarshal([]byte(raw.Details), &saleDetails)
 
+	saleType := xdr.SaleTypeBasicSale
+	if raw.Ext.SaleTypeExt != nil {
+		saleType = raw.Ext.SaleTypeExt.TypedSale.SaleType
+	}
+
 	return &history.Sale{
 		ID:                uint64(raw.SaleId),
 		OwnerID:           raw.OwnerId.Address(),
@@ -68,7 +73,8 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 			QuoteAssets: quoteAssets,
 		},
 		BaseCurrentCap: int64(raw.CurrentCapInBase),
-		BaseHardCap:    int64(raw.HardCapInBase),
+		BaseHardCap:    int64(raw.MaxAmountToBeSold),
 		State:          history.SaleStateOpen,
+		SaleType:       saleType,
 	}, nil
 }

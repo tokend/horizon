@@ -50,6 +50,23 @@ func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 	return nil
 }
 
+func reviewableRequestDelete(is *Session, key *xdr.LedgerKey) error {
+	requestKey := key.ReviewableRequest
+	if requestKey == nil {
+		return errors.New("expected reviewable request key not to be nil")
+	}
+
+	// approve it since the request is most likely to be auto-reviewed
+	// the case when it's a permanent reject will be handled later in ingest operation
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(requestKey.RequestId))
+
+	if err != nil {
+		return errors.Wrap(err, "Failed to delete reviewable request")
+	}
+
+	return nil
+}
+
 func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTime time.Time) (*history.ReviewableRequest, error) {
 	var reference *string
 	if request.Reference != nil {
@@ -166,6 +183,12 @@ func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.Details), &details)
+
+	saleType := xdr.SaleTypeBasicSale
+	if request.Ext.SaleTypeExt != nil {
+		saleType = request.Ext.SaleTypeExt.TypedSale.SaleType
+	}
+
 	return history.SaleRequest{
 		BaseAsset:         string(request.BaseAsset),
 		DefaultQuoteAsset: string(request.DefaultQuoteAsset),
@@ -175,6 +198,7 @@ func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
 		HardCap:           amount.StringU(uint64(request.HardCap)),
 		Details:           details,
 		QuoteAssets:       quoteAssets,
+		SaleType:          saleType,
 	}
 }
 
