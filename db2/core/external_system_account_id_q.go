@@ -2,7 +2,7 @@ package core
 
 import (
 	sq "github.com/lann/squirrel"
-	"gitlab.com/distributed_lab/logan/v2/errors"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // ExternalSystemAccountIDQI - provides methods to select from db

@@ -102,7 +102,9 @@ func (is *Session) operation() {
 		is.handleCheckSaleState(success)
 		if success.Effect.Effect == xdr.CheckSaleStateEffectClosed {
 			closed := success.Effect.SaleClosed
-			is.storeTrades(uint64(success.SaleId), closed.SaleDetails)
+			for i := range closed.Results {
+				is.storeTrades(uint64(success.SaleId), closed.Results[i].SaleDetails)
+			}
 		}
 	}
 }

@@ -14,6 +14,14 @@ func (action AccountBalancesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action AccountDetailedBalancesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "AccountDetailedBalancesAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action AccountIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
@@ -50,6 +58,14 @@ func (action AccountTypeLimitsShowAction) ServeHTTPC(c web.C, w http.ResponseWri
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "AccountTypeLimitsShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action AssetHoldersShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "AssetHoldersShowAction")
 	ap.Execute(&action)
 }
 
@@ -314,6 +330,14 @@ func (action SaleShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "SaleShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action CoreSalesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SalesAction")
 	ap.Execute(&action)
 }
 

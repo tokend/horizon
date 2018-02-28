@@ -9,6 +9,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/swarmfund/horizon/db2/sqx"
 )
 
 type SalesQ interface {
@@ -18,21 +19,16 @@ type SalesQ interface {
 	ForOwner(ownerID string) SalesQ
 	// ForBaseAsset - filters by base asset
 	ForBaseAsset(baseAsset string) SalesQ
+	// ForBaseAssets - filters by base assets
+	ForBaseAssets(baseAssets ...string) SalesQ
 	// ForName - filters by `name` field in the `details` json.
 	ForName(baseAsset string) SalesQ
 	// Open - selects only open sales
 	Open(now time.Time) SalesQ
 	// Upcoming - selects only upcoming sales.
 	Upcoming(now time.Time) SalesQ
-	// CollectedValueBound - selects all sales in which the `current_cap` is above bound.
-	CollectedValueBound(bound int64) SalesQ
-	// CurrentSoftCapsRatio is selects all sales in which the `current_cap`
-	// is filled by more than a percentBound of the `soft_cap`.
-	CurrentSoftCapsRatio(percentBound int64) SalesQ
 	// OrderByEndTime is set ordering by `end_time`.
 	OrderByEndTime() SalesQ
-	// OrderByCurrentCap is set ordering by `current_cap`.
-	OrderByCurrentCap(desc bool) SalesQ
 	// OrderByPopularity is merge with quantity of the
 	// unique investors for each sale, and sort sales by quantity.
 	OrderByPopularity(values db2.OrderBooksInvestors) SalesQ
@@ -111,38 +107,6 @@ func (q *saleQ) Upcoming(now time.Time) SalesQ {
 	return q
 }
 
-// CollectedValueBound - selects all sales in which the `current_cap` is above bound.
-func (q *saleQ) CollectedValueBound(bound int64) SalesQ {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("current_cap >= ?", bound)
-	return q
-}
-
-// ReachedSoftCap - selects all sales in which the `current_cap` is above `soft_cap`.
-func (q *saleQ) ReachedSoftCap() SalesQ {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("current_cap > soft_cap")
-	return q
-}
-
-// CurrentSoftCapsRatio is selects all sales in which the `current_cap` is filled by more than a percentBound of the `soft_cap`.
-func (q *saleQ) CurrentSoftCapsRatio(percentBound int64) SalesQ {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.
-		Where("div((current_cap * 100 ), soft_cap) > ?", percentBound)
-
-	return q
-}
-
 // ByID - selects sale by specified id. Returns nil, nil if not found
 func (q *saleQ) ByID(saleID uint64) (*Sale, error) {
 	if q.Err != nil {
@@ -167,12 +131,14 @@ func (q *saleQ) ByID(saleID uint64) (*Sale, error) {
 func (q *saleQ) Insert(sale Sale) error {
 	sql := sq.Insert("sale").
 		Columns(
-			"id", "owner_id", "base_asset", "quote_asset", "start_time", "end_time",
-			"price", "soft_cap", "hard_cap", "current_cap", "details", "state",
+			"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time",
+			"quote_assets", "soft_cap", "hard_cap", "details", "state", "base_current_cap",
+			"base_hard_cap, sale_type",
 		).
 		Values(
-			sale.ID, sale.OwnerID, sale.BaseAsset, sale.QuoteAsset, sale.StartTime, sale.EndTime,
-			sale.Price, sale.SoftCap, sale.HardCap, sale.CurrentCap, sale.Details, sale.State,
+			sale.ID, sale.OwnerID, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
+			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.Details, sale.State,
+			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType,
 		)
 
 	_, err := q.parent.Exec(sql)
@@ -186,17 +152,19 @@ func (q *saleQ) Insert(sale Sale) error {
 // Update - updates existing sale
 func (q *saleQ) Update(sale Sale) error {
 	sql := sq.Update("sale").SetMap(map[string]interface{}{
-		"owner_id":    sale.OwnerID,
-		"base_asset":  sale.BaseAsset,
-		"quote_asset": sale.QuoteAsset,
-		"start_time":  sale.StartTime,
-		"end_time":    sale.EndTime,
-		"price":       sale.Price,
-		"soft_cap":    sale.SoftCap,
-		"hard_cap":    sale.HardCap,
-		"current_cap": sale.CurrentCap,
-		"details":     sale.Details,
-		"state":       sale.State,
+		"owner_id":            sale.OwnerID,
+		"base_asset":          sale.BaseAsset,
+		"default_quote_asset": sale.DefaultQuoteAsset,
+		"start_time":          sale.StartTime,
+		"end_time":            sale.EndTime,
+		"quote_assets":        sale.QuoteAssets,
+		"soft_cap":            sale.SoftCap,
+		"hard_cap":            sale.HardCap,
+		"details":             sale.Details,
+		"state":               sale.State,
+		"base_hard_cap":       sale.BaseHardCap,
+		"base_current_cap":    sale.BaseCurrentCap,
+		"sale_type": sale.SaleType,
 	}).Where("id = ?", sale.ID)
 
 	_, err := q.parent.Exec(sql)
@@ -277,15 +245,26 @@ func (q *saleQ) OrderByPopularity(values db2.OrderBooksInvestors) SalesQ {
 	if q.Err != nil {
 		return q
 	}
-	q.sql = q.sql.Join(
+	q.sql = q.sql.LeftJoin(
 		fmt.Sprintf(
 			"(values %s) as investors_count(order_book_id, quantity) on id = investors_count.order_book_id",
 			values.String()),
-	).OrderBy("investors_count.quantity DESC")
+	).OrderBy("investors_count.quantity DESC NULLS LAST")
 
 	return q
 }
 
+// ForBaseAssets - filters by base assets
+func (q *saleQ) ForBaseAssets(baseAssets ...string) SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	query, values := sqx.InForString("base_asset", baseAssets...)
+	q.sql = q.sql.Where(query, values...)
+	return q
+}
+
 var selectSales = sq.Select(
-	"id", "owner_id", "base_asset", "quote_asset", "start_time", "end_time", "price", "soft_cap", "hard_cap",
-	"current_cap", "details", "state").From("sale")
+	"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time", "quote_assets", "soft_cap", "hard_cap",
+	"details", "state", "base_hard_cap", "base_current_cap, sale_type").From("sale")

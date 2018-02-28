@@ -30,3 +30,23 @@ func (pair AssetPair) ConvertToDestAsset(destCode string, amountToConvert int64)
 	result, isOverflow := amount.BigDivide(amountToConvert, amount.One, pair.CurrentPrice, amount.ROUND_DOWN)
 	return result, !isOverflow, nil
 }
+
+// ConvertFromSourceAsset - converts specified amount from source to another asset in pair using current price,
+// returns false - if failed
+func (pair AssetPair) ConvertFromSourceAsset(sourceCode string, amountToConvert int64) (int64, bool, error) {
+	destCode := pair.QuoteAsset
+	if sourceCode == destCode {
+		destCode = pair.BaseAsset
+	}
+
+	return pair.ConvertToDestAsset(destCode, amountToConvert)
+}
+
+// Contains - returns true if base or quote equal to asset
+func (pair AssetPair) Contains(asset string) bool {
+	return pair.BaseAsset == asset || pair.QuoteAsset == asset
+}
+
+func (pair AssetPair) IsOverlaps(anotherPair AssetPair) bool {
+	return pair.Contains(anotherPair.BaseAsset) || pair.Contains(anotherPair.QuoteAsset)
+}

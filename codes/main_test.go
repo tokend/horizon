@@ -68,11 +68,6 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
-	Convey("RecoverResultCode", t, func() {
-		for _, code := range xdr.RecoverResultCodeAll {
-			checkCode(t, code)
-		}
-	})
 	Convey("ManageBalanceResultCode", t, func() {
 		for _, code := range xdr.ManageBalanceResultCodeAll {
 			checkCode(t, code)
@@ -127,6 +122,12 @@ func TestCodes(t *testing.T) {
 
 	Convey("Create sale", t, func() {
 		for _, code := range xdr.CreateSaleCreationRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Review request", t, func() {
+		for _, code := range xdr.ReviewRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})

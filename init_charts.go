@@ -3,11 +3,15 @@ package horizon
 import (
 	"time"
 
+	"fmt"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/charts"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/exchange"
 	"gitlab.com/swarmfund/horizon/log"
 )
 
@@ -19,6 +23,30 @@ func initCharts(app *App) {
 
 	app.charts = NewCharts()
 
+	// asset price initial value
+	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
+		if change.Type != xdr.LedgerEntryChangeTypeCreated {
+			return
+		}
+		if change.Created.Data.Type != xdr.LedgerEntryTypeAssetPair {
+			return
+		}
+		data := change.Created.Data.AssetPair
+		app.charts.Set(fmt.Sprintf("%s-%s", data.Base, data.Quote), ts, int64(data.CurrentPrice))
+	})
+
+	// asset prices
+	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
+		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
+			return
+		}
+		if change.Updated.Data.Type != xdr.LedgerEntryTypeAssetPair {
+			return
+		}
+		data := change.Updated.Data.AssetPair
+		app.charts.Set(fmt.Sprintf("%s-%s", data.Base, data.Quote), ts, int64(data.CurrentPrice))
+	})
+
 	// sales initial value
 	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
 		if change.Type != xdr.LedgerEntryChangeTypeCreated {
@@ -28,7 +56,7 @@ func initCharts(app *App) {
 			return
 		}
 		data := change.Created.Data.Sale
-		app.charts.Set(string(data.BaseAsset), ts, int64(data.CurrentCap))
+		app.charts.Set(string(data.BaseAsset), ts, int64(0))
 	})
 
 	// sales current cap charts
@@ -40,10 +68,28 @@ func initCharts(app *App) {
 			return
 		}
 		data := change.Updated.Data.Sale
-		app.charts.Set(string(data.BaseAsset), ts, int64(data.CurrentCap))
+		// TODO: fix me
+		logger := log.WithField("listener", "sales_current_cap")
+		converter, err := exchange.NewConverter(app.CoreQ())
+		if err != nil {
+			logger.WithError(err).Error("Failed to init converter")
+			return
+		}
+
+		cupInQuote, err := getCurrentCapInDefaultQuoteForEntry(*data, converter)
+		if err != nil {
+			logger.WithError(err).Error("Failed to convert")
+			return
+		}
+
+		app.charts.Set(string(data.BaseAsset), ts, cupInQuote)
 	})
 
 	// sun issued
+	prevIssued := map[string]*int64{
+		"ETH": nil,
+		"BTC": nil,
+	}
 	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
 		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
 			return
@@ -52,10 +98,27 @@ func initCharts(app *App) {
 			return
 		}
 		data := change.Updated.Data.Asset
-		if string(data.Code) != "SUN" {
+		code := string(data.Code)
+		if _, ok := prevIssued[code]; !ok {
 			return
 		}
-		app.charts.Set("SUN", ts, int64(data.Issued))
+
+		issued := int64(data.Issued)
+		prevIssued[code] = &issued
+		logger := log.WithField("listener", "sales_current_cap")
+		converter, err := exchange.NewConverter(app.CoreQ())
+		if err != nil {
+			logger.WithError(err).Error("Failed to init converter")
+			return
+		}
+
+		totalIssued, err := convertMap(prevIssued, "SUN", converter)
+		if err != nil {
+			logger.WithError(err).Error("Failed to convert map of ETH BTC to SUN")
+			return
+		}
+
+		app.charts.Set("SUN", ts, totalIssued)
 	})
 
 	if err := listener.Init(); err != nil {
@@ -184,4 +247,52 @@ func (l *MetaListener) Run() {
 
 func init() {
 	appInit.Add("swarm_horizon", initCharts, "horizon-db")
+}
+
+func convertMap(data map[string]*int64, destAsset string, converter *exchange.Converter) (int64, error) {
+	var result int64
+	for key, value := range data {
+		if value == nil {
+			continue
+		}
+
+		converted, err := converter.TryToConvertWithOneHop(*value, key, destAsset)
+		if err != nil || converted == nil {
+			if err == nil {
+				err = errors.New("failed to find path to convert asset")
+			}
+			return 0, errors.Wrap(err, "failed to convert asset")
+		}
+
+		var ok bool
+		result, ok = amount.SafePositiveSum(result, *converted)
+		if !ok {
+			return 0, errors.New("overflow on conversion")
+		}
+	}
+
+	return result, nil
+}
+
+func getCurrentCapInDefaultQuoteForEntry(sale xdr.SaleEntry, converter *exchange.Converter) (int64, error) {
+	totalCapInDefaultQuoteAsset := int64(0)
+	for _, quoteAsset := range sale.QuoteAssets {
+		currentCapInDefaultQuoteAsset, err := converter.TryToConvertWithOneHop(int64(quoteAsset.CurrentCap),
+			string(quoteAsset.QuoteAsset), string(sale.DefaultQuoteAsset))
+		if err != nil {
+			return 0, errors.Wrap(err, "failed to convert current cap to default quote asset")
+		}
+
+		if currentCapInDefaultQuoteAsset == nil {
+			return 0, errors.New("failed to convert to current cap: no path found")
+		}
+
+		var isOk bool
+		totalCapInDefaultQuoteAsset, isOk = amount.SafePositiveSum(totalCapInDefaultQuoteAsset, *currentCapInDefaultQuoteAsset)
+		if !isOk {
+			return 0, errors.New("failed to find total cap in default quote asset: overflow")
+		}
+	}
+
+	return totalCapInDefaultQuoteAsset, nil
 }

@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/pkg/errors"
+	"github.com/zenazn/goji/web"
 	"gitlab.com/swarmfund/go/signcontrol"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/actions"
@@ -17,8 +19,6 @@ import (
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/toid"
-	"github.com/pkg/errors"
-	"github.com/zenazn/goji/web"
 )
 
 // Action is the "base type" for all actions in horizon.  It provides
@@ -73,6 +73,7 @@ func (action *Action) IsAllowed(ownersOfData ...string) {
 func (action *Action) isAllowed(ownerOfData string) {
 	//return if develop mode without signatures is used
 	if action.App.config.SkipCheck {
+		action.IsAdmin = true
 		return
 	}
 
@@ -304,9 +305,24 @@ func (action *Action) IsAccountSigner(accountId, signer string) *bool {
 	return isSigner
 }
 
+func getSystemAccountTypes() []xdr.AccountType {
+	return []xdr.AccountType{xdr.AccountTypeOperational, xdr.AccountTypeCommission, xdr.AccountTypeMaster}
+}
+
+func isSystemAccount(accountType int32) bool {
+	sysAccountTypes := getSystemAccountTypes()
+	for _, sysAccountType := range sysAccountTypes {
+		if accountType == int32(sysAccountType) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
-	// commission is managed by master account signers
-	if account.AccountType == int32(xdr.AccountTypeCommission) {
+	// all system accounts are managed by master account signers
+	if isSystemAccount(account.AccountType) && account.AccountType != int32(xdr.AccountTypeMaster) {
 		masterAccount, err := action.CoreQ().Accounts().ByAddress(action.App.CoreInfo.MasterAccountID)
 		if err != nil || masterAccount == nil {
 			if err == nil {
@@ -325,6 +341,17 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get signers")
 		return nil, err
+	}
+
+	if !isSystemAccount(account.AccountType) {
+		// add recovery signer
+		signers = append(signers, core.Signer{
+			Accountid:  account.RecoveryID,
+			Publickey:  account.RecoveryID,
+			Weight:     255,
+			SignerType: action.getMasterSignerType(),
+			Identity:   0,
+		})
 	}
 
 	// is master key allowed

@@ -1,32 +1,36 @@
 package reviewablerequest
 
 import (
-	"time"
 	"encoding/json"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/resource/base"
+	"time"
 )
 
 type SaleCreationRequest struct {
-	BaseAsset  string                 `json:"base_asset"`
-	QuoteAsset string                 `json:"quote_asset"`
-	StartTime  time.Time              `json:"start_time"`
-	EndTime    time.Time              `json:"end_time"`
-	Price      string                 `json:"price"`
-	SoftCap    string                 `json:"soft_cap"`
-	HardCap    string                 `json:"hard_cap"`
-	Details    map[string]interface{} `json:"details"`
+	BaseAsset         string                   `json:"base_asset"`
+	DefaultQuoteAsset string                   `json:"default_quote_asset"`
+	StartTime         time.Time                `json:"start_time"`
+	EndTime           time.Time                `json:"end_time"`
+	SoftCap           string                   `json:"soft_cap"`
+	HardCap           string                   `json:"hard_cap"`
+	SaleType          base.Flag                `json:"sale_type"`
+	Details           map[string]interface{}   `json:"details"`
+	QuoteAssets       []history.SaleQuoteAsset `json:"quote_assets"`
 }
 
 func (r *SaleCreationRequest) Populate(histRequest history.SaleRequest) {
 	r.BaseAsset = histRequest.BaseAsset
-	r.QuoteAsset = histRequest.QuoteAsset
+	r.DefaultQuoteAsset = histRequest.DefaultQuoteAsset
 	r.StartTime = histRequest.StartTime
 	r.EndTime = histRequest.EndTime
-	r.Price = histRequest.Price
 	r.SoftCap = histRequest.SoftCap
 	r.HardCap = histRequest.HardCap
 	r.Details = histRequest.Details
+	r.QuoteAssets = histRequest.QuoteAssets
+	r.SaleType.Value = int32(histRequest.SaleType)
+	r.SaleType.Name = histRequest.SaleType.ShortString()
 }
 
 func (r *SaleCreationRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
@@ -39,4 +43,3 @@ func (r *SaleCreationRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
 	r.Populate(histRequest)
 	return nil
 }
-

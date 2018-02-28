@@ -9,6 +9,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/swarmfund/horizon/exchange"
 )
 
 type Sort int64
@@ -27,8 +28,6 @@ type SaleIndexAction struct {
 	BaseAsset            string
 	OpenOnly             bool
 	Upcoming             bool
-	CurrentSoftCapsRatio *int64
-	CollectedValueBound  *int64
 	SortType             *int64
 	Name                 string
 	Records              []history.Sale
@@ -58,9 +57,6 @@ func (action *SaleIndexAction) loadParams() {
 	action.OpenOnly = action.GetBool("open_only")
 	action.Upcoming = action.GetBool("upcoming")
 
-	action.CurrentSoftCapsRatio = action.GetOptionalInt64("current_soft_caps_ratio")
-	action.CollectedValueBound = action.GetOptionalAmount("collected_value_bound")
-
 	action.SortType = action.GetOptionalInt64("sort_by")
 	action.Page.Filters = map[string]string{
 		"owner":                   action.Owner,
@@ -68,8 +64,6 @@ func (action *SaleIndexAction) loadParams() {
 		"name":                    action.Name,
 		"open_only":               action.GetString("open_only"),
 		"upcoming":                action.GetString("upcoming"),
-		"collected_value_bound":   action.GetString("collected_value_bound"),
-		"current_soft_caps_ratio": action.GetString("current_soft_caps_ratio"),
 	}
 }
 
@@ -96,14 +90,6 @@ func (action *SaleIndexAction) loadRecord() {
 		q = q.Upcoming(time.Now().UTC())
 	}
 
-	if action.CurrentSoftCapsRatio != nil {
-		q = q.CurrentSoftCapsRatio(*action.CurrentSoftCapsRatio)
-	}
-
-	if action.CollectedValueBound != nil {
-		q = q.CollectedValueBound(*action.CollectedValueBound)
-	}
-
 	sortBy := SortTypeDefaultPage
 	if action.SortType != nil {
 		sortBy = Sort(*action.SortType)
@@ -112,8 +98,6 @@ func (action *SaleIndexAction) loadRecord() {
 	switch sortBy {
 	case SortTypeDefaultPage:
 		q = q.Page(action.PagingParams)
-	case SortTypeMostFounded:
-		q = q.OrderByCurrentCap(true)
 	case SortTypeByEndTime:
 		q = q.OrderByEndTime()
 	case SortTypeByPopularity:
@@ -129,8 +113,14 @@ func (action *SaleIndexAction) loadRecord() {
 		return
 	}
 
-	var err error
-	action.Records, err = q.Select()
+	converter, err := exchange.NewConverter(action.CoreQ())
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to init converter")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	action.Records, err = selectSalesWithCurrentCap(q, converter)
 	if err != nil {
 		action.Log.WithError(err).Error("failed to load sales")
 		action.Err = &problem.ServerError

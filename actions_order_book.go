@@ -1,11 +1,12 @@
 package horizon
 
 import (
+	"strconv"
+
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"strconv"
 )
 
 type OrderBookAction struct {
@@ -15,7 +16,7 @@ type OrderBookAction struct {
 	IsBuy       bool
 	OrderBookID *uint64
 
-	CoreRecords []core.OrderBookEntry
+	CoreRecords []core.Offer
 	Page        hal.Page
 }
 
@@ -23,6 +24,7 @@ type OrderBookAction struct {
 func (action *OrderBookAction) JSON() {
 	action.Do(
 		action.loadParams,
+		action.checkIsSigned,
 		action.loadRecords,
 		func() {
 			hal.Render(action.W, action.Page)
@@ -43,18 +45,23 @@ func (action *OrderBookAction) loadParams() {
 	}
 }
 
+func (action *OrderBookAction) checkIsSigned() {
+	if action.Signer != "" {
+		action.isAllowed(action.Signer)
+	}
+}
+
 func (action *OrderBookAction) loadRecords() {
 	q := action.CoreQ().
-		OrderBook().
+		Offers().
 		ForAssets(action.BaseAsset, action.QuoteAsset).
-		Direction(action.IsBuy)
+		IsBuy(action.IsBuy)
 
 	if action.OrderBookID != nil {
 		q = q.ForOrderBookID(*action.OrderBookID)
 	}
 
 	err := q.Select(&action.CoreRecords)
-
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get offers from core DB")
 		action.Err = &problem.ServerError
@@ -63,12 +70,15 @@ func (action *OrderBookAction) loadRecords() {
 
 	for i := range action.CoreRecords {
 		var result resource.OrderBookEntry
-		result.Populate(&action.CoreRecords[i], action.BaseAsset, action.QuoteAsset, action.IsBuy)
+		result.Populate(&action.CoreRecords[i].OrderBookEntry, action.BaseAsset, action.QuoteAsset, action.IsBuy)
+		if action.IsAdmin {
+			result.OfferID = action.CoreRecords[i].OfferID
+			result.OwnerID = action.CoreRecords[i].OwnerID
+		}
 		action.Page.Add(&result)
 	}
 
 	action.Page.BaseURL = action.BaseURL()
 	action.Page.BasePath = action.Path()
 	action.Page.PopulateLinks()
-
 }
