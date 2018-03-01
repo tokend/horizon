@@ -233,6 +233,11 @@ func initWebActions(app *App) {
 			"document_hash": "",
 		},
 	})
+	r.Get("/request/change_kyc", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]string{
+			"updated_account_id": "",
+		},
+	})
 
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
