@@ -1,24 +1,33 @@
 package reviewablerequest
 
 import (
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"encoding/json"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
-type UpdateKYCRequest struct {
-	KYCData string `json:"KYC_data"`
+type ChangeKYCRequest struct {
+	UpdatedAccountID string          `json:"updated_account_id"`
+	AccountTypeToSet xdr.AccountType `json:"account_type_to_set"`
+	KYCData          string          `json:"KYC_data"`
+	KYCLevel         xdr.Uint32      `json:"KYC_level"`
 }
 
-func (r *UpdateKYCRequest) Populate(histRequest history.UpdateKYCRequest) {
+func (r *ChangeKYCRequest) Populate(histRequest history.ChangeKYCRequest) {
+	r.UpdatedAccountID = histRequest.UpdatedAccountId
+	r.AccountTypeToSet = histRequest.AccountTypeToSet
 	r.KYCData = histRequest.KYCData
+	r.KYCLevel = histRequest.KYCLevel
+
 }
 
-func (r *UpdateKYCRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
-	var histRequest history.UpdateKYCRequest
+func (r *ChangeKYCRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
+	var histRequest history.ChangeKYCRequest
 	err := json.Unmarshal(rawJson, &histRequest)
 	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal history.UpdateKYCRequest")
+		return errors.Wrap(err, "failed to unmarshal history.ChangeKYCRequest")
 	}
 
 	r.Populate(histRequest)

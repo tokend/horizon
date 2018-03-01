@@ -208,9 +208,11 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) history.LimitsUpda
 	}
 }
 
-func getUpdateKYCRequest(request *xdr.UpdateKycRequest) history.UpdateKYCRequest {
-	return history.UpdateKYCRequest{
-		KYCData: string(request.DataKyc),
+func getChangeKYCRequest(request *xdr.ChangeKycRequest) history.ChangeKYCRequest {
+	return history.ChangeKYCRequest{
+		KYCData:          string(request.KycData),
+		KYCLevel:         request.KycLevel,
+		AccountTypeToSet: request.AccountTypeToSet,
 	}
 }
 
@@ -237,8 +239,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, 
 		rawDetails = getLimitsUpdateRequest(body.LimitsUpdateRequest)
 	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
 		rawDetails = getWithdrawalRequest(body.TwoStepWithdrawalRequest)
-	case xdr.ReviewableRequestTypeUpdateKyc:
-		rawDetails = getUpdateKYCRequest(body.UpdateKycRequest)
+	case xdr.ReviewableRequestTypeChangeKyc:
+		rawDetails = getChangeKYCRequest(body.ChangeKycRequest)
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

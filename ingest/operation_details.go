@@ -69,10 +69,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["limits_update_request_document_hash"] = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
 		}
 
-		if op.UpdateKycData != nil {
-			details["updateKYC_data"] = op.UpdateKycData.DataKyc
-		}
-
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 		if op.Fee != nil {

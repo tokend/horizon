@@ -141,6 +141,10 @@ var messages = map[string]string{
 	"op_requestor_is_blocked":                        "Requestor is blocked",
 	"op_version_is_not_supported_yet":                "Version of this operation is not supported yet",
 	"op_balance_already_exists":                      "Balance already exists",
+	"op_updated_acc_not_exist":                       "Account to update KYC data doesn't exist",
+	"op_request_exist":                               "Request already exists",
+	"op_set_type_the_same":                           "Account type and kyc level are the same",
+	"op_request_not_exist":                           "Request does not exist",
 }
 
 func getMessage(rawCode string) string {

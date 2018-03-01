@@ -1,8 +1,9 @@
 package history
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
 	"time"
+
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 type AssetCreationRequest struct {
@@ -67,6 +68,9 @@ type LimitsUpdateRequest struct {
 	DocumentHash string `json:"document_hash"`
 }
 
-type UpdateKYCRequest struct {
-	KYCData string `json:"KYC_data"`
+type ChangeKYCRequest struct {
+	KYCData          string          `json:"KYC_data"`
+	KYCLevel         xdr.Uint32      `json:"KYC_level"`
+	AccountTypeToSet xdr.AccountType `json:"account_type_to_set"`
+	UpdatedAccountId string          `json:"updated_account_id"`
 }
