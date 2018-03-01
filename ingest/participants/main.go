@@ -121,6 +121,13 @@ func ForOperation(
 		}
 
 		sourceParticipant = nil
+	case xdr.OperationTypeCreateKycRequest:
+		changeKYCRequest := op.Body.MustCreateKycRequestOp().ChangeKycRequest
+		result = append(result, Participant{
+			AccountID: changeKYCRequest.UpdatedAccount,
+			BalanceID: nil,
+			Details: nil,
+		})
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

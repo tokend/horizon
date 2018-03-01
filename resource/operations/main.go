@@ -102,6 +102,12 @@ func New(
 			e.ExternalDetails = nil
 		}
 		result = e
+	case xdr.OperationTypeCreateKycRequest:
+		e := CreateKYCRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.KYCData = nil
+		}
 	default:
 		result = base
 	}
