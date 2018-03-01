@@ -17,7 +17,7 @@ type Details struct {
 	TwoStepWithdrawal *WithdrawalRequest    `json:"two_step_withdrawal"`
 	Sale              *SaleCreationRequest  `json:"sale,omitempty"`
 	LimitsUpdate      *LimitsUpdateRequest  `json:"limits_update"`
-	ChangeKYC         *ChangeKYCRequest     `json:"changeKYC,omitempty"`
+	ChangeKYC         *ChangeKYCRequest     `json:"change_kyc,omitempty"`
 }
 
 func (d *Details) PopulateFromRawJSON(requestType xdr.ReviewableRequestType, rawJSON []byte) error {

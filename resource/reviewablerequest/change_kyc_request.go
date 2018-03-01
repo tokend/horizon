@@ -9,10 +9,10 @@ import (
 )
 
 type ChangeKYCRequest struct {
-	UpdatedAccountID string          `json:"updated_account_id"`
-	AccountTypeToSet xdr.AccountType `json:"account_type_to_set"`
-	KYCData          string          `json:"KYC_data"`
-	KYCLevel         xdr.Uint32      `json:"KYC_level"`
+	UpdatedAccountID string                 `json:"updated_account_id"`
+	AccountTypeToSet xdr.AccountType        `json:"account_type_to_set"`
+	KYCData          map[string]interface{} `json:"kyc_data"`
+	KYCLevel         xdr.Uint32             `json:"kyc_level"`
 }
 
 func (r *ChangeKYCRequest) Populate(histRequest history.ChangeKYCRequest) {
@@ -20,7 +20,6 @@ func (r *ChangeKYCRequest) Populate(histRequest history.ChangeKYCRequest) {
 	r.AccountTypeToSet = histRequest.AccountTypeToSet
 	r.KYCData = histRequest.KYCData
 	r.KYCLevel = histRequest.KYCLevel
-
 }
 
 func (r *ChangeKYCRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
