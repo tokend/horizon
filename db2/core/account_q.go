@@ -107,4 +107,5 @@ var selectAccount = sq.Select(
 	"a.account_type",
 	"a.block_reasons",
 	"a.policies",
+	"a.kyc_level",
 ).From("accounts a")
