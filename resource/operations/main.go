@@ -103,6 +103,7 @@ func New(
 		if public {
 			e.KYCData = nil
 		}
+		result = e
 	default:
 		result = base
 	}
