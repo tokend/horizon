@@ -232,11 +232,13 @@ func initWebActions(app *App) {
 		RequestSpecificFilters: map[string]string{
 			"document_hash": "",
 		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeLimitsUpdate},
 	})
 	r.Get("/request/change_kyc", &ReviewableRequestIndexAction{
 		RequestSpecificFilters: map[string]string{
 			"updated_account_id": "",
 		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeChangeKyc},
 	})
 
 	// Sales actions
