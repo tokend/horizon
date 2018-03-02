@@ -209,10 +209,14 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) history.LimitsUpda
 }
 
 func getChangeKYCRequest(request *xdr.ChangeKycRequest) history.ChangeKYCRequest {
+	var kycData map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.KycData), &kycData)
 	return history.ChangeKYCRequest{
-		KYCData:          string(request.KycData),
+		KYCData:          kycData,
 		KYCLevel:         request.KycLevel,
 		AccountTypeToSet: request.AccountTypeToSet,
+		UpdatedAccountId: request.UpdatedAccount.Address(),
 	}
 }
 
