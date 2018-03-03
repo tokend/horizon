@@ -287,7 +287,7 @@
   branch = "master"
   name = "gitlab.com/swarmfund/go"
   packages = ["amount","build","crc16","hash","keypair","network","signcontrol","strkey","xdr"]
-  revision = "c71a5b7d45aa6ace2e4f8567ca71389dc14877ee"
+  revision = "3d7b51459047d9b015c679bb5dd431e4c1c6f9bd"
 
 [[projects]]
   branch = "master"
