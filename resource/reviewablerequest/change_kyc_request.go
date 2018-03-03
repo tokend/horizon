@@ -12,7 +12,7 @@ type ChangeKYCRequest struct {
 	UpdatedAccountID string                 `json:"updated_account_id"`
 	AccountTypeToSet xdr.AccountType        `json:"account_type_to_set"`
 	KYCData          map[string]interface{} `json:"kyc_data"`
-	KYCLevel         xdr.Uint32             `json:"kyc_level"`
+	KYCLevel         uint32                 `json:"kyc_level"`
 }
 
 func (r *ChangeKYCRequest) Populate(histRequest history.ChangeKYCRequest) {

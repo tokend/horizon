@@ -70,7 +70,7 @@ type LimitsUpdateRequest struct {
 
 type ChangeKYCRequest struct {
 	KYCData          map[string]interface{} `json:"kyc_data"`
-	KYCLevel         xdr.Uint32             `json:"kyc_level"`
+	KYCLevel         uint32                 `json:"kyc_level"`
 	AccountTypeToSet xdr.AccountType        `json:"account_type_to_set"`
 	UpdatedAccountId string                 `json:"updated_account_id"`
 }

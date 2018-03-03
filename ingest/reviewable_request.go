@@ -214,7 +214,7 @@ func getChangeKYCRequest(request *xdr.ChangeKycRequest) history.ChangeKYCRequest
 	_ = json.Unmarshal([]byte(request.KycData), &kycData)
 	return history.ChangeKYCRequest{
 		KYCData:          kycData,
-		KYCLevel:         request.KycLevel,
+		KYCLevel:         uint32(request.KycLevel),
 		AccountTypeToSet: request.AccountTypeToSet,
 		UpdatedAccountId: request.UpdatedAccount.Address(),
 	}
