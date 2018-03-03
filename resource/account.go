@@ -21,17 +21,18 @@ type Account struct {
 	} `json:"_links"`
 
 	HistoryAccount
-	IsBlocked     bool              `json:"is_blocked"`
-	BlockReasonsI int32             `json:"block_reasons_i"`
-	BlockReasons  []base.Flag       `json:"block_reasons"`
-	AccountTypeI  int32             `json:"account_type_i"`
-	AccountType   string            `json:"account_type"`
-	Thresholds    AccountThresholds `json:"thresholds"`
-	Balances      []Balance         `json:"balances"`
+	IsBlocked              bool                      `json:"is_blocked"`
+	BlockReasonsI          int32                     `json:"block_reasons_i"`
+	BlockReasons           []base.Flag               `json:"block_reasons"`
+	AccountTypeI           int32                     `json:"account_type_i"`
+	AccountType            string                    `json:"account_type"`
+	Thresholds             AccountThresholds         `json:"thresholds"`
+	Balances               []Balance                 `json:"balances"`
 	Signers
-	Limits                 `json:"limits"`
-	Statistics             `json:"statistics"`
+	Limits                                           `json:"limits"`
+	Statistics                                       `json:"statistics"`
 	Policies               AccountPolicies           `json:"policies"`
+	AccountKYC                                       `json:"account_kyc"`
 	ExternalSystemAccounts []ExternalSystemAccountID `json:"external_system_accounts"`
 }
 
@@ -53,6 +54,7 @@ func (a *Account) Populate(ctx context.Context, ca core.Account) {
 	a.Links.Operations = lb.PagedLink(self, "operations")
 	a.Links.Payments = lb.PagedLink(self, "payments")
 	a.Statistics.Populate(*ca.Statistics)
+	a.AccountKYC.Populate(*ca.AccountKYC)
 }
 
 func (a *Account) SetBalances(balances []core.Balance) {

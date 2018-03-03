@@ -14,4 +14,5 @@ type Account struct {
 	Policies     int32          `db:"policies"`
 	KYCLevel     int32          `db:"kyc_level"`
 	*Statistics
+	*AccountKYC
 }

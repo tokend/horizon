@@ -22,6 +22,8 @@ type AccountQI interface {
 	ForAddresses(addresses ...string) AccountQI
 	// Selects first element from filtered
 	First() (*Account, error)
+	// joins account KYC
+	WithAccountKYC() AccountQI
 }
 
 // AccountQ is a helper struct to aid in configuring queries that loads
@@ -73,6 +75,17 @@ func (q *AccountQ) WithStatistics() AccountQI {
 	return q
 }
 
+func (q *AccountQ) WithAccountKYC() AccountQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.
+		LeftJoin("account_KYC ak on (ak.accountid = a.accountid)").
+		Columns("ak.KYC_data as account_kyc_data")
+	return q
+}
+
 func (q *AccountQ) Select(destination interface{}) error {
 	if q.Err != nil {
 		return q.Err
@@ -84,7 +97,7 @@ func (q *AccountQ) ForAddresses(addresses ...string) AccountQI {
 	if q.Err != nil {
 		return q
 	}
-	q.sql = q.sql.Where(sq.Eq{"accountid": addresses})
+	q.sql = q.sql.Where(sq.Eq{"a.accountid": addresses})
 	return q
 }
 
