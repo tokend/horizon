@@ -37,7 +37,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
 		details["subject"] = op.Subject
-		details["reference"] = op.Reference
+		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["asset"] = opResult.PaymentResponse.Asset
 	case xdr.OperationTypeSetOptions:
 		op := c.Operation().Body.MustSetOptionsOp()
@@ -138,7 +138,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
 		details["subject"] = op.Subject
-		details["reference"] = op.Reference
+		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["asset"] = opResult.PaymentResponse.Asset
 	case xdr.OperationTypeManageAssetPair:
 		op := c.Operation().Body.MustManageAssetPairOp()
