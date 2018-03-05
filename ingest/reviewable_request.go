@@ -10,6 +10,7 @@ import (
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/utf8"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -71,7 +72,7 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTi
 	var reference *string
 	if request.Reference != nil {
 		reference = new(string)
-		*reference = string(*request.Reference)
+		*reference = utf8.Scrub(string(*request.Reference))
 	}
 
 	details, err := getReviewableRequestDetails(&request.Body)
