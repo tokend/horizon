@@ -25,6 +25,7 @@ func New(
 		if public {
 			e.Funder = ""
 			e.Account = ""
+			e.Referrer = nil
 		}
 		result = e
 	case xdr.OperationTypePayment:
@@ -109,9 +110,10 @@ func New(
 // is CreateAccount.
 type CreateAccount struct {
 	Base
-	Funder      string `json:"funder,omitempty"`
-	Account     string `json:"account,omitempty"`
-	AccountType int32  `json:"account_type"`
+	Funder      string  `json:"funder,omitempty"`
+	Account     string  `json:"account,omitempty"`
+	AccountType int32   `json:"account_type"`
+	Referrer    *string `json:"referrer,omitempty"`
 }
 
 type BasePayment struct {
