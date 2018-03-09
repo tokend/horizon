@@ -23,6 +23,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["funder"] = source.Address()
 		details["account"] = op.Destination.Address()
 		details["account_type"] = int32(op.AccountType)
+		if op.Referrer != nil {
+			details["referrer"] = (*op.Referrer).Address()
+		}
 	case xdr.OperationTypePayment:
 		op := c.Operation().Body.MustPaymentOp()
 		opResult := c.OperationResult().MustPaymentResult()
