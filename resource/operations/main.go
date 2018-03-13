@@ -1,8 +1,6 @@
 package operations
 
 import (
-	"fmt"
-
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
@@ -15,8 +13,6 @@ func New(
 	ctx context.Context, row history.Operation, participants []*history.Participant, public bool,
 ) (result hal.Pageable, err error) {
 
-	fmt.Printf("%#v\n", row)
-	fmt.Printf("%#v\n", participants)
 	base := Base{}
 	err = base.Populate(ctx, row, participants, public)
 	if err != nil {
@@ -29,6 +25,7 @@ func New(
 		if public {
 			e.Funder = ""
 			e.Account = ""
+			e.Referrer = nil
 		}
 		result = e
 	case xdr.OperationTypePayment:
@@ -113,9 +110,10 @@ func New(
 // is CreateAccount.
 type CreateAccount struct {
 	Base
-	Funder      string `json:"funder,omitempty"`
-	Account     string `json:"account,omitempty"`
-	AccountType int32  `json:"account_type"`
+	Funder      string  `json:"funder,omitempty"`
+	Account     string  `json:"account,omitempty"`
+	AccountType int32   `json:"account_type"`
+	Referrer    *string `json:"referrer,omitempty"`
 }
 
 type BasePayment struct {

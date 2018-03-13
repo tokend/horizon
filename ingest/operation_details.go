@@ -23,6 +23,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["funder"] = source.Address()
 		details["account"] = op.Destination.Address()
 		details["account_type"] = int32(op.AccountType)
+		if op.Referrer != nil {
+			details["referrer"] = (*op.Referrer).Address()
+		}
 	case xdr.OperationTypePayment:
 		op := c.Operation().Body.MustPaymentOp()
 		opResult := c.OperationResult().MustPaymentResult()
@@ -37,7 +40,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
 		details["subject"] = op.Subject
-		details["reference"] = op.Reference
+		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["asset"] = opResult.PaymentResponse.Asset
 	case xdr.OperationTypeSetOptions:
 		op := c.Operation().Body.MustSetOptionsOp()
@@ -138,7 +141,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
 		details["subject"] = op.Subject
-		details["reference"] = op.Reference
+		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["asset"] = opResult.PaymentResponse.Asset
 	case xdr.OperationTypeManageAssetPair:
 		op := c.Operation().Body.MustManageAssetPairOp()
