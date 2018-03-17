@@ -197,7 +197,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeCreateSaleRequest:
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:
-		// no details needed
+		op := c.Operation().Body.MustCheckSaleStateOp()
+		opResult := c.OperationResult().MustCheckSaleStateResult().MustSuccess()
+		details["sale_id"] = uint64(op.SaleId)
+		details["effect"] = opResult.Effect.Effect.String()
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
