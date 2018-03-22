@@ -121,6 +121,8 @@ func ForOperation(
 		}
 
 		sourceParticipant = nil
+	case xdr.OperationTypeCreateAmlAlert:
+		// TODO add participant
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

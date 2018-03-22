@@ -198,6 +198,12 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:
 		// no details needed
+	case xdr.OperationTypeCreateAmlAlert:
+		op := c.Operation().Body.MustCreateAmlAlertRequestOp()
+		details["amount"] = amount.StringU(uint64(op.AmlAlertRequest.Amount))
+		details["balance_id"] = op.AmlAlertRequest.BalanceId.AsString()
+		details["reason"] = op.AmlAlertRequest.Reason
+		details["reference"] = op.Reference
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
