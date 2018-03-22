@@ -99,6 +99,13 @@ func New(
 			e.ExternalDetails = nil
 		}
 		result = e
+	case xdr.OperationTypeCreateAmlAlert:
+		e := CreateAmlAlert{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.BalanceID = ""
+		}
+		result = e
 	default:
 		result = base
 	}

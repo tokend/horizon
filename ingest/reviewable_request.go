@@ -172,6 +172,14 @@ func getWithdrawalRequest(request *xdr.WithdrawalRequest) history.WithdrawalRequ
 	}
 }
 
+func getAmlAlertRequest(request *xdr.AmlAlertRequest) history.AmlAlertRequest {
+	return history.AmlAlertRequest{
+		BalanceID: request.BalanceId.AsString(),
+		Amount:    amount.StringU(uint64(request.Amount)),
+		Reason:    string(request.Reason),
+	}
+}
+
 func getSaleRequest(request *xdr.SaleCreationRequest) history.SaleRequest {
 	var quoteAssets []history.SaleQuoteAsset
 	for i := range request.QuoteAssets {
@@ -232,6 +240,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, 
 		rawDetails = getLimitsUpdateRequest(body.LimitsUpdateRequest)
 	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
 		rawDetails = getWithdrawalRequest(body.TwoStepWithdrawalRequest)
+	case xdr.ReviewableRequestTypeAmlAlert:
+		rawDetails = getAmlAlertRequest(body.AmlAlertRequest)
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

@@ -66,3 +66,9 @@ type SaleQuoteAsset struct {
 type LimitsUpdateRequest struct {
 	DocumentHash string `json:"document_hash"`
 }
+
+type AmlAlertRequest struct {
+	BalanceID string `json:"balance_id"`
+	Amount    string `json:"amount"`
+	Reason    string `json:"reason"`
+}

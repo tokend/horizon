@@ -17,6 +17,7 @@ type Details struct {
 	TwoStepWithdrawal *WithdrawalRequest    `json:"two_step_withdrawal"`
 	Sale              *SaleCreationRequest  `json:"sale,omitempty"`
 	LimitsUpdate      *LimitsUpdateRequest  `json:"limits_update"`
+	AmlAlert          *AmlAlertRequest      `json:"aml_alert"`
 }
 
 func (d *Details) PopulateFromRawJSON(requestType xdr.ReviewableRequestType, rawJSON []byte) error {
@@ -55,6 +56,9 @@ func (d *Details) PopulateSpecificRequest(requestType xdr.ReviewableRequestType,
 	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
 		d.TwoStepWithdrawal = new(WithdrawalRequest)
 		return d.TwoStepWithdrawal.PopulateFromRawJsonHistory(rawJSON)
+	case xdr.ReviewableRequestTypeAmlAlert:
+		d.AmlAlert = new(AmlAlertRequest)
+		return d.AmlAlert.PopulateFromRawJsonHistory(rawJSON)
 	default:
 		return errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),
