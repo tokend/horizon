@@ -7,6 +7,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/utf8"
 )
 
 func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
@@ -86,11 +87,15 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 
 	var reviewerDetails map[string]interface{}
 
-	err = json.Unmarshal([]byte(details.ExternalDetails), &reviewerDetails)
+	externalDetails := utf8.Scrub(details.ExternalDetails)
+	err = json.Unmarshal([]byte(externalDetails), &reviewerDetails)
 	if err != nil {
 		// we ignore here error on purpose, as it's too late to valid the error
 		err = errors.Wrap(err, "failed to marshal reviewer details", fields)
-		is.log.WithError(err).WithField("details", details.ExternalDetails).Warn("Reviewer sent invalid json in withdrawal details")
+		is.log.WithError(err).WithFields(logan.F{
+			"scrubbed_details": externalDetails,
+			"original_details": details.ExternalDetails,
+		}).Warn("Reviewer sent invalid json in withdrawal details")
 	}
 
 	withdrawalDetails.ReviewerDetails = reviewerDetails

@@ -13,6 +13,10 @@ func Scrub(in string) string {
 	// drop nil bytes
 	in = strings.Replace(in, "\u0000", "", -1)
 
+	// drop line breaks
+	// (originating from withdraw external_details hotfix, where mysterious line break appeared in tx_hex)
+	in = strings.Replace(in, `\n`, "", -1)
+
 	// First check validity using the stdlib, returning if the string is already
 	// valid
 	if utf8.ValidString(in) {
