@@ -15,7 +15,7 @@ func Scrub(in string) string {
 
 	// drop line breaks
 	// (originating from withdraw external_details hotfix, where mysterious line break appeared in tx_hex)
-	in = strings.Replace(in, `\n`, "", -1)
+	in = strings.Replace(in, "\n", "", -1)
 
 	// First check validity using the stdlib, returning if the string is already
 	// valid
