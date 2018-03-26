@@ -1,11 +1,12 @@
 package ingest
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"encoding/json"
+
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
 func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
@@ -16,7 +17,7 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 	var err error
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
-		err = is.approveReviewableRequest (op)
+		err = is.approveReviewableRequest(op)
 	case xdr.ReviewRequestOpActionPermanentReject:
 		err = is.permanentReject(op)
 	case xdr.ReviewRequestOpActionReject:
@@ -89,7 +90,7 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 	if err != nil {
 		// we ignore here error on purpose, as it's too late to valid the error
 		err = errors.Wrap(err, "failed to marshal reviewer details", fields)
-		is.log.WithError(err).Warn("Reviewer sent invalid json in withdrawal details")
+		is.log.WithError(err).WithField("details", details.ExternalDetails).Warn("Reviewer sent invalid json in withdrawal details")
 	}
 
 	withdrawalDetails.ReviewerDetails = reviewerDetails
@@ -105,4 +106,3 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 
 	return nil
 }
-
