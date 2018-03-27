@@ -48,9 +48,9 @@ func ForOperation(
 		result = append(result, Participant{paymentResponse.Destination, &paymentOp.DestinationBalanceId, nil})
 		sourceParticipant.BalanceID = &paymentOp.SourceBalanceId
 	case xdr.OperationTypeSetOptions:
-		// the only direct participant is the source_account
+	// the only direct participant is the source_account
 	case xdr.OperationTypeSetFees:
-		// the only direct participant is the source_account
+	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAccount:
 		manageAccountOp := op.Body.MustManageAccountOp()
 		result = append(result, Participant{manageAccountOp.Account, nil, nil})
@@ -63,9 +63,9 @@ func ForOperation(
 			result = append(result, Participant{manageBalanceOp.Destination, nil, nil})
 		}
 	case xdr.OperationTypeReviewPaymentRequest:
-		// the only direct participant is the source_account
+	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAsset:
-		// the only direct participant is the source_accountWWW
+	// the only direct participant is the source_accountWWW
 	case xdr.OperationTypeSetLimits:
 		setLimitsOp := op.Body.MustSetLimitsOp()
 		if setLimitsOp.Account != nil {
@@ -121,6 +121,8 @@ func ForOperation(
 		}
 
 		sourceParticipant = nil
+	case xdr.OperationTypeCreateAmlAlert:
+		// TODO add participant
 	case xdr.OperationTypeCreateKycRequest:
 		updateKYCRequestData := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
 		if sourceParticipant.AccountID.Address() != updateKYCRequestData.AccountToUpdateKyc.Address() {

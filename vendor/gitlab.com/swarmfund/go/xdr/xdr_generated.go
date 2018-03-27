@@ -19,6 +19,7 @@
 //  xdr/raw/Stellar-ledger-entries.x
 //  xdr/raw/Stellar-ledger.x
 //  xdr/raw/Stellar-operation-check-sale-state.x
+//  xdr/raw/Stellar-operation-create-AML-alert-request.x
 //  xdr/raw/Stellar-operation-create-account.x
 //  xdr/raw/Stellar-operation-create-issuance-request.x
 //  xdr/raw/Stellar-operation-create-preissuance-request.x
@@ -38,6 +39,7 @@
 //  xdr/raw/Stellar-operation-set-limits.x
 //  xdr/raw/Stellar-operation-set-options.x
 //  xdr/raw/Stellar-overlay.x
+//  xdr/raw/Stellar-reviewable-request-AML-alert.x
 //  xdr/raw/Stellar-reviewable-request-asset.x
 //  xdr/raw/Stellar-reviewable-request-issuance.x
 //  xdr/raw/Stellar-reviewable-request-limits-update.x
@@ -684,7 +686,10 @@ type AccountTypeLimitsEntry struct {
 //    	USER_ASSET_MANAGER = 131072, // can review sale, asset creation/update requests
 //    	USER_ISSUANCE_MANAGER = 262144, // can review pre-issuance/issuance requests
 //    	WITHDRAW_MANAGER = 524288, // can review withdraw requests
-//    	FEES_MANAGER = 1048576 // can set fee
+//    	FEES_MANAGER = 1048576, // can set fee
+//    	TX_SENDER = 2097152, // can send tx
+//    	AML_ALERT_MANAGER = 4194304, // can manage AML alert request
+//    	AML_ALERT_REVIEWER = 8388608 // can review aml alert requests
 //    };
 //
 type SignerType int32
@@ -711,6 +716,9 @@ const (
 	SignerTypeUserIssuanceManager       SignerType = 262144
 	SignerTypeWithdrawManager           SignerType = 524288
 	SignerTypeFeesManager               SignerType = 1048576
+	SignerTypeTxSender                  SignerType = 2097152
+	SignerTypeAmlAlertManager           SignerType = 4194304
+	SignerTypeAmlAlertReviewer          SignerType = 8388608
 )
 
 var SignerTypeAll = []SignerType{
@@ -735,6 +743,9 @@ var SignerTypeAll = []SignerType{
 	SignerTypeUserIssuanceManager,
 	SignerTypeWithdrawManager,
 	SignerTypeFeesManager,
+	SignerTypeTxSender,
+	SignerTypeAmlAlertManager,
+	SignerTypeAmlAlertReviewer,
 }
 
 var signerTypeMap = map[int32]string{
@@ -759,6 +770,9 @@ var signerTypeMap = map[int32]string{
 	262144:  "SignerTypeUserIssuanceManager",
 	524288:  "SignerTypeWithdrawManager",
 	1048576: "SignerTypeFeesManager",
+	2097152: "SignerTypeTxSender",
+	4194304: "SignerTypeAmlAlertManager",
+	8388608: "SignerTypeAmlAlertReviewer",
 }
 
 var signerTypeShortMap = map[int32]string{
@@ -783,6 +797,9 @@ var signerTypeShortMap = map[int32]string{
 	262144:  "user_issuance_manager",
 	524288:  "withdraw_manager",
 	1048576: "fees_manager",
+	2097152: "tx_sender",
+	4194304: "aml_alert_manager",
+	8388608: "aml_alert_reviewer",
 }
 
 var signerTypeRevMap = map[string]int32{
@@ -807,6 +824,9 @@ var signerTypeRevMap = map[string]int32{
 	"SignerTypeUserIssuanceManager":       262144,
 	"SignerTypeWithdrawManager":           524288,
 	"SignerTypeFeesManager":               1048576,
+	"SignerTypeTxSender":                  2097152,
+	"SignerTypeAmlAlertManager":           4194304,
+	"SignerTypeAmlAlertReviewer":          8388608,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -1652,18 +1672,20 @@ type AssetPairEntry struct {
 //    	STATS_QUOTE_ASSET = 4,
 //    	WITHDRAWABLE = 8,
 //    	TWO_STEP_WITHDRAWAL = 16,
-//    	REQUIRES_KYC = 32
+//    	REQUIRES_KYC = 32,
+//    	ISSUANCE_MANUAL_REVIEW_REQUIRED = 64
 //    };
 //
 type AssetPolicy int32
 
 const (
-	AssetPolicyTransferable      AssetPolicy = 1
-	AssetPolicyBaseAsset         AssetPolicy = 2
-	AssetPolicyStatsQuoteAsset   AssetPolicy = 4
-	AssetPolicyWithdrawable      AssetPolicy = 8
-	AssetPolicyTwoStepWithdrawal AssetPolicy = 16
-	AssetPolicyRequiresKyc       AssetPolicy = 32
+	AssetPolicyTransferable                 AssetPolicy = 1
+	AssetPolicyBaseAsset                    AssetPolicy = 2
+	AssetPolicyStatsQuoteAsset              AssetPolicy = 4
+	AssetPolicyWithdrawable                 AssetPolicy = 8
+	AssetPolicyTwoStepWithdrawal            AssetPolicy = 16
+	AssetPolicyRequiresKyc                  AssetPolicy = 32
+	AssetPolicyIssuanceManualReviewRequired AssetPolicy = 64
 )
 
 var AssetPolicyAll = []AssetPolicy{
@@ -1673,6 +1695,7 @@ var AssetPolicyAll = []AssetPolicy{
 	AssetPolicyWithdrawable,
 	AssetPolicyTwoStepWithdrawal,
 	AssetPolicyRequiresKyc,
+	AssetPolicyIssuanceManualReviewRequired,
 }
 
 var assetPolicyMap = map[int32]string{
@@ -1682,6 +1705,7 @@ var assetPolicyMap = map[int32]string{
 	8:  "AssetPolicyWithdrawable",
 	16: "AssetPolicyTwoStepWithdrawal",
 	32: "AssetPolicyRequiresKyc",
+	64: "AssetPolicyIssuanceManualReviewRequired",
 }
 
 var assetPolicyShortMap = map[int32]string{
@@ -1691,15 +1715,17 @@ var assetPolicyShortMap = map[int32]string{
 	8:  "withdrawable",
 	16: "two_step_withdrawal",
 	32: "requires_kyc",
+	64: "issuance_manual_review_required",
 }
 
 var assetPolicyRevMap = map[string]int32{
-	"AssetPolicyTransferable":      1,
-	"AssetPolicyBaseAsset":         2,
-	"AssetPolicyStatsQuoteAsset":   4,
-	"AssetPolicyWithdrawable":      8,
-	"AssetPolicyTwoStepWithdrawal": 16,
-	"AssetPolicyRequiresKyc":       32,
+	"AssetPolicyTransferable":                 1,
+	"AssetPolicyBaseAsset":                    2,
+	"AssetPolicyStatsQuoteAsset":              4,
+	"AssetPolicyWithdrawable":                 8,
+	"AssetPolicyTwoStepWithdrawal":            16,
+	"AssetPolicyRequiresKyc":                  32,
+	"AssetPolicyIssuanceManualReviewRequired": 64,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -2946,7 +2972,8 @@ type ReferenceEntry struct {
 //    	WITHDRAW = 4,
 //    	SALE = 5,
 //    	LIMITS_UPDATE = 6,
-//    	TWO_STEP_WITHDRAWAL = 7
+//    	TWO_STEP_WITHDRAWAL = 7,
+//    	AML_ALERT = 8
 //    };
 //
 type ReviewableRequestType int32
@@ -2960,6 +2987,7 @@ const (
 	ReviewableRequestTypeSale              ReviewableRequestType = 5
 	ReviewableRequestTypeLimitsUpdate      ReviewableRequestType = 6
 	ReviewableRequestTypeTwoStepWithdrawal ReviewableRequestType = 7
+	ReviewableRequestTypeAmlAlert          ReviewableRequestType = 8
 )
 
 var ReviewableRequestTypeAll = []ReviewableRequestType{
@@ -2971,6 +2999,7 @@ var ReviewableRequestTypeAll = []ReviewableRequestType{
 	ReviewableRequestTypeSale,
 	ReviewableRequestTypeLimitsUpdate,
 	ReviewableRequestTypeTwoStepWithdrawal,
+	ReviewableRequestTypeAmlAlert,
 }
 
 var reviewableRequestTypeMap = map[int32]string{
@@ -2982,6 +3011,7 @@ var reviewableRequestTypeMap = map[int32]string{
 	5: "ReviewableRequestTypeSale",
 	6: "ReviewableRequestTypeLimitsUpdate",
 	7: "ReviewableRequestTypeTwoStepWithdrawal",
+	8: "ReviewableRequestTypeAmlAlert",
 }
 
 var reviewableRequestTypeShortMap = map[int32]string{
@@ -2993,6 +3023,7 @@ var reviewableRequestTypeShortMap = map[int32]string{
 	5: "sale",
 	6: "limits_update",
 	7: "two_step_withdrawal",
+	8: "aml_alert",
 }
 
 var reviewableRequestTypeRevMap = map[string]int32{
@@ -3004,6 +3035,7 @@ var reviewableRequestTypeRevMap = map[string]int32{
 	"ReviewableRequestTypeSale":              5,
 	"ReviewableRequestTypeLimitsUpdate":      6,
 	"ReviewableRequestTypeTwoStepWithdrawal": 7,
+	"ReviewableRequestTypeAmlAlert":          8,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -3086,6 +3118,8 @@ func (e *ReviewableRequestType) UnmarshalJSON(data []byte) error {
 //                LimitsUpdateRequest limitsUpdateRequest;
 //    		case TWO_STEP_WITHDRAWAL:
 //    			WithdrawalRequest twoStepWithdrawalRequest;
+//    	    case AML_ALERT:
+//    	        AMLAlertRequest amlAlertRequest;
 //    	}
 //
 type ReviewableRequestEntryBody struct {
@@ -3098,6 +3132,7 @@ type ReviewableRequestEntryBody struct {
 	SaleCreationRequest      *SaleCreationRequest  `json:"saleCreationRequest,omitempty"`
 	LimitsUpdateRequest      *LimitsUpdateRequest  `json:"limitsUpdateRequest,omitempty"`
 	TwoStepWithdrawalRequest *WithdrawalRequest    `json:"twoStepWithdrawalRequest,omitempty"`
+	AmlAlertRequest          *AmlAlertRequest      `json:"amlAlertRequest,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -3126,6 +3161,8 @@ func (u ReviewableRequestEntryBody) ArmForSwitch(sw int32) (string, bool) {
 		return "LimitsUpdateRequest", true
 	case ReviewableRequestTypeTwoStepWithdrawal:
 		return "TwoStepWithdrawalRequest", true
+	case ReviewableRequestTypeAmlAlert:
+		return "AmlAlertRequest", true
 	}
 	return "-", false
 }
@@ -3190,6 +3227,13 @@ func NewReviewableRequestEntryBody(aType ReviewableRequestType, value interface{
 			return
 		}
 		result.TwoStepWithdrawalRequest = &tv
+	case ReviewableRequestTypeAmlAlert:
+		tv, ok := value.(AmlAlertRequest)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AmlAlertRequest")
+			return
+		}
+		result.AmlAlertRequest = &tv
 	}
 	return
 }
@@ -3394,6 +3438,31 @@ func (u ReviewableRequestEntryBody) GetTwoStepWithdrawalRequest() (result Withdr
 	return
 }
 
+// MustAmlAlertRequest retrieves the AmlAlertRequest value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestEntryBody) MustAmlAlertRequest() AmlAlertRequest {
+	val, ok := u.GetAmlAlertRequest()
+
+	if !ok {
+		panic("arm AmlAlertRequest is not set")
+	}
+
+	return val
+}
+
+// GetAmlAlertRequest retrieves the AmlAlertRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestEntryBody) GetAmlAlertRequest() (result AmlAlertRequest, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AmlAlertRequest" {
+		result = *u.AmlAlertRequest
+		ok = true
+	}
+
+	return
+}
+
 // ReviewableRequestEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -3460,6 +3529,8 @@ func NewReviewableRequestEntryExt(v LedgerVersion, value interface{}) (result Re
 //                LimitsUpdateRequest limitsUpdateRequest;
 //    		case TWO_STEP_WITHDRAWAL:
 //    			WithdrawalRequest twoStepWithdrawalRequest;
+//    	    case AML_ALERT:
+//    	        AMLAlertRequest amlAlertRequest;
 //    	} body;
 //
 //    	// reserved for future use
@@ -9006,6 +9077,319 @@ func (u CheckSaleStateResult) GetSuccess() (result CheckSaleStateSuccess, ok boo
 	return
 }
 
+// CreateAmlAlertRequestOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateAmlAlertRequestOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateAmlAlertRequestOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateAmlAlertRequestOpExt
+func (u CreateAmlAlertRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateAmlAlertRequestOpExt creates a new  CreateAmlAlertRequestOpExt.
+func NewCreateAmlAlertRequestOpExt(v LedgerVersion, value interface{}) (result CreateAmlAlertRequestOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateAmlAlertRequestOp is an XDR Struct defines as:
+//
+//   struct CreateAMLAlertRequestOp
+//    {
+//        string64 reference;
+//        AMLAlertRequest amlAlertRequest;
+//
+//    	union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//
+//    };
+//
+type CreateAmlAlertRequestOp struct {
+	Reference       String64                   `json:"reference,omitempty"`
+	AmlAlertRequest AmlAlertRequest            `json:"amlAlertRequest,omitempty"`
+	Ext             CreateAmlAlertRequestOpExt `json:"ext,omitempty"`
+}
+
+// CreateAmlAlertRequestResultCode is an XDR Enum defines as:
+//
+//   enum CreateAMLAlertRequestResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//        BALANCE_NOT_EXIST = 1, // balance doesn't exist
+//        INVALID_REASON = 2, //invalid reason for request
+//        UNDERFUNDED = 3, //when couldn't lock balance
+//    	REFERENCE_DUPLICATION = 4, // reference already exists
+//    	INVALID_AMOUNT = 5 // amount must be positive
+//
+//
+//    };
+//
+type CreateAmlAlertRequestResultCode int32
+
+const (
+	CreateAmlAlertRequestResultCodeSuccess              CreateAmlAlertRequestResultCode = 0
+	CreateAmlAlertRequestResultCodeBalanceNotExist      CreateAmlAlertRequestResultCode = 1
+	CreateAmlAlertRequestResultCodeInvalidReason        CreateAmlAlertRequestResultCode = 2
+	CreateAmlAlertRequestResultCodeUnderfunded          CreateAmlAlertRequestResultCode = 3
+	CreateAmlAlertRequestResultCodeReferenceDuplication CreateAmlAlertRequestResultCode = 4
+	CreateAmlAlertRequestResultCodeInvalidAmount        CreateAmlAlertRequestResultCode = 5
+)
+
+var CreateAmlAlertRequestResultCodeAll = []CreateAmlAlertRequestResultCode{
+	CreateAmlAlertRequestResultCodeSuccess,
+	CreateAmlAlertRequestResultCodeBalanceNotExist,
+	CreateAmlAlertRequestResultCodeInvalidReason,
+	CreateAmlAlertRequestResultCodeUnderfunded,
+	CreateAmlAlertRequestResultCodeReferenceDuplication,
+	CreateAmlAlertRequestResultCodeInvalidAmount,
+}
+
+var createAmlAlertRequestResultCodeMap = map[int32]string{
+	0: "CreateAmlAlertRequestResultCodeSuccess",
+	1: "CreateAmlAlertRequestResultCodeBalanceNotExist",
+	2: "CreateAmlAlertRequestResultCodeInvalidReason",
+	3: "CreateAmlAlertRequestResultCodeUnderfunded",
+	4: "CreateAmlAlertRequestResultCodeReferenceDuplication",
+	5: "CreateAmlAlertRequestResultCodeInvalidAmount",
+}
+
+var createAmlAlertRequestResultCodeShortMap = map[int32]string{
+	0: "success",
+	1: "balance_not_exist",
+	2: "invalid_reason",
+	3: "underfunded",
+	4: "reference_duplication",
+	5: "invalid_amount",
+}
+
+var createAmlAlertRequestResultCodeRevMap = map[string]int32{
+	"CreateAmlAlertRequestResultCodeSuccess":              0,
+	"CreateAmlAlertRequestResultCodeBalanceNotExist":      1,
+	"CreateAmlAlertRequestResultCodeInvalidReason":        2,
+	"CreateAmlAlertRequestResultCodeUnderfunded":          3,
+	"CreateAmlAlertRequestResultCodeReferenceDuplication": 4,
+	"CreateAmlAlertRequestResultCodeInvalidAmount":        5,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CreateAmlAlertRequestResultCode
+func (e CreateAmlAlertRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := createAmlAlertRequestResultCodeMap[v]
+	return ok
+}
+func (e CreateAmlAlertRequestResultCode) isFlag() bool {
+	for i := len(CreateAmlAlertRequestResultCodeAll) - 1; i >= 0; i-- {
+		expected := CreateAmlAlertRequestResultCode(2) << uint64(len(CreateAmlAlertRequestResultCodeAll)-1) >> uint64(len(CreateAmlAlertRequestResultCodeAll)-i)
+		if expected != CreateAmlAlertRequestResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CreateAmlAlertRequestResultCode) String() string {
+	name, _ := createAmlAlertRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CreateAmlAlertRequestResultCode) ShortString() string {
+	name, _ := createAmlAlertRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CreateAmlAlertRequestResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range CreateAmlAlertRequestResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CreateAmlAlertRequestResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CreateAmlAlertRequestResultCode(t.Value)
+	return nil
+}
+
+// CreateAmlAlertRequestSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateAmlAlertRequestSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateAmlAlertRequestSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateAmlAlertRequestSuccessExt
+func (u CreateAmlAlertRequestSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateAmlAlertRequestSuccessExt creates a new  CreateAmlAlertRequestSuccessExt.
+func NewCreateAmlAlertRequestSuccessExt(v LedgerVersion, value interface{}) (result CreateAmlAlertRequestSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateAmlAlertRequestSuccess is an XDR Struct defines as:
+//
+//   struct CreateAMLAlertRequestSuccess {
+//    	uint64 requestID;
+//
+//    	union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CreateAmlAlertRequestSuccess struct {
+	RequestId Uint64                          `json:"requestID,omitempty"`
+	Ext       CreateAmlAlertRequestSuccessExt `json:"ext,omitempty"`
+}
+
+// CreateAmlAlertRequestResult is an XDR Union defines as:
+//
+//   union CreateAMLAlertRequestResult switch (CreateAMLAlertRequestResultCode code)
+//    {
+//        case SUCCESS:
+//            CreateAMLAlertRequestSuccess success;
+//        default:
+//            void;
+//    };
+//
+type CreateAmlAlertRequestResult struct {
+	Code    CreateAmlAlertRequestResultCode `json:"code,omitempty"`
+	Success *CreateAmlAlertRequestSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateAmlAlertRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateAmlAlertRequestResult
+func (u CreateAmlAlertRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CreateAmlAlertRequestResultCode(sw) {
+	case CreateAmlAlertRequestResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewCreateAmlAlertRequestResult creates a new  CreateAmlAlertRequestResult.
+func NewCreateAmlAlertRequestResult(code CreateAmlAlertRequestResultCode, value interface{}) (result CreateAmlAlertRequestResult, err error) {
+	result.Code = code
+	switch CreateAmlAlertRequestResultCode(code) {
+	case CreateAmlAlertRequestResultCodeSuccess:
+		tv, ok := value.(CreateAmlAlertRequestSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateAmlAlertRequestSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u CreateAmlAlertRequestResult) MustSuccess() CreateAmlAlertRequestSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreateAmlAlertRequestResult) GetSuccess() (result CreateAmlAlertRequestSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
 // CreateAccountOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -11913,7 +12297,8 @@ func (u ManageAssetPairResult) GetSuccess() (result ManageAssetPairSuccess, ok b
 //    {
 //        CREATE_ASSET_CREATION_REQUEST = 0,
 //        CREATE_ASSET_UPDATE_REQUEST = 1,
-//    	CANCEL_ASSET_REQUEST = 2
+//    	CANCEL_ASSET_REQUEST = 2,
+//    	CHANGE_PREISSUED_ASSET_SIGNER = 3
 //    };
 //
 type ManageAssetAction int32
@@ -11922,30 +12307,35 @@ const (
 	ManageAssetActionCreateAssetCreationRequest ManageAssetAction = 0
 	ManageAssetActionCreateAssetUpdateRequest   ManageAssetAction = 1
 	ManageAssetActionCancelAssetRequest         ManageAssetAction = 2
+	ManageAssetActionChangePreissuedAssetSigner ManageAssetAction = 3
 )
 
 var ManageAssetActionAll = []ManageAssetAction{
 	ManageAssetActionCreateAssetCreationRequest,
 	ManageAssetActionCreateAssetUpdateRequest,
 	ManageAssetActionCancelAssetRequest,
+	ManageAssetActionChangePreissuedAssetSigner,
 }
 
 var manageAssetActionMap = map[int32]string{
 	0: "ManageAssetActionCreateAssetCreationRequest",
 	1: "ManageAssetActionCreateAssetUpdateRequest",
 	2: "ManageAssetActionCancelAssetRequest",
+	3: "ManageAssetActionChangePreissuedAssetSigner",
 }
 
 var manageAssetActionShortMap = map[int32]string{
 	0: "create_asset_creation_request",
 	1: "create_asset_update_request",
 	2: "cancel_asset_request",
+	3: "change_preissued_asset_signer",
 }
 
 var manageAssetActionRevMap = map[string]int32{
 	"ManageAssetActionCreateAssetCreationRequest": 0,
 	"ManageAssetActionCreateAssetUpdateRequest":   1,
 	"ManageAssetActionCancelAssetRequest":         2,
+	"ManageAssetActionChangePreissuedAssetSigner": 3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -12074,13 +12464,16 @@ type CancelAssetRequest struct {
 //    		AssetUpdateRequest updateAsset;
 //    	case CANCEL_ASSET_REQUEST:
 //    		CancelAssetRequest cancelRequest;
+//    	case CHANGE_PREISSUED_ASSET_SIGNER:
+//    		AssetChangePreissuedSigner changePreissuedSigner;
 //    	}
 //
 type ManageAssetOpRequest struct {
-	Action        ManageAssetAction     `json:"action,omitempty"`
-	CreateAsset   *AssetCreationRequest `json:"createAsset,omitempty"`
-	UpdateAsset   *AssetUpdateRequest   `json:"updateAsset,omitempty"`
-	CancelRequest *CancelAssetRequest   `json:"cancelRequest,omitempty"`
+	Action                ManageAssetAction           `json:"action,omitempty"`
+	CreateAsset           *AssetCreationRequest       `json:"createAsset,omitempty"`
+	UpdateAsset           *AssetUpdateRequest         `json:"updateAsset,omitempty"`
+	CancelRequest         *CancelAssetRequest         `json:"cancelRequest,omitempty"`
+	ChangePreissuedSigner *AssetChangePreissuedSigner `json:"changePreissuedSigner,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -12099,6 +12492,8 @@ func (u ManageAssetOpRequest) ArmForSwitch(sw int32) (string, bool) {
 		return "UpdateAsset", true
 	case ManageAssetActionCancelAssetRequest:
 		return "CancelRequest", true
+	case ManageAssetActionChangePreissuedAssetSigner:
+		return "ChangePreissuedSigner", true
 	}
 	return "-", false
 }
@@ -12128,6 +12523,13 @@ func NewManageAssetOpRequest(action ManageAssetAction, value interface{}) (resul
 			return
 		}
 		result.CancelRequest = &tv
+	case ManageAssetActionChangePreissuedAssetSigner:
+		tv, ok := value.(AssetChangePreissuedSigner)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AssetChangePreissuedSigner")
+			return
+		}
+		result.ChangePreissuedSigner = &tv
 	}
 	return
 }
@@ -12207,6 +12609,31 @@ func (u ManageAssetOpRequest) GetCancelRequest() (result CancelAssetRequest, ok 
 	return
 }
 
+// MustChangePreissuedSigner retrieves the ChangePreissuedSigner value from the union,
+// panicing if the value is not set.
+func (u ManageAssetOpRequest) MustChangePreissuedSigner() AssetChangePreissuedSigner {
+	val, ok := u.GetChangePreissuedSigner()
+
+	if !ok {
+		panic("arm ChangePreissuedSigner is not set")
+	}
+
+	return val
+}
+
+// GetChangePreissuedSigner retrieves the ChangePreissuedSigner value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAssetOpRequest) GetChangePreissuedSigner() (result AssetChangePreissuedSigner, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "ChangePreissuedSigner" {
+		result = *u.ChangePreissuedSigner
+		ok = true
+	}
+
+	return
+}
+
 // ManageAssetOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -12258,6 +12685,8 @@ func NewManageAssetOpExt(v LedgerVersion, value interface{}) (result ManageAsset
 //    		AssetUpdateRequest updateAsset;
 //    	case CANCEL_ASSET_REQUEST:
 //    		CancelAssetRequest cancelRequest;
+//    	case CHANGE_PREISSUED_ASSET_SIGNER:
+//    		AssetChangePreissuedSigner changePreissuedSigner;
 //    	} request;
 //
 //    	// reserved for future use
@@ -15433,6 +15862,62 @@ type WithdrawalDetails struct {
 	Ext             WithdrawalDetailsExt `json:"ext,omitempty"`
 }
 
+// AmlAlertDetailsExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AmlAlertDetailsExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AmlAlertDetailsExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AmlAlertDetailsExt
+func (u AmlAlertDetailsExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAmlAlertDetailsExt creates a new  AmlAlertDetailsExt.
+func NewAmlAlertDetailsExt(v LedgerVersion, value interface{}) (result AmlAlertDetailsExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AmlAlertDetails is an XDR Struct defines as:
+//
+//   struct AMLAlertDetails {
+//    	string comment<>;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AmlAlertDetails struct {
+	Comment string             `json:"comment,omitempty"`
+	Ext     AmlAlertDetailsExt `json:"ext,omitempty"`
+}
+
 // ReviewRequestOpRequestDetails is an XDR NestedUnion defines as:
 //
 //   union switch(ReviewableRequestType requestType) {
@@ -15442,6 +15927,8 @@ type WithdrawalDetails struct {
 //            LimitsUpdateDetails limitsUpdate;
 //    	case TWO_STEP_WITHDRAWAL:
 //    		WithdrawalDetails twoStepWithdrawal;
+//    	case AML_ALERT:
+//    		AMLAlertDetails amlAlertDetails;
 //    	default:
 //    		void;
 //    	}
@@ -15451,6 +15938,7 @@ type ReviewRequestOpRequestDetails struct {
 	Withdrawal        *WithdrawalDetails    `json:"withdrawal,omitempty"`
 	LimitsUpdate      *LimitsUpdateDetails  `json:"limitsUpdate,omitempty"`
 	TwoStepWithdrawal *WithdrawalDetails    `json:"twoStepWithdrawal,omitempty"`
+	AmlAlertDetails   *AmlAlertDetails      `json:"amlAlertDetails,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -15469,6 +15957,8 @@ func (u ReviewRequestOpRequestDetails) ArmForSwitch(sw int32) (string, bool) {
 		return "LimitsUpdate", true
 	case ReviewableRequestTypeTwoStepWithdrawal:
 		return "TwoStepWithdrawal", true
+	case ReviewableRequestTypeAmlAlert:
+		return "AmlAlertDetails", true
 	default:
 		return "", true
 	}
@@ -15499,6 +15989,13 @@ func NewReviewRequestOpRequestDetails(requestType ReviewableRequestType, value i
 			return
 		}
 		result.TwoStepWithdrawal = &tv
+	case ReviewableRequestTypeAmlAlert:
+		tv, ok := value.(AmlAlertDetails)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AmlAlertDetails")
+			return
+		}
+		result.AmlAlertDetails = &tv
 	default:
 		// void
 	}
@@ -15580,6 +16077,31 @@ func (u ReviewRequestOpRequestDetails) GetTwoStepWithdrawal() (result Withdrawal
 	return
 }
 
+// MustAmlAlertDetails retrieves the AmlAlertDetails value from the union,
+// panicing if the value is not set.
+func (u ReviewRequestOpRequestDetails) MustAmlAlertDetails() AmlAlertDetails {
+	val, ok := u.GetAmlAlertDetails()
+
+	if !ok {
+		panic("arm AmlAlertDetails is not set")
+	}
+
+	return val
+}
+
+// GetAmlAlertDetails retrieves the AmlAlertDetails value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewRequestOpRequestDetails) GetAmlAlertDetails() (result AmlAlertDetails, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "AmlAlertDetails" {
+		result = *u.AmlAlertDetails
+		ok = true
+	}
+
+	return
+}
+
 // ReviewRequestOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -15631,6 +16153,8 @@ func NewReviewRequestOpExt(v LedgerVersion, value interface{}) (result ReviewReq
 //            LimitsUpdateDetails limitsUpdate;
 //    	case TWO_STEP_WITHDRAWAL:
 //    		WithdrawalDetails twoStepWithdrawal;
+//    	case AML_ALERT:
+//    		AMLAlertDetails amlAlertDetails;
 //    	default:
 //    		void;
 //    	} requestDetails;
@@ -18352,6 +18876,65 @@ func (u AuthenticatedMessage) GetV0() (result AuthenticatedMessageV0, ok bool) {
 	return
 }
 
+// AmlAlertRequestExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AmlAlertRequestExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AmlAlertRequestExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AmlAlertRequestExt
+func (u AmlAlertRequestExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAmlAlertRequestExt creates a new  AmlAlertRequestExt.
+func NewAmlAlertRequestExt(v LedgerVersion, value interface{}) (result AmlAlertRequestExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AmlAlertRequest is an XDR Struct defines as:
+//
+//   struct AMLAlertRequest {
+//        BalanceID balanceID;
+//        uint64 amount;
+//        string256 reason;
+//    	union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AmlAlertRequest struct {
+	BalanceId BalanceId          `json:"balanceID,omitempty"`
+	Amount    Uint64             `json:"amount,omitempty"`
+	Reason    String256          `json:"reason,omitempty"`
+	Ext       AmlAlertRequestExt `json:"ext,omitempty"`
+}
+
 // AssetCreationRequestExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -18479,6 +19062,64 @@ type AssetUpdateRequest struct {
 	Details  Longstring            `json:"details,omitempty"`
 	Policies Uint32                `json:"policies,omitempty"`
 	Ext      AssetUpdateRequestExt `json:"ext,omitempty"`
+}
+
+// AssetChangePreissuedSignerExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AssetChangePreissuedSignerExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AssetChangePreissuedSignerExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AssetChangePreissuedSignerExt
+func (u AssetChangePreissuedSignerExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAssetChangePreissuedSignerExt creates a new  AssetChangePreissuedSignerExt.
+func NewAssetChangePreissuedSignerExt(v LedgerVersion, value interface{}) (result AssetChangePreissuedSignerExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AssetChangePreissuedSigner is an XDR Struct defines as:
+//
+//   struct AssetChangePreissuedSigner {
+//    	AssetCode code;
+//    	AccountID accountID;
+//    	// reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AssetChangePreissuedSigner struct {
+	Code      AssetCode                     `json:"code,omitempty"`
+	AccountId AccountId                     `json:"accountID,omitempty"`
+	Ext       AssetChangePreissuedSignerExt `json:"ext,omitempty"`
 }
 
 // PreIssuanceRequestExt is an XDR NestedUnion defines as:
@@ -19160,6 +19801,8 @@ type WithdrawalRequest struct {
 //    		CreateSaleCreationRequestOp createSaleCreationRequestOp;
 //    	case CHECK_SALE_STATE:
 //    		CheckSaleStateOp checkSaleStateOp;
+//    	case CREATE_AML_ALERT:
+//    	    CreateAMLAlertRequestOp createAMLAlertRequestOp;
 //        }
 //
 type OperationBody struct {
@@ -19183,6 +19826,7 @@ type OperationBody struct {
 	ReviewRequestOp             *ReviewRequestOp             `json:"reviewRequestOp,omitempty"`
 	CreateSaleCreationRequestOp *CreateSaleCreationRequestOp `json:"createSaleCreationRequestOp,omitempty"`
 	CheckSaleStateOp            *CheckSaleStateOp            `json:"checkSaleStateOp,omitempty"`
+	CreateAmlAlertRequestOp     *CreateAmlAlertRequestOp     `json:"createAMLAlertRequestOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -19233,6 +19877,8 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "CreateSaleCreationRequestOp", true
 	case OperationTypeCheckSaleState:
 		return "CheckSaleStateOp", true
+	case OperationTypeCreateAmlAlert:
+		return "CreateAmlAlertRequestOp", true
 	}
 	return "-", false
 }
@@ -19374,6 +20020,13 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.CheckSaleStateOp = &tv
+	case OperationTypeCreateAmlAlert:
+		tv, ok := value.(CreateAmlAlertRequestOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateAmlAlertRequestOp")
+			return
+		}
+		result.CreateAmlAlertRequestOp = &tv
 	}
 	return
 }
@@ -19853,6 +20506,31 @@ func (u OperationBody) GetCheckSaleStateOp() (result CheckSaleStateOp, ok bool) 
 	return
 }
 
+// MustCreateAmlAlertRequestOp retrieves the CreateAmlAlertRequestOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustCreateAmlAlertRequestOp() CreateAmlAlertRequestOp {
+	val, ok := u.GetCreateAmlAlertRequestOp()
+
+	if !ok {
+		panic("arm CreateAmlAlertRequestOp is not set")
+	}
+
+	return val
+}
+
+// GetCreateAmlAlertRequestOp retrieves the CreateAmlAlertRequestOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetCreateAmlAlertRequestOp() (result CreateAmlAlertRequestOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreateAmlAlertRequestOp" {
+		result = *u.CreateAmlAlertRequestOp
+		ok = true
+	}
+
+	return
+}
+
 // Operation is an XDR Struct defines as:
 //
 //   struct Operation
@@ -19902,6 +20580,8 @@ func (u OperationBody) GetCheckSaleStateOp() (result CheckSaleStateOp, ok bool) 
 //    		CreateSaleCreationRequestOp createSaleCreationRequestOp;
 //    	case CHECK_SALE_STATE:
 //    		CheckSaleStateOp checkSaleStateOp;
+//    	case CREATE_AML_ALERT:
+//    	    CreateAMLAlertRequestOp createAMLAlertRequestOp;
 //        }
 //        body;
 //    };
@@ -20490,6 +21170,8 @@ func (e *OperationResultCode) UnmarshalJSON(data []byte) error {
 //    		CreateSaleCreationRequestResult createSaleCreationRequestResult;
 //    	case CHECK_SALE_STATE:
 //    		CheckSaleStateResult checkSaleStateResult;
+//    	case CREATE_AML_ALERT:
+//    	    CreateAMLAlertRequestResult createAMLAlertRequestResult;
 //        }
 //
 type OperationResultTr struct {
@@ -20513,6 +21195,7 @@ type OperationResultTr struct {
 	ReviewRequestResult             *ReviewRequestResult             `json:"reviewRequestResult,omitempty"`
 	CreateSaleCreationRequestResult *CreateSaleCreationRequestResult `json:"createSaleCreationRequestResult,omitempty"`
 	CheckSaleStateResult            *CheckSaleStateResult            `json:"checkSaleStateResult,omitempty"`
+	CreateAmlAlertRequestResult     *CreateAmlAlertRequestResult     `json:"createAMLAlertRequestResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -20563,6 +21246,8 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "CreateSaleCreationRequestResult", true
 	case OperationTypeCheckSaleState:
 		return "CheckSaleStateResult", true
+	case OperationTypeCreateAmlAlert:
+		return "CreateAmlAlertRequestResult", true
 	}
 	return "-", false
 }
@@ -20704,6 +21389,13 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.CheckSaleStateResult = &tv
+	case OperationTypeCreateAmlAlert:
+		tv, ok := value.(CreateAmlAlertRequestResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateAmlAlertRequestResult")
+			return
+		}
+		result.CreateAmlAlertRequestResult = &tv
 	}
 	return
 }
@@ -21183,6 +21875,31 @@ func (u OperationResultTr) GetCheckSaleStateResult() (result CheckSaleStateResul
 	return
 }
 
+// MustCreateAmlAlertRequestResult retrieves the CreateAmlAlertRequestResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustCreateAmlAlertRequestResult() CreateAmlAlertRequestResult {
+	val, ok := u.GetCreateAmlAlertRequestResult()
+
+	if !ok {
+		panic("arm CreateAmlAlertRequestResult is not set")
+	}
+
+	return val
+}
+
+// GetCreateAmlAlertRequestResult retrieves the CreateAmlAlertRequestResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetCreateAmlAlertRequestResult() (result CreateAmlAlertRequestResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreateAmlAlertRequestResult" {
+		result = *u.CreateAmlAlertRequestResult
+		ok = true
+	}
+
+	return
+}
+
 // OperationResult is an XDR Union defines as:
 //
 //   union OperationResult switch (OperationResultCode code)
@@ -21228,6 +21945,8 @@ func (u OperationResultTr) GetCheckSaleStateResult() (result CheckSaleStateResul
 //    		CreateSaleCreationRequestResult createSaleCreationRequestResult;
 //    	case CHECK_SALE_STATE:
 //    		CheckSaleStateResult checkSaleStateResult;
+//    	case CREATE_AML_ALERT:
+//    	    CreateAMLAlertRequestResult createAMLAlertRequestResult;
 //        }
 //        tr;
 //    default:
@@ -21897,7 +22616,9 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //    	DETAILED_LEDGER_CHANGES = 2, // write more all ledger changes to transaction meta
 //    	NEW_SIGNER_TYPES = 3, // use more comprehensive list of signer types
 //    	TYPED_SALE = 4, // sales can have type
-//    	UNIQUE_BALANCE_CREATION = 5 // allows to specify in manage balance that balance should not be created if one for such asset and account exists
+//    	UNIQUE_BALANCE_CREATION = 5, // allows to specify in manage balance that balance should not be created if one for such asset and account exists
+//    	ASSET_PREISSUER_MIGRATION = 6,
+//    	ASSET_PREISSUER_MIGRATED = 7
 //    };
 //
 type LedgerVersion int32
@@ -21909,6 +22630,8 @@ const (
 	LedgerVersionNewSignerTypes                  LedgerVersion = 3
 	LedgerVersionTypedSale                       LedgerVersion = 4
 	LedgerVersionUniqueBalanceCreation           LedgerVersion = 5
+	LedgerVersionAssetPreissuerMigration         LedgerVersion = 6
+	LedgerVersionAssetPreissuerMigrated          LedgerVersion = 7
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -21918,6 +22641,8 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionNewSignerTypes,
 	LedgerVersionTypedSale,
 	LedgerVersionUniqueBalanceCreation,
+	LedgerVersionAssetPreissuerMigration,
+	LedgerVersionAssetPreissuerMigrated,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -21927,6 +22652,8 @@ var ledgerVersionMap = map[int32]string{
 	3: "LedgerVersionNewSignerTypes",
 	4: "LedgerVersionTypedSale",
 	5: "LedgerVersionUniqueBalanceCreation",
+	6: "LedgerVersionAssetPreissuerMigration",
+	7: "LedgerVersionAssetPreissuerMigrated",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -21936,6 +22663,8 @@ var ledgerVersionShortMap = map[int32]string{
 	3: "new_signer_types",
 	4: "typed_sale",
 	5: "unique_balance_creation",
+	6: "asset_preissuer_migration",
+	7: "asset_preissuer_migrated",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -21945,6 +22674,8 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionNewSignerTypes":                  3,
 	"LedgerVersionTypedSale":                       4,
 	"LedgerVersionUniqueBalanceCreation":           5,
+	"LedgerVersionAssetPreissuerMigration":         6,
+	"LedgerVersionAssetPreissuerMigrated":          7,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -22324,7 +23055,8 @@ type Fee struct {
 //        MANAGE_INVOICE = 17,
 //    	REVIEW_REQUEST = 18,
 //    	CREATE_SALE_REQUEST = 19,
-//    	CHECK_SALE_STATE = 20
+//    	CHECK_SALE_STATE = 20,
+//    	CREATE_AML_ALERT = 21
 //    };
 //
 type OperationType int32
@@ -22349,6 +23081,7 @@ const (
 	OperationTypeReviewRequest            OperationType = 18
 	OperationTypeCreateSaleRequest        OperationType = 19
 	OperationTypeCheckSaleState           OperationType = 20
+	OperationTypeCreateAmlAlert           OperationType = 21
 )
 
 var OperationTypeAll = []OperationType{
@@ -22371,6 +23104,7 @@ var OperationTypeAll = []OperationType{
 	OperationTypeReviewRequest,
 	OperationTypeCreateSaleRequest,
 	OperationTypeCheckSaleState,
+	OperationTypeCreateAmlAlert,
 }
 
 var operationTypeMap = map[int32]string{
@@ -22393,6 +23127,7 @@ var operationTypeMap = map[int32]string{
 	18: "OperationTypeReviewRequest",
 	19: "OperationTypeCreateSaleRequest",
 	20: "OperationTypeCheckSaleState",
+	21: "OperationTypeCreateAmlAlert",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -22415,6 +23150,7 @@ var operationTypeShortMap = map[int32]string{
 	18: "review_request",
 	19: "create_sale_request",
 	20: "check_sale_state",
+	21: "create_aml_alert",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -22437,6 +23173,7 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeReviewRequest":            18,
 	"OperationTypeCreateSaleRequest":        19,
 	"OperationTypeCheckSaleState":           20,
+	"OperationTypeCreateAmlAlert":           21,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements

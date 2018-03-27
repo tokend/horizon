@@ -12,6 +12,7 @@ import (
 func New(
 	ctx context.Context, row history.Operation, participants []*history.Participant, public bool,
 ) (result hal.Pageable, err error) {
+
 	base := Base{}
 	err = base.Populate(ctx, row, participants, public)
 	if err != nil {
@@ -24,6 +25,7 @@ func New(
 		if public {
 			e.Funder = ""
 			e.Account = ""
+			e.Referrer = nil
 		}
 		result = e
 	case xdr.OperationTypePayment:
@@ -97,6 +99,13 @@ func New(
 			e.ExternalDetails = nil
 		}
 		result = e
+	case xdr.OperationTypeCreateAmlAlert:
+		e := CreateAmlAlert{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.BalanceID = ""
+		}
+		result = e
 	case xdr.OperationTypeCreateKycRequest:
 		e := CreateUpdateKYCRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
@@ -115,9 +124,10 @@ func New(
 // is CreateAccount.
 type CreateAccount struct {
 	Base
-	Funder      string `json:"funder,omitempty"`
-	Account     string `json:"account,omitempty"`
-	AccountType int32  `json:"account_type"`
+	Funder      string  `json:"funder,omitempty"`
+	Account     string  `json:"account,omitempty"`
+	AccountType int32   `json:"account_type"`
+	Referrer    *string `json:"referrer,omitempty"`
 }
 
 type BasePayment struct {

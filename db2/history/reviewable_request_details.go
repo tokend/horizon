@@ -68,6 +68,12 @@ type LimitsUpdateRequest struct {
 	DocumentHash string `json:"document_hash"`
 }
 
+type AmlAlertRequest struct {
+	BalanceID string `json:"balance_id"`
+	Amount    string `json:"amount"`
+	Reason    string `json:"reason"`
+}
+
 type UpdateKYCRequest struct {
 	AccountToUpdateKYC string                   `json:"updated_account_id"`
 	AccountTypeToSet   xdr.AccountType          `json:"account_type_to_set"`

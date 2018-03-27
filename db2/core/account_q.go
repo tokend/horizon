@@ -20,6 +20,8 @@ type AccountQI interface {
 	Select(destination interface{}) error
 	// filters by account ids
 	ForAddresses(addresses ...string) AccountQI
+	// filters by referrer
+	ForReferrer(referrer string) AccountQI
 	// Selects first element from filtered
 	First() (*Account, error)
 	// joins account KYC
@@ -67,11 +69,20 @@ func (q *AccountQ) WithStatistics() AccountQI {
 	q.sql = q.sql.
 		LeftJoin("statistics st on (st.account_id = a.accountid)").
 		Columns(
-			"st.daily_out as st_daily_out",
-			"st.weekly_out as st_weekly_out",
-			"st.monthly_out as st_monthly_out",
-			"st.annual_out as st_annual_out",
-			"st.updated_at as st_updated_at")
+		"st.daily_out as st_daily_out",
+		"st.weekly_out as st_weekly_out",
+		"st.monthly_out as st_monthly_out",
+		"st.annual_out as st_annual_out",
+		"st.updated_at as st_updated_at")
+	return q
+}
+
+func (q *AccountQ) ForReferrer(referrer string) AccountQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("referrer = ?", referrer)
 	return q
 }
 
@@ -119,6 +130,7 @@ var selectAccount = sq.Select(
 	"a.thresholds",
 	"a.account_type",
 	"a.block_reasons",
+	"a.referrer",
 	"a.policies",
 	"a.kyc_level",
 ).From("accounts a")

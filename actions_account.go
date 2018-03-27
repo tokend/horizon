@@ -16,8 +16,8 @@ import (
 // AccountShowAction renders a account summary found by its address.
 type AccountShowAction struct {
 	Action
-	Address     string
-	Resource    resource.Account
+	Address  string
+	Resource resource.Account
 }
 
 // JSON is a method for actions.JSON
@@ -29,6 +29,7 @@ func (action *AccountShowAction) JSON() {
 		action.loadLimits,
 		action.loadBalances,
 		action.loadExternalSystemAccountIDs,
+		action.loadReferrals,
 		func() {
 			hal.Render(action.W, action.Resource)
 		},
@@ -111,5 +112,20 @@ func (action *AccountShowAction) loadExternalSystemAccountIDs() {
 	action.Resource.ExternalSystemAccounts = make([]resource.ExternalSystemAccountID, len(exSysIDs))
 	for i := range exSysIDs {
 		action.Resource.ExternalSystemAccounts[i].Populate(exSysIDs[i])
+	}
+}
+
+func (action *AccountShowAction) loadReferrals() {
+	var coreReferrals []core.Account
+	err := action.CoreQ().Accounts().ForReferrer(action.Address).Select(&coreReferrals)
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to load referrals")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	action.Resource.Referrals = make([]resource.Referral, len(coreReferrals))
+	for i := range coreReferrals {
+		action.Resource.Referrals[i].Populate(coreReferrals[i])
 	}
 }
