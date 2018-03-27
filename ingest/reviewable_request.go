@@ -208,15 +208,27 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) history.LimitsUpda
 	}
 }
 
-func getChangeKYCRequest(request *xdr.ChangeKycRequest) history.ChangeKYCRequest {
+func getUpdateKYCRequest(request *xdr.UpdateKycRequest) history.UpdateKYCRequest {
 	var kycData map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.KycData), &kycData)
-	return history.ChangeKYCRequest{
-		KYCData:          kycData,
-		KYCLevel:         uint32(request.KycLevel),
-		AccountTypeToSet: request.AccountTypeToSet,
-		UpdatedAccountId: request.UpdatedAccount.Address(),
+
+	var externalDetails []map[string]interface{}
+	for _, item := range request.ExternalDetails {
+		var comment map[string]interface{}
+		_ = json.Unmarshal([]byte(item), &comment)
+		externalDetails = append(externalDetails, comment)
+	}
+
+	return history.UpdateKYCRequest{
+		AccountToUpdateKYC: request.AccountToUpdateKyc.Address(),
+		AccountTypeToSet:   request.AccountTypeToSet,
+		KYCLevel:           uint32(request.KycLevel),
+		KYCData:            kycData,
+		AllTasks:           uint32(request.AllTasks),
+		PendingTasks:       uint32(request.PendingTasks),
+		SequenceNumber:     uint32(request.SequenceNumber),
+		ExternalDetails:    externalDetails,
 	}
 }
 
@@ -243,8 +255,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) ([]byte, 
 		rawDetails = getLimitsUpdateRequest(body.LimitsUpdateRequest)
 	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
 		rawDetails = getWithdrawalRequest(body.TwoStepWithdrawalRequest)
-	case xdr.ReviewableRequestTypeChangeKyc:
-		rawDetails = getChangeKYCRequest(body.ChangeKycRequest)
+	case xdr.ReviewableRequestTypeUpdateKyc:
+		rawDetails = getUpdateKYCRequest(body.UpdateKycRequest)
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

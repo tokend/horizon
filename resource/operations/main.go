@@ -98,7 +98,7 @@ func New(
 		}
 		result = e
 	case xdr.OperationTypeCreateKycRequest:
-		e := CreateKYCRequest{Base: base}
+		e := CreateUpdateKYCRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
 		if public {
 			e.KYCData = nil

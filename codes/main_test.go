@@ -133,7 +133,7 @@ func TestCodes(t *testing.T) {
 	})
 
 	Convey("Create KYC request", t, func() {
-		for _, code := range xdr.CreateKycRequestResultCodeAll {
+		for _, code := range xdr.CreateUpdateKycRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})

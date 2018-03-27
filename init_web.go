@@ -234,11 +234,11 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeLimitsUpdate},
 	})
-	r.Get("/request/change_kyc", &ReviewableRequestIndexAction{
+	r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
 		RequestSpecificFilters: map[string]string{
-			"updated_account_id": "",
+			"account_to_update_kyc": "",
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeChangeKyc},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateKyc},
 	})
 
 	// Sales actions

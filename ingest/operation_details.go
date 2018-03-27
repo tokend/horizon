@@ -197,16 +197,21 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeCheckSaleState:
 		// no details needed
 	case xdr.OperationTypeCreateKycRequest:
-		op := c.Operation().Body.MustCreateKycRequestOp()
-		opResult := c.OperationResult().MustCreateKycRequestResult().MustSuccess()
+		op := c.Operation().Body.MustCreateUpdateKycRequestOp()
+		opResult := c.OperationResult().MustCreateUpdateKycRequestResult().MustSuccess()
 		details["request_id"] = uint64(opResult.RequestId)
-		details["updated_account"] = op.ChangeKycRequest.UpdatedAccount.Address()
-		details["account_type_to_set"] = int32(op.ChangeKycRequest.AccountTypeToSet)
-		details["kyc_level"] = uint32(op.ChangeKycRequest.KycLevel)
+		details["account_to_update_kyc"] = op.UpdateKycRequestData.AccountToUpdateKyc.Address()
+		details["account_type_to_set"] = int32(op.UpdateKycRequestData.AccountTypeToSet)
+		details["kyc_level"] = uint32(op.UpdateKycRequestData.KycLevel)
+
 		var kycData map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(op.ChangeKycRequest.KycData), &kycData)
+		_ = json.Unmarshal([]byte(op.UpdateKycRequestData.KycData), &kycData)
 		details["kyc_data"] = kycData
+
+		if op.UpdateKycRequestData.AllTasks != nil {
+			details["all_tasks"] = *op.UpdateKycRequestData.AllTasks
+		}
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

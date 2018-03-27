@@ -122,10 +122,10 @@ func ForOperation(
 
 		sourceParticipant = nil
 	case xdr.OperationTypeCreateKycRequest:
-		changeKYCRequest := op.Body.MustCreateKycRequestOp().ChangeKycRequest
-		if sourceParticipant.AccountID.Address() != changeKYCRequest.UpdatedAccount.Address() {
+		updateKYCRequestData := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
+		if sourceParticipant.AccountID.Address() != updateKYCRequestData.AccountToUpdateKyc.Address() {
 			result = append(result, Participant{
-				AccountID: changeKYCRequest.UpdatedAccount,
+				AccountID: updateKYCRequestData.AccountToUpdateKyc,
 				BalanceID: nil,
 				Details:   nil,
 			})
