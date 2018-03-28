@@ -15,6 +15,7 @@ type ReviewableRequestIndexAction struct {
 	Reviewer     string
 	Requestor    string
 	State        *int64
+	UpdatedAfter *int64
 	Records      []history.ReviewableRequest
 
 	RequestTypes []xdr.ReviewableRequestType
@@ -43,6 +44,7 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 	action.Reviewer = action.GetString("reviewer")
 	action.Requestor = action.GetString("requestor")
 	action.State = action.GetOptionalInt64("state")
+	action.UpdatedAfter = action.GetOptionalInt64("updated_after")
 	action.Page.Filters = map[string]string{}
 	for key := range action.RequestSpecificFilters {
 		action.RequestSpecificFilters[key] = action.GetString(key)
@@ -71,6 +73,10 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 
 	if action.State != nil {
 		q = q.ForState(*action.State)
+	}
+
+	if action.UpdatedAfter != nil {
+		q = q.UpdatedAfter(*action.UpdatedAfter)
 	}
 
 	for key, value := range action.RequestSpecificFilters {
