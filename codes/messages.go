@@ -147,6 +147,9 @@ var messages = map[string]string{
 	"op_request_does_not_exist":                      "Request does not exist",
 	"op_permanent_reject_not_allowed":                "Permanent reject not allowed, use reject",
 	"op_pending_request_update_not_allowed":          "User not allowed to update UpdateKYCRequest if it isn't rejected",
+	"op_not_allowed_to_update_request":               "Master not allowed to update UpdateKYCRequest",
+	"op_invalid_update_kyc_request_data":             "Invalid UpdateKYCRequest data",
+	"op_invalid_kyc_data":                            "Invalid KYC data",
 }
 
 func getMessage(rawCode string) string {

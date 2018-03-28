@@ -227,7 +227,7 @@ func (q *ReviewableRequestQ) UpdatedAfter(timestamp int64) ReviewableRequestQI {
 	tm := time.Unix(timestamp, 0)
 	tmf := tm.Format(time.RFC3339)
 
-	q.sql = q.sql.Where(fmt.Sprintf( "updated_at > '%s'::timestamp", tmf))
+	q.sql = q.sql.Where(fmt.Sprintf( "updated_at >= '%s'::timestamp", tmf))
 	return q
 }
 
