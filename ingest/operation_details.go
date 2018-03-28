@@ -211,7 +211,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["request_id"] = uint64(opResult.RequestId)
 		details["account_to_update_kyc"] = op.UpdateKycRequestData.AccountToUpdateKyc.Address()
 		details["account_type_to_set"] = int32(op.UpdateKycRequestData.AccountTypeToSet)
-		details["kyc_level"] = uint32(op.UpdateKycRequestData.KycLevel)
+		details["kyc_level_to_set"] = uint32(op.UpdateKycRequestData.KycLevelToSet)
 
 		var kycData map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error

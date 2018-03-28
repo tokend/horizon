@@ -82,5 +82,5 @@ type UpdateKYCRequest struct {
 	AllTasks           uint32                   `json:"all_tasks"`
 	PendingTasks       uint32                   `json:"pending_tasks"`
 	SequenceNumber     uint32                   `json:"sequence_number"`
-	ExternalDetails    []map[string]interface{} `json:"extrenal_details"`
+	ExternalDetails    []map[string]interface{} `json:"external_details"`
 }
