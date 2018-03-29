@@ -49,6 +49,7 @@ func (action *AccountShowAction) loadRecord() {
 		Accounts().
 		ForAddresses(action.Address).
 		WithStatistics().
+		WithAccountKYC().
 		First()
 
 	if err != nil {

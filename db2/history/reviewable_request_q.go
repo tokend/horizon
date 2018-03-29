@@ -7,6 +7,7 @@ import (
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
+	"time"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -37,6 +38,8 @@ type ReviewableRequestQI interface {
 	Page(page db2.PageQuery) ReviewableRequestQI
 	// ByDetails - filters by specified key value from the details. Note: do not pass key passed by user
 	ByDetails(key, value string) ReviewableRequestQI
+	// UpdatedAfter - selects requests updated after given timestamp
+	UpdatedAfter(timestamp int64) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
 	Select() ([]ReviewableRequest, error)
 }
@@ -212,6 +215,19 @@ func (q *ReviewableRequestQ) ForTypes(requestTypes []xdr.ReviewableRequestType) 
 	query, values := sqx.InForReviewableRequestTypes("request_type", requestTypes...)
 
 	q.sql = q.sql.Where(query, values...)
+	return q
+}
+
+// UpdatedAfter - selects requests updated after given timestamp
+func (q *ReviewableRequestQ) UpdatedAfter(timestamp int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	tm := time.Unix(timestamp, 0)
+	tmf := tm.Format(time.RFC3339)
+
+	q.sql = q.sql.Where(fmt.Sprintf( "updated_at >= '%s'::timestamp", tmf))
 	return q
 }
 

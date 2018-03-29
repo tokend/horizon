@@ -25,4 +25,5 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeCreateSaleRequest:        func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateSaleCreationRequestResult().Code },
 	xdr.OperationTypeCheckSaleState:           func(ir xdr.OperationResultTr) shortStr { return ir.MustCheckSaleStateResult().Code },
 	xdr.OperationTypeCreateAmlAlert:           func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateAmlAlertRequestResult().Code },
+	xdr.OperationTypeCreateKycRequest:         func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateUpdateKycRequestResult().Code },
 }

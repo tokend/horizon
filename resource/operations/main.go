@@ -106,6 +106,13 @@ func New(
 			e.BalanceID = ""
 		}
 		result = e
+	case xdr.OperationTypeCreateKycRequest:
+		e := CreateUpdateKYCRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.KYCData = nil
+		}
+		result = e
 	default:
 		result = base
 	}

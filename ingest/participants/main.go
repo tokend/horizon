@@ -123,6 +123,15 @@ func ForOperation(
 		sourceParticipant = nil
 	case xdr.OperationTypeCreateAmlAlert:
 		// TODO add participant
+	case xdr.OperationTypeCreateKycRequest:
+		updateKYCRequestData := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
+		if sourceParticipant.AccountID.Address() != updateKYCRequestData.AccountToUpdateKyc.Address() {
+			result = append(result, Participant{
+				AccountID: updateKYCRequestData.AccountToUpdateKyc,
+				BalanceID: nil,
+				Details:   nil,
+			})
+		}
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
