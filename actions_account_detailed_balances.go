@@ -38,6 +38,10 @@ func (action *AccountDetailedBalancesAction) JSON() {
 		action.loadSales,
 		action.loadResource,
 		func() {
+			if action.Resource == nil {
+				action.Resource = make([]resource.Balance, 0)
+			}
+			
 			hal.Render(action.W, action.Resource)
 		},
 	)
@@ -74,6 +78,10 @@ func (action *AccountDetailedBalancesAction) groupBalancesByAsset() {
 }
 
 func (action *AccountDetailedBalancesAction) loadAssets() {
+	if len(action.AssetCodes) == 0 {
+		return
+	}
+
 	var err error
 	action.Assets, err = action.CoreQ().Assets().ForCodes(action.AssetCodes).Select()
 	if err != nil {
@@ -94,6 +102,10 @@ func (action *AccountDetailedBalancesAction) createConverter() {
 }
 
 func (action *AccountDetailedBalancesAction) loadSales() {
+	if len(action.AssetCodes) == 0 {
+		return
+	}
+
 	var err error
 	action.Sales, err = selectSalesWithCurrentCap(action.HistoryQ().Sales().ForBaseAssets(action.AssetCodes...), action.converter)
 	if err != nil {
