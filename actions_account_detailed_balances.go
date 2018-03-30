@@ -1,7 +1,6 @@
 package horizon
 
 import (
-	"github.com/go-errors/errors"
 	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -41,7 +40,7 @@ func (action *AccountDetailedBalancesAction) JSON() {
 			if action.Resource == nil {
 				action.Resource = make([]resource.Balance, 0)
 			}
-			
+
 			hal.Render(action.W, action.Resource)
 		},
 	)
@@ -150,12 +149,12 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 
 func convertAmount(balance int64, fromAsset, toAsset string, converter *exchange.Converter) (string, error) {
 	convertedAmount, err := converter.TryToConvertWithOneHop(balance, fromAsset, toAsset)
-	if err != nil || convertedAmount == nil {
-		if err == nil {
-			err = errors.New("failed to find path to convert balance amount")
-		}
-
+	if err != nil {
 		return "", err
+	}
+
+	if convertedAmount == nil {
+		return "", nil
 	}
 
 	return amount.String(*convertedAmount), nil
