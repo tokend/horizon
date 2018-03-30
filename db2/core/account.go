@@ -13,5 +13,7 @@ type Account struct {
 	BlockReasons int32          `db:"block_reasons"`
 	Referrer     string         `db:"referrer"`
 	Policies     int32          `db:"policies"`
+	KYCLevel     int32          `db:"kyc_level"`
 	*Statistics
+	*AccountKYC
 }

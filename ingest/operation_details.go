@@ -71,6 +71,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.LimitsUpdateRequestData != nil {
 			details["limits_update_request_document_hash"] = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
 		}
+
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 		if op.Fee != nil {
@@ -198,6 +199,28 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:
 		// no details needed
+	case xdr.OperationTypeCreateAmlAlert:
+		op := c.Operation().Body.MustCreateAmlAlertRequestOp()
+		details["amount"] = amount.StringU(uint64(op.AmlAlertRequest.Amount))
+		details["balance_id"] = op.AmlAlertRequest.BalanceId.AsString()
+		details["reason"] = op.AmlAlertRequest.Reason
+		details["reference"] = op.Reference
+	case xdr.OperationTypeCreateKycRequest:
+		op := c.Operation().Body.MustCreateUpdateKycRequestOp()
+		opResult := c.OperationResult().MustCreateUpdateKycRequestResult().MustSuccess()
+		details["request_id"] = uint64(opResult.RequestId)
+		details["account_to_update_kyc"] = op.UpdateKycRequestData.AccountToUpdateKyc.Address()
+		details["account_type_to_set"] = int32(op.UpdateKycRequestData.AccountTypeToSet)
+		details["kyc_level_to_set"] = uint32(op.UpdateKycRequestData.KycLevelToSet)
+
+		var kycData map[string]interface{}
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(op.UpdateKycRequestData.KycData), &kycData)
+		details["kyc_data"] = kycData
+
+		if op.UpdateKycRequestData.AllTasks != nil {
+			details["all_tasks"] = *op.UpdateKycRequestData.AllTasks
+		}
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

@@ -1,14 +1,16 @@
 package ingest
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"encoding/json"
+
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/utf8"
 )
 
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
+func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {
 	if is.Err != nil {
 		return
 	}
@@ -16,7 +18,7 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 	var err error
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
-		err = is.approveReviewableRequest (op)
+		err = is.approveReviewableRequest(op, changes)
 	case xdr.ReviewRequestOpActionPermanentReject:
 		err = is.permanentReject(op)
 	case xdr.ReviewRequestOpActionReject:
@@ -34,9 +36,27 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 	}
 }
 
-func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp) error {
+func hasKYCRequestDeleted(changes xdr.LedgerEntryChanges) bool {
+	for i := range changes {
+		if changes[i].Removed == nil {
+			continue
+		}
+
+		if changes[i].Removed.ReviewableRequest != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) error {
 	// approval of two step withdrawal leads to update of request to withdrawal
 	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeTwoStepWithdrawal {
+		return nil
+	}
+
+	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeUpdateKyc && !hasKYCRequestDeleted(changes) {
 		return nil
 	}
 
@@ -85,11 +105,15 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 
 	var reviewerDetails map[string]interface{}
 
-	err = json.Unmarshal([]byte(details.ExternalDetails), &reviewerDetails)
+	externalDetails := utf8.Scrub(details.ExternalDetails)
+	err = json.Unmarshal([]byte(externalDetails), &reviewerDetails)
 	if err != nil {
 		// we ignore here error on purpose, as it's too late to valid the error
 		err = errors.Wrap(err, "failed to marshal reviewer details", fields)
-		is.log.WithError(err).Warn("Reviewer sent invalid json in withdrawal details")
+		is.log.WithError(err).WithFields(logan.F{
+			"scrubbed_details": externalDetails,
+			"original_details": details.ExternalDetails,
+		}).Warn("Reviewer sent invalid json in withdrawal details")
 	}
 
 	withdrawalDetails.ReviewerDetails = reviewerDetails
@@ -105,4 +129,3 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 
 	return nil
 }
-
