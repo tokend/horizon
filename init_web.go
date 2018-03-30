@@ -84,7 +84,7 @@ func initWebMiddleware(app *App) {
 }
 
 const (
-	levelLow      int = 1 << (1 * iota)
+	levelLow int = 1 << (1 * iota)
 	levelMid
 	levelHigh
 	levelCritical
@@ -199,39 +199,48 @@ func initWebActions(app *App) {
 	// Reviewable Request actions
 	r.Get("/requests/:id", &ReviewableRequestShowAction{})
 	r.Get("/request/assets", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"asset": "",
+		RequestSpecificFilters: map[string]reviewableRequestFilter{
+			"asset": {reviewableRequestByEq, "asset"},
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAssetCreate, xdr.ReviewableRequestTypeAssetUpdate},
 	})
 	r.Get("/request/preissuances", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"asset": "",
+		RequestSpecificFilters: map[string]reviewableRequestFilter{
+			"asset": {reviewableRequestByEq, "asset"},
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypePreIssuanceCreate},
 	})
 	r.Get("/request/issuances", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"asset": "",
+		RequestSpecificFilters: map[string]reviewableRequestFilter{
+			"asset": {reviewableRequestByEq, "asset"},
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeIssuanceCreate},
 	})
 	r.Get("/request/withdrawals", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"dest_asset_code": "",
+		RequestSpecificFilters: map[string]reviewableRequestFilter{
+			"dest_asset_code": {reviewableRequestByEq, "dest_asset_code"},
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw, xdr.ReviewableRequestTypeTwoStepWithdrawal},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"base_asset": "",
+		RequestSpecificFilters: map[string]reviewableRequestFilter{
+			"base_asset": {reviewableRequestByEq, "base_asset"},
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
 	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"document_hash": "",
+		RequestSpecificFilters: map[string]reviewableRequestFilter{
+			"document_hash": {reviewableRequestByEq, "document_hash"},
 		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeLimitsUpdate},
+	})
+	r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
+		RequestSpecificFilters: map[string]reviewableRequestFilter{
+			"account_to_update_kyc": {reviewableRequestByEq, "account_to_update_kyc"},
+			"mask_set":              {reviewableRequestMaskSet, "pending_tasks"},
+			"mask_not_set":          {reviewableRequestMaskNotSet, "pending_tasks"},
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateKyc},
 	})
 
 	// Sales actions

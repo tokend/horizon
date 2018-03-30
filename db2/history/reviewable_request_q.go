@@ -7,6 +7,7 @@ import (
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
+	"time"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -35,8 +36,14 @@ type ReviewableRequestQI interface {
 	ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI
 	// Page specifies the paging constraints for the query being built by `q`.
 	Page(page db2.PageQuery) ReviewableRequestQI
-	// ByDetails - filters by specified key value from the details. Note: do not pass key passed by user
-	ByDetails(key, value string) ReviewableRequestQI
+	// ByDetailsEq - filters by specified key value from the details. Note: do not pass key passed by user
+	ByDetailsEq(key, value string) ReviewableRequestQI
+	// ByDetailsMaskNotSet - filters by value for specified key not having specified flags set. Note: do not pass key passed by user
+	ByDetailsMaskNotSet(key string, value int64) ReviewableRequestQI
+	// ByDetailsMaskSet - filters by value for specified key having all specified flags set. Note: do not pass key passed by user
+	ByDetailsMaskSet(key string, value int64) ReviewableRequestQI
+	// UpdatedAfter - selects requests updated after given timestamp
+	UpdatedAfter(timestamp int64) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
 	Select() ([]ReviewableRequest, error)
 }
@@ -189,13 +196,33 @@ func (q *ReviewableRequestQ) ForType(requestType int64) ReviewableRequestQI {
 	return q
 }
 
-// ByDetails - filters by specified key value from the details. Note: do not pass key passed by user
-func (q *ReviewableRequestQ) ByDetails(key, value string) ReviewableRequestQI {
+// ByDetailsEq - filters by specified key value from the details. Note: do not pass key passed by user
+func (q *ReviewableRequestQ) ByDetailsEq(key, value string) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
 	}
 
 	q.sql = q.sql.Where(fmt.Sprintf("details->>'%s' = ?", key), value)
+	return q
+}
+
+// ByDetailsMaskSet - filters by value for specified key from the details & value passed = value passed . Note: do not pass key passed by user
+func (q *ReviewableRequestQ) ByDetailsMaskSet(key string, value int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(fmt.Sprintf("(details->>'%s')::integer & %d = %d", key, value, value))
+	return q
+}
+
+// ByDetailsMaskNotSet - filters by value for specified key not having specified flags set. Note: do not pass key passed by user
+func (q *ReviewableRequestQ) ByDetailsMaskNotSet(key string, value int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(fmt.Sprintf("~(details->>'%s')::integer & %d = %d", key, value, value))
 	return q
 }
 
@@ -212,6 +239,19 @@ func (q *ReviewableRequestQ) ForTypes(requestTypes []xdr.ReviewableRequestType) 
 	query, values := sqx.InForReviewableRequestTypes("request_type", requestTypes...)
 
 	q.sql = q.sql.Where(query, values...)
+	return q
+}
+
+// UpdatedAfter - selects requests updated after given timestamp
+func (q *ReviewableRequestQ) UpdatedAfter(timestamp int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	tm := time.Unix(timestamp, 0)
+	tmf := tm.Format(time.RFC3339)
+
+	q.sql = q.sql.Where(fmt.Sprintf( "updated_at >= '%s'::timestamp", tmf))
 	return q
 }
 

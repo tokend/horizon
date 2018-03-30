@@ -1,8 +1,9 @@
 package history
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
 	"time"
+
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 type AssetCreationRequest struct {
@@ -65,4 +66,21 @@ type SaleQuoteAsset struct {
 
 type LimitsUpdateRequest struct {
 	DocumentHash string `json:"document_hash"`
+}
+
+type AmlAlertRequest struct {
+	BalanceID string `json:"balance_id"`
+	Amount    string `json:"amount"`
+	Reason    string `json:"reason"`
+}
+
+type UpdateKYCRequest struct {
+	AccountToUpdateKYC string                   `json:"updated_account_id"`
+	AccountTypeToSet   xdr.AccountType          `json:"account_type_to_set"`
+	KYCLevel           uint32                   `json:"kyc_level"`
+	KYCData            map[string]interface{}   `json:"kyc_data"`
+	AllTasks           uint32                   `json:"all_tasks"`
+	PendingTasks       uint32                   `json:"pending_tasks"`
+	SequenceNumber     uint32                   `json:"sequence_number"`
+	ExternalDetails    []map[string]interface{} `json:"external_details"`
 }
