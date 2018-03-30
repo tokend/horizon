@@ -10,7 +10,7 @@ import (
 	"gitlab.com/swarmfund/horizon/utf8"
 )
 
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
+func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {
 	if is.Err != nil {
 		return
 	}
@@ -18,7 +18,7 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 	var err error
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
-		err = is.approveReviewableRequest(op)
+		err = is.approveReviewableRequest(op, changes)
 	case xdr.ReviewRequestOpActionPermanentReject:
 		err = is.permanentReject(op)
 	case xdr.ReviewRequestOpActionReject:
@@ -36,9 +36,27 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 	}
 }
 
-func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp) error {
+func hasKYCRequestDeleted(changes xdr.LedgerEntryChanges) bool {
+	for i := range changes {
+		if changes[i].Removed == nil {
+			continue
+		}
+
+		if changes[i].Removed.ReviewableRequest != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) error {
 	// approval of two step withdrawal leads to update of request to withdrawal
 	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeTwoStepWithdrawal {
+		return nil
+	}
+
+	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeUpdateKyc && !hasKYCRequestDeleted(changes) {
 		return nil
 	}
 
