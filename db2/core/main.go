@@ -93,6 +93,8 @@ type QInterface interface {
 
 	// ExternalSystemAccountID - returns builder to access external system account IDs
 	ExternalSystemAccountID() ExternalSystemAccountIDQI
+
+	References() *ReferenceQ
 }
 
 // PriceLevel represents an aggregation of offers to trade at a certain
