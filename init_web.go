@@ -137,6 +137,7 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:account_id/payments", &OperationIndexAction{
 		Types: operationTypesPayment,
 	})
+	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
 
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})
