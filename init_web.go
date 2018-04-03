@@ -102,6 +102,7 @@ const (
 func initWebActions(app *App) {
 	apiProxy := httputil.NewSingleHostReverseProxy(app.config.APIBackend)
 	keychainProxy := httputil.NewSingleHostReverseProxy(app.config.KeychainBackend)
+	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
@@ -300,6 +301,12 @@ func initWebActions(app *App) {
 	r.Handle(regexp.MustCompile(`^/users/\w+/keys`), func() func(web.C, http.ResponseWriter, *http.Request) {
 		return func(c web.C, w http.ResponseWriter, r *http.Request) {
 			keychainProxy.ServeHTTP(w, r)
+		}
+	}())
+
+	r.Handle(regexp.MustCompile(`^/templates/.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
+		return func(c web.C, w http.ResponseWriter, r *http.Request) {
+			templateProxy.ServeHTTP(w, r)
 		}
 	}())
 
