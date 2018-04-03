@@ -202,11 +202,10 @@ func (c *Config) Init() error {
 
 	c.DisableAPISubmit = c.getBool("disable_api_submit")
 
-	if c.getString("template_backend") != "" {
-		c.TemplateBackend, err = c.getParsedURL("template_backend")
-		if err != nil {
-			return errors.Wrap(err, "Failed to get template_backend value")
-		}
+	c.TemplateBackend, err = c.getParsedURL("template_backend")
+	if err != nil {
+		return errors.Wrap(err, "Failed to get template_backend value")
 	}
+
 	return nil
 }
