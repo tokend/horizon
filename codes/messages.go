@@ -150,6 +150,7 @@ var messages = map[string]string{
 	"op_not_allowed_to_update_request":               "Master not allowed to update UpdateKYCRequest",
 	"op_invalid_update_kyc_request_data":             "Invalid UpdateKYCRequest data",
 	"op_invalid_kyc_data":                            "Invalid KYC data",
+	"op_non_zero_tasks_to_remove_not_allowed":        "Non-zero value of tasksToRemove field is not allowed in reject KYC request",
 }
 
 func getMessage(rawCode string) string {
