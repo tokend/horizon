@@ -33,6 +33,7 @@ type Account struct {
 	Limits                                           `json:"limits"`
 	Statistics                                       `json:"statistics"`
 	Policies               AccountPolicies           `json:"policies"`
+	AccountKYC                                       `json:"account_kyc"`
 	ExternalSystemAccounts []ExternalSystemAccountID `json:"external_system_accounts"`
 	Referrals              []Referral                `json:"referrals"`
 }
@@ -56,6 +57,7 @@ func (a *Account) Populate(ctx context.Context, ca core.Account) {
 	a.Links.Operations = lb.PagedLink(self, "operations")
 	a.Links.Payments = lb.PagedLink(self, "payments")
 	a.Statistics.Populate(*ca.Statistics)
+	a.AccountKYC.Populate(*ca.AccountKYC)
 }
 
 func (a *Account) SetBalances(balances []core.Balance) {
