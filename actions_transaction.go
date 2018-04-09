@@ -79,11 +79,20 @@ func (action *TransactionIndexAction) SSE(stream sse.Stream) {
 	)
 }
 
+const (
+	maxTxPagSize uint64 = 1000
+)
+
 func (action *TransactionIndexAction) loadParams() {
 	action.ValidateCursorAsDefault()
 	action.AccountFilter = action.GetString("account_id")
 	action.LedgerFilter = action.GetInt32("ledger_id")
+
 	action.PagingParams = action.GetPageQuery()
+
+	if action.PagingParams.Limit > maxTxPagSize {
+		action.PagingParams.Limit = maxTxPagSize
+	}
 }
 
 func (action *TransactionIndexAction) loadRecords() {
