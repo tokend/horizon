@@ -1,8 +1,6 @@
 package reviewablerequest
 
 import (
-	"encoding/json"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/resource/base"
 	"time"
@@ -20,7 +18,7 @@ type SaleCreationRequest struct {
 	QuoteAssets       []history.SaleQuoteAsset `json:"quote_assets"`
 }
 
-func (r *SaleCreationRequest) Populate(histRequest history.SaleRequest) {
+func (r *SaleCreationRequest) Populate(histRequest history.SaleRequest) (error) {
 	r.BaseAsset = histRequest.BaseAsset
 	r.DefaultQuoteAsset = histRequest.DefaultQuoteAsset
 	r.StartTime = histRequest.StartTime
@@ -31,15 +29,5 @@ func (r *SaleCreationRequest) Populate(histRequest history.SaleRequest) {
 	r.QuoteAssets = histRequest.QuoteAssets
 	r.SaleType.Value = int32(histRequest.SaleType)
 	r.SaleType.Name = histRequest.SaleType.ShortString()
-}
-
-func (r *SaleCreationRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
-	var histRequest history.SaleRequest
-	err := json.Unmarshal(rawJson, &histRequest)
-	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal history.SaleRequest")
-	}
-
-	r.Populate(histRequest)
 	return nil
 }
