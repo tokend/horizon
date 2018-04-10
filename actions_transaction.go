@@ -14,7 +14,6 @@ import (
 	"gitlab.com/swarmfund/horizon/render/sse"
 	"gitlab.com/swarmfund/horizon/resource"
 	txsubHelper "gitlab.com/swarmfund/horizon/txsub"
-	"gitlab.com/swarmfund/horizon/actions"
 )
 
 // This file contains the actions:
@@ -91,12 +90,9 @@ func (action *TransactionIndexAction) loadParams() {
 
 	action.PagingParams = action.GetPageQuery()
 
-	limit := action.GetUInt64(actions.ParamLimit)
-	if limit > maxTxPagSize {
-		limit = maxTxPagSize
+	if action.PagingParams.Limit > maxTxPagSize {
+		action.PagingParams.Limit = maxTxPagSize
 	}
-
-	action.PagingParams.Limit = limit
 }
 
 func (action *TransactionIndexAction) loadRecords() {

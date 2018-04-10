@@ -36,7 +36,7 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.Ledg
 	}
 }
 
-func hasKYCRequestDeleted(changes xdr.LedgerEntryChanges) bool {
+func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
 	for i := range changes {
 		if changes[i].Removed == nil {
 			continue
@@ -56,7 +56,7 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.
 		return nil
 	}
 
-	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeUpdateKyc && !hasKYCRequestDeleted(changes) {
+	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeUpdateKyc && !hasDeletedReviewableRequest(changes) {
 		return nil
 	}
 
@@ -97,12 +97,6 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 		return errors.From(errors.New("expected withdrawal request"), fields.Add("request_type", request.RequestType))
 	}
 
-	var withdrawalDetails history.WithdrawalRequest
-	err = json.Unmarshal(request.Details, &withdrawalDetails)
-	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal withdrawal details", fields)
-	}
-
 	var reviewerDetails map[string]interface{}
 
 	externalDetails := utf8.Scrub(details.ExternalDetails)
@@ -116,12 +110,16 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 		}).Warn("Reviewer sent invalid json in withdrawal details")
 	}
 
-	withdrawalDetails.ReviewerDetails = reviewerDetails
-	request.Details, err = json.Marshal(withdrawalDetails)
-	if err != nil {
-		return errors.Wrap(err, "failed to marhsal withdrawal details", fields)
+	var withdrawalDetails *history.WithdrawalRequest
+	if request.Details.Withdrawal != nil {
+		withdrawalDetails = request.Details.Withdrawal
+	} else if request.Details.TwoStepWithdrawal != nil {
+		withdrawalDetails = request.Details.TwoStepWithdrawal
+	} else {
+		return errors.New("Unexpected state: expected withdrawal details to be available")
 	}
 
+	withdrawalDetails.ReviewerDetails = reviewerDetails
 	err = is.Ingestion.HistoryQ().ReviewableRequests().Update(*request)
 	if err != nil {
 		return errors.Wrap(err, "failed to update withdrawal request", fields)
