@@ -186,6 +186,7 @@ func (is *Session) ingestOperationParticipants() {
 		&is.Cursor.Transaction().Envelope.Tx,
 		is.Cursor.Operation(),
 		*is.Cursor.OperationResult(),
+		is.Cursor.OperationChanges(),
 		is.Cursor.Ledger(),
 	)
 

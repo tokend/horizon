@@ -201,46 +201,87 @@ func initWebActions(app *App) {
 	// Reviewable Request actions
 	r.Get("/requests/:id", &ReviewableRequestShowAction{})
 	r.Get("/request/assets", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]reviewableRequestFilter{
-			"asset": {reviewableRequestByEq, "asset"},
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("asset")
+			action.Page.Filters["asset"] = asset
+			if asset != "" {
+				action.q = action.q.AssetManagementByAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAssetCreate, xdr.ReviewableRequestTypeAssetUpdate},
 	})
 	r.Get("/request/preissuances", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]reviewableRequestFilter{
-			"asset": {reviewableRequestByEq, "asset"},
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("asset")
+			action.Page.Filters["asset"] = asset
+			if asset != "" {
+				action.q = action.q.PreIssuanceByAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypePreIssuanceCreate},
 	})
 	r.Get("/request/issuances", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]reviewableRequestFilter{
-			"asset": {reviewableRequestByEq, "asset"},
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("asset")
+			action.Page.Filters["asset"] = asset
+			if asset != "" {
+				action.q = action.q.IssuanceByAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeIssuanceCreate},
 	})
 	r.Get("/request/withdrawals", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]reviewableRequestFilter{
-			"dest_asset_code": {reviewableRequestByEq, "dest_asset_code"},
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("dest_asset_code")
+			action.Page.Filters["dest_asset_code"] = asset
+			if asset != "" {
+				action.q = action.q.WithdrawalByDestAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw, xdr.ReviewableRequestTypeTwoStepWithdrawal},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]reviewableRequestFilter{
-			"base_asset": {reviewableRequestByEq, "base_asset"},
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("base_asset")
+			action.Page.Filters["base_asset"] = asset
+			if asset != "" {
+				action.q = action.q.SalesByBaseAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
 	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]reviewableRequestFilter{
-			"document_hash": {reviewableRequestByEq, "document_hash"},
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			hash := action.GetString("document_hash")
+			action.Page.Filters["document_hash"] = hash
+			if hash != "" {
+				action.q = action.q.LimitsByDocHash(hash)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeLimitsUpdate},
 	})
-	r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]reviewableRequestFilter{
-			"account_to_update_kyc": {reviewableRequestByEq, "account_to_update_kyc"},
-			"mask_set":              {reviewableRequestMaskSet, "pending_tasks"},
-			"mask_not_set":          {reviewableRequestMaskNotSet, "pending_tasks"},
+		r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			account := action.GetString("account_to_update_kyc")
+			maskSet := action.GetInt64("mask_set")
+			maskSetPartialEq := action.GetBool("mask_set_part_eq")
+			maskNotSet := action.GetOptionalInt64("mask_not_set")
+			if action.Err != nil {
+				return
+			}
+			action.Page.Filters["account_to_update_kyc"] = account
+			action.Page.Filters["mask_set"] = action.GetString("mask_set")
+			action.Page.Filters["mask_set_part_eq"] = action.GetString("mask_set_part_eq")
+			action.Page.Filters["mask_not_set"] = action.GetString("mask_not_set")
+
+			if account != "" {
+				action.q = action.q.KYCByAccountToUpdateKYC(account)
+			}
+
+			action.q = action.q.KYCByMaskSet(maskSet, maskSetPartialEq)
+			if maskNotSet != nil {
+				action.q = action.q.KYCByMaskNotSet(*maskNotSet)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateKyc},
 	})
