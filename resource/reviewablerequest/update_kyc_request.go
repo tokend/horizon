@@ -1,9 +1,6 @@
 package reviewablerequest
 
 import (
-	"encoding/json"
-
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 )
@@ -19,7 +16,7 @@ type UpdateKYCRequest struct {
 	ExternalDetails    []map[string]interface{} `json:"external_details"`
 }
 
-func (r *UpdateKYCRequest) Populate(histRequest history.UpdateKYCRequest) {
+func (r *UpdateKYCRequest) Populate(histRequest history.UpdateKYCRequest) error {
 	r.AccountToUpdateKYC = histRequest.AccountToUpdateKYC
 	r.AccountTypeToSet = histRequest.AccountTypeToSet
 	r.KYCLevel = histRequest.KYCLevel
@@ -28,15 +25,5 @@ func (r *UpdateKYCRequest) Populate(histRequest history.UpdateKYCRequest) {
 	r.PendingTasks = histRequest.PendingTasks
 	r.SequenceNumber = histRequest.SequenceNumber
 	r.ExternalDetails = histRequest.ExternalDetails
-}
-
-func (r *UpdateKYCRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
-	var histRequest history.UpdateKYCRequest
-	err := json.Unmarshal(rawJson, &histRequest)
-	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal history.UpdateKYCRequest")
-	}
-
-	r.Populate(histRequest)
 	return nil
 }
