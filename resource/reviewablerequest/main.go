@@ -36,7 +36,7 @@ func (r *ReviewableRequest) Populate(request *history.ReviewableRequest) error {
 	r.UpdatedAt = request.UpdatedAt.Format(time.RFC3339)
 
 	r.Details = new(Details)
-	err := r.Details.PopulateFromRawJSON(request.RequestType, request.Details)
+	err := r.Details.Populate(request.RequestType, request.Details)
 	if err != nil {
 		return errors.Wrap(err, "failed to populate reviewable request details")
 	}

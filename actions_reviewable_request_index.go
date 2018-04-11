@@ -7,41 +7,13 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
-	"strconv"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 )
-
-type reviewableRequestFilter struct {
-	Fn fnReviewableRequestFilter
-	Key string
-}
-
-type fnReviewableRequestFilter func(q history.ReviewableRequestQI, key, value string) (history.ReviewableRequestQI, error)
-
-func reviewableRequestByEq(q history.ReviewableRequestQI, key, value string) (history.ReviewableRequestQI, error) {
-	return q.ByDetailsEq(key, value), nil
-}
-
-func reviewableRequestMaskSet(q history.ReviewableRequestQI, key, rawValue string) (history.ReviewableRequestQI, error) {
-	value, err := strconv.ParseInt(rawValue, 10, 64)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse int")
-	}
-	return q.ByDetailsMaskSet(key, value), nil
-}
-
-func reviewableRequestMaskNotSet(q history.ReviewableRequestQI, key, rawValue string) (history.ReviewableRequestQI, error) {
-	value, err := strconv.ParseInt(rawValue, 10, 64)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse int")
-	}
-	return q.ByDetailsMaskNotSet(key, value), nil
-}
 
 // ReviewableRequestIndexAction renders slice of reviewable requests
 type ReviewableRequestIndexAction struct {
 	Action
-	q history.ReviewableRequestQI
+	CustomFilter func(action *ReviewableRequestIndexAction)
+	q            history.ReviewableRequestQI
 	Reviewer     string
 	Requestor    string
 	State        *int64
@@ -49,7 +21,6 @@ type ReviewableRequestIndexAction struct {
 	Records      []history.ReviewableRequest
 
 	RequestTypes []xdr.ReviewableRequestType
-	RequestSpecificFilters map[string]reviewableRequestFilter
 
 	PagingParams db2.PageQuery
 	Page         hal.Page
@@ -75,27 +46,12 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 	action.Requestor = action.GetString("requestor")
 	action.State = action.GetOptionalInt64("state")
 	action.UpdatedAfter = action.GetOptionalInt64("updated_after")
-	action.Page.Filters = map[string]string{}
-	action.q = action.HistoryQ().ReviewableRequests()
-	for requestParam, filter := range action.RequestSpecificFilters {
-		value := action.GetString(requestParam)
-		if value == "" {
-			continue
-		}
-
-		var err error
-		action.q, err = filter.Fn(action.q, filter.Key, value)
-		if err != nil {
-			action.SetInvalidField(requestParam, err)
-			return
-		}
-
-		action.Page.Filters[requestParam] = value
+	action.Page.Filters = map[string]string{
+		"reviewer":      action.Reviewer,
+		"requestor":     action.Requestor,
+		"state":         action.GetString("state"),
+		"updated_after": action.GetString("updated_after"),
 	}
-
-	action.Page.Filters["reviewer"] = action.Reviewer
-	action.Page.Filters["requestor"] = action.Requestor
-	action.Page.Filters["state"] = action.GetString("state")
 }
 
 func (action *ReviewableRequestIndexAction) checkAllowed() {
@@ -103,6 +59,7 @@ func (action *ReviewableRequestIndexAction) checkAllowed() {
 }
 
 func (action *ReviewableRequestIndexAction) loadRecord() {
+	action.q = action.HistoryQ().ReviewableRequests()
 
 	if action.Reviewer != "" {
 		action.q = action.q.ForReviewer(action.Reviewer)
@@ -118,6 +75,14 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 
 	if action.UpdatedAfter != nil {
 		action.q = action.q.UpdatedAfter(*action.UpdatedAfter)
+	}
+
+	if action.CustomFilter != nil {
+		action.CustomFilter(action)
+	}
+
+	if action.Err != nil {
+		return
 	}
 
 	action.q = action.q.ForTypes(action.RequestTypes).Page(action.PagingParams)

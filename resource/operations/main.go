@@ -113,6 +113,10 @@ func New(
 			e.KYCData = nil
 		}
 		result = e
+	case xdr.OperationTypeReviewRequest:
+		e := ReviewRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
 	default:
 		result = base
 	}
