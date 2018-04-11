@@ -4,6 +4,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/toid"
 	sq "github.com/lann/squirrel"
+	"strconv"
 )
 
 var selectTransaction = sq.Select(
@@ -57,6 +58,21 @@ func (q *Q) TransactionByHash(dest interface{}, hash string) error {
 	sql := selectTransaction.
 		Limit(1).
 		Where("ht.transaction_hash = ?", hash)
+
+	return q.Get(dest, sql)
+}
+
+// TransactionByHashOrID is a query that loads a single row from the
+// `history_transactions` table based upon the provided hash or id.
+func (q *Q) TransactionByHashOrID(dest interface{}, hashOrID string) error {
+	txID, err := strconv.ParseUint(hashOrID, 10, 64)
+	if err != nil {
+		return q.TransactionByHash(dest, hashOrID)
+	}
+
+	sql := selectTransaction.
+		Limit(1).
+		Where("ht.id = ?", txID)
 
 	return q.Get(dest, sql)
 }

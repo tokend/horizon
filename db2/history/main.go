@@ -50,6 +50,7 @@ type QInterface interface {
 	// Transactions
 	Transactions() TransactionsQI
 	TransactionByHash(dest interface{}, hash string) error
+	TransactionByHashOrID(dest interface{}, hash string) error
 
 	PaymentRequestByID(dest interface{}, requestID uint64) error
 	PaymentRequestByPaymentID(dest interface{}, requestID uint64) error

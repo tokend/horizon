@@ -15,7 +15,6 @@ import (
 type Operation struct {
 	db2.TotalOrderID
 	TransactionID    int64             `db:"transaction_id"`
-	TransactionHash  string            `db:"transaction_hash"`
 	ApplicationOrder int32             `db:"application_order"`
 	Type             xdr.OperationType `db:"type"`
 	DetailsString    null.String       `db:"details"`
