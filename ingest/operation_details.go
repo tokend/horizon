@@ -202,6 +202,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeCreateSaleRequest:
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:
+		op := c.Operation().Body.MustCheckSaleStateOp()
+		opResult := c.OperationResult().MustCheckSaleStateResult().MustSuccess()
+		details["sale_id"] = uint64(op.SaleId)
+		details["effect"] = opResult.Effect.Effect.String()
 		// no details needed
 	case xdr.OperationTypeCreateAmlAlert:
 		op := c.Operation().Body.MustCreateAmlAlertRequestOp()
