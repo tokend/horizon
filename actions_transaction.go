@@ -79,11 +79,20 @@ func (action *TransactionIndexAction) SSE(stream sse.Stream) {
 	)
 }
 
+const (
+	maxTxPagSize uint64 = 1000
+)
+
 func (action *TransactionIndexAction) loadParams() {
 	action.ValidateCursorAsDefault()
 	action.AccountFilter = action.GetString("account_id")
 	action.LedgerFilter = action.GetInt32("ledger_id")
+
 	action.PagingParams = action.GetPageQuery()
+
+	if action.PagingParams.Limit > maxTxPagSize {
+		action.PagingParams.Limit = maxTxPagSize
+	}
 }
 
 func (action *TransactionIndexAction) loadRecords() {
@@ -149,17 +158,17 @@ func (action *TransactionIndexAction) checkAllowed() {
 // TransactionShowAction renders a ledger found by its sequence number.
 type TransactionShowAction struct {
 	Action
-	Hash     string
+	HashOrID string
 	Record   history.Transaction
 	Resource resource.Transaction
 }
 
 func (action *TransactionShowAction) loadParams() {
-	action.Hash = action.GetString("id")
+	action.HashOrID = action.GetString("id")
 }
 
 func (action *TransactionShowAction) loadRecord() {
-	action.Err = action.HistoryQ().TransactionByHash(&action.Record, action.Hash)
+	action.Err = action.HistoryQ().TransactionByHashOrID(&action.Record, action.HashOrID)
 }
 
 func (action *TransactionShowAction) loadResource() {

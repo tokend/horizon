@@ -94,7 +94,7 @@ func (is *Session) operation() {
 		is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
 			is.Cursor.OperationResult().MustManageInvoiceResult())
 	case xdr.OperationTypeReviewRequest:
-		is.processReviewRequest(is.Cursor.Operation().Body.MustReviewRequestOp())
+		is.processReviewRequest(is.Cursor.Operation().Body.MustReviewRequestOp(), is.Cursor.OperationChanges())
 	case xdr.OperationTypeManageAsset:
 		is.processManageAsset(is.Cursor.Operation().Body.ManageAssetOp)
 	case xdr.OperationTypeCheckSaleState:

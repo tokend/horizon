@@ -1,8 +1,6 @@
 package reviewablerequest
 
 import (
-	"encoding/json"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
@@ -18,7 +16,7 @@ type WithdrawalRequest struct {
 	ReviewerDetails        map[string]interface{} `json:"reviewer_details"`
 }
 
-func (r *WithdrawalRequest) Populate(histRequest history.WithdrawalRequest) {
+func (r *WithdrawalRequest) Populate(histRequest history.WithdrawalRequest) error {
 	r.BalanceID = histRequest.BalanceID
 	r.Amount = histRequest.Amount
 	r.FixedFee = histRequest.FixedFee
@@ -28,15 +26,5 @@ func (r *WithdrawalRequest) Populate(histRequest history.WithdrawalRequest) {
 	r.DestAssetAmount = histRequest.DestAssetAmount
 	r.ReviewerDetails = histRequest.ReviewerDetails
 	r.PreConfirmationDetails = histRequest.PreConfirmationDetails
-}
-
-func (r *WithdrawalRequest) PopulateFromRawJsonHistory(rawJson []byte) error {
-	var histRequest history.WithdrawalRequest
-	err := json.Unmarshal(rawJson, &histRequest)
-	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal history.WithdrawalRequest")
-	}
-
-	r.Populate(histRequest)
 	return nil
 }

@@ -3,8 +3,8 @@ package codes
 import (
 	"testing"
 
-	"gitlab.com/swarmfund/go/xdr"
 	. "github.com/smartystreets/goconvey/convey"
+	"gitlab.com/swarmfund/go/xdr"
 )
 
 func checkCode(t *testing.T, code shortStr) {
@@ -128,6 +128,12 @@ func TestCodes(t *testing.T) {
 
 	Convey("Review request", t, func() {
 		for _, code := range xdr.ReviewRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Create KYC request", t, func() {
+		for _, code := range xdr.CreateUpdateKycRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})

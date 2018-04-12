@@ -154,7 +154,7 @@ func convertAmount(balance int64, fromAsset, toAsset string, converter *exchange
 	}
 
 	if convertedAmount == nil {
-		return "", nil
+		return amount.String(balance), nil
 	}
 
 	return amount.String(*convertedAmount), nil

@@ -3,6 +3,7 @@ package reviewablerequest
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
 // Details - provides specific for request type details.
@@ -17,44 +18,43 @@ type Details struct {
 	TwoStepWithdrawal *WithdrawalRequest    `json:"two_step_withdrawal"`
 	Sale              *SaleCreationRequest  `json:"sale,omitempty"`
 	LimitsUpdate      *LimitsUpdateRequest  `json:"limits_update"`
+	AmlAlert          *AmlAlertRequest      `json:"aml_alert"`
+	UpdateKYC         *UpdateKYCRequest     `json:"update_kyc,omitempty"`
 }
 
-func (d *Details) PopulateFromRawJSON(requestType xdr.ReviewableRequestType, rawJSON []byte) error {
+func (d *Details) Populate(requestType xdr.ReviewableRequestType, h history.ReviewableRequestDetails) error {
 	d.RequestType.Populate(requestType)
-	err := d.PopulateSpecificRequest(requestType, rawJSON)
-	if err != nil {
-		return errors.Wrap(err, "failed to populate reviewable request details")
-	}
-
-	return nil
-}
-
-func (d *Details) PopulateSpecificRequest(requestType xdr.ReviewableRequestType, rawJSON []byte) error {
 	switch requestType {
 	case xdr.ReviewableRequestTypeAssetCreate:
 		d.AssetCreation = new(AssetCreationRequest)
-		return d.AssetCreation.PopulateFromRawJsonHistory(rawJSON)
+		return d.AssetCreation.Populate(*h.AssetCreation)
 	case xdr.ReviewableRequestTypeAssetUpdate:
 		d.AssetUpdate = new(AssetUpdateRequest)
-		return d.AssetUpdate.PopulateFromRawJsonHistory(rawJSON)
+		return d.AssetUpdate.Populate(*h.AssetUpdate)
 	case xdr.ReviewableRequestTypePreIssuanceCreate:
 		d.PreIssuanceCreate = new(PreIssuanceRequest)
-		return d.PreIssuanceCreate.PopulateFromRawJsonHistory(rawJSON)
+		return d.PreIssuanceCreate.Populate(*h.PreIssuanceCreate)
 	case xdr.ReviewableRequestTypeIssuanceCreate:
 		d.IssuanceCreate = new(IssuanceRequest)
-		return d.IssuanceCreate.PopulateFromRawJsonHistory(rawJSON)
+		return d.IssuanceCreate.Populate(*h.IssuanceCreate)
 	case xdr.ReviewableRequestTypeWithdraw:
 		d.Withdrawal = new(WithdrawalRequest)
-		return d.Withdrawal.PopulateFromRawJsonHistory(rawJSON)
+		return d.Withdrawal.Populate(*h.Withdrawal)
 	case xdr.ReviewableRequestTypeSale:
 		d.Sale = new(SaleCreationRequest)
-		return d.Sale.PopulateFromRawJsonHistory(rawJSON)
+		return d.Sale.Populate(*h.Sale)
 	case xdr.ReviewableRequestTypeLimitsUpdate:
 		d.LimitsUpdate = new(LimitsUpdateRequest)
-		return d.LimitsUpdate.PopulateFromRawJsonHistory(rawJSON)
+		return d.LimitsUpdate.Populate(*h.LimitsUpdate)
 	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
 		d.TwoStepWithdrawal = new(WithdrawalRequest)
-		return d.TwoStepWithdrawal.PopulateFromRawJsonHistory(rawJSON)
+		return d.TwoStepWithdrawal.Populate(*h.TwoStepWithdrawal)
+	case xdr.ReviewableRequestTypeAmlAlert:
+		d.AmlAlert = new(AmlAlertRequest)
+		return d.AmlAlert.Populate(*h.AmlAlert)
+	case xdr.ReviewableRequestTypeUpdateKyc:
+		d.UpdateKYC = new(UpdateKYCRequest)
+		return d.UpdateKYC.Populate(*h.UpdateKYC)
 	default:
 		return errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),

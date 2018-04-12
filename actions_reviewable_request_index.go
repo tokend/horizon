@@ -12,13 +12,15 @@ import (
 // ReviewableRequestIndexAction renders slice of reviewable requests
 type ReviewableRequestIndexAction struct {
 	Action
+	CustomFilter func(action *ReviewableRequestIndexAction)
+	q            history.ReviewableRequestQI
 	Reviewer     string
 	Requestor    string
 	State        *int64
+	UpdatedAfter *int64
 	Records      []history.ReviewableRequest
 
 	RequestTypes []xdr.ReviewableRequestType
-	RequestSpecificFilters map[string]string
 
 	PagingParams db2.PageQuery
 	Page         hal.Page
@@ -43,15 +45,13 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 	action.Reviewer = action.GetString("reviewer")
 	action.Requestor = action.GetString("requestor")
 	action.State = action.GetOptionalInt64("state")
-	action.Page.Filters = map[string]string{}
-	for key := range action.RequestSpecificFilters {
-		action.RequestSpecificFilters[key] = action.GetString(key)
-		action.Page.Filters[key] = action.RequestSpecificFilters[key]
+	action.UpdatedAfter = action.GetOptionalInt64("updated_after")
+	action.Page.Filters = map[string]string{
+		"reviewer":      action.Reviewer,
+		"requestor":     action.Requestor,
+		"state":         action.GetString("state"),
+		"updated_after": action.GetString("updated_after"),
 	}
-
-	action.Page.Filters["reviewer"] = action.Reviewer
-	action.Page.Filters["requestor"] = action.Requestor
-	action.Page.Filters["state"] = action.GetString("state")
 }
 
 func (action *ReviewableRequestIndexAction) checkAllowed() {
@@ -59,31 +59,35 @@ func (action *ReviewableRequestIndexAction) checkAllowed() {
 }
 
 func (action *ReviewableRequestIndexAction) loadRecord() {
-	q := action.HistoryQ().ReviewableRequests()
+	action.q = action.HistoryQ().ReviewableRequests()
 
 	if action.Reviewer != "" {
-		q = q.ForReviewer(action.Reviewer)
+		action.q = action.q.ForReviewer(action.Reviewer)
 	}
 
 	if action.Requestor != "" {
-		q = q.ForRequestor(action.Requestor)
+		action.q = action.q.ForRequestor(action.Requestor)
 	}
 
 	if action.State != nil {
-		q = q.ForState(*action.State)
+		action.q = action.q.ForState(*action.State)
 	}
 
-	for key, value := range action.RequestSpecificFilters {
-		if value == "" {
-			continue
-		}
-
-		q = q.ByDetails(key, value)
+	if action.UpdatedAfter != nil {
+		action.q = action.q.UpdatedAfter(*action.UpdatedAfter)
 	}
 
-	q = q.ForTypes(action.RequestTypes).Page(action.PagingParams)
+	if action.CustomFilter != nil {
+		action.CustomFilter(action)
+	}
+
+	if action.Err != nil {
+		return
+	}
+
+	action.q = action.q.ForTypes(action.RequestTypes).Page(action.PagingParams)
 	var err error
-	action.Records, err = q.Select()
+	action.Records, err = action.q.Select()
 	if err != nil {
 		action.Log.WithError(err).Error("failed to load reviewable requests")
 		action.Err = &problem.ServerError

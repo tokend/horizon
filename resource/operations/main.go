@@ -99,6 +99,28 @@ func New(
 			e.ExternalDetails = nil
 		}
 		result = e
+	case xdr.OperationTypeCheckSaleState:
+		e := CheckSaleState{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
+	case xdr.OperationTypeCreateAmlAlert:
+		e := CreateAmlAlert{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.BalanceID = ""
+		}
+		result = e
+	case xdr.OperationTypeCreateKycRequest:
+		e := CreateUpdateKYCRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.KYCData = nil
+		}
+		result = e
+	case xdr.OperationTypeReviewRequest:
+		e := ReviewRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
 	default:
 		result = base
 	}
