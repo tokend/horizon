@@ -65,7 +65,7 @@ func (this *Base) Populate(
 	this.Links.Self = lb.Link(self)
 	this.Links.Succeeds = lb.Linkf(nil, "/effects?order=desc&cursor=%s", this.PT)
 	this.Links.Precedes = lb.Linkf(nil, "/effects?order=asc&cursor=%s", this.PT)
-	this.Links.Transaction = lb.Linkf(nil, "/transactions/%s", row.TransactionHash)
+	this.Links.Transaction = lb.Linkf(nil, "/transactions/")
 
 	if public {
 		this.SourceAccount = ""
