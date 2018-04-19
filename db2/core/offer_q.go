@@ -5,6 +5,10 @@ import (
 	"gitlab.com/swarmfund/horizon/db2"
 )
 
+const (
+	secondaryMarketID = 0
+)
+
 type OfferQ struct {
 	Err    error
 	parent *Q
@@ -42,6 +46,15 @@ func (q *OfferQ) ForOrderBookID(orderBookID uint64) *OfferQ {
 	}
 
 	q.sql = q.sql.Where("order_book_id = ?", orderBookID)
+	return q
+}
+
+func (q *OfferQ) OnlyPrimaryMarket() *OfferQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("order_book_id <> ?", secondaryMarketID)
 	return q
 }
 
