@@ -1,10 +1,7 @@
 package horizon
 
 import (
-	"strconv"
-
 	"github.com/go-errors/errors"
-	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
@@ -13,13 +10,13 @@ import (
 
 type OffersAction struct {
 	Action
-	AccountID    string
-	BaseAsset    string
-	QuoteAsset   string
-	IsBuy        *bool
-	PagingParams db2.PageQuery
-	OfferID      string
-	OrderBookID  *uint64
+	AccountID         string
+	BaseAsset         string
+	QuoteAsset        string
+	IsBuy             *bool
+	OfferID           string
+	OrderBookID       *uint64
+	OnlyPrimaryMarket bool
 
 	CoreRecords []core.Offer
 	Page        hal.Page
@@ -48,17 +45,8 @@ func (action *OffersAction) loadParams() {
 		action.SetInvalidField("base_asset", errors.New("base and quote assets must be both set or both not set"))
 		return
 	}
-	action.PagingParams = action.GetPageQuery()
-	action.Page.Filters = map[string]string{
-		"offer_id":      action.OfferID,
-		"base_asset":    action.BaseAsset,
-		"quote_asset":   action.QuoteAsset,
-		"order_book_id": action.GetString("order_book_id"),
-	}
 
-	if action.IsBuy != nil {
-		action.Page.Filters["is_buy"] = strconv.FormatBool(*action.IsBuy)
-	}
+	action.OnlyPrimaryMarket = action.GetBool("only_primary")
 }
 
 func (action *OffersAction) checkAllowed() {
@@ -83,7 +71,11 @@ func (action *OffersAction) loadRecords() {
 		q = q.ForOrderBookID(*action.OrderBookID)
 	}
 
-	err := q.Page(action.PagingParams).Select(&action.CoreRecords)
+	if action.OnlyPrimaryMarket {
+		q = q.OnlyPrimaryMarket()
+	}
+
+	err := q.Select(&action.CoreRecords)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get offers from core DB")
 		action.Err = &problem.ServerError
@@ -95,12 +87,5 @@ func (action *OffersAction) loadRecords() {
 		result.Populate(&action.CoreRecords[i])
 		action.Page.Add(&result)
 	}
-
-	action.Page.BaseURL = action.BaseURL()
-	action.Page.BasePath = action.Path()
-	action.Page.Limit = action.PagingParams.Limit
-	action.Page.Cursor = action.PagingParams.Cursor
-	action.Page.Order = action.PagingParams.Order
-	action.Page.PopulateLinks()
 
 }
