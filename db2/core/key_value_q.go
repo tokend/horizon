@@ -2,13 +2,11 @@ package core
 
 import sq "github.com/lann/squirrel"
 
-
 // KeyValueQI - provides methods to operate key-value
 type KeyValueQI interface {
 	// ByKey - selects KeyValue by key. Returns nil, nil if not found
 	ByKey(key string) (*KeyValue, error)
 }
-
 
 type KeyValueQ struct {
 	Err    error
@@ -16,7 +14,7 @@ type KeyValueQ struct {
 	sql    sq.SelectBuilder
 }
 
-func (q *KeyValueQ) ByKey(key string) (* KeyValue,error){
+func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 	if q.Err != nil {
 		return nil, q.Err
 	}
@@ -35,3 +33,6 @@ func (q *KeyValueQ) ByKey(key string) (* KeyValue,error){
 
 	return &result, nil
 }
+
+
+var selectKeyValue = sq.Select("kv.key","kv.value").From("key_value_entry kv")

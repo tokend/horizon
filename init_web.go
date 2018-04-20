@@ -111,6 +111,7 @@ func initWebActions(app *App) {
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
 		xdr.OperationTypeCheckSaleState,
+		xdr.OperationTypeManageKeyValue,
 	}
 
 	r := app.web.router
@@ -140,6 +141,8 @@ func initWebActions(app *App) {
 	})
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
 
+	//keyValue actions
+	r.Get("/keyValue/:key", &KeyValueShowAction{})
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})
 
