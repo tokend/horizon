@@ -266,6 +266,7 @@ func initWebActions(app *App) {
 			maskSet := action.GetInt64("mask_set")
 			maskSetPartialEq := action.GetBool("mask_set_part_eq")
 			maskNotSet := action.GetOptionalInt64("mask_not_set")
+			accountTypeToSet := action.GetOptionalInt64("account_type_to_set")
 			if action.Err != nil {
 				return
 			}
@@ -273,6 +274,7 @@ func initWebActions(app *App) {
 			action.Page.Filters["mask_set"] = action.GetString("mask_set")
 			action.Page.Filters["mask_set_part_eq"] = action.GetString("mask_set_part_eq")
 			action.Page.Filters["mask_not_set"] = action.GetString("mask_not_set")
+			action.Page.Filters["account_type_to_set"] = action.GetString("account_type_to_set")
 
 			if account != "" {
 				action.q = action.q.KYCByAccountToUpdateKYC(account)
@@ -281,6 +283,10 @@ func initWebActions(app *App) {
 			action.q = action.q.KYCByMaskSet(maskSet, maskSetPartialEq)
 			if maskNotSet != nil {
 				action.q = action.q.KYCByMaskNotSet(*maskNotSet)
+			}
+
+			if accountTypeToSet != nil {
+				action.q = action.q.KYCByAccountTypeToSet(xdr.AccountType(*accountTypeToSet))
 			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateKyc},
