@@ -53,7 +53,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["value"] = op.Action.Value.Value
 		}
 
-
 	case xdr.OperationTypeSetOptions:
 		op := c.Operation().Body.MustSetOptionsOp()
 
