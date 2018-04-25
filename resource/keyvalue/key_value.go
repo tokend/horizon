@@ -2,16 +2,15 @@ package keyvalue
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/go/xdr"
 )
 
 
 type KeyValue struct {
-	Key 	string 						`json:"key"`
-	Value 	*xdr.KeyValueEntryValue 	`json:"value"`
+	Key 	string 						`db:"key"`
+	Value 	*core.KeyValueEntry 		`db:"value"`
 }
 
-func (k *KeyValue) Populate(keyValue *core.KeyValue)  {
+func (k *KeyValue) Populate(keyValue *core.KeyValue) error {
 	k.Key = keyValue.Key
-	k.Value,_ = keyValue.Scan()
+	return k.Value.Scan(keyValue.Body)
 }

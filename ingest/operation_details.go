@@ -46,7 +46,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 	case xdr.OperationTypeManageKeyValue:
 		op := c.Operation().Body.MustManageKeyValueOp()
-		details["funder"] = source
+		details["source"] = source
 		details["key"] = op.Key
 		details["action"] = op.Action
 		if op.Action.Action != xdr.ManageKvActionDelete {

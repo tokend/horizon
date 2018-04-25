@@ -5,21 +5,27 @@ import (
 	"gitlab.com/swarmfund/go/xdr"
 )
 
+type KeyValueEntry xdr.KeyValueEntryValue
+
+func (k *KeyValueEntry) Scan(src interface{}) error {
+	var data []byte
+	switch rawData := src.(type) {
+	case []byte:
+		data = rawData
+	case string:
+		data = []byte(rawData)
+	default:
+		return errors.New("Unexpected type")
+	}
+	err := xdr.SafeUnmarshal(data,k);
+	if err!=nil {
+		return  errors.New("Faild to unmarshal key_value")
+	}
+
+	return nil
+}
+
 type KeyValue struct {
 	Key		string                `db:"key"`
 	Body    []byte                `db:"value"`
-}
-
-func (a *KeyValue) Scan() (*xdr.KeyValueEntryValue, error) {
-	var result xdr.KeyValueEntryValue
-	err := xdr.SafeUnmarshal(a.Body,result)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal keyValue")
-	}
-
-	return &result, nil
-}
-
-func (a *KeyValue) Value()([]byte,error) {
-	return a.Body,nil
 }

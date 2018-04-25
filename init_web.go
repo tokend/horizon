@@ -142,7 +142,7 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
 
 	//keyValue actions
-	r.Get("/keyValue/:key", &KeyValueShowAction{})
+	r.Get("/keyvalue/:key", &KeyValueShowAction{})
 
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})

@@ -182,10 +182,7 @@
 [[projects]]
   branch = "master"
   name = "github.com/nullstyle/go-xdr"
-  packages = [
-    "xdr",
-    "xdr3"
-  ]
+  packages = ["xdr3"]
   revision = "a875e7c9fa2388ce03279f6b5ba1c2ccd1f9e917"
 
 [[projects]]
@@ -448,6 +445,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7047465bf26cb8866d8864f1daf83cde2c59b66dcfda76874520ea0b535f348e"
+  inputs-digest = "df5d6b256c488bab75e79aa815cdf6b91a2a24abaa32f8a179f6bc91c7c6cacc"
   solver-name = "gps-cdcl"
   solver-version = 1
