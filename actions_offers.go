@@ -82,6 +82,7 @@ func (action *OffersAction) loadRecords() {
 		return
 	}
 
+	action.Page.Init()
 	for i := range action.CoreRecords {
 		var result resource.Offer
 		result.Populate(&action.CoreRecords[i])
