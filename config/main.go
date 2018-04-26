@@ -61,6 +61,7 @@ type Config struct {
 	Core Core
 
 	TemplateBackend *url.URL
+	InvestReady     *url.URL
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
@@ -113,6 +114,7 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.bindEnv("disable_api_submit")
 
 	c.bindEnv("template_backend")
+	c.bindEnv("invest_ready")
 }
 
 func (c *Config) Init() error {
@@ -205,6 +207,11 @@ func (c *Config) Init() error {
 	c.TemplateBackend, err = c.getParsedURL("template_backend")
 	if err != nil {
 		return errors.Wrap(err, "Failed to get template_backend value")
+	}
+
+	c.InvestReady, err = c.getParsedURL("invest_ready")
+	if err != nil {
+		return errors.Wrap(err, "Failed to get invest_ready value")
 	}
 
 	return nil
