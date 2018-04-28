@@ -103,6 +103,7 @@ func initWebActions(app *App) {
 	apiProxy := httputil.NewSingleHostReverseProxy(app.config.APIBackend)
 	keychainProxy := httputil.NewSingleHostReverseProxy(app.config.KeychainBackend)
 	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
+	investReadyProxy := httputil.NewSingleHostReverseProxy(app.config.InvestReady)
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
@@ -358,6 +359,12 @@ func initWebActions(app *App) {
 	r.Handle(regexp.MustCompile(`^/templates/.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
 		return func(c web.C, w http.ResponseWriter, r *http.Request) {
 			templateProxy.ServeHTTP(w, r)
+		}
+	}())
+
+	r.Handle(regexp.MustCompile(`^/integrations/invest-ready`), func() func(web.C, http.ResponseWriter, *http.Request) {
+		return func(c web.C, w http.ResponseWriter, r *http.Request) {
+			investReadyProxy.ServeHTTP(w, r)
 		}
 	}())
 
