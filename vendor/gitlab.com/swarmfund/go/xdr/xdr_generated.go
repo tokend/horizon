@@ -2765,29 +2765,29 @@ type InvoiceEntry struct {
 //
 //   enum KeyValueEntryType
 //        {
-//            KYC_SETTINGS = 1
+//            UINT32 = 1
 //        };
 //
 type KeyValueEntryType int32
 
 const (
-	KeyValueEntryTypeKycSettings KeyValueEntryType = 1
+	KeyValueEntryTypeUint32 KeyValueEntryType = 1
 )
 
 var KeyValueEntryTypeAll = []KeyValueEntryType{
-	KeyValueEntryTypeKycSettings,
+	KeyValueEntryTypeUint32,
 }
 
 var keyValueEntryTypeMap = map[int32]string{
-	1: "KeyValueEntryTypeKycSettings",
+	1: "KeyValueEntryTypeUint32",
 }
 
 var keyValueEntryTypeShortMap = map[int32]string{
-	1: "kyc_settings",
+	1: "uint32",
 }
 
 var keyValueEntryTypeRevMap = map[string]int32{
-	"KeyValueEntryTypeKycSettings": 1,
+	"KeyValueEntryTypeUint32": 1,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -2851,72 +2851,17 @@ func (e *KeyValueEntryType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// KycSettingsExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//                case EMPTY_VERSION:
-//                    void;
-//            }
-//
-type KycSettingsExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u KycSettingsExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of KycSettingsExt
-func (u KycSettingsExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewKycSettingsExt creates a new  KycSettingsExt.
-func NewKycSettingsExt(v LedgerVersion, value interface{}) (result KycSettingsExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// KycSettings is an XDR Struct defines as:
-//
-//   struct KYCSettings
-//        {
-//            // reserved for future use
-//            union switch (LedgerVersion v)
-//            {
-//                case EMPTY_VERSION:
-//                    void;
-//            }
-//            ext;
-//        };
-//
-type KycSettings struct {
-	Ext KycSettingsExt `json:"ext,omitempty"`
-}
-
 // KeyValueEntryValue is an XDR NestedUnion defines as:
 //
 //   union switch (KeyValueEntryType type)
 //            {
-//                 case KYC_SETTINGS:
-//                    KYCSettings kycSettings;
+//                 case UINT32:
+//                    uint32 defaultMask;
 //            }
 //
 type KeyValueEntryValue struct {
 	Type        KeyValueEntryType `json:"type,omitempty"`
-	KycSettings *KycSettings      `json:"kycSettings,omitempty"`
+	DefaultMask *Uint32           `json:"defaultMask,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -2929,8 +2874,8 @@ func (u KeyValueEntryValue) SwitchFieldName() string {
 // the value for an instance of KeyValueEntryValue
 func (u KeyValueEntryValue) ArmForSwitch(sw int32) (string, bool) {
 	switch KeyValueEntryType(sw) {
-	case KeyValueEntryTypeKycSettings:
-		return "KycSettings", true
+	case KeyValueEntryTypeUint32:
+		return "DefaultMask", true
 	}
 	return "-", false
 }
@@ -2939,36 +2884,36 @@ func (u KeyValueEntryValue) ArmForSwitch(sw int32) (string, bool) {
 func NewKeyValueEntryValue(aType KeyValueEntryType, value interface{}) (result KeyValueEntryValue, err error) {
 	result.Type = aType
 	switch KeyValueEntryType(aType) {
-	case KeyValueEntryTypeKycSettings:
-		tv, ok := value.(KycSettings)
+	case KeyValueEntryTypeUint32:
+		tv, ok := value.(Uint32)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be KycSettings")
+			err = fmt.Errorf("invalid value, must be Uint32")
 			return
 		}
-		result.KycSettings = &tv
+		result.DefaultMask = &tv
 	}
 	return
 }
 
-// MustKycSettings retrieves the KycSettings value from the union,
+// MustDefaultMask retrieves the DefaultMask value from the union,
 // panicing if the value is not set.
-func (u KeyValueEntryValue) MustKycSettings() KycSettings {
-	val, ok := u.GetKycSettings()
+func (u KeyValueEntryValue) MustDefaultMask() Uint32 {
+	val, ok := u.GetDefaultMask()
 
 	if !ok {
-		panic("arm KycSettings is not set")
+		panic("arm DefaultMask is not set")
 	}
 
 	return val
 }
 
-// GetKycSettings retrieves the KycSettings value from the union,
+// GetDefaultMask retrieves the DefaultMask value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u KeyValueEntryValue) GetKycSettings() (result KycSettings, ok bool) {
+func (u KeyValueEntryValue) GetDefaultMask() (result Uint32, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "KycSettings" {
-		result = *u.KycSettings
+	if armName == "DefaultMask" {
+		result = *u.DefaultMask
 		ok = true
 	}
 
@@ -3017,13 +2962,13 @@ func NewKeyValueEntryExt(v LedgerVersion, value interface{}) (result KeyValueEnt
 //
 //   struct KeyValueEntry
 //        {
-//            string256 key;
+//            longstring key;
 //
 //
 //            union switch (KeyValueEntryType type)
 //            {
-//                 case KYC_SETTINGS:
-//                    KYCSettings kycSettings;
+//                 case UINT32:
+//                    uint32 defaultMask;
 //            }
 //            value;
 //
@@ -3037,7 +2982,7 @@ func NewKeyValueEntryExt(v LedgerVersion, value interface{}) (result KeyValueEnt
 //        };
 //
 type KeyValueEntry struct {
-	Key   String256          `json:"key,omitempty"`
+	Key   Longstring         `json:"key,omitempty"`
 	Value KeyValueEntryValue `json:"value,omitempty"`
 	Ext   KeyValueEntryExt   `json:"ext,omitempty"`
 }
@@ -10272,7 +10217,8 @@ type CreateUpdateKycRequestOp struct {
 //    	PENDING_REQUEST_UPDATE_NOT_ALLOWED = -5,
 //    	NOT_ALLOWED_TO_UPDATE_REQUEST = -6, // master account can update request only through review request operation
 //    	INVALID_UPDATE_KYC_REQUEST_DATA = -7,
-//    	INVALID_KYC_DATA = -8
+//    	INVALID_KYC_DATA = -8,
+//    	KYC_RULE_NOT_FOUND = -9
 //    };
 //
 type CreateUpdateKycRequestResultCode int32
@@ -10287,6 +10233,7 @@ const (
 	CreateUpdateKycRequestResultCodeNotAllowedToUpdateRequest      CreateUpdateKycRequestResultCode = -6
 	CreateUpdateKycRequestResultCodeInvalidUpdateKycRequestData    CreateUpdateKycRequestResultCode = -7
 	CreateUpdateKycRequestResultCodeInvalidKycData                 CreateUpdateKycRequestResultCode = -8
+	CreateUpdateKycRequestResultCodeKycRuleNotFound                CreateUpdateKycRequestResultCode = -9
 )
 
 var CreateUpdateKycRequestResultCodeAll = []CreateUpdateKycRequestResultCode{
@@ -10299,6 +10246,7 @@ var CreateUpdateKycRequestResultCodeAll = []CreateUpdateKycRequestResultCode{
 	CreateUpdateKycRequestResultCodeNotAllowedToUpdateRequest,
 	CreateUpdateKycRequestResultCodeInvalidUpdateKycRequestData,
 	CreateUpdateKycRequestResultCodeInvalidKycData,
+	CreateUpdateKycRequestResultCodeKycRuleNotFound,
 }
 
 var createUpdateKycRequestResultCodeMap = map[int32]string{
@@ -10311,6 +10259,7 @@ var createUpdateKycRequestResultCodeMap = map[int32]string{
 	-6: "CreateUpdateKycRequestResultCodeNotAllowedToUpdateRequest",
 	-7: "CreateUpdateKycRequestResultCodeInvalidUpdateKycRequestData",
 	-8: "CreateUpdateKycRequestResultCodeInvalidKycData",
+	-9: "CreateUpdateKycRequestResultCodeKycRuleNotFound",
 }
 
 var createUpdateKycRequestResultCodeShortMap = map[int32]string{
@@ -10323,6 +10272,7 @@ var createUpdateKycRequestResultCodeShortMap = map[int32]string{
 	-6: "not_allowed_to_update_request",
 	-7: "invalid_update_kyc_request_data",
 	-8: "invalid_kyc_data",
+	-9: "kyc_rule_not_found",
 }
 
 var createUpdateKycRequestResultCodeRevMap = map[string]int32{
@@ -10335,6 +10285,7 @@ var createUpdateKycRequestResultCodeRevMap = map[string]int32{
 	"CreateUpdateKycRequestResultCodeNotAllowedToUpdateRequest":      -6,
 	"CreateUpdateKycRequestResultCodeInvalidUpdateKycRequestData":    -7,
 	"CreateUpdateKycRequestResultCodeInvalidKycData":                 -8,
+	"CreateUpdateKycRequestResultCodeKycRuleNotFound":                -9,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -24582,7 +24533,8 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //    	ERROR_ON_NON_ZERO_TASKS_TO_REMOVE_IN_REJECT_KYC = 9,
 //    	ALLOW_ACCOUNT_MANAGER_TO_CHANGE_KYC = 10,
 //    	CHANGE_ASSET_ISSUER_BAD_AUTH_EXTRA_FIXED = 11,
-//    	AUTO_CREATE_COMMISSION_BALANCE_ON_TRANSFER = 12
+//    	AUTO_CREATE_COMMISSION_BALANCE_ON_TRANSFER = 12,
+//    	KYC_RULES = 13
 //    };
 //
 type LedgerVersion int32
@@ -24601,6 +24553,7 @@ const (
 	LedgerVersionAllowAccountManagerToChangeKyc         LedgerVersion = 10
 	LedgerVersionChangeAssetIssuerBadAuthExtraFixed     LedgerVersion = 11
 	LedgerVersionAutoCreateCommissionBalanceOnTransfer  LedgerVersion = 12
+	LedgerVersionKycRules                               LedgerVersion = 13
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -24617,6 +24570,7 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionAllowAccountManagerToChangeKyc,
 	LedgerVersionChangeAssetIssuerBadAuthExtraFixed,
 	LedgerVersionAutoCreateCommissionBalanceOnTransfer,
+	LedgerVersionKycRules,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -24633,6 +24587,7 @@ var ledgerVersionMap = map[int32]string{
 	10: "LedgerVersionAllowAccountManagerToChangeKyc",
 	11: "LedgerVersionChangeAssetIssuerBadAuthExtraFixed",
 	12: "LedgerVersionAutoCreateCommissionBalanceOnTransfer",
+	13: "LedgerVersionKycRules",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -24649,6 +24604,7 @@ var ledgerVersionShortMap = map[int32]string{
 	10: "allow_account_manager_to_change_kyc",
 	11: "change_asset_issuer_bad_auth_extra_fixed",
 	12: "auto_create_commission_balance_on_transfer",
+	13: "kyc_rules",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -24665,6 +24621,7 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionAllowAccountManagerToChangeKyc":         10,
 	"LedgerVersionChangeAssetIssuerBadAuthExtraFixed":     11,
 	"LedgerVersionAutoCreateCommissionBalanceOnTransfer":  12,
+	"LedgerVersionKycRules":                               13,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements

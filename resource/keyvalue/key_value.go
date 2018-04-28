@@ -7,10 +7,17 @@ import (
 
 type KeyValue struct {
 	Key 	string 						`db:"key"`
-	Value 	*core.KeyValueEntry 		`db:"value"`
+	Type 	int32
+	Value 	int32 						`db:"value"`
 }
 
 func (k *KeyValue) Populate(keyValue *core.KeyValue) error {
 	k.Key = keyValue.Key
-	return k.Value.Scan(keyValue.Body)
+	var kvBody core.KeyValueEntry
+	if err :=kvBody.Scan(keyValue.Body); err!=nil{
+		return err
+	}
+	k.Value = int32(*kvBody.DefaultMask)
+	k.Type = int32(kvBody.Type)
+	return nil
 }
