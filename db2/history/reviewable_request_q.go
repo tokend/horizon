@@ -292,7 +292,7 @@ func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) Reviewable
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'asset_create'->>'asset' = ? OR details->'asset_update'->>'asset' = ?", assetCode, assetCode)
+	q.sql = q.sql.Where("(details->'asset_create'->>'asset' = ? OR details->'asset_update'->>'asset' = ?)", assetCode, assetCode)
 	return q
 }
 
@@ -326,7 +326,7 @@ func (q *ReviewableRequestQ) WithdrawalByDestAsset(assetCode string) ReviewableR
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'withdraw'->>'dest_asset_code' = ? OR details->'two_step_withdrawal'->>'dest_asset_code' = ?", assetCode, assetCode)
+	q.sql = q.sql.Where("(details->'withdraw'->>'dest_asset_code' = ? OR details->'two_step_withdrawal'->>'dest_asset_code' = ?)", assetCode, assetCode)
 	return q
 }
 
