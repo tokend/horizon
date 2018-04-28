@@ -75,6 +75,8 @@ type ReviewableRequestQI interface {
 	KYCByMaskSet(mask int64, maskSetPartialEq bool) ReviewableRequestQI
 	// KYCByMaskNotSet - filters update KYC requests by mask which must not be set
 	KYCByMaskNotSet(mask int64) ReviewableRequestQI
+	// KYCByAccountTypeToSet - filters update KYC requests by account type which must be set.
+	KYCByAccountTypeToSet(accountTypeToSet xdr.AccountType) ReviewableRequestQI
 }
 
 type ReviewableRequestQ struct {
@@ -290,7 +292,7 @@ func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) Reviewable
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'asset_create'->>'asset' = ? OR details->'asset_update'->>'asset' = ?", assetCode, assetCode)
+	q.sql = q.sql.Where("(details->'asset_create'->>'asset' = ? OR details->'asset_update'->>'asset' = ?)", assetCode, assetCode)
 	return q
 }
 
@@ -324,7 +326,7 @@ func (q *ReviewableRequestQ) WithdrawalByDestAsset(assetCode string) ReviewableR
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'withdraw'->>'dest_asset_code' = ? OR details->'two_step_withdrawal'->>'dest_asset_code' = ?", assetCode, assetCode)
+	q.sql = q.sql.Where("(details->'withdraw'->>'dest_asset_code' = ? OR details->'two_step_withdrawal'->>'dest_asset_code' = ?)", assetCode, assetCode)
 	return q
 }
 
@@ -374,6 +376,7 @@ func (q *ReviewableRequestQ) KYCByMaskSet(mask int64, maskSetPartialEq bool) Rev
 	}
 	return q
 }
+
 // KYCByMaskNotSet - filters update KYC requests by mask which must not be set
 func (q *ReviewableRequestQ) KYCByMaskNotSet(mask int64) ReviewableRequestQI {
 	if q.Err != nil {
@@ -381,6 +384,16 @@ func (q *ReviewableRequestQ) KYCByMaskNotSet(mask int64) ReviewableRequestQI {
 	}
 
 	q.sql = q.sql.Where("~(details->'update_kyc'->>'pending_tasks')::integer & ? = ?", mask, mask)
+	return q
+}
+
+// KYCByAccountTypeToSet - filters update KYC requests by account type which must be set.
+func (q *ReviewableRequestQ) KYCByAccountTypeToSet(accountTypeToSet xdr.AccountType) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("(details->'update_kyc'->'account_type_to_set'->>'int')::integer = ?", int32(accountTypeToSet))
 	return q
 }
 
