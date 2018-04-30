@@ -328,7 +328,6 @@
   revision = "cbfb465258955230864e0a76aba0ff2738000782"
 
 [[projects]]
-  branch = "master"
   name = "gitlab.com/distributed_lab/logan"
   packages = [
     ".",
@@ -336,7 +335,8 @@
     "v3/errors",
     "v3/fields"
   ]
-  revision = "c2a19229f43a9edce4b1c49f06ff0fead896bc35"
+  revision = "b8cfbf0cdfb9c7185cd426c24babaac54dcfbb82"
+  version = "v3.0"
 
 [[projects]]
   branch = "master"
@@ -461,6 +461,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "046bb2f1b89b43f5e1ac0086add2d56364fc1a7e34a670562521cf05b7fdf9d0"
+  inputs-digest = "c379d76f154f40a1fa86a8fe7796a1be275bd0bdf42795b3466809e740f398ec"
   solver-name = "gps-cdcl"
   solver-version = 1

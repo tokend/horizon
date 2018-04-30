@@ -1,21 +1,16 @@
 package errors
 
 import (
+	"fmt"
 	"github.com/pkg/errors"
 	"gitlab.com/distributed_lab/logan/v3/fields"
-	"fmt"
-)
-
-const (
-	unknownStack = "unknown"
 )
 
 // FromPanic extracts the err from the result of a recover() call.
-// If rec is not actually an error - a new error will be created, formatting the `rec` as "%s".
 func FromPanic(rec interface{}) error {
 	err, ok := rec.(error)
 	if !ok {
-		err = errors.Errorf("%s", rec)
+		err = fmt.Errorf("%s", rec)
 	}
 
 	return err
@@ -25,19 +20,6 @@ func FromPanic(rec interface{}) error {
 // New also records the stack trace at the point it was called.
 func New(msg string) error {
 	return errors.New(msg)
-}
-
-// Errorf formats according to a format specifier and returns the string
-// as a value that satisfies error.
-// Errorf also records the stack trace at the point it was called.
-func Errorf(format string, args ...interface{}) error {
-	return errors.Errorf(format, args...)
-}
-
-// WithStack annotates err with a stack trace at the point WithStack was called.
-// If err is nil, WithStack returns nil.
-func WithStack(err error) error {
-	return errors.WithStack(err)
 }
 
 // Wrap returns an error annotating err with a stack trace
@@ -113,11 +95,11 @@ func GetFields(err error) map[string]interface{} {
 		Cause() error
 	}
 
-	mergedResult := eFields{}
+	result := eFields{}
 	for err != nil {
 		fError, ok := err.(fieldsProvider)
 		if ok {
-			mergedResult = fields.Merge(mergedResult, fError.GetFields())
+			result = fields.Merge(result, fError.GetFields())
 		}
 
 		cause, ok := err.(causer)
@@ -127,72 +109,7 @@ func GetFields(err error) map[string]interface{} {
 		err = cause.Cause()
 	}
 
-	return mergedResult
-}
-
-// GetStack returns the string representation of stacktrace of the
-// provided error (see getErrorStack func for stack retrieving details).
-//
-// If the provided error does not provide stack,
-// GetStack will try to retrieve stack from its causer,
-// then from causer of its cause, and so one.
-//
-// If no stack was provided by any of the causers,
-// the value of `unknownStack` const will be returned.
-func GetStack(err error) string {
-	type causer interface {
-		Cause() error
-	}
-
-	for err != nil {
-		stack := getErrorStack(err)
-		if stack != unknownStack {
-			return stack
-		}
-
-		cause, ok := err.(causer)
-		if !ok {
-			break
-		}
-		err = cause.Cause()
-	}
-
-	return unknownStack
-}
-
-// GetErrorStack returns the stack, as a string, if one can be extracted from `err`.
-// Currently 2 interfaces of stack providing are supported:
-//
-//		type stackTraceProvider interface {
-//			StackTrace() errors.StackTrace
-//		}
-//
-//		and
-//
-//		type stackProvider interface {
-//			Stack() []byte
-//		}
-//
-// The first one is implemented by errors from pkg/errors and
-// the second one - from go-errors.
-func getErrorStack(err error) string {
-	// pkg/errors
-	type stackTraceProvider interface {
-		StackTrace() errors.StackTrace
-	}
-	if s, ok := err.(stackTraceProvider); ok {
-		return fmt.Sprintf("%+v", s.StackTrace())
-	}
-
-	// go-errors
-	type stackProvider interface {
-		Stack() []byte
-	}
-	if s, ok := err.(stackProvider); ok {
-		return string(s.Stack())
-	}
-
-	return unknownStack
+	return result
 }
 
 type withFields struct {
@@ -200,14 +117,14 @@ type withFields struct {
 	eFields
 }
 
-func (w withFields) Error() string {
+func (w *withFields) Error() string {
 	return w.error.Error()
 }
 
-func (w withFields) GetFields() eFields {
+func (w *withFields) GetFields() eFields {
 	return w.eFields
 }
 
-func (w withFields) Cause() error {
+func (w *withFields) Cause() error {
 	return w.error
 }

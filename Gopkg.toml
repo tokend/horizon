@@ -96,7 +96,7 @@
 
 [[constraint]]
   name = "gitlab.com/distributed_lab/logan"
-  branch = "master"
+  version = "=3.0"
 
 [[constraint]]
   branch = "master"
