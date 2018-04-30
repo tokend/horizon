@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/guregu/null"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Operation is a row of data from the `history_operations` table

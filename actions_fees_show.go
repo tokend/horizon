@@ -1,12 +1,12 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/go/amount"
+	"github.com/go-errors/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"github.com/go-errors/errors"
+	"gitlab.com/tokend/go/amount"
 )
 
 // This file contains the actions:

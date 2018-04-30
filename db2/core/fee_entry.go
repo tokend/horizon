@@ -1,11 +1,12 @@
 package core
 
 import (
-	"gitlab.com/swarmfund/go/hash"
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/go/hash"
 )
 
 var selectFees = sq.Select("f.fee_type", "f.asset", "f.subtype", "f.fixed", "f.percent", "f.lastmodified,"+

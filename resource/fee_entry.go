@@ -1,8 +1,8 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/go/amount"
 )
 
 type FeeEntry struct {

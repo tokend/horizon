@@ -5,9 +5,9 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {

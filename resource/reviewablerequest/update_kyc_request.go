@@ -1,8 +1,8 @@
 package reviewablerequest
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type UpdateKYCRequest struct {

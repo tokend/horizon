@@ -4,7 +4,7 @@ package codes
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ErrUnknownCode is returned when an unexepcted value is provided to `String`

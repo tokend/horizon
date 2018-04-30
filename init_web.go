@@ -10,10 +10,10 @@ import (
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
-	"gitlab.com/swarmfund/go/signcontrol"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Web contains the http server related fields for horizon: the router,
@@ -261,7 +261,7 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeLimitsUpdate},
 	})
-		r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
+	r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			account := action.GetString("account_to_update_kyc")
 			maskSet := action.GetInt64("mask_set")

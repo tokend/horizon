@@ -3,11 +3,12 @@ package history
 import (
 	"fmt"
 
+	"time"
+
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
-	"time"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -296,7 +297,6 @@ func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) Reviewable
 	return q
 }
 
-
 // PreIssuance
 // PreIssuanceByAsset - filters pre issuance requests by asset
 func (q *ReviewableRequestQ) PreIssuanceByAsset(assetCode string) ReviewableRequestQI {
@@ -362,6 +362,7 @@ func (q *ReviewableRequestQ) KYCByAccountToUpdateKYC(accountID string) Reviewabl
 	q.sql = q.sql.Where("details->'update_kyc'->>'updated_account_id' = ?", accountID)
 	return q
 }
+
 // KYCByMaskSet - filters update KYC requests by mask which must be set. If mustBeEq is false, request will be returned
 // even if only part of the mask is set
 func (q *ReviewableRequestQ) KYCByMaskSet(mask int64, maskSetPartialEq bool) ReviewableRequestQI {

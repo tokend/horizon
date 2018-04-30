@@ -1,9 +1,9 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/amount"
 )
 
 func (b *BalancePublic) Populate(balance history.Balance) {
@@ -18,7 +18,7 @@ func (b *Balance) Populate(balance core.Balance) {
 	b.Balance = amount.String(balance.Amount)
 	b.Locked = amount.String(balance.Locked)
 	b.Asset = balance.Asset
-	}
+}
 
 func (balance BalancePublic) PagingToken() string {
 	return balance.ID

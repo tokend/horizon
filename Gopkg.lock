@@ -328,6 +328,7 @@
   revision = "cbfb465258955230864e0a76aba0ff2738000782"
 
 [[projects]]
+  branch = "master"
   name = "gitlab.com/distributed_lab/logan"
   packages = [
     ".",
@@ -335,8 +336,7 @@
     "v3/errors",
     "v3/fields"
   ]
-  revision = "b8cfbf0cdfb9c7185cd426c24babaac54dcfbb82"
-  version = "v3.0"
+  revision = "c2a19229f43a9edce4b1c49f06ff0fead896bc35"
 
 [[projects]]
   branch = "master"
@@ -346,7 +346,7 @@
 
 [[projects]]
   branch = "master"
-  name = "gitlab.com/swarmfund/go"
+  name = "gitlab.com/tokend/go"
   packages = [
     "amount",
     "build",
@@ -355,15 +355,31 @@
     "keypair",
     "network",
     "signcontrol",
+    "signcontrol/internal/httpsignatures",
     "strkey",
     "xdr"
   ]
-  revision = "936b07b8ae8fed3539db0f8bd93f51c9323a8cb1"
+  revision = "bc0dd83fb8cb09756bfa31ce9434345a4fa77758"
+
+[[projects]]
+  branch = "master"
+  name = "gitlab.com/tokend/keypair"
+  packages = [
+    ".",
+    "internal",
+    "internal/crc16",
+    "internal/strkey"
+  ]
+  revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
+  packages = [
+    "ed25519",
+    "ed25519/internal/edwards25519",
+    "ssh/terminal"
+  ]
   revision = "6a293f2d4b14b8e6d3f0539e383f6d0d30fce3fd"
 
 [[projects]]
@@ -445,6 +461,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "be1acc215b1113329b14394c0e494be77a1f8aac2dfd1cc77440c4b4ea66f128"
+  inputs-digest = "046bb2f1b89b43f5e1ac0086add2d56364fc1a7e34a670562521cf05b7fdf9d0"
   solver-name = "gps-cdcl"
   solver-version = 1

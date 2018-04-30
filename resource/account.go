@@ -3,11 +3,11 @@ package resource
 import (
 	"fmt"
 
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/httpx"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/resource/base"
+	"gitlab.com/tokend/go/xdr"
 	"golang.org/x/net/context"
 )
 
@@ -21,19 +21,19 @@ type Account struct {
 	} `json:"_links"`
 
 	HistoryAccount
-	IsBlocked              bool                      `json:"is_blocked"`
-	BlockReasonsI          int32                     `json:"block_reasons_i"`
-	BlockReasons           []base.Flag               `json:"block_reasons"`
-	AccountTypeI           int32                     `json:"account_type_i"`
-	AccountType            string                    `json:"account_type"`
-	Referrer               string                    `json:"referrer"`
-	Thresholds             AccountThresholds         `json:"thresholds"`
-	Balances               []Balance                 `json:"balances"`
+	IsBlocked     bool              `json:"is_blocked"`
+	BlockReasonsI int32             `json:"block_reasons_i"`
+	BlockReasons  []base.Flag       `json:"block_reasons"`
+	AccountTypeI  int32             `json:"account_type_i"`
+	AccountType   string            `json:"account_type"`
+	Referrer      string            `json:"referrer"`
+	Thresholds    AccountThresholds `json:"thresholds"`
+	Balances      []Balance         `json:"balances"`
 	Signers
-	Limits                                           `json:"limits"`
-	Statistics                                       `json:"statistics"`
-	Policies               AccountPolicies           `json:"policies"`
-	AccountKYC                                       `json:"account_kyc"`
+	Limits                 `json:"limits"`
+	Statistics             `json:"statistics"`
+	Policies               AccountPolicies `json:"policies"`
+	AccountKYC             `json:"account_kyc"`
 	ExternalSystemAccounts []ExternalSystemAccountID `json:"external_system_accounts"`
 	Referrals              []Referral                `json:"referrals"`
 }

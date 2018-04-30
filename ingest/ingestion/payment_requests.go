@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"time"
 
-	"gitlab.com/swarmfund/go/xdr"
+	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func (ingest *Ingestion) InsertPaymentRequest(

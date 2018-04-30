@@ -1,9 +1,9 @@
 package history
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
 
 var selectPaymentRequest = sq.Select("hpr.*, ho.state").

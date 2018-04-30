@@ -1,8 +1,8 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/codes"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // TransactionResultCodes represent a summary of result codes returned from
@@ -23,6 +23,6 @@ func NewTransactionResultCodes(txResult xdr.TransactionResult) (*TransactionResu
 	return &TransactionResultCodes{
 		TransactionCode: txResultCode,
 		OperationCodes:  opResultCodes,
-		Messages: messages,
+		Messages:        messages,
 	}, nil
 }
