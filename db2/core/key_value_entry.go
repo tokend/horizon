@@ -8,16 +8,17 @@ import (
 type KeyValueEntry xdr.KeyValueEntryValue
 
 func (k *KeyValueEntry) Scan(src interface{}) error {
-	var data []byte
+	var data string
 	switch rawData := src.(type) {
 	case []byte:
-		data = rawData
+		data = string(rawData)
 	case string:
-		data = []byte(rawData)
+		data = rawData
+
 	default:
 		return errors.New("Unexpected type")
 	}
-	err := xdr.SafeUnmarshal(data,k);
+	err := xdr.SafeUnmarshalBase64(data,k);
 	if err!=nil {
 		return  errors.New("Faild to unmarshal key_value")
 	}
@@ -26,6 +27,6 @@ func (k *KeyValueEntry) Scan(src interface{}) error {
 }
 
 type KeyValue struct {
-	Key		string                `db:"key"`
-	Body    []byte                `db:"value"`
+	Key		 string         `db:"key"`
+	Value    KeyValueEntry 	`db:"value"`
 }

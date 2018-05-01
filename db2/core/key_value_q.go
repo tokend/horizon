@@ -34,5 +34,4 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 	return &result, nil
 }
 
-
 var selectKeyValue = sq.Select("kv.key","kv.value").From("key_value_entry kv")

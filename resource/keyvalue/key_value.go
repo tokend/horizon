@@ -6,18 +6,14 @@ import (
 
 
 type KeyValue struct {
-	Key 	string 						`db:"key"`
-	Type 	int32
-	Value 	int32 						`db:"value"`
+	Key 	string 						`json:"key"`
+	Type 	int32						`json:"type"`
+	Value 	int32 						`json:"value"`
 }
 
 func (k *KeyValue) Populate(keyValue *core.KeyValue) error {
-	k.Key = keyValue.Key
-	var kvBody core.KeyValueEntry
-	if err :=kvBody.Scan(keyValue.Body); err!=nil{
-		return err
-	}
-	k.Value = int32(*kvBody.DefaultMask)
-	k.Type = int32(kvBody.Type)
+	k.Key 	= keyValue.Key
+	k.Type 	= int32(keyValue.Value.Type)
+	k.Value = int32(*keyValue.Value.DefaultMask)
 	return nil
 }
