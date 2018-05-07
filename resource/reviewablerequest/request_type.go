@@ -1,6 +1,6 @@
 package reviewablerequest
 
-import "gitlab.com/swarmfund/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 // RequestType - provides frontend friendly representation of ReviewableRequestType
 type RequestType struct {

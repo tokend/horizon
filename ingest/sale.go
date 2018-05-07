@@ -2,12 +2,13 @@ package ingest
 
 import (
 	"encoding/json"
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/amount"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"time"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func saleCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {

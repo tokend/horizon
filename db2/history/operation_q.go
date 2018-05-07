@@ -3,9 +3,9 @@ package history
 import (
 	"time"
 
-	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
 
 var selectOperation = sq.Select("distinct on (ho.id) ho.*").

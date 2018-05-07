@@ -6,9 +6,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
-	"gitlab.com/swarmfund/go/amount"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/utf8"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -178,7 +178,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.Action == xdr.ReviewRequestOpActionApprove {
 			details["is_fulfilled"] = hasDeletedReviewableRequest(c.OperationChanges())
 		}
-		details["details"]= getReviewRequestOpDetails(op.RequestDetails)
+		details["details"] = getReviewRequestOpDetails(op.RequestDetails)
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
@@ -238,8 +238,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 func getReviewRequestOpDetails(requestDetails xdr.ReviewRequestOpRequestDetails) map[string]interface{} {
 	return map[string]interface{}{
 		"request_type": requestDetails.RequestType.ShortString(),
-		"update_kyc": getUpdateKYCDetails(requestDetails.UpdateKyc),
-
+		"update_kyc":   getUpdateKYCDetails(requestDetails.UpdateKyc),
 	}
 }
 
@@ -250,9 +249,9 @@ func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
 
 	var externalDetails map[string]interface{}
 	_ = json.Unmarshal([]byte(details.ExternalDetails), externalDetails)
-	return map[string]interface{} {
+	return map[string]interface{}{
 		"external_details": externalDetails,
-		"tasks_to_add": uint32(details.TasksToAdd),
-		"tasks_to_remove": uint32(details.TasksToRemove),
+		"tasks_to_add":     uint32(details.TasksToAdd),
+		"tasks_to_remove":  uint32(details.TasksToRemove),
 	}
 }

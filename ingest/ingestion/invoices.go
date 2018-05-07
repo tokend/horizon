@@ -3,9 +3,9 @@ package ingestion
 import (
 	"fmt"
 
-	"gitlab.com/swarmfund/go/xdr"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func (ingest *Ingestion) UpdateInvoice(

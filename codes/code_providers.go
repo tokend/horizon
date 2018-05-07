@@ -1,6 +1,6 @@
 package codes
 
-import "gitlab.com/swarmfund/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 type codeProvider func(tr xdr.OperationResultTr) shortStr
 
