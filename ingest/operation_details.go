@@ -248,9 +248,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["amount"] = amount.StringU(uint64(op.Amount))
 		details["asset"] = string(opResult.Asset)
 		details["source_actual_payment_fee"] = amount.StringU(uint64(opResult.ActualSourcePaymentFee))
-		details["source_actual_payment_fee_asset_code"] = string(opResult.ActualSourcePaymentFeeAssetCode)
+		details["source_actual_payment_fee_asset_code"] = string(op.FeeData.SourceFee.FeeAsset)
 		details["destination_actual_payment_fee"] = amount.StringU(uint64(opResult.ActualDestinationPaymentFee))
-		details["destination_actual_payment_fee_asset_code"] = string(opResult.ActualDestPaymentFeeAssetCode)
+		details["destination_actual_payment_fee_asset_code"] = string(op.FeeData.DestinationFee.FeeAsset)
 		details["source_fixed_fee"] = amount.StringU(uint64(op.FeeData.SourceFee.FixedFee))
 		details["destination_fixed_fee"] = amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee))
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
