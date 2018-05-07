@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/zenazn/goji/web"
-	"gitlab.com/swarmfund/go/signcontrol"
+	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/swarmfund/horizon/render/problem"
 )
 

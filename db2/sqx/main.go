@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // StringArray returns a sq.Expr suitable for inclusion in an insert that represents

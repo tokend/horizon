@@ -5,7 +5,7 @@ package participants
 import (
 	"fmt"
 
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -140,6 +140,12 @@ func ForOperation(
 				Details:   nil,
 			})
 		}
+	case xdr.OperationTypePaymentV2:
+		paymentOpV2 := op.Body.MustPaymentOpV2()
+		paymentV2Response := opResult.MustPaymentV2Result().MustPaymentV2Response()
+
+		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil},)
+		sourceParticipant.BalanceID = &paymentOpV2.SourceBalanceId
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

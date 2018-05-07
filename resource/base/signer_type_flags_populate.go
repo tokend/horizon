@@ -4,7 +4,7 @@
 
 package base
 
-import "gitlab.com/swarmfund/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 func FlagFromXdrSignerType(mask int32, allFlags []xdr.SignerType) []Flag {
 	result := []Flag{}

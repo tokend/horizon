@@ -3,7 +3,7 @@ package codes
 import (
 	"testing"
 
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

@@ -2,7 +2,7 @@ package core
 
 import (
 	"github.com/go-errors/errors"
-	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/tokend/go/amount"
 )
 
 type AssetPair struct {

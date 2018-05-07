@@ -2,7 +2,7 @@ package horizon
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/exchange"

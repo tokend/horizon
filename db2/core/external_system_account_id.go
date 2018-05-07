@@ -1,6 +1,6 @@
 package core
 
-import "gitlab.com/swarmfund/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 // ExternalSystemAccountID - represents id generated for user in external system like Bitcoin/Ethereum
 type ExternalSystemAccountID struct {

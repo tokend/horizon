@@ -3,7 +3,7 @@ package ingestion
 import (
 	"fmt"
 
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/horizon/db2/history"
 )

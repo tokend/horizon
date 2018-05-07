@@ -130,7 +130,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "gitlab.com/swarmfund/go"
+  name = "gitlab.com/tokend/go"
 
 [[constraint]]
   branch = "master"

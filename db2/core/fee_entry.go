@@ -1,7 +1,7 @@
 package core
 
 import (
-	"gitlab.com/swarmfund/go/hash"
+	"gitlab.com/tokend/go/hash"
 	"database/sql"
 	"encoding/hex"
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 var selectFees = sq.Select("f.fee_type", "f.asset", "f.subtype", "f.fixed", "f.percent", "f.lastmodified,"+
-	"f.account_id, f.account_type, f.lower_bound, f.upper_bound, f.hash").
+	"f.account_id, f.account_type, f.lower_bound, f.upper_bound, f.hash, f.fee_asset").
 	From("fee_state f")
 
 type FeeEntry struct {
@@ -23,6 +23,7 @@ type FeeEntry struct {
 	LowerBound  int64  `db:"lower_bound"`
 	UpperBound  int64  `db:"upper_bound"`
 	Hash        string `db:"hash"`
+	FeeAsset    string `db:"fee_asset"`
 
 	LastModified int32 `db:"lastmodified"`
 }

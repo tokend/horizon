@@ -5,7 +5,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/tokend/go/amount"
 	"github.com/go-errors/errors"
 )
 
