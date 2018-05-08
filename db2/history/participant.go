@@ -3,8 +3,8 @@ package history
 import (
 	"encoding/json"
 
-	"gitlab.com/swarmfund/go/xdr"
 	"github.com/go-errors/errors"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // helper struct, should exists mostly in operation_q

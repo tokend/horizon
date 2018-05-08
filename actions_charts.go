@@ -1,11 +1,11 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/horizon/charts"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/tokend/go/amount"
 )
 
 type ChartsAction struct {

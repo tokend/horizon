@@ -6,9 +6,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
-	"gitlab.com/swarmfund/go/amount"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/utf8"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -23,6 +23,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["funder"] = source.Address()
 		details["account"] = op.Destination.Address()
 		details["account_type"] = int32(op.AccountType)
+		if op.Referrer != nil {
+			details["referrer"] = (*op.Referrer).Address()
+		}
 	case xdr.OperationTypePayment:
 		op := c.Operation().Body.MustPaymentOp()
 		opResult := c.OperationResult().MustPaymentResult()
@@ -37,7 +40,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
 		details["subject"] = op.Subject
-		details["reference"] = op.Reference
+		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["asset"] = opResult.PaymentResponse.Asset
 	case xdr.OperationTypeSetOptions:
 		op := c.Operation().Body.MustSetOptionsOp()
@@ -68,6 +71,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.LimitsUpdateRequestData != nil {
 			details["limits_update_request_document_hash"] = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
 		}
+
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 		if op.Fee != nil {
@@ -138,7 +142,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
 		details["subject"] = op.Subject
-		details["reference"] = op.Reference
+		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["asset"] = opResult.PaymentResponse.Asset
 	case xdr.OperationTypeManageAssetPair:
 		op := c.Operation().Body.MustManageAssetPairOp()
@@ -166,11 +170,15 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["asset"] = string(opResult.Success.Asset)
 	case xdr.OperationTypeReviewRequest:
 		op := c.Operation().Body.MustReviewRequestOp()
-		details["action"] = int32(op.Action)
+		details["action"] = op.Action.ShortString()
 		details["reason"] = string(op.Reason)
 		details["request_hash"] = hex.EncodeToString(op.RequestHash[:])
 		details["request_id"] = uint64(op.RequestId)
-		details["request_type"] = int32(op.RequestDetails.RequestType)
+		details["request_type"] = op.RequestDetails.RequestType.ShortString()
+		if op.Action == xdr.ReviewRequestOpActionApprove {
+			details["is_fulfilled"] = hasDeletedReviewableRequest(c.OperationChanges())
+		}
+		details["details"] = getReviewRequestOpDetails(op.RequestDetails)
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
@@ -194,13 +202,60 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeCreateSaleRequest:
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:
+		op := c.Operation().Body.MustCheckSaleStateOp()
+		opResult := c.OperationResult().MustCheckSaleStateResult().MustSuccess()
+		details["sale_id"] = uint64(op.SaleId)
+		details["effect"] = opResult.Effect.Effect.String()
 		// no details needed
 	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
 		// no details needed
 	case xdr.OperationTypeBindExternalSystemAccountId:
 		// no details needed
+	case xdr.OperationTypeCreateAmlAlert:
+		op := c.Operation().Body.MustCreateAmlAlertRequestOp()
+		details["amount"] = amount.StringU(uint64(op.AmlAlertRequest.Amount))
+		details["balance_id"] = op.AmlAlertRequest.BalanceId.AsString()
+		details["reason"] = op.AmlAlertRequest.Reason
+		details["reference"] = op.Reference
+	case xdr.OperationTypeCreateKycRequest:
+		op := c.Operation().Body.MustCreateUpdateKycRequestOp()
+		opResult := c.OperationResult().MustCreateUpdateKycRequestResult().MustSuccess()
+		details["request_id"] = uint64(opResult.RequestId)
+		details["account_to_update_kyc"] = op.UpdateKycRequestData.AccountToUpdateKyc.Address()
+		details["account_type_to_set"] = int32(op.UpdateKycRequestData.AccountTypeToSet)
+		details["kyc_level_to_set"] = uint32(op.UpdateKycRequestData.KycLevelToSet)
+
+		var kycData map[string]interface{}
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(op.UpdateKycRequestData.KycData), &kycData)
+		details["kyc_data"] = kycData
+
+		if op.UpdateKycRequestData.AllTasks != nil {
+			details["all_tasks"] = *op.UpdateKycRequestData.AllTasks
+		}
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
 	return details
+}
+
+func getReviewRequestOpDetails(requestDetails xdr.ReviewRequestOpRequestDetails) map[string]interface{} {
+	return map[string]interface{}{
+		"request_type": requestDetails.RequestType.ShortString(),
+		"update_kyc":   getUpdateKYCDetails(requestDetails.UpdateKyc),
+	}
+}
+
+func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
+	if details == nil {
+		return nil
+	}
+
+	var externalDetails map[string]interface{}
+	_ = json.Unmarshal([]byte(details.ExternalDetails), externalDetails)
+	return map[string]interface{}{
+		"external_details": externalDetails,
+		"tasks_to_add":     uint32(details.TasksToAdd),
+		"tasks_to_remove":  uint32(details.TasksToRemove),
+	}
 }

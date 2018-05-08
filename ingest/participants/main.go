@@ -5,10 +5,10 @@ package participants
 import (
 	"fmt"
 
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ForOperation returns all the participating accounts from the
@@ -25,6 +25,7 @@ func ForOperation(
 	tx *xdr.Transaction,
 	op *xdr.Operation,
 	opResult xdr.OperationResultTr,
+	ledgerChanges xdr.LedgerEntryChanges,
 	ledger *core.LedgerHeader,
 ) (result []Participant, err error) {
 	sourceParticipant := &Participant{}
@@ -98,7 +99,14 @@ func ForOperation(
 		sourceParticipant.BalanceID = &manageInvoiceOp.ReceiverBalance
 		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.ManageInvoiceResult.Success.SenderBalance, nil})
 	case xdr.OperationTypeReviewRequest:
-		// the only direct participant is the source_account
+		request := getReviewableRequestByID(uint64(op.Body.MustReviewRequestOp().RequestId), ledgerChanges)
+		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address() {
+			result = append(result, Participant{
+				AccountID: request.Requestor,
+				BalanceID: nil,
+				Details:   nil,
+			})
+		}
 	case xdr.OperationTypeCreatePreissuanceRequest:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateIssuanceRequest:
@@ -125,6 +133,17 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeBindExternalSystemAccountId:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeCreateAmlAlert:
+		// TODO add participant
+	case xdr.OperationTypeCreateKycRequest:
+		updateKYCRequestData := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
+		if sourceParticipant.AccountID.Address() != updateKYCRequestData.AccountToUpdateKyc.Address() {
+			result = append(result, Participant{
+				AccountID: updateKYCRequestData.AccountToUpdateKyc,
+				BalanceID: nil,
+				Details:   nil,
+			})
+		}
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
@@ -133,6 +152,31 @@ func ForOperation(
 		result = append(result, *sourceParticipant)
 	}
 	return
+}
+
+func getReviewableRequestByID(id uint64, ledgerChanges xdr.LedgerEntryChanges) *xdr.ReviewableRequestEntry {
+	for i := range ledgerChanges {
+		ledgerChange := ledgerChanges[i]
+		var reviewableRequest *xdr.ReviewableRequestEntry
+		switch ledgerChange.Type {
+		case xdr.LedgerEntryChangeTypeCreated:
+			reviewableRequest = ledgerChange.Created.Data.ReviewableRequest
+		case xdr.LedgerEntryChangeTypeUpdated:
+			reviewableRequest = ledgerChange.Updated.Data.ReviewableRequest
+		default:
+			continue
+		}
+
+		if reviewableRequest == nil {
+			continue
+		}
+
+		if uint64(reviewableRequest.RequestId) == id {
+			return reviewableRequest
+		}
+	}
+
+	return nil
 }
 
 func addMatchParticipants(participants []Participant, offerSourceID xdr.AccountId, baseBalanceID xdr.BalanceId,
@@ -164,7 +208,7 @@ func ForTransaction(
 	tx *xdr.Transaction,
 	opResults []xdr.OperationResult,
 	meta *xdr.TransactionMeta,
-	feeMeta *xdr.LedgerEntryChanges,
+	ledgerChanges *xdr.LedgerEntryChanges,
 	ledger *core.LedgerHeader,
 ) (result []xdr.AccountId, err error) {
 
@@ -176,14 +220,14 @@ func ForTransaction(
 	}
 	result = append(result, p...)
 
-	p, err = forChanges(feeMeta)
+	p, err = forChanges(ledgerChanges)
 	if err != nil {
 		return
 	}
 	result = append(result, p...)
 
 	for i := range tx.Operations {
-		participants, err := ForOperation(DB, tx, &tx.Operations[i], *opResults[i].Tr, ledger)
+		participants, err := ForOperation(DB, tx, &tx.Operations[i], *opResults[i].Tr, nil, ledger)
 		if err != nil {
 			return nil, err
 		}

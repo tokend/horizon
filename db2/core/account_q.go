@@ -3,8 +3,8 @@ package core
 import (
 	"database/sql"
 
-	"gitlab.com/swarmfund/go/xdr"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/go/xdr"
 )
 
 var _ AccountQI = &AccountQ{}
@@ -20,8 +20,12 @@ type AccountQI interface {
 	Select(destination interface{}) error
 	// filters by account ids
 	ForAddresses(addresses ...string) AccountQI
+	// filters by referrer
+	ForReferrer(referrer string) AccountQI
 	// Selects first element from filtered
 	First() (*Account, error)
+	// joins account KYC
+	WithAccountKYC() AccountQI
 }
 
 // AccountQ is a helper struct to aid in configuring queries that loads
@@ -73,6 +77,26 @@ func (q *AccountQ) WithStatistics() AccountQI {
 	return q
 }
 
+func (q *AccountQ) ForReferrer(referrer string) AccountQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("referrer = ?", referrer)
+	return q
+}
+
+func (q *AccountQ) WithAccountKYC() AccountQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.
+		LeftJoin("account_KYC ak on (ak.accountid = a.accountid)").
+		Columns("ak.KYC_data as account_kyc_data")
+	return q
+}
+
 func (q *AccountQ) Select(destination interface{}) error {
 	if q.Err != nil {
 		return q.Err
@@ -84,7 +108,7 @@ func (q *AccountQ) ForAddresses(addresses ...string) AccountQI {
 	if q.Err != nil {
 		return q
 	}
-	q.sql = q.sql.Where(sq.Eq{"accountid": addresses})
+	q.sql = q.sql.Where(sq.Eq{"a.accountid": addresses})
 	return q
 }
 
@@ -106,5 +130,7 @@ var selectAccount = sq.Select(
 	"a.thresholds",
 	"a.account_type",
 	"a.block_reasons",
+	"a.referrer",
 	"a.policies",
+	"a.kyc_level",
 ).From("accounts a")

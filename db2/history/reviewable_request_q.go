@@ -3,10 +3,12 @@ package history
 import (
 	"fmt"
 
+	"time"
+
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -35,10 +37,47 @@ type ReviewableRequestQI interface {
 	ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI
 	// Page specifies the paging constraints for the query being built by `q`.
 	Page(page db2.PageQuery) ReviewableRequestQI
-	// ByDetails - filters by specified key value from the details. Note: do not pass key passed by user
-	ByDetails(key, value string) ReviewableRequestQI
+	// UpdatedAfter - selects requests updated after given timestamp
+	UpdatedAfter(timestamp int64) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
 	Select() ([]ReviewableRequest, error)
+
+	// Request Type specific filters. Filter for request type must be applied separately
+
+	// Asset Management
+	// AssetManagementByAsset - filters asset management requests by asset
+	AssetManagementByAsset(assetCode string) ReviewableRequestQI
+
+	// PreIssuance
+	// PreIssuanceByAsset - filters pre issuance requests by asset
+	PreIssuanceByAsset(assetCode string) ReviewableRequestQI
+
+	// Issuance
+	// IssuanceByAsset - filters issuance requests by asset
+	IssuanceByAsset(assetCode string) ReviewableRequestQI
+
+	// Withdrawal
+	// WithdrawalByDestAsset - filters withdrawal requests by dest asset
+	WithdrawalByDestAsset(assetCode string) ReviewableRequestQI
+
+	// Sales
+	// SalesByBaseAsset - filters sale requests by base asset
+	SalesByBaseAsset(assetCode string) ReviewableRequestQI
+
+	// Limits
+	// LimitsByDocHash - filters limits request by document hash
+	LimitsByDocHash(hash string) ReviewableRequestQI
+
+	// KYC
+	// KYCByAccountToUpdateKYC - filters update KYC requests by accountID of the owner of KYC
+	KYCByAccountToUpdateKYC(accountID string) ReviewableRequestQI
+	// KYCByMaskSet - filters update KYC requests by mask which must be set. If maskSetPartialEq is false, request will be returned
+	// even if only part of the mask is set
+	KYCByMaskSet(mask int64, maskSetPartialEq bool) ReviewableRequestQI
+	// KYCByMaskNotSet - filters update KYC requests by mask which must not be set
+	KYCByMaskNotSet(mask int64) ReviewableRequestQI
+	// KYCByAccountTypeToSet - filters update KYC requests by account type which must be set.
+	KYCByAccountTypeToSet(accountTypeToSet xdr.AccountType) ReviewableRequestQI
 }
 
 type ReviewableRequestQ struct {
@@ -189,8 +228,8 @@ func (q *ReviewableRequestQ) ForType(requestType int64) ReviewableRequestQI {
 	return q
 }
 
-// ByDetails - filters by specified key value from the details. Note: do not pass key passed by user
-func (q *ReviewableRequestQ) ByDetails(key, value string) ReviewableRequestQI {
+// ByDetailsEq - filters by specified key value from the details. Note: do not pass key passed by user
+func (q *ReviewableRequestQ) ByDetailsEq(key, value string) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
 	}
@@ -215,6 +254,19 @@ func (q *ReviewableRequestQ) ForTypes(requestTypes []xdr.ReviewableRequestType) 
 	return q
 }
 
+// UpdatedAfter - selects requests updated after given timestamp
+func (q *ReviewableRequestQ) UpdatedAfter(timestamp int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	tm := time.Unix(timestamp, 0)
+	tmf := tm.Format(time.RFC3339)
+
+	q.sql = q.sql.Where(fmt.Sprintf("updated_at >= '%s'::timestamp", tmf))
+	return q
+}
+
 // Page specifies the paging constraints for the query being built by `q`.
 func (q *ReviewableRequestQ) Page(page db2.PageQuery) ReviewableRequestQI {
 	if q.Err != nil {
@@ -234,6 +286,116 @@ func (q *ReviewableRequestQ) Select() ([]ReviewableRequest, error) {
 	var result []ReviewableRequest
 	q.Err = q.parent.Select(&result, q.sql)
 	return result, q.Err
+}
+
+func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("(details->'asset_create'->>'asset' = ? OR details->'asset_update'->>'asset' = ?)", assetCode, assetCode)
+	return q
+}
+
+// PreIssuance
+// PreIssuanceByAsset - filters pre issuance requests by asset
+func (q *ReviewableRequestQ) PreIssuanceByAsset(assetCode string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'pre_issuance_create'->>'asset' = ?", assetCode)
+	return q
+}
+
+// Issuance
+// IssuanceByAsset - filters issuance requests by asset
+func (q *ReviewableRequestQ) IssuanceByAsset(assetCode string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'issuance_create'->>'asset' = ?", assetCode)
+	return q
+}
+
+// Withdrawal
+// WithdrawalByDestAsset - filters withdrawal requests by dest asset
+func (q *ReviewableRequestQ) WithdrawalByDestAsset(assetCode string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("(details->'withdraw'->>'dest_asset_code' = ? OR details->'two_step_withdrawal'->>'dest_asset_code' = ?)", assetCode, assetCode)
+	return q
+}
+
+// Sales
+// SalesByBaseAsset - filters sale requests by base asset
+func (q *ReviewableRequestQ) SalesByBaseAsset(assetCode string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'sale'->>'base_asset' = ?", assetCode)
+	return q
+}
+
+// Limits
+// LimitsByDocHash - filters limits request by document hash
+func (q *ReviewableRequestQ) LimitsByDocHash(hash string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'limits_update'->>'document_hash' = ?", hash)
+	return q
+}
+
+// KYC
+// KYCByAccountToUpdateKYC - filters update KYC requests by accountID of the owner of KYC
+func (q *ReviewableRequestQ) KYCByAccountToUpdateKYC(accountID string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'update_kyc'->>'updated_account_id' = ?", accountID)
+	return q
+}
+
+// KYCByMaskSet - filters update KYC requests by mask which must be set. If mustBeEq is false, request will be returned
+// even if only part of the mask is set
+func (q *ReviewableRequestQ) KYCByMaskSet(mask int64, maskSetPartialEq bool) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	if maskSetPartialEq {
+		q.sql = q.sql.Where("(details->'update_kyc'->>'pending_tasks')::integer & ? <> 0", mask)
+	} else {
+		q.sql = q.sql.Where("(details->'update_kyc'->>'pending_tasks')::integer & ? = ?", mask, mask)
+	}
+	return q
+}
+
+// KYCByMaskNotSet - filters update KYC requests by mask which must not be set
+func (q *ReviewableRequestQ) KYCByMaskNotSet(mask int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("~(details->'update_kyc'->>'pending_tasks')::integer & ? = ?", mask, mask)
+	return q
+}
+
+// KYCByAccountTypeToSet - filters update KYC requests by account type which must be set.
+func (q *ReviewableRequestQ) KYCByAccountTypeToSet(accountTypeToSet xdr.AccountType) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("(details->'update_kyc'->'account_type_to_set'->>'int')::integer = ?", int32(accountTypeToSet))
+	return q
 }
 
 var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason", "request_type", "request_state", "hash",

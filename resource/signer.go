@@ -1,9 +1,9 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/resource/base"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Signer represents one of an account's signers.

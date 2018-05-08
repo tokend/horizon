@@ -1,9 +1,45 @@
 package history
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
 	"time"
+
+	"database/sql/driver"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
+
+type ReviewableRequestDetails struct {
+	AssetCreation     *AssetCreationRequest `json:"asset_create,omitempty"`
+	AssetUpdate       *AssetUpdateRequest   `json:"asset_update,omitempty"`
+	PreIssuanceCreate *PreIssuanceRequest   `json:"pre_issuance_create,omitempty"`
+	IssuanceCreate    *IssuanceRequest      `json:"issuance_create,omitempty"`
+	Withdrawal        *WithdrawalRequest    `json:"withdraw,omitempty"`
+	TwoStepWithdrawal *WithdrawalRequest    `json:"two_step_withdrawal"`
+	Sale              *SaleRequest          `json:"sale,omitempty"`
+	LimitsUpdate      *LimitsUpdateRequest  `json:"limits_update"`
+	AmlAlert          *AmlAlertRequest      `json:"aml_alert"`
+	UpdateKYC         *UpdateKYCRequest     `json:"update_kyc,omitempty"`
+}
+
+func (r ReviewableRequestDetails) Value() (driver.Value, error) {
+	result, err := db2.DriverValue(r)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal details")
+	}
+
+	return result, nil
+}
+
+func (r *ReviewableRequestDetails) Scan(src interface{}) error {
+	err := db2.DriveScan(src, r)
+	if err != nil {
+		return errors.Wrap(err, "failed to scan details")
+	}
+
+	return nil
+}
 
 type AssetCreationRequest struct {
 	Asset                  string                 `json:"asset"`
@@ -65,4 +101,21 @@ type SaleQuoteAsset struct {
 
 type LimitsUpdateRequest struct {
 	DocumentHash string `json:"document_hash"`
+}
+
+type AmlAlertRequest struct {
+	BalanceID string `json:"balance_id"`
+	Amount    string `json:"amount"`
+	Reason    string `json:"reason"`
+}
+
+type UpdateKYCRequest struct {
+	AccountToUpdateKYC string                   `json:"updated_account_id"`
+	AccountTypeToSet   xdr.AccountType          `json:"account_type_to_set"`
+	KYCLevel           uint32                   `json:"kyc_level"`
+	KYCData            map[string]interface{}   `json:"kyc_data"`
+	AllTasks           uint32                   `json:"all_tasks"`
+	PendingTasks       uint32                   `json:"pending_tasks"`
+	SequenceNumber     uint32                   `json:"sequence_number"`
+	ExternalDetails    []map[string]interface{} `json:"external_details"`
 }

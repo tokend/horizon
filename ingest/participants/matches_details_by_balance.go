@@ -3,7 +3,7 @@ package participants
 import (
 	"fmt"
 
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type MatchesDetailsByBalance struct {

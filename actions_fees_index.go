@@ -3,13 +3,13 @@ package horizon
 import (
 	"database/sql"
 
-	"gitlab.com/swarmfund/go/xdr"
+	"github.com/go-errors/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/ledger"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"github.com/go-errors/errors"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // This file contains the actions:

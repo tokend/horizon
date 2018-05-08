@@ -1,14 +1,16 @@
 package ingest
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"encoding/json"
+
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/utf8"
+	"gitlab.com/tokend/go/xdr"
 )
 
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
+func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {
 	if is.Err != nil {
 		return
 	}
@@ -16,7 +18,7 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 	var err error
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
-		err = is.approveReviewableRequest (op)
+		err = is.approveReviewableRequest(op, changes)
 	case xdr.ReviewRequestOpActionPermanentReject:
 		err = is.permanentReject(op)
 	case xdr.ReviewRequestOpActionReject:
@@ -34,9 +36,27 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp) {
 	}
 }
 
-func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp) error {
+func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
+	for i := range changes {
+		if changes[i].Removed == nil {
+			continue
+		}
+
+		if changes[i].Removed.ReviewableRequest != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) error {
 	// approval of two step withdrawal leads to update of request to withdrawal
 	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeTwoStepWithdrawal {
+		return nil
+	}
+
+	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeUpdateKyc && !hasDeletedReviewableRequest(changes) {
 		return nil
 	}
 
@@ -77,27 +97,29 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 		return errors.From(errors.New("expected withdrawal request"), fields.Add("request_type", request.RequestType))
 	}
 
-	var withdrawalDetails history.WithdrawalRequest
-	err = json.Unmarshal(request.Details, &withdrawalDetails)
-	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal withdrawal details", fields)
-	}
-
 	var reviewerDetails map[string]interface{}
 
-	err = json.Unmarshal([]byte(details.ExternalDetails), &reviewerDetails)
+	externalDetails := utf8.Scrub(details.ExternalDetails)
+	err = json.Unmarshal([]byte(externalDetails), &reviewerDetails)
 	if err != nil {
 		// we ignore here error on purpose, as it's too late to valid the error
 		err = errors.Wrap(err, "failed to marshal reviewer details", fields)
-		is.log.WithError(err).Warn("Reviewer sent invalid json in withdrawal details")
+		is.log.WithError(err).WithFields(logan.F{
+			"scrubbed_details": externalDetails,
+			"original_details": details.ExternalDetails,
+		}).Warn("Reviewer sent invalid json in withdrawal details")
+	}
+
+	var withdrawalDetails *history.WithdrawalRequest
+	if request.Details.Withdrawal != nil {
+		withdrawalDetails = request.Details.Withdrawal
+	} else if request.Details.TwoStepWithdrawal != nil {
+		withdrawalDetails = request.Details.TwoStepWithdrawal
+	} else {
+		return errors.New("Unexpected state: expected withdrawal details to be available")
 	}
 
 	withdrawalDetails.ReviewerDetails = reviewerDetails
-	request.Details, err = json.Marshal(withdrawalDetails)
-	if err != nil {
-		return errors.Wrap(err, "failed to marhsal withdrawal details", fields)
-	}
-
 	err = is.Ingestion.HistoryQ().ReviewableRequests().Update(*request)
 	if err != nil {
 		return errors.Wrap(err, "failed to update withdrawal request", fields)
@@ -105,4 +127,3 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 
 	return nil
 }
-

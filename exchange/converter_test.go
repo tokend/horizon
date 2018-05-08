@@ -10,8 +10,8 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func getAssetsHelper(assetCode string) []core.Asset {

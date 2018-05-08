@@ -3,8 +3,8 @@ package resource
 import (
 	"time"
 
-	"gitlab.com/swarmfund/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/go/amount"
 )
 
 type OfferData struct {

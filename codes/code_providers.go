@@ -1,6 +1,6 @@
 package codes
 
-import "gitlab.com/swarmfund/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 type codeProvider func(tr xdr.OperationResultTr) shortStr
 
@@ -26,4 +26,6 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeCheckSaleState:                         func(ir xdr.OperationResultTr) shortStr { return ir.MustCheckSaleStateResult().Code },
 	xdr.OperationTypeManageExternalSystemAccountIdPoolEntry: func(ir xdr.OperationResultTr) shortStr { return ir.MustManageExternalSystemAccountIdPoolEntryResult().Code },
 	xdr.OperationTypeBindExternalSystemAccountId:            func(ir xdr.OperationResultTr) shortStr { return ir.MustBindExternalSystemAccountIdResult().Code },
+	xdr.OperationTypeCreateAmlAlert:          				 func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateAmlAlertRequestResult().Code },
+	xdr.OperationTypeCreateKycRequest:        				 func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateUpdateKycRequestResult().Code },
 }

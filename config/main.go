@@ -59,6 +59,9 @@ type Config struct {
 
 	TFA  TFA
 	Core Core
+
+	TemplateBackend *url.URL
+	InvestReady     *url.URL
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
@@ -109,6 +112,9 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.bindEnv("hostname")
 
 	c.bindEnv("disable_api_submit")
+
+	c.bindEnv("template_backend")
+	c.bindEnv("invest_ready")
 }
 
 func (c *Config) Init() error {
@@ -197,6 +203,16 @@ func (c *Config) Init() error {
 	}
 
 	c.DisableAPISubmit = c.getBool("disable_api_submit")
+
+	c.TemplateBackend, err = c.getParsedURL("template_backend")
+	if err != nil {
+		return errors.Wrap(err, "Failed to get template_backend value")
+	}
+
+	c.InvestReady, err = c.getParsedURL("invest_ready")
+	if err != nil {
+		return errors.Wrap(err, "Failed to get invest_ready value")
+	}
 
 	return nil
 }

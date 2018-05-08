@@ -10,10 +10,10 @@ import (
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
-	"gitlab.com/swarmfund/go/signcontrol"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Web contains the http server related fields for horizon: the router,
@@ -84,7 +84,7 @@ func initWebMiddleware(app *App) {
 }
 
 const (
-	levelLow      int = 1 << (1 * iota)
+	levelLow int = 1 << (1 * iota)
 	levelMid
 	levelHigh
 	levelCritical
@@ -102,6 +102,8 @@ const (
 func initWebActions(app *App) {
 	apiProxy := httputil.NewSingleHostReverseProxy(app.config.APIBackend)
 	keychainProxy := httputil.NewSingleHostReverseProxy(app.config.KeychainBackend)
+	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
+	investReadyProxy := httputil.NewSingleHostReverseProxy(app.config.InvestReady)
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
@@ -137,6 +139,7 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:account_id/payments", &OperationIndexAction{
 		Types: operationTypesPayment,
 	})
+	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
 
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})
@@ -199,39 +202,95 @@ func initWebActions(app *App) {
 	// Reviewable Request actions
 	r.Get("/requests/:id", &ReviewableRequestShowAction{})
 	r.Get("/request/assets", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"asset": "",
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("asset")
+			action.Page.Filters["asset"] = asset
+			if asset != "" {
+				action.q = action.q.AssetManagementByAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAssetCreate, xdr.ReviewableRequestTypeAssetUpdate},
 	})
 	r.Get("/request/preissuances", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"asset": "",
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("asset")
+			action.Page.Filters["asset"] = asset
+			if asset != "" {
+				action.q = action.q.PreIssuanceByAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypePreIssuanceCreate},
 	})
 	r.Get("/request/issuances", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"asset": "",
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("asset")
+			action.Page.Filters["asset"] = asset
+			if asset != "" {
+				action.q = action.q.IssuanceByAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeIssuanceCreate},
 	})
 	r.Get("/request/withdrawals", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"dest_asset_code": "",
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("dest_asset_code")
+			action.Page.Filters["dest_asset_code"] = asset
+			if asset != "" {
+				action.q = action.q.WithdrawalByDestAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw, xdr.ReviewableRequestTypeTwoStepWithdrawal},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"base_asset": "",
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			asset := action.GetString("base_asset")
+			action.Page.Filters["base_asset"] = asset
+			if asset != "" {
+				action.q = action.q.SalesByBaseAsset(asset)
+			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
 	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
-		RequestSpecificFilters: map[string]string{
-			"document_hash": "",
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			hash := action.GetString("document_hash")
+			action.Page.Filters["document_hash"] = hash
+			if hash != "" {
+				action.q = action.q.LimitsByDocHash(hash)
+			}
 		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeLimitsUpdate},
+	})
+	r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			account := action.GetString("account_to_update_kyc")
+			maskSet := action.GetInt64("mask_set")
+			maskSetPartialEq := action.GetBool("mask_set_part_eq")
+			maskNotSet := action.GetOptionalInt64("mask_not_set")
+			accountTypeToSet := action.GetOptionalInt64("account_type_to_set")
+			if action.Err != nil {
+				return
+			}
+			action.Page.Filters["account_to_update_kyc"] = account
+			action.Page.Filters["mask_set"] = action.GetString("mask_set")
+			action.Page.Filters["mask_set_part_eq"] = action.GetString("mask_set_part_eq")
+			action.Page.Filters["mask_not_set"] = action.GetString("mask_not_set")
+			action.Page.Filters["account_type_to_set"] = action.GetString("account_type_to_set")
+
+			if account != "" {
+				action.q = action.q.KYCByAccountToUpdateKYC(account)
+			}
+
+			action.q = action.q.KYCByMaskSet(maskSet, maskSetPartialEq)
+			if maskNotSet != nil {
+				action.q = action.q.KYCByMaskNotSet(*maskNotSet)
+			}
+
+			if accountTypeToSet != nil {
+				action.q = action.q.KYCByAccountTypeToSet(xdr.AccountType(*accountTypeToSet))
+			}
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateKyc},
 	})
 
 	// Sales actions
@@ -290,6 +349,18 @@ func initWebActions(app *App) {
 	r.Handle(regexp.MustCompile(`^/users/\w+/keys`), func() func(web.C, http.ResponseWriter, *http.Request) {
 		return func(c web.C, w http.ResponseWriter, r *http.Request) {
 			keychainProxy.ServeHTTP(w, r)
+		}
+	}())
+
+	r.Handle(regexp.MustCompile(`^/templates/.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
+		return func(c web.C, w http.ResponseWriter, r *http.Request) {
+			templateProxy.ServeHTTP(w, r)
+		}
+	}())
+
+	r.Handle(regexp.MustCompile(`^/integrations/invest-ready`), func() func(web.C, http.ResponseWriter, *http.Request) {
+		return func(c web.C, w http.ResponseWriter, r *http.Request) {
+			investReadyProxy.ServeHTTP(w, r)
 		}
 	}())
 

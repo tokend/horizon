@@ -1,9 +1,9 @@
 package base
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"github.com/go-errors/errors"
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type BaseEffects interface {

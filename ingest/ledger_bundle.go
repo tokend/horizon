@@ -1,10 +1,11 @@
 package ingest
 
 import (
-	"gitlab.com/swarmfund/go/amount"
+	"strconv"
+
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"strconv"
+	"gitlab.com/tokend/go/amount"
 )
 
 // Load runs queries against `core` to fill in the records of the bundle.

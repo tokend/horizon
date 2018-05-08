@@ -5,9 +5,9 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Run starts an attempt to ingest the range of ledgers specified in this
@@ -95,7 +95,6 @@ func (is *Session) ingestLedger() {
 	for is.Cursor.NextTx() {
 		is.ingestTransaction()
 	}
-
 
 	is.Ingested++
 	if is.Metrics != nil {
@@ -186,6 +185,7 @@ func (is *Session) ingestOperationParticipants() {
 		&is.Cursor.Transaction().Envelope.Tx,
 		is.Cursor.Operation(),
 		*is.Cursor.OperationResult(),
+		is.Cursor.OperationChanges(),
 		is.Cursor.Ledger(),
 	)
 
