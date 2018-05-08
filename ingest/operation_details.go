@@ -247,12 +247,16 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["to_balance"] = opResult.DestinationBalanceId.AsString()
 		details["amount"] = amount.StringU(uint64(op.Amount))
 		details["asset"] = string(opResult.Asset)
-		details["source_actual_payment_fee"] = amount.StringU(uint64(opResult.ActualSourcePaymentFee))
-		details["source_actual_payment_fee_asset_code"] = string(op.FeeData.SourceFee.FeeAsset)
-		details["destination_actual_payment_fee"] = amount.StringU(uint64(opResult.ActualDestinationPaymentFee))
-		details["destination_actual_payment_fee_asset_code"] = string(op.FeeData.DestinationFee.FeeAsset)
-		details["source_fixed_fee"] = amount.StringU(uint64(op.FeeData.SourceFee.FixedFee))
-		details["destination_fixed_fee"] = amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee))
+		details["source_fee_data"] = map[string]interface{} {
+			"fixed_fee": amount.StringU(uint64(op.FeeData.SourceFee.FixedFee)),
+			"actual_payment_fee": amount.StringU(uint64(opResult.ActualSourcePaymentFee)),
+			"actual_payment_fee_asset_code": string(op.FeeData.SourceFee.FeeAsset),
+		}
+		details["destination_fee_data"] = map[string]interface{} {
+			"fixed_fee": amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee)),
+			"actual_payment_fee": amount.StringU(uint64(opResult.ActualDestinationPaymentFee)),
+			"actual_payment_fee_asset_code": string(op.FeeData.DestinationFee.FeeAsset),
+		}
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
 		details["subject"] = op.Subject
 		details["reference"] = utf8.Scrub(string(op.Reference))
