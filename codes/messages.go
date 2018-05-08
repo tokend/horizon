@@ -158,6 +158,13 @@ var messages = map[string]string{
 	"op_fee_asset_not_found":                         "Fee asset not found",
 	"op_asset_pair_not_found":                        "Cannot create cross asset fee entry without existing asset pair",
 	"op_invalid_asset_pair_price":                    "Asset pair price is <= 0",
+	"op_destination_balance_not_found":               "Destination balance not found",
+	"op_invalid_destination_fee":                     "Destination fee is invalid",
+	"op_invalid_destination_fee_asset":               "Destination fee asset must be the same as source balance asset",
+	"op_fee_asset_mismatched":                        "Fee asset from operation not the same as fee asset from database",
+	"op_insufficient_fee_amount":                     "Insufficient fee amount",
+	"op_balance_to_charge_fee_from_not_found":        "Balance to charge fee from not found",
+	"op_payment_amount_is_less_than_dest_fee":        "Payment amount is less than destination fee",
 }
 
 func getMessage(rawCode string) string {
