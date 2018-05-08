@@ -100,7 +100,7 @@ func ForOperation(
 		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.ManageInvoiceResult.Success.SenderBalance, nil})
 	case xdr.OperationTypeReviewRequest:
 		request := getReviewableRequestByID(uint64(op.Body.MustReviewRequestOp().RequestId), ledgerChanges)
-		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address(){
+		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address() {
 			result = append(result, Participant{
 				AccountID: request.Requestor,
 				BalanceID: nil,
@@ -229,7 +229,7 @@ func ForTransaction(
 	result = append(result, p...)
 
 	for i := range tx.Operations {
-		participants, err := ForOperation(DB, tx, &tx.Operations[i], *opResults[i].Tr,nil, ledger)
+		participants, err := ForOperation(DB, tx, &tx.Operations[i], *opResults[i].Tr, nil, ledger)
 		if err != nil {
 			return nil, err
 		}

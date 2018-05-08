@@ -96,7 +96,6 @@ func (is *Session) ingestLedger() {
 		is.ingestTransaction()
 	}
 
-
 	is.Ingested++
 	if is.Metrics != nil {
 		is.Metrics.IngestLedgerTimer.Update(time.Since(start))

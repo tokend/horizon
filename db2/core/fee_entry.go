@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+
 	sq "github.com/lann/squirrel"
 )
 

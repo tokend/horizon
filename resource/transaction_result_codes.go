@@ -23,6 +23,6 @@ func NewTransactionResultCodes(txResult xdr.TransactionResult) (*TransactionResu
 	return &TransactionResultCodes{
 		TransactionCode: txResultCode,
 		OperationCodes:  opResultCodes,
-		Messages: messages,
+		Messages:        messages,
 	}, nil
 }

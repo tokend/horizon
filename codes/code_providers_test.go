@@ -7,7 +7,6 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-
 func TestCodeProviders(t *testing.T) {
 	Convey("Code providers", t, func() {
 		for _, opType := range xdr.OperationTypeAll {

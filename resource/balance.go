@@ -18,7 +18,7 @@ func (b *Balance) Populate(balance core.Balance) {
 	b.Balance = amount.String(balance.Amount)
 	b.Locked = amount.String(balance.Locked)
 	b.Asset = balance.Asset
-	}
+}
 
 func (balance BalancePublic) PagingToken() string {
 	return balance.ID
