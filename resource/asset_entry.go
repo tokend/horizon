@@ -1,10 +1,9 @@
 package resource
 
 import (
-	"encoding/json"
-
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
+	"encoding/json"
 )
 
 type AssetEntry struct {

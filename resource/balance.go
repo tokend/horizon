@@ -1,9 +1,9 @@
 package resource
 
 import (
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/go/amount"
 )
 
 func (b *BalancePublic) Populate(balance history.Balance) {

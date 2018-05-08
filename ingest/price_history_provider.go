@@ -4,11 +4,11 @@ import (
 	"strconv"
 	"time"
 
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/ingest/ingestion"
 	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/tokend/go/amount"
+	"gitlab.com/swarmfund/horizon/ingest/ingestion"
 )
 
 type assetPairPriceKey struct {

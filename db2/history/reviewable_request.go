@@ -3,8 +3,8 @@ package history
 import (
 	"time"
 
-	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2"
 )
 
 // Represents Reviewable request

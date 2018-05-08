@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/zenazn/goji/web"
-	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/swarmfund/horizon/render/problem"
 )
 
 type SignatureValidator struct {

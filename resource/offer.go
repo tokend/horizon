@@ -3,8 +3,8 @@ package resource
 import (
 	"strconv"
 
-	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/tokend/go/amount"
+	"gitlab.com/swarmfund/horizon/db2/core"
 )
 
 type Offer struct {

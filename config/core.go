@@ -1,9 +1,8 @@
 package config
 
 import (
-	"errors"
-
 	"gitlab.com/tokend/go/keypair"
+	"errors"
 )
 
 type Core struct {
