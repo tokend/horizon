@@ -3,13 +3,13 @@ package horizon
 import (
 	"database/sql"
 
-	"gitlab.com/swarmfund/go/xdr"
+	"github.com/go-errors/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/ledger"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"github.com/go-errors/errors"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // This file contains the actions:
@@ -131,7 +131,14 @@ func feesContainsType(feeType int, entries []resource.FeeEntry) bool {
 
 func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries []resource.FeeEntry) []resource.FeeEntry {
 	for _, feeType := range xdr.FeeTypeAll {
-		entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), int64(0)))
+		subtypes := []int64{0}
+		if feeType == xdr.FeeTypePaymentFee {
+			subtypes = []int64{int64(xdr.PaymentFeeTypeIncoming), int64(xdr.PaymentFeeTypeOutgoing)}
+		}
+
+		for _, subtype := range subtypes {
+			entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), subtype))
+		}
 	}
 
 	return entries
@@ -153,5 +160,6 @@ func (action *FeesAllAction) getDefaultFee(asset string, feeType int, subType in
 		UpperBound:  "0",
 		AccountType: accountType,
 		AccountID:   action.Account,
+		FeeAsset:    asset,
 	}
 }

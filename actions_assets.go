@@ -5,13 +5,13 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/tokend/go/amount"
 	"github.com/go-errors/errors"
 )
 
 type AssetsIndexAction struct {
 	Action
-	Owner string
+	Owner  string
 	Assets []resource.Asset
 }
 
@@ -78,10 +78,10 @@ func (action *AssetPairsAction) loadData() {
 
 type AssetPairsConverterAction struct {
 	Action
-	AssetPair core.AssetPair
+	AssetPair   core.AssetPair
 	SourceAsset string
-	DestAsset string
-	Amount int64
+	DestAsset   string
+	Amount      int64
 }
 
 func (action *AssetPairsConverterAction) loadParams() {
@@ -147,7 +147,6 @@ func (action *AssetPairsConverterAction) loadData() {
 		action.Err = &problem.ServerError
 		return
 	}
-
 
 	if !isConverted {
 		action.SetInvalidField("amount", errors.New("failed to convert due to overflow"))

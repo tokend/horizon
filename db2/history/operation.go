@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/guregu/null"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 )
 

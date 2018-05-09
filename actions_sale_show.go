@@ -2,7 +2,7 @@ package horizon
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/exchange"
@@ -145,7 +145,7 @@ func selectSalesWithCurrentCap(q history.SalesQ, converter *exchange.Converter) 
 	for i := range result {
 		currentCapInDefaultQuote, err := getCurrentCapInDefaultQuote(result[i], converter)
 		if err != nil {
-			return nil ,errors.Wrap(err, "failed to calculate current cap in default quote")
+			return nil, errors.Wrap(err, "failed to calculate current cap in default quote")
 		}
 
 		result[i].CurrentCap = amount.String(currentCapInDefaultQuote)

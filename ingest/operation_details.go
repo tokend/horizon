@@ -6,8 +6,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
-	"gitlab.com/swarmfund/go/amount"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/utf8"
 )
 
@@ -79,6 +79,13 @@ func (is *Session) operationDetails() map[string]interface{} {
 			if op.Fee.AccountId != nil {
 				accountID = op.Fee.AccountId.Address()
 			}
+
+			feeAssetString := ""
+			feeAsset, ok := op.Fee.Ext.GetFeeAsset()
+			if ok {
+				feeAssetString = string(feeAsset)
+			}
+
 			accountType := op.Fee.AccountType
 			details["fee"] = map[string]interface{}{
 				"asset_code":   string(op.Fee.Asset),
@@ -90,6 +97,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 				"subtype":      int64(op.Fee.Subtype),
 				"lower_bound":  int64(op.Fee.LowerBound),
 				"upper_bound":  int64(op.Fee.UpperBound),
+				"fee_asset":    feeAssetString,
 			}
 		}
 
@@ -178,7 +186,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.Action == xdr.ReviewRequestOpActionApprove {
 			details["is_fulfilled"] = hasDeletedReviewableRequest(c.OperationChanges())
 		}
-		details["details"]= getReviewRequestOpDetails(op.RequestDetails)
+		details["details"] = getReviewRequestOpDetails(op.RequestDetails)
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
@@ -229,6 +237,30 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.UpdateKycRequestData.AllTasks != nil {
 			details["all_tasks"] = *op.UpdateKycRequestData.AllTasks
 		}
+	case xdr.OperationTypePaymentV2:
+		op := c.Operation().Body.MustPaymentOpV2()
+		opResult := c.OperationResult().MustPaymentV2Result().MustPaymentV2Response()
+		details["payment_id"] = uint64(opResult.PaymentId)
+		details["from"] = source.Address()
+		details["to"] = opResult.Destination.Address()
+		details["from_balance"] = op.SourceBalanceId.AsString()
+		details["to_balance"] = opResult.DestinationBalanceId.AsString()
+		details["amount"] = amount.StringU(uint64(op.Amount))
+		details["asset"] = string(opResult.Asset)
+		details["source_fee_data"] = map[string]interface{} {
+			"fixed_fee": amount.StringU(uint64(op.FeeData.SourceFee.FixedFee)),
+			"actual_payment_fee": amount.StringU(uint64(opResult.ActualSourcePaymentFee)),
+			"actual_payment_fee_asset_code": string(op.FeeData.SourceFee.FeeAsset),
+		}
+		details["destination_fee_data"] = map[string]interface{} {
+			"fixed_fee": amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee)),
+			"actual_payment_fee": amount.StringU(uint64(opResult.ActualDestinationPaymentFee)),
+			"actual_payment_fee_asset_code": string(op.FeeData.DestinationFee.FeeAsset),
+		}
+		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
+		details["subject"] = op.Subject
+		details["reference"] = utf8.Scrub(string(op.Reference))
+		details["source_sent_universal"] = amount.StringU(uint64(opResult.SourceSentUniversal))
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
@@ -238,8 +270,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 func getReviewRequestOpDetails(requestDetails xdr.ReviewRequestOpRequestDetails) map[string]interface{} {
 	return map[string]interface{}{
 		"request_type": requestDetails.RequestType.ShortString(),
-		"update_kyc": getUpdateKYCDetails(requestDetails.UpdateKyc),
-
+		"update_kyc":   getUpdateKYCDetails(requestDetails.UpdateKyc),
 	}
 }
 
@@ -250,9 +281,9 @@ func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
 
 	var externalDetails map[string]interface{}
 	_ = json.Unmarshal([]byte(details.ExternalDetails), externalDetails)
-	return map[string]interface{} {
+	return map[string]interface{}{
 		"external_details": externalDetails,
-		"tasks_to_add": uint32(details.TasksToAdd),
-		"tasks_to_remove": uint32(details.TasksToRemove),
+		"tasks_to_add":     uint32(details.TasksToAdd),
+		"tasks_to_remove":  uint32(details.TasksToRemove),
 	}
 }

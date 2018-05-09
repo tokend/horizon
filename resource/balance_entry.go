@@ -1,16 +1,16 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/go/amount"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type BalanceEntry struct {
-	AccountID    string          `json:"account_id"`
-	BalanceID    string          `json:"balance_id"`
-	Asset        string          `json:"asset"`
-	Amount       string          `json:"amount"`
-	Locked       string          `json:"locked"`
+	AccountID string `json:"account_id"`
+	BalanceID string `json:"balance_id"`
+	Asset     string `json:"asset"`
+	Amount    string `json:"amount"`
+	Locked    string `json:"locked"`
 }
 
 func (r *BalanceEntry) Populate(entry xdr.BalanceEntry) {

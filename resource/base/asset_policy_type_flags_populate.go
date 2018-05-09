@@ -4,7 +4,7 @@
 
 package base
 
-import "gitlab.com/swarmfund/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 func FlagFromXdrAssetPolicy(mask int32, allFlags []xdr.AssetPolicy) []Flag {
 	result := []Flag{}

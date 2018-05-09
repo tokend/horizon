@@ -5,7 +5,7 @@ package participants
 import (
 	"fmt"
 
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -100,7 +100,7 @@ func ForOperation(
 		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.ManageInvoiceResult.Success.SenderBalance, nil})
 	case xdr.OperationTypeReviewRequest:
 		request := getReviewableRequestByID(uint64(op.Body.MustReviewRequestOp().RequestId), ledgerChanges)
-		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address(){
+		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address() {
 			result = append(result, Participant{
 				AccountID: request.Requestor,
 				BalanceID: nil,
@@ -140,6 +140,12 @@ func ForOperation(
 				Details:   nil,
 			})
 		}
+	case xdr.OperationTypePaymentV2:
+		paymentOpV2 := op.Body.MustPaymentOpV2()
+		paymentV2Response := opResult.MustPaymentV2Result().MustPaymentV2Response()
+
+		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil},)
+		sourceParticipant.BalanceID = &paymentOpV2.SourceBalanceId
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
@@ -223,7 +229,7 @@ func ForTransaction(
 	result = append(result, p...)
 
 	for i := range tx.Operations {
-		participants, err := ForOperation(DB, tx, &tx.Operations[i], *opResults[i].Tr,nil, ledger)
+		participants, err := ForOperation(DB, tx, &tx.Operations[i], *opResults[i].Tr, nil, ledger)
 		if err != nil {
 			return nil, err
 		}

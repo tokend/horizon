@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"golang.org/x/net/context"
@@ -54,6 +54,7 @@ func New(
 		if public {
 			if e.Fee != nil {
 				e.Fee.AccountID = ""
+				e.Fee.FeeAsset = ""
 			}
 		}
 		result = e
@@ -119,6 +120,10 @@ func New(
 		result = e
 	case xdr.OperationTypeReviewRequest:
 		e := ReviewRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
+	case xdr.OperationTypePaymentV2:
+		e := PaymentV2{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
 	default:
@@ -199,6 +204,7 @@ type Fee struct {
 	Subtype     int64  `json:"subtype"`
 	LowerBound  int64  `json:"lower_bound"`
 	UpperBound  int64  `json:"upper_bound"`
+	FeeAsset    string `json:"fee_asset"`
 }
 
 type SetFees struct {

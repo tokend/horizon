@@ -1,7 +1,7 @@
 package config
 
 import (
-	"gitlab.com/swarmfund/go/keypair"
+	"gitlab.com/tokend/go/keypair"
 	"errors"
 )
 
