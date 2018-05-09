@@ -31,6 +31,9 @@ func (fee *FeeEntry) Populate(cfee core.FeeEntry) error {
 	fee.LowerBound = amount.String(cfee.LowerBound)
 	fee.UpperBound = amount.String(cfee.UpperBound)
 	fee.FeeAsset = cfee.FeeAsset
+	if fee.FeeAsset == "" {
+		fee.FeeAsset = cfee.Asset
+	}
 	fee.Exists = true
 	return nil
 }
