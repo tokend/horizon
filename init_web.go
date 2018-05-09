@@ -329,7 +329,7 @@ func initWebActions(app *App) {
 		// (we rely on SignatureValidator middleware here)
 		signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" || app.config.DisableAPISubmit {
-			TransactionCreateAction{}.ServeHTTPC(c, w, r)
+			TransactionCreateAction{APIUrl: app.config.APIBackend}.ServeHTTPC(c, w, r)
 		} else {
 			apiProxy.ServeHTTP(w, r)
 		}
