@@ -10,7 +10,7 @@ import (
 	"io"
 	"bytes"
 	"fmt"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	txsubHelper "gitlab.com/swarmfund/horizon/txsub"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
