@@ -2,7 +2,7 @@ package ingestion
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"time"
 )
 

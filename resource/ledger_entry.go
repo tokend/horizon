@@ -1,6 +1,6 @@
 package resource
 
-import "gitlab.com/swarmfund/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 type LedgerEntry struct {
 	LastModifiedLedgerSeq uint32        `json:"last_modified_ledger_seq"`

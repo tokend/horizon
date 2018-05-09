@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
 	"time"

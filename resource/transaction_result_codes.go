@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/codes"
 )
 
@@ -23,6 +23,6 @@ func NewTransactionResultCodes(txResult xdr.TransactionResult) (*TransactionResu
 	return &TransactionResultCodes{
 		TransactionCode: txResultCode,
 		OperationCodes:  opResultCodes,
-		Messages: messages,
+		Messages:        messages,
 	}, nil
 }

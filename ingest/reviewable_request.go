@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/amount"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
