@@ -37,7 +37,7 @@ func (action *KeyValueShowAction) loadParams(){
 func (action *KeyValueShowAction) loadRecord() {
 	var err error
 	q := action.CoreQ().KeyValue()
-	action.KeyValueRecord,err = q.ByKey(action.Key)
+	action.KeyValueRecord, err = q.ByKey(action.Key)
 	if err!=nil {
 		action.Log.WithError(err).Error("Failed to get key_value from core DB")
 		action.Err = &problem.ServerError

@@ -1,6 +1,9 @@
 package core
 
-import sq "github.com/lann/squirrel"
+import (
+	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+)
 
 // KeyValueQI - provides methods to operate key-value
 type KeyValueQI interface {
@@ -28,10 +31,14 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 	}
 
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to load key value")
 	}
 
 	return &result, nil
+}
+
+func (q KeyValueQ) All() ([]*KeyValue, error){
+
 }
 
 var selectKeyValue = sq.Select("kv.key","kv.value").From("key_value_entry kv")
