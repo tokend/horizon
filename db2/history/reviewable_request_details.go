@@ -4,10 +4,9 @@ import (
 	"time"
 
 	"database/sql/driver"
-
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2"
 )
 
 type ReviewableRequestDetails struct {

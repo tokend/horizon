@@ -3,8 +3,8 @@ package resource
 import (
 	"time"
 
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/tokend/go/amount"
+	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
 type AccountSummary struct {

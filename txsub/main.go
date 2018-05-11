@@ -1,10 +1,10 @@
 package txsub
 
 import (
-	"gitlab.com/distributed_lab/logan"
-	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/tokend/go/build"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/distributed_lab/logan"
+	"gitlab.com/distributed_lab/txsub"
 )
 
 func ExtractEnvelopeInfo(env string, passphrase string) (*txsub.EnvelopeInfo, error) {

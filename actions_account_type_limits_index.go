@@ -1,13 +1,12 @@
 package horizon
 
 import (
-	"database/sql"
-
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/tokend/go/xdr"
+	"database/sql"
 )
 
 type AccountTypeLimitsAllAction struct {

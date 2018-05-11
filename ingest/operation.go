@@ -1,8 +1,8 @@
 package ingest
 
 import (
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
 func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationResult *xdr.OperationResultTr) (history.OperationState, uint64) {

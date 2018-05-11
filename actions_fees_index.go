@@ -131,7 +131,14 @@ func feesContainsType(feeType int, entries []resource.FeeEntry) bool {
 
 func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries []resource.FeeEntry) []resource.FeeEntry {
 	for _, feeType := range xdr.FeeTypeAll {
-		entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), int64(0)))
+		subtypes := []int64{0}
+		if feeType == xdr.FeeTypePaymentFee {
+			subtypes = []int64{int64(xdr.PaymentFeeTypeIncoming), int64(xdr.PaymentFeeTypeOutgoing)}
+		}
+
+		for _, subtype := range subtypes {
+			entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), subtype))
+		}
 	}
 
 	return entries
@@ -153,5 +160,6 @@ func (action *FeesAllAction) getDefaultFee(asset string, feeType int, subType in
 		UpperBound:  "0",
 		AccountType: accountType,
 		AccountID:   action.Account,
+		FeeAsset:    asset,
 	}
 }

@@ -2,8 +2,8 @@ package ingest
 
 import (
 	"github.com/pkg/errors"
-	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2/core"
 )
 
 func balanceUpdated(is *Session, ledgerEntry *xdr.LedgerEntry) error {

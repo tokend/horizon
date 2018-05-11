@@ -1,10 +1,9 @@
 package ingestion
 
 import (
-	"time"
-
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
+	"time"
 )
 
 func (ingest *Ingestion) StoreTrades(orderBookID uint64, result xdr.ManageOfferSuccessResult, ledgerCloseTime int64) error {

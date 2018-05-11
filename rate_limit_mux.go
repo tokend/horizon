@@ -6,10 +6,10 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/zenazn/goji/web"
 	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/swarmfund/horizon/render/problem"
+	"github.com/zenazn/goji/web"
 	"gopkg.in/throttled/throttled.v2"
 	"gopkg.in/throttled/throttled.v2/store/memstore"
 	"gopkg.in/throttled/throttled.v2/store/redigostore"

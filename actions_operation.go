@@ -7,7 +7,7 @@ import (
 
 	"strconv"
 
-	"github.com/pkg/errors"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ledger"
@@ -16,7 +16,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/sse"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/toid"
-	"gitlab.com/tokend/go/xdr"
+	"github.com/pkg/errors"
 )
 
 // This file contains the actions:

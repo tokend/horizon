@@ -5,8 +5,8 @@ package core
 import (
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2"
 )
 
 // LedgerHeader is row of data from the `ledgerheaders` table

@@ -3,8 +3,8 @@ package codes
 import (
 	"testing"
 
-	. "github.com/smartystreets/goconvey/convey"
 	"gitlab.com/tokend/go/xdr"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestCodeProviders(t *testing.T) {
