@@ -5,7 +5,7 @@ package core
 import (
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 )
 

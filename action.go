@@ -7,8 +7,8 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/zenazn/goji/web"
-	"gitlab.com/swarmfund/go/signcontrol"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/actions"
 	"gitlab.com/swarmfund/horizon/cache"
 	"gitlab.com/swarmfund/horizon/db2"

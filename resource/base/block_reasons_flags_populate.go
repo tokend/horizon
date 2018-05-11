@@ -4,7 +4,7 @@
 
 package base
 
-import "gitlab.com/swarmfund/go/xdr"
+import "gitlab.com/tokend/go/xdr"
 
 func FlagFromXdrBlockReasons(mask int32, allFlags []xdr.BlockReasons) []Flag {
 	result := []Flag{}

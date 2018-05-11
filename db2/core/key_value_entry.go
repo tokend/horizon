@@ -2,7 +2,7 @@ package core
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type KeyValueEntry xdr.KeyValueEntryValue
@@ -20,7 +20,7 @@ func (k *KeyValueEntry) Scan(src interface{}) error {
 	}
 	err := xdr.SafeUnmarshalBase64(data,k);
 	if err!=nil {
-		return  errors.New("Faild to unmarshal key_value")
+		return  errors.New("Failed to unmarshal key_value")
 	}
 
 	return nil

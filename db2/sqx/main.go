@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // StringArray returns a sq.Expr suitable for inclusion in an insert that represents
@@ -19,7 +19,7 @@ func StringArray(str []string) interface{} {
 	)
 }
 
-func InForReviewableRequestTypes(columnName string, values...xdr.ReviewableRequestType) (string, []interface{}) {
+func InForReviewableRequestTypes(columnName string, values ...xdr.ReviewableRequestType) (string, []interface{}) {
 	rawValues := make([]interface{}, len(values))
 	for i := range values {
 		rawValues[i] = int32(values[i])
@@ -39,7 +39,7 @@ func InForString(columnName string, values ...string) (string, []interface{}) {
 }
 
 // Returns statement and params of it for SQL IN.
-func In(columnName string, values...interface{}) (string, []interface{}) {
+func In(columnName string, values ...interface{}) (string, []interface{}) {
 	params := make([]string, len(values))
 	for i := range values {
 		params[i] = "?"
@@ -47,4 +47,3 @@ func In(columnName string, values...interface{}) (string, []interface{}) {
 
 	return fmt.Sprintf("%s IN (%s)", columnName, strings.Join(params, ",")), values
 }
-

@@ -10,8 +10,8 @@ import (
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
-	"gitlab.com/swarmfund/go/signcontrol"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
 )
@@ -113,6 +113,7 @@ func initWebActions(app *App) {
 		xdr.OperationTypeManageInvoice,
 		xdr.OperationTypeCheckSaleState,
 		xdr.OperationTypeManageKeyValue,
+		xdr.OperationTypePaymentV2,
 	}
 
 	r := app.web.router
@@ -333,7 +334,7 @@ func initWebActions(app *App) {
 		// (we rely on SignatureValidator middleware here)
 		signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" || app.config.DisableAPISubmit {
-			TransactionCreateAction{}.ServeHTTPC(c, w, r)
+			TransactionCreateAction{APIUrl: app.config.APIBackend}.ServeHTTPC(c, w, r)
 		} else {
 			apiProxy.ServeHTTP(w, r)
 		}

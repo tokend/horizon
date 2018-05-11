@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // AccountThresholds represents an accounts "thresholds", the numerical values

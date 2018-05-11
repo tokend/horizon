@@ -1,7 +1,7 @@
 package core
 
 import (
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	sq "github.com/lann/squirrel"
 )
 
