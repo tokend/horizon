@@ -7,12 +7,12 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"net/http"
-	"io"
 	"bytes"
 	"fmt"
 	"gitlab.com/tokend/go/xdr"
 	txsubHelper "gitlab.com/swarmfund/horizon/txsub"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"io"
 )
 
 // TransactionCreateAction submits a transaction to the stellar-core network
@@ -78,19 +78,17 @@ func (action *TransactionCreateAction) loadResult() {
 		return
 	}
 
-	if !action.App.config.DisableAPISubmit {
-		apiResp, err := action.checkTFA(envelopeInfo.SourceAddress, envelopeInfo.ContentHash)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to check TFA via API.")
-			action.Err = errors.Wrap(err, "Failed to check TFA using API")
-			return
-		}
-		if apiResp.StatusCode < 200 || apiResp.StatusCode >= 300 {
-			action.tfaFailed = true
-			action.W.WriteHeader(apiResp.StatusCode)
-			io.Copy(action.W, apiResp.Body)
-			return
-		}
+	apiResp, err := action.checkTFA(envelopeInfo.SourceAddress, envelopeInfo.ContentHash)
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to check TFA via API.")
+		action.Err = errors.Wrap(err, "Failed to check TFA using API")
+		return
+	}
+	if apiResp.StatusCode < 200 || apiResp.StatusCode >= 300 {
+		action.tfaFailed = true
+		action.W.WriteHeader(apiResp.StatusCode)
+		io.Copy(action.W, apiResp.Body)
+		return
 	}
 
 	action.result = action.App.submitter.Submit(action.Ctx, envelopeInfo)
