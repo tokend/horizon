@@ -215,6 +215,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["sale_id"] = uint64(op.SaleId)
 		details["effect"] = opResult.Effect.Effect.String()
 		// no details needed
+	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
+		// no details needed
+	case xdr.OperationTypeBindExternalSystemAccountId:
+		// no details needed
 	case xdr.OperationTypeCreateAmlAlert:
 		op := c.Operation().Body.MustCreateAmlAlertRequestOp()
 		details["amount"] = amount.StringU(uint64(op.AmlAlertRequest.Amount))

@@ -11,7 +11,12 @@ type ExternalSystemAccountID struct {
 }
 
 func (id *ExternalSystemAccountID) Populate(coreRecord core.ExternalSystemAccountID) {
-	id.Type.Name = coreRecord.ExternalSystemType.ShortString()
+	switch coreRecord.ExternalSystemType{
+	case 1:
+		id.Type.Name = "Bitcoin"
+	case 2:
+		id.Type.Name = "Ethereum"
+	}
 	id.Type.Value = int32(coreRecord.ExternalSystemType)
 	id.Data = coreRecord.Data
 }
