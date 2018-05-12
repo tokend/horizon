@@ -10,16 +10,17 @@ import (
 // Note: json key of specific request must be equal to xdr.ReviewableRequestType.ShortString result
 type Details struct {
 	RequestType
-	AssetCreation     *AssetCreationRequest `json:"asset_create,omitempty"`
-	AssetUpdate       *AssetUpdateRequest   `json:"asset_update,omitempty"`
-	PreIssuanceCreate *PreIssuanceRequest   `json:"pre_issuance_create,omitempty"`
-	IssuanceCreate    *IssuanceRequest      `json:"issuance_create,omitempty"`
-	Withdrawal        *WithdrawalRequest    `json:"withdraw,omitempty"`
-	TwoStepWithdrawal *WithdrawalRequest    `json:"two_step_withdrawal"`
-	Sale              *SaleCreationRequest  `json:"sale,omitempty"`
-	LimitsUpdate      *LimitsUpdateRequest  `json:"limits_update"`
-	AmlAlert          *AmlAlertRequest      `json:"aml_alert"`
-	UpdateKYC         *UpdateKYCRequest     `json:"update_kyc,omitempty"`
+	AssetCreation     *AssetCreationRequest     `json:"asset_create,omitempty"`
+	AssetUpdate       *AssetUpdateRequest       `json:"asset_update,omitempty"`
+	PreIssuanceCreate *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
+	IssuanceCreate    *IssuanceRequest          `json:"issuance_create,omitempty"`
+	Withdrawal        *WithdrawalRequest        `json:"withdraw,omitempty"`
+	TwoStepWithdrawal *WithdrawalRequest        `json:"two_step_withdrawal"`
+	Sale              *SaleCreationRequest      `json:"sale,omitempty"`
+	LimitsUpdate      *LimitsUpdateRequest      `json:"limits_update"`
+	AmlAlert          *AmlAlertRequest          `json:"aml_alert"`
+	UpdateKYC         *UpdateKYCRequest         `json:"update_kyc,omitempty"`
+	UpdateSaleDetails *UpdateSaleDetailsRequest `json:"update_sale_details"`
 }
 
 func (d *Details) Populate(requestType xdr.ReviewableRequestType, h history.ReviewableRequestDetails) error {
@@ -55,6 +56,9 @@ func (d *Details) Populate(requestType xdr.ReviewableRequestType, h history.Revi
 	case xdr.ReviewableRequestTypeUpdateKyc:
 		d.UpdateKYC = new(UpdateKYCRequest)
 		return d.UpdateKYC.Populate(*h.UpdateKYC)
+	case xdr.ReviewableRequestTypeUpdateSaleDetails:
+		d.UpdateSaleDetails = new(UpdateSaleDetailsRequest)
+		return d.UpdateSaleDetails.Populate(*h.UpdateSaleDetails)
 	default:
 		return errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),

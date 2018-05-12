@@ -293,6 +293,9 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateKyc},
 	})
+	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
+	})
 
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})

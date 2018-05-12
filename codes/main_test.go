@@ -143,4 +143,10 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
+
+	Convey("Manage sale", t, func() {
+		for _, code := range xdr.ManageSaleResultCodeAll {
+			checkCode(t, code)
+		}
+	})
 }
