@@ -132,6 +132,17 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
+	Convey("Manage external system account id pool entry", t, func() {
+		for _, code := range xdr.ManageExternalSystemAccountIdPoolEntryResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Bind external system account id", t, func() {
+		for _, code := range xdr.BindExternalSystemAccountIdResultCodeAll {
+			checkCode(t, code)
+		}
+	})
 	Convey("Create KYC request", t, func() {
 		for _, code := range xdr.CreateUpdateKycRequestResultCodeAll {
 			checkCode(t, code)
