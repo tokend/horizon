@@ -56,8 +56,9 @@ type Config struct {
 	// for dev purposes only, works well with SkipCheck enabled
 	// pending transactions and transaction 2fa will be disabled as well.
 	DisableAPISubmit bool
+	// If set to true - Horizon won't check TFA (via API) during TX submission.
+	DisableTXTfa bool
 
-	TFA  TFA
 	Core Core
 
 	TemplateBackend *url.URL
@@ -66,9 +67,6 @@ type Config struct {
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.Base = NewBase(nil, "")
-
-	c.TFA.Base = NewBase(c.Base, "tfa")
-	c.TFA.DefineConfigStructure()
 
 	c.Core.Base = NewBase(c.Base, "core")
 	c.Core.DefineConfigStructure()
@@ -165,8 +163,6 @@ func (c *Config) Init() error {
 
 	c.RedisURL = c.getString("redis_url")
 
-	c.TFA.Init()
-
 	err = c.Core.Init()
 	if err != nil {
 		return err
@@ -203,6 +199,7 @@ func (c *Config) Init() error {
 	}
 
 	c.DisableAPISubmit = c.getBool("disable_api_submit")
+	c.DisableTXTfa = c.getBool("disable_tx_tfa")
 
 	c.TemplateBackend, err = c.getParsedURL("template_backend")
 	if err != nil {
