@@ -131,10 +131,7 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
 	r.Get("/accounts/:id/summary", &AccountSummaryAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
-	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{
-		// TODO: fix me
-		ConvertToAsset: "SUN",
-	})
+	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{})
 
 	r.Get("/accounts/:account_id/signers/:id", &SignerShowAction{})
 	r.Get("/accounts/:account_id/operations", &OperationIndexAction{}, 1)
@@ -183,6 +180,7 @@ func initWebActions(app *App) {
 	})
 
 	r.Get("/payment_requests/:id", &PaymentRequestShowAction{})
+
 
 	//get fees action
 	r.Get("/fees", &FeesAllAction{})

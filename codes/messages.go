@@ -141,6 +141,8 @@ var messages = map[string]string{
 	"op_requestor_is_blocked":                        "Requestor is blocked",
 	"op_version_is_not_supported_yet":                "Version of this operation is not supported yet",
 	"op_balance_already_exists":                      "Balance already exists",
+	"op_no_available_id":                             "No available external system account id for binding",
+	"op_auto_generated_type_not_allowed":             "Auto generated external system type is not allowed to bind",
 	"op_acc_to_update_does_not_exist":                "Account to update KYC data doesn't exist",
 	"op_request_exist":                               "Request already exists",
 	"op_same_acc_type_to_set":                        "Account type and kyc level are the same",
