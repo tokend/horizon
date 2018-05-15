@@ -113,6 +113,7 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 
 	c.bindEnv("template_backend")
 	c.bindEnv("invest_ready")
+	c.bindEnv("disable_tx_tfa")
 }
 
 func (c *Config) Init() error {
