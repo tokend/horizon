@@ -150,6 +150,8 @@ func ForOperation(
 
 		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil},)
 		sourceParticipant.BalanceID = &paymentOpV2.SourceBalanceId
+	case xdr.OperationTypeManageSale:
+		// the only direct participant is the source_account
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

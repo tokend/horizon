@@ -107,7 +107,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[constraint]]
-  branch = "feature/external_system_account_id"
+  branch = "feature/update_sale_details"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

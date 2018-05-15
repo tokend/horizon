@@ -7,12 +7,12 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"net/http"
-	"io"
 	"bytes"
 	"fmt"
 	"gitlab.com/tokend/go/xdr"
 	txsubHelper "gitlab.com/swarmfund/horizon/txsub"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"io"
 )
 
 // TransactionCreateAction submits a transaction to the stellar-core network
