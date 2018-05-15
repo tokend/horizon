@@ -14,12 +14,12 @@ func (k *KeyValueEntry) Scan(src interface{}) error {
 		data = string(rawData)
 	case string:
 		data = rawData
-
 	default:
 		return errors.New("Unexpected type")
 	}
-	err := xdr.SafeUnmarshalBase64(data,k);
-	if err!=nil {
+
+	err := xdr.SafeUnmarshalBase64(data,k)
+	if err != nil {
 		return  errors.New("Failed to unmarshal key_value")
 	}
 
