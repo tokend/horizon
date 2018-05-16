@@ -141,6 +141,8 @@ var messages = map[string]string{
 	"op_requestor_is_blocked":                        "Requestor is blocked",
 	"op_version_is_not_supported_yet":                "Version of this operation is not supported yet",
 	"op_balance_already_exists":                      "Balance already exists",
+	"op_no_available_id":                             "No available external system account id for binding",
+	"op_auto_generated_type_not_allowed":             "Auto generated external system type is not allowed to bind",
 	"op_acc_to_update_does_not_exist":                "Account to update KYC data doesn't exist",
 	"op_request_exist":                               "Request already exists",
 	"op_same_acc_type_to_set":                        "Account type and kyc level are the same",
@@ -165,6 +167,10 @@ var messages = map[string]string{
 	"op_insufficient_fee_amount":                     "Insufficient fee amount",
 	"op_balance_to_charge_fee_from_not_found":        "Balance to charge fee from not found",
 	"op_payment_amount_is_less_than_dest_fee":        "Payment amount is less than destination fee",
+	"op_sale_not_found":                              "Sale not found",
+	"op_invalid_new_details":                         "New sale details is invalid JSON",
+	"op_update_details_request_already_exists":       "Update sale details request already exists",
+	"op_update_details_request_not_found":            "Update sale details request to amend not found",
 }
 
 func getMessage(rawCode string) string {
