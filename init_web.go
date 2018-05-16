@@ -291,6 +291,9 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateKyc},
 	})
+	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
+	})
 
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
@@ -328,7 +331,7 @@ func initWebActions(app *App) {
 		// (we rely on SignatureValidator middleware here)
 		signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" || app.config.DisableAPISubmit {
-			TransactionCreateAction{}.ServeHTTPC(c, w, r)
+			TransactionCreateAction{APIUrl: app.config.APIBackend}.ServeHTTPC(c, w, r)
 		} else {
 			apiProxy.ServeHTTP(w, r)
 		}

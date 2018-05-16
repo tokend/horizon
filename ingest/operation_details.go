@@ -215,6 +215,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["sale_id"] = uint64(op.SaleId)
 		details["effect"] = opResult.Effect.Effect.String()
 		// no details needed
+	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
+		// no details needed
+	case xdr.OperationTypeBindExternalSystemAccountId:
+		// no details needed
 	case xdr.OperationTypeCreateAmlAlert:
 		op := c.Operation().Body.MustCreateAmlAlertRequestOp()
 		details["amount"] = amount.StringU(uint64(op.AmlAlertRequest.Amount))
@@ -261,6 +265,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["subject"] = op.Subject
 		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["source_sent_universal"] = amount.StringU(uint64(opResult.SourceSentUniversal))
+	case xdr.OperationTypeManageSale:
+		op := c.Operation().Body.MustManageSaleOp()
+		details["sale_id"] = uint64(op.SaleId)
+		details["action"] = op.Data.Action.ShortString()
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
