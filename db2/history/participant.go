@@ -3,7 +3,7 @@ package history
 import (
 	"encoding/json"
 
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"github.com/go-errors/errors"
 )
 

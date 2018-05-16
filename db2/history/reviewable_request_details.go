@@ -5,21 +5,22 @@ import (
 
 	"database/sql/driver"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 )
 
 type ReviewableRequestDetails struct {
-	AssetCreation     *AssetCreationRequest `json:"asset_create,omitempty"`
-	AssetUpdate       *AssetUpdateRequest   `json:"asset_update,omitempty"`
-	PreIssuanceCreate *PreIssuanceRequest   `json:"pre_issuance_create,omitempty"`
-	IssuanceCreate    *IssuanceRequest      `json:"issuance_create,omitempty"`
-	Withdrawal        *WithdrawalRequest    `json:"withdraw,omitempty"`
-	TwoStepWithdrawal *WithdrawalRequest    `json:"two_step_withdrawal"`
-	Sale              *SaleRequest          `json:"sale,omitempty"`
-	LimitsUpdate      *LimitsUpdateRequest  `json:"limits_update"`
-	AmlAlert          *AmlAlertRequest      `json:"aml_alert"`
-	UpdateKYC         *UpdateKYCRequest     `json:"update_kyc,omitempty"`
+	AssetCreation     *AssetCreationRequest     `json:"asset_create,omitempty"`
+	AssetUpdate       *AssetUpdateRequest       `json:"asset_update,omitempty"`
+	PreIssuanceCreate *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
+	IssuanceCreate    *IssuanceRequest          `json:"issuance_create,omitempty"`
+	Withdrawal        *WithdrawalRequest        `json:"withdraw,omitempty"`
+	TwoStepWithdrawal *WithdrawalRequest        `json:"two_step_withdrawal"`
+	Sale              *SaleRequest              `json:"sale,omitempty"`
+	LimitsUpdate      *LimitsUpdateRequest      `json:"limits_update"`
+	AmlAlert          *AmlAlertRequest          `json:"aml_alert"`
+	UpdateKYC         *UpdateKYCRequest         `json:"update_kyc,omitempty"`
+	UpdateSaleDetails *UpdateSaleDetailsRequest `json:"update_sale_details"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -117,4 +118,9 @@ type UpdateKYCRequest struct {
 	PendingTasks       uint32                   `json:"pending_tasks"`
 	SequenceNumber     uint32                   `json:"sequence_number"`
 	ExternalDetails    []map[string]interface{} `json:"external_details"`
+}
+
+type UpdateSaleDetailsRequest struct {
+	SaleID     uint64                 `json:"sale_id"`
+	NewDetails map[string]interface{} `json:"new_details"`
 }

@@ -10,8 +10,8 @@ import (
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
-	"gitlab.com/swarmfund/go/signcontrol"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
 )
@@ -112,6 +112,7 @@ func initWebActions(app *App) {
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
 		xdr.OperationTypeCheckSaleState,
+		xdr.OperationTypePaymentV2,
 	}
 
 	r := app.web.router
@@ -129,10 +130,7 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
 	r.Get("/accounts/:id/summary", &AccountSummaryAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
-	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{
-		// TODO: fix me
-		ConvertToAsset: "SUN",
-	})
+	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{})
 
 	r.Get("/accounts/:account_id/signers/:id", &SignerShowAction{})
 	r.Get("/accounts/:account_id/operations", &OperationIndexAction{}, 1)
@@ -177,6 +175,7 @@ func initWebActions(app *App) {
 	})
 
 	r.Get("/payment_requests/:id", &PaymentRequestShowAction{})
+
 
 	//get fees action
 	r.Get("/fees", &FeesAllAction{})
@@ -292,6 +291,9 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateKyc},
 	})
+	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
+	})
 
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
@@ -329,7 +331,7 @@ func initWebActions(app *App) {
 		// (we rely on SignatureValidator middleware here)
 		signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" || app.config.DisableAPISubmit {
-			TransactionCreateAction{}.ServeHTTPC(c, w, r)
+			TransactionCreateAction{APIUrl: app.config.APIBackend}.ServeHTTPC(c, w, r)
 		} else {
 			apiProxy.ServeHTTP(w, r)
 		}

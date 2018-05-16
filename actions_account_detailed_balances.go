@@ -1,13 +1,15 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/exchange"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/tokend/go/xdr"
+	"github.com/go-errors/errors"
 )
 
 type AccountDetailedBalancesAction struct {
@@ -48,10 +50,39 @@ func (action *AccountDetailedBalancesAction) JSON() {
 
 func (action *AccountDetailedBalancesAction) loadParams() {
 	action.AccountID = action.GetNonEmptyString("id")
+	action.ConvertToAsset = action.getConvertToAsset("convert_to")
 }
 
 func (action *AccountDetailedBalancesAction) checkAllowed() {
 	action.IsAllowed(action.AccountID)
+}
+
+func (action *AccountDetailedBalancesAction) getConvertToAsset(fieldName string) string {
+	code := action.GetString(fieldName)
+	if code != "" {
+		return code
+	}
+
+	statsQuoteAsset, err := action.CoreQ().Assets().ForPolicy(uint32(xdr.AssetPolicyStatsQuoteAsset)).Select()
+	if err != nil {
+		action.Log.WithError(err).Error("failed to load stats quote asset")
+		action.Err = &problem.ServerError
+		return ""
+	}
+
+	if len(statsQuoteAsset) == 0 {
+		action.SetInvalidField(fieldName, errors.New("stats quote asset is not specified. Explicitly specify convert_to asset or create stats quote asset"))
+		return ""
+	}
+
+	if len(statsQuoteAsset) > 1 {
+		action.Log.Error("unexpected number of stats quote assets. Expected [0,1]")
+		action.Err = &problem.ServerError
+		return ""
+	}
+
+	return statsQuoteAsset[0].Code
+
 }
 
 func (action *AccountDetailedBalancesAction) loadBalances() {
@@ -143,6 +174,7 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 			return
 		}
 
+		r.ConvertedToAsset = action.ConvertToAsset
 		action.Resource = append(action.Resource, r)
 	}
 }
@@ -154,7 +186,7 @@ func convertAmount(balance int64, fromAsset, toAsset string, converter *exchange
 	}
 
 	if convertedAmount == nil {
-		return amount.String(balance), nil
+		return amount.String(0), nil
 	}
 
 	return amount.String(*convertedAmount), nil

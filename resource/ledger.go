@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/httpx"
 	"gitlab.com/swarmfund/horizon/render/hal"

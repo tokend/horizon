@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
-	"gitlab.com/swarmfund/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func checkCode(t *testing.T, code shortStr) {
@@ -132,8 +132,31 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
+	Convey("Manage external system account id pool entry", t, func() {
+		for _, code := range xdr.ManageExternalSystemAccountIdPoolEntryResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Bind external system account id", t, func() {
+		for _, code := range xdr.BindExternalSystemAccountIdResultCodeAll {
+			checkCode(t, code)
+		}
+	})
 	Convey("Create KYC request", t, func() {
 		for _, code := range xdr.CreateUpdateKycRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Payment V2", t, func() {
+		for _, code := range xdr.PaymentV2ResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Manage sale", t, func() {
+		for _, code := range xdr.ManageSaleResultCodeAll {
 			checkCode(t, code)
 		}
 	})

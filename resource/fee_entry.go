@@ -1,7 +1,7 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/go/amount"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
 )
 
@@ -15,6 +15,7 @@ type FeeEntry struct {
 	AccountType int32  `json:"account_type"`
 	LowerBound  string `json:"lower_bound"`
 	UpperBound  string `json:"upper_bound"`
+	FeeAsset    string `json:"fee_asset"`
 	Exists      bool   `json:"exists"`
 }
 
@@ -29,6 +30,10 @@ func (fee *FeeEntry) Populate(cfee core.FeeEntry) error {
 	fee.AccountType = cfee.AccountType
 	fee.LowerBound = amount.String(cfee.LowerBound)
 	fee.UpperBound = amount.String(cfee.UpperBound)
+	fee.FeeAsset = cfee.FeeAsset
+	if fee.FeeAsset == "" {
+		fee.FeeAsset = cfee.Asset
+	}
 	fee.Exists = true
 	return nil
 }
