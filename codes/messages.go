@@ -171,6 +171,7 @@ var messages = map[string]string{
 	"op_invalid_new_details":                         "New sale details is invalid JSON",
 	"op_update_details_request_already_exists":       "Update sale details request already exists",
 	"op_update_details_request_not_found":            "Update sale details request to amend not found",
+	"op_kyc_rule_not_found":						  "KYC rule not found",
 }
 
 func getMessage(rawCode string) string {
