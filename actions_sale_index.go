@@ -6,10 +6,10 @@ import (
 
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/swarmfund/horizon/exchange"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/swarmfund/horizon/exchange"
 )
 
 type Sort int64
@@ -19,20 +19,21 @@ const (
 	SortTypeMostFounded
 	SortTypeByEndTime
 	SortTypeByPopularity
+	SortTypeStartTime
 )
 
 // SaleIndexAction renders slice of reviewable requests
 type SaleIndexAction struct {
 	Action
-	Owner                string
-	BaseAsset            string
-	OpenOnly             bool
-	Upcoming             bool
-	SortType             *int64
-	Name                 string
-	Records              []history.Sale
-	PagingParams         db2.PageQuery
-	Page                 hal.Page
+	Owner        string
+	BaseAsset    string
+	OpenOnly     bool
+	Upcoming     bool
+	SortType     *int64
+	Name         string
+	Records      []history.Sale
+	PagingParams db2.PageQuery
+	Page         hal.Page
 }
 
 // JSON is a method for actions.JSON
@@ -59,11 +60,11 @@ func (action *SaleIndexAction) loadParams() {
 
 	action.SortType = action.GetOptionalInt64("sort_by")
 	action.Page.Filters = map[string]string{
-		"owner":                   action.Owner,
-		"base_asset":              action.BaseAsset,
-		"name":                    action.Name,
-		"open_only":               action.GetString("open_only"),
-		"upcoming":                action.GetString("upcoming"),
+		"owner":      action.Owner,
+		"base_asset": action.BaseAsset,
+		"name":       action.Name,
+		"open_only":  action.GetString("open_only"),
+		"upcoming":   action.GetString("upcoming"),
 	}
 }
 
@@ -98,6 +99,8 @@ func (action *SaleIndexAction) loadRecord() {
 	switch sortBy {
 	case SortTypeDefaultPage:
 		q = q.Page(action.PagingParams)
+	case SortTypeStartTime:
+		q = q.OrderByStartTime()
 	case SortTypeByEndTime:
 		q = q.OrderByEndTime()
 	case SortTypeByPopularity:
