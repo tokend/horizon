@@ -7,8 +7,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/zenazn/goji/web"
-	"gitlab.com/tokend/go/signcontrol"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/actions"
 	"gitlab.com/swarmfund/horizon/cache"
 	"gitlab.com/swarmfund/horizon/db2"
@@ -19,6 +17,8 @@ import (
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/toid"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Action is the "base type" for all actions in horizon.  It provides
@@ -180,7 +180,7 @@ func (action *Action) Prepare(c web.C, w http.ResponseWriter, r *http.Request) {
 
 	base.SkipCheck = action.App.config.SkipCheck //pass config variable to base (since base can't read one)
 
-	base.Signer = r.Header.Get(signcontrol.PublicKeyHeader)
+	base.Signer, _ = signcontrol.CheckSignature(r)
 
 	if action.Ctx != nil {
 		action.Log = log.Ctx(action.Ctx)
