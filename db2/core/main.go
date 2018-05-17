@@ -5,8 +5,8 @@ package core
 import (
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // LedgerHeader is row of data from the `ledgerheaders` table
@@ -93,6 +93,7 @@ type QInterface interface {
 
 	// ExternalSystemAccountID - returns builder to access external system account IDs
 	ExternalSystemAccountID() ExternalSystemAccountIDQI
+	ExternalSystemAccountIDPool() *ExternalSystemAccountIDPoolQ
 
 	References() *ReferenceQ
 }
@@ -192,4 +193,8 @@ func (q *Q) AssetPairs() AssetPairsQ {
 		parent: q,
 		sql:    selectAssetPair,
 	}
+}
+
+func (q *Q) ExternalSystemAccountIDPool() *ExternalSystemAccountIDPoolQ {
+	return NewExternalSystemAccountIDPoolQ(q)
 }

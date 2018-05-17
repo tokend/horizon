@@ -374,6 +374,12 @@
 
 [[projects]]
   branch = "master"
+  name = "gitlab.com/tokend/regources"
+  packages = ["."]
+  revision = "ecbffe29f291da2f85844e0faa7c65922cd86abf"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/crypto"
   packages = [
     "ed25519",
@@ -461,6 +467,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9c3b1786d0ea8af7f4d3852d1985420b2acb6f9281b5abf89861c80370a4667f"
+  inputs-digest = "4b2a458bc3b571a2ee6dff8a8f97bf6db14dba2daa201dc9868a11cd8bda94b8"
   solver-name = "gps-cdcl"
   solver-version = 1

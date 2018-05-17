@@ -366,6 +366,14 @@ func (action SignersIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *h
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action StatisticsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "StatisticsAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action TradesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
