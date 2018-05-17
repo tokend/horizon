@@ -359,7 +359,7 @@
     "strkey",
     "xdr"
   ]
-  revision = "deb61e84c1daf872d480403b5ac81e8e6a7a8e45"
+  revision = "81b1695749aef6f99e6fe73e5cc9588514152de3"
 
 [[projects]]
   branch = "master"

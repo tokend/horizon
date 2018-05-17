@@ -11,8 +11,8 @@ import (
 
 type KeyValueShowAction struct {
 	Action
-	Key string
-	KeyValueRecord *core.KeyValue
+	key string
+	keyValueRecord *core.KeyValue
 }
 
 func (action *KeyValueShowAction) JSON() {
@@ -21,7 +21,7 @@ func (action *KeyValueShowAction) JSON() {
 		action.loadRecord,
 		func() {
 			var res keyvalue.KeyValue
-			err := res.Populate(action.KeyValueRecord)
+			err := res.Populate(action.keyValueRecord)
 			if err != nil {
 				action.Log.WithError(err).Error("Failed to populate key_value")
 				action.Err = &problem.ServerError
@@ -33,20 +33,20 @@ func (action *KeyValueShowAction) JSON() {
 }
 
 func (action *KeyValueShowAction) loadParams(){
-	action.Key = action.GetString("key")
+	action.key = action.GetString("key")
 }
 
 func (action *KeyValueShowAction) loadRecord() {
 	var err error
 	q := action.CoreQ().KeyValue()
-	action.KeyValueRecord, err = q.ByKey(action.Key)
+	action.keyValueRecord, err = q.ByKey(action.key)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get key_value from core DB")
 		action.Err = &problem.ServerError
 		return
 	}
 
-	if action.KeyValueRecord == nil {
+	if action.keyValueRecord == nil {
 		action.Err = &problem.NotFound
 		return
 	}
@@ -54,21 +54,15 @@ func (action *KeyValueShowAction) loadRecord() {
 
 type KeyValueShowAllAction struct {
 	Action
-	CoreRecord []core.KeyValue
+	coreRecords 	[]core.KeyValue
+	recordsToRender []keyvalue.KeyValue
 }
 
 func (action *KeyValueShowAllAction) JSON() {
 	action.Do(
 		action.loadRecord,
 		func() {
-			res, err := action.getPopulatedKeyValues()
-			if err != nil {
-				action.Log.WithError(err).Error("Failed to populate all key_values")
-				action.Err = &problem.ServerError
-				return
-			}
-
-			hal.Render(action.W, res)
+			hal.Render(action.W, action.recordsToRender)
 		},
 	)
 }
@@ -76,22 +70,24 @@ func (action *KeyValueShowAllAction) JSON() {
 func (action *KeyValueShowAllAction) loadRecord() {
 	var err error
 	q := action.CoreQ().KeyValue()
-	action.CoreRecord, err = q.All()
+	action.coreRecords, err = q.Select()
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get all key_values from core DB")
 		action.Err = &problem.ServerError
 		return
 	}
 
-	if action.CoreRecord == nil {
-		action.Err = &problem.NotFound
+	action.recordsToRender, err = action.getPopulatedKeyValues()
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to populate all key_values")
+		action.Err = &problem.ServerError
 		return
 	}
 }
 
 func (action *KeyValueShowAllAction) getPopulatedKeyValues() ([]keyvalue.KeyValue, error){
 	var res []keyvalue.KeyValue
-	for i, keyValue := range action.CoreRecord {
+	for i, keyValue := range action.coreRecords {
 		res = append(res, keyvalue.KeyValue{})
 		err := res[i].Populate(&keyValue)
 		if err != nil {

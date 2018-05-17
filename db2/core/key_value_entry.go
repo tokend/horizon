@@ -15,7 +15,7 @@ func (k *KeyValueEntry) Scan(src interface{}) error {
 	case string:
 		data = rawData
 	default:
-		return errors.New("Unexpected type")
+		return errors.New("Unexpected type for KeyValueEntry")
 	}
 
 	err := xdr.SafeUnmarshalBase64(data,k)
@@ -27,6 +27,6 @@ func (k *KeyValueEntry) Scan(src interface{}) error {
 }
 
 type KeyValue struct {
-	Key		 string         `db:"key"`
+	Key 	 string         `db:"key"`
 	Value    KeyValueEntry 	`db:"value"`
 }

@@ -11,7 +11,7 @@ var selectKeyValue = sq.Select("kv.key", "kv.value").From("key_value_entry kv")
 type KeyValueQI interface {
 	// ByKey - selects KeyValue by key. Returns nil, nil if not found
 	ByKey(key string) (*KeyValue, error)
-	All() ([]KeyValue, error)
+	Select() ([]KeyValue, error)
 }
 
 type KeyValueQ struct {
@@ -40,8 +40,8 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 	return &result, nil
 }
 
-// All selects all existing KeyValues. Returns nil, nil if not found
-func (q KeyValueQ) All() ([]KeyValue, error){
+// Select selects all existing KeyValues. Returns nil, nil if not found
+func (q KeyValueQ) Select() ([]KeyValue, error){
 	if q.Err != nil {
 		return nil, q.Err
 	}
