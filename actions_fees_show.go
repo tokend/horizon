@@ -88,6 +88,10 @@ func (action *FeesShowAction) loadData() {
 		result.FeeType = action.FeeType
 	}
 
+	if result.FeeAsset == "" {
+		result.FeeAsset = result.Asset
+	}
+
 	if result.Asset != result.FeeAsset {
 		action.Amount, err = convertAmount(am, result.Asset, result.FeeAsset, action.converter)
 		if err != nil {
