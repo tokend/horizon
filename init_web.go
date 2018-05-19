@@ -112,6 +112,7 @@ func initWebActions(app *App) {
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeManageInvoice,
 		xdr.OperationTypeCheckSaleState,
+		xdr.OperationTypeManageKeyValue,
 		xdr.OperationTypePaymentV2,
 	}
 
@@ -138,6 +139,10 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
+
+	//keyValue actions
+	r.Get("/key_value", &KeyValueShowAllAction{})
+	r.Get("/key_value/:key", &KeyValueShowAction{})
 
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})

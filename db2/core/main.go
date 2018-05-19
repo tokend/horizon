@@ -82,6 +82,8 @@ type QInterface interface {
 	Assets() AssetQI
 	// Balances - creates new balances query builder
 	Balances() BalancesQI
+	//KeyValue - creates new KeyValue query helper
+	KeyValue() KeyValueQI
 
 	Trusts() *TrustQ
 	Offers() *OfferQ
@@ -175,6 +177,13 @@ func (q *Q) Assets() AssetQI {
 	return &assetQ{
 		parent: q,
 		sql:    selectAsset,
+	}
+}
+
+func (q *Q) KeyValue() KeyValueQI {
+	return &KeyValueQ{
+		parent:	q,
+		sql:	selectKeyValue,
 	}
 }
 

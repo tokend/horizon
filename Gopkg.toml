@@ -96,7 +96,7 @@
 
 [[constraint]]
   name = "gitlab.com/distributed_lab/logan"
-  version = "=3.0"
+  version = "3.0"
 
 [[constraint]]
   branch = "master"
@@ -107,7 +107,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[constraint]]
-  branch = "feature/specify_required_hardcap"
+  branch = "feature/key_value"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
