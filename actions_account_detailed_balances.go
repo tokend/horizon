@@ -17,7 +17,6 @@ type AccountDetailedBalancesAction struct {
 	converter *exchange.Converter
 
 	AccountID      string
-	ConvertToAsset string
 
 	Balances []core.Balance
 	Assets   []core.Asset
@@ -50,7 +49,6 @@ func (action *AccountDetailedBalancesAction) JSON() {
 
 func (action *AccountDetailedBalancesAction) loadParams() {
 	action.AccountID = action.GetNonEmptyString("id")
-	action.ConvertToAsset = action.getConvertToAsset("convert_to")
 }
 
 func (action *AccountDetailedBalancesAction) checkAllowed() {
@@ -146,6 +144,15 @@ func (action *AccountDetailedBalancesAction) loadSales() {
 }
 
 func (action *AccountDetailedBalancesAction) loadResource() {
+	var convertToAsset string
+	if len(action.Balances) != 0 {
+		convertToAsset = action.getConvertToAsset("convert_to")
+		if action.Err != nil {
+			return
+		}
+	}
+
+
 	for _, record := range action.Balances {
 		var r resource.Balance
 		r.Populate(record)
@@ -160,21 +167,21 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 		r.AssetDetails.Sales = findAllSalesForAsset(asset.Code, action.Sales)
 
 		var err error
-		r.ConvertedBalance, err = convertAmount(record.Amount, r.Asset, action.ConvertToAsset, action.converter)
+		r.ConvertedBalance, err = convertAmount(record.Amount, r.Asset, convertToAsset, action.converter)
 		if err != nil {
 			action.Log.WithError(err).Error("Failed to convert balance")
 			action.Err = &problem.ServerError
 			return
 		}
 
-		r.ConvertedLocked, err = convertAmount(record.Locked, r.Asset, action.ConvertToAsset, action.converter)
+		r.ConvertedLocked, err = convertAmount(record.Locked, r.Asset, convertToAsset, action.converter)
 		if err != nil {
 			action.Log.WithError(err).Error("failed to convert locked amount")
 			action.Err = &problem.ServerError
 			return
 		}
 
-		r.ConvertedToAsset = action.ConvertToAsset
+		r.ConvertedToAsset = convertToAsset
 		action.Resource = append(action.Resource, r)
 	}
 }
