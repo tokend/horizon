@@ -83,15 +83,16 @@ type WithdrawalRequest struct {
 }
 
 type SaleRequest struct {
-	BaseAsset         string                 `json:"base_asset"`
-	DefaultQuoteAsset string                 `json:"quote_asset"`
-	StartTime         time.Time              `json:"start_time"`
-	EndTime           time.Time              `json:"end_time"`
-	SoftCap           string                 `json:"soft_cap"`
-	HardCap           string                 `json:"hard_cap"`
-	Details           map[string]interface{} `json:"details"`
-	QuoteAssets       []SaleQuoteAsset       `json:"quote_assets"`
-	SaleType          xdr.SaleType           `json:"sale_type"`
+	BaseAsset           string                 `json:"base_asset"`
+	DefaultQuoteAsset   string                 `json:"quote_asset"`
+	StartTime           time.Time              `json:"start_time"`
+	EndTime             time.Time              `json:"end_time"`
+	SoftCap             string                 `json:"soft_cap"`
+	HardCap             string                 `json:"hard_cap"`
+	Details             map[string]interface{} `json:"details"`
+	QuoteAssets         []SaleQuoteAsset       `json:"quote_assets"`
+	SaleType            xdr.SaleType           `json:"sale_type"`
+	BaseAssetForHardCap string                 `json:"base_asset_for_hard_cap"`
 }
 
 type SaleQuoteAsset struct {

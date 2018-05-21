@@ -198,16 +198,23 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 		saleType = request.Ext.SaleTypeExt.TypedSale.SaleType
 	}
 
+	var baseAssetForHardCap uint64 = 0
+	if extV2, ok := request.Ext.GetExtV2(); ok {
+		baseAssetForHardCap = uint64(extV2.RequiredBaseAssetForHardCap)
+		saleType = extV2.SaleTypeExt.TypedSale.SaleType
+	}
+
 	return &history.SaleRequest{
-		BaseAsset:         string(request.BaseAsset),
-		DefaultQuoteAsset: string(request.DefaultQuoteAsset),
-		StartTime:         time.Unix(int64(request.StartTime), 0).UTC(),
-		EndTime:           time.Unix(int64(request.EndTime), 0).UTC(),
-		SoftCap:           amount.StringU(uint64(request.SoftCap)),
-		HardCap:           amount.StringU(uint64(request.HardCap)),
-		Details:           details,
-		QuoteAssets:       quoteAssets,
-		SaleType:          saleType,
+		BaseAsset:           string(request.BaseAsset),
+		DefaultQuoteAsset:   string(request.DefaultQuoteAsset),
+		StartTime:           time.Unix(int64(request.StartTime), 0).UTC(),
+		EndTime:             time.Unix(int64(request.EndTime), 0).UTC(),
+		SoftCap:             amount.StringU(uint64(request.SoftCap)),
+		HardCap:             amount.StringU(uint64(request.HardCap)),
+		Details:             details,
+		QuoteAssets:         quoteAssets,
+		SaleType:            saleType,
+		BaseAssetForHardCap: amount.StringU(baseAssetForHardCap),
 	}
 }
 
