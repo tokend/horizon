@@ -112,7 +112,8 @@ func ForOperation(
 	case xdr.OperationTypeCreateIssuanceRequest:
 		manageIssuanceRequest := op.Body.MustCreateIssuanceRequestOp()
 		manageIssuanceResult := opResult.MustCreateIssuanceRequestResult()
-		if sourceParticipant.AccountID.Address() != manageIssuanceResult.MustSuccess().Receiver.Address() {
+		receiver := manageIssuanceResult.MustSuccess().Receiver
+		if sourceParticipant.AccountID.Address() != receiver.Address() {
 			result = append(result, Participant{manageIssuanceResult.MustSuccess().Receiver,
 				&manageIssuanceRequest.Request.Receiver, nil})
 		}
