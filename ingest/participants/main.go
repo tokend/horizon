@@ -152,6 +152,8 @@ func ForOperation(
 		sourceParticipant.BalanceID = &paymentOpV2.SourceBalanceId
 	case xdr.OperationTypeManageSale:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeManageKeyValue:
+		// the only direct participant is the source_account
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

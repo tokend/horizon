@@ -42,6 +42,17 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["subject"] = op.Subject
 		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["asset"] = opResult.PaymentResponse.Asset
+
+
+	case xdr.OperationTypeManageKeyValue:
+		op := c.Operation().Body.MustManageKeyValueOp()
+		details["source"] = source
+		details["key"] = op.Key
+		details["action"] = op.Action
+		if op.Action.Action != xdr.ManageKvActionDelete {
+			details["value"] = op.Action.Value.Value
+		}
+
 	case xdr.OperationTypeSetOptions:
 		op := c.Operation().Body.MustSetOptionsOp()
 

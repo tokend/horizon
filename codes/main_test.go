@@ -160,4 +160,10 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
+
+	Convey("Manage key value", t, func() {
+		for _, code := range xdr.ManageKeyValueResultCodeAll {
+			checkCode(t, code)
+		}
+	})
 }
