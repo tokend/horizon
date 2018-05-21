@@ -109,9 +109,17 @@ func (action *AccountShowAction) loadExternalSystemAccountIDs() {
 		return
 	}
 
-	action.Resource.ExternalSystemAccounts = make([]resource.ExternalSystemAccountID, len(exSysIDs))
+	action.Resource.ExternalSystemAccounts = make([]resource.ExternalSystemAccountID, 0, len(exSysIDs))
 	for i := range exSysIDs {
-		action.Resource.ExternalSystemAccounts[i].Populate(exSysIDs[i])
+		if exSysIDs[i].ExpiresAt == nil {
+			var distantFuture = time.Now().Unix() * 2
+			exSysIDs[i].ExpiresAt = &distantFuture
+		}
+
+		if *exSysIDs[i].ExpiresAt >= time.Now().Unix() {
+			action.Resource.ExternalSystemAccounts = append(action.Resource.ExternalSystemAccounts, resource.ExternalSystemAccountID{})
+			action.Resource.ExternalSystemAccounts[i].Populate(exSysIDs[i])
+		}
 	}
 }
 

@@ -25,7 +25,7 @@ func (q *externalSystemAccountIDQ) ForAccount(accountID string) ExternalSystemAc
 		return q
 	}
 
-	q.sql = q.sql.Where("account_id = ?", accountID)
+	q.sql = q.sql.Where("esa.account_id = ?", accountID)
 	return q
 }
 
@@ -45,5 +45,11 @@ func (q *externalSystemAccountIDQ) Select() ([]ExternalSystemAccountID, error) {
 	return result, err
 }
 
-var selectExternalSystemAccountIDs = sq.Select("account_id", "external_system_type", "data").
-	From("external_system_account_id")
+var selectExternalSystemAccountIDs = sq.Select(
+	"esa.account_id",
+	"esa.external_system_type",
+	"esa.data",
+	"p.expires_at as pool_entry_expires_at").
+	From("external_system_account_id esa").
+	LeftJoin("external_system_account_id_pool p on (p.account_id = esa.account_id AND " +
+	"p.external_system_type = esa.external_system_type)")
