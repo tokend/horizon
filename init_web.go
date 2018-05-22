@@ -10,10 +10,10 @@ import (
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
-	"gitlab.com/tokend/go/signcontrol"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Web contains the http server related fields for horizon: the router,
@@ -118,6 +118,8 @@ func initWebActions(app *App) {
 
 	r := app.web.router
 	r.Get("/", &RootAction{})
+	// system summary variables too verbose to be included into /
+	r.Get("/statistics", &StatisticsAction{})
 	r.Get("/metrics", &MetricsAction{})
 
 	// ledger actions
@@ -180,7 +182,6 @@ func initWebActions(app *App) {
 	})
 
 	r.Get("/payment_requests/:id", &PaymentRequestShowAction{})
-
 
 	//get fees action
 	r.Get("/fees", &FeesAllAction{})
@@ -265,7 +266,7 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeLimitsUpdate},
 	})
-		r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
+	r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			account := action.GetString("account_to_update_kyc")
 			maskSet := action.GetInt64("mask_set")
