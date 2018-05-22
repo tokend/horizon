@@ -112,11 +112,8 @@ func ForOperation(
 	case xdr.OperationTypeCreateIssuanceRequest:
 		manageIssuanceRequest := op.Body.MustCreateIssuanceRequestOp()
 		manageIssuanceResult := opResult.MustCreateIssuanceRequestResult()
-		receiver := manageIssuanceResult.MustSuccess().Receiver
-		if sourceParticipant.AccountID.Address() != receiver.Address() {
-			result = append(result, Participant{manageIssuanceResult.MustSuccess().Receiver,
-				&manageIssuanceRequest.Request.Receiver, nil})
-		}
+		result = append(result, Participant{manageIssuanceResult.MustSuccess().Receiver,
+			&manageIssuanceRequest.Request.Receiver, nil})
 	case xdr.OperationTypeCreateSaleRequest:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCheckSaleState:
