@@ -3,12 +3,14 @@ package resource
 import (
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/resource/base"
+	"time"
 )
 
 type ExternalSystemAccountID struct {
 	Type      base.Flag `json:"type"`
 	Data      string    `json:"data"`
-	AssetCode string    `json:"asset_code"`
+	AssetCode string    `json:"asset_code,omitempty"`
+	ExpiresAt string    `json:"expires_at,omitempty"`
 }
 
 func (id *ExternalSystemAccountID) Populate(coreRecord core.ExternalSystemAccountID) {
@@ -22,4 +24,9 @@ func (id *ExternalSystemAccountID) Populate(coreRecord core.ExternalSystemAccoun
 	}
 	id.Type.Value = int32(coreRecord.ExternalSystemType)
 	id.Data = coreRecord.Data
+
+	// check out actions_account.go to find ExpiresAt default value
+	if coreRecord.ExpiresAt != nil {
+		id.ExpiresAt = time.Unix(*coreRecord.ExpiresAt, 0).Format(time.RFC3339)
+	}
 }
