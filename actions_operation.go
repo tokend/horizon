@@ -240,7 +240,7 @@ func (action *OperationIndexAction) loadPage() {
 		}
 
 		// add operation 2 time if it's within one account
-		if len(opParticipants.Participants) == 2 && record.Type != xdr.OperationTypeManageOffer &&
+		if len(opParticipants.Participants) == 2 && record.Type != xdr.OperationTypeManageOffer && record.Type != xdr.OperationTypeCreateIssuanceRequest &&
 			opParticipants.Participants[0].AccountID == opParticipants.Participants[1].AccountID {
 
 			action.Page.Add(res)
