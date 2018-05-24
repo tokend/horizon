@@ -4,7 +4,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/resource/keyvalue"
+	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/logan/v3"
 )
@@ -20,7 +20,7 @@ func (action *KeyValueShowAction) JSON() {
 		action.loadParams,
 		action.loadRecord,
 		func() {
-			var res keyvalue.KeyValue
+			var res resource.KeyValue
 			err := res.Populate(action.keyValueRecord)
 			if err != nil {
 				action.Log.WithError(err).Error("Failed to populate key_value")
@@ -55,7 +55,7 @@ func (action *KeyValueShowAction) loadRecord() {
 type KeyValueShowAllAction struct {
 	Action
 	coreRecords 	[]core.KeyValue
-	recordsToRender []keyvalue.KeyValue
+	recordsToRender []resource.KeyValue
 }
 
 func (action *KeyValueShowAllAction) JSON() {
@@ -85,10 +85,10 @@ func (action *KeyValueShowAllAction) loadRecord() {
 	}
 }
 
-func (action *KeyValueShowAllAction) getPopulatedKeyValues() ([]keyvalue.KeyValue, error){
-	var res []keyvalue.KeyValue
+func (action *KeyValueShowAllAction) getPopulatedKeyValues() ([]resource.KeyValue, error){
+	var res []resource.KeyValue
 	for i, keyValue := range action.coreRecords {
-		res = append(res, keyvalue.KeyValue{})
+		res = append(res, resource.KeyValue{})
 		err := res[i].Populate(&keyValue)
 		if err != nil {
 			return nil, errors.Wrap(err, "Failed to populate key_value", logan.F{

@@ -49,7 +49,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["source"] = source
 		details["key"] = op.Key
 		details["action"] = op.Action
-		if op.Action.Action != xdr.ManageKvActionDelete {
+		if op.Action.Action != xdr.ManageKvActionRemove {
 			details["value"] = op.Action.Value.Value
 		}
 
