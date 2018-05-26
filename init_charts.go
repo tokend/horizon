@@ -6,13 +6,13 @@ import (
 	"fmt"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/charts"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/exchange"
 	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func initCharts(app *App) {
@@ -148,6 +148,7 @@ func (c *Charts) Set(name string, ts time.Time, value int64) {
 		histograms = make(map[string]*charts.Histogram)
 		histograms["hour"] = charts.NewHistogram(1*time.Hour, 360)
 		histograms["day"] = charts.NewHistogram(24*time.Hour, 360)
+		histograms["week"] = charts.NewHistogram(7*24*time.Hour, 360)
 		histograms["month"] = charts.NewHistogram(30*24*time.Hour, 360)
 		histograms["year"] = charts.NewHistogram(365*24*time.Hour, 360)
 		c.histograms[name] = histograms
