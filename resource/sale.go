@@ -62,20 +62,17 @@ func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) error 
 	if len(offers) == 0 && len(balances) == 0 {
 		return nil
 	}
-	sum := big.NewInt(0)
+
 	uniqueInvestors := make(map[string]bool)
 	for _, offer := range offers {
-		sum = sum.Add(sum, big.NewInt(offer.QuoteAmount))
 		uniqueInvestors[offer.OwnerID] = true
 	}
 
-	balanceSum := big.NewInt(0)
 	for _, balance := range balances {
 		if balance.Amount == 0 {
 			continue
 		}
 		uniqueInvestors[balance.AccountID] = true
-		balanceSum = balanceSum.Add(balanceSum, big.NewInt(balance.Amount))
 	}
 
 	quantity := len(uniqueInvestors)

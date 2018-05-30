@@ -132,6 +132,14 @@ func (action *SaleIndexAction) loadPage() {
 	for i := range action.Records {
 		var res resource.Sale
 		res.Populate(&action.Records[i])
+		err := populateSaleWithStats(action.Records[i].ID, &res, action.CoreQ())
+		if err != nil {
+			action.Log.WithError(err).
+				WithField("sale_id", action.Records[i].ID).
+				Error("failed to populate stat for sale")
+			action.Err = &problem.ServerError
+			return
+		}
 		action.Page.Add(&res)
 	}
 

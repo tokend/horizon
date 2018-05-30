@@ -16,8 +16,6 @@ type SaleShowAction struct {
 	Action
 	RequestID uint64
 	Record    *history.Sale
-	offers    []core.Offer
-	balances  []core.Balance
 	result    resource.Sale
 }
 
@@ -57,27 +55,6 @@ func (action *SaleShowAction) loadRecord() {
 	err = action.populateTotalCurrentCap()
 	if err != nil {
 		action.Log.WithError(err).Error("failed to populate total current cap")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	action.offers = make([]core.Offer, 0)
-	err = action.CoreQ().Offers().
-		ForOrderBookID(action.Record.ID).Select(&action.offers)
-	if err != nil {
-		action.Log.WithError(err).
-			WithField("sale_id", action.Record.ID).
-			Error("failed to load offers for sale")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	action.balances, err = action.CoreQ().Balances().
-		ByAsset(action.Record.BaseAsset).Select()
-	if err != nil {
-		action.Log.WithError(err).
-			WithField("sale_id", action.Record.ID).
-			Error("failed to load base asset balances for sale")
 		action.Err = &problem.ServerError
 		return
 	}
@@ -126,7 +103,7 @@ func (action *SaleShowAction) populateTotalCurrentCap() error {
 
 func (action *SaleShowAction) populateResult() {
 	action.result.Populate(action.Record)
-	err := action.result.PopulateStat(action.offers, action.balances)
+	err := populateSaleWithStats(action.Record.ID, &action.result, action.CoreQ())
 	if err != nil {
 		action.Log.WithError(err).
 			WithField("request_id", action.RequestID).
@@ -134,6 +111,32 @@ func (action *SaleShowAction) populateResult() {
 		action.Err = &problem.ServerError
 		return
 	}
+}
+
+func populateSaleWithStats(saleID uint64, sale *resource.Sale, q core.QInterface) error {
+	var offers []core.Offer
+	err := q.Offers().ForOrderBookID(saleID).Select(&offers)
+	if err != nil {
+		return errors.Wrap(err, "failed to load offers for sale", map[string]interface{}{
+			"sale_id": saleID,
+		})
+	}
+
+	balances, err := q.Balances().ByAsset(sale.BaseAsset).Select()
+	if err != nil {
+		return errors.Wrap(err, "failed to load balances for sale's base asset", map[string]interface{}{
+			"sale_id": saleID,
+		})
+	}
+
+	err = sale.PopulateStat(offers, balances)
+	if err != nil {
+		return errors.Wrap(err, "failed to populate stats for sale", map[string]interface{}{
+			"sale_id": saleID,
+		})
+	}
+
+	return nil
 }
 
 func selectSalesWithCurrentCap(q history.SalesQ, converter *exchange.Converter) ([]history.Sale, error) {
