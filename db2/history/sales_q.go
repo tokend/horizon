@@ -29,6 +29,8 @@ type SalesQ interface {
 	Upcoming(now time.Time) SalesQ
 	// OrderByEndTime is set ordering by `end_time`.
 	OrderByEndTime() SalesQ
+	// OrderByStartTime is set ordering by `start_time`.
+	OrderByStartTime() SalesQ
 	// OrderByPopularity is merge with quantity of the
 	// unique investors for each sale, and sort sales by quantity.
 	OrderByPopularity(values db2.OrderBooksInvestors) SalesQ
@@ -164,7 +166,7 @@ func (q *saleQ) Update(sale Sale) error {
 		"state":               sale.State,
 		"base_hard_cap":       sale.BaseHardCap,
 		"base_current_cap":    sale.BaseCurrentCap,
-		"sale_type": sale.SaleType,
+		"sale_type":           sale.SaleType,
 	}).Where("id = ?", sale.ID)
 
 	_, err := q.parent.Exec(sql)
@@ -212,6 +214,16 @@ func (q *saleQ) Page(page db2.PageQuery) SalesQ {
 	}
 
 	q.sql, q.Err = page.ApplyTo(q.sql, "sale.id")
+	return q
+}
+
+// OrderByEndTime is set ordering by `start_time`.
+func (q *saleQ) OrderByStartTime() SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.OrderBy("start_time ASC")
 	return q
 }
 
