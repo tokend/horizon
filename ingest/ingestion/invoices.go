@@ -11,7 +11,7 @@ import (
 func (ingest *Ingestion) UpdateInvoice(
 	invoiceID xdr.Uint64,
 	state history.OperationState,
-	rejectReason *xdr.String256,
+	rejectReason *xdr.Longstring,
 ) error {
 	if rejectReason != nil {
 		err := ingest.ingestRejectReason(string(*rejectReason), uint64(invoiceID))

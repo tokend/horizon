@@ -155,6 +155,22 @@ func (is *Session) handleCheckSaleState(result xdr.CheckSaleStateSuccess) {
 
 }
 
+func (is *Session) handleManageSale(op *xdr.ManageSaleOp) {
+	if is.Err != nil {
+		return
+	}
+
+	if op.Data.Action != xdr.ManageSaleActionCancel {
+		return
+	}
+
+	err := is.Ingestion.HistoryQ().Sales().SetState(uint64(op.SaleId), history.SaleStateCanceled)
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to set state", logan.F{"sale_id": uint64(op.SaleId)})
+		return
+	}
+}
+
 func (is *Session) processManageAsset(op *xdr.ManageAssetOp) {
 	if is.Err != nil {
 		return
