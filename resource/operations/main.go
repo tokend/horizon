@@ -126,6 +126,10 @@ func New(
 		e := PaymentV2{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
+	case xdr.OperationTypeManageSale:
+		e := ManageSale{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
 	default:
 		result = base
 	}

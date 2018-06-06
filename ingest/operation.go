@@ -106,5 +106,8 @@ func (is *Session) operation() {
 				is.storeTrades(uint64(success.SaleId), closed.Results[i].SaleDetails)
 			}
 		}
+	case xdr.OperationTypeManageSale:
+		opManageSale := is.Cursor.Operation().Body.MustManageSaleOp()
+		is.handleManageSale(&opManageSale)
 	}
 }
