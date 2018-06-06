@@ -83,8 +83,12 @@ func (action *TransactionIndexAction) loadParams() {
 
 	action.PagingParams = action.GetPageQuery()
 
-	if action.PagingParams.Limit > maxTxPagSize {
-		action.PagingParams.Limit = maxTxPagSize
+	limit := action.GetUInt64("limit")
+	if limit > db2.MaxPageSize {
+		action.PagingParams.Limit = limit
+		if limit > maxTxPagSize {
+			action.PagingParams.Limit = maxTxPagSize
+		}
 	}
 }
 
