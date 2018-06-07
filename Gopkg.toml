@@ -107,7 +107,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[constraint]]
-  branch = "feature/cancel_sale"
+  branch = "master"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
