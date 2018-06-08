@@ -31,6 +31,7 @@ type SalesQ interface {
 	OrderByEndTime() SalesQ
 	// OrderByStartTime is set ordering by `start_time`.
 	OrderByStartTime() SalesQ
+	OrderById(order string) SalesQ
 	// OrderByPopularity is merge with quantity of the
 	// unique investors for each sale, and sort sales by quantity.
 	OrderByPopularity(values db2.OrderBooksInvestors) SalesQ
@@ -42,8 +43,6 @@ type SalesQ interface {
 	SetState(saleID uint64, state SaleState) error
 	// Select - selects slice of Sales using specified filters
 	Select() ([]Sale, error)
-	// Page specifies the paging constraints for the query being built by `q`.
-	Page(page db2.PageQuery) SalesQ
 }
 
 type saleQ struct {
@@ -224,6 +223,15 @@ func (q *saleQ) OrderByStartTime() SalesQ {
 	}
 
 	q.sql = q.sql.OrderBy("start_time ASC")
+	return q
+}
+
+// OrderById assumes order were validate beforehand and it's value is one of db accepts
+func (q *saleQ) OrderById(order string) SalesQ {
+	if q.Err != nil {
+		return q
+	}
+	q.sql = q.sql.OrderBy(fmt.Sprintf("sale.id %s", order))
 	return q
 }
 

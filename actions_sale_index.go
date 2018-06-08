@@ -98,7 +98,7 @@ func (action *SaleIndexAction) loadRecord() {
 
 	switch sortBy {
 	case SortTypeDefaultPage:
-		q = q.Page(action.PagingParams)
+		q = q.OrderById(action.PagingParams.Order)
 	case SortTypeStartTime:
 		q = q.OrderByStartTime()
 	case SortTypeByEndTime:
