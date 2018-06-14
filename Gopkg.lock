@@ -345,7 +345,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "master"
+  branch = "feature/sale_ante"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -359,7 +359,7 @@
     "strkey",
     "xdr"
   ]
-  revision = "1d40178b2154b2ea8924f0f0f3fe07d476540219"
+  revision = "b8b91f9751d7acf6946c3d526eb72c839e967a3e"
 
 [[projects]]
   branch = "master"
@@ -467,6 +467,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6820c8ae4c8d0a33d8d1b39bc7bcb072ea3b99559b06caaaff3718c720c25bbb"
+  inputs-digest = "1b4770a8dae5b7296f8f1f8a525a3632a6de139793290f9f033dd0cbd9eac5da"
   solver-name = "gps-cdcl"
   solver-version = 1
