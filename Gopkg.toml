@@ -100,10 +100,6 @@
 
 [[constraint]]
   branch = "master"
-  name = "gitlab.com/distributed_lab/notificator"
-
-[[constraint]]
-  branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
 [[constraint]]
