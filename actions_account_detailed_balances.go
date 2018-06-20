@@ -9,7 +9,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/tokend/go/xdr"
-	"github.com/go-errors/errors"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type AccountDetailedBalancesAction struct {
@@ -164,9 +164,14 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 		}
 
 		r.AssetDetails = asset
-		r.AssetDetails.Sales = findAllSalesForAsset(asset.Code, action.Sales)
-
 		var err error
+		r.AssetDetails.Sales, err = findAllSalesForAsset(action.CoreQ(), asset.Code, action.Sales)
+		if err != nil {
+			action.Log.WithError(err).Error("failed to find all sales for asset")
+			action.Err = &problem.ServerError
+			return
+		}
+		
 		r.ConvertedBalance, err = convertAmount(record.Amount, r.Asset, convertToAsset, action.converter)
 		if err != nil {
 			action.Log.WithError(err).Error("Failed to convert balance")
@@ -213,7 +218,7 @@ func findAssetByAssetCode(code string, assets []core.Asset) *resource.Asset {
 	return nil
 }
 
-func findAllSalesForAsset(code string, sales []history.Sale) []resource.Sale {
+func findAllSalesForAsset(q core.QInterface, code string, sales []history.Sale) ([]resource.Sale, error) {
 	var result []resource.Sale
 	for i := range sales {
 		if sales[i].BaseAsset != code {
@@ -222,8 +227,13 @@ func findAllSalesForAsset(code string, sales []history.Sale) []resource.Sale {
 
 		var sale resource.Sale
 		sale.Populate(&sales[i])
+
+		err := populateSaleWithStats(sales[i].ID, &sale, q)
+		if err != nil {
+			return nil, errors.Wrap(err ,"failed to populate sale with stats")
+		}
 		result = append(result, sale)
 	}
 
-	return result
+	return result, nil
 }
