@@ -5,6 +5,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 type SaleAnteAction struct {
@@ -83,9 +84,18 @@ func (action *SaleAnteAction) loadRecords() {
 }
 
 func (action *SaleAnteAction) loadPage() {
-	for i := range action.Records {
+	for _, saleAnte := range action.Records {
+		participantBalance, err := action.CoreQ().Balances().ByID(saleAnte.ParticipantBalanceID)
+		if err != nil || participantBalance == nil {
+			action.Log.WithError(err).WithFields(logan.F{
+				"sale_id":                saleAnte.SaleID,
+				"participant_balance_id": saleAnte.ParticipantBalanceID,
+			}).Error("Failed to get participant balance for sale ante from core DB")
+			action.Err = &problem.ServerError
+			return
+		}
 		var res resource.SaleAnte
-		res.Populate(&action.Records[i])
+		res.Populate(&saleAnte, participantBalance.Asset)
 		action.Page.Add(&res)
 	}
 
