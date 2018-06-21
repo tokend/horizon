@@ -89,6 +89,7 @@ type QInterface interface {
 	Offers() *OfferQ
 	OrderBook() *OrderBookQ
 	Sales() *SaleQ
+	SaleAntes() *SaleAnteQ
 
 	// AssetPairs - creates new asset pair query helper
 	AssetPairs() AssetPairsQ

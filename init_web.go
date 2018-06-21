@@ -306,6 +306,9 @@ func initWebActions(app *App) {
 	r.Get("/sales", &SaleIndexAction{})
 	r.Get("/core_sales", &CoreSalesAction{})
 
+	// Sale antes actions
+	r.Get("/sale_antes", &SaleAnteAction{})
+
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// DISCLAIMER: while following is true, it does not currently applies
 		// API does not accept transactions make sure DisableAPISubmit is set to true

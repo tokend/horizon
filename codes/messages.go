@@ -171,8 +171,10 @@ var messages = map[string]string{
 	"op_invalid_new_details":                         "New sale details is invalid JSON",
 	"op_update_details_request_already_exists":       "Update sale details request already exists",
 	"op_update_details_request_not_found":            "Update sale details request to amend not found",
-	"op_kyc_rule_not_found":						  "KYC rule not found",
-	"op_invalid_type":								  "Invalid key value type at KYC rule",
+	"op_kyc_rule_not_found":                          "KYC rule not found",
+	"op_invalid_type":                                "Invalid key value type at KYC rule",
+	"op_source_underfunded":                          "Source account underfunded",
+	"op_source_balance_lock_overflow":                "Overflow while locking amount from source balance",
 }
 
 func getMessage(rawCode string) string {
