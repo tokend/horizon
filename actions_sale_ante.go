@@ -9,10 +9,10 @@ import (
 
 type SaleAnteAction struct {
 	Action
-	CustomFilter         func(action *SaleAnteAction)
 	q                    core.SaleAnteQI
 	SaleID               string
 	ParticipantBalanceID string
+	ParticipantAccountID string
 	Records              []core.SaleAnte
 	Page                 hal.Page
 }
@@ -20,6 +20,7 @@ type SaleAnteAction struct {
 func (action *SaleAnteAction) JSON() {
 	action.Do(
 		action.loadParams,
+		action.loadParticipantAccountID,
 		action.checkAllowed,
 		action.loadRecords,
 		action.loadPage,
@@ -39,7 +40,7 @@ func (action *SaleAnteAction) loadParams() {
 }
 
 func (action *SaleAnteAction) checkAllowed() {
-	action.IsAllowed("")
+	action.IsAllowed(action.ParticipantAccountID)
 }
 
 func (action *SaleAnteAction) loadRecords() {
@@ -51,10 +52,6 @@ func (action *SaleAnteAction) loadRecords() {
 
 	if action.ParticipantBalanceID != "" {
 		action.q = action.q.ForBalance(action.ParticipantBalanceID)
-	}
-
-	if action.CustomFilter != nil {
-		action.CustomFilter(action)
 	}
 
 	if action.Err != nil {
@@ -81,4 +78,24 @@ func (action *SaleAnteAction) loadPage() {
 	action.Page.BaseURL = action.BaseURL()
 	action.Page.BasePath = action.Path()
 	action.Page.PopulateLinks()
+}
+
+func (action *SaleAnteAction) loadParticipantAccountID() {
+	if action.ParticipantBalanceID == "" {
+		return
+	}
+
+	participantBalance, err := action.CoreQ().Balances().ByID(action.ParticipantBalanceID)
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to get sale ante participant balance from core DB")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	if participantBalance == nil {
+		action.Err = &problem.BadRequest
+		return
+	}
+
+	action.ParticipantAccountID = participantBalance.AccountID
 }

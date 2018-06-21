@@ -307,17 +307,7 @@ func initWebActions(app *App) {
 	r.Get("/core_sales", &CoreSalesAction{})
 
 	// Sale antes actions
-	r.Get("/sale_antes", &SaleAnteAction{
-		CustomFilter: func(action *SaleAnteAction) {
-			saleID := action.GetString("sale_id")
-			participantBalanceID := action.GetString("participant_balance_id")
-			if action.Err != nil {
-				return
-			}
-			action.Page.Filters["sale_id"] = saleID
-			action.Page.Filters["participant_balance_id"] = participantBalanceID
-		},
-	})
+	r.Get("/sale_antes", &SaleAnteAction{})
 
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// DISCLAIMER: while following is true, it does not currently applies

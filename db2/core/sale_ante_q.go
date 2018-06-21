@@ -5,6 +5,8 @@ import sq "github.com/lann/squirrel"
 var _ SaleAnteQI = &SaleAnteQ{}
 
 type SaleAnteQI interface {
+	// returns nil, nil if sale ante not found
+	ByKey(balanceID string, saleID uint64) (*SaleAnte, error)
 	// filters by sale id
 	ForSale(saleID string) SaleAnteQI
 	// filters by balance id
@@ -24,6 +26,16 @@ func (q *Q) SaleAntes() *SaleAnteQ {
 		parent: q,
 		sql:    selectSaleAnte,
 	}
+}
+
+func (q *SaleAnteQ) ByKey(balanceID string, saleID uint64) (*SaleAnte, error) {
+	result := new(SaleAnte)
+	query := selectSaleAnte.Limit(1).Where("sa.sale_id = ? AND sa.participant_balance_id = ?", saleID, balanceID)
+	err := q.parent.Get(result, query)
+	if q.parent.NoRows(err) {
+		return nil, nil
+	}
+	return result, err
 }
 
 func (q *SaleAnteQ) ForSale(saleID string) SaleAnteQI {
