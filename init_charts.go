@@ -5,6 +5,7 @@ import (
 
 	"fmt"
 
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/charts"
 	"gitlab.com/swarmfund/horizon/db2"
@@ -22,6 +23,61 @@ func initCharts(app *App) {
 	)
 
 	app.charts = NewCharts()
+
+	// asset pair volume
+	listener.SubscribeRaw(func(tx history.Transaction) {
+		var txResult xdr.TransactionResult
+		if err := xdr.SafeUnmarshalBase64(tx.TxResult, &txResult); err != nil {
+			listener.log.WithError(err).Error("failed to decode tx result")
+			return
+		}
+
+		if txResult.Result.Results == nil {
+			return
+		}
+		//			  base              quote         value
+		result := map[xdr.AssetCode]map[xdr.AssetCode]int64{}
+		for _, operation := range *txResult.Result.Results {
+			if operation.Tr == nil {
+				continue
+			}
+			switch operation.Tr.Type {
+			case xdr.OperationTypeManageOffer:
+				opbody := operation.Tr.ManageOfferResult
+				if opbody.Code != xdr.ManageOfferResultCodeSuccess {
+					continue
+				}
+				if result[opbody.Success.BaseAsset] == nil {
+					result[opbody.Success.BaseAsset] = map[xdr.AssetCode]int64{}
+				}
+				for _, claim := range opbody.Success.OffersClaimed {
+					result[opbody.Success.BaseAsset][opbody.Success.QuoteAsset] += int64(claim.BaseAmount)
+				}
+			case xdr.OperationTypeCheckSaleState:
+				opbody := operation.Tr.CheckSaleStateResult
+				if opbody.Code != xdr.CheckSaleStateResultCodeSuccess {
+					continue
+				}
+				if opbody.Success.Effect.Effect != xdr.CheckSaleStateEffectClosed {
+					continue
+				}
+				effect := opbody.Success.Effect.SaleClosed
+				for _, effect := range effect.Results {
+					if result[effect.SaleDetails.BaseAsset] == nil {
+						result[effect.SaleDetails.BaseAsset] = map[xdr.AssetCode]int64{}
+					}
+					for _, claim := range effect.SaleDetails.OffersClaimed {
+						result[effect.SaleDetails.BaseAsset][effect.SaleDetails.QuoteAsset] += int64(claim.BaseAmount)
+					}
+				}
+			}
+		}
+		for base := range result {
+			for quote := range result[base] {
+				app.charts.Add(fmt.Sprintf("%s-%s-volume", base, quote), tx.LedgerCloseTime, result[base][quote])
+			}
+		}
+	})
 
 	// asset price initial value
 	listener.Subscribe(func(ts time.Time, change xdr.LedgerEntryChange) {
@@ -142,7 +198,16 @@ func (c *Charts) Get(name string) map[string]*charts.Histogram {
 	return c.histograms[name]
 }
 
-func (c *Charts) Set(name string, ts time.Time, value int64) {
+type updateType int
+
+const (
+	updateTypeSet updateType = iota + 1
+	updateTypeAdd
+)
+
+var errUnknownUpdateType = errors.New("unknown update type")
+
+func (c *Charts) update(tpe updateType, name string, ts time.Time, value int64) {
 	histograms, ok := c.histograms[name]
 	if !ok {
 		histograms = make(map[string]*charts.Histogram)
@@ -155,17 +220,37 @@ func (c *Charts) Set(name string, ts time.Time, value int64) {
 	}
 
 	for _, histogram := range histograms {
-		histogram.Run(value, ts)
+		switch tpe {
+		case updateTypeSet:
+			histogram.Run(value, ts)
+		case updateTypeAdd:
+			histogram.Add(value, ts)
+		default:
+			panic(errors.From(errUnknownUpdateType, logan.F{
+				"update_type": tpe,
+			}))
+		}
+
 	}
 }
 
+func (c *Charts) Set(name string, ts time.Time, value int64) {
+	c.update(updateTypeSet, name, ts, value)
+}
+
+func (c *Charts) Add(name string, ts time.Time, value int64) {
+	c.update(updateTypeAdd, name, ts, value)
+}
+
 type Subscriber func(time.Time, xdr.LedgerEntryChange)
+type RawSubscriber func(history.Transaction)
 
 type MetaListener struct {
-	log         *log.Entry
-	cursor      db2.PageQuery
-	txq         func() history.TransactionsQI
-	subscribers []Subscriber
+	log            *log.Entry
+	cursor         db2.PageQuery
+	txq            func() history.TransactionsQI
+	subscribers    []Subscriber
+	rawSubscribers []RawSubscriber
 }
 
 func NewMetaListener(log *log.Entry, txq func() history.TransactionsQI) *MetaListener {
@@ -182,6 +267,10 @@ func NewMetaListener(log *log.Entry, txq func() history.TransactionsQI) *MetaLis
 
 func (l *MetaListener) Subscribe(subscriber Subscriber) {
 	l.subscribers = append(l.subscribers, subscriber)
+}
+
+func (l *MetaListener) SubscribeRaw(subscriber RawSubscriber) {
+	l.rawSubscribers = append(l.rawSubscribers, subscriber)
 }
 
 func (l *MetaListener) Init() error {
@@ -208,6 +297,10 @@ func (l *MetaListener) processRecord(tx history.Transaction) error {
 	var meta xdr.TransactionMeta
 	if err := xdr.SafeUnmarshalBase64(tx.TxMeta, &meta); err != nil {
 		return errors.Wrap(err, "failed to unmarshal meta")
+	}
+
+	for _, subscriber := range l.rawSubscribers {
+		subscriber(tx)
 	}
 
 	for _, changes := range meta.MustOperations() {
