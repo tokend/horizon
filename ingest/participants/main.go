@@ -67,12 +67,8 @@ func ForOperation(
 	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAsset:
 	// the only direct participant is the source_accountWWW
-	case xdr.OperationTypeSetLimits:
-		setLimitsOp := op.Body.MustSetLimitsOp()
-		if setLimitsOp.Account != nil {
-			details := map[string]interface{}{}
-			details["account"] = setLimitsOp.Account
-		}
+	case xdr.OperationTypeManageLimits:
+	// the only direct participant is the source_account, but I'm not sure
 	case xdr.OperationTypeDirectDebit:
 		debitOp := op.Body.MustDirectDebitOp()
 		paymentOp := debitOp.PaymentOp
@@ -153,6 +149,8 @@ func ForOperation(
 	case xdr.OperationTypeManageSale:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeManageKeyValue:
+		// the only direct participant is the source_account
+	case xdr.OperationTypeCreateManageLimitsRequest:
 		// the only direct participant is the source_account
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)

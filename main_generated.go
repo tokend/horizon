@@ -46,18 +46,10 @@ func (action AccountSummaryAction) ServeHTTPC(c web.C, w http.ResponseWriter, r 
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action AccountTypeLimitsAllAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action LimitsV2ShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountTypeLimitsAllAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action AccountTypeLimitsShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountTypeLimitsShowAction")
+	action.Log = action.Log.WithField("action", "LimitsV2ShowAction")
 	ap.Execute(&action)
 }
 

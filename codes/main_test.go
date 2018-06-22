@@ -84,8 +84,8 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
-	Convey("SetLimits", t, func() {
-		for _, code := range xdr.SetLimitsResultCodeAll {
+	Convey("ManageLimits", t, func() {
+		for _, code := range xdr.ManageLimitsResultCodeAll {
 			checkCode(t, code)
 		}
 	})
@@ -163,6 +163,12 @@ func TestCodes(t *testing.T) {
 
 	Convey("Manage key value", t, func() {
 		for _, code := range xdr.ManageKeyValueResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Create manage limits request", t, func() {
+		for _, code := range xdr.ManageLimitsResultCodeAll {
 			checkCode(t, code)
 		}
 	})
