@@ -6,6 +6,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type SaleAnteAction struct {
@@ -40,18 +41,19 @@ func (action *SaleAnteAction) loadParams() {
 
 func (action *SaleAnteAction) checkAllowed() {
 	if action.ParticipantBalanceID == "" {
+		action.IsAllowed("")
 		return
 	}
 
 	participantBalance, err := action.CoreQ().Balances().ByID(action.ParticipantBalanceID)
 	if err != nil {
-		action.Log.WithError(err).Error("Failed to get sale ante participant balance from core DB")
+		action.Log.WithError(err).Error("failed to get sale ante participant balance from core DB")
 		action.Err = &problem.ServerError
 		return
 	}
 
 	if participantBalance == nil {
-		action.Err = &problem.BadRequest
+		action.SetInvalidField("participant_balance_id", errors.New("sale ante participant balance does not exist in core DB"))
 		return
 	}
 
@@ -77,7 +79,7 @@ func (action *SaleAnteAction) loadRecords() {
 
 	action.Records, err = action.q.Select()
 	if err != nil {
-		action.Log.WithError(err).Error("Failed to get sale antes from core DB")
+		action.Log.WithError(err).Error("failed to get sale antes from core DB")
 		action.Err = &problem.ServerError
 		return
 	}
@@ -90,7 +92,7 @@ func (action *SaleAnteAction) loadPage() {
 			action.Log.WithError(err).WithFields(logan.F{
 				"sale_id":                saleAnte.SaleID,
 				"participant_balance_id": saleAnte.ParticipantBalanceID,
-			}).Error("Failed to get participant balance for sale ante from core DB")
+			}).Error("failed to get participant balance for sale ante from core DB")
 			action.Err = &problem.ServerError
 			return
 		}
