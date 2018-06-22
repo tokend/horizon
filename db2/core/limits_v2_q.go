@@ -4,6 +4,7 @@ import(
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"database/sql"
+	"fmt"
 )
 
 var selectLimitsV2 = sq.Select("lim.id",
@@ -32,27 +33,28 @@ type LimitsV2Q struct {
 }
 
 func (q *LimitsV2Q) ForAccountByAccountType(accountID string, accountType int32) ([]LimitsV2Entry, error) {
-	result, err := q.ForAccount(accountID)
+	if q.Err != nil {
+		return nil, q.Err
+	}
+
+	accountIDStr := fmt.Sprintf("'%s'", accountID)
+
+	query := fmt.Sprintf("select distinct on (account_id, account_type)  id, " +
+		"account_type, account_id, stats_op_type, asset_code, is_convert_needed, daily_out, " +
+		"weekly_out, monthly_out, annual_out " +
+		"from limits_v2 " +
+		"where (account_type = %d or account_type is null) and (account_id = %s or account_id is null) " +
+		"order by account_id, account_type, stats_op_type desc", accountType, accountIDStr)
+
+	var result []LimitsV2Entry
+	err := q.parent.SelectRaw(&result, query)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to load limits_v2 for account by account type")
+		return nil, errors.Wrap(err, "Failed to load limits_v2 for account")
 	}
-
-	if result != nil {
-		return result, nil
-	}
-
-	result, err = q.ForAccountType(accountType)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed to load limits_v2 for account by account type")
-	}
-
-	if result != nil {
-		return result, nil
-	}
-
-	defaultLimits := new(LimitsV2Entry)
-	defaultLimits.SetDefaultLimits()
-	result = append(result, *defaultLimits)
 
 	return result, nil
 }
