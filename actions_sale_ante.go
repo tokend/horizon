@@ -40,6 +40,7 @@ func (action *SaleAnteAction) loadParams() {
 
 func (action *SaleAnteAction) checkAllowed() {
 	if action.ParticipantBalanceID == "" {
+		action.IsAllowed("")
 		return
 	}
 
@@ -51,6 +52,9 @@ func (action *SaleAnteAction) checkAllowed() {
 	}
 
 	if participantBalance == nil {
+		action.Log.WithError(err).
+			WithField("participant_balance_id", action.ParticipantBalanceID).
+			Error("Sale ante participant balance does not exist in core DB")
 		action.Err = &problem.BadRequest
 		return
 	}
