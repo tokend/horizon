@@ -17,9 +17,10 @@ type SaleCreationRequest struct {
 	BaseAssetForHardCap string                   `json:"base_asset_for_hard_cap"`
 	Details             map[string]interface{}   `json:"details"`
 	QuoteAssets         []history.SaleQuoteAsset `json:"quote_assets"`
+	State               base.Flag                `json:"state"`
 }
 
-func (r *SaleCreationRequest) Populate(histRequest history.SaleRequest) (error) {
+func (r *SaleCreationRequest) Populate(histRequest history.SaleRequest) error {
 	r.BaseAsset = histRequest.BaseAsset
 	r.DefaultQuoteAsset = histRequest.DefaultQuoteAsset
 	r.StartTime = histRequest.StartTime
@@ -31,5 +32,7 @@ func (r *SaleCreationRequest) Populate(histRequest history.SaleRequest) (error) 
 	r.SaleType.Value = int32(histRequest.SaleType)
 	r.SaleType.Name = histRequest.SaleType.ShortString()
 	r.BaseAssetForHardCap = histRequest.BaseAssetForHardCap
+	r.State.Value = int32(histRequest.State)
+	r.State.Name = histRequest.State.ShortString()
 	return nil
 }

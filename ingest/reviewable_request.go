@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -204,6 +204,11 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 		saleType = extV2.SaleTypeExt.TypedSale.SaleType
 	}
 
+	state := xdr.SaleStateNone
+	if request.Ext.ExtV3 != nil {
+		state = request.Ext.ExtV3.State
+	}
+
 	return &history.SaleRequest{
 		BaseAsset:           string(request.BaseAsset),
 		DefaultQuoteAsset:   string(request.DefaultQuoteAsset),
@@ -215,6 +220,7 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 		QuoteAssets:         quoteAssets,
 		SaleType:            saleType,
 		BaseAssetForHardCap: amount.StringU(baseAssetForHardCap),
+		State:               state,
 	}
 }
 
