@@ -5,8 +5,8 @@ import (
 
 	"database/sql/driver"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type ReviewableRequestDetails struct {
@@ -93,6 +93,7 @@ type SaleRequest struct {
 	QuoteAssets         []SaleQuoteAsset       `json:"quote_assets"`
 	SaleType            xdr.SaleType           `json:"sale_type"`
 	BaseAssetForHardCap string                 `json:"base_asset_for_hard_cap"`
+	State               xdr.SaleState          `json:"state"`
 }
 
 type SaleQuoteAsset struct {
