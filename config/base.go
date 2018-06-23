@@ -90,6 +90,21 @@ func (c *Base) getParsedURL(name string) (*url.URL, error) {
 	return parsed, nil
 }
 
+func (c *Base) getOptionalParsedURL(name string) (*url.URL, error) {
+	rawUrl := c.getString(name)
+	if rawUrl == "" {
+		// No URL is provided - it's OK value is optional
+		return nil, nil
+	}
+
+	parsed, err := url.Parse(rawUrl)
+	if err != nil {
+		return nil, c.invalidField(name, err.Error())
+	}
+
+	return parsed, nil
+}
+
 func (c *Base) getURLAsString(name string) (string, error) {
 	result, err := c.getParsedURL(name)
 	if err != nil {
