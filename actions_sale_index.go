@@ -29,6 +29,8 @@ type SaleIndexAction struct {
 	BaseAsset    string
 	OpenOnly     bool
 	Upcoming     bool
+	Voting       bool
+	Promotions   bool
 	SortType     *int64
 	Name         string
 	Records      []history.Sale
@@ -55,8 +57,11 @@ func (action *SaleIndexAction) loadParams() {
 	action.BaseAsset = action.GetString("base_asset")
 	action.Name = action.GetString("name")
 
+	// TODO: refactoring required: switch to state
 	action.OpenOnly = action.GetBool("open_only")
 	action.Upcoming = action.GetBool("upcoming")
+	action.Voting = action.GetBool("voting")
+	action.Promotions = action.GetBool("promotions")
 
 	action.SortType = action.GetOptionalInt64("sort_by")
 	action.Page.Filters = map[string]string{
@@ -65,6 +70,8 @@ func (action *SaleIndexAction) loadParams() {
 		"name":       action.Name,
 		"open_only":  action.GetString("open_only"),
 		"upcoming":   action.GetString("upcoming"),
+		"voting":     action.GetString("voting"),
+		"promotions": action.GetString("promotions"),
 	}
 }
 
@@ -89,6 +96,14 @@ func (action *SaleIndexAction) loadRecord() {
 
 	if action.Upcoming {
 		q = q.Upcoming(time.Now().UTC())
+	}
+
+	if action.Voting {
+		q = q.Voting()
+	}
+
+	if action.Promotions {
+		q = q.Promotions()
 	}
 
 	sortBy := SortTypeDefaultPage
