@@ -5,16 +5,16 @@ import (
 )
 
 type LimitsV2 struct {
-	Id              uint64 		`json:"id"`
-	AccountType     *int32    	`json:"account_type"`
-	AccountId       *string     `json:"account_id"`
-	StatsOpType     int32     	`json:"stats_op_type"`
-	AssetCode       string      `json:"asset_code"`
-	IsConvertNeeded bool        `json:"is_convert_needed"`
-	DailyOut   		uint64 		`json:"daily_out"`
-	WeeklyOut 		uint64 		`json:"weekly_out"`
-	MonthlyOut 		uint64 		`json:"monthly_out"`
-	AnnualOut  		uint64 		`json:"annual_out"`
+	Id              uint64  `json:"id"`
+	AccountType     *int32  `json:"account_type"`
+	AccountId       *string `json:"account_id"`
+	StatsOpType     int32   `json:"stats_op_type"`
+	AssetCode       string  `json:"asset_code"`
+	IsConvertNeeded bool    `json:"is_convert_needed"`
+	DailyOut        uint64  `json:"daily_out"`
+	WeeklyOut       uint64  `json:"weekly_out"`
+	MonthlyOut      uint64  `json:"monthly_out"`
+	AnnualOut       uint64  `json:"annual_out"`
 }
 
 // Populate fills out the fields of the signer, using one of an account's

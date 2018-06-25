@@ -26,8 +26,6 @@ func (action *AccountShowAction) JSON() {
 		action.loadParams,
 		action.checkAllowed,
 		action.loadRecord,
-		action.loadLimits,
-		action.loadStatistics,
 		action.loadBalances,
 		action.loadExternalSystemAccountIDs,
 		action.loadReferrals,
@@ -75,28 +73,6 @@ func (action *AccountShowAction) loadRecord() {
 	action.Resource.Signers.Populate(signers)
 }
 
-func (action *AccountShowAction) loadLimits() {
-	limits, err := action.CoreQ().LimitsV2().ForAccountByAccountType(action.Address, action.Resource.AccountTypeI)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to load limits for account")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	action.populateLimitsV2(limits)
-}
-
-func (action *AccountShowAction) loadStatistics() {
-	statisticsV2Records, err := action.CoreQ().StatisticsV2().ForAccount(action.Address)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to get statistics for account from core DB")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	action.populateStatisticsV2(statisticsV2Records)
-}
-
 func (action *AccountShowAction) loadBalances() {
 	var balances []core.Balance
 	err := action.CoreQ().
@@ -140,19 +116,5 @@ func (action *AccountShowAction) loadReferrals() {
 	action.Resource.Referrals = make([]resource.Referral, len(coreReferrals))
 	for i := range coreReferrals {
 		action.Resource.Referrals[i].Populate(coreReferrals[i])
-	}
-}
-
-func (action *AccountShowAction) populateLimitsV2(limitsV2Records []core.LimitsV2Entry) {
-	for i, limitsV2 := range limitsV2Records {
-		action.Resource.LimitsV2 = append(action.Resource.LimitsV2, resource.LimitsV2{})
-		action.Resource.LimitsV2[i].Populate(limitsV2)
-	}
-}
-
-func (action *AccountShowAction) populateStatisticsV2(statisticsV2Records []core.StatisticsV2Entry) {
-	for i, statisticsV2 := range statisticsV2Records {
-		action.Resource.StatisticsV2 = append(action.Resource.StatisticsV2, resource.StatisticsV2{})
-		action.Resource.StatisticsV2[i].Populate(statisticsV2)
 	}
 }

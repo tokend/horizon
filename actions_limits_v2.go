@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
@@ -12,10 +13,11 @@ import (
 // AccountTypeLimitsShowAction: renders AccountTypeLimits for operationType
 type LimitsV2ShowAction struct {
 	Action
-	StatsOpType	int32
-	AccountID 	*string
-	AccountType	*int32
-	LimitsV2	[]resource.LimitsV2
+	StatsOpType int32
+	Asset       string
+	AccountID   *string
+	AccountType *int32
+	Result      resource.LimitsV2
 }
 
 // JSON is a method for actions.JSON
@@ -24,14 +26,13 @@ func (action *LimitsV2ShowAction) JSON() {
 		action.loadParams,
 		action.loadData,
 		func() {
-			hal.Render(action.W, action.LimitsV2)
+			hal.Render(action.W, action.Result)
 		},
 	)
 }
 func (action *LimitsV2ShowAction) loadParams() {
 	action.StatsOpType = action.GetInt32("stats_op_type")
-	action.AccountID = nil
-	action.AccountType = nil
+	action.Asset = action.GetNonEmptyString("asset")
 	accountID := action.GetString("account_id")
 	if accountID != "" {
 		action.AccountID = &accountID
@@ -40,46 +41,39 @@ func (action *LimitsV2ShowAction) loadParams() {
 	if accountType != 0 {
 		action.AccountType = &accountType
 	}
+
+	if (action.AccountID != nil) && (action.AccountType != nil) {
+		action.SetInvalidField("account_id", errors.New("It's not allowed to specify both account_id and account type"))
+		return
+	}
 }
 
 func (action *LimitsV2ShowAction) loadData() {
-	if (action.AccountID != nil) && (action.AccountType != nil){
-		action.Log.Error("Unexpected state. Expected accountID or accountType, not both")
+	q := action.CoreQ().LimitsV2().ForStatsOpType(action.StatsOpType).ForAsset(action.Asset)
+	if action.AccountID != nil {
+		q = q.ForAccountID(*action.AccountID)
+	} else if action.AccountType != nil {
+		q = q.ForAccountType(*action.AccountType)
+	} else {
+		q = q.Global()
+	}
+
+	result, err := q.Select()
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to select limits")
 		action.Err = &problem.ServerError
 		return
 	}
 
-	var result []core.LimitsV2Entry
-	var err error
-
-	if action.AccountID != nil {
-		result, err = action.CoreQ().LimitsV2().ForAccountByStatsOpType(action.StatsOpType, *action.AccountID)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to load limits")
-			action.Err = &problem.ServerError
-			return
-		}
-	} else if action.AccountType != nil {
-		result, err = action.CoreQ().LimitsV2().ForAccountTypeByStatsOpType(action.StatsOpType, *action.AccountType)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to load limits")
-			action.Err = &problem.ServerError
-			return
-		}
-	} else {
-		result, err = action.CoreQ().LimitsV2().Select(action.StatsOpType)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to load limits")
-			action.Err = &problem.ServerError
-			return
-		}
+	if len(result) > 1 {
+		action.Log.WithField("limits", result).Error("Expected 1 limit at max")
+		action.Err = &problem.ServerError
+		return
 	}
-	action.populateLimitsV2(result)
-}
 
-func (action *LimitsV2ShowAction) populateLimitsV2(limitsV2Records []core.LimitsV2Entry) {
-	for i, limitsV2 := range limitsV2Records {
-		action.LimitsV2 = append(action.LimitsV2, resource.LimitsV2{})
-		action.LimitsV2[i].Populate(limitsV2)
+	if len(result) == 0 {
+		result = append(result, core.DefaultLimits(action.AccountType, action.AccountID, action.StatsOpType, action.Asset))
 	}
+
+	action.Result.Populate(result[0])
 }

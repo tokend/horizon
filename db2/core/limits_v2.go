@@ -17,9 +17,17 @@ type LimitsV2Entry struct {
 	AnnualOut       uint64      `db:"annual_out"`
 }
 
-func (l *LimitsV2Entry) SetDefaultLimits() {
-	l.DailyOut = math.MaxInt64
-	l.WeeklyOut = math.MaxInt64
-	l.MonthlyOut = math.MaxInt64
-	l.AnnualOut = math.MaxInt64
+func DefaultLimits(accountType *int32, accountID *string, statsOpType int32, assetCode string) LimitsV2Entry {
+	return LimitsV2Entry{
+		AccountType: accountType,
+		AccountId: accountID,
+		StatsOpType: statsOpType,
+		AssetCode: assetCode,
+		DailyOut: math.MaxInt64,
+		WeeklyOut: math.MaxInt64,
+		MonthlyOut: math.MaxInt64,
+		AnnualOut: math.MaxInt64,
+	}
+
+
 }

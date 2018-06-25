@@ -30,8 +30,6 @@ type Account struct {
 	Thresholds             AccountThresholds         `json:"thresholds"`
 	Balances               []Balance                 `json:"balances"`
 	Signers
-	LimitsV2               []LimitsV2                `json:"limits"`
-	StatisticsV2           []StatisticsV2            `json:"statistics"`
 	Policies               AccountPolicies           `json:"policies"`
 	AccountKYC                                       `json:"account_kyc"`
 	ExternalSystemAccounts []ExternalSystemAccountID `json:"external_system_accounts"`
@@ -68,11 +66,4 @@ func (a *Account) SetBalances(balances []core.Balance) {
 
 func (a Account) PagingToken() string {
 	return a.ID
-}
-
-func (a *Account) populateStatisticsV2(statisticsV2Records []core.StatisticsV2Entry) {
-	for i, statisticsV2 := range statisticsV2Records {
-		a.StatisticsV2 = append(a.StatisticsV2, StatisticsV2{})
-		a.StatisticsV2[i].Populate(statisticsV2)
-	}
 }
