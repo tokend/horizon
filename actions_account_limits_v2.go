@@ -28,7 +28,11 @@ func (action *LimitsV2AccountShowAction) JSON() {
 	)
 }
 func (action *LimitsV2AccountShowAction) loadParams() {
-	action.AccountID = action.GetNonEmptyString("account_id")
+	action.AccountID = action.GetNonEmptyString("id")
+}
+
+func (action *LimitsV2AccountShowAction) checkAllowed() {
+	action.IsAllowed(action.AccountID)
 }
 
 func (action *LimitsV2AccountShowAction) loadData() {
