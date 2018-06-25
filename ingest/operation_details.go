@@ -159,6 +159,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.Details.Action == xdr.ManageLimitsActionDelete {
 			details["id"] = op.Details.Id
 		}
+	case xdr.OperationTypeCreateManageLimitsRequest:
+		op := c.Operation().Body.MustCreateManageLimitsRequestOp()
+		details["limits_manage_request_document_hash"] = hex.EncodeToString(op.ManageLimitsRequest.DocumentHash[:])
 	case xdr.OperationTypeDirectDebit:
 		op := c.Operation().Body.MustDirectDebitOp().PaymentOp
 		opResult := c.OperationResult().MustDirectDebitResult().MustSuccess()
