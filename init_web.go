@@ -137,6 +137,7 @@ func initWebActions(app *App) {
 
 	// account actions
 	r.Get("/accounts/:id", &AccountShowAction{})
+	r.Get("/accounts/:id/limits", &LimitsV2AccountShowAction{})
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
 	r.Get("/accounts/:id/summary", &AccountSummaryAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
@@ -162,8 +163,7 @@ func initWebActions(app *App) {
 
 	r.Get("/trusts/:balance_id", &BalanceTrustsAction{})
 
-	r.Get("/default_limits", &AccountTypeLimitsAllAction{})
-	r.Get("/default_limits/:account_type", &AccountTypeLimitsShowAction{})
+	r.Get("/limits", &LimitsV2ShowAction{})
 
 	// transaction history actions
 	r.Get("/transactions", &TransactionIndexAction{})

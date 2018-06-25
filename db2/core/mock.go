@@ -11,11 +11,6 @@ type CoreQMock struct {
 	mock.Mock
 }
 
-func (q *CoreQMock) AccountTypeLimits() AccountTypeLimitsQI {
-	args := q.Called()
-	return args.Get(0).(AccountTypeLimitsQI)
-}
-
 func (q *CoreQMock) BalanceByID(dest interface{}, bid string) error {
 	args := q.Called(dest, bid)
 	return args.Error(0)
@@ -35,20 +30,9 @@ func (q *CoreQMock) FeesByTypeAssetAccount(feeType int, asset string, subtype in
 	return args.Get(0).([]FeeEntry), args.Error(1)
 }
 
-func (q *CoreQMock) LimitsByAccountType(accountType int32) (*AccountTypeLimits, error) {
-	args := q.Called(accountType)
-	return args.Get(0).(*AccountTypeLimits), args.Error(1)
-}
-
 func (q *CoreQMock) ExternalSystemAccountID() ExternalSystemAccountIDQI {
 	args := q.Called()
 	return args.Get(0).(ExternalSystemAccountIDQI)
-}
-
-func (q *CoreQMock) LimitsForAccount(accountID string, accountType int32) (Limits, error) {
-	args := q.Called()
-	limits := args.Get(0).(Limits)
-	return limits, args.Error(1)
 }
 
 func (q *CoreQMock) Offers() *OfferQ {
@@ -63,11 +47,6 @@ func (q *CoreQMock) OrderBook() *OrderBookQ {
 func (q *CoreQMock) Trusts() *TrustQ {
 	args := q.Called()
 	return args.Get(0).(*TrustQ)
-}
-
-func (q *CoreQMock) LimitsByAddress(addy string) (*AccountLimits, error) {
-	args := q.Called(addy)
-	return args.Get(0).(*AccountLimits), args.Error(1)
 }
 
 func (q *CoreQMock) FeeByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account, amount int64) (*FeeEntry, error) {

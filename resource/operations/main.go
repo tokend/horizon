@@ -72,8 +72,8 @@ func New(
 			e.ExternalDetails = nil
 		}
 		result = e
-	case xdr.OperationTypeSetLimits:
-		e := SetLimits{Base: base}
+	case xdr.OperationTypeManageLimits:
+		e := ManageLimits{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
 	case xdr.OperationTypeManageInvoice:

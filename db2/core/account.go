@@ -14,6 +14,6 @@ type Account struct {
 	Referrer     string         `db:"referrer"`
 	Policies     int32          `db:"policies"`
 	KYCLevel     int32          `db:"kyc_level"`
-	*Statistics
+	StatisticsV2 []StatisticsV2Entry
 	*AccountKYC
 }

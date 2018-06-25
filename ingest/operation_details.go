@@ -143,10 +143,25 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.RejectReason != nil {
 			details["reject_reason"] = *op.RejectReason
 		}
-	case xdr.OperationTypeSetLimits:
-		op := c.Operation().Body.MustSetLimitsOp()
-		details["account_type"] = op.AccountType
-		details["account"] = op.Account
+	case xdr.OperationTypeManageLimits:
+		op := c.Operation().Body.MustManageLimitsOp()
+		if op.Details.Action == xdr.ManageLimitsActionCreate {
+			details["account_type"] = op.Details.LimitsCreateDetails.AccountType
+			details["account_id"] = op.Details.LimitsCreateDetails.AccountId
+			details["stats_op_type"] = op.Details.LimitsCreateDetails.StatsOpType
+			details["asset_code"] = op.Details.LimitsCreateDetails.AssetCode
+			details["is_convert_needed"] = op.Details.LimitsCreateDetails.IsConvertNeeded
+			details["daily_out"] = op.Details.LimitsCreateDetails.DailyOut
+			details["weekly_out"] = op.Details.LimitsCreateDetails.WeeklyOut
+			details["monthly_out"] = op.Details.LimitsCreateDetails.MonthlyOut
+			details["annual_out"] = op.Details.LimitsCreateDetails.AnnualOut
+		}
+		if op.Details.Action == xdr.ManageLimitsActionDelete {
+			details["id"] = op.Details.Id
+		}
+	case xdr.OperationTypeCreateManageLimitsRequest:
+		op := c.Operation().Body.MustCreateManageLimitsRequestOp()
+		details["limits_manage_request_document_hash"] = hex.EncodeToString(op.ManageLimitsRequest.DocumentHash[:])
 	case xdr.OperationTypeDirectDebit:
 		op := c.Operation().Body.MustDirectDebitOp().PaymentOp
 		opResult := c.OperationResult().MustDirectDebitResult().MustSuccess()
