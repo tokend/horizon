@@ -2,7 +2,7 @@ package resource
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/lbhack/go/amount"
+	"gitlab.com/tokend/go/amount"
 )
 
 type LimitsV2 struct {

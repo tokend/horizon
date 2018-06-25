@@ -63,8 +63,8 @@ func (q *LimitsV2Q) ForAccount(account *Account) ([]LimitsV2Entry, error) {
 		"weekly_out, monthly_out, annual_out "+
 		"from limits_v2 "+
 		"where (account_type=%d or account_type is null) and (account_id=%s or account_id is null)"+
-		"order by stats_op_type, asset_code, is_convert_needed, account_id = :%s, " +
-		"account_type = :%d desc", account.AccountType, accountIDStr, accountIDStr, account.AccountType)
+		"order by stats_op_type, asset_code, is_convert_needed, account_id = %s, " +
+		"account_type = %d desc", account.AccountType, accountIDStr, accountIDStr, account.AccountType)
 
 	var result []LimitsV2Entry
 	err = q.parent.SelectRaw(&result, query)
