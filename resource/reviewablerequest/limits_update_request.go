@@ -6,9 +6,11 @@ import (
 
 type LimitsUpdateRequest struct {
 	DocumentHash string `json:"document_hash"`
+	Details 	 string `json:"details"`
 }
 
 func (r *LimitsUpdateRequest) Populate(histRequest history.LimitsUpdateRequest) (error) {
-	r.DocumentHash = histRequest.DocumentHash;
+	r.Details = histRequest.Details
+	r.DocumentHash = histRequest.DocumentHash
 	return nil
 }

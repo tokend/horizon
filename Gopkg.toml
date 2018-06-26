@@ -103,7 +103,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[constraint]]
-  branch = "feature/statisticsV2"
+  branch = "feature/limits_update_request"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

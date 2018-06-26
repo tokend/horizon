@@ -225,8 +225,14 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 }
 
 func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
+	details, ok := request.Ext.GetDetails()
+	var limitsDetails string
+	if ok {
+		limitsDetails = string(details)
+	}
 	return &history.LimitsUpdateRequest{
-		DocumentHash: hex.EncodeToString(request.DocumentHash[:]),
+		Details:	  limitsDetails,
+		DocumentHash: hex.EncodeToString(request.DeprecatedDocumentHash[:]),
 	}
 }
 

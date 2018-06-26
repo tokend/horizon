@@ -161,7 +161,11 @@ func (is *Session) operationDetails() map[string]interface{} {
 		}
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		op := c.Operation().Body.MustCreateManageLimitsRequestOp()
-		details["limits_manage_request_document_hash"] = hex.EncodeToString(op.ManageLimitsRequest.DocumentHash[:])
+		limitsUpdateDetails, ok := op.ManageLimitsRequest.Ext.GetDetails()
+		if ok {
+			details["limits_manage_request_details"] = string(limitsUpdateDetails)
+		}
+		details["limits_manage_request_document_hash"] = hex.EncodeToString(op.ManageLimitsRequest.DeprecatedDocumentHash[:])
 	case xdr.OperationTypeDirectDebit:
 		op := c.Operation().Body.MustDirectDebitOp().PaymentOp
 		opResult := c.OperationResult().MustDirectDebitResult().MustSuccess()
