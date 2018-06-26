@@ -26,6 +26,16 @@ func (q *ReferenceQ) ForAccount(accountID string) *ReferenceQ {
 	return q
 }
 
+// ByReference matches references by substring
+func (q *ReferenceQ) ByReference(reference string) *ReferenceQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("reference ilike '%?%'")
+	return q
+}
+
 // Select loads the results of the query specified by `q` into `dest`.
 func (q *ReferenceQ) Select() ([]Reference, error) {
 	if q.Err != nil {
