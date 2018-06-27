@@ -141,6 +141,7 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
+	r.Get("/accs/balances_report", &AccountsBalancesReportAction{})
 
 	//keyValue actions
 	r.Get("/key_value", &KeyValueShowAllAction{})
