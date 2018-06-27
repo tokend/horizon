@@ -3,9 +3,11 @@ package history
 import (
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2"
+	"fmt"
+
 	sq "github.com/lann/squirrel"
+	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
 
 var selectOperation = sq.Select("distinct on (ho.id) ho.*").
@@ -174,7 +176,8 @@ func (q *OperationsQ) ForReference(reference string) OperationsQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("ho.details->>'reference' = ? AND ho.type = ?", reference, xdr.OperationTypePayment)
+	// FIXME might(will) not work for all operation types, works at least for payments and issuances
+	q.sql = q.sql.Where(fmt.Sprintf("ho.details->>'reference' ilike '%%%s%%'", reference))
 
 	return q
 }
