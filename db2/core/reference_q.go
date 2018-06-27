@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+
 	sq "github.com/lann/squirrel"
 )
 
@@ -32,7 +34,7 @@ func (q *ReferenceQ) ByReference(reference string) *ReferenceQ {
 		return q
 	}
 
-	q.sql = q.sql.Where("reference ilike '%?%'")
+	q.sql = q.sql.Where(fmt.Sprintf("reference ilike '%%%s%%'", reference))
 	return q
 }
 
