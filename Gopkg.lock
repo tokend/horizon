@@ -345,7 +345,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/statisticsV2"
+  branch = "feature/limits_update_request"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -359,7 +359,7 @@
     "strkey",
     "xdr"
   ]
-  revision = "6ddb01686b56a665ebd5b707d1de4ad9f75c63b3"
+  revision = "2e087a725c0858b49ec6a4bb0712adb81024b5a2"
 
 [[projects]]
   branch = "master"
@@ -467,6 +467,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "db8ea3a6c3e6b3d0b7d32532810363df5cd827199efb33b87a40d1ab043d880d"
+  inputs-digest = "3ef4b5d7107b5d80ad9e09aecba9898bc769cb5115b14db8b95aff6a47c81e27"
   solver-name = "gps-cdcl"
   solver-version = 1

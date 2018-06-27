@@ -103,6 +103,7 @@ type SaleQuoteAsset struct {
 
 type LimitsUpdateRequest struct {
 	DocumentHash string `json:"document_hash"`
+	Details 	 string `json:"details"`
 }
 
 type AmlAlertRequest struct {
