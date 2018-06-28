@@ -3,8 +3,8 @@ package core
 import (
 	"database/sql"
 
-	sq "github.com/lann/squirrel"
 	"gitlab.com/tokend/go/xdr"
+	sq "github.com/lann/squirrel"
 )
 
 var _ AccountQI = &AccountQ{}

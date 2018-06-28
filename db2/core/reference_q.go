@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+
 	sq "github.com/lann/squirrel"
 )
 
@@ -23,6 +25,16 @@ func (q *ReferenceQ) ForAccount(accountID string) *ReferenceQ {
 	}
 
 	q.sql = q.sql.Where("sender = ?", accountID)
+	return q
+}
+
+// ByReference matches references by substring
+func (q *ReferenceQ) ByReference(reference string) *ReferenceQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(fmt.Sprintf("reference ilike '%%%s%%'", reference))
 	return q
 }
 

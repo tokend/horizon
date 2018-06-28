@@ -7,7 +7,7 @@ import (
 
 	"strconv"
 
-	"gitlab.com/tokend/go/xdr"
+	"github.com/pkg/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ledger"
@@ -16,7 +16,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/sse"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/toid"
-	"github.com/pkg/errors"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // This file contains the actions:
@@ -38,13 +38,14 @@ type OperationIndexAction struct {
 	AssetFilter       string
 	ExchangeFilter    string
 	TransactionFilter string
-	ReferenceFilter   string
-	SinceFilter       *time.Time
-	ToFilter          *time.Time
-	PagingParams      db2.PageQuery
-	Records           []history.Operation
-	Participants      map[int64]*history.OperationParticipants
-	Page              hal.Page
+	// ReferenceFilter substring
+	ReferenceFilter string
+	SinceFilter     *time.Time
+	ToFilter        *time.Time
+	PagingParams    db2.PageQuery
+	Records         []history.Operation
+	Participants    map[int64]*history.OperationParticipants
+	Page            hal.Page
 }
 
 // JSON is a method for actions.JSON

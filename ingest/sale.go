@@ -3,10 +3,10 @@ package ingest
 import (
 	"encoding/json"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 	"time"
 )
 
@@ -59,6 +59,16 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		saleType = raw.Ext.SaleTypeExt.TypedSale.SaleType
 	}
 
+	rawState := xdr.SaleStateNone
+	if raw.Ext.StatableSaleExt != nil {
+		rawState = raw.Ext.StatableSaleExt.State
+	}
+
+	state, err := convertSaleState(rawState)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to convert sale state")
+	}
+
 	return &history.Sale{
 		ID:                uint64(raw.SaleId),
 		OwnerID:           raw.OwnerId.Address(),
@@ -74,7 +84,22 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		},
 		BaseCurrentCap: int64(raw.CurrentCapInBase),
 		BaseHardCap:    int64(raw.MaxAmountToBeSold),
-		State:          history.SaleStateOpen,
+		State:          state,
 		SaleType:       saleType,
 	}, nil
+}
+
+func convertSaleState(state xdr.SaleState) (history.SaleState, error) {
+	switch state {
+	case xdr.SaleStateNone:
+		return history.SaleStateOpen, nil
+	case xdr.SaleStatePromotion:
+		return history.SaleStatePromotion, nil
+	case xdr.SaleStateVoting:
+		return history.SaleStateVoting, nil
+	default:
+		return history.SaleStateOpen, errors.From(errors.New("unepxected sale of the state"), map[string]interface{}{
+			"state": state,
+		})
+	}
 }

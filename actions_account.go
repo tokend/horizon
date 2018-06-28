@@ -26,7 +26,6 @@ func (action *AccountShowAction) JSON() {
 		action.loadParams,
 		action.checkAllowed,
 		action.loadRecord,
-		action.loadLimits,
 		action.loadBalances,
 		action.loadExternalSystemAccountIDs,
 		action.loadReferrals,
@@ -48,7 +47,6 @@ func (action *AccountShowAction) loadRecord() {
 	coreRecord, err := action.CoreQ().
 		Accounts().
 		ForAddresses(action.Address).
-		WithStatistics().
 		WithAccountKYC().
 		First()
 
@@ -63,8 +61,6 @@ func (action *AccountShowAction) loadRecord() {
 		return
 	}
 
-	coreRecord.Statistics.ClearObsolete(time.Now().UTC())
-
 	action.Resource.Populate(action.Ctx, *coreRecord)
 
 	signers, err := action.GetSigners(coreRecord)
@@ -75,17 +71,6 @@ func (action *AccountShowAction) loadRecord() {
 	}
 
 	action.Resource.Signers.Populate(signers)
-}
-
-func (action *AccountShowAction) loadLimits() {
-	limits, err := action.CoreQ().LimitsForAccount(action.Address, action.Resource.AccountTypeI)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to load limits for account")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	action.Resource.Limits.Populate(limits)
 }
 
 func (action *AccountShowAction) loadBalances() {

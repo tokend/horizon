@@ -14,7 +14,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManageBalance:                          func(ir xdr.OperationResultTr) shortStr { return ir.MustManageBalanceResult().Code },
 	xdr.OperationTypeReviewPaymentRequest:                   func(ir xdr.OperationResultTr) shortStr { return ir.MustReviewPaymentRequestResult().Code },
 	xdr.OperationTypeManageAsset:                            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAssetResult().Code },
-	xdr.OperationTypeSetLimits:                              func(ir xdr.OperationResultTr) shortStr { return ir.MustSetLimitsResult().Code },
+	xdr.OperationTypeManageLimits:                           func(ir xdr.OperationResultTr) shortStr { return ir.MustManageLimitsResult().Code },
 	xdr.OperationTypeDirectDebit:                            func(ir xdr.OperationResultTr) shortStr { return ir.MustDirectDebitResult().Code },
 	xdr.OperationTypeManageAssetPair:                        func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAssetPairResult().Code },
 	xdr.OperationTypeManageOffer:                            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageOfferResult().Code },
@@ -31,4 +31,5 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypePaymentV2:           				     func(ir xdr.OperationResultTr) shortStr { return ir.MustPaymentV2Result().Code },
 	xdr.OperationTypeManageSale:               				 func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSaleResult().Code },
 	xdr.OperationTypeManageKeyValue: 						 func(ir xdr.OperationResultTr) shortStr { return ir.MustManageKeyValueResult().Code },
+	xdr.OperationTypeCreateManageLimitsRequest:				 func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateManageLimitsRequestResult().Code },
 }

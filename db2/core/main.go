@@ -68,14 +68,10 @@ type QInterface interface {
 	FeeByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account, amount int64) (*FeeEntry, error)
 	FeesByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account) ([]FeeEntry, error)
 
-	// limits
-	AccountTypeLimits() AccountTypeLimitsQI
-	// tries to load limits for specific account, if not found loads for account type, if not found returns default
-	LimitsForAccount(accountID string, accountType int32) (Limits, error)
-	LimitsByAccountType(accountType int32) (*AccountTypeLimits, error)
-	// tries to load account limits, if not found returns nil, nil
-	LimitsByAddress(addy string) (*AccountLimits, error)
-
+	//LimitsV2 - creates new limitsV2 query helper
+	LimitsV2() LimitsV2QI
+	//StatisticsV2 - creates new statisticsV2 query helper
+	StatisticsV2() StatisticsV2QI
 	// Accounts - creates new accounts query helper
 	Accounts() AccountQI
 	// Assets - creates new assets query helper
@@ -89,6 +85,7 @@ type QInterface interface {
 	Offers() *OfferQ
 	OrderBook() *OrderBookQ
 	Sales() *SaleQ
+	SaleAntes() *SaleAnteQ
 
 	// AssetPairs - creates new asset pair query helper
 	AssetPairs() AssetPairsQ
@@ -185,6 +182,20 @@ func (q *Q) KeyValue() KeyValueQI {
 	return &KeyValueQ{
 		parent:	q,
 		sql:	selectKeyValue,
+	}
+}
+
+func (q *Q) LimitsV2() LimitsV2QI {
+	return &LimitsV2Q{
+		parent: q,
+		sql: 	selectLimitsV2,
+	}
+}
+
+func (q *Q) StatisticsV2() StatisticsV2QI {
+	return &StatisticsV2Q{
+		parent: q,
+		sql: 	selectStatisticsV2,
 	}
 }
 
