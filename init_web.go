@@ -2,6 +2,7 @@ package horizon
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"regexp"
@@ -126,7 +127,7 @@ func initWebActions(app *App) {
 	r.Get("/ledgers", &LedgerIndexAction{})
 	r.Get("/ledgers/:id", &LedgerShowAction{})
 	r.Get("/ledgers/:ledger_id/transactions", &TransactionIndexAction{})
-	r.Get("/ledger_changes", &LedgerChangesAction{})
+	r.Get("/ledger_changes", &AccountsBalancesReportAction{})
 
 	// account actions
 	r.Get("/accounts/:id", &AccountShowAction{})
@@ -141,7 +142,7 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
-	r.Get("/accs/balances_report", &AccountsBalancesReportAction{})
+	r.Get("/report", &AccountsBalancesReportAction{})
 
 	//keyValue actions
 	r.Get("/key_value", &KeyValueShowAllAction{})
@@ -376,6 +377,7 @@ func initWebActions(app *App) {
 	// proxy pass every request horizon could not handle to API
 	r.Handle(regexp.MustCompile(`^.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
 		return func(c web.C, w http.ResponseWriter, r *http.Request) {
+			fmt.Println("got request, proxying to api")
 			apiProxy.ServeHTTP(w, r)
 		}
 	}())
