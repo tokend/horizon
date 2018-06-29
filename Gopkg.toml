@@ -103,7 +103,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[constraint]]
-  branch = "fix/payment_v2_fee"
+  branch = "feature/promotions"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
