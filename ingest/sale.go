@@ -17,6 +17,19 @@ func saleCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.Wrap(err, "failed to convert sale")
 	}
 
+	histSale, err := is.Ingestion.HistoryQ().Sales().ByID(sale.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get sale from History DB")
+	}
+
+	if histSale != nil {
+		err = is.Ingestion.HistoryQ().Sales().Update(*sale)
+		if err != nil {
+			return errors.Wrap(err, "failed to update sale")
+		}
+		return nil
+	}
+
 	err = is.Ingestion.HistoryQ().Sales().Insert(*sale)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert sale")
@@ -34,7 +47,7 @@ func saleUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 
 	err = is.Ingestion.HistoryQ().Sales().Update(*sale)
 	if err != nil {
-		return errors.Wrap(err, "faied to update sale")
+		return errors.Wrap(err, "failed to update sale")
 	}
 
 	return nil

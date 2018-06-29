@@ -21,6 +21,7 @@ type ReviewableRequestDetails struct {
 	AmlAlert          *AmlAlertRequest          `json:"aml_alert"`
 	UpdateKYC         *UpdateKYCRequest         `json:"update_kyc,omitempty"`
 	UpdateSaleDetails *UpdateSaleDetailsRequest `json:"update_sale_details"`
+	PromotionUpdate   *PromotionUpdateRequest   `json:"promotion_update"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -103,7 +104,7 @@ type SaleQuoteAsset struct {
 
 type LimitsUpdateRequest struct {
 	DocumentHash string `json:"document_hash"`
-	Details 	 string `json:"details"`
+	Details      string `json:"details"`
 }
 
 type AmlAlertRequest struct {
@@ -126,4 +127,9 @@ type UpdateKYCRequest struct {
 type UpdateSaleDetailsRequest struct {
 	SaleID     uint64                 `json:"sale_id"`
 	NewDetails map[string]interface{} `json:"new_details"`
+}
+
+type PromotionUpdateRequest struct {
+	SaleID           uint64      `json:"sale_id"`
+	NewPromotionData SaleRequest `json:"new_promotion_data"`
 }
