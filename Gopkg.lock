@@ -345,7 +345,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "fix/payment_v2_fee"
+  branch = "feature/verified_account_type"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -359,7 +359,7 @@
     "strkey",
     "xdr"
   ]
-  revision = "f6b39f3b841d0c9b05d0acb010ef39ca30100326"
+  revision = "7b3af8191bcabe674cd943603ccc1e4f4af47c41"
 
 [[projects]]
   branch = "master"
@@ -467,6 +467,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "14eafa2af4060960fa1dfebd19fcdb5d556babdb5415357d07dfe6661c79145e"
+  inputs-digest = "e6163086e53f3e461d991240d5f1f932d85693f556b97c77f94fd7153e71313d"
   solver-name = "gps-cdcl"
   solver-version = 1
