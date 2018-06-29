@@ -175,6 +175,14 @@ var messages = map[string]string{
 	"op_invalid_type":                                "Invalid key value type at KYC rule",
 	"op_source_underfunded":                          "Source account underfunded",
 	"op_source_balance_lock_overflow":                "Overflow while locking amount from source balance",
+	"op_invalid_sale_state":                          "Invalid sale state",
+	"op_promotion_update_request_invalid_asset_pair": "One of the assets (base or quote) has invalid code or they are equal",
+	"op_promotion_update_request_invalid_price":      "Price can not be 0",
+	"op_promotion_update_request_start_end_invalid":  "IO should not end before start",
+	"op_promotion_update_request_invalid_cap":        "Soft cap should not exceed Hard cap",
+	"op_promotion_update_request_invalid_details":    "Details is invalid JSON",
+	"op_promotion_update_request_already_exists":     "PromotionUpdateRequest already exists",
+	"op_promotion_update_request_not_found":          "PromotionUpdateRequest not found",
 }
 
 func getMessage(rawCode string) string {
