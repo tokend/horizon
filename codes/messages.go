@@ -175,6 +175,7 @@ var messages = map[string]string{
 	"op_invalid_type":                                "Invalid key value type at KYC rule",
 	"op_source_underfunded":                          "Source account underfunded",
 	"op_source_balance_lock_overflow":                "Overflow while locking amount from source balance",
+	"op_requires_verification":						  "You or your counterpary need to be verified to use specified asset",
 	"op_invalid_sale_state":                          "Invalid sale state",
 	"op_promotion_update_request_invalid_asset_pair": "One of the assets (base or quote) has invalid code or they are equal",
 	"op_promotion_update_request_invalid_price":      "Price can not be 0",
