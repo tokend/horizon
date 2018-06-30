@@ -54,22 +54,40 @@ func (h *Histogram) Run(value int64, ts time.Time) {
 	}
 }
 
+func (h *Histogram) Add(value int64, ts time.Time) {
+	idx := h.getIndex(ts)
+	if idx >= 0 && idx < len(h.points) {
+		// point fits into interval
+		h.points.Add(idx, value)
+	}
+	if idx < 0 {
+		// storing latest value before first interval value
+		if h.preceded == nil || ts.After(h.preceded.Timestamp) {
+			h.preceded = &Point{ts, &value}
+		}
+	}
+}
+
 // Render fills missing buckets with previously known values
 // Guaranteed to return non-nil values
-func (h *Histogram) Render() []Point {
+func (h *Histogram) Render(fill bool) []Point {
 	var zero int64 = 0
 	points := make([]Point, 0, len(h.points))
 	for idx, point := range h.points {
 		value := point.Value
 		if value == nil {
 			if idx == 0 {
-				if h.preceded != nil {
+				if h.preceded != nil && fill {
 					value = h.preceded.Value
 				} else {
 					value = &zero
 				}
 			} else {
-				value = points[idx-1].Value
+				if fill {
+					value = points[idx-1].Value
+				} else {
+					value = &zero
+				}
 			}
 		}
 		if value == nil {
