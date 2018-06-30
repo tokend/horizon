@@ -46,50 +46,6 @@ func (action AccountSummaryAction) ServeHTTPC(c web.C, w http.ResponseWriter, r 
 }
 
 // ServeHTTPC is a method for web.Handler
-<<<<<<< HEAD
-func (action AccountTypeLimitsAllAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountTypeLimitsAllAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action AccountTypeLimitsShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountTypeLimitsShowAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action AccountsBalancesReportAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountsBalancesReportAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-||||||| merged common ancestors
-func (action AccountTypeLimitsAllAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountTypeLimitsAllAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action AccountTypeLimitsShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountTypeLimitsShowAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-=======
->>>>>>> c6c632efdbfa3c46c176e84af7b3e91e45a5d30a
 func (action AssetHoldersShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
@@ -158,6 +114,14 @@ func (action BalanceTrustsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "BalanceTrustsAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action BalancesReportAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "BalancesReportAction")
 	ap.Execute(&action)
 }
 
