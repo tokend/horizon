@@ -14,8 +14,6 @@ type AccountQI interface {
 	ByAddress(address string) (*Account, error)
 	// filters by account type
 	ForTypes(types []xdr.AccountType) AccountQI
-	// joins statistics
-	WithStatistics() AccountQI
 	// performs select with specified filters
 	Select(destination interface{}) error
 	// filters by account ids
@@ -58,22 +56,6 @@ func (q *AccountQ) ForTypes(types []xdr.AccountType) AccountQI {
 		return q
 	}
 	q.sql = q.sql.Where(sq.Eq{"account_type": types})
-	return q
-}
-
-func (q *AccountQ) WithStatistics() AccountQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.
-		LeftJoin("statistics st on (st.account_id = a.accountid)").
-		Columns(
-			"st.daily_out as st_daily_out",
-			"st.weekly_out as st_weekly_out",
-			"st.monthly_out as st_monthly_out",
-			"st.annual_out as st_annual_out",
-			"st.updated_at as st_updated_at")
 	return q
 }
 

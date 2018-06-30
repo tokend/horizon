@@ -43,6 +43,10 @@ type SalesQ interface {
 	SetState(saleID uint64, state SaleState) error
 	// Select - selects slice of Sales using specified filters
 	Select() ([]Sale, error)
+	// Voting - filters voting only
+	Voting() SalesQ
+	// Promotions - filters promotions only
+	Promotions() SalesQ
 }
 
 type saleQ struct {
@@ -104,7 +108,27 @@ func (q *saleQ) Upcoming(now time.Time) SalesQ {
 		return q
 	}
 
-	q.sql = q.sql.Where("start_time > ?", now)
+	q.sql = q.sql.Where("state = ? AND start_time > ?", SaleStateOpen, now)
+	return q
+}
+
+// Promotions - selects only promotion sales.
+func (q *saleQ) Promotions() SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("state = ?", SaleStatePromotion)
+	return q
+}
+
+// Voting - selects only voting sales.
+func (q *saleQ) Voting() SalesQ {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("state = ?", SaleStateVoting)
 	return q
 }
 

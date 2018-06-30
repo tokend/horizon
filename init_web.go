@@ -105,6 +105,13 @@ func initWebActions(app *App) {
 	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
 	investReadyProxy := httputil.NewSingleHostReverseProxy(app.config.InvestReady)
 
+	var telegramAirdropProxy *httputil.ReverseProxy
+	if app.config.TelegramAirdrop != nil {
+		telegramAirdropProxy = httputil.NewSingleHostReverseProxy(app.config.TelegramAirdrop)
+	} else {
+		telegramAirdropProxy = nil
+	}
+
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
 		xdr.OperationTypeCreateIssuanceRequest,
@@ -130,6 +137,7 @@ func initWebActions(app *App) {
 
 	// account actions
 	r.Get("/accounts/:id", &AccountShowAction{})
+	r.Get("/accounts/:id/limits", &LimitsV2AccountShowAction{})
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
 	r.Get("/accounts/:id/summary", &AccountSummaryAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
@@ -155,8 +163,7 @@ func initWebActions(app *App) {
 
 	r.Get("/trusts/:balance_id", &BalanceTrustsAction{})
 
-	r.Get("/default_limits", &AccountTypeLimitsAllAction{})
-	r.Get("/default_limits/:account_type", &AccountTypeLimitsShowAction{})
+	r.Get("/limits", &LimitsV2ShowAction{})
 
 	// transaction history actions
 	r.Get("/transactions", &TransactionIndexAction{})
@@ -374,6 +381,14 @@ func initWebActions(app *App) {
 			investReadyProxy.ServeHTTP(w, r)
 		}
 	}())
+
+	if telegramAirdropProxy != nil {
+		r.Handle(regexp.MustCompile(`^/integrations/telegram-airdrop`), func() func(web.C, http.ResponseWriter, *http.Request) {
+			return func(c web.C, w http.ResponseWriter, r *http.Request) {
+				telegramAirdropProxy.ServeHTTP(w, r)
+			}
+		}())
+	}
 
 	// proxy pass every request horizon could not handle to API
 	r.Handle(regexp.MustCompile(`^.*`), func() func(web.C, http.ResponseWriter, *http.Request) {

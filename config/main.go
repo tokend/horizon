@@ -63,6 +63,7 @@ type Config struct {
 
 	TemplateBackend *url.URL
 	InvestReady     *url.URL
+	TelegramAirdrop *url.URL
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
@@ -113,6 +114,7 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 
 	c.bindEnv("template_backend")
 	c.bindEnv("invest_ready")
+	c.bindEnv("telegram_airdrop")
 	c.bindEnv("disable_tx_tfa")
 }
 
@@ -210,6 +212,11 @@ func (c *Config) Init() error {
 	c.InvestReady, err = c.getParsedURL("invest_ready")
 	if err != nil {
 		return errors.Wrap(err, "Failed to get invest_ready value")
+	}
+
+	c.TelegramAirdrop, err = c.getOptionalParsedURL("telegram_airdrop")
+	if err != nil {
+		return errors.Wrap(err, "Failed to get telegram_airdrop value")
 	}
 
 	return nil
