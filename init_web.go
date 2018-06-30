@@ -128,13 +128,14 @@ func initWebActions(app *App) {
 	r.Get("/", &RootAction{})
 	// system summary variables too verbose to be included into /
 	r.Get("/statistics", &StatisticsAction{})
+	r.Get("/statistics/balances", &BalancesReportAction{})
 	r.Get("/metrics", &MetricsAction{})
 
 	// ledger actions
 	r.Get("/ledgers", &LedgerIndexAction{})
 	r.Get("/ledgers/:id", &LedgerShowAction{})
 	r.Get("/ledgers/:ledger_id/transactions", &TransactionIndexAction{})
-	r.Get("/ledger_changes", &AccountsBalancesReportAction{})
+	r.Get("/ledger_changes", &LedgerChangesAction{})
 
 	// account actions
 	r.Get("/accounts/:id", &AccountShowAction{})
@@ -150,7 +151,6 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
-	r.Get("/report", &AccountsBalancesReportAction{})
 
 	//keyValue actions
 	r.Get("/key_value", &KeyValueShowAllAction{})
