@@ -89,6 +89,7 @@ func initCharts(app *App) {
 		}
 		data := change.Created.Data.AssetPair
 		app.charts.Set(fmt.Sprintf("%s-%s", data.Base, data.Quote), ts, int64(data.CurrentPrice))
+		app.charts.Add(fmt.Sprintf("%s-%s-volume", data.Base, data.Quote), ts, 0)
 	})
 
 	// asset prices
