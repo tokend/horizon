@@ -9,6 +9,7 @@ import (
 
 type BalancesReportAction struct {
 	Action
+	account   string
 	threshold int64
 	assetType string
 	Records   regources.BalancesReport
@@ -25,11 +26,12 @@ func (action *BalancesReportAction) JSON() {
 	)
 }
 
-func (action *TransactionIndexAction) checkAllowed() {
-	action.IsAllowed(action.AccountFilter)
+func (action *BalancesReportAction) checkAllowed() {
+	action.IsAllowed(action.account)
 }
 
 func (action *BalancesReportAction) loadParams() {
+	action.account = action.GetString("account_id")
 	action.threshold = action.GetInt64("threshold")
 	action.assetType = action.GetString("asset_code")
 }
