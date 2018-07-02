@@ -17,11 +17,16 @@ type BalancesReportAction struct {
 func (action *BalancesReportAction) JSON() {
 	action.Do(
 		action.loadParams,
+		action.checkAllowed,
 		action.loadRecords,
 		func() {
 			hal.Render(action.W, &action.Records)
 		},
 	)
+}
+
+func (action *TransactionIndexAction) checkAllowed() {
+	action.IsAllowed(action.AccountFilter)
 }
 
 func (action *BalancesReportAction) loadParams() {
