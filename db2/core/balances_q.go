@@ -25,6 +25,7 @@ type BalancesQI interface {
 	ByID(balanceID string) (*Balance, error)
 	// NonZero select `balances` only with positive `amount` OR `locked` value.
 	NonZero() BalancesQI
+	Zero() BalancesQI
 	Select() ([]Balance, error)
 }
 
@@ -69,6 +70,15 @@ func (q *BalancesQ) NonZero() BalancesQI {
 	}
 
 	q.sql = q.sql.Where("(ba.amount > 0 OR ba.locked > 0)")
+	return q
+}
+
+func (q *BalancesQ) Zero() BalancesQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("(ba.amount = 0 AND ba.locked = 0)")
 	return q
 }
 
