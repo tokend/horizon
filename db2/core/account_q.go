@@ -24,8 +24,6 @@ type AccountQI interface {
 	ForReferrer(referrer string) AccountQI
 	// Selects first element from filtered
 	First() (*Account, error)
-	// TODO docs
-	WithBalance() AccountQI
 	// joins account KYC
 	WithAccountKYC() AccountQI
 }
@@ -64,22 +62,6 @@ func (q *AccountQ) ForTypes(types []xdr.AccountType) AccountQI {
 }
 
 func (q *AccountQ) WithStatistics() AccountQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.
-		LeftJoin("statistics st on (st.account_id = a.accountid)").
-		Columns(
-			"st.daily_out as st_daily_out",
-			"st.weekly_out as st_weekly_out",
-			"st.monthly_out as st_monthly_out",
-			"st.annual_out as st_annual_out",
-			"st.updated_at as st_updated_at")
-	return q
-}
-
-func (q *AccountQ) WithBalance() AccountQI {
 	if q.Err != nil {
 		return q
 	}
