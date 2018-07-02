@@ -72,8 +72,8 @@ func (action *BalancesReportAction) loadRecords() {
 	}
 
 	// filter and count by threshold
-	for account := range AmountFromAccount {
-		if AmountFromAccount[account] < action.threshold {
+	for _, amount := range AmountFromAccount {
+		if amount < action.threshold {
 			action.Records.TotalAccountsCount.BelowThreshold += 1
 		} else {
 			action.Records.TotalAccountsCount.AboveThreshold += 1
