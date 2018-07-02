@@ -175,6 +175,7 @@ var messages = map[string]string{
 	"op_invalid_type":                                "Invalid key value type at KYC rule",
 	"op_source_underfunded":                          "Source account underfunded",
 	"op_source_balance_lock_overflow":                "Overflow while locking amount from source balance",
+	"op_requires_verification":						  "You or your counterpary need to be verified to use specified asset",
 }
 
 func getMessage(rawCode string) string {

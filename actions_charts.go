@@ -1,11 +1,13 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/go/amount"
+	"strings"
+
 	"gitlab.com/swarmfund/horizon/charts"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/tokend/go/amount"
 )
 
 type ChartsAction struct {
@@ -42,8 +44,13 @@ func (action *ChartsAction) loadChart() {
 
 func (action *ChartsAction) renderResource() {
 	action.Resource = make(resource.Charts)
+	var points []charts.Point
 	for key, histogram := range action.Record {
-		points := histogram.Render()
+		if strings.HasSuffix(action.Code, "volume") {
+			points = histogram.Render(false)
+		} else {
+			points = histogram.Render(true)
+		}
 		for _, point := range points {
 			action.Resource[key] = append(action.Resource[key], resource.Point{
 				Timestamp: point.Timestamp,
