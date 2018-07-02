@@ -31,9 +31,9 @@ func (action *BalancesReportAction) checkAllowed() {
 }
 
 func (action *BalancesReportAction) loadParams() {
-	action.account = action.GetString("account_id")
-	action.threshold = action.GetInt64("threshold")
-	action.assetType = action.GetString("asset_code")
+	action.account = action.GetNonEmptyString("account_id")
+	action.threshold = action.GetPositiveInt64("threshold")
+	action.assetType = action.GetNonEmptyString("asset_code")
 }
 
 func (action *BalancesReportAction) loadRecords() {
