@@ -214,6 +214,9 @@ func initWebActions(app *App) {
 
 	// Reviewable Request actions
 	r.Get("/requests/:id", &ReviewableRequestShowAction{})
+	r.Get("/requests", &ReviewableRequestIndexAction{
+		RequestTypes: xdr.ReviewableRequestTypeAll,
+	})
 	r.Get("/request/assets", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			asset := action.GetString("asset")
