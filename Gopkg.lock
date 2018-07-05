@@ -345,7 +345,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "fix/review_manage_sale_request"
+  branch = "feature/manage_invoice"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -359,7 +359,7 @@
     "strkey",
     "xdr"
   ]
-  revision = "3ce2ab194b32427be81cec2e5abdb551e777802c"
+  revision = "a0e2aea750268a1aa21bbc24dd53d82ec7a9db4d"
 
 [[projects]]
   branch = "master"
@@ -467,6 +467,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "980d21d357db7d59e832c801ad4d4450cd6f77b695cb485248b779c932ea6af9"
+  inputs-digest = "bbe7e6480f0d2074b26e183e75e61a26be82d87c98b993c40255f39fd2942a1c"
   solver-name = "gps-cdcl"
   solver-version = 1
