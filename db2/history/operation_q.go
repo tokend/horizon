@@ -8,6 +8,8 @@ import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 var selectOperation = sq.Select("distinct on (ho.id) ho.*").
@@ -37,6 +39,7 @@ type OperationsQI interface {
 	// JoinOnAccount required to filter on account ID and account type
 	JoinOnAccount() OperationsQI
 	Page(page db2.PageQuery) OperationsQI
+	Update(op Operation) error
 	Select(dest interface{}) error
 
 	Participants(dest map[int64]*OperationParticipants) error
@@ -210,6 +213,28 @@ func (q *OperationsQ) Page(page db2.PageQuery) OperationsQI {
 
 	q.sql, q.Err = page.ApplyTo(q.sql, "ho.id")
 	return q
+}
+
+// Update - updates existing operation
+func (q *OperationsQ) Update(op Operation) error {
+	sql := sq.Update("history_operations").SetMap(map[string]interface{}{
+		"id": op.ID,
+		"transaction_id": op.TransactionID,
+		"application_order": op.ApplicationOrder,
+		"type": op.Type,
+		"details": op.DetailsString,
+		"source_account": op.SourceAccount,
+		"ledger_close_time": op.LedgerCloseTime,
+		"identifier": op.Identifier,
+		"state": op.State,
+	}).Where("id = ?", op.ID)
+	
+	_, err := q.parent.Exec(sql)
+	if err != nil {
+		return errors.Wrap(err, "failed to update operation", logan.F{"operation_id": op.ID})
+	}
+
+	return nil
 }
 
 // Select loads the results of the query specified by `q` into `dest`.
