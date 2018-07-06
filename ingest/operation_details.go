@@ -191,13 +191,20 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["max_price_step"] = amount.String(int64(op.MaxPriceStep))
 		details["policies_i"] = int32(op.Policies)
 	case xdr.OperationTypeManageOffer:
-		op := c.Operation().Body.ManageOfferOp
+		op := c.Operation().Body.MustManageOfferOp()
+		opResult := c.OperationResult().MustManageOfferResult().MustSuccess()
+		isDeleted := opResult.Offer.Effect.ShortString() == "deleted"
 		details["is_buy"] = op.IsBuy
 		details["amount"] = amount.String(int64(op.Amount))
 		details["price"] = amount.String(int64(op.Price))
 		details["fee"] = amount.String(int64(op.Fee))
-		details["offer_id"] = op.OfferId
-		details["is_deleted"] = int64(op.OfferId) != 0
+		details["is_deleted"] = isDeleted
+		if isDeleted {
+			details["offer_id"] = op.OfferId
+		} else {
+			details["offer_id"] = opResult.Offer.Offer.OfferId
+		}
+		details["offer_state"] = getOfferState(op, opResult)
 	case xdr.OperationTypeManageInvoice:
 		op := c.Operation().Body.MustManageInvoiceOp()
 		opResult := c.OperationResult().MustManageInvoiceResult()
@@ -323,5 +330,22 @@ func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
 		"external_details": externalDetails,
 		"tasks_to_add":     uint32(details.TasksToAdd),
 		"tasks_to_remove":  uint32(details.TasksToRemove),
+	}
+}
+
+func getOfferState(op xdr.ManageOfferOp, opResult xdr.ManageOfferSuccessResult) string {
+	switch opResult.Offer.Effect.ShortString() {
+	case "created":
+		if len(opResult.OffersClaimed) == 0 {
+			return "pending"
+		}
+		return "partially matched"
+	case "deleted":
+		if op.Amount != 0 {
+			return "fully matched"
+		}
+		return "cancelled"
+	default:
+		panic(fmt.Errorf("unknown manage offer op effect: %s", opResult.Offer.Effect.ShortString()))
 	}
 }

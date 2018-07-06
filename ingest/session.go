@@ -112,6 +112,47 @@ func (is *Session) storeTrades(orderBookID uint64, result xdr.ManageOfferSuccess
 	is.Err = is.Ingestion.StoreTrades(orderBookID, result, is.Cursor.Ledger().CloseTime)
 }
 
+func (is *Session) updateOffersState(op xdr.ManageOfferOp, opResult xdr.ManageOfferSuccessResult) {
+	// if offer from operation has no offers claimed - nothing to do here
+	if len(opResult.OffersClaimed) == 0 {
+		return
+	}
+
+	ledgerChanges := is.Cursor.OperationChanges()
+	for _, change := range ledgerChanges {
+		switch change.Type {
+		case xdr.LedgerEntryChangeTypeUpdated:
+			if change.Updated.Data.Type != xdr.LedgerEntryTypeOfferEntry {
+				continue
+			}
+			if change.Updated.Data.Offer.OfferId == op.OfferId {
+				continue
+			}
+			err := is.Ingestion.SetOfferState(uint64(change.Updated.Data.Offer.OfferId), "partially matched")
+			if err != nil {
+				is.Err = errors.Wrap(err, "failed to set offer state", logan.F{
+					"offer_id": uint64(change.Updated.Data.Offer.OfferId),
+				})
+				return
+			}
+		case xdr.LedgerEntryChangeTypeRemoved:
+			if change.Removed.Type != xdr.LedgerEntryTypeOfferEntry {
+				continue
+			}
+			if change.Removed.Offer.OfferId == op.OfferId {
+				continue
+			}
+			err := is.Ingestion.SetOfferState(uint64(change.Removed.Offer.OfferId), "fully matched")
+			if err != nil {
+				is.Err = errors.Wrap(err, "failed to set offer state", logan.F{
+					"offer_id": uint64(change.Removed.Offer.OfferId),
+				})
+				return
+			}
+		}
+	}
+}
+
 func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.ManageInvoiceResult) {
 	if is.Err != nil {
 		return

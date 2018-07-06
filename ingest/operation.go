@@ -90,6 +90,8 @@ func (is *Session) operation() {
 	case xdr.OperationTypeManageOffer:
 		is.storeTrades(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OrderBookId),
 			*is.Cursor.OperationResult().MustManageOfferResult().Success)
+		is.updateOffersState(is.Cursor.Operation().Body.MustManageOfferOp(),
+			*is.Cursor.OperationResult().MustManageOfferResult().Success)
 	case xdr.OperationTypeManageInvoice:
 		is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
 			is.Cursor.OperationResult().MustManageInvoiceResult())
