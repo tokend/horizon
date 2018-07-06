@@ -10,17 +10,18 @@ import (
 )
 
 type ReviewableRequestDetails struct {
-	AssetCreation     *AssetCreationRequest     `json:"asset_create,omitempty"`
-	AssetUpdate       *AssetUpdateRequest       `json:"asset_update,omitempty"`
-	PreIssuanceCreate *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
-	IssuanceCreate    *IssuanceRequest          `json:"issuance_create,omitempty"`
-	Withdrawal        *WithdrawalRequest        `json:"withdraw,omitempty"`
-	TwoStepWithdrawal *WithdrawalRequest        `json:"two_step_withdrawal"`
-	Sale              *SaleRequest              `json:"sale,omitempty"`
-	LimitsUpdate      *LimitsUpdateRequest      `json:"limits_update"`
-	AmlAlert          *AmlAlertRequest          `json:"aml_alert"`
-	UpdateKYC         *UpdateKYCRequest         `json:"update_kyc,omitempty"`
-	UpdateSaleDetails *UpdateSaleDetailsRequest `json:"update_sale_details"`
+	AssetCreation            *AssetCreationRequest     `json:"asset_create,omitempty"`
+	AssetUpdate              *AssetUpdateRequest       `json:"asset_update,omitempty"`
+	PreIssuanceCreate        *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
+	IssuanceCreate           *IssuanceRequest          `json:"issuance_create,omitempty"`
+	Withdrawal               *WithdrawalRequest        `json:"withdraw,omitempty"`
+	TwoStepWithdrawal        *WithdrawalRequest        `json:"two_step_withdrawal"`
+	Sale                     *SaleRequest              `json:"sale,omitempty"`
+	LimitsUpdate             *LimitsUpdateRequest      `json:"limits_update"`
+	AmlAlert                 *AmlAlertRequest          `json:"aml_alert"`
+	UpdateKYC                *UpdateKYCRequest         `json:"update_kyc,omitempty"`
+	UpdateSaleDetails        *UpdateSaleDetailsRequest `json:"update_sale_details"`
+	UpdateSaleEndTimeRequest *UpdateSaleEndTimeRequest `json:"update_sale_end_time_request"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -103,7 +104,7 @@ type SaleQuoteAsset struct {
 
 type LimitsUpdateRequest struct {
 	DocumentHash string `json:"document_hash"`
-	Details 	 string `json:"details"`
+	Details      string `json:"details"`
 }
 
 type AmlAlertRequest struct {
@@ -126,4 +127,9 @@ type UpdateKYCRequest struct {
 type UpdateSaleDetailsRequest struct {
 	SaleID     uint64                 `json:"sale_id"`
 	NewDetails map[string]interface{} `json:"new_details"`
+}
+
+type UpdateSaleEndTimeRequest struct {
+	SaleID     uint64 `json:"sale_id"`
+	NewEndTime uint64 `json:"new_end_time"`
 }
