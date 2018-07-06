@@ -103,7 +103,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[constraint]]
-  branch = "fix/review_manage_sale_request"
+  branch = "feature/update_sale_end_time"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
