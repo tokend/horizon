@@ -9,6 +9,7 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/utf8"
+	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -42,7 +43,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["subject"] = op.Subject
 		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["asset"] = opResult.PaymentResponse.Asset
-
 
 	case xdr.OperationTypeManageKeyValue:
 		op := c.Operation().Body.MustManageKeyValueOp()
@@ -288,14 +288,14 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["to_balance"] = opResult.DestinationBalanceId.AsString()
 		details["amount"] = amount.StringU(uint64(op.Amount))
 		details["asset"] = string(opResult.Asset)
-		details["source_fee_data"] = map[string]interface{} {
-			"fixed_fee": amount.StringU(uint64(op.FeeData.SourceFee.FixedFee)),
-			"actual_payment_fee": amount.StringU(uint64(opResult.ActualSourcePaymentFee)),
+		details["source_fee_data"] = map[string]interface{}{
+			"fixed_fee":                     amount.StringU(uint64(op.FeeData.SourceFee.FixedFee)),
+			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualSourcePaymentFee)),
 			"actual_payment_fee_asset_code": string(op.FeeData.SourceFee.FeeAsset),
 		}
-		details["destination_fee_data"] = map[string]interface{} {
-			"fixed_fee": amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee)),
-			"actual_payment_fee": amount.StringU(uint64(opResult.ActualDestinationPaymentFee)),
+		details["destination_fee_data"] = map[string]interface{}{
+			"fixed_fee":                     amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee)),
+			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualDestinationPaymentFee)),
 			"actual_payment_fee_asset_code": string(op.FeeData.DestinationFee.FeeAsset),
 		}
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
@@ -334,17 +334,17 @@ func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
 }
 
 func getOfferState(op xdr.ManageOfferOp, opResult xdr.ManageOfferSuccessResult) string {
-	switch opResult.Offer.Effect.ShortString() {
-	case "created":
+	switch opResult.Offer.Effect {
+	case xdr.ManageOfferEffectCreated:
 		if len(opResult.OffersClaimed) == 0 {
-			return "pending"
+			return history.OfferStatePending.String()
 		}
-		return "partially matched"
-	case "deleted":
+		return history.OfferStatePartiallyMatched.String()
+	case xdr.ManageOfferEffectDeleted:
 		if op.Amount != 0 {
-			return "fully matched"
+			return history.OfferStateFullyMatched.String()
 		}
-		return "cancelled"
+		return history.OfferStateCancelled.String()
 	default:
 		panic(fmt.Errorf("unknown manage offer op effect: %s", opResult.Offer.Effect.ShortString()))
 	}
