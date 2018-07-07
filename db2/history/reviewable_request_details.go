@@ -130,6 +130,6 @@ type UpdateSaleDetailsRequest struct {
 }
 
 type UpdateSaleEndTimeRequest struct {
-	SaleID     uint64 `json:"sale_id"`
-	NewEndTime uint64 `json:"new_end_time"`
+	SaleID     uint64    `json:"sale_id"`
+	NewEndTime time.Time `json:"new_end_time"`
 }

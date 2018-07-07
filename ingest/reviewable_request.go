@@ -274,7 +274,7 @@ func getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history
 func getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
 	return &history.UpdateSaleEndTimeRequest{
 		SaleID:     uint64(request.SaleId),
-		NewEndTime: uint64(request.NewEndTime),
+		NewEndTime: time.Unix(int64(request.NewEndTime), 0).UTC(),
 	}
 }
 
