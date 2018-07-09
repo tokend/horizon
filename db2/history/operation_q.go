@@ -42,6 +42,10 @@ type OperationsQI interface {
 	Update(op Operation) error
 	Select(dest interface{}) error
 
+	// Manage Offer
+	// ManageOfferByOffer - filters manage offer operations by offer id
+	ManageOfferByOffer(offerID uint64) OperationsQI
+
 	Participants(dest map[int64]*OperationParticipants) error
 }
 
@@ -218,23 +222,32 @@ func (q *OperationsQ) Page(page db2.PageQuery) OperationsQI {
 // Update - updates existing operation
 func (q *OperationsQ) Update(op Operation) error {
 	sql := sq.Update("history_operations").SetMap(map[string]interface{}{
-		"id": op.ID,
-		"transaction_id": op.TransactionID,
+		"id":                op.ID,
+		"transaction_id":    op.TransactionID,
 		"application_order": op.ApplicationOrder,
-		"type": op.Type,
-		"details": op.DetailsString,
-		"source_account": op.SourceAccount,
+		"type":              op.Type,
+		"details":           op.DetailsString,
+		"source_account":    op.SourceAccount,
 		"ledger_close_time": op.LedgerCloseTime,
-		"identifier": op.Identifier,
-		"state": op.State,
+		"identifier":        op.Identifier,
+		"state":             op.State,
 	}).Where("id = ?", op.ID)
-	
+
 	_, err := q.parent.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update operation", logan.F{"operation_id": op.ID})
 	}
 
 	return nil
+}
+
+func (q *OperationsQ) ManageOfferByOffer(offerID uint64) OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("(ho.type = ? AND ho.details->'offer_id' = ?)", xdr.OperationTypeManageOffer, offerID)
+	return q
 }
 
 // Select loads the results of the query specified by `q` into `dest`.
