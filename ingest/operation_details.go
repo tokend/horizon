@@ -204,6 +204,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		} else {
 			details["offer_id"] = opResult.Offer.Offer.OfferId
 		}
+		details["order_book_id"] = op.OrderBookId
 		details["offer_state"] = getOfferState(op, opResult)
 	case xdr.OperationTypeManageInvoice:
 		op := c.Operation().Body.MustManageInvoiceOp()

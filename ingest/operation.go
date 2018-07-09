@@ -88,10 +88,16 @@ func (is *Session) operation() {
 			opDirectDebit.From,
 			is.Cursor.OperationResult().MustDirectDebitResult().MustSuccess().PaymentResponse)
 	case xdr.OperationTypeManageOffer:
-		is.storeTrades(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OrderBookId),
-			*is.Cursor.OperationResult().MustManageOfferResult().Success)
-		is.updateOffersState(is.Cursor.Operation().Body.MustManageOfferOp(),
-			*is.Cursor.OperationResult().MustManageOfferResult().Success)
+		op := is.Cursor.Operation().Body.MustManageOfferOp()
+		opResult := is.Cursor.OperationResult().MustManageOfferResult().MustSuccess()
+		is.storeTrades(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OrderBookId), opResult)
+
+		offerIsCancelled := op.OfferId != 0 && op.Amount == 0
+		if offerIsCancelled {
+			is.Ingestion.SetOfferState(uint64(op.OfferId), history.OfferStateCancelled.String())
+			return
+		}
+		is.updateOffersState(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
 	case xdr.OperationTypeManageInvoice:
 		is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
 			is.Cursor.OperationResult().MustManageInvoiceResult())
