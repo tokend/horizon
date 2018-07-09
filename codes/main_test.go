@@ -108,8 +108,8 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
-	Convey("ManageInvoice", t, func() {
-		for _, code := range xdr.ManageInvoiceResultCodeAll {
+	Convey("ManageInvoiceRequest", t, func() {
+		for _, code := range xdr.ManageInvoiceRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
@@ -169,6 +169,12 @@ func TestCodes(t *testing.T) {
 
 	Convey("Create manage limits request", t, func() {
 		for _, code := range xdr.ManageLimitsResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Bill pay", t, func(){
+		for _, code := range xdr.BillPayResultCodeAll {
 			checkCode(t, code)
 		}
 	})

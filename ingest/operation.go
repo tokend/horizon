@@ -107,5 +107,6 @@ func (is *Session) operation() {
 	case xdr.OperationTypeManageSale:
 		opManageSale := is.Cursor.Operation().Body.MustManageSaleOp()
 		is.handleManageSale(&opManageSale)
-	}
+	} //add new case for bill pay, if success, invoice request approve, use method of reviable request ot approve
+	// if remove invoice request set state canceled
 }

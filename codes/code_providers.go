@@ -32,4 +32,5 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManageSale:               				 func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSaleResult().Code },
 	xdr.OperationTypeManageKeyValue: 						 func(ir xdr.OperationResultTr) shortStr { return ir.MustManageKeyValueResult().Code },
 	xdr.OperationTypeCreateManageLimitsRequest:				 func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateManageLimitsRequestResult().Code },
+	xdr.OperationTypeBillPay:								 func(ir xdr.OperationResultTr) shortStr { return ir.MustBillPayResult().Code },
 }
