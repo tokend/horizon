@@ -24,15 +24,16 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 		manageRequestResult := operationResult.MustCreateWithdrawalRequestResult()
 		operationIdentifier = uint64(manageRequestResult.Success.RequestId)
 		return state, operationIdentifier
-	case xdr.OperationTypeManageInvoice:
-		manageInvoiceOp := op.Body.MustManageInvoiceOp()
-		if manageInvoiceOp.InvoiceId != 0 {
-			return state, operationIdentifier
+	case xdr.OperationTypeManageInvoiceRequest:
+		manageInvoiceOp := op.Body.MustManageInvoiceRequestOp()
+		if manageInvoiceOp.Details.Action == xdr.ManageInvoiceRequestActionRemove {
+			operationIdentifier = uint64(*manageInvoiceOp.Details.RequestId)
+			return history.OperationStateCanceled, operationIdentifier
 		}
 
 		state = history.OperationStatePending
-		manageInvoiceResult := operationResult.MustManageInvoiceResult()
-		operationIdentifier = uint64(manageInvoiceResult.Success.InvoiceId)
+		manageInvoiceResult := operationResult.MustManageInvoiceRequestResult()
+		operationIdentifier = uint64(manageInvoiceResult.Success.Details.Response.RequestId)
 		return state, operationIdentifier
 	case xdr.OperationTypeCreateIssuanceRequest:
 		createIssuanceRequestResult := operationResult.MustCreateIssuanceRequestResult()
@@ -90,9 +91,6 @@ func (is *Session) operation() {
 	case xdr.OperationTypeManageOffer:
 		is.storeTrades(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OrderBookId),
 			*is.Cursor.OperationResult().MustManageOfferResult().Success)
-	case xdr.OperationTypeManageInvoice:
-		is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
-			is.Cursor.OperationResult().MustManageInvoiceResult())
 	case xdr.OperationTypeReviewRequest:
 		is.processReviewRequest(is.Cursor.Operation().Body.MustReviewRequestOp(), is.Cursor.OperationChanges())
 	case xdr.OperationTypeManageAsset:

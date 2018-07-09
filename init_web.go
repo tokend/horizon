@@ -117,7 +117,7 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCreateIssuanceRequest,
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
-		xdr.OperationTypeManageInvoice,
+		xdr.OperationTypeBillPay,
 		xdr.OperationTypeCheckSaleState,
 		xdr.OperationTypeManageKeyValue,
 		xdr.OperationTypePaymentV2,
@@ -310,6 +310,16 @@ func initWebActions(app *App) {
 	})
 	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
+	})
+	r.Get("/request/invoices", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction){
+			sender := action.GetString("sender_account_id")
+			action.Page.Filters["sender_account_id"] = sender
+			if sender != "" {
+				action.q = action.q.InvoiceByPayer(sender)
+			}
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeInvoice},
 	})
 
 	// Sales actions

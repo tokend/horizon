@@ -271,6 +271,19 @@ func getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history
 	}
 }
 
+func getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest{
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.Details), &details)
+
+	return &history.InvoiceRequest{
+		ReceiverBalanceID: 	request.ReceiverBalance.AsString(),
+		SenderAccountID:	request.Sender.Address(),
+		Amount:				uint64(request.Amount),
+		Details:			details,
+	}
+}
+
 func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
 	var details history.ReviewableRequestDetails
 	var err error
@@ -300,6 +313,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.UpdateKYC = getUpdateKYCRequest(body.UpdateKycRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
+	case xdr.ReviewableRequestTypeInvoice:
+		details.Invoice = getInvoiceRequest(body.InvoiceRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

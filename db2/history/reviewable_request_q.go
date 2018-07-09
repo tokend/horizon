@@ -67,6 +67,10 @@ type ReviewableRequestQI interface {
 	// LimitsByDocHash - filters limits request by document hash
 	LimitsByDocHash(hash string) ReviewableRequestQI
 
+	// Invoices
+	// InvoiceByPayer - filters invoice requests by sender
+	InvoiceByPayer(senderAccountID string) ReviewableRequestQI
+
 	// KYC
 	// KYCByAccountToUpdateKYC - filters update KYC requests by accountID of the owner of KYC
 	KYCByAccountToUpdateKYC(accountID string) ReviewableRequestQI
@@ -349,6 +353,15 @@ func (q *ReviewableRequestQ) LimitsByDocHash(hash string) ReviewableRequestQI {
 	}
 
 	q.sql = q.sql.Where("details->'limits_update'->>'document_hash' = ?", hash)
+	return q
+}
+
+func (q *ReviewableRequestQ) InvoiceByPayer(senderAccountID string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'invoice'->>'sender_account_id' = ?", senderAccountID)
 	return q
 }
 

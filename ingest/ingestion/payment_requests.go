@@ -8,6 +8,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	sq "github.com/lann/squirrel"
+	"fmt"
 )
 
 func (ingest *Ingestion) InsertPaymentRequest(
@@ -84,4 +85,11 @@ func (ingest *Ingestion) UpdatePayment(
 	}
 
 	return nil
+}
+
+func (ingest *Ingestion) ingestRejectReason(rejectReason string, operationID uint64) error {
+	addRejectReasonQuery := fmt.Sprintf("UPDATE history_operations SET details = jsonb_set(details, '{reject_reason}', '\"%s\"') "+
+		"WHERE identifier = %v", rejectReason, operationID)
+	_, err := ingest.DB.ExecRaw(addRejectReasonQuery)
+	return err
 }

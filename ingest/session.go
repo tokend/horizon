@@ -112,17 +112,6 @@ func (is *Session) storeTrades(orderBookID uint64, result xdr.ManageOfferSuccess
 	is.Err = is.Ingestion.StoreTrades(orderBookID, result, is.Cursor.Ledger().CloseTime)
 }
 
-func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.ManageInvoiceResult) {
-	if is.Err != nil {
-		return
-	}
-	if op.InvoiceId == 0 || op.Amount != 0 {
-		return
-	}
-	is.Ingestion.UpdateInvoice(op.InvoiceId, history.OperationStateCanceled, nil)
-
-}
-
 func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
 	err := is.Ingestion.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
 	if err != nil {
@@ -274,15 +263,6 @@ func (is *Session) processPayment(paymentOp xdr.PaymentOp, source xdr.AccountId,
 	if is.Err != nil {
 		return
 	}
-
-	invoiceReference := paymentOp.InvoiceReference
-	if invoiceReference != nil {
-		if invoiceReference.Accept {
-			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.OperationStateSuccess, nil)
-		} else if !invoiceReference.Accept {
-			is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.OperationStateRejected, nil)
-		}
-	}
 }
 
 func (is *Session) updateIngestedPaymentRequest(operation xdr.Operation, source xdr.AccountId) {
@@ -306,16 +286,6 @@ func (is *Session) updateIngestedPayment(operation xdr.Operation, source xdr.Acc
 	}
 	reviewPaymentOp := operation.Body.MustReviewPaymentRequestOp()
 	reviewPaymentResponse := result.MustReviewPaymentRequestResult().ReviewPaymentResponse
-
-	if reviewPaymentResponse.RelatedInvoiceId != nil {
-		if reviewPaymentOp.Accept {
-			is.Ingestion.UpdateInvoice(*reviewPaymentResponse.RelatedInvoiceId,
-				history.OperationStateSuccess, nil)
-		} else {
-			is.Ingestion.UpdateInvoice(*reviewPaymentResponse.RelatedInvoiceId,
-				history.OperationStateFailed, reviewPaymentOp.RejectReason)
-		}
-	}
 
 	state := reviewPaymentResponse.State
 	if state == xdr.PaymentStatePending {

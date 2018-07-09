@@ -76,14 +76,9 @@ func New(
 		e := ManageLimits{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
-	case xdr.OperationTypeManageInvoice:
-		e := ManageInvoice{Base: base}
+	case xdr.OperationTypeManageInvoiceRequest:
+		e := ManageInvoiceRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
-		if public {
-			e.ReceiverBalance = ""
-			e.Sender = ""
-			e.RejectReason = nil
-		}
 		result = e
 	case xdr.OperationTypeManageOffer:
 		e := ManagerOffer{Base: base}

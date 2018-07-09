@@ -9,6 +9,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // ForOperation returns all the participating accounts from the
@@ -86,14 +87,19 @@ func ForOperation(
 		result = addMatchParticipants(result, sourceParticipant.AccountID, manageOfferOp.BaseBalance,
 			manageOfferOp.QuoteBalance, manageOfferOp.IsBuy, manageOfferResult.Success)
 		sourceParticipant = nil
-	case xdr.OperationTypeManageInvoice:
-		manageInvoiceOp := op.Body.MustManageInvoiceOp()
-		if manageInvoiceOp.Amount == 0 {
+	case xdr.OperationTypeManageInvoiceRequest:
+		manageInvoiceOp := op.Body.MustManageInvoiceRequestOp()
+		switch manageInvoiceOp.Details.Action {
+		case xdr.ManageInvoiceRequestActionCreate:
+			if manageInvoiceOp.Details.InvoiceRequest.Amount == 0 {
+				return nil, errors.New("Unexpected state, amount cannot be zero")
+			}
+			sourceParticipant.BalanceID = &manageInvoiceOp.Details.InvoiceRequest.ReceiverBalance
+			result = append(result, Participant{manageInvoiceOp.Details.InvoiceRequest.Sender,
+			&opResult.ManageInvoiceRequestResult.Success.Details.Response.SenderBalance, nil})
+		case xdr.ManageInvoiceRequestActionRemove:
 			sourceParticipant = nil
-			break
 		}
-		sourceParticipant.BalanceID = &manageInvoiceOp.ReceiverBalance
-		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.ManageInvoiceResult.Success.SenderBalance, nil})
 	case xdr.OperationTypeReviewRequest:
 		request := getReviewableRequestByID(uint64(op.Body.MustReviewRequestOp().RequestId), ledgerChanges)
 		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address() {
@@ -152,6 +158,12 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeBillPay:
+		billPayOp := op.Body.MustBillPayOp()
+		paymentV2Response := opResult.MustBillPayResult().MustSuccess().PaymentV2Response
+
+		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil},)
+		sourceParticipant.BalanceID = &billPayOp.PaymentDetails.SourceBalanceId
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
