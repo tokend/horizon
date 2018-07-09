@@ -218,11 +218,12 @@ type SetFees struct {
 
 type ManagerOffer struct {
 	Base
-	IsBuy      bool   `json:"is_buy"`
-	Amount     string `json:"amount"`
-	Price      string `json:"price"`
-	Fee        string `json:"fee"`
-	OfferId    int64  `json:"offer_id"`
-	IsDeleted  bool   `json:"is_deleted"`
-	OfferState string `json:"offer_state"`
+	IsBuy       bool   `json:"is_buy"`
+	Amount      string `json:"amount"`
+	Price       string `json:"price"`
+	Fee         string `json:"fee"`
+	OfferId     int64  `json:"offer_id"`
+	OrderBookID int64  `json:"order_book_id"`
+	IsDeleted   bool   `json:"is_deleted"`
+	OfferState  string `json:"offer_state"`
 }
