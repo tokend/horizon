@@ -21,7 +21,7 @@ type Details struct {
 	AmlAlert          *AmlAlertRequest          `json:"aml_alert"`
 	UpdateKYC         *UpdateKYCRequest         `json:"update_kyc,omitempty"`
 	UpdateSaleDetails *UpdateSaleDetailsRequest `json:"update_sale_details"`
-	Invoice			  *InvoiceRequest			`json:"invoice,omitempty"`
+	Invoice           *InvoiceRequest           `json:"invoice,omitempty"`
 }
 
 func (d *Details) Populate(requestType xdr.ReviewableRequestType, h history.ReviewableRequestDetails) error {
