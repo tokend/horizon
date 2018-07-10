@@ -21,6 +21,7 @@ type Details struct {
 	AmlAlert          *AmlAlertRequest          `json:"aml_alert"`
 	UpdateKYC         *UpdateKYCRequest         `json:"update_kyc,omitempty"`
 	UpdateSaleDetails *UpdateSaleDetailsRequest `json:"update_sale_details"`
+	Invoice			  *InvoiceRequest			`json:"invoice,omitempty"`
 }
 
 func (d *Details) Populate(requestType xdr.ReviewableRequestType, h history.ReviewableRequestDetails) error {
@@ -59,6 +60,9 @@ func (d *Details) Populate(requestType xdr.ReviewableRequestType, h history.Revi
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		d.UpdateSaleDetails = new(UpdateSaleDetailsRequest)
 		return d.UpdateSaleDetails.Populate(*h.UpdateSaleDetails)
+	case xdr.ReviewableRequestTypeInvoice:
+		d.Invoice = new(InvoiceRequest)
+		return d.Invoice.Populate(*h.Invoice)
 	default:
 		return errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),

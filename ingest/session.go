@@ -300,3 +300,38 @@ func (is *Session) updateIngestedPayment(operation xdr.Operation, source xdr.Acc
 		return
 	}
 }
+
+func (is *Session) processBillPay(op xdr.BillPayOp, result xdr.BillPayResult) {
+	if is.Err != nil {
+		return
+	}
+	if result.Code != xdr.BillPayResultCodeSuccess {
+		return
+	}
+
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to update invoice request state to approve", logan.F{
+			"request_id": uint64(op.RequestId),
+		})
+	}
+}
+
+func (is *Session) processManageInvoiceRequest(op xdr.ManageInvoiceRequestOp, result xdr.ManageInvoiceRequestResult) {
+	if is.Err != nil {
+		return
+	}
+	if result.Code != xdr.ManageInvoiceRequestResultCodeSuccess {
+		return
+	}
+	if op.Details.Action == xdr.ManageInvoiceRequestActionCreate {
+		return
+	}
+
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Cancel(uint64(*op.Details.RequestId))
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to update invoice request state to cancel", logan.F{
+			"request_id": uint64(*op.Details.RequestId),
+		})
+	}
+}

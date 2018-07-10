@@ -178,13 +178,13 @@ var messages = map[string]string{
 	"op_requires_verification":                        "You or your counterpary need to be verified to use specified asset",
 	"op_payment_v1_no_longer_supported":               "Use payment_v2",
 	"op_manage_invoice_request_reference_duplication": "You cannot make two invoices with the same details",
-	"op_not_allowed_to_remove":						   "Only creator of invoice request can remove it",
-	"op_approve_not_allowed":						   "Use another operation to approve reviewable request, use bill pay for invoice",
-	"op_invoice_request_not_found":					   "There is no such request or it is not invoice request",
-	"op_amount_mismatched":							   "Amount must be the same like in invoice",
-	"op_destination_balance_mismatched":			   "Destination balance must be coincide invoice destination balance",
-	"op_destination_account_mismatched":			   "Destination account must be coincide invoice destination account",
-	"op_required_source_pay_for_destination":		   "Source must pay fee, destination should not pay it",
+	"op_not_allowed_to_remove":                        "Only creator of invoice request can remove it",
+	"op_approve_not_allowed":                          "Use another operation to approve reviewable request, use bill pay for invoice",
+	"op_invoice_request_not_found":                    "There is no such request or it is not invoice request",
+	"op_amount_mismatched":                            "Amount must be the same like in invoice",
+	"op_destination_balance_mismatched":               "Destination balance must be coincide invoice destination balance",
+	"op_destination_account_mismatched":               "Destination account must be coincide invoice destination account",
+	"op_required_source_pay_for_destination":          "Source must pay fee, destination should not pay it",
 }
 
 func getMessage(rawCode string) string {
