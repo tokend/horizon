@@ -203,7 +203,7 @@ func (is *Session) handleCheckSaleState(result xdr.CheckSaleStateSuccess) {
 		return
 	}
 
-	err = is.Ingestion.SetOffersStateByOrderBookID(uint64(result.SaleId), offerState)
+	err = is.Ingestion.SetOffersStateByOrderBookID(uint64(result.SaleId), offerState, true)
 	if err != nil {
 		is.Err = errors.Wrap(err, "failed to set offers states", fields)
 		return
@@ -229,7 +229,7 @@ func (is *Session) handleManageSale(op *xdr.ManageSaleOp) {
 		return
 	}
 
-	err = is.Ingestion.SetOffersStateByOrderBookID(uint64(op.SaleId), history.OfferStateCancelled.String())
+	err = is.Ingestion.SetOffersStateByOrderBookID(uint64(op.SaleId), history.OfferStateCancelled.String(), false)
 	if err != nil {
 		is.Err = errors.Wrap(err, "failed to set offers states", fields)
 		return
