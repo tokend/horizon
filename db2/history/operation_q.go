@@ -10,6 +10,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/tokend/go/amount"
 )
 
 var selectOperation = sq.Select("distinct on (ho.id) ho.*").
@@ -45,6 +46,12 @@ type OperationsQI interface {
 	// Manage Offer
 	// ManageOfferByOffer - filters manage offer operations by offer id
 	ManageOfferByOffer(offerID uint64) OperationsQI
+
+	// ManageOfferByOrderBookID - filters manage offer operations by order book id
+	ManageOfferByOrderBookID(orderBookID uint64) OperationsQI
+
+	// WithoutCancelOffer - don't load manage offer operations which cancel offer
+	WithoutCancelOffer() OperationsQI
 
 	Participants(dest map[int64]*OperationParticipants) error
 }
@@ -247,6 +254,27 @@ func (q *OperationsQ) ManageOfferByOffer(offerID uint64) OperationsQI {
 	}
 
 	q.sql = q.sql.Where("(ho.type = ? AND ho.details->'offer_id' = ?)", xdr.OperationTypeManageOffer, offerID)
+	return q
+}
+
+func (q *OperationsQ) ManageOfferByOrderBookID(orderBookID uint64) OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("(ho.type = ? AND ho.details->'order_book_id' = ?)", xdr.OperationTypeManageOffer,
+		orderBookID)
+	return q
+}
+
+func (q *OperationsQ) WithoutCancelOffer() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	// 'amount' field in 'details' jsonb
+	q.sql = q.sql.Where("(ho.type <> ? OR (ho.details->>'amount') != ?)", xdr.OperationTypeManageOffer,
+		amount.String(0))
 	return q
 }
 
