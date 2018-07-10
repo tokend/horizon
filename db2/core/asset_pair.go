@@ -23,11 +23,11 @@ func (pair AssetPair) ConvertToDestAsset(destCode string, amountToConvert int64)
 	}
 
 	if pair.QuoteAsset == destCode {
-		result, isOverflow := amount.BigDivide(amountToConvert, pair.CurrentPrice, amount.One, amount.ROUND_DOWN)
+		result, isOverflow := amount.BigDivide(amountToConvert, pair.CurrentPrice, amount.One, amount.ROUND_UP)
 		return result, !isOverflow, nil
 	}
 
-	result, isOverflow := amount.BigDivide(amountToConvert, amount.One, pair.CurrentPrice, amount.ROUND_DOWN)
+	result, isOverflow := amount.BigDivide(amountToConvert, amount.One, pair.CurrentPrice, amount.ROUND_UP)
 	return result, !isOverflow, nil
 }
 
