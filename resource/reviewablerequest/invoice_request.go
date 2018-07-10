@@ -6,19 +6,16 @@ import (
 )
 
 type InvoiceRequest struct {
-	Amount          string  `json:"amount"`
-	ReceiverBalance string  `json:"receiver_balance,omitempty"`
-	ReceiverAccount string	`json:"receiver_account,omitempty"`
-	Sender          string  `json:"sender,omitempty"`
-	RejectReason    *string `json:"reject_reason,omitempty"`
-	Asset           string  `json:"asset"`
+	Amount          string                 `json:"amount"`
+	ReceiverBalance string                 `json:"receiver_balance"`
+	Sender          string                 `json:"sender"`
+	Details         map[string]interface{} `json:"details"`
 }
 
 func (r *InvoiceRequest) Populate(histRequest history.InvoiceRequest) error {
 	r.Amount = amount.StringU(histRequest.Amount)
 	r.ReceiverBalance = histRequest.ReceiverBalanceID
 	r.Sender = histRequest.SenderAccountID
-	r.ReceiverAccount = histRequest.ReceiverAccountID
-	//r.RejectReason = histRequest.
+	r.Details = histRequest.Details
 	return nil
 }

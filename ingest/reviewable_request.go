@@ -226,12 +226,14 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 
 func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
 	details, ok := request.Ext.GetDetails()
-	var limitsDetails string
+	var detailsMap map[string]interface{}
 	if ok {
-		limitsDetails = string(details)
+		limitsDetails := string(details)
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(limitsDetails), &detailsMap)
 	}
 	return &history.LimitsUpdateRequest{
-		Details:	  limitsDetails,
+		Details:	  detailsMap,
 		DocumentHash: hex.EncodeToString(request.DeprecatedDocumentHash[:]),
 	}
 }

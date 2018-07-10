@@ -21,7 +21,7 @@ type ReviewableRequestDetails struct {
 	AmlAlert          *AmlAlertRequest          `json:"aml_alert"`
 	UpdateKYC         *UpdateKYCRequest         `json:"update_kyc,omitempty"`
 	UpdateSaleDetails *UpdateSaleDetailsRequest `json:"update_sale_details"`
-	Invoice			  *InvoiceRequest			`json:"invoice"`
+	Invoice           *InvoiceRequest           `json:"invoice"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -103,8 +103,8 @@ type SaleQuoteAsset struct {
 }
 
 type LimitsUpdateRequest struct {
-	DocumentHash string `json:"document_hash"`
-	Details      string `json:"details"` // maybe need to use map[string]interface{}
+	DocumentHash string                 `json:"document_hash"`
+	Details      map[string]interface{} `json:"details"`
 }
 
 type AmlAlertRequest struct {
@@ -130,7 +130,6 @@ type UpdateSaleDetailsRequest struct {
 }
 
 type InvoiceRequest struct {
-	ReceiverAccountID string                 `json:"receiver_account_id"`
 	ReceiverBalanceID string                 `json:"receiver_balance_id"`
 	SenderAccountID   string                 `json:"sender_account_id"`
 	Amount            uint64                 `json:"amount"`

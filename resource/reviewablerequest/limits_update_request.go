@@ -5,8 +5,8 @@ import (
 )
 
 type LimitsUpdateRequest struct {
-	DocumentHash string `json:"document_hash"`
-	Details 	 string `json:"details"`
+	DocumentHash string                 `json:"document_hash"`
+	Details      map[string]interface{} `json:"details"`
 }
 
 func (r *LimitsUpdateRequest) Populate(histRequest history.LimitsUpdateRequest) (error) {
