@@ -311,6 +311,9 @@ func initWebActions(app *App) {
 	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
 	})
+	r.Get("/request/update_sale_end_time", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
+	})
 
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
