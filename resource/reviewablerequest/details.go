@@ -21,6 +21,7 @@ type Details struct {
 	AmlAlert               *AmlAlertRequest          `json:"aml_alert"`
 	UpdateKYC              *UpdateKYCRequest         `json:"update_kyc,omitempty"`
 	UpdateSaleDetails      *UpdateSaleDetailsRequest `json:"update_sale_details"`
+	UpdateSaleEndTime      *UpdateSaleEndTimeRequest `json:"update_sale_end_time"`
 	PromotionUpdateRequest *PromotionUpdateRequest   `json:"promotion_update_request"`
 }
 
@@ -60,6 +61,9 @@ func (d *Details) Populate(requestType xdr.ReviewableRequestType, h history.Revi
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		d.UpdateSaleDetails = new(UpdateSaleDetailsRequest)
 		return d.UpdateSaleDetails.Populate(*h.UpdateSaleDetails)
+	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
+		d.UpdateSaleEndTime = new(UpdateSaleEndTimeRequest)
+		return d.UpdateSaleEndTime.Populate(*h.UpdateSaleEndTimeRequest)
 	case xdr.ReviewableRequestTypeUpdatePromotion:
 		d.PromotionUpdateRequest = new(PromotionUpdateRequest)
 		return d.PromotionUpdateRequest.Populate(*h.PromotionUpdate)

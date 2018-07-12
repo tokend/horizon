@@ -175,7 +175,7 @@ var messages = map[string]string{
 	"op_invalid_type":                                "Invalid key value type at KYC rule",
 	"op_source_underfunded":                          "Source account underfunded",
 	"op_source_balance_lock_overflow":                "Overflow while locking amount from source balance",
-	"op_requires_verification":						  "You or your counterpary need to be verified to use specified asset",
+	"op_requires_verification":                       "You or your counterpary need to be verified to use specified asset",
 	"op_invalid_sale_state":                          "Invalid sale state",
 	"op_promotion_update_request_invalid_asset_pair": "One of the assets (base or quote) has invalid code or they are equal",
 	"op_promotion_update_request_invalid_price":      "Price can not be 0",
@@ -184,6 +184,10 @@ var messages = map[string]string{
 	"op_promotion_update_request_invalid_details":    "Details is invalid JSON",
 	"op_promotion_update_request_already_exists":     "PromotionUpdateRequest already exists",
 	"op_promotion_update_request_not_found":          "PromotionUpdateRequest not found",
+	"op_invalid_sale_new_end_time":                   "New sale end time is before start time or current ledger close time",
+	"op_invalid_new_end_time":                        "New end time is before start time or current ledger close time",
+	"op_update_end_time_request_already_exists":      "UpdateSaleEndTimeRequest already exists",
+	"op_update_end_time_request_not_found":           "UpdateSaleEndTimeRequest already not found",
 }
 
 func getMessage(rawCode string) string {

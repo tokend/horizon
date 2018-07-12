@@ -280,6 +280,13 @@ func getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history
 	}
 }
 
+func getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
+	return &history.UpdateSaleEndTimeRequest{
+		SaleID:     uint64(request.SaleId),
+		NewEndTime: time.Unix(int64(request.NewEndTime), 0).UTC(),
+	}
+}
+
 func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
 	var details history.ReviewableRequestDetails
 	var err error
@@ -309,6 +316,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.UpdateKYC = getUpdateKYCRequest(body.UpdateKycRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
+	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
+		details.UpdateSaleEndTimeRequest = getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
 	case xdr.ReviewableRequestTypeUpdatePromotion:
 		details.PromotionUpdate = getPromotionUpdateRequest(body.PromotionUpdateRequest)
 	default:

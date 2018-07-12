@@ -34,7 +34,7 @@ func TestRender(t *testing.T) {
 		preceded: nil,
 	}
 
-	h.points = h.Render(true)
+	h.points = h.Render(false)
 	for i := range p {
 		t.Run(fmt.Sprint(i), func(t *testing.T) {
 			assert.NotNil(t, h.points[i].Value)
@@ -65,6 +65,9 @@ func TestHistogram_Render(t *testing.T) {
 
 	for i := range p {
 		t.Run(fmt.Sprint(i), func(t *testing.T) {
+			assert.NotPanics(t, func() {
+				h.points = h.Render(false)
+			})
 			assert.NotPanics(t, func() {
 				h.points = h.Render(true)
 			})

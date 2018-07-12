@@ -11,13 +11,13 @@ import (
 
 	"time"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/strkey"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/utils"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/strkey"
+	"gitlab.com/tokend/go/xdr"
 )
 
 const (
@@ -161,6 +161,20 @@ func (base *Base) GetInt64(name string) int64 {
 	result := base.GetOptionalInt64(name)
 	if result == nil {
 		return 0
+	}
+
+	return *result
+}
+
+func (base *Base) GetPositiveInt64(name string) int64 {
+	result := base.GetOptionalInt64(name)
+	if result == nil {
+		base.SetInvalidField(name, errors.New("must not be empty"))
+		return 0
+	}
+
+	if *result <= 0 {
+		base.SetInvalidField(name, errors.New("must be positive"))
 	}
 
 	return *result

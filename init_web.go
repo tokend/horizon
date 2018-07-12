@@ -127,6 +127,7 @@ func initWebActions(app *App) {
 	r.Get("/", &RootAction{})
 	// system summary variables too verbose to be included into /
 	r.Get("/statistics", &StatisticsAction{})
+	r.Get("/statistics/balances", &BalancesReportAction{})
 	r.Get("/metrics", &MetricsAction{})
 
 	// ledger actions
@@ -213,6 +214,9 @@ func initWebActions(app *App) {
 
 	// Reviewable Request actions
 	r.Get("/requests/:id", &ReviewableRequestShowAction{})
+	r.Get("/requests", &ReviewableRequestIndexAction{
+		RequestTypes: xdr.ReviewableRequestTypeAll,
+	})
 	r.Get("/request/assets", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			asset := action.GetString("asset")
@@ -306,6 +310,9 @@ func initWebActions(app *App) {
 	})
 	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
+	})
+	r.Get("/request/update_sale_end_time", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
 	})
 
 	// Sales actions
