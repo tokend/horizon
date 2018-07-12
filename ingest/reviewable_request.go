@@ -236,6 +236,15 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpd
 	}
 }
 
+func getPromotionUpdateRequest(request *xdr.PromotionUpdateRequest) *history.PromotionUpdateRequest {
+	newPromorionData := getSaleRequest(&request.NewPromotionData)
+
+	return &history.PromotionUpdateRequest{
+		SaleID:           uint64(request.PromotionId),
+		NewPromotionData: *newPromorionData,
+	}
+}
+
 func getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
 	var kycData map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
@@ -309,6 +318,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.UpdateSaleDetails = getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
 		details.UpdateSaleEndTimeRequest = getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
+	case xdr.ReviewableRequestTypeUpdatePromotion:
+		details.PromotionUpdate = getPromotionUpdateRequest(body.PromotionUpdateRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

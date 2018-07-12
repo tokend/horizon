@@ -22,6 +22,7 @@ type ReviewableRequestDetails struct {
 	UpdateKYC                *UpdateKYCRequest         `json:"update_kyc,omitempty"`
 	UpdateSaleDetails        *UpdateSaleDetailsRequest `json:"update_sale_details"`
 	UpdateSaleEndTimeRequest *UpdateSaleEndTimeRequest `json:"update_sale_end_time_request"`
+	PromotionUpdate          *PromotionUpdateRequest   `json:"promotion_update"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -132,4 +133,9 @@ type UpdateSaleDetailsRequest struct {
 type UpdateSaleEndTimeRequest struct {
 	SaleID     uint64    `json:"sale_id"`
 	NewEndTime time.Time `json:"new_end_time"`
+}
+
+type PromotionUpdateRequest struct {
+	SaleID           uint64      `json:"sale_id"`
+	NewPromotionData SaleRequest `json:"new_promotion_data"`
 }
