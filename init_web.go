@@ -174,6 +174,8 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 
+	r.Get("/transactions_v2", &TransactionV2IndexAction{})
+
 	// operation actions
 	r.Get("/public/operations", &HistoryOperationIndexAction{})
 	r.Get("/public/operations/:id", &HistoryOperationShowAction{})

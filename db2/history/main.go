@@ -69,6 +69,9 @@ type QInterface interface {
 
 	// ReviewableRequests - provides builder of request to access reviewable requests
 	ReviewableRequests() ReviewableRequestQI
+
+	// LedgerChanges - provides builder to access ledger changes
+	LedgerChanges() LedgerChangesQI
 }
 
 // ReviewableRequests - provides builder of request to access reviewable requests
