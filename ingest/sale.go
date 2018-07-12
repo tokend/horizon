@@ -17,6 +17,7 @@ func saleCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.Wrap(err, "failed to convert sale")
 	}
 
+	// if sale already exists - it was in state "PROMOTION" and we need to update it
 	histSale, err := is.Ingestion.HistoryQ().Sales().ByID(sale.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get sale from History DB")
