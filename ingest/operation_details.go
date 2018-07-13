@@ -9,7 +9,6 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/utf8"
-	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -205,7 +204,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["offer_id"] = opResult.Offer.Offer.OfferId
 		}
 		details["order_book_id"] = op.OrderBookId
-		details["offer_state"] = getOfferState(op, opResult)
 	case xdr.OperationTypeManageInvoice:
 		op := c.Operation().Body.MustManageInvoiceOp()
 		opResult := c.OperationResult().MustManageInvoiceResult()
@@ -331,22 +329,5 @@ func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
 		"external_details": externalDetails,
 		"tasks_to_add":     uint32(details.TasksToAdd),
 		"tasks_to_remove":  uint32(details.TasksToRemove),
-	}
-}
-
-func getOfferState(op xdr.ManageOfferOp, opResult xdr.ManageOfferSuccessResult) string {
-	switch opResult.Offer.Effect {
-	case xdr.ManageOfferEffectCreated:
-		if len(opResult.OffersClaimed) == 0 {
-			return history.OfferStatePending.String()
-		}
-		return history.OfferStatePartiallyMatched.String()
-	case xdr.ManageOfferEffectDeleted:
-		if op.Amount != 0 {
-			return history.OfferStateFullyMatched.String()
-		}
-		return history.OfferStateCancelled.String()
-	default:
-		panic(fmt.Errorf("unknown manage offer op effect: %s", opResult.Offer.Effect.ShortString()))
 	}
 }

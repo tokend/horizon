@@ -225,5 +225,4 @@ type ManagerOffer struct {
 	OfferId     int64  `json:"offer_id"`
 	OrderBookID int64  `json:"order_book_id"`
 	IsDeleted   bool   `json:"is_deleted"`
-	OfferState  string `json:"offer_state"`
 }
