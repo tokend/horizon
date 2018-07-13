@@ -3,6 +3,7 @@ package ingest
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"fmt"
 )
 
 func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationResult *xdr.OperationResultTr) (history.OperationState, uint64) {
@@ -41,6 +42,24 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 			state = history.OperationStateSuccess
 		}
 		return state, uint64(createIssuanceRequestResult.Success.RequestId)
+	case xdr.OperationTypeManageOffer:
+		manageOfferOp := op.Body.MustManageOfferOp()
+		manageOfferResult := operationResult.MustManageOfferResult().MustSuccess()
+
+		switch manageOfferResult.Offer.Effect {
+		case xdr.ManageOfferEffectCreated:
+			if len(manageOfferResult.OffersClaimed) == 0 {
+				return history.OperationStatePending, 0
+			}
+			return history.OperationStatePartiallyMatched, 0
+		case xdr.ManageOfferEffectDeleted:
+			if manageOfferOp.Amount != 0 {
+				return history.OperationStateFullyMatched, 0
+			}
+			return history.OperationStateCanceled, 0
+		default:
+			panic(fmt.Errorf("unknown manage offer op effect: %s", manageOfferResult.Offer.Effect.ShortString()))
+		}
 	default:
 		return state, operationIdentifier
 	}
@@ -94,7 +113,7 @@ func (is *Session) operation() {
 
 		offerIsCancelled := op.OfferId != 0 && op.Amount == 0
 		if offerIsCancelled {
-			is.Ingestion.SetOfferState(uint64(op.OfferId), history.OfferStateCancelled.String())
+			is.updateOfferState(uint64(op.OfferId), uint64(history.OperationStateCanceled))
 			return
 		}
 		is.updateOffersState(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
