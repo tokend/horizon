@@ -3,7 +3,6 @@ package history
 import (
 	"gitlab.com/swarmfund/horizon/db2"
 	sq "github.com/lann/squirrel"
-	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"fmt"
 )
@@ -26,9 +25,14 @@ type LedgerChangesQ struct {
 }
 
 type LedgerChangesQI interface {
+	// ByEffects filters query by specific effects
 	ByEffects(effects []int) LedgerChangesQI
+	// ByEntryType filters query by specific entry types
 	ByEntryType(entryType []int) LedgerChangesQI
+	// ByTransactionIDs filters query by specific tx_ids which based on page params,
+	// entry types, effects
 	ByTransactionIDs(page db2.PageQuery, entryTypes []int, effects []int) LedgerChangesQI
+	// Select loads the results of the query specified by `q` into `dest`.
 	Select(dest interface{}) error
 }
 
@@ -41,6 +45,7 @@ func (q *Q) LedgerChanges() LedgerChangesQI {
 	}
 }
 
+// ByEffects filters query by specific effects
 func (q *LedgerChangesQ) ByEffects(effects []int) LedgerChangesQI {
 	if q.Err != nil {
 		return q
@@ -54,6 +59,7 @@ func (q *LedgerChangesQ) ByEffects(effects []int) LedgerChangesQI {
 	return q
 }
 
+// ByEntryType filters query by specific entry types
 func (q *LedgerChangesQ) ByEntryType(entryTypes []int) LedgerChangesQI {
 	if q.Err != nil {
 		return q
@@ -73,8 +79,6 @@ func (q *LedgerChangesQ) Select(dest interface{}) error {
 		return q.Err
 	}
 
-	logan.New().Debug(q.sql.ToSql())
-
 	q.Err = q.parent.Select(dest, q.sql)
 	return q.Err
 }
@@ -85,15 +89,6 @@ func (q *LedgerChangesQ) ByTransactionIDs(page db2.PageQuery, entryTypes []int, 
 	if q.Err != nil {
 		return q
 	}
-
-	//txID, err := page.CursorInt64()
-	//if err != nil {
-	//
-	//}
-	//
-	//query := fmt.Sprintf("hlc.tx_id in (select hlc.tx_id from history_ledger_changes hlc" +
-	//	" where %s %s and tx_id > %d order by tx_id %s limit %d)",
-	//	getStringFromIntEntryTypes(entryTypes), getStringFromIntEffects(effects), txID, page.Order, page.Limit)
 
 	selectTxIDs := sq.Select("hlc.tx_id").From("history_ledger_changes hlc")
 	selectTxIDs = selectTxIDs.Where(sq.Eq{"effect" : effects})
@@ -113,38 +108,6 @@ func (q *LedgerChangesQ) ByTransactionIDs(page db2.PageQuery, entryTypes []int, 
 		return q
 	}
 
-	//logan.New().Debug(query)
-
 	q.sql = q.sql.Where(fmt.Sprintf("hlc.tx_id in (%s)", sqlTxIDs), args...)
 	return q
-}
-
-func getStringFromIntArray(input []int) string {
-	if input == nil {
-		return ""
-	}
-	var res string
-	for _, value := range input {
-		res = res + string(value) + ", "
-	}
-
-	return "(" + res[0:len(res)-2] + ")"
-}
-
-func getStringFromIntEntryTypes(input []int) string {
-	str := getStringFromIntArray(input)
-	if str == "" {
-		return " (1=0) "
-	}
-
-	return " entry_type in " + str
-}
-
-func getStringFromIntEffects(input []int) string {
-	str := getStringFromIntArray(input)
-	if str == "" {
-		return " (1=0) "
-	}
-
-	return " effect in " + str
 }

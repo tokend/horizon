@@ -3,7 +3,6 @@ package resource
 import (
 	"time"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/go/xdr"
 )
 
 // TransactionV2 represents a single, successful transaction
@@ -18,8 +17,8 @@ type TransactionV2 struct {
 }
 
 type LedgerEntryChangeV2 struct {
-	Effect    string `json:"effect"`
-	EntryType string `json:"entry_type"`
+	Effect    int32  `json:"effect"`
+	EntryType int32  `json:"entry_type"`
 	Payload   string `json:"payload"`
 }
 
@@ -32,8 +31,8 @@ func (t *TransactionV2) Populate(transactionRow history.Transaction, ledgerChang
 	t.ResultXdr = transactionRow.TxResult
 	for _, change := range ledgerChangesRow {
 		ledgerEntryChangeV2 := LedgerEntryChangeV2{
-			Effect:    xdr.LedgerEntryChangeType(change.Effect).ShortString(),
-			EntryType: xdr.LedgerEntryType(change.EntryType).ShortString(),
+			Effect:    int32(change.Effect),
+			EntryType: int32(change.EntryType),
 			Payload: change.Payload,
 		}
 		t.Changes = append(t.Changes, ledgerEntryChangeV2)

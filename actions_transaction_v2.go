@@ -47,9 +47,8 @@ func (action *TransactionV2IndexAction) JSON() {
 func (action *TransactionV2IndexAction) loadParams() {
 	action.ValidateCursorAsDefault()
 	var err error
-	action.GetAddress()
-	entryTypeFilterStr := action.BaseURL().Query()["entry_type"]
-	action.Log.Info(entryTypeFilterStr)
+
+	entryTypeFilterStr := action.Base.R.URL.Query()["entry_type"]
 	action.EntryTypeFilter, err = getIntArrayFromStringArray(entryTypeFilterStr)
 	if err != nil {
 		action.Log.WithError(err).Error("failed to get entry type filter")
@@ -57,15 +56,13 @@ func (action *TransactionV2IndexAction) loadParams() {
 		return
 	}
 
-	effectFilterStr := action.BaseURL().Query()["effect"]
+	effectFilterStr := action.Base.R.URL.Query()["effect"]
 	action.EffectFilter, err = getIntArrayFromStringArray(effectFilterStr)
 	if err != nil {
 		action.Log.WithError(err).Error("failed to get effect filter")
 		action.Err = &problem.BadRequest
 		return
 	}
-
-	action.Log.Info(action.EffectFilter)
 
 	action.PagingParams = action.GetPageQuery()
 
@@ -120,7 +117,7 @@ func (action *TransactionV2IndexAction) loadRecords() {
 
 	for txID, changes := range sortedLedgerChanges {
 		var tx history.Transaction
-		action.Err = q.TransactionByHashOrID(&tx, string(txID))
+		action.Err = q.TransactionByHashOrID(&tx, strconv.FormatInt(txID, 10))
 		transactionV2 := resource.TransactionV2{}
 		transactionV2.Populate(tx, changes)
 		action.TransactionsV2Records = append(action.TransactionsV2Records, transactionV2)
