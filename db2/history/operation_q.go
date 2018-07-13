@@ -8,8 +8,6 @@ import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/go/amount"
 )
 
@@ -40,16 +38,9 @@ type OperationsQI interface {
 	// JoinOnAccount required to filter on account ID and account type
 	JoinOnAccount() OperationsQI
 	Page(page db2.PageQuery) OperationsQI
-	Update(op Operation) error
 	Select(dest interface{}) error
 
 	// Manage Offer
-	// ManageOfferByOffer - filters manage offer operations by offer id
-	ManageOfferByOffer(offerID uint64) OperationsQI
-
-	// ManageOfferByOrderBookID - filters manage offer operations by order book id
-	ManageOfferByOrderBookID(orderBookID uint64) OperationsQI
-
 	// WithoutCancelOffer - don't load manage offer operations which cancel offer
 	WithoutCancelOffer() OperationsQI
 
@@ -223,47 +214,6 @@ func (q *OperationsQ) Page(page db2.PageQuery) OperationsQI {
 	}
 
 	q.sql, q.Err = page.ApplyTo(q.sql, "ho.id")
-	return q
-}
-
-// Update - updates existing operation
-func (q *OperationsQ) Update(op Operation) error {
-	sql := sq.Update("history_operations").SetMap(map[string]interface{}{
-		"id":                op.ID,
-		"transaction_id":    op.TransactionID,
-		"application_order": op.ApplicationOrder,
-		"type":              op.Type,
-		"details":           op.DetailsString,
-		"source_account":    op.SourceAccount,
-		"ledger_close_time": op.LedgerCloseTime,
-		"identifier":        op.Identifier,
-		"state":             op.State,
-	}).Where("id = ?", op.ID)
-
-	_, err := q.parent.Exec(sql)
-	if err != nil {
-		return errors.Wrap(err, "failed to update operation", logan.F{"operation_id": op.ID})
-	}
-
-	return nil
-}
-
-func (q *OperationsQ) ManageOfferByOffer(offerID uint64) OperationsQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("(ho.type = ? AND ho.details->'offer_id' = ?)", xdr.OperationTypeManageOffer, offerID)
-	return q
-}
-
-func (q *OperationsQ) ManageOfferByOrderBookID(orderBookID uint64) OperationsQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where("(ho.type = ? AND ho.details->'order_book_id' = ?)", xdr.OperationTypeManageOffer,
-		orderBookID)
 	return q
 }
 

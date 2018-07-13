@@ -162,10 +162,7 @@ func (action *OperationIndexAction) loadParams() {
 }
 
 func (action *OperationIndexAction) loadRecords() {
-	ops := action.HistoryQ().Operations()
-	
-	// Ignore manageOffer ops which cancel offer
-	ops.WithoutCancelOffer()
+	ops := action.HistoryQ().Operations().WithoutCancelOffer()
 
 	if len(action.Types) > 0 {
 		ops.ForTypes(action.Types)
