@@ -222,7 +222,7 @@ func (q *OperationsQ) WithoutCancelOffer() OperationsQI {
 		return q
 	}
 
-	// 'amount' field in 'details' jsonb
+	// 'amount' field in 'details' jsonb has type string, thus required to pass amount.String to query
 	q.sql = q.sql.Where("(ho.type <> ? OR (ho.details->>'amount') != ?)", xdr.OperationTypeManageOffer,
 		amount.String(0))
 	return q
