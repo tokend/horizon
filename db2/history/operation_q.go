@@ -9,6 +9,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/go/amount"
+	"gitlab.com/swarmfund/horizon/db2/sqx"
 )
 
 var selectOperation = sq.Select("distinct on (ho.id) ho.*").
@@ -214,13 +215,14 @@ func (q *OperationsQ) CompletedOnly() OperationsQI {
 		return q
 	}
 
-	filter := "state IN ("
-	filter += fmt.Sprintf("%d, %d, %d, %d, %d)",
-		OperationStateSuccess, OperationStateRejected, OperationStateCanceled,
-		OperationStateFailed, OperationStateFullyMatched)
+	query, values := sqx.In("state",
+		OperationStateSuccess,
+		OperationStateRejected,
+		OperationStateCanceled,
+		OperationStateFailed,
+		OperationStateFullyMatched)
 
-	q.sql = q.sql.Where(filter)
-
+	q.sql = q.sql.Where(query, values...)
 	return q
 }
 
@@ -229,12 +231,11 @@ func (q *OperationsQ) PendingOnly() OperationsQI {
 		return q
 	}
 
-	filter := "state IN ("
-	filter += fmt.Sprintf("%d, %d)",
-		OperationStatePending, OperationStatePartiallyMatched)
+	query, values := sqx.In("state",
+		OperationStatePending,
+		OperationStatePartiallyMatched)
 
-	q.sql = q.sql.Where(filter)
-
+	q.sql = q.sql.Where(query, values...)
 	return q
 }
 
