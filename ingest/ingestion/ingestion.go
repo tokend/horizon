@@ -101,14 +101,14 @@ func (ingest *Ingestion) LedgerChanges(
 	txID, opID int64,
 	orderNumber, effect int,
 	entryType xdr.LedgerEntryType,
-	ledgerKeyOrEntry interface{},
+	payload interface{},
 ) error {
-	xdrLedgerKeyOrEntry, err := xdr.MarshalBase64(ledgerKeyOrEntry)
+	xdrPayload, err := xdr.MarshalBase64(payload)
 	if err != nil {
-		return errors.Wrap(err, "failed to marshal ledger key")
+		return errors.Wrap(err, "failed to marshal payload")
 	}
 
-	sql := ingest.ledger_changes.Values(txID, opID, orderNumber, effect, entryType, xdrLedgerKeyOrEntry)
+	sql := ingest.ledger_changes.Values(txID, opID, orderNumber, effect, entryType, xdrPayload)
 
 	_, err = ingest.DB.Exec(sql)
 	if err != nil {

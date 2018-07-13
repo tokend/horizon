@@ -5,7 +5,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/history"
 )
 
-// TransactionV2 represents a single, successful transaction
+// TransactionV2 represents a single, successful transaction with ledger changes
 type TransactionV2 struct {
 	ID              string                `json:"id"`
 	PT              string                `json:"paging_token"`
@@ -22,6 +22,7 @@ type LedgerEntryChangeV2 struct {
 	Payload   string `json:"payload"`
 }
 
+// Populate fills out the details
 func (t *TransactionV2) Populate(transactionRow history.Transaction, ledgerChangesRow []history.LedgerChanges) error {
 	t.ID = transactionRow.TransactionHash
 	t.PT = transactionRow.PagingToken()

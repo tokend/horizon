@@ -10,20 +10,15 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-// This file contains the actions:
-//
-// TransactionIndexAction: pages of transactions
-// TransactionShowAction: single transaction by sequence, by hash or id
+// TransactionV2IndexAction: pages of transactions
 
-// TransactionIndexAction renders a page of ledger resources, identified by
-// a normal page query.
+// TransactionV2IndexAction renders a page of ledger resources, identified by
+// a normal page query, entry type and effects
 type TransactionV2IndexAction struct {
 	Action
 	EntryTypeFilter       []int
 	EffectFilter          []int
 	PagingParams          db2.PageQuery
-	TransactionsRecords   []history.Transaction
-	LedgerChangesRecords  []history.LedgerChanges
 	TransactionsV2Records []resource.TransactionV2
 	MetaLedger            history.Ledger
 	Page                  hal.Page

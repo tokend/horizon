@@ -37,7 +37,7 @@ func (is *Session) operationChanges(changes xdr.LedgerEntryChanges) error {
 }
 
 func (is *Session) ledgerChanges(orderNumber int, change xdr.LedgerEntryChange) error {
-	ledgerKeyOrEntry, entryType, ok := getLedgerKeyOrEntry(change)
+	payload, entryType, ok := getLedgerKeyOrEntry(change)
 	if !ok {
 		return nil
 	}
@@ -48,7 +48,7 @@ func (is *Session) ledgerChanges(orderNumber int, change xdr.LedgerEntryChange) 
 		orderNumber,
 		int(change.Type),
 		entryType,
-		ledgerKeyOrEntry)
+		payload)
 	if err != nil {
 		return errors.Wrap(err, "failed to ingest ledger changes")
 	}
