@@ -10,5 +10,6 @@ func (is *Session) updateOfferState(offerID, state uint64) {
 	err := is.Ingestion.UpdateOfferState(offerID, state)
 	if err != nil {
 		is.Err = errors.Wrap(err, "failed to process manage offer")
+		return
 	}
 }
