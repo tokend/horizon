@@ -3,15 +3,18 @@ package history
 import (
 	"gitlab.com/swarmfund/horizon/db2"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"fmt"
 )
 
 var selectLedgerChanges = sq.Select(
 	"hlc.tx_id",
 	"hlc.op_id",
-	"hlc.entry_index",
+	"hlc.order_number",
 	"hlc.effect",
 	"hlc.entry_type",
-	"hlc.ledger_key",
+	"hlc.payload",
 ).From("history_ledger_changes hlc")
 
 // LedgerChangesQ is a helper struct to aid in configuring queries that loads
@@ -23,7 +26,9 @@ type LedgerChangesQ struct {
 }
 
 type LedgerChangesQI interface {
-	Page(page db2.PageQuery) LedgersQI
+	ByEffects(effects []int) LedgerChangesQI
+	ByEntryType(entryType []int) LedgerChangesQI
+	ByTransactionIDs(page db2.PageQuery, entryTypes []int, effects []int) LedgerChangesQI
 	Select(dest interface{}) error
 }
 
@@ -36,13 +41,29 @@ func (q *Q) LedgerChanges() LedgerChangesQI {
 	}
 }
 
-// Page specifies the paging constraints for the query being built by `q`.
-func (q *LedgerChangesQ) Page(page db2.PageQuery) LedgersQI {
+func (q *LedgerChangesQ) ByEffects(effects []int) LedgerChangesQI {
 	if q.Err != nil {
 		return q
 	}
 
-	q.sql, q.Err = page.ApplyTo(q.sql, "hlc.tx_id")
+	if len(effects) == 0 {
+		return q
+	}
+
+	q.sql = q.sql.Where(sq.Eq{"effect" : effects})
+	return q
+}
+
+func (q *LedgerChangesQ) ByEntryType(entryTypes []int) LedgerChangesQI {
+	if q.Err != nil {
+		return q
+	}
+
+	if len(entryTypes) == 0 {
+		return q
+	}
+
+	q.sql = q.sql.Where(sq.Eq{"entry_type" : entryTypes})
 	return q
 }
 
@@ -52,6 +73,78 @@ func (q *LedgerChangesQ) Select(dest interface{}) error {
 		return q.Err
 	}
 
+	logan.New().Debug(q.sql.ToSql())
+
 	q.Err = q.parent.Select(dest, q.sql)
 	return q.Err
+}
+
+// ByTransactionsIDs filters ledger changes by tx_id which specifies on
+// entry types, effects and paging params
+func (q *LedgerChangesQ) ByTransactionIDs(page db2.PageQuery, entryTypes []int, effects []int) LedgerChangesQI {
+	if q.Err != nil {
+		return q
+	}
+
+	//txID, err := page.CursorInt64()
+	//if err != nil {
+	//
+	//}
+	//
+	//query := fmt.Sprintf("hlc.tx_id in (select hlc.tx_id from history_ledger_changes hlc" +
+	//	" where %s %s and tx_id > %d order by tx_id %s limit %d)",
+	//	getStringFromIntEntryTypes(entryTypes), getStringFromIntEffects(effects), txID, page.Order, page.Limit)
+
+	selectTxIDs := sq.Select("hlc.tx_id").From("history_ledger_changes hlc")
+	selectTxIDs = selectTxIDs.Where(sq.Eq{"effect" : effects})
+	selectTxIDs = selectTxIDs.Where(sq.Eq{"entry_type" : entryTypes})
+	selectTxIDs, q.Err = page.ApplyTo(selectTxIDs, "hlc.tx_id")
+
+	if q.Err != nil {
+		q.Err = errors.Wrap(q.Err,"failed to get paging params")
+		return q
+	}
+
+	var sqlTxIDs string
+	var args []interface{}
+	sqlTxIDs, args, q.Err = selectTxIDs.ToSql()
+	if q.Err != nil {
+		q.Err = errors.Wrap(q.Err, "failed to get sql string for tx_id")
+		return q
+	}
+
+	//logan.New().Debug(query)
+
+	q.sql = q.sql.Where(fmt.Sprintf("hlc.tx_id in (%s)", sqlTxIDs), args...)
+	return q
+}
+
+func getStringFromIntArray(input []int) string {
+	if input == nil {
+		return ""
+	}
+	var res string
+	for _, value := range input {
+		res = res + string(value) + ", "
+	}
+
+	return "(" + res[0:len(res)-2] + ")"
+}
+
+func getStringFromIntEntryTypes(input []int) string {
+	str := getStringFromIntArray(input)
+	if str == "" {
+		return " (1=0) "
+	}
+
+	return " entry_type in " + str
+}
+
+func getStringFromIntEffects(input []int) string {
+	str := getStringFromIntArray(input)
+	if str == "" {
+		return " (1=0) "
+	}
+
+	return " effect in " + str
 }

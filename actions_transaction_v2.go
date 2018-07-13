@@ -6,6 +6,8 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+	"strconv"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // This file contains the actions:
@@ -17,12 +19,15 @@ import (
 // a normal page query.
 type TransactionV2IndexAction struct {
 	Action
-	EntryTypeFilter []int
-	EffectFilter    []int
-	PagingParams    db2.PageQuery
-	Records         []history.Transaction
-	MetaLedger      history.Ledger
-	Page            hal.Page
+	EntryTypeFilter       []int
+	EffectFilter          []int
+	PagingParams          db2.PageQuery
+	TransactionsRecords   []history.Transaction
+	LedgerChangesRecords  []history.LedgerChanges
+	TransactionsV2Records []resource.TransactionV2
+	MetaLedger            history.Ledger
+	Page                  hal.Page
+
 }
 
 // JSON is a method for actions.JSON
@@ -41,6 +46,26 @@ func (action *TransactionV2IndexAction) JSON() {
 
 func (action *TransactionV2IndexAction) loadParams() {
 	action.ValidateCursorAsDefault()
+	var err error
+	action.GetAddress()
+	entryTypeFilterStr := action.BaseURL().Query()["entry_type"]
+	action.Log.Info(entryTypeFilterStr)
+	action.EntryTypeFilter, err = getIntArrayFromStringArray(entryTypeFilterStr)
+	if err != nil {
+		action.Log.WithError(err).Error("failed to get entry type filter")
+		action.Err = &problem.BadRequest
+		return
+	}
+
+	effectFilterStr := action.BaseURL().Query()["effect"]
+	action.EffectFilter, err = getIntArrayFromStringArray(effectFilterStr)
+	if err != nil {
+		action.Log.WithError(err).Error("failed to get effect filter")
+		action.Err = &problem.BadRequest
+		return
+	}
+
+	action.Log.Info(action.EffectFilter)
 
 	action.PagingParams = action.GetPageQuery()
 
@@ -53,23 +78,52 @@ func (action *TransactionV2IndexAction) loadParams() {
 	}
 }
 
+func getIntArrayFromStringArray(input []string) (result []int, err error) {
+	for _, str := range input {
+		value, err := strconv.Atoi(str)
+		if err != nil {
+			return nil, errors.New("failed to convert entry type")
+		}
+
+		result = append(result, value)
+	}
+
+	return
+}
+
 func (action *TransactionV2IndexAction) loadRecords() {
 	q := action.HistoryQ()
-	txs := q.Transactions()
 
 	// memorize ledger sequence before select to prevent data race
 	latestLedger := int32(action.App.historyLatestLedgerGauge.Value())
 
-	err := txs.Page(action.PagingParams).Select(&action.Records)
+	lc := q.LedgerChanges()
+
+	var ledgerChanges []history.LedgerChanges
+
+	err := lc.ByEntryType(action.EntryTypeFilter).
+		ByEffects(action.EffectFilter).
+		ByTransactionIDs(action.PagingParams, action.EntryTypeFilter, action.EffectFilter).
+		Select(&ledgerChanges)
+
 	if err != nil {
-		action.Log.WithError(err).Error("failed to get transactions")
+		action.Log.WithError(err).Error("failed to get ledger changes")
 		action.Err = &problem.ServerError
 		return
 	}
 
-	if uint64(len(action.Records)) == action.PagingParams.Limit {
-		// we fetched full page, probably there is something ahead
-		latestLedger = action.Records[len(action.Records)-1].LedgerSequence
+	 sortedLedgerChanges := map[int64][]history.LedgerChanges{}
+
+	for _, change := range ledgerChanges {
+		sortedLedgerChanges[change.TransactionID] = append(sortedLedgerChanges[change.TransactionID], change)
+	}
+
+	for txID, changes := range sortedLedgerChanges {
+		var tx history.Transaction
+		action.Err = q.TransactionByHashOrID(&tx, string(txID))
+		transactionV2 := resource.TransactionV2{}
+		transactionV2.Populate(tx, changes)
+		action.TransactionsV2Records = append(action.TransactionsV2Records, transactionV2)
 	}
 
 	// load ledger close time
@@ -81,10 +135,8 @@ func (action *TransactionV2IndexAction) loadRecords() {
 }
 
 func (action *TransactionV2IndexAction) loadPage() {
-	for _, record := range action.Records {
-		var res resource.TransactionV2
-		res.Populate(action.Ctx, record)
-		action.Page.Add(res)
+	for _, record := range action.TransactionsV2Records {
+		action.Page.Add(record)
 	}
 
 	action.Page.Embedded.Meta = &hal.PageMeta{

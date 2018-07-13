@@ -436,3 +436,11 @@ func (action TransactionShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r
 	action.Log = action.Log.WithField("action", "TransactionShowAction")
 	ap.Execute(&action)
 }
+
+// ServeHTTPC is a method for web.Handler
+func (action TransactionV2IndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "TransactionV2IndexAction")
+	ap.Execute(&action)
+}

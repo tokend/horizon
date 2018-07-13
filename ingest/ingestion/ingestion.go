@@ -343,7 +343,7 @@ func (ingest *Ingestion) createInsertBuilders() {
 		"order_number",
 		"effect",
 		"entry_type",
-		"ledger_key",
+		"payload",
 	)
 }
 

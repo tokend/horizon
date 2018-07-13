@@ -3,6 +3,7 @@ package resource
 import (
 	"time"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // TransactionV2 represents a single, successful transaction
@@ -22,12 +23,25 @@ type LedgerEntryChangeV2 struct {
 	Payload   string `json:"payload"`
 }
 
-func (t *TransactionV2) Populate(transactionRow history.Transaction, ledgerChangesRow history.LedgerChanges) error {
+func (t *TransactionV2) Populate(transactionRow history.Transaction, ledgerChangesRow []history.LedgerChanges) error {
 	t.ID = transactionRow.TransactionHash
 	t.PT = transactionRow.PagingToken()
 	t.Hash = transactionRow.TransactionHash
 	t.LedgerCloseTime = transactionRow.LedgerCloseTime
 	t.EnvelopeXdr = transactionRow.TxEnvelope
 	t.ResultXdr = transactionRow.TxResult
+	for _, change := range ledgerChangesRow {
+		ledgerEntryChangeV2 := LedgerEntryChangeV2{
+			Effect:    xdr.LedgerEntryChangeType(change.Effect).ShortString(),
+			EntryType: xdr.LedgerEntryType(change.EntryType).ShortString(),
+			Payload: change.Payload,
+		}
+		t.Changes = append(t.Changes, ledgerEntryChangeV2)
+	}
 	return nil
+}
+
+// PagingToken implementation for hal.Pageable
+func (t TransactionV2) PagingToken() string {
+	return t.PT
 }
