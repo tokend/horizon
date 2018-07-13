@@ -33,6 +33,8 @@ type OperationsQI interface {
 	ForReference(reference string) OperationsQI
 	Since(ts time.Time) OperationsQI
 	To(ts time.Time) OperationsQI
+	CompletedOnly() OperationsQI
+	PendingOnly() OperationsQI
 	// required prior to exchange and asset filtering
 	JoinOnBalance() OperationsQI
 	// JoinOnAccount required to filter on account ID and account type
@@ -203,6 +205,35 @@ func (q *OperationsQ) To(ts time.Time) OperationsQI {
 	}
 
 	q.sql = q.sql.Where("ho.ledger_close_time <= ?", ts)
+
+	return q
+}
+
+func (q *OperationsQ) CompletedOnly() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	filter := "state IN ("
+	filter += fmt.Sprintf("%d, %d, %d, %d, %d)",
+		OperationStateSuccess, OperationStateRejected, OperationStateCanceled,
+		OperationStateFailed, OperationStateFullyMatched)
+
+	q.sql = q.sql.Where(filter)
+
+	return q
+}
+
+func (q *OperationsQ) PendingOnly() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	filter := "state IN ("
+	filter += fmt.Sprintf("%d, %d)",
+		OperationStatePending, OperationStatePartiallyMatched)
+
+	q.sql = q.sql.Where(filter)
 
 	return q
 }
