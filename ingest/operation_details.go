@@ -192,7 +192,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeManageOffer:
 		op := c.Operation().Body.MustManageOfferOp()
 		opResult := c.OperationResult().MustManageOfferResult().MustSuccess()
-		isDeleted := opResult.Offer.Effect.ShortString() == "deleted"
+		isDeleted := opResult.Offer.Effect == xdr.ManageOfferEffectDeleted
 		details["is_buy"] = op.IsBuy
 		details["amount"] = amount.String(int64(op.Amount))
 		details["price"] = amount.String(int64(op.Price))

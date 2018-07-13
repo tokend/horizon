@@ -112,7 +112,7 @@ func (is *Session) storeTrades(orderBookID uint64, result xdr.ManageOfferSuccess
 	is.Err = is.Ingestion.StoreTrades(orderBookID, result, is.Cursor.Ledger().CloseTime)
 }
 
-func (is *Session) updateOffersState(offerID uint64) {
+func (is *Session) processManageOfferLedgerChanges(offerID uint64) {
 	ledgerChanges := is.Cursor.OperationChanges()
 	for _, change := range ledgerChanges {
 		switch change.Type {
@@ -193,19 +193,15 @@ func (is *Session) handleCheckSaleState(result xdr.CheckSaleStateSuccess) {
 		offerState = uint64(history.OperationStateFullyMatched)
 	}
 
-	fields := map[string]interface{}{
-		"sale_id": uint64(result.SaleId),
-	}
-
 	err := is.Ingestion.HistoryQ().Sales().SetState(uint64(result.SaleId), state)
 	if err != nil {
-		is.Err = errors.Wrap(err, "failed to set state", fields)
+		is.Err = errors.Wrap(err, "failed to set state", logan.F{"sale_id": uint64(result.SaleId)})
 		return
 	}
 
 	err = is.Ingestion.UpdateOrderBookState(uint64(result.SaleId), offerState, true)
 	if err != nil {
-		is.Err = errors.Wrap(err, "failed to set offers states", fields)
+		is.Err = errors.Wrap(err, "failed to set offers states", logan.F{"sale_id": uint64(result.SaleId)})
 		return
 	}
 }
@@ -219,19 +215,15 @@ func (is *Session) handleManageSale(op *xdr.ManageSaleOp) {
 		return
 	}
 
-	fields := map[string]interface{}{
-		"sale_id": uint64(op.SaleId),
-	}
-
 	err := is.Ingestion.HistoryQ().Sales().SetState(uint64(op.SaleId), history.SaleStateCanceled)
 	if err != nil {
-		is.Err = errors.Wrap(err, "failed to set state", fields)
+		is.Err = errors.Wrap(err, "failed to set state", logan.F{"sale_id": uint64(op.SaleId)})
 		return
 	}
 
 	err = is.Ingestion.UpdateOrderBookState(uint64(op.SaleId), uint64(history.OperationStateCanceled), false)
 	if err != nil {
-		is.Err = errors.Wrap(err, "failed to set offers states", fields)
+		is.Err = errors.Wrap(err, "failed to set offers states", logan.F{"sale_id": uint64(op.SaleId)})
 		return
 	}
 }

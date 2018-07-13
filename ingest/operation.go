@@ -116,7 +116,7 @@ func (is *Session) operation() {
 			is.updateOfferState(uint64(op.OfferId), uint64(history.OperationStateCanceled))
 			return
 		}
-		is.updateOffersState(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
+		is.processManageOfferLedgerChanges(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
 	case xdr.OperationTypeManageInvoice:
 		is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
 			is.Cursor.OperationResult().MustManageInvoiceResult())

@@ -20,16 +20,11 @@ func (ingest *Ingestion) UpdateOfferState(offerID, state uint64) error {
 }
 
 func (ingest *Ingestion) UpdateOrderBookState(orderBookID, state uint64, ignoreCanceled bool) error {
-	var sql sq.UpdateBuilder
+	sql := sq.Update("history_operations").
+		Set("state", state).
+		Where("type = ? AND details->>'order_book_id' = ?", xdr.OperationTypeManageOffer, orderBookID)
 	if ignoreCanceled {
-		sql = sq.Update("history_operations").
-			Set("state", state).
-			Where("type = ? AND state <> ? AND details->>'order_book_id' = ?", xdr.OperationTypeManageOffer,
-			history.OperationStateCanceled, orderBookID)
-	} else {
-		sql = sq.Update("history_operations").
-			Set("state", state).
-			Where("type = ? AND details->>'order_book_id' = ?", xdr.OperationTypeManageOffer, orderBookID)
+		sql = sql.Where("state <> ?", history.OperationStateCanceled)
 	}
 
 	_, err := ingest.DB.Exec(sql)
