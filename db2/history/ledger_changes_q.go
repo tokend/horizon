@@ -45,7 +45,7 @@ func (q *Q) LedgerChanges() LedgerChangesQI {
 	}
 }
 
-// ByEffects filters query by specific effects
+// ByEffects filters query by specific effects, if array empty do nothing
 func (q *LedgerChangesQ) ByEffects(effects []int) LedgerChangesQI {
 	if q.Err != nil {
 		return q
@@ -54,13 +54,12 @@ func (q *LedgerChangesQ) ByEffects(effects []int) LedgerChangesQI {
 	if len(effects) == 0 {
 		return q
 	}
-	if effects != nil {
-		q.sql = q.sql.Where(sq.Eq{"effect": effects})
-	}
+
+	q.sql = q.sql.Where(sq.Eq{"effect": effects})
 	return q
 }
 
-// ByEntryType filters query by specific entry types
+// ByEntryType filters query by specific entry types, if array empty do nothing
 func (q *LedgerChangesQ) ByEntryType(entryTypes []int) LedgerChangesQI {
 	if q.Err != nil {
 		return q
@@ -69,9 +68,8 @@ func (q *LedgerChangesQ) ByEntryType(entryTypes []int) LedgerChangesQI {
 	if len(entryTypes) == 0 {
 		return q
 	}
-	if entryTypes != nil {
-		q.sql = q.sql.Where(sq.Eq{"entry_type": entryTypes})
-	}
+
+	q.sql = q.sql.Where(sq.Eq{"entry_type": entryTypes})
 	return q
 }
 
@@ -93,10 +91,10 @@ func (q *LedgerChangesQ) ByTransactionIDs(page db2.PageQuery, entryTypes []int, 
 	}
 
 	selectTxIDs := sq.Select("hlc.tx_id").From("history_ledger_changes hlc")
-	if effects != nil {
+	if len(effects) != 0 {
 		selectTxIDs = selectTxIDs.Where(sq.Eq{"effect": effects})
 	}
-	if entryTypes != nil {
+	if len(entryTypes) != 0 {
 		selectTxIDs = selectTxIDs.Where(sq.Eq{"entry_type": entryTypes})
 	}
 	selectTxIDs, q.Err = page.ApplyTo(selectTxIDs, "hlc.tx_id")

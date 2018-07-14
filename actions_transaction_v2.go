@@ -6,8 +6,6 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"strconv"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // TransactionV2IndexAction: pages of transactions
@@ -41,26 +39,15 @@ func (action *TransactionV2IndexAction) JSON() {
 
 func (action *TransactionV2IndexAction) loadParams() {
 	action.ValidateCursorAsDefault()
-	var err error
 
-	entryTypeFilterStr := action.Base.R.URL.Query()["entry_type"]
-	action.EntryTypeFilter, err = getIntArrayFromStringArray(entryTypeFilterStr)
-	if err != nil {
-		action.Log.WithError(err).Error("failed to get entry type filter")
-		action.Err = &problem.BadRequest
-		return
-	}
-
-	effectFilterStr := action.Base.R.URL.Query()["effect"]
-	action.EffectFilter, err = getIntArrayFromStringArray(effectFilterStr)
-	if err != nil {
-		action.Log.WithError(err).Error("failed to get effect filter")
-		action.Err = &problem.BadRequest
-		return
-	}
-
+	action.EntryTypeFilter = action.GetIntArray("entry_type")
+	action.EffectFilter = action.GetIntArray("effect")
 	action.PagingParams = action.GetPageQuery()
 
+	action.setPageLimit()
+}
+
+func (action *TransactionV2IndexAction) setPageLimit() {
 	limit := action.GetUInt64("limit")
 	if limit > db2.MaxPageSize {
 		action.PagingParams.Limit = limit
@@ -70,30 +57,14 @@ func (action *TransactionV2IndexAction) loadParams() {
 	}
 }
 
-func getIntArrayFromStringArray(input []string) (result []int, err error) {
-	for _, str := range input {
-		value, err := strconv.Atoi(str)
-		if err != nil {
-			return nil, errors.New("failed to convert entry type")
-		}
-
-		result = append(result, value)
-	}
-
-	return
-}
-
 func (action *TransactionV2IndexAction) loadRecords() {
-	q := action.HistoryQ()
-
 	// memorize ledger sequence before select to prevent data race
 	latestLedger := int32(action.App.historyLatestLedgerGauge.Value())
 
-	lc := q.LedgerChanges()
-
 	var ledgerChanges []history.LedgerChanges
 
-	err := lc.ByEntryType(action.EntryTypeFilter).
+	q := action.HistoryQ()
+	err := q.LedgerChanges().ByEntryType(action.EntryTypeFilter).
 		ByEffects(action.EffectFilter).
 		ByTransactionIDs(action.PagingParams, action.EntryTypeFilter, action.EffectFilter).
 		Select(&ledgerChanges)
@@ -104,19 +75,30 @@ func (action *TransactionV2IndexAction) loadRecords() {
 		return
 	}
 
-	 sortedLedgerChanges := map[int64][]history.LedgerChanges{}
-
+	sortedLedgerChanges := map[int64][]history.LedgerChanges{}
 	for _, change := range ledgerChanges {
 		sortedLedgerChanges[change.TransactionID] = append(sortedLedgerChanges[change.TransactionID], change)
 	}
 
-	for txID, changes := range sortedLedgerChanges {
-		var tx history.Transaction
-		action.Err = q.TransactionByHashOrID(&tx, strconv.FormatInt(txID, 10))
+	var transactionsIDs []int64
+	for txID := range sortedLedgerChanges {
+		transactionsIDs = append(transactionsIDs, txID)
+	}
+
+	var transactions []history.Transaction
+	err = q.Transactions().ByTxIDs(transactionsIDs).Select(&transactions)
+	if err != nil {
+		action.Log.WithError(err).Error("failed to get transactions")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	for _, tx := range transactions {
 		transactionV2 := resource.TransactionV2{}
-		transactionV2.Populate(tx, changes)
+		transactionV2.Populate(tx, sortedLedgerChanges[tx.ID])
 		action.TransactionsV2Records = append(action.TransactionsV2Records, transactionV2)
 	}
+
 
 	// load ledger close time
 	if err := action.HistoryQ().LedgerBySequence(&action.MetaLedger, latestLedger); err != nil {
