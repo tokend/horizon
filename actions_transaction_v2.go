@@ -6,6 +6,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // TransactionV2IndexAction: pages of transactions
@@ -64,7 +65,12 @@ func (action *TransactionV2IndexAction) loadRecords() {
 	// memorize ledger sequence before select to prevent data race
 	latestLedger := int32(action.App.historyLatestLedgerGauge.Value())
 
-	sortedLedgerChanges := action.getLedgerChanges()
+	sortedLedgerChanges, err := action.getLedgerChanges()
+	if err != nil {
+		action.Log.WithError(err).Error("failed to get ledger changes")
+		action.Err = &problem.ServerError
+		return
+	}
 
 	var transactionsIDs []int64
 	for txID := range sortedLedgerChanges {
@@ -72,7 +78,7 @@ func (action *TransactionV2IndexAction) loadRecords() {
 	}
 
 	var transactions []history.Transaction
-	err := action.HistoryQ().Transactions().ByTxIDs(transactionsIDs).Select(&transactions)
+	err = action.HistoryQ().Transactions().ByTxIDs(transactionsIDs).Select(&transactions)
 	if err != nil {
 		action.Log.WithError(err).Error("failed to get transactions")
 		action.Err = &problem.ServerError
@@ -93,7 +99,7 @@ func (action *TransactionV2IndexAction) loadRecords() {
 	}
 }
 
-func (action *TransactionV2IndexAction) getLedgerChanges() map[int64][]history.LedgerChanges {
+func (action *TransactionV2IndexAction) getLedgerChanges() (map[int64][]history.LedgerChanges, error) {
 	var ledgerChanges []history.LedgerChanges
 
 	err := action.HistoryQ().LedgerChanges().ByEntryType(action.EntryTypeFilter).
@@ -102,9 +108,7 @@ func (action *TransactionV2IndexAction) getLedgerChanges() map[int64][]history.L
 	Select(&ledgerChanges)
 
 	if err != nil {
-		action.Log.WithError(err).Error("failed to get ledger changes")
-		action.Err = &problem.ServerError
-		return nil
+		return nil, errors.Wrap(err, "failed to select ledger changes")
 	}
 
 	sortedLedgerChanges := map[int64][]history.LedgerChanges{}
@@ -112,7 +116,7 @@ func (action *TransactionV2IndexAction) getLedgerChanges() map[int64][]history.L
 		sortedLedgerChanges[change.TransactionID] = append(sortedLedgerChanges[change.TransactionID], change)
 	}
 
-	return sortedLedgerChanges
+	return sortedLedgerChanges, nil
 }
 
 func (action *TransactionV2IndexAction) loadPage() {
