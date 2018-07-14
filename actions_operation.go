@@ -31,13 +31,15 @@ type OperationIndexAction struct {
 	Action
 	Types []xdr.OperationType
 
-	LedgerFilter      int32
-	AccountFilter     string
-	AccountTypeFilter int32
-	BalanceFilter     string
-	AssetFilter       string
-	ExchangeFilter    string
-	TransactionFilter string
+	LedgerFilter        int32
+	AccountFilter       string
+	AccountTypeFilter   int32
+	BalanceFilter       string
+	AssetFilter         string
+	ExchangeFilter      string
+	TransactionFilter   string
+	CompletedOnlyFilter bool
+	PendingOnlyFilter   bool
 	// ReferenceFilter substring
 	ReferenceFilter string
 	SinceFilter     *time.Time
@@ -110,6 +112,13 @@ func (action *OperationIndexAction) loadParams() {
 	action.ReferenceFilter = action.GetString("reference")
 	action.SinceFilter = action.TryGetTime("since")
 	action.ToFilter = action.TryGetTime("to")
+	action.CompletedOnlyFilter = action.GetBool("completed_only")
+	action.PendingOnlyFilter = action.GetBool("pending_only")
+
+	if action.CompletedOnlyFilter && action.PendingOnlyFilter {
+		action.SetInvalidField("pending_only", errors.New("completed_only and pending_only filters cannot both be set"))
+		return
+	}
 
 	var err error
 	opTypeStr := action.GetString("operation_type")
@@ -162,7 +171,7 @@ func (action *OperationIndexAction) loadParams() {
 }
 
 func (action *OperationIndexAction) loadRecords() {
-	ops := action.HistoryQ().Operations()
+	ops := action.HistoryQ().Operations().WithoutCancelOffer()
 
 	if len(action.Types) > 0 {
 		ops.ForTypes(action.Types)
@@ -207,6 +216,15 @@ func (action *OperationIndexAction) loadRecords() {
 	if action.ToFilter != nil {
 		ops.To(*action.ToFilter)
 	}
+
+	if action.CompletedOnlyFilter {
+		ops.CompletedOnly()
+	}
+
+	if action.PendingOnlyFilter {
+		ops.PendingOnly()
+	}
+
 
 	err := ops.Page(action.PagingParams).Select(&action.Records)
 
