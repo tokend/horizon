@@ -8,6 +8,8 @@ import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/swarmfund/horizon/db2/sqx"
 )
 
 var selectOperation = sq.Select("distinct on (ho.id) ho.*").
@@ -32,12 +34,18 @@ type OperationsQI interface {
 	ForReference(reference string) OperationsQI
 	Since(ts time.Time) OperationsQI
 	To(ts time.Time) OperationsQI
+	CompletedOnly() OperationsQI
+	PendingOnly() OperationsQI
 	// required prior to exchange and asset filtering
 	JoinOnBalance() OperationsQI
 	// JoinOnAccount required to filter on account ID and account type
 	JoinOnAccount() OperationsQI
 	Page(page db2.PageQuery) OperationsQI
 	Select(dest interface{}) error
+
+	// Manage Offer
+	// WithoutCancelOffer - don't load manage offer operations which cancel offer
+	WithoutCancelOffer() OperationsQI
 
 	Participants(dest map[int64]*OperationParticipants) error
 }
@@ -202,6 +210,35 @@ func (q *OperationsQ) To(ts time.Time) OperationsQI {
 	return q
 }
 
+func (q *OperationsQ) CompletedOnly() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	query, values := sqx.In("state",
+		OperationStateSuccess,
+		OperationStateRejected,
+		OperationStateCanceled,
+		OperationStateFailed,
+		OperationStateFullyMatched)
+
+	q.sql = q.sql.Where(query, values...)
+	return q
+}
+
+func (q *OperationsQ) PendingOnly() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	query, values := sqx.In("state",
+		OperationStatePending,
+		OperationStatePartiallyMatched)
+
+	q.sql = q.sql.Where(query, values...)
+	return q
+}
+
 // Page specifies the paging constraints for the query being built by `q`.
 func (q *OperationsQ) Page(page db2.PageQuery) OperationsQI {
 	if q.Err != nil {
@@ -209,6 +246,17 @@ func (q *OperationsQ) Page(page db2.PageQuery) OperationsQI {
 	}
 
 	q.sql, q.Err = page.ApplyTo(q.sql, "ho.id")
+	return q
+}
+
+func (q *OperationsQ) WithoutCancelOffer() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	// 'amount' field in 'details' jsonb has type string, thus required to pass amount.String to query
+	q.sql = q.sql.Where("(ho.type <> ? OR (ho.details->>'amount') != ?)", xdr.OperationTypeManageOffer,
+		amount.String(0))
 	return q
 }
 

@@ -43,7 +43,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["reference"] = utf8.Scrub(string(op.Reference))
 		details["asset"] = opResult.PaymentResponse.Asset
 
-
 	case xdr.OperationTypeManageKeyValue:
 		op := c.Operation().Body.MustManageKeyValueOp()
 		details["source"] = source
@@ -191,13 +190,20 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["max_price_step"] = amount.String(int64(op.MaxPriceStep))
 		details["policies_i"] = int32(op.Policies)
 	case xdr.OperationTypeManageOffer:
-		op := c.Operation().Body.ManageOfferOp
+		op := c.Operation().Body.MustManageOfferOp()
+		opResult := c.OperationResult().MustManageOfferResult().MustSuccess()
+		isDeleted := opResult.Offer.Effect == xdr.ManageOfferEffectDeleted
 		details["is_buy"] = op.IsBuy
 		details["amount"] = amount.String(int64(op.Amount))
 		details["price"] = amount.String(int64(op.Price))
 		details["fee"] = amount.String(int64(op.Fee))
-		details["offer_id"] = op.OfferId
-		details["is_deleted"] = int64(op.OfferId) != 0
+		details["is_deleted"] = isDeleted
+		if isDeleted {
+			details["offer_id"] = op.OfferId
+		} else {
+			details["offer_id"] = opResult.Offer.Offer.OfferId
+		}
+		details["order_book_id"] = op.OrderBookId
 	case xdr.OperationTypeManageInvoice:
 		op := c.Operation().Body.MustManageInvoiceOp()
 		opResult := c.OperationResult().MustManageInvoiceResult()
@@ -281,14 +287,14 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["to_balance"] = opResult.DestinationBalanceId.AsString()
 		details["amount"] = amount.StringU(uint64(op.Amount))
 		details["asset"] = string(opResult.Asset)
-		details["source_fee_data"] = map[string]interface{} {
-			"fixed_fee": amount.StringU(uint64(op.FeeData.SourceFee.FixedFee)),
-			"actual_payment_fee": amount.StringU(uint64(opResult.ActualSourcePaymentFee)),
+		details["source_fee_data"] = map[string]interface{}{
+			"fixed_fee":                     amount.StringU(uint64(op.FeeData.SourceFee.FixedFee)),
+			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualSourcePaymentFee)),
 			"actual_payment_fee_asset_code": string(op.FeeData.SourceFee.FeeAsset),
 		}
-		details["destination_fee_data"] = map[string]interface{} {
-			"fixed_fee": amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee)),
-			"actual_payment_fee": amount.StringU(uint64(opResult.ActualDestinationPaymentFee)),
+		details["destination_fee_data"] = map[string]interface{}{
+			"fixed_fee":                     amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee)),
+			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualDestinationPaymentFee)),
 			"actual_payment_fee_asset_code": string(op.FeeData.DestinationFee.FeeAsset),
 		}
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest

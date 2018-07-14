@@ -12,24 +12,22 @@ func balanceUpdated(is *Session, ledgerEntry *xdr.LedgerEntry) error {
 		return errors.New("expected non nil balance")
 	}
 
-	if is.Paranoid {
-		// seems like we have partial history, ensuring balance exists
-		var b core.Balance
-		err := is.Cursor.CoreQ().BalanceByID(&b, balance.BalanceId.AsString())
-		if err != nil {
-			return errors.Wrap(err, "failed to get balance")
-		}
-		_, err = is.Ingestion.TryIngestBalance(b.BalanceID, b.Asset, b.AccountID)
-		if err != nil {
-			return errors.Wrap(err, "failed to ingest balance")
-		}
+	// seems like we have partial history, ensuring balance exists
+	if !is.Paranoid {
+		return nil
 	}
 
-	amount := balance.Amount + balance.Locked
+	var b core.Balance
+	err := is.Cursor.CoreQ().BalanceByID(&b, balance.BalanceId.AsString())
+	if err != nil {
+		return errors.Wrap(err, "failed to get balance")
+	}
+	_, err = is.Ingestion.TryIngestBalance(b.BalanceID, b.Asset, b.AccountID)
+	if err != nil {
+		return errors.Wrap(err, "failed to ingest balance")
+	}
 
-	return is.Ingestion.TryIngestBalanceUpdate(
-		balance.BalanceId.AsString(), int64(amount), is.Cursor.Ledger().CloseTime,
-	)
+	return nil
 }
 
 func balanceCreated(is *Session, ledgerEntry *xdr.LedgerEntry) error {

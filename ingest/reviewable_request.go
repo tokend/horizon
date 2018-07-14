@@ -231,8 +231,17 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpd
 		limitsDetails = string(details)
 	}
 	return &history.LimitsUpdateRequest{
-		Details:	  limitsDetails,
+		Details:      limitsDetails,
 		DocumentHash: hex.EncodeToString(request.DeprecatedDocumentHash[:]),
+	}
+}
+
+func getPromotionUpdateRequest(request *xdr.PromotionUpdateRequest) *history.PromotionUpdateRequest {
+	newPromorionData := getSaleRequest(&request.NewPromotionData)
+
+	return &history.PromotionUpdateRequest{
+		SaleID:           uint64(request.PromotionId),
+		NewPromotionData: *newPromorionData,
 	}
 }
 
@@ -271,6 +280,13 @@ func getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history
 	}
 }
 
+func getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
+	return &history.UpdateSaleEndTimeRequest{
+		SaleID:     uint64(request.SaleId),
+		NewEndTime: time.Unix(int64(request.NewEndTime), 0).UTC(),
+	}
+}
+
 func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
 	var details history.ReviewableRequestDetails
 	var err error
@@ -300,6 +316,10 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.UpdateKYC = getUpdateKYCRequest(body.UpdateKycRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
+	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
+		details.UpdateSaleEndTimeRequest = getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
+	case xdr.ReviewableRequestTypeUpdatePromotion:
+		details.PromotionUpdate = getPromotionUpdateRequest(body.PromotionUpdateRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

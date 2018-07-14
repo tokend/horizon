@@ -34,7 +34,6 @@ type QInterface interface {
 	Accounts() AccountsQI
 	AccountByAddress(dest interface{}, addy string) error
 	AccountByID(dest interface{}, id int64) error
-	AccountSummary(address string, since, to *time.Time) ([]BalanceSummary, error)
 
 	Balances() BalancesQI
 	BalanceByID(dest interface{}, id string) error

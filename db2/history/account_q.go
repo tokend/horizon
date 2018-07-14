@@ -1,10 +1,6 @@
 package history
 
 import (
-	"time"
-
-	"fmt"
-
 	"gitlab.com/swarmfund/horizon/db2"
 	sq "github.com/lann/squirrel"
 )
@@ -36,50 +32,6 @@ func (q *Q) Accounts() AccountsQI {
 		parent: q,
 		sql:    selectAccount,
 	}
-}
-
-// AccountSummary will return all balance updates within bounds of `since` and `to`,
-// including ones that does not change amount. There are couple of reasons for this:
-// * idea of keeping ingest as simple/fast as possible and also avoiding of
-// 	 abstraction levels mixing too much
-// * filtering it out with SQL while reading is possible, but query will become
-//	 unmaintainable before it even starts to work.
-// If any additional filtering is required save your time and just do it inline
-func (q *Q) AccountSummary(address string, since, to *time.Time) ([]BalanceSummary, error) {
-	var result []BalanceSummary
-	sincef := since.Format(time.RFC3339)
-	tof := to.Format(time.RFC3339)
-
-	amountBefore := fmt.Sprintf(`
-	coalesce((
-    	SELECT hbu.amount
-		FROM history_balance_updates hbu
-		WHERE hbu.balance_id = bid.balance_id
-		  AND hbu.updated_at < '%s'::timestamp
-		ORDER BY hbu.id DESC
-		LIMIT 1
-	), 0) AS amount_before`, sincef)
-
-	updates := fmt.Sprintf(`
-   (SELECT json_agg(hbu ORDER BY hbu.id)
-   	FROM history_balance_updates hbu
-    WHERE hbu.balance_id = bid.balance_id
-      AND hbu.updated_at >= '%s'::timestamp
-	  AND hbu.updated_at < '%s'::timestamp) AS updates`, sincef, tof)
-
-	balances := fmt.Sprintf(`
-	SELECT DISTINCT hbu.balance_id
-    FROM history_balance_updates hbu
-    JOIN history_balances hb ON hb.balance_id = hbu.balance_id
-    WHERE hb.account_id = '%s'
-	`, address)
-
-	stmt := fmt.Sprintf(`
-	SELECT bid.balance_id, %s, %s
-	FROM (%s) AS bid`, amountBefore, updates, balances)
-
-	err := q.SelectRaw(&result, stmt)
-	return result, err
 }
 
 // AccountByAddress loads a row from `history_accounts`, by address
