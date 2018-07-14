@@ -112,6 +112,44 @@ func (is *Session) storeTrades(orderBookID uint64, result xdr.ManageOfferSuccess
 	is.Err = is.Ingestion.StoreTrades(orderBookID, result, is.Cursor.Ledger().CloseTime)
 }
 
+func (is *Session) processManageOfferLedgerChanges(offerID uint64) {
+	ledgerChanges := is.Cursor.OperationChanges()
+	for _, change := range ledgerChanges {
+		switch change.Type {
+		case xdr.LedgerEntryChangeTypeUpdated:
+			if change.Updated.Data.Type != xdr.LedgerEntryTypeOfferEntry {
+				continue
+			}
+			if uint64(change.Updated.Data.Offer.OfferId) == offerID {
+				continue
+			}
+			err := is.Ingestion.UpdateOfferState(uint64(change.Updated.Data.Offer.OfferId),
+				uint64(history.OperationStatePartiallyMatched))
+			if err != nil {
+				is.Err = errors.Wrap(err, "failed to update offer state", logan.F{
+					"offer_id": uint64(change.Updated.Data.Offer.OfferId),
+				})
+				return
+			}
+		case xdr.LedgerEntryChangeTypeRemoved:
+			if change.Removed.Type != xdr.LedgerEntryTypeOfferEntry {
+				continue
+			}
+			if uint64(change.Removed.Offer.OfferId) == offerID {
+				continue
+			}
+			err := is.Ingestion.UpdateOfferState(uint64(change.Removed.Offer.OfferId),
+				uint64(history.OperationStateFullyMatched))
+			if err != nil {
+				is.Err = errors.Wrap(err, "failed to update offer state", logan.F{
+					"offer_id": uint64(change.Removed.Offer.OfferId),
+				})
+				return
+			}
+		}
+	}
+}
+
 func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
 	err := is.Ingestion.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
 	if err != nil {
@@ -136,12 +174,25 @@ func (is *Session) handleCheckSaleState(result xdr.CheckSaleStateSuccess) {
 		state = history.SaleStateCanceled
 	}
 
+	var offerState uint64
+	switch state {
+	case history.SaleStateCanceled:
+		offerState = uint64(history.OperationStateCanceled)
+	case history.SaleStateClosed:
+		offerState = uint64(history.OperationStateFullyMatched)
+	}
+
 	err := is.Ingestion.HistoryQ().Sales().SetState(uint64(result.SaleId), state)
 	if err != nil {
 		is.Err = errors.Wrap(err, "failed to set state", logan.F{"sale_id": uint64(result.SaleId)})
 		return
 	}
 
+	err = is.Ingestion.UpdateOrderBookState(uint64(result.SaleId), offerState, true)
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to set offers states", logan.F{"sale_id": uint64(result.SaleId)})
+		return
+	}
 }
 
 func (is *Session) handleManageSale(op *xdr.ManageSaleOp) {
@@ -156,6 +207,12 @@ func (is *Session) handleManageSale(op *xdr.ManageSaleOp) {
 	err := is.Ingestion.HistoryQ().Sales().SetState(uint64(op.SaleId), history.SaleStateCanceled)
 	if err != nil {
 		is.Err = errors.Wrap(err, "failed to set state", logan.F{"sale_id": uint64(op.SaleId)})
+		return
+	}
+
+	err = is.Ingestion.UpdateOrderBookState(uint64(op.SaleId), uint64(history.OperationStateCanceled), false)
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to set offers states", logan.F{"sale_id": uint64(op.SaleId)})
 		return
 	}
 }

@@ -311,6 +311,7 @@ func initWebActions(app *App) {
 	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
 	})
+
 	r.Get("/request/invoices", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction){
 			sender := action.GetString("sender_account_id")
@@ -320,6 +321,10 @@ func initWebActions(app *App) {
 			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeInvoice},
+	})
+
+	r.Get("/request/update_sale_end_time", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
 	})
 
 	// Sales actions

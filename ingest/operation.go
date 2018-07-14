@@ -3,6 +3,7 @@ package ingest
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"fmt"
 )
 
 func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationResult *xdr.OperationResultTr) (history.OperationState, uint64) {
@@ -42,6 +43,24 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 			state = history.OperationStateSuccess
 		}
 		return state, uint64(createIssuanceRequestResult.Success.RequestId)
+	case xdr.OperationTypeManageOffer:
+		manageOfferOp := op.Body.MustManageOfferOp()
+		manageOfferResult := operationResult.MustManageOfferResult().MustSuccess()
+
+		switch manageOfferResult.Offer.Effect {
+		case xdr.ManageOfferEffectCreated:
+			if len(manageOfferResult.OffersClaimed) == 0 {
+				return history.OperationStatePending, 0
+			}
+			return history.OperationStatePartiallyMatched, 0
+		case xdr.ManageOfferEffectDeleted:
+			if manageOfferOp.Amount != 0 {
+				return history.OperationStateFullyMatched, 0
+			}
+			return history.OperationStateCanceled, 0
+		default:
+			panic(fmt.Errorf("unknown manage offer op effect: %s", manageOfferResult.Offer.Effect.ShortString()))
+		}
 	default:
 		return state, operationIdentifier
 	}
@@ -89,8 +108,16 @@ func (is *Session) operation() {
 			opDirectDebit.From,
 			is.Cursor.OperationResult().MustDirectDebitResult().MustSuccess().PaymentResponse)
 	case xdr.OperationTypeManageOffer:
-		is.storeTrades(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OrderBookId),
-			*is.Cursor.OperationResult().MustManageOfferResult().Success)
+		op := is.Cursor.Operation().Body.MustManageOfferOp()
+		opResult := is.Cursor.OperationResult().MustManageOfferResult().MustSuccess()
+		is.storeTrades(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OrderBookId), opResult)
+
+		offerIsCancelled := op.OfferId != 0 && op.Amount == 0
+		if offerIsCancelled {
+			is.updateOfferState(uint64(op.OfferId), uint64(history.OperationStateCanceled))
+			return
+		}
+		is.processManageOfferLedgerChanges(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
 	case xdr.OperationTypeReviewRequest:
 		is.processReviewRequest(is.Cursor.Operation().Body.MustReviewRequestOp(), is.Cursor.OperationChanges())
 	case xdr.OperationTypeManageAsset:

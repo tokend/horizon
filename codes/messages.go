@@ -185,6 +185,18 @@ var messages = map[string]string{
 	"op_destination_balance_mismatched":               "Destination balance must be coincide invoice destination balance",
 	"op_destination_account_mismatched":               "Destination account must be coincide invoice destination account",
 	"op_required_source_pay_for_destination":          "Source must pay fee, destination should not pay it",
+	"op_invalid_sale_state":                           "Invalid sale state",
+	"op_promotion_update_request_invalid_asset_pair":  "One of the assets (base or quote) has invalid code or they are equal",
+	"op_promotion_update_request_invalid_price":       "Price can not be 0",
+	"op_promotion_update_request_start_end_invalid":   "IO should not end before start",
+	"op_promotion_update_request_invalid_cap":         "Soft cap should not exceed Hard cap",
+	"op_promotion_update_request_invalid_details":     "Details is invalid JSON",
+	"op_promotion_update_request_already_exists":      "PromotionUpdateRequest already exists",
+	"op_promotion_update_request_not_found":           "PromotionUpdateRequest not found",
+	"op_invalid_sale_new_end_time":                    "New sale end time is before start time or current ledger close time",
+	"op_invalid_new_end_time":                         "New end time is before start time or current ledger close time",
+	"op_update_end_time_request_already_exists":       "UpdateSaleEndTimeRequest already exists",
+	"op_update_end_time_request_not_found":            "UpdateSaleEndTimeRequest already not found",
 }
 
 func getMessage(rawCode string) string {

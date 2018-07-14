@@ -238,6 +238,15 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpd
 	}
 }
 
+func getPromotionUpdateRequest(request *xdr.PromotionUpdateRequest) *history.PromotionUpdateRequest {
+	newPromorionData := getSaleRequest(&request.NewPromotionData)
+
+	return &history.PromotionUpdateRequest{
+		SaleID:           uint64(request.PromotionId),
+		NewPromotionData: *newPromorionData,
+	}
+}
+
 func getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
 	var kycData map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
@@ -273,16 +282,23 @@ func getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history
 	}
 }
 
-func getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest{
+func getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.Details), &details)
 
 	return &history.InvoiceRequest{
-		ReceiverBalanceID: 	request.ReceiverBalance.AsString(),
-		SenderAccountID:	request.Sender.Address(),
-		Amount:				uint64(request.Amount),
-		Details:			details,
+		ReceiverBalanceID: request.ReceiverBalance.AsString(),
+		SenderAccountID:   request.Sender.Address(),
+		Amount:            uint64(request.Amount),
+		Details:           details,
+	}
+}
+
+func getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
+	return &history.UpdateSaleEndTimeRequest{
+		SaleID:     uint64(request.SaleId),
+		NewEndTime: time.Unix(int64(request.NewEndTime), 0).UTC(),
 	}
 }
 
@@ -317,6 +333,10 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.UpdateSaleDetails = getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
 	case xdr.ReviewableRequestTypeInvoice:
 		details.Invoice = getInvoiceRequest(body.InvoiceRequest)
+	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
+		details.UpdateSaleEndTimeRequest = getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
+	case xdr.ReviewableRequestTypeUpdatePromotion:
+		details.PromotionUpdate = getPromotionUpdateRequest(body.PromotionUpdateRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

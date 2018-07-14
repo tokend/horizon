@@ -10,18 +10,20 @@ import (
 )
 
 type ReviewableRequestDetails struct {
-	AssetCreation     *AssetCreationRequest     `json:"asset_create,omitempty"`
-	AssetUpdate       *AssetUpdateRequest       `json:"asset_update,omitempty"`
-	PreIssuanceCreate *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
-	IssuanceCreate    *IssuanceRequest          `json:"issuance_create,omitempty"`
-	Withdrawal        *WithdrawalRequest        `json:"withdraw,omitempty"`
-	TwoStepWithdrawal *WithdrawalRequest        `json:"two_step_withdrawal"`
-	Sale              *SaleRequest              `json:"sale,omitempty"`
-	LimitsUpdate      *LimitsUpdateRequest      `json:"limits_update"`
-	AmlAlert          *AmlAlertRequest          `json:"aml_alert"`
-	UpdateKYC         *UpdateKYCRequest         `json:"update_kyc,omitempty"`
-	UpdateSaleDetails *UpdateSaleDetailsRequest `json:"update_sale_details"`
-	Invoice           *InvoiceRequest           `json:"invoice"`
+	AssetCreation            *AssetCreationRequest     `json:"asset_create,omitempty"`
+	AssetUpdate              *AssetUpdateRequest       `json:"asset_update,omitempty"`
+	PreIssuanceCreate        *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
+	IssuanceCreate           *IssuanceRequest          `json:"issuance_create,omitempty"`
+	Withdrawal               *WithdrawalRequest        `json:"withdraw,omitempty"`
+	TwoStepWithdrawal        *WithdrawalRequest        `json:"two_step_withdrawal"`
+	Sale                     *SaleRequest              `json:"sale,omitempty"`
+	LimitsUpdate             *LimitsUpdateRequest      `json:"limits_update"`
+	AmlAlert                 *AmlAlertRequest          `json:"aml_alert"`
+	UpdateKYC                *UpdateKYCRequest         `json:"update_kyc,omitempty"`
+	UpdateSaleDetails        *UpdateSaleDetailsRequest `json:"update_sale_details"`
+	UpdateSaleEndTimeRequest *UpdateSaleEndTimeRequest `json:"update_sale_end_time_request"`
+	PromotionUpdate          *PromotionUpdateRequest   `json:"promotion_update"`
+	Invoice                  *InvoiceRequest           `json:"invoice"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -134,4 +136,14 @@ type InvoiceRequest struct {
 	SenderAccountID   string                 `json:"sender_account_id"`
 	Amount            uint64                 `json:"amount"`
 	Details           map[string]interface{} `json:"details"`
+}
+
+type UpdateSaleEndTimeRequest struct {
+	SaleID     uint64    `json:"sale_id"`
+	NewEndTime time.Time `json:"new_end_time"`
+}
+
+type PromotionUpdateRequest struct {
+	SaleID           uint64      `json:"sale_id"`
+	NewPromotionData SaleRequest `json:"new_promotion_data"`
 }
