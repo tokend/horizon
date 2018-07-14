@@ -79,7 +79,7 @@ func getIntArrayFromStringArray(input []string) (result []int, err error) {
 	for _, str := range input {
 		value, err := strconv.Atoi(str)
 		if err != nil {
-			return nil, errors.New("failed to convert entry type")
+			return nil, errors.New("failed to convert to int from string")
 		}
 
 		result = append(result, value)

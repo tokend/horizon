@@ -27,6 +27,7 @@ type TransactionV2IndexAction struct {
 func (action *TransactionV2IndexAction) JSON() {
 	action.Do(
 		action.EnsureHistoryFreshness,
+		action.checkAllowed,
 		action.loadParams,
 		action.ValidateCursorWithinHistory,
 		action.loadRecords,
@@ -37,31 +38,33 @@ func (action *TransactionV2IndexAction) JSON() {
 	)
 }
 
-func (action *TransactionV2IndexAction) loadParams() {
-	action.ValidateCursorAsDefault()
-
-	action.EntryTypeFilter = action.GetIntArray("entry_type")
-	action.EffectFilter = action.GetIntArray("effect")
-	action.PagingParams = action.GetPageQuery()
-
-	action.setPageLimit()
+func (action *TransactionV2IndexAction) checkAllowed() {
+	action.IsAllowed("")
 }
 
-func (action *TransactionV2IndexAction) setPageLimit() {
+func (action *TransactionV2IndexAction) loadParams() {
+	action.ValidateCursorAsDefault()
+	action.EntryTypeFilter = action.GetIntArray("entry_type")
+	action.EffectFilter = action.GetIntArray("effect")
+	action.PagingParams = action.getTxPageQuery()
+
+}
+
+func (action *TransactionV2IndexAction) getTxPageQuery() db2.PageQuery {
+	pagingParams := action.GetPageQuery()
 	limit := action.GetUInt64("limit")
-	if limit > db2.MaxPageSize {
-		action.PagingParams.Limit = limit
-		if limit > maxTxPagSize {
-			action.PagingParams.Limit = maxTxPagSize
-		}
+	if limit > maxTxPagSize {
+		pagingParams.Limit = maxTxPagSize
 	}
+
+	return pagingParams
 }
 
 func (action *TransactionV2IndexAction) loadRecords() {
 	// memorize ledger sequence before select to prevent data race
 	latestLedger := int32(action.App.historyLatestLedgerGauge.Value())
 
-	sortedLedgerChanges := action.getSortedLedgerChanges()
+	sortedLedgerChanges := action.getLedgerChanges()
 
 	var transactionsIDs []int64
 	for txID := range sortedLedgerChanges {
@@ -90,7 +93,7 @@ func (action *TransactionV2IndexAction) loadRecords() {
 	}
 }
 
-func (action *TransactionV2IndexAction) getSortedLedgerChanges() map[int64][]history.LedgerChanges {
+func (action *TransactionV2IndexAction) getLedgerChanges() map[int64][]history.LedgerChanges {
 	var ledgerChanges []history.LedgerChanges
 
 	err := action.HistoryQ().LedgerChanges().ByEntryType(action.EntryTypeFilter).
