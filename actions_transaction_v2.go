@@ -61,24 +61,7 @@ func (action *TransactionV2IndexAction) loadRecords() {
 	// memorize ledger sequence before select to prevent data race
 	latestLedger := int32(action.App.historyLatestLedgerGauge.Value())
 
-	var ledgerChanges []history.LedgerChanges
-
-	q := action.HistoryQ()
-	err := q.LedgerChanges().ByEntryType(action.EntryTypeFilter).
-		ByEffects(action.EffectFilter).
-		ByTransactionIDs(action.PagingParams, action.EntryTypeFilter, action.EffectFilter).
-		Select(&ledgerChanges)
-
-	if err != nil {
-		action.Log.WithError(err).Error("failed to get ledger changes")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	sortedLedgerChanges := map[int64][]history.LedgerChanges{}
-	for _, change := range ledgerChanges {
-		sortedLedgerChanges[change.TransactionID] = append(sortedLedgerChanges[change.TransactionID], change)
-	}
+	sortedLedgerChanges := action.getSortedLedgerChanges()
 
 	var transactionsIDs []int64
 	for txID := range sortedLedgerChanges {
@@ -86,7 +69,7 @@ func (action *TransactionV2IndexAction) loadRecords() {
 	}
 
 	var transactions []history.Transaction
-	err = q.Transactions().ByTxIDs(transactionsIDs).Select(&transactions)
+	err := action.HistoryQ().Transactions().ByTxIDs(transactionsIDs).Select(&transactions)
 	if err != nil {
 		action.Log.WithError(err).Error("failed to get transactions")
 		action.Err = &problem.ServerError
@@ -99,13 +82,34 @@ func (action *TransactionV2IndexAction) loadRecords() {
 		action.TransactionsV2Records = append(action.TransactionsV2Records, transactionV2)
 	}
 
-
 	// load ledger close time
 	if err := action.HistoryQ().LedgerBySequence(&action.MetaLedger, latestLedger); err != nil {
 		action.Log.WithError(err).Error("failed to get ledger")
 		action.Err = &problem.ServerError
 		return
 	}
+}
+
+func (action *TransactionV2IndexAction) getSortedLedgerChanges() map[int64][]history.LedgerChanges {
+	var ledgerChanges []history.LedgerChanges
+
+	err := action.HistoryQ().LedgerChanges().ByEntryType(action.EntryTypeFilter).
+	ByEffects(action.EffectFilter).
+	ByTransactionIDs(action.PagingParams, action.EntryTypeFilter, action.EffectFilter).
+	Select(&ledgerChanges)
+
+	if err != nil {
+		action.Log.WithError(err).Error("failed to get ledger changes")
+		action.Err = &problem.ServerError
+		return nil
+	}
+
+	sortedLedgerChanges := map[int64][]history.LedgerChanges{}
+	for _, change := range ledgerChanges {
+		sortedLedgerChanges[change.TransactionID] = append(sortedLedgerChanges[change.TransactionID], change)
+	}
+
+	return sortedLedgerChanges
 }
 
 func (action *TransactionV2IndexAction) loadPage() {
