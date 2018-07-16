@@ -173,6 +173,9 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 
+	// transactions with ledger changes history action
+	r.Get("/transactions_v2", &TransactionV2IndexAction{})
+
 	// operation actions
 	r.Get("/public/operations", &HistoryOperationIndexAction{})
 	r.Get("/public/operations/:id", &HistoryOperationShowAction{})
