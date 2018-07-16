@@ -1,16 +1,17 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/resource/base"
 	"time"
+
+	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/regources"
 )
 
 type ExternalSystemAccountID struct {
-	Type      base.Flag `json:"type"`
-	Data      string    `json:"data"`
-	AssetCode string    `json:"asset_code,omitempty"`
-	ExpiresAt *string    `json:"expires_at,omitempty"`
+	Type      regources.Flag `json:"type"`
+	Data      string         `json:"data"`
+	AssetCode string         `json:"asset_code,omitempty"`
+	ExpiresAt *string        `json:"expires_at,omitempty"`
 }
 
 func (id *ExternalSystemAccountID) Populate(coreRecord core.ExternalSystemAccountID) {
