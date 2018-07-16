@@ -19,8 +19,10 @@ type TransactionV2IndexAction struct {
 	EffectFilter          []int
 	PagingParams          db2.PageQuery
 	TransactionsV2Records []resource.TransactionV2
-	MetaLedger            history.Ledger
-	Page                  hal.Page
+	// It's guarantied that there is no additional changes
+	// which satisfy restriction change_time < NoUpdatesUntilLedger.ClosedAt
+	NoUpdatesUntilLedger history.Ledger
+	Page                 hal.Page
 
 }
 
@@ -60,15 +62,12 @@ func (action *TransactionV2IndexAction) getTxPageQuery() db2.PageQuery {
 	return pagingParams
 }
 
-func (action *TransactionV2IndexAction) loadRecords() {
-	// memorize ledger sequence before select to prevent data race
-	latestLedger := int32(action.App.historyLatestLedgerGauge.Value())
-
-	sortedLedgerChanges, err := action.getLedgerChanges()
+// getTransactionRecords - returns slice of transactions fetched for ledger changes,
+// true - if page of records was full, error - if something bad happened
+func (action *TransactionV2IndexAction) getTransactionRecords() ([]resource.TransactionV2, bool, error) {
+	sortedLedgerChanges, isPageFull, err := action.getLedgerChanges()
 	if err != nil {
-		action.Log.WithError(err).Error("failed to get ledger changes")
-		action.Err = &problem.ServerError
-		return
+		return nil, false, errors.Wrap(err, "failed to get ledger changes")
 	}
 
 	var transactionsIDs []int64
@@ -77,33 +76,52 @@ func (action *TransactionV2IndexAction) loadRecords() {
 	}
 
 	var transactions []history.Transaction
-	err = action.HistoryQ().Transactions().ByTxIDs(transactionsIDs).Select(&transactions)
+	err = action.HistoryQ().Transactions().ByTxIDs(transactionsIDs).
+		Page(action.PagingParams). // page here is needed to make sure that order of transaction is correct (it will not add or remove any values)
+		Select(&transactions)
 	if err != nil {
-		action.Log.WithError(err).Error("failed to get transactions")
+		return nil, false, errors.Wrap(err, "failed to get transactions for ledger changes")
+	}
+
+	var result []resource.TransactionV2
+	for _, tx := range transactions {
+		var txV2 resource.TransactionV2
+		txV2.Populate(tx, sortedLedgerChanges[tx.ID])
+		result = append(result, txV2)
+	}
+
+	return result, isPageFull, nil
+}
+
+func (action *TransactionV2IndexAction) loadRecords() {
+	// memorize ledger sequence before select to prevent data race
+	noUpdatesUntilLedgerSeq := int32(action.App.historyLatestLedgerGauge.Value())
+
+	var err error
+	var isPageFull bool
+	action.TransactionsV2Records, isPageFull, err = action.getTransactionRecords()
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to get transactions v2 records")
 		action.Err = &problem.ServerError
 		return
 	}
 
-	for _, tx := range transactions {
-		transactionV2 := resource.TransactionV2{}
-		transactionV2.Populate(tx, sortedLedgerChanges[tx.ID])
-		action.TransactionsV2Records = append(action.TransactionsV2Records, transactionV2)
-	}
-
-	if uint64(len(transactions)) == action.PagingParams.Limit {
+	if isPageFull {
 		// we fetched full page, probably there is something ahead
-		latestLedger = transactions[len(transactions)-1].LedgerSequence
+		noUpdatesUntilLedgerSeq = action.TransactionsV2Records[len(action.TransactionsV2Records)-1].LedgerSeq
 	}
 
 	// load ledger close time
-	if err := action.HistoryQ().LedgerBySequence(&action.MetaLedger, latestLedger); err != nil {
-		action.Log.WithError(err).Error("failed to get ledger")
+	if err := action.HistoryQ().LedgerBySequence(&action.NoUpdatesUntilLedger, noUpdatesUntilLedgerSeq); err != nil {
+		action.Log.WithError(err).Error("failed to get NoUpdatesUntilLedger")
 		action.Err = &problem.ServerError
 		return
 	}
 }
 
-func (action *TransactionV2IndexAction) getLedgerChanges() (map[int64][]history.LedgerChanges, error) {
+// getLedgerChanges - returns map of ledger changes grouped by transaction_id,
+// true if page is full, error if something went wrong
+func (action *TransactionV2IndexAction) getLedgerChanges() (map[int64][]history.LedgerChanges, bool, error) {
 	var ledgerChanges []history.LedgerChanges
 
 	err := action.HistoryQ().LedgerChanges().ByEntryType(action.EntryTypeFilter).
@@ -112,7 +130,7 @@ func (action *TransactionV2IndexAction) getLedgerChanges() (map[int64][]history.
 	Select(&ledgerChanges)
 
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to select ledger changes")
+		return nil, false, errors.Wrap(err, "failed to select ledger changes")
 	}
 
 	sortedLedgerChanges := map[int64][]history.LedgerChanges{}
@@ -120,7 +138,8 @@ func (action *TransactionV2IndexAction) getLedgerChanges() (map[int64][]history.
 		sortedLedgerChanges[change.TransactionID] = append(sortedLedgerChanges[change.TransactionID], change)
 	}
 
-	return sortedLedgerChanges, nil
+	isPageFull := uint64(len(ledgerChanges)) >= action.PagingParams.Limit
+	return sortedLedgerChanges, isPageFull, nil
 }
 
 func (action *TransactionV2IndexAction) loadPage() {
@@ -130,8 +149,8 @@ func (action *TransactionV2IndexAction) loadPage() {
 
 	action.Page.Embedded.Meta = &hal.PageMeta{
 		LatestLedger: &hal.LatestLedgerMeta{
-			Sequence: action.MetaLedger.Sequence,
-			ClosedAt: action.MetaLedger.ClosedAt,
+			Sequence: action.NoUpdatesUntilLedger.Sequence,
+			ClosedAt: action.NoUpdatesUntilLedger.ClosedAt,
 		},
 	}
 
