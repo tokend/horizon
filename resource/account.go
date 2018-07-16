@@ -33,8 +33,8 @@ type Account struct {
 	Signers
 	Policies               AccountPolicies `json:"policies"`
 	AccountKYC             `json:"account_kyc"`
-	ExternalSystemAccounts []ExternalSystemAccountID `json:"external_system_accounts"`
-	Referrals              []Referral                `json:"referrals"`
+	ExternalSystemAccounts []regources.ExternalSystemAccountID `json:"external_system_accounts"`
+	Referrals              []Referral                          `json:"referrals"`
 }
 
 // Populate fills out the resource's fields

@@ -7,14 +7,7 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-type ExternalSystemAccountID struct {
-	Type      regources.Flag `json:"type"`
-	Data      string         `json:"data"`
-	AssetCode string         `json:"asset_code,omitempty"`
-	ExpiresAt *string        `json:"expires_at,omitempty"`
-}
-
-func (id *ExternalSystemAccountID) Populate(coreRecord core.ExternalSystemAccountID) {
+func PopulateExternalSystemAccountID(coreRecord core.ExternalSystemAccountID) (id regources.ExternalSystemAccountID) {
 	switch coreRecord.ExternalSystemType {
 	case 1:
 		id.Type.Name = "Bitcoin"
@@ -31,4 +24,5 @@ func (id *ExternalSystemAccountID) Populate(coreRecord core.ExternalSystemAccoun
 		expiresAt := time.Unix(*coreRecord.ExpiresAt, 0).Format(time.RFC3339)
 		id.ExpiresAt = &expiresAt
 	}
+	return id
 }

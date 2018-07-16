@@ -7,6 +7,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/tokend/regources"
 )
 
 // This file contains the actions:
@@ -94,11 +95,10 @@ func (action *AccountShowAction) loadExternalSystemAccountIDs() {
 		return
 	}
 
-	action.Resource.ExternalSystemAccounts = make([]resource.ExternalSystemAccountID, 0, len(exSysIDs))
+	action.Resource.ExternalSystemAccounts = make([]regources.ExternalSystemAccountID, 0, len(exSysIDs))
 	for i := range exSysIDs {
 		if exSysIDs[i].ExpiresAt == nil || *exSysIDs[i].ExpiresAt >= time.Now().Unix() {
-			var result resource.ExternalSystemAccountID
-			result.Populate(exSysIDs[i])
+			result := resource.PopulateExternalSystemAccountID(exSysIDs[i])
 			action.Resource.ExternalSystemAccounts = append(action.Resource.ExternalSystemAccounts, result)
 		}
 	}
