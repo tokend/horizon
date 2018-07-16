@@ -48,7 +48,6 @@ func (action *TransactionV2IndexAction) loadParams() {
 	action.EntryTypeFilter = action.GetIntArray("entry_type")
 	action.EffectFilter = action.GetIntArray("effect")
 	action.PagingParams = action.getTxPageQuery()
-
 }
 
 func (action *TransactionV2IndexAction) getTxPageQuery() db2.PageQuery {
@@ -89,6 +88,11 @@ func (action *TransactionV2IndexAction) loadRecords() {
 		transactionV2 := resource.TransactionV2{}
 		transactionV2.Populate(tx, sortedLedgerChanges[tx.ID])
 		action.TransactionsV2Records = append(action.TransactionsV2Records, transactionV2)
+	}
+
+	if uint64(len(transactions)) == action.PagingParams.Limit {
+		// we fetched full page, probably there is something ahead
+		latestLedger = transactions[len(transactions)-1].LedgerSequence
 	}
 
 	// load ledger close time
