@@ -140,7 +140,6 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:id", &AccountShowAction{})
 	r.Get("/accounts/:id/limits", &LimitsV2AccountShowAction{})
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
-	r.Get("/accounts/:id/summary", &AccountSummaryAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
 	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{})
 
@@ -173,6 +172,9 @@ func initWebActions(app *App) {
 	r.Get("/transactions/:tx_id/payments", &OperationIndexAction{
 		Types: operationTypesPayment,
 	})
+
+	// transactions with ledger changes history action
+	r.Get("/transactions_v2", &TransactionV2IndexAction{})
 
 	// operation actions
 	r.Get("/public/operations", &HistoryOperationIndexAction{})

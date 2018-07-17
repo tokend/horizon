@@ -58,6 +58,36 @@ func (base *Base) GetString(name string) string {
 	return base.R.URL.Query().Get(name)
 }
 
+func (base *Base) GetIntArray(name string) []int {
+	if base.Err != nil {
+		return nil
+	}
+
+	stringArray := base.R.URL.Query()[name]
+
+	res, err := getIntArrayFromStringArray(stringArray)
+	if err != nil {
+		base.SetInvalidField(name, err)
+		return nil
+	}
+
+	return res
+}
+
+
+func getIntArrayFromStringArray(input []string) (result []int, err error) {
+	for _, str := range input {
+		value, err := strconv.Atoi(str)
+		if err != nil {
+			return nil, errors.New("failed to convert to int from string")
+		}
+
+		result = append(result, value)
+	}
+
+	return
+}
+
 // GetNonEmptyString retrieves an string from the action parameter of the given name.
 // Populates err if the value is an empty string
 func (base *Base) GetNonEmptyString(name string) string {
