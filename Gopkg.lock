@@ -376,7 +376,7 @@
   branch = "master"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
-  revision = "ecbffe29f291da2f85844e0faa7c65922cd86abf"
+  revision = "d1030566bd0bedd57148368c812af3e8ca7cd3e3"
 
 [[projects]]
   branch = "master"
