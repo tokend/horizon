@@ -7,6 +7,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/regources"
 )
 
 // TransactionV2IndexAction: pages of transactions
@@ -18,7 +19,7 @@ type TransactionV2IndexAction struct {
 	EntryTypeFilter       []int
 	EffectFilter          []int
 	PagingParams          db2.PageQuery
-	TransactionsV2Records []resource.TransactionV2
+	TransactionsV2Records []regources.TransactionV2
 	// It's guarantied that there is no additional changes
 	// which satisfy restriction change_time < NoUpdatesUntilLedger.ClosedAt
 	NoUpdatesUntilLedger history.Ledger
@@ -64,7 +65,7 @@ func (action *TransactionV2IndexAction) getTxPageQuery() db2.PageQuery {
 
 // getTransactionRecords - returns slice of transactions fetched for ledger changes,
 // true - if page of records was full, error - if something bad happened
-func (action *TransactionV2IndexAction) getTransactionRecords() ([]resource.TransactionV2, bool, error) {
+func (action *TransactionV2IndexAction) getTransactionRecords() ([]regources.TransactionV2, bool, error) {
 	sortedLedgerChanges, isPageFull, err := action.getLedgerChanges()
 	if err != nil {
 		return nil, false, errors.Wrap(err, "failed to get ledger changes")
@@ -83,10 +84,9 @@ func (action *TransactionV2IndexAction) getTransactionRecords() ([]resource.Tran
 		return nil, false, errors.Wrap(err, "failed to get transactions for ledger changes")
 	}
 
-	var result []resource.TransactionV2
+	var result []regources.TransactionV2
 	for _, tx := range transactions {
-		var txV2 resource.TransactionV2
-		txV2.Populate(tx, sortedLedgerChanges[tx.ID])
+		txV2 := resource.PopulateTransactionV2(tx, sortedLedgerChanges[tx.ID])
 		result = append(result, txV2)
 	}
 
@@ -108,7 +108,7 @@ func (action *TransactionV2IndexAction) loadRecords() {
 
 	if isPageFull {
 		// we fetched full page, probably there is something ahead
-		noUpdatesUntilLedgerSeq = action.TransactionsV2Records[len(action.TransactionsV2Records)-1].LedgerSeq
+		noUpdatesUntilLedgerSeq = action.TransactionsV2Records[len(action.TransactionsV2Records)-1].LedgerSequence
 	}
 
 	// load ledger close time
