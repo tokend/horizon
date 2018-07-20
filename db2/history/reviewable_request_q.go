@@ -1,8 +1,6 @@
 package history
 
 import (
-	"fmt"
-
 	sq "github.com/lann/squirrel"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
@@ -227,16 +225,6 @@ func (q *ReviewableRequestQ) ForType(requestType int64) ReviewableRequestQI {
 	return q
 }
 
-// ByDetailsEq - filters by specified key value from the details. Note: do not pass key passed by user
-func (q *ReviewableRequestQ) ByDetailsEq(key, value string) ReviewableRequestQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where(fmt.Sprintf("details->>'%s' = ?", key), value)
-	return q
-}
-
 // ForTypes - filters requests by request type
 func (q *ReviewableRequestQ) ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI {
 	if q.Err != nil {
@@ -262,7 +250,7 @@ func (q *ReviewableRequestQ) UpdatedAfter(timestamp int64) ReviewableRequestQI {
 	tm := time.Unix(timestamp, 0)
 	tmf := tm.Format(time.RFC3339)
 
-	q.sql = q.sql.Where(fmt.Sprintf("updated_at >= '%s'::timestamp", tmf))
+	q.sql = q.sql.Where("updated_at >= ?::timestamp", tmf)
 	return q
 }
 

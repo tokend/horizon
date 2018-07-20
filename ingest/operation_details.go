@@ -155,8 +155,12 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["monthly_out"] = op.Details.LimitsCreateDetails.MonthlyOut
 			details["annual_out"] = op.Details.LimitsCreateDetails.AnnualOut
 		}
+
+
 		if op.Details.Action == xdr.ManageLimitsActionRemove {
-			details["id"] = op.Details.Id
+			details["limit_id"] = op.Details.Id
+		} else {
+			details["limit_id"] = *c.OperationResult().MustManageLimitsResult().Success.Details.Id
 		}
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		op := c.Operation().Body.MustCreateManageLimitsRequestOp()

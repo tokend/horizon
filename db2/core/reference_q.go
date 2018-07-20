@@ -34,7 +34,7 @@ func (q *ReferenceQ) ByReference(reference string) *ReferenceQ {
 		return q
 	}
 
-	q.sql = q.sql.Where(fmt.Sprintf("reference ilike '%%%s%%'", reference))
+	q.sql = q.sql.Where("reference ilike ?", fmt.Sprintf("%%%s%%", reference))
 	return q
 }
 

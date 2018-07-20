@@ -185,7 +185,7 @@ func (q *OperationsQ) ForReference(reference string) OperationsQI {
 	}
 
 	// FIXME might(will) not work for all operation types, works at least for payments and issuances
-	q.sql = q.sql.Where(fmt.Sprintf("ho.details->>'reference' ilike '%%%s%%'", reference))
+	q.sql = q.sql.Where("ho.details->>'reference' ilike ?", fmt.Sprintf("%%%s%%", reference))
 
 	return q
 }
