@@ -269,6 +269,11 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
+
+	r.Get("/request/aml_alerts", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAmlAlert},
+	})
+
 	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			hash := action.GetString("document_hash")
