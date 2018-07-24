@@ -171,7 +171,7 @@ func (action *OperationIndexAction) loadParams() {
 }
 
 func (action *OperationIndexAction) loadRecords() {
-	ops := action.HistoryQ().Operations().WithoutCancelOffer()
+	ops := action.HistoryQ().Operations().WithoutCancelOffer().WithoutExternallyFullyMatched()
 
 	if len(action.Types) > 0 {
 		ops.ForTypes(action.Types)

@@ -47,6 +47,9 @@ type OperationsQI interface {
 	// WithoutCancelOffer - don't load manage offer operations which cancel offer
 	WithoutCancelOffer() OperationsQI
 
+	// WithoutExternallyFullyMatched = don't load manage offer operations with ExternallyFullyMatched state
+	WithoutExternallyFullyMatched() OperationsQI
+
 	Participants(dest map[int64]*OperationParticipants) error
 }
 
@@ -257,6 +260,15 @@ func (q *OperationsQ) WithoutCancelOffer() OperationsQI {
 	// 'amount' field in 'details' jsonb has type string, thus required to pass amount.String to query
 	q.sql = q.sql.Where("(ho.type <> ? OR (ho.details->>'amount') != ?)", xdr.OperationTypeManageOffer,
 		amount.String(0))
+	return q
+}
+
+func (q *OperationsQ) WithoutExternallyFullyMatched() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("ho.state <> ?", OperationStateExternallyFullyMatched)
 	return q
 }
 
