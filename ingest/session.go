@@ -8,6 +8,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
+	"gitlab.com/tokend/go/amount"
 )
 
 // Run starts an attempt to ingest the range of ledgers specified in this
@@ -112,6 +113,18 @@ func (is *Session) storeTrades(orderBookID uint64, result xdr.ManageOfferSuccess
 	is.Err = is.Ingestion.StoreTrades(orderBookID, result, is.Cursor.Ledger().CloseTime)
 }
 
+func parseOfferEntryToDetails(offerEntry xdr.OfferEntry) map[string]interface{} {
+	result := map[string]interface{}{}
+	result["fee"] = amount.String(int64(offerEntry.Fee))
+	result["price"] = amount.String(int64(offerEntry.Price))
+	result["amount"] = amount.String(int64(offerEntry.BaseAmount))
+	result["is_buy"] = offerEntry.IsBuy
+	result["offer_id"] = uint64(offerEntry.OfferId)
+	result["is_deleted"] = false
+	result["order_book_id"] = uint64(offerEntry.OrderBookId)
+	return result
+}
+
 func (is *Session) processManageOfferLedgerChanges(offerID uint64) {
 	ledgerChanges := is.Cursor.OperationChanges()
 	for _, change := range ledgerChanges {
@@ -123,10 +136,10 @@ func (is *Session) processManageOfferLedgerChanges(offerID uint64) {
 			if uint64(change.Updated.Data.Offer.OfferId) == offerID {
 				continue
 			}
-			err := is.Ingestion.UpdateOfferState(uint64(change.Updated.Data.Offer.OfferId),
-				uint64(history.OperationStatePartiallyMatched))
+			offerDetails := parseOfferEntryToDetails(*change.Updated.Data.Offer)
+			err := is.Ingestion.UpdateOfferDetails(offerDetails, uint64(history.OperationStatePartiallyMatched))
 			if err != nil {
-				is.Err = errors.Wrap(err, "failed to update offer state", logan.F{
+				is.Err = errors.Wrap(err, "failed to update offer details", logan.F{
 					"offer_id": uint64(change.Updated.Data.Offer.OfferId),
 				})
 				return
@@ -139,7 +152,7 @@ func (is *Session) processManageOfferLedgerChanges(offerID uint64) {
 				continue
 			}
 			err := is.Ingestion.UpdateOfferState(uint64(change.Removed.Offer.OfferId),
-				uint64(history.OperationStateFullyMatched))
+				uint64(history.OperationStateExternallyFullyMatched))
 			if err != nil {
 				is.Err = errors.Wrap(err, "failed to update offer state", logan.F{
 					"offer_id": uint64(change.Removed.Offer.OfferId),

@@ -85,7 +85,9 @@ func ForOperation(
 		manageOfferResult := opResult.MustManageOfferResult()
 		result = addMatchParticipants(result, sourceParticipant.AccountID, manageOfferOp.BaseBalance,
 			manageOfferOp.QuoteBalance, manageOfferOp.IsBuy, manageOfferResult.Success)
-		sourceParticipant = nil
+		if len(result) != 0 {
+			sourceParticipant = nil
+		}
 	case xdr.OperationTypeManageInvoice:
 		manageInvoiceOp := op.Body.MustManageInvoiceOp()
 		if manageInvoiceOp.Amount == 0 {
