@@ -39,6 +39,7 @@ type TransactionsQI interface {
 	ForAccount(aid string) TransactionsQI
 	ForLedger(seq int32) TransactionsQI
 	Page(page db2.PageQuery) TransactionsQI
+	ByTxIDs(txIDs []int64) TransactionsQI
 	Select(dest interface{}) error
 }
 
@@ -119,6 +120,15 @@ func (q *TransactionsQ) Page(page db2.PageQuery) TransactionsQI {
 	}
 
 	q.sql, q.Err = page.ApplyTo(q.sql, "ht.id")
+	return q
+}
+
+func (q *TransactionsQ) ByTxIDs(txIDs []int64) TransactionsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(sq.Eq{"ht.id" : txIDs})
 	return q
 }
 

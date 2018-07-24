@@ -42,6 +42,10 @@ func (ingest *Ingestion) Clear(start int64, end int64) error {
 	if err != nil {
 		return err
 	}
+	err = clear(start, end, "history_ledger_changes", "tx_id")
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -86,6 +90,27 @@ func (ingest *Ingestion) Ledger(
 	)
 
 	_, err := ingest.DB.Exec(sql)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ingest *Ingestion) LedgerChanges(
+	txID, opID int64,
+	orderNumber, effect int,
+	entryType xdr.LedgerEntryType,
+	payload interface{},
+) error {
+	xdrPayload, err := xdr.MarshalBase64(payload)
+	if err != nil {
+		return errors.Wrap(err, "failed to marshal payload")
+	}
+
+	sql := ingest.ledger_changes.Values(txID, opID, orderNumber, effect, entryType, xdrPayload)
+
+	_, err = ingest.DB.Exec(sql)
 	if err != nil {
 		return err
 	}
@@ -312,6 +337,14 @@ func (ingest *Ingestion) createInsertBuilders() {
 		"request_type",
 	)
 
+	ingest.ledger_changes = sq.Insert("history_ledger_changes").Columns(
+		"tx_id",
+		"op_id",
+		"order_number",
+		"effect",
+		"entry_type",
+		"payload",
+	)
 }
 
 func (ingest *Ingestion) commit() error {

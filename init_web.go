@@ -173,6 +173,9 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 
+	// transactions with ledger changes history action
+	r.Get("/v2/transactions", &TransactionV2IndexAction{})
+
 	// operation actions
 	r.Get("/public/operations", &HistoryOperationIndexAction{})
 	r.Get("/public/operations/:id", &HistoryOperationShowAction{})
@@ -266,6 +269,11 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
+
+	r.Get("/request/aml_alerts", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAmlAlert},
+	})
+
 	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			hash := action.GetString("document_hash")
