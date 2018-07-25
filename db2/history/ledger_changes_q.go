@@ -1,10 +1,11 @@
 package history
 
 import (
-	"gitlab.com/swarmfund/horizon/db2"
+	"fmt"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"fmt"
+	"gitlab.com/swarmfund/horizon/db2"
 )
 
 var selectLedgerChanges = sq.Select(
@@ -97,10 +98,14 @@ func (q *LedgerChangesQ) ByTransactionIDs(page db2.PageQuery, entryTypes []int, 
 	if len(entryTypes) != 0 {
 		selectTxIDs = selectTxIDs.Where(sq.Eq{"entry_type": entryTypes})
 	}
+
 	selectTxIDs, q.Err = page.ApplyTo(selectTxIDs, "hlc.tx_id")
 
+	// extend order by to preserve ledger changes order within tx
+	selectTxIDs = selectTxIDs.OrderBy("hcl.op_id")
+
 	if q.Err != nil {
-		q.Err = errors.Wrap(q.Err,"failed to get paging params")
+		q.Err = errors.Wrap(q.Err, "failed to get paging params")
 		return q
 	}
 

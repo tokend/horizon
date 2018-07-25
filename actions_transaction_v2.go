@@ -1,12 +1,12 @@
 package horizon
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/regources"
 )
 
@@ -24,7 +24,6 @@ type TransactionV2IndexAction struct {
 	// which satisfy restriction change_time < NoUpdatesUntilLedger.ClosedAt
 	NoUpdatesUntilLedger history.Ledger
 	Page                 hal.Page
-
 }
 
 // JSON is a method for actions.JSON
@@ -125,9 +124,9 @@ func (action *TransactionV2IndexAction) getLedgerChanges() (map[int64][]history.
 	var ledgerChanges []history.LedgerChanges
 
 	err := action.HistoryQ().LedgerChanges().ByEntryType(action.EntryTypeFilter).
-	ByEffects(action.EffectFilter).
-	ByTransactionIDs(action.PagingParams, action.EntryTypeFilter, action.EffectFilter).
-	Select(&ledgerChanges)
+		ByEffects(action.EffectFilter).
+		ByTransactionIDs(action.PagingParams, action.EntryTypeFilter, action.EffectFilter).
+		Select(&ledgerChanges)
 
 	if err != nil {
 		return nil, false, errors.Wrap(err, "failed to select ledger changes")
