@@ -101,10 +101,6 @@ func (q *LedgerChangesQ) ByTransactionIDs(page db2.PageQuery, entryTypes []int, 
 
 	selectTxIDs, q.Err = page.ApplyTo(selectTxIDs, "hlc.tx_id")
 
-	// extend order by to preserve ledger changes order within tx
-	// `op_id` will sort operations and `order_number` is index of change in op
-	selectTxIDs = selectTxIDs.OrderBy("hlc.op_id", "hlc.order_number")
-
 	if q.Err != nil {
 		q.Err = errors.Wrap(q.Err, "failed to get paging params")
 		return q
@@ -118,6 +114,10 @@ func (q *LedgerChangesQ) ByTransactionIDs(page db2.PageQuery, entryTypes []int, 
 		return q
 	}
 
-	q.sql = q.sql.Where(fmt.Sprintf("hlc.tx_id in (%s)", sqlTxIDs), args...)
+	q.sql = q.sql.
+		Where(fmt.Sprintf("hlc.tx_id in (%s)", sqlTxIDs), args...).
+		// applying ordering to preserve natural order of ledger changes within op and ops within tx
+		OrderBy("hlc.tx_id", "hlc.op_id", "hlc.order_number")
+
 	return q
 }
