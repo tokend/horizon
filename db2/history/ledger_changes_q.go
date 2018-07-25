@@ -102,7 +102,7 @@ func (q *LedgerChangesQ) ByTransactionIDs(page db2.PageQuery, entryTypes []int, 
 	selectTxIDs, q.Err = page.ApplyTo(selectTxIDs, "hlc.tx_id")
 
 	// extend order by to preserve ledger changes order within tx
-	selectTxIDs = selectTxIDs.OrderBy("hcl.op_id")
+	selectTxIDs = selectTxIDs.OrderBy("hlc.op_id")
 
 	if q.Err != nil {
 		q.Err = errors.Wrap(q.Err, "failed to get paging params")
