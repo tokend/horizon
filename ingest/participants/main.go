@@ -85,6 +85,11 @@ func ForOperation(
 		manageOfferResult := opResult.MustManageOfferResult()
 		result = addMatchParticipants(result, sourceParticipant.AccountID, manageOfferOp.BaseBalance,
 			manageOfferOp.QuoteBalance, manageOfferOp.IsBuy, manageOfferResult.Success)
+		if manageOfferOp.IsBuy {
+			sourceParticipant.BalanceID = &manageOfferOp.QuoteBalance
+		} else {
+			sourceParticipant.BalanceID = &manageOfferOp.BaseBalance
+		}
 		if len(result) != 0 {
 			sourceParticipant = nil
 		}
