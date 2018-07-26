@@ -8,27 +8,16 @@ import (
 	"time"
 )
 
-type Offer struct {
-	regources.Offer
-}
-
-// PagingToken implementation for hal.Pageable
-func (o Offer) PagingToken() string {
-	return strconv.FormatUint(o.OfferID, 10)
-}
-
-func PopulateOffer(o core.Offer) Offer {
-	return Offer{
-		Offer: regources.Offer{
-			OwnerID:        o.OwnerID,
-			OfferID:        o.OfferID,
-			OrderBookID:    o.OrderBookID,
-			OfferData:      PopulateOfferData(o),
-			BaseBalanceID:  o.BaseBalanceID,
-			QuoteBalanceID: o.QuoteBalanceID,
-			Fee:            regources.Amount(o.Fee),
-			PT:             strconv.FormatUint(o.OfferID, 10),
-		},
+func PopulateOffer(o core.Offer) regources.Offer {
+	return regources.Offer{
+		OwnerID:        o.OwnerID,
+		OfferID:        o.OfferID,
+		OrderBookID:    o.OrderBookID,
+		OfferData:      PopulateOfferData(o),
+		BaseBalanceID:  o.BaseBalanceID,
+		QuoteBalanceID: o.QuoteBalanceID,
+		Fee:            regources.Amount(o.Fee),
+		PT:             strconv.FormatUint(o.OfferID, 10),
 	}
 }
 

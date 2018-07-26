@@ -87,5 +87,4 @@ func (action *OffersAction) loadRecords() {
 	for i := range action.coreRecords {
 		action.page.Add(resource.PopulateOffer(action.coreRecords[i]))
 	}
-
 }

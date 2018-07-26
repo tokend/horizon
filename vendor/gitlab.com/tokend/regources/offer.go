@@ -3,6 +3,7 @@ package regources
 import (
 	"gitlab.com/distributed_lab/logan/v3/fields"
 	"time"
+	"strconv"
 )
 
 type Offer struct {
@@ -14,6 +15,11 @@ type Offer struct {
 	QuoteBalanceID string `json:"quote_balance_id"`
 	Fee            Amount `json:"fee"`
 	OfferData
+}
+
+// PagingToken implementation for hal.Pageable in Horizon
+func (o Offer) PagingToken() string {
+	return strconv.FormatUint(o.OfferID, 10)
 }
 
 func (o Offer) GetLoganFields() map[string]interface{} {
