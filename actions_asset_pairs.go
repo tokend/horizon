@@ -4,18 +4,19 @@ import (
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
+	"gitlab.com/tokend/regources"
 )
 
 type AssetPairsAction struct {
 	Action
-	Assets []resource.AssetPair
+	assetPairs []regources.AssetPair
 }
 
 func (action *AssetPairsAction) JSON() {
 	action.Do(
 		action.loadData,
 		func() {
-			hal.Render(action.W, action.Assets)
+			hal.Render(action.W, action.assetPairs)
 		},
 	)
 }
@@ -28,8 +29,8 @@ func (action *AssetPairsAction) loadData() {
 		return
 	}
 
-	action.Assets = make([]resource.AssetPair, len(assets))
+	action.assetPairs = make([]regources.AssetPair, len(assets))
 	for i := range assets {
-		action.Assets[i].Populate(&assets[i])
+		action.assetPairs[i] = resource.PopulateAssetPair(assets[i])
 	}
 }

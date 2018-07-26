@@ -33,15 +33,3 @@ func (p *Policies) PopulateFromInt32(policies int32) {
 		}
 	}
 }
-
-func (p *Policies) PopulateForAssetPair(row core.AssetPair) {
-	p.PolicyI = row.Policies
-	for _, policy := range xdr.AssetPairPolicyAll {
-		if (int32(policy) & p.PolicyI) != 0 {
-			p.Policies = append(p.Policies, Policy{
-				Value: int32(policy),
-				Name:  policy.String(),
-			})
-		}
-	}
-}

@@ -1,8 +1,10 @@
 package resource
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/regources"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type Asset struct {
@@ -32,22 +34,30 @@ func (a *Asset) Populate(asset *core.Asset) {
 	a.Details, _ = asset.GetDetails()
 }
 
-type AssetPair struct {
-	BaseAsset               string `json:"base"`
-	QuoteAsset              string `json:"quote"`
-	CurrentPrice            string `json:"current_price"`
-	PhysicalPrice           string `json:"physical_price"`
-	PhysicalPriceCorrection string `json:"physical_price_correction"`
-	MaxPriceStep            string `json:"max_price_step"`
-	Policies
+func PopulateAssetPair(asset core.AssetPair) regources.AssetPair {
+	return regources.AssetPair{
+		Base:                    asset.BaseAsset,
+		Quote:                   asset.QuoteAsset,
+		CurrentPrice:            regources.Amount(asset.CurrentPrice),
+		PhysicalPrice:           regources.Amount(asset.PhysicalPrice),
+		PhysicalPriceCorrection: regources.Amount(asset.PhysicalPriceCorrection),
+		MaxPriceStep:            regources.Amount(asset.MaxPriceStep),
+		Policy:                  asset.Policies,
+		Policies:                PopulatePolicies(asset.Policies),
+	}
 }
 
-func (a *AssetPair) Populate(asset *core.AssetPair) {
-	a.BaseAsset = asset.BaseAsset
-	a.QuoteAsset = asset.QuoteAsset
-	a.CurrentPrice = amount.String(asset.CurrentPrice)
-	a.PhysicalPrice = amount.String(asset.PhysicalPrice)
-	a.PhysicalPriceCorrection = amount.String(asset.PhysicalPriceCorrection)
-	a.MaxPriceStep = amount.String(asset.MaxPriceStep)
-	a.Policies.PopulateForAssetPair(*asset)
+func PopulatePolicies(policy int32) []regources.Policy {
+	result := make([]regources.Policy,0)
+
+	for _, p := range xdr.AssetPairPolicyAll {
+		if (int32(p) & policy) != 0 {
+			result = append(result, regources.Policy{
+				Name:  p.String(),
+				Value: int32(p),
+			})
+		}
+	}
+
+	return result
 }
