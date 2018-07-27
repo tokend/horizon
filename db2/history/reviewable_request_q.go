@@ -90,17 +90,20 @@ func (q *ReviewableRequestQ) Insert(request ReviewableRequest) error {
 	}
 
 	query := sq.Insert("reviewable_request").SetMap(map[string]interface{}{
-		"id":            request.ID,
-		"requestor":     request.Requestor,
-		"reviewer":      request.Reviewer,
-		"reference":     request.Reference,
-		"reject_reason": request.RejectReason,
-		"request_type":  request.RequestType,
-		"request_state": request.RequestState,
-		"hash":          request.Hash,
-		"details":       request.Details,
-		"created_at":    request.CreatedAt,
-		"updated_at":    request.UpdatedAt,
+		"id":               request.ID,
+		"requestor":        request.Requestor,
+		"reviewer":         request.Reviewer,
+		"reference":        request.Reference,
+		"reject_reason":    request.RejectReason,
+		"request_type":     request.RequestType,
+		"request_state":    request.RequestState,
+		"hash":             request.Hash,
+		"details":          request.Details,
+		"created_at":       request.CreatedAt,
+		"updated_at":       request.UpdatedAt,
+		"all_tasks":        request.AllTasks,
+		"pending_tasks":    request.PendingTasks,
+		"external_details": request.ExternalDetails,
 	})
 
 	_, err := q.parent.Exec(query)
@@ -114,14 +117,17 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 	}
 
 	query := sq.Update("reviewable_request").SetMap(map[string]interface{}{
-		"requestor":     request.Requestor,
-		"reviewer":      request.Reviewer,
-		"reject_reason": request.RejectReason,
-		"request_type":  request.RequestType,
-		"request_state": request.RequestState,
-		"hash":          request.Hash,
-		"details":       request.Details,
-		"updated_at":    request.UpdatedAt,
+		"requestor":        request.Requestor,
+		"reviewer":         request.Reviewer,
+		"reject_reason":    request.RejectReason,
+		"request_type":     request.RequestType,
+		"request_state":    request.RequestState,
+		"hash":             request.Hash,
+		"details":          request.Details,
+		"updated_at":       request.UpdatedAt,
+		"all_tasks":        request.AllTasks,
+		"pending_tasks":    request.PendingTasks,
+		"external_details": request.ExternalDetails,
 	}).Where("id = ?", request.ID)
 
 	_, err := q.parent.Exec(query)
@@ -284,7 +290,6 @@ func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) Reviewable
 	return q
 }
 
-
 // PreIssuance
 // PreIssuanceByAsset - filters pre issuance requests by asset
 func (q *ReviewableRequestQ) PreIssuanceByAsset(assetCode string) ReviewableRequestQI {
@@ -350,6 +355,7 @@ func (q *ReviewableRequestQ) KYCByAccountToUpdateKYC(accountID string) Reviewabl
 	q.sql = q.sql.Where("details->'update_kyc'->>'updated_account_id' = ?", accountID)
 	return q
 }
+
 // KYCByMaskSet - filters update KYC requests by mask which must be set. If mustBeEq is false, request will be returned
 // even if only part of the mask is set
 func (q *ReviewableRequestQ) KYCByMaskSet(mask int64, maskSetPartialEq bool) ReviewableRequestQI {
@@ -385,5 +391,6 @@ func (q *ReviewableRequestQ) KYCByAccountTypeToSet(accountTypeToSet xdr.AccountT
 	return q
 }
 
-var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason", "request_type", "request_state", "hash",
-	"details", "created_at", "updated_at").From("reviewable_request")
+var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason",
+	"request_type", "request_state", "hash", "details", "created_at", "updated_at", "all_tasks", "pending_tasks",
+	"external_details").From("reviewable_request")
