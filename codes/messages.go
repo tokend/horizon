@@ -188,6 +188,8 @@ var messages = map[string]string{
 	"op_invalid_new_end_time":                        "New end time is before start time or current ledger close time",
 	"op_update_end_time_request_already_exists":      "UpdateSaleEndTimeRequest already exists",
 	"op_update_end_time_request_not_found":           "UpdateSaleEndTimeRequest already not found",
+	"op_issuance_tasks_not_found":                    "Issuance tasks have not been provided by the source and don't exist in KeyValue table",
+	"op_system_tasks_not_allowed":                    "Source is trying to set one of the core flags",
 }
 
 func getMessage(rawCode string) string {
