@@ -345,7 +345,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/promotions"
+  branch = "feature/issuance_tasks"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -359,7 +359,7 @@
     "strkey",
     "xdr"
   ]
-  revision = "d4906a53b736eff2995286ae4e259e31184abc7b"
+  revision = "bb80a31eaa813eb62b222d5be3972a4fbd88e15c"
 
 [[projects]]
   branch = "master"
@@ -467,6 +467,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a6a2dad4369cf17404aa01936e27b48c02c4d4fd7dd1fa03f21c44ad293f6f41"
+  inputs-digest = "ef159d3fbc629ba57eaef3893641560e7441259d34d2c7b048eb63f81ba540f6"
   solver-name = "gps-cdcl"
   solver-version = 1
