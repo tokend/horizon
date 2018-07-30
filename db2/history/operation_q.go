@@ -44,8 +44,10 @@ type OperationsQI interface {
 	Select(dest interface{}) error
 
 	// Manage Offer
-	// WithoutCancelOffer - don't load manage offer operations which cancel offer
-	WithoutCancelOffer() OperationsQI
+	// WithoutCancelingManagerOffer - don't load manage offer operations which cancel offer
+	WithoutCancelingManagerOffer() OperationsQI
+	// WithoutCanceled - filters canceled operations
+	WithoutCanceled() OperationsQI
 
 	// WithoutExternallyFullyMatched = don't load manage offer operations with ExternallyFullyMatched state
 	WithoutExternallyFullyMatched() OperationsQI
@@ -252,7 +254,7 @@ func (q *OperationsQ) Page(page db2.PageQuery) OperationsQI {
 	return q
 }
 
-func (q *OperationsQ) WithoutCancelOffer() OperationsQI {
+func (q *OperationsQ) WithoutCancelingManagerOffer() OperationsQI {
 	if q.Err != nil {
 		return q
 	}
@@ -269,6 +271,16 @@ func (q *OperationsQ) WithoutExternallyFullyMatched() OperationsQI {
 	}
 
 	q.sql = q.sql.Where("ho.state <> ?", OperationStateExternallyFullyMatched)
+	return q
+}
+
+// WithoutCanceled - filters canceled operations
+func (q *OperationsQ) WithoutCanceled() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("ho.state <> ?", OperationStateCanceled)
 	return q
 }
 
