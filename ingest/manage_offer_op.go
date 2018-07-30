@@ -17,11 +17,14 @@ func (is *Session) updateOfferState(offerID, state uint64) {
 	}
 }
 
-func (is *Session) deriveOfferBaseAsset (changes xdr.LedgerEntryChanges, saleId xdr.Uint64) xdr.AssetCode {
-	for i := range changes {
-		ledgerData := changes[i].Updated.Data
-		if ledgerData.Type == xdr.LedgerEntryTypeSale && ledgerData.Sale.SaleId == saleId {
-			return ledgerData.Sale.BaseAsset
+func (is *Session) getOfferBaseAsset (changes xdr.LedgerEntryChanges, saleId xdr.Uint64) xdr.AssetCode {
+	for _, change := range changes {
+		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
+			continue
+		}
+		data := change.Updated.Data
+		if data.Type == xdr.LedgerEntryTypeSale && data.Sale.SaleId == saleId {
+			return data.Sale.BaseAsset
 		}
 	}
 	return xdr.AssetCode("")

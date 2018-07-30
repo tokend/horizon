@@ -197,7 +197,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustManageOfferOp()
 		opResult := c.OperationResult().MustManageOfferResult().MustSuccess()
 		isDeleted := opResult.Offer.Effect == xdr.ManageOfferEffectDeleted
-		isSaleOffer := op.OrderBookId != 0
 		details["is_buy"] = op.IsBuy
 		details["amount"] = amount.String(int64(op.Amount))
 		details["price"] = amount.String(int64(op.Price))
@@ -208,10 +207,11 @@ func (is *Session) operationDetails() map[string]interface{} {
 		} else {
 			details["offer_id"] = opResult.Offer.Offer.OfferId
 		}
-		if isSaleOffer {
-			details["base_asset"] = is.deriveOfferBaseAsset(c.OperationChanges(), op.OrderBookId)
-		}
 		details["order_book_id"] = op.OrderBookId
+		isSaleOffer := op.OrderBookId != 0
+		if isSaleOffer {
+			details["base_asset"] = is.getOfferBaseAsset(c.OperationChanges(), op.OrderBookId)
+		}
 	case xdr.OperationTypeManageInvoice:
 		op := c.Operation().Body.MustManageInvoiceOp()
 		opResult := c.OperationResult().MustManageInvoiceResult()
