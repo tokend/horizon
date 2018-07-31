@@ -219,6 +219,7 @@ type SetFees struct {
 type ManagerOffer struct {
 	Base
 	IsBuy       bool   `json:"is_buy"`
+	BaseAsset	bool   `json:"base_asset"`
 	Amount      string `json:"amount"`
 	Price       string `json:"price"`
 	Fee         string `json:"fee"`
