@@ -231,11 +231,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		}
 		details["details"] = getReviewRequestOpDetails(op.RequestDetails)
 
-		reviewDetails, ok := op.Ext.GetReviewDetails()
-		if ok {
-			details["review_details"] = reviewDetails
-		}
-
 		opResult := c.OperationResult().MustReviewRequestResult().MustSuccess()
 		extendedResult, ok := opResult.Ext.GetExtendedResult()
 		if ok {
