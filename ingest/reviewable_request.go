@@ -85,7 +85,7 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTi
 		state = history.ReviewableRequestStateRejected
 	}
 
-	return &history.ReviewableRequest{
+	result := history.ReviewableRequest{
 		TotalOrderID: db2.TotalOrderID{
 			ID: int64(request.RequestId),
 		},
@@ -99,7 +99,30 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTi
 		Details:      details,
 		CreatedAt:    time.Unix(int64(request.CreatedAt), 0).UTC(),
 		UpdatedAt:    ledgerCloseTime,
-	}, nil
+	}
+
+	tasksExt, ok := request.Ext.GetTasksExt()
+	if !ok {
+		return &result, nil
+	}
+
+	result.AllTasks = uint32(tasksExt.AllTasks)
+	result.PendingTasks = uint32(tasksExt.PendingTasks)
+
+	var externalDetails []map[string]interface{}
+	for _, item := range tasksExt.ExternalDetails {
+		var comment map[string]interface{}
+		_ = json.Unmarshal([]byte(item), &comment)
+		externalDetails = append(externalDetails, comment)
+	}
+
+	// we use key "data" for compatibility with db2.Details
+	// the value for the key "data" is a slice of map[string]interface{}
+	result.ExternalDetails = map[string]interface{}{
+		"data": externalDetails,
+	}
+
+	return &result, nil
 }
 
 func getAssetCreation(request *xdr.AssetCreationRequest) *history.AssetCreationRequest {

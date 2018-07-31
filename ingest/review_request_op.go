@@ -10,7 +10,16 @@ import (
 	"gitlab.com/swarmfund/horizon/utf8"
 )
 
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {
+func isFulfilled(res xdr.ReviewRequestResultSuccess) bool {
+	extendedResult, ok := res.Ext.GetExtendedResult()
+	if !ok {
+		return true
+	}
+	return extendedResult.Fulfilled
+}
+
+func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
+	changes xdr.LedgerEntryChanges) {
 	if is.Err != nil {
 		return
 	}
@@ -18,7 +27,7 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.Ledg
 	var err error
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
-		err = is.approveReviewableRequest(op, changes)
+		err = is.approveReviewableRequest(op, res, changes)
 	case xdr.ReviewRequestOpActionPermanentReject:
 		err = is.permanentReject(op)
 	case xdr.ReviewRequestOpActionReject:
@@ -50,13 +59,18 @@ func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
 	return false
 }
 
-func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) error {
+func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
+	changes xdr.LedgerEntryChanges) error {
 	// approval of two step withdrawal leads to update of request to withdrawal
 	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeTwoStepWithdrawal {
 		return nil
 	}
 
 	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeUpdateKyc && !hasDeletedReviewableRequest(changes) {
+		return nil
+	}
+
+	if !isFulfilled(res) {
 		return nil
 	}
 

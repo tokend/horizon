@@ -10,16 +10,19 @@ import (
 
 // Represents Reviewable request
 type ReviewableRequest struct {
-	ID           string   `json:"id"`
-	PT           string   `json:"paging_token"`
-	Requestor    string   `json:"requestor"`
-	Reviewer     string   `json:"reviewer"`
-	Reference    *string  `json:"reference"`
-	RejectReason string   `json:"reject_reason"`
-	Hash         string   `json:"hash"`
-	Details      *Details `json:"details"`
-	CreatedAt    string   `json:"created_at"`
-	UpdatedAt    string   `json:"updated_at"`
+	ID              string                 `json:"id"`
+	PT              string                 `json:"paging_token"`
+	Requestor       string                 `json:"requestor"`
+	Reviewer        string                 `json:"reviewer"`
+	Reference       *string                `json:"reference"`
+	RejectReason    string                 `json:"reject_reason"`
+	Hash            string                 `json:"hash"`
+	Details         *Details               `json:"details"`
+	CreatedAt       string                 `json:"created_at"`
+	UpdatedAt       string                 `json:"updated_at"`
+	AllTasks        uint32                 `json:"all_tasks"`
+	PendingTasks    uint32                 `json:"pending_tasks"`
+	ExternalDetails map[string]interface{} `json:"external_details"`
 	RequestState
 }
 
@@ -34,6 +37,9 @@ func (r *ReviewableRequest) Populate(request *history.ReviewableRequest) error {
 	r.Hash = request.Hash
 	r.CreatedAt = request.CreatedAt.Format(time.RFC3339)
 	r.UpdatedAt = request.UpdatedAt.Format(time.RFC3339)
+	r.AllTasks = request.AllTasks
+	r.PendingTasks = request.PendingTasks
+	r.ExternalDetails = request.ExternalDetails
 
 	r.Details = new(Details)
 	err := r.Details.Populate(request.RequestType, request.Details)

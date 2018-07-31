@@ -8,4 +8,5 @@ type CreateIssuanceRequest struct {
 	FeeFixed        string                 `json:"fee_fixed"`
 	FeePercent      string                 `json:"fee_percent"`
 	ExternalDetails map[string]interface{} `json:"external_details"`
+	AllTasks        *uint32                `json:"all_tasks"`
 }

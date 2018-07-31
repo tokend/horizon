@@ -156,7 +156,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["annual_out"] = op.Details.LimitsCreateDetails.AnnualOut
 		}
 
-
 		if op.Details.Action == xdr.ManageLimitsActionRemove {
 			details["limit_id"] = op.Details.Id
 		} else {
@@ -227,6 +226,17 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["is_fulfilled"] = hasDeletedReviewableRequest(c.OperationChanges())
 		}
 		details["details"] = getReviewRequestOpDetails(op.RequestDetails)
+
+		reviewDetails, ok := op.Ext.GetReviewDetails()
+		if ok {
+			details["review_details"] = reviewDetails
+		}
+
+		opResult := c.OperationResult().MustReviewRequestResult().MustSuccess()
+		extendedResult, ok := opResult.Ext.GetExtendedResult()
+		if ok {
+			details["is_fulfilled"] = extendedResult.Fulfilled
+		}
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
@@ -247,6 +257,11 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// error is ignored on purpose, we should not block ingest in case of such error
 		_ = json.Unmarshal([]byte(op.Request.ExternalDetails), &externalDetails)
 		details["external_details"] = externalDetails
+
+		allTasks, ok := op.Ext.GetAllTasks()
+		if ok && allTasks != nil {
+			details["all_tasks"] = *allTasks
+		}
 	case xdr.OperationTypeCreateSaleRequest:
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:
