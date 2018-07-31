@@ -66,6 +66,11 @@ type Config struct {
 	TelegramAirdrop *url.URL
 
 	ForceHTTPSLinks bool
+
+	SentryDSN      string
+	Project        string
+	SentryLogLevel string
+	Env            string
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
@@ -80,6 +85,10 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.setDefault("sign_checkskip", false)
 	c.setDefault("log_level", "debug")
 	c.setDefault("force_https_links", true)
+	c.setDefault("sentry_dsn", "")
+	c.setDefault("project", "")
+	c.setDefault("sentry_log_level", "warn")
+	c.setDefault("env", "")
 
 	c.bindEnv("port")
 	c.bindEnv("database_url")
@@ -224,5 +233,9 @@ func (c *Config) Init() error {
 	}
 
 	c.ForceHTTPSLinks = c.getBool("force_https_links")
+	c.SentryDSN = c.getString("sentry_dsn")
+	c.Project = c.getString("project")
+	c.SentryLogLevel = c.getString("sentry_log_level")
+	c.Env = c.getString("env")
 	return nil
 }
