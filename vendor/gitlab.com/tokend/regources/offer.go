@@ -41,6 +41,7 @@ type OfferData struct {
 	BaseAmount     Amount    `json:"base_amount"`
 	QuoteAmount    Amount    `json:"quote_amount"`
 	Price          Amount    `json:"price"`
+	// TODO Add Custom Marshal/Unmarshal on this struct
 	CreatedAt      time.Time `json:"created_at"`
 }
 

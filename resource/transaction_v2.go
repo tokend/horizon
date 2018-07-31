@@ -6,23 +6,17 @@ import (
 )
 
 // Populate fills out the details
-func PopulateTransactionV2(transactionRow history.Transaction, ledgerChangesRows []history.LedgerChanges,
-) (t regources.TransactionV2) {
-	t.ID = transactionRow.TransactionHash
-	t.PT = transactionRow.PagingToken()
-	t.Hash = transactionRow.TransactionHash
-	t.LedgerCloseTime = transactionRow.LedgerCloseTime
-	t.EnvelopeXDR = transactionRow.TxEnvelope
-	t.ResultXDR = transactionRow.TxResult
-	t.LedgerSequence = transactionRow.LedgerSequence
-	for _, change := range ledgerChangesRows {
+func PopulateTransactionV2(
+	row history.Transaction, ledgerChanges []history.LedgerChanges,
+) (t regources.Transaction) {
+	t = PopulateTransaction(row)
+	for _, change := range ledgerChanges {
 		ledgerEntryChangeV2 := regources.LedgerEntryChangeV2{
 			Effect:    int32(change.Effect),
 			EntryType: int32(change.EntryType),
-			Payload: change.Payload,
+			Payload:   change.Payload,
 		}
 		t.Changes = append(t.Changes, ledgerEntryChangeV2)
 	}
-
-	return
+	return t
 }
