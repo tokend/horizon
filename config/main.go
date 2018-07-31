@@ -64,6 +64,8 @@ type Config struct {
 	TemplateBackend *url.URL
 	InvestReady     *url.URL
 	TelegramAirdrop *url.URL
+
+	ForceHTTPSLinks bool
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
@@ -77,6 +79,7 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.setDefault("history_retention_count", 0)
 	c.setDefault("sign_checkskip", false)
 	c.setDefault("log_level", "debug")
+	c.setDefault("force_https_links", true)
 
 	c.bindEnv("port")
 	c.bindEnv("database_url")
@@ -116,6 +119,7 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.bindEnv("invest_ready")
 	c.bindEnv("telegram_airdrop")
 	c.bindEnv("disable_tx_tfa")
+	c.bindEnv("force_https_links")
 }
 
 func (c *Config) Init() error {
@@ -219,5 +223,6 @@ func (c *Config) Init() error {
 		return errors.Wrap(err, "Failed to get telegram_airdrop value")
 	}
 
+	c.ForceHTTPSLinks = c.getBool("force_https_links")
 	return nil
 }
