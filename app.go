@@ -285,3 +285,7 @@ func (a *App) run() {
 		}
 	}
 }
+
+func (a *App) Conf() config.Config {
+	return a.config
+}
