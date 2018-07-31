@@ -208,6 +208,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["offer_id"] = opResult.Offer.Offer.OfferId
 		}
 		details["order_book_id"] = op.OrderBookId
+		isSaleOffer := op.OrderBookId != 0
+		if isSaleOffer {
+			details["base_asset"] = getOfferBaseAsset(c.OperationChanges(), op.OrderBookId)
+		}
 	case xdr.OperationTypeManageInvoice:
 		op := c.Operation().Body.MustManageInvoiceOp()
 		opResult := c.OperationResult().MustManageInvoiceResult()
@@ -334,4 +338,17 @@ func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
 		"tasks_to_add":     uint32(details.TasksToAdd),
 		"tasks_to_remove":  uint32(details.TasksToRemove),
 	}
+}
+
+func getOfferBaseAsset(changes xdr.LedgerEntryChanges, saleId xdr.Uint64) xdr.AssetCode {
+	for _, change := range changes {
+		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
+			continue
+		}
+		data := change.Updated.Data
+		if data.Type == xdr.LedgerEntryTypeSale && data.Sale.SaleId == saleId {
+			return data.Sale.BaseAsset
+		}
+	}
+	return xdr.AssetCode("")
 }

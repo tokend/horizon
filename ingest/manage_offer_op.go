@@ -1,6 +1,8 @@
 package ingest
 
-import "gitlab.com/distributed_lab/logan/v3/errors"
+import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
+)
 
 func (is *Session) updateOfferState(offerID, state uint64) {
 	if is.Err != nil {
