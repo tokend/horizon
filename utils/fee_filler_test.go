@@ -5,7 +5,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"math"
 	"testing"
-)
+	"github.com/magiconair/properties/assert"
+	)
 
 var Tests = []struct {
 	coreFees []core.FeeEntry
@@ -41,4 +42,113 @@ func TestParse(t *testing.T) {
 			require.Equal(t, v.expected[i], actualResult[i])
 		}
 	}
+}
+
+func TestSmartFillFeeGaps(t *testing.T) {
+	t.Run("one gap", func(t *testing.T) {
+		primaryFees := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+			},
+			{
+				LowerBound: 10,
+				UpperBound: 15,
+			},
+		}
+		secondaryFees := []core.FeeEntry{
+			{
+				LowerBound: 2,
+				UpperBound: 20,
+				Percent: 2,
+			},
+		}
+
+		expected := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+			},
+			{
+				LowerBound: 6,
+				UpperBound: 9,
+				Percent: 2,
+			},
+			{
+				LowerBound: 10,
+				UpperBound: 15,
+			},
+			{
+				LowerBound: 16,
+				UpperBound: 20,
+				Percent: 2,
+			},
+		}
+
+		got := SmartFillFeeGaps(primaryFees, secondaryFees)
+
+		assert.Equal(t, got, expected)
+	})
+	t.Run("two gaps", func(t *testing.T) {
+		primaryFees := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+			},
+			{
+				LowerBound: 10,
+				UpperBound: 15,
+			},
+			{
+				LowerBound: 20,
+				UpperBound: 22,
+			},
+		}
+		secondaryFees := []core.FeeEntry{
+			{
+				LowerBound: 2,
+				UpperBound: 20,
+				Percent: 2,
+			},
+			{
+				LowerBound: 21,
+				UpperBound: 25,
+				Percent: 3,
+			},
+		}
+
+		expected := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+			},
+			{
+				LowerBound: 6,
+				UpperBound: 9,
+				Percent: 2,
+			},
+			{
+				LowerBound: 10,
+				UpperBound: 15,
+			},
+			{
+				LowerBound: 16,
+				UpperBound: 19,
+				Percent: 2,
+			},
+			{
+				LowerBound: 20,
+				UpperBound: 22,
+			},
+			{
+				LowerBound: 23,
+				UpperBound: 25,
+				Percent: 3,
+			},
+		}
+
+		got := SmartFillFeeGaps(primaryFees, secondaryFees)
+
+		assert.Equal(t, got, expected)
+	})
 }

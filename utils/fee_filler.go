@@ -67,3 +67,73 @@ func getNewZeroFee(zeroFee core.FeeEntry, lowerBound, upperBound int64) core.Fee
 	zeroFee.UpperBound = upperBound
 	return zeroFee
 }
+
+func SmartFillFeeGaps(rawFees []core.FeeEntry, otherFees []core.FeeEntry) []core.FeeEntry {
+	if len(rawFees) == 0 {
+		return rawFees
+	}
+
+	fees := sortedFees(rawFees)
+	sort.Sort(fees)
+
+	// check lower bound
+	// no need to add [0,0] fee
+	if fees[0].LowerBound != 0 && fees[0].LowerBound != 1 {
+		fees = fees.Add(getNewFee(otherFees, 0, fees[0].LowerBound-1))
+	}
+
+	// check upper bound
+	if fees[fees.Len()-1].UpperBound != math.MaxInt64 {
+		fees = fees.Add(getNewFee(otherFees, fees[fees.Len()-1].UpperBound+1, math.MaxInt64))
+	}
+
+	for i := 0; i < fees.Len()-1; i++ {
+		if fees[i].UpperBound == math.MaxInt64 {
+			break
+		}
+
+		expectedLowerBoundForNextFee := fees[i].UpperBound + 1
+		if expectedLowerBoundForNextFee != fees[i+1].LowerBound {
+			fees = fees.Add(getNewFee(otherFees, expectedLowerBoundForNextFee, fees[i+1].LowerBound-1))
+		}
+	}
+
+	return fees
+}
+
+func getNewFee(fees []core.FeeEntry, lowerBound, upperBound int64) (fee core.FeeEntry) {
+	for _, v := range fees{
+		if l, b := overlap(lowerBound, upperBound, v.LowerBound, v.UpperBound); l != 0 && b != 0 {
+			fee = v
+			fee.LowerBound = l
+			fee.UpperBound = b
+			return
+		}
+	}
+	return
+}
+
+func overlap(a, b, c, d int64) (from int64, to int64){
+	if a > b || c > d {
+		return
+	}
+	if b - c >= 0 && d - a >= 0 {
+		return max(a, c), min(b, d)
+	}
+
+	return
+}
+
+func min (a, b int64) int64{
+	if a > b{
+		return b
+	}
+	return  a
+}
+
+func max (a, b int64) int64{
+	if a < b{
+		return b
+	}
+	return  a
+}
