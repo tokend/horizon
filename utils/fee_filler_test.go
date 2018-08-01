@@ -1,12 +1,13 @@
 package utils
 
 import (
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"github.com/stretchr/testify/require"
 	"math"
 	"testing"
+
 	"github.com/magiconair/properties/assert"
-	)
+	"github.com/stretchr/testify/require"
+	"gitlab.com/swarmfund/horizon/db2/core"
+)
 
 var Tests = []struct {
 	coreFees []core.FeeEntry
@@ -60,7 +61,7 @@ func TestSmartFillFeeGaps(t *testing.T) {
 			{
 				LowerBound: 2,
 				UpperBound: 20,
-				Percent: 2,
+				Percent:    2,
 			},
 		}
 
@@ -72,7 +73,7 @@ func TestSmartFillFeeGaps(t *testing.T) {
 			{
 				LowerBound: 6,
 				UpperBound: 9,
-				Percent: 2,
+				Percent:    2,
 			},
 			{
 				LowerBound: 10,
@@ -81,7 +82,7 @@ func TestSmartFillFeeGaps(t *testing.T) {
 			{
 				LowerBound: 16,
 				UpperBound: 20,
-				Percent: 2,
+				Percent:    2,
 			},
 		}
 
@@ -108,12 +109,12 @@ func TestSmartFillFeeGaps(t *testing.T) {
 			{
 				LowerBound: 2,
 				UpperBound: 20,
-				Percent: 2,
+				Percent:    2,
 			},
 			{
 				LowerBound: 21,
 				UpperBound: 25,
-				Percent: 3,
+				Percent:    3,
 			},
 		}
 
@@ -125,7 +126,7 @@ func TestSmartFillFeeGaps(t *testing.T) {
 			{
 				LowerBound: 6,
 				UpperBound: 9,
-				Percent: 2,
+				Percent:    2,
 			},
 			{
 				LowerBound: 10,
@@ -134,7 +135,7 @@ func TestSmartFillFeeGaps(t *testing.T) {
 			{
 				LowerBound: 16,
 				UpperBound: 19,
-				Percent: 2,
+				Percent:    2,
 			},
 			{
 				LowerBound: 20,
@@ -143,7 +144,90 @@ func TestSmartFillFeeGaps(t *testing.T) {
 			{
 				LowerBound: 23,
 				UpperBound: 25,
-				Percent: 3,
+				Percent:    3,
+			},
+		}
+
+		got := SmartFillFeeGaps(primaryFees, secondaryFees)
+
+		assert.Equal(t, got, expected)
+	})
+	t.Run("no primary fees", func(t *testing.T) {
+		primaryFees := []core.FeeEntry{}
+		secondaryFees := []core.FeeEntry{
+			{
+				LowerBound: 2,
+				UpperBound: 20,
+				Percent:    2,
+			},
+		}
+
+		expected := []core.FeeEntry{
+			{
+				LowerBound: 2,
+				UpperBound: 20,
+				Percent:    2,
+			},
+		}
+
+		got := SmartFillFeeGaps(primaryFees, secondaryFees)
+
+		assert.Equal(t, got, expected)
+	})
+	t.Run("no secondary fees", func(t *testing.T) {
+		primaryFees := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+			},
+			{
+				LowerBound: 10,
+				UpperBound: 15,
+			},
+		}
+		expected := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+			},
+
+			{
+				LowerBound: 10,
+				UpperBound: 15,
+			},
+		}
+
+		got := SmartFillFeeGaps(primaryFees, nil)
+
+		assert.Equal(t, got, expected)
+	})
+	t.Run("no overlap", func(t *testing.T) {
+		primaryFees := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+			},
+			{
+				LowerBound: 10,
+				UpperBound: 15,
+			},
+		}
+		secondaryFees := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+				Percent:    2,
+			},
+		}
+
+		expected := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+			},
+			{
+				LowerBound: 10,
+				UpperBound: 15,
 			},
 		}
 
