@@ -9,7 +9,8 @@ import (
 //using different level fees
 type SmartFeeTable map[int]map[int64]map[string][]core.FeeEntry
 
-func (sft SmartFeeTable) Populate(fees ...core.FeeEntry) {
+func NewSmartFeeTable(fees []core.FeeEntry) (sft SmartFeeTable) {
+	sft = SmartFeeTable{}
 	for _, entry := range fees {
 		if sft[entry.FeeType] == nil {
 			sft[entry.FeeType] = make(map[int64]map[string][]core.FeeEntry)
@@ -19,6 +20,7 @@ func (sft SmartFeeTable) Populate(fees ...core.FeeEntry) {
 		}
 		sft[entry.FeeType][entry.Subtype][entry.Asset] = append(sft[entry.FeeType][entry.Subtype][entry.Asset], entry)
 	}
+	return sft
 }
 
 func (sft SmartFeeTable) Update(fees []core.FeeEntry) {

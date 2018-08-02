@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	"gitlab.com/swarmfund/horizon/db2/core"
-	)
+)
 
 type sortedFees []core.FeeEntry
 
@@ -31,7 +31,9 @@ func (s sortedFees) Add(entry core.FeeEntry) sortedFees {
 
 func FillFeeGaps(rawFees []core.FeeEntry, zeroFee core.FeeEntry) []core.FeeEntry {
 	if len(rawFees) == 0 {
-		return rawFees
+		zeroFee.LowerBound = 0
+		zeroFee.UpperBound = math.MaxInt64
+		return []core.FeeEntry{zeroFee}
 	}
 
 	fees := sortedFees(rawFees)
@@ -69,28 +71,24 @@ func getNewZeroFee(zeroFee core.FeeEntry, lowerBound, upperBound int64) core.Fee
 }
 
 func SmartFillFeeGaps(rawFees []core.FeeEntry, otherFees []core.FeeEntry) []core.FeeEntry {
-	if len(rawFees) == 0 || len(otherFees) == 0{
+	if len(rawFees) == 0 || len(otherFees) == 0 {
 		return append(rawFees, otherFees...)
 	}
-
 	fees := sortedFees(rawFees)
 	sort.Sort(fees)
-
+	other := sortedFees(otherFees)
+	sort.Sort(other)
 	// check lower bound
-	// no need to add [0,0] fee
-	if fees[0].LowerBound != 0 && fees[0].LowerBound != 1 {
+	for fees[0].LowerBound > other[0].LowerBound {
 		newFee, ok := getNewFee(otherFees, 0, fees[0].LowerBound-1)
-		if ok{
+		if ok {
 			fees = fees.Add(newFee)
 		}
-
-
 	}
-
 	// check upper bound
-	if fees[fees.Len()-1].UpperBound != math.MaxInt64 {
+	for fees[fees.Len()-1].UpperBound < other[other.Len()-1].UpperBound {
 		newFee, ok := getNewFee(otherFees, fees[fees.Len()-1].UpperBound+1, math.MaxInt64)
-		if ok{
+		if ok {
 			fees = fees.Add(newFee)
 		}
 	}
@@ -103,7 +101,7 @@ func SmartFillFeeGaps(rawFees []core.FeeEntry, otherFees []core.FeeEntry) []core
 		expectedLowerBoundForNextFee := fees[i].UpperBound + 1
 		if expectedLowerBoundForNextFee != fees[i+1].LowerBound {
 			newFee, ok := getNewFee(otherFees, expectedLowerBoundForNextFee, fees[i+1].LowerBound-1)
-			if ok{
+			if ok {
 				fees = fees.Add(newFee)
 			}
 		}
@@ -113,8 +111,8 @@ func SmartFillFeeGaps(rawFees []core.FeeEntry, otherFees []core.FeeEntry) []core
 }
 
 func getNewFee(fees []core.FeeEntry, lowerBound, upperBound int64) (fee core.FeeEntry, ok bool) {
-	for _, v := range fees{
-		if l, b := overlap(lowerBound, upperBound, v.LowerBound, v.UpperBound); l != 0 && b != 0 {
+	for _, v := range fees {
+		if ok, l, b := overlap(lowerBound, upperBound, v.LowerBound, v.UpperBound); ok {
 			fee = v
 			fee.LowerBound = l
 			fee.UpperBound = b
@@ -124,27 +122,27 @@ func getNewFee(fees []core.FeeEntry, lowerBound, upperBound int64) (fee core.Fee
 	return fee, false
 }
 
-func overlap(a, b, c, d int64) (from int64, to int64){
+func overlap(a, b, c, d int64) (ok bool, from int64, to int64) {
 	if a > b || c > d {
 		return
 	}
-	if b - c >= 0 && d - a >= 0 {
-		return max(a, c), min(b, d)
+	if b-c >= 0 && d-a >= 0 {
+		return true, max(a, c), min(b, d)
 	}
 
-	return
+	return false, 0, 0
 }
 
-func min (a, b int64) int64{
+func min(a, b int64) int64 {
 	if a > b {
 		return b
 	}
-	return  a
+	return a
 }
 
-func max (a, b int64) int64{
+func max(a, b int64) int64 {
 	if a < b {
 		return b
 	}
-	return  a
+	return a
 }

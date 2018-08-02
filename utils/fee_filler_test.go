@@ -7,6 +7,7 @@ import (
 	"github.com/magiconair/properties/assert"
 	"github.com/stretchr/testify/require"
 	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/go/xdr"
 )
 
 var Tests = []struct {
@@ -234,5 +235,159 @@ func TestSmartFillFeeGaps(t *testing.T) {
 		got := SmartFillFeeGaps(primaryFees, secondaryFees)
 
 		assert.Equal(t, got, expected)
+	})
+	t.Run("multiple big secondary entries", func(t *testing.T) {
+		primaryFees := []core.FeeEntry{
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 0,
+				UpperBound: 5,
+			},
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 10,
+				UpperBound: 15,
+			},
+		}
+		secondaryFees := []core.FeeEntry{
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 2,
+				UpperBound: 20,
+				Percent:    2,
+			},
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 21,
+				UpperBound: 25,
+				Percent:    3,
+			},
+		}
+		expected := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+			},
+			{
+				LowerBound: 6,
+				UpperBound: 9,
+				Percent:    2,
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+			},
+			{
+				LowerBound: 10,
+				UpperBound: 15,
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+			},
+			{
+				LowerBound: 16,
+				UpperBound: 20,
+				Percent:    2,
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+			},
+			{
+				LowerBound: 21,
+				UpperBound: 25,
+				Percent:    3,
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+			},
+		}
+
+		got := SmartFillFeeGaps(primaryFees, secondaryFees)
+		assert.Equal(t, got, expected)
+
+	})
+	t.Run("multiple small secondary entries", func(t *testing.T) {
+		primaryFees := []core.FeeEntry{
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 10,
+				UpperBound: 15,
+			},
+		}
+		secondaryFees := []core.FeeEntry{
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 0,
+				UpperBound: 5,
+				Percent:    2,
+			},
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 6,
+				UpperBound: 9,
+				Percent:    2,
+			},
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 10,
+				UpperBound: 20,
+				Percent:    2,
+			},
+		}
+		expected := []core.FeeEntry{
+			{
+				LowerBound: 0,
+				UpperBound: 5,
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				Percent:    2,
+			},
+			{
+				LowerBound: 6,
+				UpperBound: 9,
+				Percent:    2,
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+			},
+			{
+				LowerBound: 10,
+				UpperBound: 15,
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+			},
+			{
+				LowerBound: 16,
+				UpperBound: 20,
+				Percent:    2,
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+			},
+		}
+
+		got := SmartFillFeeGaps(primaryFees, secondaryFees)
+		assert.Equal(t, got, expected)
+
 	})
 }
