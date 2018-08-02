@@ -35,7 +35,6 @@ func (sft SmartFeeTable) Update(fees []core.FeeEntry) {
 				sft[feeType][feeSubtype][asset] = SmartFillFeeGaps(fees, feeMap[asset])
 			}
 		}
-
 	}
 }
 

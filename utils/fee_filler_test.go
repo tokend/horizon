@@ -15,7 +15,6 @@ var Tests = []struct {
 	zeroFee  core.FeeEntry
 	expected []core.FeeEntry
 }{
-	{nil, core.FeeEntry{}, nil},
 	// gap at the begging, mid, end
 	{[]core.FeeEntry{
 		{LowerBound: 402, UpperBound: 500, Percent: 4},

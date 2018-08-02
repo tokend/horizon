@@ -138,23 +138,21 @@ func (action *FeesAllAction) smartLoadData() {
 		forAccountType = q.ForAccountType(action.AccountType)
 		forGeneralType = q.ForAccountType(nil)
 	}
-	accountFees := []core.FeeEntry{}
-	accountTypeFees := []core.FeeEntry{}
-	generalFees := []core.FeeEntry{}
+	var accountFees []core.FeeEntry
+	var accountTypeFees []core.FeeEntry
+	var generalFees []core.FeeEntry
 
 	action.getFeeEntriesFromDB(forAccount, &accountFees)
 	action.getFeeEntriesFromDB(forAccountType, &accountTypeFees)
 	action.getFeeEntriesFromDB(forGeneralType, &generalFees)
 
-	var sft utils.SmartFeeTable
-	sft.Populate(accountFees...)
+	sft := utils.NewSmartFeeTable(accountFees)
 	sft.Update(accountTypeFees)
 	sft.Update(generalFees)
 
 	if action.IsOverview {
 		return
 	}
-
 	assets, err := action.CoreQ().Assets().Select()
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to load assets")
