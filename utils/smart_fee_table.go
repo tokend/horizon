@@ -20,14 +20,15 @@ func NewSmartFeeTable(fees []core.FeeEntry) (sft SmartFeeTable) {
 	for _, entry := range fees {
 		ft := feeType(entry.FeeType)
 		asset := assetCode(entry.Asset)
+		st := entry.Subtype
 		if _, ok := sft[ft]; !ok {
 			sft[ft] = make(map[feeSubtype]map[assetCode][]core.FeeEntry)
 		}
-		if _, ok := sft[ft][entry.Subtype]; !ok {
-			sft[ft][entry.Subtype] = make(map[assetCode][]core.FeeEntry)
+		if _, ok := sft[ft][st]; !ok {
+			sft[ft][st] = make(map[assetCode][]core.FeeEntry)
 		}
-		sft[ft][entry.Subtype][asset] =
-			append(sft[ft][entry.Subtype][asset], entry)
+		sft[ft][st][asset] =
+			append(sft[ft][st][asset], entry)
 	}
 	return sft
 }
@@ -35,17 +36,17 @@ func NewSmartFeeTable(fees []core.FeeEntry) (sft SmartFeeTable) {
 func (sft SmartFeeTable) Update(fees []core.FeeEntry) {
 	update := NewSmartFeeTable(fees)
 
-	for feeType, byFeeType := range update {
-		if sft[feeType] == nil {
-			sft[feeType] = make(map[feeSubtype]map[assetCode][]core.FeeEntry)
+	for ft, byFeeType := range update {
+		if _, ok := sft[ft]; !ok {
+			sft[ft] = make(map[feeSubtype]map[assetCode][]core.FeeEntry)
 		}
-		for feeSubtype, byFeeSubType := range byFeeType {
-			if sft[feeType][feeSubtype] == nil {
-				sft[feeType][feeSubtype] = make(map[assetCode][]core.FeeEntry)
+		for st, byFeeSubType := range byFeeType {
+			if _, ok := sft[ft][st]; !ok {
+				sft[ft][st] = make(map[assetCode][]core.FeeEntry)
 			}
 			for asset, newFees := range byFeeSubType {
-				sft[feeType][feeSubtype][asset] =
-					SmartFillFeeGaps(sft[feeType][feeSubtype][asset], newFees)
+				sft[ft][st][asset] =
+					SmartFillFeeGaps(sft[ft][st][asset], newFees)
 			}
 		}
 	}
@@ -65,7 +66,7 @@ func (sft SmartFeeTable) GetValuesByAsset() (byAsset map[string][]core.FeeEntry)
 
 func (sft SmartFeeTable) AddZeroFees(assets []core.Asset) {
 	for _, ft := range xdr.FeeTypeAll {
-		if sft[ft] == nil {
+		if _, ok := sft[ft]; !ok {
 			sft[ft] = make(map[feeSubtype]map[assetCode][]core.FeeEntry)
 		}
 		subtypes := []feeSubtype{0}
@@ -75,17 +76,17 @@ func (sft SmartFeeTable) AddZeroFees(assets []core.Asset) {
 				feeSubtype(xdr.PaymentFeeTypeOutgoing),
 			}
 		}
-		for _, feeSubtype := range subtypes {
-			if sft[ft][feeSubtype] == nil {
-				sft[ft][feeSubtype] = make(map[assetCode][]core.FeeEntry)
+		for _, st := range subtypes {
+			if _, ok := sft[ft][st]; !ok {
+				sft[ft][st] = make(map[assetCode][]core.FeeEntry)
 			}
 			for _, asset := range assets {
 				ac := assetCode(asset.Code)
-				sft[ft][feeSubtype][ac] = FillFeeGaps(
-					sft[ft][feeSubtype][ac],
+				sft[ft][st][ac] = FillFeeGaps(
+					sft[ft][st][ac],
 					core.FeeEntry{
 						Asset:   asset.Code,
-						Subtype: feeSubtype,
+						Subtype: st,
 						FeeType: int(ft),
 					})
 			}
