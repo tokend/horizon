@@ -32,7 +32,7 @@ func (s sortedFees) Add(entry core.FeeEntry) sortedFees {
 func FillFeeGaps(rawFees []core.FeeEntry, zeroFee core.FeeEntry) []core.FeeEntry {
 	if len(rawFees) == 0 {
 		zeroFee.LowerBound = 0
-		zeroFee.UpperBound = math.MaxInt64
+		zeroFee.UpperBound = 0
 		return []core.FeeEntry{zeroFee}
 	}
 
@@ -40,7 +40,6 @@ func FillFeeGaps(rawFees []core.FeeEntry, zeroFee core.FeeEntry) []core.FeeEntry
 	sort.Sort(fees)
 
 	// check lower bound
-	// no need to add [0,0] fee
 	if fees[0].LowerBound != 0 && fees[0].LowerBound != 1 {
 		fees = fees.Add(getNewZeroFee(zeroFee, 0, fees[0].LowerBound-1))
 	}
