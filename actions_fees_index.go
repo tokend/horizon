@@ -9,8 +9,8 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/utils"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // This file contains the actions:
@@ -32,7 +32,7 @@ type FeesAllAction struct {
 func (action *FeesAllAction) JSON() {
 	action.Do(
 		action.loadParams,
-		action.loadData,
+		action.smartLoadData,
 		func() {
 			hal.Render(action.W, action.Response)
 		},
@@ -67,60 +67,60 @@ func (action *FeesAllAction) getAccountType(name string) *int32 {
 	return nil
 }
 
-func (action *FeesAllAction) loadData() {
-	var ledgerHeader core.LedgerHeader
-	err := action.CoreQ().LedgerHeaderBySequence(&ledgerHeader, ledger.CurrentState().CoreLatest)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to get latest ledger")
-		action.Err = &problem.ServerError
-		return
-	}
+//func (action *FeesAllAction) loadData() {
+//	var ledgerHeader core.LedgerHeader
+//	err := action.CoreQ().LedgerHeaderBySequence(&ledgerHeader, ledger.CurrentState().CoreLatest)
+//	if err != nil {
+//		action.Log.WithError(err).Error("Failed to get latest ledger")
+//		action.Err = &problem.ServerError
+//		return
+//	}
+//
+//	q := action.CoreQ().FeeEntries()
+//	// for the overview we need to return all the fee rules we have, so we just ignore filters
+//	if !action.IsOverview {
+//		// pass all the filters. Q will resolve them correctly
+//		q = q.ForAccount(action.Account).ForAccountType(action.AccountType)
+//	}
+//
+//	actualFees := []core.FeeEntry{}
+//	err = q.Select(&actualFees)
+//	if err != nil {
+//		if err != sql.ErrNoRows {
+//			action.Err = &problem.ServerError
+//			action.Log.WithStack(err).WithError(err).Error("Could not get fee from the database")
+//			return
+//		}
+//
+//		err = nil
+//	}
+//
+//	// convert to map of resources
+//	action.Response.Fees = map[string][]resource.FeeEntry{}
+//	var fee resource.FeeEntry
+//	for _, coreFee := range actualFees {
+//		fee.Populate(coreFee)
+//		action.Response.Fees[coreFee.Asset] = append(action.Response.Fees[coreFee.Asset], fee)
+//	}
+//
+//	// for overview we do not need to populate default fees
+//	if action.IsOverview {
+//		return
+//	}
+//
+//	assets, err := action.CoreQ().Assets().Select()
+//	if err != nil {
+//		action.Log.WithError(err).Error("Failed to load assets")
+//		action.Err = &problem.ServerError
+//		return
+//	}
+//
+//	for _, asset := range assets {
+//		action.Response.Fees[asset.Code] = action.addDefaultEntriesForAsset(asset, action.Response.Fees[asset.Code])
+//	}
+//}
 
-	q := action.CoreQ().FeeEntries()
-	// for the overview we need to return all the fee rules we have, so we just ignore filters
-	if !action.IsOverview {
-		// pass all the filters. Q will resolve them correctly
-		q = q.ForAccount(action.Account).ForAccountType(action.AccountType)
-	}
-
-	actualFees := []core.FeeEntry{}
-	err = q.Select(&actualFees)
-	if err != nil {
-		if err != sql.ErrNoRows {
-			action.Err = &problem.ServerError
-			action.Log.WithStack(err).WithError(err).Error("Could not get fee from the database")
-			return
-		}
-
-		err = nil
-	}
-
-	// convert to map of resources
-	action.Response.Fees = map[string][]resource.FeeEntry{}
-	var fee resource.FeeEntry
-	for _, coreFee := range actualFees {
-		fee.Populate(coreFee)
-		action.Response.Fees[coreFee.Asset] = append(action.Response.Fees[coreFee.Asset], fee)
-	}
-
-	// for overview we do not need to populate default fees
-	if action.IsOverview {
-		return
-	}
-
-	assets, err := action.CoreQ().Assets().Select()
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to load assets")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	for _, asset := range assets {
-		action.Response.Fees[asset.Code] = action.addDefaultEntriesForAsset(asset, action.Response.Fees[asset.Code])
-	}
-}
-
-func (action *FeesAllAction) smartLoadFees(){
+func (action *FeesAllAction) smartLoadData() {
 	var ledgerHeader core.LedgerHeader
 	err := action.CoreQ().LedgerHeaderBySequence(&ledgerHeader, ledger.CurrentState().CoreLatest)
 	if err != nil {
@@ -151,7 +151,7 @@ func (action *FeesAllAction) smartLoadFees(){
 	sft.Update(accountTypeFees)
 	sft.Update(generalFees)
 
-	if action.IsOverview{
+	if action.IsOverview {
 		return
 	}
 
@@ -161,23 +161,20 @@ func (action *FeesAllAction) smartLoadFees(){
 		action.Err = &problem.ServerError
 		return
 	}
+	sft.AddZeroFees(assets)
 
 	action.Response.Fees = map[string][]resource.FeeEntry{}
 	byAssets := sft.GetValuesByAsset()
 	var fee resource.FeeEntry
-	for _, feesForAsset := range byAssets{
-		for _, coreFee := range feesForAsset{
+	for _, feesForAsset := range byAssets {
+		for _, coreFee := range feesForAsset {
 			fee.Populate(coreFee)
 			action.Response.Fees[coreFee.Asset] = append(action.Response.Fees[coreFee.Asset], fee)
 		}
 	}
-
-	for _, asset := range assets {
-		action.Response.Fees[asset.Code] = action.addDefaultEntriesForAsset(asset, action.Response.Fees[asset.Code])
-	}
 }
 
-func (action *FeesAllAction)getFeeEntriesFromDB(q core.FeeEntryQI, dest interface{}) error{
+func (action *FeesAllAction) getFeeEntriesFromDB(q core.FeeEntryQI, dest interface{}) error {
 	err := q.Select(&dest)
 	if err != nil {
 		if err != sql.ErrNoRows {
@@ -188,39 +185,40 @@ func (action *FeesAllAction)getFeeEntriesFromDB(q core.FeeEntryQI, dest interfac
 
 		err = nil
 	}
+	return err
 }
 
-func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries []resource.FeeEntry) []resource.FeeEntry {
-	for _, feeType := range xdr.FeeTypeAll {
-		subtypes := []int64{0}
-		if feeType == xdr.FeeTypePaymentFee {
-			subtypes = []int64{int64(xdr.PaymentFeeTypeIncoming), int64(xdr.PaymentFeeTypeOutgoing)}
-		}
+//
+//func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries []resource.FeeEntry) []resource.FeeEntry {
+//	for _, feeType := range xdr.FeeTypeAll {
+//		subtypes := []int64{0}
+//		if feeType == xdr.FeeTypePaymentFee {
+//			subtypes = []int64{int64(xdr.PaymentFeeTypeIncoming), int64(xdr.PaymentFeeTypeOutgoing)}
+//		}
+//
+//		for _, subtype := range subtypes {
+//			entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), subtype))
+//		}
+//	}
+//	return entries
+//}
 
-		for _, subtype := range subtypes {
-			entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), subtype))
-		}
-	}
-
-	return entries
-}
-
-func (action *FeesAllAction) getDefaultFee(asset string, feeType int, subType int64) resource.FeeEntry {
-	accountType := int32(-1)
-	if action.AccountType != nil {
-		accountType = *action.AccountType
-	}
-
-	return resource.FeeEntry{
-		Asset:       asset,
-		FeeType:     feeType,
-		Subtype:     subType,
-		Percent:     "0",
-		Fixed:       "0",
-		LowerBound:  "0",
-		UpperBound:  "0",
-		AccountType: accountType,
-		AccountID:   action.Account,
-		FeeAsset:    asset,
-	}
-}
+//func (action *FeesAllAction) getDefaultFee(asset string, feeType int, subType int64) resource.FeeEntry {
+//	accountType := int32(-1)
+//	if action.AccountType != nil {
+//		accountType = *action.AccountType
+//	}
+//
+//	return resource.FeeEntry{
+//		Asset:       asset,
+//		FeeType:     feeType,
+//		Subtype:     subType,
+//		Percent:     "0",
+//		Fixed:       "0",
+//		LowerBound:  "0",
+//		UpperBound:  "0",
+//		AccountType: accountType,
+//		AccountID:   action.Account,
+//		FeeAsset:    asset,
+//	}
+//}
