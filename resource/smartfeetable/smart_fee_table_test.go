@@ -1,4 +1,4 @@
-package utils
+package smartfeetable
 
 import (
 	"testing"
@@ -27,9 +27,9 @@ func TestNewSmartFeeTable(t *testing.T) {
 			},
 		}
 		expected := SmartFeeTable{
-			int(xdr.FeeTypePaymentFee): {
-				int64(xdr.PaymentFeeTypeOutgoing): {
-					"USD": []core.FeeEntry{
+			"USD": {
+				xdr.FeeTypePaymentFee: {
+					int64(xdr.PaymentFeeTypeOutgoing): []core.FeeEntry{
 						{
 							FeeType:    int(xdr.FeeTypePaymentFee),
 							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
@@ -131,9 +131,9 @@ func TestSmartFeeTable_Update(t *testing.T) {
 			},
 		}
 		expectedFeeTable := SmartFeeTable{
-			int(xdr.FeeTypePaymentFee): {
-				int64(xdr.PaymentFeeTypeOutgoing): {
-					"USD": []core.FeeEntry{
+			"USD": {
+				xdr.FeeTypePaymentFee: {
+					int64(xdr.PaymentFeeTypeOutgoing): []core.FeeEntry{
 						{
 							LowerBound: 0,
 							UpperBound: 5,
@@ -202,9 +202,9 @@ func TestSmartFeeTable_Update(t *testing.T) {
 			},
 		}
 		expectedFeeTable := SmartFeeTable{
-			int(xdr.FeeTypePaymentFee): {
-				int64(xdr.PaymentFeeTypeOutgoing): {
-					"USD": []core.FeeEntry{
+			"USD": {
+				xdr.FeeTypePaymentFee: {
+					int64(xdr.PaymentFeeTypeOutgoing): []core.FeeEntry{
 						{
 							FeeType:    int(xdr.FeeTypePaymentFee),
 							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
@@ -266,9 +266,9 @@ func TestSmartFeeTable_Update(t *testing.T) {
 			},
 		}
 		expectedFeeTable := SmartFeeTable{
-			int(xdr.FeeTypePaymentFee): {
-				int64(xdr.PaymentFeeTypeOutgoing): {
-					"USD": []core.FeeEntry{
+			"USD": {
+				xdr.FeeTypePaymentFee: {
+					int64(xdr.PaymentFeeTypeOutgoing): []core.FeeEntry{
 						{
 							LowerBound: 0,
 							UpperBound: 5,
@@ -285,10 +285,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 						},
 					},
 				},
-			},
-			int(xdr.FeeTypeOfferFee): {
-				int64(0): {
-					"USD": []core.FeeEntry{
+				xdr.FeeTypeOfferFee: {
+					int64(0): []core.FeeEntry{
 						{
 							LowerBound: 2,
 							UpperBound: 20,

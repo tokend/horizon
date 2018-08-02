@@ -9,7 +9,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/swarmfund/horizon/utils"
+	. "gitlab.com/swarmfund/horizon/resource/smartfeetable"
 	"gitlab.com/tokend/go/xdr"
 )
 
@@ -25,14 +25,17 @@ type FeesAllAction struct {
 	Account     string
 
 	IsOverview bool
-
-	Response resource.FeesResponse
+	Records    SmartFeeTable
+	Assets     []core.Asset
+	Response   resource.FeesResponse
 }
 
 func (action *FeesAllAction) JSON() {
 	action.Do(
 		action.loadParams,
-		action.smartLoadData,
+		action.loadData,
+		action.loadFees,
+		action.loadResponse,
 		func() {
 			hal.Render(action.W, action.Response)
 		},
@@ -67,7 +70,7 @@ func (action *FeesAllAction) getAccountType(name string) *int32 {
 	return nil
 }
 
-func (action *FeesAllAction) smartLoadData() {
+func (action *FeesAllAction) loadData() {
 	var ledgerHeader core.LedgerHeader
 	err := action.CoreQ().LedgerHeaderBySequence(&ledgerHeader, ledger.CurrentState().CoreLatest)
 	if err != nil {
@@ -76,31 +79,16 @@ func (action *FeesAllAction) smartLoadData() {
 		return
 	}
 
-	fees := action.loadFees()
-	if action.IsOverview {
-		sft := utils.NewSmartFeeTable(fees["overview"])
-		byAssets := sft.GetValuesByAsset()
-		action.Render(byAssets)
-		return
-	}
-
-	sft := utils.NewSmartFeeTable(fees["account"])
-	sft.Update(fees["account_type"])
-	sft.Update(fees["general"])
 	assets, err := action.CoreQ().Assets().Select()
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to load assets")
 		action.Err = &problem.ServerError
 		return
 	}
-	sft.AddZeroFees(assets)
-	byAssets := sft.GetValuesByAsset()
-	action.Render(byAssets)
-	return
-
+	action.Assets = assets
 }
 
-func (action *FeesAllAction) getFeeEntriesFromDB(q core.FeeEntryQI) []core.FeeEntry {
+func (action *FeesAllAction) getFees(q core.FeeEntryQI) []core.FeeEntry {
 	var result []core.FeeEntry
 	err := q.Select(&result)
 	if err != nil {
@@ -113,22 +101,31 @@ func (action *FeesAllAction) getFeeEntriesFromDB(q core.FeeEntryQI) []core.FeeEn
 	return result
 }
 
-func (action *FeesAllAction) loadFees() (result map[string][]core.FeeEntry) {
+func (action *FeesAllAction) loadFees() {
 	q := action.CoreQ().FeeEntries()
-	result = make(map[string][]core.FeeEntry)
+	result := make(map[string][]core.FeeEntry)
+
+	// for overview we only need general fees
 	if action.IsOverview {
-		result["overview"] = action.getFeeEntriesFromDB(q.ForAccountType(action.AccountType))
-		return result
+		result["overview"] = action.getFees(q.ForAccountType(action.AccountType))
+		action.Records = NewSmartFeeTable(result["overview"])
+		return
 	}
 
-	result["account"] = action.getFeeEntriesFromDB(q.ForAccount(action.Account))
-	result["account_type"] = action.getFeeEntriesFromDB(q.ForAccountType(action.AccountType))
+	result["account"] = action.getFees(q.ForAccount(action.Account))
+	result["account_type"] = action.getFees(q.ForAccountType(action.AccountType))
 	//get general fees set for all, not to be confused with fees for General Account Type
-	result["general"] = action.getFeeEntriesFromDB(q.ForAccountType(nil))
-	return result
+	result["general"] = action.getFees(q.ForAccountType(nil))
+
+	sft := NewSmartFeeTable(result["account"])
+	sft.Update(result["account_type"])
+	sft.Update(result["general"])
+	sft.AddZeroFees(action.Assets)
+	action.Records = sft
 }
 
-func (action *FeesAllAction) Render(byAssets map[string][]core.FeeEntry) {
+func (action *FeesAllAction) loadResponse() {
+	byAssets := action.Records.GetValuesByAsset()
 	action.Response.Fees = map[string][]resource.FeeEntry{}
 	var fee resource.FeeEntry
 	for _, feesForAsset := range byAssets {
