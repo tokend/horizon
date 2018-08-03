@@ -31,9 +31,7 @@ func (s sortedFees) Add(entry core.FeeEntry) sortedFees {
 
 func FillFeeGaps(rawFees []core.FeeEntry, zeroFee core.FeeEntry) []core.FeeEntry {
 	if len(rawFees) == 0 {
-		zeroFee.LowerBound = 0
-		zeroFee.UpperBound = 0
-		return []core.FeeEntry{zeroFee}
+		return nil
 	}
 
 	fees := sortedFees(rawFees)

@@ -95,11 +95,12 @@ func (action *FeesAllAction) loadData() {
 	}
 
 	// convert to map of resources
-	action.Response.Fees = map[string][]resource.FeeEntry{}
+	action.Response.Fees = map[xdr.AssetCode][]resource.FeeEntry{}
 	var fee resource.FeeEntry
 	for _, coreFee := range actualFees {
 		fee.Populate(coreFee)
-		action.Response.Fees[coreFee.Asset] = append(action.Response.Fees[coreFee.Asset], fee)
+		ac := xdr.AssetCode(coreFee.Asset)
+		action.Response.Fees[ac] = append(action.Response.Fees[ac], fee)
 	}
 
 	// for overview we do not need to populate default fees
@@ -115,7 +116,8 @@ func (action *FeesAllAction) loadData() {
 	}
 
 	for _, asset := range assets {
-		action.Response.Fees[asset.Code] = action.addDefaultEntriesForAsset(asset, action.Response.Fees[asset.Code])
+		ac := xdr.AssetCode(asset.Code)
+		action.Response.Fees[ac] = action.addDefaultEntriesForAsset(asset, action.Response.Fees[ac])
 	}
 }
 

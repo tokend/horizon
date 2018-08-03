@@ -25,8 +25,10 @@ func NewSmartFeeTable(fees []core.FeeEntry) (sft SmartFeeTable) {
 			FeeType:   entry.FeeType,
 			Subtype:   entry.Subtype,
 		}
+
 		sft[key] = append(sft[key], entry)
 	}
+
 	return sft
 }
 
@@ -43,6 +45,7 @@ func (sft SmartFeeTable) GetValuesByAsset() (byAsset map[string][]core.FeeEntry)
 	for key := range sft {
 		byAsset[key.AssetCode] = append(byAsset[key.AssetCode], sft[key]...)
 	}
+
 	return byAsset
 }
 

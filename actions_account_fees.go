@@ -1,14 +1,13 @@
 package horizon
 
 import (
-	"fmt"
-
 	"github.com/go-errors/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
 	. "gitlab.com/swarmfund/horizon/resource/smartfeetable"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // This file contains the actions:
@@ -31,13 +30,16 @@ func (action *AccountFeesAction) JSON() {
 		action.loadAccountType,
 		action.loadAssets,
 		action.loadResponse,
+		func() {
+			hal.Render(action.W, action.Response)
+		},
 	)
 }
 
 func (action *AccountFeesAction) loadParams() {
 	action.Account = action.GetString("account_id")
 	if action.Account == "" {
-		action.SetInvalidField("account_id", errors.New(""))
+		action.SetInvalidField("account_id", errors.New("cannot be blank"))
 	}
 }
 
@@ -63,32 +65,28 @@ func (action *AccountFeesAction) loadAccountType() {
 func (action *AccountFeesAction) getFees(q core.FeeEntryQI) []core.FeeEntry {
 	var result []core.FeeEntry
 	err := q.Select(&result)
-	fmt.Println()
 	if err != nil {
 		action.Err = &problem.ServerError
-		action.Log.WithStack(err).Error("Could not get fee from the database")
+		action.Log.WithError(err).Error("Could not get fee from the database")
 		return nil
 	}
 	return result
 }
 
 func (action *AccountFeesAction) loadFees() SmartFeeTable {
-
-	result := make(map[string][]core.FeeEntry)
-
 	q := action.CoreQ().FeeEntries()
-	result["account"] = action.getFees(q.ForAccount(action.Account))
+	account := action.getFees(q.ForAccount(action.Account))
 
 	q = action.CoreQ().FeeEntries()
-	result["account_type"] = action.getFees(q.ForAccountType(action.AccountType))
+	accountType := action.getFees(q.ForAccountType(action.AccountType))
 
 	//get general fees set for all, not to be confused with fees for General Account Type
 	q = action.CoreQ().FeeEntries()
-	result["general"] = action.getFees(q.ForAccountType(nil))
+	general := action.getFees(q.ForAccountType(nil))
 
-	sft := NewSmartFeeTable(result["account"])
-	sft.Update(result["account_type"])
-	sft.Update(result["general"])
+	sft := NewSmartFeeTable(account)
+	sft.Update(accountType)
+	sft.Update(general)
 	sft.AddZeroFees(action.Assets)
 	return sft
 }
@@ -100,15 +98,52 @@ func (action *AccountFeesAction) loadResponse() {
 	}
 
 	byAssets := records.GetValuesByAsset()
-	response := resource.FeesResponse{}
-	response.Fees = map[string][]resource.FeeEntry{}
+	action.Response.Fees = make(map[xdr.AssetCode][]resource.FeeEntry)
 	var fee resource.FeeEntry
 	for _, feesForAsset := range byAssets {
 		for _, coreFee := range feesForAsset {
 			fee.Populate(coreFee)
-			response.Fees[coreFee.Asset] = append(response.Fees[coreFee.Asset], fee)
+			ac := xdr.AssetCode(coreFee.Asset)
+			action.Response.Fees[ac] = append(action.Response.Fees[ac], fee)
 		}
 	}
 
-	hal.Render(action.W, response)
+	for _, asset := range action.Assets {
+		ac := xdr.AssetCode(asset.Code)
+		action.Response.Fees[ac] = action.addDefaultEntriesForAsset(asset, action.Response.Fees[ac])
+	}
+}
+
+func (action *AccountFeesAction) addDefaultEntriesForAsset(asset core.Asset, entries []resource.FeeEntry) []resource.FeeEntry {
+	if entries == nil {
+		entries = make([]resource.FeeEntry, 0)
+	}
+	for _, feeType := range xdr.FeeTypeAll {
+		subtypes := []int64{0}
+		if feeType == xdr.FeeTypePaymentFee {
+			subtypes = []int64{int64(xdr.PaymentFeeTypeIncoming), int64(xdr.PaymentFeeTypeOutgoing)}
+		}
+
+		for _, subtype := range subtypes {
+			entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), subtype))
+		}
+	}
+
+	return entries
+}
+
+func (action *AccountFeesAction) getDefaultFee(asset string, feeType int, subType int64) resource.FeeEntry {
+	accountType := int32(-1)
+
+	return resource.FeeEntry{
+		Asset:       asset,
+		FeeType:     feeType,
+		Subtype:     subType,
+		Percent:     "0",
+		Fixed:       "0",
+		LowerBound:  "0",
+		UpperBound:  "0",
+		AccountType: accountType,
+		FeeAsset:    asset,
+	}
 }
