@@ -26,7 +26,7 @@ func Populate(fee regources.FeeEntry, cfee core.FeeEntry) regources.FeeEntry {
 	return fee
 }
 
-func SmartPopulate(wrapper smartfeetable.FeeWrapper) (fee regources.FeeEntry) {
+func SmartPopulate(wrapper smartfeetable.FeeWrapper, accountType int32) (fee regources.FeeEntry) {
 	fee.FeeType = wrapper.FeeType
 	fee.Asset = wrapper.Asset
 	fee.Fixed = amount.String(wrapper.Fixed)
