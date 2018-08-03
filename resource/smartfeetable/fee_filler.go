@@ -3,11 +3,9 @@ package smartfeetable
 import (
 	"math"
 	"sort"
-
-	"gitlab.com/swarmfund/horizon/db2/core"
 )
 
-type sortedFees []core.FeeEntry
+type sortedFees []FeeWrapper
 
 func (s sortedFees) Len() int {
 	return len(s)
@@ -23,13 +21,13 @@ func (s sortedFees) Swap(i, j int) {
 	s[j] = data
 }
 
-func (s sortedFees) Add(entry core.FeeEntry) sortedFees {
+func (s sortedFees) Add(entry FeeWrapper) sortedFees {
 	result := append(s, entry)
 	sort.Sort(result)
 	return result
 }
 
-func FillFeeGaps(rawFees []core.FeeEntry, zeroFee core.FeeEntry) []core.FeeEntry {
+func FillFeeGaps(rawFees []FeeWrapper, zeroFee FeeWrapper) []FeeWrapper {
 	if len(rawFees) == 0 {
 		return nil
 	}
@@ -61,13 +59,14 @@ func FillFeeGaps(rawFees []core.FeeEntry, zeroFee core.FeeEntry) []core.FeeEntry
 	return fees
 }
 
-func getNewZeroFee(zeroFee core.FeeEntry, lowerBound, upperBound int64) core.FeeEntry {
+func getNewZeroFee(zeroFee FeeWrapper, lowerBound, upperBound int64) FeeWrapper {
 	zeroFee.LowerBound = lowerBound
 	zeroFee.UpperBound = upperBound
+	zeroFee.NotExist = true
 	return zeroFee
 }
 
-func SmartFillFeeGaps(rawFees []core.FeeEntry, otherFees []core.FeeEntry) []core.FeeEntry {
+func SmartFillFeeGaps(rawFees []FeeWrapper, otherFees []FeeWrapper) []FeeWrapper {
 	if len(rawFees) == 0 || len(otherFees) == 0 {
 		return append(rawFees, otherFees...)
 	}
@@ -107,7 +106,7 @@ func SmartFillFeeGaps(rawFees []core.FeeEntry, otherFees []core.FeeEntry) []core
 	return fees
 }
 
-func getNewFee(fees []core.FeeEntry, lowerBound, upperBound int64) (fee core.FeeEntry, ok bool) {
+func getNewFee(fees []FeeWrapper, lowerBound, upperBound int64) (fee FeeWrapper, ok bool) {
 	for _, v := range fees {
 		if ok, l, b := overlap(lowerBound, upperBound, v.LowerBound, v.UpperBound); ok {
 			fee = v

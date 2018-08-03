@@ -100,10 +100,9 @@ func (action *AccountFeesAction) loadResponse() {
 
 	byAssets := records.GetValuesByAsset()
 	action.Response.Fees = make(map[xdr.AssetCode][]regources.FeeEntry)
-	var fee regources.FeeEntry
 	for _, feesForAsset := range byAssets {
 		for _, coreFee := range feesForAsset {
-			fee := resource.Populate(fee, coreFee)
+			fee := resource.SmartPopulate(coreFee)
 			ac := xdr.AssetCode(coreFee.Asset)
 			action.Response.Fees[ac] = append(action.Response.Fees[ac], fee)
 		}

@@ -9,12 +9,16 @@ import (
 //using different level fees
 
 type (
+	FeeWrapper struct {
+		core.FeeEntry
+		NotExist bool
+	}
 	FeeGroup struct {
 		AssetCode string
 		FeeType   int
 		Subtype   int64
 	}
-	SmartFeeTable map[FeeGroup][]core.FeeEntry
+	SmartFeeTable map[FeeGroup][]FeeWrapper
 )
 
 func NewSmartFeeTable(fees []core.FeeEntry) (sft SmartFeeTable) {
@@ -26,7 +30,12 @@ func NewSmartFeeTable(fees []core.FeeEntry) (sft SmartFeeTable) {
 			Subtype:   entry.Subtype,
 		}
 
-		sft[key] = append(sft[key], entry)
+		value := FeeWrapper{
+			entry,
+			false,
+		}
+
+		sft[key] = append(sft[key], value)
 	}
 
 	return sft
@@ -40,8 +49,8 @@ func (sft SmartFeeTable) Update(fees []core.FeeEntry) {
 	}
 }
 
-func (sft SmartFeeTable) GetValuesByAsset() (byAsset map[string][]core.FeeEntry) {
-	byAsset = make(map[string][]core.FeeEntry)
+func (sft SmartFeeTable) GetValuesByAsset() (byAsset map[string][]FeeWrapper) {
+	byAsset = make(map[string][]FeeWrapper)
 	for key := range sft {
 		byAsset[key.AssetCode] = append(byAsset[key.AssetCode], sft[key]...)
 	}
@@ -66,10 +75,13 @@ func (sft SmartFeeTable) AddZeroFees(assets []core.Asset) {
 					Subtype:   st,
 				}
 
-				zeroFee := core.FeeEntry{
-					Asset:   asset.Code,
-					Subtype: st,
-					FeeType: int(ft),
+				zeroFee := FeeWrapper{
+					FeeEntry: core.FeeEntry{
+						Asset:   asset.Code,
+						Subtype: st,
+						FeeType: int(ft),
+					},
+					NotExist: true,
 				}
 
 				sft[key] = FillFeeGaps(sft[key], zeroFee)
