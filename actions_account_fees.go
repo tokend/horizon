@@ -8,12 +8,13 @@ import (
 	"gitlab.com/swarmfund/horizon/resource"
 	. "gitlab.com/swarmfund/horizon/resource/smartfeetable"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
 
 // This file contains the actions:
 //
-// FeesForAccount: renders all registration requests
-//FeesForAccount show all fees
+// FeesForAccount: renders all the fees for a specific account
+//FeesForAccount show all fees for account
 
 type AccountFeesAction struct {
 	Action
@@ -98,11 +99,11 @@ func (action *AccountFeesAction) loadResponse() {
 	}
 
 	byAssets := records.GetValuesByAsset()
-	action.Response.Fees = make(map[xdr.AssetCode][]resource.FeeEntry)
-	var fee resource.FeeEntry
+	action.Response.Fees = make(map[xdr.AssetCode][]regources.FeeEntry)
+	var fee regources.FeeEntry
 	for _, feesForAsset := range byAssets {
 		for _, coreFee := range feesForAsset {
-			fee.Populate(coreFee)
+			fee := resource.Populate(fee, coreFee)
 			ac := xdr.AssetCode(coreFee.Asset)
 			action.Response.Fees[ac] = append(action.Response.Fees[ac], fee)
 		}
@@ -114,9 +115,9 @@ func (action *AccountFeesAction) loadResponse() {
 	}
 }
 
-func (action *AccountFeesAction) addDefaultEntriesForAsset(asset core.Asset, entries []resource.FeeEntry) []resource.FeeEntry {
+func (action *AccountFeesAction) addDefaultEntriesForAsset(asset core.Asset, entries []regources.FeeEntry) []regources.FeeEntry {
 	if entries == nil {
-		entries = make([]resource.FeeEntry, 0)
+		entries = make([]regources.FeeEntry, 0)
 	}
 	for _, feeType := range xdr.FeeTypeAll {
 		subtypes := []int64{0}
@@ -132,10 +133,12 @@ func (action *AccountFeesAction) addDefaultEntriesForAsset(asset core.Asset, ent
 	return entries
 }
 
-func (action *AccountFeesAction) getDefaultFee(asset string, feeType int, subType int64) resource.FeeEntry {
+func (action *AccountFeesAction) getDefaultFee(asset string, feeType int, subType int64) regources.FeeEntry {
 	accountType := int32(-1)
-
-	return resource.FeeEntry{
+	if action.AccountType != nil {
+		accountType = *action.AccountType
+	}
+	return regources.FeeEntry{
 		Asset:       asset,
 		FeeType:     feeType,
 		Subtype:     subType,
