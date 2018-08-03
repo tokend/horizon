@@ -27,24 +27,24 @@ func TestNewSmartFeeTable(t *testing.T) {
 			},
 		}
 		expected := SmartFeeTable{
-			"USD": {
-				xdr.FeeTypePaymentFee: {
-					int64(xdr.PaymentFeeTypeOutgoing): []core.FeeEntry{
-						{
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-							LowerBound: 0,
-							UpperBound: 5,
-						},
-						{
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-							LowerBound: 10,
-							UpperBound: 15,
-						},
-					},
+			FeeGroup{
+				AssetCode: "USD",
+				FeeType:   int(xdr.FeeTypePaymentFee),
+				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
+			}: []core.FeeEntry{
+				{
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
+					LowerBound: 0,
+					UpperBound: 5,
+				},
+				{
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
+					LowerBound: 10,
+					UpperBound: 15,
 				},
 			},
 		}
@@ -131,48 +131,48 @@ func TestSmartFeeTable_Update(t *testing.T) {
 			},
 		}
 		expectedFeeTable := SmartFeeTable{
-			"USD": {
-				xdr.FeeTypePaymentFee: {
-					int64(xdr.PaymentFeeTypeOutgoing): []core.FeeEntry{
-						{
-							LowerBound: 0,
-							UpperBound: 5,
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-						},
-						{
-							LowerBound: 6,
-							UpperBound: 9,
-							Percent:    2,
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-						},
-						{
-							LowerBound: 10,
-							UpperBound: 15,
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-						},
-						{
-							LowerBound: 16,
-							UpperBound: 20,
-							Percent:    2,
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-						},
-						{
-							LowerBound: 21,
-							UpperBound: 25,
-							Percent:    3,
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-						},
-					},
+			FeeGroup{
+				AssetCode: "USD",
+				FeeType:   int(xdr.FeeTypePaymentFee),
+				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
+			}: []core.FeeEntry{
+				{
+					LowerBound: 0,
+					UpperBound: 5,
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
+				},
+				{
+					LowerBound: 6,
+					UpperBound: 9,
+					Percent:    2,
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
+				},
+				{
+					LowerBound: 10,
+					UpperBound: 15,
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
+				},
+				{
+					LowerBound: 16,
+					UpperBound: 20,
+					Percent:    2,
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
+				},
+				{
+					LowerBound: 21,
+					UpperBound: 25,
+					Percent:    3,
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
 				},
 			},
 		}
@@ -202,26 +202,26 @@ func TestSmartFeeTable_Update(t *testing.T) {
 			},
 		}
 		expectedFeeTable := SmartFeeTable{
-			"USD": {
-				xdr.FeeTypePaymentFee: {
-					int64(xdr.PaymentFeeTypeOutgoing): []core.FeeEntry{
-						{
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-							LowerBound: 2,
-							UpperBound: 20,
-							Percent:    2,
-						},
-						{
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-							LowerBound: 21,
-							UpperBound: 25,
-							Percent:    3,
-						},
-					},
+			FeeGroup{
+				AssetCode: "USD",
+				FeeType:   int(xdr.FeeTypePaymentFee),
+				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
+			}: []core.FeeEntry{
+				{
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
+					LowerBound: 2,
+					UpperBound: 20,
+					Percent:    2,
+				},
+				{
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
+					LowerBound: 21,
+					UpperBound: 25,
+					Percent:    3,
 				},
 			},
 		}
@@ -266,44 +266,46 @@ func TestSmartFeeTable_Update(t *testing.T) {
 			},
 		}
 		expectedFeeTable := SmartFeeTable{
-			"USD": {
-				xdr.FeeTypePaymentFee: {
-					int64(xdr.PaymentFeeTypeOutgoing): []core.FeeEntry{
-						{
-							LowerBound: 0,
-							UpperBound: 5,
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-						},
-						{
-							LowerBound: 10,
-							UpperBound: 15,
-							FeeType:    int(xdr.FeeTypePaymentFee),
-							Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
-							Asset:      "USD",
-						},
-					},
+			FeeGroup{
+				AssetCode: "USD",
+				FeeType:   int(xdr.FeeTypePaymentFee),
+				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
+			}: []core.FeeEntry{
+				{
+					LowerBound: 0,
+					UpperBound: 5,
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
 				},
-				xdr.FeeTypeOfferFee: {
-					int64(0): []core.FeeEntry{
-						{
-							LowerBound: 2,
-							UpperBound: 20,
-							Percent:    2,
-							FeeType:    int(xdr.FeeTypeOfferFee),
-							Subtype:    int64(0),
-							Asset:      "USD",
-						},
-						{
-							FeeType:    int(xdr.FeeTypeOfferFee),
-							Subtype:    int64(0),
-							Asset:      "USD",
-							LowerBound: 21,
-							UpperBound: 25,
-							Percent:    3,
-						},
-					},
+				{
+					LowerBound: 10,
+					UpperBound: 15,
+					FeeType:    int(xdr.FeeTypePaymentFee),
+					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+					Asset:      "USD",
+				},
+			},
+			FeeGroup{
+				AssetCode: "USD",
+				FeeType:   int(xdr.FeeTypeOfferFee),
+				Subtype:   int64(0),
+			}: []core.FeeEntry{
+				{
+					LowerBound: 2,
+					UpperBound: 20,
+					Percent:    2,
+					FeeType:    int(xdr.FeeTypeOfferFee),
+					Subtype:    int64(0),
+					Asset:      "USD",
+				},
+				{
+					FeeType:    int(xdr.FeeTypeOfferFee),
+					Subtype:    int64(0),
+					Asset:      "USD",
+					LowerBound: 21,
+					UpperBound: 25,
+					Percent:    3,
 				},
 			},
 		}

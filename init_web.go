@@ -199,6 +199,7 @@ func initWebActions(app *App) {
 		IsOverview: true,
 	})
 	r.Get("/fees/:fee_type", &FeesShowAction{})
+	r.Get("/account_fees", &AccountFeesAction{})
 
 	// assets
 	r.Get("/charts/:code", &ChartsAction{})

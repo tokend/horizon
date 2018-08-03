@@ -9,26 +9,23 @@ import (
 //using different level fees
 
 type (
-	feeType       = xdr.FeeType
-	feeSubtype    = int64
-	assetCode     = xdr.AssetCode
-	SmartFeeTable map[assetCode]map[feeType]map[feeSubtype][]core.FeeEntry
+	FeeGroup struct {
+		AssetCode string
+		FeeType   int
+		Subtype   int64
+	}
+	SmartFeeTable map[FeeGroup][]core.FeeEntry
 )
 
 func NewSmartFeeTable(fees []core.FeeEntry) (sft SmartFeeTable) {
 	sft = SmartFeeTable{}
 	for _, entry := range fees {
-		ft := feeType(entry.FeeType)
-		asset := assetCode(entry.Asset)
-		st := entry.Subtype
-		if _, ok := sft[asset]; !ok {
-			sft[asset] = make(map[feeType]map[feeSubtype][]core.FeeEntry)
+		key := FeeGroup{
+			AssetCode: entry.Asset,
+			FeeType:   entry.FeeType,
+			Subtype:   entry.Subtype,
 		}
-		if _, ok := sft[asset][ft]; !ok {
-			sft[asset][ft] = make(map[feeSubtype][]core.FeeEntry)
-		}
-		sft[asset][ft][st] =
-			append(sft[asset][ft][st], entry)
+		sft[key] = append(sft[key], entry)
 	}
 	return sft
 }
@@ -36,59 +33,43 @@ func NewSmartFeeTable(fees []core.FeeEntry) (sft SmartFeeTable) {
 func (sft SmartFeeTable) Update(fees []core.FeeEntry) {
 	update := NewSmartFeeTable(fees)
 
-	for asset, byAsset := range update {
-		if _, ok := sft[asset]; !ok {
-			sft[asset] = make(map[feeType]map[feeSubtype][]core.FeeEntry)
-		}
-		for ft, byFeeType := range byAsset {
-			if _, ok := sft[asset][ft]; !ok {
-				sft[asset][ft] = make(map[feeSubtype][]core.FeeEntry)
-			}
-			for st, newFees := range byFeeType {
-				sft[asset][ft][st] =
-					SmartFillFeeGaps(sft[asset][ft][st], newFees)
-			}
-		}
+	for k, v := range update {
+		sft[k] = SmartFillFeeGaps(sft[k], v)
 	}
 }
 
 func (sft SmartFeeTable) GetValuesByAsset() (byAsset map[string][]core.FeeEntry) {
 	byAsset = make(map[string][]core.FeeEntry)
-	for ac := range sft {
-		for ft := range sft[ac] {
-			for st := range sft[ac][ft] {
-				byAsset[string(ac)] = sft[ac][ft][st]
-			}
-		}
+	for key := range sft {
+		byAsset[key.AssetCode] = append(byAsset[key.AssetCode], sft[key]...)
 	}
 	return byAsset
 }
 
 func (sft SmartFeeTable) AddZeroFees(assets []core.Asset) {
 	for _, asset := range assets {
-		ac := assetCode(asset.Code)
-		if _, ok := sft[ac]; !ok {
-			sft[ac] = make(map[feeType]map[feeSubtype][]core.FeeEntry)
-		}
 		for _, ft := range xdr.FeeTypeAll {
-			if _, ok := sft[ac][ft]; !ok {
-				sft[ac][ft] = make(map[feeSubtype][]core.FeeEntry)
-			}
-			subtypes := []feeSubtype{0}
+			subtypes := []int64{0}
 			if ft == xdr.FeeTypePaymentFee {
-				subtypes = []feeSubtype{
-					feeSubtype(xdr.PaymentFeeTypeIncoming),
-					feeSubtype(xdr.PaymentFeeTypeOutgoing),
+				subtypes = []int64{
+					int64(xdr.PaymentFeeTypeIncoming),
+					int64(xdr.PaymentFeeTypeOutgoing),
 				}
 			}
 			for _, st := range subtypes {
-				sft[ac][ft][st] = FillFeeGaps(
-					sft[ac][ft][st],
-					core.FeeEntry{
-						Asset:   asset.Code,
-						Subtype: st,
-						FeeType: int(ft),
-					})
+				key := FeeGroup{
+					AssetCode: asset.Code,
+					FeeType:   int(ft),
+					Subtype:   st,
+				}
+
+				zeroFee := core.FeeEntry{
+					Asset:   asset.Code,
+					Subtype: st,
+					FeeType: int(ft),
+				}
+
+				sft[key] = FillFeeGaps(sft[key], zeroFee)
 			}
 		}
 	}
