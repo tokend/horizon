@@ -495,12 +495,12 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/balances_report"
-  digest = "1:6cfef6d6e9a3da89d4118e81ef07a913c1783cf5154d2e7da96bf035b803772d"
+  branch = "master"
+  digest = "1:881f86acd8d5ed7be7fd1f2dae78ce651f9c00202ef211d1ed3c16826b73e332"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "db10e5148204b8ff29f1cabccef2708f6a28f43c"
+  revision = "f23f8716d064f59bcd6a5f8ad3f4fd2fbb182409"
 
 [[projects]]
   branch = "master"
