@@ -130,6 +130,10 @@ func New(
 		e := ManageSale{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
+	case xdr.OperationTypeManageAsset:
+		e := ManageAsset{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
 	default:
 		result = base
 	}

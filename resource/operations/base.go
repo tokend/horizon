@@ -10,6 +10,7 @@ import (
 	"gitlab.com/swarmfund/horizon/resource/base"
 	"golang.org/x/net/context"
 	"time"
+	"gitlab.com/tokend/go/amount"
 )
 
 // Base represents the common attributes of an operation resource
@@ -32,6 +33,7 @@ type Base struct {
 	Identifier      string             `json:"identifier"`
 	LedgerCloseTime time.Time          `json:"ledger_close_time"`
 	Participants    []base.Participant `json:"participants,omitempty"`
+	OperationFee    string             `json:"operation_fee"`
 }
 
 // PagingToken implements hal.Pageable
@@ -51,8 +53,9 @@ func (this *Base) Populate(
 	this.LedgerCloseTime = row.LedgerCloseTime
 	this.Participants = make([]base.Participant, len(participants))
 	this.StateI = int32(row.State)
-	this.State= row.State.String()
+	this.State = row.State.String()
 	this.Identifier = strconv.FormatInt(row.Identifier, 10)
+	this.OperationFee = amount.String(0)
 	for i := range participants {
 		err := this.Participants[i].Populate(participants[i], row.Type, public)
 		if err != nil {
