@@ -63,23 +63,35 @@ func (action *AccountFeesAction) loadAccountType() {
 	action.AccountType = &account.AccountType
 }
 
-func (action *AccountFeesAction) getFees(q core.FeeEntryQI) []core.FeeEntry {
-	var result []core.FeeEntry
-	err := q.Select(&result)
-	if err != nil {
-		action.Err = &problem.ServerError
-		action.Log.WithError(err).Error("Could not get fee from the database")
-		return nil
-	}
-	return result
+func (action *AccountFeesAction) getFees(q core.FeeEntryQI) (result []core.FeeEntry, err error) {
+	err = q.Select(&result)
+	return result, err
 }
 
 func (action *AccountFeesAction) loadFees() SmartFeeTable {
-	account := action.getFees(action.CoreQ().FeeEntries().ForAccount(action.Account))
-	accountType := action.getFees(action.CoreQ().FeeEntries().ForAccountType(action.AccountType))
+	account, err := action.getFees(action.CoreQ().FeeEntries().ForAccount(action.Account))
+	if err != nil {
+		action.Err = &problem.ServerError
+		action.Log.WithError(err).Error("Could not get account fees from the database")
+		return nil
+	}
+
+	accountType, err := action.getFees(action.CoreQ().FeeEntries().ForAccountType(action.AccountType))
+	if err != nil {
+		action.Err = &problem.ServerError
+		action.Log.WithError(err).Error("Could not get account type fees from the database")
+		return nil
+
+	}
 
 	//get general fees set for all, not to be confused with fees for General Account Type
-	general := action.getFees(action.CoreQ().FeeEntries().ForAccountType(nil))
+	general, err := action.getFees(action.CoreQ().FeeEntries().ForAccountType(nil))
+	if err != nil {
+		action.Err = &problem.ServerError
+		action.Log.WithError(err).Error("Could not get general fees from the database")
+		return nil
+	}
+
 	sft := NewSmartFeeTable(account)
 	sft.Update(accountType)
 	sft.Update(general)
