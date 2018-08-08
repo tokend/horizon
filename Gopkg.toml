@@ -102,9 +102,13 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
+[[override]]
+  branch = "fix/payment_v2_dest_account_validation"
+  name = "gitlab.com/tokend/go"
+
 [[constraint]]
   branch = "master"
-  name = "gitlab.com/tokend/go"
+  name = "gitlab.com/tokend/regources"
 
 [[constraint]]
   branch = "master"

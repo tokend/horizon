@@ -463,8 +463,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:8ae58ebe23def448a880c4275cfb726b5110d7587bfa1ba54d5c173cd30e5bc5"
+  branch = "fix/payment_v2_dest_account_validation"
+  digest = "1:f8d0f64e540feb3911de3813a7375a66b7b2f245ee08b1e8076d32a9a560c8d8"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -479,7 +479,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "db7f5e270245a066579e484c46fdc3019cfec268"
+  revision = "6a864d92b7ff731bbe29a6ad11234a1fc70194b2"
 
 [[projects]]
   branch = "master"
@@ -496,11 +496,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:881f86acd8d5ed7be7fd1f2dae78ce651f9c00202ef211d1ed3c16826b73e332"
+  digest = "1:8c088d94058b8fb136597d721412ab1e5c1c37f09b92d9ea8c958df1760ab6db"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "f23f8716d064f59bcd6a5f8ad3f4fd2fbb182409"
+  revision = "1d6de2aa420a79a2396343e96d43f343fabf4be9"
 
 [[projects]]
   branch = "master"
