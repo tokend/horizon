@@ -68,12 +68,17 @@ func getNewZeroFee(zeroFee FeeWrapper, lowerBound, upperBound int64) FeeWrapper 
 
 func SmartFillFeeGaps(rawFees []FeeWrapper, otherFees []FeeWrapper) []FeeWrapper {
 	if len(rawFees) == 0 || len(otherFees) == 0 {
-		return append(rawFees, otherFees...)
+		for _, v := range otherFees {
+			rawFees = append(rawFees, v)
+		}
+		return rawFees
 	}
+
 	fees := sortedFees(rawFees)
 	sort.Sort(fees)
 	other := sortedFees(otherFees)
 	sort.Sort(other)
+
 	// check lower bound
 	for fees[0].LowerBound > other[0].LowerBound {
 		newFee, ok := fillGap(otherFees, 0, fees[0].LowerBound-1)
@@ -81,6 +86,7 @@ func SmartFillFeeGaps(rawFees []FeeWrapper, otherFees []FeeWrapper) []FeeWrapper
 			fees = fees.Add(newFee)
 		}
 	}
+
 	// check upper bound
 	for fees[fees.Len()-1].UpperBound < other[other.Len()-1].UpperBound {
 		newFee, ok := fillGap(otherFees, fees[fees.Len()-1].UpperBound+1, math.MaxInt64)
