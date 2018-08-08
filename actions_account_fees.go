@@ -45,10 +45,14 @@ func (action *AccountFeesAction) loadParams() {
 		action.SetInvalidField("account_id", errors.New("cannot be blank"))
 	}
 
-	acc, _ := action.CoreQ().Accounts().ByAddress(action.Account)
+	acc, err := action.CoreQ().Accounts().ByAddress(action.Account)
 	if acc == nil {
 		action.Log.Error("account does not exist")
 		action.Err = &problem.BadRequest
+	}
+	if err != nil {
+		action.Log.WithError(err)
+		action.Err = &problem.ServerError
 	}
 }
 
