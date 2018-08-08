@@ -75,16 +75,11 @@ func (action *AccountFeesAction) getFees(q core.FeeEntryQI) []core.FeeEntry {
 }
 
 func (action *AccountFeesAction) loadFees() SmartFeeTable {
-	q := action.CoreQ().FeeEntries()
-	account := action.getFees(q.ForAccount(action.Account))
-
-	q = action.CoreQ().FeeEntries()
-	accountType := action.getFees(q.ForAccountType(action.AccountType))
+	account := action.getFees(action.CoreQ().FeeEntries().ForAccount(action.Account))
+	accountType := action.getFees(action.CoreQ().FeeEntries().ForAccountType(action.AccountType))
 
 	//get general fees set for all, not to be confused with fees for General Account Type
-	q = action.CoreQ().FeeEntries()
-	general := action.getFees(q.ForAccountType(nil))
-
+	general := action.getFees(action.CoreQ().FeeEntries().ForAccountType(nil))
 	sft := NewSmartFeeTable(account)
 	sft.Update(accountType)
 	sft.Update(general)
