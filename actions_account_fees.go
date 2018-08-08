@@ -44,10 +44,16 @@ func (action *AccountFeesAction) loadParams() {
 	if action.Account == "" {
 		action.SetInvalidField("account_id", errors.New("cannot be blank"))
 	}
+
+	acc, _ := action.CoreQ().Accounts().ByAddress(action.Account)
+	if acc == nil {
+		action.Log.Error("account does not exist")
+		action.Err = &problem.BadRequest
+	}
 }
 
 func (action *AccountFeesAction) loadAssets() {
-	assets, err := action.CoreQ().Assets().Select()
+	assets, err := action.CoreQ().Assets().ForOwner(action.Account).Select()
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to load assets")
 		action.Err = &problem.ServerError
