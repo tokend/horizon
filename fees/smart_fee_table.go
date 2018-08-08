@@ -1,4 +1,4 @@
-package smartfeetable
+package fees
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/core"

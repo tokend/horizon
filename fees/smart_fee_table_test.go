@@ -1,4 +1,4 @@
-package smartfeetable
+package fees
 
 import (
 	"testing"

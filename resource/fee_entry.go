@@ -2,7 +2,7 @@ package resource
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/resource/smartfeetable"
+	"gitlab.com/swarmfund/horizon/fees"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/regources"
 )
@@ -26,7 +26,7 @@ func Populate(fee regources.FeeEntry, cfee core.FeeEntry) regources.FeeEntry {
 	return fee
 }
 
-func SmartPopulate(wrapper smartfeetable.FeeWrapper, accountType int32) (fee regources.FeeEntry) {
+func SmartPopulate(wrapper fees.FeeWrapper, accountType int32) (fee regources.FeeEntry) {
 	fee.FeeType = wrapper.FeeType
 	fee.Asset = wrapper.Asset
 	fee.Fixed = amount.String(wrapper.Fixed)
