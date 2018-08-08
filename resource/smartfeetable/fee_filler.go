@@ -76,14 +76,14 @@ func SmartFillFeeGaps(rawFees []FeeWrapper, otherFees []FeeWrapper) []FeeWrapper
 	sort.Sort(other)
 	// check lower bound
 	for fees[0].LowerBound > other[0].LowerBound {
-		newFee, ok := getNewFee(otherFees, 0, fees[0].LowerBound-1)
+		newFee, ok := fillGap(otherFees, 0, fees[0].LowerBound-1)
 		if ok {
 			fees = fees.Add(newFee)
 		}
 	}
 	// check upper bound
 	for fees[fees.Len()-1].UpperBound < other[other.Len()-1].UpperBound {
-		newFee, ok := getNewFee(otherFees, fees[fees.Len()-1].UpperBound+1, math.MaxInt64)
+		newFee, ok := fillGap(otherFees, fees[fees.Len()-1].UpperBound+1, math.MaxInt64)
 		if ok {
 			fees = fees.Add(newFee)
 		}
@@ -96,7 +96,7 @@ func SmartFillFeeGaps(rawFees []FeeWrapper, otherFees []FeeWrapper) []FeeWrapper
 
 		expectedLowerBoundForNextFee := fees[i].UpperBound + 1
 		if expectedLowerBoundForNextFee != fees[i+1].LowerBound {
-			newFee, ok := getNewFee(otherFees, expectedLowerBoundForNextFee, fees[i+1].LowerBound-1)
+			newFee, ok := fillGap(otherFees, expectedLowerBoundForNextFee, fees[i+1].LowerBound-1)
 			if ok {
 				fees = fees.Add(newFee)
 			}
@@ -106,7 +106,7 @@ func SmartFillFeeGaps(rawFees []FeeWrapper, otherFees []FeeWrapper) []FeeWrapper
 	return fees
 }
 
-func getNewFee(fees []FeeWrapper, lowerBound, upperBound int64) (fee FeeWrapper, ok bool) {
+func fillGap(fees []FeeWrapper, lowerBound, upperBound int64) (fee FeeWrapper, ok bool) {
 	for _, v := range fees {
 		if ok, l, b := overlap(lowerBound, upperBound, v.LowerBound, v.UpperBound); ok {
 			fee = v
