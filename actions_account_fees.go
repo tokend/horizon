@@ -1,8 +1,6 @@
 package horizon
 
 import (
-	"github.com/go-errors/errors"
-	"gitlab.com/swarmfund/horizon/db2/core"
 	. "gitlab.com/swarmfund/horizon/fees"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
@@ -19,17 +17,16 @@ import (
 type AccountFeesAction struct {
 	Action
 	AccountType *int32
-	Account     string
+	AccountID   string
 
 	Records  SmartFeeTable
-	Assets   []core.Asset
+	Assets   []string
 	Response resource.FeesResponse
 }
 
 func (action *AccountFeesAction) JSON() {
 	action.Do(
 		action.loadParams,
-		action.loadAccountType,
 		action.loadAssets,
 		action.loadFees,
 		action.loadResponse,
@@ -40,65 +37,54 @@ func (action *AccountFeesAction) JSON() {
 }
 
 func (action *AccountFeesAction) loadParams() {
-	action.Account = action.GetString("account_id")
-	if action.Account == "" {
-		action.SetInvalidField("account_id", errors.New("cannot be blank"))
-	}
+	action.AccountID = action.GetString("account_id")
 
-	acc, err := action.CoreQ().Accounts().ByAddress(action.Account)
-	if acc == nil {
-		action.Log.Error("account does not exist")
-		action.Err = &problem.BadRequest
-	}
-	if err != nil {
-		action.Log.WithError(err)
-		action.Err = &problem.ServerError
-	}
+	acc := action.GetCoreAccount(action.AccountID, action.CoreQ())
+	action.AccountType = &acc.AccountType
 }
 
 func (action *AccountFeesAction) loadAssets() {
-	assets, err := action.CoreQ().Assets().ForOwner(action.Account).Select()
+	accountBalances, err := action.CoreQ().Balances().ByAddress(action.AccountID).Select()
 	if err != nil {
-		action.Log.WithError(err).Error("Failed to load assets")
+		action.Log.WithError(err).Error("failed to load balances")
 		action.Err = &problem.ServerError
 		return
+	}
+
+	var assets []string
+	for _, balance := range accountBalances {
+		assets = append(assets, balance.Asset)
 	}
 	action.Assets = assets
 }
-func (action *AccountFeesAction) loadAccountType() {
-	account, err := action.CoreQ().Accounts().ByAddress(action.Account)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to get account info")
-		action.Err = &problem.ServerError
-		return
-	}
-	action.AccountType = &account.AccountType
-}
 
 func (action *AccountFeesAction) loadFees() {
-	account, err := action.CoreQ().FeeEntries().ForAccount(action.Account).Select()
+	forAccount, err := action.CoreQ().FeeEntries().ForAccount(action.AccountID).Select()
 	if err != nil {
 		action.Err = &problem.ServerError
-		action.Log.WithError(err).Error("Could not get account fees from the database")
+		action.Log.WithError(err).Error("can't get account fees from the database")
+		return
 	}
 
-	accountType, err := action.CoreQ().FeeEntries().ForAccountType(action.AccountType).Select()
+	forAccountType, err := action.CoreQ().FeeEntries().ForAccountType(action.AccountType).Select()
 	if err != nil {
 		action.Err = &problem.ServerError
-		action.Log.WithError(err).Error("Could not get account type fees from the database")
+		action.Log.WithError(err).Error("can't get account type fees from the database")
+		return
 
 	}
 
 	//get general fees set for all, not to be confused with fees for General Account Type
-	general, err := action.CoreQ().FeeEntries().ForAccountType(nil).Select()
+	generalFees, err := action.CoreQ().FeeEntries().ForAccountType(nil).Select()
 	if err != nil {
 		action.Err = &problem.ServerError
-		action.Log.WithError(err).Error("Could not get general fees from the database")
+		action.Log.WithError(err).Error("can't get general fees from the database")
+		return
 	}
 
-	sft := NewSmartFeeTable(account)
-	sft.Update(accountType)
-	sft.Update(general)
+	sft := NewSmartFeeTable(forAccount)
+	sft.Update(forAccountType)
+	sft.Update(generalFees)
 	sft.AddZeroFees(action.Assets)
 	action.Records = sft
 }
@@ -116,46 +102,5 @@ func (action *AccountFeesAction) loadResponse() {
 			ac := xdr.AssetCode(coreFee.Asset)
 			action.Response.Fees[ac] = append(action.Response.Fees[ac], fee)
 		}
-	}
-
-	for _, asset := range action.Assets {
-		ac := xdr.AssetCode(asset.Code)
-		action.Response.Fees[ac] = action.addDefaultEntriesForAsset(asset, action.Response.Fees[ac])
-	}
-}
-
-func (action *AccountFeesAction) addDefaultEntriesForAsset(asset core.Asset, entries []regources.FeeEntry) []regources.FeeEntry {
-	if entries == nil {
-		entries = make([]regources.FeeEntry, 0)
-	}
-	for _, feeType := range xdr.FeeTypeAll {
-		subtypes := []int64{0}
-		if feeType == xdr.FeeTypePaymentFee {
-			subtypes = []int64{int64(xdr.PaymentFeeTypeIncoming), int64(xdr.PaymentFeeTypeOutgoing)}
-		}
-
-		for _, subtype := range subtypes {
-			entries = append(entries, action.getDefaultFee(asset.Code, int(feeType), subtype))
-		}
-	}
-
-	return entries
-}
-
-func (action *AccountFeesAction) getDefaultFee(asset string, feeType int, subType int64) regources.FeeEntry {
-	accountType := int32(-1)
-	if action.AccountType != nil {
-		accountType = *action.AccountType
-	}
-	return regources.FeeEntry{
-		Asset:       asset,
-		FeeType:     feeType,
-		Subtype:     subType,
-		Percent:     "0",
-		Fixed:       "0",
-		LowerBound:  "0",
-		UpperBound:  "0",
-		AccountType: accountType,
-		FeeAsset:    asset,
 	}
 }

@@ -45,7 +45,7 @@ func (sft SmartFeeTable) Update(fees []core.FeeEntry) {
 	update := NewSmartFeeTable(fees)
 
 	for k, v := range update {
-		sft[k] = SmartFillFeeGaps(sft[k], v)
+		sft[k] = FillFeeGaps(sft[k], v...)
 	}
 }
 
@@ -58,7 +58,7 @@ func (sft SmartFeeTable) GetValuesByAsset() (byAsset map[string][]FeeWrapper) {
 	return byAsset
 }
 
-func (sft SmartFeeTable) AddZeroFees(assets []core.Asset) {
+func (sft SmartFeeTable) AddZeroFees(assets []string) {
 	for _, asset := range assets {
 		for _, ft := range xdr.FeeTypeAll {
 			subtypes := []int64{0}
@@ -70,14 +70,14 @@ func (sft SmartFeeTable) AddZeroFees(assets []core.Asset) {
 			}
 			for _, st := range subtypes {
 				key := FeeGroup{
-					AssetCode: asset.Code,
+					AssetCode: asset,
 					FeeType:   int(ft),
 					Subtype:   st,
 				}
 
 				zeroFee := FeeWrapper{
 					FeeEntry: core.FeeEntry{
-						Asset:   asset.Code,
+						Asset:   asset,
 						Subtype: st,
 						FeeType: int(ft),
 					},
