@@ -84,8 +84,7 @@ func (action *FeesAllAction) loadData() {
 		q = q.ForAccount(action.Account).ForAccountType(action.AccountType)
 	}
 
-	actualFees := []core.FeeEntry{}
-	err = q.Select(&actualFees)
+	actualFees, err := q.Select()
 	if err != nil {
 		if err != sql.ErrNoRows {
 			action.Err = &problem.ServerError

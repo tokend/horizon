@@ -21,6 +21,7 @@ type AccountFeesAction struct {
 	AccountType *int32
 	Account     string
 
+	Records  SmartFeeTable
 	Assets   []core.Asset
 	Response resource.FeesResponse
 }
@@ -30,6 +31,7 @@ func (action *AccountFeesAction) JSON() {
 		action.loadParams,
 		action.loadAccountType,
 		action.loadAssets,
+		action.loadFees,
 		action.loadResponse,
 		func() {
 			hal.Render(action.W, action.Response)
@@ -63,49 +65,40 @@ func (action *AccountFeesAction) loadAccountType() {
 	action.AccountType = &account.AccountType
 }
 
-func (action *AccountFeesAction) getFees(q core.FeeEntryQI) (result []core.FeeEntry, err error) {
-	err = q.Select(&result)
-	return result, err
-}
-
-func (action *AccountFeesAction) loadFees() SmartFeeTable {
-	account, err := action.getFees(action.CoreQ().FeeEntries().ForAccount(action.Account))
+func (action *AccountFeesAction) loadFees() {
+	account, err := action.CoreQ().FeeEntries().ForAccount(action.Account).Select()
 	if err != nil {
 		action.Err = &problem.ServerError
 		action.Log.WithError(err).Error("Could not get account fees from the database")
-		return nil
 	}
 
-	accountType, err := action.getFees(action.CoreQ().FeeEntries().ForAccountType(action.AccountType))
+	accountType, err := action.CoreQ().FeeEntries().ForAccountType(action.AccountType).Select()
 	if err != nil {
 		action.Err = &problem.ServerError
 		action.Log.WithError(err).Error("Could not get account type fees from the database")
-		return nil
 
 	}
 
 	//get general fees set for all, not to be confused with fees for General Account Type
-	general, err := action.getFees(action.CoreQ().FeeEntries().ForAccountType(nil))
+	general, err := action.CoreQ().FeeEntries().ForAccountType(nil).Select()
 	if err != nil {
 		action.Err = &problem.ServerError
 		action.Log.WithError(err).Error("Could not get general fees from the database")
-		return nil
 	}
 
 	sft := NewSmartFeeTable(account)
 	sft.Update(accountType)
 	sft.Update(general)
 	sft.AddZeroFees(action.Assets)
-	return sft
+	action.Records = sft
 }
 
 func (action *AccountFeesAction) loadResponse() {
-	records := action.loadFees()
 	if action.Err != nil {
 		return
 	}
 
-	byAssets := records.GetValuesByAsset()
+	byAssets := action.Records.GetValuesByAsset()
 	action.Response.Fees = make(map[xdr.AssetCode][]regources.FeeEntry)
 	for _, feesForAsset := range byAssets {
 		for _, coreFee := range feesForAsset {
