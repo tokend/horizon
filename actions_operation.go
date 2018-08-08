@@ -39,6 +39,7 @@ type OperationIndexAction struct {
 	ExchangeFilter      string
 	TransactionFilter   string
 	CompletedOnlyFilter bool
+	SkipCanceled bool
 	PendingOnlyFilter   bool
 	// ReferenceFilter substring
 	ReferenceFilter string
@@ -112,7 +113,8 @@ func (action *OperationIndexAction) loadParams() {
 	action.ReferenceFilter = action.GetString("reference")
 	action.SinceFilter = action.TryGetTime("since")
 	action.ToFilter = action.TryGetTime("to")
-	action.CompletedOnlyFilter = action.GetBool("completed_only")
+	action.CompletedOnlyFilter = action.GetBoolOrDefault("completed_only", true)
+	action.SkipCanceled = action.GetBoolOrDefault("skip_canceled", true)
 	action.PendingOnlyFilter = action.GetBool("pending_only")
 
 	if action.CompletedOnlyFilter && action.PendingOnlyFilter {
@@ -171,10 +173,14 @@ func (action *OperationIndexAction) loadParams() {
 }
 
 func (action *OperationIndexAction) loadRecords() {
-	ops := action.HistoryQ().Operations().WithoutCancelOffer()
+	ops := action.HistoryQ().Operations().WithoutCancelingManagerOffer().WithoutExternallyFullyMatched()
 
 	if len(action.Types) > 0 {
 		ops.ForTypes(action.Types)
+	}
+
+	if action.SkipCanceled {
+		ops = ops.WithoutCanceled()
 	}
 
 	if action.AccountFilter != "" || action.AccountTypeFilter != 0 {
