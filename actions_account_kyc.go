@@ -36,5 +36,11 @@ func (action *AccountKYCAction) loadData() {
 		return
 	}
 
+	if accountKYC == nil {
+		action.Err = &problem.NotFound
+		action.Log.WithStack(err).WithError(err).Error("account_kyc not found ")
+		return
+	}
+
 	action.AccountKYC.Populate(*accountKYC)
 }
