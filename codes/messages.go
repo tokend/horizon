@@ -160,6 +160,7 @@ var messages = map[string]string{
 	"op_fee_asset_not_found":                         "Fee asset not found",
 	"op_asset_pair_not_found":                        "Cannot create cross asset fee entry without existing asset pair",
 	"op_invalid_asset_pair_price":                    "Asset pair price is <= 0",
+	"op_destination_account_not_found":               "Destination account not found",
 	"op_destination_balance_not_found":               "Destination balance not found",
 	"op_invalid_destination_fee":                     "Destination fee is invalid",
 	"op_invalid_destination_fee_asset":               "Destination fee asset must be the same as source balance asset",

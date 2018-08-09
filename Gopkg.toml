@@ -102,9 +102,13 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[constraint]]
+[[override]]
   branch = "feature/update_voting"
   name = "gitlab.com/tokend/go"
+
+[[constraint]]
+  branch = "master"
+  name = "gitlab.com/tokend/regources"
 
 [[constraint]]
   branch = "master"

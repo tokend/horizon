@@ -29,6 +29,14 @@
   version = "v7"
 
 [[projects]]
+  digest = "1:8722889ad027febfced94665914d1e7be8f1b703d31f2ef9461c59e4d40fe974"
+  name = "github.com/certifi/gocertifi"
+  packages = ["."]
+  pruneopts = ""
+  revision = "deb3ae2ef2610fde3330947281941c562861188b"
+  version = "2018.01.18"
+
+[[projects]]
   branch = "master"
   digest = "1:6d64ffbe1ad2ff71c6086e83e33558f37797ec20b495510f8ab47a8a14423ec3"
   name = "github.com/cheekybits/genny"
@@ -43,6 +51,14 @@
   pruneopts = ""
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
+
+[[projects]]
+  digest = "1:a9ed1d8b070755631d246e0288dc5de6f19bd7b52baec5d515e7975a4c12dc8d"
+  name = "github.com/evalphobia/logrus_sentry"
+  packages = ["."]
+  pruneopts = ""
+  revision = "b78b27461c8163c45abf4ab3a8330d2b1ee9456a"
+  version = "v0.4.6"
 
 [[projects]]
   digest = "1:9f1e571696860f2b4f8a241b43ce91c6085e7aaed849ccca53f590a4dc7b95bd"
@@ -62,6 +78,14 @@
   pruneopts = ""
   revision = "47dc60e71eed504e3ef8e77ee3c6fe720f3be57f"
   version = "v1.3.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:deac8131c45a4dedb29d4591fe79ce1074daf0a11660598d8be3d1c64efd263e"
+  name = "github.com/getsentry/raven-go"
+  packages = ["."]
+  pruneopts = ""
+  revision = "ba97302481f2659d9ae93288e422acb942093b26"
 
 [[projects]]
   branch = "master"
@@ -440,7 +464,7 @@
 
 [[projects]]
   branch = "feature/update_voting"
-  digest = "1:8ae58ebe23def448a880c4275cfb726b5110d7587bfa1ba54d5c173cd30e5bc5"
+  digest = "1:f8d0f64e540feb3911de3813a7375a66b7b2f245ee08b1e8076d32a9a560c8d8"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -455,7 +479,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "96e61d04176f1991fdadc6ed4112a363eea27a47"
+  revision = "cc46ae2d9c6f1e74f3f2ad51643a5225214bfbd3"
 
 [[projects]]
   branch = "master"
@@ -472,11 +496,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3114c20b001850328ee720c6303c800effdb8c21a045653b41960a1307a3441b"
+  digest = "1:8c088d94058b8fb136597d721412ab1e5c1c37f09b92d9ea8c958df1760ab6db"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "f597b01ef45ccc3398ea70a196597cfc9ef75766"
+  revision = "1d6de2aa420a79a2396343e96d43f343fabf4be9"
 
 [[projects]]
   branch = "master"
@@ -589,7 +613,9 @@
     "bitbucket.org/ww/goautoneg",
     "github.com/asaskevich/govalidator",
     "github.com/cheekybits/genny/generic",
+    "github.com/evalphobia/logrus_sentry",
     "github.com/garyburd/redigo/redis",
+    "github.com/getsentry/raven-go",
     "github.com/go-errors/errors",
     "github.com/goji/context",
     "github.com/guregu/null",
