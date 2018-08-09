@@ -99,7 +99,7 @@ func (action *FeesAllAction) loadData() {
 	action.Response.Fees = map[xdr.AssetCode][]regources.FeeEntry{}
 	var fee regources.FeeEntry
 	for _, coreFee := range actualFees {
-		fee = resource.Populate(fee, coreFee)
+		fee = resource.NewFeeEntry(coreFee)
 		ac := xdr.AssetCode(coreFee.Asset)
 		action.Response.Fees[ac] = append(action.Response.Fees[ac], fee)
 	}

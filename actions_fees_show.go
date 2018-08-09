@@ -110,7 +110,7 @@ func (action *FeesShowAction) loadData() {
 
 	result.Percent = percentFee
 
-	action.Fee = resource.Populate(action.Fee, *result)
+	action.Fee = resource.NewFeeEntry(*result)
 }
 
 func (action *FeesShowAction) GetPercentFee(percentFee int64, rawAmount string) (int64, bool) {

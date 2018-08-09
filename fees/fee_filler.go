@@ -52,19 +52,21 @@ func FillFeeGaps(primaryFees []FeeWrapper, secondaryFee FeeWrapper) []FeeWrapper
 	}
 
 	for i := 0; i < fees.Len()-1; i++ {
-		if fees[i].UpperBound == math.MaxInt64 {
+		if fees[i].LowerBound > secondaryFee.UpperBound {
 			break
 		}
 
 		expectedLowerBoundForNextFee := fees[i].UpperBound + 1
-		if expectedLowerBoundForNextFee != fees[i+1].LowerBound {
-			fee, ok := fillGap(expectedLowerBoundForNextFee, fees[i+1].LowerBound-1, secondaryFee)
-			if !ok {
-				continue
-			}
-
-			fees = fees.Add(fee)
+		if expectedLowerBoundForNextFee == fees[i+1].LowerBound {
+			continue
 		}
+
+		fee, ok := fillGap(expectedLowerBoundForNextFee, fees[i+1].LowerBound-1, secondaryFee)
+		if !ok {
+			continue
+		}
+
+		fees = fees.Add(fee)
 	}
 
 	return fees

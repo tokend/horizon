@@ -8,7 +8,7 @@ import (
 )
 
 // Populate fills out the resource's fields
-func Populate(fee regources.FeeEntry, cfee core.FeeEntry) regources.FeeEntry {
+func NewFeeEntry(cfee core.FeeEntry) (fee regources.FeeEntry) {
 	fee.FeeType = cfee.FeeType
 	fee.Asset = cfee.Asset
 	fee.Fixed = amount.String(cfee.Fixed)
@@ -26,7 +26,7 @@ func Populate(fee regources.FeeEntry, cfee core.FeeEntry) regources.FeeEntry {
 	return fee
 }
 
-func SmartPopulate(wrapper fees.FeeWrapper, accountType int32) (fee regources.FeeEntry) {
+func NewFeeEntryFromWrapper(wrapper fees.FeeWrapper) (fee regources.FeeEntry) {
 	fee.FeeType = wrapper.FeeType
 	fee.Asset = wrapper.Asset
 	fee.Fixed = amount.String(wrapper.Fixed)

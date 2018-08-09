@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"gitlab.com/swarmfund/horizon/db2/core"
 	. "gitlab.com/swarmfund/horizon/fees"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
@@ -16,8 +17,7 @@ import (
 
 type AccountFeesAction struct {
 	Action
-	AccountType *int32
-	AccountID   string
+	Account *core.Account
 
 	Records  SmartFeeTable
 	Assets   []string
@@ -37,14 +37,14 @@ func (action *AccountFeesAction) JSON() {
 }
 
 func (action *AccountFeesAction) loadParams() {
-	action.AccountID = action.GetString("account_id")
-
-	acc := action.GetCoreAccount(action.AccountID, action.CoreQ())
-	action.AccountType = &acc.AccountType
+	acc := action.GetCoreAccount("account_id", action.CoreQ())
+	if acc != nil && action.Err == nil {
+		action.Account = acc
+	}
 }
 
 func (action *AccountFeesAction) loadAssets() {
-	accountBalances, err := action.CoreQ().Balances().ByAddress(action.AccountID).Select()
+	accountBalances, err := action.CoreQ().Balances().ByAddress(action.Account.AccountID).Select()
 	if err != nil {
 		action.Log.WithError(err).Error("failed to load balances")
 		action.Err = &problem.ServerError
@@ -59,14 +59,14 @@ func (action *AccountFeesAction) loadAssets() {
 }
 
 func (action *AccountFeesAction) loadFees() {
-	forAccount, err := action.CoreQ().FeeEntries().ForAccount(action.AccountID).Select()
+	forAccount, err := action.CoreQ().FeeEntries().ForAccount(action.Account.AccountID).Select()
 	if err != nil {
 		action.Err = &problem.ServerError
 		action.Log.WithError(err).Error("can't get account fees from the database")
 		return
 	}
 
-	forAccountType, err := action.CoreQ().FeeEntries().ForAccountType(action.AccountType).Select()
+	forAccountType, err := action.CoreQ().FeeEntries().ForAccountType(&action.Account.AccountType).Select()
 	if err != nil {
 		action.Err = &problem.ServerError
 		action.Log.WithError(err).Error("can't get account type fees from the database")
@@ -90,16 +90,12 @@ func (action *AccountFeesAction) loadFees() {
 }
 
 func (action *AccountFeesAction) loadResponse() {
-	if action.Err != nil {
-		return
-	}
-
 	byAssets := action.Records.GetValuesByAsset()
 	action.Response.Fees = make(map[xdr.AssetCode][]regources.FeeEntry)
 	for _, feesForAsset := range byAssets {
-		for _, coreFee := range feesForAsset {
-			fee := resource.SmartPopulate(coreFee, *action.AccountType)
-			ac := xdr.AssetCode(coreFee.Asset)
+		for _, wrapper := range feesForAsset {
+			fee := resource.NewFeeEntryFromWrapper(wrapper)
+			ac := xdr.AssetCode(wrapper.Asset)
 			action.Response.Fees[ac] = append(action.Response.Fees[ac], fee)
 		}
 	}
