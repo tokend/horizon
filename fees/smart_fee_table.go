@@ -11,7 +11,7 @@ import (
 type (
 	FeeWrapper struct {
 		core.FeeEntry
-		NotExist bool
+		NotExists bool
 	}
 	FeeGroup struct {
 		AssetCode string
@@ -42,10 +42,17 @@ func NewSmartFeeTable(fees []core.FeeEntry) (sft SmartFeeTable) {
 }
 
 func (sft SmartFeeTable) Update(fees []core.FeeEntry) {
-	update := NewSmartFeeTable(fees)
+	for _, v := range fees {
+		key := FeeGroup{
+			AssetCode: v.Asset,
+			FeeType:   v.FeeType,
+			Subtype:   v.Subtype,
+		}
+		entry := FeeWrapper{
+			FeeEntry: v,
+		}
 
-	for k, v := range update {
-		sft[k] = FillFeeGaps(sft[k], v)
+		sft[key] = FillFeeGaps(sft[key], entry)
 	}
 }
 
@@ -81,7 +88,7 @@ func (sft SmartFeeTable) AddZeroFees(assets []string) {
 						Subtype: st,
 						FeeType: int(ft),
 					},
-					NotExist: true,
+					NotExists: true,
 				}
 
 				sft[key] = FillFeeGaps(sft[key], zeroFee)

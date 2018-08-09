@@ -27,17 +27,16 @@ func (s sortedFees) Add(entry FeeWrapper) sortedFees {
 	return result
 }
 
-func FillFeeGaps(rawFees []FeeWrapper, zeroFee ...FeeWrapper) []FeeWrapper {
-	if len(rawFees) == 0 {
-		return nil
+func FillFeeGaps(primaryFees []FeeWrapper, secondaryFee FeeWrapper) []FeeWrapper {
+	if len(primaryFees) == 0 {
+		return []FeeWrapper{secondaryFee}
 	}
-
-	fees := sortedFees(rawFees)
+	fees := sortedFees(primaryFees)
 	sort.Sort(fees)
 
 	// check lower bound
 	if fees[0].LowerBound != 0 && fees[0].LowerBound != 1 {
-		fee, ok := fillGap(0, fees[0].LowerBound-1, zeroFee...)
+		fee, ok := fillGap(0, fees[0].LowerBound-1, secondaryFee)
 		if ok {
 			fees = fees.Add(fee)
 		}
@@ -46,7 +45,7 @@ func FillFeeGaps(rawFees []FeeWrapper, zeroFee ...FeeWrapper) []FeeWrapper {
 
 	// check upper bound
 	if fees[fees.Len()-1].UpperBound != math.MaxInt64 {
-		fee, ok := fillGap(fees[fees.Len()-1].UpperBound+1, math.MaxInt64, zeroFee...)
+		fee, ok := fillGap(fees[fees.Len()-1].UpperBound+1, math.MaxInt64, secondaryFee)
 		if ok {
 			fees = fees.Add(fee)
 		}
@@ -59,7 +58,7 @@ func FillFeeGaps(rawFees []FeeWrapper, zeroFee ...FeeWrapper) []FeeWrapper {
 
 		expectedLowerBoundForNextFee := fees[i].UpperBound + 1
 		if expectedLowerBoundForNextFee != fees[i+1].LowerBound {
-			fee, ok := fillGap(expectedLowerBoundForNextFee, fees[i+1].LowerBound-1, zeroFee...)
+			fee, ok := fillGap(expectedLowerBoundForNextFee, fees[i+1].LowerBound-1, secondaryFee)
 			if !ok {
 				continue
 			}
@@ -71,14 +70,11 @@ func FillFeeGaps(rawFees []FeeWrapper, zeroFee ...FeeWrapper) []FeeWrapper {
 	return fees
 }
 
-func fillGap(lowerBound, upperBound int64, fees ...FeeWrapper) (fee FeeWrapper, ok bool) {
-	for _, v := range fees {
-		if ok, l, b := overlap(lowerBound, upperBound, v.LowerBound, v.UpperBound); ok {
-			fee = v
-			fee.LowerBound = l
-			fee.UpperBound = b
-			return fee, true
-		}
+func fillGap(lowerBound, upperBound int64, fee FeeWrapper) (filler FeeWrapper, ok bool) {
+	if ok, l, u := overlap(lowerBound, upperBound, fee.LowerBound, fee.UpperBound); ok {
+		fee.LowerBound = l
+		fee.UpperBound = u
+		return fee, true
 	}
 	return fee, false
 }
