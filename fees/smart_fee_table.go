@@ -52,7 +52,7 @@ func (sft SmartFeeTable) Update(fees []core.FeeEntry) {
 			FeeEntry: v,
 		}
 
-		sft[key] = FillFeeGaps(sft[key], entry)
+		sft[key] = fillFeeGaps(sft[key], entry)
 	}
 }
 
@@ -91,7 +91,7 @@ func (sft SmartFeeTable) AddZeroFees(assets []string) {
 					NotExists: true,
 				}
 
-				sft[key] = FillFeeGaps(sft[key], zeroFee)
+				sft[key] = fillFeeGaps(sft[key], zeroFee)
 			}
 		}
 	}

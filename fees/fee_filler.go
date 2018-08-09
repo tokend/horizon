@@ -27,7 +27,7 @@ func (s sortedFees) Add(entry FeeWrapper) sortedFees {
 	return result
 }
 
-func FillFeeGaps(primaryFees []FeeWrapper, secondaryFee FeeWrapper) []FeeWrapper {
+func fillFeeGaps(primaryFees []FeeWrapper, secondaryFee FeeWrapper) []FeeWrapper {
 	if len(primaryFees) == 0 {
 		return []FeeWrapper{secondaryFee}
 	}

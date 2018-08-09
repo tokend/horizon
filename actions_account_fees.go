@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"github.com/pkg/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	. "gitlab.com/swarmfund/horizon/fees"
 	"gitlab.com/swarmfund/horizon/render/hal"
@@ -37,9 +38,13 @@ func (action *AccountFeesAction) JSON() {
 }
 
 func (action *AccountFeesAction) loadParams() {
-	acc := action.GetCoreAccount("account_id", action.CoreQ())
-	if acc != nil && action.Err == nil {
-		action.Account = acc
+	action.Account = action.GetCoreAccount("account_id", action.CoreQ())
+	if action.Err != nil {
+		return
+	}
+	if action.Account == nil {
+		action.SetInvalidField("account_id", errors.New("Must not be empty"))
+		return
 	}
 }
 

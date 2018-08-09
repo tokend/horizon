@@ -27,19 +27,7 @@ func NewFeeEntry(cfee core.FeeEntry) (fee regources.FeeEntry) {
 }
 
 func NewFeeEntryFromWrapper(wrapper fees.FeeWrapper) (fee regources.FeeEntry) {
-	fee.FeeType = wrapper.FeeType
-	fee.Asset = wrapper.Asset
-	fee.Fixed = amount.String(wrapper.Fixed)
-	fee.Percent = amount.String(wrapper.Percent)
-	fee.Subtype = wrapper.Subtype
-	fee.AccountID = wrapper.AccountID
-	fee.AccountType = wrapper.AccountType
-	fee.LowerBound = amount.String(wrapper.LowerBound)
-	fee.UpperBound = amount.String(wrapper.UpperBound)
-	fee.FeeAsset = wrapper.FeeAsset
-	if fee.FeeAsset == "" {
-		fee.FeeAsset = wrapper.Asset
-	}
+	fee = NewFeeEntry(wrapper.FeeEntry)
 	fee.Exists = !wrapper.NotExist
 	return fee
 }
