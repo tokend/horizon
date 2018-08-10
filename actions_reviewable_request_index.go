@@ -1,24 +1,25 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ReviewableRequestIndexAction renders slice of reviewable requests
 type ReviewableRequestIndexAction struct {
 	Action
-	CustomFilter func(action *ReviewableRequestIndexAction)
-	q            history.ReviewableRequestQI
-	Reviewer     string
-	Requestor    string
-	State        *int64
-	UpdatedAfter *int64
-	Records      []history.ReviewableRequest
+	CustomFilter       func(action *ReviewableRequestIndexAction)
+	CustomCheckAllowed func(action *ReviewableRequestIndexAction)
+	q                  history.ReviewableRequestQI
+	Reviewer           string
+	Requestor          string
+	State              *int64
+	UpdatedAfter       *int64
+	Records            []history.ReviewableRequest
 
 	RequestTypes []xdr.ReviewableRequestType
 
@@ -55,6 +56,10 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 }
 
 func (action *ReviewableRequestIndexAction) checkAllowed() {
+	if action.CustomCheckAllowed != nil {
+		action.CustomCheckAllowed(action)
+		return
+	}
 	action.IsAllowed(action.Requestor, action.Reviewer)
 }
 

@@ -1,9 +1,9 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
+	"gitlab.com/tokend/go/xdr"
 	"golang.org/x/net/context"
 )
 
@@ -214,6 +214,7 @@ type SetFees struct {
 type ManagerOffer struct {
 	Base
 	IsBuy       bool   `json:"is_buy"`
+	BaseAsset   string `json:"base_asset"`
 	Amount      string `json:"amount"`
 	Price       string `json:"price"`
 	Fee         string `json:"fee"`

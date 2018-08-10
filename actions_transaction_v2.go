@@ -1,12 +1,12 @@
 package horizon
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/regources"
 )
 
@@ -19,12 +19,11 @@ type TransactionV2IndexAction struct {
 	EntryTypeFilter       []int
 	EffectFilter          []int
 	PagingParams          db2.PageQuery
-	TransactionsV2Records []regources.TransactionV2
+	TransactionsV2Records []regources.Transaction
 	// It's guarantied that there is no additional changes
 	// which satisfy restriction change_time < NoUpdatesUntilLedger.ClosedAt
 	NoUpdatesUntilLedger history.Ledger
 	Page                 hal.Page
-
 }
 
 // JSON is a method for actions.JSON
@@ -65,7 +64,7 @@ func (action *TransactionV2IndexAction) getTxPageQuery() db2.PageQuery {
 
 // getTransactionRecords - returns slice of transactions fetched for ledger changes,
 // true - if page of records was full, error - if something bad happened
-func (action *TransactionV2IndexAction) getTransactionRecords() ([]regources.TransactionV2, bool, error) {
+func (action *TransactionV2IndexAction) getTransactionRecords() ([]regources.Transaction, bool, error) {
 	sortedLedgerChanges, isPageFull, err := action.getLedgerChanges()
 	if err != nil {
 		return nil, false, errors.Wrap(err, "failed to get ledger changes")
@@ -84,10 +83,10 @@ func (action *TransactionV2IndexAction) getTransactionRecords() ([]regources.Tra
 		return nil, false, errors.Wrap(err, "failed to get transactions for ledger changes")
 	}
 
-	var result []regources.TransactionV2
-	for _, tx := range transactions {
-		txV2 := resource.PopulateTransactionV2(tx, sortedLedgerChanges[tx.ID])
-		result = append(result, txV2)
+	var result []regources.Transaction
+	for _, record := range transactions {
+		tx := resource.PopulateTransactionV2(record, sortedLedgerChanges[record.ID])
+		result = append(result, tx)
 	}
 
 	return result, isPageFull, nil
@@ -108,7 +107,7 @@ func (action *TransactionV2IndexAction) loadRecords() {
 
 	if isPageFull {
 		// we fetched full page, probably there is something ahead
-		noUpdatesUntilLedgerSeq = action.TransactionsV2Records[len(action.TransactionsV2Records)-1].LedgerSequence
+		noUpdatesUntilLedgerSeq = action.TransactionsV2Records[len(action.TransactionsV2Records)-1].Ledger
 	}
 
 	// load ledger close time
@@ -125,9 +124,9 @@ func (action *TransactionV2IndexAction) getLedgerChanges() (map[int64][]history.
 	var ledgerChanges []history.LedgerChanges
 
 	err := action.HistoryQ().LedgerChanges().ByEntryType(action.EntryTypeFilter).
-	ByEffects(action.EffectFilter).
-	ByTransactionIDs(action.PagingParams, action.EntryTypeFilter, action.EffectFilter).
-	Select(&ledgerChanges)
+		ByEffects(action.EffectFilter).
+		ByTransactionIDs(action.PagingParams, action.EntryTypeFilter, action.EffectFilter).
+		Select(&ledgerChanges)
 
 	if err != nil {
 		return nil, false, errors.Wrap(err, "failed to select ledger changes")

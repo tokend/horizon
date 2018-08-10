@@ -1,18 +1,17 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/resource/base"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
 
-
 type KeyValue struct {
-	Key 		string 			`json:"key"`
-	Type        base.Flag		`json:"type,omitempty"`
-	Ui32Value   *uint32         `json:"ui32_value,omitempty"`
-	StringValue *string         `json:"string_value,omitempty"`
+	Key         string         `json:"key"`
+	Type        regources.Flag `json:"type,omitempty"`
+	Ui32Value   *uint32        `json:"ui32_value,omitempty"`
+	StringValue *string        `json:"string_value,omitempty"`
 }
 
 func (k *KeyValue) Populate(keyValue *core.KeyValue) error {
@@ -33,7 +32,6 @@ func (k *KeyValue) Populate(keyValue *core.KeyValue) error {
 	default:
 		return errors.New("Unexpected key value type")
 	}
-
 
 	return nil
 }

@@ -297,17 +297,25 @@ func (base *Base) GetOptionalBool(name string) *bool {
 // GetInt32 retrieves an int32 from the action parameter of the given name.
 // Populates err if the value is not a valid int32
 func (base *Base) GetBool(name string) bool {
+	return base.GetBoolOrDefault(name, false)
+}
+
+// GetBoolOrDefault - returns boolean values passed, if parameter is not available or value is empty string - returns default value
+func (base *Base) GetBoolOrDefault(name string, defaultValue bool) bool {
 	if base.Err != nil {
 		return false
 	}
 
 	asStr := base.GetString(name)
+	if asStr == "" {
+		return defaultValue
+	}
 
 	if asStr == "true" {
 		return true
-	} else {
-		return false
 	}
+
+	return false
 }
 
 // GetUInt64 retrieves an uint64 from the action parameter of the given name.

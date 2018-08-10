@@ -4,14 +4,17 @@
 
 package base
 
-import "gitlab.com/tokend/go/xdr"
+import (
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
+)
 
-func FlagFromXdrSignerType(mask int32, allFlags []xdr.SignerType) []Flag {
-	result := []Flag{}
+func FlagFromXdrSignerType(mask int32, allFlags []xdr.SignerType) []regources.Flag {
+	result := []regources.Flag{}
 	for _, flagValue := range allFlags {
 		flagValueAsInt := int32(flagValue)
 		if (flagValueAsInt & mask) == flagValueAsInt {
-			result = append(result, Flag{
+			result = append(result, regources.Flag{
 				Value: flagValueAsInt,
 				Name:  flagValue.String(),
 			})

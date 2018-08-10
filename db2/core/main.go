@@ -76,6 +76,8 @@ type QInterface interface {
 	Accounts() AccountQI
 	// Assets - creates new assets query helper
 	Assets() AssetQI
+	// AccountKyc - creates new account_kyc query helper
+	AccountKYC() AccountKYCQI
 	// Balances - creates new balances query builder
 	Balances() BalancesQI
 	//KeyValue - creates new KeyValue query helper

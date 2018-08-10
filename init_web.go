@@ -140,6 +140,7 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:id", &AccountShowAction{})
 	r.Get("/accounts/:id/limits", &LimitsV2AccountShowAction{})
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
+	r.Get("/accounts/:id/account_kyc", &AccountKYCAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
 	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{})
 
@@ -269,6 +270,11 @@ func initWebActions(app *App) {
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
 	})
+
+	r.Get("/request/aml_alerts", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAmlAlert},
+	})
+
 	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			hash := action.GetString("document_hash")
@@ -280,6 +286,9 @@ func initWebActions(app *App) {
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeLimitsUpdate},
 	})
 	r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
+		CustomCheckAllowed: func(action *ReviewableRequestIndexAction) {
+			action.IsAllowed(action.GetString("account_to_update_kyc"), action.Reviewer, action.Requestor)
+		},
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			account := action.GetString("account_to_update_kyc")
 			maskSet := action.GetInt64("mask_set")

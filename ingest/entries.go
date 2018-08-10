@@ -1,9 +1,9 @@
 package ingest
 
 import (
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func (is *Session) operationChanges(changes xdr.LedgerEntryChanges) error {
@@ -28,7 +28,7 @@ func (is *Session) operationChanges(changes xdr.LedgerEntryChanges) error {
 		err = is.ledgerChanges(i, changes[i])
 		if err != nil {
 			return errors.Wrap(err, "failed to process ledger changes", logan.F{
-				"change" : changes[i],
+				"change": changes[i],
 			})
 		}
 	}
@@ -63,7 +63,7 @@ func getLedgerKeyOrEntry(change xdr.LedgerEntryChange) (interface{}, xdr.LedgerE
 	case xdr.LedgerEntryChangeTypeRemoved:
 		return change.MustRemoved(), change.MustRemoved().Type, true
 	case xdr.LedgerEntryChangeTypeUpdated:
-		return change.MustUpdated(), change.MustUpdated().Data.Type ,true
+		return change.MustUpdated(), change.MustUpdated().Data.Type, true
 	default:
 		return new(interface{}), xdr.LedgerEntryType(1), false
 	}
