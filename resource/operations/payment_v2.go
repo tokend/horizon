@@ -9,7 +9,7 @@ type PaymentV2 struct {
 	To                  string              `json:"to,omitempty"`
 	FromBalance         string              `json:"from_balance,omitempty"`
 	ToBalance           string              `json:"to_balance,omitempty"`
-	Amount              string              `json:"amount"`
+	Amount              regources.Amount    `json:"amount"`
 	Asset               string              `json:"asset"`
 	SourceFeeData       regources.FeeDataV2 `json:"source_fee_data"`
 	DestinationFeeData  regources.FeeDataV2 `json:"destination_fee_data"`
