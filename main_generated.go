@@ -198,6 +198,14 @@ func (action KeyValueShowAllAction) ServeHTTPC(c web.C, w http.ResponseWriter, r
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action AccountKYCAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "AccountKYCAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action LedgerChangesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
