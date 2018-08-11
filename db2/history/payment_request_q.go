@@ -1,8 +1,7 @@
 package history
 
 import (
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2"
+		"gitlab.com/swarmfund/horizon/db2"
 	sq "github.com/lann/squirrel"
 )
 
@@ -21,8 +20,6 @@ type PaymentRequestsQI interface {
 	ForAccount(accountId string) PaymentRequestsQI
 	ForBalance(balanceId string) PaymentRequestsQI
 	ForState(state *bool) PaymentRequestsQI
-	ForfeitsOnly() PaymentRequestsQI
-	PaymentsOnly() PaymentRequestsQI
 	Select(dest interface{}) error
 }
 
@@ -70,16 +67,6 @@ func (q *PaymentRequestsQ) ForState(state *bool) PaymentRequestsQI {
 	} else {
 		q.sql = q.sql.Where("hpr.accepted = ?", state)
 	}
-	return q
-}
-
-func (q *PaymentRequestsQ) ForfeitsOnly() PaymentRequestsQI {
-	q.sql = q.sql.Where("hpr.request_type != ?", int(xdr.RequestTypeRequestTypePayment))
-	return q
-}
-
-func (q *PaymentRequestsQ) PaymentsOnly() PaymentRequestsQI {
-	q.sql = q.sql.Where("hpr.request_type == ?", int(xdr.RequestTypeRequestTypePayment))
 	return q
 }
 
