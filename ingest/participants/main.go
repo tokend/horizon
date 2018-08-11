@@ -64,8 +64,6 @@ func ForOperation(
 		if sourceParticipant.AccountID.Address() != manageBalanceOp.Destination.Address() {
 			result = append(result, Participant{manageBalanceOp.Destination, nil, nil})
 		}
-	case xdr.OperationTypeReviewPaymentRequest:
-	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAsset:
 	// the only direct participant is the source_accountWWW
 	case xdr.OperationTypeManageLimits:
@@ -101,7 +99,6 @@ func ForOperation(
 			if manageInvoiceOp.Details.InvoiceRequest.Amount == 0 {
 				return nil, errors.New("Unexpected state, amount cannot be zero")
 			}
-			sourceParticipant.BalanceID = &manageInvoiceOp.Details.InvoiceRequest.ReceiverBalance
 			result = append(result, Participant{manageInvoiceOp.Details.InvoiceRequest.Sender,
 			&opResult.ManageInvoiceRequestResult.Success.Details.Response.SenderBalance, nil})
 		case xdr.ManageInvoiceRequestActionRemove:
@@ -165,12 +162,6 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeBillPay:
-		billPayOp := op.Body.MustBillPayOp()
-		paymentV2Response := opResult.MustBillPayResult().MustSuccess().PaymentV2Response
-
-		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil},)
-		sourceParticipant.BalanceID = &billPayOp.PaymentDetails.SourceBalanceId
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

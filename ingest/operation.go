@@ -99,9 +99,6 @@ func (is *Session) operation() {
 	case xdr.OperationTypePayment:
 		is.processPayment(is.Cursor.Operation().Body.MustPaymentOp(), is.Cursor.OperationSourceAccount(),
 			*is.Cursor.OperationResult().MustPaymentResult().PaymentResponse)
-	case xdr.OperationTypeReviewPaymentRequest:
-		is.updateIngestedPaymentRequest(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount())
-		is.updateIngestedPayment(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
 	case xdr.OperationTypeDirectDebit:
 		opDirectDebit := is.Cursor.Operation().Body.MustDirectDebitOp()
 		is.processPayment(opDirectDebit.PaymentOp,
@@ -134,10 +131,10 @@ func (is *Session) operation() {
 	case xdr.OperationTypeManageSale:
 		opManageSale := is.Cursor.Operation().Body.MustManageSaleOp()
 		is.handleManageSale(&opManageSale)
-	case xdr.OperationTypeBillPay:
-		is.processBillPay(is.Cursor.Operation().Body.MustBillPayOp(), is.Cursor.OperationResult().MustBillPayResult())
 	case xdr.OperationTypeManageInvoiceRequest:
 		is.processManageInvoiceRequest(is.Cursor.Operation().Body.MustManageInvoiceRequestOp(),
 			is.Cursor.OperationResult().MustManageInvoiceRequestResult())
+	case xdr.OperationTypeManageContract:
+
 	}
 }

@@ -12,7 +12,6 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManageAccount:                          func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountResult().Code },
 	xdr.OperationTypeCreateWithdrawalRequest:                func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateWithdrawalRequestResult().Code },
 	xdr.OperationTypeManageBalance:                          func(ir xdr.OperationResultTr) shortStr { return ir.MustManageBalanceResult().Code },
-	xdr.OperationTypeReviewPaymentRequest:                   func(ir xdr.OperationResultTr) shortStr { return ir.MustReviewPaymentRequestResult().Code },
 	xdr.OperationTypeManageAsset:                            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAssetResult().Code },
 	xdr.OperationTypeManageLimits:                           func(ir xdr.OperationResultTr) shortStr { return ir.MustManageLimitsResult().Code },
 	xdr.OperationTypeDirectDebit:                            func(ir xdr.OperationResultTr) shortStr { return ir.MustDirectDebitResult().Code },
@@ -32,5 +31,6 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManageSale:                             func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSaleResult().Code },
 	xdr.OperationTypeManageKeyValue:                         func(ir xdr.OperationResultTr) shortStr { return ir.MustManageKeyValueResult().Code },
 	xdr.OperationTypeCreateManageLimitsRequest:              func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateManageLimitsRequestResult().Code },
-	xdr.OperationTypeBillPay:                                func(ir xdr.OperationResultTr) shortStr { return ir.MustBillPayResult().Code },
+	xdr.OperationTypeManageContractRequest:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustManageContractRequestResult().Code },
+	xdr.OperationTypeManageContract:                         func(ir xdr.OperationResultTr) shortStr { return ir.MustManageContractResult().Code },
 }

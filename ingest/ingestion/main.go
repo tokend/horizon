@@ -24,6 +24,7 @@ type Ingestion struct {
 	trades                   sq.InsertBuilder
 	priceHistory             sq.InsertBuilder
 	ledger_changes           sq.InsertBuilder
+	contracts                sq.InsertBuilder
 }
 
 func (i *Ingestion) HistoryQ() history.QInterface {

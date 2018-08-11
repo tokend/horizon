@@ -135,13 +135,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustManageBalanceOp()
 		details["destination"] = op.Destination
 		details["action"] = op.Action
-	case xdr.OperationTypeReviewPaymentRequest:
-		op := c.Operation().Body.MustReviewPaymentRequestOp()
-		details["payment_id"] = op.PaymentId
-		details["accept"] = op.Accept
-		if op.RejectReason != nil {
-			details["reject_reason"] = *op.RejectReason
-		}
 	case xdr.OperationTypeManageLimits:
 		op := c.Operation().Body.MustManageLimitsOp()
 		if op.Details.Action == xdr.ManageLimitsActionCreate {
@@ -218,10 +211,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		switch op.Details.Action {
 		case xdr.ManageInvoiceRequestActionCreate:
 			details["amount"] = amount.String(int64(op.Details.InvoiceRequest.Amount))
-			details["receiver_balance"] = op.Details.InvoiceRequest.ReceiverBalance.AsString()
 			details["sender"] = op.Details.InvoiceRequest.Sender.Address()
 			details["request_id"] = opResult.Success.Details.Response.RequestId
-			details["asset"] = string(opResult.Success.Details.Response.Asset)
+			details["asset"] = string(op.Details.InvoiceRequest.Asset)
 		case xdr.ManageInvoiceRequestActionRemove:
 			details["request_id"] = *op.Details.RequestId
 		}
@@ -318,32 +310,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustManageSaleOp()
 		details["sale_id"] = uint64(op.SaleId)
 		details["action"] = op.Data.Action.ShortString()
-	case xdr.OperationTypeBillPay:
-		op := c.Operation().Body.MustBillPayOp()
-		paymentDetails := op.PaymentDetails
-		opResult := c.OperationResult().MustBillPayResult().MustSuccess().PaymentV2Response
-		details["request_id"] = uint64(op.RequestId)
-		details["payment_id"] = uint64(opResult.PaymentId)
-		details["from"] = source.Address()
-		details["to"] = opResult.Destination.Address()
-		details["from_balance"] = paymentDetails.SourceBalanceId.AsString()
-		details["to_balance"] = opResult.DestinationBalanceId.AsString()
-		details["amount"] = amount.StringU(uint64(paymentDetails.Amount))
-		details["asset"] = string(opResult.Asset)
-		details["source_fee_data"] = map[string]interface{} {
-			"fixed_fee": amount.StringU(uint64(paymentDetails.FeeData.SourceFee.FixedFee)),
-			"actual_payment_fee": amount.StringU(uint64(opResult.ActualSourcePaymentFee)),
-			"actual_payment_fee_asset_code": string(paymentDetails.FeeData.SourceFee.FeeAsset),
-		}
-		details["destination_fee_data"] = map[string]interface{} {
-			"fixed_fee": amount.StringU(uint64(paymentDetails.FeeData.DestinationFee.FixedFee)),
-			"actual_payment_fee": amount.StringU(uint64(opResult.ActualDestinationPaymentFee)),
-			"actual_payment_fee_asset_code": string(paymentDetails.FeeData.DestinationFee.FeeAsset),
-		}
-		details["source_pays_for_dest"] = paymentDetails.FeeData.SourcePaysForDest
-		details["subject"] = paymentDetails.Subject
-		details["reference"] = utf8.Scrub(string(paymentDetails.Reference))
-		details["source_sent_universal"] = amount.StringU(uint64(opResult.SourceSentUniversal))
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

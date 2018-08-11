@@ -163,7 +163,7 @@ func (is *Session) processManageOfferLedgerChanges(offerID uint64) {
 	}
 }
 
-func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
+func (is *Session)  permanentReject(op xdr.ReviewRequestOp) error {
 	err := is.Ingestion.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
 	if err != nil {
 		return errors.Wrap(err, "failed to permanently reject request")
@@ -332,58 +332,6 @@ func (is *Session) ingestTransactionParticipants() {
 func (is *Session) processPayment(paymentOp xdr.PaymentOp, source xdr.AccountId, result xdr.PaymentResponse) {
 	if is.Err != nil {
 		return
-	}
-}
-
-func (is *Session) updateIngestedPaymentRequest(operation xdr.Operation, source xdr.AccountId) {
-	if is.Err != nil {
-		return
-	}
-	reviewPaymentOp := operation.Body.MustReviewPaymentRequestOp()
-	is.Err = is.Ingestion.UpdatePaymentRequest(
-		is.Cursor.Ledger(),
-		uint64(reviewPaymentOp.PaymentId),
-		reviewPaymentOp.Accept,
-	)
-	if is.Err != nil {
-		return
-	}
-}
-
-func (is *Session) updateIngestedPayment(operation xdr.Operation, source xdr.AccountId, result xdr.OperationResultTr) {
-	if is.Err != nil {
-		return
-	}
-	reviewPaymentOp := operation.Body.MustReviewPaymentRequestOp()
-	reviewPaymentResponse := result.MustReviewPaymentRequestResult().ReviewPaymentResponse
-
-	state := reviewPaymentResponse.State
-	if state == xdr.PaymentStatePending {
-		return
-	}
-	is.Err = is.Ingestion.UpdatePayment(
-		reviewPaymentOp.PaymentId,
-		state == xdr.PaymentStateProcessed,
-		reviewPaymentOp.RejectReason,
-	)
-	if is.Err != nil {
-		return
-	}
-}
-
-func (is *Session) processBillPay(op xdr.BillPayOp, result xdr.BillPayResult) {
-	if is.Err != nil {
-		return
-	}
-	if result.Code != xdr.BillPayResultCodeSuccess {
-		return
-	}
-
-	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
-	if err != nil {
-		is.Err = errors.Wrap(err, "failed to update invoice request state to approve", logan.F{
-			"request_id": uint64(op.RequestId),
-		})
 	}
 }
 

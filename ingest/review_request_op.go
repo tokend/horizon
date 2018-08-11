@@ -8,6 +8,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
+	"time"
 )
 
 func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {
@@ -73,6 +74,8 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.
 	switch op.RequestDetails.RequestType {
 	case xdr.ReviewableRequestTypeWithdraw:
 		err = is.setWithdrawalDetails(uint64(op.RequestId), op.RequestDetails.Withdrawal)
+	case xdr.ReviewableRequestTypeContract:
+		err = is.processCreateContractLedgerChanges()
 	}
 
 	if err != nil {
@@ -126,4 +129,62 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 	}
 
 	return nil
+}
+
+func (is *Session) processCreateContractLedgerChanges() error {
+	ledgerChanges := is.Cursor.OperationChanges()
+	for _, change := range ledgerChanges {
+		switch change.Type {
+		case xdr.LedgerEntryChangeTypeCreated:
+			if change.Created.Data.Type != xdr.LedgerEntryTypeContract {
+				continue
+			}
+
+			contract := convertContract(change.Created.Data.MustContract())
+
+			err := is.Ingestion.Contracts(contract)
+			if err != nil {
+				return errors.Wrap(err, "failed to ingest contract", logan.F{
+					"contract_id": uint64(change.Created.Data.MustContract().ContractId),
+				})
+			}
+		}
+	}
+	return nil
+}
+
+func convertContract(rawContract xdr.ContractEntry) history.Contract {
+	disputer := ""
+	var disputeReason map[string]interface{}
+	if (rawContract.StateInfo.State & xdr.ContractStateDisputing) != 0 {
+		disputer = rawContract.StateInfo.DisputeDetails.Disputer.Address()
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(rawContract.StateInfo.MustDisputeDetails().Reason), &disputeReason)
+	}
+
+	var details []map[string]interface{}
+	for _, item := range rawContract.Details {
+		var detail map[string]interface{}
+		_ = json.Unmarshal([]byte(item), &detail)
+		details = append(details, detail)
+	}
+
+	var invoices []int64
+	for _, item := range rawContract.InvoiceRequestsIDs {
+		invoices = append(invoices, int64(item))
+	}
+
+	return history.Contract{
+		ContractID: uint64(rawContract.ContractId),
+		Contractor: rawContract.Contractor.Address(),
+		Customer: rawContract.Customer.Address(),
+		Escrow: rawContract.Escrow.Address(),
+		Disputer: disputer,
+		StartTime: time.Unix(int64(rawContract.StartTime), 0).UTC(),
+		EndTime: time.Unix(int64(rawContract.EndTime), 0).UTC(),
+		Details: details,
+		Invoices: invoices,
+		DisputeReason: disputeReason,
+		State: int32(rawContract.StateInfo.State),
+	}
 }

@@ -117,7 +117,6 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCreateIssuanceRequest,
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
-		xdr.OperationTypeBillPay,
 		xdr.OperationTypeCheckSaleState,
 		xdr.OperationTypeManageKeyValue,
 		xdr.OperationTypePaymentV2,
@@ -186,13 +185,6 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 	r.Get("/operations/:id", &OperationShowAction{})
-
-	r.Get("/payment_requests", &PaymentRequestIndexAction{})
-	r.Get("/forfeit_requests", &PaymentRequestIndexAction{
-		OnlyForfeits: true,
-	})
-
-	r.Get("/payment_requests/:id", &PaymentRequestShowAction{})
 
 	//get fees action
 	r.Get("/fees", &FeesAllAction{})
@@ -325,13 +317,16 @@ func initWebActions(app *App) {
 
 	r.Get("/request/invoices", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction){
-			sender := action.GetString("sender_account_id")
-			action.Page.Filters["sender_account_id"] = sender
-			if sender != "" {
-				action.q = action.q.InvoiceByPayer(sender)
+			contractID := action.GetOptionalUint64("contract_id")
+			if contractID != nil {
+				action.q = action.q.InvoicesByContract(*contractID)
 			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeInvoice},
+	})
+
+	r.Get("/request/contracts", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
 	})
 
 	r.Get("/request/update_sale_end_time", &ReviewableRequestIndexAction{

@@ -7,12 +7,12 @@ import (
 
 	"github.com/guregu/null"
 	sq "github.com/lann/squirrel"
-	"github.com/pkg/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // Clear removes data from the ledger
@@ -43,6 +43,10 @@ func (ingest *Ingestion) Clear(start int64, end int64) error {
 		return err
 	}
 	err = clear(start, end, "history_ledger_changes", "tx_id")
+	if err != nil {
+		return err
+	}
+	err = clear(start, end, "history_contracts", "contract_id")
 	if err != nil {
 		return err
 	}
@@ -111,6 +115,33 @@ func (ingest *Ingestion) LedgerChanges(
 	sql := ingest.ledger_changes.Values(txID, opID, orderNumber, effect, entryType, xdrPayload)
 
 	_, err = ingest.DB.Exec(sql)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ingest *Ingestion) Contracts(contract history.Contract) error {
+	if (int32(contract.State) & int32(xdr.ContractStateDisputing)) != 0 {
+		return errors.New("Unexpected contract state. Expected not disputing")
+	}
+
+	sql := ingest.contracts.Values(
+		contract.ContractID,
+		contract.Contractor,
+		contract.Customer,
+		contract.Escrow,
+		contract.Disputer,
+		contract.StartTime,
+		contract.EndTime,
+		contract.Details,
+		contract.Invoices,
+		contract.DisputeReason,
+		contract.State,
+	)
+
+	_, err := ingest.DB.Exec(sql)
 	if err != nil {
 		return err
 	}
@@ -344,6 +375,19 @@ func (ingest *Ingestion) createInsertBuilders() {
 		"effect",
 		"entry_type",
 		"payload",
+	)
+
+	ingest.contracts = sq.Insert("history_contracts").Columns("contract_id",
+		"contractor",
+		"customer",
+		"escrow",
+		"disputer",
+		"start_time",
+		"end_time",
+		"details",
+		"invoices",
+		"dispute_reason",
+		"state",
 	)
 }
 

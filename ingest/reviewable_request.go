@@ -288,7 +288,6 @@ func getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
 	_ = json.Unmarshal([]byte(request.Details), &details)
 
 	return &history.InvoiceRequest{
-		ReceiverBalanceID: request.ReceiverBalance.AsString(),
 		SenderAccountID:   request.Sender.Address(),
 		Amount:            uint64(request.Amount),
 		Details:           details,
