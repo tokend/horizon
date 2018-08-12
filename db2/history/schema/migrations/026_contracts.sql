@@ -2,7 +2,7 @@
 
 CREATE TABLE history_contracts
 (
-  contract_id     BIGINT      NOT NULL CHECK (contract_id >= 0),
+  id              BIGINT      NOT NULL CHECK (id >= 0),
   contractor      VARCHAR(56) NOT NULL,
   customer        VARCHAR(56) NOT NULL,
   escrow          VARCHAR(56) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE history_contracts
   invoices        BIGINT[]    DEFAULT NULL,
   dispute_reason  jsonb       DEFAULT NULL,
   state           INT         NOT NULL,
-  PRIMARY KEY (contract_id)
+  PRIMARY KEY (id)
 );
 
 -- +migrate Down

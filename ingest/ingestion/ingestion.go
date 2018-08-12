@@ -38,10 +38,6 @@ func (ingest *Ingestion) Clear(start int64, end int64) error {
 	if err != nil {
 		return err
 	}
-	err = clear(start, end, "history_payment_requests", "id")
-	if err != nil {
-		return err
-	}
 	err = clear(start, end, "history_ledger_changes", "tx_id")
 	if err != nil {
 		return err
@@ -128,7 +124,7 @@ func (ingest *Ingestion) Contracts(contract history.Contract) error {
 	}
 
 	sql := ingest.contracts.Values(
-		contract.ContractID,
+		contract.ID,
 		contract.Contractor,
 		contract.Customer,
 		contract.Escrow,

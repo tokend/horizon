@@ -9,6 +9,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
 	"time"
+	"gitlab.com/swarmfund/horizon/db2"
 )
 
 func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {
@@ -175,7 +176,9 @@ func convertContract(rawContract xdr.ContractEntry) history.Contract {
 	}
 
 	return history.Contract{
-		ContractID: uint64(rawContract.ContractId),
+		TotalOrderID: db2.TotalOrderID{
+			ID: int64(rawContract.ContractId),
+		},
 		Contractor: rawContract.Contractor.Address(),
 		Customer: rawContract.Customer.Address(),
 		Escrow: rawContract.Escrow.Address(),

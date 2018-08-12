@@ -1,9 +1,12 @@
 package history
 
-import "time"
+import (
+	"time"
+	"gitlab.com/swarmfund/horizon/db2"
+)
 
 type Contract struct {
-	ContractID    uint64                   `db:"contract_id"`
+	db2.TotalOrderID
 	Contractor    string                   `db:"contractor"`
 	Customer      string                   `db:"customer"`
 	Escrow        string                   `db:"escrow"`
@@ -11,7 +14,7 @@ type Contract struct {
 	StartTime     time.Time                `db:"start_time"`
 	EndTime       time.Time                `db:"end_time"`
 	Details       []map[string]interface{} `db:"details"`
-	Invoices	[]int64	`db:"invoices"`
+	Invoices      []int64                  `db:"invoices"`
 	DisputeReason map[string]interface{}   `db:"dispute_reason"`
 	State         int32                    `db:"state"`
 }
