@@ -341,6 +341,11 @@ func initWebActions(app *App) {
 	// Sale antes actions
 	r.Get("/sale_antes", &SaleAnteAction{})
 
+	// Contracts actions
+	r.Get("/contracts", &ContractIndexAction{})
+	r.Get("/contract/:id", &ContractShowAction{})
+	r.Get("/contract/:contractor_id", &ContractShowAction{})
+
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// DISCLAIMER: while following is true, it does not currently applies
 		// API does not accept transactions make sure DisableAPISubmit is set to true

@@ -8,16 +8,14 @@ import (
 	"gitlab.com/swarmfund/horizon/resource"
 )
 
-// TransactionV2IndexAction: pages of transactions
-
-// TransactionV2IndexAction renders a page of ledger resources, identified by
-// a normal page query, entry type and effects
 type ContractIndexAction struct {
 	Action
 	PagingParams     db2.PageQuery
 	StartTime        *int64
 	EndTime          *int64
-	Disputing            *bool
+	Disputing        *bool
+	ContractorID	string
+	CustomerID string
 	ContractsRecords []regources.Contract
 	Page             hal.Page
 }
@@ -46,6 +44,8 @@ func (action *ContractIndexAction) loadParams() {
 	action.StartTime = action.GetOptionalInt64("start_time")
 	action.EndTime = action.GetOptionalInt64("end_time")
 	action.Disputing = action.GetOptionalBool("state")
+	action.ContractorID = action.GetString("contractor_id")
+	action.CustomerID = action.GetString("customer_id")
 	action.PagingParams = action.getTxPageQuery()
 }
 // array in object for invoices json
@@ -73,6 +73,12 @@ func (action *ContractIndexAction) loadRecords() {
 	}
 	if action.Disputing != nil {
 		q = q.ByDisputeState(*action.Disputing)
+	}
+	if action.ContractorID != "" {
+		q = q.ByContractorID(action.ContractorID)
+	}
+	if action.CustomerID != "" {
+		q = q.ByCustomerID(action.CustomerID)
 	}
 
 	historyContracts, err := q.Page(action.PagingParams).Select()
