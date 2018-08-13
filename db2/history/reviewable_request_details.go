@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"database/sql/driver"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
@@ -24,6 +25,7 @@ type ReviewableRequestDetails struct {
 	UpdateSaleEndTimeRequest *UpdateSaleEndTimeRequest `json:"update_sale_end_time_request"`
 	PromotionUpdate          *PromotionUpdateRequest   `json:"promotion_update"`
 	Invoice                  *InvoiceRequest           `json:"invoice"`
+	Contract                 *ContractRequest          `json:"contract"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -132,10 +134,17 @@ type UpdateSaleDetailsRequest struct {
 }
 
 type InvoiceRequest struct {
-	ReceiverBalanceID string                 `json:"receiver_balance_id"`
-	SenderAccountID   string                 `json:"sender_account_id"`
-	Amount            uint64                 `json:"amount"`
-	Details           map[string]interface{} `json:"details"`
+	Asset      string                 `json:"receiver_balance_id"`
+	Amount     uint64                 `json:"amount"`
+	ContractID *int64                 `json:"contract_id"`
+	Details    map[string]interface{} `json:"details"`
+}
+
+type ContractRequest struct {
+	Escrow    string                 `json:"escrow"`
+	Details   map[string]interface{} `json:"details"`
+	StartTime time.Time              `json:"start_time"`
+	EndTime   time.Time              `json:"end_time"`
 }
 
 type UpdateSaleEndTimeRequest struct {

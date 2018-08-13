@@ -233,7 +233,7 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpd
 		_ = json.Unmarshal([]byte(limitsDetails), &detailsMap)
 	}
 	return &history.LimitsUpdateRequest{
-		Details:	  detailsMap,
+		Details:      detailsMap,
 		DocumentHash: hex.EncodeToString(request.DeprecatedDocumentHash[:]),
 	}
 }
@@ -287,10 +287,30 @@ func getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.Details), &details)
 
+	var contractID *int64
+	if request.ContractId != nil {
+		tmpContractID := int64(*request.ContractId)
+		contractID = &tmpContractID
+	}
+
 	return &history.InvoiceRequest{
-		SenderAccountID:   request.Sender.Address(),
-		Amount:            uint64(request.Amount),
-		Details:           details,
+		Asset:      string(request.Asset),
+		Amount:     uint64(request.Amount),
+		ContractID: contractID,
+		Details:    details,
+	}
+}
+
+func getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.Details), &details)
+
+	return &history.ContractRequest{
+		Escrow:    request.Escrow.Address(),
+		Details:   details,
+		StartTime: time.Unix(int64(request.StartTime), 0).UTC(),
+		EndTime:   time.Unix(int64(request.EndTime), 0).UTC(),
 	}
 }
 
@@ -332,6 +352,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.UpdateSaleDetails = getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
 	case xdr.ReviewableRequestTypeInvoice:
 		details.Invoice = getInvoiceRequest(body.InvoiceRequest)
+	case xdr.ReviewableRequestTypeContract:
+		details.Contract = getContractRequest(body.ContractRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
 		details.UpdateSaleEndTimeRequest = getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
 	case xdr.ReviewableRequestTypeUpdatePromotion:

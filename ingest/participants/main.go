@@ -5,11 +5,10 @@ package participants
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ForOperation returns all the participating accounts from the
@@ -96,14 +95,24 @@ func ForOperation(
 		manageInvoiceOp := op.Body.MustManageInvoiceRequestOp()
 		switch manageInvoiceOp.Details.Action {
 		case xdr.ManageInvoiceRequestActionCreate:
-			if manageInvoiceOp.Details.InvoiceRequest.Amount == 0 {
-				return nil, errors.New("Unexpected state, amount cannot be zero")
-			}
 			result = append(result, Participant{manageInvoiceOp.Details.InvoiceRequest.Sender,
-			&opResult.ManageInvoiceRequestResult.Success.Details.Response.SenderBalance, nil})
+				&opResult.ManageInvoiceRequestResult.Success.Details.Response.SenderBalance, nil})
 		case xdr.ManageInvoiceRequestActionRemove:
 			sourceParticipant = nil
 		}
+	case xdr.OperationTypeManageContractRequest:
+		manageContractOp := op.Body.MustManageContractRequestOp()
+		switch manageContractOp.Details.Action {
+		case xdr.ManageContractRequestActionCreate:
+			result = append(result, Participant{manageContractOp.Details.ContractRequest.Customer,
+				nil, nil})
+			result = append(result, Participant{manageContractOp.Details.ContractRequest.Escrow,
+				nil, nil})
+		case xdr.ManageContractRequestActionRemove:
+			sourceParticipant = nil
+		}
+	case xdr.OperationTypeManageContract:
+		// the only direct participant is the source_account
 	case xdr.OperationTypeReviewRequest:
 		request := getReviewableRequestByID(uint64(op.Body.MustReviewRequestOp().RequestId), ledgerChanges)
 		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address() {
@@ -154,7 +163,7 @@ func ForOperation(
 		paymentOpV2 := op.Body.MustPaymentOpV2()
 		paymentV2Response := opResult.MustPaymentV2Result().MustPaymentV2Response()
 
-		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil},)
+		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil})
 		sourceParticipant.BalanceID = &paymentOpV2.SourceBalanceId
 	case xdr.OperationTypeManageSale:
 		// the only direct participant is the source_account

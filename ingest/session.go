@@ -5,10 +5,10 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
 	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Run starts an attempt to ingest the range of ledgers specified in this
@@ -163,7 +163,7 @@ func (is *Session) processManageOfferLedgerChanges(offerID uint64) {
 	}
 }
 
-func (is *Session)  permanentReject(op xdr.ReviewRequestOp) error {
+func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
 	err := is.Ingestion.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
 	if err != nil {
 		return errors.Wrap(err, "failed to permanently reject request")
@@ -343,6 +343,7 @@ func (is *Session) processManageInvoiceRequest(op xdr.ManageInvoiceRequestOp, re
 		return
 	}
 	if op.Details.Action == xdr.ManageInvoiceRequestActionCreate {
+		is.processContractLedgerChanges(nil, nil)
 		return
 	}
 
@@ -350,6 +351,50 @@ func (is *Session) processManageInvoiceRequest(op xdr.ManageInvoiceRequestOp, re
 	if err != nil {
 		is.Err = errors.Wrap(err, "failed to update invoice request state to cancel", logan.F{
 			"request_id": uint64(*op.Details.RequestId),
+		})
+	}
+}
+
+func (is *Session) processManageContractRequest(
+	op xdr.ManageContractRequestOp,
+	result xdr.ManageContractRequestResult,
+) {
+	if is.Err != nil {
+		return
+	}
+	if result.Code != xdr.ManageContractRequestResultCodeSuccess {
+		return
+	}
+	if op.Details.Action == xdr.ManageContractRequestActionCreate {
+		return
+	}
+
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Cancel(uint64(*op.Details.RequestId))
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to update contract request state to cancel", logan.F{
+			"request_id": uint64(*op.Details.RequestId),
+		})
+	}
+}
+
+func (is *Session) processManageContract(
+	op xdr.ManageContractOp,
+	result xdr.ManageContractResult,
+) {
+	if is.Err != nil {
+		return
+	}
+	if result.Code != xdr.ManageContractResultCodeSuccess {
+		return
+	}
+
+	isDisputeStart := op.Data.Action == xdr.ManageContractActionStartDispute
+
+	err := is.processContractLedgerChanges(&isDisputeStart, op.Data.IsRevert)
+
+	if err != nil {
+		is.Err = errors.Wrap(err, "failed to update contract", logan.F{
+			"contract_id": uint64(op.ContractId),
 		})
 	}
 }

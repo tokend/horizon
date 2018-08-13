@@ -1,11 +1,12 @@
 package history
 
 import (
+	"time"
+
 	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
-	"time"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -14,8 +15,12 @@ type ReviewableRequestQI interface {
 	Insert(request ReviewableRequest) error
 	// Update - update request using it's ID
 	Update(request ReviewableRequest) error
+	// UpdateStates - update state of requests
+	UpdateStates(requestIDs []int64, state ReviewableRequestState) error
 	// ByID - selects request by id. Returns nil, nil if not found
 	ByID(requestID uint64) (*ReviewableRequest, error)
+	// ByID - selects request by id. Returns nil, nil if not found
+	ByIDs(requestIDs []int64) ReviewableRequestQI
 	// Cancel - sets request state to `ReviewableRequestStateCanceled`
 	Cancel(requestID uint64) error
 	// Approve - sets request state to ReviewableRequestStateApproved and cleans reject reason
@@ -132,6 +137,19 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 	return err
 }
 
+func (q *ReviewableRequestQ) UpdateStates(requestIDs []int64, state ReviewableRequestState) error {
+	if q.Err != nil {
+		return q.Err
+	}
+
+	query := sq.Update("reviewable_request").
+		Set("request_state", state).
+		Where(sq.Eq{"id": requestIDs})
+
+	_, err := q.parent.Exec(query)
+	return err
+}
+
 // ByID - selects request by id. Returns nil, nil if not found
 func (q *ReviewableRequestQ) ByID(requestID uint64) (*ReviewableRequest, error) {
 	if q.Err != nil {
@@ -151,6 +169,15 @@ func (q *ReviewableRequestQ) ByID(requestID uint64) (*ReviewableRequest, error) 
 	}
 
 	return &result, nil
+}
+
+func (q *ReviewableRequestQ) ByIDs(requestIDs []int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(sq.Eq{"id": requestIDs})
+	return q
 }
 
 // Cancel - sets request state to `ReviewableRequestStateCanceled`
@@ -288,7 +315,6 @@ func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) Reviewable
 	return q
 }
 
-
 // PreIssuance
 // PreIssuanceByAsset - filters pre issuance requests by asset
 func (q *ReviewableRequestQ) PreIssuanceByAsset(assetCode string) ReviewableRequestQI {
@@ -363,6 +389,7 @@ func (q *ReviewableRequestQ) KYCByAccountToUpdateKYC(accountID string) Reviewabl
 	q.sql = q.sql.Where("details->'update_kyc'->>'updated_account_id' = ?", accountID)
 	return q
 }
+
 // KYCByMaskSet - filters update KYC requests by mask which must be set. If mustBeEq is false, request will be returned
 // even if only part of the mask is set
 func (q *ReviewableRequestQ) KYCByMaskSet(mask int64, maskSetPartialEq bool) ReviewableRequestQI {

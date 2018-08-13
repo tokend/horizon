@@ -7,12 +7,12 @@ import (
 
 	"github.com/guregu/null"
 	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
 	"gitlab.com/swarmfund/horizon/ingest/participants"
-	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Clear removes data from the ledger
@@ -42,7 +42,7 @@ func (ingest *Ingestion) Clear(start int64, end int64) error {
 	if err != nil {
 		return err
 	}
-	err = clear(start, end, "history_contracts", "contract_id")
+	err = clear(start, end, "history_contracts", "id")
 	if err != nil {
 		return err
 	}
@@ -373,7 +373,7 @@ func (ingest *Ingestion) createInsertBuilders() {
 		"payload",
 	)
 
-	ingest.contracts = sq.Insert("history_contracts").Columns("contract_id",
+	ingest.contracts = sq.Insert("history_contracts").Columns("id",
 		"contractor",
 		"customer",
 		"escrow",

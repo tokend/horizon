@@ -3,13 +3,14 @@ package ingest
 import (
 	"encoding/json"
 
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
-	"time"
-	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {
@@ -76,11 +77,13 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.
 	case xdr.ReviewableRequestTypeWithdraw:
 		err = is.setWithdrawalDetails(uint64(op.RequestId), op.RequestDetails.Withdrawal)
 	case xdr.ReviewableRequestTypeContract:
-		err = is.processCreateContractLedgerChanges()
+		err = is.processContractLedgerChanges(nil, nil)
+	case xdr.ReviewableRequestTypeInvoice:
+		err = is.setWaitingForConfirmationState(uint64(op.RequestId))
 	}
 
 	if err != nil {
-		return errors.Wrap(err, "failed to set reviewer details")
+		return errors.Wrap(err, "failed to set request details")
 	}
 
 	return nil
@@ -132,7 +135,28 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 	return nil
 }
 
-func (is *Session) processCreateContractLedgerChanges() error {
+func (is *Session) setWaitingForConfirmationState(requestID uint64) error {
+	request, err := is.Ingestion.HistoryQ().ReviewableRequests().ByID(requestID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get request", logan.F{
+			"request_id": requestID,
+		})
+	}
+
+	if (request == nil) || (request.Details.Invoice == nil) || (request.Details.Invoice.ContractID == nil) {
+		return nil
+	}
+
+	err = is.Ingestion.HistoryQ().ReviewableRequests().UpdateStates([]int64{int64(requestID)},
+		history.ReviewableRequestStateWaitingForConfirmation)
+	if err != nil {
+		return errors.Wrap(err, "failed to update request state")
+	}
+
+	return nil
+}
+
+func (is *Session) processContractLedgerChanges(isDisputeStart, isRevert *bool) error {
 	ledgerChanges := is.Cursor.OperationChanges()
 	for _, change := range ledgerChanges {
 		switch change.Type {
@@ -149,21 +173,128 @@ func (is *Session) processCreateContractLedgerChanges() error {
 					"contract_id": uint64(change.Created.Data.MustContract().ContractId),
 				})
 			}
+		case xdr.LedgerEntryChangeTypeUpdated:
+			if change.Updated.Data.Type != xdr.LedgerEntryTypeContract {
+				continue
+			}
+
+			contract := convertContract(change.Updated.Data.MustContract())
+
+			err := is.Ingestion.HistoryQ().Contracts().Update(contract)
+			if err != nil {
+				return errors.Wrap(err, "failed to update contract", logan.F{
+					"contract_id": uint64(change.Updated.Data.MustContract().ContractId),
+				})
+			}
+		case xdr.LedgerEntryChangeTypeRemoved:
+			if change.Removed.Type != xdr.LedgerEntryTypeContract {
+				continue
+			}
+
+			contractID := int64(change.Removed.Contract.ContractId)
+
+			contract, err := is.Ingestion.HistoryQ().Contracts().ByID(contractID)
+			if err != nil {
+				return errors.Wrap(err, "failed to get contract", logan.F{
+					"contract_id": contractID,
+				})
+			}
+
+			if isRevert == nil {
+				return is.updateInvoicesContractStates(contract,
+					history.ReviewableRequestStateApproved,
+					int32(xdr.ContractStateCustomerConfirmed)|
+						int32(xdr.ContractStateContractorConfirmed),
+				)
+			}
+
+			if *isRevert {
+				return is.updateInvoicesContractStates(contract,
+					history.ReviewableRequestStatePermanentlyRejected,
+					int32(xdr.ContractStateRevertResolve),
+				)
+			}
+
+			contract.State |= int32(xdr.ContractStateNotRevertResolve)
+			err = is.Ingestion.HistoryQ().Contracts().Update(contract)
+			if err != nil {
+				return errors.Wrap(err, "failed to update contract state")
+			}
+
+			return is.updateRevertingContractInovices(contract)
 		}
 	}
+	return nil
+}
+
+func (is *Session) updateInvoicesContractStates(
+	contract history.Contract,
+	invoiceState history.ReviewableRequestState,
+	contactState int32,
+) error {
+	err := is.Ingestion.HistoryQ().ReviewableRequests().UpdateStates(
+		contract.Invoices,
+		invoiceState,
+	)
+	if err != nil {
+		return errors.Wrap(err, "failed to update invoices states")
+	}
+
+	contract.State |= contactState
+	err = is.Ingestion.HistoryQ().Contracts().Update(contract)
+	if err != nil {
+		return errors.Wrap(err, "failed to update contract state")
+	}
+
+	return nil
+}
+
+func (is *Session) updateRevertingContractInovices(contract history.Contract) error {
+	invoices, err := is.Ingestion.HistoryQ().ReviewableRequests().ByIDs(contract.Invoices).Select()
+	if err != nil {
+		return errors.Wrap(err, "failed to load invoices")
+	}
+
+	var approvedInvoicesIDs, rejectedInvoicesIDs []int64
+
+	for _, invoice := range invoices {
+		if invoice.RequestState == history.ReviewableRequestStateWaitingForConfirmation {
+			approvedInvoicesIDs = append(approvedInvoicesIDs, invoice.ID)
+			continue
+		}
+
+		rejectedInvoicesIDs = append(rejectedInvoicesIDs, invoice.ID)
+	}
+
+	err = is.Ingestion.HistoryQ().ReviewableRequests().UpdateStates(approvedInvoicesIDs,
+		history.ReviewableRequestStateApproved)
+	if err != nil {
+		return errors.Wrap(err, "failed to update approved invoices", logan.F{
+			"request_ids": approvedInvoicesIDs,
+		})
+	}
+
+	err = is.Ingestion.HistoryQ().ReviewableRequests().UpdateStates(rejectedInvoicesIDs,
+		history.ReviewableRequestStatePermanentlyRejected)
+	if err != nil {
+		return errors.Wrap(err, "failed to update rejected invoices", logan.F{
+			"request_ids": rejectedInvoicesIDs,
+		})
+	}
+
 	return nil
 }
 
 func convertContract(rawContract xdr.ContractEntry) history.Contract {
 	disputer := ""
 	var disputeReason map[string]interface{}
-	if (rawContract.StateInfo.State & xdr.ContractStateDisputing) != 0 {
-		disputer = rawContract.StateInfo.DisputeDetails.Disputer.Address()
+	if (int32(rawContract.State) & int32(xdr.ContractStateDisputing)) != 0 {
+		disputer = rawContract.DisputeDetails.Disputer.Address()
 		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(rawContract.StateInfo.MustDisputeDetails().Reason), &disputeReason)
+		_ = json.Unmarshal([]byte(rawContract.DisputeDetails.Reason), &disputeReason)
 	}
 
-	var details []map[string]interface{}
+	var details []db2.Details
 	for _, item := range rawContract.Details {
 		var detail map[string]interface{}
 		_ = json.Unmarshal([]byte(item), &detail)
@@ -179,15 +310,15 @@ func convertContract(rawContract xdr.ContractEntry) history.Contract {
 		TotalOrderID: db2.TotalOrderID{
 			ID: int64(rawContract.ContractId),
 		},
-		Contractor: rawContract.Contractor.Address(),
-		Customer: rawContract.Customer.Address(),
-		Escrow: rawContract.Escrow.Address(),
-		Disputer: disputer,
-		StartTime: time.Unix(int64(rawContract.StartTime), 0).UTC(),
-		EndTime: time.Unix(int64(rawContract.EndTime), 0).UTC(),
-		Details: details,
-		Invoices: invoices,
+		Contractor:    rawContract.Contractor.Address(),
+		Customer:      rawContract.Customer.Address(),
+		Escrow:        rawContract.Escrow.Address(),
+		Disputer:      disputer,
+		StartTime:     time.Unix(int64(rawContract.StartTime), 0).UTC(),
+		EndTime:       time.Unix(int64(rawContract.EndTime), 0).UTC(),
+		Details:       details,
+		Invoices:      invoices,
 		DisputeReason: disputeReason,
-		State: int32(rawContract.StateInfo.State),
+		State:         int32(rawContract.State),
 	}
 }

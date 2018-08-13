@@ -1,10 +1,11 @@
 package history
 
 import (
+	"time"
+
 	sq "github.com/lann/squirrel"
-		"time"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
 
 var selectContracts = sq.Select(
@@ -30,6 +31,7 @@ type ContractsQI interface {
 	Page(page db2.PageQuery) ContractsQI
 	Select() ([]Contract, error)
 	ByID(id int64) (Contract, error)
+	Update(contract Contract) error
 }
 
 type ContractsQ struct {
@@ -105,7 +107,7 @@ func (q *ContractsQ) ByID(id int64) (Contract, error) {
 		return Contract{}, q.Err
 	}
 
-	q.sql = q.sql.Where(sq.Eq{"id" : id})
+	q.sql = q.sql.Where(sq.Eq{"id": id})
 
 	var result Contract
 	q.Err = q.parent.Get(&result, q.sql)
@@ -117,7 +119,7 @@ func (q *ContractsQ) ByContractorID(contractorID string) ContractsQI {
 		return q
 	}
 
-	q.sql = q.sql.Where(sq.Eq{"contractor" : contractorID})
+	q.sql = q.sql.Where(sq.Eq{"contractor": contractorID})
 
 	return q
 }
@@ -127,7 +129,30 @@ func (q *ContractsQ) ByCustomerID(customerID string) ContractsQI {
 		return q
 	}
 
-	q.sql = q.sql.Where(sq.Eq{"customer" : customerID})
+	q.sql = q.sql.Where(sq.Eq{"customer": customerID})
 
 	return q
+}
+
+// Update - update contract using it's ID
+func (q *ContractsQ) Update(contract Contract) error {
+	if q.Err != nil {
+		return q.Err
+	}
+
+	query := sq.Update("history_contracts").SetMap(map[string]interface{}{
+		"contractor":     contract.Contractor,
+		"customer":       contract.Customer,
+		"escrow":         contract.Escrow,
+		"disputer":       contract.Disputer,
+		"start_time":     contract.StartTime,
+		"end_time":       contract.EndTime,
+		"details":        contract.Details,
+		"invoices":       contract.Invoices,
+		"dispute_reason": contract.DisputeReason,
+		"state":          contract.State,
+	}).Where("id = ?", contract.ID)
+
+	_, err := q.parent.Exec(query)
+	return err
 }

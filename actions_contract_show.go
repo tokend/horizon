@@ -1,16 +1,18 @@
 package horizon
 
 import (
-		"gitlab.com/swarmfund/horizon/render/hal"
+	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/tokend/regources"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
+	"gitlab.com/tokend/regources"
 )
 
 type ContractShowAction struct {
 	Action
-	ContractID     int64
-	ContractRecord regources.Contract
+	ContractID      int64
+	ContractRecord  regources.Contract
+	InvoicesRecords []reviewablerequest.ReviewableRequest
 }
 
 // JSON is a method for actions.JSON
@@ -22,6 +24,7 @@ func (action *ContractShowAction) JSON() {
 		action.loadRecords,
 		func() {
 			hal.Render(action.W, action.ContractRecord)
+			hal.Render(action.W, action.InvoicesRecords)
 		},
 	)
 }
@@ -44,4 +47,22 @@ func (action *ContractShowAction) loadRecords() {
 	}
 
 	action.ContractRecord = resource.PopulateContract(contract)
+
+	invoices, err := action.HistoryQ().ReviewableRequests().ByIDs(contract.Invoices).Select()
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to get invoices records")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	for _, invoice := range invoices {
+		var res reviewablerequest.ReviewableRequest
+		err := res.Populate(&invoice)
+		if err != nil {
+			action.Log.WithError(err).Error("Failed to populate invoice request")
+			action.Err = &problem.ServerError
+			return
+		}
+		action.InvoicesRecords = append(action.InvoicesRecords, res)
+	}
 }

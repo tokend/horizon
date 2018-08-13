@@ -2,8 +2,8 @@ package reviewablerequest
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Details - provides specific for request type details.
@@ -24,6 +24,7 @@ type Details struct {
 	UpdateSaleEndTime      *UpdateSaleEndTimeRequest `json:"update_sale_end_time"`
 	PromotionUpdateRequest *PromotionUpdateRequest   `json:"promotion_update_request"`
 	Invoice                *InvoiceRequest           `json:"invoice,omitempty"`
+	Contract               *ContractRequest
 }
 
 func (d *Details) Populate(requestType xdr.ReviewableRequestType, h history.ReviewableRequestDetails) error {
@@ -71,6 +72,9 @@ func (d *Details) Populate(requestType xdr.ReviewableRequestType, h history.Revi
 	case xdr.ReviewableRequestTypeUpdatePromotion:
 		d.PromotionUpdateRequest = new(PromotionUpdateRequest)
 		return d.PromotionUpdateRequest.Populate(*h.PromotionUpdate)
+	case xdr.ReviewableRequestTypeContract:
+		d.Contract = new(ContractRequest)
+		return d.Contract.Populate(*h.Contract)
 	default:
 		return errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),

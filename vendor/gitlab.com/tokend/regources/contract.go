@@ -13,7 +13,7 @@ type Contract struct {
 	EndTime       time.Time                `json:"end_time"`
 	Details       []map[string]interface{} `json:"details"`
 	DisputeReason map[string]interface{}   `json:"dispute_reason,omitempty"`
-	State         string                   `json:"state"`
+	State         []Flag                   `json:"state"`
 }
 
 func (c Contract) PagingToken() string {

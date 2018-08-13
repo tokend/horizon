@@ -1,9 +1,10 @@
 package ingest
 
 import (
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"fmt"
+
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationResult *xdr.OperationResultTr) (history.OperationState, uint64) {
@@ -35,6 +36,17 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 		state = history.OperationStatePending
 		manageInvoiceResult := operationResult.MustManageInvoiceRequestResult()
 		operationIdentifier = uint64(manageInvoiceResult.Success.Details.Response.RequestId)
+		return state, operationIdentifier
+	case xdr.OperationTypeManageContractRequest:
+		manageContractOp := op.Body.MustManageContractRequestOp()
+		if manageContractOp.Details.Action == xdr.ManageContractRequestActionRemove {
+			operationIdentifier = uint64(*manageContractOp.Details.RequestId)
+			return history.OperationStateCanceled, operationIdentifier
+		}
+
+		state = history.OperationStatePending
+		manageContractResult := operationResult.MustManageContractRequestResult()
+		operationIdentifier = uint64(manageContractResult.Success.Details.Response.RequestId)
 		return state, operationIdentifier
 	case xdr.OperationTypeCreateIssuanceRequest:
 		createIssuanceRequestResult := operationResult.MustCreateIssuanceRequestResult()
@@ -134,7 +146,11 @@ func (is *Session) operation() {
 	case xdr.OperationTypeManageInvoiceRequest:
 		is.processManageInvoiceRequest(is.Cursor.Operation().Body.MustManageInvoiceRequestOp(),
 			is.Cursor.OperationResult().MustManageInvoiceRequestResult())
+	case xdr.OperationTypeManageContractRequest:
+		is.processManageContractRequest(is.Cursor.Operation().Body.MustManageContractRequestOp(),
+			is.Cursor.OperationResult().MustManageContractRequestResult())
 	case xdr.OperationTypeManageContract:
-
+		is.processManageContract(is.Cursor.Operation().Body.MustManageContractOp(),
+			is.Cursor.OperationResult().MustManageContractResult())
 	}
 }
