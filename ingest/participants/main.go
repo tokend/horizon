@@ -5,10 +5,11 @@ package participants
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ForOperation returns all the participating accounts from the
@@ -151,7 +152,7 @@ func ForOperation(
 		paymentOpV2 := op.Body.MustPaymentOpV2()
 		paymentV2Response := opResult.MustPaymentV2Result().MustPaymentV2Response()
 
-		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil},)
+		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil})
 		sourceParticipant.BalanceID = &paymentOpV2.SourceBalanceId
 	case xdr.OperationTypeManageSale:
 		// the only direct participant is the source_account
@@ -244,7 +245,7 @@ func ForTransaction(
 	for i := range tx.Operations {
 		participants, err := ForOperation(DB, tx, &tx.Operations[i], *opResults[i].Tr, nil, ledger)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "failed to get participants for operation")
 		}
 		for _, participant := range participants {
 			result = append(result, participant.AccountID)
@@ -259,7 +260,7 @@ func getAccountIDByBalance(q history.Q, balanceID string) (result *xdr.AccountId
 	var targetBalance history.Balance
 	err = q.BalanceByID(&targetBalance, balanceID)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to get balance by balance id")
 	}
 	var aid xdr.AccountId
 	aid.SetAddress(targetBalance.AccountID)
@@ -336,7 +337,7 @@ func forMeta(
 		var acc []xdr.AccountId
 		acc, err = forChanges(&op.Changes)
 		if err != nil {
-			return
+			return nil, errors.Wrap(err, "failed to get ledger changes")
 		}
 
 		result = append(result, acc...)

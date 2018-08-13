@@ -1,10 +1,12 @@
 package ingestion
 
 import (
-	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"encoding/json"
+
+	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func (ingest *Ingestion) UpdateOfferDetails(newOfferDetails map[string]interface{}, stateToSet uint64) error {
@@ -15,13 +17,13 @@ func (ingest *Ingestion) UpdateOfferDetails(newOfferDetails map[string]interface
 
 	sql := sq.Update("history_operations").
 		SetMap(map[string]interface{}{
-		"details": bytes,
-		"state":   stateToSet,
-	}).Where("type = ? AND details->>'offer_id' = ?", xdr.OperationTypeManageOffer, newOfferDetails["offer_id"])
+			"details": bytes,
+			"state":   stateToSet,
+		}).Where("type = ? AND details->>'offer_id' = ?", xdr.OperationTypeManageOffer, newOfferDetails["offer_id"])
 
 	_, err = ingest.DB.Exec(sql)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to update history_operations")
 	}
 
 	return nil
@@ -34,7 +36,7 @@ func (ingest *Ingestion) UpdateOfferState(offerID, state uint64) error {
 
 	_, err := ingest.DB.Exec(sql)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to update history_operations")
 	}
 
 	return nil
@@ -50,7 +52,7 @@ func (ingest *Ingestion) UpdateOrderBookState(orderBookID, state uint64, ignoreC
 
 	_, err := ingest.DB.Exec(sql)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to update history_operations")
 	}
 
 	return nil

@@ -3,9 +3,10 @@ package ingestion
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/xdr"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func (ingest *Ingestion) UpdateInvoice(
@@ -16,7 +17,7 @@ func (ingest *Ingestion) UpdateInvoice(
 	if rejectReason != nil {
 		err := ingest.ingestRejectReason(string(*rejectReason), uint64(invoiceID))
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to ingest reject reason")
 		}
 	}
 	sql := sq.Update("history_operations").SetMap(sq.Eq{

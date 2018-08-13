@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
+	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func (ingest *Ingestion) InsertPaymentRequest(
@@ -34,7 +35,7 @@ func (ingest *Ingestion) InsertPaymentRequest(
 
 	_, err = ingest.DB.Exec(sql)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to execute sql query")
 	}
 
 	return nil
@@ -52,7 +53,7 @@ func (ingest *Ingestion) UpdatePaymentRequest(
 
 	_, err := ingest.DB.Exec(sql)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to update history_payment_request")
 	}
 
 	return nil
@@ -71,7 +72,7 @@ func (ingest *Ingestion) UpdatePayment(
 	if rejectReason != nil {
 		err := ingest.ingestRejectReason(string(*rejectReason), uint64(paymentID))
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to ingest reject reason")
 		}
 	}
 	sql := sq.Update("history_operations").SetMap(sq.Eq{
@@ -80,7 +81,7 @@ func (ingest *Ingestion) UpdatePayment(
 
 	_, err := ingest.DB.Exec(sql)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to update history_operations")
 	}
 
 	return nil
