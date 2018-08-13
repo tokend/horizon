@@ -5,17 +5,12 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
+	"gitlab.com/tokend/go/xdr"
 )
 
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {
-	if is.Err != nil {
-		return
-	}
-
-	var err error
+func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) (err error) {
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
 		err = is.approveReviewableRequest(op, changes)
@@ -30,10 +25,11 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.Ledg
 	}
 
 	if err != nil {
-		is.Err = errors.Wrap(err, "failed to process review request", map[string]interface{}{
+		return errors.Wrap(err, "failed to process review request", map[string]interface{}{
 			"request_id": uint64(op.RequestId),
 		})
 	}
+	return nil
 }
 
 func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
@@ -50,7 +46,7 @@ func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
 	return false
 }
 
-func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) error {
+func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) (err error) {
 	// approval of two step withdrawal leads to update of request to withdrawal
 	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeTwoStepWithdrawal {
 		return nil
@@ -60,7 +56,7 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.
 		return nil
 	}
 
-	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
+	err = is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
 	if err != nil {
 		return errors.Wrap(err, "failed to approve reviewable request")
 	}
@@ -82,7 +78,7 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.
 	return nil
 }
 
-func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.WithdrawalDetails) error {
+func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.WithdrawalDetails) (err error) {
 	fields := logan.Field("request_id", requestID)
 	request, err := is.Ingestion.HistoryQ().ReviewableRequests().ByID(requestID)
 	if err != nil {
