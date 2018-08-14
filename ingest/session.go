@@ -166,16 +166,10 @@ func (is *Session) processManageOfferLedgerChanges(offerID uint64) error {
 }
 
 func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.ManageInvoiceResult) error {
-	if op.InvoiceId == 0 {
-		return errors.Wrap(nil, "field cannot be empty", map[string]interface{}{
-			"op.InvoiceId": "empty",
-		})
+	if op.InvoiceId == 0 || op.Amount != 0 {
+		return nil
 	}
-	if op.Amount != 0 {
-		return errors.Wrap(nil, "must be zero", map[string]interface{}{
-			"op.Amount": "non-zero value",
-		})
-	}
+
 	err := is.Ingestion.UpdateInvoice(op.InvoiceId, history.OperationStateCanceled, nil)
 	if err != nil {
 		return errors.Wrap(err, "failed to update invoice", map[string]interface{}{
@@ -227,7 +221,7 @@ func (is *Session) handleCheckSaleState(result xdr.CheckSaleStateSuccess) error 
 
 func (is *Session) handleManageSale(op *xdr.ManageSaleOp) error {
 	if op.Data.Action != xdr.ManageSaleActionCancel {
-		return errors.New("incorrect arguments")
+		return nil
 	}
 
 	err := is.Ingestion.HistoryQ().Sales().SetState(uint64(op.SaleId), history.SaleStateCanceled)
@@ -244,7 +238,7 @@ func (is *Session) handleManageSale(op *xdr.ManageSaleOp) error {
 
 func (is *Session) processManageAsset(op *xdr.ManageAssetOp) error {
 	if op.Request.Action != xdr.ManageAssetActionCancelAssetRequest {
-		return errors.New("incorrect arguments")
+		return nil
 	}
 
 	err := is.Ingestion.HistoryQ().ReviewableRequests().Cancel(uint64(op.RequestId))
