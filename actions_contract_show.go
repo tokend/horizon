@@ -6,14 +6,12 @@ import (
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
 	"gitlab.com/tokend/regources"
-	"gitlab.com/tokend/regources/reviewablerequest2"
 )
 
 type ContractShowAction struct {
 	Action
-	ContractID      int64
-	ContractRecord  regources.Contract
-	InvoicesRecords []reviewablerequest2.ReviewableRequest
+	ContractID     int64
+	ContractRecord regources.Contract
 }
 
 // JSON is a method for actions.JSON
@@ -25,7 +23,6 @@ func (action *ContractShowAction) JSON() {
 		action.loadRecords,
 		func() {
 			hal.Render(action.W, action.ContractRecord)
-			hal.Render(action.W, action.InvoicesRecords)
 		},
 	)
 }
@@ -64,7 +61,7 @@ func (action *ContractShowAction) loadRecords() {
 			return
 		}
 		if res != nil {
-			action.InvoicesRecords = append(action.InvoicesRecords, *res)
+			action.ContractRecord.Invoices = append(action.ContractRecord.Invoices, *res)
 		}
 	}
 }

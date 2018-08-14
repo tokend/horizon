@@ -4,8 +4,8 @@ import (
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/tokend/regources"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/tokend/regources"
 )
 
 type ContractIndexAction struct {
@@ -14,8 +14,8 @@ type ContractIndexAction struct {
 	StartTime        *int64
 	EndTime          *int64
 	Disputing        *bool
-	ContractorID	string
-	CustomerID string
+	ContractorID     string
+	CustomerID       string
 	ContractsRecords []regources.Contract
 	Page             hal.Page
 }
@@ -48,7 +48,7 @@ func (action *ContractIndexAction) loadParams() {
 	action.CustomerID = action.GetString("customer_id")
 	action.PagingParams = action.getTxPageQuery()
 }
-// array in object for invoices json
+
 const (
 	maxContractPagSize uint64 = 1000
 )
