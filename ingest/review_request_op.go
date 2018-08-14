@@ -64,11 +64,6 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.
 		return errors.Wrap(err, "failed to approve reviewable request")
 	}
 
-	err = is.Ingestion.UpdatePayment(op.RequestId, true, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to approve operation")
-	}
-
 	switch op.RequestDetails.RequestType {
 	case xdr.ReviewableRequestTypeWithdraw:
 		err = is.setWithdrawalDetails(uint64(op.RequestId), op.RequestDetails.Withdrawal)

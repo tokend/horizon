@@ -32264,14 +32264,10 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //    	ALLOW_TO_ISSUE_AFTER_SALE = 38,
 //    	FIX_PAYMENT_V2_SEND_TO_SELF = 39,
 //    	FIX_PAYMENT_V2_DEST_ACCOUNT_NOT_FOUND = 40,
-<<<<<<< HEAD
 //        FIX_CREATE_KYC_REQUEST_AUTO_APPROVE = 41,
 //        USE_ONLY_PAYMENT_V2 = 42,
 //        ADD_REVIEW_INVOICE_REQUEST_PAYMENT_RESPONSE = 43,
 //        ADD_CONTRACT_ID_REVIEW_REQUEST_RESULT = 44
-=======
-//    	FIX_CREATE_KYC_REQUEST_AUTO_APPROVE = 41
->>>>>>> master
 //    };
 //
 type LedgerVersion int32
@@ -32319,12 +32315,9 @@ const (
 	LedgerVersionFixPaymentV2SendToSelf                           LedgerVersion = 39
 	LedgerVersionFixPaymentV2DestAccountNotFound                  LedgerVersion = 40
 	LedgerVersionFixCreateKycRequestAutoApprove                   LedgerVersion = 41
-<<<<<<< HEAD
 	LedgerVersionUseOnlyPaymentV2                                 LedgerVersion = 42
 	LedgerVersionAddReviewInvoiceRequestPaymentResponse           LedgerVersion = 43
 	LedgerVersionAddContractIdReviewRequestResult                 LedgerVersion = 44
-=======
->>>>>>> master
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -32370,12 +32363,9 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixPaymentV2SendToSelf,
 	LedgerVersionFixPaymentV2DestAccountNotFound,
 	LedgerVersionFixCreateKycRequestAutoApprove,
-<<<<<<< HEAD
 	LedgerVersionUseOnlyPaymentV2,
 	LedgerVersionAddReviewInvoiceRequestPaymentResponse,
 	LedgerVersionAddContractIdReviewRequestResult,
-=======
->>>>>>> master
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -32421,12 +32411,9 @@ var ledgerVersionMap = map[int32]string{
 	39: "LedgerVersionFixPaymentV2SendToSelf",
 	40: "LedgerVersionFixPaymentV2DestAccountNotFound",
 	41: "LedgerVersionFixCreateKycRequestAutoApprove",
-<<<<<<< HEAD
 	42: "LedgerVersionUseOnlyPaymentV2",
 	43: "LedgerVersionAddReviewInvoiceRequestPaymentResponse",
 	44: "LedgerVersionAddContractIdReviewRequestResult",
-=======
->>>>>>> master
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -32472,12 +32459,9 @@ var ledgerVersionShortMap = map[int32]string{
 	39: "fix_payment_v2_send_to_self",
 	40: "fix_payment_v2_dest_account_not_found",
 	41: "fix_create_kyc_request_auto_approve",
-<<<<<<< HEAD
 	42: "use_only_payment_v2",
 	43: "add_review_invoice_request_payment_response",
 	44: "add_contract_id_review_request_result",
-=======
->>>>>>> master
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -32523,12 +32507,9 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixPaymentV2SendToSelf":                           39,
 	"LedgerVersionFixPaymentV2DestAccountNotFound":                  40,
 	"LedgerVersionFixCreateKycRequestAutoApprove":                   41,
-<<<<<<< HEAD
 	"LedgerVersionUseOnlyPaymentV2":                                 42,
 	"LedgerVersionAddReviewInvoiceRequestPaymentResponse":           43,
 	"LedgerVersionAddContractIdReviewRequestResult":                 44,
-=======
->>>>>>> master
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements

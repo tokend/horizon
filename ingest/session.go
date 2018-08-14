@@ -171,11 +171,6 @@ func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
 		return errors.Wrap(err, "failed to permanently reject request")
 	}
 
-	err = is.Ingestion.UpdatePayment(op.RequestId, false, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to permanently reject operation")
-	}
-
 	return nil
 }
 
