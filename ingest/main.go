@@ -36,7 +36,7 @@ type Cursor struct {
 	// attempt to be ingested in this session.
 	LastLedger int32
 	// DB is the stellar-core db that data is ingested from.
-	CoreDB    *db2.Repo
+	CoreDB *db2.Repo
 
 	Metrics *IngesterMetrics
 
@@ -57,10 +57,10 @@ func (c *Cursor) LedgerCloseTime() time.Time {
 // LedgerBundle represents a single ledger's worth of novelty created by one
 // ledger close
 type LedgerBundle struct {
-	Sequence            int32
-	Header              core.LedgerHeader
-	TransactionFees     []core.TransactionFee
-	Transactions        []core.Transaction
+	Sequence        int32
+	Header          core.LedgerHeader
+	TransactionFees []core.TransactionFee
+	Transactions    []core.Transaction
 }
 
 // System represents the data ingestion subsystem of horizon.
@@ -109,10 +109,6 @@ type Session struct {
 	//
 	// Results fields
 	//
-
-	// Err is the error that caused this session to fail, if any.
-	Err error
-
 	// Ingested is the number of ledgers that were successfully ingested during
 	// this session.
 	Ingested int
@@ -151,8 +147,8 @@ func NewSession(paranoid bool, first, last int32, i *System) *Session {
 	return &Session{
 		Paranoid: paranoid,
 		Ingestion: &ingestion.Ingestion{
-			DB:       hdb,
-			CoreDB:   coredb,
+			DB:     hdb,
+			CoreDB: coredb,
 		},
 
 		Cursor: &Cursor{

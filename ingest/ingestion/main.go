@@ -19,7 +19,6 @@ type Ingestion struct {
 	operations               sq.InsertBuilder
 	operation_participants   sq.InsertBuilder
 	recovery_requests        sq.InsertBuilder
-	payment_requests         sq.InsertBuilder
 	balances                 sq.InsertBuilder
 	trades                   sq.InsertBuilder
 	priceHistory             sq.InsertBuilder

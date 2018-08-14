@@ -21,8 +21,7 @@ func (is *Session) operationChanges(changes xdr.LedgerEntryChanges) error {
 			// nothing to do here
 		}
 		if err != nil {
-			is.log.Error("Failed to process operation changes")
-			return err
+			return errors.Wrap(err, "failed to process operation changes")
 		}
 
 		err = is.ledgerChanges(i, changes[i])

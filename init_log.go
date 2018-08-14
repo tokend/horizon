@@ -28,8 +28,6 @@ const (
 // initLog initialized the logging subsystem, attaching app.log and
 // app.logMetrics.  It also configured the logger's level using Config.LogLevel.
 func initLog(app *App) {
-	log.DefaultLogger.Logger.Level = app.config.LogLevel
-	log.DefaultLogger = log.DefaultLogger.WithField("host", app.config.Hostname)
 
 	if app.config.LogToJSON {
 		log.DefaultLogger.Entry.Logger.Formatter = &logrus.JSONFormatter{}
@@ -51,15 +49,13 @@ func initLog(app *App) {
 		log.SlowQueryBound = *app.config.SlowQueryBound
 	}
 	entry := logan.New()
-	level := app.config.SentryLogLevel
-	if level == "" {
-		level = defaultLogLevel
-	}
-	lvl, err := logan.ParseLevel(level)
+	entry, err := addSentryHook(app.config, entry)
 	if err != nil {
-		errors.Wrap(err, "Failed to parse log level")
+		errors.Wrap(err, "Failed to add Sentry hook")
 	}
-	entry = entry.Level(lvl)
+	log.DefaultLogger.Entry = *entry
+	log.DefaultLogger.Logger.Level = app.config.LogLevel
+	log.DefaultLogger = log.DefaultLogger.WithField("host", app.config.Hostname)
 
 	entry, err = addSentryHook(app.config, entry)
 	if err != nil {
@@ -75,6 +71,15 @@ func init() {
 
 func addSentryHook(config config.Config, entry *logan.Entry) (*logan.Entry, error) {
 	sentry := config.SentryDSN
+	lvl := config.SentryLogLevel
+	if lvl == "" {
+		lvl = defaultLogLevel
+	}
+	level, err := logrus.ParseLevel(lvl)
+	if err != nil {
+		errors.Wrap(err, "Failed to parse log level")
+	}
+
 	if sentry == "" {
 		return entry, nil
 	}
@@ -108,8 +113,7 @@ func addSentryHook(config config.Config, entry *logan.Entry) (*logan.Entry, erro
 	})
 
 	hook.StacktraceConfiguration.Enable = true
-	// TODO Consider using log level from config
-	hook.StacktraceConfiguration.Level = logrus.WarnLevel
+	hook.StacktraceConfiguration.Level = level
 	hook.StacktraceConfiguration.Context = NLinesAroundErrorPoint
 	hook.Timeout = 3 * time.Second
 	hook.AddExtraFilter("status_code", func(v interface{}) interface{} {
