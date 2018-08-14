@@ -4,12 +4,12 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources"
+	"gitlab.com/tokend/regources/valueflag"
 )
 
 type KeyValue struct {
 	Key         string         `json:"key"`
-	Type        regources.Flag `json:"type,omitempty"`
+	Type        valueflag.Flag `json:"type,omitempty"`
 	Ui32Value   *uint32        `json:"ui32_value,omitempty"`
 	StringValue *string        `json:"string_value,omitempty"`
 }

@@ -8,6 +8,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources/reviewablerequest2"
 )
 
 type ReviewableRequestDetails struct {
@@ -88,22 +89,17 @@ type WithdrawalRequest struct {
 }
 
 type SaleRequest struct {
-	BaseAsset           string                 `json:"base_asset"`
-	DefaultQuoteAsset   string                 `json:"quote_asset"`
-	StartTime           time.Time              `json:"start_time"`
-	EndTime             time.Time              `json:"end_time"`
-	SoftCap             string                 `json:"soft_cap"`
-	HardCap             string                 `json:"hard_cap"`
-	Details             map[string]interface{} `json:"details"`
-	QuoteAssets         []SaleQuoteAsset       `json:"quote_assets"`
-	SaleType            xdr.SaleType           `json:"sale_type"`
-	BaseAssetForHardCap string                 `json:"base_asset_for_hard_cap"`
-	State               xdr.SaleState          `json:"state"`
-}
-
-type SaleQuoteAsset struct {
-	QuoteAsset string `json:"quote_asset"`
-	Price      string `json:"price"`
+	BaseAsset           string                              `json:"base_asset"`
+	DefaultQuoteAsset   string                              `json:"quote_asset"`
+	StartTime           time.Time                           `json:"start_time"`
+	EndTime             time.Time                           `json:"end_time"`
+	SoftCap             string                              `json:"soft_cap"`
+	HardCap             string                              `json:"hard_cap"`
+	Details             map[string]interface{}              `json:"details"`
+	QuoteAssets         []reviewablerequest2.SaleQuoteAsset `json:"quote_assets"`
+	SaleType            xdr.SaleType                        `json:"sale_type"`
+	BaseAssetForHardCap string                              `json:"base_asset_for_hard_cap"`
+	State               xdr.SaleState                       `json:"state"`
 }
 
 type LimitsUpdateRequest struct {

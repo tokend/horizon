@@ -6,13 +6,14 @@ import (
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
 	"gitlab.com/tokend/regources"
+	"gitlab.com/tokend/regources/reviewablerequest2"
 )
 
 type ContractShowAction struct {
 	Action
 	ContractID      int64
 	ContractRecord  regources.Contract
-	InvoicesRecords []reviewablerequest.ReviewableRequest
+	InvoicesRecords []reviewablerequest2.ReviewableRequest
 }
 
 // JSON is a method for actions.JSON
@@ -56,13 +57,14 @@ func (action *ContractShowAction) loadRecords() {
 	}
 
 	for _, invoice := range invoices {
-		var res reviewablerequest.ReviewableRequest
-		err := res.Populate(&invoice)
+		res, err := reviewablerequest.PopulateReviewableRequest(&invoice)
 		if err != nil {
 			action.Log.WithError(err).Error("Failed to populate invoice request")
 			action.Err = &problem.ServerError
 			return
 		}
-		action.InvoicesRecords = append(action.InvoicesRecords, res)
+		if res != nil {
+			action.InvoicesRecords = append(action.InvoicesRecords, *res)
+		}
 	}
 }

@@ -2,19 +2,16 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/regources/reviewablerequest2"
 )
 
-type IssuanceRequest struct {
-	Asset    string `json:"asset"`
-	Amount   string `json:"amount"`
-	Receiver string `json:"receiver"`
-	ExternalDetails map[string]interface{} `json:"external_details"`
-}
-
-func (r *IssuanceRequest) Populate(histRequest history.IssuanceRequest) error {
+func PopulateIssuanceRequest(histRequest history.IssuanceRequest) (
+	r *reviewablerequest2.IssuanceRequest, err error,
+) {
+	r = &reviewablerequest2.IssuanceRequest{}
 	r.Asset = histRequest.Asset
 	r.Amount = histRequest.Amount
 	r.Receiver = histRequest.Receiver
 	r.ExternalDetails = histRequest.ExternalDetails
-	return nil
+	return
 }

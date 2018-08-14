@@ -11,6 +11,7 @@ import (
 	"gitlab.com/swarmfund/horizon/utf8"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources/reviewablerequest2"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -181,9 +182,9 @@ func getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
 }
 
 func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
-	var quoteAssets []history.SaleQuoteAsset
+	var quoteAssets []reviewablerequest2.SaleQuoteAsset
 	for i := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, history.SaleQuoteAsset{
+		quoteAssets = append(quoteAssets, reviewablerequest2.SaleQuoteAsset{
 			Price:      amount.StringU(uint64(request.QuoteAssets[i].Price)),
 			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
 		})

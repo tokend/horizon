@@ -9,6 +9,7 @@ import (
 	"gitlab.com/swarmfund/horizon/resource/base"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/regources"
+	"gitlab.com/tokend/regources/valueflag"
 	"golang.org/x/net/context"
 )
 
@@ -24,7 +25,7 @@ type Account struct {
 	HistoryAccount
 	IsBlocked     bool              `json:"is_blocked"`
 	BlockReasonsI int32             `json:"block_reasons_i"`
-	BlockReasons  []regources.Flag  `json:"block_reasons"`
+	BlockReasons  []valueflag.Flag  `json:"block_reasons"`
 	AccountTypeI  int32             `json:"account_type_i"`
 	AccountType   string            `json:"account_type"`
 	Referrer      string            `json:"referrer"`

@@ -1,4 +1,4 @@
-package regources
+package valueflag
 
 // Flag represents one value of binary mask
 type Flag struct {

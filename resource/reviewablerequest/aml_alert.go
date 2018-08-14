@@ -2,17 +2,15 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/regources/reviewablerequest2"
 )
 
-type AmlAlertRequest struct {
-	BalanceID string `json:"balance_id"`
-	Amount    string `json:"amount"`
-	Reason    string `json:"reason"`
-}
-
-func (r *AmlAlertRequest) Populate(histRequest history.AmlAlertRequest) (error) {
-	r.BalanceID = histRequest.BalanceID
-	r.Amount = histRequest.Amount
-	r.Reason = histRequest.Reason
-	return nil
+func PopulateAmlAlertRequest(histRequest history.AmlAlertRequest) (
+	*reviewablerequest2.AmlAlertRequest, error,
+) {
+	return &reviewablerequest2.AmlAlertRequest{
+		BalanceID: histRequest.BalanceID,
+		Amount:    histRequest.Amount,
+		Reason:    histRequest.Reason,
+	}, nil
 }

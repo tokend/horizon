@@ -102,14 +102,13 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 
 func (action *ReviewableRequestIndexAction) loadPage() {
 	for i := range action.Records {
-		var res reviewablerequest.ReviewableRequest
-		err := res.Populate(&action.Records[i])
+		res, err := reviewablerequest.PopulateReviewableRequest(&action.Records[i])
 		if err != nil {
 			action.Log.WithError(err).Error("Failed to populate reviewable request")
 			action.Err = &problem.ServerError
 			return
 		}
-		action.Page.Add(&res)
+		action.Page.Add(res)
 	}
 
 	action.Page.BaseURL = action.BaseURL()

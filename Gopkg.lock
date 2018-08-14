@@ -496,11 +496,15 @@
 
 [[projects]]
   branch = "feature/manage_invoice"
-  digest = "1:b926b9657b2a6baa4caf409d295f29418c9871a89693af4148e8adf8db9b3e02"
+  digest = "1:6fcc033bd30a688104f3a3f46da9817fdc021eef9870895d146cc41e083af403"
   name = "gitlab.com/tokend/regources"
-  packages = ["."]
+  packages = [
+    ".",
+    "reviewablerequest2",
+    "valueflag",
+  ]
   pruneopts = ""
-  revision = "3ae5a34ecc66e71ec4183a314cdeff73c1188a58"
+  revision = "10b8d24e688565b4737efb39e6a009f38a8b1922"
 
 [[projects]]
   branch = "master"
@@ -653,6 +657,8 @@
     "gitlab.com/tokend/go/strkey",
     "gitlab.com/tokend/go/xdr",
     "gitlab.com/tokend/regources",
+    "gitlab.com/tokend/regources/reviewablerequest2",
+    "gitlab.com/tokend/regources/valueflag",
     "golang.org/x/net/context",
     "golang.org/x/net/http2",
     "golang.org/x/time/rate",

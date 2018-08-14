@@ -1,14 +1,18 @@
 package reviewablerequest
 
-import "gitlab.com/swarmfund/horizon/db2/history"
+import (
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/regources/reviewablerequest2"
+)
 
-type PromotionUpdateRequest struct {
-	SaleID           uint64              `json:"sale_id"`
-	NewPromotionData SaleCreationRequest `json:"new_promotion_data"`
-}
-
-func (r *PromotionUpdateRequest) Populate(histRequest history.PromotionUpdateRequest) error {
+func PopulatePromotionUpdateRequest(histRequest history.PromotionUpdateRequest) (
+	r *reviewablerequest2.PromotionUpdateRequest, err error,
+) {
+	r = &reviewablerequest2.PromotionUpdateRequest{}
 	r.SaleID = histRequest.SaleID
-	r.NewPromotionData.Populate(histRequest.NewPromotionData)
-	return nil
+	newPromotionData, err := PopulateSaleCreationRequest(histRequest.NewPromotionData)
+	if newPromotionData != nil {
+		r.NewPromotionData = *newPromotionData
+	}
+	return
 }
