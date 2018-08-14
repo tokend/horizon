@@ -103,7 +103,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "fix/payment_v2_dest_account_validation"
+  branch = "feature/update_voting"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
