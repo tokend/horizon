@@ -4,13 +4,13 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/resource/base"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateAssetUpdateRequest(histRequest history.AssetUpdateRequest) (
-	*reviewablerequest2.AssetUpdateRequest, error,
+	*regources.AssetUpdateRequest, error,
 ) {
-	return &reviewablerequest2.AssetUpdateRequest{
+	return &regources.AssetUpdateRequest{
 		Code:     histRequest.Asset,
 		Policies: base.FlagFromXdrAssetPolicy(histRequest.Policies, xdr.AssetPolicyAll),
 		Details:  histRequest.Details,

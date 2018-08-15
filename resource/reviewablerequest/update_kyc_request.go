@@ -2,13 +2,13 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateUpdateKYCRequest(histRequest history.UpdateKYCRequest) (
-	r *reviewablerequest2.UpdateKYCRequest, err error,
+	r *regources.UpdateKYCRequest, err error,
 ) {
-	r = &reviewablerequest2.UpdateKYCRequest{}
+	r = &regources.UpdateKYCRequest{}
 	r.AccountToUpdateKYC = histRequest.AccountToUpdateKYC
 	r.AccountTypeToSet = int32(histRequest.AccountTypeToSet)
 	r.KYCLevel = histRequest.KYCLevel

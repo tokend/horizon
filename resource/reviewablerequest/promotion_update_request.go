@@ -2,13 +2,13 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulatePromotionUpdateRequest(histRequest history.PromotionUpdateRequest) (
-	r *reviewablerequest2.PromotionUpdateRequest, err error,
+	r *regources.PromotionUpdateRequest, err error,
 ) {
-	r = &reviewablerequest2.PromotionUpdateRequest{}
+	r = &regources.PromotionUpdateRequest{}
 	r.SaleID = histRequest.SaleID
 	newPromotionData, err := PopulateSaleCreationRequest(histRequest.NewPromotionData)
 	if newPromotionData != nil {

@@ -2,13 +2,13 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateSaleCreationRequest(histRequest history.SaleRequest) (
-	r *reviewablerequest2.SaleCreationRequest, err error,
+	r *regources.SaleCreationRequest, err error,
 ) {
-	r = &reviewablerequest2.SaleCreationRequest{}
+	r = &regources.SaleCreationRequest{}
 	r.BaseAsset = histRequest.BaseAsset
 	r.DefaultQuoteAsset = histRequest.DefaultQuoteAsset
 	r.StartTime = histRequest.StartTime

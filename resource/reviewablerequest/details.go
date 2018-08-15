@@ -4,13 +4,13 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateDetails(requestType xdr.ReviewableRequestType, h history.ReviewableRequestDetails) (
-	d *reviewablerequest2.Details, err error,
+	d *regources.Details, err error,
 ) {
-	d = &reviewablerequest2.Details{}
+	d = &regources.Details{}
 	d.RequestType = PopulateRequestType(requestType)
 	switch requestType {
 	case xdr.ReviewableRequestTypeAssetCreate:

@@ -10,7 +10,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/regources/valueflag"
+	"gitlab.com/tokend/regources"
 )
 
 type Sale struct {
@@ -24,13 +24,13 @@ type Sale struct {
 	SoftCap           string                 `json:"soft_cap"`
 	HardCap           string                 `json:"hard_cap"`
 	Details           map[string]interface{} `json:"details"`
-	State             valueflag.Flag         `json:"state"`
+	State             regources.Flag         `json:"state"`
 	Statistics        SaleStatistics         `json:"statistics"`
 	QuoteAssets       history.QuoteAssets    `json:"quote_assets"`
 	BaseHardCap       string                 `json:"base_hard_cap"`
 	BaseCurrentCap    string                 `json:"base_current_cap"`
 	CurrentCap        string                 `json:"current_cap"`
-	SaleType          valueflag.Flag         `json:"sale_type"`
+	SaleType          regources.Flag         `json:"sale_type"`
 }
 
 type SaleStatistics struct {

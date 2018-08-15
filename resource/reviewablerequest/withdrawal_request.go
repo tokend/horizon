@@ -2,13 +2,13 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateWithdrawalRequest(histRequest history.WithdrawalRequest) (
-	r *reviewablerequest2.WithdrawalRequest, err error,
+	r *regources.WithdrawalRequest, err error,
 ) {
-	r = &reviewablerequest2.WithdrawalRequest{}
+	r = &regources.WithdrawalRequest{}
 	r.BalanceID = histRequest.BalanceID
 	r.Amount = histRequest.Amount
 	r.FixedFee = histRequest.FixedFee

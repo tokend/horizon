@@ -2,13 +2,13 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateAmlAlertRequest(histRequest history.AmlAlertRequest) (
-	*reviewablerequest2.AmlAlertRequest, error,
+	*regources.AmlAlertRequest, error,
 ) {
-	return &reviewablerequest2.AmlAlertRequest{
+	return &regources.AmlAlertRequest{
 		BalanceID: histRequest.BalanceID,
 		Amount:    histRequest.Amount,
 		Reason:    histRequest.Reason,

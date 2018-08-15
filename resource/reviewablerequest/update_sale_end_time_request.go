@@ -2,13 +2,13 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateUpdateSaleEndTimeRequest(histRequest history.UpdateSaleEndTimeRequest) (
-	r *reviewablerequest2.UpdateSaleEndTimeRequest, err error,
+	r *regources.UpdateSaleEndTimeRequest, err error,
 ) {
-	r = &reviewablerequest2.UpdateSaleEndTimeRequest{}
+	r = &regources.UpdateSaleEndTimeRequest{}
 	r.SaleID = histRequest.SaleID
 	r.NewEndTime = histRequest.NewEndTime
 	return

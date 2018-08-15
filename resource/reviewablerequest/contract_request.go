@@ -2,13 +2,13 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateContractRequest(histRequest history.ContractRequest) (
-	*reviewablerequest2.ContractRequest, error,
+	*regources.ContractRequest, error,
 ) {
-	return &reviewablerequest2.ContractRequest{
+	return &regources.ContractRequest{
 		Escrow:    histRequest.Escrow,
 		Details:   histRequest.Details,
 		StartTime: histRequest.StartTime,

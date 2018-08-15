@@ -4,7 +4,7 @@ import (
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/resource/base"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources/valueflag"
+	"gitlab.com/tokend/regources"
 )
 
 // Signer represents one of an account's signers.
@@ -12,7 +12,7 @@ type Signer struct {
 	PublicKey      string           `json:"public_key"`
 	Weight         int32            `json:"weight"`
 	SignerTypeI    int32            `json:"signer_type_i"`
-	SignerTypes    []valueflag.Flag `json:"signer_types"`
+	SignerTypes    []regources.Flag `json:"signer_types"`
 	SignerIdentity int32            `json:"signer_identity"`
 	SignerName     string           `json:"signer_name"`
 }

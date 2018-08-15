@@ -6,13 +6,13 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/tokend/regources/reviewablerequest2"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateReviewableRequest(request *history.ReviewableRequest) (
-	r *reviewablerequest2.ReviewableRequest, err error,
+	r *regources.ReviewableRequest, err error,
 ) {
-	r = &reviewablerequest2.ReviewableRequest{}
+	r = &regources.ReviewableRequest{}
 	r.ID = strconv.FormatInt(request.ID, 10)
 	r.PT = request.PagingToken()
 	r.Requestor = request.Requestor
