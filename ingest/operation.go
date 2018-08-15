@@ -164,7 +164,6 @@ func (is *Session) operation() error {
 		if err != nil {
 			return errors.Wrap(err, "failed to handle manage sale")
 		}
-		//fixme three cases
 	case xdr.OperationTypeManageInvoiceRequest:
 		err = is.processManageInvoiceRequest(is.Cursor.Operation().Body.MustManageInvoiceRequestOp(),
 			is.Cursor.OperationResult().MustManageInvoiceRequestResult())

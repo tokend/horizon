@@ -7,6 +7,7 @@ import (
 	"gitlab.com/tokend/regources/valueflag"
 )
 
+// Contract represents singe contract entry with attached invoices
 type Contract struct {
 	ID            string                                 `json:"id"`
 	PT            string                                 `json:"paging_token"`
