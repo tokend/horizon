@@ -8,6 +8,8 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
+// ContractShowAction represents singe contract by id
+// with invoices requests
 type ContractShowAction struct {
 	Action
 	ContractID     int64

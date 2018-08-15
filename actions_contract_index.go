@@ -8,6 +8,9 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
+// ContractIndexAction renders a page of contracts
+// filters by startTime, endTime, disputing state,
+// contractorID, customerID
 type ContractIndexAction struct {
 	Action
 	PagingParams     db2.PageQuery

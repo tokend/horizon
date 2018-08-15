@@ -168,12 +168,6 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
-	Convey("Manage invoice request", t, func() {
-		for _, code := range xdr.ManageInvoiceRequestResultCodeAll {
-			checkCode(t, code)
-		}
-	})
-
 	Convey("Manage contract request", t, func() {
 		for _, code := range xdr.ManageContractRequestResultCodeAll {
 			checkCode(t, code)

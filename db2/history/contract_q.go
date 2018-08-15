@@ -23,14 +23,23 @@ var selectContracts = sq.Select(
 ).From("history_contracts hc")
 
 type ContractsQI interface {
+	// ByStartTime - filters contracts by start time
 	ByStartTime(seconds int64) ContractsQI
+	// ByEndTime - filters contracts by end time
 	ByEndTime(seconds int64) ContractsQI
+	// ByDisputeState - filters contracts by dispute state
 	ByDisputeState(isDisputing bool) ContractsQI
+	// ByContractorID - filters contracts by contractor id
 	ByContractorID(contractorID string) ContractsQI
+	// ByCustomerID - filters contracts by customer id
 	ByCustomerID(customerID string) ContractsQI
+	// Page - applies page params
 	Page(page db2.PageQuery) ContractsQI
+	// Select - selects contract by specifics filters
 	Select() ([]Contract, error)
+	// ByID - get contract by contract id
 	ByID(id int64) (Contract, error)
+	// Update - update contract
 	Update(contract Contract) error
 }
 
