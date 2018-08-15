@@ -202,11 +202,11 @@ func (is *Session) processContractLedgerChanges(isDisputeStart, isRevert *bool) 
 			if *isRevert {
 				return is.updateInvoicesContractStates(contract,
 					history.ReviewableRequestStatePermanentlyRejected,
-					int32(xdr.ContractStateRevertResolve),
+					int32(xdr.ContractStateRevertingResolve),
 				)
 			}
 
-			contract.State |= int32(xdr.ContractStateNotRevertResolve)
+			contract.State |= int32(xdr.ContractStateNotRevertingResolve)
 			err = is.Ingestion.HistoryQ().Contracts().Update(contract)
 			if err != nil {
 				return errors.Wrap(err, "failed to update contract state")
