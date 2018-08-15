@@ -11,6 +11,7 @@ import (
 
 type OrderBookAction struct {
 	Action
+	OwnerID     string
 	BaseAsset   string
 	QuoteAsset  string
 	IsBuy       bool
@@ -36,6 +37,7 @@ func (action *OrderBookAction) loadParams() {
 	action.BaseAsset = action.GetNonEmptyString("base_asset")
 	action.QuoteAsset = action.GetNonEmptyString("quote_asset")
 	action.OrderBookID = action.GetOptionalUint64("order_book_id")
+	action.OwnerID = action.GetString("owner_id")
 	action.IsBuy = action.GetBool("is_buy")
 	action.Page.Filters = map[string]string{
 		"base_asset":    action.BaseAsset,
@@ -46,6 +48,11 @@ func (action *OrderBookAction) loadParams() {
 }
 
 func (action *OrderBookAction) checkIsSigned() {
+	if action.OwnerID != "" {
+		action.IsAllowed(action.OwnerID)
+		return
+	}
+
 	if action.Signer != "" {
 		action.isAllowed(action.Signer)
 	}
@@ -71,7 +78,7 @@ func (action *OrderBookAction) loadRecords() {
 	for i := range action.CoreRecords {
 		var result resource.OrderBookEntry
 		result.Populate(&action.CoreRecords[i].OrderBookEntry, action.BaseAsset, action.QuoteAsset, action.IsBuy)
-		if action.IsAdmin {
+		if action.IsAdmin || action.OwnerID == action.CoreRecords[i].OwnerID {
 			result.OfferID = action.CoreRecords[i].OfferID
 			result.OwnerID = action.CoreRecords[i].OwnerID
 		}

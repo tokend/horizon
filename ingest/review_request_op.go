@@ -5,9 +5,9 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func isFulfilled(res xdr.ReviewRequestResultSuccess) bool {
@@ -19,12 +19,8 @@ func isFulfilled(res xdr.ReviewRequestResultSuccess) bool {
 }
 
 func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
-	changes xdr.LedgerEntryChanges) {
-	if is.Err != nil {
-		return
-	}
+	changes xdr.LedgerEntryChanges) (err error) {
 
-	var err error
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
 		err = is.approveReviewableRequest(op, res, changes)
@@ -39,10 +35,11 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, res xdr.ReviewRe
 	}
 
 	if err != nil {
-		is.Err = errors.Wrap(err, "failed to process review request", map[string]interface{}{
+		return errors.Wrap(err, "failed to process review request", map[string]interface{}{
 			"request_id": uint64(op.RequestId),
 		})
 	}
+	return nil
 }
 
 func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {

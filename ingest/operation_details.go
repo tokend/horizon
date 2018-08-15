@@ -6,9 +6,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
+	"gitlab.com/swarmfund/horizon/utf8"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/utf8"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -321,8 +321,14 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["source_sent_universal"] = amount.StringU(uint64(opResult.SourceSentUniversal))
 	case xdr.OperationTypeManageSale:
 		op := c.Operation().Body.MustManageSaleOp()
+		opRes := c.OperationResult().MustManageSaleResult().MustSuccess()
 		details["sale_id"] = uint64(op.SaleId)
 		details["action"] = op.Data.Action.ShortString()
+
+		fulfilled, ok := opRes.Ext.GetFulfilled()
+		if ok {
+			details["fulfilled"] = fulfilled
+		}
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

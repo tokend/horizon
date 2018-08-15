@@ -7,6 +7,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/render/sse"
 	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/tokend/regources"
 )
 
 // This file contains the actions:
@@ -60,8 +61,7 @@ func (action *TransactionIndexAction) SSE(stream sse.Stream) {
 			records := action.Records[:]
 
 			for _, record := range records {
-				var res resource.Transaction
-				res.Populate(action.Ctx, record)
+				res := resource.PopulateTransaction(record)
 				stream.Send(sse.Event{
 					ID:   res.PagingToken(),
 					Data: res,
@@ -128,8 +128,7 @@ func (action *TransactionIndexAction) loadRecords() {
 
 func (action *TransactionIndexAction) loadPage() {
 	for _, record := range action.Records {
-		var res resource.Transaction
-		res.Populate(action.Ctx, record)
+		res := resource.PopulateTransaction(record)
 		action.Page.Add(res)
 	}
 
@@ -157,7 +156,7 @@ type TransactionShowAction struct {
 	Action
 	HashOrID string
 	Record   history.Transaction
-	Resource resource.Transaction
+	Resource regources.Transaction
 }
 
 func (action *TransactionShowAction) loadParams() {
@@ -169,7 +168,7 @@ func (action *TransactionShowAction) loadRecord() {
 }
 
 func (action *TransactionShowAction) loadResource() {
-	action.Resource.Populate(action.Ctx, action.Record)
+	action.Resource = resource.PopulateTransaction(action.Record)
 }
 
 // JSON is a method for actions.JSON

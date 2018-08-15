@@ -1,9 +1,12 @@
 package ingest
 
 import (
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"fmt"
+
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationResult *xdr.OperationResultTr) (history.OperationState, uint64) {
@@ -65,20 +68,15 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 	}
 }
 
-func (is *Session) operation() {
-	if is.Err != nil {
-		return
-	}
+func (is *Session) operation() error {
 
 	err := is.operationChanges(is.Cursor.OperationChanges())
 	if err != nil {
-		is.log.WithError(err).Error("Failed to process operation changes")
-		is.Err = err
-		return
+		return errors.Wrap(err, "failed to process operation changes")
 	}
 
 	state, operationIdentifier := getStateIdentifier(is.Cursor.OperationType(), is.Cursor.Operation(), is.Cursor.OperationResult())
-	is.Err = is.Ingestion.Operation(
+	err = is.Ingestion.Operation(
 		is.Cursor.OperationID(),
 		is.Cursor.TransactionID(),
 		is.Cursor.OperationOrder(),
@@ -89,53 +87,111 @@ func (is *Session) operation() {
 		operationIdentifier,
 		state,
 	)
-	if is.Err != nil {
-		return
+	if err != nil {
+		return errors.Wrap(err, "failed to ingest operation")
 	}
 
-	is.ingestOperationParticipants()
+	err = is.ingestOperationParticipants()
+	if err != nil {
+		return errors.Wrap(err, "failed to ingest operation participants")
+	}
 	switch is.Cursor.OperationType() {
 	case xdr.OperationTypePayment:
-		is.processPayment(is.Cursor.Operation().Body.MustPaymentOp(), is.Cursor.OperationSourceAccount(),
+		err = is.processPayment(is.Cursor.Operation().Body.MustPaymentOp(), is.Cursor.OperationSourceAccount(),
 			*is.Cursor.OperationResult().MustPaymentResult().PaymentResponse)
+		if err != nil {
+			return errors.Wrap(err, "failed to process payment")
+		}
+
 	case xdr.OperationTypeReviewPaymentRequest:
-		is.updateIngestedPaymentRequest(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount())
-		is.updateIngestedPayment(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
+		err = is.updateIngestedPaymentRequest(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount())
+		if err != nil {
+			return errors.Wrap(err, "failed to update ingested payment request")
+		}
+
+		err = is.updateIngestedPayment(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
+		if err != nil {
+			return errors.Wrap(err, "failed to update ingested payment")
+		}
+
 	case xdr.OperationTypeDirectDebit:
 		opDirectDebit := is.Cursor.Operation().Body.MustDirectDebitOp()
-		is.processPayment(opDirectDebit.PaymentOp,
+		err = is.processPayment(opDirectDebit.PaymentOp,
 			opDirectDebit.From,
 			is.Cursor.OperationResult().MustDirectDebitResult().MustSuccess().PaymentResponse)
+		if err != nil {
+			return errors.Wrap(err, "failed to process payment")
+		}
+
 	case xdr.OperationTypeManageOffer:
 		op := is.Cursor.Operation().Body.MustManageOfferOp()
 		opResult := is.Cursor.OperationResult().MustManageOfferResult().MustSuccess()
-		is.storeTrades(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OrderBookId), opResult)
+		err = is.storeTrades(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OrderBookId), opResult)
+		if err != nil {
+			return errors.Wrap(err, "failed to store trades")
+		}
 
 		offerIsCancelled := op.OfferId != 0 && op.Amount == 0
 		if offerIsCancelled {
-			is.updateOfferState(uint64(op.OfferId), uint64(history.OperationStateCanceled))
-			return
+			err = is.updateOfferState(uint64(op.OfferId), uint64(history.OperationStateCanceled))
+			if err != nil {
+				return errors.Wrap(err, "failed to update offer state")
+			}
+			return nil
 		}
-		is.processManageOfferLedgerChanges(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
+
+		err = is.processManageOfferLedgerChanges(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
+		if err != nil {
+			return errors.Wrap(err, "failed to process manage offer ledger changes")
+		}
+
 	case xdr.OperationTypeManageInvoice:
-		is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
+		err = is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
 			is.Cursor.OperationResult().MustManageInvoiceResult())
+		if err != nil {
+			return errors.Wrap(err, "failed to process manage invoice operation")
+		}
+
 	case xdr.OperationTypeReviewRequest:
-		is.processReviewRequest(is.Cursor.Operation().Body.MustReviewRequestOp(),
-			is.Cursor.OperationResult().MustReviewRequestResult().MustSuccess(), is.Cursor.OperationChanges())
+		err = is.processReviewRequest(
+			is.Cursor.Operation().Body.MustReviewRequestOp(),
+			is.Cursor.OperationResult().ReviewRequestResult.MustSuccess(),
+			is.Cursor.OperationChanges(),
+		)
+		if err != nil {
+			return errors.Wrap(err, "failed to process review request")
+		}
 	case xdr.OperationTypeManageAsset:
-		is.processManageAsset(is.Cursor.Operation().Body.ManageAssetOp)
+		err = is.processManageAsset(is.Cursor.Operation().Body.ManageAssetOp)
+		if err != nil {
+			return errors.Wrap(err, "failed to process manage asset operation")
+		}
+
 	case xdr.OperationTypeCheckSaleState:
 		success := *is.Cursor.OperationResult().MustCheckSaleStateResult().Success
-		is.handleCheckSaleState(success)
+		err = is.handleCheckSaleState(success)
+		if err != nil {
+			return errors.Wrap(err, "failed to handle check sale state")
+		}
+
 		if success.Effect.Effect == xdr.CheckSaleStateEffectClosed {
 			closed := success.Effect.SaleClosed
 			for i := range closed.Results {
-				is.storeTrades(uint64(success.SaleId), closed.Results[i].SaleDetails)
+				err = is.storeTrades(uint64(success.SaleId), closed.Results[i].SaleDetails)
+				if err != nil {
+					errors.Wrap(err, "failed to insert sale into db", logan.F{
+						"sale":         success.SaleId,
+						"sale results": closed.Results[i],
+					})
+				}
 			}
 		}
 	case xdr.OperationTypeManageSale:
 		opManageSale := is.Cursor.Operation().Body.MustManageSaleOp()
-		is.handleManageSale(&opManageSale)
+		err = is.handleManageSale(&opManageSale)
+		if err != nil {
+			return errors.Wrap(err, "failed to handle manage sale")
+		}
 	}
+	return nil
 }
