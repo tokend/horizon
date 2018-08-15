@@ -4,27 +4,35 @@ import "time"
 
 // Represents Reviewable request
 type ReviewableRequest struct {
-	ID           string   `json:"id"`
-	PT           string   `json:"paging_token"`
-	Requestor    string   `json:"requestor"`
-	Reviewer     string   `json:"reviewer"`
-	Reference    *string  `json:"reference"`
-	RejectReason string   `json:"reject_reason"`
-	Hash         string   `json:"hash"`
-	Details      *Details `json:"details"`
-	CreatedAt    string   `json:"created_at"`
-	UpdatedAt    string   `json:"updated_at"`
-	RequestState
+	ID           string                    `json:"id"`
+	PT           string                    `json:"paging_token"`
+	Requestor    string                    `json:"requestor"`
+	Reviewer     string                    `json:"reviewer"`
+	Reference    *string                   `json:"reference"`
+	RejectReason string                    `json:"reject_reason"`
+	Hash         string                    `json:"hash"`
+	Details      *ReviewableRequestDetails `json:"details"`
+	CreatedAt    time.Time                 `json:"created_at"`
+	UpdatedAt    time.Time                 `json:"updated_at"`
+
+	// RequestStateI  - integer representation of request state
+	StateI int32 `json:"request_state_i"`
+	// RequestState  - string representation of request state
+	State string `json:"request_state"`
 }
 
 func (r *ReviewableRequest) PagingToken() string {
 	return r.PT
 }
 
-// Details - provides specific for request type details.
+// ReviewableRequestDetails - provides specific for request type details.
 // Note: json key of specific request must be equal to xdr.ReviewableRequestType.ShortString result
-type Details struct {
-	RequestType
+type ReviewableRequestDetails struct {
+	// RequestTypeI  - integer representation of request type
+	TypeI int32 `json:"request_type_i"`
+	// RequestType  - string representation of request type
+	Type string `json:"request_type"`
+
 	AssetCreation          *AssetCreationRequest     `json:"asset_create,omitempty"`
 	AssetUpdate            *AssetUpdateRequest       `json:"asset_update,omitempty"`
 	PreIssuanceCreate      *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
@@ -44,7 +52,7 @@ type Details struct {
 
 type AMLAlertRequest struct {
 	BalanceID string `json:"balance_id"`
-	Amount    string `json:"amount"`
+	Amount    Amount `json:"amount"`
 	Reason    string `json:"reason"`
 }
 
@@ -52,8 +60,8 @@ type AssetCreationRequest struct {
 	Code                   string                 `json:"code"`
 	Policies               []Flag                 `json:"policies"`
 	PreIssuedAssetSigner   string                 `json:"pre_issued_asset_signer"`
-	MaxIssuanceAmount      string                 `json:"max_issuance_amount"`
-	InitialPreissuedAmount string                 `json:"initial_preissued_amount"`
+	MaxIssuanceAmount      Amount                 `json:"max_issuance_amount"`
+	InitialPreissuedAmount Amount                 `json:"initial_preissued_amount"`
 	Details                map[string]interface{} `json:"details"`
 }
 
@@ -71,7 +79,7 @@ type ContractRequest struct {
 }
 
 type InvoiceRequest struct {
-	Amount     string                 `json:"amount"`
+	Amount     Amount                 `json:"amount"`
 	Asset      string                 `json:"asset"`
 	ContractID string                 `json:"contract_id,omitempty"`
 	Details    map[string]interface{} `json:"details"`
@@ -79,7 +87,7 @@ type InvoiceRequest struct {
 
 type IssuanceRequest struct {
 	Asset           string                 `json:"asset"`
-	Amount          string                 `json:"amount"`
+	Amount          Amount                 `json:"amount"`
 	Receiver        string                 `json:"receiver"`
 	ExternalDetails map[string]interface{} `json:"external_details"`
 }
@@ -91,7 +99,7 @@ type LimitsUpdateRequest struct {
 
 type PreIssuanceRequest struct {
 	Asset     string `json:"asset"`
-	Amount    string `json:"amount"`
+	Amount    Amount `json:"amount"`
 	Signature string `json:"signature"`
 	Reference string `json:"reference"`
 }
@@ -101,21 +109,6 @@ type PromotionUpdateRequest struct {
 	NewPromotionData SaleCreationRequest `json:"new_promotion_data"`
 }
 
-// RequestState - provides frontend friendly representation of history.ReviewableRequestState
-type RequestState struct {
-	// RequestStateI  - integer representation of request state
-	RequestStateI int32 `json:"request_state_i"`
-	// RequestState  - string representation of request state
-	RequestState string `json:"request_state"`
-}
-
-// RequestType - provides frontend friendly representation of ReviewableRequestType
-type RequestType struct {
-	// RequestTypeI  - integer representation of request type
-	RequestTypeI int32 `json:"request_type_i"`
-	// RequestType  - string representation of request type
-	RequestType string `json:"request_type"`
-}
 type SaleCreationRequest struct {
 	BaseAsset           string                 `json:"base_asset"`
 	DefaultQuoteAsset   string                 `json:"default_quote_asset"`
@@ -132,7 +125,7 @@ type SaleCreationRequest struct {
 
 type SaleQuoteAsset struct {
 	QuoteAsset string `json:"quote_asset"`
-	Price      string `json:"price"`
+	Price      Amount `json:"price"`
 }
 
 type UpdateKYCRequest struct {
@@ -158,12 +151,12 @@ type UpdateSaleEndTimeRequest struct {
 
 type WithdrawalRequest struct {
 	BalanceID              string                 `json:"balance_id"`
-	Amount                 string                 `json:"amount"`
-	FixedFee               string                 `json:"fixed_fee"`
-	PercentFee             string                 `json:"percent_fee"`
+	Amount                 Amount                 `json:"amount"`
+	FixedFee               Amount                 `json:"fixed_fee"`
+	PercentFee             Amount                 `json:"percent_fee"`
 	PreConfirmationDetails map[string]interface{} `json:"pre_confirmation_details"`
 	ExternalDetails        map[string]interface{} `json:"external_details"`
 	DestAssetCode          string                 `json:"dest_asset_code"`
-	DestAssetAmount        string                 `json:"dest_asset_amount"`
+	DestAssetAmount        Amount                 `json:"dest_asset_amount"`
 	ReviewerDetails        map[string]interface{} `json:"reviewer_details"`
 }
