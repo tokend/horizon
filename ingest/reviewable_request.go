@@ -338,13 +338,13 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 			return details, errors.Wrap(err, "failed to get pre issuance request")
 		}
 	case xdr.ReviewableRequestTypeWithdraw:
-		details.Withdrawal = getWithdrawalRequest(body.WithdrawalRequest)
+		details.Withdraw = getWithdrawalRequest(body.WithdrawalRequest)
 	case xdr.ReviewableRequestTypeSale:
 		details.Sale = getSaleRequest(body.SaleCreationRequest)
 	case xdr.ReviewableRequestTypeLimitsUpdate:
 		details.LimitsUpdate = getLimitsUpdateRequest(body.LimitsUpdateRequest)
 	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
-		details.TwoStepWithdrawal = getWithdrawalRequest(body.TwoStepWithdrawalRequest)
+		details.TwoStepWithdraw = getWithdrawalRequest(body.TwoStepWithdrawalRequest)
 	case xdr.ReviewableRequestTypeAmlAlert:
 		details.AmlAlert = getAmlAlertRequest(body.AmlAlertRequest)
 	case xdr.ReviewableRequestTypeUpdateKyc:

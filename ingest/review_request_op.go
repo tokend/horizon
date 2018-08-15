@@ -109,10 +109,10 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 	}
 
 	var withdrawalDetails *history.WithdrawalRequest
-	if request.Details.Withdrawal != nil {
-		withdrawalDetails = request.Details.Withdrawal
-	} else if request.Details.TwoStepWithdrawal != nil {
-		withdrawalDetails = request.Details.TwoStepWithdrawal
+	if request.Details.Withdraw != nil {
+		withdrawalDetails = request.Details.Withdraw
+	} else if request.Details.TwoStepWithdraw != nil {
+		withdrawalDetails = request.Details.TwoStepWithdraw
 	} else {
 		return errors.New("Unexpected state: expected withdrawal details to be available")
 	}
