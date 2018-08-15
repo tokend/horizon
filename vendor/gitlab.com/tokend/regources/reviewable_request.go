@@ -1,7 +1,5 @@
 package regources
 
-import "time"
-
 // Represents Reviewable request
 type ReviewableRequest struct {
 	ID           string                    `json:"id"`
@@ -12,8 +10,8 @@ type ReviewableRequest struct {
 	RejectReason string                    `json:"reject_reason"`
 	Hash         string                    `json:"hash"`
 	Details      *ReviewableRequestDetails `json:"details"`
-	CreatedAt    time.Time                 `json:"created_at"`
-	UpdatedAt    time.Time                 `json:"updated_at"`
+	CreatedAt    Time                      `json:"created_at"`
+	UpdatedAt    Time                      `json:"updated_at"`
 
 	// RequestStateI  - integer representation of request state
 	StateI int32 `json:"request_state_i"`
@@ -29,9 +27,9 @@ func (r *ReviewableRequest) PagingToken() string {
 // Note: json key of specific request must be equal to xdr.ReviewableRequestType.ShortString result
 type ReviewableRequestDetails struct {
 	// RequestTypeI  - integer representation of request type
-	TypeI int32 `json:"request_type_i"`
+	RequestTypeI int32 `json:"request_type_i"`
 	// RequestType  - string representation of request type
-	Type string `json:"request_type"`
+	RequestType string `json:"request_type"`
 
 	AssetCreation          *AssetCreationRequest     `json:"asset_create,omitempty"`
 	AssetUpdate            *AssetUpdateRequest       `json:"asset_update,omitempty"`
@@ -74,8 +72,8 @@ type AssetUpdateRequest struct {
 type ContractRequest struct {
 	Escrow    string                 `json:"escrow"`
 	Details   map[string]interface{} `json:"details"`
-	StartTime time.Time              `json:"start_time"`
-	EndTime   time.Time              `json:"end_time"`
+	StartTime Time                   `json:"start_time"`
+	EndTime   Time                   `json:"end_time"`
 }
 
 type InvoiceRequest struct {
@@ -112,8 +110,8 @@ type PromotionUpdateRequest struct {
 type SaleCreationRequest struct {
 	BaseAsset           string                 `json:"base_asset"`
 	DefaultQuoteAsset   string                 `json:"default_quote_asset"`
-	StartTime           time.Time              `json:"start_time"`
-	EndTime             time.Time              `json:"end_time"`
+	StartTime           Time                   `json:"start_time"`
+	EndTime             Time                   `json:"end_time"`
 	SoftCap             string                 `json:"soft_cap"`
 	HardCap             string                 `json:"hard_cap"`
 	SaleType            Flag                   `json:"sale_type"`
@@ -145,8 +143,8 @@ type UpdateSaleDetailsRequest struct {
 }
 
 type UpdateSaleEndTimeRequest struct {
-	SaleID     uint64    `json:"sale_id"`
-	NewEndTime time.Time `json:"new_end_time"`
+	SaleID     uint64 `json:"sale_id"`
+	NewEndTime Time   `json:"new_end_time"`
 }
 
 type WithdrawalRequest struct {
