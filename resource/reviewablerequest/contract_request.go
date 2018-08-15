@@ -11,7 +11,7 @@ func PopulateContractRequest(histRequest history.ContractRequest) (
 	return &regources.ContractRequest{
 		Escrow:    histRequest.Escrow,
 		Details:   histRequest.Details,
-		StartTime: histRequest.StartTime,
-		EndTime:   histRequest.EndTime,
+		StartTime: regources.Time(histRequest.StartTime),
+		EndTime:   regources.Time(histRequest.EndTime),
 	}, nil
 }

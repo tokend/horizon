@@ -29,6 +29,6 @@ func PopulateOfferData(o core.Offer) regources.OfferData {
 		BaseAmount:     regources.Amount(o.BaseAmount),
 		QuoteAmount:    regources.Amount(o.QuoteAmount),
 		Price:          regources.Amount(o.Price),
-		CreatedAt:      time.Unix(o.CreatedAt, 0).UTC(),
+		CreatedAt:      regources.Time(time.Unix(o.CreatedAt, 0).UTC()),
 	}
 }

@@ -11,8 +11,8 @@ func PopulateSaleCreationRequest(histRequest history.SaleRequest) (
 	r = &regources.SaleCreationRequest{}
 	r.BaseAsset = histRequest.BaseAsset
 	r.DefaultQuoteAsset = histRequest.DefaultQuoteAsset
-	r.StartTime = histRequest.StartTime
-	r.EndTime = histRequest.EndTime
+	r.StartTime = regources.Time(histRequest.StartTime)
+	r.EndTime = regources.Time(histRequest.EndTime)
 	r.SoftCap = histRequest.SoftCap
 	r.HardCap = histRequest.HardCap
 	r.Details = histRequest.Details

@@ -185,7 +185,7 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 	var quoteAssets []regources.SaleQuoteAsset
 	for i := range request.QuoteAssets {
 		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
-			Price:      amount.StringU(uint64(request.QuoteAssets[i].Price)),
+			Price:      regources.Amount(int64(request.QuoteAssets[i].Price)),
 			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
 		})
 	}

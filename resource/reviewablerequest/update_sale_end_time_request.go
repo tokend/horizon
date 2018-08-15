@@ -10,6 +10,6 @@ func PopulateUpdateSaleEndTimeRequest(histRequest history.UpdateSaleEndTimeReque
 ) {
 	r = &regources.UpdateSaleEndTimeRequest{}
 	r.SaleID = histRequest.SaleID
-	r.NewEndTime = histRequest.NewEndTime
+	r.NewEndTime = regources.Time(histRequest.NewEndTime)
 	return
 }

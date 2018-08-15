@@ -8,10 +8,11 @@ import (
 )
 
 func PopulateDetails(requestType xdr.ReviewableRequestType, h history.ReviewableRequestDetails) (
-	d *regources.Details, err error,
+	d *regources.ReviewableRequestDetails, err error,
 ) {
-	d = &regources.Details{}
-	d.RequestType = PopulateRequestType(requestType)
+	d = &regources.ReviewableRequestDetails{}
+	d.RequestType = requestType.ShortString()
+	d.RequestTypeI = int32(requestType)
 	switch requestType {
 	case xdr.ReviewableRequestTypeAssetCreate:
 		d.AssetCreation, err = PopulateAssetCreationRequest(*h.AssetCreation)
