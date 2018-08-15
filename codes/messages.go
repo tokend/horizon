@@ -213,6 +213,8 @@ var messages = map[string]string{
 	"op_resolve_dispute_now_allowed":                    "Only escrow can resolve dispute",
 	"op_confirm_not_allowed":                            "Only customer and contractor can confirm contract",
 	"op_customer_balance_overflow":                      "Customer balances amounts exceed max amount",
+	"op_system_tasks_not_allowed":                       "Source is trying to set one of the core flags",
+	"op_issuance_tasks_not_found":                       "Issuance tasks have not been provided by the source and don't exist in KeyValue table",
 }
 
 func getMessage(rawCode string) string {
