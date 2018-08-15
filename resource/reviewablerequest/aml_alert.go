@@ -6,9 +6,9 @@ import (
 )
 
 func PopulateAmlAlertRequest(histRequest history.AmlAlertRequest) (
-	*regources.AmlAlertRequest, error,
+	*regources.AMLAlertRequest, error,
 ) {
-	return &regources.AmlAlertRequest{
+	return &regources.AMLAlertRequest{
 		BalanceID: histRequest.BalanceID,
 		Amount:    histRequest.Amount,
 		Reason:    histRequest.Reason,
