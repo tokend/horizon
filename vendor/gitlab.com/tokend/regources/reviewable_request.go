@@ -1,5 +1,7 @@
 package regources
 
+import "encoding/json"
+
 // Represents Reviewable request
 type ReviewableRequest struct {
 	ID           string                    `json:"id"`
@@ -127,14 +129,43 @@ type SaleQuoteAsset struct {
 }
 
 type UpdateKYCRequest struct {
-	AccountToUpdateKYC string                   `json:"account_to_update_kyc"`
-	AccountTypeToSet   int32                    `json:"account_type_to_set"`
-	KYCLevel           uint32                   `json:"kyc_level"`
-	KYCData            map[string]interface{}   `json:"kyc_data"`
-	AllTasks           uint32                   `json:"all_tasks"`
-	PendingTasks       uint32                   `json:"pending_tasks"`
-	SequenceNumber     uint32                   `json:"sequence_number"`
-	ExternalDetails    []map[string]interface{} `json:"external_details"`
+	AccountToUpdateKYC string                 `json:"account_to_update_kyc"`
+	AccountTypeToSet   AccountTypeToSet       `json:"account_type_to_set"`
+	KYCLevel           uint32                 `json:"kyc_level"`
+	KYCData            map[string]interface{} `json:"kyc_data"`
+	// KYCDataStruct is the data from raw map of KYCData, unmarshalled into typed struct in custom Unmarshal below
+	KYCDataStruct   KYCData                  `json:"-"`
+	AllTasks        uint32                   `json:"all_tasks"`
+	PendingTasks    uint32                   `json:"pending_tasks"`
+	SequenceNumber  uint32                   `json:"sequence_number"`
+	ExternalDetails []map[string]interface{} `json:"external_details"`
+}
+
+func (r *UpdateKYCRequest) UnmarshalJSON(data []byte) error {
+	type t UpdateKYCRequest
+	var tt t
+	if err := json.Unmarshal(data, &tt); err != nil {
+		return err
+	}
+	*r = UpdateKYCRequest(tt)
+
+	// marshal map back to json
+	rawKYC, err := json.Marshal(r.KYCData)
+	if err != nil {
+		return err
+	}
+
+	// finally unmarshal to proper struct
+	if err := json.Unmarshal(rawKYC, &r.KYCDataStruct); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type AccountTypeToSet struct {
+	Int    int    `json:"int"`
+	String string `json:"string"`
 }
 
 type UpdateSaleDetailsRequest struct {
