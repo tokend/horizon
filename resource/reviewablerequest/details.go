@@ -11,11 +11,11 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 	d *regources.ReviewableRequestDetails, err error,
 ) {
 	d = &regources.ReviewableRequestDetails{}
-	d.RequestType = requestType.ShortString()
-	d.RequestTypeI = int32(requestType)
+	d.RequestTypeName = requestType.ShortString()
+	d.RequestType = int32(requestType)
 	switch requestType {
 	case xdr.ReviewableRequestTypeAssetCreate:
-		d.AssetCreation, err = PopulateAssetCreationRequest(*h.AssetCreation)
+		d.AssetCreate, err = PopulateAssetCreationRequest(*h.AssetCreation)
 		return
 	case xdr.ReviewableRequestTypeAssetUpdate:
 		d.AssetUpdate, err = PopulateAssetUpdateRequest(*h.AssetUpdate)
@@ -39,10 +39,10 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 		d.TwoStepWithdraw, err = PopulateWithdrawalRequest(*h.TwoStepWithdraw)
 		return
 	case xdr.ReviewableRequestTypeAmlAlert:
-		d.AmlAlert, err = PopulateAmlAlertRequest(*h.AmlAlert)
+		d.AMLAlert, err = PopulateAmlAlertRequest(*h.AmlAlert)
 		return
 	case xdr.ReviewableRequestTypeUpdateKyc:
-		d.UpdateKYC, err = PopulateUpdateKYCRequest(*h.UpdateKYC)
+		d.KYC, err = PopulateUpdateKYCRequest(*h.UpdateKYC)
 		return
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		d.UpdateSaleDetails, err = PopulateUpdateSaleDetailsRequest(*h.UpdateSaleDetails)
