@@ -212,7 +212,7 @@ func (is *Session) processContractLedgerChanges(isDisputeStart, isRevert *bool) 
 				return errors.Wrap(err, "failed to update contract state")
 			}
 
-			return is.updateRevertingContractInovices(contract)
+			return is.updateNotRevertingContractInovices(contract)
 		}
 	}
 	return nil
@@ -240,7 +240,7 @@ func (is *Session) updateInvoicesContractStates(
 	return nil
 }
 
-func (is *Session) updateRevertingContractInovices(contract history.Contract) error {
+func (is *Session) updateNotRevertingContractInovices(contract history.Contract) error {
 	invoices, err := is.Ingestion.HistoryQ().ReviewableRequests().ByIDs(contract.Invoices).Select()
 	if err != nil {
 		return errors.Wrap(err, "failed to load invoices")
