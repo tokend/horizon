@@ -24,3 +24,7 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 
 	return errors.Wrap(err, "can't parse time")
 }
+
+func (t Time) Time() time.Time {
+	return time.Time(t)
+}

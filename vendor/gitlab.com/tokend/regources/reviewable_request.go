@@ -35,8 +35,8 @@ type ReviewableRequestDetails struct {
 	AssetUpdate            *AssetUpdateRequest       `json:"asset_update,omitempty"`
 	PreIssuanceCreate      *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
 	IssuanceCreate         *IssuanceRequest          `json:"issuance_create,omitempty"`
-	Withdrawal             *WithdrawalRequest        `json:"withdraw,omitempty"`
-	TwoStepWithdrawal      *WithdrawalRequest        `json:"two_step_withdrawal"`
+	Withdraw               *WithdrawalRequest        `json:"withdraw,omitempty"`
+	TwoStepWithdraw        *WithdrawalRequest        `json:"two_step_withdrawal"`
 	Sale                   *SaleCreationRequest      `json:"sale,omitempty"`
 	LimitsUpdate           *LimitsUpdateRequest      `json:"limits_update,omitempty"`
 	AmlAlert               *AMLAlertRequest          `json:"aml_alert"`
