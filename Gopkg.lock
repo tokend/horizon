@@ -464,7 +464,7 @@
 
 [[projects]]
   branch = "feature/manage_invoice"
-  digest = "1:5f7459b650d4bed890f3191598c04eed36fbb87ea1b189547bc4184a77ff10d8"
+  digest = "1:c71a880ef989c98a2d411375b5020cd6fe1d74cb0130a6e6bf28698e868c87ca"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -479,7 +479,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "d736f8a0b5c3a75e0bcf46ce39b2ceef9339bbfe"
+  revision = "34742af769dfcd57b2365f24ccd46777e653ce7a"
 
 [[projects]]
   branch = "master"
