@@ -29,6 +29,14 @@
   version = "v7"
 
 [[projects]]
+  digest = "1:8722889ad027febfced94665914d1e7be8f1b703d31f2ef9461c59e4d40fe974"
+  name = "github.com/certifi/gocertifi"
+  packages = ["."]
+  pruneopts = ""
+  revision = "deb3ae2ef2610fde3330947281941c562861188b"
+  version = "2018.01.18"
+
+[[projects]]
   branch = "master"
   digest = "1:6d64ffbe1ad2ff71c6086e83e33558f37797ec20b495510f8ab47a8a14423ec3"
   name = "github.com/cheekybits/genny"
@@ -43,6 +51,14 @@
   pruneopts = ""
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
+
+[[projects]]
+  digest = "1:a9ed1d8b070755631d246e0288dc5de6f19bd7b52baec5d515e7975a4c12dc8d"
+  name = "github.com/evalphobia/logrus_sentry"
+  packages = ["."]
+  pruneopts = ""
+  revision = "b78b27461c8163c45abf4ab3a8330d2b1ee9456a"
+  version = "v0.4.6"
 
 [[projects]]
   digest = "1:9f1e571696860f2b4f8a241b43ce91c6085e7aaed849ccca53f590a4dc7b95bd"
@@ -62,6 +78,14 @@
   pruneopts = ""
   revision = "47dc60e71eed504e3ef8e77ee3c6fe720f3be57f"
   version = "v1.3.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:92c1e8de853307765a902ee7b1b25ac7acf849f2b69215d9e974a911602eb15c"
+  name = "github.com/getsentry/raven-go"
+  packages = ["."]
+  pruneopts = ""
+  revision = "7535a8fa2ace0ffb684b19f28d00655459ea2dae"
 
 [[projects]]
   branch = "master"
@@ -440,7 +464,7 @@
 
 [[projects]]
   branch = "feature/issuance_tasks"
-  digest = "1:b5d862d4d1238d0e1ad41b34c39607646cdc9fafe3cd79c307920f63f2877701"
+  digest = "1:375843d53698b258fb69da050316abcae4964285845191510bbd11e6591fa619"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -455,7 +479,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "c50fc65c799cb87e51ce23ad5ed9cd9e34baaca4"
+  revision = "8bd588625562ce6d8dc5cfe03fec02778df6f84c"
 
 [[projects]]
   branch = "master"
@@ -589,7 +613,9 @@
     "bitbucket.org/ww/goautoneg",
     "github.com/asaskevich/govalidator",
     "github.com/cheekybits/genny/generic",
+    "github.com/evalphobia/logrus_sentry",
     "github.com/garyburd/redigo/redis",
+    "github.com/getsentry/raven-go",
     "github.com/go-errors/errors",
     "github.com/goji/context",
     "github.com/guregu/null",
