@@ -28,8 +28,8 @@ type ContractIndexAction struct {
 func (action *ContractIndexAction) JSON() {
 	action.Do(
 		action.EnsureHistoryFreshness,
-		action.checkAllowed,
 		action.loadParams,
+		action.checkAllowed,
 		action.ValidateCursorWithinHistory,
 		action.loadRecords,
 		action.loadPage,

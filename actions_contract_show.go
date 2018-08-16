@@ -22,15 +22,15 @@ func (action *ContractShowAction) JSON() {
 		action.EnsureHistoryFreshness,
 		action.loadParams,
 		action.loadRecords,
+		action.checkAllowed,
 		func() {
-			action.checkAllowed(action.ContractRecord)
 			hal.Render(action.W, action.ContractRecord)
 		},
 	)
 }
 
-func (action *ContractShowAction) checkAllowed(contract regources.Contract) {
-	action.IsAllowed(contract.Contractor, contract.Customer, contract.Escrow)
+func (action *ContractShowAction) checkAllowed() {
+	action.IsAllowed(action.ContractRecord.Contractor, action.ContractRecord.Customer, action.ContractRecord.Escrow)
 }
 
 func (action *ContractShowAction) loadParams() {
