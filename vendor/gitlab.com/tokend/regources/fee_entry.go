@@ -1,5 +1,6 @@
 package regources
 
+
 type FeeEntry struct {
 	Asset       string `json:"asset"`
 	Fixed       string `json:"fixed"`
@@ -13,3 +14,4 @@ type FeeEntry struct {
 	FeeAsset    string `json:"fee_asset"`
 	Exists      bool   `json:"exists"`
 }
+

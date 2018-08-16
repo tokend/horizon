@@ -1,10 +1,10 @@
 package regources
 
 import (
-	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"gitlab.com/tokend/go/amount"
 	"testing"
+	"github.com/stretchr/testify/assert"
+	"encoding/json"
+	"gitlab.com/tokend/go/amount"
 )
 
 func TestFeeDataV2_Unmarshal(t *testing.T) {
