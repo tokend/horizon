@@ -176,12 +176,6 @@ func (is *Session) operation() error {
 		if err != nil {
 			return errors.Wrap(err, "failed to process manage contract request")
 		}
-	case xdr.OperationTypeManageContract:
-		err = is.processManageContract(is.Cursor.Operation().Body.MustManageContractOp(),
-			is.Cursor.OperationResult().MustManageContractResult())
-		if err != nil {
-			return errors.Wrap(err, "failed to process manage contract")
-		}
 	}
 	return nil
 }

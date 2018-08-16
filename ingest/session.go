@@ -319,10 +319,6 @@ func (is *Session) processManageInvoiceRequest(op xdr.ManageInvoiceRequestOp,
 	if result.Code != xdr.ManageInvoiceRequestResultCodeSuccess {
 		return nil
 	}
-	if op.Details.Action == xdr.ManageInvoiceRequestActionCreate {
-		is.processContractLedgerChanges(nil, nil)
-		return nil
-	}
 
 	err := is.Ingestion.HistoryQ().ReviewableRequests().Cancel(uint64(*op.Details.RequestId))
 	if err != nil {
@@ -349,27 +345,6 @@ func (is *Session) processManageContractRequest(
 	if err != nil {
 		return errors.Wrap(err, "failed to update contract request state to cancel", logan.F{
 			"request_id": uint64(*op.Details.RequestId),
-		})
-	}
-
-	return nil
-}
-
-func (is *Session) processManageContract(
-	op xdr.ManageContractOp,
-	result xdr.ManageContractResult,
-) error {
-	if result.Code != xdr.ManageContractResultCodeSuccess {
-		return nil
-	}
-
-	isDisputeStart := op.Data.Action == xdr.ManageContractActionStartDispute
-
-	err := is.processContractLedgerChanges(&isDisputeStart, op.Data.IsRevert)
-
-	if err != nil {
-		return errors.Wrap(err, "failed to update contract", logan.F{
-			"contract_id": uint64(op.ContractId),
 		})
 	}
 

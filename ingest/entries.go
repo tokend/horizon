@@ -99,14 +99,17 @@ var creationHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerEntry *xd
 	xdr.LedgerEntryTypeBalance:           balanceCreated,
 	xdr.LedgerEntryTypeReviewableRequest: reviewableRequestCreate,
 	xdr.LedgerEntryTypeSale:              saleCreate,
+	xdr.LedgerEntryTypeContract:          contractCreate,
 }
 
 var deletionHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerKey *xdr.LedgerKey) error{
 	xdr.LedgerEntryTypeReviewableRequest: reviewableRequestDelete,
+	xdr.LedgerEntryTypeContract:          contractDelete,
 }
 
 var updateHandlers = map[xdr.LedgerEntryType]func(is *Session, ledgerKey *xdr.LedgerEntry) error{
 	xdr.LedgerEntryTypeBalance:           balanceUpdated,
 	xdr.LedgerEntryTypeReviewableRequest: reviewableRequestUpdate,
 	xdr.LedgerEntryTypeSale:              saleUpdate,
+	xdr.LedgerEntryTypeContract:          contractUpdate,
 }

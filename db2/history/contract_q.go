@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
 )
@@ -41,6 +42,7 @@ type ContractsQI interface {
 	ByID(id int64) (Contract, error)
 	// Update - update contract
 	Update(contract Contract) error
+	AddState(contractID int64, stateToAdd int32) error
 }
 
 type ContractsQ struct {
@@ -164,4 +166,19 @@ func (q *ContractsQ) Update(contract Contract) error {
 
 	_, err := q.parent.Exec(query)
 	return err
+}
+
+func (q *ContractsQ) AddState(contractID int64, stateToAdd int32) error {
+	if q.Err != nil {
+		return q.Err
+	}
+
+	query := "UPDATE history_contracts SET state = (state | ?) WHERE id = ?"
+
+	_, err := q.parent.ExecRaw(query, stateToAdd, contractID)
+	if err != nil {
+		return errors.Wrap(err, "failed to execute contract raw")
+	}
+
+	return nil
 }

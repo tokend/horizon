@@ -316,8 +316,8 @@ func initWebActions(app *App) {
 	})
 
 	r.Get("/request/invoices", &ReviewableRequestIndexAction{
-		CustomFilter: func(action *ReviewableRequestIndexAction){
-			contractID := action.GetOptionalUint64("contract_id")
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			contractID := action.GetOptionalInt64("contract_id")
 			if contractID != nil {
 				action.q = action.q.InvoicesByContract(*contractID)
 			}
