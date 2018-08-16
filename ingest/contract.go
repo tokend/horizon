@@ -42,31 +42,34 @@ func contractDelete(is *Session, key *xdr.LedgerKey) error {
 	if manageContractOp.ContractId != key.Contract.ContractId {
 		return errors.New("Expected manage contract op contract id to be equal ledger key contract id")
 	}
-	isRevert := manageContractOp.Data.IsRevert
 	contractID := int64(manageContractOp.ContractId)
 
-	if isRevert == nil {
+	switch manageContractOp.Data.Action {
+	case xdr.ManageContractActionConfirmCompleted:
 		return is.updateInvoicesContractStates(contractID,
 			history.ReviewableRequestStateApproved,
 			int32(xdr.ContractStateCustomerConfirmed)|
 				int32(xdr.ContractStateContractorConfirmed),
 			[]history.ReviewableRequestState{history.ReviewableRequestStateApproved})
-	}
+	case xdr.ManageContractActionResolveDispute:
+		isRevert := manageContractOp.Data.IsRevert
+		if *isRevert {
+			return is.updateInvoicesContractStates(contractID,
+				history.ReviewableRequestStatePermanentlyRejected,
+				int32(xdr.ContractStateRevertingResolve),
+				[]history.ReviewableRequestState{history.ReviewableRequestStatePending,
+					history.ReviewableRequestStateWaitingForConfirmation})
+		}
 
-	if *isRevert {
-		return is.updateInvoicesContractStates(contractID,
-			history.ReviewableRequestStatePermanentlyRejected,
-			int32(xdr.ContractStateRevertingResolve),
-			[]history.ReviewableRequestState{history.ReviewableRequestStatePending,
-				history.ReviewableRequestStateWaitingForConfirmation})
-	}
+		err := is.Ingestion.HistoryQ().Contracts().AddState(contractID, int32(xdr.ContractStateNotRevertingResolve))
+		if err != nil {
+			return errors.Wrap(err, "failed to update contract state")
+		}
 
-	err := is.Ingestion.HistoryQ().Contracts().AddState(contractID, int32(xdr.ContractStateNotRevertingResolve))
-	if err != nil {
-		return errors.Wrap(err, "failed to update contract state")
+		return is.updateNotRevertingContractInvoices(contractID)
+	default:
+		return errors.New("Unexpected case in delete contract")
 	}
-
-	return is.updateNotRevertingContractInvoices(contractID)
 }
 
 func (is *Session) updateInvoicesContractStates(
@@ -76,7 +79,7 @@ func (is *Session) updateInvoicesContractStates(
 	oldStates []history.ReviewableRequestState,
 ) error {
 	err := is.Ingestion.HistoryQ().ReviewableRequests().
-		UpdateInvoicesStates(invoiceState, contractID, oldStates)
+		UpdateInvoicesStates(invoiceState, oldStates, contractID)
 	if err != nil {
 		return errors.Wrap(err, "failed to update invoices states")
 	}
@@ -91,8 +94,9 @@ func (is *Session) updateInvoicesContractStates(
 
 func (is *Session) updateNotRevertingContractInvoices(contractID int64) error {
 	err := is.Ingestion.HistoryQ().ReviewableRequests().UpdateInvoicesStates(
-		history.ReviewableRequestStateApproved, contractID,
-		[]history.ReviewableRequestState{history.ReviewableRequestStateWaitingForConfirmation})
+		history.ReviewableRequestStateApproved,
+		[]history.ReviewableRequestState{history.ReviewableRequestStateWaitingForConfirmation},
+		contractID)
 	if err != nil {
 		return errors.Wrap(err, "failed to update approved invoices", logan.F{
 			"contract_id": contractID,
@@ -100,8 +104,9 @@ func (is *Session) updateNotRevertingContractInvoices(contractID int64) error {
 	}
 
 	err = is.Ingestion.HistoryQ().ReviewableRequests().UpdateInvoicesStates(
-		history.ReviewableRequestStatePermanentlyRejected, contractID,
-		[]history.ReviewableRequestState{history.ReviewableRequestStatePending})
+		history.ReviewableRequestStatePermanentlyRejected,
+		[]history.ReviewableRequestState{history.ReviewableRequestStatePending},
+		contractID)
 	if err != nil {
 		return errors.Wrap(err, "failed to update rejected invoices", logan.F{
 			"contract_id": contractID,
