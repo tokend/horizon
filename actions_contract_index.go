@@ -19,6 +19,7 @@ type ContractIndexAction struct {
 	Disputing        *bool
 	ContractorID     string
 	CustomerID       string
+	EscrowID         string
 	ContractsRecords []regources.Contract
 	Page             hal.Page
 }
@@ -39,7 +40,11 @@ func (action *ContractIndexAction) JSON() {
 }
 
 func (action *ContractIndexAction) checkAllowed() {
-	action.IsAllowed("")
+	var allowedAccounts []string
+	allowedAccounts = append(allowedAccounts, action.ContractorID)
+	allowedAccounts = append(allowedAccounts, action.CustomerID)
+	allowedAccounts = append(allowedAccounts, action.EscrowID)
+	action.IsAllowed(allowedAccounts...)
 }
 
 func (action *ContractIndexAction) loadParams() {
@@ -49,21 +54,8 @@ func (action *ContractIndexAction) loadParams() {
 	action.Disputing = action.GetOptionalBool("state")
 	action.ContractorID = action.GetString("contractor_id")
 	action.CustomerID = action.GetString("customer_id")
-	action.PagingParams = action.getTxPageQuery()
-}
-
-const (
-	maxContractPagSize uint64 = 1000
-)
-
-func (action *ContractIndexAction) getTxPageQuery() db2.PageQuery {
-	pagingParams := action.GetPageQuery()
-	limit := action.GetUInt64("limit")
-	if limit > maxContractPagSize {
-		pagingParams.Limit = maxContractPagSize
-	}
-
-	return pagingParams
+	action.EscrowID = action.GetString("escrow_id")
+	action.PagingParams = action.GetPageQuery()
 }
 
 func (action *ContractIndexAction) loadRecords() {
@@ -83,6 +75,9 @@ func (action *ContractIndexAction) loadRecords() {
 	if action.CustomerID != "" {
 		q = q.ByCustomerID(action.CustomerID)
 	}
+	if action.EscrowID != "" {
+		q = q.ByEscrowID(action.EscrowID)
+	}
 
 	historyContracts, err := q.Page(action.PagingParams).Select()
 	if err != nil {
@@ -92,15 +87,11 @@ func (action *ContractIndexAction) loadRecords() {
 	}
 
 	for _, contract := range historyContracts {
-		action.ContractsRecords = append(action.ContractsRecords, resource.PopulateContract(contract))
+		action.Page.Add(resource.PopulateContract(contract))
 	}
 }
 
 func (action *ContractIndexAction) loadPage() {
-	for _, record := range action.ContractsRecords {
-		action.Page.Add(record)
-	}
-
 	action.Page.BaseURL = action.BaseURL()
 	action.Page.BasePath = action.Path()
 	action.Page.Limit = action.PagingParams.Limit

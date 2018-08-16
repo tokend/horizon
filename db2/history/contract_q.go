@@ -34,12 +34,14 @@ type ContractsQI interface {
 	ByContractorID(contractorID string) ContractsQI
 	// ByCustomerID - filters contracts by customer id
 	ByCustomerID(customerID string) ContractsQI
+	// ByCustomerID - filters contracts by customer id
+	ByEscrowID(escrowID string) ContractsQI
 	// Page - applies page params
 	Page(page db2.PageQuery) ContractsQI
 	// Select - selects contract by specifics filters
 	Select() ([]Contract, error)
 	// ByID - get contract by contract id
-	ByID(id int64) (Contract, error)
+	ByID(id int64) (*Contract, error)
 	// Update - update contract
 	Update(contract Contract) error
 	AddState(contractID int64, stateToAdd int32) error
@@ -113,16 +115,16 @@ func (q *ContractsQ) Select() ([]Contract, error) {
 	return result, q.Err
 }
 
-func (q *ContractsQ) ByID(id int64) (Contract, error) {
+func (q *ContractsQ) ByID(id int64) (*Contract, error) {
 	if q.Err != nil {
-		return Contract{}, q.Err
+		return nil, q.Err
 	}
 
 	q.sql = q.sql.Where(sq.Eq{"id": id})
 
 	var result Contract
 	q.Err = q.parent.Get(&result, q.sql)
-	return result, q.Err
+	return &result, q.Err
 }
 
 func (q *ContractsQ) ByContractorID(contractorID string) ContractsQI {
@@ -141,6 +143,16 @@ func (q *ContractsQ) ByCustomerID(customerID string) ContractsQI {
 	}
 
 	q.sql = q.sql.Where(sq.Eq{"customer": customerID})
+
+	return q
+}
+
+func (q *ContractsQ) ByEscrowID(escrowID string) ContractsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(sq.Eq{"escrow": escrowID})
 
 	return q
 }

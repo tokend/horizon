@@ -319,6 +319,9 @@ func (is *Session) processManageInvoiceRequest(op xdr.ManageInvoiceRequestOp,
 	if result.Code != xdr.ManageInvoiceRequestResultCodeSuccess {
 		return nil
 	}
+	if op.Details.Action == xdr.ManageInvoiceRequestActionCreate {
+		return nil
+	}
 
 	err := is.Ingestion.HistoryQ().ReviewableRequests().Cancel(uint64(*op.Details.RequestId))
 	if err != nil {

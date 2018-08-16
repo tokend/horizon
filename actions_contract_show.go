@@ -20,17 +20,21 @@ type ContractShowAction struct {
 func (action *ContractShowAction) JSON() {
 	action.Do(
 		action.EnsureHistoryFreshness,
-		action.checkAllowed,
 		action.loadParams,
 		action.loadRecords,
 		func() {
+			action.checkAllowed(action.ContractRecord)
 			hal.Render(action.W, action.ContractRecord)
 		},
 	)
 }
 
-func (action *ContractShowAction) checkAllowed() {
-	action.IsAllowed("")
+func (action *ContractShowAction) checkAllowed(contract regources.Contract) {
+	var allowedAccounts []string
+	allowedAccounts = append(allowedAccounts, contract.Contractor)
+	allowedAccounts = append(allowedAccounts, contract.Customer)
+	allowedAccounts = append(allowedAccounts, contract.Escrow)
+	action.IsAllowed(allowedAccounts...)
 }
 
 func (action *ContractShowAction) loadParams() {
@@ -46,7 +50,12 @@ func (action *ContractShowAction) loadRecords() {
 		return
 	}
 
-	action.ContractRecord = resource.PopulateContract(contract)
+	if contract == nil {
+		action.Err = &problem.NotFound
+		return
+	}
+
+	action.ContractRecord = resource.PopulateContract(*contract)
 
 	invoices, err := action.HistoryQ().ReviewableRequests().ByIDs(contract.Invoices).Select()
 	if err != nil {
@@ -62,8 +71,7 @@ func (action *ContractShowAction) loadRecords() {
 			action.Err = &problem.ServerError
 			return
 		}
-		if res != nil {
-			action.ContractRecord.Invoices = append(action.ContractRecord.Invoices, *res)
-		}
+
+		action.ContractRecord.Invoices = append(action.ContractRecord.Invoices, *res)
 	}
 }

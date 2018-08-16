@@ -74,7 +74,7 @@ type ReviewableRequestQI interface {
 	// InvoicesByContract - filters invoice requests by contract id
 	InvoicesByContract(contractID int64) ReviewableRequestQI
 	// UpdateInvoicesStates - update state of invoice requests by contract id
-	UpdateInvoicesStates(state ReviewableRequestState, contractID int64, oldState *ReviewableRequestState) error
+	UpdateInvoicesStates(state ReviewableRequestState, contractID int64, oldStates []ReviewableRequestState) error
 
 	// KYC
 	// KYCByAccountToUpdateKYC - filters update KYC requests by accountID of the owner of KYC
@@ -382,7 +382,7 @@ func (q *ReviewableRequestQ) InvoicesByContract(contractID int64) ReviewableRequ
 }
 
 func (q *ReviewableRequestQ) UpdateInvoicesStates(state ReviewableRequestState, contractID int64,
-	oldState *ReviewableRequestState,
+	oldStates []ReviewableRequestState,
 ) error {
 	if q.Err != nil {
 		return q.Err
@@ -390,11 +390,8 @@ func (q *ReviewableRequestQ) UpdateInvoicesStates(state ReviewableRequestState, 
 
 	query := sq.Update("reviewable_request").
 		Set("request_state", state).
-		Where("details->'invoice'->>'contract_id' = ?", contractID)
-
-	if oldState != nil {
-		query = query.Where(sq.Eq{"request_state": *oldState})
-	}
+		Where("details->'invoice'->>'contract_id' = ?", contractID).
+		Where(sq.Eq{"request_state": oldStates})
 
 	_, err := q.parent.Exec(query)
 	return err
