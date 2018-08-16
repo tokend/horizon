@@ -35,19 +35,19 @@ type ReviewableRequestDetails struct {
 	// RequestTypeName  - string representation of request type
 	RequestTypeName string `json:"request_type"`
 
-	AssetCreate       *AssetCreationRequest `json:"asset_create,omitempty"`
-	AssetUpdate       *AssetUpdateRequest   `json:"asset_update,omitempty"`
-	PreIssuanceCreate *PreIssuanceRequest   `json:"pre_issuance_create,omitempty"`
-	IssuanceCreate    *IssuanceRequest      `json:"issuance_create,omitempty"`
-	Withdraw          *WithdrawalRequest    `json:"withdraw,omitempty"`
-	TwoStepWithdraw   *WithdrawalRequest    `json:"two_step_withdrawal"`
-	Sale              *SaleCreationRequest  `json:"sale,omitempty"`
+	AssetCreate            *AssetCreationRequest     `json:"asset_create,omitempty"`
+	AssetUpdate            *AssetUpdateRequest       `json:"asset_update,omitempty"`
+	PreIssuanceCreate      *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
+	IssuanceCreate         *IssuanceRequest          `json:"issuance_create,omitempty"`
+	Withdraw               *WithdrawalRequest        `json:"withdraw,omitempty"`
+	TwoStepWithdraw        *WithdrawalRequest        `json:"two_step_withdrawal,omitempty"`
+	Sale                   *SaleCreationRequest      `json:"sale,omitempty"`
 	LimitsUpdate           *LimitsUpdateRequest      `json:"limits_update,omitempty"`
-	AMLAlert               *AMLAlertRequest          `json:"aml_alert"`
+	AMLAlert               *AMLAlertRequest          `json:"aml_alert,omitempty"`
 	KYC                    *UpdateKYCRequest         `json:"update_kyc,omitempty"`
-	UpdateSaleDetails      *UpdateSaleDetailsRequest `json:"update_sale_details"`
-	UpdateSaleEndTime      *UpdateSaleEndTimeRequest `json:"update_sale_end_time"`
-	PromotionUpdateRequest *PromotionUpdateRequest   `json:"promotion_update_request"`
+	UpdateSaleDetails      *UpdateSaleDetailsRequest `json:"update_sale_details,omitempty"`
+	UpdateSaleEndTime      *UpdateSaleEndTimeRequest `json:"update_sale_end_time,omitempty"`
+	PromotionUpdateRequest *PromotionUpdateRequest   `json:"promotion_update_request,omitempty"`
 	Invoice                *InvoiceRequest           `json:"invoice,omitempty"`
 	Contract               *ContractRequest          `json:"contract,omitempty"`
 }

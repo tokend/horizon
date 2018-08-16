@@ -30,11 +30,7 @@ func (action *ContractShowAction) JSON() {
 }
 
 func (action *ContractShowAction) checkAllowed(contract regources.Contract) {
-	var allowedAccounts []string
-	allowedAccounts = append(allowedAccounts, contract.Contractor)
-	allowedAccounts = append(allowedAccounts, contract.Customer)
-	allowedAccounts = append(allowedAccounts, contract.Escrow)
-	action.IsAllowed(allowedAccounts...)
+	action.IsAllowed(contract.Contractor, contract.Customer, contract.Escrow)
 }
 
 func (action *ContractShowAction) loadParams() {

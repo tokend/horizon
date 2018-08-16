@@ -40,11 +40,7 @@ func (action *ContractIndexAction) JSON() {
 }
 
 func (action *ContractIndexAction) checkAllowed() {
-	var allowedAccounts []string
-	allowedAccounts = append(allowedAccounts, action.ContractorID)
-	allowedAccounts = append(allowedAccounts, action.CustomerID)
-	allowedAccounts = append(allowedAccounts, action.EscrowID)
-	action.IsAllowed(allowedAccounts...)
+	action.IsAllowed(action.ContractorID, action.CustomerID, action.EscrowID)
 }
 
 func (action *ContractIndexAction) loadParams() {
