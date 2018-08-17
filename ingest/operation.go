@@ -180,7 +180,7 @@ func (is *Session) operation() error {
 		err = is.processManageContract(is.Cursor.Operation().Body.MustManageContractOp(),
 			is.Cursor.OperationResult().MustManageContractResult())
 		if err != nil {
-			return errors.Wrap(err, "failed to process manage contract request")
+			return errors.Wrap(err, "failed to process manage contract")
 		}
 	}
 	return nil

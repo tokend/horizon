@@ -118,7 +118,7 @@ func (is *Session) updateNotRevertingContractInvoices(contractID int64) error {
 
 func convertContract(rawContract xdr.ContractEntry) history.Contract {
 	var initialDetails map[string]interface{}
-	_ = json.Unmarshal([]byte(rawContract.InitialDetails), &initialDetails)
+	_ = json.Unmarshal([]byte(string(rawContract.InitialDetails)), &initialDetails)
 
 	var invoices []int64
 	for _, item := range rawContract.InvoiceRequestsIDs {

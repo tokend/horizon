@@ -14,7 +14,7 @@ type Contract struct {
 	StartTime         time.Time              `json:"start_time"`
 	EndTime           time.Time              `json:"end_time"`
 	InitialDetails    map[string]interface{} `json:"initial_details"`
-	AdditionalDetails []DetailsWithPayload   `json:"notes"`
+	AdditionalDetails []DetailsWithPayload   `json:"notes,omitempty"`
 	Invoices          []ReviewableRequest    `json:"invoices,omitempty"`
 	DisputeReason     DetailsWithPayload     `json:"dispute,omitempty"`
 	State             []Flag                 `json:"state"`

@@ -19,7 +19,7 @@ CREATE TABLE history_contracts_details
   contract_id BIGINT      NOT NULL CHECK (contract_id >= 0),
   details     jsonb       NOT NULL,
   author      VARCHAR(56) NOT NULL,
-  created_at  BIGINT      NOT NULL CHECK (created_at >= 0)
+  created_at  TIMESTAMP without time zone NOT NULL
 );
 
 create index on history_contracts_details (contract_id);
@@ -29,7 +29,7 @@ CREATE TABLE history_contracts_disputes
   contract_id BIGINT      NOT NULL CHECK (contract_id >= 0),
   reason      jsonb       NOT NULL,
   author      VARCHAR(56) NOT NULL,
-  created_at  BIGINT      NOT NULL CHECK (created_at >= 0)
+  created_at  TIMESTAMP without time zone NOT NULL
 );
 
 create index on history_contracts_disputes (contract_id);

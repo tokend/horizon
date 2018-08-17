@@ -8,7 +8,7 @@ type ReviewableRequest struct {
 	PT           string                    `json:"paging_token"`
 	Requestor    string                    `json:"requestor"`
 	Reviewer     string                    `json:"reviewer"`
-	Reference    *string                   `json:"reference"`
+	Reference    *string                   `json:"reference,omitempty"`
 	RejectReason string                    `json:"reject_reason"`
 	Hash         string                    `json:"hash"`
 	Details      *ReviewableRequestDetails `json:"details"`
