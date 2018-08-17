@@ -3,7 +3,6 @@ package regources
 import (
 	"gitlab.com/distributed_lab/logan/v3/fields"
 	"strconv"
-	"time"
 )
 
 type Offer struct {
@@ -41,8 +40,7 @@ type OfferData struct {
 	BaseAmount     Amount `json:"base_amount"`
 	QuoteAmount    Amount `json:"quote_amount"`
 	Price          Amount `json:"price"`
-	// TODO Add Custom Marshal/Unmarshal on this struct
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt      Time   `json:"created_at"`
 }
 
 func (d OfferData) GetLoganFields() map[string]interface{} {

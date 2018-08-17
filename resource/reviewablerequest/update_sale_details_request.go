@@ -1,14 +1,15 @@
 package reviewablerequest
 
-import "gitlab.com/swarmfund/horizon/db2/history"
+import (
+	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/regources"
+)
 
-type UpdateSaleDetailsRequest struct {
-	SaleID     uint64                 `json:"sale_id"`
-	NewDetails map[string]interface{} `json:"new_details"`
-}
-
-func (r *UpdateSaleDetailsRequest) Populate(histRequest history.UpdateSaleDetailsRequest) error {
+func PopulateUpdateSaleDetailsRequest(histRequest history.UpdateSaleDetailsRequest) (
+	r *regources.UpdateSaleDetailsRequest, err error,
+) {
+	r = &regources.UpdateSaleDetailsRequest{}
 	r.SaleID = histRequest.SaleID
 	r.NewDetails = histRequest.NewDetails
-	return nil
+	return
 }

@@ -28,15 +28,27 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 		manageRequestResult := operationResult.MustCreateWithdrawalRequestResult()
 		operationIdentifier = uint64(manageRequestResult.Success.RequestId)
 		return state, operationIdentifier
-	case xdr.OperationTypeManageInvoice:
-		manageInvoiceOp := op.Body.MustManageInvoiceOp()
-		if manageInvoiceOp.InvoiceId != 0 {
-			return state, operationIdentifier
+	case xdr.OperationTypeManageInvoiceRequest:
+		manageInvoiceOp := op.Body.MustManageInvoiceRequestOp()
+		if manageInvoiceOp.Details.Action == xdr.ManageInvoiceRequestActionRemove {
+			operationIdentifier = uint64(*manageInvoiceOp.Details.RequestId)
+			return history.OperationStateCanceled, operationIdentifier
 		}
 
 		state = history.OperationStatePending
-		manageInvoiceResult := operationResult.MustManageInvoiceResult()
-		operationIdentifier = uint64(manageInvoiceResult.Success.InvoiceId)
+		manageInvoiceResult := operationResult.MustManageInvoiceRequestResult()
+		operationIdentifier = uint64(manageInvoiceResult.Success.Details.Response.RequestId)
+		return state, operationIdentifier
+	case xdr.OperationTypeManageContractRequest:
+		manageContractOp := op.Body.MustManageContractRequestOp()
+		if manageContractOp.Details.Action == xdr.ManageContractRequestActionRemove {
+			operationIdentifier = uint64(*manageContractOp.Details.RequestId)
+			return history.OperationStateCanceled, operationIdentifier
+		}
+
+		state = history.OperationStatePending
+		manageContractResult := operationResult.MustManageContractRequestResult()
+		operationIdentifier = uint64(manageContractResult.Success.Details.Response.RequestId)
 		return state, operationIdentifier
 	case xdr.OperationTypeCreateIssuanceRequest:
 		createIssuanceRequestResult := operationResult.MustCreateIssuanceRequestResult()
@@ -96,33 +108,6 @@ func (is *Session) operation() error {
 		return errors.Wrap(err, "failed to ingest operation participants")
 	}
 	switch is.Cursor.OperationType() {
-	case xdr.OperationTypePayment:
-		err = is.processPayment(is.Cursor.Operation().Body.MustPaymentOp(), is.Cursor.OperationSourceAccount(),
-			*is.Cursor.OperationResult().MustPaymentResult().PaymentResponse)
-		if err != nil {
-			return errors.Wrap(err, "failed to process payment")
-		}
-
-	case xdr.OperationTypeReviewPaymentRequest:
-		err = is.updateIngestedPaymentRequest(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount())
-		if err != nil {
-			return errors.Wrap(err, "failed to update ingested payment request")
-		}
-
-		err = is.updateIngestedPayment(*is.Cursor.Operation(), is.Cursor.OperationSourceAccount(), *is.Cursor.OperationResult())
-		if err != nil {
-			return errors.Wrap(err, "failed to update ingested payment")
-		}
-
-	case xdr.OperationTypeDirectDebit:
-		opDirectDebit := is.Cursor.Operation().Body.MustDirectDebitOp()
-		err = is.processPayment(opDirectDebit.PaymentOp,
-			opDirectDebit.From,
-			is.Cursor.OperationResult().MustDirectDebitResult().MustSuccess().PaymentResponse)
-		if err != nil {
-			return errors.Wrap(err, "failed to process payment")
-		}
-
 	case xdr.OperationTypeManageOffer:
 		op := is.Cursor.Operation().Body.MustManageOfferOp()
 		opResult := is.Cursor.OperationResult().MustManageOfferResult().MustSuccess()
@@ -139,19 +124,10 @@ func (is *Session) operation() error {
 			}
 			return nil
 		}
-
 		err = is.processManageOfferLedgerChanges(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
 		if err != nil {
 			return errors.Wrap(err, "failed to process manage offer ledger changes")
 		}
-
-	case xdr.OperationTypeManageInvoice:
-		err = is.processManageInvoice(is.Cursor.Operation().Body.MustManageInvoiceOp(),
-			is.Cursor.OperationResult().MustManageInvoiceResult())
-		if err != nil {
-			return errors.Wrap(err, "failed to process manage invoice operation")
-		}
-
 	case xdr.OperationTypeReviewRequest:
 		err = is.processReviewRequest(
 			is.Cursor.Operation().Body.MustReviewRequestOp(),
@@ -191,6 +167,24 @@ func (is *Session) operation() error {
 		err = is.handleManageSale(&opManageSale)
 		if err != nil {
 			return errors.Wrap(err, "failed to handle manage sale")
+		}
+	case xdr.OperationTypeManageInvoiceRequest:
+		err = is.processManageInvoiceRequest(is.Cursor.Operation().Body.MustManageInvoiceRequestOp(),
+			is.Cursor.OperationResult().MustManageInvoiceRequestResult())
+		if err != nil {
+			return errors.Wrap(err, "failed to process manage invoice request")
+		}
+	case xdr.OperationTypeManageContractRequest:
+		err = is.processManageContractRequest(is.Cursor.Operation().Body.MustManageContractRequestOp(),
+			is.Cursor.OperationResult().MustManageContractRequestResult())
+		if err != nil {
+			return errors.Wrap(err, "failed to process manage contract request")
+		}
+	case xdr.OperationTypeManageContract:
+		err = is.processManageContract(is.Cursor.Operation().Body.MustManageContractOp(),
+			is.Cursor.OperationResult().MustManageContractResult())
+		if err != nil {
+			return errors.Wrap(err, "failed to process manage contract")
 		}
 	}
 	return nil

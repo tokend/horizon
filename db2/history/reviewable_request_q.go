@@ -1,11 +1,12 @@
 package history
 
 import (
+	"time"
+
 	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
-	"time"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -14,8 +15,12 @@ type ReviewableRequestQI interface {
 	Insert(request ReviewableRequest) error
 	// Update - update request using it's ID
 	Update(request ReviewableRequest) error
+	// UpdateStates - update state of requests
+	UpdateStates(requestIDs []int64, state ReviewableRequestState) error
 	// ByID - selects request by id. Returns nil, nil if not found
 	ByID(requestID uint64) (*ReviewableRequest, error)
+	// ByID - selects request by id. Returns nil, nil if not found
+	ByIDs(requestIDs []int64) ReviewableRequestQI
 	// Cancel - sets request state to `ReviewableRequestStateCanceled`
 	Cancel(requestID uint64) error
 	// Approve - sets request state to ReviewableRequestStateApproved and cleans reject reason
@@ -53,7 +58,7 @@ type ReviewableRequestQI interface {
 	// IssuanceByAsset - filters issuance requests by asset
 	IssuanceByAsset(assetCode string) ReviewableRequestQI
 
-	// Withdrawal
+	// Withdraw
 	// WithdrawalByDestAsset - filters withdrawal requests by dest asset
 	WithdrawalByDestAsset(assetCode string) ReviewableRequestQI
 
@@ -64,6 +69,12 @@ type ReviewableRequestQI interface {
 	// Limits
 	// LimitsByDocHash - filters limits request by document hash
 	LimitsByDocHash(hash string) ReviewableRequestQI
+
+	// Invoices
+	// InvoicesByContract - filters invoice requests by contract id
+	InvoicesByContract(contractID int64) ReviewableRequestQI
+	// UpdateInvoicesStates - update state of invoice requests by contract id
+	UpdateInvoicesStates(state ReviewableRequestState, oldStates []ReviewableRequestState, contractID int64) error
 
 	// KYC
 	// KYCByAccountToUpdateKYC - filters update KYC requests by accountID of the owner of KYC
@@ -134,6 +145,19 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 	return err
 }
 
+func (q *ReviewableRequestQ) UpdateStates(requestIDs []int64, state ReviewableRequestState) error {
+	if q.Err != nil {
+		return q.Err
+	}
+
+	query := sq.Update("reviewable_request").
+		Set("request_state", state).
+		Where(sq.Eq{"id": requestIDs})
+
+	_, err := q.parent.Exec(query)
+	return err
+}
+
 // ByID - selects request by id. Returns nil, nil if not found
 func (q *ReviewableRequestQ) ByID(requestID uint64) (*ReviewableRequest, error) {
 	if q.Err != nil {
@@ -153,6 +177,15 @@ func (q *ReviewableRequestQ) ByID(requestID uint64) (*ReviewableRequest, error) 
 	}
 
 	return &result, nil
+}
+
+func (q *ReviewableRequestQ) ByIDs(requestIDs []int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(sq.Eq{"id": requestIDs})
+	return q
 }
 
 // Cancel - sets request state to `ReviewableRequestStateCanceled`
@@ -312,7 +345,7 @@ func (q *ReviewableRequestQ) IssuanceByAsset(assetCode string) ReviewableRequest
 	return q
 }
 
-// Withdrawal
+// Withdraw
 // WithdrawalByDestAsset - filters withdrawal requests by dest asset
 func (q *ReviewableRequestQ) WithdrawalByDestAsset(assetCode string) ReviewableRequestQI {
 	if q.Err != nil {
@@ -343,6 +376,32 @@ func (q *ReviewableRequestQ) LimitsByDocHash(hash string) ReviewableRequestQI {
 
 	q.sql = q.sql.Where("details->'limits_update'->>'document_hash' = ?", hash)
 	return q
+}
+
+func (q *ReviewableRequestQ) InvoicesByContract(contractID int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'invoice'->>'contract_id' = ?", contractID)
+	return q
+}
+
+func (q *ReviewableRequestQ) UpdateInvoicesStates(state ReviewableRequestState,
+	oldStates []ReviewableRequestState,
+	contractID int64,
+) error {
+	if q.Err != nil {
+		return q.Err
+	}
+
+	query := sq.Update("reviewable_request").
+		Set("request_state", state).
+		Where("details->'invoice'->>'contract_id' = ?", contractID).
+		Where(sq.Eq{"request_state": oldStates})
+
+	_, err := q.parent.Exec(query)
+	return err
 }
 
 // KYC

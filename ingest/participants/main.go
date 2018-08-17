@@ -64,8 +64,6 @@ func ForOperation(
 		if sourceParticipant.AccountID.Address() != manageBalanceOp.Destination.Address() {
 			result = append(result, Participant{manageBalanceOp.Destination, nil, nil})
 		}
-	case xdr.OperationTypeReviewPaymentRequest:
-	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAsset:
 	// the only direct participant is the source_accountWWW
 	case xdr.OperationTypeManageLimits:
@@ -94,14 +92,28 @@ func ForOperation(
 		if len(result) != 0 {
 			sourceParticipant = nil
 		}
-	case xdr.OperationTypeManageInvoice:
-		manageInvoiceOp := op.Body.MustManageInvoiceOp()
-		if manageInvoiceOp.Amount == 0 {
+	case xdr.OperationTypeManageInvoiceRequest:
+		manageInvoiceOp := op.Body.MustManageInvoiceRequestOp()
+		switch manageInvoiceOp.Details.Action {
+		case xdr.ManageInvoiceRequestActionCreate:
+			result = append(result, Participant{manageInvoiceOp.Details.InvoiceRequest.Sender,
+				&opResult.ManageInvoiceRequestResult.Success.Details.Response.SenderBalance, nil})
+		case xdr.ManageInvoiceRequestActionRemove:
 			sourceParticipant = nil
-			break
 		}
-		sourceParticipant.BalanceID = &manageInvoiceOp.ReceiverBalance
-		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.ManageInvoiceResult.Success.SenderBalance, nil})
+	case xdr.OperationTypeManageContractRequest:
+		manageContractOp := op.Body.MustManageContractRequestOp()
+		switch manageContractOp.Details.Action {
+		case xdr.ManageContractRequestActionCreate:
+			result = append(result, Participant{manageContractOp.Details.ContractRequest.Customer,
+				nil, nil})
+			result = append(result, Participant{manageContractOp.Details.ContractRequest.Escrow,
+				nil, nil})
+		case xdr.ManageContractRequestActionRemove:
+			sourceParticipant = nil
+		}
+	case xdr.OperationTypeManageContract:
+		// the only direct participant is the source_account
 	case xdr.OperationTypeReviewRequest:
 		request := getReviewableRequestByID(uint64(op.Body.MustReviewRequestOp().RequestId), ledgerChanges)
 		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address() {

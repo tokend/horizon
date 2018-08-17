@@ -2,7 +2,7 @@
 
 ALTER TABLE reviewable_request ADD all_tasks        INT   NOT NULL DEFAULT 0;
 ALTER TABLE reviewable_request ADD pending_tasks    INT   NOT NULL DEFAULT 0;
-ALTER TABLE reviewable_request ADD external_details TEXT  NOT NULL;
+ALTER TABLE reviewable_request ADD external_details TEXT  NOT NULL DEFAULT '';
 
 -- +migrate Down
 

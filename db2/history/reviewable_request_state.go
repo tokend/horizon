@@ -14,14 +14,18 @@ const (
 	ReviewableRequestStateRejected
 	// ReviewableRequestStatePermanentlyRejected - was rejected by reviewer, can't be updated
 	ReviewableRequestStatePermanentlyRejected
+	// ReviewableRequestStateInvoiceWaitingContractConfirmation - invoice was approved by reviewer,
+	// wait for contract completed
+	ReviewableRequestStateWaitingForConfirmation
 )
 
 var reviewableRequestStateStr = map[ReviewableRequestState]string{
-	ReviewableRequestStatePending:             "pending",
-	ReviewableRequestStateCanceled:            "canceled",
-	ReviewableRequestStateApproved:            "approved",
-	ReviewableRequestStateRejected:            "rejected",
-	ReviewableRequestStatePermanentlyRejected: "permanently_rejected",
+	ReviewableRequestStatePending:                "pending",
+	ReviewableRequestStateCanceled:               "canceled",
+	ReviewableRequestStateApproved:               "approved",
+	ReviewableRequestStateRejected:               "rejected",
+	ReviewableRequestStatePermanentlyRejected:    "permanently_rejected",
+	ReviewableRequestStateWaitingForConfirmation: "waiting_for_confirmation",
 }
 
 func (s ReviewableRequestState) String() string {

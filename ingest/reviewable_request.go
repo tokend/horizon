@@ -11,6 +11,7 @@ import (
 	"gitlab.com/swarmfund/horizon/utf8"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -204,10 +205,10 @@ func getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
 }
 
 func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
-	var quoteAssets []history.SaleQuoteAsset
+	var quoteAssets []regources.SaleQuoteAsset
 	for i := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, history.SaleQuoteAsset{
-			Price:      amount.StringU(uint64(request.QuoteAssets[i].Price)),
+		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
+			Price:      regources.Amount(int64(request.QuoteAssets[i].Price)),
 			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
 		})
 	}
@@ -249,12 +250,14 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 
 func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
 	details, ok := request.Ext.GetDetails()
-	var limitsDetails string
+	var detailsMap map[string]interface{}
 	if ok {
-		limitsDetails = string(details)
+		limitsDetails := string(details)
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(limitsDetails), &detailsMap)
 	}
 	return &history.LimitsUpdateRequest{
-		Details:      limitsDetails,
+		Details:      detailsMap,
 		DocumentHash: hex.EncodeToString(request.DeprecatedDocumentHash[:]),
 	}
 }
@@ -303,6 +306,38 @@ func getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history
 	}
 }
 
+func getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.Details), &details)
+
+	var contractID *int64
+	if request.ContractId != nil {
+		tmpContractID := int64(*request.ContractId)
+		contractID = &tmpContractID
+	}
+
+	return &history.InvoiceRequest{
+		Asset:      string(request.Asset),
+		Amount:     uint64(request.Amount),
+		ContractID: contractID,
+		Details:    details,
+	}
+}
+
+func getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.Details), &details)
+
+	return &history.ContractRequest{
+		Escrow:    request.Escrow.Address(),
+		Details:   details,
+		StartTime: time.Unix(int64(request.StartTime), 0).UTC(),
+		EndTime:   time.Unix(int64(request.EndTime), 0).UTC(),
+	}
+}
+
 func getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
 	return &history.UpdateSaleEndTimeRequest{
 		SaleID:     uint64(request.SaleId),
@@ -326,19 +361,23 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 			return details, errors.Wrap(err, "failed to get pre issuance request")
 		}
 	case xdr.ReviewableRequestTypeWithdraw:
-		details.Withdrawal = getWithdrawalRequest(body.WithdrawalRequest)
+		details.Withdraw = getWithdrawalRequest(body.WithdrawalRequest)
 	case xdr.ReviewableRequestTypeSale:
 		details.Sale = getSaleRequest(body.SaleCreationRequest)
 	case xdr.ReviewableRequestTypeLimitsUpdate:
 		details.LimitsUpdate = getLimitsUpdateRequest(body.LimitsUpdateRequest)
 	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
-		details.TwoStepWithdrawal = getWithdrawalRequest(body.TwoStepWithdrawalRequest)
+		details.TwoStepWithdraw = getWithdrawalRequest(body.TwoStepWithdrawalRequest)
 	case xdr.ReviewableRequestTypeAmlAlert:
 		details.AmlAlert = getAmlAlertRequest(body.AmlAlertRequest)
 	case xdr.ReviewableRequestTypeUpdateKyc:
 		details.UpdateKYC = getUpdateKYCRequest(body.UpdateKycRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
+	case xdr.ReviewableRequestTypeInvoice:
+		details.Invoice = getInvoiceRequest(body.InvoiceRequest)
+	case xdr.ReviewableRequestTypeContract:
+		details.Contract = getContractRequest(body.ContractRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
 		details.UpdateSaleEndTimeRequest = getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
 	case xdr.ReviewableRequestTypeUpdatePromotion:

@@ -165,29 +165,10 @@ func (is *Session) processManageOfferLedgerChanges(offerID uint64) error {
 	return nil
 }
 
-func (is *Session) processManageInvoice(op xdr.ManageInvoiceOp, result xdr.ManageInvoiceResult) error {
-	if op.InvoiceId == 0 || op.Amount != 0 {
-		return nil
-	}
-
-	err := is.Ingestion.UpdateInvoice(op.InvoiceId, history.OperationStateCanceled, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to update invoice", map[string]interface{}{
-			"Ingestion.UpdateInvoice": "failed",
-		})
-	}
-	return nil
-}
-
 func (is *Session) permanentReject(op xdr.ReviewRequestOp) error {
 	err := is.Ingestion.HistoryQ().ReviewableRequests().PermanentReject(uint64(op.RequestId), string(op.Reason))
 	if err != nil {
 		return errors.Wrap(err, "failed to permanently reject request")
-	}
-
-	err = is.Ingestion.UpdatePayment(op.RequestId, false, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to permanently reject operation")
 	}
 
 	return nil
@@ -332,65 +313,43 @@ func (is *Session) ingestTransactionParticipants() (err error) {
 	return nil
 }
 
-func (is *Session) processPayment(paymentOp xdr.PaymentOp, source xdr.AccountId, result xdr.PaymentResponse) (err error) {
-	invoiceReference := paymentOp.InvoiceReference
-	if invoiceReference != nil {
-		if invoiceReference.Accept {
-			err = is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.OperationStateSuccess, nil)
-
-		} else if !invoiceReference.Accept {
-			err = is.Ingestion.UpdateInvoice(invoiceReference.InvoiceId, history.OperationStateRejected, nil)
-		}
-		if err != nil {
-			return errors.Wrap(err, "failed to update invoice")
-		}
-	}
-	return nil
-}
-
-func (is *Session) updateIngestedPaymentRequest(operation xdr.Operation, source xdr.AccountId) (err error) {
-
-	reviewPaymentOp := operation.Body.MustReviewPaymentRequestOp()
-	err = is.Ingestion.UpdatePaymentRequest(
-		is.Cursor.Ledger(),
-		uint64(reviewPaymentOp.PaymentId),
-		reviewPaymentOp.Accept,
-	)
-	if err != nil {
-		return errors.Wrap(err, "failed to update payment request")
-	}
-	return nil
-}
-
-func (is *Session) updateIngestedPayment(operation xdr.Operation, source xdr.AccountId, result xdr.OperationResultTr) (err error) {
-
-	reviewPaymentOp := operation.Body.MustReviewPaymentRequestOp()
-	reviewPaymentResponse := result.MustReviewPaymentRequestResult().ReviewPaymentResponse
-
-	if reviewPaymentResponse.RelatedInvoiceId != nil {
-		if reviewPaymentOp.Accept {
-			err = is.Ingestion.UpdateInvoice(*reviewPaymentResponse.RelatedInvoiceId,
-				history.OperationStateSuccess, nil)
-		} else {
-			err = is.Ingestion.UpdateInvoice(*reviewPaymentResponse.RelatedInvoiceId,
-				history.OperationStateFailed, reviewPaymentOp.RejectReason)
-		}
-	}
-	if err != nil {
-		return errors.Wrap(err, "failed to update invoice")
-	}
-
-	state := reviewPaymentResponse.State
-	if state == xdr.PaymentStatePending {
+func (is *Session) processManageInvoiceRequest(op xdr.ManageInvoiceRequestOp,
+	result xdr.ManageInvoiceRequestResult,
+) error {
+	if result.Code != xdr.ManageInvoiceRequestResultCodeSuccess {
 		return nil
 	}
-	err = is.Ingestion.UpdatePayment(
-		reviewPaymentOp.PaymentId,
-		state == xdr.PaymentStateProcessed,
-		reviewPaymentOp.RejectReason,
-	)
-	if err != nil {
-		return errors.Wrap(err, "failed to update payment")
+	if op.Details.Action == xdr.ManageInvoiceRequestActionCreate {
+		return nil
 	}
+
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Cancel(uint64(*op.Details.RequestId))
+	if err != nil {
+		return errors.Wrap(err, "failed to update invoice request state to cancel", logan.F{
+			"request_id": uint64(*op.Details.RequestId),
+		})
+	}
+
+	return nil
+}
+
+func (is *Session) processManageContractRequest(
+	op xdr.ManageContractRequestOp,
+	result xdr.ManageContractRequestResult,
+) error {
+	if result.Code != xdr.ManageContractRequestResultCodeSuccess {
+		return nil
+	}
+	if op.Details.Action == xdr.ManageContractRequestActionCreate {
+		return nil
+	}
+
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Cancel(uint64(*op.Details.RequestId))
+	if err != nil {
+		return errors.Wrap(err, "failed to update contract request state to cancel", logan.F{
+			"request_id": uint64(*op.Details.RequestId),
+		})
+	}
+
 	return nil
 }
