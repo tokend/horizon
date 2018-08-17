@@ -16,7 +16,7 @@ type Contract struct {
 	InitialDetails    map[string]interface{} `json:"initial_details"`
 	AdditionalDetails []DetailsWithPayload   `json:"notes,omitempty"`
 	Invoices          []ReviewableRequest    `json:"invoices,omitempty"`
-	DisputeReason     DetailsWithPayload     `json:"dispute,omitempty"`
+	DisputeReason     *DetailsWithPayload    `json:"dispute,omitempty"`
 	State             []Flag                 `json:"state"`
 }
 

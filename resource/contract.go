@@ -31,8 +31,8 @@ func PopulateContractDetails(row history.ContractDetails) regources.DetailsWithP
 	}
 }
 
-func PopulateContractDispute(row history.ContractDispute) regources.DetailsWithPayload {
-	return regources.DetailsWithPayload{
+func PopulateContractDispute(row history.ContractDispute) *regources.DetailsWithPayload {
+	return &regources.DetailsWithPayload{
 		Details:   row.Reason,
 		Author:    row.Author,
 		CreatedAt: row.CreatedAt,
