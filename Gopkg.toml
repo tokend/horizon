@@ -103,7 +103,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/manage_invoice"
+  branch = "feature/update_and_reject_limits_update_request"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
