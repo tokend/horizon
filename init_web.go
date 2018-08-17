@@ -117,7 +117,6 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCreateIssuanceRequest,
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
-		xdr.OperationTypeManageInvoice,
 		xdr.OperationTypeCheckSaleState,
 		xdr.OperationTypeManageKeyValue,
 		xdr.OperationTypePaymentV2,
@@ -186,13 +185,6 @@ func initWebActions(app *App) {
 		Types: operationTypesPayment,
 	})
 	r.Get("/operations/:id", &OperationShowAction{})
-
-	r.Get("/payment_requests", &PaymentRequestIndexAction{})
-	r.Get("/forfeit_requests", &PaymentRequestIndexAction{
-		OnlyForfeits: true,
-	})
-
-	r.Get("/payment_requests/:id", &PaymentRequestShowAction{})
 
 	//get fees action
 	r.Get("/fees", &FeesAllAction{})
@@ -322,6 +314,21 @@ func initWebActions(app *App) {
 	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
 	})
+
+	r.Get("/request/invoices", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			contractID := action.GetOptionalInt64("contract_id")
+			if contractID != nil {
+				action.q = action.q.InvoicesByContract(*contractID)
+			}
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeInvoice},
+	})
+
+	r.Get("/request/contracts", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
+	})
+
 	r.Get("/request/update_sale_end_time", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
 	})
@@ -333,6 +340,11 @@ func initWebActions(app *App) {
 
 	// Sale antes actions
 	r.Get("/sale_antes", &SaleAnteAction{})
+
+	// Contracts actions
+	r.Get("/contracts", &ContractIndexAction{})
+	r.Get("/contract/:id", &ContractShowAction{})
+	r.Get("/contract/:contractor_id", &ContractShowAction{})
 
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// DISCLAIMER: while following is true, it does not currently applies

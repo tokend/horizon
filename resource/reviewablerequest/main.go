@@ -1,49 +1,30 @@
 package reviewablerequest
 
 import (
-	"strconv"
-	"time"
-
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/regources"
 )
 
-// Represents Reviewable request
-type ReviewableRequest struct {
-	ID           string   `json:"id"`
-	PT           string   `json:"paging_token"`
-	Requestor    string   `json:"requestor"`
-	Reviewer     string   `json:"reviewer"`
-	Reference    *string  `json:"reference"`
-	RejectReason string   `json:"reject_reason"`
-	Hash         string   `json:"hash"`
-	Details      *Details `json:"details"`
-	CreatedAt    string   `json:"created_at"`
-	UpdatedAt    string   `json:"updated_at"`
-	RequestState
-}
+func PopulateReviewableRequest(request *history.ReviewableRequest) (r *regources.ReviewableRequest, err error) {
+	r = &regources.ReviewableRequest{}
 
-func (r *ReviewableRequest) Populate(request *history.ReviewableRequest) error {
-	r.ID = strconv.FormatInt(request.ID, 10)
+	r.ID = uint64(request.ID)
 	r.PT = request.PagingToken()
 	r.Requestor = request.Requestor
 	r.Reviewer = request.Reviewer
 	r.Reference = request.Reference
 	r.RejectReason = request.RejectReason
-	r.RequestState.Populate(request.RequestState)
+	r.StateName = request.RequestState.String()
+	r.State = int32(request.RequestState)
 	r.Hash = request.Hash
-	r.CreatedAt = request.CreatedAt.Format(time.RFC3339)
-	r.UpdatedAt = request.UpdatedAt.Format(time.RFC3339)
+	r.CreatedAt = regources.Time(request.CreatedAt)
+	r.UpdatedAt = regources.Time(request.UpdatedAt)
 
-	r.Details = new(Details)
-	err := r.Details.Populate(request.RequestType, request.Details)
+	r.Details, err = PopulateDetails(request.RequestType, request.Details)
 	if err != nil {
-		return errors.Wrap(err, "failed to populate reviewable request details")
+		return nil, errors.Wrap(err, "failed to populate reviewable request details")
 	}
 
-	return nil
-}
-
-func (r *ReviewableRequest) PagingToken() string {
-	return r.PT
+	return
 }

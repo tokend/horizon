@@ -7,6 +7,7 @@ import (
 
 	"github.com/guregu/null"
 	sq "github.com/lann/squirrel"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
@@ -39,13 +40,21 @@ func (ingest *Ingestion) Clear(start int64, end int64) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_ledgers table")
 	}
-	err = clear(start, end, "history_payment_requests", "id")
-	if err != nil {
-		return errors.Wrap(err, "failed to clear history_payment_requests table")
-	}
 	err = clear(start, end, "history_ledger_changes", "tx_id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_ledger_changes table")
+	}
+	err = clear(start, end, "history_contracts", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_contract table")
+	}
+	err = clear(start, end, "history_contracts_details", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_contracts_details table")
+	}
+	err = clear(start, end, "history_contracts_disputes", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_contracts_disputes table")
 	}
 
 	return nil
@@ -120,6 +129,63 @@ func (ingest *Ingestion) LedgerChanges(
 	sql := ingest.ledger_changes.Values(txID, opID, orderNumber, effect, entryType, xdrPayload)
 
 	_, err = ingest.DB.Exec(sql)
+	if err != nil {
+		return errors.Wrap(err, "failed to execute sql query")
+	}
+
+	return nil
+}
+
+func (ingest *Ingestion) Contracts(contract history.Contract) error {
+	if (int32(contract.State) & int32(xdr.ContractStateDisputing)) != 0 {
+		return errors.New("Unexpected contract state. Expected not disputing")
+	}
+
+	sql := ingest.contracts.Values(
+		contract.ID,
+		contract.Contractor,
+		contract.Customer,
+		contract.Escrow,
+		contract.StartTime,
+		contract.EndTime,
+		contract.InitialDetails,
+		contract.Invoices,
+		contract.State,
+	)
+
+	_, err := ingest.DB.Exec(sql)
+	if err != nil {
+		return errors.Wrap(err, "failed to execute sql query")
+	}
+
+	return nil
+}
+
+func (ingest *Ingestion) ContractDetails(contractDetails history.ContractDetails) error {
+	sql := ingest.contractsDetails.Values(
+		contractDetails.ContractID,
+		contractDetails.Details,
+		contractDetails.Author,
+		contractDetails.CreatedAt,
+	)
+
+	_, err := ingest.DB.Exec(sql)
+	if err != nil {
+		return errors.Wrap(err, "failed to execute sql query")
+	}
+
+	return nil
+}
+
+func (ingest *Ingestion) ContractDispute(contractDetails history.ContractDispute) error {
+	sql := ingest.contractsDisputes.Values(
+		contractDetails.ContractID,
+		contractDetails.Reason,
+		contractDetails.Author,
+		contractDetails.CreatedAt,
+	)
+
+	_, err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute sql query")
 	}
@@ -343,16 +409,6 @@ func (ingest *Ingestion) createInsertBuilders() {
 
 	ingest.priceHistory = sq.Insert("history_price").Columns("base_asset", "quote_asset", "timestamp", "price")
 
-	ingest.payment_requests = sq.Insert("history_payment_requests").Columns(
-		"payment_id",
-		"exchange",
-		"accepted",
-		"details",
-		"created_at",
-		"updated_at",
-		"request_type",
-	)
-
 	ingest.ledger_changes = sq.Insert("history_ledger_changes").Columns(
 		"tx_id",
 		"op_id",
@@ -360,6 +416,31 @@ func (ingest *Ingestion) createInsertBuilders() {
 		"effect",
 		"entry_type",
 		"payload",
+	)
+
+	ingest.contracts = sq.Insert("history_contracts").Columns("id",
+		"contractor",
+		"customer",
+		"escrow",
+		"start_time",
+		"end_time",
+		"initial_details",
+		"invoices",
+		"state",
+	)
+
+	ingest.contractsDetails = sq.Insert("history_contracts_details").Columns(
+		"contract_id",
+		"details",
+		"author",
+		"created_at",
+	)
+
+	ingest.contractsDisputes = sq.Insert("history_contracts_disputes").Columns(
+		"contract_id",
+		"reason",
+		"author",
+		"created_at",
 	)
 }
 

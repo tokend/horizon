@@ -2,17 +2,17 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
+	amount2 "gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/regources"
 )
 
-type AmlAlertRequest struct {
-	BalanceID string `json:"balance_id"`
-	Amount    string `json:"amount"`
-	Reason    string `json:"reason"`
-}
-
-func (r *AmlAlertRequest) Populate(histRequest history.AmlAlertRequest) (error) {
-	r.BalanceID = histRequest.BalanceID
-	r.Amount = histRequest.Amount
-	r.Reason = histRequest.Reason
-	return nil
+func PopulateAmlAlertRequest(histRequest history.AmlAlertRequest) (
+	*regources.AMLAlertRequest, error,
+) {
+	amount := amount2.MustParse(histRequest.Amount)
+	return &regources.AMLAlertRequest{
+		BalanceID: histRequest.BalanceID,
+		Amount:    regources.Amount(amount),
+		Reason:    histRequest.Reason,
+	}, nil
 }

@@ -7,15 +7,12 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-type AssetUpdateRequest struct {
-	Code     string                 `json:"code"`
-	Policies []regources.Flag       `json:"policies"`
-	Details  map[string]interface{} `json:"details"`
-}
-
-func (r *AssetUpdateRequest) Populate(histRequest history.AssetUpdateRequest) error {
-	r.Code = histRequest.Asset
-	r.Policies = base.FlagFromXdrAssetPolicy(histRequest.Policies, xdr.AssetPolicyAll)
-	r.Details = histRequest.Details
-	return nil
+func PopulateAssetUpdateRequest(histRequest history.AssetUpdateRequest) (
+	*regources.AssetUpdateRequest, error,
+) {
+	return &regources.AssetUpdateRequest{
+		Code:     histRequest.Asset,
+		Policies: base.FlagFromXdrAssetPolicy(histRequest.Policies, xdr.AssetPolicyAll),
+		Details:  histRequest.Details,
+	}, nil
 }

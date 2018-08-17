@@ -103,11 +103,11 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/update_voting"
+  branch = "feature/manage_invoice"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "master"
+  branch = "feature/manage_invoice"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
