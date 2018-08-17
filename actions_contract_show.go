@@ -5,6 +5,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/regources"
 )
 
@@ -70,4 +71,29 @@ func (action *ContractShowAction) loadRecords() {
 
 		action.ContractRecord.Invoices = append(action.ContractRecord.Invoices, *res)
 	}
+
+	additionDetails, err := action.HistoryQ().ContractsDetails().ByContractID(contract.ID)
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to get additional contract details records")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	for _, detail := range additionDetails {
+		res := resource.PopulateContractDetails(detail)
+		action.ContractRecord.AdditionalDetails = append(action.ContractRecord.AdditionalDetails, res)
+	}
+
+	if (contract.State & int32(xdr.ContractStateDisputing)) == 0 {
+		return
+	}
+
+	dispute, err := action.HistoryQ().ContractDispute().ByContractID(contract.ID)
+	if (err != nil) || (dispute == nil) {
+		action.Log.WithError(err).Error("Failed to get contract dispute records")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	action.ContractRecord.DisputeReason = resource.PopulateContractDispute(*dispute)
 }

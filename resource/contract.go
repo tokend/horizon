@@ -10,21 +10,31 @@ import (
 )
 
 func PopulateContract(row history.Contract) regources.Contract {
-	var details []map[string]interface{}
-	for _, item := range row.Details {
-		details = append(details, item)
-	}
 	return regources.Contract{
-		ID:            strconv.FormatInt(row.ID, 10),
-		PT:            row.PagingToken(),
-		Contractor:    row.Contractor,
-		Customer:      row.Customer,
-		Escrow:        row.Escrow,
-		Disputer:      row.Disputer,
-		StartTime:     row.StartTime,
-		EndTime:       row.EndTime,
-		Details:       details,
-		DisputeReason: row.DisputeReason,
-		State:         base.FlagFromXdrContractState(row.State, xdr.ContractStateAll),
+		ID:             strconv.FormatInt(row.ID, 10),
+		PT:             row.PagingToken(),
+		Contractor:     row.Contractor,
+		Customer:       row.Customer,
+		Escrow:         row.Escrow,
+		StartTime:      row.StartTime,
+		EndTime:        row.EndTime,
+		InitialDetails: row.InitialDetails,
+		State:          base.FlagFromXdrContractState(row.State, xdr.ContractStateAll),
+	}
+}
+
+func PopulateContractDetails(row history.ContractDetails) regources.DetailsWithPayload {
+	return regources.DetailsWithPayload{
+		Details:   row.Details,
+		Author:    row.Author,
+		CreatedAt: row.CreatedAt,
+	}
+}
+
+func PopulateContractDispute(row history.ContractDispute) regources.DetailsWithPayload {
+	return regources.DetailsWithPayload{
+		Details:   row.Reason,
+		Author:    row.Author,
+		CreatedAt: row.CreatedAt,
 	}
 }

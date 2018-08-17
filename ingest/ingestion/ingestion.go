@@ -48,6 +48,14 @@ func (ingest *Ingestion) Clear(start int64, end int64) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_contract table")
 	}
+	err = clear(start, end, "history_contracts_details", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_contracts_details table")
+	}
+	err = clear(start, end, "history_contracts_disputes", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_contracts_disputes table")
+	}
 
 	return nil
 }
@@ -138,13 +146,43 @@ func (ingest *Ingestion) Contracts(contract history.Contract) error {
 		contract.Contractor,
 		contract.Customer,
 		contract.Escrow,
-		contract.Disputer,
 		contract.StartTime,
 		contract.EndTime,
-		contract.Details,
+		contract.InitialDetails,
 		contract.Invoices,
-		contract.DisputeReason,
 		contract.State,
+	)
+
+	_, err := ingest.DB.Exec(sql)
+	if err != nil {
+		return errors.Wrap(err, "failed to execute sql query")
+	}
+
+	return nil
+}
+
+func (ingest *Ingestion) ContractDetails(contractDetails history.ContractDetails) error {
+	sql := ingest.contractsDetails.Values(
+		contractDetails.ContractID,
+		contractDetails.Details,
+		contractDetails.Author,
+		contractDetails.CreatedAt,
+	)
+
+	_, err := ingest.DB.Exec(sql)
+	if err != nil {
+		return errors.Wrap(err, "failed to execute sql query")
+	}
+
+	return nil
+}
+
+func (ingest *Ingestion) ContractDispute(contractDetails history.ContractDispute) error {
+	sql := ingest.contractsDisputes.Values(
+		contractDetails.ContractID,
+		contractDetails.Reason,
+		contractDetails.Author,
+		contractDetails.CreatedAt,
 	)
 
 	_, err := ingest.DB.Exec(sql)
@@ -384,13 +422,25 @@ func (ingest *Ingestion) createInsertBuilders() {
 		"contractor",
 		"customer",
 		"escrow",
-		"disputer",
 		"start_time",
 		"end_time",
-		"details",
+		"initial_details",
 		"invoices",
-		"dispute_reason",
 		"state",
+	)
+
+	ingest.contractsDetails = sq.Insert("history_contracts_details").Columns(
+		"contract_id",
+		"details",
+		"author",
+		"created_at",
+	)
+
+	ingest.contractsDisputes = sq.Insert("history_contracts_disputes").Columns(
+		"contract_id",
+		"reason",
+		"author",
+		"created_at",
 	)
 }
 

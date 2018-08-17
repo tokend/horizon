@@ -69,7 +69,9 @@ type QInterface interface {
 	LedgerChanges() LedgerChangesQI
 
 	//Contracts
-	Contracts() ContractsQI
+	Contracts() ContractQI
+	ContractsDetails() ContractsDetailsQI
+	ContractDispute() ContractDisputeQI
 }
 
 // ReviewableRequests - provides builder of request to access reviewable requests

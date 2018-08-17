@@ -17,7 +17,7 @@ func contractCreate(is *Session, entry *xdr.LedgerEntry) error {
 	err := is.Ingestion.Contracts(contract)
 	if err != nil {
 		return errors.Wrap(err, "failed to ingest contract", logan.F{
-			"contract_id": uint64(entry.Data.MustContract().ContractId),
+			"contract_id": contract.ID,
 		})
 	}
 
@@ -30,7 +30,7 @@ func contractUpdate(is *Session, entry *xdr.LedgerEntry) error {
 	err := is.Ingestion.HistoryQ().Contracts().Update(contract)
 	if err != nil {
 		return errors.Wrap(err, "failed to update contract", logan.F{
-			"contract_id": uint64(entry.Data.MustContract().ContractId),
+			"contract_id": contract.ID,
 		})
 	}
 
@@ -117,20 +117,8 @@ func (is *Session) updateNotRevertingContractInvoices(contractID int64) error {
 }
 
 func convertContract(rawContract xdr.ContractEntry) history.Contract {
-	disputer := ""
-	var disputeReason map[string]interface{}
-	if (int32(rawContract.State) & int32(xdr.ContractStateDisputing)) != 0 {
-		disputer = rawContract.DisputeDetails.Disputer.Address()
-		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(rawContract.DisputeDetails.Reason), &disputeReason)
-	}
-
-	var details []db2.Details
-	for _, item := range rawContract.Details {
-		var detail map[string]interface{}
-		_ = json.Unmarshal([]byte(item), &detail)
-		details = append(details, detail)
-	}
+	var initialDetails map[string]interface{}
+	_ = json.Unmarshal([]byte(rawContract.InitialDetails), &initialDetails)
 
 	var invoices []int64
 	for _, item := range rawContract.InvoiceRequestsIDs {
@@ -141,15 +129,86 @@ func convertContract(rawContract xdr.ContractEntry) history.Contract {
 		TotalOrderID: db2.TotalOrderID{
 			ID: int64(rawContract.ContractId),
 		},
-		Contractor:    rawContract.Contractor.Address(),
-		Customer:      rawContract.Customer.Address(),
-		Escrow:        rawContract.Escrow.Address(),
-		Disputer:      disputer,
-		StartTime:     time.Unix(int64(rawContract.StartTime), 0).UTC(),
-		EndTime:       time.Unix(int64(rawContract.EndTime), 0).UTC(),
-		Details:       details,
-		Invoices:      invoices,
-		DisputeReason: disputeReason,
-		State:         int32(rawContract.State),
+		Contractor:     rawContract.Contractor.Address(),
+		Customer:       rawContract.Customer.Address(),
+		Escrow:         rawContract.Escrow.Address(),
+		StartTime:      time.Unix(int64(rawContract.StartTime), 0).UTC(),
+		EndTime:        time.Unix(int64(rawContract.EndTime), 0).UTC(),
+		InitialDetails: initialDetails,
+		Invoices:       invoices,
+		State:          int32(rawContract.State),
 	}
+}
+
+func (is *Session) processManageContract(op xdr.ManageContractOp, result xdr.ManageContractResult) error {
+	if result.Code != xdr.ManageContractResultCodeSuccess {
+		return nil
+	}
+
+	switch op.Data.Action {
+	case xdr.ManageContractActionAddDetails:
+		return is.addContractDetails(string(op.Data.MustDetails()), int64(op.ContractId))
+	case xdr.ManageContractActionStartDispute:
+		return is.addContractDispute(string(op.Data.MustDisputeReason()), int64(op.ContractId))
+	}
+
+	return nil
+}
+
+func (is *Session) addContractDetails(xdrDetails string, contractID int64) error {
+	var details map[string]interface{}
+	err := json.Unmarshal([]byte(xdrDetails), &details)
+	if err != nil {
+		return errors.Wrap(err, "failed to unmarshal contract details", logan.F{
+			"contract_id": contractID,
+		})
+	}
+
+	source := is.Cursor.OperationSourceAccount()
+	closeTime := is.Cursor.LedgerCloseTime()
+
+	contractDetails := history.ContractDetails{
+		ContractID: contractID,
+		Details:    details,
+		Author:     source.Address(),
+		CreatedAt:  closeTime,
+	}
+
+	err = is.Ingestion.ContractDetails(contractDetails)
+	if err != nil {
+		return errors.Wrap(err, "failed to ingest contract details", logan.F{
+			"contract_id": contractID,
+		})
+	}
+
+	return nil
+}
+
+func (is *Session) addContractDispute(xdrReason string, contractID int64) error {
+	var details map[string]interface{}
+	err := json.Unmarshal([]byte(xdrReason), &details)
+	if err != nil {
+		return errors.Wrap(err, "failed to unmarshal contract dispute reason", logan.F{
+			"contract_id": contractID,
+		})
+	}
+
+	source := is.Cursor.OperationSourceAccount()
+	closeTime := is.Cursor.LedgerCloseTime()
+
+	contractDispute := history.ContractDispute{
+		ContractID: contractID,
+		Reason:     details,
+		Author:     source.Address(),
+		CreatedAt:  closeTime,
+	}
+
+	err = is.Ingestion.ContractDispute(contractDispute)
+	if err != nil {
+		return errors.Wrap(err, "failed to ingest contract dispute", logan.F{
+			"contract_id": contractID,
+		})
+	}
+
+	return nil
 }

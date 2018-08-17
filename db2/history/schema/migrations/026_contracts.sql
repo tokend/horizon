@@ -6,16 +6,36 @@ CREATE TABLE history_contracts
   contractor      VARCHAR(56) NOT NULL,
   customer        VARCHAR(56) NOT NULL,
   escrow          VARCHAR(56) NOT NULL,
-  disputer        VARCHAR(56) DEFAULT NULL,
   start_time      TIMESTAMP without time zone NOT NULL,
   end_time        TIMESTAMP without time zone NOT NULL,
-  details         jsonb       NOT NULL,
+  initial_details jsonb       NOT NULL,
   invoices        BIGINT[]    DEFAULT NULL,
-  dispute_reason  jsonb       DEFAULT NULL,
   state           INT         NOT NULL,
   PRIMARY KEY (id)
 );
 
+CREATE TABLE history_contracts_details
+(
+  contract_id BIGINT      NOT NULL CHECK (contract_id >= 0),
+  details     jsonb       NOT NULL,
+  author      VARCHAR(56) NOT NULL,
+  created_at  BIGINT      NOT NULL CHECK (created_at >= 0)
+);
+
+create index on history_contracts_details (contract_id);
+
+CREATE TABLE history_contracts_disputes
+(
+  contract_id BIGINT      NOT NULL CHECK (contract_id >= 0),
+  reason      jsonb       NOT NULL,
+  author      VARCHAR(56) NOT NULL,
+  created_at  BIGINT      NOT NULL CHECK (created_at >= 0)
+);
+
+create index on history_contracts_disputes (contract_id);
+
 -- +migrate Down
 
 DROP TABLE IF EXISTS history_contracts;
+DROP TABLE IF EXISTS history_contracts_details;
+DROP TABLE IF EXISTS history_contracts_disputes;

@@ -14,7 +14,6 @@ var selectContracts = sq.Select(
 	"hc.contractor",
 	"hc.customer",
 	"hc.escrow",
-	"hc.disputer",
 	"hc.start_time",
 	"hc.end_time",
 	"hc.details",
@@ -23,21 +22,21 @@ var selectContracts = sq.Select(
 	"hc.state",
 ).From("history_contracts hc")
 
-type ContractsQI interface {
+type ContractQI interface {
 	// ByStartTime - filters contracts by start time
-	ByStartTime(seconds int64) ContractsQI
+	ByStartTime(seconds int64) ContractQI
 	// ByEndTime - filters contracts by end time
-	ByEndTime(seconds int64) ContractsQI
+	ByEndTime(seconds int64) ContractQI
 	// ByDisputeState - filters contracts by dispute state
-	ByDisputeState(isDisputing bool) ContractsQI
+	ByDisputeState(isDisputing bool) ContractQI
 	// ByContractorID - filters contracts by contractor id
-	ByContractorID(contractorID string) ContractsQI
+	ByContractorID(contractorID string) ContractQI
 	// ByCustomerID - filters contracts by customer id
-	ByCustomerID(customerID string) ContractsQI
+	ByCustomerID(customerID string) ContractQI
 	// ByCustomerID - filters contracts by customer id
-	ByEscrowID(escrowID string) ContractsQI
+	ByEscrowID(escrowID string) ContractQI
 	// Page - applies page params
-	Page(page db2.PageQuery) ContractsQI
+	Page(page db2.PageQuery) ContractQI
 	// Select - selects contract by specifics filters
 	Select() ([]Contract, error)
 	// ByID - get contract by contract id
@@ -47,20 +46,20 @@ type ContractsQI interface {
 	AddState(contractID int64, stateToAdd int32) error
 }
 
-type ContractsQ struct {
+type ContractQ struct {
 	Err    error
 	parent *Q
 	sql    sq.SelectBuilder
 }
 
-func (q *Q) Contracts() ContractsQI {
-	return &ContractsQ{
+func (q *Q) Contracts() ContractQI {
+	return &ContractQ{
 		parent: q,
 		sql:    selectContracts,
 	}
 }
 
-func (q *ContractsQ) ByStartTime(seconds int64) ContractsQI {
+func (q *ContractQ) ByStartTime(seconds int64) ContractQI {
 	if q.Err != nil {
 		return q
 	}
@@ -70,7 +69,7 @@ func (q *ContractsQ) ByStartTime(seconds int64) ContractsQI {
 	return q
 }
 
-func (q *ContractsQ) ByEndTime(seconds int64) ContractsQI {
+func (q *ContractQ) ByEndTime(seconds int64) ContractQI {
 	if q.Err != nil {
 		return q
 	}
@@ -80,7 +79,7 @@ func (q *ContractsQ) ByEndTime(seconds int64) ContractsQI {
 	return q
 }
 
-func (q *ContractsQ) ByDisputeState(isDisputing bool) ContractsQI {
+func (q *ContractQ) ByDisputeState(isDisputing bool) ContractQI {
 	if q.Err != nil {
 		return q
 	}
@@ -96,7 +95,7 @@ func (q *ContractsQ) ByDisputeState(isDisputing bool) ContractsQI {
 	return q
 }
 
-func (q *ContractsQ) Page(page db2.PageQuery) ContractsQI {
+func (q *ContractQ) Page(page db2.PageQuery) ContractQI {
 	if q.Err != nil {
 		return q
 	}
@@ -105,7 +104,7 @@ func (q *ContractsQ) Page(page db2.PageQuery) ContractsQI {
 	return q
 }
 
-func (q *ContractsQ) Select() ([]Contract, error) {
+func (q *ContractQ) Select() ([]Contract, error) {
 	if q.Err != nil {
 		return nil, q.Err
 	}
@@ -115,7 +114,7 @@ func (q *ContractsQ) Select() ([]Contract, error) {
 	return result, q.Err
 }
 
-func (q *ContractsQ) ByID(id int64) (*Contract, error) {
+func (q *ContractQ) ByID(id int64) (*Contract, error) {
 	if q.Err != nil {
 		return nil, q.Err
 	}
@@ -127,7 +126,7 @@ func (q *ContractsQ) ByID(id int64) (*Contract, error) {
 	return &result, q.Err
 }
 
-func (q *ContractsQ) ByContractorID(contractorID string) ContractsQI {
+func (q *ContractQ) ByContractorID(contractorID string) ContractQI {
 	if q.Err != nil {
 		return q
 	}
@@ -137,7 +136,7 @@ func (q *ContractsQ) ByContractorID(contractorID string) ContractsQI {
 	return q
 }
 
-func (q *ContractsQ) ByCustomerID(customerID string) ContractsQI {
+func (q *ContractQ) ByCustomerID(customerID string) ContractQI {
 	if q.Err != nil {
 		return q
 	}
@@ -147,7 +146,7 @@ func (q *ContractsQ) ByCustomerID(customerID string) ContractsQI {
 	return q
 }
 
-func (q *ContractsQ) ByEscrowID(escrowID string) ContractsQI {
+func (q *ContractQ) ByEscrowID(escrowID string) ContractQI {
 	if q.Err != nil {
 		return q
 	}
@@ -158,29 +157,26 @@ func (q *ContractsQ) ByEscrowID(escrowID string) ContractsQI {
 }
 
 // Update - update contract using it's ID
-func (q *ContractsQ) Update(contract Contract) error {
+func (q *ContractQ) Update(contract Contract) error {
 	if q.Err != nil {
 		return q.Err
 	}
 
 	query := sq.Update("history_contracts").SetMap(map[string]interface{}{
-		"contractor":     contract.Contractor,
-		"customer":       contract.Customer,
-		"escrow":         contract.Escrow,
-		"disputer":       contract.Disputer,
-		"start_time":     contract.StartTime,
-		"end_time":       contract.EndTime,
-		"details":        contract.Details,
-		"invoices":       contract.Invoices,
-		"dispute_reason": contract.DisputeReason,
-		"state":          contract.State,
+		"contractor": contract.Contractor,
+		"customer":   contract.Customer,
+		"escrow":     contract.Escrow,
+		"start_time": contract.StartTime,
+		"end_time":   contract.EndTime,
+		"invoices":   contract.Invoices,
+		"state":      contract.State,
 	}).Where("id = ?", contract.ID)
 
 	_, err := q.parent.Exec(query)
 	return err
 }
 
-func (q *ContractsQ) AddState(contractID int64, stateToAdd int32) error {
+func (q *ContractQ) AddState(contractID int64, stateToAdd int32) error {
 	if q.Err != nil {
 		return q.Err
 	}

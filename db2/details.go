@@ -26,9 +26,13 @@ func (r *Details) Scan(src interface{}) error {
 	return nil
 }
 
-type DetailsArray []Details
+type DetailsWithPayload struct {
+	Details   Details `json:"details"`
+	Author    string  `json:"author"`
+	CreatedAt int64   `json:"created_at"`
+}
 
-func (r DetailsArray) Value() (driver.Value, error) {
+func (r DetailsWithPayload) Value() (driver.Value, error) {
 	result, err := DriverValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal details array")
@@ -37,7 +41,7 @@ func (r DetailsArray) Value() (driver.Value, error) {
 	return result, nil
 }
 
-func (r *DetailsArray) Scan(src interface{}) error {
+func (r *DetailsWithPayload) Scan(src interface{}) error {
 	err := DriveScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan details array")
