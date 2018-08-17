@@ -14,7 +14,7 @@ type ReviewableRequest struct {
 	Details         *ReviewableRequestDetails `json:"details"`
 	AllTasks        uint32                    `json:"all_tasks"`
 	PendingTasks    uint32                    `json:"pending_tasks"`
-	ExternalDetails map[string]interface{}    `json:"external_details"`
+	ExternalDetails map[string]interface{}  `json:"external_details"`
 	CreatedAt       Time                      `json:"created_at"`
 	UpdatedAt       Time                      `json:"updated_at"`
 
