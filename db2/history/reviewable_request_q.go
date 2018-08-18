@@ -43,6 +43,9 @@ type ReviewableRequestQI interface {
 	UpdatedAfter(timestamp int64) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
 	Select() ([]ReviewableRequest, error)
+	// Count loads count of the results of the query specified by `q`
+	Count() (int64, error)
+	CountQuery() ReviewableRequestQI
 
 	// Request Type specific filters. Filter for request type must be applied separately
 
@@ -311,6 +314,24 @@ func (q *ReviewableRequestQ) Select() ([]ReviewableRequest, error) {
 
 	var result []ReviewableRequest
 	q.Err = q.parent.Select(&result, q.sql)
+	return result, q.Err
+}
+
+func (q *ReviewableRequestQ) CountQuery() ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+	q.sql = sq.Select("COUNT(*)").From("reviewable_request")
+	return q
+}
+
+func (q *ReviewableRequestQ) Count() (int64, error) {
+	if q.Err != nil {
+		return 0, q.Err
+	}
+
+	var result int64
+	q.Err = q.parent.Get(&result, q.sql)
 	return result, q.Err
 }
 
