@@ -212,7 +212,7 @@ func initWebActions(app *App) {
 	r.Get("/requests", &ReviewableRequestIndexAction{
 		RequestTypes: xdr.ReviewableRequestTypeAll,
 	})
-	r.Get("/requests/count/issuance/:state", &ReviewableRequestCountAction{
+	r.Get("/requests/count/issuance", &ReviewableRequestCountAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeIssuanceCreate},
 	})
 	r.Get("/request/assets", &ReviewableRequestIndexAction{
