@@ -10,10 +10,20 @@ import (
 	"gitlab.com/tokend/go/xdr"
 )
 
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) (err error) {
+func isFulfilled(res xdr.ReviewRequestResultSuccess) bool {
+	extendedResult, ok := res.Ext.GetExtendedResult()
+	if !ok {
+		return true
+	}
+	return extendedResult.Fulfilled
+}
+
+func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
+	changes xdr.LedgerEntryChanges) (err error) {
+
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
-		err = is.approveReviewableRequest(op, changes)
+		err = is.approveReviewableRequest(op, res, changes)
 	case xdr.ReviewRequestOpActionPermanentReject:
 		err = is.permanentReject(op)
 	case xdr.ReviewRequestOpActionReject:
@@ -46,7 +56,8 @@ func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
 	return false
 }
 
-func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) (err error) {
+func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
+	changes xdr.LedgerEntryChanges) error {
 	// approval of two step withdrawal leads to update of request to withdrawal
 	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeTwoStepWithdrawal {
 		return nil
@@ -56,7 +67,11 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.
 		return nil
 	}
 
-	err = is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
+	if !isFulfilled(res) {
+		return nil
+	}
+
+	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
 	if err != nil {
 		return errors.Wrap(err, "failed to approve reviewable request")
 	}
@@ -75,7 +90,7 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.
 	return nil
 }
 
-func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.WithdrawalDetails) (err error) {
+func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.WithdrawalDetails) error {
 	fields := logan.Field("request_id", requestID)
 	request, err := is.Ingestion.HistoryQ().ReviewableRequests().ByID(requestID)
 	if err != nil {

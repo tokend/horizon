@@ -11,7 +11,7 @@ import (
 
 type OrderBookAction struct {
 	Action
-	OwnerID string
+	OwnerID     string
 	BaseAsset   string
 	QuoteAsset  string
 	IsBuy       bool

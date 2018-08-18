@@ -463,7 +463,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/manage_invoice"
+  branch = "master"
   digest = "1:ead0746dd3fae87bc2a0c2ff215cbe3ec196956eadccfa3cab07d6447c23ad77"
   name = "gitlab.com/tokend/go"
   packages = [
@@ -479,7 +479,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "40c3dd22cb8613a3e27b0871d26778fc8fab746c"
+  revision = "1c81bb1a94909364758bdf187cfdb48535313e2f"
 
 [[projects]]
   branch = "master"
@@ -495,12 +495,12 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/manage_invoice"
-  digest = "1:08d9af3f0f7f176ba5d33f8a21da004b6aa288480bf0e1c33e59f3f7fd962cf5"
+  branch = "feature/issuance_tasks"
+  digest = "1:64a51a5c2afc2de007461e6f3d0f72c78f58b1c0a145f8f9156bb942bc9cf908"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "56e74cdf1dbbc84a1cafa2318fb0230007517bd5"
+  revision = "723d7666b90f6f38c2119ff01c7e115d507ef769"
 
 [[projects]]
   branch = "master"
