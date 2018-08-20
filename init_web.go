@@ -148,6 +148,9 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:account_id/payments", &OperationIndexAction{
 		Types: operationTypesPayment,
 	})
+	r.Get("/accounts/:account_id/offers_history", &OperationIndexAction{
+		Types: []xdr.OperationType{xdr.OperationTypeManageOffer},
+	})
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
 
 	//keyValue actions
