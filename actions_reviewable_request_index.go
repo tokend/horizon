@@ -7,7 +7,6 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources"
 )
 
 // ReviewableRequestIndexAction renders slice of reviewable requests
@@ -21,7 +20,6 @@ type ReviewableRequestIndexAction struct {
 	State              *int64
 	UpdatedAfter       *int64
 	Records            []history.ReviewableRequest
-	Count              regources.RequestsCount
 
 	RequestTypes []xdr.ReviewableRequestType
 
@@ -100,25 +98,6 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 		action.Err = &problem.ServerError
 		return
 	}
-
-	q := action.HistoryQ().ReviewableRequests().CountQuery().ForTypes(action.RequestTypes)
-	if action.Err != nil {
-		return
-	}
-
-	action.Count.Approved, err = q.ForState(int64(history.ReviewableRequestStateApproved)).Count()
-	if err != nil {
-		action.Log.WithError(err).Error("failed to load count of approved reviewable requests")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	action.Count.Pending, err = q.ForState(int64(history.ReviewableRequestStatePending)).Count()
-	if err != nil {
-		action.Log.WithError(err).Error("failed to load count of pending reviewable requests")
-		action.Err = &problem.ServerError
-		return
-	}
 }
 
 func (action *ReviewableRequestIndexAction) loadPage() {
@@ -132,9 +111,6 @@ func (action *ReviewableRequestIndexAction) loadPage() {
 		action.Page.Add(res)
 	}
 
-	action.Page.Embedded.Meta = &hal.PageMeta{
-		Count: &action.Count,
-	}
 	action.Page.BaseURL = action.BaseURL()
 	action.Page.BasePath = action.Path()
 	action.Page.Limit = action.PagingParams.Limit
