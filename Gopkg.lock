@@ -495,12 +495,12 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/issuance_tasks"
-  digest = "1:64a51a5c2afc2de007461e6f3d0f72c78f58b1c0a145f8f9156bb942bc9cf908"
+  branch = "feature/issuance_requests_count"
+  digest = "1:a72981090da8ced8c7561c12e503b03810fa341d0a83ed6d71d69933839e45ce"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "723d7666b90f6f38c2119ff01c7e115d507ef769"
+  revision = "8f37d921e04be87c95543a8b9c7097b89578fbfa"
 
 [[projects]]
   branch = "master"

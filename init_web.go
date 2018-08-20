@@ -10,10 +10,13 @@ import (
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
+	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
 
 // Web contains the http server related fields for horizon: the router,
@@ -239,8 +242,31 @@ func initWebActions(app *App) {
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			asset := action.GetString("asset")
 			action.Page.Filters["asset"] = asset
+			approvedCountingQ := action.HistoryQ().ReviewableRequests().CountQuery().ForTypes(action.RequestTypes)
+			pendingCountingQ := action.HistoryQ().ReviewableRequests().CountQuery().ForTypes(action.RequestTypes)
 			if asset != "" {
 				action.q = action.q.IssuanceByAsset(asset)
+				approvedCountingQ = approvedCountingQ.IssuanceByAsset(asset)
+				pendingCountingQ = pendingCountingQ.IssuanceByAsset(asset)
+			}
+
+			action.Page.Embedded.Meta = &hal.PageMeta{
+				Count: &regources.RequestsCount{},
+			}
+
+			var err error
+			action.Page.Embedded.Meta.Count.Approved, err = approvedCountingQ.ForState(int64(history.ReviewableRequestStateApproved)).Count()
+			if err != nil {
+				action.Log.WithError(err).Error("failed to load count of approved reviewable requests")
+				action.Err = &problem.ServerError
+				return
+			}
+
+			action.Page.Embedded.Meta.Count.Pending, err = pendingCountingQ.ForState(int64(history.ReviewableRequestStatePending)).Count()
+			if err != nil {
+				action.Log.WithError(err).Error("failed to load count of pending reviewable requests")
+				action.Err = &problem.ServerError
+				return
 			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeIssuanceCreate},
