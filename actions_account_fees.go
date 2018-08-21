@@ -38,12 +38,12 @@ func (action *AccountFeesAction) JSON() {
 }
 
 func (action *AccountFeesAction) loadParams() {
-	action.Account = action.GetCoreAccount("account_id", action.CoreQ())
+	action.Account = action.GetCoreAccount("id", action.CoreQ())
 	if action.Err != nil {
 		return
 	}
 	if action.Account == nil {
-		action.SetInvalidField("account_id", errors.New("Must not be empty"))
+		action.SetInvalidField("id", errors.New("Must not be empty"))
 		return
 	}
 }
