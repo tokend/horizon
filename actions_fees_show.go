@@ -1,13 +1,14 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/go/amount"
+	"github.com/go-errors/errors"
 	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/swarmfund/horizon/exchange"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
-	"github.com/go-errors/errors"
-	"gitlab.com/swarmfund/horizon/exchange"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/regources"
 )
 
 // This file contains the actions:
@@ -25,7 +26,7 @@ type FeesShowAction struct {
 
 	Amount string
 
-	Fee resource.FeeEntry
+	Fee regources.FeeEntry
 }
 
 // JSON is a method for actions.JSON
@@ -109,7 +110,7 @@ func (action *FeesShowAction) loadData() {
 
 	result.Percent = percentFee
 
-	action.Fee.Populate(*result)
+	action.Fee = resource.NewFeeEntry(*result)
 }
 
 func (action *FeesShowAction) GetPercentFee(percentFee int64, rawAmount string) (int64, bool) {

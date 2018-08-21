@@ -9,7 +9,9 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource"
+
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
 
 // This file contains the actions:
@@ -82,8 +84,7 @@ func (action *FeesAllAction) loadData() {
 		q = q.ForAccount(action.Account).ForAccountType(action.AccountType)
 	}
 
-	actualFees := []core.FeeEntry{}
-	err = q.Select(&actualFees)
+	actualFees, err := q.Select()
 	if err != nil {
 		if err != sql.ErrNoRows {
 			action.Err = &problem.ServerError
@@ -94,12 +95,13 @@ func (action *FeesAllAction) loadData() {
 		err = nil
 	}
 
-	// convert to map of resources
-	action.Response.Fees = map[string][]resource.FeeEntry{}
-	var fee resource.FeeEntry
+	// convert to map of regourcess
+	action.Response.Fees = map[xdr.AssetCode][]regources.FeeEntry{}
+	var fee regources.FeeEntry
 	for _, coreFee := range actualFees {
-		fee.Populate(coreFee)
-		action.Response.Fees[coreFee.Asset] = append(action.Response.Fees[coreFee.Asset], fee)
+		fee = resource.NewFeeEntry(coreFee)
+		ac := xdr.AssetCode(coreFee.Asset)
+		action.Response.Fees[ac] = append(action.Response.Fees[ac], fee)
 	}
 
 	// for overview we do not need to populate default fees
@@ -115,11 +117,12 @@ func (action *FeesAllAction) loadData() {
 	}
 
 	for _, asset := range assets {
-		action.Response.Fees[asset.Code] = action.addDefaultEntriesForAsset(asset, action.Response.Fees[asset.Code])
+		ac := xdr.AssetCode(asset.Code)
+		action.Response.Fees[ac] = action.addDefaultEntriesForAsset(asset, action.Response.Fees[ac])
 	}
 }
 
-func feesContainsType(feeType int, entries []resource.FeeEntry) bool {
+func feesContainsType(feeType int, entries []regources.FeeEntry) bool {
 	for _, entry := range entries {
 		if entry.FeeType == feeType {
 			return true
@@ -129,7 +132,7 @@ func feesContainsType(feeType int, entries []resource.FeeEntry) bool {
 	return false
 }
 
-func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries []resource.FeeEntry) []resource.FeeEntry {
+func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries []regources.FeeEntry) []regources.FeeEntry {
 	for _, feeType := range xdr.FeeTypeAll {
 		subtypes := []int64{0}
 		if feeType == xdr.FeeTypePaymentFee {
@@ -144,13 +147,13 @@ func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries
 	return entries
 }
 
-func (action *FeesAllAction) getDefaultFee(asset string, feeType int, subType int64) resource.FeeEntry {
+func (action *FeesAllAction) getDefaultFee(asset string, feeType int, subType int64) regources.FeeEntry {
 	accountType := int32(-1)
 	if action.AccountType != nil {
 		accountType = *action.AccountType
 	}
 
-	return resource.FeeEntry{
+	return regources.FeeEntry{
 		Asset:       asset,
 		FeeType:     feeType,
 		Subtype:     subType,
