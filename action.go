@@ -326,11 +326,23 @@ func (action *Action) Doorman() doorman.Doorman {
 	return doorman.New(false, action)
 }
 
-func (action *Action) Signers(string) ([]resources.Signer, error) {
-	signers, err := action.GetSigners(action.GetCoreAccount(action.Signer, action.cq))
-	if err != nil {
-		return nil, err
+// Signers used by doorman, basically just a connector to existing signers check logic
+func (action *Action) Signers(address string) ([]resources.Signer, error) {
+	// just to ensure backwards compatibility with checkAllowed
+	if address == "" {
+		address = action.App.CoreInfo.MasterAccountID
 	}
+	// get core account
+	account, err := action.CoreQ().Accounts().ByAddress(address)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account")
+	}
+	// pass it to legacy routine
+	signers, err := action.GetSigners(account)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account")
+	}
+	// convert structs
 	result := make([]resources.Signer, 0, len(signers))
 	for _, signer := range signers {
 		result = append(result, resources.Signer{
@@ -343,6 +355,7 @@ func (action *Action) Signers(string) ([]resources.Signer, error) {
 	}
 	return result, nil
 }
+
 func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 	// all system accounts are managed by master account signers
 	if isSystemAccount(account.AccountType) && account.AccountType != int32(xdr.AccountTypeMaster) {
