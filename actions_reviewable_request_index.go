@@ -58,26 +58,37 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 
 func (action *ReviewableRequestIndexAction) checkAllowed() {
 
-	for _, actionType := range action.RequestTypes {
-		if actionType == xdr.ReviewableRequestTypeIssuanceCreate {
-			action.Doorman().Check(action.R,
-				doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionPendingIssuance),
-				doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionIssuanceHistory))
-		}
-		if actionType == xdr.ReviewableRequestTypeUpdateKyc {
-			action.Doorman().Check(action.R,
-				doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionPendingKYC),
-				doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionKYCHistory))
-
-		}
-		if actionType == xdr.ReviewableRequestTypeSale {
-			action.Doorman().Check(action.R, doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionCrowdfundingCampaign))
-		}
-	}
 	if action.CustomCheckAllowed != nil {
 		action.CustomCheckAllowed(action)
 		return
 	}
+
+	constrains := []doorman.SignerConstraint{}
+	extentions := []doorman.SignerExtension{}
+	for _, actionType := range action.RequestTypes {
+		if actionType == xdr.ReviewableRequestTypeIssuanceCreate {
+			extentions = append(extentions, doorman.SignerExternsionPendingIssuance, doorman.SignerExternsionIssuanceHistory)
+		}
+		if actionType == xdr.ReviewableRequestTypeUpdateKyc {
+			extentions = append(extentions, doorman.SignerExternsionPendingKYC, doorman.SignerExternsionKYCHistory)
+
+		}
+		if actionType == xdr.ReviewableRequestTypeSale {
+			extentions = append(extentions, doorman.SignerExternsionCrowdfundingCampaign)
+		}
+	}
+
+	for _, ext := range extentions {
+		if action.Requestor != "" {
+			constrains = append(constrains, doorman.SignerOfWithPermission(action.Requestor, ext))
+		}
+		if action.Reviewer != "" {
+			constrains = append(constrains, doorman.SignerOfWithPermission(action.Reviewer, ext))
+		}
+		constrains = append(constrains, doorman.SignerOfWithPermission(action.App.CoreInfo.MasterAccountID, ext))
+	}
+
+	action.Doorman().Check(action.R, constrains...)
 }
 
 func (action *ReviewableRequestIndexAction) loadRecord() {
