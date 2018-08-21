@@ -1,10 +1,11 @@
 package utils
 
 import (
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"github.com/stretchr/testify/require"
 	"math"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+	"gitlab.com/swarmfund/horizon/db2/core"
 )
 
 var Tests = []struct {
