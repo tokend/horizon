@@ -6,6 +6,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
+	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/go/xdr"
 )
 
@@ -56,11 +57,27 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 }
 
 func (action *ReviewableRequestIndexAction) checkAllowed() {
+
+	for _, actionType := range action.RequestTypes {
+		if actionType == xdr.ReviewableRequestTypeIssuanceCreate {
+			action.Doorman().Check(action.R,
+				doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionPendingIssuance),
+				doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionIssuanceHistory))
+		}
+		if actionType == xdr.ReviewableRequestTypeUpdateKyc {
+			action.Doorman().Check(action.R,
+				doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionPendingKYC),
+				doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionKYCHistory))
+
+		}
+		if actionType == xdr.ReviewableRequestTypeSale {
+			action.Doorman().Check(action.R, doorman.SignerOfWithPermission(action.Signer, doorman.SignerExternsionCrowdfundingCampaign))
+		}
+	}
 	if action.CustomCheckAllowed != nil {
 		action.CustomCheckAllowed(action)
 		return
 	}
-	action.IsAllowed(action.Requestor, action.Reviewer)
 }
 
 func (action *ReviewableRequestIndexAction) loadRecord() {

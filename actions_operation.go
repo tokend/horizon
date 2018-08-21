@@ -16,6 +16,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/sse"
 	"gitlab.com/swarmfund/horizon/resource"
 	"gitlab.com/swarmfund/horizon/toid"
+	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/go/xdr"
 )
 
@@ -39,7 +40,7 @@ type OperationIndexAction struct {
 	ExchangeFilter      string
 	TransactionFilter   string
 	CompletedOnlyFilter bool
-	SkipCanceled bool
+	SkipCanceled        bool
 	PendingOnlyFilter   bool
 	// ReferenceFilter substring
 	ReferenceFilter string
@@ -231,7 +232,6 @@ func (action *OperationIndexAction) loadRecords() {
 		ops.PendingOnly()
 	}
 
-
 	err := ops.Page(action.PagingParams).Select(&action.Records)
 
 	if err != nil {
@@ -283,7 +283,7 @@ func (action *OperationIndexAction) loadPage() {
 }
 
 func (action *OperationIndexAction) checkAllowed() {
-	action.IsAllowed(action.AccountFilter)
+	action.Doorman().Check(action.R, doorman.SignerOfWithPermission(action.AccountFilter, doorman.SignerExternsionOperationsList))
 }
 
 // OperationShowAction renders a ledger found by its sequence number.
