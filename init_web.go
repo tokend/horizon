@@ -145,6 +145,7 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:id/account_kyc", &AccountKYCAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
 	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{})
+	r.Get("/accounts/:id/fees", &AccountFeesAction{})
 
 	r.Get("/accounts/:account_id/signers/:id", &SignerShowAction{})
 	r.Get("/accounts/:account_id/operations", &OperationIndexAction{}, 1)
