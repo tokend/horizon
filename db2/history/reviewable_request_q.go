@@ -43,6 +43,9 @@ type ReviewableRequestQI interface {
 	UpdatedAfter(timestamp int64) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
 	Select() ([]ReviewableRequest, error)
+	// Count loads count of the results of the query specified by `q`
+	Count() (int64, error)
+	CountQuery() ReviewableRequestQI
 
 	// Request Type specific filters. Filter for request type must be applied separately
 
@@ -101,17 +104,20 @@ func (q *ReviewableRequestQ) Insert(request ReviewableRequest) error {
 	}
 
 	query := sq.Insert("reviewable_request").SetMap(map[string]interface{}{
-		"id":            request.ID,
-		"requestor":     request.Requestor,
-		"reviewer":      request.Reviewer,
-		"reference":     request.Reference,
-		"reject_reason": request.RejectReason,
-		"request_type":  request.RequestType,
-		"request_state": request.RequestState,
-		"hash":          request.Hash,
-		"details":       request.Details,
-		"created_at":    request.CreatedAt,
-		"updated_at":    request.UpdatedAt,
+		"id":               request.ID,
+		"requestor":        request.Requestor,
+		"reviewer":         request.Reviewer,
+		"reference":        request.Reference,
+		"reject_reason":    request.RejectReason,
+		"request_type":     request.RequestType,
+		"request_state":    request.RequestState,
+		"hash":             request.Hash,
+		"details":          request.Details,
+		"created_at":       request.CreatedAt,
+		"updated_at":       request.UpdatedAt,
+		"all_tasks":        request.AllTasks,
+		"pending_tasks":    request.PendingTasks,
+		"external_details": request.ExternalDetails,
 	})
 
 	_, err := q.parent.Exec(query)
@@ -125,14 +131,17 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 	}
 
 	query := sq.Update("reviewable_request").SetMap(map[string]interface{}{
-		"requestor":     request.Requestor,
-		"reviewer":      request.Reviewer,
-		"reject_reason": request.RejectReason,
-		"request_type":  request.RequestType,
-		"request_state": request.RequestState,
-		"hash":          request.Hash,
-		"details":       request.Details,
-		"updated_at":    request.UpdatedAt,
+		"requestor":        request.Requestor,
+		"reviewer":         request.Reviewer,
+		"reject_reason":    request.RejectReason,
+		"request_type":     request.RequestType,
+		"request_state":    request.RequestState,
+		"hash":             request.Hash,
+		"details":          request.Details,
+		"updated_at":       request.UpdatedAt,
+		"all_tasks":        request.AllTasks,
+		"pending_tasks":    request.PendingTasks,
+		"external_details": request.ExternalDetails,
 	}).Where("id = ?", request.ID)
 
 	_, err := q.parent.Exec(query)
@@ -308,6 +317,24 @@ func (q *ReviewableRequestQ) Select() ([]ReviewableRequest, error) {
 	return result, q.Err
 }
 
+func (q *ReviewableRequestQ) CountQuery() ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+	q.sql = sq.Select("COUNT(*)").From("reviewable_request")
+	return q
+}
+
+func (q *ReviewableRequestQ) Count() (int64, error) {
+	if q.Err != nil {
+		return 0, q.Err
+	}
+
+	var result int64
+	q.Err = q.parent.Get(&result, q.sql)
+	return result, q.Err
+}
+
 func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
@@ -444,5 +471,6 @@ func (q *ReviewableRequestQ) KYCByAccountTypeToSet(accountTypeToSet xdr.AccountT
 	return q
 }
 
-var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason", "request_type", "request_state", "hash",
-	"details", "created_at", "updated_at").From("reviewable_request")
+var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason",
+	"request_type", "request_state", "hash", "details", "created_at", "updated_at", "all_tasks", "pending_tasks",
+	"external_details").From("reviewable_request")

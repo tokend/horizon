@@ -129,7 +129,11 @@ func (is *Session) operation() error {
 			return errors.Wrap(err, "failed to process manage offer ledger changes")
 		}
 	case xdr.OperationTypeReviewRequest:
-		err = is.processReviewRequest(is.Cursor.Operation().Body.MustReviewRequestOp(), is.Cursor.OperationChanges())
+		err = is.processReviewRequest(
+			is.Cursor.Operation().Body.MustReviewRequestOp(),
+			is.Cursor.OperationResult().ReviewRequestResult.MustSuccess(),
+			is.Cursor.OperationChanges(),
+		)
 		if err != nil {
 			return errors.Wrap(err, "failed to process review request")
 		}

@@ -4,16 +4,19 @@ import "encoding/json"
 
 // Represents Reviewable request
 type ReviewableRequest struct {
-	ID           uint64                    `json:"id,string"`
-	PT           string                    `json:"paging_token"`
-	Requestor    string                    `json:"requestor"`
-	Reviewer     string                    `json:"reviewer"`
-	Reference    *string                   `json:"reference,omitempty"`
-	RejectReason string                    `json:"reject_reason"`
-	Hash         string                    `json:"hash"`
-	Details      *ReviewableRequestDetails `json:"details"`
-	CreatedAt    Time                      `json:"created_at"`
-	UpdatedAt    Time                      `json:"updated_at"`
+	ID              uint64                    `json:"id,string"`
+	PT              string                    `json:"paging_token"`
+	Requestor       string                    `json:"requestor"`
+	Reviewer        string                    `json:"reviewer"`
+	Reference       *string                   `json:"reference,omitempty"`
+	RejectReason    string                    `json:"reject_reason"`
+	Hash            string                    `json:"hash"`
+	Details         *ReviewableRequestDetails `json:"details"`
+	AllTasks        uint32                    `json:"all_tasks"`
+	PendingTasks    uint32                    `json:"pending_tasks"`
+	ExternalDetails map[string]interface{}  `json:"external_details"`
+	CreatedAt       Time                      `json:"created_at"`
+	UpdatedAt       Time                      `json:"updated_at"`
 
 	// RequestStateI  - integer representation of request state
 	State int32 `json:"request_state_i"`
@@ -92,6 +95,45 @@ type IssuanceRequest struct {
 	Amount          Amount                 `json:"amount"`
 	Receiver        string                 `json:"receiver"`
 	ExternalDetails map[string]interface{} `json:"external_details"`
+	DepositDetails  DepositDetails         `json:"-"`
+}
+
+func (r *IssuanceRequest) UnmarshalJSON(data []byte) error {
+	type t IssuanceRequest
+	var tt t
+	if err := json.Unmarshal(data, &tt); err != nil {
+		return err
+	}
+	*r = IssuanceRequest(tt)
+
+	// marshal map back to json
+	rawExtDetails, err := json.Marshal(r.ExternalDetails)
+	if err != nil {
+		return err
+	}
+
+	// finally unmarshal to proper struct
+	if err := json.Unmarshal(rawExtDetails, &r.DepositDetails); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DepositDetails is a blob to be put into CreateIssuance Operation DepositDetails as JSON string.
+// DepositDetails provide info not included into the Issuance itself, but necessary for verification the Issuance.
+type DepositDetails struct {
+	BlockNumber uint64 `json:"block_number"`
+	TXHash      string `json:"tx_hash"`
+	OutIndex    uint   `json:"out_index"`
+}
+
+// GetLoganFields implements fields.Provider interface from logan.
+func (d DepositDetails) GetLoganFields() map[string]interface{} {
+	return map[string]interface{}{
+		"block_number": d.BlockNumber,
+		"tx_hash":      d.TXHash,
+	}
 }
 
 type LimitsUpdateRequest struct {

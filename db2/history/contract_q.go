@@ -28,6 +28,8 @@ type ContractQI interface {
 	ByEndTime(seconds int64) ContractQI
 	// ByDisputeState - filters contracts by dispute state
 	ByDisputeState(isDisputing bool) ContractQI
+	// ByCompletedState - filters contracts by completed state
+	ByCompletedState(isCompleted bool) ContractQI
 	// ByContractorID - filters contracts by contractor id
 	ByContractorID(contractorID string) ContractQI
 	// ByCustomerID - filters contracts by customer id
@@ -89,6 +91,23 @@ func (q *ContractQ) ByDisputeState(isDisputing bool) ContractQI {
 		q.sql = q.sql.Where("state & ? = ?", disputeState, disputeState)
 	} else {
 		q.sql = q.sql.Where("state & ? = 0", disputeState)
+	}
+
+	return q
+}
+
+func (q *ContractQ) ByCompletedState(isCompleted bool) ContractQI {
+	if q.Err != nil {
+		return q
+	}
+
+	bothCompleted := int32(xdr.ContractStateContractorConfirmed) | int32(xdr.ContractStateCustomerConfirmed)
+	escrowResolve := int32(xdr.ContractStateRevertingResolve) | int32(xdr.ContractStateNotRevertingResolve)
+
+	if isCompleted {
+		q.sql = q.sql.Where("(state & ? = ?) or (state & ? != 0)", bothCompleted, bothCompleted, escrowResolve)
+	} else {
+		q.sql = q.sql.Where("(state & ? != ?) and (state & ? = 0)", bothCompleted, bothCompleted, escrowResolve)
 	}
 
 	return q

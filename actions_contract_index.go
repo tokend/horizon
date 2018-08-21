@@ -17,6 +17,7 @@ type ContractIndexAction struct {
 	StartTime        *int64
 	EndTime          *int64
 	Disputing        *bool
+	Completed        *bool
 	ContractorID     string
 	CustomerID       string
 	EscrowID         string
@@ -47,7 +48,8 @@ func (action *ContractIndexAction) loadParams() {
 	action.ValidateCursorAsDefault()
 	action.StartTime = action.GetOptionalInt64("start_time")
 	action.EndTime = action.GetOptionalInt64("end_time")
-	action.Disputing = action.GetOptionalBool("state")
+	action.Disputing = action.GetOptionalBool("disputing")
+	action.Completed = action.GetOptionalBool("completed")
 	action.ContractorID = action.GetString("contractor_id")
 	action.CustomerID = action.GetString("customer_id")
 	action.EscrowID = action.GetString("escrow_id")
@@ -64,6 +66,9 @@ func (action *ContractIndexAction) loadRecords() {
 	}
 	if action.Disputing != nil {
 		q = q.ByDisputeState(*action.Disputing)
+	}
+	if action.Completed != nil {
+		q = q.ByCompletedState(*action.Completed)
 	}
 	if action.ContractorID != "" {
 		q = q.ByContractorID(action.ContractorID)

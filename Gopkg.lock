@@ -495,12 +495,12 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/manage_invoice"
-  digest = "1:08d9af3f0f7f176ba5d33f8a21da004b6aa288480bf0e1c33e59f3f7fd962cf5"
+  branch = "master"
+  digest = "1:a72981090da8ced8c7561c12e503b03810fa341d0a83ed6d71d69933839e45ce"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "56e74cdf1dbbc84a1cafa2318fb0230007517bd5"
+  revision = "73ed59a402083d9a1bc394a48e35e333441717bc"
 
 [[projects]]
   branch = "master"
