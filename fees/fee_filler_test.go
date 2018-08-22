@@ -59,7 +59,7 @@ func TestFillFeeGaps(t *testing.T) {
 				},
 			},
 		}
-		got := FillFeeGaps(primaryFees, secondaryFee)
+		got := fillFeeGaps(primaryFees, secondaryFee)
 
 		assert.Equal(t, got, expected)
 	})
@@ -146,7 +146,7 @@ func TestFillFeeGaps(t *testing.T) {
 
 		got := primaryFees
 		for _, fee := range secondaryFees {
-			got = FillFeeGaps(got, fee)
+			got = fillFeeGaps(got, fee)
 		}
 		assert.Equal(t, got, expected)
 	})
@@ -176,7 +176,7 @@ func TestFillFeeGaps(t *testing.T) {
 
 		got := primaryFees
 		for _, fee := range secondaryFees {
-			got = FillFeeGaps(got, fee)
+			got = fillFeeGaps(got, fee)
 		}
 		assert.Equal(t, got, expected)
 	})
@@ -214,7 +214,7 @@ func TestFillFeeGaps(t *testing.T) {
 
 		got := primaryFees
 		for _, fee := range secondaryFees {
-			got = FillFeeGaps(got, fee)
+			got = fillFeeGaps(got, fee)
 		}
 		assert.Equal(t, got, expected)
 	})
@@ -257,7 +257,7 @@ func TestFillFeeGaps(t *testing.T) {
 			},
 		}
 
-		got := FillFeeGaps(primaryFees, secondaryFee)
+		got := fillFeeGaps(primaryFees, secondaryFee)
 
 		assert.Equal(t, got, expected)
 	})
