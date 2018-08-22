@@ -367,6 +367,15 @@ func initWebActions(app *App) {
 			if counterparty != "" {
 				action.q = action.q.ForCounterparty(counterparty)
 			}
+
+			source := action.GetString("source")
+			if source != "" {
+				action.q = action.q.ForCounterparty(source)
+			}
+		},
+		CustomCheckAllowed: func(action *ReviewableRequestIndexAction) {
+			source := action.GetString("source")
+			action.IsAllowed(source)
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
 	})

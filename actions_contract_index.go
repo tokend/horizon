@@ -18,6 +18,7 @@ type ContractIndexAction struct {
 	EndTime          *int64
 	Disputing        *bool
 	Completed        *bool
+	Source           string
 	Counterparty     string
 	EscrowID         string
 	ContractNumber   string
@@ -41,7 +42,7 @@ func (action *ContractIndexAction) JSON() {
 }
 
 func (action *ContractIndexAction) checkAllowed() {
-	action.IsAllowed(action.Counterparty, action.EscrowID)
+	action.IsAllowed(action.Source, action.EscrowID)
 }
 
 func (action *ContractIndexAction) loadParams() {
@@ -51,9 +52,14 @@ func (action *ContractIndexAction) loadParams() {
 	action.Disputing = action.GetOptionalBool("disputing")
 	action.Completed = action.GetOptionalBool("completed")
 	action.Counterparty = action.GetString("counterparty")
+	action.Source = action.GetString("source")
 	action.ContractNumber = action.GetString("contract_number")
-	action.EscrowID = action.GetString("escrow_id")
+	action.EscrowID = action.GetString("escrow")
 	action.PagingParams = action.GetPageQuery()
+	action.Page.Filters = map[string]string{
+		"disputing": action.GetString("disputing"),
+		"completed": action.GetString("completed"),
+	}
 }
 
 func (action *ContractIndexAction) loadRecords() {
@@ -72,6 +78,9 @@ func (action *ContractIndexAction) loadRecords() {
 	}
 	if action.Counterparty != "" {
 		q = q.ByCounterpartyID(action.Counterparty)
+	}
+	if action.Source != "" {
+		q = q.ByCounterpartyID(action.Source)
 	}
 	if action.EscrowID != "" {
 		q = q.ByEscrowID(action.EscrowID)
