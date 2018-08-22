@@ -384,6 +384,8 @@ func initWebActions(app *App) {
 
 			action.Reviewer = ""
 			action.Page.Filters["contract_number"] = contractNumber
+			action.Page.Filters["start_time"] = action.GetString("start_time")
+			action.Page.Filters["end_time"] = action.GetString("end_time")
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
 	})
