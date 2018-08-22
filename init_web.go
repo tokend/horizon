@@ -356,6 +356,17 @@ func initWebActions(app *App) {
 	})
 
 	r.Get("/request/contracts", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			contractNumber := action.GetString("contract_number")
+			if contractNumber != "" {
+				action.q = action.q.ContractsByContractNumber(contractNumber)
+			}
+
+			counterparty := action.GetString("counterparty")
+			if counterparty != "" {
+				action.q = action.q.ForCounterparty(counterparty)
+			}
+		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
 	})
 

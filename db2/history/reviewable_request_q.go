@@ -31,6 +31,8 @@ type ReviewableRequestQI interface {
 	ForRequestor(requestor string) ReviewableRequestQI
 	// ForReviewer - filters requests by reviewer
 	ForReviewer(reviewer string) ReviewableRequestQI
+	// ForCounterparty - filters requests by reviewer or requestor
+	ForCounterparty(counterparty string) ReviewableRequestQI
 	// ForState - filters requests by state
 	ForState(state int64) ReviewableRequestQI
 	// ForType - filters requests by type
@@ -72,6 +74,10 @@ type ReviewableRequestQI interface {
 	// Limits
 	// LimitsByDocHash - filters limits request by document hash
 	LimitsByDocHash(hash string) ReviewableRequestQI
+
+	// Contracts
+	// ContractsByContractNumber - filters contract requests by contract number
+	ContractsByContractNumber(contractNumber string) ReviewableRequestQI
 
 	// Invoices
 	// InvoicesByContract - filters invoice requests by contract id
@@ -247,6 +253,15 @@ func (q *ReviewableRequestQ) ForReviewer(reviewer string) ReviewableRequestQI {
 	return q
 }
 
+func (q *ReviewableRequestQ) ForCounterparty(counterparty string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("((reviewer = ?) or (requestor = ?))", counterparty, counterparty)
+	return q
+}
+
 // ForState - filters requests by state
 func (q *ReviewableRequestQ) ForState(state int64) ReviewableRequestQI {
 	if q.Err != nil {
@@ -396,6 +411,15 @@ func (q *ReviewableRequestQ) LimitsByDocHash(hash string) ReviewableRequestQI {
 	}
 
 	q.sql = q.sql.Where("details->'limits_update'->>'document_hash' = ?", hash)
+	return q
+}
+
+func (q *ReviewableRequestQ) ContractsByContractNumber(contractNumber string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'contract'->'details'->>'contract_number' = ?", contractNumber)
 	return q
 }
 
