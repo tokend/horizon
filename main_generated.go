@@ -246,6 +246,14 @@ func (action LedgerIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *ht
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action LedgerOperationsIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "LedgerOperationsIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action LedgerShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
