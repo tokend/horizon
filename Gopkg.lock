@@ -466,8 +466,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:69883cc2e9d060268112a34286e7f47352f384c3bdd868acefd23b0da0f96ab2"
+  branch = "feature/update_and_reject_limits_update_request"
+  digest = "1:d5ce896689c993fc92f570b1b01e1f0904f9eb08bca42d304e8c2e2f276f7338"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +485,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "d2d66505c158f9c2098f3e3a6d18f75a9598da16"
+  revision = "8efb32fa436576fe5f4de7bd2d0cb501a64d381e"
 
 [[projects]]
   branch = "master"

@@ -215,6 +215,8 @@ var messages = map[string]string{
 	"op_customer_balance_overflow":                      "Customer balances amounts exceed max amount",
 	"op_system_tasks_not_allowed":                       "Source is trying to set one of the core flags",
 	"op_issuance_tasks_not_found":                       "Issuance tasks have not been provided by the source and don't exist in KeyValue table",
+	"op_cannot_create_for_acc_id_and_acc_type":          "Limits cannot be created for account ID and account type simultaneously",
+	"op_invalid_limits":                                 "Invalid limits",
 }
 
 func getMessage(rawCode string) string {
