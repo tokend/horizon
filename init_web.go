@@ -363,22 +363,19 @@ func initWebActions(app *App) {
 				action.q = action.q.ContractsByContractNumber(contractNumber)
 			}
 
-			counterparty := action.GetString("counterparty")
-			if counterparty != "" {
-				action.q = action.q.ForCounterparty(counterparty)
+			// TODO: FIX ME!!!!!!!!!!!!!!!!!
+			if action.Requestor != "" {
+				action.q = action.q.ForCounterparty(action.Requestor)
 			}
 
-			source := action.GetString("source")
-			if source != "" {
-				action.q = action.q.ForCounterparty(source)
+			action.Requestor = ""
+
+			if action.Reviewer != "" {
+				action.q = action.q.ForCounterparty(action.Reviewer)
 			}
+
+			action.Reviewer = ""
 			action.Page.Filters["contract_number"] = contractNumber
-			action.Page.Filters["counterparty"] = counterparty
-			action.Page.Filters["source"] = source
-		},
-		CustomCheckAllowed: func(action *ReviewableRequestIndexAction) {
-			source := action.GetString("source")
-			action.IsAllowed(source)
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
 	})

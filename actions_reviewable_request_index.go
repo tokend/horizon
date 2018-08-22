@@ -94,6 +94,14 @@ func (action *ReviewableRequestIndexAction) checkAllowed() {
 func (action *ReviewableRequestIndexAction) loadRecord() {
 	action.q = action.HistoryQ().ReviewableRequests()
 
+	if action.CustomFilter != nil {
+		action.CustomFilter(action)
+	}
+
+	if action.Err != nil {
+		return
+	}
+
 	if action.Reviewer != "" {
 		action.q = action.q.ForReviewer(action.Reviewer)
 	}
@@ -108,14 +116,6 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 
 	if action.UpdatedAfter != nil {
 		action.q = action.q.UpdatedAfter(*action.UpdatedAfter)
-	}
-
-	if action.CustomFilter != nil {
-		action.CustomFilter(action)
-	}
-
-	if action.Err != nil {
-		return
 	}
 
 	action.q = action.q.ForTypes(action.RequestTypes).Page(action.PagingParams)
