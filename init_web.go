@@ -362,6 +362,14 @@ func initWebActions(app *App) {
 			if contractNumber != "" {
 				action.q = action.q.ContractsByContractNumber(contractNumber)
 			}
+			startTime := action.GetOptionalInt64("start_time")
+			if startTime != nil {
+				action.q = action.q.ContractsByStartTime(*startTime)
+			}
+			endTime := action.GetOptionalInt64("end_time")
+			if endTime != nil {
+				action.q = action.q.ContractsByStartTime(*endTime)
+			}
 
 			// TODO: FIX ME!!!!!!!!!!!!!!!!!
 			if action.Requestor != "" {
