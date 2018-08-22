@@ -18,9 +18,10 @@ type ContractIndexAction struct {
 	EndTime          *int64
 	Disputing        *bool
 	Completed        *bool
-	ContractorID     string
-	CustomerID       string
+	Source           string
+	Counterparty     string
 	EscrowID         string
+	ContractNumber   string
 	ContractsRecords []regources.Contract
 	Page             hal.Page
 }
@@ -41,7 +42,7 @@ func (action *ContractIndexAction) JSON() {
 }
 
 func (action *ContractIndexAction) checkAllowed() {
-	action.IsAllowed(action.ContractorID, action.CustomerID, action.EscrowID)
+	action.IsAllowed(action.Source, action.EscrowID)
 }
 
 func (action *ContractIndexAction) loadParams() {
@@ -50,10 +51,21 @@ func (action *ContractIndexAction) loadParams() {
 	action.EndTime = action.GetOptionalInt64("end_time")
 	action.Disputing = action.GetOptionalBool("disputing")
 	action.Completed = action.GetOptionalBool("completed")
-	action.ContractorID = action.GetString("contractor_id")
-	action.CustomerID = action.GetString("customer_id")
-	action.EscrowID = action.GetString("escrow_id")
+	action.Counterparty = action.GetString("counterparty")
+	action.Source = action.GetString("source")
+	action.ContractNumber = action.GetString("contract_number")
+	action.EscrowID = action.GetString("escrow")
 	action.PagingParams = action.GetPageQuery()
+	action.Page.Filters = map[string]string{
+		"disputing":       action.GetString("disputing"),
+		"completed":       action.GetString("completed"),
+		"start_time":      action.GetString("start_time"),
+		"end_time":        action.GetString("end_time"),
+		"counterparty":    action.Counterparty,
+		"source":          action.Source,
+		"contract_number": action.ContractNumber,
+		"escrow":          action.EscrowID,
+	}
 }
 
 func (action *ContractIndexAction) loadRecords() {
@@ -70,14 +82,17 @@ func (action *ContractIndexAction) loadRecords() {
 	if action.Completed != nil {
 		q = q.ByCompletedState(*action.Completed)
 	}
-	if action.ContractorID != "" {
-		q = q.ByContractorID(action.ContractorID)
+	if action.Counterparty != "" {
+		q = q.ByCounterpartyID(action.Counterparty)
 	}
-	if action.CustomerID != "" {
-		q = q.ByCustomerID(action.CustomerID)
+	if action.Source != "" {
+		q = q.ByCounterpartyID(action.Source)
 	}
 	if action.EscrowID != "" {
 		q = q.ByEscrowID(action.EscrowID)
+	}
+	if action.ContractNumber != "" {
+		q = q.ByContractNumber(action.ContractNumber)
 	}
 
 	historyContracts, err := q.Page(action.PagingParams).Select()

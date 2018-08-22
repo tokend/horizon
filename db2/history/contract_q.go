@@ -30,10 +30,10 @@ type ContractQI interface {
 	ByDisputeState(isDisputing bool) ContractQI
 	// ByCompletedState - filters contracts by completed state
 	ByCompletedState(isCompleted bool) ContractQI
-	// ByContractorID - filters contracts by contractor id
-	ByContractorID(contractorID string) ContractQI
-	// ByCustomerID - filters contracts by customer id
-	ByCustomerID(customerID string) ContractQI
+	// ByCounterpartyID - filters contracts by contractor id
+	ByCounterpartyID(counterpartyID string) ContractQI
+	// ByContractNumber - filters contracts by contractor id
+	ByContractNumber(contractNumber string) ContractQI
 	// ByCustomerID - filters contracts by customer id
 	ByEscrowID(escrowID string) ContractQI
 	// Page - applies page params
@@ -105,9 +105,9 @@ func (q *ContractQ) ByCompletedState(isCompleted bool) ContractQI {
 	escrowResolve := int32(xdr.ContractStateRevertingResolve) | int32(xdr.ContractStateNotRevertingResolve)
 
 	if isCompleted {
-		q.sql = q.sql.Where("(state & ? = ?) or (state & ? != 0)", bothCompleted, bothCompleted, escrowResolve)
+		q.sql = q.sql.Where("((state & ? = ?) or (state & ? != 0))", bothCompleted, bothCompleted, escrowResolve)
 	} else {
-		q.sql = q.sql.Where("(state & ? != ?) and (state & ? = 0)", bothCompleted, bothCompleted, escrowResolve)
+		q.sql = q.sql.Where("((state & ? != ?) and (state & ? = 0))", bothCompleted, bothCompleted, escrowResolve)
 	}
 
 	return q
@@ -144,22 +144,12 @@ func (q *ContractQ) ByID(id int64) (*Contract, error) {
 	return &result, q.Err
 }
 
-func (q *ContractQ) ByContractorID(contractorID string) ContractQI {
+func (q *ContractQ) ByCounterpartyID(counterpartyID string) ContractQI {
 	if q.Err != nil {
 		return q
 	}
 
-	q.sql = q.sql.Where(sq.Eq{"contractor": contractorID})
-
-	return q
-}
-
-func (q *ContractQ) ByCustomerID(customerID string) ContractQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where(sq.Eq{"customer": customerID})
+	q.sql = q.sql.Where("((contractor = ?) or (customer = ?))", counterpartyID, counterpartyID)
 
 	return q
 }
@@ -170,6 +160,16 @@ func (q *ContractQ) ByEscrowID(escrowID string) ContractQI {
 	}
 
 	q.sql = q.sql.Where(sq.Eq{"escrow": escrowID})
+
+	return q
+}
+
+func (q *ContractQ) ByContractNumber(contractNumber string) ContractQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("initial_details->>'contract_number' = ?", contractNumber)
 
 	return q
 }

@@ -357,6 +357,26 @@ func initWebActions(app *App) {
 	})
 
 	r.Get("/request/contracts", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			contractNumber := action.GetString("contract_number")
+			if contractNumber != "" {
+				action.q = action.q.ContractsByContractNumber(contractNumber)
+			}
+
+			// TODO: FIX ME!!!!!!!!!!!!!!!!!
+			if action.Requestor != "" {
+				action.q = action.q.ForCounterparty(action.Requestor)
+			}
+
+			action.Requestor = ""
+
+			if action.Reviewer != "" {
+				action.q = action.q.ForCounterparty(action.Reviewer)
+			}
+
+			action.Reviewer = ""
+			action.Page.Filters["contract_number"] = contractNumber
+		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
 	})
 
