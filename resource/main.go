@@ -3,6 +3,9 @@
 package resource
 
 import (
+	"fmt"
+	"time"
+
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/resource/operations"
@@ -63,4 +66,24 @@ func NewPublicOperation(
 	ctx context.Context, row history.Operation, participants []*history.Participant,
 ) (result hal.Pageable, err error) {
 	return operations.New(ctx, row, participants, true)
+}
+
+type Data struct {
+	Ledgers []DataLedger `json:"ledgers"`
+}
+
+type DataLedger struct {
+	ClosedAt     time.Time               `json:"cloased_at"`
+	Sequence     int32                   `json:"sequence"`
+	LedgerHash   string                  `json:"ledger_hash"`
+	Transactions []DataLedgerTransaction `json:"transactions"`
+}
+
+func (d DataLedger) PagingToken() string {
+	return fmt.Sprintf("%d", d.Sequence)
+}
+
+type DataLedgerTransaction struct {
+	ID         int64          `json:"id"`
+	Operations []hal.Pageable `json:"operations"`
 }

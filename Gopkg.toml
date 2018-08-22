@@ -102,7 +102,7 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[constraint]]
+[[override]]
   branch = "master"
   name = "gitlab.com/tokend/go"
 

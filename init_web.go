@@ -186,6 +186,7 @@ func initWebActions(app *App) {
 	// operation actions
 	r.Get("/public/operations", &HistoryOperationIndexAction{})
 	r.Get("/public/operations/:id", &HistoryOperationShowAction{})
+	r.Get("/public/ledgers", &LedgerOperationsIndexAction{})
 
 	r.Get("/operations", &OperationIndexAction{})
 	r.Get("/payments", &OperationIndexAction{
