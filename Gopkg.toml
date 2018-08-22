@@ -103,7 +103,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/update_and_reject_limits_update_request"
+  branch = "master"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
