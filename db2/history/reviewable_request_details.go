@@ -4,9 +4,11 @@ import (
 	"time"
 
 	"database/sql/driver"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
 
 type ReviewableRequestDetails struct {
@@ -14,8 +16,8 @@ type ReviewableRequestDetails struct {
 	AssetUpdate              *AssetUpdateRequest       `json:"asset_update,omitempty"`
 	PreIssuanceCreate        *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
 	IssuanceCreate           *IssuanceRequest          `json:"issuance_create,omitempty"`
-	Withdrawal               *WithdrawalRequest        `json:"withdraw,omitempty"`
-	TwoStepWithdrawal        *WithdrawalRequest        `json:"two_step_withdrawal"`
+	Withdraw                 *WithdrawalRequest        `json:"withdraw,omitempty"`
+	TwoStepWithdraw          *WithdrawalRequest        `json:"two_step_withdrawal"`
 	Sale                     *SaleRequest              `json:"sale,omitempty"`
 	LimitsUpdate             *LimitsUpdateRequest      `json:"limits_update"`
 	AmlAlert                 *AmlAlertRequest          `json:"aml_alert"`
@@ -23,6 +25,8 @@ type ReviewableRequestDetails struct {
 	UpdateSaleDetails        *UpdateSaleDetailsRequest `json:"update_sale_details"`
 	UpdateSaleEndTimeRequest *UpdateSaleEndTimeRequest `json:"update_sale_end_time_request"`
 	PromotionUpdate          *PromotionUpdateRequest   `json:"promotion_update"`
+	Invoice                  *InvoiceRequest           `json:"invoice"`
+	Contract                 *ContractRequest          `json:"contract"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -85,27 +89,22 @@ type WithdrawalRequest struct {
 }
 
 type SaleRequest struct {
-	BaseAsset           string                 `json:"base_asset"`
-	DefaultQuoteAsset   string                 `json:"quote_asset"`
-	StartTime           time.Time              `json:"start_time"`
-	EndTime             time.Time              `json:"end_time"`
-	SoftCap             string                 `json:"soft_cap"`
-	HardCap             string                 `json:"hard_cap"`
-	Details             map[string]interface{} `json:"details"`
-	QuoteAssets         []SaleQuoteAsset       `json:"quote_assets"`
-	SaleType            xdr.SaleType           `json:"sale_type"`
-	BaseAssetForHardCap string                 `json:"base_asset_for_hard_cap"`
-	State               xdr.SaleState          `json:"state"`
-}
-
-type SaleQuoteAsset struct {
-	QuoteAsset string `json:"quote_asset"`
-	Price      string `json:"price"`
+	BaseAsset           string                     `json:"base_asset"`
+	DefaultQuoteAsset   string                     `json:"quote_asset"`
+	StartTime           time.Time                  `json:"start_time"`
+	EndTime             time.Time                  `json:"end_time"`
+	SoftCap             string                     `json:"soft_cap"`
+	HardCap             string                     `json:"hard_cap"`
+	Details             map[string]interface{}     `json:"details"`
+	QuoteAssets         []regources.SaleQuoteAsset `json:"quote_assets"`
+	SaleType            xdr.SaleType               `json:"sale_type"`
+	BaseAssetForHardCap string                     `json:"base_asset_for_hard_cap"`
+	State               xdr.SaleState              `json:"state"`
 }
 
 type LimitsUpdateRequest struct {
-	DocumentHash string `json:"document_hash"`
-	Details      string `json:"details"`
+	DocumentHash string                 `json:"document_hash"`
+	Details      map[string]interface{} `json:"details"`
 }
 
 type AmlAlertRequest struct {
@@ -128,6 +127,20 @@ type UpdateKYCRequest struct {
 type UpdateSaleDetailsRequest struct {
 	SaleID     uint64                 `json:"sale_id"`
 	NewDetails map[string]interface{} `json:"new_details"`
+}
+
+type InvoiceRequest struct {
+	Asset      string                 `json:"receiver_balance_id"`
+	Amount     uint64                 `json:"amount"`
+	ContractID *int64                 `json:"contract_id"`
+	Details    map[string]interface{} `json:"details"`
+}
+
+type ContractRequest struct {
+	Escrow    string                 `json:"escrow"`
+	Details   map[string]interface{} `json:"details"`
+	StartTime time.Time              `json:"start_time"`
+	EndTime   time.Time              `json:"end_time"`
 }
 
 type UpdateSaleEndTimeRequest struct {

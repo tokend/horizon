@@ -51,10 +51,6 @@ type QInterface interface {
 	TransactionByHash(dest interface{}, hash string) error
 	TransactionByHashOrID(dest interface{}, hash string) error
 
-	PaymentRequestByID(dest interface{}, requestID uint64) error
-	PaymentRequestByPaymentID(dest interface{}, requestID uint64) error
-	PaymentRequests() PaymentRequestsQI
-
 	// PendingTransactions
 
 	// prices history
@@ -71,6 +67,11 @@ type QInterface interface {
 
 	// LedgerChanges - provides builder to access ledger changes
 	LedgerChanges() LedgerChangesQI
+
+	//Contracts
+	Contracts() ContractQI
+	ContractsDetails() ContractsDetailsQI
+	ContractDispute() ContractDisputeQI
 }
 
 // ReviewableRequests - provides builder of request to access reviewable requests

@@ -73,11 +73,6 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
-	Convey("ReviewPaymentRequestResultCode", t, func() {
-		for _, code := range xdr.ReviewPaymentRequestResultCodeAll {
-			checkCode(t, code)
-		}
-	})
 	Convey("ManageAssetResultCode", t, func() {
 		for _, code := range xdr.ManageAssetResultCodeAll {
 			checkCode(t, code)
@@ -108,8 +103,8 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
-	Convey("ManageInvoice", t, func() {
-		for _, code := range xdr.ManageInvoiceResultCodeAll {
+	Convey("ManageInvoiceRequest", t, func() {
+		for _, code := range xdr.ManageInvoiceRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
@@ -169,6 +164,18 @@ func TestCodes(t *testing.T) {
 
 	Convey("Create manage limits request", t, func() {
 		for _, code := range xdr.ManageLimitsResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Manage contract request", t, func() {
+		for _, code := range xdr.ManageContractRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Manage contract", t, func() {
+		for _, code := range xdr.ManageContractResultCodeAll {
 			checkCode(t, code)
 		}
 	})

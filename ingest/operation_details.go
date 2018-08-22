@@ -6,9 +6,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
+	"gitlab.com/swarmfund/horizon/utf8"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/utf8"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -139,13 +139,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustManageBalanceOp()
 		details["destination"] = op.Destination
 		details["action"] = op.Action
-	case xdr.OperationTypeReviewPaymentRequest:
-		op := c.Operation().Body.MustReviewPaymentRequestOp()
-		details["payment_id"] = op.PaymentId
-		details["accept"] = op.Accept
-		if op.RejectReason != nil {
-			details["reject_reason"] = *op.RejectReason
-		}
 	case xdr.OperationTypeManageLimits:
 		op := c.Operation().Body.MustManageLimitsOp()
 		if op.Details.Action == xdr.ManageLimitsActionCreate {
@@ -170,6 +163,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 		limitsUpdateDetails, ok := op.ManageLimitsRequest.Ext.GetDetails()
 		if ok {
 			details["limits_manage_request_details"] = string(limitsUpdateDetails)
+		}
+		requestID, ok := op.Ext.GetRequestId()
+		if ok {
+			details["request_id"] = uint64(requestID)
 		}
 		details["limits_manage_request_document_hash"] = hex.EncodeToString(op.ManageLimitsRequest.DeprecatedDocumentHash[:])
 	case xdr.OperationTypeDirectDebit:
@@ -215,14 +212,45 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if isSaleOffer {
 			details["base_asset"] = getOfferBaseAsset(c.OperationChanges(), op.OrderBookId)
 		}
-	case xdr.OperationTypeManageInvoice:
-		op := c.Operation().Body.MustManageInvoiceOp()
-		opResult := c.OperationResult().MustManageInvoiceResult()
-		details["amount"] = amount.String(int64(op.Amount))
-		details["receiver_balance"] = op.ReceiverBalance.AsString()
-		details["sender"] = op.Sender.Address()
-		details["invoice_id"] = opResult.Success.InvoiceId
-		details["asset"] = string(opResult.Success.Asset)
+	case xdr.OperationTypeManageInvoiceRequest:
+		op := c.Operation().Body.MustManageInvoiceRequestOp()
+		opResult := c.OperationResult().MustManageInvoiceRequestResult()
+		switch op.Details.Action {
+		case xdr.ManageInvoiceRequestActionCreate:
+			details["amount"] = amount.String(int64(op.Details.InvoiceRequest.Amount))
+			details["sender"] = op.Details.InvoiceRequest.Sender.Address()
+			details["request_id"] = opResult.Success.Details.Response.RequestId
+			details["asset"] = string(op.Details.InvoiceRequest.Asset)
+		case xdr.ManageInvoiceRequestActionRemove:
+			details["request_id"] = *op.Details.RequestId
+		}
+	case xdr.OperationTypeManageContractRequest:
+		op := c.Operation().Body.MustManageContractRequestOp()
+		opResult := c.OperationResult().MustManageContractRequestResult()
+		switch op.Details.Action {
+		case xdr.ManageContractRequestActionCreate:
+			details["escrow"] = op.Details.ContractRequest.Escrow.Address()
+			details["details"] = op.Details.ContractRequest.Details
+			details["start_time"] = int64(op.Details.ContractRequest.StartTime)
+			details["end_time"] = int64(op.Details.ContractRequest.EndTime)
+			details["request_id"] = opResult.Success.Details.Response.RequestId
+		case xdr.ManageContractRequestActionRemove:
+			details["request_id"] = *op.Details.RequestId
+		}
+	case xdr.OperationTypeManageContract:
+		op := c.Operation().Body.MustManageContractOp()
+		details["contract_id"] = int64(op.ContractId)
+		switch op.Data.Action {
+		case xdr.ManageContractActionAddDetails:
+			details["details"] = string(op.Data.MustDetails())
+		case xdr.ManageContractActionConfirmCompleted:
+			opResult := c.OperationResult().MustManageContractResult()
+			details["is_completed"] = opResult.Response.Data.MustIsCompleted()
+		case xdr.ManageContractActionStartDispute:
+			details["dispute_reason"] = string(op.Data.MustDisputeReason())
+		case xdr.ManageContractActionResolveDispute:
+			details["is_revert"] = op.Data.MustIsRevert()
+		}
 	case xdr.OperationTypeReviewRequest:
 		op := c.Operation().Body.MustReviewRequestOp()
 		details["action"] = op.Action.ShortString()
@@ -234,6 +262,12 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["is_fulfilled"] = hasDeletedReviewableRequest(c.OperationChanges())
 		}
 		details["details"] = getReviewRequestOpDetails(op.RequestDetails)
+
+		opResult := c.OperationResult().MustReviewRequestResult().MustSuccess()
+		extendedResult, ok := opResult.Ext.GetExtendedResult()
+		if ok {
+			details["is_fulfilled"] = extendedResult.Fulfilled
+		}
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
@@ -255,6 +289,11 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// error is ignored on purpose, we should not block ingest in case of such error
 		_ = json.Unmarshal([]byte(op.Request.ExternalDetails), &externalDetails)
 		details["external_details"] = externalDetails
+
+		allTasks, ok := op.Ext.GetAllTasks()
+		if ok && allTasks != nil {
+			details["all_tasks"] = *allTasks
+		}
 	case xdr.OperationTypeCreateSaleRequest:
 		// no details needed
 	case xdr.OperationTypeCheckSaleState:
@@ -315,8 +354,14 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["source_sent_universal"] = amount.StringU(uint64(opResult.SourceSentUniversal))
 	case xdr.OperationTypeManageSale:
 		op := c.Operation().Body.MustManageSaleOp()
+		opRes := c.OperationResult().MustManageSaleResult().MustSuccess()
 		details["sale_id"] = uint64(op.SaleId)
 		details["action"] = op.Data.Action.ShortString()
+
+		fulfilled, ok := opRes.Ext.GetFulfilled()
+		if ok {
+			details["fulfilled"] = fulfilled
+		}
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

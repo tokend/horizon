@@ -76,6 +76,8 @@ type QInterface interface {
 	Accounts() AccountQI
 	// Assets - creates new assets query helper
 	Assets() AssetQI
+	// AccountKyc - creates new account_kyc query helper
+	AccountKYC() AccountKYCQI
 	// Balances - creates new balances query builder
 	Balances() BalancesQI
 	//KeyValue - creates new KeyValue query helper
@@ -180,22 +182,22 @@ func (q *Q) Assets() AssetQI {
 
 func (q *Q) KeyValue() KeyValueQI {
 	return &KeyValueQ{
-		parent:	q,
-		sql:	selectKeyValue,
+		parent: q,
+		sql:    selectKeyValue,
 	}
 }
 
 func (q *Q) LimitsV2() LimitsV2QI {
 	return &LimitsV2Q{
 		parent: q,
-		sql: 	selectLimitsV2,
+		sql:    selectLimitsV2,
 	}
 }
 
 func (q *Q) StatisticsV2() StatisticsV2QI {
 	return &StatisticsV2Q{
 		parent: q,
-		sql: 	selectStatisticsV2,
+		sql:    selectStatisticsV2,
 	}
 }
 

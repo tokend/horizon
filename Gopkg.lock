@@ -225,7 +225,10 @@
 [[projects]]
   digest = "1:1ce378ab2352c756c6d7a0172c22ecbd387659d32712a4ce3bc474273309a5dc"
   name = "github.com/magiconair/properties"
-  packages = ["."]
+  packages = [
+    ".",
+    "assert",
+  ]
   pruneopts = ""
   revision = "be5ece7dd465ab0765a9682137865547526d1dfb"
   version = "v1.7.3"
@@ -464,22 +467,25 @@
 
 [[projects]]
   branch = "feature/transaction_fee"
-  digest = "1:06cce73272a73ed6cb1e5b945a5f7301af57d7e7b98a526d91e801503a532071"
+  digest = "1:73d84a84418a61bc81652637a62e6329978cc2e3d86e04da1181262b60069191"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
     "build",
     "crc16",
+    "doorman",
+    "doorman/data",
     "hash",
     "keypair",
     "network",
+    "resources",
     "signcontrol",
     "signcontrol/internal/httpsignatures",
     "strkey",
     "xdr",
   ]
   pruneopts = ""
-  revision = "3f8e5448829fc0828ef81f2f1e858fc6d9f2ca76"
+  revision = "80a14ccd5f171beb8be4ff0fd7ef7a714580590f"
 
 [[projects]]
   branch = "master"
@@ -496,11 +502,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8c088d94058b8fb136597d721412ab1e5c1c37f09b92d9ea8c958df1760ab6db"
+  digest = "1:00118954b7f03ce4c9e7b50728f87c026d8f95f1b0704ba8888b2f9489941fc6"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "1d6de2aa420a79a2396343e96d43f343fabf4be9"
+  revision = "b77bd591eb8bed9345fd3857c3bd5c9c0da71703"
 
 [[projects]]
   branch = "master"
@@ -623,6 +629,7 @@
     "github.com/jmoiron/sqlx",
     "github.com/lann/squirrel",
     "github.com/lib/pq",
+    "github.com/magiconair/properties/assert",
     "github.com/multiplay/go-slack/chat",
     "github.com/multiplay/go-slack/lrhook",
     "github.com/patrickmn/go-cache",
@@ -647,8 +654,10 @@
     "gitlab.com/distributed_lab/txsub",
     "gitlab.com/tokend/go/amount",
     "gitlab.com/tokend/go/build",
+    "gitlab.com/tokend/go/doorman",
     "gitlab.com/tokend/go/hash",
     "gitlab.com/tokend/go/keypair",
+    "gitlab.com/tokend/go/resources",
     "gitlab.com/tokend/go/signcontrol",
     "gitlab.com/tokend/go/strkey",
     "gitlab.com/tokend/go/xdr",

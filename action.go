@@ -17,6 +17,8 @@ import (
 	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/toid"
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/go/resources"
 	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/go/xdr"
 )
@@ -318,6 +320,40 @@ func isSystemAccount(accountType int32) bool {
 	}
 
 	return false
+}
+
+func (action *Action) Doorman() doorman.Doorman {
+	return doorman.New(false, action)
+}
+
+// Signers used by doorman, basically just a connector to existing signers check logic
+func (action *Action) Signers(address string) ([]resources.Signer, error) {
+	// just to ensure backwards compatibility with checkAllowed
+	if address == "" {
+		address = action.App.CoreInfo.MasterAccountID
+	}
+	// get core account
+	account, err := action.CoreQ().Accounts().ByAddress(address)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account")
+	}
+	// pass it to legacy routine
+	signers, err := action.GetSigners(account)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account")
+	}
+	// convert structs
+	result := make([]resources.Signer, 0, len(signers))
+	for _, signer := range signers {
+		result = append(result, resources.Signer{
+			AccountID:  signer.Publickey,
+			Weight:     int(signer.Weight),
+			SignerType: int(signer.SignerType),
+			Identity:   int(signer.Identity),
+			Name:       signer.Name,
+		})
+	}
+	return result, nil
 }
 
 func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {

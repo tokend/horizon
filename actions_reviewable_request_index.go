@@ -6,6 +6,7 @@ import (
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
+	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/go/xdr"
 )
 
@@ -56,15 +57,50 @@ func (action *ReviewableRequestIndexAction) loadParams() {
 }
 
 func (action *ReviewableRequestIndexAction) checkAllowed() {
+
 	if action.CustomCheckAllowed != nil {
 		action.CustomCheckAllowed(action)
 		return
 	}
-	action.IsAllowed(action.Requestor, action.Reviewer)
+
+	constrains := []doorman.SignerConstraint{}
+	extentions := []doorman.SignerExtension{}
+	for _, actionType := range action.RequestTypes {
+		if actionType == xdr.ReviewableRequestTypeIssuanceCreate {
+			extentions = append(extentions, doorman.SignerExternsionPendingIssuance, doorman.SignerExternsionIssuanceHistory)
+		}
+		if actionType == xdr.ReviewableRequestTypeUpdateKyc {
+			extentions = append(extentions, doorman.SignerExternsionPendingKYC, doorman.SignerExternsionKYCHistory)
+
+		}
+		if actionType == xdr.ReviewableRequestTypeSale {
+			extentions = append(extentions, doorman.SignerExternsionCrowdfundingCampaign)
+		}
+	}
+
+	for _, ext := range extentions {
+		if action.Requestor != "" {
+			constrains = append(constrains, doorman.SignerOfWithPermission(action.Requestor, ext))
+		}
+		if action.Reviewer != "" {
+			constrains = append(constrains, doorman.SignerOfWithPermission(action.Reviewer, ext))
+		}
+		constrains = append(constrains, doorman.SignerOfWithPermission(action.App.CoreInfo.MasterAccountID, ext))
+	}
+
+	action.Doorman().Check(action.R, constrains...)
 }
 
 func (action *ReviewableRequestIndexAction) loadRecord() {
 	action.q = action.HistoryQ().ReviewableRequests()
+
+	if action.CustomFilter != nil {
+		action.CustomFilter(action)
+	}
+
+	if action.Err != nil {
+		return
+	}
 
 	if action.Reviewer != "" {
 		action.q = action.q.ForReviewer(action.Reviewer)
@@ -82,14 +118,6 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 		action.q = action.q.UpdatedAfter(*action.UpdatedAfter)
 	}
 
-	if action.CustomFilter != nil {
-		action.CustomFilter(action)
-	}
-
-	if action.Err != nil {
-		return
-	}
-
 	action.q = action.q.ForTypes(action.RequestTypes).Page(action.PagingParams)
 	var err error
 	action.Records, err = action.q.Select()
@@ -102,14 +130,13 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 
 func (action *ReviewableRequestIndexAction) loadPage() {
 	for i := range action.Records {
-		var res reviewablerequest.ReviewableRequest
-		err := res.Populate(&action.Records[i])
+		res, err := reviewablerequest.PopulateReviewableRequest(&action.Records[i])
 		if err != nil {
 			action.Log.WithError(err).Error("Failed to populate reviewable request")
 			action.Err = &problem.ServerError
 			return
 		}
-		action.Page.Add(&res)
+		action.Page.Add(res)
 	}
 
 	action.Page.BaseURL = action.BaseURL()

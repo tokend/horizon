@@ -10,10 +10,13 @@ import (
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
+	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
 	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
 
 // Web contains the http server related fields for horizon: the router,
@@ -117,7 +120,6 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCreateIssuanceRequest,
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
-		xdr.OperationTypeManageInvoice,
 		xdr.OperationTypeCheckSaleState,
 		xdr.OperationTypeManageKeyValue,
 		xdr.OperationTypePaymentV2,
@@ -140,13 +142,18 @@ func initWebActions(app *App) {
 	r.Get("/accounts/:id", &AccountShowAction{})
 	r.Get("/accounts/:id/limits", &LimitsV2AccountShowAction{})
 	r.Get("/accounts/:id/signers", &SignersIndexAction{})
+	r.Get("/accounts/:id/account_kyc", &AccountKYCAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
 	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{})
+	r.Get("/accounts/:id/fees", &AccountFeesAction{})
 
 	r.Get("/accounts/:account_id/signers/:id", &SignerShowAction{})
 	r.Get("/accounts/:account_id/operations", &OperationIndexAction{}, 1)
 	r.Get("/accounts/:account_id/payments", &OperationIndexAction{
 		Types: operationTypesPayment,
+	})
+	r.Get("/accounts/:account_id/offers_history", &OperationIndexAction{
+		Types: []xdr.OperationType{xdr.OperationTypeManageOffer},
 	})
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
 
@@ -179,19 +186,13 @@ func initWebActions(app *App) {
 	// operation actions
 	r.Get("/public/operations", &HistoryOperationIndexAction{})
 	r.Get("/public/operations/:id", &HistoryOperationShowAction{})
+	r.Get("/public/ledgers", &LedgerOperationsIndexAction{})
 
 	r.Get("/operations", &OperationIndexAction{})
 	r.Get("/payments", &OperationIndexAction{
 		Types: operationTypesPayment,
 	})
 	r.Get("/operations/:id", &OperationShowAction{})
-
-	r.Get("/payment_requests", &PaymentRequestIndexAction{})
-	r.Get("/forfeit_requests", &PaymentRequestIndexAction{
-		OnlyForfeits: true,
-	})
-
-	r.Get("/payment_requests/:id", &PaymentRequestShowAction{})
 
 	//get fees action
 	r.Get("/fees", &FeesAllAction{})
@@ -243,8 +244,31 @@ func initWebActions(app *App) {
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			asset := action.GetString("asset")
 			action.Page.Filters["asset"] = asset
+			approvedCountingQ := action.HistoryQ().ReviewableRequests().CountQuery().ForTypes(action.RequestTypes)
+			pendingCountingQ := action.HistoryQ().ReviewableRequests().CountQuery().ForTypes(action.RequestTypes)
 			if asset != "" {
 				action.q = action.q.IssuanceByAsset(asset)
+				approvedCountingQ = approvedCountingQ.IssuanceByAsset(asset)
+				pendingCountingQ = pendingCountingQ.IssuanceByAsset(asset)
+			}
+
+			action.Page.Embedded.Meta = &hal.PageMeta{
+				Count: &regources.RequestsCount{},
+			}
+
+			var err error
+			action.Page.Embedded.Meta.Count.Approved, err = approvedCountingQ.ForState(int64(history.ReviewableRequestStateApproved)).Count()
+			if err != nil {
+				action.Log.WithError(err).Error("failed to load count of approved reviewable requests")
+				action.Err = &problem.ServerError
+				return
+			}
+
+			action.Page.Embedded.Meta.Count.Pending, err = pendingCountingQ.ForState(int64(history.ReviewableRequestStatePending)).Count()
+			if err != nil {
+				action.Log.WithError(err).Error("failed to load count of pending reviewable requests")
+				action.Err = &problem.ServerError
+				return
 			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeIssuanceCreate},
@@ -321,6 +345,41 @@ func initWebActions(app *App) {
 	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
 	})
+
+	r.Get("/request/invoices", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			contractID := action.GetOptionalInt64("contract_id")
+			if contractID != nil {
+				action.q = action.q.InvoicesByContract(*contractID)
+			}
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeInvoice},
+	})
+
+	r.Get("/request/contracts", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			contractNumber := action.GetString("contract_number")
+			if contractNumber != "" {
+				action.q = action.q.ContractsByContractNumber(contractNumber)
+			}
+
+			// TODO: FIX ME!!!!!!!!!!!!!!!!!
+			if action.Requestor != "" {
+				action.q = action.q.ForCounterparty(action.Requestor)
+			}
+
+			action.Requestor = ""
+
+			if action.Reviewer != "" {
+				action.q = action.q.ForCounterparty(action.Reviewer)
+			}
+
+			action.Reviewer = ""
+			action.Page.Filters["contract_number"] = contractNumber
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
+	})
+
 	r.Get("/request/update_sale_end_time", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
 	})
@@ -332,6 +391,10 @@ func initWebActions(app *App) {
 
 	// Sale antes actions
 	r.Get("/sale_antes", &SaleAnteAction{})
+
+	// Contracts actions
+	r.Get("/contracts", &ContractIndexAction{})
+	r.Get("/contracts/:id", &ContractShowAction{})
 
 	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// DISCLAIMER: while following is true, it does not currently applies

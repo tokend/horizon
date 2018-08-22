@@ -5,10 +5,11 @@ package participants
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ForOperation returns all the participating accounts from the
@@ -63,8 +64,6 @@ func ForOperation(
 		if sourceParticipant.AccountID.Address() != manageBalanceOp.Destination.Address() {
 			result = append(result, Participant{manageBalanceOp.Destination, nil, nil})
 		}
-	case xdr.OperationTypeReviewPaymentRequest:
-	// the only direct participant is the source_account
 	case xdr.OperationTypeManageAsset:
 	// the only direct participant is the source_accountWWW
 	case xdr.OperationTypeManageLimits:
@@ -93,14 +92,28 @@ func ForOperation(
 		if len(result) != 0 {
 			sourceParticipant = nil
 		}
-	case xdr.OperationTypeManageInvoice:
-		manageInvoiceOp := op.Body.MustManageInvoiceOp()
-		if manageInvoiceOp.Amount == 0 {
+	case xdr.OperationTypeManageInvoiceRequest:
+		manageInvoiceOp := op.Body.MustManageInvoiceRequestOp()
+		switch manageInvoiceOp.Details.Action {
+		case xdr.ManageInvoiceRequestActionCreate:
+			result = append(result, Participant{manageInvoiceOp.Details.InvoiceRequest.Sender,
+				&opResult.ManageInvoiceRequestResult.Success.Details.Response.SenderBalance, nil})
+		case xdr.ManageInvoiceRequestActionRemove:
 			sourceParticipant = nil
-			break
 		}
-		sourceParticipant.BalanceID = &manageInvoiceOp.ReceiverBalance
-		result = append(result, Participant{manageInvoiceOp.Sender, &opResult.ManageInvoiceResult.Success.SenderBalance, nil})
+	case xdr.OperationTypeManageContractRequest:
+		manageContractOp := op.Body.MustManageContractRequestOp()
+		switch manageContractOp.Details.Action {
+		case xdr.ManageContractRequestActionCreate:
+			result = append(result, Participant{manageContractOp.Details.ContractRequest.Customer,
+				nil, nil})
+			result = append(result, Participant{manageContractOp.Details.ContractRequest.Escrow,
+				nil, nil})
+		case xdr.ManageContractRequestActionRemove:
+			sourceParticipant = nil
+		}
+	case xdr.OperationTypeManageContract:
+		// the only direct participant is the source_account
 	case xdr.OperationTypeReviewRequest:
 		request := getReviewableRequestByID(uint64(op.Body.MustReviewRequestOp().RequestId), ledgerChanges)
 		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address() {
@@ -151,7 +164,7 @@ func ForOperation(
 		paymentOpV2 := op.Body.MustPaymentOpV2()
 		paymentV2Response := opResult.MustPaymentV2Result().MustPaymentV2Response()
 
-		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil},)
+		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil})
 		sourceParticipant.BalanceID = &paymentOpV2.SourceBalanceId
 	case xdr.OperationTypeManageSale:
 		// the only direct participant is the source_account
@@ -244,7 +257,7 @@ func ForTransaction(
 	for i := range tx.Operations {
 		participants, err := ForOperation(DB, tx, &tx.Operations[i], *opResults[i].Tr, nil, ledger)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "failed to get participants for operation")
 		}
 		for _, participant := range participants {
 			result = append(result, participant.AccountID)
@@ -259,7 +272,7 @@ func getAccountIDByBalance(q history.Q, balanceID string) (result *xdr.AccountId
 	var targetBalance history.Balance
 	err = q.BalanceByID(&targetBalance, balanceID)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to get balance by balance id")
 	}
 	var aid xdr.AccountId
 	aid.SetAddress(targetBalance.AccountID)
@@ -336,7 +349,7 @@ func forMeta(
 		var acc []xdr.AccountId
 		acc, err = forChanges(&op.Changes)
 		if err != nil {
-			return
+			return nil, errors.Wrap(err, "failed to get ledger changes")
 		}
 
 		result = append(result, acc...)

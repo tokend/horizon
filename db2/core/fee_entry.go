@@ -1,10 +1,11 @@
 package core
 
 import (
-	"gitlab.com/tokend/go/hash"
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+
+	"gitlab.com/tokend/go/hash"
 
 	sq "github.com/lann/squirrel"
 )
@@ -99,7 +100,7 @@ type FeeEntryQ struct {
 }
 
 type FeeEntryQI interface {
-	Select(dest interface{}) error
+	Select() ([]FeeEntry, error)
 	ForAccountType(accountType *int32) FeeEntryQI
 	ForAccount(account string) FeeEntryQI
 }
@@ -142,11 +143,11 @@ func (q *FeeEntryQ) ForAccount(account string) FeeEntryQI {
 }
 
 // Select loads the results of the query specified by `q` into `dest`.
-func (q *FeeEntryQ) Select(dest interface{}) error {
+func (q *FeeEntryQ) Select() (res []FeeEntry, err error) {
 	if q.Err != nil {
-		return q.Err
+		return nil, q.Err
 	}
 
-	q.Err = q.parent.Select(dest, q.sql)
-	return q.Err
+	q.Err = q.parent.Select(&res, q.sql)
+	return res, q.Err
 }

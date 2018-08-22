@@ -5,20 +5,25 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/utf8"
+	"gitlab.com/tokend/go/xdr"
 )
 
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) {
-	if is.Err != nil {
-		return
+func isFulfilled(res xdr.ReviewRequestResultSuccess) bool {
+	extendedResult, ok := res.Ext.GetExtendedResult()
+	if !ok {
+		return true
 	}
+	return extendedResult.Fulfilled
+}
 
-	var err error
+func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
+	changes xdr.LedgerEntryChanges) (err error) {
+
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
-		err = is.approveReviewableRequest(op, changes)
+		err = is.approveReviewableRequest(op, res, changes)
 	case xdr.ReviewRequestOpActionPermanentReject:
 		err = is.permanentReject(op)
 	case xdr.ReviewRequestOpActionReject:
@@ -30,10 +35,11 @@ func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, changes xdr.Ledg
 	}
 
 	if err != nil {
-		is.Err = errors.Wrap(err, "failed to process review request", map[string]interface{}{
+		return errors.Wrap(err, "failed to process review request", map[string]interface{}{
 			"request_id": uint64(op.RequestId),
 		})
 	}
+	return nil
 }
 
 func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
@@ -50,7 +56,8 @@ func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
 	return false
 }
 
-func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.LedgerEntryChanges) error {
+func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
+	changes xdr.LedgerEntryChanges) error {
 	// approval of two step withdrawal leads to update of request to withdrawal
 	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeTwoStepWithdrawal {
 		return nil
@@ -60,23 +67,24 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, changes xdr.
 		return nil
 	}
 
+	if !isFulfilled(res) {
+		return nil
+	}
+
 	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(op.RequestId))
 	if err != nil {
 		return errors.Wrap(err, "failed to approve reviewable request")
 	}
 
-	err = is.Ingestion.UpdatePayment(op.RequestId, true, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to approve operation")
-	}
-
 	switch op.RequestDetails.RequestType {
 	case xdr.ReviewableRequestTypeWithdraw:
 		err = is.setWithdrawalDetails(uint64(op.RequestId), op.RequestDetails.Withdrawal)
+	case xdr.ReviewableRequestTypeInvoice:
+		err = is.setWaitingForConfirmationState(uint64(op.RequestId))
 	}
 
 	if err != nil {
-		return errors.Wrap(err, "failed to set reviewer details")
+		return errors.Wrap(err, "failed to set request details")
 	}
 
 	return nil
@@ -111,10 +119,10 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 	}
 
 	var withdrawalDetails *history.WithdrawalRequest
-	if request.Details.Withdrawal != nil {
-		withdrawalDetails = request.Details.Withdrawal
-	} else if request.Details.TwoStepWithdrawal != nil {
-		withdrawalDetails = request.Details.TwoStepWithdrawal
+	if request.Details.Withdraw != nil {
+		withdrawalDetails = request.Details.Withdraw
+	} else if request.Details.TwoStepWithdraw != nil {
+		withdrawalDetails = request.Details.TwoStepWithdraw
 	} else {
 		return errors.New("Unexpected state: expected withdrawal details to be available")
 	}
@@ -123,6 +131,27 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 	err = is.Ingestion.HistoryQ().ReviewableRequests().Update(*request)
 	if err != nil {
 		return errors.Wrap(err, "failed to update withdrawal request", fields)
+	}
+
+	return nil
+}
+
+func (is *Session) setWaitingForConfirmationState(requestID uint64) error {
+	request, err := is.Ingestion.HistoryQ().ReviewableRequests().ByID(requestID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get request", logan.F{
+			"request_id": requestID,
+		})
+	}
+
+	if (request == nil) || (request.Details.Invoice == nil) || (request.Details.Invoice.ContractID == nil) {
+		return nil
+	}
+
+	err = is.Ingestion.HistoryQ().ReviewableRequests().UpdateStates([]int64{int64(requestID)},
+		history.ReviewableRequestStateWaitingForConfirmation)
+	if err != nil {
+		return errors.Wrap(err, "failed to update request state")
 	}
 
 	return nil

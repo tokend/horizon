@@ -1,9 +1,14 @@
 package hal
 
-import "time"
+import (
+	"time"
+
+	"gitlab.com/tokend/regources"
+)
 
 type PageMeta struct {
-	LatestLedger *LatestLedgerMeta `json:"latest_ledger"`
+	LatestLedger *LatestLedgerMeta        `json:"latest_ledger,omitempty"`
+	Count        *regources.RequestsCount `json:"count,omitempty"`
 }
 
 type LatestLedgerMeta struct {

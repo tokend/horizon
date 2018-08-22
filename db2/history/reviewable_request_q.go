@@ -1,11 +1,12 @@
 package history
 
 import (
+	"time"
+
 	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/sqx"
-	"time"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -14,8 +15,12 @@ type ReviewableRequestQI interface {
 	Insert(request ReviewableRequest) error
 	// Update - update request using it's ID
 	Update(request ReviewableRequest) error
+	// UpdateStates - update state of requests
+	UpdateStates(requestIDs []int64, state ReviewableRequestState) error
 	// ByID - selects request by id. Returns nil, nil if not found
 	ByID(requestID uint64) (*ReviewableRequest, error)
+	// ByID - selects request by id. Returns nil, nil if not found
+	ByIDs(requestIDs []int64) ReviewableRequestQI
 	// Cancel - sets request state to `ReviewableRequestStateCanceled`
 	Cancel(requestID uint64) error
 	// Approve - sets request state to ReviewableRequestStateApproved and cleans reject reason
@@ -26,6 +31,8 @@ type ReviewableRequestQI interface {
 	ForRequestor(requestor string) ReviewableRequestQI
 	// ForReviewer - filters requests by reviewer
 	ForReviewer(reviewer string) ReviewableRequestQI
+	// ForCounterparty - filters requests by reviewer or requestor
+	ForCounterparty(counterparty string) ReviewableRequestQI
 	// ForState - filters requests by state
 	ForState(state int64) ReviewableRequestQI
 	// ForType - filters requests by type
@@ -38,6 +45,9 @@ type ReviewableRequestQI interface {
 	UpdatedAfter(timestamp int64) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
 	Select() ([]ReviewableRequest, error)
+	// Count loads count of the results of the query specified by `q`
+	Count() (int64, error)
+	CountQuery() ReviewableRequestQI
 
 	// Request Type specific filters. Filter for request type must be applied separately
 
@@ -53,7 +63,7 @@ type ReviewableRequestQI interface {
 	// IssuanceByAsset - filters issuance requests by asset
 	IssuanceByAsset(assetCode string) ReviewableRequestQI
 
-	// Withdrawal
+	// Withdraw
 	// WithdrawalByDestAsset - filters withdrawal requests by dest asset
 	WithdrawalByDestAsset(assetCode string) ReviewableRequestQI
 
@@ -64,6 +74,16 @@ type ReviewableRequestQI interface {
 	// Limits
 	// LimitsByDocHash - filters limits request by document hash
 	LimitsByDocHash(hash string) ReviewableRequestQI
+
+	// Contracts
+	// ContractsByContractNumber - filters contract requests by contract number
+	ContractsByContractNumber(contractNumber string) ReviewableRequestQI
+
+	// Invoices
+	// InvoicesByContract - filters invoice requests by contract id
+	InvoicesByContract(contractID int64) ReviewableRequestQI
+	// UpdateInvoicesStates - update state of invoice requests by contract id
+	UpdateInvoicesStates(state ReviewableRequestState, oldStates []ReviewableRequestState, contractID int64) error
 
 	// KYC
 	// KYCByAccountToUpdateKYC - filters update KYC requests by accountID of the owner of KYC
@@ -90,17 +110,20 @@ func (q *ReviewableRequestQ) Insert(request ReviewableRequest) error {
 	}
 
 	query := sq.Insert("reviewable_request").SetMap(map[string]interface{}{
-		"id":            request.ID,
-		"requestor":     request.Requestor,
-		"reviewer":      request.Reviewer,
-		"reference":     request.Reference,
-		"reject_reason": request.RejectReason,
-		"request_type":  request.RequestType,
-		"request_state": request.RequestState,
-		"hash":          request.Hash,
-		"details":       request.Details,
-		"created_at":    request.CreatedAt,
-		"updated_at":    request.UpdatedAt,
+		"id":               request.ID,
+		"requestor":        request.Requestor,
+		"reviewer":         request.Reviewer,
+		"reference":        request.Reference,
+		"reject_reason":    request.RejectReason,
+		"request_type":     request.RequestType,
+		"request_state":    request.RequestState,
+		"hash":             request.Hash,
+		"details":          request.Details,
+		"created_at":       request.CreatedAt,
+		"updated_at":       request.UpdatedAt,
+		"all_tasks":        request.AllTasks,
+		"pending_tasks":    request.PendingTasks,
+		"external_details": request.ExternalDetails,
 	})
 
 	_, err := q.parent.Exec(query)
@@ -114,15 +137,31 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 	}
 
 	query := sq.Update("reviewable_request").SetMap(map[string]interface{}{
-		"requestor":     request.Requestor,
-		"reviewer":      request.Reviewer,
-		"reject_reason": request.RejectReason,
-		"request_type":  request.RequestType,
-		"request_state": request.RequestState,
-		"hash":          request.Hash,
-		"details":       request.Details,
-		"updated_at":    request.UpdatedAt,
+		"requestor":        request.Requestor,
+		"reviewer":         request.Reviewer,
+		"reject_reason":    request.RejectReason,
+		"request_type":     request.RequestType,
+		"request_state":    request.RequestState,
+		"hash":             request.Hash,
+		"details":          request.Details,
+		"updated_at":       request.UpdatedAt,
+		"all_tasks":        request.AllTasks,
+		"pending_tasks":    request.PendingTasks,
+		"external_details": request.ExternalDetails,
 	}).Where("id = ?", request.ID)
+
+	_, err := q.parent.Exec(query)
+	return err
+}
+
+func (q *ReviewableRequestQ) UpdateStates(requestIDs []int64, state ReviewableRequestState) error {
+	if q.Err != nil {
+		return q.Err
+	}
+
+	query := sq.Update("reviewable_request").
+		Set("request_state", state).
+		Where(sq.Eq{"id": requestIDs})
 
 	_, err := q.parent.Exec(query)
 	return err
@@ -147,6 +186,15 @@ func (q *ReviewableRequestQ) ByID(requestID uint64) (*ReviewableRequest, error) 
 	}
 
 	return &result, nil
+}
+
+func (q *ReviewableRequestQ) ByIDs(requestIDs []int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(sq.Eq{"id": requestIDs})
+	return q
 }
 
 // Cancel - sets request state to `ReviewableRequestStateCanceled`
@@ -202,6 +250,15 @@ func (q *ReviewableRequestQ) ForReviewer(reviewer string) ReviewableRequestQI {
 	}
 
 	q.sql = q.sql.Where("reviewer = ?", reviewer)
+	return q
+}
+
+func (q *ReviewableRequestQ) ForCounterparty(counterparty string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("((reviewer = ?) or (requestor = ?))", counterparty, counterparty)
 	return q
 }
 
@@ -275,6 +332,24 @@ func (q *ReviewableRequestQ) Select() ([]ReviewableRequest, error) {
 	return result, q.Err
 }
 
+func (q *ReviewableRequestQ) CountQuery() ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+	q.sql = sq.Select("COUNT(*)").From("reviewable_request")
+	return q
+}
+
+func (q *ReviewableRequestQ) Count() (int64, error) {
+	if q.Err != nil {
+		return 0, q.Err
+	}
+
+	var result int64
+	q.Err = q.parent.Get(&result, q.sql)
+	return result, q.Err
+}
+
 func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
@@ -283,7 +358,6 @@ func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) Reviewable
 	q.sql = q.sql.Where("(details->'asset_create'->>'asset' = ? OR details->'asset_update'->>'asset' = ?)", assetCode, assetCode)
 	return q
 }
-
 
 // PreIssuance
 // PreIssuanceByAsset - filters pre issuance requests by asset
@@ -307,7 +381,7 @@ func (q *ReviewableRequestQ) IssuanceByAsset(assetCode string) ReviewableRequest
 	return q
 }
 
-// Withdrawal
+// Withdraw
 // WithdrawalByDestAsset - filters withdrawal requests by dest asset
 func (q *ReviewableRequestQ) WithdrawalByDestAsset(assetCode string) ReviewableRequestQI {
 	if q.Err != nil {
@@ -340,6 +414,41 @@ func (q *ReviewableRequestQ) LimitsByDocHash(hash string) ReviewableRequestQI {
 	return q
 }
 
+func (q *ReviewableRequestQ) ContractsByContractNumber(contractNumber string) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'contract'->'details'->>'contract_number' = ?", contractNumber)
+	return q
+}
+
+func (q *ReviewableRequestQ) InvoicesByContract(contractID int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'invoice'->>'contract_id' = ?", contractID)
+	return q
+}
+
+func (q *ReviewableRequestQ) UpdateInvoicesStates(state ReviewableRequestState,
+	oldStates []ReviewableRequestState,
+	contractID int64,
+) error {
+	if q.Err != nil {
+		return q.Err
+	}
+
+	query := sq.Update("reviewable_request").
+		Set("request_state", state).
+		Where("details->'invoice'->>'contract_id' = ?", contractID).
+		Where(sq.Eq{"request_state": oldStates})
+
+	_, err := q.parent.Exec(query)
+	return err
+}
+
 // KYC
 // KYCByAccountToUpdateKYC - filters update KYC requests by accountID of the owner of KYC
 func (q *ReviewableRequestQ) KYCByAccountToUpdateKYC(accountID string) ReviewableRequestQI {
@@ -350,6 +459,7 @@ func (q *ReviewableRequestQ) KYCByAccountToUpdateKYC(accountID string) Reviewabl
 	q.sql = q.sql.Where("details->'update_kyc'->>'updated_account_id' = ?", accountID)
 	return q
 }
+
 // KYCByMaskSet - filters update KYC requests by mask which must be set. If mustBeEq is false, request will be returned
 // even if only part of the mask is set
 func (q *ReviewableRequestQ) KYCByMaskSet(mask int64, maskSetPartialEq bool) ReviewableRequestQI {
@@ -385,5 +495,6 @@ func (q *ReviewableRequestQ) KYCByAccountTypeToSet(accountTypeToSet xdr.AccountT
 	return q
 }
 
-var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason", "request_type", "request_state", "hash",
-	"details", "created_at", "updated_at").From("reviewable_request")
+var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason",
+	"request_type", "request_state", "hash", "details", "created_at", "updated_at", "all_tasks", "pending_tasks",
+	"external_details").From("reviewable_request")

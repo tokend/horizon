@@ -2,16 +2,14 @@ package reviewablerequest
 
 import (
 	"gitlab.com/swarmfund/horizon/db2/history"
-	"time"
+	"gitlab.com/tokend/regources"
 )
 
-type UpdateSaleEndTimeRequest struct {
-	SaleID     uint64    `json:"sale_id"`
-	NewEndTime time.Time `json:"new_end_time"`
-}
-
-func (r *UpdateSaleEndTimeRequest) Populate(histRequest history.UpdateSaleEndTimeRequest) error {
+func PopulateUpdateSaleEndTimeRequest(histRequest history.UpdateSaleEndTimeRequest) (
+	r *regources.UpdateSaleEndTimeRequest, err error,
+) {
+	r = &regources.UpdateSaleEndTimeRequest{}
 	r.SaleID = histRequest.SaleID
-	r.NewEndTime = histRequest.NewEndTime
-	return nil
+	r.NewEndTime = regources.Time(histRequest.NewEndTime)
+	return
 }
