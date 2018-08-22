@@ -57,8 +57,14 @@ func (action *ContractIndexAction) loadParams() {
 	action.EscrowID = action.GetString("escrow")
 	action.PagingParams = action.GetPageQuery()
 	action.Page.Filters = map[string]string{
-		"disputing": action.GetString("disputing"),
-		"completed": action.GetString("completed"),
+		"disputing":       action.GetString("disputing"),
+		"completed":       action.GetString("completed"),
+		"start_time":      action.GetString("start_time"),
+		"end_time":        action.GetString("end_time"),
+		"counterparty":    action.Counterparty,
+		"source":          action.Source,
+		"contract_number": action.ContractNumber,
+		"escrow":          action.EscrowID,
 	}
 }
 

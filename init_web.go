@@ -372,6 +372,9 @@ func initWebActions(app *App) {
 			if source != "" {
 				action.q = action.q.ForCounterparty(source)
 			}
+			action.Page.Filters["contract_number"] = contractNumber
+			action.Page.Filters["counterparty"] = counterparty
+			action.Page.Filters["source"] = source
 		},
 		CustomCheckAllowed: func(action *ReviewableRequestIndexAction) {
 			source := action.GetString("source")
