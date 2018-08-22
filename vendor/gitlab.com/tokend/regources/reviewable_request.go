@@ -12,9 +12,9 @@ type ReviewableRequest struct {
 	RejectReason    string                    `json:"reject_reason"`
 	Hash            string                    `json:"hash"`
 	Details         *ReviewableRequestDetails `json:"details"`
-	AllTasks        uint32                    `json:"all_tasks"`
-	PendingTasks    uint32                    `json:"pending_tasks"`
-	ExternalDetails map[string]interface{}  `json:"external_details"`
+	AllTasks        uint32                    `json:"all_tasks,omitempty"`
+	PendingTasks    uint32                    `json:"pending_tasks,omitempty"`
+	ExternalDetails map[string]interface{}    `json:"external_details,omitempty"`
 	CreatedAt       Time                      `json:"created_at"`
 	UpdatedAt       Time                      `json:"updated_at"`
 

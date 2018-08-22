@@ -225,7 +225,10 @@
 [[projects]]
   digest = "1:1ce378ab2352c756c6d7a0172c22ecbd387659d32712a4ce3bc474273309a5dc"
   name = "github.com/magiconair/properties"
-  packages = ["."]
+  packages = [
+    ".",
+    "assert",
+  ]
   pruneopts = ""
   revision = "be5ece7dd465ab0765a9682137865547526d1dfb"
   version = "v1.7.3"
@@ -470,9 +473,12 @@
     "amount",
     "build",
     "crc16",
+    "doorman",
+    "doorman/data",
     "hash",
     "keypair",
     "network",
+    "resources",
     "signcontrol",
     "signcontrol/internal/httpsignatures",
     "strkey",
@@ -496,11 +502,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a72981090da8ced8c7561c12e503b03810fa341d0a83ed6d71d69933839e45ce"
+  digest = "1:00118954b7f03ce4c9e7b50728f87c026d8f95f1b0704ba8888b2f9489941fc6"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "73ed59a402083d9a1bc394a48e35e333441717bc"
+  revision = "b77bd591eb8bed9345fd3857c3bd5c9c0da71703"
 
 [[projects]]
   branch = "master"
@@ -623,6 +629,7 @@
     "github.com/jmoiron/sqlx",
     "github.com/lann/squirrel",
     "github.com/lib/pq",
+    "github.com/magiconair/properties/assert",
     "github.com/multiplay/go-slack/chat",
     "github.com/multiplay/go-slack/lrhook",
     "github.com/patrickmn/go-cache",
@@ -647,8 +654,10 @@
     "gitlab.com/distributed_lab/txsub",
     "gitlab.com/tokend/go/amount",
     "gitlab.com/tokend/go/build",
+    "gitlab.com/tokend/go/doorman",
     "gitlab.com/tokend/go/hash",
     "gitlab.com/tokend/go/keypair",
+    "gitlab.com/tokend/go/resources",
     "gitlab.com/tokend/go/signcontrol",
     "gitlab.com/tokend/go/strkey",
     "gitlab.com/tokend/go/xdr",

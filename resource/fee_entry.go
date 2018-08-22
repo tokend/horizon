@@ -28,6 +28,6 @@ func NewFeeEntry(cfee core.FeeEntry) (fee regources.FeeEntry) {
 
 func NewFeeEntryFromWrapper(wrapper fees.FeeWrapper) (fee regources.FeeEntry) {
 	fee = NewFeeEntry(wrapper.FeeEntry)
-	fee.Exists = !wrapper.NotExist
+	fee.Exists = !wrapper.NotExists
 	return fee
 }
