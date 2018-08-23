@@ -404,7 +404,7 @@ func getOfferBaseAsset(changes xdr.LedgerEntryChanges, saleId xdr.Uint64) xdr.As
 
 func getOperationFee(opFees []xdr.OperationFee, opType xdr.OperationType) uint64 {
 	for _, opFee := range opFees {
-		if opFee.Operation.Body.Type == opType {
+		if opFee.OperationType == opType {
 			return uint64(opFee.Amount)
 		}
 	}
