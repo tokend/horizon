@@ -467,7 +467,7 @@
 
 [[projects]]
   branch = "feature/transaction_fee"
-  digest = "1:73d84a84418a61bc81652637a62e6329978cc2e3d86e04da1181262b60069191"
+  digest = "1:f7042c8189d9d2acb26387c6eb08582443af4be24eea40f0a570b875a97436ee"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +485,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "80a14ccd5f171beb8be4ff0fd7ef7a714580590f"
+  revision = "df24bd525148012e8e5730dcb0bedbe58e606057"
 
 [[projects]]
   branch = "master"
