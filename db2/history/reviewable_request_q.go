@@ -78,6 +78,10 @@ type ReviewableRequestQI interface {
 	// Contracts
 	// ContractsByContractNumber - filters contract requests by contract number
 	ContractsByContractNumber(contractNumber string) ReviewableRequestQI
+	// ContractsByStartTime - filters contract requests by contract start time
+	ContractsByStartTime(seconds int64) ReviewableRequestQI
+	// ContractsByEndTime - filters contract requests by contract start time
+	ContractsByEndTime(seconds int64) ReviewableRequestQI
 
 	// Invoices
 	// InvoicesByContract - filters invoice requests by contract id
@@ -420,6 +424,24 @@ func (q *ReviewableRequestQ) ContractsByContractNumber(contractNumber string) Re
 	}
 
 	q.sql = q.sql.Where("details->'contract'->'details'->>'contract_number' = ?", contractNumber)
+	return q
+}
+
+func (q *ReviewableRequestQ) ContractsByStartTime(seconds int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'contract'->>'start_time' >= ?", time.Unix(seconds, 0).UTC())
+	return q
+}
+
+func (q *ReviewableRequestQ) ContractsByEndTime(seconds int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'contract'->>'end_time' >= ?", time.Unix(seconds, 0).UTC())
 	return q
 }
 

@@ -12,8 +12,8 @@ func PopulateAssetCreationRequest(histRequest history.AssetCreationRequest) (
 	*regources.AssetCreationRequest,
 	error,
 ) {
-	maxIssuanceAmount := amount.MustParse(histRequest.MaxIssuanceAmount)
-	initialPreissuedAmount := amount.MustParse(histRequest.InitialPreissuedAmount)
+	maxIssuanceAmount := amount.MustParseU(histRequest.MaxIssuanceAmount)
+	initialPreissuedAmount := amount.MustParseU(histRequest.InitialPreissuedAmount)
 	return &regources.AssetCreationRequest{
 		Code:                   histRequest.Asset,
 		Policies:               base.FlagFromXdrAssetPolicy(histRequest.Policies, xdr.AssetPolicyAll),
