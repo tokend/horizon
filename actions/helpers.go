@@ -11,6 +11,7 @@ import (
 
 	"time"
 
+	"github.com/spf13/cast"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/problem"
@@ -73,7 +74,6 @@ func (base *Base) GetIntArray(name string) []int {
 
 	return res
 }
-
 
 func getIntArrayFromStringArray(input []string) (result []int, err error) {
 	for _, str := range input {
@@ -311,11 +311,7 @@ func (base *Base) GetBoolOrDefault(name string, defaultValue bool) bool {
 		return defaultValue
 	}
 
-	if asStr == "true" {
-		return true
-	}
-
-	return false
+	return cast.ToBool(asStr)
 }
 
 // GetUInt64 retrieves an uint64 from the action parameter of the given name.
