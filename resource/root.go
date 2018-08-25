@@ -1,11 +1,13 @@
 package resource
 
 import (
+	"time"
+
 	"gitlab.com/swarmfund/horizon/httpx"
 	"gitlab.com/swarmfund/horizon/ledger"
 	"gitlab.com/swarmfund/horizon/render/hal"
+	"gitlab.com/tokend/go/amount"
 	"golang.org/x/net/context"
-	"time"
 )
 
 // Root is the initial map of links into the api.
@@ -31,6 +33,7 @@ type Root struct {
 	MasterExchangeName   string `json:"master_exchange_name"`
 	TxExpirationPeriod   int64  `json:"tx_expiration_period"`
 	CurrentTime          int64  `json:"current_time"`
+	Precision            int64  `json:"precision"`
 }
 
 // Populate fills in the details
@@ -51,4 +54,5 @@ func (res *Root) PopulateLedgerState(
 	res.Links.Self = lb.Link("/")
 	res.Links.Transaction = lb.Link("/transactions/{hash}")
 	res.Links.Transactions = lb.PagedLink("/transactions")
+	res.Precision = amount.One
 }
