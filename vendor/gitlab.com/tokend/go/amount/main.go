@@ -28,7 +28,7 @@ func MustParse(v string) int64 {
 	return ret
 }
 
-// MustParse is the panicking version of Parse
+// MustParseU is the panicking version of ParseU
 func MustParseU(v string) uint64 {
 	ret, err := ParseU(v)
 	if err != nil {
@@ -36,7 +36,6 @@ func MustParseU(v string) uint64 {
 	}
 	return ret
 }
-
 
 // Parse parses the provided as a stellar "amount", i.e. A 64-bit signed integer
 // that represents a decimal number with 7 digits of significance in the

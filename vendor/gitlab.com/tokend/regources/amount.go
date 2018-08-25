@@ -20,7 +20,7 @@ func (a *Amount) UnmarshalJSON(data []byte) error {
 		return errors.Wrap(err, "can't unmarshal amount")
 	}
 
-	rawA, err := amount.Parse(rawAmount)
+	rawA, err := amount.ParseU(rawAmount)
 	*a = Amount(rawA)
 
 	return errors.Wrap(err, "can't parse amount")
