@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/tokend/go/xdr"
@@ -53,6 +54,21 @@ func (ingest *Ingestion) UpdateOrderBookState(orderBookID, state uint64, ignoreC
 	_, err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update history_operations")
+	}
+
+	return nil
+}
+
+func (ingest *Ingestion) UpdateReviewableRequestState(requestId, state uint64) error {
+	sql := sq.Update("history_operations").
+		Set("state", state).
+		Where("identifier = ?", requestId)
+
+	_, err := ingest.DB.Exec(sql)
+	if err != nil {
+		return errors.Wrap(err, "failed to update review request state in history_operations", logan.F{
+			"request_id": requestId,
+		})
 	}
 
 	return nil

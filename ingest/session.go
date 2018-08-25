@@ -353,3 +353,23 @@ func (is *Session) processManageContractRequest(
 
 	return nil
 }
+
+func (is *Session) updateReviewableRequestState(
+	req xdr.ReviewRequestOp,
+	result xdr.ReviewRequestResult,
+) error {
+
+	switch result.Code {
+	case xdr.ReviewRequestResultCodeSuccess:
+		err := is.Ingestion.UpdateReviewableRequestState(
+			uint64(req.RequestId),
+			uint64(history.OperationStateSuccess),
+		)
+		if err != nil {
+			return errors.Wrap(err, "failed to update successful reviewable request state:", logan.F{
+				"request_id": uint64(req.RequestId),
+			})
+		}
+	}
+	return nil
+}

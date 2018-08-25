@@ -137,6 +137,15 @@ func (is *Session) operation() error {
 		if err != nil {
 			return errors.Wrap(err, "failed to process review request")
 		}
+
+		err = is.updateReviewableRequestState(
+			is.Cursor.Operation().Body.MustReviewRequestOp(),
+			is.Cursor.OperationResult().MustReviewRequestResult(),
+		)
+		if err != nil {
+			return errors.Wrap(err, "failed to update review request state")
+		}
+
 	case xdr.OperationTypeManageAsset:
 		err = is.processManageAsset(is.Cursor.Operation().Body.ManageAssetOp)
 		if err != nil {
