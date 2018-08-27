@@ -15,9 +15,11 @@ func PopulateInvoiceRequest(histRequest history.InvoiceRequest) (
 		contractID = strconv.FormatInt(*histRequest.ContractID, 10)
 	}
 	return &regources.InvoiceRequest{
-		Amount:     regources.Amount(histRequest.Amount),
-		Asset:      histRequest.Asset,
-		ContractID: contractID,
-		Details:    histRequest.Details,
+		Amount:          regources.Amount(histRequest.Amount),
+		Asset:           histRequest.Asset,
+		ContractID:      contractID,
+		Details:         histRequest.Details,
+		PayerBalance:    histRequest.PayerBalance,
+		ReceiverBalance: histRequest.ReceiverBalance,
 	}, nil
 }

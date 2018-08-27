@@ -17,6 +17,7 @@ var selectContracts = sq.Select(
 	"hc.start_time",
 	"hc.end_time",
 	"hc.initial_details",
+	"hc.customer_details",
 	"hc.invoices",
 	"hc.state",
 ).From("history_contracts hc")
@@ -181,14 +182,15 @@ func (q *ContractQ) Update(contract Contract) error {
 	}
 
 	query := sq.Update("history_contracts").SetMap(map[string]interface{}{
-		"contractor":      contract.Contractor,
-		"customer":        contract.Customer,
-		"escrow":          contract.Escrow,
-		"start_time":      contract.StartTime,
-		"end_time":        contract.EndTime,
-		"initial_details": contract.InitialDetails,
-		"invoices":        contract.Invoices,
-		"state":           contract.State,
+		"contractor":       contract.Contractor,
+		"customer":         contract.Customer,
+		"escrow":           contract.Escrow,
+		"start_time":       contract.StartTime,
+		"end_time":         contract.EndTime,
+		"initial_details":  contract.InitialDetails,
+		"customer_details": contract.CustomerDetails,
+		"invoices":         contract.Invoices,
+		"state":            contract.State,
 	}).Where("id = ?", contract.ID)
 
 	_, err := q.parent.Exec(query)

@@ -11,15 +11,16 @@ import (
 
 func PopulateContract(row history.Contract) regources.Contract {
 	return regources.Contract{
-		ID:             strconv.FormatInt(row.ID, 10),
-		PT:             row.PagingToken(),
-		Contractor:     row.Contractor,
-		Customer:       row.Customer,
-		Escrow:         row.Escrow,
-		StartTime:      row.StartTime,
-		EndTime:        row.EndTime,
-		InitialDetails: row.InitialDetails,
-		State:          base.FlagFromXdrContractState(row.State, xdr.ContractStateAll),
+		ID:              strconv.FormatInt(row.ID, 10),
+		PT:              row.PagingToken(),
+		Contractor:      row.Contractor,
+		Customer:        row.Customer,
+		Escrow:          row.Escrow,
+		StartTime:       row.StartTime,
+		EndTime:         row.EndTime,
+		InitialDetails:  row.InitialDetails,
+		CustomerDetails: row.CustomerDetails,
+		State:           base.FlagFromXdrContractState(row.State, xdr.ContractStateAll),
 	}
 }
 
