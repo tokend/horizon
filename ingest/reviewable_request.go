@@ -318,10 +318,12 @@ func getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
 	}
 
 	return &history.InvoiceRequest{
-		Asset:      string(request.Asset),
-		Amount:     uint64(request.Amount),
-		ContractID: contractID,
-		Details:    details,
+		Asset:           string(request.Asset),
+		Amount:          uint64(request.Amount),
+		ContractID:      contractID,
+		Details:         details,
+		PayerBalance:    request.SenderBalance.AsString(),
+		ReceiverBalance: request.ReceiverBalance.AsString(),
 	}
 }
 

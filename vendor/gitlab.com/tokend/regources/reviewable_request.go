@@ -84,10 +84,12 @@ type ContractRequest struct {
 }
 
 type InvoiceRequest struct {
-	Amount     Amount                 `json:"amount"`
-	Asset      string                 `json:"asset"`
-	ContractID string                 `json:"contract_id,omitempty"`
-	Details    map[string]interface{} `json:"details"`
+	Amount          Amount                 `json:"amount"`
+	Asset           string                 `json:"asset"`
+	ContractID      string                 `json:"contract_id,omitempty"`
+	Details         map[string]interface{} `json:"details"`
+	PayerBalance    string                 `json:"payer_balance"`
+	ReceiverBalance string                 `json:"receiver_balance"`
 }
 
 type IssuanceRequest struct {

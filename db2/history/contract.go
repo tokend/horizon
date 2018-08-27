@@ -9,14 +9,15 @@ import (
 
 type Contract struct {
 	db2.TotalOrderID
-	Contractor     string        `db:"contractor"`
-	Customer       string        `db:"customer"`
-	Escrow         string        `db:"escrow"`
-	StartTime      time.Time     `db:"start_time"`
-	EndTime        time.Time     `db:"end_time"`
-	InitialDetails db2.Details   `db:"initial_details"`
-	Invoices       pq.Int64Array `db:"invoices"`
-	State          int32         `db:"state"`
+	Contractor      string        `db:"contractor"`
+	Customer        string        `db:"customer"`
+	Escrow          string        `db:"escrow"`
+	StartTime       time.Time     `db:"start_time"`
+	EndTime         time.Time     `db:"end_time"`
+	InitialDetails  db2.Details   `db:"initial_details"`
+	CustomerDetails db2.Details   `db:"customer_details"`
+	Invoices        pq.Int64Array `db:"invoices"`
+	State           int32         `db:"state"`
 }
 
 type ContractDetails struct {

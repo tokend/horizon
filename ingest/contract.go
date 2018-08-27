@@ -120,6 +120,11 @@ func convertContract(rawContract xdr.ContractEntry) history.Contract {
 	var initialDetails map[string]interface{}
 	_ = json.Unmarshal([]byte(string(rawContract.InitialDetails)), &initialDetails)
 
+	var customerDetails map[string]interface{}
+	if rawContract.Ext.V == xdr.LedgerVersionAddCustomerDetailsToContract {
+		_ = json.Unmarshal([]byte(string(rawContract.Ext.MustCustomerDetails())), &customerDetails)
+	}
+
 	var invoices []int64
 	for _, item := range rawContract.InvoiceRequestsIDs {
 		invoices = append(invoices, int64(item))
@@ -129,14 +134,15 @@ func convertContract(rawContract xdr.ContractEntry) history.Contract {
 		TotalOrderID: db2.TotalOrderID{
 			ID: int64(rawContract.ContractId),
 		},
-		Contractor:     rawContract.Contractor.Address(),
-		Customer:       rawContract.Customer.Address(),
-		Escrow:         rawContract.Escrow.Address(),
-		StartTime:      time.Unix(int64(rawContract.StartTime), 0).UTC(),
-		EndTime:        time.Unix(int64(rawContract.EndTime), 0).UTC(),
-		InitialDetails: initialDetails,
-		Invoices:       invoices,
-		State:          int32(rawContract.State),
+		Contractor:      rawContract.Contractor.Address(),
+		Customer:        rawContract.Customer.Address(),
+		Escrow:          rawContract.Escrow.Address(),
+		StartTime:       time.Unix(int64(rawContract.StartTime), 0).UTC(),
+		EndTime:         time.Unix(int64(rawContract.EndTime), 0).UTC(),
+		InitialDetails:  initialDetails,
+		CustomerDetails: customerDetails,
+		Invoices:        invoices,
+		State:           int32(rawContract.State),
 	}
 }
 
