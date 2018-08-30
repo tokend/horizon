@@ -29,7 +29,6 @@ type ContractIndexAction struct {
 // JSON is a method for actions.JSON
 func (action *ContractIndexAction) JSON() {
 	action.Do(
-		action.EnsureHistoryFreshness,
 		action.loadParams,
 		action.checkAllowed,
 		action.ValidateCursorWithinHistory,
