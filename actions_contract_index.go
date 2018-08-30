@@ -31,7 +31,6 @@ func (action *ContractIndexAction) JSON() {
 	action.Do(
 		action.loadParams,
 		action.checkAllowed,
-		action.ValidateCursorWithinHistory,
 		action.loadRecords,
 		action.loadPage,
 		func() {
