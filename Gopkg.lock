@@ -467,7 +467,7 @@
 
 [[projects]]
   branch = "feature/capital_deployment_fee_type"
-  digest = "1:85b888cc30367e42aca686ba0b8ae8a985c3237a6d8aebfbfbced8615eed7e80"
+  digest = "1:ca70d37e440117d4a946bf29cdc0f6bf2cb40b6f88e413a7793c4e17aaa30fa2"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +485,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "c09283d09fb17c9bf33d8b5c442d197f175b9834"
+  revision = "0ef712e668ac45a7e1c2b2c2c7f5063caa43c7cb"
 
 [[projects]]
   branch = "master"
