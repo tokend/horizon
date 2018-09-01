@@ -12,17 +12,16 @@ type CoreReferencesAction struct {
 	accountID string
 	reference string
 
-	records []core.Reference
+	record core.Reference
 }
 
 func (action *CoreReferencesAction) JSON() {
 	action.Do(
 		action.loadParams,
-		action.checkAllowed,
 		action.loadRecords,
 		func() {
 			response := map[string]interface{}{
-				"data": action.records,
+				"data": action.record,
 			}
 			hal.Render(action.W, response)
 		},
@@ -52,5 +51,11 @@ func (action *CoreReferencesAction) loadRecords() {
 		return
 	}
 
-	action.records = records
+	if len(records) == 0 {
+		action.Log.Error("No records in DB matching request")
+		action.Err = &problem.NotFound
+		return
+	}
+
+	action.record = records[0]
 }
