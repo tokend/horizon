@@ -156,6 +156,7 @@ func initWebActions(app *App) {
 		Types: []xdr.OperationType{xdr.OperationTypeManageOffer},
 	})
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
+	r.Get("/accounts/:account_id/references/:reference", &CoreReferencesAction{})
 
 	//keyValue actions
 	r.Get("/key_value", &KeyValueShowAllAction{})
