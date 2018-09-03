@@ -2,12 +2,13 @@ package ingest
 
 import (
 	"encoding/json"
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
-	"time"
 )
 
 func saleCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -69,13 +70,17 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	_ = json.Unmarshal([]byte(raw.Details), &saleDetails)
 
 	saleType := xdr.SaleTypeBasicSale
-	if raw.Ext.SaleTypeExt != nil {
-		saleType = raw.Ext.SaleTypeExt.TypedSale.SaleType
-	}
-
 	rawState := xdr.SaleStateNone
-	if raw.Ext.StatableSaleExt != nil {
-		rawState = raw.Ext.StatableSaleExt.State
+	switch raw.Ext.V {
+	case xdr.LedgerVersionEmptyVersion:
+	case xdr.LedgerVersionTypedSale:
+		saleType = raw.Ext.MustSaleTypeExt().TypedSale.SaleType
+	case xdr.LedgerVersionStatableSales:
+		ext := raw.Ext.MustStatableSaleExt()
+		saleType = ext.SaleTypeExt.TypedSale.SaleType
+		rawState = ext.State
+	default:
+		panic("Unexpected ledger version in getSaleRequest")
 	}
 
 	state, err := convertSaleState(rawState)
@@ -112,7 +117,7 @@ func convertSaleState(state xdr.SaleState) (history.SaleState, error) {
 	case xdr.SaleStateVoting:
 		return history.SaleStateVoting, nil
 	default:
-		return history.SaleStateOpen, errors.From(errors.New("unepxected sale of the state"), map[string]interface{}{
+		return history.SaleStateOpen, errors.From(errors.New("unexpected sale of the state"), map[string]interface{}{
 			"state": state,
 		})
 	}

@@ -218,19 +218,23 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 	_ = json.Unmarshal([]byte(request.Details), &details)
 
 	saleType := xdr.SaleTypeBasicSale
-	if request.Ext.SaleTypeExt != nil {
-		saleType = request.Ext.SaleTypeExt.TypedSale.SaleType
-	}
-
-	var baseAssetForHardCap uint64 = 0
-	if extV2, ok := request.Ext.GetExtV2(); ok {
+	baseAssetForHardCap := uint64(0)
+	state := xdr.SaleStateNone
+	switch request.Ext.V {
+	case xdr.LedgerVersionEmptyVersion:
+	case xdr.LedgerVersionTypedSale:
+		saleType = request.Ext.MustSaleTypeExt().TypedSale.SaleType
+	case xdr.LedgerVersionAllowToSpecifyRequiredBaseAssetAmountForHardCap:
+		extV2 := request.Ext.MustExtV2()
 		baseAssetForHardCap = uint64(extV2.RequiredBaseAssetForHardCap)
 		saleType = extV2.SaleTypeExt.TypedSale.SaleType
-	}
-
-	state := xdr.SaleStateNone
-	if request.Ext.ExtV3 != nil {
-		state = request.Ext.ExtV3.State
+	case xdr.LedgerVersionStatableSales:
+		extV3 := request.Ext.MustExtV3()
+		saleType = extV3.SaleTypeExt.TypedSale.SaleType
+		baseAssetForHardCap = uint64(extV3.RequiredBaseAssetForHardCap)
+		state = extV3.State
+	default:
+		panic("Unexpected ledger version in getSaleRequest")
 	}
 
 	return &history.SaleRequest{
