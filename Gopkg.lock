@@ -449,6 +449,9 @@
   name = "gitlab.com/distributed_lab/logan"
   packages = [
     ".",
+    "v2",
+    "v2/errors",
+    "v2/fields",
     "v3",
     "v3/errors",
     "v3/fields",
@@ -467,7 +470,7 @@
 
 [[projects]]
   branch = "feature/capital_deployment_fee_type"
-  digest = "1:ca70d37e440117d4a946bf29cdc0f6bf2cb40b6f88e413a7793c4e17aaa30fa2"
+  digest = "1:e8997c77f5d5622d2c80bc2efff91dc71d81e77f58cecae55e6814ad6412596f"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +488,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "fa9c9babee67f1983e2682ab9660b45a5fc7bd86"
+  revision = "be16a4c108397ea5fcf70ac6d5304de344f3dbcc"
 
 [[projects]]
   branch = "master"
@@ -650,6 +653,7 @@
     "github.com/zenazn/goji/web/mutil",
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/logan",
+    "gitlab.com/distributed_lab/logan/v2",
     "gitlab.com/distributed_lab/logan/v3",
     "gitlab.com/distributed_lab/logan/v3/errors",
     "gitlab.com/distributed_lab/txsub",
