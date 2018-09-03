@@ -103,7 +103,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "master"
+  branch = "feature/capital_deployment_fee_type"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
