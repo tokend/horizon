@@ -30,19 +30,13 @@ func (action *CoreReferencesAction) JSON() {
 
 func (action *CoreReferencesAction) loadParams() {
 	action.accountID = action.GetNonEmptyString("account_id")
-	action.reference = action.GetString("reference")
-}
-
-func (action *CoreReferencesAction) checkAllowed() {
-	action.IsAllowed(action.accountID)
+	action.reference = action.GetNonEmptyString("reference")
 }
 
 func (action *CoreReferencesAction) loadRecords() {
-	q := action.CoreQ().References().ForAccount(action.accountID)
-
-	if action.reference != "" {
-		q = q.ByReference(action.reference)
-	}
+	q := action.CoreQ().References().
+		ForAccount(action.accountID).
+		ByReference(action.reference)
 
 	records, err := q.Select()
 	if err != nil {
@@ -52,7 +46,6 @@ func (action *CoreReferencesAction) loadRecords() {
 	}
 
 	if len(records) == 0 {
-		action.Log.Error("No records in DB matching request")
 		action.Err = &problem.NotFound
 		return
 	}
