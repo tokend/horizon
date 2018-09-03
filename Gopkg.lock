@@ -449,9 +449,6 @@
   name = "gitlab.com/distributed_lab/logan"
   packages = [
     ".",
-    "v2",
-    "v2/errors",
-    "v2/fields",
     "v3",
     "v3/errors",
     "v3/fields",
@@ -488,7 +485,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "be16a4c108397ea5fcf70ac6d5304de344f3dbcc"
+  revision = "331b74d667f0ba3ae28c1c26da222866b6f717fd"
 
 [[projects]]
   branch = "master"
@@ -653,7 +650,6 @@
     "github.com/zenazn/goji/web/mutil",
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/logan",
-    "gitlab.com/distributed_lab/logan/v2",
     "gitlab.com/distributed_lab/logan/v3",
     "gitlab.com/distributed_lab/logan/v3/errors",
     "gitlab.com/distributed_lab/txsub",
