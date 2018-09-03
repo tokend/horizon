@@ -237,7 +237,7 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 	default:
 		panic(errors.Wrap(errors.New("Unexpected ledger version in getSaleRequest"),
 			"failed to ingest sale request", logan.F{
-				"actual ledger version": request.Ext.V.ShortString(),
+				"actual_ledger_version": request.Ext.V.ShortString(),
 			}))
 	}
 

@@ -83,7 +83,7 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	default:
 		panic(errors.Wrap(errors.New("Unexpected ledger version in convertSale"),
 			"failed to ingest sale", logan.F{
-				"actual ledger version": raw.Ext.V.ShortString(),
+				"actual_ledger_version": raw.Ext.V.ShortString(),
 			}))
 	}
 
