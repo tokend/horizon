@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -80,7 +81,10 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		saleType = ext.SaleTypeExt.TypedSale.SaleType
 		rawState = ext.State
 	default:
-		panic("Unexpected ledger version in getSaleRequest")
+		panic(errors.Wrap(errors.New("Unexpected ledger version in convertSale"),
+			"failed to ingest sale", logan.F{
+				"actual ledger version": raw.Ext.V.ShortString(),
+			}))
 	}
 
 	state, err := convertSaleState(rawState)

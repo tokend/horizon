@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/horizon/db2"
 	"gitlab.com/swarmfund/horizon/db2/history"
@@ -234,7 +235,10 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 		baseAssetForHardCap = uint64(extV3.RequiredBaseAssetForHardCap)
 		state = extV3.State
 	default:
-		panic("Unexpected ledger version in getSaleRequest")
+		panic(errors.Wrap(errors.New("Unexpected ledger version in getSaleRequest"),
+			"failed to ingest sale request", logan.F{
+				"actual ledger version": request.Ext.V.ShortString(),
+			}))
 	}
 
 	return &history.SaleRequest{
