@@ -220,6 +220,7 @@ var messages = map[string]string{
 	"op_issuance_tasks_not_found":                       "Issuance tasks have not been provided by the source and don't exist in KeyValue table",
 	"op_cannot_create_for_acc_id_and_acc_type":          "Limits cannot be created for account ID and account type simultaneously",
 	"op_invalid_limits":                                 "Invalid limits",
+	"op_contract_details_too_long":                      "Customer details has exceeded max contract details length",
 }
 
 func getMessage(rawCode string) string {

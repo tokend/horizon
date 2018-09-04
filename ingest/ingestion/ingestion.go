@@ -149,6 +149,7 @@ func (ingest *Ingestion) Contracts(contract history.Contract) error {
 		contract.StartTime,
 		contract.EndTime,
 		contract.InitialDetails,
+		contract.CustomerDetails,
 		contract.Invoices,
 		contract.State,
 	)
@@ -425,6 +426,7 @@ func (ingest *Ingestion) createInsertBuilders() {
 		"start_time",
 		"end_time",
 		"initial_details",
+		"customer_details",
 		"invoices",
 		"state",
 	)

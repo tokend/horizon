@@ -155,12 +155,17 @@ func (action *OperationIndexAction) loadParams() {
 
 	action.PagingParams = action.GetPageQuery()
 	action.Page.Filters = map[string]string{
-		"account_id":   action.AccountFilter,
-		"account_type": fmt.Sprintf("%d", action.AccountTypeFilter),
-		"balance_id":   action.BalanceFilter,
-		"asset":        action.AssetFilter,
-		"tx_id":        action.TransactionFilter,
-		"reference":    action.ReferenceFilter,
+		"account_id":     action.AccountFilter,
+		"account_type":   fmt.Sprintf("%d", action.AccountTypeFilter),
+		"balance_id":     action.BalanceFilter,
+		"asset":          action.AssetFilter,
+		"tx_id":          action.TransactionFilter,
+		"reference":      action.ReferenceFilter,
+		"since":          action.GetString("since"),
+		"to":             action.GetString("to"),
+		"completed_only": action.GetString("completed_only"),
+		"skip_canceled":  action.GetString("skip_canceled"),
+		"pending_only":   action.GetString("pending_only"),
 	}
 	if action.SinceFilter != nil {
 		action.Page.Filters["since"] = action.SinceFilter.Format(time.RFC3339)

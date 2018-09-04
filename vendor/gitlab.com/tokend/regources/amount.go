@@ -7,10 +7,10 @@ import (
 	"gitlab.com/tokend/go/amount"
 )
 
-type Amount int64
+type Amount uint64
 
 func (a Amount) MarshalJSON() ([]byte, error) {
-	return json.Marshal(amount.String(int64(a)))
+	return json.Marshal(amount.StringU(uint64(a)))
 }
 
 func (a *Amount) UnmarshalJSON(data []byte) error {
@@ -20,12 +20,12 @@ func (a *Amount) UnmarshalJSON(data []byte) error {
 		return errors.Wrap(err, "can't unmarshal amount")
 	}
 
-	rawA, err := amount.Parse(rawAmount)
+	rawA, err := amount.ParseU(rawAmount)
 	*a = Amount(rawA)
 
 	return errors.Wrap(err, "can't parse amount")
 }
 
 func (a Amount) String() string {
-	return amount.String(int64(a))
+	return amount.StringU(uint64(a))
 }

@@ -467,7 +467,7 @@
 
 [[projects]]
   branch = "feature/transaction_fee"
-  digest = "1:f7042c8189d9d2acb26387c6eb08582443af4be24eea40f0a570b875a97436ee"
+  digest = "1:e10c242644ddb43eb04b020663fcae0ed2613c1e0de52ff6044f2f454d255293"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +485,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "df24bd525148012e8e5730dcb0bedbe58e606057"
+  revision = "d2fefa17c1054595ca773c3dd50591f24f8b1060"
 
 [[projects]]
   branch = "master"
@@ -502,11 +502,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:00118954b7f03ce4c9e7b50728f87c026d8f95f1b0704ba8888b2f9489941fc6"
+  digest = "1:a237e53cd4437748534fafb3d90854cbb08facfa6e0eada9e7d90867c9fcedce"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "b77bd591eb8bed9345fd3857c3bd5c9c0da71703"
+  revision = "ab2ff9afadec7359bf9e22e9984c4c12e826d394"
 
 [[projects]]
   branch = "master"
@@ -639,6 +639,7 @@
     "github.com/rubenv/sql-migrate",
     "github.com/sirupsen/logrus",
     "github.com/smartystreets/goconvey/convey",
+    "github.com/spf13/cast",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
     "github.com/stretchr/testify/assert",

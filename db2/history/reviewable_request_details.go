@@ -130,10 +130,12 @@ type UpdateSaleDetailsRequest struct {
 }
 
 type InvoiceRequest struct {
-	Asset      string                 `json:"receiver_balance_id"`
-	Amount     uint64                 `json:"amount"`
-	ContractID *int64                 `json:"contract_id"`
-	Details    map[string]interface{} `json:"details"`
+	Asset           string                 `json:"receiver_balance_id"`
+	Amount          uint64                 `json:"amount"`
+	ContractID      *int64                 `json:"contract_id"`
+	Details         map[string]interface{} `json:"details"`
+	PayerBalance    string                 `json:"payer_balance"`
+	ReceiverBalance string                 `json:"receiver_balance"`
 }
 
 type ContractRequest struct {

@@ -12,17 +12,16 @@ type CoreReferencesAction struct {
 	accountID string
 	reference string
 
-	records []core.Reference
+	record core.Reference
 }
 
 func (action *CoreReferencesAction) JSON() {
 	action.Do(
 		action.loadParams,
-		action.checkAllowed,
 		action.loadRecords,
 		func() {
 			response := map[string]interface{}{
-				"data": action.records,
+				"data": action.record,
 			}
 			hal.Render(action.W, response)
 		},
@@ -31,19 +30,13 @@ func (action *CoreReferencesAction) JSON() {
 
 func (action *CoreReferencesAction) loadParams() {
 	action.accountID = action.GetNonEmptyString("account_id")
-	action.reference = action.GetString("reference")
-}
-
-func (action *CoreReferencesAction) checkAllowed() {
-	action.IsAllowed(action.accountID)
+	action.reference = action.GetNonEmptyString("reference")
 }
 
 func (action *CoreReferencesAction) loadRecords() {
-	q := action.CoreQ().References().ForAccount(action.accountID)
-
-	if action.reference != "" {
-		q = q.ByReference(action.reference)
-	}
+	q := action.CoreQ().References().
+		ForAccount(action.accountID).
+		ByReference(action.reference)
 
 	records, err := q.Select()
 	if err != nil {
@@ -52,5 +45,10 @@ func (action *CoreReferencesAction) loadRecords() {
 		return
 	}
 
-	action.records = records
+	if len(records) == 0 {
+		action.Err = &problem.NotFound
+		return
+	}
+
+	action.record = records[0]
 }
