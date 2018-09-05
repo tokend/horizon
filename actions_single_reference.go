@@ -6,44 +6,37 @@ import (
 	"gitlab.com/swarmfund/horizon/render/problem"
 )
 
-type CoreReferencesAction struct {
+type SingleReferenceAction struct {
 	Action
 
 	accountID string
 	reference string
 
-	records []core.Reference
+	record core.Reference
 }
 
-func (action *CoreReferencesAction) JSON() {
+func (action *SingleReferenceAction) JSON() {
 	action.Do(
 		action.loadParams,
-		action.checkAllowed,
 		action.loadRecords,
 		func() {
 			response := map[string]interface{}{
-				"data": action.records,
+				"data": action.record,
 			}
 			hal.Render(action.W, response)
 		},
 	)
 }
 
-func (action *CoreReferencesAction) loadParams() {
+func (action *SingleReferenceAction) loadParams() {
 	action.accountID = action.GetNonEmptyString("account_id")
-	action.reference = action.GetString("reference")
+	action.reference = action.GetNonEmptyString("reference")
 }
 
-func (action *CoreReferencesAction) checkAllowed() {
-	action.IsAllowed(action.accountID)
-}
-
-func (action *CoreReferencesAction) loadRecords() {
-	q := action.CoreQ().References().ForAccount(action.accountID)
-
-	if action.reference != "" {
-		q = q.ByReference(action.reference)
-	}
+func (action *SingleReferenceAction) loadRecords() {
+	q := action.CoreQ().References().
+		ForAccount(action.accountID).
+		ByReference(action.reference)
 
 	records, err := q.Select()
 	if err != nil {
@@ -52,5 +45,10 @@ func (action *CoreReferencesAction) loadRecords() {
 		return
 	}
 
-	action.records = records
+	if len(records) == 0 {
+		action.Err = &problem.NotFound
+		return
+	}
+
+	action.record = records[0]
 }
