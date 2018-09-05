@@ -17,6 +17,11 @@ func (is *Session) operationDetails() map[string]interface{} {
 	details := map[string]interface{}{}
 	c := is.Cursor
 	source := c.OperationSourceAccount()
+	txFee, ok := c.Transaction().Result.Result.Ext.GetTransactionFee()
+	if ok {
+		details["operation_fee"] = amount.StringU(getOperationFee(txFee.OperationFees, c.Operation().Body.Type))
+		details["operation_fee_asset"] = txFee.AssetCode
+	}
 	switch c.OperationType() {
 	case xdr.OperationTypeCreateAccount:
 		op := c.Operation().Body.MustCreateAccountOp()
@@ -268,6 +273,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
 		details["action"] = int32(op.Request.Action)
+		details["action_string"] = op.Request.Action.ShortString()
 	case xdr.OperationTypeCreatePreissuanceRequest:
 		// no details needed
 	case xdr.OperationTypeCreateIssuanceRequest:
@@ -395,4 +401,13 @@ func getOfferBaseAsset(changes xdr.LedgerEntryChanges, saleId xdr.Uint64) xdr.As
 		}
 	}
 	return xdr.AssetCode("")
+}
+
+func getOperationFee(opFees []xdr.OperationFee, opType xdr.OperationType) uint64 {
+	for _, opFee := range opFees {
+		if opFee.OperationType == opType {
+			return uint64(opFee.Amount)
+		}
+	}
+	return 0
 }
