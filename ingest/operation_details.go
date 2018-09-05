@@ -20,7 +20,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 	txFee, ok := c.Transaction().Result.Result.Ext.GetTransactionFee()
 	if ok {
 		details["operation_fee"] = amount.StringU(getOperationFee(txFee.OperationFees, c.Operation().Body.Type))
-		details["transaction_fee_asset"] = txFee.AssetCode
+		details["operation_fee_asset"] = txFee.AssetCode
 	}
 	switch c.OperationType() {
 	case xdr.OperationTypeCreateAccount:

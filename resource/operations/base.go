@@ -35,7 +35,7 @@ type Base struct {
 	LedgerCloseTime     time.Time          `json:"ledger_close_time"`
 	Participants        []base.Participant `json:"participants,omitempty"`
 	OperationFee        string             `json:"operation_fee"`
-	TransactionFeeAsset string             `json:"transaction_fee_asset,omitempty"`
+	TransactionFeeAsset string             `json:"operation_fee_asset,omitempty"`
 }
 
 // PagingToken implements hal.Pageable
