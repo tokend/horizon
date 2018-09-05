@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"strconv"
 
+	"time"
+
 	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/swarmfund/horizon/httpx"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/resource/base"
-	"golang.org/x/net/context"
-	"time"
 	"gitlab.com/tokend/go/amount"
+	"golang.org/x/net/context"
 )
 
 // Base represents the common attributes of an operation resource
@@ -22,18 +23,19 @@ type Base struct {
 		Precedes    hal.Link `json:"precedes"`
 	} `json:"_links"`
 
-	ID              string             `json:"id"`
-	PT              string             `json:"paging_token"`
-	TransactionID   string             `json:"transaction_id"`
-	SourceAccount   string             `json:"source_account,omitempty"`
-	Type            string             `json:"type"`
-	TypeI           int32              `json:"type_i"`
-	StateI          int32              `json:"state_i"`
-	State           string             `json:"state"`
-	Identifier      string             `json:"identifier"`
-	LedgerCloseTime time.Time          `json:"ledger_close_time"`
-	Participants    []base.Participant `json:"participants,omitempty"`
-	OperationFee    string             `json:"operation_fee"`
+	ID                  string             `json:"id"`
+	PT                  string             `json:"paging_token"`
+	TransactionID       string             `json:"transaction_id"`
+	SourceAccount       string             `json:"source_account,omitempty"`
+	Type                string             `json:"type"`
+	TypeI               int32              `json:"type_i"`
+	StateI              int32              `json:"state_i"`
+	State               string             `json:"state"`
+	Identifier          string             `json:"identifier"`
+	LedgerCloseTime     time.Time          `json:"ledger_close_time"`
+	Participants        []base.Participant `json:"participants,omitempty"`
+	OperationFee        string             `json:"operation_fee"`
+	TransactionFeeAsset string             `json:"transaction_fee_asset,omitempty"`
 }
 
 // PagingToken implements hal.Pageable
