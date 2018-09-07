@@ -1,6 +1,8 @@
 package fees
 
 import (
+	"math"
+
 	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/tokend/go/xdr"
 )
@@ -84,9 +86,11 @@ func (sft SmartFeeTable) AddZeroFees(assets []string) {
 
 				zeroFee := FeeWrapper{
 					FeeEntry: core.FeeEntry{
-						Asset:   asset,
-						Subtype: st,
-						FeeType: int(ft),
+						Asset:      asset,
+						Subtype:    st,
+						FeeType:    int(ft),
+						LowerBound: 0,
+						UpperBound: math.MaxInt64,
 					},
 					NotExists: true,
 				}
