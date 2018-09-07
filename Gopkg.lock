@@ -501,12 +501,12 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:a237e53cd4437748534fafb3d90854cbb08facfa6e0eada9e7d90867c9fcedce"
+  branch = "feature/atomic_swap"
+  digest = "1:eb8d89cfbafa4cfee93f85d79c56e92868111ef5071d23d73aa4e90ee7257ee9"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "ab2ff9afadec7359bf9e22e9984c4c12e826d394"
+  revision = "88ab49c1a6517e0d8348bb92a51c51a2ad015484"
 
 [[projects]]
   branch = "master"

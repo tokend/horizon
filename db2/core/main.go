@@ -82,6 +82,10 @@ type QInterface interface {
 	Balances() BalancesQI
 	//KeyValue - creates new KeyValue query helper
 	KeyValue() KeyValueQI
+	// AtomicSwapBid - creates new AtomicSwapBid query helper
+	AtomicSwapBid() AtomicSwapBidQI
+	// AtomicSwapQuoteAsset - creates new AtomicSwapQuoteAsset query helper
+	AtomicSwapQuoteAsset() AtomicSwapQuoteAssetQI
 
 	Trusts() *TrustQ
 	Offers() *OfferQ

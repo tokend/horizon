@@ -107,7 +107,7 @@
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "master"
+  branch = "feature/atomic_swap"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
