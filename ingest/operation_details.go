@@ -363,6 +363,31 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if ok {
 			details["fulfilled"] = fulfilled
 		}
+	case xdr.OperationTypeCreateAswapBidRequest:
+		op := c.Operation().Body.MustCreateASwapBidCreationRequestOp()
+		opRes := c.OperationResult().MustCreateASwapBidCreationRequestResult().
+			MustSuccess()
+		details["base_balance_id"] = op.Request.BaseBalance
+		details["amount"] = amount.StringU(uint64(op.Request.Amount))
+
+		var bidDetails map[string]interface{}
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(op.Request.Details), &bidDetails)
+		details["details"] = bidDetails
+		details["quote_assets"] = op.Request.QuoteAssets
+		details["request_id"] = uint64(opRes.RequestId)
+	case xdr.OperationTypeCancelAswapBid:
+		op := c.Operation().Body.MustCancelASwapBidOp()
+
+		details["bid_id"] = uint64(op.BidId)
+	case xdr.OperationTypeCreateAswapRequest:
+		op := c.Operation().Body.MustCreateASwapRequestOp()
+		opRes := c.OperationResult().MustCreateASwapRequestResult().
+			MustSuccess()
+		details["bid_id"] = op.Request.BidId
+		details["base_amount"] = amount.StringU(uint64(op.Request.BaseAmount))
+		details["quote_asset"] = string(op.Request.QuoteAsset)
+		details["request_id"] = opRes.RequestId
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

@@ -172,6 +172,12 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeCreateAswapBidRequest:
+		// the only direct participant is the source_account
+	case xdr.OperationTypeCancelAswapBid:
+		// the only direct participant is the source_account
+	case xdr.OperationTypeCreateAswapRequest:
+		result = append(result, Participant{opResult.MustCreateASwapRequestResult().Success.BidOwnerId, nil, nil})
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
