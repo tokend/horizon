@@ -14,6 +14,7 @@ type AtomicSwapBid struct {
 	AvailableAmount Amount                 `json:"available_amount"`
 	LockedAmount    Amount                 `json:"locked_amount"`
 	CreatedAt       time.Time              `json:"created_at"`
+	IsCanceled      bool                   `json:"is_canceled"`
 	Details         map[string]interface{} `json:"details"`
 	QuoteAssets     []AssetPrice           `json:"quote_assets"`
 }

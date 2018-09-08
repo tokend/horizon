@@ -53,6 +53,8 @@ type ReviewableRequestDetails struct {
 	PromotionUpdateRequest *PromotionUpdateRequest   `json:"promotion_update_request,omitempty"`
 	Invoice                *InvoiceRequest           `json:"invoice,omitempty"`
 	Contract               *ContractRequest          `json:"contract,omitempty"`
+	AtomicSwapBidCreation  *AtomicSwapBidCreation    `json:"atomic_swap_bid_creation,omitempty"`
+	AtomicSwap             *AtomicSwap               `json:"atomic_swap,omitempty"`
 }
 
 type AMLAlertRequest struct {
@@ -234,4 +236,17 @@ type WithdrawalRequest struct {
 	DestAssetCode          string                 `json:"dest_asset_code"`
 	DestAssetAmount        Amount                 `json:"dest_asset_amount"`
 	ReviewerDetails        map[string]interface{} `json:"reviewer_details"`
+}
+
+type AtomicSwapBidCreation struct {
+	BaseBalance string                 `json:"base_balance"`
+	BaseAmount  Amount                 `json:"base_amount"`
+	Details     map[string]interface{} `json:"details"`
+	QuoteAssets []AssetPrice           `json:"quote_assets"`
+}
+
+type AtomicSwap struct {
+	BidID      string `json:"bid_id"`
+	BaseAmount Amount `json:"base_amount"`
+	QuoteAsset string `json:"quote_asset"`
 }

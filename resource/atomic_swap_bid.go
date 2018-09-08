@@ -26,6 +26,7 @@ func PopulateASwapBid(
 		AvailableAmount: regources.Amount(bid.AvailableAmount),
 		LockedAmount:    regources.Amount(bid.LockedAmount),
 		CreatedAt:       time.Unix(bid.CreatedAt, 0).UTC(),
+		IsCanceled:      bid.IsCanceled,
 		Details:         details,
 		QuoteAssets:     quoteAssets,
 	}

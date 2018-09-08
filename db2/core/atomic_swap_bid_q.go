@@ -106,6 +106,7 @@ var selectAtomicSwapBid = sq.Select(
 	"asb.base_balance_id",
 	"asb.base_amount",
 	"asb.locked_amount",
+	"asb.is_cancelled",
 	"asb.details",
 	"asb.created_at",
 ).From("atomic_swap_bid asb")

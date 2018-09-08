@@ -59,6 +59,12 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 	case xdr.ReviewableRequestTypeContract:
 		d.Contract, err = PopulateContractRequest(*h.Contract)
 		return
+	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
+		d.AtomicSwapBidCreation, err = PopulateASwapBidCreationRequest(*h.AtomicSwapBidCreation)
+		return
+	case xdr.ReviewableRequestTypeAtomicSwap:
+		d.AtomicSwap, err = PopulateASwapRequest(*h.AtomicSwap)
+		return
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),
