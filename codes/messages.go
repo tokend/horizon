@@ -232,22 +232,13 @@ var messages = map[string]string{
 	"op_invalid_quote_asset":                            "Quote asset code is invalid",
 	"op_bid_not_found":                                  "There is no atomic swap bid with such bid id",
 	"op_bid_underfunded":                                "Atomic swap bid has not enough available amount",
-	"op_aswap_bid_overflow":                             "Quote amount one of quote asset has exceeded limit",
-	"op_aswap_bid_quote_asset_not_found":                "There is no asset with such asset code",
-	"op_aswap_bid_base_asset_not_found":                 "There is no asset with such asset code",
-	"op_aswap_bid_base_asset_cannot_be_swapped":         "Base asset must have CAN_BE_BASE_IN_ATOMIC_SWAP policy",
-	"op_aswap_bid_quote_asset_cannot_be_swapped":        "Quote asset must have CAN_BE_QUOTE_IN_ATOMIC_SWAP policy",
-	"op_aswap_bid_base_balance_not_found":               "There is no balance with such balance id",
-	"op_aswap_bid_assets_are_equal":                     "Not allowed to set quote asset equal to base asset",
-	"op_aswap_bid_base_balance_underfunded":             "There isn't enough amount on base balance",
-	"op_aswap_bid_invalid_base_amount":                  "Not allowed to set zero amount",
-	"op_aswap_bid_invalid_quote_asset":                  "Quote asset code is invalid",
 	"op_aswap_bid_not_found":                            "There is no atomic swap bid with such bid id",
 	"op_aswap_bid_underfunded":                          "Atomic swap bid has not enough available amount",
 	"op_lower_bound_not_exceeded":                       "Not allowed to withdraw amount less than minimal amount for such asset",
 	"op_aswap_purchaser_full_line":                      "Seller balance amount exceed max amount",
 	"op_aswap_bid_insufficient_fee":                     "Fee amount not enough to perform such action",
 	"op_atomic_swap_tasks_not_found":                    "There is no key value for atomic swap tasks",
+	"op_already_cancelled":                              "Atomic swap bid has already canceled",
 }
 
 func getMessage(rawCode string) string {

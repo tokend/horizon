@@ -11484,34 +11484,40 @@ type CancelASwapBidOp struct {
 //        SUCCESS = 0,
 //
 //        // codes considered as "failure" for the operation
-//        NOT_FOUND = -1 // atomic swap bid does not exist
+//        NOT_FOUND = -1, // atomic swap bid does not exist
+//        ALREADY_CANCELLED = -2 // atomic swap bid already cancelled
 //    };
 //
 type CancelASwapBidResultCode int32
 
 const (
-	CancelASwapBidResultCodeSuccess  CancelASwapBidResultCode = 0
-	CancelASwapBidResultCodeNotFound CancelASwapBidResultCode = -1
+	CancelASwapBidResultCodeSuccess          CancelASwapBidResultCode = 0
+	CancelASwapBidResultCodeNotFound         CancelASwapBidResultCode = -1
+	CancelASwapBidResultCodeAlreadyCancelled CancelASwapBidResultCode = -2
 )
 
 var CancelASwapBidResultCodeAll = []CancelASwapBidResultCode{
 	CancelASwapBidResultCodeSuccess,
 	CancelASwapBidResultCodeNotFound,
+	CancelASwapBidResultCodeAlreadyCancelled,
 }
 
 var cancelASwapBidResultCodeMap = map[int32]string{
 	0:  "CancelASwapBidResultCodeSuccess",
 	-1: "CancelASwapBidResultCodeNotFound",
+	-2: "CancelASwapBidResultCodeAlreadyCancelled",
 }
 
 var cancelASwapBidResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "not_found",
+	-2: "already_cancelled",
 }
 
 var cancelASwapBidResultCodeRevMap = map[string]int32{
-	"CancelASwapBidResultCodeSuccess":  0,
-	"CancelASwapBidResultCodeNotFound": -1,
+	"CancelASwapBidResultCodeSuccess":          0,
+	"CancelASwapBidResultCodeNotFound":         -1,
+	"CancelASwapBidResultCodeAlreadyCancelled": -2,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -13659,7 +13665,8 @@ type CreateASwapBidCreationRequestOp struct {
 //        BASE_BALANCE_NOT_FOUND = -9,
 //        ASSETS_ARE_EQUAL = -10, // base and quote assets are the same
 //        BASE_BALANCE_UNDERFUNDED = -11,
-//        INVALID_QUOTE_ASSET = -12 // one of the quote assets is invalid
+//        INVALID_QUOTE_ASSET = -12, // one of the quote assets is invalid
+//        NOT_ALLOWED_BY_ASSET_POLICY = -13
 //    };
 //
 type CreateASwapBidCreationRequestResultCode int32
@@ -13678,6 +13685,7 @@ const (
 	CreateASwapBidCreationRequestResultCodeAssetsAreEqual            CreateASwapBidCreationRequestResultCode = -10
 	CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded    CreateASwapBidCreationRequestResultCode = -11
 	CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset         CreateASwapBidCreationRequestResultCode = -12
+	CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy   CreateASwapBidCreationRequestResultCode = -13
 )
 
 var CreateASwapBidCreationRequestResultCodeAll = []CreateASwapBidCreationRequestResultCode{
@@ -13694,6 +13702,7 @@ var CreateASwapBidCreationRequestResultCodeAll = []CreateASwapBidCreationRequest
 	CreateASwapBidCreationRequestResultCodeAssetsAreEqual,
 	CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded,
 	CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset,
+	CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy,
 }
 
 var createASwapBidCreationRequestResultCodeMap = map[int32]string{
@@ -13710,6 +13719,7 @@ var createASwapBidCreationRequestResultCodeMap = map[int32]string{
 	-10: "CreateASwapBidCreationRequestResultCodeAssetsAreEqual",
 	-11: "CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded",
 	-12: "CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset",
+	-13: "CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy",
 }
 
 var createASwapBidCreationRequestResultCodeShortMap = map[int32]string{
@@ -13726,6 +13736,7 @@ var createASwapBidCreationRequestResultCodeShortMap = map[int32]string{
 	-10: "assets_are_equal",
 	-11: "base_balance_underfunded",
 	-12: "invalid_quote_asset",
+	-13: "not_allowed_by_asset_policy",
 }
 
 var createASwapBidCreationRequestResultCodeRevMap = map[string]int32{
@@ -13742,6 +13753,7 @@ var createASwapBidCreationRequestResultCodeRevMap = map[string]int32{
 	"CreateASwapBidCreationRequestResultCodeAssetsAreEqual":            -10,
 	"CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded":    -11,
 	"CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset":         -12,
+	"CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy":   -13,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -14004,7 +14016,8 @@ type CreateASwapRequestOp struct {
 //        BID_NOT_FOUND = -3,
 //        QUOTE_ASSET_NOT_FOUND = -4,
 //        BID_UNDERFUNDED = -5, // bid has not enough base amount available for lock
-//        ATOMIC_SWAP_TASKS_NOT_FOUND = -6
+//        ATOMIC_SWAP_TASKS_NOT_FOUND = -6,
+//        NOT_ALLOWED_BY_ASSET_POLICY = -7
 //    };
 //
 type CreateASwapRequestResultCode int32
@@ -14017,6 +14030,7 @@ const (
 	CreateASwapRequestResultCodeQuoteAssetNotFound      CreateASwapRequestResultCode = -4
 	CreateASwapRequestResultCodeBidUnderfunded          CreateASwapRequestResultCode = -5
 	CreateASwapRequestResultCodeAtomicSwapTasksNotFound CreateASwapRequestResultCode = -6
+	CreateASwapRequestResultCodeNotAllowedByAssetPolicy CreateASwapRequestResultCode = -7
 )
 
 var CreateASwapRequestResultCodeAll = []CreateASwapRequestResultCode{
@@ -14027,6 +14041,7 @@ var CreateASwapRequestResultCodeAll = []CreateASwapRequestResultCode{
 	CreateASwapRequestResultCodeQuoteAssetNotFound,
 	CreateASwapRequestResultCodeBidUnderfunded,
 	CreateASwapRequestResultCodeAtomicSwapTasksNotFound,
+	CreateASwapRequestResultCodeNotAllowedByAssetPolicy,
 }
 
 var createASwapRequestResultCodeMap = map[int32]string{
@@ -14037,6 +14052,7 @@ var createASwapRequestResultCodeMap = map[int32]string{
 	-4: "CreateASwapRequestResultCodeQuoteAssetNotFound",
 	-5: "CreateASwapRequestResultCodeBidUnderfunded",
 	-6: "CreateASwapRequestResultCodeAtomicSwapTasksNotFound",
+	-7: "CreateASwapRequestResultCodeNotAllowedByAssetPolicy",
 }
 
 var createASwapRequestResultCodeShortMap = map[int32]string{
@@ -14047,6 +14063,7 @@ var createASwapRequestResultCodeShortMap = map[int32]string{
 	-4: "quote_asset_not_found",
 	-5: "bid_underfunded",
 	-6: "atomic_swap_tasks_not_found",
+	-7: "not_allowed_by_asset_policy",
 }
 
 var createASwapRequestResultCodeRevMap = map[string]int32{
@@ -14057,6 +14074,7 @@ var createASwapRequestResultCodeRevMap = map[string]int32{
 	"CreateASwapRequestResultCodeQuoteAssetNotFound":      -4,
 	"CreateASwapRequestResultCodeBidUnderfunded":          -5,
 	"CreateASwapRequestResultCodeAtomicSwapTasksNotFound": -6,
+	"CreateASwapRequestResultCodeNotAllowedByAssetPolicy": -7,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -26928,13 +26946,11 @@ type ReviewRequestOp struct {
 //        CONTRACT_DETAILS_TOO_LONG = -140, // customer details reached length limit
 //
 //        // Atomic swap bid creation requests
-//        ASWAP_BID_BASE_ASSET_NOT_FOUND = -150, // base asset does not exist
-//        ASWAP_BID_BASE_ASSET_CANNOT_BE_SWAPPED = -151,
-//        ASWAP_BID_QUOTE_ASSET_NOT_FOUND = -152, // quote asset does not exist
-//        ASWAP_BID_QUOTE_ASSET_CANNOT_BE_SWAPPED = -153,
-//        ASWAP_BID_ASSETS_ARE_EQUAL = -154, // base and quote assets are the same
-//        ASWAP_BID_OVERFLOW = -155,
-//        ASWAP_BID_INSUFFICIENT_FEE = -156,
+//        BASE_ASSET_NOT_FOUND = -150, // base asset does not exist
+//        BASE_ASSET_CANNOT_BE_SWAPPED = -151,
+//        QUOTE_ASSET_NOT_FOUND = -152, // quote asset does not exist
+//        QUOTE_ASSET_CANNOT_BE_SWAPPED = -153,
+//        ASSETS_ARE_EQUAL = -154, // base and quote assets are the same
 //
 //        // Atomic swap
 //        ASWAP_BID_NOT_FOUND = -160,
@@ -26996,13 +27012,11 @@ const (
 	ReviewRequestResultCodeCannotCreateForAccIdAndAccType           ReviewRequestResultCode = 130
 	ReviewRequestResultCodeInvalidLimits                            ReviewRequestResultCode = 131
 	ReviewRequestResultCodeContractDetailsTooLong                   ReviewRequestResultCode = -140
-	ReviewRequestResultCodeAswapBidBaseAssetNotFound                ReviewRequestResultCode = -150
-	ReviewRequestResultCodeAswapBidBaseAssetCannotBeSwapped         ReviewRequestResultCode = -151
-	ReviewRequestResultCodeAswapBidQuoteAssetNotFound               ReviewRequestResultCode = -152
-	ReviewRequestResultCodeAswapBidQuoteAssetCannotBeSwapped        ReviewRequestResultCode = -153
-	ReviewRequestResultCodeAswapBidAssetsAreEqual                   ReviewRequestResultCode = -154
-	ReviewRequestResultCodeAswapBidOverflow                         ReviewRequestResultCode = -155
-	ReviewRequestResultCodeAswapBidInsufficientFee                  ReviewRequestResultCode = -156
+	ReviewRequestResultCodeBaseAssetNotFound                        ReviewRequestResultCode = -150
+	ReviewRequestResultCodeBaseAssetCannotBeSwapped                 ReviewRequestResultCode = -151
+	ReviewRequestResultCodeQuoteAssetNotFound                       ReviewRequestResultCode = -152
+	ReviewRequestResultCodeQuoteAssetCannotBeSwapped                ReviewRequestResultCode = -153
+	ReviewRequestResultCodeAssetsAreEqual                           ReviewRequestResultCode = -154
 	ReviewRequestResultCodeAswapBidNotFound                         ReviewRequestResultCode = -160
 	ReviewRequestResultCodeAswapBidUnderfunded                      ReviewRequestResultCode = -161
 	ReviewRequestResultCodeAswapPurchaserFullLine                   ReviewRequestResultCode = -162
@@ -27060,13 +27074,11 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeCannotCreateForAccIdAndAccType,
 	ReviewRequestResultCodeInvalidLimits,
 	ReviewRequestResultCodeContractDetailsTooLong,
-	ReviewRequestResultCodeAswapBidBaseAssetNotFound,
-	ReviewRequestResultCodeAswapBidBaseAssetCannotBeSwapped,
-	ReviewRequestResultCodeAswapBidQuoteAssetNotFound,
-	ReviewRequestResultCodeAswapBidQuoteAssetCannotBeSwapped,
-	ReviewRequestResultCodeAswapBidAssetsAreEqual,
-	ReviewRequestResultCodeAswapBidOverflow,
-	ReviewRequestResultCodeAswapBidInsufficientFee,
+	ReviewRequestResultCodeBaseAssetNotFound,
+	ReviewRequestResultCodeBaseAssetCannotBeSwapped,
+	ReviewRequestResultCodeQuoteAssetNotFound,
+	ReviewRequestResultCodeQuoteAssetCannotBeSwapped,
+	ReviewRequestResultCodeAssetsAreEqual,
 	ReviewRequestResultCodeAswapBidNotFound,
 	ReviewRequestResultCodeAswapBidUnderfunded,
 	ReviewRequestResultCodeAswapPurchaserFullLine,
@@ -27124,13 +27136,11 @@ var reviewRequestResultCodeMap = map[int32]string{
 	130:  "ReviewRequestResultCodeCannotCreateForAccIdAndAccType",
 	131:  "ReviewRequestResultCodeInvalidLimits",
 	-140: "ReviewRequestResultCodeContractDetailsTooLong",
-	-150: "ReviewRequestResultCodeAswapBidBaseAssetNotFound",
-	-151: "ReviewRequestResultCodeAswapBidBaseAssetCannotBeSwapped",
-	-152: "ReviewRequestResultCodeAswapBidQuoteAssetNotFound",
-	-153: "ReviewRequestResultCodeAswapBidQuoteAssetCannotBeSwapped",
-	-154: "ReviewRequestResultCodeAswapBidAssetsAreEqual",
-	-155: "ReviewRequestResultCodeAswapBidOverflow",
-	-156: "ReviewRequestResultCodeAswapBidInsufficientFee",
+	-150: "ReviewRequestResultCodeBaseAssetNotFound",
+	-151: "ReviewRequestResultCodeBaseAssetCannotBeSwapped",
+	-152: "ReviewRequestResultCodeQuoteAssetNotFound",
+	-153: "ReviewRequestResultCodeQuoteAssetCannotBeSwapped",
+	-154: "ReviewRequestResultCodeAssetsAreEqual",
 	-160: "ReviewRequestResultCodeAswapBidNotFound",
 	-161: "ReviewRequestResultCodeAswapBidUnderfunded",
 	-162: "ReviewRequestResultCodeAswapPurchaserFullLine",
@@ -27188,13 +27198,11 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	130:  "cannot_create_for_acc_id_and_acc_type",
 	131:  "invalid_limits",
 	-140: "contract_details_too_long",
-	-150: "aswap_bid_base_asset_not_found",
-	-151: "aswap_bid_base_asset_cannot_be_swapped",
-	-152: "aswap_bid_quote_asset_not_found",
-	-153: "aswap_bid_quote_asset_cannot_be_swapped",
-	-154: "aswap_bid_assets_are_equal",
-	-155: "aswap_bid_overflow",
-	-156: "aswap_bid_insufficient_fee",
+	-150: "base_asset_not_found",
+	-151: "base_asset_cannot_be_swapped",
+	-152: "quote_asset_not_found",
+	-153: "quote_asset_cannot_be_swapped",
+	-154: "assets_are_equal",
 	-160: "aswap_bid_not_found",
 	-161: "aswap_bid_underfunded",
 	-162: "aswap_purchaser_full_line",
@@ -27252,13 +27260,11 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeCannotCreateForAccIdAndAccType":           130,
 	"ReviewRequestResultCodeInvalidLimits":                            131,
 	"ReviewRequestResultCodeContractDetailsTooLong":                   -140,
-	"ReviewRequestResultCodeAswapBidBaseAssetNotFound":                -150,
-	"ReviewRequestResultCodeAswapBidBaseAssetCannotBeSwapped":         -151,
-	"ReviewRequestResultCodeAswapBidQuoteAssetNotFound":               -152,
-	"ReviewRequestResultCodeAswapBidQuoteAssetCannotBeSwapped":        -153,
-	"ReviewRequestResultCodeAswapBidAssetsAreEqual":                   -154,
-	"ReviewRequestResultCodeAswapBidOverflow":                         -155,
-	"ReviewRequestResultCodeAswapBidInsufficientFee":                  -156,
+	"ReviewRequestResultCodeBaseAssetNotFound":                        -150,
+	"ReviewRequestResultCodeBaseAssetCannotBeSwapped":                 -151,
+	"ReviewRequestResultCodeQuoteAssetNotFound":                       -152,
+	"ReviewRequestResultCodeQuoteAssetCannotBeSwapped":                -153,
+	"ReviewRequestResultCodeAssetsAreEqual":                           -154,
 	"ReviewRequestResultCodeAswapBidNotFound":                         -160,
 	"ReviewRequestResultCodeAswapBidUnderfunded":                      -161,
 	"ReviewRequestResultCodeAswapPurchaserFullLine":                   -162,
