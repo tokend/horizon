@@ -2278,6 +2278,8 @@ func NewAtomicSwapBidEntryExt(v LedgerVersion, value interface{}) (result Atomic
 //        uint64 lockedAmount;
 //        uint64 createdAt;
 //
+//        bool isCancelled;
+//
 //        longstring details;
 //
 //        ASwapBidQuoteAsset quoteAssets<>;
@@ -2299,6 +2301,7 @@ type AtomicSwapBidEntry struct {
 	Amount       Uint64                `json:"amount,omitempty"`
 	LockedAmount Uint64                `json:"lockedAmount,omitempty"`
 	CreatedAt    Uint64                `json:"createdAt,omitempty"`
+	IsCancelled  bool                  `json:"isCancelled,omitempty"`
 	Details      Longstring            `json:"details,omitempty"`
 	QuoteAssets  []ASwapBidQuoteAsset  `json:"quoteAssets,omitempty"`
 	Ext          AtomicSwapBidEntryExt `json:"ext,omitempty"`
@@ -9144,7 +9147,6 @@ func NewLedgerKeyAtomicSwapBidExt(v LedgerVersion, value interface{}) (result Le
 //
 //   struct {
 //            uint64 bidID;
-//            AccountID ownerID;
 //            union switch (LedgerVersion v)
 //            {
 //            case EMPTY_VERSION:
@@ -9154,9 +9156,8 @@ func NewLedgerKeyAtomicSwapBidExt(v LedgerVersion, value interface{}) (result Le
 //        }
 //
 type LedgerKeyAtomicSwapBid struct {
-	BidId   Uint64                    `json:"bidID,omitempty"`
-	OwnerId AccountId                 `json:"ownerID,omitempty"`
-	Ext     LedgerKeyAtomicSwapBidExt `json:"ext,omitempty"`
+	BidId Uint64                    `json:"bidID,omitempty"`
+	Ext   LedgerKeyAtomicSwapBidExt `json:"ext,omitempty"`
 }
 
 // LedgerKey is an XDR Union defines as:
@@ -9391,7 +9392,6 @@ type LedgerKeyAtomicSwapBid struct {
 //    case ATOMIC_SWAP_BID:
 //        struct {
 //            uint64 bidID;
-//            AccountID ownerID;
 //            union switch (LedgerVersion v)
 //            {
 //            case EMPTY_VERSION:
@@ -14006,18 +14006,20 @@ type CreateASwapRequestOp struct {
 //        INVALID_QUOTE_ASSET = -2,
 //        BID_NOT_FOUND = -3,
 //        QUOTE_ASSET_NOT_FOUND = -4,
-//        BID_UNDERFUNDED = -5 // bid has not enough base amount available for lock
+//        BID_UNDERFUNDED = -5, // bid has not enough base amount available for lock
+//        ATOMIC_SWAP_TASKS_NOT_FOUND = -6
 //    };
 //
 type CreateASwapRequestResultCode int32
 
 const (
-	CreateASwapRequestResultCodeSuccess            CreateASwapRequestResultCode = 0
-	CreateASwapRequestResultCodeInvalidBaseAmount  CreateASwapRequestResultCode = -1
-	CreateASwapRequestResultCodeInvalidQuoteAsset  CreateASwapRequestResultCode = -2
-	CreateASwapRequestResultCodeBidNotFound        CreateASwapRequestResultCode = -3
-	CreateASwapRequestResultCodeQuoteAssetNotFound CreateASwapRequestResultCode = -4
-	CreateASwapRequestResultCodeBidUnderfunded     CreateASwapRequestResultCode = -5
+	CreateASwapRequestResultCodeSuccess                 CreateASwapRequestResultCode = 0
+	CreateASwapRequestResultCodeInvalidBaseAmount       CreateASwapRequestResultCode = -1
+	CreateASwapRequestResultCodeInvalidQuoteAsset       CreateASwapRequestResultCode = -2
+	CreateASwapRequestResultCodeBidNotFound             CreateASwapRequestResultCode = -3
+	CreateASwapRequestResultCodeQuoteAssetNotFound      CreateASwapRequestResultCode = -4
+	CreateASwapRequestResultCodeBidUnderfunded          CreateASwapRequestResultCode = -5
+	CreateASwapRequestResultCodeAtomicSwapTasksNotFound CreateASwapRequestResultCode = -6
 )
 
 var CreateASwapRequestResultCodeAll = []CreateASwapRequestResultCode{
@@ -14027,6 +14029,7 @@ var CreateASwapRequestResultCodeAll = []CreateASwapRequestResultCode{
 	CreateASwapRequestResultCodeBidNotFound,
 	CreateASwapRequestResultCodeQuoteAssetNotFound,
 	CreateASwapRequestResultCodeBidUnderfunded,
+	CreateASwapRequestResultCodeAtomicSwapTasksNotFound,
 }
 
 var createASwapRequestResultCodeMap = map[int32]string{
@@ -14036,6 +14039,7 @@ var createASwapRequestResultCodeMap = map[int32]string{
 	-3: "CreateASwapRequestResultCodeBidNotFound",
 	-4: "CreateASwapRequestResultCodeQuoteAssetNotFound",
 	-5: "CreateASwapRequestResultCodeBidUnderfunded",
+	-6: "CreateASwapRequestResultCodeAtomicSwapTasksNotFound",
 }
 
 var createASwapRequestResultCodeShortMap = map[int32]string{
@@ -14045,15 +14049,17 @@ var createASwapRequestResultCodeShortMap = map[int32]string{
 	-3: "bid_not_found",
 	-4: "quote_asset_not_found",
 	-5: "bid_underfunded",
+	-6: "atomic_swap_tasks_not_found",
 }
 
 var createASwapRequestResultCodeRevMap = map[string]int32{
-	"CreateASwapRequestResultCodeSuccess":            0,
-	"CreateASwapRequestResultCodeInvalidBaseAmount":  -1,
-	"CreateASwapRequestResultCodeInvalidQuoteAsset":  -2,
-	"CreateASwapRequestResultCodeBidNotFound":        -3,
-	"CreateASwapRequestResultCodeQuoteAssetNotFound": -4,
-	"CreateASwapRequestResultCodeBidUnderfunded":     -5,
+	"CreateASwapRequestResultCodeSuccess":                 0,
+	"CreateASwapRequestResultCodeInvalidBaseAmount":       -1,
+	"CreateASwapRequestResultCodeInvalidQuoteAsset":       -2,
+	"CreateASwapRequestResultCodeBidNotFound":             -3,
+	"CreateASwapRequestResultCodeQuoteAssetNotFound":      -4,
+	"CreateASwapRequestResultCodeBidUnderfunded":          -5,
+	"CreateASwapRequestResultCodeAtomicSwapTasksNotFound": -6,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
