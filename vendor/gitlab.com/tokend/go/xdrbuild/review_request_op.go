@@ -120,7 +120,7 @@ func (op ReviewRequestOp) XDR() (*xdr.Operation, error) {
 			ReviewDetails: &xdr.ReviewDetails{
 				TasksToAdd:      xdr.Uint32(op.ReviewDetails.TasksToAdd),
 				TasksToRemove:   xdr.Uint32(op.ReviewDetails.TasksToRemove),
-				ExternalDetails: op.ReviewDetails.ExternalDetails,
+				ExternalDetails: xdr.Longstring(op.ReviewDetails.ExternalDetails),
 			},
 		}
 	}
