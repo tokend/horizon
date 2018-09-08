@@ -11617,8 +11617,6 @@ func NewCancelASwapBidResultSuccessExt(v LedgerVersion, value interface{}) (resu
 //
 //   struct CancelASwapBidResultSuccess
 //    {
-//        uint64 bidID;
-//
 //        union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
@@ -11627,8 +11625,7 @@ func NewCancelASwapBidResultSuccessExt(v LedgerVersion, value interface{}) (resu
 //    };
 //
 type CancelASwapBidResultSuccess struct {
-	BidId Uint64                         `json:"bidID,omitempty"`
-	Ext   CancelASwapBidResultSuccessExt `json:"ext,omitempty"`
+	Ext CancelASwapBidResultSuccessExt `json:"ext,omitempty"`
 }
 
 // CancelASwapBidResult is an XDR Union defines as:

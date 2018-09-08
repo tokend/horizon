@@ -207,7 +207,7 @@ var messages = map[string]string{
 	"op_invoice_already_approved":                       "Not allowed to approve invoice request second time",
 	"op_payment_v2_malformed":                           "Payment v2 malformed in some way in approve invoice request",
 	"op_too_many_contracts":                             "Reached contract max count for contractor limit",
-	"op_details_too_long":                               "Details to long",
+	"op_details_too_long":                               "Details too long",
 	"op_too_many_contract_details":                      "Reached max contract details count limit",
 	"op_dispute_reason_too_long":                        "Dispute reason to long",
 	"op_already_confirmed":                              "Not allowed to confirm contract second time",
@@ -245,6 +245,9 @@ var messages = map[string]string{
 	"op_aswap_bid_not_found":                            "There is no atomic swap bid with such bid id",
 	"op_aswap_bid_underfunded":                          "Atomic swap bid has not enough available amount",
 	"op_lower_bound_not_exceeded":                       "Not allowed to withdraw amount less than minimal amount for such asset",
+	"op_aswap_purchaser_full_line":                      "Seller balance amount exceed max amount",
+	"op_aswap_bid_insufficient_fee":                     "Fee amount not enough to perform such action",
+	"op_atomic_swap_tasks_not_found":                    "There is no key value for atomic swap tasks",
 }
 
 func getMessage(rawCode string) string {
