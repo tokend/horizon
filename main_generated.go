@@ -1,10 +1,25 @@
 package horizon
 
 import (
-	"net/http"
-
 	"github.com/zenazn/goji/web"
+	"net/http"
 )
+
+// ServeHTTPC is a method for web.Handler
+func (action ASwapBidIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "ASwapBidIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action ASwapBidShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "ASwapBidShowAction")
+	ap.Execute(&action)
+}
 
 // ServeHTTPC is a method for web.Handler
 func (action AccountBalancesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
@@ -163,14 +178,6 @@ func (action CoreReferencesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r 
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "CoreReferencesAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action SingleReferenceAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "SingleReferenceAction")
 	ap.Execute(&action)
 }
 
@@ -419,6 +426,14 @@ func (action SignersIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *h
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "SignersIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action SingleReferenceAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SingleReferenceAction")
 	ap.Execute(&action)
 }
 

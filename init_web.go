@@ -395,6 +395,14 @@ func initWebActions(app *App) {
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
 	})
 
+	r.Get("/request/atomic_swap_bids", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwapBid},
+	})
+
+	r.Get("/request/atomic_swaps", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAtomicSwap},
+	})
+
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
 	r.Get("/sales", &SaleIndexAction{})
@@ -402,6 +410,10 @@ func initWebActions(app *App) {
 
 	// Sale antes actions
 	r.Get("/sale_antes", &SaleAnteAction{})
+
+	// Atomic swap bid actions
+	r.Get("atomic_swap_bids", &ASwapBidIndexAction{})
+	r.Get("atomic_swap_bids/:id", &ASwapBidShowAction{})
 
 	// Contracts actions
 	r.Get("/contracts", &ContractIndexAction{})
