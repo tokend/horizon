@@ -3,8 +3,11 @@ package fees
 import (
 	"testing"
 
+	"math"
+
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 )
 
@@ -351,5 +354,82 @@ func TestSmartFeeTable_Update(t *testing.T) {
 		sft := NewSmartFeeTable(primaryFees)
 		sft.Update(secondaryFees)
 		assert.Empty(t, sft)
+	})
+
+	t.Run("valid", func(t *testing.T) {
+		fees := []core.FeeEntry{
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 0,
+				UpperBound: 815 * amount.One,
+			},
+			{
+				FeeType:    int(xdr.FeeTypePaymentFee),
+				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+				Asset:      "USD",
+				LowerBound: 816 * amount.One,
+				UpperBound: 1000 * amount.One,
+			},
+		}
+		secondaryFees := []core.FeeEntry{}
+		expectedFeeGroup := FeeGroup{
+			AssetCode: "USD",
+			FeeType:   int(xdr.FeeTypePaymentFee),
+			Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
+		}
+		expectedFeeTable := SmartFeeTable{
+			FeeGroup{
+				AssetCode: "USD",
+				FeeType:   int(xdr.FeeTypePaymentFee),
+				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
+			}: []FeeWrapper{
+				{
+					FeeEntry: core.FeeEntry{
+						FeeType:    int(xdr.FeeTypePaymentFee),
+						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+						Asset:      "USD",
+						LowerBound: 0,
+						UpperBound: 815 * amount.One,
+					},
+				},
+				{
+					FeeEntry: core.FeeEntry{
+						FeeType:    int(xdr.FeeTypePaymentFee),
+						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+						Asset:      "USD",
+						LowerBound: 815*amount.One + 1,
+						UpperBound: 816*amount.One - 1,
+					},
+					NotExists: true,
+				},
+				{
+					FeeEntry: core.FeeEntry{
+						FeeType:    int(xdr.FeeTypePaymentFee),
+						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+						Asset:      "USD",
+						LowerBound: 816 * amount.One,
+						UpperBound: 1000 * amount.One,
+					},
+				},
+				{
+					FeeEntry: core.FeeEntry{
+						FeeType:    int(xdr.FeeTypePaymentFee),
+						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
+						Asset:      "USD",
+						LowerBound: 1000*amount.One + 1,
+						UpperBound: math.MaxInt64,
+					},
+					NotExists: true,
+				},
+			},
+		}
+
+		sft := NewSmartFeeTable(fees)
+		sft.Update(secondaryFees)
+		sft.AddZeroFees([]string{"USD"})
+
+		assert.Equal(t, sft[expectedFeeGroup], expectedFeeTable[expectedFeeGroup])
 	})
 }
