@@ -26953,9 +26953,8 @@ type ReviewRequestOp struct {
 //        ASSETS_ARE_EQUAL = -154, // base and quote assets are the same
 //
 //        // Atomic swap
-//        ASWAP_BID_NOT_FOUND = -160,
-//        ASWAP_BID_UNDERFUNDED = -161,
-//        ASWAP_PURCHASER_FULL_LINE = -162
+//        ASWAP_BID_UNDERFUNDED = -160,
+//        ASWAP_PURCHASER_FULL_LINE = -161
 //    };
 //
 type ReviewRequestResultCode int32
@@ -27017,9 +27016,8 @@ const (
 	ReviewRequestResultCodeQuoteAssetNotFound                       ReviewRequestResultCode = -152
 	ReviewRequestResultCodeQuoteAssetCannotBeSwapped                ReviewRequestResultCode = -153
 	ReviewRequestResultCodeAssetsAreEqual                           ReviewRequestResultCode = -154
-	ReviewRequestResultCodeAswapBidNotFound                         ReviewRequestResultCode = -160
-	ReviewRequestResultCodeAswapBidUnderfunded                      ReviewRequestResultCode = -161
-	ReviewRequestResultCodeAswapPurchaserFullLine                   ReviewRequestResultCode = -162
+	ReviewRequestResultCodeAswapBidUnderfunded                      ReviewRequestResultCode = -160
+	ReviewRequestResultCodeAswapPurchaserFullLine                   ReviewRequestResultCode = -161
 )
 
 var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
@@ -27079,7 +27077,6 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeQuoteAssetNotFound,
 	ReviewRequestResultCodeQuoteAssetCannotBeSwapped,
 	ReviewRequestResultCodeAssetsAreEqual,
-	ReviewRequestResultCodeAswapBidNotFound,
 	ReviewRequestResultCodeAswapBidUnderfunded,
 	ReviewRequestResultCodeAswapPurchaserFullLine,
 }
@@ -27141,9 +27138,8 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-152: "ReviewRequestResultCodeQuoteAssetNotFound",
 	-153: "ReviewRequestResultCodeQuoteAssetCannotBeSwapped",
 	-154: "ReviewRequestResultCodeAssetsAreEqual",
-	-160: "ReviewRequestResultCodeAswapBidNotFound",
-	-161: "ReviewRequestResultCodeAswapBidUnderfunded",
-	-162: "ReviewRequestResultCodeAswapPurchaserFullLine",
+	-160: "ReviewRequestResultCodeAswapBidUnderfunded",
+	-161: "ReviewRequestResultCodeAswapPurchaserFullLine",
 }
 
 var reviewRequestResultCodeShortMap = map[int32]string{
@@ -27203,9 +27199,8 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-152: "quote_asset_not_found",
 	-153: "quote_asset_cannot_be_swapped",
 	-154: "assets_are_equal",
-	-160: "aswap_bid_not_found",
-	-161: "aswap_bid_underfunded",
-	-162: "aswap_purchaser_full_line",
+	-160: "aswap_bid_underfunded",
+	-161: "aswap_purchaser_full_line",
 }
 
 var reviewRequestResultCodeRevMap = map[string]int32{
@@ -27265,9 +27260,8 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeQuoteAssetNotFound":                       -152,
 	"ReviewRequestResultCodeQuoteAssetCannotBeSwapped":                -153,
 	"ReviewRequestResultCodeAssetsAreEqual":                           -154,
-	"ReviewRequestResultCodeAswapBidNotFound":                         -160,
-	"ReviewRequestResultCodeAswapBidUnderfunded":                      -161,
-	"ReviewRequestResultCodeAswapPurchaserFullLine":                   -162,
+	"ReviewRequestResultCodeAswapBidUnderfunded":                      -160,
+	"ReviewRequestResultCodeAswapPurchaserFullLine":                   -161,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
