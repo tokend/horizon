@@ -412,8 +412,8 @@ func initWebActions(app *App) {
 	r.Get("/sale_antes", &SaleAnteAction{})
 
 	// Atomic swap bid actions
-	r.Get("atomic_swap_bids", &ASwapBidIndexAction{})
-	r.Get("atomic_swap_bids/:id", &ASwapBidShowAction{})
+	r.Get("/atomic_swap_bids", &ASwapBidIndexAction{})
+	r.Get("/atomic_swap_bids/:id", &ASwapBidShowAction{})
 
 	// Contracts actions
 	r.Get("/contracts", &ContractIndexAction{})
