@@ -239,6 +239,7 @@ var messages = map[string]string{
 	"op_aswap_bid_insufficient_fee":                     "Fee amount not enough to perform such action",
 	"op_atomic_swap_tasks_not_found":                    "There is no key value for atomic swap tasks",
 	"op_already_cancelled":                              "Atomic swap bid has already canceled",
+	"op_bid_is_cancelled":                               "Cannot create atomic swap request for cancelled bid",
 }
 
 func getMessage(rawCode string) string {
