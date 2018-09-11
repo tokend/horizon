@@ -288,8 +288,13 @@ func (action *OperationIndexAction) loadPage() {
 }
 
 func (action *OperationIndexAction) checkAllowed() {
-	action.Doorman().Check(action.R, doorman.SignerOf(action.AccountFilter),
-		doorman.SignerOfWithPermission(action.App.CoreInfo.MasterAccountID, doorman.SignerExternsionOperationsList))
+	constraints := []doorman.SignerConstraint{
+		doorman.SignerOfWithPermission(action.App.CoreInfo.MasterAccountID, doorman.SignerExternsionOperationsList),
+	}
+	if action.AccountFilter != "" {
+		constraints = append(constraints, doorman.SignerOf(action.AccountFilter))
+	}
+	action.Doorman().Check(action.R, constraints...)
 }
 
 // OperationShowAction renders a ledger found by its sequence number.
