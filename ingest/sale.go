@@ -126,3 +126,23 @@ func convertSaleState(state xdr.SaleState) (history.SaleState, error) {
 		})
 	}
 }
+
+func (is *Session) processCancelSaleCreationRequest(
+	op xdr.CancelSaleCreationRequestOp,
+	result xdr.CancelSaleCreationRequestResult,
+) error {
+	if result.Code != xdr.CancelSaleCreationRequestResultCodeSuccess {
+		return nil
+	}
+
+	err := is.Ingestion.HistoryQ().ReviewableRequests().
+		Cancel(uint64(op.RequestId))
+	if err != nil {
+		return errors.Wrap(err,
+			"failed to update sale creation request state to cancel", logan.F{
+				"request_id": uint64(op.RequestId),
+			})
+	}
+
+	return nil
+}

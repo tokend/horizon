@@ -195,6 +195,13 @@ func (is *Session) operation() error {
 		if err != nil {
 			return errors.Wrap(err, "failed to process manage contract")
 		}
+	case xdr.OperationTypeCancelSaleRequest:
+		err = is.processCancelSaleCreationRequest(
+			is.Cursor.Operation().Body.MustCancelSaleCreationRequestOp(),
+			is.Cursor.OperationResult().MustCancelSaleCreationRequestResult())
+		if err != nil {
+			return errors.Wrap(err, "failed to process cancel sale request")
+		}
 	}
 	return nil
 }

@@ -221,6 +221,8 @@ var messages = map[string]string{
 	"op_cannot_create_for_acc_id_and_acc_type":          "Limits cannot be created for account ID and account type simultaneously",
 	"op_invalid_limits":                                 "Invalid limits",
 	"op_contract_details_too_long":                      "Customer details has exceeded max contract details length",
+	"op_lower_bound_not_exceeded":                       "Requested amount to withdraw is too small",
+	"op_request_id_invalid":                             "Request id can not be equal zero",
 }
 
 func getMessage(rawCode string) string {

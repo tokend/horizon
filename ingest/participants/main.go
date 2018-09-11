@@ -172,6 +172,8 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeCancelSaleRequest:
+		// the only direct participant is the source_account
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
