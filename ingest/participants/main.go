@@ -178,7 +178,8 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateAswapRequest:
 		// FIXME !!!!!
-		if sourceParticipant.AccountID != opResult.MustCreateASwapRequestResult().Success.BidOwnerId {
+		//tx.SourceAccount
+		if sourceParticipant.AccountID.Address() != opResult.MustCreateASwapRequestResult().Success.BidOwnerId.Address() {
 			result = append(result, Participant{opResult.MustCreateASwapRequestResult().Success.BidOwnerId, nil, nil})
 		}
 	default:
