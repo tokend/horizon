@@ -13860,6 +13860,7 @@ func NewCreateASwapBidCreationRequestSuccessExt(v LedgerVersion, value interface
 //   struct CreateASwapBidCreationRequestSuccess
 //    {
 //        uint64 requestID;
+//        bool fulfilled;
 //
 //        union switch (LedgerVersion v)
 //        {
@@ -13870,6 +13871,7 @@ func NewCreateASwapBidCreationRequestSuccessExt(v LedgerVersion, value interface
 //
 type CreateASwapBidCreationRequestSuccess struct {
 	RequestId Uint64                                  `json:"requestID,omitempty"`
+	Fulfilled bool                                    `json:"fulfilled,omitempty"`
 	Ext       CreateASwapBidCreationRequestSuccessExt `json:"ext,omitempty"`
 }
 
