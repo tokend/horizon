@@ -22,17 +22,12 @@ type ASwapBidIndexAction struct {
 func (action *ASwapBidIndexAction) JSON() {
 	action.Do(
 		action.loadParams,
-		action.checkAllowed,
 		action.loadRecords,
 		action.loadPage,
 		func() {
 			hal.Render(action.W, action.Page)
 		},
 	)
-}
-
-func (action *ASwapBidIndexAction) checkAllowed() {
-	action.IsAllowed("")
 }
 
 func (action *ASwapBidIndexAction) loadParams() {

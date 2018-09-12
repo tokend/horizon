@@ -19,16 +19,11 @@ type ASwapBidShowAction struct {
 func (action *ASwapBidShowAction) JSON() {
 	action.Do(
 		action.loadParams,
-		action.checkAllowed,
 		action.loadRecords,
 		func() {
 			hal.Render(action.W, action.Record)
 		},
 	)
-}
-
-func (action *ASwapBidShowAction) checkAllowed() {
-	action.IsAllowed("")
 }
 
 func (action *ASwapBidShowAction) loadParams() {
