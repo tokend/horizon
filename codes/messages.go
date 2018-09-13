@@ -240,6 +240,7 @@ var messages = map[string]string{
 	"op_atomic_swap_tasks_not_found":                    "There is no key value for atomic swap tasks",
 	"op_already_cancelled":                              "Atomic swap bid has already canceled",
 	"op_bid_is_cancelled":                               "Cannot create atomic swap request for cancelled bid",
+	"op_cannot_create_aswap_request_for_own_bid":        "Cannot create atomic swap request for own bid",
 }
 
 func getMessage(rawCode string) string {
