@@ -57,11 +57,6 @@ func (action *ASwapBidIndexAction) loadRecords() {
 		return
 	}
 
-	if aswapBids == nil {
-		action.Err = &problem.NotFound
-		return
-	}
-
 	var bidIDs []int64
 	for _, aswapBid := range aswapBids {
 		bidIDs = append(bidIDs, aswapBid.BidID)
