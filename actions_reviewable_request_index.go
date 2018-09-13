@@ -40,7 +40,7 @@ func (action *ReviewableRequestIndexAction) JSON() {
 		action.loadRecord,
 		action.loadPage,
 		func() {
-			hal.Render(action.W, action.Records)
+			hal.Render(action.W, action.Page)
 		},
 	)
 }
@@ -147,6 +147,13 @@ func (action *ReviewableRequestIndexAction) loadPage() {
 			action.Err = &problem.ServerError
 			return
 		}
-		action.Records = append(action.Records, *res)
+		action.Page.Add(res)
 	}
+
+	action.Page.BaseURL = action.BaseURL()
+	action.Page.BasePath = action.Path()
+	action.Page.Limit = action.PagingParams.Limit
+	action.Page.Cursor = action.PagingParams.Cursor
+	action.Page.Order = action.PagingParams.Order
+	action.Page.PopulateLinks()
 }
