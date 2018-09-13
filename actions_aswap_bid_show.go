@@ -27,7 +27,7 @@ func (action *ASwapBidShowAction) JSON() {
 }
 
 func (action *ASwapBidShowAction) loadParams() {
-	action.BidID = action.GetInt64("bid_id")
+	action.BidID = action.GetInt64("id")
 }
 
 func (action *ASwapBidShowAction) loadRecords() {
