@@ -400,6 +400,12 @@ func initWebActions(app *App) {
 	})
 
 	r.Get("/request/atomic_swaps", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			bidID := action.GetOptionalInt64("bid_id")
+			if bidID != nil {
+				action.q = action.q.ASwapByBidID(*bidID)
+			}
+		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAtomicSwap},
 	})
 
