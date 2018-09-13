@@ -14020,21 +14020,23 @@ type CreateASwapRequestOp struct {
 //        BID_UNDERFUNDED = -5, // bid has not enough base amount available for lock
 //        ATOMIC_SWAP_TASKS_NOT_FOUND = -6,
 //        NOT_ALLOWED_BY_ASSET_POLICY = -7,
-//        BID_IS_CANCELLED = -8
+//        BID_IS_CANCELLED = -8,
+//        CANNOT_CREATE_ASWAP_REQUEST_FOR_OWN_BID = -9
 //    };
 //
 type CreateASwapRequestResultCode int32
 
 const (
-	CreateASwapRequestResultCodeSuccess                 CreateASwapRequestResultCode = 0
-	CreateASwapRequestResultCodeInvalidBaseAmount       CreateASwapRequestResultCode = -1
-	CreateASwapRequestResultCodeInvalidQuoteAsset       CreateASwapRequestResultCode = -2
-	CreateASwapRequestResultCodeBidNotFound             CreateASwapRequestResultCode = -3
-	CreateASwapRequestResultCodeQuoteAssetNotFound      CreateASwapRequestResultCode = -4
-	CreateASwapRequestResultCodeBidUnderfunded          CreateASwapRequestResultCode = -5
-	CreateASwapRequestResultCodeAtomicSwapTasksNotFound CreateASwapRequestResultCode = -6
-	CreateASwapRequestResultCodeNotAllowedByAssetPolicy CreateASwapRequestResultCode = -7
-	CreateASwapRequestResultCodeBidIsCancelled          CreateASwapRequestResultCode = -8
+	CreateASwapRequestResultCodeSuccess                           CreateASwapRequestResultCode = 0
+	CreateASwapRequestResultCodeInvalidBaseAmount                 CreateASwapRequestResultCode = -1
+	CreateASwapRequestResultCodeInvalidQuoteAsset                 CreateASwapRequestResultCode = -2
+	CreateASwapRequestResultCodeBidNotFound                       CreateASwapRequestResultCode = -3
+	CreateASwapRequestResultCodeQuoteAssetNotFound                CreateASwapRequestResultCode = -4
+	CreateASwapRequestResultCodeBidUnderfunded                    CreateASwapRequestResultCode = -5
+	CreateASwapRequestResultCodeAtomicSwapTasksNotFound           CreateASwapRequestResultCode = -6
+	CreateASwapRequestResultCodeNotAllowedByAssetPolicy           CreateASwapRequestResultCode = -7
+	CreateASwapRequestResultCodeBidIsCancelled                    CreateASwapRequestResultCode = -8
+	CreateASwapRequestResultCodeCannotCreateAswapRequestForOwnBid CreateASwapRequestResultCode = -9
 )
 
 var CreateASwapRequestResultCodeAll = []CreateASwapRequestResultCode{
@@ -14047,6 +14049,7 @@ var CreateASwapRequestResultCodeAll = []CreateASwapRequestResultCode{
 	CreateASwapRequestResultCodeAtomicSwapTasksNotFound,
 	CreateASwapRequestResultCodeNotAllowedByAssetPolicy,
 	CreateASwapRequestResultCodeBidIsCancelled,
+	CreateASwapRequestResultCodeCannotCreateAswapRequestForOwnBid,
 }
 
 var createASwapRequestResultCodeMap = map[int32]string{
@@ -14059,6 +14062,7 @@ var createASwapRequestResultCodeMap = map[int32]string{
 	-6: "CreateASwapRequestResultCodeAtomicSwapTasksNotFound",
 	-7: "CreateASwapRequestResultCodeNotAllowedByAssetPolicy",
 	-8: "CreateASwapRequestResultCodeBidIsCancelled",
+	-9: "CreateASwapRequestResultCodeCannotCreateAswapRequestForOwnBid",
 }
 
 var createASwapRequestResultCodeShortMap = map[int32]string{
@@ -14071,18 +14075,20 @@ var createASwapRequestResultCodeShortMap = map[int32]string{
 	-6: "atomic_swap_tasks_not_found",
 	-7: "not_allowed_by_asset_policy",
 	-8: "bid_is_cancelled",
+	-9: "cannot_create_aswap_request_for_own_bid",
 }
 
 var createASwapRequestResultCodeRevMap = map[string]int32{
-	"CreateASwapRequestResultCodeSuccess":                 0,
-	"CreateASwapRequestResultCodeInvalidBaseAmount":       -1,
-	"CreateASwapRequestResultCodeInvalidQuoteAsset":       -2,
-	"CreateASwapRequestResultCodeBidNotFound":             -3,
-	"CreateASwapRequestResultCodeQuoteAssetNotFound":      -4,
-	"CreateASwapRequestResultCodeBidUnderfunded":          -5,
-	"CreateASwapRequestResultCodeAtomicSwapTasksNotFound": -6,
-	"CreateASwapRequestResultCodeNotAllowedByAssetPolicy": -7,
-	"CreateASwapRequestResultCodeBidIsCancelled":          -8,
+	"CreateASwapRequestResultCodeSuccess":                           0,
+	"CreateASwapRequestResultCodeInvalidBaseAmount":                 -1,
+	"CreateASwapRequestResultCodeInvalidQuoteAsset":                 -2,
+	"CreateASwapRequestResultCodeBidNotFound":                       -3,
+	"CreateASwapRequestResultCodeQuoteAssetNotFound":                -4,
+	"CreateASwapRequestResultCodeBidUnderfunded":                    -5,
+	"CreateASwapRequestResultCodeAtomicSwapTasksNotFound":           -6,
+	"CreateASwapRequestResultCodeNotAllowedByAssetPolicy":           -7,
+	"CreateASwapRequestResultCodeBidIsCancelled":                    -8,
+	"CreateASwapRequestResultCodeCannotCreateAswapRequestForOwnBid": -9,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
