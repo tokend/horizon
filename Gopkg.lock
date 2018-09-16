@@ -466,8 +466,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:073039e68082b9c8bbf26d0dfbf8925aeffea8dc8242ce11b9d7951d81fa74d4"
+  branch = "feature/cancel_sale_request"
+  digest = "1:02a304487ba33828dce64155026988249966f782a7a111a521264b7f1e4bf00b"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +485,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "ac0ea1c34bbeea3521198dc90b3ba8e24cc547a0"
+  revision = "507da80713114b3b720f6a2b1dfb04a71aee505b"
 
 [[projects]]
   branch = "master"
