@@ -71,6 +71,8 @@ type Config struct {
 	Project        string
 	SentryLogLevel string
 	Env            string
+
+	MigrateUpOnStart bool
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
@@ -129,6 +131,7 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.bindEnv("telegram_airdrop")
 	c.bindEnv("disable_tx_tfa")
 	c.bindEnv("force_https_links")
+	c.bindEnv("migrate_up_on_start")
 }
 
 func (c *Config) Init() error {
@@ -236,6 +239,8 @@ func (c *Config) Init() error {
 	c.SentryDSN = c.getString("sentry_dsn")
 	c.Project = c.getString("project")
 	c.SentryLogLevel = c.getString("sentry_log_level")
+
+	c.MigrateUpOnStart = c.getBool("migrate_up_on_start")
 	c.Env = c.getString("env")
 	return nil
 }

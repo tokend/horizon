@@ -4,9 +4,10 @@ import (
 	"log"
 	"runtime"
 
+	"github.com/spf13/cobra"
 	"gitlab.com/swarmfund/horizon"
 	"gitlab.com/swarmfund/horizon/config"
-	"github.com/spf13/cobra"
+	"gitlab.com/swarmfund/horizon/db2/history/schema"
 )
 
 var app *horizon.App
@@ -45,6 +46,11 @@ func initApp(cmd *cobra.Command, args []string) {
 		log.Println("Failed to init config")
 		log.Fatal(err.Error())
 	}
+
+	if conf.MigrateUpOnStart {
+		migrate("up", 0, schema.Migrate, conf.DatabaseURL)
+	}
+
 	app, err = horizon.NewApp(conf)
 
 	if err != nil {
