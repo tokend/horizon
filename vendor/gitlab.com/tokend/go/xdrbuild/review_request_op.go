@@ -24,10 +24,17 @@ type ReviewRequestOpWithdrawalDetails struct {
 
 type ReviewRequestOpIssuanceDetails struct{}
 type IssuanceDetails struct{}
+type AtomicSwapDetails struct{}
 
 func (d IssuanceDetails) ReviewRequestDetails() xdr.ReviewRequestOpRequestDetails {
 	return xdr.ReviewRequestOpRequestDetails{
 		RequestType: xdr.ReviewableRequestTypeIssuanceCreate,
+	}
+}
+
+func (d AtomicSwapDetails) ReviewRequestDetails() xdr.ReviewRequestOpRequestDetails {
+	return xdr.ReviewRequestOpRequestDetails{
+		RequestType: xdr.ReviewableRequestTypeAtomicSwap,
 	}
 }
 
