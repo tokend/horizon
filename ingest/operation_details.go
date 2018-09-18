@@ -363,6 +363,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if ok {
 			details["fulfilled"] = fulfilled
 		}
+	case xdr.OperationTypeCancelSaleRequest:
+		op := c.Operation().Body.MustCancelSaleCreationRequestOp()
+		details["request_id"] = uint64(op.RequestId)
 	case xdr.OperationTypeCreateAswapBidRequest:
 		op := c.Operation().Body.MustCreateASwapBidCreationRequestOp()
 		opRes := c.OperationResult().MustCreateASwapBidCreationRequestResult().

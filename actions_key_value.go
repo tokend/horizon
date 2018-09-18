@@ -1,17 +1,18 @@
 package horizon
 
 import (
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/tokend/regources"
 )
 
 type KeyValueShowAction struct {
 	Action
-	key string
+	key            string
 	keyValueRecord *core.KeyValue
 }
 
@@ -20,19 +21,18 @@ func (action *KeyValueShowAction) JSON() {
 		action.loadParams,
 		action.loadRecord,
 		func() {
-			var res resource.KeyValue
-			err := res.Populate(action.keyValueRecord)
+			res, err := resource.PopulateKeyValue(action.keyValueRecord)
 			if err != nil {
 				action.Log.WithError(err).Error("Failed to populate key_value")
 				action.Err = &problem.ServerError
 				return
 			}
-			hal.Render(action.W, res)
+			hal.Render(action.W, *res)
 		},
 	)
 }
 
-func (action *KeyValueShowAction) loadParams(){
+func (action *KeyValueShowAction) loadParams() {
 	action.key = action.GetString("key")
 }
 
@@ -54,8 +54,8 @@ func (action *KeyValueShowAction) loadRecord() {
 
 type KeyValueShowAllAction struct {
 	Action
-	coreRecords 	[]core.KeyValue
-	recordsToRender []resource.KeyValue
+	coreRecords     []core.KeyValue
+	recordsToRender []regources.KeyValue
 }
 
 func (action *KeyValueShowAllAction) JSON() {
@@ -85,16 +85,16 @@ func (action *KeyValueShowAllAction) loadRecord() {
 	}
 }
 
-func (action *KeyValueShowAllAction) getPopulatedKeyValues() ([]resource.KeyValue, error){
-	var res []resource.KeyValue
-	for i, keyValue := range action.coreRecords {
-		res = append(res, resource.KeyValue{})
-		err := res[i].Populate(&keyValue)
+func (action *KeyValueShowAllAction) getPopulatedKeyValues() ([]regources.KeyValue, error) {
+	var res []regources.KeyValue
+	for _, keyValue := range action.coreRecords {
+		keyValueEntry, err := resource.PopulateKeyValue(&keyValue)
 		if err != nil {
 			return nil, errors.Wrap(err, "Failed to populate key_value", logan.F{
 				"keyValue": keyValue,
 			})
 		}
+		res = append(res, *keyValueEntry)
 	}
 	return res, nil
 }

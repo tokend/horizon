@@ -182,6 +182,8 @@ func ForOperation(
 		if sourceParticipant.AccountID.Address() != opResult.MustCreateASwapRequestResult().Success.BidOwnerId.Address() {
 			result = append(result, Participant{opResult.MustCreateASwapRequestResult().Success.BidOwnerId, nil, nil})
 		}
+	case xdr.OperationTypeCancelSaleRequest:
+		// the only direct participant is the source_account
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
