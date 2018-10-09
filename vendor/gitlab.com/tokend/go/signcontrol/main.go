@@ -5,65 +5,67 @@ import (
 	"strconv"
 	"time"
 
-	"fmt"
-
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
-
+	"github.com/pkg/errors"
 	"gitlab.com/tokend/go/hash"
 	"gitlab.com/tokend/go/keypair"
+	"gitlab.com/tokend/go/signcontrol/internal/httpsignatures"
 	"gitlab.com/tokend/go/xdr"
 )
 
-
-
 const (
-	SignatureHeader     = "x-authsignature"
-	HMACSignatureHeader = "x-hmac-signature"
-	PublicKeyHeader     = "x-authpublickey"
-	ValidUntilHeader    = "x-authvaliduntilltimestamp"
-	ValidUntilOffset    = 60
+	SignatureHeader  = "x-authsignature"
+	PublicKeyHeader  = "x-authpublickey"
+	ValidUntilHeader = "x-authvaliduntilltimestamp"
+
+	// SignatureAlgorithm default algorithm used to sign requests
+	SignatureAlgorithm = "ed25519-sha256"
 )
 
+type Signature struct {
+	Address       string
+	Signer        string
+	RawValidUntil string
+	Signature     string
+}
+
+func IsSigned(request *http.Request) (*Signature, bool) {
+	if request == nil {
+		panic(ErrNilRequest)
+	}
+
+	s := Signature{
+		Signer:        request.Header.Get(PublicKeyHeader),
+		Signature:     request.Header.Get(SignatureHeader),
+		RawValidUntil: request.Header.Get(ValidUntilHeader),
+	}
+	return &s, s.Signature != "" && s.Signer != "" && s.RawValidUntil != ""
+}
+
 func SignRequest(request *http.Request, kp keypair.KP) error {
-	// TODO check if request is nil
-	// TODO check if kp is nil
-
-	validUntil := fmt.Sprintf("%d", time.Now().Unix()+ValidUntilOffset)
-
-	request.Header.Set(ValidUntilHeader, validUntil)
-	request.Header.Set(PublicKeyHeader, kp.Address())
-
-	base := fmt.Sprintf("{ uri: '%s', valid_untill: '%s'}", request.URL.RequestURI(), validUntil)
-	hashBase := hash.Hash([]byte(base))
-
-	decorated, err := kp.SignDecorated(hashBase[:])
+	algorithm, err := httpsignatures.GetAlgorithm(SignatureAlgorithm)
 	if err != nil {
+		return errors.Wrap(err, "failed to get signature algorithm")
+	}
+	signer := httpsignatures.NewSigner(algorithm, "date", httpsignatures.RequestTarget)
+	if err = signer.SignRequest(kp.Address(), kp, request); err != nil {
 		return err
 	}
-
-	encodedSign, err := xdr.MarshalBase64(decorated)
-	if err != nil {
-		return err
-	}
-
-	request.Header.Set(SignatureHeader, encodedSign)
 	return nil
 }
 
 func CheckSignature(request *http.Request) (string, error) {
-	// TODO cache results to request.Context()
-	// check if signature is valid
-	signature := request.Header.Get(SignatureHeader)
-	signer := request.Header.Get(PublicKeyHeader)
-	rawValidUntil := request.Header.Get(ValidUntilHeader)
+	// check if it v2 signature
+	if request.Header.Get("signature") != "" || request.Header.Get("authorization") != "" {
+		return checkV2(request)
+	}
 
-	if signature == "" || signer == "" || rawValidUntil == "" {
+	// TODO cache results to request.Context()
+	sig, ok := IsSigned(request)
+	if !ok {
 		return "", ErrNotSigned
 	}
 
-	validUntil, err := strconv.ParseInt(rawValidUntil, 10, 64)
+	validUntil, err := strconv.ParseInt(sig.RawValidUntil, 10, 64)
 	if err != nil {
 		return "", ErrValidUntil
 	}
@@ -72,15 +74,15 @@ func CheckSignature(request *http.Request) (string, error) {
 		return "", ErrExpired
 	}
 
-	signatureBase := "{ uri: '" + request.URL.RequestURI() + "', valid_untill: '" + rawValidUntil + "'}"
+	signatureBase := "{ uri: '" + request.URL.RequestURI() + "', valid_untill: '" + sig.RawValidUntil + "'}"
 	hashBase := hash.Hash([]byte(signatureBase))
-	pubKey, err := keypair.Parse(signer)
+	pubKey, err := keypair.Parse(sig.Signer)
 	if err != nil {
 		return "", ErrSignerKey
 	}
 
 	var decoratedSign xdr.DecoratedSignature
-	err = xdr.SafeUnmarshalBase64(signature, &decoratedSign)
+	err = xdr.SafeUnmarshalBase64(sig.Signature, &decoratedSign)
 	if err != nil {
 		return "", ErrSignature
 	}
@@ -89,25 +91,17 @@ func CheckSignature(request *http.Request) (string, error) {
 		return "", ErrSignature
 	}
 
-	return signer, nil
+	return sig.Signer, nil
 }
 
-func CheckHMACSignature(request *http.Request, key string) error {
-	signature := request.Header.Get(HMACSignatureHeader)
-	rawValidUntil := request.Header.Get(ValidUntilHeader)
-	signer := request.Header.Get(PublicKeyHeader)
-
-	if signature == "" || signer == "" || rawValidUntil == "" {
-		return ErrNotSigned
+func checkV2(request *http.Request) (string, error) {
+	signature, err := httpsignatures.FromRequest(request)
+	if err != nil {
+		// TODO check for no such algorithm
+		return "", err
 	}
-
-	base := fmt.Sprintf("%s:%s:%s", request.Method, request.URL.RequestURI(), rawValidUntil)
-	h := hmac.New(sha256.New, []byte(key))
-	h.Write([]byte(base))
-	sign := h.Sum(nil)
-	encodedSign := hex.EncodeToString(sign)
-	if encodedSign != signature {
-		return ErrNotAllowed
+	if ok := signature.IsValid(request); !ok {
+		return "", ErrSignature
 	}
-	return nil
+	return signature.KeyID, nil
 }

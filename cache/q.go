@@ -12,8 +12,6 @@ import (
 type QInterface interface {
 	// returns error if asset not found
 	MustAssetByCode(code string) (core.Asset, error)
-	// tries not load number of coins in circulation, returns error if fails to load
-	MustCoinsInCirculationForAsset(masterAccountID, asset string) (core.AssetAmount, error)
 }
 
 type Q struct {
@@ -35,7 +33,7 @@ func (q *Q) MustAssetByCode(code string) (core.Asset, error) {
 		return asset, nil
 	}
 
-	asset, err := q.coreQ.AssetByCode(code)
+	asset, err := q.coreQ.Assets().ByCode(code)
 	if err != nil {
 		return core.Asset{}, err
 	}
@@ -48,20 +46,4 @@ func (q *Q) MustAssetByCode(code string) (core.Asset, error) {
 	q.cacheProvider.assetCache.Set(code, *asset, cache.DefaultExpiration)
 
 	return *asset, nil
-}
-
-func (q *Q) MustCoinsInCirculationForAsset(masterAccountID, asset string) (core.AssetAmount, error) {
-	// we can ignore master account id here as it never changes
-	if asset, isFound := q.cacheProvider.assetAmountCache.Get(asset); isFound {
-		return asset, nil
-	}
-
-	result, err := q.coreQ.MustCoinsInCirculationForAsset(masterAccountID, asset)
-	if err != nil {
-		return core.AssetAmount{}, err
-	}
-
-	q.cacheProvider.assetAmountCache.Set(asset, result, cache.DefaultExpiration)
-
-	return result, nil
 }

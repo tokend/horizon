@@ -1,48 +1,41 @@
 package ingest
 
 import (
-	"gitlab.com/tokend/go/amount"
+	"strconv"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
-	"strconv"
-	"time"
+	"gitlab.com/tokend/go/amount"
 )
 
 // Load runs queries against `core` to fill in the records of the bundle.
-func (lb *LedgerBundle) Load(coreQ core.QInterface, historyQ history.QInterface) error {
+func (lb *LedgerBundle) Load(coreQ core.QInterface) error {
 
 	// Load Header
 	err := coreQ.LedgerHeaderBySequence(&lb.Header, lb.Sequence)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to get ledger header")
 	}
 
 	// Load transactions
 	err = coreQ.TransactionsByLedger(&lb.Transactions, lb.Sequence)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to get transactions for ledger")
 	}
 
 	err = coreQ.TransactionFeesByLedger(&lb.TransactionFees, lb.Sequence)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to get transaction fees for ledger")
 	}
-
-	assetPairs, err := getAssetPairs(coreQ, historyQ)
-	if err != nil {
-		return err
-	}
-
-	lb.HistoryPriceProvide = new(PriceHistoryProvider)
-	lb.HistoryPriceProvide.Init(assetPairs, time.Unix(lb.Header.CloseTime, 0).UTC())
 
 	return nil
 }
 
 func getAssetPairs(coreQ core.QInterface, historyQ history.QInterface) (assetPairs []core.AssetPair, err error) {
-	assetPairs, err = coreQ.AssetPairs()
+	assetPairs, err = coreQ.AssetPairs().Select()
 	if err != nil {
-		return assetPairs, err
+		return assetPairs, errors.Wrap(err, "failed to select asset pairs")
 	}
 
 	for key, ap := range assetPairs {
@@ -58,7 +51,7 @@ func getAssetPairs(coreQ core.QInterface, historyQ history.QInterface) (assetPai
 func getPriceFromHistory(historyQ history.QInterface, assetPair core.AssetPair) (int64, error) {
 	price, err := historyQ.LastPrice(assetPair.BaseAsset, assetPair.QuoteAsset)
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "failed to get last price")
 	}
 
 	// if the price is not in history db
@@ -71,7 +64,7 @@ func getPriceFromHistory(historyQ history.QInterface, assetPair core.AssetPair) 
 
 	xPrice, err := amount.Parse(priceStr)
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "failed to parse amount")
 	}
 
 	return int64(xPrice), nil

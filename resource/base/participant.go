@@ -1,9 +1,9 @@
 package base
 
 import (
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2/history"
 	"github.com/go-errors/errors"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/go/xdr"
 )
 
 type BaseEffects interface {
@@ -48,6 +48,11 @@ func (f *Participant) PopulateEffects(p *history.Participant, opType xdr.Operati
 	switch opType {
 	case xdr.OperationTypeManageOffer:
 		f.Effects = MatchEffects{}
+		err = p.UnmarshalEffects(&f.Effects)
+	case xdr.OperationTypeCheckSaleState:
+		f.Effects = MatchEffects{}
+		err = p.UnmarshalEffects(&f.Effects)
+	case xdr.OperationTypePayout:
 		err = p.UnmarshalEffects(&f.Effects)
 	default:
 		err = errors.New("Unexpected effects type")

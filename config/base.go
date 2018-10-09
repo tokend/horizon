@@ -5,10 +5,10 @@ import (
 	"html/template"
 	"net/url"
 	"strings"
-
-	"gitlab.com/tokend/horizon/assets"
+	"time"
 
 	"github.com/spf13/viper"
+	"gitlab.com/tokend/horizon/assets"
 )
 
 const (
@@ -90,6 +90,21 @@ func (c *Base) getParsedURL(name string) (*url.URL, error) {
 	return parsed, nil
 }
 
+func (c *Base) getOptionalParsedURL(name string) (*url.URL, error) {
+	rawUrl := c.getString(name)
+	if rawUrl == "" {
+		// No URL is provided - it's OK value is optional
+		return nil, nil
+	}
+
+	parsed, err := url.Parse(rawUrl)
+	if err != nil {
+		return nil, c.invalidField(name, err.Error())
+	}
+
+	return parsed, nil
+}
+
 func (c *Base) getURLAsString(name string) (string, error) {
 	result, err := c.getParsedURL(name)
 	if err != nil {
@@ -107,6 +122,19 @@ func (c *Base) getBool(name string) bool {
 	return viper.GetBool(c.getFieldName(name))
 }
 
+func (c *Base) getTimeDuration(name string) (time.Duration, error) {
+	rawDur := viper.GetString(c.getFieldName(name))
+	return time.ParseDuration(rawDur)
+}
+
+func (c *Base) getOptionalTDuration(name string) (*time.Duration, error) {
+	rawDur := viper.GetString(c.getFieldName(name))
+	if rawDur == "" {
+		return nil, nil
+	}
+	tDur, err := time.ParseDuration(rawDur)
+	return &tDur, err
+}
 func (c *Base) getTemplate(name string) *template.Template {
 	return assets.Templates.Lookup(name)
 }

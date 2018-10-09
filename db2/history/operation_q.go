@@ -3,9 +3,13 @@ package history
 import (
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
+	"fmt"
+
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/horizon/db2/sqx"
 )
 
 var selectOperation = sq.Select("distinct on (ho.id) ho.*").
@@ -30,12 +34,23 @@ type OperationsQI interface {
 	ForReference(reference string) OperationsQI
 	Since(ts time.Time) OperationsQI
 	To(ts time.Time) OperationsQI
+	CompletedOnly() OperationsQI
+	PendingOnly() OperationsQI
 	// required prior to exchange and asset filtering
 	JoinOnBalance() OperationsQI
 	// JoinOnAccount required to filter on account ID and account type
 	JoinOnAccount() OperationsQI
 	Page(page db2.PageQuery) OperationsQI
 	Select(dest interface{}) error
+
+	// Manage Offer
+	// WithoutCancelingManagerOffer - don't load manage offer operations which cancel offer
+	WithoutCancelingManagerOffer() OperationsQI
+	// WithoutCanceled - filters canceled operations
+	WithoutCanceled() OperationsQI
+
+	// WithoutExternallyFullyMatched = don't load manage offer operations with ExternallyFullyMatched state
+	WithoutExternallyFullyMatched() OperationsQI
 
 	Participants(dest map[int64]*OperationParticipants) error
 }
@@ -174,7 +189,8 @@ func (q *OperationsQ) ForReference(reference string) OperationsQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("ho.details->>'reference' = ? AND ho.type = ?", reference, xdr.OperationTypePayment)
+	// FIXME might(will) not work for all operation types, works at least for payments and issuances
+	q.sql = q.sql.Where("ho.details->>'reference' ilike ?", fmt.Sprintf("%%%s%%", reference))
 
 	return q
 }
@@ -199,6 +215,35 @@ func (q *OperationsQ) To(ts time.Time) OperationsQI {
 	return q
 }
 
+func (q *OperationsQ) CompletedOnly() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	query, values := sqx.In("state",
+		OperationStateSuccess,
+		OperationStateRejected,
+		OperationStateCanceled,
+		OperationStateFailed,
+		OperationStateFullyMatched)
+
+	q.sql = q.sql.Where(query, values...)
+	return q
+}
+
+func (q *OperationsQ) PendingOnly() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	query, values := sqx.In("state",
+		OperationStatePending,
+		OperationStatePartiallyMatched)
+
+	q.sql = q.sql.Where(query, values...)
+	return q
+}
+
 // Page specifies the paging constraints for the query being built by `q`.
 func (q *OperationsQ) Page(page db2.PageQuery) OperationsQI {
 	if q.Err != nil {
@@ -206,6 +251,36 @@ func (q *OperationsQ) Page(page db2.PageQuery) OperationsQI {
 	}
 
 	q.sql, q.Err = page.ApplyTo(q.sql, "ho.id")
+	return q
+}
+
+func (q *OperationsQ) WithoutCancelingManagerOffer() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	// 'amount' field in 'details' jsonb has type string, thus required to pass amount.String to query
+	q.sql = q.sql.Where("(ho.type <> ? OR (ho.details->>'amount') != ?)", xdr.OperationTypeManageOffer,
+		amount.String(0))
+	return q
+}
+
+func (q *OperationsQ) WithoutExternallyFullyMatched() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("ho.state <> ?", OperationStateExternallyFullyMatched)
+	return q
+}
+
+// WithoutCanceled - filters canceled operations
+func (q *OperationsQ) WithoutCanceled() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("ho.state <> ?", OperationStateCanceled)
 	return q
 }
 

@@ -2,7 +2,7 @@ package log
 
 import (
 	"gitlab.com/tokend/horizon/errors"
-	"gitlab.com/distributed_lab/logan"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 type Entry struct {

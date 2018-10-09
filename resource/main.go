@@ -3,6 +3,7 @@
 package resource
 
 import (
+	"fmt"
 	"time"
 
 	"gitlab.com/tokend/horizon/db2/history"
@@ -11,65 +12,23 @@ import (
 	"golang.org/x/net/context"
 )
 
-// Account is the summary of an account
-type Account struct {
-	Links struct {
-		Self         hal.Link `json:"self"`
-		Transactions hal.Link `json:"transactions"`
-		Operations   hal.Link `json:"operations"`
-		Payments     hal.Link `json:"payments"`
-	} `json:"_links"`
-
-	HistoryAccount
-	IsBlocked            bool               `json:"is_blocked"`
-	BlockReasons         int32              `json:"block_reasons"`
-	IsRequireReview      bool               `json:"is_require_review"`
-	AccountTypeI         int32              `json:"account_type_i"`
-	AccountType          string             `json:"account_type"`
-	InflationDestination string             `json:"inflation_destination,omitempty"`
-	HomeDomain           string             `json:"home_domain,omitempty"`
-	Thresholds           AccountThresholds  `json:"thresholds"`
-	Flags                AccountFlags       `json:"flags"`
-	Balances             []Balance          `json:"balances"`
-	Signers
-	Limits           `json:"limits"`
-	Statistics       `json:"statistics"`
-	Referrer         string          `json:"referrer"`
-	ShareForReferrer string          `json:"share_for_referrer"`
-	Policies         AccountPolicies `json:"policies"`
-	CreatedAt        time.Time       `json:"created_at"`
-
-	IncentivePerCoinExpiresAt int64 `json:"incentive_per_coin_expires_at"`
-}
-
-// AccountFlags represents the state of an account's flags
-type AccountFlags struct {
-	AuthRequired  bool `json:"auth_required"`
-	AuthRevocable bool `json:"auth_revocable"`
-}
-
-// AccountThresholds represents an accounts "thresholds", the numerical values
-// needed to satisfy the authorization of a given operation.
-type AccountThresholds struct {
-	LowThreshold  byte `json:"low_threshold"`
-	MedThreshold  byte `json:"med_threshold"`
-	HighThreshold byte `json:"high_threshold"`
-}
-
 type BalancePublic struct {
-	ID           string `json:"id,omitempty"`
-	BalanceID    string `json:"balance_id"`
-	AccountID    string `json:"account_id"`
-	Asset        string `json:"asset"`
+	ID        string `json:"id,omitempty"`
+	BalanceID string `json:"balance_id"`
+	AccountID string `json:"account_id"`
+	Asset     string `json:"asset"`
 }
 
 // Balance represents an account's holdings for a single currency type
 type Balance struct {
 	BalancePublic
-	Balance                  string    `json:"balance,omitempty"`
-	Locked                   string    `json:"locked,omitempty"`
-	RequireReview            bool      `json:"require_review"`
-	IncentivePerCoin         string    `json:"incentive_per_coin"`
+	Balance          string `json:"balance,omitempty"`
+	Locked           string `json:"locked,omitempty"`
+	RequireReview    bool   `json:"require_review"`
+	AssetDetails     *Asset `json:"asset_details,omitempty"`
+	ConvertedBalance string `json:"converted_balance,omitempty"`
+	ConvertedLocked  string `json:"converted_locked,omitempty"`
+	ConvertedToAsset string `json:"converted_to_asset,omitempty"`
 }
 
 // HistoryAccount is a simple resource, used for the account collection actions.
@@ -78,58 +37,6 @@ type HistoryAccount struct {
 	ID        string `json:"id,omitempty"`
 	PT        string `json:"paging_token,omitempty"`
 	AccountID string `json:"account_id"`
-}
-
-// Ledger represents a single closed ledger
-type Ledger struct {
-	Links struct {
-		Self         hal.Link `json:"self"`
-		Transactions hal.Link `json:"transactions"`
-		Operations   hal.Link `json:"operations"`
-		Payments     hal.Link `json:"payments"`
-	} `json:"_links"`
-	ID               string    `json:"id"`
-	PT               string    `json:"paging_token"`
-	Hash             string    `json:"hash"`
-	PrevHash         string    `json:"prev_hash,omitempty"`
-	Sequence         int32     `json:"sequence"`
-	TransactionCount int32     `json:"transaction_count"`
-	OperationCount   int32     `json:"operation_count"`
-	ClosedAt         time.Time `json:"closed_at"`
-	TotalCoins       string    `json:"total_coins"`
-	FeePool          string    `json:"fee_pool"`
-	BaseFee          int32     `json:"base_fee"`
-	BaseReserve      string    `json:"base_reserve"`
-	MaxTxSetSize     int32     `json:"max_tx_set_size"`
-}
-
-// Transaction represents a single, successful transaction
-type Transaction struct {
-	Links struct {
-		Self       hal.Link `json:"self"`
-		Account    hal.Link `json:"account"`
-		Ledger     hal.Link `json:"ledger"`
-		Operations hal.Link `json:"operations"`
-		Precedes   hal.Link `json:"precedes"`
-		Succeeds   hal.Link `json:"succeeds"`
-	} `json:"_links"`
-	ID              string    `json:"id"`
-	PT              string    `json:"paging_token"`
-	Hash            string    `json:"hash"`
-	Ledger          int32     `json:"ledger"`
-	LedgerCloseTime time.Time `json:"created_at"`
-	Account         string    `json:"source_account"`
-	FeePaid         int32     `json:"fee_paid"`
-	OperationCount  int32     `json:"operation_count"`
-	EnvelopeXdr     string    `json:"envelope_xdr"`
-	ResultXdr       string    `json:"result_xdr"`
-	ResultMetaXdr   string    `json:"result_meta_xdr"`
-	FeeMetaXdr      string    `json:"fee_meta_xdr"`
-	MemoType        string    `json:"memo_type"`
-	Memo            string    `json:"memo,omitempty"`
-	Signatures      []string  `json:"signatures"`
-	ValidAfter      string    `json:"valid_after,omitempty"`
-	ValidBefore     string    `json:"valid_before,omitempty"`
 }
 
 // TransactionSuccess represents the result of a successful transaction
@@ -159,4 +66,24 @@ func NewPublicOperation(
 	ctx context.Context, row history.Operation, participants []*history.Participant,
 ) (result hal.Pageable, err error) {
 	return operations.New(ctx, row, participants, true)
+}
+
+type Data struct {
+	Ledgers []DataLedger `json:"ledgers"`
+}
+
+type DataLedger struct {
+	ClosedAt     time.Time               `json:"cloased_at"`
+	Sequence     int32                   `json:"sequence"`
+	LedgerHash   string                  `json:"ledger_hash"`
+	Transactions []DataLedgerTransaction `json:"transactions"`
+}
+
+func (d DataLedger) PagingToken() string {
+	return fmt.Sprintf("%d", d.Sequence)
+}
+
+type DataLedgerTransaction struct {
+	ID         int64          `json:"id"`
+	Operations []hal.Pageable `json:"operations"`
 }

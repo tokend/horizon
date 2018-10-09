@@ -1,25 +1,14 @@
 package resource
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/fees"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/regources"
 )
 
-type FeeEntry struct {
-	Asset       string `json:"asset"`
-	Fixed       string `json:"fixed"`
-	Percent     string `json:"percent"`
-	FeeType     int    `json:"fee_type"`
-	Subtype     int64  `json:"subtype"`
-	AccountID   string `json:"account_id"`
-	AccountType int32  `json:"account_type"`
-	LowerBound  string `json:"lower_bound"`
-	UpperBound  string `json:"upper_bound"`
-	Exists      bool   `json:"exists"`
-}
-
 // Populate fills out the resource's fields
-func (fee *FeeEntry) Populate(cfee core.FeeEntry) error {
+func NewFeeEntry(cfee core.FeeEntry) (fee regources.FeeEntry) {
 	fee.FeeType = cfee.FeeType
 	fee.Asset = cfee.Asset
 	fee.Fixed = amount.String(cfee.Fixed)
@@ -29,6 +18,16 @@ func (fee *FeeEntry) Populate(cfee core.FeeEntry) error {
 	fee.AccountType = cfee.AccountType
 	fee.LowerBound = amount.String(cfee.LowerBound)
 	fee.UpperBound = amount.String(cfee.UpperBound)
+	fee.FeeAsset = cfee.FeeAsset
+	if fee.FeeAsset == "" {
+		fee.FeeAsset = cfee.Asset
+	}
 	fee.Exists = true
-	return nil
+	return fee
+}
+
+func NewFeeEntryFromWrapper(wrapper fees.FeeWrapper) (fee regources.FeeEntry) {
+	fee = NewFeeEntry(wrapper.FeeEntry)
+	fee.Exists = !wrapper.NotExists
+	return fee
 }

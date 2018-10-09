@@ -8,7 +8,6 @@ import (
 )
 
 //go:generate genny -in=$GOFILE -out=asset_cache_generated.go gen "ValueType=core.Asset"
-//go:generate genny -in=$GOFILE -out=asset_amount_cache_generate.go gen "ValueType=core.AssetAmount"
 
 type ValueType generic.Type
 

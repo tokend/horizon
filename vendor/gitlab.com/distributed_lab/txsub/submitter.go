@@ -1,9 +1,9 @@
 package txsub
 
 import (
-	"github.com/go-errors/errors"
+	"fmt"
 	"gitlab.com/distributed_lab/corer"
-	"gitlab.com/distributed_lab/logan"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"golang.org/x/net/context"
 	"time"
 )
@@ -32,13 +32,13 @@ func (sub *submitter) Submit(ctx context.Context, env string) (result Submission
 
 	coreResponse, err := sub.connector.SubmitTx(env)
 	if err != nil {
-		result.Err = logan.Wrap(err, "Failed to submit tx to core")
+		result.Err = errors.Wrap(err, "Failed to submit tx to core")
 		return
 	}
 
 	// interpet response
 	if coreResponse.Exception != "" {
-		result.Err = errors.Errorf("stellar-core exception: %s", coreResponse.Exception)
+		result.Err = fmt.Errorf("stellar-core exception: %s", coreResponse.Exception)
 		return
 	}
 
@@ -48,7 +48,7 @@ func (sub *submitter) Submit(ctx context.Context, env string) (result Submission
 	case corer.TxStatusPending, corer.TxStatusDuplicate:
 		//noop.  A nil Err indicates success
 	default:
-		result.Err = errors.Errorf("Unrecognized stellar-core status response: %s", coreResponse.Status)
+		result.Err = fmt.Errorf("Unrecognized stellar-core status response: %s", coreResponse.Status)
 	}
 
 	return

@@ -11,13 +11,14 @@ import (
 
 	"time"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/strkey"
-	"gitlab.com/tokend/go/xdr"
+	"github.com/spf13/cast"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/utils"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/strkey"
+	"gitlab.com/tokend/go/xdr"
 )
 
 const (
@@ -56,6 +57,35 @@ func (base *Base) GetString(name string) string {
 	}
 
 	return base.R.URL.Query().Get(name)
+}
+
+func (base *Base) GetIntArray(name string) []int {
+	if base.Err != nil {
+		return nil
+	}
+
+	stringArray := base.R.URL.Query()[name]
+
+	res, err := getIntArrayFromStringArray(stringArray)
+	if err != nil {
+		base.SetInvalidField(name, err)
+		return nil
+	}
+
+	return res
+}
+
+func getIntArrayFromStringArray(input []string) (result []int, err error) {
+	for _, str := range input {
+		value, err := strconv.Atoi(str)
+		if err != nil {
+			return nil, errors.New("failed to convert to int from string")
+		}
+
+		result = append(result, value)
+	}
+
+	return
 }
 
 // GetNonEmptyString retrieves an string from the action parameter of the given name.
@@ -166,6 +196,20 @@ func (base *Base) GetInt64(name string) int64 {
 	return *result
 }
 
+func (base *Base) GetPositiveInt64(name string) int64 {
+	result := base.GetOptionalInt64(name)
+	if result == nil {
+		base.SetInvalidField(name, errors.New("must not be empty"))
+		return 0
+	}
+
+	if *result <= 0 {
+		base.SetInvalidField(name, errors.New("must be positive"))
+	}
+
+	return *result
+}
+
 func (base *Base) GetOptionalInt64(name string) *int64 {
 	if base.Err != nil {
 		return nil
@@ -185,6 +229,27 @@ func (base *Base) GetOptionalInt64(name string) *int64 {
 	}
 
 	return &asI64
+}
+
+func (base *Base) GetOptionalUint64(name string) *uint64 {
+	if base.Err != nil {
+		return nil
+	}
+
+	asStr := base.GetString(name)
+
+	if asStr == "" {
+		return nil
+	}
+
+	asU64, err := strconv.ParseUint(asStr, 10, 64)
+
+	if err != nil {
+		base.SetInvalidField(name, err)
+		return nil
+	}
+
+	return &asU64
 }
 
 // GetInt32 retrieves an int32 from the action parameter of the given name.
@@ -232,17 +297,21 @@ func (base *Base) GetOptionalBool(name string) *bool {
 // GetInt32 retrieves an int32 from the action parameter of the given name.
 // Populates err if the value is not a valid int32
 func (base *Base) GetBool(name string) bool {
+	return base.GetBoolOrDefault(name, false)
+}
+
+// GetBoolOrDefault - returns boolean values passed, if parameter is not available or value is empty string - returns default value
+func (base *Base) GetBoolOrDefault(name string, defaultValue bool) bool {
 	if base.Err != nil {
 		return false
 	}
 
 	asStr := base.GetString(name)
-
-	if asStr == "true" {
-		return true
-	} else {
-		return false
+	if asStr == "" {
+		return defaultValue
 	}
+
+	return cast.ToBool(asStr)
 }
 
 // GetUInt64 retrieves an uint64 from the action parameter of the given name.
@@ -348,8 +417,12 @@ func (base *Base) GetAccountID(name string) (result xdr.AccountId) {
 
 // GetAmount returns a native amount (i.e. 64-bit integer) by parsing
 // the string at the provided name in accordance with the stellar client
-// conventions
+// conventions.
 func (base *Base) GetAmount(name string) int64 {
+	if base.Err != nil {
+		return 0
+	}
+
 	var err error
 	result, err := amount.Parse(base.GetString(name))
 
@@ -358,7 +431,28 @@ func (base *Base) GetAmount(name string) int64 {
 		return 0
 	}
 
-	return int64(result)
+	return result
+}
+
+// GetOptionalAmount returns a pointer of native amount (i.e. 64-bit integer) by parsing
+// the string at the provided name in accordance with the stellar client
+// conventions.
+func (base *Base) GetOptionalAmount(name string) *int64 {
+	if base.Err != nil {
+		return nil
+	}
+
+	str := base.GetString(name)
+	if str == "" {
+		return nil
+	}
+
+	result, err := amount.Parse(str)
+	if err != nil {
+		base.SetInvalidField(name, err)
+		return nil
+	}
+	return &result
 }
 
 // SetInvalidField establishes an error response triggered by an invalid

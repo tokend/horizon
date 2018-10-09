@@ -5,6 +5,8 @@ import (
 
 	"os"
 
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -22,6 +24,7 @@ type Config struct {
 	RedisURL               string
 	LogLevel               logrus.Level
 	LogToJSON              bool
+	SlowQueryBound         *time.Duration
 
 	APIBackend      *url.URL
 	KeychainBackend *url.URL
@@ -41,31 +44,39 @@ type Config struct {
 	// determining a "retention duration", each ledger roughly corresponds to 10
 	// seconds of real time.
 	HistoryRetentionCount uint
-
 	// StaleThreshold represents the number of ledgers a history database may be
 	// out-of-date by before horizon begins to respond with an error to history
 	// requests.
 	StaleThreshold uint
-
 	//For developing without signatures
 	SkipCheck bool
-
 	// enable on dev only
 	CORSEnabled bool
+	// DisableAPISubmit tell horizon to not use API for transaction submission
+	// for dev purposes only, works well with SkipCheck enabled
+	// pending transactions and transaction 2fa will be disabled as well.
+	DisableAPISubmit bool
+	// If set to true - Horizon won't check TFA (via API) during TX submission.
+	DisableTXTfa bool
 
-	Notificator Notificator
-	TFA         TFA
-	Core        Core
+	Core Core
+
+	TemplateBackend *url.URL
+	InvestReady     *url.URL
+	TelegramAirdrop *url.URL
+
+	ForceHTTPSLinks bool
+
+	SentryDSN      string
+	Project        string
+	SentryLogLevel string
+	Env            string
+
+	MigrateUpOnStart bool
 }
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.Base = NewBase(nil, "")
-
-	c.Notificator.Base = NewBase(c.Base, "notificator")
-	c.Notificator.DefineConfigStructure()
-
-	c.TFA.Base = NewBase(c.Base, "tfa")
-	c.TFA.DefineConfigStructure()
 
 	c.Core.Base = NewBase(c.Base, "core")
 	c.Core.DefineConfigStructure()
@@ -75,6 +86,11 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.setDefault("history_retention_count", 0)
 	c.setDefault("sign_checkskip", false)
 	c.setDefault("log_level", "debug")
+	c.setDefault("force_https_links", true)
+	c.setDefault("sentry_dsn", "")
+	c.setDefault("project", "")
+	c.setDefault("sentry_log_level", "warn")
+	c.setDefault("env", "")
 
 	c.bindEnv("port")
 	c.bindEnv("database_url")
@@ -85,6 +101,7 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.bindEnv("redis_url")
 	c.bindEnv("log_level")
 	c.bindEnv("log_to_json")
+	c.bindEnv("slow_query_bound")
 
 	c.bindEnv("tls_cert")
 	c.bindEnv("tls_key")
@@ -106,6 +123,15 @@ func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 
 	c.bindEnv("cors_enabled")
 	c.bindEnv("hostname")
+
+	c.bindEnv("disable_api_submit")
+
+	c.bindEnv("template_backend")
+	c.bindEnv("invest_ready")
+	c.bindEnv("telegram_airdrop")
+	c.bindEnv("disable_tx_tfa")
+	c.bindEnv("force_https_links")
+	c.bindEnv("migrate_up_on_start")
 }
 
 func (c *Config) Init() error {
@@ -129,6 +155,11 @@ func (c *Config) Init() error {
 
 	c.RedisURL = c.getString("redis_url")
 
+	c.SlowQueryBound, err = c.getOptionalTDuration("slow_query_bound")
+	if err != nil {
+		return err
+	}
+
 	c.LogToJSON = c.getBool("log_to_json")
 	c.LogLevel, err = logrus.ParseLevel(c.getString("log_level"))
 	if err != nil {
@@ -150,13 +181,6 @@ func (c *Config) Init() error {
 	c.SkipCheck = c.getBool("sign_check_skip")
 
 	c.RedisURL = c.getString("redis_url")
-
-	err = c.Notificator.Init()
-	if err != nil {
-		return err
-	}
-
-	c.TFA.Init()
 
 	err = c.Core.Init()
 	if err != nil {
@@ -192,5 +216,31 @@ func (c *Config) Init() error {
 			return errors.Wrap(err, "failed to get hostname")
 		}
 	}
+
+	c.DisableAPISubmit = c.getBool("disable_api_submit")
+	c.DisableTXTfa = c.getBool("disable_tx_tfa")
+
+	c.TemplateBackend, err = c.getParsedURL("template_backend")
+	if err != nil {
+		return errors.Wrap(err, "Failed to get template_backend value")
+	}
+
+	c.InvestReady, err = c.getParsedURL("invest_ready")
+	if err != nil {
+		return errors.Wrap(err, "Failed to get invest_ready value")
+	}
+
+	c.TelegramAirdrop, err = c.getOptionalParsedURL("telegram_airdrop")
+	if err != nil {
+		return errors.Wrap(err, "Failed to get telegram_airdrop value")
+	}
+
+	c.ForceHTTPSLinks = c.getBool("force_https_links")
+	c.SentryDSN = c.getString("sentry_dsn")
+	c.Project = c.getString("project")
+	c.SentryLogLevel = c.getString("sentry_log_level")
+
+	c.MigrateUpOnStart = c.getBool("migrate_up_on_start")
+	c.Env = c.getString("env")
 	return nil
 }

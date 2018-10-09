@@ -4,6 +4,13 @@ import (
 	"gitlab.com/tokend/go/xdr"
 )
 
+type MatchIngestDetails struct {
+	BaseAsset  string  `json:"base_asset"`
+	QuoteAsset string  `json:"quote_asset"`
+	IsBuy      bool    `json:"is_buy"`
+	Matches    []Match `json:"matches"`
+}
+
 type MatchesDetails struct {
 	Source     xdr.AccountId
 	Balance    xdr.BalanceId
@@ -25,11 +32,13 @@ func NewMatchesDetails(source xdr.AccountId, balance xdr.BalanceId, baseAsset, q
 }
 
 func (m *MatchesDetails) ToParticipant() Participant {
-	return Participant{m.Source, &m.Balance, &map[string]interface{}{
-		"base_asset":  m.BaseAsset,
-		"quote_asset": m.QuoteAsset,
-		"is_buy":      m.IsBuy,
-		"matches":     m.Matches,
+	return Participant{m.Source, &m.Balance, []MatchIngestDetails{
+		{
+			BaseAsset:  m.BaseAsset,
+			QuoteAsset: m.QuoteAsset,
+			IsBuy:      m.IsBuy,
+			Matches:    m.Matches,
+		},
 	}}
 }
 

@@ -4,12 +4,39 @@ import (
 	"fmt"
 	"strconv"
 
+	"time"
+
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/httpx"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/resource/base"
+	"gitlab.com/tokend/go/amount"
 	"golang.org/x/net/context"
 )
+
+// Base represents the common attributes of an operation resource
+type Base struct {
+	Links struct {
+		Self        hal.Link `json:"self"`
+		Transaction hal.Link `json:"transaction"`
+		Succeeds    hal.Link `json:"succeeds"`
+		Precedes    hal.Link `json:"precedes"`
+	} `json:"_links"`
+
+	ID                  string             `json:"id"`
+	PT                  string             `json:"paging_token"`
+	TransactionID       string             `json:"transaction_id"`
+	SourceAccount       string             `json:"source_account,omitempty"`
+	Type                string             `json:"type"`
+	TypeI               int32              `json:"type_i"`
+	StateI              int32              `json:"state_i"`
+	State               string             `json:"state"`
+	Identifier          string             `json:"identifier"`
+	LedgerCloseTime     time.Time          `json:"ledger_close_time"`
+	Participants        []base.Participant `json:"participants,omitempty"`
+	OperationFee        string             `json:"operation_fee"`
+	TransactionFeeAsset string             `json:"operation_fee_asset,omitempty"`
+}
 
 // PagingToken implements hal.Pageable
 func (this Base) PagingToken() string {
@@ -27,8 +54,10 @@ func (this *Base) Populate(
 	this.populateType(row)
 	this.LedgerCloseTime = row.LedgerCloseTime
 	this.Participants = make([]base.Participant, len(participants))
-	this.State = int32(row.State)
+	this.StateI = int32(row.State)
+	this.State = row.State.String()
 	this.Identifier = strconv.FormatInt(row.Identifier, 10)
+	this.OperationFee = amount.String(0)
 	for i := range participants {
 		err := this.Participants[i].Populate(participants[i], row.Type, public)
 		if err != nil {
@@ -41,7 +70,7 @@ func (this *Base) Populate(
 	this.Links.Self = lb.Link(self)
 	this.Links.Succeeds = lb.Linkf(nil, "/effects?order=desc&cursor=%s", this.PT)
 	this.Links.Precedes = lb.Linkf(nil, "/effects?order=asc&cursor=%s", this.PT)
-	this.Links.Transaction = lb.Linkf(nil, "/transactions/%s", row.TransactionHash)
+	this.Links.Transaction = lb.Linkf(nil, "/transactions/")
 
 	if public {
 		this.SourceAccount = ""
@@ -50,11 +79,6 @@ func (this *Base) Populate(
 }
 
 func (this *Base) populateType(row history.Operation) {
-	var ok bool
 	this.TypeI = int32(row.Type)
-	this.Type, ok = TypeNames[row.Type]
-
-	if !ok {
-		this.Type = "unknown"
-	}
+	this.Type = row.Type.ShortString()
 }

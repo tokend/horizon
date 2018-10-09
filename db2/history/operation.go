@@ -5,31 +5,22 @@ import (
 
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"github.com/go-errors/errors"
 	"github.com/guregu/null"
-)
-
-const (
-	PENDING  = 1 + iota
-	SUCCESS  = 1 + iota
-	REJECTED = 1 + iota
-	CANCELED = 1 + iota
-	FAILED   = 1 + iota
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // Operation is a row of data from the `history_operations` table
 type Operation struct {
 	db2.TotalOrderID
 	TransactionID    int64             `db:"transaction_id"`
-	TransactionHash  string            `db:"transaction_hash"`
 	ApplicationOrder int32             `db:"application_order"`
 	Type             xdr.OperationType `db:"type"`
 	DetailsString    null.String       `db:"details"`
 	LedgerCloseTime  time.Time         `db:"ledger_close_time"`
 	SourceAccount    string            `db:"source_account"`
-	State            int32             `db:"state"`
+	State            OperationState    `db:"state"`
 	Identifier       int64             `db:"identifier"`
 }
 

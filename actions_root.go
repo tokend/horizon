@@ -3,6 +3,7 @@ package horizon
 import (
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
 )
 
@@ -16,8 +17,14 @@ type RootAction struct {
 func (action *RootAction) JSON() {
 	action.App.UpdateStellarCoreInfo()
 
+	if action.App.CoreInfo == nil {
+		action.Err = &problem.ServerOverCapacity
+		return
+	}
+
 	var res resource.Root
 	res.PopulateLedgerState(action.Ctx, ledger.CurrentState())
+
 	res.NetworkPassphrase = action.App.CoreInfo.NetworkPassphrase
 	res.CommissionAccountID = action.App.CoreInfo.CommissionAccountID
 	res.MasterAccountID = action.App.CoreInfo.MasterAccountID

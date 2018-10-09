@@ -7,6 +7,7 @@ import (
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
+	"gitlab.com/tokend/regources"
 )
 
 // This file contains the actions:
@@ -16,12 +17,8 @@ import (
 // AccountShowAction renders a account summary found by its address.
 type AccountShowAction struct {
 	Action
-	Address     string
-	CoreRecord  *core.Account
-	CoreSigners []core.Signer
-	CoreLimits  core.Limits
-	Balances    []core.Balance
-	Resource    resource.Account
+	Address  string
+	Resource resource.Account
 }
 
 // JSON is a method for actions.JSON
@@ -31,9 +28,9 @@ func (action *AccountShowAction) JSON() {
 		action.checkAllowed,
 		action.loadRecord,
 		action.loadBalances,
-		action.loadResource,
+		action.loadExternalSystemAccountIDs,
+		action.loadReferrals,
 		func() {
-			action.Resource.IncentivePerCoinExpiresAt = time.Date(2017, 10, 1, 0, 0, 0, 0, time.UTC).Unix()
 			hal.Render(action.W, action.Resource)
 		},
 	)
@@ -47,6 +44,36 @@ func (action *AccountShowAction) checkAllowed() {
 	action.IsAllowed(action.Address)
 }
 
+func (action *AccountShowAction) loadRecord() {
+	coreRecord, err := action.CoreQ().
+		Accounts().
+		ForAddresses(action.Address).
+		WithAccountKYC().
+		First()
+
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to get account from core DB")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	if coreRecord == nil {
+		action.Err = &problem.NotFound
+		return
+	}
+
+	action.Resource.Populate(action.Ctx, *coreRecord)
+
+	signers, err := action.GetSigners(coreRecord)
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to get signers")
+		action.Err = &problem.ServerError
+		return
+	}
+
+	action.Resource.Signers.Populate(signers)
+}
+
 func (action *AccountShowAction) loadBalances() {
 	var balances []core.Balance
 	err := action.CoreQ().
@@ -57,65 +84,37 @@ func (action *AccountShowAction) loadBalances() {
 		return
 	}
 
-	for i := range balances {
-		assetCode := balances[i].Asset
-		asset, err := action.CachedQ().MustAssetByCode(assetCode)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to load asset")
-			action.Err = &problem.ServerError
-			return
-		}
+	action.Resource.SetBalances(balances)
+}
 
-		if !action.IsAdmin && !asset.IsVisibleForUser(action.CoreRecord) {
-			continue
-		}
+func (action *AccountShowAction) loadExternalSystemAccountIDs() {
+	exSysIDs, err := action.CoreQ().ExternalSystemAccountID().ForAccount(action.Address).Select()
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to load external system account ids")
+		action.Err = &problem.ServerError
+		return
+	}
 
-		action.Balances = append(action.Balances, balances[i])
+	action.Resource.ExternalSystemAccounts = make([]regources.ExternalSystemAccountID, 0, len(exSysIDs))
+	for i := range exSysIDs {
+		if exSysIDs[i].ExpiresAt == nil || *exSysIDs[i].ExpiresAt >= time.Now().Unix() {
+			result := resource.PopulateExternalSystemAccountID(exSysIDs[i])
+			action.Resource.ExternalSystemAccounts = append(action.Resource.ExternalSystemAccounts, result)
+		}
 	}
 }
 
-func (action *AccountShowAction) loadRecord() {
-	var err error
-	action.CoreRecord, err = action.CoreQ().
-		Accounts().
-		ForAddresses(action.Address).
-		WithStatistics().
-		First()
-
+func (action *AccountShowAction) loadReferrals() {
+	var coreReferrals []core.Account
+	err := action.CoreQ().Accounts().ForReferrer(action.Address).Select(&coreReferrals)
 	if err != nil {
-		action.Log.WithError(err).Error("Failed to get account from core DB")
+		action.Log.WithError(err).Error("Failed to load referrals")
 		action.Err = &problem.ServerError
 		return
 	}
 
-	if action.CoreRecord == nil {
-		action.Err = &problem.NotFound
-		return
-	}
-
-	action.CoreRecord.Statistics.ClearObsolete(time.Now().UTC())
-
-	action.CoreSigners, err = action.GetSigners(action.CoreRecord)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to get signers for account")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	action.CoreLimits, err = action.CoreQ().LimitsForAccount(action.CoreRecord.AccountID, action.CoreRecord.AccountType)
-}
-
-func (action *AccountShowAction) loadResource() {
-	err := action.Resource.Populate(
-		action.Ctx,
-		*action.CoreRecord,
-		action.CoreSigners,
-		action.Balances,
-		&action.CoreLimits,
-	)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to populate account response")
-		action.Err = &problem.ServerError
-		return
+	action.Resource.Referrals = make([]resource.Referral, len(coreReferrals))
+	for i := range coreReferrals {
+		action.Resource.Referrals[i].Populate(coreReferrals[i])
 	}
 }

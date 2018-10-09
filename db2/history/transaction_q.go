@@ -4,6 +4,7 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/toid"
 	sq "github.com/lann/squirrel"
+	"strconv"
 )
 
 var selectTransaction = sq.Select(
@@ -38,6 +39,7 @@ type TransactionsQI interface {
 	ForAccount(aid string) TransactionsQI
 	ForLedger(seq int32) TransactionsQI
 	Page(page db2.PageQuery) TransactionsQI
+	ByTxIDs(txIDs []int64) TransactionsQI
 	Select(dest interface{}) error
 }
 
@@ -57,6 +59,21 @@ func (q *Q) TransactionByHash(dest interface{}, hash string) error {
 	sql := selectTransaction.
 		Limit(1).
 		Where("ht.transaction_hash = ?", hash)
+
+	return q.Get(dest, sql)
+}
+
+// TransactionByHashOrID is a query that loads a single row from the
+// `history_transactions` table based upon the provided hash or id.
+func (q *Q) TransactionByHashOrID(dest interface{}, hashOrID string) error {
+	txID, err := strconv.ParseUint(hashOrID, 10, 64)
+	if err != nil {
+		return q.TransactionByHash(dest, hashOrID)
+	}
+
+	sql := selectTransaction.
+		Limit(1).
+		Where("ht.id = ?", txID)
 
 	return q.Get(dest, sql)
 }
@@ -103,6 +120,15 @@ func (q *TransactionsQ) Page(page db2.PageQuery) TransactionsQI {
 	}
 
 	q.sql, q.Err = page.ApplyTo(q.sql, "ht.id")
+	return q
+}
+
+func (q *TransactionsQ) ByTxIDs(txIDs []int64) TransactionsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(sq.Eq{"ht.id" : txIDs})
 	return q
 }
 

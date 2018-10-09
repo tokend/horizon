@@ -1,12 +1,13 @@
 package main
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"database/sql"
-	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/spf13/cobra"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type Migrator func(*sql.DB, db2.MigrateDir, int) (int, error)
@@ -19,7 +20,7 @@ func migrateDB(cmd *cobra.Command, args []string, dbConnectionURL string, migrat
 		os.Exit(1)
 	}
 
-	dir := db2.MigrateDir(args[0])
+	dir := args[0]
 	count := 0
 
 	// If a second arg is present, parse it to an int and use it as the count
@@ -33,6 +34,11 @@ func migrateDB(cmd *cobra.Command, args []string, dbConnectionURL string, migrat
 			os.Exit(1)
 		}
 	}
+	migrate(dir, count, migrator, dbConnectionURL)
+}
+
+func migrate(direction string, count int, migrator Migrator, dbConnectionURL string) {
+	dir := db2.MigrateDir(direction)
 
 	db, err := sql.Open("postgres", dbConnectionURL)
 	if err != nil {

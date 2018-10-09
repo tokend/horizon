@@ -46,6 +46,7 @@ func (m *txSubError) ResultXDR() string {
 
 // NewRejectedTxError creates error with type RejectedTx
 func NewRejectedTxError(resultXDR string) Error {
+
 	return &txSubError{
 		error:     fmt.Errorf("core rejected tx: %s", resultXDR),
 		errorType: RejectedTx,

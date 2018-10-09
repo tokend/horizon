@@ -5,14 +5,14 @@ package ingest
 
 import (
 	"sync"
+	"time"
 
+	"github.com/rcrowley/go-metrics"
 	"gitlab.com/tokend/horizon/corer"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/ingest/ingestion"
 	"gitlab.com/tokend/horizon/log"
-	sq "github.com/lann/squirrel"
-	"github.com/rcrowley/go-metrics"
 )
 
 const (
@@ -36,13 +36,9 @@ type Cursor struct {
 	// attempt to be ingested in this session.
 	LastLedger int32
 	// DB is the stellar-core db that data is ingested from.
-	CoreDB    *db2.Repo
-	HistoryDB *db2.Repo
+	CoreDB *db2.Repo
 
 	Metrics *IngesterMetrics
-
-	// Err is the error that caused this iteration to fail, if any.
-	Err error
 
 	lg   int32
 	tx   int
@@ -54,29 +50,17 @@ func (c *Cursor) CoreQ() core.QInterface {
 	return &core.Q{Repo: c.CoreDB}
 }
 
-func (c *Cursor) HistoryQ() history.QInterface {
-	return &history.Q{Repo: c.HistoryDB}
-}
-
-// EffectIngestion is a helper struct to smooth the ingestion of effects.  this
-// struct will track what the correct operation to use and order to use when
-// adding effects into an ingestion.
-type EffectIngestion struct {
-	Dest        *Ingestion
-	OperationID int64
-	err         error
-	added       int
-	parent      *Ingestion
+func (c *Cursor) LedgerCloseTime() time.Time {
+	return time.Unix(int64(c.data.Header.CloseTime), 0).UTC()
 }
 
 // LedgerBundle represents a single ledger's worth of novelty created by one
 // ledger close
 type LedgerBundle struct {
-	Sequence            int32
-	Header              core.LedgerHeader
-	TransactionFees     []core.TransactionFee
-	Transactions        []core.Transaction
-	HistoryPriceProvide *PriceHistoryProvider
+	Sequence        int32
+	Header          core.LedgerHeader
+	TransactionFees []core.TransactionFee
+	Transactions    []core.Transaction
 }
 
 // System represents the data ingestion subsystem of horizon.
@@ -107,33 +91,11 @@ type IngesterMetrics struct {
 	LoadLedgerTimer   metrics.Timer
 }
 
-// Ingestion receives write requests from a Session
-type Ingestion struct {
-	// DB is the sql repo to be used for writing any rows into the horizon
-	// database.
-	DB     *db2.Repo
-	CoreDB *db2.Repo
-
-	CoreQ core.QInterface
-
-	ledgers                  sq.InsertBuilder
-	transactions             sq.InsertBuilder
-	transaction_participants sq.InsertBuilder
-	operations               sq.InsertBuilder
-	operation_participants   sq.InsertBuilder
-	emission_requests        sq.InsertBuilder
-	recovery_requests        sq.InsertBuilder
-	payment_requests         sq.InsertBuilder
-	balances                 sq.InsertBuilder
-	trades                   sq.InsertBuilder
-	priceHistory             sq.InsertBuilder
-}
-
 // Session represents a single attempt at ingesting data into the history
 // database.
 type Session struct {
 	Cursor    *Cursor
-	Ingestion *Ingestion
+	Ingestion *ingestion.Ingestion
 
 	CoreInfo *corer.Info
 
@@ -147,10 +109,6 @@ type Session struct {
 	//
 	// Results fields
 	//
-
-	// Err is the error that caused this session to fail, if any.
-	Err error
-
 	// Ingested is the number of ledgers that were successfully ingested during
 	// this session.
 	Ingested int
@@ -188,17 +146,15 @@ func NewSession(paranoid bool, first, last int32, i *System) *Session {
 
 	return &Session{
 		Paranoid: paranoid,
-		Ingestion: &Ingestion{
+		Ingestion: &ingestion.Ingestion{
 			DB:     hdb,
 			CoreDB: coredb,
-			CoreQ:  core.NewQ(coredb),
 		},
 
 		Cursor: &Cursor{
 			FirstLedger: first,
 			LastLedger:  last,
 			CoreDB:      i.CoreDB,
-			HistoryDB:   i.HorizonDB,
 			Metrics:     &i.Metrics,
 		},
 		CoreConnector: i.CoreConnector,

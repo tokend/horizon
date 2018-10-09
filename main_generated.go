@@ -1,8 +1,9 @@
 package horizon
 
 import (
-	"github.com/zenazn/goji/web"
 	"net/http"
+
+	"github.com/zenazn/goji/web"
 )
 
 // ServeHTTPC is a method for web.Handler
@@ -10,6 +11,22 @@ func (action AccountBalancesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "AccountBalancesAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action AccountDetailedBalancesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "AccountDetailedBalancesAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action AccountFeesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "AccountFeesAction")
 	ap.Execute(&action)
 }
 
@@ -22,10 +39,10 @@ func (action AccountIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *h
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action AccountReferralsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action AccountKYCAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountReferralsAction")
+	action.Log = action.Log.WithField("action", "AccountKYCAction")
 	ap.Execute(&action)
 }
 
@@ -38,26 +55,10 @@ func (action AccountShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *ht
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action AccountSummaryAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action AssetHoldersShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountSummaryAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action AccountTypeLimitsAllAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountTypeLimitsAllAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action AccountTypeLimitsShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AccountTypeLimitsShowAction")
+	action.Log = action.Log.WithField("action", "AssetHoldersShowAction")
 	ap.Execute(&action)
 }
 
@@ -70,10 +71,26 @@ func (action AssetPairsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *htt
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action AssetsAllAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action AssetPairsConverterAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "AssetsAllAction")
+	action.Log = action.Log.WithField("action", "AssetPairsConverterAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action AssetsIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "AssetsIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action AssetsShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "AssetsShowAction")
 	ap.Execute(&action)
 }
 
@@ -110,42 +127,58 @@ func (action BalanceTrustsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action CheckPreEmissionAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action BalancesReportAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "CheckPreEmissionAction")
+	action.Log = action.Log.WithField("action", "BalancesReportAction")
 	ap.Execute(&action)
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action CoinsAmountInfoAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action ChartsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "CoinsAmountInfoAction")
+	action.Log = action.Log.WithField("action", "ChartsAction")
 	ap.Execute(&action)
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action CoinsEmissionRequestIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action ContractIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "CoinsEmissionRequestIndexAction")
+	action.Log = action.Log.WithField("action", "ContractIndexAction")
 	ap.Execute(&action)
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action CoinsEmissionRequestShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action ContractShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "CoinsEmissionRequestShowAction")
+	action.Log = action.Log.WithField("action", "ContractShowAction")
 	ap.Execute(&action)
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action EmissionRulesShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+func (action CoreReferencesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "EmissionRulesShowAction")
+	action.Log = action.Log.WithField("action", "CoreReferencesAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action SingleReferenceAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SingleReferenceAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action CoreSalesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "CoreSalesAction")
 	ap.Execute(&action)
 }
 
@@ -162,14 +195,6 @@ func (action FeesShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "FeesShowAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action ForfeitRequestAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "ForfeitRequestAction")
 	ap.Execute(&action)
 }
 
@@ -198,6 +223,30 @@ func (action KdfParamsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action KeyValueShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "KeyValueShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action KeyValueShowAllAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "KeyValueShowAllAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action LedgerChangesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "LedgerChangesAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action LedgerIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
@@ -206,10 +255,34 @@ func (action LedgerIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *ht
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action LedgerOperationsIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "LedgerOperationsIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action LedgerShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "LedgerShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action LimitsV2AccountShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "LimitsV2AccountShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action LimitsV2ShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "LimitsV2ShowAction")
 	ap.Execute(&action)
 }
 
@@ -270,22 +343,6 @@ func (action OrderBookAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action PaymentRequestIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "PaymentRequestIndexAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
-func (action PaymentRequestShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "PaymentRequestShowAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
 func (action PricesHistoryAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
@@ -302,10 +359,50 @@ func (action RateLimitExceededAction) ServeHTTPC(c web.C, w http.ResponseWriter,
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action ReviewableRequestIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "ReviewableRequestIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action ReviewableRequestShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "ReviewableRequestShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action RootAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "RootAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action SaleAnteAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SaleAnteAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action SaleIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SaleIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action SaleShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SaleShowAction")
 	ap.Execute(&action)
 }
 
@@ -322,6 +419,14 @@ func (action SignersIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *h
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "SignersIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action StatisticsAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "StatisticsAction")
 	ap.Execute(&action)
 }
 
@@ -354,5 +459,13 @@ func (action TransactionShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "TransactionShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action TransactionV2IndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "TransactionV2IndexAction")
 	ap.Execute(&action)
 }

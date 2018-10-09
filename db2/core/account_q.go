@@ -14,16 +14,16 @@ type AccountQI interface {
 	ByAddress(address string) (*Account, error)
 	// filters by account type
 	ForTypes(types []xdr.AccountType) AccountQI
-	// joins statistics
-	WithStatistics() AccountQI
-	// filters by referrer
-	ForReferrer(referrer string) AccountQI
 	// performs select with specified filters
 	Select(destination interface{}) error
 	// filters by account ids
 	ForAddresses(addresses ...string) AccountQI
+	// filters by referrer
+	ForReferrer(referrer string) AccountQI
 	// Selects first element from filtered
 	First() (*Account, error)
+	// joins account KYC
+	WithAccountKYC() AccountQI
 }
 
 // AccountQ is a helper struct to aid in configuring queries that loads
@@ -59,28 +59,23 @@ func (q *AccountQ) ForTypes(types []xdr.AccountType) AccountQI {
 	return q
 }
 
-func (q *AccountQ) WithStatistics() AccountQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.
-		LeftJoin("statistics st on (st.account_id = a.accountid)").
-		Columns(
-			"st.daily_out as st_daily_out",
-			"st.weekly_out as st_weekly_out",
-			"st.monthly_out as st_monthly_out",
-			"st.annual_out as st_annual_out",
-			"st.updated_at as st_updated_at")
-	return q
-}
-
 func (q *AccountQ) ForReferrer(referrer string) AccountQI {
 	if q.Err != nil {
 		return q
 	}
 
 	q.sql = q.sql.Where("referrer = ?", referrer)
+	return q
+}
+
+func (q *AccountQ) WithAccountKYC() AccountQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.
+		LeftJoin("account_KYC ak on (ak.accountid = a.accountid)").
+		Columns("ak.KYC_data as account_kyc_data")
 	return q
 }
 
@@ -95,7 +90,7 @@ func (q *AccountQ) ForAddresses(addresses ...string) AccountQI {
 	if q.Err != nil {
 		return q
 	}
-	q.sql = q.sql.Where(sq.Eq{"accountid": addresses})
+	q.sql = q.sql.Where(sq.Eq{"a.accountid": addresses})
 	return q
 }
 
@@ -113,11 +108,11 @@ func (q *AccountQ) First() (*Account, error) {
 
 var selectAccount = sq.Select(
 	"a.accountid",
+	"a.recoveryid",
 	"a.thresholds",
 	"a.account_type",
 	"a.block_reasons",
 	"a.referrer",
-	"a.share_for_referrer",
 	"a.policies",
-	"a.created_at",
+	"a.kyc_level",
 ).From("accounts a")

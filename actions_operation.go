@@ -7,7 +7,7 @@ import (
 
 	"strconv"
 
-	"gitlab.com/tokend/go/xdr"
+	"github.com/pkg/errors"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/ledger"
@@ -16,7 +16,8 @@ import (
 	"gitlab.com/tokend/horizon/render/sse"
 	"gitlab.com/tokend/horizon/resource"
 	"gitlab.com/tokend/horizon/toid"
-	"github.com/pkg/errors"
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // This file contains the actions:
@@ -31,20 +32,24 @@ type OperationIndexAction struct {
 	Action
 	Types []xdr.OperationType
 
-	LedgerFilter      int32
-	AccountFilter     string
-	AccountTypeFilter int32
-	BalanceFilter     string
-	AssetFilter       string
-	ExchangeFilter    string
-	TransactionFilter string
-	ReferenceFilter   string
-	SinceFilter       *time.Time
-	ToFilter          *time.Time
-	PagingParams      db2.PageQuery
-	Records           []history.Operation
-	Participants      map[int64]*history.OperationParticipants
-	Page              hal.Page
+	LedgerFilter        int32
+	AccountFilter       string
+	AccountTypeFilter   int32
+	BalanceFilter       string
+	AssetFilter         string
+	ExchangeFilter      string
+	TransactionFilter   string
+	CompletedOnlyFilter bool
+	SkipCanceled        bool
+	PendingOnlyFilter   bool
+	// ReferenceFilter substring
+	ReferenceFilter string
+	SinceFilter     *time.Time
+	ToFilter        *time.Time
+	PagingParams    db2.PageQuery
+	Records         []history.Operation
+	Participants    map[int64]*history.OperationParticipants
+	Page            hal.Page
 }
 
 // JSON is a method for actions.JSON
@@ -109,6 +114,14 @@ func (action *OperationIndexAction) loadParams() {
 	action.ReferenceFilter = action.GetString("reference")
 	action.SinceFilter = action.TryGetTime("since")
 	action.ToFilter = action.TryGetTime("to")
+	action.CompletedOnlyFilter = action.GetBoolOrDefault("completed_only", true)
+	action.SkipCanceled = action.GetBoolOrDefault("skip_canceled", true)
+	action.PendingOnlyFilter = action.GetBool("pending_only")
+
+	if action.CompletedOnlyFilter && action.PendingOnlyFilter {
+		action.SetInvalidField("pending_only", errors.New("completed_only and pending_only filters cannot both be set"))
+		return
+	}
 
 	var err error
 	opTypeStr := action.GetString("operation_type")
@@ -142,12 +155,17 @@ func (action *OperationIndexAction) loadParams() {
 
 	action.PagingParams = action.GetPageQuery()
 	action.Page.Filters = map[string]string{
-		"account_id":   action.AccountFilter,
-		"account_type": fmt.Sprintf("%d", action.AccountTypeFilter),
-		"balance_id":   action.BalanceFilter,
-		"asset":        action.AssetFilter,
-		"tx_id":        action.TransactionFilter,
-		"reference":    action.ReferenceFilter,
+		"account_id":     action.AccountFilter,
+		"account_type":   fmt.Sprintf("%d", action.AccountTypeFilter),
+		"balance_id":     action.BalanceFilter,
+		"asset":          action.AssetFilter,
+		"tx_id":          action.TransactionFilter,
+		"reference":      action.ReferenceFilter,
+		"since":          action.GetString("since"),
+		"to":             action.GetString("to"),
+		"completed_only": action.GetString("completed_only"),
+		"skip_canceled":  action.GetString("skip_canceled"),
+		"pending_only":   action.GetString("pending_only"),
 	}
 	if action.SinceFilter != nil {
 		action.Page.Filters["since"] = action.SinceFilter.Format(time.RFC3339)
@@ -161,10 +179,14 @@ func (action *OperationIndexAction) loadParams() {
 }
 
 func (action *OperationIndexAction) loadRecords() {
-	ops := action.HistoryQ().Operations()
+	ops := action.HistoryQ().Operations().WithoutCancelingManagerOffer().WithoutExternallyFullyMatched()
 
 	if len(action.Types) > 0 {
 		ops.ForTypes(action.Types)
+	}
+
+	if action.SkipCanceled {
+		ops = ops.WithoutCanceled()
 	}
 
 	if action.AccountFilter != "" || action.AccountTypeFilter != 0 {
@@ -207,6 +229,14 @@ func (action *OperationIndexAction) loadRecords() {
 		ops.To(*action.ToFilter)
 	}
 
+	if action.CompletedOnlyFilter {
+		ops.CompletedOnly()
+	}
+
+	if action.PendingOnlyFilter {
+		ops.PendingOnly()
+	}
+
 	err := ops.Page(action.PagingParams).Select(&action.Records)
 
 	if err != nil {
@@ -240,7 +270,7 @@ func (action *OperationIndexAction) loadPage() {
 		}
 
 		// add operation 2 time if it's within one account
-		if len(opParticipants.Participants) == 2 && record.Type != xdr.OperationTypeManageOffer &&
+		if len(opParticipants.Participants) == 2 && record.Type != xdr.OperationTypeManageOffer && record.Type != xdr.OperationTypeCreateIssuanceRequest &&
 			opParticipants.Participants[0].AccountID == opParticipants.Participants[1].AccountID {
 
 			action.Page.Add(res)
@@ -258,7 +288,8 @@ func (action *OperationIndexAction) loadPage() {
 }
 
 func (action *OperationIndexAction) checkAllowed() {
-	action.IsAllowed(action.AccountFilter)
+	action.Doorman().Check(action.R, doorman.SignerOf(action.AccountFilter),
+		doorman.SignerOfWithPermission(action.App.CoreInfo.MasterAccountID, doorman.SignerExternsionOperationsList))
 }
 
 // OperationShowAction renders a ledger found by its sequence number.

@@ -2,6 +2,7 @@
 
 CREATE TABLE history_trades (
     id BIGSERIAL NOT NULL,
+    order_book_id BIGINT NOT NULL,
     base_asset character varying(16) NOT NULL,
     quote_asset character varying(16) NOT NULL,
     base_amount BIGINT NOT NULL,

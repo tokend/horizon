@@ -1,15 +1,17 @@
 package core
 
 import (
-	"gitlab.com/tokend/go/hash"
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+
+	"gitlab.com/tokend/go/hash"
+
 	sq "github.com/lann/squirrel"
 )
 
 var selectFees = sq.Select("f.fee_type", "f.asset", "f.subtype", "f.fixed", "f.percent", "f.lastmodified,"+
-	"f.account_id, f.account_type, f.lower_bound, f.upper_bound, f.hash").
+	"f.account_id, f.account_type, f.lower_bound, f.upper_bound, f.hash, f.fee_asset").
 	From("fee_state f")
 
 type FeeEntry struct {
@@ -23,6 +25,7 @@ type FeeEntry struct {
 	LowerBound  int64  `db:"lower_bound"`
 	UpperBound  int64  `db:"upper_bound"`
 	Hash        string `db:"hash"`
+	FeeAsset    string `db:"fee_asset"`
 
 	LastModified int32 `db:"lastmodified"`
 }
@@ -97,7 +100,7 @@ type FeeEntryQ struct {
 }
 
 type FeeEntryQI interface {
-	Select(dest interface{}) error
+	Select() ([]FeeEntry, error)
 	ForAccountType(accountType *int32) FeeEntryQI
 	ForAccount(account string) FeeEntryQI
 }
@@ -140,11 +143,11 @@ func (q *FeeEntryQ) ForAccount(account string) FeeEntryQI {
 }
 
 // Select loads the results of the query specified by `q` into `dest`.
-func (q *FeeEntryQ) Select(dest interface{}) error {
+func (q *FeeEntryQ) Select() (res []FeeEntry, err error) {
 	if q.Err != nil {
-		return q.Err
+		return nil, q.Err
 	}
 
-	q.Err = q.parent.Select(dest, q.sql)
-	return q.Err
+	q.Err = q.parent.Select(&res, q.sql)
+	return res, q.Err
 }

@@ -1,97 +1,12 @@
 package ingest
 
 import (
+	err2 "github.com/pkg/errors"
 	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/errors"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/log"
-	err2 "github.com/pkg/errors"
 )
-
-// ReingestAll re-ingests all ledgers
-func (i *System) ReingestAll() (int, error) {
-	ls := ledger.CurrentState()
-	return i.ReingestRange(ls.CoreElder, ls.CoreLatest)
-}
-
-// ReingestOutdated finds old ledgers and reimports them.
-func (i *System) ReingestOutdated() (n int, err error) {
-	q := history.Q{Repo: i.HorizonDB}
-
-	// NOTE: this loop will never terminate if some bug were cause a ledger
-	// reingestion to silently fail.
-	for {
-		outdated := []int32{}
-		err = q.OldestOutdatedLedgers(&outdated, CurrentVersion)
-		if err != nil {
-			return
-		}
-
-		if len(outdated) == 0 {
-			return
-		}
-
-		log.
-			WithField("lowest_sequence", outdated[0]).
-			WithField("batch_size", len(outdated)).
-			Info("reingest: outdated")
-
-		var start, end int32
-		flush := func() error {
-			ingested, ferr := i.ReingestRange(start, end)
-
-			if ferr != nil {
-				return ferr
-			}
-			n += ingested
-			return nil
-		}
-
-		for idx := range outdated {
-			seq := outdated[idx]
-
-			if start == 0 {
-				start = seq
-				end = seq
-				continue
-			}
-
-			if seq == end+1 {
-				end = seq
-				continue
-			}
-
-			err = flush()
-			if err != nil {
-				return
-			}
-
-			start = seq
-			end = seq
-		}
-
-		err = flush()
-		if err != nil {
-			return
-		}
-	}
-}
-
-// ReingestRange reingests a range of ledgers, from `start` to `end`, inclusive.
-func (i *System) ReingestRange(start, end int32) (int, error) {
-	is := NewSession(start > 1, start, end, i)
-	is.ClearExisting = true
-
-	is.Run()
-	return is.Ingested, is.Err
-}
-
-// ReingestSingle re-ingests a single ledger
-func (i *System) ReingestSingle(sequence int32) error {
-	_, err := i.ReingestRange(sequence, sequence)
-	return err
-}
 
 // Tick triggers the ingestion system to ingest any new ledger data, provided
 // that there currently is not an import session in progress.
@@ -186,10 +101,6 @@ func (i *System) runOnce() {
 
 	// 3.
 	is.Run()
-
-	if is.Err != nil {
-		log.Errorf("import session failed: %s", is.Err)
-	}
 
 	return
 }

@@ -30,5 +30,5 @@ func (request *RecoveryRequest) Populate(row *history.RecoveryRequest) error {
 
 // PagingToken implementation for hal.Pageable
 func (request *RecoveryRequest) PagingToken() string {
-	return fmt.Sprintf("%d", request.PT)
+	return fmt.Sprintf("%s", request.PT)
 }

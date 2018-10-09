@@ -58,12 +58,6 @@ func (q *AccountsQMock) Page(page db2.PageQuery) AccountsQI {
 func (q *AccountsQMock) Select(dest interface{}) error {
 	return q.Called(dest).Error(0)
 }
-func (q *QMock) CoinsEmissionRequestByRequestID(dest interface{}, requestID string) error {
-	return nil
-}
-func (q *QMock) CoinsEmissionRequests() CoinsEmissionRequestsQI {
-	return nil
-}
 
 // Ledgers
 func (q *QMock) Ledgers() LedgersQI {

@@ -1,12 +1,14 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/go/amount"
+	"github.com/go-errors/errors"
 	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/exchange"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
-	"github.com/go-errors/errors"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/regources"
 )
 
 // This file contains the actions:
@@ -14,6 +16,8 @@ import (
 // FeesShowAction: renders fees for operationType
 type FeesShowAction struct {
 	Action
+	converter *exchange.Converter
+
 	FeeType   int
 	Asset     string
 	Subtype   int64
@@ -22,13 +26,14 @@ type FeesShowAction struct {
 
 	Amount string
 
-	Fee resource.FeeEntry
+	Fee regources.FeeEntry
 }
 
 // JSON is a method for actions.JSON
 func (action *FeesShowAction) JSON() {
 	action.Do(
 		action.loadParams,
+		action.createConverter,
 		action.loadData,
 		func() {
 			hal.Render(action.W, action.Fee)
@@ -41,6 +46,16 @@ func (action *FeesShowAction) loadParams() {
 	action.Subtype = action.GetInt64("subtype")
 	action.AccountID = action.GetString("account")
 	action.Amount = action.GetString("amount")
+}
+
+func (action *FeesShowAction) createConverter() {
+	var err error
+	action.converter, err = exchange.NewConverter(action.CoreQ())
+	if err != nil {
+		action.Log.WithError(err).Error("Failed to init converter")
+		action.Err = &problem.ServerError
+		return
+	}
 }
 
 func (action *FeesShowAction) loadData() {
@@ -70,7 +85,21 @@ func (action *FeesShowAction) loadData() {
 	if result == nil {
 		result = new(core.FeeEntry)
 		result.Asset = action.Asset
+		result.FeeAsset = action.Asset
 		result.FeeType = action.FeeType
+	}
+
+	if result.FeeAsset == "" {
+		result.FeeAsset = result.Asset
+	}
+
+	if result.Asset != result.FeeAsset {
+		action.Amount, err = convertAmount(am, result.Asset, result.FeeAsset, action.converter)
+		if err != nil {
+			action.Log.WithError(err).Error("Failed to convert fee")
+			action.Err = &problem.ServerError
+			return
+		}
 	}
 
 	percentFee, isOverflow := action.GetPercentFee(result.Percent, action.Amount)
@@ -81,7 +110,7 @@ func (action *FeesShowAction) loadData() {
 
 	result.Percent = percentFee
 
-	action.Fee.Populate(*result)
+	action.Fee = resource.NewFeeEntry(*result)
 }
 
 func (action *FeesShowAction) GetPercentFee(percentFee int64, rawAmount string) (int64, bool) {

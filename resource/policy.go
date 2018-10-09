@@ -19,20 +19,12 @@ type Policies struct {
 // Populate fills out the fields of the signer, using one of an account's
 // secondary signers.
 func (p *Policies) Populate(row core.Asset) {
-	p.PolicyI = row.Policies
-	for _, policy := range xdr.AssetPolicyAll {
-		if (int32(policy) & p.PolicyI) != 0 {
-			p.Policies = append(p.Policies, Policy{
-				Value: int32(policy),
-				Name:  policy.String(),
-			})
-		}
-	}
+	p.PopulateFromInt32(row.Policies)
 }
 
-func (p *Policies) PopulateForAssetPair(row core.AssetPair) {
-	p.PolicyI = row.Policies
-	for _, policy := range xdr.AssetPairPolicyAll {
+func (p *Policies) PopulateFromInt32(policies int32) {
+	p.PolicyI = policies
+	for _, policy := range xdr.AssetPolicyAll {
 		if (int32(policy) & p.PolicyI) != 0 {
 			p.Policies = append(p.Policies, Policy{
 				Value: int32(policy),

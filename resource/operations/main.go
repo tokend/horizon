@@ -1,37 +1,11 @@
 package operations
 
 import (
-	"time"
-
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
-	"gitlab.com/tokend/horizon/resource/base"
+	"gitlab.com/tokend/go/xdr"
 	"golang.org/x/net/context"
 )
-
-// TypeNames maps from operation type to the string used to represent that type
-// in horizon's JSON responses
-var TypeNames = map[xdr.OperationType]string{
-	xdr.OperationTypeCreateAccount:              "create_account",
-	xdr.OperationTypePayment:                    "payment",
-	xdr.OperationTypeSetOptions:                 "set_options",
-	xdr.OperationTypeManageCoinsEmissionRequest: "manage_coins_emission_request",
-	xdr.OperationTypeReviewCoinsEmissionRequest: "review_coins_emission_request",
-	xdr.OperationTypeSetFees:                    "set_fees",
-	xdr.OperationTypeManageAccount:              "manage_account",
-	xdr.OperationTypeManageForfeitRequest:       "manage_forfeit_request",
-	xdr.OperationTypeRecover:                    "recover",
-	xdr.OperationTypeManageBalance:              "manage_balance",
-	xdr.OperationTypeReviewPaymentRequest:       "review_payment_request",
-	xdr.OperationTypeManageAsset:                "manage_asset",
-	xdr.OperationTypeUploadPreemissions:         "upload_pre-emissions",
-	xdr.OperationTypeSetLimits:                  "set_limits",
-	xdr.OperationTypeDirectDebit:                "direct_debit",
-	xdr.OperationTypeManageAssetPair:            "manage_asset_pair",
-	xdr.OperationTypeManageOffer:                "manage_offer",
-	xdr.OperationTypeManageInvoice:              "manage_invoice",
-}
 
 // New creates a new operation resource, finding the appropriate type to use
 // based upon the row's type.
@@ -74,24 +48,13 @@ func New(
 			e.SignerKey = ""
 		}
 		result = e
-	case xdr.OperationTypeManageCoinsEmissionRequest:
-		e := ManageCoinsEmissionRequest{Base: base}
-		err = row.UnmarshalDetails(&e)
-		result = e
-	case xdr.OperationTypeReviewCoinsEmissionRequest:
-		e := ReviewCoinsEmissionRequest{Base: base}
-		err = row.UnmarshalDetails(&e)
-		if public {
-			e.Reason = ""
-			e.Issuer = ""
-		}
-		result = e
 	case xdr.OperationTypeSetFees:
 		e := SetFees{Base: base}
 		err = row.UnmarshalDetails(&e)
 		if public {
 			if e.Fee != nil {
 				e.Fee.AccountID = ""
+				e.Fee.FeeAsset = ""
 			}
 		}
 		result = e
@@ -102,25 +65,20 @@ func New(
 			e.Account = ""
 		}
 		result = e
-	case xdr.OperationTypeManageForfeitRequest:
-		e := ManageForfeitRequest{Base: base}
+	case xdr.OperationTypeCreateWithdrawalRequest:
+		e := CreateWithdrawalRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
 		if public {
-			e.UserDetails = ""
+			e.ExternalDetails = nil
 		}
 		result = e
-	case xdr.OperationTypeSetLimits:
-		e := SetLimits{Base: base}
+	case xdr.OperationTypeManageLimits:
+		e := ManageLimits{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
-	case xdr.OperationTypeManageInvoice:
-		e := ManageInvoice{Base: base}
+	case xdr.OperationTypeManageInvoiceRequest:
+		e := ManageInvoiceRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
-		if public {
-			e.ReceiverBalance = ""
-			e.Sender = ""
-			e.RejectReason = nil
-		}
 		result = e
 	case xdr.OperationTypeManageOffer:
 		e := ManagerOffer{Base: base}
@@ -130,32 +88,61 @@ func New(
 		e := ManageAssetPair{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
+	case xdr.OperationTypeCreateIssuanceRequest:
+		e := CreateIssuanceRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.ExternalDetails = nil
+		}
+		result = e
+	case xdr.OperationTypePayout:
+		e := Payout{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.SourceBalanceID = ""
+			e.FixedFee = ""
+			e.PercentFee = ""
+		}
+		result = e
+	case xdr.OperationTypeCheckSaleState:
+		e := CheckSaleState{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
+	case xdr.OperationTypeCreateAmlAlert:
+		e := CreateAmlAlert{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.BalanceID = ""
+		}
+		result = e
+	case xdr.OperationTypeCreateKycRequest:
+		e := CreateUpdateKYCRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		if public {
+			e.KYCData = nil
+		}
+		result = e
+	case xdr.OperationTypeReviewRequest:
+		e := ReviewRequest{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
+	case xdr.OperationTypePaymentV2:
+		e := PaymentV2{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
+	case xdr.OperationTypeManageSale:
+		e := ManageSale{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
+	case xdr.OperationTypeManageAsset:
+		e := ManageAsset{Base: base}
+		err = row.UnmarshalDetails(&e)
+		result = e
 	default:
 		result = base
 	}
 
 	return
-}
-
-// Base represents the common attributes of an operation resource
-type Base struct {
-	Links struct {
-		Self        hal.Link `json:"self"`
-		Transaction hal.Link `json:"transaction"`
-		Succeeds    hal.Link `json:"succeeds"`
-		Precedes    hal.Link `json:"precedes"`
-	} `json:"_links"`
-
-	ID              string             `json:"id"`
-	PT              string             `json:"paging_token"`
-	TransactionID   string             `json:"transaction_id"`
-	SourceAccount   string             `json:"source_account,omitempty"`
-	Type            string             `json:"type"`
-	TypeI           int32              `json:"type_i"`
-	State           int32              `json:"state"`
-	Identifier      string             `json:"identifier"`
-	LedgerCloseTime time.Time          `json:"ledger_close_time"`
-	Participants    []base.Participant `json:"participants,omitempty"`
 }
 
 // CreateAccount is the json resource representing a single operation whose type
@@ -169,18 +156,18 @@ type CreateAccount struct {
 }
 
 type BasePayment struct {
-	From                  string             `json:"from,omitempty"`
-	To                    string             `json:"to,omitempty"`
-	FromBalance           string             `json:"from_balance,omitempty"`
-	ToBalance             string             `json:"to_balance,omitempty"`
-	Amount                string             `json:"amount"`
-	UserDetails           string             `json:"user_details,omitempty"`
-	Asset                 string             `json:"asset"`
-	SourcePaymentFee      string             `json:"source_payment_fee"`
-	DestinationPaymentFee string             `json:"destination_payment_fee"`
-	SourceFixedFee        string             `json:"source_fixed_fee"`
-	DestinationFixedFee   string             `json:"destination_fixed_fee"`
-	SourcePaysForDest     bool               `json:"source_pays_for_dest"`
+	From                  string `json:"from,omitempty"`
+	To                    string `json:"to,omitempty"`
+	FromBalance           string `json:"from_balance,omitempty"`
+	ToBalance             string `json:"to_balance,omitempty"`
+	Amount                string `json:"amount"`
+	UserDetails           string `json:"user_details,omitempty"`
+	Asset                 string `json:"asset"`
+	SourcePaymentFee      string `json:"source_payment_fee"`
+	DestinationPaymentFee string `json:"destination_payment_fee"`
+	SourceFixedFee        string `json:"source_fixed_fee"`
+	DestinationFixedFee   string `json:"destination_fixed_fee"`
+	SourcePaysForDest     bool   `json:"source_pays_for_dest"`
 }
 
 // Payment is the json resource representing a single operation whose type is
@@ -229,19 +216,22 @@ type Fee struct {
 	Subtype     int64  `json:"subtype"`
 	LowerBound  int64  `json:"lower_bound"`
 	UpperBound  int64  `json:"upper_bound"`
+	FeeAsset    string `json:"fee_asset"`
 }
 
 type SetFees struct {
 	Base
-	Fee              *Fee   `json:"fee"`
+	Fee *Fee `json:"fee"`
 }
 
 type ManagerOffer struct {
 	Base
-	IsBuy     bool   `json:"is_buy"`
-	Amount    string `json:"amount"`
-	Price     string `json:"price"`
-	Fee       string `json:"fee"`
-	OfferId   int64  `json:"offer_id"`
-	IsDeleted bool   `json:"is_deleted"`
+	IsBuy       bool   `json:"is_buy"`
+	BaseAsset   string `json:"base_asset"`
+	Amount      string `json:"amount"`
+	Price       string `json:"price"`
+	Fee         string `json:"fee"`
+	OfferId     int64  `json:"offer_id"`
+	OrderBookID int64  `json:"order_book_id"`
+	IsDeleted   bool   `json:"is_deleted"`
 }

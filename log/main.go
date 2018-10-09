@@ -7,12 +7,15 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	// glog "log"
-	"gitlab.com/distributed_lab/logan"
+	"time"
+
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 var contextKey = 0
 var DefaultLogger *Entry
 var DefaultMetrics *Metrics
+var SlowQueryBound time.Duration
 
 type F logan.F
 
@@ -26,6 +29,7 @@ const (
 
 func init() {
 	DefaultLogger, DefaultMetrics = New()
+	SlowQueryBound = 250 * time.Millisecond
 }
 
 // New creates a new logger according to horizon specifications.

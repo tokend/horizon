@@ -15,9 +15,9 @@ import (
 	"strconv"
 )
 
-// One is the value of one whole unit of currency.  Stellar uses 4 fixed digits
-// for fractional values, thus One is 10 thousand (10^4)
-const One = 10000
+// One is the value of one whole unit of currency.  The system uses 6 fixed digits
+// for fractional values, thus One is 1 million (10^6)
+const One = 1000000
 
 // MustParse is the panicking version of Parse
 func MustParse(v string) int64 {
@@ -28,21 +28,24 @@ func MustParse(v string) int64 {
 	return ret
 }
 
+// MustParseU is the panicking version of ParseU
+func MustParseU(v string) uint64 {
+	ret, err := ParseU(v)
+	if err != nil {
+		panic(err)
+	}
+	return ret
+}
+
 // Parse parses the provided as a stellar "amount", i.e. A 64-bit signed integer
 // that represents a decimal number with 7 digits of significance in the
 // fractional portion of the number.
 func Parse(v string) (int64, error) {
-	var f, o, r big.Rat
-
-	_, ok := f.SetString(v)
-	if !ok {
-		return 0, fmt.Errorf("cannot parse amount: %s", v)
+	is, err := stringToIntString(v)
+	if err != nil {
+		return 0, err
 	}
 
-	o.SetInt64(One)
-	r.Mul(&f, &o)
-
-	is := r.FloatString(0)
 	i, err := strconv.ParseInt(is, 10, 64)
 	if err != nil {
 		return 0, err
@@ -58,5 +61,48 @@ func String(v int64) string {
 	o.SetInt64(One)
 	r.Quo(&f, &o)
 
-	return r.FloatString(4)
+	return r.FloatString(6)
+}
+
+func stringToIntString(v string) (string, error) {
+	var f, o, r big.Rat
+
+	_, ok := f.SetString(v)
+	if !ok {
+		return "", fmt.Errorf("cannot parse amount: %s", v)
+	}
+
+	o.SetInt64(One)
+	r.Mul(&f, &o)
+
+	is := r.FloatString(0)
+	return is, nil
+}
+
+// Parse parses the provided as a stellar "amount", i.e. A 64-bit unsigned integer
+// that represents a decimal number with 7 digits of significance in the
+// fractional portion of the number.
+func ParseU(v string) (uint64, error) {
+	is, err := stringToIntString(v)
+	if err != nil {
+		return 0, err
+	}
+
+	i, err := strconv.ParseUint(is, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+	return i, nil
+}
+
+func StringU(v uint64) string {
+	var f, o, r big.Rat
+
+	var fInt big.Int
+	fInt.SetUint64(v)
+	f.SetInt(&fInt)
+	o.SetInt64(One)
+	r.Quo(&f, &o)
+
+	return r.FloatString(6)
 }

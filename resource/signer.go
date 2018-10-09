@@ -1,23 +1,20 @@
 package resource
 
 import (
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/resource/base"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
-
-type SignerType struct {
-	Name  string `json:"name"`
-	Value int32  `json:"value"`
-}
 
 // Signer represents one of an account's signers.
 type Signer struct {
-	PublicKey      string       `json:"public_key"`
-	Weight         int32        `json:"weight"`
-	SignerTypeI    int32        `json:"signer_type_i"`
-	SignerTypes    []SignerType `json:"signer_types"`
-	SignerIdentity int32        `json:"signer_identity"`
-	SignerName     string       `json:"signer_name"`
+	PublicKey      string           `json:"public_key"`
+	Weight         int32            `json:"weight"`
+	SignerTypeI    int32            `json:"signer_type_i"`
+	SignerTypes    []regources.Flag `json:"signer_types"`
+	SignerIdentity int32            `json:"signer_identity"`
+	SignerName     string           `json:"signer_name"`
 }
 
 // Populate fills out the fields of the signer, using one of an account's
@@ -32,12 +29,15 @@ func (s *Signer) populate(publicKey string, weight, rawSignerType, identity int3
 	s.SignerTypeI = rawSignerType
 	s.SignerIdentity = identity
 	s.SignerName = name
-	for _, signerType := range xdr.SignerTypeAll {
-		if (int32(signerType) & s.SignerTypeI) != 0 {
-			s.SignerTypes = append(s.SignerTypes, SignerType{
-				Value: int32(signerType),
-				Name:  signerType.String(),
-			})
-		}
-	}
+	s.SignerTypes = base.FlagFromXdrSignerType(rawSignerType, xdr.SignerTypeAll)
+}
+
+func (s *Signer) FromXDR(xSigner xdr.Signer) {
+	s.PublicKey = xSigner.PubKey.Address()
+	s.Weight = int32(xSigner.Weight)
+	s.SignerTypeI = int32(xSigner.SignerType)
+	s.SignerIdentity = int32(xSigner.Identity)
+	s.SignerName = string(xSigner.Name)
+	s.SignerTypes = base.FlagFromXdrSignerType(s.SignerTypeI, xdr.SignerTypeAll)
+
 }

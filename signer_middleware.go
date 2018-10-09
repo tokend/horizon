@@ -3,9 +3,9 @@ package horizon
 import (
 	"net/http"
 
+	"github.com/zenazn/goji/web"
 	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/horizon/render/problem"
-	"github.com/zenazn/goji/web"
 )
 
 type SignatureValidator struct {
@@ -40,7 +40,12 @@ func (v *SignatureValidator) Middleware(c *web.C, next http.Handler) http.Handle
 				// passing not signed requests through w/o setting any headers
 				next.ServeHTTP(w, r)
 			default:
-				problem.Render(r.Context(), w, &problem.BadRequest)
+				p := &problem.BadRequest
+				p.Extras = map[string]interface{}{
+					"invalid_field": "signature",
+					"reason":        err.Error(),
+				}
+				problem.Render(r.Context(), w, p)
 			}
 			return
 		}

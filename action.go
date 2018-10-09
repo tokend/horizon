@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"strings"
 
-	"gitlab.com/tokend/go/signcontrol"
-	"gitlab.com/tokend/go/xdr"
+	"github.com/pkg/errors"
+	"github.com/zenazn/goji/web"
 	"gitlab.com/tokend/horizon/actions"
 	"gitlab.com/tokend/horizon/cache"
 	"gitlab.com/tokend/horizon/db2"
@@ -17,8 +17,10 @@ import (
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/toid"
-	"github.com/pkg/errors"
-	"github.com/zenazn/goji/web"
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/go/resources"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // Action is the "base type" for all actions in horizon.  It provides
@@ -73,6 +75,7 @@ func (action *Action) IsAllowed(ownersOfData ...string) {
 func (action *Action) isAllowed(ownerOfData string) {
 	//return if develop mode without signatures is used
 	if action.App.config.SkipCheck {
+		action.IsAdmin = true
 		return
 	}
 
@@ -179,7 +182,7 @@ func (action *Action) Prepare(c web.C, w http.ResponseWriter, r *http.Request) {
 
 	base.SkipCheck = action.App.config.SkipCheck //pass config variable to base (since base can't read one)
 
-	base.Signer = r.Header.Get(signcontrol.PublicKeyHeader)
+	base.Signer, _ = signcontrol.CheckSignature(r)
 
 	if action.Ctx != nil {
 		action.Log = log.Ctx(action.Ctx)
@@ -304,9 +307,58 @@ func (action *Action) IsAccountSigner(accountId, signer string) *bool {
 	return isSigner
 }
 
+func getSystemAccountTypes() []xdr.AccountType {
+	return []xdr.AccountType{xdr.AccountTypeOperational, xdr.AccountTypeCommission, xdr.AccountTypeMaster}
+}
+
+func isSystemAccount(accountType int32) bool {
+	sysAccountTypes := getSystemAccountTypes()
+	for _, sysAccountType := range sysAccountTypes {
+		if accountType == int32(sysAccountType) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (action *Action) Doorman() doorman.Doorman {
+	return doorman.New(false, action)
+}
+
+// Signers used by doorman, basically just a connector to existing signers check logic
+func (action *Action) Signers(address string) ([]resources.Signer, error) {
+	// just to ensure backwards compatibility with checkAllowed
+	if address == "" {
+		address = action.App.CoreInfo.MasterAccountID
+	}
+	// get core account
+	account, err := action.CoreQ().Accounts().ByAddress(address)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account")
+	}
+	// pass it to legacy routine
+	signers, err := action.GetSigners(account)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account")
+	}
+	// convert structs
+	result := make([]resources.Signer, 0, len(signers))
+	for _, signer := range signers {
+		result = append(result, resources.Signer{
+			AccountID:  signer.Publickey,
+			Weight:     int(signer.Weight),
+			SignerType: int(signer.SignerType),
+			Identity:   int(signer.Identity),
+			Name:       signer.Name,
+		})
+	}
+	return result, nil
+}
+
 func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
-	// commission is managed by master account signers
-	if account.AccountType == int32(xdr.AccountTypeCommission) {
+	// all system accounts are managed by master account signers
+	if isSystemAccount(account.AccountType) && account.AccountType != int32(xdr.AccountTypeMaster) {
 		masterAccount, err := action.CoreQ().Accounts().ByAddress(action.App.CoreInfo.MasterAccountID)
 		if err != nil || masterAccount == nil {
 			if err == nil {
@@ -325,6 +377,17 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get signers")
 		return nil, err
+	}
+
+	if !isSystemAccount(account.AccountType) {
+		// add recovery signer
+		signers = append(signers, core.Signer{
+			Accountid:  account.RecoveryID,
+			Publickey:  account.RecoveryID,
+			Weight:     255,
+			SignerType: action.getMasterSignerType(),
+			Identity:   0,
+		})
 	}
 
 	// is master key allowed
@@ -379,28 +442,4 @@ func (action *Action) LoadParticipants(ownerAccountID string, participants map[i
 			opParticipants.Participants = filteredParticipants
 		}
 	}
-}
-
-func (action *Action) obtainCoinsInCirculation() (map[string]int64, error) {
-	coinsAmountInfo := make(map[string]int64)
-	assets, err := action.CoreQ().Assets()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load assets")
-	}
-
-	amounts, err := action.CoreQ().CoinsInCirculation(action.App.CoreInfo.MasterAccountID)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get coins in circulation")
-	}
-
-	for _, amount := range amounts {
-		coinsAmountInfo[amount.Asset] = amount.Amount
-	}
-
-	for _, asset := range assets {
-		if _, ok := coinsAmountInfo[asset.Code]; !ok {
-			coinsAmountInfo[asset.Code] = 0
-		}
-	}
-	return coinsAmountInfo, nil
 }

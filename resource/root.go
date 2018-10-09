@@ -1,9 +1,12 @@
 package resource
 
 import (
+	"time"
+
 	"gitlab.com/tokend/horizon/httpx"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/go/amount"
 	"golang.org/x/net/context"
 )
 
@@ -29,6 +32,8 @@ type Root struct {
 	MasterAccountID      string `json:"master_account_id"`
 	MasterExchangeName   string `json:"master_exchange_name"`
 	TxExpirationPeriod   int64  `json:"tx_expiration_period"`
+	CurrentTime          int64  `json:"current_time"`
+	Precision            int64  `json:"precision"`
 }
 
 // Populate fills in the details
@@ -40,6 +45,7 @@ func (res *Root) PopulateLedgerState(
 	res.HistoryElderSequence = ledgerState.HistoryElder
 	res.CoreSequence = ledgerState.CoreLatest
 	res.CoreElderSequence = ledgerState.CoreElder
+	res.CurrentTime = time.Now().Unix()
 
 	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
 	res.Links.Account = lb.Link("/accounts/{account_id}")
@@ -48,4 +54,5 @@ func (res *Root) PopulateLedgerState(
 	res.Links.Self = lb.Link("/")
 	res.Links.Transaction = lb.Link("/transactions/{hash}")
 	res.Links.Transactions = lb.PagedLink("/transactions")
+	res.Precision = amount.One
 }

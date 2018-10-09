@@ -3,10 +3,10 @@
 package core
 
 import (
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // LedgerHeader is row of data from the `ledgerheaders` table
@@ -16,6 +16,7 @@ type LedgerHeader struct {
 	BucketListHash string           `db:"bucketlisthash"`
 	CloseTime      int64            `db:"closetime"`
 	Sequence       uint32           `db:"ledgerseq"`
+	Version        uint64           `db:"version"`
 	Data           xdr.LedgerHeader `db:"data"`
 }
 
@@ -67,36 +68,35 @@ type QInterface interface {
 	FeeByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account, amount int64) (*FeeEntry, error)
 	FeesByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account) ([]FeeEntry, error)
 
-	// limits
-	AccountTypeLimits() AccountTypeLimitsQI
-	// tries to load limits for specific account, if not found loads for account type, if not found returns default
-	LimitsForAccount(accountID string, accountType int32) (Limits, error)
-	LimitsByAccountType(accountType int32) (*AccountTypeLimits, error)
-	// tries to load account limits, if not found returns nil, nil
-	LimitsByAddress(addy string) (*AccountLimits, error)
-
-	Assets() ([]Asset, error)
-	AssetByCode(code string) (*Asset, error)
-
-	AvailableEmissions(masterAccountID string) ([]AssetAmount, error)
-
-	EmissionRequestByExchangeAndRef(exchange, reference string) (*bool, error)
-
-	CoinsInCirculation(masterAccountID string) ([]AssetAmount, error)
-	// tries not load number of coins in circulation, returns error if fails to load
-	MustCoinsInCirculationForAsset(masterAccountID, asset string) (AssetAmount, error)
-	AssetStats(masterAccountID string) ([]AssetStat, error)
-
-	// accounts helper
+	//LimitsV2 - creates new limitsV2 query helper
+	LimitsV2() LimitsV2QI
+	//StatisticsV2 - creates new statisticsV2 query helper
+	StatisticsV2() StatisticsV2QI
+	// Accounts - creates new accounts query helper
 	Accounts() AccountQI
+	// Assets - creates new assets query helper
+	Assets() AssetQI
+	// AccountKyc - creates new account_kyc query helper
+	AccountKYC() AccountKYCQI
+	// Balances - creates new balances query builder
+	Balances() BalancesQI
+	//KeyValue - creates new KeyValue query helper
+	KeyValue() KeyValueQI
 
-	CoinsEmissions() *CoinsEmissionQ
 	Trusts() *TrustQ
 	Offers() *OfferQ
 	OrderBook() *OrderBookQ
+	Sales() *SaleQ
+	SaleAntes() *SaleAnteQ
 
-	AssetPair(base, quote string) (*AssetPair, error)
-	AssetPairs() ([]AssetPair, error)
+	// AssetPairs - creates new asset pair query helper
+	AssetPairs() AssetPairsQ
+
+	// ExternalSystemAccountID - returns builder to access external system account IDs
+	ExternalSystemAccountID() ExternalSystemAccountIDQI
+	ExternalSystemAccountIDPool() *ExternalSystemAccountIDPoolQ
+
+	References() *ReferenceQ
 }
 
 // PriceLevel represents an aggregation of offers to trade at a certain
@@ -171,4 +171,52 @@ func (q *Q) ElderLedger(dest *int32) error {
 // LatestLedger loads the latest known ledger
 func (q *Q) LatestLedger(dest interface{}) error {
 	return q.GetRaw(dest, `SELECT COALESCE(MAX(ledgerseq), 0) FROM ledgerheaders`)
+}
+
+func (q *Q) Assets() AssetQI {
+	return &assetQ{
+		parent: q,
+		sql:    selectAsset,
+	}
+}
+
+func (q *Q) KeyValue() KeyValueQI {
+	return &KeyValueQ{
+		parent: q,
+		sql:    selectKeyValue,
+	}
+}
+
+func (q *Q) LimitsV2() LimitsV2QI {
+	return &LimitsV2Q{
+		parent: q,
+		sql:    selectLimitsV2,
+	}
+}
+
+func (q *Q) StatisticsV2() StatisticsV2QI {
+	return &StatisticsV2Q{
+		parent: q,
+		sql:    selectStatisticsV2,
+	}
+}
+
+// ExternalSystemAccountID - returns builder to access external system account IDs
+func (q *Q) ExternalSystemAccountID() ExternalSystemAccountIDQI {
+	return &externalSystemAccountIDQ{
+		parent: q,
+		sql:    selectExternalSystemAccountIDs,
+	}
+}
+
+// AssetPairs - creates new asset pair query helper
+func (q *Q) AssetPairs() AssetPairsQ {
+	return &assetPairQ{
+		parent: q,
+		sql:    selectAssetPair,
+	}
+}
+
+func (q *Q) ExternalSystemAccountIDPool() *ExternalSystemAccountIDPoolQ {
+	return NewExternalSystemAccountIDPoolQ(q)
 }
