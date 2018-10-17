@@ -1,8 +1,8 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 var selectBalance = sq.Select("hb.*").From("history_balances hb")
@@ -57,7 +57,7 @@ func (q *BalancesQ) Page(page db2.PageQuery) BalancesQI {
 		return q
 	}
 
-	q.sql, q.Err = page.ApplyTo(q.sql, "hb.id")
+	q.sql, q.Err = page.ApplyTo(q.sql, "hb.balance_id")
 	return q
 }
 
