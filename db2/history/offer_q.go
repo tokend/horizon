@@ -17,22 +17,35 @@ var selectOffers = sq.Select(
 	"current_base_amount",
 	"price",
 	"is_canceled",
-	"created_at").
-	From("history_offer")
+	"created_at",
+).From("history_offer")
 
 type OffersQI interface {
+	// ForBase filters offers by base asset
 	ForBase(base string) OffersQI
+	// ForQuote filters offers by quote asset
 	ForQuote(quote string) OffersQI
+	// ForOwnerID filters offers by owner id
 	ForOwnerID(ownerID string) OffersQI
+	// ForIsBuy filters offers by is buy
 	ForIsBuy(isBuy bool) OffersQI
+	// NoMatches filters offers that have not been matched with others
 	NoMatches() OffersQI
+	// PartiallyMatched filters offers that have been matched not fully with others
 	PartiallyMatched() OffersQI
+	// FullyMatched filters offers that have been matched fully with others
 	FullyMatched() OffersQI
+	// Canceled filters offers that have been canceled by owner
 	Canceled() OffersQI
+	// Page - applies page params
 	Page(page db2.PageQuery) OffersQI
+	// Select - selects offers by specifics filters
 	Select() ([]Offer, error)
+	// Insert - add new offer to database
 	Insert(offer Offer) error
+	// UpdateBaseAmount changes current base amount by offer id
 	UpdateBaseAmount(baseAmount, offerID int64) error
+	// Cancel set true to is_canceled field by offer id
 	Cancel(offerID int64) error
 }
 
