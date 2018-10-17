@@ -2,4 +2,4 @@
 
 set -a
 . $1
-horizon "${@:2}"
+horizon /config.env "${@:2}"
