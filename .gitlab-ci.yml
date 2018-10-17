@@ -58,6 +58,6 @@ publish-dh:
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PWD
-    - docker pull $IMAGE_BUILD_NAME
-    - docker tag $IMAGE_BUILD_NAME $DH_IMAGE_NAME
+    - docker pull $PG_IMAGE
+    - docker tag $PG_IMAGE $DH_IMAGE_NAME
     - docker push $DH_IMAGE_NAME
