@@ -83,13 +83,13 @@ func (action *HistoryOfferIndexAction) loadRecords() {
 	case OfferStateAny:
 		// all offers are appropriate
 	case OfferStateNoMatches:
-		q = q.NoMatches()
+		q = q.NoMatches().Canceled(false)
 	case OfferStatePartiallyMatched:
-		q = q.PartiallyMatched()
+		q = q.PartiallyMatched().Canceled(false)
 	case OfferStateFullyMatched:
 		q = q.FullyMatched()
 	case OfferStateCanceled:
-		q = q.Canceled()
+		q = q.Canceled(true)
 	default:
 		action.SetInvalidField("state", fmt.Errorf("invalid value %d", action.OfferState))
 		return

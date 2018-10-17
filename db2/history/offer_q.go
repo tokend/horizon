@@ -36,7 +36,7 @@ type OffersQI interface {
 	// FullyMatched filters offers that have been matched fully with others
 	FullyMatched() OffersQI
 	// Canceled filters offers that have been canceled by owner
-	Canceled() OffersQI
+	Canceled(isCanceled bool) OffersQI
 	// Page - applies page params
 	Page(page db2.PageQuery) OffersQI
 	// Select - selects offers by specifics filters
@@ -126,12 +126,12 @@ func (q *OffersQ) FullyMatched() OffersQI {
 	return q
 }
 
-func (q *OffersQ) Canceled() OffersQI {
+func (q *OffersQ) Canceled(isCanceled bool) OffersQI {
 	if q.Err != nil {
 		return q
 	}
 
-	q.sql = q.sql.Where("is_canceled")
+	q.sql = q.sql.Where(sq.Eq{"is_canceled": isCanceled})
 	return q
 }
 
