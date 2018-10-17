@@ -5,8 +5,8 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationResult *xdr.OperationResultTr) (history.OperationState, uint64) {
@@ -127,6 +127,11 @@ func (is *Session) operation() error {
 		err = is.processManageOfferLedgerChanges(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
 		if err != nil {
 			return errors.Wrap(err, "failed to process manage offer ledger changes")
+		}
+
+		err = is.processCreateMatchedOffer(op, opResult)
+		if err != nil {
+			return errors.Wrap(err, "failed to create matched offer")
 		}
 	case xdr.OperationTypeReviewRequest:
 		err = is.processReviewRequest(
