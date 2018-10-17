@@ -1,9 +1,8 @@
 package horizon
 
 import (
-	"net/http"
-
 	"github.com/zenazn/goji/web"
+	"net/http"
 )
 
 // ServeHTTPC is a method for web.Handler
@@ -167,14 +166,6 @@ func (action CoreReferencesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r 
 }
 
 // ServeHTTPC is a method for web.Handler
-func (action SingleReferenceAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
-	ap := &action.Action
-	ap.Prepare(c, w, r)
-	action.Log = action.Log.WithField("action", "SingleReferenceAction")
-	ap.Execute(&action)
-}
-
-// ServeHTTPC is a method for web.Handler
 func (action CoreSalesAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
@@ -195,6 +186,14 @@ func (action FeesShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "FeesShowAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action HistoryOfferIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "HistoryOfferIndexAction")
 	ap.Execute(&action)
 }
 
@@ -419,6 +418,14 @@ func (action SignersIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *h
 	ap := &action.Action
 	ap.Prepare(c, w, r)
 	action.Log = action.Log.WithField("action", "SignersIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
+func (action SingleReferenceAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "SingleReferenceAction")
 	ap.Execute(&action)
 }
 

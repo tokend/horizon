@@ -9,12 +9,13 @@ import (
 var selectOffers = sq.Select(
 	"id",
 	"offer_id",
+	"owner_id",
 	"base_asset",
 	"quote_asset",
+	"is_buy",
 	"initial_base_amount",
 	"current_base_amount",
 	"price",
-	"owner_id",
 	"is_canceled",
 	"created_at").
 	From("history_offer")
@@ -22,8 +23,13 @@ var selectOffers = sq.Select(
 type OffersQI interface {
 	ForBase(base string) OffersQI
 	ForQuote(quote string) OffersQI
-	Page(page db2.PageQuery) OffersQI
 	ForOwnerID(ownerID string) OffersQI
+	ForIsBuy(isBuy bool) OffersQI
+	NoMatches() OffersQI
+	PartiallyMatched() OffersQI
+	FullyMatched() OffersQI
+	Canceled() OffersQI
+	Page(page db2.PageQuery) OffersQI
 	Select() ([]Offer, error)
 	Insert(offer Offer) error
 	UpdateBaseAmount(baseAmount, offerID int64) error
@@ -61,21 +67,67 @@ func (q *OffersQ) ForQuote(quote string) OffersQI {
 	return q
 }
 
-func (q *OffersQ) Page(page db2.PageQuery) OffersQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql, q.Err = page.ApplyTo(q.sql, "id")
-	return q
-}
-
 func (q *OffersQ) ForOwnerID(ownerID string) OffersQI {
 	if q.Err != nil {
 		return q
 	}
 
 	q.sql = q.sql.Where(sq.Eq{"owner_id": ownerID})
+	return q
+}
+
+func (q *OffersQ) ForIsBuy(isBuy bool) OffersQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where(sq.Eq{"is_buy": isBuy})
+	return q
+}
+
+func (q *OffersQ) NoMatches() OffersQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("initial_base_amount = current_base_amount")
+	return q
+}
+
+func (q *OffersQ) PartiallyMatched() OffersQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("initial_base_amount != current_base_amount").
+		Where("current_base_amount > 0")
+	return q
+}
+
+func (q *OffersQ) FullyMatched() OffersQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("current_base_amount = 0")
+	return q
+}
+
+func (q *OffersQ) Canceled() OffersQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("is_canceled")
+	return q
+}
+
+func (q *OffersQ) Page(page db2.PageQuery) OffersQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql, q.Err = page.ApplyTo(q.sql, "id")
 	return q
 }
 
@@ -99,13 +151,14 @@ func (q *OffersQ) Select() ([]Offer, error) {
 
 func (q *OffersQ) Insert(offer Offer) error {
 	query := sq.Insert("history_offer").SetMap(sq.Eq{
-		"offer_if":            offer.OfferID,
+		"offer_id":            offer.OfferID,
+		"owner_id":            offer.OwnerID,
 		"base_asset":          offer.BaseAsset,
 		"quote_asset":         offer.QuoteAsset,
+		"is_buy":              offer.IsBuy,
 		"initial_base_amount": offer.InitialBaseAmount,
 		"current_base_amount": offer.CurrentBaseAmount,
 		"price":               offer.Price,
-		"owner_id":            offer.OwnerID,
 		"is_canceled":         offer.IsCanceled,
 		"created_at":          offer.CreatedAt,
 	})

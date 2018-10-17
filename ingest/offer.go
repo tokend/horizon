@@ -12,6 +12,10 @@ import (
 
 func offerCreate(is *Session, entry *xdr.LedgerEntry) error {
 	op := is.Cursor.Operation().Body.MustManageOfferOp()
+	if op.OrderBookId != 0 {
+		return nil
+	}
+
 	offer := convertOffer(entry.Data.MustOffer(), int64(op.Amount))
 
 	err := is.Ingestion.HistoryQ().Offers().Insert(offer)
@@ -37,7 +41,11 @@ func offerUpdate(is *Session, entry *xdr.LedgerEntry) error {
 }
 
 func offerDelete(is *Session, key *xdr.LedgerKey) error {
-	op := is.Cursor.Operation().Body.MustManageOfferOp()
+	op, ok := is.Cursor.Operation().Body.GetManageOfferOp()
+	if !ok {
+		return nil
+	}
+
 	if op.Amount == 0 {
 		err := is.Ingestion.HistoryQ().Offers().Cancel(int64(op.OfferId))
 		if err != nil {
@@ -61,12 +69,13 @@ func offerDelete(is *Session, key *xdr.LedgerKey) error {
 func convertOffer(raw xdr.OfferEntry, initialBaseAmount int64) history.Offer {
 	return history.Offer{
 		OfferID:           int64(raw.OfferId),
+		OwnerID:           raw.OwnerId.Address(),
 		BaseAsset:         string(raw.Base),
 		QuoteAsset:        string(raw.Quote),
+		IsBuy:             raw.IsBuy,
 		InitialBaseAmount: initialBaseAmount,
 		CurrentBaseAmount: int64(raw.BaseAmount),
 		Price:             int64(raw.Price),
-		OwnerID:           raw.OwnerId.Address(),
 		IsCanceled:        false,
 		CreatedAt:         time.Unix(int64(raw.CreatedAt), 0).UTC(),
 	}
@@ -78,14 +87,17 @@ func (is *Session) processCreateMatchedOffer(op xdr.ManageOfferOp, res xdr.Manag
 		return nil
 	}
 
+	sourceAccount := is.Cursor.OperationSourceAccount()
+
 	newOffer := history.Offer{
 		OfferID:           0,
+		OwnerID:           sourceAccount.Address(),
 		BaseAsset:         string(res.BaseAsset),
 		QuoteAsset:        string(res.QuoteAsset),
+		IsBuy:             op.IsBuy,
 		InitialBaseAmount: int64(op.Amount),
 		CurrentBaseAmount: 0,
 		Price:             int64(op.Price),
-		OwnerID:           is.Cursor.OperationSourceAccount().Address(),
 		IsCanceled:        false,
 		CreatedAt:         is.Cursor.LedgerCloseTime(),
 	}
