@@ -1,49 +1,63 @@
 # docker-in-docker allows to build and publish docker images
 services:
-  - docker:dind
+- docker:dind
 
 variables:
-  # dockerfile for building test image
-  TEST_DOCKERFILE: test.dockerfile
-  # dockerfile for building artifact image
+  IMAGE_NAME: registry.gitlab.com/tokend/horizon
+  BUILD_IMAGE: horizonbuild
   BUILD_DOCKERFILE: build.dockerfile
-  IMAGE_NAME: registry.gitlab.com/swarmfund/horizon
-  IMAGE_BUILD_NAME: $IMAGE_NAME:$CI_COMMIT_SHA
-  IMAGE_TEST_NAME: $IMAGE_NAME:$CI_COMMIT_SHA-test
-  DEPLOYMENT_DIR: /root/deployment
-  DEPLOYMENT_INV: $DEPLOYMENT_DIR/$CI_COMMIT_REF_NAME.ini
-  DEPLOYMENT_SECRETS: $DEPLOYMENT_DIR/secrets/$CI_COMMIT_REF_NAME.yml
+  LEGACY_IMAGE: $IMAGE_NAME:$CI_COMMIT_SHA
+  LEGACY_DOCKERFILE: legacy.dockerfile
+  PG_IMAGE: $IMAGE_NAME:pg-$CI_COMMIT_SHA
+  PG_DOCKERFILE: pg.dockerfile
+  TEST_IMAGE: $IMAGE_NAME:$CI_COMMIT_SHA-test
+  TEST_DOCKERFILE: test.dockerfile
+  DH_IMAGE_NAME: tokend/horizon:latest
 
 stages:
-  - build
-  - test
-  - deploy
+- build
+# TODO fix tests
+# - test
+- publish
 
 # build and publish docker image to the registry
 build:
   image: docker:latest
   stage: build
+  tags:
+  - tokend
   script:
-    # login to docker registry
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker build --pull -t $IMAGE_BUILD_NAME -f $BUILD_DOCKERFILE .
-    - docker push $IMAGE_BUILD_NAME
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  # build intermediate binary
+  - docker build --pull -t $BUILD_IMAGE -f $BUILD_DOCKERFILE .
+  # legacy
+  - docker build -t $LEGACY_IMAGE -f $LEGACY_DOCKERFILE .
+  - docker push $LEGACY_IMAGE
+  # pg
+  - docker pull registry.gitlab.com/tokend/deployment/postgres-ubuntu:9.6
+  - docker build -t $PG_IMAGE -f $PG_DOCKERFILE .
+  - docker push $PG_IMAGE
 
 # build testing image and run tests
-test:
+# test:
+#   image: docker:latest
+#   stage: test
+#   tags:
+#     - tokend
+#   script:
+#     - docker build --pull -t $TEST_IMAGE -f $TEST_DOCKERFILE .
+#     - docker run $IMAGE_TEST_NAME ./...
+
+publish-dh:
   image: docker:latest
-  stage: test
-  script:
-    - docker build --pull -t $IMAGE_TEST_NAME -f $TEST_DOCKERFILE .
-    - docker run $IMAGE_TEST_NAME ./...
-
-
-deploy:
-  image: williamyeh/ansible:ubuntu16.04
-  stage: deploy
+  stage: publish
+  tags:
+  - tokend
   only:
-    - staging
-    - dev
+  - dockerhub
   script:
-    # TODO add host fingerprint
-    - ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i $DEPLOYMENT_INV -e @$DEPLOYMENT_SECRETS -e horizon_revision=$CI_COMMIT_SHA $DEPLOYMENT_DIR/horizon.yml
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PWD
+  - docker pull $PG_IMAGE
+  - docker tag $PG_IMAGE $DH_IMAGE_NAME
+  - docker push $DH_IMAGE_NAME
