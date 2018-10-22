@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"gitlab.com/tokend/go/amount"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/swarmfund/horizon/ingest/ingestion"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/ingest/ingestion"
+	"gitlab.com/tokend/horizon/log"
 )
 
 type assetPairPriceKey struct {

@@ -3,8 +3,8 @@ package history
 import (
 	"time"
 
-	"gitlab.com/swarmfund/horizon/db2"
 	"github.com/guregu/null"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // Transaction is a row of data from the `history_transactions` table

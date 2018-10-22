@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 
-	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/test"
 	"github.com/stretchr/testify/assert"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/test"
 )
 
 // Assertions provides an assertions helper.  Custom assertions for this package

@@ -4,9 +4,9 @@ import (
 	"strconv"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 // Load runs queries against `core` to fill in the records of the bundle.

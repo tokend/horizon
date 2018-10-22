@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
-	"gitlab.com/swarmfund/horizon/assets"
+	"gitlab.com/tokend/horizon/assets"
 )
 
 const (

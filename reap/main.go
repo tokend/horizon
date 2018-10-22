@@ -5,8 +5,9 @@
 package reap
 
 import (
-	"gitlab.com/swarmfund/horizon/db2"
 	"time"
+
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // System represents the history reaping subsystem of horizon.

@@ -1,10 +1,10 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/horizon/ledger"
-	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/tokend/horizon/ledger"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/resource"
 )
 
 // RootAction provides a summary of the horizon instance and links to various

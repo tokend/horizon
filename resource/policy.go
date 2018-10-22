@@ -2,7 +2,7 @@ package resource
 
 import (
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 type Policy struct {

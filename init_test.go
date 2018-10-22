@@ -3,7 +3,7 @@ package horizon
 import (
 	"testing"
 
-	"gitlab.com/swarmfund/horizon/test"
+	"gitlab.com/tokend/horizon/test"
 )
 
 func TestAppInit(t *testing.T) {

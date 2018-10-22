@@ -3,9 +3,10 @@ package resource
 import (
 	"strconv"
 
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/swarmfund/horizon/db2/core"
 	"time"
+
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 type OrderBookEntry struct {

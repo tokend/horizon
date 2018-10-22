@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/resource/operations"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/resource/operations"
 	"golang.org/x/net/context"
 )
 

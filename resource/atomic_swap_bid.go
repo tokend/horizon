@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/regources"
 )
 

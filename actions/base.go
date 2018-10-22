@@ -12,10 +12,10 @@ import (
 	"encoding/json"
 	"errors"
 
-	"gitlab.com/swarmfund/horizon/render"
-	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/render/sse"
 	"github.com/zenazn/goji/web"
+	"gitlab.com/tokend/horizon/render"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/render/sse"
 	"golang.org/x/net/context"
 )
 

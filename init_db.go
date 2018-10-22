@@ -1,10 +1,10 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/log"
 )
 
 func initHorizonDb(app *App) {

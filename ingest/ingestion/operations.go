@@ -6,8 +6,8 @@ import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 func (ingest *Ingestion) UpdateOfferDetails(newOfferDetails map[string]interface{}, stateToSet uint64) error {

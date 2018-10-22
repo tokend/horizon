@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 func getAssetsHelper(assetCode string) []core.Asset {

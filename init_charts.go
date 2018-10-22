@@ -7,13 +7,13 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/horizon/charts"
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/exchange"
-	"gitlab.com/swarmfund/horizon/log"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/charts"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/exchange"
+	"gitlab.com/tokend/horizon/log"
 )
 
 func initCharts(app *App) {
@@ -341,7 +341,7 @@ func (l *MetaListener) Run() {
 }
 
 func init() {
-	appInit.Add("swarm_horizon", initCharts, "horizon-db")
+	appInit.Add("horizon", initCharts, "horizon-db")
 }
 
 func convertMap(data map[string]*int64, destAsset string, converter *exchange.Converter) (int64, error) {

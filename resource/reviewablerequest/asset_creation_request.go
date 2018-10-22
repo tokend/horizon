@@ -1,10 +1,10 @@
 package reviewablerequest
 
 import (
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/resource/base"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/resource/base"
 	"gitlab.com/tokend/regources"
 )
 

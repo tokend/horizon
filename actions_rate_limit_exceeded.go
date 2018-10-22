@@ -5,7 +5,7 @@ import (
 
 	"github.com/zenazn/goji/web"
 
-	"gitlab.com/swarmfund/horizon/render/problem"
+	"gitlab.com/tokend/horizon/render/problem"
 )
 
 // RateLimitExceededAction renders a 429 response

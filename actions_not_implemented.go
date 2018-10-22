@@ -1,6 +1,6 @@
 package horizon
 
-import "gitlab.com/swarmfund/horizon/render/problem"
+import "gitlab.com/tokend/horizon/render/problem"
 
 // NotImplementedAction renders a NotImplemented prblem
 type NotImplementedAction struct {

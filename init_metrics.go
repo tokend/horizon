@@ -5,9 +5,9 @@ import (
 
 	"time"
 
-	"gitlab.com/swarmfund/horizon/log"
 	influx "github.com/influxdata/influxdb/client/v2"
 	"github.com/rcrowley/go-metrics"
+	"gitlab.com/tokend/horizon/log"
 )
 
 func initMetrics(app *App) {

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 var Tests = []struct {

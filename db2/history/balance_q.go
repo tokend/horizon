@@ -1,8 +1,8 @@
 package history
 
 import (
-	"gitlab.com/swarmfund/horizon/db2"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 var selectBalance = sq.Select("hb.*").From("history_balances hb")

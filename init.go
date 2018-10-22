@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/tokend/horizon/log"
 )
 
 // InitFn is a function that contributes to the initialization of an App struct

@@ -1,9 +1,9 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/horizon/httpx"
-	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/distributed_lab/txsub"
+	"gitlab.com/tokend/horizon/httpx"
+	"gitlab.com/tokend/horizon/render/hal"
 	"golang.org/x/net/context"
 )
 

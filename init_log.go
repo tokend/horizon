@@ -14,8 +14,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"gitlab.com/swarmfund/horizon/config"
-	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/tokend/horizon/config"
+	"gitlab.com/tokend/horizon/log"
 	"golang.org/x/time/rate"
 )
 

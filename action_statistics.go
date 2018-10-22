@@ -1,8 +1,8 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/render/problem"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/regources"
 )
 

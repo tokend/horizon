@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sync"
 
-	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/tokend/horizon/log"
 	"golang.org/x/net/context"
 )
 

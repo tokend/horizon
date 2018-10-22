@@ -2,7 +2,7 @@ package core
 
 import (
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type OrderBookQ struct {

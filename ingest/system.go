@@ -2,10 +2,10 @@ package ingest
 
 import (
 	err2 "github.com/pkg/errors"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/errors"
-	"gitlab.com/swarmfund/horizon/ledger"
-	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/errors"
+	"gitlab.com/tokend/horizon/ledger"
+	"gitlab.com/tokend/horizon/log"
 )
 
 // Tick triggers the ingestion system to ingest any new ledger data, provided

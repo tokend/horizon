@@ -2,8 +2,8 @@ package ingestion
 
 import (
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 // Ingestion receives write requests from a Session

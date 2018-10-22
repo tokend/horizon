@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/rcrowley/go-metrics"
-	"gitlab.com/swarmfund/horizon/corer"
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/ingest/ingestion"
-	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/tokend/horizon/corer"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/ingest/ingestion"
+	"gitlab.com/tokend/horizon/log"
 )
 
 const (

@@ -3,11 +3,11 @@ package resource
 import (
 	"fmt"
 
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/httpx"
-	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/resource/base"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/httpx"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/resource/base"
 	"gitlab.com/tokend/regources"
 	"golang.org/x/net/context"
 )

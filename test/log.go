@@ -1,8 +1,8 @@
 package test
 
 import (
-	"gitlab.com/swarmfund/horizon/log"
 	"github.com/sirupsen/logrus"
+	"gitlab.com/tokend/horizon/log"
 )
 
 var testLogger *log.Entry

@@ -1,22 +1,22 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/exchange"
-	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/exchange"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/resource"
 )
 
 type AccountDetailedBalancesAction struct {
 	Action
 	converter *exchange.Converter
 
-	AccountID      string
+	AccountID string
 
 	Balances []core.Balance
 	Assets   []core.Asset
@@ -152,7 +152,6 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 		}
 	}
 
-
 	for _, record := range action.Balances {
 		var r resource.Balance
 		r.Populate(record)
@@ -171,7 +170,7 @@ func (action *AccountDetailedBalancesAction) loadResource() {
 			action.Err = &problem.ServerError
 			return
 		}
-		
+
 		r.ConvertedBalance, err = convertAmount(record.Amount, r.Asset, convertToAsset, action.converter)
 		if err != nil {
 			action.Log.WithError(err).Error("Failed to convert balance")
@@ -230,7 +229,7 @@ func findAllSalesForAsset(q core.QInterface, code string, sales []history.Sale) 
 
 		err := populateSaleWithStats(sales[i].ID, &sale, q)
 		if err != nil {
-			return nil, errors.Wrap(err ,"failed to populate sale with stats")
+			return nil, errors.Wrap(err, "failed to populate sale with stats")
 		}
 		result = append(result, sale)
 	}

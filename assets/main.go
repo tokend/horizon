@@ -7,7 +7,7 @@ import (
 
 	"fmt"
 
-	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/tokend/horizon/log"
 )
 
 //go:generate go-bindata -ignore .+\.go$ -pkg assets -o bindata.go ./...

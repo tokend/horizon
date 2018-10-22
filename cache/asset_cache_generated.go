@@ -8,7 +8,7 @@ import (
 	"time"
 
 	cache "github.com/patrickmn/go-cache"
-	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 type CoreAssetCache struct {

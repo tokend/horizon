@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 type RecoveryRequest struct {

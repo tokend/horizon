@@ -13,7 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	hlog "gitlab.com/swarmfund/horizon/log"
+	hlog "gitlab.com/tokend/horizon/log"
 	"golang.org/x/net/context"
 )
 

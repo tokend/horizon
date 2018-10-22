@@ -1,8 +1,8 @@
 package log
 
 import (
-	"gitlab.com/swarmfund/horizon/errors"
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/tokend/horizon/errors"
 )
 
 type Entry struct {

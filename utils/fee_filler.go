@@ -4,7 +4,7 @@ import (
 	"math"
 	"sort"
 
-	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 type sortedFees []core.FeeEntry

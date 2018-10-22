@@ -6,9 +6,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
-	"gitlab.com/swarmfund/horizon/utf8"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/utf8"
 )
 
 // operationDetails returns the details regarding the current operation, suitable

@@ -2,8 +2,9 @@ package core
 
 import (
 	"encoding/json"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type Asset struct {

@@ -4,7 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type CoreQMock struct {

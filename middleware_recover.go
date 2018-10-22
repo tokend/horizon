@@ -3,10 +3,10 @@ package horizon
 import (
 	"net/http"
 
-	"gitlab.com/swarmfund/horizon/errors"
-	"gitlab.com/swarmfund/horizon/render/problem"
 	gctx "github.com/goji/context"
 	"github.com/zenazn/goji/web"
+	"gitlab.com/tokend/horizon/errors"
+	"gitlab.com/tokend/horizon/render/problem"
 )
 
 // RecoverMiddleware helps the server recover from panics.  It ensures that

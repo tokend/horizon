@@ -1,13 +1,13 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/ledger"
-	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/render/sse"
-	"gitlab.com/swarmfund/horizon/resource"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/ledger"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/render/sse"
+	"gitlab.com/tokend/horizon/resource"
 )
 
 // This file contains the actions:

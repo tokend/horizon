@@ -3,7 +3,7 @@ package utf8
 import (
 	"testing"
 
-	"gitlab.com/swarmfund/horizon/test"
+	"gitlab.com/tokend/horizon/test"
 )
 
 func TestScrub(t *testing.T) {

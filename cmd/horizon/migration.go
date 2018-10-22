@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type Migrator func(*sql.DB, db2.MigrateDir, int) (int, error)

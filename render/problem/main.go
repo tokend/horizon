@@ -7,10 +7,10 @@ import (
 
 	"time"
 
-	"gitlab.com/swarmfund/horizon/context/requestid"
-	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/swarmfund/horizon/utils"
 	"github.com/go-errors/errors"
+	"gitlab.com/tokend/horizon/context/requestid"
+	"gitlab.com/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/utils"
 	"golang.org/x/net/context"
 )
 
@@ -145,7 +145,7 @@ var (
 		Detail: "An error occurred while processing this request.  This is usually due " +
 			"to a bug within the server software.  Trying this request again may " +
 			"succeed if the bug is transient, otherwise please report this issue " +
-			"to the issue tracker at: https://gitlab.com/swarmfund/horizon/issues." +
+			"to the issue tracker at: https://gitlab.com/tokend/horizon/issues." +
 			" Please include this response in your issue.",
 	}
 

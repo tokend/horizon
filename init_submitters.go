@@ -5,12 +5,12 @@ import (
 
 	"time"
 
-	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	hTxsub "gitlab.com/swarmfund/horizon/txsub"
 	"gitlab.com/distributed_lab/corer"
 	"gitlab.com/distributed_lab/txsub"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/log"
+	hTxsub "gitlab.com/tokend/horizon/txsub"
 )
 
 func initSubmissionSystem(app *App) {

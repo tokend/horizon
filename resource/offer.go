@@ -3,9 +3,10 @@ package resource
 import (
 	"strconv"
 
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/tokend/regources"
 	"time"
+
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/regources"
 )
 
 func PopulateOffer(o core.Offer) regources.Offer {

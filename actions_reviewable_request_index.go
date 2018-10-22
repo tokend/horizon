@@ -1,13 +1,13 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/resource/reviewablerequest"
 	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/resource/reviewablerequest"
 	"gitlab.com/tokend/regources"
 )
 

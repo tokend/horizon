@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/horizon/cache"
+	"gitlab.com/tokend/horizon/cache"
 )
 
 func initMemoryCache(app *App) {

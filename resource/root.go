@@ -3,10 +3,10 @@ package resource
 import (
 	"time"
 
-	"gitlab.com/swarmfund/horizon/httpx"
-	"gitlab.com/swarmfund/horizon/ledger"
-	"gitlab.com/swarmfund/horizon/render/hal"
 	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/horizon/httpx"
+	"gitlab.com/tokend/horizon/ledger"
+	"gitlab.com/tokend/horizon/render/hal"
 	"golang.org/x/net/context"
 )
 

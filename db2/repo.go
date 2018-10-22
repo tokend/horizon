@@ -9,7 +9,7 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/horizon/log"
+	"gitlab.com/tokend/horizon/log"
 	"golang.org/x/net/context"
 )
 

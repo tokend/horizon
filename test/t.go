@@ -1,8 +1,8 @@
 package test
 
 import (
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/ledger"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/ledger"
 )
 
 // CoreRepo returns a db2.Repo instance pointing at the stellar core test database

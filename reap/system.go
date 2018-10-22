@@ -3,10 +3,10 @@ package reap
 import (
 	"time"
 
-	"gitlab.com/swarmfund/horizon/errors"
-	"gitlab.com/swarmfund/horizon/ledger"
-	"gitlab.com/swarmfund/horizon/log"
-	"gitlab.com/swarmfund/horizon/toid"
+	"gitlab.com/tokend/horizon/errors"
+	"gitlab.com/tokend/horizon/ledger"
+	"gitlab.com/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/toid"
 )
 
 // DeleteUnretainedHistory removes all data associated with unretained ledgers.

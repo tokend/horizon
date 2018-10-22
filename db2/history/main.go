@@ -5,7 +5,7 @@ package history
 import (
 	"time"
 
-	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // EffectType is the numeric type for an effect, used as the `type` field in the

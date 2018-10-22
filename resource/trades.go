@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"gitlab.com/tokend/go/amount"
-	"gitlab.com/swarmfund/horizon/db2/history"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 type Trades struct {

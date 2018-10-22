@@ -1,4 +1,4 @@
-	package actions
+package actions
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/zenazn/goji/web"
-	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/test"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/test"
 )
 
 func TestGetAccountID(t *testing.T) {

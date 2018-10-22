@@ -12,13 +12,13 @@ import (
 	"time"
 
 	"github.com/spf13/cast"
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/utils"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/strkey"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/utils"
 )
 
 const (

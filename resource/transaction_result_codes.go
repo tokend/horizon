@@ -2,7 +2,7 @@ package resource
 
 import (
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/codes"
+	"gitlab.com/tokend/horizon/codes"
 )
 
 // TransactionResultCodes represent a summary of result codes returned from

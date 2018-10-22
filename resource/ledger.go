@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"gitlab.com/tokend/go/amount"
-	"gitlab.com/swarmfund/horizon/db2/history"
-	"gitlab.com/swarmfund/horizon/httpx"
-	"gitlab.com/swarmfund/horizon/render/hal"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/httpx"
+	"gitlab.com/tokend/horizon/render/hal"
 	"golang.org/x/net/context"
 )
 

@@ -1,10 +1,11 @@
 package history
 
 import (
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/toid"
-	sq "github.com/lann/squirrel"
 	"strconv"
+
+	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/toid"
 )
 
 var selectTransaction = sq.Select(
@@ -128,7 +129,7 @@ func (q *TransactionsQ) ByTxIDs(txIDs []int64) TransactionsQI {
 		return q
 	}
 
-	q.sql = q.sql.Where(sq.Eq{"ht.id" : txIDs})
+	q.sql = q.sql.Where(sq.Eq{"ht.id": txIDs})
 	return q
 }
 

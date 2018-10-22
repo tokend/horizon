@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"errors"
 
-	"gitlab.com/swarmfund/horizon/db2"
 	migrate "github.com/rubenv/sql-migrate"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 //go:generate go-bindata -ignore .+\.go$ -pkg schema -o bindata.go ./...

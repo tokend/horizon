@@ -5,9 +5,9 @@ import (
 	"runtime"
 
 	"github.com/spf13/cobra"
-	"gitlab.com/swarmfund/horizon"
-	"gitlab.com/swarmfund/horizon/config"
-	"gitlab.com/swarmfund/horizon/db2/history/schema"
+	"gitlab.com/tokend/horizon"
+	"gitlab.com/tokend/horizon/config"
+	"gitlab.com/tokend/horizon/db2/history/schema"
 )
 
 var app *horizon.App

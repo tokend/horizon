@@ -6,11 +6,11 @@ import (
 	"bytes"
 	"encoding/base64"
 
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/db2/core"
-	"gitlab.com/swarmfund/horizon/db2/history"
 	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/txsub"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
 	"golang.org/x/net/context"
 )
 

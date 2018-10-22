@@ -1,8 +1,8 @@
 package resource
 
 import (
-	"gitlab.com/swarmfund/horizon/resource/base"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/resource/base"
 	"gitlab.com/tokend/regources"
 )
 

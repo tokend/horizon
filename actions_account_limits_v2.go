@@ -1,11 +1,11 @@
 package horizon
 
 import (
-	"gitlab.com/swarmfund/horizon/render/hal"
-	"gitlab.com/swarmfund/horizon/render/problem"
-	"gitlab.com/swarmfund/horizon/resource"
-	"gitlab.com/swarmfund/horizon/db2/core"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/resource"
 )
 
 // This file contains the actions:
@@ -13,8 +13,8 @@ import (
 // LimitsV2AccountShowAction: renders AccountTypeLimits for account
 type LimitsV2AccountShowAction struct {
 	Action
-	AccountID   string
-	Result      resource.LimitsResponse
+	AccountID string
+	Result    resource.LimitsResponse
 }
 
 // JSON is a method for actions.JSON
@@ -48,7 +48,6 @@ func (action *LimitsV2AccountShowAction) loadData() {
 		return
 	}
 
-
 	limits, err := action.CoreQ().LimitsV2().ForAccount(account)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to load limits for account")
@@ -63,13 +62,12 @@ func (action *LimitsV2AccountShowAction) loadData() {
 		return
 	}
 
-
 	for _, limit := range limits {
 		var result resource.LimitResponse
 		result.Limit.Populate(limit)
 		stat, ok := stats[statsKey{
-			StatsOpType: limit.StatsOpType,
-			AssetCode: limit.AssetCode,
+			StatsOpType:     limit.StatsOpType,
+			AssetCode:       limit.AssetCode,
 			IsConvertNeeded: limit.IsConvertNeeded,
 		}]
 
@@ -90,7 +88,7 @@ func (action *LimitsV2AccountShowAction) loadData() {
 type statsKey struct {
 	StatsOpType     int32
 	AssetCode       string
-	IsConvertNeeded bool   
+	IsConvertNeeded bool
 }
 
 func (action *LimitsV2AccountShowAction) loadStatistics(accountID string) (map[statsKey]core.StatisticsV2Entry, error) {
@@ -100,10 +98,10 @@ func (action *LimitsV2AccountShowAction) loadStatistics(accountID string) (map[s
 	}
 
 	result := map[statsKey]core.StatisticsV2Entry{}
-	for i := range rawStats{
+	for i := range rawStats {
 		result[statsKey{
-			StatsOpType: rawStats[i].StatsOpType,
-			AssetCode: rawStats[i].AssetCode,
+			StatsOpType:     rawStats[i].StatsOpType,
+			AssetCode:       rawStats[i].AssetCode,
 			IsConvertNeeded: rawStats[i].IsConvertNeeded,
 		}] = rawStats[i]
 	}

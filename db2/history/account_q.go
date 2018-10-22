@@ -2,7 +2,7 @@ package history
 
 import (
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/horizon/db2"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 var selectAccount = sq.Select("ha.*").From("history_accounts ha")

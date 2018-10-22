@@ -4,11 +4,11 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"gitlab.com/tokend/go/strkey"
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/swarmfund/horizon/utf8"
 	"github.com/guregu/null"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/go/strkey"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/utf8"
 )
 
 // Base64Signatures returns a slice of strings where each element is a base64

@@ -2,7 +2,7 @@ package exchange
 
 import (
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/swarmfund/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 type assetProviderQMock struct {

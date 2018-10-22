@@ -4,9 +4,9 @@ import (
 	"time"
 
 	sq "github.com/lann/squirrel"
-	"gitlab.com/swarmfund/horizon/db2"
-	"gitlab.com/swarmfund/horizon/db2/sqx"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/sqx"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
