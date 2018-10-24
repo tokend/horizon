@@ -501,12 +501,12 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/history_offer"
+  branch = "master"
   digest = "1:b004667a0a9a1e2d3dd491e328d06ead6f3cc4721e6e69116a115c2375f17c03"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "3a3eb670eb19db877b28f322fcc8ac55b4871893"
+  revision = "6c29e09f55210ad0d627cd02a22f3f195aed0a08"
 
 [[projects]]
   branch = "master"
