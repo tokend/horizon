@@ -83,7 +83,7 @@ func templatesAdmin_notificationHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/admin_notification.html", size: 11, mode: os.FileMode(420), modTime: time.Unix(1529318720, 0)}
+	info := bindataFileInfo{name: "templates/admin_notification.html", size: 11, mode: os.FileMode(436), modTime: time.Unix(1539080718, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

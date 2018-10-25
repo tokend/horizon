@@ -165,6 +165,7 @@ func initWebActions(app *App) {
 
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})
+	r.Get("/history_offers", &HistoryOfferIndexAction{})
 
 	// order book
 	r.Get("/order_book", &OrderBookAction{})

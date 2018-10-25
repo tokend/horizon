@@ -72,6 +72,9 @@ type QInterface interface {
 	Contracts() ContractQI
 	ContractsDetails() ContractsDetailsQI
 	ContractDispute() ContractDisputeQI
+
+	// Offers - provides builder to work with offer entries
+	Offers() OffersQI
 }
 
 // ReviewableRequests - provides builder of request to access reviewable requests
