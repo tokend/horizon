@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-errors/errors"
-	"gitlab.com/tokend/horizon/context/requestid"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
 	"net/http"
@@ -34,6 +33,10 @@ type ErrorObject struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 }
 
+type ErrorResponse struct {
+	Errors []*ErrorObject `json:"errors"`
+}
+
 var (
 	errToJsonApiMap = map[error]ErrorObject{}
 )
@@ -43,12 +46,6 @@ var (
 // ErrorObject instance.
 func RegisterError(err error, errObj ErrorObject) {
 	errToJsonApiMap[err] = errObj
-}
-
-// Inflate expands a problem with contextual information.
-// At present it adds the request's id as the problem's ID, if available.
-func Inflate(ctx context.Context, errObj *ErrorObject) {
-	errObj.ID = requestid.FromContext(ctx)
 }
 
 func RenderErr(ctx context.Context, w http.ResponseWriter, err interface{}) {
@@ -66,12 +63,16 @@ func RenderErr(ctx context.Context, w http.ResponseWriter, err interface{}) {
 	}
 }
 
-func render(ctx context.Context, w http.ResponseWriter, errObj ErrorObject) {
-	Inflate(ctx, &errObj)
-
+func render(ctx context.Context, w http.ResponseWriter, errObjects ...*ErrorObject) {
 	w.Header().Set("Content-Type", "application/vnd.api+json")
 
-	js, err := json.MarshalIndent(errObj, "", "  ")
+	js, err := json.MarshalIndent(
+		ErrorResponse{
+			Errors: errObjects,
+		},
+		"",
+		"  ",
+	)
 
 	if err != nil {
 		err := errors.Wrap(err, 1)
@@ -80,10 +81,9 @@ func render(ctx context.Context, w http.ResponseWriter, errObj ErrorObject) {
 		return
 	}
 
-	status, err := strconv.Atoi(errObj.Status)
+	status, err := strconv.Atoi(errObjects[0].Status)
 	if err != nil {
-		// TODO
-		panic(fmt.Sprintf("Invalid status: %d+", errObj.Status))
+		panic(fmt.Sprintf("Invalid status: %d+", errObjects[0].Status))
 	}
 
 	w.WriteHeader(status)

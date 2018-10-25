@@ -32,5 +32,5 @@ func Negotiate(ctx context.Context, r *http.Request) string {
 
 func RegisterError(err error, p problem.P) {
 	problem.RegisterError(err, p)
-	jsonapi.RegisterError(err, jsonapi.FromProblem(p))
+	jsonapi.RegisterError(err, *jsonapi.FromProblem(p))
 }

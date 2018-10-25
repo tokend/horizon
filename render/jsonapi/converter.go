@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func FromProblem(p problem.P) ErrorObject {
+func FromProblem(p problem.P) *ErrorObject {
 	errorObject := ErrorObject{
 		Title:  p.Title,
 		Detail: p.Detail,
@@ -19,17 +19,17 @@ func FromProblem(p problem.P) ErrorObject {
 		}
 	}
 
-	return errorObject
+	return &errorObject
 }
 
-func FromError(err error) ErrorObject {
+func FromError(err error) *ErrorObject {
 	errObj, ok := errToJsonApiMap[err]
 
 	// If this error is not a registered error
 	// log it and replace it with a 500 error
 	if !ok {
-		errObj = FromProblem(problem.ServerError)
+		return FromProblem(problem.ServerError)
 	}
 
-	return errObj
+	return &errObj
 }
