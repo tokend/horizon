@@ -6,12 +6,14 @@ import (
 	"bitbucket.org/ww/goautoneg"
 	"gitlab.com/tokend/horizon/log"
 	"golang.org/x/net/context"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/render/jsonapi"
 )
 
 // Negotiate inspects the Accept header of the provided request and determines
 // what the most appropriate response type should be.  Defaults to HAL.
 func Negotiate(ctx context.Context, r *http.Request) string {
-	alternatives := []string{MimeHal, MimeJSON, MimeEventStream, MimeRaw}
+	alternatives := []string{MimeHal, MimeJSON, MimeEventStream, MimeRaw, MimeJSONAPI}
 	accept := r.Header.Get("Accept")
 
 	if accept == "" {
@@ -26,4 +28,9 @@ func Negotiate(ctx context.Context, r *http.Request) string {
 	}).Debug("Negotiated content type")
 
 	return result
+}
+
+func RegisterError(err error, p problem.P) {
+	problem.RegisterError(err, p)
+	jsonapi.RegisterError(err, *jsonapi.FromProblem(p))
 }
