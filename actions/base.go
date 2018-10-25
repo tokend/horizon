@@ -12,11 +12,13 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/zenazn/goji/web"
 	"gitlab.com/tokend/horizon/render"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/render/sse"
-	"github.com/zenazn/goji/web"
 	"golang.org/x/net/context"
+	"gitlab.com/tokend/horizon/render/jsonapi"
+	"fmt"
 )
 
 // Base is a helper struct you can use as part of a custom action via
@@ -76,6 +78,8 @@ func (base *Base) JsonValue(name string) string {
 func (base *Base) Execute(action interface{}) {
 	contentType := render.Negotiate(base.Ctx, base.R)
 
+	fmt.Println("Content type:")
+	fmt.Println(contentType)
 	switch contentType {
 	case render.MimeHal, render.MimeJSON:
 		action, ok := action.(JSON)
@@ -88,6 +92,19 @@ func (base *Base) Execute(action interface{}) {
 
 		if base.Err != nil {
 			problem.Render(base.Ctx, base.W, base.Err)
+			return
+		}
+
+	case render.MimeJSONAPI:
+		action, ok := action.(JSON)
+		if !ok {
+			goto NotAcceptable
+		}
+
+		action.JSON()
+
+		if base.Err != nil {
+			jsonapi.RenderErr(base.Ctx, base.W, base.Err)
 			return
 		}
 
