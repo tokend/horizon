@@ -18,7 +18,6 @@ import (
 	"gitlab.com/tokend/horizon/render/sse"
 	"golang.org/x/net/context"
 	"gitlab.com/tokend/horizon/render/jsonapi"
-	"fmt"
 )
 
 // Base is a helper struct you can use as part of a custom action via
@@ -78,8 +77,6 @@ func (base *Base) JsonValue(name string) string {
 func (base *Base) Execute(action interface{}) {
 	contentType := render.Negotiate(base.Ctx, base.R)
 
-	fmt.Println("Content type:")
-	fmt.Println(contentType)
 	switch contentType {
 	case render.MimeHal, render.MimeJSON:
 		action, ok := action.(JSON)
