@@ -34,7 +34,7 @@ type SaleIndexAction struct {
 	SortType     *int64
 	Name         string
 	Records      []history.Sale
-	PagingParams db2.PageQuery
+	PagingParams db2.PageQueryV2
 	Page         hal.Page
 }
 
@@ -52,7 +52,7 @@ func (action *SaleIndexAction) JSON() {
 }
 
 func (action *SaleIndexAction) loadParams() {
-	action.PagingParams = action.GetPageQuery()
+	action.PagingParams = action.GetPageQueryV2()
 	action.Owner = action.GetString("owner")
 	action.BaseAsset = action.GetString("base_asset")
 	action.Name = action.GetString("name")
@@ -76,7 +76,7 @@ func (action *SaleIndexAction) loadParams() {
 }
 
 func (action *SaleIndexAction) loadRecord() {
-	q := action.HistoryQ().Sales()
+	q := action.HistoryQ().Sales().PageV2(action.PagingParams)
 
 	if action.Owner != "" {
 		q = q.ForOwner(action.Owner)
@@ -113,7 +113,8 @@ func (action *SaleIndexAction) loadRecord() {
 
 	switch sortBy {
 	case SortTypeDefaultPage:
-		q = q.OrderById(action.PagingParams.Order)
+		// FIXME tmp:
+		q = q.OrderById("asc")
 	case SortTypeStartTime:
 		q = q.OrderByStartTime()
 	case SortTypeByEndTime:
@@ -171,8 +172,7 @@ func (action *SaleIndexAction) loadPage() {
 
 	action.Page.BaseURL = action.BaseURL()
 	action.Page.BasePath = action.Path()
+	action.Page.Page = action.PagingParams.Page
 	action.Page.Limit = action.PagingParams.Limit
-	action.Page.Cursor = action.PagingParams.Cursor
-	action.Page.Order = action.PagingParams.Order
-	action.Page.PopulateLinks()
+	action.Page.PopulateLinksV2()
 }
