@@ -162,14 +162,6 @@ func (action *SaleIndexAction) loadPage() {
 		action.Page.Add(&res)
 	}
 
-	// with custom sorting type
-	// pagination will not work
-	if action.SortType != nil {
-		// init set empty slice if no records
-		action.Page.Init()
-		return
-	}
-
 	action.Page.BaseURL = action.BaseURL()
 	action.Page.BasePath = action.Path()
 	action.Page.Page = action.PagingParams.Page
