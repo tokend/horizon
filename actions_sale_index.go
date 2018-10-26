@@ -72,6 +72,7 @@ func (action *SaleIndexAction) loadParams() {
 		"upcoming":   action.GetString("upcoming"),
 		"voting":     action.GetString("voting"),
 		"promotions": action.GetString("promotions"),
+		"sort_by":    action.GetString("sort_by"),
 	}
 }
 
