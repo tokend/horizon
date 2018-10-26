@@ -12,13 +12,13 @@ import (
 	"time"
 
 	"github.com/spf13/cast"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/strkey"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/utils"
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/strkey"
-	"gitlab.com/tokend/go/xdr"
 )
 
 const (
@@ -493,6 +493,9 @@ func (base *Base) ValidateBodyType() {
 	case mt == "application/x-www-form-urlencoded":
 		return
 	case mt == "multipart/form-data":
+		return
+	case mt == "application/vnd.api+json":
+		base.isJson = true
 		return
 	case mt == "application/json":
 		base.isJson = true
