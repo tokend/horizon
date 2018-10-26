@@ -158,6 +158,16 @@ func (action *Action) GetPagingParams() (cursor string, order string, limit uint
 	return
 }
 
+func (action *Action) GetPagingParamsV2 () (page uint64, limit uint64) {
+	if action.Err != nil {
+		return
+	}
+
+	page, limit = action.Base.GetPagingParamsV2()
+
+	return
+}
+
 // GetPageQuery is a helper that returns a new db.PageQuery struct initialized
 // using the results from a call to GetPagingParams()
 func (action *Action) GetPageQuery() db2.PageQuery {
@@ -166,6 +176,20 @@ func (action *Action) GetPageQuery() db2.PageQuery {
 	}
 
 	r, err := db2.NewPageQuery(action.GetPagingParams())
+
+	if err != nil {
+		action.Err = err
+	}
+
+	return r
+}
+
+func (action *Action) GetPageQueryV2() db2.PageQueryV2 {
+	if action.Err != nil {
+		return db2.PageQueryV2{}
+	}
+
+	r, err := db2.NewPageQueryV2(action.GetPagingParamsV2())
 
 	if err != nil {
 		action.Err = err

@@ -28,6 +28,8 @@ const (
 	ParamOrder = "order"
 	// ParamLimit is a query string param name
 	ParamLimit = "limit"
+	// ParamLimit is a query string param name
+	ParamPage = "page"
 )
 
 // GetString retrieves a string from either the URLParams, form or query string.
@@ -351,6 +353,17 @@ func (base *Base) GetPagingParams() (cursor string, order string, limit uint64) 
 	if lei := base.R.Header.Get("Last-Event-ID"); lei != "" {
 		cursor = lei
 	}
+
+	return
+}
+
+func (base *Base) GetPagingParamsV2() (page uint64, limit uint64) {
+	if base.Err != nil {
+		return
+	}
+
+	page = base.GetUInt64(ParamPage)
+	limit = base.GetUInt64(ParamLimit)
 
 	return
 }

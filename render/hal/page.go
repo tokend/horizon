@@ -42,6 +42,7 @@ type Page struct {
 	Order    string            `json:"-"`
 	Limit    uint64            `json:"-"`
 	Cursor   string            `json:"-"`
+	Page     uint64            `json:"-"`
 	Filters  map[string]string `json:"-"`
 }
 
@@ -60,6 +61,26 @@ func (p *Page) PopulateLinks() {
 	} else {
 		p.Links.Next = lb.Linkf(p.Filters, fmts, p.Order, p.Limit, p.Cursor)
 		p.Links.Prev = lb.Linkf(p.Filters, fmts, p.InvertedOrder(), p.Limit, p.Cursor)
+	}
+}
+// PopulateLinksV2 sets the common links for the page for limit/offset-based pagination
+func (p *Page) PopulateLinksV2() {
+	p.Init()
+	fmts := p.BasePath + "?page=%d&limit=%d"
+
+	lb := LinkBuilder{p.BaseURL}
+
+	p.Links.Self = lb.Linkf(p.Filters, fmts, p.Page, p.Limit)
+	rec := p.Embedded.Records
+
+	if len(rec) > 0 {
+		p.Links.Next = lb.Linkf(p.Filters, fmts, p.Page + 1, p.Limit)
+		if p.Page > 0 {
+			p.Links.Prev = lb.Linkf(p.Filters, fmts, p.Page - 1, p.Limit)
+		}
+	} else {
+		p.Links.Next = lb.Linkf(p.Filters, fmts, p.Page, p.Limit)
+		p.Links.Prev = lb.Linkf(p.Filters, fmts, p.Page, p.Limit)
 	}
 }
 
