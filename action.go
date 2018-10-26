@@ -158,14 +158,14 @@ func (action *Action) GetPagingParams() (cursor string, order string, limit uint
 	return
 }
 
-func (action *Action) GetPagingParamsV2 () (page uint64) {
+func (action *Action) GetPagingParamsV2 () (page uint64, limit uint64) {
 	if action.Err != nil {
 		return
 	}
 
-	page = action.Base.GetPagingParamsV2()
+	page, limit = action.Base.GetPagingParamsV2()
 
-	return page
+	return
 }
 
 // GetPageQuery is a helper that returns a new db.PageQuery struct initialized

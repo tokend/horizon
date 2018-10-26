@@ -8,23 +8,34 @@ import (
 const (
 	// Default limit is the default amount of records will be returned
 	DefaultLimit  = 15
-	DefaultOffset = 0
+	MaxLimit = 50
 )
 
 // NewPageQueryV2 accepts the page derived for request
 // URL params and calculates the proper offset for the
 // sql-select
-func NewPageQueryV2(page uint64) (result PageQueryV2, err error) {
+func NewPageQueryV2(page uint64, limit uint64) (result PageQueryV2, err error) {
 	if err != nil {
 		err = errors.Wrap(err, "Got invalid page")
 		return
 	}
 
-	result = PageQueryV2{
-		Limit:  DefaultLimit,
-		Offset: page * DefaultLimit,
-		Page: page,
+	switch {
+	case limit == 0:
+		result.Limit = DefaultLimit
+		break
+	case limit < 0:
+		err = ErrInvalidLimit
+		return
+	case limit > MaxLimit:
+		result.Limit = MaxLimit
+		break
+	default:
+		result.Limit = limit
 	}
+
+	result.Offset = page * limit
+	result.Page = page
 
 	return
 }

@@ -357,12 +357,13 @@ func (base *Base) GetPagingParams() (cursor string, order string, limit uint64) 
 	return
 }
 
-func (base *Base) GetPagingParamsV2() (page uint64) {
+func (base *Base) GetPagingParamsV2() (page uint64, limit uint64) {
 	if base.Err != nil {
 		return
 	}
 
 	page = base.GetUInt64(ParamPage)
+	limit = base.GetUInt64(ParamLimit)
 
 	return
 }
