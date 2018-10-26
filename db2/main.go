@@ -29,11 +29,19 @@ type Pageable interface {
 }
 
 // PageQuery represents a portion of a Query struct concerned with paging
-// through a large dataset.
+// through a large dataset. Is used for cursor-based pagination
 type PageQuery struct {
 	Cursor string
 	Order  string
 	Limit  uint64
+}
+
+// PageQueryV2 represents a portion of a Query struct concerned with paging
+// through a large dataset. Is used for page-based(offset, limit) pagination
+type PageQueryV2 struct {
+	Limit  uint64
+	Offset uint64
+	Page   uint64
 }
 
 // Repo provides helper methods for making queries against `Conn`, such as
