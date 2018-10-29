@@ -55,6 +55,7 @@ publish-dh:
     - tokend
   only:
     - dockerhub
+    - dockerhub-v2
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PWD
