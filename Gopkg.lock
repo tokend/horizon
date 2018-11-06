@@ -466,8 +466,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/payout"
-  digest = "1:1ab2cdc0c6d3257ad9cd99a4de77a22775f94b3447e2bdf5b0378bd1bd3a8c8d"
+  branch = "feature/nondivisible_tokens"
+  digest = "1:c8c4c58cc8d491dc3bc7c731fae2efc0bb72fbae4326609a9090ff3e451868af"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +485,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "d87759e84874ad0bee22e2a0b61b48a584ae3b07"
+  revision = "20a866f34e6a3a526f0ef00d9d770975dfc9b907"
 
 [[projects]]
   branch = "master"

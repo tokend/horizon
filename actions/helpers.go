@@ -575,12 +575,12 @@ func (base *Base) ValidateToProblem(ok bool, result *utils.ValidateError) {
 	}
 }
 
-func (base *Base) CalculatePercentFee(percentFee, am int64) (int64, bool) {
+func (base *Base) CalculatePercentFee(percentFee, am, minimalAmount int64) (int64, bool) {
 	if percentFee == 0 || am == 0 {
 		return 0, false
 	}
 
-	return amount.BigDivide(am, percentFee, amount.One*100, amount.ROUND_UP)
+	return amount.BigDivide(am, percentFee, amount.One*100, amount.ROUND_UP, minimalAmount)
 }
 
 func (base *Base) ParseResponse(response *http.Response) (p *problem.P) {

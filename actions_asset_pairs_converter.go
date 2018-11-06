@@ -1,11 +1,11 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/render/problem"
-	"gitlab.com/tokend/horizon/render/hal"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
 )
 
 type AssetPairsConverterAction struct {
@@ -73,7 +73,8 @@ func (action *AssetPairsConverterAction) loadData() {
 		return
 	}
 
-	result, isConverted, err := assetPair.ConvertToDestAsset(action.DestAsset, action.Amount)
+	result, isConverted, err := assetPair.
+		ConvertToDestAsset(action.DestAsset, action.Amount, action.CoreQ().Assets().ByCode)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to convert amount to dest asset")
 		action.Err = &problem.ServerError

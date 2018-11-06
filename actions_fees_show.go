@@ -1,13 +1,13 @@
 package horizon
 
 import (
-	"github.com/go-errors/errors"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/exchange"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/regources"
 )
 
@@ -102,9 +102,8 @@ func (action *FeesShowAction) loadData() {
 		}
 	}
 
-	percentFee, isOverflow := action.GetPercentFee(result.Percent, action.Amount)
-	if isOverflow {
-		action.SetInvalidField("amount", errors.New("is too big - overflow"))
+	percentFee := action.GetPercentFee(result.Percent)
+	if action.Err != nil {
 		return
 	}
 
@@ -113,17 +112,34 @@ func (action *FeesShowAction) loadData() {
 	action.Fee = resource.NewFeeEntry(*result)
 }
 
-func (action *FeesShowAction) GetPercentFee(percentFee int64, rawAmount string) (int64, bool) {
+func (action *FeesShowAction) GetPercentFee(percentFee int64) int64 {
 	// request does not require to calculate
-	if rawAmount == "" {
-		return percentFee, false
+	if action.Amount == "" {
+		return percentFee
 	}
 
-	am, err := amount.Parse(rawAmount)
+	am, err := amount.Parse(action.Amount)
 	if err != nil {
-		action.SetInvalidField("amount", err)
-		return 0, false
+		action.SetInvalidField("amount", errors.Wrap(err, "failed to parse"))
+		return 0
 	}
 
-	return action.CalculatePercentFee(percentFee, int64(am))
+	asset, err := action.CoreQ().Assets().ByCode(action.Asset)
+	if err != nil {
+		action.Err = &problem.ServerError
+		return 0
+	}
+
+	if asset == nil {
+		action.SetInvalidField("asset", errors.Wrap(err, "no such asset"))
+		return 0
+	}
+
+	res, isOverflow := action.CalculatePercentFee(percentFee, am, asset.GetMinimumAmount())
+	if isOverflow {
+		action.SetInvalidField("amount", errors.Wrap(err, "is too big - overflow"))
+		return 0
+	}
+
+	return res
 }

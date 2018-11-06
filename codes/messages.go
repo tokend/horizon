@@ -16,6 +16,7 @@ var messages = map[string]string{
 	"tx_insufficient_fee":                               "The total fee amount is greater than the max fee amount specified by tx source",
 	"tx_source_underfunded":                             "Not enough funds for tx fee",
 	"tx_commission_line_full":                           "Charging tx fee would cause uint64 overflow",
+	"tx_fee_incorrect_precision":                        "Cannot charge the fee for the transaction. The fee is charged with a non-divisible asset, and the total calculated amount of the fee would cause this asset to split",
 	"op_inner":                                          "Op inner",
 	"op_bad_auth":                                       "You dont have permission to complete this action",
 	"op_no_account":                                     "Target account does not exist",
@@ -228,6 +229,9 @@ var messages = map[string]string{
 	"op_fee_exceeds_actual_amount":                      "Fee more than actual amount to be payed",
 	"op_total_fee_overflow":                             "Unexpected state, sum of fixed and calculated fee exceeded max amount",
 	"op_min_amount_too_big":                             "There is no receivers which can receive more than minPayoutAmount",
+	"op_incorrect_precision":                            "The asset we operate on, does not allow such precise amounts",
+	"op_incorrect_amount_precision":                     "The asset we operate on, does not allow such precise amounts",
+	"op_no_role_permission":                             "Role permission for operation doesn't exist",
 }
 
 func getMessage(rawCode string) string {
