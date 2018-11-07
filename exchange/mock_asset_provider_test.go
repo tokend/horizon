@@ -56,18 +56,25 @@ func (_m *mockAssetProvider) GetAssetsForPolicy(policy uint32) ([]core.Asset, er
 	return r0, r1
 }
 
-// GetLoadAssetByCodeFunc provides a mock function with given fields:
-func (_m *mockAssetProvider) GetLoadAssetByCodeFunc() func(string) (*core.Asset, error) {
-	ret := _m.Called()
+// GetLoadAssetByCode provides a mock function with given fields: code
+func (_m *mockAssetProvider) GetLoadAssetByCode(code string) (*core.Asset, error) {
+	ret := _m.Called(code)
 
-	var r0 func(string) (*core.Asset, error)
-	if rf, ok := ret.Get(0).(func() func(string) (*core.Asset, error)); ok {
-		r0 = rf()
+	var r0 *core.Asset
+	if rf, ok := ret.Get(0).(func(string) *core.Asset); ok {
+		r0 = rf(code)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(func(string) (*core.Asset, error))
+			r0 = ret.Get(0).(*core.Asset)
 		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(code)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
