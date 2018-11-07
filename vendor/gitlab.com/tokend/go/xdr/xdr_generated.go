@@ -18680,7 +18680,8 @@ type ManageAssetOp struct {
 //    	REQUEST_ALREADY_EXISTS = -9,      // request for creation of unique entry already exists
 //    	STATS_ASSET_ALREADY_EXISTS = -10, // statistics quote asset already exists
 //    	INITIAL_PREISSUED_EXCEEDS_MAX_ISSUANCE = -11, // initial pre issued amount exceeds max issuance amount
-//    	INVALID_DETAILS = -12 // details must be a valid json
+//        INVALID_DETAILS = -12, // details must be a valid json
+//        INVALID_TRAILING_DIGITS_COUNT = 13 // invalid number of trailing digits
 //    };
 //
 type ManageAssetResultCode int32
@@ -18697,6 +18698,7 @@ const (
 	ManageAssetResultCodeStatsAssetAlreadyExists            ManageAssetResultCode = -10
 	ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance ManageAssetResultCode = -11
 	ManageAssetResultCodeInvalidDetails                     ManageAssetResultCode = -12
+	ManageAssetResultCodeInvalidTrailingDigitsCount         ManageAssetResultCode = 13
 )
 
 var ManageAssetResultCodeAll = []ManageAssetResultCode{
@@ -18711,6 +18713,7 @@ var ManageAssetResultCodeAll = []ManageAssetResultCode{
 	ManageAssetResultCodeStatsAssetAlreadyExists,
 	ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance,
 	ManageAssetResultCodeInvalidDetails,
+	ManageAssetResultCodeInvalidTrailingDigitsCount,
 }
 
 var manageAssetResultCodeMap = map[int32]string{
@@ -18725,6 +18728,7 @@ var manageAssetResultCodeMap = map[int32]string{
 	-10: "ManageAssetResultCodeStatsAssetAlreadyExists",
 	-11: "ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance",
 	-12: "ManageAssetResultCodeInvalidDetails",
+	13:  "ManageAssetResultCodeInvalidTrailingDigitsCount",
 }
 
 var manageAssetResultCodeShortMap = map[int32]string{
@@ -18739,6 +18743,7 @@ var manageAssetResultCodeShortMap = map[int32]string{
 	-10: "stats_asset_already_exists",
 	-11: "initial_preissued_exceeds_max_issuance",
 	-12: "invalid_details",
+	13:  "invalid_trailing_digits_count",
 }
 
 var manageAssetResultCodeRevMap = map[string]int32{
@@ -18753,6 +18758,7 @@ var manageAssetResultCodeRevMap = map[string]int32{
 	"ManageAssetResultCodeStatsAssetAlreadyExists":            -10,
 	"ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance": -11,
 	"ManageAssetResultCodeInvalidDetails":                     -12,
+	"ManageAssetResultCodeInvalidTrailingDigitsCount":         13,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements

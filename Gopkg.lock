@@ -467,7 +467,7 @@
 
 [[projects]]
   branch = "feature/nondivisible_tokens"
-  digest = "1:c8c4c58cc8d491dc3bc7c731fae2efc0bb72fbae4326609a9090ff3e451868af"
+  digest = "1:da259d4695720cb111297be12df5a91027fe24d2c272f6225f103e735685e386"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +485,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "20a866f34e6a3a526f0ef00d9d770975dfc9b907"
+  revision = "281d34621028f29a0d8bc504deff9054714e52ed"
 
 [[projects]]
   branch = "master"

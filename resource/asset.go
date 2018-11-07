@@ -1,10 +1,12 @@
 package resource
 
 import (
-	"gitlab.com/tokend/horizon/db2/core"
+	"strconv"
+
 	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/regources"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/regources"
 )
 
 type Asset struct {
@@ -15,6 +17,7 @@ type Asset struct {
 	MaxIssuanceAmount    string `json:"max_issuance_amount"`
 	Issued               string `json:"issued"`
 	PendingIssuance      string `json:"pending_issuance"`
+	TrailingDigitsCount  string `json:"trailing_digits_count"`
 	Policies
 	Details map[string]interface{} `json:"details"`
 	Sales   []Sale                 `json:"sales,omitempty"`
@@ -29,6 +32,7 @@ func (a *Asset) Populate(asset *core.Asset) {
 	a.MaxIssuanceAmount = amount.StringU(asset.MaxIssuanceAmount)
 	a.PendingIssuance = amount.StringU(asset.PendingIssuance)
 	a.Issued = amount.StringU(asset.Issued)
+	a.TrailingDigitsCount = strconv.Itoa(int(asset.TrailingDigits))
 
 	a.Policies.Populate(*asset)
 	a.Details, _ = asset.GetDetails()
@@ -48,7 +52,7 @@ func PopulateAssetPair(asset core.AssetPair) regources.AssetPair {
 }
 
 func PopulatePolicies(policy int32) []regources.Policy {
-	result := make([]regources.Policy,0)
+	result := make([]regources.Policy, 0)
 
 	for _, p := range xdr.AssetPairPolicyAll {
 		if (int32(p) & policy) != 0 {
