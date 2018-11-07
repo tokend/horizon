@@ -123,6 +123,7 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCheckSaleState,
 		xdr.OperationTypeManageKeyValue,
 		xdr.OperationTypePaymentV2,
+		xdr.OperationTypeReviewRequest,
 	}
 
 	r := app.web.router

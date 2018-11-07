@@ -50,9 +50,9 @@ func ForOperation(
 		result = append(result, Participant{paymentResponse.Destination, &paymentOp.DestinationBalanceId, nil})
 		sourceParticipant.BalanceID = &paymentOp.SourceBalanceId
 	case xdr.OperationTypeSetOptions:
-	// the only direct participant is the source_account
+		// the only direct participant is the source_account
 	case xdr.OperationTypeSetFees:
-	// the only direct participant is the source_account
+		// the only direct participant is the source_account
 	case xdr.OperationTypeManageAccount:
 		manageAccountOp := op.Body.MustManageAccountOp()
 		result = append(result, Participant{manageAccountOp.Account, nil, nil})
@@ -65,9 +65,9 @@ func ForOperation(
 			result = append(result, Participant{manageBalanceOp.Destination, nil, nil})
 		}
 	case xdr.OperationTypeManageAsset:
-	// the only direct participant is the source_accountWWW
+		// the only direct participant is the source_accountWWW
 	case xdr.OperationTypeManageLimits:
-	// the only direct participant is the source_account, but I'm not sure
+		// the only direct participant is the source_account, but I'm not sure
 	case xdr.OperationTypeDirectDebit:
 		debitOp := op.Body.MustDirectDebitOp()
 		paymentOp := debitOp.PaymentOp
@@ -116,13 +116,40 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeReviewRequest:
 		request := getReviewableRequestByID(uint64(op.Body.MustReviewRequestOp().RequestId), ledgerChanges)
-		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address() {
+		if request == nil || sourceParticipant.AccountID.Address() == request.Requestor.Address() {
+			break
+		}
+
+		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeAtomicSwap.ShortString() {
 			result = append(result, Participant{
 				AccountID: request.Requestor,
 				BalanceID: nil,
 				Details:   nil,
 			})
+			break
 		}
+
+		extendedResult, ok := opResult.MustReviewRequestResult().MustSuccess().Ext.GetExtendedResult()
+		if !ok {
+			break
+		}
+
+		atomicSwapExtendedResult, ok := extendedResult.TypeExt.GetASwapExtended()
+		if !ok {
+			break
+		}
+
+		result = append(result, Participant{
+			AccountID: atomicSwapExtendedResult.BidOwnerId,
+			BalanceID: &atomicSwapExtendedResult.BidOwnerBaseBalanceId,
+			Details:   nil,
+		})
+
+		result = append(result, Participant{
+			AccountID: atomicSwapExtendedResult.PurchaserId,
+			BalanceID: &atomicSwapExtendedResult.PurchaserBaseBalanceId,
+			Details:   nil,
+		})
 	case xdr.OperationTypeCreatePreissuanceRequest:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateIssuanceRequest:

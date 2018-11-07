@@ -52,6 +52,9 @@ type OperationsQI interface {
 	// WithoutExternallyFullyMatched = don't load manage offer operations with ExternallyFullyMatched state
 	WithoutExternallyFullyMatched() OperationsQI
 
+	// OnlyReviewOfAtomicSwapRequest - load review request ops only with atomic swap request type
+	OnlyReviewOfAtomicSwapRequest() OperationsQI
+
 	Participants(dest map[int64]*OperationParticipants) error
 }
 
@@ -271,6 +274,16 @@ func (q *OperationsQ) WithoutExternallyFullyMatched() OperationsQI {
 	}
 
 	q.sql = q.sql.Where("ho.state <> ?", OperationStateExternallyFullyMatched)
+	return q
+}
+
+func (q *OperationsQ) OnlyReviewOfAtomicSwapRequest() OperationsQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("ho.request_type IS NULL OR ho.request_type == ?",
+		xdr.ReviewableRequestTypeAtomicSwap.ShortString())
 	return q
 }
 

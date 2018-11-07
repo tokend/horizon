@@ -9,6 +9,7 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/utf8"
+	"gitlab.com/tokend/regources"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -266,9 +267,16 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		opResult := c.OperationResult().MustReviewRequestResult().MustSuccess()
 		extendedResult, ok := opResult.Ext.GetExtendedResult()
-		if ok {
-			details["is_fulfilled"] = extendedResult.Fulfilled
+		if !ok {
+			break
 		}
+		details["is_fulfilled"] = extendedResult.Fulfilled
+
+		aSwapExtended, ok := extendedResult.TypeExt.GetASwapExtended()
+		if !ok {
+			break
+		}
+		details["atomic_swap_details"] = getAtomicSwapDetails(aSwapExtended)
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
@@ -401,6 +409,21 @@ func getReviewRequestOpDetails(requestDetails xdr.ReviewRequestOpRequestDetails)
 	return map[string]interface{}{
 		"request_type": requestDetails.RequestType.ShortString(),
 		"update_kyc":   getUpdateKYCDetails(requestDetails.UpdateKyc),
+	}
+}
+
+func getAtomicSwapDetails(atomicSwapExtendedResult xdr.ASwapExtended) map[string]interface{} {
+	return map[string]interface{}{
+		"bid_id":                          uint64(atomicSwapExtendedResult.BidId),
+		"bid_owner_id":                    atomicSwapExtendedResult.BidOwnerId.Address(),
+		"bid_owner_base_asset_balance_id": atomicSwapExtendedResult.BidOwnerBaseBalanceId.AsString(),
+		"purchaser_id":                    atomicSwapExtendedResult.PurchaserId.Address(),
+		"purchaser_base_asset_balance_id": atomicSwapExtendedResult.PurchaserBaseBalanceId.AsString(),
+		"base_asset":                      string(atomicSwapExtendedResult.BaseAsset),
+		"quote_asset":                     string(atomicSwapExtendedResult.QuoteAsset),
+		"base_amount":                     regources.Amount(atomicSwapExtendedResult.BaseAmount),
+		"quote_amount":                    regources.Amount(atomicSwapExtendedResult.QuoteAmount),
+		"price":                           regources.Amount(atomicSwapExtendedResult.Price),
 	}
 }
 
