@@ -91,5 +91,14 @@ func (q *assetQ) Select() ([]Asset, error) {
 	return result, nil
 }
 
-var selectAsset = sq.Select("a.code, a.owner, a.preissued_asset_signer, a.details," +
-	"a.max_issuance_amount, a.available_for_issueance, a.issued, a.policies,  a.pending_issuance").From("asset a")
+var selectAsset = sq.Select("a.code",
+	"a.owner",
+	"a.preissued_asset_signer",
+	"a.details",
+	"a.max_issuance_amount",
+	"a.available_for_issueance",
+	"a.issued",
+	"a.policies",
+	"a.pending_issuance",
+	"a.trailing_digits",
+).From("asset a")
