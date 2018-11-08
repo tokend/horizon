@@ -16,16 +16,22 @@ type AssetPair struct {
 	Policies                int32  `db:"policies"`
 }
 
+//go:generate mockery -case underscore -name assetLoader -inpkg -testonly
+
+// AssetLoader uses to load asset before converting, we need minimal amount
+type assetLoader interface {
+	LoadAsset(code string) (*Asset, error)
+}
+
 // ConvertToDestAsset - converts specified amount to dest asset using current price,
 // returns false - if failed
-func (pair AssetPair) ConvertToDestAsset(destCode string, amountToConvert int64,
-	loadAsset func(code string) (*Asset, error),
+func (pair AssetPair) ConvertToDestAsset(destCode string, amountToConvert int64, loader assetLoader,
 ) (int64, bool, error) {
 	if pair.CurrentPrice == 0 {
 		return 0, false, errors.New("Price is invalid")
 	}
 
-	destAsset, err := loadAsset(destCode)
+	destAsset, err := loader.LoadAsset(destCode)
 	if err != nil {
 		return 0, false, errors.From(errors.New("failed to select dest asset"), logan.F{
 			"destCode": destCode,
@@ -38,28 +44,43 @@ func (pair AssetPair) ConvertToDestAsset(destCode string, amountToConvert int64,
 		})
 	}
 
-	if pair.QuoteAsset == destCode {
+	switch destCode {
+	case pair.QuoteAsset:
 		result, isOverflow := amount.BigDivide(amountToConvert, pair.CurrentPrice,
 			amount.One, amount.ROUND_UP, destAsset.GetMinimumAmount())
 		return result, !isOverflow, nil
+	case pair.BaseAsset:
+		result, isOverflow := amount.BigDivide(amountToConvert, amount.One,
+			pair.CurrentPrice, amount.ROUND_UP, destAsset.GetMinimumAmount())
+		return result, !isOverflow, nil
+	default:
+		return 0, false, errors.From(errors.New("unexpected dest code"), logan.F{
+			"base":        pair.BaseAsset,
+			"quote":       pair.QuoteAsset,
+			"actual dest": destCode,
+		})
 	}
-
-	result, isOverflow := amount.BigDivide(amountToConvert, amount.One,
-		pair.CurrentPrice, amount.ROUND_UP, destAsset.GetMinimumAmount())
-	return result, !isOverflow, nil
 }
 
 // ConvertFromSourceAsset - converts specified amount from source to another asset in pair using current price,
 // returns false - if failed
-func (pair AssetPair) ConvertFromSourceAsset(sourceCode string, amountToConvert int64,
-	loadAsset func(code string) (*Asset, error),
+func (pair AssetPair) ConvertFromSourceAsset(sourceCode string, amountToConvert int64, loader assetLoader,
 ) (int64, bool, error) {
-	destCode := pair.QuoteAsset
-	if sourceCode == destCode {
+	destCode := ""
+	switch sourceCode {
+	case pair.BaseAsset:
+		destCode = pair.QuoteAsset
+	case pair.QuoteAsset:
 		destCode = pair.BaseAsset
+	default:
+		return 0, false, errors.From(errors.New("unexpected source code"), logan.F{
+			"base":          pair.BaseAsset,
+			"quote":         pair.QuoteAsset,
+			"actual source": sourceCode,
+		})
 	}
 
-	return pair.ConvertToDestAsset(destCode, amountToConvert, loadAsset)
+	return pair.ConvertToDestAsset(destCode, amountToConvert, loader)
 }
 
 // Contains - returns true if base or quote equal to asset

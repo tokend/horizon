@@ -10,7 +10,7 @@ import (
 type assetProvider interface {
 	GetAssetsForPolicy(policy uint32) ([]core.Asset, error)
 	GetAssetPairsForCodes(baseAssets []string, quoteAssets []string) ([]core.AssetPair, error)
-	GetLoadAssetByCode(code string) (*core.Asset, error)
+	LoadAsset(code string) (*core.Asset, error)
 }
 
 type Converter struct {
@@ -28,7 +28,7 @@ func (p assetProviderImpl) GetAssetsForPolicy(policy uint32) ([]core.Asset, erro
 func (p assetProviderImpl) GetAssetPairsForCodes(baseAssets []string, quoteAssets []string) ([]core.AssetPair, error) {
 	return p.q.AssetPairs().ForAssets(baseAssets, quoteAssets).Select()
 }
-func (p assetProviderImpl) GetLoadAssetByCode(code string) (*core.Asset, error) {
+func (p assetProviderImpl) LoadAsset(code string) (*core.Asset, error) {
 	return p.q.Assets().ByCode(code)
 }
 
@@ -88,8 +88,7 @@ func (c *Converter) convertWithMaxPath(amount int64, fromAsset, toAsset string, 
 	converted := false
 	var result int64
 	for _, fromPair := range fromPairs {
-		hopAmount, isConverted, err := fromPair.ConvertFromSourceAsset(fromAsset,
-			amount, c.assetProvider.GetLoadAssetByCode)
+		hopAmount, isConverted, err := fromPair.ConvertFromSourceAsset(fromAsset, amount, c.assetProvider)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert from asset to hop asset")
 		}
@@ -103,8 +102,7 @@ func (c *Converter) convertWithMaxPath(amount int64, fromAsset, toAsset string, 
 				continue
 			}
 
-			destAmount, isConverted, err := fromPair.ConvertToDestAsset(toAsset,
-				hopAmount, c.assetProvider.GetLoadAssetByCode)
+			destAmount, isConverted, err := fromPair.ConvertToDestAsset(toAsset, hopAmount, c.assetProvider)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to convert to toAsset")
 			}
@@ -138,8 +136,7 @@ func (c *Converter) TryToConvertWithOneHop(amount int64, fromAsset, toAsset stri
 	}
 
 	if directPair != nil {
-		result, isConverted, err := directPair.ConvertToDestAsset(toAsset,
-			amount, c.assetProvider.GetLoadAssetByCode)
+		result, isConverted, err := directPair.ConvertToDestAsset(toAsset, amount, c.assetProvider)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert using direct pair")
 		}

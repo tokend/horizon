@@ -67,14 +67,22 @@ func (action *AssetPairsConverterAction) tryLoadMatchingAssetPair() core.AssetPa
 	return *assetPair
 }
 
+type assetLoader struct {
+	core.AssetQI
+}
+
+func (l assetLoader) LoadAsset(code string) (*core.Asset, error) {
+	return l.ByCode(code)
+}
+
 func (action *AssetPairsConverterAction) loadData() {
 	assetPair := action.tryLoadMatchingAssetPair()
 	if action.Err != nil {
 		return
 	}
 
-	result, isConverted, err := assetPair.
-		ConvertToDestAsset(action.DestAsset, action.Amount, action.CoreQ().Assets().ByCode)
+	result, isConverted, err := assetPair.ConvertToDestAsset(action.DestAsset,
+		action.Amount, assetLoader{AssetQI: action.CoreQ().Assets()})
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to convert amount to dest asset")
 		action.Err = &problem.ServerError

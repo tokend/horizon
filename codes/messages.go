@@ -232,6 +232,7 @@ var messages = map[string]string{
 	"op_incorrect_precision":                            "The asset we operate on, does not allow such precise amounts",
 	"op_incorrect_amount_precision":                     "The asset we operate on, does not allow such precise amounts",
 	"op_no_role_permission":                             "Role permission for operation doesn't exist",
+	"op_invalid_trailing_digits_count":                  "Count of trailing digits must be equal or less than 6",
 }
 
 func getMessage(rawCode string) string {
