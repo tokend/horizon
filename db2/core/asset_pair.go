@@ -62,6 +62,11 @@ func (pair AssetPair) ConvertToDestAsset(destCode string, amountToConvert int64,
 	}
 }
 
+func (pair AssetPair) IsSimilar(other AssetPair) bool {
+	return (pair.BaseAsset == other.BaseAsset && pair.QuoteAsset == other.QuoteAsset) ||
+		(pair.BaseAsset == other.QuoteAsset && pair.QuoteAsset == other.BaseAsset)
+}
+
 // ConvertFromSourceAsset - converts specified amount from source to another asset in pair using current price,
 // returns false - if failed
 func (pair AssetPair) ConvertFromSourceAsset(sourceCode string, amountToConvert int64, loader assetLoader,

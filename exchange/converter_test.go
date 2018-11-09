@@ -4,6 +4,8 @@ import (
 	"math"
 	"testing"
 
+	"gitlab.com/tokend/go/amount"
+
 	"fmt"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -195,7 +197,7 @@ func TestConverter_convertWithMaxPath(t *testing.T) {
 	var q mockAssetProvider
 	defer q.AssertExpectations(t)
 
-	rawFromAsset, rawToAsset := "SUN", "BTC"
+	rawFromAsset, rawMedAsset, rawToAsset := "SUN", "MED", "BTC"
 	assets := getAssetsHelper(rawFromAsset)
 	q.On("GetAssetsForPolicy", uint32(xdr.AssetPolicyBaseAsset)).Return(assets, nil).Once()
 
@@ -204,14 +206,15 @@ func TestConverter_convertWithMaxPath(t *testing.T) {
 	amount := int64(1000)
 	fromAsset, toAsset := "SUN0", "BTC0"
 
-	fromPairs := getAssetPairsHelper(rawFromAsset, rawToAsset, 1000, 3)
-	toPairs := getAssetPairsHelper(rawToAsset, rawFromAsset, 1000, 3)
+	fromPairs := getAssetPairsHelper(rawFromAsset, rawMedAsset, 1000, 1)
+	toPairs := getAssetPairsHelper(rawMedAsset, rawToAsset, 1000, 1)
 
 	Convey("Test convertWithMaxPath", t, func() {
 		Convey("Success to convertWithMaxPath", func() {
-			q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Twice()
+			q.On("LoadAsset", "MED0").Return(&assets[0], nil).Once()
+			q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Once()
 			// only BTC0, SUN0 pairs are appropriate
-			path, err := converter.convertWithMaxPath(amount, fromAsset, toAsset, fromPairs[:1], toPairs[:1])
+			path, err := converter.convertWithMaxPath(amount, fromAsset, toAsset, fromPairs, toPairs)
 
 			assert.NoError(t, err)
 			assert.NotNil(t, path)
@@ -230,9 +233,8 @@ func TestConverter_convertWithMaxPath(t *testing.T) {
 			})
 			Convey("Failed to convert from asset to hop asset", func() {
 				fakeToAsset := toAsset + "hgfds"
-				q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Once()
+				q.On("LoadAsset", "MED0").Return(&assets[0], nil).Once()
 				q.On("LoadAsset", fakeToAsset).Return(&assets[0], nil).Once()
-
 				path, err := converter.convertWithMaxPath(amount, fromAsset, fakeToAsset, fromPairs, toPairs)
 
 				assert.Error(t, err)
@@ -252,7 +254,7 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 
 	converter, _ := newConverter(&q)
 
-	amount := int64(1000)
+	am := int64(amount.One)
 	fromAsset, toAsset := "SUN0", "BTC0"
 
 	Convey("General test for TryToConvertWithOneHop", t, func() {
@@ -262,29 +264,33 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 				q.On("GetAssetPairsForCodes", []string{"SUN0", "BTC0"}, []string{"SUN0", "BTC0"}).Return(assetPairs, nil).Once()
 				q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Once()
 
-				res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
+				res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
 
 				assert.NoError(t, err)
 				assert.NotNil(t, res)
 			})
 
 			Convey("Success to load pairs with base assets", func() {
-				assetPairs := getAssetPairsHelper(rawFromAsset, rawToAsset, 1000, 3)
+				mediatorAsset := "MED"
+				fromAssetPairs := getAssetPairsHelper(rawFromAsset, mediatorAsset, 2*amount.One, 1)
+				toAssetPairs := getAssetPairsHelper(mediatorAsset, rawToAsset, 5*amount.One, 1)
 				q.On("GetAssetPairsForCodes", []string{"SUN0", "BTC0"}, []string{"SUN0", "BTC0"}).Return([]core.AssetPair{}, nil).Once()
 
 				//success to load fromAsset
-				q.On("GetAssetPairsForCodes", []string{"SUN0"}, []string{"SUN0", "SUN1", "SUN2"}).Return(assetPairs[:1], nil).Once()
+				q.On("GetAssetPairsForCodes", []string{"SUN0"}, []string{"SUN0", "SUN1", "SUN2"}).Return(fromAssetPairs, nil).Once()
 				q.On("GetAssetPairsForCodes", []string{"SUN0", "SUN1", "SUN2"}, []string{"SUN0"}).Return([]core.AssetPair{}, nil).Once()
 
 				//success to load toAsset
 				q.On("GetAssetPairsForCodes", []string{"BTC0"}, []string{"SUN0", "SUN1", "SUN2"}).Return([]core.AssetPair{}, nil).Once()
-				q.On("GetAssetPairsForCodes", []string{"SUN0", "SUN1", "SUN2"}, []string{"BTC0"}).Return(assetPairs, nil).Once()
-				q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Twice()
+				q.On("GetAssetPairsForCodes", []string{"SUN0", "SUN1", "SUN2"}, []string{"BTC0"}).Return(toAssetPairs, nil).Once()
+				q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Once()
+				q.On("LoadAsset", "MED0").Return(&assets[0], nil).Once()
 
-				res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
+				res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
 
 				assert.NoError(t, err)
 				assert.NotNil(t, res)
+				assert.Equal(t, *res, 10*am)
 			})
 		})
 		Convey("Failed to convert with one hop", func() {
@@ -301,7 +307,7 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 					expectedErr := errors.New("failed to load pairs with base asset for to asset")
 					q.On("GetAssetPairsForCodes", []string{"BTC0"}, []string{"SUN0", "SUN1", "SUN2"}).Return(emptyAssetPairs, expectedErr).Once()
 
-					res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
+					res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
 
 					assert.Nil(t, res)
 					assert.Equal(t, expectedErr, errors.Cause(err))
@@ -315,7 +321,7 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 					expectedErr := errors.New("failed to load pairs with base asset for from asset")
 					q.On("GetAssetPairsForCodes", []string{"SUN0"}, []string{"SUN0", "SUN1", "SUN2"}).Return(emptyAssetPairs, expectedErr).Once()
 
-					res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
+					res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
 
 					assert.Nil(t, res)
 					assert.Error(t, err)
@@ -326,10 +332,10 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 					assetPairs := getAssetPairsHelper("SUN", "BTC", math.MaxInt64, 3)
 					q.On("GetAssetPairsForCodes", []string{"SUN0", "BTC0"}, []string{"SUN0", "BTC0"}).Return(assetPairs, nil).Once()
 
-					amount = math.MaxInt64
+					am = math.MaxInt64
 					q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Once()
 
-					res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
+					res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
 
 					assert.Nil(t, res)
 					assert.NoError(t, err)
@@ -338,12 +344,30 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 					assetPairs := getAssetPairsHelper("SUN", "BTC", 0, 3)
 					q.On("GetAssetPairsForCodes", []string{"SUN0", "BTC0"}, []string{"SUN0", "BTC0"}).Return(assetPairs, nil).Once()
 
-					res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
+					res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
 
 					assert.Nil(t, res)
 					assert.Error(t, err)
 				})
 
+			})
+			Convey("Unexpected state same pairs", func() {
+				assetPairs := getAssetPairsHelper(rawFromAsset, rawToAsset, 1000, 3)
+				q.On("GetAssetPairsForCodes", []string{"SUN0", "BTC0"}, []string{"SUN0", "BTC0"}).Return([]core.AssetPair{}, nil).Once()
+
+				//success to load fromAsset
+				q.On("GetAssetPairsForCodes", []string{"SUN0"}, []string{"SUN0", "SUN1", "SUN2"}).Return(assetPairs[:1], nil).Once()
+				q.On("GetAssetPairsForCodes", []string{"SUN0", "SUN1", "SUN2"}, []string{"SUN0"}).Return([]core.AssetPair{}, nil).Once()
+
+				//success to load toAsset
+				q.On("GetAssetPairsForCodes", []string{"BTC0"}, []string{"SUN0", "SUN1", "SUN2"}).Return([]core.AssetPair{}, nil).Once()
+				q.On("GetAssetPairsForCodes", []string{"SUN0", "SUN1", "SUN2"}, []string{"BTC0"}).Return(assetPairs, nil).Once()
+				q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Once()
+
+				res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
+
+				assert.Error(t, err)
+				assert.Nil(t, res)
 			})
 			Convey("failed to convert from source", func() {
 				assetPairs := getAssetPairsHelper(rawFromAsset, rawToAsset, 1000, 3)
@@ -356,9 +380,9 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 				//success to load toAsset
 				q.On("GetAssetPairsForCodes", []string{"BTC0"}, []string{"SUN0", "SUN1", "SUN2"}).Return([]core.AssetPair{}, nil).Once()
 				q.On("GetAssetPairsForCodes", []string{"SUN0", "SUN1", "SUN2"}, []string{"BTC0"}).Return(assetPairs, nil).Once()
-				q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Twice()
+				q.On("LoadAsset", "BTC0").Return(&assets[0], nil).Once()
 
-				res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
+				res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
 
 				assert.Error(t, err)
 				assert.Nil(t, res)
@@ -368,7 +392,7 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 				var emptyAssetPairs []core.AssetPair
 				q.On("GetAssetPairsForCodes", []string{"SUN0", "BTC0"}, []string{"SUN0", "BTC0"}).Return(emptyAssetPairs, expectedErr).Once()
 
-				res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
+				res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
 
 				assert.Nil(t, res)
 				assert.Error(t, err)
@@ -377,8 +401,8 @@ func TestConverter_TryToConvertWithOneHop(t *testing.T) {
 			Convey("When from asset == to asset", func() {
 				fromAsset, toAsset = "SUN0", "SUN0"
 
-				res, err := converter.TryToConvertWithOneHop(amount, fromAsset, toAsset)
-				assert.Equal(t, *res, amount)
+				res, err := converter.TryToConvertWithOneHop(am, fromAsset, toAsset)
+				assert.Equal(t, *res, am)
 				assert.NoError(t, err)
 			})
 		})

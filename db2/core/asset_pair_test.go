@@ -25,7 +25,7 @@ func TestAssetPair_ConvertToDestAsset(t *testing.T) {
 	t.Run("Failed to select asset", func(t *testing.T) {
 		destCode := "TEST"
 		assetPair := AssetPair{CurrentPrice: 2 * amount.One}
-		q.On("LoadAsset", destCode).Return(nil, errors.New("not nil"))
+		q.On("LoadAsset", destCode).Return(nil, errors.New("not nil")).Once()
 		res, isConverted, err := assetPair.ConvertToDestAsset(destCode, 123, &q)
 		assert.Zero(t, res)
 		assert.False(t, isConverted)
@@ -35,7 +35,7 @@ func TestAssetPair_ConvertToDestAsset(t *testing.T) {
 	t.Run("Asset not found", func(t *testing.T) {
 		destCode := "TEST"
 		assetPair := AssetPair{CurrentPrice: 2 * amount.One}
-		q.On("LoadAsset", destCode).Return(nil, nil)
+		q.On("LoadAsset", destCode).Return(nil, nil).Once()
 		res, isConverted, err := assetPair.ConvertToDestAsset(destCode, 123, &q)
 		assert.Zero(t, res)
 		assert.False(t, isConverted)
@@ -48,7 +48,7 @@ func TestAssetPair_ConvertToDestAsset(t *testing.T) {
 			BaseAsset:    "BASE",
 		}
 		fakeDestCode := "FAKEBASE"
-		q.On("LoadAsset", fakeDestCode).Return(&Asset{TrailingDigits: 5}, nil)
+		q.On("LoadAsset", fakeDestCode).Return(&Asset{TrailingDigits: 5}, nil).Once()
 		res, isConverted, err := assetPair.ConvertToDestAsset(fakeDestCode, 123, &q)
 		assert.Zero(t, res)
 		assert.False(t, isConverted)
@@ -60,7 +60,7 @@ func TestAssetPair_ConvertToDestAsset(t *testing.T) {
 			CurrentPrice: 2 * amount.One,
 			QuoteAsset:   "QUOTE",
 		}
-		q.On("LoadAsset", assetPair.QuoteAsset).Return(&Asset{TrailingDigits: 5}, nil)
+		q.On("LoadAsset", assetPair.QuoteAsset).Return(&Asset{TrailingDigits: 5}, nil).Once()
 		res, isConverted, err := assetPair.ConvertToDestAsset(assetPair.QuoteAsset, 123, &q)
 		assert.Equal(t, res, int64(250))
 		assert.True(t, isConverted)
@@ -72,7 +72,7 @@ func TestAssetPair_ConvertToDestAsset(t *testing.T) {
 			CurrentPrice: 2 * amount.One,
 			BaseAsset:    "BASE",
 		}
-		q.On("LoadAsset", assetPair.BaseAsset).Return(&Asset{TrailingDigits: 5}, nil)
+		q.On("LoadAsset", assetPair.BaseAsset).Return(&Asset{TrailingDigits: 5}, nil).Once()
 		res, isConverted, err := assetPair.ConvertToDestAsset(assetPair.BaseAsset, 123, &q)
 		assert.Equal(t, res, int64(70))
 		assert.True(t, isConverted)

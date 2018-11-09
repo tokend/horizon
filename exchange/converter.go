@@ -98,11 +98,17 @@ func (c *Converter) convertWithMaxPath(amount int64, fromAsset, toAsset string, 
 		}
 
 		for _, toPair := range toPairs {
+			if fromPair.IsSimilar(toPair) {
+				return nil, errors.From(errors.New("unexpected state: received same pairs"), map[string]interface{}{
+					"fromPair": fromPair,
+					"toPair":   toPair,
+				})
+			}
 			if !fromPair.IsOverlaps(toPair) {
 				continue
 			}
 
-			destAmount, isConverted, err := fromPair.ConvertToDestAsset(toAsset, hopAmount, c.assetProvider)
+			destAmount, isConverted, err := toPair.ConvertToDestAsset(toAsset, hopAmount, c.assetProvider)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to convert to toAsset")
 			}
