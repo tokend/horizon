@@ -60,8 +60,6 @@ type Config struct {
 	DisableTXTfa bool
 
 	TemplateBackend *url.URL
-	InvestReady     *url.URL
-	TelegramAirdrop *url.URL
 
 	ForceHTTPSLinks bool
 
@@ -213,16 +211,6 @@ func (c *Config) Init() error {
 	c.TemplateBackend, err = c.getParsedURL("template_backend")
 	if err != nil {
 		return errors.Wrap(err, "Failed to get template_backend value")
-	}
-
-	c.InvestReady, err = c.getParsedURL("invest_ready")
-	if err != nil {
-		return errors.Wrap(err, "Failed to get invest_ready value")
-	}
-
-	c.TelegramAirdrop, err = c.getOptionalParsedURL("telegram_airdrop")
-	if err != nil {
-		return errors.Wrap(err, "Failed to get telegram_airdrop value")
 	}
 
 	c.ForceHTTPSLinks = c.getBool("force_https_links")

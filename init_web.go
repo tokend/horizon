@@ -106,14 +106,6 @@ func initWebActions(app *App) {
 	apiProxy := httputil.NewSingleHostReverseProxy(app.config.APIBackend)
 	keychainProxy := httputil.NewSingleHostReverseProxy(app.config.KeychainBackend)
 	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
-	investReadyProxy := httputil.NewSingleHostReverseProxy(app.config.InvestReady)
-
-	var telegramAirdropProxy *httputil.ReverseProxy
-	if app.config.TelegramAirdrop != nil {
-		telegramAirdropProxy = httputil.NewSingleHostReverseProxy(app.config.TelegramAirdrop)
-	} else {
-		telegramAirdropProxy = nil
-	}
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
@@ -485,20 +477,6 @@ func initWebActions(app *App) {
 			templateProxy.ServeHTTP(w, r)
 		}
 	}())
-
-	r.Handle(regexp.MustCompile(`^/integrations/invest-ready`), func() func(web.C, http.ResponseWriter, *http.Request) {
-		return func(c web.C, w http.ResponseWriter, r *http.Request) {
-			investReadyProxy.ServeHTTP(w, r)
-		}
-	}())
-
-	if telegramAirdropProxy != nil {
-		r.Handle(regexp.MustCompile(`^/integrations/telegram-airdrop`), func() func(web.C, http.ResponseWriter, *http.Request) {
-			return func(c web.C, w http.ResponseWriter, r *http.Request) {
-				telegramAirdropProxy.ServeHTTP(w, r)
-			}
-		}())
-	}
 
 	// proxy pass every request horizon could not handle to API
 	r.Handle(regexp.MustCompile(`^.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
