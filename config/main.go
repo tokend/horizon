@@ -59,8 +59,6 @@ type Config struct {
 	// If set to true - Horizon won't check TFA (via API) during TX submission.
 	DisableTXTfa bool
 
-	Core Core
-
 	TemplateBackend *url.URL
 	InvestReady     *url.URL
 	TelegramAirdrop *url.URL
@@ -77,9 +75,6 @@ type Config struct {
 
 func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
 	c.Base = NewBase(nil, "")
-
-	c.Core.Base = NewBase(c.Base, "core")
-	c.Core.DefineConfigStructure()
 
 	c.setDefault("port", 8000)
 	c.setDefault("per_hour_hate_limit", 72000)
@@ -181,11 +176,6 @@ func (c *Config) Init() error {
 	c.SkipCheck = c.getBool("sign_check_skip")
 
 	c.RedisURL = c.getString("redis_url")
-
-	err = c.Core.Init()
-	if err != nil {
-		return err
-	}
 
 	c.APIBackend, err = c.getParsedURL("api_backend")
 	if err != nil {
