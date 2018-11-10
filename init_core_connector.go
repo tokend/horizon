@@ -5,8 +5,8 @@ import (
 
 	"time"
 
-	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/corer"
+	"gitlab.com/tokend/horizon/log"
 )
 
 func initCoreConnector(app *App) {

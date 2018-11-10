@@ -1,9 +1,9 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/resource"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/resource"
 	"gitlab.com/tokend/regources"
 )
 

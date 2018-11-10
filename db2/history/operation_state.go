@@ -3,7 +3,7 @@ package history
 type OperationState int32
 
 const (
-	OperationStatePending                OperationState = 1 + iota
+	OperationStatePending OperationState = 1 + iota
 	OperationStateSuccess
 	OperationStateRejected
 	OperationStateCanceled

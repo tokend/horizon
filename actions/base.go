@@ -14,10 +14,10 @@ import (
 
 	"github.com/zenazn/goji/web"
 	"gitlab.com/tokend/horizon/render"
+	"gitlab.com/tokend/horizon/render/jsonapi"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/render/sse"
 	"golang.org/x/net/context"
-	"gitlab.com/tokend/horizon/render/jsonapi"
 )
 
 // Base is a helper struct you can use as part of a custom action via

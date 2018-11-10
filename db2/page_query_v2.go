@@ -7,8 +7,8 @@ import (
 
 const (
 	// Default limit is the default amount of records will be returned
-	DefaultLimit  = 15
-	MaxLimit = 50
+	DefaultLimit = 15
+	MaxLimit     = 50
 )
 
 // NewPageQueryV2 accepts the page derived for request

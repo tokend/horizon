@@ -1,8 +1,8 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 var selectLedger = sq.Select(

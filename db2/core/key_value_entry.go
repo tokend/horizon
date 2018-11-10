@@ -21,7 +21,7 @@ func (k *KeyValueEntry) Scan(src interface{}) error {
 	var rawData xdr.KeyValueEntryValue
 	err := xdr.SafeUnmarshalBase64(data, &rawData)
 	if err != nil {
-		return  errors.Wrap(err, "Failed to unmarshal key_value")
+		return errors.Wrap(err, "Failed to unmarshal key_value")
 	}
 
 	*k = KeyValueEntry(rawData)
@@ -30,6 +30,6 @@ func (k *KeyValueEntry) Scan(src interface{}) error {
 }
 
 type KeyValue struct {
-	Key 	 string         `db:"key"`
-	Value    KeyValueEntry 	`db:"value"`
+	Key   string        `db:"key"`
+	Value KeyValueEntry `db:"value"`
 }

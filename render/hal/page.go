@@ -63,6 +63,7 @@ func (p *Page) PopulateLinks() {
 		p.Links.Prev = lb.Linkf(p.Filters, fmts, p.InvertedOrder(), p.Limit, p.Cursor)
 	}
 }
+
 // PopulateLinksV2 sets the common links for the page for limit/offset-based pagination
 func (p *Page) PopulateLinksV2() {
 	p.Init()
@@ -74,9 +75,9 @@ func (p *Page) PopulateLinksV2() {
 	rec := p.Embedded.Records
 
 	if len(rec) > 0 {
-		p.Links.Next = lb.Linkf(p.Filters, fmts, p.Page + 1, p.Limit)
+		p.Links.Next = lb.Linkf(p.Filters, fmts, p.Page+1, p.Limit)
 		if p.Page > 0 {
-			p.Links.Prev = lb.Linkf(p.Filters, fmts, p.Page - 1, p.Limit)
+			p.Links.Prev = lb.Linkf(p.Filters, fmts, p.Page-1, p.Limit)
 		}
 	} else {
 		p.Links.Next = lb.Linkf(p.Filters, fmts, p.Page, p.Limit)

@@ -30,7 +30,6 @@ const (
 	ParamLimit = "limit"
 	// ParamLimit is a query string param name
 	ParamPage = "page"
-
 )
 
 // GetString retrieves a string from either the URLParams, form or query string.
@@ -384,8 +383,6 @@ func (base *Base) GetPagingParamsV2() (page uint64, limit uint64) {
 
 	return
 }
-
-
 
 // GetAddress retrieves a stellar address.  It confirms the value loaded is a
 // valid stellar address, setting an invalid field error if it is not.
