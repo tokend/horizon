@@ -1,10 +1,10 @@
 package ingest
 
 import (
-	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/db2/history"
 	sq "github.com/lann/squirrel"
 	"github.com/pkg/errors"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 // IntegrityCheck validates history database state and tries to fix known issues

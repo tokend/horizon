@@ -7,11 +7,11 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/regources"
 )
 
@@ -355,6 +355,36 @@ func getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history
 	}
 }
 
+func getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
+) *history.AtomicSwapBidCreation {
+	var details map[string]interface{}
+	_ = json.Unmarshal([]byte(request.Details), &details)
+
+	var quoteAssets []regources.AssetPrice
+	for _, quoteAsset := range request.QuoteAssets {
+		quoteAssets = append(quoteAssets, regources.AssetPrice{
+			Asset: string(quoteAsset.QuoteAsset),
+			Price: regources.Amount(quoteAsset.Price),
+		})
+	}
+
+	return &history.AtomicSwapBidCreation{
+		BaseBalance: request.BaseBalance.AsString(),
+		BaseAmount:  uint64(request.Amount),
+		Details:     details,
+		QuoteAssets: quoteAssets,
+	}
+}
+
+func getAtomicSwapRequest(request *xdr.ASwapRequest,
+) *history.AtomicSwap {
+	return &history.AtomicSwap{
+		BidID:      uint64(request.BidId),
+		BaseAmount: uint64(request.BaseAmount),
+		QuoteAsset: string(request.QuoteAsset),
+	}
+}
+
 func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
 	var details history.ReviewableRequestDetails
 	var err error
@@ -392,6 +422,10 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.UpdateSaleEndTimeRequest = getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
 	case xdr.ReviewableRequestTypeUpdatePromotion:
 		details.PromotionUpdate = getPromotionUpdateRequest(body.PromotionUpdateRequest)
+	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
+		details.AtomicSwapBidCreation = getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
+	case xdr.ReviewableRequestTypeAtomicSwap:
+		details.AtomicSwap = getAtomicSwapRequest(body.ASwapRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

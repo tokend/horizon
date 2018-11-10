@@ -6,9 +6,10 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
-	"gitlab.com/tokend/horizon/utf8"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/utf8"
+	"gitlab.com/tokend/regources"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -266,9 +267,16 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		opResult := c.OperationResult().MustReviewRequestResult().MustSuccess()
 		extendedResult, ok := opResult.Ext.GetExtendedResult()
-		if ok {
-			details["is_fulfilled"] = extendedResult.Fulfilled
+		if !ok {
+			break
 		}
+		details["is_fulfilled"] = extendedResult.Fulfilled
+
+		aSwapExtended, ok := extendedResult.TypeExt.GetASwapExtended()
+		if !ok {
+			break
+		}
+		details["atomic_swap_details"] = getAtomicSwapDetails(aSwapExtended)
 	case xdr.OperationTypeManageAsset:
 		op := c.Operation().Body.MustManageAssetOp()
 		details["request_id"] = uint64(op.RequestId)
@@ -307,17 +315,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// no details needed
 	case xdr.OperationTypeBindExternalSystemAccountId:
 		// no details needed
-	case xdr.OperationTypePayout:
-		op := c.Operation().Body.MustPayoutOp()
-		opResult := c.OperationResult().MustPayoutResult().Success
-		details["asset"] = op.Asset
-		details["source_balance_id"] = op.SourceBalanceId.AsString()
-		details["max_payout_amount"] = amount.StringU(uint64(op.MaxPayoutAmount))
-		details["actual_payout_amount"] = amount.StringU(uint64(opResult.ActualPayoutAmount))
-		details["min_payout_amount"] = amount.StringU(uint64(op.MinPayoutAmount))
-		details["min_asset_holder_amount"] = amount.StringU(uint64(op.MinAssetHolderAmount))
-		details["fixed_fee"] = amount.StringU(uint64(opResult.ActualFee.Fixed))
-		details["percent_fee"] = amount.StringU(uint64(opResult.ActualFee.Percent))
 	case xdr.OperationTypeCreateAmlAlert:
 		op := c.Operation().Body.MustCreateAmlAlertRequestOp()
 		details["amount"] = amount.StringU(uint64(op.AmlAlertRequest.Amount))
@@ -377,6 +374,31 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeCancelSaleRequest:
 		op := c.Operation().Body.MustCancelSaleCreationRequestOp()
 		details["request_id"] = uint64(op.RequestId)
+	case xdr.OperationTypeCreateAswapBidRequest:
+		op := c.Operation().Body.MustCreateASwapBidCreationRequestOp()
+		opRes := c.OperationResult().MustCreateASwapBidCreationRequestResult().
+			MustSuccess()
+		details["base_balance_id"] = op.Request.BaseBalance
+		details["amount"] = amount.StringU(uint64(op.Request.Amount))
+
+		var bidDetails map[string]interface{}
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(op.Request.Details), &bidDetails)
+		details["details"] = bidDetails
+		details["quote_assets"] = op.Request.QuoteAssets
+		details["request_id"] = uint64(opRes.RequestId)
+	case xdr.OperationTypeCancelAswapBid:
+		op := c.Operation().Body.MustCancelASwapBidOp()
+
+		details["bid_id"] = uint64(op.BidId)
+	case xdr.OperationTypeCreateAswapRequest:
+		op := c.Operation().Body.MustCreateASwapRequestOp()
+		opRes := c.OperationResult().MustCreateASwapRequestResult().
+			MustSuccess()
+		details["bid_id"] = op.Request.BidId
+		details["base_amount"] = amount.StringU(uint64(op.Request.BaseAmount))
+		details["quote_asset"] = string(op.Request.QuoteAsset)
+		details["request_id"] = opRes.RequestId
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
@@ -387,6 +409,21 @@ func getReviewRequestOpDetails(requestDetails xdr.ReviewRequestOpRequestDetails)
 	return map[string]interface{}{
 		"request_type": requestDetails.RequestType.ShortString(),
 		"update_kyc":   getUpdateKYCDetails(requestDetails.UpdateKyc),
+	}
+}
+
+func getAtomicSwapDetails(atomicSwapExtendedResult xdr.ASwapExtended) map[string]interface{} {
+	return map[string]interface{}{
+		"bid_id":                          uint64(atomicSwapExtendedResult.BidId),
+		"bid_owner_id":                    atomicSwapExtendedResult.BidOwnerId.Address(),
+		"bid_owner_base_asset_balance_id": atomicSwapExtendedResult.BidOwnerBaseBalanceId.AsString(),
+		"purchaser_id":                    atomicSwapExtendedResult.PurchaserId.Address(),
+		"purchaser_base_asset_balance_id": atomicSwapExtendedResult.PurchaserBaseBalanceId.AsString(),
+		"base_asset":                      string(atomicSwapExtendedResult.BaseAsset),
+		"quote_asset":                     string(atomicSwapExtendedResult.QuoteAsset),
+		"base_amount":                     regources.Amount(atomicSwapExtendedResult.BaseAmount),
+		"quote_amount":                    regources.Amount(atomicSwapExtendedResult.QuoteAmount),
+		"price":                           regources.Amount(atomicSwapExtendedResult.Price),
 	}
 }
 

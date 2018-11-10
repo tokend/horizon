@@ -128,11 +128,6 @@ func (is *Session) operation() error {
 		if err != nil {
 			return errors.Wrap(err, "failed to process manage offer ledger changes")
 		}
-
-		err = is.processCreateMatchedOffer(op, opResult)
-		if err != nil {
-			return errors.Wrap(err, "failed to create matched offer")
-		}
 	case xdr.OperationTypeReviewRequest:
 		err = is.processReviewRequest(
 			is.Cursor.Operation().Body.MustReviewRequestOp(),

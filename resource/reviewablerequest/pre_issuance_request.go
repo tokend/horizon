@@ -1,9 +1,9 @@
 package reviewablerequest
 
 import (
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/regources"
-	"gitlab.com/tokend/go/amount"
 )
 
 func PopulatePreIssuanceRequest(histRequest history.PreIssuanceRequest) (

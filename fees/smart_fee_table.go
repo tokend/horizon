@@ -3,8 +3,8 @@ package fees
 import (
 	"math"
 
-	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 //SmartFeeTable is used to built complete fee overview,

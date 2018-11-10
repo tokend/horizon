@@ -1,10 +1,10 @@
 package resource
 
 import (
-	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/regources"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/regources"
 )
 
 type Asset struct {
@@ -48,7 +48,7 @@ func PopulateAssetPair(asset core.AssetPair) regources.AssetPair {
 }
 
 func PopulatePolicies(policy int32) []regources.Policy {
-	result := make([]regources.Policy,0)
+	result := make([]regources.Policy, 0)
 
 	for _, p := range xdr.AssetPairPolicyAll {
 		if (int32(p) & policy) != 0 {

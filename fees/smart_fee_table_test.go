@@ -6,9 +6,9 @@ import (
 	"math"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 func TestNewSmartFeeTable(t *testing.T) {

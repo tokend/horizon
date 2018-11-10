@@ -103,7 +103,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/payout"
+  branch = "product"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

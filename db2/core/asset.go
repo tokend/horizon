@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )

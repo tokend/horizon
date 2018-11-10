@@ -5,8 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"gitlab.com/tokend/horizon/test"
 	. "github.com/smartystreets/goconvey/convey"
+	"gitlab.com/tokend/horizon/test"
 )
 
 func TestSsePackage(t *testing.T) {

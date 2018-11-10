@@ -28,8 +28,6 @@ const (
 	ParamOrder = "order"
 	// ParamLimit is a query string param name
 	ParamLimit = "limit"
-	// ParamLimit is a query string param name
-	ParamPage = "page"
 )
 
 // GetString retrieves a string from either the URLParams, form or query string.
@@ -357,17 +355,6 @@ func (base *Base) GetPagingParams() (cursor string, order string, limit uint64) 
 	return
 }
 
-func (base *Base) GetPagingParamsV2() (page uint64, limit uint64) {
-	if base.Err != nil {
-		return
-	}
-
-	page = base.GetUInt64(ParamPage)
-	limit = base.GetUInt64(ParamLimit)
-
-	return
-}
-
 // GetPageQuery is a helper that returns a new db.PageQuery struct initialized
 // using the results from a call to GetPagingParams()
 func (base *Base) GetPageQuery() db2.PageQuery {
@@ -506,9 +493,6 @@ func (base *Base) ValidateBodyType() {
 	case mt == "application/x-www-form-urlencoded":
 		return
 	case mt == "multipart/form-data":
-		return
-	case mt == "application/vnd.api+json":
-		base.isJson = true
 		return
 	case mt == "application/json":
 		base.isJson = true

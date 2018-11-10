@@ -1,9 +1,9 @@
 package resource
 
 import (
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/resource/base"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/regources"
 )
 

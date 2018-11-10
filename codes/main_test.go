@@ -180,14 +180,26 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
-	Convey("Cancel sale request", t, func() {
-		for _, code := range xdr.CancelSaleCreationRequestResultCodeAll {
+	Convey("Create Atomic Swap Bid Creation Request", t, func() {
+		for _, code := range xdr.CreateASwapBidCreationRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
 
-	Convey("Payout", t, func() {
-		for _, code := range xdr.PayoutResultCodeAll {
+	Convey("Cancel atomic swap bid", t, func() {
+		for _, code := range xdr.CancelASwapBidResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Create Atomic Swap Request", t, func() {
+		for _, code := range xdr.CreateASwapRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Cancel Sale Request", t, func() {
+		for _, code := range xdr.CancelSaleCreationRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
