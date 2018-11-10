@@ -5,6 +5,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/regources"
+	"strconv"
 )
 
 type Asset struct {
@@ -15,6 +16,7 @@ type Asset struct {
 	MaxIssuanceAmount    string `json:"max_issuance_amount"`
 	Issued               string `json:"issued"`
 	PendingIssuance      string `json:"pending_issuance"`
+	TrailingDigitsCount  string `json:"trailing_digits_count"`
 	Policies
 	Details map[string]interface{} `json:"details"`
 	Sales   []Sale                 `json:"sales,omitempty"`
@@ -29,6 +31,7 @@ func (a *Asset) Populate(asset *core.Asset) {
 	a.MaxIssuanceAmount = amount.StringU(asset.MaxIssuanceAmount)
 	a.PendingIssuance = amount.StringU(asset.PendingIssuance)
 	a.Issued = amount.StringU(asset.Issued)
+	a.TrailingDigitsCount = strconv.Itoa(int(asset.TrailingDigits))
 
 	a.Policies.Populate(*asset)
 	a.Details, _ = asset.GetDetails()

@@ -2,10 +2,13 @@ package core
 
 import (
 	"encoding/json"
+	"math"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
+
+const maximumTrailingDigits int32 = 6
 
 type Asset struct {
 	Code                 string `db:"code"`
@@ -18,6 +21,7 @@ type Asset struct {
 	LockedIssuance       uint64 `db:"locked_issuance"`
 	PendingIssuance      uint64 `db:"pending_issuance"`
 	Details              []byte `db:"details"`
+	TrailingDigits       int32  `db:"trailing_digits"`
 }
 
 func (a Asset) GetDetails() (db2.Details, error) {
@@ -28,4 +32,13 @@ func (a Asset) GetDetails() (db2.Details, error) {
 	}
 
 	return result, nil
+}
+
+func (a Asset) GetMinimumAmount() int64 {
+	nullDigits := maximumTrailingDigits - a.TrailingDigits
+	if nullDigits < 0 {
+		panic("Unexpected database state. Expected asset trailing digits be equal or less 6")
+	}
+
+	return int64(math.Pow10(int(nullDigits)))
 }

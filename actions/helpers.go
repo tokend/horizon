@@ -28,6 +28,9 @@ const (
 	ParamOrder = "order"
 	// ParamLimit is a query string param name
 	ParamLimit = "limit"
+	// ParamLimit is a query string param name
+	ParamPage = "page"
+
 )
 
 // GetString retrieves a string from either the URLParams, form or query string.
@@ -371,6 +374,19 @@ func (base *Base) GetPageQuery() db2.PageQuery {
 	return r
 }
 
+func (base *Base) GetPagingParamsV2() (page uint64, limit uint64) {
+	if base.Err != nil {
+		return
+	}
+
+	page = base.GetUInt64(ParamPage)
+	limit = base.GetUInt64(ParamLimit)
+
+	return
+}
+
+
+
 // GetAddress retrieves a stellar address.  It confirms the value loaded is a
 // valid stellar address, setting an invalid field error if it is not.
 func (base *Base) GetAddress(name string) (result string) {
@@ -559,12 +575,12 @@ func (base *Base) ValidateToProblem(ok bool, result *utils.ValidateError) {
 	}
 }
 
-func (base *Base) CalculatePercentFee(percentFee, am int64) (int64, bool) {
+func (base *Base) CalculatePercentFee(percentFee, am, minimalAmount int64) (int64, bool) {
 	if percentFee == 0 || am == 0 {
 		return 0, false
 	}
 
-	return amount.BigDivide(am, percentFee, amount.One*100, amount.ROUND_UP)
+	return amount.BigDivide(am, percentFee, amount.One*100, amount.ROUND_UP, minimalAmount)
 }
 
 func (base *Base) ParseResponse(response *http.Response) (p *problem.P) {
