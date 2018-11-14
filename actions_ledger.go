@@ -66,6 +66,7 @@ func (action *LedgerIndexAction) loadParams() {
 }
 
 func (action *LedgerIndexAction) loadRecords() {
+	var a string
 	action.Err = action.HistoryQ().Ledgers().
 		Page(action.PagingParams).
 		Select(&action.Records)
