@@ -7,7 +7,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-type accountsStorageI interface {
+type accountsStorage interface {
 	InsertAccounts(accounts []history.Account) error
 }
 
@@ -27,13 +27,13 @@ func (p *accountsProcessor) Consume(it ledgerChangesIteration) (error) {
 		return nil
 	}
 
-	newAccount := history.NewAccount(*lc.Created.Data.Account, it.LedgerSeq, it.LedgerGlobOpSeq)
+	newAccount := history.NewAccount(lc.Created.Data.MustAccount(), it.LedgerSeq, it.LedgerGlobOpSeq)
 	p.accounts[lc.Created.Data.Account.AccountId] = newAccount
 	p.newAccounts = append(p.newAccounts, newAccount)
 	return nil
 }
 
-func (p *accountsProcessor) Store(storage accountsStorageI) error {
+func (p *accountsProcessor) Store(storage accountsStorage) error {
 	err := storage.InsertAccounts(p.newAccounts)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert accounts")
