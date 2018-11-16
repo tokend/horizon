@@ -21,6 +21,13 @@ type CreateAccountDetails struct {
 	AccountType xdr.AccountType `json:"account_type"`
 }
 
+type ManageBalanceDetails struct {
+	DestinationAccount int64                   `json:"destination_account"`
+	Action             xdr.ManageBalanceAction `json:"action"`
+	Asset              xdr.AssetCode           `json:"asset"`
+	BalanceID          int64                   `json:"balance_id"`
+}
+
 type ManageAccountDetails struct {
 	AccountID            int64 `json:"account_id"`
 	BlockReasonsToAdd    int32 `json:"block_reasons_to_add"`

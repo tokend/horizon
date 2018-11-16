@@ -2,6 +2,7 @@ package operaitons
 
 import (
 	"encoding/json"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
@@ -27,6 +28,9 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeManageAccount: &manageAccountOpHandler{
 				pubKeyConverter: mainProvider.GetPubKeyConverter(),
 			},
+			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
+				pubKeyConverter: mainProvider.GetPubKeyConverter(),
+			},
 			xdr.OperationTypePayment: &paymentOpHandler{},
 		},
 		opIDProvider:         mainProvider.GetOperationIDProvider(),
@@ -35,10 +39,14 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 	}
 }
 
-func (h *operationHandler) ConvertOperation(op xdr.Operation, txSource xdr.AccountId) (history2.Operation, []history2.ParticipantEffect, error) {
+func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.OperationResult, txSource xdr.AccountId) (history2.Operation, []history2.ParticipantEffect, error) {
+	if op.Body.Type != opRes.MustTr().Type {
+		panic("operation type mismatch")
+	}
+
 	handler := h.allHandlers[op.Body.Type]
 
-	details, err := handler.OperationDetails(op.Body)
+	details, err := handler.OperationDetails(op.Body, opRes.MustTr())
 	if err != nil {
 		return history2.Operation{}, nil,
 			errors.Wrap(err, "failed to get operation details", map[string]interface{}{
@@ -100,7 +108,7 @@ type publicKeyConverter interface {
 }
 
 type operationHandlerI interface {
-	OperationDetails(opBody xdr.OperationBody) (history2.OperationDetails, error)
+	OperationDetails(opBody xdr.OperationBody, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
 	ParticipantsEffects(opBody xdr.OperationBody, source history2.ParticipantEffect) ([]history2.ParticipantEffect, error)
 }
 
@@ -254,15 +262,23 @@ func (h *createWithdrawRequestOpHandler) OperationDetails(opBody xdr.OperationBo
 	var externalDetails map[string]interface{}
 	json.Unmarshal([]byte(withdrawRequest.ExternalDetails), externalDetails)
 
+	destinationAsset := xdr.AssetCode("")
+	destinationAmount := int64(0)
+	if autoConvDet, ok := withdrawRequest.Details.GetAutoConversion(); ok {
+		destinationAsset = autoConvDet.DestAsset
+		destinationAmount = int64(autoConvDet.ExpectedAmount)
+	}
+
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateWithdrawalRequest,
 		CreateWithdrawRequest: &history2.CreateWithdrawRequestDetails{
-			BalanceID:  h.pubKeyConverter.ConvertToInt64(xdr.PublicKey(withdrawRequest.Balance)),
-			Amount:     int64(withdrawRequest.Amount),
-			FixedFee:   int64(withdrawRequest.Fee.Fixed),
-			PercentFee: int64(withdrawRequest.Fee.Percent),
-			ExternalDetails: externalDetails,
-			DestinationAsset: withdrawRequest.Ext
+			BalanceID:         h.pubKeyConverter.ConvertToInt64(xdr.PublicKey(withdrawRequest.Balance)),
+			Amount:            int64(withdrawRequest.Amount),
+			FixedFee:          int64(withdrawRequest.Fee.Fixed),
+			PercentFee:        int64(withdrawRequest.Fee.Percent),
+			ExternalDetails:   externalDetails,
+			DestinationAsset:  destinationAsset,
+			DestinationAmount: destinationAmount,
 		},
 	}, nil
 }
@@ -285,7 +301,7 @@ type manageBalanceOpHandler struct {
 	pubKeyConverter publicKeyConverter
 }
 
-func (h *manageBalanceOpHandler) OperationDetails(opBody xdr.OperationBody) (history2.OperationDetails, error) {
+func (h *manageBalanceOpHandler) OperationDetails(opBody xdr.OperationBody, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
 
 }
 
