@@ -20,7 +20,7 @@ type storage struct {
 }
 
 // newStorage - creates new storage. db should not have any transactions started.
-func newStorage(db *db2.Repo) (*storage, error) {
+func newStorageWithTx(db *db2.Repo) (*storage, error) {
 	err := db.Begin()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to begin tx for ingest storage")
