@@ -1,10 +1,10 @@
 package changes
 
 import (
-	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 type accountProvider interface {
@@ -16,11 +16,11 @@ type balanceStorage interface {
 }
 
 type balanceChanges struct {
-	storage balanceStorage
+	storage         balanceStorage
 	accountProvider accountProvider
-	balances map[xdr.BalanceId]history2.Balance
+	balances        map[xdr.BalanceId]history2.Balance
 
-	balanceSeq int32
+	balanceSeq          int32
 	processingLedgerSeq int32
 }
 
@@ -28,7 +28,9 @@ func (c *balanceChanges) Created(lc LedgerChange) error {
 	balance := lc.LedgerChange.MustCreated().Data.MustBalance()
 	account, err := c.accountProvider.GetAccount(balance.AccountId)
 	if err != nil {
-		return errors.Wrap(err, "failed to get account for address", logan.Field("address", balance.AccountId.Address()))
+		return errors.Wrap(err, "failed to get account for address", logan.F{
+			"address": balance.AccountId.Address(),
+		})
 	}
 
 	balanceSeq := c.nextBalanceSeq(lc.LedgerSeq)
@@ -36,7 +38,9 @@ func (c *balanceChanges) Created(lc LedgerChange) error {
 	c.balances[balance.BalanceId] = newBalance
 	err = c.storage.InsertBalance(newBalance)
 	if err != nil {
-		return errors.Wrap(err, "failed to insert balance", logan.Field("balance_address", newBalance.BalanceAddress))
+		return errors.Wrap(err, "failed to insert balance", logan.F{
+			"balance_address": newBalance.BalanceAddress,
+		})
 	}
 	return nil
 }

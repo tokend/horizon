@@ -15,60 +15,69 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-type reviewableRequest struct {
-
+type reviewableRequestChanges struct {
+	storage reviewableRequestStorage
 }
 
-func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
-	reviewableRequest := ledgerEntry.Data.ReviewableRequest
-	if reviewableRequest == nil {
-		return errors.New("expected reviewable request not to be nil")
+type reviewableRequestStorage interface {
+	InsertReviewableRequest(request history.ReviewableRequest) error
+	UpdateReviewableRequest(request history.ReviewableRequest) error
+	ApproveReviewableRequest(id uint64) error
+}
+
+func (c *reviewableRequestChanges) Created(lc LedgerChange) error {
+	reviewableRequest := lc.LedgerChange.MustCreated().Data.MustReviewableRequest()
+	histReviewableReq, err := convertReviewableRequest(&reviewableRequest, lc.LedgerCloseTime)
+	if err != nil {
+		return errors.Wrap(err, "failed to convert reviewable request", logan.F{
+			"request":         reviewableRequest,
+			"ledger_sequence": lc.LedgerSeq,
+		})
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
+	err = c.storage.InsertReviewableRequest(*histReviewableReq)
 	if err != nil {
-		return errors.Wrap(err, "failed to convert reviewable request")
-	}
-
-	err = is.Ingestion.HistoryQ().ReviewableRequests().Insert(*histReviewableRequest)
-	if err != nil {
-		return errors.Wrap(err, "failed to create reviewable request")
+		return errors.Wrap(err, "failed to insert reviewable request", logan.F{
+			"request":         histReviewableReq,
+			"ledger_sequence": lc.LedgerSeq,
+		})
 	}
 
 	return nil
 }
 
-func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
-	reviewableRequest := ledgerEntry.Data.ReviewableRequest
-	if reviewableRequest == nil {
-		return errors.New("expected reviewable request not to be nil")
+func (c *reviewableRequestChanges) Updated(lc LedgerChange) error {
+	reviewableRequest := lc.LedgerChange.MustUpdated().Data.MustReviewableRequest()
+	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, lc.LedgerCloseTime)
+	if err != nil {
+		return errors.Wrap(err, "failed to convert reviewable request", logan.F{
+			"request":         reviewableRequest,
+			"ledger_sequence": lc.LedgerSeq,
+		})
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
+	err = c.storage.UpdateReviewableRequest(*histReviewableRequest)
 	if err != nil {
-		return errors.Wrap(err, "failed to convert reviewable request")
-	}
-
-	err = is.Ingestion.HistoryQ().ReviewableRequests().Update(*histReviewableRequest)
-	if err != nil {
-		return errors.Wrap(err, "failed to update reviewable request")
+		return errors.Wrap(err, "failed to update reviewable request", logan.F{
+			"request":         histReviewableRequest,
+			"ledger_sequence": lc.LedgerSeq,
+		})
 	}
 
 	return nil
 }
 
-func reviewableRequestDelete(is *Session, key *xdr.LedgerKey) error {
-	requestKey := key.ReviewableRequest
-	if requestKey == nil {
-		return errors.New("expected reviewable request key not to be nil")
-	}
+func (c *reviewableRequestChanges) Deleted(lc LedgerChange) error {
+	key := lc.LedgerChange.MustRemoved().MustReviewableRequest()
 
 	// approve it since the request is most likely to be auto-reviewed
 	// the case when it's a permanent reject will be handled later in ingest operation
-	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(requestKey.RequestId))
+	err := c.storage.ApproveReviewableRequest(uint64(key.RequestId))
 
 	if err != nil {
-		return errors.Wrap(err, "Failed to delete reviewable request")
+		return errors.Wrap(err, "Failed to delete reviewable request", logan.F{
+			"ledger_entry_key": key,
+		})
 	}
 
 	return nil
