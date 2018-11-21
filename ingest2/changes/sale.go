@@ -24,7 +24,7 @@ type saleChanges struct {
 func (c *saleChanges) Created(lc LedgerChange) error {
 	rawSale := lc.LedgerChange.MustCreated().Data.MustSale()
 
-	sale, err := convertSale(rawSale)
+	sale, err := c.convertSale(rawSale)
 	if err != nil {
 		return errors.Wrap(err, "failed to convert sale", logan.F{
 			"raw_sale":        rawSale,
@@ -44,7 +44,7 @@ func (c *saleChanges) Created(lc LedgerChange) error {
 
 func (c *saleChanges) Updated(lc LedgerChange) error {
 	rawSale := lc.LedgerChange.MustUpdated().Data.MustSale()
-	sale, err := convertSale(rawSale)
+	sale, err := c.convertSale(rawSale)
 	if err != nil {
 		return errors.Wrap(err, "failed to convert sale ", logan.F{
 			"raw_sale":        rawSale,
@@ -61,7 +61,7 @@ func (c *saleChanges) Updated(lc LedgerChange) error {
 	return nil
 }
 
-func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
+func (c *saleChanges) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	var quoteAssets []history.QuoteAsset
 	for i := range raw.QuoteAssets {
 		quoteAssets = append(quoteAssets, history.QuoteAsset{
@@ -92,7 +92,7 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 			}))
 	}
 
-	state, err := convertSaleState(rawState)
+	state, err := c.convertSaleState(rawState)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to convert sale state")
 	}
@@ -117,7 +117,7 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	}, nil
 }
 
-func convertSaleState(state xdr.SaleState) (history.SaleState, error) {
+func (c *saleChanges) convertSaleState(state xdr.SaleState) (history.SaleState, error) {
 	switch state {
 	case xdr.SaleStateNone:
 		return history.SaleStateOpen, nil
