@@ -14,12 +14,18 @@ type OperationDetails struct {
 	Payment                   *PaymentDetails                   `json:"payment,omitempty"`
 	ManageKeyValue            *ManageKeyValueDetails            `json:"manage_key_value,omitempty"`
 	SetFee                    *SetFeeDetails                    `json:"set_fee,omitempty"`
-	ManageAssetPair           *ManageAssetPairDetails           `json:"manage_asset_pair"`
+	ManageAsset               *ManageAssetDetails               `json:"manage_asset"`
+	ManageAssetPair           *ManageAssetPairDetails           `json:"manage_asset_pair,omitempty"`
 	ManageLimits              *ManageLimitsDetails              `json:"manage_limits,omitempty"`
-	ManageOffer               *ManageOfferDetails               `json:"manage_offer"`
-	CreateManageLimitsRequest *CreateManageLimitsRequestDetails `json:"create_manage_limits_request"`
+	ManageOffer               *ManageOfferDetails               `json:"manage_offer,omitempty"`
+	ManageContract            *ManageContractDetails            `json:"manage_contract,omitempty"`
+	CreatePreIssuanceRequest  *CreatePreIssuanceRequestDetails  `json:"create_pre_issuance_request"`
+	CreateIssuanceRequest     *CreateIssuanceRequestDetails     `json:"create_issuance_request"`
+	CreateManageLimitsRequest *CreateManageLimitsRequestDetails `json:"create_manage_limits_request,omitempty"`
 	CreateWithdrawRequest     *CreateWithdrawRequestDetails     `json:"create_withdraw_request,omitempty"`
-	ManageInvoiceRequest      *ManageInvoiceRequestDetails      `json:"manage_invoice_request"`
+	ManageInvoiceRequest      *ManageInvoiceRequestDetails      `json:"manage_invoice_request,omitempty"`
+	ManageContractRequest     *ManageContractRequestDetails     `json:"manage_contract_request,omitempty"`
+	ReviewRequest             *ReviewRequestDetails             `json:"review_request,omitempty"`
 }
 
 // CreateAccountDetails - stores details of create account operation
@@ -92,11 +98,12 @@ type RemoveInvoiceRequestDetails struct {
 }
 
 type ManageContractRequestDetails struct {
-	Action xdr.ManageContractRequestAction
-	/*Create
-	Remove*/
+	Action xdr.ManageContractRequestAction `json:"action"`
+	Create *CreateContractRequestDetails   `json:"create,omitempty"`
+	Remove *RemoveContractReqeustDetails   `json:"remove,omitempty"`
 }
 type CreateContractRequestDetails struct {
+	Customer  int64                  `json:"customer"`
 	Escrow    int64                  `json:"escrow"`
 	Details   map[string]interface{} `json:"details"`
 	StartTime int64                  `json:"start_time"`
@@ -146,6 +153,54 @@ type ManageOfferDetails struct {
 	IsBuy       bool          `json:"is_buy"`
 	Fee         string        `json:"fee"`
 	IsDeleted   bool          `json:"is_deleted"`
+}
+
+type ManageContractDetails struct {
+	ContractID    int64                    `json:"contract_id"`
+	Action        xdr.ManageContractAction `json:"action"`
+	Details       map[string]interface{}   `json:"details,omitempty"`
+	IsCompleted   *bool                    `json:"is_completed,omitempty"`
+	DisputeReason map[string]interface{}   `json:"dispute_reason,omitempty"`
+	IsRevert      *bool                    `json:"is_revert,omitempty"`
+}
+
+type ReviewRequestDetails struct {
+	Action            xdr.ReviewRequestOpAction         `json:"action"`
+	Reason            string                            `json:"reason"`
+	RequestHash       string                            `json:"request_hash"`
+	RequestID         int64                             `json:"request_id"`
+	RequestType       xdr.ReviewableRequestType         `json:"request_type"`
+	RequestDetails    xdr.ReviewRequestOpRequestDetails `json:"request_details"`
+	IsFulfilled       bool                              `json:"is_fulfilled"`
+	AtomicSwapDetails *xdr.ASwapExtended                `json:"atomic_swap_details,omitempty"`
+}
+
+type ManageAssetDetails struct {
+	AssetCode         xdr.AssetCode          `json:"asset_code,omitempty"`
+	RequestID         int64                  `json:"request_id"`
+	Action            xdr.ManageAssetAction  `json:"action"`
+	Policies          *int32                 `json:"policies,omitempty"`
+	Details           map[string]interface{} `json:"details,omitempty"`
+	PreissuedSigner   *int64                 `json:"preissued_signer,omitempty"`
+	MaxIssuanceAmount string                 `json:"max_issuance_amount,omitempty"`
+}
+
+type CreatePreIssuanceRequestDetails struct {
+	AssetCode   xdr.AssetCode `json:"asset_code"`
+	Amount      string        `json:"amount"`
+	RequestID   int64         `json:"request_id"`
+	IsFulfilled bool          `json:"is_fulfilled"`
+}
+
+type CreateIssuanceRequestDetails struct {
+	FixedFee        string                 `json:"fixed_fee"`
+	PercentFee      string                 `json:"percent_fee"`
+	Reference       string                 `json:"reference"`
+	Amount          string                 `json:"amount"`
+	Asset           xdr.AssetCode          `json:"asset"`
+	BalanceID       int64                  `json:"balance_id"`
+	ExternalDetails map[string]interface{} `json:"external_details"`
+	AllTasks        *int64                 `json:"all_tasks,omitempty"`
 }
 
 // PaymentDetails - stores details of payment operation
