@@ -24,7 +24,7 @@ type contractChanges struct {
 
 func (c *contractChanges) Created(lc LedgerChange) error {
 	rawContract := lc.LedgerChange.MustCreated().Data.MustContract()
-	contract := convertContract(rawContract)
+	contract := c.convertContract(rawContract)
 
 	err := c.storage.InsertContract(contract)
 	if err != nil {
@@ -38,7 +38,7 @@ func (c *contractChanges) Created(lc LedgerChange) error {
 
 func (c *contractChanges) Updated(lc LedgerChange) error {
 	rawContract := lc.LedgerChange.MustUpdated().Data.MustContract()
-	contract := convertContract(rawContract)
+	contract := c.convertContract(rawContract)
 
 	err := c.storage.UpdateContract(contract)
 	if err != nil {
@@ -70,7 +70,7 @@ func (c *contractChanges) Deleted(lc LedgerChange) error {
 
 	case xdr.ManageContractActionResolveDispute:
 		isRevert := manageContractOp.Data.IsRevert
-		if *isRevert {
+		if isRevert != nil && *isRevert {
 			err := c.processRevert(uint64(contractID))
 			if err != nil {
 				return errors.Wrap(err, "failed to process contract revert")
@@ -140,7 +140,7 @@ func (c *contractChanges) processRevert(id uint64) error {
 	return nil
 }
 
-func convertContract(rawContract xdr.ContractEntry) history.Contract {
+func (c *contractChanges) convertContract(rawContract xdr.ContractEntry) history.Contract {
 	var initialDetails map[string]interface{}
 	_ = json.Unmarshal([]byte(string(rawContract.InitialDetails)), &initialDetails)
 

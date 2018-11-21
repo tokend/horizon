@@ -1,7 +1,6 @@
 package changes
 
 import (
-	"database/sql"
 	"encoding/json"
 	"time"
 
@@ -33,20 +32,10 @@ func (c *saleChanges) Created(lc LedgerChange) error {
 		})
 	}
 
-	//if sale was in promotion state - we need to update it
-	//else - we need to insert it
-	err = c.storage.UpdateSale(*sale)
-	if err == sql.ErrNoRows {
-		err := c.storage.InsertSale(*sale)
-		if err != nil {
-			errors.Wrap(err, "failed to insert sale into DB", logan.F{
-				"sale": sale,
-			})
-		}
-		return nil
-	} else if err != nil {
-		return errors.Wrap(err, "failed to update sale", logan.F{
-			"id": sale.ID,
+	err = c.storage.InsertSale(*sale)
+	if err != nil {
+		errors.Wrap(err, "failed to insert sale into DB", logan.F{
+			"sale": sale,
 		})
 	}
 
