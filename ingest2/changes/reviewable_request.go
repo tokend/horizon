@@ -23,6 +23,7 @@ type reviewableRequestStorage interface {
 	InsertReviewableRequest(request history.ReviewableRequest) error
 	UpdateReviewableRequest(request history.ReviewableRequest) error
 	ApproveReviewableRequest(id uint64) error
+	UpdateInvoices(contractID uint64, oldStates uint64, newStates uint64) error
 }
 
 func (c *reviewableRequestChanges) Created(lc LedgerChange) error {
@@ -48,7 +49,7 @@ func (c *reviewableRequestChanges) Created(lc LedgerChange) error {
 
 func (c *reviewableRequestChanges) Updated(lc LedgerChange) error {
 	reviewableRequest := lc.LedgerChange.MustUpdated().Data.MustReviewableRequest()
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, lc.LedgerCloseTime)
+	histReviewableRequest, err := convertReviewableRequest(&reviewableRequest, lc.LedgerCloseTime)
 	if err != nil {
 		return errors.Wrap(err, "failed to convert reviewable request", logan.F{
 			"request":         reviewableRequest,
