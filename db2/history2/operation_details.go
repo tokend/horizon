@@ -193,14 +193,15 @@ type CreatePreIssuanceRequestDetails struct {
 }
 
 type CreateIssuanceRequestDetails struct {
-	FixedFee        string                 `json:"fixed_fee"`
-	PercentFee      string                 `json:"percent_fee"`
-	Reference       string                 `json:"reference"`
-	Amount          string                 `json:"amount"`
-	Asset           xdr.AssetCode          `json:"asset"`
-	BalanceID       int64                  `json:"balance_id"`
-	ExternalDetails map[string]interface{} `json:"external_details"`
-	AllTasks        *int64                 `json:"all_tasks,omitempty"`
+	FixedFee          string                 `json:"fixed_fee"`
+	PercentFee        string                 `json:"percent_fee"`
+	Reference         string                 `json:"reference"`
+	Amount            string                 `json:"amount"`
+	Asset             xdr.AssetCode          `json:"asset"`
+	ReceiverAccountID int64                  `json:"receiver_account_id"`
+	ReceiverBalanceID int64                  `json:"receiver_balance_id"`
+	ExternalDetails   map[string]interface{} `json:"external_details"`
+	AllTasks          *int64                 `json:"all_tasks,omitempty"`
 }
 
 // PaymentDetails - stores details of payment operation

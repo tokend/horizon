@@ -11,7 +11,7 @@ import (
 type operationHandler struct {
 	allHandlers          map[xdr.OperationType]operationHandlerI
 	opIDProvider         operationIDProvider
-	partEffectIDProvider paricipantEffectIDProvider
+	partEffectIDProvider participantEffectIDProvider
 	pubKeyProvider       publicKeyProvider
 }
 
@@ -45,7 +45,8 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			},
 			xdr.OperationTypeCreatePreissuanceRequest: &createPreIssuanceRequestOpHandler{},
 			xdr.OperationTypeCreateIssuanceRequest: &createIssuanceRequestOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				pubKeyProvider:  pubKeyProvider,
+				balanceProvider: mainProvider.GetBalanceProvider(),
 			},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
@@ -58,9 +59,9 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeReviewRequest: &reviewRequestOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				pubKeyProvider:        pubKeyProvider,
+				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
 			},
-			//xdr.OperationTypePayment: &paymentOpHandler{},
 		},
 		opIDProvider:         mainProvider.GetOperationIDProvider(),
 		partEffectIDProvider: mainProvider.GetParticipantEffectIDProvider(),
@@ -123,21 +124,31 @@ func (h *operationHandler) getBaseSourceParticipantEffect(opSource *xdr.AccountI
 
 type providerCluster interface {
 	GetOperationIDProvider() operationIDProvider
-	GetParticipantEffectIDProvider() paricipantEffectIDProvider
+	GetParticipantEffectIDProvider() participantEffectIDProvider
 	GetPubKeyProvider() publicKeyProvider
+	GetBalanceProvider() balanceProvider
+	GetLedgerChangesProvider() ledgerChangesProvider
 }
 
 type operationIDProvider interface {
 	GetOperationID() int64
 }
 
-type paricipantEffectIDProvider interface {
+type participantEffectIDProvider interface {
 	GetNextParticipantEffectID() int64
 }
 
 type publicKeyProvider interface {
 	GetAccountID(raw xdr.AccountId) int64
 	GetBalanceID(raw xdr.BalanceId) int64
+}
+
+type balanceProvider interface {
+	GetBalanceByID(balanceID int64) history2.Balance
+}
+
+type ledgerChangesProvider interface {
+	GetLedgerChanges() xdr.LedgerEntryChanges
 }
 
 type operationHandlerI interface {

@@ -8,7 +8,8 @@ import (
 )
 
 type reviewRequestOpHandler struct {
-	pubKeyProvider publicKeyProvider
+	pubKeyProvider        publicKeyProvider
+	ledgerChangesProvider ledgerChangesProvider
 }
 
 func (h *reviewRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
@@ -50,7 +51,20 @@ func (h *reviewRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
 func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
+	reviewRequestOp := opBody.MustReviewRequestOp()
+
 	participants := []history2.ParticipantEffect{source}
+
+	request := h.getReviewableRequestByID(int64(reviewRequestOp.RequestId))
+	if request == nil || source.AccountID == h.pubKeyProvider.GetAccountID(request.Requestor) {
+		return participants, nil
+	}
+
+	if request.Body.Type != xdr.ReviewableRequestTypeAtomicSwap {
+		return append(participants, history2.ParticipantEffect{
+			AccountID: h.pubKeyProvider.GetAccountID(request.Requestor),
+		}), nil
+	}
 
 	extendedResult, ok := opRes.MustReviewRequestResult().MustSuccess().Ext.GetExtendedResult()
 	if !ok {
@@ -79,4 +93,42 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	})
 
 	return participants, nil
+}
+
+func (h *reviewRequestOpHandler) getReviewableRequestByID(id int64) *xdr.ReviewableRequestEntry {
+	ledgerChanges := h.ledgerChangesProvider.GetLedgerChanges()
+
+	tryFindUpdated := false
+	var bestResult *xdr.ReviewableRequestEntry
+
+	for _, change := range ledgerChanges {
+		var reviewableRequest *xdr.ReviewableRequestEntry
+
+		switch change.Type {
+		case xdr.LedgerEntryChangeTypeCreated:
+			reviewableRequest = change.MustCreated().Data.ReviewableRequest
+		case xdr.LedgerEntryChangeTypeUpdated:
+			tryFindUpdated = false
+			reviewableRequest = change.MustUpdated().Data.ReviewableRequest
+		case xdr.LedgerEntryChangeTypeState:
+			tryFindUpdated = true
+			reviewableRequest = change.MustState().Data.ReviewableRequest
+		default:
+			continue
+		}
+
+		if reviewableRequest == nil {
+			continue
+		}
+
+		if int64(reviewableRequest.RequestId) == id {
+			if !tryFindUpdated {
+				return reviewableRequest
+			}
+
+			bestResult = reviewableRequest
+		}
+	}
+
+	return bestResult
 }

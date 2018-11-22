@@ -7,6 +7,7 @@ type EffectType int64
 
 const (
 	EffectTypeNone EffectType = iota
+	EffectTypeIssuance
 	EffectTypeWithdraw
 	EffectTypeOffer
 )
@@ -15,6 +16,7 @@ const (
 // Effect should never store more than one change to the account or balance
 type Effect struct {
 	Type           EffectType   `json:"type"`
+	IssuanceAmount *int64       `json:"issuance_amount,omitempty"`
 	WithdrawAmount *int64       `json:"withdraw_amount,omitempty"`
 	Offer          *OfferEffect `json:"offer_effect,omitempty"`
 }
