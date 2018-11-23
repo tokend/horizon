@@ -2,6 +2,7 @@ package history2
 
 import (
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
 
 // OperationDetails - stores details of the operation performed in union switch form. Only one value must be selected at
@@ -11,18 +12,20 @@ type OperationDetails struct {
 	CreateAccount             *CreateAccountDetails             `json:"create_account,omitempty"`
 	ManageAccount             *ManageAccountDetails             `json:"manage_account,omitempty"`
 	ManageBalance             *ManageBalanceDetails             `json:"manage_balance,omitempty"`
-	Payment                   *PaymentDetails                   `json:"payment,omitempty"`
 	ManageKeyValue            *ManageKeyValueDetails            `json:"manage_key_value,omitempty"`
-	SetFee                    *SetFeeDetails                    `json:"set_fee,omitempty"`
-	ManageAsset               *ManageAssetDetails               `json:"manage_asset"`
+	ManageAsset               *ManageAssetDetails               `json:"manage_asset,omitempty"`
 	ManageAssetPair           *ManageAssetPairDetails           `json:"manage_asset_pair,omitempty"`
 	ManageLimits              *ManageLimitsDetails              `json:"manage_limits,omitempty"`
 	ManageOffer               *ManageOfferDetails               `json:"manage_offer,omitempty"`
 	ManageContract            *ManageContractDetails            `json:"manage_contract,omitempty"`
-	CreatePreIssuanceRequest  *CreatePreIssuanceRequestDetails  `json:"create_pre_issuance_request"`
-	CreateIssuanceRequest     *CreateIssuanceRequestDetails     `json:"create_issuance_request"`
+	Payment                   *PaymentDetails                   `json:"payment,omitempty"`
+	SetFee                    *SetFeeDetails                    `json:"set_fee,omitempty"`
+	CheckSaleState            *CheckSaleStateDetails            `json:"check_sale_state,omitempty"`
+	CreatePreIssuanceRequest  *CreatePreIssuanceRequestDetails  `json:"create_pre_issuance_request,omitempty"`
+	CreateIssuanceRequest     *CreateIssuanceRequestDetails     `json:"create_issuance_request,omitempty"`
 	CreateManageLimitsRequest *CreateManageLimitsRequestDetails `json:"create_manage_limits_request,omitempty"`
 	CreateWithdrawRequest     *CreateWithdrawRequestDetails     `json:"create_withdraw_request,omitempty"`
+	CreateSaleRequest         *CreateSaleRequestDetails         `json:"create_sale_request,omitempty"`
 	ManageInvoiceRequest      *ManageInvoiceRequestDetails      `json:"manage_invoice_request,omitempty"`
 	ManageContractRequest     *ManageContractRequestDetails     `json:"manage_contract_request,omitempty"`
 	ReviewRequest             *ReviewRequestDetails             `json:"review_request,omitempty"`
@@ -30,6 +33,7 @@ type OperationDetails struct {
 
 // CreateAccountDetails - stores details of create account operation
 type CreateAccountDetails struct {
+	AccountID   int64           `json:"account_id"`
 	AccountType xdr.AccountType `json:"account_type"`
 }
 
@@ -202,6 +206,23 @@ type CreateIssuanceRequestDetails struct {
 	ReceiverBalanceID int64                  `json:"receiver_balance_id"`
 	ExternalDetails   map[string]interface{} `json:"external_details"`
 	AllTasks          *int64                 `json:"all_tasks,omitempty"`
+}
+
+type CreateSaleRequestDetails struct {
+	RequestID         int64         `json:"request_id"`
+	BaseAsset         xdr.AssetCode `json:"base_asset"`
+	DefaultQuoteAsset xdr.AssetCode `json:"default_quote_asset"`
+	StartTime         int64         `json:"start_time"`
+	EndTime           int64         `json:"end_time"`
+	SoftCap           string        `json:"soft_cap"`
+	HardCap           string        `json:"hard_cap"`
+	QuoteAssets       []regources.SaleQuoteAsset
+	Details           map[string]interface{} `json:"details"`
+}
+
+type CheckSaleStateDetails struct {
+	SaleID int64 `json:"sale_id"`
+	Effect xdr.CheckSaleStateEffect
 }
 
 // PaymentDetails - stores details of payment operation

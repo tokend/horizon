@@ -69,14 +69,14 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 	}
 }
 
+// ConvertOperation transform xdr operation data to db suitable Operation and Participants Effects
 func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.OperationResultTr, txSource xdr.AccountId) (history2.Operation, []history2.ParticipantEffect, error) {
-	if op.Body.Type != opRes.Type {
-		errors.New("operation type mismatch")
-	}
-
-	handler := h.allHandlers[op.Body.Type]
-	if handler == nil {
-		return history2.Operation{}, nil, errors.New("no handler for such operation type")
+	handler, ok := h.allHandlers[op.Body.Type]
+	if !ok {
+		return history2.Operation{}, nil, errors.From(
+			errors.New("no handler for such operation type"), map[string]interface{}{
+				"operation type": op.Body.Type.String(),
+			})
 	}
 
 	details, err := handler.OperationDetails(op.Body, opRes)
@@ -144,7 +144,7 @@ type publicKeyProvider interface {
 }
 
 type balanceProvider interface {
-	GetBalanceByID(balanceID int64) history2.Balance
+	GetBalanceByID(balanceID xdr.BalanceId) history2.Balance
 }
 
 type ledgerChangesProvider interface {

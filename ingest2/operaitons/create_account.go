@@ -16,6 +16,7 @@ func (h *createAccountOpHandler) OperationDetails(opBody xdr.OperationBody, _ xd
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAccount,
 		CreateAccount: &history2.CreateAccountDetails{
+			AccountID:   h.pubKeyProvider.GetAccountID(op.Destination),
 			AccountType: op.AccountType,
 		},
 	}, nil
