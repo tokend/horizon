@@ -25,6 +25,7 @@ type OperationDetails struct {
 	CreateIssuanceRequest     *CreateIssuanceRequestDetails     `json:"create_issuance_request,omitempty"`
 	CreateManageLimitsRequest *CreateManageLimitsRequestDetails `json:"create_manage_limits_request,omitempty"`
 	CreateWithdrawRequest     *CreateWithdrawRequestDetails     `json:"create_withdraw_request,omitempty"`
+	CreateAMLAlertRequest     *CreateAMLAlertRequestDetails     `json:"create_aml_alert_request"`
 	CreateSaleRequest         *CreateSaleRequestDetails         `json:"create_sale_request,omitempty"`
 	ManageInvoiceRequest      *ManageInvoiceRequestDetails      `json:"manage_invoice_request,omitempty"`
 	ManageContractRequest     *ManageContractRequestDetails     `json:"manage_contract_request,omitempty"`
@@ -223,6 +224,12 @@ type CreateSaleRequestDetails struct {
 type CheckSaleStateDetails struct {
 	SaleID int64 `json:"sale_id"`
 	Effect xdr.CheckSaleStateEffect
+}
+
+type CreateAMLAlertRequestDetails struct {
+	Amount    string        `json:"amount"`
+	BalanceID xdr.BalanceId `json:"balance_id"`
+	Reason    string        `json:"reason"`
 }
 
 // PaymentDetails - stores details of payment operation

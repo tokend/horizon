@@ -21,7 +21,8 @@ type Effect struct {
 	Type     EffectType      `json:"type"`
 	Issuance *IssuanceEffect `json:"issuance,omitempty"`
 	Withdraw *WithdrawEffect `json:"withdraw,omitempty"`
-	Offer    *OfferEffect    `json:"offer ,omitempty"`
+	Offer    *OfferEffect    `json:"offer,omitempty"`
+	AMLAlert *AMLAlertEffect `json:"aml_alert,omitempty"`
 }
 
 type OfferEffect struct {
@@ -42,4 +43,8 @@ type IssuanceEffect struct {
 
 type WithdrawEffect struct {
 	Amount int64 `json:"amount"`
+}
+
+type AMLAlertEffect struct {
+	Amount string `json:"amount"`
 }
