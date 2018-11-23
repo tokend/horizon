@@ -4,8 +4,6 @@ import (
 	"context"
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
-
 	"gitlab.com/tokend/horizon/ingest2/changes"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -25,33 +23,14 @@ type operationConsumer interface {
 	Consume(operation) error
 }
 
-type ledgerChange struct {
-	changes.LedgerChange
-}
-
-func (c *ledgerChange) Consume(ledgerChange) error {
-	switch c.LedgerChange.LedgerChange.Type {
-	case xdr.LedgerEntryChangeTypeCreated:
-		return c.LedgerChange.Created()
-	case xdr.LedgerEntryChangeTypeUpdated:
-		return c.LedgerChange.Updated()
-	case xdr.LedgerEntryChangeTypeRemoved:
-		return c.LedgerChange.Deleted()
-	case xdr.LedgerEntryChangeTypeState:
-		return nil
-	default:
-		return errors.Errorf("Unrecognized ledger entry change type: %d", c.LedgerChange.LedgerChange.Type)
-	}
-}
-
-type ledgerChangesConsumer interface {
-	Consume(ledgerChange) error
+type ChangesConsumer interface {
+	Consume(changes.LedgerChange) error
 }
 
 type ledgerConsumer struct {
 	log           *logan.Entry
 	ledgerStorage ledgerStorage
-	lcConsumer    ledgerChangesConsumer
+	lcConsumer    ChangesConsumer
 	opConsumer    operationConsumer
 }
 
@@ -68,14 +47,13 @@ func (c *ledgerConsumer) Consume(ctx context.Context, bundle ledgerBundle) error
 
 			for lcSeq, lc := range operationsMeta[opSeq].Changes {
 				fields = fields.Add("ledger_change_seq", lcSeq)
-				err := c.lcConsumer.Consume(ledgerChange{
+				err := c.lcConsumer.Consume(
 					changes.LedgerChange{
 						LedgerChange:    lc,
-						LedgerCloseTime: time.Unix(bundle.Header.CloseTime, 0),
+						LedgerCloseTime: time.Unix(bundle.Header.CloseTime, 0).UTC(),
 						LedgerSeq:       bundle.Sequence,
 						Operation:       &op,
-					},
-				})
+					})
 				if err != nil {
 					return errors.Wrap(err, "failed to process ledger change", fields)
 				}

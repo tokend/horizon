@@ -2,10 +2,11 @@ package ingest2
 
 import (
 	"context"
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
-	"time"
 )
 
 type dbTxManager interface {
@@ -18,9 +19,9 @@ type dbTxManager interface {
 }
 
 type consumer struct {
-	log        *logan.Entry
+	log         *logan.Entry
 	dbTxManager dbTxManager
-	dataSource <-chan ledgerBundle
+	dataSource  <-chan ledgerBundle
 }
 
 func (c *consumer) Start(ctx context.Context) {
@@ -38,8 +39,8 @@ func (c *consumer) runOnce(ctx context.Context) error {
 
 	c.log.WithFields(logan.F{
 		"batch_len": len(bundles),
-		"from": bundles[0].Sequence,
-		"to": bundles[len(bundles)-1].Sequence,
+		"from":      bundles[0].Sequence,
+		"to":        bundles[len(bundles)-1].Sequence,
 	}).Info("Starting to process new ledger bundles batch")
 
 	err := c.dbTxManager.Begin()
@@ -71,14 +72,14 @@ func (c *consumer) readBatch(ctx context.Context) []ledgerBundle {
 
 			bundles = append(bundles, ledgerBundle)
 		case <-ctx.Done():
-				return nil
+			return nil
 		default:
 			return bundles
 		}
 	}
 }
 
-func (c *consumer) readAtLeastOne(ctx context.Context) []ledgerBundle{
+func (c *consumer) readAtLeastOne(ctx context.Context) []ledgerBundle {
 	select {
 	case bundle, ok := <-c.dataSource:
 		{
@@ -90,8 +91,8 @@ func (c *consumer) readAtLeastOne(ctx context.Context) []ledgerBundle{
 			bundles = append(bundles, bundle)
 			return bundles
 		}
-		case <- ctx.Done():
-			return nil
+	case <-ctx.Done():
+		return nil
 
 	}
 }

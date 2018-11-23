@@ -2,7 +2,6 @@ package changes
 
 import (
 	"encoding/json"
-	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -53,7 +52,7 @@ func (c *contractChanges) Updated(lc LedgerChange) error {
 func (c *contractChanges) Deleted(lc LedgerChange) error {
 	contractKey := lc.LedgerChange.MustRemoved().MustContract()
 	contractID := contractKey.ContractId
-	manageContractOp := lc.Operation.Body.ManageContractOp
+	manageContractOp := lc.Operation.Body.MustManageContractOp()
 	if contractID != manageContractOp.ContractId {
 		return errors.New("Expected ledger key and manage contract op to have same contract id")
 	}
@@ -161,8 +160,8 @@ func (c *contractChanges) convertContract(rawContract xdr.ContractEntry) history
 		Contractor:      rawContract.Contractor.Address(),
 		Customer:        rawContract.Customer.Address(),
 		Escrow:          rawContract.Escrow.Address(),
-		StartTime:       time.Unix(int64(rawContract.StartTime), 0).UTC(),
-		EndTime:         time.Unix(int64(rawContract.EndTime), 0).UTC(),
+		StartTime:       unixToTime(int64(rawContract.StartTime)),
+		EndTime:         unixToTime(int64(rawContract.EndTime)),
 		InitialDetails:  initialDetails,
 		CustomerDetails: customerDetails,
 		Invoices:        invoices,

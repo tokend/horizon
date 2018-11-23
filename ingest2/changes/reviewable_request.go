@@ -72,7 +72,7 @@ func (c *reviewableRequestChanges) Updated(lc LedgerChange) error {
 func (c *reviewableRequestChanges) Deleted(lc LedgerChange) error {
 	key := lc.LedgerChange.MustRemoved().MustReviewableRequest()
 
-	op := lc.Operation.Body.ReviewRequestOp
+	op := lc.Operation.Body.MustReviewRequestOp()
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
 		err := c.storage.ApproveReviewableRequest(uint64(key.RequestId))
@@ -122,7 +122,7 @@ func (c *reviewableRequestChanges) convertReviewableRequest(request *xdr.Reviewa
 		RequestState: state,
 		Hash:         hex.EncodeToString(request.Hash[:]),
 		Details:      details,
-		CreatedAt:    time.Unix(int64(request.CreatedAt), 0).UTC(),
+		CreatedAt:    unixToTime(int64(request.CreatedAt)),
 		UpdatedAt:    ledgerCloseTime,
 	}
 
@@ -267,8 +267,8 @@ func (c *reviewableRequestChanges) getSaleRequest(request *xdr.SaleCreationReque
 	return &history.SaleRequest{
 		BaseAsset:           string(request.BaseAsset),
 		DefaultQuoteAsset:   string(request.DefaultQuoteAsset),
-		StartTime:           time.Unix(int64(request.StartTime), 0).UTC(),
-		EndTime:             time.Unix(int64(request.EndTime), 0).UTC(),
+		StartTime:           unixToTime(int64(request.StartTime)),
+		EndTime:             unixToTime(int64(request.EndTime)),
 		SoftCap:             amount.StringU(uint64(request.SoftCap)),
 		HardCap:             amount.StringU(uint64(request.HardCap)),
 		Details:             details,
@@ -366,15 +366,15 @@ func (c *reviewableRequestChanges) getContractRequest(request *xdr.ContractReque
 	return &history.ContractRequest{
 		Escrow:    request.Escrow.Address(),
 		Details:   details,
-		StartTime: time.Unix(int64(request.StartTime), 0).UTC(),
-		EndTime:   time.Unix(int64(request.EndTime), 0).UTC(),
+		StartTime: unixToTime(int64(request.StartTime)),
+		EndTime:   unixToTime(int64(request.EndTime)),
 	}
 }
 
 func (c *reviewableRequestChanges) getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
 	return &history.UpdateSaleEndTimeRequest{
 		SaleID:     uint64(request.SaleId),
-		NewEndTime: time.Unix(int64(request.NewEndTime), 0).UTC(),
+		NewEndTime: unixToTime(int64(request.NewEndTime)),
 	}
 }
 
