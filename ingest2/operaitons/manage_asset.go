@@ -69,26 +69,5 @@ func (h *manageAssetOpHandler) OperationDetails(opBody xdr.OperationBody, opRes 
 func (h *manageAssetOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
-	manageAssetOp := opBody.MustManageAssetOp()
-
-	participants := []history2.ParticipantEffect{source}
-
-	switch manageAssetOp.Request.Action {
-	case xdr.ManageAssetActionCreateAssetCreationRequest:
-		creationDetails := manageAssetOp.Request.MustCreateAsset()
-
-		participants = append(participants, history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.GetAccountID(creationDetails.PreissuedAssetSigner),
-			AssetCode: &creationDetails.Code,
-		})
-	case xdr.ManageAssetActionChangePreissuedAssetSigner:
-		updateDetails := manageAssetOp.Request.MustChangePreissuedSigner()
-
-		participants = append(participants, history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.GetAccountID(updateDetails.AccountId),
-			AssetCode: &updateDetails.Code,
-		})
-	}
-
-	return participants, nil
+	return []history2.ParticipantEffect{source}, nil
 }

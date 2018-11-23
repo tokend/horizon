@@ -19,16 +19,11 @@ func (h *createManageLimitsRequestOpHandler) OperationDetails(opBody xdr.Operati
 		data = customDetailsUnmarshal([]byte(rawData))
 	}
 
-	var requestID int64
-	if rawID, ok := createManageLimitsRequestOp.Ext.GetRequestId(); ok {
-		requestID = int64(rawID)
-	}
-
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateManageLimitsRequest,
 		CreateManageLimitsRequest: &history2.CreateManageLimitsRequestDetails{
 			Data:      data,
-			RequestID: requestID,
+			RequestID: int64(opRes.MustCreateManageLimitsRequestResult().MustSuccess().ManageLimitsRequestId),
 		},
 	}, nil
 }
