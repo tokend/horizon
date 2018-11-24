@@ -15,73 +15,92 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-type reviewableRequest struct {
-
+type reviewableRequestChanges struct {
+	storage reviewableRequestStorage
 }
 
-func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
-	reviewableRequest := ledgerEntry.Data.ReviewableRequest
-	if reviewableRequest == nil {
-		return errors.New("expected reviewable request not to be nil")
+type reviewableRequestStorage interface {
+	InsertReviewableRequest(request history.ReviewableRequest) error
+	UpdateReviewableRequest(request history.ReviewableRequest) error
+	ApproveReviewableRequest(id uint64) error
+	RejectReviewableRequest(id uint64) error
+	UpdateInvoices(contractID uint64, oldStates uint64, newStates uint64) error
+}
+
+func (c *reviewableRequestChanges) Created(lc LedgerChange) error {
+	reviewableRequest := lc.LedgerChange.MustCreated().Data.MustReviewableRequest()
+	histReviewableReq, err := c.convertReviewableRequest(&reviewableRequest, lc.LedgerCloseTime)
+	if err != nil {
+		return errors.Wrap(err, "failed to convert reviewable request", logan.F{
+			"request":         reviewableRequest,
+			"ledger_sequence": lc.LedgerSeq,
+		})
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
+	err = c.storage.InsertReviewableRequest(*histReviewableReq)
 	if err != nil {
-		return errors.Wrap(err, "failed to convert reviewable request")
-	}
-
-	err = is.Ingestion.HistoryQ().ReviewableRequests().Insert(*histReviewableRequest)
-	if err != nil {
-		return errors.Wrap(err, "failed to create reviewable request")
+		return errors.Wrap(err, "failed to insert reviewable request", logan.F{
+			"request":         histReviewableReq,
+			"ledger_sequence": lc.LedgerSeq,
+		})
 	}
 
 	return nil
 }
 
-func reviewableRequestUpdate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
-	reviewableRequest := ledgerEntry.Data.ReviewableRequest
-	if reviewableRequest == nil {
-		return errors.New("expected reviewable request not to be nil")
+func (c *reviewableRequestChanges) Updated(lc LedgerChange) error {
+	reviewableRequest := lc.LedgerChange.MustUpdated().Data.MustReviewableRequest()
+	histReviewableRequest, err := c.convertReviewableRequest(&reviewableRequest, lc.LedgerCloseTime)
+	if err != nil {
+		return errors.Wrap(err, "failed to convert reviewable request", logan.F{
+			"request":         reviewableRequest,
+			"ledger_sequence": lc.LedgerSeq,
+		})
 	}
 
-	histReviewableRequest, err := convertReviewableRequest(reviewableRequest, is.Cursor.LedgerCloseTime())
+	err = c.storage.UpdateReviewableRequest(*histReviewableRequest)
 	if err != nil {
-		return errors.Wrap(err, "failed to convert reviewable request")
-	}
-
-	err = is.Ingestion.HistoryQ().ReviewableRequests().Update(*histReviewableRequest)
-	if err != nil {
-		return errors.Wrap(err, "failed to update reviewable request")
+		return errors.Wrap(err, "failed to update reviewable request", logan.F{
+			"request":         histReviewableRequest,
+			"ledger_sequence": lc.LedgerSeq,
+		})
 	}
 
 	return nil
 }
 
-func reviewableRequestDelete(is *Session, key *xdr.LedgerKey) error {
-	requestKey := key.ReviewableRequest
-	if requestKey == nil {
-		return errors.New("expected reviewable request key not to be nil")
-	}
+func (c *reviewableRequestChanges) Deleted(lc LedgerChange) error {
+	key := lc.LedgerChange.MustRemoved().MustReviewableRequest()
 
-	// approve it since the request is most likely to be auto-reviewed
-	// the case when it's a permanent reject will be handled later in ingest operation
-	err := is.Ingestion.HistoryQ().ReviewableRequests().Approve(uint64(requestKey.RequestId))
-
-	if err != nil {
-		return errors.Wrap(err, "Failed to delete reviewable request")
+	op := lc.Operation.Body.MustReviewRequestOp()
+	switch op.Action {
+	case xdr.ReviewRequestOpActionApprove:
+		err := c.storage.ApproveReviewableRequest(uint64(key.RequestId))
+		if err != nil {
+			return errors.Wrap(err, "Failed to delete reviewable request", logan.F{
+				"ledger_entry_key": key,
+			})
+		}
+	case xdr.ReviewRequestOpActionPermanentReject:
+		err := c.storage.RejectReviewableRequest(uint64(key.RequestId))
+		if err != nil {
+			return errors.Wrap(err, "Failed to delete reviewable request", logan.F{
+				"ledger_entry_key": key,
+			})
+		}
 	}
 
 	return nil
 }
 
-func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTime time.Time) (*history.ReviewableRequest, error) {
+func (c *reviewableRequestChanges) convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTime time.Time) (*history.ReviewableRequest, error) {
 	var reference *string
 	if request.Reference != nil {
 		reference = new(string)
 		*reference = utf8.Scrub(string(*request.Reference))
 	}
 
-	details, err := getReviewableRequestDetails(&request.Body)
+	details, err := c.getReviewableRequestDetails(&request.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get reviewable request details")
 	}
@@ -103,7 +122,7 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTi
 		RequestState: state,
 		Hash:         hex.EncodeToString(request.Hash[:]),
 		Details:      details,
-		CreatedAt:    time.Unix(int64(request.CreatedAt), 0).UTC(),
+		CreatedAt:    unixToTime(int64(request.CreatedAt)),
 		UpdatedAt:    ledgerCloseTime,
 	}
 
@@ -131,7 +150,7 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTi
 	return &result, nil
 }
 
-func getAssetCreation(request *xdr.AssetCreationRequest) *history.AssetCreationRequest {
+func (c *reviewableRequestChanges) getAssetCreation(request *xdr.AssetCreationRequest) *history.AssetCreationRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose
 	_ = json.Unmarshal([]byte(request.Details), &details)
@@ -145,7 +164,7 @@ func getAssetCreation(request *xdr.AssetCreationRequest) *history.AssetCreationR
 	}
 }
 
-func getAssetUpdate(request *xdr.AssetUpdateRequest) *history.AssetUpdateRequest {
+func (c *reviewableRequestChanges) getAssetUpdate(request *xdr.AssetUpdateRequest) *history.AssetUpdateRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose
 	_ = json.Unmarshal([]byte(request.Details), &details)
@@ -156,7 +175,7 @@ func getAssetUpdate(request *xdr.AssetUpdateRequest) *history.AssetUpdateRequest
 	}
 }
 
-func getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (*history.PreIssuanceRequest, error) {
+func (c *reviewableRequestChanges) getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (*history.PreIssuanceRequest, error) {
 	signature, err := xdr.MarshalBase64(request.Signature)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal signature")
@@ -170,7 +189,7 @@ func getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (*history.PreIssuanc
 	}, nil
 }
 
-func getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
+func (c *reviewableRequestChanges) getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.ExternalDetails), &details)
@@ -182,7 +201,7 @@ func getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
 	}
 }
 
-func getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.WithdrawalRequest {
+func (c *reviewableRequestChanges) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.WithdrawalRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.ExternalDetails), &details)
@@ -201,7 +220,7 @@ func getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.WithdrawalReq
 	}
 }
 
-func getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
+func (c *reviewableRequestChanges) getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
 	return &history.AmlAlertRequest{
 		BalanceID: request.BalanceId.AsString(),
 		Amount:    amount.StringU(uint64(request.Amount)),
@@ -209,7 +228,7 @@ func getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
 	}
 }
 
-func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
+func (c *reviewableRequestChanges) getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 	var quoteAssets []regources.SaleQuoteAsset
 	for i := range request.QuoteAssets {
 		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
@@ -248,8 +267,8 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 	return &history.SaleRequest{
 		BaseAsset:           string(request.BaseAsset),
 		DefaultQuoteAsset:   string(request.DefaultQuoteAsset),
-		StartTime:           time.Unix(int64(request.StartTime), 0).UTC(),
-		EndTime:             time.Unix(int64(request.EndTime), 0).UTC(),
+		StartTime:           unixToTime(int64(request.StartTime)),
+		EndTime:             unixToTime(int64(request.EndTime)),
 		SoftCap:             amount.StringU(uint64(request.SoftCap)),
 		HardCap:             amount.StringU(uint64(request.HardCap)),
 		Details:             details,
@@ -260,7 +279,7 @@ func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 	}
 }
 
-func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
+func (c *reviewableRequestChanges) getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
 	details, ok := request.Ext.GetDetails()
 	var detailsMap map[string]interface{}
 	if ok {
@@ -274,8 +293,8 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpd
 	}
 }
 
-func getPromotionUpdateRequest(request *xdr.PromotionUpdateRequest) *history.PromotionUpdateRequest {
-	newPromorionData := getSaleRequest(&request.NewPromotionData)
+func (c *reviewableRequestChanges) getPromotionUpdateRequest(request *xdr.PromotionUpdateRequest) *history.PromotionUpdateRequest {
+	newPromorionData := c.getSaleRequest(&request.NewPromotionData)
 
 	return &history.PromotionUpdateRequest{
 		SaleID:           uint64(request.PromotionId),
@@ -283,7 +302,7 @@ func getPromotionUpdateRequest(request *xdr.PromotionUpdateRequest) *history.Pro
 	}
 }
 
-func getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
+func (c *reviewableRequestChanges) getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
 	var kycData map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.KycData), &kycData)
@@ -307,7 +326,7 @@ func getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCReques
 	}
 }
 
-func getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history.UpdateSaleDetailsRequest {
+func (c *reviewableRequestChanges) getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history.UpdateSaleDetailsRequest {
 	var newDetails map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.NewDetails), &newDetails)
@@ -318,7 +337,7 @@ func getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history
 	}
 }
 
-func getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
+func (c *reviewableRequestChanges) getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.Details), &details)
@@ -339,7 +358,7 @@ func getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
 	}
 }
 
-func getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
+func (c *reviewableRequestChanges) getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.Details), &details)
@@ -347,19 +366,19 @@ func getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
 	return &history.ContractRequest{
 		Escrow:    request.Escrow.Address(),
 		Details:   details,
-		StartTime: time.Unix(int64(request.StartTime), 0).UTC(),
-		EndTime:   time.Unix(int64(request.EndTime), 0).UTC(),
+		StartTime: unixToTime(int64(request.StartTime)),
+		EndTime:   unixToTime(int64(request.EndTime)),
 	}
 }
 
-func getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
+func (c *reviewableRequestChanges) getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
 	return &history.UpdateSaleEndTimeRequest{
 		SaleID:     uint64(request.SaleId),
-		NewEndTime: time.Unix(int64(request.NewEndTime), 0).UTC(),
+		NewEndTime: unixToTime(int64(request.NewEndTime)),
 	}
 }
 
-func getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
+func (c *reviewableRequestChanges) getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 ) *history.AtomicSwapBidCreation {
 	var details map[string]interface{}
 	_ = json.Unmarshal([]byte(request.Details), &details)
@@ -380,7 +399,7 @@ func getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 	}
 }
 
-func getAtomicSwapRequest(request *xdr.ASwapRequest,
+func (c *reviewableRequestChanges) getAtomicSwapRequest(request *xdr.ASwapRequest,
 ) *history.AtomicSwap {
 	return &history.AtomicSwap{
 		BidID:      uint64(request.BidId),
@@ -389,47 +408,47 @@ func getAtomicSwapRequest(request *xdr.ASwapRequest,
 	}
 }
 
-func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
+func (c *reviewableRequestChanges) getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
 	var details history.ReviewableRequestDetails
 	var err error
 	switch body.Type {
 	case xdr.ReviewableRequestTypeAssetCreate:
-		details.AssetCreation = getAssetCreation(body.AssetCreationRequest)
+		details.AssetCreation = c.getAssetCreation(body.AssetCreationRequest)
 	case xdr.ReviewableRequestTypeAssetUpdate:
-		details.AssetUpdate = getAssetUpdate(body.AssetUpdateRequest)
+		details.AssetUpdate = c.getAssetUpdate(body.AssetUpdateRequest)
 	case xdr.ReviewableRequestTypeIssuanceCreate:
-		details.IssuanceCreate = getIssuanceRequest(body.IssuanceRequest)
+		details.IssuanceCreate = c.getIssuanceRequest(body.IssuanceRequest)
 	case xdr.ReviewableRequestTypePreIssuanceCreate:
-		details.PreIssuanceCreate, err = getPreIssuanceRequest(body.PreIssuanceRequest)
+		details.PreIssuanceCreate, err = c.getPreIssuanceRequest(body.PreIssuanceRequest)
 		if err != nil {
 			return details, errors.Wrap(err, "failed to get pre issuance request")
 		}
 	case xdr.ReviewableRequestTypeWithdraw:
-		details.Withdraw = getWithdrawalRequest(body.WithdrawalRequest)
+		details.Withdraw = c.getWithdrawalRequest(body.WithdrawalRequest)
 	case xdr.ReviewableRequestTypeSale:
-		details.Sale = getSaleRequest(body.SaleCreationRequest)
+		details.Sale = c.getSaleRequest(body.SaleCreationRequest)
 	case xdr.ReviewableRequestTypeLimitsUpdate:
-		details.LimitsUpdate = getLimitsUpdateRequest(body.LimitsUpdateRequest)
+		details.LimitsUpdate = c.getLimitsUpdateRequest(body.LimitsUpdateRequest)
 	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
-		details.TwoStepWithdraw = getWithdrawalRequest(body.TwoStepWithdrawalRequest)
+		details.TwoStepWithdraw = c.getWithdrawalRequest(body.TwoStepWithdrawalRequest)
 	case xdr.ReviewableRequestTypeAmlAlert:
-		details.AmlAlert = getAmlAlertRequest(body.AmlAlertRequest)
+		details.AmlAlert = c.getAmlAlertRequest(body.AmlAlertRequest)
 	case xdr.ReviewableRequestTypeUpdateKyc:
-		details.UpdateKYC = getUpdateKYCRequest(body.UpdateKycRequest)
+		details.UpdateKYC = c.getUpdateKYCRequest(body.UpdateKycRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
-		details.UpdateSaleDetails = getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
+		details.UpdateSaleDetails = c.getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
 	case xdr.ReviewableRequestTypeInvoice:
-		details.Invoice = getInvoiceRequest(body.InvoiceRequest)
+		details.Invoice = c.getInvoiceRequest(body.InvoiceRequest)
 	case xdr.ReviewableRequestTypeContract:
-		details.Contract = getContractRequest(body.ContractRequest)
+		details.Contract = c.getContractRequest(body.ContractRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
-		details.UpdateSaleEndTimeRequest = getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
+		details.UpdateSaleEndTimeRequest = c.getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
 	case xdr.ReviewableRequestTypeUpdatePromotion:
-		details.PromotionUpdate = getPromotionUpdateRequest(body.PromotionUpdateRequest)
+		details.PromotionUpdate = c.getPromotionUpdateRequest(body.PromotionUpdateRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		details.AtomicSwapBidCreation = getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
+		details.AtomicSwapBidCreation = c.getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
 	case xdr.ReviewableRequestTypeAtomicSwap:
-		details.AtomicSwap = getAtomicSwapRequest(body.ASwapRequest)
+		details.AtomicSwap = c.getAtomicSwapRequest(body.ASwapRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

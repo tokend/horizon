@@ -1,8 +1,14 @@
 package changes
 
-import "gitlab.com/tokend/go/xdr"
+import (
+	"time"
+
+	"gitlab.com/tokend/go/xdr"
+)
 
 type LedgerChange struct {
-	LedgerSeq int32
-	LedgerChange xdr.LedgerEntryChange
+	LedgerSeq       int32
+	LedgerCloseTime time.Time
+	LedgerChange    xdr.LedgerEntryChange
+	Operation       *xdr.Operation
 }
