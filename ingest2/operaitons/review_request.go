@@ -3,6 +3,8 @@ package operaitons
 import (
 	"encoding/hex"
 
+	"gitlab.com/tokend/go/amount"
+
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
@@ -10,12 +12,12 @@ import (
 type reviewRequestOpHandler struct {
 	pubKeyProvider        publicKeyProvider
 	ledgerChangesProvider ledgerChangesProvider
+	balanceProvider       balanceProvider
 }
 
-func (h *reviewRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr,
+func (h *reviewRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	reviewRequestOp := opBody.MustReviewRequestOp()
+	reviewRequestOp := op.Body.MustReviewRequestOp()
 	reviewRequestOpRes := opRes.MustReviewRequestResult().MustSuccess().Ext
 
 	opDetails := history2.OperationDetails{
@@ -53,10 +55,58 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 ) ([]history2.ParticipantEffect, error) {
 	reviewRequestOp := opBody.MustReviewRequestOp()
 
+	request := h.getReviewableRequestByID(int64(reviewRequestOp.RequestId))
+
+	if request == nil {
+		return []history2.ParticipantEffect{source}, nil
+	}
+
+	var participants []history2.ParticipantEffect
+
+	switch reviewRequestOp.RequestDetails.RequestType {
+	case xdr.ReviewableRequestTypeIssuanceCreate:
+		details := request.Body.MustIssuanceRequest()
+
+		effect := history2.Effect{
+			Type: history2.EffectTypeFunded,
+			Issuance: &history2.IssuanceEffect{
+				Amount: amount.StringU(uint64(details.Amount)),
+			},
+		}
+
+		participants = h.getParticipantEffectByBalanceID(details.Receiver, effect, source)
+	case xdr.ReviewableRequestTypeWithdraw:
+		details := request.Body.MustWithdrawalRequest()
+
+		effect := history2.Effect{
+			Type: history2.EffectTypeChargedFromLocked,
+			Withdraw: &history2.WithdrawEffect{
+				Amount: amount.StringU(uint64(details.Amount)),
+			},
+		}
+
+		participants = h.getParticipantEffectByBalanceID(details.Balance, effect, source)
+	case xdr.ReviewableRequestTypeAmlAlert:
+		details := request.Body.MustAmlAlertRequest()
+
+		effect := history2.Effect{
+			Type: history2.EffectTypeChargedFromLocked,
+			AMLAlert: &history2.AMLAlertEffect{
+				Amount: amount.StringU(uint64(details.Amount)),
+			},
+		}
+
+		participants = h.getParticipantEffectByBalanceID(details.BalanceId, effect, source)
+	case xdr.ReviewableRequestTypeInvoice:
+		paymentOp := request.Body.MustInvoiceRequest().
+	}
+
+	reviewRequestOp.RequestDetails.BillPay.PaymentDetails
+	opRes.MustReviewRequestResult().MustSuccess().Ext.PaymentV2Response.
+
 	participants := []history2.ParticipantEffect{source}
 
-	request := h.getReviewableRequestByID(int64(reviewRequestOp.RequestId))
-	if request == nil || source.AccountID == h.pubKeyProvider.GetAccountID(request.Requestor) {
+	if source.AccountID == h.pubKeyProvider.GetAccountID(request.Requestor) {
 		return participants, nil
 	}
 
@@ -93,6 +143,25 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	})
 
 	return participants, nil
+}
+
+func (h *reviewRequestOpHandler) getParticipantEffectByBalanceID(balanceID xdr.BalanceId,
+	effect history2.Effect, source history2.ParticipantEffect,
+) []history2.ParticipantEffect {
+	balance := h.balanceProvider.GetBalanceByID(balanceID)
+	if balance.AccountID == source.AccountID {
+		source.BalanceID = &balance.BalanceID
+		source.AssetCode = &balance.AssetCode
+		source.Effect = effect
+		return []history2.ParticipantEffect{source}
+	} else {
+		return []history2.ParticipantEffect{{
+			AccountID: balance.AccountID,
+			BalanceID: &balance.BalanceID,
+			AssetCode: &balance.AssetCode,
+			Effect:    effect,
+		}, source}
+	}
 }
 
 func (h *reviewRequestOpHandler) getReviewableRequestByID(id int64) *xdr.ReviewableRequestEntry {

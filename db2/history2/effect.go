@@ -39,11 +39,11 @@ type OfferEffect struct {
 }
 
 type IssuanceEffect struct {
-	Amount int64 `json:"amount"`
+	Amount string `json:"amount"`
 }
 
 type WithdrawEffect struct {
-	Amount int64 `json:"amount"`
+	Amount string `json:"amount"`
 }
 
 type AMLAlertEffect struct {
