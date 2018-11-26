@@ -62,6 +62,15 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 				pubKeyProvider:        pubKeyProvider,
 				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
 			},
+			xdr.OperationTypePaymentV2: &paymentOpHandler{
+				pubKeyProvider: pubKeyProvider,
+			},
+			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{
+				pubKeyProvider: pubKeyProvider,
+				offerHelper: offerHelper{
+					pubKeyProvider: pubKeyProvider,
+				},
+			},
 		},
 		opIDProvider:         mainProvider.GetOperationIDProvider(),
 		partEffectIDProvider: mainProvider.GetParticipantEffectIDProvider(),

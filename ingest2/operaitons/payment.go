@@ -47,7 +47,7 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	paymentOp := opBody.MustPaymentOpV2()
 	paymentRes := opRes.MustPaymentV2Result().PaymentV2Response
 
-	sourceBalanceID :=  h.pubKeyProvider.GetBalanceID(paymentOp.SourceBalanceId)
+	sourceBalanceID := h.pubKeyProvider.GetBalanceID(paymentOp.SourceBalanceId)
 	source.BalanceID = &sourceBalanceID
 	source.AssetCode = &paymentRes.Asset
 	source.Effect = history2.Effect{
@@ -57,7 +57,7 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		},
 	}
 
-	destBalanceID := h.pubKeyProvider.GetBalanceID(paymentRes.DestinationBalanceId),
+	destBalanceID := h.pubKeyProvider.GetBalanceID(paymentRes.DestinationBalanceId)
 
 	return []history2.ParticipantEffect{source, {
 		AccountID: h.pubKeyProvider.GetAccountID(paymentRes.Destination),

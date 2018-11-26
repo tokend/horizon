@@ -1,0 +1,88 @@
+package operaitons
+
+import (
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/history2"
+)
+
+type offerDirection struct {
+	BaseAsset  xdr.AssetCode
+	QuoteAsset xdr.AssetCode
+	IsBuy      bool
+}
+
+type offerHelper struct {
+	pubKeyProvider publicKeyProvider
+}
+
+func (h *offerHelper) getParticipantsEffects(claimOfferAtoms []xdr.ClaimOfferAtom,
+	sourceOfferDirection offerDirection, sourceAccountID, baseSourceBalanceID, quoteSourceBalanceID int64,
+) []history2.ParticipantEffect {
+	var result []history2.ParticipantEffect
+
+	for _, offerAtom := range claimOfferAtoms {
+		baseBalanceID := h.pubKeyProvider.GetBalanceID(offerAtom.BaseBalance)
+		quoteBalanceID := h.pubKeyProvider.GetBalanceID(offerAtom.QuoteBalance)
+
+		counterpartyEffect := history2.Effect{
+			Type: history2.EffectTypeMatched,
+			Offer: &history2.OfferEffect{
+				BaseBalanceID:  baseBalanceID,
+				QuoteBalanceID: quoteBalanceID,
+				BaseAsset:      sourceOfferDirection.BaseAsset,
+				QuoteAsset:     sourceOfferDirection.QuoteAsset,
+				BaseAmount:     amount.String(int64(offerAtom.BaseAmount)),
+				QuoteAmount:    amount.String(int64(offerAtom.QuoteAmount)),
+				IsBuy:          !sourceOfferDirection.IsBuy,
+				Price:          amount.String(int64(offerAtom.CurrentPrice)),
+			},
+		}
+
+		baseCounterparty := history2.ParticipantEffect{
+			AccountID: h.pubKeyProvider.GetAccountID(offerAtom.BAccountId),
+			BalanceID: &baseBalanceID,
+			AssetCode: &sourceOfferDirection.BaseAsset,
+			Effect:    counterpartyEffect,
+		}
+
+		quoteCounterparty := history2.ParticipantEffect{
+			AccountID: h.pubKeyProvider.GetAccountID(offerAtom.BAccountId),
+			BalanceID: &quoteBalanceID,
+			AssetCode: &sourceOfferDirection.QuoteAsset,
+			Effect:    counterpartyEffect,
+		}
+
+		sourceEffect := history2.Effect{
+			Type: history2.EffectTypeMatched,
+			Offer: &history2.OfferEffect{
+				BaseBalanceID:  baseSourceBalanceID,
+				QuoteBalanceID: quoteSourceBalanceID,
+				BaseAsset:      sourceOfferDirection.BaseAsset,
+				QuoteAsset:     sourceOfferDirection.QuoteAsset,
+				BaseAmount:     amount.String(int64(offerAtom.BaseAmount)),
+				QuoteAmount:    amount.String(int64(offerAtom.QuoteAmount)),
+				IsBuy:          sourceOfferDirection.IsBuy,
+				Price:          amount.String(int64(offerAtom.CurrentPrice)),
+			},
+		}
+
+		baseSource := history2.ParticipantEffect{
+			AccountID: sourceAccountID,
+			BalanceID: &baseSourceBalanceID,
+			AssetCode: &sourceOfferDirection.BaseAsset,
+			Effect:    sourceEffect,
+		}
+
+		quoteSource := history2.ParticipantEffect{
+			AccountID: sourceAccountID,
+			BalanceID: &quoteSourceBalanceID,
+			AssetCode: &sourceOfferDirection.QuoteAsset,
+			Effect:    sourceEffect,
+		}
+
+		result = append(result, baseCounterparty, quoteCounterparty, baseSource, quoteSource)
+	}
+
+	return result
+}

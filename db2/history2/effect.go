@@ -12,7 +12,7 @@ const (
 	EffectTypeLocked
 	EffectTypeUnlocked
 	EffectTypeChargedFromLocked
-	EffectTypeMatched
+	EffectTypeMatched // funded, charged or charge from locked in offer cases
 )
 
 // Effect stores the details of the effect in union switch form. Only one value should be selected
