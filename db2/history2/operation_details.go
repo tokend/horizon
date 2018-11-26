@@ -234,4 +234,21 @@ type CreateAMLAlertRequestDetails struct {
 
 // PaymentDetails - stores details of payment operation
 type PaymentDetails struct {
+	AccountFrom             string        `json:"account_from"`
+	AccountTo               string        `json:"account_to"`
+	BalanceFrom             string        `json:"balance_from"`
+	BalanceTo               string        `json:"balance_to"`
+	Amount                  string        `json:"amount"`
+	Asset                   xdr.AssetCode `json:"asset"`
+	SourceFeeData           FeeData       `json:"source_fee_data"`
+	DestinationFeeData      FeeData       `json:"destination_fee_data"`
+	SourcePayForDestination bool          `json:"source_pay_for_destination"`
+	Subject                 string        `json:"subject"`
+	Reference               string        `json:"reference"`
+	UniversalAmount         string        `json:"universal_amount"`
+}
+
+type FeeData struct {
+	FixedFee  string `json:"fixed_fee"`
+	ActualFee string `json:"actual_fee"`
 }

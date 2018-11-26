@@ -70,7 +70,8 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 }
 
 // ConvertOperation transform xdr operation data to db suitable Operation and Participants Effects
-func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.OperationResultTr, txSource xdr.AccountId) (history2.Operation, []history2.ParticipantEffect, error) {
+func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.OperationResultTr, txSource xdr.AccountId,
+) (history2.Operation, []history2.ParticipantEffect, error) {
 	handler, ok := h.allHandlers[op.Body.Type]
 	if !ok {
 		return history2.Operation{}, nil, errors.From(
@@ -109,16 +110,22 @@ func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.Operatio
 	}, participantsEffects, nil
 }
 
-func (h *operationHandler) getBaseSourceParticipantEffect(opSource *xdr.AccountId,
+func (h *operationHandler) getOperationSource(opSource *xdr.AccountId,
 	txSource xdr.AccountId,
-) history2.ParticipantEffect {
+) xdr.AccountId {
 	source := txSource
 	if opSource != nil {
 		source = *opSource
 	}
 
+	return source
+}
+
+func (h *operationHandler) getBaseSourceParticipantEffect(opSource *xdr.AccountId,
+	txSource xdr.AccountId,
+) history2.ParticipantEffect {
 	return history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.GetAccountID(source),
+		AccountID: h.pubKeyProvider.GetAccountID(h.getOperationSource(opSource, txSource)),
 	}
 }
 
@@ -152,8 +159,13 @@ type ledgerChangesProvider interface {
 }
 
 type operationHandlerI interface {
-	OperationDetails(opBody xdr.OperationBody, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
+	OperationDetails(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
 	ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr, source history2.ParticipantEffect) ([]history2.ParticipantEffect, error)
+}
+
+type rawOperation struct {
+	Source xdr.AccountId
+	Body   xdr.OperationBody
 }
 
 func customDetailsUnmarshal(rawDetails []byte) map[string]interface{} {
@@ -169,34 +181,3 @@ func customDetailsUnmarshal(rawDetails []byte) map[string]interface{} {
 }
 
 // TODO set option operation handler
-
-type paymentOpHandler struct {
-}
-
-func (h *paymentOpHandler) OperationDetails(opBody xdr.OperationBody) (history2.OperationDetails, error) {
-	op := opBody.MustCreateAccountOp()
-
-	return history2.OperationDetails{
-		Type:    xdr.OperationTypeCreateAccount,
-		Payment: &history2.PaymentDetails{},
-	}, nil
-}
-
-func (h *paymentOpHandler) GetParticipantsEffects(opBody xdr.OperationBody) ([]history2.ParticipantEffect, error) {
-	var participants []history2.ParticipantEffect
-	var converter history2.PubKeyConverter
-
-	op := opBody.MustPaymentOp()
-	participants = append(participants, history2.ParticipantEffect{
-		AccountID:   converter.ConvertToInt64(xdr.PublicKey(op.Destination)),
-		OperationID: 0,
-	})
-
-	if op.Referrer != nil {
-		participants = append(participants, history2.ParticipantEffect{
-			AccountID: converter.ConvertToInt64(xdr.PublicKey(*op.Referrer)),
-		})
-	}
-
-	return participants, nil
-}

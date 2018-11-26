@@ -23,6 +23,7 @@ type Effect struct {
 	Withdraw *WithdrawEffect `json:"withdraw,omitempty"`
 	Offer    *OfferEffect    `json:"offer,omitempty"`
 	AMLAlert *AMLAlertEffect `json:"aml_alert,omitempty"`
+	Payment  *PaymentEffect  `json:"payment"`
 }
 
 type OfferEffect struct {
@@ -46,5 +47,9 @@ type WithdrawEffect struct {
 }
 
 type AMLAlertEffect struct {
+	Amount string `json:"amount"`
+}
+
+type PaymentEffect struct {
 	Amount string `json:"amount"`
 }
