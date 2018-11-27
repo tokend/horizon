@@ -11,10 +11,9 @@ type manageLimitsOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *manageLimitsOpHandler) OperationDetails(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr,
+func (h *manageLimitsOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageLimitsOp := opBody.MustManageLimitsOp()
+	manageLimitsOp := op.Body.MustManageLimitsOp()
 
 	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeManageLimits,
@@ -27,14 +26,8 @@ func (h *manageLimitsOpHandler) OperationDetails(opBody xdr.OperationBody,
 	case xdr.ManageLimitsActionCreate:
 		creationDetails := manageLimitsOp.Details.MustLimitsCreateDetails()
 
-		var accountID *int64
-		if creationDetails.AccountId != nil {
-			accountIDInt := h.pubKeyProvider.GetAccountID(*creationDetails.AccountId)
-			accountID = &accountIDInt
-		}
-
 		opDetails.ManageLimits.Creation = &history2.ManageLimitsCreationDetails{
-			AccountID:       accountID,
+			AccountID:       creationDetails.AccountId.Address(), // Address() - smart, check for nil inside
 			AccountType:     creationDetails.AccountType,
 			StatsOpType:     creationDetails.StatsOpType,
 			AssetCode:       creationDetails.AssetCode,

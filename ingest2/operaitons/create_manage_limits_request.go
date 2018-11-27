@@ -8,10 +8,10 @@ import (
 type createManageLimitsRequestOpHandler struct {
 }
 
-func (h *createManageLimitsRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
+func (h *createManageLimitsRequestOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	createManageLimitsRequestOp := opBody.MustCreateManageLimitsRequestOp()
+	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()
 
 	var data map[string]interface{}
 	rawData, ok := createManageLimitsRequestOp.ManageLimitsRequest.Ext.GetDetails()

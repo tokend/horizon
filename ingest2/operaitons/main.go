@@ -25,6 +25,7 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeManageAccount: &manageAccountOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
+			xdr.OperationTypeManageExternalSystemAccountIdPoolEntry: &manageExternalSystemPoolOpHandler{},
 			xdr.OperationTypeManageBalance: &manageBalanceOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
@@ -32,9 +33,7 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeManageLimits: &manageLimitsOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
-			xdr.OperationTypeManageAsset: &manageAssetOpHandler{
-				pubKeyProvider: pubKeyProvider,
-			},
+			xdr.OperationTypeManageAsset:     &manageAssetOpHandler{},
 			xdr.OperationTypeManageAssetPair: &manageAssetPairOpHadler{},
 			xdr.OperationTypeManageOffer: &manageOfferOpHandler{
 				pubKeyProvider: pubKeyProvider,
@@ -47,6 +46,7 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeCreateIssuanceRequest: &createIssuanceRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
+			xdr.OperationTypeCreateSaleRequest: &createSaleRequestOpHandler{},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},

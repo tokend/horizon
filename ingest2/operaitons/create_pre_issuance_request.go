@@ -9,10 +9,10 @@ import (
 type createPreIssuanceRequestOpHandler struct {
 }
 
-func (h *createPreIssuanceRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
+func (h *createPreIssuanceRequestOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	preissuanceRequest := opBody.MustCreatePreIssuanceRequest().Request
+	preissuanceRequest := op.Body.MustCreatePreIssuanceRequest().Request
 	successResult := opRes.MustCreatePreIssuanceRequestResult().MustSuccess()
 
 	return history2.OperationDetails{

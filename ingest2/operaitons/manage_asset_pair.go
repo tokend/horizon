@@ -9,10 +9,10 @@ import (
 type manageAssetPairOpHadler struct {
 }
 
-func (h *manageAssetPairOpHadler) OperationDetails(opBody xdr.OperationBody,
+func (h *manageAssetPairOpHadler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageAssetPairOp := opBody.MustManageAssetPairOp()
+	manageAssetPairOp := op.Body.MustManageAssetPairOp()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageAssetPair,

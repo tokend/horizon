@@ -8,10 +8,9 @@ import (
 type manageKeyValueOpHandler struct {
 }
 
-func (h *manageKeyValueOpHandler) OperationDetails(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr,
+func (h *manageKeyValueOpHandler) OperationDetails(op rawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageKVOp := opBody.MustManageKeyValueOp()
+	manageKVOp := op.Body.MustManageKeyValueOp()
 
 	var value *xdr.KeyValueEntryValue
 	if manageKVOp.Action.Action == xdr.ManageKvActionPut {

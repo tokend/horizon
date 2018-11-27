@@ -9,15 +9,15 @@ type createAccountOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *createAccountOpHandler) OperationDetails(opBody xdr.OperationBody, _ xdr.OperationResultTr,
+func (h *createAccountOpHandler) OperationDetails(op rawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	op := opBody.MustCreateAccountOp()
+	operation := op.Body.MustCreateAccountOp()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAccount,
 		CreateAccount: &history2.CreateAccountDetails{
-			AccountID:   h.pubKeyProvider.GetAccountID(op.Destination),
-			AccountType: op.AccountType,
+			AccountID:   operation.Destination.Address(),
+			AccountType: operation.AccountType,
 		},
 	}, nil
 }

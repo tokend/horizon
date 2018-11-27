@@ -11,10 +11,9 @@ type manageOfferOpHandler struct {
 	offerHelper    offerHelper
 }
 
-func (h *manageOfferOpHandler) OperationDetails(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr,
+func (h *manageOfferOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageOfferOp := opBody.MustManageOfferOp()
+	manageOfferOp := op.Body.MustManageOfferOp()
 	manageOfferOpRes := opRes.MustManageOfferResult().MustSuccess()
 
 	offerID := int64(manageOfferOp.OfferId)

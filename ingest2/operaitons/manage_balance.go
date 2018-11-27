@@ -9,17 +9,17 @@ type manageBalanceOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *manageBalanceOpHandler) OperationDetails(opBody xdr.OperationBody, opRes xdr.OperationResultTr,
+func (h *manageBalanceOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageBalanceOp := opBody.MustManageBalanceOp()
+	manageBalanceOp := op.Body.MustManageBalanceOp()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageBalance,
 		ManageBalance: &history2.ManageBalanceDetails{
-			DestinationAccount: h.pubKeyProvider.GetAccountID(manageBalanceOp.Destination),
+			DestinationAccount: manageBalanceOp.Destination.Address(),
 			Action:             manageBalanceOp.Action,
 			Asset:              manageBalanceOp.Asset,
-			BalanceID:          h.pubKeyProvider.GetBalanceID(opRes.MustManageBalanceResult().MustSuccess().BalanceId),
+			BalanceID:          opRes.MustManageBalanceResult().MustSuccess().BalanceId.AsString(),
 		},
 	}, nil
 }
@@ -27,12 +27,12 @@ func (h *manageBalanceOpHandler) OperationDetails(opBody xdr.OperationBody, opRe
 func (h *manageBalanceOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
-	participants := []history2.ParticipantEffect{source}
-
 	manageBalanceOp := opBody.MustManageBalanceOp()
 
 	destinationAccount := h.pubKeyProvider.GetAccountID(manageBalanceOp.Destination)
 	destinationBalance := h.pubKeyProvider.GetBalanceID(opRes.MustManageBalanceResult().MustSuccess().BalanceId)
+
+	var participants []history2.ParticipantEffect
 
 	if source.AccountID != destinationAccount {
 		participants = append(participants, history2.ParticipantEffect{
@@ -41,9 +41,9 @@ func (h *manageBalanceOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 			AssetCode: &manageBalanceOp.Asset,
 		})
 	} else {
-		participants[0].BalanceID = &destinationBalance
-		participants[0].AssetCode = &manageBalanceOp.Asset
+		source.BalanceID = &destinationBalance
+		source.AssetCode = &manageBalanceOp.Asset
 	}
 
-	return participants, nil
+	return append(participants, source), nil
 }

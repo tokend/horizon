@@ -12,7 +12,7 @@ type manageInvoiceRequestOpHandler struct {
 func (h *manageInvoiceRequestOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageInvoiceRequestOp := opBody.MustManageInvoiceRequestOp()
+	manageInvoiceRequestOp := op.Body.MustManageInvoiceRequestOp()
 	manageInvoiceRequestOpRes := opRes.MustManageInvoiceRequestResult().MustSuccess()
 
 	opDetails := history2.OperationDetails{

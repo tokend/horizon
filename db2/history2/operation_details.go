@@ -34,21 +34,21 @@ type OperationDetails struct {
 
 // CreateAccountDetails - stores details of create account operation
 type CreateAccountDetails struct {
-	AccountID   xdr.AccountId   `json:"account_id"`
+	AccountID   string          `json:"account_id"`
 	AccountType xdr.AccountType `json:"account_type"`
 }
 
 type ManageBalanceDetails struct {
-	DestinationAccount xdr.AccountId           `json:"destination_account"`
+	DestinationAccount string                  `json:"destination_account"`
 	Action             xdr.ManageBalanceAction `json:"action"`
 	Asset              xdr.AssetCode           `json:"asset"`
-	BalanceID          xdr.BalanceId           `json:"balance_id"`
+	BalanceID          string                  `json:"balance_id"`
 }
 
 type ManageAccountDetails struct {
-	AccountID            xdr.AccountId `json:"account_id"`
-	BlockReasonsToAdd    int32         `json:"block_reasons_to_add"`
-	BlockReasonsToRemove int32         `json:"block_reasons_to_remove"`
+	AccountID            string `json:"account_id"`
+	BlockReasonsToAdd    int32  `json:"block_reasons_to_add"`
+	BlockReasonsToRemove int32  `json:"block_reasons_to_remove"`
 }
 
 type ManageKeyValueDetails struct {
@@ -62,7 +62,7 @@ type SetFeeDetails struct {
 	FixedFee    string           `json:"fixed_fee"`
 	PercentFee  string           `json:"percent_fee"`
 	FeeType     xdr.FeeType      `json:"fee_type"`
-	AccountID   *xdr.AccountId   `json:"account_id,omitempty"`
+	AccountID   string           `json:"account_id,omitempty"`
 	AccountType *xdr.AccountType `json:"account_type,omitempty"`
 	Subtype     int64            `json:"subtype"`
 	LowerBound  string           `json:"lower_bound"`
@@ -126,7 +126,7 @@ type ManageLimitsDetails struct {
 }
 type ManageLimitsCreationDetails struct {
 	AccountType     *xdr.AccountType `json:"account_type,omitempty"`
-	AccountID       *xdr.AccountId   `json:"account_id,omitempty"`
+	AccountID       string           `json:"account_id,omitempty"`
 	StatsOpType     xdr.StatsOpType  `json:"stats_op_type"`
 	AssetCode       xdr.AssetCode    `json:"asset_code"`
 	IsConvertNeeded bool             `json:"is_convert_needed"`
@@ -186,7 +186,7 @@ type ManageAssetDetails struct {
 	Action            xdr.ManageAssetAction  `json:"action"`
 	Policies          *int32                 `json:"policies,omitempty"`
 	Details           map[string]interface{} `json:"details,omitempty"`
-	PreissuedSigner   *xdr.AccountId         `json:"preissued_signer,omitempty"`
+	PreissuedSigner   string                 `json:"preissued_signer,omitempty"`
 	MaxIssuanceAmount string                 `json:"max_issuance_amount,omitempty"`
 }
 

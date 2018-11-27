@@ -8,12 +8,11 @@ import (
 )
 
 type manageAssetOpHandler struct {
-	pubKeyProvider publicKeyProvider
 }
 
-func (h *manageAssetOpHandler) OperationDetails(opBody xdr.OperationBody, opRes xdr.OperationResultTr,
+func (h *manageAssetOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageAssetOp := opBody.MustManageAssetOp()
+	manageAssetOp := op.Body.MustManageAssetOp()
 
 	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeManageAsset,
@@ -32,12 +31,11 @@ func (h *manageAssetOpHandler) OperationDetails(opBody xdr.OperationBody, opRes 
 		creationDetails := manageAssetOp.Request.MustCreateAsset()
 
 		policies := int32(creationDetails.Policies)
-		preissuedSigner := h.pubKeyProvider.GetAccountID(creationDetails.PreissuedAssetSigner)
 
 		opDetails.ManageAsset.AssetCode = creationDetails.Code
 		opDetails.ManageAsset.Details = customDetailsUnmarshal([]byte(creationDetails.Details))
 		opDetails.ManageAsset.Policies = &policies
-		opDetails.ManageAsset.PreissuedSigner = &preissuedSigner
+		opDetails.ManageAsset.PreissuedSigner = creationDetails.PreissuedAssetSigner.Address()
 		opDetails.ManageAsset.MaxIssuanceAmount = amount.StringU(uint64(creationDetails.MaxIssuanceAmount))
 	case xdr.ManageAssetActionCreateAssetUpdateRequest:
 		updateDetails := manageAssetOp.Request.MustUpdateAsset()
@@ -50,10 +48,9 @@ func (h *manageAssetOpHandler) OperationDetails(opBody xdr.OperationBody, opRes 
 	case xdr.ManageAssetActionCancelAssetRequest:
 	case xdr.ManageAssetActionChangePreissuedAssetSigner:
 		data := manageAssetOp.Request.MustChangePreissuedSigner()
-		preissuedSigner := h.pubKeyProvider.GetAccountID(data.AccountId)
 
 		opDetails.ManageAsset.AssetCode = data.Code
-		opDetails.ManageAsset.PreissuedSigner = &preissuedSigner
+		opDetails.ManageAsset.PreissuedSigner = data.AccountId.Address()
 	case xdr.ManageAssetActionUpdateMaxIssuance:
 		data := manageAssetOp.Request.MustUpdateMaxIssuance()
 

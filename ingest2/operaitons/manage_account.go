@@ -9,15 +9,15 @@ type manageAccountOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *manageAccountOpHandler) OperationDetails(opBody xdr.OperationBody,
+func (h *manageAccountOpHandler) OperationDetails(op rawOperation,
 	_ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageAccountOp := opBody.MustManageAccountOp()
+	manageAccountOp := op.Body.MustManageAccountOp()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageAccount,
 		ManageAccount: &history2.ManageAccountDetails{
-			AccountID:            h.pubKeyProvider.GetAccountID(manageAccountOp.Account),
+			AccountID:            manageAccountOp.Account.Address(),
 			BlockReasonsToAdd:    int32(manageAccountOp.BlockReasonsToAdd),
 			BlockReasonsToRemove: int32(manageAccountOp.BlockReasonsToRemove),
 		},

@@ -8,7 +8,7 @@ import (
 type manageExternalSystemPoolOpHandler struct {
 }
 
-func (h *manageExternalSystemPoolOpHandler) OperationDetails(opBody xdr.OperationBody,
+func (h *manageExternalSystemPoolOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	//manageExternalSystemPoolOp := opBody.MustManageExternalSystemAccountIdPoolEntryOp()
