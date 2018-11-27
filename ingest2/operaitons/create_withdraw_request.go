@@ -10,10 +10,10 @@ type createWithdrawRequestOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *createWithdrawRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr,
+func (h *createWithdrawRequestOpHandler) OperationDetails(op rawOperation,
+	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	withdrawRequest := opBody.MustCreateWithdrawalRequestOp().Request
+	withdrawRequest := op.Body.MustCreateWithdrawalRequestOp().Request
 
 	destinationAsset := xdr.AssetCode("")
 	destinationAmount := amount.String(int64(0))
@@ -25,7 +25,7 @@ func (h *createWithdrawRequestOpHandler) OperationDetails(opBody xdr.OperationBo
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateWithdrawalRequest,
 		CreateWithdrawRequest: &history2.CreateWithdrawRequestDetails{
-			BalanceID:         h.pubKeyProvider.GetBalanceID(withdrawRequest.Balance),
+			BalanceID:         withdrawRequest.Balance.AsString(),
 			Amount:            amount.StringU(uint64(withdrawRequest.Amount)),
 			FixedFee:          amount.String(int64(withdrawRequest.Fee.Fixed)),
 			PercentFee:        amount.String(int64(withdrawRequest.Fee.Percent)),
@@ -41,11 +41,12 @@ func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 ) ([]history2.ParticipantEffect, error) {
 	withdrawRequest := opBody.MustCreateWithdrawalRequestOp().Request
 	balanceIDInt := h.pubKeyProvider.GetBalanceID(withdrawRequest.Balance)
-	withdrawAmount := int64(withdrawRequest.Amount)
 
 	source.BalanceID = &balanceIDInt
-	source.Effect.Type = history2.EffectTypeWithdraw
-	source.Effect.WithdrawAmount = &withdrawAmount
+	source.Effect.Type = history2.EffectTypeLocked
+	source.Effect.Withdraw = &history2.WithdrawEffect{
+		Amount: amount.StringU(uint64(withdrawRequest.Amount)),
+	}
 
 	return []history2.ParticipantEffect{source}, nil
 }

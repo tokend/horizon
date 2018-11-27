@@ -10,10 +10,10 @@ type manageContractRequestOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *manageContractRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
+func (h *manageContractRequestOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageContractRequestOp := opBody.MustManageContractRequestOp()
+	manageContractRequestOp := op.Body.MustManageContractRequestOp()
 
 	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeManageContractRequest,
@@ -27,8 +27,8 @@ func (h *manageContractRequestOpHandler) OperationDetails(opBody xdr.OperationBo
 		creationDetails := manageContractRequestOp.Details.MustContractRequest()
 
 		opDetails.ManageContractRequest.Create = &history2.CreateContractRequestDetails{
-			Customer:  h.pubKeyProvider.GetAccountID(creationDetails.Customer),
-			Escrow:    h.pubKeyProvider.GetAccountID(creationDetails.Escrow),
+			Customer:  creationDetails.Customer.Address(),
+			Escrow:    creationDetails.Escrow.Address(),
 			Details:   customDetailsUnmarshal([]byte(creationDetails.Details)),
 			StartTime: int64(creationDetails.StartTime),
 			EndTime:   int64(creationDetails.EndTime),

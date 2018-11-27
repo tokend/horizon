@@ -71,7 +71,7 @@ type SetFeeDetails struct {
 }
 
 type CreateWithdrawRequestDetails struct {
-	BalanceID         xdr.BalanceId          `json:"balance_id"`
+	BalanceID         string                 `json:"balance_id"`
 	Amount            string                 `json:"amount"`
 	FixedFee          string                 `json:"fixed_fee"`
 	PercentFee        string                 `json:"percent_fee"`
@@ -92,7 +92,7 @@ type ManageInvoiceRequestDetails struct {
 }
 type CreateInvoiceRequestDetails struct {
 	Amount     string                 `json:"amount"`
-	Sender     xdr.AccountId          `json:"sender"`
+	Sender     string                 `json:"sender"`
 	RequestID  int64                  `json:"request_id"`
 	Asset      xdr.AssetCode          `json:"asset"`
 	ContractID *int64                 `json:"contract_id,omitempty"`
@@ -108,8 +108,8 @@ type ManageContractRequestDetails struct {
 	Remove *RemoveContractReqeustDetails   `json:"remove,omitempty"`
 }
 type CreateContractRequestDetails struct {
-	Customer  xdr.AccountId          `json:"customer"`
-	Escrow    xdr.AccountId          `json:"escrow"`
+	Customer  string                 `json:"customer"`
+	Escrow    string                 `json:"escrow"`
 	Details   map[string]interface{} `json:"details"`
 	StartTime int64                  `json:"start_time"`
 	EndTime   int64                  `json:"end_time"`
@@ -203,10 +203,11 @@ type CreateIssuanceRequestDetails struct {
 	Reference         string                 `json:"reference"`
 	Amount            string                 `json:"amount"`
 	Asset             xdr.AssetCode          `json:"asset"`
-	ReceiverAccountID xdr.AccountId          `json:"receiver_account_id"`
-	ReceiverBalanceID xdr.BalanceId          `json:"receiver_balance_id"`
+	ReceiverAccountID string                 `json:"receiver_account_id"`
+	ReceiverBalanceID string                 `json:"receiver_balance_id"`
 	ExternalDetails   map[string]interface{} `json:"external_details"`
 	AllTasks          *int64                 `json:"all_tasks,omitempty"`
+	RequestDetails    RequestDetails         `json:"request_details"`
 }
 
 type CreateSaleRequestDetails struct {
@@ -227,9 +228,9 @@ type CheckSaleStateDetails struct {
 }
 
 type CreateAMLAlertRequestDetails struct {
-	Amount    string        `json:"amount"`
-	BalanceID xdr.BalanceId `json:"balance_id"`
-	Reason    string        `json:"reason"`
+	Amount    string `json:"amount"`
+	BalanceID string `json:"balance_id"`
+	Reason    string `json:"reason"`
 }
 
 // PaymentDetails - stores details of payment operation
@@ -251,4 +252,8 @@ type PaymentDetails struct {
 type FeeData struct {
 	FixedFee  string `json:"fixed_fee"`
 	ActualFee string `json:"actual_fee"`
+}
+
+type RequestDetails struct {
+	IsFulfilled bool `json:"is_fulfilled"`
 }

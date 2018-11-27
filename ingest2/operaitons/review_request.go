@@ -55,6 +55,7 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
 	reviewRequestOp := opBody.MustReviewRequestOp()
+	reviewRequestRes := opRes.MustReviewRequestResult().MustSuccess()
 
 	request := h.getReviewableRequestByID(int64(reviewRequestOp.RequestId))
 
@@ -64,6 +65,7 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	var participants []history2.ParticipantEffect
 
+	// maybe do map with specific handlers
 	switch reviewRequestOp.RequestDetails.RequestType {
 	case xdr.ReviewableRequestTypeIssuanceCreate:
 		details := request.Body.MustIssuanceRequest()
@@ -108,43 +110,31 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		}
 
 		participants = h.paymentHelper.getParticipantsEffects(paymentOp, paymentRes, source, effect)
+	case xdr.ReviewableRequestTypeAtomicSwap:
+		atomicSwapExtendedResult := reviewRequestRes.Ext.MustExtendedResult().TypeExt.MustASwapExtended()
+		ownerBalanceID := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.BidOwnerBaseBalanceId)
+
+		participants = append(participants, history2.ParticipantEffect{
+			AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.BidOwnerId),
+			BalanceID: &ownerBalanceID,
+			AssetCode: &atomicSwapExtendedResult.BaseAsset,
+			Effect: history2.Effect{
+				Type: history2.EffectTypeChargedFromLocked,
+			},
+		})
+
+		purchaserBaseBalanceId := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.PurchaserBaseBalanceId)
+
+		participants = append(participants, history2.ParticipantEffect{
+			AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.PurchaserId),
+			BalanceID: &purchaserBaseBalanceId,
+			AssetCode: &atomicSwapExtendedResult.BaseAsset,
+		})
 	}
 
-	if source.AccountID == h.pubKeyProvider.GetAccountID(request.Requestor) {
+	/*if source.AccountID == h.pubKeyProvider.GetAccountID(request.Requestor) {
 		return participants, nil
-	}
-
-	if request.Body.Type != xdr.ReviewableRequestTypeAtomicSwap {
-		return append(participants, history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.GetAccountID(request.Requestor),
-		}), nil
-	}
-
-	extendedResult, ok := opRes.MustReviewRequestResult().MustSuccess().Ext.GetExtendedResult()
-	if !ok {
-		return participants, nil
-	}
-
-	atomicSwapExtendedResult, ok := extendedResult.TypeExt.GetASwapExtended()
-	if !ok {
-		return participants, nil
-	}
-
-	ownerBalanceID := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.BidOwnerBaseBalanceId)
-
-	participants = append(participants, history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.BidOwnerId),
-		BalanceID: &ownerBalanceID,
-		AssetCode: &atomicSwapExtendedResult.BaseAsset,
-	})
-
-	purchaserBaseBalanceId := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.PurchaserBaseBalanceId)
-
-	participants = append(participants, history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.PurchaserId),
-		BalanceID: &purchaserBaseBalanceId,
-		AssetCode: &atomicSwapExtendedResult.BaseAsset,
-	})
+	}*/
 
 	return participants, nil
 }

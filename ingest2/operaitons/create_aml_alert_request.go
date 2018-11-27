@@ -10,16 +10,16 @@ type createAMLAlertReqeustOpHandler struct {
 	balanceProvider balanceProvider
 }
 
-func (h *createAMLAlertReqeustOpHandler) OperationDetails(opBody xdr.OperationBody,
+func (h *createAMLAlertReqeustOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	amlAlertRequest := opBody.MustCreateAmlAlertRequestOp().AmlAlertRequest
+	amlAlertRequest := op.Body.MustCreateAmlAlertRequestOp().AmlAlertRequest
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAmlAlert,
 		CreateAMLAlertRequest: &history2.CreateAMLAlertRequestDetails{
 			Amount:    amount.StringU(uint64(amlAlertRequest.Amount)),
-			BalanceID: amlAlertRequest.BalanceId,
+			BalanceID: amlAlertRequest.BalanceId.AsString(),
 			Reason:    string(amlAlertRequest.Reason),
 		},
 	}, nil

@@ -45,16 +45,16 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			},
 			xdr.OperationTypeCreatePreissuanceRequest: &createPreIssuanceRequestOpHandler{},
 			xdr.OperationTypeCreateIssuanceRequest: &createIssuanceRequestOpHandler{
-				pubKeyProvider:  pubKeyProvider,
-				balanceProvider: mainProvider.GetBalanceProvider(),
+				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
-			xdr.OperationTypeCreateManageLimitsRequest: &createManageLimitsRequestOpHandler{},
-			xdr.OperationTypeManageInvoiceRequest: &manageInvoiceRequestOpHandler{
-				pubKeyProvider: pubKeyProvider,
+			xdr.OperationTypeCreateAmlAlert: &createAMLAlertReqeustOpHandler{
+				balanceProvider: mainProvider.GetBalanceProvider(),
 			},
+			xdr.OperationTypeCreateManageLimitsRequest: &createManageLimitsRequestOpHandler{},
+			xdr.OperationTypeManageInvoiceRequest:      &manageInvoiceRequestOpHandler{},
 			xdr.OperationTypeManageContractRequest: &manageContractRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},

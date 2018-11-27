@@ -7,10 +7,9 @@ import (
 )
 
 type manageInvoiceRequestOpHandler struct {
-	pubKeyProvider publicKeyProvider
 }
 
-func (h *manageInvoiceRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
+func (h *manageInvoiceRequestOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageInvoiceRequestOp := opBody.MustManageInvoiceRequestOp()
@@ -35,7 +34,7 @@ func (h *manageInvoiceRequestOpHandler) OperationDetails(opBody xdr.OperationBod
 
 		opDetails.ManageInvoiceRequest.Create = &history2.CreateInvoiceRequestDetails{
 			Amount:     amount.StringU(uint64(creationDetails.Amount)),
-			Sender:     h.pubKeyProvider.GetAccountID(creationDetails.Sender),
+			Sender:     creationDetails.Sender.Address(),
 			RequestID:  int64(manageInvoiceRequestOpRes.Details.MustResponse().RequestId),
 			Asset:      creationDetails.Asset,
 			ContractID: contractID,
@@ -53,5 +52,5 @@ func (h *manageInvoiceRequestOpHandler) OperationDetails(opBody xdr.OperationBod
 func (h *manageInvoiceRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
-
+	return []history2.ParticipantEffect{source}, nil
 }

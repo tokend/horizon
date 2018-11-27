@@ -19,12 +19,13 @@ const (
 // Effect stores the details of the effect in union switch form. Only one value should be selected
 // Effect should never store more than one change to the account or balance
 type Effect struct {
-	Type     EffectType      `json:"type"`
-	Issuance *IssuanceEffect `json:"issuance,omitempty"`
-	Withdraw *WithdrawEffect `json:"withdraw,omitempty"`
-	Offer    *OfferEffect    `json:"offer,omitempty"`
-	AMLAlert *AMLAlertEffect `json:"aml_alert,omitempty"`
-	Payment  *PaymentEffect  `json:"payment"`
+	Type       EffectType        `json:"type"`
+	Issuance   *IssuanceEffect   `json:"issuance,omitempty"`
+	Withdraw   *WithdrawEffect   `json:"withdraw,omitempty"`
+	Offer      *OfferEffect      `json:"offer,omitempty"`
+	AMLAlert   *AMLAlertEffect   `json:"aml_alert,omitempty"`
+	Payment    *PaymentEffect    `json:"payment"`
+	AtomicSwap *AtomicSwapEffect `json:"atomic_swap"`
 }
 
 type OfferEffect struct {
@@ -52,5 +53,9 @@ type AMLAlertEffect struct {
 }
 
 type PaymentEffect struct {
+	Amount string `json:"amount"`
+}
+
+type AtomicSwapEffect struct {
 	Amount string `json:"amount"`
 }
