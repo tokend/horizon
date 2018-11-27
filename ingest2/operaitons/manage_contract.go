@@ -56,7 +56,7 @@ func (h *manageContractOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		return []history2.ParticipantEffect{source}, nil
 	}
 
-	request := h.requestProvider.GetContractByID(int64(manageContractOp.ContractId))
+	request := h.requestProvider.GetInvoiceRequestsByContractID(int64(manageContractOp.ContractId))
 
 	if isRevert, ok := manageContractOp.Data.GetIsRevert(); ok && isRevert {
 		return h.getRevertedInvoiceParticipantsEffects(request), nil

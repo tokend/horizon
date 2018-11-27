@@ -38,7 +38,10 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeManageOffer: &manageOfferOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
-			xdr.OperationTypeManageContract: &manageContractOpHandler{},
+			xdr.OperationTypeManageContract: &manageContractOpHandler{
+				pubKeyProvider:  pubKeyProvider,
+				requestProvider: mainProvider.GetRequestProvider(),
+			},
 			xdr.OperationTypeSetFees: &setFeeOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
@@ -89,7 +92,10 @@ func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.Operatio
 			})
 	}
 
-	details, err := handler.OperationDetails(op.Body, opRes)
+	details, err := handler.OperationDetails(rawOperation{
+		Body:   op.Body,
+		Source: h.getOperationSource(op.SourceAccount, txSource),
+	}, opRes)
 	if err != nil {
 		return history2.Operation{}, nil,
 			errors.Wrap(err, "failed to get operation details", map[string]interface{}{
@@ -144,6 +150,7 @@ type providerCluster interface {
 	GetPubKeyProvider() publicKeyProvider
 	GetBalanceProvider() balanceProvider
 	GetLedgerChangesProvider() ledgerChangesProvider
+	GetRequestProvider() requestProvider
 }
 
 type operationIDProvider interface {
@@ -168,7 +175,7 @@ type ledgerChangesProvider interface {
 }
 
 type requestProvider interface {
-	GetContractByID(contractID int64) []xdr.ReviewableRequestEntry
+	GetInvoiceRequestsByContractID(contractID int64) []xdr.ReviewableRequestEntry
 }
 
 type operationHandlerI interface {
