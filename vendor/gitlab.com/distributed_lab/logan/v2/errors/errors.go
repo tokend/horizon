@@ -6,7 +6,8 @@ import (
 )
 
 // FromPanic extracts the err from the result of a recover() call.
-// DEPRECATED
+//
+// DEPRECATED: Use logan/v3 instead
 func FromPanic(rec interface{}) error {
 	err, ok := rec.(error)
 	if !ok {
@@ -18,7 +19,8 @@ func FromPanic(rec interface{}) error {
 
 // New returns an error with the supplied message.
 // New also records the stack trace at the point it was called.
-// DEPRECATED
+//
+// DEPRECATED: Use logan/v3 instead
 func New(msg string) error {
 	return errors.New(msg)
 }
@@ -26,7 +28,8 @@ func New(msg string) error {
 // Wrap returns an error annotating err with a stack trace
 // at the point Wrap is called, and the supplied message.
 // If err is nil, Wrap returns nil.
-// DEPRECATED
+//
+// DEPRECATED: Use logan/v3 instead
 func Wrap(base error, msg string) error {
 	return errors.Wrap(base, msg)
 }
@@ -42,7 +45,8 @@ func Wrap(base error, msg string) error {
 // If the error does not implement Cause, the original error will
 // be returned. If the error is nil, nil will be returned without further
 // investigation.
-// DEPRECATED
+//
+// DEPRECATED: Use logan/v3 instead
 func Cause(err error) error {
 	return errors.Cause(err)
 }
@@ -56,7 +60,8 @@ func Cause(err error) error {
 //
 // If the error and all of its nested causes do not implement GetFields, empty fields map will
 // be returned.
-// DEPRECATED
+//
+// DEPRECATED: Use logan/v3 instead
 func GetFields(err error) F {
 	type fieldsProvider interface {
 		GetFields() F
@@ -83,23 +88,23 @@ func GetFields(err error) F {
 	return f
 }
 
-// DEPRECATED
+// DEPRECATED: Use logan/v3 instead
 type withFields struct {
 	error
 	F
 }
 
-// DEPRECATED
+// DEPRECATED: Use logan/v3 instead
 func (w *withFields) Error() string {
 	return w.error.Error()
 }
 
-// DEPRECATED
+// DEPRECATED: Use logan/v3 instead
 func (w *withFields) GetFields() F {
 	return w.F
 }
 
-// DEPRECATED
+// DEPRECATED: Use logan/v3 instead
 func (w *withFields) Cause() error {
 	return w.error
 }

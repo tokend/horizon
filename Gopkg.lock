@@ -445,7 +445,7 @@
   revision = "cbfb465258955230864e0a76aba0ff2738000782"
 
 [[projects]]
-  digest = "1:7feb21d1be128ea134fe7fccc11b69ebbab499932b5b6e8e1ec1c0b55646ab23"
+  digest = "1:b99b8a2b417591f9246cb6306b108fdd223a3b724488d9d47f766c06a36e2acf"
   name = "gitlab.com/distributed_lab/logan"
   packages = [
     ".",
@@ -454,8 +454,16 @@
     "v3/fields",
   ]
   pruneopts = ""
-  revision = "b8cfbf0cdfb9c7185cd426c24babaac54dcfbb82"
-  version = "v3.0"
+  revision = "df004fabe2425cd853d9787ec32b04189a22762f"
+  version = "v3.7.1"
+
+[[projects]]
+  digest = "1:8d319987cf8a2ac092b54e3bf04cab2e6da9d574292651d1339cfbc48bd5aef5"
+  name = "gitlab.com/distributed_lab/running"
+  packages = ["."]
+  pruneopts = ""
+  revision = "023b9c716a08001f0464f43cf1d85dffb209273c"
+  version = "v1"
 
 [[projects]]
   branch = "master"
@@ -467,7 +475,7 @@
 
 [[projects]]
   branch = "product"
-  digest = "1:da259d4695720cb111297be12df5a91027fe24d2c272f6225f103e735685e386"
+  digest = "1:ba584cdf13426d87240b82750585c8fe05c873f8ef2df2ccbc25a2243c7fb274"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +493,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "281d34621028f29a0d8bc504deff9054714e52ed"
+  revision = "73afd6c43fd326bee00fd75e50fe61dcf8377750"
 
 [[projects]]
   branch = "master"
@@ -652,12 +660,12 @@
     "gitlab.com/distributed_lab/logan",
     "gitlab.com/distributed_lab/logan/v3",
     "gitlab.com/distributed_lab/logan/v3/errors",
+    "gitlab.com/distributed_lab/running",
     "gitlab.com/distributed_lab/txsub",
     "gitlab.com/tokend/go/amount",
     "gitlab.com/tokend/go/build",
     "gitlab.com/tokend/go/doorman",
     "gitlab.com/tokend/go/hash",
-    "gitlab.com/tokend/go/keypair",
     "gitlab.com/tokend/go/resources",
     "gitlab.com/tokend/go/signcontrol",
     "gitlab.com/tokend/go/strkey",

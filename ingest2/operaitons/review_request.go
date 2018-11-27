@@ -135,7 +135,7 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	participants = append(participants, history2.ParticipantEffect{
 		AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.BidOwnerId),
 		BalanceID: &ownerBalanceID,
-		AssetCode: &atomicSwapExtendedResult.baseAsset,
+		AssetCode: &atomicSwapExtendedResult.BaseAsset,
 	})
 
 	purchaserBaseBalanceId := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.PurchaserBaseBalanceId)
@@ -143,7 +143,7 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	participants = append(participants, history2.ParticipantEffect{
 		AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.PurchaserId),
 		BalanceID: &purchaserBaseBalanceId,
-		AssetCode: &atomicSwapExtendedResult.baseAsset,
+		AssetCode: &atomicSwapExtendedResult.BaseAsset,
 	})
 
 	return participants, nil
