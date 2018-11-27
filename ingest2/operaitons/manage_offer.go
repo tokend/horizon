@@ -47,7 +47,7 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	baseBalanceID := h.pubKeyProvider.GetBalanceID(manageOfferOp.BaseBalance)
 	quoteBalanceID := h.pubKeyProvider.GetBalanceID(manageOfferOp.QuoteBalance)
 
-	participants := h.offerHelper.getParticipantsEffects(manageOfferOpRes.OffersClaimed,
+	participants, _ := h.offerHelper.getParticipantsEffects(manageOfferOpRes.OffersClaimed,
 		offerDirection{
 			BaseAsset:  manageOfferOpRes.BaseAsset,
 			QuoteAsset: manageOfferOpRes.QuoteAsset,

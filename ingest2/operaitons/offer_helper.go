@@ -18,10 +18,13 @@ type offerHelper struct {
 
 func (h *offerHelper) getParticipantsEffects(claimOfferAtoms []xdr.ClaimOfferAtom,
 	sourceOfferDirection offerDirection, sourceAccountID, baseSourceBalanceID, quoteSourceBalanceID int64,
-) []history2.ParticipantEffect {
+) ([]history2.ParticipantEffect, uint64) {
 	var result []history2.ParticipantEffect
+	var totalBaseAmount uint64 = 0
 
 	for _, offerAtom := range claimOfferAtoms {
+		totalBaseAmount += uint64(offerAtom.BaseAmount)
+
 		baseBalanceID := h.pubKeyProvider.GetBalanceID(offerAtom.BaseBalance)
 		quoteBalanceID := h.pubKeyProvider.GetBalanceID(offerAtom.QuoteBalance)
 
@@ -84,5 +87,5 @@ func (h *offerHelper) getParticipantsEffects(claimOfferAtoms []xdr.ClaimOfferAto
 		result = append(result, baseCounterparty, quoteCounterparty, baseSource, quoteSource)
 	}
 
-	return result
+	return result, totalBaseAmount
 }

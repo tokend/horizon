@@ -8,28 +8,29 @@ import (
 // OperationDetails - stores details of the operation performed in union switch form. Only one value must be selected at
 // a type
 type OperationDetails struct {
-	Type                      xdr.OperationType                 `json:"type"`
-	CreateAccount             *CreateAccountDetails             `json:"create_account,omitempty"`
-	ManageAccount             *ManageAccountDetails             `json:"manage_account,omitempty"`
-	ManageBalance             *ManageBalanceDetails             `json:"manage_balance,omitempty"`
-	ManageKeyValue            *ManageKeyValueDetails            `json:"manage_key_value,omitempty"`
-	ManageAsset               *ManageAssetDetails               `json:"manage_asset,omitempty"`
-	ManageAssetPair           *ManageAssetPairDetails           `json:"manage_asset_pair,omitempty"`
-	ManageLimits              *ManageLimitsDetails              `json:"manage_limits,omitempty"`
-	ManageOffer               *ManageOfferDetails               `json:"manage_offer,omitempty"`
-	ManageContract            *ManageContractDetails            `json:"manage_contract,omitempty"`
-	Payment                   *PaymentDetails                   `json:"payment,omitempty"`
-	SetFee                    *SetFeeDetails                    `json:"set_fee,omitempty"`
-	CheckSaleState            *CheckSaleStateDetails            `json:"check_sale_state,omitempty"`
-	CreatePreIssuanceRequest  *CreatePreIssuanceRequestDetails  `json:"create_pre_issuance_request,omitempty"`
-	CreateIssuanceRequest     *CreateIssuanceRequestDetails     `json:"create_issuance_request,omitempty"`
-	CreateManageLimitsRequest *CreateManageLimitsRequestDetails `json:"create_manage_limits_request,omitempty"`
-	CreateWithdrawRequest     *CreateWithdrawRequestDetails     `json:"create_withdraw_request,omitempty"`
-	CreateAMLAlertRequest     *CreateAMLAlertRequestDetails     `json:"create_aml_alert_request"`
-	CreateSaleRequest         *CreateSaleRequestDetails         `json:"create_sale_request,omitempty"`
-	ManageInvoiceRequest      *ManageInvoiceRequestDetails      `json:"manage_invoice_request,omitempty"`
-	ManageContractRequest     *ManageContractRequestDetails     `json:"manage_contract_request,omitempty"`
-	ReviewRequest             *ReviewRequestDetails             `json:"review_request,omitempty"`
+	Type                       xdr.OperationType                  `json:"type"`
+	CreateAccount              *CreateAccountDetails              `json:"create_account,omitempty"`
+	ManageAccount              *ManageAccountDetails              `json:"manage_account,omitempty"`
+	ManageBalance              *ManageBalanceDetails              `json:"manage_balance,omitempty"`
+	ManageKeyValue             *ManageKeyValueDetails             `json:"manage_key_value,omitempty"`
+	ManageAsset                *ManageAssetDetails                `json:"manage_asset,omitempty"`
+	ManageAssetPair            *ManageAssetPairDetails            `json:"manage_asset_pair,omitempty"`
+	ManageLimits               *ManageLimitsDetails               `json:"manage_limits,omitempty"`
+	ManageOffer                *ManageOfferDetails                `json:"manage_offer,omitempty"`
+	ManageContract             *ManageContractDetails             `json:"manage_contract,omitempty"`
+	Payment                    *PaymentDetails                    `json:"payment,omitempty"`
+	SetFee                     *SetFeeDetails                     `json:"set_fee,omitempty"`
+	CheckSaleState             *CheckSaleStateDetails             `json:"check_sale_state,omitempty"`
+	CreatePreIssuanceRequest   *CreatePreIssuanceRequestDetails   `json:"create_pre_issuance_request,omitempty"`
+	CreateIssuanceRequest      *CreateIssuanceRequestDetails      `json:"create_issuance_request,omitempty"`
+	CreateManageLimitsRequest  *CreateManageLimitsRequestDetails  `json:"create_manage_limits_request,omitempty"`
+	CreateWithdrawRequest      *CreateWithdrawRequestDetails      `json:"create_withdraw_request,omitempty"`
+	CreateAMLAlertRequest      *CreateAMLAlertRequestDetails      `json:"create_aml_alert_request"`
+	CreateSaleRequest          *CreateSaleRequestDetails          `json:"create_sale_request,omitempty"`
+	CreateAtomicSwapBidRequest *CreateAtomicSwapBidRequestDetails `json:"create_atomic_swap_bid_request"`
+	ManageInvoiceRequest       *ManageInvoiceRequestDetails       `json:"manage_invoice_request,omitempty"`
+	ManageContractRequest      *ManageContractRequestDetails      `json:"manage_contract_request,omitempty"`
+	ReviewRequest              *ReviewRequestDetails              `json:"review_request,omitempty"`
 }
 
 // CreateAccountDetails - stores details of create account operation
@@ -220,6 +221,13 @@ type CreateSaleRequestDetails struct {
 	HardCap           string                     `json:"hard_cap"`
 	QuoteAssets       []regources.SaleQuoteAsset `json:"quote_assets"`
 	Details           map[string]interface{}     `json:"details"`
+}
+
+type CreateAtomicSwapBidRequestDetails struct {
+	Amount      string                     `json:"amount"`
+	BaseBalance string                     `json:"base_balance"`
+	QuoteAssets []regources.SaleQuoteAsset `json:"quote_assets"`
+	Details     map[string]interface{}     `json:"details"`
 }
 
 type CheckSaleStateDetails struct {

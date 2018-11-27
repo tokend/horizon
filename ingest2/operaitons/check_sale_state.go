@@ -1,6 +1,7 @@
 package operaitons
 
 import (
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
@@ -28,26 +29,46 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	res := opRes.MustCheckSaleStateResult().MustSuccess()
 
 	if res.Effect.Effect != xdr.CheckSaleStateEffectClosed {
-		return []history2.ParticipantEffect{source}, nil
+		return nil, nil
 	}
 
 	closedRes := res.Effect.MustSaleClosed()
+	if len(closedRes.Results) == 0 {
+		return nil, nil
+	}
+
 	saleOwnerID := h.pubKeyProvider.GetAccountID(closedRes.SaleOwner)
+	baseBalanceID := h.pubKeyProvider.GetBalanceID(closedRes.Results[0].SaleBaseBalance)
+	baseAsset := closedRes.Results[0].SaleDetails.BaseAsset
 
 	var participants []history2.ParticipantEffect
+	var issuedAmount uint64 = 0
 
 	for _, subRes := range closedRes.Results {
-		baseBalanceID := h.pubKeyProvider.GetBalanceID(subRes.SaleBaseBalance)
 		quoteBalanceID := h.pubKeyProvider.GetBalanceID(subRes.SaleQuoteBalance)
 
-		participants = append(participants, h.offerHelper.getParticipantsEffects(subRes.SaleDetails.OffersClaimed,
+		newParticipants, baseAmount := h.offerHelper.getParticipantsEffects(
+			subRes.SaleDetails.OffersClaimed,
 			offerDirection{
 				BaseAsset:  subRes.SaleDetails.BaseAsset,
 				QuoteAsset: subRes.SaleDetails.QuoteAsset,
 				IsBuy:      false,
-			}, saleOwnerID, baseBalanceID, quoteBalanceID)...,
-		)
+			}, saleOwnerID, baseBalanceID, quoteBalanceID)
+
+		participants = append(participants, newParticipants...)
+
+		issuedAmount += baseAmount
 	}
 
-	return participants, nil
+	return append(participants, history2.ParticipantEffect{
+		AccountID: saleOwnerID,
+		BalanceID: &baseBalanceID,
+		AssetCode: &baseAsset,
+		Effect: history2.Effect{
+			Type: history2.EffectTypeFunded,
+			Issuance: &history2.IssuanceEffect{
+				Amount: amount.StringU(issuedAmount),
+			},
+		},
+	}), nil
 }
