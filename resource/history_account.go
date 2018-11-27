@@ -5,5 +5,5 @@ import (
 )
 
 func (this *HistoryAccount) Populate(row history.Account) {
-	this.AccountID = row.Address
+	this.AccountID = row.AccountID
 }
