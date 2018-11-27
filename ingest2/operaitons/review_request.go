@@ -13,6 +13,7 @@ type reviewRequestOpHandler struct {
 	pubKeyProvider        publicKeyProvider
 	ledgerChangesProvider ledgerChangesProvider
 	balanceProvider       balanceProvider
+	paymentHelper         paymentHelper
 }
 
 func (h *reviewRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
@@ -98,13 +99,16 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 		participants = h.getParticipantEffectByBalanceID(details.BalanceId, effect, source)
 	case xdr.ReviewableRequestTypeInvoice:
-		paymentOp := request.Body.MustInvoiceRequest().
+		paymentOp := reviewRequestOp.RequestDetails.MustBillPay().PaymentDetails
+		paymentRes := opRes.MustReviewRequestResult().MustSuccess().Ext.MustPaymentV2Response()
+
+		effect := history2.EffectTypeFunded
+		if request.Body.MustInvoiceRequest().ContractId != nil {
+			effect = history2.EffectTypeFundedToLocked
+		}
+
+		participants = h.paymentHelper.getParticipantsEffects(paymentOp, paymentRes, source, effect)
 	}
-
-	reviewRequestOp.RequestDetails.BillPay.PaymentDetails
-	opRes.MustReviewRequestResult().MustSuccess().Ext.PaymentV2Response.
-
-	participants := []history2.ParticipantEffect{source}
 
 	if source.AccountID == h.pubKeyProvider.GetAccountID(request.Requestor) {
 		return participants, nil

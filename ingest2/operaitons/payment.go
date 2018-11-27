@@ -9,6 +9,7 @@ import (
 
 type paymentOpHandler struct {
 	pubKeyProvider publicKeyProvider
+	paymentHelper  paymentHelper
 }
 
 func (h *paymentOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
@@ -45,29 +46,9 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
 	paymentOp := opBody.MustPaymentOpV2()
-	paymentRes := opRes.MustPaymentV2Result().PaymentV2Response
+	paymentRes := opRes.MustPaymentV2Result().MustPaymentV2Response()
 
-	sourceBalanceID := h.pubKeyProvider.GetBalanceID(paymentOp.SourceBalanceId)
-	source.BalanceID = &sourceBalanceID
-	source.AssetCode = &paymentRes.Asset
-	source.Effect = history2.Effect{
-		Type: history2.EffectTypeCharged,
-		Payment: &history2.PaymentEffect{
-			Amount: amount.StringU(uint64(paymentOp.Amount)),
-		},
-	}
-
-	destBalanceID := h.pubKeyProvider.GetBalanceID(paymentRes.DestinationBalanceId)
-
-	return []history2.ParticipantEffect{source, {
-		AccountID: h.pubKeyProvider.GetAccountID(paymentRes.Destination),
-		BalanceID: &destBalanceID,
-		AssetCode: &paymentRes.Asset,
-		Effect: history2.Effect{
-			Type: history2.EffectTypeFunded,
-			Payment: &history2.PaymentEffect{
-				Amount: amount.StringU(uint64(paymentOp.Amount)),
-			},
-		},
-	}}, nil
+	return h.paymentHelper.getParticipantsEffects(
+		paymentOp, paymentRes, source, history2.EffectTypeFunded,
+	), nil
 }

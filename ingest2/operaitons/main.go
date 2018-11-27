@@ -167,6 +167,10 @@ type ledgerChangesProvider interface {
 	GetLedgerChanges() xdr.LedgerEntryChanges
 }
 
+type requestProvider interface {
+	GetContractByID(contractID int64) []xdr.ReviewableRequestEntry
+}
+
 type operationHandlerI interface {
 	OperationDetails(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
 	ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr, source history2.ParticipantEffect) ([]history2.ParticipantEffect, error)

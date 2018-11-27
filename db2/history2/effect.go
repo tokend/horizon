@@ -12,6 +12,7 @@ const (
 	EffectTypeLocked
 	EffectTypeUnlocked
 	EffectTypeChargedFromLocked
+	EffectTypeFundedToLocked
 	EffectTypeMatched // funded, charged or charge from locked in offer cases
 )
 
