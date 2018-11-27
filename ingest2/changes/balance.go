@@ -8,10 +8,12 @@ import (
 )
 
 type accountProvider interface {
+	//fetches account from DB by account ID
 	GetAccount(address xdr.AccountId) (history2.Account, error)
 }
 
 type balanceStorage interface {
+	//Inserts balance
 	InsertBalance(balance history2.Balance) error
 }
 

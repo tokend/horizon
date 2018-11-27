@@ -2,6 +2,7 @@ package changes
 
 import (
 	"a5ac0aaf.ngrok.io/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 )
@@ -9,12 +10,15 @@ import (
 // Consumer - consumes ledger changes
 
 type creatable interface {
+	//Handles Created Ledger entry change
 	Created(change LedgerChange) error
 }
 type updatable interface {
+	//Handles Updated Ledger entry change
 	Updated(change LedgerChange) error
 }
 type deletable interface {
+	//Handles Removed Ledger entry change
 	Deleted(change LedgerChange) error
 }
 

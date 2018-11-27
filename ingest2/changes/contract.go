@@ -11,8 +11,11 @@ import (
 )
 
 type contractStorage interface {
+	//inserts contract into DB
 	InsertContract(contract history.Contract) error
+	//updates contract
 	UpdateContract(contract history.Contract) error
+	//Adds state to contract
 	AddContractState(id uint64, state uint64) error
 }
 
