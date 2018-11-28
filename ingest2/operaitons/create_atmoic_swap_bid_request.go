@@ -8,6 +8,7 @@ import (
 )
 
 type createAtomicSwapBidRequestOpHandler struct {
+	balanceProvider balanceProvider
 }
 
 func (h *createAtomicSwapBidRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
@@ -37,5 +38,16 @@ func (h *createAtomicSwapBidRequestOpHandler) ParticipantsEffects(opBody xdr.Ope
 ) ([]history2.ParticipantEffect, error) {
 	aSwapBidRequest := opBody.MustCreateASwapBidCreationRequestOp().Request
 
-	return nil, nil
+	balance := h.balanceProvider.GetBalanceByID(aSwapBidRequest.BaseBalance)
+
+	source.BalanceID = &balance.BalanceID
+	source.AssetCode = &balance.AssetCode
+	source.Effect = history2.Effect{
+		Type: history2.EffectTypeLocked,
+		AtomicSwap: &history2.AtomicSwapEffect{
+			Amount: amount.StringU(uint64(aSwapBidRequest.Amount)),
+		},
+	}
+
+	return []history2.ParticipantEffect{source}, nil
 }

@@ -50,6 +50,9 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeCreateSaleRequest: &createSaleRequestOpHandler{},
+			xdr.OperationTypeCreateAswapBidRequest: &createAtomicSwapBidRequestOpHandler{
+				balanceProvider: mainProvider.GetBalanceProvider(),
+			},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
