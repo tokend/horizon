@@ -1,7 +1,6 @@
 package changes
 
 import (
-	"a5ac0aaf.ngrok.io/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"

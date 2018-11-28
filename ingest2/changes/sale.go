@@ -37,7 +37,7 @@ func (c *saleChanges) Created(lc LedgerChange) error {
 
 	err = c.storage.InsertSale(*sale)
 	if err != nil {
-		errors.Wrap(err, "failed to insert sale into DB", logan.F{
+		return errors.Wrap(err, "failed to insert sale into DB", logan.F{
 			"sale": sale,
 		})
 	}

@@ -2,6 +2,7 @@ package changes
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -144,11 +145,19 @@ func (c *contractChanges) processRevert(id uint64) error {
 
 func (c *contractChanges) convertContract(rawContract xdr.ContractEntry) history.Contract {
 	var initialDetails map[string]interface{}
-	_ = json.Unmarshal([]byte(string(rawContract.InitialDetails)), &initialDetails)
+	err := json.Unmarshal([]byte(string(rawContract.InitialDetails)), &initialDetails)
+	if err != nil {
+		initialDetails["reason"] = fmt.Sprintf("Expected json, got %v", rawContract.InitialDetails)
+		initialDetails["error"] = err.Error()
+	}
 
 	var customerDetails map[string]interface{}
 	if rawContract.Ext.V == xdr.LedgerVersionAddCustomerDetailsToContract {
-		_ = json.Unmarshal([]byte(string(rawContract.Ext.MustCustomerDetails())), &customerDetails)
+		err = json.Unmarshal([]byte(string(rawContract.Ext.MustCustomerDetails())), &customerDetails)
+		if err != nil {
+			customerDetails["reason"] = fmt.Sprintf("Expected json, got %v", rawContract.Ext.MustCustomerDetails())
+			customerDetails["error"] = err.Error()
+		}
 	}
 
 	var invoices []int64
