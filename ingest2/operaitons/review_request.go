@@ -51,11 +51,17 @@ func (h *reviewRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.Ope
 	return opDetails, nil
 }
 
+// TODO handle participants effects based on result
+
 func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
 	reviewRequestOp := opBody.MustReviewRequestOp()
 	reviewRequestRes := opRes.MustReviewRequestResult().MustSuccess()
+
+	/*if reviewRequestOp.Action != xdr.ReviewRequestOpActionApprove {
+		return h.getNotApprovedRequestParticipnatsEffects(), nil
+	}*/
 
 	request := h.getReviewableRequestByID(int64(reviewRequestOp.RequestId))
 
@@ -112,6 +118,10 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		participants = h.paymentHelper.getParticipantsEffects(paymentOp, paymentRes, source, effect)
 	case xdr.ReviewableRequestTypeAtomicSwap:
 		atomicSwapExtendedResult := reviewRequestRes.Ext.MustExtendedResult().TypeExt.MustASwapExtended()
+		if !reviewRequestRes.Ext.MustExtendedResult().Fulfilled {
+			break
+		}
+
 		ownerBalanceID := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.BidOwnerBaseBalanceId)
 
 		participants = append(participants, history2.ParticipantEffect{
@@ -120,6 +130,9 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 			AssetCode: &atomicSwapExtendedResult.BaseAsset,
 			Effect: history2.Effect{
 				Type: history2.EffectTypeChargedFromLocked,
+				AtomicSwap: &history2.AtomicSwapEffect{
+					Amount: amount.StringU(uint64(atomicSwapExtendedResult.BaseAmount)),
+				},
 			},
 		})
 
@@ -129,7 +142,34 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 			AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.PurchaserId),
 			BalanceID: &purchaserBaseBalanceId,
 			AssetCode: &atomicSwapExtendedResult.BaseAsset,
+			Effect: history2.Effect{
+				Type: history2.EffectTypeFunded,
+				AtomicSwap: &history2.AtomicSwapEffect{
+					Amount: amount.StringU(uint64(atomicSwapExtendedResult.BaseAmount)),
+				},
+			},
 		})
+
+		bid := h.getAtomicSwapBid(atomicSwapExtendedResult.BidId)
+		if bid == nil {
+			break
+		}
+
+		bidIsSoldOut := (bid.Amount == 0) && (bid.LockedAmount == 0)
+		bidIsRemoved := bidIsSoldOut || (bid.IsCancelled && bid.LockedAmount == 0)
+		if bidIsRemoved && (bid.Amount != 0) {
+			participants = append(participants, history2.ParticipantEffect{
+				AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.BidOwnerId),
+				BalanceID: &ownerBalanceID,
+				AssetCode: &atomicSwapExtendedResult.BaseAsset,
+				Effect: history2.Effect{
+					Type: history2.EffectTypeUnlocked,
+					AtomicSwap: &history2.AtomicSwapEffect{
+						Amount: amount.StringU(uint64(bid.Amount)),
+					},
+				},
+			})
+		}
 	}
 
 	/*if source.AccountID == h.pubKeyProvider.GetAccountID(request.Requestor) {
@@ -195,3 +235,41 @@ func (h *reviewRequestOpHandler) getReviewableRequestByID(id int64) *xdr.Reviewa
 
 	return bestResult
 }
+
+func (h *reviewRequestOpHandler) getAtomicSwapBid(bidID xdr.Uint64) *xdr.AtomicSwapBidEntry {
+	ledgerChanges := h.ledgerChangesProvider.GetLedgerChanges()
+
+	for _, change := range ledgerChanges {
+		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
+			continue
+		}
+
+		if change.MustUpdated().Data.Type != xdr.LedgerEntryTypeAtomicSwapBid {
+			continue
+		}
+
+		atomicSwapBid := change.MustUpdated().Data.MustAtomicSwapBid()
+
+		if atomicSwapBid.BidId == bidID {
+			return &atomicSwapBid
+		}
+	}
+
+	return nil
+}
+
+/*
+func (h *reviewRequestOpHandler) getNotApprovedRequestParticipnatsEffects(op xdr.ReviewRequestOp) []history2.ParticipantEffect {
+	var participants []history2.ParticipantEffect
+
+	switch op.RequestDetails.RequestType {
+	case xdr.ReviewableRequestTypeAmlAlert:
+		op.RequestDetails.MustAmlAlertDetails().
+
+		participants = append(participants, history2.ParticipantEffect{
+			AccountID: op
+		})
+	case xdr.ReviewableRequestTypeWithdraw:
+
+	}
+}*/

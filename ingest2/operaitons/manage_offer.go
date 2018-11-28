@@ -79,6 +79,18 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 			},
 		}
 		participants = append(participants, source)
+	} else if manageOfferOpRes.Offer.MustDeletedOfferResult().UnlockedAmount != 0 {
+		deletedOfferResult := manageOfferOpRes.Offer.MustDeletedOfferResult()
+		balanceID := h.pubKeyProvider.GetBalanceID(deletedOfferResult.BaseBalance)
+
+		source.BalanceID = &balanceID
+		source.AssetCode = &deletedOfferResult.BaseAsset
+		source.Effect = history2.Effect{
+			Type: history2.EffectTypeUnlocked,
+			DeletedOffer: &history2.DeletedOfferEffect{
+				BaseAmount: amount.StringU(uint64(deletedOfferResult.UnlockedAmount)),
+			},
+		}
 	}
 
 	return participants, nil

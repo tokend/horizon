@@ -25,48 +25,22 @@ func (h *cancelAtomicSwapBidOpHandler) OperationDetails(op rawOperation,
 func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
-	atomicSwapBid := h.getAtomicSwapBid(opBody.MustCancelASwapBidOp().BidId)
+	successRes := opRes.MustCancelASwapBidResult().MustSuccess()
 
-	if atomicSwapBid == nil {
-		return nil, nil
-	}
-
-	if atomicSwapBid.LockedAmount != 0 {
+	if successRes.UnlockedAmount == 0 {
 		return []history2.ParticipantEffect{source}, nil
 	}
 
-	balanceID := h.pubKeyProvider.GetBalanceID(atomicSwapBid.BaseBalance)
+	balanceID := h.pubKeyProvider.GetBalanceID(successRes.BaseBalance)
 
 	source.BalanceID = &balanceID
-	source.AssetCode = &atomicSwapBid.BaseAsset
+	source.AssetCode = &successRes.BaseAsset
 	source.Effect = history2.Effect{
 		Type: history2.EffectTypeUnlocked,
 		AtomicSwap: &history2.AtomicSwapEffect{
-			Amount: amount.StringU(uint64(atomicSwapBid.Amount)),
+			Amount: amount.StringU(uint64(successRes.UnlockedAmount)),
 		},
 	}
 
 	return []history2.ParticipantEffect{source}, nil
-}
-
-func (h *cancelAtomicSwapBidOpHandler) getAtomicSwapBid(bidID xdr.Uint64) *xdr.AtomicSwapBidEntry {
-	ledgerChanges := h.ledgerChangesProvider.GetLedgerChanges()
-
-	for _, change := range ledgerChanges {
-		if change.Type != xdr.LedgerEntryChangeTypeState {
-			continue
-		}
-
-		if change.MustState().Data.Type != xdr.LedgerEntryTypeAtomicSwapBid {
-			continue
-		}
-
-		atomicSwapBid := change.MustState().Data.MustAtomicSwapBid()
-
-		if atomicSwapBid.BidId == bidID {
-			return &atomicSwapBid
-		}
-	}
-
-	return nil
 }
