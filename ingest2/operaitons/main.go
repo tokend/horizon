@@ -53,6 +53,7 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeCreateAswapBidRequest: &createAtomicSwapBidRequestOpHandler{
 				balanceProvider: mainProvider.GetBalanceProvider(),
 			},
+			xdr.OperationTypeCreateAswapRequest: &createAtomicSwapRequestOpHandler{},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
@@ -76,6 +77,9 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 				offerHelper: offerHelper{
 					pubKeyProvider: pubKeyProvider,
 				},
+			},
+			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
+				pubKeyProvider: pubKeyProvider,
 			},
 		},
 		opIDProvider:         mainProvider.GetOperationIDProvider(),
@@ -201,6 +205,16 @@ func customDetailsUnmarshal(rawDetails []byte) map[string]interface{} {
 	}
 
 	return result
+}
+
+func initializeRequeviwableRequestMap() map[xdr.ReviewableRequestType]requestHandlerI {
+	return map[xdr.ReviewableRequestType]requestHandlerI{
+		xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{},
+		xdr.ReviewableRequestTypeWithdraw:       &withdrawHandler{},
+		xdr.ReviewableRequestTypeAmlAlert:       &amlAlertHandler{},
+		xdr.ReviewableRequestTypeInvoice:        &invoiceHandler{},
+		xdr.ReviewableRequestTypeAtomicSwap:     &atomicSwapHandler{},
+	}
 }
 
 // TODO set option operation handler

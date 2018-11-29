@@ -7,8 +7,7 @@ import (
 )
 
 type cancelAtomicSwapBidOpHandler struct {
-	pubKeyProvider        publicKeyProvider
-	ledgerChangesProvider ledgerChangesProvider
+	pubKeyProvider publicKeyProvider
 }
 
 func (h *cancelAtomicSwapBidOpHandler) OperationDetails(op rawOperation,
@@ -37,7 +36,7 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 	source.AssetCode = &successRes.BaseAsset
 	source.Effect = history2.Effect{
 		Type: history2.EffectTypeUnlocked,
-		AtomicSwap: &history2.AtomicSwapEffect{
+		Unlocked: &history2.UnlockedEffect{
 			Amount: amount.StringU(uint64(successRes.UnlockedAmount)),
 		},
 	}

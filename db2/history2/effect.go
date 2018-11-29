@@ -19,14 +19,15 @@ const (
 // Effect stores the details of the effect in union switch form. Only one value should be selected
 // Effect should never store more than one change to the account or balance
 type Effect struct {
-	Type         EffectType          `json:"type"`
-	Issuance     *IssuanceEffect     `json:"issuance,omitempty"`
-	Withdraw     *WithdrawEffect     `json:"withdraw,omitempty"`
-	Offer        *OfferEffect        `json:"offer,omitempty"`
-	DeletedOffer *DeletedOfferEffect `json:"deleted_offer,omitempty"`
-	AMLAlert     *AMLAlertEffect     `json:"aml_alert,omitempty"`
-	Payment      *PaymentEffect      `json:"payment,omitempty"`
-	AtomicSwap   *AtomicSwapEffect   `json:"atomic_swap,omitempty"`
+	Type              EffectType               `json:"type"`
+	Funded            *FundedEffect            `json:"funded,omitempty"`
+	Charged           *ChargedEffect           `json:"withdraw,omitempty"`
+	Locked            *LockedEffect            `json:"locked,omitempty"`
+	Unlocked          *UnlockedEffect          `json:"unlocked,omitempty"`
+	ChargedFromLocked *ChargedFromLockedEffect `json:"charged_from_locked,omitempty"`
+	FundedToLocked    *FundedToLockedEffect    `json:"funded_to_locked,omitempty"`
+	Offer             *OfferEffect             `json:"offer,omitempty"`
+	DeletedOffer      *DeletedOfferEffect      `json:"deleted_offer,omitempty"`
 }
 
 type OfferEffect struct {
@@ -45,22 +46,37 @@ type DeletedOfferEffect struct {
 	BaseAmount string `json:"base_amount"`
 }
 
-type IssuanceEffect struct {
-	Amount string `json:"amount"`
+type FundedEffect struct {
+	Amount  string  `json:"amount"`
+	FeePaid FeePaid `json:"fee_paid"`
 }
 
-type WithdrawEffect struct {
-	Amount string `json:"amount"`
+type FeePaid struct {
+	Fixed             string `json:"fixed"`
+	CalculatedPercent string `json:"calculated_percent"`
 }
 
-type AMLAlertEffect struct {
-	Amount string `json:"amount"`
+type LockedEffect struct {
+	Amount  string  `json:"amount"`
+	FeePaid FeePaid `json:"fee_paid"`
 }
 
-type PaymentEffect struct {
-	Amount string `json:"amount"`
+type ChargedEffect struct {
+	Amount  string  `json:"amount"`
+	FeePaid FeePaid `json:"fee_paid"`
 }
 
-type AtomicSwapEffect struct {
-	Amount string `json:"amount"`
+type UnlockedEffect struct {
+	Amount  string  `json:"amount"`
+	FeePaid FeePaid `json:"fee_paid"`
+}
+
+type ChargedFromLockedEffect struct {
+	Amount  string  `json:"amount"`
+	FeePaid FeePaid `json:"fee_paid"`
+}
+
+type FundedToLockedEffect struct {
+	Amount  string  `json:"amount"`
+	FeePaid FeePaid `json:"fee_paid"`
 }

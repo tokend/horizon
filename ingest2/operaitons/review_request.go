@@ -14,6 +14,7 @@ type reviewRequestOpHandler struct {
 	ledgerChangesProvider ledgerChangesProvider
 	balanceProvider       balanceProvider
 	paymentHelper         paymentHelper
+	allRequestHandlers    map[xdr.ReviewableRequestType]requestHandlerI
 }
 
 func (h *reviewRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
@@ -51,7 +52,7 @@ func (h *reviewRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.Ope
 	return opDetails, nil
 }
 
-// TODO handle participants effects based on result
+// TODO handle participants effects based on operation result
 
 func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
@@ -258,8 +259,39 @@ func (h *reviewRequestOpHandler) getAtomicSwapBid(bidID xdr.Uint64) *xdr.AtomicS
 	return nil
 }
 
-/*
-func (h *reviewRequestOpHandler) getNotApprovedRequestParticipnatsEffects(op xdr.ReviewRequestOp) []history2.ParticipantEffect {
+type requestHandlerI interface {
+	SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess) []history2.ParticipantEffect
+}
+
+type issuanceHandler struct{}
+
+func (h *issuanceHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess) []history2.ParticipantEffect {
+
+}
+
+type withdrawHandler struct {
+}
+
+func (h *withdrawHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess) []history2.ParticipantEffect {
+
+}
+
+type amlAlertHandler struct{}
+
+func (h *amlAlertHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess) []history2.ParticipantEffect {
+}
+
+type invoiceHandler struct{}
+
+func (h *invoiceHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess) []history2.ParticipantEffect {
+}
+
+type atomicSwapHandler struct{}
+
+func (h *atomicSwapHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess) []history2.ParticipantEffect {
+}
+
+/*func (h *reviewRequestOpHandler) getNotApprovedRequestParticipnatsEffects(op xdr.ReviewRequestOp) []history2.ParticipantEffect {
 	var participants []history2.ParticipantEffect
 
 	switch op.RequestDetails.RequestType {
@@ -271,5 +303,7 @@ func (h *reviewRequestOpHandler) getNotApprovedRequestParticipnatsEffects(op xdr
 		})
 	case xdr.ReviewableRequestTypeWithdraw:
 
+	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
+	case xdr.ReviewableRequestTypeAtomicSwap:
 	}
 }*/
