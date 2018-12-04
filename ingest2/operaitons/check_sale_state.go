@@ -11,6 +11,7 @@ type checkSaleStateOpHandler struct {
 	pubKeyProvider        publicKeyProvider
 	offerHelper           offerHelper
 	ledgerChangesProvider ledgerChangesProvider
+	balanceProvider       balanceProvider
 }
 
 func (h *checkSaleStateOpHandler) OperationDetails(op rawOperation,
@@ -30,13 +31,23 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 ) ([]history2.ParticipantEffect, error) {
 	res := opRes.MustCheckSaleStateResult().MustSuccess()
 
+	var result []history2.ParticipantEffect
+	var err error
 	switch res.Effect.Effect {
-	case xdr.CheckSaleStateEffectUpdated:
-		fallthrough
 	case xdr.CheckSaleStateEffectCanceled:
-		return h.getDeletedParticipants(), nil
+		result, err = h.getSaleAntesEffects(history2.EffectTypeUnlocked)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get effects from sale antes")
+		}
+		fallthrough
+	case xdr.CheckSaleStateEffectUpdated:
+		return append(result, h.getDeletedParticipants()...), nil
 	case xdr.CheckSaleStateEffectClosed:
-		return h.getApprovedParticipants(res.Effect.MustSaleClosed()), nil
+		result, err = h.getSaleAntesEffects(history2.EffectTypeChargedFromLocked)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get effects from sale antes")
+		}
+		return append(result, h.getApprovedParticipants(res.Effect.MustSaleClosed())...), nil
 	default:
 		return nil, errors.From(errors.New("unexpected check sale state result effect"), map[string]interface{}{
 			"effect_i": int32(res.Effect.Effect),
@@ -116,6 +127,59 @@ func (h *checkSaleStateOpHandler) getDeletedParticipants() []history2.Participan
 		}
 
 		result = append(result, participantEffect)
+	}
+
+	return result
+}
+
+func (h *checkSaleStateOpHandler) getSaleAntesEffects(effectType history2.EffectType,
+) ([]history2.ParticipantEffect, error) {
+	var result []history2.ParticipantEffect
+
+	saleAntes := h.getStatedSaleAntes()
+	for _, saleAnte := range saleAntes {
+		balance := h.balanceProvider.GetBalanceByID(saleAnte.ParticipantBalanceId)
+
+		effect := history2.Effect{
+			Type: effectType,
+		}
+		switch effect.Type {
+		case history2.EffectTypeChargedFromLocked:
+			effect.ChargedFromLocked = &history2.ChargedFromLockedEffect{
+				Amount: amount.StringU(uint64(saleAnte.Amount)),
+			}
+		case history2.EffectTypeUnlocked:
+			effect.Unlocked = &history2.UnlockedEffect{
+				Amount: amount.StringU(uint64(saleAnte.Amount)),
+			}
+		default:
+			return nil, errors.New("unexpected effect type for sale ante entry")
+		}
+
+		result = append(result, history2.ParticipantEffect{
+			AccountID: balance.AccountID,
+			BalanceID: &balance.BalanceID,
+			AssetCode: &balance.AssetCode,
+			Effect:    effect,
+		})
+	}
+
+}
+
+func (h *checkSaleStateOpHandler) getStatedSaleAntes() []xdr.SaleAnteEntry {
+	var result []xdr.SaleAnteEntry
+
+	ledgerChanges := h.ledgerChangesProvider.GetLedgerChanges()
+	for _, change := range ledgerChanges {
+		if change.Type != xdr.LedgerEntryChangeTypeState {
+			continue
+		}
+
+		if change.MustState().Data.Type != xdr.LedgerEntryTypeSaleAnte {
+			continue
+		}
+
+		result = append(result, change.MustState().Data.MustSaleAnte())
 	}
 
 	return result
