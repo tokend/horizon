@@ -5,8 +5,8 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-// OperationDetails - stores details of the operation performed in union switch form. Only one value must be selected at
-// a type
+// OperationDetails - stores details of the operation performed in union switch form.
+// Only one value must be selected at a type
 type OperationDetails struct {
 	Type                       xdr.OperationType                  `json:"type"`
 	CreateAccount              *CreateAccountDetails              `json:"create_account,omitempty"`
@@ -19,8 +19,9 @@ type OperationDetails struct {
 	ManageOffer                *ManageOfferDetails                `json:"manage_offer,omitempty"`
 	ManageContract             *ManageContractDetails             `json:"manage_contract,omitempty"`
 	Payment                    *PaymentDetails                    `json:"payment,omitempty"`
+	Payout                     *PayoutDetails                     `json:"payout,omitempty"`
 	SetFee                     *SetFeeDetails                     `json:"set_fee,omitempty"`
-	CancelAtomicSwapBid        *CancelAtomicSwapBidDetails        `json:"cancel_atomic_swap_bid"`
+	CancelAtomicSwapBid        *CancelAtomicSwapBidDetails        `json:"cancel_atomic_swap_bid,omitempty"`
 	CheckSaleState             *CheckSaleStateDetails             `json:"check_sale_state,omitempty"`
 	CreatePreIssuanceRequest   *CreatePreIssuanceRequestDetails   `json:"create_pre_issuance_request,omitempty"`
 	CreateIssuanceRequest      *CreateIssuanceRequestDetails      `json:"create_issuance_request,omitempty"`
@@ -269,6 +270,20 @@ type PaymentDetails struct {
 	Subject                 string        `json:"subject"`
 	Reference               string        `json:"reference"`
 	UniversalAmount         string        `json:"universal_amount"`
+}
+
+type PayoutDetails struct {
+	SourceAccountID      string        `json:"source_account_id"`
+	SourceBalanceID      string        `json:"source_balance_id"`
+	Asset                xdr.AssetCode `json:"asset"`
+	MaxPayoutAmount      string        `json:"max_payout_amount"`
+	MinAssetHolderAmount string        `json:"min_asset_holder_amount"`
+	MinPayoutAmount      string        `json:"min_payout_amount"`
+	ExpectedFixedFee     string        `json:"expected_fixed_fee"`
+	ExpectedPercentFee   string        `json:"expected_percent_fee"`
+	ActualFixedFee       string        `json:"actual_fixed_fee"`
+	ActualPercentFee     string        `json:"actual_percent_fee"`
+	ActualPayoutAmount   string        `json:"actual_payout_amount"`
 }
 
 type FeeData struct {
