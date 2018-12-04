@@ -8,8 +8,10 @@ import (
 )
 
 type manageOfferOpHandler struct {
-	pubKeyProvider publicKeyProvider
-	offerHelper    offerHelper
+	pubKeyProvider        publicKeyProvider
+	offerHelper           offerHelper
+	ledgerChangesProvider ledgerChangesProvider
+	balanceProvider       balanceProvider
 }
 
 func (h *manageOfferOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
@@ -46,7 +48,16 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	manageOfferOpRes := opRes.MustManageOfferResult().MustSuccess()
 
 	if manageOfferOp.Amount != 0 {
-		return h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source), nil
+		var result []history2.ParticipantEffect
+		if manageOfferOp.OrderBookId != 0 {
+			var err error
+			result, err = h.getSaleAnteEffects()
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get sale ante effects")
+			}
+		}
+
+		return append(result, h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source)...), nil
 	}
 
 	source, err := h.getDeletedOfferEffect(source)
@@ -128,4 +139,82 @@ func (h *manageOfferOpHandler) getDeletedOfferEffect(source history2.Participant
 	}
 
 	return source, nil
+}
+
+func (h *manageOfferOpHandler) getSaleAnteEffects() ([]history2.ParticipantEffect, error) {
+	var result []history2.ParticipantEffect
+
+	createdSaleAntes, updatedSaleAntes, statedSaleAntes := h.getChangedSaleAntes()
+	for _, saleAnte := range createdSaleAntes {
+		balance := h.balanceProvider.GetBalanceByID(saleAnte.ParticipantBalanceId)
+
+		result = append(result, history2.ParticipantEffect{
+			AccountID: balance.AccountID,
+			BalanceID: &balance.BalanceID,
+			AssetCode: &balance.AssetCode,
+			Effect: history2.Effect{
+				Type: history2.EffectTypeLocked,
+				Locked: &history2.LockedEffect{
+					Amount: amount.StringU(uint64(saleAnte.Amount)),
+				},
+			},
+		})
+	}
+
+	// for now possible only one updated saleAnte
+	for _, updatedSaleAnte := range updatedSaleAntes {
+		if len(statedSaleAntes) == 0 {
+			return nil, errors.New("unexpected state, updated sale ante exists, but stated not")
+		}
+
+		for _, statedSaleAnte := range statedSaleAntes {
+			if (updatedSaleAnte.ParticipantBalanceId.AsString() != statedSaleAnte.ParticipantBalanceId.AsString()) ||
+				(updatedSaleAnte.SaleId != statedSaleAnte.SaleId) {
+				continue
+			}
+
+			balance := h.balanceProvider.GetBalanceByID(updatedSaleAnte.ParticipantBalanceId)
+
+			result = append(result, history2.ParticipantEffect{
+				AccountID: balance.AccountID,
+				BalanceID: &balance.BalanceID,
+				AssetCode: &balance.AssetCode,
+				Effect: history2.Effect{
+					Type: history2.EffectTypeLocked,
+					Locked: &history2.LockedEffect{
+						Amount: amount.StringU(uint64(updatedSaleAnte.Amount - statedSaleAnte.Amount)),
+					},
+				},
+			})
+		}
+	}
+
+	return result, nil
+}
+
+func (h *manageOfferOpHandler) getChangedSaleAntes() ([]xdr.SaleAnteEntry, []xdr.SaleAnteEntry, []xdr.SaleAnteEntry) {
+	var created, updated, stated []xdr.SaleAnteEntry
+
+	ledgerChanges := h.ledgerChangesProvider.GetLedgerChanges()
+	for _, change := range ledgerChanges {
+		switch change.Type {
+		case xdr.LedgerEntryChangeTypeCreated:
+			if change.MustCreated().Data.Type != xdr.LedgerEntryTypeSaleAnte {
+				continue
+			}
+			created = append(created, change.MustCreated().Data.MustSaleAnte())
+		case xdr.LedgerEntryChangeTypeUpdated:
+			if change.MustCreated().Data.Type != xdr.LedgerEntryTypeSaleAnte {
+				continue
+			}
+			updated = append(updated, change.MustUpdated().Data.MustSaleAnte())
+		case xdr.LedgerEntryChangeTypeState:
+			if change.MustCreated().Data.Type != xdr.LedgerEntryTypeSaleAnte {
+				continue
+			}
+			stated = append(stated, change.MustState().Data.MustSaleAnte())
+		}
+	}
+
+	return created, updated, stated
 }

@@ -36,7 +36,7 @@ func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.Operatio
 
 	effect := history2.Effect{
 		Type: history2.EffectTypeLocked,
-		AMLAlert: &history2.AMLAlertEffect{
+		Locked: &history2.LockedEffect{
 			Amount: amount.String(int64(amlAlertRequest.Amount)),
 		},
 	}
