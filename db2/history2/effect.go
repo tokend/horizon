@@ -40,6 +40,7 @@ type OfferEffect struct {
 	QuoteAsset     xdr.AssetCode `json:"quote_asset"`
 	Price          string        `json:"price"`
 	IsBuy          bool          `json:"is_buy"`
+	FeePaid        FeePaid       `json:"fee_paid"`
 }
 
 type DeletedOfferEffect struct {

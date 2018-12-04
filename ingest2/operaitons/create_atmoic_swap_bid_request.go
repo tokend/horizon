@@ -44,7 +44,7 @@ func (h *createAtomicSwapBidRequestOpHandler) ParticipantsEffects(opBody xdr.Ope
 	source.AssetCode = &balance.AssetCode
 	source.Effect = history2.Effect{
 		Type: history2.EffectTypeLocked,
-		AtomicSwap: &history2.AtomicSwapEffect{
+		Locked: &history2.LockedEffect{
 			Amount: amount.StringU(uint64(aSwapBidRequest.Amount)),
 		},
 	}

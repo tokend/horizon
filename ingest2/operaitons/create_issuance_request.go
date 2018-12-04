@@ -60,8 +60,12 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 
 	effect := history2.Effect{
 		Type: history2.EffectTypeFunded,
-		Issuance: &history2.IssuanceEffect{
-			Amount: amount.String(int64(issuanceRequest.Amount)),
+		Funded: &history2.FundedEffect{
+			Amount: amount.String(int64(issuanceRequest.Amount - issuanceRequest.Fee.Fixed - issuanceRequest.Fee.Percent)),
+			FeePaid: history2.FeePaid{
+				Fixed:             amount.StringU(uint64(issuanceRequest.Fee.Fixed)),
+				CalculatedPercent: amount.StringU(uint64(issuanceRequest.Fee.Percent)),
+			},
 		},
 	}
 

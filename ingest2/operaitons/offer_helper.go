@@ -40,6 +40,9 @@ func (h *offerHelper) getParticipantsEffects(claimOfferAtoms []xdr.ClaimOfferAto
 				QuoteAmount:    amount.String(int64(offerAtom.QuoteAmount)),
 				IsBuy:          !sourceOfferDirection.IsBuy,
 				Price:          amount.String(int64(offerAtom.CurrentPrice)),
+				FeePaid: history2.FeePaid{
+					CalculatedPercent: amount.String(int64(offerAtom.BFeePaid)),
+				},
 			},
 		}
 
@@ -68,6 +71,9 @@ func (h *offerHelper) getParticipantsEffects(claimOfferAtoms []xdr.ClaimOfferAto
 				QuoteAmount:    amount.String(int64(offerAtom.QuoteAmount)),
 				IsBuy:          sourceOfferDirection.IsBuy,
 				Price:          amount.String(int64(offerAtom.CurrentPrice)),
+				FeePaid: history2.FeePaid{
+					CalculatedPercent: amount.String(int64(offerAtom.AFeePaid)),
+				},
 			},
 		}
 
