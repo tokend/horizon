@@ -475,7 +475,7 @@
 
 [[projects]]
   branch = "product"
-  digest = "1:922f9ca603a38b041e200abfddbfc5ff312652aee82a566f4d5cc94eaf3e0548"
+  digest = "1:b39a5267ab373fbb764a055177e087c707f5611388fc028253fdd16d8a592b85"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -493,7 +493,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "26f0217ce03bb356e6ec01424441f8fc0f216af6"
+  revision = "0c45e4844879478bcd2776476fb44306b660049c"
 
 [[projects]]
   branch = "master"

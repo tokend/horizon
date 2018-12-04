@@ -1,4 +1,4 @@
-// revision: 9613a25de5a25b0a905e1071e0d0c7e53666455a
+// revision: ed77c50c7af961081231927b15db35c3b6ac9454
 // branch:   product
 // Package xdr is generated from:
 //
@@ -12189,10 +12189,6 @@ func NewCancelASwapBidResultSuccessExt(v LedgerVersion, value interface{}) (resu
 //
 //   struct CancelASwapBidResultSuccess
 //    {
-//        BalanceID baseBalance;
-//        AssetCode baseAsset;
-//        uint64 unlockedAmount;
-//
 //        union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
@@ -12201,10 +12197,7 @@ func NewCancelASwapBidResultSuccessExt(v LedgerVersion, value interface{}) (resu
 //    };
 //
 type CancelASwapBidResultSuccess struct {
-	BaseBalance    BalanceId                      `json:"baseBalance,omitempty"`
-	BaseAsset      AssetCode                      `json:"baseAsset,omitempty"`
-	UnlockedAmount Uint64                         `json:"unlockedAmount,omitempty"`
-	Ext            CancelASwapBidResultSuccessExt `json:"ext,omitempty"`
+	Ext CancelASwapBidResultSuccessExt `json:"ext,omitempty"`
 }
 
 // CancelASwapBidResult is an XDR Union defines as:
@@ -25198,66 +25191,6 @@ type ClaimOfferAtom struct {
 	Ext          ClaimOfferAtomExt `json:"ext,omitempty"`
 }
 
-// DeletedOfferResultExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type DeletedOfferResultExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u DeletedOfferResultExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of DeletedOfferResultExt
-func (u DeletedOfferResultExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewDeletedOfferResultExt creates a new  DeletedOfferResultExt.
-func NewDeletedOfferResultExt(v LedgerVersion, value interface{}) (result DeletedOfferResultExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// DeletedOfferResult is an XDR Struct defines as:
-//
-//   struct DeletedOfferResult
-//    {
-//        BalanceID baseBalance;
-//        AssetCode baseAsset;
-//        uint64 unlockedAmount;
-//
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        } ext;
-//    };
-//
-type DeletedOfferResult struct {
-	BaseBalance    BalanceId             `json:"baseBalance,omitempty"`
-	BaseAsset      AssetCode             `json:"baseAsset,omitempty"`
-	UnlockedAmount Uint64                `json:"unlockedAmount,omitempty"`
-	Ext            DeletedOfferResultExt `json:"ext,omitempty"`
-}
-
 // ManageOfferSuccessResultOffer is an XDR NestedUnion defines as:
 //
 //   union switch (ManageOfferEffect effect)
@@ -25265,16 +25198,13 @@ type DeletedOfferResult struct {
 //        case CREATED:
 //        case UPDATED:
 //            OfferEntry offer;
-//        case DELETED:
-//            DeletedOfferResult deletedOfferResult;
 //        default:
 //            void;
 //        }
 //
 type ManageOfferSuccessResultOffer struct {
-	Effect             ManageOfferEffect   `json:"effect,omitempty"`
-	Offer              *OfferEntry         `json:"offer,omitempty"`
-	DeletedOfferResult *DeletedOfferResult `json:"deletedOfferResult,omitempty"`
+	Effect ManageOfferEffect `json:"effect,omitempty"`
+	Offer  *OfferEntry       `json:"offer,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -25291,8 +25221,6 @@ func (u ManageOfferSuccessResultOffer) ArmForSwitch(sw int32) (string, bool) {
 		return "Offer", true
 	case ManageOfferEffectUpdated:
 		return "Offer", true
-	case ManageOfferEffectDeleted:
-		return "DeletedOfferResult", true
 	default:
 		return "", true
 	}
@@ -25316,13 +25244,6 @@ func NewManageOfferSuccessResultOffer(effect ManageOfferEffect, value interface{
 			return
 		}
 		result.Offer = &tv
-	case ManageOfferEffectDeleted:
-		tv, ok := value.(DeletedOfferResult)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be DeletedOfferResult")
-			return
-		}
-		result.DeletedOfferResult = &tv
 	default:
 		// void
 	}
@@ -25348,31 +25269,6 @@ func (u ManageOfferSuccessResultOffer) GetOffer() (result OfferEntry, ok bool) {
 
 	if armName == "Offer" {
 		result = *u.Offer
-		ok = true
-	}
-
-	return
-}
-
-// MustDeletedOfferResult retrieves the DeletedOfferResult value from the union,
-// panicing if the value is not set.
-func (u ManageOfferSuccessResultOffer) MustDeletedOfferResult() DeletedOfferResult {
-	val, ok := u.GetDeletedOfferResult()
-
-	if !ok {
-		panic("arm DeletedOfferResult is not set")
-	}
-
-	return val
-}
-
-// GetDeletedOfferResult retrieves the DeletedOfferResult value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ManageOfferSuccessResultOffer) GetDeletedOfferResult() (result DeletedOfferResult, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Effect))
-
-	if armName == "DeletedOfferResult" {
-		result = *u.DeletedOfferResult
 		ok = true
 	}
 
@@ -25432,8 +25328,6 @@ func NewManageOfferSuccessResultExt(v LedgerVersion, value interface{}) (result 
 //        case CREATED:
 //        case UPDATED:
 //            OfferEntry offer;
-//        case DELETED:
-//            DeletedOfferResult deletedOfferResult;
 //        default:
 //            void;
 //        }
@@ -39643,4 +39537,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "9613a25de5a25b0a905e1071e0d0c7e53666455a"
+var Revision = "ed77c50c7af961081231927b15db35c3b6ac9454"
