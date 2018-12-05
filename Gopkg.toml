@@ -103,7 +103,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/withdrawal_tasks"
+  branch = "master"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

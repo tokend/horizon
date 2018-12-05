@@ -466,8 +466,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/withdrawal_tasks"
-  digest = "1:6a0e6e9c206ca558a7dd37ad10b1bcc18e6f5c539d9c08896ac3e420793a2307"
+  branch = "master"
+  digest = "1:d5e2bb746bbf34f4a84886ff9c55f1f708b185885f64d4fcd786fbc4cd6d64f6"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -485,7 +485,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "ec70c964091a19f514235aab1751e52623dcf410"
+  revision = "e4509f4597e732cc822913786868fff623f91eff"
 
 [[projects]]
   branch = "master"
