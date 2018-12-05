@@ -9,4 +9,5 @@ type CreateWithdrawalRequest struct {
 	ExternalDetails map[string]interface{} `json:"external_details"`
 	DestAsset       string                 `json:"dest_asset"`
 	DestAmount      string                 `json:"dest_amount"`
+	AllTasks        *uint32                `json:"all_tasks"`
 }

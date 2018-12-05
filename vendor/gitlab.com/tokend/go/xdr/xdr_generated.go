@@ -1,74 +1,80 @@
+// revision: 0b366c3fff83de5ee79cb1b7d191d1aa709f15b0
+// branch:   master
 // Package xdr is generated from:
 //
-//  xdr/raw/Stellar-SCP.x
-//  xdr/raw/Stellar-ledger-entries-account-KYC.x
-//  xdr/raw/Stellar-ledger-entries-account-limits.x
-//  xdr/raw/Stellar-ledger-entries-account-type-limits.x
-//  xdr/raw/Stellar-ledger-entries-account.x
-//  xdr/raw/Stellar-ledger-entries-asset-pair.x
-//  xdr/raw/Stellar-ledger-entries-asset.x
-//  xdr/raw/Stellar-ledger-entries-balance.x
-//  xdr/raw/Stellar-ledger-entries-contract.x
-//  xdr/raw/Stellar-ledger-entries-external-system-id-pool-entry.x
-//  xdr/raw/Stellar-ledger-entries-external-system-id.x
-//  xdr/raw/Stellar-ledger-entries-fee.x
-//  xdr/raw/Stellar-ledger-entries-key-value.x
-//  xdr/raw/Stellar-ledger-entries-limits-v2.x
-//  xdr/raw/Stellar-ledger-entries-offer.x
-//  xdr/raw/Stellar-ledger-entries-pending-statistics.x
-//  xdr/raw/Stellar-ledger-entries-reference.x
-//  xdr/raw/Stellar-ledger-entries-reviewable-request.x
-//  xdr/raw/Stellar-ledger-entries-sale-ante.x
-//  xdr/raw/Stellar-ledger-entries-sale.x
-//  xdr/raw/Stellar-ledger-entries-statistics-v2.x
-//  xdr/raw/Stellar-ledger-entries-statistics.x
-//  xdr/raw/Stellar-ledger-entries.x
-//  xdr/raw/Stellar-ledger.x
-//  xdr/raw/Stellar-operation-bind-external-system-id.x
-//  xdr/raw/Stellar-operation-cancel-sale-creation-request.x
-//  xdr/raw/Stellar-operation-check-sale-state.x
-//  xdr/raw/Stellar-operation-create-AML-alert-request.x
-//  xdr/raw/Stellar-operation-create-KYC-request.x
-//  xdr/raw/Stellar-operation-create-account.x
-//  xdr/raw/Stellar-operation-create-issuance-request.x
-//  xdr/raw/Stellar-operation-create-manage-limits-request.x
-//  xdr/raw/Stellar-operation-create-preissuance-request.x
-//  xdr/raw/Stellar-operation-create-sale-creation-request.x
-//  xdr/raw/Stellar-operation-create-withdrawal-request.x
-//  xdr/raw/Stellar-operation-direct-debit.x
-//  xdr/raw/Stellar-operation-manage-account.x
-//  xdr/raw/Stellar-operation-manage-asset-pair.x
-//  xdr/raw/Stellar-operation-manage-asset.x
-//  xdr/raw/Stellar-operation-manage-balance.x
-//  xdr/raw/Stellar-operation-manage-contract-request.x
-//  xdr/raw/Stellar-operation-manage-contract.x
-//  xdr/raw/Stellar-operation-manage-external-system-id-pool-entry.x
-//  xdr/raw/Stellar-operation-manage-invoice-request.x
-//  xdr/raw/Stellar-operation-manage-key-value.x
-//  xdr/raw/Stellar-operation-manage-limits.x
-//  xdr/raw/Stellar-operation-manage-offer.x
-//  xdr/raw/Stellar-operation-manage-sale.x
-//  xdr/raw/Stellar-operation-payment-v2.x
-//  xdr/raw/Stellar-operation-payment.x
-//  xdr/raw/Stellar-operation-payout.x
-//  xdr/raw/Stellar-operation-review-request.x
-//  xdr/raw/Stellar-operation-set-fees.x
-//  xdr/raw/Stellar-operation-set-options.x
-//  xdr/raw/Stellar-overlay.x
-//  xdr/raw/Stellar-reviewable-request-AML-alert.x
-//  xdr/raw/Stellar-reviewable-request-asset.x
-//  xdr/raw/Stellar-reviewable-request-contract.x
-//  xdr/raw/Stellar-reviewable-request-invoice.x
-//  xdr/raw/Stellar-reviewable-request-issuance.x
-//  xdr/raw/Stellar-reviewable-request-limits-update.x
-//  xdr/raw/Stellar-reviewable-request-sale.x
-//  xdr/raw/Stellar-reviewable-request-update-KYC.x
-//  xdr/raw/Stellar-reviewable-request-update-promotion.x
-//  xdr/raw/Stellar-reviewable-request-update-sale-details.x
-//  xdr/raw/Stellar-reviewable-request-update-sale-end-time.x
-//  xdr/raw/Stellar-reviewable-request-withdrawal.x
-//  xdr/raw/Stellar-transaction.x
-//  xdr/raw/Stellar-types.x
+//  xdr/Stellar-SCP.x
+//  xdr/Stellar-ledger-entries-account-KYC.x
+//  xdr/Stellar-ledger-entries-account-limits.x
+//  xdr/Stellar-ledger-entries-account-role-permission.x
+//  xdr/Stellar-ledger-entries-account-role.x
+//  xdr/Stellar-ledger-entries-account-type-limits.x
+//  xdr/Stellar-ledger-entries-account.x
+//  xdr/Stellar-ledger-entries-asset-pair.x
+//  xdr/Stellar-ledger-entries-asset.x
+//  xdr/Stellar-ledger-entries-balance.x
+//  xdr/Stellar-ledger-entries-contract.x
+//  xdr/Stellar-ledger-entries-external-system-id-pool-entry.x
+//  xdr/Stellar-ledger-entries-external-system-id.x
+//  xdr/Stellar-ledger-entries-fee.x
+//  xdr/Stellar-ledger-entries-key-value.x
+//  xdr/Stellar-ledger-entries-limits-v2.x
+//  xdr/Stellar-ledger-entries-offer.x
+//  xdr/Stellar-ledger-entries-pending-statistics.x
+//  xdr/Stellar-ledger-entries-reference.x
+//  xdr/Stellar-ledger-entries-reviewable-request.x
+//  xdr/Stellar-ledger-entries-sale-ante.x
+//  xdr/Stellar-ledger-entries-sale.x
+//  xdr/Stellar-ledger-entries-statistics-v2.x
+//  xdr/Stellar-ledger-entries-statistics.x
+//  xdr/Stellar-ledger-entries.x
+//  xdr/Stellar-ledger.x
+//  xdr/Stellar-operation-bind-external-system-id.x
+//  xdr/Stellar-operation-cancel-sale-creation-request.x
+//  xdr/Stellar-operation-check-sale-state.x
+//  xdr/Stellar-operation-create-AML-alert-request.x
+//  xdr/Stellar-operation-create-KYC-request.x
+//  xdr/Stellar-operation-create-account.x
+//  xdr/Stellar-operation-create-issuance-request.x
+//  xdr/Stellar-operation-create-manage-limits-request.x
+//  xdr/Stellar-operation-create-preissuance-request.x
+//  xdr/Stellar-operation-create-sale-creation-request.x
+//  xdr/Stellar-operation-create-withdrawal-request.x
+//  xdr/Stellar-operation-direct-debit.x
+//  xdr/Stellar-operation-manage-account-role-permission.x
+//  xdr/Stellar-operation-manage-account-role.x
+//  xdr/Stellar-operation-manage-account.x
+//  xdr/Stellar-operation-manage-asset-pair.x
+//  xdr/Stellar-operation-manage-asset.x
+//  xdr/Stellar-operation-manage-balance.x
+//  xdr/Stellar-operation-manage-contract-request.x
+//  xdr/Stellar-operation-manage-contract.x
+//  xdr/Stellar-operation-manage-external-system-id-pool-entry.x
+//  xdr/Stellar-operation-manage-invoice-request.x
+//  xdr/Stellar-operation-manage-key-value.x
+//  xdr/Stellar-operation-manage-limits.x
+//  xdr/Stellar-operation-manage-offer.x
+//  xdr/Stellar-operation-manage-sale.x
+//  xdr/Stellar-operation-payment-v2.x
+//  xdr/Stellar-operation-payment.x
+//  xdr/Stellar-operation-payout.x
+//  xdr/Stellar-operation-review-request.x
+//  xdr/Stellar-operation-set-fees.x
+//  xdr/Stellar-operation-set-options.x
+//  xdr/Stellar-overlay.x
+//  xdr/Stellar-reviewable-request-AML-alert.x
+//  xdr/Stellar-reviewable-request-asset.x
+//  xdr/Stellar-reviewable-request-contract.x
+//  xdr/Stellar-reviewable-request-invoice.x
+//  xdr/Stellar-reviewable-request-issuance.x
+//  xdr/Stellar-reviewable-request-limits-update.x
+//  xdr/Stellar-reviewable-request-sale.x
+//  xdr/Stellar-reviewable-request-update-KYC.x
+//  xdr/Stellar-reviewable-request-update-promotion.x
+//  xdr/Stellar-reviewable-request-update-sale-details.x
+//  xdr/Stellar-reviewable-request-update-sale-end-time.x
+//  xdr/Stellar-reviewable-request-withdrawal.x
+//  xdr/Stellar-transaction.x
+//  xdr/Stellar-types.x
 //
 // DO NOT EDIT or your changes may be overwritten
 package xdr
@@ -684,6 +690,125 @@ type AccountLimitsEntry struct {
 	Ext       AccountLimitsEntryExt `json:"ext,omitempty"`
 }
 
+// AccountRolePermissionEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AccountRolePermissionEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AccountRolePermissionEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AccountRolePermissionEntryExt
+func (u AccountRolePermissionEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAccountRolePermissionEntryExt creates a new  AccountRolePermissionEntryExt.
+func NewAccountRolePermissionEntryExt(v LedgerVersion, value interface{}) (result AccountRolePermissionEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AccountRolePermissionEntry is an XDR Struct defines as:
+//
+//   struct AccountRolePermissionEntry
+//    {
+//        uint64 permissionID;
+//        uint64 accountRoleID;
+//        OperationType opType;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AccountRolePermissionEntry struct {
+	PermissionId  Uint64                        `json:"permissionID,omitempty"`
+	AccountRoleId Uint64                        `json:"accountRoleID,omitempty"`
+	OpType        OperationType                 `json:"opType,omitempty"`
+	Ext           AccountRolePermissionEntryExt `json:"ext,omitempty"`
+}
+
+// AccountRoleEntryExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v) {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AccountRoleEntryExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AccountRoleEntryExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AccountRoleEntryExt
+func (u AccountRoleEntryExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAccountRoleEntryExt creates a new  AccountRoleEntryExt.
+func NewAccountRoleEntryExt(v LedgerVersion, value interface{}) (result AccountRoleEntryExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AccountRoleEntry is an XDR Struct defines as:
+//
+//   struct AccountRoleEntry {
+//        uint64 accountRoleID;
+//        longstring accountRoleName;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v) {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AccountRoleEntry struct {
+	AccountRoleId   Uint64              `json:"accountRoleID,omitempty"`
+	AccountRoleName Longstring          `json:"accountRoleName,omitempty"`
+	Ext             AccountRoleEntryExt `json:"ext,omitempty"`
+}
+
 // AccountTypeLimitsEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -777,7 +902,8 @@ type AccountTypeLimitsEntry struct {
 //    	EXTERNAL_SYSTEM_ACCOUNT_ID_POOL_MANAGER = 67108864,
 //        KEY_VALUE_MANAGER = 134217728, // can manage keyValue
 //        SUPER_ISSUANCE_MANAGER = 268435456,
-//        CONTRACT_MANAGER = 536870912
+//        CONTRACT_MANAGER = 536870912,
+//        ACCOUNT_ROLE_PERMISSION_MANAGER = 1073741824 // can manage account role permissions
 //    };
 //
 type SignerType int32
@@ -813,6 +939,7 @@ const (
 	SignerTypeKeyValueManager                    SignerType = 134217728
 	SignerTypeSuperIssuanceManager               SignerType = 268435456
 	SignerTypeContractManager                    SignerType = 536870912
+	SignerTypeAccountRolePermissionManager       SignerType = 1073741824
 )
 
 var SignerTypeAll = []SignerType{
@@ -846,72 +973,75 @@ var SignerTypeAll = []SignerType{
 	SignerTypeKeyValueManager,
 	SignerTypeSuperIssuanceManager,
 	SignerTypeContractManager,
+	SignerTypeAccountRolePermissionManager,
 }
 
 var signerTypeMap = map[int32]string{
-	1:         "SignerTypeReader",
-	2:         "SignerTypeNotVerifiedAccManager",
-	4:         "SignerTypeGeneralAccManager",
-	8:         "SignerTypeDirectDebitOperator",
-	16:        "SignerTypeAssetManager",
-	32:        "SignerTypeAssetRateManager",
-	64:        "SignerTypeBalanceManager",
-	128:       "SignerTypeIssuanceManager",
-	256:       "SignerTypeInvoiceManager",
-	512:       "SignerTypePaymentOperator",
-	1024:      "SignerTypeLimitsManager",
-	2048:      "SignerTypeAccountManager",
-	4096:      "SignerTypeCommissionBalanceManager",
-	8192:      "SignerTypeOperationalBalanceManager",
-	16384:     "SignerTypeEventsChecker",
-	32768:     "SignerTypeExchangeAccManager",
-	65536:     "SignerTypeSyndicateAccManager",
-	131072:    "SignerTypeUserAssetManager",
-	262144:    "SignerTypeUserIssuanceManager",
-	524288:    "SignerTypeWithdrawManager",
-	1048576:   "SignerTypeFeesManager",
-	2097152:   "SignerTypeTxSender",
-	4194304:   "SignerTypeAmlAlertManager",
-	8388608:   "SignerTypeAmlAlertReviewer",
-	16777216:  "SignerTypeKycAccManager",
-	33554432:  "SignerTypeKycSuperAdmin",
-	67108864:  "SignerTypeExternalSystemAccountIdPoolManager",
-	134217728: "SignerTypeKeyValueManager",
-	268435456: "SignerTypeSuperIssuanceManager",
-	536870912: "SignerTypeContractManager",
+	1:          "SignerTypeReader",
+	2:          "SignerTypeNotVerifiedAccManager",
+	4:          "SignerTypeGeneralAccManager",
+	8:          "SignerTypeDirectDebitOperator",
+	16:         "SignerTypeAssetManager",
+	32:         "SignerTypeAssetRateManager",
+	64:         "SignerTypeBalanceManager",
+	128:        "SignerTypeIssuanceManager",
+	256:        "SignerTypeInvoiceManager",
+	512:        "SignerTypePaymentOperator",
+	1024:       "SignerTypeLimitsManager",
+	2048:       "SignerTypeAccountManager",
+	4096:       "SignerTypeCommissionBalanceManager",
+	8192:       "SignerTypeOperationalBalanceManager",
+	16384:      "SignerTypeEventsChecker",
+	32768:      "SignerTypeExchangeAccManager",
+	65536:      "SignerTypeSyndicateAccManager",
+	131072:     "SignerTypeUserAssetManager",
+	262144:     "SignerTypeUserIssuanceManager",
+	524288:     "SignerTypeWithdrawManager",
+	1048576:    "SignerTypeFeesManager",
+	2097152:    "SignerTypeTxSender",
+	4194304:    "SignerTypeAmlAlertManager",
+	8388608:    "SignerTypeAmlAlertReviewer",
+	16777216:   "SignerTypeKycAccManager",
+	33554432:   "SignerTypeKycSuperAdmin",
+	67108864:   "SignerTypeExternalSystemAccountIdPoolManager",
+	134217728:  "SignerTypeKeyValueManager",
+	268435456:  "SignerTypeSuperIssuanceManager",
+	536870912:  "SignerTypeContractManager",
+	1073741824: "SignerTypeAccountRolePermissionManager",
 }
 
 var signerTypeShortMap = map[int32]string{
-	1:         "reader",
-	2:         "not_verified_acc_manager",
-	4:         "general_acc_manager",
-	8:         "direct_debit_operator",
-	16:        "asset_manager",
-	32:        "asset_rate_manager",
-	64:        "balance_manager",
-	128:       "issuance_manager",
-	256:       "invoice_manager",
-	512:       "payment_operator",
-	1024:      "limits_manager",
-	2048:      "account_manager",
-	4096:      "commission_balance_manager",
-	8192:      "operational_balance_manager",
-	16384:     "events_checker",
-	32768:     "exchange_acc_manager",
-	65536:     "syndicate_acc_manager",
-	131072:    "user_asset_manager",
-	262144:    "user_issuance_manager",
-	524288:    "withdraw_manager",
-	1048576:   "fees_manager",
-	2097152:   "tx_sender",
-	4194304:   "aml_alert_manager",
-	8388608:   "aml_alert_reviewer",
-	16777216:  "kyc_acc_manager",
-	33554432:  "kyc_super_admin",
-	67108864:  "external_system_account_id_pool_manager",
-	134217728: "key_value_manager",
-	268435456: "super_issuance_manager",
-	536870912: "contract_manager",
+	1:          "reader",
+	2:          "not_verified_acc_manager",
+	4:          "general_acc_manager",
+	8:          "direct_debit_operator",
+	16:         "asset_manager",
+	32:         "asset_rate_manager",
+	64:         "balance_manager",
+	128:        "issuance_manager",
+	256:        "invoice_manager",
+	512:        "payment_operator",
+	1024:       "limits_manager",
+	2048:       "account_manager",
+	4096:       "commission_balance_manager",
+	8192:       "operational_balance_manager",
+	16384:      "events_checker",
+	32768:      "exchange_acc_manager",
+	65536:      "syndicate_acc_manager",
+	131072:     "user_asset_manager",
+	262144:     "user_issuance_manager",
+	524288:     "withdraw_manager",
+	1048576:    "fees_manager",
+	2097152:    "tx_sender",
+	4194304:    "aml_alert_manager",
+	8388608:    "aml_alert_reviewer",
+	16777216:   "kyc_acc_manager",
+	33554432:   "kyc_super_admin",
+	67108864:   "external_system_account_id_pool_manager",
+	134217728:  "key_value_manager",
+	268435456:  "super_issuance_manager",
+	536870912:  "contract_manager",
+	1073741824: "account_role_permission_manager",
 }
 
 var signerTypeRevMap = map[string]int32{
@@ -945,6 +1075,7 @@ var signerTypeRevMap = map[string]int32{
 	"SignerTypeKeyValueManager":                    134217728,
 	"SignerTypeSuperIssuanceManager":               268435456,
 	"SignerTypeContractManager":                    536870912,
+	"SignerTypeAccountRolePermissionManager":       1073741824,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -1553,19 +1684,82 @@ func (e *BlockReasons) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// AccountEntryExtendedExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type AccountEntryExtendedExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AccountEntryExtendedExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AccountEntryExtendedExt
+func (u AccountEntryExtendedExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewAccountEntryExtendedExt creates a new  AccountEntryExtendedExt.
+func NewAccountEntryExtendedExt(v LedgerVersion, value interface{}) (result AccountEntryExtendedExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// AccountEntryExtended is an XDR Struct defines as:
+//
+//   struct AccountEntryExtended
+//    {
+//        uint32 kycLevel;
+//        uint64* accountRole;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type AccountEntryExtended struct {
+	KycLevel    Uint32                  `json:"kycLevel,omitempty"`
+	AccountRole *Uint64                 `json:"accountRole,omitempty"`
+	Ext         AccountEntryExtendedExt `json:"ext,omitempty"`
+}
+
 // AccountEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
 //            void;
-//    	case USE_KYC_LEVEL:
-//    		uint32 kycLevel;
+//        case USE_KYC_LEVEL:
+//            uint32 kycLevel;
+//        case REPLACE_ACCOUNT_TYPES_WITH_POLICIES:
+//            AccountEntryExtended accountEntryExt;
 //        }
 //
 type AccountEntryExt struct {
-	V        LedgerVersion `json:"v,omitempty"`
-	KycLevel *Uint32       `json:"kycLevel,omitempty"`
+	V               LedgerVersion         `json:"v,omitempty"`
+	KycLevel        *Uint32               `json:"kycLevel,omitempty"`
+	AccountEntryExt *AccountEntryExtended `json:"accountEntryExt,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -1582,6 +1776,8 @@ func (u AccountEntryExt) ArmForSwitch(sw int32) (string, bool) {
 		return "", true
 	case LedgerVersionUseKycLevel:
 		return "KycLevel", true
+	case LedgerVersionReplaceAccountTypesWithPolicies:
+		return "AccountEntryExt", true
 	}
 	return "-", false
 }
@@ -1599,6 +1795,13 @@ func NewAccountEntryExt(v LedgerVersion, value interface{}) (result AccountEntry
 			return
 		}
 		result.KycLevel = &tv
+	case LedgerVersionReplaceAccountTypesWithPolicies:
+		tv, ok := value.(AccountEntryExtended)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountEntryExtended")
+			return
+		}
+		result.AccountEntryExt = &tv
 	}
 	return
 }
@@ -1622,6 +1825,31 @@ func (u AccountEntryExt) GetKycLevel() (result Uint32, ok bool) {
 
 	if armName == "KycLevel" {
 		result = *u.KycLevel
+		ok = true
+	}
+
+	return
+}
+
+// MustAccountEntryExt retrieves the AccountEntryExt value from the union,
+// panicing if the value is not set.
+func (u AccountEntryExt) MustAccountEntryExt() AccountEntryExtended {
+	val, ok := u.GetAccountEntryExt()
+
+	if !ok {
+		panic("arm AccountEntryExt is not set")
+	}
+
+	return val
+}
+
+// GetAccountEntryExt retrieves the AccountEntryExt value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountEntryExt) GetAccountEntryExt() (result AccountEntryExtended, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.V))
+
+	if armName == "AccountEntryExt" {
+		result = *u.AccountEntryExt
 		ok = true
 	}
 
@@ -1655,10 +1883,11 @@ func (u AccountEntryExt) GetKycLevel() (result Uint32, ok bool) {
 //        {
 //        case EMPTY_VERSION:
 //            void;
-//    	case USE_KYC_LEVEL:
-//    		uint32 kycLevel;
+//        case USE_KYC_LEVEL:
+//            uint32 kycLevel;
+//        case REPLACE_ACCOUNT_TYPES_WITH_POLICIES:
+//            AccountEntryExtended accountEntryExt;
 //        }
-//
 //        ext;
 //    };
 //
@@ -1862,7 +2091,8 @@ type AssetPairEntry struct {
 //    	TWO_STEP_WITHDRAWAL = 16,
 //    	REQUIRES_KYC = 32,
 //    	ISSUANCE_MANUAL_REVIEW_REQUIRED = 64,
-//    	REQUIRES_VERIFICATION = 128
+//    	REQUIRES_VERIFICATION = 128,
+//    	WITHDRAWABLE_V2 = 256 // switch to withdraw with tasks
 //    };
 //
 type AssetPolicy int32
@@ -1876,6 +2106,7 @@ const (
 	AssetPolicyRequiresKyc                  AssetPolicy = 32
 	AssetPolicyIssuanceManualReviewRequired AssetPolicy = 64
 	AssetPolicyRequiresVerification         AssetPolicy = 128
+	AssetPolicyWithdrawableV2               AssetPolicy = 256
 )
 
 var AssetPolicyAll = []AssetPolicy{
@@ -1887,6 +2118,7 @@ var AssetPolicyAll = []AssetPolicy{
 	AssetPolicyRequiresKyc,
 	AssetPolicyIssuanceManualReviewRequired,
 	AssetPolicyRequiresVerification,
+	AssetPolicyWithdrawableV2,
 }
 
 var assetPolicyMap = map[int32]string{
@@ -1898,6 +2130,7 @@ var assetPolicyMap = map[int32]string{
 	32:  "AssetPolicyRequiresKyc",
 	64:  "AssetPolicyIssuanceManualReviewRequired",
 	128: "AssetPolicyRequiresVerification",
+	256: "AssetPolicyWithdrawableV2",
 }
 
 var assetPolicyShortMap = map[int32]string{
@@ -1909,6 +2142,7 @@ var assetPolicyShortMap = map[int32]string{
 	32:  "requires_kyc",
 	64:  "issuance_manual_review_required",
 	128: "requires_verification",
+	256: "withdrawable_v2",
 }
 
 var assetPolicyRevMap = map[string]int32{
@@ -1920,6 +2154,7 @@ var assetPolicyRevMap = map[string]int32{
 	"AssetPolicyRequiresKyc":                  32,
 	"AssetPolicyIssuanceManualReviewRequired": 64,
 	"AssetPolicyRequiresVerification":         128,
+	"AssetPolicyWithdrawableV2":               256,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -2079,10 +2314,13 @@ func (e *AssetSystemPolicies) UnmarshalJSON(data []byte) error {
 //        {
 //        case EMPTY_VERSION:
 //            void;
+//        case ADD_ASSET_BALANCE_PRECISION:
+//            uint32 trailingDigitsCount;
 //        }
 //
 type AssetEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
+	V                   LedgerVersion `json:"v,omitempty"`
+	TrailingDigitsCount *Uint32       `json:"trailingDigitsCount,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -2097,6 +2335,8 @@ func (u AssetEntryExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
+	case LedgerVersionAddAssetBalancePrecision:
+		return "TrailingDigitsCount", true
 	}
 	return "-", false
 }
@@ -2107,7 +2347,39 @@ func NewAssetEntryExt(v LedgerVersion, value interface{}) (result AssetEntryExt,
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
 		// void
+	case LedgerVersionAddAssetBalancePrecision:
+		tv, ok := value.(Uint32)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be Uint32")
+			return
+		}
+		result.TrailingDigitsCount = &tv
 	}
+	return
+}
+
+// MustTrailingDigitsCount retrieves the TrailingDigitsCount value from the union,
+// panicing if the value is not set.
+func (u AssetEntryExt) MustTrailingDigitsCount() Uint32 {
+	val, ok := u.GetTrailingDigitsCount()
+
+	if !ok {
+		panic("arm TrailingDigitsCount is not set")
+	}
+
+	return val
+}
+
+// GetTrailingDigitsCount retrieves the TrailingDigitsCount value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AssetEntryExt) GetTrailingDigitsCount() (result Uint32, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.V))
+
+	if armName == "TrailingDigitsCount" {
+		result = *u.TrailingDigitsCount
+		ok = true
+	}
+
 	return
 }
 
@@ -2130,6 +2402,8 @@ func NewAssetEntryExt(v LedgerVersion, value interface{}) (result AssetEntryExt,
 //        {
 //        case EMPTY_VERSION:
 //            void;
+//        case ADD_ASSET_BALANCE_PRECISION:
+//            uint32 trailingDigitsCount;
 //        }
 //        ext;
 //    };
@@ -5813,7 +6087,9 @@ func (e *ThresholdIndexes) UnmarshalJSON(data []byte) error {
 //        LIMITS_V2 = 22,
 //        STATISTICS_V2 = 23,
 //        PENDING_STATISTICS = 24,
-//        CONTRACT = 25
+//        CONTRACT = 25,
+//        ACCOUNT_ROLE = 26,
+//        ACCOUNT_ROLE_PERMISSION = 27
 //    };
 //
 type LedgerEntryType int32
@@ -5842,6 +6118,8 @@ const (
 	LedgerEntryTypeStatisticsV2                     LedgerEntryType = 23
 	LedgerEntryTypePendingStatistics                LedgerEntryType = 24
 	LedgerEntryTypeContract                         LedgerEntryType = 25
+	LedgerEntryTypeAccountRole                      LedgerEntryType = 26
+	LedgerEntryTypeAccountRolePermission            LedgerEntryType = 27
 )
 
 var LedgerEntryTypeAll = []LedgerEntryType{
@@ -5868,6 +6146,8 @@ var LedgerEntryTypeAll = []LedgerEntryType{
 	LedgerEntryTypeStatisticsV2,
 	LedgerEntryTypePendingStatistics,
 	LedgerEntryTypeContract,
+	LedgerEntryTypeAccountRole,
+	LedgerEntryTypeAccountRolePermission,
 }
 
 var ledgerEntryTypeMap = map[int32]string{
@@ -5894,6 +6174,8 @@ var ledgerEntryTypeMap = map[int32]string{
 	23: "LedgerEntryTypeStatisticsV2",
 	24: "LedgerEntryTypePendingStatistics",
 	25: "LedgerEntryTypeContract",
+	26: "LedgerEntryTypeAccountRole",
+	27: "LedgerEntryTypeAccountRolePermission",
 }
 
 var ledgerEntryTypeShortMap = map[int32]string{
@@ -5920,6 +6202,8 @@ var ledgerEntryTypeShortMap = map[int32]string{
 	23: "statistics_v2",
 	24: "pending_statistics",
 	25: "contract",
+	26: "account_role",
+	27: "account_role_permission",
 }
 
 var ledgerEntryTypeRevMap = map[string]int32{
@@ -5946,6 +6230,8 @@ var ledgerEntryTypeRevMap = map[string]int32{
 	"LedgerEntryTypeStatisticsV2":                     23,
 	"LedgerEntryTypePendingStatistics":                24,
 	"LedgerEntryTypeContract":                         25,
+	"LedgerEntryTypeAccountRole":                      26,
+	"LedgerEntryTypeAccountRolePermission":            27,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -6057,6 +6343,10 @@ func (e *LedgerEntryType) UnmarshalJSON(data []byte) error {
 //            PendingStatisticsEntry pendingStatistics;
 //        case CONTRACT:
 //            ContractEntry contract;
+//        case ACCOUNT_ROLE:
+//            AccountRoleEntry accountRole;
+//        case ACCOUNT_ROLE_PERMISSION:
+//            AccountRolePermissionEntry accountRolePermission;
 //        }
 //
 type LedgerEntryData struct {
@@ -6083,6 +6373,8 @@ type LedgerEntryData struct {
 	StatisticsV2                     *StatisticsV2Entry                `json:"statisticsV2,omitempty"`
 	PendingStatistics                *PendingStatisticsEntry           `json:"pendingStatistics,omitempty"`
 	Contract                         *ContractEntry                    `json:"contract,omitempty"`
+	AccountRole                      *AccountRoleEntry                 `json:"accountRole,omitempty"`
+	AccountRolePermission            *AccountRolePermissionEntry       `json:"accountRolePermission,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -6139,6 +6431,10 @@ func (u LedgerEntryData) ArmForSwitch(sw int32) (string, bool) {
 		return "PendingStatistics", true
 	case LedgerEntryTypeContract:
 		return "Contract", true
+	case LedgerEntryTypeAccountRole:
+		return "AccountRole", true
+	case LedgerEntryTypeAccountRolePermission:
+		return "AccountRolePermission", true
 	}
 	return "-", false
 }
@@ -6301,6 +6597,20 @@ func NewLedgerEntryData(aType LedgerEntryType, value interface{}) (result Ledger
 			return
 		}
 		result.Contract = &tv
+	case LedgerEntryTypeAccountRole:
+		tv, ok := value.(AccountRoleEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountRoleEntry")
+			return
+		}
+		result.AccountRole = &tv
+	case LedgerEntryTypeAccountRolePermission:
+		tv, ok := value.(AccountRolePermissionEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountRolePermissionEntry")
+			return
+		}
+		result.AccountRolePermission = &tv
 	}
 	return
 }
@@ -6855,6 +7165,56 @@ func (u LedgerEntryData) GetContract() (result ContractEntry, ok bool) {
 	return
 }
 
+// MustAccountRole retrieves the AccountRole value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustAccountRole() AccountRoleEntry {
+	val, ok := u.GetAccountRole()
+
+	if !ok {
+		panic("arm AccountRole is not set")
+	}
+
+	return val
+}
+
+// GetAccountRole retrieves the AccountRole value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetAccountRole() (result AccountRoleEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AccountRole" {
+		result = *u.AccountRole
+		ok = true
+	}
+
+	return
+}
+
+// MustAccountRolePermission retrieves the AccountRolePermission value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustAccountRolePermission() AccountRolePermissionEntry {
+	val, ok := u.GetAccountRolePermission()
+
+	if !ok {
+		panic("arm AccountRolePermission is not set")
+	}
+
+	return val
+}
+
+// GetAccountRolePermission retrieves the AccountRolePermission value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetAccountRolePermission() (result AccountRolePermissionEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AccountRolePermission" {
+		result = *u.AccountRolePermission
+		ok = true
+	}
+
+	return
+}
+
 // LedgerEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -6945,6 +7305,10 @@ func NewLedgerEntryExt(v LedgerVersion, value interface{}) (result LedgerEntryEx
 //            PendingStatisticsEntry pendingStatistics;
 //        case CONTRACT:
 //            ContractEntry contract;
+//        case ACCOUNT_ROLE:
+//            AccountRoleEntry accountRole;
+//        case ACCOUNT_ROLE_PERMISSION:
+//            AccountRolePermissionEntry accountRolePermission;
 //        }
 //        data;
 //
@@ -8811,6 +9175,116 @@ type LedgerKeyContract struct {
 	Ext        LedgerKeyContractExt `json:"ext,omitempty"`
 }
 
+// LedgerKeyAccountRoleExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//            {
+//            case EMPTY_VERSION:
+//                void;
+//            }
+//
+type LedgerKeyAccountRoleExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u LedgerKeyAccountRoleExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of LedgerKeyAccountRoleExt
+func (u LedgerKeyAccountRoleExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewLedgerKeyAccountRoleExt creates a new  LedgerKeyAccountRoleExt.
+func NewLedgerKeyAccountRoleExt(v LedgerVersion, value interface{}) (result LedgerKeyAccountRoleExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// LedgerKeyAccountRole is an XDR NestedStruct defines as:
+//
+//   struct {
+//            uint64 accountRoleID;
+//            union switch (LedgerVersion v)
+//            {
+//            case EMPTY_VERSION:
+//                void;
+//            }
+//            ext;
+//        }
+//
+type LedgerKeyAccountRole struct {
+	AccountRoleId Uint64                  `json:"accountRoleID,omitempty"`
+	Ext           LedgerKeyAccountRoleExt `json:"ext,omitempty"`
+}
+
+// LedgerKeyAccountRolePermissionExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//            {
+//            case EMPTY_VERSION:
+//                void;
+//            }
+//
+type LedgerKeyAccountRolePermissionExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u LedgerKeyAccountRolePermissionExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of LedgerKeyAccountRolePermissionExt
+func (u LedgerKeyAccountRolePermissionExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewLedgerKeyAccountRolePermissionExt creates a new  LedgerKeyAccountRolePermissionExt.
+func NewLedgerKeyAccountRolePermissionExt(v LedgerVersion, value interface{}) (result LedgerKeyAccountRolePermissionExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// LedgerKeyAccountRolePermission is an XDR NestedStruct defines as:
+//
+//   struct {
+//            uint64 permissionID;
+//            union switch (LedgerVersion v)
+//            {
+//            case EMPTY_VERSION:
+//                void;
+//            }
+//            ext;
+//        }
+//
+type LedgerKeyAccountRolePermission struct {
+	PermissionId Uint64                            `json:"permissionID,omitempty"`
+	Ext          LedgerKeyAccountRolePermissionExt `json:"ext,omitempty"`
+}
+
 // LedgerKey is an XDR Union defines as:
 //
 //   union LedgerKey switch (LedgerEntryType type)
@@ -9040,6 +9514,26 @@ type LedgerKeyContract struct {
 //            }
 //            ext;
 //        } contract;
+//    case ACCOUNT_ROLE:
+//        struct {
+//            uint64 accountRoleID;
+//            union switch (LedgerVersion v)
+//            {
+//            case EMPTY_VERSION:
+//                void;
+//            }
+//            ext;
+//        } accountRole;
+//    case ACCOUNT_ROLE_PERMISSION:
+//        struct {
+//            uint64 permissionID;
+//            union switch (LedgerVersion v)
+//            {
+//            case EMPTY_VERSION:
+//                void;
+//            }
+//            ext;
+//        } accountRolePermission;
 //    };
 //
 type LedgerKey struct {
@@ -9066,6 +9560,8 @@ type LedgerKey struct {
 	StatisticsV2                     *LedgerKeyStatisticsV2                     `json:"statisticsV2,omitempty"`
 	PendingStatistics                *LedgerKeyPendingStatistics                `json:"pendingStatistics,omitempty"`
 	Contract                         *LedgerKeyContract                         `json:"contract,omitempty"`
+	AccountRole                      *LedgerKeyAccountRole                      `json:"accountRole,omitempty"`
+	AccountRolePermission            *LedgerKeyAccountRolePermission            `json:"accountRolePermission,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -9122,6 +9618,10 @@ func (u LedgerKey) ArmForSwitch(sw int32) (string, bool) {
 		return "PendingStatistics", true
 	case LedgerEntryTypeContract:
 		return "Contract", true
+	case LedgerEntryTypeAccountRole:
+		return "AccountRole", true
+	case LedgerEntryTypeAccountRolePermission:
+		return "AccountRolePermission", true
 	}
 	return "-", false
 }
@@ -9284,6 +9784,20 @@ func NewLedgerKey(aType LedgerEntryType, value interface{}) (result LedgerKey, e
 			return
 		}
 		result.Contract = &tv
+	case LedgerEntryTypeAccountRole:
+		tv, ok := value.(LedgerKeyAccountRole)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be LedgerKeyAccountRole")
+			return
+		}
+		result.AccountRole = &tv
+	case LedgerEntryTypeAccountRolePermission:
+		tv, ok := value.(LedgerKeyAccountRolePermission)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be LedgerKeyAccountRolePermission")
+			return
+		}
+		result.AccountRolePermission = &tv
 	}
 	return
 }
@@ -9832,6 +10346,56 @@ func (u LedgerKey) GetContract() (result LedgerKeyContract, ok bool) {
 
 	if armName == "Contract" {
 		result = *u.Contract
+		ok = true
+	}
+
+	return
+}
+
+// MustAccountRole retrieves the AccountRole value from the union,
+// panicing if the value is not set.
+func (u LedgerKey) MustAccountRole() LedgerKeyAccountRole {
+	val, ok := u.GetAccountRole()
+
+	if !ok {
+		panic("arm AccountRole is not set")
+	}
+
+	return val
+}
+
+// GetAccountRole retrieves the AccountRole value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerKey) GetAccountRole() (result LedgerKeyAccountRole, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AccountRole" {
+		result = *u.AccountRole
+		ok = true
+	}
+
+	return
+}
+
+// MustAccountRolePermission retrieves the AccountRolePermission value from the union,
+// panicing if the value is not set.
+func (u LedgerKey) MustAccountRolePermission() LedgerKeyAccountRolePermission {
+	val, ok := u.GetAccountRolePermission()
+
+	if !ok {
+		panic("arm AccountRolePermission is not set")
+	}
+
+	return val
+}
+
+// GetAccountRolePermission retrieves the AccountRolePermission value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerKey) GetAccountRolePermission() (result LedgerKeyAccountRolePermission, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AccountRolePermission" {
+		result = *u.AccountRolePermission
 		ok = true
 	}
 
@@ -12159,9 +12723,9 @@ type CreateAmlAlertRequestOp struct {
 //        BALANCE_NOT_EXIST = 1, // balance doesn't exist
 //        INVALID_REASON = 2, //invalid reason for request
 //        UNDERFUNDED = 3, //when couldn't lock balance
-//    	REFERENCE_DUPLICATION = 4, // reference already exists
-//    	INVALID_AMOUNT = 5 // amount must be positive
-//
+//        REFERENCE_DUPLICATION = 4, // reference already exists
+//        INVALID_AMOUNT = 5, // amount must be positive
+//        INCORRECT_PRECISION = 6
 //
 //    };
 //
@@ -12174,6 +12738,7 @@ const (
 	CreateAmlAlertRequestResultCodeUnderfunded          CreateAmlAlertRequestResultCode = 3
 	CreateAmlAlertRequestResultCodeReferenceDuplication CreateAmlAlertRequestResultCode = 4
 	CreateAmlAlertRequestResultCodeInvalidAmount        CreateAmlAlertRequestResultCode = 5
+	CreateAmlAlertRequestResultCodeIncorrectPrecision   CreateAmlAlertRequestResultCode = 6
 )
 
 var CreateAmlAlertRequestResultCodeAll = []CreateAmlAlertRequestResultCode{
@@ -12183,6 +12748,7 @@ var CreateAmlAlertRequestResultCodeAll = []CreateAmlAlertRequestResultCode{
 	CreateAmlAlertRequestResultCodeUnderfunded,
 	CreateAmlAlertRequestResultCodeReferenceDuplication,
 	CreateAmlAlertRequestResultCodeInvalidAmount,
+	CreateAmlAlertRequestResultCodeIncorrectPrecision,
 }
 
 var createAmlAlertRequestResultCodeMap = map[int32]string{
@@ -12192,6 +12758,7 @@ var createAmlAlertRequestResultCodeMap = map[int32]string{
 	3: "CreateAmlAlertRequestResultCodeUnderfunded",
 	4: "CreateAmlAlertRequestResultCodeReferenceDuplication",
 	5: "CreateAmlAlertRequestResultCodeInvalidAmount",
+	6: "CreateAmlAlertRequestResultCodeIncorrectPrecision",
 }
 
 var createAmlAlertRequestResultCodeShortMap = map[int32]string{
@@ -12201,6 +12768,7 @@ var createAmlAlertRequestResultCodeShortMap = map[int32]string{
 	3: "underfunded",
 	4: "reference_duplication",
 	5: "invalid_amount",
+	6: "incorrect_precision",
 }
 
 var createAmlAlertRequestResultCodeRevMap = map[string]int32{
@@ -12210,6 +12778,7 @@ var createAmlAlertRequestResultCodeRevMap = map[string]int32{
 	"CreateAmlAlertRequestResultCodeUnderfunded":          3,
 	"CreateAmlAlertRequestResultCodeReferenceDuplication": 4,
 	"CreateAmlAlertRequestResultCodeInvalidAmount":        5,
+	"CreateAmlAlertRequestResultCodeIncorrectPrecision":   6,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -12814,19 +13383,82 @@ func (u CreateUpdateKycRequestResult) GetSuccess() (result CreateUpdateKycReques
 	return
 }
 
+// CreateAccountOpExtendedExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateAccountOpExtendedExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateAccountOpExtendedExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateAccountOpExtendedExt
+func (u CreateAccountOpExtendedExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateAccountOpExtendedExt creates a new  CreateAccountOpExtendedExt.
+func NewCreateAccountOpExtendedExt(v LedgerVersion, value interface{}) (result CreateAccountOpExtendedExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateAccountOpExtended is an XDR Struct defines as:
+//
+//   struct CreateAccountOpExtended
+//    {
+//        ExternalSystemAccountID externalSystemIDs<>;
+//        uint64* roleID;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CreateAccountOpExtended struct {
+	ExternalSystemIDs []ExternalSystemAccountId  `json:"externalSystemIDs,omitempty"`
+	RoleId            *Uint64                    `json:"roleID,omitempty"`
+	Ext               CreateAccountOpExtendedExt `json:"ext,omitempty"`
+}
+
 // CreateAccountOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
 //            void;
-//    	case PASS_EXTERNAL_SYS_ACC_ID_IN_CREATE_ACC:
-//    		ExternalSystemAccountID externalSystemIDs<>;
+//        case PASS_EXTERNAL_SYS_ACC_ID_IN_CREATE_ACC:
+//            ExternalSystemAccountID externalSystemIDs<>;
+//        case REPLACE_ACCOUNT_TYPES_WITH_POLICIES:
+//            CreateAccountOpExtended opExt;
 //        }
 //
 type CreateAccountOpExt struct {
 	V                 LedgerVersion              `json:"v,omitempty"`
 	ExternalSystemIDs *[]ExternalSystemAccountId `json:"externalSystemIDs,omitempty"`
+	OpExt             *CreateAccountOpExtended   `json:"opExt,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -12843,6 +13475,8 @@ func (u CreateAccountOpExt) ArmForSwitch(sw int32) (string, bool) {
 		return "", true
 	case LedgerVersionPassExternalSysAccIdInCreateAcc:
 		return "ExternalSystemIDs", true
+	case LedgerVersionReplaceAccountTypesWithPolicies:
+		return "OpExt", true
 	}
 	return "-", false
 }
@@ -12860,6 +13494,13 @@ func NewCreateAccountOpExt(v LedgerVersion, value interface{}) (result CreateAcc
 			return
 		}
 		result.ExternalSystemIDs = &tv
+	case LedgerVersionReplaceAccountTypesWithPolicies:
+		tv, ok := value.(CreateAccountOpExtended)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateAccountOpExtended")
+			return
+		}
+		result.OpExt = &tv
 	}
 	return
 }
@@ -12889,6 +13530,31 @@ func (u CreateAccountOpExt) GetExternalSystemIDs() (result []ExternalSystemAccou
 	return
 }
 
+// MustOpExt retrieves the OpExt value from the union,
+// panicing if the value is not set.
+func (u CreateAccountOpExt) MustOpExt() CreateAccountOpExtended {
+	val, ok := u.GetOpExt()
+
+	if !ok {
+		panic("arm OpExt is not set")
+	}
+
+	return val
+}
+
+// GetOpExt retrieves the OpExt value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreateAccountOpExt) GetOpExt() (result CreateAccountOpExtended, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.V))
+
+	if armName == "OpExt" {
+		result = *u.OpExt
+		ok = true
+	}
+
+	return
+}
+
 // CreateAccountOp is an XDR Struct defines as:
 //
 //   struct CreateAccountOp
@@ -12904,8 +13570,10 @@ func (u CreateAccountOpExt) GetExternalSystemIDs() (result []ExternalSystemAccou
 //        {
 //        case EMPTY_VERSION:
 //            void;
-//    	case PASS_EXTERNAL_SYS_ACC_ID_IN_CREATE_ACC:
-//    		ExternalSystemAccountID externalSystemIDs<>;
+//        case PASS_EXTERNAL_SYS_ACC_ID_IN_CREATE_ACC:
+//            ExternalSystemAccountID externalSystemIDs<>;
+//        case REPLACE_ACCOUNT_TYPES_WITH_POLICIES:
+//            CreateAccountOpExtended opExt;
 //        }
 //        ext;
 //    };
@@ -13304,7 +13972,7 @@ type CreateIssuanceRequestOp struct {
 //
 //        // codes considered as "failure" for the operation
 //        ASSET_NOT_FOUND = -1,
-//    	INVALID_AMOUNT = -2,
+//    	INVALID_AMOUNT = -2,             // amount is 0
 //    	REFERENCE_DUPLICATION = -3,
 //    	NO_COUNTERPARTY = -4,
 //    	NOT_AUTHORIZED = -5,
@@ -13315,7 +13983,8 @@ type CreateIssuanceRequestOp struct {
 //        REQUIRES_KYC = -10, // asset requires receiver to have KYC
 //        REQUIRES_VERIFICATION = -11, //asset requires receiver to be verified
 //        ISSUANCE_TASKS_NOT_FOUND = -12, // issuance tasks have not been provided by the source and don't exist in 'KeyValue' table
-//        SYSTEM_TASKS_NOT_ALLOWED = -13
+//        SYSTEM_TASKS_NOT_ALLOWED = -13,
+//        INVALID_AMOUNT_PRECISION = -14   // amount does not match asset's precision
 //    };
 //
 type CreateIssuanceRequestResultCode int32
@@ -13335,6 +14004,7 @@ const (
 	CreateIssuanceRequestResultCodeRequiresVerification     CreateIssuanceRequestResultCode = -11
 	CreateIssuanceRequestResultCodeIssuanceTasksNotFound    CreateIssuanceRequestResultCode = -12
 	CreateIssuanceRequestResultCodeSystemTasksNotAllowed    CreateIssuanceRequestResultCode = -13
+	CreateIssuanceRequestResultCodeInvalidAmountPrecision   CreateIssuanceRequestResultCode = -14
 )
 
 var CreateIssuanceRequestResultCodeAll = []CreateIssuanceRequestResultCode{
@@ -13352,6 +14022,7 @@ var CreateIssuanceRequestResultCodeAll = []CreateIssuanceRequestResultCode{
 	CreateIssuanceRequestResultCodeRequiresVerification,
 	CreateIssuanceRequestResultCodeIssuanceTasksNotFound,
 	CreateIssuanceRequestResultCodeSystemTasksNotAllowed,
+	CreateIssuanceRequestResultCodeInvalidAmountPrecision,
 }
 
 var createIssuanceRequestResultCodeMap = map[int32]string{
@@ -13369,6 +14040,7 @@ var createIssuanceRequestResultCodeMap = map[int32]string{
 	-11: "CreateIssuanceRequestResultCodeRequiresVerification",
 	-12: "CreateIssuanceRequestResultCodeIssuanceTasksNotFound",
 	-13: "CreateIssuanceRequestResultCodeSystemTasksNotAllowed",
+	-14: "CreateIssuanceRequestResultCodeInvalidAmountPrecision",
 }
 
 var createIssuanceRequestResultCodeShortMap = map[int32]string{
@@ -13386,6 +14058,7 @@ var createIssuanceRequestResultCodeShortMap = map[int32]string{
 	-11: "requires_verification",
 	-12: "issuance_tasks_not_found",
 	-13: "system_tasks_not_allowed",
+	-14: "invalid_amount_precision",
 }
 
 var createIssuanceRequestResultCodeRevMap = map[string]int32{
@@ -13403,6 +14076,7 @@ var createIssuanceRequestResultCodeRevMap = map[string]int32{
 	"CreateIssuanceRequestResultCodeRequiresVerification":     -11,
 	"CreateIssuanceRequestResultCodeIssuanceTasksNotFound":    -12,
 	"CreateIssuanceRequestResultCodeSystemTasksNotAllowed":    -13,
+	"CreateIssuanceRequestResultCodeInvalidAmountPrecision":   -14,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -14021,25 +14695,27 @@ type CreatePreIssuanceRequestOp struct {
 //
 //        // codes considered as "failure" for the operation
 //        ASSET_NOT_FOUND = -1,
-//        REFERENCE_DUPLICATION = -2,    // reference is already used
-//        NOT_AUTHORIZED_UPLOAD = -3, // tries to pre issue asset for not owned asset
+//        REFERENCE_DUPLICATION = -2,      // reference is already used
+//        NOT_AUTHORIZED_UPLOAD = -3,      // tries to pre issue asset for not owned asset
 //        INVALID_SIGNATURE = -4,
 //        EXCEEDED_MAX_AMOUNT = -5,
-//    	INVALID_AMOUNT = -6,
-//    	INVALID_REFERENCE = -7
+//        INVALID_AMOUNT = -6,             // amount is 0
+//        INVALID_REFERENCE = -7,
+//        INCORRECT_AMOUNT_PRECISION = -8  // amount does not fit to this asset's precision
 //    };
 //
 type CreatePreIssuanceRequestResultCode int32
 
 const (
-	CreatePreIssuanceRequestResultCodeSuccess              CreatePreIssuanceRequestResultCode = 0
-	CreatePreIssuanceRequestResultCodeAssetNotFound        CreatePreIssuanceRequestResultCode = -1
-	CreatePreIssuanceRequestResultCodeReferenceDuplication CreatePreIssuanceRequestResultCode = -2
-	CreatePreIssuanceRequestResultCodeNotAuthorizedUpload  CreatePreIssuanceRequestResultCode = -3
-	CreatePreIssuanceRequestResultCodeInvalidSignature     CreatePreIssuanceRequestResultCode = -4
-	CreatePreIssuanceRequestResultCodeExceededMaxAmount    CreatePreIssuanceRequestResultCode = -5
-	CreatePreIssuanceRequestResultCodeInvalidAmount        CreatePreIssuanceRequestResultCode = -6
-	CreatePreIssuanceRequestResultCodeInvalidReference     CreatePreIssuanceRequestResultCode = -7
+	CreatePreIssuanceRequestResultCodeSuccess                  CreatePreIssuanceRequestResultCode = 0
+	CreatePreIssuanceRequestResultCodeAssetNotFound            CreatePreIssuanceRequestResultCode = -1
+	CreatePreIssuanceRequestResultCodeReferenceDuplication     CreatePreIssuanceRequestResultCode = -2
+	CreatePreIssuanceRequestResultCodeNotAuthorizedUpload      CreatePreIssuanceRequestResultCode = -3
+	CreatePreIssuanceRequestResultCodeInvalidSignature         CreatePreIssuanceRequestResultCode = -4
+	CreatePreIssuanceRequestResultCodeExceededMaxAmount        CreatePreIssuanceRequestResultCode = -5
+	CreatePreIssuanceRequestResultCodeInvalidAmount            CreatePreIssuanceRequestResultCode = -6
+	CreatePreIssuanceRequestResultCodeInvalidReference         CreatePreIssuanceRequestResultCode = -7
+	CreatePreIssuanceRequestResultCodeIncorrectAmountPrecision CreatePreIssuanceRequestResultCode = -8
 )
 
 var CreatePreIssuanceRequestResultCodeAll = []CreatePreIssuanceRequestResultCode{
@@ -14051,6 +14727,7 @@ var CreatePreIssuanceRequestResultCodeAll = []CreatePreIssuanceRequestResultCode
 	CreatePreIssuanceRequestResultCodeExceededMaxAmount,
 	CreatePreIssuanceRequestResultCodeInvalidAmount,
 	CreatePreIssuanceRequestResultCodeInvalidReference,
+	CreatePreIssuanceRequestResultCodeIncorrectAmountPrecision,
 }
 
 var createPreIssuanceRequestResultCodeMap = map[int32]string{
@@ -14062,6 +14739,7 @@ var createPreIssuanceRequestResultCodeMap = map[int32]string{
 	-5: "CreatePreIssuanceRequestResultCodeExceededMaxAmount",
 	-6: "CreatePreIssuanceRequestResultCodeInvalidAmount",
 	-7: "CreatePreIssuanceRequestResultCodeInvalidReference",
+	-8: "CreatePreIssuanceRequestResultCodeIncorrectAmountPrecision",
 }
 
 var createPreIssuanceRequestResultCodeShortMap = map[int32]string{
@@ -14073,17 +14751,19 @@ var createPreIssuanceRequestResultCodeShortMap = map[int32]string{
 	-5: "exceeded_max_amount",
 	-6: "invalid_amount",
 	-7: "invalid_reference",
+	-8: "incorrect_amount_precision",
 }
 
 var createPreIssuanceRequestResultCodeRevMap = map[string]int32{
-	"CreatePreIssuanceRequestResultCodeSuccess":              0,
-	"CreatePreIssuanceRequestResultCodeAssetNotFound":        -1,
-	"CreatePreIssuanceRequestResultCodeReferenceDuplication": -2,
-	"CreatePreIssuanceRequestResultCodeNotAuthorizedUpload":  -3,
-	"CreatePreIssuanceRequestResultCodeInvalidSignature":     -4,
-	"CreatePreIssuanceRequestResultCodeExceededMaxAmount":    -5,
-	"CreatePreIssuanceRequestResultCodeInvalidAmount":        -6,
-	"CreatePreIssuanceRequestResultCodeInvalidReference":     -7,
+	"CreatePreIssuanceRequestResultCodeSuccess":                  0,
+	"CreatePreIssuanceRequestResultCodeAssetNotFound":            -1,
+	"CreatePreIssuanceRequestResultCodeReferenceDuplication":     -2,
+	"CreatePreIssuanceRequestResultCodeNotAuthorizedUpload":      -3,
+	"CreatePreIssuanceRequestResultCodeInvalidSignature":         -4,
+	"CreatePreIssuanceRequestResultCodeExceededMaxAmount":        -5,
+	"CreatePreIssuanceRequestResultCodeInvalidAmount":            -6,
+	"CreatePreIssuanceRequestResultCodeInvalidReference":         -7,
+	"CreatePreIssuanceRequestResultCodeIncorrectAmountPrecision": -8,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -14653,13 +15333,16 @@ func (u CreateSaleCreationRequestResult) GetSuccess() (result CreateSaleCreation
 // CreateWithdrawalRequestOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case WITHDRAWAL_TASKS:
+//            uint32* allTasks;
+//        }
 //
 type CreateWithdrawalRequestOpExt struct {
-	V LedgerVersion `json:"v,omitempty"`
+	V        LedgerVersion `json:"v,omitempty"`
+	AllTasks **Uint32      `json:"allTasks,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -14674,6 +15357,8 @@ func (u CreateWithdrawalRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
+	case LedgerVersionWithdrawalTasks:
+		return "AllTasks", true
 	}
 	return "-", false
 }
@@ -14684,7 +15369,39 @@ func NewCreateWithdrawalRequestOpExt(v LedgerVersion, value interface{}) (result
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
 		// void
+	case LedgerVersionWithdrawalTasks:
+		tv, ok := value.(*Uint32)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be *Uint32")
+			return
+		}
+		result.AllTasks = &tv
 	}
+	return
+}
+
+// MustAllTasks retrieves the AllTasks value from the union,
+// panicing if the value is not set.
+func (u CreateWithdrawalRequestOpExt) MustAllTasks() *Uint32 {
+	val, ok := u.GetAllTasks()
+
+	if !ok {
+		panic("arm AllTasks is not set")
+	}
+
+	return val
+}
+
+// GetAllTasks retrieves the AllTasks value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreateWithdrawalRequestOpExt) GetAllTasks() (result *Uint32, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.V))
+
+	if armName == "AllTasks" {
+		result = *u.AllTasks
+		ok = true
+	}
+
 	return
 }
 
@@ -14695,11 +15412,13 @@ func NewCreateWithdrawalRequestOpExt(v LedgerVersion, value interface{}) (result
 //    	WithdrawalRequest request;
 //
 //    	union switch (LedgerVersion v)
-//    	{
-//    	case EMPTY_VERSION:
-//    		void;
-//    	}
-//    	ext;
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case WITHDRAWAL_TASKS:
+//            uint32* allTasks;
+//        }
+//        ext;
 //
 //    };
 //
@@ -14730,28 +15449,32 @@ type CreateWithdrawalRequestOp struct {
 //    	STATS_OVERFLOW = -12, // statistics overflowed by the operation
 //    	LIMITS_EXCEEDED = -13, // withdraw exceeds limits for source account
 //    	INVALID_PRE_CONFIRMATION_DETAILS = -14, // it's not allowed to pass pre confirmation details
-//    	LOWER_BOUND_NOT_EXCEEDED = -15
+//    	LOWER_BOUND_NOT_EXCEEDED = -15, //amount to withdraw is too small
+//        WITHDRAWAL_TASKS_NOT_FOUND = -16,
+//    	NOT_ALLOWED_TO_SET_WITHDRAWAL_TASKS = -17 //Can't set withdrawal tasks on request creation
 //    };
 //
 type CreateWithdrawalRequestResultCode int32
 
 const (
-	CreateWithdrawalRequestResultCodeSuccess                       CreateWithdrawalRequestResultCode = 0
-	CreateWithdrawalRequestResultCodeInvalidAmount                 CreateWithdrawalRequestResultCode = -1
-	CreateWithdrawalRequestResultCodeInvalidExternalDetails        CreateWithdrawalRequestResultCode = -2
-	CreateWithdrawalRequestResultCodeBalanceNotFound               CreateWithdrawalRequestResultCode = -3
-	CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable        CreateWithdrawalRequestResultCode = -4
-	CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable CreateWithdrawalRequestResultCode = -5
-	CreateWithdrawalRequestResultCodeFeeMismatched                 CreateWithdrawalRequestResultCode = -6
-	CreateWithdrawalRequestResultCodeConversionOverflow            CreateWithdrawalRequestResultCode = -7
-	CreateWithdrawalRequestResultCodeConvertedAmountMismatched     CreateWithdrawalRequestResultCode = -8
-	CreateWithdrawalRequestResultCodeBalanceLockOverflow           CreateWithdrawalRequestResultCode = -9
-	CreateWithdrawalRequestResultCodeUnderfunded                   CreateWithdrawalRequestResultCode = -10
-	CreateWithdrawalRequestResultCodeInvalidUniversalAmount        CreateWithdrawalRequestResultCode = -11
-	CreateWithdrawalRequestResultCodeStatsOverflow                 CreateWithdrawalRequestResultCode = -12
-	CreateWithdrawalRequestResultCodeLimitsExceeded                CreateWithdrawalRequestResultCode = -13
-	CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails CreateWithdrawalRequestResultCode = -14
-	CreateWithdrawalRequestResultCodeLowerBoundNotExceeded         CreateWithdrawalRequestResultCode = -15
+	CreateWithdrawalRequestResultCodeSuccess                        CreateWithdrawalRequestResultCode = 0
+	CreateWithdrawalRequestResultCodeInvalidAmount                  CreateWithdrawalRequestResultCode = -1
+	CreateWithdrawalRequestResultCodeInvalidExternalDetails         CreateWithdrawalRequestResultCode = -2
+	CreateWithdrawalRequestResultCodeBalanceNotFound                CreateWithdrawalRequestResultCode = -3
+	CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable         CreateWithdrawalRequestResultCode = -4
+	CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable  CreateWithdrawalRequestResultCode = -5
+	CreateWithdrawalRequestResultCodeFeeMismatched                  CreateWithdrawalRequestResultCode = -6
+	CreateWithdrawalRequestResultCodeConversionOverflow             CreateWithdrawalRequestResultCode = -7
+	CreateWithdrawalRequestResultCodeConvertedAmountMismatched      CreateWithdrawalRequestResultCode = -8
+	CreateWithdrawalRequestResultCodeBalanceLockOverflow            CreateWithdrawalRequestResultCode = -9
+	CreateWithdrawalRequestResultCodeUnderfunded                    CreateWithdrawalRequestResultCode = -10
+	CreateWithdrawalRequestResultCodeInvalidUniversalAmount         CreateWithdrawalRequestResultCode = -11
+	CreateWithdrawalRequestResultCodeStatsOverflow                  CreateWithdrawalRequestResultCode = -12
+	CreateWithdrawalRequestResultCodeLimitsExceeded                 CreateWithdrawalRequestResultCode = -13
+	CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails  CreateWithdrawalRequestResultCode = -14
+	CreateWithdrawalRequestResultCodeLowerBoundNotExceeded          CreateWithdrawalRequestResultCode = -15
+	CreateWithdrawalRequestResultCodeWithdrawalTasksNotFound        CreateWithdrawalRequestResultCode = -16
+	CreateWithdrawalRequestResultCodeNotAllowedToSetWithdrawalTasks CreateWithdrawalRequestResultCode = -17
 )
 
 var CreateWithdrawalRequestResultCodeAll = []CreateWithdrawalRequestResultCode{
@@ -14771,6 +15494,8 @@ var CreateWithdrawalRequestResultCodeAll = []CreateWithdrawalRequestResultCode{
 	CreateWithdrawalRequestResultCodeLimitsExceeded,
 	CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails,
 	CreateWithdrawalRequestResultCodeLowerBoundNotExceeded,
+	CreateWithdrawalRequestResultCodeWithdrawalTasksNotFound,
+	CreateWithdrawalRequestResultCodeNotAllowedToSetWithdrawalTasks,
 }
 
 var createWithdrawalRequestResultCodeMap = map[int32]string{
@@ -14790,6 +15515,8 @@ var createWithdrawalRequestResultCodeMap = map[int32]string{
 	-13: "CreateWithdrawalRequestResultCodeLimitsExceeded",
 	-14: "CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails",
 	-15: "CreateWithdrawalRequestResultCodeLowerBoundNotExceeded",
+	-16: "CreateWithdrawalRequestResultCodeWithdrawalTasksNotFound",
+	-17: "CreateWithdrawalRequestResultCodeNotAllowedToSetWithdrawalTasks",
 }
 
 var createWithdrawalRequestResultCodeShortMap = map[int32]string{
@@ -14809,25 +15536,29 @@ var createWithdrawalRequestResultCodeShortMap = map[int32]string{
 	-13: "limits_exceeded",
 	-14: "invalid_pre_confirmation_details",
 	-15: "lower_bound_not_exceeded",
+	-16: "withdrawal_tasks_not_found",
+	-17: "not_allowed_to_set_withdrawal_tasks",
 }
 
 var createWithdrawalRequestResultCodeRevMap = map[string]int32{
-	"CreateWithdrawalRequestResultCodeSuccess":                       0,
-	"CreateWithdrawalRequestResultCodeInvalidAmount":                 -1,
-	"CreateWithdrawalRequestResultCodeInvalidExternalDetails":        -2,
-	"CreateWithdrawalRequestResultCodeBalanceNotFound":               -3,
-	"CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable":        -4,
-	"CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable": -5,
-	"CreateWithdrawalRequestResultCodeFeeMismatched":                 -6,
-	"CreateWithdrawalRequestResultCodeConversionOverflow":            -7,
-	"CreateWithdrawalRequestResultCodeConvertedAmountMismatched":     -8,
-	"CreateWithdrawalRequestResultCodeBalanceLockOverflow":           -9,
-	"CreateWithdrawalRequestResultCodeUnderfunded":                   -10,
-	"CreateWithdrawalRequestResultCodeInvalidUniversalAmount":        -11,
-	"CreateWithdrawalRequestResultCodeStatsOverflow":                 -12,
-	"CreateWithdrawalRequestResultCodeLimitsExceeded":                -13,
-	"CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails": -14,
-	"CreateWithdrawalRequestResultCodeLowerBoundNotExceeded":         -15,
+	"CreateWithdrawalRequestResultCodeSuccess":                        0,
+	"CreateWithdrawalRequestResultCodeInvalidAmount":                  -1,
+	"CreateWithdrawalRequestResultCodeInvalidExternalDetails":         -2,
+	"CreateWithdrawalRequestResultCodeBalanceNotFound":                -3,
+	"CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable":         -4,
+	"CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable":  -5,
+	"CreateWithdrawalRequestResultCodeFeeMismatched":                  -6,
+	"CreateWithdrawalRequestResultCodeConversionOverflow":             -7,
+	"CreateWithdrawalRequestResultCodeConvertedAmountMismatched":      -8,
+	"CreateWithdrawalRequestResultCodeBalanceLockOverflow":            -9,
+	"CreateWithdrawalRequestResultCodeUnderfunded":                    -10,
+	"CreateWithdrawalRequestResultCodeInvalidUniversalAmount":         -11,
+	"CreateWithdrawalRequestResultCodeStatsOverflow":                  -12,
+	"CreateWithdrawalRequestResultCodeLimitsExceeded":                 -13,
+	"CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails":  -14,
+	"CreateWithdrawalRequestResultCodeLowerBoundNotExceeded":          -15,
+	"CreateWithdrawalRequestResultCodeWithdrawalTasksNotFound":        -16,
+	"CreateWithdrawalRequestResultCodeNotAllowedToSetWithdrawalTasks": -17,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -15371,6 +16102,1360 @@ func (u DirectDebitResult) MustSuccess() DirectDebitSuccess {
 // GetSuccess retrieves the Success value from the union,
 // returning ok if the union's switch indicated the value is valid.
 func (u DirectDebitResult) GetSuccess() (result DirectDebitSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// ManageAccountRolePermissionOpAction is an XDR Enum defines as:
+//
+//   enum ManageAccountRolePermissionOpAction
+//    {
+//        CREATE = 0,
+//        UPDATE = 1,
+//        REMOVE = 2
+//    };
+//
+type ManageAccountRolePermissionOpAction int32
+
+const (
+	ManageAccountRolePermissionOpActionCreate ManageAccountRolePermissionOpAction = 0
+	ManageAccountRolePermissionOpActionUpdate ManageAccountRolePermissionOpAction = 1
+	ManageAccountRolePermissionOpActionRemove ManageAccountRolePermissionOpAction = 2
+)
+
+var ManageAccountRolePermissionOpActionAll = []ManageAccountRolePermissionOpAction{
+	ManageAccountRolePermissionOpActionCreate,
+	ManageAccountRolePermissionOpActionUpdate,
+	ManageAccountRolePermissionOpActionRemove,
+}
+
+var manageAccountRolePermissionOpActionMap = map[int32]string{
+	0: "ManageAccountRolePermissionOpActionCreate",
+	1: "ManageAccountRolePermissionOpActionUpdate",
+	2: "ManageAccountRolePermissionOpActionRemove",
+}
+
+var manageAccountRolePermissionOpActionShortMap = map[int32]string{
+	0: "create",
+	1: "update",
+	2: "remove",
+}
+
+var manageAccountRolePermissionOpActionRevMap = map[string]int32{
+	"ManageAccountRolePermissionOpActionCreate": 0,
+	"ManageAccountRolePermissionOpActionUpdate": 1,
+	"ManageAccountRolePermissionOpActionRemove": 2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageAccountRolePermissionOpAction
+func (e ManageAccountRolePermissionOpAction) ValidEnum(v int32) bool {
+	_, ok := manageAccountRolePermissionOpActionMap[v]
+	return ok
+}
+func (e ManageAccountRolePermissionOpAction) isFlag() bool {
+	for i := len(ManageAccountRolePermissionOpActionAll) - 1; i >= 0; i-- {
+		expected := ManageAccountRolePermissionOpAction(2) << uint64(len(ManageAccountRolePermissionOpActionAll)-1) >> uint64(len(ManageAccountRolePermissionOpActionAll)-i)
+		if expected != ManageAccountRolePermissionOpActionAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManageAccountRolePermissionOpAction) String() string {
+	name, _ := manageAccountRolePermissionOpActionMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountRolePermissionOpAction) ShortString() string {
+	name, _ := manageAccountRolePermissionOpActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountRolePermissionOpAction) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManageAccountRolePermissionOpActionAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManageAccountRolePermissionOpAction) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManageAccountRolePermissionOpAction(t.Value)
+	return nil
+}
+
+// CreateAccountRolePermissionDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateAccountRolePermissionDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateAccountRolePermissionDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateAccountRolePermissionDataExt
+func (u CreateAccountRolePermissionDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateAccountRolePermissionDataExt creates a new  CreateAccountRolePermissionDataExt.
+func NewCreateAccountRolePermissionDataExt(v LedgerVersion, value interface{}) (result CreateAccountRolePermissionDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateAccountRolePermissionData is an XDR Struct defines as:
+//
+//   struct CreateAccountRolePermissionData
+//    {
+//        uint64 roleID;
+//        OperationType opType;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type CreateAccountRolePermissionData struct {
+	RoleId Uint64                             `json:"roleID,omitempty"`
+	OpType OperationType                      `json:"opType,omitempty"`
+	Ext    CreateAccountRolePermissionDataExt `json:"ext,omitempty"`
+}
+
+// UpdateAccountRolePermissionDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type UpdateAccountRolePermissionDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u UpdateAccountRolePermissionDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of UpdateAccountRolePermissionDataExt
+func (u UpdateAccountRolePermissionDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewUpdateAccountRolePermissionDataExt creates a new  UpdateAccountRolePermissionDataExt.
+func NewUpdateAccountRolePermissionDataExt(v LedgerVersion, value interface{}) (result UpdateAccountRolePermissionDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// UpdateAccountRolePermissionData is an XDR Struct defines as:
+//
+//   struct UpdateAccountRolePermissionData
+//    {
+//        uint64 permissionID;
+//        uint64 roleID;
+//        OperationType opType;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type UpdateAccountRolePermissionData struct {
+	PermissionId Uint64                             `json:"permissionID,omitempty"`
+	RoleId       Uint64                             `json:"roleID,omitempty"`
+	OpType       OperationType                      `json:"opType,omitempty"`
+	Ext          UpdateAccountRolePermissionDataExt `json:"ext,omitempty"`
+}
+
+// RemoveAccountRolePermissionDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveAccountRolePermissionDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAccountRolePermissionDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAccountRolePermissionDataExt
+func (u RemoveAccountRolePermissionDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveAccountRolePermissionDataExt creates a new  RemoveAccountRolePermissionDataExt.
+func NewRemoveAccountRolePermissionDataExt(v LedgerVersion, value interface{}) (result RemoveAccountRolePermissionDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveAccountRolePermissionData is an XDR Struct defines as:
+//
+//   struct RemoveAccountRolePermissionData
+//    {
+//        uint64 permissionID;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type RemoveAccountRolePermissionData struct {
+	PermissionId Uint64                             `json:"permissionID,omitempty"`
+	Ext          RemoveAccountRolePermissionDataExt `json:"ext,omitempty"`
+}
+
+// ManageAccountRolePermissionOpData is an XDR NestedUnion defines as:
+//
+//   union switch (ManageAccountRolePermissionOpAction action)
+//        {
+//        case CREATE:
+//            CreateAccountRolePermissionData createData;
+//        case UPDATE:
+//            UpdateAccountRolePermissionData updateData;
+//        case REMOVE:
+//            RemoveAccountRolePermissionData removeData;
+//        }
+//
+type ManageAccountRolePermissionOpData struct {
+	Action     ManageAccountRolePermissionOpAction `json:"action,omitempty"`
+	CreateData *CreateAccountRolePermissionData    `json:"createData,omitempty"`
+	UpdateData *UpdateAccountRolePermissionData    `json:"updateData,omitempty"`
+	RemoveData *RemoveAccountRolePermissionData    `json:"removeData,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountRolePermissionOpData) SwitchFieldName() string {
+	return "Action"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountRolePermissionOpData
+func (u ManageAccountRolePermissionOpData) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageAccountRolePermissionOpAction(sw) {
+	case ManageAccountRolePermissionOpActionCreate:
+		return "CreateData", true
+	case ManageAccountRolePermissionOpActionUpdate:
+		return "UpdateData", true
+	case ManageAccountRolePermissionOpActionRemove:
+		return "RemoveData", true
+	}
+	return "-", false
+}
+
+// NewManageAccountRolePermissionOpData creates a new  ManageAccountRolePermissionOpData.
+func NewManageAccountRolePermissionOpData(action ManageAccountRolePermissionOpAction, value interface{}) (result ManageAccountRolePermissionOpData, err error) {
+	result.Action = action
+	switch ManageAccountRolePermissionOpAction(action) {
+	case ManageAccountRolePermissionOpActionCreate:
+		tv, ok := value.(CreateAccountRolePermissionData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateAccountRolePermissionData")
+			return
+		}
+		result.CreateData = &tv
+	case ManageAccountRolePermissionOpActionUpdate:
+		tv, ok := value.(UpdateAccountRolePermissionData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be UpdateAccountRolePermissionData")
+			return
+		}
+		result.UpdateData = &tv
+	case ManageAccountRolePermissionOpActionRemove:
+		tv, ok := value.(RemoveAccountRolePermissionData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAccountRolePermissionData")
+			return
+		}
+		result.RemoveData = &tv
+	}
+	return
+}
+
+// MustCreateData retrieves the CreateData value from the union,
+// panicing if the value is not set.
+func (u ManageAccountRolePermissionOpData) MustCreateData() CreateAccountRolePermissionData {
+	val, ok := u.GetCreateData()
+
+	if !ok {
+		panic("arm CreateData is not set")
+	}
+
+	return val
+}
+
+// GetCreateData retrieves the CreateData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAccountRolePermissionOpData) GetCreateData() (result CreateAccountRolePermissionData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "CreateData" {
+		result = *u.CreateData
+		ok = true
+	}
+
+	return
+}
+
+// MustUpdateData retrieves the UpdateData value from the union,
+// panicing if the value is not set.
+func (u ManageAccountRolePermissionOpData) MustUpdateData() UpdateAccountRolePermissionData {
+	val, ok := u.GetUpdateData()
+
+	if !ok {
+		panic("arm UpdateData is not set")
+	}
+
+	return val
+}
+
+// GetUpdateData retrieves the UpdateData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAccountRolePermissionOpData) GetUpdateData() (result UpdateAccountRolePermissionData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "UpdateData" {
+		result = *u.UpdateData
+		ok = true
+	}
+
+	return
+}
+
+// MustRemoveData retrieves the RemoveData value from the union,
+// panicing if the value is not set.
+func (u ManageAccountRolePermissionOpData) MustRemoveData() RemoveAccountRolePermissionData {
+	val, ok := u.GetRemoveData()
+
+	if !ok {
+		panic("arm RemoveData is not set")
+	}
+
+	return val
+}
+
+// GetRemoveData retrieves the RemoveData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAccountRolePermissionOpData) GetRemoveData() (result RemoveAccountRolePermissionData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "RemoveData" {
+		result = *u.RemoveData
+		ok = true
+	}
+
+	return
+}
+
+// ManageAccountRolePermissionOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageAccountRolePermissionOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountRolePermissionOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountRolePermissionOpExt
+func (u ManageAccountRolePermissionOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAccountRolePermissionOpExt creates a new  ManageAccountRolePermissionOpExt.
+func NewManageAccountRolePermissionOpExt(v LedgerVersion, value interface{}) (result ManageAccountRolePermissionOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAccountRolePermissionOp is an XDR Struct defines as:
+//
+//   struct ManageAccountRolePermissionOp
+//    {
+//        union switch (ManageAccountRolePermissionOpAction action)
+//        {
+//        case CREATE:
+//            CreateAccountRolePermissionData createData;
+//        case UPDATE:
+//            UpdateAccountRolePermissionData updateData;
+//        case REMOVE:
+//            RemoveAccountRolePermissionData removeData;
+//        } data;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageAccountRolePermissionOp struct {
+	Data ManageAccountRolePermissionOpData `json:"data,omitempty"`
+	Ext  ManageAccountRolePermissionOpExt  `json:"ext,omitempty"`
+}
+
+// ManageAccountRolePermissionResultCode is an XDR Enum defines as:
+//
+//   enum ManageAccountRolePermissionResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        NOT_FOUND = -1,
+//        PERMISSION_ALREADY_EXISTS = -2
+//    };
+//
+type ManageAccountRolePermissionResultCode int32
+
+const (
+	ManageAccountRolePermissionResultCodeSuccess                 ManageAccountRolePermissionResultCode = 0
+	ManageAccountRolePermissionResultCodeNotFound                ManageAccountRolePermissionResultCode = -1
+	ManageAccountRolePermissionResultCodePermissionAlreadyExists ManageAccountRolePermissionResultCode = -2
+)
+
+var ManageAccountRolePermissionResultCodeAll = []ManageAccountRolePermissionResultCode{
+	ManageAccountRolePermissionResultCodeSuccess,
+	ManageAccountRolePermissionResultCodeNotFound,
+	ManageAccountRolePermissionResultCodePermissionAlreadyExists,
+}
+
+var manageAccountRolePermissionResultCodeMap = map[int32]string{
+	0:  "ManageAccountRolePermissionResultCodeSuccess",
+	-1: "ManageAccountRolePermissionResultCodeNotFound",
+	-2: "ManageAccountRolePermissionResultCodePermissionAlreadyExists",
+}
+
+var manageAccountRolePermissionResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+	-2: "permission_already_exists",
+}
+
+var manageAccountRolePermissionResultCodeRevMap = map[string]int32{
+	"ManageAccountRolePermissionResultCodeSuccess":                 0,
+	"ManageAccountRolePermissionResultCodeNotFound":                -1,
+	"ManageAccountRolePermissionResultCodePermissionAlreadyExists": -2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageAccountRolePermissionResultCode
+func (e ManageAccountRolePermissionResultCode) ValidEnum(v int32) bool {
+	_, ok := manageAccountRolePermissionResultCodeMap[v]
+	return ok
+}
+func (e ManageAccountRolePermissionResultCode) isFlag() bool {
+	for i := len(ManageAccountRolePermissionResultCodeAll) - 1; i >= 0; i-- {
+		expected := ManageAccountRolePermissionResultCode(2) << uint64(len(ManageAccountRolePermissionResultCodeAll)-1) >> uint64(len(ManageAccountRolePermissionResultCodeAll)-i)
+		if expected != ManageAccountRolePermissionResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManageAccountRolePermissionResultCode) String() string {
+	name, _ := manageAccountRolePermissionResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountRolePermissionResultCode) ShortString() string {
+	name, _ := manageAccountRolePermissionResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountRolePermissionResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManageAccountRolePermissionResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManageAccountRolePermissionResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManageAccountRolePermissionResultCode(t.Value)
+	return nil
+}
+
+// ManageAccountRolePermissionResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//                {
+//                case EMPTY_VERSION:
+//                    void;
+//                }
+//
+type ManageAccountRolePermissionResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountRolePermissionResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountRolePermissionResultSuccessExt
+func (u ManageAccountRolePermissionResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAccountRolePermissionResultSuccessExt creates a new  ManageAccountRolePermissionResultSuccessExt.
+func NewManageAccountRolePermissionResultSuccessExt(v LedgerVersion, value interface{}) (result ManageAccountRolePermissionResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAccountRolePermissionResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct {
+//                uint64 permissionID;
+//
+//                // reserved for future use
+//                union switch (LedgerVersion v)
+//                {
+//                case EMPTY_VERSION:
+//                    void;
+//                }
+//                ext;
+//            }
+//
+type ManageAccountRolePermissionResultSuccess struct {
+	PermissionId Uint64                                      `json:"permissionID,omitempty"`
+	Ext          ManageAccountRolePermissionResultSuccessExt `json:"ext,omitempty"`
+}
+
+// ManageAccountRolePermissionResult is an XDR Union defines as:
+//
+//   union ManageAccountRolePermissionResult switch (ManageAccountRolePermissionResultCode code)
+//    {
+//        case SUCCESS:
+//            struct {
+//                uint64 permissionID;
+//
+//                // reserved for future use
+//                union switch (LedgerVersion v)
+//                {
+//                case EMPTY_VERSION:
+//                    void;
+//                }
+//                ext;
+//            } success;
+//        default:
+//            void;
+//    };
+//
+type ManageAccountRolePermissionResult struct {
+	Code    ManageAccountRolePermissionResultCode     `json:"code,omitempty"`
+	Success *ManageAccountRolePermissionResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountRolePermissionResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountRolePermissionResult
+func (u ManageAccountRolePermissionResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageAccountRolePermissionResultCode(sw) {
+	case ManageAccountRolePermissionResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageAccountRolePermissionResult creates a new  ManageAccountRolePermissionResult.
+func NewManageAccountRolePermissionResult(code ManageAccountRolePermissionResultCode, value interface{}) (result ManageAccountRolePermissionResult, err error) {
+	result.Code = code
+	switch ManageAccountRolePermissionResultCode(code) {
+	case ManageAccountRolePermissionResultCodeSuccess:
+		tv, ok := value.(ManageAccountRolePermissionResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageAccountRolePermissionResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageAccountRolePermissionResult) MustSuccess() ManageAccountRolePermissionResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAccountRolePermissionResult) GetSuccess() (result ManageAccountRolePermissionResultSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// ManageAccountRoleOpAction is an XDR Enum defines as:
+//
+//   enum ManageAccountRoleOpAction
+//    {
+//        CREATE = 0,
+//        REMOVE = 1
+//    };
+//
+type ManageAccountRoleOpAction int32
+
+const (
+	ManageAccountRoleOpActionCreate ManageAccountRoleOpAction = 0
+	ManageAccountRoleOpActionRemove ManageAccountRoleOpAction = 1
+)
+
+var ManageAccountRoleOpActionAll = []ManageAccountRoleOpAction{
+	ManageAccountRoleOpActionCreate,
+	ManageAccountRoleOpActionRemove,
+}
+
+var manageAccountRoleOpActionMap = map[int32]string{
+	0: "ManageAccountRoleOpActionCreate",
+	1: "ManageAccountRoleOpActionRemove",
+}
+
+var manageAccountRoleOpActionShortMap = map[int32]string{
+	0: "create",
+	1: "remove",
+}
+
+var manageAccountRoleOpActionRevMap = map[string]int32{
+	"ManageAccountRoleOpActionCreate": 0,
+	"ManageAccountRoleOpActionRemove": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageAccountRoleOpAction
+func (e ManageAccountRoleOpAction) ValidEnum(v int32) bool {
+	_, ok := manageAccountRoleOpActionMap[v]
+	return ok
+}
+func (e ManageAccountRoleOpAction) isFlag() bool {
+	for i := len(ManageAccountRoleOpActionAll) - 1; i >= 0; i-- {
+		expected := ManageAccountRoleOpAction(2) << uint64(len(ManageAccountRoleOpActionAll)-1) >> uint64(len(ManageAccountRoleOpActionAll)-i)
+		if expected != ManageAccountRoleOpActionAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManageAccountRoleOpAction) String() string {
+	name, _ := manageAccountRoleOpActionMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountRoleOpAction) ShortString() string {
+	name, _ := manageAccountRoleOpActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountRoleOpAction) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManageAccountRoleOpActionAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManageAccountRoleOpAction) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManageAccountRoleOpAction(t.Value)
+	return nil
+}
+
+// CreateAccountRoleDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateAccountRoleDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateAccountRoleDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateAccountRoleDataExt
+func (u CreateAccountRoleDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateAccountRoleDataExt creates a new  CreateAccountRoleDataExt.
+func NewCreateAccountRoleDataExt(v LedgerVersion, value interface{}) (result CreateAccountRoleDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateAccountRoleData is an XDR Struct defines as:
+//
+//   struct CreateAccountRoleData
+//    {
+//        longstring name;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type CreateAccountRoleData struct {
+	Name Longstring               `json:"name,omitempty"`
+	Ext  CreateAccountRoleDataExt `json:"ext,omitempty"`
+}
+
+// RemoveAccountRoleDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveAccountRoleDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAccountRoleDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAccountRoleDataExt
+func (u RemoveAccountRoleDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveAccountRoleDataExt creates a new  RemoveAccountRoleDataExt.
+func NewRemoveAccountRoleDataExt(v LedgerVersion, value interface{}) (result RemoveAccountRoleDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveAccountRoleData is an XDR Struct defines as:
+//
+//   struct RemoveAccountRoleData
+//    {
+//        uint64 accountRoleID;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type RemoveAccountRoleData struct {
+	AccountRoleId Uint64                   `json:"accountRoleID,omitempty"`
+	Ext           RemoveAccountRoleDataExt `json:"ext,omitempty"`
+}
+
+// ManageAccountRoleOpData is an XDR NestedUnion defines as:
+//
+//   union switch (ManageAccountRoleOpAction action)
+//        {
+//        case CREATE:
+//            CreateAccountRoleData createData;
+//        case REMOVE:
+//            RemoveAccountRoleData removeData;
+//        }
+//
+type ManageAccountRoleOpData struct {
+	Action     ManageAccountRoleOpAction `json:"action,omitempty"`
+	CreateData *CreateAccountRoleData    `json:"createData,omitempty"`
+	RemoveData *RemoveAccountRoleData    `json:"removeData,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountRoleOpData) SwitchFieldName() string {
+	return "Action"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountRoleOpData
+func (u ManageAccountRoleOpData) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageAccountRoleOpAction(sw) {
+	case ManageAccountRoleOpActionCreate:
+		return "CreateData", true
+	case ManageAccountRoleOpActionRemove:
+		return "RemoveData", true
+	}
+	return "-", false
+}
+
+// NewManageAccountRoleOpData creates a new  ManageAccountRoleOpData.
+func NewManageAccountRoleOpData(action ManageAccountRoleOpAction, value interface{}) (result ManageAccountRoleOpData, err error) {
+	result.Action = action
+	switch ManageAccountRoleOpAction(action) {
+	case ManageAccountRoleOpActionCreate:
+		tv, ok := value.(CreateAccountRoleData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateAccountRoleData")
+			return
+		}
+		result.CreateData = &tv
+	case ManageAccountRoleOpActionRemove:
+		tv, ok := value.(RemoveAccountRoleData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAccountRoleData")
+			return
+		}
+		result.RemoveData = &tv
+	}
+	return
+}
+
+// MustCreateData retrieves the CreateData value from the union,
+// panicing if the value is not set.
+func (u ManageAccountRoleOpData) MustCreateData() CreateAccountRoleData {
+	val, ok := u.GetCreateData()
+
+	if !ok {
+		panic("arm CreateData is not set")
+	}
+
+	return val
+}
+
+// GetCreateData retrieves the CreateData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAccountRoleOpData) GetCreateData() (result CreateAccountRoleData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "CreateData" {
+		result = *u.CreateData
+		ok = true
+	}
+
+	return
+}
+
+// MustRemoveData retrieves the RemoveData value from the union,
+// panicing if the value is not set.
+func (u ManageAccountRoleOpData) MustRemoveData() RemoveAccountRoleData {
+	val, ok := u.GetRemoveData()
+
+	if !ok {
+		panic("arm RemoveData is not set")
+	}
+
+	return val
+}
+
+// GetRemoveData retrieves the RemoveData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAccountRoleOpData) GetRemoveData() (result RemoveAccountRoleData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "RemoveData" {
+		result = *u.RemoveData
+		ok = true
+	}
+
+	return
+}
+
+// ManageAccountRoleOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageAccountRoleOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountRoleOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountRoleOpExt
+func (u ManageAccountRoleOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAccountRoleOpExt creates a new  ManageAccountRoleOpExt.
+func NewManageAccountRoleOpExt(v LedgerVersion, value interface{}) (result ManageAccountRoleOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAccountRoleOp is an XDR Struct defines as:
+//
+//   struct ManageAccountRoleOp
+//    {
+//        union switch (ManageAccountRoleOpAction action)
+//        {
+//        case CREATE:
+//            CreateAccountRoleData createData;
+//        case REMOVE:
+//            RemoveAccountRoleData removeData;
+//        } data;
+//
+//        // reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageAccountRoleOp struct {
+	Data ManageAccountRoleOpData `json:"data,omitempty"`
+	Ext  ManageAccountRoleOpExt  `json:"ext,omitempty"`
+}
+
+// ManageAccountRoleResultCode is an XDR Enum defines as:
+//
+//   enum ManageAccountRoleResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        NOT_FOUND = -1
+//    };
+//
+type ManageAccountRoleResultCode int32
+
+const (
+	ManageAccountRoleResultCodeSuccess  ManageAccountRoleResultCode = 0
+	ManageAccountRoleResultCodeNotFound ManageAccountRoleResultCode = -1
+)
+
+var ManageAccountRoleResultCodeAll = []ManageAccountRoleResultCode{
+	ManageAccountRoleResultCodeSuccess,
+	ManageAccountRoleResultCodeNotFound,
+}
+
+var manageAccountRoleResultCodeMap = map[int32]string{
+	0:  "ManageAccountRoleResultCodeSuccess",
+	-1: "ManageAccountRoleResultCodeNotFound",
+}
+
+var manageAccountRoleResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+}
+
+var manageAccountRoleResultCodeRevMap = map[string]int32{
+	"ManageAccountRoleResultCodeSuccess":  0,
+	"ManageAccountRoleResultCodeNotFound": -1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageAccountRoleResultCode
+func (e ManageAccountRoleResultCode) ValidEnum(v int32) bool {
+	_, ok := manageAccountRoleResultCodeMap[v]
+	return ok
+}
+func (e ManageAccountRoleResultCode) isFlag() bool {
+	for i := len(ManageAccountRoleResultCodeAll) - 1; i >= 0; i-- {
+		expected := ManageAccountRoleResultCode(2) << uint64(len(ManageAccountRoleResultCodeAll)-1) >> uint64(len(ManageAccountRoleResultCodeAll)-i)
+		if expected != ManageAccountRoleResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManageAccountRoleResultCode) String() string {
+	name, _ := manageAccountRoleResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountRoleResultCode) ShortString() string {
+	name, _ := manageAccountRoleResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageAccountRoleResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManageAccountRoleResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManageAccountRoleResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManageAccountRoleResultCode(t.Value)
+	return nil
+}
+
+// ManageAccountRoleResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//                {
+//                case EMPTY_VERSION:
+//                    void;
+//                }
+//
+type ManageAccountRoleResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountRoleResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountRoleResultSuccessExt
+func (u ManageAccountRoleResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageAccountRoleResultSuccessExt creates a new  ManageAccountRoleResultSuccessExt.
+func NewManageAccountRoleResultSuccessExt(v LedgerVersion, value interface{}) (result ManageAccountRoleResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageAccountRoleResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct {
+//                uint64 accountRoleID;
+//
+//                // reserved for future use
+//                union switch (LedgerVersion v)
+//                {
+//                case EMPTY_VERSION:
+//                    void;
+//                }
+//                ext;
+//            }
+//
+type ManageAccountRoleResultSuccess struct {
+	AccountRoleId Uint64                            `json:"accountRoleID,omitempty"`
+	Ext           ManageAccountRoleResultSuccessExt `json:"ext,omitempty"`
+}
+
+// ManageAccountRoleResult is an XDR Union defines as:
+//
+//   union ManageAccountRoleResult switch (ManageAccountRoleResultCode code)
+//    {
+//        case SUCCESS:
+//            struct {
+//                uint64 accountRoleID;
+//
+//                // reserved for future use
+//                union switch (LedgerVersion v)
+//                {
+//                case EMPTY_VERSION:
+//                    void;
+//                }
+//                ext;
+//            } success;
+//        default:
+//            void;
+//    };
+//
+type ManageAccountRoleResult struct {
+	Code    ManageAccountRoleResultCode     `json:"code,omitempty"`
+	Success *ManageAccountRoleResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageAccountRoleResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageAccountRoleResult
+func (u ManageAccountRoleResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageAccountRoleResultCode(sw) {
+	case ManageAccountRoleResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageAccountRoleResult creates a new  ManageAccountRoleResult.
+func NewManageAccountRoleResult(code ManageAccountRoleResultCode, value interface{}) (result ManageAccountRoleResult, err error) {
+	result.Code = code
+	switch ManageAccountRoleResultCode(code) {
+	case ManageAccountRoleResultCodeSuccess:
+		tv, ok := value.(ManageAccountRoleResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageAccountRoleResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageAccountRoleResult) MustSuccess() ManageAccountRoleResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageAccountRoleResult) GetSuccess() (result ManageAccountRoleResultSuccess, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Code))
 
 	if armName == "Success" {
@@ -16666,7 +18751,11 @@ type ManageAssetOp struct {
 //    	REQUEST_ALREADY_EXISTS = -9,      // request for creation of unique entry already exists
 //    	STATS_ASSET_ALREADY_EXISTS = -10, // statistics quote asset already exists
 //    	INITIAL_PREISSUED_EXCEEDS_MAX_ISSUANCE = -11, // initial pre issued amount exceeds max issuance amount
-//    	INVALID_DETAILS = -12 // details must be a valid json
+//        INVALID_DETAILS = -12,                        // details must be a valid json
+//        INVALID_TRAILING_DIGITS_COUNT = -13,          // invalid number of trailing digits
+//        INVALID_PREISSUED_AMOUNT_PRECISION = -14,     // initial pre issued amount does not match precision set by trailing digits count
+//        INVALID_MAX_ISSUANCE_AMOUNT_PRECISION = -15,   // maximum issuance amount does not match precision set by trailing digits count
+//        INCOMPATIBLE_POLICIES = -16 // policies set in request are incompatible(i.e. WITHDRAWABLE and WITHDRAWA
 //    };
 //
 type ManageAssetResultCode int32
@@ -16683,6 +18772,10 @@ const (
 	ManageAssetResultCodeStatsAssetAlreadyExists            ManageAssetResultCode = -10
 	ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance ManageAssetResultCode = -11
 	ManageAssetResultCodeInvalidDetails                     ManageAssetResultCode = -12
+	ManageAssetResultCodeInvalidTrailingDigitsCount         ManageAssetResultCode = -13
+	ManageAssetResultCodeInvalidPreissuedAmountPrecision    ManageAssetResultCode = -14
+	ManageAssetResultCodeInvalidMaxIssuanceAmountPrecision  ManageAssetResultCode = -15
+	ManageAssetResultCodeIncompatiblePolicies               ManageAssetResultCode = -16
 )
 
 var ManageAssetResultCodeAll = []ManageAssetResultCode{
@@ -16697,6 +18790,10 @@ var ManageAssetResultCodeAll = []ManageAssetResultCode{
 	ManageAssetResultCodeStatsAssetAlreadyExists,
 	ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance,
 	ManageAssetResultCodeInvalidDetails,
+	ManageAssetResultCodeInvalidTrailingDigitsCount,
+	ManageAssetResultCodeInvalidPreissuedAmountPrecision,
+	ManageAssetResultCodeInvalidMaxIssuanceAmountPrecision,
+	ManageAssetResultCodeIncompatiblePolicies,
 }
 
 var manageAssetResultCodeMap = map[int32]string{
@@ -16711,6 +18808,10 @@ var manageAssetResultCodeMap = map[int32]string{
 	-10: "ManageAssetResultCodeStatsAssetAlreadyExists",
 	-11: "ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance",
 	-12: "ManageAssetResultCodeInvalidDetails",
+	-13: "ManageAssetResultCodeInvalidTrailingDigitsCount",
+	-14: "ManageAssetResultCodeInvalidPreissuedAmountPrecision",
+	-15: "ManageAssetResultCodeInvalidMaxIssuanceAmountPrecision",
+	-16: "ManageAssetResultCodeIncompatiblePolicies",
 }
 
 var manageAssetResultCodeShortMap = map[int32]string{
@@ -16725,6 +18826,10 @@ var manageAssetResultCodeShortMap = map[int32]string{
 	-10: "stats_asset_already_exists",
 	-11: "initial_preissued_exceeds_max_issuance",
 	-12: "invalid_details",
+	-13: "invalid_trailing_digits_count",
+	-14: "invalid_preissued_amount_precision",
+	-15: "invalid_max_issuance_amount_precision",
+	-16: "incompatible_policies",
 }
 
 var manageAssetResultCodeRevMap = map[string]int32{
@@ -16739,6 +18844,10 @@ var manageAssetResultCodeRevMap = map[string]int32{
 	"ManageAssetResultCodeStatsAssetAlreadyExists":            -10,
 	"ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance": -11,
 	"ManageAssetResultCodeInvalidDetails":                     -12,
+	"ManageAssetResultCodeInvalidTrailingDigitsCount":         -13,
+	"ManageAssetResultCodeInvalidPreissuedAmountPrecision":    -14,
+	"ManageAssetResultCodeInvalidMaxIssuanceAmountPrecision":  -15,
+	"ManageAssetResultCodeIncompatiblePolicies":               -16,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -18379,7 +20488,8 @@ type ManageContractOp struct {
 //        ALREADY_CONFIRMED = -6,
 //        INVOICE_NOT_APPROVED = -7, // all contract invoices must be approved
 //        DISPUTE_ALREADY_STARTED = -8,
-//        CUSTOMER_BALANCE_OVERFLOW = -9
+//        CUSTOMER_BALANCE_OVERFLOW = -9,
+//        INCORRECT_PRECISION = -10
 //    };
 //
 type ManageContractResultCode int32
@@ -18395,6 +20505,7 @@ const (
 	ManageContractResultCodeInvoiceNotApproved      ManageContractResultCode = -7
 	ManageContractResultCodeDisputeAlreadyStarted   ManageContractResultCode = -8
 	ManageContractResultCodeCustomerBalanceOverflow ManageContractResultCode = -9
+	ManageContractResultCodeIncorrectPrecision      ManageContractResultCode = -10
 )
 
 var ManageContractResultCodeAll = []ManageContractResultCode{
@@ -18408,32 +20519,35 @@ var ManageContractResultCodeAll = []ManageContractResultCode{
 	ManageContractResultCodeInvoiceNotApproved,
 	ManageContractResultCodeDisputeAlreadyStarted,
 	ManageContractResultCodeCustomerBalanceOverflow,
+	ManageContractResultCodeIncorrectPrecision,
 }
 
 var manageContractResultCodeMap = map[int32]string{
-	0:  "ManageContractResultCodeSuccess",
-	-1: "ManageContractResultCodeMalformed",
-	-2: "ManageContractResultCodeNotFound",
-	-3: "ManageContractResultCodeNotAllowed",
-	-4: "ManageContractResultCodeDetailsTooLong",
-	-5: "ManageContractResultCodeDisputeReasonTooLong",
-	-6: "ManageContractResultCodeAlreadyConfirmed",
-	-7: "ManageContractResultCodeInvoiceNotApproved",
-	-8: "ManageContractResultCodeDisputeAlreadyStarted",
-	-9: "ManageContractResultCodeCustomerBalanceOverflow",
+	0:   "ManageContractResultCodeSuccess",
+	-1:  "ManageContractResultCodeMalformed",
+	-2:  "ManageContractResultCodeNotFound",
+	-3:  "ManageContractResultCodeNotAllowed",
+	-4:  "ManageContractResultCodeDetailsTooLong",
+	-5:  "ManageContractResultCodeDisputeReasonTooLong",
+	-6:  "ManageContractResultCodeAlreadyConfirmed",
+	-7:  "ManageContractResultCodeInvoiceNotApproved",
+	-8:  "ManageContractResultCodeDisputeAlreadyStarted",
+	-9:  "ManageContractResultCodeCustomerBalanceOverflow",
+	-10: "ManageContractResultCodeIncorrectPrecision",
 }
 
 var manageContractResultCodeShortMap = map[int32]string{
-	0:  "success",
-	-1: "malformed",
-	-2: "not_found",
-	-3: "not_allowed",
-	-4: "details_too_long",
-	-5: "dispute_reason_too_long",
-	-6: "already_confirmed",
-	-7: "invoice_not_approved",
-	-8: "dispute_already_started",
-	-9: "customer_balance_overflow",
+	0:   "success",
+	-1:  "malformed",
+	-2:  "not_found",
+	-3:  "not_allowed",
+	-4:  "details_too_long",
+	-5:  "dispute_reason_too_long",
+	-6:  "already_confirmed",
+	-7:  "invoice_not_approved",
+	-8:  "dispute_already_started",
+	-9:  "customer_balance_overflow",
+	-10: "incorrect_precision",
 }
 
 var manageContractResultCodeRevMap = map[string]int32{
@@ -18447,6 +20561,7 @@ var manageContractResultCodeRevMap = map[string]int32{
 	"ManageContractResultCodeInvoiceNotApproved":      -7,
 	"ManageContractResultCodeDisputeAlreadyStarted":   -8,
 	"ManageContractResultCodeCustomerBalanceOverflow": -9,
+	"ManageContractResultCodeIncorrectPrecision":      -10,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -21349,7 +23464,8 @@ type ManageOfferOp struct {
 //    	REQUIRES_KYC = -24, // source must have KYC in order to participate
 //    	SOURCE_UNDERFUNDED = -25,
 //    	SOURCE_BALANCE_LOCK_OVERFLOW = -26,
-//    	REQUIRES_VERIFICATION = -27 // source must be verified in order to participate
+//    	REQUIRES_VERIFICATION = -27, // source must be verified in order to participate
+//    	INCORRECT_AMOUNT_PRECISION = -28
 //    };
 //
 type ManageOfferResultCode int32
@@ -21383,6 +23499,7 @@ const (
 	ManageOfferResultCodeSourceUnderfunded         ManageOfferResultCode = -25
 	ManageOfferResultCodeSourceBalanceLockOverflow ManageOfferResultCode = -26
 	ManageOfferResultCodeRequiresVerification      ManageOfferResultCode = -27
+	ManageOfferResultCodeIncorrectAmountPrecision  ManageOfferResultCode = -28
 )
 
 var ManageOfferResultCodeAll = []ManageOfferResultCode{
@@ -21414,6 +23531,7 @@ var ManageOfferResultCodeAll = []ManageOfferResultCode{
 	ManageOfferResultCodeSourceUnderfunded,
 	ManageOfferResultCodeSourceBalanceLockOverflow,
 	ManageOfferResultCodeRequiresVerification,
+	ManageOfferResultCodeIncorrectAmountPrecision,
 }
 
 var manageOfferResultCodeMap = map[int32]string{
@@ -21445,6 +23563,7 @@ var manageOfferResultCodeMap = map[int32]string{
 	-25: "ManageOfferResultCodeSourceUnderfunded",
 	-26: "ManageOfferResultCodeSourceBalanceLockOverflow",
 	-27: "ManageOfferResultCodeRequiresVerification",
+	-28: "ManageOfferResultCodeIncorrectAmountPrecision",
 }
 
 var manageOfferResultCodeShortMap = map[int32]string{
@@ -21476,6 +23595,7 @@ var manageOfferResultCodeShortMap = map[int32]string{
 	-25: "source_underfunded",
 	-26: "source_balance_lock_overflow",
 	-27: "requires_verification",
+	-28: "incorrect_amount_precision",
 }
 
 var manageOfferResultCodeRevMap = map[string]int32{
@@ -21507,6 +23627,7 @@ var manageOfferResultCodeRevMap = map[string]int32{
 	"ManageOfferResultCodeSourceUnderfunded":         -25,
 	"ManageOfferResultCodeSourceBalanceLockOverflow": -26,
 	"ManageOfferResultCodeRequiresVerification":      -27,
+	"ManageOfferResultCodeIncorrectAmountPrecision":  -28,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -23678,7 +25799,8 @@ type PaymentOpV2 struct {
 //        INSUFFICIENT_FEE_AMOUNT = -14,
 //        BALANCE_TO_CHARGE_FEE_FROM_NOT_FOUND = -15,
 //        PAYMENT_AMOUNT_IS_LESS_THAN_DEST_FEE = -16,
-//        DESTINATION_ACCOUNT_NOT_FOUND = -17
+//        DESTINATION_ACCOUNT_NOT_FOUND = -17,
+//        INCORRECT_AMOUNT_PRECISION = -18
 //
 //         // !!! Add new result code to review invoice op too !!!
 //    };
@@ -23704,6 +25826,7 @@ const (
 	PaymentV2ResultCodeBalanceToChargeFeeFromNotFound PaymentV2ResultCode = -15
 	PaymentV2ResultCodePaymentAmountIsLessThanDestFee PaymentV2ResultCode = -16
 	PaymentV2ResultCodeDestinationAccountNotFound     PaymentV2ResultCode = -17
+	PaymentV2ResultCodeIncorrectAmountPrecision       PaymentV2ResultCode = -18
 )
 
 var PaymentV2ResultCodeAll = []PaymentV2ResultCode{
@@ -23725,6 +25848,7 @@ var PaymentV2ResultCodeAll = []PaymentV2ResultCode{
 	PaymentV2ResultCodeBalanceToChargeFeeFromNotFound,
 	PaymentV2ResultCodePaymentAmountIsLessThanDestFee,
 	PaymentV2ResultCodeDestinationAccountNotFound,
+	PaymentV2ResultCodeIncorrectAmountPrecision,
 }
 
 var paymentV2ResultCodeMap = map[int32]string{
@@ -23746,6 +25870,7 @@ var paymentV2ResultCodeMap = map[int32]string{
 	-15: "PaymentV2ResultCodeBalanceToChargeFeeFromNotFound",
 	-16: "PaymentV2ResultCodePaymentAmountIsLessThanDestFee",
 	-17: "PaymentV2ResultCodeDestinationAccountNotFound",
+	-18: "PaymentV2ResultCodeIncorrectAmountPrecision",
 }
 
 var paymentV2ResultCodeShortMap = map[int32]string{
@@ -23767,6 +25892,7 @@ var paymentV2ResultCodeShortMap = map[int32]string{
 	-15: "balance_to_charge_fee_from_not_found",
 	-16: "payment_amount_is_less_than_dest_fee",
 	-17: "destination_account_not_found",
+	-18: "incorrect_amount_precision",
 }
 
 var paymentV2ResultCodeRevMap = map[string]int32{
@@ -23788,6 +25914,7 @@ var paymentV2ResultCodeRevMap = map[string]int32{
 	"PaymentV2ResultCodeBalanceToChargeFeeFromNotFound": -15,
 	"PaymentV2ResultCodePaymentAmountIsLessThanDestFee": -16,
 	"PaymentV2ResultCodeDestinationAccountNotFound":     -17,
+	"PaymentV2ResultCodeIncorrectAmountPrecision":       -18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -24671,7 +26798,8 @@ type PayoutOp struct {
 //        MIN_AMOUNT_TOO_BIG = -11, // there is no appropriate holders balances
 //        LINE_FULL = -12, // destination balance amount overflows
 //        STATS_OVERFLOW = -13, // source statistics overflow
-//        LIMITS_EXCEEDED = -14 // source account limit exceeded
+//        LIMITS_EXCEEDED = -14, // source account limit exceeded
+//        INCORRECT_PRECISION = -15 // asset does not allow amounts with such precision
 //    };
 //
 type PayoutResultCode int32
@@ -24692,6 +26820,7 @@ const (
 	PayoutResultCodeLineFull               PayoutResultCode = -12
 	PayoutResultCodeStatsOverflow          PayoutResultCode = -13
 	PayoutResultCodeLimitsExceeded         PayoutResultCode = -14
+	PayoutResultCodeIncorrectPrecision     PayoutResultCode = -15
 )
 
 var PayoutResultCodeAll = []PayoutResultCode{
@@ -24710,6 +26839,7 @@ var PayoutResultCodeAll = []PayoutResultCode{
 	PayoutResultCodeLineFull,
 	PayoutResultCodeStatsOverflow,
 	PayoutResultCodeLimitsExceeded,
+	PayoutResultCodeIncorrectPrecision,
 }
 
 var payoutResultCodeMap = map[int32]string{
@@ -24728,6 +26858,7 @@ var payoutResultCodeMap = map[int32]string{
 	-12: "PayoutResultCodeLineFull",
 	-13: "PayoutResultCodeStatsOverflow",
 	-14: "PayoutResultCodeLimitsExceeded",
+	-15: "PayoutResultCodeIncorrectPrecision",
 }
 
 var payoutResultCodeShortMap = map[int32]string{
@@ -24746,6 +26877,7 @@ var payoutResultCodeShortMap = map[int32]string{
 	-12: "line_full",
 	-13: "stats_overflow",
 	-14: "limits_exceeded",
+	-15: "incorrect_precision",
 }
 
 var payoutResultCodeRevMap = map[string]int32{
@@ -24764,6 +26896,7 @@ var payoutResultCodeRevMap = map[string]int32{
 	"PayoutResultCodeLineFull":               -12,
 	"PayoutResultCodeStatsOverflow":          -13,
 	"PayoutResultCodeLimitsExceeded":         -14,
+	"PayoutResultCodeIncorrectPrecision":     -15,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -26166,6 +28299,7 @@ type ReviewRequestOp struct {
 //    	INSUFFICIENT_AVAILABLE_FOR_ISSUANCE_AMOUNT = -41,
 //    	FULL_LINE = -42, // can't fund balance - total funds exceed UINT64_MAX
 //    	SYSTEM_TASKS_NOT_ALLOWED = -43,
+//        INCORRECT_PRECISION = -44,
 //
 //    	// Sale creation requests
 //    	BASE_ASSET_DOES_NOT_EXISTS = -50,
@@ -26218,7 +28352,10 @@ type ReviewRequestOp struct {
 //        INVALID_LIMITS = 131,
 //
 //        // Contract requests
-//        CONTRACT_DETAILS_TOO_LONG = -140 // customer details reached length limit
+//        CONTRACT_DETAILS_TOO_LONG = -140, // customer details reached length limit
+//
+//    	//Withdrawal request
+//    	REMOVING_NOT_SET_TASKS = -150 // cannot remove tasks which are not set
 //    };
 //
 type ReviewRequestResultCode int32
@@ -26240,6 +28377,7 @@ const (
 	ReviewRequestResultCodeInsufficientAvailableForIssuanceAmount   ReviewRequestResultCode = -41
 	ReviewRequestResultCodeFullLine                                 ReviewRequestResultCode = -42
 	ReviewRequestResultCodeSystemTasksNotAllowed                    ReviewRequestResultCode = -43
+	ReviewRequestResultCodeIncorrectPrecision                       ReviewRequestResultCode = -44
 	ReviewRequestResultCodeBaseAssetDoesNotExists                   ReviewRequestResultCode = -50
 	ReviewRequestResultCodeHardCapWillExceedMaxIssuance             ReviewRequestResultCode = -51
 	ReviewRequestResultCodeInsufficientPreissuedForHardCap          ReviewRequestResultCode = -52
@@ -26275,6 +28413,7 @@ const (
 	ReviewRequestResultCodeCannotCreateForAccIdAndAccType           ReviewRequestResultCode = 130
 	ReviewRequestResultCodeInvalidLimits                            ReviewRequestResultCode = 131
 	ReviewRequestResultCodeContractDetailsTooLong                   ReviewRequestResultCode = -140
+	ReviewRequestResultCodeRemovingNotSetTasks                      ReviewRequestResultCode = -150
 )
 
 var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
@@ -26294,6 +28433,7 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeInsufficientAvailableForIssuanceAmount,
 	ReviewRequestResultCodeFullLine,
 	ReviewRequestResultCodeSystemTasksNotAllowed,
+	ReviewRequestResultCodeIncorrectPrecision,
 	ReviewRequestResultCodeBaseAssetDoesNotExists,
 	ReviewRequestResultCodeHardCapWillExceedMaxIssuance,
 	ReviewRequestResultCodeInsufficientPreissuedForHardCap,
@@ -26329,6 +28469,7 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeCannotCreateForAccIdAndAccType,
 	ReviewRequestResultCodeInvalidLimits,
 	ReviewRequestResultCodeContractDetailsTooLong,
+	ReviewRequestResultCodeRemovingNotSetTasks,
 }
 
 var reviewRequestResultCodeMap = map[int32]string{
@@ -26348,6 +28489,7 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-41:  "ReviewRequestResultCodeInsufficientAvailableForIssuanceAmount",
 	-42:  "ReviewRequestResultCodeFullLine",
 	-43:  "ReviewRequestResultCodeSystemTasksNotAllowed",
+	-44:  "ReviewRequestResultCodeIncorrectPrecision",
 	-50:  "ReviewRequestResultCodeBaseAssetDoesNotExists",
 	-51:  "ReviewRequestResultCodeHardCapWillExceedMaxIssuance",
 	-52:  "ReviewRequestResultCodeInsufficientPreissuedForHardCap",
@@ -26383,6 +28525,7 @@ var reviewRequestResultCodeMap = map[int32]string{
 	130:  "ReviewRequestResultCodeCannotCreateForAccIdAndAccType",
 	131:  "ReviewRequestResultCodeInvalidLimits",
 	-140: "ReviewRequestResultCodeContractDetailsTooLong",
+	-150: "ReviewRequestResultCodeRemovingNotSetTasks",
 }
 
 var reviewRequestResultCodeShortMap = map[int32]string{
@@ -26402,6 +28545,7 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-41:  "insufficient_available_for_issuance_amount",
 	-42:  "full_line",
 	-43:  "system_tasks_not_allowed",
+	-44:  "incorrect_precision",
 	-50:  "base_asset_does_not_exists",
 	-51:  "hard_cap_will_exceed_max_issuance",
 	-52:  "insufficient_preissued_for_hard_cap",
@@ -26437,6 +28581,7 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	130:  "cannot_create_for_acc_id_and_acc_type",
 	131:  "invalid_limits",
 	-140: "contract_details_too_long",
+	-150: "removing_not_set_tasks",
 }
 
 var reviewRequestResultCodeRevMap = map[string]int32{
@@ -26456,6 +28601,7 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeInsufficientAvailableForIssuanceAmount":   -41,
 	"ReviewRequestResultCodeFullLine":                                 -42,
 	"ReviewRequestResultCodeSystemTasksNotAllowed":                    -43,
+	"ReviewRequestResultCodeIncorrectPrecision":                       -44,
 	"ReviewRequestResultCodeBaseAssetDoesNotExists":                   -50,
 	"ReviewRequestResultCodeHardCapWillExceedMaxIssuance":             -51,
 	"ReviewRequestResultCodeInsufficientPreissuedForHardCap":          -52,
@@ -26491,6 +28637,7 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeCannotCreateForAccIdAndAccType":           130,
 	"ReviewRequestResultCodeInvalidLimits":                            131,
 	"ReviewRequestResultCodeContractDetailsTooLong":                   -140,
+	"ReviewRequestResultCodeRemovingNotSetTasks":                      -150,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -29032,10 +31179,13 @@ type AmlAlertRequest struct {
 //        {
 //        case EMPTY_VERSION:
 //            void;
+//        case ADD_ASSET_BALANCE_PRECISION:
+//            uint32 trailingDigitsCount;
 //        }
 //
 type AssetCreationRequestExt struct {
-	V LedgerVersion `json:"v,omitempty"`
+	V                   LedgerVersion `json:"v,omitempty"`
+	TrailingDigitsCount *Uint32       `json:"trailingDigitsCount,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -29050,6 +31200,8 @@ func (u AssetCreationRequestExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
+	case LedgerVersionAddAssetBalancePrecision:
+		return "TrailingDigitsCount", true
 	}
 	return "-", false
 }
@@ -29060,7 +31212,39 @@ func NewAssetCreationRequestExt(v LedgerVersion, value interface{}) (result Asse
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
 		// void
+	case LedgerVersionAddAssetBalancePrecision:
+		tv, ok := value.(Uint32)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be Uint32")
+			return
+		}
+		result.TrailingDigitsCount = &tv
 	}
+	return
+}
+
+// MustTrailingDigitsCount retrieves the TrailingDigitsCount value from the union,
+// panicing if the value is not set.
+func (u AssetCreationRequestExt) MustTrailingDigitsCount() Uint32 {
+	val, ok := u.GetTrailingDigitsCount()
+
+	if !ok {
+		panic("arm TrailingDigitsCount is not set")
+	}
+
+	return val
+}
+
+// GetTrailingDigitsCount retrieves the TrailingDigitsCount value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AssetCreationRequestExt) GetTrailingDigitsCount() (result Uint32, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.V))
+
+	if armName == "TrailingDigitsCount" {
+		result = *u.TrailingDigitsCount
+		ok = true
+	}
+
 	return
 }
 
@@ -29080,6 +31264,8 @@ func NewAssetCreationRequestExt(v LedgerVersion, value interface{}) (result Asse
 //        {
 //        case EMPTY_VERSION:
 //            void;
+//        case ADD_ASSET_BALANCE_PRECISION:
+//            uint32 trailingDigitsCount;
 //        }
 //        ext;
 //    };
@@ -30462,6 +32648,10 @@ type WithdrawalRequest struct {
 //            ManageContractOp manageContractOp;
 //        case CANCEL_SALE_REQUEST:
 //            CancelSaleCreationRequestOp cancelSaleCreationRequestOp;
+//        case MANAGE_ACCOUNT_ROLE:
+//            ManageAccountRoleOp manageAccountRoleOp;
+//        case MANAGE_ACCOUNT_ROLE_PERMISSION:
+//            ManageAccountRolePermissionOp manageAccountRolePermissionOp;
 //        }
 //
 type OperationBody struct {
@@ -30496,6 +32686,8 @@ type OperationBody struct {
 	ManageContractRequestOp                  *ManageContractRequestOp                  `json:"manageContractRequestOp,omitempty"`
 	ManageContractOp                         *ManageContractOp                         `json:"manageContractOp,omitempty"`
 	CancelSaleCreationRequestOp              *CancelSaleCreationRequestOp              `json:"cancelSaleCreationRequestOp,omitempty"`
+	ManageAccountRoleOp                      *ManageAccountRoleOp                      `json:"manageAccountRoleOp,omitempty"`
+	ManageAccountRolePermissionOp            *ManageAccountRolePermissionOp            `json:"manageAccountRolePermissionOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -30568,6 +32760,10 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageContractOp", true
 	case OperationTypeCancelSaleRequest:
 		return "CancelSaleCreationRequestOp", true
+	case OperationTypeManageAccountRole:
+		return "ManageAccountRoleOp", true
+	case OperationTypeManageAccountRolePermission:
+		return "ManageAccountRolePermissionOp", true
 	}
 	return "-", false
 }
@@ -30786,6 +32982,20 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.CancelSaleCreationRequestOp = &tv
+	case OperationTypeManageAccountRole:
+		tv, ok := value.(ManageAccountRoleOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageAccountRoleOp")
+			return
+		}
+		result.ManageAccountRoleOp = &tv
+	case OperationTypeManageAccountRolePermission:
+		tv, ok := value.(ManageAccountRolePermissionOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageAccountRolePermissionOp")
+			return
+		}
+		result.ManageAccountRolePermissionOp = &tv
 	}
 	return
 }
@@ -31540,6 +33750,56 @@ func (u OperationBody) GetCancelSaleCreationRequestOp() (result CancelSaleCreati
 	return
 }
 
+// MustManageAccountRoleOp retrieves the ManageAccountRoleOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustManageAccountRoleOp() ManageAccountRoleOp {
+	val, ok := u.GetManageAccountRoleOp()
+
+	if !ok {
+		panic("arm ManageAccountRoleOp is not set")
+	}
+
+	return val
+}
+
+// GetManageAccountRoleOp retrieves the ManageAccountRoleOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetManageAccountRoleOp() (result ManageAccountRoleOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManageAccountRoleOp" {
+		result = *u.ManageAccountRoleOp
+		ok = true
+	}
+
+	return
+}
+
+// MustManageAccountRolePermissionOp retrieves the ManageAccountRolePermissionOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustManageAccountRolePermissionOp() ManageAccountRolePermissionOp {
+	val, ok := u.GetManageAccountRolePermissionOp()
+
+	if !ok {
+		panic("arm ManageAccountRolePermissionOp is not set")
+	}
+
+	return val
+}
+
+// GetManageAccountRolePermissionOp retrieves the ManageAccountRolePermissionOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetManageAccountRolePermissionOp() (result ManageAccountRolePermissionOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManageAccountRolePermissionOp" {
+		result = *u.ManageAccountRolePermissionOp
+		ok = true
+	}
+
+	return
+}
+
 // Operation is an XDR Struct defines as:
 //
 //   struct Operation
@@ -31611,6 +33871,10 @@ func (u OperationBody) GetCancelSaleCreationRequestOp() (result CancelSaleCreati
 //            ManageContractOp manageContractOp;
 //        case CANCEL_SALE_REQUEST:
 //            CancelSaleCreationRequestOp cancelSaleCreationRequestOp;
+//        case MANAGE_ACCOUNT_ROLE:
+//            ManageAccountRoleOp manageAccountRoleOp;
+//        case MANAGE_ACCOUNT_ROLE_PERMISSION:
+//            ManageAccountRolePermissionOp manageAccountRolePermissionOp;
 //        }
 //        body;
 //    };
@@ -32070,7 +34334,8 @@ type TransactionEnvelope struct {
 //        opNO_COUNTERPARTY = -5,
 //        opCOUNTERPARTY_BLOCKED = -6,
 //        opCOUNTERPARTY_WRONG_TYPE = -7,
-//    	opBAD_AUTH_EXTRA = -8
+//        opBAD_AUTH_EXTRA = -8,
+//        opNO_ROLE_PERMISSION = -9 // not allowed for this role of source account
 //    };
 //
 type OperationResultCode int32
@@ -32085,6 +34350,7 @@ const (
 	OperationResultCodeOpCounterpartyBlocked   OperationResultCode = -6
 	OperationResultCodeOpCounterpartyWrongType OperationResultCode = -7
 	OperationResultCodeOpBadAuthExtra          OperationResultCode = -8
+	OperationResultCodeOpNoRolePermission      OperationResultCode = -9
 )
 
 var OperationResultCodeAll = []OperationResultCode{
@@ -32097,6 +34363,7 @@ var OperationResultCodeAll = []OperationResultCode{
 	OperationResultCodeOpCounterpartyBlocked,
 	OperationResultCodeOpCounterpartyWrongType,
 	OperationResultCodeOpBadAuthExtra,
+	OperationResultCodeOpNoRolePermission,
 }
 
 var operationResultCodeMap = map[int32]string{
@@ -32109,6 +34376,7 @@ var operationResultCodeMap = map[int32]string{
 	-6: "OperationResultCodeOpCounterpartyBlocked",
 	-7: "OperationResultCodeOpCounterpartyWrongType",
 	-8: "OperationResultCodeOpBadAuthExtra",
+	-9: "OperationResultCodeOpNoRolePermission",
 }
 
 var operationResultCodeShortMap = map[int32]string{
@@ -32121,6 +34389,7 @@ var operationResultCodeShortMap = map[int32]string{
 	-6: "op_counterparty_blocked",
 	-7: "op_counterparty_wrong_type",
 	-8: "op_bad_auth_extra",
+	-9: "op_no_role_permission",
 }
 
 var operationResultCodeRevMap = map[string]int32{
@@ -32133,6 +34402,7 @@ var operationResultCodeRevMap = map[string]int32{
 	"OperationResultCodeOpCounterpartyBlocked":   -6,
 	"OperationResultCodeOpCounterpartyWrongType": -7,
 	"OperationResultCodeOpBadAuthExtra":          -8,
+	"OperationResultCodeOpNoRolePermission":      -9,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -32260,6 +34530,10 @@ func (e *OperationResultCode) UnmarshalJSON(data []byte) error {
 //            ManageContractResult manageContractResult;
 //        case CANCEL_SALE_REQUEST:
 //            CancelSaleCreationRequestResult cancelSaleCreationRequestResult;
+//        case MANAGE_ACCOUNT_ROLE:
+//            ManageAccountRoleResult manageAccountRoleResult;
+//        case MANAGE_ACCOUNT_ROLE_PERMISSION:
+//            ManageAccountRolePermissionResult manageAccountRolePermissionResult;
 //        }
 //
 type OperationResultTr struct {
@@ -32294,6 +34568,8 @@ type OperationResultTr struct {
 	ManageContractRequestResult                  *ManageContractRequestResult                  `json:"manageContractRequestResult,omitempty"`
 	ManageContractResult                         *ManageContractResult                         `json:"manageContractResult,omitempty"`
 	CancelSaleCreationRequestResult              *CancelSaleCreationRequestResult              `json:"cancelSaleCreationRequestResult,omitempty"`
+	ManageAccountRoleResult                      *ManageAccountRoleResult                      `json:"manageAccountRoleResult,omitempty"`
+	ManageAccountRolePermissionResult            *ManageAccountRolePermissionResult            `json:"manageAccountRolePermissionResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -32366,6 +34642,10 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageContractResult", true
 	case OperationTypeCancelSaleRequest:
 		return "CancelSaleCreationRequestResult", true
+	case OperationTypeManageAccountRole:
+		return "ManageAccountRoleResult", true
+	case OperationTypeManageAccountRolePermission:
+		return "ManageAccountRolePermissionResult", true
 	}
 	return "-", false
 }
@@ -32584,6 +34864,20 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.CancelSaleCreationRequestResult = &tv
+	case OperationTypeManageAccountRole:
+		tv, ok := value.(ManageAccountRoleResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageAccountRoleResult")
+			return
+		}
+		result.ManageAccountRoleResult = &tv
+	case OperationTypeManageAccountRolePermission:
+		tv, ok := value.(ManageAccountRolePermissionResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageAccountRolePermissionResult")
+			return
+		}
+		result.ManageAccountRolePermissionResult = &tv
 	}
 	return
 }
@@ -33338,6 +35632,56 @@ func (u OperationResultTr) GetCancelSaleCreationRequestResult() (result CancelSa
 	return
 }
 
+// MustManageAccountRoleResult retrieves the ManageAccountRoleResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustManageAccountRoleResult() ManageAccountRoleResult {
+	val, ok := u.GetManageAccountRoleResult()
+
+	if !ok {
+		panic("arm ManageAccountRoleResult is not set")
+	}
+
+	return val
+}
+
+// GetManageAccountRoleResult retrieves the ManageAccountRoleResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetManageAccountRoleResult() (result ManageAccountRoleResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManageAccountRoleResult" {
+		result = *u.ManageAccountRoleResult
+		ok = true
+	}
+
+	return
+}
+
+// MustManageAccountRolePermissionResult retrieves the ManageAccountRolePermissionResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustManageAccountRolePermissionResult() ManageAccountRolePermissionResult {
+	val, ok := u.GetManageAccountRolePermissionResult()
+
+	if !ok {
+		panic("arm ManageAccountRolePermissionResult is not set")
+	}
+
+	return val
+}
+
+// GetManageAccountRolePermissionResult retrieves the ManageAccountRolePermissionResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetManageAccountRolePermissionResult() (result ManageAccountRolePermissionResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManageAccountRolePermissionResult" {
+		result = *u.ManageAccountRolePermissionResult
+		ok = true
+	}
+
+	return
+}
+
 // OperationResult is an XDR Union defines as:
 //
 //   union OperationResult switch (OperationResultCode code)
@@ -33405,6 +35749,10 @@ func (u OperationResultTr) GetCancelSaleCreationRequestResult() (result CancelSa
 //            ManageContractResult manageContractResult;
 //        case CANCEL_SALE_REQUEST:
 //            CancelSaleCreationRequestResult cancelSaleCreationRequestResult;
+//        case MANAGE_ACCOUNT_ROLE:
+//            ManageAccountRoleResult manageAccountRoleResult;
+//        case MANAGE_ACCOUNT_ROLE_PERMISSION:
+//            ManageAccountRolePermissionResult manageAccountRolePermissionResult;
 //        }
 //        tr;
 //    default:
@@ -33487,34 +35835,36 @@ func (u OperationResult) GetTr() (result OperationResultTr, ok bool) {
 //        txTOO_LATE = -3,          // ledger closeTime after maxTime
 //        txMISSING_OPERATION = -4, // no operation was specified
 //
-//        txBAD_AUTH = -5,             // too few valid signatures / wrong network
-//        txNO_ACCOUNT = -6,           // source account not found
-//        txBAD_AUTH_EXTRA = -7,       // unused signatures attached to transaction
-//        txINTERNAL_ERROR = -8,       // an unknown error occured
-//    	txACCOUNT_BLOCKED = -9,      // account is blocked and cannot be source of tx
-//        txDUPLICATION = -10,         // if timing is stored
-//        txINSUFFICIENT_FEE = -11,    // the actual total fee amount is greater than the max total fee amount, provided by the source
-//        txSOURCE_UNDERFUNDED = -12,  // not enough tx fee asset on source balance
-//        txCOMMISSION_LINE_FULL = -13 // commission tx fee asset balance amount overflow
+//        txBAD_AUTH = -5,                   // too few valid signatures / wrong network
+//        txNO_ACCOUNT = -6,                 // source account not found
+//        txBAD_AUTH_EXTRA = -7,             // unused signatures attached to transaction
+//        txINTERNAL_ERROR = -8,             // an unknown error occured
+//        txACCOUNT_BLOCKED = -9,            // account is blocked and cannot be source of tx
+//        txDUPLICATION = -10,               // if timing is stored
+//        txINSUFFICIENT_FEE = -11,          // the actual total fee amount is greater than the max total fee amount, provided by the source
+//        txSOURCE_UNDERFUNDED = -12,        // not enough tx fee asset on source balance
+//        txCOMMISSION_LINE_FULL = -13,      // commission tx fee asset balance amount overflow
+//        txFEE_INCORRECT_PRECISION = -14    // fee amount is incompatible with asset precision
 //    };
 //
 type TransactionResultCode int32
 
 const (
-	TransactionResultCodeTxSuccess            TransactionResultCode = 0
-	TransactionResultCodeTxFailed             TransactionResultCode = -1
-	TransactionResultCodeTxTooEarly           TransactionResultCode = -2
-	TransactionResultCodeTxTooLate            TransactionResultCode = -3
-	TransactionResultCodeTxMissingOperation   TransactionResultCode = -4
-	TransactionResultCodeTxBadAuth            TransactionResultCode = -5
-	TransactionResultCodeTxNoAccount          TransactionResultCode = -6
-	TransactionResultCodeTxBadAuthExtra       TransactionResultCode = -7
-	TransactionResultCodeTxInternalError      TransactionResultCode = -8
-	TransactionResultCodeTxAccountBlocked     TransactionResultCode = -9
-	TransactionResultCodeTxDuplication        TransactionResultCode = -10
-	TransactionResultCodeTxInsufficientFee    TransactionResultCode = -11
-	TransactionResultCodeTxSourceUnderfunded  TransactionResultCode = -12
-	TransactionResultCodeTxCommissionLineFull TransactionResultCode = -13
+	TransactionResultCodeTxSuccess               TransactionResultCode = 0
+	TransactionResultCodeTxFailed                TransactionResultCode = -1
+	TransactionResultCodeTxTooEarly              TransactionResultCode = -2
+	TransactionResultCodeTxTooLate               TransactionResultCode = -3
+	TransactionResultCodeTxMissingOperation      TransactionResultCode = -4
+	TransactionResultCodeTxBadAuth               TransactionResultCode = -5
+	TransactionResultCodeTxNoAccount             TransactionResultCode = -6
+	TransactionResultCodeTxBadAuthExtra          TransactionResultCode = -7
+	TransactionResultCodeTxInternalError         TransactionResultCode = -8
+	TransactionResultCodeTxAccountBlocked        TransactionResultCode = -9
+	TransactionResultCodeTxDuplication           TransactionResultCode = -10
+	TransactionResultCodeTxInsufficientFee       TransactionResultCode = -11
+	TransactionResultCodeTxSourceUnderfunded     TransactionResultCode = -12
+	TransactionResultCodeTxCommissionLineFull    TransactionResultCode = -13
+	TransactionResultCodeTxFeeIncorrectPrecision TransactionResultCode = -14
 )
 
 var TransactionResultCodeAll = []TransactionResultCode{
@@ -33532,6 +35882,7 @@ var TransactionResultCodeAll = []TransactionResultCode{
 	TransactionResultCodeTxInsufficientFee,
 	TransactionResultCodeTxSourceUnderfunded,
 	TransactionResultCodeTxCommissionLineFull,
+	TransactionResultCodeTxFeeIncorrectPrecision,
 }
 
 var transactionResultCodeMap = map[int32]string{
@@ -33549,6 +35900,7 @@ var transactionResultCodeMap = map[int32]string{
 	-11: "TransactionResultCodeTxInsufficientFee",
 	-12: "TransactionResultCodeTxSourceUnderfunded",
 	-13: "TransactionResultCodeTxCommissionLineFull",
+	-14: "TransactionResultCodeTxFeeIncorrectPrecision",
 }
 
 var transactionResultCodeShortMap = map[int32]string{
@@ -33566,23 +35918,25 @@ var transactionResultCodeShortMap = map[int32]string{
 	-11: "tx_insufficient_fee",
 	-12: "tx_source_underfunded",
 	-13: "tx_commission_line_full",
+	-14: "tx_fee_incorrect_precision",
 }
 
 var transactionResultCodeRevMap = map[string]int32{
-	"TransactionResultCodeTxSuccess":            0,
-	"TransactionResultCodeTxFailed":             -1,
-	"TransactionResultCodeTxTooEarly":           -2,
-	"TransactionResultCodeTxTooLate":            -3,
-	"TransactionResultCodeTxMissingOperation":   -4,
-	"TransactionResultCodeTxBadAuth":            -5,
-	"TransactionResultCodeTxNoAccount":          -6,
-	"TransactionResultCodeTxBadAuthExtra":       -7,
-	"TransactionResultCodeTxInternalError":      -8,
-	"TransactionResultCodeTxAccountBlocked":     -9,
-	"TransactionResultCodeTxDuplication":        -10,
-	"TransactionResultCodeTxInsufficientFee":    -11,
-	"TransactionResultCodeTxSourceUnderfunded":  -12,
-	"TransactionResultCodeTxCommissionLineFull": -13,
+	"TransactionResultCodeTxSuccess":               0,
+	"TransactionResultCodeTxFailed":                -1,
+	"TransactionResultCodeTxTooEarly":              -2,
+	"TransactionResultCodeTxTooLate":               -3,
+	"TransactionResultCodeTxMissingOperation":      -4,
+	"TransactionResultCodeTxBadAuth":               -5,
+	"TransactionResultCodeTxNoAccount":             -6,
+	"TransactionResultCodeTxBadAuthExtra":          -7,
+	"TransactionResultCodeTxInternalError":         -8,
+	"TransactionResultCodeTxAccountBlocked":        -9,
+	"TransactionResultCodeTxDuplication":           -10,
+	"TransactionResultCodeTxInsufficientFee":       -11,
+	"TransactionResultCodeTxSourceUnderfunded":     -12,
+	"TransactionResultCodeTxCommissionLineFull":    -13,
+	"TransactionResultCodeTxFeeIncorrectPrecision": -14,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -34295,7 +36649,11 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //        ALLOW_TO_UPDATE_AND_REJECT_LIMITS_UPDATE_REQUESTS = 46,
 //        ADD_CUSTOMER_DETAILS_TO_CONTRACT = 47,
 //        ADD_CAPITAL_DEPLOYMENT_FEE_TYPE = 48,
-//        ADD_TRANSACTION_FEE = 49
+//        ADD_TRANSACTION_FEE = 49,
+//        ADD_DEFAULT_ISSUANCE_TASKS = 50,
+//    	ADD_ASSET_BALANCE_PRECISION = 51,
+//    	WITHDRAWAL_TASKS = 52,
+//        REPLACE_ACCOUNT_TYPES_WITH_POLICIES = 999999 // do not use it yet, there are features to be improved
 //    };
 //
 type LedgerVersion int32
@@ -34351,6 +36709,10 @@ const (
 	LedgerVersionAddCustomerDetailsToContract                     LedgerVersion = 47
 	LedgerVersionAddCapitalDeploymentFeeType                      LedgerVersion = 48
 	LedgerVersionAddTransactionFee                                LedgerVersion = 49
+	LedgerVersionAddDefaultIssuanceTasks                          LedgerVersion = 50
+	LedgerVersionAddAssetBalancePrecision                         LedgerVersion = 51
+	LedgerVersionWithdrawalTasks                                  LedgerVersion = 52
+	LedgerVersionReplaceAccountTypesWithPolicies                  LedgerVersion = 999999
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -34404,112 +36766,124 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionAddCustomerDetailsToContract,
 	LedgerVersionAddCapitalDeploymentFeeType,
 	LedgerVersionAddTransactionFee,
+	LedgerVersionAddDefaultIssuanceTasks,
+	LedgerVersionAddAssetBalancePrecision,
+	LedgerVersionWithdrawalTasks,
+	LedgerVersionReplaceAccountTypesWithPolicies,
 }
 
 var ledgerVersionMap = map[int32]string{
-	0:  "LedgerVersionEmptyVersion",
-	1:  "LedgerVersionPassExternalSysAccIdInCreateAcc",
-	2:  "LedgerVersionDetailedLedgerChanges",
-	3:  "LedgerVersionNewSignerTypes",
-	4:  "LedgerVersionTypedSale",
-	5:  "LedgerVersionUniqueBalanceCreation",
-	6:  "LedgerVersionAssetPreissuerMigration",
-	7:  "LedgerVersionAssetPreissuerMigrated",
-	8:  "LedgerVersionUseKycLevel",
-	9:  "LedgerVersionErrorOnNonZeroTasksToRemoveInRejectKyc",
-	10: "LedgerVersionAllowAccountManagerToChangeKyc",
-	11: "LedgerVersionChangeAssetIssuerBadAuthExtraFixed",
-	12: "LedgerVersionAutoCreateCommissionBalanceOnTransfer",
-	13: "LedgerVersionAllowRejectRequestOfBlockedRequestor",
-	14: "LedgerVersionAssetUpdateCheckReferenceExists",
-	15: "LedgerVersionCrossAssetFee",
-	16: "LedgerVersionUsePaymentV2",
-	17: "LedgerVersionAllowSyndicateToUpdateKyc",
-	18: "LedgerVersionDoNotBuildAccountIfVersionEqualsOrGreater",
-	19: "LedgerVersionAllowToSpecifyRequiredBaseAssetAmountForHardCap",
-	20: "LedgerVersionKycRules",
-	21: "LedgerVersionAllowToCreateSeveralSales",
-	22: "LedgerVersionKeyValuePoolEntryExpiresAt",
-	23: "LedgerVersionKeyValueUpdate",
-	24: "LedgerVersionAllowToCancelSaleParticipWithoutSpecifingBalance",
-	25: "LedgerVersionDetailsMaxLengthExtended",
-	26: "LedgerVersionAllowMasterToManageSale",
-	27: "LedgerVersionUseSaleAnte",
-	28: "LedgerVersionFixAssetPairsCreationInSaleCreation",
-	29: "LedgerVersionStatableSales",
-	30: "LedgerVersionCreateOnlyStatisticsV2",
-	31: "LedgerVersionLimitsUpdateRequestDeprecatedDocumentHash",
-	32: "LedgerVersionFixPaymentV2Fee",
-	33: "LedgerVersionAddSaleIdReviewRequestResult",
-	34: "LedgerVersionFixSetSaleStateAndCheckSaleStateOps",
-	35: "LedgerVersionFixUpdateMaxIssuance",
-	36: "LedgerVersionAllowCloseSaleWithNonZeroBalance",
-	37: "LedgerVersionAllowToUpdateVotingSalesAsPromotion",
-	38: "LedgerVersionAllowToIssueAfterSale",
-	39: "LedgerVersionFixPaymentV2SendToSelf",
-	40: "LedgerVersionFixPaymentV2DestAccountNotFound",
-	41: "LedgerVersionFixCreateKycRequestAutoApprove",
-	42: "LedgerVersionAddTasksToReviewableRequest",
-	43: "LedgerVersionUseOnlyPaymentV2",
-	44: "LedgerVersionAddReviewInvoiceRequestPaymentResponse",
-	45: "LedgerVersionAddContractIdReviewRequestResult",
-	46: "LedgerVersionAllowToUpdateAndRejectLimitsUpdateRequests",
-	47: "LedgerVersionAddCustomerDetailsToContract",
-	48: "LedgerVersionAddCapitalDeploymentFeeType",
-	49: "LedgerVersionAddTransactionFee",
+	0:      "LedgerVersionEmptyVersion",
+	1:      "LedgerVersionPassExternalSysAccIdInCreateAcc",
+	2:      "LedgerVersionDetailedLedgerChanges",
+	3:      "LedgerVersionNewSignerTypes",
+	4:      "LedgerVersionTypedSale",
+	5:      "LedgerVersionUniqueBalanceCreation",
+	6:      "LedgerVersionAssetPreissuerMigration",
+	7:      "LedgerVersionAssetPreissuerMigrated",
+	8:      "LedgerVersionUseKycLevel",
+	9:      "LedgerVersionErrorOnNonZeroTasksToRemoveInRejectKyc",
+	10:     "LedgerVersionAllowAccountManagerToChangeKyc",
+	11:     "LedgerVersionChangeAssetIssuerBadAuthExtraFixed",
+	12:     "LedgerVersionAutoCreateCommissionBalanceOnTransfer",
+	13:     "LedgerVersionAllowRejectRequestOfBlockedRequestor",
+	14:     "LedgerVersionAssetUpdateCheckReferenceExists",
+	15:     "LedgerVersionCrossAssetFee",
+	16:     "LedgerVersionUsePaymentV2",
+	17:     "LedgerVersionAllowSyndicateToUpdateKyc",
+	18:     "LedgerVersionDoNotBuildAccountIfVersionEqualsOrGreater",
+	19:     "LedgerVersionAllowToSpecifyRequiredBaseAssetAmountForHardCap",
+	20:     "LedgerVersionKycRules",
+	21:     "LedgerVersionAllowToCreateSeveralSales",
+	22:     "LedgerVersionKeyValuePoolEntryExpiresAt",
+	23:     "LedgerVersionKeyValueUpdate",
+	24:     "LedgerVersionAllowToCancelSaleParticipWithoutSpecifingBalance",
+	25:     "LedgerVersionDetailsMaxLengthExtended",
+	26:     "LedgerVersionAllowMasterToManageSale",
+	27:     "LedgerVersionUseSaleAnte",
+	28:     "LedgerVersionFixAssetPairsCreationInSaleCreation",
+	29:     "LedgerVersionStatableSales",
+	30:     "LedgerVersionCreateOnlyStatisticsV2",
+	31:     "LedgerVersionLimitsUpdateRequestDeprecatedDocumentHash",
+	32:     "LedgerVersionFixPaymentV2Fee",
+	33:     "LedgerVersionAddSaleIdReviewRequestResult",
+	34:     "LedgerVersionFixSetSaleStateAndCheckSaleStateOps",
+	35:     "LedgerVersionFixUpdateMaxIssuance",
+	36:     "LedgerVersionAllowCloseSaleWithNonZeroBalance",
+	37:     "LedgerVersionAllowToUpdateVotingSalesAsPromotion",
+	38:     "LedgerVersionAllowToIssueAfterSale",
+	39:     "LedgerVersionFixPaymentV2SendToSelf",
+	40:     "LedgerVersionFixPaymentV2DestAccountNotFound",
+	41:     "LedgerVersionFixCreateKycRequestAutoApprove",
+	42:     "LedgerVersionAddTasksToReviewableRequest",
+	43:     "LedgerVersionUseOnlyPaymentV2",
+	44:     "LedgerVersionAddReviewInvoiceRequestPaymentResponse",
+	45:     "LedgerVersionAddContractIdReviewRequestResult",
+	46:     "LedgerVersionAllowToUpdateAndRejectLimitsUpdateRequests",
+	47:     "LedgerVersionAddCustomerDetailsToContract",
+	48:     "LedgerVersionAddCapitalDeploymentFeeType",
+	49:     "LedgerVersionAddTransactionFee",
+	50:     "LedgerVersionAddDefaultIssuanceTasks",
+	51:     "LedgerVersionAddAssetBalancePrecision",
+	52:     "LedgerVersionWithdrawalTasks",
+	999999: "LedgerVersionReplaceAccountTypesWithPolicies",
 }
 
 var ledgerVersionShortMap = map[int32]string{
-	0:  "empty_version",
-	1:  "pass_external_sys_acc_id_in_create_acc",
-	2:  "detailed_ledger_changes",
-	3:  "new_signer_types",
-	4:  "typed_sale",
-	5:  "unique_balance_creation",
-	6:  "asset_preissuer_migration",
-	7:  "asset_preissuer_migrated",
-	8:  "use_kyc_level",
-	9:  "error_on_non_zero_tasks_to_remove_in_reject_kyc",
-	10: "allow_account_manager_to_change_kyc",
-	11: "change_asset_issuer_bad_auth_extra_fixed",
-	12: "auto_create_commission_balance_on_transfer",
-	13: "allow_reject_request_of_blocked_requestor",
-	14: "asset_update_check_reference_exists",
-	15: "cross_asset_fee",
-	16: "use_payment_v2",
-	17: "allow_syndicate_to_update_kyc",
-	18: "do_not_build_account_if_version_equals_or_greater",
-	19: "allow_to_specify_required_base_asset_amount_for_hard_cap",
-	20: "kyc_rules",
-	21: "allow_to_create_several_sales",
-	22: "key_value_pool_entry_expires_at",
-	23: "key_value_update",
-	24: "allow_to_cancel_sale_particip_without_specifing_balance",
-	25: "details_max_length_extended",
-	26: "allow_master_to_manage_sale",
-	27: "use_sale_ante",
-	28: "fix_asset_pairs_creation_in_sale_creation",
-	29: "statable_sales",
-	30: "create_only_statistics_v2",
-	31: "limits_update_request_deprecated_document_hash",
-	32: "fix_payment_v2_fee",
-	33: "add_sale_id_review_request_result",
-	34: "fix_set_sale_state_and_check_sale_state_ops",
-	35: "fix_update_max_issuance",
-	36: "allow_close_sale_with_non_zero_balance",
-	37: "allow_to_update_voting_sales_as_promotion",
-	38: "allow_to_issue_after_sale",
-	39: "fix_payment_v2_send_to_self",
-	40: "fix_payment_v2_dest_account_not_found",
-	41: "fix_create_kyc_request_auto_approve",
-	42: "add_tasks_to_reviewable_request",
-	43: "use_only_payment_v2",
-	44: "add_review_invoice_request_payment_response",
-	45: "add_contract_id_review_request_result",
-	46: "allow_to_update_and_reject_limits_update_requests",
-	47: "add_customer_details_to_contract",
-	48: "add_capital_deployment_fee_type",
-	49: "add_transaction_fee",
+	0:      "empty_version",
+	1:      "pass_external_sys_acc_id_in_create_acc",
+	2:      "detailed_ledger_changes",
+	3:      "new_signer_types",
+	4:      "typed_sale",
+	5:      "unique_balance_creation",
+	6:      "asset_preissuer_migration",
+	7:      "asset_preissuer_migrated",
+	8:      "use_kyc_level",
+	9:      "error_on_non_zero_tasks_to_remove_in_reject_kyc",
+	10:     "allow_account_manager_to_change_kyc",
+	11:     "change_asset_issuer_bad_auth_extra_fixed",
+	12:     "auto_create_commission_balance_on_transfer",
+	13:     "allow_reject_request_of_blocked_requestor",
+	14:     "asset_update_check_reference_exists",
+	15:     "cross_asset_fee",
+	16:     "use_payment_v2",
+	17:     "allow_syndicate_to_update_kyc",
+	18:     "do_not_build_account_if_version_equals_or_greater",
+	19:     "allow_to_specify_required_base_asset_amount_for_hard_cap",
+	20:     "kyc_rules",
+	21:     "allow_to_create_several_sales",
+	22:     "key_value_pool_entry_expires_at",
+	23:     "key_value_update",
+	24:     "allow_to_cancel_sale_particip_without_specifing_balance",
+	25:     "details_max_length_extended",
+	26:     "allow_master_to_manage_sale",
+	27:     "use_sale_ante",
+	28:     "fix_asset_pairs_creation_in_sale_creation",
+	29:     "statable_sales",
+	30:     "create_only_statistics_v2",
+	31:     "limits_update_request_deprecated_document_hash",
+	32:     "fix_payment_v2_fee",
+	33:     "add_sale_id_review_request_result",
+	34:     "fix_set_sale_state_and_check_sale_state_ops",
+	35:     "fix_update_max_issuance",
+	36:     "allow_close_sale_with_non_zero_balance",
+	37:     "allow_to_update_voting_sales_as_promotion",
+	38:     "allow_to_issue_after_sale",
+	39:     "fix_payment_v2_send_to_self",
+	40:     "fix_payment_v2_dest_account_not_found",
+	41:     "fix_create_kyc_request_auto_approve",
+	42:     "add_tasks_to_reviewable_request",
+	43:     "use_only_payment_v2",
+	44:     "add_review_invoice_request_payment_response",
+	45:     "add_contract_id_review_request_result",
+	46:     "allow_to_update_and_reject_limits_update_requests",
+	47:     "add_customer_details_to_contract",
+	48:     "add_capital_deployment_fee_type",
+	49:     "add_transaction_fee",
+	50:     "add_default_issuance_tasks",
+	51:     "add_asset_balance_precision",
+	52:     "withdrawal_tasks",
+	999999: "replace_account_types_with_policies",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -34563,6 +36937,10 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionAddCustomerDetailsToContract":                     47,
 	"LedgerVersionAddCapitalDeploymentFeeType":                      48,
 	"LedgerVersionAddTransactionFee":                                49,
+	"LedgerVersionAddDefaultIssuanceTasks":                          50,
+	"LedgerVersionAddAssetBalancePrecision":                         51,
+	"LedgerVersionWithdrawalTasks":                                  52,
+	"LedgerVersionReplaceAccountTypesWithPolicies":                  999999,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -34953,7 +37331,9 @@ type Fee struct {
 //        MANAGE_CONTRACT_REQUEST = 29,
 //        MANAGE_CONTRACT = 30,
 //        CANCEL_SALE_REQUEST = 31,
-//        PAYOUT = 32
+//        PAYOUT = 32,
+//        MANAGE_ACCOUNT_ROLE = 33,
+//        MANAGE_ACCOUNT_ROLE_PERMISSION = 34
 //    };
 //
 type OperationType int32
@@ -34989,6 +37369,8 @@ const (
 	OperationTypeManageContract                         OperationType = 30
 	OperationTypeCancelSaleRequest                      OperationType = 31
 	OperationTypePayout                                 OperationType = 32
+	OperationTypeManageAccountRole                      OperationType = 33
+	OperationTypeManageAccountRolePermission            OperationType = 34
 )
 
 var OperationTypeAll = []OperationType{
@@ -35022,6 +37404,8 @@ var OperationTypeAll = []OperationType{
 	OperationTypeManageContract,
 	OperationTypeCancelSaleRequest,
 	OperationTypePayout,
+	OperationTypeManageAccountRole,
+	OperationTypeManageAccountRolePermission,
 }
 
 var operationTypeMap = map[int32]string{
@@ -35055,6 +37439,8 @@ var operationTypeMap = map[int32]string{
 	30: "OperationTypeManageContract",
 	31: "OperationTypeCancelSaleRequest",
 	32: "OperationTypePayout",
+	33: "OperationTypeManageAccountRole",
+	34: "OperationTypeManageAccountRolePermission",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -35088,6 +37474,8 @@ var operationTypeShortMap = map[int32]string{
 	30: "manage_contract",
 	31: "cancel_sale_request",
 	32: "payout",
+	33: "manage_account_role",
+	34: "manage_account_role_permission",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -35121,6 +37509,8 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeManageContract":                         30,
 	"OperationTypeCancelSaleRequest":                      31,
 	"OperationTypePayout":                                 32,
+	"OperationTypeManageAccountRole":                      33,
+	"OperationTypeManageAccountRolePermission":            34,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -35198,3 +37588,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
+var Revision = "0b366c3fff83de5ee79cb1b7d191d1aa709f15b0"
