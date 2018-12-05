@@ -83,7 +83,7 @@ func (h *manageContractOpHandler) getRevertedInvoiceParticipantsEffects(requests
 			AssetCode: &invoiceDetails.Asset,
 			Effect: history2.Effect{
 				Type: history2.EffectTypeChargedFromLocked,
-				Payment: &history2.PaymentEffect{
+				ChargedFromLocked: &history2.ChargedFromLockedEffect{
 					Amount: amount.StringU(uint64(invoiceDetails.Amount)),
 				},
 			},
@@ -97,7 +97,7 @@ func (h *manageContractOpHandler) getRevertedInvoiceParticipantsEffects(requests
 			AssetCode: &invoiceDetails.Asset,
 			Effect: history2.Effect{
 				Type: history2.EffectTypeFunded,
-				Payment: &history2.PaymentEffect{
+				Funded: &history2.FundedEffect{
 					Amount: amount.StringU(uint64(invoiceDetails.Amount)),
 				},
 			},
@@ -125,7 +125,7 @@ func (h *manageContractOpHandler) getConfirmedInvoicesParticipantsEffects(reques
 			AssetCode: &invoiceDetails.Asset,
 			Effect: history2.Effect{
 				Type: history2.EffectTypeUnlocked,
-				Payment: &history2.PaymentEffect{
+				Unlocked: &history2.UnlockedEffect{
 					Amount: amount.StringU(uint64(invoiceDetails.Amount)),
 				},
 			},

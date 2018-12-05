@@ -278,7 +278,26 @@ func (h *withdrawHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, re
 
 type amlAlertHandler struct{}
 
-func (h *amlAlertHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess) []history2.ParticipantEffect {
+func (h *amlAlertHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess, request xdr.ReviewableRequestEntry) []history2.ParticipantEffect {
+	details := request.Body.MustAmlAlertRequest()
+
+	effect := history2.Effect{
+		Type: history2.EffectTypeChargedFromLocked,
+		ChargedFromLocked: &history2.ChargedFromLockedEffect{
+			Amount: amount.StringU(uint64(details.Amount)),
+		},
+	}
+
+	if op.Action != xdr.ReviewRequestOpActionApprove {
+		effect.Type = history2.EffectTypeUnlocked
+		effect.ChargedFromLocked = nil
+		effect.Unlocked = &history2.UnlockedEffect{
+			Amount: amount.StringU(uint64(details.Amount)),
+		}
+	}
+
+	participants = h.getParticipantEffectByBalanceID(details.BalanceId, effect, source)
+
 }
 
 type invoiceHandler struct{}

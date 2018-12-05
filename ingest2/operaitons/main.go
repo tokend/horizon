@@ -17,6 +17,13 @@ type operationHandler struct {
 
 func newOperationHandler(mainProvider providerCluster) operationHandler {
 	pubKeyProvider := mainProvider.GetPubKeyProvider()
+	offerHelper := offerHelper{
+		pubKeyProvider:        pubKeyProvider,
+		ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
+	}
+	paymentHelper := paymentHelper{
+		pubKeyProvider: pubKeyProvider,
+	}
 	return operationHandler{
 		allHandlers: map[xdr.OperationType]operationHandlerI{
 			xdr.OperationTypeCreateAccount: &createAccountOpHandler{
@@ -36,7 +43,10 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeManageAsset:     &manageAssetOpHandler{},
 			xdr.OperationTypeManageAssetPair: &manageAssetPairOpHadler{},
 			xdr.OperationTypeManageOffer: &manageOfferOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				pubKeyProvider:        pubKeyProvider,
+				offerHelper:           offerHelper,
+				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
+				balanceProvider:       mainProvider.GetBalanceProvider(),
 			},
 			xdr.OperationTypeManageContract: &manageContractOpHandler{
 				pubKeyProvider:  pubKeyProvider,
@@ -71,15 +81,17 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			},
 			xdr.OperationTypePaymentV2: &paymentOpHandler{
 				pubKeyProvider: pubKeyProvider,
+				paymentHelper:  paymentHelper,
 			},
 			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{
-				pubKeyProvider: pubKeyProvider,
-				offerHelper: offerHelper{
-					pubKeyProvider: pubKeyProvider,
-				},
+				pubKeyProvider:        pubKeyProvider,
+				offerHelper:           offerHelper,
+				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
+				balanceProvider:       mainProvider.GetBalanceProvider(),
 			},
 			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				pubKeyProvider:        pubKeyProvider,
+				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
 			},
 		},
 		opIDProvider:         mainProvider.GetOperationIDProvider(),
