@@ -40,7 +40,7 @@ func (h *createAtomicSwapBidRequestOpHandler) ParticipantsEffects(opBody xdr.Ope
 
 	balance := h.balanceProvider.GetBalanceByID(aSwapBidRequest.BaseBalance)
 
-	source.BalanceID = &balance.BalanceID
+	source.BalanceID = &balance.ID
 	source.AssetCode = &balance.AssetCode
 	source.Effect = history2.Effect{
 		Type: history2.EffectTypeLocked,

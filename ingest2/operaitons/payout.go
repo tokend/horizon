@@ -47,7 +47,7 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		return nil, errors.New("unexpected state, expected source owns source balance")
 	}
 
-	source.BalanceID = &balance.BalanceID
+	source.BalanceID = &balance.ID
 	source.AssetCode = &balance.AssetCode
 	source.Effect = history2.Effect{
 		Type: history2.EffectTypeCharged,

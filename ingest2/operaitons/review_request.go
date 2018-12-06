@@ -60,17 +60,19 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	reviewRequestOp := opBody.MustReviewRequestOp()
 	reviewRequestRes := opRes.MustReviewRequestResult().MustSuccess()
 
-	/*if reviewRequestOp.Action != xdr.ReviewRequestOpActionApprove {
-		return h.getNotApprovedRequestParticipnatsEffects(), nil
-	}*/
-
 	request := h.getReviewableRequestByID(int64(reviewRequestOp.RequestId))
 
 	if request == nil {
 		return []history2.ParticipantEffect{source}, nil
 	}
 
-	var participants []history2.ParticipantEffect
+	specificHandler, ok := h.allRequestHandlers[request.Body.Type]
+	if !ok {
+		return []history2.ParticipantEffect{source}, nil
+	}
+
+	return specificHandler.SpecificParticipantsEffects(reviewRequestOp,
+		reviewRequestRes, *request, source), nil
 
 	// maybe do map with specific handlers
 	switch reviewRequestOp.RequestDetails.RequestType {
@@ -172,27 +174,25 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 			})
 		}
 	}
-
-	/*if source.AccountID == h.pubKeyProvider.GetAccountID(request.Requestor) {
-		return participants, nil
-	}*/
-
-	return participants, nil
 }
 
-func (h *reviewRequestOpHandler) getParticipantEffectByBalanceID(balanceID xdr.BalanceId,
+type effectHelper struct {
+	balanceProvider balanceProvider
+}
+
+func (h *effectHelper) getParticipantEffectByBalanceID(balanceID xdr.BalanceId,
 	effect history2.Effect, source history2.ParticipantEffect,
 ) []history2.ParticipantEffect {
 	balance := h.balanceProvider.GetBalanceByID(balanceID)
 	if balance.AccountID == source.AccountID {
-		source.BalanceID = &balance.BalanceID
+		source.BalanceID = &balance.ID
 		source.AssetCode = &balance.AssetCode
 		source.Effect = effect
 		return []history2.ParticipantEffect{source}
 	} else {
 		return []history2.ParticipantEffect{{
 			AccountID: balance.AccountID,
-			BalanceID: &balance.BalanceID,
+			BalanceID: &balance.ID,
 			AssetCode: &balance.AssetCode,
 			Effect:    effect,
 		}, source}
@@ -260,7 +260,9 @@ func (h *reviewRequestOpHandler) getAtomicSwapBid(bidID xdr.Uint64) *xdr.AtomicS
 }
 
 type requestHandlerI interface {
-	SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess) []history2.ParticipantEffect
+	SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
+		request xdr.ReviewableRequestEntry, source history2.ParticipantEffect,
+	) []history2.ParticipantEffect
 }
 
 type issuanceHandler struct{}
@@ -276,9 +278,13 @@ func (h *withdrawHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, re
 
 }
 
-type amlAlertHandler struct{}
+type amlAlertHandler struct {
+	effectHelper effectHelper
+}
 
-func (h *amlAlertHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess, request xdr.ReviewableRequestEntry) []history2.ParticipantEffect {
+func (h *amlAlertHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp,
+	res xdr.ReviewRequestResultSuccess, request xdr.ReviewableRequestEntry, source history2.ParticipantEffect,
+) []history2.ParticipantEffect {
 	details := request.Body.MustAmlAlertRequest()
 
 	effect := history2.Effect{
@@ -296,8 +302,7 @@ func (h *amlAlertHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp, re
 		}
 	}
 
-	participants = h.getParticipantEffectByBalanceID(details.BalanceId, effect, source)
-
+	return h.effectHelper.getParticipantEffectByBalanceID(details.BalanceId, effect, source)
 }
 
 type invoiceHandler struct{}

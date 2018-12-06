@@ -150,7 +150,7 @@ func (h *manageOfferOpHandler) getSaleAnteEffects() ([]history2.ParticipantEffec
 
 		result = append(result, history2.ParticipantEffect{
 			AccountID: balance.AccountID,
-			BalanceID: &balance.BalanceID,
+			BalanceID: &balance.ID,
 			AssetCode: &balance.AssetCode,
 			Effect: history2.Effect{
 				Type: history2.EffectTypeLocked,
@@ -177,7 +177,7 @@ func (h *manageOfferOpHandler) getSaleAnteEffects() ([]history2.ParticipantEffec
 
 			result = append(result, history2.ParticipantEffect{
 				AccountID: balance.AccountID,
-				BalanceID: &balance.BalanceID,
+				BalanceID: &balance.ID,
 				AssetCode: &balance.AssetCode,
 				Effect: history2.Effect{
 					Type: history2.EffectTypeLocked,

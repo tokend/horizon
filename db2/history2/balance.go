@@ -5,7 +5,7 @@ import "gitlab.com/tokend/go/xdr"
 type Balance struct {
 	ID        int64         `db:"id"`
 	AccountID int64         `db:"account_id"`
-	BalanceID int64         `db:"address"`
+	BalanceID string        `db:"address"`
 	AssetCode xdr.AssetCode `db:"asset_code"`
 }
 

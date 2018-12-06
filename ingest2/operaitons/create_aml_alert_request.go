@@ -44,13 +44,13 @@ func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	var participants []history2.ParticipantEffect
 
 	if balance.AccountID == source.AccountID {
-		source.BalanceID = &balance.BalanceID
+		source.BalanceID = &balance.ID
 		source.AssetCode = &assetCode
 		source.Effect = effect
 	} else {
 		participants = append(participants, history2.ParticipantEffect{
 			AccountID: balance.AccountID,
-			BalanceID: &balance.BalanceID,
+			BalanceID: &balance.ID,
 			AssetCode: &assetCode,
 			Effect:    effect,
 		})

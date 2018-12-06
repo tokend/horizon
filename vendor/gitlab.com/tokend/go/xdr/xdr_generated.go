@@ -1,4 +1,4 @@
-// revision: ed77c50c7af961081231927b15db35c3b6ac9454
+// revision: b0bd518e7b24242f35fbe5ef30b45e7e7c81157b
 // branch:   product
 // Package xdr is generated from:
 //
@@ -3563,17 +3563,17 @@ func (e *KeyValueEntryType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// KeyValueEntryValue is an XDR NestedUnion defines as:
+// KeyValueEntryValue is an XDR Union defines as:
 //
-//   union switch (KeyValueEntryType type)
-//            {
-//                 case UINT32:
-//                    uint32 ui32Value;
-//                 case STRING:
-//                    string stringValue<>;
-//                case UINT64:
-//                    uint64 ui64Value;
-//            }
+//   union KeyValueEntryValue switch (KeyValueEntryType type)
+//        {
+//            case UINT32:
+//                uint32 ui32Value;
+//            case STRING:
+//                string stringValue<>;
+//            case UINT64:
+//                uint64 ui64Value;
+//        };
 //
 type KeyValueEntryValue struct {
 	Type        KeyValueEntryType `json:"type,omitempty"`
@@ -3750,16 +3750,7 @@ func NewKeyValueEntryExt(v LedgerVersion, value interface{}) (result KeyValueEnt
 //        {
 //            longstring key;
 //
-//            union switch (KeyValueEntryType type)
-//            {
-//                 case UINT32:
-//                    uint32 ui32Value;
-//                 case STRING:
-//                    string stringValue<>;
-//                case UINT64:
-//                    uint64 ui64Value;
-//            }
-//            value;
+//            KeyValueEntryValue value; // todo docs
 //
 //            // reserved for future use
 //            union switch (LedgerVersion v)
@@ -7725,101 +7716,6 @@ func (e *EnvelopeType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// ExternalSystemIdGeneratorType is an XDR Enum defines as:
-//
-//   enum ExternalSystemIDGeneratorType {
-//    	BITCOIN_BASIC = 1,
-//    	ETHEREUM_BASIC = 2
-//    };
-//
-type ExternalSystemIdGeneratorType int32
-
-const (
-	ExternalSystemIdGeneratorTypeBitcoinBasic  ExternalSystemIdGeneratorType = 1
-	ExternalSystemIdGeneratorTypeEthereumBasic ExternalSystemIdGeneratorType = 2
-)
-
-var ExternalSystemIdGeneratorTypeAll = []ExternalSystemIdGeneratorType{
-	ExternalSystemIdGeneratorTypeBitcoinBasic,
-	ExternalSystemIdGeneratorTypeEthereumBasic,
-}
-
-var externalSystemIdGeneratorTypeMap = map[int32]string{
-	1: "ExternalSystemIdGeneratorTypeBitcoinBasic",
-	2: "ExternalSystemIdGeneratorTypeEthereumBasic",
-}
-
-var externalSystemIdGeneratorTypeShortMap = map[int32]string{
-	1: "bitcoin_basic",
-	2: "ethereum_basic",
-}
-
-var externalSystemIdGeneratorTypeRevMap = map[string]int32{
-	"ExternalSystemIdGeneratorTypeBitcoinBasic":  1,
-	"ExternalSystemIdGeneratorTypeEthereumBasic": 2,
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for ExternalSystemIdGeneratorType
-func (e ExternalSystemIdGeneratorType) ValidEnum(v int32) bool {
-	_, ok := externalSystemIdGeneratorTypeMap[v]
-	return ok
-}
-func (e ExternalSystemIdGeneratorType) isFlag() bool {
-	for i := len(ExternalSystemIdGeneratorTypeAll) - 1; i >= 0; i-- {
-		expected := ExternalSystemIdGeneratorType(2) << uint64(len(ExternalSystemIdGeneratorTypeAll)-1) >> uint64(len(ExternalSystemIdGeneratorTypeAll)-i)
-		if expected != ExternalSystemIdGeneratorTypeAll[i] {
-			return false
-		}
-	}
-	return true
-}
-
-// String returns the name of `e`
-func (e ExternalSystemIdGeneratorType) String() string {
-	name, _ := externalSystemIdGeneratorTypeMap[int32(e)]
-	return name
-}
-
-func (e ExternalSystemIdGeneratorType) ShortString() string {
-	name, _ := externalSystemIdGeneratorTypeShortMap[int32(e)]
-	return name
-}
-
-func (e ExternalSystemIdGeneratorType) MarshalJSON() ([]byte, error) {
-	if e.isFlag() {
-		// marshal as mask
-		result := flag{
-			Value: int32(e),
-		}
-		for _, value := range ExternalSystemIdGeneratorTypeAll {
-			if (value & e) == value {
-				result.Flags = append(result.Flags, flagValue{
-					Value: int32(value),
-					Name:  value.ShortString(),
-				})
-			}
-		}
-		return json.Marshal(&result)
-	} else {
-		// marshal as enum
-		result := enum{
-			Value:  int32(e),
-			String: e.ShortString(),
-		}
-		return json.Marshal(&result)
-	}
-}
-
-func (e *ExternalSystemIdGeneratorType) UnmarshalJSON(data []byte) error {
-	var t value
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
-	}
-	*e = ExternalSystemIdGeneratorType(t.Value)
-	return nil
-}
-
 // UpgradeType is an XDR Typedef defines as:
 //
 //   typedef opaque UpgradeType<128>;
@@ -7963,7 +7859,6 @@ func NewLedgerHeaderExt(v LedgerVersion, value interface{}) (result LedgerHeader
 //
 //        uint32 maxTxSetSize; // maximum size a transaction set can be
 //
-//        ExternalSystemIDGeneratorType externalSystemIDGenerators<>;
 //        int64 txExpirationPeriod;
 //
 //        Hash skipList[4]; // hashes of ledgers in the past. allows you to jump back
@@ -7982,20 +7877,19 @@ func NewLedgerHeaderExt(v LedgerVersion, value interface{}) (result LedgerHeader
 //    };
 //
 type LedgerHeader struct {
-	LedgerVersion              Uint32                          `json:"ledgerVersion,omitempty"`
-	PreviousLedgerHash         Hash                            `json:"previousLedgerHash,omitempty"`
-	ScpValue                   StellarValue                    `json:"scpValue,omitempty"`
-	TxSetResultHash            Hash                            `json:"txSetResultHash,omitempty"`
-	BucketListHash             Hash                            `json:"bucketListHash,omitempty"`
-	LedgerSeq                  Uint32                          `json:"ledgerSeq,omitempty"`
-	IdGenerators               []IdGenerator                   `json:"idGenerators,omitempty"`
-	BaseFee                    Uint32                          `json:"baseFee,omitempty"`
-	BaseReserve                Uint32                          `json:"baseReserve,omitempty"`
-	MaxTxSetSize               Uint32                          `json:"maxTxSetSize,omitempty"`
-	ExternalSystemIdGenerators []ExternalSystemIdGeneratorType `json:"externalSystemIDGenerators,omitempty"`
-	TxExpirationPeriod         Int64                           `json:"txExpirationPeriod,omitempty"`
-	SkipList                   [4]Hash                         `json:"skipList,omitempty"`
-	Ext                        LedgerHeaderExt                 `json:"ext,omitempty"`
+	LedgerVersion      Uint32          `json:"ledgerVersion,omitempty"`
+	PreviousLedgerHash Hash            `json:"previousLedgerHash,omitempty"`
+	ScpValue           StellarValue    `json:"scpValue,omitempty"`
+	TxSetResultHash    Hash            `json:"txSetResultHash,omitempty"`
+	BucketListHash     Hash            `json:"bucketListHash,omitempty"`
+	LedgerSeq          Uint32          `json:"ledgerSeq,omitempty"`
+	IdGenerators       []IdGenerator   `json:"idGenerators,omitempty"`
+	BaseFee            Uint32          `json:"baseFee,omitempty"`
+	BaseReserve        Uint32          `json:"baseReserve,omitempty"`
+	MaxTxSetSize       Uint32          `json:"maxTxSetSize,omitempty"`
+	TxExpirationPeriod Int64           `json:"txExpirationPeriod,omitempty"`
+	SkipList           [4]Hash         `json:"skipList,omitempty"`
+	Ext                LedgerHeaderExt `json:"ext,omitempty"`
 }
 
 // LedgerUpgradeType is an XDR Enum defines as:
@@ -8004,45 +7898,39 @@ type LedgerHeader struct {
 //    {
 //        VERSION = 1,
 //        MAX_TX_SET_SIZE = 2,
-//        TX_EXPIRATION_PERIOD = 3,
-//    	EXTERNAL_SYSTEM_ID_GENERATOR = 4
+//        TX_EXPIRATION_PERIOD = 3
 //    };
 //
 type LedgerUpgradeType int32
 
 const (
-	LedgerUpgradeTypeVersion                   LedgerUpgradeType = 1
-	LedgerUpgradeTypeMaxTxSetSize              LedgerUpgradeType = 2
-	LedgerUpgradeTypeTxExpirationPeriod        LedgerUpgradeType = 3
-	LedgerUpgradeTypeExternalSystemIdGenerator LedgerUpgradeType = 4
+	LedgerUpgradeTypeVersion            LedgerUpgradeType = 1
+	LedgerUpgradeTypeMaxTxSetSize       LedgerUpgradeType = 2
+	LedgerUpgradeTypeTxExpirationPeriod LedgerUpgradeType = 3
 )
 
 var LedgerUpgradeTypeAll = []LedgerUpgradeType{
 	LedgerUpgradeTypeVersion,
 	LedgerUpgradeTypeMaxTxSetSize,
 	LedgerUpgradeTypeTxExpirationPeriod,
-	LedgerUpgradeTypeExternalSystemIdGenerator,
 }
 
 var ledgerUpgradeTypeMap = map[int32]string{
 	1: "LedgerUpgradeTypeVersion",
 	2: "LedgerUpgradeTypeMaxTxSetSize",
 	3: "LedgerUpgradeTypeTxExpirationPeriod",
-	4: "LedgerUpgradeTypeExternalSystemIdGenerator",
 }
 
 var ledgerUpgradeTypeShortMap = map[int32]string{
 	1: "version",
 	2: "max_tx_set_size",
 	3: "tx_expiration_period",
-	4: "external_system_id_generator",
 }
 
 var ledgerUpgradeTypeRevMap = map[string]int32{
-	"LedgerUpgradeTypeVersion":                   1,
-	"LedgerUpgradeTypeMaxTxSetSize":              2,
-	"LedgerUpgradeTypeTxExpirationPeriod":        3,
-	"LedgerUpgradeTypeExternalSystemIdGenerator": 4,
+	"LedgerUpgradeTypeVersion":            1,
+	"LedgerUpgradeTypeMaxTxSetSize":       2,
+	"LedgerUpgradeTypeTxExpirationPeriod": 3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -8114,18 +8002,15 @@ func (e *LedgerUpgradeType) UnmarshalJSON(data []byte) error {
 //        uint32 newLedgerVersion; // update ledgerVersion
 //    case MAX_TX_SET_SIZE:
 //        uint32 newMaxTxSetSize; // update maxTxSetSize
-//    case EXTERNAL_SYSTEM_ID_GENERATOR:
-//        ExternalSystemIDGeneratorType newExternalSystemIDGenerators<>;
 //    case TX_EXPIRATION_PERIOD:
 //        int64 newTxExpirationPeriod;
 //    };
 //
 type LedgerUpgrade struct {
-	Type                          LedgerUpgradeType                `json:"type,omitempty"`
-	NewLedgerVersion              *Uint32                          `json:"newLedgerVersion,omitempty"`
-	NewMaxTxSetSize               *Uint32                          `json:"newMaxTxSetSize,omitempty"`
-	NewExternalSystemIdGenerators *[]ExternalSystemIdGeneratorType `json:"newExternalSystemIDGenerators,omitempty"`
-	NewTxExpirationPeriod         *Int64                           `json:"newTxExpirationPeriod,omitempty"`
+	Type                  LedgerUpgradeType `json:"type,omitempty"`
+	NewLedgerVersion      *Uint32           `json:"newLedgerVersion,omitempty"`
+	NewMaxTxSetSize       *Uint32           `json:"newMaxTxSetSize,omitempty"`
+	NewTxExpirationPeriod *Int64            `json:"newTxExpirationPeriod,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -8142,8 +8027,6 @@ func (u LedgerUpgrade) ArmForSwitch(sw int32) (string, bool) {
 		return "NewLedgerVersion", true
 	case LedgerUpgradeTypeMaxTxSetSize:
 		return "NewMaxTxSetSize", true
-	case LedgerUpgradeTypeExternalSystemIdGenerator:
-		return "NewExternalSystemIdGenerators", true
 	case LedgerUpgradeTypeTxExpirationPeriod:
 		return "NewTxExpirationPeriod", true
 	}
@@ -8168,13 +8051,6 @@ func NewLedgerUpgrade(aType LedgerUpgradeType, value interface{}) (result Ledger
 			return
 		}
 		result.NewMaxTxSetSize = &tv
-	case LedgerUpgradeTypeExternalSystemIdGenerator:
-		tv, ok := value.([]ExternalSystemIdGeneratorType)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be []ExternalSystemIdGeneratorType")
-			return
-		}
-		result.NewExternalSystemIdGenerators = &tv
 	case LedgerUpgradeTypeTxExpirationPeriod:
 		tv, ok := value.(Int64)
 		if !ok {
@@ -8230,31 +8106,6 @@ func (u LedgerUpgrade) GetNewMaxTxSetSize() (result Uint32, ok bool) {
 
 	if armName == "NewMaxTxSetSize" {
 		result = *u.NewMaxTxSetSize
-		ok = true
-	}
-
-	return
-}
-
-// MustNewExternalSystemIdGenerators retrieves the NewExternalSystemIdGenerators value from the union,
-// panicing if the value is not set.
-func (u LedgerUpgrade) MustNewExternalSystemIdGenerators() []ExternalSystemIdGeneratorType {
-	val, ok := u.GetNewExternalSystemIdGenerators()
-
-	if !ok {
-		panic("arm NewExternalSystemIdGenerators is not set")
-	}
-
-	return val
-}
-
-// GetNewExternalSystemIdGenerators retrieves the NewExternalSystemIdGenerators value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u LedgerUpgrade) GetNewExternalSystemIdGenerators() (result []ExternalSystemIdGeneratorType, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "NewExternalSystemIdGenerators" {
-		result = *u.NewExternalSystemIdGenerators
 		ok = true
 	}
 
@@ -9070,7 +8921,7 @@ func NewLedgerKeyKeyValueExt(v LedgerVersion, value interface{}) (result LedgerK
 // LedgerKeyKeyValue is an XDR NestedStruct defines as:
 //
 //   struct {
-//            string256 key;
+//            longstring key;
 //            union switch (LedgerVersion v)
 //            {
 //            	case EMPTY_VERSION:
@@ -9080,7 +8931,7 @@ func NewLedgerKeyKeyValueExt(v LedgerVersion, value interface{}) (result LedgerK
 //        }
 //
 type LedgerKeyKeyValue struct {
-	Key String256            `json:"key,omitempty"`
+	Key Longstring           `json:"key,omitempty"`
 	Ext LedgerKeyKeyValueExt `json:"ext,omitempty"`
 }
 
@@ -9787,7 +9638,7 @@ type LedgerKeyAccountRolePermission struct {
 //    	} sale;
 //    case KEY_VALUE:
 //        struct {
-//            string256 key;
+//            longstring key;
 //            union switch (LedgerVersion v)
 //            {
 //            	case EMPTY_VERSION:
@@ -11753,45 +11604,39 @@ type BindExternalSystemAccountIdOp struct {
 //
 //        // codes considered as "failure" for the operation
 //        MALFORMED = -1,
-//        NO_AVAILABLE_ID = -2,
-//        AUTO_GENERATED_TYPE_NOT_ALLOWED = -3
+//        NO_AVAILABLE_ID = -2
 //    };
 //
 type BindExternalSystemAccountIdResultCode int32
 
 const (
-	BindExternalSystemAccountIdResultCodeSuccess                     BindExternalSystemAccountIdResultCode = 0
-	BindExternalSystemAccountIdResultCodeMalformed                   BindExternalSystemAccountIdResultCode = -1
-	BindExternalSystemAccountIdResultCodeNoAvailableId               BindExternalSystemAccountIdResultCode = -2
-	BindExternalSystemAccountIdResultCodeAutoGeneratedTypeNotAllowed BindExternalSystemAccountIdResultCode = -3
+	BindExternalSystemAccountIdResultCodeSuccess       BindExternalSystemAccountIdResultCode = 0
+	BindExternalSystemAccountIdResultCodeMalformed     BindExternalSystemAccountIdResultCode = -1
+	BindExternalSystemAccountIdResultCodeNoAvailableId BindExternalSystemAccountIdResultCode = -2
 )
 
 var BindExternalSystemAccountIdResultCodeAll = []BindExternalSystemAccountIdResultCode{
 	BindExternalSystemAccountIdResultCodeSuccess,
 	BindExternalSystemAccountIdResultCodeMalformed,
 	BindExternalSystemAccountIdResultCodeNoAvailableId,
-	BindExternalSystemAccountIdResultCodeAutoGeneratedTypeNotAllowed,
 }
 
 var bindExternalSystemAccountIdResultCodeMap = map[int32]string{
 	0:  "BindExternalSystemAccountIdResultCodeSuccess",
 	-1: "BindExternalSystemAccountIdResultCodeMalformed",
 	-2: "BindExternalSystemAccountIdResultCodeNoAvailableId",
-	-3: "BindExternalSystemAccountIdResultCodeAutoGeneratedTypeNotAllowed",
 }
 
 var bindExternalSystemAccountIdResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "malformed",
 	-2: "no_available_id",
-	-3: "auto_generated_type_not_allowed",
 }
 
 var bindExternalSystemAccountIdResultCodeRevMap = map[string]int32{
-	"BindExternalSystemAccountIdResultCodeSuccess":                     0,
-	"BindExternalSystemAccountIdResultCodeMalformed":                   -1,
-	"BindExternalSystemAccountIdResultCodeNoAvailableId":               -2,
-	"BindExternalSystemAccountIdResultCodeAutoGeneratedTypeNotAllowed": -3,
+	"BindExternalSystemAccountIdResultCodeSuccess":       0,
+	"BindExternalSystemAccountIdResultCodeMalformed":     -1,
+	"BindExternalSystemAccountIdResultCodeNoAvailableId": -2,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -14110,7 +13955,6 @@ func NewCreateAccountOpExtendedExt(v LedgerVersion, value interface{}) (result C
 //
 //   struct CreateAccountOpExtended
 //    {
-//        ExternalSystemAccountID externalSystemIDs<>;
 //        uint64* roleID;
 //
 //        // reserved for future use
@@ -14123,9 +13967,8 @@ func NewCreateAccountOpExtendedExt(v LedgerVersion, value interface{}) (result C
 //    };
 //
 type CreateAccountOpExtended struct {
-	ExternalSystemIDs []ExternalSystemAccountId  `json:"externalSystemIDs,omitempty"`
-	RoleId            *Uint64                    `json:"roleID,omitempty"`
-	Ext               CreateAccountOpExtendedExt `json:"ext,omitempty"`
+	RoleId *Uint64                    `json:"roleID,omitempty"`
+	Ext    CreateAccountOpExtendedExt `json:"ext,omitempty"`
 }
 
 // CreateAccountOpExt is an XDR NestedUnion defines as:
@@ -14286,9 +14129,7 @@ type CreateAccountOp struct {
 //        NAME_DUPLICATION = -4,
 //        REFERRER_NOT_FOUND = -5,
 //    	INVALID_ACCOUNT_VERSION = -6, // if account version is higher than ledger version
-//    	NOT_VERIFIED_CANNOT_HAVE_POLICIES = -7,
-//    	EXTERNAL_SYS_ACC_NOT_ALLOWED = -8, // op contains external system account ID which should be generated on core level
-//    	EXTERNAL_SYS_ID_EXISTS = -9 // external system account ID already exists
+//    	NOT_VERIFIED_CANNOT_HAVE_POLICIES = -7
 //    };
 //
 type CreateAccountResultCode int32
@@ -14302,8 +14143,6 @@ const (
 	CreateAccountResultCodeReferrerNotFound              CreateAccountResultCode = -5
 	CreateAccountResultCodeInvalidAccountVersion         CreateAccountResultCode = -6
 	CreateAccountResultCodeNotVerifiedCannotHavePolicies CreateAccountResultCode = -7
-	CreateAccountResultCodeExternalSysAccNotAllowed      CreateAccountResultCode = -8
-	CreateAccountResultCodeExternalSysIdExists           CreateAccountResultCode = -9
 )
 
 var CreateAccountResultCodeAll = []CreateAccountResultCode{
@@ -14315,8 +14154,6 @@ var CreateAccountResultCodeAll = []CreateAccountResultCode{
 	CreateAccountResultCodeReferrerNotFound,
 	CreateAccountResultCodeInvalidAccountVersion,
 	CreateAccountResultCodeNotVerifiedCannotHavePolicies,
-	CreateAccountResultCodeExternalSysAccNotAllowed,
-	CreateAccountResultCodeExternalSysIdExists,
 }
 
 var createAccountResultCodeMap = map[int32]string{
@@ -14328,8 +14165,6 @@ var createAccountResultCodeMap = map[int32]string{
 	-5: "CreateAccountResultCodeReferrerNotFound",
 	-6: "CreateAccountResultCodeInvalidAccountVersion",
 	-7: "CreateAccountResultCodeNotVerifiedCannotHavePolicies",
-	-8: "CreateAccountResultCodeExternalSysAccNotAllowed",
-	-9: "CreateAccountResultCodeExternalSysIdExists",
 }
 
 var createAccountResultCodeShortMap = map[int32]string{
@@ -14341,8 +14176,6 @@ var createAccountResultCodeShortMap = map[int32]string{
 	-5: "referrer_not_found",
 	-6: "invalid_account_version",
 	-7: "not_verified_cannot_have_policies",
-	-8: "external_sys_acc_not_allowed",
-	-9: "external_sys_id_exists",
 }
 
 var createAccountResultCodeRevMap = map[string]int32{
@@ -14354,8 +14187,6 @@ var createAccountResultCodeRevMap = map[string]int32{
 	"CreateAccountResultCodeReferrerNotFound":              -5,
 	"CreateAccountResultCodeInvalidAccountVersion":         -6,
 	"CreateAccountResultCodeNotVerifiedCannotHavePolicies": -7,
-	"CreateAccountResultCodeExternalSysAccNotAllowed":      -8,
-	"CreateAccountResultCodeExternalSysIdExists":           -9,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -14461,7 +14292,6 @@ func NewCreateAccountSuccessExt(v LedgerVersion, value interface{}) (result Crea
 //
 //   struct CreateAccountSuccess
 //    {
-//    	ExternalSystemAccountID externalSystemIDs<>;
 //    	 // reserved for future use
 //        union switch (LedgerVersion v)
 //        {
@@ -14472,8 +14302,7 @@ func NewCreateAccountSuccessExt(v LedgerVersion, value interface{}) (result Crea
 //    };
 //
 type CreateAccountSuccess struct {
-	ExternalSystemIDs []ExternalSystemAccountId `json:"externalSystemIDs,omitempty"`
-	Ext               CreateAccountSuccessExt   `json:"ext,omitempty"`
+	Ext CreateAccountSuccessExt `json:"ext,omitempty"`
 }
 
 // CreateAccountResult is an XDR Union defines as:
@@ -22554,25 +22383,22 @@ type ManageExternalSystemAccountIdPoolEntryOp struct {
 //        // codes considered as "failure" for the operation
 //        MALFORMED = -1,
 //        ALREADY_EXISTS = -2,
-//        AUTO_GENERATED_TYPE_NOT_ALLOWED = -3,
-//        NOT_FOUND = -4
+//        NOT_FOUND = -3
 //    };
 //
 type ManageExternalSystemAccountIdPoolEntryResultCode int32
 
 const (
-	ManageExternalSystemAccountIdPoolEntryResultCodeSuccess                     ManageExternalSystemAccountIdPoolEntryResultCode = 0
-	ManageExternalSystemAccountIdPoolEntryResultCodeMalformed                   ManageExternalSystemAccountIdPoolEntryResultCode = -1
-	ManageExternalSystemAccountIdPoolEntryResultCodeAlreadyExists               ManageExternalSystemAccountIdPoolEntryResultCode = -2
-	ManageExternalSystemAccountIdPoolEntryResultCodeAutoGeneratedTypeNotAllowed ManageExternalSystemAccountIdPoolEntryResultCode = -3
-	ManageExternalSystemAccountIdPoolEntryResultCodeNotFound                    ManageExternalSystemAccountIdPoolEntryResultCode = -4
+	ManageExternalSystemAccountIdPoolEntryResultCodeSuccess       ManageExternalSystemAccountIdPoolEntryResultCode = 0
+	ManageExternalSystemAccountIdPoolEntryResultCodeMalformed     ManageExternalSystemAccountIdPoolEntryResultCode = -1
+	ManageExternalSystemAccountIdPoolEntryResultCodeAlreadyExists ManageExternalSystemAccountIdPoolEntryResultCode = -2
+	ManageExternalSystemAccountIdPoolEntryResultCodeNotFound      ManageExternalSystemAccountIdPoolEntryResultCode = -3
 )
 
 var ManageExternalSystemAccountIdPoolEntryResultCodeAll = []ManageExternalSystemAccountIdPoolEntryResultCode{
 	ManageExternalSystemAccountIdPoolEntryResultCodeSuccess,
 	ManageExternalSystemAccountIdPoolEntryResultCodeMalformed,
 	ManageExternalSystemAccountIdPoolEntryResultCodeAlreadyExists,
-	ManageExternalSystemAccountIdPoolEntryResultCodeAutoGeneratedTypeNotAllowed,
 	ManageExternalSystemAccountIdPoolEntryResultCodeNotFound,
 }
 
@@ -22580,24 +22406,21 @@ var manageExternalSystemAccountIdPoolEntryResultCodeMap = map[int32]string{
 	0:  "ManageExternalSystemAccountIdPoolEntryResultCodeSuccess",
 	-1: "ManageExternalSystemAccountIdPoolEntryResultCodeMalformed",
 	-2: "ManageExternalSystemAccountIdPoolEntryResultCodeAlreadyExists",
-	-3: "ManageExternalSystemAccountIdPoolEntryResultCodeAutoGeneratedTypeNotAllowed",
-	-4: "ManageExternalSystemAccountIdPoolEntryResultCodeNotFound",
+	-3: "ManageExternalSystemAccountIdPoolEntryResultCodeNotFound",
 }
 
 var manageExternalSystemAccountIdPoolEntryResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "malformed",
 	-2: "already_exists",
-	-3: "auto_generated_type_not_allowed",
-	-4: "not_found",
+	-3: "not_found",
 }
 
 var manageExternalSystemAccountIdPoolEntryResultCodeRevMap = map[string]int32{
-	"ManageExternalSystemAccountIdPoolEntryResultCodeSuccess":                     0,
-	"ManageExternalSystemAccountIdPoolEntryResultCodeMalformed":                   -1,
-	"ManageExternalSystemAccountIdPoolEntryResultCodeAlreadyExists":               -2,
-	"ManageExternalSystemAccountIdPoolEntryResultCodeAutoGeneratedTypeNotAllowed": -3,
-	"ManageExternalSystemAccountIdPoolEntryResultCodeNotFound":                    -4,
+	"ManageExternalSystemAccountIdPoolEntryResultCodeSuccess":       0,
+	"ManageExternalSystemAccountIdPoolEntryResultCodeMalformed":     -1,
+	"ManageExternalSystemAccountIdPoolEntryResultCodeAlreadyExists": -2,
+	"ManageExternalSystemAccountIdPoolEntryResultCodeNotFound":      -3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -23666,14 +23489,14 @@ func (e *ManageKvAction) UnmarshalJSON(data []byte) error {
 //   union switch(ManageKVAction action)
 //            {
 //                case PUT:
-//                    KeyValueEntry value;
+//                     KeyValueEntryValue value;
 //                case REMOVE:
 //                    void;
 //            }
 //
 type ManageKeyValueOpAction struct {
-	Action ManageKvAction `json:"action,omitempty"`
-	Value  *KeyValueEntry `json:"value,omitempty"`
+	Action ManageKvAction      `json:"action,omitempty"`
+	Value  *KeyValueEntryValue `json:"value,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -23699,9 +23522,9 @@ func NewManageKeyValueOpAction(action ManageKvAction, value interface{}) (result
 	result.Action = action
 	switch ManageKvAction(action) {
 	case ManageKvActionPut:
-		tv, ok := value.(KeyValueEntry)
+		tv, ok := value.(KeyValueEntryValue)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be KeyValueEntry")
+			err = fmt.Errorf("invalid value, must be KeyValueEntryValue")
 			return
 		}
 		result.Value = &tv
@@ -23713,7 +23536,7 @@ func NewManageKeyValueOpAction(action ManageKvAction, value interface{}) (result
 
 // MustValue retrieves the Value value from the union,
 // panicing if the value is not set.
-func (u ManageKeyValueOpAction) MustValue() KeyValueEntry {
+func (u ManageKeyValueOpAction) MustValue() KeyValueEntryValue {
 	val, ok := u.GetValue()
 
 	if !ok {
@@ -23725,7 +23548,7 @@ func (u ManageKeyValueOpAction) MustValue() KeyValueEntry {
 
 // GetValue retrieves the Value value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ManageKeyValueOpAction) GetValue() (result KeyValueEntry, ok bool) {
+func (u ManageKeyValueOpAction) GetValue() (result KeyValueEntryValue, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Action))
 
 	if armName == "Value" {
@@ -23740,8 +23563,8 @@ func (u ManageKeyValueOpAction) GetValue() (result KeyValueEntry, ok bool) {
 //
 //   union switch (LedgerVersion v)
 //            {
-//            case EMPTY_VERSION:
-//                void;
+//                case EMPTY_VERSION:
+//                    void;
 //            }
 //
 type ManageKeyValueOpExt struct {
@@ -23778,11 +23601,11 @@ func NewManageKeyValueOpExt(v LedgerVersion, value interface{}) (result ManageKe
 //
 //   struct ManageKeyValueOp
 //        {
-//            string256 key;
+//            longstring key;
 //            union switch(ManageKVAction action)
 //            {
 //                case PUT:
-//                    KeyValueEntry value;
+//                     KeyValueEntryValue value;
 //                case REMOVE:
 //                    void;
 //            }
@@ -23791,14 +23614,14 @@ func NewManageKeyValueOpExt(v LedgerVersion, value interface{}) (result ManageKe
 //            // reserved for future use
 //            union switch (LedgerVersion v)
 //            {
-//            case EMPTY_VERSION:
-//                void;
+//                case EMPTY_VERSION:
+//                    void;
 //            }
 //            ext;
 //        };
 //
 type ManageKeyValueOp struct {
-	Key    String256              `json:"key,omitempty"`
+	Key    Longstring             `json:"key,omitempty"`
 	Action ManageKeyValueOpAction `json:"action,omitempty"`
 	Ext    ManageKeyValueOpExt    `json:"ext,omitempty"`
 }
@@ -23862,7 +23685,7 @@ type ManageKeyValueSuccess struct {
 //
 //   enum ManageKeyValueResultCode
 //        {
-//            SUCCESS = 1,
+//            SUCCESS = 0,
 //            NOT_FOUND = -1,
 //            INVALID_TYPE = -2
 //        };
@@ -23870,7 +23693,7 @@ type ManageKeyValueSuccess struct {
 type ManageKeyValueResultCode int32
 
 const (
-	ManageKeyValueResultCodeSuccess     ManageKeyValueResultCode = 1
+	ManageKeyValueResultCodeSuccess     ManageKeyValueResultCode = 0
 	ManageKeyValueResultCodeNotFound    ManageKeyValueResultCode = -1
 	ManageKeyValueResultCodeInvalidType ManageKeyValueResultCode = -2
 )
@@ -23882,19 +23705,19 @@ var ManageKeyValueResultCodeAll = []ManageKeyValueResultCode{
 }
 
 var manageKeyValueResultCodeMap = map[int32]string{
-	1:  "ManageKeyValueResultCodeSuccess",
+	0:  "ManageKeyValueResultCodeSuccess",
 	-1: "ManageKeyValueResultCodeNotFound",
 	-2: "ManageKeyValueResultCodeInvalidType",
 }
 
 var manageKeyValueResultCodeShortMap = map[int32]string{
-	1:  "success",
+	0:  "success",
 	-1: "not_found",
 	-2: "invalid_type",
 }
 
 var manageKeyValueResultCodeRevMap = map[string]int32{
-	"ManageKeyValueResultCodeSuccess":     1,
+	"ManageKeyValueResultCodeSuccess":     0,
 	"ManageKeyValueResultCodeNotFound":    -1,
 	"ManageKeyValueResultCodeInvalidType": -2,
 }
@@ -27122,7 +26945,8 @@ type PaymentOpV2 struct {
 //        INSUFFICIENT_FEE_AMOUNT = -14,
 //        BALANCE_TO_CHARGE_FEE_FROM_NOT_FOUND = -15,
 //        PAYMENT_AMOUNT_IS_LESS_THAN_DEST_FEE = -16,
-//        DESTINATION_ACCOUNT_NOT_FOUND = -17
+//        DESTINATION_ACCOUNT_NOT_FOUND = -17,
+//        INCORRECT_AMOUNT_PRECISION = -18
 //
 //         // !!! Add new result code to review invoice op too !!!
 //    };
@@ -27148,6 +26972,7 @@ const (
 	PaymentV2ResultCodeBalanceToChargeFeeFromNotFound PaymentV2ResultCode = -15
 	PaymentV2ResultCodePaymentAmountIsLessThanDestFee PaymentV2ResultCode = -16
 	PaymentV2ResultCodeDestinationAccountNotFound     PaymentV2ResultCode = -17
+	PaymentV2ResultCodeIncorrectAmountPrecision       PaymentV2ResultCode = -18
 )
 
 var PaymentV2ResultCodeAll = []PaymentV2ResultCode{
@@ -27169,6 +26994,7 @@ var PaymentV2ResultCodeAll = []PaymentV2ResultCode{
 	PaymentV2ResultCodeBalanceToChargeFeeFromNotFound,
 	PaymentV2ResultCodePaymentAmountIsLessThanDestFee,
 	PaymentV2ResultCodeDestinationAccountNotFound,
+	PaymentV2ResultCodeIncorrectAmountPrecision,
 }
 
 var paymentV2ResultCodeMap = map[int32]string{
@@ -27190,6 +27016,7 @@ var paymentV2ResultCodeMap = map[int32]string{
 	-15: "PaymentV2ResultCodeBalanceToChargeFeeFromNotFound",
 	-16: "PaymentV2ResultCodePaymentAmountIsLessThanDestFee",
 	-17: "PaymentV2ResultCodeDestinationAccountNotFound",
+	-18: "PaymentV2ResultCodeIncorrectAmountPrecision",
 }
 
 var paymentV2ResultCodeShortMap = map[int32]string{
@@ -27211,6 +27038,7 @@ var paymentV2ResultCodeShortMap = map[int32]string{
 	-15: "balance_to_charge_fee_from_not_found",
 	-16: "payment_amount_is_less_than_dest_fee",
 	-17: "destination_account_not_found",
+	-18: "incorrect_amount_precision",
 }
 
 var paymentV2ResultCodeRevMap = map[string]int32{
@@ -27232,6 +27060,7 @@ var paymentV2ResultCodeRevMap = map[string]int32{
 	"PaymentV2ResultCodeBalanceToChargeFeeFromNotFound": -15,
 	"PaymentV2ResultCodePaymentAmountIsLessThanDestFee": -16,
 	"PaymentV2ResultCodeDestinationAccountNotFound":     -17,
+	"PaymentV2ResultCodeIncorrectAmountPrecision":       -18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -27343,8 +27172,8 @@ func NewPaymentV2ResponseExt(v LedgerVersion, value interface{}) (result Payment
 //        uint64 sourceSentUniversal;
 //        uint64 paymentID;
 //
-//        uint64 actualSourcePaymentFee;
-//        uint64 actualDestinationPaymentFee;
+//        Fee actualSourcePaymentFee;
+//        Fee actualDestinationPaymentFee;
 //
 //        // reserved for future use
 //        union switch (LedgerVersion v)
@@ -27361,8 +27190,8 @@ type PaymentV2Response struct {
 	Asset                       AssetCode            `json:"asset,omitempty"`
 	SourceSentUniversal         Uint64               `json:"sourceSentUniversal,omitempty"`
 	PaymentId                   Uint64               `json:"paymentID,omitempty"`
-	ActualSourcePaymentFee      Uint64               `json:"actualSourcePaymentFee,omitempty"`
-	ActualDestinationPaymentFee Uint64               `json:"actualDestinationPaymentFee,omitempty"`
+	ActualSourcePaymentFee      Fee                  `json:"actualSourcePaymentFee,omitempty"`
+	ActualDestinationPaymentFee Fee                  `json:"actualDestinationPaymentFee,omitempty"`
 	Ext                         PaymentV2ResponseExt `json:"ext,omitempty"`
 }
 
@@ -28983,414 +28812,6 @@ type ReviewDetails struct {
 	Ext             ReviewDetailsExt `json:"ext,omitempty"`
 }
 
-// SaleExtendedExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type SaleExtendedExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u SaleExtendedExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of SaleExtendedExt
-func (u SaleExtendedExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewSaleExtendedExt creates a new  SaleExtendedExt.
-func NewSaleExtendedExt(v LedgerVersion, value interface{}) (result SaleExtendedExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// SaleExtended is an XDR Struct defines as:
-//
-//   struct SaleExtended {
-//        uint64 saleID;
-//
-//        // Reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type SaleExtended struct {
-	SaleId Uint64          `json:"saleID,omitempty"`
-	Ext    SaleExtendedExt `json:"ext,omitempty"`
-}
-
-// ASwapBidExtendedExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ASwapBidExtendedExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ASwapBidExtendedExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ASwapBidExtendedExt
-func (u ASwapBidExtendedExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewASwapBidExtendedExt creates a new  ASwapBidExtendedExt.
-func NewASwapBidExtendedExt(v LedgerVersion, value interface{}) (result ASwapBidExtendedExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ASwapBidExtended is an XDR Struct defines as:
-//
-//   struct ASwapBidExtended
-//    {
-//        uint64 bidID;
-//
-//        // Reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ASwapBidExtended struct {
-	BidId Uint64              `json:"bidID,omitempty"`
-	Ext   ASwapBidExtendedExt `json:"ext,omitempty"`
-}
-
-// ASwapExtendedExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type ASwapExtendedExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ASwapExtendedExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ASwapExtendedExt
-func (u ASwapExtendedExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewASwapExtendedExt creates a new  ASwapExtendedExt.
-func NewASwapExtendedExt(v LedgerVersion, value interface{}) (result ASwapExtendedExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ASwapExtended is an XDR Struct defines as:
-//
-//   struct ASwapExtended
-//    {
-//        uint64 bidID;
-//        AccountID bidOwnerID;
-//        AccountID purchaserID;
-//        AssetCode baseAsset;
-//        AssetCode quoteAsset;
-//        uint64 baseAmount;
-//        uint64 quoteAmount;
-//        uint64 price;
-//        BalanceID bidOwnerBaseBalanceID;
-//        BalanceID purchaserBaseBalanceID;
-//
-//        // Reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type ASwapExtended struct {
-	BidId                  Uint64           `json:"bidID,omitempty"`
-	BidOwnerId             AccountId        `json:"bidOwnerID,omitempty"`
-	PurchaserId            AccountId        `json:"purchaserID,omitempty"`
-	BaseAsset              AssetCode        `json:"baseAsset,omitempty"`
-	QuoteAsset             AssetCode        `json:"quoteAsset,omitempty"`
-	BaseAmount             Uint64           `json:"baseAmount,omitempty"`
-	QuoteAmount            Uint64           `json:"quoteAmount,omitempty"`
-	Price                  Uint64           `json:"price,omitempty"`
-	BidOwnerBaseBalanceId  BalanceId        `json:"bidOwnerBaseBalanceID,omitempty"`
-	PurchaserBaseBalanceId BalanceId        `json:"purchaserBaseBalanceID,omitempty"`
-	Ext                    ASwapExtendedExt `json:"ext,omitempty"`
-}
-
-// ExtendedResultTypeExt is an XDR NestedUnion defines as:
-//
-//   union switch(ReviewableRequestType requestType) {
-//        case SALE:
-//            SaleExtended saleExtended;
-//        case NONE:
-//            void;
-//        case CREATE_ATOMIC_SWAP_BID:
-//            ASwapBidExtended aSwapBidExtended;
-//        case ATOMIC_SWAP:
-//            ASwapExtended aSwapExtended;
-//        }
-//
-type ExtendedResultTypeExt struct {
-	RequestType      ReviewableRequestType `json:"requestType,omitempty"`
-	SaleExtended     *SaleExtended         `json:"saleExtended,omitempty"`
-	ASwapBidExtended *ASwapBidExtended     `json:"aSwapBidExtended,omitempty"`
-	ASwapExtended    *ASwapExtended        `json:"aSwapExtended,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ExtendedResultTypeExt) SwitchFieldName() string {
-	return "RequestType"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ExtendedResultTypeExt
-func (u ExtendedResultTypeExt) ArmForSwitch(sw int32) (string, bool) {
-	switch ReviewableRequestType(sw) {
-	case ReviewableRequestTypeSale:
-		return "SaleExtended", true
-	case ReviewableRequestTypeNone:
-		return "", true
-	case ReviewableRequestTypeCreateAtomicSwapBid:
-		return "ASwapBidExtended", true
-	case ReviewableRequestTypeAtomicSwap:
-		return "ASwapExtended", true
-	}
-	return "-", false
-}
-
-// NewExtendedResultTypeExt creates a new  ExtendedResultTypeExt.
-func NewExtendedResultTypeExt(requestType ReviewableRequestType, value interface{}) (result ExtendedResultTypeExt, err error) {
-	result.RequestType = requestType
-	switch ReviewableRequestType(requestType) {
-	case ReviewableRequestTypeSale:
-		tv, ok := value.(SaleExtended)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be SaleExtended")
-			return
-		}
-		result.SaleExtended = &tv
-	case ReviewableRequestTypeNone:
-		// void
-	case ReviewableRequestTypeCreateAtomicSwapBid:
-		tv, ok := value.(ASwapBidExtended)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ASwapBidExtended")
-			return
-		}
-		result.ASwapBidExtended = &tv
-	case ReviewableRequestTypeAtomicSwap:
-		tv, ok := value.(ASwapExtended)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be ASwapExtended")
-			return
-		}
-		result.ASwapExtended = &tv
-	}
-	return
-}
-
-// MustSaleExtended retrieves the SaleExtended value from the union,
-// panicing if the value is not set.
-func (u ExtendedResultTypeExt) MustSaleExtended() SaleExtended {
-	val, ok := u.GetSaleExtended()
-
-	if !ok {
-		panic("arm SaleExtended is not set")
-	}
-
-	return val
-}
-
-// GetSaleExtended retrieves the SaleExtended value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ExtendedResultTypeExt) GetSaleExtended() (result SaleExtended, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.RequestType))
-
-	if armName == "SaleExtended" {
-		result = *u.SaleExtended
-		ok = true
-	}
-
-	return
-}
-
-// MustASwapBidExtended retrieves the ASwapBidExtended value from the union,
-// panicing if the value is not set.
-func (u ExtendedResultTypeExt) MustASwapBidExtended() ASwapBidExtended {
-	val, ok := u.GetASwapBidExtended()
-
-	if !ok {
-		panic("arm ASwapBidExtended is not set")
-	}
-
-	return val
-}
-
-// GetASwapBidExtended retrieves the ASwapBidExtended value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ExtendedResultTypeExt) GetASwapBidExtended() (result ASwapBidExtended, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.RequestType))
-
-	if armName == "ASwapBidExtended" {
-		result = *u.ASwapBidExtended
-		ok = true
-	}
-
-	return
-}
-
-// MustASwapExtended retrieves the ASwapExtended value from the union,
-// panicing if the value is not set.
-func (u ExtendedResultTypeExt) MustASwapExtended() ASwapExtended {
-	val, ok := u.GetASwapExtended()
-
-	if !ok {
-		panic("arm ASwapExtended is not set")
-	}
-
-	return val
-}
-
-// GetASwapExtended retrieves the ASwapExtended value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ExtendedResultTypeExt) GetASwapExtended() (result ASwapExtended, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.RequestType))
-
-	if armName == "ASwapExtended" {
-		result = *u.ASwapExtended
-		ok = true
-	}
-
-	return
-}
-
-// ExtendedResultExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//       {
-//       case EMPTY_VERSION:
-//           void;
-//       }
-//
-type ExtendedResultExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u ExtendedResultExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ExtendedResultExt
-func (u ExtendedResultExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewExtendedResultExt creates a new  ExtendedResultExt.
-func NewExtendedResultExt(v LedgerVersion, value interface{}) (result ExtendedResultExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// ExtendedResult is an XDR Struct defines as:
-//
-//   struct ExtendedResult {
-//        bool fulfilled;
-//
-//        union switch(ReviewableRequestType requestType) {
-//        case SALE:
-//            SaleExtended saleExtended;
-//        case NONE:
-//            void;
-//        case CREATE_ATOMIC_SWAP_BID:
-//            ASwapBidExtended aSwapBidExtended;
-//        case ATOMIC_SWAP:
-//            ASwapExtended aSwapExtended;
-//        } typeExt;
-//
-//       // Reserved for future use
-//       union switch (LedgerVersion v)
-//       {
-//       case EMPTY_VERSION:
-//           void;
-//       }
-//       ext;
-//    };
-//
-type ExtendedResult struct {
-	Fulfilled bool                  `json:"fulfilled,omitempty"`
-	TypeExt   ExtendedResultTypeExt `json:"typeExt,omitempty"`
-	Ext       ExtendedResultExt     `json:"ext,omitempty"`
-}
-
 // ReviewRequestOpRequestDetails is an XDR NestedUnion defines as:
 //
 //   union switch(ReviewableRequestType requestType) {
@@ -30274,214 +29695,608 @@ func (e *ReviewRequestResultCode) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// ReviewRequestResultSuccessExt is an XDR NestedUnion defines as:
+// InvoiceExtendedExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
-//    		{
-//    		case ADD_SALE_ID_REVIEW_REQUEST_RESULT:
-//    		    uint64 saleID;
-//    		case ADD_REVIEW_INVOICE_REQUEST_PAYMENT_RESPONSE:
-//    		    PaymentV2Response paymentV2Response;
-//    		case ADD_CONTRACT_ID_REVIEW_REQUEST_RESULT:
-//    		    uint64 contractID;
-//    		case EMPTY_VERSION:
-//    			void;
-//            case ADD_TASKS_TO_REVIEWABLE_REQUEST:
-//                ExtendedResult extendedResult;
-//    		}
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
 //
-type ReviewRequestResultSuccessExt struct {
-	V                 LedgerVersion      `json:"v,omitempty"`
-	SaleId            *Uint64            `json:"saleID,omitempty"`
-	PaymentV2Response *PaymentV2Response `json:"paymentV2Response,omitempty"`
-	ContractId        *Uint64            `json:"contractID,omitempty"`
-	ExtendedResult    *ExtendedResult    `json:"extendedResult,omitempty"`
+type InvoiceExtendedExt struct {
+	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u ReviewRequestResultSuccessExt) SwitchFieldName() string {
+func (u InvoiceExtendedExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ReviewRequestResultSuccessExt
-func (u ReviewRequestResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of InvoiceExtendedExt
+func (u InvoiceExtendedExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
-	case LedgerVersionAddSaleIdReviewRequestResult:
-		return "SaleId", true
-	case LedgerVersionAddReviewInvoiceRequestPaymentResponse:
-		return "PaymentV2Response", true
-	case LedgerVersionAddContractIdReviewRequestResult:
-		return "ContractId", true
 	case LedgerVersionEmptyVersion:
 		return "", true
-	case LedgerVersionAddTasksToReviewableRequest:
-		return "ExtendedResult", true
 	}
 	return "-", false
 }
 
-// NewReviewRequestResultSuccessExt creates a new  ReviewRequestResultSuccessExt.
-func NewReviewRequestResultSuccessExt(v LedgerVersion, value interface{}) (result ReviewRequestResultSuccessExt, err error) {
+// NewInvoiceExtendedExt creates a new  InvoiceExtendedExt.
+func NewInvoiceExtendedExt(v LedgerVersion, value interface{}) (result InvoiceExtendedExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
-	case LedgerVersionAddSaleIdReviewRequestResult:
-		tv, ok := value.(Uint64)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be Uint64")
-			return
-		}
-		result.SaleId = &tv
-	case LedgerVersionAddReviewInvoiceRequestPaymentResponse:
-		tv, ok := value.(PaymentV2Response)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be PaymentV2Response")
-			return
-		}
-		result.PaymentV2Response = &tv
-	case LedgerVersionAddContractIdReviewRequestResult:
-		tv, ok := value.(Uint64)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be Uint64")
-			return
-		}
-		result.ContractId = &tv
 	case LedgerVersionEmptyVersion:
 		// void
-	case LedgerVersionAddTasksToReviewableRequest:
-		tv, ok := value.(ExtendedResult)
+	}
+	return
+}
+
+// InvoiceExtended is an XDR Struct defines as:
+//
+//   struct InvoiceExtended
+//    {
+//        PaymentV2Response paymentV2Response;
+//
+//        // Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type InvoiceExtended struct {
+	PaymentV2Response PaymentV2Response  `json:"paymentV2Response,omitempty"`
+	Ext               InvoiceExtendedExt `json:"ext,omitempty"`
+}
+
+// ContractExtendedExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ContractExtendedExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ContractExtendedExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ContractExtendedExt
+func (u ContractExtendedExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewContractExtendedExt creates a new  ContractExtendedExt.
+func NewContractExtendedExt(v LedgerVersion, value interface{}) (result ContractExtendedExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ContractExtended is an XDR Struct defines as:
+//
+//   struct ContractExtended
+//    {
+//        uint64 contractID;
+//
+//        // Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ContractExtended struct {
+	ContractId Uint64              `json:"contractID,omitempty"`
+	Ext        ContractExtendedExt `json:"ext,omitempty"`
+}
+
+// SaleExtendedExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type SaleExtendedExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SaleExtendedExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SaleExtendedExt
+func (u SaleExtendedExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewSaleExtendedExt creates a new  SaleExtendedExt.
+func NewSaleExtendedExt(v LedgerVersion, value interface{}) (result SaleExtendedExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// SaleExtended is an XDR Struct defines as:
+//
+//   struct SaleExtended
+//    {
+//        uint64 saleID;
+//
+//        // Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type SaleExtended struct {
+	SaleId Uint64          `json:"saleID,omitempty"`
+	Ext    SaleExtendedExt `json:"ext,omitempty"`
+}
+
+// ASwapBidExtendedExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ASwapBidExtendedExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ASwapBidExtendedExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ASwapBidExtendedExt
+func (u ASwapBidExtendedExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewASwapBidExtendedExt creates a new  ASwapBidExtendedExt.
+func NewASwapBidExtendedExt(v LedgerVersion, value interface{}) (result ASwapBidExtendedExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ASwapBidExtended is an XDR Struct defines as:
+//
+//   struct ASwapBidExtended
+//    {
+//        uint64 bidID;
+//
+//        // Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ASwapBidExtended struct {
+	BidId Uint64              `json:"bidID,omitempty"`
+	Ext   ASwapBidExtendedExt `json:"ext,omitempty"`
+}
+
+// ASwapExtendedExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ASwapExtendedExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ASwapExtendedExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ASwapExtendedExt
+func (u ASwapExtendedExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewASwapExtendedExt creates a new  ASwapExtendedExt.
+func NewASwapExtendedExt(v LedgerVersion, value interface{}) (result ASwapExtendedExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ASwapExtended is an XDR Struct defines as:
+//
+//   struct ASwapExtended
+//    {
+//        uint64 bidID;
+//        AccountID bidOwnerID;
+//        AccountID purchaserID;
+//        AssetCode baseAsset;
+//        AssetCode quoteAsset;
+//        uint64 baseAmount;
+//        uint64 quoteAmount;
+//        uint64 price;
+//        BalanceID bidOwnerBaseBalanceID;
+//        BalanceID purchaserBaseBalanceID;
+//
+//        // Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ASwapExtended struct {
+	BidId                  Uint64           `json:"bidID,omitempty"`
+	BidOwnerId             AccountId        `json:"bidOwnerID,omitempty"`
+	PurchaserId            AccountId        `json:"purchaserID,omitempty"`
+	BaseAsset              AssetCode        `json:"baseAsset,omitempty"`
+	QuoteAsset             AssetCode        `json:"quoteAsset,omitempty"`
+	BaseAmount             Uint64           `json:"baseAmount,omitempty"`
+	QuoteAmount            Uint64           `json:"quoteAmount,omitempty"`
+	Price                  Uint64           `json:"price,omitempty"`
+	BidOwnerBaseBalanceId  BalanceId        `json:"bidOwnerBaseBalanceID,omitempty"`
+	PurchaserBaseBalanceId BalanceId        `json:"purchaserBaseBalanceID,omitempty"`
+	Ext                    ASwapExtendedExt `json:"ext,omitempty"`
+}
+
+// ReviewRequestSuccessResultTypeExt is an XDR NestedUnion defines as:
+//
+//   union switch(ReviewableRequestType requestType) {
+//        case SALE:
+//            SaleExtended saleExtended;
+//        case NONE:
+//            void;
+//        case CONTRACT:
+//            ContractExtended contractExtended;
+//        case INVOICE:
+//            InvoiceExtended invoiceExtended;
+//        case CREATE_ATOMIC_SWAP_BID:
+//            ASwapBidExtended aSwapBidExtended;
+//        case ATOMIC_SWAP:
+//            ASwapExtended aSwapExtended;
+//        }
+//
+type ReviewRequestSuccessResultTypeExt struct {
+	RequestType      ReviewableRequestType `json:"requestType,omitempty"`
+	SaleExtended     *SaleExtended         `json:"saleExtended,omitempty"`
+	ContractExtended *ContractExtended     `json:"contractExtended,omitempty"`
+	InvoiceExtended  *InvoiceExtended      `json:"invoiceExtended,omitempty"`
+	ASwapBidExtended *ASwapBidExtended     `json:"aSwapBidExtended,omitempty"`
+	ASwapExtended    *ASwapExtended        `json:"aSwapExtended,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ReviewRequestSuccessResultTypeExt) SwitchFieldName() string {
+	return "RequestType"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ReviewRequestSuccessResultTypeExt
+func (u ReviewRequestSuccessResultTypeExt) ArmForSwitch(sw int32) (string, bool) {
+	switch ReviewableRequestType(sw) {
+	case ReviewableRequestTypeSale:
+		return "SaleExtended", true
+	case ReviewableRequestTypeNone:
+		return "", true
+	case ReviewableRequestTypeContract:
+		return "ContractExtended", true
+	case ReviewableRequestTypeInvoice:
+		return "InvoiceExtended", true
+	case ReviewableRequestTypeCreateAtomicSwapBid:
+		return "ASwapBidExtended", true
+	case ReviewableRequestTypeAtomicSwap:
+		return "ASwapExtended", true
+	}
+	return "-", false
+}
+
+// NewReviewRequestSuccessResultTypeExt creates a new  ReviewRequestSuccessResultTypeExt.
+func NewReviewRequestSuccessResultTypeExt(requestType ReviewableRequestType, value interface{}) (result ReviewRequestSuccessResultTypeExt, err error) {
+	result.RequestType = requestType
+	switch ReviewableRequestType(requestType) {
+	case ReviewableRequestTypeSale:
+		tv, ok := value.(SaleExtended)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be ExtendedResult")
+			err = fmt.Errorf("invalid value, must be SaleExtended")
 			return
 		}
-		result.ExtendedResult = &tv
+		result.SaleExtended = &tv
+	case ReviewableRequestTypeNone:
+		// void
+	case ReviewableRequestTypeContract:
+		tv, ok := value.(ContractExtended)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ContractExtended")
+			return
+		}
+		result.ContractExtended = &tv
+	case ReviewableRequestTypeInvoice:
+		tv, ok := value.(InvoiceExtended)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be InvoiceExtended")
+			return
+		}
+		result.InvoiceExtended = &tv
+	case ReviewableRequestTypeCreateAtomicSwapBid:
+		tv, ok := value.(ASwapBidExtended)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ASwapBidExtended")
+			return
+		}
+		result.ASwapBidExtended = &tv
+	case ReviewableRequestTypeAtomicSwap:
+		tv, ok := value.(ASwapExtended)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ASwapExtended")
+			return
+		}
+		result.ASwapExtended = &tv
 	}
 	return
 }
 
-// MustSaleId retrieves the SaleId value from the union,
+// MustSaleExtended retrieves the SaleExtended value from the union,
 // panicing if the value is not set.
-func (u ReviewRequestResultSuccessExt) MustSaleId() Uint64 {
-	val, ok := u.GetSaleId()
+func (u ReviewRequestSuccessResultTypeExt) MustSaleExtended() SaleExtended {
+	val, ok := u.GetSaleExtended()
 
 	if !ok {
-		panic("arm SaleId is not set")
+		panic("arm SaleExtended is not set")
 	}
 
 	return val
 }
 
-// GetSaleId retrieves the SaleId value from the union,
+// GetSaleExtended retrieves the SaleExtended value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewRequestResultSuccessExt) GetSaleId() (result Uint64, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.V))
+func (u ReviewRequestSuccessResultTypeExt) GetSaleExtended() (result SaleExtended, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
 
-	if armName == "SaleId" {
-		result = *u.SaleId
+	if armName == "SaleExtended" {
+		result = *u.SaleExtended
 		ok = true
 	}
 
 	return
 }
 
-// MustPaymentV2Response retrieves the PaymentV2Response value from the union,
+// MustContractExtended retrieves the ContractExtended value from the union,
 // panicing if the value is not set.
-func (u ReviewRequestResultSuccessExt) MustPaymentV2Response() PaymentV2Response {
-	val, ok := u.GetPaymentV2Response()
+func (u ReviewRequestSuccessResultTypeExt) MustContractExtended() ContractExtended {
+	val, ok := u.GetContractExtended()
 
 	if !ok {
-		panic("arm PaymentV2Response is not set")
+		panic("arm ContractExtended is not set")
 	}
 
 	return val
 }
 
-// GetPaymentV2Response retrieves the PaymentV2Response value from the union,
+// GetContractExtended retrieves the ContractExtended value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewRequestResultSuccessExt) GetPaymentV2Response() (result PaymentV2Response, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.V))
+func (u ReviewRequestSuccessResultTypeExt) GetContractExtended() (result ContractExtended, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
 
-	if armName == "PaymentV2Response" {
-		result = *u.PaymentV2Response
+	if armName == "ContractExtended" {
+		result = *u.ContractExtended
 		ok = true
 	}
 
 	return
 }
 
-// MustContractId retrieves the ContractId value from the union,
+// MustInvoiceExtended retrieves the InvoiceExtended value from the union,
 // panicing if the value is not set.
-func (u ReviewRequestResultSuccessExt) MustContractId() Uint64 {
-	val, ok := u.GetContractId()
+func (u ReviewRequestSuccessResultTypeExt) MustInvoiceExtended() InvoiceExtended {
+	val, ok := u.GetInvoiceExtended()
 
 	if !ok {
-		panic("arm ContractId is not set")
+		panic("arm InvoiceExtended is not set")
 	}
 
 	return val
 }
 
-// GetContractId retrieves the ContractId value from the union,
+// GetInvoiceExtended retrieves the InvoiceExtended value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewRequestResultSuccessExt) GetContractId() (result Uint64, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.V))
+func (u ReviewRequestSuccessResultTypeExt) GetInvoiceExtended() (result InvoiceExtended, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
 
-	if armName == "ContractId" {
-		result = *u.ContractId
+	if armName == "InvoiceExtended" {
+		result = *u.InvoiceExtended
 		ok = true
 	}
 
 	return
 }
 
-// MustExtendedResult retrieves the ExtendedResult value from the union,
+// MustASwapBidExtended retrieves the ASwapBidExtended value from the union,
 // panicing if the value is not set.
-func (u ReviewRequestResultSuccessExt) MustExtendedResult() ExtendedResult {
-	val, ok := u.GetExtendedResult()
+func (u ReviewRequestSuccessResultTypeExt) MustASwapBidExtended() ASwapBidExtended {
+	val, ok := u.GetASwapBidExtended()
 
 	if !ok {
-		panic("arm ExtendedResult is not set")
+		panic("arm ASwapBidExtended is not set")
 	}
 
 	return val
 }
 
-// GetExtendedResult retrieves the ExtendedResult value from the union,
+// GetASwapBidExtended retrieves the ASwapBidExtended value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewRequestResultSuccessExt) GetExtendedResult() (result ExtendedResult, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.V))
+func (u ReviewRequestSuccessResultTypeExt) GetASwapBidExtended() (result ASwapBidExtended, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
 
-	if armName == "ExtendedResult" {
-		result = *u.ExtendedResult
+	if armName == "ASwapBidExtended" {
+		result = *u.ASwapBidExtended
 		ok = true
 	}
 
 	return
 }
 
-// ReviewRequestResultSuccess is an XDR NestedStruct defines as:
+// MustASwapExtended retrieves the ASwapExtended value from the union,
+// panicing if the value is not set.
+func (u ReviewRequestSuccessResultTypeExt) MustASwapExtended() ASwapExtended {
+	val, ok := u.GetASwapExtended()
+
+	if !ok {
+		panic("arm ASwapExtended is not set")
+	}
+
+	return val
+}
+
+// GetASwapExtended retrieves the ASwapExtended value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewRequestSuccessResultTypeExt) GetASwapExtended() (result ASwapExtended, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "ASwapExtended" {
+		result = *u.ASwapExtended
+		ok = true
+	}
+
+	return
+}
+
+// ReviewRequestSuccessResultExt is an XDR NestedUnion defines as:
 //
-//   struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case ADD_SALE_ID_REVIEW_REQUEST_RESULT:
-//    		    uint64 saleID;
-//    		case ADD_REVIEW_INVOICE_REQUEST_PAYMENT_RESPONSE:
-//    		    PaymentV2Response paymentV2Response;
-//    		case ADD_CONTRACT_ID_REVIEW_REQUEST_RESULT:
-//    		    uint64 contractID;
-//    		case EMPTY_VERSION:
-//    			void;
-//            case ADD_TASKS_TO_REVIEWABLE_REQUEST:
-//                ExtendedResult extendedResult;
-//    		}
-//    		ext;
-//    	}
+//   union switch (LedgerVersion v)
+//       {
+//       case EMPTY_VERSION:
+//           void;
+//       }
 //
-type ReviewRequestResultSuccess struct {
-	Ext ReviewRequestResultSuccessExt `json:"ext,omitempty"`
+type ReviewRequestSuccessResultExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ReviewRequestSuccessResultExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ReviewRequestSuccessResultExt
+func (u ReviewRequestSuccessResultExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewReviewRequestSuccessResultExt creates a new  ReviewRequestSuccessResultExt.
+func NewReviewRequestSuccessResultExt(v LedgerVersion, value interface{}) (result ReviewRequestSuccessResultExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ReviewRequestSuccessResult is an XDR Struct defines as:
+//
+//   struct ReviewRequestSuccessResult
+//    {
+//        bool fulfilled;
+//
+//        union switch(ReviewableRequestType requestType) {
+//        case SALE:
+//            SaleExtended saleExtended;
+//        case NONE:
+//            void;
+//        case CONTRACT:
+//            ContractExtended contractExtended;
+//        case INVOICE:
+//            InvoiceExtended invoiceExtended;
+//        case CREATE_ATOMIC_SWAP_BID:
+//            ASwapBidExtended aSwapBidExtended;
+//        case ATOMIC_SWAP:
+//            ASwapExtended aSwapExtended;
+//        } typeExt;
+//
+//       // Reserved for future use
+//       union switch (LedgerVersion v)
+//       {
+//       case EMPTY_VERSION:
+//           void;
+//       }
+//       ext;
+//    };
+//
+type ReviewRequestSuccessResult struct {
+	Fulfilled bool                              `json:"fulfilled,omitempty"`
+	TypeExt   ReviewRequestSuccessResultTypeExt `json:"typeExt,omitempty"`
+	Ext       ReviewRequestSuccessResultExt     `json:"ext,omitempty"`
 }
 
 // ReviewRequestResult is an XDR Union defines as:
@@ -30489,30 +30304,14 @@ type ReviewRequestResultSuccess struct {
 //   union ReviewRequestResult switch (ReviewRequestResultCode code)
 //    {
 //    case SUCCESS:
-//    	struct {
-//    		// reserved for future use
-//    		union switch (LedgerVersion v)
-//    		{
-//    		case ADD_SALE_ID_REVIEW_REQUEST_RESULT:
-//    		    uint64 saleID;
-//    		case ADD_REVIEW_INVOICE_REQUEST_PAYMENT_RESPONSE:
-//    		    PaymentV2Response paymentV2Response;
-//    		case ADD_CONTRACT_ID_REVIEW_REQUEST_RESULT:
-//    		    uint64 contractID;
-//    		case EMPTY_VERSION:
-//    			void;
-//            case ADD_TASKS_TO_REVIEWABLE_REQUEST:
-//                ExtendedResult extendedResult;
-//    		}
-//    		ext;
-//    	} success;
+//    	ReviewRequestSuccessResult success;
 //    default:
 //        void;
 //    };
 //
 type ReviewRequestResult struct {
 	Code    ReviewRequestResultCode     `json:"code,omitempty"`
-	Success *ReviewRequestResultSuccess `json:"success,omitempty"`
+	Success *ReviewRequestSuccessResult `json:"success,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -30537,9 +30336,9 @@ func NewReviewRequestResult(code ReviewRequestResultCode, value interface{}) (re
 	result.Code = code
 	switch ReviewRequestResultCode(code) {
 	case ReviewRequestResultCodeSuccess:
-		tv, ok := value.(ReviewRequestResultSuccess)
+		tv, ok := value.(ReviewRequestSuccessResult)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be ReviewRequestResultSuccess")
+			err = fmt.Errorf("invalid value, must be ReviewRequestSuccessResult")
 			return
 		}
 		result.Success = &tv
@@ -30551,7 +30350,7 @@ func NewReviewRequestResult(code ReviewRequestResultCode, value interface{}) (re
 
 // MustSuccess retrieves the Success value from the union,
 // panicing if the value is not set.
-func (u ReviewRequestResult) MustSuccess() ReviewRequestResultSuccess {
+func (u ReviewRequestResult) MustSuccess() ReviewRequestSuccessResult {
 	val, ok := u.GetSuccess()
 
 	if !ok {
@@ -30563,7 +30362,7 @@ func (u ReviewRequestResult) MustSuccess() ReviewRequestResultSuccess {
 
 // GetSuccess retrieves the Success value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewRequestResult) GetSuccess() (result ReviewRequestResultSuccess, ok bool) {
+func (u ReviewRequestResult) GetSuccess() (result ReviewRequestSuccessResult, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Code))
 
 	if armName == "Success" {
@@ -39537,4 +39336,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "ed77c50c7af961081231927b15db35c3b6ac9454"
+var Revision = "b0bd518e7b24242f35fbe5ef30b45e7e7c81157b"

@@ -158,12 +158,13 @@ func (h *checkSaleStateOpHandler) getSaleAntesEffects(effectType history2.Effect
 
 		result = append(result, history2.ParticipantEffect{
 			AccountID: balance.AccountID,
-			BalanceID: &balance.BalanceID,
+			BalanceID: &balance.ID,
 			AssetCode: &balance.AssetCode,
 			Effect:    effect,
 		})
 	}
 
+	return result, nil
 }
 
 func (h *checkSaleStateOpHandler) getStatedSaleAntes() []xdr.SaleAnteEntry {

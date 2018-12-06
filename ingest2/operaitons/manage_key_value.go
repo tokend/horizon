@@ -14,7 +14,7 @@ func (h *manageKeyValueOpHandler) OperationDetails(op rawOperation, _ xdr.Operat
 
 	var value *xdr.KeyValueEntryValue
 	if manageKVOp.Action.Action == xdr.ManageKvActionPut {
-		valueForPtr := manageKVOp.Action.MustValue().Value
+		valueForPtr := manageKVOp.Action.MustValue()
 		value = &valueForPtr
 	}
 
