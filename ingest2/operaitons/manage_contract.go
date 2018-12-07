@@ -60,9 +60,9 @@ func (h *manageContractOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	if isRevert, ok := manageContractOp.Data.GetIsRevert(); ok && isRevert {
 		return h.getRevertedInvoiceParticipantsEffects(request), nil
-	} else {
-		return h.getConfirmedInvoicesParticipantsEffects(request), nil
 	}
+
+	return h.getConfirmedInvoicesParticipantsEffects(request), nil
 }
 
 func (h *manageContractOpHandler) getRevertedInvoiceParticipantsEffects(requests []xdr.ReviewableRequestEntry) []history2.ParticipantEffect {

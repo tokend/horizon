@@ -68,8 +68,8 @@ type ChargedEffect struct {
 }
 
 type UnlockedEffect struct {
-	Amount  string  `json:"amount"`
-	FeePaid FeePaid `json:"fee_paid"`
+	Amount      string  `json:"amount"`
+	FeeUnlocked FeePaid `json:"fee_unlocked"`
 }
 
 type ChargedFromLockedEffect struct {

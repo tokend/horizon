@@ -23,6 +23,7 @@ type OperationDetails struct {
 	SetFee                     *SetFeeDetails                     `json:"set_fee,omitempty"`
 	CancelAtomicSwapBid        *CancelAtomicSwapBidDetails        `json:"cancel_atomic_swap_bid,omitempty"`
 	CheckSaleState             *CheckSaleStateDetails             `json:"check_sale_state,omitempty"`
+	CreateKYCRequest           *CreateKYCRequestDetails           `json:"create_kyc_request"`
 	CreatePreIssuanceRequest   *CreatePreIssuanceRequestDetails   `json:"create_pre_issuance_request,omitempty"`
 	CreateIssuanceRequest      *CreateIssuanceRequestDetails      `json:"create_issuance_request,omitempty"`
 	CreateManageLimitsRequest  *CreateManageLimitsRequestDetails  `json:"create_manage_limits_request,omitempty"`
@@ -294,4 +295,12 @@ type FeeData struct {
 type RequestDetails struct {
 	RequestID   int64 `json:"request_id,omitempty"`
 	IsFulfilled bool  `json:"is_fulfilled"`
+}
+
+type CreateKYCRequestDetails struct {
+	AccountIDToUpdateKYC string                 `json:"account_id_to_update_kyc"`
+	AccountTypeToSet     xdr.AccountType        `json:"account_type_to_set"`
+	KYCData              map[string]interface{} `json:"kyc_data"`
+	AllTasks             *uint32                `json:"all_tasks"`
+	RequestDetails       RequestDetails         `json:"request_details"`
 }

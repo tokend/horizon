@@ -21,9 +21,7 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 		pubKeyProvider:        pubKeyProvider,
 		ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
 	}
-	paymentHelper := paymentHelper{
-		pubKeyProvider: pubKeyProvider,
-	}
+	balanceProvider := mainProvider.GetBalanceProvider()
 	return operationHandler{
 		allHandlers: map[xdr.OperationType]operationHandlerI{
 			xdr.OperationTypeCreateAccount: &createAccountOpHandler{
@@ -46,7 +44,7 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 				pubKeyProvider:        pubKeyProvider,
 				offerHelper:           offerHelper,
 				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
-				balanceProvider:       mainProvider.GetBalanceProvider(),
+				balanceProvider:       balanceProvider,
 			},
 			xdr.OperationTypeManageContract: &manageContractOpHandler{
 				pubKeyProvider:  pubKeyProvider,
@@ -61,14 +59,14 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			},
 			xdr.OperationTypeCreateSaleRequest: &createSaleRequestOpHandler{},
 			xdr.OperationTypeCreateAswapBidRequest: &createAtomicSwapBidRequestOpHandler{
-				balanceProvider: mainProvider.GetBalanceProvider(),
+				balanceProvider: balanceProvider,
 			},
 			xdr.OperationTypeCreateAswapRequest: &createAtomicSwapRequestOpHandler{},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeCreateAmlAlert: &createAMLAlertReqeustOpHandler{
-				balanceProvider: mainProvider.GetBalanceProvider(),
+				balanceProvider: balanceProvider,
 			},
 			xdr.OperationTypeCreateManageLimitsRequest: &createManageLimitsRequestOpHandler{},
 			xdr.OperationTypeManageInvoiceRequest:      &manageInvoiceRequestOpHandler{},
@@ -78,16 +76,21 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeReviewRequest: &reviewRequestOpHandler{
 				pubKeyProvider:        pubKeyProvider,
 				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
+				balanceProvider:       balanceProvider,
+				allRequestHandlers: initializeReviewableRequestMap(balanceProvider,
+					pubKeyProvider, mainProvider.GetLedgerChangesProvider()),
 			},
 			xdr.OperationTypePaymentV2: &paymentOpHandler{
 				pubKeyProvider: pubKeyProvider,
-				paymentHelper:  paymentHelper,
+				paymentHelper: paymentHelper{
+					pubKeyProvider: pubKeyProvider,
+				},
 			},
 			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{
 				pubKeyProvider:        pubKeyProvider,
 				offerHelper:           offerHelper,
 				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
-				balanceProvider:       mainProvider.GetBalanceProvider(),
+				balanceProvider:       balanceProvider,
 			},
 			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
 				pubKeyProvider:        pubKeyProvider,
@@ -97,6 +100,35 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 		opIDProvider:         mainProvider.GetOperationIDProvider(),
 		partEffectIDProvider: mainProvider.GetParticipantEffectIDProvider(),
 		pubKeyProvider:       pubKeyProvider,
+	}
+}
+
+func initializeReviewableRequestMap(balanceProvider balanceProvider,
+	pubKeyProvider publicKeyProvider, changesProvider ledgerChangesProvider,
+) map[xdr.ReviewableRequestType]requestHandlerI {
+	effectHelper := effectHelper{
+		balanceProvider: balanceProvider,
+	}
+
+	return map[xdr.ReviewableRequestType]requestHandlerI{
+		xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{
+			effectHelper: effectHelper,
+		},
+		xdr.ReviewableRequestTypeWithdraw: &withdrawHandler{
+			effectHelper: effectHelper,
+		},
+		xdr.ReviewableRequestTypeAmlAlert: &amlAlertHandler{
+			effectHelper: effectHelper,
+		},
+		xdr.ReviewableRequestTypeInvoice: &invoiceHandler{
+			paymentHelper: paymentHelper{
+				pubKeyProvider: pubKeyProvider,
+			},
+		},
+		xdr.ReviewableRequestTypeAtomicSwap: &atomicSwapHandler{
+			pubKeyProvider:        pubKeyProvider,
+			ledgerChangesProvider: changesProvider,
+		},
 	}
 }
 
@@ -217,16 +249,6 @@ func customDetailsUnmarshal(rawDetails []byte) map[string]interface{} {
 	}
 
 	return result
-}
-
-func initializeRequeviwableRequestMap() map[xdr.ReviewableRequestType]requestHandlerI {
-	return map[xdr.ReviewableRequestType]requestHandlerI{
-		xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{},
-		xdr.ReviewableRequestTypeWithdraw:       &withdrawHandler{},
-		xdr.ReviewableRequestTypeAmlAlert:       &amlAlertHandler{},
-		xdr.ReviewableRequestTypeInvoice:        &invoiceHandler{},
-		xdr.ReviewableRequestTypeAtomicSwap:     &atomicSwapHandler{},
-	}
 }
 
 // TODO set option operation handler

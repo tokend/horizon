@@ -27,12 +27,12 @@ func (h *paymentOpHandler) OperationDetails(op rawOperation, opRes xdr.Operation
 			Amount:      amount.StringU(uint64(paymentOp.Amount)),
 			Asset:       paymentRes.Asset,
 			SourceFeeData: history2.FeeData{
-				FixedFee:  amount.StringU(uint64(paymentOp.FeeData.SourceFee.FixedFee)),
-				ActualFee: amount.StringU(uint64(paymentRes.ActualSourcePaymentFee)),
+				FixedFee:  amount.StringU(uint64(paymentRes.ActualSourcePaymentFee.Fixed)),
+				ActualFee: amount.StringU(uint64(paymentRes.ActualSourcePaymentFee.Percent)),
 			},
 			DestinationFeeData: history2.FeeData{
-				FixedFee:  amount.StringU(uint64(paymentOp.FeeData.DestinationFee.FixedFee)),
-				ActualFee: amount.StringU(uint64(paymentRes.ActualDestinationPaymentFee)),
+				FixedFee:  amount.StringU(uint64(paymentRes.ActualDestinationPaymentFee.Fixed)),
+				ActualFee: amount.StringU(uint64(paymentRes.ActualDestinationPaymentFee.Percent)),
 			},
 			SourcePayForDestination: paymentOp.FeeData.SourcePaysForDest,
 			Subject:                 string(paymentOp.Subject),
@@ -50,5 +50,5 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	return h.paymentHelper.getParticipantsEffects(
 		paymentOp, paymentRes, source, history2.EffectTypeFunded,
-	), nil
+	)
 }
