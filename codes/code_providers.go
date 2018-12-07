@@ -37,4 +37,6 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManageContract:              func(ir xdr.OperationResultTr) shortStr { return ir.MustManageContractResult().Code },
 	xdr.OperationTypeCancelSaleRequest:           func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelSaleCreationRequestResult().Code },
 	xdr.OperationTypePayout:                      func(ir xdr.OperationResultTr) shortStr { return ir.MustPayoutResult().Code },
+	xdr.OperationTypeManageAccountRole:           func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountRoleResult().Code },
+	xdr.OperationTypeManageAccountRolePermission: func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountRolePermissionResult().Code },
 }
