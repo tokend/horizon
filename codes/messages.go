@@ -228,8 +228,20 @@ var messages = map[string]string{
 	"op_fee_exceeds_actual_amount":                      "Fee more than actual amount to be payed",
 	"op_total_fee_overflow":                             "Unexpected state, sum of fixed and calculated fee exceeded max amount",
 	"op_min_amount_too_big":                             "There is no receivers which can receive more than minPayoutAmount",
+	//"tx_fee_incorrect_precision": "tx_fee_incorrect_precision",
+	//"op_no_role_permission": "",
+	//"op_invalid_amount_precision": "",
+	//"op_invalid_trailing_digits_count": "",
+	//"op_invalid_preissued_amount_precision": "",
+	//"op_invalid_max_issuance_amount_precision": "",
+	//"op_incompatible_policies": "",
+	//"op_removing_not_set_tasks": "",
 }
 
 func getMessage(rawCode string) string {
-	return messages[rawCode]
+	msg, ok := messages[rawCode]
+	if !ok {
+		return rawCode
+	}
+	return msg
 }
