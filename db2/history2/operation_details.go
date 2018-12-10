@@ -19,6 +19,7 @@ type OperationDetails struct {
 	ManageOffer                *ManageOfferDetails                `json:"manage_offer,omitempty"`
 	ManageContract             *ManageContractDetails             `json:"manage_contract,omitempty"`
 	ManageExternalSystemPool   *ManageExternalSystemPoolDetails   `json:"manage_external_system_pool"`
+	BindExternalSystemAccount  *BindExternalSystemAccountDetails  `json:"bind_external_system_account"`
 	Payment                    *PaymentDetails                    `json:"payment,omitempty"`
 	Payout                     *PayoutDetails                     `json:"payout,omitempty"`
 	SetFee                     *SetFeeDetails                     `json:"set_fee,omitempty"`
@@ -319,4 +320,9 @@ type CreateExternalSystemPoolDetails struct {
 }
 type RemoveExternalSystemPoolDetails struct {
 	PoolID uint64 `json:"pool_id"`
+}
+
+type BindExternalSystemAccountDetails struct {
+	ExternalSystemType int32  `json:"external_system_type"`
+	Source             string `json:"source"`
 }

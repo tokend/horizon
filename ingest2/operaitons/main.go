@@ -34,6 +34,7 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeManageExternalSystemAccountIdPoolEntry: &manageExternalSystemPoolOpHandler{},
+			xdr.OperationTypeBindExternalSystemAccountId:            &bindExternalSystemAccountOpHandler{},
 			xdr.OperationTypeManageBalance: &manageBalanceOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
