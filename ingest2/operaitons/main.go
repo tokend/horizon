@@ -150,9 +150,10 @@ func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.Operatio
 			})
 	}
 
+	source := h.getOperationSource(op.SourceAccount, txSource)
 	details, err := handler.OperationDetails(rawOperation{
 		Body:   op.Body,
-		Source: h.getOperationSource(op.SourceAccount, txSource),
+		Source: source,
 	}, opRes)
 	if err != nil {
 		return history2.Operation{}, nil,
@@ -180,6 +181,7 @@ func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.Operatio
 		ID:               operationID,
 		OperationDetails: details,
 		Type:             op.Body.Type,
+		Source:           source.Address(),
 	}, participantsEffects, nil
 }
 

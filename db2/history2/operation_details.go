@@ -323,6 +323,5 @@ type RemoveExternalSystemPoolDetails struct {
 }
 
 type BindExternalSystemAccountDetails struct {
-	ExternalSystemType int32  `json:"external_system_type"`
-	Source             string `json:"source"`
+	ExternalSystemType int32 `json:"external_system_type"`
 }

@@ -18,7 +18,6 @@ func (h *bindExternalSystemAccountOpHandler) OperationDetails(op rawOperation,
 		Type: xdr.OperationTypeBindExternalSystemAccountId,
 		BindExternalSystemAccount: &history2.BindExternalSystemAccountDetails{
 			ExternalSystemType: int32(bindExternalSystemAccountOp.ExternalSystemType),
-			Source:             op.Source.Address(),
 		},
 	}, nil
 }
