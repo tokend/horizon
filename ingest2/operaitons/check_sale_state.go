@@ -26,6 +26,8 @@ func (h *checkSaleStateOpHandler) OperationDetails(op rawOperation,
 	}, nil
 }
 
+// ParticipantsEffects returns sale owner and participants `matched` effects if sale closed
+// returns `unlocked` effects if sale canceled or updated
 func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {

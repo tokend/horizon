@@ -22,6 +22,8 @@ func (h *cancelAtomicSwapBidOpHandler) OperationDetails(op rawOperation,
 	}, nil
 }
 
+// ParticipantsEffects returns participants effects with source effect `unlocked`
+// if atomic swap bid has zero locked amount
 func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {

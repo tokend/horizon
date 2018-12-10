@@ -17,9 +17,9 @@ func (h *createWithdrawRequestOpHandler) OperationDetails(op rawOperation,
 
 	destinationAsset := xdr.AssetCode("")
 	destinationAmount := amount.String(int64(0))
-	if autoConvDet, ok := withdrawRequest.Details.GetAutoConversion(); ok {
-		destinationAsset = autoConvDet.DestAsset
-		destinationAmount = amount.StringU(uint64(autoConvDet.ExpectedAmount))
+	if autoConversion, ok := withdrawRequest.Details.GetAutoConversion(); ok {
+		destinationAsset = autoConversion.DestAsset
+		destinationAmount = amount.StringU(uint64(autoConversion.ExpectedAmount))
 	}
 
 	return history2.OperationDetails{
@@ -36,6 +36,7 @@ func (h *createWithdrawRequestOpHandler) OperationDetails(op rawOperation,
 	}, nil
 }
 
+// ParticipantsEffects returns source `locked` effect
 func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	_ xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {

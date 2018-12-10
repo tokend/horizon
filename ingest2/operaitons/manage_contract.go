@@ -45,6 +45,8 @@ func (h *manageContractOpHandler) OperationDetails(op rawOperation, opRes xdr.Op
 	return opDetails, nil
 }
 
+// ParticipantsEffects returns unlocked if contract completed or confirmed by escrow
+// returns `charged from locked` and `funded` effects if invoice reverted
 func (h *manageContractOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {

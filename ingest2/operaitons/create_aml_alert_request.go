@@ -25,6 +25,8 @@ func (h *createAMLAlertReqeustOpHandler) OperationDetails(op rawOperation,
 	}, nil
 }
 
+// ParticipantsEffects returns `locked` effect for account
+// which is suspected in illegal obtaining of tokens
 func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {

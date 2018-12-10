@@ -35,6 +35,7 @@ func (h *payoutHandler) OperationDetails(op rawOperation, res xdr.OperationResul
 	}, nil
 }
 
+// ParticipantsEffects returns `charged` and `funded` effects
 func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	res xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {

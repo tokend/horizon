@@ -41,6 +41,8 @@ func (h *manageOfferOpHandler) OperationDetails(op rawOperation, opRes xdr.Opera
 	}, nil
 }
 
+// ParticipantsEffects can return `matched` and `locked` effects if offer created
+// returns `unlocked` effects if offer canceled (deleted by user)
 func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {

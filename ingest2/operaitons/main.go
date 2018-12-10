@@ -15,11 +15,14 @@ type operationHandler struct {
 	pubKeyProvider       publicKeyProvider
 }
 
+// newOperationHandler returns new handler which can return
+// details and participants effects of certain operation
 func newOperationHandler(mainProvider providerCluster) operationHandler {
 	pubKeyProvider := mainProvider.GetPubKeyProvider()
+	ledgerChangesProvider := mainProvider.GetLedgerChangesProvider()
 	offerHelper := offerHelper{
 		pubKeyProvider:        pubKeyProvider,
-		ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
+		ledgerChangesProvider: ledgerChangesProvider,
 	}
 	balanceProvider := mainProvider.GetBalanceProvider()
 	return operationHandler{
@@ -43,7 +46,7 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeManageOffer: &manageOfferOpHandler{
 				pubKeyProvider:        pubKeyProvider,
 				offerHelper:           offerHelper,
-				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
+				ledgerChangesProvider: ledgerChangesProvider,
 				balanceProvider:       balanceProvider,
 			},
 			xdr.OperationTypeManageContract: &manageContractOpHandler{
@@ -51,6 +54,9 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 				requestProvider: mainProvider.GetRequestProvider(),
 			},
 			xdr.OperationTypeSetFees: &setFeeOpHandler{
+				pubKeyProvider: pubKeyProvider,
+			},
+			xdr.OperationTypeCreateKycRequest: &createKYCRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeCreatePreissuanceRequest: &createPreIssuanceRequestOpHandler{},
@@ -75,10 +81,10 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			},
 			xdr.OperationTypeReviewRequest: &reviewRequestOpHandler{
 				pubKeyProvider:        pubKeyProvider,
-				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
+				ledgerChangesProvider: ledgerChangesProvider,
 				balanceProvider:       balanceProvider,
 				allRequestHandlers: initializeReviewableRequestMap(balanceProvider,
-					pubKeyProvider, mainProvider.GetLedgerChangesProvider()),
+					pubKeyProvider, ledgerChangesProvider),
 			},
 			xdr.OperationTypePaymentV2: &paymentOpHandler{
 				pubKeyProvider: pubKeyProvider,
@@ -89,12 +95,12 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{
 				pubKeyProvider:        pubKeyProvider,
 				offerHelper:           offerHelper,
-				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
+				ledgerChangesProvider: ledgerChangesProvider,
 				balanceProvider:       balanceProvider,
 			},
 			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
 				pubKeyProvider:        pubKeyProvider,
-				ledgerChangesProvider: mainProvider.GetLedgerChangesProvider(),
+				ledgerChangesProvider: ledgerChangesProvider,
 			},
 		},
 		opIDProvider:         mainProvider.GetOperationIDProvider(),
@@ -132,7 +138,7 @@ func initializeReviewableRequestMap(balanceProvider balanceProvider,
 	}
 }
 
-// ConvertOperation transform xdr operation data to db suitable Operation and Participants Effects
+// ConvertOperation transforms xdr operation data to db suitable Operation and Participants Effects
 func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.OperationResultTr, txSource xdr.AccountId,
 ) (history2.Operation, []history2.ParticipantEffect, error) {
 	handler, ok := h.allHandlers[op.Body.Type]
@@ -196,41 +202,58 @@ func (h *operationHandler) getBaseSourceParticipantEffect(opSource *xdr.AccountI
 }
 
 type providerCluster interface {
+	// GetOperationIDProvider returns operationIDProvider
 	GetOperationIDProvider() operationIDProvider
+	// GetParticipantEffectIDProvider returns participantEffectIDProvider
 	GetParticipantEffectIDProvider() participantEffectIDProvider
+	// GetPubKeyProvider returns publicKeyProvider
 	GetPubKeyProvider() publicKeyProvider
+	// GetBalanceProvider returns balanceProvider
 	GetBalanceProvider() balanceProvider
+	// GetLedgerChangesProvider returns ledgerChangesProvider
 	GetLedgerChangesProvider() ledgerChangesProvider
+	// GetRequestProvider returns requestProvider
 	GetRequestProvider() requestProvider
 }
 
 type operationIDProvider interface {
+	// GetOperationID returns unique id of current operation
 	GetOperationID() int64
 }
 
 type participantEffectIDProvider interface {
+	// GetNextParticipantEffectID return unique value for participant effect
 	GetNextParticipantEffectID() int64
 }
 
 type publicKeyProvider interface {
+	// GetAccountID returns int value which corresponds to xdr.AccountId
 	GetAccountID(raw xdr.AccountId) int64
+	// GetBalanceID returns int value which corresponds to xdr.BalanceId
 	GetBalanceID(raw xdr.BalanceId) int64
 }
 
 type balanceProvider interface {
+	// GetBalanceByID returns history balance struct for specific balance id
 	GetBalanceByID(balanceID xdr.BalanceId) history2.Balance
 }
 
 type ledgerChangesProvider interface {
+	// GetLedgerChanges returns all ledger changes for certain operation
 	GetLedgerChanges() xdr.LedgerEntryChanges
 }
 
 type requestProvider interface {
+	// GetInvoiceRequestsByContractID returns invoice request which attached to contract with specific id
 	GetInvoiceRequestsByContractID(contractID int64) []xdr.ReviewableRequestEntry
 }
 
 type operationHandlerI interface {
+	// OperationDetails returns db suitable operation details,
+	// returns error if operation has not existing action (union switch)
 	OperationDetails(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
+	// ParticipantsEffects returns slice of effects (changes) balances amounts of each participants
+	// even if there is no changes on balances, operation participants can be returned
 	ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr, source history2.ParticipantEffect) ([]history2.ParticipantEffect, error)
 }
 

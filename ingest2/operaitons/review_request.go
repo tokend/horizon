@@ -44,6 +44,7 @@ func (h *reviewRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.Ope
 	return opDetails, nil
 }
 
+// ParticipantsEffects can return different effects depended on request type
 func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
@@ -291,11 +292,11 @@ func (h *atomicSwapHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp,
 		},
 	}}
 
-	purchaserBaseBalanceId := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.PurchaserBaseBalanceId)
+	purchaserBaseBalanceID := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.PurchaserBaseBalanceId)
 
 	participants = append(participants, history2.ParticipantEffect{
 		AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.PurchaserId),
-		BalanceID: &purchaserBaseBalanceId,
+		BalanceID: &purchaserBaseBalanceID,
 		AssetCode: &atomicSwapExtendedResult.BaseAsset,
 		Effect: history2.Effect{
 			Type: history2.EffectTypeFunded,

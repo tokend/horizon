@@ -45,6 +45,7 @@ func (h *createIssuanceRequestOpHandler) OperationDetails(op rawOperation,
 	}, nil
 }
 
+// ParticipantsEffects returns source `funded` effect if request was fulfilled
 func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {

@@ -12,6 +12,7 @@ type manageBalanceOpHandler struct {
 func (h *manageBalanceOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageBalanceOp := op.Body.MustManageBalanceOp()
+	manageBalanceRes := opRes.MustManageBalanceResult().MustSuccess()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageBalance,
@@ -19,7 +20,7 @@ func (h *manageBalanceOpHandler) OperationDetails(op rawOperation, opRes xdr.Ope
 			DestinationAccount: manageBalanceOp.Destination.Address(),
 			Action:             manageBalanceOp.Action,
 			Asset:              manageBalanceOp.Asset,
-			BalanceID:          opRes.MustManageBalanceResult().MustSuccess().BalanceId.AsString(),
+			BalanceID:          manageBalanceRes.BalanceId.AsString(),
 		},
 	}, nil
 }
