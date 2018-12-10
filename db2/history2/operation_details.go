@@ -18,6 +18,7 @@ type OperationDetails struct {
 	ManageLimits               *ManageLimitsDetails               `json:"manage_limits,omitempty"`
 	ManageOffer                *ManageOfferDetails                `json:"manage_offer,omitempty"`
 	ManageContract             *ManageContractDetails             `json:"manage_contract,omitempty"`
+	ManageExternalSystemPool   *ManageExternalSystemPoolDetails   `json:"manage_external_system_pool"`
 	Payment                    *PaymentDetails                    `json:"payment,omitempty"`
 	Payout                     *PayoutDetails                     `json:"payout,omitempty"`
 	SetFee                     *SetFeeDetails                     `json:"set_fee,omitempty"`
@@ -303,4 +304,19 @@ type CreateKYCRequestDetails struct {
 	KYCData              map[string]interface{} `json:"kyc_data"`
 	AllTasks             *uint32                `json:"all_tasks"`
 	RequestDetails       RequestDetails         `json:"request_details"`
+}
+
+type ManageExternalSystemPoolDetails struct {
+	Action xdr.ManageExternalSystemAccountIdPoolEntryAction `json:"action"`
+	Create *CreateExternalSystemPoolDetails                 `json:"create"`
+	Remove *RemoveExternalSystemPoolDetails                 `json:"remove"`
+}
+type CreateExternalSystemPoolDetails struct {
+	PoolID             uint64 `json:"pool_id"`
+	Data               string `json:"data"`
+	Parent             uint64 `json:"parent"`
+	ExternalSystemType int32  `json:"external_system_type"`
+}
+type RemoveExternalSystemPoolDetails struct {
+	PoolID uint64 `json:"pool_id"`
 }
