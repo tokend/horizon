@@ -10,6 +10,7 @@ type setFeeOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
+// OperationDetails returns details about set fee operation
 func (h *setFeeOpHandler) OperationDetails(op rawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	setFeeOp := op.Body.MustSetFeesOp()

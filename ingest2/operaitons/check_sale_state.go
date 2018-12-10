@@ -14,6 +14,7 @@ type checkSaleStateOpHandler struct {
 	balanceProvider       balanceProvider
 }
 
+// OperationDetails returns details about check sale state operation
 func (h *checkSaleStateOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

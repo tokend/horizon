@@ -16,6 +16,7 @@ type reviewRequestOpHandler struct {
 	allRequestHandlers    map[xdr.ReviewableRequestType]requestHandlerI
 }
 
+// OperationDetails returns details about review request operation
 func (h *reviewRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	reviewRequestOp := op.Body.MustReviewRequestOp()

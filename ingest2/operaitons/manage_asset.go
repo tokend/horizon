@@ -10,6 +10,7 @@ import (
 type manageAssetOpHandler struct {
 }
 
+// OperationDetails returns details about manage asset operation
 func (h *manageAssetOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageAssetOp := op.Body.MustManageAssetOp()

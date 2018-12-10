@@ -12,6 +12,7 @@ type manageContractOpHandler struct {
 	pubKeyProvider  publicKeyProvider
 }
 
+// OperationDetails returns details about manage contract operation
 func (h *manageContractOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageContractOp := op.Body.MustManageContractOp()

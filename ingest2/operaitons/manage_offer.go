@@ -14,6 +14,7 @@ type manageOfferOpHandler struct {
 	balanceProvider       balanceProvider
 }
 
+// OperationDetails returns details about manage offer operation
 func (h *manageOfferOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageOfferOp := op.Body.MustManageOfferOp()

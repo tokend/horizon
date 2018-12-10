@@ -11,6 +11,7 @@ type cancelAtomicSwapBidOpHandler struct {
 	ledgerChangesProvider ledgerChangesProvider
 }
 
+// OperationDetails returns details about cancel atomic swap bid operation
 func (h *cancelAtomicSwapBidOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

@@ -11,6 +11,7 @@ type createIssuanceRequestOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
+// OperationDetails returns details about create issuance request operation
 func (h *createIssuanceRequestOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

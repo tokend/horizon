@@ -9,6 +9,7 @@ import (
 type manageInvoiceRequestOpHandler struct {
 }
 
+// OperationDetails returns details about manage invoice request operation
 func (h *manageInvoiceRequestOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

@@ -11,6 +11,7 @@ type manageLimitsOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
+// OperationDetails returns details about manage limits operation
 func (h *manageLimitsOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageLimitsOp := op.Body.MustManageLimitsOp()

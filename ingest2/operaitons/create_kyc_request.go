@@ -9,6 +9,7 @@ type createKYCRequestOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
+// OperationDetails returns details about create KYC request operation
 func (h *createKYCRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createKYCRequestOp := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData

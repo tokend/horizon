@@ -8,6 +8,7 @@ import (
 type manageExternalSystemPoolOpHandler struct {
 }
 
+// OperationDetails returns details about manage external system pool operation
 func (h *manageExternalSystemPoolOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

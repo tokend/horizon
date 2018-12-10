@@ -9,6 +9,7 @@ import (
 type manageAssetPairOpHadler struct {
 }
 
+// OperationDetails returns details about manage asset pair operation
 func (h *manageAssetPairOpHadler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

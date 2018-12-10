@@ -12,6 +12,7 @@ type paymentOpHandler struct {
 	paymentHelper  paymentHelper
 }
 
+// OperationDetails returns details about payment operation
 func (h *paymentOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	paymentOp := op.Body.MustPaymentOpV2()

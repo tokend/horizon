@@ -9,6 +9,7 @@ type manageBalanceOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
+// OperationDetails returns details about manage balance operation
 func (h *manageBalanceOpHandler) OperationDetails(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageBalanceOp := op.Body.MustManageBalanceOp()

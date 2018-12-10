@@ -10,6 +10,7 @@ type createAMLAlertReqeustOpHandler struct {
 	balanceProvider balanceProvider
 }
 
+// OperationDetails returns details about create AML alert request operation
 func (h *createAMLAlertReqeustOpHandler) OperationDetails(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
