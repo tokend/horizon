@@ -1,6 +1,7 @@
 package operaitons
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
@@ -27,12 +28,17 @@ func (h *cancelAtomicSwapBidOpHandler) OperationDetails(op rawOperation,
 func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	atomicSwapBid := h.getAtomicSwapBid(opBody.MustCancelASwapBidOp().BidId)
+	atomicSwapBid := h.getAtomicSwapBid(opBody.MustCancelASwapBidOp().BidId, ledgerChanges)
 
 	if atomicSwapBid == nil {
-		return nil, nil
+		return nil, errors.From(
+			errors.New("expected atomic swap to be in STATE ledger changes"), map[string]interface{}{
+				"bid_id": uint64(opBody.MustCancelASwapBidOp().BidId),
+			})
 	}
 
+	// it means that someone already create atomic swap request,
+	// we must wait for review that request
 	if atomicSwapBid.LockedAmount != 0 {
 		return []history2.ParticipantEffect{source}, nil
 	}

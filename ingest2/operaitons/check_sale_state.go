@@ -37,29 +37,38 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	var err error
 	switch res.Effect.Effect {
 	case xdr.CheckSaleStateEffectCanceled:
-		result, err = h.getSaleAntesEffects(history2.EffectTypeUnlocked)
+		result, err = h.getSaleAntesEffects(history2.EffectTypeUnlocked, ledgerChanges)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get effects from sale antes")
 		}
 		fallthrough
 	case xdr.CheckSaleStateEffectUpdated:
-		return append(result, h.getDeletedParticipants()...), nil
+		return append(result, h.getDeletedParticipants(ledgerChanges)...), nil
 	case xdr.CheckSaleStateEffectClosed:
-		result, err = h.getSaleAntesEffects(history2.EffectTypeChargedFromLocked)
+		result, err = h.getSaleAntesEffects(history2.EffectTypeChargedFromLocked, ledgerChanges)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get effects from sale antes")
 		}
-		return append(result, h.getApprovedParticipants(res.Effect.MustSaleClosed())...), nil
+		participants, err := h.getApprovedParticipants(res.Effect.MustSaleClosed())
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to approved participants", map[string]interface{}{
+				"sale_id": uint64(res.SaleId),
+			})
+		}
+
+		return append(result, participants...), nil
 	default:
 		return nil, errors.From(errors.New("unexpected check sale state result effect"), map[string]interface{}{
 			"effect_i": int32(res.Effect.Effect),
+			"sale_id":  uint64(res.SaleId),
 		})
 	}
 }
 
-func (h *checkSaleStateOpHandler) getApprovedParticipants(closedRes xdr.CheckSaleClosedResult) []history2.ParticipantEffect {
+func (h *checkSaleStateOpHandler) getApprovedParticipants(closedRes xdr.CheckSaleClosedResult,
+) ([]history2.ParticipantEffect, error) {
 	if len(closedRes.Results) == 0 {
-		return nil
+		return nil, errors.New("expected not empty results")
 	}
 
 	saleOwnerID := h.pubKeyProvider.GetAccountID(closedRes.SaleOwner)
@@ -95,7 +104,7 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(closedRes xdr.CheckSal
 				Amount: amount.StringU(issuedAmount),
 			},
 		},
-	})
+	}), nil
 }
 
 func (h *checkSaleStateOpHandler) getDeletedParticipants(ledgerChanges []xdr.LedgerEntryChange,
@@ -105,14 +114,11 @@ func (h *checkSaleStateOpHandler) getDeletedParticipants(ledgerChanges []xdr.Led
 	deletedOffers := h.offerHelper.getStateOffers(ledgerChanges)
 
 	for _, offer := range deletedOffers {
-		baseBalanceID := h.pubKeyProvider.GetBalanceID(offer.BaseBalance)
-		quoteBalanceID := h.pubKeyProvider.GetBalanceID(offer.QuoteBalance)
-
-		balanceID := baseBalanceID
+		balanceID := h.pubKeyProvider.GetBalanceID(offer.BaseBalance)
 		asset := offer.Base
 		unlockedAmount := offer.BaseAmount
 		if offer.IsBuy {
-			balanceID = quoteBalanceID
+			balanceID = h.pubKeyProvider.GetBalanceID(offer.QuoteBalance)
 			asset = offer.Quote
 			unlockedAmount = offer.QuoteAmount + offer.Fee
 		}
@@ -136,10 +142,11 @@ func (h *checkSaleStateOpHandler) getDeletedParticipants(ledgerChanges []xdr.Led
 }
 
 func (h *checkSaleStateOpHandler) getSaleAntesEffects(effectType history2.EffectType,
+	ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	var result []history2.ParticipantEffect
 
-	saleAntes := h.getStatedSaleAntes()
+	saleAntes := h.getStatedSaleAntes(ledgerChanges)
 	for _, saleAnte := range saleAntes {
 		balance := h.balanceProvider.GetBalanceByID(saleAnte.ParticipantBalanceId)
 
