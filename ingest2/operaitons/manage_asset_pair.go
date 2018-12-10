@@ -29,7 +29,7 @@ func (h *manageAssetPairOpHadler) OperationDetails(op rawOperation,
 }
 
 func (h *manageAssetPairOpHadler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

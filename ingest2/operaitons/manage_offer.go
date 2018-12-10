@@ -8,10 +8,9 @@ import (
 )
 
 type manageOfferOpHandler struct {
-	pubKeyProvider        publicKeyProvider
-	offerHelper           offerHelper
-	ledgerChangesProvider ledgerChangesProvider
-	balanceProvider       balanceProvider
+	pubKeyProvider  publicKeyProvider
+	offerHelper     offerHelper
+	balanceProvider balanceProvider
 }
 
 // OperationDetails returns details about manage offer operation
@@ -45,7 +44,7 @@ func (h *manageOfferOpHandler) OperationDetails(op rawOperation, opRes xdr.Opera
 // ParticipantsEffects can return `matched` and `locked` effects if offer created
 // returns `unlocked` effects if offer canceled (deleted by user)
 func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	manageOfferOp := opBody.MustManageOfferOp()
 	manageOfferOpRes := opRes.MustManageOfferResult().MustSuccess()
@@ -54,7 +53,7 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		var result []history2.ParticipantEffect
 		if manageOfferOp.OrderBookId != 0 {
 			var err error
-			result, err = h.getSaleAnteEffects()
+			result, err = h.getSaleAnteEffects(ledgerChanges)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get sale ante effects")
 			}
@@ -63,7 +62,7 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		return append(result, h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source)...), nil
 	}
 
-	source, err := h.getDeletedOfferEffect(source)
+	source, err := h.getDeletedOfferEffect(source, ledgerChanges)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get source effect")
 	}
@@ -114,8 +113,10 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 	return participants
 }
 
-func (h *manageOfferOpHandler) getDeletedOfferEffect(source history2.ParticipantEffect) (history2.ParticipantEffect, error) {
-	offers := h.offerHelper.getStateOffers()
+func (h *manageOfferOpHandler) getDeletedOfferEffect(source history2.ParticipantEffect,
+	ledgerChanges []xdr.LedgerEntryChange,
+) (history2.ParticipantEffect, error) {
+	offers := h.offerHelper.getStateOffers(ledgerChanges)
 	if len(offers) != 1 {
 		return history2.ParticipantEffect{}, errors.New("unexpected count of state offers")
 	}
@@ -144,10 +145,11 @@ func (h *manageOfferOpHandler) getDeletedOfferEffect(source history2.Participant
 	return source, nil
 }
 
-func (h *manageOfferOpHandler) getSaleAnteEffects() ([]history2.ParticipantEffect, error) {
+func (h *manageOfferOpHandler) getSaleAnteEffects(ledgerChanges []xdr.LedgerEntryChange,
+) ([]history2.ParticipantEffect, error) {
 	var result []history2.ParticipantEffect
 
-	createdSaleAntes, updatedSaleAntes, statedSaleAntes := h.getChangedSaleAntes()
+	createdSaleAntes, updatedSaleAntes, statedSaleAntes := h.getChangedSaleAntes(ledgerChanges)
 	for _, saleAnte := range createdSaleAntes {
 		balance := h.balanceProvider.GetBalanceByID(saleAnte.ParticipantBalanceId)
 
@@ -195,10 +197,10 @@ func (h *manageOfferOpHandler) getSaleAnteEffects() ([]history2.ParticipantEffec
 	return result, nil
 }
 
-func (h *manageOfferOpHandler) getChangedSaleAntes() ([]xdr.SaleAnteEntry, []xdr.SaleAnteEntry, []xdr.SaleAnteEntry) {
+func (h *manageOfferOpHandler) getChangedSaleAntes(ledgerChanges []xdr.LedgerEntryChange,
+) ([]xdr.SaleAnteEntry, []xdr.SaleAnteEntry, []xdr.SaleAnteEntry) {
 	var created, updated, stated []xdr.SaleAnteEntry
 
-	ledgerChanges := h.ledgerChangesProvider.GetLedgerChanges()
 	for _, change := range ledgerChanges {
 		switch change.Type {
 		case xdr.LedgerEntryChangeTypeCreated:

@@ -3,6 +3,8 @@ package operaitons
 import (
 	"encoding/json"
 
+	"gitlab.com/tokend/horizon/ingest2/operaitons/reviewrequest"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
@@ -19,10 +21,8 @@ type operationHandler struct {
 // details and participants effects of certain operation
 func newOperationHandler(mainProvider providerCluster) operationHandler {
 	pubKeyProvider := mainProvider.GetPubKeyProvider()
-	ledgerChangesProvider := mainProvider.GetLedgerChangesProvider()
 	offerHelper := offerHelper{
-		pubKeyProvider:        pubKeyProvider,
-		ledgerChangesProvider: ledgerChangesProvider,
+		pubKeyProvider: pubKeyProvider,
 	}
 	balanceProvider := mainProvider.GetBalanceProvider()
 	return operationHandler{
@@ -45,10 +45,9 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeManageAsset:     &manageAssetOpHandler{},
 			xdr.OperationTypeManageAssetPair: &manageAssetPairOpHadler{},
 			xdr.OperationTypeManageOffer: &manageOfferOpHandler{
-				pubKeyProvider:        pubKeyProvider,
-				offerHelper:           offerHelper,
-				ledgerChangesProvider: ledgerChangesProvider,
-				balanceProvider:       balanceProvider,
+				pubKeyProvider:  pubKeyProvider,
+				offerHelper:     offerHelper,
+				balanceProvider: balanceProvider,
 			},
 			xdr.OperationTypeManageContract: &manageContractOpHandler{
 				pubKeyProvider:  pubKeyProvider,
@@ -80,13 +79,7 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 			xdr.OperationTypeManageContractRequest: &manageContractRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
-			xdr.OperationTypeReviewRequest: &reviewRequestOpHandler{
-				pubKeyProvider:        pubKeyProvider,
-				ledgerChangesProvider: ledgerChangesProvider,
-				balanceProvider:       balanceProvider,
-				allRequestHandlers: initializeReviewableRequestMap(balanceProvider,
-					pubKeyProvider, ledgerChangesProvider),
-			},
+			xdr.OperationTypeReviewRequest: reviewrequest.NewReviewRequestOpHandler(pubKeyProvider, balanceProvider),
 			xdr.OperationTypePaymentV2: &paymentOpHandler{
 				pubKeyProvider: pubKeyProvider,
 				paymentHelper: paymentHelper{
@@ -94,14 +87,12 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 				},
 			},
 			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{
-				pubKeyProvider:        pubKeyProvider,
-				offerHelper:           offerHelper,
-				ledgerChangesProvider: ledgerChangesProvider,
-				balanceProvider:       balanceProvider,
+				pubKeyProvider:  pubKeyProvider,
+				offerHelper:     offerHelper,
+				balanceProvider: balanceProvider,
 			},
 			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
-				pubKeyProvider:        pubKeyProvider,
-				ledgerChangesProvider: ledgerChangesProvider,
+				pubKeyProvider: pubKeyProvider,
 			},
 		},
 		opIDProvider:         mainProvider.GetOperationIDProvider(),
@@ -110,37 +101,9 @@ func newOperationHandler(mainProvider providerCluster) operationHandler {
 	}
 }
 
-func initializeReviewableRequestMap(balanceProvider balanceProvider,
-	pubKeyProvider publicKeyProvider, changesProvider ledgerChangesProvider,
-) map[xdr.ReviewableRequestType]requestHandlerI {
-	effectHelper := effectHelper{
-		balanceProvider: balanceProvider,
-	}
-
-	return map[xdr.ReviewableRequestType]requestHandlerI{
-		xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{
-			effectHelper: effectHelper,
-		},
-		xdr.ReviewableRequestTypeWithdraw: &withdrawHandler{
-			effectHelper: effectHelper,
-		},
-		xdr.ReviewableRequestTypeAmlAlert: &amlAlertHandler{
-			effectHelper: effectHelper,
-		},
-		xdr.ReviewableRequestTypeInvoice: &invoiceHandler{
-			paymentHelper: paymentHelper{
-				pubKeyProvider: pubKeyProvider,
-			},
-		},
-		xdr.ReviewableRequestTypeAtomicSwap: &atomicSwapHandler{
-			pubKeyProvider:        pubKeyProvider,
-			ledgerChangesProvider: changesProvider,
-		},
-	}
-}
-
 // ConvertOperation transforms xdr operation data to db suitable Operation and Participants Effects
-func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.OperationResultTr, txSource xdr.AccountId,
+func (h *operationHandler) ConvertOperation(op xdr.Operation, opRes xdr.OperationResultTr,
+	txSource xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) (history2.Operation, []history2.ParticipantEffect, error) {
 	handler, ok := h.allHandlers[op.Body.Type]
 	if !ok {
@@ -213,8 +176,6 @@ type providerCluster interface {
 	GetPubKeyProvider() publicKeyProvider
 	// GetBalanceProvider returns balanceProvider
 	GetBalanceProvider() balanceProvider
-	// GetLedgerChangesProvider returns ledgerChangesProvider
-	GetLedgerChangesProvider() ledgerChangesProvider
 	// GetRequestProvider returns requestProvider
 	GetRequestProvider() requestProvider
 }
@@ -241,11 +202,6 @@ type balanceProvider interface {
 	GetBalanceByID(balanceID xdr.BalanceId) history2.Balance
 }
 
-type ledgerChangesProvider interface {
-	// GetLedgerChanges returns all ledger changes for certain operation
-	GetLedgerChanges() xdr.LedgerEntryChanges
-}
-
 type requestProvider interface {
 	// GetInvoiceRequestsByContractID returns invoice request which attached to contract with specific id
 	GetInvoiceRequestsByContractID(contractID int64) []xdr.ReviewableRequestEntry
@@ -255,9 +211,11 @@ type operationHandlerI interface {
 	// OperationDetails returns db suitable operation details,
 	// returns error if operation has not existing action (union switch)
 	OperationDetails(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
-	// ParticipantsEffects returns slice of effects (changes) balances amounts of each participants
-	// even if there is no changes on balances, operation participants can be returned
-	ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr, source history2.ParticipantEffect) ([]history2.ParticipantEffect, error)
+	// ParticipantsEffects returns slice of participant effects of each participants
+	// that was affected by operation, can include effects (changes) on participants balances
+	ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr,
+		source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
+	) ([]history2.ParticipantEffect, error)
 }
 
 type rawOperation struct {

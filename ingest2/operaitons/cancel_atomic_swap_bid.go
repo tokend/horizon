@@ -7,8 +7,7 @@ import (
 )
 
 type cancelAtomicSwapBidOpHandler struct {
-	pubKeyProvider        publicKeyProvider
-	ledgerChangesProvider ledgerChangesProvider
+	pubKeyProvider publicKeyProvider
 }
 
 // OperationDetails returns details about cancel atomic swap bid operation
@@ -26,7 +25,7 @@ func (h *cancelAtomicSwapBidOpHandler) OperationDetails(op rawOperation,
 // ParticipantsEffects returns participants effects with source effect `unlocked`
 // if atomic swap bid has zero locked amount
 func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	atomicSwapBid := h.getAtomicSwapBid(opBody.MustCancelASwapBidOp().BidId)
 
@@ -52,9 +51,9 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 	return []history2.ParticipantEffect{source}, nil
 }
 
-func (h *cancelAtomicSwapBidOpHandler) getAtomicSwapBid(bidID xdr.Uint64) *xdr.AtomicSwapBidEntry {
-	ledgerChanges := h.ledgerChangesProvider.GetLedgerChanges()
-
+func (h *cancelAtomicSwapBidOpHandler) getAtomicSwapBid(bidID xdr.Uint64,
+	ledgerChanges []xdr.LedgerEntryChange,
+) *xdr.AtomicSwapBidEntry {
 	for _, change := range ledgerChanges {
 		if change.Type != xdr.LedgerEntryChangeTypeState {
 			continue

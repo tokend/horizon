@@ -30,7 +30,7 @@ func (h *createManageLimitsRequestOpHandler) OperationDetails(op rawOperation,
 }
 
 func (h *createManageLimitsRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

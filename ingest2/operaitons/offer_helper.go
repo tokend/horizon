@@ -13,8 +13,7 @@ type offerDirection struct {
 }
 
 type offerHelper struct {
-	pubKeyProvider        publicKeyProvider
-	ledgerChangesProvider ledgerChangesProvider
+	pubKeyProvider publicKeyProvider
 }
 
 func (h *offerHelper) getParticipantsEffects(claimOfferAtoms []xdr.ClaimOfferAtom,
@@ -97,9 +96,7 @@ func (h *offerHelper) getParticipantsEffects(claimOfferAtoms []xdr.ClaimOfferAto
 	return result, totalBaseAmount
 }
 
-func (h *offerHelper) getStateOffers() []xdr.OfferEntry {
-	ledgerChanges := h.ledgerChangesProvider.GetLedgerChanges()
-
+func (h *offerHelper) getStateOffers(ledgerChanges []xdr.LedgerEntryChange) []xdr.OfferEntry {
 	var result []xdr.OfferEntry
 
 	for _, change := range ledgerChanges {

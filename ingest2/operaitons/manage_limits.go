@@ -50,7 +50,7 @@ func (h *manageLimitsOpHandler) OperationDetails(op rawOperation, opRes xdr.Oper
 }
 
 func (h *manageLimitsOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	participants := []history2.ParticipantEffect{source}
 

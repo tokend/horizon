@@ -45,7 +45,7 @@ func (h *paymentOpHandler) OperationDetails(op rawOperation, opRes xdr.Operation
 
 // ParticipantsEffects returns `funded` and `charged` effects
 func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	paymentOp := opBody.MustPaymentOpV2()
 	paymentRes := opRes.MustPaymentV2Result().MustPaymentV2Response()

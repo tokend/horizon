@@ -26,7 +26,7 @@ func (h *manageAccountOpHandler) OperationDetails(op rawOperation,
 }
 
 func (h *manageAccountOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	participants := []history2.ParticipantEffect{source}
 

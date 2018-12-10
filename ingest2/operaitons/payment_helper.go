@@ -11,7 +11,6 @@ type paymentHelper struct {
 	pubKeyProvider publicKeyProvider
 }
 
-// TODO handle fee after payment response will have normal info about fee
 func (h *paymentHelper) getParticipantsEffects(op xdr.PaymentOpV2,
 	res xdr.PaymentV2Response, source history2.ParticipantEffect, destinationEffectType history2.EffectType,
 ) ([]history2.ParticipantEffect, error) {

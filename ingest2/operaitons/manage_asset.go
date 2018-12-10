@@ -65,7 +65,7 @@ func (h *manageAssetOpHandler) OperationDetails(op rawOperation, opRes xdr.Opera
 }
 
 func (h *manageAssetOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

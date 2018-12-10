@@ -25,7 +25,7 @@ func (h *createAccountOpHandler) OperationDetails(op rawOperation, _ xdr.Operati
 
 // ParticipantsEffects returns counterparties without effects
 func (h *createAccountOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	participants := []history2.ParticipantEffect{source}
 

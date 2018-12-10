@@ -47,7 +47,7 @@ func (h *manageContractRequestOpHandler) OperationDetails(op rawOperation,
 }
 
 func (h *manageContractRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	creationDetails := opBody.MustManageContractRequestOp().Details.MustContractRequest()
 

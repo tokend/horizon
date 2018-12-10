@@ -36,7 +36,7 @@ func (h *createAtomicSwapBidRequestOpHandler) OperationDetails(op rawOperation, 
 
 // ParticipantsEffects returns source effect with `locked` effect
 func (h *createAtomicSwapBidRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	aSwapBidRequest := opBody.MustCreateASwapBidCreationRequestOp().Request
 

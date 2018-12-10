@@ -30,7 +30,7 @@ func (h *createSaleRequestOpHandler) OperationDetails(op rawOperation, opRes xdr
 }
 
 func (h *createSaleRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

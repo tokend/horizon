@@ -8,10 +8,9 @@ import (
 )
 
 type checkSaleStateOpHandler struct {
-	pubKeyProvider        publicKeyProvider
-	offerHelper           offerHelper
-	ledgerChangesProvider ledgerChangesProvider
-	balanceProvider       balanceProvider
+	pubKeyProvider  publicKeyProvider
+	offerHelper     offerHelper
+	balanceProvider balanceProvider
 }
 
 // OperationDetails returns details about check sale state operation
@@ -30,7 +29,7 @@ func (h *checkSaleStateOpHandler) OperationDetails(op rawOperation,
 // ParticipantsEffects returns sale owner and participants `matched` effects if sale closed
 // returns `unlocked` effects if sale canceled or updated
 func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	res := opRes.MustCheckSaleStateResult().MustSuccess()
 
@@ -99,10 +98,11 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(closedRes xdr.CheckSal
 	})
 }
 
-func (h *checkSaleStateOpHandler) getDeletedParticipants() []history2.ParticipantEffect {
+func (h *checkSaleStateOpHandler) getDeletedParticipants(ledgerChanges []xdr.LedgerEntryChange,
+) []history2.ParticipantEffect {
 	var result []history2.ParticipantEffect
 
-	deletedOffers := h.offerHelper.getStateOffers()
+	deletedOffers := h.offerHelper.getStateOffers(ledgerChanges)
 
 	for _, offer := range deletedOffers {
 		baseBalanceID := h.pubKeyProvider.GetBalanceID(offer.BaseBalance)
@@ -170,10 +170,10 @@ func (h *checkSaleStateOpHandler) getSaleAntesEffects(effectType history2.Effect
 	return result, nil
 }
 
-func (h *checkSaleStateOpHandler) getStatedSaleAntes() []xdr.SaleAnteEntry {
+func (h *checkSaleStateOpHandler) getStatedSaleAntes(ledgerChanges []xdr.LedgerEntryChange,
+) []xdr.SaleAnteEntry {
 	var result []xdr.SaleAnteEntry
 
-	ledgerChanges := h.ledgerChangesProvider.GetLedgerChanges()
 	for _, change := range ledgerChanges {
 		if change.Type != xdr.LedgerEntryChangeTypeState {
 			continue

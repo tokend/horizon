@@ -37,7 +37,7 @@ func (h *createKYCRequestOpHandler) OperationDetails(op rawOperation, opRes xdr.
 }
 
 func (h *createKYCRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	createKYCRequestOp := opBody.MustCreateUpdateKycRequestOp().UpdateKycRequestData
 

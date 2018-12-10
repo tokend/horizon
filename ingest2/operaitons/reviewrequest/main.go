@@ -1,4 +1,4 @@
-package operaitons
+package reviewrequest
 
 import (
 	"encoding/hex"
@@ -10,10 +10,56 @@ import (
 )
 
 type reviewRequestOpHandler struct {
-	pubKeyProvider        publicKeyProvider
-	ledgerChangesProvider ledgerChangesProvider
-	balanceProvider       balanceProvider
-	allRequestHandlers    map[xdr.ReviewableRequestType]requestHandlerI
+	pubKeyProvider     publicKeyProvider // new interfaces
+	balanceProvider    balanceProvider
+	allRequestHandlers map[xdr.ReviewableRequestType]requestHandlerI
+}
+
+type publicKeyProvider interface {
+	// GetAccountID returns int value which corresponds to xdr.AccountId
+	GetAccountID(raw xdr.AccountId) int64
+	// GetBalanceID returns int value which corresponds to xdr.BalanceId
+	GetBalanceID(raw xdr.BalanceId) int64
+}
+
+type balanceProvider interface {
+	// GetBalanceByID returns history balance struct for specific balance id
+	GetBalanceByID(balanceID xdr.BalanceId) history2.Balance
+}
+
+func NewReviewRequestOpHandler(pubKeyProvider publicKeyProvider, balanceProvider balanceProvider) *reviewRequestOpHandler {
+	return &reviewRequestOpHandler{
+		pubKeyProvider:     pubKeyProvider,
+		balanceProvider:    balanceProvider,
+		allRequestHandlers: initializeReviewableRequestMap(balanceProvider, pubKeyProvider),
+	}
+}
+
+func initializeReviewableRequestMap(balanceProvider balanceProvider, pubKeyProvider publicKeyProvider,
+) map[xdr.ReviewableRequestType]requestHandlerI {
+	effectHelper := effectHelper{
+		balanceProvider: balanceProvider,
+	}
+
+	return map[xdr.ReviewableRequestType]requestHandlerI{
+		xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{
+			effectHelper: effectHelper,
+		},
+		xdr.ReviewableRequestTypeWithdraw: &withdrawHandler{
+			effectHelper: effectHelper,
+		},
+		xdr.ReviewableRequestTypeAmlAlert: &amlAlertHandler{
+			effectHelper: effectHelper,
+		},
+		xdr.ReviewableRequestTypeInvoice: &invoiceHandler{
+			paymentHelper: paymentHelper{
+				pubKeyProvider: pubKeyProvider,
+			},
+		},
+		xdr.ReviewableRequestTypeAtomicSwap: &atomicSwapHandler{
+			pubKeyProvider: pubKeyProvider,
+		},
+	}
 }
 
 // OperationDetails returns details about review request operation

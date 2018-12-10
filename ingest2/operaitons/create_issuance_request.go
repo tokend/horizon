@@ -48,7 +48,7 @@ func (h *createIssuanceRequestOpHandler) OperationDetails(op rawOperation,
 
 // ParticipantsEffects returns source `funded` effect if request was fulfilled
 func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	issuanceRequest := opBody.MustCreateIssuanceRequestOp().Request
 	createIssuanceRequestRes := opRes.MustCreateIssuanceRequestResult().MustSuccess()

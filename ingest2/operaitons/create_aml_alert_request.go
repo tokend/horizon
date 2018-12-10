@@ -29,7 +29,7 @@ func (h *createAMLAlertReqeustOpHandler) OperationDetails(op rawOperation,
 // ParticipantsEffects returns `locked` effect for account
 // which is suspected in illegal obtaining of tokens
 func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	amlAlertRequest := opBody.MustCreateAmlAlertRequestOp().AmlAlertRequest
 

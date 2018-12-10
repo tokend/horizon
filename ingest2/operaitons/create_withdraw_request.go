@@ -39,7 +39,7 @@ func (h *createWithdrawRequestOpHandler) OperationDetails(op rawOperation,
 
 // ParticipantsEffects returns source `locked` effect
 func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	withdrawRequest := opBody.MustCreateWithdrawalRequestOp().Request
 	balanceIDInt := h.pubKeyProvider.GetBalanceID(withdrawRequest.Balance)

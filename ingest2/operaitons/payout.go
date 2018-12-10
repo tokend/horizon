@@ -38,7 +38,7 @@ func (h *payoutHandler) OperationDetails(op rawOperation, res xdr.OperationResul
 
 // ParticipantsEffects returns `charged` and `funded` effects
 func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	res xdr.OperationResultTr, source history2.ParticipantEffect,
+	res xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	payoutOp := opBody.MustPayoutOp()
 	payoutRes := res.MustPayoutResult().MustSuccess()

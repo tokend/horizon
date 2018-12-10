@@ -27,7 +27,7 @@ func (h *manageBalanceOpHandler) OperationDetails(op rawOperation, opRes xdr.Ope
 }
 
 func (h *manageBalanceOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	manageBalanceOp := opBody.MustManageBalanceOp()
 
