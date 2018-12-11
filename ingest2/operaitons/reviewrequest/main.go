@@ -198,8 +198,8 @@ func (h *issuanceHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp,
 	details := request.Body.MustIssuanceRequest()
 
 	effect := history2.Effect{
-		Type: history2.EffectTypeFunded,
-		Funded: &history2.FundedEffect{
+		Type: history2.EffectTypeIssued,
+		Issued: &history2.FundedEffect{
 			Amount: amount.StringU(uint64(details.Amount)),
 			FeePaid: history2.FeePaid{
 				Fixed:             amount.StringU(uint64(details.Fee.Fixed)),
@@ -233,10 +233,10 @@ func (h *withdrawHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp,
 
 	if op.Action != xdr.ReviewRequestOpActionApprove {
 		effect = history2.Effect{
-			Type: history2.EffectTypeUnlocked,
-			Unlocked: &history2.UnlockedEffect{
+			Type: history2.EffectTypeWithdrawn,
+			Withdrawn: &history2.ChargedFromLockedEffect{
 				Amount: amount.StringU(uint64(details.Amount)),
-				FeeUnlocked: history2.FeePaid{
+				FeePaid: history2.FeePaid{
 					Fixed:             amount.StringU(uint64(details.Fee.Fixed)),
 					CalculatedPercent: amount.StringU(uint64(details.Fee.Percent)),
 				},
@@ -257,8 +257,8 @@ func (h *amlAlertHandler) SpecificParticipantsEffects(op xdr.ReviewRequestOp,
 	details := request.Body.MustAmlAlertRequest()
 
 	effect := history2.Effect{
-		Type: history2.EffectTypeChargedFromLocked,
-		ChargedFromLocked: &history2.ChargedFromLockedEffect{
+		Type: history2.EffectTypeWithdrawn,
+		Withdrawn: &history2.ChargedFromLockedEffect{
 			Amount: amount.StringU(uint64(details.Amount)),
 		},
 	}

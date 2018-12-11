@@ -94,17 +94,17 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(closedRes xdr.CheckSal
 		issuedAmount += baseAmount
 	}
 
-	return append(participants, history2.ParticipantEffect{
+	return append([]history2.ParticipantEffect{{
 		AccountID: saleOwnerID,
 		BalanceID: &baseBalanceID,
 		AssetCode: &baseAsset,
 		Effect: history2.Effect{
-			Type: history2.EffectTypeFunded,
-			Funded: &history2.FundedEffect{
+			Type: history2.EffectTypeIssued,
+			Issued: &history2.FundedEffect{
 				Amount: amount.StringU(issuedAmount),
 			},
 		},
-	}), nil
+	}}, participants...), nil
 }
 
 func (h *checkSaleStateOpHandler) getDeletedParticipants(ledgerChanges []xdr.LedgerEntryChange,

@@ -61,8 +61,8 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	receiverBalanceID := h.pubKeyProvider.GetBalanceID(issuanceRequest.Receiver)
 
 	effect := history2.Effect{
-		Type: history2.EffectTypeFunded,
-		Funded: &history2.FundedEffect{
+		Type: history2.EffectTypeIssued,
+		Issued: &history2.FundedEffect{
 			Amount: amount.String(int64(issuanceRequest.Amount - issuanceRequest.Fee.Fixed - issuanceRequest.Fee.Percent)),
 			FeePaid: history2.FeePaid{
 				Fixed:             amount.StringU(uint64(issuanceRequest.Fee.Fixed)),

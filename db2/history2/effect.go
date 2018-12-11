@@ -8,7 +8,9 @@ type EffectType int64
 const (
 	EffectTypeNone EffectType = iota
 	EffectTypeFunded
+	EffectTypeIssued
 	EffectTypeCharged
+	EffectTypeWithdrawn
 	EffectTypeLocked
 	EffectTypeUnlocked
 	EffectTypeChargedFromLocked
@@ -21,7 +23,9 @@ const (
 type Effect struct {
 	Type              EffectType               `json:"type"`
 	Funded            *FundedEffect            `json:"funded,omitempty"`
-	Charged           *ChargedEffect           `json:"withdraw,omitempty"`
+	Issued            *FundedEffect            `json:"issued,omitempty"`
+	Charged           *ChargedEffect           `json:"charged,omitempty"`
+	Withdrawn         *ChargedFromLockedEffect `json:"withdrawn,omitempty"`
 	Locked            *LockedEffect            `json:"locked,omitempty"`
 	Unlocked          *UnlockedEffect          `json:"unlocked,omitempty"`
 	ChargedFromLocked *ChargedFromLockedEffect `json:"charged_from_locked,omitempty"`
