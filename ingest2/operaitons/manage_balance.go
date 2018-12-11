@@ -32,19 +32,13 @@ func (h *manageBalanceOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	manageBalanceOp := opBody.MustManageBalanceOp()
 
 	destinationAccount := h.pubKeyProvider.GetAccountID(manageBalanceOp.Destination)
-	destinationBalance := h.pubKeyProvider.GetBalanceID(opRes.MustManageBalanceResult().MustSuccess().BalanceId)
 
 	var participants []history2.ParticipantEffect
 
 	if source.AccountID != destinationAccount {
-		participants = append(participants, history2.ParticipantEffect{
+		participants = []history2.ParticipantEffect{{
 			AccountID: destinationAccount,
-			BalanceID: &destinationBalance,
-			AssetCode: &manageBalanceOp.Asset,
-		})
-	} else {
-		source.BalanceID = &destinationBalance
-		source.AssetCode = &manageBalanceOp.Asset
+		}}
 	}
 
 	return append(participants, source), nil

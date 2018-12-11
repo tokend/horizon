@@ -54,8 +54,14 @@ func (h *manageContractOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	manageContractOp := opBody.MustManageContractOp()
 	manageContractRes := opRes.MustManageContractResult().MustResponse()
 
-	isCompleted, ok := manageContractRes.Data.GetIsCompleted()
-	if !ok && (manageContractOp.Data.Action != xdr.ManageContractActionResolveDispute) || (ok && !isCompleted) {
+	isContractCompleted := false
+	if isCompleted, ok := manageContractRes.Data.GetIsCompleted(); ok {
+		isContractCompleted = isCompleted
+	}
+
+	isDisputeResolved := manageContractOp.Data.Action == xdr.ManageContractActionResolveDispute
+
+	if !isContractCompleted && !isDisputeResolved {
 		return []history2.ParticipantEffect{source}, nil
 	}
 
