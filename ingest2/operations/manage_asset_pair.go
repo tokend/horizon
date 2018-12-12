@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/tokend/go/amount"
@@ -9,10 +9,11 @@ import (
 type manageAssetPairOpHadler struct {
 }
 
-func (h *manageAssetPairOpHadler) OperationDetails(opBody xdr.OperationBody,
+// OperationDetails returns details about manage asset pair operation
+func (h *manageAssetPairOpHadler) OperationDetails(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageAssetPairOp := opBody.MustManageAssetPairOp()
+	manageAssetPairOp := op.Body.MustManageAssetPairOp()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageAssetPair,
@@ -28,7 +29,7 @@ func (h *manageAssetPairOpHadler) OperationDetails(opBody xdr.OperationBody,
 }
 
 func (h *manageAssetPairOpHadler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

@@ -3,18 +3,18 @@ package history2
 import "gitlab.com/tokend/go/xdr"
 
 type Balance struct {
-	ID             int64  `db:"id"`
-	AccountID      int64  `db:"account_id"`
-	BalanceAddress string `db:"address"`
-	AssetCode      string `db:"asset_code"`
+	ID        int64         `db:"id"`
+	AccountID int64         `db:"account_id"`
+	BalanceID string        `db:"address"`
+	AssetCode xdr.AssetCode `db:"asset_code"`
 }
 
 func NewBalance(ledgerSeq, balanceSeq int32, accountID int64, balance xdr.BalanceEntry) Balance {
 	return Balance{
-		ID:             balanceID(ledgerSeq, balanceSeq),
-		AccountID:      accountID,
-		BalanceAddress: balance.BalanceId.AsString(),
-		AssetCode:      string(balance.Asset),
+		ID:        balanceID(ledgerSeq, balanceSeq),
+		AccountID: accountID,
+		BalanceID: balance.BalanceId.AsString(),
+		AssetCode: balance.Asset,
 	}
 }
 

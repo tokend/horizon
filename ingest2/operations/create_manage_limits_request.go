@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/tokend/go/xdr"
@@ -8,10 +8,11 @@ import (
 type createManageLimitsRequestOpHandler struct {
 }
 
-func (h *createManageLimitsRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
+// OperationDetails returns details about create limits request operation
+func (h *createManageLimitsRequestOpHandler) OperationDetails(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	createManageLimitsRequestOp := opBody.MustCreateManageLimitsRequestOp()
+	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()
 
 	var data map[string]interface{}
 	rawData, ok := createManageLimitsRequestOp.ManageLimitsRequest.Ext.GetDetails()
@@ -29,7 +30,7 @@ func (h *createManageLimitsRequestOpHandler) OperationDetails(opBody xdr.Operati
 }
 
 func (h *createManageLimitsRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/tokend/go/amount"
@@ -9,10 +9,11 @@ import (
 type createPreIssuanceRequestOpHandler struct {
 }
 
-func (h *createPreIssuanceRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
+// OperationDetails returns details about create pre issuance request operation
+func (h *createPreIssuanceRequestOpHandler) OperationDetails(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	preissuanceRequest := opBody.MustCreatePreIssuanceRequest().Request
+	preissuanceRequest := op.Body.MustCreatePreIssuanceRequest().Request
 	successResult := opRes.MustCreatePreIssuanceRequestResult().MustSuccess()
 
 	return history2.OperationDetails{
@@ -27,7 +28,7 @@ func (h *createPreIssuanceRequestOpHandler) OperationDetails(opBody xdr.Operatio
 }
 
 func (h *createPreIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

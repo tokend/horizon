@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,10 +11,10 @@ type manageLimitsOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *manageLimitsOpHandler) OperationDetails(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr,
+// OperationDetails returns details about manage limits operation
+func (h *manageLimitsOpHandler) OperationDetails(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageLimitsOp := opBody.MustManageLimitsOp()
+	manageLimitsOp := op.Body.MustManageLimitsOp()
 
 	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeManageLimits,
@@ -27,14 +27,8 @@ func (h *manageLimitsOpHandler) OperationDetails(opBody xdr.OperationBody,
 	case xdr.ManageLimitsActionCreate:
 		creationDetails := manageLimitsOp.Details.MustLimitsCreateDetails()
 
-		var accountID *int64
-		if creationDetails.AccountId != nil {
-			accountIDInt := h.pubKeyProvider.GetAccountID(*creationDetails.AccountId)
-			accountID = &accountIDInt
-		}
-
 		opDetails.ManageLimits.Creation = &history2.ManageLimitsCreationDetails{
-			AccountID:       accountID,
+			AccountID:       creationDetails.AccountId.Address(), // Address() - smart, check for nil inside
 			AccountType:     creationDetails.AccountType,
 			StatsOpType:     creationDetails.StatsOpType,
 			AssetCode:       creationDetails.AssetCode,
@@ -56,7 +50,7 @@ func (h *manageLimitsOpHandler) OperationDetails(opBody xdr.OperationBody,
 }
 
 func (h *manageLimitsOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	participants := []history2.ParticipantEffect{source}
 

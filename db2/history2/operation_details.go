@@ -5,50 +5,57 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-// OperationDetails - stores details of the operation performed in union switch form. Only one value must be selected at
-// a type
+// OperationDetails - stores details of the operation performed in union switch form.
+// Only one value must be selected at a type
 type OperationDetails struct {
-	Type                      xdr.OperationType                 `json:"type"`
-	CreateAccount             *CreateAccountDetails             `json:"create_account,omitempty"`
-	ManageAccount             *ManageAccountDetails             `json:"manage_account,omitempty"`
-	ManageBalance             *ManageBalanceDetails             `json:"manage_balance,omitempty"`
-	ManageKeyValue            *ManageKeyValueDetails            `json:"manage_key_value,omitempty"`
-	ManageAsset               *ManageAssetDetails               `json:"manage_asset,omitempty"`
-	ManageAssetPair           *ManageAssetPairDetails           `json:"manage_asset_pair,omitempty"`
-	ManageLimits              *ManageLimitsDetails              `json:"manage_limits,omitempty"`
-	ManageOffer               *ManageOfferDetails               `json:"manage_offer,omitempty"`
-	ManageContract            *ManageContractDetails            `json:"manage_contract,omitempty"`
-	Payment                   *PaymentDetails                   `json:"payment,omitempty"`
-	SetFee                    *SetFeeDetails                    `json:"set_fee,omitempty"`
-	CheckSaleState            *CheckSaleStateDetails            `json:"check_sale_state,omitempty"`
-	CreatePreIssuanceRequest  *CreatePreIssuanceRequestDetails  `json:"create_pre_issuance_request,omitempty"`
-	CreateIssuanceRequest     *CreateIssuanceRequestDetails     `json:"create_issuance_request,omitempty"`
-	CreateManageLimitsRequest *CreateManageLimitsRequestDetails `json:"create_manage_limits_request,omitempty"`
-	CreateWithdrawRequest     *CreateWithdrawRequestDetails     `json:"create_withdraw_request,omitempty"`
-	CreateAMLAlertRequest     *CreateAMLAlertRequestDetails     `json:"create_aml_alert_request"`
-	CreateSaleRequest         *CreateSaleRequestDetails         `json:"create_sale_request,omitempty"`
-	ManageInvoiceRequest      *ManageInvoiceRequestDetails      `json:"manage_invoice_request,omitempty"`
-	ManageContractRequest     *ManageContractRequestDetails     `json:"manage_contract_request,omitempty"`
-	ReviewRequest             *ReviewRequestDetails             `json:"review_request,omitempty"`
+	Type                       xdr.OperationType                  `json:"type"`
+	CreateAccount              *CreateAccountDetails              `json:"create_account,omitempty"`
+	ManageAccount              *ManageAccountDetails              `json:"manage_account,omitempty"`
+	ManageBalance              *ManageBalanceDetails              `json:"manage_balance,omitempty"`
+	ManageKeyValue             *ManageKeyValueDetails             `json:"manage_key_value,omitempty"`
+	ManageAsset                *ManageAssetDetails                `json:"manage_asset,omitempty"`
+	ManageAssetPair            *ManageAssetPairDetails            `json:"manage_asset_pair,omitempty"`
+	ManageLimits               *ManageLimitsDetails               `json:"manage_limits,omitempty"`
+	ManageOffer                *ManageOfferDetails                `json:"manage_offer,omitempty"`
+	ManageContract             *ManageContractDetails             `json:"manage_contract,omitempty"`
+	ManageExternalSystemPool   *ManageExternalSystemPoolDetails   `json:"manage_external_system_pool"`
+	BindExternalSystemAccount  *BindExternalSystemAccountDetails  `json:"bind_external_system_account"`
+	Payment                    *PaymentDetails                    `json:"payment,omitempty"`
+	Payout                     *PayoutDetails                     `json:"payout,omitempty"`
+	SetFee                     *SetFeeDetails                     `json:"set_fee,omitempty"`
+	CancelAtomicSwapBid        *CancelAtomicSwapBidDetails        `json:"cancel_atomic_swap_bid,omitempty"`
+	CheckSaleState             *CheckSaleStateDetails             `json:"check_sale_state,omitempty"`
+	CreateKYCRequest           *CreateKYCRequestDetails           `json:"create_kyc_request"`
+	CreatePreIssuanceRequest   *CreatePreIssuanceRequestDetails   `json:"create_pre_issuance_request,omitempty"`
+	CreateIssuanceRequest      *CreateIssuanceRequestDetails      `json:"create_issuance_request,omitempty"`
+	CreateManageLimitsRequest  *CreateManageLimitsRequestDetails  `json:"create_manage_limits_request,omitempty"`
+	CreateWithdrawRequest      *CreateWithdrawRequestDetails      `json:"create_withdraw_request,omitempty"`
+	CreateAMLAlertRequest      *CreateAMLAlertRequestDetails      `json:"create_aml_alert_request,omitempty"`
+	CreateSaleRequest          *CreateSaleRequestDetails          `json:"create_sale_request,omitempty"`
+	CreateAtomicSwapBidRequest *CreateAtomicSwapBidRequestDetails `json:"create_atomic_swap_bid_request,omitempty"`
+	CreateAtomicSwapRequest    *CreateAtomicSwapRequestDetails    `json:"create_atomic_swap_request,omitempty"`
+	ManageInvoiceRequest       *ManageInvoiceRequestDetails       `json:"manage_invoice_request,omitempty"`
+	ManageContractRequest      *ManageContractRequestDetails      `json:"manage_contract_request,omitempty"`
+	ReviewRequest              *ReviewRequestDetails              `json:"review_request,omitempty"`
 }
 
 // CreateAccountDetails - stores details of create account operation
 type CreateAccountDetails struct {
-	AccountID   xdr.AccountId   `json:"account_id"`
+	AccountID   string          `json:"account_id"`
 	AccountType xdr.AccountType `json:"account_type"`
 }
 
 type ManageBalanceDetails struct {
-	DestinationAccount xdr.AccountId           `json:"destination_account"`
+	DestinationAccount string                  `json:"destination_account"`
 	Action             xdr.ManageBalanceAction `json:"action"`
 	Asset              xdr.AssetCode           `json:"asset"`
-	BalanceID          xdr.BalanceId           `json:"balance_id"`
+	BalanceID          string                  `json:"balance_id"`
 }
 
 type ManageAccountDetails struct {
-	AccountID            xdr.AccountId `json:"account_id"`
-	BlockReasonsToAdd    int32         `json:"block_reasons_to_add"`
-	BlockReasonsToRemove int32         `json:"block_reasons_to_remove"`
+	AccountID            string `json:"account_id"`
+	BlockReasonsToAdd    int32  `json:"block_reasons_to_add"`
+	BlockReasonsToRemove int32  `json:"block_reasons_to_remove"`
 }
 
 type ManageKeyValueDetails struct {
@@ -62,7 +69,7 @@ type SetFeeDetails struct {
 	FixedFee    string           `json:"fixed_fee"`
 	PercentFee  string           `json:"percent_fee"`
 	FeeType     xdr.FeeType      `json:"fee_type"`
-	AccountID   *xdr.AccountId   `json:"account_id,omitempty"`
+	AccountID   string           `json:"account_id,omitempty"`
 	AccountType *xdr.AccountType `json:"account_type,omitempty"`
 	Subtype     int64            `json:"subtype"`
 	LowerBound  string           `json:"lower_bound"`
@@ -71,7 +78,7 @@ type SetFeeDetails struct {
 }
 
 type CreateWithdrawRequestDetails struct {
-	BalanceID         xdr.BalanceId          `json:"balance_id"`
+	BalanceID         string                 `json:"balance_id"`
 	Amount            string                 `json:"amount"`
 	FixedFee          string                 `json:"fixed_fee"`
 	PercentFee        string                 `json:"percent_fee"`
@@ -92,7 +99,7 @@ type ManageInvoiceRequestDetails struct {
 }
 type CreateInvoiceRequestDetails struct {
 	Amount     string                 `json:"amount"`
-	Sender     xdr.AccountId          `json:"sender"`
+	Sender     string                 `json:"sender"`
 	RequestID  int64                  `json:"request_id"`
 	Asset      xdr.AssetCode          `json:"asset"`
 	ContractID *int64                 `json:"contract_id,omitempty"`
@@ -108,8 +115,8 @@ type ManageContractRequestDetails struct {
 	Remove *RemoveContractReqeustDetails   `json:"remove,omitempty"`
 }
 type CreateContractRequestDetails struct {
-	Customer  xdr.AccountId          `json:"customer"`
-	Escrow    xdr.AccountId          `json:"escrow"`
+	Customer  string                 `json:"customer"`
+	Escrow    string                 `json:"escrow"`
 	Details   map[string]interface{} `json:"details"`
 	StartTime int64                  `json:"start_time"`
 	EndTime   int64                  `json:"end_time"`
@@ -126,7 +133,7 @@ type ManageLimitsDetails struct {
 }
 type ManageLimitsCreationDetails struct {
 	AccountType     *xdr.AccountType `json:"account_type,omitempty"`
-	AccountID       *xdr.AccountId   `json:"account_id,omitempty"`
+	AccountID       string           `json:"account_id,omitempty"`
 	StatsOpType     xdr.StatsOpType  `json:"stats_op_type"`
 	AssetCode       xdr.AssetCode    `json:"asset_code"`
 	IsConvertNeeded bool             `json:"is_convert_needed"`
@@ -178,6 +185,9 @@ type ReviewRequestDetails struct {
 	RequestDetails    xdr.ReviewRequestOpRequestDetails `json:"request_details"`
 	IsFulfilled       bool                              `json:"is_fulfilled"`
 	AtomicSwapDetails *xdr.ASwapExtended                `json:"atomic_swap_details,omitempty"`
+	AddedTasks        uint32                            `json:"added_tasks"`
+	RemovedTasks      uint32                            `json:"removed_tasks"`
+	ExternalDetails   string                            `json:"external_details"`
 }
 
 type ManageAssetDetails struct {
@@ -186,7 +196,7 @@ type ManageAssetDetails struct {
 	Action            xdr.ManageAssetAction  `json:"action"`
 	Policies          *int32                 `json:"policies,omitempty"`
 	Details           map[string]interface{} `json:"details,omitempty"`
-	PreissuedSigner   *xdr.AccountId         `json:"preissued_signer,omitempty"`
+	PreissuedSigner   string                 `json:"preissued_signer,omitempty"`
 	MaxIssuanceAmount string                 `json:"max_issuance_amount,omitempty"`
 }
 
@@ -203,10 +213,11 @@ type CreateIssuanceRequestDetails struct {
 	Reference         string                 `json:"reference"`
 	Amount            string                 `json:"amount"`
 	Asset             xdr.AssetCode          `json:"asset"`
-	ReceiverAccountID xdr.AccountId          `json:"receiver_account_id"`
-	ReceiverBalanceID xdr.BalanceId          `json:"receiver_balance_id"`
+	ReceiverAccountID string                 `json:"receiver_account_id"`
+	ReceiverBalanceID string                 `json:"receiver_balance_id"`
 	ExternalDetails   map[string]interface{} `json:"external_details"`
 	AllTasks          *int64                 `json:"all_tasks,omitempty"`
+	RequestDetails    RequestDetails         `json:"request_details"`
 }
 
 type CreateSaleRequestDetails struct {
@@ -226,12 +237,94 @@ type CheckSaleStateDetails struct {
 	Effect xdr.CheckSaleStateEffect
 }
 
+type CreateAtomicSwapBidRequestDetails struct {
+	Amount         string                     `json:"amount"`
+	BaseBalance    string                     `json:"base_balance"`
+	QuoteAssets    []regources.SaleQuoteAsset `json:"quote_assets"`
+	Details        map[string]interface{}     `json:"details"`
+	RequestDetails RequestDetails             `json:"request_details"`
+}
+
+type CreateAtomicSwapRequestDetails struct {
+	BidID          int64          `json:"bid_id"`
+	BaseAmount     string         `json:"base_amount"`
+	QuoteAsset     xdr.AssetCode  `json:"quote_asset"`
+	RequestDetails RequestDetails `json:"request_details"`
+}
+
+type CancelAtomicSwapBidDetails struct {
+	BidID int64 `json:"bid_id"`
+}
+
 type CreateAMLAlertRequestDetails struct {
-	Amount    string        `json:"amount"`
-	BalanceID xdr.BalanceId `json:"balance_id"`
-	Reason    string        `json:"reason"`
+	Amount    string `json:"amount"`
+	BalanceID string `json:"balance_id"`
+	Reason    string `json:"reason"`
 }
 
 // PaymentDetails - stores details of payment operation
 type PaymentDetails struct {
+	AccountFrom             string        `json:"account_from"`
+	AccountTo               string        `json:"account_to"`
+	BalanceFrom             string        `json:"balance_from"`
+	BalanceTo               string        `json:"balance_to"`
+	Amount                  string        `json:"amount"`
+	Asset                   xdr.AssetCode `json:"asset"`
+	SourceFeeData           FeeData       `json:"source_fee_data"`
+	DestinationFeeData      FeeData       `json:"destination_fee_data"`
+	SourcePayForDestination bool          `json:"source_pay_for_destination"`
+	Subject                 string        `json:"subject"`
+	Reference               string        `json:"reference"`
+	UniversalAmount         string        `json:"universal_amount"`
+}
+
+type PayoutDetails struct {
+	SourceAccountID      string        `json:"source_account_id"`
+	SourceBalanceID      string        `json:"source_balance_id"`
+	Asset                xdr.AssetCode `json:"asset"`
+	MaxPayoutAmount      string        `json:"max_payout_amount"`
+	MinAssetHolderAmount string        `json:"min_asset_holder_amount"`
+	MinPayoutAmount      string        `json:"min_payout_amount"`
+	ExpectedFixedFee     string        `json:"expected_fixed_fee"`
+	ExpectedPercentFee   string        `json:"expected_percent_fee"`
+	ActualFixedFee       string        `json:"actual_fixed_fee"`
+	ActualPercentFee     string        `json:"actual_percent_fee"`
+	ActualPayoutAmount   string        `json:"actual_payout_amount"`
+}
+
+type FeeData struct {
+	FixedFee  string `json:"fixed_fee"`
+	ActualFee string `json:"actual_fee"`
+}
+
+type RequestDetails struct {
+	RequestID   int64 `json:"request_id,omitempty"`
+	IsFulfilled bool  `json:"is_fulfilled"`
+}
+
+type CreateKYCRequestDetails struct {
+	AccountIDToUpdateKYC string                 `json:"account_id_to_update_kyc"`
+	AccountTypeToSet     xdr.AccountType        `json:"account_type_to_set"`
+	KYCData              map[string]interface{} `json:"kyc_data"`
+	AllTasks             *uint32                `json:"all_tasks"`
+	RequestDetails       RequestDetails         `json:"request_details"`
+}
+
+type ManageExternalSystemPoolDetails struct {
+	Action xdr.ManageExternalSystemAccountIdPoolEntryAction `json:"action"`
+	Create *CreateExternalSystemPoolDetails                 `json:"create"`
+	Remove *RemoveExternalSystemPoolDetails                 `json:"remove"`
+}
+type CreateExternalSystemPoolDetails struct {
+	PoolID             uint64 `json:"pool_id"`
+	Data               string `json:"data"`
+	Parent             uint64 `json:"parent"`
+	ExternalSystemType int32  `json:"external_system_type"`
+}
+type RemoveExternalSystemPoolDetails struct {
+	PoolID uint64 `json:"pool_id"`
+}
+
+type BindExternalSystemAccountDetails struct {
+	ExternalSystemType int32 `json:"external_system_type"`
 }

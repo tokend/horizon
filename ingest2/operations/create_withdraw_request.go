@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/tokend/go/amount"
@@ -10,22 +10,23 @@ type createWithdrawRequestOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *createWithdrawRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr,
+// OperationDetails returns details about create withdraw request operation
+func (h *createWithdrawRequestOpHandler) OperationDetails(op RawOperation,
+	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	withdrawRequest := opBody.MustCreateWithdrawalRequestOp().Request
+	withdrawRequest := op.Body.MustCreateWithdrawalRequestOp().Request
 
 	destinationAsset := xdr.AssetCode("")
 	destinationAmount := amount.String(int64(0))
-	if autoConvDet, ok := withdrawRequest.Details.GetAutoConversion(); ok {
-		destinationAsset = autoConvDet.DestAsset
-		destinationAmount = amount.StringU(uint64(autoConvDet.ExpectedAmount))
+	if autoConversion, ok := withdrawRequest.Details.GetAutoConversion(); ok {
+		destinationAsset = autoConversion.DestAsset
+		destinationAmount = amount.StringU(uint64(autoConversion.ExpectedAmount))
 	}
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateWithdrawalRequest,
 		CreateWithdrawRequest: &history2.CreateWithdrawRequestDetails{
-			BalanceID:         h.pubKeyProvider.GetBalanceID(withdrawRequest.Balance),
+			BalanceID:         withdrawRequest.Balance.AsString(),
 			Amount:            amount.StringU(uint64(withdrawRequest.Amount)),
 			FixedFee:          amount.String(int64(withdrawRequest.Fee.Fixed)),
 			PercentFee:        amount.String(int64(withdrawRequest.Fee.Percent)),
@@ -36,16 +37,22 @@ func (h *createWithdrawRequestOpHandler) OperationDetails(opBody xdr.OperationBo
 	}, nil
 }
 
+// ParticipantsEffects returns source `locked` effect
 func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	withdrawRequest := opBody.MustCreateWithdrawalRequestOp().Request
 	balanceIDInt := h.pubKeyProvider.GetBalanceID(withdrawRequest.Balance)
-	withdrawAmount := int64(withdrawRequest.Amount)
 
 	source.BalanceID = &balanceIDInt
-	source.Effect.Type = history2.EffectTypeWithdraw
-	source.Effect.WithdrawAmount = &withdrawAmount
+	source.Effect.Type = history2.EffectTypeLocked
+	source.Effect.Locked = &history2.LockedEffect{
+		Amount: amount.StringU(uint64(withdrawRequest.Amount)),
+		FeeLocked: history2.FeePaid{
+			Fixed:             amount.StringU(uint64(withdrawRequest.Fee.Fixed)),
+			CalculatedPercent: amount.StringU(uint64(withdrawRequest.Fee.Percent)),
+		},
+	}
 
 	return []history2.ParticipantEffect{source}, nil
 }

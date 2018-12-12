@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/tokend/go/xdr"
@@ -9,15 +9,16 @@ type manageAccountOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *manageAccountOpHandler) OperationDetails(opBody xdr.OperationBody,
+// OperationDetails returns details about manage account operation
+func (h *manageAccountOpHandler) OperationDetails(op RawOperation,
 	_ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageAccountOp := opBody.MustManageAccountOp()
+	manageAccountOp := op.Body.MustManageAccountOp()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageAccount,
 		ManageAccount: &history2.ManageAccountDetails{
-			AccountID:            h.pubKeyProvider.GetAccountID(manageAccountOp.Account),
+			AccountID:            manageAccountOp.Account.Address(),
 			BlockReasonsToAdd:    int32(manageAccountOp.BlockReasonsToAdd),
 			BlockReasonsToRemove: int32(manageAccountOp.BlockReasonsToRemove),
 		},
@@ -25,7 +26,7 @@ func (h *manageAccountOpHandler) OperationDetails(opBody xdr.OperationBody,
 }
 
 func (h *manageAccountOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	participants := []history2.ParticipantEffect{source}
 

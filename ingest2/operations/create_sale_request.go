@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/tokend/go/amount"
@@ -9,10 +9,10 @@ import (
 type createSaleRequestOpHandler struct {
 }
 
-func (h *createSaleRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr,
+// OperationDetails returns details about create sale request operation
+func (h *createSaleRequestOpHandler) OperationDetails(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	createSaleRequest := opBody.MustCreateSaleCreationRequestOp().Request
+	createSaleRequest := op.Body.MustCreateSaleCreationRequestOp().Request
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateSaleRequest,
@@ -30,7 +30,7 @@ func (h *createSaleRequestOpHandler) OperationDetails(opBody xdr.OperationBody,
 }
 
 func (h *createSaleRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

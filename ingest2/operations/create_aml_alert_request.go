@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/tokend/go/amount"
@@ -10,23 +10,26 @@ type createAMLAlertReqeustOpHandler struct {
 	balanceProvider balanceProvider
 }
 
-func (h *createAMLAlertReqeustOpHandler) OperationDetails(opBody xdr.OperationBody,
+// OperationDetails returns details about create AML alert request operation
+func (h *createAMLAlertReqeustOpHandler) OperationDetails(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	amlAlertRequest := opBody.MustCreateAmlAlertRequestOp().AmlAlertRequest
+	amlAlertRequest := op.Body.MustCreateAmlAlertRequestOp().AmlAlertRequest
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAmlAlert,
 		CreateAMLAlertRequest: &history2.CreateAMLAlertRequestDetails{
 			Amount:    amount.StringU(uint64(amlAlertRequest.Amount)),
-			BalanceID: amlAlertRequest.BalanceId,
+			BalanceID: amlAlertRequest.BalanceId.AsString(),
 			Reason:    string(amlAlertRequest.Reason),
 		},
 	}, nil
 }
 
+// ParticipantsEffects returns `locked` effect for account
+// which is suspected in illegal obtaining of tokens
 func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	amlAlertRequest := opBody.MustCreateAmlAlertRequestOp().AmlAlertRequest
 
@@ -36,7 +39,7 @@ func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.Operatio
 
 	effect := history2.Effect{
 		Type: history2.EffectTypeLocked,
-		AMLAlert: &history2.AMLAlertEffect{
+		Locked: &history2.LockedEffect{
 			Amount: amount.String(int64(amlAlertRequest.Amount)),
 		},
 	}
@@ -44,13 +47,13 @@ func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	var participants []history2.ParticipantEffect
 
 	if balance.AccountID == source.AccountID {
-		source.BalanceID = &balance.BalanceID
+		source.BalanceID = &balance.ID
 		source.AssetCode = &assetCode
 		source.Effect = effect
 	} else {
 		participants = append(participants, history2.ParticipantEffect{
 			AccountID: balance.AccountID,
-			BalanceID: &balance.BalanceID,
+			BalanceID: &balance.ID,
 			AssetCode: &assetCode,
 			Effect:    effect,
 		})

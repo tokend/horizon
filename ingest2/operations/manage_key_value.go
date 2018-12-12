@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/tokend/go/xdr"
@@ -8,14 +8,14 @@ import (
 type manageKeyValueOpHandler struct {
 }
 
-func (h *manageKeyValueOpHandler) OperationDetails(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr,
+// OperationDetails returns details about manage key value operation
+func (h *manageKeyValueOpHandler) OperationDetails(op RawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageKVOp := opBody.MustManageKeyValueOp()
+	manageKVOp := op.Body.MustManageKeyValueOp()
 
 	var value *xdr.KeyValueEntryValue
 	if manageKVOp.Action.Action == xdr.ManageKvActionPut {
-		valueForPtr := manageKVOp.Action.MustValue().Value
+		valueForPtr := manageKVOp.Action.MustValue()
 		value = &valueForPtr
 	}
 
@@ -30,7 +30,7 @@ func (h *manageKeyValueOpHandler) OperationDetails(opBody xdr.OperationBody,
 }
 
 func (h *manageKeyValueOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

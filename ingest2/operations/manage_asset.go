@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -8,12 +8,12 @@ import (
 )
 
 type manageAssetOpHandler struct {
-	pubKeyProvider publicKeyProvider
 }
 
-func (h *manageAssetOpHandler) OperationDetails(opBody xdr.OperationBody, opRes xdr.OperationResultTr,
+// OperationDetails returns details about manage asset operation
+func (h *manageAssetOpHandler) OperationDetails(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	manageAssetOp := opBody.MustManageAssetOp()
+	manageAssetOp := op.Body.MustManageAssetOp()
 
 	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeManageAsset,
@@ -32,12 +32,11 @@ func (h *manageAssetOpHandler) OperationDetails(opBody xdr.OperationBody, opRes 
 		creationDetails := manageAssetOp.Request.MustCreateAsset()
 
 		policies := int32(creationDetails.Policies)
-		preissuedSigner := h.pubKeyProvider.GetAccountID(creationDetails.PreissuedAssetSigner)
 
 		opDetails.ManageAsset.AssetCode = creationDetails.Code
 		opDetails.ManageAsset.Details = customDetailsUnmarshal([]byte(creationDetails.Details))
 		opDetails.ManageAsset.Policies = &policies
-		opDetails.ManageAsset.PreissuedSigner = &preissuedSigner
+		opDetails.ManageAsset.PreissuedSigner = creationDetails.PreissuedAssetSigner.Address()
 		opDetails.ManageAsset.MaxIssuanceAmount = amount.StringU(uint64(creationDetails.MaxIssuanceAmount))
 	case xdr.ManageAssetActionCreateAssetUpdateRequest:
 		updateDetails := manageAssetOp.Request.MustUpdateAsset()
@@ -50,10 +49,9 @@ func (h *manageAssetOpHandler) OperationDetails(opBody xdr.OperationBody, opRes 
 	case xdr.ManageAssetActionCancelAssetRequest:
 	case xdr.ManageAssetActionChangePreissuedAssetSigner:
 		data := manageAssetOp.Request.MustChangePreissuedSigner()
-		preissuedSigner := h.pubKeyProvider.GetAccountID(data.AccountId)
 
 		opDetails.ManageAsset.AssetCode = data.Code
-		opDetails.ManageAsset.PreissuedSigner = &preissuedSigner
+		opDetails.ManageAsset.PreissuedSigner = data.AccountId.Address()
 	case xdr.ManageAssetActionUpdateMaxIssuance:
 		data := manageAssetOp.Request.MustUpdateMaxIssuance()
 
@@ -67,7 +65,7 @@ func (h *manageAssetOpHandler) OperationDetails(opBody xdr.OperationBody, opRes 
 }
 
 func (h *manageAssetOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect,
+	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return []history2.ParticipantEffect{source}, nil
 }

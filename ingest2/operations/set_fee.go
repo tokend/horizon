@@ -1,4 +1,4 @@
-package operaitons
+package operations
 
 import (
 	"gitlab.com/tokend/go/amount"
@@ -10,9 +10,10 @@ type setFeeOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *setFeeOpHandler) OperationDetails(opBody xdr.OperationBody, _ xdr.OperationResultTr,
+// OperationDetails returns details about set fee operation
+func (h *setFeeOpHandler) OperationDetails(op RawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	setFeeOp := opBody.MustSetFeesOp()
+	setFeeOp := op.Body.MustSetFeesOp()
 
 	if setFeeOp.IsDelete || setFeeOp.Fee == nil {
 		return history2.OperationDetails{
@@ -23,12 +24,6 @@ func (h *setFeeOpHandler) OperationDetails(opBody xdr.OperationBody, _ xdr.Opera
 
 	fee := *setFeeOp.Fee
 
-	var accountIDPtr *int64
-	if fee.AccountId != nil {
-		accountIDInt := h.pubKeyProvider.GetAccountID(*fee.AccountId)
-		accountIDPtr = &accountIDInt
-	}
-
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeSetFees,
 		SetFee: &history2.SetFeeDetails{
@@ -36,7 +31,7 @@ func (h *setFeeOpHandler) OperationDetails(opBody xdr.OperationBody, _ xdr.Opera
 			FixedFee:    amount.String(int64(fee.FixedFee)),
 			PercentFee:  amount.String(int64(fee.PercentFee)),
 			FeeType:     fee.FeeType,
-			AccountID:   accountIDPtr,
+			AccountID:   fee.AccountId.Address(),
 			AccountType: fee.AccountType,
 			Subtype:     int64(fee.Subtype),
 			LowerBound:  amount.String(int64(fee.LowerBound)),
@@ -46,7 +41,7 @@ func (h *setFeeOpHandler) OperationDetails(opBody xdr.OperationBody, _ xdr.Opera
 }
 
 func (h *setFeeOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	participants := []history2.ParticipantEffect{source}
 

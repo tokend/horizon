@@ -12,4 +12,5 @@ type Operation struct {
 	Type             xdr.OperationType
 	OperationDetails OperationDetails
 	LedgerCloseTime  time.Time
+	Source           string
 }
