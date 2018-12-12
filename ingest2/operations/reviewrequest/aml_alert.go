@@ -32,5 +32,5 @@ func (h *amlAlertHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 		}
 	}
 
-	return h.effectHelper.getParticipantEffectByBalanceID(details.BalanceId, effect, source), nil
+	return h.effectHelper.populateEffectWithBalanceDetails(details.BalanceId, effect, source), nil
 }

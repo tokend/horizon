@@ -40,5 +40,5 @@ func (h *withdrawHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 		}
 	}
 
-	return h.effectHelper.getParticipantEffectByBalanceID(details.Balance, effect, source), nil
+	return h.effectHelper.populateEffectWithBalanceDetails(details.Balance, effect, source), nil
 }

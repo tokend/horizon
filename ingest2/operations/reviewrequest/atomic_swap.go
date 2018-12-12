@@ -66,13 +66,21 @@ func (h *atomicSwapHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 	})
 
 	bid := h.getAtomicSwapBid(atomicSwapExtendedResult.BidId, ledgerChanges)
+	// review of bid request has not affected bid, so there is no additional effects
 	if bid == nil {
 		return participants, nil
 	}
 
+	// no additional effects for the bid owner
+	if bid.Amount == 0 {
+		return participants, nil
+	}
+
 	bidIsSoldOut := (bid.Amount == 0) && (bid.LockedAmount == 0)
-	bidIsRemoved := bidIsSoldOut || (bid.IsCancelled && bid.LockedAmount == 0)
-	if bidIsRemoved && (bid.Amount != 0) {
+	bindIsRemovedOnReviewAfterCancel := bid.IsCancelled && bid.LockedAmount == 0
+	bidIsRemoved := bidIsSoldOut || bindIsRemovedOnReviewAfterCancel
+	// If bid was removed, but we had to unlock some amount
+	if bidIsRemoved {
 		participants = append(participants, history2.ParticipantEffect{
 			AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.BidOwnerId),
 			BalanceID: &ownerBalanceID,

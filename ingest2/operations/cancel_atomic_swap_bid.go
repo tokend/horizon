@@ -37,7 +37,8 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 			})
 	}
 
-	// it means that someone already create atomic swap request,
+	// it means that there is pending atomic swap request,
+	// so bid still exists
 	// we must wait for review that request
 	if atomicSwapBid.LockedAmount != 0 {
 		return []history2.ParticipantEffect{source}, nil

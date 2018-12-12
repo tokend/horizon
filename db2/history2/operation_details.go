@@ -185,6 +185,9 @@ type ReviewRequestDetails struct {
 	RequestDetails    xdr.ReviewRequestOpRequestDetails `json:"request_details"`
 	IsFulfilled       bool                              `json:"is_fulfilled"`
 	AtomicSwapDetails *xdr.ASwapExtended                `json:"atomic_swap_details,omitempty"`
+	AddedTasks        uint32                            `json:"added_tasks"`
+	RemovedTasks      uint32                            `json:"removed_tasks"`
+	ExternalDetails   string                            `json:"external_details"`
 }
 
 type ManageAssetDetails struct {

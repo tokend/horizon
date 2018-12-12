@@ -3,6 +3,8 @@ package reviewrequest
 import (
 	"encoding/hex"
 
+	"gitlab.com/distributed_lab/logan/v3/errors"
+
 	"gitlab.com/tokend/horizon/ingest2/operations"
 
 	"gitlab.com/tokend/go/xdr"
@@ -69,16 +71,28 @@ func (h *reviewRequestOpHandler) OperationDetails(op operations.RawOperation, op
 	reviewRequestOp := op.Body.MustReviewRequestOp()
 	reviewRequestOpRes := opRes.MustReviewRequestResult().MustSuccess()
 
+	var addedTasks uint32
+	var removedTasks uint32
+	var externalDetails string
+	if details, ok := reviewRequestOp.Ext.GetReviewDetails(); ok {
+		addedTasks = uint32(details.TasksToAdd)
+		removedTasks = uint32(details.TasksToRemove)
+		externalDetails = string(details.ExternalDetails)
+	}
+
 	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeReviewRequest,
 		ReviewRequest: &history2.ReviewRequestDetails{
-			RequestID:      int64(reviewRequestOp.RequestId),
-			RequestType:    reviewRequestOp.RequestDetails.RequestType,
-			RequestHash:    hex.EncodeToString(reviewRequestOp.RequestHash[:]),
-			Action:         reviewRequestOp.Action,
-			Reason:         string(reviewRequestOp.Reason),
-			IsFulfilled:    reviewRequestOpRes.Fulfilled,
-			RequestDetails: reviewRequestOp.RequestDetails,
+			RequestID:       int64(reviewRequestOp.RequestId),
+			RequestType:     reviewRequestOp.RequestDetails.RequestType,
+			RequestHash:     hex.EncodeToString(reviewRequestOp.RequestHash[:]),
+			Action:          reviewRequestOp.Action,
+			Reason:          string(reviewRequestOp.Reason),
+			IsFulfilled:     reviewRequestOpRes.Fulfilled,
+			RequestDetails:  reviewRequestOp.RequestDetails,
+			AddedTasks:      addedTasks,
+			RemovedTasks:    removedTasks,
+			ExternalDetails: externalDetails,
 		},
 	}
 
@@ -106,7 +120,10 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	request := h.getReviewableRequestByID(int64(reviewRequestOp.RequestId), ledgerChanges)
 
 	if request == nil {
-		return []history2.ParticipantEffect{source}, nil
+		return nil, errors.From(
+			errors.New("expected request to be in ledger changes"), map[string]interface{}{
+				"request_id": int64(reviewRequestOp.RequestId),
+			})
 	}
 
 	specificHandler, ok := h.allRequestHandlers[request.Body.Type]
@@ -122,7 +139,7 @@ type effectHelper struct {
 	balanceProvider balanceProvider
 }
 
-func (h *effectHelper) getParticipantEffectByBalanceID(balanceID xdr.BalanceId,
+func (h *effectHelper) populateEffectWithBalanceDetails(balanceID xdr.BalanceId,
 	effect history2.Effect, source history2.ParticipantEffect,
 ) []history2.ParticipantEffect {
 	balance := h.balanceProvider.GetBalanceByID(balanceID)
@@ -141,37 +158,38 @@ func (h *effectHelper) getParticipantEffectByBalanceID(balanceID xdr.BalanceId,
 	}, source}
 }
 
+// Tries to get latest version of reviewable request by ID (updated first, created or state otherwise)
 func (h *reviewRequestOpHandler) getReviewableRequestByID(id int64, ledgerChanges []xdr.LedgerEntryChange,
 ) *xdr.ReviewableRequestEntry {
-	tryFindUpdated := false
 	var bestResult *xdr.ReviewableRequestEntry
 
 	for _, change := range ledgerChanges {
-		var reviewableRequest *xdr.ReviewableRequestEntry
+		var ledgerEntryData xdr.LedgerEntryData
 
 		switch change.Type {
 		case xdr.LedgerEntryChangeTypeCreated:
-			reviewableRequest = change.MustCreated().Data.ReviewableRequest
+			ledgerEntryData = change.MustCreated().Data
 		case xdr.LedgerEntryChangeTypeUpdated:
-			tryFindUpdated = false
-			reviewableRequest = change.MustUpdated().Data.ReviewableRequest
+			ledgerEntryData = change.MustUpdated().Data
 		case xdr.LedgerEntryChangeTypeState:
-			tryFindUpdated = true
-			reviewableRequest = change.MustState().Data.ReviewableRequest
+			ledgerEntryData = change.MustState().Data
 		default:
 			continue
 		}
 
-		if reviewableRequest == nil {
+		if ledgerEntryData.Type != xdr.LedgerEntryTypeReviewableRequest {
 			continue
 		}
 
-		if int64(reviewableRequest.RequestId) == id {
-			if !tryFindUpdated {
-				return reviewableRequest
-			}
+		request := ledgerEntryData.MustReviewableRequest()
+		if int64(request.RequestId) != id {
+			continue
+		}
 
-			bestResult = reviewableRequest
+		bestResult = &request
+		// we have found latest version of the request, so can return
+		if change.Type == xdr.LedgerEntryChangeTypeUpdated {
+			return bestResult
 		}
 	}
 

@@ -31,5 +31,5 @@ func (h *issuanceHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 		},
 	}
 
-	return h.effectHelper.getParticipantEffectByBalanceID(details.Receiver, effect, source), nil
+	return h.effectHelper.populateEffectWithBalanceDetails(details.Receiver, effect, source), nil
 }
