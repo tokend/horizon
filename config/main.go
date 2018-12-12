@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 // Config is the configuration for horizon.  It get's populated by the
@@ -22,7 +22,7 @@ type Config struct {
 	StellarCoreURL         string
 	Port                   int
 	RedisURL               string
-	LogLevel               logrus.Level
+	LogLevel               logan.Level
 	LogToJSON              bool
 	SlowQueryBound         *time.Duration
 
@@ -154,7 +154,7 @@ func (c *Config) Init() error {
 	}
 
 	c.LogToJSON = c.getBool("log_to_json")
-	c.LogLevel, err = logrus.ParseLevel(c.getString("log_level"))
+	c.LogLevel, err = logan.ParseLevel(c.getString("log_level"))
 	if err != nil {
 		return err
 	}

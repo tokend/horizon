@@ -389,7 +389,7 @@
     "strkey",
     "xdr"
   ]
-  revision = "281d34621028f29a0d8bc504deff9054714e52ed"
+  revision = "7e22f49d28cc980a443beff8e8fbcb0575230d32"
 
 [[projects]]
   branch = "master"
@@ -406,7 +406,7 @@
   branch = "product"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
-  revision = "6c29e09f55210ad0d627cd02a22f3f195aed0a08"
+  revision = "1cd355c055d3e972eba96aa008256009b570992c"
 
 [[projects]]
   branch = "master"

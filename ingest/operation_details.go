@@ -55,7 +55,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["key"] = op.Key
 		details["action"] = op.Action
 		if op.Action.Action != xdr.ManageKvActionRemove {
-			details["value"] = op.Action.Value.Value
+			details["value"] = op.Action.Value
 		}
 
 	case xdr.OperationTypeSetOptions:
@@ -266,13 +266,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["details"] = getReviewRequestOpDetails(op.RequestDetails)
 
 		opResult := c.OperationResult().MustReviewRequestResult().MustSuccess()
-		extendedResult, ok := opResult.Ext.GetExtendedResult()
-		if !ok {
-			break
-		}
-		details["is_fulfilled"] = extendedResult.Fulfilled
+		details["is_fulfilled"] = opResult.Fulfilled
 
-		aSwapExtended, ok := extendedResult.TypeExt.GetASwapExtended()
+		aSwapExtended, ok := opResult.TypeExt.GetASwapExtended()
 		if !ok {
 			break
 		}
@@ -348,13 +344,13 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["amount"] = amount.StringU(uint64(op.Amount))
 		details["asset"] = string(opResult.Asset)
 		details["source_fee_data"] = map[string]interface{}{
-			"fixed_fee":                     amount.StringU(uint64(op.FeeData.SourceFee.FixedFee)),
-			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualSourcePaymentFee)),
+			"fixed_fee":                     amount.StringU(uint64(opResult.ActualDestinationPaymentFee.Fixed)),
+			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualDestinationPaymentFee.Percent)),
 			"actual_payment_fee_asset_code": string(op.FeeData.SourceFee.FeeAsset),
 		}
 		details["destination_fee_data"] = map[string]interface{}{
 			"fixed_fee":                     amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee)),
-			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualDestinationPaymentFee)),
+			"actual_payment_fee":            amount.StringU(uint64(op.FeeData.DestinationFee.MaxPaymentFee)),
 			"actual_payment_fee_asset_code": string(op.FeeData.DestinationFee.FeeAsset),
 		}
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest

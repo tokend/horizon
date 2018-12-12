@@ -30,7 +30,7 @@ const (
 func initLog(app *App) {
 
 	if app.config.LogToJSON {
-		log.DefaultLogger.Entry.Logger.Formatter = &logrus.JSONFormatter{}
+		log.DefaultLogger.Formatter(&logrus.JSONFormatter{})
 	}
 
 	if app.config.SlackWebhook != nil {
@@ -43,7 +43,7 @@ func initLog(app *App) {
 			},
 		}
 		h := lrhook.New(cfg, app.config.SlackWebhook.String())
-		log.DefaultLogger.Logger.Hooks.Add(h)
+		log.DefaultLogger.AddLogrusHook(h)
 	}
 	if app.config.SlowQueryBound != nil {
 		log.SlowQueryBound = *app.config.SlowQueryBound
@@ -54,7 +54,7 @@ func initLog(app *App) {
 		errors.Wrap(err, "Failed to add Sentry hook")
 	}
 	log.DefaultLogger.Entry = *entry
-	log.DefaultLogger.Logger.Level = app.config.LogLevel
+	log.DefaultLogger.Level(app.config.LogLevel)
 	log.DefaultLogger = log.DefaultLogger.WithField("host", app.config.Hostname)
 
 	entry, err = addSentryHook(app.config, entry)

@@ -128,7 +128,7 @@ func ForOperation(
 			break
 		}
 
-		extendedResult, ok := opResult.MustReviewRequestResult().MustSuccess().Ext.GetExtendedResult()
+		extendedResult, ok := opResult.MustReviewRequestResult().GetSuccess()
 		if !ok {
 			break
 		}

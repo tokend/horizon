@@ -270,7 +270,7 @@ func (r *Repo) log(typ string, start time.Time, query string, args []interface{}
 	lEntry.Debugf("sql: %s", typ)
 
 	if dur > log.SlowQueryBound {
-		lEntry.Warningf("too slow sql: %s", typ)
+		lEntry.WithField("type", typ).Warn("too slow sql")
 	}
 }
 

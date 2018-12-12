@@ -4,9 +4,7 @@ import (
 	"os"
 
 	"github.com/go-errors/errors"
-	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
-	// glog "log"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -35,11 +33,10 @@ func init() {
 // New creates a new logger according to horizon specifications.
 func New() (result *Entry, m *Metrics) {
 	m = NewMetrics()
-	l := logrus.New()
-	l.Level = logrus.WarnLevel
-	l.Hooks.Add(m)
+	entry := logan.New().Level(logan.WarnLevel).WithField("pid", os.Getpid())
+	entry.AddLogrusHook(m)
 
-	result = &Entry{logan.Entry{Entry: logrus.NewEntry(l).WithField("pid", os.Getpid())}}
+	result = &Entry{*entry}
 	return
 }
 
