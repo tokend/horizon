@@ -8,37 +8,27 @@ import (
 )
 
 type accountsStorage interface {
-	InsertAccounts(accounts []history.Account) error
+	InsertAccount(account history.Account) error
 }
 
 type accountsProcessor struct {
 	log *logan.Entry
+	storage accountsStorage
 	accounts map[xdr.AccountId]history.Account
-	newAccounts []history.Account
 }
 
 func (p *accountsProcessor) Consume(it ledgerChangesIteration) (error) {
 	lc := it.LedgerChange
-	if lc.Type != xdr.LedgerEntryChangeTypeCreated {
-		return nil
-	}
-
-	if lc.Created.Data.Type != xdr.LedgerEntryTypeAccount {
-		return nil
-	}
-
-	newAccount := history.NewAccount(lc.Created.Data.MustAccount(), it.LedgerSeq, it.LedgerGlobOpSeq)
-	p.accounts[lc.Created.Data.Account.AccountId] = newAccount
-	p.newAccounts = append(p.newAccounts, newAccount)
-	return nil
+	account := lc.MustCreated().Data.MustAccount()
+	return p.ConsumeAccountDetails(account.AccountId, int32(account.AccountType), it.LedgerSeq, it.LedgerGlobOpSeq)
 }
 
-func (p *accountsProcessor) Store(storage accountsStorage) error {
-	err := storage.InsertAccounts(p.newAccounts)
+func (p *accountsProcessor) ConsumeAccountDetails(accountID xdr.AccountId, accountType int32, ledgerSeq, ledgerGlobalOpSeq int32) error {
+	newAccount := history.NewAccount(accountID.Address(), accountType, ledgerSeq, ledgerGlobalOpSeq)
+	p.accounts[accountID] = newAccount
+	err := p.storage.InsertAccount(newAccount)
 	if err != nil {
-		return errors.Wrap(err, "failed to insert accounts")
+		return errors.Wrap(err, "failed to insert account")
 	}
-
-	p.newAccounts = p.newAccounts[0:0]
 	return nil
 }

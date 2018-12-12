@@ -48,7 +48,7 @@ func (action *BalanceAccountAction) loadRecord() {
 		return
 	}
 	action.Record = history.Account{
-		Address: balance.AccountID,
+		AccountID: balance.AccountID,
 	}
 }
 

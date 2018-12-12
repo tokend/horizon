@@ -9,7 +9,6 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/db2/history"
 )
 
 // ForOperation returns all the participating accounts from the
@@ -305,17 +304,6 @@ func ForTransaction(
 
 	result = dedupe(result)
 	return
-}
-
-func getAccountIDByBalance(q history.Q, balanceID string) (result *xdr.AccountId, err error) {
-	var targetBalance history.Balance
-	err = q.BalanceByID(&targetBalance, balanceID)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get balance by balance id")
-	}
-	var aid xdr.AccountId
-	aid.SetAddress(targetBalance.AccountID)
-	return &aid, nil
 }
 
 // dedupe remove any duplicate ids from `in`
