@@ -1,12 +1,10 @@
 package changes
 
 import (
-	"a5ac0aaf.ngrok.io/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/distributed_lab/logan/v3"
 )
-
-// Consumer - consumes ledger changes
 
 type creatable interface {
 	Created(change LedgerChange) error
@@ -18,12 +16,14 @@ type deletable interface {
 	Deleted(change LedgerChange) error
 }
 
+// Consumer - consumes ledger changes
 type Consumer struct {
 	Delete map[xdr.LedgerEntryType]deletable
 	Update map[xdr.LedgerEntryType]updatable
 	Create map[xdr.LedgerEntryType]creatable
 }
 
+// Consume - tries to find corresponding ledger change handler and handle it.
 func (c *Consumer) Consume(lc LedgerChange) error {
 	switch lc.LedgerChange.Type {
 	case xdr.LedgerEntryChangeTypeCreated:
