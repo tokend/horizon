@@ -1,29 +1,32 @@
 package changes
 
 import (
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/distributed_lab/logan/v3"
 )
 
+// Consumer - consumes ledger changes
+
 type creatable interface {
+	//Handles Created Ledger entry change
 	Created(change LedgerChange) error
 }
 type updatable interface {
+	//Handles Updated Ledger entry change
 	Updated(change LedgerChange) error
 }
 type deletable interface {
+	//Handles Removed Ledger entry change
 	Deleted(change LedgerChange) error
 }
 
-// Consumer - consumes ledger changes
 type Consumer struct {
 	Delete map[xdr.LedgerEntryType]deletable
 	Update map[xdr.LedgerEntryType]updatable
 	Create map[xdr.LedgerEntryType]creatable
 }
 
-// Consume - tries to find corresponding ledger change handler and handle it.
 func (c *Consumer) Consume(lc LedgerChange) error {
 	switch lc.LedgerChange.Type {
 	case xdr.LedgerEntryChangeTypeCreated:

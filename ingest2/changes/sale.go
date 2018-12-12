@@ -2,6 +2,7 @@ package changes
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -13,7 +14,9 @@ import (
 )
 
 type saleStorage interface {
+	//Inserts sale into DB
 	InsertSale(sale history.Sale) error
+	//Updates sale
 	UpdateSale(sale history.Sale) error
 }
 
@@ -34,7 +37,7 @@ func (c *saleChanges) Created(lc LedgerChange) error {
 
 	err = c.storage.InsertSale(*sale)
 	if err != nil {
-		errors.Wrap(err, "failed to insert sale into DB", logan.F{
+		return errors.Wrap(err, "failed to insert sale into DB", logan.F{
 			"sale": sale,
 		})
 	}
@@ -73,7 +76,11 @@ func (c *saleChanges) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	}
 
 	var saleDetails db2.Details
-	_ = json.Unmarshal([]byte(raw.Details), &saleDetails)
+	err := json.Unmarshal([]byte(raw.Details), &saleDetails)
+	if err != nil {
+		saleDetails["reason"] = fmt.Sprintf("Expected json, got %v", raw.Details)
+		saleDetails["error"] = err.Error()
+	}
 
 	saleType := xdr.SaleTypeBasicSale
 	rawState := xdr.SaleStateNone
