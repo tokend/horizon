@@ -10,8 +10,8 @@ type setFeeOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-// OperationDetails returns details about set fee operation
-func (h *setFeeOpHandler) OperationDetails(op RawOperation, _ xdr.OperationResultTr,
+// Details returns details about set fee operation
+func (h *setFeeOpHandler) Details(op RawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	setFeeOp := op.Body.MustSetFeesOp()
 
@@ -24,18 +24,24 @@ func (h *setFeeOpHandler) OperationDetails(op RawOperation, _ xdr.OperationResul
 
 	fee := *setFeeOp.Fee
 
+	var feeAccountAddress *string
+	if fee.AccountId != nil {
+		feeAccountAddress = new(string)
+		*feeAccountAddress = fee.AccountId.Address()
+	}
+
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeSetFees,
 		SetFee: &history2.SetFeeDetails{
-			AssetCode:   fee.Asset,
-			FixedFee:    amount.String(int64(fee.FixedFee)),
-			PercentFee:  amount.String(int64(fee.PercentFee)),
-			FeeType:     fee.FeeType,
-			AccountID:   fee.AccountId.Address(),
-			AccountType: fee.AccountType,
-			Subtype:     int64(fee.Subtype),
-			LowerBound:  amount.String(int64(fee.LowerBound)),
-			UpperBound:  amount.String(int64(fee.UpperBound)),
+			AssetCode:      fee.Asset,
+			FixedFee:       amount.String(int64(fee.FixedFee)),
+			PercentFee:     amount.String(int64(fee.PercentFee)),
+			FeeType:        fee.FeeType,
+			AccountAddress: feeAccountAddress,
+			AccountType:    fee.AccountType,
+			Subtype:        int64(fee.Subtype),
+			LowerBound:     amount.String(int64(fee.LowerBound)),
+			UpperBound:     amount.String(int64(fee.UpperBound)),
 		},
 	}, nil
 }

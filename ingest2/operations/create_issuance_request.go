@@ -8,11 +8,11 @@ import (
 )
 
 type createIssuanceRequestOpHandler struct {
-	pubKeyProvider publicKeyProvider
+	balanceProvider balanceProvider
 }
 
-// OperationDetails returns details about create issuance request operation
-func (h *createIssuanceRequestOpHandler) OperationDetails(op RawOperation,
+// Details returns details about create issuance request operation
+func (h *createIssuanceRequestOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createIssuanceRequestOp := op.Body.MustCreateIssuanceRequestOp()
@@ -30,15 +30,15 @@ func (h *createIssuanceRequestOpHandler) OperationDetails(op RawOperation,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateIssuanceRequest,
 		CreateIssuanceRequest: &history2.CreateIssuanceRequestDetails{
-			FixedFee:          amount.StringU(uint64(issuanceRequest.Fee.Fixed)),
-			PercentFee:        amount.StringU(uint64(issuanceRequest.Fee.Percent)),
-			Reference:         utf8.Scrub(string(createIssuanceRequestOp.Reference)),
-			Amount:            amount.StringU(uint64(issuanceRequest.Amount)),
-			Asset:             issuanceRequest.Asset,
-			ReceiverAccountID: createIssuanceRequestRes.Receiver.Address(),
-			ReceiverBalanceID: issuanceRequest.Receiver.AsString(),
-			ExternalDetails:   customDetailsUnmarshal([]byte(issuanceRequest.ExternalDetails)),
-			AllTasks:          allTasks,
+			FixedFee:   amount.StringU(uint64(issuanceRequest.Fee.Fixed)),
+			PercentFee: amount.StringU(uint64(issuanceRequest.Fee.Percent)),
+			Reference:  utf8.Scrub(string(createIssuanceRequestOp.Reference)),
+			Amount:     amount.StringU(uint64(issuanceRequest.Amount)),
+			Asset:      issuanceRequest.Asset,
+			ReceiverAccountAddress: createIssuanceRequestRes.Receiver.Address(),
+			ReceiverBalanceAddress: issuanceRequest.Receiver.AsString(),
+			ExternalDetails:        customDetailsUnmarshal([]byte(issuanceRequest.ExternalDetails)),
+			AllTasks:               allTasks,
 			RequestDetails: history2.RequestDetails{
 				IsFulfilled: createIssuanceRequestRes.Fulfilled,
 			},
@@ -57,9 +57,6 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 		return []history2.ParticipantEffect{source}, nil
 	}
 
-	receiverID := h.pubKeyProvider.GetAccountID(createIssuanceRequestRes.Receiver)
-	receiverBalanceID := h.pubKeyProvider.GetBalanceID(issuanceRequest.Receiver)
-
 	effect := history2.Effect{
 		Type: history2.EffectTypeIssued,
 		Issued: &history2.FundedEffect{
@@ -71,20 +68,6 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 		},
 	}
 
-	var participants []history2.ParticipantEffect
-
-	if receiverID == source.AccountID {
-		source.BalanceID = &receiverBalanceID
-		source.AssetCode = &issuanceRequest.Asset
-		source.Effect = effect
-	} else {
-		participants = append(participants, history2.ParticipantEffect{
-			AccountID: receiverID,
-			BalanceID: &receiverBalanceID,
-			AssetCode: &issuanceRequest.Asset,
-			Effect:    effect,
-		})
-	}
-
-	return append(participants, source), nil
+	balance := h.balanceProvider.GetBalanceByID(issuanceRequest.Receiver)
+	return populateEffects(balance, effect, source), nil
 }

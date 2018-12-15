@@ -11,8 +11,8 @@ type cancelAtomicSwapBidOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-// OperationDetails returns details about cancel atomic swap bid operation
-func (h *cancelAtomicSwapBidOpHandler) OperationDetails(op RawOperation,
+// Details returns details about cancel atomic swap bid operation
+func (h *cancelAtomicSwapBidOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	return history2.OperationDetails{
@@ -47,7 +47,8 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 	balanceID := h.pubKeyProvider.GetBalanceID(atomicSwapBid.BaseBalance)
 
 	source.BalanceID = &balanceID
-	source.AssetCode = &atomicSwapBid.BaseAsset
+	atomicSwapBidBaseAsset := string(atomicSwapBid.BaseAsset)
+	source.AssetCode = &atomicSwapBidBaseAsset
 	source.Effect = history2.Effect{
 		Type: history2.EffectTypeUnlocked,
 		Unlocked: &history2.UnlockedEffect{

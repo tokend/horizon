@@ -20,11 +20,17 @@ type saleStorage interface {
 	UpdateSale(sale history.Sale) error
 }
 
-type saleChanges struct {
+type saleHandler struct {
 	storage saleStorage
 }
 
-func (c *saleChanges) Created(lc LedgerChange) error {
+func newSaleHandler(storage saleStorage) *saleHandler {
+	return &saleHandler{
+		storage: storage,
+	}
+}
+
+func (c *saleHandler) Created(lc ledgerChange) error {
 	rawSale := lc.LedgerChange.MustCreated().Data.MustSale()
 
 	sale, err := c.convertSale(rawSale)
@@ -45,7 +51,7 @@ func (c *saleChanges) Created(lc LedgerChange) error {
 	return nil
 }
 
-func (c *saleChanges) Updated(lc LedgerChange) error {
+func (c *saleHandler) Updated(lc ledgerChange) error {
 	rawSale := lc.LedgerChange.MustUpdated().Data.MustSale()
 	sale, err := c.convertSale(rawSale)
 	if err != nil {
@@ -64,7 +70,7 @@ func (c *saleChanges) Updated(lc LedgerChange) error {
 	return nil
 }
 
-func (c *saleChanges) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
+func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	var quoteAssets []history.QuoteAsset
 	for i := range raw.QuoteAssets {
 		quoteAssets = append(quoteAssets, history.QuoteAsset{
@@ -124,7 +130,7 @@ func (c *saleChanges) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	}, nil
 }
 
-func (c *saleChanges) convertSaleState(state xdr.SaleState) (history.SaleState, error) {
+func (c *saleHandler) convertSaleState(state xdr.SaleState) (history.SaleState, error) {
 	switch state {
 	case xdr.SaleStateNone:
 		return history.SaleStateOpen, nil

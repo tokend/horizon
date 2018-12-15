@@ -9,8 +9,8 @@ import (
 type createPreIssuanceRequestOpHandler struct {
 }
 
-// OperationDetails returns details about create pre issuance request operation
-func (h *createPreIssuanceRequestOpHandler) OperationDetails(op RawOperation,
+// Details returns details about create pre issuance request operation
+func (h *createPreIssuanceRequestOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	preissuanceRequest := op.Body.MustCreatePreIssuanceRequest().Request

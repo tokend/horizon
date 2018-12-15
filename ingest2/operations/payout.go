@@ -12,8 +12,8 @@ type payoutHandler struct {
 	pubKeyProvider  publicKeyProvider
 }
 
-// OperationDetails returns details about payout operation
-func (h *payoutHandler) OperationDetails(op RawOperation, res xdr.OperationResultTr,
+// Details returns details about payout operation
+func (h *payoutHandler) Details(op RawOperation, res xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	payoutOp := op.Body.MustPayoutOp()
 	payoutRes := res.MustPayoutResult().MustSuccess()
@@ -21,8 +21,8 @@ func (h *payoutHandler) OperationDetails(op RawOperation, res xdr.OperationResul
 	return history2.OperationDetails{
 		Type: xdr.OperationTypePayout,
 		Payout: &history2.PayoutDetails{
-			SourceAccountID:      op.Source.Address(),
-			SourceBalanceID:      payoutOp.SourceBalanceId.AsString(),
+			SourceAccountAddress: op.Source.Address(),
+			SourceBalanceAddress: payoutOp.SourceBalanceId.AsString(),
 			Asset:                payoutOp.Asset,
 			MaxPayoutAmount:      amount.StringU(uint64(payoutOp.MaxPayoutAmount)),
 			MinAssetHolderAmount: amount.StringU(uint64(payoutOp.MinAssetHolderAmount)),

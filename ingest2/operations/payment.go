@@ -8,12 +8,11 @@ import (
 )
 
 type paymentOpHandler struct {
-	pubKeyProvider publicKeyProvider
-	paymentHelper  PaymentHelper
+	pubKeyProvider          publicKeyProvider
 }
 
-// OperationDetails returns details about payment operation
-func (h *paymentOpHandler) OperationDetails(op RawOperation, opRes xdr.OperationResultTr,
+// Details returns details about payment operation
+func (h *paymentOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	paymentOp := op.Body.MustPaymentOpV2()
 	paymentRes := opRes.MustPaymentV2Result().MustPaymentV2Response()
@@ -47,10 +46,51 @@ func (h *paymentOpHandler) OperationDetails(op RawOperation, opRes xdr.Operation
 func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	paymentOp := opBody.MustPaymentOpV2()
-	paymentRes := opRes.MustPaymentV2Result().MustPaymentV2Response()
+	op := opBody.MustPaymentOpV2()
+	res := opRes.MustPaymentV2Result().MustPaymentV2Response()
 
-	return h.paymentHelper.GetParticipantsEffects(
-		paymentOp, paymentRes, source, history2.EffectTypeFunded,
-	)
+	sourceFixedFee := res.ActualSourcePaymentFee.Fixed
+	sourcePercentFee := res.ActualSourcePaymentFee.Percent
+	destFixedFee := res.ActualDestinationPaymentFee.Fixed
+	destPercentFee := res.ActualDestinationPaymentFee.Percent
+	if op.FeeData.SourcePaysForDest {
+		sourceFixedFee += destFixedFee
+		destFixedFee = 0
+		sourcePercentFee += destPercentFee
+		destPercentFee = 0
+	}
+
+	sourceBalanceID := h.pubKeyProvider.GetBalanceID(op.SourceBalanceId)
+	source.BalanceID = &sourceBalanceID
+	source.AssetCode = new(string)
+	*source.AssetCode = string(res.Asset)
+	source.Effect = history2.Effect{
+		Type: history2.EffectTypeCharged,
+		Charged: &history2.ChargedEffect{
+			Amount: amount.StringU(uint64(op.Amount)),
+			FeePaid: history2.FeePaid{
+				Fixed:             amount.StringU(uint64(sourceFixedFee)),
+				CalculatedPercent: amount.StringU(uint64(sourcePercentFee)),
+			},
+		},
+	}
+
+	destBalanceID := h.pubKeyProvider.GetBalanceID(res.DestinationBalanceId)
+	destination := history2.ParticipantEffect{
+		AccountID: h.pubKeyProvider.GetAccountID(res.Destination),
+		BalanceID: &destBalanceID,
+		AssetCode: source.AssetCode,
+		Effect: history2.Effect{
+			Type: history2.EffectTypeFunded,
+			Funded: &history2.FundedEffect{
+				Amount: amount.StringU(uint64(op.Amount)),
+				FeePaid: history2.FeePaid{
+					Fixed:             amount.StringU(uint64(destFixedFee)),
+					CalculatedPercent: amount.StringU(uint64(destPercentFee)),
+				},
+			},
+		},
+	}
+
+	return []history2.ParticipantEffect{source, destination}, nil
 }

@@ -1,4 +1,4 @@
-package reviewrequest
+package operations
 
 import (
 	"gitlab.com/tokend/go/amount"
@@ -7,10 +7,10 @@ import (
 )
 
 type issuanceHandler struct {
-	effectHelper effectHelper
+	balanceProvider balanceProvider
 }
 
-func (h *issuanceHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
+func (h *issuanceHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
@@ -31,5 +31,5 @@ func (h *issuanceHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 		},
 	}
 
-	return h.effectHelper.populateEffectWithBalanceDetails(details.Receiver, effect, source), nil
+	return populateEffects(h.balanceProvider.GetBalanceByID(details.Receiver), effect, source), nil
 }

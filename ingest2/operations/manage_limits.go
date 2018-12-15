@@ -11,8 +11,8 @@ type manageLimitsOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-// OperationDetails returns details about manage limits operation
-func (h *manageLimitsOpHandler) OperationDetails(op RawOperation, opRes xdr.OperationResultTr,
+// Details returns details about manage limits operation
+func (h *manageLimitsOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageLimitsOp := op.Body.MustManageLimitsOp()
 
@@ -28,7 +28,7 @@ func (h *manageLimitsOpHandler) OperationDetails(op RawOperation, opRes xdr.Oper
 		creationDetails := manageLimitsOp.Details.MustLimitsCreateDetails()
 
 		opDetails.ManageLimits.Creation = &history2.ManageLimitsCreationDetails{
-			AccountID:       creationDetails.AccountId.Address(), // Address() - smart, check for nil inside
+			AccountAddress:  creationDetails.AccountId.Address(), // Address() - smart, check for nil inside
 			AccountType:     creationDetails.AccountType,
 			StatsOpType:     creationDetails.StatsOpType,
 			AssetCode:       creationDetails.AssetCode,
@@ -72,9 +72,10 @@ func (h *manageLimitsOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		return participants, nil
 	}
 
+	assetCode := string(creationDetails.AssetCode)
 	participants = append(participants, history2.ParticipantEffect{
 		AccountID: accountID,
-		AssetCode: &creationDetails.AssetCode,
+		AssetCode: &assetCode,
 	})
 
 	return participants, nil

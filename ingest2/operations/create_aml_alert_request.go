@@ -10,8 +10,8 @@ type createAMLAlertReqeustOpHandler struct {
 	balanceProvider balanceProvider
 }
 
-// OperationDetails returns details about create AML alert request operation
-func (h *createAMLAlertReqeustOpHandler) OperationDetails(op RawOperation,
+// Details returns details about create AML alert request operation
+func (h *createAMLAlertReqeustOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	amlAlertRequest := op.Body.MustCreateAmlAlertRequestOp().AmlAlertRequest
@@ -20,7 +20,7 @@ func (h *createAMLAlertReqeustOpHandler) OperationDetails(op RawOperation,
 		Type: xdr.OperationTypeCreateAmlAlert,
 		CreateAMLAlertRequest: &history2.CreateAMLAlertRequestDetails{
 			Amount:    amount.StringU(uint64(amlAlertRequest.Amount)),
-			BalanceID: amlAlertRequest.BalanceId.AsString(),
+			BalanceAddress: amlAlertRequest.BalanceId.AsString(),
 			Reason:    string(amlAlertRequest.Reason),
 		},
 	}, nil
@@ -33,10 +33,6 @@ func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.Operatio
 ) ([]history2.ParticipantEffect, error) {
 	amlAlertRequest := opBody.MustCreateAmlAlertRequestOp().AmlAlertRequest
 
-	balance := h.balanceProvider.GetBalanceByID(amlAlertRequest.BalanceId)
-
-	assetCode := xdr.AssetCode(balance.AssetCode)
-
 	effect := history2.Effect{
 		Type: history2.EffectTypeLocked,
 		Locked: &history2.LockedEffect{
@@ -44,20 +40,6 @@ func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.Operatio
 		},
 	}
 
-	var participants []history2.ParticipantEffect
-
-	if balance.AccountID == source.AccountID {
-		source.BalanceID = &balance.ID
-		source.AssetCode = &assetCode
-		source.Effect = effect
-	} else {
-		participants = append(participants, history2.ParticipantEffect{
-			AccountID: balance.AccountID,
-			BalanceID: &balance.ID,
-			AssetCode: &assetCode,
-			Effect:    effect,
-		})
-	}
-
-	return append(participants, source), nil
+	balance := h.balanceProvider.GetBalanceByID(amlAlertRequest.BalanceId)
+	return populateEffects(balance, effect, source), nil
 }

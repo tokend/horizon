@@ -7,38 +7,38 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
-type accountProvider interface {
-	//fetches account from DB by account ID
-	GetAccount(address xdr.AccountId) (history2.Account, error)
-}
 
 type balanceStorage interface {
-	//Inserts balance
-	InsertBalance(balance history2.Balance) error
+	InsertBalance(rawID xdr.BalanceId, balance history2.Balance) error
 }
 
-type balanceChanges struct {
+type balanceHandler struct {
 	storage         balanceStorage
-	accountProvider accountProvider
-	balances        map[xdr.BalanceId]history2.Balance
+	accountStorage accountStorage
 
 	balanceSeq          int32
 	processingLedgerSeq int32
 }
 
-func (c *balanceChanges) Created(lc LedgerChange) error {
+func newBalanceHandler(accountStorage accountStorage, storage balanceStorage) (*balanceHandler){
+	return &balanceHandler{
+		storage:storage,
+		accountStorage:accountStorage,
+	}
+}
+
+func (c *balanceHandler) Created(lc ledgerChange) error {
 	balance := lc.LedgerChange.MustCreated().Data.MustBalance()
-	account, err := c.accountProvider.GetAccount(balance.AccountId)
+	account, err := c.accountStorage.GetAccount(balance.AccountId)
 	if err != nil {
 		return errors.Wrap(err, "failed to get account for address", logan.F{
 			"address": balance.AccountId.Address(),
 		})
 	}
 
-	balanceSeq := c.nextBalanceSeq(lc.LedgerSeq)
-	newBalance := history2.NewBalance(lc.LedgerSeq, balanceSeq, account.ID, balance)
-	c.balances[balance.BalanceId] = newBalance
-	err = c.storage.InsertBalance(newBalance)
+	newBalanceID := c.nextBalanceID(lc.LedgerSeq)
+	newBalance := history2.NewBalance(newBalanceID, account.ID, balance)
+	err = c.storage.InsertBalance(balance.BalanceId, newBalance)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert balance", logan.F{
 			"balance_address": newBalance.BalanceAddress,
@@ -47,7 +47,7 @@ func (c *balanceChanges) Created(lc LedgerChange) error {
 	return nil
 }
 
-func (c *balanceChanges) nextBalanceSeq(ledgerSeq int32) int32 {
+func (c *balanceHandler) nextBalanceID(ledgerSeq int32) int64 {
 	if c.processingLedgerSeq != ledgerSeq {
 		c.processingLedgerSeq = ledgerSeq
 		c.balanceSeq = 0
@@ -55,5 +55,6 @@ func (c *balanceChanges) nextBalanceSeq(ledgerSeq int32) int32 {
 
 	c.balanceSeq++
 
-	return c.balanceSeq
+	// we should never end up in situation when there is more than 16777216 new balances in one ledger
+	return int64(ledgerSeq)<<24 | int64(c.balanceSeq)
 }

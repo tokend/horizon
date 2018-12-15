@@ -9,8 +9,8 @@ import (
 type manageExternalSystemPoolOpHandler struct {
 }
 
-// OperationDetails returns details about manage external system pool operation
-func (h *manageExternalSystemPoolOpHandler) OperationDetails(op RawOperation,
+// Details returns details about manage external system pool operation
+func (h *manageExternalSystemPoolOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageExternalSystemPoolOp := op.Body.MustManageExternalSystemAccountIdPoolEntryOp()

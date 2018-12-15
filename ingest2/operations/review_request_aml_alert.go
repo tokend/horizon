@@ -1,4 +1,4 @@
-package reviewrequest
+package operations
 
 import (
 	"gitlab.com/tokend/go/amount"
@@ -7,10 +7,10 @@ import (
 )
 
 type amlAlertHandler struct {
-	effectHelper effectHelper
+	balanceProvider balanceProvider
 }
 
-func (h *amlAlertHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
+func (h *amlAlertHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
@@ -32,5 +32,5 @@ func (h *amlAlertHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 		}
 	}
 
-	return h.effectHelper.populateEffectWithBalanceDetails(details.BalanceId, effect, source), nil
+	return populateEffects(h.balanceProvider.GetBalanceByID(details.BalanceId), effect, source), nil
 }

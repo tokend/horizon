@@ -9,8 +9,8 @@ type createKYCRequestOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-// OperationDetails returns details about create KYC request operation
-func (h *createKYCRequestOpHandler) OperationDetails(op RawOperation, opRes xdr.OperationResultTr,
+// Details returns details about create KYC request operation
+func (h *createKYCRequestOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createKYCRequestOp := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
 	createKYCRequestRes := opRes.MustCreateUpdateKycRequestResult().MustSuccess()
@@ -24,10 +24,10 @@ func (h *createKYCRequestOpHandler) OperationDetails(op RawOperation, opRes xdr.
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateKycRequest,
 		CreateKYCRequest: &history2.CreateKYCRequestDetails{
-			AccountIDToUpdateKYC: createKYCRequestOp.AccountToUpdateKyc.Address(),
-			AccountTypeToSet:     createKYCRequestOp.AccountTypeToSet,
-			KYCData:              customDetailsUnmarshal([]byte(createKYCRequestOp.KycData)),
-			AllTasks:             allTasks,
+			AccountAddressToUpdateKYC: createKYCRequestOp.AccountToUpdateKyc.Address(),
+			AccountTypeToSet:          createKYCRequestOp.AccountTypeToSet,
+			KYCData:                   customDetailsUnmarshal([]byte(createKYCRequestOp.KycData)),
+			AllTasks:                  allTasks,
 			RequestDetails: history2.RequestDetails{
 				RequestID:   int64(createKYCRequestRes.RequestId),
 				IsFulfilled: createKYCRequestRes.Fulfilled,

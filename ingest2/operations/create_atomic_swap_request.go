@@ -9,8 +9,8 @@ import (
 type createAtomicSwapRequestOpHandler struct {
 }
 
-// OperationDetails returns details about create atomic swap request operation
-func (h *createAtomicSwapRequestOpHandler) OperationDetails(op RawOperation,
+// Details returns details about create atomic swap request operation
+func (h *createAtomicSwapRequestOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	aSwapRequest := op.Body.MustCreateASwapRequestOp().Request

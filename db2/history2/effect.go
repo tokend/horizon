@@ -1,7 +1,5 @@
 package history2
 
-import "gitlab.com/tokend/go/xdr"
-
 // EffectType describe the effect of some operation to the account or particular balance
 type EffectType int64
 
@@ -36,15 +34,15 @@ type Effect struct {
 
 type OfferEffect struct {
 	// maybe add offer id
-	BaseBalanceID  int64         `json:"base_balance_id"`
-	QuoteBalanceID int64         `json:"quote_balance_id"`
-	BaseAmount     string        `json:"base_amount"`
-	QuoteAmount    string        `json:"quote_amount"`
-	BaseAsset      xdr.AssetCode `json:"base_asset"`
-	QuoteAsset     xdr.AssetCode `json:"quote_asset"`
-	Price          string        `json:"price"`
-	IsBuy          bool          `json:"is_buy"`
-	FeePaid        FeePaid       `json:"fee_paid"`
+	BaseBalanceAddress  string  `json:"base_balance_address"`
+	QuoteBalanceAddress string  `json:"quote_balance_address"`
+	BaseAmount          string  `json:"base_amount"`
+	QuoteAmount         string  `json:"quote_amount"`
+	BaseAsset           string  `json:"base_asset"`
+	QuoteAsset          string  `json:"quote_asset"`
+	Price               string  `json:"price"`
+	IsBuy               bool    `json:"is_buy"`
+	FeePaid             FeePaid `json:"fee_paid"`
 }
 
 type DeletedOfferEffect struct {

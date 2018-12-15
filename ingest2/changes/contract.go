@@ -20,12 +20,19 @@ type contractStorage interface {
 	AddContractState(id uint64, state uint64) error
 }
 
-type contractChanges struct {
+type contractHandler struct {
 	storage    contractStorage
 	reqStorage reviewableRequestStorage
 }
 
-func (c *contractChanges) Created(lc LedgerChange) error {
+func newContractHandler(storage contractStorage, reqStorage reviewableRequestStorage) *contractHandler {
+	return &contractHandler{
+		storage:    storage,
+		reqStorage: reqStorage,
+	}
+}
+
+func (c *contractHandler) Created(lc ledgerChange) error {
 	rawContract := lc.LedgerChange.MustCreated().Data.MustContract()
 	contract := c.convertContract(rawContract)
 
@@ -39,7 +46,7 @@ func (c *contractChanges) Created(lc LedgerChange) error {
 	return nil
 }
 
-func (c *contractChanges) Updated(lc LedgerChange) error {
+func (c *contractHandler) Updated(lc ledgerChange) error {
 	rawContract := lc.LedgerChange.MustUpdated().Data.MustContract()
 	contract := c.convertContract(rawContract)
 
@@ -53,7 +60,7 @@ func (c *contractChanges) Updated(lc LedgerChange) error {
 	return nil
 }
 
-func (c *contractChanges) Deleted(lc LedgerChange) error {
+func (c *contractHandler) Removed(lc ledgerChange) error {
 	contractKey := lc.LedgerChange.MustRemoved().MustContract()
 	contractID := contractKey.ContractId
 	manageContractOp := lc.Operation.Body.MustManageContractOp()
@@ -93,7 +100,7 @@ func (c *contractChanges) Deleted(lc LedgerChange) error {
 	}
 }
 
-func (c *contractChanges) processResolveDispute(id uint64) error {
+func (c *contractHandler) processResolveDispute(id uint64) error {
 	err := c.reqStorage.UpdateInvoices(
 		id,
 		uint64(history.ReviewableRequestStateWaitingForConfirmation),
@@ -119,7 +126,7 @@ func (c *contractChanges) processResolveDispute(id uint64) error {
 	return nil
 }
 
-func (c *contractChanges) processRevert(id uint64) error {
+func (c *contractHandler) processRevert(id uint64) error {
 	err := c.reqStorage.UpdateInvoices(
 		id,
 		uint64(history.ReviewableRequestStateWaitingForConfirmation|
@@ -143,7 +150,7 @@ func (c *contractChanges) processRevert(id uint64) error {
 	return nil
 }
 
-func (c *contractChanges) convertContract(rawContract xdr.ContractEntry) history.Contract {
+func (c *contractHandler) convertContract(rawContract xdr.ContractEntry) history.Contract {
 	var initialDetails map[string]interface{}
 	err := json.Unmarshal([]byte(string(rawContract.InitialDetails)), &initialDetails)
 	if err != nil {

@@ -7,29 +7,19 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
-type providerCluster interface {
-	// GetOperationIDProvider returns operationIDProvider
-	GetOperationIDProvider() operationIDProvider
-	// GetParticipantEffectIDProvider returns participantEffectIDProvider
-	GetParticipantEffectIDProvider() participantEffectIDProvider
-	// GetPubKeyProvider returns publicKeyProvider
-	GetPubKeyProvider() publicKeyProvider
-	// GetBalanceProvider returns balanceProvider
-	GetBalanceProvider() balanceProvider
-	// GetRequestProvider returns requestProvider
-	GetRequestProvider() requestProvider
-}
-
+//go:generate mockery -case underscore -name operationIDProvider -inpkg -testonly
 type operationIDProvider interface {
 	// GetOperationID returns unique id of current operation
 	GetOperationID() int64
 }
 
+//go:generate mockery -case underscore -name participantEffectIDProvider -inpkg -testonly
 type participantEffectIDProvider interface {
 	// GetNextParticipantEffectID return unique value for participant effect
 	GetNextParticipantEffectID() int64
 }
 
+//go:generate mockery -case underscore -name publicKeyProvider -inpkg -testonly
 type publicKeyProvider interface {
 	// GetAccountID returns int value which corresponds to xdr.AccountId
 	GetAccountID(raw xdr.AccountId) int64
@@ -37,21 +27,17 @@ type publicKeyProvider interface {
 	GetBalanceID(raw xdr.BalanceId) int64
 }
 
+//go:generate mockery -case underscore -name balanceProvider -inpkg -testonly
 type balanceProvider interface {
 	// GetBalanceByID returns history balance struct for specific balance id
 	GetBalanceByID(balanceID xdr.BalanceId) history2.Balance
 }
 
-type requestProvider interface {
-	// GetInvoiceRequestsByContractID returns invoice request which attached to contract with specific id
-	GetInvoiceRequestsByContractID(contractID int64) []xdr.ReviewableRequestEntry
-}
-
-// OperationHandler used to get info and changes from success operation
-type OperationHandler interface {
-	// OperationDetails returns db suitable operation details,
+// operationHandler used to get info and changes from success operation
+type operationHandler interface {
+	// Details returns db suitable operation details,
 	// returns error if operation has not existing action (union switch)
-	OperationDetails(op RawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
+	Details(op RawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
 	// ParticipantsEffects returns slice of participant effects of each participants
 	// that was affected by operation, can include effects (changes) on participants balances
 	ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr,
@@ -60,7 +46,7 @@ type OperationHandler interface {
 }
 
 // RawOperation - inner struct to pass source with operation body
-// as one parameter in OperationDetails method
+// as one parameter in Details method
 type RawOperation struct {
 	Source xdr.AccountId
 	Body   xdr.OperationBody

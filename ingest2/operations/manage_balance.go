@@ -9,8 +9,8 @@ type manageBalanceOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-// OperationDetails returns details about manage balance operation
-func (h *manageBalanceOpHandler) OperationDetails(op RawOperation, opRes xdr.OperationResultTr,
+// Details returns details about manage balance operation
+func (h *manageBalanceOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageBalanceOp := op.Body.MustManageBalanceOp()
 	manageBalanceRes := opRes.MustManageBalanceResult().MustSuccess()
@@ -21,7 +21,7 @@ func (h *manageBalanceOpHandler) OperationDetails(op RawOperation, opRes xdr.Ope
 			DestinationAccount: manageBalanceOp.Destination.Address(),
 			Action:             manageBalanceOp.Action,
 			Asset:              manageBalanceOp.Asset,
-			BalanceID:          manageBalanceRes.BalanceId.AsString(),
+			BalanceAddress:     manageBalanceRes.BalanceId.AsString(),
 		},
 	}, nil
 }

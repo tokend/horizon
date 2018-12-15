@@ -10,8 +10,8 @@ type createWithdrawRequestOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-// OperationDetails returns details about create withdraw request operation
-func (h *createWithdrawRequestOpHandler) OperationDetails(op RawOperation,
+// Details returns details about create withdraw request operation
+func (h *createWithdrawRequestOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	withdrawRequest := op.Body.MustCreateWithdrawalRequestOp().Request
@@ -26,7 +26,7 @@ func (h *createWithdrawRequestOpHandler) OperationDetails(op RawOperation,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateWithdrawalRequest,
 		CreateWithdrawRequest: &history2.CreateWithdrawRequestDetails{
-			BalanceID:         withdrawRequest.Balance.AsString(),
+			BalanceAddress:    withdrawRequest.Balance.AsString(),
 			Amount:            amount.StringU(uint64(withdrawRequest.Amount)),
 			FixedFee:          amount.String(int64(withdrawRequest.Fee.Fixed)),
 			PercentFee:        amount.String(int64(withdrawRequest.Fee.Percent)),

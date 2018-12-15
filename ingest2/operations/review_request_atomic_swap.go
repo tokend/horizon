@@ -1,4 +1,4 @@
-package reviewrequest
+package operations
 
 import (
 	"gitlab.com/tokend/go/amount"
@@ -10,28 +10,7 @@ type atomicSwapHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-func (h *atomicSwapHandler) getAtomicSwapBid(bidID xdr.Uint64, ledgerChanges []xdr.LedgerEntryChange,
-) *xdr.AtomicSwapBidEntry {
-	for _, change := range ledgerChanges {
-		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
-			continue
-		}
-
-		if change.MustUpdated().Data.Type != xdr.LedgerEntryTypeAtomicSwapBid {
-			continue
-		}
-
-		atomicSwapBid := change.MustUpdated().Data.MustAtomicSwapBid()
-
-		if atomicSwapBid.BidId == bidID {
-			return &atomicSwapBid
-		}
-	}
-
-	return nil
-}
-
-func (h *atomicSwapHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
+func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
@@ -39,10 +18,11 @@ func (h *atomicSwapHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 
 	ownerBalanceID := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.BidOwnerBaseBalanceId)
 
+	baseAsset := string(atomicSwapExtendedResult.BaseAsset)
 	participants := []history2.ParticipantEffect{{
 		AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.BidOwnerId),
 		BalanceID: &ownerBalanceID,
-		AssetCode: &atomicSwapExtendedResult.BaseAsset,
+		AssetCode: &baseAsset,
 		Effect: history2.Effect{
 			Type: history2.EffectTypeChargedFromLocked,
 			ChargedFromLocked: &history2.ChargedFromLockedEffect{
@@ -56,7 +36,7 @@ func (h *atomicSwapHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 	participants = append(participants, history2.ParticipantEffect{
 		AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.PurchaserId),
 		BalanceID: &purchaserBaseBalanceID,
-		AssetCode: &atomicSwapExtendedResult.BaseAsset,
+		AssetCode: &baseAsset,
 		Effect: history2.Effect{
 			Type: history2.EffectTypeFunded,
 			Funded: &history2.FundedEffect{
@@ -84,7 +64,7 @@ func (h *atomicSwapHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 		participants = append(participants, history2.ParticipantEffect{
 			AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.BidOwnerId),
 			BalanceID: &ownerBalanceID,
-			AssetCode: &atomicSwapExtendedResult.BaseAsset,
+			AssetCode: &baseAsset,
 			Effect: history2.Effect{
 				Type: history2.EffectTypeUnlocked,
 				Unlocked: &history2.UnlockedEffect{
@@ -95,4 +75,26 @@ func (h *atomicSwapHandler) specificParticipantsEffects(op xdr.ReviewRequestOp,
 	}
 
 	return participants, nil
+}
+
+
+func (h *atomicSwapHandler) getAtomicSwapBid(bidID xdr.Uint64, ledgerChanges []xdr.LedgerEntryChange,
+) *xdr.AtomicSwapBidEntry {
+	for _, change := range ledgerChanges {
+		if change.Type != xdr.LedgerEntryChangeTypeUpdated {
+			continue
+		}
+
+		if change.MustUpdated().Data.Type != xdr.LedgerEntryTypeAtomicSwapBid {
+			continue
+		}
+
+		atomicSwapBid := change.MustUpdated().Data.MustAtomicSwapBid()
+
+		if atomicSwapBid.BidId == bidID {
+			return &atomicSwapBid
+		}
+	}
+
+	return nil
 }

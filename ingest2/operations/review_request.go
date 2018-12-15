@@ -1,72 +1,65 @@
-package reviewrequest
+package operations
 
 import (
 	"encoding/hex"
-
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-
-	"gitlab.com/tokend/horizon/ingest2/operations"
-
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 type reviewRequestOpHandler struct {
-	pubKeyProvider     publicKeyProvider // new interfaces
+	pubKeyProvider     publicKeyProvider
 	balanceProvider    balanceProvider
-	allRequestHandlers map[xdr.ReviewableRequestType]requestHandlerI
+	allRequestHandlers map[xdr.ReviewableRequestType]reviewRequestHandler
 }
 
-type publicKeyProvider interface {
-	// GetAccountID returns int value which corresponds to xdr.AccountId
-	GetAccountID(raw xdr.AccountId) int64
-	// GetBalanceID returns int value which corresponds to xdr.BalanceId
-	GetBalanceID(raw xdr.BalanceId) int64
+type reviewRequestHandler interface {
+	ParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestSuccessResult,
+		request xdr.ReviewableRequestEntry, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
+	) ([]history2.ParticipantEffect, error)
 }
 
-type balanceProvider interface {
-	// GetBalanceByID returns history balance struct for specific balance id
-	GetBalanceByID(balanceID xdr.BalanceId) history2.Balance
-}
-
-// NewReviewRequestOpHandler creates new handler for review request operations
+// newReviewRequestOpHandler creates new handler for review request operations
 // with specific handlers for different types
-func NewReviewRequestOpHandler(pubKeyProvider publicKeyProvider, balanceProvider balanceProvider,
-) operations.OperationHandler {
+func newReviewRequestOpHandler(pubKeyProvider publicKeyProvider, balanceProvider balanceProvider,
+) *reviewRequestOpHandler {
+	// All reviewable requests must be explisitly handled here. If there is nothing to handle use reviewableRequestHandlerStub
 	return &reviewRequestOpHandler{
-		pubKeyProvider:     pubKeyProvider,
-		balanceProvider:    balanceProvider,
-		allRequestHandlers: initializeReviewableRequestMap(balanceProvider, pubKeyProvider),
-	}
-}
-
-func initializeReviewableRequestMap(balanceProvider balanceProvider, pubKeyProvider publicKeyProvider,
-) map[xdr.ReviewableRequestType]requestHandlerI {
-	effectHelper := effectHelper{
+		pubKeyProvider:  pubKeyProvider,
 		balanceProvider: balanceProvider,
-	}
-
-	return map[xdr.ReviewableRequestType]requestHandlerI{
-		xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{
-			effectHelper: effectHelper,
-		},
-		xdr.ReviewableRequestTypeWithdraw: &withdrawHandler{
-			effectHelper: effectHelper,
-		},
-		xdr.ReviewableRequestTypeAmlAlert: &amlAlertHandler{
-			effectHelper: effectHelper,
-		},
-		xdr.ReviewableRequestTypeInvoice: &invoiceHandler{
-			paymentHelper: operations.NewPaymentHelper(pubKeyProvider),
-		},
-		xdr.ReviewableRequestTypeAtomicSwap: &atomicSwapHandler{
-			pubKeyProvider: pubKeyProvider,
+		allRequestHandlers: map[xdr.ReviewableRequestType]reviewRequestHandler{
+			xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{
+				balanceProvider: balanceProvider,
+			},
+			xdr.ReviewableRequestTypeWithdraw: &withdrawHandler{
+				balanceProvider: balanceProvider,
+			},
+			xdr.ReviewableRequestTypeAmlAlert: &amlAlertHandler{
+				balanceProvider: balanceProvider,
+			},
+			xdr.ReviewableRequestTypeAtomicSwap: &atomicSwapHandler{
+				pubKeyProvider: pubKeyProvider,
+			},
+			xdr.ReviewableRequestTypeAssetCreate: &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeAssetUpdate: &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypePreIssuanceCreate: &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeSale: &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeLimitsUpdate: &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeTwoStepWithdrawal: &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeUpdateKyc: &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeUpdateSaleDetails: &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeUpdatePromotion: &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeUpdateSaleEndTime: &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeInvoice: &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeContract: &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &reviewableRequestHandlerStub{},
 		},
 	}
 }
 
-// OperationDetails returns details about review request operation
-func (h *reviewRequestOpHandler) OperationDetails(op operations.RawOperation, opRes xdr.OperationResultTr,
+// Details returns details about review request operation
+func (h *reviewRequestOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	reviewRequestOp := op.Body.MustReviewRequestOp()
 	reviewRequestOpRes := opRes.MustReviewRequestResult().MustSuccess()
@@ -96,13 +89,6 @@ func (h *reviewRequestOpHandler) OperationDetails(op operations.RawOperation, op
 		},
 	}
 
-	aSwapExtended, ok := reviewRequestOpRes.TypeExt.GetASwapExtended()
-	if !ok {
-		return opDetails, nil
-	}
-
-	opDetails.ReviewRequest.AtomicSwapDetails = &aSwapExtended
-
 	return opDetails, nil
 }
 
@@ -128,34 +114,13 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	specificHandler, ok := h.allRequestHandlers[request.Body.Type]
 	if !ok {
-		return []history2.ParticipantEffect{source}, nil
+		return nil, errors.From(errors.New("failed to find handler for reviewable request"), logan.F{
+			"request_type": request.Body.Type,
+		})
 	}
 
-	return specificHandler.specificParticipantsEffects(reviewRequestOp,
+	return specificHandler.ParticipantsEffects(reviewRequestOp,
 		reviewRequestRes, *request, source, ledgerChanges)
-}
-
-type effectHelper struct {
-	balanceProvider balanceProvider
-}
-
-func (h *effectHelper) populateEffectWithBalanceDetails(balanceID xdr.BalanceId,
-	effect history2.Effect, source history2.ParticipantEffect,
-) []history2.ParticipantEffect {
-	balance := h.balanceProvider.GetBalanceByID(balanceID)
-	if balance.AccountID == source.AccountID {
-		source.BalanceID = &balance.ID
-		source.AssetCode = &balance.AssetCode
-		source.Effect = effect
-		return []history2.ParticipantEffect{source}
-	}
-
-	return []history2.ParticipantEffect{{
-		AccountID: balance.AccountID,
-		BalanceID: &balance.ID,
-		AssetCode: &balance.AssetCode,
-		Effect:    effect,
-	}, source}
 }
 
 // Tries to get latest version of reviewable request by ID (updated first, created or state otherwise)
@@ -194,10 +159,4 @@ func (h *reviewRequestOpHandler) getReviewableRequestByID(id int64, ledgerChange
 	}
 
 	return bestResult
-}
-
-type requestHandlerI interface {
-	specificParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestSuccessResult,
-		request xdr.ReviewableRequestEntry, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
-	) ([]history2.ParticipantEffect, error)
 }

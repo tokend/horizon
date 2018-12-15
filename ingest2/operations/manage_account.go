@@ -9,8 +9,8 @@ type manageAccountOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-// OperationDetails returns details about manage account operation
-func (h *manageAccountOpHandler) OperationDetails(op RawOperation,
+// Details returns details about manage account operation
+func (h *manageAccountOpHandler) Details(op RawOperation,
 	_ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageAccountOp := op.Body.MustManageAccountOp()
@@ -18,7 +18,7 @@ func (h *manageAccountOpHandler) OperationDetails(op RawOperation,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageAccount,
 		ManageAccount: &history2.ManageAccountDetails{
-			AccountID:            manageAccountOp.Account.Address(),
+			AccountAddress:       manageAccountOp.Account.Address(),
 			BlockReasonsToAdd:    int32(manageAccountOp.BlockReasonsToAdd),
 			BlockReasonsToRemove: int32(manageAccountOp.BlockReasonsToRemove),
 		},

@@ -6,11 +6,12 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
-type manageAssetPairOpHadler struct {
+type manageAssetPairOpHandler struct {
+	manageOfferOpHandler *manageOfferOpHandler
 }
 
-// OperationDetails returns details about manage asset pair operation
-func (h *manageAssetPairOpHadler) OperationDetails(op RawOperation,
+// Details returns details about manage asset pair operation
+func (h *manageAssetPairOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageAssetPairOp := op.Body.MustManageAssetPairOp()
@@ -28,8 +29,9 @@ func (h *manageAssetPairOpHadler) OperationDetails(op RawOperation,
 	}, nil
 }
 
-func (h *manageAssetPairOpHadler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+func (h *manageAssetPairOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{source}, nil
+	result := h.manageOfferOpHandler.getDeletedOffersEffect(ledgerChanges)
+	return append(result, source), nil
 }

@@ -24,7 +24,7 @@ type operationConsumer interface {
 }
 
 type ChangesConsumer interface {
-	Consume(changes.LedgerChange) error
+	Consume(changes.ledgerChange) error
 }
 
 type ledgerConsumer struct {
@@ -48,7 +48,7 @@ func (c *ledgerConsumer) Consume(ctx context.Context, bundle ledgerBundle) error
 			for lcSeq, lc := range operationsMeta[opSeq].Changes {
 				fields = fields.Add("ledger_change_seq", lcSeq)
 				err := c.lcConsumer.Consume(
-					changes.LedgerChange{
+					changes.ledgerChange{
 						LedgerChange:    lc,
 						LedgerCloseTime: time.Unix(bundle.Header.CloseTime, 0).UTC(),
 						LedgerSeq:       bundle.Sequence,

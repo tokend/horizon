@@ -9,8 +9,8 @@ import (
 type createSaleRequestOpHandler struct {
 }
 
-// OperationDetails returns details about create sale request operation
-func (h *createSaleRequestOpHandler) OperationDetails(op RawOperation, opRes xdr.OperationResultTr,
+// Details returns details about create sale request operation
+func (h *createSaleRequestOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createSaleRequest := op.Body.MustCreateSaleCreationRequestOp().Request
 

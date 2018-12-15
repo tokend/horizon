@@ -9,16 +9,16 @@ type createAccountOpHandler struct {
 	pubKeyProvider publicKeyProvider
 }
 
-// OperationDetails returns details about create account operation
-func (h *createAccountOpHandler) OperationDetails(op RawOperation, _ xdr.OperationResultTr,
+// Details returns details about create account operation
+func (h *createAccountOpHandler) Details(op RawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	operation := op.Body.MustCreateAccountOp()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAccount,
 		CreateAccount: &history2.CreateAccountDetails{
-			AccountID:   operation.Destination.Address(),
-			AccountType: operation.AccountType,
+			AccountAddress: operation.Destination.Address(),
+			AccountType:    operation.AccountType,
 		},
 	}, nil
 }

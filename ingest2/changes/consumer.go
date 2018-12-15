@@ -6,35 +6,57 @@ import (
 	"gitlab.com/tokend/go/xdr"
 )
 
-// Consumer - consumes ledger changes
-
 type creatable interface {
-	//Handles Created Ledger entry change
-	Created(change LedgerChange) error
+	Created(change ledgerChange) error
 }
 type updatable interface {
-	//Handles Updated Ledger entry change
-	Updated(change LedgerChange) error
+	Updated(change ledgerChange) error
 }
-type deletable interface {
-	//Handles Removed Ledger entry change
-	Deleted(change LedgerChange) error
+type removable interface {
+	Removed(change ledgerChange) error
 }
 
-type Consumer struct {
-	Delete map[xdr.LedgerEntryType]deletable
-	Update map[xdr.LedgerEntryType]updatable
+// Handler - handles ledger changes
+type Handler struct {
 	Create map[xdr.LedgerEntryType]creatable
+	Update map[xdr.LedgerEntryType]updatable
+	Remove map[xdr.LedgerEntryType]removable
 }
 
-func (c *Consumer) Consume(lc LedgerChange) error {
+func NewHandler(account accountStorage, balance balanceStorage, contract contractStorage, request reviewableRequestStorage, sale saleStorage) *Handler {
+	contractHandler := newContractHandler(contract, request)
+	reviewableRequestHandler := newReviewableRequestHandler(request)
+	saleHandler := newSaleHandler(sale)
+
+	return &Handler{
+		Create: map[xdr.LedgerEntryType]creatable{
+			xdr.LedgerEntryTypeAccount:           newAccountHandler(account),
+			xdr.LedgerEntryTypeBalance:           newBalanceHandler(account, balance),
+			xdr.LedgerEntryTypeContract:          contractHandler,
+			xdr.LedgerEntryTypeReviewableRequest: reviewableRequestHandler,
+			xdr.LedgerEntryTypeSale:              saleHandler,
+		},
+		Update: map[xdr.LedgerEntryType]updatable{
+			xdr.LedgerEntryTypeContract:          contractHandler,
+			xdr.LedgerEntryTypeReviewableRequest: reviewableRequestHandler,
+			xdr.LedgerEntryTypeSale:              saleHandler,
+		},
+		Remove: map[xdr.LedgerEntryType]removable{
+			xdr.LedgerEntryTypeContract:          contractHandler,
+			xdr.LedgerEntryTypeReviewableRequest: reviewableRequestHandler,
+		},
+	}
+}
+
+// Handle - tries to find corresponding ledger change handler and handle it.
+func (c *Handler) Handle(lc ledgerChange) error {
 	switch lc.LedgerChange.Type {
 	case xdr.LedgerEntryChangeTypeCreated:
 		return c.Created(lc)
 	case xdr.LedgerEntryChangeTypeUpdated:
 		return c.Updated(lc)
 	case xdr.LedgerEntryChangeTypeRemoved:
-		return c.Deleted(lc)
+		return c.Removed(lc)
 	case xdr.LedgerEntryChangeTypeState:
 		return nil
 	default:
@@ -44,35 +66,29 @@ func (c *Consumer) Consume(lc LedgerChange) error {
 	}
 }
 
-func (c *Consumer) Created(lc LedgerChange) error {
+func (c *Handler) Created(lc ledgerChange) error {
 	handler, ok := c.Create[lc.LedgerChange.Created.Data.Type]
 	if !ok {
-		return errors.From(errors.New("No handler provided for required entry type"), logan.F{
-			"entry_type": lc.LedgerChange.Created.Data.Type,
-		})
+		return nil
 	}
 
 	return handler.Created(lc)
 }
 
-func (c *Consumer) Updated(lc LedgerChange) error {
+func (c *Handler) Updated(lc ledgerChange) error {
 	handler, ok := c.Update[lc.LedgerChange.Updated.Data.Type]
 	if !ok {
-		return errors.From(errors.New("No handler provided for required entry type"), logan.F{
-			"entry_type": lc.LedgerChange.Created.Data.Type,
-		})
+		return nil
 	}
 
 	return handler.Updated(lc)
 }
 
-func (c *Consumer) Deleted(lc LedgerChange) error {
-	handler, ok := c.Delete[lc.LedgerChange.Removed.Type]
+func (c *Handler) Removed(lc ledgerChange) error {
+	handler, ok := c.Remove[lc.LedgerChange.Removed.Type]
 	if !ok {
-		return errors.From(errors.New("No handler provided for required entry type"), logan.F{
-			"entry_type": lc.LedgerChange.Removed.Type,
-		})
+		return nil
 	}
 
-	return handler.Deleted(lc)
+	return handler.Removed(lc)
 }

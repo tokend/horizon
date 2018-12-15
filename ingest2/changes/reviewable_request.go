@@ -16,10 +16,6 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-type reviewableRequestChanges struct {
-	storage reviewableRequestStorage
-}
-
 type reviewableRequestStorage interface {
 	//Inserts Reviewable request into DB
 	InsertReviewableRequest(request history.ReviewableRequest) error
@@ -33,7 +29,17 @@ type reviewableRequestStorage interface {
 	UpdateInvoices(contractID uint64, oldStates uint64, newStates uint64) error
 }
 
-func (c *reviewableRequestChanges) Created(lc LedgerChange) error {
+type reviewableRequestHandler struct {
+	storage reviewableRequestStorage
+}
+
+func newReviewableRequestHandler(storage reviewableRequestStorage) *reviewableRequestHandler {
+	return &reviewableRequestHandler{
+		storage: storage,
+	}
+}
+
+func (c *reviewableRequestHandler) Created(lc ledgerChange) error {
 	reviewableRequest := lc.LedgerChange.MustCreated().Data.MustReviewableRequest()
 	histReviewableReq, err := c.convertReviewableRequest(&reviewableRequest, lc.LedgerCloseTime)
 	if err != nil {
@@ -54,7 +60,7 @@ func (c *reviewableRequestChanges) Created(lc LedgerChange) error {
 	return nil
 }
 
-func (c *reviewableRequestChanges) Updated(lc LedgerChange) error {
+func (c *reviewableRequestHandler) Updated(lc ledgerChange) error {
 	reviewableRequest := lc.LedgerChange.MustUpdated().Data.MustReviewableRequest()
 	histReviewableRequest, err := c.convertReviewableRequest(&reviewableRequest, lc.LedgerCloseTime)
 	if err != nil {
@@ -75,7 +81,7 @@ func (c *reviewableRequestChanges) Updated(lc LedgerChange) error {
 	return nil
 }
 
-func (c *reviewableRequestChanges) Deleted(lc LedgerChange) error {
+func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	key := lc.LedgerChange.MustRemoved().MustReviewableRequest()
 
 	op := lc.Operation.Body.MustReviewRequestOp()
@@ -99,7 +105,7 @@ func (c *reviewableRequestChanges) Deleted(lc LedgerChange) error {
 	return nil
 }
 
-func (c *reviewableRequestChanges) convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTime time.Time) (*history.ReviewableRequest, error) {
+func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTime time.Time) (*history.ReviewableRequest, error) {
 	var reference *string
 	if request.Reference != nil {
 		reference = new(string)
@@ -156,7 +162,7 @@ func (c *reviewableRequestChanges) convertReviewableRequest(request *xdr.Reviewa
 	return &result, nil
 }
 
-func (c *reviewableRequestChanges) getAssetCreation(request *xdr.AssetCreationRequest) *history.AssetCreationRequest {
+func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRequest) *history.AssetCreationRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose
 	err := json.Unmarshal([]byte(request.Details), &details)
@@ -175,7 +181,7 @@ func (c *reviewableRequestChanges) getAssetCreation(request *xdr.AssetCreationRe
 	}
 }
 
-func (c *reviewableRequestChanges) getAssetUpdate(request *xdr.AssetUpdateRequest) *history.AssetUpdateRequest {
+func (c *reviewableRequestHandler) getAssetUpdate(request *xdr.AssetUpdateRequest) *history.AssetUpdateRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose
 	err := json.Unmarshal([]byte(request.Details), &details)
@@ -190,7 +196,7 @@ func (c *reviewableRequestChanges) getAssetUpdate(request *xdr.AssetUpdateReques
 	}
 }
 
-func (c *reviewableRequestChanges) getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (*history.PreIssuanceRequest, error) {
+func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (*history.PreIssuanceRequest, error) {
 	signature, err := xdr.MarshalBase64(request.Signature)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal signature")
@@ -204,7 +210,7 @@ func (c *reviewableRequestChanges) getPreIssuanceRequest(request *xdr.PreIssuanc
 	}, nil
 }
 
-func (c *reviewableRequestChanges) getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
+func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	err := json.Unmarshal([]byte(request.ExternalDetails), &details)
@@ -221,7 +227,7 @@ func (c *reviewableRequestChanges) getIssuanceRequest(request *xdr.IssuanceReque
 	}
 }
 
-func (c *reviewableRequestChanges) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.WithdrawalRequest {
+func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.WithdrawalRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	err := json.Unmarshal([]byte(request.ExternalDetails), &details)
@@ -247,7 +253,7 @@ func (c *reviewableRequestChanges) getWithdrawalRequest(request *xdr.WithdrawalR
 	}
 }
 
-func (c *reviewableRequestChanges) getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
+func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
 	return &history.AmlAlertRequest{
 		BalanceID: request.BalanceId.AsString(),
 		Amount:    amount.StringU(uint64(request.Amount)),
@@ -255,7 +261,7 @@ func (c *reviewableRequestChanges) getAmlAlertRequest(request *xdr.AmlAlertReque
 	}
 }
 
-func (c *reviewableRequestChanges) getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
+func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
 	var quoteAssets []regources.SaleQuoteAsset
 	for i := range request.QuoteAssets {
 		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
@@ -310,7 +316,7 @@ func (c *reviewableRequestChanges) getSaleRequest(request *xdr.SaleCreationReque
 	}
 }
 
-func (c *reviewableRequestChanges) getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
+func (c *reviewableRequestHandler) getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
 	details, ok := request.Ext.GetDetails()
 	var detailsMap map[string]interface{}
 	if ok {
@@ -328,7 +334,7 @@ func (c *reviewableRequestChanges) getLimitsUpdateRequest(request *xdr.LimitsUpd
 	}
 }
 
-func (c *reviewableRequestChanges) getPromotionUpdateRequest(request *xdr.PromotionUpdateRequest) *history.PromotionUpdateRequest {
+func (c *reviewableRequestHandler) getPromotionUpdateRequest(request *xdr.PromotionUpdateRequest) *history.PromotionUpdateRequest {
 	newPromorionData := c.getSaleRequest(&request.NewPromotionData)
 
 	return &history.PromotionUpdateRequest{
@@ -337,7 +343,7 @@ func (c *reviewableRequestChanges) getPromotionUpdateRequest(request *xdr.Promot
 	}
 }
 
-func (c *reviewableRequestChanges) getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
+func (c *reviewableRequestHandler) getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
 	var kycData map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	err := json.Unmarshal([]byte(request.KycData), &kycData)
@@ -369,7 +375,7 @@ func (c *reviewableRequestChanges) getUpdateKYCRequest(request *xdr.UpdateKycReq
 	}
 }
 
-func (c *reviewableRequestChanges) getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history.UpdateSaleDetailsRequest {
+func (c *reviewableRequestHandler) getUpdateSaleDetailsRequest(request *xdr.UpdateSaleDetailsRequest) *history.UpdateSaleDetailsRequest {
 	var newDetails map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	err := json.Unmarshal([]byte(request.NewDetails), &newDetails)
@@ -383,7 +389,7 @@ func (c *reviewableRequestChanges) getUpdateSaleDetailsRequest(request *xdr.Upda
 	}
 }
 
-func (c *reviewableRequestChanges) getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
+func (c *reviewableRequestHandler) getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	err := json.Unmarshal([]byte(request.Details), &details)
@@ -407,7 +413,7 @@ func (c *reviewableRequestChanges) getInvoiceRequest(request *xdr.InvoiceRequest
 	}
 }
 
-func (c *reviewableRequestChanges) getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
+func (c *reviewableRequestHandler) getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	err := json.Unmarshal([]byte(request.Details), &details)
@@ -424,14 +430,14 @@ func (c *reviewableRequestChanges) getContractRequest(request *xdr.ContractReque
 	}
 }
 
-func (c *reviewableRequestChanges) getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
+func (c *reviewableRequestHandler) getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
 	return &history.UpdateSaleEndTimeRequest{
 		SaleID:     uint64(request.SaleId),
 		NewEndTime: unixToTime(int64(request.NewEndTime)),
 	}
 }
 
-func (c *reviewableRequestChanges) getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
+func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 ) *history.AtomicSwapBidCreation {
 	var details map[string]interface{}
 	err := json.Unmarshal([]byte(request.Details), &details)
@@ -456,7 +462,7 @@ func (c *reviewableRequestChanges) getAtomicSwapBidCreationRequest(request *xdr.
 	}
 }
 
-func (c *reviewableRequestChanges) getAtomicSwapRequest(request *xdr.ASwapRequest,
+func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.ASwapRequest,
 ) *history.AtomicSwap {
 	return &history.AtomicSwap{
 		BidID:      uint64(request.BidId),
@@ -465,7 +471,7 @@ func (c *reviewableRequestChanges) getAtomicSwapRequest(request *xdr.ASwapReques
 	}
 }
 
-func (c *reviewableRequestChanges) getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
+func (c *reviewableRequestHandler) getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
 	var details history.ReviewableRequestDetails
 	var err error
 	switch body.Type {

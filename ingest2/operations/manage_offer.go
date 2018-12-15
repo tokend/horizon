@@ -1,20 +1,20 @@
 package operations
 
 import (
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
+
 type manageOfferOpHandler struct {
-	pubKeyProvider  publicKeyProvider
-	offerHelper     offerHelper
-	balanceProvider balanceProvider
+	pubKeyProvider publicKeyProvider
 }
 
-// OperationDetails returns details about manage offer operation
-func (h *manageOfferOpHandler) OperationDetails(op RawOperation, opRes xdr.OperationResultTr,
+// Details returns details about manage offer operation
+func (h *manageOfferOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageOfferOp := op.Body.MustManageOfferOp()
 	manageOfferOpRes := opRes.MustManageOfferResult().MustSuccess()
@@ -50,21 +50,15 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	manageOfferOpRes := opRes.MustManageOfferResult().MustSuccess()
 
 	if manageOfferOp.Amount != 0 {
-		var result []history2.ParticipantEffect
-		if manageOfferOp.OrderBookId != 0 {
-			var err error
-			result, err = h.getSaleAnteEffects(ledgerChanges)
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to get sale ante effects")
-			}
-		}
-
-		return append(result, h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source)...), nil
+		return h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source), nil
 	}
 
-	source, err := h.getDeletedOfferEffect(source, ledgerChanges)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get source effect")
+	deletedOfferEffects := h.getDeletedOffersEffect(ledgerChanges)
+	if len(deletedOfferEffects) != 1 {
+		return nil, errors.From(errors.New("Unexpected number of deleted offer for manage offer delete"), logan.F{
+			"expected": 1,
+			"actual":   len(deletedOfferEffects),
+		})
 	}
 
 	return []history2.ParticipantEffect{source}, nil
@@ -73,153 +67,188 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 	res xdr.ManageOfferSuccessResult, source history2.ParticipantEffect,
 ) []history2.ParticipantEffect {
-	baseBalanceID := h.pubKeyProvider.GetBalanceID(op.BaseBalance)
-	quoteBalanceID := h.pubKeyProvider.GetBalanceID(op.QuoteBalance)
+	offer := offer{
+		AccountID:           source.AccountID,
+		BaseBalanceID:       h.pubKeyProvider.GetBalanceID(op.BaseBalance),
+		BaseBalanceAddress:  op.BaseBalance.AsString(),
+		QuoteBalanceID:      h.pubKeyProvider.GetBalanceID(op.QuoteBalance),
+		QuoteBalanceAddress: op.QuoteBalance.AsString(),
+		BaseAsset:           string(res.BaseAsset),
+		QuoteAsset:          string(res.QuoteAsset),
+		IsBuy:               op.IsBuy,
+	}
 
-	participants, _ := h.offerHelper.getParticipantsEffects(res.OffersClaimed,
-		offerDirection{
-			BaseAsset:  res.BaseAsset,
-			QuoteAsset: res.QuoteAsset,
-			IsBuy:      op.IsBuy,
+	participants, _ := h.getMatchesEffects(res.OffersClaimed, offer)
+	if res.Offer.Effect == xdr.ManageOfferEffectDeleted {
+		return participants
+	}
+
+	// we need to handle amount which was not matched
+	newOffer := res.Offer.MustOffer()
+	source.Effect = history2.Effect{
+		Type: history2.EffectTypeLocked,
+		Offer: &history2.OfferEffect{
+			BaseBalanceAddress:  offer.BaseBalanceAddress,
+			QuoteBalanceAddress: offer.QuoteBalanceAddress,
+			BaseAsset:           offer.BaseAsset,
+			QuoteAsset:          offer.QuoteAsset,
+			BaseAmount:          amount.String(int64(newOffer.BaseAmount)),
+			QuoteAmount:         amount.String(int64(newOffer.QuoteAmount)),
+			IsBuy:               newOffer.IsBuy,
+			Price:               amount.String(int64(newOffer.Price)),
 		},
-		source.AccountID, baseBalanceID, quoteBalanceID)
-
-	source.AssetCode = &res.BaseAsset
-	source.BalanceID = &baseBalanceID
-	if op.IsBuy {
-		source.AssetCode = &res.QuoteAsset
-		source.BalanceID = &quoteBalanceID
 	}
-
-	if res.Offer.Effect != xdr.ManageOfferEffectDeleted {
-		newOffer := res.Offer.MustOffer()
-
-		source.Effect = history2.Effect{
-			Type: history2.EffectTypeLocked,
-			Offer: &history2.OfferEffect{
-				BaseBalanceID:  baseBalanceID,
-				QuoteBalanceID: quoteBalanceID,
-				BaseAsset:      res.BaseAsset,
-				QuoteAsset:     res.QuoteAsset,
-				BaseAmount:     amount.String(int64(newOffer.BaseAmount)),
-				QuoteAmount:    amount.String(int64(newOffer.QuoteAmount)),
-				IsBuy:          newOffer.IsBuy,
-				Price:          amount.String(int64(newOffer.Price)),
-			},
-		}
-		participants = append(participants, source)
-	}
-
+	participants = append(participants, source)
 	return participants
 }
 
-func (h *manageOfferOpHandler) getDeletedOfferEffect(source history2.ParticipantEffect,
-	ledgerChanges []xdr.LedgerEntryChange,
-) (history2.ParticipantEffect, error) {
-	offers := h.offerHelper.getStateOffers(ledgerChanges)
-	if len(offers) != 1 {
-		return history2.ParticipantEffect{}, errors.New("unexpected count of state offers")
+// getDeletedOffersEffect - creates participant effects for all offer entries with change type `State`
+func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.LedgerEntryChange,
+) []history2.ParticipantEffect {
+	var result []history2.ParticipantEffect
+	for _, change := range ledgerChanges {
+		if change.Type != xdr.LedgerEntryChangeTypeState {
+			continue
+		}
+
+		if change.MustState().Data.Type != xdr.LedgerEntryTypeOfferEntry {
+			continue
+		}
+
+		offer := change.MustState().Data.MustOffer()
+
+		participant := history2.ParticipantEffect{
+			AccountID: h.pubKeyProvider.GetAccountID(offer.OwnerId),
+			BalanceID: new(int64),
+			AssetCode: new(string),
+		}
+		var unlockedAmount int64
+		if offer.IsBuy {
+			*participant.BalanceID = h.pubKeyProvider.GetBalanceID(offer.QuoteBalance)
+			*participant.AssetCode = string(offer.Quote)
+			unlockedAmount = int64(offer.QuoteAmount + offer.Fee)
+		} else {
+			*participant.BalanceID = h.pubKeyProvider.GetBalanceID(offer.BaseBalance)
+			*participant.AssetCode = string(offer.Base)
+			unlockedAmount = int64(offer.BaseAmount)
+		}
+
+		participant.Effect = history2.Effect{
+			Type: history2.EffectTypeUnlocked,
+			Unlocked: &history2.UnlockedEffect{
+				Amount: amount.String(int64(unlockedAmount)),
+			},
+		}
+
+		result = append(result, participant)
 	}
 
-	offer := offers[0]
-
-	baseBalanceID := h.pubKeyProvider.GetBalanceID(offer.BaseBalance)
-	quoteBalanceID := h.pubKeyProvider.GetBalanceID(offer.QuoteBalance)
-
-	source.BalanceID = &baseBalanceID
-	source.AssetCode = &offer.Base
-	unlockedAmount := offer.BaseAmount
-	if offer.IsBuy {
-		source.BalanceID = &quoteBalanceID
-		source.AssetCode = &offer.Quote
-		unlockedAmount = offer.QuoteAmount + offer.Fee
-	}
-
-	source.Effect = history2.Effect{
-		Type: history2.EffectTypeUnlocked,
-		Unlocked: &history2.UnlockedEffect{
-			Amount: amount.String(int64(unlockedAmount)),
-		},
-	}
-
-	return source, nil
+	return result
 }
 
-func (h *manageOfferOpHandler) getSaleAnteEffects(ledgerChanges []xdr.LedgerEntryChange,
-) ([]history2.ParticipantEffect, error) {
-	var result []history2.ParticipantEffect
+func (h *manageOfferOpHandler) getStateOffers(ledgerChanges []xdr.LedgerEntryChange) []xdr.OfferEntry {
+	var result []xdr.OfferEntry
+	for _, change := range ledgerChanges {
+		if change.Type != xdr.LedgerEntryChangeTypeState {
+			continue
+		}
 
-	createdSaleAntes, updatedSaleAntes, statedSaleAntes := h.getChangedSaleAntes(ledgerChanges)
-	for _, saleAnte := range createdSaleAntes {
-		balance := h.balanceProvider.GetBalanceByID(saleAnte.ParticipantBalanceId)
+		state := change.MustState()
+		if state.Data.Type != xdr.LedgerEntryTypeOfferEntry {
+			continue
+		}
 
-		result = append(result, history2.ParticipantEffect{
-			AccountID: balance.AccountID,
-			BalanceID: &balance.ID,
-			AssetCode: &balance.AssetCode,
-			Effect: history2.Effect{
-				Type: history2.EffectTypeLocked,
-				Locked: &history2.LockedEffect{
-					Amount: amount.StringU(uint64(saleAnte.Amount)),
+		result = append(result, state.Data.MustOffer())
+	}
+
+	return result
+}
+
+type offer struct {
+	AccountID           int64
+	BaseBalanceID       int64
+	BaseBalanceAddress  string
+	QuoteBalanceID      int64
+	QuoteBalanceAddress string
+	BaseAsset           string
+	QuoteAsset          string
+	IsBuy               bool
+}
+
+// getParticipantsEffects - returns participants effects based on the provided matches and total base amount
+func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOfferAtom,
+	offer offer) ([]history2.ParticipantEffect, uint64) {
+
+	sourceOfferEffect := history2.OfferEffect{
+		BaseBalanceAddress:  offer.BaseBalanceAddress,
+		QuoteBalanceAddress: offer.QuoteBalanceAddress,
+		BaseAsset:           offer.BaseAsset,
+		QuoteAsset:          offer.QuoteAsset,
+		IsBuy:               offer.IsBuy,
+	}
+
+	var totalBaseAmount uint64 = 0
+	result := make([]history2.ParticipantEffect, 0, len(claimOfferAtoms)*4)
+	for _, offerAtom := range claimOfferAtoms {
+		totalBaseAmount += uint64(offerAtom.BaseAmount)
+
+		counterpartyEffect := history2.Effect{
+			Type: history2.EffectTypeMatched,
+			Offer: &history2.OfferEffect{
+				BaseBalanceAddress:  offerAtom.BaseBalance.AsString(),
+				QuoteBalanceAddress: offerAtom.QuoteBalance.AsString(),
+				BaseAsset:           offer.BaseAsset,
+				QuoteAsset:          offer.QuoteAsset,
+				BaseAmount:          amount.String(int64(offerAtom.BaseAmount)),
+				QuoteAmount:         amount.String(int64(offerAtom.QuoteAmount)),
+				IsBuy:               !offer.IsBuy,
+				Price:               amount.String(int64(offerAtom.CurrentPrice)),
+				FeePaid: history2.FeePaid{
+					CalculatedPercent: amount.String(int64(offerAtom.BFeePaid)),
 				},
 			},
+		}
+
+		baseBalanceID := h.pubKeyProvider.GetBalanceID(offerAtom.BaseBalance)
+		result = append(result, history2.ParticipantEffect{
+			AccountID: h.pubKeyProvider.GetAccountID(offerAtom.BAccountId),
+			BalanceID: &baseBalanceID,
+			AssetCode: &offer.BaseAsset,
+			Effect:    counterpartyEffect,
+		})
+
+		quoteBalanceID := h.pubKeyProvider.GetBalanceID(offerAtom.QuoteBalance)
+		result = append(result, history2.ParticipantEffect{
+			AccountID: h.pubKeyProvider.GetAccountID(offerAtom.BAccountId),
+			BalanceID: &quoteBalanceID,
+			AssetCode: &offer.QuoteAsset,
+			Effect:    counterpartyEffect,
+		})
+
+		sourceOfferEffect.BaseAmount = amount.String(int64(offerAtom.BaseAmount))
+		sourceOfferEffect.QuoteAmount = amount.String(int64(offerAtom.QuoteAmount))
+		sourceOfferEffect.Price = amount.String(int64(offerAtom.CurrentPrice))
+		sourceOfferEffect.FeePaid.CalculatedPercent = amount.String(int64(offerAtom.AFeePaid))
+		sourceOfferEffectCopy := sourceOfferEffect
+		sourceEffect := history2.Effect{
+			Type:  history2.EffectTypeMatched,
+			Offer: &sourceOfferEffectCopy,
+		}
+
+		result = append(result, history2.ParticipantEffect{
+			AccountID: offer.AccountID,
+			BalanceID: &offer.BaseBalanceID,
+			AssetCode: &offer.BaseAsset,
+			Effect:    sourceEffect,
+		})
+
+		result = append(result, history2.ParticipantEffect{
+			AccountID: offer.AccountID,
+			BalanceID: &offer.QuoteBalanceID,
+			AssetCode: &offer.QuoteAsset,
+			Effect:    sourceEffect,
 		})
 	}
 
-	// for now possible only one updated saleAnte
-	for _, updatedSaleAnte := range updatedSaleAntes {
-		if len(statedSaleAntes) == 0 {
-			return nil, errors.New("unexpected state, updated sale ante exists, but stated not")
-		}
-
-		for _, statedSaleAnte := range statedSaleAntes {
-			if (updatedSaleAnte.ParticipantBalanceId.AsString() != statedSaleAnte.ParticipantBalanceId.AsString()) ||
-				(updatedSaleAnte.SaleId != statedSaleAnte.SaleId) {
-				continue
-			}
-
-			balance := h.balanceProvider.GetBalanceByID(updatedSaleAnte.ParticipantBalanceId)
-
-			result = append(result, history2.ParticipantEffect{
-				AccountID: balance.AccountID,
-				BalanceID: &balance.ID,
-				AssetCode: &balance.AssetCode,
-				Effect: history2.Effect{
-					Type: history2.EffectTypeLocked,
-					Locked: &history2.LockedEffect{
-						Amount: amount.StringU(uint64(updatedSaleAnte.Amount - statedSaleAnte.Amount)),
-					},
-				},
-			})
-		}
-	}
-
-	return result, nil
-}
-
-func (h *manageOfferOpHandler) getChangedSaleAntes(ledgerChanges []xdr.LedgerEntryChange,
-) ([]xdr.SaleAnteEntry, []xdr.SaleAnteEntry, []xdr.SaleAnteEntry) {
-	var created, updated, stated []xdr.SaleAnteEntry
-
-	for _, change := range ledgerChanges {
-		switch change.Type {
-		case xdr.LedgerEntryChangeTypeCreated:
-			if change.MustCreated().Data.Type != xdr.LedgerEntryTypeSaleAnte {
-				continue
-			}
-			created = append(created, change.MustCreated().Data.MustSaleAnte())
-		case xdr.LedgerEntryChangeTypeUpdated:
-			if change.MustCreated().Data.Type != xdr.LedgerEntryTypeSaleAnte {
-				continue
-			}
-			updated = append(updated, change.MustUpdated().Data.MustSaleAnte())
-		case xdr.LedgerEntryChangeTypeState:
-			if change.MustCreated().Data.Type != xdr.LedgerEntryTypeSaleAnte {
-				continue
-			}
-			stated = append(stated, change.MustState().Data.MustSaleAnte())
-		}
-	}
-
-	return created, updated, stated
+	return result, totalBaseAmount
 }

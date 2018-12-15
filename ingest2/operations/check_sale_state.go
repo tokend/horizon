@@ -7,14 +7,13 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
+
 type checkSaleStateOpHandler struct {
-	pubKeyProvider  publicKeyProvider
-	offerHelper     offerHelper
-	balanceProvider balanceProvider
+	manageOfferOpHandler *manageOfferOpHandler
 }
 
-// OperationDetails returns details about check sale state operation
-func (h *checkSaleStateOpHandler) OperationDetails(op RawOperation,
+// Details returns details about check sale state operation
+func (h *checkSaleStateOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	return history2.OperationDetails{
@@ -33,30 +32,11 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 ) ([]history2.ParticipantEffect, error) {
 	res := opRes.MustCheckSaleStateResult().MustSuccess()
 
-	var result []history2.ParticipantEffect
-	var err error
 	switch res.Effect.Effect {
-	case xdr.CheckSaleStateEffectCanceled:
-		result, err = h.getSaleAntesEffects(history2.EffectTypeUnlocked, ledgerChanges)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get effects from sale antes")
-		}
-		fallthrough
-	case xdr.CheckSaleStateEffectUpdated:
-		return append(result, h.getDeletedParticipants(ledgerChanges)...), nil
+	case xdr.CheckSaleStateEffectCanceled, xdr.CheckSaleStateEffectUpdated:
+		return h.manageOfferOpHandler.getDeletedOffersEffect(ledgerChanges), nil
 	case xdr.CheckSaleStateEffectClosed:
-		result, err = h.getSaleAntesEffects(history2.EffectTypeChargedFromLocked, ledgerChanges)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get effects from sale antes")
-		}
-		participants, err := h.getApprovedParticipants(res.Effect.MustSaleClosed())
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to approved participants", map[string]interface{}{
-				"sale_id": uint64(res.SaleId),
-			})
-		}
-
-		return append(result, participants...), nil
+		return h.getApprovedParticipants(res.Effect.MustSaleClosed()), nil
 	default:
 		return nil, errors.From(errors.New("unexpected check sale state result effect"), map[string]interface{}{
 			"effect_i": int32(res.Effect.Effect),
@@ -66,132 +46,51 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 }
 
 func (h *checkSaleStateOpHandler) getApprovedParticipants(closedRes xdr.CheckSaleClosedResult,
-) ([]history2.ParticipantEffect, error) {
+) ([]history2.ParticipantEffect) {
+	// TODO: we are not handling here cases that some parts of offers might be canceled due to rounding
 	if len(closedRes.Results) == 0 {
-		return nil, errors.New("expected not empty results")
+		return nil
 	}
 
-	saleOwnerID := h.pubKeyProvider.GetAccountID(closedRes.SaleOwner)
-	baseBalanceID := h.pubKeyProvider.GetBalanceID(closedRes.Results[0].SaleBaseBalance)
-	baseAsset := closedRes.Results[0].SaleDetails.BaseAsset
+	var result []history2.ParticipantEffect
+	var totalBaseIssued uint64
+	ownerID := h.manageOfferOpHandler.pubKeyProvider.GetAccountID(closedRes.SaleOwner)
+	// it does not matter which base balance is used as we are sure that the operation of distribution will be clean
+	baseBalanceAddress := closedRes.Results[0].SaleBaseBalance.AsString()
+	baseBalanceID := h.manageOfferOpHandler.pubKeyProvider.GetBalanceID(closedRes.Results[0].SaleBaseBalance)
+	baseAsset :=  string(closedRes.Results[0].SaleDetails.BaseAsset)
+	for _, assetPairResult := range closedRes.Results {
+		assetPairMatches, baseIssued := h.manageOfferOpHandler.getMatchesEffects(assetPairResult.SaleDetails.OffersClaimed, offer{
+			AccountID:           ownerID,
+			BaseBalanceID:       baseBalanceID,
+			BaseBalanceAddress:  baseBalanceAddress,
+			QuoteBalanceID:      h.manageOfferOpHandler.pubKeyProvider.GetBalanceID(assetPairResult.SaleQuoteBalance),
+			QuoteBalanceAddress: assetPairResult.SaleQuoteBalance.AsString(),
+			BaseAsset:          baseAsset,
+			QuoteAsset:          string(assetPairResult.SaleDetails.QuoteAsset),
+			IsBuy:               false,
+		})
 
-	var participants []history2.ParticipantEffect
-	var issuedAmount uint64 = 0
-
-	for _, subRes := range closedRes.Results {
-		quoteBalanceID := h.pubKeyProvider.GetBalanceID(subRes.SaleQuoteBalance)
-
-		newParticipants, baseAmount := h.offerHelper.getParticipantsEffects(
-			subRes.SaleDetails.OffersClaimed,
-			offerDirection{
-				BaseAsset:  subRes.SaleDetails.BaseAsset,
-				QuoteAsset: subRes.SaleDetails.QuoteAsset,
-				IsBuy:      false,
-			}, saleOwnerID, baseBalanceID, quoteBalanceID)
-
-		participants = append(participants, newParticipants...)
-
-		issuedAmount += baseAmount
+		totalBaseIssued += baseIssued
+		result = append(result, assetPairMatches...)
 	}
 
-	return append([]history2.ParticipantEffect{{
-		AccountID: saleOwnerID,
+	// we need to show explicitly that issuance has been perform to ensure that balance history is consistent
+	issuanceEffect := history2.ParticipantEffect{
+	AccountID: ownerID,
 		BalanceID: &baseBalanceID,
-		AssetCode: &baseAsset,
-		Effect: history2.Effect{
+			AssetCode: &baseAsset,
+			Effect: history2.Effect{
 			Type: history2.EffectTypeIssued,
 			Issued: &history2.FundedEffect{
-				Amount: amount.StringU(issuedAmount),
+				Amount: amount.StringU(totalBaseIssued),
 			},
 		},
-	}}, participants...), nil
-}
-
-func (h *checkSaleStateOpHandler) getDeletedParticipants(ledgerChanges []xdr.LedgerEntryChange,
-) []history2.ParticipantEffect {
-	var result []history2.ParticipantEffect
-
-	deletedOffers := h.offerHelper.getStateOffers(ledgerChanges)
-
-	for _, offer := range deletedOffers {
-		balanceID := h.pubKeyProvider.GetBalanceID(offer.BaseBalance)
-		asset := offer.Base
-		unlockedAmount := offer.BaseAmount
-		if offer.IsBuy {
-			balanceID = h.pubKeyProvider.GetBalanceID(offer.QuoteBalance)
-			asset = offer.Quote
-			unlockedAmount = offer.QuoteAmount + offer.Fee
-		}
-
-		participantEffect := history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.GetAccountID(offer.OwnerId),
-			BalanceID: &balanceID,
-			AssetCode: &asset,
-			Effect: history2.Effect{
-				Type: history2.EffectTypeUnlocked,
-				Unlocked: &history2.UnlockedEffect{
-					Amount: amount.String(int64(unlockedAmount)),
-				},
-			},
-		}
-
-		result = append(result, participantEffect)
 	}
 
-	return result
-}
-
-func (h *checkSaleStateOpHandler) getSaleAntesEffects(effectType history2.EffectType,
-	ledgerChanges []xdr.LedgerEntryChange,
-) ([]history2.ParticipantEffect, error) {
-	var result []history2.ParticipantEffect
-
-	saleAntes := h.getStatedSaleAntes(ledgerChanges)
-	for _, saleAnte := range saleAntes {
-		balance := h.balanceProvider.GetBalanceByID(saleAnte.ParticipantBalanceId)
-
-		effect := history2.Effect{
-			Type: effectType,
-		}
-		switch effect.Type {
-		case history2.EffectTypeChargedFromLocked:
-			effect.ChargedFromLocked = &history2.ChargedFromLockedEffect{
-				Amount: amount.StringU(uint64(saleAnte.Amount)),
-			}
-		case history2.EffectTypeUnlocked:
-			effect.Unlocked = &history2.UnlockedEffect{
-				Amount: amount.StringU(uint64(saleAnte.Amount)),
-			}
-		default:
-			return nil, errors.New("unexpected effect type for sale ante entry")
-		}
-
-		result = append(result, history2.ParticipantEffect{
-			AccountID: balance.AccountID,
-			BalanceID: &balance.ID,
-			AssetCode: &balance.AssetCode,
-			Effect:    effect,
-		})
-	}
-
-	return result, nil
-}
-
-func (h *checkSaleStateOpHandler) getStatedSaleAntes(ledgerChanges []xdr.LedgerEntryChange,
-) []xdr.SaleAnteEntry {
-	var result []xdr.SaleAnteEntry
-
-	for _, change := range ledgerChanges {
-		if change.Type != xdr.LedgerEntryChangeTypeState {
-			continue
-		}
-
-		if change.MustState().Data.Type != xdr.LedgerEntryTypeSaleAnte {
-			continue
-		}
-
-		result = append(result, change.MustState().Data.MustSaleAnte())
-	}
+	// prepend
+	result = append(result, result[0])
+	result[0] = issuanceEffect
 
 	return result
 }

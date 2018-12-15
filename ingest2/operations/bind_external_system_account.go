@@ -8,8 +8,8 @@ import (
 type bindExternalSystemAccountOpHandler struct {
 }
 
-// OperationDetails returns details about bind external system account operation
-func (h *bindExternalSystemAccountOpHandler) OperationDetails(op RawOperation,
+// Details returns details about bind external system account operation
+func (h *bindExternalSystemAccountOpHandler) Details(op RawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	bindExternalSystemAccountOp := op.Body.MustBindExternalSystemAccountIdOp()
