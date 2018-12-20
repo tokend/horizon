@@ -105,13 +105,7 @@ func (a *App) Serve() {
 
 	go a.run()
 
-	var err error
-	if a.config.TLSCert != "" {
-		err = srv.ListenAndServeTLS(a.config.TLSCert, a.config.TLSKey)
-	} else {
-		err = srv.ListenAndServe()
-	}
-
+	err := srv.ListenAndServe()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -255,7 +249,6 @@ func (a *App) Tick() {
 	}
 
 	wg.Add(2)
-	go func() { a.reaper.Tick(); wg.Done() }()
 	go func() { a.submitter.Tick(a.ctx); wg.Done() }()
 	wg.Wait()
 

@@ -105,7 +105,6 @@ const (
 // provided app.  All route registration should be implemented here.
 func initWebActions(app *App) {
 	apiProxy := httputil.NewSingleHostReverseProxy(app.config.APIBackend)
-	keychainProxy := httputil.NewSingleHostReverseProxy(app.config.KeychainBackend)
 	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
 	investReadyProxy := httputil.NewSingleHostReverseProxy(app.config.InvestReady)
 
@@ -456,12 +455,6 @@ func initWebActions(app *App) {
 			TransactionIndexAction{}.ServeHTTPC(c, w, r)
 		}
 	}))
-
-	r.Handle(regexp.MustCompile(`^/users/\w+/keys`), func() func(web.C, http.ResponseWriter, *http.Request) {
-		return func(c web.C, w http.ResponseWriter, r *http.Request) {
-			keychainProxy.ServeHTTP(w, r)
-		}
-	}())
 
 	r.Handle(regexp.MustCompile(`^/templates/.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
 		return func(c web.C, w http.ResponseWriter, r *http.Request) {

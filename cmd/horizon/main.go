@@ -13,6 +13,7 @@ import (
 var app *horizon.App
 var conf config.Config
 var version string
+var configFile string
 
 var rootCmd *cobra.Command
 
@@ -34,14 +35,13 @@ func init() {
 			app.Serve()
 		},
 	}
-
-	conf.DefineConfigStructure(rootCmd)
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", "config.yaml", "config file")
 
 	rootCmd.AddCommand(dbCmd)
 }
 
 func initApp(cmd *cobra.Command, args []string) {
-	err := conf.Init()
+	err := initConfig(configFile)
 	if err != nil {
 		log.Println("Failed to init config")
 		log.Fatal(err.Error())
@@ -56,4 +56,13 @@ func initApp(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+}
+
+func initConfig(fn string) error {
+	c := config.NewViperConfig(fn)
+	if err := c.Init(); err != nil {
+		return err
+	}
+	conf = c
+	return nil
 }

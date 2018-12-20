@@ -1,0 +1,36 @@
+config:
+  stellar_core_url: http://
+  stellar_core_database_url: postgres://
+  hostname: ""
+  database_url: postgres://
+  redis_url: ""
+  log_level: ""
+  slow_query_bound: 1s
+  slack_webhook: ""
+  slack_channel: ""
+  port: 8000
+  log_to_json: false
+  api_backend: http://
+  keychain_backend: http://
+  tls_cert: ""
+  tls_key: ""
+  ingest: true
+  history_retention_count: 0
+  stale_threshold: 0
+  sign_checkskip: true
+  cors_enabled: true
+  disable_api_submit: true
+  disable_tx_tfa: true
+  template_backend: http://
+  force_https_links: true
+  sentry_dsn: ""
+  sentry_log_level: ""
+  project: ""
+  env: ""
+  migrate_up_on_start: false
+
+  invest_ready: http://
+  telegram_airdrop: http://
+
+
+
