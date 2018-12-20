@@ -33,11 +33,10 @@ func (d ETHWithdrawRequestDetails) Validate() error {
 
 // TODO tests
 type CreateWithdrawRequestOp struct {
-	Balance  string
-	Asset    string
-	Amount   uint64
-	AllTasks *uint32
-	Details  WithdrawRequestDetails
+	Balance string
+	Asset   string
+	Amount  uint64
+	Details WithdrawRequestDetails
 }
 
 func (op CreateWithdrawRequestOp) Validate() error {
@@ -56,7 +55,7 @@ func (op CreateWithdrawRequestOp) XDR() (*xdr.Operation, error) {
 		return nil, errors.Wrap(err, "failed to set receiver")
 	}
 
-	operation := &xdr.Operation{
+	return &xdr.Operation{
 		Body: xdr.OperationBody{
 			Type: xdr.OperationTypeCreateWithdrawalRequest,
 			CreateWithdrawalRequestOp: &xdr.CreateWithdrawalRequestOp{
@@ -74,19 +73,5 @@ func (op CreateWithdrawRequestOp) XDR() (*xdr.Operation, error) {
 				},
 			},
 		},
-	}
-
-	if op.AllTasks != nil {
-		var allTasksXDR xdr.Uint32
-		var allTasksXDRPointer *xdr.Uint32
-		allTasksXDR = xdr.Uint32(*op.AllTasks)
-		allTasksXDRPointer = &allTasksXDR
-
-		operation.Body.CreateWithdrawalRequestOp.Ext = xdr.CreateWithdrawalRequestOpExt{
-			V:        xdr.LedgerVersionWithdrawalTasks,
-			AllTasks: &allTasksXDRPointer,
-		}
-	}
-
-	return operation, nil
+	}, nil
 }

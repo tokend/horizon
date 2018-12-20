@@ -120,7 +120,7 @@ func newViperConfig(raw rawGetter) Config {
 
 var (
 	URLHook = figure.Hooks{
-		"url.URL": func(value interface{}) (reflect.Value, error) {
+		"*url.URL": func(value interface{}) (reflect.Value, error) {
 			str, err := cast.ToStringE(value)
 			if err != nil {
 				return reflect.Value{}, errors.Wrap(err, "failed to parse string")
@@ -129,7 +129,7 @@ var (
 			if err != nil {
 				return reflect.Value{}, errors.Wrap(err, "failed to parse url")
 			}
-			return reflect.ValueOf(*u), nil
+			return reflect.ValueOf(u), nil
 		},
 	}
 

@@ -16713,16 +16713,13 @@ func (u CreateSaleCreationRequestResult) GetSuccess() (result CreateSaleCreation
 // CreateWithdrawalRequestOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        case WITHDRAWAL_TASKS:
-//            uint32* allTasks;
-//        }
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
 //
 type CreateWithdrawalRequestOpExt struct {
-	V        LedgerVersion `json:"v,omitempty"`
-	AllTasks **Uint32      `json:"allTasks,omitempty"`
+	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -16737,8 +16734,6 @@ func (u CreateWithdrawalRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
-	case LedgerVersionWithdrawalTasks:
-		return "AllTasks", true
 	}
 	return "-", false
 }
@@ -16749,39 +16744,7 @@ func NewCreateWithdrawalRequestOpExt(v LedgerVersion, value interface{}) (result
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
 		// void
-	case LedgerVersionWithdrawalTasks:
-		tv, ok := value.(*Uint32)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be *Uint32")
-			return
-		}
-		result.AllTasks = &tv
 	}
-	return
-}
-
-// MustAllTasks retrieves the AllTasks value from the union,
-// panicing if the value is not set.
-func (u CreateWithdrawalRequestOpExt) MustAllTasks() *Uint32 {
-	val, ok := u.GetAllTasks()
-
-	if !ok {
-		panic("arm AllTasks is not set")
-	}
-
-	return val
-}
-
-// GetAllTasks retrieves the AllTasks value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u CreateWithdrawalRequestOpExt) GetAllTasks() (result *Uint32, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.V))
-
-	if armName == "AllTasks" {
-		result = *u.AllTasks
-		ok = true
-	}
-
 	return
 }
 
@@ -16792,13 +16755,11 @@ func (u CreateWithdrawalRequestOpExt) GetAllTasks() (result *Uint32, ok bool) {
 //    	WithdrawalRequest request;
 //
 //    	union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        case WITHDRAWAL_TASKS:
-//            uint32* allTasks;
-//        }
-//        ext;
+//    	{
+//    	case EMPTY_VERSION:
+//    		void;
+//    	}
+//    	ext;
 //
 //    };
 //
@@ -16829,32 +16790,28 @@ type CreateWithdrawalRequestOp struct {
 //    	STATS_OVERFLOW = -12, // statistics overflowed by the operation
 //    	LIMITS_EXCEEDED = -13, // withdraw exceeds limits for source account
 //    	INVALID_PRE_CONFIRMATION_DETAILS = -14, // it's not allowed to pass pre confirmation details
-//    	LOWER_BOUND_NOT_EXCEEDED = -15, //amount to withdraw is too small
-//        WITHDRAWAL_TASKS_NOT_FOUND = -16,
-//    	NOT_ALLOWED_TO_SET_WITHDRAWAL_TASKS = -17 //Can't set withdrawal tasks on request creation
+//    	LOWER_BOUND_NOT_EXCEEDED = -15
 //    };
 //
 type CreateWithdrawalRequestResultCode int32
 
 const (
-	CreateWithdrawalRequestResultCodeSuccess                        CreateWithdrawalRequestResultCode = 0
-	CreateWithdrawalRequestResultCodeInvalidAmount                  CreateWithdrawalRequestResultCode = -1
-	CreateWithdrawalRequestResultCodeInvalidExternalDetails         CreateWithdrawalRequestResultCode = -2
-	CreateWithdrawalRequestResultCodeBalanceNotFound                CreateWithdrawalRequestResultCode = -3
-	CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable         CreateWithdrawalRequestResultCode = -4
-	CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable  CreateWithdrawalRequestResultCode = -5
-	CreateWithdrawalRequestResultCodeFeeMismatched                  CreateWithdrawalRequestResultCode = -6
-	CreateWithdrawalRequestResultCodeConversionOverflow             CreateWithdrawalRequestResultCode = -7
-	CreateWithdrawalRequestResultCodeConvertedAmountMismatched      CreateWithdrawalRequestResultCode = -8
-	CreateWithdrawalRequestResultCodeBalanceLockOverflow            CreateWithdrawalRequestResultCode = -9
-	CreateWithdrawalRequestResultCodeUnderfunded                    CreateWithdrawalRequestResultCode = -10
-	CreateWithdrawalRequestResultCodeInvalidUniversalAmount         CreateWithdrawalRequestResultCode = -11
-	CreateWithdrawalRequestResultCodeStatsOverflow                  CreateWithdrawalRequestResultCode = -12
-	CreateWithdrawalRequestResultCodeLimitsExceeded                 CreateWithdrawalRequestResultCode = -13
-	CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails  CreateWithdrawalRequestResultCode = -14
-	CreateWithdrawalRequestResultCodeLowerBoundNotExceeded          CreateWithdrawalRequestResultCode = -15
-	CreateWithdrawalRequestResultCodeWithdrawalTasksNotFound        CreateWithdrawalRequestResultCode = -16
-	CreateWithdrawalRequestResultCodeNotAllowedToSetWithdrawalTasks CreateWithdrawalRequestResultCode = -17
+	CreateWithdrawalRequestResultCodeSuccess                       CreateWithdrawalRequestResultCode = 0
+	CreateWithdrawalRequestResultCodeInvalidAmount                 CreateWithdrawalRequestResultCode = -1
+	CreateWithdrawalRequestResultCodeInvalidExternalDetails        CreateWithdrawalRequestResultCode = -2
+	CreateWithdrawalRequestResultCodeBalanceNotFound               CreateWithdrawalRequestResultCode = -3
+	CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable        CreateWithdrawalRequestResultCode = -4
+	CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable CreateWithdrawalRequestResultCode = -5
+	CreateWithdrawalRequestResultCodeFeeMismatched                 CreateWithdrawalRequestResultCode = -6
+	CreateWithdrawalRequestResultCodeConversionOverflow            CreateWithdrawalRequestResultCode = -7
+	CreateWithdrawalRequestResultCodeConvertedAmountMismatched     CreateWithdrawalRequestResultCode = -8
+	CreateWithdrawalRequestResultCodeBalanceLockOverflow           CreateWithdrawalRequestResultCode = -9
+	CreateWithdrawalRequestResultCodeUnderfunded                   CreateWithdrawalRequestResultCode = -10
+	CreateWithdrawalRequestResultCodeInvalidUniversalAmount        CreateWithdrawalRequestResultCode = -11
+	CreateWithdrawalRequestResultCodeStatsOverflow                 CreateWithdrawalRequestResultCode = -12
+	CreateWithdrawalRequestResultCodeLimitsExceeded                CreateWithdrawalRequestResultCode = -13
+	CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails CreateWithdrawalRequestResultCode = -14
+	CreateWithdrawalRequestResultCodeLowerBoundNotExceeded         CreateWithdrawalRequestResultCode = -15
 )
 
 var CreateWithdrawalRequestResultCodeAll = []CreateWithdrawalRequestResultCode{
@@ -16874,8 +16831,6 @@ var CreateWithdrawalRequestResultCodeAll = []CreateWithdrawalRequestResultCode{
 	CreateWithdrawalRequestResultCodeLimitsExceeded,
 	CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails,
 	CreateWithdrawalRequestResultCodeLowerBoundNotExceeded,
-	CreateWithdrawalRequestResultCodeWithdrawalTasksNotFound,
-	CreateWithdrawalRequestResultCodeNotAllowedToSetWithdrawalTasks,
 }
 
 var createWithdrawalRequestResultCodeMap = map[int32]string{
@@ -16895,8 +16850,6 @@ var createWithdrawalRequestResultCodeMap = map[int32]string{
 	-13: "CreateWithdrawalRequestResultCodeLimitsExceeded",
 	-14: "CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails",
 	-15: "CreateWithdrawalRequestResultCodeLowerBoundNotExceeded",
-	-16: "CreateWithdrawalRequestResultCodeWithdrawalTasksNotFound",
-	-17: "CreateWithdrawalRequestResultCodeNotAllowedToSetWithdrawalTasks",
 }
 
 var createWithdrawalRequestResultCodeShortMap = map[int32]string{
@@ -16916,29 +16869,25 @@ var createWithdrawalRequestResultCodeShortMap = map[int32]string{
 	-13: "limits_exceeded",
 	-14: "invalid_pre_confirmation_details",
 	-15: "lower_bound_not_exceeded",
-	-16: "withdrawal_tasks_not_found",
-	-17: "not_allowed_to_set_withdrawal_tasks",
 }
 
 var createWithdrawalRequestResultCodeRevMap = map[string]int32{
-	"CreateWithdrawalRequestResultCodeSuccess":                        0,
-	"CreateWithdrawalRequestResultCodeInvalidAmount":                  -1,
-	"CreateWithdrawalRequestResultCodeInvalidExternalDetails":         -2,
-	"CreateWithdrawalRequestResultCodeBalanceNotFound":                -3,
-	"CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable":         -4,
-	"CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable":  -5,
-	"CreateWithdrawalRequestResultCodeFeeMismatched":                  -6,
-	"CreateWithdrawalRequestResultCodeConversionOverflow":             -7,
-	"CreateWithdrawalRequestResultCodeConvertedAmountMismatched":      -8,
-	"CreateWithdrawalRequestResultCodeBalanceLockOverflow":            -9,
-	"CreateWithdrawalRequestResultCodeUnderfunded":                    -10,
-	"CreateWithdrawalRequestResultCodeInvalidUniversalAmount":         -11,
-	"CreateWithdrawalRequestResultCodeStatsOverflow":                  -12,
-	"CreateWithdrawalRequestResultCodeLimitsExceeded":                 -13,
-	"CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails":  -14,
-	"CreateWithdrawalRequestResultCodeLowerBoundNotExceeded":          -15,
-	"CreateWithdrawalRequestResultCodeWithdrawalTasksNotFound":        -16,
-	"CreateWithdrawalRequestResultCodeNotAllowedToSetWithdrawalTasks": -17,
+	"CreateWithdrawalRequestResultCodeSuccess":                       0,
+	"CreateWithdrawalRequestResultCodeInvalidAmount":                 -1,
+	"CreateWithdrawalRequestResultCodeInvalidExternalDetails":        -2,
+	"CreateWithdrawalRequestResultCodeBalanceNotFound":               -3,
+	"CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable":        -4,
+	"CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable": -5,
+	"CreateWithdrawalRequestResultCodeFeeMismatched":                 -6,
+	"CreateWithdrawalRequestResultCodeConversionOverflow":            -7,
+	"CreateWithdrawalRequestResultCodeConvertedAmountMismatched":     -8,
+	"CreateWithdrawalRequestResultCodeBalanceLockOverflow":           -9,
+	"CreateWithdrawalRequestResultCodeUnderfunded":                   -10,
+	"CreateWithdrawalRequestResultCodeInvalidUniversalAmount":        -11,
+	"CreateWithdrawalRequestResultCodeStatsOverflow":                 -12,
+	"CreateWithdrawalRequestResultCodeLimitsExceeded":                -13,
+	"CreateWithdrawalRequestResultCodeInvalidPreConfirmationDetails": -14,
+	"CreateWithdrawalRequestResultCodeLowerBoundNotExceeded":         -15,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -27173,8 +27122,7 @@ type PaymentOpV2 struct {
 //        INSUFFICIENT_FEE_AMOUNT = -14,
 //        BALANCE_TO_CHARGE_FEE_FROM_NOT_FOUND = -15,
 //        PAYMENT_AMOUNT_IS_LESS_THAN_DEST_FEE = -16,
-//        DESTINATION_ACCOUNT_NOT_FOUND = -17,
-//        INCORRECT_AMOUNT_PRECISION = -18
+//        DESTINATION_ACCOUNT_NOT_FOUND = -17
 //
 //         // !!! Add new result code to review invoice op too !!!
 //    };
@@ -27200,7 +27148,6 @@ const (
 	PaymentV2ResultCodeBalanceToChargeFeeFromNotFound PaymentV2ResultCode = -15
 	PaymentV2ResultCodePaymentAmountIsLessThanDestFee PaymentV2ResultCode = -16
 	PaymentV2ResultCodeDestinationAccountNotFound     PaymentV2ResultCode = -17
-	PaymentV2ResultCodeIncorrectAmountPrecision       PaymentV2ResultCode = -18
 )
 
 var PaymentV2ResultCodeAll = []PaymentV2ResultCode{
@@ -27222,7 +27169,6 @@ var PaymentV2ResultCodeAll = []PaymentV2ResultCode{
 	PaymentV2ResultCodeBalanceToChargeFeeFromNotFound,
 	PaymentV2ResultCodePaymentAmountIsLessThanDestFee,
 	PaymentV2ResultCodeDestinationAccountNotFound,
-	PaymentV2ResultCodeIncorrectAmountPrecision,
 }
 
 var paymentV2ResultCodeMap = map[int32]string{
@@ -27244,7 +27190,6 @@ var paymentV2ResultCodeMap = map[int32]string{
 	-15: "PaymentV2ResultCodeBalanceToChargeFeeFromNotFound",
 	-16: "PaymentV2ResultCodePaymentAmountIsLessThanDestFee",
 	-17: "PaymentV2ResultCodeDestinationAccountNotFound",
-	-18: "PaymentV2ResultCodeIncorrectAmountPrecision",
 }
 
 var paymentV2ResultCodeShortMap = map[int32]string{
@@ -27266,7 +27211,6 @@ var paymentV2ResultCodeShortMap = map[int32]string{
 	-15: "balance_to_charge_fee_from_not_found",
 	-16: "payment_amount_is_less_than_dest_fee",
 	-17: "destination_account_not_found",
-	-18: "incorrect_amount_precision",
 }
 
 var paymentV2ResultCodeRevMap = map[string]int32{
@@ -27288,7 +27232,6 @@ var paymentV2ResultCodeRevMap = map[string]int32{
 	"PaymentV2ResultCodeBalanceToChargeFeeFromNotFound": -15,
 	"PaymentV2ResultCodePaymentAmountIsLessThanDestFee": -16,
 	"PaymentV2ResultCodeDestinationAccountNotFound":     -17,
-	"PaymentV2ResultCodeIncorrectAmountPrecision":       -18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -39594,4 +39537,3 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "0b366c3fff83de5ee79cb1b7d191d1aa709f15b0"
