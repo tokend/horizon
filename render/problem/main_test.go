@@ -5,10 +5,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"gitlab.com/tokend/horizon/context/requestid"
-	"gitlab.com/tokend/horizon/test"
 	ge "github.com/go-errors/errors"
 	. "github.com/smartystreets/goconvey/convey"
+	"gitlab.com/tokend/horizon/context/requestid"
+	"gitlab.com/tokend/horizon/test"
 	"golang.org/x/net/context"
 )
 

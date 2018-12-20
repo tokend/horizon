@@ -7,7 +7,6 @@ import (
 )
 
 func (b *BalancePublic) Populate(balance history.Balance) {
-	b.ID = balance.BalanceID
 	b.BalanceID = balance.BalanceID
 	b.AccountID = balance.AccountID
 	b.Asset = balance.Asset

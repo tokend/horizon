@@ -6,7 +6,6 @@ type Balance struct {
 	Asset     string `db:"asset"`
 	Amount    int64  `db:"amount"`
 	Locked    int64  `db:"locked"`
-
 }
 
 // DEPRECATED

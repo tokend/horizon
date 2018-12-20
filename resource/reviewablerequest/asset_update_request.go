@@ -1,9 +1,9 @@
 package reviewablerequest
 
 import (
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/resource/base"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/regources"
 )
 

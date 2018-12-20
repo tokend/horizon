@@ -1,8 +1,8 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/render/hal"
 	"github.com/rcrowley/go-metrics"
+	"gitlab.com/tokend/horizon/render/hal"
 )
 
 // MetricsAction collects and renders a snapshot from the metrics system that

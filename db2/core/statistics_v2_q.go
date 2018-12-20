@@ -1,10 +1,10 @@
 package core
 
-import(
-	sq "github.com/lann/squirrel"
+import (
 	"database/sql"
-	"time"
+	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"time"
 )
 
 var selectStatisticsV2 = sq.Select("st.id",
@@ -17,7 +17,6 @@ var selectStatisticsV2 = sq.Select("st.id",
 	"st.monthly_out",
 	"st.annual_out",
 	"st.updated_at").From("statistics_v2 st")
-
 
 type StatisticsV2QI interface {
 	ForAccount(accountID string) ([]StatisticsV2Entry, error)

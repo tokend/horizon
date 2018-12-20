@@ -1,18 +1,18 @@
 package horizon
 
 import (
-	"net/url"
-	"gitlab.com/distributed_lab/txsub"
-	"gitlab.com/tokend/horizon/resource"
-	"gitlab.com/tokend/horizon/render/hal"
-	"gitlab.com/tokend/horizon/render/problem"
-	"net/http"
 	"bytes"
 	"fmt"
-	"gitlab.com/tokend/go/xdr"
-	txsubHelper "gitlab.com/tokend/horizon/txsub"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/distributed_lab/txsub"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/render/hal"
+	"gitlab.com/tokend/horizon/render/problem"
+	"gitlab.com/tokend/horizon/resource"
+	txsubHelper "gitlab.com/tokend/horizon/txsub"
 	"io"
+	"net/http"
+	"net/url"
 )
 
 // TransactionCreateAction submits a transaction to the stellar-core network
@@ -20,7 +20,7 @@ import (
 type TransactionCreateAction struct {
 	Action
 
-	APIUrl      *url.URL
+	APIUrl *url.URL
 
 	tx       string
 	result   txsub.Result

@@ -7,6 +7,10 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/zenazn/goji/web"
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/go/resources"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/actions"
 	"gitlab.com/tokend/horizon/cache"
 	"gitlab.com/tokend/horizon/db2"
@@ -17,10 +21,6 @@ import (
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/toid"
-	"gitlab.com/tokend/go/doorman"
-	"gitlab.com/tokend/go/resources"
-	"gitlab.com/tokend/go/signcontrol"
-	"gitlab.com/tokend/go/xdr"
 )
 
 // Action is the "base type" for all actions in horizon.  It provides
@@ -158,7 +158,7 @@ func (action *Action) GetPagingParams() (cursor string, order string, limit uint
 	return
 }
 
-func (action *Action) GetPagingParamsV2 () (page uint64, limit uint64) {
+func (action *Action) GetPagingParamsV2() (page uint64, limit uint64) {
 	if action.Err != nil {
 		return
 	}

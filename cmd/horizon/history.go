@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"gitlab.com/tokend/horizon/db2/history/schema"
 	"github.com/spf13/cobra"
+	"gitlab.com/tokend/horizon/db2/history/schema"
 )
 
 var historyCmd = &cobra.Command{

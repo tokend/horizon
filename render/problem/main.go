@@ -7,10 +7,10 @@ import (
 
 	"time"
 
+	"github.com/go-errors/errors"
 	"gitlab.com/tokend/horizon/context/requestid"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/utils"
-	"github.com/go-errors/errors"
 	"golang.org/x/net/context"
 )
 

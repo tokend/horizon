@@ -1,8 +1,8 @@
 package core
 
 import (
-	"gitlab.com/tokend/go/xdr"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/go/xdr"
 )
 
 // ChangesXDR returns the XDR encoded changes for this transaction fee

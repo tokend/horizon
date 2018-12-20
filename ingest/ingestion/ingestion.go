@@ -10,11 +10,11 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/db2/sqx"
 	"gitlab.com/tokend/horizon/ingest/participants"
-	"gitlab.com/tokend/go/xdr"
 )
 
 // Clear removes data from the ledger

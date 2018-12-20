@@ -461,8 +461,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:d5e2bb746bbf34f4a84886ff9c55f1f708b185885f64d4fcd786fbc4cd6d64f6"
+  digest = "1:955be4ce8ee809f05c5c2961bfe075f7029018f30c6ab144c3c3fabd0e83b10b"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -480,7 +479,7 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "e4509f4597e732cc822913786868fff623f91eff"
+  revision = "081bef70ea755bdf01b764bf72702e43117b8ffb"
 
 [[projects]]
   branch = "master"
@@ -496,12 +495,12 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:b004667a0a9a1e2d3dd491e328d06ead6f3cc4721e6e69116a115c2375f17c03"
+  branch = "product"
+  digest = "1:5acfadee6c6302a1a3c586fb3d8db642e354efc6ab97cbc78f475c8dbdf8dcbe"
   name = "gitlab.com/tokend/regources"
   packages = ["."]
   pruneopts = ""
-  revision = "6c29e09f55210ad0d627cd02a22f3f195aed0a08"
+  revision = "1cd355c055d3e972eba96aa008256009b570992c"
 
 [[projects]]
   branch = "master"
@@ -643,7 +642,6 @@
     "gitlab.com/tokend/go/build",
     "gitlab.com/tokend/go/doorman",
     "gitlab.com/tokend/go/hash",
-    "gitlab.com/tokend/go/keypair",
     "gitlab.com/tokend/go/resources",
     "gitlab.com/tokend/go/signcontrol",
     "gitlab.com/tokend/go/strkey",

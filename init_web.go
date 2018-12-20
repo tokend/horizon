@@ -14,7 +14,6 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/log"
-	"gitlab.com/tokend/horizon/render"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/regources"
@@ -51,7 +50,7 @@ func initWeb(app *App) {
 	}
 
 	// register problems
-	render.RegisterError(sql.ErrNoRows, problem.NotFound)
+	problem.RegisterError(sql.ErrNoRows, problem.NotFound)
 }
 
 // initWebMiddleware installs the middleware stack used for horizon onto the
@@ -106,14 +105,6 @@ const (
 func initWebActions(app *App) {
 	apiProxy := httputil.NewSingleHostReverseProxy(app.config.APIBackend)
 	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
-	investReadyProxy := httputil.NewSingleHostReverseProxy(app.config.InvestReady)
-
-	var telegramAirdropProxy *httputil.ReverseProxy
-	if app.config.TelegramAirdrop != nil {
-		telegramAirdropProxy = httputil.NewSingleHostReverseProxy(app.config.TelegramAirdrop)
-	} else {
-		telegramAirdropProxy = nil
-	}
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
@@ -121,8 +112,9 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeCheckSaleState,
-		xdr.OperationTypePayout,
+		xdr.OperationTypeManageKeyValue,
 		xdr.OperationTypePaymentV2,
+		xdr.OperationTypeReviewRequest,
 	}
 
 	r := app.web.router
@@ -164,7 +156,6 @@ func initWebActions(app *App) {
 
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})
-	r.Get("/history_offers", &HistoryOfferIndexAction{})
 
 	// order book
 	r.Get("/order_book", &OrderBookAction{})
@@ -396,6 +387,20 @@ func initWebActions(app *App) {
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
 	})
 
+	r.Get("/request/atomic_swap_bids", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwapBid},
+	})
+
+	r.Get("/request/atomic_swaps", &ReviewableRequestIndexAction{
+		CustomFilter: func(action *ReviewableRequestIndexAction) {
+			bidID := action.GetOptionalInt64("bid_id")
+			if bidID != nil {
+				action.q = action.q.ASwapByBidID(*bidID)
+			}
+		},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAtomicSwap},
+	})
+
 	// Sales actions
 	r.Get("/sales/:id", &SaleShowAction{})
 	r.Get("/sales", &SaleIndexAction{})
@@ -403,6 +408,10 @@ func initWebActions(app *App) {
 
 	// Sale antes actions
 	r.Get("/sale_antes", &SaleAnteAction{})
+
+	// Atomic swap bid actions
+	r.Get("/atomic_swap_bids", &ASwapBidIndexAction{})
+	r.Get("/atomic_swap_bids/:id", &ASwapBidShowAction{})
 
 	// Contracts actions
 	r.Get("/contracts", &ContractIndexAction{})
@@ -461,20 +470,6 @@ func initWebActions(app *App) {
 			templateProxy.ServeHTTP(w, r)
 		}
 	}())
-
-	r.Handle(regexp.MustCompile(`^/integrations/invest-ready`), func() func(web.C, http.ResponseWriter, *http.Request) {
-		return func(c web.C, w http.ResponseWriter, r *http.Request) {
-			investReadyProxy.ServeHTTP(w, r)
-		}
-	}())
-
-	if telegramAirdropProxy != nil {
-		r.Handle(regexp.MustCompile(`^/integrations/telegram-airdrop`), func() func(web.C, http.ResponseWriter, *http.Request) {
-			return func(c web.C, w http.ResponseWriter, r *http.Request) {
-				telegramAirdropProxy.ServeHTTP(w, r)
-			}
-		}())
-	}
 
 	// proxy pass every request horizon could not handle to API
 	r.Handle(regexp.MustCompile(`^.*`), func() func(web.C, http.ResponseWriter, *http.Request) {

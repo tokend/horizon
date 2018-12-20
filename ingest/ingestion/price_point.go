@@ -1,8 +1,8 @@
 package ingestion
 
 import (
-	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2/history"
 )
 
 type LedgerPricePoint struct {

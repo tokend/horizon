@@ -1,12 +1,12 @@
 package horizon
 
 import (
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
-	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type SaleAnteAction struct {

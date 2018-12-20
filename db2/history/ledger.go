@@ -1,8 +1,8 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"github.com/guregu/null"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 )
 

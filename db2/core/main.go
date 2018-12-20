@@ -5,8 +5,8 @@ package core
 import (
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // LedgerHeader is row of data from the `ledgerheaders` table
@@ -82,6 +82,10 @@ type QInterface interface {
 	Balances() BalancesQI
 	//KeyValue - creates new KeyValue query helper
 	KeyValue() KeyValueQI
+	// AtomicSwapBid - creates new AtomicSwapBid query helper
+	AtomicSwapBid() AtomicSwapBidQI
+	// AtomicSwapQuoteAsset - creates new AtomicSwapQuoteAsset query helper
+	AtomicSwapQuoteAsset() AtomicSwapQuoteAssetQI
 
 	Trusts() *TrustQ
 	Offers() *OfferQ

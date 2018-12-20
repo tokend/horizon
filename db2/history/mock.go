@@ -1,8 +1,8 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"github.com/stretchr/testify/mock"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type QMock struct {

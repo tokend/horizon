@@ -3,10 +3,10 @@ package horizon
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/context/requestid"
-	"gitlab.com/tokend/horizon/httpx"
 	gctx "github.com/goji/context"
 	"github.com/zenazn/goji/web"
+	"gitlab.com/tokend/horizon/context/requestid"
+	"gitlab.com/tokend/horizon/httpx"
 	"golang.org/x/net/context"
 )
 

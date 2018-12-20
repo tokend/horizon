@@ -58,6 +58,33 @@ func TestReviewRequestOp_XDR(t *testing.T) {
 		assert.EqualValues(t, op.ReviewDetails.ExternalDetails, body.Ext.ReviewDetails.ExternalDetails)
 	})
 
+	t.Run("approve atomic swap with tasks", func(t *testing.T) {
+		reviewDetails := ReviewDetails{
+			TasksToAdd:      0,
+			TasksToRemove:   8,
+			ExternalDetails: "Request can be approved",
+		}
+		op := ReviewRequestOp{
+			ID:            1,
+			Hash:          fmt.Sprintf("%x", hash[:]),
+			Details:       AtomicSwapDetails{},
+			Action:        xdr.ReviewRequestOpActionApprove,
+			ReviewDetails: &reviewDetails,
+		}
+		got, err := op.XDR()
+		if err != nil {
+			t.Fatal(err)
+		}
+		body := got.Body.ReviewRequestOp
+		assert.EqualValues(t, op.ID, body.RequestId)
+		assert.EqualValues(t, hash, body.RequestHash)
+		assert.EqualValues(t, xdr.ReviewableRequestTypeAtomicSwap, body.RequestDetails.RequestType)
+		assert.EqualValues(t, op.Action, body.Action)
+		assert.EqualValues(t, op.ReviewDetails.TasksToAdd, body.Ext.ReviewDetails.TasksToAdd)
+		assert.EqualValues(t, op.ReviewDetails.TasksToRemove, body.Ext.ReviewDetails.TasksToRemove)
+		assert.EqualValues(t, op.ReviewDetails.ExternalDetails, body.Ext.ReviewDetails.ExternalDetails)
+	})
+
 	t.Run("reject", func(t *testing.T) {
 		op := ReviewRequestOp{
 			ID:     1,

@@ -8,6 +8,8 @@ import (
 	"strconv"
 
 	"github.com/pkg/errors"
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/ledger"
@@ -16,8 +18,6 @@ import (
 	"gitlab.com/tokend/horizon/render/sse"
 	"gitlab.com/tokend/horizon/resource"
 	"gitlab.com/tokend/horizon/toid"
-	"gitlab.com/tokend/go/doorman"
-	"gitlab.com/tokend/go/xdr"
 )
 
 // This file contains the actions:
