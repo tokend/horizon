@@ -243,19 +243,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:135974b965318050d38b2bf24ee71c493dc96cdd722c356722f6116d0edaaa7c"
-  name = "github.com/multiplay/go-slack"
-  packages = [
-    ".",
-    "chat",
-    "lrhook",
-    "webhook",
-  ]
-  pruneopts = ""
-  revision = "2ca6009c6de1deb2a2f77a80ee09194b66c3473f"
-
-[[projects]]
-  branch = "master"
   digest = "1:ae9fa4942b5d936e854f2cedb174ad5e047848a1a11b07391413f59f010d044f"
   name = "github.com/nullstyle/go-xdr"
   packages = ["xdr3"]
@@ -445,6 +432,14 @@
   revision = "cbfb465258955230864e0a76aba0ff2738000782"
 
 [[projects]]
+  digest = "1:2ccdf049b4b3d099012cadfe574565b188325e4b1e06471ba3516e352f14081f"
+  name = "gitlab.com/distributed_lab/figure"
+  packages = ["."]
+  pruneopts = ""
+  revision = "4465722a2b24cd44606a0b8d2885077c476302be"
+  version = "v1.3"
+
+[[projects]]
   digest = "1:7feb21d1be128ea134fe7fccc11b69ebbab499932b5b6e8e1ec1c0b55646ab23"
   name = "gitlab.com/distributed_lab/logan"
   packages = [
@@ -569,14 +564,6 @@
   revision = "88f656faf3f37f690df1a32515b479415e1a6769"
 
 [[projects]]
-  branch = "master"
-  digest = "1:962626db478d8aa0ae5a1d99c2b367acc756346c6657780a91252cfda66a67d3"
-  name = "golang.org/x/time"
-  packages = ["rate"]
-  pruneopts = ""
-  revision = "6dc17368e09b0e8634d71cac8168d853e869a0c7"
-
-[[projects]]
   digest = "1:1c59d1f588f06f61d72480163b90a67f9380aca3d6c8ed6fee27d29a8d0ea515"
   name = "gopkg.in/gorp.v1"
   packages = ["."]
@@ -630,8 +617,6 @@
     "github.com/lann/squirrel",
     "github.com/lib/pq",
     "github.com/magiconair/properties/assert",
-    "github.com/multiplay/go-slack/chat",
-    "github.com/multiplay/go-slack/lrhook",
     "github.com/patrickmn/go-cache",
     "github.com/pkg/errors",
     "github.com/rcrowley/go-metrics",
@@ -649,6 +634,7 @@
     "github.com/zenazn/goji/web/middleware",
     "github.com/zenazn/goji/web/mutil",
     "gitlab.com/distributed_lab/corer",
+    "gitlab.com/distributed_lab/figure",
     "gitlab.com/distributed_lab/logan",
     "gitlab.com/distributed_lab/logan/v3",
     "gitlab.com/distributed_lab/logan/v3/errors",
@@ -665,7 +651,6 @@
     "gitlab.com/tokend/regources",
     "golang.org/x/net/context",
     "golang.org/x/net/http2",
-    "golang.org/x/time/rate",
     "gopkg.in/throttled/throttled.v2",
     "gopkg.in/throttled/throttled.v2/store/memstore",
     "gopkg.in/throttled/throttled.v2/store/redigostore",
