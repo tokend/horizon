@@ -69,17 +69,6 @@
   version = "v1.4.2"
 
 [[projects]]
-  digest = "1:dc100ac3d17843d02b68597df496d68fee5c1180c340c3029d374eff46214683"
-  name = "github.com/garyburd/redigo"
-  packages = [
-    "internal",
-    "redis",
-  ]
-  pruneopts = ""
-  revision = "47dc60e71eed504e3ef8e77ee3c6fe720f3be57f"
-  version = "v1.3.0"
-
-[[projects]]
   branch = "master"
   digest = "1:deac8131c45a4dedb29d4591fe79ce1074daf0a11660598d8be3d1c64efd263e"
   name = "github.com/getsentry/raven-go"
@@ -576,7 +565,6 @@
   packages = [
     ".",
     "store/memstore",
-    "store/redigostore",
   ]
   pruneopts = ""
   revision = "b5675e93f9d999b22f92d859a5bf2138d3641af4"
@@ -606,7 +594,6 @@
     "github.com/asaskevich/govalidator",
     "github.com/cheekybits/genny/generic",
     "github.com/evalphobia/logrus_sentry",
-    "github.com/garyburd/redigo/redis",
     "github.com/getsentry/raven-go",
     "github.com/go-errors/errors",
     "github.com/goji/context",
@@ -651,7 +638,6 @@
     "golang.org/x/net/http2",
     "gopkg.in/throttled/throttled.v2",
     "gopkg.in/throttled/throttled.v2/store/memstore",
-    "gopkg.in/throttled/throttled.v2/store/redigostore",
     "gopkg.in/tylerb/graceful.v1",
   ]
   solver-name = "gps-cdcl"
