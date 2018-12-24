@@ -1,224 +1,159 @@
 package config
 
 import (
+	"fmt"
 	"net/url"
-
 	"os"
+	"reflect"
+
+	"github.com/spf13/cast"
+
+	"gitlab.com/distributed_lab/figure"
+
+	"github.com/spf13/viper"
 
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
 )
 
 // Config is the configuration for horizon.  It get's populated by the
 // app's main function and is provided to NewApp.
 type Config struct {
-	*Base
-	Hostname               string
-	DatabaseURL            string
-	StellarCoreDatabaseURL string
-	StellarCoreURL         string
-	Port                   int
-	RedisURL               string
-	LogLevel               logrus.Level
-	LogToJSON              bool
-	SlowQueryBound         *time.Duration
+	rawGetter              `fig:"-"`
+	Hostname               string `fig:"hostname"`
+	DatabaseURL            string `fig:"database_url,required"`
+	StellarCoreDatabaseURL string `fig:"stellar_core_database_url,required"`
+	StellarCoreURL         string `fig:"stellar_core_url,required"`
+	Port                   int    `fig:"port"`
 
-	APIBackend      *url.URL
-	KeychainBackend *url.URL
+	LogLevel logrus.Level `fig:"log_level"`
 
-	SlackWebhook *url.URL
-	SlackChannel string
+	SlowQueryBound *time.Duration `fig:"slow_query_bound"`
 
-	// TLSCert is a path to a certificate file to use for horizon's TLS config
-	TLSCert string
-	// TLSKey is the path to a private key file to use for horizon's TLS config
-	TLSKey string
-	// Ingest is a boolean that indicates whether or not this horizon instance
-	// should run the data ingestion subsystem.
-	Ingest bool
-	// HistoryRetentionCount represents the minimum number of ledgers worth of
-	// history data to retain in the horizon database. For the purposes of
-	// determining a "retention duration", each ledger roughly corresponds to 10
-	// seconds of real time.
-	HistoryRetentionCount uint
+	APIBackend *url.URL `fig:"api_backend"`
+
+	Ingest bool `fig:"ingest"`
 	// StaleThreshold represents the number of ledgers a history database may be
 	// out-of-date by before horizon begins to respond with an error to history
 	// requests.
-	StaleThreshold uint
+	StaleThreshold uint `fig:"stale_threshold"`
 	//For developing without signatures
-	SkipCheck bool
+	SkipCheck bool `fig:"sign_checkskip"`
 	// enable on dev only
-	CORSEnabled bool
+	CORSEnabled bool `fig:"cors_enabled"`
 	// DisableAPISubmit tell horizon to not use API for transaction submission
 	// for dev purposes only, works well with SkipCheck enabled
 	// pending transactions and transaction 2fa will be disabled as well.
-	DisableAPISubmit bool
+	DisableAPISubmit bool `fig:"disable_api_submit"`
 	// If set to true - Horizon won't check TFA (via API) during TX submission.
-	DisableTXTfa bool
+	DisableTXTfa bool `fig:"disable_tx_tfa"`
 
-	TemplateBackend *url.URL
+	TemplateBackend *url.URL `fig:"template_backend"`
 
-	ForceHTTPSLinks bool
+	TelegramAirdrop *url.URL `fig:"telegram_airdrop"`
+	InvestReady     *url.URL `fig:"invest_ready"`
 
-	SentryDSN      string
-	Project        string
-	SentryLogLevel string
-	Env            string
+	ForceHTTPSLinks bool `fig:"force_https_links"`
 
-	MigrateUpOnStart bool
-}
+	SentryDSN      string `fig:"sentry_dsn"`
+	Project        string `fig:"project"`
+	SentryLogLevel string `fig:"sentry_log_level"`
+	Env            string `fig:"env"`
 
-func (c *Config) DefineConfigStructure(cmd *cobra.Command) {
-	c.Base = NewBase(nil, "")
-
-	c.setDefault("port", 8000)
-	c.setDefault("per_hour_hate_limit", 72000)
-	c.setDefault("history_retention_count", 0)
-	c.setDefault("sign_checkskip", false)
-	c.setDefault("log_level", "debug")
-	c.setDefault("force_https_links", true)
-	c.setDefault("sentry_dsn", "")
-	c.setDefault("project", "")
-	c.setDefault("sentry_log_level", "warn")
-	c.setDefault("env", "")
-
-	c.bindEnv("port")
-	c.bindEnv("database_url")
-	c.bindEnv("api_database_url")
-	c.bindEnv("stellar_core_database_url")
-	c.bindEnv("stellar_core_url")
-	c.bindEnv("per_hour_hate_limit")
-	c.bindEnv("redis_url")
-	c.bindEnv("log_level")
-	c.bindEnv("log_to_json")
-	c.bindEnv("slow_query_bound")
-
-	c.bindEnv("tls_cert")
-	c.bindEnv("tls_key")
-	c.bindEnv("ingest")
-	c.bindEnv("history_retention_count")
-	c.bindEnv("history_stale_threshold")
-	c.bindEnv("sign_check_skip")
-
-	c.bindEnv("templates_path")
-
-	c.bindEnv("horizon_secret")
-	c.bindEnv("keyserver_url")
-
-	c.bindEnv("api_backend")
-	c.bindEnv("keychain_backend")
-
-	c.bindEnv("slack_webhook")
-	c.bindEnv("slack_channel")
-
-	c.bindEnv("cors_enabled")
-	c.bindEnv("hostname")
-
-	c.bindEnv("disable_api_submit")
-
-	c.bindEnv("template_backend")
-	c.bindEnv("invest_ready")
-	c.bindEnv("telegram_airdrop")
-	c.bindEnv("disable_tx_tfa")
-	c.bindEnv("force_https_links")
-	c.bindEnv("migrate_up_on_start")
+	MigrateUpOnStart bool `fig:"migrate_up_on_start"`
 }
 
 func (c *Config) Init() error {
-	c.Port = c.getInt("port")
+	if err := viper.ReadInConfig(); err != nil {
+		return errors.Wrap(err, "failed to read config file")
+	}
 
-	var err error
-	c.DatabaseURL, err = c.getNonEmptyString("database_url")
+	err := figure.Out(c).From(c.GetStringMap("config")).With(figure.BaseHooks, URLHook, logLevelHook).Please()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to figure out config")
 	}
 
-	c.StellarCoreDatabaseURL, err = c.getNonEmptyString("stellar_core_database_url")
-	if err != nil {
-		return err
-	}
-
-	c.StellarCoreURL, err = c.getNonEmptyString("stellar_core_url")
-	if err != nil {
-		return err
-	}
-
-	c.RedisURL = c.getString("redis_url")
-
-	c.SlowQueryBound, err = c.getOptionalTDuration("slow_query_bound")
-	if err != nil {
-		return err
-	}
-
-	c.LogToJSON = c.getBool("log_to_json")
-	c.LogLevel, err = logrus.ParseLevel(c.getString("log_level"))
-	if err != nil {
-		return err
-	}
-
-	c.TLSCert = c.getString("tls_cert")
-	c.TLSKey = c.getString("tls_key")
-	switch {
-	case c.TLSCert != "" && c.TLSKey == "":
-		return errors.New("Invalid TLS config: key not configured")
-	case c.TLSCert == "" && c.TLSKey != "":
-		return errors.New("Invalid TLS config: cert not configured")
-	}
-
-	c.Ingest = c.getBool("ingest")
-	c.HistoryRetentionCount = uint(c.getInt("history_retention_count"))
-	c.StaleThreshold = uint(c.getInt("history_stale_threshold"))
-	c.SkipCheck = c.getBool("sign_check_skip")
-
-	c.RedisURL = c.getString("redis_url")
-
-	c.APIBackend, err = c.getParsedURL("api_backend")
-	if err != nil {
-		return err
-	}
-
-	c.KeychainBackend, err = c.getParsedURL("keychain_backend")
-	if err != nil {
-		return err
-	}
-
-	if c.getString("slack_webhook") != "" {
-		c.SlackWebhook, err = c.getParsedURL("slack_webhook")
-		if err != nil {
-			return err
-		}
-		c.SlackChannel, err = c.getNonEmptyString("slack_channel")
-		if err != nil {
-			return err
-		}
-	}
-
-	c.CORSEnabled = c.getBool("cors_enabled")
-	c.Hostname = c.getString("hostname")
 	if c.Hostname == "" {
 		c.Hostname, err = os.Hostname()
 		if err != nil {
 			return errors.Wrap(err, "failed to get hostname")
 		}
 	}
-
-	c.DisableAPISubmit = c.getBool("disable_api_submit")
-	c.DisableTXTfa = c.getBool("disable_tx_tfa")
-
-	c.TemplateBackend, err = c.getParsedURL("template_backend")
-	if err != nil {
-		return errors.Wrap(err, "Failed to get template_backend value")
-	}
-
-	c.ForceHTTPSLinks = c.getBool("force_https_links")
-	c.SentryDSN = c.getString("sentry_dsn")
-	c.Project = c.getString("project")
-	c.SentryLogLevel = c.getString("sentry_log_level")
-
-	c.MigrateUpOnStart = c.getBool("migrate_up_on_start")
-	c.Env = c.getString("env")
 	return nil
 }
+
+// rawGetter encapsulates raw config values provider
+type rawGetter interface {
+	GetStringMap(key string) map[string]interface{}
+}
+
+func NewViperConfig(fn string) Config {
+	// init underlying viper
+	v := viper.GetViper()
+	v.SetConfigFile(fn)
+
+	return newViperConfig(v)
+}
+
+func newViperConfig(raw rawGetter) Config {
+	lvl, err := logrus.ParseLevel("debug")
+	if err != nil {
+		panic("failed to parse default log level")
+	}
+
+	config := &Config{
+		Port:            8000,
+		LogLevel:        lvl,
+		ForceHTTPSLinks: true,
+		SentryDSN:       "",
+		SentryLogLevel:  "warn",
+		Project:         "",
+		Env:             "",
+		SkipCheck:       false,
+	}
+
+	config.rawGetter = raw
+	return *config
+}
+
+var (
+	URLHook = figure.Hooks{
+		"*url.URL": func(value interface{}) (reflect.Value, error) {
+			str, err := cast.ToStringE(value)
+			if err != nil {
+				return reflect.Value{}, errors.Wrap(err, "failed to parse string")
+			}
+			u, err := url.Parse(str)
+			if err != nil {
+				return reflect.Value{}, errors.Wrap(err, "failed to parse url")
+			}
+			return reflect.ValueOf(u), nil
+		},
+	}
+
+	logLevelHook = figure.Hooks{
+		"map[string]string": func(value interface{}) (reflect.Value, error) {
+			result, err := cast.ToStringMapStringE(value)
+			if err != nil {
+				return reflect.Value{}, errors.Wrap(err, "failed to parse map[string]string")
+			}
+			return reflect.ValueOf(result), nil
+		},
+		"logrus.Level": func(value interface{}) (reflect.Value, error) {
+			switch v := value.(type) {
+			case string:
+				lvl, err := logrus.ParseLevel(v)
+				if err != nil {
+					return reflect.Value{}, errors.Wrap(err, "failed to parse log level")
+				}
+				return reflect.ValueOf(lvl), nil
+			case nil:
+				return reflect.ValueOf(nil), nil
+			default:
+				return reflect.Value{}, fmt.Errorf("unsupported conversion from %T", value)
+			}
+		},
+	}
+)
