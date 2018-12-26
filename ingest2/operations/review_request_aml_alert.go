@@ -18,7 +18,7 @@ func (h *amlAlertHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 
 	effect := history2.Effect{
 		Type: history2.EffectTypeWithdrawn,
-		Withdrawn: &history2.ChargedFromLockedEffect{
+		Withdrawn: &history2.BalanceChangeEffect{
 			Amount: amount.StringU(uint64(details.Amount)),
 		},
 	}
@@ -26,11 +26,11 @@ func (h *amlAlertHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	if op.Action != xdr.ReviewRequestOpActionApprove {
 		effect = history2.Effect{
 			Type: history2.EffectTypeUnlocked,
-			Unlocked: &history2.UnlockedEffect{
+			Unlocked: &history2.BalanceChangeEffect{
 				Amount: amount.StringU(uint64(details.Amount)),
 			},
 		}
 	}
 
-	return populateEffects(h.balanceProvider.GetBalanceByID(details.BalanceId), effect, source), nil
+	return populateEffects(h.balanceProvider.MustBalance(details.BalanceId), effect, source), nil
 }

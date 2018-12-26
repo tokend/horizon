@@ -12,10 +12,10 @@ type createAtomicSwapBidRequestOpHandler struct {
 }
 
 // Details returns details about create atomic swap bid request operation
-func (h *createAtomicSwapBidRequestOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
+func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
 	aSwapBidRequest := op.Body.MustCreateASwapBidCreationRequestOp().Request
 
-	var quoteAssets []regources.SaleQuoteAsset
+	quoteAssets := make([]regources.SaleQuoteAsset, 0, len(aSwapBidRequest.QuoteAssets))
 	for _, quoteAsset := range aSwapBidRequest.QuoteAssets {
 		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
 			QuoteAsset: string(quoteAsset.QuoteAsset),
@@ -40,13 +40,13 @@ func (h *createAtomicSwapBidRequestOpHandler) ParticipantsEffects(opBody xdr.Ope
 ) ([]history2.ParticipantEffect, error) {
 	aSwapBidRequest := opBody.MustCreateASwapBidCreationRequestOp().Request
 
-	balance := h.balanceProvider.GetBalanceByID(aSwapBidRequest.BaseBalance)
+	balance := h.balanceProvider.MustBalance(aSwapBidRequest.BaseBalance)
 
 	source.BalanceID = &balance.ID
 	source.AssetCode = &balance.AssetCode
 	source.Effect = history2.Effect{
 		Type: history2.EffectTypeLocked,
-		Locked: &history2.LockedEffect{
+		Locked: &history2.BalanceChangeEffect{
 			Amount: amount.StringU(uint64(aSwapBidRequest.Amount)),
 		},
 	}

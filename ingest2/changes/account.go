@@ -8,14 +8,11 @@ import (
 
 type accountStorage interface {
 	InsertAccount(rawAccountID xdr.AccountId, account history.Account) error
-	GetAccount(address xdr.AccountId) (history.Account, error)
+	MustAccount(address xdr.AccountId) (history.Account)
 }
 
 type accountHandler struct {
 	storage accountStorage
-
-	accountSeq          int32
-	processingLedgerSeq int32
 }
 
 func newAccountHandler(storage accountStorage) *accountHandler {
@@ -24,23 +21,13 @@ func newAccountHandler(storage accountStorage) *accountHandler {
 	}
 }
 
+//Created - stores new account to storage
 func (p *accountHandler) Created(lc ledgerChange) error {
 	account := lc.LedgerChange.MustCreated().Data.MustAccount()
-	newAccountID := p.nextAccountID(lc.LedgerSeq)
-	newAccount := history.NewAccount(newAccountID, account.AccountId.Address(), int32(account.AccountType))
+	newAccount := history.NewAccount(uint64(account.AccountSeqId), account.AccountId.Address())
 	err := p.storage.InsertAccount(account.AccountId, newAccount)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert account")
 	}
 	return nil
-}
-
-func (p *accountHandler) nextAccountID(ledgerSeq int32) int64 {
-	if p.processingLedgerSeq != ledgerSeq {
-		p.processingLedgerSeq = ledgerSeq
-		p.accountSeq = 0
-	}
-
-	p.accountSeq++
-	return int64(ledgerSeq)<<32 | int64(p.accountSeq)
 }

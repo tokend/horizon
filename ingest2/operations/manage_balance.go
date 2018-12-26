@@ -6,11 +6,11 @@ import (
 )
 
 type manageBalanceOpHandler struct {
-	pubKeyProvider publicKeyProvider
+	pubKeyProvider IDProvider
 }
 
 // Details returns details about manage balance operation
-func (h *manageBalanceOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
+func (h *manageBalanceOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageBalanceOp := op.Body.MustManageBalanceOp()
 	manageBalanceRes := opRes.MustManageBalanceResult().MustSuccess()
@@ -31,7 +31,7 @@ func (h *manageBalanceOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 ) ([]history2.ParticipantEffect, error) {
 	manageBalanceOp := opBody.MustManageBalanceOp()
 
-	destinationAccount := h.pubKeyProvider.GetAccountID(manageBalanceOp.Destination)
+	destinationAccount := h.pubKeyProvider.MustAccountID(manageBalanceOp.Destination)
 
 	var participants []history2.ParticipantEffect
 

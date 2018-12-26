@@ -1,19 +1,19 @@
 package history2
 
-import "gitlab.com/tokend/go/xdr"
-
+//Balance - represents balance instance used to optimize indexing of db
 type Balance struct {
-	ID             int64  `db:"id"`
-	AccountID      int64  `db:"account_id"`
-	BalanceAddress string `db:"address"`
-	AssetCode      string `db:"asset_code"`
+	ID        uint64 `db:"id"`
+	AccountID uint64 `db:"account_id"`
+	Address   string `db:"address"`
+	AssetCode string `db:"asset_code"`
 }
 
-func NewBalance(balanceID int64, accountID int64, balance xdr.BalanceEntry) Balance {
+//NewBalance - creates new instance of Balance
+func NewBalance(balanceID, accountID uint64, address, assetCode string) Balance {
 	return Balance{
-		ID:             balanceID,
-		AccountID:      accountID,
-		BalanceAddress: balance.BalanceId.AsString(),
-		AssetCode:      string(balance.Asset),
+		ID:        balanceID,
+		AccountID: accountID,
+		Address:   address,
+		AssetCode: assetCode,
 	}
 }

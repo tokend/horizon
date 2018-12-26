@@ -402,7 +402,7 @@ func (base *Base) GetAddress(name string) (result string) {
 	return result
 }
 
-// GetAccountID retireves an xdr.AccountID by attempting to decode a stellar
+// MustAccountID retireves an xdr.AccountID by attempting to decode a stellar
 // address at the provided name.
 func (base *Base) GetAccountID(name string) (result xdr.AccountId) {
 	raw, err := strkey.Decode(strkey.VersionByteAccountID, base.GetString(name))

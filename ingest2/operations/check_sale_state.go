@@ -13,7 +13,7 @@ type checkSaleStateOpHandler struct {
 }
 
 // Details returns details about check sale state operation
-func (h *checkSaleStateOpHandler) Details(op RawOperation,
+func (h *checkSaleStateOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	return history2.OperationDetails{
@@ -36,7 +36,7 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	case xdr.CheckSaleStateEffectCanceled, xdr.CheckSaleStateEffectUpdated:
 		return h.manageOfferOpHandler.getDeletedOffersEffect(ledgerChanges), nil
 	case xdr.CheckSaleStateEffectClosed:
-		return h.getApprovedParticipants(res.Effect.MustSaleClosed()), nil
+		return h.getApprovedParticipants(int64(opBody.MustManageSaleOp().SaleId), res.Effect.MustSaleClosed()), nil
 	default:
 		return nil, errors.From(errors.New("unexpected check sale state result effect"), map[string]interface{}{
 			"effect_i": int32(res.Effect.Effect),
@@ -45,26 +45,27 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	}
 }
 
-func (h *checkSaleStateOpHandler) getApprovedParticipants(closedRes xdr.CheckSaleClosedResult,
+func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, closedRes xdr.CheckSaleClosedResult,
 ) ([]history2.ParticipantEffect) {
 	// TODO: we are not handling here cases that some parts of offers might be canceled due to rounding
 	if len(closedRes.Results) == 0 {
 		return nil
 	}
 
-	var result []history2.ParticipantEffect
+	result := make([]history2.ParticipantEffect, 0)
 	var totalBaseIssued uint64
-	ownerID := h.manageOfferOpHandler.pubKeyProvider.GetAccountID(closedRes.SaleOwner)
+	ownerID := h.manageOfferOpHandler.pubKeyProvider.MustAccountID(closedRes.SaleOwner)
 	// it does not matter which base balance is used as we are sure that the operation of distribution will be clean
 	baseBalanceAddress := closedRes.Results[0].SaleBaseBalance.AsString()
-	baseBalanceID := h.manageOfferOpHandler.pubKeyProvider.GetBalanceID(closedRes.Results[0].SaleBaseBalance)
+	baseBalanceID := h.manageOfferOpHandler.pubKeyProvider.MustBalanceID(closedRes.Results[0].SaleBaseBalance)
 	baseAsset :=  string(closedRes.Results[0].SaleDetails.BaseAsset)
 	for _, assetPairResult := range closedRes.Results {
 		assetPairMatches, baseIssued := h.manageOfferOpHandler.getMatchesEffects(assetPairResult.SaleDetails.OffersClaimed, offer{
+			OrderBookID: orderBookID,
 			AccountID:           ownerID,
 			BaseBalanceID:       baseBalanceID,
 			BaseBalanceAddress:  baseBalanceAddress,
-			QuoteBalanceID:      h.manageOfferOpHandler.pubKeyProvider.GetBalanceID(assetPairResult.SaleQuoteBalance),
+			QuoteBalanceID:      h.manageOfferOpHandler.pubKeyProvider.MustBalanceID(assetPairResult.SaleQuoteBalance),
 			QuoteBalanceAddress: assetPairResult.SaleQuoteBalance.AsString(),
 			BaseAsset:          baseAsset,
 			QuoteAsset:          string(assetPairResult.SaleDetails.QuoteAsset),
@@ -82,7 +83,7 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(closedRes xdr.CheckSal
 			AssetCode: &baseAsset,
 			Effect: history2.Effect{
 			Type: history2.EffectTypeIssued,
-			Issued: &history2.FundedEffect{
+			Issued: &history2.BalanceChangeEffect{
 				Amount: amount.StringU(totalBaseIssued),
 			},
 		},

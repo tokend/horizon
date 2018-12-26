@@ -1,0 +1,110 @@
+package storage
+
+import (
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/core2"
+	"gitlab.com/tokend/horizon/db2/history2"
+)
+
+// Account is helper struct to aid in loading accounts and storing accounts
+// it uses lazy change, which stores all selected or inserted accounts locally.
+type Account struct {
+	accounts map[xdr.AccountId]*history2.Account
+
+	accountQ     *history2.AccountsQ
+	coreAccounts *core2.AccountsQ
+	repo         *db2.Repo
+}
+
+// NewAccount - creates new instance of Account
+func NewAccount(repo *db2.Repo, coreRepo *db2.Repo) *Account {
+	return &Account{
+		repo:         repo,
+		accountQ:     history2.NewAccountsQ(repo),
+		accounts:     make(map[xdr.AccountId]*history2.Account),
+		coreAccounts: core2.NewAccountsQ(coreRepo),
+	}
+}
+
+// MustAccount - gets account by rawAddress from local change or storage
+// In case of error panics
+// If account does not exists in horizon db, tries to get it from core and inserts into horizon
+func (a *Account) MustAccount(rawAddress xdr.AccountId) history2.Account {
+	account, err := a.getAccount(rawAddress)
+	if err != nil {
+		panic(errors.Wrap(err, "failed to get account"))
+	}
+	return account
+}
+
+func (a *Account) getAccount(rawAddress xdr.AccountId) (history2.Account, error) {
+	account, ok := a.accounts[rawAddress]
+	if ok {
+		return *account, nil
+	}
+
+	address := rawAddress.Address()
+	account, err := a.accountQ.ByAddress(address)
+	if err != nil {
+		return history2.Account{}, errors.Wrap(err, "failed to load account by address", logan.F{
+			"address": address,
+		})
+	}
+
+	// it seems that we have ingest partial history
+	if account == nil {
+		account = new(history2.Account)
+		*account, err = a.getAccountFromCore(rawAddress, address)
+		if err != nil {
+			return history2.Account{}, errors.Wrap(err, "failed to load account from core")
+		}
+	}
+
+	a.accounts[rawAddress] = account
+	return *account, nil
+}
+
+func (a *Account) getAccountFromCore(rawAddress xdr.AccountId, address string) (history2.Account, error) {
+	coreAccount, err := a.coreAccounts.ByAddress(address)
+	if err != nil {
+		return history2.Account{}, errors.Wrap(err, "failed to load account by address from core", logan.F{
+			"address": address,
+		})
+	}
+
+	if coreAccount == nil {
+		return history2.Account{}, errors.From(errors.New("account is not found in core db"), logan.F{"address": address})
+	}
+
+	account := history2.NewAccount(coreAccount.SequenceID, coreAccount.AccountID)
+	err = a.InsertAccount(rawAddress, account)
+	if err != nil {
+		return history2.Account{}, errors.Wrap(err, "failed to insert account into db after fatched it from core")
+	}
+
+	return account, nil
+}
+
+// InsertAccount - adds account to local cache and inserts it into storage
+func (a *Account) InsertAccount(rawAccountID xdr.AccountId, account history2.Account) error {
+	// it's ok if the account already exists in the map.
+	// Such case could occur during roll back of transaction and retry to process same ledger
+	a.accounts[rawAccountID] = &account
+	_, err := a.repo.ExecRaw("INSERT INTO accounts (id, address) VALUES($1, $2)", account.ID, account.Address)
+	if err != nil {
+		return errors.Wrap(err, "failed to insert new account", logan.F{
+			"address": account.Address,
+			"id":      account.ID,
+		})
+	}
+
+	return nil
+}
+
+// MustAccountID returns int value which corresponds to xdr.AccountId
+func (a *Account) MustAccountID(raw xdr.AccountId) uint64 {
+	return a.MustAccount(raw).ID
+}

@@ -22,14 +22,14 @@ func (h *issuanceHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 
 	effect := history2.Effect{
 		Type: history2.EffectTypeIssued,
-		Issued: &history2.FundedEffect{
+		Issued: &history2.BalanceChangeEffect{
 			Amount: amount.StringU(uint64(details.Amount)),
-			FeePaid: history2.FeePaid{
+			Fee: history2.Fee{
 				Fixed:             amount.StringU(uint64(details.Fee.Fixed)),
 				CalculatedPercent: amount.StringU(uint64(details.Fee.Percent)),
 			},
 		},
 	}
 
-	return populateEffects(h.balanceProvider.GetBalanceByID(details.Receiver), effect, source), nil
+	return populateEffects(h.balanceProvider.MustBalance(details.Receiver), effect, source), nil
 }

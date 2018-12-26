@@ -8,11 +8,11 @@ import (
 )
 
 type manageLimitsOpHandler struct {
-	pubKeyProvider publicKeyProvider
+	pubKeyProvider IDProvider
 }
 
 // Details returns details about manage limits operation
-func (h *manageLimitsOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
+func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageLimitsOp := op.Body.MustManageLimitsOp()
 
@@ -66,7 +66,7 @@ func (h *manageLimitsOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		return participants, nil
 	}
 
-	accountID := h.pubKeyProvider.GetAccountID(*creationDetails.AccountId)
+	accountID := h.pubKeyProvider.MustAccountID(*creationDetails.AccountId)
 
 	if source.AccountID == accountID {
 		return participants, nil

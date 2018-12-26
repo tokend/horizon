@@ -8,7 +8,7 @@ import (
 type stubOpHandler struct {
 }
 
-func (h *stubOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
+func (h *stubOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
 	return history2.OperationDetails{
 		Type: op.Body.Type,
 	}, nil

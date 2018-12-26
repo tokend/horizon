@@ -7,11 +7,11 @@ import (
 )
 
 type setFeeOpHandler struct {
-	pubKeyProvider publicKeyProvider
+	pubKeyProvider IDProvider
 }
 
 // Details returns details about set fee operation
-func (h *setFeeOpHandler) Details(op RawOperation, _ xdr.OperationResultTr,
+func (h *setFeeOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	setFeeOp := op.Body.MustSetFeesOp()
 
@@ -54,7 +54,7 @@ func (h *setFeeOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	setFeeOp := opBody.MustSetFeesOp()
 	if (setFeeOp.Fee != nil) && (setFeeOp.Fee.AccountId != nil) {
 		participants = append(participants, history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.GetAccountID(*setFeeOp.Fee.AccountId),
+			AccountID: h.pubKeyProvider.MustAccountID(*setFeeOp.Fee.AccountId),
 		})
 	}
 

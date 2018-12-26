@@ -11,22 +11,22 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/horizon/db2/history"
+	history "gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/utf8"
 	"gitlab.com/tokend/regources"
 )
 
 type reviewableRequestStorage interface {
 	//Inserts Reviewable request into DB
-	InsertReviewableRequest(request history.ReviewableRequest) error
+	Insert(request history.ReviewableRequest) error
 	//Updates Reviewable request
-	UpdateReviewableRequest(request history.ReviewableRequest) error
+	Update(request history.ReviewableRequest) error
 	//Approves reviewable request
-	ApproveReviewableRequest(id uint64) error
-	//Rejects reviewable request
-	RejectReviewableRequest(id uint64) error
-	//Updates reviewable request state
-	UpdateInvoices(contractID uint64, oldStates uint64, newStates uint64) error
+	Approve(id uint64) error
+	//PermanentReject - rejects permanently reviewable request
+	PermanentReject(id uint64, rejectReason string) error
+	//Cancel - cancels reviewable request
+	Cancel(id uint64) error
 }
 
 type reviewableRequestHandler struct {
@@ -49,7 +49,7 @@ func (c *reviewableRequestHandler) Created(lc ledgerChange) error {
 		})
 	}
 
-	err = c.storage.InsertReviewableRequest(*histReviewableReq)
+	err = c.storage.Insert(*histReviewableReq)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert reviewable request", logan.F{
 			"request":         histReviewableReq,
@@ -70,7 +70,7 @@ func (c *reviewableRequestHandler) Updated(lc ledgerChange) error {
 		})
 	}
 
-	err = c.storage.UpdateReviewableRequest(*histReviewableRequest)
+	err = c.storage.Update(*histReviewableRequest)
 	if err != nil {
 		return errors.Wrap(err, "failed to update reviewable request", logan.F{
 			"request":         histReviewableRequest,
@@ -82,24 +82,57 @@ func (c *reviewableRequestHandler) Updated(lc ledgerChange) error {
 }
 
 func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
-	key := lc.LedgerChange.MustRemoved().MustReviewableRequest()
+	// The request is deleted in 3 cases:
+	// 1. Due to approve via reviewRequestOp
+	// 2. Due to permanentReject vai reviewRequestOp
+	// 3. Due to cancel via specific operation
+	op := lc.Operation.Body
+	switch op.Type {
+	case xdr.OperationTypeReviewRequest:
+		return c.removedOnReview(lc)
+	case xdr.OperationTypeManageAsset:
+		return c.cancel(lc)
+	case xdr.OperationTypeManageSale:
+		return c.cancel(lc)
+	}
 
+	return nil
+}
+
+func (c *reviewableRequestHandler) removedOnReview(lc ledgerChange) error {
+	key := lc.LedgerChange.MustRemoved().MustReviewableRequest()
 	op := lc.Operation.Body.MustReviewRequestOp()
 	switch op.Action {
 	case xdr.ReviewRequestOpActionApprove:
-		err := c.storage.ApproveReviewableRequest(uint64(key.RequestId))
+		err := c.storage.Approve(uint64(key.RequestId))
 		if err != nil {
 			return errors.Wrap(err, "Failed to delete reviewable request", logan.F{
 				"ledger_entry_key": key,
 			})
 		}
 	case xdr.ReviewRequestOpActionPermanentReject:
-		err := c.storage.RejectReviewableRequest(uint64(key.RequestId))
+		err := c.storage.PermanentReject(uint64(key.RequestId), string(op.Reason))
 		if err != nil {
 			return errors.Wrap(err, "Failed to delete reviewable request", logan.F{
 				"ledger_entry_key": key,
 			})
 		}
+	default:
+		return errors.From(errors.New("unknown action during handle of removed reviewable request on review operation"), logan.F{
+			"action": op.Action.String(),
+		})
+	}
+
+	return nil
+}
+
+func (c *reviewableRequestHandler) cancel(lc ledgerChange) error {
+	key := lc.LedgerChange.MustRemoved().MustReviewableRequest()
+	err := c.storage.Cancel(uint64(key.RequestId))
+	if err != nil {
+		return errors.Wrap(err, "failed to cancel reivewalbe request on remove by operation", logan.F{
+			"op_type": lc.Operation.Body.Type,
+		})
 	}
 
 	return nil
@@ -146,7 +179,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 	result.AllTasks = uint32(tasksExt.AllTasks)
 	result.PendingTasks = uint32(tasksExt.PendingTasks)
 
-	var externalDetails []map[string]interface{}
+	externalDetails := make([]map[string]interface{}, 0, len(tasksExt.ExternalDetails))
 	for _, item := range tasksExt.ExternalDetails {
 		var comment map[string]interface{}
 		_ = json.Unmarshal([]byte(item), &comment)
@@ -262,7 +295,7 @@ func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertReque
 }
 
 func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
-	var quoteAssets []regources.SaleQuoteAsset
+	quoteAssets :=  make([]regources.SaleQuoteAsset, 0, len(request.QuoteAssets))
 	for i := range request.QuoteAssets {
 		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
 			Price:      regources.Amount(int64(request.QuoteAssets[i].Price)),
@@ -334,15 +367,6 @@ func (c *reviewableRequestHandler) getLimitsUpdateRequest(request *xdr.LimitsUpd
 	}
 }
 
-func (c *reviewableRequestHandler) getPromotionUpdateRequest(request *xdr.PromotionUpdateRequest) *history.PromotionUpdateRequest {
-	newPromorionData := c.getSaleRequest(&request.NewPromotionData)
-
-	return &history.PromotionUpdateRequest{
-		SaleID:           uint64(request.PromotionId),
-		NewPromotionData: *newPromorionData,
-	}
-}
-
 func (c *reviewableRequestHandler) getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
 	var kycData map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
@@ -352,7 +376,7 @@ func (c *reviewableRequestHandler) getUpdateKYCRequest(request *xdr.UpdateKycReq
 		kycData["error"] = err.Error()
 	}
 
-	var externalDetails []map[string]interface{}
+	externalDetails  :=make([]map[string]interface{},0,len(request.ExternalDetails))
 	for _, item := range request.ExternalDetails {
 		var comment map[string]interface{}
 		err := json.Unmarshal([]byte(item), &comment)
@@ -389,47 +413,6 @@ func (c *reviewableRequestHandler) getUpdateSaleDetailsRequest(request *xdr.Upda
 	}
 }
 
-func (c *reviewableRequestHandler) getInvoiceRequest(request *xdr.InvoiceRequest) *history.InvoiceRequest {
-	var details map[string]interface{}
-	// error is ignored on purpose, we should not block ingest in case of such error
-	err := json.Unmarshal([]byte(request.Details), &details)
-	if err != nil {
-		details["reason"] = fmt.Sprintf("Expected json, got %v", request.Details)
-		details["error"] = err.Error()
-	}
-	var contractID *int64
-	if request.ContractId != nil {
-		tmpContractID := int64(*request.ContractId)
-		contractID = &tmpContractID
-	}
-
-	return &history.InvoiceRequest{
-		Asset:           string(request.Asset),
-		Amount:          uint64(request.Amount),
-		ContractID:      contractID,
-		Details:         details,
-		PayerBalance:    request.SenderBalance.AsString(),
-		ReceiverBalance: request.ReceiverBalance.AsString(),
-	}
-}
-
-func (c *reviewableRequestHandler) getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
-	var details map[string]interface{}
-	// error is ignored on purpose, we should not block ingest in case of such error
-	err := json.Unmarshal([]byte(request.Details), &details)
-	if err != nil {
-		details["reason"] = fmt.Sprintf("Expected json, got %v", request.Details)
-		details["error"] = err.Error()
-	}
-
-	return &history.ContractRequest{
-		Escrow:    request.Escrow.Address(),
-		Details:   details,
-		StartTime: unixToTime(int64(request.StartTime)),
-		EndTime:   unixToTime(int64(request.EndTime)),
-	}
-}
-
 func (c *reviewableRequestHandler) getUpdateSaleEndTimeRequest(request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
 	return &history.UpdateSaleEndTimeRequest{
 		SaleID:     uint64(request.SaleId),
@@ -446,7 +429,7 @@ func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.
 		details["error"] = err.Error()
 	}
 
-	var quoteAssets []regources.AssetPrice
+	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for _, quoteAsset := range request.QuoteAssets {
 		quoteAssets = append(quoteAssets, regources.AssetPrice{
 			Asset: string(quoteAsset.QuoteAsset),
@@ -500,14 +483,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(body *xdr.Reviewa
 		details.UpdateKYC = c.getUpdateKYCRequest(body.UpdateKycRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = c.getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
-	case xdr.ReviewableRequestTypeInvoice:
-		details.Invoice = c.getInvoiceRequest(body.InvoiceRequest)
-	case xdr.ReviewableRequestTypeContract:
-		details.Contract = c.getContractRequest(body.ContractRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
 		details.UpdateSaleEndTimeRequest = c.getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
-	case xdr.ReviewableRequestTypeUpdatePromotion:
-		details.PromotionUpdate = c.getPromotionUpdateRequest(body.PromotionUpdateRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
 		details.AtomicSwapBidCreation = c.getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
 	case xdr.ReviewableRequestTypeAtomicSwap:

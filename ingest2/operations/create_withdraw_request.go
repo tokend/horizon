@@ -7,11 +7,11 @@ import (
 )
 
 type createWithdrawRequestOpHandler struct {
-	pubKeyProvider publicKeyProvider
+	pubKeyProvider IDProvider
 }
 
 // Details returns details about create withdraw request operation
-func (h *createWithdrawRequestOpHandler) Details(op RawOperation,
+func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	withdrawRequest := op.Body.MustCreateWithdrawalRequestOp().Request
@@ -42,13 +42,13 @@ func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	withdrawRequest := opBody.MustCreateWithdrawalRequestOp().Request
-	balanceIDInt := h.pubKeyProvider.GetBalanceID(withdrawRequest.Balance)
+	balanceIDInt := h.pubKeyProvider.MustBalanceID(withdrawRequest.Balance)
 
 	source.BalanceID = &balanceIDInt
 	source.Effect.Type = history2.EffectTypeLocked
-	source.Effect.Locked = &history2.LockedEffect{
+	source.Effect.Locked = &history2.BalanceChangeEffect{
 		Amount: amount.StringU(uint64(withdrawRequest.Amount)),
-		FeeLocked: history2.FeePaid{
+		Fee: history2.Fee{
 			Fixed:             amount.StringU(uint64(withdrawRequest.Fee.Fixed)),
 			CalculatedPercent: amount.StringU(uint64(withdrawRequest.Fee.Percent)),
 		},

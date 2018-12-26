@@ -9,11 +9,11 @@ import (
 
 type payoutHandler struct {
 	balanceProvider balanceProvider
-	pubKeyProvider  publicKeyProvider
+	pubKeyProvider  IDProvider
 }
 
 // Details returns details about payout operation
-func (h *payoutHandler) Details(op RawOperation, res xdr.OperationResultTr,
+func (h *payoutHandler) Details(op rawOperation, res xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	payoutOp := op.Body.MustPayoutOp()
 	payoutRes := res.MustPayoutResult().MustSuccess()
@@ -43,7 +43,7 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	payoutOp := opBody.MustPayoutOp()
 	payoutRes := res.MustPayoutResult().MustSuccess()
 
-	balance := h.balanceProvider.GetBalanceByID(payoutOp.SourceBalanceId)
+	balance := h.balanceProvider.MustBalance(payoutOp.SourceBalanceId)
 
 	if balance.AccountID != source.AccountID {
 		return nil, errors.New("unexpected state, expected source owns source balance")
@@ -53,9 +53,9 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	source.AssetCode = &balance.AssetCode
 	source.Effect = history2.Effect{
 		Type: history2.EffectTypeCharged,
-		Charged: &history2.ChargedEffect{
+		Charged: &history2.BalanceChangeEffect{
 			Amount: amount.StringU(uint64(payoutRes.ActualPayoutAmount)),
-			FeePaid: history2.FeePaid{
+			Fee: history2.Fee{
 				Fixed:             amount.StringU(uint64(payoutRes.ActualFee.Fixed)),
 				CalculatedPercent: amount.StringU(uint64(payoutRes.ActualFee.Percent)),
 			},
@@ -66,15 +66,15 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	responses := payoutRes.PayoutResponses
 	for _, response := range responses {
-		balanceID := h.pubKeyProvider.GetBalanceID(response.ReceiverBalanceId)
+		balanceID := h.pubKeyProvider.MustBalanceID(response.ReceiverBalanceId)
 
 		participants = append(participants, history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.GetAccountID(response.ReceiverId),
+			AccountID: h.pubKeyProvider.MustAccountID(response.ReceiverId),
 			BalanceID: &balanceID,
 			AssetCode: &balance.AssetCode, // source balance has the same asset as receivers
 			Effect: history2.Effect{
 				Type: history2.EffectTypeFunded,
-				Funded: &history2.FundedEffect{
+				Funded: &history2.BalanceChangeEffect{
 					Amount: amount.StringU(uint64(response.ReceivedAmount)),
 				},
 			},

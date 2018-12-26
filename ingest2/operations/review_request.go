@@ -9,7 +9,7 @@ import (
 )
 
 type reviewRequestOpHandler struct {
-	pubKeyProvider     publicKeyProvider
+	pubKeyProvider     IDProvider
 	balanceProvider    balanceProvider
 	allRequestHandlers map[xdr.ReviewableRequestType]reviewRequestHandler
 }
@@ -22,7 +22,7 @@ type reviewRequestHandler interface {
 
 // newReviewRequestOpHandler creates new handler for review request operations
 // with specific handlers for different types
-func newReviewRequestOpHandler(pubKeyProvider publicKeyProvider, balanceProvider balanceProvider,
+func newReviewRequestOpHandler(pubKeyProvider IDProvider, balanceProvider balanceProvider,
 ) *reviewRequestOpHandler {
 	// All reviewable requests must be explisitly handled here. If there is nothing to handle use reviewableRequestHandlerStub
 	return &reviewRequestOpHandler{
@@ -59,7 +59,7 @@ func newReviewRequestOpHandler(pubKeyProvider publicKeyProvider, balanceProvider
 }
 
 // Details returns details about review request operation
-func (h *reviewRequestOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
+func (h *reviewRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	reviewRequestOp := op.Body.MustReviewRequestOp()
 	reviewRequestOpRes := opRes.MustReviewRequestResult().MustSuccess()

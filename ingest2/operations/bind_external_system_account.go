@@ -9,7 +9,7 @@ type bindExternalSystemAccountOpHandler struct {
 }
 
 // Details returns details about bind external system account operation
-func (h *bindExternalSystemAccountOpHandler) Details(op RawOperation,
+func (h *bindExternalSystemAccountOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	bindExternalSystemAccountOp := op.Body.MustBindExternalSystemAccountIdOp()

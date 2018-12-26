@@ -11,7 +11,7 @@ type manageAssetOpHandler struct {
 }
 
 // Details returns details about manage asset operation
-func (h *manageAssetOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
+func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageAssetOp := op.Body.MustManageAssetOp()
 

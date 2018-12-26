@@ -24,6 +24,7 @@ import (
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
 	"gopkg.in/tylerb/graceful.v1"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // You can override this variable using: gb build -ldflags "-X main.version aabbccdd"
@@ -167,41 +168,44 @@ func (a *App) IsHistoryStale() bool {
 // UpdateLedgerState triggers a refresh of several metrics gauges, such as open
 // db connections and ledger state
 func (a *App) UpdateLedgerState() {
-	var err error
+	err := a.updateLedgerState()
+	if err != nil {
+		log.WithStack(err).
+			WithField("err", err.Error()).
+			Error("failed to load ledger state")
+	}
+
+}
+
+func (a *App) updateLedgerState() error {
 	var next ledger.State
 
-	err = a.CoreQ().LatestLedger(&next.CoreLatest)
+	err := a.CoreQ().LatestLedger(&next.CoreLatest)
 	if err != nil {
-		goto Failed
+		return err
 	}
 
 	err = a.CoreQ().ElderLedger(&next.CoreElder)
 	if err != nil {
-		goto Failed
+		return err
 	}
 
 	err = a.HistoryQ().LatestLedger(&next.HistoryLatest)
 	if err != nil {
-		goto Failed
+		return err
 	}
 
 	err = a.HistoryQ().ElderLedger(&next.HistoryElder)
 	if err != nil {
-		goto Failed
+		return err
 	}
 
 	err = ledger.SetState(next)
 	if err != nil {
-		log.WithField("err", err.Error()).Error("core is hanging")
+		return errors.Wrap(err, "core is hanging")
 	}
 
-	return
-
-Failed:
-	log.WithStack(err).
-		WithField("err", err.Error()).
-		Error("failed to load ledger state")
-
+	return nil
 }
 
 // UpdateStellarCoreInfo updates the value of coreVersion and networkPassphrase

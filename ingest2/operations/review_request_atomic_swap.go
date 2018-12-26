@@ -7,7 +7,7 @@ import (
 )
 
 type atomicSwapHandler struct {
-	pubKeyProvider publicKeyProvider
+	pubKeyProvider IDProvider
 }
 
 func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
@@ -16,30 +16,30 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 ) ([]history2.ParticipantEffect, error) {
 	atomicSwapExtendedResult := res.TypeExt.MustASwapExtended()
 
-	ownerBalanceID := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.BidOwnerBaseBalanceId)
+	ownerBalanceID := h.pubKeyProvider.MustBalanceID(atomicSwapExtendedResult.BidOwnerBaseBalanceId)
 
 	baseAsset := string(atomicSwapExtendedResult.BaseAsset)
 	participants := []history2.ParticipantEffect{{
-		AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.BidOwnerId),
+		AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.BidOwnerId),
 		BalanceID: &ownerBalanceID,
 		AssetCode: &baseAsset,
 		Effect: history2.Effect{
 			Type: history2.EffectTypeChargedFromLocked,
-			ChargedFromLocked: &history2.ChargedFromLockedEffect{
+			ChargedFromLocked: &history2.BalanceChangeEffect{
 				Amount: amount.StringU(uint64(atomicSwapExtendedResult.BaseAmount)),
 			},
 		},
 	}}
 
-	purchaserBaseBalanceID := h.pubKeyProvider.GetBalanceID(atomicSwapExtendedResult.PurchaserBaseBalanceId)
+	purchaserBaseBalanceID := h.pubKeyProvider.MustBalanceID(atomicSwapExtendedResult.PurchaserBaseBalanceId)
 
 	participants = append(participants, history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.PurchaserId),
+		AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.PurchaserId),
 		BalanceID: &purchaserBaseBalanceID,
 		AssetCode: &baseAsset,
 		Effect: history2.Effect{
 			Type: history2.EffectTypeFunded,
-			Funded: &history2.FundedEffect{
+			Funded: &history2.BalanceChangeEffect{
 				Amount: amount.StringU(uint64(atomicSwapExtendedResult.BaseAmount)),
 			},
 		},
@@ -62,12 +62,12 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	// If bid was removed, but we had to unlock some amount
 	if bidIsRemoved {
 		participants = append(participants, history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.GetAccountID(atomicSwapExtendedResult.BidOwnerId),
+			AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.BidOwnerId),
 			BalanceID: &ownerBalanceID,
 			AssetCode: &baseAsset,
 			Effect: history2.Effect{
 				Type: history2.EffectTypeUnlocked,
-				Unlocked: &history2.UnlockedEffect{
+				Unlocked: &history2.BalanceChangeEffect{
 					Amount: amount.StringU(uint64(bid.Amount)),
 				},
 			},

@@ -11,7 +11,7 @@ type createAMLAlertReqeustOpHandler struct {
 }
 
 // Details returns details about create AML alert request operation
-func (h *createAMLAlertReqeustOpHandler) Details(op RawOperation,
+func (h *createAMLAlertReqeustOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	amlAlertRequest := op.Body.MustCreateAmlAlertRequestOp().AmlAlertRequest
@@ -35,11 +35,11 @@ func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.Operatio
 
 	effect := history2.Effect{
 		Type: history2.EffectTypeLocked,
-		Locked: &history2.LockedEffect{
+		Locked: &history2.BalanceChangeEffect{
 			Amount: amount.String(int64(amlAlertRequest.Amount)),
 		},
 	}
 
-	balance := h.balanceProvider.GetBalanceByID(amlAlertRequest.BalanceId)
+	balance := h.balanceProvider.MustBalance(amlAlertRequest.BalanceId)
 	return populateEffects(balance, effect, source), nil
 }

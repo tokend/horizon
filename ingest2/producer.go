@@ -3,12 +3,13 @@ package ingest2
 import (
 	"context"
 	"github.com/rcrowley/go-metrics"
-	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
-	"gitlab.com/tokend/horizon/db2/core"
+	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/ledger"
 	"time"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 const (
@@ -25,25 +26,28 @@ type txProvider interface {
 	LedgerHeaderBySequence(seq int32) (*core.LedgerHeader, error)
 }
 
-type producer struct {
+// Producer - worker which is responsible for loading sequence of ledgers and transactions and sending them
+// to provided channel.
+type Producer struct {
 	loadLedgerTimer *metrics.Timer
 	txProvider      txProvider
-	log             *logan.Entry
+	log             *log.Entry
 
 	data          chan ledgerBundle
 	currentLedger int32
 }
 
-func newProducer(txProvider txProvider, log *logan.Entry) *producer {
-	return &producer{
+// NewProducer - creates new instance of ingest data producer
+func NewProducer(txProvider txProvider, log *log.Entry) *Producer {
+	return &Producer{
 		loadLedgerTimer: new(metrics.Timer),
 		log:             log.WithField("service", "ingest_producer"),
 		txProvider:      txProvider,
 	}
 }
 
-// Start - starts the producer in new goroutine. Panics on initialization step if already started.
-func (l *producer) Start(ctx context.Context, bufferSize int, ledgerState ledger.State) chan ledgerBundle {
+// Start - starts the Producer in new goroutine. Panics on initialization step if already started.
+func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger.State) chan ledgerBundle {
 	if l.data != nil {
 		l.log.Panic("Already started")
 	}
@@ -56,7 +60,7 @@ func (l *producer) Start(ctx context.Context, bufferSize int, ledgerState ledger
 	return l.data
 }
 
-func (l *producer) runOnce(ctx context.Context) error {
+func (l *Producer) runOnce(ctx context.Context) error {
 	isSent, err := l.trySendBlock(ctx, l.currentLedger)
 	if err != nil {
 		return errors.Wrap(err, "failed to send block", logan.Field("seq", l.currentLedger))
@@ -72,7 +76,7 @@ func (l *producer) runOnce(ctx context.Context) error {
 	return nil
 }
 
-func (l *producer) trySendBlock(ctx context.Context, seq int32) (bool, error) {
+func (l *Producer) trySendBlock(ctx context.Context, seq int32) (bool, error) {
 	ledgerHeader, err := l.txProvider.LedgerHeaderBySequence(seq)
 	if err != nil {
 		return false, errors.Wrap(err, "failed to load ledger header", logan.Field("ledger_seq", seq))
@@ -91,12 +95,12 @@ func (l *producer) trySendBlock(ctx context.Context, seq int32) (bool, error) {
 	select {
 	case <-ctx.Done():
 		return false, nil
-	case l.data <- newLedgerBundle(seq, *ledgerHeader, txs):
+	case l.data <- newLedgerBundle(*ledgerHeader, txs):
 		return true, nil
 	}
 }
 
-func (l *producer) loadSuccessTxs(seq int32) ([]core.Transaction, error) {
+func (l *Producer) loadSuccessTxs(seq int32) ([]core.Transaction, error) {
 	txs, err := l.txProvider.TransactionsByLedger(seq)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load transactions for ledger", logan.Field("ledger_seq", seq))
@@ -114,7 +118,7 @@ func (l *producer) loadSuccessTxs(seq int32) ([]core.Transaction, error) {
 	return successTxs, nil
 }
 
-func (l *producer) getLedgerSeqToStartFrom(ledgerState ledger.State) int32 {
+func (l *Producer) getLedgerSeqToStartFrom(ledgerState ledger.State) int32 {
 	if ledgerState.HistoryLatest == 0 {
 		return ledgerState.CoreElder
 	}

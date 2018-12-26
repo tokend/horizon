@@ -12,7 +12,7 @@ type createIssuanceRequestOpHandler struct {
 }
 
 // Details returns details about create issuance request operation
-func (h *createIssuanceRequestOpHandler) Details(op RawOperation,
+func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createIssuanceRequestOp := op.Body.MustCreateIssuanceRequestOp()
@@ -59,15 +59,15 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 
 	effect := history2.Effect{
 		Type: history2.EffectTypeIssued,
-		Issued: &history2.FundedEffect{
+		Issued: &history2.BalanceChangeEffect{
 			Amount: amount.String(int64(issuanceRequest.Amount - issuanceRequest.Fee.Fixed - issuanceRequest.Fee.Percent)),
-			FeePaid: history2.FeePaid{
+			Fee: history2.Fee{
 				Fixed:             amount.StringU(uint64(issuanceRequest.Fee.Fixed)),
 				CalculatedPercent: amount.StringU(uint64(issuanceRequest.Fee.Percent)),
 			},
 		},
 	}
 
-	balance := h.balanceProvider.GetBalanceByID(issuanceRequest.Receiver)
+	balance := h.balanceProvider.MustBalance(issuanceRequest.Receiver)
 	return populateEffects(balance, effect, source), nil
 }

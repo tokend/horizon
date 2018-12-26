@@ -6,11 +6,11 @@ import (
 )
 
 type manageAccountOpHandler struct {
-	pubKeyProvider publicKeyProvider
+	pubKeyProvider IDProvider
 }
 
 // Details returns details about manage account operation
-func (h *manageAccountOpHandler) Details(op RawOperation,
+func (h *manageAccountOpHandler) Details(op rawOperation,
 	_ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageAccountOp := op.Body.MustManageAccountOp()
@@ -31,7 +31,7 @@ func (h *manageAccountOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	participants := []history2.ParticipantEffect{source}
 
 	participants = append(participants, history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.GetAccountID(opBody.MustManageAccountOp().Account),
+		AccountID: h.pubKeyProvider.MustAccountID(opBody.MustManageAccountOp().Account),
 	})
 
 	return participants, nil

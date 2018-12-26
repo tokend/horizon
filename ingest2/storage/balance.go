@@ -1,0 +1,124 @@
+package storage
+
+import (
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/core2"
+	"gitlab.com/tokend/horizon/db2/history2"
+)
+
+type accountStorage interface {
+	// MustAccount - gets account by rawAddress
+	MustAccount(rawAddress xdr.AccountId) history2.Account
+}
+
+// Balance is helper struct to aid in loading balances and storing balances
+// it uses lazy change, which stores all selected or inserted balances locally.
+type Balance struct {
+	balances map[xdr.BalanceId]*history2.Balance
+
+	balanceQ       *history2.BalancesQ
+	coreBalances   *core2.BalancesQ
+	repo           *db2.Repo
+	accountStorage accountStorage
+}
+
+// NewBalance - creates new instance of Balance
+func NewBalance(repo *db2.Repo, coreRepo *db2.Repo, accountStorage accountStorage) *Balance {
+	return &Balance{
+		repo:           repo,
+		balanceQ:       history2.NewBalancesQ(repo),
+		balances:       make(map[xdr.BalanceId]*history2.Balance),
+		coreBalances:   core2.NewBalancesQ(coreRepo),
+		accountStorage: accountStorage,
+	}
+}
+
+// MustBalance - gets balance by rawAddress from local change or storage
+// In case of error panics
+// If balance does not exists in horizon db, tries to get it from core and inserts into horizon
+func (s *Balance) MustBalance(rawAddress xdr.BalanceId) history2.Balance {
+	balance, err := s.getBalance(rawAddress)
+	if err != nil {
+		panic(errors.Wrap(err, "failed to get balance"))
+	}
+	return balance
+}
+
+func (s *Balance) getBalance(rawAddress xdr.BalanceId) (history2.Balance, error) {
+	balance, ok := s.balances[rawAddress]
+	if ok {
+		return *balance, nil
+	}
+
+	address := rawAddress.AsString()
+	balance, err := s.balanceQ.ByAddress(address)
+	if err != nil {
+		return history2.Balance{}, errors.Wrap(err, "failed to load balance by address", logan.F{
+			"address": address,
+		})
+	}
+
+	// it seems that we have ingest partial history
+	if balance == nil {
+		balance = new(history2.Balance)
+		*balance, err = s.getBalanceFromCore(rawAddress, address)
+		if err != nil {
+			return history2.Balance{}, errors.Wrap(err, "failed to load balance from core db", logan.F{"address": address})
+		}
+	}
+
+	s.balances[rawAddress] = balance
+	return *balance, nil
+}
+
+func (s *Balance) getBalanceFromCore(rawAddress xdr.BalanceId, address string) (history2.Balance, error) {
+	coreBalance, err := s.coreBalances.ByAddress(address)
+	if err != nil {
+		return history2.Balance{}, errors.Wrap(err, "failed to load balance by address from core", logan.F{
+			"address": address,
+		})
+	}
+
+	if coreBalance == nil {
+		return history2.Balance{}, errors.From(errors.New("balance not found in core db"), logan.F{"balance_address": address})
+	}
+
+	var rawAccountAddress xdr.AccountId
+	err = rawAccountAddress.SetAddress(coreBalance.AccountAddress)
+	if err != nil {
+		return history2.Balance{}, errors.Wrap(err, "failed to set address for account_id", logan.F{"str_address": coreBalance.AccountAddress})
+	}
+
+	account := s.accountStorage.MustAccount(rawAccountAddress)
+	balance := history2.NewBalance(coreBalance.BalanceSeqID, account.ID, coreBalance.BalanceAddress, coreBalance.Asset)
+	err = s.InsertBalance(rawAddress, balance)
+	if err != nil {
+		return history2.Balance{}, errors.Wrap(err, "failed to insert balance into db after fatched it from core")
+	}
+
+	return balance, nil
+}
+
+// InsertBalance - adds balance to local cache and inserts it into storage
+func (s *Balance) InsertBalance(rawBalanceID xdr.BalanceId, balance history2.Balance) error {
+	// it's ok if the balance already exists in the map.
+	// Such case could occur during roll back of transaction and retry to process same ledger
+	s.balances[rawBalanceID] = &balance
+	_, err := s.repo.ExecRaw("INSERT INTO balances (id, account_id, address, asset_code) VALUES($1, $2, $3, $4)",
+		balance.ID, balance.AccountID, balance.Address, balance.AssetCode)
+	if err != nil {
+		return errors.Wrap(err, "failed to insert new balance", logan.F{
+			"address": balance.Address,
+			"id":      balance.ID,
+		})
+	}
+
+	return nil
+}
+
+func (s *Balance) MustBalanceID(rawBalanceID xdr.BalanceId) uint64 {
+	return s.MustBalance(rawBalanceID).ID
+}

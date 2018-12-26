@@ -10,7 +10,7 @@ import (
 type deprecatedOpHandler struct {
 }
 
-func (h *deprecatedOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
+func (h *deprecatedOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
 	return history2.OperationDetails{}, errors.From(errors.New("Tried to ingest deprecated operation"), logan.F{
 		"op_type": op.Body.Type,
 	})

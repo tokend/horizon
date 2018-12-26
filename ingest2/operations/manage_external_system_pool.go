@@ -10,7 +10,7 @@ type manageExternalSystemPoolOpHandler struct {
 }
 
 // Details returns details about manage external system pool operation
-func (h *manageExternalSystemPoolOpHandler) Details(op RawOperation,
+func (h *manageExternalSystemPoolOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageExternalSystemPoolOp := op.Body.MustManageExternalSystemAccountIdPoolEntryOp()

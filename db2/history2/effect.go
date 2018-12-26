@@ -1,85 +1,66 @@
 package history2
 
-// EffectType describe the effect of some operation to the account or particular balance
-type EffectType int64
+// effectType describe the effect of some operation to the account or particular balance
+type effectType int64
 
 const (
-	EffectTypeNone EffectType = iota
-	EffectTypeFunded
+	// EffectTypeFunded - balance received funds from other balance
+	EffectTypeFunded effectType = iota
+	// EffectTypeIssued - funds have been issued to the balance
 	EffectTypeIssued
+	// EffectTypeCharged - balance has been charged
 	EffectTypeCharged
+	// EffectTypeWithdrawn - balance has been charged and corresponding amount of tokens has been destroyed
 	EffectTypeWithdrawn
+	// EffectTypeLocked - funds has been locked on the balance
 	EffectTypeLocked
+	// EffectTypeUnlocked - funds has been unlocked on the balance
 	EffectTypeUnlocked
+	// EffectTypeChargedFromLocked - funds has been charged from locked amount on balance
 	EffectTypeChargedFromLocked
-	EffectTypeFundedToLocked
-	EffectTypeMatched // funded, charged or charge from locked in offer cases
+	// EffectTypeMatched - balance has been charged or received funds due to match of the offers
+	EffectTypeMatched
 )
 
-// Effect stores the details of the effect in union switch form. Only one value should be selected
+// Effect stores the details of the operation effect on balance in union switch form. Only one value should be selected
 // Effect should never store more than one change to the account or balance
 type Effect struct {
-	Type              EffectType               `json:"type"`
-	Funded            *FundedEffect            `json:"funded,omitempty"`
-	Issued            *FundedEffect            `json:"issued,omitempty"`
-	Charged           *ChargedEffect           `json:"charged,omitempty"`
-	Withdrawn         *ChargedFromLockedEffect `json:"withdrawn,omitempty"`
-	Locked            *LockedEffect            `json:"locked,omitempty"`
-	Unlocked          *UnlockedEffect          `json:"unlocked,omitempty"`
-	ChargedFromLocked *ChargedFromLockedEffect `json:"charged_from_locked,omitempty"`
-	FundedToLocked    *FundedToLockedEffect    `json:"funded_to_locked,omitempty"`
-	Offer             *OfferEffect             `json:"offer,omitempty"`
-	DeletedOffer      *DeletedOfferEffect      `json:"deleted_offer,omitempty"`
+	Type              effectType           `json:"type"`
+	Funded            *BalanceChangeEffect `json:"funded,omitempty"`
+	Issued            *BalanceChangeEffect `json:"issued,omitempty"`
+	Charged           *BalanceChangeEffect `json:"charged,omitempty"`
+	Withdrawn         *BalanceChangeEffect `json:"withdrawn,omitempty"`
+	Locked            *BalanceChangeEffect `json:"locked,omitempty"`
+	Unlocked          *BalanceChangeEffect `json:"unlocked,omitempty"`
+	ChargedFromLocked *BalanceChangeEffect `json:"charged_from_locked,omitempty"`
+	Matched           *MatchEffect         `json:"matched"`
 }
 
-type OfferEffect struct {
-	// maybe add offer id
-	BaseBalanceAddress  string  `json:"base_balance_address"`
-	QuoteBalanceAddress string  `json:"quote_balance_address"`
-	BaseAmount          string  `json:"base_amount"`
-	QuoteAmount         string  `json:"quote_amount"`
-	BaseAsset           string  `json:"base_asset"`
-	QuoteAsset          string  `json:"quote_asset"`
-	Price               string  `json:"price"`
-	IsBuy               bool    `json:"is_buy"`
-	FeePaid             FeePaid `json:"fee_paid"`
+// MatchEffect - describes changes to base and quote balance occurred on match
+type MatchEffect struct {
+	OfferID     int64                         `json:"offer_id"`
+	OrderBookID int64                         `json:"order_book_id"`
+	Price       string                        `json:"price"`
+	Charged     ParticularBalanceChangeEffect `json:"charged"`
+	Funded      ParticularBalanceChangeEffect `json:"funded"`
 }
 
-type DeletedOfferEffect struct {
-	BaseAmount string `json:"base_amount"`
+// ParticularBalanceChangeEffect - describes movement of fund for particular balance
+type ParticularBalanceChangeEffect struct {
+	BalanceChangeEffect
+	BalanceAddress string `json:"balance_address"`
+	AssetCode      string `json:"asset_code"`
 }
 
-type FundedEffect struct {
-	Amount  string  `json:"amount"`
-	FeePaid FeePaid `json:"fee_paid"`
+// BalanceChangeEffect - describes movement of funds
+type BalanceChangeEffect struct {
+	Amount string `json:"amount"`
+	Fee    Fee    `json:"fee"`
 }
 
-type FeePaid struct {
+// Fee - describes fee happened on balance. Direction of fee depends on the operation (depending on effect might be charged, locked, unlocked,
+// for all incoming effects but unlocked it's always charged)
+type Fee struct {
 	Fixed             string `json:"fixed"`
 	CalculatedPercent string `json:"calculated_percent"`
-}
-
-type LockedEffect struct {
-	Amount    string  `json:"amount"`
-	FeeLocked FeePaid `json:"fee_locked"`
-}
-
-type ChargedEffect struct {
-	Amount  string  `json:"amount"`
-	FeePaid FeePaid `json:"fee_paid"`
-}
-
-type UnlockedEffect struct {
-	Amount      string  `json:"amount"`
-	FeeUnlocked FeePaid `json:"fee_unlocked"`
-}
-
-type ChargedFromLockedEffect struct {
-	Amount  string  `json:"amount"`
-	FeePaid FeePaid `json:"fee_paid"`
-}
-
-type FundedToLockedEffect struct {
-	Amount  string  `json:"amount"`
-	FeePaid FeePaid `json:"fee_paid"`
 }

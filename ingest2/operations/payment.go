@@ -8,11 +8,11 @@ import (
 )
 
 type paymentOpHandler struct {
-	pubKeyProvider          publicKeyProvider
+	pubKeyProvider IDProvider
 }
 
 // Details returns details about payment operation
-func (h *paymentOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
+func (h *paymentOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	paymentOp := op.Body.MustPaymentOpV2()
 	paymentRes := opRes.MustPaymentV2Result().MustPaymentV2Response()
@@ -60,31 +60,31 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		destPercentFee = 0
 	}
 
-	sourceBalanceID := h.pubKeyProvider.GetBalanceID(op.SourceBalanceId)
+	sourceBalanceID := h.pubKeyProvider.MustBalanceID(op.SourceBalanceId)
 	source.BalanceID = &sourceBalanceID
 	source.AssetCode = new(string)
 	*source.AssetCode = string(res.Asset)
 	source.Effect = history2.Effect{
 		Type: history2.EffectTypeCharged,
-		Charged: &history2.ChargedEffect{
+		Charged: &history2.BalanceChangeEffect{
 			Amount: amount.StringU(uint64(op.Amount)),
-			FeePaid: history2.FeePaid{
+			Fee: history2.Fee{
 				Fixed:             amount.StringU(uint64(sourceFixedFee)),
 				CalculatedPercent: amount.StringU(uint64(sourcePercentFee)),
 			},
 		},
 	}
 
-	destBalanceID := h.pubKeyProvider.GetBalanceID(res.DestinationBalanceId)
+	destBalanceID := h.pubKeyProvider.MustBalanceID(res.DestinationBalanceId)
 	destination := history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.GetAccountID(res.Destination),
+		AccountID: h.pubKeyProvider.MustAccountID(res.Destination),
 		BalanceID: &destBalanceID,
 		AssetCode: source.AssetCode,
 		Effect: history2.Effect{
 			Type: history2.EffectTypeFunded,
-			Funded: &history2.FundedEffect{
+			Funded: &history2.BalanceChangeEffect{
 				Amount: amount.StringU(uint64(op.Amount)),
-				FeePaid: history2.FeePaid{
+				Fee: history2.Fee{
 					Fixed:             amount.StringU(uint64(destFixedFee)),
 					CalculatedPercent: amount.StringU(uint64(destPercentFee)),
 				},

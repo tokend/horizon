@@ -18,9 +18,9 @@ func (h *withdrawHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 
 	effect := history2.Effect{
 		Type: history2.EffectTypeChargedFromLocked,
-		ChargedFromLocked: &history2.ChargedFromLockedEffect{
+		ChargedFromLocked: &history2.BalanceChangeEffect{
 			Amount: amount.StringU(uint64(details.Amount)),
-			FeePaid: history2.FeePaid{
+			Fee: history2.Fee{
 				Fixed:             amount.StringU(uint64(details.Fee.Fixed)),
 				CalculatedPercent: amount.StringU(uint64(details.Fee.Percent)),
 			},
@@ -30,9 +30,9 @@ func (h *withdrawHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	if op.Action != xdr.ReviewRequestOpActionApprove {
 		effect = history2.Effect{
 			Type: history2.EffectTypeWithdrawn,
-			Withdrawn: &history2.ChargedFromLockedEffect{
+			Withdrawn: &history2.BalanceChangeEffect{
 				Amount: amount.StringU(uint64(details.Amount)),
-				FeePaid: history2.FeePaid{
+				Fee: history2.Fee{
 					Fixed:             amount.StringU(uint64(details.Fee.Fixed)),
 					CalculatedPercent: amount.StringU(uint64(details.Fee.Percent)),
 				},
@@ -40,5 +40,5 @@ func (h *withdrawHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 		}
 	}
 
-	return populateEffects(h.balanceProvider.GetBalanceByID(details.Balance), effect, source), nil
+	return populateEffects(h.balanceProvider.MustBalance(details.Balance), effect, source), nil
 }

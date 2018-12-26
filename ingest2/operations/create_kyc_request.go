@@ -6,11 +6,11 @@ import (
 )
 
 type createKYCRequestOpHandler struct {
-	pubKeyProvider publicKeyProvider
+	pubKeyProvider IDProvider
 }
 
 // Details returns details about create KYC request operation
-func (h *createKYCRequestOpHandler) Details(op RawOperation, opRes xdr.OperationResultTr,
+func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createKYCRequestOp := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
 	createKYCRequestRes := opRes.MustCreateUpdateKycRequestResult().MustSuccess()
@@ -41,7 +41,7 @@ func (h *createKYCRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody
 ) ([]history2.ParticipantEffect, error) {
 	createKYCRequestOp := opBody.MustCreateUpdateKycRequestOp().UpdateKycRequestData
 
-	accountIDToUpdateKYC := h.pubKeyProvider.GetAccountID(createKYCRequestOp.AccountToUpdateKyc)
+	accountIDToUpdateKYC := h.pubKeyProvider.MustAccountID(createKYCRequestOp.AccountToUpdateKyc)
 
 	if accountIDToUpdateKYC == source.AccountID {
 		return []history2.ParticipantEffect{source}, nil

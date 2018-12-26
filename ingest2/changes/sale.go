@@ -10,14 +10,14 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/horizon/db2/history"
+	history "gitlab.com/tokend/horizon/db2/history2"
 )
 
 type saleStorage interface {
 	//Inserts sale into DB
-	InsertSale(sale history.Sale) error
+	Insert(sale history.Sale) error
 	//Updates sale
-	UpdateSale(sale history.Sale) error
+	Update(sale history.Sale) error
 }
 
 type saleHandler struct {
@@ -41,7 +41,7 @@ func (c *saleHandler) Created(lc ledgerChange) error {
 		})
 	}
 
-	err = c.storage.InsertSale(*sale)
+	err = c.storage.Insert(*sale)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert sale into DB", logan.F{
 			"sale": sale,
@@ -61,7 +61,7 @@ func (c *saleHandler) Updated(lc ledgerChange) error {
 		})
 	}
 
-	err = c.storage.UpdateSale(*sale)
+	err = c.storage.Update(*sale)
 	if err != nil {
 		return errors.Wrap(err, "failed to update sale", logan.F{
 			"sale": sale,
@@ -71,7 +71,7 @@ func (c *saleHandler) Updated(lc ledgerChange) error {
 }
 
 func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
-	var quoteAssets []history.QuoteAsset
+	quoteAssets := make([]history.QuoteAsset, 0, len(raw.QuoteAssets))
 	for i := range raw.QuoteAssets {
 		quoteAssets = append(quoteAssets, history.QuoteAsset{
 			Asset:          string(raw.QuoteAssets[i].QuoteAsset),
@@ -89,7 +89,6 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	}
 
 	saleType := xdr.SaleTypeBasicSale
-	rawState := xdr.SaleStateNone
 	switch raw.Ext.V {
 	case xdr.LedgerVersionEmptyVersion:
 	case xdr.LedgerVersionTypedSale:
@@ -97,17 +96,11 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	case xdr.LedgerVersionStatableSales:
 		ext := raw.Ext.MustStatableSaleExt()
 		saleType = ext.SaleTypeExt.TypedSale.SaleType
-		rawState = ext.State
 	default:
 		panic(errors.Wrap(errors.New("Unexpected ledger version in convertSale"),
 			"failed to ingest sale", logan.F{
 				"actual_ledger_version": raw.Ext.V.ShortString(),
 			}))
-	}
-
-	state, err := c.convertSaleState(rawState)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert sale state")
 	}
 
 	return &history.Sale{
@@ -125,22 +118,7 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		},
 		BaseCurrentCap: int64(raw.CurrentCapInBase),
 		BaseHardCap:    int64(raw.MaxAmountToBeSold),
-		State:          state,
+		State:          history.SaleStateOpen,
 		SaleType:       saleType,
 	}, nil
-}
-
-func (c *saleHandler) convertSaleState(state xdr.SaleState) (history.SaleState, error) {
-	switch state {
-	case xdr.SaleStateNone:
-		return history.SaleStateOpen, nil
-	case xdr.SaleStatePromotion:
-		return history.SaleStatePromotion, nil
-	case xdr.SaleStateVoting:
-		return history.SaleStateVoting, nil
-	default:
-		return history.SaleStateOpen, errors.From(errors.New("unexpected sale of the state"), map[string]interface{}{
-			"state": state,
-		})
-	}
 }

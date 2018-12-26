@@ -11,7 +11,7 @@ type manageAssetPairOpHandler struct {
 }
 
 // Details returns details about manage asset pair operation
-func (h *manageAssetPairOpHandler) Details(op RawOperation,
+func (h *manageAssetPairOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageAssetPairOp := op.Body.MustManageAssetPairOp()

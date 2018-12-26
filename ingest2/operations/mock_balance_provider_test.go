@@ -11,8 +11,8 @@ type mockBalanceProvider struct {
 	mock.Mock
 }
 
-// GetBalanceByID provides a mock function with given fields: balanceID
-func (_m *mockBalanceProvider) GetBalanceByID(balanceID xdr.BalanceId) history2.Balance {
+// MustBalance provides a mock function with given fields: balanceID
+func (_m *mockBalanceProvider) MustBalance(balanceID xdr.BalanceId) history2.Balance {
 	ret := _m.Called(balanceID)
 
 	var r0 history2.Balance

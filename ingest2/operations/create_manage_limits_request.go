@@ -9,7 +9,7 @@ type createManageLimitsRequestOpHandler struct {
 }
 
 // Details returns details about create limits request operation
-func (h *createManageLimitsRequestOpHandler) Details(op RawOperation,
+func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()

@@ -96,12 +96,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 				accountID = op.Fee.AccountId.Address()
 			}
 
-			feeAssetString := ""
-			feeAsset, ok := op.Fee.Ext.GetFeeAsset()
-			if ok {
-				feeAssetString = string(feeAsset)
-			}
-
 			accountType := op.Fee.AccountType
 			details["fee"] = map[string]interface{}{
 				"asset_code":   string(op.Fee.Asset),
@@ -113,7 +107,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 				"subtype":      int64(op.Fee.Subtype),
 				"lower_bound":  int64(op.Fee.LowerBound),
 				"upper_bound":  int64(op.Fee.UpperBound),
-				"fee_asset":    feeAssetString,
 			}
 		}
 
@@ -346,12 +339,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["source_fee_data"] = map[string]interface{}{
 			"fixed_fee":                     amount.StringU(uint64(opResult.ActualDestinationPaymentFee.Fixed)),
 			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualDestinationPaymentFee.Percent)),
-			"actual_payment_fee_asset_code": string(op.FeeData.SourceFee.FeeAsset),
 		}
 		details["destination_fee_data"] = map[string]interface{}{
-			"fixed_fee":                     amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee)),
-			"actual_payment_fee":            amount.StringU(uint64(op.FeeData.DestinationFee.MaxPaymentFee)),
-			"actual_payment_fee_asset_code": string(op.FeeData.DestinationFee.FeeAsset),
+			"fixed_fee":                     amount.StringU(uint64(op.FeeData.DestinationFee.Fixed)),
+			"actual_payment_fee":            amount.StringU(uint64(op.FeeData.DestinationFee.Percent)),
 		}
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
 		details["subject"] = op.Subject

@@ -6,11 +6,11 @@ import (
 )
 
 type createAccountOpHandler struct {
-	pubKeyProvider publicKeyProvider
+	pubKeyProvider IDProvider
 }
 
 // Details returns details about create account operation
-func (h *createAccountOpHandler) Details(op RawOperation, _ xdr.OperationResultTr,
+func (h *createAccountOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	operation := op.Body.MustCreateAccountOp()
 
@@ -32,12 +32,12 @@ func (h *createAccountOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	createAccountOp := opBody.MustCreateAccountOp()
 
 	participants = append(participants, history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.GetAccountID(createAccountOp.Destination),
+		AccountID: h.pubKeyProvider.MustAccountID(createAccountOp.Destination),
 	})
 
 	if createAccountOp.Referrer != nil {
 		participants = append(participants, history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.GetAccountID(*createAccountOp.Referrer),
+			AccountID: h.pubKeyProvider.MustAccountID(*createAccountOp.Referrer),
 		})
 	}
 

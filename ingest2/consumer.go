@@ -7,6 +7,8 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
+	core "gitlab.com/tokend/horizon/db2/core2"
+	"gitlab.com/tokend/horizon/log"
 )
 
 type dbTxManager interface {
@@ -18,29 +20,50 @@ type dbTxManager interface {
 	Commit() error
 }
 
-type consumer struct {
-	log         *logan.Entry
+//Handler - handles ledger and transactions applied for this ledger
+type Handler interface {
+	// Handle - processes ledger and stores corresponding data to db
+	Handle(header *core.LedgerHeader, txs []core.Transaction) error
+	// Name - returns name of the Handler
+	Name() string
+}
+
+// Consumer - consumes ingest data and populate db with it
+type Consumer struct {
+	log         *log.Entry
 	dbTxManager dbTxManager
 	dataSource  <-chan ledgerBundle
+	handlers    []Handler
 }
 
-func (c *consumer) Start(ctx context.Context) {
+// NewConsumer - creates new instance of consumer
+func NewConsumer(log *log.Entry, dbTxManager dbTxManager, handlers []Handler, dataSource <-chan ledgerBundle) *Consumer {
+	return &Consumer{
+		log:         log.WithField("service", "ingest_consumer"),
+		dbTxManager: dbTxManager,
+		dataSource:  dataSource,
+		handlers:    handlers,
+	}
+}
+
+func (c *Consumer) Start(ctx context.Context) {
 	// normalPeriod is set to 0 to ensure that we are aggressive during catchup. If we failed to get ledger from core
 	// runOnce will handle waiting period
-	go running.WithBackOff(ctx, c.log, "ingest_consumer", c.runOnce, time.Duration(0), minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
+	go running.WithBackOff(ctx, c.log, "ingest_consumer", c.runOnce, time.Duration(0),
+		minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
 }
 
-func (c *consumer) runOnce(ctx context.Context) error {
+func (c *Consumer) runOnce(ctx context.Context) error {
 	bundles := c.readBatch(ctx)
 	if len(bundles) == 0 {
 		c.log.Info("Fetched empty ledger bundle batch. It's clear sign that we are going to stop")
 		return nil
 	}
 
-	c.log.WithFields(logan.F{
+	c.log.WithFields(log.F{
 		"batch_len": len(bundles),
-		"from":      bundles[0].Sequence,
-		"to":        bundles[len(bundles)-1].Sequence,
+		"from":      bundles[0].Header.Sequence,
+		"to":        bundles[len(bundles)-1].Header.Sequence,
 	}).Info("Starting to process new ledger bundles batch")
 
 	err := c.dbTxManager.Begin()
@@ -48,7 +71,9 @@ func (c *consumer) runOnce(ctx context.Context) error {
 		return errors.Wrap(err, "failed to begin db tx")
 	}
 
-	defer c.dbTxManager.Rollback()
+	defer func() {
+		_ = c.dbTxManager.Rollback()
+	}()
 	err = c.processBatch(ctx, bundles)
 	if err != nil {
 		return errors.Wrap(err, "failed to process batch of ledger bundles")
@@ -61,7 +86,8 @@ func (c *consumer) runOnce(ctx context.Context) error {
 	return nil
 }
 
-func (c *consumer) readBatch(ctx context.Context) []ledgerBundle {
+func (c *Consumer) readBatch(ctx context.Context) []ledgerBundle {
+	const maxBatchSize = 100
 	bundles := c.readAtLeastOne(ctx)
 	for {
 		select {
@@ -71,6 +97,10 @@ func (c *consumer) readBatch(ctx context.Context) []ledgerBundle {
 			}
 
 			bundles = append(bundles, ledgerBundle)
+			if len(bundles) >= maxBatchSize {
+				return bundles
+			}
+
 		case <-ctx.Done():
 			return nil
 		default:
@@ -79,7 +109,7 @@ func (c *consumer) readBatch(ctx context.Context) []ledgerBundle {
 	}
 }
 
-func (c *consumer) readAtLeastOne(ctx context.Context) []ledgerBundle {
+func (c *Consumer) readAtLeastOne(ctx context.Context) []ledgerBundle {
 	select {
 	case bundle, ok := <-c.dataSource:
 		{
@@ -97,7 +127,7 @@ func (c *consumer) readAtLeastOne(ctx context.Context) []ledgerBundle {
 	}
 }
 
-func (c *consumer) processBatch(ctx context.Context, bundles []ledgerBundle) error {
+func (c *Consumer) processBatch(ctx context.Context, bundles []ledgerBundle) error {
 	for _, bundle := range bundles {
 		select {
 		case <-ctx.Done():
@@ -107,7 +137,21 @@ func (c *consumer) processBatch(ctx context.Context, bundles []ledgerBundle) err
 
 		err := c.processLedgerBundle(ctx, bundle)
 		if err != nil {
-			return errors.Wrap(err, "failed to process ledger bundle", logan.Field("ledger_seq", bundle.Sequence))
+			return errors.Wrap(err, "failed to process ledger bundle", log.F{"ledger_seq": bundle.Header.Sequence})
+		}
+	}
+
+	return nil
+}
+
+func (c *Consumer) processLedgerBundle(ctx context.Context, bundle ledgerBundle) error {
+	for _, handler := range c.handlers {
+		err := handler.Handle(&bundle.Header, bundle.Transactions)
+		if err != nil {
+			return errors.Wrap(err, "failed to handle ledger", logan.F{
+				"ledger_seq":   bundle.Header.Sequence,
+				"handler_name": handler.Name(),
+			})
 		}
 	}
 
