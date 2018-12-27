@@ -30,6 +30,7 @@ func newSaleHandler(storage saleStorage) *saleHandler {
 	}
 }
 
+//Created - handles creation of new sale
 func (c *saleHandler) Created(lc ledgerChange) error {
 	rawSale := lc.LedgerChange.MustCreated().Data.MustSale()
 
@@ -51,6 +52,7 @@ func (c *saleHandler) Created(lc ledgerChange) error {
 	return nil
 }
 
+//Updated - handles update of the sale
 func (c *saleHandler) Updated(lc ledgerChange) error {
 	rawSale := lc.LedgerChange.MustUpdated().Data.MustSale()
 	sale, err := c.convertSale(rawSale)
@@ -97,10 +99,10 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		ext := raw.Ext.MustStatableSaleExt()
 		saleType = ext.SaleTypeExt.TypedSale.SaleType
 	default:
-		panic(errors.Wrap(errors.New("Unexpected ledger version in convertSale"),
+		return nil, errors.Wrap(errors.New("Unexpected ledger version in convertSale"),
 			"failed to ingest sale", logan.F{
 				"actual_ledger_version": raw.Ext.V.ShortString(),
-			}))
+			})
 	}
 
 	return &history.Sale{

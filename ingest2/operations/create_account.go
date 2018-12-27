@@ -12,13 +12,13 @@ type createAccountOpHandler struct {
 // Details returns details about create account operation
 func (h *createAccountOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	operation := op.Body.MustCreateAccountOp()
+	createAccOp := op.Body.MustCreateAccountOp()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAccount,
 		CreateAccount: &history2.CreateAccountDetails{
-			AccountAddress: operation.Destination.Address(),
-			AccountType:    operation.AccountType,
+			AccountAddress: createAccOp.Destination.Address(),
+			AccountType:    createAccOp.AccountType,
 		},
 	}, nil
 }

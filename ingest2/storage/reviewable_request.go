@@ -13,6 +13,7 @@ type ReviewableRequest struct {
 	repo *db2.Repo
 }
 
+//NewReviewableRequest - creates new instance
 func NewReviewableRequest(repo *db2.Repo) *ReviewableRequest {
 	return &ReviewableRequest{
 		repo: repo,
@@ -64,7 +65,8 @@ func (q *ReviewableRequest) Update(request history2.ReviewableRequest) error {
 
 	_, err := q.repo.Exec(query)
 	if err != nil {
-		return errors.Wrap(err, "failed to do full update of reviewable_request", logan.F{"request_id": request.ID})
+		return errors.Wrap(err, "failed to do full update of reviewable_request",
+			logan.F{"request_id": request.ID})
 	}
 
 	return nil
@@ -85,7 +87,9 @@ func (q *ReviewableRequest) PermanentReject(requestID uint64, rejectReason strin
 	return q.setStateRejectReason(requestID, history2.ReviewableRequestStatePermanentlyRejected, &rejectReason)
 }
 
-func (q *ReviewableRequest) setStateRejectReason(requestID uint64, requestState history2.ReviewableRequestState, rejectReason *string) error {
+func (q *ReviewableRequest) setStateRejectReason(requestID uint64, requestState history2.ReviewableRequestState,
+	rejectReason *string) error {
+
 	query := sq.Update("reviewable_request").
 		Set("request_state", requestState).Where("id = ?", requestID)
 	if rejectReason != nil {

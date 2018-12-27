@@ -8,7 +8,7 @@ import (
 
 type accountStorage interface {
 	InsertAccount(rawAccountID xdr.AccountId, account history.Account) error
-	MustAccount(address xdr.AccountId) (history.Account)
+	MustAccount(address xdr.AccountId) history.Account
 }
 
 type accountHandler struct {

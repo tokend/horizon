@@ -24,6 +24,7 @@ var reviewableRequestStateStr = map[ReviewableRequestState]string{
 	ReviewableRequestStatePermanentlyRejected: "permanently_rejected",
 }
 
+//String - converts int enum value to string
 func (s ReviewableRequestState) String() string {
 	return reviewableRequestStateStr[s]
 }

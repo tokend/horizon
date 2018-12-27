@@ -36,6 +36,7 @@ func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.Operation
 	}, nil
 }
 
+//ParticipantsEffects returns source participant effect and effect for account for which KYC is updated
 func (h *createKYCRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

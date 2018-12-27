@@ -29,6 +29,7 @@ func (h *manageAssetPairOpHandler) Details(op rawOperation,
 	}, nil
 }
 
+//ParticipantsEffects - returns source of the operation
 func (h *manageAssetPairOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	_ xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

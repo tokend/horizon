@@ -1,3 +1,4 @@
+// Package changes provides handlers which update state of entities in the DB according to change of the entry in core
 package changes
 
 import (

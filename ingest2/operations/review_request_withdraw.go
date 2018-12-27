@@ -10,6 +10,7 @@ type withdrawHandler struct {
 	balanceProvider balanceProvider
 }
 
+//ParticipantsEffects - returns effect due to review of withdrawal request
 func (h *withdrawHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,

@@ -25,6 +25,7 @@ func (h *manageAccountOpHandler) Details(op rawOperation,
 	}, nil
 }
 
+//ParticipantsEffects - returns slice of participants effected by the operation
 func (h *manageAccountOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

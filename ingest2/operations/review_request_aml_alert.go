@@ -10,6 +10,7 @@ type amlAlertHandler struct {
 	balanceProvider balanceProvider
 }
 
+//ParticipantsEffects - returns source participant and effects for balance for which AML Alert was created
 func (h *amlAlertHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,

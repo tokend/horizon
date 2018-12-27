@@ -2,6 +2,7 @@ package operations
 
 import (
 	"testing"
+
 	"gitlab.com/tokend/go/xdr"
 )
 

@@ -29,6 +29,7 @@ func (h *createAtomicSwapRequestOpHandler) Details(op rawOperation,
 	}, nil
 }
 
+//ParticipantsEffects - returns source participant effect
 func (h *createAtomicSwapRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

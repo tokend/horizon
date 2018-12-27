@@ -7,12 +7,12 @@ import (
 )
 
 func TestAllReviewableRequestsHandled(t *testing.T) {
-	reviewRequestOpHandler := newReviewRequestOpHandler(&MockIDProvider{}, &mockBalanceProvider{})
+	reviewRequestOpHandlerInst := newReviewRequestOpHandler(&MockIDProvider{}, &mockBalanceProvider{})
 	for _, requestT := range xdr.ReviewableRequestTypeAll {
 		if requestT == xdr.ReviewableRequestTypeNone {
 			continue
 		}
-		_, ok := reviewRequestOpHandler.allRequestHandlers[requestT]
+		_, ok := reviewRequestOpHandlerInst.allRequestHandlers[requestT]
 		if !ok {
 			t.Fatalf("All reivable requests must be handled. Request type: %s is not handled", requestT)
 		}

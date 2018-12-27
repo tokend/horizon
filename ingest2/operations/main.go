@@ -1,3 +1,5 @@
+// Package operations providers handler which converts xdr operations into details suitable for client side applications
+// participants of the operations and effects occurred for their balances
 package operations
 
 import (

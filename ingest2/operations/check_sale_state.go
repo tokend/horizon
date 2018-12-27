@@ -7,7 +7,6 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
-
 type checkSaleStateOpHandler struct {
 	manageOfferOpHandler *manageOfferOpHandler
 }
@@ -46,7 +45,7 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 }
 
 func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, closedRes xdr.CheckSaleClosedResult,
-) ([]history2.ParticipantEffect) {
+) []history2.ParticipantEffect {
 	// TODO: we are not handling here cases that some parts of offers might be canceled due to rounding
 	if len(closedRes.Results) == 0 {
 		return nil
@@ -58,19 +57,21 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 	// it does not matter which base balance is used as we are sure that the operation of distribution will be clean
 	baseBalanceAddress := closedRes.Results[0].SaleBaseBalance.AsString()
 	baseBalanceID := h.manageOfferOpHandler.pubKeyProvider.MustBalanceID(closedRes.Results[0].SaleBaseBalance)
-	baseAsset :=  string(closedRes.Results[0].SaleDetails.BaseAsset)
+	baseAsset := string(closedRes.Results[0].SaleDetails.BaseAsset)
 	for _, assetPairResult := range closedRes.Results {
-		assetPairMatches, baseIssued := h.manageOfferOpHandler.getMatchesEffects(assetPairResult.SaleDetails.OffersClaimed, offer{
-			OrderBookID: orderBookID,
+		sourceOffer := offer{
+			OrderBookID:         orderBookID,
 			AccountID:           ownerID,
 			BaseBalanceID:       baseBalanceID,
 			BaseBalanceAddress:  baseBalanceAddress,
 			QuoteBalanceID:      h.manageOfferOpHandler.pubKeyProvider.MustBalanceID(assetPairResult.SaleQuoteBalance),
 			QuoteBalanceAddress: assetPairResult.SaleQuoteBalance.AsString(),
-			BaseAsset:          baseAsset,
+			BaseAsset:           baseAsset,
 			QuoteAsset:          string(assetPairResult.SaleDetails.QuoteAsset),
 			IsBuy:               false,
-		})
+		}
+		assetPairMatches, baseIssued := h.manageOfferOpHandler.getMatchesEffects(
+			assetPairResult.SaleDetails.OffersClaimed, sourceOffer)
 
 		totalBaseIssued += baseIssued
 		result = append(result, assetPairMatches...)
@@ -78,10 +79,10 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 
 	// we need to show explicitly that issuance has been perform to ensure that balance history is consistent
 	issuanceEffect := history2.ParticipantEffect{
-	AccountID: ownerID,
+		AccountID: ownerID,
 		BalanceID: &baseBalanceID,
-			AssetCode: &baseAsset,
-			Effect: history2.Effect{
+		AssetCode: &baseAsset,
+		Effect: history2.Effect{
 			Type: history2.EffectTypeIssued,
 			Issued: &history2.BalanceChangeEffect{
 				Amount: amount.StringU(totalBaseIssued),

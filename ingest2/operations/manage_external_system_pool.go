@@ -24,17 +24,20 @@ func (h *manageExternalSystemPoolOpHandler) Details(op rawOperation,
 
 	switch operationDetails.ManageExternalSystemPool.Action {
 	case xdr.ManageExternalSystemAccountIdPoolEntryActionCreate:
-		creationDetails := manageExternalSystemPoolOp.ActionInput.MustCreateExternalSystemAccountIdPoolEntryActionInput()
+		creationDetails := manageExternalSystemPoolOp.ActionInput.
+			MustCreateExternalSystemAccountIdPoolEntryActionInput()
 
 		operationDetails.ManageExternalSystemPool.Create = &history2.CreateExternalSystemPoolDetails{
 			Data:               string(creationDetails.Data),
 			ExternalSystemType: int32(creationDetails.ExternalSystemType),
 			Parent:             uint64(creationDetails.Parent),
-			PoolID:             uint64(opRes.MustManageExternalSystemAccountIdPoolEntryResult().MustSuccess().PoolEntryId),
+			PoolID: uint64(opRes.MustManageExternalSystemAccountIdPoolEntryResult().MustSuccess().
+				PoolEntryId),
 		}
 	case xdr.ManageExternalSystemAccountIdPoolEntryActionRemove:
 		operationDetails.ManageExternalSystemPool.Remove = &history2.RemoveExternalSystemPoolDetails{
-			PoolID: uint64(manageExternalSystemPoolOp.ActionInput.MustDeleteExternalSystemAccountIdPoolEntryActionInput().PoolEntryId),
+			PoolID: uint64(manageExternalSystemPoolOp.ActionInput.
+				MustDeleteExternalSystemAccountIdPoolEntryActionInput().PoolEntryId),
 		}
 	default:
 		return history2.OperationDetails{}, errors.From(
@@ -46,6 +49,7 @@ func (h *manageExternalSystemPoolOpHandler) Details(op rawOperation,
 	return operationDetails, nil
 }
 
+//ParticipantsEffects - returns source of the operation
 func (h *manageExternalSystemPoolOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

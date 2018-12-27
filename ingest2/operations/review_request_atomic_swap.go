@@ -10,6 +10,7 @@ type atomicSwapHandler struct {
 	pubKeyProvider IDProvider
 }
 
+//ParticipantsEffects - returns slice of effects for participants of the operation
 func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
@@ -76,7 +77,6 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 
 	return participants, nil
 }
-
 
 func (h *atomicSwapHandler) getAtomicSwapBid(bidID xdr.Uint64, ledgerChanges []xdr.LedgerEntryChange,
 ) *xdr.AtomicSwapBidEntry {

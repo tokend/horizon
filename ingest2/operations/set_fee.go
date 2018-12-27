@@ -46,6 +46,8 @@ func (h *setFeeOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 	}, nil
 }
 
+//ParticipantsEffects - returns source participant and counterparty for which fee has been set if one explicitly
+// specified
 func (h *setFeeOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

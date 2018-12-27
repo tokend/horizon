@@ -26,6 +26,7 @@ func (h *manageBalanceOpHandler) Details(op rawOperation, opRes xdr.OperationRes
 	}, nil
 }
 
+//ParticipantsEffects - returns source of the operation and account for which balance was created if they differ
 func (h *manageBalanceOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

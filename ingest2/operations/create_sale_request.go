@@ -29,6 +29,7 @@ func (h *createSaleRequestOpHandler) Details(op rawOperation, opRes xdr.Operatio
 	}, nil
 }
 
+//ParticipantsEffects returns source participant effect
 func (h *createSaleRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

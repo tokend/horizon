@@ -8,17 +8,21 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
+//Tx - handles write operations in DB for txs
 type Tx struct {
 	repo *db2.Repo
 }
 
+//NewTx - creates new instance of Tx
 func NewTx(repo *db2.Repo) *Tx {
 	return &Tx{
 		repo: repo,
 	}
 }
 
+//Insert - inserts slice of txs into DB in one slice
 func (s *Tx) Insert(txs []history2.Transaction) error {
+	//TODO: might have issues to due to limit of params for postgres in one query
 	sql := sq.Insert("tx").
 		Columns(
 			"id", "tx_hash", "ledger_sequence", "ledger_close_time", "application_order", "account",

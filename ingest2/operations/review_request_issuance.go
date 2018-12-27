@@ -10,6 +10,7 @@ type issuanceHandler struct {
 	balanceProvider balanceProvider
 }
 
+//ParticipantsEffects - returns effect for receiver of the funds and source of the op
 func (h *issuanceHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,

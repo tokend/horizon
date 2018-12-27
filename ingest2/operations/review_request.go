@@ -2,6 +2,7 @@ package operations
 
 import (
 	"encoding/hex"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
@@ -24,7 +25,8 @@ type reviewRequestHandler interface {
 // with specific handlers for different types
 func newReviewRequestOpHandler(pubKeyProvider IDProvider, balanceProvider balanceProvider,
 ) *reviewRequestOpHandler {
-	// All reviewable requests must be explisitly handled here. If there is nothing to handle use reviewableRequestHandlerStub
+	// All reviewable requests must be explicitly handled here. If there is nothing to handle
+	// use reviewableRequestHandlerStub
 	return &reviewRequestOpHandler{
 		pubKeyProvider:  pubKeyProvider,
 		balanceProvider: balanceProvider,
@@ -41,18 +43,18 @@ func newReviewRequestOpHandler(pubKeyProvider IDProvider, balanceProvider balanc
 			xdr.ReviewableRequestTypeAtomicSwap: &atomicSwapHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
-			xdr.ReviewableRequestTypeAssetCreate: &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeAssetUpdate: &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypePreIssuanceCreate: &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeSale: &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeLimitsUpdate: &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeTwoStepWithdrawal: &deprecatedReviewRequestHandler{},
-			xdr.ReviewableRequestTypeUpdateKyc: &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeUpdateSaleDetails: &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeUpdatePromotion: &deprecatedReviewRequestHandler{},
-			xdr.ReviewableRequestTypeUpdateSaleEndTime: &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeInvoice: &deprecatedReviewRequestHandler{},
-			xdr.ReviewableRequestTypeContract: &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeAssetCreate:         &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeAssetUpdate:         &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypePreIssuanceCreate:   &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeSale:                &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeLimitsUpdate:        &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeTwoStepWithdrawal:   &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeUpdateKyc:           &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeUpdateSaleDetails:   &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeUpdatePromotion:     &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeUpdateSaleEndTime:   &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeInvoice:             &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeContract:            &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &reviewableRequestHandlerStub{},
 		},
 	}
@@ -92,7 +94,8 @@ func (h *reviewRequestOpHandler) Details(op rawOperation, opRes xdr.OperationRes
 	return opDetails, nil
 }
 
-// ParticipantsEffects can return different effects depended on request type
+// ParticipantsEffects - returns source participant if request was not fulfilled
+// finds specific handler otherwise
 func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

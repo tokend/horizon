@@ -1,12 +1,13 @@
 package ingest2
 
 import (
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"time"
 )
 
 type ledgerStorage interface {
@@ -18,7 +19,6 @@ type LedgerHandler struct {
 	storage ledgerStorage
 }
 
-
 // NewLedgerHandler - creates new instance of ledger handler
 func NewLedgerHandler(storage ledgerStorage) *LedgerHandler {
 	return &LedgerHandler{
@@ -26,6 +26,7 @@ func NewLedgerHandler(storage ledgerStorage) *LedgerHandler {
 	}
 }
 
+//Name - returns name of the Handler
 func (h *LedgerHandler) Name() string {
 	return "ledger_saver"
 }

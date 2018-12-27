@@ -49,6 +49,7 @@ func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResu
 	return opDetails, nil
 }
 
+//ParticipantsEffects - returns source of the operation and account for which limits were managed if they are different
 func (h *manageLimitsOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

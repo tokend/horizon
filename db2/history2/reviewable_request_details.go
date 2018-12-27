@@ -11,7 +11,9 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
+//ReviewableRequestDetails - stores in union switch details of the reviewable requests
 type ReviewableRequestDetails struct {
+	Type                     xdr.ReviewableRequestType `json:"type"`
 	AssetCreation            *AssetCreationRequest     `json:"asset_create,omitempty"`
 	AssetUpdate              *AssetUpdateRequest       `json:"asset_update,omitempty"`
 	PreIssuanceCreate        *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
@@ -28,6 +30,7 @@ type ReviewableRequestDetails struct {
 	AtomicSwap               *AtomicSwap               `json:"atomic_swap"`
 }
 
+//Value - implements db driver method for auto marshal
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
 	result, err := db2.DriverValue(r)
 	if err != nil {
@@ -37,6 +40,7 @@ func (r ReviewableRequestDetails) Value() (driver.Value, error) {
 	return result, nil
 }
 
+//Scan - implements db driver method for auto unmarshal
 func (r *ReviewableRequestDetails) Scan(src interface{}) error {
 	err := db2.DriveScan(src, r)
 	if err != nil {
@@ -46,6 +50,7 @@ func (r *ReviewableRequestDetails) Scan(src interface{}) error {
 	return nil
 }
 
+//AssetCreationRequest - asset creation request details
 type AssetCreationRequest struct {
 	Asset                  string                 `json:"asset"`
 	Policies               int32                  `json:"policies"`
@@ -55,12 +60,14 @@ type AssetCreationRequest struct {
 	Details                map[string]interface{} `json:"details"`
 }
 
+//AssetUpdateRequest - asset update request details
 type AssetUpdateRequest struct {
 	Asset    string                 `json:"asset"`
 	Policies int32                  `json:"policies"`
 	Details  map[string]interface{} `json:"details"`
 }
 
+//PreIssuanceRequest - request details
 type PreIssuanceRequest struct {
 	Asset     string `json:"asset"`
 	Amount    string `json:"amount"`
@@ -68,6 +75,7 @@ type PreIssuanceRequest struct {
 	Reference string `json:"reference"`
 }
 
+//IssuanceRequest - request details
 type IssuanceRequest struct {
 	Asset           string                 `json:"asset"`
 	Amount          string                 `json:"amount"`
@@ -75,6 +83,7 @@ type IssuanceRequest struct {
 	ExternalDetails map[string]interface{} `json:"external_details"`
 }
 
+//WithdrawalRequest - request details
 type WithdrawalRequest struct {
 	BalanceID              string                 `json:"balance_id"`
 	Amount                 string                 `json:"amount"`
@@ -87,6 +96,7 @@ type WithdrawalRequest struct {
 	PreConfirmationDetails map[string]interface{} `json:"pre_confirmation_details"`
 }
 
+//SaleRequest - request details
 type SaleRequest struct {
 	BaseAsset           string                     `json:"base_asset"`
 	DefaultQuoteAsset   string                     `json:"quote_asset"`
@@ -101,17 +111,20 @@ type SaleRequest struct {
 	State               xdr.SaleState              `json:"state"`
 }
 
+//LimitsUpdateRequest - request details
 type LimitsUpdateRequest struct {
 	DocumentHash string                 `json:"document_hash"`
 	Details      map[string]interface{} `json:"details"`
 }
 
+//AmlAlertRequest - request details
 type AmlAlertRequest struct {
 	BalanceID string `json:"balance_id"`
 	Amount    string `json:"amount"`
 	Reason    string `json:"reason"`
 }
 
+//UpdateKYCRequest - request details
 type UpdateKYCRequest struct {
 	AccountToUpdateKYC string                   `json:"updated_account_id"`
 	AccountTypeToSet   xdr.AccountType          `json:"account_type_to_set"`
@@ -123,16 +136,19 @@ type UpdateKYCRequest struct {
 	ExternalDetails    []map[string]interface{} `json:"external_details"`
 }
 
+//UpdateSaleDetailsRequest - request details
 type UpdateSaleDetailsRequest struct {
 	SaleID     uint64                 `json:"sale_id"`
 	NewDetails map[string]interface{} `json:"new_details"`
 }
 
+//UpdateSaleEndTimeRequest - request details
 type UpdateSaleEndTimeRequest struct {
 	SaleID     uint64    `json:"sale_id"`
 	NewEndTime time.Time `json:"new_end_time"`
 }
 
+//AtomicSwapBidCreation - request details
 type AtomicSwapBidCreation struct {
 	BaseBalance string                 `json:"base_balance"`
 	BaseAmount  uint64                 `json:"base_amount"`
@@ -140,6 +156,7 @@ type AtomicSwapBidCreation struct {
 	QuoteAssets []regources.AssetPrice `json:"quote_assets"`
 }
 
+//AtomicSwap - request details
 type AtomicSwap struct {
 	BidID      uint64 `json:"bid_id"`
 	BaseAmount uint64 `json:"base_amount"`

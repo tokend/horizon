@@ -1,12 +1,13 @@
 package ingest2
 
 import (
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"time"
 	"gitlab.com/tokend/horizon/ingest2/generator"
 )
 
@@ -18,7 +19,6 @@ type txStorage interface {
 type TxSaver struct {
 	storage txStorage
 }
-
 
 // NewTxSaver - creates new instance of TxSaver
 func NewTxSaver(storage txStorage) *TxSaver {
@@ -62,6 +62,7 @@ func (h *TxSaver) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 	return nil
 }
 
+//Name - returns name of the handler
 func (h *TxSaver) Name() string {
 	return "tx_saver"
 }

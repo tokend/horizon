@@ -27,7 +27,8 @@ func newBalanceHandler(accountStorage accountStorage, storage balanceStorage) *b
 func (c *balanceHandler) Created(lc ledgerChange) error {
 	balance := lc.LedgerChange.MustCreated().Data.MustBalance()
 	account := c.accountStorage.MustAccount(balance.AccountId)
-	newBalance := history2.NewBalance(uint64(balance.BalanceSeqId), account.ID, balance.BalanceId.AsString(), string(balance.Asset))
+	newBalance := history2.NewBalance(uint64(balance.BalanceSeqId), account.ID, balance.BalanceId.AsString(),
+		string(balance.Asset))
 	err := c.storage.InsertBalance(balance.BalanceId, newBalance)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert balance", logan.F{

@@ -2,12 +2,14 @@ package history2
 
 import (
 	"database/sql/driver"
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	"time"
 )
 
+//Sale - represents instance of compounding campaign
 type Sale struct {
 	ID                uint64    `db:"id"`
 	OwnerID           string    `db:"owner_id"`
@@ -26,10 +28,12 @@ type Sale struct {
 	SaleType          xdr.SaleType `db:"sale_type"`
 }
 
+//QuoteAssets - assets allowed to invest in sale
 type QuoteAssets struct {
 	QuoteAssets []QuoteAsset `json:"quote_assets"`
 }
 
+//Value - implements db driver method for auto marshal
 func (r QuoteAssets) Value() (driver.Value, error) {
 	result, err := db2.DriverValue(r)
 	if err != nil {
@@ -39,6 +43,7 @@ func (r QuoteAssets) Value() (driver.Value, error) {
 	return result, nil
 }
 
+//Scan - implements db driver method for auto unmarshal
 func (r *QuoteAssets) Scan(src interface{}) error {
 	err := db2.DriveScan(src, r)
 	if err != nil {
@@ -48,6 +53,7 @@ func (r *QuoteAssets) Scan(src interface{}) error {
 	return nil
 }
 
+//QuoteAsset - asset allowed to invest into sale
 type QuoteAsset struct {
 	Asset           string `json:"asset"`
 	Price           string `json:"price"`

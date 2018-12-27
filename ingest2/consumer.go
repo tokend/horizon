@@ -32,12 +32,13 @@ type Handler interface {
 type Consumer struct {
 	log         *log.Entry
 	dbTxManager dbTxManager
-	dataSource  <-chan ledgerBundle
+	dataSource  <-chan LedgerBundle
 	handlers    []Handler
 }
 
 // NewConsumer - creates new instance of consumer
-func NewConsumer(log *log.Entry, dbTxManager dbTxManager, handlers []Handler, dataSource <-chan ledgerBundle) *Consumer {
+func NewConsumer(log *log.Entry, dbTxManager dbTxManager, handlers []Handler,
+	dataSource <-chan LedgerBundle) *Consumer {
 	return &Consumer{
 		log:         log.WithField("service", "ingest_consumer"),
 		dbTxManager: dbTxManager,
@@ -46,6 +47,7 @@ func NewConsumer(log *log.Entry, dbTxManager dbTxManager, handlers []Handler, da
 	}
 }
 
+//Start - starts consumer in separate goroutine. Must only be used once per instance of consumer
 func (c *Consumer) Start(ctx context.Context) {
 	// normalPeriod is set to 0 to ensure that we are aggressive during catchup. If we failed to get ledger from core
 	// runOnce will handle waiting period
@@ -86,7 +88,7 @@ func (c *Consumer) runOnce(ctx context.Context) error {
 	return nil
 }
 
-func (c *Consumer) readBatch(ctx context.Context) []ledgerBundle {
+func (c *Consumer) readBatch(ctx context.Context) []LedgerBundle {
 	const maxBatchSize = 100
 	bundles := c.readAtLeastOne(ctx)
 	for {
@@ -109,7 +111,7 @@ func (c *Consumer) readBatch(ctx context.Context) []ledgerBundle {
 	}
 }
 
-func (c *Consumer) readAtLeastOne(ctx context.Context) []ledgerBundle {
+func (c *Consumer) readAtLeastOne(ctx context.Context) []LedgerBundle {
 	select {
 	case bundle, ok := <-c.dataSource:
 		{
@@ -117,7 +119,7 @@ func (c *Consumer) readAtLeastOne(ctx context.Context) []ledgerBundle {
 				return nil
 			}
 
-			bundles := make([]ledgerBundle, len(c.dataSource)+1)
+			bundles := make([]LedgerBundle, len(c.dataSource)+1)
 			bundles = append(bundles, bundle)
 			return bundles
 		}
@@ -127,7 +129,7 @@ func (c *Consumer) readAtLeastOne(ctx context.Context) []ledgerBundle {
 	}
 }
 
-func (c *Consumer) processBatch(ctx context.Context, bundles []ledgerBundle) error {
+func (c *Consumer) processBatch(ctx context.Context, bundles []LedgerBundle) error {
 	for _, bundle := range bundles {
 		select {
 		case <-ctx.Done():
@@ -137,15 +139,22 @@ func (c *Consumer) processBatch(ctx context.Context, bundles []ledgerBundle) err
 
 		err := c.processLedgerBundle(ctx, bundle)
 		if err != nil {
-			return errors.Wrap(err, "failed to process ledger bundle", log.F{"ledger_seq": bundle.Header.Sequence})
+			return errors.Wrap(err, "failed to process ledger bundle",
+				log.F{"ledger_seq": bundle.Header.Sequence})
 		}
 	}
 
 	return nil
 }
 
-func (c *Consumer) processLedgerBundle(ctx context.Context, bundle ledgerBundle) error {
+func (c *Consumer) processLedgerBundle(ctx context.Context, bundle LedgerBundle) error {
 	for _, handler := range c.handlers {
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+		}
+
 		err := handler.Handle(&bundle.Header, bundle.Transactions)
 		if err != nil {
 			return errors.Wrap(err, "failed to handle ledger", logan.F{

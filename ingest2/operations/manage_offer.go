@@ -117,10 +117,10 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 			continue
 		}
 
-		offer := change.MustState().Data.MustOffer()
+		deletedOffer := change.MustState().Data.MustOffer()
 
 		participant := history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.MustAccountID(offer.OwnerId),
+			AccountID: h.pubKeyProvider.MustAccountID(deletedOffer.OwnerId),
 			BalanceID: new(uint64),
 			AssetCode: new(string),
 			Effect: history2.Effect{
@@ -129,15 +129,15 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 			},
 		}
 
-		if offer.IsBuy {
-			*participant.BalanceID = h.pubKeyProvider.MustBalanceID(offer.QuoteBalance)
-			*participant.AssetCode = string(offer.Quote)
-			participant.Effect.Unlocked.Amount = amount.String(int64(offer.QuoteAmount))
-			participant.Effect.Unlocked.Fee.CalculatedPercent = amount.String(int64(offer.PercentFee))
+		if deletedOffer.IsBuy {
+			*participant.BalanceID = h.pubKeyProvider.MustBalanceID(deletedOffer.QuoteBalance)
+			*participant.AssetCode = string(deletedOffer.Quote)
+			participant.Effect.Unlocked.Amount = amount.String(int64(deletedOffer.QuoteAmount))
+			participant.Effect.Unlocked.Fee.CalculatedPercent = amount.String(int64(deletedOffer.PercentFee))
 		} else {
-			*participant.BalanceID = h.pubKeyProvider.MustBalanceID(offer.BaseBalance)
-			*participant.AssetCode = string(offer.Base)
-			participant.Effect.Unlocked.Amount = amount.String(int64(offer.BaseAmount))
+			*participant.BalanceID = h.pubKeyProvider.MustBalanceID(deletedOffer.BaseBalance)
+			*participant.AssetCode = string(deletedOffer.Base)
+			participant.Effect.Unlocked.Amount = amount.String(int64(deletedOffer.BaseAmount))
 		}
 
 		result = append(result, participant)
@@ -161,7 +161,7 @@ type offer struct {
 // getParticipantsEffects - returns participants effects based on the provided matches and total base amount
 func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOfferAtom,
 	sourceOffer offer) ([]history2.ParticipantEffect, uint64) {
-	var totalBaseAmount uint64 = 0
+	var totalBaseAmount uint64
 	result := make([]history2.ParticipantEffect, 0, len(claimOfferAtoms)*4)
 	for _, matchedOffer := range claimOfferAtoms {
 		totalBaseAmount += uint64(matchedOffer.BaseAmount)
@@ -176,7 +176,8 @@ func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOffe
 			BaseAsset:           sourceOffer.BaseAsset,
 			QuoteAsset:          sourceOffer.QuoteAsset,
 			IsBuy:               !sourceOffer.IsBuy,
-		}, int64(matchedOffer.OfferId), matchedOffer.BaseAmount, matchedOffer.QuoteAmount, matchedOffer.CurrentPrice, matchedOffer.BFeePaid)
+		}, int64(matchedOffer.OfferId), matchedOffer.BaseAmount, matchedOffer.QuoteAmount, matchedOffer.CurrentPrice,
+			matchedOffer.BFeePaid)
 
 		result = h.addParticipantEffects(result, sourceOffer, 0, matchedOffer.BaseAmount,
 			matchedOffer.QuoteAmount, matchedOffer.CurrentPrice, matchedOffer.AFeePaid)

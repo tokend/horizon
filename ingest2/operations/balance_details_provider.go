@@ -4,7 +4,9 @@ import (
 	history "gitlab.com/tokend/horizon/db2/history2"
 )
 
-func populateEffects(balance history.Balance, effect history.Effect, source history.ParticipantEffect) []history.ParticipantEffect {
+func populateEffects(balance history.Balance, effect history.Effect,
+	source history.ParticipantEffect) []history.ParticipantEffect {
+
 	if balance.AccountID == source.AccountID {
 		source.BalanceID = &balance.ID
 		source.AssetCode = &balance.AssetCode

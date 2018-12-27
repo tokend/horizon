@@ -13,17 +13,19 @@ type ledgerChangesStorage interface {
 	Insert(ledgerChanges []history2.LedgerChanges) error
 }
 
+//LedgerChangesSaver - handles each ledger to store sequence of changes occurred for ledger entries
 type LedgerChangesSaver struct {
 	storage ledgerChangesStorage
 }
 
+//NewLedgerChangesHandler - creates new instance of LedgerChangesSaver
 func NewLedgerChangesHandler(storage ledgerChangesStorage) *LedgerChangesSaver {
 	return &LedgerChangesSaver{
 		storage: storage,
 	}
 }
 
-// Handle - converts tx into history tx and stores them into db
+// Handle - stores ledger changes into db
 func (h *LedgerChangesSaver) Handle(header *core.LedgerHeader, txs []core.Transaction) error {
 	txIDGen := generator.NewIDI32(header.Sequence)
 	opIDGen := generator.NewIDI32(header.Sequence)
@@ -67,6 +69,7 @@ func (h *LedgerChangesSaver) handleOpChanges(txID, opID int64, ledgerChanges []x
 	return nil
 }
 
+//Name - name of the handler
 func (h *LedgerChangesSaver) Name() string {
 	return "ledger_changes_saver"
 }

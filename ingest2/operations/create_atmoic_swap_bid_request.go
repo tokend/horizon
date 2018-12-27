@@ -12,7 +12,9 @@ type createAtomicSwapBidRequestOpHandler struct {
 }
 
 // Details returns details about create atomic swap bid request operation
-func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
+func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
+	opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
+
 	aSwapBidRequest := op.Body.MustCreateASwapBidCreationRequestOp().Request
 
 	quoteAssets := make([]regources.SaleQuoteAsset, 0, len(aSwapBidRequest.QuoteAssets))

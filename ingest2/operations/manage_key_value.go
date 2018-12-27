@@ -29,6 +29,7 @@ func (h *manageKeyValueOpHandler) Details(op rawOperation, _ xdr.OperationResult
 	}, nil
 }
 
+//ParticipantsEffects - returns source of the operation
 func (h *manageKeyValueOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {

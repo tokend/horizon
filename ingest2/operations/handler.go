@@ -6,8 +6,8 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/ingest2/generator"
+	"gitlab.com/tokend/horizon/log"
 )
 
 //go:generate mockery -case underscore -name operationsStorage -inpkg -testonly
@@ -22,6 +22,8 @@ type participantEffectsStorage interface {
 	Insert(participants []history2.ParticipantEffect) error
 }
 
+//Handler - handles txs to create operation details and participant effects. Routes operation
+// to particular implementation of handler
 type Handler struct {
 	participantEffectsStorage participantEffectsStorage
 	operationsStorage         operationsStorage
@@ -33,7 +35,7 @@ type Handler struct {
 // details and participants effects of certain operation
 func NewOperationsHandler(operationsStorage operationsStorage, participantEffectsStorage participantEffectsStorage,
 	pubKeyProvider IDProvider, balanceProvider balanceProvider) *Handler {
-	manageOfferOpHandler := &manageOfferOpHandler{
+	manageOfferOpHandlerInst := &manageOfferOpHandler{
 		pubKeyProvider: pubKeyProvider,
 	}
 	return &Handler{
@@ -57,8 +59,8 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeManageAsset:     &manageAssetOpHandler{},
-			xdr.OperationTypeManageAssetPair: &manageAssetPairOpHandler{manageOfferOpHandler},
-			xdr.OperationTypeManageOffer:     manageOfferOpHandler,
+			xdr.OperationTypeManageAssetPair: &manageAssetPairOpHandler{manageOfferOpHandlerInst},
+			xdr.OperationTypeManageOffer:     manageOfferOpHandlerInst,
 			xdr.OperationTypeSetFees: &setFeeOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
@@ -84,7 +86,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{
-				manageOfferOpHandler: manageOfferOpHandler,
+				manageOfferOpHandler: manageOfferOpHandlerInst,
 			},
 			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
 				pubKeyProvider: pubKeyProvider,
@@ -94,7 +96,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeDirectDebit:          &deprecatedOpHandler{},
 			xdr.OperationTypeManageInvoiceRequest: &deprecatedOpHandler{},
 			xdr.OperationTypeManageSale: &manageSaleHandler{
-				manageOfferOpHandler: manageOfferOpHandler,
+				manageOfferOpHandler: manageOfferOpHandlerInst,
 			},
 			xdr.OperationTypeManageContractRequest:       &deprecatedOpHandler{},
 			xdr.OperationTypeManageContract:              &deprecatedOpHandler{},
@@ -156,9 +158,11 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 }
 
 // convertOperation transforms xdr operation data to db suitable Operation and Participants Effects
-func (h *Handler) convertOperation(op operation, opIDGen *generator.ID, participantIDGen *generator.ID) (history2.Operation, []history2.ParticipantEffect, error) {
+func (h *Handler) convertOperation(op operation, opIDGen *generator.ID,
+	participantIDGen *generator.ID) (history2.Operation, []history2.ParticipantEffect, error) {
+
 	opType := op.Operation().Body.Type
-	handler, ok := h.allHandlers[opType]
+	opHandler, ok := h.allHandlers[opType]
 	if !ok {
 		return history2.Operation{}, nil, errors.From(
 			errors.New("no handler for such operation type"), map[string]interface{}{
@@ -167,7 +171,7 @@ func (h *Handler) convertOperation(op operation, opIDGen *generator.ID, particip
 	}
 
 	source := op.Source()
-	details, err := handler.Details(rawOperation{
+	details, err := opHandler.Details(rawOperation{
 		Body:   op.Operation().Body,
 		Source: source,
 	}, op.Result())
@@ -181,7 +185,7 @@ func (h *Handler) convertOperation(op operation, opIDGen *generator.ID, particip
 	sourceParticipant := history2.ParticipantEffect{
 		AccountID: h.pubKeyProvider.MustAccountID(source),
 	}
-	participantsEffects, err := handler.ParticipantsEffects(op.Operation().Body, op.Result(), sourceParticipant,
+	participantsEffects, err := opHandler.ParticipantsEffects(op.Operation().Body, op.Result(), sourceParticipant,
 		op.LedgerChanges())
 	if err != nil {
 		return history2.Operation{}, nil,
@@ -204,32 +208,7 @@ func (h *Handler) convertOperation(op operation, opIDGen *generator.ID, particip
 	}, participantsEffects, nil
 }
 
+//Name - returns name of the handler
 func (h *Handler) Name() string {
 	return "operation_handler"
-}
-
-type operation struct {
-	tx  core.Transaction
-	opI int
-}
-
-func (op *operation) LedgerChanges() []xdr.LedgerEntryChange {
-	return op.tx.ResultMeta.MustOperations()[op.opI].Changes
-}
-
-func (op *operation) Operation() xdr.Operation {
-	return op.tx.Envelope.Tx.Operations[op.opI]
-}
-
-func (op *operation) Source() xdr.AccountId {
-	opSource := op.Operation().SourceAccount
-	if opSource != nil {
-		return *opSource
-	}
-
-	return op.tx.Envelope.Tx.SourceAccount
-}
-
-func (op *operation) Result() xdr.OperationResultTr {
-	return op.tx.Result.Result.Result.MustResults()[op.opI].MustTr()
 }

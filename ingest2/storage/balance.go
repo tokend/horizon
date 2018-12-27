@@ -66,7 +66,8 @@ func (s *Balance) getBalance(rawAddress xdr.BalanceId) (history2.Balance, error)
 		balance = new(history2.Balance)
 		*balance, err = s.getBalanceFromCore(rawAddress, address)
 		if err != nil {
-			return history2.Balance{}, errors.Wrap(err, "failed to load balance from core db", logan.F{"address": address})
+			return history2.Balance{}, errors.Wrap(err, "failed to load balance from core db",
+				logan.F{"address": address})
 		}
 	}
 
@@ -83,13 +84,15 @@ func (s *Balance) getBalanceFromCore(rawAddress xdr.BalanceId, address string) (
 	}
 
 	if coreBalance == nil {
-		return history2.Balance{}, errors.From(errors.New("balance not found in core db"), logan.F{"balance_address": address})
+		return history2.Balance{}, errors.From(errors.New("balance not found in core db"),
+			logan.F{"balance_address": address})
 	}
 
 	var rawAccountAddress xdr.AccountId
 	err = rawAccountAddress.SetAddress(coreBalance.AccountAddress)
 	if err != nil {
-		return history2.Balance{}, errors.Wrap(err, "failed to set address for account_id", logan.F{"str_address": coreBalance.AccountAddress})
+		return history2.Balance{}, errors.Wrap(err, "failed to set address for account_id",
+			logan.F{"str_address": coreBalance.AccountAddress})
 	}
 
 	account := s.accountStorage.MustAccount(rawAccountAddress)
@@ -119,6 +122,7 @@ func (s *Balance) InsertBalance(rawBalanceID xdr.BalanceId, balance history2.Bal
 	return nil
 }
 
+//MustBalanceID - returns balanceID. Panics if fails to find one.
 func (s *Balance) MustBalanceID(rawBalanceID xdr.BalanceId) uint64 {
 	return s.MustBalance(rawBalanceID).ID
 }

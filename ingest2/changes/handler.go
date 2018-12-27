@@ -1,11 +1,12 @@
 package changes
 
 import (
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	core "gitlab.com/tokend/horizon/db2/core2"
-	"time"
 )
 
 type creatable interface {
@@ -18,30 +19,33 @@ type removable interface {
 	Removed(change ledgerChange) error
 }
 
-// Handler - handles ledger changes
+// Handler - handles ledger changes to populate changes for entries
 type Handler struct {
 	Create map[xdr.LedgerEntryType]creatable
 	Update map[xdr.LedgerEntryType]updatable
 	Remove map[xdr.LedgerEntryType]removable
 }
 
-func NewHandler(account accountStorage, balance balanceStorage, request reviewableRequestStorage, sale saleStorage) *Handler {
-	reviewableRequestHandler := newReviewableRequestHandler(request)
-	saleHandler := newSaleHandler(sale)
+//NewHandler - returns new instance of handler
+func NewHandler(account accountStorage, balance balanceStorage, request reviewableRequestStorage,
+	sale saleStorage) *Handler {
+
+	reviewRequestHandlerInst := newReviewableRequestHandler(request)
+	saleHandlerInst := newSaleHandler(sale)
 
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{
 			xdr.LedgerEntryTypeAccount:           newAccountHandler(account),
 			xdr.LedgerEntryTypeBalance:           newBalanceHandler(account, balance),
-			xdr.LedgerEntryTypeReviewableRequest: reviewableRequestHandler,
-			xdr.LedgerEntryTypeSale:              saleHandler,
+			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
+			xdr.LedgerEntryTypeSale:              saleHandlerInst,
 		},
 		Update: map[xdr.LedgerEntryType]updatable{
-			xdr.LedgerEntryTypeReviewableRequest: reviewableRequestHandler,
-			xdr.LedgerEntryTypeSale:              saleHandler,
+			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
+			xdr.LedgerEntryTypeSale:              saleHandlerInst,
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
-			xdr.LedgerEntryTypeReviewableRequest: reviewableRequestHandler,
+			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 		},
 	}
 }
@@ -123,6 +127,7 @@ func (h *Handler) removed(lc ledgerChange) error {
 	return handler.Removed(lc)
 }
 
-func (h *Handler) Name() string{
+//Name - name of the handler
+func (h *Handler) Name() string {
 	return "ledger_changes_handler"
 }
