@@ -32,6 +32,7 @@ var version = ""
 type App struct {
 	config         config.Config
 	web            *Web
+	webV2          *WebV2
 	historyQ       history.QInterface
 	coreQ          core.QInterface
 	ctx            context.Context
