@@ -5,7 +5,9 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
-	"net/http"
+	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/logan/v3"
+	"time"
 )
 
 type WebV2 struct {
@@ -28,25 +30,20 @@ func initWebV2(app *App) {
 func initWebV2Middleware(app *App) {
 	r := app.webV2.router
 
-	r.Use(middleware.StripSlashes)
-	// FIXME pls: use ctxMiddleware from ape here
+	logger := logan.New()
+
 	r.Use(
-		func(next http.Handler) http.Handler {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				ctx := r.Context()
-				extender := app.CtxExtender()
-				extender(ctx)
-				next.ServeHTTP(w, r.WithContext(ctx))
-			})
-		},
+		middleware.StripSlashes,
+		ape.CtxMiddleWare(
+			app.CtxExtender(),
+		),
+		middleware.SetHeader(upstreamHeader, app.config.Hostname),
+		middleware.RequestID,
+		ape.LoganMiddleware(logger, 300*time.Millisecond),
+		ape.RecoverMiddleware(logger),
+		requestMetricsMiddlewareV2,
 	)
-	r.Use(middleware.SetHeader(upstreamHeader, app.config.Hostname))
-	r.Use(middleware.RequestID)
-	// FIXME pls: use loganMiddleware from ape
-	r.Use(middleware.Logger)
-	r.Use(requestMetricsMiddlewareV2)
-	// FIXME pls: use recoverMiddleware from ape
-	r.Use(middleware.Recoverer)
+
 	if app.config.CORSEnabled {
 		// TODO: chi doesn't provide an analogue, should write own implementation?
 		//r.Use(middleware.AutomaticOptions)
