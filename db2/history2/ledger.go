@@ -1,8 +1,9 @@
 package history2
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"time"
+
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // Ledger is a row of data from the `ledgers` table
@@ -13,4 +14,5 @@ type Ledger struct {
 	PreviousHash string    `db:"previous_hash"`
 	ClosedAt     time.Time `db:"closed_at"`
 	TxCount      int32     `db:"tx_count"`
+	Data         string    `db:"data"`
 }

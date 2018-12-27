@@ -107,7 +107,7 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 
 	return &history.Sale{
 		ID:                uint64(raw.SaleId),
-		OwnerID:           raw.OwnerId.Address(),
+		OwnerAddress:      raw.OwnerId.Address(),
 		BaseAsset:         string(raw.BaseAsset),
 		DefaultQuoteAsset: string(raw.DefaultQuoteAsset),
 		StartTime:         time.Unix(int64(raw.StartTime), 0).UTC(),

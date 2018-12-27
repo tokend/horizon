@@ -5,6 +5,7 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
@@ -33,6 +34,11 @@ func (h *LedgerHandler) Name() string {
 
 // Handle - stores ledger into db. Returns error if failed to store
 func (h *LedgerHandler) Handle(header *core.LedgerHeader, txs []core.Transaction) error {
+	rawData, err := xdr.MarshalBase64(header.Data)
+	if err != nil {
+		return errors.Wrap(err, "failed to marshal raw ledger data")
+	}
+
 	hHeader := history2.Ledger{
 		TotalOrderID: db2.TotalOrderID{
 			ID: int64(header.Sequence),
@@ -42,9 +48,10 @@ func (h *LedgerHandler) Handle(header *core.LedgerHeader, txs []core.Transaction
 		PreviousHash: header.PrevHash,
 		ClosedAt:     time.Unix(header.CloseTime, 0).UTC(),
 		TxCount:      int32(len(txs)),
+		Data:         rawData,
 	}
 
-	err := h.storage.Insert(&hHeader)
+	err = h.storage.Insert(&hHeader)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert ledger", logan.F{
 			"ledger_seq": header.Sequence,

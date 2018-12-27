@@ -29,7 +29,7 @@ func (q *Sale) Insert(sale history2.Sale) error {
 			"base_hard_cap, sale_type",
 		).
 		Values(
-			sale.ID, sale.OwnerID, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
+			sale.ID, sale.OwnerAddress, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
 			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.Details, sale.State,
 			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType,
 		)
@@ -45,7 +45,7 @@ func (q *Sale) Insert(sale history2.Sale) error {
 // Update - updates existing sale
 func (q *Sale) Update(sale history2.Sale) error {
 	sql := sq.Update("sale").SetMap(map[string]interface{}{
-		"owner_id":            sale.OwnerID,
+		"owner_id":            sale.OwnerAddress,
 		"base_asset":          sale.BaseAsset,
 		"default_quote_asset": sale.DefaultQuoteAsset,
 		"start_time":          sale.StartTime,

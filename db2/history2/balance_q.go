@@ -7,7 +7,6 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-
 // BalancesQ is a helper struct to aid in configuring queries that loads balances
 type BalancesQ struct {
 	repo *db2.Repo
@@ -24,7 +23,8 @@ func NewBalancesQ(repo *db2.Repo) *BalancesQ {
 // returns nil, nil - if balance does not exists
 func (q *BalancesQ) ByAddress(address string) (*Balance, error) {
 	var result Balance
-	err := q.repo.Get(&result, sq.Select("b.id, b.account_id, b.address, b.asset_code").From("balances b").Where("b.address = ?", address))
+	err := q.repo.Get(&result, sq.Select("b.id, b.account_id, b.address, b.asset_code").
+		From("balances b").Where("b.address = ?", address))
 	if err != nil {
 		if q.repo.NoRows(err) {
 			return nil, nil

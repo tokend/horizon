@@ -9,7 +9,7 @@ import (
 // Transaction is a row of data from the `history_transactions` table
 type Transaction struct {
 	db2.TotalOrderID
-	TxHash           string    `db:"tx_hash"`
+	Hash             string    `db:"hash"`
 	LedgerSequence   int32     `db:"ledger_sequence"`
 	LedgerCloseTime  time.Time `db:"ledger_close_time"`
 	ApplicationOrder int32     `db:"application_order"`

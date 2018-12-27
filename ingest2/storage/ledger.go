@@ -23,7 +23,8 @@ func NewLedger(repo *db2.Repo) *Ledger {
 //Insert - inserts Ledger into DB
 func (s *Ledger) Insert(ledger *history2.Ledger) error {
 	sql := squirrel.Insert("ledgers").Columns("id", "sequence", "hash", "previous_hash", "closed_at",
-		"tx_count").Values(ledger.ID, ledger.Sequence, ledger.Hash, ledger.PreviousHash, ledger.ClosedAt, ledger.TxCount)
+		"tx_count", "data").Values(ledger.ID, ledger.Sequence, ledger.Hash, ledger.PreviousHash, ledger.ClosedAt,
+		ledger.TxCount, ledger.Data)
 
 	_, err := s.repo.Exec(sql)
 	if err != nil {

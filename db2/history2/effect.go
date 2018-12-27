@@ -4,8 +4,10 @@ package history2
 type effectType int64
 
 const (
+	// EffectTypeNone - default effect type
+	EffectTypeNone effectType = iota
 	// EffectTypeFunded - balance received funds from other balance
-	EffectTypeFunded effectType = iota
+	EffectTypeFunded
 	// EffectTypeIssued - funds have been issued to the balance
 	EffectTypeIssued
 	// EffectTypeCharged - balance has been charged
@@ -58,8 +60,8 @@ type BalanceChangeEffect struct {
 	Fee    Fee    `json:"fee"`
 }
 
-// Fee - describes fee happened on balance. Direction of fee depends on the operation (depending on effect might be charged, locked, unlocked,
-// for all incoming effects but unlocked it's always charged)
+// Fee - describes fee happened on balance. Direction of fee depends on the operation (depending on effect might be
+// charged, locked, unlocked, for all incoming effects but unlocked it's always charged)
 type Fee struct {
 	Fixed             string `json:"fixed"`
 	CalculatedPercent string `json:"calculated_percent"`

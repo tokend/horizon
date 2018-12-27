@@ -36,7 +36,7 @@ func (h *TxSaver) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 			TotalOrderID: db2.TotalOrderID{
 				ID: idGenerator.Next(),
 			},
-			TxHash:           tx.TransactionHash,
+			Hash:             tx.TransactionHash,
 			LedgerSequence:   header.Sequence,
 			LedgerCloseTime:  time.Unix(header.CloseTime, 0).UTC(),
 			ApplicationOrder: int32(i),

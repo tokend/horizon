@@ -30,7 +30,7 @@ func (s *Tx) Insert(txs []history2.Transaction) error {
 		)
 
 	for _, tx := range txs {
-		sql = sql.Values(tx.ID, tx.TxHash, tx.LedgerSequence, tx.LedgerCloseTime, tx.ApplicationOrder, tx.Account,
+		sql = sql.Values(tx.ID, tx.Hash, tx.LedgerSequence, tx.LedgerCloseTime, tx.ApplicationOrder, tx.Account,
 			tx.OperationCount, tx.Envelope, tx.Result, tx.Meta,
 			tx.ValidAfter, tx.ValidBefore)
 	}
