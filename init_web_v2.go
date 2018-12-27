@@ -3,28 +3,24 @@ package horizon
 import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/tokend/horizon/v2"
+	v2middleware "gitlab.com/tokend/horizon/v2/middleware"
 	"time"
 )
 
 type WebV2 struct {
-	router chi.Router
-
-	requestCounter metrics.Counter
-	failureCounter metrics.Counter
-
-	requestTimer metrics.Timer
-	failureMeter metrics.Meter
-	successMeter metrics.Meter
+	router  chi.Router
+	metrics *v2.WebMetrics
 }
 
 func initWebV2(app *App) {
 	router := chi.NewRouter()
 
 	app.webV2.router = router
+	app.webV2.metrics = v2.NewWebMetrics()
 }
 
 func initWebV2Middleware(app *App) {
@@ -41,7 +37,7 @@ func initWebV2Middleware(app *App) {
 		middleware.RequestID,
 		ape.LoganMiddleware(logger, 300*time.Millisecond),
 		ape.RecoverMiddleware(logger),
-		requestMetricsMiddlewareV2,
+		v2middleware.Metrics,
 	)
 
 	if app.config.CORSEnabled {

@@ -187,6 +187,11 @@ func (a *App) UpdateMetrics() {
 	//a.coreConnGauge.Update(int64(a.coreQ.Repo.DB.Stats().OpenConnections))
 }
 
+// UpdateWebV2Metrics updates the metrics for the web_v2 requests
+func (a *App) UpdateWebV2Metrics (requestDuration time.Duration, responseStatus int) {
+	a.webV2.metrics.Update(requestDuration, responseStatus)
+}
+
 // Tick triggers horizon to update all of it's background processes such as
 // transaction submission, metrics, ingestion and reaping.
 func (a *App) Tick() {
