@@ -1,4 +1,4 @@
-package v2_resource
+package resource
 
 import "gitlab.com/tokend/regources"
 

@@ -1,4 +1,4 @@
-package v2_resource
+package resource
 
 type RelationshipBase struct {
 	Id            string               `json:"id"`
