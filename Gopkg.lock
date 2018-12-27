@@ -62,7 +62,10 @@
   branch = "master"
   digest = "1:e1fd16e1c9d22d6d40e4f20abc23cfbf6448ad5665ea0b2c845fafdbb075f63a"
   name = "github.com/go-chi/chi"
-  packages = ["."]
+  packages = [
+    ".",
+    "middleware",
+  ]
   pruneopts = ""
   revision = "efb8f44e73c80bcd00026f0f4e37c76595b1757e"
 
@@ -74,10 +77,26 @@
   revision = "3afebba5a48dbc89b574d890b6b34d9ee10b4785"
 
 [[projects]]
+  digest = "1:e9d5b80e1c25c1c79a2b2cfa97bf114456345d3c7c345a875c7b7badc70aa975"
+  name = "github.com/go-ozzo/ozzo-validation"
+  packages = ["."]
+  pruneopts = ""
+  revision = "106681dbb37bfa3e7683c4c8129cb7f5925ea3e9"
+  version = "v3.5.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/goji/context"
   packages = ["."]
   revision = "68b83f7b0439800daff361aeff573ecad1b26cbe"
+
+[[projects]]
+  digest = "1:ec6c80b25440f994fd5d8c3b8d6593543134e967b56ad52e0dda88e13515a49d"
+  name = "github.com/google/jsonapi"
+  packages = ["."]
+  pruneopts = ""
+  revision = "46d3ced0434461be12e555852e2f1a9ed382e139"
+  version = "1.0.0"
 
 [[projects]]
   branch = "master"
@@ -332,6 +351,17 @@
   version = "v1.0"
 
 [[projects]]
+  digest = "1:608f8f870a52343815cc73a01cbfa1bba11ee1b4f58ba695d3ce98401cba2ef3"
+  name = "gitlab.com/distributed_lab/ape"
+  packages = [
+    ".",
+    "problems",
+  ]
+  pruneopts = ""
+  revision = "04ce3e307f061c4d106592454b65456d46fcf6d2"
+  version = "v0.4"
+
+[[projects]]
   branch = "master"
   name = "gitlab.com/distributed_lab/corer"
   packages = ["."]
@@ -491,6 +521,7 @@
     "github.com/evalphobia/logrus_sentry",
     "github.com/getsentry/raven-go",
     "github.com/go-chi/chi",
+    "github.com/go-chi/chi/middleware",
     "github.com/go-errors/errors",
     "github.com/goji/context",
     "github.com/guregu/null",
@@ -515,6 +546,7 @@
     "github.com/zenazn/goji/web",
     "github.com/zenazn/goji/web/middleware",
     "github.com/zenazn/goji/web/mutil",
+    "gitlab.com/distributed_lab/ape",
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/figure",
     "gitlab.com/distributed_lab/logan",

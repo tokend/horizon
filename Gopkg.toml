@@ -86,7 +86,7 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/corer"
 
-[[constraint]]
+[[override]]
   name = "gitlab.com/distributed_lab/logan"
   version = "3.0"
 
@@ -117,3 +117,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/go-chi/chi"
+
+[[constraint]]
+  name = "gitlab.com/distributed_lab/ape"
+  version = "0.4.0"
