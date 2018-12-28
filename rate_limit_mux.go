@@ -12,7 +12,6 @@ import (
 	"gitlab.com/tokend/horizon/render/problem"
 	"gopkg.in/throttled/throttled.v2"
 	"gopkg.in/throttled/throttled.v2/store/memstore"
-	"gopkg.in/throttled/throttled.v2/store/redigostore"
 )
 
 type RateLimitedMux struct {
@@ -22,14 +21,8 @@ type RateLimitedMux struct {
 }
 
 func NewRateLimitedMux(app *App) (*RateLimitedMux, error) {
-	var err error
-	var store throttled.GCRAStore
+	store, err := memstore.New(2 << 10)
 
-	if app.redis != nil {
-		store, err = redigostore.New(app.redis, "ratelimit:", 0)
-	} else {
-		store, err = memstore.New(2 << 10)
-	}
 	if err != nil {
 		log.WithField("service", "rate-limiter").WithError(err).Fatal("failed to init rate limiter")
 	}

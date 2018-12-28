@@ -1,0 +1,28 @@
+config:
+  stellar_core_url: http://
+  stellar_core_database_url: postgres://
+  hostname: ""
+  database_url: postgres://
+  log_level: ""
+  slow_query_bound: 1s
+  port: 8000
+  api_backend: http://
+  ingest: true
+  stale_threshold: 0
+  sign_checkskip: true
+  cors_enabled: true
+  disable_api_submit: true
+  disable_tx_tfa: true
+  template_backend: http://
+  force_https_links: true
+  sentry_dsn: ""
+  sentry_log_level: ""
+  project: ""
+  env: ""
+  migrate_up_on_start: false
+
+  invest_ready: http://
+  telegram_airdrop: http://
+
+
+

@@ -39,4 +39,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypePayout:                      func(ir xdr.OperationResultTr) shortStr { return ir.MustPayoutResult().Code },
 	xdr.OperationTypeManageAccountRole:           func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountRoleResult().Code },
 	xdr.OperationTypeManageAccountRolePermission: func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountRolePermissionResult().Code },
+	xdr.OperationTypeCreateAswapBidRequest:       func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateASwapBidCreationRequestResult().Code },
+	xdr.OperationTypeCancelAswapBid:              func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelASwapBidResult().Code },
+	xdr.OperationTypeCreateAswapRequest:          func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateASwapRequestResult().Code },
 }

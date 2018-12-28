@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/garyburd/redigo/redis"
 	"github.com/rcrowley/go-metrics"
 	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/tokend/horizon/cache"
@@ -19,7 +18,6 @@ import (
 	"gitlab.com/tokend/horizon/ingest"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/log"
-	"gitlab.com/tokend/horizon/reap"
 	"gitlab.com/tokend/horizon/render/sse"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
@@ -38,10 +36,8 @@ type App struct {
 	coreQ          core.QInterface
 	ctx            context.Context
 	cancel         func()
-	redis          *redis.Pool
 	submitter      *txsub.System
 	ingester       *ingest.System
-	reaper         *reap.System
 	ticks          *time.Ticker
 	CoreInfo       *corer.Info
 	horizonVersion string
@@ -106,13 +102,7 @@ func (a *App) Serve() {
 
 	go a.run()
 
-	var err error
-	if a.config.TLSCert != "" {
-		err = srv.ListenAndServeTLS(a.config.TLSCert, a.config.TLSKey)
-	} else {
-		err = srv.ListenAndServe()
-	}
-
+	err := srv.ListenAndServe()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -237,12 +227,6 @@ func (a *App) UpdateMetrics() {
 	//a.coreConnGauge.Update(int64(a.coreQ.Repo.DB.Stats().OpenConnections))
 }
 
-// DeleteUnretainedHistory forwards to the app's reaper.  See
-// `reap.DeleteUnretainedHistory` for details
-func (a *App) DeleteUnretainedHistory() error {
-	return a.reaper.DeleteUnretainedHistory()
-}
-
 // Tick triggers horizon to update all of it's background processes such as
 // transaction submission, metrics, ingestion and reaping.
 func (a *App) Tick() {
@@ -259,7 +243,6 @@ func (a *App) Tick() {
 	}
 
 	wg.Add(2)
-	go func() { a.reaper.Tick(); wg.Done() }()
 	go func() { a.submitter.Tick(a.ctx); wg.Done() }()
 	wg.Wait()
 

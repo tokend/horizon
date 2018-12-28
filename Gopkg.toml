@@ -103,8 +103,8 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "product"
   name = "gitlab.com/tokend/go"
+  revision = "3c272455773ab57f55999ba65e88a6a1f87b4a60"
 
 [[constraint]]
   branch = "product"
