@@ -2,19 +2,22 @@ package middleware
 
 import (
 	"github.com/go-chi/chi/middleware"
-	"gitlab.com/tokend/horizon"
 	"net/http"
 	"time"
 )
 
-func Metrics(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		app := r.Context().Value("app").(*horizon.App)
+type WebV2MetricsUpdater interface {
+	UpdateWebV2Metrics(duration time.Duration, status int)
+}
 
-		mw := middleware.NewWrapResponseWriter(w, 1)
-		ts := time.Now()
-		next.ServeHTTP(mw.(http.ResponseWriter), r)
+func WebMetrics(updater WebV2MetricsUpdater) func (handler http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			mw := middleware.NewWrapResponseWriter(w, 1)
+			ts := time.Now()
+			next.ServeHTTP(mw.(http.ResponseWriter), r)
 
-		app.UpdateWebV2Metrics(time.Since(ts), mw.Status())
-	})
+			updater.UpdateWebV2Metrics(time.Since(ts), mw.Status())
+		})
+	}
 }

@@ -8,6 +8,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/horizon/v2"
 	v2middleware "gitlab.com/tokend/horizon/v2/middleware"
+	"net/http"
 	"time"
 )
 
@@ -30,14 +31,11 @@ func initWebV2Middleware(app *App) {
 
 	r.Use(
 		middleware.StripSlashes,
-		ape.CtxMiddleWare(
-			app.CtxExtender(),
-		),
 		middleware.SetHeader(upstreamHeader, app.config.Hostname),
 		middleware.RequestID,
 		ape.LoganMiddleware(logger, 300*time.Millisecond),
 		ape.RecoverMiddleware(logger),
-		v2middleware.Metrics,
+		v2middleware.WebMetrics(app),
 	)
 
 	if app.config.CORSEnabled {
@@ -60,7 +58,11 @@ func initWebV2Middleware(app *App) {
 }
 
 func initWebV2Actions(app *App) {
-	// TODO
+	r := app.webV2.router
+
+	r.Get("/v2/accounts", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("welcome"))
+	})
 }
 
 func init() {

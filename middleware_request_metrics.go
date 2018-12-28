@@ -30,25 +30,3 @@ func requestMetricsMiddleware(c *web.C, h http.Handler) http.Handler {
 		}
 	})
 }
-
-func requestMetricsMiddlewareV2(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		app := r.Context().Value("app").(*App)
-
-		mw := mutil.WrapWriter(w)
-
-		app.webV2.requestCounter.Inc(1)
-		app.webV2.requestTimer.Time(func() {
-			h.ServeHTTP(mw.(http.ResponseWriter), r)
-		})
-
-		if 200 <= mw.Status() && mw.Status() < 400 {
-			// a success is in [200, 400)
-			app.webV2.successMeter.Mark(1)
-		} else if 400 <= mw.Status() && mw.Status() < 600 {
-			// a success is in [400, 600)
-			app.webV2.failureCounter.Inc(1)
-			app.webV2.failureMeter.Mark(1)
-		}
-	})
-}
