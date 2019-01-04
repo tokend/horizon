@@ -65,9 +65,7 @@ func initWebV2Middleware(app *App) {
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
-	r.Get("/v2/accounts", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
-	})
+	m.Get("/v2/accounts/{id}", &handlers.AccountShow{})
 }
 
 func init() {
