@@ -28,8 +28,8 @@ func main() {
 func init() {
 	rootCmd = &cobra.Command{
 		Use:   "horizon",
-		Short: "client-facing api server for the stellar network",
-		Long:  "client-facing api server for the stellar network",
+		Short: "client-facing api server for the TokenD network",
+		Long:  "client-facing api server for the TokenD network",
 		Run: func(cmd *cobra.Command, args []string) {
 			initApp(cmd, args)
 			app.Serve()

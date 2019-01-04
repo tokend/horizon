@@ -2,7 +2,6 @@ package ingest2
 
 import (
 	"context"
-	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -47,45 +46,37 @@ func NewConsumer(log *log.Entry, dbTxManager dbTxManager, handlers []Handler,
 	}
 }
 
-//Start - starts consumer in separate goroutine. Must only be used once per instance of consumer
+//Start - starts consumer in separate goroutine. Must only be used once
 func (c *Consumer) Start(ctx context.Context) {
-	// normalPeriod is set to 0 to ensure that we are aggressive during catchup. If we failed to get ledger from core
-	// runOnce will handle waiting period
-	go running.WithBackOff(ctx, c.log, "ingest_consumer", c.runOnce, time.Duration(0),
-		minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
+	go c.run(ctx)
 }
 
-func (c *Consumer) runOnce(ctx context.Context) error {
-	bundles := c.readBatch(ctx)
-	if len(bundles) == 0 {
-		c.log.Info("Fetched empty ledger bundle batch. It's clear sign that we are going to stop")
-		return nil
+func (c *Consumer) run(ctx context.Context) {
+	for {
+		bundles := c.readBatch(ctx)
+		if len(bundles) == 0 {
+			c.log.Info("Fetched empty ledger bundle batch. It's clear sign that we are going to stop")
+			return
+		}
+
+		localLog := c.log.WithFields(log.F{
+			"batch_len": len(bundles),
+			"from":      bundles[0].Header.Sequence,
+			"to":        bundles[len(bundles)-1].Header.Sequence,
+		})
+
+		localLog.Info("Starting to process new ledger bundles batch")
+		running.UntilSuccess(ctx, localLog, "ingest_consumer", func(ctx context.Context) (bool, error) {
+			err := c.processBatch(ctx, bundles)
+			if err != nil {
+				return false, err
+			}
+
+			return true, nil
+		}, minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
+		localLog.Info("Ledger bundles batch processed")
 	}
 
-	c.log.WithFields(log.F{
-		"batch_len": len(bundles),
-		"from":      bundles[0].Header.Sequence,
-		"to":        bundles[len(bundles)-1].Header.Sequence,
-	}).Info("Starting to process new ledger bundles batch")
-
-	err := c.dbTxManager.Begin()
-	if err != nil {
-		return errors.Wrap(err, "failed to begin db tx")
-	}
-
-	defer func() {
-		_ = c.dbTxManager.Rollback()
-	}()
-	err = c.processBatch(ctx, bundles)
-	if err != nil {
-		return errors.Wrap(err, "failed to process batch of ledger bundles")
-	}
-
-	err = c.dbTxManager.Commit()
-	if err != nil {
-		return errors.Wrap(err, "failed to commit db tx")
-	}
-	return nil
 }
 
 func (c *Consumer) readBatch(ctx context.Context) []LedgerBundle {
@@ -130,6 +121,15 @@ func (c *Consumer) readAtLeastOne(ctx context.Context) []LedgerBundle {
 }
 
 func (c *Consumer) processBatch(ctx context.Context, bundles []LedgerBundle) error {
+	err := c.dbTxManager.Begin()
+	if err != nil {
+		return errors.Wrap(err, "failed to begin db tx")
+	}
+
+	defer func() {
+		_ = c.dbTxManager.Rollback()
+	}()
+
 	for _, bundle := range bundles {
 		select {
 		case <-ctx.Done():
@@ -137,13 +137,17 @@ func (c *Consumer) processBatch(ctx context.Context, bundles []LedgerBundle) err
 		default:
 		}
 
-		err := c.processLedgerBundle(ctx, bundle)
+		err = c.processLedgerBundle(ctx, bundle)
 		if err != nil {
 			return errors.Wrap(err, "failed to process ledger bundle",
 				log.F{"ledger_seq": bundle.Header.Sequence})
 		}
 	}
 
+	err = c.dbTxManager.Commit()
+	if err != nil {
+		return errors.Wrap(err, "failed to commit db tx")
+	}
 	return nil
 }
 
