@@ -12,7 +12,6 @@ type LedgerHeaderQ struct {
 	repo *db2.Repo
 }
 
-
 // NewLedgerHeaderQ - creates new instance of LedgerHeaderQ
 func NewLedgerHeaderQ(repo *db2.Repo) *LedgerHeaderQ {
 	return &LedgerHeaderQ{
@@ -23,7 +22,7 @@ func NewLedgerHeaderQ(repo *db2.Repo) *LedgerHeaderQ {
 // LedgerHeaderBySequence returns *core.LedgerHeader by its sequence. Returns nil, nil if ledgerHeader does not exists
 func (q *LedgerHeaderQ) LedgerHeaderBySequence(seq int32) (*LedgerHeader, error) {
 	query := sq.Select("l.ledgerhash, l.prevhash, l.bucketlisthash, l.closetime, l.ledgerseq, l.version, l.data").
-		From("ledgerheaders h").Where("ledgerseq = ?", seq)
+		From("ledgerheaders l").Where("ledgerseq = ?", seq)
 	var header LedgerHeader
 	err := q.repo.Get(&header, query)
 	if err != nil {

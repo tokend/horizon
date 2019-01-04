@@ -10,6 +10,7 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"gitlab.com/tokend/horizon/log"
 	"golang.org/x/net/context"
 )
 
@@ -52,6 +53,8 @@ type Repo struct {
 
 	// Ctx is the optional context in which the repo is operating under.
 	Ctx context.Context
+
+	Log *log.Entry
 
 	tx *sqlx.Tx
 }

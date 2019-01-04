@@ -260,14 +260,18 @@ func (r *Repo) conn() Conn {
 
 func (r *Repo) log(typ string, start time.Time, query string, args []interface{}) {
 	dur := time.Since(start)
+
 	lEntry := log.
-		Ctx(r.logCtx()).
-		WithFields(log.F{
-			"args": args,
-			"sql":  query,
-			"dur":  dur.String(),
-		})
-	lEntry.Debugf("sql: %s", typ)
+		Ctx(r.logCtx())
+
+	if r.Log != nil {
+		lEntry = r.Log
+	}
+	lEntry.WithFields(log.F{
+		"args": args,
+		"sql":  query,
+		"dur":  dur.String(),
+	}).Debugf("sql: %s", typ)
 
 	if dur > log.SlowQueryBound {
 		lEntry.WithField("type", typ).Warn("too slow sql")

@@ -18,6 +18,8 @@ func initIngester2(app *App) {
 
 	ctx := app.ctx
 	coreRepo := app.CoreRepo(ctx)
+	log := log.WithField("service", "ingest_data_producer")
+	coreRepo.Log = log
 	txProvider := struct {
 		*core2.LedgerHeaderQ
 		*core2.TransactionQ
@@ -31,7 +33,7 @@ func initIngester2(app *App) {
 		panic(errors.Wrap(err, "ingest failed to update ledger state"))
 	}
 
-	ledgersChan := ingest2.NewProducer(txProvider, log.WithField("service", "ingest_data_producer")).Start(ctx, 100, ledger.CurrentState())
+	ledgersChan := ingest2.NewProducer(txProvider, log).Start(ctx, 100, ledger.CurrentState())
 
 	hRepo := app.HistoryRepo(ctx)
 	accountStorage := storage.NewAccount(hRepo, coreRepo)
