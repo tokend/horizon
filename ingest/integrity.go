@@ -38,7 +38,7 @@ func (i *System) ensureAccountTypes() error {
 		for _, account := range accounts {
 			cursor = account.ID
 			// gets core account
-			coreAccount, err := coreQ.Accounts().ByAddress(account.AccountID)
+			coreAccount, err := coreQ.Accounts().ByAddress(account.Address)
 			if err != nil {
 				return errors.Wrap(err, "failed to get core account")
 			}
