@@ -7,29 +7,30 @@ import (
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/horizon/v2"
+	"gitlab.com/tokend/horizon/v2/handlers"
 	v2middleware "gitlab.com/tokend/horizon/v2/middleware"
-	"net/http"
 	"time"
 )
 
 type WebV2 struct {
-	router  chi.Router
+	mux     *v2.Mux
 	metrics *v2.WebMetrics
 }
 
 func initWebV2(app *App) {
 	router := chi.NewRouter()
+	mux := v2.NewMux(router)
 
-	app.webV2.router = router
+	app.webV2.mux = mux
 	app.webV2.metrics = v2.NewWebMetrics()
 }
 
 func initWebV2Middleware(app *App) {
-	r := app.webV2.router
+	m := app.webV2.mux
 
 	logger := logan.New()
 
-	r.Use(
+	m.Use(
 		middleware.StripSlashes,
 		middleware.SetHeader(upstreamHeader, app.config.Hostname),
 		middleware.RequestID,
@@ -49,16 +50,16 @@ func initWebV2Middleware(app *App) {
 			AllowCredentials: true,
 		})
 
-		r.Use(c.Handler)
+		m.Use(c.Handler)
 	}
 
 	signatureValidator := &SignatureValidator{app.config.SkipCheck}
 
-	r.Use(signatureValidator.MiddlewareV2)
+	m.Use(signatureValidator.MiddlewareV2)
 }
 
 func initWebV2Actions(app *App) {
-	r := app.webV2.router
+	m := app.webV2.mux
 
 	r.Get("/v2/accounts", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("welcome"))
