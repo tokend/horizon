@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
@@ -32,13 +33,19 @@ func (b *Base) CheckAllowed(request *http.Request, resource resource.Resource) e
 }
 
 func (b *Base) ServeSingle(w http.ResponseWriter, r *http.Request, resource resource.Resource) {
-	err := resource.PopulateModel()
+	err := resource.PopulateAttributes()
 	if err != nil {
 		b.RenderErr()
 		return
 	}
 
-	js, err := resource.MarshalModel()
+	response, err := resource.Response()
+	if err != nil {
+		b.RenderErr()
+		return
+	}
+
+	js, err := json.MarshalIndent(response, "", "	")
 	if err != nil {
 		b.RenderErr()
 		return

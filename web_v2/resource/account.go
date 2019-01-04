@@ -8,11 +8,11 @@ import (
 )
 
 type Account struct {
-	Base
+	Base `json:"-"`
 
-	Id         string
-	Type       string
-	Attributes attributes.Account
+	Id         string             `json:"id"`
+	Type       ResourceType       `json:"type"`
+	Attributes attributes.Account `json:"attributes"`
 }
 
 func (a *Account) FindOwner() error {
@@ -38,20 +38,22 @@ func (a *Account) PopulateAttributes() error {
 	a.Id = record.AccountID
 	a.Type = TypeAccounts
 
-	attrs := attributes.Account{}
-
-	attrs.AccountType.Type = xdr.AccountType(record.AccountType).String()
-	attrs.AccountType.TypeI = record.AccountType
+	a.Attributes.AccountType.Type = xdr.AccountType(record.AccountType).String()
+	a.Attributes.AccountType.TypeI = record.AccountType
 	// TODO: move `FlagFromXdrBlockReasons` to regources?
-	attrs.BlockReasons.Types = base.FlagFromXdrBlockReasons(record.BlockReasons, xdr.BlockReasonsAll)
-	attrs.BlockReasons.TypeI = record.BlockReasons
-	attrs.IsBlocked = record.BlockReasons > 0
-	attrs.Policies.TypeI = record.Policies
+	a.Attributes.BlockReasons.Types = base.FlagFromXdrBlockReasons(record.BlockReasons, xdr.BlockReasonsAll)
+	a.Attributes.BlockReasons.TypeI = record.BlockReasons
+	a.Attributes.IsBlocked = record.BlockReasons > 0
+	a.Attributes.Policies.TypeI = record.Policies
 	// TODO: move `FlagFromXdrAccountPolicy` to regources?
-	attrs.Policies.Types = base.FlagFromXdrAccountPolicy(record.Policies, xdr.AccountPoliciesAll)
-	attrs.Thresholds.HighThreshold = record.Thresholds[1]
-	attrs.Thresholds.HighThreshold = record.Thresholds[2]
-	attrs.Thresholds.HighThreshold = record.Thresholds[3]
+	a.Attributes.Policies.Types = base.FlagFromXdrAccountPolicy(record.Policies, xdr.AccountPoliciesAll)
+	a.Attributes.Thresholds.HighThreshold = record.Thresholds[1]
+	a.Attributes.Thresholds.HighThreshold = record.Thresholds[2]
+	a.Attributes.Thresholds.HighThreshold = record.Thresholds[3]
 
 	return nil
+}
+
+func (a *Account) Response() (interface{}, error) {
+	return a, nil
 }
