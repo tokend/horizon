@@ -57,3 +57,32 @@ func (a *Account) PopulateAttributes() error {
 func (a *Account) Response() (interface{}, error) {
 	return a, nil
 }
+
+type AccountCollection struct {
+	Base `json:"-"`
+
+	resources []Account
+}
+
+func (c *AccountCollection) FindOwner() error {
+	return nil
+}
+
+func (c *AccountCollection) IsAllowed() (bool, error) {
+	return c.isSignedByAdmin(), nil
+}
+
+func (c *AccountCollection) PopulateAttributes () error {
+	for _, r := range c.resources {
+		err := r.PopulateAttributes()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (c *AccountCollection) Response() (interface{}, error) {
+	return c.resources, nil
+}

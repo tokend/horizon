@@ -32,7 +32,7 @@ func (b *Base) CheckAllowed(request *http.Request, resource resource.Resource) e
 	return nil
 }
 
-func (b *Base) ServeSingle(w http.ResponseWriter, r *http.Request, resource resource.Resource) {
+func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, resource resource.Resource) {
 	err := resource.PopulateAttributes()
 	if err != nil {
 		b.RenderErr()
@@ -56,6 +56,10 @@ func (b *Base) ServeSingle(w http.ResponseWriter, r *http.Request, resource reso
 		b.RenderErr()
 		return
 	}
+}
+
+func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, collection resource.Resource) {
+	b.RenderResource(w, r, collection)
 }
 
 func (b *Base) RenderErr() {
