@@ -36,6 +36,10 @@ func initWebV2Middleware(app *App) {
 		middleware.RequestID,
 		ape.LoganMiddleware(logger, 300*time.Millisecond),
 		ape.RecoverMiddleware(logger),
+		ape.CtxMiddleWare(
+			v2middleware.CtxCoreQ(app.coreQ),
+			v2middleware.CtxHistoryQ(app.historyQ),
+		),
 		v2middleware.WebMetrics(app),
 	)
 
