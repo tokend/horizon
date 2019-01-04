@@ -30,3 +30,27 @@ func (b *Base) CheckAllowed(request *http.Request, resource resource.Resource) e
 
 	return nil
 }
+
+func (b *Base) ServeSingle(w http.ResponseWriter, r *http.Request, resource resource.Resource) {
+	err := resource.PopulateModel()
+	if err != nil {
+		b.RenderErr()
+		return
+	}
+
+	js, err := resource.MarshalModel()
+	if err != nil {
+		b.RenderErr()
+		return
+	}
+
+	_, err = w.Write(js)
+	if err != nil {
+		b.RenderErr()
+		return
+	}
+}
+
+func (b *Base) RenderErr() {
+	// TODO
+}
