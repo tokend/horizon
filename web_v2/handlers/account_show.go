@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/go-chi/chi"
 	"gitlab.com/tokend/go/signcontrol"
-	"gitlab.com/tokend/horizon/v2/resource"
+	"gitlab.com/tokend/horizon/web_v2/resource"
 	"net/http"
 )
 

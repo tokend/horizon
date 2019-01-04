@@ -1,8 +1,8 @@
-package v2
+package web_v2
 
 import (
 	"github.com/go-chi/chi"
-	"gitlab.com/tokend/horizon/v2/handlers"
+	"gitlab.com/tokend/horizon/web_v2/handlers"
 	"net/http"
 )
 

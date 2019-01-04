@@ -1,4 +1,4 @@
-package v2
+package web_v2
 
 import (
 	"github.com/rcrowley/go-metrics"

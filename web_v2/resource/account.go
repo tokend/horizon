@@ -4,7 +4,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/resource/base"
-	"gitlab.com/tokend/horizon/v2/model"
+	"gitlab.com/tokend/horizon/web_v2/model"
 )
 
 type Account struct {

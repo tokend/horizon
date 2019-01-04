@@ -6,23 +6,23 @@ import (
 	"github.com/rs/cors"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/tokend/horizon/v2"
-	"gitlab.com/tokend/horizon/v2/handlers"
-	v2middleware "gitlab.com/tokend/horizon/v2/middleware"
+	"gitlab.com/tokend/horizon/web_v2"
+	"gitlab.com/tokend/horizon/web_v2/handlers"
+	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
 	"time"
 )
 
 type WebV2 struct {
-	mux     *v2.Mux
-	metrics *v2.WebMetrics
+	mux     *web_v2.Mux
+	metrics *web_v2.WebMetrics
 }
 
 func initWebV2(app *App) {
 	router := chi.NewRouter()
-	mux := v2.NewMux(router)
+	mux := web_v2.NewMux(router)
 
 	app.webV2.mux = mux
-	app.webV2.metrics = v2.NewWebMetrics()
+	app.webV2.metrics = web_v2.NewWebMetrics()
 }
 
 func initWebV2Middleware(app *App) {

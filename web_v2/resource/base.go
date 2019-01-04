@@ -4,7 +4,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/horizon/v2/middleware"
+	"gitlab.com/tokend/horizon/web_v2/middleware"
 	"net/http"
 )
 
