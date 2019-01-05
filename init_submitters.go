@@ -34,5 +34,5 @@ func initSubmissionSystem(app *App) {
 }
 
 func init() {
-	appInit.Add("txsub", initSubmissionSystem, "app-context", "log", "horizon-db", "core-db", "stellarCoreInfo")
+	appInit.Add("txsub", initSubmissionSystem, "app-context", "log", "horizon-db", "core-db", "core-info")
 }

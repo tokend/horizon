@@ -26,5 +26,5 @@ func initIngester(app *App) {
 }
 
 func init() {
-	appInit.Add("ingester", initIngester, "core_connector", "app-context", "log", "horizon-db", "core-db", "stellarCoreInfo")
+	appInit.Add("ingester", initIngester, "core_connector", "app-context", "log", "horizon-db", "core-db", "core-info", "ledger-state")
 }

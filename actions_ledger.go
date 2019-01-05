@@ -119,7 +119,7 @@ func (action *LedgerShowAction) loadRecord() {
 }
 
 func (action *LedgerShowAction) verifyWithinHistory() {
-	if action.Sequence < ledger.CurrentState().HistoryElder {
+	if action.Sequence < ledger.CurrentState().History.OldestOnStart {
 		action.Err = &problem.BeforeHistory
 	}
 }

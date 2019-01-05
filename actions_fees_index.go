@@ -70,7 +70,7 @@ func (action *FeesAllAction) getAccountType(name string) *int32 {
 
 func (action *FeesAllAction) loadData() {
 	var ledgerHeader core.LedgerHeader
-	err := action.CoreQ().LedgerHeaderBySequence(&ledgerHeader, ledger.CurrentState().CoreLatest)
+	err := action.CoreQ().LedgerHeaderBySequence(&ledgerHeader, ledger.CurrentState().Core.Latest)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get latest ledger")
 		action.Err = &problem.ServerError

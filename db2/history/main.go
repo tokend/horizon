@@ -75,6 +75,11 @@ type QInterface interface {
 
 	// Offers - provides builder to work with offer entries
 	Offers() OffersQI
+
+	// OldestLedgerSeq - returns oldest ledger sequence
+	OldestLedgerSeq() (int32, error)
+	// LatestLedgerSeq - returns latest ledger sequence available in DB
+	LatestLedgerSeq() (int32, error)
 }
 
 // ReviewableRequests - provides builder of request to access reviewable requests
@@ -104,4 +109,18 @@ func (q *Q) OldestOutdatedLedgers(dest interface{}, currentVersion int) error {
 		WHERE importer_version < $1
 		ORDER BY sequence ASC
 		LIMIT 1000000`, currentVersion)
+}
+
+// LatestLedgerSeq - returns latest ledger sequence available in DB
+func (q *Q) LatestLedgerSeq() (int32, error) {
+	var result int32
+	err := q.LatestLedger(&result)
+	return result, err
+}
+
+// OldestLedgerSeq - returns oldest ledger sequence
+func (q *Q) OldestLedgerSeq() (int32, error) {
+	var result int32
+	err := q.ElderLedger(&result)
+	return result, err
 }

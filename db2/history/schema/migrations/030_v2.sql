@@ -2,8 +2,8 @@
 
 
 create table ledgers (
-    id int not null primary key,
-    sequence int not null,
+    id bigint not null primary key,
+    sequence bigint not null,
     hash character(64) not null,
     previous_hash character(64) not null,
     tx_count int not null,
@@ -12,7 +12,7 @@ create table ledgers (
 );
 
 create table transactions (
-    id int not null, --- consists ledger sequence as 32 significant bits. We should not worry to much about duplication
+    id bigint not null, --- consists ledger sequence as 32 significant bits. We should not worry to much about duplication
     --  of ids as such issue will be handled during ledger inserts.
     hash character(64) NOT NULL primary key,
     ledger_sequence integer NOT NULL,
@@ -28,8 +28,8 @@ create table transactions (
 );
 
 create table ledger_changes (
-  tx_id         int    not null,
-  op_id         int    not null,
+  tx_id         bigint    not null,
+  op_id         bigint    not null,
   order_number  int       not null,
   effect        int       not null,
   entry_type    int       not null,

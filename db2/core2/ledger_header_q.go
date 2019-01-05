@@ -35,3 +35,32 @@ func (q *LedgerHeaderQ) LedgerHeaderBySequence(seq int32) (*LedgerHeader, error)
 
 	return &header, nil
 }
+
+// LatestLedgerSeq - returns latest ledger sequence available in DB
+func (q *LedgerHeaderQ) LatestLedgerSeq() (int32, error) {
+	var result int32
+	err := q.repo.GetRaw(&result, "SELECT COALESCE(MAX(ledgerseq), 1) FROM ledgerheaders")
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to get latest ledger seq")
+	}
+
+	return result, nil
+}
+
+// OldestLedgerSeq - returns oldest ledger sequence (which does not have gaps) available in the core db.
+// Due to design of core it will always have 1 ledger in the db. So we try to find min ledger sequence > 1
+// In case it's 2 we will return 1.
+// Note: this method does not handle and should not handle existence of 2 gaps
+func (q *LedgerHeaderQ) OldestLedgerSeq() (int32, error) {
+	var result int32
+	err := q.repo.GetRaw(&result, "SELECT COALESCE(MIN(ledgerseq), 1) FROM ledgerheaders WHERE ledgerseq > 1")
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to get oldest ledger seq")
+	}
+
+	if result == 2 {
+		return 1, nil
+	}
+
+	return result, nil
+}

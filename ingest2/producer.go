@@ -47,7 +47,7 @@ func NewProducer(txProvider txProvider, log *log.Entry) *Producer {
 }
 
 // Start - starts the Producer in new goroutine. Panics on initialization step if already started.
-func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger.State) chan LedgerBundle {
+func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger.SystemState) chan LedgerBundle {
 	if l.data != nil {
 		l.log.Panic("Already started")
 	}
@@ -121,10 +121,10 @@ func (l *Producer) loadSuccessTxs(seq int32) ([]core.Transaction, error) {
 	return successTxs, nil
 }
 
-func (l *Producer) getLedgerSeqToStartFrom(ledgerState ledger.State) int32 {
-	if ledgerState.HistoryLatest == 0 {
-		return ledgerState.CoreElder
+func (l *Producer) getLedgerSeqToStartFrom(ledgerState ledger.SystemState) int32 {
+	if ledgerState.History2.Latest == 0 {
+		return ledgerState.Core.OldestOnStart
 	}
 
-	return ledgerState.HistoryLatest + 1
+	return ledgerState.History2.Latest + 1
 }

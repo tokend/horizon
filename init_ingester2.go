@@ -1,7 +1,6 @@
 package horizon
 
 import (
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/ingest2"
 	"gitlab.com/tokend/horizon/ingest2/changes"
@@ -26,11 +25,6 @@ func initIngester2(app *App) {
 	}{
 		LedgerHeaderQ: core2.NewLedgerHeaderQ(coreRepo),
 		TransactionQ:  core2.NewTransactionQ(coreRepo),
-	}
-	// TODO part with current state of the ledger must be refactored
-	err := app.updateLedgerState()
-	if err != nil {
-		panic(errors.Wrap(err, "ingest failed to update ledger state"))
 	}
 
 	ledgersChan := ingest2.NewProducer(txProvider, log).Start(ctx, 100, ledger.CurrentState())
@@ -63,5 +57,5 @@ func initIngester2(app *App) {
 }
 
 func init() {
-	appInit.Add("ingester2", initIngester2, "core_connector", "app-context", "log", "horizon-db", "core-db", "stellarCoreInfo")
+	appInit.Add("ingester2", initIngester2, "app-context", "log", "horizon-db", "core-db", "core-info", "ledger-state")
 }

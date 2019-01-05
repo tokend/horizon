@@ -1,9 +1,9 @@
 package horizon
 
-func initStellarCoreInfo(app *App) {
-	app.UpdateStellarCoreInfo()
+func initCoreInfo(app *App) {
+	app.UpdateCoreInfo()
 }
 
 func init() {
-	appInit.Add("stellarCoreInfo", initStellarCoreInfo, "core_connector", "app-context", "log")
+	appInit.Add("core-info", initCoreInfo, "core_connector", "app-context", "log")
 }

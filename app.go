@@ -22,7 +22,6 @@ import (
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
 	"gopkg.in/tylerb/graceful.v1"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // You can override this variable using: gb build -ldflags "-X main.version aabbccdd"
@@ -152,55 +151,12 @@ func (a *App) IsHistoryStale() bool {
 	}
 
 	ls := ledger.CurrentState()
-	return (ls.CoreLatest - ls.HistoryLatest) > int32(a.config.StaleThreshold)
+	return (ls.Core.Latest - ls.History.Latest) > int32(a.config.StaleThreshold)
 }
 
-// UpdateLedgerState triggers a refresh of several metrics gauges, such as open
-// db connections and ledger state
-func (a *App) UpdateLedgerState() {
-	err := a.updateLedgerState()
-	if err != nil {
-		log.WithStack(err).
-			WithField("err", err.Error()).
-			Error("failed to load ledger state")
-	}
-
-}
-
-func (a *App) updateLedgerState() error {
-	var next ledger.State
-
-	err := a.CoreQ().LatestLedger(&next.CoreLatest)
-	if err != nil {
-		return err
-	}
-
-	err = a.CoreQ().ElderLedger(&next.CoreElder)
-	if err != nil {
-		return err
-	}
-
-	err = a.HistoryQ().LatestLedger(&next.HistoryLatest)
-	if err != nil {
-		return err
-	}
-
-	err = a.HistoryQ().ElderLedger(&next.HistoryElder)
-	if err != nil {
-		return err
-	}
-
-	err = ledger.SetState(next)
-	if err != nil {
-		return errors.Wrap(err, "core is hanging")
-	}
-
-	return nil
-}
-
-// UpdateStellarCoreInfo updates the value of coreVersion and networkPassphrase
+// UpdateCoreInfo updates the value of coreVersion and networkPassphrase
 // from the Stellar core API.
-func (a *App) UpdateStellarCoreInfo() {
+func (a *App) UpdateCoreInfo() {
 	if a.config.StellarCoreURL == "" {
 		return
 	}
@@ -218,10 +174,10 @@ func (a *App) UpdateStellarCoreInfo() {
 func (a *App) UpdateMetrics() {
 	a.goroutineGauge.Update(int64(runtime.NumGoroutine()))
 	ls := ledger.CurrentState()
-	a.historyLatestLedgerGauge.Update(int64(ls.HistoryLatest))
-	a.historyElderLedgerGauge.Update(int64(ls.HistoryElder))
-	a.coreLatestLedgerGauge.Update(int64(ls.CoreLatest))
-	a.coreElderLedgerGauge.Update(int64(ls.CoreElder))
+	a.historyLatestLedgerGauge.Update(int64(ls.History.Latest))
+	a.historyElderLedgerGauge.Update(int64(ls.History.OldestOnStart))
+	a.coreLatestLedgerGauge.Update(int64(ls.Core.Latest))
+	a.coreElderLedgerGauge.Update(int64(ls.Core.OldestOnStart))
 
 	//a.horizonConnGauge.Update(int64(a.historyQ.Repo.DB.Stats().OpenConnections))
 	//a.coreConnGauge.Update(int64(a.coreQ.Repo.DB.Stats().OpenConnections))
@@ -233,16 +189,15 @@ func (a *App) Tick() {
 	var wg sync.WaitGroup
 	log.Debug("ticking app")
 	// update ledger state and stellar-core info in parallel
-	wg.Add(2)
-	go func() { a.UpdateLedgerState(); wg.Done() }()
-	go func() { a.UpdateStellarCoreInfo(); wg.Done() }()
+	wg.Add(1)
+	go func() { a.UpdateCoreInfo(); wg.Done() }()
 	wg.Wait()
 
 	if a.ingester != nil {
 		go a.ingester.Tick()
 	}
 
-	wg.Add(2)
+	wg.Add(1)
 	go func() { a.submitter.Tick(a.ctx); wg.Done() }()
 	wg.Wait()
 

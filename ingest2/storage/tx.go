@@ -28,9 +28,9 @@ func convertTxToParams(tx history2.Transaction) []interface{} {
 
 //Insert - inserts slice of txs into DB in one slice
 func (s *Tx) Insert(txs []history2.Transaction) error {
-	columns := []string{"id", "tx_hash", "ledger_sequence", "ledger_close_time", "application_order", "account",
+	columns := []string{"id", "hash", "ledger_sequence", "ledger_close_time", "application_order", "account",
 		"operation_count", "envelope", "result", "meta", "valid_after", "valid_before"}
-	err := history2TransactionBatchInsert(s.repo, txs, "tx", columns, convertTxToParams)
+	err := history2TransactionBatchInsert(s.repo, txs, "transactions", columns, convertTxToParams)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert txs")
 	}

@@ -110,7 +110,7 @@ func (c *Consumer) readAtLeastOne(ctx context.Context) []LedgerBundle {
 				return nil
 			}
 
-			bundles := make([]LedgerBundle, len(c.dataSource)+1)
+			bundles := make([]LedgerBundle, 0, len(c.dataSource)+1)
 			bundles = append(bundles, bundle)
 			return bundles
 		}

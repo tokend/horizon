@@ -21,30 +21,24 @@ type Root struct {
 		Transactions        hal.Link `json:"transactions"`
 	} `json:"_links"`
 
-	HorizonSequence      int32  `json:"history_latest_ledger"`
-	HistoryElderSequence int32  `json:"history_elder_ledger"`
-	CoreSequence         int32  `json:"core_latest_ledger"`
-	CoreElderSequence    int32  `json:"core_elder_ledger"`
-	NetworkPassphrase    string `json:"network_passphrase"`
-	CommissionAccountID  string `json:"commission_account_id"`
-	OperationalAccountID string `json:"operational_account_id"`
-	StorageFeeAccountID  string `json:"storage_fee_account_id"`
-	MasterAccountID      string `json:"master_account_id"`
-	MasterExchangeName   string `json:"master_exchange_name"`
-	TxExpirationPeriod   int64  `json:"tx_expiration_period"`
-	CurrentTime          int64  `json:"current_time"`
-	Precision            int64  `json:"precision"`
+	LedgersState         ledger.SystemState `json:"ledgers_state"`
+	NetworkPassphrase    string             `json:"network_passphrase"`
+	CommissionAccountID  string             `json:"commission_account_id"`
+	OperationalAccountID string             `json:"operational_account_id"`
+	StorageFeeAccountID  string             `json:"storage_fee_account_id"`
+	MasterAccountID      string             `json:"master_account_id"`
+	MasterExchangeName   string             `json:"master_exchange_name"`
+	TxExpirationPeriod   int64              `json:"tx_expiration_period"`
+	CurrentTime          int64              `json:"current_time"`
+	Precision            int64              `json:"precision"`
 }
 
 // Populate fills in the details
 func (res *Root) PopulateLedgerState(
 	ctx context.Context,
-	ledgerState ledger.State,
+	ledgerState ledger.SystemState,
 ) {
-	res.HorizonSequence = ledgerState.HistoryLatest
-	res.HistoryElderSequence = ledgerState.HistoryElder
-	res.CoreSequence = ledgerState.CoreLatest
-	res.CoreElderSequence = ledgerState.CoreElder
+	res.LedgersState = ledgerState
 	res.CurrentTime = time.Now().Unix()
 
 	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}

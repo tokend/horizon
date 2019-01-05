@@ -148,7 +148,7 @@ func (action *Action) GetPagingParams() (cursor string, order string, limit uint
 
 	if cursor == "now" {
 		tid := toid.ID{
-			LedgerSequence:   ledger.CurrentState().HistoryLatest,
+			LedgerSequence:   ledger.CurrentState().History.Latest,
 			TransactionOrder: toid.TransactionMask,
 			OperationOrder:   toid.OperationMask,
 		}
@@ -268,7 +268,7 @@ func (action *Action) ValidateCursorWithinHistory() {
 		return
 	}
 
-	elder := toid.New(ledger.CurrentState().HistoryElder, 0, 0)
+	elder := toid.New(ledger.CurrentState().History.OldestOnStart, 0, 0)
 
 	if cursor <= elder.ToInt64() {
 		action.Err = &problem.BeforeHistory
@@ -285,8 +285,8 @@ func (action *Action) EnsureHistoryFreshness() {
 		ls := ledger.CurrentState()
 		err := problem.StaleHistory
 		err.Extras = map[string]interface{}{
-			"history_latest_ledger": ls.HistoryLatest,
-			"core_latest_ledger":    ls.CoreLatest,
+			"history_latest_ledger": ls.History.Latest,
+			"core_latest_ledger":    ls.Core.Latest,
 		}
 		action.Err = &err
 	}

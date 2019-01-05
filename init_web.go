@@ -483,7 +483,7 @@ func init() {
 	appInit.Add(
 		"web.init",
 		initWeb,
-		"app-context", "stellarCoreInfo", "memory_cache",
+		"app-context", "core-info", "memory_cache", "ledger-state",
 	)
 
 	appInit.Add(

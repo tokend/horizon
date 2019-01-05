@@ -338,7 +338,7 @@ func (action *OperationShowAction) JSON() {
 
 func (action *OperationShowAction) verifyWithinHistory() {
 	parsed := toid.Parse(action.ID)
-	if parsed.LedgerSequence < ledger.CurrentState().HistoryElder {
+	if parsed.LedgerSequence < ledger.CurrentState().History.OldestOnStart {
 		action.Err = &problem.BeforeHistory
 	}
 }
