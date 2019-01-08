@@ -41,11 +41,11 @@ func (b *Base) HistoryQ() history.QInterface {
 	return b.historyQ
 }
 
-func (b *Base) isSignedByOwner() bool {
-	return b.Signer == b.Owner
+func (b *Base) isSignedBy(signer string) bool {
+	return b.Signer == signer
 }
 
-func (b *Base) isSignedByAdmin() bool {
-	// TODO: get master signers with Q, check if our signer is master
-	return false
+func (b *Base) isSignedByMaster() bool {
+	master := "" // TODO: fetch master account id
+	return b.isSignedBy(master)
 }

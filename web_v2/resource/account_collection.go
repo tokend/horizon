@@ -19,7 +19,7 @@ func (c *AccountCollection) Fetch(pp PagingParams) error {
 }
 
 func (c *AccountCollection) IsAllowed() (bool, error) {
-	return c.isSignedByAdmin(), nil
+	return c.isSignedByMaster(), nil
 }
 
 func (c *AccountCollection) Populate() error {

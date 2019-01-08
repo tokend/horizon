@@ -25,24 +25,9 @@ func NewAccount (id string) (*Account, error) {
 	}, nil
 }
 
-func (a *Account) FindOwner() error {
-	record, err := a.CoreQ().Accounts().ByAddress(a.Id)
-	if err != nil {
-		return errors.Wrap(err, "Failed to get account by address")
-	}
-
-	a.record = record
-	a.Owner = record.AccountID
-	return nil
-}
-
 func (a *Account) IsAllowed() (bool, error) {
-	err := a.FindOwner()
-	if err != nil {
-		return false, errors.Wrap(err, "Failed to find the account owner")
-	}
-
-	return a.isSignedByOwner() || a.isSignedByAdmin(), nil
+	// TODO: can be optimized a bit
+	return a.isSignedBy(a.Id) || a.isSignedByMaster(), nil
 }
 
 func (a *Account) Fetch() error {
