@@ -14,11 +14,6 @@ type Base struct {
 }
 
 func (b *Base) CheckAllowed(request *http.Request, resource Resource) error {
-	err := resource.FindOwner()
-	if err != nil {
-		return errors.Wrap(err, "Failed to define the owner of data") // TODO: 401
-	}
-
 	isAllowed, err := resource.IsAllowed()
 	if !isAllowed {
 		return errors.New("Resource is not allowed") // TODO: 401

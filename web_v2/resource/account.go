@@ -29,6 +29,11 @@ func (a *Account) FindOwner() error {
 }
 
 func (a *Account) IsAllowed() (bool, error) {
+	err := a.FindOwner()
+	if err != nil {
+		return false, errors.Wrap(err, "Failed to find the account owner")
+	}
+
 	return a.isSignedByOwner() || a.isSignedByAdmin(), nil
 }
 

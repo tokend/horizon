@@ -9,10 +9,6 @@ type AccountCollection struct {
 	records   []core.Account
 }
 
-func (c *AccountCollection) FindOwner() error {
-	return nil
-}
-
 func (c *AccountCollection) Fetch() error {
 	return nil
 }
