@@ -32,5 +32,6 @@ func (a *AccountShow) Prepare(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AccountShow) Render(w http.ResponseWriter, r *http.Request) {
+	a.Prepare(w, r)
 	a.Base.RenderResource(w, r, a.filters.accountId, a.resource)
 }

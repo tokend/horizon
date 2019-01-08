@@ -38,5 +38,6 @@ func (a *AccountIndex) Prepare(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AccountIndex) Render(w http.ResponseWriter, r *http.Request) {
+	a.Prepare(w, r)
 	a.Base.RenderCollection(w, r, a.pagingParams, a.collection)
 }
