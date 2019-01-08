@@ -26,8 +26,8 @@ func (b *Base) CheckAllowed(request *http.Request, resource Resource) error {
 	return nil
 }
 
-func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, resource Resource) {
-	err := resource.Fetch()
+func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, id string, resource Resource) {
+	err := resource.Fetch(id)
 	if err != nil {
 		b.RenderErr()
 		return
@@ -59,7 +59,7 @@ func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, resource R
 }
 
 func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, collection Resource) {
-	b.RenderResource(w, r, collection)
+	b.RenderResource(w, r, "", collection)
 }
 
 func (b *Base) RenderErr() {

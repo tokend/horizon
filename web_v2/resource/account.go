@@ -37,12 +37,12 @@ func (a *Account) IsAllowed() (bool, error) {
 	return a.isSignedByOwner() || a.isSignedByAdmin(), nil
 }
 
-func (a *Account) Fetch() error {
+func (a *Account) Fetch(id string) error {
 	if a.record != nil {
 		return nil
 	}
 
-	record, err := a.CoreQ().Accounts().ByAddress(a.Id)
+	record, err := a.CoreQ().Accounts().ByAddress(id)
 	if err != nil {
 		return errors.Wrap(err, "Failed to fetch account")
 	}
@@ -53,11 +53,7 @@ func (a *Account) Fetch() error {
 }
 
 func (a *Account) Populate() error {
-	record, err := a.CoreQ().Accounts().ByAddress(a.Id)
-
-	if err != nil {
-		return errors.New("Failed to get account by address")
-	}
+	record := a.record
 
 	a.Id = record.AccountID
 	a.Type = TypeAccounts

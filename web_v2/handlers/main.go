@@ -4,7 +4,7 @@ import "gitlab.com/tokend/horizon/web_v2/resource"
 
 type Resource interface {
 	IsAllowed() (bool, error)
-	Fetch() error
+	Fetch(id string) error
 	Populate() error
 	Response() (interface{}, error)
 }
