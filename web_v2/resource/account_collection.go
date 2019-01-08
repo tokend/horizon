@@ -1,6 +1,8 @@
 package resource
 
-import "gitlab.com/tokend/horizon/db2/core"
+import (
+	"gitlab.com/tokend/horizon/db2/core"
+)
 
 type AccountCollection struct {
 	Base `json:"-"`
@@ -9,7 +11,7 @@ type AccountCollection struct {
 	records   []core.Account
 }
 
-func (c *AccountCollection) Fetch() error {
+func (c *AccountCollection) Fetch(pp PagingParams) error {
 	return nil
 }
 
@@ -28,7 +30,12 @@ func (c *AccountCollection) Populate() error {
 	return nil
 }
 
-func (c *AccountCollection) Response() (interface{}, error) {
-	return c.resources, nil
-}
+func (c *AccountCollection) Response() ([]interface{}, error) {
+	response := make([]interface{}, len(c.resources))
 
+	for i := range c.resources {
+		response[i] = c.resources[i]
+	}
+
+	return response, nil
+}
