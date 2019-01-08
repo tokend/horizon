@@ -12,10 +12,7 @@ type AccountCollection struct {
 }
 
 func (c *AccountCollection) Fetch(pp PagingParams) error {
-	return c.
-		CoreQ().
-		Accounts().
-		Select(&c.records)
+	return c.CoreQ.Accounts().Select(&c.records)
 }
 
 func (c *AccountCollection) IsAllowed() (bool, error) {

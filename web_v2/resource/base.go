@@ -12,16 +12,16 @@ import (
 type Base struct {
 	logger *logan.Entry
 
-	coreQ    core.QInterface
-	historyQ history.QInterface
+	CoreQ    core.QInterface
+	HistoryQ history.QInterface
 
 	Owner  string
 	Signer string
 }
 
 func (b *Base) Prepare(r *http.Request) error {
-	b.coreQ = r.Context().Value(middleware.CoreQCtxKey).(core.QInterface)
-	b.historyQ = r.Context().Value(middleware.HistoryQCtxKey).(history.QInterface)
+	b.CoreQ = r.Context().Value(middleware.CoreQCtxKey).(core.QInterface)
+	b.HistoryQ = r.Context().Value(middleware.HistoryQCtxKey).(history.QInterface)
 
 	signer, err := signcontrol.CheckSignature(r)
 	if err != nil {
@@ -31,14 +31,6 @@ func (b *Base) Prepare(r *http.Request) error {
 	b.Signer = signer
 
 	return nil
-}
-
-func (b *Base) CoreQ() core.QInterface {
-	return b.coreQ
-}
-
-func (b *Base) HistoryQ() history.QInterface {
-	return b.historyQ
 }
 
 func (b *Base) isSignedBy(signer string) bool {

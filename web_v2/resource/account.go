@@ -33,7 +33,7 @@ func (a *Account) Fetch() error {
 		return nil
 	}
 
-	record, err := a.CoreQ().Accounts().ByAddress(a.Id)
+	record, err := a.CoreQ.Accounts().ByAddress(a.Id)
 	if err != nil {
 		return errors.Wrap(err, "Failed to fetch account")
 	}
