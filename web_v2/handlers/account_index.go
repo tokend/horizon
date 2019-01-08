@@ -32,7 +32,7 @@ func (a *AccountIndex) Render(w http.ResponseWriter, r *http.Request) {
 	a.pagingParams.Limit = chi.URLParam(r, "limit")
 	a.pagingParams.Page = chi.URLParam(r, "page")
 
-	err = a.Base.RenderCollection(w, r, a.pagingParams, a.collection)
+	err = a.RenderCollection(w, r, a.pagingParams, a.collection)
 	if err != nil {
 		a.RenderErr(w, err)
 		return

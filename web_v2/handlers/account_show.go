@@ -26,7 +26,7 @@ func (a *AccountShow) Render(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = a.Base.RenderResource(w, r, accountId, a.resource)
+	err = a.RenderResource(w, r, accountId, a.resource)
 	if err != nil {
 		a.RenderErr(w, err)
 		return
