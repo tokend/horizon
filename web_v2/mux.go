@@ -11,7 +11,7 @@ type Mux struct {
 
 type Handler interface {
 	Prepare(w http.ResponseWriter, r *http.Request)
-	Serve(w http.ResponseWriter, r *http.Request)
+	Render(w http.ResponseWriter, r *http.Request)
 }
 
 func NewMux(r chi.Router) *Mux {
@@ -23,7 +23,7 @@ func NewMux(r chi.Router) *Mux {
 func (m *Mux) Get(pattern string, handler Handler) {
 	m.router.Get(pattern, func(w http.ResponseWriter, r *http.Request) {
 		handler.Prepare(w, r)
-		handler.Serve(w, r)
+		handler.Render(w, r)
 	})
 }
 
