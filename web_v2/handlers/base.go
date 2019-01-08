@@ -35,6 +35,20 @@ func (b *Base) PrepareResource(request *http.Request, resource Resource) error {
 	return nil
 }
 
+func (b *Base) PrepareCollection (request *http.Request, collection Collection) error {
+	err := collection.Prepare(request)
+	if err != nil {
+		return problems.NotAllowed()
+	}
+
+	err = b.CheckAllowed(collection)
+	if err != nil {
+		return problems.NotAllowed()
+	}
+
+	return nil
+}
+
 func (b *Base) CheckAllowed(resource Allowable) error {
 	isAllowed, err := resource.IsAllowed()
 	if !isAllowed {
@@ -77,8 +91,8 @@ func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, id string,
 	return nil
 }
 
-func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, pp resource.PagingParams, collection Collection) {
-	// TODO
+func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, pp resource.PagingParams, collection Collection) error {
+	return nil
 }
 
 func (b *Base) RenderErr(w http.ResponseWriter, err error) {

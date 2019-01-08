@@ -6,7 +6,7 @@ import (
 )
 
 type Resource interface {
-	Prepare (r *http.Request) error
+	Prepare(r *http.Request) error
 	IsAllowed() (bool, error)
 	Fetch(id string) error
 	Populate() error
@@ -14,6 +14,7 @@ type Resource interface {
 }
 
 type Collection interface {
+	Prepare(r *http.Request) error
 	IsAllowed() (bool, error)
 	Fetch(resource.PagingParams) error
 	Populate() error
