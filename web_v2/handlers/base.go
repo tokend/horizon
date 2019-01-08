@@ -35,7 +35,7 @@ func (b *Base) PrepareResource(request *http.Request, resource Resource) error {
 	return nil
 }
 
-func (b *Base) PrepareCollection (request *http.Request, collection Collection) error {
+func (b *Base) PrepareCollection(request *http.Request, collection Collection) error {
 	err := collection.Prepare(request)
 	if err != nil {
 		return problems.NotAllowed()

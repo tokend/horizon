@@ -19,7 +19,7 @@ type Base struct {
 	Signer string
 }
 
-func (b *Base) Prepare (r *http.Request) error {
+func (b *Base) Prepare(r *http.Request) error {
 	b.coreQ = r.Context().Value(middleware.CoreQCtxKey).(core.QInterface)
 	b.historyQ = r.Context().Value(middleware.HistoryQCtxKey).(history.QInterface)
 

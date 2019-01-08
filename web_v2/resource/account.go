@@ -19,10 +19,8 @@ type Account struct {
 	}
 }
 
-func NewAccount (id string) (*Account, error) {
-	return &Account{
-		Id: id,
-	}, nil
+func NewAccount(id string) (*Account, error) {
+	return &Account{Id: id}, nil
 }
 
 func (a *Account) IsAllowed() (bool, error) {
