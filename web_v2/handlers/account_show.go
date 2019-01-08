@@ -24,7 +24,7 @@ func (a *AccountShow) Prepare(w http.ResponseWriter, r *http.Request) {
 	a.resource.W = w
 	a.resource.R = r
 
-	err := a.CheckAllowed(r, a.resource)
+	err := a.CheckAllowed(a.resource)
 	if err != nil {
 		a.RenderErr()
 		return

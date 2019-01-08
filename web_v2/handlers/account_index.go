@@ -30,7 +30,7 @@ func (a *AccountIndex) Prepare(w http.ResponseWriter, r *http.Request) {
 	a.collection.W = w
 	a.collection.R = r
 
-	err := a.CheckAllowed(r, a.collection)
+	err := a.CheckAllowed(a.collection)
 	if err != nil {
 		a.RenderErr()
 		return

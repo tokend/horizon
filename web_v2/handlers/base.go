@@ -18,7 +18,7 @@ type Allowable interface {
 	IsAllowed() (bool, error)
 }
 
-func (b *Base) CheckAllowed(request *http.Request, resource Allowable) error {
+func (b *Base) CheckAllowed(resource Allowable) error {
 	isAllowed, err := resource.IsAllowed()
 	if !isAllowed {
 		return errors.New("Resource is not allowed") // TODO: 401
