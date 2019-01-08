@@ -12,9 +12,6 @@ import (
 type Base struct {
 	logger *logan.Entry
 
-	W http.ResponseWriter
-	R *http.Request
-
 	coreQ    core.QInterface
 	historyQ history.QInterface
 
