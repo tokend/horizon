@@ -8,25 +8,17 @@ import (
 
 type AccountShow struct {
 	Base
-	resource *resource.Account
 }
 
 func (a *AccountShow) Render(w http.ResponseWriter, r *http.Request) {
-	accountId := chi.URLParam(r, "id")
+	id := chi.URLParam(r, "id")
 
-	account, err := resource.NewAccount(accountId)
+	account, err := resource.NewAccount(id)
 	if err != nil {
 		a.RenderErr(w, err)
 	}
-	a.resource = account
 
-	err = a.PrepareResource(r, a.resource)
-	if err != nil {
-		a.RenderErr(w, err)
-		return
-	}
-
-	err = a.RenderResource(w, r, accountId, a.resource)
+	err = a.RenderResource(w, r, id, account)
 	if err != nil {
 		a.RenderErr(w, err)
 		return

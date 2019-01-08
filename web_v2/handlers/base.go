@@ -21,20 +21,6 @@ type Allowable interface {
 	IsAllowed() (bool, error)
 }
 
-func (b *Base) PrepareResource(request *http.Request, resource Resource) error {
-	err := resource.Prepare(request)
-	if err != nil {
-		return problems.NotAllowed()
-	}
-
-	err = b.CheckAllowed(resource)
-	if err != nil {
-		return problems.NotAllowed()
-	}
-
-	return nil
-}
-
 func (b *Base) PrepareCollection(request *http.Request, collection Collection) error {
 	err := collection.Prepare(request)
 	if err != nil {
@@ -63,7 +49,17 @@ func (b *Base) CheckAllowed(resource Allowable) error {
 }
 
 func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, id string, resource Resource) error {
-	err := resource.Fetch()
+	err := resource.Prepare(r)
+	if err != nil {
+		return problems.NotAllowed()
+	}
+
+	err = b.CheckAllowed(resource)
+	if err != nil {
+		return problems.NotAllowed()
+	}
+
+	err = resource.Fetch()
 	if err != nil {
 		return problems.InternalError()
 	}
