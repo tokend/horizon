@@ -9,24 +9,24 @@ import (
 type AccountShow struct {
 	Base
 	resource *resource.Account
-
-	filters struct {
-		accountId string
-	}
 }
 
 func (a *AccountShow) Render(w http.ResponseWriter, r *http.Request) {
-	a.resource = &resource.Account{}
+	accountId := chi.URLParam(r, "id")
 
-	err := a.PrepareResource(r, a.resource)
+	account, err := resource.NewAccount(accountId)
+	if err != nil {
+		a.RenderErr(w, err)
+	}
+	a.resource = account
+
+	err = a.PrepareResource(r, a.resource)
 	if err != nil {
 		a.RenderErr(w, err)
 		return
 	}
 
-	a.filters.accountId = chi.URLParam(r, "id")
-
-	err = a.Base.RenderResource(w, r, a.filters.accountId, a.resource)
+	err = a.Base.RenderResource(w, r, accountId, a.resource)
 	if err != nil {
 		a.RenderErr(w, err)
 		return

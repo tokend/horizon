@@ -8,7 +8,7 @@ import (
 type Resource interface {
 	Prepare(r *http.Request) error
 	IsAllowed() (bool, error)
-	Fetch(id string) error
+	Fetch() error
 	Populate() error
 	Response() (interface{}, error)
 }

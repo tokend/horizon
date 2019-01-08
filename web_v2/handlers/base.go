@@ -63,7 +63,7 @@ func (b *Base) CheckAllowed(resource Allowable) error {
 }
 
 func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, id string, resource Resource) error {
-	err := resource.Fetch(id)
+	err := resource.Fetch()
 	if err != nil {
 		return problems.InternalError()
 	}

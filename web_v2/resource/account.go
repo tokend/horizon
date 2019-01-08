@@ -9,13 +9,20 @@ import (
 )
 
 type Account struct {
-	Base `json:"-"`
+	Base
+	Id       string
+	record   *core.Account
+	response struct {
+		Id         string             `json:"id"`
+		Type       ResourceType       `json:"type"`
+		Attributes attributes.Account `json:"attributes"`
+	}
+}
 
-	Id         string             `json:"id"`
-	Type       ResourceType       `json:"type"`
-	Attributes attributes.Account `json:"attributes"`
-
-	record *core.Account `json:"-"`
+func NewAccount (id string) (*Account, error) {
+	return &Account{
+		Id: id,
+	}, nil
 }
 
 func (a *Account) FindOwner() error {
@@ -24,6 +31,7 @@ func (a *Account) FindOwner() error {
 		return errors.Wrap(err, "Failed to get account by address")
 	}
 
+	a.record = record
 	a.Owner = record.AccountID
 	return nil
 }
@@ -37,12 +45,12 @@ func (a *Account) IsAllowed() (bool, error) {
 	return a.isSignedByOwner() || a.isSignedByAdmin(), nil
 }
 
-func (a *Account) Fetch(id string) error {
+func (a *Account) Fetch() error {
 	if a.record != nil {
 		return nil
 	}
 
-	record, err := a.CoreQ().Accounts().ByAddress(id)
+	record, err := a.CoreQ().Accounts().ByAddress(a.Id)
 	if err != nil {
 		return errors.Wrap(err, "Failed to fetch account")
 	}
@@ -53,27 +61,25 @@ func (a *Account) Fetch(id string) error {
 }
 
 func (a *Account) Populate() error {
-	record := a.record
+	a.response.Id = a.record.AccountID
+	a.response.Type = TypeAccounts
 
-	a.Id = record.AccountID
-	a.Type = TypeAccounts
-
-	a.Attributes.AccountType.Type = xdr.AccountType(record.AccountType).String()
-	a.Attributes.AccountType.TypeI = record.AccountType
+	a.response.Attributes.AccountType.Type = xdr.AccountType(a.record.AccountType).String()
+	a.response.Attributes.AccountType.TypeI = a.record.AccountType
 	// TODO: move `FlagFromXdrBlockReasons` to regources?
-	a.Attributes.BlockReasons.Types = base.FlagFromXdrBlockReasons(record.BlockReasons, xdr.BlockReasonsAll)
-	a.Attributes.BlockReasons.TypeI = record.BlockReasons
-	a.Attributes.IsBlocked = record.BlockReasons > 0
-	a.Attributes.Policies.TypeI = record.Policies
+	a.response.Attributes.BlockReasons.Types = base.FlagFromXdrBlockReasons(a.record.BlockReasons, xdr.BlockReasonsAll)
+	a.response.Attributes.BlockReasons.TypeI = a.record.BlockReasons
+	a.response.Attributes.IsBlocked = a.record.BlockReasons > 0
+	a.response.Attributes.Policies.TypeI = a.record.Policies
 	// TODO: move `FlagFromXdrAccountPolicy` to regources?
-	a.Attributes.Policies.Types = base.FlagFromXdrAccountPolicy(record.Policies, xdr.AccountPoliciesAll)
-	a.Attributes.Thresholds.HighThreshold = record.Thresholds[1]
-	a.Attributes.Thresholds.HighThreshold = record.Thresholds[2]
-	a.Attributes.Thresholds.HighThreshold = record.Thresholds[3]
+	a.response.Attributes.Policies.Types = base.FlagFromXdrAccountPolicy(a.record.Policies, xdr.AccountPoliciesAll)
+	a.response.Attributes.Thresholds.HighThreshold = a.record.Thresholds[1]
+	a.response.Attributes.Thresholds.HighThreshold = a.record.Thresholds[2]
+	a.response.Attributes.Thresholds.HighThreshold = a.record.Thresholds[3]
 
 	return nil
 }
 
 func (a *Account) Response() (interface{}, error) {
-	return a, nil
+	return a.response, nil
 }
