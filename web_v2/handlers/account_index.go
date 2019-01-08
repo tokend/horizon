@@ -16,10 +16,15 @@ type AccountIndex struct {
 		signerType  int32
 		isBlocked   bool
 	}
+
+	pagingParams resource.PagingParams
 }
 
 func (a *AccountIndex) Prepare(w http.ResponseWriter, r *http.Request) {
 	a.filters.accountType = chi.URLParam(r, "account_type")
+
+	a.pagingParams.Limit = chi.URLParam(r, "limit")
+	a.pagingParams.Page = chi.URLParam(r, "page")
 
 	a.collection.Signer, _ = signcontrol.CheckSignature(r)
 	a.collection.W = w
@@ -33,5 +38,5 @@ func (a *AccountIndex) Prepare(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AccountIndex) Render(w http.ResponseWriter, r *http.Request) {
-	a.Base.RenderCollection(w, r, a.collection)
+	a.Base.RenderCollection(w, r, a.pagingParams, a.collection)
 }

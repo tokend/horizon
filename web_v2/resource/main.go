@@ -3,8 +3,8 @@ package resource
 type ResourceType string
 
 type PagingParams struct {
-	page  string
-	limit string
+	Page  string
+	Limit string
 }
 
 const (

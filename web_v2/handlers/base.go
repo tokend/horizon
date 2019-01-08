@@ -5,6 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/web_v2/resource"
 	"net/http"
 )
 
@@ -62,7 +63,7 @@ func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, id string,
 	}
 }
 
-func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, collection Collection) {
+func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, pp resource.PagingParams, collection Collection) {
 	// TODO
 }
 
