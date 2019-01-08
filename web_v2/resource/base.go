@@ -70,7 +70,7 @@ func (b *Base) Prepare(r *http.Request) error {
 		return err
 	}
 
-	b.PageQuery = pageQuery
+	b.PageQuery = *pageQuery
 
 	return nil
 }
