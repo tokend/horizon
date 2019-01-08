@@ -8,7 +8,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/horizon/web_v2/resource"
 	"net/http"
 )
 
@@ -19,20 +18,6 @@ type Base struct {
 
 type Allowable interface {
 	IsAllowed() (bool, error)
-}
-
-func (b *Base) PrepareCollection(request *http.Request, collection Collection) error {
-	err := collection.Prepare(request)
-	if err != nil {
-		return problems.NotAllowed()
-	}
-
-	err = b.CheckAllowed(collection)
-	if err != nil {
-		return problems.NotAllowed()
-	}
-
-	return nil
 }
 
 func (b *Base) CheckAllowed(resource Allowable) error {
@@ -87,7 +72,17 @@ func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, id string,
 	return nil
 }
 
-func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, pp resource.PagingParams, collection Collection) error {
+func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, collection Collection) error {
+	err := collection.Prepare(r)
+	if err != nil {
+		return problems.NotAllowed()
+	}
+
+	err = b.CheckAllowed(collection)
+	if err != nil {
+		return problems.NotAllowed()
+	}
+
 	return nil
 }
 

@@ -7,6 +7,10 @@ import (
 type AccountCollection struct {
 	Base `json:"-"`
 
+	Filters struct {
+		AccountType string
+	}
+
 	resources []Account
 	records   []core.Account
 }
