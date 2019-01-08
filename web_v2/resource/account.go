@@ -3,6 +3,7 @@ package resource
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/resource/base"
 	"gitlab.com/tokend/horizon/web_v2/attributes"
 )
@@ -13,6 +14,8 @@ type Account struct {
 	Id         string             `json:"id"`
 	Type       ResourceType       `json:"type"`
 	Attributes attributes.Account `json:"attributes"`
+
+	record *core.Account `json:"-"`
 }
 
 func (a *Account) FindOwner() error {
@@ -20,12 +23,28 @@ func (a *Account) FindOwner() error {
 	if err != nil {
 		return errors.Wrap(err, "Failed to get account by address")
 	}
+
 	a.Owner = record.AccountID
 	return nil
 }
 
 func (a *Account) IsAllowed() (bool, error) {
 	return a.isSignedByOwner() || a.isSignedByAdmin(), nil
+}
+
+func (a *Account) Fetch() error {
+	if a.record != nil {
+		return nil
+	}
+
+	record, err := a.CoreQ().Accounts().ByAddress(a.Id)
+	if err != nil {
+		return errors.Wrap(err, "Failed to fetch account")
+	}
+
+	a.record = record
+
+	return nil
 }
 
 func (a *Account) PopulateAttributes() error {
@@ -68,11 +87,15 @@ func (c *AccountCollection) FindOwner() error {
 	return nil
 }
 
+func (c *AccountCollection) Fetch() error {
+	return nil
+}
+
 func (c *AccountCollection) IsAllowed() (bool, error) {
 	return c.isSignedByAdmin(), nil
 }
 
-func (c *AccountCollection) PopulateAttributes () error {
+func (c *AccountCollection) PopulateAttributes() error {
 	for _, r := range c.resources {
 		err := r.PopulateAttributes()
 		if err != nil {

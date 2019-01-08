@@ -32,7 +32,13 @@ func (b *Base) CheckAllowed(request *http.Request, resource Resource) error {
 }
 
 func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, resource Resource) {
-	err := resource.PopulateAttributes()
+	err := resource.Fetch()
+	if err != nil {
+		b.RenderErr()
+		return
+	}
+
+	err = resource.PopulateAttributes()
 	if err != nil {
 		b.RenderErr()
 		return
