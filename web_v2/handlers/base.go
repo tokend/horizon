@@ -33,7 +33,7 @@ func (b *Base) CheckAllowed(resource Allowable) error {
 	return nil
 }
 
-func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, id string, resource Resource) error {
+func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, resource Resource) error {
 	err := resource.Prepare(r)
 	if err != nil {
 		return problems.NotAllowed()
