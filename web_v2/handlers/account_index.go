@@ -32,6 +32,6 @@ func (a *AccountIndex) Prepare(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *AccountIndex) Serve(w http.ResponseWriter, r *http.Request) {
+func (a *AccountIndex) Render(w http.ResponseWriter, r *http.Request) {
 	a.Base.RenderCollection(w, r, a.collection)
 }
