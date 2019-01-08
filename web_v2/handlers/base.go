@@ -13,7 +13,11 @@ type Base struct {
 	HistoryQ history.QInterface
 }
 
-func (b *Base) CheckAllowed(request *http.Request, resource Resource) error {
+type Allowable interface {
+	IsAllowed() (bool, error)
+}
+
+func (b *Base) CheckAllowed(request *http.Request, resource Allowable) error {
 	isAllowed, err := resource.IsAllowed()
 	if !isAllowed {
 		return errors.New("Resource is not allowed") // TODO: 401
@@ -58,8 +62,8 @@ func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, id string,
 	}
 }
 
-func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, collection Resource) {
-	b.RenderResource(w, r, "", collection)
+func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, collection Collection) {
+	// TODO
 }
 
 func (b *Base) RenderErr() {
