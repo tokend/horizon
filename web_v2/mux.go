@@ -2,12 +2,16 @@ package web_v2
 
 import (
 	"github.com/go-chi/chi"
-	"gitlab.com/tokend/horizon/web_v2/handlers"
 	"net/http"
 )
 
 type Mux struct {
 	router chi.Router
+}
+
+type Handler interface {
+	Prepare(w http.ResponseWriter, r *http.Request)
+	Serve(w http.ResponseWriter, r *http.Request)
 }
 
 func NewMux(r chi.Router) *Mux {
@@ -16,7 +20,7 @@ func NewMux(r chi.Router) *Mux {
 	}
 }
 
-func (m *Mux) Get(pattern string, handler handlers.Handler) {
+func (m *Mux) Get(pattern string, handler Handler) {
 	m.router.Get(pattern, func(w http.ResponseWriter, r *http.Request) {
 		handler.Prepare(w, r)
 		handler.Serve(w, r)
