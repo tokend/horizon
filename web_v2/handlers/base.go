@@ -38,7 +38,7 @@ func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, resource R
 		return
 	}
 
-	err = resource.PopulateAttributes()
+	err = resource.Populate()
 	if err != nil {
 		b.RenderErr()
 		return

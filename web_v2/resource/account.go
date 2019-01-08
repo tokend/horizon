@@ -47,7 +47,7 @@ func (a *Account) Fetch() error {
 	return nil
 }
 
-func (a *Account) PopulateAttributes() error {
+func (a *Account) Populate() error {
 	record, err := a.CoreQ().Accounts().ByAddress(a.Id)
 
 	if err != nil {
@@ -95,9 +95,9 @@ func (c *AccountCollection) IsAllowed() (bool, error) {
 	return c.isSignedByAdmin(), nil
 }
 
-func (c *AccountCollection) PopulateAttributes() error {
+func (c *AccountCollection) Populate() error {
 	for _, r := range c.resources {
-		err := r.PopulateAttributes()
+		err := r.Populate()
 		if err != nil {
 			return err
 		}

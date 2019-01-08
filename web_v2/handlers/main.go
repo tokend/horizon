@@ -4,6 +4,6 @@ type Resource interface {
 	IsAllowed() (bool, error)
 	FindOwner() error
 	Fetch() error
-	PopulateAttributes() error
+	Populate() error
 	Response() (interface{}, error)
 }
