@@ -2,6 +2,7 @@ package resource
 
 import (
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/web_v2/middleware"
@@ -21,23 +22,25 @@ type Base struct {
 	Signer string
 }
 
-func (b *Base) CoreQ() core.QInterface {
-	if b.coreQ != nil {
-		return b.coreQ
+func (b *Base) Prepare (r *http.Request) error {
+	b.coreQ = r.Context().Value(middleware.CoreQCtxKey).(core.QInterface)
+	b.historyQ = r.Context().Value(middleware.HistoryQCtxKey).(history.QInterface)
+
+	signer, err := signcontrol.CheckSignature(r)
+	if err != nil {
+		return err
 	}
 
-	b.coreQ = b.R.Context().Value(middleware.CoreQCtxKey).(core.QInterface)
+	b.Signer = signer
 
+	return nil
+}
+
+func (b *Base) CoreQ() core.QInterface {
 	return b.coreQ
 }
 
 func (b *Base) HistoryQ() history.QInterface {
-	if b.coreQ != nil {
-		return b.historyQ
-	}
-
-	b.coreQ = b.R.Context().Value(middleware.HistoryQCtxKey).(core.QInterface)
-
 	return b.historyQ
 }
 

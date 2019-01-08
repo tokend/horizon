@@ -27,12 +27,10 @@ func (a *AccountIndex) Prepare(w http.ResponseWriter, r *http.Request) {
 	a.pagingParams.Page = chi.URLParam(r, "page")
 
 	a.collection.Signer, _ = signcontrol.CheckSignature(r)
-	a.collection.W = w
-	a.collection.R = r
 
 	err := a.CheckAllowed(a.collection)
 	if err != nil {
-		a.RenderErr()
+		a.RenderErr(w, err)
 		return
 	}
 }

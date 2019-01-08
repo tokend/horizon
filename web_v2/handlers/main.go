@@ -1,8 +1,12 @@
 package handlers
 
-import "gitlab.com/tokend/horizon/web_v2/resource"
+import (
+	"gitlab.com/tokend/horizon/web_v2/resource"
+	"net/http"
+)
 
 type Resource interface {
+	Prepare (r *http.Request) error
 	IsAllowed() (bool, error)
 	Fetch(id string) error
 	Populate() error
