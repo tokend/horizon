@@ -23,7 +23,7 @@ func NewBalancesQ(repo *db2.Repo) *BalancesQ {
 // returns nil, nil - if balance does not exists
 func (q *BalancesQ) ByAddress(address string) (*Balance, error) {
 	var result Balance
-	err := q.repo.Get(&result, sq.Select("a.balance_id, a.sequence_id, a.asset, a.account_id").From("balances a").Where("a.balance_id = ?", address))
+	err := q.repo.Get(&result, sq.Select("a.balance_id, a.sequential_id, a.asset, a.account_id").From("balances a").Where("a.balance_id = ?", address))
 	if err != nil {
 		if q.repo.NoRows(err) {
 			return nil, nil

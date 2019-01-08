@@ -1,7 +1,11 @@
 package history2
 
 import (
+	"database/sql/driver"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/regources"
 )
 
@@ -35,6 +39,24 @@ type OperationDetails struct {
 	CreateAtomicSwapRequest    *CreateAtomicSwapRequestDetails    `json:"create_atomic_swap_request,omitempty"`
 	ReviewRequest              *ReviewRequestDetails              `json:"review_request,omitempty"`
 	ManageSale                 *ManageSaleDetails                 `json:"manage_sale,omitempty"`
+}
+
+func (r OperationDetails) Value() (driver.Value, error) {
+	result, err := db2.DriverValue(r)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal operation details")
+	}
+
+	return result, nil
+}
+
+func (r *OperationDetails) Scan(src interface{}) error {
+	err := db2.DriveScan(src, r)
+	if err != nil {
+		return errors.Wrap(err, "failed to scan operation details")
+	}
+
+	return nil
 }
 
 // CreateAccountDetails - stores details of create account operation
@@ -81,13 +103,11 @@ type SetFeeDetails struct {
 
 //CreateWithdrawRequestDetails - details of corresponding op
 type CreateWithdrawRequestDetails struct {
-	BalanceAddress    string                 `json:"balance_address"`
-	Amount            string                 `json:"amount"`
-	FixedFee          string                 `json:"fixed_fee"`
-	PercentFee        string                 `json:"percent_fee"`
-	ExternalDetails   map[string]interface{} `json:"external_details"`
-	DestinationAsset  xdr.AssetCode          `json:"destination_asset"`
-	DestinationAmount string                 `json:"destination_amount"`
+	BalanceAddress  string                 `json:"balance_address"`
+	Amount          string                 `json:"amount"`
+	FixedFee        string                 `json:"fixed_fee"`
+	PercentFee      string                 `json:"percent_fee"`
+	ExternalDetails map[string]interface{} `json:"external_details"`
 }
 
 //CreateManageLimitsRequestDetails - details of corresponding op

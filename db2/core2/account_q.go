@@ -24,7 +24,7 @@ func NewAccountsQ(repo *db2.Repo) *AccountsQ {
 // returns nil, nil - if account does not exists
 func (q *AccountsQ) ByAddress(address string) (*Account, error) {
 	var result Account
-	err := q.repo.Get(&result, sq.Select("a.accountid, a.sequence_id, a.recoveryid, a.thresholds, a.account_type," +
+	err := q.repo.Get(&result, sq.Select("a.accountid, a.sequential_id, a.recoveryid, a.thresholds, a.account_type,"+
 		" a.block_reasons, a.referrer, a.policies, a.kyc_level").From("accounts a").Where("a.accountid = ?", address))
 	if err != nil {
 		if q.repo.NoRows(err) {

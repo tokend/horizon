@@ -1,5 +1,12 @@
 package history2
 
+import (
+	"database/sql/driver"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2"
+)
+
 // effectType describe the effect of some operation to the account or particular balance
 type effectType int64
 
@@ -36,6 +43,24 @@ type Effect struct {
 	Unlocked          *BalanceChangeEffect `json:"unlocked,omitempty"`
 	ChargedFromLocked *BalanceChangeEffect `json:"charged_from_locked,omitempty"`
 	Matched           *MatchEffect         `json:"matched"`
+}
+
+func (r Effect) Value() (driver.Value, error) {
+	result, err := db2.DriverValue(r)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal effect")
+	}
+
+	return result, nil
+}
+
+func (r *Effect) Scan(src interface{}) error {
+	err := db2.DriveScan(src, r)
+	if err != nil {
+		return errors.Wrap(err, "failed to scan effect")
+	}
+
+	return nil
 }
 
 // MatchEffect - describes changes to base and quote balance occurred on match

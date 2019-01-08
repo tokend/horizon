@@ -35,9 +35,6 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 	case xdr.ReviewableRequestTypeLimitsUpdate:
 		d.LimitsUpdate, err = PopulateLimitsUpdateRequest(*h.LimitsUpdate)
 		return
-	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
-		d.TwoStepWithdraw, err = PopulateWithdrawalRequest(*h.TwoStepWithdraw)
-		return
 	case xdr.ReviewableRequestTypeAmlAlert:
 		d.AMLAlert, err = PopulateAmlAlertRequest(*h.AmlAlert)
 		return
@@ -49,12 +46,6 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 		return
 	case xdr.ReviewableRequestTypeInvoice:
 		d.Invoice, err = PopulateInvoiceRequest(*h.Invoice)
-		return
-	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
-		d.UpdateSaleEndTime, err = PopulateUpdateSaleEndTimeRequest(*h.UpdateSaleEndTimeRequest)
-		return
-	case xdr.ReviewableRequestTypeUpdatePromotion:
-		d.PromotionUpdateRequest, err = PopulatePromotionUpdateRequest(*h.PromotionUpdate)
 		return
 	case xdr.ReviewableRequestTypeContract:
 		d.Contract, err = PopulateContractRequest(*h.Contract)

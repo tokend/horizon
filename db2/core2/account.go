@@ -5,7 +5,7 @@ import "gitlab.com/tokend/go/xdr"
 // Account is a row of data from the `accounts` table
 type Account struct {
 	AccountID    string         `db:"accountid"`
-	SequenceID   uint64         `db:"sequence_id"`
+	SequenceID   uint64         `db:"sequential_id"`
 	RecoveryID   string         `db:"recoveryid"`
 	Thresholds   xdr.Thresholds `db:"thresholds"`
 	AccountType  int32          `db:"account_type"`

@@ -51,7 +51,7 @@ func (i *System) runOnce() {
 	defer func() {
 		if rec := recover(); rec != nil {
 			err := errors.FromPanic(rec)
-			log.Errorf("import session panicked: %s", err)
+			log.WithField("service", "ingest_v1").WithError(err).WithStack(err).Error("Import session paniced")
 		}
 	}()
 

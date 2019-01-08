@@ -178,11 +178,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 		UpdatedAt:    ledgerCloseTime,
 	}
 
-	tasksExt, ok := request.Ext.GetTasksExt()
-	if !ok {
-		return &result, nil
-	}
-
+	tasksExt := request.Tasks
 	result.AllTasks = uint32(tasksExt.AllTasks)
 	result.PendingTasks = uint32(tasksExt.PendingTasks)
 
@@ -274,24 +270,16 @@ func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalR
 	// error is ignored on purpose, we should not block ingest in case of such error
 	err := json.Unmarshal([]byte(request.ExternalDetails), &details)
 	if err != nil {
-		details["reason"] = fmt.Sprintf("Expected json, got %v", request.Details)
+		details["reason"] = fmt.Sprintf("Expected json, got %v", request.ExternalDetails)
 		details["error"] = err.Error()
 	}
-	var preConfirmationDetails map[string]interface{}
-	err = json.Unmarshal([]byte(request.PreConfirmationDetails), &preConfirmationDetails)
-	if err != nil {
-		preConfirmationDetails["reason"] = fmt.Sprintf("Expected json, got %v", request.PreConfirmationDetails)
-		preConfirmationDetails["error"] = err.Error()
-	}
+
 	return &history.WithdrawalRequest{
-		BalanceID:              request.Balance.AsString(),
-		Amount:                 amount.StringU(uint64(request.Amount)),
-		FixedFee:               amount.StringU(uint64(request.Fee.Fixed)),
-		PercentFee:             amount.StringU(uint64(request.Fee.Percent)),
-		ExternalDetails:        details,
-		DestAssetCode:          string(request.Details.AutoConversion.DestAsset),
-		DestAssetAmount:        amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount)),
-		PreConfirmationDetails: preConfirmationDetails,
+		BalanceID:       request.Balance.AsString(),
+		Amount:          amount.StringU(uint64(request.Amount)),
+		FixedFee:        amount.StringU(uint64(request.Fee.Fixed)),
+		PercentFee:      amount.StringU(uint64(request.Fee.Percent)),
+		ExternalDetails: details,
 	}
 }
 
@@ -320,28 +308,8 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 		details["error"] = err.Error()
 	}
 
-	saleType := xdr.SaleTypeBasicSale
-	baseAssetForHardCap := uint64(0)
-	state := xdr.SaleStateNone
-	switch request.Ext.V {
-	case xdr.LedgerVersionEmptyVersion:
-	case xdr.LedgerVersionTypedSale:
-		saleType = request.Ext.MustSaleTypeExt().TypedSale.SaleType
-	case xdr.LedgerVersionAllowToSpecifyRequiredBaseAssetAmountForHardCap:
-		extV2 := request.Ext.MustExtV2()
-		baseAssetForHardCap = uint64(extV2.RequiredBaseAssetForHardCap)
-		saleType = extV2.SaleTypeExt.TypedSale.SaleType
-	case xdr.LedgerVersionStatableSales:
-		extV3 := request.Ext.MustExtV3()
-		saleType = extV3.SaleTypeExt.TypedSale.SaleType
-		baseAssetForHardCap = uint64(extV3.RequiredBaseAssetForHardCap)
-		state = extV3.State
-	default:
-		panic(errors.Wrap(errors.New("Unexpected ledger version in getSaleRequest"),
-			"failed to ingest sale request", logan.F{
-				"actual_ledger_version": request.Ext.V.ShortString(),
-			}))
-	}
+	saleType := request.SaleTypeExt.SaleType
+	baseAssetForHardCap := uint64(request.RequiredBaseAssetForHardCap)
 
 	return &history.SaleRequest{
 		BaseAsset:           string(request.BaseAsset),
@@ -354,7 +322,6 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 		QuoteAssets:         quoteAssets,
 		SaleType:            saleType,
 		BaseAssetForHardCap: amount.StringU(baseAssetForHardCap),
-		State:               state,
 	}
 }
 
@@ -403,8 +370,6 @@ func (c *reviewableRequestHandler) getUpdateKYCRequest(request *xdr.UpdateKycReq
 		AccountTypeToSet:   request.AccountTypeToSet,
 		KYCLevel:           uint32(request.KycLevel),
 		KYCData:            kycData,
-		AllTasks:           uint32(request.AllTasks),
-		PendingTasks:       uint32(request.PendingTasks),
 		SequenceNumber:     uint32(request.SequenceNumber),
 		ExternalDetails:    externalDetails,
 	}
@@ -423,15 +388,6 @@ func (c *reviewableRequestHandler) getUpdateSaleDetailsRequest(
 	return &history.UpdateSaleDetailsRequest{
 		SaleID:     uint64(request.SaleId),
 		NewDetails: newDetails,
-	}
-}
-
-func (c *reviewableRequestHandler) getUpdateSaleEndTimeRequest(
-	request *xdr.UpdateSaleEndTimeRequest) *history.UpdateSaleEndTimeRequest {
-
-	return &history.UpdateSaleEndTimeRequest{
-		SaleID:     uint64(request.SaleId),
-		NewEndTime: unixToTime(int64(request.NewEndTime)),
 	}
 }
 
@@ -495,16 +451,12 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.Sale = c.getSaleRequest(body.SaleCreationRequest)
 	case xdr.ReviewableRequestTypeLimitsUpdate:
 		details.LimitsUpdate = c.getLimitsUpdateRequest(body.LimitsUpdateRequest)
-	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
-		details.TwoStepWithdraw = c.getWithdrawalRequest(body.TwoStepWithdrawalRequest)
 	case xdr.ReviewableRequestTypeAmlAlert:
 		details.AmlAlert = c.getAmlAlertRequest(body.AmlAlertRequest)
 	case xdr.ReviewableRequestTypeUpdateKyc:
 		details.UpdateKYC = c.getUpdateKYCRequest(body.UpdateKycRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = c.getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
-	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
-		details.UpdateSaleEndTimeRequest = c.getUpdateSaleEndTimeRequest(body.UpdateSaleEndTimeRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
 		details.AtomicSwapBidCreation = c.getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
 	case xdr.ReviewableRequestTypeAtomicSwap:

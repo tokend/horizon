@@ -25,12 +25,12 @@ func (q *Sale) Insert(sale history2.Sale) error {
 	sql := sq.Insert("sale").
 		Columns(
 			"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time",
-			"quote_assets", "soft_cap", "hard_cap", "details", "state", "base_current_cap",
+			"quote_assets", "soft_cap", "hard_cap", "details", "base_current_cap",
 			"base_hard_cap, sale_type",
 		).
 		Values(
 			sale.ID, sale.OwnerAddress, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
-			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.Details, sale.State,
+			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.Details,
 			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType,
 		)
 
@@ -54,7 +54,6 @@ func (q *Sale) Update(sale history2.Sale) error {
 		"soft_cap":            sale.SoftCap,
 		"hard_cap":            sale.HardCap,
 		"details":             sale.Details,
-		"state":               sale.State,
 		"base_hard_cap":       sale.BaseHardCap,
 		"base_current_cap":    sale.BaseCurrentCap,
 		"sale_type":           sale.SaleType,

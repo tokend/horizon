@@ -85,15 +85,12 @@ type IssuanceRequest struct {
 
 //WithdrawalRequest - request details
 type WithdrawalRequest struct {
-	BalanceID              string                 `json:"balance_id"`
-	Amount                 string                 `json:"amount"`
-	FixedFee               string                 `json:"fixed_fee"`
-	PercentFee             string                 `json:"percent_fee"`
-	ExternalDetails        map[string]interface{} `json:"external_details"`
-	DestAssetCode          string                 `json:"dest_asset_code"`
-	DestAssetAmount        string                 `json:"dest_asset_amount"`
-	ReviewerDetails        map[string]interface{} `json:"reviewer_details"`
-	PreConfirmationDetails map[string]interface{} `json:"pre_confirmation_details"`
+	BalanceID       string                 `json:"balance_id"`
+	Amount          string                 `json:"amount"`
+	FixedFee        string                 `json:"fixed_fee"`
+	PercentFee      string                 `json:"percent_fee"`
+	ExternalDetails map[string]interface{} `json:"external_details"`
+	ReviewerDetails map[string]interface{} `json:"reviewer_details"`
 }
 
 //SaleRequest - request details
@@ -108,7 +105,6 @@ type SaleRequest struct {
 	QuoteAssets         []regources.SaleQuoteAsset `json:"quote_assets"`
 	SaleType            xdr.SaleType               `json:"sale_type"`
 	BaseAssetForHardCap string                     `json:"base_asset_for_hard_cap"`
-	State               xdr.SaleState              `json:"state"`
 }
 
 //LimitsUpdateRequest - request details
@@ -130,8 +126,6 @@ type UpdateKYCRequest struct {
 	AccountTypeToSet   xdr.AccountType          `json:"account_type_to_set"`
 	KYCLevel           uint32                   `json:"kyc_level"`
 	KYCData            map[string]interface{}   `json:"kyc_data"`
-	AllTasks           uint32                   `json:"all_tasks"`
-	PendingTasks       uint32                   `json:"pending_tasks"`
 	SequenceNumber     uint32                   `json:"sequence_number"`
 	ExternalDetails    []map[string]interface{} `json:"external_details"`
 }

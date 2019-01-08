@@ -12,7 +12,7 @@ type withdrawHandler struct {
 
 //ParticipantsEffects - returns effect due to review of withdrawal request
 func (h *withdrawHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
-	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
+	res xdr.ExtendedResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	details := request.Body.MustWithdrawalRequest()

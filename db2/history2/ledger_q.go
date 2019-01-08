@@ -1,6 +1,8 @@
 package history2
 
 import (
+	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -37,4 +39,20 @@ func (q *LedgerQ) OldestLedgerSeq() (int32, error) {
 	}
 
 	return result, nil
+}
+
+//BySequence - returns ledger, if ledger with specified seq does not exists - returns nil, nil
+func (q *LedgerQ) BySequence(seq int32) (*Ledger, error) {
+	var result Ledger
+	err := q.repo.Get(&result, sq.Select("l.id, l.sequence, l.hash, l.previous_hash", "l.closed_at", "l.tx_count", "l.data").
+		From("ledgers l").Where("l.id = ?", seq))
+	if err != nil {
+		if q.repo.NoRows(err) {
+			return nil, nil
+		}
+
+		return nil, errors.Wrap(err, "failed to load ledger by sequence", logan.F{"sequence": seq})
+	}
+
+	return &result, nil
 }

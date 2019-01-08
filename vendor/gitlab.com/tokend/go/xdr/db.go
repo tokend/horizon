@@ -3,6 +3,7 @@ package xdr
 import (
 	"errors"
 	"fmt"
+	"database/sql/driver"
 )
 
 // This file contains implementations of the sql.Scanner interface for stellar xdr types
@@ -19,8 +20,8 @@ func (t *Int64) Scan(src interface{}) error {
 }
 
 // Scan reads from src into an LedgerEntryChanges struct
-func (t *LedgerEntryChanges) Scan(src interface{}) error {
-	return safeBase64Scan(src, t)
+func (change *LedgerEntryChanges) Scan(src interface{}) error {
+	return safeBase64Scan(src, change)
 }
 
 // Scan reads from src into an LedgerHeader struct
@@ -77,4 +78,8 @@ func safeBase64Scan(src, dest interface{}) error {
 	}
 
 	return SafeUnmarshalBase64(val, dest)
+}
+
+func safeBase64Value(src interface{}) (driver.Value, error) {
+	return MarshalBase64(src)
 }

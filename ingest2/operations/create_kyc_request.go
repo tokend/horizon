@@ -12,7 +12,7 @@ type createKYCRequestOpHandler struct {
 // Details returns details about create KYC request operation
 func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	createKYCRequestOp := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
+	createKYCRequestOp := op.Body.MustCreateUpdateKycRequestOp()
 	createKYCRequestRes := opRes.MustCreateUpdateKycRequestResult().MustSuccess()
 
 	var allTasks *uint32
@@ -24,9 +24,9 @@ func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.Operation
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateKycRequest,
 		CreateKYCRequest: &history2.CreateKYCRequestDetails{
-			AccountAddressToUpdateKYC: createKYCRequestOp.AccountToUpdateKyc.Address(),
-			AccountTypeToSet:          createKYCRequestOp.AccountTypeToSet,
-			KYCData:                   customDetailsUnmarshal([]byte(createKYCRequestOp.KycData)),
+			AccountAddressToUpdateKYC: createKYCRequestOp.UpdateKycRequestData.AccountToUpdateKyc.Address(),
+			AccountTypeToSet:          createKYCRequestOp.UpdateKycRequestData.AccountTypeToSet,
+			KYCData:                   customDetailsUnmarshal([]byte(createKYCRequestOp.UpdateKycRequestData.KycData)),
 			AllTasks:                  allTasks,
 			RequestDetails: history2.RequestDetails{
 				RequestID:   int64(createKYCRequestRes.RequestId),

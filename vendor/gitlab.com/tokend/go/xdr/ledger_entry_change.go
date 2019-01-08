@@ -1,6 +1,9 @@
 package xdr
 
-import "fmt"
+import (
+	"fmt"
+	"database/sql/driver"
+)
 
 // EntryType is a helper to get at the entry type for a change.
 func (change *LedgerEntryChange) EntryType() LedgerEntryType {
@@ -37,4 +40,16 @@ func (change *LedgerEntryChange) LedgerKey() LedgerKey {
 	default:
 		panic(fmt.Errorf("Unknown change type: %v", change.Type))
 	}
+}
+
+
+// Value converts to driver.Value
+func (change LedgerEntryChange) Value() (driver.Value, error) {
+	return safeBase64Value(change)
+}
+
+
+// Scan reads from src into an LedgerEntryChange struct
+func (change *LedgerEntryChange) Scan(src interface{}) error {
+	return safeBase64Scan(src, change)
 }

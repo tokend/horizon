@@ -104,9 +104,9 @@ func ForOperation(
 		manageContractOp := op.Body.MustManageContractRequestOp()
 		switch manageContractOp.Details.Action {
 		case xdr.ManageContractRequestActionCreate:
-			result = append(result, Participant{manageContractOp.Details.ContractRequest.Customer,
+			result = append(result, Participant{manageContractOp.Details.MustCreateContractRequest().ContractRequest.Customer,
 				nil, nil})
-			result = append(result, Participant{manageContractOp.Details.ContractRequest.Escrow,
+			result = append(result, Participant{manageContractOp.Details.MustCreateContractRequest().ContractRequest.Escrow,
 				nil, nil})
 		case xdr.ManageContractRequestActionRemove:
 			sourceParticipant = nil

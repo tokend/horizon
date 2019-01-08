@@ -12,7 +12,7 @@ type issuanceHandler struct {
 
 //ParticipantsEffects - returns effect for receiver of the funds and source of the op
 func (h *issuanceHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
-	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
+	res xdr.ExtendedResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	if op.Action != xdr.ReviewRequestOpActionApprove {

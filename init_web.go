@@ -274,7 +274,7 @@ func initWebActions(app *App) {
 				action.q = action.q.WithdrawalByDestAsset(asset)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw, xdr.ReviewableRequestTypeTwoStepWithdrawal},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
@@ -381,10 +381,6 @@ func initWebActions(app *App) {
 			action.Page.Filters["end_time"] = action.GetString("end_time")
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
-	})
-
-	r.Get("/request/update_sale_end_time", &ReviewableRequestIndexAction{
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
 	})
 
 	r.Get("/request/atomic_swap_bids", &ReviewableRequestIndexAction{

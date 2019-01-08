@@ -24,7 +24,6 @@ type Sale struct {
 	EndTime           time.Time    `db:"end_time"`
 	CurrentCap        string
 	Details           db2.Details `db:"details"`
-	State             SaleState   `db:"state"`
 	QuoteAssets       QuoteAssets `db:"quote_assets"`
 }
 

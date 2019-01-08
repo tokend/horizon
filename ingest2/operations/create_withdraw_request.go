@@ -16,23 +16,14 @@ func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 ) (history2.OperationDetails, error) {
 	withdrawRequest := op.Body.MustCreateWithdrawalRequestOp().Request
 
-	destinationAsset := xdr.AssetCode("")
-	destinationAmount := amount.String(int64(0))
-	if autoConversion, ok := withdrawRequest.Details.GetAutoConversion(); ok {
-		destinationAsset = autoConversion.DestAsset
-		destinationAmount = amount.StringU(uint64(autoConversion.ExpectedAmount))
-	}
-
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateWithdrawalRequest,
 		CreateWithdrawRequest: &history2.CreateWithdrawRequestDetails{
-			BalanceAddress:    withdrawRequest.Balance.AsString(),
-			Amount:            amount.StringU(uint64(withdrawRequest.Amount)),
-			FixedFee:          amount.String(int64(withdrawRequest.Fee.Fixed)),
-			PercentFee:        amount.String(int64(withdrawRequest.Fee.Percent)),
-			ExternalDetails:   customDetailsUnmarshal([]byte(withdrawRequest.ExternalDetails)),
-			DestinationAsset:  destinationAsset,
-			DestinationAmount: destinationAmount,
+			BalanceAddress:  withdrawRequest.Balance.AsString(),
+			Amount:          amount.StringU(uint64(withdrawRequest.Amount)),
+			FixedFee:        amount.String(int64(withdrawRequest.Fee.Fixed)),
+			PercentFee:      amount.String(int64(withdrawRequest.Fee.Percent)),
+			ExternalDetails: customDetailsUnmarshal([]byte(withdrawRequest.ExternalDetails)),
 		},
 	}, nil
 }

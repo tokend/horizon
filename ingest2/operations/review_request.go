@@ -16,7 +16,7 @@ type reviewRequestOpHandler struct {
 }
 
 type reviewRequestHandler interface {
-	ParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ReviewRequestSuccessResult,
+	ParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ExtendedResult,
 		request xdr.ReviewableRequestEntry, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 	) ([]history2.ParticipantEffect, error)
 }
@@ -48,11 +48,8 @@ func newReviewRequestOpHandler(pubKeyProvider IDProvider, balanceProvider balanc
 			xdr.ReviewableRequestTypePreIssuanceCreate:   &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeSale:                &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeLimitsUpdate:        &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeTwoStepWithdrawal:   &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeUpdateKyc:           &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeUpdateSaleDetails:   &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeUpdatePromotion:     &deprecatedReviewRequestHandler{},
-			xdr.ReviewableRequestTypeUpdateSaleEndTime:   &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeInvoice:             &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeContract:            &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &reviewableRequestHandlerStub{},
@@ -66,14 +63,9 @@ func (h *reviewRequestOpHandler) Details(op rawOperation, opRes xdr.OperationRes
 	reviewRequestOp := op.Body.MustReviewRequestOp()
 	reviewRequestOpRes := opRes.MustReviewRequestResult().MustSuccess()
 
-	var addedTasks uint32
-	var removedTasks uint32
-	var externalDetails string
-	if details, ok := reviewRequestOp.Ext.GetReviewDetails(); ok {
-		addedTasks = uint32(details.TasksToAdd)
-		removedTasks = uint32(details.TasksToRemove)
-		externalDetails = string(details.ExternalDetails)
-	}
+	addedTasks := uint32(reviewRequestOp.ReviewDetails.TasksToAdd)
+	removedTasks := uint32(reviewRequestOp.ReviewDetails.TasksToRemove)
+	externalDetails := string(reviewRequestOp.ReviewDetails.ExternalDetails)
 
 	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeReviewRequest,

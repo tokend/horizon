@@ -19,8 +19,8 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	issuanceRequest := createIssuanceRequestOp.Request
 
 	var allTasks *int64
-	rawAllTasks, ok := createIssuanceRequestOp.Ext.GetAllTasks()
-	if ok && rawAllTasks != nil {
+	rawAllTasks := createIssuanceRequestOp.AllTasks
+	if rawAllTasks != nil {
 		allTasksInt := int64(*rawAllTasks)
 		allTasks = &allTasksInt
 	}

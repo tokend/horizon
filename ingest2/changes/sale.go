@@ -90,20 +90,7 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		saleDetails["error"] = err.Error()
 	}
 
-	saleType := xdr.SaleTypeBasicSale
-	switch raw.Ext.V {
-	case xdr.LedgerVersionEmptyVersion:
-	case xdr.LedgerVersionTypedSale:
-		saleType = raw.Ext.MustSaleTypeExt().TypedSale.SaleType
-	case xdr.LedgerVersionStatableSales:
-		ext := raw.Ext.MustStatableSaleExt()
-		saleType = ext.SaleTypeExt.TypedSale.SaleType
-	default:
-		return nil, errors.Wrap(errors.New("Unexpected ledger version in convertSale"),
-			"failed to ingest sale", logan.F{
-				"actual_ledger_version": raw.Ext.V.ShortString(),
-			})
-	}
+	saleType := raw.SaleTypeExt.SaleType
 
 	return &history.Sale{
 		ID:                uint64(raw.SaleId),
@@ -120,7 +107,6 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		},
 		BaseCurrentCap: int64(raw.CurrentCapInBase),
 		BaseHardCap:    int64(raw.MaxAmountToBeSold),
-		State:          history.SaleStateOpen,
 		SaleType:       saleType,
 	}, nil
 }

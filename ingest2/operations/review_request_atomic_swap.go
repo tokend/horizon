@@ -12,7 +12,7 @@ type atomicSwapHandler struct {
 
 //ParticipantsEffects - returns slice of effects for participants of the operation
 func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
-	res xdr.ReviewRequestSuccessResult, request xdr.ReviewableRequestEntry,
+	res xdr.ExtendedResult, request xdr.ReviewableRequestEntry,
 	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	atomicSwapExtendedResult := res.TypeExt.MustASwapExtended()

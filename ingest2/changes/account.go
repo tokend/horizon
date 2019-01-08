@@ -24,7 +24,7 @@ func newAccountHandler(storage accountStorage) *accountHandler {
 //Created - stores new account to storage
 func (p *accountHandler) Created(lc ledgerChange) error {
 	account := lc.LedgerChange.MustCreated().Data.MustAccount()
-	newAccount := history.NewAccount(uint64(account.AccountSeqId), account.AccountId.Address())
+	newAccount := history.NewAccount(uint64(account.SequentialId), account.AccountId.Address())
 	err := p.storage.InsertAccount(account.AccountId, newAccount)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert account")

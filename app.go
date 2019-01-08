@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/rcrowley/go-metrics"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/tokend/horizon/cache"
 	"gitlab.com/tokend/horizon/config"
@@ -156,17 +157,19 @@ func (a *App) IsHistoryStale() bool {
 
 // UpdateCoreInfo updates the value of coreVersion and networkPassphrase
 // from the Stellar core API.
-func (a *App) UpdateCoreInfo() {
+func (a *App) UpdateCoreInfo() error {
 	if a.config.StellarCoreURL == "" {
-		return
+		return nil
 	}
 
 	var err error
 	a.CoreInfo, err = a.CoreConnector.GetCoreInfo()
 	if err != nil {
 		log.WithField("service", "core-info").WithError(err).Error("could not load stellar-core info")
-		return
+		return errors.Wrap(err, "could not load stellar-core info")
 	}
+
+	return nil
 }
 
 // UpdateMetrics triggers a refresh of several metrics gauges, such as open

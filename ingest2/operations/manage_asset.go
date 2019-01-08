@@ -29,7 +29,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 
 	switch opDetails.ManageAsset.Action {
 	case xdr.ManageAssetActionCreateAssetCreationRequest:
-		creationDetails := manageAssetOp.Request.MustCreateAsset()
+		creationDetails := manageAssetOp.Request.MustCreateAssetCreationRequest().CreateAsset
 
 		policies := int32(creationDetails.Policies)
 
@@ -39,7 +39,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		opDetails.ManageAsset.PreissuedSigner = creationDetails.PreissuedAssetSigner.Address()
 		opDetails.ManageAsset.MaxIssuanceAmount = amount.StringU(uint64(creationDetails.MaxIssuanceAmount))
 	case xdr.ManageAssetActionCreateAssetUpdateRequest:
-		updateDetails := manageAssetOp.Request.MustUpdateAsset()
+		updateDetails := manageAssetOp.Request.MustCreateAssetUpdateRequest().UpdateAsset
 
 		policies := int32(updateDetails.Policies)
 

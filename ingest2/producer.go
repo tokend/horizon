@@ -8,6 +8,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
 	core "gitlab.com/tokend/horizon/db2/core2"
+	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/log"
 )
@@ -17,6 +18,11 @@ const (
 	minErrorRecoveryPeriod = time.Second * 2
 	maxErrorRecoveryPeriod = time.Minute * 10
 )
+
+// historyLedgerProvider - specifies methods required to get ledger from history db
+type historyLedgerProvider interface {
+	BySequence(seq int32) (*history2.Ledger, error)
+}
 
 // txProvider - specifies methods required to get data from core db needed for ingest
 type txProvider interface {
@@ -31,18 +37,20 @@ type txProvider interface {
 // Producer - worker which is responsible for loading sequence of ledgers and transactions and sending them
 // to provided channel.
 type Producer struct {
-	txProvider txProvider
-	log        *log.Entry
+	txProvider      txProvider
+	hLedgerProvider historyLedgerProvider
+	log             *log.Entry
 
 	data          chan LedgerBundle
 	currentLedger int32
 }
 
 // NewProducer - creates new instance of ingest data produce
-func NewProducer(txProvider txProvider, log *log.Entry) *Producer {
+func NewProducer(txProvider txProvider, hLedgerProvider historyLedgerProvider, log *log.Entry) *Producer {
 	return &Producer{
-		log:        log.WithField("service", "ingest_producer"),
-		txProvider: txProvider,
+		log:             log,
+		txProvider:      txProvider,
+		hLedgerProvider: hLedgerProvider,
 	}
 }
 
@@ -53,7 +61,16 @@ func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger
 	}
 
 	l.data = make(chan LedgerBundle, bufferSize)
-	l.currentLedger = l.getLedgerSeqToStartFrom(ledgerState)
+	var err error
+	l.currentLedger, err = l.getLedgerSeqToStartFrom(ledgerState)
+	if err != nil {
+		l.log.WithError(err).Panic("Failed to figure out ledger sequence from which to start")
+	}
+
+	err = l.ensureChainIsConsistent(l.currentLedger)
+	if err != nil {
+		l.log.WithError(err).Panic("Failed to ensure consistency of core and horizon chains")
+	}
 	// normalPeriod is set to 0 to ensure that we are aggressive during catchup. If we failed to get ledger from core
 	// runOnce will handle waiting period
 	go running.WithBackOff(ctx, l.log, "ingest_producer", l.runOnce, time.Duration(0),
@@ -121,10 +138,57 @@ func (l *Producer) loadSuccessTxs(seq int32) ([]core.Transaction, error) {
 	return successTxs, nil
 }
 
-func (l *Producer) getLedgerSeqToStartFrom(ledgerState ledger.SystemState) int32 {
-	if ledgerState.History2.Latest == 0 {
-		return ledgerState.Core.OldestOnStart
+// ensureChainIsConsistent - ensures that we'll end up with consistent chain of blocks in both core and horizon.
+func (l *Producer) ensureChainIsConsistent(ledgerSeqToIngest int32) error {
+	// try to load previously ingested ledger
+	prevLedger, err := l.hLedgerProvider.BySequence(ledgerSeqToIngest - 1)
+	if err != nil {
+		return errors.Wrap(err, "failed to load ledger by sequence", logan.F{
+			"ledger_seq": ledgerSeqToIngest - 1,
+		})
 	}
 
-	return ledgerState.History2.Latest + 1
+	// horizon db is empty, so we have the same chain
+	if prevLedger == nil {
+		return nil
+	}
+
+	currentLedger, err := l.txProvider.LedgerHeaderBySequence(ledgerSeqToIngest)
+	if err != nil {
+		return errors.Wrap(err, "failed to load ledger by seq from core", logan.F{
+			"ledger_seq": ledgerSeqToIngest,
+		})
+	}
+
+	if currentLedger == nil {
+		return errors.From(errors.New("failed to load from core ledger to ingest - horizon is ahead of core"), logan.F{
+			"ledger_to_ingest": ledgerSeqToIngest,
+		})
+	}
+
+	if currentLedger.PrevHash != prevLedger.Hash {
+		return errors.From(errors.New("chain in horizon does not match chain in core"), logan.F{
+			"current_ledger_prev_hash": currentLedger.PrevHash,
+			"prev_ledger_hash":         prevLedger.Hash,
+			"prev_ledger_seq":          prevLedger.Sequence,
+			"current_ledger_seq":       currentLedger.Sequence,
+		})
+	}
+
+	return nil
+
+}
+
+func (l *Producer) getLedgerSeqToStartFrom(ledgerState ledger.SystemState) (int32, error) {
+	if ledgerState.Core.Latest < ledgerState.History2.Latest {
+		return 0, errors.From(errors.New("horizon is ahead of core"), logan.F{
+			"core_latest":     ledgerState.Core.Latest,
+			"history2_latest": ledgerState.History2.Latest,
+		})
+	}
+	if ledgerState.History2.Latest == 0 {
+		return ledgerState.Core.OldestOnStart, nil
+	}
+
+	return ledgerState.History2.Latest + 1, nil
 }

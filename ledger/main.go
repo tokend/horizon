@@ -66,7 +66,7 @@ func StartLedgerStateUpdater(ctx context.Context, log *log.Entry, conf Config) e
 	}
 
 	err = startNewListener(ctx, log.WithField("listener", "core_ledger_seq"), &lock, &instance.Core,
-		"new_ledger_seq", conf.CoreDB)
+		"new_ledgers_seq", conf.CoreDB)
 	if err != nil {
 		return errors.Wrap(err, "failed to start core ledger seq listener")
 	}

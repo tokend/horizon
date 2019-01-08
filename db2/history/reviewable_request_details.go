@@ -101,7 +101,6 @@ type SaleRequest struct {
 	QuoteAssets         []regources.SaleQuoteAsset `json:"quote_assets"`
 	SaleType            xdr.SaleType               `json:"sale_type"`
 	BaseAssetForHardCap string                     `json:"base_asset_for_hard_cap"`
-	State               xdr.SaleState              `json:"state"`
 }
 
 type LimitsUpdateRequest struct {

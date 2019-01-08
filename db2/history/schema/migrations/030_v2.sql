@@ -60,14 +60,14 @@ create table operations (
   type int not null,
   details jsonb not null,
   ledger_close_time timestamp without time zone not null,
-  sourse character varying(64) not null
+  source character varying(64) not null
 );
 
 create table participant_effects (
   id bigint not null primary key,
   account_id bigint not null,
   balance_id bigint ,
-  asset_code character varying(64) not null,
+  asset_code character varying(64),
   effect jsonb not null,
   operation_id bigint not null
 );
