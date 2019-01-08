@@ -5,7 +5,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/horizon/web_v2/resource"
 	"net/http"
 )
 
@@ -14,7 +13,7 @@ type Base struct {
 	HistoryQ history.QInterface
 }
 
-func (b *Base) CheckAllowed(request *http.Request, resource resource.Resource) error {
+func (b *Base) CheckAllowed(request *http.Request, resource Resource) error {
 	err := resource.FindOwner()
 	if err != nil {
 		return errors.Wrap(err, "Failed to define the owner of data") // TODO: 401
@@ -32,7 +31,7 @@ func (b *Base) CheckAllowed(request *http.Request, resource resource.Resource) e
 	return nil
 }
 
-func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, resource resource.Resource) {
+func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, resource Resource) {
 	err := resource.PopulateAttributes()
 	if err != nil {
 		b.RenderErr()
@@ -58,7 +57,7 @@ func (b *Base) RenderResource(w http.ResponseWriter, r *http.Request, resource r
 	}
 }
 
-func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, collection resource.Resource) {
+func (b *Base) RenderCollection(w http.ResponseWriter, r *http.Request, collection Resource) {
 	b.RenderResource(w, r, collection)
 }
 
