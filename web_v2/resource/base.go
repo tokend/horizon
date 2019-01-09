@@ -55,8 +55,10 @@ func (b *Base) GetPageQuery(r *http.Request) (*db2.PageQueryV2, error) {
 }
 
 func (b *Base) Prepare(r *http.Request) error {
-	b.CoreQ = r.Context().Value(middleware.CoreQCtxKey).(core.QInterface)
-	b.HistoryQ = r.Context().Value(middleware.HistoryQCtxKey).(history.QInterface)
+	coreRepo := r.Context().Value(middleware.CoreQCtxKey).(*db2.Repo)
+	historyRepo := r.Context().Value(middleware.HistoryQCtxKey).(*db2.Repo)
+	b.CoreQ = &core.Q{Repo: coreRepo}
+	b.HistoryQ = &history.Q{Repo: historyRepo}
 
 	signer, err := signcontrol.CheckSignature(r)
 	if err != nil {
