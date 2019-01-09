@@ -9,20 +9,23 @@ import (
 	"gitlab.com/tokend/horizon/web_v2"
 	"gitlab.com/tokend/horizon/web_v2/handlers"
 	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
+	"net/http"
 	"time"
 )
 
 type WebV2 struct {
-	mux     *web_v2.Mux
+	mux     *chi.Mux
 	metrics *web_v2.WebMetrics
 }
 
 func initWebV2(app *App) {
-	router := chi.NewRouter()
-	mux := web_v2.NewMux(router)
+	mux := chi.NewMux()
+	metrics := web_v2.NewWebMetrics()
 
-	app.webV2.mux = mux
-	app.webV2.metrics = web_v2.NewWebMetrics()
+	app.webV2 = &WebV2{
+		mux:     mux,
+		metrics: metrics,
+	}
 }
 
 func initWebV2Middleware(app *App) {
@@ -65,26 +68,29 @@ func initWebV2Middleware(app *App) {
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
-	m.Get("/v2/accounts/{id}", &handlers.AccountShow{})
+	m.Get("/v2/accounts/{id}", func(w http.ResponseWriter, r *http.Request) {
+		handler := handlers.AccountShow{}
+		handler.Render(w, r)
+	})
 }
 
 func init() {
 	appInit.Add(
-		"web.init",
+		"web2.init",
 		initWebV2,
-		"app-context", "stellarCoreInfo", "memory_cache",
+		"app-context", "core-info", "memory_cache", "ledger-state",
 	)
 
 	appInit.Add(
-		"web.middleware",
+		"web2.middleware",
 		initWebV2Middleware,
-		"web.init",
+		"web2.init",
 		"web.metrics",
 	)
 
 	appInit.Add(
-		"web.actions",
+		"web2.actions",
 		initWebV2Actions,
-		"web.init",
+		"web2.middleware", "web2.init",
 	)
 }

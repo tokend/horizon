@@ -79,6 +79,7 @@ func NewApp(config config.Config) (*App, error) {
 func (a *App) Serve() {
 
 	a.web.router.Compile()
+	http.Handle("/v2/", a.webV2.mux)
 	http.Handle("/", a.web.router)
 
 	addr := fmt.Sprintf(":%d", a.config.Port)
