@@ -15,7 +15,7 @@ type Resource interface {
 	IsAllowed() (bool, error)
 	Fetch() error
 	Populate() error
-	Response() (interface{}, error)
+	Response() (resource.Response, error)
 }
 
 type Collection interface {
@@ -43,31 +43,40 @@ func CheckAllowed(resource Allowable) error {
 	return nil
 }
 
-func RenderResource(w http.ResponseWriter, r *http.Request, resource Resource) error {
+func BuildResource(r *http.Request, resource Resource) (*resource.Response, error) {
 	err := resource.Prepare(r)
 	if err != nil {
-		return problems.NotAllowed()
+		return nil, problems.NotAllowed()
 	}
 
 	err = CheckAllowed(resource)
 	if err != nil {
-		return problems.NotAllowed()
+		return nil, problems.NotAllowed()
 	}
 
 	err = resource.Fetch()
 	if err != nil {
-		return problems.InternalError()
+		return nil, problems.InternalError()
 	}
 
 	err = resource.Populate()
 	if err != nil {
-		return problems.InternalError()
+		return nil, problems.InternalError()
 	}
 
 	response, err := resource.Response()
 	if err != nil {
-		return problems.InternalError()
+		return nil, problems.InternalError()
 	}
+
+	return &response, nil
+}
+
+func RenderResource(w http.ResponseWriter, data resource.Response) error {
+	var response struct {
+		Data resource.Response `json:"data"`
+	}
+	response.Data = data
 
 	js, err := json.MarshalIndent(response, "", "	")
 	if err != nil {

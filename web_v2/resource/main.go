@@ -10,3 +10,10 @@ type PagingParams struct {
 const (
 	TypeAccounts = "accounts"
 )
+
+type Response struct {
+	Id            string       `json:"id"`
+	Type          ResourceType `json:"type"`
+	Attributes    interface{}  `json:"attributes, omitempty"`
+	Relationships interface{}  `json:"relationships, omitempty"`
+}

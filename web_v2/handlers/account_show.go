@@ -12,9 +12,16 @@ func ShowAccount(w http.ResponseWriter, r *http.Request) {
 	account, err := resource.NewAccount(id)
 	if err != nil {
 		RenderErr(w, err)
+		return
 	}
 
-	err = RenderResource(w, r, account)
+	response, err := BuildResource(r, account)
+	if err != nil {
+		RenderErr(w, err)
+		return
+	}
+
+	err = RenderResource(w, *response)
 	if err != nil {
 		RenderErr(w, err)
 		return
