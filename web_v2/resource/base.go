@@ -28,8 +28,12 @@ type Base struct {
 }
 
 func (b *Base) GetUint64(r *http.Request, name string) (uint64, error) {
-	res, err := strconv.ParseUint(chi.URLParam(r, name), 10, 64)
+	str := chi.URLParam(r, name)
+	if len(str) == 0 {
+		return 0, nil
+	}
 
+	res, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
 		return 0, errors.Wrap(err, "Failed to get "+name+"query param")
 	}
