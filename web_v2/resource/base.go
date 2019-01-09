@@ -41,23 +41,25 @@ func (b *Base) GetUint64(r *http.Request, name string) (uint64, error) {
 	return res, nil
 }
 
-func (b *Base) GetPageQuery(r *http.Request) (*db2.PageQueryV2, error) {
+func (b *Base) GetPageQuery(r *http.Request) error {
 	limit, err := b.GetUint64(r, "limit")
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	page, err := b.GetUint64(r, "page")
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	pageQuery, err := db2.NewPageQueryV2(page, limit)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to init page query")
+		return errors.Wrap(err, "Failed to init page query")
 	}
 
-	return &pageQuery, nil
+	b.PageQuery = pageQuery
+
+	return nil
 }
 
 func (b *Base) Prepare(r *http.Request) error {
@@ -71,12 +73,10 @@ func (b *Base) Prepare(r *http.Request) error {
 		b.Signer = signer
 	}
 
-	pageQuery, err := b.GetPageQuery(r)
+	err := b.GetPageQuery(r)
 	if err != nil {
 		return errors.Wrap(err, "Failed to get page query")
 	}
-
-	b.PageQuery = *pageQuery
 
 	return nil
 }
