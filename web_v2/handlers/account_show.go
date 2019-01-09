@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape/problems"
+	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/resource"
 	"net/http"
 )
@@ -12,7 +13,7 @@ func ShowAccount(w http.ResponseWriter, r *http.Request) {
 
 	account, err := resource.NewAccount(id)
 	if err != nil {
-		Log(r).WithError(err).Error("Failed to create account resource")
+		ctx.Log(r).WithError(err).Error("Failed to create account resource")
 		RenderErr(r, w, err)
 		return
 	}
@@ -25,7 +26,7 @@ func ShowAccount(w http.ResponseWriter, r *http.Request) {
 
 	err = RenderResource(w, *response)
 	if err != nil {
-		Log(r).WithError(err).Error("Failed to render account resource")
+		ctx.Log(r).WithError(err).Error("Failed to render account resource")
 		RenderErr(r, w, problems.InternalError())
 		return
 	}

@@ -8,7 +8,7 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/horizon/web_v2/middleware"
+	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"net/http"
 	"strconv"
 )
@@ -61,19 +61,15 @@ func (b *Base) GetPageQuery(r *http.Request) (*db2.PageQueryV2, error) {
 }
 
 func (b *Base) Prepare(r *http.Request) error {
-	coreRepo := r.Context().Value(middleware.CoreQCtxKey).(*db2.Repo)
-	historyRepo := r.Context().Value(middleware.HistoryQCtxKey).(*db2.Repo)
-	b.CoreQ = &core.Q{Repo: coreRepo}
-	b.HistoryQ = &history.Q{Repo: historyRepo}
+	b.Logger = ctx.Log(r)
+	b.CoreQ = ctx.CoreQ(r)
+	b.HistoryQ = ctx.HistoryQ(r)
+	b.SignCheckSkip = ctx.SignCheckSkip(r)
 
-	signCheckSkip := r.Context().Value(middleware.SignCheckSkipCtxKey).(bool)
-	b.SignCheckSkip = signCheckSkip
-	if !signCheckSkip {
+	if !b.SignCheckSkip {
 		signer, _ := signcontrol.CheckSignature(r)
 		b.Signer = signer
 	}
-
-	b.Logger = r.Context().Value(middleware.LogCtxKey).(*logan.Entry)
 
 	pageQuery, err := b.GetPageQuery(r)
 	if err != nil {

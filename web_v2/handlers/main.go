@@ -5,9 +5,8 @@ import (
 	"github.com/google/jsonapi"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/web_v2/middleware"
+	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/resource"
 	"net/http"
 )
@@ -48,31 +47,31 @@ func CheckAllowed(resource Allowable) error {
 func BuildResource(r *http.Request, resource Resource) (*resource.Response, error) {
 	err := resource.Prepare(r)
 	if err != nil {
-		Log(r).WithError(err).Error("Failed to prepare the resource")
+		ctx.Log(r).WithError(err).Error("Failed to prepare the resource")
 		return nil, problems.BadRequest(err)[0]
 	}
 
 	err = CheckAllowed(resource)
 	if err != nil {
-		Log(r).WithError(err).Error("Failed to check if resource is allowed")
+		ctx.Log(r).WithError(err).Error("Failed to check if resource is allowed")
 		return nil, problems.NotAllowed()
 	}
 
 	err = resource.Fetch()
 	if err != nil {
-		Log(r).WithError(err).Error("Failed to fetch the resource data")
+		ctx.Log(r).WithError(err).Error("Failed to fetch the resource data")
 		return nil, problems.InternalError()
 	}
 
 	err = resource.Populate()
 	if err != nil {
-		Log(r).WithError(err).Error("Failed to populate the resource")
+		ctx.Log(r).WithError(err).Error("Failed to populate the resource")
 		return nil, problems.InternalError()
 	}
 
 	response, err := resource.Response()
 	if err != nil {
-		Log(r).WithError(err).Error("Failed to get the resource")
+		ctx.Log(r).WithError(err).Error("Failed to get the resource")
 		return nil, problems.InternalError()
 	}
 
@@ -112,17 +111,13 @@ func RenderCollection(w http.ResponseWriter, r *http.Request, collection Collect
 	return nil
 }
 
-func Log(r *http.Request) *logan.Entry {
-	return r.Context().Value(middleware.LogCtxKey).(*logan.Entry)
-}
-
 func RenderErr(r *http.Request, w http.ResponseWriter, err error) {
 	switch e := err.(type) {
 	case *jsonapi.ErrorObject:
 		ape.RenderErr(w, e)
 		break
 	default:
-		Log(r).Error(err)
+		ctx.Log(r).Error(err)
 		ape.RenderErr(w, problems.InternalError())
 	}
 }
