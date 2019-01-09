@@ -69,8 +69,7 @@ func (b *Base) Prepare(r *http.Request) error {
 	b.SignCheckSkip = ctx.SignCheckSkip(r)
 
 	if !b.SignCheckSkip {
-		signer, _ := signcontrol.CheckSignature(r)
-		b.Signer = signer
+		b.Signer, _ = signcontrol.CheckSignature(r)
 	}
 
 	err := b.GetPageQuery(r)
