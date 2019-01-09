@@ -14,7 +14,7 @@ import (
 )
 
 type Base struct {
-	logger *logan.Entry
+	Logger *logan.Entry
 
 	CoreQ    core.QInterface
 	HistoryQ history.QInterface
@@ -31,7 +31,7 @@ func (b *Base) GetUint64(r *http.Request, name string) (uint64, error) {
 	res, err := strconv.ParseUint(chi.URLParam(r, name), 10, 64)
 
 	if err != nil {
-		return 0, errors.Wrap(err, "Failed to get " + name + "query param")
+		return 0, errors.Wrap(err, "Failed to get "+name+"query param")
 	}
 
 	return res, nil
@@ -50,7 +50,7 @@ func (b *Base) GetPageQuery(r *http.Request) (*db2.PageQueryV2, error) {
 
 	pageQuery, err := db2.NewPageQueryV2(page, limit)
 	if err != nil {
-		return nil, errors.Wrap(err,"Failed to init page query")
+		return nil, errors.Wrap(err, "Failed to init page query")
 	}
 
 	return &pageQuery, nil
@@ -62,19 +62,18 @@ func (b *Base) Prepare(r *http.Request) error {
 	b.CoreQ = &core.Q{Repo: coreRepo}
 	b.HistoryQ = &history.Q{Repo: historyRepo}
 
-	signCheckSkip := r.Context().Value(middleware.SignCheckSkipKey).(bool)
+	signCheckSkip := r.Context().Value(middleware.SignCheckSkipCtxKey).(bool)
 	b.SignCheckSkip = signCheckSkip
 	if !signCheckSkip {
-		signer, err := signcontrol.CheckSignature(r)
-		if err != nil {
-			return err
-		}
+		signer, _ := signcontrol.CheckSignature(r)
 		b.Signer = signer
 	}
 
+	b.Logger = r.Context().Value(middleware.LogCtxKey).(*logan.Entry)
+
 	pageQuery, err := b.GetPageQuery(r)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Failed to get page query")
 	}
 
 	b.PageQuery = *pageQuery

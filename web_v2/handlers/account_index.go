@@ -12,7 +12,7 @@ func ShowAccountList(w http.ResponseWriter, r *http.Request) {
 
 	err := RenderCollection(w, r, collection)
 	if err != nil {
-		RenderErr(w, err)
+		RenderErr(r, w, err)
 		return
 	}
 }

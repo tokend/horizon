@@ -41,7 +41,8 @@ func initWebV2Middleware(app *App) {
 		ape.CtxMiddleWare(
 			v2middleware.CtxCoreQ(app.coreQ),
 			v2middleware.CtxHistoryQ(app.historyQ),
-			v2middleware.SignCheckSkip(app.config.SkipCheck),
+			v2middleware.CtxSignCheckSkip(app.config.SkipCheck),
+			v2middleware.CtxLog(logger),
 		),
 		v2middleware.WebMetrics(app),
 	)
