@@ -6,15 +6,10 @@ import (
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/db2/history"
 	"net/http"
 )
 
-type Base struct {
-	CoreQ    core.QInterface
-	HistoryQ history.QInterface
-}
+type Base struct {}
 
 type Allowable interface {
 	IsAllowed() (bool, error)
