@@ -23,6 +23,8 @@ type Base struct {
 	Signer string
 
 	PageQuery db2.PageQueryV2
+
+	SignCheckSkip bool
 }
 
 func (b *Base) GetUint64(r *http.Request, name string) (uint64, error) {
@@ -60,12 +62,15 @@ func (b *Base) Prepare(r *http.Request) error {
 	b.CoreQ = &core.Q{Repo: coreRepo}
 	b.HistoryQ = &history.Q{Repo: historyRepo}
 
-	signer, err := signcontrol.CheckSignature(r)
-	if err != nil {
-		return err
+	signCheckSkip := r.Context().Value(middleware.SignCheckSkipKey).(bool)
+	b.SignCheckSkip = signCheckSkip
+	if !signCheckSkip {
+		signer, err := signcontrol.CheckSignature(r)
+		if err != nil {
+			return err
+		}
+		b.Signer = signer
 	}
-
-	b.Signer = signer
 
 	pageQuery, err := b.GetPageQuery(r)
 	if err != nil {
@@ -78,6 +83,11 @@ func (b *Base) Prepare(r *http.Request) error {
 }
 
 func (b *Base) isSignedBy(signer string) bool {
+	if b.SignCheckSkip {
+		return true
+	}
+
+	// TODO: check also for signers
 	return b.Signer == signer
 }
 
