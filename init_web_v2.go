@@ -9,7 +9,6 @@ import (
 	"gitlab.com/tokend/horizon/web_v2"
 	"gitlab.com/tokend/horizon/web_v2/handlers"
 	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
-	"net/http"
 	"time"
 )
 
@@ -68,10 +67,7 @@ func initWebV2Middleware(app *App) {
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
-	m.Get("/v2/accounts/{id}", func(w http.ResponseWriter, r *http.Request) {
-		handler := handlers.AccountShow{}
-		handler.Render(w, r)
-	})
+	m.Get("/v2/accounts/{id}", handlers.ShowAccount)
 }
 
 func init() {

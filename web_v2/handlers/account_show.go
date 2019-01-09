@@ -6,21 +6,17 @@ import (
 	"net/http"
 )
 
-type AccountShow struct {
-	Base
-}
-
-func (a *AccountShow) Render(w http.ResponseWriter, r *http.Request) {
+func ShowAccount(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
 	account, err := resource.NewAccount(id)
 	if err != nil {
-		a.RenderErr(w, err)
+		RenderErr(w, err)
 	}
 
-	err = a.RenderResource(w, r, account)
+	err = RenderResource(w, r, account)
 	if err != nil {
-		a.RenderErr(w, err)
+		RenderErr(w, err)
 		return
 	}
 }
