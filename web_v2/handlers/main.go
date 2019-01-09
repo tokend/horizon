@@ -29,7 +29,7 @@ type Resource interface {
 
 type Collection interface {
 	ResourceBase
-	Response() ([]interface{}, error)
+	Response() ([]resource.Response, error)
 }
 
 func CheckAllowed(resource Allowable) error {
@@ -45,32 +45,57 @@ func CheckAllowed(resource Allowable) error {
 	return nil
 }
 
-func BuildResource(r *http.Request, resource Resource) (*resource.Response, error) {
+func BuildResourceBase (r *http.Request, resource ResourceBase) error {
 	err := resource.Prepare(r)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("Failed to prepare the resource")
-		return nil, problems.BadRequest(err)[0]
+		return problems.BadRequest(err)[0]
 	}
 
 	err = CheckAllowed(resource)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("Failed to check if resource is allowed")
-		return nil, problems.NotAllowed()
+		return problems.NotAllowed()
 	}
 
 	err = resource.Fetch()
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("Failed to fetch the resource data")
-		return nil, problems.InternalError()
+		return problems.InternalError()
 	}
 
 	err = resource.Populate()
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("Failed to populate the resource")
-		return nil, problems.InternalError()
+		return problems.InternalError()
+	}
+
+	return nil
+}
+
+func BuildResource(r *http.Request, resource Resource) (*resource.Response, error) {
+	err := BuildResourceBase(r, resource)
+	if err != nil {
+		return nil, err
 	}
 
 	response, err := resource.Response()
+	if err != nil {
+		ctx.Log(r).WithError(err).Error("Failed to get the resource")
+		return nil, problems.InternalError()
+	}
+
+	return &response, nil
+}
+
+func BuildCollection(r *http.Request, collection Collection) (*[]resource.Response, error) {
+	err := BuildResourceBase(r, collection)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := collection.Response()
+
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("Failed to get the resource")
 		return nil, problems.InternalError()
@@ -98,15 +123,20 @@ func RenderResource(w http.ResponseWriter, data *resource.Response) error {
 	return nil
 }
 
-func RenderCollection(w http.ResponseWriter, r *http.Request, collection Collection) error {
-	err := collection.Prepare(r)
+func RenderCollection(w http.ResponseWriter, data *[]resource.Response) error {
+	var response struct {
+		Data *[]resource.Response `json:"data"`
+	}
+	response.Data = data
+
+	js, err := json.MarshalIndent(response, "", "	")
 	if err != nil {
-		return problems.NotAllowed()
+		return err
 	}
 
-	err = CheckAllowed(collection)
+	_, err = w.Write(js)
 	if err != nil {
-		return problems.NotAllowed()
+		return err
 	}
 
 	return nil

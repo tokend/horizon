@@ -5,7 +5,7 @@ import (
 )
 
 type AccountCollection struct {
-	Base `json:"-"`
+	Base
 
 	Filters struct {
 		AccountType string
@@ -15,7 +15,11 @@ type AccountCollection struct {
 	records   []core.Account
 }
 
-func (c *AccountCollection) Fetch(pp PagingParams) error {
+func NewAccountCollection() (*AccountCollection, error) {
+	return &AccountCollection{}, nil
+}
+
+func (c *AccountCollection) Fetch() error {
 	return c.CoreQ.Accounts().Select(&c.records)
 }
 
@@ -24,21 +28,35 @@ func (c *AccountCollection) IsAllowed() (bool, error) {
 }
 
 func (c *AccountCollection) Populate() error {
-	for _, r := range c.resources {
-		err := r.Populate()
+	for _, record := range c.records {
+		resource, err := NewAccount(record.AccountID)
 		if err != nil {
 			return err
 		}
+
+		resource.record = &record
+
+		err = resource.Populate()
+		if err != nil {
+			return err
+		}
+
+		c.resources = append(c.resources, *resource)
 	}
 
 	return nil
 }
 
-func (c *AccountCollection) Response() ([]interface{}, error) {
-	response := make([]interface{}, len(c.resources))
+func (c *AccountCollection) Response() ([]Response, error) {
+	response := make([]Response, len(c.resources))
 
 	for i := range c.resources {
-		response[i] = c.resources[i]
+		r, err := c.resources[i].Response()
+		if err != nil {
+			return nil, err
+		}
+
+		response[i] = r
 	}
 
 	return response, nil
