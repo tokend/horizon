@@ -496,7 +496,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:23f1797dda8312ea29b2c73c89d824f36f4607ca75e8ce2a5c06e8958e58524a"
+  digest = "1:9d960fbd109d55c497bb85d7a17035bb0eb2f2ce0a6a0d2c9d214bd7c06a1499"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -669,6 +669,7 @@
     "github.com/zenazn/goji/web/middleware",
     "github.com/zenazn/goji/web/mutil",
     "gitlab.com/distributed_lab/ape",
+    "gitlab.com/distributed_lab/ape/problems",
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/figure",
     "gitlab.com/distributed_lab/logan",
