@@ -11,24 +11,25 @@ import (
 	"net/http"
 )
 
-type Resource interface {
-	Prepare(r *http.Request) error
+type Allowable interface {
 	IsAllowed() (bool, error)
+}
+
+type ResourceBase interface {
+	Allowable
+	Prepare(r *http.Request) error
 	Fetch() error
 	Populate() error
+}
+
+type Resource interface {
+	ResourceBase
 	Response() (resource.Response, error)
 }
 
 type Collection interface {
-	Prepare(r *http.Request) error
-	IsAllowed() (bool, error)
-	Fetch(resource.PagingParams) error
-	Populate() error
+	ResourceBase
 	Response() ([]interface{}, error)
-}
-
-type Allowable interface {
-	IsAllowed() (bool, error)
 }
 
 func CheckAllowed(resource Allowable) error {
@@ -78,9 +79,9 @@ func BuildResource(r *http.Request, resource Resource) (*resource.Response, erro
 	return &response, nil
 }
 
-func RenderResource(w http.ResponseWriter, data resource.Response) error {
+func RenderResource(w http.ResponseWriter, data *resource.Response) error {
 	var response struct {
-		Data resource.Response `json:"data"`
+		Data *resource.Response `json:"data"`
 	}
 	response.Data = data
 

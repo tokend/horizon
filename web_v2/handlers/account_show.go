@@ -24,7 +24,7 @@ func ShowAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = RenderResource(w, *response)
+	err = RenderResource(w, response)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("Failed to render account resource")
 		RenderErr(r, w, problems.InternalError())
