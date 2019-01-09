@@ -19,7 +19,6 @@ type Base struct {
 	CoreQ    core.QInterface
 	HistoryQ history.QInterface
 
-	Owner  string
 	Signer string
 
 	PageQuery db2.PageQueryV2
