@@ -28,10 +28,11 @@ type Handler struct {
 
 //NewHandler - returns new instance of handler
 func NewHandler(account accountStorage, balance balanceStorage, request reviewableRequestStorage,
-	sale saleStorage) *Handler {
+	sale saleStorage, assetPair assetPairStorage) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request)
 	saleHandlerInst := newSaleHandler(sale)
+	assetPairHandler := newAssetPairHandler(assetPair)
 
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{
@@ -39,10 +40,12 @@ func NewHandler(account accountStorage, balance balanceStorage, request reviewab
 			xdr.LedgerEntryTypeBalance:           newBalanceHandler(account, balance),
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:              saleHandlerInst,
+			xdr.LedgerEntryTypeAssetPair:         assetPairHandler,
 		},
 		Update: map[xdr.LedgerEntryType]updatable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:              saleHandlerInst,
+			xdr.LedgerEntryTypeAssetPair:         assetPairHandler,
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
