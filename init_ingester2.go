@@ -46,7 +46,7 @@ func initIngester2(app *App) {
 	}
 	opHandler := operations.NewOperationsHandler(storage.NewOperationDetails(hRepo), storage.NewOpParticipants(hRepo), &idProvider, balanceStorage)
 
-	consumer := ingest2.NewConsumer(log.WithField("service", "ingest_data_consumer"), hRepo, []ingest2.Handler{
+	consumer := ingest2.NewConsumer(log.WithField("service", "ingest_data_consumer"), hRepo, app.CoreConnector, []ingest2.Handler{
 		ingest2.NewLedgerHandler(storage.NewLedger(hRepo)),
 		ingest2.NewTxSaver(storage.NewTx(hRepo)),
 		ingest2.NewLedgerChangesHandler(storage.NewLedgerChange(hRepo)),
@@ -58,5 +58,5 @@ func initIngester2(app *App) {
 }
 
 func init() {
-	appInit.Add("ingester2", initIngester2, "app-context", "log", "horizon-db", "core-db", "core-info", "ledger-state")
+	appInit.Add("ingester2", initIngester2, "app-context", "log", "horizon-db", "core-db", "core_connector", "core-info", "ledger-state")
 }

@@ -1,4 +1,4 @@
-// revision: 056150543b034db81b782b7acd09406b053ee4f1
+// revision: 4528535615a5db45006557d390186b1861724e74
 // branch:   (detached
 // Package xdr is generated from:
 //
@@ -4043,7 +4043,7 @@ type ReferenceEntry struct {
 //
 //   enum ReviewableRequestType
 //    {
-//        ASSET_CREATE = 0,
+//    	NONE = 0, // use this request type in ReviewRequestOp extended result if additional info is not required
 //    	ASSET_UPDATE = 1,
 //    	PRE_ISSUANCE_CREATE = 2,
 //    	ISSUANCE_CREATE = 3,
@@ -4053,7 +4053,7 @@ type ReferenceEntry struct {
 //        AML_ALERT = 7,
 //    	UPDATE_KYC = 8,
 //    	UPDATE_SALE_DETAILS = 9,
-//    	NONE = 10, // use this request type in ReviewRequestOp extended result if additional info is not required
+//    	ASSET_CREATE = 10,
 //    	INVOICE = 11,
 //    	CONTRACT = 12,
 //    	CREATE_ATOMIC_SWAP_BID = 16,
@@ -4063,7 +4063,7 @@ type ReferenceEntry struct {
 type ReviewableRequestType int32
 
 const (
-	ReviewableRequestTypeAssetCreate         ReviewableRequestType = 0
+	ReviewableRequestTypeNone                ReviewableRequestType = 0
 	ReviewableRequestTypeAssetUpdate         ReviewableRequestType = 1
 	ReviewableRequestTypePreIssuanceCreate   ReviewableRequestType = 2
 	ReviewableRequestTypeIssuanceCreate      ReviewableRequestType = 3
@@ -4073,7 +4073,7 @@ const (
 	ReviewableRequestTypeAmlAlert            ReviewableRequestType = 7
 	ReviewableRequestTypeUpdateKyc           ReviewableRequestType = 8
 	ReviewableRequestTypeUpdateSaleDetails   ReviewableRequestType = 9
-	ReviewableRequestTypeNone                ReviewableRequestType = 10
+	ReviewableRequestTypeAssetCreate         ReviewableRequestType = 10
 	ReviewableRequestTypeInvoice             ReviewableRequestType = 11
 	ReviewableRequestTypeContract            ReviewableRequestType = 12
 	ReviewableRequestTypeCreateAtomicSwapBid ReviewableRequestType = 16
@@ -4081,7 +4081,7 @@ const (
 )
 
 var ReviewableRequestTypeAll = []ReviewableRequestType{
-	ReviewableRequestTypeAssetCreate,
+	ReviewableRequestTypeNone,
 	ReviewableRequestTypeAssetUpdate,
 	ReviewableRequestTypePreIssuanceCreate,
 	ReviewableRequestTypeIssuanceCreate,
@@ -4091,7 +4091,7 @@ var ReviewableRequestTypeAll = []ReviewableRequestType{
 	ReviewableRequestTypeAmlAlert,
 	ReviewableRequestTypeUpdateKyc,
 	ReviewableRequestTypeUpdateSaleDetails,
-	ReviewableRequestTypeNone,
+	ReviewableRequestTypeAssetCreate,
 	ReviewableRequestTypeInvoice,
 	ReviewableRequestTypeContract,
 	ReviewableRequestTypeCreateAtomicSwapBid,
@@ -4099,7 +4099,7 @@ var ReviewableRequestTypeAll = []ReviewableRequestType{
 }
 
 var reviewableRequestTypeMap = map[int32]string{
-	0:  "ReviewableRequestTypeAssetCreate",
+	0:  "ReviewableRequestTypeNone",
 	1:  "ReviewableRequestTypeAssetUpdate",
 	2:  "ReviewableRequestTypePreIssuanceCreate",
 	3:  "ReviewableRequestTypeIssuanceCreate",
@@ -4109,7 +4109,7 @@ var reviewableRequestTypeMap = map[int32]string{
 	7:  "ReviewableRequestTypeAmlAlert",
 	8:  "ReviewableRequestTypeUpdateKyc",
 	9:  "ReviewableRequestTypeUpdateSaleDetails",
-	10: "ReviewableRequestTypeNone",
+	10: "ReviewableRequestTypeAssetCreate",
 	11: "ReviewableRequestTypeInvoice",
 	12: "ReviewableRequestTypeContract",
 	16: "ReviewableRequestTypeCreateAtomicSwapBid",
@@ -4117,7 +4117,7 @@ var reviewableRequestTypeMap = map[int32]string{
 }
 
 var reviewableRequestTypeShortMap = map[int32]string{
-	0:  "asset_create",
+	0:  "none",
 	1:  "asset_update",
 	2:  "pre_issuance_create",
 	3:  "issuance_create",
@@ -4127,7 +4127,7 @@ var reviewableRequestTypeShortMap = map[int32]string{
 	7:  "aml_alert",
 	8:  "update_kyc",
 	9:  "update_sale_details",
-	10: "none",
+	10: "asset_create",
 	11: "invoice",
 	12: "contract",
 	16: "create_atomic_swap_bid",
@@ -4135,7 +4135,7 @@ var reviewableRequestTypeShortMap = map[int32]string{
 }
 
 var reviewableRequestTypeRevMap = map[string]int32{
-	"ReviewableRequestTypeAssetCreate":         0,
+	"ReviewableRequestTypeNone":                0,
 	"ReviewableRequestTypeAssetUpdate":         1,
 	"ReviewableRequestTypePreIssuanceCreate":   2,
 	"ReviewableRequestTypeIssuanceCreate":      3,
@@ -4145,7 +4145,7 @@ var reviewableRequestTypeRevMap = map[string]int32{
 	"ReviewableRequestTypeAmlAlert":            7,
 	"ReviewableRequestTypeUpdateKyc":           8,
 	"ReviewableRequestTypeUpdateSaleDetails":   9,
-	"ReviewableRequestTypeNone":                10,
+	"ReviewableRequestTypeAssetCreate":         10,
 	"ReviewableRequestTypeInvoice":             11,
 	"ReviewableRequestTypeContract":            12,
 	"ReviewableRequestTypeCreateAtomicSwapBid": 16,
@@ -37657,4 +37657,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "056150543b034db81b782b7acd09406b053ee4f1"
+var Revision = "4528535615a5db45006557d390186b1861724e74"

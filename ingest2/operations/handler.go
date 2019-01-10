@@ -68,8 +68,10 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeCreatePreissuanceRequest: &createPreIssuanceRequestOpHandler{},
-			xdr.OperationTypeCreateIssuanceRequest:    &createIssuanceRequestOpHandler{},
-			xdr.OperationTypeCreateSaleRequest:        &createSaleRequestOpHandler{},
+			xdr.OperationTypeCreateIssuanceRequest: &createIssuanceRequestOpHandler{
+				balanceProvider: balanceProvider,
+			},
+			xdr.OperationTypeCreateSaleRequest: &createSaleRequestOpHandler{},
 			xdr.OperationTypeCreateAswapBidRequest: &createAtomicSwapBidRequestOpHandler{
 				balanceProvider: balanceProvider,
 			},
