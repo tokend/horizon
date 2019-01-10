@@ -1,63 +1,24 @@
 package resource
 
-import (
-	"gitlab.com/tokend/horizon/db2/core"
-)
+import "gitlab.com/tokend/horizon/db2/core"
+
+func NewAccountCollection(records []core.Account) *AccountCollection {
+	data := make([]AccountData, len(records))
+
+	for i, record := range records {
+		data[i] = NewAccount(&record).Data
+	}
+
+	return &AccountCollection{Data: data}
+}
 
 type AccountCollection struct {
-	Base
+	Data     []AccountData `json:"data"`
+	Included []interface{} `json:"included,omitempty"`
+}
 
-	Filters struct {
-		AccountType string
+func (a *AccountCollection) IncludeBalances(balances []BalanceData) {
+	for _, balance := range balances {
+		a.Included = append(a.Included, balance)
 	}
-
-	resources []Account
-	records   []core.Account
-}
-
-func NewAccountCollection() (*AccountCollection, error) {
-	return &AccountCollection{}, nil
-}
-
-func (c *AccountCollection) Fetch() error {
-	return c.CoreQ.Accounts().Select(&c.records)
-}
-
-func (c *AccountCollection) IsAllowed() (bool, error) {
-	return c.isSignedByMaster(), nil
-}
-
-func (c *AccountCollection) Populate() error {
-	for _, record := range c.records {
-		resource, err := NewAccount(record.AccountID)
-		if err != nil {
-			return err
-		}
-
-		resource.record = &record
-
-		err = resource.Populate()
-		if err != nil {
-			return err
-		}
-
-		c.resources = append(c.resources, *resource)
-	}
-
-	return nil
-}
-
-func (c *AccountCollection) Response() ([]Response, error) {
-	response := make([]Response, len(c.resources))
-
-	for i := range c.resources {
-		r, err := c.resources[i].Response()
-		if err != nil {
-			return nil, err
-		}
-
-		response[i] = r
-	}
-
-	return response, nil
 }

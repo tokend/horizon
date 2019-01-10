@@ -2,147 +2,71 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/go-chi/chi"
 	"github.com/google/jsonapi"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
-	"gitlab.com/tokend/horizon/web_v2/resource"
 	"net/http"
+	"strconv"
 )
 
-type Allowable interface {
-	IsAllowed() (bool, error)
+func Includes(string) bool {
+	// TODO
+	return true
 }
 
-type ResourceBase interface {
-	Allowable
-	Prepare(r *http.Request) error
-	Fetch() error
-	Populate() error
-}
-
-type Resource interface {
-	ResourceBase
-	Response() (resource.Response, error)
-}
-
-type Collection interface {
-	ResourceBase
-	Response() ([]resource.Response, error)
-}
-
-func CheckAllowed(resource Allowable) error {
-	isAllowed, err := resource.IsAllowed()
-	if !isAllowed {
-		return errors.New("Resource is not allowed")
+func GetUint64(r *http.Request, name string) (uint64, error) {
+	str := chi.URLParam(r, name)
+	if len(str) == 0 {
+		return 0, nil
 	}
 
+	res, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
-		return errors.New("Failed to check if resource is allowed to expose")
+		return 0, errors.Wrap(err, "Failed to get "+name+"query param")
 	}
 
-	return nil
+	return res, nil
 }
 
-func BuildResourceBase (r *http.Request, resource ResourceBase) error {
-	err := resource.Prepare(r)
-	if err != nil {
-		ctx.Log(r).WithError(err).Error("Failed to prepare the resource")
-		return problems.BadRequest(err)[0]
-	}
-
-	err = CheckAllowed(resource)
-	if err != nil {
-		ctx.Log(r).WithError(err).Error("Failed to check if resource is allowed")
-		return problems.NotAllowed()
-	}
-
-	err = resource.Fetch()
-	if err != nil {
-		ctx.Log(r).WithError(err).Error("Failed to fetch the resource data")
-		return problems.InternalError()
-	}
-
-	err = resource.Populate()
-	if err != nil {
-		ctx.Log(r).WithError(err).Error("Failed to populate the resource")
-		return problems.InternalError()
-	}
-
-	return nil
-}
-
-func BuildResource(r *http.Request, resource Resource) (*resource.Response, error) {
-	err := BuildResourceBase(r, resource)
+func GetPageQuery(r *http.Request) (*db2.PageQueryV2, error) {
+	limit, err := GetUint64(r, "limit")
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := resource.Response()
-	if err != nil {
-		ctx.Log(r).WithError(err).Error("Failed to get the resource")
-		return nil, problems.InternalError()
-	}
-
-	return &response, nil
-}
-
-func BuildCollection(r *http.Request, collection Collection) (*[]resource.Response, error) {
-	err := BuildResourceBase(r, collection)
+	page, err := GetUint64(r, "page")
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := collection.Response()
-
+	pageQuery, err := db2.NewPageQueryV2(page, limit)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("Failed to get the resource")
-		return nil, problems.InternalError()
+		return nil, errors.Wrap(err, "Failed to init page query")
 	}
 
-	return &response, nil
+	return &pageQuery, nil
 }
 
-func RenderResource(w http.ResponseWriter, data *resource.Response) error {
-	var response struct {
-		Data *resource.Response `json:"data"`
-	}
-	response.Data = data
 
-	js, err := json.MarshalIndent(response, "", "	")
+func Render(w http.ResponseWriter, resource interface{}) error {
+	js, err := json.MarshalIndent(resource, "", "	")
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Failed to marshal the response")
 	}
 
 	_, err = w.Write(js)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Failed to write the response")
 	}
 
 	return nil
 }
 
-func RenderCollection(w http.ResponseWriter, data *[]resource.Response) error {
-	var response struct {
-		Data *[]resource.Response `json:"data"`
-	}
-	response.Data = data
-
-	js, err := json.MarshalIndent(response, "", "	")
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write(js)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func RenderErr(r *http.Request, w http.ResponseWriter, err error) {
+func RenderErr(w http.ResponseWriter, r *http.Request, err error) {
 	switch e := err.(type) {
 	case *jsonapi.ErrorObject:
 		ape.RenderErr(w, e)

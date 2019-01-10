@@ -1,69 +1,98 @@
 package resource
 
 import (
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/resource/base"
-	"gitlab.com/tokend/horizon/web_v2/attributes"
+	"gitlab.com/tokend/regources"
 )
 
 type Account struct {
-	Base
-	id         string
-	record     *core.Account
-	attributes *attributes.Account
+	Data     AccountData   `json:"data"`
+	Included []interface{} `json:"included,omitempty"`
 }
 
-func NewAccount(id string) (*Account, error) {
-	return &Account{id: id}, nil
+func NewAccount(record *core.Account) *Account {
+	return &Account{
+		Data: AccountData{
+			Id:   record.AccountID,
+			Type: TypeAccounts,
+			Attributes: &AccountAttributes{
+				AccountType: AccountType{
+					Type:  xdr.AccountType(record.AccountType).String(),
+					TypeI: record.AccountType,
+				},
+				BlockReasons: AccountBlockReasons{
+					Types: base.FlagFromXdrBlockReasons(record.BlockReasons, xdr.BlockReasonsAll),
+					TypeI: record.BlockReasons,
+				},
+				IsBlocked: record.BlockReasons > 0,
+				Policies: AccountPolicies{
+					TypeI: record.Policies,
+					Types: base.FlagFromXdrAccountPolicy(record.Policies, xdr.AccountPoliciesAll),
+				},
+				Thresholds: AccountThresholds{
+					LowThreshold:  record.Thresholds[1],
+					MedThreshold:  record.Thresholds[2],
+					HighThreshold: record.Thresholds[3],
+				},
+			},
+		},
+	}
 }
 
-func (a *Account) IsAllowed() (bool, error) {
-	// TODO: can be optimized a bit
-	return a.isSignedBy(a.id) || a.isSignedByMaster(), nil
+func (a *Account) IncludeBalances(balances []BalanceData) {
+	for _, balance := range balances {
+		a.Included = append(a.Included, balance)
+	}
 }
 
-func (a *Account) Fetch() error {
-	if a.record != nil {
-		return nil
+type AccountData struct {
+	Id            string                `json:"id"`
+	Type          string                `json:"type"`
+	Attributes    *AccountAttributes    `json:"attributes,omitempty"`
+	Relationships *AccountRelationships `json:"relationships,omitempty"`
+}
+
+type AccountRelationships struct {
+	Referrer  *Account           `json:"referrer,omitempty"`
+	Balances  *BalanceCollection `json:"balances,omitempty"`
+	Referrals *AccountCollection `json:"referrals,omitempty"`
+}
+
+func (data *AccountData) RelateBalances(balances BalanceCollection) {
+	if data.Relationships == nil {
+		data.Relationships = &AccountRelationships{}
 	}
 
-	record, err := a.CoreQ.Accounts().ByAddress(a.id)
-	if err != nil {
-		return errors.Wrap(err, "Failed to fetch account")
-	}
-
-	a.record = record
-
-	return nil
+	data.Relationships.Balances = balances.AsRelation()
 }
 
-func (a *Account) Populate() error {
-	a.attributes = &attributes.Account{}
-
-	a.attributes.AccountType.Type = xdr.AccountType(a.record.AccountType).String()
-	a.attributes.AccountType.TypeI = a.record.AccountType
-	// TODO: move `FlagFromXdrBlockReasons` to regources?
-	a.attributes.BlockReasons.Types = base.FlagFromXdrBlockReasons(a.record.BlockReasons, xdr.BlockReasonsAll)
-	a.attributes.BlockReasons.TypeI = a.record.BlockReasons
-	a.attributes.IsBlocked = a.record.BlockReasons > 0
-	a.attributes.Policies.TypeI = a.record.Policies
-	// TODO: move `FlagFromXdrAccountPolicy` to regources?
-	a.attributes.Policies.Types = base.FlagFromXdrAccountPolicy(a.record.Policies, xdr.AccountPoliciesAll)
-	a.attributes.Thresholds.HighThreshold = a.record.Thresholds[1]
-	a.attributes.Thresholds.HighThreshold = a.record.Thresholds[2]
-	a.attributes.Thresholds.HighThreshold = a.record.Thresholds[3]
-
-	return nil
+type AccountAttributes struct {
+	AccountType  AccountType         `json:"account_type"`
+	BlockReasons AccountBlockReasons `json:"block_reasons"`
+	IsBlocked    bool                `json:"is_blocked"`
+	Policies     AccountPolicies     `json:"policies"`
+	Thresholds   AccountThresholds   `json:"thresholds"`
 }
 
-func (a *Account) Response() (Response, error) {
-	response := Response{
-		Id: a.id,
-		Type: TypeAccounts,
-		Attributes: a.attributes,
-	}
+type AccountBlockReasons struct {
+	Types []regources.Flag `json:"types"`
+	TypeI int32            `json:"type_i"`
+}
 
-	return response, nil
+type AccountType struct {
+	Type  string `json:"type"`
+	TypeI int32  `json:"type_i"`
+}
+
+type AccountThresholds struct {
+	LowThreshold  byte `json:"low_threshold"`
+	MedThreshold  byte `json:"med_threshold"`
+	HighThreshold byte `json:"high_threshold"`
+}
+
+type AccountPolicies struct {
+	TypeI int32            `json:"type_i"`
+	Types []regources.Flag `json:"types"`
 }
