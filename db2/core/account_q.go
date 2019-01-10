@@ -2,6 +2,7 @@ package core
 
 import (
 	"database/sql"
+	"gitlab.com/tokend/horizon/db2"
 
 	sq "github.com/lann/squirrel"
 	"gitlab.com/tokend/go/xdr"
@@ -24,6 +25,8 @@ type AccountQI interface {
 	First() (*Account, error)
 	// joins account KYC
 	WithAccountKYC() AccountQI
+	// applies paging params
+	PageV2(page db2.PageQueryV2) AccountQI
 }
 
 // AccountQ is a helper struct to aid in configuring queries that loads
@@ -76,6 +79,15 @@ func (q *AccountQ) WithAccountKYC() AccountQI {
 	q.sql = q.sql.
 		LeftJoin("account_KYC ak on (ak.accountid = a.accountid)").
 		Columns("ak.KYC_data as account_kyc_data")
+	return q
+}
+
+func (q *AccountQ)PageV2(page db2.PageQueryV2) AccountQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql, q.Err = page.ApplyTo(q.sql)
 	return q
 }
 

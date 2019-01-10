@@ -13,6 +13,7 @@ func NewAccountCollection(records []core.Account) *AccountCollection {
 }
 
 type AccountCollection struct {
+	Links    LinksObject   `json:"links"`
 	Data     []AccountData `json:"data"`
 	Included []interface{} `json:"included,omitempty"`
 }
