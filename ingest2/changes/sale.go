@@ -1,16 +1,14 @@
 package changes
 
 import (
-	"encoding/json"
-	"fmt"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	history "gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 )
 
 type saleStorage interface {
@@ -83,13 +81,6 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		})
 	}
 
-	var saleDetails db2.Details
-	err := json.Unmarshal([]byte(raw.Details), &saleDetails)
-	if err != nil {
-		saleDetails["reason"] = fmt.Sprintf("Expected json, got %v", raw.Details)
-		saleDetails["error"] = err.Error()
-	}
-
 	saleType := raw.SaleTypeExt.SaleType
 
 	return &history.Sale{
@@ -101,7 +92,7 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		EndTime:           time.Unix(int64(raw.EndTime), 0).UTC(),
 		SoftCap:           uint64(raw.SoftCap),
 		HardCap:           uint64(raw.HardCap),
-		Details:           saleDetails,
+		Details:           internal.MarshalCustomDetails(raw.Details),
 		QuoteAssets: history.QuoteAssets{
 			QuoteAssets: quoteAssets,
 		},

@@ -4,6 +4,7 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/regources"
 )
 
@@ -31,7 +32,7 @@ func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 			Amount:      amount.StringU(uint64(aSwapBidRequest.Amount)),
 			BaseBalance: aSwapBidRequest.BaseBalance.AsString(),
 			QuoteAssets: quoteAssets,
-			Details:     customDetailsUnmarshal([]byte(aSwapBidRequest.Details)),
+			Details:     internal.MarshalCustomDetails(aSwapBidRequest.Details),
 		},
 	}, nil
 }

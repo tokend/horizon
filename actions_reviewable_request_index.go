@@ -131,7 +131,7 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 	action.q = action.q.ForTypes(action.RequestTypes)
 
 	var err error
-	action.HistRecords, err = action.q.Select()
+	action.HistRecords, err = action.q.Page(action.PagingParams).Select()
 	if err != nil {
 		action.Log.WithError(err).Error("failed to load reviewable requests")
 		action.Err = &problem.ServerError

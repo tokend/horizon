@@ -22,7 +22,7 @@ func NewReviewableRequest(repo *db2.Repo) *ReviewableRequest {
 
 // Insert - inserts new request
 func (q *ReviewableRequest) Insert(request history2.ReviewableRequest) error {
-	query := sq.Insert("reviewable_request").SetMap(map[string]interface{}{
+	query := sq.Insert("reviewable_requests").SetMap(map[string]interface{}{
 		"id":               request.ID,
 		"requestor":        request.Requestor,
 		"reviewer":         request.Reviewer,

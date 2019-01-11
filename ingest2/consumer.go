@@ -10,6 +10,11 @@ import (
 	"gitlab.com/tokend/horizon/log"
 )
 
+type corer interface {
+	// SetCursor reports to core last ledger been processed, so that core could release resources during maintenance
+	SetCursor(id string, lastLedger int32) error
+}
+
 type dbTxManager interface {
 	// Begin - starts new db transaction
 	Begin() error
@@ -33,16 +38,18 @@ type Consumer struct {
 	dbTxManager dbTxManager
 	dataSource  <-chan LedgerBundle
 	handlers    []Handler
+	corer       corer
 }
 
 // NewConsumer - creates new instance of consumer
-func NewConsumer(log *log.Entry, dbTxManager dbTxManager, handlers []Handler,
+func NewConsumer(log *log.Entry, dbTxManager dbTxManager, corer corer, handlers []Handler,
 	dataSource <-chan LedgerBundle) *Consumer {
 	return &Consumer{
 		log:         log.WithField("service", "ingest_consumer"),
 		dbTxManager: dbTxManager,
 		dataSource:  dataSource,
 		handlers:    handlers,
+		corer:       corer,
 	}
 }
 
@@ -147,6 +154,14 @@ func (c *Consumer) processBatch(ctx context.Context, bundles []LedgerBundle) err
 	err = c.dbTxManager.Commit()
 	if err != nil {
 		return errors.Wrap(err, "failed to commit db tx")
+	}
+
+	err = c.corer.SetCursor("HORIZON2", bundles[len(bundles)-1].Header.Sequence)
+	// we are not fully handing error here to ensure that we'll not try to reprocess whole batch
+	// as it was already committed
+	if err != nil {
+		c.log.WithError(err).Warn("Failed to set cursor")
+		return nil
 	}
 	return nil
 }

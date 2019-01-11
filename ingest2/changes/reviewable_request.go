@@ -2,8 +2,6 @@ package changes
 
 import (
 	"encoding/hex"
-	"encoding/json"
-	"fmt"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -12,6 +10,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	history "gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
 	"gitlab.com/tokend/regources"
 )
@@ -184,9 +183,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 
 	externalDetails := make([]map[string]interface{}, 0, len(tasksExt.ExternalDetails))
 	for _, item := range tasksExt.ExternalDetails {
-		var comment map[string]interface{}
-		_ = json.Unmarshal([]byte(item), &comment)
-		externalDetails = append(externalDetails, comment)
+		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}
 
 	// we use key "data" for compatibility with db2.Details
@@ -199,36 +196,21 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 }
 
 func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRequest) *history.AssetCreationRequest {
-	var details map[string]interface{}
-	// error is ignored on purpose
-	err := json.Unmarshal([]byte(request.Details), &details)
-	if err != nil {
-		details["reason"] = fmt.Sprintf("Expected json, got %v", request.Details)
-		details["error"] = err.Error()
-	}
-
 	return &history.AssetCreationRequest{
 		Asset:                  string(request.Code),
 		Policies:               int32(request.Policies),
 		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:      amount.StringU(uint64(request.MaxIssuanceAmount)),
 		InitialPreissuedAmount: amount.StringU(uint64(request.InitialPreissuedAmount)),
-		Details:                details,
+		Details:                internal.MarshalCustomDetails(request.Details),
 	}
 }
 
 func (c *reviewableRequestHandler) getAssetUpdate(request *xdr.AssetUpdateRequest) *history.AssetUpdateRequest {
-	var details map[string]interface{}
-	// error is ignored on purpose
-	err := json.Unmarshal([]byte(request.Details), &details)
-	if err != nil {
-		details["reason"] = fmt.Sprintf("Expected json, got %v", request.Details)
-		details["error"] = err.Error()
-	}
 	return &history.AssetUpdateRequest{
 		Asset:    string(request.Code),
 		Policies: int32(request.Policies),
-		Details:  details,
+		Details:  internal.MarshalCustomDetails(request.Details),
 	}
 }
 
@@ -249,37 +231,21 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 }
 
 func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
-	var details map[string]interface{}
-	// error is ignored on purpose, we should not block ingest in case of such error
-	err := json.Unmarshal([]byte(request.ExternalDetails), &details)
-	if err != nil {
-		details["reason"] = fmt.Sprintf("Expected json, got %v", request.ExternalDetails)
-		details["error"] = err.Error()
-	}
-
 	return &history.IssuanceRequest{
-		Asset:           string(request.Asset),
-		Amount:          amount.StringU(uint64(request.Amount)),
-		Receiver:        request.Receiver.AsString(),
-		ExternalDetails: details,
+		Asset:    string(request.Asset),
+		Amount:   amount.StringU(uint64(request.Amount)),
+		Receiver: request.Receiver.AsString(),
+		Details:  internal.MarshalCustomDetails(request.ExternalDetails),
 	}
 }
 
 func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.WithdrawalRequest {
-	var details map[string]interface{}
-	// error is ignored on purpose, we should not block ingest in case of such error
-	err := json.Unmarshal([]byte(request.ExternalDetails), &details)
-	if err != nil {
-		details["reason"] = fmt.Sprintf("Expected json, got %v", request.ExternalDetails)
-		details["error"] = err.Error()
-	}
-
 	return &history.WithdrawalRequest{
-		BalanceID:       request.Balance.AsString(),
-		Amount:          amount.StringU(uint64(request.Amount)),
-		FixedFee:        amount.StringU(uint64(request.Fee.Fixed)),
-		PercentFee:      amount.StringU(uint64(request.Fee.Percent)),
-		ExternalDetails: details,
+		BalanceID:  request.Balance.AsString(),
+		Amount:     amount.StringU(uint64(request.Amount)),
+		FixedFee:   amount.StringU(uint64(request.Fee.Fixed)),
+		PercentFee: amount.StringU(uint64(request.Fee.Percent)),
+		Details:    internal.MarshalCustomDetails(request.ExternalDetails),
 	}
 }
 
@@ -300,14 +266,6 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 		})
 	}
 
-	var details map[string]interface{}
-	// error is ignored on purpose, we should not block ingest in case of such error
-	err := json.Unmarshal([]byte(request.Details), &details)
-	if err != nil {
-		details["reason"] = fmt.Sprintf("Expected json, got %v", request.Details)
-		details["error"] = err.Error()
-	}
-
 	saleType := request.SaleTypeExt.SaleType
 	baseAssetForHardCap := uint64(request.RequiredBaseAssetForHardCap)
 
@@ -318,7 +276,7 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 		EndTime:             unixToTime(int64(request.EndTime)),
 		SoftCap:             amount.StringU(uint64(request.SoftCap)),
 		HardCap:             amount.StringU(uint64(request.HardCap)),
-		Details:             details,
+		Details:             internal.MarshalCustomDetails(request.Details),
 		QuoteAssets:         quoteAssets,
 		SaleType:            saleType,
 		BaseAssetForHardCap: amount.StringU(baseAssetForHardCap),
@@ -331,13 +289,7 @@ func (c *reviewableRequestHandler) getLimitsUpdateRequest(
 	details, ok := request.Ext.GetDetails()
 	var detailsMap map[string]interface{}
 	if ok {
-		limitsDetails := string(details)
-		// error is ignored on purpose, we should not block ingest in case of such error
-		err := json.Unmarshal([]byte(limitsDetails), &detailsMap)
-		if err != nil {
-			detailsMap["reason"] = fmt.Sprintf("Expected json, got %v", limitsDetails)
-			detailsMap["error"] = err.Error()
-		}
+		detailsMap = internal.MarshalCustomDetails(details)
 	}
 	return &history.LimitsUpdateRequest{
 		Details:      detailsMap,
@@ -346,30 +298,16 @@ func (c *reviewableRequestHandler) getLimitsUpdateRequest(
 }
 
 func (c *reviewableRequestHandler) getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
-	var kycData map[string]interface{}
-	// error is ignored on purpose, we should not block ingest in case of such error
-	err := json.Unmarshal([]byte(request.KycData), &kycData)
-	if err != nil {
-		kycData["reason"] = fmt.Sprintf("Expected json, got %v", request.KycData)
-		kycData["error"] = err.Error()
-	}
-
 	externalDetails := make([]map[string]interface{}, 0, len(request.ExternalDetails))
 	for _, item := range request.ExternalDetails {
-		var comment map[string]interface{}
-		err = json.Unmarshal([]byte(item), &comment)
-		if err != nil {
-			comment["reason"] = fmt.Sprintf("Expected json, got %v", item)
-			comment["error"] = err.Error()
-		}
-		externalDetails = append(externalDetails, comment)
+		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}
 
 	return &history.UpdateKYCRequest{
 		AccountToUpdateKYC: request.AccountToUpdateKyc.Address(),
 		AccountTypeToSet:   request.AccountTypeToSet,
 		KYCLevel:           uint32(request.KycLevel),
-		KYCData:            kycData,
+		KYCData:            internal.MarshalCustomDetails(request.KycData),
 		SequenceNumber:     uint32(request.SequenceNumber),
 		ExternalDetails:    externalDetails,
 	}
@@ -377,29 +315,14 @@ func (c *reviewableRequestHandler) getUpdateKYCRequest(request *xdr.UpdateKycReq
 
 func (c *reviewableRequestHandler) getUpdateSaleDetailsRequest(
 	request *xdr.UpdateSaleDetailsRequest) *history.UpdateSaleDetailsRequest {
-
-	var newDetails map[string]interface{}
-	// error is ignored on purpose, we should not block ingest in case of such error
-	err := json.Unmarshal([]byte(request.NewDetails), &newDetails)
-	if err != nil {
-		newDetails["reason"] = fmt.Sprintf("Expected json, got %v", request.NewDetails)
-		newDetails["error"] = err.Error()
-	}
 	return &history.UpdateSaleDetailsRequest{
 		SaleID:     uint64(request.SaleId),
-		NewDetails: newDetails,
+		NewDetails: internal.MarshalCustomDetails(request.NewDetails),
 	}
 }
 
 func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 ) *history.AtomicSwapBidCreation {
-	var details map[string]interface{}
-	err := json.Unmarshal([]byte(request.Details), &details)
-	if err != nil {
-		details["reason"] = fmt.Sprintf("Expected json, got %v", request.Details)
-		details["error"] = err.Error()
-	}
-
 	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for _, quoteAsset := range request.QuoteAssets {
 		quoteAssets = append(quoteAssets, regources.AssetPrice{
@@ -411,7 +334,7 @@ func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.
 	return &history.AtomicSwapBidCreation{
 		BaseBalance: request.BaseBalance.AsString(),
 		BaseAmount:  uint64(request.Amount),
-		Details:     details,
+		Details:     internal.MarshalCustomDetails(request.Details),
 		QuoteAssets: quoteAssets,
 	}
 }

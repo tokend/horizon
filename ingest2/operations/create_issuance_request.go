@@ -4,6 +4,7 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
 )
 
@@ -37,7 +38,7 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 			Asset:      issuanceRequest.Asset,
 			ReceiverAccountAddress: createIssuanceRequestRes.Receiver.Address(),
 			ReceiverBalanceAddress: issuanceRequest.Receiver.AsString(),
-			ExternalDetails:        customDetailsUnmarshal([]byte(issuanceRequest.ExternalDetails)),
+			ExternalDetails:        internal.MarshalCustomDetails(issuanceRequest.ExternalDetails),
 			AllTasks:               allTasks,
 			RequestDetails: history2.RequestDetails{
 				IsFulfilled: createIssuanceRequestRes.Fulfilled,

@@ -5,6 +5,7 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 )
 
 type manageAssetOpHandler struct {
@@ -34,7 +35,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		policies := int32(creationDetails.Policies)
 
 		opDetails.ManageAsset.AssetCode = creationDetails.Code
-		opDetails.ManageAsset.Details = customDetailsUnmarshal([]byte(creationDetails.Details))
+		opDetails.ManageAsset.Details = internal.MarshalCustomDetails(creationDetails.Details)
 		opDetails.ManageAsset.Policies = &policies
 		opDetails.ManageAsset.PreissuedSigner = creationDetails.PreissuedAssetSigner.Address()
 		opDetails.ManageAsset.MaxIssuanceAmount = amount.StringU(uint64(creationDetails.MaxIssuanceAmount))
@@ -44,7 +45,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		policies := int32(updateDetails.Policies)
 
 		opDetails.ManageAsset.AssetCode = updateDetails.Code
-		opDetails.ManageAsset.Details = customDetailsUnmarshal([]byte(updateDetails.Details))
+		opDetails.ManageAsset.Details = internal.MarshalCustomDetails(updateDetails.Details)
 		opDetails.ManageAsset.Policies = &policies
 	case xdr.ManageAssetActionCancelAssetRequest:
 	case xdr.ManageAssetActionChangePreissuedAssetSigner:

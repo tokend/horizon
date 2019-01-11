@@ -339,50 +339,6 @@ func initWebActions(app *App) {
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
 	})
 
-	r.Get("/request/invoices", &ReviewableRequestIndexAction{
-		CustomFilter: func(action *ReviewableRequestIndexAction) {
-			contractID := action.GetOptionalInt64("contract_id")
-			if contractID != nil {
-				action.q = action.q.InvoicesByContract(*contractID)
-			}
-		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeInvoice},
-	})
-
-	r.Get("/request/contracts", &ReviewableRequestIndexAction{
-		CustomFilter: func(action *ReviewableRequestIndexAction) {
-			contractNumber := action.GetString("contract_number")
-			if contractNumber != "" {
-				action.q = action.q.ContractsByContractNumber(contractNumber)
-			}
-			startTime := action.GetOptionalInt64("start_time")
-			if startTime != nil {
-				action.q = action.q.ContractsByStartTime(*startTime)
-			}
-			endTime := action.GetOptionalInt64("end_time")
-			if endTime != nil {
-				action.q = action.q.ContractsByStartTime(*endTime)
-			}
-
-			// TODO: FIX ME!!!!!!!!!!!!!!!!!
-			if action.Requestor != "" {
-				action.q = action.q.ForCounterparty(action.Requestor)
-			}
-
-			action.Requestor = ""
-
-			if action.Reviewer != "" {
-				action.q = action.q.ForCounterparty(action.Reviewer)
-			}
-
-			action.Reviewer = ""
-			action.Page.Filters["contract_number"] = contractNumber
-			action.Page.Filters["start_time"] = action.GetString("start_time")
-			action.Page.Filters["end_time"] = action.GetString("end_time")
-		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
-	})
-
 	r.Get("/request/atomic_swap_bids", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwapBid},
 	})
