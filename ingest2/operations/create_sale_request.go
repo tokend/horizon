@@ -4,6 +4,7 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 )
 
 type createSaleRequestOpHandler struct {
@@ -24,7 +25,7 @@ func (h *createSaleRequestOpHandler) Details(op rawOperation, opRes xdr.Operatio
 			EndTime:           int64(createSaleRequest.EndTime),
 			HardCap:           amount.StringU(uint64(createSaleRequest.HardCap)),
 			SoftCap:           amount.StringU(uint64(createSaleRequest.SoftCap)),
-			Details:           customDetailsUnmarshal([]byte(createSaleRequest.Details)),
+			Details:           internal.MarshalCustomDetails(createSaleRequest.Details),
 		},
 	}, nil
 }

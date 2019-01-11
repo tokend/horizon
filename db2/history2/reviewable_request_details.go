@@ -77,10 +77,10 @@ type PreIssuanceRequest struct {
 
 //IssuanceRequest - request details
 type IssuanceRequest struct {
-	Asset           string                 `json:"asset"`
-	Amount          string                 `json:"amount"`
-	Receiver        string                 `json:"receiver"`
-	ExternalDetails map[string]interface{} `json:"external_details"`
+	Asset    string                 `json:"asset"`
+	Amount   string                 `json:"amount"`
+	Receiver string                 `json:"receiver"`
+	Details  map[string]interface{} `json:"external_details"`
 }
 
 //WithdrawalRequest - request details
@@ -89,7 +89,7 @@ type WithdrawalRequest struct {
 	Amount          string                 `json:"amount"`
 	FixedFee        string                 `json:"fixed_fee"`
 	PercentFee      string                 `json:"percent_fee"`
-	ExternalDetails map[string]interface{} `json:"external_details"`
+	Details         map[string]interface{} `json:"external_details"`
 	ReviewerDetails map[string]interface{} `json:"reviewer_details"`
 }
 

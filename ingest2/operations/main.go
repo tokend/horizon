@@ -3,8 +3,6 @@
 package operations
 
 import (
-	"encoding/json"
-
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
@@ -40,16 +38,4 @@ type handler interface {
 type rawOperation struct {
 	Source xdr.AccountId
 	Body   xdr.OperationBody
-}
-
-func customDetailsUnmarshal(rawDetails []byte) map[string]interface{} {
-	var result map[string]interface{}
-	err := json.Unmarshal(rawDetails, &result)
-	if err != nil {
-		result = make(map[string]interface{})
-		result["data"] = string(rawDetails)
-		result["error"] = err.Error()
-	}
-
-	return result
 }

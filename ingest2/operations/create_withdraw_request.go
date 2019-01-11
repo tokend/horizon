@@ -4,6 +4,7 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 )
 
 type createWithdrawRequestOpHandler struct {
@@ -23,7 +24,7 @@ func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 			Amount:          amount.StringU(uint64(withdrawRequest.Amount)),
 			FixedFee:        amount.String(int64(withdrawRequest.Fee.Fixed)),
 			PercentFee:      amount.String(int64(withdrawRequest.Fee.Percent)),
-			ExternalDetails: customDetailsUnmarshal([]byte(withdrawRequest.ExternalDetails)),
+			ExternalDetails: internal.MarshalCustomDetails(withdrawRequest.ExternalDetails),
 		},
 	}, nil
 }
