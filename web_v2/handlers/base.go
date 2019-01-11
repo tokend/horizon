@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+	"strconv"
+	"strings"
+
 	"github.com/go-chi/chi"
-	"github.com/google/jsonapi"
-	"gitlab.com/distributed_lab/ape"
-	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
@@ -15,9 +16,6 @@ import (
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/resource"
-	"net/http"
-	"strconv"
-	"strings"
 )
 
 type Base struct {
@@ -31,8 +29,10 @@ type Base struct {
 }
 
 func (b *Base) Prepare(r *http.Request, w http.ResponseWriter) {
-	b.HistoryQ = ctx.HistoryQ(r)
-	b.CoreQ = ctx.CoreQ(r)
+	b.HistoryQ = &history.Q{
+		Repo: ctx.HistoryRepo(r),
+	}
+	b.CoreQ = core.NewQ(ctx.CoreRepo(r))
 	b.Logger = ctx.Log(r)
 	b.Request = r
 	b.Writer = w
@@ -80,11 +80,11 @@ func (b *Base) IsRequested(inclusion string) bool {
 func (b *Base) GetLinksObject() resource.LinksObject {
 	path := b.Request.URL.Path
 	// TODO: hal.linkBuilder is still useful, move it somewhere
-	lb := hal.LinkBuilder{ Base: httpx.BaseURL(b.Request.Context()) }
+	lb := hal.LinkBuilder{Base: httpx.BaseURL(b.Request.Context())}
 	format := path + "?page=%d&limit=%d"
 
 	return resource.LinksObject{
-		Next: lb.Linkf(b.Filters, format, b.PageQuery.Page + 1, b.PageQuery.Limit).Href,
+		Next: lb.Linkf(b.Filters, format, b.PageQuery.Page+1, b.PageQuery.Limit).Href,
 	}
 }
 
@@ -103,12 +103,12 @@ func (b *Base) Render(resource interface{}) {
 }
 
 func (b *Base) RenderErr(err error) {
-	switch e := err.(type) {
+	/*switch e := err.(type) {
 	case *jsonapi.ErrorObject:
-		ape.RenderErr(b.Writer, e)
+		//ape.RenderErr(b.Writer, e)
 		break
 	default:
 		b.Logger.Error(err)
 		ape.RenderErr(b.Writer, problems.InternalError())
-	}
+	}*/
 }

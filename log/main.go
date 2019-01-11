@@ -3,9 +3,10 @@ package log
 import (
 	"os"
 
+	"time"
+
 	"github.com/go-errors/errors"
 	"golang.org/x/net/context"
-	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 )

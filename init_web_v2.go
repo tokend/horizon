@@ -1,15 +1,17 @@
 package horizon
 
 import (
+	"time"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/rs/cors"
 	"gitlab.com/distributed_lab/ape"
-	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/web_v2"
+	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/handlers"
 	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
-	"time"
 )
 
 type WebV2 struct {
@@ -30,19 +32,21 @@ func initWebV2(app *App) {
 func initWebV2Middleware(app *App) {
 	m := app.webV2.mux
 
-	logger := logan.New()
+	logger := &log.DefaultLogger.Entry
 
 	m.Use(
 		middleware.StripSlashes,
 		middleware.SetHeader(upstreamHeader, app.config.Hostname),
 		middleware.RequestID,
-		ape.LoganMiddleware(logger, 300*time.Millisecond),
+		ape.LoganMiddleware(logger, time.Millisecond, ape.LoggerSetter(ctx.SetLog),
+			ape.RequestIDProvider(middleware.GetReqID)),
 		ape.RecoverMiddleware(logger),
 		ape.CtxMiddleWare(
-			v2middleware.CtxCoreQ(app.coreQ),
-			v2middleware.CtxHistoryQ(app.historyQ),
-			v2middleware.CtxSignCheckSkip(app.config.SkipCheck),
-			v2middleware.CtxLog(logger),
+			// log will be set by logger setter on handler call
+			ctx.SetCoreRepo(app.CoreRepoLogged(nil)),
+			// log will be set by logger setter on handler call
+			ctx.SetHistoryRepo(app.HistoryRepoLogged(nil)),
+			ctx.SetSignCheckSkip(app.config.SkipCheck),
 		),
 		v2middleware.WebMetrics(app),
 	)

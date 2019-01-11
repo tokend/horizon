@@ -10,7 +10,6 @@ import (
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ledger"
-	"gitlab.com/tokend/horizon/log"
 )
 
 const (
@@ -39,14 +38,14 @@ type txProvider interface {
 type Producer struct {
 	txProvider      txProvider
 	hLedgerProvider historyLedgerProvider
-	log             *log.Entry
+	log             *logan.Entry
 
 	data          chan LedgerBundle
 	currentLedger int32
 }
 
 // NewProducer - creates new instance of ingest data produce
-func NewProducer(txProvider txProvider, hLedgerProvider historyLedgerProvider, log *log.Entry) *Producer {
+func NewProducer(txProvider txProvider, hLedgerProvider historyLedgerProvider, log *logan.Entry) *Producer {
 	return &Producer{
 		log:             log,
 		txProvider:      txProvider,

@@ -17,10 +17,9 @@ func initIngester2(app *App) {
 	}
 
 	ctx := app.ctx
-	coreRepo := app.CoreRepo(ctx)
-	hRepo := app.HistoryRepo(ctx)
-	log := log.WithField("service", "ingest_data_producer")
-	coreRepo.Log = log
+	logger := log.DefaultLogger.Entry.WithField("service", "ingest_v2")
+	coreRepo := app.CoreRepoLogged(logger)
+
 	txProvider := struct {
 		*core2.LedgerHeaderQ
 		*core2.TransactionQ
@@ -29,7 +28,8 @@ func initIngester2(app *App) {
 		TransactionQ:  core2.NewTransactionQ(coreRepo),
 	}
 
-	ledgersChan := ingest2.NewProducer(txProvider, history2.NewLedgerQ(hRepo), log).Start(ctx, 100, ledger.CurrentState())
+	hRepo := app.HistoryRepoLogged(logger)
+	ledgersChan := ingest2.NewProducer(txProvider, history2.NewLedgerQ(hRepo), logger).Start(ctx, 100, ledger.CurrentState())
 
 	accountStorage := storage.NewAccount(hRepo, coreRepo)
 	balanceStorage := storage.NewBalance(hRepo, coreRepo, accountStorage)
@@ -46,7 +46,7 @@ func initIngester2(app *App) {
 	}
 	opHandler := operations.NewOperationsHandler(storage.NewOperationDetails(hRepo), storage.NewOpParticipants(hRepo), &idProvider, balanceStorage)
 
-	consumer := ingest2.NewConsumer(log.WithField("service", "ingest_data_consumer"), hRepo, app.CoreConnector, []ingest2.Handler{
+	consumer := ingest2.NewConsumer(logger.WithField("service", "ingest_data_consumer"), hRepo, app.CoreConnector, []ingest2.Handler{
 		ingest2.NewLedgerHandler(storage.NewLedger(hRepo)),
 		ingest2.NewTxSaver(storage.NewTx(hRepo)),
 		ingest2.NewLedgerChangesHandler(storage.NewLedgerChange(hRepo)),

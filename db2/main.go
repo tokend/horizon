@@ -10,8 +10,7 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"gitlab.com/tokend/horizon/log"
-	"golang.org/x/net/context"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 // Conn represents a connection to a single database.
@@ -51,10 +50,7 @@ type Repo struct {
 	// Conn is the database connection that queries should be executed against.
 	DB *sqlx.DB
 
-	// Ctx is the optional context in which the repo is operating under.
-	Ctx context.Context
-
-	Log *log.Entry
+	Log *logan.Entry
 
 	tx *sqlx.Tx
 }

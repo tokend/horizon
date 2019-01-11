@@ -8,12 +8,13 @@ import (
 )
 
 func initLedgerState(app *App) {
-	ledger.StartLedgerStateUpdater(app.ctx, log.WithField("service", "ledger_state_updater"), ledger.Config{
+	logger := log.WithField("service", "ledger_state_updater")
+	ledger.StartLedgerStateUpdater(app.ctx, logger, ledger.Config{
 		CoreDB:    app.config.StellarCoreDatabaseURL,
 		HistoryDB: app.config.DatabaseURL,
-		Core:      core2.NewLedgerHeaderQ(app.CoreRepo(app.ctx)),
+		Core:      core2.NewLedgerHeaderQ(app.CoreRepoLogged(&logger.Entry)),
 		History:   app.HistoryQ(),
-		History2:  history2.NewLedgerQ(app.HistoryRepo(app.ctx)),
+		History2:  history2.NewLedgerQ(app.HistoryRepoLogged(&logger.Entry)),
 	})
 }
 

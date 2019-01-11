@@ -120,7 +120,7 @@
 
 [[constraint]]
   name = "gitlab.com/distributed_lab/ape"
-  version = "0.4.0"
+  version = "0.5.0"
 
 [[constraint]]
   name = "github.com/google/jsonapi"

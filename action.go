@@ -114,7 +114,7 @@ func (action *Action) isAllowed(ownerOfData string) {
 // CoreQ provides access to queries that access the stellar core database.
 func (action *Action) CoreQ() core.QInterface {
 	if action.cq == nil {
-		action.cq = &core.Q{Repo: action.App.CoreRepo(action.Ctx)}
+		action.cq = &core.Q{Repo: action.App.CoreRepoLogged(&action.Log.Entry)}
 	}
 	return action.cq
 }
@@ -123,7 +123,7 @@ func (action *Action) CoreQ() core.QInterface {
 // horizon's database.
 func (action *Action) HistoryQ() history.QInterface {
 	if action.hq == nil {
-		action.hq = &history.Q{Repo: action.App.HistoryRepo(action.Ctx)}
+		action.hq = &history.Q{Repo: action.App.HistoryRepoLogged(&action.Log.Entry)}
 	}
 
 	return action.hq

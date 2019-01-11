@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/web_v2/resource"
-	"net/http"
 )
 
 func ShowAccountCollection(w http.ResponseWriter, r *http.Request) {

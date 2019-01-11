@@ -34,7 +34,7 @@ type Handler interface {
 
 // Consumer - consumes ingest data and populate db with it
 type Consumer struct {
-	log         *log.Entry
+	log         *logan.Entry
 	dbTxManager dbTxManager
 	dataSource  <-chan LedgerBundle
 	handlers    []Handler
@@ -42,7 +42,7 @@ type Consumer struct {
 }
 
 // NewConsumer - creates new instance of consumer
-func NewConsumer(log *log.Entry, dbTxManager dbTxManager, corer corer, handlers []Handler,
+func NewConsumer(log *logan.Entry, dbTxManager dbTxManager, corer corer, handlers []Handler,
 	dataSource <-chan LedgerBundle) *Consumer {
 	return &Consumer{
 		log:         log.WithField("service", "ingest_consumer"),
@@ -66,7 +66,7 @@ func (c *Consumer) run(ctx context.Context) {
 			return
 		}
 
-		localLog := c.log.WithFields(log.F{
+		localLog := c.log.WithFields(logan.F{
 			"batch_len": len(bundles),
 			"from":      bundles[0].Header.Sequence,
 			"to":        bundles[len(bundles)-1].Header.Sequence,

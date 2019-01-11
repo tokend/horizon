@@ -14,13 +14,14 @@ import (
 )
 
 func initSubmissionSystem(app *App) {
-	cq := &core.Q{Repo: app.CoreRepo(nil)}
-	hq := &history.Q{Repo: app.HistoryRepo(nil)}
+	logger := &log.WithField("service", "initSubmissionSystem").Entry
+	cq := &core.Q{Repo: app.CoreRepoLogged(logger)}
+	hq := &history.Q{Repo: app.HistoryRepoLogged(logger)}
 	coreConnector, err := corer.NewConnector(&http.Client{
 		Timeout: time.Duration(1 * time.Minute),
 	}, app.config.StellarCoreURL)
 	if err != nil {
-		log.WithField("service", initSubmissionSystem).WithError(err).Panic("Failed to create core connector")
+		logger.WithError(err).Panic("Failed to create core connector")
 	}
 	app.submitter = &txsub.System{
 		Pending:   txsub.NewDefaultSubmissionList(),

@@ -9,8 +9,8 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/horizon/log"
-	"golang.org/x/net/context"
 )
 
 // Begin binds this repo to a new transaction.
@@ -34,8 +34,7 @@ func (r *Repo) Begin() error {
 // source is currently within.
 func (r *Repo) Clone() *Repo {
 	return &Repo{
-		DB:  r.DB,
-		Ctx: r.Ctx,
+		DB: r.DB,
 	}
 }
 
@@ -258,16 +257,19 @@ func (r *Repo) conn() Conn {
 	return r.DB
 }
 
+func (r *Repo) getLog() *logan.Entry {
+	if r.Log != nil {
+		return r.Log
+	}
+
+	return &log.DefaultLogger.Entry
+}
+
 func (r *Repo) log(typ string, start time.Time, query string, args []interface{}) {
 	dur := time.Since(start)
 
-	lEntry := log.
-		Ctx(r.logCtx())
-
-	if r.Log != nil {
-		lEntry = r.Log
-	}
-	lEntry.WithFields(log.F{
+	lEntry := r.getLog()
+	lEntry.WithFields(logan.F{
 		"args": args,
 		"sql":  query,
 		"dur":  dur.String(),
@@ -279,21 +281,13 @@ func (r *Repo) log(typ string, start time.Time, query string, args []interface{}
 }
 
 func (r *Repo) logBegin() {
-	log.Ctx(r.logCtx()).Debug("sql: begin")
+	r.getLog().Debug("sql: begin")
 }
 
 func (r *Repo) logCommit() {
-	log.Ctx(r.logCtx()).Debug("sql: commit")
+	r.getLog().Debug("sql: commit")
 }
 
 func (r *Repo) logRollback() {
-	log.Ctx(r.logCtx()).Debug("sql: rollback")
-}
-
-func (r *Repo) logCtx() context.Context {
-	if r.Ctx != nil {
-		return r.Ctx
-	}
-
-	return context.Background()
+	r.getLog().Debug("sql: rollback")
 }

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/rcrowley/go-metrics"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/tokend/horizon/cache"
@@ -134,16 +135,20 @@ func (a *App) HistoryQ() history.QInterface {
 	return a.historyQ
 }
 
-// CoreRepo returns a new repo that loads data from the stellar core
-// database. The returned repo is bound to `ctx`.
-func (a *App) CoreRepo(ctx context.Context) *db2.Repo {
-	return &db2.Repo{DB: a.coreQ.GetRepo().DB, Ctx: ctx}
+// CoreRepoLogged returns a new repo that loads data from the core database.
+func (a *App) CoreRepoLogged(log *logan.Entry) *db2.Repo {
+	return &db2.Repo{
+		DB:  a.coreQ.GetRepo().DB,
+		Log: log,
+	}
 }
 
-// HistoryRepo returns a new repo that loads data from the horizon database. The
-// returned repo is bound to `ctx`.
-func (a *App) HistoryRepo(ctx context.Context) *db2.Repo {
-	return &db2.Repo{DB: a.historyQ.GetRepo().DB, Ctx: ctx}
+// HistoryRepoLogged returns a new repo that loads data from the horizon database.
+func (a *App) HistoryRepoLogged(log *logan.Entry) *db2.Repo {
+	return &db2.Repo{
+		DB:  a.historyQ.GetRepo().DB,
+		Log: log,
+	}
 }
 
 // IsHistoryStale returns true if the latest history ledger is more than
@@ -189,7 +194,7 @@ func (a *App) UpdateMetrics() {
 }
 
 // UpdateWebV2Metrics updates the metrics for the web_v2 requests
-func (a *App) UpdateWebV2Metrics (requestDuration time.Duration, responseStatus int) {
+func (a *App) UpdateWebV2Metrics(requestDuration time.Duration, responseStatus int) {
 	a.webV2.metrics.Update(requestDuration, responseStatus)
 }
 
