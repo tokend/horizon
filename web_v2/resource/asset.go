@@ -9,52 +9,34 @@ import (
 
 // Asset - resource object representing AssetEntry
 type Asset struct {
-	Key
-	Attributes    AssetAttributes    `json:"attributes"`
-	Relationships AssetRelationships `json:"relationships"`
+	ID                     string                 `jsonapi:"primary, assets"`
+	PreIssuanceAssetSigner string                 `jsonapi:"attr,pre_issuance_asset_signer" `
+	Details                map[string]interface{} `jsonapi:"attr,details"`
+	MaxIssuanceAmount      string                 `jsonapi:"attr,max_issuance_amount"`
+	AvailableForIssuance   string                 `jsonapi:"attr,available_for_issuance"`
+	Issued                 string                 `jsonapi:"attr,issued"`
+	PendingIssuance        string                 `jsonapi:"attr,pending_issuance"`
+	Policies               Mask                   `jsonapi:"attr,policies"`
+	TrailingDigits         int64                  `jsonapi:"attr,trailing_digits"`
+	Owner                  *Account               `jsonapi:"relation,owner"`
 }
 
-func NewAsset(core *core2.Asset) Asset {
-	return Asset{
-		Key: Key{
-			ID:   core.Code,
-			Type: typeAssets,
-		},
-		Attributes: AssetAttributes{
-			PreIssuanceAssetSigner: core.PreIssuanceAssetSigner,
-			Details:                core.Details,
-			MaxIssuanceAmount:      amount.String(core.MaxIssuanceAmount),
-			AvailableForIssuance:   amount.String(core.AvailableForIssuance),
-			Issued:                 amount.String(core.Issued),
-			PendingIssuance:        amount.String(core.PendingIssuance),
-			Policies: Mask{
-				Mask:  core.Policies,
-				Flags: base.FlagFromXdrAssetPolicy(core.Policies, xdr.AssetPolicyAll),
-			},
-			TrailingDigits: core.TrailingDigits,
-		},
-		Relationships: AssetRelationships{
-			Owner: Key{
-				ID:   core.Owner,
-				Type: typeAccounts,
-			},
-		},
+func NewAsset(core *core2.Asset) *Asset {
+	if core == nil {
+		return nil
 	}
-}
-
-//AssetAttributes - represents info about asset
-type AssetAttributes struct {
-	PreIssuanceAssetSigner string                 `json:"pre_issuance_asset_signer"`
-	Details                map[string]interface{} `json:"details"`
-	MaxIssuanceAmount      string                 `json:"max_issuance_amount"`
-	AvailableForIssuance   string                 `json:"available_for_issuance"`
-	Issued                 string                 `json:"issued"`
-	PendingIssuance        string                 `json:"pending_issuance"`
-	Policies               Mask                   `json:"policies"`
-	TrailingDigits         int64                  `json:"trailing_digits"`
-}
-
-// AssetRelationships - represents references from account to other resource objects
-type AssetRelationships struct {
-	Owner Key `json:"owner,omitempty"`
+	return &Asset{
+		ID: core.Code,
+		PreIssuanceAssetSigner: core.PreIssuanceAssetSigner,
+		Details:                core.Details,
+		MaxIssuanceAmount:      amount.String(core.MaxIssuanceAmount),
+		AvailableForIssuance:   amount.String(core.AvailableForIssuance),
+		Issued:                 amount.String(core.Issued),
+		PendingIssuance:        amount.String(core.PendingIssuance),
+		Policies: Mask{
+			Mask:  core.Policies,
+			Flags: base.FlagFromXdrAssetPolicy(core.Policies, xdr.AssetPolicyAll),
+		},
+		TrailingDigits: core.TrailingDigits,
+	}
 }

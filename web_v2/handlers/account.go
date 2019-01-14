@@ -3,8 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"encoding/json"
-
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -44,12 +42,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(result)
-	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to encode response")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
+	ape.Render(w, result)
 
 }
 
@@ -59,7 +52,7 @@ type getAccountHandler struct {
 	Log       *logan.Entry
 }
 
-func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*resource.AccountResponse, error) {
+func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*resource.Account, error) {
 	account, err := h.AccountsQ.GetByAddress(request.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account by address")
@@ -69,7 +62,7 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*resource.
 		return nil, nil
 	}
 
-	response := resource.NewAccountResponse(account)
+	response := resource.NewAccount(account)
 	if request.NeedBalance() {
 		balancesQ := h.BalancesQ.FilterByAccount(request.Address)
 		if request.NeedBalanceWithAsset() {
@@ -82,8 +75,16 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*resource.
 			return nil, errors.Wrap(err, "failed to select balances for account")
 		}
 
-		response.IncludeBalances(balances)
+		for i := range balances {
+			b := resource.NewBalance(&balances[i])
+			response.Balances = append(response.Balances, &b)
+		}
+
+		for i := range balances {
+			b := resource.NewBalance(&balances[i])
+			response.Balances = append(response.Balances, &b)
+		}
 	}
 
-	return response, nil
+	return &response, nil
 }

@@ -5,51 +5,20 @@ import (
 	core "gitlab.com/tokend/horizon/db2/core2"
 )
 
-// BalanceResponse - JSON:API response for Balance resource
-type BalanceResponse struct {
-	Data     Balance       `json:"data"`
-	Included []interface{} `json:"included,omitempty"`
-}
-
-func NewBalanceResponse(record *core.Balance) *BalanceResponse {
-	return &BalanceResponse{
-		Data: NewBalance(record),
-	}
-}
-
 // Balance - resource object representing BalanceEntry
 type Balance struct {
-	Key
-	Attributes    *BalanceAttributes    `json:"attributes,omitempty"`
-	Relationships *BalanceRelationships `json:"relationships"`
+	ID        string `jsonapi:"primary,balances"`
+	Available string `jsonapi:"attr,available"`
+	Locked    string `jsonapi:"attr,locked"`
+	Asset     *Asset `jsonapi:"relation,asset,omitempty"`
 }
 
+//NewBalance - creates new instance of balance using core balance
 func NewBalance(record *core.Balance) Balance {
 	return Balance{
-		Key: Key{
-			ID:   record.BalanceAddress,
-			Type: typeBalances,
-		},
-		Attributes: &BalanceAttributes{
-			Locked:    amount.String(record.Locked),
-			Available: amount.String(record.Amount),
-		},
-		Relationships: &BalanceRelationships{
-			Asset: &Key{
-				ID:   record.Code,
-				Type: typeAssets,
-			},
-		},
+		ID:        record.BalanceAddress,
+		Locked:    amount.String(record.Locked),
+		Available: amount.String(record.Amount),
+		Asset:     NewAsset(record.Asset),
 	}
-}
-
-// BalanceAttributes - represents information about Balance
-type BalanceAttributes struct {
-	Available string `json:"available"`
-	Locked    string `json:"locked"`
-}
-
-//BalanceRelationships -represents reference from Account to other resource objects
-type BalanceRelationships struct {
-	Asset *Key `json:"asset,omitempty"`
 }
