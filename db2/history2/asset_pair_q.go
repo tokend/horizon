@@ -1,7 +1,6 @@
 package history2
 
 import (
-	"fmt"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -34,7 +33,7 @@ func (q *AssetPairQ) AssetPairPriceAt(base, quote string, ts time.Time) (int64, 
 			return 0, nil
 		}
 
-		return 0, errors.Wrap(err, "failed to load asset pair", logan.F{"asset pair": fmt.Sprintf("%s-%s", base, quote)})
+		return 0, errors.Wrap(err, "failed to load asset pair", logan.F{"base": base, "quote": quote})
 	}
 	return result, nil
 }
