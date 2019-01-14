@@ -8,21 +8,21 @@ import (
 )
 
 // AccountsQ is a helper struct to aid in configuring queries that loads
-// slices of account structs.
+// account structs.
 type AccountsQ struct {
 	repo *db2.Repo
 }
 
-// NewAccountsQ
+// NewAccountsQ - creates new instance of AccountsQ
 func NewAccountsQ(repo *db2.Repo) *AccountsQ {
 	return &AccountsQ{
 		repo: repo,
 	}
 }
 
-// AccountByAddress loads a row from `accounts`, by address
+// GetByAddress loads a row from `accounts`, by address
 // returns nil, nil - if account does not exists
-func (q *AccountsQ) ByAddress(address string) (*Account, error) {
+func (q *AccountsQ) GetByAddress(address string) (*Account, error) {
 	var result Account
 	err := q.repo.Get(&result, sq.Select("a.accountid, a.sequential_id, a.recoveryid, a.thresholds, a.account_type,"+
 		" a.block_reasons, a.referrer, a.policies, a.kyc_level").From("accounts a").Where("a.accountid = ?", address))

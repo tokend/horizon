@@ -38,7 +38,7 @@ func initWebV2Middleware(app *App) {
 		middleware.StripSlashes,
 		middleware.SetHeader(upstreamHeader, app.config.Hostname),
 		middleware.RequestID,
-		ape.LoganMiddleware(logger, time.Millisecond, ape.LoggerSetter(ctx.SetLog),
+		ape.LoganMiddleware(logger, time.Second, ape.LoggerSetter(ctx.SetLog),
 			ape.RequestIDProvider(middleware.GetReqID)),
 		ape.RecoverMiddleware(logger),
 		ape.CtxMiddleWare(
@@ -73,8 +73,7 @@ func initWebV2Middleware(app *App) {
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
-	m.Get("/v2/accounts/{id}", handlers.ShowAccount)
-	m.Get("/v2/accounts", handlers.ShowAccountCollection)
+	m.Get("/v2/accounts/{id}", handlers.GetAccount)
 }
 
 func init() {

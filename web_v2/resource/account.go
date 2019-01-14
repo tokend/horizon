@@ -2,97 +2,83 @@ package resource
 
 import (
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2/core"
+	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/resource/base"
-	"gitlab.com/tokend/regources"
 )
 
+// AccountResponse - JSON:API response for Account resource
+type AccountResponse struct {
+	Data     Account            `json:"data"`
+	Included includedCollection `json:"included,omitempty"`
+}
+
+func NewAccountResponse(record *core.Account) *AccountResponse {
+	return &AccountResponse{
+		Data: NewAccount(record),
+	}
+}
+
+//IncludeBalances - includes balances into response
+func (a *AccountResponse) IncludeBalances(balances []core.Balance) {
+	a.Data.Relationships.Balances = &RelationshipCollection{}
+	for i := range balances {
+		balanceResource := NewBalance(&balances[i])
+		a.Data.Relationships.Balances.Add(balanceResource.Key)
+		a.Included.Add(&balanceResource)
+		if balances[i].Asset != nil {
+			assetResource := NewAsset(balances[i].Asset)
+			a.Included.Add(&assetResource)
+		}
+	}
+}
+
+// Account - resource object representing AccountEntry
 type Account struct {
-	Data     AccountData   `json:"data"`
-	Included []interface{} `json:"included,omitempty"`
-}
-
-func NewAccount(record *core.Account) *Account {
-	return &Account{
-		Data: AccountData{
-			Id:   record.AccountID,
-			Type: TypeAccounts,
-			Attributes: &AccountAttributes{
-				AccountType: AccountType{
-					Type:  xdr.AccountType(record.AccountType).String(),
-					TypeI: record.AccountType,
-				},
-				BlockReasons: AccountBlockReasons{
-					Types: base.FlagFromXdrBlockReasons(record.BlockReasons, xdr.BlockReasonsAll),
-					TypeI: record.BlockReasons,
-				},
-				IsBlocked: record.BlockReasons > 0,
-				Policies: AccountPolicies{
-					TypeI: record.Policies,
-					Types: base.FlagFromXdrAccountPolicy(record.Policies, xdr.AccountPoliciesAll),
-				},
-				Thresholds: AccountThresholds{
-					LowThreshold:  record.Thresholds[1],
-					MedThreshold:  record.Thresholds[2],
-					HighThreshold: record.Thresholds[3],
-				},
-			},
-		},
-	}
-}
-
-func (a *Account) IncludeBalances(balances []BalanceData) {
-	for _, balance := range balances {
-		a.Included = append(a.Included, balance)
-	}
-}
-
-type AccountData struct {
-	Id            string                `json:"id"`
-	Type          string                `json:"type"`
+	Key
 	Attributes    *AccountAttributes    `json:"attributes,omitempty"`
 	Relationships *AccountRelationships `json:"relationships,omitempty"`
 }
 
-type AccountRelationships struct {
-	Referrer  *Account           `json:"referrer,omitempty"`
-	Balances  *BalanceCollection `json:"balances,omitempty"`
-	Referrals *AccountCollection `json:"referrals,omitempty"`
-}
-
-func (data *AccountData) RelateBalances(balances BalanceCollection) {
-	if data.Relationships == nil {
-		data.Relationships = &AccountRelationships{}
+//PopulateFromCore - populates account using core.Account
+func NewAccount(record *core.Account) Account {
+	return Account{
+		Key: Key{
+			ID:   record.Address,
+			Type: typeAccounts,
+		},
+		Attributes: &AccountAttributes{
+			Role: AccountRole{
+				// TODO: must use account role
+				ID:   int64(record.AccountType),
+				Name: xdr.AccountType(record.AccountType).ShortString(),
+			},
+			BlockReasons: Mask{
+				Mask:  record.BlockReasons,
+				Flags: base.FlagFromXdrBlockReasons(record.BlockReasons, xdr.BlockReasonsAll),
+			},
+			IsBlocked: record.BlockReasons != 0,
+		},
+		Relationships: &AccountRelationships{},
 	}
-
-	data.Relationships.Balances = balances.AsRelation()
 }
 
+//AccountRelationships -represents reference from Account to other resource objects
+type AccountRelationships struct {
+	Referrer  *Key                    `json:"referrer,omitempty"`
+	Balances  *RelationshipCollection `json:"balances,omitempty"`
+	Referrals *RelationshipCollection `json:"referrals,omitempty"`
+	Signers   *RelationshipCollection `json:"signers,omitempty"`
+}
+
+// AccountAttributes - represents information about Account
 type AccountAttributes struct {
-	AccountType  AccountType         `json:"account_type"`
-	BlockReasons AccountBlockReasons `json:"block_reasons"`
-	IsBlocked    bool                `json:"is_blocked"`
-	Policies     AccountPolicies     `json:"policies"`
-	Thresholds   AccountThresholds   `json:"thresholds"`
+	Role         AccountRole `json:"role"`
+	BlockReasons Mask        `json:"block_reasons"`
+	IsBlocked    bool        `json:"is_blocked"`
 }
 
-type AccountBlockReasons struct {
-	Types []regources.Flag `json:"types"`
-	TypeI int32            `json:"type_i"`
-}
-
-type AccountType struct {
-	Type  string `json:"type"`
-	TypeI int32  `json:"type_i"`
-}
-
-type AccountThresholds struct {
-	LowThreshold  byte `json:"low_threshold"`
-	MedThreshold  byte `json:"med_threshold"`
-	HighThreshold byte `json:"high_threshold"`
-}
-
-type AccountPolicies struct {
-	TypeI int32            `json:"type_i"`
-	Types []regources.Flag `json:"types"`
+// AccountRole - represents account role which defines actions allowed to be performed by this account
+type AccountRole struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
 }

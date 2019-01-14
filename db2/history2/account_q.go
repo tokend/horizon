@@ -19,7 +19,7 @@ func NewAccountsQ(repo *db2.Repo) *AccountsQ {
 	}
 }
 
-// ByAddress loads a row from `accounts`, by address
+// GetByAddress loads a row from `accounts`, by address
 // returns nil, nil - if account does not exists
 func (q *AccountsQ) ByAddress(address string) (*Account, error) {
 	var result Account

@@ -68,7 +68,7 @@ func (a *Account) getAccount(rawAddress xdr.AccountId) (history2.Account, error)
 }
 
 func (a *Account) getAccountFromCore(rawAddress xdr.AccountId, address string) (history2.Account, error) {
-	coreAccount, err := a.coreAccounts.ByAddress(address)
+	coreAccount, err := a.coreAccounts.GetByAddress(address)
 	if err != nil {
 		return history2.Account{}, errors.Wrap(err, "failed to load account by address from core", logan.F{
 			"address": address,
@@ -79,7 +79,7 @@ func (a *Account) getAccountFromCore(rawAddress xdr.AccountId, address string) (
 		return history2.Account{}, errors.From(errors.New("account is not found in core db"), logan.F{"address": address})
 	}
 
-	account := history2.NewAccount(coreAccount.SequenceID, coreAccount.AccountID)
+	account := history2.NewAccount(coreAccount.SequenceID, coreAccount.Address)
 	err = a.InsertAccount(rawAddress, account)
 	if err != nil {
 		return history2.Account{}, errors.Wrap(err, "failed to insert account into db after fatched it from core")

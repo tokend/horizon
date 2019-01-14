@@ -19,8 +19,8 @@ func NewTransactionQ(repo *db2.Repo) *TransactionQ {
 	}
 }
 
-// TransactionsByLedger returns slice of transaction for given ledger sequence. Returns empty slice, nil if there is no transactions
-func (q *TransactionQ) TransactionsByLedger(seq int32) ([]Transaction, error) {
+// GetByLedger returns slice of transaction for given ledger sequence. Returns empty slice, nil if there is no transactions
+func (q *TransactionQ) GetByLedger(seq int32) ([]Transaction, error) {
 	query := sq.Select("tx.txid, tx.ledgerseq, tx.txindex, tx.txbody, tx.txresult, tx.txmeta").
 		From("txhistory tx").Where("ledgerseq = ?", seq)
 	var result []Transaction

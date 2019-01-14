@@ -20,17 +20,17 @@ const (
 
 // historyLedgerProvider - specifies methods required to get ledger from history db
 type historyLedgerProvider interface {
-	BySequence(seq int32) (*history2.Ledger, error)
+	GetBySequence(seq int32) (*history2.Ledger, error)
 }
 
 // txProvider - specifies methods required to get data from core db needed for ingest
 type txProvider interface {
-	// TransactionsByLedger returns slice of transaction for given ledger sequence. Returns empty slice,
+	// GetByLedger returns slice of transaction for given ledger sequence. Returns empty slice,
 	// nil if there is no transactions
-	TransactionsByLedger(seq int32) ([]core.Transaction, error)
-	// LedgerHeaderBySequence returns *core.LedgerHeader by its sequence. Returns nil, nil if ledgerHeader
+	GetByLedger(seq int32) ([]core.Transaction, error)
+	// GetBySequence returns *core.LedgerHeader by its sequence. Returns nil, nil if ledgerHeader
 	// does not exists
-	LedgerHeaderBySequence(seq int32) (*core.LedgerHeader, error)
+	GetBySequence(seq int32) (*core.LedgerHeader, error)
 }
 
 // Producer - worker which is responsible for loading sequence of ledgers and transactions and sending them
@@ -94,7 +94,7 @@ func (l *Producer) runOnce(ctx context.Context) error {
 }
 
 func (l *Producer) trySendBlock(ctx context.Context, seq int32) (bool, error) {
-	ledgerHeader, err := l.txProvider.LedgerHeaderBySequence(seq)
+	ledgerHeader, err := l.txProvider.GetBySequence(seq)
 	if err != nil {
 		return false, errors.Wrap(err, "failed to load ledger header", logan.F{"ledger_seq": seq})
 	}
@@ -119,7 +119,7 @@ func (l *Producer) trySendBlock(ctx context.Context, seq int32) (bool, error) {
 }
 
 func (l *Producer) loadSuccessTxs(seq int32) ([]core.Transaction, error) {
-	txs, err := l.txProvider.TransactionsByLedger(seq)
+	txs, err := l.txProvider.GetByLedger(seq)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load transactions for ledger",
 			logan.F{"ledger_seq": seq})
@@ -140,7 +140,7 @@ func (l *Producer) loadSuccessTxs(seq int32) ([]core.Transaction, error) {
 // ensureChainIsConsistent - ensures that we'll end up with consistent chain of blocks in both core and horizon.
 func (l *Producer) ensureChainIsConsistent(ledgerSeqToIngest int32) error {
 	// try to load previously ingested ledger
-	prevLedger, err := l.hLedgerProvider.BySequence(ledgerSeqToIngest - 1)
+	prevLedger, err := l.hLedgerProvider.GetBySequence(ledgerSeqToIngest - 1)
 	if err != nil {
 		return errors.Wrap(err, "failed to load ledger by sequence", logan.F{
 			"ledger_seq": ledgerSeqToIngest - 1,
@@ -152,7 +152,7 @@ func (l *Producer) ensureChainIsConsistent(ledgerSeqToIngest int32) error {
 		return nil
 	}
 
-	currentLedger, err := l.txProvider.LedgerHeaderBySequence(ledgerSeqToIngest)
+	currentLedger, err := l.txProvider.GetBySequence(ledgerSeqToIngest)
 	if err != nil {
 		return errors.Wrap(err, "failed to load ledger by seq from core", logan.F{
 			"ledger_seq": ledgerSeqToIngest,
@@ -160,7 +160,7 @@ func (l *Producer) ensureChainIsConsistent(ledgerSeqToIngest int32) error {
 	}
 
 	if currentLedger == nil {
-		return errors.From(errors.New("failed to load from core ledger to ingest - horizon is ahead of core"), logan.F{
+		return errors.From(errors.New("failed to load from core ledger to ingest - horizon is ahead of core or core is dead"), logan.F{
 			"ledger_to_ingest": ledgerSeqToIngest,
 		})
 	}

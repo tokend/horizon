@@ -42,10 +42,10 @@ func CurrentState() SystemState {
 }
 
 type ledgerSeqProvider interface {
-	// OldestLedgerSeq - returns oldest ledger sequence
-	OldestLedgerSeq() (int32, error)
-	// LatestLedgerSeq - returns latest ledger sequence available in DB
-	LatestLedgerSeq() (int32, error)
+	// GetOldestLedgerSeq - returns oldest ledger sequence
+	GetOldestLedgerSeq() (int32, error)
+	// GetLatestLedgerSeq - returns latest ledger sequence available in DB
+	GetLatestLedgerSeq() (int32, error)
 }
 
 // Config - helper struct which contains all resources needed by ledger state updater
@@ -112,12 +112,12 @@ func initSystemState(conf Config) error {
 func tryGetState(provider ledgerSeqProvider) (State, error) {
 	var result State
 	var err error
-	result.OldestOnStart, err = provider.OldestLedgerSeq()
+	result.OldestOnStart, err = provider.GetOldestLedgerSeq()
 	if err != nil {
 		return State{}, errors.Wrap(err, "failed to get oldest ledger seq")
 	}
 
-	result.Latest, err = provider.LatestLedgerSeq()
+	result.Latest, err = provider.GetLatestLedgerSeq()
 	if err != nil {
 		return State{}, errors.Wrap(err, "failed to get latest ledger seq")
 	}
