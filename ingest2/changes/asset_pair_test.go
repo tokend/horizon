@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"gitlab.com/distributed_lab/logan/v3/errors"
+
 	"gitlab.com/tokend/horizon/db2/history2"
 
 	"github.com/stretchr/testify/assert"
@@ -26,16 +28,25 @@ func TestAssetPairHandler(t *testing.T) {
 		},
 	}
 	ts := time.Now()
+
+	lcCreated := ledgerChange{
+		LedgerCloseTime: ts,
+		LedgerChange: xdr.LedgerEntryChange{
+			Type:    0,
+			Created: &entry},
+	}
+
+	lcUpdated := ledgerChange{
+		LedgerCloseTime: ts,
+		LedgerChange: xdr.LedgerEntryChange{
+			Type:    1,
+			Updated: &entry},
+	}
+
 	storage := mockAssetPairStorage{}
 	handler := NewHandler(nil, nil, nil, nil, &storage)
 
 	t.Run("created", func(t *testing.T) {
-		lc := ledgerChange{
-			LedgerCloseTime: ts,
-			LedgerChange: xdr.LedgerEntryChange{
-				Type:    0,
-				Created: &entry},
-		}
 		defer storage.AssertExpectations(t)
 		storage.On("InsertAssetPair", mock.AnythingOfType("history2.AssetPair")).Run(func(arguments mock.Arguments) {
 			args := arguments.Get(0).(history2.AssetPair)
@@ -45,17 +56,11 @@ func TestAssetPairHandler(t *testing.T) {
 			assert.Equal(t, ts, args.LedgerCloseTime)
 		}).Return(nil).Once()
 
-		err := handler.handle(lc)
+		err := handler.handle(lcCreated)
 		assert.NoError(t, err)
 	})
 
 	t.Run("updated", func(t *testing.T) {
-		lc := ledgerChange{
-			LedgerCloseTime: ts,
-			LedgerChange: xdr.LedgerEntryChange{
-				Type:    1,
-				Updated: &entry},
-		}
 		defer storage.AssertExpectations(t)
 		storage.On("InsertAssetPair", mock.AnythingOfType("history2.AssetPair")).Run(func(arguments mock.Arguments) {
 			args := arguments.Get(0).(history2.AssetPair)
@@ -65,7 +70,25 @@ func TestAssetPairHandler(t *testing.T) {
 			assert.Equal(t, ts, args.LedgerCloseTime)
 		}).Return(nil).Once()
 
-		err := handler.handle(lc)
+		err := handler.handle(lcUpdated)
 		assert.NoError(t, err)
+	})
+
+	t.Run("updated, with error", func(t *testing.T) {
+		errUpdated := errors.New("failed to insert from updated")
+		defer storage.AssertExpectations(t)
+		storage.On("InsertAssetPair", mock.AnythingOfType("history2.AssetPair")).Return(errUpdated).Once()
+		err := handler.handle(lcUpdated)
+		assert.Error(t, err)
+		assert.Equal(t, errUpdated, errors.Cause(err))
+	})
+
+	t.Run("created, with error", func(t *testing.T) {
+		errCreated := errors.New("failed to insert from created")
+		defer storage.AssertExpectations(t)
+		storage.On("InsertAssetPair", mock.AnythingOfType("history2.AssetPair")).Return(errCreated).Once()
+		err := handler.handle(lcCreated)
+		assert.Error(t, err)
+		assert.Equal(t, errCreated, errors.Cause(err))
 	})
 }

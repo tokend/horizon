@@ -1,7 +1,10 @@
 package changes
 
 import (
+	"time"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	history "gitlab.com/tokend/horizon/db2/history2"
 )
 
@@ -22,16 +25,22 @@ func newAssetPairHandler(storage assetPairStorage) *assetPairHandler {
 
 func (p *assetPairHandler) Created(lc ledgerChange) error {
 	assetPair := lc.LedgerChange.MustCreated().Data.MustAssetPair()
-	newAssetPair := history.NewAssetPair(string(assetPair.Base), string(assetPair.Quote), int64(assetPair.CurrentPrice), lc.LedgerCloseTime)
-	err := p.storage.InsertAssetPair(newAssetPair)
-	if err != nil {
-		return errors.Wrap(err, "failed to insert asset pair")
+	if err := p.insert(assetPair, lc.LedgerCloseTime); err != nil {
+		return errors.Wrap(err, "failed to insert from created")
 	}
 	return nil
 }
+
 func (p *assetPairHandler) Updated(lc ledgerChange) error {
 	assetPair := lc.LedgerChange.MustUpdated().Data.MustAssetPair()
-	newAssetPair := history.NewAssetPair(string(assetPair.Base), string(assetPair.Quote), int64(assetPair.CurrentPrice), lc.LedgerCloseTime)
+	if err := p.insert(assetPair, lc.LedgerCloseTime); err != nil {
+		return errors.Wrap(err, "failed to insert from updated")
+	}
+	return nil
+}
+
+func (p *assetPairHandler) insert(entry xdr.AssetPairEntry, ts time.Time) error {
+	newAssetPair := history.NewAssetPair(string(entry.Base), string(entry.Quote), int64(entry.CurrentPrice), ts)
 	err := p.storage.InsertAssetPair(newAssetPair)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert asset pair")
