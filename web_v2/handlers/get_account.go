@@ -28,6 +28,13 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: MUST be changes to role based access
+	if request.NeedBalanceState() {
+		if !isAllowed(r, w, request.Address) {
+			return
+		}
+	}
+
 	result, err := handler.GetAccount(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get account", logan.F{
@@ -52,6 +59,7 @@ type getAccountHandler struct {
 	Log       *logan.Entry
 }
 
+//GetAccount - returns Account resource
 func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*resource.Account, error) {
 	account, err := h.AccountsQ.GetByAddress(request.Address)
 	if err != nil {
@@ -76,13 +84,12 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*resource.
 		}
 
 		for i := range balances {
-			b := resource.NewBalance(&balances[i])
-			response.Balances = append(response.Balances, &b)
-		}
+			responseBalance := resource.NewBalance(&balances[i])
+			if request.NeedBalanceState() {
+				responseBalance.State = resource.NewBalanceState(&balances[i])
+			}
 
-		for i := range balances {
-			b := resource.NewBalance(&balances[i])
-			response.Balances = append(response.Balances, &b)
+			response.Balances = append(response.Balances, responseBalance)
 		}
 	}
 

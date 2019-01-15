@@ -13,8 +13,9 @@ type GetAccount struct {
 //NewGetAccount - returns new instance of GetAccount request
 func NewGetAccount(r *http.Request) (*GetAccount, error) {
 	b, err := newBase(r, map[string]struct{}{
-		"balances":        {},
-		"balances.assets": {},
+		"balances":                {},
+		"balances.assets":         {},
+		"balances.balance_states": {},
 	})
 	if err != nil {
 		return nil, err
@@ -32,10 +33,15 @@ func NewGetAccount(r *http.Request) (*GetAccount, error) {
 
 //NeedBalance - returns true if user requested to include balances or any of balance relationships
 func (a *GetAccount) NeedBalance() bool {
-	return a.shouldInclude("balances") || a.NeedBalanceWithAsset()
+	return a.shouldInclude("balances") || a.NeedBalanceWithAsset() || a.NeedBalanceState()
 }
 
 //NeedBalanceWithAsset - returns true if user request to include assets for balance
 func (a *GetAccount) NeedBalanceWithAsset() bool {
 	return a.shouldInclude("balances.assets")
+}
+
+//NeedBalanceState - returns true if user requested to include balance state for balance
+func (a *GetAccount) NeedBalanceState() bool {
+	return a.shouldInclude("balances.balance-states")
 }

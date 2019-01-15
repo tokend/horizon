@@ -18,7 +18,7 @@ type Asset struct {
 	PendingIssuance        string                 `jsonapi:"attr,pending_issuance"`
 	Policies               Mask                   `jsonapi:"attr,policies"`
 	TrailingDigits         int64                  `jsonapi:"attr,trailing_digits"`
-	Owner                  *Account               `jsonapi:"relation,owner"`
+	Owner                  *Account               `jsonapi:"relation,owner,omitempty"`
 }
 
 func NewAsset(core *core2.Asset) *Asset {

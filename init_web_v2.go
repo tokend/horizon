@@ -7,6 +7,9 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/rs/cors"
 	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/horizon/db2/core2"
+	hdoorman "gitlab.com/tokend/horizon/doorman"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/web_v2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
@@ -34,6 +37,8 @@ func initWebV2Middleware(app *App) {
 
 	logger := &log.DefaultLogger.Entry
 
+	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
+
 	m.Use(
 		middleware.StripSlashes,
 		middleware.SetHeader(upstreamHeader, app.config.Hostname),
@@ -46,7 +51,8 @@ func initWebV2Middleware(app *App) {
 			ctx.SetCoreRepo(app.CoreRepoLogged(nil)),
 			// log will be set by logger setter on handler call
 			ctx.SetHistoryRepo(app.HistoryRepoLogged(nil)),
-			ctx.SetSignCheckSkip(app.config.SkipCheck),
+			ctx.SetDoorman(doorman.New(app.config.SkipCheck, signersProvider)),
+			ctx.SetCoreInfo(*app.CoreInfo),
 		),
 		v2middleware.WebMetrics(app),
 	)

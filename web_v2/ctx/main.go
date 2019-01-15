@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/horizon/corer"
 	"gitlab.com/tokend/horizon/db2"
 )
 
@@ -14,8 +16,9 @@ type ctxKey int
 const (
 	keyCoreRepo ctxKey = iota
 	keyHistoryRepo
-	keySignCheckSkip
 	keyLog
+	keyDoorman
+	keyCoreInfo
 )
 
 // Log - gets entry from context
@@ -26,18 +29,6 @@ func Log(r *http.Request) *logan.Entry {
 // SetLog - sets log entry into ctx
 func SetLog(ctx context.Context, value *logan.Entry) context.Context {
 	return context.WithValue(ctx, keyLog, value)
-}
-
-// SignCheckSkip - gets from ctx if request signature verification should be skipped
-func SignCheckSkip(r *http.Request) bool {
-	return r.Context().Value(keySignCheckSkip).(bool)
-}
-
-// SetSignCheckSkip - sets into context if request signature verification should be skipped
-func SetSignCheckSkip(value bool) func(context.Context) context.Context {
-	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, keySignCheckSkip, value)
-	}
 }
 
 // CoreRepo - returns new copy of repo with connection to core DB
@@ -70,4 +61,29 @@ func getRepo(r *http.Request, key ctxKey) *db2.Repo {
 		DB:  repo.DB,
 		Log: Log(r),
 	}
+}
+
+//Doorman - perform signature check
+func Doorman(r *http.Request, constraints ...doorman.SignerConstraint) error {
+	d := r.Context().Value(keyDoorman).(doorman.Doorman)
+	return d.Check(r, constraints...)
+}
+
+//SetDoorman - adds doorman to context
+func SetDoorman(d doorman.Doorman) func(ctx context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, keyDoorman, d)
+	}
+}
+
+//SetCoreInfo - adds core info to context
+func SetCoreInfo(info corer.Info) func(ctx context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, keyCoreInfo, info)
+	}
+}
+
+//CoreInfo - returns core info from the context
+func CoreInfo(r *http.Request) corer.Info {
+	return r.Context().Value(keyCoreInfo).(corer.Info)
 }
