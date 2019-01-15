@@ -18,6 +18,7 @@ import (
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/render/sse"
 	"golang.org/x/net/context"
+	"gitlab.com/tokend/horizon/render/jsonapi"
 )
 
 // Base is a helper struct you can use as part of a custom action via
