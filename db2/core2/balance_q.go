@@ -15,10 +15,11 @@ type BalancesQ struct {
 }
 
 // NewBalancesQ - creates new instance of BalanceQ with no filters
-func NewBalancesQ(repo *db2.Repo) *BalancesQ {
-	return &BalancesQ{
-		repo:     repo,
-		selector: sq.Select("balances.balance_id, balances.sequential_id, balances.asset, balances.account_id").From("balance balances"),
+func NewBalancesQ(repo *db2.Repo) BalancesQ {
+	return BalancesQ{
+		repo: repo,
+		selector: sq.Select("balances.balance_id", "balances.sequential_id", "balances.asset", "balances.account_id",
+			"balances.amount", "balances.locked").From("balance balances"),
 	}
 }
 

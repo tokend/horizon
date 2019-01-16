@@ -10,7 +10,8 @@ import (
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/horizon/web_v2/resource"
+	"gitlab.com/tokend/horizon/web_v2/resources"
+	"gitlab.com/tokend/regources/v2"
 )
 
 // GetAccount - processes request to get account and it's details by address
@@ -29,7 +30,9 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: MUST be changes to role based access
-	if request.NeedBalanceState() {
+	if request.NeedBalanceState() || request.NeedReferrer() ||
+		request.NeedAccountState() || request.NeedRole() {
+
 		if !isAllowed(r, w, request.Address) {
 			return
 		}
@@ -54,13 +57,13 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 type getAccountHandler struct {
-	AccountsQ *core2.AccountsQ
-	BalancesQ *core2.BalancesQ
+	AccountsQ core2.AccountsQ
+	BalancesQ core2.BalancesQ
 	Log       *logan.Entry
 }
 
-//GetAccount - returns Account resource
-func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*resource.Account, error) {
+//GetAccount - returns Account resources
+func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources.Account, error) {
 	account, err := h.AccountsQ.GetByAddress(request.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account by address")
@@ -70,28 +73,101 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*resource.
 		return nil, nil
 	}
 
-	response := resource.NewAccount(account)
+	response := resources.NewAccount(account)
+	if request.NeedAccountState() {
+		response.State = resources.NewAccountState(account)
+	}
+
+	if request.NeedRole() {
+		response.Role = h.getRole(request)
+	}
+
 	if request.NeedBalance() {
-		balancesQ := h.BalancesQ.FilterByAccount(request.Address)
-		if request.NeedBalanceWithAsset() {
-			balancesQ = balancesQ.WithAsset()
-		}
-
-		var balances []core2.Balance
-		balances, err = balancesQ.Select()
+		response.Balances, err = h.getBalances(request)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to select balances for account")
-		}
-
-		for i := range balances {
-			responseBalance := resource.NewBalance(&balances[i])
-			if request.NeedBalanceState() {
-				responseBalance.State = resource.NewBalanceState(&balances[i])
-			}
-
-			response.Balances = append(response.Balances, responseBalance)
+			return nil, errors.Wrap(err, "failed to include balances")
 		}
 	}
 
-	return &response, nil
+	if request.NeedReferrer() {
+		response.Referrer, err = h.getReferrer(account)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to include referrer")
+		}
+	}
+
+	return response, nil
+}
+
+func (h *getAccountHandler) getReferrer(account *core2.Account) (*regources.Account, error) {
+	if account.Referrer == "" {
+		return nil, nil
+	}
+
+	referrer, err := h.AccountsQ.GetByAddress(account.Referrer)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load referrer", logan.F{
+			"referrer_address": account.Referrer,
+		})
+	}
+
+	if referrer == nil {
+		return nil, errors.Wrap(err, "expected referrer to exist", logan.F{
+			"account_address":  account.Address,
+			"referrer_address": account.Referrer,
+		})
+	}
+
+	return resources.NewAccount(referrer), nil
+}
+
+func (h *getAccountHandler) getBalances(request *requests.GetAccount) ([]*regources.Balance, error) {
+
+	balancesQ := h.BalancesQ.FilterByAccount(request.Address)
+	if request.NeedBalanceWithAsset() {
+		balancesQ = balancesQ.WithAsset()
+	}
+
+	balances, err := balancesQ.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select balances for account")
+	}
+
+	result := make([]*regources.Balance, len(balances))
+	for i := range balances {
+		responseBalance := resources.NewBalance(&balances[i])
+		if request.NeedBalanceState() {
+			responseBalance.State = resources.NewBalanceState(&balances[i])
+		}
+
+		result[i] = responseBalance
+	}
+
+	return result, nil
+}
+
+func (h *getAccountHandler) getRole(request *requests.GetAccount) *regources.Role {
+	result := regources.Role{
+		ID: "mocked_role",
+		Details: map[string]interface{}{
+			"name": "Name of the Mocked Role",
+		},
+	}
+
+	if !request.NeedRules() {
+		return &result
+	}
+
+	result.Rules = []*regources.Rule{
+		{
+			ID:       "mocked_rule_id",
+			Resource: "NOTE: format will be changed",
+			Action:   "view",
+			Details: map[string]interface{}{
+				"name": "Name of the mocked Rule",
+			},
+		},
+	}
+
+	return &result
 }

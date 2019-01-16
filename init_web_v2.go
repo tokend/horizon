@@ -80,6 +80,7 @@ func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
 	m.Get("/v2/accounts/{id}", handlers.GetAccount)
+	m.Get("/v2/accounts/{id}/signers", handlers.GetAccountSigners)
 }
 
 func init() {

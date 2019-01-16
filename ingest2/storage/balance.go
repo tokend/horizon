@@ -20,7 +20,7 @@ type Balance struct {
 	balances map[xdr.BalanceId]*history2.Balance
 
 	balanceQ       *history2.BalancesQ
-	coreBalances   *core2.BalancesQ
+	coreBalances   core2.BalancesQ
 	historyRepo    *db2.Repo
 	accountStorage accountStorage
 }

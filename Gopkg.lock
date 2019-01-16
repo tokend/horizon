@@ -420,8 +420,11 @@
 [[projects]]
   branch = "product"
   name = "gitlab.com/tokend/regources"
-  packages = ["."]
-  revision = "1cd355c055d3e972eba96aa008256009b570992c"
+  packages = [
+    ".",
+    "v2"
+  ]
+  revision = "b1106a9a209f081dec4c033e1951899276a4a9d0"
 
 [[projects]]
   branch = "master"
@@ -505,6 +508,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bc2b0e9f07c87df647646727882d3f3fb74b227305f0f744e9a90e13df747842"
+  inputs-digest = "798ededf70d0a676e80db88d610c9a9101784cd9ecf3121352dffeeacf9c95f4"
   solver-name = "gps-cdcl"
   solver-version = 1

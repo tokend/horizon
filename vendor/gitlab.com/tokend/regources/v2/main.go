@@ -1,6 +1,4 @@
-package resource
-
-import "gitlab.com/tokend/regources"
+package regources
 
 type LinksObject struct {
 	Self  string `json:"self,omitempty"`
@@ -12,6 +10,6 @@ type LinksObject struct {
 
 // Mask - represent bit mask
 type Mask struct {
-	Flags []regources.Flag `json:"flags"`
-	Mask  int32            `json:"mask"`
+	Flags []Flag `json:"flags"`
+	Mask  int32  `json:"mask"`
 }
