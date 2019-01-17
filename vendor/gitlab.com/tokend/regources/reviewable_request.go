@@ -233,8 +233,6 @@ type WithdrawalRequest struct {
 	PercentFee             Amount                 `json:"percent_fee"`
 	PreConfirmationDetails map[string]interface{} `json:"pre_confirmation_details"`
 	ExternalDetails        map[string]interface{} `json:"external_details"`
-	DestAssetCode          string                 `json:"dest_asset_code"`
-	DestAssetAmount        Amount                 `json:"dest_asset_amount"`
 	ReviewerDetails        map[string]interface{} `json:"reviewer_details"`
 }
 

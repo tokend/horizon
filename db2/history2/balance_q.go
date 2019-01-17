@@ -19,9 +19,9 @@ func NewBalancesQ(repo *db2.Repo) *BalancesQ {
 	}
 }
 
-// ByAddress loads a row from `balances`, by address
+// GetByAddress loads a row from `balances`, by address
 // returns nil, nil - if balance does not exists
-func (q *BalancesQ) ByAddress(address string) (*Balance, error) {
+func (q *BalancesQ) GetByAddress(address string) (*Balance, error) {
 	var result Balance
 	err := q.repo.Get(&result, sq.Select("b.id, b.account_id, b.address, b.asset_code").
 		From("balances b").Where("b.address = ?", address))

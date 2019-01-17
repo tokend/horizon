@@ -507,6 +507,9 @@ func (base *Base) ValidateBodyType() {
 		return
 	case mt == "multipart/form-data":
 		return
+	case mt == "application/vnd.api+json":
+		base.isJson = true
+		return
 	case mt == "application/json":
 		base.isJson = true
 		return

@@ -6,10 +6,10 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/go-errors/errors"
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/log"
 )
 
@@ -21,7 +21,7 @@ func (r *Repo) Begin() error {
 
 	tx, err := r.DB.Beginx()
 	if err != nil {
-		return errors.Wrap(err, 1)
+		return errors.Wrap(err, "failed to begin tx")
 	}
 	r.logBegin()
 
@@ -90,7 +90,10 @@ func (r *Repo) GetRaw(dest interface{}, query string, args ...interface{}) error
 		return err
 	}
 
-	return errors.Wrap(err, 1)
+	return errors.Wrap(err, "failed to exec query", logan.F{
+		"query": query,
+		"args":  args,
+	})
 }
 
 // Exec runs `query`
@@ -137,7 +140,10 @@ func (r *Repo) ExecRaw(query string, args ...interface{}) (sql.Result, error) {
 		return nil, err
 	}
 
-	return nil, errors.Wrap(err, 1)
+	return nil, errors.Wrap(err, "failed to exec", logan.F{
+		"query": query,
+		"args":  args,
+	})
 }
 
 // NoRows returns true if the provided error resulted from a query that found
@@ -170,7 +176,10 @@ func (r *Repo) QueryRaw(query string, args ...interface{}) (*sqlx.Rows, error) {
 		return nil, err
 	}
 
-	return nil, errors.Wrap(err, 1)
+	return nil, errors.Wrap(err, "failed to query raw", logan.F{
+		"query": query,
+		"args":  args,
+	})
 }
 
 // Rollback rolls back the current transaction
@@ -214,7 +223,10 @@ func (r *Repo) SelectRaw(
 		return err
 	}
 
-	return errors.Wrap(err, 1)
+	return errors.Wrap(err, "failed to select raw", logan.F{
+		"query": query,
+		"args":  args,
+	})
 }
 
 // build converts the provided sql builder `b` into the sql and args to execute
@@ -223,7 +235,7 @@ func (r *Repo) build(b sq.Sqlizer) (sql string, args []interface{}, err error) {
 	sql, args, err = b.ToSql()
 
 	if err != nil {
-		err = errors.Wrap(err, 1)
+		err = errors.Wrap(err, "failed to build sql request")
 	}
 	return
 }

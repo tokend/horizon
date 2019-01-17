@@ -46,6 +46,7 @@ func NewHandler(account accountStorage, balance balanceStorage, request reviewab
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
+			xdr.LedgerEntryTypeSale:              saleHandlerInst,
 		},
 	}
 }
@@ -64,6 +65,7 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 					LedgerCloseTime: time.Unix(header.CloseTime, 0).UTC(),
 					LedgerChange:    change,
 					Operation:       &tx.Envelope.Tx.Operations[opI],
+					OperationResult: tx.Result.Result.Result.MustResults()[opI].Tr,
 				})
 
 				if err != nil {

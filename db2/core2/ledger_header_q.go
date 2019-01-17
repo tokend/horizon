@@ -19,8 +19,8 @@ func NewLedgerHeaderQ(repo *db2.Repo) *LedgerHeaderQ {
 	}
 }
 
-// LedgerHeaderBySequence returns *core.LedgerHeader by its sequence. Returns nil, nil if ledgerHeader does not exists
-func (q *LedgerHeaderQ) LedgerHeaderBySequence(seq int32) (*LedgerHeader, error) {
+// GetBySequence returns *core.LedgerHeader by its sequence. Returns nil, nil if ledgerHeader does not exists
+func (q *LedgerHeaderQ) GetBySequence(seq int32) (*LedgerHeader, error) {
 	query := sq.Select("l.ledgerhash, l.prevhash, l.bucketlisthash, l.closetime, l.ledgerseq, l.version, l.data").
 		From("ledgerheaders l").Where("ledgerseq = ?", seq)
 	var header LedgerHeader
@@ -36,8 +36,8 @@ func (q *LedgerHeaderQ) LedgerHeaderBySequence(seq int32) (*LedgerHeader, error)
 	return &header, nil
 }
 
-// LatestLedgerSeq - returns latest ledger sequence available in DB
-func (q *LedgerHeaderQ) LatestLedgerSeq() (int32, error) {
+// GetLatestLedgerSeq - returns latest ledger sequence available in DB
+func (q *LedgerHeaderQ) GetLatestLedgerSeq() (int32, error) {
 	var result int32
 	err := q.repo.GetRaw(&result, "SELECT COALESCE(MAX(ledgerseq), 1) FROM ledgerheaders")
 	if err != nil {
@@ -47,11 +47,11 @@ func (q *LedgerHeaderQ) LatestLedgerSeq() (int32, error) {
 	return result, nil
 }
 
-// OldestLedgerSeq - returns oldest ledger sequence (which does not have gaps) available in the core db.
+// GetOldestLedgerSeq - returns oldest ledger sequence (which does not have gaps) available in the core db.
 // Due to design of core it will always have 1 ledger in the db. So we try to find min ledger sequence > 1
 // In case it's 2 we will return 1.
 // Note: this method does not handle and should not handle existence of 2 gaps
-func (q *LedgerHeaderQ) OldestLedgerSeq() (int32, error) {
+func (q *LedgerHeaderQ) GetOldestLedgerSeq() (int32, error) {
 	var result int32
 	err := q.repo.GetRaw(&result, "SELECT COALESCE(MIN(ledgerseq), 1) FROM ledgerheaders WHERE ledgerseq > 1")
 	if err != nil {

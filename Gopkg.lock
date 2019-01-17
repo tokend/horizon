@@ -454,9 +454,8 @@
     ".",
     "problems",
   ]
-  pruneopts = ""
-  revision = "7d5673dabf6037c430a991445ddff6eaa7129b1b"
-  version = "v0.5"
+  revision = "bacc5494fe4c9509361b3d3687ed1694234a8b7e"
+  version = "v0.6"
 
 [[projects]]
   branch = "master"
@@ -561,9 +560,11 @@
   branch = "product"
   digest = "1:5acfadee6c6302a1a3c586fb3d8db642e354efc6ab97cbc78f475c8dbdf8dcbe"
   name = "gitlab.com/tokend/regources"
-  packages = ["."]
-  pruneopts = ""
-  revision = "1cd355c055d3e972eba96aa008256009b570992c"
+  packages = [
+    ".",
+    "v2"
+  ]
+  revision = "b1106a9a209f081dec4c033e1951899276a4a9d0"
 
 [[projects]]
   branch = "master"
@@ -663,63 +664,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = [
-    "bitbucket.org/ww/goautoneg",
-    "github.com/asaskevich/govalidator",
-    "github.com/cheekybits/genny/generic",
-    "github.com/evalphobia/logrus_sentry",
-    "github.com/getsentry/raven-go",
-    "github.com/go-chi/chi",
-    "github.com/go-chi/chi/middleware",
-    "github.com/go-errors/errors",
-    "github.com/goji/context",
-    "github.com/guregu/null",
-    "github.com/influxdata/influxdb/client/v2",
-    "github.com/jmoiron/sqlx",
-    "github.com/lann/squirrel",
-    "github.com/lib/pq",
-    "github.com/magiconair/properties/assert",
-    "github.com/patrickmn/go-cache",
-    "github.com/pkg/errors",
-    "github.com/rcrowley/go-metrics",
-    "github.com/rs/cors",
-    "github.com/rubenv/sql-migrate",
-    "github.com/sirupsen/logrus",
-    "github.com/smartystreets/goconvey/convey",
-    "github.com/spf13/cast",
-    "github.com/spf13/cobra",
-    "github.com/spf13/viper",
-    "github.com/stretchr/testify/assert",
-    "github.com/stretchr/testify/mock",
-    "github.com/stretchr/testify/require",
-    "github.com/zenazn/goji/web",
-    "github.com/zenazn/goji/web/middleware",
-    "github.com/zenazn/goji/web/mutil",
-    "gitlab.com/distributed_lab/ape",
-    "gitlab.com/distributed_lab/ape/problems",
-    "gitlab.com/distributed_lab/corer",
-    "gitlab.com/distributed_lab/figure",
-    "gitlab.com/distributed_lab/kit/comfig",
-    "gitlab.com/distributed_lab/kit/kv",
-    "gitlab.com/distributed_lab/logan",
-    "gitlab.com/distributed_lab/logan/v3",
-    "gitlab.com/distributed_lab/logan/v3/errors",
-    "gitlab.com/distributed_lab/running",
-    "gitlab.com/distributed_lab/txsub",
-    "gitlab.com/tokend/go/amount",
-    "gitlab.com/tokend/go/build",
-    "gitlab.com/tokend/go/doorman",
-    "gitlab.com/tokend/go/hash",
-    "gitlab.com/tokend/go/resources",
-    "gitlab.com/tokend/go/signcontrol",
-    "gitlab.com/tokend/go/strkey",
-    "gitlab.com/tokend/go/xdr",
-    "gitlab.com/tokend/regources",
-    "golang.org/x/net/context",
-    "golang.org/x/net/http2",
-    "gopkg.in/throttled/throttled.v2",
-    "gopkg.in/throttled/throttled.v2/store/memstore",
-    "gopkg.in/tylerb/graceful.v1",
-  ]
+  inputs-digest = "798ededf70d0a676e80db88d610c9a9101784cd9ecf3121352dffeeacf9c95f4"
   solver-name = "gps-cdcl"
   solver-version = 1

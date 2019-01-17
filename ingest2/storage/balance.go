@@ -20,15 +20,15 @@ type Balance struct {
 	balances map[xdr.BalanceId]*history2.Balance
 
 	balanceQ       *history2.BalancesQ
-	coreBalances   *core2.BalancesQ
-	repo           *db2.Repo
+	coreBalances   core2.BalancesQ
+	historyRepo    *db2.Repo
 	accountStorage accountStorage
 }
 
 // NewBalance - creates new instance of Balance
 func NewBalance(repo *db2.Repo, coreRepo *db2.Repo, accountStorage accountStorage) *Balance {
 	return &Balance{
-		repo:           repo,
+		historyRepo:    repo,
 		balanceQ:       history2.NewBalancesQ(repo),
 		balances:       make(map[xdr.BalanceId]*history2.Balance),
 		coreBalances:   core2.NewBalancesQ(coreRepo),
@@ -54,7 +54,7 @@ func (s *Balance) getBalance(rawAddress xdr.BalanceId) (history2.Balance, error)
 	}
 
 	address := rawAddress.AsString()
-	balance, err := s.balanceQ.ByAddress(address)
+	balance, err := s.balanceQ.GetByAddress(address)
 	if err != nil {
 		return history2.Balance{}, errors.Wrap(err, "failed to load balance by address", logan.F{
 			"address": address,
@@ -76,7 +76,7 @@ func (s *Balance) getBalance(rawAddress xdr.BalanceId) (history2.Balance, error)
 }
 
 func (s *Balance) getBalanceFromCore(rawAddress xdr.BalanceId, address string) (history2.Balance, error) {
-	coreBalance, err := s.coreBalances.ByAddress(address)
+	coreBalance, err := s.coreBalances.GetByAddress(address)
 	if err != nil {
 		return history2.Balance{}, errors.Wrap(err, "failed to load balance by address from core", logan.F{
 			"address": address,
@@ -96,7 +96,7 @@ func (s *Balance) getBalanceFromCore(rawAddress xdr.BalanceId, address string) (
 	}
 
 	account := s.accountStorage.MustAccount(rawAccountAddress)
-	balance := history2.NewBalance(coreBalance.BalanceSeqID, account.ID, coreBalance.BalanceAddress, coreBalance.Asset)
+	balance := history2.NewBalance(coreBalance.BalanceSeqID, account.ID, coreBalance.BalanceAddress, coreBalance.AssetCode)
 	err = s.InsertBalance(rawAddress, balance)
 	if err != nil {
 		return history2.Balance{}, errors.Wrap(err, "failed to insert balance into db after fatched it from core")
@@ -110,7 +110,7 @@ func (s *Balance) InsertBalance(rawBalanceID xdr.BalanceId, balance history2.Bal
 	// it's ok if the balance already exists in the map.
 	// Such case could occur during roll back of transaction and retry to process same ledger
 	s.balances[rawBalanceID] = &balance
-	_, err := s.repo.ExecRaw("INSERT INTO balances (id, account_id, address, asset_code) VALUES($1, $2, $3, $4)",
+	_, err := s.historyRepo.ExecRaw("INSERT INTO balances (id, account_id, address, asset_code) VALUES($1, $2, $3, $4)",
 		balance.ID, balance.AccountID, balance.Address, balance.AssetCode)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert new balance", logan.F{

@@ -16,6 +16,8 @@ type saleStorage interface {
 	Insert(sale history.Sale) error
 	//Updates sale
 	Update(sale history.Sale) error
+	// SetState - sets state
+	SetState(saleID uint64, state history.SaleState) error
 }
 
 type saleHandler struct {
@@ -45,6 +47,27 @@ func (c *saleHandler) Created(lc ledgerChange) error {
 		return errors.Wrap(err, "failed to insert sale into DB", logan.F{
 			"sale": sale,
 		})
+	}
+
+	return nil
+}
+
+//Removed - handles state of the sale due to it was removed
+func (c *saleHandler) Removed(lc ledgerChange) error {
+	// sale can be removed by check sale state or cancel sale
+	// so we can handle approve of the sale and by default mark is as cancelled
+	saleState := history.SaleStateCanceled
+	if lc.OperationResult.Type == xdr.OperationTypeCheckSaleState {
+		opEffect := lc.OperationResult.MustCheckSaleStateResult().MustSuccess().Effect
+		if opEffect.Effect == xdr.CheckSaleStateEffectClosed {
+			saleState = history.SaleStateClosed
+		}
+	}
+
+	saleID := uint64(lc.LedgerChange.MustRemoved().MustSale().SaleId)
+	err := c.storage.SetState(saleID, saleState)
+	if err != nil {
+		return errors.Wrap(err, "failed to set sale state")
 	}
 
 	return nil

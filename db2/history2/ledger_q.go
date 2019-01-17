@@ -19,8 +19,8 @@ func NewLedgerQ(repo *db2.Repo) *LedgerQ {
 	}
 }
 
-// LatestLedgerSeq - returns latest ledger sequence available in DB
-func (q *LedgerQ) LatestLedgerSeq() (int32, error) {
+// GetLatestLedgerSeq - returns latest ledger sequence available in DB
+func (q *LedgerQ) GetLatestLedgerSeq() (int32, error) {
 	var result int32
 	err := q.repo.GetRaw(&result, "SELECT COALESCE(MAX(sequence), 0) FROM ledgers")
 	if err != nil {
@@ -30,8 +30,8 @@ func (q *LedgerQ) LatestLedgerSeq() (int32, error) {
 	return result, nil
 }
 
-// OldestLedgerSeq - returns oldest ledger sequence
-func (q *LedgerQ) OldestLedgerSeq() (int32, error) {
+// GetOldestLedgerSeq - returns oldest ledger sequence
+func (q *LedgerQ) GetOldestLedgerSeq() (int32, error) {
 	var result int32
 	err := q.repo.GetRaw(&result, "SELECT COALESCE(MIN(sequence), 0) FROM ledgers")
 	if err != nil {
@@ -41,8 +41,8 @@ func (q *LedgerQ) OldestLedgerSeq() (int32, error) {
 	return result, nil
 }
 
-//BySequence - returns ledger, if ledger with specified seq does not exists - returns nil, nil
-func (q *LedgerQ) BySequence(seq int32) (*Ledger, error) {
+//GetBySequence - returns ledger, if ledger with specified seq does not exists - returns nil, nil
+func (q *LedgerQ) GetBySequence(seq int32) (*Ledger, error) {
 	var result Ledger
 	err := q.repo.Get(&result, sq.Select("l.id, l.sequence, l.hash, l.previous_hash", "l.closed_at", "l.tx_count", "l.data").
 		From("ledgers l").Where("l.id = ?", seq))
