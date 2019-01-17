@@ -10,29 +10,29 @@ var assetColumns = []string{"assets.code", "assets.owner", "assets.preissued_ass
 	"assets.max_issuance_amount", "assets.available_for_issueance", "assets.issued",
 	"assets.pending_issuance", "assets.policies", "assets.trailing_digits"}
 
-//AssetQ - helper struct to load assets from db
-type AssetQ struct {
+//AssetsQ - helper struct to load assets from db
+type AssetsQ struct {
 	repo     *db2.Repo
 	selector sq.SelectBuilder
 }
 
-func NewAssetQ(repo *db2.Repo) AssetQ {
-	return AssetQ{
+func NewAssetsQ(repo *db2.Repo) AssetsQ {
+	return AssetsQ{
 		repo:     repo,
 		selector: sq.Select(assetColumns...).From("asset AS assets"),
 	}
 }
 
-func (q AssetQ) GetByCode(code string) (*Asset, error) {
+func (q AssetsQ) GetByCode(code string) (*Asset, error) {
 	return q.FilterByCode(code).Get()
 }
 
-func (q AssetQ) FilterByCode(code string) AssetQ {
+func (q AssetsQ) FilterByCode(code string) AssetsQ {
 	q.selector = q.selector.Where("assets.code = ?")
 	return q
 }
 
-func (q AssetQ) Get() (*Asset, error) {
+func (q AssetsQ) Get() (*Asset, error) {
 	var result Asset
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
