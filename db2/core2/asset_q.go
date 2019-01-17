@@ -28,7 +28,7 @@ func (q AssetsQ) GetByCode(code string) (*Asset, error) {
 }
 
 func (q AssetsQ) FilterByCode(code string) AssetsQ {
-	q.selector = q.selector.Where("assets.code = ?")
+	q.selector = q.selector.Where("assets.code = ?", code)
 	return q
 }
 
