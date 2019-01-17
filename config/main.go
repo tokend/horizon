@@ -6,12 +6,14 @@ import (
 	"os"
 	"reflect"
 
+	"gitlab.com/distributed_lab/kit/kv"
+
+	"gitlab.com/distributed_lab/kit/comfig"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 
 	"gitlab.com/distributed_lab/figure"
-
-	"github.com/spf13/viper"
 
 	"time"
 
@@ -22,12 +24,13 @@ import (
 // Config is the configuration for horizon.  It get's populated by the
 // app's main function and is provided to NewApp.
 type Config struct {
-	rawGetter              `fig:"-"`
-	Hostname               string `fig:"hostname"`
-	DatabaseURL            string `fig:"database_url,required"`
-	StellarCoreDatabaseURL string `fig:"stellar_core_database_url,required"`
-	StellarCoreURL         string `fig:"stellar_core_url,required"`
-	Port                   int    `fig:"port"`
+	comfig.Januser
+	getter                 rawGetter `fig:"-"`
+	Hostname               string    `fig:"hostname"`
+	DatabaseURL            string    `fig:"database_url,required"`
+	StellarCoreDatabaseURL string    `fig:"stellar_core_database_url,required"`
+	StellarCoreURL         string    `fig:"stellar_core_url,required"`
+	Port                   int       `fig:"port"`
 
 	LogLevel logan.Level `fig:"log_level"`
 
@@ -64,11 +67,11 @@ type Config struct {
 }
 
 func (c *Config) Init() error {
-	if err := viper.ReadInConfig(); err != nil {
-		return errors.Wrap(err, "failed to read config file")
-	}
-
-	err := figure.Out(c).From(c.GetStringMap("config")).With(figure.BaseHooks, URLHook, logLevelHook).Please()
+	err := figure.
+		Out(c).
+		From(kv.MustGetStringMap(c.getter, "config")).
+		With(figure.BaseHooks, URLHook, logLevelHook).
+		Please()
 	if err != nil {
 		return errors.Wrap(err, "failed to figure out config")
 	}
@@ -84,13 +87,12 @@ func (c *Config) Init() error {
 
 // rawGetter encapsulates raw config values provider
 type rawGetter interface {
-	GetStringMap(key string) map[string]interface{}
+	GetStringMap(key string) (map[string]interface{}, error)
 }
 
 func NewViperConfig(fn string) Config {
 	// init underlying viper
-	v := viper.GetViper()
-	v.SetConfigFile(fn)
+	v := kv.NewViperFile(fn)
 
 	return newViperConfig(v)
 }
@@ -110,9 +112,10 @@ func newViperConfig(raw rawGetter) Config {
 		Project:         "",
 		Env:             "",
 		SkipCheck:       false,
+		Januser:         comfig.NewJanuser(raw),
 	}
 
-	config.rawGetter = raw
+	config.getter = raw
 	return *config
 }
 

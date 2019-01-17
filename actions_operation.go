@@ -1,11 +1,9 @@
 package horizon
 
 import (
-	"time"
-
 	"fmt"
-
 	"strconv"
+	"time"
 
 	"github.com/pkg/errors"
 	"gitlab.com/tokend/go/doorman"
@@ -288,8 +286,12 @@ func (action *OperationIndexAction) loadPage() {
 }
 
 func (action *OperationIndexAction) checkAllowed() {
-	action.Doorman().Check(action.R, doorman.SignerOf(action.AccountFilter),
+	err := action.Doorman().Check(action.R, doorman.SignerOf(action.AccountFilter),
 		doorman.SignerOfWithPermission(action.App.CoreInfo.MasterAccountID, doorman.SignerExternsionOperationsList))
+	if err != nil {
+		action.Err = &problem.NotAllowed
+		return
+	}
 }
 
 // OperationShowAction renders a ledger found by its sequence number.

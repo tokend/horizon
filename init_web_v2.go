@@ -81,6 +81,12 @@ func initWebV2Actions(app *App) {
 
 	m.Get("/v2/accounts/{id}", handlers.GetAccount)
 	m.Get("/v2/accounts/{id}/signers", handlers.GetAccountSigners)
+	logger := &log.DefaultLogger.Entry
+	janus := app.config.Janus()
+	err := janus.DoRegister(m, logger)
+	if err != nil {
+		logger.WithError(err).Error("failed to register janus")
+	}
 }
 
 func init() {
