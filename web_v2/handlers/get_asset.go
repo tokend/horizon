@@ -51,6 +51,7 @@ type getAssetHandler struct {
 	Log       *logan.Entry
 }
 
+// GetAsset returns asset with related resources
 func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*regources.Asset, error) {
 	asset, err := h.AssetsQ.GetByCode(request.Code)
 	if err != nil {

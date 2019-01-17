@@ -8,6 +8,7 @@ type GetAsset struct {
 	Code string
 }
 
+// NewGetAsset returns new instance of GetAsset request
 func NewGetAsset(r *http.Request) (*GetAsset, error) {
 	b, err := newBase(r, map[string]struct{}{
 		"owner": {},
