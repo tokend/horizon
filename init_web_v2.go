@@ -81,6 +81,7 @@ func initWebV2Actions(app *App) {
 
 	m.Get("/v2/accounts/{id}", handlers.GetAccount)
 	m.Get("/v2/accounts/{id}/signers", handlers.GetAccountSigners)
+	m.Get("/v2/asset/{code}", handlers.GetAsset)
 	logger := &log.DefaultLogger.Entry
 	janus := app.config.Janus()
 	err := janus.DoRegister(m, logger)
