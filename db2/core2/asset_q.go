@@ -32,6 +32,20 @@ func (q AssetsQ) FilterByCode(code string) AssetsQ {
 	return q
 }
 
+func (q AssetsQ) Select() ([]Asset, error) {
+	var result []Asset
+	err := q.repo.Select(&result, q.selector)
+	if err != nil {
+		if q.repo.NoRows(err) {
+			return nil, nil
+		}
+
+		return nil, errors.Wrap(err, "failed to load assets")
+	}
+
+	return result, nil
+}
+
 func (q AssetsQ) Get() (*Asset, error) {
 	var result Asset
 	err := q.repo.Get(&result, q.selector)
