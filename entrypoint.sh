@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
 set -a
-. ${CONFIG:-/config.env}
-horizon "${@:1}"
+horizon --config ${CONFIG:-/config.yaml} "${@:1}"
