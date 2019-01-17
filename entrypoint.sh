@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 set -a
-. /config.env
+. ${CONFIG:-/config.env}
 horizon "${@:1}"
