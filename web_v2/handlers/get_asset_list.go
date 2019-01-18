@@ -28,22 +28,21 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pageParams, err := request.GetOffsetBasedPageParams()
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get asset list", logan.F{
-			"request": request,
-		})
-		ape.RenderErr(w, problems.InternalError())
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	result, err := handler.GetAssetList(request)
+	result, err := handler.GetAssetList(request, pageParams.Limit(), pageParams.Offset())
 	if result == nil {
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
 
-	ape.Render(w, result)
+	links := pageParams.GetLinks(request.GetLinkBase())
 
+	ape.RenderPage(w, result, links)
 }
 
 type getAssetListHandler struct {
@@ -53,10 +52,10 @@ type getAssetListHandler struct {
 }
 
 // GetAssetList returns the list of assets with related resources
-func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) ([]*regources.Asset, error) {
-	assets, err := h.AssetsQ.Select()
+func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList, limit, offset uint64) ([]*regources.Asset, error) {
+	assets, err := h.AssetsQ.Page(limit, offset).Select()
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get asset by code")
+		return nil, errors.Wrap(err, "Failed to get asset list")
 	}
 
 	response := make([]*regources.Asset, 0, len(assets))

@@ -4,7 +4,7 @@ import (
 	"gitlab.com/distributed_lab/figure"
 	"net/http"
 	"net/url"
-
+	"strconv"
 	"strings"
 
 	"fmt"
@@ -60,6 +60,25 @@ func (r *base) unmarshalQuery(opts baseOpts) error {
 	return nil
 }
 
+func (r *base) GetLinkBase() string {
+	prefix := r.request.URL.Path
+	query := r.marshalQuery()
+
+	return fmt.Sprintf("%s?%s", prefix, query)
+}
+
+func (r *base) marshalQuery() string {
+	var builder strings.Builder
+
+	for key, values := range *r.queryValues {
+		if !strings.Contains(key, "page[") {
+			builder.WriteString(key + "=" + strings.Join(values, ",") + "&")
+		}
+	}
+
+	return strings.TrimSuffix(builder.String(), "&")
+}
+
 func (r *base) populateFilters(target interface{}) error {
 	filter := make(map[string]interface{})
 	for k, v := range r.filter {
@@ -101,6 +120,15 @@ func (r *base) getString(name string) string {
 	}
 
 	return strings.TrimSpace(r.queryValues.Get(name))
+}
+
+func (r *base) getUint64(name string) (uint64, error) {
+	strVal := r.getString(name)
+	if strVal == "" {
+		return 0, nil
+	}
+
+	return strconv.ParseUint(strVal, 0, 64)
 }
 
 func (r *base) getFilters(supportedFilters map[string]struct{}) (map[string]string, error) {
@@ -145,7 +173,40 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 	}
 
 	return requestIncludes, nil
+}
 
+func (r *base) GetOffsetBasedPageParams() (*offsetBasedPageParams, error) {
+	limit, err := r.getUint64(pageParamLimit)
+	if err != nil {
+		return nil, err
+	}
+
+	number, err := r.getUint64(pageParamNumber)
+	if err != nil {
+		return nil, err
+	}
+
+	return newOffsetBasedPageParams(limit, number), nil
+}
+
+func (r *base) GetCursorBasedPageParams() (*cursorBasedPageParams, error) {
+	limit, err := r.getUint64(pageParamLimit)
+	if err != nil {
+		return nil, validation.Errors{
+			pageParamLimit: errors.New("Must be a valid uint64 value"),
+		}
+	}
+
+	order := r.getString(pageParamOrder)
+	if order != PageOrderAsc && order != PageOrderDesc {
+		return nil, validation.Errors{
+			pageParamOrder: errors.New("Must be a valid uint64 value"),
+		}
+	}
+
+	cursor := r.getString(pageParamCursor)
+
+	return newCursorBasedPageParams(limit, cursor, order), nil
 }
 
 func getSliceOfSupportedIncludes(includes map[string]struct{}) []string {

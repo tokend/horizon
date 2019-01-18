@@ -32,6 +32,11 @@ func (q AssetsQ) FilterByCode(code string) AssetsQ {
 	return q
 }
 
+func (q AssetsQ) Page(limit, offset uint64) AssetsQ {
+	q.selector = q.selector.Limit(limit).Offset(offset)
+	return q
+}
+
 func (q AssetsQ) Select() ([]Asset, error) {
 	var result []Asset
 	err := q.repo.Select(&result, q.selector)
