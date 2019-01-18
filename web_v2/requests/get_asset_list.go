@@ -43,7 +43,6 @@ func NewGetAssetList(r *http.Request) (*GetAssetList, error) {
 	}
 
 	err = b.populateFilters(&request.filters)
-
 	if err != nil {
 		return nil, err
 	}
