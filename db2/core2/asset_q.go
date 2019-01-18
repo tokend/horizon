@@ -32,6 +32,16 @@ func (q AssetsQ) FilterByCode(code string) AssetsQ {
 	return q
 }
 
+func (q AssetsQ) FilterByOwner(ownerID string) AssetsQ {
+	q.selector = q.selector.Where("assets.owner = ?", ownerID)
+	return q
+}
+
+func (q AssetsQ) FilterByPolicy(mask uint64) AssetsQ {
+	q.selector = q.selector.Where("assets.policies & ? = ?", mask, mask)
+	return q
+}
+
 func (q AssetsQ) Page(limit, offset uint64) AssetsQ {
 	q.selector = q.selector.Limit(limit).Offset(offset)
 	return q

@@ -94,6 +94,11 @@ func (r *base) populateFilters(target interface{}) error {
 	return nil
 }
 
+func (r *base) ShouldFilter(name string) bool {
+	_, ok := r.filter[name]
+	return ok
+}
+
 //ShouldInclude - returns true if user requested to include resource
 func (r *base) ShouldInclude(name string) bool {
 	_, ok := r.include[name]

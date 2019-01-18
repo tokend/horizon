@@ -23,7 +23,7 @@ var FilterTypeAssetListAll = map[string]struct{}{
 //GetAccountSigners - represents params to be specified for Get Assets handler
 type GetAssetList struct {
 	*base
-	filters struct {
+	Filters struct {
 		Policy uint64 `fig:"policy"`
 		Owner  string `fig:"owner"`
 	}
@@ -42,7 +42,7 @@ func NewGetAssetList(r *http.Request) (*GetAssetList, error) {
 		base: b,
 	}
 
-	err = b.populateFilters(&request.filters)
+	err = b.populateFilters(&request.Filters)
 	if err != nil {
 		return nil, err
 	}
