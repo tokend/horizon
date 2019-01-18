@@ -6,10 +6,18 @@ import (
 
 const (
 	IncludeTypeAssetListOwners = "owner"
+
+	FilterTypeAssetListOwner  = "owner"
+	FilterTypeAssetListPolicy = "policy"
 )
 
 var IncludeTypeAssetListAll = map[string]struct{}{
 	IncludeTypeAssetListOwners: {},
+}
+
+var FilterTypeAssetListAll = map[string]struct{}{
+	FilterTypeAssetListOwner:  {},
+	FilterTypeAssetListPolicy: {},
 }
 
 //GetAccountSigners - represents params to be specified for Get Assets handler
@@ -24,10 +32,7 @@ type GetAssetList struct {
 func NewGetAssetList(r *http.Request) (*GetAssetList, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: IncludeTypeAssetListAll,
-		supportedFilters: map[string]struct{}{
-			"policy": {},
-			"owner":  {},
-		},
+		supportedFilters:  FilterTypeAssetListAll,
 	})
 	if err != nil {
 		return nil, err
