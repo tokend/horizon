@@ -12,14 +12,16 @@ type GetAccount struct {
 
 //NewGetAccount - returns new instance of GetAccount request
 func NewGetAccount(r *http.Request) (*GetAccount, error) {
-	b, err := newBase(r, map[string]struct{}{
-		"balances":       {},
-		"balances.asset": {},
-		"balances.state": {},
-		"referrer":       {},
-		"state":          {},
-		"role":           {},
-		"role.rules":     {},
+	b, err := newBase(r, baseOpts{
+		supportedIncludes: map[string]struct{}{
+			"balances":       {},
+			"balances.asset": {},
+			"balances.state": {},
+			"referrer":       {},
+			"state":          {},
+			"role":           {},
+			"role.rules":     {},
+		},
 	})
 	if err != nil {
 		return nil, err

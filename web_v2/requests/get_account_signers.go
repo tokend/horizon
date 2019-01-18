@@ -12,9 +12,11 @@ type GetAccountSigners struct {
 
 //NewGetAccountSigners - returns new instance of GetAccountSigners request
 func NewGetAccountSigners(r *http.Request) (*GetAccountSigners, error) {
-	b, err := newBase(r, map[string]struct{}{
-		"roles":       {},
-		"roles.rules": {},
+	b, err := newBase(r, baseOpts{
+		supportedIncludes: map[string]struct{}{
+			"roles":       {},
+			"roles.rules": {},
+		},
 	})
 	if err != nil {
 		return nil, err

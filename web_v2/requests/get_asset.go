@@ -10,8 +10,10 @@ type GetAsset struct {
 
 // NewGetAsset returns new instance of GetAsset request
 func NewGetAsset(r *http.Request) (*GetAsset, error) {
-	b, err := newBase(r, map[string]struct{}{
-		"owner": {},
+	b, err := newBase(r, baseOpts{
+		supportedIncludes: map[string]struct{}{
+			"owner": {},
+		},
 	})
 	if err != nil {
 		return nil, err
