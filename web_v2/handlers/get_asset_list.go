@@ -62,7 +62,7 @@ func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) ([]*r
 	response := make([]*regources.Asset, 0, len(assets))
 	for i := range assets {
 		asset := resources.NewAsset(&assets[i])
-		if request.NeedOwner() {
+		if request.ShouldInclude(requests.IncludeTypeAssetListOwners) {
 			asset.Owner = &regources.Account{
 				ID: assets[i].Owner,
 			}

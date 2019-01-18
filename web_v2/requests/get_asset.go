@@ -2,6 +2,14 @@ package requests
 
 import "net/http"
 
+const (
+	IncludeTypeAssetOwner = "owner"
+)
+
+var IncludeTypeAssetAll = map[string]struct{}{
+	IncludeTypeAssetOwner: {},
+}
+
 // GetAsset - represents params to be specified by user for Get Asset handler
 type GetAsset struct {
 	*base
@@ -11,9 +19,7 @@ type GetAsset struct {
 // NewGetAsset returns new instance of GetAsset request
 func NewGetAsset(r *http.Request) (*GetAsset, error) {
 	b, err := newBase(r, baseOpts{
-		supportedIncludes: map[string]struct{}{
-			"owner": {},
-		},
+		supportedIncludes: IncludeTypeAssetAll,
 	})
 	if err != nil {
 		return nil, err
@@ -25,8 +31,4 @@ func NewGetAsset(r *http.Request) (*GetAsset, error) {
 		base: b,
 		Code: code,
 	}, nil
-}
-
-func (r *GetAsset) NeedOwner() bool {
-	return r.shouldInclude("owner")
 }

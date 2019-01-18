@@ -63,7 +63,7 @@ func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*regources.Asset
 
 	response := resources.NewAsset(asset)
 
-	if request.NeedOwner() {
+	if request.ShouldInclude(requests.IncludeTypeAssetOwner) {
 		response.Owner = &regources.Account{
 			ID: asset.Owner,
 		}

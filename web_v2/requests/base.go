@@ -75,10 +75,22 @@ func (r *base) populateFilters(target interface{}) error {
 	return nil
 }
 
-//shouldInclude - returns true if user requested to include resource
-func (r *base) shouldInclude(name string) bool {
+//ShouldInclude - returns true if user requested to include resource
+func (r *base) ShouldInclude(name string) bool {
 	_, ok := r.include[name]
 	return ok
+}
+
+//ShouldIncludeAny - returns true if user requested to include one of the provided resources
+func (r *base) ShouldIncludeAny(names ...string) bool {
+	for _, name := range names {
+		_, ok := r.include[name]
+		if ok {
+			return ok
+		}
+	}
+
+	return false
 }
 
 // getString - tries to get string from URL param, if empty gets from query values
