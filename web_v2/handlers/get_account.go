@@ -30,9 +30,13 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: MUST be changes to role based access
-	if request.NeedBalanceState() || request.NeedReferrer() ||
-		request.NeedAccountState() || request.NeedRole() {
-
+	if request.ShouldIncludeAny(
+		requests.IncludeTypeAccountBalancesState,
+		requests.IncludeTypeAccountAccountReferrer,
+		requests.IncludeTypeAccountState,
+		requests.IncludeTypeAccountRole,
+		requests.IncludeTypeAccountRoleRules,
+	) {
 		if !isAllowed(r, w, request.Address) {
 			return
 		}
@@ -74,22 +78,25 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 	}
 
 	response := resources.NewAccount(account)
-	if request.NeedAccountState() {
+	if request.ShouldInclude(requests.IncludeTypeAccountState) {
 		response.State = resources.NewAccountState(account)
 	}
 
-	if request.NeedRole() {
+	if request.ShouldIncludeAny(
+		requests.IncludeTypeAccountRole,
+		requests.IncludeTypeAccountRoleRules,
+	) {
 		response.Role = h.getRole(request)
 	}
 
-	if request.NeedBalance() {
+	if request.ShouldInclude(requests.IncludeTypeAccountBalances) {
 		response.Balances, err = h.getBalances(request)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to include balances")
 		}
 	}
 
-	if request.NeedReferrer() {
+	if request.ShouldInclude(requests.IncludeTypeAccountAccountReferrer) {
 		response.Referrer, err = h.getReferrer(account)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to include referrer")
@@ -124,7 +131,7 @@ func (h *getAccountHandler) getReferrer(account *core2.Account) (*regources.Acco
 func (h *getAccountHandler) getBalances(request *requests.GetAccount) ([]*regources.Balance, error) {
 
 	balancesQ := h.BalancesQ.FilterByAccount(request.Address)
-	if request.NeedBalanceWithAsset() {
+	if request.ShouldInclude(requests.IncludeTypeAccountBalancesAsset) {
 		balancesQ = balancesQ.WithAsset()
 	}
 
@@ -136,7 +143,7 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount) ([]*regour
 	result := make([]*regources.Balance, len(balances))
 	for i := range balances {
 		responseBalance := resources.NewBalance(&balances[i])
-		if request.NeedBalanceState() {
+		if request.ShouldInclude(requests.IncludeTypeAccountBalancesState) {
 			responseBalance.State = resources.NewBalanceState(&balances[i])
 		}
 
@@ -154,7 +161,7 @@ func (h *getAccountHandler) getRole(request *requests.GetAccount) *regources.Rol
 		},
 	}
 
-	if !request.NeedRules() {
+	if !request.ShouldInclude(requests.IncludeTypeAccountRoleRules) {
 		return &result
 	}
 

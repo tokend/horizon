@@ -449,13 +449,15 @@
 
 [[projects]]
   digest = "1:1b95f16231319fc11e5755f60182f6b72e52ca08075f85c76640469d4e7d06c2"
+  digest = "1:d49fe1bacf29ea50a2bdb3bf2ef1497a2e72b5f78a9cc0209e934fd235e62905"
   name = "gitlab.com/distributed_lab/ape"
   packages = [
     ".",
     "problems",
   ]
-  revision = "bacc5494fe4c9509361b3d3687ed1694234a8b7e"
-  version = "v0.6"
+  pruneopts = ""
+  revision = "acd1038b8cf8db768640059b6a88171614952f3c"
+  version = "0.7"
 
 [[projects]]
   branch = "master"
@@ -558,12 +560,13 @@
 
 [[projects]]
   branch = "product"
-  digest = "1:5acfadee6c6302a1a3c586fb3d8db642e354efc6ab97cbc78f475c8dbdf8dcbe"
+  digest = "1:63675e1d734aa6da91f58db655f30e1aaac91440155f19e3e34066cb832db7f6"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
-    "v2"
+    "v2",
   ]
+  pruneopts = ""
   revision = "b1106a9a209f081dec4c033e1951899276a4a9d0"
 
 [[projects]]
@@ -664,6 +667,63 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "798ededf70d0a676e80db88d610c9a9101784cd9ecf3121352dffeeacf9c95f4"
+  input-imports = [
+    "bitbucket.org/ww/goautoneg",
+    "github.com/asaskevich/govalidator",
+    "github.com/cheekybits/genny/generic",
+    "github.com/evalphobia/logrus_sentry",
+    "github.com/getsentry/raven-go",
+    "github.com/go-chi/chi",
+    "github.com/go-chi/chi/middleware",
+    "github.com/go-errors/errors",
+    "github.com/go-ozzo/ozzo-validation",
+    "github.com/goji/context",
+    "github.com/guregu/null",
+    "github.com/influxdata/influxdb/client/v2",
+    "github.com/jmoiron/sqlx",
+    "github.com/lann/squirrel",
+    "github.com/lib/pq",
+    "github.com/magiconair/properties/assert",
+    "github.com/patrickmn/go-cache",
+    "github.com/pkg/errors",
+    "github.com/rcrowley/go-metrics",
+    "github.com/rs/cors",
+    "github.com/rubenv/sql-migrate",
+    "github.com/sirupsen/logrus",
+    "github.com/smartystreets/goconvey/convey",
+    "github.com/spf13/cast",
+    "github.com/spf13/cobra",
+    "github.com/spf13/viper",
+    "github.com/stretchr/testify/assert",
+    "github.com/stretchr/testify/mock",
+    "github.com/stretchr/testify/require",
+    "github.com/zenazn/goji/web",
+    "github.com/zenazn/goji/web/middleware",
+    "github.com/zenazn/goji/web/mutil",
+    "gitlab.com/distributed_lab/ape",
+    "gitlab.com/distributed_lab/ape/problems",
+    "gitlab.com/distributed_lab/corer",
+    "gitlab.com/distributed_lab/figure",
+    "gitlab.com/distributed_lab/logan",
+    "gitlab.com/distributed_lab/logan/v3",
+    "gitlab.com/distributed_lab/logan/v3/errors",
+    "gitlab.com/distributed_lab/running",
+    "gitlab.com/distributed_lab/txsub",
+    "gitlab.com/tokend/go/amount",
+    "gitlab.com/tokend/go/build",
+    "gitlab.com/tokend/go/doorman",
+    "gitlab.com/tokend/go/hash",
+    "gitlab.com/tokend/go/resources",
+    "gitlab.com/tokend/go/signcontrol",
+    "gitlab.com/tokend/go/strkey",
+    "gitlab.com/tokend/go/xdr",
+    "gitlab.com/tokend/regources",
+    "gitlab.com/tokend/regources/v2",
+    "golang.org/x/net/context",
+    "golang.org/x/net/http2",
+    "gopkg.in/throttled/throttled.v2",
+    "gopkg.in/throttled/throttled.v2/store/memstore",
+    "gopkg.in/tylerb/graceful.v1",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

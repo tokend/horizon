@@ -86,7 +86,7 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 	response := make([]*regources.Signer, 0, len(signers))
 	for i := range signers {
 		signer := resources.NewSigner(signers[i])
-		if request.NeedRoles() {
+		if request.ShouldInclude(requests.IncludeTypeSignerRoles) {
 			signer.Role = h.getRole(request)
 		}
 		response = append(response, signer)
@@ -103,7 +103,7 @@ func (h *getAccountSignersHandler) getRole(request *requests.GetAccountSigners) 
 		},
 	}
 
-	if !request.NeedRules() {
+	if !request.ShouldInclude(requests.IncludeTypeSignerRolesRules) {
 		return &result
 	}
 
