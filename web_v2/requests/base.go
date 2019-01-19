@@ -60,6 +60,7 @@ func (r *base) unmarshalQuery(opts baseOpts) error {
 	return nil
 }
 
+// TODO: return net.URL instead of str
 func (r *base) GetLinkBase() string {
 	prefix := r.request.URL.Path
 	query := r.marshalQuery()
@@ -144,7 +145,7 @@ func (r *base) getFilters(supportedFilters map[string]struct{}) (map[string]stri
 			filterKey = strings.TrimSuffix(filterKey, "]")
 			if _, supported := supportedFilters[filterKey]; !supported {
 				return nil, validation.Errors{
-					filterKey: errors.New(
+					queryParam: errors.New(
 						fmt.Sprintf("filter is not supported; supported values: %v",
 							getSliceOfSupportedIncludes(supportedFilters)),
 					),

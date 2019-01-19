@@ -39,6 +39,10 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
+	if err != nil {
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
 
 	links := pageParams.GetLinks(request.GetLinkBase())
 

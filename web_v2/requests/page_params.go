@@ -40,6 +40,7 @@ func (p *offsetBasedPageParams) Offset() uint64 {
 	return p.Limit() * p.pageNumber
 }
 
+// TODO: accept net.URL instead of string
 func (p *offsetBasedPageParams) GetLinks(linkBase string) *jsonapi.Links {
 	format := linkBase + "&page[number]=%d&page[limit]=%d"
 	return &jsonapi.Links{
