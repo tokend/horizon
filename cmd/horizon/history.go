@@ -21,7 +21,7 @@ var historyDBMigrateCmd = &cobra.Command{
 	Short: "migrate schema",
 	Long:  "performs a schema migration command",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := conf.Init()
+		err := initConfig(configFile)
 		if err != nil {
 			log.Fatal(err)
 		}

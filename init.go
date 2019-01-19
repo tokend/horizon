@@ -1,6 +1,8 @@
 package horizon
 
 import (
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/log"
 )
 
@@ -28,28 +30,33 @@ func (is *initializerSet) Add(name string, fn InitFn, deps ...string) {
 
 // Run initializes the provided application, but running every Initializer
 func (is *initializerSet) Run(app *App) {
+	err := is.checkDuplicates()
+	if err != nil {
+		log.WithField("err", err).Fatal("failed to init initializer")
+	}
 	init := *is
 	alreadyRun := make(map[string]bool)
 
 	for {
 		ranInitializer := false
 		for _, i := range init {
-			runnable := true
-
 			// if we've already been run, skip
-			if _, ok := alreadyRun[i.Name]; ok {
-				runnable = false
+			if ok := alreadyRun[i.Name]; ok {
+				continue
 			}
 
 			// if any of our dependencies haven't been run, skip
+			isReadyToRun := true
 			for _, d := range i.Deps {
-				if _, ok := alreadyRun[d]; !ok {
-					runnable = false
+				if ok := alreadyRun[d]; !ok {
+					alreadyRun[d] = false
+					isReadyToRun = false
 					break
 				}
 			}
 
-			if !runnable {
+			if !isReadyToRun {
+				alreadyRun[i.Name] = false
 				continue
 			}
 
@@ -67,6 +74,25 @@ func (is *initializerSet) Run(app *App) {
 
 	// if we didn't get to run all initializers, we have a cycle
 	if len(alreadyRun) != len(init) {
-		log.Panic("initializer cycle detected")
+		var failedToRun []string
+		for name, isStarted := range alreadyRun {
+			if !isStarted {
+				failedToRun = append(failedToRun, name)
+			}
+		}
+		log.WithField("failedToRun", failedToRun).Panic("initializer cycle detected")
 	}
+}
+
+func (is *initializerSet) checkDuplicates() error {
+	init := *is
+	unique := map[string]struct{}{}
+	for _, runner := range init {
+		if _, exists := unique[runner.Name]; exists {
+			return errors.From(errors.New("duplicated initializer"), logan.F{"name": runner.Name})
+		}
+		unique[runner.Name] = struct{}{}
+	}
+
+	return nil
 }

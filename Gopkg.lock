@@ -78,11 +78,30 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:e1fd16e1c9d22d6d40e4f20abc23cfbf6448ad5665ea0b2c845fafdbb075f63a"
+  name = "github.com/go-chi/chi"
+  packages = [
+    ".",
+    "middleware",
+  ]
+  pruneopts = ""
+  revision = "efb8f44e73c80bcd00026f0f4e37c76595b1757e"
+
+[[projects]]
+  branch = "master"
   digest = "1:e424c4e8ca4d251ecec17ae6520040812a204ad934bd5e11a6d8cc088a004e68"
   name = "github.com/go-errors/errors"
   packages = ["."]
   pruneopts = ""
   revision = "3afebba5a48dbc89b574d890b6b34d9ee10b4785"
+
+[[projects]]
+  digest = "1:e9d5b80e1c25c1c79a2b2cfa97bf114456345d3c7c345a875c7b7badc70aa975"
+  name = "github.com/go-ozzo/ozzo-validation"
+  packages = ["."]
+  pruneopts = ""
+  revision = "106681dbb37bfa3e7683c4c8129cb7f5925ea3e9"
+  version = "v3.5.0"
 
 [[projects]]
   branch = "master"
@@ -91,6 +110,14 @@
   packages = ["."]
   pruneopts = ""
   revision = "68b83f7b0439800daff361aeff573ecad1b26cbe"
+
+[[projects]]
+  digest = "1:ec6c80b25440f994fd5d8c3b8d6593543134e967b56ad52e0dda88e13515a49d"
+  name = "github.com/google/jsonapi"
+  packages = ["."]
+  pruneopts = ""
+  revision = "46d3ced0434461be12e555852e2f1a9ed382e139"
+  version = "1.0.0"
 
 [[projects]]
   branch = "master"
@@ -221,6 +248,14 @@
   pruneopts = ""
   revision = "be5ece7dd465ab0765a9682137865547526d1dfb"
   version = "v1.7.3"
+
+[[projects]]
+  digest = "1:eccd869de771cf2a53cd564b2e163be6f46d789a898d7576f7982b6d5e61f840"
+  name = "github.com/masterminds/squirrel"
+  packages = ["."]
+  pruneopts = ""
+  revision = "fa735ea14f09f8685fcf5e75db091feb5a410730"
+  version = "v1.1"
 
 [[projects]]
   branch = "master"
@@ -413,6 +448,18 @@
   version = "v1.0"
 
 [[projects]]
+  digest = "1:1b95f16231319fc11e5755f60182f6b72e52ca08075f85c76640469d4e7d06c2"
+  digest = "1:d49fe1bacf29ea50a2bdb3bf2ef1497a2e72b5f78a9cc0209e934fd235e62905"
+  name = "gitlab.com/distributed_lab/ape"
+  packages = [
+    ".",
+    "problems",
+  ]
+  pruneopts = ""
+  revision = "acd1038b8cf8db768640059b6a88171614952f3c"
+  version = "0.7"
+
+[[projects]]
   branch = "master"
   digest = "1:5807a8e40155ba6b1d846434df1d252df857ad62e9db1aba9516ca8310327b3e"
   name = "gitlab.com/distributed_lab/corer"
@@ -429,7 +476,19 @@
   version = "v1.3"
 
 [[projects]]
-  digest = "1:7feb21d1be128ea134fe7fccc11b69ebbab499932b5b6e8e1ec1c0b55646ab23"
+  branch = "master"
+  digest = "1:239218b3e5f05049a89f406d11584de6a84843fbfdabd782156d06cad1d6bb33"
+  name = "gitlab.com/distributed_lab/kit"
+  packages = [
+    "comfig",
+    "kv",
+    "pgdb",
+  ]
+  pruneopts = ""
+  revision = "80a0fe990a93101755f5c2552b65489a91a6e7e4"
+
+[[projects]]
+  digest = "1:b99b8a2b417591f9246cb6306b108fdd223a3b724488d9d47f766c06a36e2acf"
   name = "gitlab.com/distributed_lab/logan"
   packages = [
     ".",
@@ -438,8 +497,16 @@
     "v3/fields",
   ]
   pruneopts = ""
-  revision = "b8cfbf0cdfb9c7185cd426c24babaac54dcfbb82"
-  version = "v3.0"
+  revision = "df004fabe2425cd853d9787ec32b04189a22762f"
+  version = "v3.7.1"
+
+[[projects]]
+  digest = "1:8d319987cf8a2ac092b54e3bf04cab2e6da9d574292651d1339cfbc48bd5aef5"
+  name = "gitlab.com/distributed_lab/running"
+  packages = ["."]
+  pruneopts = ""
+  revision = "023b9c716a08001f0464f43cf1d85dffb209273c"
+  version = "v1"
 
 [[projects]]
   branch = "master"
@@ -450,7 +517,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:955be4ce8ee809f05c5c2961bfe075f7029018f30c6ab144c3c3fabd0e83b10b"
+  digest = "1:a5a794837d971a045375d19e85e317e51eca1fdac53b1aaaedf902dee28705f2"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -468,7 +535,15 @@
     "xdr",
   ]
   pruneopts = ""
-  revision = "081bef70ea755bdf01b764bf72702e43117b8ffb"
+  revision = "6f68c028e5258674306b346d4bb40e47d0d6621d"
+
+[[projects]]
+  branch = "add-janus"
+  digest = "1:ccfd5ea91bffdb8aa16c1bcf7b4537a7b70c0b57afb44068a303436159e88c33"
+  name = "gitlab.com/tokend/go-janus"
+  packages = ["."]
+  pruneopts = ""
+  revision = "d29aaad2c703c945d6b78c2eaf0f83f3ac2e6d3f"
 
 [[projects]]
   branch = "master"
@@ -485,11 +560,14 @@
 
 [[projects]]
   branch = "product"
-  digest = "1:5acfadee6c6302a1a3c586fb3d8db642e354efc6ab97cbc78f475c8dbdf8dcbe"
+  digest = "1:63675e1d734aa6da91f58db655f30e1aaac91440155f19e3e34066cb832db7f6"
   name = "gitlab.com/tokend/regources"
-  packages = ["."]
+  packages = [
+    ".",
+    "v2",
+  ]
   pruneopts = ""
-  revision = "1cd355c055d3e972eba96aa008256009b570992c"
+  revision = "b1106a9a209f081dec4c033e1951899276a4a9d0"
 
 [[projects]]
   branch = "master"
@@ -595,7 +673,10 @@
     "github.com/cheekybits/genny/generic",
     "github.com/evalphobia/logrus_sentry",
     "github.com/getsentry/raven-go",
+    "github.com/go-chi/chi",
+    "github.com/go-chi/chi/middleware",
     "github.com/go-errors/errors",
+    "github.com/go-ozzo/ozzo-validation",
     "github.com/goji/context",
     "github.com/guregu/null",
     "github.com/influxdata/influxdb/client/v2",
@@ -619,11 +700,14 @@
     "github.com/zenazn/goji/web",
     "github.com/zenazn/goji/web/middleware",
     "github.com/zenazn/goji/web/mutil",
+    "gitlab.com/distributed_lab/ape",
+    "gitlab.com/distributed_lab/ape/problems",
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/figure",
     "gitlab.com/distributed_lab/logan",
     "gitlab.com/distributed_lab/logan/v3",
     "gitlab.com/distributed_lab/logan/v3/errors",
+    "gitlab.com/distributed_lab/running",
     "gitlab.com/distributed_lab/txsub",
     "gitlab.com/tokend/go/amount",
     "gitlab.com/tokend/go/build",
@@ -634,6 +718,7 @@
     "gitlab.com/tokend/go/strkey",
     "gitlab.com/tokend/go/xdr",
     "gitlab.com/tokend/regources",
+    "gitlab.com/tokend/regources/v2",
     "golang.org/x/net/context",
     "golang.org/x/net/http2",
     "gopkg.in/throttled/throttled.v2",

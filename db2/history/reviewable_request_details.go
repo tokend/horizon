@@ -84,8 +84,6 @@ type WithdrawalRequest struct {
 	FixedFee               string                 `json:"fixed_fee"`
 	PercentFee             string                 `json:"percent_fee"`
 	ExternalDetails        map[string]interface{} `json:"external_details"`
-	DestAssetCode          string                 `json:"dest_asset_code"`
-	DestAssetAmount        string                 `json:"dest_asset_amount"`
 	ReviewerDetails        map[string]interface{} `json:"reviewer_details"`
 	PreConfirmationDetails map[string]interface{} `json:"pre_confirmation_details"`
 }
@@ -101,7 +99,6 @@ type SaleRequest struct {
 	QuoteAssets         []regources.SaleQuoteAsset `json:"quote_assets"`
 	SaleType            xdr.SaleType               `json:"sale_type"`
 	BaseAssetForHardCap string                     `json:"base_asset_for_hard_cap"`
-	State               xdr.SaleState              `json:"state"`
 }
 
 type LimitsUpdateRequest struct {

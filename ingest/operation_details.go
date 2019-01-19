@@ -55,7 +55,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["key"] = op.Key
 		details["action"] = op.Action
 		if op.Action.Action != xdr.ManageKvActionRemove {
-			details["value"] = op.Action.Value.Value
+			details["value"] = op.Action.Value
 		}
 
 	case xdr.OperationTypeSetOptions:
@@ -96,12 +96,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 				accountID = op.Fee.AccountId.Address()
 			}
 
-			feeAssetString := ""
-			feeAsset, ok := op.Fee.Ext.GetFeeAsset()
-			if ok {
-				feeAssetString = string(feeAsset)
-			}
-
 			accountType := op.Fee.AccountType
 			details["fee"] = map[string]interface{}{
 				"asset_code":   string(op.Fee.Asset),
@@ -113,7 +107,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 				"subtype":      int64(op.Fee.Subtype),
 				"lower_bound":  int64(op.Fee.LowerBound),
 				"upper_bound":  int64(op.Fee.UpperBound),
-				"fee_asset":    feeAssetString,
 			}
 		}
 
@@ -134,9 +127,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		// error is ignored on purpose, we should not block ingest in case of such error
 		_ = json.Unmarshal([]byte(request.ExternalDetails), &externalDetails)
 		details["external_details"] = externalDetails
-
-		details["dest_asset"] = request.Details.AutoConversion.DestAsset
-		details["dest_amount"] = amount.StringU(uint64(request.Details.AutoConversion.ExpectedAmount))
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
 		details["destination"] = op.Destination
@@ -231,10 +221,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		opResult := c.OperationResult().MustManageContractRequestResult()
 		switch op.Details.Action {
 		case xdr.ManageContractRequestActionCreate:
-			details["escrow"] = op.Details.ContractRequest.Escrow.Address()
-			details["details"] = op.Details.ContractRequest.Details
-			details["start_time"] = int64(op.Details.ContractRequest.StartTime)
-			details["end_time"] = int64(op.Details.ContractRequest.EndTime)
 			details["request_id"] = opResult.Success.Details.Response.RequestId
 		case xdr.ManageContractRequestActionRemove:
 			details["request_id"] = *op.Details.RequestId
@@ -266,13 +252,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["details"] = getReviewRequestOpDetails(op.RequestDetails)
 
 		opResult := c.OperationResult().MustReviewRequestResult().MustSuccess()
-		extendedResult, ok := opResult.Ext.GetExtendedResult()
-		if !ok {
-			break
-		}
-		details["is_fulfilled"] = extendedResult.Fulfilled
+		details["is_fulfilled"] = opResult.Fulfilled
 
-		aSwapExtended, ok := extendedResult.TypeExt.GetASwapExtended()
+		aSwapExtended, ok := opResult.TypeExt.GetASwapExtended()
 		if !ok {
 			break
 		}
@@ -299,8 +281,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		_ = json.Unmarshal([]byte(op.Request.ExternalDetails), &externalDetails)
 		details["external_details"] = externalDetails
 
-		allTasks, ok := op.Ext.GetAllTasks()
-		if ok && allTasks != nil {
+		allTasks := op.AllTasks
+		if allTasks != nil {
 			details["all_tasks"] = *allTasks
 		}
 	case xdr.OperationTypeCreateSaleRequest:
@@ -334,8 +316,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		_ = json.Unmarshal([]byte(op.UpdateKycRequestData.KycData), &kycData)
 		details["kyc_data"] = kycData
 
-		if op.UpdateKycRequestData.AllTasks != nil {
-			details["all_tasks"] = *op.UpdateKycRequestData.AllTasks
+		if op.AllTasks != nil {
+			details["all_tasks"] = *op.AllTasks
 		}
 	case xdr.OperationTypePaymentV2:
 		op := c.Operation().Body.MustPaymentOpV2()
@@ -348,14 +330,12 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["amount"] = amount.StringU(uint64(op.Amount))
 		details["asset"] = string(opResult.Asset)
 		details["source_fee_data"] = map[string]interface{}{
-			"fixed_fee":                     amount.StringU(uint64(op.FeeData.SourceFee.FixedFee)),
-			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualSourcePaymentFee)),
-			"actual_payment_fee_asset_code": string(op.FeeData.SourceFee.FeeAsset),
+			"fixed_fee":          amount.StringU(uint64(opResult.ActualDestinationPaymentFee.Fixed)),
+			"actual_payment_fee": amount.StringU(uint64(opResult.ActualDestinationPaymentFee.Percent)),
 		}
 		details["destination_fee_data"] = map[string]interface{}{
-			"fixed_fee":                     amount.StringU(uint64(op.FeeData.DestinationFee.FixedFee)),
-			"actual_payment_fee":            amount.StringU(uint64(opResult.ActualDestinationPaymentFee)),
-			"actual_payment_fee_asset_code": string(op.FeeData.DestinationFee.FeeAsset),
+			"fixed_fee":          amount.StringU(uint64(op.FeeData.DestinationFee.Fixed)),
+			"actual_payment_fee": amount.StringU(uint64(op.FeeData.DestinationFee.Percent)),
 		}
 		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
 		details["subject"] = op.Subject
@@ -366,11 +346,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		opRes := c.OperationResult().MustManageSaleResult().MustSuccess()
 		details["sale_id"] = uint64(op.SaleId)
 		details["action"] = op.Data.Action.ShortString()
-
-		fulfilled, ok := opRes.Ext.GetFulfilled()
-		if ok {
-			details["fulfilled"] = fulfilled
-		}
+		details["fulfilled"] = opRes.Fulfilled
 	case xdr.OperationTypeCancelSaleRequest:
 		op := c.Operation().Body.MustCancelSaleCreationRequestOp()
 		details["request_id"] = uint64(op.RequestId)
@@ -436,8 +412,6 @@ func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
 	_ = json.Unmarshal([]byte(details.ExternalDetails), externalDetails)
 	return map[string]interface{}{
 		"external_details": externalDetails,
-		"tasks_to_add":     uint32(details.TasksToAdd),
-		"tasks_to_remove":  uint32(details.TasksToRemove),
 	}
 }
 

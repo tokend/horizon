@@ -20,7 +20,7 @@ func TestCodes(t *testing.T) {
 	Convey("TransactionResultCode", t, func() {
 		for _, code := range xdr.TransactionResultCodeAll {
 			message := getMessage(code.ShortString())
-			if message == "" {
+			if message == "" || message == code.ShortString()  {
 				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
 			}
 		}
@@ -28,7 +28,7 @@ func TestCodes(t *testing.T) {
 	Convey("OperationResultCode", t, func() {
 		for _, code := range xdr.OperationResultCodeAll {
 			message := getMessage(code.ShortString())
-			if message == "" {
+			if message == "" || message == code.ShortString(){
 				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
 			}
 		}

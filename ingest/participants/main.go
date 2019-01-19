@@ -9,7 +9,6 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/db2/history"
 )
 
 // ForOperation returns all the participating accounts from the
@@ -105,9 +104,9 @@ func ForOperation(
 		manageContractOp := op.Body.MustManageContractRequestOp()
 		switch manageContractOp.Details.Action {
 		case xdr.ManageContractRequestActionCreate:
-			result = append(result, Participant{manageContractOp.Details.ContractRequest.Customer,
+			result = append(result, Participant{manageContractOp.Details.MustCreateContractRequest().ContractRequest.Customer,
 				nil, nil})
-			result = append(result, Participant{manageContractOp.Details.ContractRequest.Escrow,
+			result = append(result, Participant{manageContractOp.Details.MustCreateContractRequest().ContractRequest.Escrow,
 				nil, nil})
 		case xdr.ManageContractRequestActionRemove:
 			sourceParticipant = nil
@@ -129,7 +128,7 @@ func ForOperation(
 			break
 		}
 
-		extendedResult, ok := opResult.MustReviewRequestResult().MustSuccess().Ext.GetExtendedResult()
+		extendedResult, ok := opResult.MustReviewRequestResult().GetSuccess()
 		if !ok {
 			break
 		}
@@ -305,17 +304,6 @@ func ForTransaction(
 
 	result = dedupe(result)
 	return
-}
-
-func getAccountIDByBalance(q history.Q, balanceID string) (result *xdr.AccountId, err error) {
-	var targetBalance history.Balance
-	err = q.BalanceByID(&targetBalance, balanceID)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get balance by balance id")
-	}
-	var aid xdr.AccountId
-	aid.SetAddress(targetBalance.AccountID)
-	return &aid, nil
 }
 
 // dedupe remove any duplicate ids from `in`

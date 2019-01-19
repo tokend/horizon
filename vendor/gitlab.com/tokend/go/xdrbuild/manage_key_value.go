@@ -23,8 +23,8 @@ func isNil(i interface{}) error {
 
 func (mkv ManageKeyValueOp) Validate() error {
 	errs := Errors{
-			"Key": Validate(&mkv.Key, Required),
-		}
+		"Key": Validate(&mkv.Key, Required),
+	}
 
 	if mkv.Uint32 != nil {
 		errs["Uint32"] = Validate(mkv.Uint32, NotNil)
@@ -46,36 +46,27 @@ func (mkv ManageKeyValueOp) Validate() error {
 
 func (mkv ManageKeyValueOp) XDR() (*xdr.Operation, error) {
 	manageKvAction := xdr.ManageKvActionRemove
-	keyValueEntry := (*xdr.KeyValueEntry)(nil)
+	keyValueEntryValue := (*xdr.KeyValueEntryValue)(nil)
 	switch {
 	case mkv.Uint32 != nil:
 		manageKvAction = xdr.ManageKvActionPut
 		val := xdr.Uint32(*mkv.Uint32)
-		keyValueEntry = &xdr.KeyValueEntry{
-			Key: xdr.Longstring(mkv.Key),
-			Value: xdr.KeyValueEntryValue{
-				Type:      xdr.KeyValueEntryTypeUint32,
-				Ui32Value: &val,
-			},
+		keyValueEntryValue = &xdr.KeyValueEntryValue{
+			Type:      xdr.KeyValueEntryTypeUint32,
+			Ui32Value: &val,
 		}
 	case mkv.Uint64 != nil:
 		manageKvAction = xdr.ManageKvActionPut
 		val := xdr.Uint64(*mkv.Uint64)
-		keyValueEntry = &xdr.KeyValueEntry{
-			Key: xdr.Longstring(mkv.Key),
-			Value: xdr.KeyValueEntryValue{
-				Type:      xdr.KeyValueEntryTypeUint64,
-				Ui64Value: &val,
-			},
+		keyValueEntryValue = &xdr.KeyValueEntryValue{
+			Type:      xdr.KeyValueEntryTypeUint64,
+			Ui64Value: &val,
 		}
 	case mkv.String != nil:
 		manageKvAction = xdr.ManageKvActionPut
-		keyValueEntry = &xdr.KeyValueEntry{
-			Key: xdr.Longstring(mkv.Key),
-			Value: xdr.KeyValueEntryValue{
-				Type:        xdr.KeyValueEntryTypeString,
-				StringValue: mkv.String,
-			},
+		keyValueEntryValue = &xdr.KeyValueEntryValue{
+			Type:        xdr.KeyValueEntryTypeString,
+			StringValue: mkv.String,
 		}
 	}
 
@@ -83,10 +74,10 @@ func (mkv ManageKeyValueOp) XDR() (*xdr.Operation, error) {
 		Body: xdr.OperationBody{
 			Type: xdr.OperationTypeManageKeyValue,
 			ManageKeyValueOp: &xdr.ManageKeyValueOp{
-				Key: xdr.String256(mkv.Key),
+				Key: xdr.Longstring(mkv.Key),
 				Action: xdr.ManageKeyValueOpAction{
 					Action: manageKvAction,
-					Value:  keyValueEntry,
+					Value:  keyValueEntryValue,
 				},
 			},
 		},

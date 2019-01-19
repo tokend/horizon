@@ -4,7 +4,7 @@ import (
 	sq "github.com/lann/squirrel"
 )
 
-// LedgerHeaderBySequence is a query that loads a single row from the
+// GetBySequence is a query that loads a single row from the
 // `ledgerheaders` table.
 func (q *Q) LedgerHeaderBySequence(dest interface{}, seq int32) error {
 	sql := sq.Select("clh.*").

@@ -18,8 +18,8 @@ func TestManageKeyValueOp_XDR(t *testing.T) {
 		xdrOp, err := op.XDR()
 		assert.NoError(t, err)
 		assert.Equal(t, xdr.ManageKvActionPut, xdrOp.Body.MustManageKeyValueOp().Action.Action)
-		assert.Equal(t, xdr.KeyValueEntryTypeUint32, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Value.Type)
-		assert.Equal(t, xdr.Uint32(v), xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Value.MustUi32Value())
+		assert.Equal(t, xdr.KeyValueEntryTypeUint32, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Type)
+		assert.Equal(t, xdr.Uint32(v), xdrOp.Body.MustManageKeyValueOp().Action.MustValue().MustUi32Value())
 	})
 	t.Run("valid with int64", func(t *testing.T) {
 		v := uint64(6)
@@ -31,8 +31,8 @@ func TestManageKeyValueOp_XDR(t *testing.T) {
 		xdrOp, err := op.XDR()
 		assert.NoError(t, err)
 		assert.Equal(t, xdr.ManageKvActionPut, xdrOp.Body.MustManageKeyValueOp().Action.Action)
-		assert.Equal(t, xdr.KeyValueEntryTypeUint64, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Value.Type)
-		assert.Equal(t, xdr.Uint64(v), xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Value.MustUi64Value())
+		assert.Equal(t, xdr.KeyValueEntryTypeUint64, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Type)
+		assert.Equal(t, xdr.Uint64(v), xdrOp.Body.MustManageKeyValueOp().Action.MustValue().MustUi64Value())
 	})
 	t.Run("valid with string", func(t *testing.T) {
 		str := "TaskFaceValidation"
@@ -44,8 +44,8 @@ func TestManageKeyValueOp_XDR(t *testing.T) {
 		xdrOp, err := op.XDR()
 		assert.NoError(t, err)
 		assert.Equal(t, xdr.ManageKvActionPut, xdrOp.Body.MustManageKeyValueOp().Action.Action)
-		assert.Equal(t, xdr.KeyValueEntryTypeString, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Value.Type)
-		assert.Equal(t, str, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Value.MustStringValue())
+		assert.Equal(t, xdr.KeyValueEntryTypeString, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Type)
+		assert.Equal(t, str, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().MustStringValue())
 	})
 	t.Run("valid remove", func(t *testing.T) {
 		op := ManageKeyValueOp{
@@ -68,15 +68,15 @@ func TestManageKeyValueOp_XDR(t *testing.T) {
 	t.Run("valid with empty string", func(t *testing.T) {
 		str := ""
 		op := ManageKeyValueOp{
-			Key: "Key",
+			Key:    "Key",
 			String: &str,
 		}
 		assert.NoError(t, op.Validate())
 	})
-	t.Run("valid with 0" , func(t *testing.T) {
+	t.Run("valid with 0", func(t *testing.T) {
 		v := uint32(0)
 		op := ManageKeyValueOp{
-			Key: "Key",
+			Key:    "Key",
 			Uint32: &v,
 		}
 		assert.NoError(t, op.Validate())

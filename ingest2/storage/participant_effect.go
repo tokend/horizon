@@ -1,0 +1,36 @@
+package storage
+
+import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/history2"
+)
+
+// ParticipantEffect - helper struct to store `operation participants`
+type ParticipantEffect struct {
+	repo *db2.Repo
+}
+
+// NewOpParticipants - creates new instance of `ParticipantEffect`
+func NewOpParticipants(repo *db2.Repo) *ParticipantEffect {
+	return &ParticipantEffect{
+		repo: repo,
+	}
+}
+
+func convertParticipantEffectToParams(participant history2.ParticipantEffect) []interface{} {
+	return []interface{}{
+		participant.ID, participant.AccountID, participant.BalanceID, participant.AssetCode,
+		participant.Effect, participant.OperationID,
+	}
+}
+
+//Insert - stores slice of the participant effects in one batch
+func (p *ParticipantEffect) Insert(participants []history2.ParticipantEffect) error {
+	columns := []string{"id, account_id, balance_id, asset_code, effect, operation_id"}
+	err := history2ParticipantEffectBatchInsert(p.repo, participants, "participant_effects", columns, convertParticipantEffectToParams)
+	if err != nil {
+		return errors.Wrap(err, "failed to insert participant effects")
+	}
+	return nil
+}

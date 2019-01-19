@@ -14,6 +14,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/log"
+	"gitlab.com/tokend/horizon/render"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/regources"
@@ -50,7 +51,7 @@ func initWeb(app *App) {
 	}
 
 	// register problems
-	problem.RegisterError(sql.ErrNoRows, problem.NotFound)
+	render.RegisterError(sql.ErrNoRows, problem.NotFound)
 }
 
 // initWebMiddleware installs the middleware stack used for horizon onto the
@@ -274,7 +275,7 @@ func initWebActions(app *App) {
 				action.q = action.q.WithdrawalByDestAsset(asset)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw, xdr.ReviewableRequestTypeTwoStepWithdrawal},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
@@ -337,54 +338,6 @@ func initWebActions(app *App) {
 	})
 	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
-	})
-
-	r.Get("/request/invoices", &ReviewableRequestIndexAction{
-		CustomFilter: func(action *ReviewableRequestIndexAction) {
-			contractID := action.GetOptionalInt64("contract_id")
-			if contractID != nil {
-				action.q = action.q.InvoicesByContract(*contractID)
-			}
-		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeInvoice},
-	})
-
-	r.Get("/request/contracts", &ReviewableRequestIndexAction{
-		CustomFilter: func(action *ReviewableRequestIndexAction) {
-			contractNumber := action.GetString("contract_number")
-			if contractNumber != "" {
-				action.q = action.q.ContractsByContractNumber(contractNumber)
-			}
-			startTime := action.GetOptionalInt64("start_time")
-			if startTime != nil {
-				action.q = action.q.ContractsByStartTime(*startTime)
-			}
-			endTime := action.GetOptionalInt64("end_time")
-			if endTime != nil {
-				action.q = action.q.ContractsByStartTime(*endTime)
-			}
-
-			// TODO: FIX ME!!!!!!!!!!!!!!!!!
-			if action.Requestor != "" {
-				action.q = action.q.ForCounterparty(action.Requestor)
-			}
-
-			action.Requestor = ""
-
-			if action.Reviewer != "" {
-				action.q = action.q.ForCounterparty(action.Reviewer)
-			}
-
-			action.Reviewer = ""
-			action.Page.Filters["contract_number"] = contractNumber
-			action.Page.Filters["start_time"] = action.GetString("start_time")
-			action.Page.Filters["end_time"] = action.GetString("end_time")
-		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
-	})
-
-	r.Get("/request/update_sale_end_time", &ReviewableRequestIndexAction{
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
 	})
 
 	r.Get("/request/atomic_swap_bids", &ReviewableRequestIndexAction{
@@ -483,7 +436,7 @@ func init() {
 	appInit.Add(
 		"web.init",
 		initWeb,
-		"app-context", "stellarCoreInfo", "memory_cache",
+		"app-context", "core-info", "memory_cache", "ledger-state",
 	)
 
 	appInit.Add(

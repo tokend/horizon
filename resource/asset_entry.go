@@ -2,6 +2,7 @@ package resource
 
 import (
 	"encoding/json"
+
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 )

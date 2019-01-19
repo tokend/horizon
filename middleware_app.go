@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"context"
 	"github.com/zenazn/goji/web"
 	"net/http"
 )
@@ -12,4 +13,10 @@ func (app *App) Middleware(c *web.C, h http.Handler) http.Handler {
 		c.Env["app"] = app
 		h.ServeHTTP(w, r)
 	})
+}
+
+func (app *App) CtxExtender() func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, "app", app)
+	}
 }

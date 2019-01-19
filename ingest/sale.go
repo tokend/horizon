@@ -70,27 +70,7 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	var saleDetails db2.Details
 	_ = json.Unmarshal([]byte(raw.Details), &saleDetails)
 
-	saleType := xdr.SaleTypeBasicSale
-	rawState := xdr.SaleStateNone
-	switch raw.Ext.V {
-	case xdr.LedgerVersionEmptyVersion:
-	case xdr.LedgerVersionTypedSale:
-		saleType = raw.Ext.MustSaleTypeExt().TypedSale.SaleType
-	case xdr.LedgerVersionStatableSales:
-		ext := raw.Ext.MustStatableSaleExt()
-		saleType = ext.SaleTypeExt.TypedSale.SaleType
-		rawState = ext.State
-	default:
-		panic(errors.Wrap(errors.New("Unexpected ledger version in convertSale"),
-			"failed to ingest sale", logan.F{
-				"actual_ledger_version": raw.Ext.V.ShortString(),
-			}))
-	}
-
-	state, err := convertSaleState(rawState)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert sale state")
-	}
+	saleType := raw.SaleTypeExt.SaleType
 
 	return &history.Sale{
 		ID:                uint64(raw.SaleId),
@@ -107,24 +87,8 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		},
 		BaseCurrentCap: int64(raw.CurrentCapInBase),
 		BaseHardCap:    int64(raw.MaxAmountToBeSold),
-		State:          state,
 		SaleType:       saleType,
 	}, nil
-}
-
-func convertSaleState(state xdr.SaleState) (history.SaleState, error) {
-	switch state {
-	case xdr.SaleStateNone:
-		return history.SaleStateOpen, nil
-	case xdr.SaleStatePromotion:
-		return history.SaleStatePromotion, nil
-	case xdr.SaleStateVoting:
-		return history.SaleStateVoting, nil
-	default:
-		return history.SaleStateOpen, errors.From(errors.New("unexpected sale of the state"), map[string]interface{}{
-			"state": state,
-		})
-	}
 }
 
 func (is *Session) processCancelSaleCreationRequest(

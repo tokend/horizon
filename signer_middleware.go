@@ -32,6 +32,10 @@ func (v *SignatureValidator) GetSigner(r *http.Request) (*string, error) {
 // Middleware checks only if request signature is valid and sets signer to request
 // context if true
 func (v *SignatureValidator) Middleware(c *web.C, next http.Handler) http.Handler {
+	return v.MiddlewareV2(next)
+}
+
+func (v *SignatureValidator) MiddlewareV2(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		_, err := v.GetSigner(r)
 		if err != nil {

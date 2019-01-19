@@ -1,9 +1,9 @@
 config:
-  stellar_core_url: http://
-  stellar_core_database_url: postgres://
+  stellar_core_url: http://localhost:8080
+  stellar_core_database_url: postgres://postgres:postgres@localhost/core?sslmode=disable
   hostname: ""
-  database_url: postgres://
-  log_level: ""
+  database_url: postgres://postgres:postgres@localhost/horizon?sslmode=disable
+  log_level: "warn"
   slow_query_bound: 1s
   port: 8000
   api_backend: http://
@@ -24,5 +24,8 @@ config:
   invest_ready: http://
   telegram_airdrop: http://
 
-
+janus:
+  url: http://
+  surname: horizon
+  target: http://
 

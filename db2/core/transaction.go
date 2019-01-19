@@ -132,7 +132,7 @@ func (q *Q) TransactionByHash(dest interface{}, hash string) error {
 	return q.Get(dest, sql)
 }
 
-// TransactionsByLedger is a query that loads all rows from `txhistory` where
+// GetByLedger is a query that loads all rows from `txhistory` where
 // ledgerseq matches `Sequence.`
 func (q *Q) TransactionsByLedger(dest interface{}, seq int32) error {
 	sql := sq.Select("ctxh.*").

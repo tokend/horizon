@@ -87,6 +87,8 @@ func (is *Session) operation() error {
 		return errors.Wrap(err, "failed to process operation changes")
 	}
 
+	is.Cursor.OperationSourceAccount()
+
 	state, operationIdentifier := getStateIdentifier(is.Cursor.OperationType(), is.Cursor.Operation(), is.Cursor.OperationResult())
 	err = is.Ingestion.Operation(
 		is.Cursor.OperationID(),

@@ -34,7 +34,7 @@ func initLog(app *App) {
 		errors.Wrap(err, "Failed to add Sentry hook")
 	}
 	log.DefaultLogger.Entry = *entry
-	log.DefaultLogger.Logger.Level = app.config.LogLevel
+	log.DefaultLogger.Level(app.config.LogLevel)
 	log.DefaultLogger = log.DefaultLogger.WithField("host", app.config.Hostname)
 
 	entry, err = addSentryHook(app.config, entry)

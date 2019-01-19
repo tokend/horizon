@@ -14,8 +14,6 @@ type StatisticsAction struct {
 
 func (action *StatisticsAction) JSON() {
 	action.Do(
-		// just to make sure core is alive
-		action.App.UpdateStellarCoreInfo,
 		action.loadExternalSystemPoolCount,
 		func() {
 			hal.Render(action.W, action.Resource)
