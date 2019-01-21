@@ -1,15 +1,23 @@
 package regources
 
-// Balance - resource object representing BalanceEntry
+// Balance - Resource object representing BalanceEntry
 type Balance struct {
-	ID    string        `jsonapi:"primary,balances"`
-	Asset *Asset        `jsonapi:"relation,asset,omitempty"`
-	State *BalanceState `jsonapi:"relation,state,omitempty"`
+	Key
+	Relationships BalanceRelation `json:"relationships,omitempty"`
 }
 
-//BalanceState - resource represents balance state
+type BalanceRelation struct {
+	Asset *Relation `json:"asset,omitempty"`
+	State *Relation `json:"state,omitempty"`
+}
+
+//BalanceState - Resource represents balance state
 type BalanceState struct {
-	ID        string `jsonapi:"primary,balance_states"`
-	Available Amount `jsonapi:"attr,available"`
-	Locked    Amount `jsonapi:"attr,locked"`
+	Key
+	Attributes BalanceStateAttr `json:"attributes"`
+}
+
+type BalanceStateAttr struct {
+	Available Amount `json:"available"`
+	Locked    Amount `json:"locked"`
 }

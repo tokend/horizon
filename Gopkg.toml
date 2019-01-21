@@ -120,8 +120,12 @@
 
 [[constraint]]
   name = "gitlab.com/distributed_lab/ape"
-  version = "0.7.0"
+  version = "0.8.0"
 
 [[override]]
   name = "github.com/google/jsonapi"
   version = "1.0.0"
+
+[prune]
+  go-tests = true
+  unused-packages = true

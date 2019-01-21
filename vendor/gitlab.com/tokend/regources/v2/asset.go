@@ -1,15 +1,39 @@
 package regources
 
-// Asset - resource object representing AssetEntry
+import (
+	"gitlab.com/tokend/go/xdr"
+)
+
+//AssetResponse - response for asset handler
+type AssetResponse struct {
+	Data     Asset    `json:"data"`
+	Included Included `json:"included"`
+}
+
+type AssetsResponse struct {
+	Links    *Links   `json:"links"`
+	Data     []Asset  `json:"data"`
+	Included Included `json:"included"`
+}
+
+// Asset - Resource object representing AssetEntry
 type Asset struct {
-	ID                     string                 `jsonapi:"primary,assets"`
-	PreIssuanceAssetSigner string                 `jsonapi:"attr,pre_issuance_asset_signer" `
-	Details                map[string]interface{} `jsonapi:"attr,details"`
-	MaxIssuanceAmount      Amount                 `jsonapi:"attr,max_issuance_amount"`
-	AvailableForIssuance   Amount                 `jsonapi:"attr,available_for_issuance"`
-	Issued                 Amount                 `jsonapi:"attr,issued"`
-	PendingIssuance        Amount                 `jsonapi:"attr,pending_issuance"`
-	Policies               Mask                   `jsonapi:"attr,policies"`
-	TrailingDigits         int64                  `jsonapi:"attr,trailing_digits"`
-	Owner                  *Account               `jsonapi:"relation,owner,omitempty"`
+	Key
+	Attributes    AssetAttrs     `json:"attributes"`
+	Relationships AssetRelations `json:"relationships"`
+}
+
+type AssetAttrs struct {
+	PreIssuanceAssetSigner string                 `json:"pre_issuance_asset_signer" `
+	Details                map[string]interface{} `json:"details"`
+	MaxIssuanceAmount      Amount                 `json:"max_issuance_amount"`
+	AvailableForIssuance   Amount                 `json:"available_for_issuance"`
+	Issued                 Amount                 `json:"issued"`
+	PendingIssuance        Amount                 `json:"pending_issuance"`
+	Policies               xdr.AssetPolicy        `json:"policies"`
+	TrailingDigits         int64                  `json:"trailing_digits"`
+}
+
+type AssetRelations struct {
+	Owner *Relation `json:"owner"`
 }

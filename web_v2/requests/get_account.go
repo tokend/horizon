@@ -9,7 +9,6 @@ const (
 	IncludeTypeAccountBalancesAsset   = "balances.asset"
 	IncludeTypeAccountBalancesState   = "balances.state"
 	IncludeTypeAccountAccountReferrer = "referrer"
-	IncludeTypeAccountState           = "state"
 	IncludeTypeAccountRole            = "role"
 	IncludeTypeAccountRoleRules       = "role.rules"
 )
@@ -19,7 +18,6 @@ var IncludeTypeAccountAll = map[string]struct{}{
 	IncludeTypeAccountBalancesAsset:   {},
 	IncludeTypeAccountBalancesState:   {},
 	IncludeTypeAccountAccountReferrer: {},
-	IncludeTypeAccountState:           {},
 	IncludeTypeAccountRole:            {},
 	IncludeTypeAccountRoleRules:       {},
 }

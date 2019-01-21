@@ -54,7 +54,7 @@ type getAccountSignersHandler struct {
 }
 
 //GetAccountSigners - returns signers for account
-func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccountSigners) ([]*regources.Signer, error) {
+func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccountSigners) (*regources.SignersResponse, error) {
 	account, err := h.AccountQ.GetByAddress(request.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load account", logan.F{
@@ -83,40 +83,58 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 		})
 	}
 
-	response := make([]*regources.Signer, 0, len(signers))
+	response := regources.SignersResponse{
+		Data: make([]regources.Signer, 0, len(signers)),
+	}
 	for i := range signers {
 		signer := resources.NewSigner(signers[i])
-		if request.ShouldInclude(requests.IncludeTypeSignerRoles) {
-			signer.Role = h.getRole(request)
+		if request.ShouldIncludeAny(requests.IncludeTypeSignerRoles) {
+			signer.Relationships.Role = h.getRole(request, &response.Included)
 		}
-		response = append(response, signer)
+		response.Data = append(response.Data, signer)
 	}
 
-	return response, nil
+	return &response, nil
 }
 
-func (h *getAccountSignersHandler) getRole(request *requests.GetAccountSigners) *regources.Role {
+func (h *getAccountSignersHandler) getRole(request *requests.GetAccountSigners, includes *regources.Included) *regources.Relation {
 	result := regources.Role{
-		ID: "mocked_role",
-		Details: map[string]interface{}{
-			"name": "Name of the Mocked Role",
+		Key: regources.Key{
+			Type: regources.TypeSignerRoles,
+			ID:   request.Address,
 		},
-	}
-
-	if !request.ShouldInclude(requests.IncludeTypeSignerRolesRules) {
-		return &result
-	}
-
-	result.Rules = []*regources.Rule{
-		{
-			ID:       "mocked_rule_id",
-			Resource: "NOTE: format will be changed",
-			Action:   "view",
+		Attributes: regources.RoleAsstr{
 			Details: map[string]interface{}{
-				"name": "Name of the mocked Rule",
+				"name": "Name of the Mocked Role",
 			},
 		},
 	}
 
-	return &result
+	if request.ShouldInclude(requests.IncludeTypeSignerRolesRules) {
+		rules := []regources.Rule{
+			{
+				Key: regources.Key{
+					ID:   "mocked_rule_id",
+					Type: regources.TypeSignerRules,
+				},
+				Attributes: regources.RuleAttr{
+					Resource: "NOTE: format will be changed",
+					Action:   "view",
+					Details: map[string]interface{}{
+						"name": "Name of the mocked Rule",
+					},
+				},
+			},
+		}
+
+		result.Relationships.Rules = &regources.RelationCollection{}
+		for i := range rules {
+			result.Relationships.Rules.Data = append(result.Relationships.Rules.Data, rules[i].GetKey())
+			includes.Add(&rules[i])
+		}
+	}
+
+	includes.Add(&result)
+
+	return result.AsRelation()
 }

@@ -2,10 +2,12 @@ package requests
 
 import (
 	"fmt"
-	"github.com/google/jsonapi"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"math"
 	"strconv"
+
+	"github.com/google/jsonapi"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/regources/v2"
 )
 
 const (
@@ -16,19 +18,19 @@ const (
 )
 const defaultLimit uint64 = 15
 
-type offsetBasedPageParams struct {
+type OffsetBasedPageParams struct {
 	limit      uint64
 	pageNumber uint64
 }
 
-func newOffsetBasedPageParams(limit, pageNumber uint64) *offsetBasedPageParams {
-	return &offsetBasedPageParams{
+func newOffsetBasedPageParams(limit, pageNumber uint64) *OffsetBasedPageParams {
+	return &OffsetBasedPageParams{
 		limit,
 		pageNumber,
 	}
 }
 
-func (p *offsetBasedPageParams) Limit() uint64 {
+func (p *OffsetBasedPageParams) Limit() uint64 {
 	if p.limit == 0 {
 		return defaultLimit
 	}
@@ -36,16 +38,16 @@ func (p *offsetBasedPageParams) Limit() uint64 {
 	return p.limit
 }
 
-func (p *offsetBasedPageParams) Offset() uint64 {
+func (p *OffsetBasedPageParams) Offset() uint64 {
 	return p.Limit() * p.pageNumber
 }
 
 // TODO: accept net.URL instead of string
-func (p *offsetBasedPageParams) GetLinks(linkBase string) *jsonapi.Links {
+func (p *OffsetBasedPageParams) GetLinks(linkBase string) *regources.Links {
 	format := linkBase + "&page[number]=%d&page[limit]=%d"
-	return &jsonapi.Links{
-		"self": fmt.Sprintf(format, p.pageNumber, p.Limit()),
-		"next": fmt.Sprintf(format, p.pageNumber+1, p.Limit()),
+	return &regources.Links{
+		Self: fmt.Sprintf(format, p.pageNumber, p.Limit()),
+		Next: fmt.Sprintf(format, p.pageNumber+1, p.Limit()),
 	}
 }
 
