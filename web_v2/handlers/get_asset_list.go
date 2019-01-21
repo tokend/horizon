@@ -47,7 +47,7 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	links := pageParams.GetLinks(request.GetLinkBase())
+	links := pageParams.GetLinks(request.URL())
 
 	ape.RenderPage(w, result, links)
 }

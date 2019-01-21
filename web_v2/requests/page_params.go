@@ -5,7 +5,9 @@ import (
 	"github.com/google/jsonapi"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"math"
+	"net/url"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -40,9 +42,20 @@ func (p *offsetBasedPageParams) Offset() uint64 {
 	return p.Limit() * p.pageNumber
 }
 
-// TODO: accept net.URL instead of string
-func (p *offsetBasedPageParams) GetLinks(linkBase string) *jsonapi.Links {
-	format := linkBase + "&page[number]=%d&page[limit]=%d"
+func (p *offsetBasedPageParams) GetLinks(url *url.URL) *jsonapi.Links {
+	var query strings.Builder
+
+	for key, values := range url.Query() {
+		switch key {
+		case pageParamNumber, pageParamLimit:
+			continue
+		default:
+			query.WriteString(fmt.Sprintf("%s=%s&", key, strings.Join(values, ",")))
+		}
+	}
+
+	format := url.Path + "?" + query.String() + "&page[number]=%d&page[limit]=%d"
+
 	return &jsonapi.Links{
 		"self": fmt.Sprintf(format, p.pageNumber, p.Limit()),
 		"next": fmt.Sprintf(format, p.pageNumber+1, p.Limit()),

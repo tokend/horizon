@@ -60,12 +60,8 @@ func (r *base) unmarshalQuery(opts baseOpts) error {
 	return nil
 }
 
-// TODO: return net.URL instead of str
-func (r *base) GetLinkBase() string {
-	prefix := r.request.URL.Path
-	query := r.marshalQuery()
-
-	return fmt.Sprintf("%s?%s", prefix, query)
+func (r *base) URL() *url.URL {
+	return r.request.URL
 }
 
 func (r *base) marshalQuery() string {
