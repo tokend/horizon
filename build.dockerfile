@@ -1,5 +1,5 @@
 # horizonbuild
-FROM golang:1.9
+FROM golang:1.10
 
 WORKDIR /go/src/gitlab.com/tokend/horizon
 COPY . .

@@ -5,7 +5,9 @@ import (
 	"github.com/google/jsonapi"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"math"
+	"net/url"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -28,6 +30,7 @@ func newOffsetBasedPageParams(limit, pageNumber uint64) *offsetBasedPageParams {
 	}
 }
 
+// Limit - returns us the limit we can should use for sql query
 func (p *offsetBasedPageParams) Limit() uint64 {
 	if p.limit == 0 {
 		return defaultLimit
@@ -36,13 +39,26 @@ func (p *offsetBasedPageParams) Limit() uint64 {
 	return p.limit
 }
 
+// Offset - calculates the actual offset we should use for sql query
 func (p *offsetBasedPageParams) Offset() uint64 {
 	return p.Limit() * p.pageNumber
 }
 
-// TODO: accept net.URL instead of string
-func (p *offsetBasedPageParams) GetLinks(linkBase string) *jsonapi.Links {
-	format := linkBase + "&page[number]=%d&page[limit]=%d"
+// Links - returns pagination links we should render to the client
+func (p *offsetBasedPageParams) Links(url *url.URL) *jsonapi.Links {
+	var query strings.Builder
+
+	for key, values := range url.Query() {
+		switch key {
+		case pageParamNumber, pageParamLimit:
+			continue
+		default:
+			query.WriteString(fmt.Sprintf("%s=%s&", key, strings.Join(values, ",")))
+		}
+	}
+
+	format := url.Path + "?" + query.String() + "&page[number]=%d&page[limit]=%d"
+
 	return &jsonapi.Links{
 		"self": fmt.Sprintf(format, p.pageNumber, p.Limit()),
 		"next": fmt.Sprintf(format, p.pageNumber+1, p.Limit()),
@@ -52,8 +68,8 @@ func (p *offsetBasedPageParams) GetLinks(linkBase string) *jsonapi.Links {
 type pageOrder string
 
 const (
-	PageOrderDesc = "desc"
-	PageOrderAsc  = "asc"
+	pageOrderDesc = "desc"
+	pageOrderAsc  = "asc"
 )
 
 type cursorBasedPageParams struct {
@@ -71,6 +87,7 @@ func newCursorBasedPageParams(limit uint64, cursor, order string) *cursorBasedPa
 	}
 }
 
+// Limit - returns the limit we can should use for sql query
 func (p *cursorBasedPageParams) Limit() uint64 {
 	if p.limit == 0 {
 		return defaultLimit
@@ -79,24 +96,27 @@ func (p *cursorBasedPageParams) Limit() uint64 {
 	return p.limit
 }
 
+// Order - returns the wished order of response records
 func (p *cursorBasedPageParams) Order() string {
 	if p.order == "" {
-		return PageOrderAsc
+		return pageOrderAsc
 	}
 
 	return p.order
 }
 
+// CursorStr - returns cursor as string
 func (p *cursorBasedPageParams) CursorStr() string {
 	return p.cursor
 }
 
+// CursorUInt64 - returns cursor as uint64
 func (p *cursorBasedPageParams) CursorUInt64() (uint64, error) {
 	if p.cursor == "" {
 		switch p.Order() {
-		case PageOrderAsc:
+		case pageOrderAsc:
 			return 0, nil
-		case PageOrderDesc:
+		case pageOrderDesc:
 			return math.MaxInt64, nil
 		default:
 			return 0, errors.New("Invalid order")
@@ -116,11 +136,12 @@ func (p *cursorBasedPageParams) CursorUInt64() (uint64, error) {
 	return i, nil
 }
 
-type Pageable interface {
+type pageable interface {
 	PagingToken() string
 }
 
-func (p *cursorBasedPageParams) GetLinks(linkBase string, records []Pageable) *jsonapi.Links {
+// Links - returns pagination links we should render to the client
+func (p *cursorBasedPageParams) Links(linkBase string, records []pageable) *jsonapi.Links {
 	format := linkBase + "&page[cursor]=%d&page[limit]=%d&page[order]"
 	return &jsonapi.Links{
 		"self": fmt.Sprintf(format, p.cursor, p.Limit(), p.Order()),
