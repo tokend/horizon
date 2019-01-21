@@ -2,9 +2,9 @@ package operations
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type checkSaleStateOpHandler struct {
@@ -14,10 +14,10 @@ type checkSaleStateOpHandler struct {
 // Details returns details about check sale state operation
 func (h *checkSaleStateOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
-	return history2.OperationDetails{
+) (regources.OperationDetails, error) {
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeCheckSaleState,
-		CheckSaleState: &history2.CheckSaleStateDetails{
+		CheckSaleState: &regources.CheckSaleStateDetails{
 			SaleID: int64(op.Body.MustCheckSaleStateOp().SaleId),
 			Effect: opRes.MustCheckSaleStateResult().MustSuccess().Effect.Effect,
 		},
@@ -82,10 +82,10 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 		AccountID: ownerID,
 		BalanceID: &baseBalanceID,
 		AssetCode: &baseAsset,
-		Effect: history2.Effect{
-			Type: history2.EffectTypeIssued,
-			Issued: &history2.BalanceChangeEffect{
-				Amount: amount.StringU(totalBaseIssued),
+		Effect: regources.Effect{
+			Type: regources.EffectTypeIssued,
+			Issued: &regources.BalanceChangeEffect{
+				Amount: regources.Amount(totalBaseIssued),
 			},
 		},
 	}

@@ -2,9 +2,9 @@ package operations
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type cancelAtomicSwapBidOpHandler struct {
@@ -14,10 +14,10 @@ type cancelAtomicSwapBidOpHandler struct {
 // Details returns details about cancel atomic swap bid operation
 func (h *cancelAtomicSwapBidOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
-	return history2.OperationDetails{
+) (regources.OperationDetails, error) {
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeCancelAswapBid,
-		CancelAtomicSwapBid: &history2.CancelAtomicSwapBidDetails{
+		CancelAtomicSwapBid: &regources.CancelAtomicSwapBidDetails{
 			BidID: int64(op.Body.MustCancelASwapBidOp().BidId),
 		},
 	}, nil
@@ -49,10 +49,10 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 	source.BalanceID = &balanceID
 	atomicSwapBidBaseAsset := string(atomicSwapBid.BaseAsset)
 	source.AssetCode = &atomicSwapBidBaseAsset
-	source.Effect = history2.Effect{
-		Type: history2.EffectTypeUnlocked,
-		Unlocked: &history2.BalanceChangeEffect{
-			Amount: amount.StringU(uint64(atomicSwapBid.Amount)),
+	source.Effect = regources.Effect{
+		Type: regources.EffectTypeUnlocked,
+		Unlocked: &regources.BalanceChangeEffect{
+			Amount: regources.Amount(atomicSwapBid.Amount),
 		},
 	}
 

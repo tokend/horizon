@@ -3,6 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type bindExternalSystemAccountOpHandler struct {
@@ -11,12 +12,12 @@ type bindExternalSystemAccountOpHandler struct {
 // Details returns details about bind external system account operation
 func (h *bindExternalSystemAccountOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	bindExternalSystemAccountOp := op.Body.MustBindExternalSystemAccountIdOp()
 
-	return history2.OperationDetails{
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeBindExternalSystemAccountId,
-		BindExternalSystemAccount: &history2.BindExternalSystemAccountDetails{
+		BindExternalSystemAccount: &regources.BindExternalSystemAccountDetails{
 			ExternalSystemType: int32(bindExternalSystemAccountOp.ExternalSystemType),
 		},
 	}, nil

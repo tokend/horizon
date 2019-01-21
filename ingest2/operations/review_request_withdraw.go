@@ -1,9 +1,10 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type withdrawHandler struct {
@@ -17,26 +18,20 @@ func (h *withdrawHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 ) ([]history2.ParticipantEffect, error) {
 	details := request.Body.MustWithdrawalRequest()
 
-	effect := history2.Effect{
-		Type: history2.EffectTypeChargedFromLocked,
-		ChargedFromLocked: &history2.BalanceChangeEffect{
-			Amount: amount.StringU(uint64(details.Amount)),
-			Fee: history2.Fee{
-				Fixed:             amount.StringU(uint64(details.Fee.Fixed)),
-				CalculatedPercent: amount.StringU(uint64(details.Fee.Percent)),
-			},
+	effect := regources.Effect{
+		Type: regources.EffectTypeChargedFromLocked,
+		ChargedFromLocked: &regources.BalanceChangeEffect{
+			Amount: regources.Amount(details.Amount),
+			Fee:    internal.FeeFromXdr(details.Fee),
 		},
 	}
 
 	if op.Action != xdr.ReviewRequestOpActionApprove {
-		effect = history2.Effect{
-			Type: history2.EffectTypeWithdrawn,
-			Withdrawn: &history2.BalanceChangeEffect{
-				Amount: amount.StringU(uint64(details.Amount)),
-				Fee: history2.Fee{
-					Fixed:             amount.StringU(uint64(details.Fee.Fixed)),
-					CalculatedPercent: amount.StringU(uint64(details.Fee.Percent)),
-				},
+		effect = regources.Effect{
+			Type: regources.EffectTypeWithdrawn,
+			Withdrawn: &regources.BalanceChangeEffect{
+				Amount: regources.Amount(details.Amount),
+				Fee:    internal.FeeFromXdr(details.Fee),
 			},
 		}
 	}

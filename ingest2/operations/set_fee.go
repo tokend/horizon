@@ -1,9 +1,9 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type setFeeOpHandler struct {
@@ -12,13 +12,13 @@ type setFeeOpHandler struct {
 
 // Details returns details about set fee operation
 func (h *setFeeOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	setFeeOp := op.Body.MustSetFeesOp()
 
 	if setFeeOp.IsDelete || setFeeOp.Fee == nil {
-		return history2.OperationDetails{
+		return regources.OperationDetails{
 			Type:   xdr.OperationTypeSetFees,
-			SetFee: &history2.SetFeeDetails{},
+			SetFee: &regources.SetFeeDetails{},
 		}, nil
 	}
 
@@ -30,18 +30,18 @@ func (h *setFeeOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 		*feeAccountAddress = fee.AccountId.Address()
 	}
 
-	return history2.OperationDetails{
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeSetFees,
-		SetFee: &history2.SetFeeDetails{
-			AssetCode:      fee.Asset,
-			FixedFee:       amount.String(int64(fee.FixedFee)),
-			PercentFee:     amount.String(int64(fee.PercentFee)),
+		SetFee: &regources.SetFeeDetails{
+			AssetCode:      string(fee.Asset),
+			FixedFee:       regources.Amount(fee.FixedFee),
+			PercentFee:     regources.Amount(fee.PercentFee),
 			FeeType:        fee.FeeType,
 			AccountAddress: feeAccountAddress,
 			AccountType:    fee.AccountType,
 			Subtype:        int64(fee.Subtype),
-			LowerBound:     amount.String(int64(fee.LowerBound)),
-			UpperBound:     amount.String(int64(fee.UpperBound)),
+			LowerBound:     regources.Amount(fee.LowerBound),
+			UpperBound:     regources.Amount(fee.UpperBound),
 		},
 	}, nil
 }

@@ -4,6 +4,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type manageExternalSystemPoolOpHandler struct {
@@ -12,12 +13,12 @@ type manageExternalSystemPoolOpHandler struct {
 // Details returns details about manage external system pool operation
 func (h *manageExternalSystemPoolOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	manageExternalSystemPoolOp := op.Body.MustManageExternalSystemAccountIdPoolEntryOp()
 
-	operationDetails := history2.OperationDetails{
+	operationDetails := regources.OperationDetails{
 		Type: xdr.OperationTypeManageExternalSystemAccountIdPoolEntry,
-		ManageExternalSystemPool: &history2.ManageExternalSystemPoolDetails{
+		ManageExternalSystemPool: &regources.ManageExternalSystemPoolDetails{
 			Action: manageExternalSystemPoolOp.ActionInput.Action,
 		},
 	}
@@ -27,7 +28,7 @@ func (h *manageExternalSystemPoolOpHandler) Details(op rawOperation,
 		creationDetails := manageExternalSystemPoolOp.ActionInput.
 			MustCreateExternalSystemAccountIdPoolEntryActionInput()
 
-		operationDetails.ManageExternalSystemPool.Create = &history2.CreateExternalSystemPoolDetails{
+		operationDetails.ManageExternalSystemPool.Create = &regources.CreateExternalSystemPoolDetails{
 			Data:               string(creationDetails.Data),
 			ExternalSystemType: int32(creationDetails.ExternalSystemType),
 			Parent:             uint64(creationDetails.Parent),
@@ -35,12 +36,12 @@ func (h *manageExternalSystemPoolOpHandler) Details(op rawOperation,
 				PoolEntryId),
 		}
 	case xdr.ManageExternalSystemAccountIdPoolEntryActionRemove:
-		operationDetails.ManageExternalSystemPool.Remove = &history2.RemoveExternalSystemPoolDetails{
+		operationDetails.ManageExternalSystemPool.Remove = &regources.RemoveExternalSystemPoolDetails{
 			PoolID: uint64(manageExternalSystemPoolOp.ActionInput.
 				MustDeleteExternalSystemAccountIdPoolEntryActionInput().PoolEntryId),
 		}
 	default:
-		return history2.OperationDetails{}, errors.From(
+		return regources.OperationDetails{}, errors.From(
 			errors.New("unexpected manage external system pool action"), map[string]interface{}{
 				"action": int32(operationDetails.ManageExternalSystemPool.Action),
 			})

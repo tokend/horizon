@@ -3,6 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type createAccountOpHandler struct {
@@ -11,12 +12,12 @@ type createAccountOpHandler struct {
 
 // Details returns details about create account operation
 func (h *createAccountOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	createAccOp := op.Body.MustCreateAccountOp()
 
-	return history2.OperationDetails{
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeCreateAccount,
-		CreateAccount: &history2.CreateAccountDetails{
+		CreateAccount: &regources.CreateAccountDetails{
 			AccountAddress: createAccOp.Destination.Address(),
 			AccountType:    createAccOp.AccountType,
 		},

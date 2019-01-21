@@ -3,7 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/horizon/ingest2/internal"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type createManageLimitsRequestOpHandler struct {
@@ -12,18 +12,18 @@ type createManageLimitsRequestOpHandler struct {
 // Details returns details about create limits request operation
 func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()
 
-	var data map[string]interface{}
+	var data []byte
 	rawData, ok := createManageLimitsRequestOp.ManageLimitsRequest.Ext.GetDetails()
 	if ok {
-		data = internal.MarshalCustomDetails(rawData)
+		data = []byte(rawData)
 	}
 
-	return history2.OperationDetails{
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeCreateManageLimitsRequest,
-		CreateManageLimitsRequest: &history2.CreateManageLimitsRequestDetails{
+		CreateManageLimitsRequest: &regources.CreateManageLimitsRequestDetails{
 			Data:      data,
 			RequestID: int64(opRes.MustCreateManageLimitsRequestResult().MustSuccess().ManageLimitsRequestId),
 		},

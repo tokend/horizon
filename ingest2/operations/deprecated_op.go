@@ -5,14 +5,15 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type deprecatedOpHandler struct {
 }
 
 //Details - returns error as deprecated op should never occur
-func (h *deprecatedOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
-	return history2.OperationDetails{}, errors.From(errors.New("Tried to ingest deprecated operation"), logan.F{
+func (h *deprecatedOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr) (regources.OperationDetails, error) {
+	return regources.OperationDetails{}, errors.From(errors.New("Tried to ingest deprecated operation"), logan.F{
 		"op_type": op.Body.Type,
 	})
 }

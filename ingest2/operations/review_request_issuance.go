@@ -1,9 +1,10 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type issuanceHandler struct {
@@ -21,14 +22,11 @@ func (h *issuanceHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 
 	details := request.Body.MustIssuanceRequest()
 
-	effect := history2.Effect{
-		Type: history2.EffectTypeIssued,
-		Issued: &history2.BalanceChangeEffect{
-			Amount: amount.StringU(uint64(details.Amount)),
-			Fee: history2.Fee{
-				Fixed:             amount.StringU(uint64(details.Fee.Fixed)),
-				CalculatedPercent: amount.StringU(uint64(details.Fee.Percent)),
-			},
+	effect := regources.Effect{
+		Type: regources.EffectTypeIssued,
+		Issued: &regources.BalanceChangeEffect{
+			Amount: regources.Amount(details.Amount),
+			Fee:    internal.FeeFromXdr(details.Fee),
 		},
 	}
 

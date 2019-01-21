@@ -1,9 +1,9 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type amlAlertHandler struct {
@@ -17,18 +17,18 @@ func (h *amlAlertHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 ) ([]history2.ParticipantEffect, error) {
 	details := request.Body.MustAmlAlertRequest()
 
-	effect := history2.Effect{
-		Type: history2.EffectTypeWithdrawn,
-		Withdrawn: &history2.BalanceChangeEffect{
-			Amount: amount.StringU(uint64(details.Amount)),
+	effect := regources.Effect{
+		Type: regources.EffectTypeWithdrawn,
+		Withdrawn: &regources.BalanceChangeEffect{
+			Amount: regources.Amount(details.Amount),
 		},
 	}
 
 	if op.Action != xdr.ReviewRequestOpActionApprove {
-		effect = history2.Effect{
-			Type: history2.EffectTypeUnlocked,
-			Unlocked: &history2.BalanceChangeEffect{
-				Amount: amount.StringU(uint64(details.Amount)),
+		effect = regources.Effect{
+			Type: regources.EffectTypeUnlocked,
+			Unlocked: &regources.BalanceChangeEffect{
+				Amount: regources.Amount(details.Amount),
 			},
 		}
 	}

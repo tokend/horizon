@@ -1,11 +1,11 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type createIssuanceRequestOpHandler struct {
@@ -15,7 +15,7 @@ type createIssuanceRequestOpHandler struct {
 // Details returns details about create issuance request operation
 func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	createIssuanceRequestOp := op.Body.MustCreateIssuanceRequestOp()
 	issuanceRequest := createIssuanceRequestOp.Request
 
@@ -28,19 +28,18 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 
 	createIssuanceRequestRes := opRes.MustCreateIssuanceRequestResult().MustSuccess()
 
-	return history2.OperationDetails{
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeCreateIssuanceRequest,
-		CreateIssuanceRequest: &history2.CreateIssuanceRequestDetails{
-			FixedFee:   amount.StringU(uint64(issuanceRequest.Fee.Fixed)),
-			PercentFee: amount.StringU(uint64(issuanceRequest.Fee.Percent)),
-			Reference:  utf8.Scrub(string(createIssuanceRequestOp.Reference)),
-			Amount:     amount.StringU(uint64(issuanceRequest.Amount)),
-			Asset:      issuanceRequest.Asset,
+		CreateIssuanceRequest: &regources.CreateIssuanceRequestDetails{
+			Fee:       internal.FeeFromXdr(issuanceRequest.Fee),
+			Reference: utf8.Scrub(string(createIssuanceRequestOp.Reference)),
+			Amount:    regources.Amount(issuanceRequest.Amount),
+			Asset:     string(issuanceRequest.Asset),
 			ReceiverAccountAddress: createIssuanceRequestRes.Receiver.Address(),
 			ReceiverBalanceAddress: issuanceRequest.Receiver.AsString(),
-			ExternalDetails:        internal.MarshalCustomDetails(issuanceRequest.ExternalDetails),
+			ExternalDetails:        []byte(issuanceRequest.ExternalDetails),
 			AllTasks:               allTasks,
-			RequestDetails: history2.RequestDetails{
+			RequestDetails: regources.RequestDetails{
 				IsFulfilled: createIssuanceRequestRes.Fulfilled,
 			},
 		},
@@ -58,14 +57,11 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 		return []history2.ParticipantEffect{source}, nil
 	}
 
-	effect := history2.Effect{
-		Type: history2.EffectTypeIssued,
-		Issued: &history2.BalanceChangeEffect{
-			Amount: amount.String(int64(issuanceRequest.Amount - issuanceRequest.Fee.Fixed - issuanceRequest.Fee.Percent)),
-			Fee: history2.Fee{
-				Fixed:             amount.StringU(uint64(issuanceRequest.Fee.Fixed)),
-				CalculatedPercent: amount.StringU(uint64(issuanceRequest.Fee.Percent)),
-			},
+	effect := regources.Effect{
+		Type: regources.EffectTypeIssued,
+		Issued: &regources.BalanceChangeEffect{
+			Amount: regources.Amount(issuanceRequest.Amount),
+			Fee:    internal.FeeFromXdr(issuanceRequest.Fee),
 		},
 	}
 

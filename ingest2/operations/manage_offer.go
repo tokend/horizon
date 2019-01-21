@@ -3,9 +3,9 @@ package operations
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type manageOfferOpHandler struct {
@@ -14,7 +14,7 @@ type manageOfferOpHandler struct {
 
 // Details returns details about manage offer operation
 func (h *manageOfferOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	manageOfferOp := op.Body.MustManageOfferOp()
 	manageOfferOpRes := opRes.MustManageOfferResult().MustSuccess()
 
@@ -24,18 +24,20 @@ func (h *manageOfferOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		offerID = int64(manageOfferOpRes.Offer.MustOffer().OfferId)
 	}
 
-	return history2.OperationDetails{
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeManageOffer,
-		ManageOffer: &history2.ManageOfferDetails{
+		ManageOffer: &regources.ManageOfferDetails{
 			OfferID:     offerID,
 			OrderBookID: int64(manageOfferOp.OrderBookId),
-			BaseAsset:   manageOfferOpRes.BaseAsset,
-			QuoteAsset:  manageOfferOpRes.QuoteAsset,
-			Amount:      amount.String(int64(manageOfferOp.Amount)),
-			Price:       amount.String(int64(manageOfferOp.Price)),
+			BaseAsset:   string(manageOfferOpRes.BaseAsset),
+			QuoteAsset:  string(manageOfferOpRes.QuoteAsset),
+			Amount:      regources.Amount(manageOfferOp.Amount),
+			Price:       regources.Amount(manageOfferOp.Price),
 			IsBuy:       manageOfferOp.IsBuy,
-			Fee:         amount.String(int64(manageOfferOp.Fee)),
-			IsDeleted:   isDeleted,
+			Fee: regources.Fee{
+				CalculatedPercent: regources.Amount(manageOfferOp.Fee),
+			},
+			IsDeleted: isDeleted,
 		},
 	}, nil
 }
@@ -85,19 +87,19 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 	newOffer := res.Offer.MustOffer()
 	source.AssetCode = new(string)
 	source.BalanceID = new(uint64)
-	source.Effect = history2.Effect{
-		Type:   history2.EffectTypeLocked,
-		Locked: &history2.BalanceChangeEffect{},
+	source.Effect = regources.Effect{
+		Type:   regources.EffectTypeLocked,
+		Locked: &regources.BalanceChangeEffect{},
 	}
 	if newOffer.IsBuy {
 		*source.BalanceID = h.pubKeyProvider.MustBalanceID(newOffer.QuoteBalance)
 		*source.AssetCode = string(newOffer.Quote)
-		source.Effect.Locked.Amount = amount.String(int64(newOffer.QuoteAmount))
-		source.Effect.Locked.Fee.CalculatedPercent = amount.String(int64(newOffer.PercentFee))
+		source.Effect.Locked.Amount = regources.Amount(newOffer.QuoteAmount)
+		source.Effect.Locked.Fee.CalculatedPercent = regources.Amount(newOffer.PercentFee)
 	} else {
 		*source.BalanceID = h.pubKeyProvider.MustBalanceID(newOffer.BaseBalance)
 		*source.AssetCode = string(newOffer.Base)
-		source.Effect.Locked.Amount = amount.String(int64(newOffer.BaseAmount))
+		source.Effect.Locked.Amount = regources.Amount(newOffer.BaseAmount)
 	}
 
 	participants = append(participants, source)
@@ -123,21 +125,21 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 			AccountID: h.pubKeyProvider.MustAccountID(deletedOffer.OwnerId),
 			BalanceID: new(uint64),
 			AssetCode: new(string),
-			Effect: history2.Effect{
-				Type:     history2.EffectTypeUnlocked,
-				Unlocked: &history2.BalanceChangeEffect{},
+			Effect: regources.Effect{
+				Type:     regources.EffectTypeUnlocked,
+				Unlocked: &regources.BalanceChangeEffect{},
 			},
 		}
 
 		if deletedOffer.IsBuy {
 			*participant.BalanceID = h.pubKeyProvider.MustBalanceID(deletedOffer.QuoteBalance)
 			*participant.AssetCode = string(deletedOffer.Quote)
-			participant.Effect.Unlocked.Amount = amount.String(int64(deletedOffer.QuoteAmount))
-			participant.Effect.Unlocked.Fee.CalculatedPercent = amount.String(int64(deletedOffer.PercentFee))
+			participant.Effect.Unlocked.Amount = regources.Amount(deletedOffer.QuoteAmount)
+			participant.Effect.Unlocked.Fee.CalculatedPercent = regources.Amount(deletedOffer.PercentFee)
 		} else {
 			*participant.BalanceID = h.pubKeyProvider.MustBalanceID(deletedOffer.BaseBalance)
 			*participant.AssetCode = string(deletedOffer.Base)
-			participant.Effect.Unlocked.Amount = amount.String(int64(deletedOffer.BaseAmount))
+			participant.Effect.Unlocked.Amount = regources.Amount(deletedOffer.BaseAmount)
 		}
 
 		result = append(result, participant)
@@ -188,31 +190,31 @@ func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOffe
 
 func (h *manageOfferOpHandler) addParticipantEffects(participants []history2.ParticipantEffect,
 	offer offer, id int64, baseAmount, quoteAmount, price, fee xdr.Int64) []history2.ParticipantEffect {
-	baseBalanceEffect := history2.ParticularBalanceChangeEffect{
+	baseBalanceEffect := regources.ParticularBalanceChangeEffect{
 		BalanceAddress: offer.BaseBalanceAddress,
 		AssetCode:      offer.BaseAsset,
-		BalanceChangeEffect: history2.BalanceChangeEffect{
-			Amount: amount.String(int64(baseAmount)),
+		BalanceChangeEffect: regources.BalanceChangeEffect{
+			Amount: regources.Amount(baseAmount),
 		},
 	}
 
-	quoteBalanceEffect := history2.ParticularBalanceChangeEffect{
+	quoteBalanceEffect := regources.ParticularBalanceChangeEffect{
 		BalanceAddress: offer.QuoteBalanceAddress,
 		AssetCode:      offer.QuoteAsset,
-		BalanceChangeEffect: history2.BalanceChangeEffect{
-			Amount: amount.String(int64(quoteAmount)),
-			Fee: history2.Fee{
-				CalculatedPercent: amount.String(int64(fee)),
+		BalanceChangeEffect: regources.BalanceChangeEffect{
+			Amount: regources.Amount(quoteAmount),
+			Fee: regources.Fee{
+				CalculatedPercent: regources.Amount(fee),
 			},
 		},
 	}
 
-	matchedOfferEffect := history2.Effect{
-		Type: history2.EffectTypeMatched,
-		Matched: &history2.MatchEffect{
+	matchedOfferEffect := regources.Effect{
+		Type: regources.EffectTypeMatched,
+		Matched: &regources.MatchEffect{
 			OfferID:     id,
 			OrderBookID: offer.OrderBookID,
-			Price:       amount.String(int64(price)),
+			Price:       regources.Amount(price),
 		},
 	}
 

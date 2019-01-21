@@ -7,6 +7,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	regources "gitlab.com/tokend/regources/v2"
 )
 
 type reviewRequestOpHandler struct {
@@ -59,17 +60,17 @@ func newReviewRequestOpHandler(pubKeyProvider IDProvider, balanceProvider balanc
 
 // Details returns details about review request operation
 func (h *reviewRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	reviewRequestOp := op.Body.MustReviewRequestOp()
 	reviewRequestOpRes := opRes.MustReviewRequestResult().MustSuccess()
 
 	addedTasks := uint32(reviewRequestOp.ReviewDetails.TasksToAdd)
 	removedTasks := uint32(reviewRequestOp.ReviewDetails.TasksToRemove)
-	externalDetails := string(reviewRequestOp.ReviewDetails.ExternalDetails)
+	externalDetails := []byte(reviewRequestOp.ReviewDetails.ExternalDetails)
 
-	opDetails := history2.OperationDetails{
+	opDetails := regources.OperationDetails{
 		Type: xdr.OperationTypeReviewRequest,
-		ReviewRequest: &history2.ReviewRequestDetails{
+		ReviewRequest: &regources.ReviewRequestDetails{
 			RequestID:       int64(reviewRequestOp.RequestId),
 			RequestType:     reviewRequestOp.RequestDetails.RequestType,
 			RequestHash:     hex.EncodeToString(reviewRequestOp.RequestHash[:]),

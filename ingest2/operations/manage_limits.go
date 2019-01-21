@@ -2,9 +2,9 @@ package operations
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type manageLimitsOpHandler struct {
@@ -13,12 +13,12 @@ type manageLimitsOpHandler struct {
 
 // Details returns details about manage limits operation
 func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	manageLimitsOp := op.Body.MustManageLimitsOp()
 
-	opDetails := history2.OperationDetails{
+	opDetails := regources.OperationDetails{
 		Type: xdr.OperationTypeManageLimits,
-		ManageLimits: &history2.ManageLimitsDetails{
+		ManageLimits: &regources.ManageLimitsDetails{
 			Action: manageLimitsOp.Details.Action,
 		},
 	}
@@ -27,23 +27,23 @@ func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResu
 	case xdr.ManageLimitsActionCreate:
 		creationDetails := manageLimitsOp.Details.MustLimitsCreateDetails()
 
-		opDetails.ManageLimits.Creation = &history2.ManageLimitsCreationDetails{
+		opDetails.ManageLimits.Creation = &regources.ManageLimitsCreationDetails{
 			AccountAddress:  creationDetails.AccountId.Address(), // Address() - smart, check for nil inside
 			AccountType:     creationDetails.AccountType,
 			StatsOpType:     creationDetails.StatsOpType,
-			AssetCode:       creationDetails.AssetCode,
+			AssetCode:       string(creationDetails.AssetCode),
 			IsConvertNeeded: creationDetails.IsConvertNeeded,
-			DailyOut:        amount.StringU(uint64(creationDetails.DailyOut)),
-			WeeklyOut:       amount.StringU(uint64(creationDetails.WeeklyOut)),
-			MonthlyOut:      amount.StringU(uint64(creationDetails.MonthlyOut)),
-			AnnualOut:       amount.StringU(uint64(creationDetails.AnnualOut)),
+			DailyOut:        regources.Amount(creationDetails.DailyOut),
+			WeeklyOut:       regources.Amount(creationDetails.WeeklyOut),
+			MonthlyOut:      regources.Amount(creationDetails.MonthlyOut),
+			AnnualOut:       regources.Amount(creationDetails.AnnualOut),
 		}
 	case xdr.ManageLimitsActionRemove:
-		opDetails.ManageLimits.Removal = &history2.ManageLimitsRemovalDetails{
-			ID: int64(manageLimitsOp.Details.MustId()),
+		opDetails.ManageLimits.Removal = &regources.ManageLimitsRemovalDetails{
+			LimitsID: int64(manageLimitsOp.Details.MustId()),
 		}
 	default:
-		return history2.OperationDetails{}, errors.New("unexpected manage limits action")
+		return regources.OperationDetails{}, errors.New("unexpected manage limits action")
 	}
 
 	return opDetails, nil

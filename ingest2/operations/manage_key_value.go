@@ -1,8 +1,11 @@
 package operations
 
 import (
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type manageKeyValueOpHandler struct {
@@ -10,18 +13,36 @@ type manageKeyValueOpHandler struct {
 
 // Details returns details about manage key value operation
 func (h *manageKeyValueOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	manageKVOp := op.Body.MustManageKeyValueOp()
 
-	var value *xdr.KeyValueEntryValue
+	var value *regources.KeyValue
 	if manageKVOp.Action.Action == xdr.ManageKvActionPut {
 		valueForPtr := manageKVOp.Action.MustValue()
-		value = &valueForPtr
+		value = &regources.KeyValue{
+			Type: valueForPtr.Type,
+		}
+
+		switch valueForPtr.Type {
+		case xdr.KeyValueEntryTypeUint32:
+			value.U32 = new(uint32)
+			*value.U32 = uint32(*valueForPtr.Ui32Value)
+		case xdr.KeyValueEntryTypeString:
+			value.Str = new(string)
+			*value.Str = string(*valueForPtr.StringValue)
+		case xdr.KeyValueEntryTypeUint64:
+			value.U64 = new(uint64)
+			*value.U64 = uint64(*valueForPtr.Ui64Value)
+		default:
+			return regources.OperationDetails{}, errors.From(errors.New("unexpected key value value type"), logan.F{
+				"type": valueForPtr.Type.ShortString(),
+			})
+		}
 	}
 
-	return history2.OperationDetails{
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeManageKeyValue,
-		ManageKeyValue: &history2.ManageKeyValueDetails{
+		ManageKeyValue: &regources.ManageKeyValueDetails{
 			Key:    string(manageKVOp.Key),
 			Action: manageKVOp.Action.Action,
 			Value:  value,

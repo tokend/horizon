@@ -5,6 +5,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 //go:generate mockery -case underscore -name IDProvider -inpkg -testonly
@@ -25,7 +26,7 @@ type balanceProvider interface {
 type handler interface {
 	// Details returns db suitable operation details,
 	// returns error if operation has not existing action (union switch)
-	Details(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
+	Details(op rawOperation, opRes xdr.OperationResultTr) (regources.OperationDetails, error)
 	// ParticipantsEffects returns slice of participant effects of each participants
 	// that was affected by operation, can include effects (changes) on participants balances
 	ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr,

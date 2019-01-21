@@ -1,9 +1,9 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type atomicSwapHandler struct {
@@ -24,10 +24,10 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 		AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.BidOwnerId),
 		BalanceID: &ownerBalanceID,
 		AssetCode: &baseAsset,
-		Effect: history2.Effect{
-			Type: history2.EffectTypeChargedFromLocked,
-			ChargedFromLocked: &history2.BalanceChangeEffect{
-				Amount: amount.StringU(uint64(atomicSwapExtendedResult.BaseAmount)),
+		Effect: regources.Effect{
+			Type: regources.EffectTypeChargedFromLocked,
+			ChargedFromLocked: &regources.BalanceChangeEffect{
+				Amount: regources.Amount(atomicSwapExtendedResult.BaseAmount),
 			},
 		},
 	}}
@@ -38,10 +38,10 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 		AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.PurchaserId),
 		BalanceID: &purchaserBaseBalanceID,
 		AssetCode: &baseAsset,
-		Effect: history2.Effect{
-			Type: history2.EffectTypeFunded,
-			Funded: &history2.BalanceChangeEffect{
-				Amount: amount.StringU(uint64(atomicSwapExtendedResult.BaseAmount)),
+		Effect: regources.Effect{
+			Type: regources.EffectTypeFunded,
+			Funded: &regources.BalanceChangeEffect{
+				Amount: regources.Amount(atomicSwapExtendedResult.BaseAmount),
 			},
 		},
 	})
@@ -66,10 +66,10 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 			AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.BidOwnerId),
 			BalanceID: &ownerBalanceID,
 			AssetCode: &baseAsset,
-			Effect: history2.Effect{
-				Type: history2.EffectTypeUnlocked,
-				Unlocked: &history2.BalanceChangeEffect{
-					Amount: amount.StringU(uint64(bid.Amount)),
+			Effect: regources.Effect{
+				Type: regources.EffectTypeUnlocked,
+				Unlocked: &regources.BalanceChangeEffect{
+					Amount: regources.Amount(bid.Amount),
 				},
 			},
 		})

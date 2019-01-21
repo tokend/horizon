@@ -3,6 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type manageBalanceOpHandler struct {
@@ -11,16 +12,16 @@ type manageBalanceOpHandler struct {
 
 // Details returns details about manage balance operation
 func (h *manageBalanceOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (history2.OperationDetails, error) {
+) (regources.OperationDetails, error) {
 	manageBalanceOp := op.Body.MustManageBalanceOp()
 	manageBalanceRes := opRes.MustManageBalanceResult().MustSuccess()
 
-	return history2.OperationDetails{
+	return regources.OperationDetails{
 		Type: xdr.OperationTypeManageBalance,
-		ManageBalance: &history2.ManageBalanceDetails{
+		ManageBalance: &regources.ManageBalanceDetails{
 			DestinationAccount: manageBalanceOp.Destination.Address(),
 			Action:             manageBalanceOp.Action,
-			Asset:              manageBalanceOp.Asset,
+			Asset:              string(manageBalanceOp.Asset),
 			BalanceAddress:     manageBalanceRes.BalanceId.AsString(),
 		},
 	}, nil
