@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -10,7 +12,6 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
 	"gitlab.com/tokend/regources/v2"
-	"net/http"
 )
 
 // GetAsset - processes request to get asset and it's details by asset code
@@ -52,7 +53,7 @@ type getAssetHandler struct {
 }
 
 // GetAsset returns asset with related resources
-func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*regources.Asset, error) {
+func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*regources.AssetResponse, error) {
 	asset, err := h.AssetsQ.GetByCode(request.Code)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get asset by code")
@@ -61,12 +62,15 @@ func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*regources.Asset
 		return nil, nil
 	}
 
-	response := resources.NewAsset(asset)
+	assetResponse := resources.NewAsset(*asset)
+	response := &regources.AssetResponse{
+		Data: assetResponse,
+	}
 
 	if request.ShouldInclude(requests.IncludeTypeAssetOwner) {
-		response.Owner = &regources.Account{
-			ID: asset.Owner,
-		}
+		assetOwner := resources.NewAccountKey(asset.Owner)
+		response.Data.Relationships.Owner = assetOwner.AsRelation()
+		response.Included.Add(&assetOwner)
 	}
 
 	return response, nil

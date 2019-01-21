@@ -2,12 +2,14 @@ package requests
 
 import (
 	"fmt"
-	"github.com/google/jsonapi"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"math"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/google/jsonapi"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/regources/v2"
 )
 
 const (
@@ -18,20 +20,20 @@ const (
 )
 const defaultLimit uint64 = 15
 
-type offsetBasedPageParams struct {
+type OffsetBasedPageParams struct {
 	limit      uint64
 	pageNumber uint64
 }
 
-func newOffsetBasedPageParams(limit, pageNumber uint64) *offsetBasedPageParams {
-	return &offsetBasedPageParams{
+func newOffsetBasedPageParams(limit, pageNumber uint64) *OffsetBasedPageParams {
+	return &OffsetBasedPageParams{
 		limit,
 		pageNumber,
 	}
 }
 
 // Limit - returns us the limit we can should use for sql query
-func (p *offsetBasedPageParams) Limit() uint64 {
+func (p *OffsetBasedPageParams) Limit() uint64 {
 	if p.limit == 0 {
 		return defaultLimit
 	}
@@ -40,12 +42,12 @@ func (p *offsetBasedPageParams) Limit() uint64 {
 }
 
 // Offset - calculates the actual offset we should use for sql query
-func (p *offsetBasedPageParams) Offset() uint64 {
+func (p *OffsetBasedPageParams) Offset() uint64 {
 	return p.Limit() * p.pageNumber
 }
 
 // Links - returns pagination links we should render to the client
-func (p *offsetBasedPageParams) Links(url *url.URL) *jsonapi.Links {
+func (p *OffsetBasedPageParams) Links(url *url.URL) *regources.Links {
 	var query strings.Builder
 
 	for key, values := range url.Query() {
@@ -59,9 +61,9 @@ func (p *offsetBasedPageParams) Links(url *url.URL) *jsonapi.Links {
 
 	format := url.Path + "?" + query.String() + "&page[number]=%d&page[limit]=%d"
 
-	return &jsonapi.Links{
-		"self": fmt.Sprintf(format, p.pageNumber, p.Limit()),
-		"next": fmt.Sprintf(format, p.pageNumber+1, p.Limit()),
+	return &regources.Links{
+		Self: fmt.Sprintf(format, p.pageNumber, p.Limit()),
+		Next: fmt.Sprintf(format, p.pageNumber+1, p.Limit()),
 	}
 }
 

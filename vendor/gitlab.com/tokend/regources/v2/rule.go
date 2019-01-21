@@ -1,9 +1,13 @@
 package regources
 
 type Rule struct {
-	ID          string                 `jsonapi:"primary,rules"`
-	Resource    string                 `jsonapi:"attr,resource"`
-	Action      string                 `jsonapi:"attr,action"`
-	IsForbidden bool                   `jsonapi:"attr,is_forbidden"`
-	Details     map[string]interface{} `jsonapi:"attr,details"`
+	Key
+	Attributes RuleAttr `json:"attributes"`
+}
+
+type RuleAttr struct {
+	Resource    string                 `json:"resource"`
+	Action      string                 `json:"action"`
+	IsForbidden string                 `json:"is_forbidden"`
+	Details     map[string]interface{} `json:"details"`
 }

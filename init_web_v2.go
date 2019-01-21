@@ -3,10 +3,13 @@ package horizon
 import (
 	"time"
 
+	"net/http"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/rs/cors"
 	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/horizon/db2/core2"
 	hdoorman "gitlab.com/tokend/horizon/doorman"
@@ -74,6 +77,14 @@ func initWebV2Middleware(app *App) {
 	signatureValidator := &SignatureValidator{app.config.SkipCheck}
 
 	m.Use(signatureValidator.MiddlewareV2)
+	m.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		err := problems.NotFound()
+		err.Detail = "Unknown path"
+		err.Meta = &map[string]interface{}{
+			"url": r.URL.String(),
+		}
+		ape.RenderErr(w, err)
+	})
 }
 
 func initWebV2Actions(app *App) {

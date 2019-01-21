@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -10,7 +12,6 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
 	"gitlab.com/tokend/regources/v2"
-	"net/http"
 )
 
 // GetAssetList - processes request to get the list of assets
@@ -34,7 +35,7 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := handler.GetAssetList(request, pageParams.Limit(), pageParams.Offset())
+	result, err := handler.GetAssetList(request, pageParams)
 	if result == nil {
 		ape.RenderErr(w, problems.NotFound())
 		return
@@ -47,9 +48,7 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	links := pageParams.Links(request.URL())
-
-	ape.RenderPage(w, result, links)
+	ape.Render(w, result)
 }
 
 type getAssetListHandler struct {
@@ -59,8 +58,8 @@ type getAssetListHandler struct {
 }
 
 // GetAssetList returns the list of assets with related resources
-func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList, limit, offset uint64) ([]*regources.Asset, error) {
-	q := h.AssetsQ.Page(limit, offset)
+func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList, pageParams *requests.OffsetBasedPageParams) (*regources.AssetsResponse, error) {
+	q := h.AssetsQ.Page(pageParams.Limit(), pageParams.Offset())
 	if request.ShouldFilter(requests.FilterTypeAssetListOwner) {
 		q = q.FilterByOwner(request.Filters.Owner)
 	}
@@ -72,15 +71,18 @@ func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList, limit
 		return nil, errors.Wrap(err, "Failed to get asset list")
 	}
 
-	response := make([]*regources.Asset, 0, len(assets))
+	response := &regources.AssetsResponse{
+		Data:  make([]regources.Asset, 0, len(assets)),
+		Links: pageParams.Links(request.URL()),
+	}
 	for i := range assets {
-		asset := resources.NewAsset(&assets[i])
+		asset := resources.NewAsset(assets[i])
 		if request.ShouldInclude(requests.IncludeTypeAssetListOwners) {
-			asset.Owner = &regources.Account{
-				ID: assets[i].Owner,
-			}
+			owner := resources.NewAccountKey(assets[i].Owner)
+			asset.Relationships.Owner = owner.AsRelation()
+			response.Included.Add(&owner)
 		}
-		response = append(response, asset)
+		response.Data = append(response.Data, asset)
 	}
 
 	return response, nil

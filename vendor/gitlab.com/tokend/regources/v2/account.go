@@ -1,16 +1,18 @@
 package regources
 
-// Account - resource object representing AccountEntry
-type Account struct {
-	ID       string        `jsonapi:"primary,accounts"`
-	State    *AccountState `jsonapi:"relation,state,omitempty"`
-	Role     *Role         `jsonapi:"relation,role,omitempty"`
-	Balances []*Balance    `jsonapi:"relation,balances,omitempty"`
-	Referrer *Account      `jsonapi:"relation,referrer,omitempty"`
+type AccountResponse struct {
+	Data     Account  `json:"data"`
+	Included Included `json:"included"`
 }
 
-type AccountState struct {
-	ID           string `jsonapi:"primary,account_states"`
-	BlockReasons *Mask  `jsonapi:"attr,block_reasons,omitempty"`
-	IsBlocked    bool   `jsonapi:"attr,is_blocked"`
+// Account - Resource object representing AccountEntry
+type Account struct {
+	Key
+	Relationships AccountRelationships `json:"relationships"`
+}
+
+type AccountRelationships struct {
+	Role     *Relation           `json:"role,omitempty"`
+	Balances *RelationCollection `json:"balances,omitempty"`
+	Referrer *Relation           `json:"referrer,omitempty"`
 }

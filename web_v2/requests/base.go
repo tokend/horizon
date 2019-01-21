@@ -1,23 +1,26 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/figure"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 
+	"gitlab.com/distributed_lab/figure"
+
 	"fmt"
 
 	"github.com/go-chi/chi"
 	"github.com/go-ozzo/ozzo-validation"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 //base - base struct describing params provided by user for the request handler
 type base struct {
-	include map[string]struct{}
-	filter  map[string]string
+	include           map[string]struct{}
+	supportedIncludes map[string]struct{}
+	filter            map[string]string
 
 	queryValues *url.Values
 	request     *http.Request
@@ -31,7 +34,8 @@ type baseOpts struct {
 // newRequest - creates new instance of request
 func newBase(r *http.Request, opts baseOpts) (*base, error) {
 	request := base{
-		request: r,
+		request:           r,
+		supportedIncludes: opts.supportedIncludes,
 	}
 
 	err := request.unmarshalQuery(opts)
@@ -97,7 +101,14 @@ func (r *base) ShouldFilter(name string) bool {
 }
 
 //ShouldInclude - returns true if user requested to include resource
+// panics if tries to check not supported include
 func (r *base) ShouldInclude(name string) bool {
+	if _, ok := r.supportedIncludes[name]; !ok {
+		panic(errors.From(errors.New("unexpected include check of the request"), logan.F{
+			"supported_includes": getSliceOfSupportedIncludes(r.supportedIncludes),
+			"checking_include":   name,
+		}))
+	}
 	_, ok := r.include[name]
 	return ok
 }
@@ -105,9 +116,8 @@ func (r *base) ShouldInclude(name string) bool {
 //ShouldIncludeAny - returns true if user requested to include one of the provided resources
 func (r *base) ShouldIncludeAny(names ...string) bool {
 	for _, name := range names {
-		_, ok := r.include[name]
-		if ok {
-			return ok
+		if r.ShouldInclude(name) {
+			return true
 		}
 	}
 
@@ -171,13 +181,25 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 			}
 		}
 
-		requestIncludes[include] = struct{}{}
+		// Note: Because compound documents require full linkage (except when relationship linkage is excluded by sparse fieldsets),
+		// intermediate resources in a multi-part path must be returned along with the leaf nodes. For example,
+		// a response to a request for comments.author should include comments as well as the author of each of those comments.
+		subIncludes := strings.Split(include, ".")
+		parentInclude := ""
+		for i := range subIncludes {
+			if parentInclude == "" {
+				parentInclude = subIncludes[i]
+			} else {
+				parentInclude += "." + subIncludes[i]
+			}
+			requestIncludes[parentInclude] = struct{}{}
+		}
 	}
 
 	return requestIncludes, nil
 }
 
-func (r *base) GetOffsetBasedPageParams() (*offsetBasedPageParams, error) {
+func (r *base) GetOffsetBasedPageParams() (*OffsetBasedPageParams, error) {
 	limit, err := r.getUint64(pageParamLimit)
 	if err != nil {
 		return nil, err

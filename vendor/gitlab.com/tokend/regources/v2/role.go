@@ -1,7 +1,15 @@
 package regources
 
 type Role struct {
-	ID      string                 `jsonapi:"primary,roles"`
-	Details map[string]interface{} `jsonapi:"attr,details"`
-	Rules   []*Rule                `jsonapi:"relation,rules,omitempty"`
+	Key
+	Attributes    RoleAsstr    `json:"attributes"`
+	Relationships RoleRelation `json:"relationships"`
+}
+
+type RoleAsstr struct {
+	Details map[string]interface{} `json:"details"`
+}
+
+type RoleRelation struct {
+	Rules *RelationCollection `json:"rules"`
 }

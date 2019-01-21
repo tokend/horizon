@@ -26,7 +26,6 @@ var includeTypeAccountAll = map[string]struct{}{
 	IncludeTypeAccountBalancesAsset:   {},
 	IncludeTypeAccountBalancesState:   {},
 	IncludeTypeAccountAccountReferrer: {},
-	IncludeTypeAccountState:           {},
 	IncludeTypeAccountRole:            {},
 	IncludeTypeAccountRoleRules:       {},
 }
