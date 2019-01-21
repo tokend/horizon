@@ -200,7 +200,7 @@ func (r *base) GetCursorBasedPageParams() (*cursorBasedPageParams, error) {
 	}
 
 	order := r.getString(pageParamOrder)
-	if order != PageOrderAsc && order != PageOrderDesc {
+	if order != pageOrderAsc && order != pageOrderDesc {
 		return nil, validation.Errors{
 			pageParamOrder: errors.New("Must be a valid uint64 value"),
 		}

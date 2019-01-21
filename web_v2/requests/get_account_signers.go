@@ -5,11 +5,13 @@ import (
 )
 
 const (
+	// IncludeTypeSignerRoles - defines if signer roles should be included in the response
 	IncludeTypeSignerRoles      = "roles"
+	// IncludeTypeSignerRolesRules - defines if rules of signer roles should be included in the response
 	IncludeTypeSignerRolesRules = "roles.rules"
 )
 
-var IncludeTypeSignerAll = map[string]struct{}{
+var includeTypeSignerAll = map[string]struct{}{
 	IncludeTypeSignerRoles:      {},
 	IncludeTypeSignerRolesRules: {},
 }
@@ -23,7 +25,7 @@ type GetAccountSigners struct {
 //NewGetAccountSigners - returns new instance of GetAccountSigners request
 func NewGetAccountSigners(r *http.Request) (*GetAccountSigners, error) {
 	b, err := newBase(r, baseOpts{
-		supportedIncludes: IncludeTypeSignerAll,
+		supportedIncludes: includeTypeSignerAll,
 	})
 	if err != nil {
 		return nil, err

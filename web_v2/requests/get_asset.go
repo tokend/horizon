@@ -3,10 +3,11 @@ package requests
 import "net/http"
 
 const (
+	// IncludeTypeAssetOwner - defines if the asset owner should be included in the response
 	IncludeTypeAssetOwner = "owner"
 )
 
-var IncludeTypeAssetAll = map[string]struct{}{
+var includeTypeAssetAll = map[string]struct{}{
 	IncludeTypeAssetOwner: {},
 }
 
@@ -19,7 +20,7 @@ type GetAsset struct {
 // NewGetAsset returns new instance of GetAsset request
 func NewGetAsset(r *http.Request) (*GetAsset, error) {
 	b, err := newBase(r, baseOpts{
-		supportedIncludes: IncludeTypeAssetAll,
+		supportedIncludes: includeTypeAssetAll,
 	})
 	if err != nil {
 		return nil, err

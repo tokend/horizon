@@ -13,7 +13,7 @@ import (
 	"net/http"
 )
 
-// GetAsset - processes request to get asset list
+// GetAssetList - processes request to get the list of assets
 func GetAssetList(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getAssetListHandler{
@@ -47,7 +47,7 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	links := pageParams.GetLinks(request.URL())
+	links := pageParams.Links(request.URL())
 
 	ape.RenderPage(w, result, links)
 }
