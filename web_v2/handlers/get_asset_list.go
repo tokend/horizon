@@ -40,6 +40,9 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
+		ctx.Log(r).WithError(err).Error("failed to get asset list", logan.F{
+			"request": request,
+		})
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
