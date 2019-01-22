@@ -68,11 +68,13 @@ func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*reg
 
 	for i := range assets {
 		asset := resources.NewAsset(assets[i])
+		owner := resources.NewAccountKey(assets[i].Owner)
+		asset.Relationships.Owner = owner.AsRelation()
+
 		if request.ShouldInclude(requests.IncludeTypeAssetListOwners) {
-			owner := resources.NewAccountKey(assets[i].Owner)
-			asset.Relationships.Owner = owner.AsRelation()
 			response.Included.Add(&owner)
 		}
+
 		response.Data = append(response.Data, asset)
 	}
 
