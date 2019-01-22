@@ -29,13 +29,7 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pageParams, err := request.GetOffsetBasedPageParams()
-	if err != nil {
-		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
-	result, err := handler.GetAssetList(request, pageParams)
+	result, err := handler.GetAssetList(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get asset list", logan.F{
 			"request": request,
@@ -54,8 +48,8 @@ type getAssetListHandler struct {
 }
 
 // GetAssetList returns the list of assets with related resources
-func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList, pageParams *requests.OffsetBasedPageParams) (*regources.AssetsResponse, error) {
-	q := h.AssetsQ.Page(pageParams.Limit(), pageParams.Offset())
+func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*regources.AssetsResponse, error) {
+	q := h.AssetsQ.Page(request.PageParams.Limit(), request.PageParams.Offset())
 	if request.ShouldFilter(requests.FilterTypeAssetListOwner) {
 		q = q.FilterByOwner(request.Filters.Owner)
 	}
@@ -69,8 +63,9 @@ func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList, pageP
 
 	response := &regources.AssetsResponse{
 		Data:  make([]regources.Asset, 0, len(assets)),
-		Links: pageParams.Links(request.URL()),
+		Links: request.PageParams.Links(request.URL()),
 	}
+
 	for i := range assets {
 		asset := resources.NewAsset(assets[i])
 		if request.ShouldInclude(requests.IncludeTypeAssetListOwners) {

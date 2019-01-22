@@ -54,7 +54,7 @@ func NewGetAssetPairList(r *http.Request) (*GetAssetPairList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.GetOffsetBasedPageParams()
+	pageParams, err := b.getOffsetBasedPageParams()
 	if err != nil {
 		return nil, err
 	}

@@ -203,7 +203,7 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 	return requestIncludes, nil
 }
 
-func (r *base) GetOffsetBasedPageParams() (*OffsetBasedPageParams, error) {
+func (r *base) getOffsetBasedPageParams() (*OffsetBasedPageParams, error) {
 	limit, err := r.getLimit(defaultLimit, maxLimit)
 	if err != nil {
 		return nil, validation.Errors{
