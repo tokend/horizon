@@ -14,7 +14,7 @@ type Trades struct {
 	BaseAsset   string    `json:"base_asset"`
 	QuoteAsset  string    `json:"quote_asset"`
 	BaseAmount  string    `json:"base_amount"`
-	QuoteAmount string    `json:"quote_asset"`
+	QuoteAmount string    `json:"quote_amount"`
 	Price       string    `json:"price"`
 	CreatedAt   time.Time `json:"created_at"`
 }
