@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"fmt"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
@@ -9,6 +10,15 @@ import (
 var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details",
 	"max_issuance_amount", "available_for_issueance", "issued",
 	"pending_issuance", "policies", "trailing_digits"}
+
+func getAssetColumns(tableName string) []string {
+	result := make([]string, 0, len(assetColumns))
+	for _, column := range assetColumns {
+		result = append(result, fmt.Sprintf(`%s.%s "%s.%s"`, tableName, column, tableName, column))
+	}
+
+	return result
+}
 
 //AssetsQ - helper struct to load assets from db
 type AssetsQ struct {
