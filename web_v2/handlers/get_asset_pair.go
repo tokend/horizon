@@ -64,13 +64,13 @@ func (h *getAssetPairHandler) GetAssetPair(request *requests.GetAssetPair) (*reg
 		Data: resources.NewAssetPair(*coreAssetPair),
 	}
 
-	baseAssetKey := resources.NewAssetKey(coreAssetPair.BaseAsset)
-	quoteAssetKey := resources.NewAssetKey(coreAssetPair.QuoteAsset)
+	baseAssetKey := resources.NewAssetKey(coreAssetPair.Base)
+	quoteAssetKey := resources.NewAssetKey(coreAssetPair.Quote)
 	response.Data.Relationships.BaseAsset = baseAssetKey.AsRelation()
 	response.Data.Relationships.QuoteAsset = quoteAssetKey.AsRelation()
 
 	if request.ShouldInclude(requests.IncludeTypeAssetPairBaseAsset) {
-		baseAsset, err := h.getAsset(coreAssetPair.BaseAsset)
+		baseAsset, err := h.getAsset(coreAssetPair.Base)
 		if err != nil {
 			return nil, errors.Wrap(err, "Failed to get base asset")
 		}
@@ -79,7 +79,7 @@ func (h *getAssetPairHandler) GetAssetPair(request *requests.GetAssetPair) (*reg
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeAssetPairQuoteAsset) {
-		quoteAsset, err := h.getAsset(coreAssetPair.BaseAsset)
+		quoteAsset, err := h.getAsset(coreAssetPair.Quote)
 		if err != nil {
 			return nil, errors.Wrap(err, "Failed to get quote asset")
 		}

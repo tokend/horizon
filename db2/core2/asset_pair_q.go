@@ -64,6 +64,24 @@ func (q AssetPairsQ) Page(limit, offset uint64) AssetPairsQ {
 	return q
 }
 
+// WithBaseAsset - joins base asset
+func (q AssetPairsQ) WithBaseAsset() AssetPairsQ {
+	q.selector = q.selector.
+		Columns(getAssetColumns("base_assets")...).
+		LeftJoin("asset base_assets ON asset_pairs.base = base_assets.code")
+
+	return q
+}
+
+// WithQuoteAsset - joins quote asset
+func (q AssetPairsQ) WithQuoteAsset() AssetPairsQ {
+	q.selector = q.selector.
+		Columns(getAssetColumns("quote_assets")...).
+		LeftJoin("asset quote_assets ON asset_pairs.quote = quote_assets.code")
+
+	return q
+}
+
 // Get - loads a row from `asset_pairs`
 // returns nil, nil - if asset pair does not exists
 // returns error if more than one asset pair found

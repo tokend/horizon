@@ -11,7 +11,7 @@ import (
 func NewAssetPair(record core2.AssetPair) regources.AssetPair {
 	return regources.AssetPair{
 		Key: regources.Key{
-			ID:   fmt.Sprintf("%s:%s", record.BaseAsset, record.QuoteAsset),
+			ID:   fmt.Sprintf("%s:%s", record.Base, record.Quote),
 			Type: regources.TypeAssetPairs,
 		},
 		Attributes: regources.AssetPairAttrs{
