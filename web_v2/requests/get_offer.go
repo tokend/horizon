@@ -17,7 +17,7 @@ var includeTypeOfferAll = map[string]struct{}{
 // GetOffer represents params to be specified by user for getOffer handler
 type GetOffer struct {
 	*base
-	ID string
+	ID uint64
 }
 
 // NewGetOffer returns new instance of the GetOffer request
@@ -29,7 +29,10 @@ func NewGetOffer(r *http.Request) (*GetOffer, error) {
 		return nil, err
 	}
 
-	id := b.getString("id")
+	id, err := b.getUint64("id")
+	if err != nil {
+		return nil, err
+	}
 
 	return &GetOffer{
 		base: b,

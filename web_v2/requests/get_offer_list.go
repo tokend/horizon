@@ -1,6 +1,9 @@
 package requests
 
-import "net/http"
+import (
+	"gitlab.com/tokend/horizon/db2"
+	"net/http"
+)
 
 const (
 	// IncludeTypeOfferListBaseAssets - defines if the base assets should be included in the response
@@ -48,10 +51,10 @@ type GetOfferList struct {
 		BaseAsset    string `fig:"base_asset"`
 		QuoteAsset   string `fig:"quote_asset"`
 		Owner        string `fig:"owner"`
-		OrderBook    string `fig:"order_book"`
+		OrderBook    uint64 `fig:"order_book"`
 		IsBuy        bool   `fig:"is_buy"`
 	}
-	PageParams *offsetBasedPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetOfferList - returns new instance of GetOfferList

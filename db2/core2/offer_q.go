@@ -65,7 +65,7 @@ func (q OffersQ) FilterByOwnerID(id string) OffersQ {
 }
 
 // FilterByOrderBookID - returns q with filter by order book ID
-func (q OffersQ) FilterByOrderBookID(id string) OffersQ {
+func (q OffersQ) FilterByOrderBookID(id uint64) OffersQ {
 	q.selector = q.selector.Where("offers.order_book_id = ?", id)
 	return q
 }
@@ -77,28 +77,27 @@ func (q OffersQ) FilterByIsBuy(isBuy bool) OffersQ {
 }
 
 // FilterByOfferID - returns q with filter by offer ID
-func (q OffersQ) FilterByOfferID (id string) OffersQ {
+func (q OffersQ) FilterByOfferID(id uint64) OffersQ {
 	q.selector = q.selector.Where("offers.offer_id = ?", id)
 	return q
 }
 
 // Page - returns Q with specified limit and offset params
-func (q OffersQ) Page(limit, offset uint64) OffersQ {
-	q.selector = q.selector.Limit(limit).Offset(offset)
+func (q OffersQ) Page(params db2.OffsetPageParams) OffersQ {
+	q.selector = params.ApplyTo(q.selector, "offers.offer_id")
 	return q
 }
 
 // GetByOfferID - loads a row from `offers` found with offer ID
 // returns nil, nil - if such offer doesn't exist
-func (q OffersQ) GetByOfferID (id string) (*Offer, error){
+func (q OffersQ) GetByOfferID(id uint64) (*Offer, error) {
 	return q.FilterByOfferID(id).Get()
 }
-
 
 // WithBaseAsset - joins base asset
 func (q OffersQ) WithBaseAsset() OffersQ {
 	q.selector = q.selector.
-		Columns(getAssetColumns("base_assets")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "base_assets")...).
 		LeftJoin("asset base_assets ON offers.base_asset_code = base_assets.code")
 
 	return q
@@ -107,7 +106,7 @@ func (q OffersQ) WithBaseAsset() OffersQ {
 // WithQuoteAsset - joins quote asset
 func (q OffersQ) WithQuoteAsset() OffersQ {
 	q.selector = q.selector.
-		Columns(getAssetColumns("quote_assets")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "quote_assets")...).
 		LeftJoin("asset quote_assets ON offers.quote_asset_code = quote_assets.code")
 
 	return q

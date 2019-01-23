@@ -29,6 +29,10 @@ func GetOfferList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isAllowed(r, w,request.Filters.Owner) {
+		return
+	}
+
 	result, err := handler.GetOfferList(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get offer list", logan.F{
@@ -50,7 +54,7 @@ type getOfferListHandler struct {
 
 // GetOfferList returns offer with related resources
 func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*regources.OffersResponse, error) {
-	q := h.OffersQ.Page(request.PageParams.Limit(), request.PageParams.Offset())
+	q := h.OffersQ.Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeOfferListBaseBalance) {
 		q = q.FilterByBaseBalanceID(request.Filters.BaseBalance)
@@ -95,37 +99,27 @@ func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*reg
 
 	response := &regources.OffersResponse{
 		Data:  make([]regources.Offer, 0, len(coreOffers)),
-		Links: request.PageParams.Links(request.URL()),
+		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 
 	for _, coreOffer := range coreOffers {
 		offer := resources.NewOffer(coreOffer)
 
-		ownerKey := resources.NewAccountKey(coreOffer.OwnerID)
-		baseAssetKey := resources.NewAssetKey(coreOffer.BaseAssetCode)
-		quoteAssetKey := resources.NewAssetKey(coreOffer.QuoteAssetCode)
-		baseBalanceKey := resources.NewBalanceKey(coreOffer.BaseBalanceID)
-		quoteBalanceKey := resources.NewBalanceKey(coreOffer.QuoteBalanceID)
-
-		offer.Relationships.Owner = ownerKey.AsRelation()
-		offer.Relationships.BaseAsset = baseAssetKey.AsRelation()
-		offer.Relationships.QuoteAsset = quoteAssetKey.AsRelation()
-		offer.Relationships.BaseBalance = baseBalanceKey.AsRelation()
-		offer.Relationships.QuoteBalance = quoteBalanceKey.AsRelation()
+		offer.Relationships.Owner = resources.NewAccountKey(coreOffer.OwnerID).AsRelation()
+		offer.Relationships.BaseAsset = resources.NewAssetKey(coreOffer.BaseAssetCode).AsRelation()
+		offer.Relationships.QuoteAsset = resources.NewAssetKey(coreOffer.QuoteAssetCode).AsRelation()
+		offer.Relationships.BaseBalance = resources.NewBalanceKey(coreOffer.BaseBalanceID).AsRelation()
+		offer.Relationships.QuoteBalance = resources.NewBalanceKey(coreOffer.QuoteBalanceID).AsRelation()
 
 		response.Data = append(response.Data, offer)
 
 		if request.ShouldInclude(requests.IncludeTypeOfferListBaseAssets) {
-			coreBaseAsset := coreOffer.BaseAsset
-			baseAsset := resources.NewAsset(*coreBaseAsset)
-
+			baseAsset := resources.NewAsset(*coreOffer.BaseAsset)
 			response.Included.Add(&baseAsset)
 		}
 
 		if request.ShouldInclude(requests.IncludeTypeOfferListQuoteAssets) {
-			coreQuoteAsset := coreOffer.QuoteAsset
-			quoteAsset := resources.NewAsset(*coreQuoteAsset)
-
+			quoteAsset := resources.NewAsset(*coreOffer.QuoteAsset)
 			response.Included.Add(&quoteAsset)
 		}
 	}

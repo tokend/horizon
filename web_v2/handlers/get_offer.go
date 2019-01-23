@@ -39,6 +39,10 @@ func GetOffer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isAllowed(r, w, result.Data.Relationships.Owner.Data.ID) {
+		return
+	}
+
 	if result == nil {
 		ape.RenderErr(w, problems.NotFound())
 		return
@@ -79,17 +83,11 @@ func (h *getOfferHandler) GetOffer(request *requests.GetOffer) (*regources.Offer
 		Data: offer,
 	}
 
-	offerOwner := resources.NewAccountKey(coreOffer.OwnerID)
-	offerBaseAsset := resources.NewAssetKey(coreOffer.BaseAssetCode)
-	offerQuoteAsset := resources.NewAssetKey(coreOffer.QuoteAssetCode)
-	offerBaseBalance := resources.NewBalanceKey(coreOffer.BaseBalanceID)
-	offerQuoteBalance := resources.NewBalanceKey(coreOffer.QuoteBalanceID)
-
-	response.Data.Relationships.Owner = offerOwner.AsRelation()
-	response.Data.Relationships.BaseAsset = offerBaseAsset.AsRelation()
-	response.Data.Relationships.QuoteAsset = offerQuoteAsset.AsRelation()
-	response.Data.Relationships.BaseBalance = offerBaseBalance.AsRelation()
-	response.Data.Relationships.QuoteBalance = offerQuoteBalance.AsRelation()
+	response.Data.Relationships.Owner = resources.NewAccountKey(coreOffer.OwnerID).AsRelation()
+	response.Data.Relationships.BaseAsset = resources.NewAssetKey(coreOffer.BaseAssetCode).AsRelation()
+	response.Data.Relationships.QuoteAsset = resources.NewAssetKey(coreOffer.QuoteAssetCode).AsRelation()
+	response.Data.Relationships.BaseBalance = resources.NewBalanceKey(coreOffer.BaseBalanceID).AsRelation()
+	response.Data.Relationships.QuoteBalance = resources.NewBalanceKey(coreOffer.QuoteBalanceID).AsRelation()
 
 	if request.ShouldInclude(requests.IncludeTypeOfferBaseAsset) {
 		coreBaseAsset := coreOffer.BaseAsset
