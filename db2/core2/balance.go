@@ -1,5 +1,6 @@
 package core2
 
+// Balance - the db representation of balance
 type Balance struct {
 	BalanceAddress string `db:"balance_id"`
 	AssetCode      string `db:"asset"`

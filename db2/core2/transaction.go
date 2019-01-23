@@ -43,7 +43,7 @@ func (tx *Transaction) MustResultXDR() string {
 	return out
 }
 
-// ResultMetaXDR returns the XDR encoded result meta for this transaction
+// MustResultMetaXDR returns the XDR encoded result meta for this transaction
 func (tx *Transaction) MustResultMetaXDR() string {
 	out, err := xdr.MarshalBase64(tx.ResultMeta)
 	if err != nil {
