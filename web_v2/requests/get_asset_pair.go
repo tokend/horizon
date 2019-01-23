@@ -38,7 +38,7 @@ func NewGetAssetPair(r *http.Request) (*GetAssetPair, error) {
 
 	id := b.getString("id")
 
-	baseAsset, quoteAsset, err := getAssetCodesFromId(id)
+	baseAsset, quoteAsset, err := getAssetCodesFromID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func NewGetAssetPair(r *http.Request) (*GetAssetPair, error) {
 
 // assetCodesFromId receives the compound ID in `base:quote` format and
 // returns separately both codes or validation error if id is invalid
-func getAssetCodesFromId(id string) (baseAsset, quoteAsset string, err error) {
+func getAssetCodesFromID(id string) (baseAsset, quoteAsset string, err error) {
 	codes := strings.Split(id, ":")
 	if len(codes) != 2 || codes[0] == "" || codes[1] == "" {
 		err = validation.Errors{
