@@ -41,7 +41,7 @@ type GetAssetPairList struct {
 		BaseAsset  string `fig:"base_asset"`
 		QuoteAsset string `fig:"quote_asset"`
 	}
-	PageParams *OffsetBasedPageParams
+	PageParams *offsetBasedPageParams
 }
 
 // NewGetAssetPairList returns new instance of GetAssetPairList request

@@ -2,6 +2,7 @@ package resources
 
 import "gitlab.com/tokend/regources/v2"
 
+// NewRule - returns a new (mocked) instance of rule
 func NewRule() regources.Rule {
 	return regources.Rule{
 		Key: regources.Key{
@@ -18,6 +19,7 @@ func NewRule() regources.Rule {
 	}
 }
 
+// NewRuleKey - returns a new (mocked) rule key
 func NewRuleKey() regources.Key {
 	return regources.Key{
 		ID:   "mocked_rule_id",

@@ -30,7 +30,7 @@ type GetAssetList struct {
 		Policy uint64 `fig:"policy"`
 		Owner  string `fig:"owner"`
 	}
-	PageParams *OffsetBasedPageParams
+	PageParams *offsetBasedPageParams
 }
 
 // NewGetAssetList returns the new instance of GetAssetList request
