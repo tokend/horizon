@@ -1,0 +1,109 @@
+package handlers
+
+import (
+	"net/http"
+
+	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2/core2"
+	"gitlab.com/tokend/horizon/web_v2/ctx"
+	"gitlab.com/tokend/horizon/web_v2/requests"
+	"gitlab.com/tokend/horizon/web_v2/resources"
+	"gitlab.com/tokend/regources/v2"
+)
+
+// GetOffer - processes request to get offer and it's details by it's ID
+func GetOffer(w http.ResponseWriter, r *http.Request) {
+	coreRepo := ctx.CoreRepo(r)
+	handler := getOfferHandler{
+		Log:       ctx.Log(r),
+		OffersQ:   core2.NewOffersQ(coreRepo),
+		AssetsQ:   core2.NewAssetsQ(coreRepo),
+		AccountsQ: core2.NewAccountsQ(coreRepo),
+	}
+
+	request, err := requests.NewGetOffer(r)
+	if err != nil {
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	result, err := handler.GetOffer(request)
+	if err != nil {
+		ctx.Log(r).WithError(err).Error("failed to get offer", logan.F{
+			"request": request,
+		})
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+
+	if result == nil {
+		ape.RenderErr(w, problems.NotFound())
+		return
+	}
+
+	ape.Render(w, result)
+}
+
+type getOfferHandler struct {
+	OffersQ   core2.OffersQ
+	AssetsQ   core2.AssetsQ
+	AccountsQ core2.AccountsQ
+	Log       *logan.Entry
+}
+
+// GetOffer returns asset with related resources
+func (h *getOfferHandler) GetOffer(request *requests.GetOffer) (*regources.OfferResponse, error) {
+	q := h.OffersQ
+
+	if request.ShouldInclude(requests.IncludeTypeOfferBaseAsset) {
+		q = q.WithBaseAsset()
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeOfferQuoteAsset) {
+		q = q.WithQuoteAsset()
+	}
+
+	coreOffer, err := q.GetByOfferID(request.ID)
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to get offer by ID")
+	}
+	if coreOffer == nil {
+		return nil, nil
+	}
+
+	offer := resources.NewOffer(*coreOffer)
+	response := &regources.OfferResponse{
+		Data: offer,
+	}
+
+	offerOwner := resources.NewAccountKey(coreOffer.OwnerID)
+	offerBaseAsset := resources.NewAssetKey(coreOffer.BaseAssetCode)
+	offerQuoteAsset := resources.NewAssetKey(coreOffer.QuoteAssetCode)
+	offerBaseBalance := resources.NewBalanceKey(coreOffer.BaseBalanceID)
+	offerQuoteBalance := resources.NewBalanceKey(coreOffer.QuoteBalanceID)
+
+	response.Data.Relationships.Owner = offerOwner.AsRelation()
+	response.Data.Relationships.BaseAsset = offerBaseAsset.AsRelation()
+	response.Data.Relationships.QuoteAsset = offerQuoteAsset.AsRelation()
+	response.Data.Relationships.BaseBalance = offerBaseBalance.AsRelation()
+	response.Data.Relationships.QuoteBalance = offerQuoteBalance.AsRelation()
+
+	if request.ShouldInclude(requests.IncludeTypeOfferBaseAsset) {
+		coreBaseAsset := coreOffer.BaseAsset
+		baseAsset := resources.NewAsset(*coreBaseAsset)
+
+		response.Included.Add(&baseAsset)
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeOfferQuoteAsset) {
+		coreQuoteAsset := coreOffer.QuoteAsset
+		quoteAsset := resources.NewAsset(*coreQuoteAsset)
+
+		response.Included.Add(&quoteAsset)
+	}
+
+	return response, nil
+}
