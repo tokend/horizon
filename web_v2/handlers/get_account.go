@@ -79,36 +79,33 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		Data: resources.NewAccount(*account),
 	}
 
-	if request.ShouldIncludeAny(
-		requests.IncludeTypeAccountRole,
-		requests.IncludeTypeAccountRoleRules,
-	) {
-		response.Data.Relationships.Referrer, err = h.getRole(request, &response.Included)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to include role")
-		}
+	response.Data.Relationships.Role, err = h.getRole(request, &response.Included)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get role")
 	}
 
-	if request.ShouldInclude(requests.IncludeTypeAccountBalances) {
-		response.Data.Relationships.Balances, err = h.getBalances(request, &response.Included)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to include balances")
-		}
+	response.Data.Relationships.Balances, err = h.getBalances(request, &response.Included)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get balances")
 	}
 
-	if request.ShouldInclude(requests.IncludeTypeAccountAccountReferrer) {
-		response.Data.Relationships.Referrer, err = h.getReferrer(account, &response.Included)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to include referrer")
-		}
+	response.Data.Relationships.Referrer, err = h.getReferrer(account, request, &response.Included)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get referrer")
 	}
 
 	return &response, nil
 }
 
-func (h *getAccountHandler) getReferrer(account *core2.Account, includes *regources.Included) (*regources.Relation, error) {
+func (h *getAccountHandler) getReferrer(account *core2.Account, request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
 	if account.Referrer == "" {
 		return nil, nil
+	}
+
+	if !request.ShouldInclude(requests.IncludeTypeAccountAccountReferrer) {
+		result := resources.NewAccountKey(account.Referrer)
+
+		return result.AsRelation(), nil
 	}
 
 	referrer, err := h.AccountsQ.GetByAddress(account.Referrer)
@@ -127,12 +124,13 @@ func (h *getAccountHandler) getReferrer(account *core2.Account, includes *regour
 
 	result := resources.NewAccount(*referrer)
 	includes.Add(&result)
+
 	return result.AsRelation(), nil
 }
 
 func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {
-
 	balancesQ := h.BalancesQ.FilterByAccount(request.Address)
+
 	if request.ShouldInclude(requests.IncludeTypeAccountBalancesAsset) {
 		balancesQ = balancesQ.WithAsset()
 	}
@@ -145,65 +143,71 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *
 	result := regources.RelationCollection{
 		Data: make([]regources.Key, 0, len(coreBalances)),
 	}
-	for i := range coreBalances {
+
+	for i, coreBalance := range coreBalances {
 		balance := resources.NewBalance(&coreBalances[i])
 		result.Data = append(result.Data, balance.Key)
+
+		if request.ShouldIncludeAny(
+			requests.IncludeTypeAccountBalances,
+			requests.IncludeTypeAccountBalancesState,
+			requests.IncludeTypeAccountBalancesAsset,
+		) {
+			balanceStateKey := resources.NewBalanceStateKey(coreBalance.BalanceAddress)
+			balanceAssetKey := resources.NewAssetKey(coreBalance.AssetCode)
+			balance.Relationships.State = balanceStateKey.AsRelation()
+			balance.Relationships.Asset = balanceAssetKey.AsRelation()
+
+			includes.Add(balance)
+		}
+
 		if request.ShouldInclude(requests.IncludeTypeAccountBalancesState) {
 			state := resources.NewBalanceState(&coreBalances[i])
-			balance.Relationships.State = state.AsRelation()
 			includes.Add(state)
 		}
 
 		if request.ShouldInclude(requests.IncludeTypeAccountBalancesAsset) {
 			asset := resources.NewAsset(*coreBalances[i].Asset)
-			balance.Relationships.Asset = asset.AsRelation()
 			includes.Add(&asset)
 		}
-
-		includes.Add(balance)
 	}
 
 	return &result, nil
 }
 
 func (h *getAccountHandler) getRole(request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
-	result := regources.Role{
-		Key: regources.Key{
-			Type: regources.TypeRoles,
-			ID:   request.Address,
-		},
-		Attributes: regources.RoleAsstr{
-			Details: map[string]interface{}{
-				"name": "Name of the Mocked Role",
-			},
-		},
+	if !request.ShouldIncludeAny(
+		requests.IncludeTypeAccountRole,
+		requests.IncludeTypeAccountRoleRules,
+	) {
+		role := resources.NewRoleKey(request.Address)
+		return role.AsRelation(), nil
 	}
+
+	role := resources.NewRole(request.Address)
 
 	if request.ShouldInclude(requests.IncludeTypeAccountRoleRules) {
 		rules := []regources.Rule{
-			{
-				Key: regources.Key{
-					ID:   "mocked_rule_id",
-					Type: regources.TypeRules,
-				},
-				Attributes: regources.RuleAttr{
-					Resource: "NOTE: format will be changed",
-					Action:   "view",
-					Details: map[string]interface{}{
-						"name": "Name of the mocked Rule",
-					},
-				},
-			},
+			resources.NewRule(),
 		}
 
-		result.Relationships.Rules = &regources.RelationCollection{}
-		for i := range rules {
-			result.Relationships.Rules.Data = append(result.Relationships.Rules.Data, rules[i].GetKey())
-			includes.Add(&rules[i])
+		role.Relationships.Rules = &regources.RelationCollection{
+			Data: make([]regources.Key, 0, len(rules)),
+		}
+
+		for _, rule := range rules {
+			role.Relationships.Rules.Data = append(role.Relationships.Rules.Data, rule.Key)
+			includes.Add(&rule)
+		}
+	} else {
+		rulesKeys := []regources.Key{
+			resources.NewRuleKey(),
+		}
+		role.Relationships.Rules = &regources.RelationCollection{
+			Data: rulesKeys,
 		}
 	}
 
-	includes.Add(&result)
-
-	return result.AsRelation(), nil
+	includes.Add(&role)
+	return role.AsRelation(), nil
 }
