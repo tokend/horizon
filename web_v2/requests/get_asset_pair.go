@@ -36,40 +36,38 @@ func NewGetAssetPair(r *http.Request) (*GetAssetPair, error) {
 		return nil, err
 	}
 
-	id := b.getString("id")
+	request := GetAssetPair{
+		base: b,
+	}
 
-	baseAsset, quoteAsset, err := getAssetCodesFromID(id)
+	err = request.getAssetCodes("id")
 	if err != nil {
 		return nil, err
 	}
 
-	return &GetAssetPair{
-		base:       b,
-		BaseAsset:  baseAsset,
-		QuoteAsset: quoteAsset,
-	}, nil
+	return &request, nil
 }
 
-// assetCodesFromId receives the compound ID in `base:quote` format and
+// getAssetCodes receives the compound ID in `base:quote` format and
 // returns separately both codes or validation error if id is invalid
-func getAssetCodesFromID(id string) (baseAsset, quoteAsset string, err error) {
+func (r *GetAssetPair) getAssetCodes(param string) error {
+	id := r.getString(param)
+
 	codes := strings.Split(id, ":")
 	if len(codes) != 2 || codes[0] == "" || codes[1] == "" {
-		err = validation.Errors{
+		return validation.Errors{
 			"id": errors.New("should be in `base:quote` format"),
 		}
-		return
 	}
 
 	if codes[0] == codes[1] {
-		err = validation.Errors{
+		return validation.Errors{
 			"id": errors.New("can't contain equal base:quote values"),
 		}
-		return
 	}
 
-	baseAsset = codes[0]
-	quoteAsset = codes[1]
+	r.BaseAsset = codes[0]
+	r.QuoteAsset = codes[1]
 
-	return
+	return nil
 }
