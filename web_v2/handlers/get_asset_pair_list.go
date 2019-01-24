@@ -111,14 +111,3 @@ func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPai
 
 	return response, nil
 }
-
-func (h *getAssetPairListHandler) getAsset(code string) (*regources.Asset, error) {
-	coreAsset, err := h.AssetsQ.GetByCode(code)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get asset by code")
-	}
-
-	asset := resources.NewAsset(*coreAsset)
-
-	return &asset, nil
-}
