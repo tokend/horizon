@@ -50,7 +50,7 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	source.BalanceID = &balance.ID
 	source.AssetCode = &balance.AssetCode
-	source.Effect = regources.Effect{
+	source.Effect = &regources.Effect{
 		Type: regources.EffectTypeCharged,
 		Charged: &regources.BalanceChangeEffect{
 			Amount: regources.Amount(payoutRes.ActualPayoutAmount),
@@ -68,7 +68,7 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 			AccountID: h.pubKeyProvider.MustAccountID(response.ReceiverId),
 			BalanceID: &balanceID,
 			AssetCode: &balance.AssetCode, // source balance has the same asset as receivers
-			Effect: regources.Effect{
+			Effect: &regources.Effect{
 				Type: regources.EffectTypeFunded,
 				Funded: &regources.BalanceChangeEffect{
 					Amount: regources.Amount(response.ReceivedAmount),

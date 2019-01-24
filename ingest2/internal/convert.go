@@ -15,7 +15,7 @@ func FeeFromXdr(data xdr.Fee) regources.Fee {
 	}
 }
 
-//ToTime - converts xdr.Uint64 to unix utc timestamp
-func ToTime(data xdr.Uint64) time.Time {
+//TimeFromXdr - converts xdr.Uint64 to unix utc timestamp
+func TimeFromXdr(data xdr.Uint64) time.Time {
 	return time.Unix(int64(data), 0).UTC()
 }

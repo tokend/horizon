@@ -8,10 +8,15 @@ import (
 //NewBalance - creates new instance of balance using core balance
 func NewBalance(record *core.Balance) *regources.Balance {
 	return &regources.Balance{
-		Key: regources.Key{
-			Type: regources.TypeBalances,
-			ID:   record.BalanceAddress,
-		},
+		Key: NewBalanceKey(record.BalanceAddress),
+	}
+}
+
+//NewBalanceKey - creates new instance of balance key
+func NewBalanceKey(balanceAddress string) regources.Key {
+	return regources.Key{
+		Type: regources.TypeBalances,
+		ID:   balanceAddress,
 	}
 }
 

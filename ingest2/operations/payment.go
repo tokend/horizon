@@ -58,7 +58,7 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	source.BalanceID = &sourceBalanceID
 	source.AssetCode = new(string)
 	*source.AssetCode = string(res.Asset)
-	source.Effect = regources.Effect{
+	source.Effect = &regources.Effect{
 		Type: regources.EffectTypeCharged,
 		Charged: &regources.BalanceChangeEffect{
 			Amount: regources.Amount(op.Amount),
@@ -74,7 +74,7 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		AccountID: h.pubKeyProvider.MustAccountID(res.Destination),
 		BalanceID: &destBalanceID,
 		AssetCode: source.AssetCode,
-		Effect: regources.Effect{
+		Effect: &regources.Effect{
 			Type: regources.EffectTypeFunded,
 			Funded: &regources.BalanceChangeEffect{
 				Amount: regources.Amount(op.Amount),

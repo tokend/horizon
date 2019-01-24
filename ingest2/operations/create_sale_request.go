@@ -21,11 +21,11 @@ func (h *createSaleRequestOpHandler) Details(op rawOperation, opRes xdr.Operatio
 			RequestID:         int64(opRes.MustCreateSaleCreationRequestResult().MustSuccess().RequestId),
 			BaseAsset:         string(createSaleRequest.BaseAsset),
 			DefaultQuoteAsset: string(createSaleRequest.DefaultQuoteAsset),
-			StartTime:         internal.ToTime(createSaleRequest.StartTime),
-			EndTime:           internal.ToTime(createSaleRequest.EndTime),
+			StartTime:         internal.TimeFromXdr(createSaleRequest.StartTime),
+			EndTime:           internal.TimeFromXdr(createSaleRequest.EndTime),
 			HardCap:           regources.Amount(createSaleRequest.HardCap),
 			SoftCap:           regources.Amount(createSaleRequest.SoftCap),
-			Details:           []byte(createSaleRequest.Details),
+			Details:           internal.MarshalCustomDetails(createSaleRequest.Details),
 		},
 	}, nil
 }

@@ -49,7 +49,7 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 	source.BalanceID = &balanceID
 	atomicSwapBidBaseAsset := string(atomicSwapBid.BaseAsset)
 	source.AssetCode = &atomicSwapBidBaseAsset
-	source.Effect = regources.Effect{
+	source.Effect = &regources.Effect{
 		Type: regources.EffectTypeUnlocked,
 		Unlocked: &regources.BalanceChangeEffect{
 			Amount: regources.Amount(atomicSwapBid.Amount),

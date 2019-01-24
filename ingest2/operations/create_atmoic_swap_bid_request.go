@@ -3,6 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/regources/v2"
 )
 
@@ -30,7 +31,7 @@ func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 			Amount:      regources.Amount(aSwapBidRequest.Amount),
 			BaseBalance: aSwapBidRequest.BaseBalance.AsString(),
 			QuoteAssets: quoteAssets,
-			Details:     []byte(aSwapBidRequest.Details),
+			Details:     internal.MarshalCustomDetails(aSwapBidRequest.Details),
 		},
 	}, nil
 }
@@ -45,7 +46,7 @@ func (h *createAtomicSwapBidRequestOpHandler) ParticipantsEffects(opBody xdr.Ope
 
 	source.BalanceID = &balance.ID
 	source.AssetCode = &balance.AssetCode
-	source.Effect = regources.Effect{
+	source.Effect = &regources.Effect{
 		Type: regources.EffectTypeLocked,
 		Locked: &regources.BalanceChangeEffect{
 			Amount: regources.Amount(aSwapBidRequest.Amount),

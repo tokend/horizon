@@ -24,7 +24,7 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 		AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.BidOwnerId),
 		BalanceID: &ownerBalanceID,
 		AssetCode: &baseAsset,
-		Effect: regources.Effect{
+		Effect: &regources.Effect{
 			Type: regources.EffectTypeChargedFromLocked,
 			ChargedFromLocked: &regources.BalanceChangeEffect{
 				Amount: regources.Amount(atomicSwapExtendedResult.BaseAmount),
@@ -38,7 +38,7 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 		AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.PurchaserId),
 		BalanceID: &purchaserBaseBalanceID,
 		AssetCode: &baseAsset,
-		Effect: regources.Effect{
+		Effect: &regources.Effect{
 			Type: regources.EffectTypeFunded,
 			Funded: &regources.BalanceChangeEffect{
 				Amount: regources.Amount(atomicSwapExtendedResult.BaseAmount),
@@ -66,7 +66,7 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 			AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.BidOwnerId),
 			BalanceID: &ownerBalanceID,
 			AssetCode: &baseAsset,
-			Effect: regources.Effect{
+			Effect: &regources.Effect{
 				Type: regources.EffectTypeUnlocked,
 				Unlocked: &regources.BalanceChangeEffect{
 					Amount: regources.Amount(bid.Amount),

@@ -9,7 +9,7 @@ const (
 	IncludeTypeAssetListOwners = "owner"
 
 	// FilterTypeAssetListOwner - defines if we need to filter the list by owner
-	FilterTypeAssetListOwner  = "owner"
+	FilterTypeAssetListOwner = "owner"
 	// FilterTypeAssetListPolicy - defines if we need to filter the list by policy
 	FilterTypeAssetListPolicy = "policy"
 )
@@ -31,6 +31,7 @@ type GetAssetList struct {
 		Owner  string `fig:"owner"`
 	}
 }
+
 // NewGetAssetList returns the new instance of GetAssetList request
 func NewGetAssetList(r *http.Request) (*GetAssetList, error) {
 	b, err := newBase(r, baseOpts{

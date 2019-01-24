@@ -23,7 +23,7 @@ func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 			BalanceAddress:  withdrawRequest.Balance.AsString(),
 			Amount:          regources.Amount(withdrawRequest.Amount),
 			Fee:             internal.FeeFromXdr(withdrawRequest.Fee),
-			ExternalDetails: []byte(withdrawRequest.ExternalDetails),
+			ExternalDetails: internal.MarshalCustomDetails(withdrawRequest.ExternalDetails),
 		},
 	}, nil
 }

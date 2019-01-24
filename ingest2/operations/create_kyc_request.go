@@ -3,6 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/regources/v2"
 )
 
@@ -27,7 +28,7 @@ func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.Operation
 		CreateKYCRequest: &regources.CreateKYCRequestDetails{
 			AccountAddressToUpdateKYC: createKYCRequestOp.UpdateKycRequestData.AccountToUpdateKyc.Address(),
 			AccountTypeToSet:          createKYCRequestOp.UpdateKycRequestData.AccountTypeToSet,
-			KYCData:                   []byte(createKYCRequestOp.UpdateKycRequestData.KycData),
+			KYCData:                   internal.MarshalCustomDetails(createKYCRequestOp.UpdateKycRequestData.KycData),
 			AllTasks:                  allTasks,
 			RequestDetails: regources.RequestDetails{
 				RequestID:   int64(createKYCRequestRes.RequestId),

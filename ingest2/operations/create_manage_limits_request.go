@@ -3,6 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/regources/v2"
 )
 
@@ -15,10 +16,10 @@ func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 ) (regources.OperationDetails, error) {
 	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()
 
-	var data []byte
+	var data regources.Details
 	rawData, ok := createManageLimitsRequestOp.ManageLimitsRequest.Ext.GetDetails()
 	if ok {
-		data = []byte(rawData)
+		data = internal.MarshalCustomDetails(rawData)
 	}
 
 	return regources.OperationDetails{

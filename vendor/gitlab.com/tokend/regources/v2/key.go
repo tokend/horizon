@@ -3,15 +3,18 @@ package regources
 type ResourceType string
 
 const (
-	TypeAccounts      ResourceType = "accounts"
-	TypeBalances                   = "balances"
-	TypeAssets                     = "assets"
-	TypeBalancesState              = "balances-state"
-	TypeRoles                      = "roles"
-	TypeRules                      = "rules"
-	TypeSigners                    = "signers"
-	TypeSignerRoles                = "signer-roles"
-	TypeSignerRules                = "signer-rules"
+	TypeAccounts           ResourceType = "accounts"
+	TypeBalances                        = "balances"
+	TypeAssets                          = "assets"
+	TypeBalancesState                   = "balances-state"
+	TypeRoles                           = "roles"
+	TypeRules                           = "rules"
+	TypeSigners                         = "signers"
+	TypeSignerRoles                     = "signer-roles"
+	TypeSignerRules                     = "signer-rules"
+	TypeParticipantEffects              = "participant_effects"
+	TypeOperations                      = "operations"
+	TypeTxs                             = "transactions"
 )
 
 // Key - identifier of the Resource
@@ -31,7 +34,7 @@ func (r *Key) GetKeyP() *Key {
 }
 
 // AsRelation - converts key to relation
-func (r *Key) AsRelation() *Relation {
+func (r Key) AsRelation() *Relation {
 	return &Relation{
 		Data: r.GetKeyP(),
 	}

@@ -87,7 +87,7 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 	newOffer := res.Offer.MustOffer()
 	source.AssetCode = new(string)
 	source.BalanceID = new(uint64)
-	source.Effect = regources.Effect{
+	source.Effect = &regources.Effect{
 		Type:   regources.EffectTypeLocked,
 		Locked: &regources.BalanceChangeEffect{},
 	}
@@ -125,7 +125,7 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 			AccountID: h.pubKeyProvider.MustAccountID(deletedOffer.OwnerId),
 			BalanceID: new(uint64),
 			AssetCode: new(string),
-			Effect: regources.Effect{
+			Effect: &regources.Effect{
 				Type:     regources.EffectTypeUnlocked,
 				Unlocked: &regources.BalanceChangeEffect{},
 			},
@@ -230,11 +230,11 @@ func (h *manageOfferOpHandler) addParticipantEffects(participants []history2.Par
 		AccountID: offer.AccountID,
 		BalanceID: &offer.BaseBalanceID,
 		AssetCode: &offer.BaseAsset,
-		Effect:    matchedOfferEffect,
+		Effect:    &matchedOfferEffect,
 	}, history2.ParticipantEffect{
 		AccountID: offer.AccountID,
 		BalanceID: &offer.QuoteBalanceID,
 		AssetCode: &offer.QuoteAsset,
-		Effect:    matchedOfferEffect,
+		Effect:    &matchedOfferEffect,
 	})
 }

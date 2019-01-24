@@ -37,7 +37,7 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 			Asset:     string(issuanceRequest.Asset),
 			ReceiverAccountAddress: createIssuanceRequestRes.Receiver.Address(),
 			ReceiverBalanceAddress: issuanceRequest.Receiver.AsString(),
-			ExternalDetails:        []byte(issuanceRequest.ExternalDetails),
+			ExternalDetails:        internal.MarshalCustomDetails(issuanceRequest.ExternalDetails),
 			AllTasks:               allTasks,
 			RequestDetails: regources.RequestDetails{
 				IsFulfilled: createIssuanceRequestRes.Fulfilled,

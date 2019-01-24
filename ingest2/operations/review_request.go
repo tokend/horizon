@@ -7,6 +7,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	regources "gitlab.com/tokend/regources/v2"
 )
 
@@ -66,7 +67,7 @@ func (h *reviewRequestOpHandler) Details(op rawOperation, opRes xdr.OperationRes
 
 	addedTasks := uint32(reviewRequestOp.ReviewDetails.TasksToAdd)
 	removedTasks := uint32(reviewRequestOp.ReviewDetails.TasksToRemove)
-	externalDetails := []byte(reviewRequestOp.ReviewDetails.ExternalDetails)
+	externalDetails := internal.MarshalCustomDetails(xdr.Longstring(reviewRequestOp.ReviewDetails.ExternalDetails))
 
 	opDetails := regources.OperationDetails{
 		Type: xdr.OperationTypeReviewRequest,

@@ -35,7 +35,7 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	case xdr.CheckSaleStateEffectCanceled, xdr.CheckSaleStateEffectUpdated:
 		return h.manageOfferOpHandler.getDeletedOffersEffect(ledgerChanges), nil
 	case xdr.CheckSaleStateEffectClosed:
-		return h.getApprovedParticipants(int64(opBody.MustManageSaleOp().SaleId), res.Effect.MustSaleClosed()), nil
+		return h.getApprovedParticipants(int64(opBody.MustCheckSaleStateOp().SaleId), res.Effect.MustSaleClosed()), nil
 	default:
 		return nil, errors.From(errors.New("unexpected check sale state result effect"), map[string]interface{}{
 			"effect_i": int32(res.Effect.Effect),
@@ -82,7 +82,7 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 		AccountID: ownerID,
 		BalanceID: &baseBalanceID,
 		AssetCode: &baseAsset,
-		Effect: regources.Effect{
+		Effect: &regources.Effect{
 			Type: regources.EffectTypeIssued,
 			Issued: &regources.BalanceChangeEffect{
 				Amount: regources.Amount(totalBaseIssued),

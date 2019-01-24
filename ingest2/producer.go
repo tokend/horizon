@@ -149,6 +149,16 @@ func (l *Producer) ensureChainIsConsistent(ledgerSeqToIngest int32) error {
 
 	// horizon db is empty, so we have the same chain
 	if prevLedger == nil {
+		var coreLedger *core.LedgerHeader
+		coreLedger, err = l.txProvider.GetBySequence(2)
+		if err != nil {
+			return errors.Wrap(err, "failed to load ledger from core DB")
+		}
+
+		if coreLedger == nil {
+			return errors.Wrap(err, "Core does not have full history. Unfortunately this version of horizon does"+
+				" not support partial history")
+		}
 		return nil
 	}
 
