@@ -36,15 +36,15 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result, err := handler.GetAssetList(request, pageParams)
-	if result == nil {
-		ape.RenderErr(w, problems.NotFound())
-		return
-	}
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get asset list", logan.F{
 			"request": request,
 		})
 		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	if result == nil {
+		ape.RenderErr(w, problems.NotFound())
 		return
 	}
 
