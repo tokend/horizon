@@ -1,4 +1,4 @@
 package history2
 
-var operationColumns = []string{"operations.id", "operations.tx_id", "operations.type", "operations.details",
-	"operations.ledger_close_time", "operations.source"}
+var operationColumns = []string{"id", "tx_id", "type", "details",
+	"ledger_close_time", "source"}

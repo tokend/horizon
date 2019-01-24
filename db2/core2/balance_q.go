@@ -40,7 +40,8 @@ func (q BalancesQ) FilterByAccount(accountAddress string) BalancesQ {
 
 //WithAsset - joins asset
 func (q BalancesQ) WithAsset() BalancesQ {
-	q.selector = q.selector.Columns(db2.GetColumnsForJoin(assetColumns)...).LeftJoin("asset assets ON balances.asset = assets.code")
+	q.selector = q.selector.Columns(db2.GetColumnsForJoin(assetColumns, "assets")...).
+		LeftJoin("asset assets ON balances.asset = assets.code")
 	return q
 }
 

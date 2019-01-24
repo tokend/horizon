@@ -6,9 +6,9 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-var assetColumns = []string{"assets.code", "assets.owner", "assets.preissued_asset_signer", "assets.details",
-	"assets.max_issuance_amount", "assets.available_for_issueance", "assets.issued",
-	"assets.pending_issuance", "assets.policies", "assets.trailing_digits"}
+var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details",
+	"max_issuance_amount", "available_for_issueance", "issued",
+	"pending_issuance", "policies", "trailing_digits"}
 
 //AssetsQ - helper struct to load assets from db
 type AssetsQ struct {

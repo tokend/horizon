@@ -23,7 +23,7 @@ func NewParticipantEffectsQ(repo *db2.Repo) ParticipantEffectsQ {
 
 //WithOperation - left joins operations
 func (q ParticipantEffectsQ) WithOperation() ParticipantEffectsQ {
-	q.selector = q.selector.Columns(db2.GetColumnsForJoin(operationColumns)...).
+	q.selector = q.selector.Columns(db2.GetColumnsForJoin(operationColumns, "operations")...).
 		LeftJoin("operations operations ON effects.operation_id = operations.id")
 	return q
 }
