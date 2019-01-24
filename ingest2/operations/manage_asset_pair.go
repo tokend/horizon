@@ -13,12 +13,12 @@ type manageAssetPairOpHandler struct {
 // Details returns details about manage asset pair operation
 func (h *manageAssetPairOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	manageAssetPairOp := op.Body.MustManageAssetPairOp()
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageAssetPair,
-		ManageAssetPair: &regources.ManageAssetPairDetails{
+		ManageAssetPair: &history2.ManageAssetPairDetails{
 			BaseAsset:               string(manageAssetPairOp.Base),
 			QuoteAsset:              string(manageAssetPairOp.Quote),
 			PhysicalPrice:           regources.Amount(manageAssetPairOp.PhysicalPrice),

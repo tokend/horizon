@@ -17,17 +17,17 @@ func (h *amlAlertHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 ) ([]history2.ParticipantEffect, error) {
 	details := request.Body.MustAmlAlertRequest()
 
-	effect := regources.Effect{
-		Type: regources.EffectTypeWithdrawn,
-		Withdrawn: &regources.BalanceChangeEffect{
+	effect := history2.Effect{
+		Type: history2.EffectTypeWithdrawn,
+		Withdrawn: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(details.Amount),
 		},
 	}
 
 	if op.Action != xdr.ReviewRequestOpActionApprove {
-		effect = regources.Effect{
-			Type: regources.EffectTypeUnlocked,
-			Unlocked: &regources.BalanceChangeEffect{
+		effect = history2.Effect{
+			Type: history2.EffectTypeUnlocked,
+			Unlocked: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(details.Amount),
 			},
 		}

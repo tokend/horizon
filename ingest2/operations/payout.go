@@ -15,13 +15,13 @@ type payoutHandler struct {
 
 // Details returns details about payout operation
 func (h *payoutHandler) Details(op rawOperation, res xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	payoutOp := op.Body.MustPayoutOp()
 	payoutRes := res.MustPayoutResult().MustSuccess()
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypePayout,
-		Payout: &regources.PayoutDetails{
+		Payout: &history2.PayoutDetails{
 			SourceAccountAddress: op.Source.Address(),
 			SourceBalanceAddress: payoutOp.SourceBalanceId.AsString(),
 			Asset:                string(payoutOp.Asset),
@@ -50,9 +50,9 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	source.BalanceID = &balance.ID
 	source.AssetCode = &balance.AssetCode
-	source.Effect = &regources.Effect{
-		Type: regources.EffectTypeCharged,
-		Charged: &regources.BalanceChangeEffect{
+	source.Effect = &history2.Effect{
+		Type: history2.EffectTypeCharged,
+		Charged: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(payoutRes.ActualPayoutAmount),
 			Fee:    internal.FeeFromXdr(payoutRes.ActualFee),
 		},
@@ -68,9 +68,9 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 			AccountID: h.pubKeyProvider.MustAccountID(response.ReceiverId),
 			BalanceID: &balanceID,
 			AssetCode: &balance.AssetCode, // source balance has the same asset as receivers
-			Effect: &regources.Effect{
-				Type: regources.EffectTypeFunded,
-				Funded: &regources.BalanceChangeEffect{
+			Effect: &history2.Effect{
+				Type: history2.EffectTypeFunded,
+				Funded: &history2.BalanceChangeEffect{
 					Amount: regources.Amount(response.ReceivedAmount),
 				},
 			},

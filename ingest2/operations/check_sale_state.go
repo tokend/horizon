@@ -14,10 +14,10 @@ type checkSaleStateOpHandler struct {
 // Details returns details about check sale state operation
 func (h *checkSaleStateOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
-	return regources.OperationDetails{
+) (history2.OperationDetails, error) {
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCheckSaleState,
-		CheckSaleState: &regources.CheckSaleStateDetails{
+		CheckSaleState: &history2.CheckSaleStateDetails{
 			SaleID: int64(op.Body.MustCheckSaleStateOp().SaleId),
 			Effect: opRes.MustCheckSaleStateResult().MustSuccess().Effect.Effect,
 		},
@@ -82,9 +82,9 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 		AccountID: ownerID,
 		BalanceID: &baseBalanceID,
 		AssetCode: &baseAsset,
-		Effect: &regources.Effect{
-			Type: regources.EffectTypeIssued,
-			Issued: &regources.BalanceChangeEffect{
+		Effect: &history2.Effect{
+			Type: history2.EffectTypeIssued,
+			Issued: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(totalBaseIssued),
 			},
 		},

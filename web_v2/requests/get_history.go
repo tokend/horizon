@@ -9,6 +9,10 @@ import (
 const (
 	// IncludeTypeHistoryOperation - defines if the operation should be included in the response
 	IncludeTypeHistoryOperation = "operation"
+	// IncludeTypeHistoryEffect - defines if particular effect should be included
+	IncludeTypeHistoryEffect = "effect"
+	//IncludeTypeHistoryOperationDetails - defines if the operation details should be included
+	IncludeTypeHistoryOperationDetails = "operation.details"
 
 	// FilterTypeHistoryAccount - defines if we need to filter the list by participant account address
 	FilterTypeHistoryAccount = "account"
@@ -30,7 +34,9 @@ type GetHistory struct {
 func NewGetHistory(r *http.Request) (*GetHistory, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: map[string]struct{}{
-			IncludeTypeHistoryOperation: {},
+			IncludeTypeHistoryOperation:        {},
+			IncludeTypeHistoryEffect:           {},
+			IncludeTypeHistoryOperationDetails: {},
 		},
 		supportedFilters: map[string]struct{}{
 			FilterTypeHistoryAccount: {},

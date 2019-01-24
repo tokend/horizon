@@ -15,7 +15,7 @@ type createIssuanceRequestOpHandler struct {
 // Details returns details about create issuance request operation
 func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	createIssuanceRequestOp := op.Body.MustCreateIssuanceRequestOp()
 	issuanceRequest := createIssuanceRequestOp.Request
 
@@ -28,9 +28,9 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 
 	createIssuanceRequestRes := opRes.MustCreateIssuanceRequestResult().MustSuccess()
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateIssuanceRequest,
-		CreateIssuanceRequest: &regources.CreateIssuanceRequestDetails{
+		CreateIssuanceRequest: &history2.CreateIssuanceRequestDetails{
 			Fee:       internal.FeeFromXdr(issuanceRequest.Fee),
 			Reference: utf8.Scrub(string(createIssuanceRequestOp.Reference)),
 			Amount:    regources.Amount(issuanceRequest.Amount),
@@ -39,7 +39,7 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 			ReceiverBalanceAddress: issuanceRequest.Receiver.AsString(),
 			ExternalDetails:        internal.MarshalCustomDetails(issuanceRequest.ExternalDetails),
 			AllTasks:               allTasks,
-			RequestDetails: regources.RequestDetails{
+			RequestDetails: history2.RequestDetails{
 				IsFulfilled: createIssuanceRequestRes.Fulfilled,
 			},
 		},
@@ -57,9 +57,9 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 		return []history2.ParticipantEffect{source}, nil
 	}
 
-	effect := regources.Effect{
-		Type: regources.EffectTypeIssued,
-		Issued: &regources.BalanceChangeEffect{
+	effect := history2.Effect{
+		Type: history2.EffectTypeIssued,
+		Issued: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(issuanceRequest.Amount),
 			Fee:    internal.FeeFromXdr(issuanceRequest.Fee),
 		},

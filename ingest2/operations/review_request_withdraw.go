@@ -18,18 +18,18 @@ func (h *withdrawHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 ) ([]history2.ParticipantEffect, error) {
 	details := request.Body.MustWithdrawalRequest()
 
-	effect := regources.Effect{
-		Type: regources.EffectTypeChargedFromLocked,
-		ChargedFromLocked: &regources.BalanceChangeEffect{
+	effect := history2.Effect{
+		Type: history2.EffectTypeChargedFromLocked,
+		ChargedFromLocked: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(details.Amount),
 			Fee:    internal.FeeFromXdr(details.Fee),
 		},
 	}
 
 	if op.Action != xdr.ReviewRequestOpActionApprove {
-		effect = regources.Effect{
-			Type: regources.EffectTypeWithdrawn,
-			Withdrawn: &regources.BalanceChangeEffect{
+		effect = history2.Effect{
+			Type: history2.EffectTypeWithdrawn,
+			Withdrawn: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(details.Amount),
 				Fee:    internal.FeeFromXdr(details.Fee),
 			},

@@ -13,12 +13,12 @@ type createAMLAlertReqeustOpHandler struct {
 // Details returns details about create AML alert request operation
 func (h *createAMLAlertReqeustOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	amlAlertRequest := op.Body.MustCreateAmlAlertRequestOp().AmlAlertRequest
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAmlAlert,
-		CreateAMLAlertRequest: &regources.CreateAMLAlertRequestDetails{
+		CreateAMLAlertRequest: &history2.CreateAMLAlertRequestDetails{
 			Amount:         regources.Amount(amlAlertRequest.Amount),
 			BalanceAddress: amlAlertRequest.BalanceId.AsString(),
 			Reason:         string(amlAlertRequest.Reason),
@@ -33,9 +33,9 @@ func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.Operatio
 ) ([]history2.ParticipantEffect, error) {
 	amlAlertRequest := opBody.MustCreateAmlAlertRequestOp().AmlAlertRequest
 
-	effect := regources.Effect{
-		Type: regources.EffectTypeLocked,
-		Locked: &regources.BalanceChangeEffect{
+	effect := history2.Effect{
+		Type: history2.EffectTypeLocked,
+		Locked: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(amlAlertRequest.Amount),
 		},
 	}

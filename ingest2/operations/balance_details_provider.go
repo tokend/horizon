@@ -2,10 +2,9 @@ package operations
 
 import (
 	history "gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
 )
 
-func populateEffects(balance history.Balance, effect regources.Effect,
+func populateEffects(balance history.Balance, effect history.Effect,
 	source history.ParticipantEffect) []history.ParticipantEffect {
 
 	if balance.AccountID == source.AccountID {

@@ -11,12 +11,12 @@ type Operation struct {
 
 //OperationRelation - represents operation relationships
 type OperationRelation struct {
-	Tx     *Relation `json:"tx"`
-	Source *Relation `json:"source"`
+	Tx      *Relation `json:"tx"`
+	Source  *Relation `json:"source"`
+	Details *Relation `json:"details"`
 }
 
 //OperationAttr - represents attributes of operation
 type OperationAttr struct {
-	Details   OperationDetails `json:"details"`
-	AppliedAt time.Time        `json:"applied_at"`
+	AppliedAt time.Time `json:"applied_at"`
 }

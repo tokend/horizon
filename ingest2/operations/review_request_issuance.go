@@ -22,9 +22,9 @@ func (h *issuanceHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 
 	details := request.Body.MustIssuanceRequest()
 
-	effect := regources.Effect{
-		Type: regources.EffectTypeIssued,
-		Issued: &regources.BalanceChangeEffect{
+	effect := history2.Effect{
+		Type: history2.EffectTypeIssued,
+		Issued: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(details.Amount),
 			Fee:    internal.FeeFromXdr(details.Fee),
 		},

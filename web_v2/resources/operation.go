@@ -12,7 +12,6 @@ func NewOperation(op history2.Operation) regources.Operation {
 	return regources.Operation{
 		Key: NewOperationKey(op.ID),
 		Attributes: regources.OperationAttr{
-			Details:   op.Details,
 			AppliedAt: op.LedgerCloseTime,
 		},
 		Relationships: regources.OperationRelation{

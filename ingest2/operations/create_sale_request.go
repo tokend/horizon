@@ -12,12 +12,12 @@ type createSaleRequestOpHandler struct {
 
 // Details returns details about create sale request operation
 func (h *createSaleRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	createSaleRequest := op.Body.MustCreateSaleCreationRequestOp().Request
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateSaleRequest,
-		CreateSaleRequest: &regources.CreateSaleRequestDetails{
+		CreateSaleRequest: &history2.CreateSaleRequestDetails{
 			RequestID:         int64(opRes.MustCreateSaleCreationRequestResult().MustSuccess().RequestId),
 			BaseAsset:         string(createSaleRequest.BaseAsset),
 			DefaultQuoteAsset: string(createSaleRequest.DefaultQuoteAsset),

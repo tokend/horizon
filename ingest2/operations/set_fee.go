@@ -12,15 +12,8 @@ type setFeeOpHandler struct {
 
 // Details returns details about set fee operation
 func (h *setFeeOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	setFeeOp := op.Body.MustSetFeesOp()
-
-	if setFeeOp.IsDelete || setFeeOp.Fee == nil {
-		return regources.OperationDetails{
-			Type:   xdr.OperationTypeSetFees,
-			SetFee: &regources.SetFeeDetails{},
-		}, nil
-	}
 
 	fee := *setFeeOp.Fee
 
@@ -30,9 +23,9 @@ func (h *setFeeOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 		*feeAccountAddress = fee.AccountId.Address()
 	}
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeSetFees,
-		SetFee: &regources.SetFeeDetails{
+		SetFee: &history2.SetFeeDetails{
 			AssetCode:      string(fee.Asset),
 			FixedFee:       regources.Amount(fee.FixedFee),
 			PercentFee:     regources.Amount(fee.PercentFee),
@@ -42,6 +35,7 @@ func (h *setFeeOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 			Subtype:        int64(fee.Subtype),
 			LowerBound:     regources.Amount(fee.LowerBound),
 			UpperBound:     regources.Amount(fee.UpperBound),
+			IsDelete:       setFeeOp.IsDelete,
 		},
 	}, nil
 }

@@ -14,13 +14,13 @@ type paymentOpHandler struct {
 
 // Details returns details about payment operation
 func (h *paymentOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	paymentOp := op.Body.MustPaymentOpV2()
 	paymentRes := opRes.MustPaymentV2Result().MustPaymentV2Response()
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypePaymentV2,
-		Payment: &regources.PaymentDetails{
+		Payment: &history2.PaymentDetails{
 			AccountFrom:             op.Source.Address(),
 			AccountTo:               paymentRes.Destination.Address(),
 			BalanceFrom:             paymentOp.SourceBalanceId.AsString(),
@@ -58,9 +58,9 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	source.BalanceID = &sourceBalanceID
 	source.AssetCode = new(string)
 	*source.AssetCode = string(res.Asset)
-	source.Effect = &regources.Effect{
-		Type: regources.EffectTypeCharged,
-		Charged: &regources.BalanceChangeEffect{
+	source.Effect = &history2.Effect{
+		Type: history2.EffectTypeCharged,
+		Charged: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(op.Amount),
 			Fee: regources.Fee{
 				Fixed:             regources.Amount(sourceFixedFee),
@@ -74,9 +74,9 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		AccountID: h.pubKeyProvider.MustAccountID(res.Destination),
 		BalanceID: &destBalanceID,
 		AssetCode: source.AssetCode,
-		Effect: &regources.Effect{
-			Type: regources.EffectTypeFunded,
-			Funded: &regources.BalanceChangeEffect{
+		Effect: &history2.Effect{
+			Type: history2.EffectTypeFunded,
+			Funded: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(op.Amount),
 				Fee: regources.Fee{
 					Fixed:             regources.Amount(destFixedFee),

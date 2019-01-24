@@ -104,11 +104,27 @@ func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.Partici
 	result.Data = make([]regources.ParticipantEffect, 0, len(effects))
 	for i := range effects {
 		effect := getEffect(effects[i])
-		result.Data = append(result.Data, effect)
 		if request.ShouldInclude(requests.IncludeTypeHistoryOperation) {
 			op := resources.NewOperation(*effects[i].Operation)
+
+			if request.ShouldInclude(requests.IncludeTypeHistoryOperationDetails) {
+				opDetails := resources.NewOperationDetails(*effects[i].Operation)
+				op.Relationships.Details = opDetails.GetKey().AsRelation()
+				result.Included.Add(opDetails)
+			}
+
 			result.Included.Add(&op)
 		}
+
+		if effects[i].Effect != nil {
+			change := resources.NewEffect(effects[i].ID, *effects[i].Effect)
+			effect.Relationships.Effect = change.GetKey().AsRelation()
+			if request.ShouldInclude(requests.IncludeTypeHistoryEffect) {
+				result.Included.Add(change)
+			}
+		}
+
+		result.Data = append(result.Data, effect)
 	}
 
 	result.Links = request.GetCursorLinks(*request.PageParams, result.Data[len(result.Data)-1].ID)
@@ -129,9 +145,6 @@ func getEffect(effect history2.ParticipantEffect) regources.ParticipantEffect {
 
 	return regources.ParticipantEffect{
 		Key: resources.NewParticipantEffectKey(effect.ID),
-		Attributes: regources.ParticipantEffectAttrs{
-			Effect: effect.Effect,
-		},
 		Relationships: regources.ParticipantEffectRelation{
 			Account:   resources.NewAccountKey(effect.AccountAddress).AsRelation(),
 			Balance:   balance,

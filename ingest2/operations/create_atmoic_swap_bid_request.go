@@ -13,7 +13,7 @@ type createAtomicSwapBidRequestOpHandler struct {
 
 // Details returns details about create atomic swap bid request operation
 func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
-	opRes xdr.OperationResultTr) (regources.OperationDetails, error) {
+	opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
 
 	aSwapBidRequest := op.Body.MustCreateASwapBidCreationRequestOp().Request
 
@@ -25,9 +25,9 @@ func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 		})
 	}
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAswapBidRequest,
-		CreateAtomicSwapBidRequest: &regources.CreateAtomicSwapBidRequestDetails{
+		CreateAtomicSwapBidRequest: &history2.CreateAtomicSwapBidRequestDetails{
 			Amount:      regources.Amount(aSwapBidRequest.Amount),
 			BaseBalance: aSwapBidRequest.BaseBalance.AsString(),
 			QuoteAssets: quoteAssets,
@@ -46,9 +46,9 @@ func (h *createAtomicSwapBidRequestOpHandler) ParticipantsEffects(opBody xdr.Ope
 
 	source.BalanceID = &balance.ID
 	source.AssetCode = &balance.AssetCode
-	source.Effect = &regources.Effect{
-		Type: regources.EffectTypeLocked,
-		Locked: &regources.BalanceChangeEffect{
+	source.Effect = &history2.Effect{
+		Type: history2.EffectTypeLocked,
+		Locked: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(aSwapBidRequest.Amount),
 		},
 	}

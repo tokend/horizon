@@ -14,10 +14,10 @@ type cancelAtomicSwapBidOpHandler struct {
 // Details returns details about cancel atomic swap bid operation
 func (h *cancelAtomicSwapBidOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
-	return regources.OperationDetails{
+) (history2.OperationDetails, error) {
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCancelAswapBid,
-		CancelAtomicSwapBid: &regources.CancelAtomicSwapBidDetails{
+		CancelAtomicSwapBid: &history2.CancelAtomicSwapBidDetails{
 			BidID: int64(op.Body.MustCancelASwapBidOp().BidId),
 		},
 	}, nil
@@ -49,9 +49,9 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 	source.BalanceID = &balanceID
 	atomicSwapBidBaseAsset := string(atomicSwapBid.BaseAsset)
 	source.AssetCode = &atomicSwapBidBaseAsset
-	source.Effect = &regources.Effect{
-		Type: regources.EffectTypeUnlocked,
-		Unlocked: &regources.BalanceChangeEffect{
+	source.Effect = &history2.Effect{
+		Type: history2.EffectTypeUnlocked,
+		Unlocked: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(atomicSwapBid.Amount),
 		},
 	}

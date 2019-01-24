@@ -14,12 +14,12 @@ type createWithdrawRequestOpHandler struct {
 // Details returns details about create withdraw request operation
 func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	withdrawRequest := op.Body.MustCreateWithdrawalRequestOp().Request
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateWithdrawalRequest,
-		CreateWithdrawRequest: &regources.CreateWithdrawRequestDetails{
+		CreateWithdrawRequest: &history2.CreateWithdrawRequestDetails{
 			BalanceAddress:  withdrawRequest.Balance.AsString(),
 			Amount:          regources.Amount(withdrawRequest.Amount),
 			Fee:             internal.FeeFromXdr(withdrawRequest.Fee),
@@ -36,8 +36,8 @@ func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	balanceIDInt := h.pubKeyProvider.MustBalanceID(withdrawRequest.Balance)
 
 	source.BalanceID = &balanceIDInt
-	source.Effect.Type = regources.EffectTypeLocked
-	source.Effect.Locked = &regources.BalanceChangeEffect{
+	source.Effect.Type = history2.EffectTypeLocked
+	source.Effect.Locked = &history2.BalanceChangeEffect{
 		Amount: regources.Amount(withdrawRequest.Amount),
 		Fee:    internal.FeeFromXdr(withdrawRequest.Fee),
 	}

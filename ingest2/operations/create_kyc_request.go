@@ -4,7 +4,6 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
-	"gitlab.com/tokend/regources/v2"
 )
 
 type createKYCRequestOpHandler struct {
@@ -13,7 +12,7 @@ type createKYCRequestOpHandler struct {
 
 // Details returns details about create KYC request operation
 func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	createKYCRequestOp := op.Body.MustCreateUpdateKycRequestOp()
 	createKYCRequestRes := opRes.MustCreateUpdateKycRequestResult().MustSuccess()
 
@@ -23,14 +22,14 @@ func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.Operation
 		allTasks = &allTasksInt
 	}
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateKycRequest,
-		CreateKYCRequest: &regources.CreateKYCRequestDetails{
+		CreateKYCRequest: &history2.CreateKYCRequestDetails{
 			AccountAddressToUpdateKYC: createKYCRequestOp.UpdateKycRequestData.AccountToUpdateKyc.Address(),
 			AccountTypeToSet:          createKYCRequestOp.UpdateKycRequestData.AccountTypeToSet,
 			KYCData:                   internal.MarshalCustomDetails(createKYCRequestOp.UpdateKycRequestData.KycData),
 			AllTasks:                  allTasks,
-			RequestDetails: regources.RequestDetails{
+			RequestDetails: history2.RequestDetails{
 				RequestID:   int64(createKYCRequestRes.RequestId),
 				IsFulfilled: createKYCRequestRes.Fulfilled,
 			},

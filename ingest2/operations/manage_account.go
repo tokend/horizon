@@ -3,7 +3,6 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
 )
 
 type manageAccountOpHandler struct {
@@ -13,12 +12,12 @@ type manageAccountOpHandler struct {
 // Details returns details about manage account operation
 func (h *manageAccountOpHandler) Details(op rawOperation,
 	_ xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	manageAccountOp := op.Body.MustManageAccountOp()
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageAccount,
-		ManageAccount: &regources.ManageAccountDetails{
+		ManageAccount: &history2.ManageAccountDetails{
 			AccountAddress:       manageAccountOp.Account.Address(),
 			BlockReasonsToAdd:    xdr.BlockReasons(manageAccountOp.BlockReasonsToAdd),
 			BlockReasonsToRemove: xdr.BlockReasons(manageAccountOp.BlockReasonsToRemove),

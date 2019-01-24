@@ -445,7 +445,7 @@
     ".",
     "v2"
   ]
-  revision = "73aadf54954e7ba7b1bf83671bfad214245b5731"
+  revision = "375f56cc805365f232d6c566c4bb3ee0da704a4a"
 
 [[projects]]
   branch = "master"
@@ -529,6 +529,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "20d74cbf8017a199b05bb8155fa565413fc422468c61f08573042b0912d088cb"
+  inputs-digest = "2df9ac26d4b1ecd62720a47bcad3de438ac4c8aa58c5bf8730f6e284a9eb78d3"
   solver-name = "gps-cdcl"
   solver-version = 1

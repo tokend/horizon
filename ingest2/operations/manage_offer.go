@@ -14,7 +14,7 @@ type manageOfferOpHandler struct {
 
 // Details returns details about manage offer operation
 func (h *manageOfferOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	manageOfferOp := op.Body.MustManageOfferOp()
 	manageOfferOpRes := opRes.MustManageOfferResult().MustSuccess()
 
@@ -24,9 +24,9 @@ func (h *manageOfferOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		offerID = int64(manageOfferOpRes.Offer.MustOffer().OfferId)
 	}
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageOffer,
-		ManageOffer: &regources.ManageOfferDetails{
+		ManageOffer: &history2.ManageOfferDetails{
 			OfferID:     offerID,
 			OrderBookID: int64(manageOfferOp.OrderBookId),
 			BaseAsset:   string(manageOfferOpRes.BaseAsset),
@@ -87,9 +87,9 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 	newOffer := res.Offer.MustOffer()
 	source.AssetCode = new(string)
 	source.BalanceID = new(uint64)
-	source.Effect = &regources.Effect{
-		Type:   regources.EffectTypeLocked,
-		Locked: &regources.BalanceChangeEffect{},
+	source.Effect = &history2.Effect{
+		Type:   history2.EffectTypeLocked,
+		Locked: &history2.BalanceChangeEffect{},
 	}
 	if newOffer.IsBuy {
 		*source.BalanceID = h.pubKeyProvider.MustBalanceID(newOffer.QuoteBalance)
@@ -125,9 +125,9 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 			AccountID: h.pubKeyProvider.MustAccountID(deletedOffer.OwnerId),
 			BalanceID: new(uint64),
 			AssetCode: new(string),
-			Effect: &regources.Effect{
-				Type:     regources.EffectTypeUnlocked,
-				Unlocked: &regources.BalanceChangeEffect{},
+			Effect: &history2.Effect{
+				Type:     history2.EffectTypeUnlocked,
+				Unlocked: &history2.BalanceChangeEffect{},
 			},
 		}
 
@@ -190,18 +190,18 @@ func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOffe
 
 func (h *manageOfferOpHandler) addParticipantEffects(participants []history2.ParticipantEffect,
 	offer offer, id int64, baseAmount, quoteAmount, price, fee xdr.Int64) []history2.ParticipantEffect {
-	baseBalanceEffect := regources.ParticularBalanceChangeEffect{
+	baseBalanceEffect := history2.ParticularBalanceChangeEffect{
 		BalanceAddress: offer.BaseBalanceAddress,
 		AssetCode:      offer.BaseAsset,
-		BalanceChangeEffect: regources.BalanceChangeEffect{
+		BalanceChangeEffect: history2.BalanceChangeEffect{
 			Amount: regources.Amount(baseAmount),
 		},
 	}
 
-	quoteBalanceEffect := regources.ParticularBalanceChangeEffect{
+	quoteBalanceEffect := history2.ParticularBalanceChangeEffect{
 		BalanceAddress: offer.QuoteBalanceAddress,
 		AssetCode:      offer.QuoteAsset,
-		BalanceChangeEffect: regources.BalanceChangeEffect{
+		BalanceChangeEffect: history2.BalanceChangeEffect{
 			Amount: regources.Amount(quoteAmount),
 			Fee: regources.Fee{
 				CalculatedPercent: regources.Amount(fee),
@@ -209,9 +209,9 @@ func (h *manageOfferOpHandler) addParticipantEffects(participants []history2.Par
 		},
 	}
 
-	matchedOfferEffect := regources.Effect{
-		Type: regources.EffectTypeMatched,
-		Matched: &regources.MatchEffect{
+	matchedOfferEffect := history2.Effect{
+		Type: history2.EffectTypeMatched,
+		Matched: &history2.MatchEffect{
 			OfferID:     id,
 			OrderBookID: offer.OrderBookID,
 			Price:       regources.Amount(price),

@@ -12,13 +12,13 @@ type createPreIssuanceRequestOpHandler struct {
 // Details returns details about create pre issuance request operation
 func (h *createPreIssuanceRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	preissuanceRequest := op.Body.MustCreatePreIssuanceRequest().Request
 	successResult := opRes.MustCreatePreIssuanceRequestResult().MustSuccess()
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreatePreissuanceRequest,
-		CreatePreIssuanceRequest: &regources.CreatePreIssuanceRequestDetails{
+		CreatePreIssuanceRequest: &history2.CreatePreIssuanceRequestDetails{
 			AssetCode:   string(preissuanceRequest.Asset),
 			Amount:      regources.Amount(preissuanceRequest.Amount),
 			RequestID:   int64(successResult.RequestId),

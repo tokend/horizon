@@ -13,7 +13,7 @@ type createManageLimitsRequestOpHandler struct {
 // Details returns details about create limits request operation
 func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()
 
 	var data regources.Details
@@ -22,9 +22,9 @@ func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 		data = internal.MarshalCustomDetails(rawData)
 	}
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateManageLimitsRequest,
-		CreateManageLimitsRequest: &regources.CreateManageLimitsRequestDetails{
+		CreateManageLimitsRequest: &history2.CreateManageLimitsRequestDetails{
 			Data:      data,
 			RequestID: int64(opRes.MustCreateManageLimitsRequestResult().MustSuccess().ManageLimitsRequestId),
 		},

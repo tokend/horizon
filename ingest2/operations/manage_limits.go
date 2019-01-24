@@ -13,12 +13,12 @@ type manageLimitsOpHandler struct {
 
 // Details returns details about manage limits operation
 func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	manageLimitsOp := op.Body.MustManageLimitsOp()
 
-	opDetails := regources.OperationDetails{
+	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeManageLimits,
-		ManageLimits: &regources.ManageLimitsDetails{
+		ManageLimits: &history2.ManageLimitsDetails{
 			Action: manageLimitsOp.Details.Action,
 		},
 	}
@@ -27,7 +27,7 @@ func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResu
 	case xdr.ManageLimitsActionCreate:
 		creationDetails := manageLimitsOp.Details.MustLimitsCreateDetails()
 
-		opDetails.ManageLimits.Creation = &regources.ManageLimitsCreationDetails{
+		opDetails.ManageLimits.Creation = &history2.ManageLimitsCreationDetails{
 			AccountAddress:  creationDetails.AccountId.Address(), // Address() - smart, check for nil inside
 			AccountType:     creationDetails.AccountType,
 			StatsOpType:     creationDetails.StatsOpType,
@@ -39,11 +39,11 @@ func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResu
 			AnnualOut:       regources.Amount(creationDetails.AnnualOut),
 		}
 	case xdr.ManageLimitsActionRemove:
-		opDetails.ManageLimits.Removal = &regources.ManageLimitsRemovalDetails{
+		opDetails.ManageLimits.Removal = &history2.ManageLimitsRemovalDetails{
 			LimitsID: int64(manageLimitsOp.Details.MustId()),
 		}
 	default:
-		return regources.OperationDetails{}, errors.New("unexpected manage limits action")
+		return history2.OperationDetails{}, errors.New("unexpected manage limits action")
 	}
 
 	return opDetails, nil

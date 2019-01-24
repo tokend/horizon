@@ -3,7 +3,6 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2"
 )
 
 type manageSaleHandler struct {
@@ -12,12 +11,12 @@ type manageSaleHandler struct {
 
 // Details returns details about payout operation
 func (h *manageSaleHandler) Details(op rawOperation, res xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	manageSale := op.Body.MustManageSaleOp()
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageSale,
-		ManageSale: &regources.ManageSaleDetails{
+		ManageSale: &history2.ManageSaleDetails{
 			SaleID: uint64(manageSale.SaleId),
 			Action: manageSale.Data.Action,
 		},

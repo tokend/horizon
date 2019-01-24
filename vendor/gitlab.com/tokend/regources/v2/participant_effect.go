@@ -11,18 +11,13 @@ type ParticipantEffectsResponse struct {
 type ParticipantEffect struct {
 	Key
 	Relationships ParticipantEffectRelation `json:"relationships"`
-	Attributes    ParticipantEffectAttrs    `json:"attributes"`
 }
 
 //ParticipantEffectRelation - represents relations of resource
 type ParticipantEffectRelation struct {
 	Account   *Relation `json:"account"`
-	Balance   *Relation `json:"balance"`
-	Asset     *Relation `json:"asset"`
+	Balance   *Relation `json:"balance,omitempty"`
+	Asset     *Relation `json:"asset,omitempty"`
 	Operation *Relation `json:"operation"`
-}
-
-//ParticipantEffectAttrs - attributes of participant effect
-type ParticipantEffectAttrs struct {
-	Effect *Effect `json:"effect"`
+	Effect    *Relation `json:"effect"`
 }

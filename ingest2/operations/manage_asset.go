@@ -13,12 +13,12 @@ type manageAssetOpHandler struct {
 
 // Details returns details about manage asset operation
 func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	manageAssetOp := op.Body.MustManageAssetOp()
 
-	opDetails := regources.OperationDetails{
+	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeManageAsset,
-		ManageAsset: &regources.ManageAssetDetails{
+		ManageAsset: &history2.ManageAssetDetails{
 			RequestID: int64(manageAssetOp.RequestId),
 			Action:    manageAssetOp.Request.Action,
 		},
@@ -59,7 +59,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		opDetails.ManageAsset.AssetCode = string(data.AssetCode)
 		opDetails.ManageAsset.MaxIssuanceAmount = regources.Amount(data.MaxIssuanceAmount)
 	default:
-		return regources.OperationDetails{}, errors.New("unexpected manage asset action")
+		return history2.OperationDetails{}, errors.New("unexpected manage asset action")
 	}
 
 	return opDetails, nil

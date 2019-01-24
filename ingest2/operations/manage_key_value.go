@@ -13,7 +13,7 @@ type manageKeyValueOpHandler struct {
 
 // Details returns details about manage key value operation
 func (h *manageKeyValueOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
-) (regources.OperationDetails, error) {
+) (history2.OperationDetails, error) {
 	manageKVOp := op.Body.MustManageKeyValueOp()
 
 	var value *regources.KeyValue
@@ -34,15 +34,15 @@ func (h *manageKeyValueOpHandler) Details(op rawOperation, _ xdr.OperationResult
 			value.U64 = new(uint64)
 			*value.U64 = uint64(*valueForPtr.Ui64Value)
 		default:
-			return regources.OperationDetails{}, errors.From(errors.New("unexpected key value value type"), logan.F{
+			return history2.OperationDetails{}, errors.From(errors.New("unexpected key value value type"), logan.F{
 				"type": valueForPtr.Type.ShortString(),
 			})
 		}
 	}
 
-	return regources.OperationDetails{
+	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageKeyValue,
-		ManageKeyValue: &regources.ManageKeyValueDetails{
+		ManageKeyValue: &history2.ManageKeyValueDetails{
 			Key:    string(manageKVOp.Key),
 			Action: manageKVOp.Action.Action,
 			Value:  value,
