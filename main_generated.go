@@ -206,6 +206,14 @@ func (action FeesShowAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.
 }
 
 // ServeHTTPC is a method for web.Handler
+func (action HistoryOfferIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
+	ap := &action.Action
+	ap.Prepare(c, w, r)
+	action.Log = action.Log.WithField("action", "HistoryOfferIndexAction")
+	ap.Execute(&action)
+}
+
+// ServeHTTPC is a method for web.Handler
 func (action HistoryOperationIndexAction) ServeHTTPC(c web.C, w http.ResponseWriter, r *http.Request) {
 	ap := &action.Action
 	ap.Prepare(c, w, r)
