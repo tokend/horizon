@@ -122,5 +122,7 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		BaseCurrentCap: int64(raw.CurrentCapInBase),
 		BaseHardCap:    int64(raw.MaxAmountToBeSold),
 		SaleType:       saleType,
+		// if sale still exists in core db - it is open
+		State: history.SaleStateOpen,
 	}, nil
 }

@@ -22,16 +22,16 @@ func NewSale(repo *db2.Repo) *Sale {
 
 // Insert - inserts new sale
 func (q *Sale) Insert(sale history2.Sale) error {
-	sql := sq.Insert("sale").
+	sql := sq.Insert("sales").
 		Columns(
-			"id", "owner_id", "base_asset", "default_quote_asset", "start_time", "end_time",
+			"id", "owner_address", "base_asset", "default_quote_asset", "start_time", "end_time",
 			"quote_assets", "soft_cap", "hard_cap", "details", "base_current_cap",
-			"base_hard_cap, sale_type",
+			"base_hard_cap, sale_type, state",
 		).
 		Values(
 			sale.ID, sale.OwnerAddress, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
 			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.Details,
-			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType,
+			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType, sale.State,
 		)
 
 	_, err := q.repo.Exec(sql)
@@ -44,8 +44,8 @@ func (q *Sale) Insert(sale history2.Sale) error {
 
 // Update - updates existing sale
 func (q *Sale) Update(sale history2.Sale) error {
-	sql := sq.Update("sale").SetMap(map[string]interface{}{
-		"owner_id":            sale.OwnerAddress,
+	sql := sq.Update("sales").SetMap(map[string]interface{}{
+		"owner_address":       sale.OwnerAddress,
 		"base_asset":          sale.BaseAsset,
 		"default_quote_asset": sale.DefaultQuoteAsset,
 		"start_time":          sale.StartTime,
@@ -57,6 +57,7 @@ func (q *Sale) Update(sale history2.Sale) error {
 		"base_hard_cap":       sale.BaseHardCap,
 		"base_current_cap":    sale.BaseCurrentCap,
 		"sale_type":           sale.SaleType,
+		"state":               sale.State,
 	}).Where("id = ?", sale.ID)
 
 	_, err := q.repo.Exec(sql)
@@ -69,7 +70,7 @@ func (q *Sale) Update(sale history2.Sale) error {
 
 // SetState - sets state
 func (q *Sale) SetState(saleID uint64, state history2.SaleState) error {
-	sql := sq.Update("sale").Set("state", state).Where("id = ?", saleID)
+	sql := sq.Update("sales").Set("state", state).Where("id = ?", saleID)
 	_, err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to set state", logan.F{"sale_id": saleID})

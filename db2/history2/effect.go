@@ -5,16 +5,15 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/regources/v2"
 )
 
-// effectType describe the effect of some operation to the account or particular balance
-type effectType int64
+// EffectType describe the effect of some operation to the account or particular balance
+type EffectType int64
 
 const (
-	// EffectTypeNone - default effect type
-	EffectTypeNone effectType = iota
 	// EffectTypeFunded - balance received funds from other balance
-	EffectTypeFunded
+	EffectTypeFunded EffectType = iota + 1
 	// EffectTypeIssued - funds have been issued to the balance
 	EffectTypeIssued
 	// EffectTypeCharged - balance has been charged
@@ -34,7 +33,8 @@ const (
 // Effect stores the details of the operation effect on balance in union switch form. Only one value should be selected
 // Effect should never store more than one change to the account or balance
 type Effect struct {
-	Type              effectType           `json:"type"`
+	//NOTE: omitempty MUST be specified for each switch value
+	Type              EffectType           `json:"type"`
 	Funded            *BalanceChangeEffect `json:"funded,omitempty"`
 	Issued            *BalanceChangeEffect `json:"issued,omitempty"`
 	Charged           *BalanceChangeEffect `json:"charged,omitempty"`
@@ -42,9 +42,10 @@ type Effect struct {
 	Locked            *BalanceChangeEffect `json:"locked,omitempty"`
 	Unlocked          *BalanceChangeEffect `json:"unlocked,omitempty"`
 	ChargedFromLocked *BalanceChangeEffect `json:"charged_from_locked,omitempty"`
-	Matched           *MatchEffect         `json:"matched"`
+	Matched           *MatchEffect         `json:"matched,omitempty"`
 }
 
+//Value - converts effect into jsonb
 func (r Effect) Value() (driver.Value, error) {
 	result, err := db2.DriverValue(r)
 	if err != nil {
@@ -54,6 +55,7 @@ func (r Effect) Value() (driver.Value, error) {
 	return result, nil
 }
 
+//Scan - converts json into Effect
 func (r *Effect) Scan(src interface{}) error {
 	err := db2.DriveScan(src, r)
 	if err != nil {
@@ -67,7 +69,7 @@ func (r *Effect) Scan(src interface{}) error {
 type MatchEffect struct {
 	OfferID     int64                         `json:"offer_id"`
 	OrderBookID int64                         `json:"order_book_id"`
-	Price       string                        `json:"price"`
+	Price       regources.Amount              `json:"price"`
 	Charged     ParticularBalanceChangeEffect `json:"charged"`
 	Funded      ParticularBalanceChangeEffect `json:"funded"`
 }
@@ -81,13 +83,6 @@ type ParticularBalanceChangeEffect struct {
 
 // BalanceChangeEffect - describes movement of funds
 type BalanceChangeEffect struct {
-	Amount string `json:"amount"`
-	Fee    Fee    `json:"fee"`
-}
-
-// Fee - describes fee happened on balance. Direction of fee depends on the operation (depending on effect might be
-// charged, locked, unlocked, for all incoming effects but unlocked it's always charged)
-type Fee struct {
-	Fixed             string `json:"fixed"`
-	CalculatedPercent string `json:"calculated_percent"`
+	Amount regources.Amount `json:"amount"`
+	Fee    regources.Fee    `json:"fee"`
 }

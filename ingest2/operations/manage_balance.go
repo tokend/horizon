@@ -20,7 +20,7 @@ func (h *manageBalanceOpHandler) Details(op rawOperation, opRes xdr.OperationRes
 		ManageBalance: &history2.ManageBalanceDetails{
 			DestinationAccount: manageBalanceOp.Destination.Address(),
 			Action:             manageBalanceOp.Action,
-			Asset:              manageBalanceOp.Asset,
+			Asset:              string(manageBalanceOp.Asset),
 			BalanceAddress:     manageBalanceRes.BalanceId.AsString(),
 		},
 	}, nil

@@ -10,7 +10,7 @@ func populateEffects(balance history.Balance, effect history.Effect,
 	if balance.AccountID == source.AccountID {
 		source.BalanceID = &balance.ID
 		source.AssetCode = &balance.AssetCode
-		source.Effect = effect
+		source.Effect = &effect
 		return []history.ParticipantEffect{source}
 	}
 
@@ -18,6 +18,6 @@ func populateEffects(balance history.Balance, effect history.Effect,
 		AccountID: balance.AccountID,
 		BalanceID: &balance.ID,
 		AssetCode: &balance.AssetCode,
-		Effect:    effect,
+		Effect:    &effect,
 	}, source}
 }

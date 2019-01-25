@@ -10,10 +10,14 @@ import (
 
 	"fmt"
 
+	"math"
+
 	"github.com/go-chi/chi"
 	"github.com/go-ozzo/ozzo-validation"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 //base - base struct describing params provided by user for the request handler
@@ -200,37 +204,76 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 }
 
 func (r *base) GetOffsetBasedPageParams() (*OffsetBasedPageParams, error) {
-	limit, err := r.getUint64(pageParamLimit)
+	limit, err := r.getLimit(defaultLimit, maxLimit)
 	if err != nil {
 		return nil, err
 	}
 
 	number, err := r.getUint64(pageParamNumber)
 	if err != nil {
-		return nil, err
+		return nil, validation.Errors{
+			pageParamNumber: err,
+		}
 	}
 
 	return newOffsetBasedPageParams(limit, number), nil
 }
 
-func (r *base) GetCursorBasedPageParams() (*cursorBasedPageParams, error) {
-	limit, err := r.getUint64(pageParamLimit)
+func (r *base) getCursorBasedPageParams() (*db2.CursorPageParams, error) {
+	limit, err := r.getLimit(defaultLimit, maxLimit)
 	if err != nil {
-		return nil, validation.Errors{
-			pageParamLimit: errors.New("Must be a valid uint64 value"),
-		}
+		return nil, err
 	}
 
-	order := r.getString(pageParamOrder)
-	if order != pageOrderAsc && order != pageOrderDesc {
-		return nil, validation.Errors{
-			pageParamOrder: errors.New("Must be a valid uint64 value"),
-		}
+	order, err := r.getOrder()
+	if err != nil {
+		return nil, err
 	}
 
-	cursor := r.getString(pageParamCursor)
+	cursor, err := r.getCursor()
+	if err != nil {
+		return nil, err
+	}
 
-	return newCursorBasedPageParams(limit, cursor, order), nil
+	if order == db2.OrderDescending && cursor == 0 {
+		cursor = math.MaxInt64
+	}
+
+	return &db2.CursorPageParams{
+		Limit:  limit,
+		Order:  order,
+		Cursor: cursor,
+	}, nil
+}
+
+//GetCursorLinks - returns links for cursor based page params
+func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *regources.Links {
+	result := regources.Links{
+		Self: r.getLink(p.Cursor, p.Limit, p.Order),
+		Prev: r.getLink(p.Cursor, p.Limit, p.Order.Invert()),
+	}
+
+	if last != "" {
+		lastI, err := strconv.ParseUint(last, 10, 64)
+		if err != nil {
+			panic(errors.Wrap(err, "failed to parse cursor", logan.F{
+				"last": last,
+			}))
+		}
+		result.Next = r.getLink(lastI, p.Limit, p.Order)
+	}
+
+	return &result
+}
+
+func (r *base) getLink(cursor, limit uint64, order db2.OrderType) string {
+	u := r.URL()
+	query := u.Query()
+	query.Set(pageParamCursor, strconv.FormatUint(cursor, 10))
+	query.Set(pageParamLimit, strconv.FormatUint(limit, 10))
+	query.Set(pageParamOrder, string(order))
+	u.RawQuery = query.Encode()
+	return u.String()
 }
 
 func getSliceOfSupportedIncludes(includes map[string]struct{}) []string {
@@ -240,4 +283,56 @@ func getSliceOfSupportedIncludes(includes map[string]struct{}) []string {
 	}
 
 	return result
+}
+
+func (r *base) getLimit(defaultLimit, maxLimit uint64) (uint64, error) {
+	result, err := r.getUint64(pageParamLimit)
+	if err != nil {
+		return 0, validation.Errors{
+			pageParamLimit: errors.New("Must be a valid uint64 value"),
+		}
+	}
+
+	if result == 0 {
+		return defaultLimit, nil
+	}
+
+	if result > maxLimit {
+		return 0, validation.Errors{
+			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
+		}
+	}
+
+	return result, nil
+}
+
+func (r *base) getOrder() (db2.OrderType, error) {
+	order := r.getString(pageParamOrder)
+	switch order {
+	case db2.OrderAscending, db2.OrderDescending:
+		return db2.OrderType(order), nil
+	case "":
+		return db2.OrderAscending, nil
+	default:
+		return db2.OrderDescending, validation.Errors{
+			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", db2.OrderAscending, db2.OrderDescending),
+		}
+	}
+}
+
+func (r *base) getCursor() (uint64, error) {
+	result, err := r.getUint64(pageParamCursor)
+	if err != nil {
+		return 0, validation.Errors{
+			pageParamCursor: err,
+		}
+	}
+
+	if result > math.MaxInt64 {
+		return 0, validation.Errors{
+			pageParamCursor: fmt.Errorf("cursor %d exceed max allowed %d", result, math.MaxInt64),
+		}
+	}
+
+	return result, nil
 }

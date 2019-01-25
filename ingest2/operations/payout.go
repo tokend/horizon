@@ -2,9 +2,10 @@ package operations
 
 import (
 	"github.com/go-errors/errors"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type payoutHandler struct {
@@ -23,15 +24,13 @@ func (h *payoutHandler) Details(op rawOperation, res xdr.OperationResultTr,
 		Payout: &history2.PayoutDetails{
 			SourceAccountAddress: op.Source.Address(),
 			SourceBalanceAddress: payoutOp.SourceBalanceId.AsString(),
-			Asset:                payoutOp.Asset,
-			MaxPayoutAmount:      amount.StringU(uint64(payoutOp.MaxPayoutAmount)),
-			MinAssetHolderAmount: amount.StringU(uint64(payoutOp.MinAssetHolderAmount)),
-			MinPayoutAmount:      amount.StringU(uint64(payoutOp.MinPayoutAmount)),
-			ExpectedFixedFee:     amount.StringU(uint64(payoutOp.Fee.Fixed)),
-			ExpectedPercentFee:   amount.StringU(uint64(payoutOp.Fee.Percent)),
-			ActualFixedFee:       amount.StringU(uint64(payoutRes.ActualFee.Fixed)),
-			ActualPercentFee:     amount.StringU(uint64(payoutRes.ActualFee.Percent)),
-			ActualPayoutAmount:   amount.StringU(uint64(payoutRes.ActualPayoutAmount)),
+			Asset:                string(payoutOp.Asset),
+			MaxPayoutAmount:      regources.Amount(payoutOp.MaxPayoutAmount),
+			MinAssetHolderAmount: regources.Amount(payoutOp.MinAssetHolderAmount),
+			MinPayoutAmount:      regources.Amount(payoutOp.MinPayoutAmount),
+			ExpectedFee:          internal.FeeFromXdr(payoutOp.Fee),
+			ActualFee:            internal.FeeFromXdr(payoutRes.ActualFee),
+			ActualPayoutAmount:   regources.Amount(payoutRes.ActualPayoutAmount),
 		},
 	}, nil
 }
@@ -51,14 +50,11 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	source.BalanceID = &balance.ID
 	source.AssetCode = &balance.AssetCode
-	source.Effect = history2.Effect{
+	source.Effect = &history2.Effect{
 		Type: history2.EffectTypeCharged,
 		Charged: &history2.BalanceChangeEffect{
-			Amount: amount.StringU(uint64(payoutRes.ActualPayoutAmount)),
-			Fee: history2.Fee{
-				Fixed:             amount.StringU(uint64(payoutRes.ActualFee.Fixed)),
-				CalculatedPercent: amount.StringU(uint64(payoutRes.ActualFee.Percent)),
-			},
+			Amount: regources.Amount(payoutRes.ActualPayoutAmount),
+			Fee:    internal.FeeFromXdr(payoutRes.ActualFee),
 		},
 	}
 
@@ -72,10 +68,10 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 			AccountID: h.pubKeyProvider.MustAccountID(response.ReceiverId),
 			BalanceID: &balanceID,
 			AssetCode: &balance.AssetCode, // source balance has the same asset as receivers
-			Effect: history2.Effect{
+			Effect: &history2.Effect{
 				Type: history2.EffectTypeFunded,
 				Funded: &history2.BalanceChangeEffect{
-					Amount: amount.StringU(uint64(response.ReceivedAmount)),
+					Amount: regources.Amount(response.ReceivedAmount),
 				},
 			},
 		})

@@ -4,6 +4,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type createManageLimitsRequestOpHandler struct {
@@ -15,7 +16,7 @@ func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 ) (history2.OperationDetails, error) {
 	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()
 
-	var data map[string]interface{}
+	var data regources.Details
 	rawData, ok := createManageLimitsRequestOp.ManageLimitsRequest.Ext.GetDetails()
 	if ok {
 		data = internal.MarshalCustomDetails(rawData)

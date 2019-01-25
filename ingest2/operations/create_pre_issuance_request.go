@@ -1,9 +1,9 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type createPreIssuanceRequestOpHandler struct {
@@ -19,8 +19,8 @@ func (h *createPreIssuanceRequestOpHandler) Details(op rawOperation,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreatePreissuanceRequest,
 		CreatePreIssuanceRequest: &history2.CreatePreIssuanceRequestDetails{
-			AssetCode:   preissuanceRequest.Asset,
-			Amount:      amount.StringU(uint64(preissuanceRequest.Amount)),
+			AssetCode:   string(preissuanceRequest.Asset),
+			Amount:      regources.Amount(preissuanceRequest.Amount),
 			RequestID:   int64(successResult.RequestId),
 			IsFulfilled: successResult.Fulfilled,
 		},
