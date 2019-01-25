@@ -67,7 +67,7 @@ func (q AssetPairsQ) Page(limit, offset uint64) AssetPairsQ {
 // WithBaseAsset - joins base asset
 func (q AssetPairsQ) WithBaseAsset() AssetPairsQ {
 	q.selector = q.selector.
-		Columns(getAssetColumns("base_assets")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "base_assets")...).
 		LeftJoin("asset base_assets ON asset_pairs.base = base_assets.code")
 
 	return q
@@ -76,7 +76,7 @@ func (q AssetPairsQ) WithBaseAsset() AssetPairsQ {
 // WithQuoteAsset - joins quote asset
 func (q AssetPairsQ) WithQuoteAsset() AssetPairsQ {
 	q.selector = q.selector.
-		Columns(getAssetColumns("quote_assets")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "quote_assets")...).
 		LeftJoin("asset quote_assets ON asset_pairs.quote = quote_assets.code")
 
 	return q
