@@ -81,9 +81,8 @@ func (h *getOfferHandler) GetOffer(request requests.GetOffer) (*core2.Offer, err
 
 // GetResponse returns offer with related resources
 func (h *getOfferHandler) GetResponse(request *requests.GetOffer, coreOffer *core2.Offer) regources.OfferResponse {
-	offer := resources.NewOffer(*coreOffer)
 	response := regources.OfferResponse{
-		Data: offer,
+		Data: resources.NewOffer(*coreOffer),
 	}
 
 	response.Data.Relationships.Owner = resources.NewAccountKey(coreOffer.OwnerID).AsRelation()
@@ -93,16 +92,12 @@ func (h *getOfferHandler) GetResponse(request *requests.GetOffer, coreOffer *cor
 	response.Data.Relationships.QuoteBalance = resources.NewBalanceKey(coreOffer.QuoteBalanceID).AsRelation()
 
 	if request.ShouldInclude(requests.IncludeTypeOfferBaseAsset) {
-		coreBaseAsset := coreOffer.BaseAsset
-		baseAsset := resources.NewAsset(*coreBaseAsset)
-
+		baseAsset := resources.NewAsset(*coreOffer.BaseAsset)
 		response.Included.Add(&baseAsset)
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeOfferQuoteAsset) {
-		coreQuoteAsset := coreOffer.QuoteAsset
-		quoteAsset := resources.NewAsset(*coreQuoteAsset)
-
+		quoteAsset := resources.NewAsset(*coreOffer.QuoteAsset)
 		response.Included.Add(&quoteAsset)
 	}
 
