@@ -88,7 +88,7 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 	}
 	for i := range signers {
 		signer := resources.NewSigner(signers[i])
-		if request.ShouldIncludeAny(requests.IncludeTypeSignerRoles) {
+		if request.ShouldInclude(requests.IncludeTypeSignerRoles) {
 			signer.Relationships.Role = h.getRole(request, &response.Included)
 		}
 		response.Data = append(response.Data, signer)

@@ -148,15 +148,9 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *
 		balance := resources.NewBalance(&coreBalances[i])
 		result.Data = append(result.Data, balance.Key)
 
-		if request.ShouldIncludeAny(
-			requests.IncludeTypeAccountBalances,
-			requests.IncludeTypeAccountBalancesState,
-			requests.IncludeTypeAccountBalancesAsset,
-		) {
-			balanceStateKey := resources.NewBalanceStateKey(coreBalance.BalanceAddress)
-			balanceAssetKey := resources.NewAssetKey(coreBalance.AssetCode)
-			balance.Relationships.State = balanceStateKey.AsRelation()
-			balance.Relationships.Asset = balanceAssetKey.AsRelation()
+		if request.ShouldInclude(requests.IncludeTypeAccountBalances) {
+			balance.Relationships.State = resources.NewBalanceStateKey(coreBalance.BalanceAddress).AsRelation()
+			balance.Relationships.Asset = resources.NewAssetKey(coreBalance.AssetCode).AsRelation()
 
 			includes.Add(balance)
 		}
@@ -176,10 +170,7 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *
 }
 
 func (h *getAccountHandler) getRole(request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
-	if !request.ShouldIncludeAny(
-		requests.IncludeTypeAccountRole,
-		requests.IncludeTypeAccountRoleRules,
-	) {
+	if !request.ShouldInclude(requests.IncludeTypeAccountRole) {
 		role := resources.NewRoleKey(request.Address)
 		return role.AsRelation(), nil
 	}
