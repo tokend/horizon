@@ -20,14 +20,6 @@ func NewBalanceKey(balanceAddress string) regources.Key {
 	}
 }
 
-//NewBalanceKey - creates new balance key using balance address
-func NewBalanceKey(address string) regources.Key {
-	return regources.Key{
-		ID:   address,
-		Type: regources.TypeBalances,
-	}
-}
-
 //NewBalanceState - returns new balance state
 func NewBalanceState(record *core.Balance) *regources.BalanceState {
 	return &regources.BalanceState{
