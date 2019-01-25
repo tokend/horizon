@@ -8,7 +8,9 @@ const (
 	TypeAccounts           ResourceType = "accounts"
 	TypeBalances                        = "balances"
 	TypeAssets                          = "assets"
+	TypeAssetPairs                      = "asset-pairs"
 	TypeBalancesState                   = "balances-state"
+	TypeOffers                          = "offers"
 	TypeRoles                           = "roles"
 	TypeRules                           = "rules"
 	TypeSigners                         = "signers"
@@ -32,7 +34,7 @@ const (
 	// TypeEffectsChargedFromLocked - funds has been charged from locked amount on balance
 	TypeEffectsChargedFromLocked = "effects-charged-from-locked"
 	// TypeEffectsMatched - balance has been charged or received funds due to match of the offers
-	TypeEffectsMatched                         = "effects-matched"
+	TypeEffectsMatched = "effects-matched"
 	// TypeCreateAccount - details of createAccountOp
 	TypeCreateAccount                          = "operations-create-account"
 	TypePayment                                = "operations-payment"
