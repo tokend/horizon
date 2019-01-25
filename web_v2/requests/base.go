@@ -206,7 +206,9 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 func (r *base) GetOffsetBasedPageParams() (*OffsetBasedPageParams, error) {
 	limit, err := r.getLimit(defaultLimit, maxLimit)
 	if err != nil {
-		return nil, err
+		return nil, validation.Errors{
+			pageParamLimit: errors.New("Must be a valid uint64 value"),
+		}
 	}
 
 	number, err := r.getUint64(pageParamNumber)

@@ -43,10 +43,6 @@ func GetAssetList(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	if result == nil {
-		ape.RenderErr(w, problems.NotFound())
-		return
-	}
 
 	ape.Render(w, result)
 }
