@@ -49,7 +49,7 @@ type getAssetListHandler struct {
 
 // GetAssetList returns the list of assets with related resources
 func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*regources.AssetsResponse, error) {
-	q := h.AssetsQ.Page(request.PageParams.Limit(), request.PageParams.Offset())
+	q := h.AssetsQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeAssetListOwner) {
 		q = q.FilterByOwner(request.Filters.Owner)
 	}
@@ -63,7 +63,7 @@ func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*reg
 
 	response := &regources.AssetsResponse{
 		Data:  make([]regources.Asset, 0, len(assets)),
-		Links: request.PageParams.Links(request.URL()),
+		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 
 	for i := range assets {

@@ -59,8 +59,8 @@ func (q AssetsQ) FilterByPolicy(mask uint64) AssetsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AssetsQ) Page(limit, offset uint64) AssetsQ {
-	q.selector = q.selector.Limit(limit).Offset(offset)
+func (q AssetsQ) Page(params db2.OffsetPageParams) AssetsQ {
+	q.selector = params.ApplyTo(q.selector, "assets.code")
 	return q
 }
 

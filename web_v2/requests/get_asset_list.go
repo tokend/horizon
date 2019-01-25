@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -30,7 +31,7 @@ type GetAssetList struct {
 		Policy uint64 `fig:"policy"`
 		Owner  string `fig:"owner"`
 	}
-	PageParams *offsetBasedPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetAssetList returns the new instance of GetAssetList request
