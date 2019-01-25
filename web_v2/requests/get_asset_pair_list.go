@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -41,7 +42,7 @@ type GetAssetPairList struct {
 		BaseAsset  string `fig:"base_asset"`
 		QuoteAsset string `fig:"quote_asset"`
 	}
-	PageParams *OffsetBasedPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetAssetPairList returns new instance of GetAssetPairList request
@@ -54,7 +55,7 @@ func NewGetAssetPairList(r *http.Request) (*GetAssetPairList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.GetOffsetBasedPageParams()
+	pageParams, err := b.getOffsetBasedPageParams()
 	if err != nil {
 		return nil, err
 	}

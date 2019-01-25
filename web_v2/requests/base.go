@@ -20,6 +20,16 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
+const (
+	pageParamLimit  = "page[limit]"
+	pageParamNumber = "page[number]"
+	pageParamCursor = "page[cursor]"
+	pageParamOrder  = "page[order]"
+)
+
+const defaultLimit uint64 = 15
+const maxLimit uint64 = 100
+
 //base - base struct describing params provided by user for the request handler
 type base struct {
 	include           map[string]struct{}
@@ -203,22 +213,27 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 	return requestIncludes, nil
 }
 
-func (r *base) GetOffsetBasedPageParams() (*OffsetBasedPageParams, error) {
+func (r *base) getOffsetBasedPageParams() (*db2.OffsetPageParams, error) {
 	limit, err := r.getLimit(defaultLimit, maxLimit)
 	if err != nil {
-		return nil, validation.Errors{
-			pageParamLimit: errors.New("Must be a valid uint64 value"),
-		}
+		return nil, err
 	}
 
-	number, err := r.getUint64(pageParamNumber)
+	pageNumber, err := r.getPageNumber()
 	if err != nil {
-		return nil, validation.Errors{
-			pageParamNumber: err,
-		}
+		return nil, err
 	}
 
-	return newOffsetBasedPageParams(limit, number), nil
+	order, err := r.getOrder()
+	if err != nil {
+		return nil, err
+	}
+
+	return &db2.OffsetPageParams{
+		Order:      order,
+		Limit:      limit,
+		PageNumber: pageNumber,
+	}, nil
 }
 
 func (r *base) getCursorBasedPageParams() (*db2.CursorPageParams, error) {
@@ -251,8 +266,8 @@ func (r *base) getCursorBasedPageParams() (*db2.CursorPageParams, error) {
 //GetCursorLinks - returns links for cursor based page params
 func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *regources.Links {
 	result := regources.Links{
-		Self: r.getLink(p.Cursor, p.Limit, p.Order),
-		Prev: r.getLink(p.Cursor, p.Limit, p.Order.Invert()),
+		Self: r.getCursorLink(p.Cursor, p.Limit, p.Order),
+		Prev: r.getCursorLink(p.Cursor, p.Limit, p.Order.Invert()),
 	}
 
 	if last != "" {
@@ -262,16 +277,36 @@ func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *regources.Li
 				"last": last,
 			}))
 		}
-		result.Next = r.getLink(lastI, p.Limit, p.Order)
+		result.Next = r.getCursorLink(lastI, p.Limit, p.Order)
 	}
 
 	return &result
 }
 
-func (r *base) getLink(cursor, limit uint64, order db2.OrderType) string {
+//GetOffsetLinks - returns links for offset based page params
+func (r *base) GetOffsetLinks(p db2.OffsetPageParams) *regources.Links {
+	result := regources.Links{
+		Next: r.getOffsetLink(p.PageNumber+1, p.Limit, p.Order),
+		Self: r.getOffsetLink(p.PageNumber, p.Limit, p.Order),
+	}
+
+	return &result
+}
+
+func (r *base) getCursorLink(cursor, limit uint64, order db2.OrderType) string {
 	u := r.URL()
 	query := u.Query()
 	query.Set(pageParamCursor, strconv.FormatUint(cursor, 10))
+	query.Set(pageParamLimit, strconv.FormatUint(limit, 10))
+	query.Set(pageParamOrder, string(order))
+	u.RawQuery = query.Encode()
+	return u.String()
+}
+
+func (r *base) getOffsetLink (pageNumber, limit uint64, order db2.OrderType) string {
+	u := r.URL()
+	query := u.Query()
+	query.Set(pageParamNumber, strconv.FormatUint(pageNumber, 10))
 	query.Set(pageParamLimit, strconv.FormatUint(limit, 10))
 	query.Set(pageParamOrder, string(order))
 	u.RawQuery = query.Encode()
@@ -320,6 +355,17 @@ func (r *base) getOrder() (db2.OrderType, error) {
 			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", db2.OrderAscending, db2.OrderDescending),
 		}
 	}
+}
+
+func (r *base) getPageNumber() (uint64, error) {
+	result, err := r.getUint64(pageParamNumber)
+	if err != nil {
+		return 0, validation.Errors{
+			pageParamNumber: err,
+		}
+	}
+
+	return result, nil
 }
 
 func (r *base) getCursor() (uint64, error) {

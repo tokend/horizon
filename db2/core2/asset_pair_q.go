@@ -59,8 +59,8 @@ func (q AssetPairsQ) GetByBaseAndQuote(base, quote string) (*AssetPair, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AssetPairsQ) Page(limit, offset uint64) AssetPairsQ {
-	q.selector = q.selector.Limit(limit).Offset(offset)
+func (q AssetPairsQ) Page(params db2.OffsetPageParams) AssetPairsQ {
+	q.selector = params.ApplyTo(q.selector, "asset_pairs.base", "asset_pairs.quote")
 	return q
 }
 

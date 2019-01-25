@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -30,6 +31,7 @@ type GetAssetList struct {
 		Policy uint64 `fig:"policy"`
 		Owner  string `fig:"owner"`
 	}
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetAssetList returns the new instance of GetAssetList request
@@ -42,8 +44,14 @@ func NewGetAssetList(r *http.Request) (*GetAssetList, error) {
 		return nil, err
 	}
 
+	pageParams, err := b.getOffsetBasedPageParams()
+	if err != nil {
+		return nil, err
+	}
+
 	request := GetAssetList{
-		base: b,
+		base:       b,
+		PageParams: pageParams,
 	}
 
 	err = b.populateFilters(&request.Filters)
