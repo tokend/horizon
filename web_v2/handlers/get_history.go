@@ -30,7 +30,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !handler.isAllowed(w, r, request) {
+	if !handler.ensureAllowed(w, r, request) {
 		return
 	}
 
@@ -155,7 +155,8 @@ func getEffect(effect history2.ParticipantEffect) regources.ParticipantEffect {
 
 }
 
-func (h *getHistory) isAllowed(w http.ResponseWriter, httpRequest *http.Request, request *requests.GetHistory) bool {
+// ensure allowed - checks it requester is allowed to access the data. If not it renders error and returns false.
+func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Request, request *requests.GetHistory) bool {
 	if request.Filters.Account != "" {
 		return isAllowed(httpRequest, w, request.Filters.Account)
 	}
@@ -168,8 +169,9 @@ func (h *getHistory) isAllowed(w http.ResponseWriter, httpRequest *http.Request,
 			return false
 		}
 
+		// if we failed to find account by balance address - balance does not exists, so we can render empty page
 		if account == nil {
-			ape.RenderErr(w, problems.NotFound())
+			ape.Render(w, regources.ParticipantEffectsResponse{})
 			return false
 		}
 
@@ -193,6 +195,12 @@ func (h *getHistory) tryGetAccountForBalance(balanceAddress string) (*history2.A
 	account, err := h.AccountsQ.ByID(balance.AccountID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load account by ID")
+	}
+
+	if account == nil {
+		return nil, errors.From(errors.New("found balance, but failed to find account for it"), logan.F{
+			"balance": balance.ID,
+		})
 	}
 
 	return account, nil
