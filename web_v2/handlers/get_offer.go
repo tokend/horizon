@@ -30,7 +30,7 @@ func GetOffer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := handler.GetOffer(request)
+	coreOffer, err := handler.GetOffer(*request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get offer", logan.F{
 			"request": request,
@@ -38,15 +38,16 @@ func GetOffer(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-
-	if !isAllowed(r, w, result.Data.Relationships.Owner.Data.ID) {
-		return
-	}
-
-	if result == nil {
+	if coreOffer == nil {
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
+
+	if !isAllowed(r, w, coreOffer.OwnerID) {
+		return
+	}
+
+	result := handler.GetResponse(request, coreOffer)
 
 	ape.Render(w, result)
 }
@@ -58,8 +59,8 @@ type getOfferHandler struct {
 	Log       *logan.Entry
 }
 
-// GetOffer returns asset with related resources
-func (h *getOfferHandler) GetOffer(request *requests.GetOffer) (*regources.OfferResponse, error) {
+// GetOffer returns gets offer from database
+func (h *getOfferHandler) GetOffer(request requests.GetOffer) (*core2.Offer, error) {
 	q := h.OffersQ
 
 	if request.ShouldInclude(requests.IncludeTypeOfferBaseAsset) {
@@ -74,12 +75,14 @@ func (h *getOfferHandler) GetOffer(request *requests.GetOffer) (*regources.Offer
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get offer by ID")
 	}
-	if coreOffer == nil {
-		return nil, nil
-	}
 
+	return coreOffer, nil
+}
+
+// GetResponse returns offer with related resources
+func (h *getOfferHandler) GetResponse(request *requests.GetOffer, coreOffer *core2.Offer) regources.OfferResponse {
 	offer := resources.NewOffer(*coreOffer)
-	response := &regources.OfferResponse{
+	response := regources.OfferResponse{
 		Data: offer,
 	}
 
@@ -103,5 +106,5 @@ func (h *getOfferHandler) GetOffer(request *requests.GetOffer) (*regources.Offer
 		response.Included.Add(&quoteAsset)
 	}
 
-	return response, nil
+	return response
 }
