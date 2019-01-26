@@ -178,7 +178,7 @@ func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Requ
 		return isAllowed(httpRequest, w, account.Address)
 	}
 
-	return isAllowed(httpRequest, w, ctx.CoreInfo(httpRequest).MasterAccountID)
+	return isAllowed(httpRequest, w, ctx.CoreInfo(httpRequest).AdminAccountID)
 }
 
 func (h *getHistory) tryGetAccountForBalance(balanceAddress string) (*history2.Account, error) {
