@@ -7,6 +7,7 @@ import (
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/generator"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/log"
 )
 
@@ -135,6 +136,7 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 			}
 
 			opDetails.TxID = txID
+			opDetails.LedgerCloseTime = internal.TimeFromXdr(xdr.Uint64(header.CloseTime))
 			ledgerOperations = append(ledgerOperations, opDetails)
 			ledgerParticipants = append(ledgerParticipants, participants...)
 		}

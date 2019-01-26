@@ -7,24 +7,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-//Details - type alice to be used when dealing with untyped details
-type Details json.RawMessage
 
-//Value - converts details to db supported type
-func (r Details) Value() (driver.Value, error) {
-	return driver.Value(r), nil
-}
-
-//Scan - converts db supported type to Details
-func (r *Details) Scan(src interface{}) error {
-	data, err := convertJSONB(src)
-	if err != nil {
-		return err
-	}
-
-	*r = data
-	return nil
-}
 
 //driverValue - converts interface into db supported type
 func driverValue(data interface{}) (driver.Value, error) {

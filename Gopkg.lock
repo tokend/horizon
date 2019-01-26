@@ -548,14 +548,14 @@
 
 [[projects]]
   branch = "product"
-  digest = "1:5ec7bed3df64664b42d092549575104ed99785368855401525133c0f346707cd"
+  digest = "1:2d5b116b91d10015d97d61d369a835d7cf7fd00a565ead24c908ddf954302ed7"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "b4e80abf8ad877272e258332d95693479502ee9d"
+  revision = "48f81071aadf45c2e6f573925f9b6dd9ae6bea96"
 
 [[projects]]
   branch = "master"
@@ -666,7 +666,6 @@
     "github.com/go-errors/errors",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/goji/context",
-    "github.com/google/jsonapi",
     "github.com/guregu/null",
     "github.com/influxdata/influxdb/client/v2",
     "github.com/jmoiron/sqlx",

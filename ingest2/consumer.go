@@ -87,7 +87,7 @@ func (c *Consumer) run(ctx context.Context) {
 }
 
 func (c *Consumer) readBatch(ctx context.Context) []LedgerBundle {
-	const maxBatchSize = 100
+	const maxBatchSize = 1000
 	bundles := c.readAtLeastOne(ctx)
 	for {
 		select {

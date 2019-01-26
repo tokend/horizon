@@ -68,7 +68,7 @@ create table participant_effects (
   account_id bigint not null,
   balance_id bigint ,
   asset_code character varying(64),
-  effect jsonb not null,
+  effect jsonb,
   operation_id bigint not null
 );
 
@@ -88,24 +88,24 @@ create table reviewable_requests (
   details jsonb not null,
   all_tasks int not null,
   pending_tasks int not null,
-  external_details text not null
+  external_details jsonb not null
 );
 
 create table sales (
   id bigint not null primary key,
-  soft_cap numeric(20, 6) not null,
-  hard_cap numeric(20, 6) not null,
-  base_current_cap numeric(20, 6) not null,
-  base_hard_cap numeric(20, 6) not null,
+  soft_cap numeric(23, 0) not null,
+  hard_cap numeric(23, 0) not null,
+  base_current_cap numeric(23, 0) not null,
+  base_hard_cap numeric(23, 0) not null,
   sale_type int not null,
   owner_address character varying(64) not null,
   base_asset character varying(64) not null,
   default_quote_asset character varying(64) not null,
   start_time timestamp without time zone not null,
   end_time timestamp without time zone not null,
-  details text not null,
+  details jsonb not null,
   state int not null,
-  quote_assets text not null
+  quote_assets jsonb not null
 );
 
 

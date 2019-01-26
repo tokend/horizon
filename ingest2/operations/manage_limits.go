@@ -2,9 +2,9 @@ package operations
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type manageLimitsOpHandler struct {
@@ -31,16 +31,16 @@ func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResu
 			AccountAddress:  creationDetails.AccountId.Address(), // Address() - smart, check for nil inside
 			AccountType:     creationDetails.AccountType,
 			StatsOpType:     creationDetails.StatsOpType,
-			AssetCode:       creationDetails.AssetCode,
+			AssetCode:       string(creationDetails.AssetCode),
 			IsConvertNeeded: creationDetails.IsConvertNeeded,
-			DailyOut:        amount.StringU(uint64(creationDetails.DailyOut)),
-			WeeklyOut:       amount.StringU(uint64(creationDetails.WeeklyOut)),
-			MonthlyOut:      amount.StringU(uint64(creationDetails.MonthlyOut)),
-			AnnualOut:       amount.StringU(uint64(creationDetails.AnnualOut)),
+			DailyOut:        regources.Amount(creationDetails.DailyOut),
+			WeeklyOut:       regources.Amount(creationDetails.WeeklyOut),
+			MonthlyOut:      regources.Amount(creationDetails.MonthlyOut),
+			AnnualOut:       regources.Amount(creationDetails.AnnualOut),
 		}
 	case xdr.ManageLimitsActionRemove:
 		opDetails.ManageLimits.Removal = &history2.ManageLimitsRemovalDetails{
-			ID: int64(manageLimitsOp.Details.MustId()),
+			LimitsID: int64(manageLimitsOp.Details.MustId()),
 		}
 	default:
 		return history2.OperationDetails{}, errors.New("unexpected manage limits action")

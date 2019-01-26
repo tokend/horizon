@@ -47,7 +47,7 @@ type ReviewableRequestDetails struct {
 	Sale                   *SaleCreationRequest      `json:"sale,omitempty"`
 	LimitsUpdate           *LimitsUpdateRequest      `json:"limits_update,omitempty"`
 	AMLAlert               *AMLAlertRequest          `json:"aml_alert,omitempty"`
-	ChangeRole             *ChangeRoleRequest        `json:"change_role,omitempty"`
+	KYC                    *UpdateKYCRequest         `json:"update_kyc,omitempty"`
 	UpdateSaleDetails      *UpdateSaleDetailsRequest `json:"update_sale_details,omitempty"`
 	UpdateSaleEndTime      *UpdateSaleEndTimeRequest `json:"update_sale_end_time,omitempty"`
 	PromotionUpdateRequest *PromotionUpdateRequest   `json:"promotion_update_request,omitempty"`
@@ -176,24 +176,26 @@ type SaleQuoteAsset struct {
 	Price      Amount `json:"price"`
 }
 
-type ChangeRoleRequest struct {
-	DestinationAccount string                 `json:"destination_account"`
-	AccountRoleToSet   uint64                 `json:"account_role_to_set"`
+type UpdateKYCRequest struct {
+	AccountToUpdateKYC string                 `json:"account_to_update_kyc"`
+	AccountTypeToSet   AccountTypeToSet       `json:"account_type_to_set"`
+	KYCLevel           uint32                 `json:"kyc_level"`
 	KYCData            map[string]interface{} `json:"kyc_data"`
 	// KYCDataStruct is the data from raw map of KYCData, unmarshalled into typed struct in custom Unmarshal below
-	KYCDataStruct  KYCData `json:"-"`
-	AllTasks       uint32  `json:"all_tasks"`
-	PendingTasks   uint32  `json:"pending_tasks"`
-	SequenceNumber uint32  `json:"sequence_number"`
+	KYCDataStruct   KYCData                  `json:"-"`
+	AllTasks        uint32                   `json:"all_tasks"`
+	PendingTasks    uint32                   `json:"pending_tasks"`
+	SequenceNumber  uint32                   `json:"sequence_number"`
+	ExternalDetails []map[string]interface{} `json:"external_details"`
 }
 
-func (r *ChangeRoleRequest) UnmarshalJSON(data []byte) error {
-	type t ChangeRoleRequest
+func (r *UpdateKYCRequest) UnmarshalJSON(data []byte) error {
+	type t UpdateKYCRequest
 	var tt t
 	if err := json.Unmarshal(data, &tt); err != nil {
 		return err
 	}
-	*r = ChangeRoleRequest(tt)
+	*r = UpdateKYCRequest(tt)
 
 	// marshal map back to json
 	rawKYC, err := json.Marshal(r.KYCData)
@@ -207,6 +209,11 @@ func (r *ChangeRoleRequest) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+type AccountTypeToSet struct {
+	Int    int    `json:"int"`
+	String string `json:"string"`
 }
 
 type UpdateSaleDetailsRequest struct {

@@ -14,7 +14,7 @@ import (
 type Account struct {
 	accounts map[xdr.AccountId]*history2.Account
 
-	accountQ     *history2.AccountsQ
+	accountQ     history2.AccountsQ
 	coreAccounts core2.AccountsQ
 	repo         *db2.Repo
 }

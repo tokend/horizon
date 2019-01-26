@@ -30,7 +30,7 @@
   version = "0.8.0"
 
 [[constraint]]
-  branch = "feature/roles_rules"
+  branch = "master"
   name = "gitlab.com/tokend/go"
 
 [prune]

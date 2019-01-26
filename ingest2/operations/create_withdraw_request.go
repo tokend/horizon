@@ -1,10 +1,10 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type createWithdrawRequestOpHandler struct {
@@ -21,9 +21,8 @@ func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 		Type: xdr.OperationTypeCreateWithdrawalRequest,
 		CreateWithdrawRequest: &history2.CreateWithdrawRequestDetails{
 			BalanceAddress:  withdrawRequest.Balance.AsString(),
-			Amount:          amount.StringU(uint64(withdrawRequest.Amount)),
-			FixedFee:        amount.String(int64(withdrawRequest.Fee.Fixed)),
-			PercentFee:      amount.String(int64(withdrawRequest.Fee.Percent)),
+			Amount:          regources.Amount(withdrawRequest.Amount),
+			Fee:             internal.FeeFromXdr(withdrawRequest.Fee),
 			ExternalDetails: internal.MarshalCustomDetails(withdrawRequest.ExternalDetails),
 		},
 	}, nil
@@ -39,11 +38,8 @@ func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	source.BalanceID = &balanceIDInt
 	source.Effect.Type = history2.EffectTypeLocked
 	source.Effect.Locked = &history2.BalanceChangeEffect{
-		Amount: amount.StringU(uint64(withdrawRequest.Amount)),
-		Fee: history2.Fee{
-			Fixed:             amount.StringU(uint64(withdrawRequest.Fee.Fixed)),
-			CalculatedPercent: amount.StringU(uint64(withdrawRequest.Fee.Percent)),
-		},
+		Amount: regources.Amount(withdrawRequest.Amount),
+		Fee:    internal.FeeFromXdr(withdrawRequest.Fee),
 	}
 
 	return []history2.ParticipantEffect{source}, nil

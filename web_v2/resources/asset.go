@@ -25,3 +25,11 @@ func NewAsset(record core2.Asset) regources.Asset {
 		},
 	}
 }
+
+//NewAssetKey - creates new Key for asset
+func NewAssetKey(assetCode string) regources.Key {
+	return regources.Key{
+		ID:   assetCode,
+		Type: regources.TypeAssets,
+	}
+}
