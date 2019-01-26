@@ -334,7 +334,7 @@ func initWebActions(app *App) {
 				action.q = action.q.KYCByAccountTypeToSet(xdr.AccountType(*accountTypeToSet))
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateKyc},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeChangeRole},
 	})
 	r.Get("/request/update_sale_details", &ReviewableRequestIndexAction{
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},

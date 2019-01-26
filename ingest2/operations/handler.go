@@ -64,7 +64,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeSetFees: &setFeeOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
-			xdr.OperationTypeCreateKycRequest: &createKYCRequestOpHandler{
+			xdr.OperationTypeCreateChangeRoleRequest: &createChangeRoleRequestOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
 			xdr.OperationTypeCreatePreissuanceRequest: &createPreIssuanceRequestOpHandler{},
@@ -100,12 +100,12 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeManageSale: &manageSaleHandler{
 				manageOfferOpHandler: manageOfferOpHandlerInst,
 			},
-			xdr.OperationTypeManageContractRequest:       &deprecatedOpHandler{},
-			xdr.OperationTypeManageContract:              &deprecatedOpHandler{},
-			xdr.OperationTypeCancelSaleRequest:           &stubOpHandler{},
-			xdr.OperationTypePayout:                      &payoutHandler{},
-			xdr.OperationTypeManageAccountRole:           &deprecatedOpHandler{},
-			xdr.OperationTypeManageAccountRolePermission: &deprecatedOpHandler{},
+			xdr.OperationTypeManageContractRequest: &deprecatedOpHandler{},
+			xdr.OperationTypeManageContract:        &deprecatedOpHandler{},
+			xdr.OperationTypeCancelSaleRequest:     &stubOpHandler{},
+			xdr.OperationTypePayout:                &payoutHandler{},
+			xdr.OperationTypeManageAccountRole:     &deprecatedOpHandler{},
+			xdr.OperationTypeManageAccountRule:     &deprecatedOpHandler{},
 		},
 	}
 }

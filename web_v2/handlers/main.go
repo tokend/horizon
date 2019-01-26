@@ -13,7 +13,7 @@ import (
 // isAllowed - returns false if user is not allowed to access requested data or failed to check - renders all
 // corresponding error; returns true - if allowed
 func isAllowed(r *http.Request, w http.ResponseWriter, dataOwner string) bool {
-	err := ctx.Doorman(r, doorman.SignerOf(dataOwner), doorman.SignerOf(ctx.CoreInfo(r).MasterAccountID))
+	err := ctx.Doorman(r, doorman.SignerOf(dataOwner), doorman.SignerOf(ctx.CoreInfo(r).AdminAccountID))
 	switch err {
 	case nil:
 		return true

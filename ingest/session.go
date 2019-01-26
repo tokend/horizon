@@ -84,16 +84,9 @@ func (is *Session) ingestLedger() (err error) {
 
 	// ingest accounts from genesis block
 	if is.Cursor.LedgerSequence() == 1 {
-		systemAccounts := []string{
-			is.CoreInfo.MasterAccountID,
-			is.CoreInfo.CommissionAccountID,
-			is.CoreInfo.OperationalAccountID,
-		}
-		for _, address := range systemAccounts {
-			_, err = is.Ingestion.TryIngestAccount(address)
-			if err != nil {
-				return errors.Wrap(err, "failed to ingest account")
-			}
+		_, err = is.Ingestion.TryIngestAccount(is.CoreInfo.AdminAccountID)
+		if err != nil {
+			return errors.Wrap(err, "failed to ingest admin account")
 		}
 	}
 

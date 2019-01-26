@@ -51,7 +51,7 @@ func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
 func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, res xdr.ExtendedResult,
 	changes xdr.LedgerEntryChanges) error {
 
-	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeUpdateKyc && !hasDeletedReviewableRequest(changes) {
+	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeChangeRole && !hasDeletedReviewableRequest(changes) {
 		return nil
 	}
 

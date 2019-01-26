@@ -6,15 +6,15 @@ import (
 	"gitlab.com/tokend/horizon/ingest2/internal"
 )
 
-type createKYCRequestOpHandler struct {
+type createChangeRoleRequestOpHandler struct {
 	pubKeyProvider IDProvider
 }
 
 // Details returns details about create KYC request operation
-func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
+func (h *createChangeRoleRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	createKYCRequestOp := op.Body.MustCreateUpdateKycRequestOp()
-	createKYCRequestRes := opRes.MustCreateUpdateKycRequestResult().MustSuccess()
+	createKYCRequestOp := op.Body.MustCreateChangeRoleRequestOp()
+	createKYCRequestRes := opRes.MustCreateChangeRoleRequestResult().MustSuccess()
 
 	var allTasks *uint32
 	if createKYCRequestOp.AllTasks != nil {
@@ -23,12 +23,12 @@ func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.Operation
 	}
 
 	return history2.OperationDetails{
-		Type: xdr.OperationTypeCreateKycRequest,
-		CreateKYCRequest: &history2.CreateKYCRequestDetails{
-			AccountAddressToUpdateKYC: createKYCRequestOp.UpdateKycRequestData.AccountToUpdateKyc.Address(),
-			AccountTypeToSet:          createKYCRequestOp.UpdateKycRequestData.AccountTypeToSet,
-			KYCData:                   internal.MarshalCustomDetails(createKYCRequestOp.UpdateKycRequestData.KycData),
-			AllTasks:                  allTasks,
+		Type: xdr.OperationTypeCreateChangeRoleRequest,
+		CreateChangeRoleRequest: &history2.CreateChangeRoleRequestDetails{
+			DestinationAccount: createKYCRequestOp.DestinationAccount.Address(),
+			AccountRoleToSet:   uint64(createKYCRequestOp.AccountRoleToSet),
+			KYCData:            internal.MarshalCustomDetails(createKYCRequestOp.KycData),
+			AllTasks:           allTasks,
 			RequestDetails: history2.RequestDetails{
 				RequestID:   int64(createKYCRequestRes.RequestId),
 				IsFulfilled: createKYCRequestRes.Fulfilled,
@@ -38,12 +38,12 @@ func (h *createKYCRequestOpHandler) Details(op rawOperation, opRes xdr.Operation
 }
 
 //ParticipantsEffects returns source participant effect and effect for account for which KYC is updated
-func (h *createKYCRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
+func (h *createChangeRoleRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	createKYCRequestOp := opBody.MustCreateUpdateKycRequestOp().UpdateKycRequestData
+	createKYCRequestOp := opBody.MustCreateChangeRoleRequestOp()
 
-	accountIDToUpdateKYC := h.pubKeyProvider.MustAccountID(createKYCRequestOp.AccountToUpdateKyc)
+	accountIDToUpdateKYC := h.pubKeyProvider.MustAccountID(createKYCRequestOp.DestinationAccount)
 
 	if accountIDToUpdateKYC == source.AccountID {
 		return []history2.ParticipantEffect{source}, nil

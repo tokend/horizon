@@ -48,7 +48,7 @@ func newReviewRequestOpHandler(pubKeyProvider IDProvider, balanceProvider balanc
 			xdr.ReviewableRequestTypePreIssuanceCreate:   &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeSale:                &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeLimitsUpdate:        &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeUpdateKyc:           &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeChangeRole:          &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeUpdateSaleDetails:   &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeInvoice:             &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeContract:            &deprecatedReviewRequestHandler{},

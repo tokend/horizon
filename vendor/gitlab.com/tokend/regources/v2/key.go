@@ -12,6 +12,8 @@ const (
 	TypeSigners                    = "signers"
 	TypeSignerRoles                = "signer-roles"
 	TypeSignerRules                = "signer-rules"
+	TypeAssetPairs                 = "asset-pairs"
+	TypeOffers                     = "offers"
 )
 
 // Key - identifier of the Resource

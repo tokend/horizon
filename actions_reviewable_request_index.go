@@ -76,7 +76,7 @@ func (action *ReviewableRequestIndexAction) checkAllowed() {
 		if actionType == xdr.ReviewableRequestTypeIssuanceCreate {
 			extentions = append(extentions, doorman.SignerExternsionPendingIssuance, doorman.SignerExternsionIssuanceHistory)
 		}
-		if actionType == xdr.ReviewableRequestTypeUpdateKyc {
+		if actionType == xdr.ReviewableRequestTypeChangeRole {
 			extentions = append(extentions, doorman.SignerExternsionPendingKYC, doorman.SignerExternsionKYCHistory)
 
 		}
@@ -92,7 +92,7 @@ func (action *ReviewableRequestIndexAction) checkAllowed() {
 		if action.Reviewer != "" {
 			constrains = append(constrains, doorman.SignerOfWithPermission(action.Reviewer, ext))
 		}
-		constrains = append(constrains, doorman.SignerOfWithPermission(action.App.CoreInfo.MasterAccountID, ext))
+		constrains = append(constrains, doorman.SignerOfWithPermission(action.App.CoreInfo.AdminAccountID, ext))
 	}
 
 	action.Doorman().Check(action.R, constrains...)

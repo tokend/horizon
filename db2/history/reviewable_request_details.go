@@ -21,7 +21,7 @@ type ReviewableRequestDetails struct {
 	Sale                     *SaleRequest              `json:"sale,omitempty"`
 	LimitsUpdate             *LimitsUpdateRequest      `json:"limits_update"`
 	AmlAlert                 *AmlAlertRequest          `json:"aml_alert"`
-	UpdateKYC                *UpdateKYCRequest         `json:"update_kyc,omitempty"`
+	ChangeRole               *ChangeRoleRequest        `json:"change_role,omitempty"`
 	UpdateSaleDetails        *UpdateSaleDetailsRequest `json:"update_sale_details"`
 	UpdateSaleEndTimeRequest *UpdateSaleEndTimeRequest `json:"update_sale_end_time_request"`
 	PromotionUpdate          *PromotionUpdateRequest   `json:"promotion_update"`
@@ -112,15 +112,13 @@ type AmlAlertRequest struct {
 	Reason    string `json:"reason"`
 }
 
-type UpdateKYCRequest struct {
-	AccountToUpdateKYC string                   `json:"updated_account_id"`
-	AccountTypeToSet   xdr.AccountType          `json:"account_type_to_set"`
-	KYCLevel           uint32                   `json:"kyc_level"`
-	KYCData            map[string]interface{}   `json:"kyc_data"`
-	AllTasks           uint32                   `json:"all_tasks"`
-	PendingTasks       uint32                   `json:"pending_tasks"`
-	SequenceNumber     uint32                   `json:"sequence_number"`
-	ExternalDetails    []map[string]interface{} `json:"external_details"`
+type ChangeRoleRequest struct {
+	DestinationAccount string                 `json:"destination_account"`
+	AccountRoleToSet   uint64                 `json:"account_role_to_set"`
+	KYCData            map[string]interface{} `json:"kyc_data"`
+	AllTasks           uint32                 `json:"all_tasks"`
+	PendingTasks       uint32                 `json:"pending_tasks"`
+	SequenceNumber     uint32                 `json:"sequence_number"`
 }
 
 type UpdateSaleDetailsRequest struct {

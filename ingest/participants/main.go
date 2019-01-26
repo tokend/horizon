@@ -177,15 +177,15 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateAmlAlert:
 		// TODO add participant
-	case xdr.OperationTypeCreateKycRequest:
-		updateKYCRequestData := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
+	case xdr.OperationTypeCreateChangeRoleRequest:
+		/*updateKYCRequestData := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
 		if sourceParticipant.AccountID.Address() != updateKYCRequestData.AccountToUpdateKyc.Address() {
 			result = append(result, Participant{
 				AccountID: updateKYCRequestData.AccountToUpdateKyc,
 				BalanceID: nil,
 				Details:   nil,
 			})
-		}
+		}*/
 	case xdr.OperationTypePaymentV2:
 		paymentOpV2 := op.Body.MustPaymentOpV2()
 		paymentV2Response := opResult.MustPaymentV2Result().MustPaymentV2Response()

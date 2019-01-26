@@ -79,7 +79,7 @@ func (action *Action) isAllowed(ownerOfData string) {
 		return
 	}
 
-	isSigner := action.IsAccountSigner(action.App.CoreInfo.MasterAccountID, action.Signer)
+	isSigner := action.IsAccountSigner(action.App.CoreInfo.AdminAccountID, action.Signer)
 	if action.Err != nil {
 		return
 	}
@@ -90,7 +90,7 @@ func (action *Action) isAllowed(ownerOfData string) {
 	}
 
 	// only master or master signers can access this data
-	if ownerOfData == "" || ownerOfData == action.App.CoreInfo.MasterAccountID {
+	if ownerOfData == "" || ownerOfData == action.App.CoreInfo.AdminAccountID {
 		action.Err = &problem.NotAllowed
 		return
 	}
@@ -354,7 +354,7 @@ func (action *Action) Doorman() doorman.Doorman {
 func (action *Action) Signers(address string) ([]resources.Signer, error) {
 	// just to ensure backwards compatibility with checkAllowed
 	if address == "" {
-		address = action.App.CoreInfo.MasterAccountID
+		address = action.App.CoreInfo.AdminAccountID
 	}
 	// get core account
 	account, err := action.CoreQ().Accounts().ByAddress(address)
@@ -383,7 +383,7 @@ func (action *Action) Signers(address string) ([]resources.Signer, error) {
 func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 	// all system accounts are managed by master account signers
 	if isSystemAccount(account.AccountType) && account.AccountType != int32(xdr.AccountTypeMaster) {
-		masterAccount, err := action.CoreQ().Accounts().ByAddress(action.App.CoreInfo.MasterAccountID)
+		masterAccount, err := action.CoreQ().Accounts().ByAddress(action.App.CoreInfo.AdminAccountID)
 		if err != nil || masterAccount == nil {
 			if err == nil {
 				err = errors.New("Not found")

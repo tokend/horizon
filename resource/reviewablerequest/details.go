@@ -38,8 +38,8 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 	case xdr.ReviewableRequestTypeAmlAlert:
 		d.AMLAlert, err = PopulateAmlAlertRequest(*h.AmlAlert)
 		return
-	case xdr.ReviewableRequestTypeUpdateKyc:
-		d.KYC, err = PopulateUpdateKYCRequest(*h.UpdateKYC)
+	case xdr.ReviewableRequestTypeChangeRole:
+		d.ChangeRole, err = PopulateChangeRoleRequest(*h.ChangeRole)
 		return
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		d.UpdateSaleDetails, err = PopulateUpdateSaleDetailsRequest(*h.UpdateSaleDetails)

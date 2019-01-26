@@ -297,19 +297,12 @@ func (c *reviewableRequestHandler) getLimitsUpdateRequest(
 	}
 }
 
-func (c *reviewableRequestHandler) getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
-	externalDetails := make([]map[string]interface{}, 0, len(request.ExternalDetails))
-	for _, item := range request.ExternalDetails {
-		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
-	}
-
-	return &history.UpdateKYCRequest{
-		AccountToUpdateKYC: request.AccountToUpdateKyc.Address(),
-		AccountTypeToSet:   request.AccountTypeToSet,
-		KYCLevel:           uint32(request.KycLevel),
+func (c *reviewableRequestHandler) getChangeRoleRequest(request *xdr.ChangeRoleRequest) *history.ChangeRoleRequest {
+	return &history.ChangeRoleRequest{
+		DestinationAccount: request.DestinationAccount.Address(),
+		AccountRoleToSet:   uint64(request.AccountRoleToSet),
 		KYCData:            internal.MarshalCustomDetails(request.KycData),
 		SequenceNumber:     uint32(request.SequenceNumber),
-		ExternalDetails:    externalDetails,
 	}
 }
 
@@ -376,8 +369,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.LimitsUpdate = c.getLimitsUpdateRequest(body.LimitsUpdateRequest)
 	case xdr.ReviewableRequestTypeAmlAlert:
 		details.AmlAlert = c.getAmlAlertRequest(body.AmlAlertRequest)
-	case xdr.ReviewableRequestTypeUpdateKyc:
-		details.UpdateKYC = c.getUpdateKYCRequest(body.UpdateKycRequest)
+	case xdr.ReviewableRequestTypeChangeRole:
+		details.ChangeRole = c.getChangeRoleRequest(body.ChangeRoleRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = c.getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:

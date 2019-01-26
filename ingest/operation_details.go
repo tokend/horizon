@@ -303,12 +303,12 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["balance_id"] = op.AmlAlertRequest.BalanceId.AsString()
 		details["reason"] = op.AmlAlertRequest.Reason
 		details["reference"] = op.Reference
-	case xdr.OperationTypeCreateKycRequest:
-		op := c.Operation().Body.MustCreateUpdateKycRequestOp()
+	case xdr.OperationTypeCreateChangeRoleRequest:
+	/*	op := c.Operation().Body.MustCreateUpdateKycRequestOp()
 		opResult := c.OperationResult().MustCreateUpdateKycRequestResult().MustSuccess()
 		details["request_id"] = uint64(opResult.RequestId)
 		details["account_to_update_kyc"] = op.UpdateKycRequestData.AccountToUpdateKyc.Address()
-		details["account_type_to_set"] = int32(op.UpdateKycRequestData.AccountTypeToSet)
+		details["account_type_to_set"] = int32(op.UpdateKycRequestData.AccountRoleToSet)
 		details["kyc_level_to_set"] = uint32(op.UpdateKycRequestData.KycLevelToSet)
 
 		var kycData map[string]interface{}
@@ -318,7 +318,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		if op.AllTasks != nil {
 			details["all_tasks"] = *op.AllTasks
-		}
+		}*/
 	case xdr.OperationTypePaymentV2:
 		op := c.Operation().Body.MustPaymentOpV2()
 		opResult := c.OperationResult().MustPaymentV2Result().MustPaymentV2Response()
@@ -384,7 +384,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 func getReviewRequestOpDetails(requestDetails xdr.ReviewRequestOpRequestDetails) map[string]interface{} {
 	return map[string]interface{}{
 		"request_type": requestDetails.RequestType.ShortString(),
-		"update_kyc":   getUpdateKYCDetails(requestDetails.UpdateKyc),
 	}
 }
 
@@ -400,18 +399,6 @@ func getAtomicSwapDetails(atomicSwapExtendedResult xdr.ASwapExtended) map[string
 		"base_amount":                     regources.Amount(atomicSwapExtendedResult.BaseAmount),
 		"quote_amount":                    regources.Amount(atomicSwapExtendedResult.QuoteAmount),
 		"price":                           regources.Amount(atomicSwapExtendedResult.Price),
-	}
-}
-
-func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
-	if details == nil {
-		return nil
-	}
-
-	var externalDetails map[string]interface{}
-	_ = json.Unmarshal([]byte(details.ExternalDetails), externalDetails)
-	return map[string]interface{}{
-		"external_details": externalDetails,
 	}
 }
 

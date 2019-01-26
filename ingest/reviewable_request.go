@@ -240,25 +240,16 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpd
 	}
 }
 
-func getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
+func getUpdateKYCRequest(request *xdr.ChangeRoleRequest) *history.ChangeRoleRequest {
 	var kycData map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(request.KycData), &kycData)
 
-	var externalDetails []map[string]interface{}
-	for _, item := range request.ExternalDetails {
-		var comment map[string]interface{}
-		_ = json.Unmarshal([]byte(item), &comment)
-		externalDetails = append(externalDetails, comment)
-	}
-
-	return &history.UpdateKYCRequest{
-		AccountToUpdateKYC: request.AccountToUpdateKyc.Address(),
-		AccountTypeToSet:   request.AccountTypeToSet,
-		KYCLevel:           uint32(request.KycLevel),
+	return &history.ChangeRoleRequest{
+		DestinationAccount: request.DestinationAccount.Address(),
+		AccountRoleToSet:   uint64(request.AccountRoleToSet),
 		KYCData:            kycData,
 		SequenceNumber:     uint32(request.SequenceNumber),
-		ExternalDetails:    externalDetails,
 	}
 }
 
@@ -360,8 +351,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.LimitsUpdate = getLimitsUpdateRequest(body.LimitsUpdateRequest)
 	case xdr.ReviewableRequestTypeAmlAlert:
 		details.AmlAlert = getAmlAlertRequest(body.AmlAlertRequest)
-	case xdr.ReviewableRequestTypeUpdateKyc:
-		details.UpdateKYC = getUpdateKYCRequest(body.UpdateKycRequest)
+	case xdr.ReviewableRequestTypeChangeRole:
+		details.ChangeRole = getUpdateKYCRequest(body.ChangeRoleRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
 	case xdr.ReviewableRequestTypeInvoice:
