@@ -38,15 +38,13 @@ func ForOperation(
 	case xdr.OperationTypeCreateAccount:
 		result = append(result, Participant{op.Body.MustCreateAccountOp().Destination, nil, nil})
 	case xdr.OperationTypePayment:
-		paymentOp := op.Body.MustPaymentOp()
-		paymentResponse := opResult.MustPaymentResult().MustPaymentResponse()
+		paymentOp := op.Body.PaymentOpV2
+		paymentResponse := opResult.PaymentV2Result
 
-		if paymentOp.InvoiceReference != nil {
-			sourceParticipant = nil
-			break
-		}
-
-		result = append(result, Participant{paymentResponse.Destination, &paymentOp.DestinationBalanceId, nil})
+		result = append(result, Participant{
+			paymentResponse.MustPaymentV2Response().Destination,
+			paymentOp.Destination.BalanceId,
+			nil})
 		sourceParticipant.BalanceID = &paymentOp.SourceBalanceId
 	case xdr.OperationTypeSetOptions:
 		// the only direct participant is the source_account
@@ -67,15 +65,6 @@ func ForOperation(
 		// the only direct participant is the source_accountWWW
 	case xdr.OperationTypeManageLimits:
 		// the only direct participant is the source_account, but I'm not sure
-	case xdr.OperationTypeDirectDebit:
-		debitOp := op.Body.MustDirectDebitOp()
-		paymentOp := debitOp.PaymentOp
-		paymentResponse := opResult.MustDirectDebitResult().MustSuccess().PaymentResponse
-		details := map[string]interface{}{}
-		details["initiated_by"] = sourceParticipant.AccountID
-		result = append(result, Participant{paymentResponse.Destination, &paymentOp.DestinationBalanceId, &details})
-		sourceParticipant.BalanceID = &paymentOp.SourceBalanceId
-		sourceParticipant.AccountID = debitOp.From
 	case xdr.OperationTypeManageAssetPair:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeManageOffer:

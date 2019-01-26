@@ -13,14 +13,9 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 	state := history.OperationStateSuccess
 	operationIdentifier := uint64(0)
 	switch opType {
-	case xdr.OperationTypePayment, xdr.OperationTypeDirectDebit:
-		var paymentResponse xdr.PaymentResponse
-		if opType == xdr.OperationTypePayment {
-			paymentResponse = *operationResult.MustPaymentResult().PaymentResponse
-		} else {
-			paymentResponse = operationResult.MustDirectDebitResult().MustSuccess().PaymentResponse
-		}
-
+	case xdr.OperationTypePaymentV2: // TODO paymentV2 or payment ?
+		var paymentResponse xdr.PaymentV2Response
+		paymentResponse = *operationResult.PaymentV2Result.PaymentV2Response
 		operationIdentifier = uint64(paymentResponse.PaymentId)
 		return state, operationIdentifier
 	case xdr.OperationTypeCreateWithdrawalRequest:

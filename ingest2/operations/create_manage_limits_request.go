@@ -15,11 +15,7 @@ func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 ) (history2.OperationDetails, error) {
 	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()
 
-	var data map[string]interface{}
-	rawData, ok := createManageLimitsRequestOp.ManageLimitsRequest.Ext.GetDetails()
-	if ok {
-		data = internal.MarshalCustomDetails(rawData)
-	}
+	data := internal.MarshalCustomDetails(createManageLimitsRequestOp.ManageLimitsRequest.Details)
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateManageLimitsRequest,
