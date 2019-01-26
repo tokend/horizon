@@ -47,9 +47,7 @@ func GetOffer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := handler.GetResponse(request, coreOffer)
-
-	ape.Render(w, result)
+	handler.RenderResponse(r, w, request, coreOffer)
 }
 
 type getOfferHandler struct {
@@ -79,8 +77,10 @@ func (h *getOfferHandler) GetOffer(request requests.GetOffer) (*core2.Offer, err
 	return coreOffer, nil
 }
 
-// GetResponse returns offer with related resources
-func (h *getOfferHandler) GetResponse(request *requests.GetOffer, coreOffer *core2.Offer) regources.OfferResponse {
+// RenderResponse renders offer with related resources
+func (h *getOfferHandler) RenderResponse(r *http.Request, w http.ResponseWriter,
+	request *requests.GetOffer, coreOffer *core2.Offer) {
+
 	response := regources.OfferResponse{
 		Data: resources.NewOffer(*coreOffer),
 	}
@@ -101,5 +101,5 @@ func (h *getOfferHandler) GetResponse(request *requests.GetOffer, coreOffer *cor
 		response.Included.Add(&quoteAsset)
 	}
 
-	return response
+	ape.Render(w, response)
 }
