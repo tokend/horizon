@@ -86,6 +86,11 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/corer"
 
+[[constraint]]
+  branch = "feature/janus"
+  name = "gitlab.com/distributed_lab/kit"
+
+
 [[override]]
   name = "gitlab.com/distributed_lab/logan"
   version = "3.0"

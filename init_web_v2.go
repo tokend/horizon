@@ -1,12 +1,12 @@
 package horizon
 
 import (
-	"time"
-
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/pkg/errors"
 	"github.com/rs/cors"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -98,11 +98,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v2/asset_pairs/{id}", handlers.GetAssetPair)
 	m.Get("/v2/asset_pairs", handlers.GetAssetPairList)
 
-	logger := &log.DefaultLogger.Entry
 	janus := app.config.Janus()
-	err := janus.DoRegister(m, logger)
-	if err != nil {
-		logger.WithError(err).Error("failed to register janus")
+	if err := janus.RegisterChi(m); err != nil {
+		panic(errors.Wrap(err, "failed to register service"))
 	}
 }
 
