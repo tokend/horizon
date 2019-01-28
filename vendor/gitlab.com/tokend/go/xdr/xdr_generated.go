@@ -1,4 +1,4 @@
-// revision: 81a55d8f860b4be2c16e795c801327c025d297a4
+// revision: d6ebe1b4315c996e3e24f80ee92c65497d97f4d8
 // branch:   feature/roles_rules
 // Package xdr is generated from:
 //
@@ -1768,6 +1768,8 @@ type AccountRuleResourceAtomicSwapBid struct {
 //
 //   union AccountRuleResource switch (LedgerEntryType type)
 //    {
+//    case TRANSACTION:
+//        void;
 //    case ASSET:
 //        struct
 //        {
@@ -2035,6 +2037,8 @@ func (u AccountRuleResource) SwitchFieldName() string {
 // the value for an instance of AccountRuleResource
 func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerEntryType(sw) {
+	case LedgerEntryTypeTransaction:
+		return "", true
 	case LedgerEntryTypeAsset:
 		return "Asset", true
 	case LedgerEntryTypeReviewableRequest:
@@ -2083,6 +2087,8 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result AccountRuleResource, err error) {
 	result.Type = aType
 	switch LedgerEntryType(aType) {
+	case LedgerEntryTypeTransaction:
+		// void
 	case LedgerEntryTypeAsset:
 		tv, ok := value.(AccountRuleResourceAsset)
 		if !ok {
@@ -21274,9 +21280,11 @@ type ManageAssetOp struct {
 //
 //        // codes considered as "failure" for the operation
 //    	REQUEST_NOT_FOUND = -1,           // failed to find asset request with such id
-//    	ASSET_ALREADY_EXISTS = -3,			   // asset with such code already exist
+//        INVALID_SIGNATURE = -2,           // only asset pre issuer can change asset pre issuer
+//    	ASSET_ALREADY_EXISTS = -3,	      // asset with such code already exist
 //        INVALID_MAX_ISSUANCE_AMOUNT = -4, // max issuance amount is 0
 //    	INVALID_CODE = -5,                // asset code is invalid (empty or contains space)
+//        INVALID_PRE_ISSUER = -6,          // pre issuer is the same as existing
 //    	INVALID_POLICIES = -7,            // asset policies (has flag which does not belong to AssetPolicies enum)
 //    	ASSET_NOT_FOUND = -8,             // asset does not exists
 //    	REQUEST_ALREADY_EXISTS = -9,      // request for creation of unique entry already exists
@@ -21297,9 +21305,11 @@ type ManageAssetResultCode int32
 const (
 	ManageAssetResultCodeSuccess                            ManageAssetResultCode = 0
 	ManageAssetResultCodeRequestNotFound                    ManageAssetResultCode = -1
+	ManageAssetResultCodeInvalidSignature                   ManageAssetResultCode = -2
 	ManageAssetResultCodeAssetAlreadyExists                 ManageAssetResultCode = -3
 	ManageAssetResultCodeInvalidMaxIssuanceAmount           ManageAssetResultCode = -4
 	ManageAssetResultCodeInvalidCode                        ManageAssetResultCode = -5
+	ManageAssetResultCodeInvalidPreIssuer                   ManageAssetResultCode = -6
 	ManageAssetResultCodeInvalidPolicies                    ManageAssetResultCode = -7
 	ManageAssetResultCodeAssetNotFound                      ManageAssetResultCode = -8
 	ManageAssetResultCodeRequestAlreadyExists               ManageAssetResultCode = -9
@@ -21318,9 +21328,11 @@ const (
 var ManageAssetResultCodeAll = []ManageAssetResultCode{
 	ManageAssetResultCodeSuccess,
 	ManageAssetResultCodeRequestNotFound,
+	ManageAssetResultCodeInvalidSignature,
 	ManageAssetResultCodeAssetAlreadyExists,
 	ManageAssetResultCodeInvalidMaxIssuanceAmount,
 	ManageAssetResultCodeInvalidCode,
+	ManageAssetResultCodeInvalidPreIssuer,
 	ManageAssetResultCodeInvalidPolicies,
 	ManageAssetResultCodeAssetNotFound,
 	ManageAssetResultCodeRequestAlreadyExists,
@@ -21339,9 +21351,11 @@ var ManageAssetResultCodeAll = []ManageAssetResultCode{
 var manageAssetResultCodeMap = map[int32]string{
 	0:   "ManageAssetResultCodeSuccess",
 	-1:  "ManageAssetResultCodeRequestNotFound",
+	-2:  "ManageAssetResultCodeInvalidSignature",
 	-3:  "ManageAssetResultCodeAssetAlreadyExists",
 	-4:  "ManageAssetResultCodeInvalidMaxIssuanceAmount",
 	-5:  "ManageAssetResultCodeInvalidCode",
+	-6:  "ManageAssetResultCodeInvalidPreIssuer",
 	-7:  "ManageAssetResultCodeInvalidPolicies",
 	-8:  "ManageAssetResultCodeAssetNotFound",
 	-9:  "ManageAssetResultCodeRequestAlreadyExists",
@@ -21360,9 +21374,11 @@ var manageAssetResultCodeMap = map[int32]string{
 var manageAssetResultCodeShortMap = map[int32]string{
 	0:   "success",
 	-1:  "request_not_found",
+	-2:  "invalid_signature",
 	-3:  "asset_already_exists",
 	-4:  "invalid_max_issuance_amount",
 	-5:  "invalid_code",
+	-6:  "invalid_pre_issuer",
 	-7:  "invalid_policies",
 	-8:  "asset_not_found",
 	-9:  "request_already_exists",
@@ -21381,9 +21397,11 @@ var manageAssetResultCodeShortMap = map[int32]string{
 var manageAssetResultCodeRevMap = map[string]int32{
 	"ManageAssetResultCodeSuccess":                            0,
 	"ManageAssetResultCodeRequestNotFound":                    -1,
+	"ManageAssetResultCodeInvalidSignature":                   -2,
 	"ManageAssetResultCodeAssetAlreadyExists":                 -3,
 	"ManageAssetResultCodeInvalidMaxIssuanceAmount":           -4,
 	"ManageAssetResultCodeInvalidCode":                        -5,
+	"ManageAssetResultCodeInvalidPreIssuer":                   -6,
 	"ManageAssetResultCodeInvalidPolicies":                    -7,
 	"ManageAssetResultCodeAssetNotFound":                      -8,
 	"ManageAssetResultCodeRequestAlreadyExists":               -9,
@@ -33355,9 +33373,12 @@ func NewAssetChangePreissuedSignerExt(v LedgerVersion, value interface{}) (resul
 
 // AssetChangePreissuedSigner is an XDR Struct defines as:
 //
-//   struct AssetChangePreissuedSigner {
+//   struct AssetChangePreissuedSigner
+//    {
 //    	AssetCode code;
 //    	AccountID accountID;
+//    	DecoratedSignature signature;
+//
 //    	// reserved for future use
 //        union switch (LedgerVersion v)
 //        {
@@ -33370,6 +33391,7 @@ func NewAssetChangePreissuedSignerExt(v LedgerVersion, value interface{}) (resul
 type AssetChangePreissuedSigner struct {
 	Code      AssetCode                     `json:"code,omitempty"`
 	AccountId AccountId                     `json:"accountID,omitempty"`
+	Signature DecoratedSignature            `json:"signature,omitempty"`
 	Ext       AssetChangePreissuedSignerExt `json:"ext,omitempty"`
 }
 
@@ -37704,13 +37726,14 @@ func (u OperationResult) GetTr() (result OperationResultTr, ok bool) {
 //        txBAD_AUTH = -5,                   // too few valid signatures / wrong network
 //        txNO_ACCOUNT = -6,                 // source account not found
 //        txBAD_AUTH_EXTRA = -7,             // unused signatures attached to transaction
-//        txINTERNAL_ERROR = -8,             // an unknown error occured
+//        txINTERNAL_ERROR = -8,             // an unknown error occurred
 //        txACCOUNT_BLOCKED = -9,            // account is blocked and cannot be source of tx
 //        txDUPLICATION = -10,               // if timing is stored
 //        txINSUFFICIENT_FEE = -11,          // the actual total fee amount is greater than the max total fee amount, provided by the source
 //        txSOURCE_UNDERFUNDED = -12,        // not enough tx fee asset on source balance
 //        txCOMMISSION_LINE_FULL = -13,      // commission tx fee asset balance amount overflow
-//        txFEE_INCORRECT_PRECISION = -14    // fee amount is incompatible with asset precision
+//        txFEE_INCORRECT_PRECISION = -14,   // fee amount is incompatible with asset precision
+//        txNO_ROLE_PERMISSION = -15         // account role has not rule that allows send transaction
 //    };
 //
 type TransactionResultCode int32
@@ -37731,6 +37754,7 @@ const (
 	TransactionResultCodeTxSourceUnderfunded     TransactionResultCode = -12
 	TransactionResultCodeTxCommissionLineFull    TransactionResultCode = -13
 	TransactionResultCodeTxFeeIncorrectPrecision TransactionResultCode = -14
+	TransactionResultCodeTxNoRolePermission      TransactionResultCode = -15
 )
 
 var TransactionResultCodeAll = []TransactionResultCode{
@@ -37749,6 +37773,7 @@ var TransactionResultCodeAll = []TransactionResultCode{
 	TransactionResultCodeTxSourceUnderfunded,
 	TransactionResultCodeTxCommissionLineFull,
 	TransactionResultCodeTxFeeIncorrectPrecision,
+	TransactionResultCodeTxNoRolePermission,
 }
 
 var transactionResultCodeMap = map[int32]string{
@@ -37767,6 +37792,7 @@ var transactionResultCodeMap = map[int32]string{
 	-12: "TransactionResultCodeTxSourceUnderfunded",
 	-13: "TransactionResultCodeTxCommissionLineFull",
 	-14: "TransactionResultCodeTxFeeIncorrectPrecision",
+	-15: "TransactionResultCodeTxNoRolePermission",
 }
 
 var transactionResultCodeShortMap = map[int32]string{
@@ -37785,6 +37811,7 @@ var transactionResultCodeShortMap = map[int32]string{
 	-12: "tx_source_underfunded",
 	-13: "tx_commission_line_full",
 	-14: "tx_fee_incorrect_precision",
+	-15: "tx_no_role_permission",
 }
 
 var transactionResultCodeRevMap = map[string]int32{
@@ -37803,6 +37830,7 @@ var transactionResultCodeRevMap = map[string]int32{
 	"TransactionResultCodeTxSourceUnderfunded":     -12,
 	"TransactionResultCodeTxCommissionLineFull":    -13,
 	"TransactionResultCodeTxFeeIncorrectPrecision": -14,
+	"TransactionResultCodeTxNoRolePermission":      -15,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -38492,7 +38520,8 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //        CONTRACT = 25,
 //        ACCOUNT_ROLE = 26,
 //        ACCOUNT_RULE = 27,
-//        ATOMIC_SWAP_BID = 28
+//        ATOMIC_SWAP_BID = 28,
+//        TRANSACTION = 29 // is used for account rule resource
 //    };
 //
 type LedgerEntryType int32
@@ -38524,6 +38553,7 @@ const (
 	LedgerEntryTypeAccountRole                      LedgerEntryType = 26
 	LedgerEntryTypeAccountRule                      LedgerEntryType = 27
 	LedgerEntryTypeAtomicSwapBid                    LedgerEntryType = 28
+	LedgerEntryTypeTransaction                      LedgerEntryType = 29
 )
 
 var LedgerEntryTypeAll = []LedgerEntryType{
@@ -38553,6 +38583,7 @@ var LedgerEntryTypeAll = []LedgerEntryType{
 	LedgerEntryTypeAccountRole,
 	LedgerEntryTypeAccountRule,
 	LedgerEntryTypeAtomicSwapBid,
+	LedgerEntryTypeTransaction,
 }
 
 var ledgerEntryTypeMap = map[int32]string{
@@ -38582,6 +38613,7 @@ var ledgerEntryTypeMap = map[int32]string{
 	26: "LedgerEntryTypeAccountRole",
 	27: "LedgerEntryTypeAccountRule",
 	28: "LedgerEntryTypeAtomicSwapBid",
+	29: "LedgerEntryTypeTransaction",
 }
 
 var ledgerEntryTypeShortMap = map[int32]string{
@@ -38611,6 +38643,7 @@ var ledgerEntryTypeShortMap = map[int32]string{
 	26: "account_role",
 	27: "account_rule",
 	28: "atomic_swap_bid",
+	29: "transaction",
 }
 
 var ledgerEntryTypeRevMap = map[string]int32{
@@ -38640,6 +38673,7 @@ var ledgerEntryTypeRevMap = map[string]int32{
 	"LedgerEntryTypeAccountRole":                      26,
 	"LedgerEntryTypeAccountRule":                      27,
 	"LedgerEntryTypeAtomicSwapBid":                    28,
+	"LedgerEntryTypeTransaction":                      29,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -39706,4 +39740,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "81a55d8f860b4be2c16e795c801327c025d297a4"
+var Revision = "d6ebe1b4315c996e3e24f80ee92c65497d97f4d8"

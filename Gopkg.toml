@@ -96,7 +96,7 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  revision = "9ae57bceb744cbe5a895376e7a35de38291e487d"
+  revision = "cc0611d0f76f6207cc6d40957d32363f151eaf46"
 
 [[constraint]]
   branch = "feature/account_role"
