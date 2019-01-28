@@ -505,7 +505,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:25e062244c59fab01550b7b998ba1c1be249c69aabc2d195142d862bdfca4f75"
+  digest = "1:3c6e044ec374f04a61ce00e0475e058daf8faa120445bb12679a811a5a3d15eb"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -523,7 +523,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "cc0611d0f76f6207cc6d40957d32363f151eaf46"
+  revision = "9b860e410378ef14669de6b21c7dc111914027c1"
 
 [[projects]]
   branch = "add-janus"
