@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"net/url"
 	"os"
 	"reflect"
 
@@ -36,8 +35,6 @@ type Config struct {
 
 	SlowQueryBound *time.Duration `fig:"slow_query_bound"`
 
-	APIBackend *url.URL `fig:"api_backend"`
-
 	Ingest bool `fig:"ingest"`
 	// StaleThreshold represents the number of ledgers a history database may be
 	// out-of-date by before horizon begins to respond with an error to history
@@ -54,8 +51,6 @@ type Config struct {
 	// If set to true - Horizon won't check TFA (via API) during TX submission.
 	DisableTXTfa bool `fig:"disable_tx_tfa"`
 
-	TemplateBackend *url.URL `fig:"template_backend"`
-
 	ForceHTTPSLinks bool `fig:"force_https_links"`
 
 	SentryDSN      string `fig:"sentry_dsn"`
@@ -70,7 +65,7 @@ func (c *Config) Init() error {
 	err := figure.
 		Out(c).
 		From(kv.MustGetStringMap(c.getter, "config")).
-		With(figure.BaseHooks, URLHook, logLevelHook).
+		With(figure.BaseHooks, logLevelHook).
 		Please()
 	if err != nil {
 		return errors.Wrap(err, "failed to figure out config")
@@ -120,20 +115,6 @@ func newViperConfig(raw rawGetter) Config {
 }
 
 var (
-	URLHook = figure.Hooks{
-		"*url.URL": func(value interface{}) (reflect.Value, error) {
-			str, err := cast.ToStringE(value)
-			if err != nil {
-				return reflect.Value{}, errors.Wrap(err, "failed to parse string")
-			}
-			u, err := url.Parse(str)
-			if err != nil {
-				return reflect.Value{}, errors.Wrap(err, "failed to parse url")
-			}
-			return reflect.ValueOf(u), nil
-		},
-	}
-
 	logLevelHook = figure.Hooks{
 		"map[string]string": func(value interface{}) (reflect.Value, error) {
 			result, err := cast.ToStringMapStringE(value)
