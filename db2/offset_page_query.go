@@ -5,7 +5,6 @@ import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"strings"
 )
 
 // OffsetPageParams - page params of the db query
@@ -24,11 +23,13 @@ func (p *OffsetPageParams) ApplyTo(sql sq.SelectBuilder, cols ...string) sq.Sele
 
 	switch p.Order {
 	case OrderAsc:
-		sql = sql.
-			OrderBy(orderBys("asc", cols))
+		for _, col := range cols {
+			sql = sql.OrderBy(fmt.Sprintf("%s %s", col, "asc"))
+		}
 	case OrderDesc:
-		sql = sql.
-			OrderBy(orderBys("desc", cols))
+		for _, col := range cols {
+			sql = sql.OrderBy(fmt.Sprintf("%s %s", col, "desc"))
+		}
 	default:
 		panic(errors.From(errors.New("unexpected order type"), logan.F{
 			"order_type": p.Order,
@@ -36,14 +37,4 @@ func (p *OffsetPageParams) ApplyTo(sql sq.SelectBuilder, cols ...string) sq.Sele
 	}
 
 	return sql
-}
-
-func orderBys(order string, cols []string) string {
-	result := make([]string, 0, len(cols))
-
-	for _, col := range cols {
-		result = append(result, fmt.Sprintf("%s %s", col, order))
-	}
-
-	return strings.Join(result, ", ")
 }
