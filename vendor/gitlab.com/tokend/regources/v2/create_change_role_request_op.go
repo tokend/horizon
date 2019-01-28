@@ -1,12 +1,12 @@
 package regources
 
-//CreateKYCRequestAttrs - details of corresponding op
-type CreateKYCRequest struct {
+//CreateChangeRoleRequest - details of corresponding op
+type CreateChangeRoleRequest struct {
 	Key
 	Attributes CreateChangeRoleRequestAttrs `json:"attributes"`
 }
 
-//CreateChangeRoleRequestDetails - details of corresponding op
+//CreateChangeRoleRequestAttrs - details of corresponding op
 type CreateChangeRoleRequestAttrs struct {
 	DestinationAccount string  `json:"destination_account"`
 	AccountRoleToSet   uint64  `json:"account_role_to_set"`

@@ -105,8 +105,8 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeManageContract:        &deprecatedOpHandler{},
 			xdr.OperationTypeCancelSaleRequest:     &stubOpHandler{},
 			xdr.OperationTypePayout:                &payoutHandler{},
-			xdr.OperationTypeManageAccountRole:     &deprecatedOpHandler{},
-			xdr.OperationTypeManageAccountRule:     &deprecatedOpHandler{},
+			xdr.OperationTypeManageAccountRole:     &manageAccountRoleOpHandler{},
+			xdr.OperationTypeManageAccountRule:     &manageAccountRuleOpHandler{},
 		},
 	}
 }

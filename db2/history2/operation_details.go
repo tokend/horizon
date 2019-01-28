@@ -18,6 +18,8 @@ type OperationDetails struct {
 	Type                       xdr.OperationType                  `json:"type"`
 	CreateAccount              *CreateAccountDetails              `json:"create_account,omitempty"`
 	ManageAccount              *ManageAccountDetails              `json:"manage_account,omitempty"`
+	ManageAccountRule          *ManageAccountRuleDetails          `json:"manage_account_rule,omitempty"`
+	ManageAccountRole          *ManageAccountRoleDetails          `json:"manage_account_role,omitempty"`
 	ManageBalance              *ManageBalanceDetails              `json:"manage_balance,omitempty"`
 	ManageKeyValue             *ManageKeyValueDetails             `json:"manage_key_value,omitempty"`
 	ManageAsset                *ManageAssetDetails                `json:"manage_asset,omitempty"`
@@ -83,6 +85,36 @@ type ManageAccountDetails struct {
 	AccountAddress       string           `json:"account_address"`
 	BlockReasonsToAdd    xdr.BlockReasons `json:"block_reasons_to_add"`
 	BlockReasonsToRemove xdr.BlockReasons `json:"block_reasons_to_remove"`
+}
+
+// ManageAccountRuleDetails - details of ManageAccountRuleOp
+type ManageAccountRuleDetails struct {
+	Action        xdr.ManageAccountRuleAction `json:"action"`
+	RuleID        uint64                      `json:"rule_id"`
+	CreateDetails *UpdateAccountRuleDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateAccountRuleDetails   `json:"update_details,omitempty"`
+}
+
+// UpdateAccountRuleDetails - details of new or updated rule
+type UpdateAccountRuleDetails struct {
+	Resource xdr.AccountRuleResource `json:"resource"`
+	Action   string                  `json:"action"`
+	IsForbid bool                    `json:"is_forbid"`
+	Details  regources.Details       `json:"details"`
+}
+
+// ManageAccountRoleDetails - details of ManageAccountRoleOp
+type ManageAccountRoleDetails struct {
+	Action        xdr.ManageAccountRoleAction `json:"action"`
+	RoleID        uint64                      `json:"role_id"`
+	CreateDetails *UpdateAccountRoleDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateAccountRoleDetails   `json:"update_details,omitempty"`
+}
+
+// UpdateAccountR0leDetails - details of new or updated role
+type UpdateAccountRoleDetails struct {
+	RuleIDs []uint64          `json:"rule_ids"`
+	Details regources.Details `json:"details"`
 }
 
 //ManageKeyValueDetails - details of ManageKeyValueOp

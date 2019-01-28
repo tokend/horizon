@@ -67,7 +67,7 @@ const (
 	TypeCancelSaleRequest                      = "operations-cancel-sale-request"
 	TypePayout                                 = "operations-payout"
 	TypeManageAccountRole                      = "operations-manage-account-role"
-	TypeManageAccountRolePermission            = "operations-manage-account-role-permission"
+	TypeManageAccountRule                      = "operations-manage-account-rule"
 	TypeCreateAswapBidRequest                  = "operations-create-aswap-bid-request"
 	TypeCancelAswapBid                         = "operations-cancel-aswap-bid"
 	TypeCreateAswapRequest                     = "operations-create-aswap-request"
