@@ -25,17 +25,17 @@ type Sale struct {
 	EndTime           time.Time    `db:"end_time"`
 	CurrentCap        string
 	Details           regources.Details `db:"details"`
-	QuoteAssets       QuoteAssets       `db:"quote_assets"`
+	QuoteAssets       SaleQuoteAssets   `db:"quote_assets"`
 	State             SaleState         `db:"state"`
 }
 
-//QuoteAssets - assets allowed to invest in sale
-type QuoteAssets struct {
-	QuoteAssets []QuoteAsset `json:"quote_assets"`
+//SaleQuoteAssets - assets allowed to invest in sale
+type SaleQuoteAssets struct {
+	QuoteAssets []SaleQuoteAsset `json:"quote_assets"`
 }
 
 //Value - implements db driver method for auto marshal
-func (r QuoteAssets) Value() (driver.Value, error) {
+func (r SaleQuoteAssets) Value() (driver.Value, error) {
 	result, err := db2.DriverValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal quote assets")
@@ -45,7 +45,7 @@ func (r QuoteAssets) Value() (driver.Value, error) {
 }
 
 //Scan - implements db driver method for auto unmarshal
-func (r *QuoteAssets) Scan(src interface{}) error {
+func (r *SaleQuoteAssets) Scan(src interface{}) error {
 	err := db2.DriveScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan quote assets")
@@ -54,8 +54,8 @@ func (r *QuoteAssets) Scan(src interface{}) error {
 	return nil
 }
 
-//QuoteAsset - asset allowed to invest into sale
-type QuoteAsset struct {
+//SaleQuoteAsset - asset allowed to invest into sale
+type SaleQuoteAsset struct {
 	Asset           string `json:"asset"`
 	Price           string `json:"price"`
 	QuoteBalanceID  string `json:"quote_balance_id"`

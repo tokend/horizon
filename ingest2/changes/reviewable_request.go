@@ -258,11 +258,11 @@ func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertReque
 }
 
 func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
-	quoteAssets := make([]regources.SaleQuoteAsset, 0, len(request.QuoteAssets))
+	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for i := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
-			Price:      regources.Amount(int64(request.QuoteAssets[i].Price)),
-			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
+		quoteAssets = append(quoteAssets, regources.AssetPrice{
+			Price: regources.Amount(int64(request.QuoteAssets[i].Price)),
+			Asset: string(request.QuoteAssets[i].QuoteAsset),
 		})
 	}
 
