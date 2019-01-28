@@ -83,7 +83,7 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 			Attributes: regources.CreateAMLAlertRequestAttrs(*op.Details.CreateAMLAlertRequest),
 		}
 	case xdr.OperationTypeCreateChangeRoleRequest:
-		return newKeyRequest(op.ID, *op.Details.CreateChangeRoleRequest)
+		return newChangeRoleRequest(op.ID, *op.Details.CreateChangeRoleRequest)
 	case xdr.OperationTypePaymentV2:
 		return &regources.Payment{
 			Key:        regources.NewKeyInt64(op.ID, regources.TypePaymentV2),
@@ -123,9 +123,9 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 			Attributes: regources.PayoutAttrs(*op.Details.Payout),
 		}
 	case xdr.OperationTypeManageAccountRole:
-		return regources.NewKeyInt64(op.ID, regources.TypeManageAccountRole).GetKeyP()
+		return newManageAccountRole(op.ID, *op.Details.ManageAccountRole)
 	case xdr.OperationTypeManageAccountRule:
-		return regources.NewKeyInt64(op.ID, regources.TypeManageAccountRolePermission).GetKeyP()
+		return newManageAccountRule(op.ID, *op.Details.ManageAccountRule)
 	case xdr.OperationTypeCreateAswapBidRequest:
 		return regources.NewKeyInt64(op.ID, regources.TypeCreateAswapBidRequest).GetKeyP()
 	case xdr.OperationTypeCancelAswapBid:

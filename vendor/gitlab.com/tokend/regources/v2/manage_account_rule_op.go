@@ -11,7 +11,7 @@ type ManageAccountRule struct {
 // ManageAccountRuleAttrs - details of ManageAccountRuleOp
 type ManageAccountRuleAttrs struct {
 	Action      xdr.ManageAccountRuleAction `json:"action"`
-	RuleID      string                      `json:"rule_id"`
+	RuleID      uint64                      `json:"rule_id"`
 	CreateAttrs *UpdateAccountRuleAttrs     `json:"create_attrs,omitempty"`
 	UpdateAttrs *UpdateAccountRuleAttrs     `json:"update_attrs,omitempty"`
 }

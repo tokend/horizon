@@ -55,7 +55,7 @@ const (
 	TypeCreateSaleRequest                      = "operations-create-sale-request"
 	TypeCheckSaleState                         = "operations-check-sale-state"
 	TypeCreateAmlAlert                         = "operations-create-aml-alert"
-	TypeCreateKycRequest                       = "operations-create-change-role-request"
+	TypeCreateChangeRoleRequest                = "operations-create-change-role-request"
 	TypePaymentV2                              = "operations-payment-v2"
 	TypeManageExternalSystemAccountIDPoolEntry = "operations-manage-external-system-account-id-pool-entry"
 	TypeBindExternalSystemAccountID            = "operations-bind-external-system-account-id"

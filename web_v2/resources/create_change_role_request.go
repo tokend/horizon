@@ -5,9 +5,10 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-func newKeyRequest(id int64, details history2.CreateChangeRoleRequestDetails) *regources.CreateKYCRequest {
-	return &regources.CreateKYCRequest{
-		Key: regources.NewKeyInt64(id, regources.TypeCreateKycRequest),
+func newChangeRoleRequest(id int64, details history2.CreateChangeRoleRequestDetails,
+) *regources.CreateChangeRoleRequest {
+	return &regources.CreateChangeRoleRequest{
+		Key: regources.NewKeyInt64(id, regources.TypeCreateChangeRoleRequest),
 		Attributes: regources.CreateChangeRoleRequestAttrs{
 			DestinationAccount: details.DestinationAccount,
 			AccountRoleToSet:   details.AccountRoleToSet,

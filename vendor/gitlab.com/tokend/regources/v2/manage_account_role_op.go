@@ -11,13 +11,13 @@ type ManageAccountRole struct {
 // ManageAccountRoleAttrs - details of ManageAccountRuleOp
 type ManageAccountRoleAttrs struct {
 	Action      xdr.ManageAccountRoleAction `json:"action"`
-	RoleID      string                      `json:"role_id"`
+	RoleID      uint64                      `json:"role_id"`
 	CreateAttrs *UpdateAccountRoleAttrs     `json:"create_attrs,omitempty"`
 	UpdateAttrs *UpdateAccountRoleAttrs     `json:"update_attrs,omitempty"`
 }
 
 // UpdateAccountRoleAttrs - details of new or updated rule
 type UpdateAccountRoleAttrs struct {
-	RuleIDs []string `json:"rule_ids"`
+	RuleIDs []uint64 `json:"rule_ids"`
 	Details Details  `json:"details"`
 }
