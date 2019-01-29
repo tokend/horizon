@@ -7,8 +7,3 @@ type Links struct {
 	Next  string `json:"next,omitempty"`
 	Last  string `json:"last,omitempty"`
 }
-
-type AssetPrice struct {
-	Asset string `json:"asset"`
-	Price Amount `json:"price"`
-}

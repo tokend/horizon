@@ -310,8 +310,8 @@
 [[projects]]
   branch = "master"
   name = "gitlab.com/distributed_lab/kit"
-  packages = ["comfig","kv","pgdb"]
-  revision = "80a0fe990a93101755f5c2552b65489a91a6e7e4"
+  packages = ["comfig","janus","janus/internal","kv","pgdb"]
+  revision = "020e442e4a9fa1a2f4469c45ebb4a668862b5b66"
 
 [[projects]]
   name = "gitlab.com/distributed_lab/logan"
@@ -335,12 +335,6 @@
   name = "gitlab.com/tokend/go"
   packages = ["amount","build","crc16","doorman","doorman/data","hash","keypair","network","resources","signcontrol","signcontrol/internal/httpsignatures","strkey","xdr"]
   revision = "133c1c688cead424f460d09825e22cbdd0038e09"
-
-[[projects]]
-  branch = "add-janus"
-  name = "gitlab.com/tokend/go-janus"
-  packages = ["."]
-  revision = "d29aaad2c703c945d6b78c2eaf0f83f3ac2e6d3f"
 
 [[projects]]
   branch = "master"
@@ -405,6 +399,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c738b77e7e44fad5f0e1cdf83a63f612c4ffbd1696e7dce972c46fde87413f21"
+  inputs-digest = "907b9de256fb2f9237b1cfd3b849a13e5a24624573e9d7ce400ee0d9bfd40714"
   solver-name = "gps-cdcl"
   solver-version = 1
