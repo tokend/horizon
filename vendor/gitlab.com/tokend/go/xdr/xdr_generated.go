@@ -1,5 +1,5 @@
 // revision: 5ea049e04a3502d18d605f77bd96be92128592a5
-// branch:   refactor/ledger-version
+// branch:   (detached
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
