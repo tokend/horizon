@@ -334,7 +334,7 @@
 [[projects]]
   name = "gitlab.com/tokend/go"
   packages = ["amount","build","crc16","doorman","doorman/data","hash","keypair","network","resources","signcontrol","signcontrol/internal/httpsignatures","strkey","xdr"]
-  revision = "133c1c688cead424f460d09825e22cbdd0038e09"
+  revision = "f3f038682cc1548d447bc4f406aea1f8056aa902"
 
 [[projects]]
   branch = "master"
@@ -399,6 +399,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "907b9de256fb2f9237b1cfd3b849a13e5a24624573e9d7ce400ee0d9bfd40714"
+  inputs-digest = "b1eab4f239aa413924c8486afa448f9f30320bbc2ab21f5d01e28cd76ad5a5ba"
   solver-name = "gps-cdcl"
   solver-version = 1
