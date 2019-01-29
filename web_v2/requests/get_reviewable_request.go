@@ -2,6 +2,15 @@ package requests
 
 import "net/http"
 
+const (
+	// IncludeTypeReviewableRequestDetails - defines if we need to include request details to response
+	IncludeTypeReviewableRequestDetails = "request_details"
+)
+
+var includeTypeReviewableRequestAll = map[string]struct{}{
+	IncludeTypeReviewableRequestDetails: {},
+}
+
 // GetReviewableRequest - represents params to be specified by user for Get Request handler
 type GetReviewableRequest struct {
 	*base
@@ -10,7 +19,9 @@ type GetReviewableRequest struct {
 
 //NewGetReviewableRequest - returns new instance of GetRequest request
 func NewGetReviewableRequest(r *http.Request) (*GetReviewableRequest, error) {
-	b, err := newBase(r, baseOpts{})
+	b, err := newBase(r, baseOpts{
+		supportedIncludes: includeTypeReviewableRequestAll,
+	})
 	if err != nil {
 		return nil, err
 	}

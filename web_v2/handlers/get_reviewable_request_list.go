@@ -88,7 +88,15 @@ func (h *getReviewableRequestListHandler) GetReviewableRequestList(
 	}
 
 	for _, historyRecord := range historyRecords {
-		response.Data = append(response.Data, resources.NewRequest(historyRecord))
+		reviewableRequest := resources.NewRequest(historyRecord)
+		reviewableRequestDetails := resources.NewRequestDetails(historyRecord)
+		reviewableRequest.Relationships.RequestDetails = reviewableRequestDetails.GetKey().AsRelation()
+
+		response.Data = append(response.Data, reviewableRequest)
+
+		if request.ShouldInclude(requests.IncludeTypeReviewableRequestListDetails) {
+			response.Included.Add(reviewableRequestDetails)
+		}
 	}
 
 	if len(response.Data) > 0 {

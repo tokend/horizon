@@ -6,6 +6,9 @@ import (
 )
 
 const (
+	// IncludeTypeReviewableRequestListDetails - defines if we need to include request details to response
+	IncludeTypeReviewableRequestListDetails = "request_details"
+
 	// FilterTypeRequestListRequestor - defines if we need to filter the list by requestor
 	FilterTypeRequestListRequestor = "requestor"
 	// FilterTypeRequestListReviewer - defines if we need to filter the list by reviewer
@@ -21,6 +24,10 @@ const (
 	// FilterTypeRequestListPendingTasksAnyOf - defines if we need to filter the list by any of pending tasks
 	FilterTypeRequestListPendingTasksAnyOf = "pending_tasks_any_of"
 )
+
+var includeTypeReviewableRequestListAll = map[string]struct{}{
+	IncludeTypeReviewableRequestListDetails: {},
+}
 
 var filterTypeRequestListAll = map[string]struct{}{
 	FilterTypeRequestListRequestor:          {},
@@ -52,7 +59,8 @@ type GetReviewableRequestList struct {
 // NewGetReviewableRequestList - returns new instance of GetReviewableRequestList
 func NewGetReviewableRequestList(r *http.Request) (*GetReviewableRequestList, error) {
 	b, err := newBase(r, baseOpts{
-		supportedFilters: filterTypeRequestListAll,
+		supportedIncludes: includeTypeReviewableRequestListAll,
+		supportedFilters:  filterTypeRequestListAll,
 	})
 	if err != nil {
 		return nil, err

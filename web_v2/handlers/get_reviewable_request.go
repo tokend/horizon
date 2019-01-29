@@ -71,5 +71,9 @@ func (h *getReviewableRequestHandler) RenderResponse(r *http.Request, w http.Res
 		Data: resources.NewRequest(*historyRecord),
 	}
 
+	if request.ShouldInclude(requests.IncludeTypeReviewableRequestDetails) {
+		response.Included.Add(resources.NewRequestDetails(*historyRecord))
+	}
+
 	ape.Render(w, response)
 }
