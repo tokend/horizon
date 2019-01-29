@@ -4,7 +4,6 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
-	"gitlab.com/tokend/regources/v2"
 )
 
 type createManageLimitsRequestOpHandler struct {
