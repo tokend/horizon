@@ -126,10 +126,6 @@
   name = "github.com/google/jsonapi"
   version = "1.0.0"
 
-[[constraint]]
-  branch = "master"
-  name = "gitlab.com/distributed_lab/kit"
-
 [prune]
   go-tests = true
   unused-packages = false

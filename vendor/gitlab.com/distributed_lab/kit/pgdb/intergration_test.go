@@ -103,12 +103,12 @@ func TestDB_Transaction(t *testing.T) {
 	}
 
 	t.Run("successful commit", func(t *testing.T) {
-		err := db.Transaction(func() error {
-			if err := db.ExecRaw(`insert into t values (1)`); err != nil {
+		err := db.Transaction(func(q pgdb.Queryer) error {
+			if err := q.ExecRaw(`insert into t values (1)`); err != nil {
 				return err
 			}
 
-			if err := db.ExecRaw(`insert into t values (2)`); err != nil {
+			if err := q.ExecRaw(`insert into t values (2)`); err != nil {
 				return err
 			}
 			return nil
@@ -124,8 +124,8 @@ func TestDB_Transaction(t *testing.T) {
 	})
 
 	t.Run("error", func(t *testing.T) {
-		err := db.Transaction(func() error {
-			if err := db.ExecRaw(`insert into t values (1)`); err != nil {
+		err := db.Transaction(func(q pgdb.Queryer) error {
+			if err := q.ExecRaw(`insert into t values (1)`); err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
@@ -143,8 +143,8 @@ func TestDB_Transaction(t *testing.T) {
 
 	t.Run("panic", func(t *testing.T) {
 		assert.PanicsWithValue(t, io.EOF, func() {
-			_ = db.Transaction(func() error {
-				if err := db.ExecRaw(`insert into t values (1)`); err != nil {
+			_ = db.Transaction(func(q pgdb.Queryer) error {
+				if err := q.ExecRaw(`insert into t values (1)`); err != nil {
 					t.Fatalf("unexpected error: %v", err)
 				}
 
@@ -160,14 +160,4 @@ func TestDB_Transaction(t *testing.T) {
 		assert.Equal(t, 2, got)
 	})
 
-	t.Run("nested transaction", func(t *testing.T) {
-		assert.Panics(t, func() {
-			_ = db.Transaction(func() error {
-				_ = db.Transaction(func() error {
-					return nil
-				})
-				return nil
-			})
-		})
-	})
 }

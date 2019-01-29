@@ -1,4 +1,4 @@
-package internal
+package janus
 
 type Service struct {
 	Name    string `json:"name"`

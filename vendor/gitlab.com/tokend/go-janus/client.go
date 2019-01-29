@@ -1,4 +1,4 @@
-package internal
+package janus
 
 import (
 	"bytes"
@@ -8,41 +8,29 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/pkg/errors"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-type Client struct {
-	Endpoint string
-}
-
-func (j *Client) AddAPI(api *Service) error {
-	url := fmt.Sprintf("%s/apis", j.Endpoint)
-	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(&api); err != nil {
-		return errors.Wrap(err, "failed to marshal body")
-	}
-	_, err := do("POST", url, &body)
+func (j *Janus) addAPI(body []byte) error {
+	url := fmt.Sprintf("%s/apis", j.URL)
+	_, err := do("POST", url, bytes.NewBuffer(body))
 	if err != nil {
 		return errors.Wrap(err, "failed to add api")
 	}
 	return nil
 }
 
-func (j *Client) UpdateAPI(name string, api *Service) error {
-	url := fmt.Sprintf("%s/apis/%s", j.Endpoint, name)
-	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(&api); err != nil {
-		return errors.Wrap(err, "failed to marshal body")
-	}
-	_, err := do("PUT", url, &body)
+func (j *Janus) modifyAPI(name string, body []byte) error {
+	url := fmt.Sprintf("%s/apis/%s", j.URL, name)
+	_, err := do("PUT", url, bytes.NewBuffer(body))
 	if err != nil {
 		return errors.Wrap(err, "failed to modify api")
 	}
 	return nil
 }
 
-func (j *Client) GetAPI(name string) (*Service, error) {
-	url := fmt.Sprintf("%s/apis/%s", j.Endpoint, name)
+func (j *Janus) getAPI(name string) (*Service, error) {
+	url := fmt.Sprintf("%s/apis/%s", j.URL, name)
 	resp, err := do("GET", url, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get api")
@@ -52,12 +40,21 @@ func (j *Client) GetAPI(name string) (*Service, error) {
 		return nil, nil
 	}
 
-	var result Service
-	err = json.Unmarshal(resp, &result)
+	var janus Service
+	err = json.Unmarshal(resp, &janus)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal")
+		return nil, errors.Wrap(err, "failed to unmarshal to JanusService struct")
 	}
-	return &result, nil
+	return &janus, nil
+}
+
+func (j *Janus) deleteAPI(name string) error {
+	url := fmt.Sprintf("%s/apis/%s", j.URL, name)
+	_, err := do("DELETE", url, nil)
+	if err != nil {
+		return errors.Wrap(err, "failed to delete api")
+	}
+	return nil
 }
 
 func do(method, url string, body io.Reader) ([]byte, error) {

@@ -39,7 +39,7 @@ type Getter interface {
 	GetRaw(dest interface{}, query string, args ...interface{}) error
 }
 
-type TransactionFunc func() error
+type TransactionFunc func(queryer Queryer) error
 
 type Transactor interface {
 	Transaction(transactionFunc TransactionFunc) (err error)
