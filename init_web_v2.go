@@ -99,6 +99,8 @@ func initWebV2Actions(app *App) {
 	m.Get("/v2/asset_pairs", handlers.GetAssetPairList)
 	m.Get("/v2/offers/{id}", handlers.GetOffer)
 	m.Get("/v2/offers", handlers.GetOfferList)
+	m.Get("/v2/requests/{id}", handlers.GetReviewableRequest)
+	m.Get("/v2/requests", handlers.GetReviewableRequestList)
 
 	logger := &log.DefaultLogger.Entry
 	janus := app.config.Janus()
