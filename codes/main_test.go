@@ -20,16 +20,16 @@ func TestCodes(t *testing.T) {
 	Convey("TransactionResultCode", t, func() {
 		for _, code := range xdr.TransactionResultCodeAll {
 			message := getMessage(code.ShortString())
-			if message == "" || message == code.ShortString()  {
-				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
+			if message == "" || message == code.ShortString() {
+				t.Errorf("Expected message not to be blank for %s", code.ShortString())
 			}
 		}
 	})
 	Convey("OperationResultCode", t, func() {
 		for _, code := range xdr.OperationResultCodeAll {
 			message := getMessage(code.ShortString())
-			if message == "" || message == code.ShortString(){
-				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
+			if message == "" || message == code.ShortString() {
+				t.Errorf("Expected message not to be blank for %s", code.ShortString())
 			}
 		}
 	})
@@ -139,7 +139,7 @@ func TestCodes(t *testing.T) {
 		}
 	})
 	Convey("Create KYC request", t, func() {
-		for _, code := range xdr.CreateUpdateKycRequestResultCodeAll {
+		for _, code := range xdr.CreateChangeRoleRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
