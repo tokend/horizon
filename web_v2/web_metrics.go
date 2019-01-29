@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// WebMetrics represents request metrics
 type WebMetrics struct {
 	requestCounter metrics.Counter
 	failureCounter metrics.Counter
@@ -15,6 +16,7 @@ type WebMetrics struct {
 	successMeter metrics.Meter
 }
 
+// NewWebMetrics creates new instance of WebMetrics
 func NewWebMetrics() *WebMetrics {
 	return &WebMetrics{
 		requestCounter: metrics.NewCounter(),
@@ -26,6 +28,7 @@ func NewWebMetrics() *WebMetrics {
 	}
 }
 
+// Update - updates web metrics with values depending on the state of request
 func (m *WebMetrics) Update(requestDuration time.Duration, responseStatus int) {
 	m.requestTimer.Update(requestDuration)
 
@@ -37,6 +40,7 @@ func (m *WebMetrics) Update(requestDuration time.Duration, responseStatus int) {
 	}
 }
 
+// ResetTimer - resets the metrics timer
 func (m *WebMetrics) ResetTimer() {
 	m.requestTimer = metrics.NewTimer()
 }

@@ -67,9 +67,10 @@ func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*regources.Asset
 		Data: assetResponse,
 	}
 
+	assetOwner := resources.NewAccountKey(asset.Owner)
+	response.Data.Relationships.Owner = assetOwner.AsRelation()
+
 	if request.ShouldInclude(requests.IncludeTypeAssetOwner) {
-		assetOwner := resources.NewAccountKey(asset.Owner)
-		response.Data.Relationships.Owner = assetOwner.AsRelation()
 		response.Included.Add(&assetOwner)
 	}
 

@@ -1,11 +1,11 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type createIssuanceRequestOpHandler struct {
@@ -31,11 +31,10 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateIssuanceRequest,
 		CreateIssuanceRequest: &history2.CreateIssuanceRequestDetails{
-			FixedFee:   amount.StringU(uint64(issuanceRequest.Fee.Fixed)),
-			PercentFee: amount.StringU(uint64(issuanceRequest.Fee.Percent)),
-			Reference:  utf8.Scrub(string(createIssuanceRequestOp.Reference)),
-			Amount:     amount.StringU(uint64(issuanceRequest.Amount)),
-			Asset:      issuanceRequest.Asset,
+			Fee:       internal.FeeFromXdr(issuanceRequest.Fee),
+			Reference: utf8.Scrub(string(createIssuanceRequestOp.Reference)),
+			Amount:    regources.Amount(issuanceRequest.Amount),
+			Asset:     string(issuanceRequest.Asset),
 			ReceiverAccountAddress: createIssuanceRequestRes.Receiver.Address(),
 			ReceiverBalanceAddress: issuanceRequest.Receiver.AsString(),
 			ExternalDetails:        internal.MarshalCustomDetails(issuanceRequest.ExternalDetails),
@@ -61,11 +60,8 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	effect := history2.Effect{
 		Type: history2.EffectTypeIssued,
 		Issued: &history2.BalanceChangeEffect{
-			Amount: amount.String(int64(issuanceRequest.Amount - issuanceRequest.Fee.Fixed - issuanceRequest.Fee.Percent)),
-			Fee: history2.Fee{
-				Fixed:             amount.StringU(uint64(issuanceRequest.Fee.Fixed)),
-				CalculatedPercent: amount.StringU(uint64(issuanceRequest.Fee.Percent)),
-			},
+			Amount: regources.Amount(issuanceRequest.Amount),
+			Fee:    internal.FeeFromXdr(issuanceRequest.Fee),
 		},
 	}
 

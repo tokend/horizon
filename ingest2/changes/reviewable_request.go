@@ -12,7 +12,7 @@ import (
 	history "gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/regources"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type reviewableRequestStorage interface {
@@ -181,7 +181,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 	result.AllTasks = uint32(tasksExt.AllTasks)
 	result.PendingTasks = uint32(tasksExt.PendingTasks)
 
-	externalDetails := make([]map[string]interface{}, 0, len(tasksExt.ExternalDetails))
+	externalDetails := make([]regources.Details, 0, len(tasksExt.ExternalDetails))
 	for _, item := range tasksExt.ExternalDetails {
 		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}
@@ -293,7 +293,7 @@ func (c *reviewableRequestHandler) getLimitsUpdateRequest(
 }
 
 func (c *reviewableRequestHandler) getUpdateKYCRequest(request *xdr.UpdateKycRequest) *history.UpdateKYCRequest {
-	externalDetails := make([]map[string]interface{}, 0, len(request.ExternalDetails))
+	externalDetails := make([]regources.Details, 0, len(request.ExternalDetails))
 	for _, item := range request.ExternalDetails {
 		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}

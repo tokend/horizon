@@ -7,6 +7,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 //Sale - represents instance of compounding campaign
@@ -23,8 +24,9 @@ type Sale struct {
 	StartTime         time.Time    `db:"start_time"`
 	EndTime           time.Time    `db:"end_time"`
 	CurrentCap        string
-	Details           db2.Details `db:"details"`
-	QuoteAssets       QuoteAssets `db:"quote_assets"`
+	Details           regources.Details `db:"details"`
+	QuoteAssets       QuoteAssets       `db:"quote_assets"`
+	State             SaleState         `db:"state"`
 }
 
 //QuoteAssets - assets allowed to invest in sale

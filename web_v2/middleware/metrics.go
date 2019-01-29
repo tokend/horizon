@@ -6,11 +6,12 @@ import (
 	"time"
 )
 
-type WebV2MetricsUpdater interface {
+type webV2MetricsUpdater interface {
 	UpdateWebV2Metrics(duration time.Duration, status int)
 }
 
-func WebMetrics(updater WebV2MetricsUpdater) func (handler http.Handler) http.Handler {
+// WebMetrics - middleware to calculate requests metrics
+func WebMetrics(updater webV2MetricsUpdater) func(handler http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			mw := middleware.NewWrapResponseWriter(w, 1)

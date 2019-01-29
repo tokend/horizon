@@ -94,6 +94,12 @@ func initWebV2Actions(app *App) {
 	m.Get("/v2/accounts/{id}/signers", handlers.GetAccountSigners)
 	m.Get("/v2/assets/{code}", handlers.GetAsset)
 	m.Get("/v2/assets", handlers.GetAssetList)
+	m.Get("/v2/history", handlers.GetHistory)
+	m.Get("/v2/asset_pairs/{id}", handlers.GetAssetPair)
+	m.Get("/v2/asset_pairs", handlers.GetAssetPairList)
+	m.Get("/v2/offers/{id}", handlers.GetOffer)
+	m.Get("/v2/offers", handlers.GetOfferList)
+
 	logger := &log.DefaultLogger.Entry
 	janus := app.config.Janus()
 	err := janus.DoRegister(m, logger)

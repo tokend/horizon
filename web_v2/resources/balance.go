@@ -8,10 +8,15 @@ import (
 //NewBalance - creates new instance of balance using core balance
 func NewBalance(record *core.Balance) *regources.Balance {
 	return &regources.Balance{
-		Key: regources.Key{
-			Type: regources.TypeBalances,
-			ID:   record.BalanceAddress,
-		},
+		Key: NewBalanceKey(record.BalanceAddress),
+	}
+}
+
+//NewBalanceKey - creates new instance of balance key
+func NewBalanceKey(balanceAddress string) regources.Key {
+	return regources.Key{
+		Type: regources.TypeBalances,
+		ID:   balanceAddress,
 	}
 }
 
@@ -26,5 +31,13 @@ func NewBalanceState(record *core.Balance) *regources.BalanceState {
 			Locked:    regources.Amount(record.Locked),
 			Available: regources.Amount(record.Amount),
 		},
+	}
+}
+
+//NewBalanceStateKey - creates new balance state key using balance address
+func NewBalanceStateKey(balanceAddress string) regources.Key {
+	return regources.Key{
+		ID:   balanceAddress,
+		Type: regources.TypeBalancesState,
 	}
 }

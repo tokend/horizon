@@ -1,10 +1,10 @@
 package operations
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type createSaleRequestOpHandler struct {
@@ -19,12 +19,12 @@ func (h *createSaleRequestOpHandler) Details(op rawOperation, opRes xdr.Operatio
 		Type: xdr.OperationTypeCreateSaleRequest,
 		CreateSaleRequest: &history2.CreateSaleRequestDetails{
 			RequestID:         int64(opRes.MustCreateSaleCreationRequestResult().MustSuccess().RequestId),
-			BaseAsset:         createSaleRequest.BaseAsset,
-			DefaultQuoteAsset: createSaleRequest.DefaultQuoteAsset,
-			StartTime:         int64(createSaleRequest.StartTime),
-			EndTime:           int64(createSaleRequest.EndTime),
-			HardCap:           amount.StringU(uint64(createSaleRequest.HardCap)),
-			SoftCap:           amount.StringU(uint64(createSaleRequest.SoftCap)),
+			BaseAsset:         string(createSaleRequest.BaseAsset),
+			DefaultQuoteAsset: string(createSaleRequest.DefaultQuoteAsset),
+			StartTime:         internal.TimeFromXdr(createSaleRequest.StartTime),
+			EndTime:           internal.TimeFromXdr(createSaleRequest.EndTime),
+			HardCap:           regources.Amount(createSaleRequest.HardCap),
+			SoftCap:           regources.Amount(createSaleRequest.SoftCap),
 			Details:           internal.MarshalCustomDetails(createSaleRequest.Details),
 		},
 	}, nil

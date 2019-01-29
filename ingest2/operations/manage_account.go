@@ -19,8 +19,8 @@ func (h *manageAccountOpHandler) Details(op rawOperation,
 		Type: xdr.OperationTypeManageAccount,
 		ManageAccount: &history2.ManageAccountDetails{
 			AccountAddress:       manageAccountOp.Account.Address(),
-			BlockReasonsToAdd:    int32(manageAccountOp.BlockReasonsToAdd),
-			BlockReasonsToRemove: int32(manageAccountOp.BlockReasonsToRemove),
+			BlockReasonsToAdd:    xdr.BlockReasons(manageAccountOp.BlockReasonsToAdd),
+			BlockReasonsToRemove: xdr.BlockReasons(manageAccountOp.BlockReasonsToRemove),
 		},
 	}, nil
 }

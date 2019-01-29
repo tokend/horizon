@@ -13,18 +13,18 @@ type BalancesQ struct {
 }
 
 // NewBalancesQ - creates new instance of BalanceQ
-func NewBalancesQ(repo *db2.Repo) *BalancesQ {
-	return &BalancesQ{
+func NewBalancesQ(repo *db2.Repo) BalancesQ {
+	return BalancesQ{
 		repo: repo,
 	}
 }
 
 // GetByAddress loads a row from `balances`, by address
 // returns nil, nil - if balance does not exists
-func (q *BalancesQ) GetByAddress(address string) (*Balance, error) {
+func (q BalancesQ) GetByAddress(address string) (*Balance, error) {
 	var result Balance
-	err := q.repo.Get(&result, sq.Select("b.id, b.account_id, b.address, b.asset_code").
-		From("balances b").Where("b.address = ?", address))
+	err := q.repo.Get(&result, sq.Select(balanceColumns...).
+		From("balances balances").Where("balances.address = ?", address))
 	if err != nil {
 		if q.repo.NoRows(err) {
 			return nil, nil
@@ -35,3 +35,5 @@ func (q *BalancesQ) GetByAddress(address string) (*Balance, error) {
 
 	return &result, nil
 }
+
+var balanceColumns = []string{"balances.id", "balances.account_id", "balances.address", "balances.asset_code"}

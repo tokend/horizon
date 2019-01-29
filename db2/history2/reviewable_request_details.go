@@ -8,7 +8,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/regources"
+	"gitlab.com/tokend/regources/v2"
 )
 
 //ReviewableRequestDetails - stores in union switch details of the reviewable requests
@@ -52,19 +52,19 @@ func (r *ReviewableRequestDetails) Scan(src interface{}) error {
 
 //AssetCreationRequest - asset creation request details
 type AssetCreationRequest struct {
-	Asset                  string                 `json:"asset"`
-	Policies               int32                  `json:"policies"`
-	PreIssuedAssetSigner   string                 `json:"pre_issued_asset_signer"`
-	MaxIssuanceAmount      string                 `json:"max_issuance_amount"`
-	InitialPreissuedAmount string                 `json:"initial_preissued_amount"`
-	Details                map[string]interface{} `json:"details"`
+	Asset                  string            `json:"asset"`
+	Policies               int32             `json:"policies"`
+	PreIssuedAssetSigner   string            `json:"pre_issued_asset_signer"`
+	MaxIssuanceAmount      string            `json:"max_issuance_amount"`
+	InitialPreissuedAmount string            `json:"initial_preissued_amount"`
+	Details                regources.Details `json:"details"`
 }
 
 //AssetUpdateRequest - asset update request details
 type AssetUpdateRequest struct {
-	Asset    string                 `json:"asset"`
-	Policies int32                  `json:"policies"`
-	Details  map[string]interface{} `json:"details"`
+	Asset    string            `json:"asset"`
+	Policies int32             `json:"policies"`
+	Details  regources.Details `json:"details"`
 }
 
 //PreIssuanceRequest - request details
@@ -77,20 +77,20 @@ type PreIssuanceRequest struct {
 
 //IssuanceRequest - request details
 type IssuanceRequest struct {
-	Asset    string                 `json:"asset"`
-	Amount   string                 `json:"amount"`
-	Receiver string                 `json:"receiver"`
-	Details  map[string]interface{} `json:"external_details"`
+	Asset    string            `json:"asset"`
+	Amount   string            `json:"amount"`
+	Receiver string            `json:"receiver"`
+	Details  regources.Details `json:"external_details"`
 }
 
 //WithdrawalRequest - request details
 type WithdrawalRequest struct {
-	BalanceID       string                 `json:"balance_id"`
-	Amount          string                 `json:"amount"`
-	FixedFee        string                 `json:"fixed_fee"`
-	PercentFee      string                 `json:"percent_fee"`
-	Details         map[string]interface{} `json:"external_details"`
-	ReviewerDetails map[string]interface{} `json:"reviewer_details"`
+	BalanceID       string            `json:"balance_id"`
+	Amount          string            `json:"amount"`
+	FixedFee        string            `json:"fixed_fee"`
+	PercentFee      string            `json:"percent_fee"`
+	Details         regources.Details `json:"external_details"`
+	ReviewerDetails regources.Details `json:"reviewer_details"`
 }
 
 //SaleRequest - request details
@@ -101,7 +101,7 @@ type SaleRequest struct {
 	EndTime             time.Time                  `json:"end_time"`
 	SoftCap             string                     `json:"soft_cap"`
 	HardCap             string                     `json:"hard_cap"`
-	Details             map[string]interface{}     `json:"details"`
+	Details             regources.Details          `json:"details"`
 	QuoteAssets         []regources.SaleQuoteAsset `json:"quote_assets"`
 	SaleType            xdr.SaleType               `json:"sale_type"`
 	BaseAssetForHardCap string                     `json:"base_asset_for_hard_cap"`
@@ -109,8 +109,8 @@ type SaleRequest struct {
 
 //LimitsUpdateRequest - request details
 type LimitsUpdateRequest struct {
-	DocumentHash string                 `json:"document_hash"`
-	Details      map[string]interface{} `json:"details"`
+	DocumentHash string            `json:"document_hash"`
+	Details      regources.Details `json:"details"`
 }
 
 //AmlAlertRequest - request details
@@ -122,18 +122,18 @@ type AmlAlertRequest struct {
 
 //UpdateKYCRequest - request details
 type UpdateKYCRequest struct {
-	AccountToUpdateKYC string                   `json:"updated_account_id"`
-	AccountTypeToSet   xdr.AccountType          `json:"account_type_to_set"`
-	KYCLevel           uint32                   `json:"kyc_level"`
-	KYCData            map[string]interface{}   `json:"kyc_data"`
-	SequenceNumber     uint32                   `json:"sequence_number"`
-	ExternalDetails    []map[string]interface{} `json:"external_details"`
+	AccountToUpdateKYC string              `json:"updated_account_id"`
+	AccountTypeToSet   xdr.AccountType     `json:"account_type_to_set"`
+	KYCLevel           uint32              `json:"kyc_level"`
+	KYCData            regources.Details   `json:"kyc_data"`
+	SequenceNumber     uint32              `json:"sequence_number"`
+	ExternalDetails    []regources.Details `json:"external_details"`
 }
 
 //UpdateSaleDetailsRequest - request details
 type UpdateSaleDetailsRequest struct {
-	SaleID     uint64                 `json:"sale_id"`
-	NewDetails map[string]interface{} `json:"new_details"`
+	SaleID     uint64            `json:"sale_id"`
+	NewDetails regources.Details `json:"new_details"`
 }
 
 //UpdateSaleEndTimeRequest - request details
@@ -146,7 +146,7 @@ type UpdateSaleEndTimeRequest struct {
 type AtomicSwapBidCreation struct {
 	BaseBalance string                 `json:"base_balance"`
 	BaseAmount  uint64                 `json:"base_amount"`
-	Details     map[string]interface{} `json:"details"`
+	Details     regources.Details      `json:"details"`
 	QuoteAssets []regources.AssetPrice `json:"quote_assets"`
 }
 

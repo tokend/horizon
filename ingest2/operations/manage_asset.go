@@ -2,10 +2,10 @@ package operations
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
+	"gitlab.com/tokend/regources/v2"
 )
 
 type manageAssetOpHandler struct {
@@ -32,32 +32,32 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 	case xdr.ManageAssetActionCreateAssetCreationRequest:
 		creationDetails := manageAssetOp.Request.MustCreateAssetCreationRequest().CreateAsset
 
-		policies := int32(creationDetails.Policies)
+		policies := xdr.AssetPolicy(creationDetails.Policies)
 
-		opDetails.ManageAsset.AssetCode = creationDetails.Code
+		opDetails.ManageAsset.AssetCode = string(creationDetails.Code)
 		opDetails.ManageAsset.Details = internal.MarshalCustomDetails(creationDetails.Details)
 		opDetails.ManageAsset.Policies = &policies
 		opDetails.ManageAsset.PreissuedSigner = creationDetails.PreissuedAssetSigner.Address()
-		opDetails.ManageAsset.MaxIssuanceAmount = amount.StringU(uint64(creationDetails.MaxIssuanceAmount))
+		opDetails.ManageAsset.MaxIssuanceAmount = regources.Amount(creationDetails.MaxIssuanceAmount)
 	case xdr.ManageAssetActionCreateAssetUpdateRequest:
 		updateDetails := manageAssetOp.Request.MustCreateAssetUpdateRequest().UpdateAsset
 
-		policies := int32(updateDetails.Policies)
+		policies := xdr.AssetPolicy(updateDetails.Policies)
 
-		opDetails.ManageAsset.AssetCode = updateDetails.Code
+		opDetails.ManageAsset.AssetCode = string(updateDetails.Code)
 		opDetails.ManageAsset.Details = internal.MarshalCustomDetails(updateDetails.Details)
 		opDetails.ManageAsset.Policies = &policies
 	case xdr.ManageAssetActionCancelAssetRequest:
 	case xdr.ManageAssetActionChangePreissuedAssetSigner:
 		data := manageAssetOp.Request.MustChangePreissuedSigner()
 
-		opDetails.ManageAsset.AssetCode = data.Code
+		opDetails.ManageAsset.AssetCode = string(data.Code)
 		opDetails.ManageAsset.PreissuedSigner = data.AccountId.Address()
 	case xdr.ManageAssetActionUpdateMaxIssuance:
 		data := manageAssetOp.Request.MustUpdateMaxIssuance()
 
-		opDetails.ManageAsset.AssetCode = data.AssetCode
-		opDetails.ManageAsset.MaxIssuanceAmount = amount.StringU(uint64(data.MaxIssuanceAmount))
+		opDetails.ManageAsset.AssetCode = string(data.AssetCode)
+		opDetails.ManageAsset.MaxIssuanceAmount = regources.Amount(data.MaxIssuanceAmount)
 	default:
 		return history2.OperationDetails{}, errors.New("unexpected manage asset action")
 	}

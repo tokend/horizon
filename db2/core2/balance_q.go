@@ -1,8 +1,6 @@
 package core2
 
 import (
-	"fmt"
-
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
@@ -42,17 +40,9 @@ func (q BalancesQ) FilterByAccount(accountAddress string) BalancesQ {
 
 //WithAsset - joins asset
 func (q BalancesQ) WithAsset() BalancesQ {
-	q.selector = q.selector.Columns(getAssetColumns()...).LeftJoin("asset assets ON balances.asset = assets.code")
+	q.selector = q.selector.Columns(db2.GetColumnsForJoin(assetColumns, "assets")...).
+		LeftJoin("asset assets ON balances.asset = assets.code")
 	return q
-}
-
-func getAssetColumns() []string {
-	result := make([]string, 0, len(assetColumns))
-	for _, column := range assetColumns {
-		result = append(result, fmt.Sprintf(`%s "%s"`, column, column))
-	}
-
-	return result
 }
 
 // Get - selects balance from db using specified filters. Returns nil, nil - if one does not exists
