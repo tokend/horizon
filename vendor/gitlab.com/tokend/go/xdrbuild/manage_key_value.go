@@ -70,11 +70,8 @@ func (mkv ManageKeyValueOp) XDR() (*xdr.Operation, error) {
 		}
 	}
 
-	if keyValueEntry == nil {
-		keyValueEntry = &xdr.KeyValueEntry{
-			Key: xdr.Longstring(mkv.Key),
-			Value: xdr.KeyValueEntryValue{},
-		}
+	if keyValueEntryValue == nil {
+		keyValueEntryValue = &xdr.KeyValueEntryValue{}
 	}
 
 	return &xdr.Operation{
@@ -84,7 +81,7 @@ func (mkv ManageKeyValueOp) XDR() (*xdr.Operation, error) {
 				Key: xdr.Longstring(mkv.Key),
 				Action: xdr.ManageKeyValueOpAction{
 					Action: manageKvAction,
-					Value:  &keyValueEntry.Value,
+					Value:  keyValueEntryValue,
 				},
 			},
 		},

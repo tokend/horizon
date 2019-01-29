@@ -96,7 +96,7 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  revision = "a6d9f063f13bfef23bc5be438b18b00f4228da3f"
+  revision = "133c1c688cead424f460d09825e22cbdd0038e09"
 
 [[constraint]]
   branch = "product"

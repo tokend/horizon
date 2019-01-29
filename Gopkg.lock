@@ -334,7 +334,7 @@
 [[projects]]
   name = "gitlab.com/tokend/go"
   packages = ["amount","build","crc16","doorman","doorman/data","hash","keypair","network","resources","signcontrol","signcontrol/internal/httpsignatures","strkey","xdr"]
-  revision = "a6d9f063f13bfef23bc5be438b18b00f4228da3f"
+  revision = "133c1c688cead424f460d09825e22cbdd0038e09"
 
 [[projects]]
   branch = "add-janus"
@@ -405,6 +405,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "27bc92fb4763db1118ca5aa9ef0ca91789ff88bdb3f5d51b380a11a4eb344239"
+  inputs-digest = "c738b77e7e44fad5f0e1cdf83a63f612c4ffbd1696e7dce972c46fde87413f21"
   solver-name = "gps-cdcl"
   solver-version = 1

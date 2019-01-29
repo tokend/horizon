@@ -21,7 +21,7 @@ func TestCodes(t *testing.T) {
 		for _, code := range xdr.TransactionResultCodeAll {
 			message := getMessage(code.ShortString())
 			if message == "" || message == code.ShortString()  {
-				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
+				t.Errorf("Expected message not to be blank for %s", code.ShortString())
 			}
 		}
 	})
@@ -29,7 +29,7 @@ func TestCodes(t *testing.T) {
 		for _, code := range xdr.OperationResultCodeAll {
 			message := getMessage(code.ShortString())
 			if message == "" || message == code.ShortString(){
-				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
+				t.Errorf("Expected message not to be blank for %s", code.ShortString())
 			}
 		}
 	})

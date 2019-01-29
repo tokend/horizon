@@ -28,19 +28,6 @@ func New(
 			e.Referrer = nil
 		}
 		result = e
-	case xdr.OperationTypePayment:
-		e := Payment{Base: base}
-		err = row.UnmarshalDetails(&e)
-		if public {
-			e.UserDetails = ""
-			e.From = ""
-			e.To = ""
-			e.FromBalance = ""
-			e.ToBalance = ""
-			e.Subject = ""
-			e.Reference = ""
-		}
-		result = e
 	case xdr.OperationTypeSetOptions:
 		e := SetOptions{Base: base}
 		err = row.UnmarshalDetails(&e)

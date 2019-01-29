@@ -1,4 +1,4 @@
-// revision: 520e69760063ee9fafbb7793f64122b7f3bd4167
+// revision: 5ea049e04a3502d18d605f77bd96be92128592a5
 // branch:   (detached
 // Package xdr is generated from:
 //
@@ -35552,7 +35552,6 @@ type Fee struct {
 //   enum OperationType
 //    {
 //        CREATE_ACCOUNT = 0,
-//        PAYMENT = 1,
 //        SET_OPTIONS = 2,
 //        CREATE_ISSUANCE_REQUEST = 3,
 //        SET_FEES = 5,
@@ -35562,7 +35561,6 @@ type Fee struct {
 //        MANAGE_ASSET = 11,
 //        CREATE_PREISSUANCE_REQUEST = 12,
 //        MANAGE_LIMITS = 13,
-//        DIRECT_DEBIT = 14,
 //    	MANAGE_ASSET_PAIR = 15,
 //    	MANAGE_OFFER = 16,
 //        MANAGE_INVOICE_REQUEST = 17,
@@ -35592,7 +35590,6 @@ type OperationType int32
 
 const (
 	OperationTypeCreateAccount                          OperationType = 0
-	OperationTypePayment                                OperationType = 1
 	OperationTypeSetOptions                             OperationType = 2
 	OperationTypeCreateIssuanceRequest                  OperationType = 3
 	OperationTypeSetFees                                OperationType = 5
@@ -35602,7 +35599,6 @@ const (
 	OperationTypeManageAsset                            OperationType = 11
 	OperationTypeCreatePreissuanceRequest               OperationType = 12
 	OperationTypeManageLimits                           OperationType = 13
-	OperationTypeDirectDebit                            OperationType = 14
 	OperationTypeManageAssetPair                        OperationType = 15
 	OperationTypeManageOffer                            OperationType = 16
 	OperationTypeManageInvoiceRequest                   OperationType = 17
@@ -35630,7 +35626,6 @@ const (
 
 var OperationTypeAll = []OperationType{
 	OperationTypeCreateAccount,
-	OperationTypePayment,
 	OperationTypeSetOptions,
 	OperationTypeCreateIssuanceRequest,
 	OperationTypeSetFees,
@@ -35640,7 +35635,6 @@ var OperationTypeAll = []OperationType{
 	OperationTypeManageAsset,
 	OperationTypeCreatePreissuanceRequest,
 	OperationTypeManageLimits,
-	OperationTypeDirectDebit,
 	OperationTypeManageAssetPair,
 	OperationTypeManageOffer,
 	OperationTypeManageInvoiceRequest,
@@ -35668,7 +35662,6 @@ var OperationTypeAll = []OperationType{
 
 var operationTypeMap = map[int32]string{
 	0:  "OperationTypeCreateAccount",
-	1:  "OperationTypePayment",
 	2:  "OperationTypeSetOptions",
 	3:  "OperationTypeCreateIssuanceRequest",
 	5:  "OperationTypeSetFees",
@@ -35678,7 +35671,6 @@ var operationTypeMap = map[int32]string{
 	11: "OperationTypeManageAsset",
 	12: "OperationTypeCreatePreissuanceRequest",
 	13: "OperationTypeManageLimits",
-	14: "OperationTypeDirectDebit",
 	15: "OperationTypeManageAssetPair",
 	16: "OperationTypeManageOffer",
 	17: "OperationTypeManageInvoiceRequest",
@@ -35706,7 +35698,6 @@ var operationTypeMap = map[int32]string{
 
 var operationTypeShortMap = map[int32]string{
 	0:  "create_account",
-	1:  "payment",
 	2:  "set_options",
 	3:  "create_issuance_request",
 	5:  "set_fees",
@@ -35716,7 +35707,6 @@ var operationTypeShortMap = map[int32]string{
 	11: "manage_asset",
 	12: "create_preissuance_request",
 	13: "manage_limits",
-	14: "direct_debit",
 	15: "manage_asset_pair",
 	16: "manage_offer",
 	17: "manage_invoice_request",
@@ -35744,7 +35734,6 @@ var operationTypeShortMap = map[int32]string{
 
 var operationTypeRevMap = map[string]int32{
 	"OperationTypeCreateAccount":                          0,
-	"OperationTypePayment":                                1,
 	"OperationTypeSetOptions":                             2,
 	"OperationTypeCreateIssuanceRequest":                  3,
 	"OperationTypeSetFees":                                5,
@@ -35754,7 +35743,6 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeManageAsset":                            11,
 	"OperationTypeCreatePreissuanceRequest":               12,
 	"OperationTypeManageLimits":                           13,
-	"OperationTypeDirectDebit":                            14,
 	"OperationTypeManageAssetPair":                        15,
 	"OperationTypeManageOffer":                            16,
 	"OperationTypeManageInvoiceRequest":                   17,
@@ -35855,4 +35843,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "520e69760063ee9fafbb7793f64122b7f3bd4167"
+var Revision = "5ea049e04a3502d18d605f77bd96be92128592a5"

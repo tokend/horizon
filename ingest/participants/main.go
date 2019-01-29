@@ -37,15 +37,6 @@ func ForOperation(
 	switch op.Body.Type {
 	case xdr.OperationTypeCreateAccount:
 		result = append(result, Participant{op.Body.MustCreateAccountOp().Destination, nil, nil})
-	case xdr.OperationTypePayment:
-		paymentOp := op.Body.PaymentOpV2
-		paymentResponse := opResult.PaymentV2Result
-
-		result = append(result, Participant{
-			paymentResponse.MustPaymentV2Response().Destination,
-			paymentOp.Destination.BalanceId,
-			nil})
-		sourceParticipant.BalanceID = &paymentOp.SourceBalanceId
 	case xdr.OperationTypeSetOptions:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeSetFees:

@@ -34,7 +34,7 @@ func TestReviewRequestOp_XDR(t *testing.T) {
 	})
 
 	t.Run("approve with tasks", func(t *testing.T) {
-		reviewDetails := ReviewDetails{
+		reviewDetails := xdr.ReviewDetails{
 			TasksToAdd:      0,
 			TasksToRemove:   8,
 			ExternalDetails: "Request can be approved",
@@ -59,7 +59,7 @@ func TestReviewRequestOp_XDR(t *testing.T) {
 	})
 
 	t.Run("approve atomic swap with tasks", func(t *testing.T) {
-		reviewDetails := ReviewDetails{
+		reviewDetails := xdr.ReviewDetails{
 			TasksToAdd:      0,
 			TasksToRemove:   8,
 			ExternalDetails: "Request can be approved",
@@ -150,7 +150,7 @@ func TestReviewRequestOp_XDR(t *testing.T) {
 			Details: UpdateKYCDetails{
 				ExternalDetails: "All right",
 			},
-			ReviewDetails: &ReviewDetails{
+			ReviewDetails: &xdr.ReviewDetails{
 				TasksToAdd:    0,
 				TasksToRemove: 3,
 			},
@@ -177,7 +177,7 @@ func TestReviewRequestOp_XDR(t *testing.T) {
 			Details: UpdateKYCDetails{
 				ExternalDetails: "Invalid identity",
 			},
-			ReviewDetails: &ReviewDetails{
+			ReviewDetails: &xdr.ReviewDetails{
 				TasksToAdd:    2,
 				TasksToRemove: 0,
 			},

@@ -27,22 +27,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.Referrer != nil {
 			details["referrer"] = (*op.Referrer).Address()
 		}
-	case xdr.OperationTypePayment:
-		op := c.Operation().Body.PaymentOpV2
-		opResult := c.OperationResult().PaymentV2Result
-		details["from"] = source.Address()
-		details["to"] = opResult.PaymentV2Response.Destination.Address()
-		details["from_balance"] = op.SourceBalanceId.AsString()
-		details["to_balance"] = op.Destination.BalanceId.AsString()
-		details["amount"] = amount.String(int64(op.Amount))
-		details["source_payment_fee"] = amount.String(int64(op.FeeData.SourceFee.Percent))
-		details["destination_payment_fee"] = amount.String(int64(op.FeeData.DestinationFee.Percent))
-		details["source_fixed_fee"] = amount.String(int64(op.FeeData.SourceFee.Fixed))
-		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.Fixed))
-		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
-		details["subject"] = op.Subject
-		details["reference"] = utf8.Scrub(string(op.Reference))
-		details["asset"] = opResult.PaymentV2Response.Asset
 
 	case xdr.OperationTypeManageKeyValue:
 		op := c.Operation().Body.MustManageKeyValueOp()

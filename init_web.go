@@ -108,7 +108,6 @@ func initWebActions(app *App) {
 	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
 
 	operationTypesPayment := []xdr.OperationType{
-		xdr.OperationTypePayment,
 		xdr.OperationTypeCreateIssuanceRequest,
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,

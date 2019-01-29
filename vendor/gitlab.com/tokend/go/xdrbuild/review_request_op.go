@@ -51,7 +51,7 @@ type ReviewRequestOp struct {
 	Action        xdr.ReviewRequestOpAction
 	Details       ReviewRequestDetails
 	Reason        string
-	ReviewDetails *ReviewDetails
+	ReviewDetails *xdr.ReviewDetails
 }
 
 type WithdrawalDetails struct {
@@ -81,6 +81,9 @@ func (d UpdateKYCDetails) ReviewRequestDetails() xdr.ReviewRequestOpRequestDetai
 }
 
 func (op ReviewRequestOp) XDR() (*xdr.Operation, error) {
+	if op.ReviewDetails == nil {
+		op.ReviewDetails = &xdr.ReviewDetails{}
+	}
 	xdrop := &xdr.Operation{
 		Body: xdr.OperationBody{
 			Type: xdr.OperationTypeReviewRequest,
