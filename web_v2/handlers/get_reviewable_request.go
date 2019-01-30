@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"gitlab.com/tokend/horizon/db2/history2"
 	"net/http"
+
+	"gitlab.com/tokend/horizon/db2/history2"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -41,6 +42,7 @@ func GetReviewableRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO add check for reviewer
 	if !isAllowed(r, w, historyRecord.Requestor) {
 		return
 	}

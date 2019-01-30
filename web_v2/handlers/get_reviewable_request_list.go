@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -10,7 +12,6 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
 	"gitlab.com/tokend/regources/v2"
-	"net/http"
 )
 
 // GetReviewableRequestList - processes request to get the list of reviewable requests and their details
@@ -26,6 +27,8 @@ func GetReviewableRequestList(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
+
+	// TODO check allowed?
 
 	result, err := handler.GetReviewableRequestList(request)
 	if err != nil {

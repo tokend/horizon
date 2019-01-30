@@ -23,12 +23,14 @@ func NewRequest(record history2.ReviewableRequest) regources.ReviewableRequest {
 			ExternalDetails: record.ExternalDetails,
 			CreatedAt:       record.CreatedAt,
 			UpdatedAt:       record.UpdatedAt,
-			State:           record.RequestState.String(),
-			StateI:          int32(record.RequestState),
+			// TODO shouldn't those look like `state: {str: "", int: 2}`?
+			//  or just drop int part?
+			State:  record.RequestState.String(),
+			StateI: int32(record.RequestState),
 		},
 		Relationships: regources.ReviewableRequestRelations{
 			Requestor: NewAccountKey(record.Requestor).AsRelation(),
-			Reviewer: NewAccountKey(record.Reviewer).AsRelation(),
+			Reviewer:  NewAccountKey(record.Reviewer).AsRelation(),
 		},
 	}
 }
