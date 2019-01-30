@@ -9,7 +9,7 @@ type AtomicSwapBidRequest struct {
 
 // AtomicSwapBidRequestAttrs - attributes of the `atomic swap bid` reviewable request
 type AtomicSwapBidRequestAttrs struct {
-	BaseAmount uint64  `json:"base_amount"`
+	BaseAmount Amount  `json:"base_amount"`
 	Details    Details `json:"details"`
 }
 

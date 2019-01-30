@@ -8,7 +8,8 @@ import (
 // SaleRequest - represents details of the `sale` reviewable request
 type SaleRequest struct {
 	Key
-	Attributes SaleRequestAttrs `json:"attributes"`
+	Attributes    SaleRequestAttrs     `json:"attributes"`
+	Relationships SaleRequestRelations `json:"relationships"`
 }
 
 // SaleRequestAttrs - attributes of the `sale` reviewable request

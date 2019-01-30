@@ -45,6 +45,7 @@ type ReviewableRequestAttrs struct {
 }
 
 type ReviewableRequestRelations struct {
-	Requestor *Relation `json:"requestor"`
-	Reviewer  *Relation `json:"reviewer"`
+	Requestor      *Relation `json:"requestor"`
+	Reviewer       *Relation `json:"reviewer"`
+	RequestDetails *Relation `json:"request_details"`
 }
