@@ -94,9 +94,9 @@ func (c *saleHandler) Updated(lc ledgerChange) error {
 }
 
 func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
-	quoteAssets := make([]history.QuoteAsset, 0, len(raw.QuoteAssets))
+	quoteAssets := make([]history.SaleQuoteAsset, 0, len(raw.QuoteAssets))
 	for i := range raw.QuoteAssets {
-		quoteAssets = append(quoteAssets, history.QuoteAsset{
+		quoteAssets = append(quoteAssets, history.SaleQuoteAsset{
 			Asset:          string(raw.QuoteAssets[i].QuoteAsset),
 			Price:          amount.StringU(uint64(raw.QuoteAssets[i].Price)),
 			QuoteBalanceID: raw.QuoteAssets[i].QuoteBalance.AsString(),
@@ -116,7 +116,7 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		SoftCap:           uint64(raw.SoftCap),
 		HardCap:           uint64(raw.HardCap),
 		Details:           internal.MarshalCustomDetails(raw.Details),
-		QuoteAssets: history.QuoteAssets{
+		QuoteAssets: history.SaleQuoteAssets{
 			QuoteAssets: quoteAssets,
 		},
 		BaseCurrentCap: int64(raw.CurrentCapInBase),

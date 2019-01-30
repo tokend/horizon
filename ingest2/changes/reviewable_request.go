@@ -15,6 +15,8 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
+var ErrUnknownRemoveReason = errors.New("request was removed due to unknown reason")
+
 type reviewableRequestStorage interface {
 	//Inserts Reviewable request into DB
 	Insert(request history.ReviewableRequest) error
@@ -86,7 +88,7 @@ func (c *reviewableRequestHandler) Updated(lc ledgerChange) error {
 func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	// The request is deleted in 3 cases:
 	// 1. Due to approve via reviewRequestOp
-	// 2. Due to permanentReject vai reviewRequestOp
+	// 2. Due to permanentReject via reviewRequestOp
 	// 3. Due to cancel via specific operation
 	op := lc.Operation.Body
 	switch op.Type {
@@ -96,9 +98,11 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.cancel(lc)
 	case xdr.OperationTypeManageSale:
 		return c.cancel(lc)
+	default: // safeguard for future updates
+		return errors.From(ErrUnknownRemoveReason, logan.F{
+			"op_type": op.Type,
+		})
 	}
-
-	return nil
 }
 
 func (c *reviewableRequestHandler) removedOnReview(lc ledgerChange) error {
@@ -258,11 +262,11 @@ func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertReque
 }
 
 func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
-	quoteAssets := make([]regources.SaleQuoteAsset, 0, len(request.QuoteAssets))
+	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for i := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
-			Price:      regources.Amount(int64(request.QuoteAssets[i].Price)),
-			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
+		quoteAssets = append(quoteAssets, regources.AssetPrice{
+			Price: regources.Amount(int64(request.QuoteAssets[i].Price)),
+			Asset: string(request.QuoteAssets[i].QuoteAsset),
 		})
 	}
 
