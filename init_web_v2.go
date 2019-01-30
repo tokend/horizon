@@ -102,6 +102,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v2/requests/{id}", handlers.GetReviewableRequest)
 	m.Get("/v2/requests", handlers.GetReviewableRequestList)
 
+	m.Get("/v2/key_values", handlers.GetKeyValueList)
+	m.Get("/v2/key_values/{key}", handlers.GetKeyValue)
+
 	logger := &log.DefaultLogger.Entry
 	janus := app.config.Janus()
 	err := janus.DoRegister(m, logger)
