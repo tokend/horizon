@@ -28,7 +28,9 @@ func GetReviewableRequestList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO check allowed?
+	if !isAllowed(r, w, request.Filters.Requestor, request.Filters.Reviewer) {
+		return
+	}
 
 	result, err := handler.GetReviewableRequestList(request)
 	if err != nil {

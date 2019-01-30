@@ -42,8 +42,7 @@ func GetReviewableRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO add check for reviewer
-	if !isAllowed(r, w, historyRecord.Requestor) {
+	if !isAllowed(r, w, historyRecord.Requestor, historyRecord.Reviewer) {
 		return
 	}
 
