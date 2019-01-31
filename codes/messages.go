@@ -111,7 +111,7 @@ var messages = map[string]string{
 	"op_invalid_universal_amount":                       "Unexpected universal amount value",
 	"op_initial_preissued_exceeds_max_issuance":         "Number of tokens available for issuance exceeds max number of tokens to be issued",
 	"op_base_asset_or_asset_request_not_found":          "Asset of asset creation request for base asset not found",
-	"op_quote_asset_not_found":                          "Quote asset not found",
+	"op_quote_asset_not_found":                          "Quote asset does not exists or there is no asset pair with quote asset and default quote asset",
 	"op_start_end_invalid":                              "IO should not end before start",
 	"op_invalid_end":                                    "Trying to create IO which already ended",
 	"op_invalid_price":                                  "Price can not be 0",
