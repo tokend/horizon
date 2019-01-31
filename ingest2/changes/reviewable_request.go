@@ -15,7 +15,7 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-var ErrUnknownRemoveReason = errors.New("request was removed due to unknown reason")
+var errUnknownRemoveReason = errors.New("request was removed due to unknown reason")
 
 type reviewableRequestStorage interface {
 	//Inserts Reviewable request into DB
@@ -97,10 +97,57 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	case xdr.OperationTypeManageAsset:
 		return c.cancel(lc)
 	case xdr.OperationTypeManageSale:
+		return c.handleRemoveOnManageSale(lc)
+	case xdr.OperationTypeCancelAswapBid:
 		return c.cancel(lc)
+	// auto review is handled by each operation separately
+	case xdr.OperationTypeCreateIssuanceRequest,
+		xdr.OperationTypeCheckSaleState,
+		xdr.OperationTypeCreateWithdrawalRequest,
+		xdr.OperationTypeCreatePreissuanceRequest,
+		xdr.OperationTypeManageLimits,
+		xdr.OperationTypeManageInvoiceRequest,
+		xdr.OperationTypeCreateSaleRequest,
+		xdr.OperationTypeCreateAmlAlert,
+		xdr.OperationTypeCreateKycRequest,
+		xdr.OperationTypeCreateAswapBidRequest:
+		return nil
 	default: // safeguard for future updates
-		return errors.From(ErrUnknownRemoveReason, logan.F{
+		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type,
+		})
+	}
+}
+
+func (c *reviewableRequestHandler) handleRemoveOnManageAsset(lc ledgerChange) error {
+	op := lc.Operation.Body.MustManageAssetOp()
+	switch op.Request.Action {
+	// must be handled by operation
+	case xdr.ManageAssetActionCreateAssetCreationRequest,
+		xdr.ManageAssetActionCreateAssetUpdateRequest,
+		xdr.ManageAssetActionChangePreissuedAssetSigner,
+		xdr.ManageAssetActionUpdateMaxIssuance:
+		return nil
+	case xdr.ManageAssetActionCancelAssetRequest:
+		return c.cancel(lc)
+	default:
+		return errors.From(errUnknownRemoveReason, logan.F{
+			"manage_asset_action": op.Request.Action,
+		})
+	}
+}
+
+func (c *reviewableRequestHandler) handleRemoveOnManageSale(lc ledgerChange) error {
+	op := lc.Operation.Body.MustManageSaleOp()
+	switch op.Data.Action {
+	// must be handled by operation
+	case xdr.ManageSaleActionCreateUpdateDetailsRequest:
+		return nil
+	case xdr.ManageSaleActionCancel:
+		return c.cancel(lc)
+	default:
+		return errors.From(errUnknownRemoveReason, logan.F{
+			"manage_sale_action": op.Data.Action,
 		})
 	}
 }
