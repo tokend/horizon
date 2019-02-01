@@ -1,5 +1,5 @@
-// revision: 714244891980ba5b2fb42ad75b54779bf2cb9ec5
-// branch:   feature/roles_rules
+// revision: 08972a39fe505bd13768fdc0fb3ec4a6dbe29594
+// branch:   refactor/details
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -693,7 +693,7 @@ type AccountRuleResourceReviewableRequestSale struct {
 //
 //   union switch (ReviewableRequestType requestType)
 //            {
-//            case SALE:
+//            case CREATE_SALE:
 //                struct
 //                {
 //                    uint64 type;
@@ -723,7 +723,7 @@ func (u AccountRuleResourceReviewableRequestDetails) SwitchFieldName() string {
 // the value for an instance of AccountRuleResourceReviewableRequestDetails
 func (u AccountRuleResourceReviewableRequestDetails) ArmForSwitch(sw int32) (string, bool) {
 	switch ReviewableRequestType(sw) {
-	case ReviewableRequestTypeSale:
+	case ReviewableRequestTypeCreateSale:
 		return "Sale", true
 	default:
 		return "", true
@@ -734,7 +734,7 @@ func (u AccountRuleResourceReviewableRequestDetails) ArmForSwitch(sw int32) (str
 func NewAccountRuleResourceReviewableRequestDetails(requestType ReviewableRequestType, value interface{}) (result AccountRuleResourceReviewableRequestDetails, err error) {
 	result.RequestType = requestType
 	switch ReviewableRequestType(requestType) {
-	case ReviewableRequestTypeSale:
+	case ReviewableRequestTypeCreateSale:
 		tv, ok := value.(AccountRuleResourceReviewableRequestSale)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be AccountRuleResourceReviewableRequestSale")
@@ -816,7 +816,7 @@ func NewAccountRuleResourceReviewableRequestExt(v LedgerVersion, value interface
 //        {
 //            union switch (ReviewableRequestType requestType)
 //            {
-//            case SALE:
+//            case CREATE_SALE:
 //                struct
 //                {
 //                    uint64 type;
@@ -1787,7 +1787,7 @@ type AccountRuleResourceAtomicSwapBid struct {
 //        {
 //            union switch (ReviewableRequestType requestType)
 //            {
-//            case SALE:
+//            case CREATE_SALE:
 //                struct
 //                {
 //                    uint64 type;
@@ -6082,20 +6082,20 @@ type ReferenceEntry struct {
 //    {
 //    	NONE = 0, // use this request type in ReviewRequestOp extended result if additional info is not required
 //    	ANY = 1,
-//    	PRE_ISSUANCE_CREATE = 2,
-//    	ISSUANCE_CREATE = 3,
-//    	WITHDRAW = 4,
-//    	SALE = 5,
-//    	LIMITS_UPDATE = 6,
-//        AML_ALERT = 7,
+//    	CREATE_PRE_ISSUANCE = 2,
+//    	CREATE_ISSUANCE = 3,
+//    	CREATE_WITHDRAW = 4,
+//    	CREATE_SALE = 5,
+//    	UPDATE_LIMITS = 6,
+//        CREATE_AML_ALERT = 7,
 //    	CHANGE_ROLE = 8,
 //    	UPDATE_SALE_DETAILS = 9,
-//    	ASSET_CREATE = 10,
-//    	INVOICE = 11,
-//    	CONTRACT = 12,
-//    	ASSET_UPDATE = 13,
+//    	CREATE_ASSET = 10,
+//    	CREATE_INVOICE = 11,
+//    	MANAGE_CONTRACT = 12,
+//    	UPDATE_ASSET = 13,
 //    	CREATE_ATOMIC_SWAP_BID = 16,
-//    	ATOMIC_SWAP = 17
+//    	CREATE_ATOMIC_SWAP = 17
 //    };
 //
 type ReviewableRequestType int32
@@ -6103,96 +6103,96 @@ type ReviewableRequestType int32
 const (
 	ReviewableRequestTypeNone                ReviewableRequestType = 0
 	ReviewableRequestTypeAny                 ReviewableRequestType = 1
-	ReviewableRequestTypePreIssuanceCreate   ReviewableRequestType = 2
-	ReviewableRequestTypeIssuanceCreate      ReviewableRequestType = 3
-	ReviewableRequestTypeWithdraw            ReviewableRequestType = 4
-	ReviewableRequestTypeSale                ReviewableRequestType = 5
-	ReviewableRequestTypeLimitsUpdate        ReviewableRequestType = 6
-	ReviewableRequestTypeAmlAlert            ReviewableRequestType = 7
+	ReviewableRequestTypeCreatePreIssuance   ReviewableRequestType = 2
+	ReviewableRequestTypeCreateIssuance      ReviewableRequestType = 3
+	ReviewableRequestTypeCreateWithdraw      ReviewableRequestType = 4
+	ReviewableRequestTypeCreateSale          ReviewableRequestType = 5
+	ReviewableRequestTypeUpdateLimits        ReviewableRequestType = 6
+	ReviewableRequestTypeCreateAmlAlert      ReviewableRequestType = 7
 	ReviewableRequestTypeChangeRole          ReviewableRequestType = 8
 	ReviewableRequestTypeUpdateSaleDetails   ReviewableRequestType = 9
-	ReviewableRequestTypeAssetCreate         ReviewableRequestType = 10
-	ReviewableRequestTypeInvoice             ReviewableRequestType = 11
-	ReviewableRequestTypeContract            ReviewableRequestType = 12
-	ReviewableRequestTypeAssetUpdate         ReviewableRequestType = 13
+	ReviewableRequestTypeCreateAsset         ReviewableRequestType = 10
+	ReviewableRequestTypeCreateInvoice       ReviewableRequestType = 11
+	ReviewableRequestTypeManageContract      ReviewableRequestType = 12
+	ReviewableRequestTypeUpdateAsset         ReviewableRequestType = 13
 	ReviewableRequestTypeCreateAtomicSwapBid ReviewableRequestType = 16
-	ReviewableRequestTypeAtomicSwap          ReviewableRequestType = 17
+	ReviewableRequestTypeCreateAtomicSwap    ReviewableRequestType = 17
 )
 
 var ReviewableRequestTypeAll = []ReviewableRequestType{
 	ReviewableRequestTypeNone,
 	ReviewableRequestTypeAny,
-	ReviewableRequestTypePreIssuanceCreate,
-	ReviewableRequestTypeIssuanceCreate,
-	ReviewableRequestTypeWithdraw,
-	ReviewableRequestTypeSale,
-	ReviewableRequestTypeLimitsUpdate,
-	ReviewableRequestTypeAmlAlert,
+	ReviewableRequestTypeCreatePreIssuance,
+	ReviewableRequestTypeCreateIssuance,
+	ReviewableRequestTypeCreateWithdraw,
+	ReviewableRequestTypeCreateSale,
+	ReviewableRequestTypeUpdateLimits,
+	ReviewableRequestTypeCreateAmlAlert,
 	ReviewableRequestTypeChangeRole,
 	ReviewableRequestTypeUpdateSaleDetails,
-	ReviewableRequestTypeAssetCreate,
-	ReviewableRequestTypeInvoice,
-	ReviewableRequestTypeContract,
-	ReviewableRequestTypeAssetUpdate,
+	ReviewableRequestTypeCreateAsset,
+	ReviewableRequestTypeCreateInvoice,
+	ReviewableRequestTypeManageContract,
+	ReviewableRequestTypeUpdateAsset,
 	ReviewableRequestTypeCreateAtomicSwapBid,
-	ReviewableRequestTypeAtomicSwap,
+	ReviewableRequestTypeCreateAtomicSwap,
 }
 
 var reviewableRequestTypeMap = map[int32]string{
 	0:  "ReviewableRequestTypeNone",
 	1:  "ReviewableRequestTypeAny",
-	2:  "ReviewableRequestTypePreIssuanceCreate",
-	3:  "ReviewableRequestTypeIssuanceCreate",
-	4:  "ReviewableRequestTypeWithdraw",
-	5:  "ReviewableRequestTypeSale",
-	6:  "ReviewableRequestTypeLimitsUpdate",
-	7:  "ReviewableRequestTypeAmlAlert",
+	2:  "ReviewableRequestTypeCreatePreIssuance",
+	3:  "ReviewableRequestTypeCreateIssuance",
+	4:  "ReviewableRequestTypeCreateWithdraw",
+	5:  "ReviewableRequestTypeCreateSale",
+	6:  "ReviewableRequestTypeUpdateLimits",
+	7:  "ReviewableRequestTypeCreateAmlAlert",
 	8:  "ReviewableRequestTypeChangeRole",
 	9:  "ReviewableRequestTypeUpdateSaleDetails",
-	10: "ReviewableRequestTypeAssetCreate",
-	11: "ReviewableRequestTypeInvoice",
-	12: "ReviewableRequestTypeContract",
-	13: "ReviewableRequestTypeAssetUpdate",
+	10: "ReviewableRequestTypeCreateAsset",
+	11: "ReviewableRequestTypeCreateInvoice",
+	12: "ReviewableRequestTypeManageContract",
+	13: "ReviewableRequestTypeUpdateAsset",
 	16: "ReviewableRequestTypeCreateAtomicSwapBid",
-	17: "ReviewableRequestTypeAtomicSwap",
+	17: "ReviewableRequestTypeCreateAtomicSwap",
 }
 
 var reviewableRequestTypeShortMap = map[int32]string{
 	0:  "none",
 	1:  "any",
-	2:  "pre_issuance_create",
-	3:  "issuance_create",
-	4:  "withdraw",
-	5:  "sale",
-	6:  "limits_update",
-	7:  "aml_alert",
+	2:  "create_pre_issuance",
+	3:  "create_issuance",
+	4:  "create_withdraw",
+	5:  "create_sale",
+	6:  "update_limits",
+	7:  "create_aml_alert",
 	8:  "change_role",
 	9:  "update_sale_details",
-	10: "asset_create",
-	11: "invoice",
-	12: "contract",
-	13: "asset_update",
+	10: "create_asset",
+	11: "create_invoice",
+	12: "manage_contract",
+	13: "update_asset",
 	16: "create_atomic_swap_bid",
-	17: "atomic_swap",
+	17: "create_atomic_swap",
 }
 
 var reviewableRequestTypeRevMap = map[string]int32{
 	"ReviewableRequestTypeNone":                0,
 	"ReviewableRequestTypeAny":                 1,
-	"ReviewableRequestTypePreIssuanceCreate":   2,
-	"ReviewableRequestTypeIssuanceCreate":      3,
-	"ReviewableRequestTypeWithdraw":            4,
-	"ReviewableRequestTypeSale":                5,
-	"ReviewableRequestTypeLimitsUpdate":        6,
-	"ReviewableRequestTypeAmlAlert":            7,
+	"ReviewableRequestTypeCreatePreIssuance":   2,
+	"ReviewableRequestTypeCreateIssuance":      3,
+	"ReviewableRequestTypeCreateWithdraw":      4,
+	"ReviewableRequestTypeCreateSale":          5,
+	"ReviewableRequestTypeUpdateLimits":        6,
+	"ReviewableRequestTypeCreateAmlAlert":      7,
 	"ReviewableRequestTypeChangeRole":          8,
 	"ReviewableRequestTypeUpdateSaleDetails":   9,
-	"ReviewableRequestTypeAssetCreate":         10,
-	"ReviewableRequestTypeInvoice":             11,
-	"ReviewableRequestTypeContract":            12,
-	"ReviewableRequestTypeAssetUpdate":         13,
+	"ReviewableRequestTypeCreateAsset":         10,
+	"ReviewableRequestTypeCreateInvoice":       11,
+	"ReviewableRequestTypeManageContract":      12,
+	"ReviewableRequestTypeUpdateAsset":         13,
 	"ReviewableRequestTypeCreateAtomicSwapBid": 16,
-	"ReviewableRequestTypeAtomicSwap":          17,
+	"ReviewableRequestTypeCreateAtomicSwap":    17,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -6323,33 +6323,33 @@ type TasksExt struct {
 // ReviewableRequestEntryBody is an XDR NestedUnion defines as:
 //
 //   union switch (ReviewableRequestType type) {
-//    		case ASSET_CREATE:
+//    		case CREATE_ASSET:
 //    			AssetCreationRequest assetCreationRequest;
-//    		case ASSET_UPDATE:
+//    		case UPDATE_ASSET:
 //    			AssetUpdateRequest assetUpdateRequest;
-//    		case PRE_ISSUANCE_CREATE:
+//    		case CREATE_PRE_ISSUANCE:
 //    			PreIssuanceRequest preIssuanceRequest;
-//    		case ISSUANCE_CREATE:
+//    		case CREATE_ISSUANCE:
 //    			IssuanceRequest issuanceRequest;
-//    		case WITHDRAW:
+//    		case CREATE_WITHDRAW:
 //    			WithdrawalRequest withdrawalRequest;
-//    		case SALE:
+//    		case CREATE_SALE:
 //    			SaleCreationRequest saleCreationRequest;
-//            case LIMITS_UPDATE:
+//            case UPDATE_LIMITS:
 //                LimitsUpdateRequest limitsUpdateRequest;
-//            case AML_ALERT:
+//            case CREATE_AML_ALERT:
 //                AMLAlertRequest amlAlertRequest;
 //            case CHANGE_ROLE:
 //                ChangeRoleRequest changeRoleRequest;
 //            case UPDATE_SALE_DETAILS:
 //                UpdateSaleDetailsRequest updateSaleDetailsRequest;
-//            case INVOICE:
+//            case CREATE_INVOICE:
 //                InvoiceRequest invoiceRequest;
-//            case CONTRACT:
+//            case MANAGE_CONTRACT:
 //                ContractRequest contractRequest;
 //            case CREATE_ATOMIC_SWAP_BID:
 //                ASwapBidCreationRequest aSwapBidCreationRequest;
-//            case ATOMIC_SWAP:
+//            case CREATE_ATOMIC_SWAP:
 //                ASwapRequest aSwapRequest;
 //    	}
 //
@@ -6381,33 +6381,33 @@ func (u ReviewableRequestEntryBody) SwitchFieldName() string {
 // the value for an instance of ReviewableRequestEntryBody
 func (u ReviewableRequestEntryBody) ArmForSwitch(sw int32) (string, bool) {
 	switch ReviewableRequestType(sw) {
-	case ReviewableRequestTypeAssetCreate:
+	case ReviewableRequestTypeCreateAsset:
 		return "AssetCreationRequest", true
-	case ReviewableRequestTypeAssetUpdate:
+	case ReviewableRequestTypeUpdateAsset:
 		return "AssetUpdateRequest", true
-	case ReviewableRequestTypePreIssuanceCreate:
+	case ReviewableRequestTypeCreatePreIssuance:
 		return "PreIssuanceRequest", true
-	case ReviewableRequestTypeIssuanceCreate:
+	case ReviewableRequestTypeCreateIssuance:
 		return "IssuanceRequest", true
-	case ReviewableRequestTypeWithdraw:
+	case ReviewableRequestTypeCreateWithdraw:
 		return "WithdrawalRequest", true
-	case ReviewableRequestTypeSale:
+	case ReviewableRequestTypeCreateSale:
 		return "SaleCreationRequest", true
-	case ReviewableRequestTypeLimitsUpdate:
+	case ReviewableRequestTypeUpdateLimits:
 		return "LimitsUpdateRequest", true
-	case ReviewableRequestTypeAmlAlert:
+	case ReviewableRequestTypeCreateAmlAlert:
 		return "AmlAlertRequest", true
 	case ReviewableRequestTypeChangeRole:
 		return "ChangeRoleRequest", true
 	case ReviewableRequestTypeUpdateSaleDetails:
 		return "UpdateSaleDetailsRequest", true
-	case ReviewableRequestTypeInvoice:
+	case ReviewableRequestTypeCreateInvoice:
 		return "InvoiceRequest", true
-	case ReviewableRequestTypeContract:
+	case ReviewableRequestTypeManageContract:
 		return "ContractRequest", true
 	case ReviewableRequestTypeCreateAtomicSwapBid:
 		return "ASwapBidCreationRequest", true
-	case ReviewableRequestTypeAtomicSwap:
+	case ReviewableRequestTypeCreateAtomicSwap:
 		return "ASwapRequest", true
 	}
 	return "-", false
@@ -6417,56 +6417,56 @@ func (u ReviewableRequestEntryBody) ArmForSwitch(sw int32) (string, bool) {
 func NewReviewableRequestEntryBody(aType ReviewableRequestType, value interface{}) (result ReviewableRequestEntryBody, err error) {
 	result.Type = aType
 	switch ReviewableRequestType(aType) {
-	case ReviewableRequestTypeAssetCreate:
+	case ReviewableRequestTypeCreateAsset:
 		tv, ok := value.(AssetCreationRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be AssetCreationRequest")
 			return
 		}
 		result.AssetCreationRequest = &tv
-	case ReviewableRequestTypeAssetUpdate:
+	case ReviewableRequestTypeUpdateAsset:
 		tv, ok := value.(AssetUpdateRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be AssetUpdateRequest")
 			return
 		}
 		result.AssetUpdateRequest = &tv
-	case ReviewableRequestTypePreIssuanceCreate:
+	case ReviewableRequestTypeCreatePreIssuance:
 		tv, ok := value.(PreIssuanceRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be PreIssuanceRequest")
 			return
 		}
 		result.PreIssuanceRequest = &tv
-	case ReviewableRequestTypeIssuanceCreate:
+	case ReviewableRequestTypeCreateIssuance:
 		tv, ok := value.(IssuanceRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be IssuanceRequest")
 			return
 		}
 		result.IssuanceRequest = &tv
-	case ReviewableRequestTypeWithdraw:
+	case ReviewableRequestTypeCreateWithdraw:
 		tv, ok := value.(WithdrawalRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be WithdrawalRequest")
 			return
 		}
 		result.WithdrawalRequest = &tv
-	case ReviewableRequestTypeSale:
+	case ReviewableRequestTypeCreateSale:
 		tv, ok := value.(SaleCreationRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be SaleCreationRequest")
 			return
 		}
 		result.SaleCreationRequest = &tv
-	case ReviewableRequestTypeLimitsUpdate:
+	case ReviewableRequestTypeUpdateLimits:
 		tv, ok := value.(LimitsUpdateRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be LimitsUpdateRequest")
 			return
 		}
 		result.LimitsUpdateRequest = &tv
-	case ReviewableRequestTypeAmlAlert:
+	case ReviewableRequestTypeCreateAmlAlert:
 		tv, ok := value.(AmlAlertRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be AmlAlertRequest")
@@ -6487,14 +6487,14 @@ func NewReviewableRequestEntryBody(aType ReviewableRequestType, value interface{
 			return
 		}
 		result.UpdateSaleDetailsRequest = &tv
-	case ReviewableRequestTypeInvoice:
+	case ReviewableRequestTypeCreateInvoice:
 		tv, ok := value.(InvoiceRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be InvoiceRequest")
 			return
 		}
 		result.InvoiceRequest = &tv
-	case ReviewableRequestTypeContract:
+	case ReviewableRequestTypeManageContract:
 		tv, ok := value.(ContractRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be ContractRequest")
@@ -6508,7 +6508,7 @@ func NewReviewableRequestEntryBody(aType ReviewableRequestType, value interface{
 			return
 		}
 		result.ASwapBidCreationRequest = &tv
-	case ReviewableRequestTypeAtomicSwap:
+	case ReviewableRequestTypeCreateAtomicSwap:
 		tv, ok := value.(ASwapRequest)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be ASwapRequest")
@@ -6919,33 +6919,33 @@ func NewReviewableRequestEntryExt(v LedgerVersion, value interface{}) (result Re
 //    	int64 createdAt; // when request was created
 //
 //    	union switch (ReviewableRequestType type) {
-//    		case ASSET_CREATE:
+//    		case CREATE_ASSET:
 //    			AssetCreationRequest assetCreationRequest;
-//    		case ASSET_UPDATE:
+//    		case UPDATE_ASSET:
 //    			AssetUpdateRequest assetUpdateRequest;
-//    		case PRE_ISSUANCE_CREATE:
+//    		case CREATE_PRE_ISSUANCE:
 //    			PreIssuanceRequest preIssuanceRequest;
-//    		case ISSUANCE_CREATE:
+//    		case CREATE_ISSUANCE:
 //    			IssuanceRequest issuanceRequest;
-//    		case WITHDRAW:
+//    		case CREATE_WITHDRAW:
 //    			WithdrawalRequest withdrawalRequest;
-//    		case SALE:
+//    		case CREATE_SALE:
 //    			SaleCreationRequest saleCreationRequest;
-//            case LIMITS_UPDATE:
+//            case UPDATE_LIMITS:
 //                LimitsUpdateRequest limitsUpdateRequest;
-//            case AML_ALERT:
+//            case CREATE_AML_ALERT:
 //                AMLAlertRequest amlAlertRequest;
 //            case CHANGE_ROLE:
 //                ChangeRoleRequest changeRoleRequest;
 //            case UPDATE_SALE_DETAILS:
 //                UpdateSaleDetailsRequest updateSaleDetailsRequest;
-//            case INVOICE:
+//            case CREATE_INVOICE:
 //                InvoiceRequest invoiceRequest;
-//            case CONTRACT:
+//            case MANAGE_CONTRACT:
 //                ContractRequest contractRequest;
 //            case CREATE_ATOMIC_SWAP_BID:
 //                ASwapBidCreationRequest aSwapBidCreationRequest;
-//            case ATOMIC_SWAP:
+//            case CREATE_ATOMIC_SWAP:
 //                ASwapRequest aSwapRequest;
 //    	} body;
 //
@@ -29932,13 +29932,13 @@ type ASwapExtended struct {
 // ExtendedResultTypeExt is an XDR NestedUnion defines as:
 //
 //   union switch(ReviewableRequestType requestType) {
-//        case SALE:
+//        case CREATE_SALE:
 //            SaleExtended saleExtended;
 //        case NONE:
 //            void;
 //    	case CREATE_ATOMIC_SWAP_BID:
 //            ASwapBidExtended aSwapBidExtended;
-//        case ATOMIC_SWAP:
+//        case CREATE_ATOMIC_SWAP:
 //            ASwapExtended aSwapExtended;
 //        }
 //
@@ -29959,13 +29959,13 @@ func (u ExtendedResultTypeExt) SwitchFieldName() string {
 // the value for an instance of ExtendedResultTypeExt
 func (u ExtendedResultTypeExt) ArmForSwitch(sw int32) (string, bool) {
 	switch ReviewableRequestType(sw) {
-	case ReviewableRequestTypeSale:
+	case ReviewableRequestTypeCreateSale:
 		return "SaleExtended", true
 	case ReviewableRequestTypeNone:
 		return "", true
 	case ReviewableRequestTypeCreateAtomicSwapBid:
 		return "ASwapBidExtended", true
-	case ReviewableRequestTypeAtomicSwap:
+	case ReviewableRequestTypeCreateAtomicSwap:
 		return "ASwapExtended", true
 	}
 	return "-", false
@@ -29975,7 +29975,7 @@ func (u ExtendedResultTypeExt) ArmForSwitch(sw int32) (string, bool) {
 func NewExtendedResultTypeExt(requestType ReviewableRequestType, value interface{}) (result ExtendedResultTypeExt, err error) {
 	result.RequestType = requestType
 	switch ReviewableRequestType(requestType) {
-	case ReviewableRequestTypeSale:
+	case ReviewableRequestTypeCreateSale:
 		tv, ok := value.(SaleExtended)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be SaleExtended")
@@ -29991,7 +29991,7 @@ func NewExtendedResultTypeExt(requestType ReviewableRequestType, value interface
 			return
 		}
 		result.ASwapBidExtended = &tv
-	case ReviewableRequestTypeAtomicSwap:
+	case ReviewableRequestTypeCreateAtomicSwap:
 		tv, ok := value.(ASwapExtended)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be ASwapExtended")
@@ -30121,13 +30121,13 @@ func NewExtendedResultExt(v LedgerVersion, value interface{}) (result ExtendedRe
 //        bool fulfilled;
 //
 //        union switch(ReviewableRequestType requestType) {
-//        case SALE:
+//        case CREATE_SALE:
 //            SaleExtended saleExtended;
 //        case NONE:
 //            void;
 //    	case CREATE_ATOMIC_SWAP_BID:
 //            ASwapBidExtended aSwapBidExtended;
-//        case ATOMIC_SWAP:
+//        case CREATE_ATOMIC_SWAP:
 //            ASwapExtended aSwapExtended;
 //        } typeExt;
 //
@@ -30149,15 +30149,15 @@ type ExtendedResult struct {
 // ReviewRequestOpRequestDetails is an XDR NestedUnion defines as:
 //
 //   union switch(ReviewableRequestType requestType) {
-//    	case WITHDRAW:
+//    	case CREATE_WITHDRAW:
 //    		WithdrawalDetails withdrawal;
-//        case LIMITS_UPDATE:
+//        case UPDATE_LIMITS:
 //            LimitsUpdateDetails limitsUpdate;
-//        case AML_ALERT:
+//        case CREATE_AML_ALERT:
 //            AMLAlertDetails amlAlertDetails;
-//        case INVOICE:
+//        case CREATE_INVOICE:
 //            BillPayDetails billPay;
-//        case CONTRACT:
+//        case MANAGE_CONTRACT:
 //            ContractDetails contract;
 //    	default:
 //    		void;
@@ -30182,15 +30182,15 @@ func (u ReviewRequestOpRequestDetails) SwitchFieldName() string {
 // the value for an instance of ReviewRequestOpRequestDetails
 func (u ReviewRequestOpRequestDetails) ArmForSwitch(sw int32) (string, bool) {
 	switch ReviewableRequestType(sw) {
-	case ReviewableRequestTypeWithdraw:
+	case ReviewableRequestTypeCreateWithdraw:
 		return "Withdrawal", true
-	case ReviewableRequestTypeLimitsUpdate:
+	case ReviewableRequestTypeUpdateLimits:
 		return "LimitsUpdate", true
-	case ReviewableRequestTypeAmlAlert:
+	case ReviewableRequestTypeCreateAmlAlert:
 		return "AmlAlertDetails", true
-	case ReviewableRequestTypeInvoice:
+	case ReviewableRequestTypeCreateInvoice:
 		return "BillPay", true
-	case ReviewableRequestTypeContract:
+	case ReviewableRequestTypeManageContract:
 		return "Contract", true
 	default:
 		return "", true
@@ -30201,35 +30201,35 @@ func (u ReviewRequestOpRequestDetails) ArmForSwitch(sw int32) (string, bool) {
 func NewReviewRequestOpRequestDetails(requestType ReviewableRequestType, value interface{}) (result ReviewRequestOpRequestDetails, err error) {
 	result.RequestType = requestType
 	switch ReviewableRequestType(requestType) {
-	case ReviewableRequestTypeWithdraw:
+	case ReviewableRequestTypeCreateWithdraw:
 		tv, ok := value.(WithdrawalDetails)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be WithdrawalDetails")
 			return
 		}
 		result.Withdrawal = &tv
-	case ReviewableRequestTypeLimitsUpdate:
+	case ReviewableRequestTypeUpdateLimits:
 		tv, ok := value.(LimitsUpdateDetails)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be LimitsUpdateDetails")
 			return
 		}
 		result.LimitsUpdate = &tv
-	case ReviewableRequestTypeAmlAlert:
+	case ReviewableRequestTypeCreateAmlAlert:
 		tv, ok := value.(AmlAlertDetails)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be AmlAlertDetails")
 			return
 		}
 		result.AmlAlertDetails = &tv
-	case ReviewableRequestTypeInvoice:
+	case ReviewableRequestTypeCreateInvoice:
 		tv, ok := value.(BillPayDetails)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be BillPayDetails")
 			return
 		}
 		result.BillPay = &tv
-	case ReviewableRequestTypeContract:
+	case ReviewableRequestTypeManageContract:
 		tv, ok := value.(ContractDetails)
 		if !ok {
 			err = fmt.Errorf("invalid value, must be ContractDetails")
@@ -30412,15 +30412,15 @@ func NewReviewRequestOpExt(v LedgerVersion, value interface{}) (result ReviewReq
 //    	uint64 requestID;
 //    	Hash requestHash;
 //    	union switch(ReviewableRequestType requestType) {
-//    	case WITHDRAW:
+//    	case CREATE_WITHDRAW:
 //    		WithdrawalDetails withdrawal;
-//        case LIMITS_UPDATE:
+//        case UPDATE_LIMITS:
 //            LimitsUpdateDetails limitsUpdate;
-//        case AML_ALERT:
+//        case CREATE_AML_ALERT:
 //            AMLAlertDetails amlAlertDetails;
-//        case INVOICE:
+//        case CREATE_INVOICE:
 //            BillPayDetails billPay;
-//        case CONTRACT:
+//        case MANAGE_CONTRACT:
 //            ContractDetails contract;
 //    	default:
 //    		void;
@@ -33142,7 +33142,8 @@ func NewAmlAlertRequestExt(v LedgerVersion, value interface{}) (result AmlAlertR
 //   struct AMLAlertRequest {
 //        BalanceID balanceID;
 //        uint64 amount;
-//        longstring reason;
+//        longstring creatorDetails; // details set by requester
+//
 //    	union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
@@ -33152,10 +33153,10 @@ func NewAmlAlertRequestExt(v LedgerVersion, value interface{}) (result AmlAlertR
 //    };
 //
 type AmlAlertRequest struct {
-	BalanceId BalanceId          `json:"balanceID,omitempty"`
-	Amount    Uint64             `json:"amount,omitempty"`
-	Reason    Longstring         `json:"reason,omitempty"`
-	Ext       AmlAlertRequestExt `json:"ext,omitempty"`
+	BalanceId      BalanceId          `json:"balanceID,omitempty"`
+	Amount         Uint64             `json:"amount,omitempty"`
+	CreatorDetails Longstring         `json:"creatorDetails,omitempty"`
+	Ext            AmlAlertRequestExt `json:"ext,omitempty"`
 }
 
 // AssetCreationRequestExt is an XDR NestedUnion defines as:
@@ -33242,7 +33243,7 @@ func (u AssetCreationRequestExt) GetTrailingDigitsCount() (result Uint32, ok boo
 //    	uint64 maxIssuanceAmount;
 //    	uint64 initialPreissuedAmount;
 //        uint32 policies;
-//        longstring details;
+//        longstring creatorDetails; // details set by requester
 //        uint64 type;
 //
 //    	uint32 sequenceNumber;
@@ -33264,7 +33265,7 @@ type AssetCreationRequest struct {
 	MaxIssuanceAmount      Uint64                  `json:"maxIssuanceAmount,omitempty"`
 	InitialPreissuedAmount Uint64                  `json:"initialPreissuedAmount,omitempty"`
 	Policies               Uint32                  `json:"policies,omitempty"`
-	Details                Longstring              `json:"details,omitempty"`
+	CreatorDetails         Longstring              `json:"creatorDetails,omitempty"`
 	Type                   Uint64                  `json:"type,omitempty"`
 	SequenceNumber         Uint32                  `json:"sequenceNumber,omitempty"`
 	Ext                    AssetCreationRequestExt `json:"ext,omitempty"`
@@ -33312,7 +33313,7 @@ func NewAssetUpdateRequestExt(v LedgerVersion, value interface{}) (result AssetU
 //
 //   struct AssetUpdateRequest {
 //    	AssetCode code;
-//    	longstring details;
+//        longstring creatorDetails; // details set by requester
 //    	uint32 policies;
 //
 //    	uint32 sequenceNumber;
@@ -33327,7 +33328,7 @@ func NewAssetUpdateRequestExt(v LedgerVersion, value interface{}) (result AssetU
 //
 type AssetUpdateRequest struct {
 	Code           AssetCode             `json:"code,omitempty"`
-	Details        Longstring            `json:"details,omitempty"`
+	CreatorDetails Longstring            `json:"creatorDetails,omitempty"`
 	Policies       Uint32                `json:"policies,omitempty"`
 	SequenceNumber Uint32                `json:"sequenceNumber,omitempty"`
 	Ext            AssetUpdateRequestExt `json:"ext,omitempty"`
@@ -33439,7 +33440,7 @@ func NewASwapBidCreationRequestExt(v LedgerVersion, value interface{}) (result A
 //    {
 //        BalanceID baseBalance;
 //        uint64 amount;
-//        longstring details;
+//        longstring creatorDetails; // details set by requester
 //
 //        ASwapBidQuoteAsset quoteAssets<>;
 //
@@ -33452,11 +33453,11 @@ func NewASwapBidCreationRequestExt(v LedgerVersion, value interface{}) (result A
 //    };
 //
 type ASwapBidCreationRequest struct {
-	BaseBalance BalanceId                  `json:"baseBalance,omitempty"`
-	Amount      Uint64                     `json:"amount,omitempty"`
-	Details     Longstring                 `json:"details,omitempty"`
-	QuoteAssets []ASwapBidQuoteAsset       `json:"quoteAssets,omitempty"`
-	Ext         ASwapBidCreationRequestExt `json:"ext,omitempty"`
+	BaseBalance    BalanceId                  `json:"baseBalance,omitempty"`
+	Amount         Uint64                     `json:"amount,omitempty"`
+	CreatorDetails Longstring                 `json:"creatorDetails,omitempty"`
+	QuoteAssets    []ASwapBidQuoteAsset       `json:"quoteAssets,omitempty"`
+	Ext            ASwapBidCreationRequestExt `json:"ext,omitempty"`
 }
 
 // ASwapRequestExt is an XDR NestedUnion defines as:
@@ -33504,6 +33505,7 @@ func NewASwapRequestExt(v LedgerVersion, value interface{}) (result ASwapRequest
 //        uint64 bidID;
 //        uint64 baseAmount;
 //        AssetCode quoteAsset;
+//        longstring creatorDetails; // details set by requester
 //
 //        union switch (LedgerVersion v)
 //        {
@@ -33513,10 +33515,11 @@ func NewASwapRequestExt(v LedgerVersion, value interface{}) (result ASwapRequest
 //    };
 //
 type ASwapRequest struct {
-	BidId      Uint64          `json:"bidID,omitempty"`
-	BaseAmount Uint64          `json:"baseAmount,omitempty"`
-	QuoteAsset AssetCode       `json:"quoteAsset,omitempty"`
-	Ext        ASwapRequestExt `json:"ext,omitempty"`
+	BidId          Uint64          `json:"bidID,omitempty"`
+	BaseAmount     Uint64          `json:"baseAmount,omitempty"`
+	QuoteAsset     AssetCode       `json:"quoteAsset,omitempty"`
+	CreatorDetails Longstring      `json:"creatorDetails,omitempty"`
+	Ext            ASwapRequestExt `json:"ext,omitempty"`
 }
 
 // ChangeRoleRequestExt is an XDR NestedUnion defines as:
@@ -33568,7 +33571,9 @@ func NewChangeRoleRequestExt(v LedgerVersion, value interface{}) (result ChangeR
 //    	// Sequence number increases when request is rejected
 //    	uint32 sequenceNumber;
 //
-//    	// Reserved for future use
+//        longstring creatorDetails; // details set by requester
+//
+//        // Reserved for future use
 //        union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
@@ -33582,6 +33587,7 @@ type ChangeRoleRequest struct {
 	AccountRoleToSet   Uint64               `json:"accountRoleToSet,omitempty"`
 	KycData            Longstring           `json:"kycData,omitempty"`
 	SequenceNumber     Uint32               `json:"sequenceNumber,omitempty"`
+	CreatorDetails     Longstring           `json:"creatorDetails,omitempty"`
 	Ext                ChangeRoleRequestExt `json:"ext,omitempty"`
 }
 
@@ -33629,7 +33635,7 @@ func NewContractRequestExt(v LedgerVersion, value interface{}) (result ContractR
 //    {
 //        AccountID customer;
 //        AccountID escrow;
-//        longstring details;
+//        longstring creatorDetails; // details set by requester
 //
 //        uint64 startTime;
 //        uint64 endTime;
@@ -33644,12 +33650,12 @@ func NewContractRequestExt(v LedgerVersion, value interface{}) (result ContractR
 //    };
 //
 type ContractRequest struct {
-	Customer  AccountId          `json:"customer,omitempty"`
-	Escrow    AccountId          `json:"escrow,omitempty"`
-	Details   Longstring         `json:"details,omitempty"`
-	StartTime Uint64             `json:"startTime,omitempty"`
-	EndTime   Uint64             `json:"endTime,omitempty"`
-	Ext       ContractRequestExt `json:"ext,omitempty"`
+	Customer       AccountId          `json:"customer,omitempty"`
+	Escrow         AccountId          `json:"escrow,omitempty"`
+	CreatorDetails Longstring         `json:"creatorDetails,omitempty"`
+	StartTime      Uint64             `json:"startTime,omitempty"`
+	EndTime        Uint64             `json:"endTime,omitempty"`
+	Ext            ContractRequestExt `json:"ext,omitempty"`
 }
 
 // InvoiceRequestExt is an XDR NestedUnion defines as:
@@ -33701,7 +33707,7 @@ func NewInvoiceRequestExt(v LedgerVersion, value interface{}) (result InvoiceReq
 //
 //        uint64 *contractID;
 //        bool isApproved;
-//        longstring details;
+//        longstring creatorDetails; // details set by requester
 //
 //        // reserved for future use
 //        union switch (LedgerVersion v)
@@ -33719,7 +33725,7 @@ type InvoiceRequest struct {
 	ReceiverBalance BalanceId         `json:"receiverBalance,omitempty"`
 	ContractId      *Uint64           `json:"contractID,omitempty"`
 	IsApproved      bool              `json:"isApproved,omitempty"`
-	Details         Longstring        `json:"details,omitempty"`
+	CreatorDetails  Longstring        `json:"creatorDetails,omitempty"`
 	Ext             InvoiceRequestExt `json:"ext,omitempty"`
 }
 
@@ -33768,6 +33774,7 @@ func NewPreIssuanceRequestExt(v LedgerVersion, value interface{}) (result PreIss
 //    	uint64 amount;
 //    	DecoratedSignature signature;
 //    	string64 reference;
+//        longstring creatorDetails; // details set by requester
 //
 //    	// reserved for future use
 //        union switch (LedgerVersion v)
@@ -33779,11 +33786,12 @@ func NewPreIssuanceRequestExt(v LedgerVersion, value interface{}) (result PreIss
 //    };
 //
 type PreIssuanceRequest struct {
-	Asset     AssetCode             `json:"asset,omitempty"`
-	Amount    Uint64                `json:"amount,omitempty"`
-	Signature DecoratedSignature    `json:"signature,omitempty"`
-	Reference String64              `json:"reference,omitempty"`
-	Ext       PreIssuanceRequestExt `json:"ext,omitempty"`
+	Asset          AssetCode             `json:"asset,omitempty"`
+	Amount         Uint64                `json:"amount,omitempty"`
+	Signature      DecoratedSignature    `json:"signature,omitempty"`
+	Reference      String64              `json:"reference,omitempty"`
+	CreatorDetails Longstring            `json:"creatorDetails,omitempty"`
+	Ext            PreIssuanceRequestExt `json:"ext,omitempty"`
 }
 
 // IssuanceRequestExt is an XDR NestedUnion defines as:
@@ -33857,12 +33865,12 @@ type IssuanceRequest struct {
 //        case EMPTY_VERSION:
 //            void;
 //        case LIMITS_UPDATE_REQUEST_DEPRECATED_DOCUMENT_HASH:
-//            longstring details;
+//            longstring creatorDetails; // details set by requester
 //        }
 //
 type LimitsUpdateRequestExt struct {
-	V       LedgerVersion `json:"v,omitempty"`
-	Details *Longstring   `json:"details,omitempty"`
+	V              LedgerVersion `json:"v,omitempty"`
+	CreatorDetails *Longstring   `json:"creatorDetails,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -33878,7 +33886,7 @@ func (u LimitsUpdateRequestExt) ArmForSwitch(sw int32) (string, bool) {
 	case LedgerVersionEmptyVersion:
 		return "", true
 	case LedgerVersionLimitsUpdateRequestDeprecatedDocumentHash:
-		return "Details", true
+		return "CreatorDetails", true
 	}
 	return "-", false
 }
@@ -33895,30 +33903,30 @@ func NewLimitsUpdateRequestExt(v LedgerVersion, value interface{}) (result Limit
 			err = fmt.Errorf("invalid value, must be Longstring")
 			return
 		}
-		result.Details = &tv
+		result.CreatorDetails = &tv
 	}
 	return
 }
 
-// MustDetails retrieves the Details value from the union,
+// MustCreatorDetails retrieves the CreatorDetails value from the union,
 // panicing if the value is not set.
-func (u LimitsUpdateRequestExt) MustDetails() Longstring {
-	val, ok := u.GetDetails()
+func (u LimitsUpdateRequestExt) MustCreatorDetails() Longstring {
+	val, ok := u.GetCreatorDetails()
 
 	if !ok {
-		panic("arm Details is not set")
+		panic("arm CreatorDetails is not set")
 	}
 
 	return val
 }
 
-// GetDetails retrieves the Details value from the union,
+// GetCreatorDetails retrieves the CreatorDetails value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u LimitsUpdateRequestExt) GetDetails() (result Longstring, ok bool) {
+func (u LimitsUpdateRequestExt) GetCreatorDetails() (result Longstring, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.V))
 
-	if armName == "Details" {
-		result = *u.Details
+	if armName == "CreatorDetails" {
+		result = *u.CreatorDetails
 		ok = true
 	}
 
@@ -33936,7 +33944,7 @@ func (u LimitsUpdateRequestExt) GetDetails() (result Longstring, ok bool) {
 //        case EMPTY_VERSION:
 //            void;
 //        case LIMITS_UPDATE_REQUEST_DEPRECATED_DOCUMENT_HASH:
-//            longstring details;
+//            longstring creatorDetails; // details set by requester
 //        }
 //        ext;
 //    };
@@ -34052,7 +34060,7 @@ func NewSaleCreationRequestExt(v LedgerVersion, value interface{}) (result SaleC
 //    	uint64 endTime; // close time of the sale
 //    	uint64 softCap; // minimum amount of quote asset to be received at which sale will be considered a successful
 //    	uint64 hardCap; // max amount of quote asset to be received
-//    	longstring details; // sale specific details
+//        longstring creatorDetails; // details set by requester
 //        SaleTypeExt saleTypeExt;
 //        uint64 requiredBaseAssetForHardCap;
 //
@@ -34075,7 +34083,7 @@ type SaleCreationRequest struct {
 	EndTime                     Uint64                          `json:"endTime,omitempty"`
 	SoftCap                     Uint64                          `json:"softCap,omitempty"`
 	HardCap                     Uint64                          `json:"hardCap,omitempty"`
-	Details                     Longstring                      `json:"details,omitempty"`
+	CreatorDetails              Longstring                      `json:"creatorDetails,omitempty"`
 	SaleTypeExt                 SaleTypeExt                     `json:"saleTypeExt,omitempty"`
 	RequiredBaseAssetForHardCap Uint64                          `json:"requiredBaseAssetForHardCap,omitempty"`
 	SequenceNumber              Uint32                          `json:"sequenceNumber,omitempty"`
@@ -34125,7 +34133,7 @@ func NewUpdateSaleDetailsRequestExt(v LedgerVersion, value interface{}) (result 
 //
 //   struct UpdateSaleDetailsRequest {
 //        uint64 saleID; // ID of sale to update details
-//        longstring newDetails;
+//        longstring creatorDetails; // details set by requester
 //
 //        uint32 sequenceNumber;
 //        // Reserved for future use
@@ -34139,7 +34147,7 @@ func NewUpdateSaleDetailsRequestExt(v LedgerVersion, value interface{}) (result 
 //
 type UpdateSaleDetailsRequest struct {
 	SaleId         Uint64                      `json:"saleID,omitempty"`
-	NewDetails     Longstring                  `json:"newDetails,omitempty"`
+	CreatorDetails Longstring                  `json:"creatorDetails,omitempty"`
 	SequenceNumber Uint32                      `json:"sequenceNumber,omitempty"`
 	Ext            UpdateSaleDetailsRequestExt `json:"ext,omitempty"`
 }
@@ -34189,7 +34197,7 @@ func NewWithdrawalRequestExt(v LedgerVersion, value interface{}) (result Withdra
 //        uint64 amount; // amount to be withdrawn
 //        uint64 universalAmount; // amount in stats asset
 //    	Fee fee; // expected fee to be paid
-//        longstring externalDetails; // details of the withdrawal (External system id, etc.)
+//        longstring creatorDetails; // details set by requester
 //
 //    	union switch (LedgerVersion v)
 //        {
@@ -34204,7 +34212,7 @@ type WithdrawalRequest struct {
 	Amount          Uint64               `json:"amount,omitempty"`
 	UniversalAmount Uint64               `json:"universalAmount,omitempty"`
 	Fee             Fee                  `json:"fee,omitempty"`
-	ExternalDetails Longstring           `json:"externalDetails,omitempty"`
+	CreatorDetails  Longstring           `json:"creatorDetails,omitempty"`
 	Ext             WithdrawalRequestExt `json:"ext,omitempty"`
 }
 
@@ -39734,4 +39742,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "714244891980ba5b2fb42ad75b54779bf2cb9ec5"
+var Revision = "08972a39fe505bd13768fdc0fb3ec4a6dbe29594"

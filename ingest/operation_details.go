@@ -125,7 +125,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		var externalDetails map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(request.ExternalDetails), &externalDetails)
+		_ = json.Unmarshal([]byte(request.CreatorDetails), &externalDetails)
 		details["external_details"] = externalDetails
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
@@ -152,7 +152,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		}
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		op := c.Operation().Body.MustCreateManageLimitsRequestOp()
-		limitsUpdateDetails, ok := op.ManageLimitsRequest.Ext.GetDetails()
+		limitsUpdateDetails, ok := op.ManageLimitsRequest.Ext.GetCreatorDetails()
 		if ok {
 			details["limits_manage_request_details"] = string(limitsUpdateDetails)
 		}
@@ -301,7 +301,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustCreateAmlAlertRequestOp()
 		details["amount"] = amount.StringU(uint64(op.AmlAlertRequest.Amount))
 		details["balance_id"] = op.AmlAlertRequest.BalanceId.AsString()
-		details["reason"] = op.AmlAlertRequest.Reason
+		details["reason"] = op.AmlAlertRequest.CreatorDetails
 		details["reference"] = op.Reference
 	case xdr.OperationTypeCreateChangeRoleRequest:
 	/*	op := c.Operation().Body.MustCreateUpdateKycRequestOp()
@@ -359,7 +359,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		var bidDetails map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(op.Request.Details), &bidDetails)
+		_ = json.Unmarshal([]byte(op.Request.CreatorDetails), &bidDetails)
 		details["details"] = bidDetails
 		details["quote_assets"] = op.Request.QuoteAssets
 		details["request_id"] = uint64(opRes.RequestId)

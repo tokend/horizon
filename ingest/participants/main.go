@@ -119,7 +119,7 @@ func ForOperation(
 			break
 		}
 
-		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeAtomicSwap.ShortString() {
+		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeCreateAtomicSwap.ShortString() {
 			result = append(result, Participant{
 				AccountID: request.Requestor,
 				BalanceID: nil,

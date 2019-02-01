@@ -17,7 +17,7 @@ func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()
 
 	var data regources.Details
-	rawData, ok := createManageLimitsRequestOp.ManageLimitsRequest.Ext.GetDetails()
+	rawData, ok := createManageLimitsRequestOp.ManageLimitsRequest.Ext.GetCreatorDetails()
 	if ok {
 		data = internal.MarshalCustomDetails(rawData)
 	}

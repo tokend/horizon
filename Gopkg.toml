@@ -96,7 +96,7 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  revision = "9b860e410378ef14669de6b21c7dc111914027c1"
+  revision = "8f3b3aaa85c317e469367c265c67a0b057ed7978"
 
 [[constraint]]
   branch = "feature/account_role"
@@ -121,6 +121,10 @@
 [[constraint]]
   name = "gitlab.com/distributed_lab/ape"
   version = "0.8.0"
+
+[[constraint]]
+  name = "gitlab.com/distributed_lab/kit"
+  branch = "master"
 
 [[override]]
   name = "github.com/google/jsonapi"
