@@ -38,8 +38,6 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newManageAssetOp(op.ID, *op.Details.ManageAsset)
 	case xdr.OperationTypeCreatePreissuanceRequest:
 		return newPreIssuanceRequestOp(op.ID, *op.Details.CreatePreIssuanceRequest)
-	case xdr.OperationTypeManageLimits:
-		return newManageLimits(op.ID, *op.Details.ManageLimits)
 	case xdr.OperationTypeManageAssetPair:
 		return newManageAssetPairOp(op.ID, *op.Details.ManageAssetPair)
 	case xdr.OperationTypeManageOffer:
