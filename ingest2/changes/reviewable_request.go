@@ -337,13 +337,8 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 func (c *reviewableRequestHandler) getLimitsUpdateRequest(
 	request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
 
-	details, ok := request.Ext.GetDetails()
-	var detailsMap regources.Details
-	if ok {
-		detailsMap = internal.MarshalCustomDetails(details)
-	}
 	return &history.LimitsUpdateRequest{
-		Details:      detailsMap,
+		Details:      internal.MarshalCustomDetails(request.Details),
 		DocumentHash: hex.EncodeToString(request.DeprecatedDocumentHash[:]),
 	}
 }

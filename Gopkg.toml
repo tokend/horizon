@@ -96,7 +96,7 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  revision = "6f68c028e5258674306b346d4bb40e47d0d6621d"
+  revision = "133c1c688cead424f460d09825e22cbdd0038e09"
 
 [[constraint]]
   branch = "product"
@@ -128,4 +128,4 @@
 
 [prune]
   go-tests = true
-  unused-packages = true
+  unused-packages = false

@@ -18,11 +18,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 	details := map[string]interface{}{}
 	c := is.Cursor
 	source := c.OperationSourceAccount()
-	txFee, ok := c.Transaction().Result.Result.Ext.GetTransactionFee()
-	if ok {
-		details["operation_fee"] = amount.StringU(getOperationFee(txFee.OperationFees, c.Operation().Body.Type))
-		details["operation_fee_asset"] = txFee.AssetCode
-	}
 	switch c.OperationType() {
 	case xdr.OperationTypeCreateAccount:
 		op := c.Operation().Body.MustCreateAccountOp()
@@ -32,22 +27,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.Referrer != nil {
 			details["referrer"] = (*op.Referrer).Address()
 		}
-	case xdr.OperationTypePayment:
-		op := c.Operation().Body.MustPaymentOp()
-		opResult := c.OperationResult().MustPaymentResult()
-		details["from"] = source.Address()
-		details["to"] = opResult.PaymentResponse.Destination.Address()
-		details["from_balance"] = op.SourceBalanceId.AsString()
-		details["to_balance"] = op.DestinationBalanceId.AsString()
-		details["amount"] = amount.String(int64(op.Amount))
-		details["source_payment_fee"] = amount.String(int64(op.FeeData.SourceFee.PaymentFee))
-		details["destination_payment_fee"] = amount.String(int64(op.FeeData.DestinationFee.PaymentFee))
-		details["source_fixed_fee"] = amount.String(int64(op.FeeData.SourceFee.FixedFee))
-		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
-		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
-		details["subject"] = op.Subject
-		details["reference"] = utf8.Scrub(string(op.Reference))
-		details["asset"] = opResult.PaymentResponse.Asset
 
 	case xdr.OperationTypeManageKeyValue:
 		op := c.Operation().Body.MustManageKeyValueOp()
@@ -152,31 +131,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		}
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		op := c.Operation().Body.MustCreateManageLimitsRequestOp()
-		limitsUpdateDetails, ok := op.ManageLimitsRequest.Ext.GetDetails()
-		if ok {
-			details["limits_manage_request_details"] = string(limitsUpdateDetails)
-		}
-		requestID, ok := op.Ext.GetRequestId()
-		if ok {
-			details["request_id"] = uint64(requestID)
-		}
+		details["limits_manage_request_details"] = string(op.ManageLimitsRequest.Details)
+		details["request_id"] = uint64(op.RequestId)
 		details["limits_manage_request_document_hash"] = hex.EncodeToString(op.ManageLimitsRequest.DeprecatedDocumentHash[:])
-	case xdr.OperationTypeDirectDebit:
-		op := c.Operation().Body.MustDirectDebitOp().PaymentOp
-		opResult := c.OperationResult().MustDirectDebitResult().MustSuccess()
-		details["from"] = source.Address()
-		details["to"] = opResult.PaymentResponse.Destination.Address()
-		details["from_balance"] = op.SourceBalanceId.AsString()
-		details["to_balance"] = op.DestinationBalanceId.AsString()
-		details["amount"] = amount.String(int64(op.Amount))
-		details["source_payment_fee"] = amount.String(int64(op.FeeData.SourceFee.PaymentFee))
-		details["destination_payment_fee"] = amount.String(int64(op.FeeData.DestinationFee.PaymentFee))
-		details["source_fixed_fee"] = amount.String(int64(op.FeeData.SourceFee.FixedFee))
-		details["destination_fixed_fee"] = amount.String(int64(op.FeeData.DestinationFee.FixedFee))
-		details["source_pays_for_dest"] = op.FeeData.SourcePaysForDest
-		details["subject"] = op.Subject
-		details["reference"] = utf8.Scrub(string(op.Reference))
-		details["asset"] = opResult.PaymentResponse.Asset
 	case xdr.OperationTypeManageAssetPair:
 		op := c.Operation().Body.MustManageAssetPairOp()
 		details["base_asset"] = op.Base

@@ -94,9 +94,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
-			xdr.OperationTypePayment:              &deprecatedOpHandler{},
 			xdr.OperationTypeSetOptions:           &stubOpHandler{},
-			xdr.OperationTypeDirectDebit:          &deprecatedOpHandler{},
 			xdr.OperationTypeManageInvoiceRequest: &deprecatedOpHandler{},
 			xdr.OperationTypeManageSale: &manageSaleHandler{
 				manageOfferOpHandler: manageOfferOpHandlerInst,

@@ -16,8 +16,6 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 			Key:        regources.NewKeyInt64(op.ID, regources.TypeCreateAccount),
 			Attributes: regources.CreateAccountOpAttrs(*op.Details.CreateAccount),
 		}
-	case xdr.OperationTypePayment:
-		return regources.NewKeyInt64(op.ID, regources.TypePaymentV2).GetKeyP()
 	case xdr.OperationTypeSetOptions:
 		return regources.NewKeyInt64(op.ID, regources.TypeSetOptions).GetKeyP()
 	case xdr.OperationTypeCreateIssuanceRequest:
@@ -40,10 +38,6 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newManageAssetOp(op.ID, *op.Details.ManageAsset)
 	case xdr.OperationTypeCreatePreissuanceRequest:
 		return newPreIssuanceRequestOp(op.ID, *op.Details.CreatePreIssuanceRequest)
-	case xdr.OperationTypeManageLimits:
-		return newManageLimitsOp(op.ID, *op.Details.ManageLimits)
-	case xdr.OperationTypeDirectDebit:
-		return regources.NewKeyInt64(op.ID, regources.TypeDirectDebit).GetKeyP()
 	case xdr.OperationTypeManageAssetPair:
 		return newManageAssetPairOp(op.ID, *op.Details.ManageAssetPair)
 	case xdr.OperationTypeManageOffer:

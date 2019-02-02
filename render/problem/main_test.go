@@ -5,7 +5,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	ge "github.com/go-errors/errors"
 	. "github.com/smartystreets/goconvey/convey"
 	"gitlab.com/tokend/horizon/context/requestid"
 	"gitlab.com/tokend/horizon/test"
@@ -89,24 +88,6 @@ func TestProblemPackage(t *testing.T) {
 			So(w.Code, ShouldEqual, 500)
 			// don't expose private error info
 			So(w.Body.String(), ShouldNotContainSubstring, "broke")
-		})
-
-		Convey("Logs the stacktrace as unknown for non-rich errors", func() {
-			ctx, log := test.ContextWithLogBuffer()
-			w := testRender(ctx, errors.New("broke"))
-			So(w.Body.String(), ShouldContainSubstring, "server_error")
-			So(w.Code, ShouldEqual, 500)
-			So(log.String(), ShouldContainSubstring, "stack=unknown")
-		})
-
-		Convey("Logs the stacktrace properly for rich errors", func() {
-			ctx, log := test.ContextWithLogBuffer()
-			w := testRender(ctx, ge.New("broke"))
-			So(w.Body.String(), ShouldContainSubstring, "server_error")
-			So(w.Code, ShouldEqual, 500)
-			// simple assert that this file shows up in the error report
-			// TODO: make less brittle
-			So(log.String(), ShouldContainSubstring, "main_test.go:")
 		})
 	})
 
