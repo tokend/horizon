@@ -49,9 +49,9 @@ func Context() context.Context {
 func ContextWithLogBuffer() (context.Context, *bytes.Buffer) {
 	output := new(bytes.Buffer)
 	l, _ := hlog.New()
-	l.Logger.Out = output
-	l.Logger.Formatter.(*logrus.TextFormatter).DisableColors = true
-	l.Logger.Level = logrus.DebugLevel
+	l.Entry.Out(output)
+	l.Formatter(&logrus.TextFormatter{DisableColors: true})
+	l.Level(hlog.DebugLevel)
 
 	ctx := hlog.Set(context.Background(), l)
 	return ctx, output
@@ -90,9 +90,9 @@ func Start(t *testing.T) *T {
 	result.T = t
 	result.LogBuffer = new(bytes.Buffer)
 	result.Logger, result.LogMetrics = hlog.New()
-	result.Logger.Logger.Out = result.LogBuffer
-	result.Logger.Logger.Formatter.(*logrus.TextFormatter).DisableColors = true
-	result.Logger.Logger.Level = logrus.DebugLevel
+	result.Logger.Out(result.LogBuffer)
+	result.Logger.Formatter(&logrus.TextFormatter{DisableColors: true})
+	result.Logger.Level(hlog.DebugLevel)
 
 	OverrideLogger(result.Logger)
 

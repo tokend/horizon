@@ -83,7 +83,7 @@ func render(ctx context.Context, w http.ResponseWriter, errObjects ...*ErrorObje
 
 	status, err := strconv.Atoi(errObjects[0].Status)
 	if err != nil {
-		panic(fmt.Sprintf("Invalid status: %d+", errObjects[0].Status))
+		panic(fmt.Sprintf("Invalid status: %s+", errObjects[0].Status))
 	}
 
 	w.WriteHeader(status)

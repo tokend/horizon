@@ -9,7 +9,7 @@ import (
 func TestAllReviewableRequestsHandled(t *testing.T) {
 	reviewRequestOpHandlerInst := newReviewRequestOpHandler(&MockIDProvider{}, &mockBalanceProvider{})
 	for _, requestT := range xdr.ReviewableRequestTypeAll {
-		if requestT == xdr.ReviewableRequestTypeNone {
+		if requestT == xdr.ReviewableRequestTypeNone || requestT == xdr.ReviewableRequestTypeAny {
 			continue
 		}
 		_, ok := reviewRequestOpHandlerInst.allRequestHandlers[requestT]

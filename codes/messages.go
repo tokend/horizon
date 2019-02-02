@@ -265,6 +265,18 @@ var messages = map[string]string{
 	"op_invalid_amount_precision":                       "The asset we operate on, does not allow such precise amounts",
 	"op_invalid_preissued_amount_precision":             "Initial pre issued amount does not match precision set by trailing digits count",
 	"op_invalid_max_issuance_amount_precision":          "Maximum issuance amount does not match precision set by trailing digits count",
+	"op_withdrawal_tasks_not_found":                     "There is no key value for withdrawal tasks",
+	"op_not_allowed_to_set_withdrawal_tasks":            "Not allowed to set withdrawal tasks",
+	"op_asset_create_tasks_not_found":                   "There is no key value for asset creation tasks",
+	"op_asset_update_tasks_not_found":                   "There is no key value for asset update tasks",
+	"op_invoice_tasks_not_found":                        "There is no key value for invoice tasks",
+	"op_withdrawal_zero_tasks_not_allowed":              "Withdrawal zero tasks are not allowed",
+	"op_sale_create_tasks_not_found":                    "There is no key value for sale creation tasks",
+	"op_removing_not_set_tasks":                         "Cannot remove tasks which were not set",
+	"op_invalid_update_details_request_data":            "There are invalid update details in request",
+	"op_sale_update_details_tasks_not_found":            "There is no key value for sale details update tasks",
+	"op_not_allowed_to_set_tasks_on_update":             "Not allowed to set tasks on update",
+	"op_contract_create_tasks_not_found":                "There is no key value for contract creation tasks",
 }
 
 func getMessage(rawCode string) string {

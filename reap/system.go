@@ -17,11 +17,11 @@ func (r *System) DeleteUnretainedHistory() error {
 	}
 
 	var (
-		latest      = ledger.CurrentState()
-		targetElder = (latest.HistoryLatest - int32(r.RetentionCount)) + 1
+		latest      = ledger.CurrentState().History
+		targetElder = (latest.Latest - int32(r.RetentionCount)) + 1
 	)
 
-	if targetElder < latest.HistoryElder {
+	if targetElder < latest.OldestOnStart {
 		return nil
 	}
 
