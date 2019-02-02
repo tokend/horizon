@@ -3,11 +3,12 @@ package ingest
 import (
 	"time"
 
+	"database/sql"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/toid"
-	"gitlab.com/distributed_lab/logan/v3/errors"
-	"database/sql"
 )
 
 // InLedger returns true if the cursor is on a ledger.

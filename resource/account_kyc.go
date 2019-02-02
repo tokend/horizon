@@ -1,8 +1,9 @@
 package resource
 
 import (
-	"gitlab.com/tokend/horizon/db2/core"
 	"encoding/json"
+
+	"gitlab.com/tokend/horizon/db2/core"
 )
 
 type AccountKYC struct {

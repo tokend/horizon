@@ -15,7 +15,7 @@ type RootAction struct {
 
 // JSON renders the json response for RootAction
 func (action *RootAction) JSON() {
-	action.App.UpdateStellarCoreInfo()
+	action.App.UpdateCoreInfo()
 
 	if action.App.CoreInfo == nil {
 		action.Err = &problem.ServerOverCapacity

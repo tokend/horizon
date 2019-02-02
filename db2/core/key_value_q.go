@@ -41,7 +41,7 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 }
 
 // Select selects all existing KeyValues. Returns nil, nil if not found
-func (q KeyValueQ) Select() ([]KeyValue, error){
+func (q KeyValueQ) Select() ([]KeyValue, error) {
 	if q.Err != nil {
 		return nil, q.Err
 	}

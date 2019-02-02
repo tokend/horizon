@@ -6,16 +6,16 @@ import (
 
 // helper struct selected only with account, field names reflect that
 type StatisticsV2Entry struct {
-	Id              uint64         	`db:"id"`
-	AccountId       string         	`db:"account_id"`
-	StatsOpType     int32          	`db:"stats_op_type"`
-	AssetCode       string    		`db:"asset_code"`
-	IsConvertNeeded bool           	`db:"is_convert_needed"`
-	DailyOutcome    uint64          `db:"daily_out"`
-	WeeklyOutcome   uint64          `db:"weekly_out"`
-	MonthlyOutcome  uint64          `db:"monthly_out"`
-	AnnualOutcome   uint64          `db:"annual_out"`
-	UpdatedAt       int64           `db:"updated_at"`
+	Id              uint64 `db:"id"`
+	AccountId       string `db:"account_id"`
+	StatsOpType     int32  `db:"stats_op_type"`
+	AssetCode       string `db:"asset_code"`
+	IsConvertNeeded bool   `db:"is_convert_needed"`
+	DailyOutcome    uint64 `db:"daily_out"`
+	WeeklyOutcome   uint64 `db:"weekly_out"`
+	MonthlyOutcome  uint64 `db:"monthly_out"`
+	AnnualOutcome   uint64 `db:"annual_out"`
+	UpdatedAt       int64  `db:"updated_at"`
 }
 
 func getDaysPassed(updatedAt, currentTime time.Time) int {

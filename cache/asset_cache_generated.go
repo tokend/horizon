@@ -15,7 +15,7 @@ type CoreAssetCache struct {
 	_cache *cache.Cache
 }
 
-func newcoreAssetCache(defaultExpiration, cleanupInterval time.Duration) *CoreAssetCache {
+func newCoreAssetCache(defaultExpiration, cleanupInterval time.Duration) *CoreAssetCache {
 	return &CoreAssetCache{
 		_cache: cache.New(defaultExpiration, cleanupInterval),
 	}

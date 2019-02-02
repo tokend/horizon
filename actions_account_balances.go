@@ -1,10 +1,10 @@
 package horizon
 
 import (
+	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
-	"gitlab.com/tokend/horizon/db2/history"
 )
 
 type AccountBalancesAction struct {
@@ -12,7 +12,7 @@ type AccountBalancesAction struct {
 
 	AccountID string
 
-	Records []history.Balance
+	Records  []history.Balance
 	Resource []resource.BalancePublic
 }
 
@@ -21,7 +21,7 @@ func (action *AccountBalancesAction) JSON() {
 		action.loadParams,
 		action.loadRecords,
 		action.loadResource,
-		func () {
+		func() {
 			hal.Render(action.W, action.Resource)
 		},
 	)
@@ -51,5 +51,3 @@ func (action *AccountBalancesAction) loadResource() {
 		action.Resource = append(action.Resource, r)
 	}
 }
-
-

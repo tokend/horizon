@@ -105,16 +105,7 @@ const (
 // provided app.  All route registration should be implemented here.
 func initWebActions(app *App) {
 	apiProxy := httputil.NewSingleHostReverseProxy(app.config.APIBackend)
-	keychainProxy := httputil.NewSingleHostReverseProxy(app.config.KeychainBackend)
 	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
-	investReadyProxy := httputil.NewSingleHostReverseProxy(app.config.InvestReady)
-
-	var telegramAirdropProxy *httputil.ReverseProxy
-	if app.config.TelegramAirdrop != nil {
-		telegramAirdropProxy = httputil.NewSingleHostReverseProxy(app.config.TelegramAirdrop)
-	} else {
-		telegramAirdropProxy = nil
-	}
 
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypePayment,
@@ -122,8 +113,9 @@ func initWebActions(app *App) {
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeCheckSaleState,
-		xdr.OperationTypePayout,
+		xdr.OperationTypeManageKeyValue,
 		xdr.OperationTypePaymentV2,
+		xdr.OperationTypeReviewRequest,
 	}
 
 	r := app.web.router
@@ -165,7 +157,6 @@ func initWebActions(app *App) {
 
 	// offers
 	r.Get("/accounts/:account_id/offers", &OffersAction{})
-	r.Get("/history_offers", &HistoryOfferIndexAction{})
 
 	// order book
 	r.Get("/order_book", &OrderBookAction{})
@@ -284,7 +275,7 @@ func initWebActions(app *App) {
 				action.q = action.q.WithdrawalByDestAsset(asset)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw, xdr.ReviewableRequestTypeTwoStepWithdrawal},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
@@ -349,52 +340,18 @@ func initWebActions(app *App) {
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleDetails},
 	})
 
-	r.Get("/request/invoices", &ReviewableRequestIndexAction{
-		CustomFilter: func(action *ReviewableRequestIndexAction) {
-			contractID := action.GetOptionalInt64("contract_id")
-			if contractID != nil {
-				action.q = action.q.InvoicesByContract(*contractID)
-			}
-		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeInvoice},
+	r.Get("/request/atomic_swap_bids", &ReviewableRequestIndexAction{
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwapBid},
 	})
 
-	r.Get("/request/contracts", &ReviewableRequestIndexAction{
+	r.Get("/request/atomic_swaps", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
-			contractNumber := action.GetString("contract_number")
-			if contractNumber != "" {
-				action.q = action.q.ContractsByContractNumber(contractNumber)
+			bidID := action.GetOptionalInt64("bid_id")
+			if bidID != nil {
+				action.q = action.q.ASwapByBidID(*bidID)
 			}
-			startTime := action.GetOptionalInt64("start_time")
-			if startTime != nil {
-				action.q = action.q.ContractsByStartTime(*startTime)
-			}
-			endTime := action.GetOptionalInt64("end_time")
-			if endTime != nil {
-				action.q = action.q.ContractsByStartTime(*endTime)
-			}
-
-			// TODO: FIX ME!!!!!!!!!!!!!!!!!
-			if action.Requestor != "" {
-				action.q = action.q.ForCounterparty(action.Requestor)
-			}
-
-			action.Requestor = ""
-
-			if action.Reviewer != "" {
-				action.q = action.q.ForCounterparty(action.Reviewer)
-			}
-
-			action.Reviewer = ""
-			action.Page.Filters["contract_number"] = contractNumber
-			action.Page.Filters["start_time"] = action.GetString("start_time")
-			action.Page.Filters["end_time"] = action.GetString("end_time")
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeContract},
-	})
-
-	r.Get("/request/update_sale_end_time", &ReviewableRequestIndexAction{
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateSaleEndTime},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAtomicSwap},
 	})
 
 	// Sales actions
@@ -404,6 +361,10 @@ func initWebActions(app *App) {
 
 	// Sale antes actions
 	r.Get("/sale_antes", &SaleAnteAction{})
+
+	// Atomic swap bid actions
+	r.Get("/atomic_swap_bids", &ASwapBidIndexAction{})
+	r.Get("/atomic_swap_bids/:id", &ASwapBidShowAction{})
 
 	// Contracts actions
 	r.Get("/contracts", &ContractIndexAction{})
@@ -457,31 +418,11 @@ func initWebActions(app *App) {
 		}
 	}))
 
-	r.Handle(regexp.MustCompile(`^/users/\w+/keys`), func() func(web.C, http.ResponseWriter, *http.Request) {
-		return func(c web.C, w http.ResponseWriter, r *http.Request) {
-			keychainProxy.ServeHTTP(w, r)
-		}
-	}())
-
 	r.Handle(regexp.MustCompile(`^/templates/.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
 		return func(c web.C, w http.ResponseWriter, r *http.Request) {
 			templateProxy.ServeHTTP(w, r)
 		}
 	}())
-
-	r.Handle(regexp.MustCompile(`^/integrations/invest-ready`), func() func(web.C, http.ResponseWriter, *http.Request) {
-		return func(c web.C, w http.ResponseWriter, r *http.Request) {
-			investReadyProxy.ServeHTTP(w, r)
-		}
-	}())
-
-	if telegramAirdropProxy != nil {
-		r.Handle(regexp.MustCompile(`^/integrations/telegram-airdrop`), func() func(web.C, http.ResponseWriter, *http.Request) {
-			return func(c web.C, w http.ResponseWriter, r *http.Request) {
-				telegramAirdropProxy.ServeHTTP(w, r)
-			}
-		}())
-	}
 
 	// proxy pass every request horizon could not handle to API
 	r.Handle(regexp.MustCompile(`^.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
@@ -495,7 +436,7 @@ func init() {
 	appInit.Add(
 		"web.init",
 		initWeb,
-		"app-context", "stellarCoreInfo", "memory_cache",
+		"app-context", "core-info", "memory_cache", "ledger-state",
 	)
 
 	appInit.Add(

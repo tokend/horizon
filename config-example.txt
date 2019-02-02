@@ -12,5 +12,7 @@ API_BACKEND=http://localhost:8001
 KEYCHAIN_BACKEND=http://black.hole
 INGEST=true
 
+TEMPLATE_BACKEND=http://template.backend
+
 # logging
 LOG_LEVEL=info

@@ -1,13 +1,13 @@
 package horizon
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
-	"fmt"
-
-	"strconv"
-
 	"github.com/pkg/errors"
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/ledger"
@@ -16,8 +16,6 @@ import (
 	"gitlab.com/tokend/horizon/render/sse"
 	"gitlab.com/tokend/horizon/resource"
 	"gitlab.com/tokend/horizon/toid"
-	"gitlab.com/tokend/go/doorman"
-	"gitlab.com/tokend/go/xdr"
 )
 
 // This file contains the actions:
@@ -288,8 +286,12 @@ func (action *OperationIndexAction) loadPage() {
 }
 
 func (action *OperationIndexAction) checkAllowed() {
-	action.Doorman().Check(action.R, doorman.SignerOf(action.AccountFilter),
+	err := action.Doorman().Check(action.R, doorman.SignerOf(action.AccountFilter),
 		doorman.SignerOfWithPermission(action.App.CoreInfo.MasterAccountID, doorman.SignerExternsionOperationsList))
+	if err != nil {
+		action.Err = &problem.NotAllowed
+		return
+	}
 }
 
 // OperationShowAction renders a ledger found by its sequence number.
@@ -338,7 +340,7 @@ func (action *OperationShowAction) JSON() {
 
 func (action *OperationShowAction) verifyWithinHistory() {
 	parsed := toid.Parse(action.ID)
-	if parsed.LedgerSequence < ledger.CurrentState().HistoryElder {
+	if parsed.LedgerSequence < ledger.CurrentState().History.OldestOnStart {
 		action.Err = &problem.BeforeHistory
 	}
 }

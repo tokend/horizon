@@ -6,9 +6,11 @@ import (
 	"gitlab.com/tokend/horizon/db2/core"
 )
 
+//go:generate mockery -case underscore -name assetProvider -inpkg -testonly
 type assetProvider interface {
 	GetAssetsForPolicy(policy uint32) ([]core.Asset, error)
 	GetAssetPairsForCodes(baseAssets []string, quoteAssets []string) ([]core.AssetPair, error)
+	LoadAsset(code string) (*core.Asset, error)
 }
 
 type Converter struct {
@@ -25,6 +27,9 @@ func (p assetProviderImpl) GetAssetsForPolicy(policy uint32) ([]core.Asset, erro
 }
 func (p assetProviderImpl) GetAssetPairsForCodes(baseAssets []string, quoteAssets []string) ([]core.AssetPair, error) {
 	return p.q.AssetPairs().ForAssets(baseAssets, quoteAssets).Select()
+}
+func (p assetProviderImpl) LoadAsset(code string) (*core.Asset, error) {
+	return p.q.Assets().ByCode(code)
 }
 
 func NewConverter(q core.QInterface) (*Converter, error) {
@@ -83,7 +88,7 @@ func (c *Converter) convertWithMaxPath(amount int64, fromAsset, toAsset string, 
 	converted := false
 	var result int64
 	for _, fromPair := range fromPairs {
-		hopAmount, isConverted, err := fromPair.ConvertFromSourceAsset(fromAsset, amount)
+		hopAmount, isConverted, err := fromPair.ConvertFromSourceAsset(fromAsset, amount, c.assetProvider)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert from asset to hop asset")
 		}
@@ -93,11 +98,17 @@ func (c *Converter) convertWithMaxPath(amount int64, fromAsset, toAsset string, 
 		}
 
 		for _, toPair := range toPairs {
+			if fromPair.IsSimilar(toPair) {
+				return nil, errors.From(errors.New("unexpected state: received same pairs"), map[string]interface{}{
+					"fromPair": fromPair,
+					"toPair":   toPair,
+				})
+			}
 			if !fromPair.IsOverlaps(toPair) {
 				continue
 			}
 
-			destAmount, isConverted, err := fromPair.ConvertToDestAsset(toAsset, hopAmount)
+			destAmount, isConverted, err := toPair.ConvertToDestAsset(toAsset, hopAmount, c.assetProvider)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to convert to toAsset")
 			}
@@ -131,7 +142,7 @@ func (c *Converter) TryToConvertWithOneHop(amount int64, fromAsset, toAsset stri
 	}
 
 	if directPair != nil {
-		result, isConverted, err := directPair.ConvertToDestAsset(toAsset, amount)
+		result, isConverted, err := directPair.ConvertToDestAsset(toAsset, amount, c.assetProvider)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert using direct pair")
 		}

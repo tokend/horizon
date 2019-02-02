@@ -4,11 +4,11 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	"github.com/guregu/null"
+	sq "github.com/lann/squirrel"
 	"gitlab.com/tokend/go/strkey"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/utf8"
-	"github.com/guregu/null"
-	sq "github.com/lann/squirrel"
 )
 
 // Base64Signatures returns a slice of strings where each element is a base64
@@ -132,7 +132,7 @@ func (q *Q) TransactionByHash(dest interface{}, hash string) error {
 	return q.Get(dest, sql)
 }
 
-// TransactionsByLedger is a query that loads all rows from `txhistory` where
+// GetByLedger is a query that loads all rows from `txhistory` where
 // ledgerseq matches `Sequence.`
 func (q *Q) TransactionsByLedger(dest interface{}, seq int32) error {
 	sql := sq.Select("ctxh.*").

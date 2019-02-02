@@ -1,9 +1,9 @@
 package resource
 
 import (
+	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/tokend/horizon/httpx"
 	"gitlab.com/tokend/horizon/render/hal"
-	"gitlab.com/distributed_lab/txsub"
 	"golang.org/x/net/context"
 )
 

@@ -1,9 +1,9 @@
 package operations
 
 import (
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
-	"gitlab.com/tokend/go/xdr"
 	"golang.org/x/net/context"
 )
 
@@ -93,15 +93,6 @@ func New(
 		err = row.UnmarshalDetails(&e)
 		if public {
 			e.ExternalDetails = nil
-		}
-		result = e
-	case xdr.OperationTypePayout:
-		e := Payout{Base: base}
-		err = row.UnmarshalDetails(&e)
-		if public {
-			e.SourceBalanceID = ""
-			e.FixedFee = ""
-			e.PercentFee = ""
 		}
 		result = e
 	case xdr.OperationTypeCheckSaleState:

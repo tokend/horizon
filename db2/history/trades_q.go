@@ -1,8 +1,8 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type TradesQI interface {
@@ -25,6 +25,7 @@ func (q *Q) Trades() TradesQI {
 		sql:    selectTrades,
 	}
 }
+
 // ForOrderBook - filters trades by order book
 func (q *TradesQ) ForOrderBook(orderBookID uint64) TradesQI {
 	if q.Err != nil {

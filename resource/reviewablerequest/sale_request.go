@@ -20,7 +20,5 @@ func PopulateSaleCreationRequest(histRequest history.SaleRequest) (
 	r.SaleType.Value = int32(histRequest.SaleType)
 	r.SaleType.Name = histRequest.SaleType.ShortString()
 	r.BaseAssetForHardCap = histRequest.BaseAssetForHardCap
-	r.State.Value = int32(histRequest.State)
-	r.State.Name = histRequest.State.ShortString()
 	return
 }

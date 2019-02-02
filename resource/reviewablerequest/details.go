@@ -2,8 +2,8 @@ package reviewablerequest
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/regources"
 )
 
@@ -35,9 +35,6 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 	case xdr.ReviewableRequestTypeLimitsUpdate:
 		d.LimitsUpdate, err = PopulateLimitsUpdateRequest(*h.LimitsUpdate)
 		return
-	case xdr.ReviewableRequestTypeTwoStepWithdrawal:
-		d.TwoStepWithdraw, err = PopulateWithdrawalRequest(*h.TwoStepWithdraw)
-		return
 	case xdr.ReviewableRequestTypeAmlAlert:
 		d.AMLAlert, err = PopulateAmlAlertRequest(*h.AmlAlert)
 		return
@@ -50,14 +47,14 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 	case xdr.ReviewableRequestTypeInvoice:
 		d.Invoice, err = PopulateInvoiceRequest(*h.Invoice)
 		return
-	case xdr.ReviewableRequestTypeUpdateSaleEndTime:
-		d.UpdateSaleEndTime, err = PopulateUpdateSaleEndTimeRequest(*h.UpdateSaleEndTimeRequest)
-		return
-	case xdr.ReviewableRequestTypeUpdatePromotion:
-		d.PromotionUpdateRequest, err = PopulatePromotionUpdateRequest(*h.PromotionUpdate)
-		return
 	case xdr.ReviewableRequestTypeContract:
 		d.Contract, err = PopulateContractRequest(*h.Contract)
+		return
+	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
+		d.AtomicSwapBidCreation, err = PopulateASwapBidCreationRequest(*h.AtomicSwapBidCreation)
+		return
+	case xdr.ReviewableRequestTypeAtomicSwap:
+		d.AtomicSwap, err = PopulateASwapRequest(*h.AtomicSwap)
 		return
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{

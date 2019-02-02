@@ -1,0 +1,128 @@
+package changes
+
+import (
+	"time"
+
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/go/xdr"
+	history "gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
+)
+
+type saleStorage interface {
+	//Inserts sale into DB
+	Insert(sale history.Sale) error
+	//Updates sale
+	Update(sale history.Sale) error
+	// SetState - sets state
+	SetState(saleID uint64, state history.SaleState) error
+}
+
+type saleHandler struct {
+	storage saleStorage
+}
+
+func newSaleHandler(storage saleStorage) *saleHandler {
+	return &saleHandler{
+		storage: storage,
+	}
+}
+
+//Created - handles creation of new sale
+func (c *saleHandler) Created(lc ledgerChange) error {
+	rawSale := lc.LedgerChange.MustCreated().Data.MustSale()
+
+	sale, err := c.convertSale(rawSale)
+	if err != nil {
+		return errors.Wrap(err, "failed to convert sale", logan.F{
+			"raw_sale":        rawSale,
+			"ledger_sequence": lc.LedgerSeq,
+		})
+	}
+
+	err = c.storage.Insert(*sale)
+	if err != nil {
+		return errors.Wrap(err, "failed to insert sale into DB", logan.F{
+			"sale": sale,
+		})
+	}
+
+	return nil
+}
+
+//Removed - handles state of the sale due to it was removed
+func (c *saleHandler) Removed(lc ledgerChange) error {
+	// sale can be removed by check sale state or cancel sale
+	// so we can handle approve of the sale and by default mark is as cancelled
+	saleState := history.SaleStateCanceled
+	if lc.OperationResult.Type == xdr.OperationTypeCheckSaleState {
+		opEffect := lc.OperationResult.MustCheckSaleStateResult().MustSuccess().Effect
+		if opEffect.Effect == xdr.CheckSaleStateEffectClosed {
+			saleState = history.SaleStateClosed
+		}
+	}
+
+	saleID := uint64(lc.LedgerChange.MustRemoved().MustSale().SaleId)
+	err := c.storage.SetState(saleID, saleState)
+	if err != nil {
+		return errors.Wrap(err, "failed to set sale state")
+	}
+
+	return nil
+}
+
+//Updated - handles update of the sale
+func (c *saleHandler) Updated(lc ledgerChange) error {
+	rawSale := lc.LedgerChange.MustUpdated().Data.MustSale()
+	sale, err := c.convertSale(rawSale)
+	if err != nil {
+		return errors.Wrap(err, "failed to convert sale ", logan.F{
+			"raw_sale":        rawSale,
+			"ledger_sequence": lc.LedgerSeq,
+		})
+	}
+
+	err = c.storage.Update(*sale)
+	if err != nil {
+		return errors.Wrap(err, "failed to update sale", logan.F{
+			"sale": sale,
+		})
+	}
+	return nil
+}
+
+func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
+	quoteAssets := make([]history.SaleQuoteAsset, 0, len(raw.QuoteAssets))
+	for i := range raw.QuoteAssets {
+		quoteAssets = append(quoteAssets, history.SaleQuoteAsset{
+			Asset:          string(raw.QuoteAssets[i].QuoteAsset),
+			Price:          amount.StringU(uint64(raw.QuoteAssets[i].Price)),
+			QuoteBalanceID: raw.QuoteAssets[i].QuoteBalance.AsString(),
+			CurrentCap:     amount.StringU(uint64(raw.QuoteAssets[i].CurrentCap)),
+		})
+	}
+
+	saleType := raw.SaleTypeExt.SaleType
+
+	return &history.Sale{
+		ID:                uint64(raw.SaleId),
+		OwnerAddress:      raw.OwnerId.Address(),
+		BaseAsset:         string(raw.BaseAsset),
+		DefaultQuoteAsset: string(raw.DefaultQuoteAsset),
+		StartTime:         time.Unix(int64(raw.StartTime), 0).UTC(),
+		EndTime:           time.Unix(int64(raw.EndTime), 0).UTC(),
+		SoftCap:           uint64(raw.SoftCap),
+		HardCap:           uint64(raw.HardCap),
+		Details:           internal.MarshalCustomDetails(raw.Details),
+		QuoteAssets: history.SaleQuoteAssets{
+			QuoteAssets: quoteAssets,
+		},
+		BaseCurrentCap: int64(raw.CurrentCapInBase),
+		BaseHardCap:    int64(raw.MaxAmountToBeSold),
+		SaleType:       saleType,
+		// if sale still exists in core db - it is open
+		State: history.SaleStateOpen,
+	}, nil
+}

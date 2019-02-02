@@ -357,17 +357,6 @@ func (base *Base) GetPagingParams() (cursor string, order string, limit uint64) 
 	return
 }
 
-func (base *Base) GetPagingParamsV2() (page uint64, limit uint64) {
-	if base.Err != nil {
-		return
-	}
-
-	page = base.GetUInt64(ParamPage)
-	limit = base.GetUInt64(ParamLimit)
-
-	return
-}
-
 // GetPageQuery is a helper that returns a new db.PageQuery struct initialized
 // using the results from a call to GetPagingParams()
 func (base *Base) GetPageQuery() db2.PageQuery {
@@ -382,6 +371,17 @@ func (base *Base) GetPageQuery() db2.PageQuery {
 	}
 
 	return r
+}
+
+func (base *Base) GetPagingParamsV2() (page uint64, limit uint64) {
+	if base.Err != nil {
+		return
+	}
+
+	page = base.GetUInt64(ParamPage)
+	limit = base.GetUInt64(ParamLimit)
+
+	return
 }
 
 // GetAddress retrieves a stellar address.  It confirms the value loaded is a
@@ -402,7 +402,7 @@ func (base *Base) GetAddress(name string) (result string) {
 	return result
 }
 
-// GetAccountID retireves an xdr.AccountID by attempting to decode a stellar
+// MustAccountID retireves an xdr.AccountID by attempting to decode a stellar
 // address at the provided name.
 func (base *Base) GetAccountID(name string) (result xdr.AccountId) {
 	raw, err := strkey.Decode(strkey.VersionByteAccountID, base.GetString(name))
@@ -575,12 +575,12 @@ func (base *Base) ValidateToProblem(ok bool, result *utils.ValidateError) {
 	}
 }
 
-func (base *Base) CalculatePercentFee(percentFee, am int64) (int64, bool) {
+func (base *Base) CalculatePercentFee(percentFee, am, minimalAmount int64) (int64, bool) {
 	if percentFee == 0 || am == 0 {
 		return 0, false
 	}
 
-	return amount.BigDivide(am, percentFee, amount.One*100, amount.ROUND_UP)
+	return amount.BigDivide(am, percentFee, amount.One*100, amount.ROUND_UP, minimalAmount)
 }
 
 func (base *Base) ParseResponse(response *http.Response) (p *problem.P) {

@@ -1,9 +1,9 @@
 package history
 
 import (
+	sq "github.com/lann/squirrel"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/toid"
-	sq "github.com/lann/squirrel"
 	"strconv"
 )
 
@@ -128,7 +128,7 @@ func (q *TransactionsQ) ByTxIDs(txIDs []int64) TransactionsQI {
 		return q
 	}
 
-	q.sql = q.sql.Where(sq.Eq{"ht.id" : txIDs})
+	q.sql = q.sql.Where(sq.Eq{"ht.id": txIDs})
 	return q
 }
 

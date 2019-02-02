@@ -5,20 +5,12 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/go/xdr"
 )
 
-func isFulfilled(res xdr.ReviewRequestResultSuccess) bool {
-	extendedResult, ok := res.Ext.GetExtendedResult()
-	if !ok {
-		return true
-	}
-	return extendedResult.Fulfilled
-}
-
-func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
+func (is *Session) processReviewRequest(op xdr.ReviewRequestOp, res xdr.ExtendedResult,
 	changes xdr.LedgerEntryChanges) (err error) {
 
 	switch op.Action {
@@ -56,18 +48,14 @@ func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
 	return false
 }
 
-func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, res xdr.ReviewRequestResultSuccess,
+func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, res xdr.ExtendedResult,
 	changes xdr.LedgerEntryChanges) error {
-	// approval of two step withdrawal leads to update of request to withdrawal
-	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeTwoStepWithdrawal {
-		return nil
-	}
 
 	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeUpdateKyc && !hasDeletedReviewableRequest(changes) {
 		return nil
 	}
 
-	if !isFulfilled(res) {
+	if !res.Fulfilled {
 		return nil
 	}
 

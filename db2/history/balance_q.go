@@ -57,7 +57,7 @@ func (q *BalancesQ) Page(page db2.PageQuery) BalancesQI {
 		return q
 	}
 
-	q.sql, q.Err = page.ApplyTo(q.sql, "hb.balance_id")
+	q.sql, q.Err = page.ApplyTo(q.sql, "hb.id")
 	return q
 }
 

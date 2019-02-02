@@ -1,8 +1,8 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/ingest"
+	"gitlab.com/tokend/horizon/log"
 )
 
 func initIngester(app *App) {
@@ -10,10 +10,12 @@ func initIngester(app *App) {
 		return
 	}
 
+	logger := log.DefaultLogger.Entry.WithField("service", "ingest")
+
 	ingester := ingest.New(app.CoreConnector,
 		app.CoreInfo,
-		app.CoreRepo(nil),
-		app.HistoryRepo(nil),
+		app.CoreRepoLogged(logger),
+		app.HistoryRepoLogged(logger),
 	)
 
 	if err := ingester.IntegrityCheck(); err != nil {
@@ -26,5 +28,5 @@ func initIngester(app *App) {
 }
 
 func init() {
-	appInit.Add("ingester", initIngester, "core_connector", "app-context", "log", "horizon-db", "core-db", "stellarCoreInfo")
+	appInit.Add("ingester", initIngester, "core_connector", "app-context", "log", "horizon-db", "core-db", "core-info", "ledger-state")
 }

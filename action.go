@@ -7,6 +7,10 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/zenazn/goji/web"
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/go/resources"
+	"gitlab.com/tokend/go/signcontrol"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/actions"
 	"gitlab.com/tokend/horizon/cache"
 	"gitlab.com/tokend/horizon/db2"
@@ -17,10 +21,6 @@ import (
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/toid"
-	"gitlab.com/tokend/go/doorman"
-	"gitlab.com/tokend/go/resources"
-	"gitlab.com/tokend/go/signcontrol"
-	"gitlab.com/tokend/go/xdr"
 )
 
 // Action is the "base type" for all actions in horizon.  It provides
@@ -114,7 +114,7 @@ func (action *Action) isAllowed(ownerOfData string) {
 // CoreQ provides access to queries that access the stellar core database.
 func (action *Action) CoreQ() core.QInterface {
 	if action.cq == nil {
-		action.cq = &core.Q{Repo: action.App.CoreRepo(action.Ctx)}
+		action.cq = &core.Q{Repo: action.App.CoreRepoLogged(&action.Log.Entry)}
 	}
 	return action.cq
 }
@@ -123,7 +123,7 @@ func (action *Action) CoreQ() core.QInterface {
 // horizon's database.
 func (action *Action) HistoryQ() history.QInterface {
 	if action.hq == nil {
-		action.hq = &history.Q{Repo: action.App.HistoryRepo(action.Ctx)}
+		action.hq = &history.Q{Repo: action.App.HistoryRepoLogged(&action.Log.Entry)}
 	}
 
 	return action.hq
@@ -148,7 +148,7 @@ func (action *Action) GetPagingParams() (cursor string, order string, limit uint
 
 	if cursor == "now" {
 		tid := toid.ID{
-			LedgerSequence:   ledger.CurrentState().HistoryLatest,
+			LedgerSequence:   ledger.CurrentState().History.Latest,
 			TransactionOrder: toid.TransactionMask,
 			OperationOrder:   toid.OperationMask,
 		}
@@ -158,7 +158,7 @@ func (action *Action) GetPagingParams() (cursor string, order string, limit uint
 	return
 }
 
-func (action *Action) GetPagingParamsV2 () (page uint64, limit uint64) {
+func (action *Action) GetPagingParamsV2() (page uint64, limit uint64) {
 	if action.Err != nil {
 		return
 	}
@@ -268,7 +268,7 @@ func (action *Action) ValidateCursorWithinHistory() {
 		return
 	}
 
-	elder := toid.New(ledger.CurrentState().HistoryElder, 0, 0)
+	elder := toid.New(ledger.CurrentState().History.OldestOnStart, 0, 0)
 
 	if cursor <= elder.ToInt64() {
 		action.Err = &problem.BeforeHistory
@@ -285,8 +285,8 @@ func (action *Action) EnsureHistoryFreshness() {
 		ls := ledger.CurrentState()
 		err := problem.StaleHistory
 		err.Extras = map[string]interface{}{
-			"history_latest_ledger": ls.HistoryLatest,
-			"core_latest_ledger":    ls.CoreLatest,
+			"history_latest_ledger": ls.History.Latest,
+			"core_latest_ledger":    ls.Core.Latest,
 		}
 		action.Err = &err
 	}

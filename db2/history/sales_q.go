@@ -48,7 +48,7 @@ type SalesQ interface {
 	// Promotions - filters promotions only
 	Promotions() SalesQ
 	// PageV2 - (limit/offset)-based paging params
-	PageV2 (page db2.PageQueryV2) SalesQ
+	PageV2(page db2.PageQueryV2) SalesQ
 }
 
 type saleQ struct {
@@ -242,7 +242,7 @@ func (q *saleQ) Page(page db2.PageQuery) SalesQ {
 	return q
 }
 
-func (q *saleQ) PageV2 (page db2.PageQueryV2) SalesQ {
+func (q *saleQ) PageV2(page db2.PageQueryV2) SalesQ {
 	if q.Err != nil {
 		return q
 	}

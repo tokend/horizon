@@ -3,11 +3,11 @@ package horizon
 import (
 	"strings"
 
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/charts"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
-	"gitlab.com/tokend/go/amount"
 )
 
 type ChartsAction struct {

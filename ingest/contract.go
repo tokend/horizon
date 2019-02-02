@@ -6,9 +6,9 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/go/xdr"
 )
 
 func contractCreate(is *Session, entry *xdr.LedgerEntry) error {

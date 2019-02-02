@@ -6,8 +6,8 @@ import (
 	"database/sql/driver"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/regources"
 )
 
@@ -27,6 +27,8 @@ type ReviewableRequestDetails struct {
 	PromotionUpdate          *PromotionUpdateRequest   `json:"promotion_update"`
 	Invoice                  *InvoiceRequest           `json:"invoice"`
 	Contract                 *ContractRequest          `json:"contract"`
+	AtomicSwapBidCreation    *AtomicSwapBidCreation    `json:"atomic_swap_bid_creation"`
+	AtomicSwap               *AtomicSwap               `json:"atomic_swap"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -82,8 +84,6 @@ type WithdrawalRequest struct {
 	FixedFee               string                 `json:"fixed_fee"`
 	PercentFee             string                 `json:"percent_fee"`
 	ExternalDetails        map[string]interface{} `json:"external_details"`
-	DestAssetCode          string                 `json:"dest_asset_code"`
-	DestAssetAmount        string                 `json:"dest_asset_amount"`
 	ReviewerDetails        map[string]interface{} `json:"reviewer_details"`
 	PreConfirmationDetails map[string]interface{} `json:"pre_confirmation_details"`
 }
@@ -99,7 +99,6 @@ type SaleRequest struct {
 	QuoteAssets         []regources.SaleQuoteAsset `json:"quote_assets"`
 	SaleType            xdr.SaleType               `json:"sale_type"`
 	BaseAssetForHardCap string                     `json:"base_asset_for_hard_cap"`
-	State               xdr.SaleState              `json:"state"`
 }
 
 type LimitsUpdateRequest struct {
@@ -153,4 +152,17 @@ type UpdateSaleEndTimeRequest struct {
 type PromotionUpdateRequest struct {
 	SaleID           uint64      `json:"sale_id"`
 	NewPromotionData SaleRequest `json:"new_promotion_data"`
+}
+
+type AtomicSwapBidCreation struct {
+	BaseBalance string                 `json:"base_balance"`
+	BaseAmount  uint64                 `json:"base_amount"`
+	Details     map[string]interface{} `json:"details"`
+	QuoteAssets []regources.AssetPrice `json:"quote_assets"`
+}
+
+type AtomicSwap struct {
+	BidID      uint64 `json:"bid_id"`
+	BaseAmount uint64 `json:"base_amount"`
+	QuoteAsset string `json:"quote_asset"`
 }

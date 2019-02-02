@@ -52,4 +52,4 @@ var selectExternalSystemAccountIDs = sq.Select(
 	"p.expires_at as pool_entry_expires_at").
 	From("external_system_account_id esa").
 	LeftJoin("external_system_account_id_pool p on (p.account_id = esa.account_id AND " +
-	"p.external_system_type = esa.external_system_type)")
+		"p.external_system_type = esa.external_system_type)")

@@ -87,6 +87,8 @@ func (is *Session) operation() error {
 		return errors.Wrap(err, "failed to process operation changes")
 	}
 
+	is.Cursor.OperationSourceAccount()
+
 	state, operationIdentifier := getStateIdentifier(is.Cursor.OperationType(), is.Cursor.Operation(), is.Cursor.OperationResult())
 	err = is.Ingestion.Operation(
 		is.Cursor.OperationID(),
@@ -127,11 +129,6 @@ func (is *Session) operation() error {
 		err = is.processManageOfferLedgerChanges(uint64(is.Cursor.Operation().Body.MustManageOfferOp().OfferId))
 		if err != nil {
 			return errors.Wrap(err, "failed to process manage offer ledger changes")
-		}
-
-		err = is.processCreateMatchedOffer(op, opResult)
-		if err != nil {
-			return errors.Wrap(err, "failed to create matched offer")
 		}
 	case xdr.OperationTypeReviewRequest:
 		err = is.processReviewRequest(

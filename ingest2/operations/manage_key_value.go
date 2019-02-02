@@ -1,0 +1,58 @@
+package operations
+
+import (
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
+)
+
+type manageKeyValueOpHandler struct {
+}
+
+// Details returns details about manage key value operation
+func (h *manageKeyValueOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
+) (history2.OperationDetails, error) {
+	manageKVOp := op.Body.MustManageKeyValueOp()
+
+	var value *regources.KeyValueEntryValue
+	if manageKVOp.Action.Action == xdr.ManageKvActionPut {
+		valueForPtr := manageKVOp.Action.MustValue()
+		value = &regources.KeyValueEntryValue{
+			Type: valueForPtr.Type,
+		}
+
+		switch valueForPtr.Type {
+		case xdr.KeyValueEntryTypeUint32:
+			value.U32 = new(uint32)
+			*value.U32 = uint32(*valueForPtr.Ui32Value)
+		case xdr.KeyValueEntryTypeString:
+			value.Str = new(string)
+			*value.Str = string(*valueForPtr.StringValue)
+		case xdr.KeyValueEntryTypeUint64:
+			value.U64 = new(uint64)
+			*value.U64 = uint64(*valueForPtr.Ui64Value)
+		default:
+			return history2.OperationDetails{}, errors.From(errors.New("unexpected key value value type"), logan.F{
+				"type": valueForPtr.Type.ShortString(),
+			})
+		}
+	}
+
+	return history2.OperationDetails{
+		Type: xdr.OperationTypeManageKeyValue,
+		ManageKeyValue: &history2.ManageKeyValueDetails{
+			Key:    string(manageKVOp.Key),
+			Action: manageKVOp.Action.Action,
+			Value:  value,
+		},
+	}, nil
+}
+
+//ParticipantsEffects - returns source of the operation
+func (h *manageKeyValueOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
+	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+) ([]history2.ParticipantEffect, error) {
+	return []history2.ParticipantEffect{source}, nil
+}

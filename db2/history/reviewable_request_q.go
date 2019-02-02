@@ -4,9 +4,9 @@ import (
 	"time"
 
 	sq "github.com/lann/squirrel"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/sqx"
-	"gitlab.com/tokend/go/xdr"
 )
 
 // ReviewableRequestQI - provides methods to operate reviewable request
@@ -99,6 +99,10 @@ type ReviewableRequestQI interface {
 	KYCByMaskNotSet(mask int64) ReviewableRequestQI
 	// KYCByAccountTypeToSet - filters update KYC requests by account type which must be set.
 	KYCByAccountTypeToSet(accountTypeToSet xdr.AccountType) ReviewableRequestQI
+
+	// Atomic swap
+	// ASwapByBidID - filters atomic swap requests by bid id
+	ASwapByBidID(bidID int64) ReviewableRequestQI
 }
 
 type ReviewableRequestQ struct {
@@ -469,6 +473,15 @@ func (q *ReviewableRequestQ) UpdateInvoicesStates(state ReviewableRequestState,
 
 	_, err := q.parent.Exec(query)
 	return err
+}
+
+func (q *ReviewableRequestQ) ASwapByBidID(bidID int64) ReviewableRequestQI {
+	if q.Err != nil {
+		return q
+	}
+
+	q.sql = q.sql.Where("details->'atomic_swap'->>'bid_id' = ?", bidID)
+	return q
 }
 
 // KYC

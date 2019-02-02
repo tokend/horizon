@@ -1,0 +1,53 @@
+package storage
+
+import (
+	"github.com/cheekybits/genny/generic"
+	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2"
+)
+
+//go:generate genny -in=$GOFILE -out=tx_batch_insert.go gen "valueType=history2.Transaction"
+//go:generate genny -in=$GOFILE -out=participant_effect_batch_insert.go gen "valueType=history2.ParticipantEffect"
+//go:generate genny -in=$GOFILE -out=ledger_changes_batch_insert.go gen "valueType=history2.LedgerChanges"
+//go:generate genny -in=$GOFILE -out=operation_details_batch_insert.go gen "valueType=history2.Operation"
+
+type valueType generic.Type
+
+type valueTypeConvertToValues func(row valueType) []interface{}
+
+func valueTypeBatchInsert(repo *db2.Repo, rows []valueType, tableName string, columns []string, converter valueTypeConvertToValues) error {
+	if len(rows) == 0 {
+		return nil
+	}
+
+	sql := sq.Insert(tableName).Columns(columns...)
+
+	paramsInQueue := 0
+	for _, row := range rows {
+		paramsInQueue += len(columns)
+		if paramsInQueue > maxPostgresParams {
+			_, err := repo.Exec(sql)
+			if err != nil {
+				return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
+			}
+
+			sql = sq.Insert(tableName).Columns(columns...)
+			paramsInQueue = 0
+		}
+
+		sql = sql.Values(converter(row)...)
+	}
+
+	if paramsInQueue == 0 {
+		return nil
+	}
+
+	_, err := repo.Exec(sql)
+	if err != nil {
+		return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
+	}
+
+	return nil
+}

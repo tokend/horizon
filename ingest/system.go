@@ -34,15 +34,15 @@ func (i *System) newTickSession() *Session {
 		ls    = ledger.CurrentState()
 	)
 
-	if ls.HistoryLatest == 0 {
-		start = ls.CoreElder
+	if ls.History.Latest == 0 {
+		start = ls.Core.OldestOnStart
 	} else {
-		start = ls.HistoryLatest + 1
+		start = ls.History.Latest + 1
 	}
 
-	end := ls.CoreLatest
+	end := ls.Core.Latest
 
-	return NewSession(ls.HistoryElder > 1 || ls.CoreElder > 1, start, end, i)
+	return NewSession(ls.History.OldestOnStart > 1 || ls.Core.OldestOnStart > 1, start, end, i)
 }
 
 // run causes the importer to check stellar-core to see if we can import new
@@ -51,7 +51,7 @@ func (i *System) runOnce() {
 	defer func() {
 		if rec := recover(); rec != nil {
 			err := errors.FromPanic(rec)
-			log.Errorf("import session panicked: %s", err)
+			log.WithField("service", "ingest_v1").WithError(err).WithStack(err).Error("Import session paniced")
 		}
 	}()
 
@@ -82,14 +82,14 @@ func (i *System) runOnce() {
 	}
 
 	// 2.
-	if ls.HistoryLatest == 0 {
+	if ls.History.Latest == 0 {
 		log.Infof(
 			"history db is empty, starting ingestion from ledger %d",
 			is.Cursor.FirstLedger,
 		)
 	}
 
-	if is.Cursor.FirstLedger != ls.CoreElder {
+	if is.Cursor.FirstLedger != ls.Core.OldestOnStart {
 		err := i.validateLedgerChain(is.Cursor.FirstLedger)
 		if err != nil {
 			log.

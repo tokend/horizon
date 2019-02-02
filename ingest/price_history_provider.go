@@ -7,8 +7,8 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/ingest/ingestion"
+	"gitlab.com/tokend/horizon/log"
 )
 
 type assetPairPriceKey struct {

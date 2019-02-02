@@ -6,11 +6,9 @@ import (
 	"fmt"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/go/xdr"
 )
 
 // ForOperation returns all the participating accounts from the
@@ -66,9 +64,9 @@ func ForOperation(
 			result = append(result, Participant{manageBalanceOp.Destination, nil, nil})
 		}
 	case xdr.OperationTypeManageAsset:
-	// the only direct participant is the source_accountWWW
+		// the only direct participant is the source_accountWWW
 	case xdr.OperationTypeManageLimits:
-	// the only direct participant is the source_account, but I'm not sure
+		// the only direct participant is the source_account, but I'm not sure
 	case xdr.OperationTypeDirectDebit:
 		debitOp := op.Body.MustDirectDebitOp()
 		paymentOp := debitOp.PaymentOp
@@ -106,9 +104,9 @@ func ForOperation(
 		manageContractOp := op.Body.MustManageContractRequestOp()
 		switch manageContractOp.Details.Action {
 		case xdr.ManageContractRequestActionCreate:
-			result = append(result, Participant{manageContractOp.Details.ContractRequest.Customer,
+			result = append(result, Participant{manageContractOp.Details.MustCreateContractRequest().ContractRequest.Customer,
 				nil, nil})
-			result = append(result, Participant{manageContractOp.Details.ContractRequest.Escrow,
+			result = append(result, Participant{manageContractOp.Details.MustCreateContractRequest().ContractRequest.Escrow,
 				nil, nil})
 		case xdr.ManageContractRequestActionRemove:
 			sourceParticipant = nil
@@ -117,13 +115,40 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeReviewRequest:
 		request := getReviewableRequestByID(uint64(op.Body.MustReviewRequestOp().RequestId), ledgerChanges)
-		if request != nil && sourceParticipant.AccountID.Address() != request.Requestor.Address() {
+		if request == nil || sourceParticipant.AccountID.Address() == request.Requestor.Address() {
+			break
+		}
+
+		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeAtomicSwap.ShortString() {
 			result = append(result, Participant{
 				AccountID: request.Requestor,
 				BalanceID: nil,
 				Details:   nil,
 			})
+			break
 		}
+
+		extendedResult, ok := opResult.MustReviewRequestResult().GetSuccess()
+		if !ok {
+			break
+		}
+
+		atomicSwapExtendedResult, ok := extendedResult.TypeExt.GetASwapExtended()
+		if !ok {
+			break
+		}
+
+		result = append(result, Participant{
+			AccountID: atomicSwapExtendedResult.BidOwnerId,
+			BalanceID: &atomicSwapExtendedResult.BidOwnerBaseBalanceId,
+			Details:   nil,
+		})
+
+		result = append(result, Participant{
+			AccountID: atomicSwapExtendedResult.PurchaserId,
+			BalanceID: &atomicSwapExtendedResult.PurchaserBaseBalanceId,
+			Details:   nil,
+		})
 	case xdr.OperationTypeCreatePreissuanceRequest:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateIssuanceRequest:
@@ -146,31 +171,6 @@ func ForOperation(
 		}
 
 		sourceParticipant = nil
-	case xdr.OperationTypePayout:
-		payoutOp := op.Body.MustPayoutOp()
-		payoutRes := opResult.MustPayoutResult().MustSuccess()
-		sourceParticipant.BalanceID = &payoutOp.SourceBalanceId
-		assetCode := obtainAssetCodeFromBalanceID(payoutOp.SourceBalanceId, ledgerChanges)
-		details := map[string]interface{}{}
-		details["payed_amount"] = amount.StringU(uint64(payoutRes.ActualPayoutAmount))
-		details["asset_code"] = assetCode
-		sourceParticipant.Details = &details
-
-		payoutResponses := payoutRes.PayoutResponses
-		if payoutResponses == nil {
-			break
-		}
-
-		for _, response := range payoutResponses {
-			receiverDetails := map[string]interface{}{}
-			receiverDetails["received_amount"] = amount.StringU(uint64(response.ReceivedAmount))
-			receiverDetails["asset_code"] = assetCode
-			result = append(result, Participant{
-				AccountID: response.ReceiverId,
-				BalanceID: &response.ReceiverBalanceId,
-				Details:   &receiverDetails,
-			})
-		}
 	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeBindExternalSystemAccountId:
@@ -198,6 +198,16 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeCreateAswapBidRequest:
+		// the only direct participant is the source_account
+	case xdr.OperationTypeCancelAswapBid:
+		// the only direct participant is the source_account
+	case xdr.OperationTypeCreateAswapRequest:
+		// FIXME !!!!!
+		//tx.SourceAccount
+		if sourceParticipant.AccountID.Address() != opResult.MustCreateASwapRequestResult().Success.BidOwnerId.Address() {
+			result = append(result, Participant{opResult.MustCreateASwapRequestResult().Success.BidOwnerId, nil, nil})
+		}
 	case xdr.OperationTypeCancelSaleRequest:
 		// the only direct participant is the source_account
 	default:
@@ -296,17 +306,6 @@ func ForTransaction(
 	return
 }
 
-func getAccountIDByBalance(q history.Q, balanceID string) (result *xdr.AccountId, err error) {
-	var targetBalance history.Balance
-	err = q.BalanceByID(&targetBalance, balanceID)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get balance by balance id")
-	}
-	var aid xdr.AccountId
-	aid.SetAddress(targetBalance.AccountID)
-	return &aid, nil
-}
-
 // dedupe remove any duplicate ids from `in`
 func dedupe(in []xdr.AccountId) (out []xdr.AccountId) {
 	set := map[string]xdr.AccountId{}
@@ -384,24 +383,4 @@ func forMeta(
 	}
 
 	return
-}
-
-func obtainAssetCodeFromBalanceID(balanceID xdr.BalanceId, changes xdr.LedgerEntryChanges) string {
-	for _, c := range changes {
-		if c.Type != xdr.LedgerEntryChangeTypeUpdated {
-			continue
-		}
-
-		data := c.MustUpdated().Data
-		if (data.Type != xdr.LedgerEntryTypeBalance) || (data.Balance == nil) {
-			continue
-		}
-
-		actualBalanceID := data.MustBalance().BalanceId
-		if actualBalanceID.AsString() == balanceID.AsString() {
-			return string(data.MustBalance().Asset)
-		}
-	}
-
-	return ""
 }

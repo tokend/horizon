@@ -1,9 +1,9 @@
 package resource
 
 import (
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/fees"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/regources"
 )
 

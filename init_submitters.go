@@ -5,22 +5,23 @@ import (
 
 	"time"
 
-	"gitlab.com/tokend/horizon/log"
-	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/db2/history"
-	hTxsub "gitlab.com/tokend/horizon/txsub"
 	"gitlab.com/distributed_lab/corer"
 	"gitlab.com/distributed_lab/txsub"
+	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/log"
+	hTxsub "gitlab.com/tokend/horizon/txsub"
 )
 
 func initSubmissionSystem(app *App) {
-	cq := &core.Q{Repo: app.CoreRepo(nil)}
-	hq := &history.Q{Repo: app.HistoryRepo(nil)}
+	logger := &log.WithField("service", "initSubmissionSystem").Entry
+	cq := &core.Q{Repo: app.CoreRepoLogged(logger)}
+	hq := &history.Q{Repo: app.HistoryRepoLogged(logger)}
 	coreConnector, err := corer.NewConnector(&http.Client{
 		Timeout: time.Duration(1 * time.Minute),
 	}, app.config.StellarCoreURL)
 	if err != nil {
-		log.WithField("service", initSubmissionSystem).WithError(err).Panic("Failed to create core connector")
+		logger.WithError(err).Panic("Failed to create core connector")
 	}
 	app.submitter = &txsub.System{
 		Pending:   txsub.NewDefaultSubmissionList(),
@@ -34,5 +35,5 @@ func initSubmissionSystem(app *App) {
 }
 
 func init() {
-	appInit.Add("txsub", initSubmissionSystem, "app-context", "log", "horizon-db", "core-db", "stellarCoreInfo")
+	appInit.Add("txsub", initSubmissionSystem, "app-context", "log", "horizon-db", "core-db", "core-info")
 }

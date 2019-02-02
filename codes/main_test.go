@@ -20,7 +20,7 @@ func TestCodes(t *testing.T) {
 	Convey("TransactionResultCode", t, func() {
 		for _, code := range xdr.TransactionResultCodeAll {
 			message := getMessage(code.ShortString())
-			if message == "" {
+			if message == "" || message == code.ShortString()  {
 				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
 			}
 		}
@@ -28,7 +28,7 @@ func TestCodes(t *testing.T) {
 	Convey("OperationResultCode", t, func() {
 		for _, code := range xdr.OperationResultCodeAll {
 			message := getMessage(code.ShortString())
-			if message == "" {
+			if message == "" || message == code.ShortString(){
 				t.Errorf("Expected message not to be blanck for %s", code.ShortString())
 			}
 		}
@@ -180,14 +180,26 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
-	Convey("Cancel sale request", t, func() {
-		for _, code := range xdr.CancelSaleCreationRequestResultCodeAll {
+	Convey("Create Atomic Swap Bid Creation Request", t, func() {
+		for _, code := range xdr.CreateASwapBidCreationRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
 
-	Convey("Payout", t, func() {
-		for _, code := range xdr.PayoutResultCodeAll {
+	Convey("Cancel atomic swap bid", t, func() {
+		for _, code := range xdr.CancelASwapBidResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Create Atomic Swap Request", t, func() {
+		for _, code := range xdr.CreateASwapRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Cancel Sale Request", t, func() {
+		for _, code := range xdr.CancelSaleCreationRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})

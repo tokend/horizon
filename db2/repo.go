@@ -6,11 +6,11 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/go-errors/errors"
 	"github.com/jmoiron/sqlx"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/log"
-	"golang.org/x/net/context"
 )
 
 // Begin binds this repo to a new transaction.
@@ -21,7 +21,7 @@ func (r *Repo) Begin() error {
 
 	tx, err := r.DB.Beginx()
 	if err != nil {
-		return errors.Wrap(err, 1)
+		return errors.Wrap(err, "failed to begin tx")
 	}
 	r.logBegin()
 
@@ -34,8 +34,7 @@ func (r *Repo) Begin() error {
 // source is currently within.
 func (r *Repo) Clone() *Repo {
 	return &Repo{
-		DB:  r.DB,
-		Ctx: r.Ctx,
+		DB: r.DB,
 	}
 }
 
@@ -91,7 +90,10 @@ func (r *Repo) GetRaw(dest interface{}, query string, args ...interface{}) error
 		return err
 	}
 
-	return errors.Wrap(err, 1)
+	return errors.Wrap(err, "failed to exec query", logan.F{
+		"query": query,
+		"args":  args,
+	})
 }
 
 // Exec runs `query`
@@ -138,7 +140,10 @@ func (r *Repo) ExecRaw(query string, args ...interface{}) (sql.Result, error) {
 		return nil, err
 	}
 
-	return nil, errors.Wrap(err, 1)
+	return nil, errors.Wrap(err, "failed to exec", logan.F{
+		"query": query,
+		"args":  args,
+	})
 }
 
 // NoRows returns true if the provided error resulted from a query that found
@@ -171,7 +176,10 @@ func (r *Repo) QueryRaw(query string, args ...interface{}) (*sqlx.Rows, error) {
 		return nil, err
 	}
 
-	return nil, errors.Wrap(err, 1)
+	return nil, errors.Wrap(err, "failed to query raw", logan.F{
+		"query": query,
+		"args":  args,
+	})
 }
 
 // Rollback rolls back the current transaction
@@ -215,7 +223,10 @@ func (r *Repo) SelectRaw(
 		return err
 	}
 
-	return errors.Wrap(err, 1)
+	return errors.Wrap(err, "failed to select raw", logan.F{
+		"query": query,
+		"args":  args,
+	})
 }
 
 // build converts the provided sql builder `b` into the sql and args to execute
@@ -224,7 +235,7 @@ func (r *Repo) build(b sq.Sqlizer) (sql string, args []interface{}, err error) {
 	sql, args, err = b.ToSql()
 
 	if err != nil {
-		err = errors.Wrap(err, 1)
+		err = errors.Wrap(err, "failed to build sql request")
 	}
 	return
 }
@@ -258,38 +269,37 @@ func (r *Repo) conn() Conn {
 	return r.DB
 }
 
+func (r *Repo) getLog() *logan.Entry {
+	if r.Log != nil {
+		return r.Log
+	}
+
+	return &log.DefaultLogger.Entry
+}
+
 func (r *Repo) log(typ string, start time.Time, query string, args []interface{}) {
 	dur := time.Since(start)
-	lEntry := log.
-		Ctx(r.logCtx()).
-		WithFields(log.F{
-			"args": args,
-			"sql":  query,
-			"dur":  dur.String(),
-		})
-	lEntry.Debugf("sql: %s", typ)
+
+	lEntry := r.getLog()
+	lEntry.WithFields(logan.F{
+		"args": args,
+		"sql":  query,
+		"dur":  dur.String(),
+	}).Debugf("sql: %s", typ)
 
 	if dur > log.SlowQueryBound {
-		lEntry.Warningf("too slow sql: %s", typ)
+		lEntry.WithField("type", typ).Warn("too slow sql")
 	}
 }
 
 func (r *Repo) logBegin() {
-	log.Ctx(r.logCtx()).Debug("sql: begin")
+	r.getLog().Debug("sql: begin")
 }
 
 func (r *Repo) logCommit() {
-	log.Ctx(r.logCtx()).Debug("sql: commit")
+	r.getLog().Debug("sql: commit")
 }
 
 func (r *Repo) logRollback() {
-	log.Ctx(r.logCtx()).Debug("sql: rollback")
-}
-
-func (r *Repo) logCtx() context.Context {
-	if r.Ctx != nil {
-		return r.Ctx
-	}
-
-	return context.Background()
+	r.getLog().Debug("sql: rollback")
 }

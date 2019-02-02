@@ -1,13 +1,14 @@
 package horizon
 
 import (
+	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource/reviewablerequest"
-	"gitlab.com/tokend/go/doorman"
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/regources"
 )
 
 // ReviewableRequestIndexAction renders slice of reviewable requests
@@ -20,12 +21,14 @@ type ReviewableRequestIndexAction struct {
 	Requestor          string
 	State              *int64
 	UpdatedAfter       *int64
-	Records            []history.ReviewableRequest
+	HistRecords        []history.ReviewableRequest
+	Records            []regources.ReviewableRequest
 
 	RequestTypes []xdr.ReviewableRequestType
 
-	PagingParams db2.PageQuery
-	Page         hal.Page
+	PagingParams  db2.PageQuery
+	Page          hal.Page
+	DisablePaging bool
 }
 
 // JSON is a method for actions.JSON
@@ -43,7 +46,11 @@ func (action *ReviewableRequestIndexAction) JSON() {
 }
 
 func (action *ReviewableRequestIndexAction) loadParams() {
+	action.DisablePaging = false
 	action.PagingParams = action.GetPageQuery()
+	if action.PagingParams.Cursor == "" {
+		action.DisablePaging = true
+	}
 	action.Reviewer = action.GetString("reviewer")
 	action.Requestor = action.GetString("requestor")
 	action.State = action.GetOptionalInt64("state")
@@ -92,6 +99,9 @@ func (action *ReviewableRequestIndexAction) checkAllowed() {
 }
 
 func (action *ReviewableRequestIndexAction) loadRecord() {
+	if !action.DisablePaging {
+		return
+	}
 	action.q = action.HistoryQ().ReviewableRequests()
 
 	if action.CustomFilter != nil {
@@ -118,9 +128,10 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 		action.q = action.q.UpdatedAfter(*action.UpdatedAfter)
 	}
 
-	action.q = action.q.ForTypes(action.RequestTypes).Page(action.PagingParams)
+	action.q = action.q.ForTypes(action.RequestTypes)
+
 	var err error
-	action.Records, err = action.q.Select()
+	action.HistRecords, err = action.q.Page(action.PagingParams).Select()
 	if err != nil {
 		action.Log.WithError(err).Error("failed to load reviewable requests")
 		action.Err = &problem.ServerError
@@ -129,8 +140,8 @@ func (action *ReviewableRequestIndexAction) loadRecord() {
 }
 
 func (action *ReviewableRequestIndexAction) loadPage() {
-	for i := range action.Records {
-		res, err := reviewablerequest.PopulateReviewableRequest(&action.Records[i])
+	for i := range action.HistRecords {
+		res, err := reviewablerequest.PopulateReviewableRequest(&action.HistRecords[i])
 		if err != nil {
 			action.Log.WithError(err).Error("Failed to populate reviewable request")
 			action.Err = &problem.ServerError

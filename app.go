@@ -7,8 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/garyburd/redigo/redis"
 	"github.com/rcrowley/go-metrics"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/tokend/horizon/cache"
 	"gitlab.com/tokend/horizon/config"
@@ -19,7 +20,6 @@ import (
 	"gitlab.com/tokend/horizon/ingest"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/log"
-	"gitlab.com/tokend/horizon/reap"
 	"gitlab.com/tokend/horizon/render/sse"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
@@ -33,14 +33,13 @@ var version = ""
 type App struct {
 	config         config.Config
 	web            *Web
+	webV2          *WebV2
 	historyQ       history.QInterface
 	coreQ          core.QInterface
 	ctx            context.Context
 	cancel         func()
-	redis          *redis.Pool
 	submitter      *txsub.System
 	ingester       *ingest.System
-	reaper         *reap.System
 	ticks          *time.Ticker
 	CoreInfo       *corer.Info
 	horizonVersion string
@@ -81,6 +80,7 @@ func NewApp(config config.Config) (*App, error) {
 func (a *App) Serve() {
 
 	a.web.router.Compile()
+	http.Handle("/v2/", a.webV2.mux)
 	http.Handle("/", a.web.router)
 
 	addr := fmt.Sprintf(":%d", a.config.Port)
@@ -105,13 +105,7 @@ func (a *App) Serve() {
 
 	go a.run()
 
-	var err error
-	if a.config.TLSCert != "" {
-		err = srv.ListenAndServeTLS(a.config.TLSCert, a.config.TLSKey)
-	} else {
-		err = srv.ListenAndServe()
-	}
-
+	err := srv.ListenAndServe()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -141,16 +135,20 @@ func (a *App) HistoryQ() history.QInterface {
 	return a.historyQ
 }
 
-// CoreRepo returns a new repo that loads data from the stellar core
-// database. The returned repo is bound to `ctx`.
-func (a *App) CoreRepo(ctx context.Context) *db2.Repo {
-	return &db2.Repo{DB: a.coreQ.GetRepo().DB, Ctx: ctx}
+// CoreRepoLogged returns a new repo that loads data from the core database.
+func (a *App) CoreRepoLogged(log *logan.Entry) *db2.Repo {
+	return &db2.Repo{
+		DB:  a.coreQ.GetRepo().DB,
+		Log: log,
+	}
 }
 
-// HistoryRepo returns a new repo that loads data from the horizon database. The
-// returned repo is bound to `ctx`.
-func (a *App) HistoryRepo(ctx context.Context) *db2.Repo {
-	return &db2.Repo{DB: a.historyQ.GetRepo().DB, Ctx: ctx}
+// HistoryRepoLogged returns a new repo that loads data from the horizon database.
+func (a *App) HistoryRepoLogged(log *logan.Entry) *db2.Repo {
+	return &db2.Repo{
+		DB:  a.historyQ.GetRepo().DB,
+		Log: log,
+	}
 }
 
 // IsHistoryStale returns true if the latest history ledger is more than
@@ -161,62 +159,24 @@ func (a *App) IsHistoryStale() bool {
 	}
 
 	ls := ledger.CurrentState()
-	return (ls.CoreLatest - ls.HistoryLatest) > int32(a.config.StaleThreshold)
+	return (ls.Core.Latest - ls.History.Latest) > int32(a.config.StaleThreshold)
 }
 
-// UpdateLedgerState triggers a refresh of several metrics gauges, such as open
-// db connections and ledger state
-func (a *App) UpdateLedgerState() {
-	var err error
-	var next ledger.State
-
-	err = a.CoreQ().LatestLedger(&next.CoreLatest)
-	if err != nil {
-		goto Failed
-	}
-
-	err = a.CoreQ().ElderLedger(&next.CoreElder)
-	if err != nil {
-		goto Failed
-	}
-
-	err = a.HistoryQ().LatestLedger(&next.HistoryLatest)
-	if err != nil {
-		goto Failed
-	}
-
-	err = a.HistoryQ().ElderLedger(&next.HistoryElder)
-	if err != nil {
-		goto Failed
-	}
-
-	err = ledger.SetState(next)
-	if err != nil {
-		log.WithField("err", err.Error()).Error("core is hanging")
-	}
-
-	return
-
-Failed:
-	log.WithStack(err).
-		WithField("err", err.Error()).
-		Error("failed to load ledger state")
-
-}
-
-// UpdateStellarCoreInfo updates the value of coreVersion and networkPassphrase
+// UpdateCoreInfo updates the value of coreVersion and networkPassphrase
 // from the Stellar core API.
-func (a *App) UpdateStellarCoreInfo() {
+func (a *App) UpdateCoreInfo() error {
 	if a.config.StellarCoreURL == "" {
-		return
+		return nil
 	}
 
 	var err error
 	a.CoreInfo, err = a.CoreConnector.GetCoreInfo()
 	if err != nil {
 		log.WithField("service", "core-info").WithError(err).Error("could not load stellar-core info")
-		return
+		return errors.Wrap(err, "could not load stellar-core info")
 	}
+
+	return nil
 }
 
 // UpdateMetrics triggers a refresh of several metrics gauges, such as open
@@ -224,19 +184,18 @@ func (a *App) UpdateStellarCoreInfo() {
 func (a *App) UpdateMetrics() {
 	a.goroutineGauge.Update(int64(runtime.NumGoroutine()))
 	ls := ledger.CurrentState()
-	a.historyLatestLedgerGauge.Update(int64(ls.HistoryLatest))
-	a.historyElderLedgerGauge.Update(int64(ls.HistoryElder))
-	a.coreLatestLedgerGauge.Update(int64(ls.CoreLatest))
-	a.coreElderLedgerGauge.Update(int64(ls.CoreElder))
+	a.historyLatestLedgerGauge.Update(int64(ls.History.Latest))
+	a.historyElderLedgerGauge.Update(int64(ls.History.OldestOnStart))
+	a.coreLatestLedgerGauge.Update(int64(ls.Core.Latest))
+	a.coreElderLedgerGauge.Update(int64(ls.Core.OldestOnStart))
 
 	//a.horizonConnGauge.Update(int64(a.historyQ.Repo.DB.Stats().OpenConnections))
 	//a.coreConnGauge.Update(int64(a.coreQ.Repo.DB.Stats().OpenConnections))
 }
 
-// DeleteUnretainedHistory forwards to the app's reaper.  See
-// `reap.DeleteUnretainedHistory` for details
-func (a *App) DeleteUnretainedHistory() error {
-	return a.reaper.DeleteUnretainedHistory()
+// UpdateWebV2Metrics updates the metrics for the web_v2 requests
+func (a *App) UpdateWebV2Metrics(requestDuration time.Duration, responseStatus int) {
+	a.webV2.metrics.Update(requestDuration, responseStatus)
 }
 
 // Tick triggers horizon to update all of it's background processes such as
@@ -245,17 +204,15 @@ func (a *App) Tick() {
 	var wg sync.WaitGroup
 	log.Debug("ticking app")
 	// update ledger state and stellar-core info in parallel
-	wg.Add(2)
-	go func() { a.UpdateLedgerState(); wg.Done() }()
-	go func() { a.UpdateStellarCoreInfo(); wg.Done() }()
+	wg.Add(1)
+	go func() { a.UpdateCoreInfo(); wg.Done() }()
 	wg.Wait()
 
 	if a.ingester != nil {
 		go a.ingester.Tick()
 	}
 
-	wg.Add(2)
-	go func() { a.reaper.Tick(); wg.Done() }()
+	wg.Add(1)
 	go func() { a.submitter.Tick(a.ctx); wg.Done() }()
 	wg.Wait()
 
