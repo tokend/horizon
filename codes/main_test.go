@@ -38,11 +38,6 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
-	Convey("PaymentResultCode", t, func() {
-		for _, code := range xdr.PaymentResultCodeAll {
-			checkCode(t, code)
-		}
-	})
 	Convey("SetOptionsResultCode", t, func() {
 		for _, code := range xdr.SetOptionsResultCodeAll {
 			checkCode(t, code)
@@ -81,12 +76,6 @@ func TestCodes(t *testing.T) {
 
 	Convey("ManageLimits", t, func() {
 		for _, code := range xdr.ManageLimitsResultCodeAll {
-			checkCode(t, code)
-		}
-	})
-
-	Convey("DirectDebit", t, func() {
-		for _, code := range xdr.DirectDebitResultCodeAll {
 			checkCode(t, code)
 		}
 	})

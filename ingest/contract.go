@@ -121,9 +121,7 @@ func convertContract(rawContract xdr.ContractEntry) history.Contract {
 	_ = json.Unmarshal([]byte(string(rawContract.InitialDetails)), &initialDetails)
 
 	var customerDetails map[string]interface{}
-	if rawContract.Ext.V == xdr.LedgerVersionAddCustomerDetailsToContract {
-		_ = json.Unmarshal([]byte(string(rawContract.Ext.MustCustomerDetails())), &customerDetails)
-	}
+	_ = json.Unmarshal([]byte(string(rawContract.CustomerDetails)), &customerDetails)
 
 	var invoices []int64
 	for _, item := range rawContract.InvoiceRequestsIDs {
