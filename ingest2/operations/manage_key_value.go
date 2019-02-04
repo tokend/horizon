@@ -16,10 +16,10 @@ func (h *manageKeyValueOpHandler) Details(op rawOperation, _ xdr.OperationResult
 ) (history2.OperationDetails, error) {
 	manageKVOp := op.Body.MustManageKeyValueOp()
 
-	var value *regources.KeyValue
+	var value *regources.KeyValueEntryValue
 	if manageKVOp.Action.Action == xdr.ManageKvActionPut {
 		valueForPtr := manageKVOp.Action.MustValue()
-		value = &regources.KeyValue{
+		value = &regources.KeyValueEntryValue{
 			Type: valueForPtr.Type,
 		}
 

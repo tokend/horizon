@@ -119,9 +119,9 @@ type UpdateAccountRoleDetails struct {
 
 //ManageKeyValueDetails - details of ManageKeyValueOp
 type ManageKeyValueDetails struct {
-	Key    string              `json:"key"`
-	Action xdr.ManageKvAction  `json:"action"`
-	Value  *regources.KeyValue `json:"value,omitempty"`
+	Key    string                        `json:"key"`
+	Action xdr.ManageKvAction            `json:"action"`
+	Value  *regources.KeyValueEntryValue `json:"value,omitempty"`
 }
 
 //SetFeeDetails - details of SetFeeOp
@@ -249,15 +249,15 @@ type CreateIssuanceRequestDetails struct {
 
 //CreateSaleRequestDetails -details of corresponding op
 type CreateSaleRequestDetails struct {
-	RequestID         int64                      `json:"request_id"`
-	BaseAsset         string                     `json:"base_asset"`
-	DefaultQuoteAsset string                     `json:"default_quote_asset"`
-	StartTime         time.Time                  `json:"start_time"`
-	EndTime           time.Time                  `json:"end_time"`
-	SoftCap           regources.Amount           `json:"soft_cap"`
-	HardCap           regources.Amount           `json:"hard_cap"`
-	QuoteAssets       []regources.SaleQuoteAsset `json:"quote_assets"`
-	Details           regources.Details          `json:"details"`
+	RequestID         int64                  `json:"request_id"`
+	BaseAsset         string                 `json:"base_asset"`
+	DefaultQuoteAsset string                 `json:"default_quote_asset"`
+	StartTime         time.Time              `json:"start_time"`
+	EndTime           time.Time              `json:"end_time"`
+	SoftCap           regources.Amount       `json:"soft_cap"`
+	HardCap           regources.Amount       `json:"hard_cap"`
+	QuoteAssets       []regources.AssetPrice `json:"quote_assets"`
+	Details           regources.Details      `json:"details"`
 }
 
 //CheckSaleStateDetails - details of corresponding op
@@ -268,11 +268,11 @@ type CheckSaleStateDetails struct {
 
 //CreateAtomicSwapBidRequestDetails - details of corresponding op
 type CreateAtomicSwapBidRequestDetails struct {
-	Amount         regources.Amount           `json:"amount"`
-	BaseBalance    string                     `json:"base_balance"`
-	QuoteAssets    []regources.SaleQuoteAsset `json:"quote_assets"`
-	Details        regources.Details          `json:"details"`
-	RequestDetails RequestDetails             `json:"request_details"`
+	Amount         regources.Amount       `json:"amount"`
+	BaseBalance    string                 `json:"base_balance"`
+	QuoteAssets    []regources.AssetPrice `json:"quote_assets"`
+	Details        regources.Details      `json:"details"`
+	RequestDetails RequestDetails         `json:"request_details"`
 }
 
 //CreateAtomicSwapRequestDetails - details of corresponding op

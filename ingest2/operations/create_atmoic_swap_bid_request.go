@@ -17,11 +17,11 @@ func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 
 	aSwapBidRequest := op.Body.MustCreateASwapBidCreationRequestOp().Request
 
-	quoteAssets := make([]regources.SaleQuoteAsset, 0, len(aSwapBidRequest.QuoteAssets))
+	quoteAssets := make([]regources.AssetPrice, 0, len(aSwapBidRequest.QuoteAssets))
 	for _, quoteAsset := range aSwapBidRequest.QuoteAssets {
-		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
-			QuoteAsset: string(quoteAsset.QuoteAsset),
-			Price:      regources.Amount(quoteAsset.Price),
+		quoteAssets = append(quoteAssets, regources.AssetPrice{
+			Asset: string(quoteAsset.QuoteAsset),
+			Price: regources.Amount(quoteAsset.Price),
 		})
 	}
 
