@@ -26,7 +26,7 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 	case xdr.ReviewableRequestTypeCreateAmlAlert:
 		return newAmlAlertRequest(request.ID, *request.Details.AmlAlert)
 	case xdr.ReviewableRequestTypeChangeRole:
-		return newUpdateKYCRequest(request.ID, *request.Details.ChangeRole)
+		return newChangeRoleRequest(request.ID, *request.Details.ChangeRole)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		return newUpdateSaleDetailsRequest(request.ID, *request.Details.UpdateSaleDetails)
 	case xdr.ReviewableRequestTypeCreateAsset:
@@ -171,7 +171,7 @@ func newSaleRequest(id int64, details history2.SaleRequest) *regources.SaleReque
 		},
 	}
 }
-func newUpdateKYCRequest(id int64, details history2.ChangeRoleRequest) *regources.ChangeRoleRequest {
+func newChangeRoleRequest(id int64, details history2.ChangeRoleRequest) *regources.ChangeRoleRequest {
 	return &regources.ChangeRoleRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsChangeRole),
 		Attributes: regources.ChangeRoleRequestAttrs{

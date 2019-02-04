@@ -53,7 +53,7 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	case xdr.OperationTypeCreateAmlAlert:
 		return newCreateAMLAlertRequestOp(op.ID, *op.Details.CreateAMLAlertRequest)
 	case xdr.OperationTypeCreateChangeRoleRequest:
-		return newChangeRoleRequest(op.ID, *op.Details.CreateChangeRoleRequest)
+		return newChangeRoleRequestOp(op.ID, *op.Details.CreateChangeRoleRequest)
 	case xdr.OperationTypePaymentV2:
 		newPaymentOp(op.ID, *op.Details.Payment)
 	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
@@ -182,7 +182,7 @@ func newManageExternalSystemPool(id int64, details history2.ManageExternalSystem
 }
 
 // newChangeRoleRequest - creates new instance of CreateKYCRequestOp
-func newChangeRoleRequest(id int64, details history2.CreateChangeRoleRequestDetails,
+func newChangeRoleRequestOp(id int64, details history2.CreateChangeRoleRequestDetails,
 ) *regources.CreateChangeRoleRequest {
 	return &regources.CreateChangeRoleRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeCreateChangeRoleRequest),
