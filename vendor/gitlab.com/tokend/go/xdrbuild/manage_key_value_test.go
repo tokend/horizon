@@ -18,8 +18,8 @@ func TestManageKeyValueOp_XDR(t *testing.T) {
 		xdrOp, err := op.XDR()
 		assert.NoError(t, err)
 		assert.Equal(t, xdr.ManageKvActionPut, xdrOp.Body.MustManageKeyValueOp().Action.Action)
-		assert.Equal(t, xdr.KeyValueEntryTypeUint32, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Type)
-		assert.Equal(t, xdr.Uint32(v), xdrOp.Body.MustManageKeyValueOp().Action.MustValue().MustUi32Value())
+		assert.Equal(t, xdr.KeyValueEntryTypeUint32, xdrOp.Body.MustManageKeyValueOp().Action.Value.Type)
+		assert.Equal(t, xdr.Uint32(v), xdrOp.Body.MustManageKeyValueOp().Action.Value.MustUi32Value())
 	})
 	t.Run("valid with int64", func(t *testing.T) {
 		v := uint64(6)
@@ -31,8 +31,8 @@ func TestManageKeyValueOp_XDR(t *testing.T) {
 		xdrOp, err := op.XDR()
 		assert.NoError(t, err)
 		assert.Equal(t, xdr.ManageKvActionPut, xdrOp.Body.MustManageKeyValueOp().Action.Action)
-		assert.Equal(t, xdr.KeyValueEntryTypeUint64, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Type)
-		assert.Equal(t, xdr.Uint64(v), xdrOp.Body.MustManageKeyValueOp().Action.MustValue().MustUi64Value())
+		assert.Equal(t, xdr.KeyValueEntryTypeUint64, xdrOp.Body.MustManageKeyValueOp().Action.Value.Type)
+		assert.Equal(t, xdr.Uint64(v), xdrOp.Body.MustManageKeyValueOp().Action.Value.MustUi64Value())
 	})
 	t.Run("valid with string", func(t *testing.T) {
 		str := "TaskFaceValidation"
@@ -44,8 +44,8 @@ func TestManageKeyValueOp_XDR(t *testing.T) {
 		xdrOp, err := op.XDR()
 		assert.NoError(t, err)
 		assert.Equal(t, xdr.ManageKvActionPut, xdrOp.Body.MustManageKeyValueOp().Action.Action)
-		assert.Equal(t, xdr.KeyValueEntryTypeString, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().Type)
-		assert.Equal(t, str, xdrOp.Body.MustManageKeyValueOp().Action.MustValue().MustStringValue())
+		assert.Equal(t, xdr.KeyValueEntryTypeString, xdrOp.Body.MustManageKeyValueOp().Action.Value.Type)
+		assert.Equal(t, str, xdrOp.Body.MustManageKeyValueOp().Action.Value.MustStringValue())
 	})
 	t.Run("valid remove", func(t *testing.T) {
 		op := ManageKeyValueOp{

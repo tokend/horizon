@@ -76,5 +76,16 @@ func (op CreateWithdrawRequestOp) XDR() (*xdr.Operation, error) {
 		},
 	}
 
+	if op.AllTasks != nil {
+		var allTasksXDR xdr.Uint32
+		var allTasksXDRPointer *xdr.Uint32
+		allTasksXDR = xdr.Uint32(*op.AllTasks)
+		allTasksXDRPointer = &allTasksXDR
+		operation.Body.CreateWithdrawalRequestOp.AllTasks = allTasksXDRPointer
+		operation.Body.CreateWithdrawalRequestOp.Ext = xdr.CreateWithdrawalRequestOpExt{
+			V:        xdr.LedgerVersionEmptyVersion,
+		}
+	}
+
 	return operation, nil
 }

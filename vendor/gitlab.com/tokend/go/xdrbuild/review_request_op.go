@@ -52,7 +52,7 @@ type ReviewRequestOp struct {
 	Action        xdr.ReviewRequestOpAction
 	Details       ReviewRequestDetails
 	Reason        string
-	ReviewDetails *ReviewDetails
+	ReviewDetails *xdr.ReviewDetails
 }
 
 type WithdrawalDetails struct {
@@ -75,6 +75,9 @@ func (d ChangeRoleDetails) ReviewRequestDetails() xdr.ReviewRequestOpRequestDeta
 }
 
 func (op ReviewRequestOp) XDR() (*xdr.Operation, error) {
+	if op.ReviewDetails == nil {
+		op.ReviewDetails = &xdr.ReviewDetails{}
+	}
 	xdrop := &xdr.Operation{
 		Body: xdr.OperationBody{
 			Type: xdr.OperationTypeReviewRequest,
@@ -82,6 +85,11 @@ func (op ReviewRequestOp) XDR() (*xdr.Operation, error) {
 				RequestId: xdr.Uint64(op.ID),
 				Action:    op.Action,
 				Reason:    xdr.Longstring(op.Reason),
+				ReviewDetails: xdr.ReviewDetails{
+					TasksToAdd:      xdr.Uint32(op.ReviewDetails.TasksToAdd),
+					TasksToRemove:   xdr.Uint32(op.ReviewDetails.TasksToRemove),
+					ExternalDetails: op.ReviewDetails.ExternalDetails,
+				},
 			},
 		},
 	}
@@ -98,14 +106,6 @@ func (op ReviewRequestOp) XDR() (*xdr.Operation, error) {
 		xdrop.Body.ReviewRequestOp.RequestDetails = op.Details.ReviewRequestDetails()
 	}
 
-	if op.ReviewDetails != nil {
-		xdrop.Body.ReviewRequestOp.ReviewDetails = xdr.ReviewDetails{
-			TasksToAdd:      xdr.Uint32(op.ReviewDetails.TasksToAdd),
-			TasksToRemove:   xdr.Uint32(op.ReviewDetails.TasksToRemove),
-			ExternalDetails: op.ReviewDetails.ExternalDetails,
-		}
-
-	}
 
 	return xdrop, nil
 }

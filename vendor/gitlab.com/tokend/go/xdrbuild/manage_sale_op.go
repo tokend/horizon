@@ -24,6 +24,10 @@ type (
 		SaleID         uint64
 		NewSaleDetails SaleDetails
 	}
+	//UpdateSaleTime struct {
+	//	SaleID     uint64
+	//	NewEndTime time.Time
+	//}
 )
 
 func (u UpdateSaleDetails) Validate() error {
@@ -57,3 +61,29 @@ func (u UpdateSaleDetails) XDR() (*xdr.Operation, error) {
 
 	return op, nil
 }
+//
+//func (u UpdateSaleTime) Validate() error {
+//	return ValidateStruct(&u,
+//		Field(&u.NewEndTime, Required),
+//	)
+//}
+//
+//func (u UpdateSaleTime) XDR() (*xdr.Operation, error) {
+//	op := &xdr.Operation{
+//		Body: xdr.OperationBody{
+//			Type: xdr.OperationTypeManageSale,
+//			ManageSaleOp: &xdr.ManageSaleOp{
+//				SaleId: xdr.Uint64(u.SaleID),
+//				Data: xdr.ManageSaleOpData{
+//					Action: xdr.ManageSaleAction(xdr.ManageSaleActionCreateUpdateEndTimeRequest),
+//					UpdateSaleEndTimeData: &xdr.UpdateSaleEndTimeData{
+//						RequestId:  0,
+//						NewEndTime: xdr.Uint64(u.NewEndTime.Unix()),
+//					},
+//				},
+//			},
+//		},
+//	}
+//
+//	return op, nil
+//}

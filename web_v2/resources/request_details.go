@@ -11,29 +11,29 @@ import (
 // NewRequestDetails - returns new instance of reviewable request details
 func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 	switch request.RequestType {
-	case xdr.ReviewableRequestTypeAssetUpdate:
+	case xdr.ReviewableRequestTypeUpdateAsset:
 		return newAssetUpdateRequest(request.ID, *request.Details.AssetUpdate)
-	case xdr.ReviewableRequestTypePreIssuanceCreate:
+	case xdr.ReviewableRequestTypeCreatePreIssuance:
 		return newPreIssuanceRequest(request.ID, *request.Details.PreIssuanceCreate)
-	case xdr.ReviewableRequestTypeIssuanceCreate:
+	case xdr.ReviewableRequestTypeCreateIssuance:
 		return newIssuanceRequest(request.ID, *request.Details.IssuanceCreate)
-	case xdr.ReviewableRequestTypeWithdraw:
+	case xdr.ReviewableRequestTypeCreateWithdraw:
 		return newWithdrawalRequest(request.ID, *request.Details.Withdraw)
-	case xdr.ReviewableRequestTypeSale:
+	case xdr.ReviewableRequestTypeCreateSale:
 		return newSaleRequest(request.ID, *request.Details.Sale)
-	case xdr.ReviewableRequestTypeLimitsUpdate:
+	case xdr.ReviewableRequestTypeUpdateLimits:
 		return newLimitsUpdateRequest(request.ID, *request.Details.LimitsUpdate)
-	case xdr.ReviewableRequestTypeAmlAlert:
+	case xdr.ReviewableRequestTypeCreateAmlAlert:
 		return newAmlAlertRequest(request.ID, *request.Details.AmlAlert)
 	case xdr.ReviewableRequestTypeChangeRole:
 		return newUpdateKYCRequest(request.ID, *request.Details.ChangeRole)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		return newUpdateSaleDetailsRequest(request.ID, *request.Details.UpdateSaleDetails)
-	case xdr.ReviewableRequestTypeAssetCreate:
+	case xdr.ReviewableRequestTypeCreateAsset:
 		return newAssetCreateRequest(request.ID, *request.Details.AssetCreation)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
 		return newAtomicSwapBidRequest(request.ID, *request.Details.AtomicSwapBidCreation)
-	case xdr.ReviewableRequestTypeAtomicSwap:
+	case xdr.ReviewableRequestTypeCreateAtomicSwap:
 		return newAtomicSwapRequest(request.ID, *request.Details.AtomicSwap)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{

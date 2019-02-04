@@ -24,12 +24,13 @@ func TestCreateAsset(t *testing.T) {
 		}
 
 		got, err := op.XDR()
+		request := got.Body.ManageAssetOp.Request.CreateAssetCreationRequest
 		assert.NoError(t, err)
-		assert.Equal(t, op.AssetSigner, got.Body.ManageAssetOp.Request.CreateAssetCreationRequest.CreateAsset.PreissuedAssetSigner.Address())
-		assert.EqualValues(t, op.Policies, got.Body.ManageAssetOp.Request.CreateAssetCreationRequest.CreateAsset.Policies)
-		assert.EqualValues(t, op.MaxIssuanceAmount, got.Body.ManageAssetOp.Request.CreateAssetCreationRequest.CreateAsset.MaxIssuanceAmount)
-		assert.EqualValues(t, op.PreIssuanceAmount, got.Body.ManageAssetOp.Request.CreateAssetCreationRequest.CreateAsset.InitialPreissuedAmount)
-		assert.EqualValues(t, op.Code, got.Body.ManageAssetOp.Request.CreateAssetCreationRequest.CreateAsset.Code)
+		assert.Equal(t, op.AssetSigner, request.CreateAsset.PreissuedAssetSigner.Address())
+		assert.EqualValues(t, op.Policies, request.CreateAsset.Policies)
+		assert.EqualValues(t, op.MaxIssuanceAmount, request.CreateAsset.MaxIssuanceAmount)
+		assert.EqualValues(t, op.PreIssuanceAmount, request.CreateAsset.InitialPreissuedAmount)
+		assert.EqualValues(t, op.Code, request.CreateAsset.Code)
 
 	})
 
@@ -51,7 +52,6 @@ func TestCreateAsset(t *testing.T) {
 	})
 }
 func TestUpdateAsset(t *testing.T) {
-
 	t.Run("valid", func(t *testing.T) {
 		op := UpdateAsset{
 			Code:     "ETH",

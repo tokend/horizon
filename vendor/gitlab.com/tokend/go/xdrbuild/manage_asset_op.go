@@ -109,6 +109,9 @@ func (ca UpdateAsset) XDR() (*xdr.Operation, error) {
 							Code:     xdr.AssetCode(ca.Code),
 							Details:  xdr.Longstring(details),
 							Policies: xdr.Uint32(ca.Policies),
+							Ext: xdr.AssetUpdateRequestExt{
+								V: xdr.LedgerVersionEmptyVersion,
+							},
 						},
 					},
 				},

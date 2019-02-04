@@ -131,14 +131,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		}
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		op := c.Operation().Body.MustCreateManageLimitsRequestOp()
-		limitsUpdateDetails, ok := op.ManageLimitsRequest.Ext.GetCreatorDetails()
-		if ok {
-			details["limits_manage_request_details"] = string(limitsUpdateDetails)
-		}
-		requestID, ok := op.Ext.GetRequestId()
-		if ok {
-			details["request_id"] = uint64(requestID)
-		}
+		details["limits_manage_request_details"] = string(op.ManageLimitsRequest.CreatorDetails)
+		details["request_id"] = uint64(op.RequestId)
 		details["limits_manage_request_document_hash"] = hex.EncodeToString(op.ManageLimitsRequest.DeprecatedDocumentHash[:])
 	case xdr.OperationTypeManageAssetPair:
 		op := c.Operation().Body.MustManageAssetPairOp()

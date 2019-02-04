@@ -70,6 +70,10 @@ func (mkv ManageKeyValueOp) XDR() (*xdr.Operation, error) {
 		}
 	}
 
+	if keyValueEntryValue == nil {
+		keyValueEntryValue = &xdr.KeyValueEntryValue{}
+	}
+
 	return &xdr.Operation{
 		Body: xdr.OperationBody{
 			Type: xdr.OperationTypeManageKeyValue,

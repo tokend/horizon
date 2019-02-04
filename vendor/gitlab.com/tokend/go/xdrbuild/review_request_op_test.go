@@ -34,7 +34,7 @@ func TestReviewRequestOp_XDR(t *testing.T) {
 	})
 
 	t.Run("approve with tasks", func(t *testing.T) {
-		reviewDetails := ReviewDetails{
+		reviewDetails := xdr.ReviewDetails{
 			TasksToAdd:      0,
 			TasksToRemove:   8,
 			ExternalDetails: "Request can be approved",
@@ -59,7 +59,7 @@ func TestReviewRequestOp_XDR(t *testing.T) {
 	})
 
 	t.Run("approve atomic swap with tasks", func(t *testing.T) {
-		reviewDetails := ReviewDetails{
+		reviewDetails := xdr.ReviewDetails{
 			TasksToAdd:      0,
 			TasksToRemove:   8,
 			ExternalDetails: "Request can be approved",
@@ -144,10 +144,11 @@ func TestReviewRequestOp_XDR(t *testing.T) {
 
 	t.Run("approve update kyc", func(t *testing.T) {
 		op := ReviewRequestOp{
-			ID:     1,
-			Hash:   fmt.Sprintf("%x", hash[:]),
-			Action: xdr.ReviewRequestOpActionApprove,
-			ReviewDetails: &ReviewDetails{
+			ID:      1,
+			Hash:    fmt.Sprintf("%x", hash[:]),
+			Action:  xdr.ReviewRequestOpActionApprove,
+			Details: &ChangeRoleDetails{},
+			ReviewDetails: &xdr.ReviewDetails{
 				TasksToAdd:    0,
 				TasksToRemove: 3,
 			},
@@ -167,11 +168,12 @@ func TestReviewRequestOp_XDR(t *testing.T) {
 
 	t.Run("reject update kyc", func(t *testing.T) {
 		op := ReviewRequestOp{
-			ID:     1,
-			Hash:   fmt.Sprintf("%x", hash[:]),
-			Action: xdr.ReviewRequestOpActionReject,
-			Reason: "yoba",
-			ReviewDetails: &ReviewDetails{
+			ID:      1,
+			Hash:    fmt.Sprintf("%x", hash[:]),
+			Action:  xdr.ReviewRequestOpActionReject,
+			Reason:  "yoba",
+			Details: &ChangeRoleDetails{},
+			ReviewDetails: &xdr.ReviewDetails{
 				TasksToAdd:    2,
 				TasksToRemove: 0,
 			},
