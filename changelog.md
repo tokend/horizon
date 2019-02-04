@@ -4,15 +4,15 @@
 
 ### Added
 
+* ingest handler for manage account rule and role operations
+
 ### Changed
 
-* Squashed ledger version;
+* Rename KYC request to change role
 
 ### Deprecated 
 
 ### Removed
-
-* Payment and Direct Debit Operations
 
 ### Fixed 
 

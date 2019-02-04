@@ -1,4 +1,4 @@
-// revision: 941f4d0faf1c8c09edb84d273066c6c0b65cac21
+// revision: 7f328ee2da4ea10324fccecef0bcb894efe957dd
 // branch:   feature/roles_rules
 // Package xdr is generated from:
 //
@@ -573,181 +573,83 @@ type ScpQuorumSet struct {
 	InnerSets  []ScpQuorumSet `json:"innerSets,omitempty"`
 }
 
-// AccountRuleResourceAssetExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceAssetExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceAssetExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceAssetExt
-func (u AccountRuleResourceAssetExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceAssetExt creates a new  AccountRuleResourceAssetExt.
-func NewAccountRuleResourceAssetExt(v LedgerVersion, value interface{}) (result AccountRuleResourceAssetExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceAsset is an XDR NestedStruct defines as:
+// RequestTypedResourceSale is an XDR NestedStruct defines as:
 //
 //   struct
 //        {
-//            AssetCode assetCode;
-//            uint64 assetType;
+//            uint64 type;
 //
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        }
 //
-type AccountRuleResourceAsset struct {
-	AssetCode AssetCode                   `json:"assetCode,omitempty"`
-	AssetType Uint64                      `json:"assetType,omitempty"`
-	Ext       AccountRuleResourceAssetExt `json:"ext,omitempty"`
+type RequestTypedResourceSale struct {
+	Type Uint64   `json:"type,omitempty"`
+	Ext  EmptyExt `json:"ext,omitempty"`
 }
 
-// AccountRuleResourceReviewableRequestSaleExt is an XDR NestedUnion defines as:
+// RequestTypedResource is an XDR Union defines as:
 //
-//   union switch (LedgerVersion v)
-//                    {
-//                    case EMPTY_VERSION:
-//                        void;
-//                    }
+//   union RequestTypedResource switch (ReviewableRequestType requestType)
+//    {
+//    case SALE:
+//        struct
+//        {
+//            uint64 type;
 //
-type AccountRuleResourceReviewableRequestSaleExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceReviewableRequestSaleExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceReviewableRequestSaleExt
-func (u AccountRuleResourceReviewableRequestSaleExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceReviewableRequestSaleExt creates a new  AccountRuleResourceReviewableRequestSaleExt.
-func NewAccountRuleResourceReviewableRequestSaleExt(v LedgerVersion, value interface{}) (result AccountRuleResourceReviewableRequestSaleExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceReviewableRequestSale is an XDR NestedStruct defines as:
+//            EmptyExt ext;
+//        } sale;
+//    default:
+//        EmptyExt ext;
+//    };
 //
-//   struct
-//                {
-//                    uint64 type;
-//
-//                    union switch (LedgerVersion v)
-//                    {
-//                    case EMPTY_VERSION:
-//                        void;
-//                    } ext;
-//                }
-//
-type AccountRuleResourceReviewableRequestSale struct {
-	Type Uint64                                      `json:"type,omitempty"`
-	Ext  AccountRuleResourceReviewableRequestSaleExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceReviewableRequestDetails is an XDR NestedUnion defines as:
-//
-//   union switch (ReviewableRequestType requestType)
-//            {
-//            case SALE:
-//                struct
-//                {
-//                    uint64 type;
-//
-//                    union switch (LedgerVersion v)
-//                    {
-//                    case EMPTY_VERSION:
-//                        void;
-//                    } ext;
-//                } sale;
-//            default:
-//                void;
-//            }
-//
-type AccountRuleResourceReviewableRequestDetails struct {
-	RequestType ReviewableRequestType                     `json:"requestType,omitempty"`
-	Sale        *AccountRuleResourceReviewableRequestSale `json:"sale,omitempty"`
+type RequestTypedResource struct {
+	RequestType ReviewableRequestType     `json:"requestType,omitempty"`
+	Sale        *RequestTypedResourceSale `json:"sale,omitempty"`
+	Ext         *EmptyExt                 `json:"ext,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u AccountRuleResourceReviewableRequestDetails) SwitchFieldName() string {
+func (u RequestTypedResource) SwitchFieldName() string {
 	return "RequestType"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceReviewableRequestDetails
-func (u AccountRuleResourceReviewableRequestDetails) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of RequestTypedResource
+func (u RequestTypedResource) ArmForSwitch(sw int32) (string, bool) {
 	switch ReviewableRequestType(sw) {
 	case ReviewableRequestTypeSale:
 		return "Sale", true
 	default:
-		return "", true
+		return "Ext", true
 	}
 }
 
-// NewAccountRuleResourceReviewableRequestDetails creates a new  AccountRuleResourceReviewableRequestDetails.
-func NewAccountRuleResourceReviewableRequestDetails(requestType ReviewableRequestType, value interface{}) (result AccountRuleResourceReviewableRequestDetails, err error) {
+// NewRequestTypedResource creates a new  RequestTypedResource.
+func NewRequestTypedResource(requestType ReviewableRequestType, value interface{}) (result RequestTypedResource, err error) {
 	result.RequestType = requestType
 	switch ReviewableRequestType(requestType) {
 	case ReviewableRequestTypeSale:
-		tv, ok := value.(AccountRuleResourceReviewableRequestSale)
+		tv, ok := value.(RequestTypedResourceSale)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceReviewableRequestSale")
+			err = fmt.Errorf("invalid value, must be RequestTypedResourceSale")
 			return
 		}
 		result.Sale = &tv
 	default:
-		// void
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Ext = &tv
 	}
 	return
 }
 
 // MustSale retrieves the Sale value from the union,
 // panicing if the value is not set.
-func (u AccountRuleResourceReviewableRequestDetails) MustSale() AccountRuleResourceReviewableRequestSale {
+func (u RequestTypedResource) MustSale() RequestTypedResourceSale {
 	val, ok := u.GetSale()
 
 	if !ok {
@@ -759,7 +661,7 @@ func (u AccountRuleResourceReviewableRequestDetails) MustSale() AccountRuleResou
 
 // GetSale retrieves the Sale value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResourceReviewableRequestDetails) GetSale() (result AccountRuleResourceReviewableRequestSale, ok bool) {
+func (u RequestTypedResource) GetSale() (result RequestTypedResourceSale, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.RequestType))
 
 	if armName == "Sale" {
@@ -770,378 +672,59 @@ func (u AccountRuleResourceReviewableRequestDetails) GetSale() (result AccountRu
 	return
 }
 
-// AccountRuleResourceReviewableRequestExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceReviewableRequestExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
+// MustExt retrieves the Ext value from the union,
+// panicing if the value is not set.
+func (u RequestTypedResource) MustExt() EmptyExt {
+	val, ok := u.GetExt()
 
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceReviewableRequestExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceReviewableRequestExt
-func (u AccountRuleResourceReviewableRequestExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
+	if !ok {
+		panic("arm Ext is not set")
 	}
-	return "-", false
+
+	return val
 }
 
-// NewAccountRuleResourceReviewableRequestExt creates a new  AccountRuleResourceReviewableRequestExt.
-func NewAccountRuleResourceReviewableRequestExt(v LedgerVersion, value interface{}) (result AccountRuleResourceReviewableRequestExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
+// GetExt retrieves the Ext value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u RequestTypedResource) GetExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "Ext" {
+		result = *u.Ext
+		ok = true
 	}
+
 	return
+}
+
+// AccountRuleResourceAsset is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            AssetCode assetCode;
+//            uint64 assetType;
+//
+//            EmptyExt ext;
+//        }
+//
+type AccountRuleResourceAsset struct {
+	AssetCode AssetCode `json:"assetCode,omitempty"`
+	AssetType Uint64    `json:"assetType,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
 // AccountRuleResourceReviewableRequest is an XDR NestedStruct defines as:
 //
 //   struct
 //        {
-//            union switch (ReviewableRequestType requestType)
-//            {
-//            case SALE:
-//                struct
-//                {
-//                    uint64 type;
+//            RequestTypedResource details;
 //
-//                    union switch (LedgerVersion v)
-//                    {
-//                    case EMPTY_VERSION:
-//                        void;
-//                    } ext;
-//                } sale;
-//            default:
-//                void;
-//            } details;
-//
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        }
 //
 type AccountRuleResourceReviewableRequest struct {
-	Details AccountRuleResourceReviewableRequestDetails `json:"details,omitempty"`
-	Ext     AccountRuleResourceReviewableRequestExt     `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceAccountExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceAccountExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceAccountExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceAccountExt
-func (u AccountRuleResourceAccountExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceAccountExt creates a new  AccountRuleResourceAccountExt.
-func NewAccountRuleResourceAccountExt(v LedgerVersion, value interface{}) (result AccountRuleResourceAccountExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceAccount is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceAccount struct {
-	Ext AccountRuleResourceAccountExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceFeeExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceFeeExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceFeeExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceFeeExt
-func (u AccountRuleResourceFeeExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceFeeExt creates a new  AccountRuleResourceFeeExt.
-func NewAccountRuleResourceFeeExt(v LedgerVersion, value interface{}) (result AccountRuleResourceFeeExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceFee is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceFee struct {
-	Ext AccountRuleResourceFeeExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceBalanceExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceBalanceExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceBalanceExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceBalanceExt
-func (u AccountRuleResourceBalanceExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceBalanceExt creates a new  AccountRuleResourceBalanceExt.
-func NewAccountRuleResourceBalanceExt(v LedgerVersion, value interface{}) (result AccountRuleResourceBalanceExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceBalance is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceBalance struct {
-	Ext AccountRuleResourceBalanceExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceReferenceExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceReferenceExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceReferenceExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceReferenceExt
-func (u AccountRuleResourceReferenceExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceReferenceExt creates a new  AccountRuleResourceReferenceExt.
-func NewAccountRuleResourceReferenceExt(v LedgerVersion, value interface{}) (result AccountRuleResourceReferenceExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceReference is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceReference struct {
-	Ext AccountRuleResourceReferenceExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceAssetPairExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceAssetPairExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceAssetPairExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceAssetPairExt
-func (u AccountRuleResourceAssetPairExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceAssetPairExt creates a new  AccountRuleResourceAssetPairExt.
-func NewAccountRuleResourceAssetPairExt(v LedgerVersion, value interface{}) (result AccountRuleResourceAssetPairExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceAssetPair is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceAssetPair struct {
-	Ext AccountRuleResourceAssetPairExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceOfferExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceOfferExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceOfferExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceOfferExt
-func (u AccountRuleResourceOfferExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceOfferExt creates a new  AccountRuleResourceOfferExt.
-func NewAccountRuleResourceOfferExt(v LedgerVersion, value interface{}) (result AccountRuleResourceOfferExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
+	Details RequestTypedResource `json:"details,omitempty"`
+	Ext     EmptyExt             `json:"ext,omitempty"`
 }
 
 // AccountRuleResourceOffer is an XDR NestedStruct defines as:
@@ -1154,110 +737,15 @@ func NewAccountRuleResourceOfferExt(v LedgerVersion, value interface{}) (result 
 //            AssetCode baseAssetCode;
 //            AssetCode quoteAssetCode;
 //
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        }
 //
 type AccountRuleResourceOffer struct {
-	BaseAssetType  Uint64                      `json:"baseAssetType,omitempty"`
-	QuoteAssetType Uint64                      `json:"quoteAssetType,omitempty"`
-	BaseAssetCode  AssetCode                   `json:"baseAssetCode,omitempty"`
-	QuoteAssetCode AssetCode                   `json:"quoteAssetCode,omitempty"`
-	Ext            AccountRuleResourceOfferExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceExternalSystemAccountExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceExternalSystemAccountExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceExternalSystemAccountExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceExternalSystemAccountExt
-func (u AccountRuleResourceExternalSystemAccountExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceExternalSystemAccountExt creates a new  AccountRuleResourceExternalSystemAccountExt.
-func NewAccountRuleResourceExternalSystemAccountExt(v LedgerVersion, value interface{}) (result AccountRuleResourceExternalSystemAccountExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceExternalSystemAccount is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceExternalSystemAccount struct {
-	Ext AccountRuleResourceExternalSystemAccountExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceSaleExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceSaleExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceSaleExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceSaleExt
-func (u AccountRuleResourceSaleExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceSaleExt creates a new  AccountRuleResourceSaleExt.
-func NewAccountRuleResourceSaleExt(v LedgerVersion, value interface{}) (result AccountRuleResourceSaleExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
+	BaseAssetType  Uint64    `json:"baseAssetType,omitempty"`
+	QuoteAssetType Uint64    `json:"quoteAssetType,omitempty"`
+	BaseAssetCode  AssetCode `json:"baseAssetCode,omitempty"`
+	QuoteAssetCode AssetCode `json:"quoteAssetCode,omitempty"`
+	Ext            EmptyExt  `json:"ext,omitempty"`
 }
 
 // AccountRuleResourceSale is an XDR NestedStruct defines as:
@@ -1267,479 +755,13 @@ func NewAccountRuleResourceSaleExt(v LedgerVersion, value interface{}) (result A
 //            uint64 saleID;
 //            uint64 saleType;
 //
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        }
 //
 type AccountRuleResourceSale struct {
-	SaleId   Uint64                     `json:"saleID,omitempty"`
-	SaleType Uint64                     `json:"saleType,omitempty"`
-	Ext      AccountRuleResourceSaleExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceAccountKycExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceAccountKycExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceAccountKycExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceAccountKycExt
-func (u AccountRuleResourceAccountKycExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceAccountKycExt creates a new  AccountRuleResourceAccountKycExt.
-func NewAccountRuleResourceAccountKycExt(v LedgerVersion, value interface{}) (result AccountRuleResourceAccountKycExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceAccountKyc is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceAccountKyc struct {
-	Ext AccountRuleResourceAccountKycExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceExternalSystemPoolExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceExternalSystemPoolExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceExternalSystemPoolExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceExternalSystemPoolExt
-func (u AccountRuleResourceExternalSystemPoolExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceExternalSystemPoolExt creates a new  AccountRuleResourceExternalSystemPoolExt.
-func NewAccountRuleResourceExternalSystemPoolExt(v LedgerVersion, value interface{}) (result AccountRuleResourceExternalSystemPoolExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceExternalSystemPool is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceExternalSystemPool struct {
-	Ext AccountRuleResourceExternalSystemPoolExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceKeyValueExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceKeyValueExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceKeyValueExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceKeyValueExt
-func (u AccountRuleResourceKeyValueExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceKeyValueExt creates a new  AccountRuleResourceKeyValueExt.
-func NewAccountRuleResourceKeyValueExt(v LedgerVersion, value interface{}) (result AccountRuleResourceKeyValueExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceKeyValue is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceKeyValue struct {
-	Ext AccountRuleResourceKeyValueExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceLimitsExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceLimitsExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceLimitsExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceLimitsExt
-func (u AccountRuleResourceLimitsExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceLimitsExt creates a new  AccountRuleResourceLimitsExt.
-func NewAccountRuleResourceLimitsExt(v LedgerVersion, value interface{}) (result AccountRuleResourceLimitsExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceLimits is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceLimits struct {
-	Ext AccountRuleResourceLimitsExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceStatisticsExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceStatisticsExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceStatisticsExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceStatisticsExt
-func (u AccountRuleResourceStatisticsExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceStatisticsExt creates a new  AccountRuleResourceStatisticsExt.
-func NewAccountRuleResourceStatisticsExt(v LedgerVersion, value interface{}) (result AccountRuleResourceStatisticsExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceStatistics is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceStatistics struct {
-	Ext AccountRuleResourceStatisticsExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourcePendingStatisticsExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourcePendingStatisticsExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourcePendingStatisticsExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourcePendingStatisticsExt
-func (u AccountRuleResourcePendingStatisticsExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourcePendingStatisticsExt creates a new  AccountRuleResourcePendingStatisticsExt.
-func NewAccountRuleResourcePendingStatisticsExt(v LedgerVersion, value interface{}) (result AccountRuleResourcePendingStatisticsExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourcePendingStatistics is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourcePendingStatistics struct {
-	Ext AccountRuleResourcePendingStatisticsExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceAccountRoleExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceAccountRoleExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceAccountRoleExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceAccountRoleExt
-func (u AccountRuleResourceAccountRoleExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceAccountRoleExt creates a new  AccountRuleResourceAccountRoleExt.
-func NewAccountRuleResourceAccountRoleExt(v LedgerVersion, value interface{}) (result AccountRuleResourceAccountRoleExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceAccountRole is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceAccountRole struct {
-	Ext AccountRuleResourceAccountRoleExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceAccountRuleExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceAccountRuleExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceAccountRuleExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceAccountRuleExt
-func (u AccountRuleResourceAccountRuleExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceAccountRuleExt creates a new  AccountRuleResourceAccountRuleExt.
-func NewAccountRuleResourceAccountRuleExt(v LedgerVersion, value interface{}) (result AccountRuleResourceAccountRuleExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// AccountRuleResourceAccountRule is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        }
-//
-type AccountRuleResourceAccountRule struct {
-	Ext AccountRuleResourceAccountRuleExt `json:"ext,omitempty"`
-}
-
-// AccountRuleResourceAtomicSwapBidExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            }
-//
-type AccountRuleResourceAtomicSwapBidExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AccountRuleResourceAtomicSwapBidExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AccountRuleResourceAtomicSwapBidExt
-func (u AccountRuleResourceAtomicSwapBidExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAccountRuleResourceAtomicSwapBidExt creates a new  AccountRuleResourceAtomicSwapBidExt.
-func NewAccountRuleResourceAtomicSwapBidExt(v LedgerVersion, value interface{}) (result AccountRuleResourceAtomicSwapBidExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
+	SaleId   Uint64   `json:"saleID,omitempty"`
+	SaleType Uint64   `json:"saleType,omitempty"`
+	Ext      EmptyExt `json:"ext,omitempty"`
 }
 
 // AccountRuleResourceAtomicSwapBid is an XDR NestedStruct defines as:
@@ -1749,17 +771,13 @@ func NewAccountRuleResourceAtomicSwapBidExt(v LedgerVersion, value interface{}) 
 //            uint64 assetType;
 //            AssetCode assetCode;
 //
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        }
 //
 type AccountRuleResourceAtomicSwapBid struct {
-	AssetType Uint64                              `json:"assetType,omitempty"`
-	AssetCode AssetCode                           `json:"assetCode,omitempty"`
-	Ext       AccountRuleResourceAtomicSwapBidExt `json:"ext,omitempty"`
+	AssetType Uint64    `json:"assetType,omitempty"`
+	AssetCode AssetCode `json:"assetCode,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
 // AccountRuleResource is an XDR Union defines as:
@@ -1774,85 +792,17 @@ type AccountRuleResourceAtomicSwapBid struct {
 //            AssetCode assetCode;
 //            uint64 assetType;
 //
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        } asset;
 //    case REVIEWABLE_REQUEST:
 //        struct
 //        {
-//            union switch (ReviewableRequestType requestType)
-//            {
-//            case SALE:
-//                struct
-//                {
-//                    uint64 type;
+//            RequestTypedResource details;
 //
-//                    union switch (LedgerVersion v)
-//                    {
-//                    case EMPTY_VERSION:
-//                        void;
-//                    } ext;
-//                } sale;
-//            default:
-//                void;
-//            } details;
-//
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        } reviewableRequest;
 //    case ANY:
 //        void;
-//    case ACCOUNT:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } account;
-//    case FEE:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } fee;
-//    case BALANCE:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } balance;
-//    case REFERENCE_ENTRY:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } reference;
-//    case ASSET_PAIR:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } assetPair;
 //    case OFFER_ENTRY:
 //        struct
 //        {
@@ -1862,167 +812,36 @@ type AccountRuleResourceAtomicSwapBid struct {
 //            AssetCode baseAssetCode;
 //            AssetCode quoteAssetCode;
 //
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        } offer;
-//    case EXTERNAL_SYSTEM_ACCOUNT_ID:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } externalSystemAccount;
 //    case SALE:
 //        struct
 //        {
 //            uint64 saleID;
 //            uint64 saleType;
 //
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        } sale;
-//    case ACCOUNT_KYC:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } accountKYC;
-//    case EXTERNAL_SYSTEM_ACCOUNT_ID_POOL_ENTRY:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } externalSystemPool;
-//    case KEY_VALUE:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } keyValue;
-//    case LIMITS_V2:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } limits;
-//    case STATISTICS_V2:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } statistics;
-//    case PENDING_STATISTICS:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } pendingStatistics;
-//    case ACCOUNT_ROLE:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } accountRole;
-//    case ACCOUNT_RULE:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } accountRule;
 //    case ATOMIC_SWAP_BID:
 //        struct
 //        {
 //            uint64 assetType;
 //            AssetCode assetCode;
 //
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
+//            EmptyExt ext;
 //        } atomicSwapBid;
-//    /*case SIGNER_RULE:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } signerRule;
-//    case SIGNER_ROLE:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } signerRole;
-//    case SIGNER:
-//        struct
-//        {
-//            union switch (LedgerVersion v)
-//            {
-//            case EMPTY_VERSION:
-//                void;
-//            } ext;
-//        } signer;*/
+//    default:
+//        EmptyExt ext;
 //    };
 //
 type AccountRuleResource struct {
-	Type                  LedgerEntryType                           `json:"type,omitempty"`
-	Asset                 *AccountRuleResourceAsset                 `json:"asset,omitempty"`
-	ReviewableRequest     *AccountRuleResourceReviewableRequest     `json:"reviewableRequest,omitempty"`
-	Account               *AccountRuleResourceAccount               `json:"account,omitempty"`
-	Fee                   *AccountRuleResourceFee                   `json:"fee,omitempty"`
-	Balance               *AccountRuleResourceBalance               `json:"balance,omitempty"`
-	Reference             *AccountRuleResourceReference             `json:"reference,omitempty"`
-	AssetPair             *AccountRuleResourceAssetPair             `json:"assetPair,omitempty"`
-	Offer                 *AccountRuleResourceOffer                 `json:"offer,omitempty"`
-	ExternalSystemAccount *AccountRuleResourceExternalSystemAccount `json:"externalSystemAccount,omitempty"`
-	Sale                  *AccountRuleResourceSale                  `json:"sale,omitempty"`
-	AccountKyc            *AccountRuleResourceAccountKyc            `json:"accountKYC,omitempty"`
-	ExternalSystemPool    *AccountRuleResourceExternalSystemPool    `json:"externalSystemPool,omitempty"`
-	KeyValue              *AccountRuleResourceKeyValue              `json:"keyValue,omitempty"`
-	Limits                *AccountRuleResourceLimits                `json:"limits,omitempty"`
-	Statistics            *AccountRuleResourceStatistics            `json:"statistics,omitempty"`
-	PendingStatistics     *AccountRuleResourcePendingStatistics     `json:"pendingStatistics,omitempty"`
-	AccountRole           *AccountRuleResourceAccountRole           `json:"accountRole,omitempty"`
-	AccountRule           *AccountRuleResourceAccountRule           `json:"accountRule,omitempty"`
-	AtomicSwapBid         *AccountRuleResourceAtomicSwapBid         `json:"atomicSwapBid,omitempty"`
+	Type              LedgerEntryType                       `json:"type,omitempty"`
+	Asset             *AccountRuleResourceAsset             `json:"asset,omitempty"`
+	ReviewableRequest *AccountRuleResourceReviewableRequest `json:"reviewableRequest,omitempty"`
+	Offer             *AccountRuleResourceOffer             `json:"offer,omitempty"`
+	Sale              *AccountRuleResourceSale              `json:"sale,omitempty"`
+	AtomicSwapBid     *AccountRuleResourceAtomicSwapBid     `json:"atomicSwapBid,omitempty"`
+	Ext               *EmptyExt                             `json:"ext,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -2043,42 +862,15 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "ReviewableRequest", true
 	case LedgerEntryTypeAny:
 		return "", true
-	case LedgerEntryTypeAccount:
-		return "Account", true
-	case LedgerEntryTypeFee:
-		return "Fee", true
-	case LedgerEntryTypeBalance:
-		return "Balance", true
-	case LedgerEntryTypeReferenceEntry:
-		return "Reference", true
-	case LedgerEntryTypeAssetPair:
-		return "AssetPair", true
 	case LedgerEntryTypeOfferEntry:
 		return "Offer", true
-	case LedgerEntryTypeExternalSystemAccountId:
-		return "ExternalSystemAccount", true
 	case LedgerEntryTypeSale:
 		return "Sale", true
-	case LedgerEntryTypeAccountKyc:
-		return "AccountKyc", true
-	case LedgerEntryTypeExternalSystemAccountIdPoolEntry:
-		return "ExternalSystemPool", true
-	case LedgerEntryTypeKeyValue:
-		return "KeyValue", true
-	case LedgerEntryTypeLimitsV2:
-		return "Limits", true
-	case LedgerEntryTypeStatisticsV2:
-		return "Statistics", true
-	case LedgerEntryTypePendingStatistics:
-		return "PendingStatistics", true
-	case LedgerEntryTypeAccountRole:
-		return "AccountRole", true
-	case LedgerEntryTypeAccountRule:
-		return "AccountRule", true
 	case LedgerEntryTypeAtomicSwapBid:
 		return "AtomicSwapBid", true
+	default:
+		return "Ext", true
 	}
-	return "-", false
 }
 
 // NewAccountRuleResource creates a new  AccountRuleResource.
@@ -2103,41 +895,6 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 		result.ReviewableRequest = &tv
 	case LedgerEntryTypeAny:
 		// void
-	case LedgerEntryTypeAccount:
-		tv, ok := value.(AccountRuleResourceAccount)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceAccount")
-			return
-		}
-		result.Account = &tv
-	case LedgerEntryTypeFee:
-		tv, ok := value.(AccountRuleResourceFee)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceFee")
-			return
-		}
-		result.Fee = &tv
-	case LedgerEntryTypeBalance:
-		tv, ok := value.(AccountRuleResourceBalance)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceBalance")
-			return
-		}
-		result.Balance = &tv
-	case LedgerEntryTypeReferenceEntry:
-		tv, ok := value.(AccountRuleResourceReference)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceReference")
-			return
-		}
-		result.Reference = &tv
-	case LedgerEntryTypeAssetPair:
-		tv, ok := value.(AccountRuleResourceAssetPair)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceAssetPair")
-			return
-		}
-		result.AssetPair = &tv
 	case LedgerEntryTypeOfferEntry:
 		tv, ok := value.(AccountRuleResourceOffer)
 		if !ok {
@@ -2145,13 +902,6 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.Offer = &tv
-	case LedgerEntryTypeExternalSystemAccountId:
-		tv, ok := value.(AccountRuleResourceExternalSystemAccount)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceExternalSystemAccount")
-			return
-		}
-		result.ExternalSystemAccount = &tv
 	case LedgerEntryTypeSale:
 		tv, ok := value.(AccountRuleResourceSale)
 		if !ok {
@@ -2159,62 +909,6 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.Sale = &tv
-	case LedgerEntryTypeAccountKyc:
-		tv, ok := value.(AccountRuleResourceAccountKyc)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceAccountKyc")
-			return
-		}
-		result.AccountKyc = &tv
-	case LedgerEntryTypeExternalSystemAccountIdPoolEntry:
-		tv, ok := value.(AccountRuleResourceExternalSystemPool)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceExternalSystemPool")
-			return
-		}
-		result.ExternalSystemPool = &tv
-	case LedgerEntryTypeKeyValue:
-		tv, ok := value.(AccountRuleResourceKeyValue)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceKeyValue")
-			return
-		}
-		result.KeyValue = &tv
-	case LedgerEntryTypeLimitsV2:
-		tv, ok := value.(AccountRuleResourceLimits)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceLimits")
-			return
-		}
-		result.Limits = &tv
-	case LedgerEntryTypeStatisticsV2:
-		tv, ok := value.(AccountRuleResourceStatistics)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceStatistics")
-			return
-		}
-		result.Statistics = &tv
-	case LedgerEntryTypePendingStatistics:
-		tv, ok := value.(AccountRuleResourcePendingStatistics)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourcePendingStatistics")
-			return
-		}
-		result.PendingStatistics = &tv
-	case LedgerEntryTypeAccountRole:
-		tv, ok := value.(AccountRuleResourceAccountRole)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceAccountRole")
-			return
-		}
-		result.AccountRole = &tv
-	case LedgerEntryTypeAccountRule:
-		tv, ok := value.(AccountRuleResourceAccountRule)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceAccountRule")
-			return
-		}
-		result.AccountRule = &tv
 	case LedgerEntryTypeAtomicSwapBid:
 		tv, ok := value.(AccountRuleResourceAtomicSwapBid)
 		if !ok {
@@ -2222,6 +916,13 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.AtomicSwapBid = &tv
+	default:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Ext = &tv
 	}
 	return
 }
@@ -2276,131 +977,6 @@ func (u AccountRuleResource) GetReviewableRequest() (result AccountRuleResourceR
 	return
 }
 
-// MustAccount retrieves the Account value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustAccount() AccountRuleResourceAccount {
-	val, ok := u.GetAccount()
-
-	if !ok {
-		panic("arm Account is not set")
-	}
-
-	return val
-}
-
-// GetAccount retrieves the Account value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetAccount() (result AccountRuleResourceAccount, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Account" {
-		result = *u.Account
-		ok = true
-	}
-
-	return
-}
-
-// MustFee retrieves the Fee value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustFee() AccountRuleResourceFee {
-	val, ok := u.GetFee()
-
-	if !ok {
-		panic("arm Fee is not set")
-	}
-
-	return val
-}
-
-// GetFee retrieves the Fee value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetFee() (result AccountRuleResourceFee, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Fee" {
-		result = *u.Fee
-		ok = true
-	}
-
-	return
-}
-
-// MustBalance retrieves the Balance value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustBalance() AccountRuleResourceBalance {
-	val, ok := u.GetBalance()
-
-	if !ok {
-		panic("arm Balance is not set")
-	}
-
-	return val
-}
-
-// GetBalance retrieves the Balance value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetBalance() (result AccountRuleResourceBalance, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Balance" {
-		result = *u.Balance
-		ok = true
-	}
-
-	return
-}
-
-// MustReference retrieves the Reference value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustReference() AccountRuleResourceReference {
-	val, ok := u.GetReference()
-
-	if !ok {
-		panic("arm Reference is not set")
-	}
-
-	return val
-}
-
-// GetReference retrieves the Reference value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetReference() (result AccountRuleResourceReference, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Reference" {
-		result = *u.Reference
-		ok = true
-	}
-
-	return
-}
-
-// MustAssetPair retrieves the AssetPair value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustAssetPair() AccountRuleResourceAssetPair {
-	val, ok := u.GetAssetPair()
-
-	if !ok {
-		panic("arm AssetPair is not set")
-	}
-
-	return val
-}
-
-// GetAssetPair retrieves the AssetPair value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetAssetPair() (result AccountRuleResourceAssetPair, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "AssetPair" {
-		result = *u.AssetPair
-		ok = true
-	}
-
-	return
-}
-
 // MustOffer retrieves the Offer value from the union,
 // panicing if the value is not set.
 func (u AccountRuleResource) MustOffer() AccountRuleResourceOffer {
@@ -2420,31 +996,6 @@ func (u AccountRuleResource) GetOffer() (result AccountRuleResourceOffer, ok boo
 
 	if armName == "Offer" {
 		result = *u.Offer
-		ok = true
-	}
-
-	return
-}
-
-// MustExternalSystemAccount retrieves the ExternalSystemAccount value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustExternalSystemAccount() AccountRuleResourceExternalSystemAccount {
-	val, ok := u.GetExternalSystemAccount()
-
-	if !ok {
-		panic("arm ExternalSystemAccount is not set")
-	}
-
-	return val
-}
-
-// GetExternalSystemAccount retrieves the ExternalSystemAccount value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetExternalSystemAccount() (result AccountRuleResourceExternalSystemAccount, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "ExternalSystemAccount" {
-		result = *u.ExternalSystemAccount
 		ok = true
 	}
 
@@ -2476,206 +1027,6 @@ func (u AccountRuleResource) GetSale() (result AccountRuleResourceSale, ok bool)
 	return
 }
 
-// MustAccountKyc retrieves the AccountKyc value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustAccountKyc() AccountRuleResourceAccountKyc {
-	val, ok := u.GetAccountKyc()
-
-	if !ok {
-		panic("arm AccountKyc is not set")
-	}
-
-	return val
-}
-
-// GetAccountKyc retrieves the AccountKyc value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetAccountKyc() (result AccountRuleResourceAccountKyc, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "AccountKyc" {
-		result = *u.AccountKyc
-		ok = true
-	}
-
-	return
-}
-
-// MustExternalSystemPool retrieves the ExternalSystemPool value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustExternalSystemPool() AccountRuleResourceExternalSystemPool {
-	val, ok := u.GetExternalSystemPool()
-
-	if !ok {
-		panic("arm ExternalSystemPool is not set")
-	}
-
-	return val
-}
-
-// GetExternalSystemPool retrieves the ExternalSystemPool value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetExternalSystemPool() (result AccountRuleResourceExternalSystemPool, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "ExternalSystemPool" {
-		result = *u.ExternalSystemPool
-		ok = true
-	}
-
-	return
-}
-
-// MustKeyValue retrieves the KeyValue value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustKeyValue() AccountRuleResourceKeyValue {
-	val, ok := u.GetKeyValue()
-
-	if !ok {
-		panic("arm KeyValue is not set")
-	}
-
-	return val
-}
-
-// GetKeyValue retrieves the KeyValue value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetKeyValue() (result AccountRuleResourceKeyValue, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "KeyValue" {
-		result = *u.KeyValue
-		ok = true
-	}
-
-	return
-}
-
-// MustLimits retrieves the Limits value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustLimits() AccountRuleResourceLimits {
-	val, ok := u.GetLimits()
-
-	if !ok {
-		panic("arm Limits is not set")
-	}
-
-	return val
-}
-
-// GetLimits retrieves the Limits value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetLimits() (result AccountRuleResourceLimits, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Limits" {
-		result = *u.Limits
-		ok = true
-	}
-
-	return
-}
-
-// MustStatistics retrieves the Statistics value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustStatistics() AccountRuleResourceStatistics {
-	val, ok := u.GetStatistics()
-
-	if !ok {
-		panic("arm Statistics is not set")
-	}
-
-	return val
-}
-
-// GetStatistics retrieves the Statistics value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetStatistics() (result AccountRuleResourceStatistics, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "Statistics" {
-		result = *u.Statistics
-		ok = true
-	}
-
-	return
-}
-
-// MustPendingStatistics retrieves the PendingStatistics value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustPendingStatistics() AccountRuleResourcePendingStatistics {
-	val, ok := u.GetPendingStatistics()
-
-	if !ok {
-		panic("arm PendingStatistics is not set")
-	}
-
-	return val
-}
-
-// GetPendingStatistics retrieves the PendingStatistics value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetPendingStatistics() (result AccountRuleResourcePendingStatistics, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "PendingStatistics" {
-		result = *u.PendingStatistics
-		ok = true
-	}
-
-	return
-}
-
-// MustAccountRole retrieves the AccountRole value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustAccountRole() AccountRuleResourceAccountRole {
-	val, ok := u.GetAccountRole()
-
-	if !ok {
-		panic("arm AccountRole is not set")
-	}
-
-	return val
-}
-
-// GetAccountRole retrieves the AccountRole value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetAccountRole() (result AccountRuleResourceAccountRole, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "AccountRole" {
-		result = *u.AccountRole
-		ok = true
-	}
-
-	return
-}
-
-// MustAccountRule retrieves the AccountRule value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustAccountRule() AccountRuleResourceAccountRule {
-	val, ok := u.GetAccountRule()
-
-	if !ok {
-		panic("arm AccountRule is not set")
-	}
-
-	return val
-}
-
-// GetAccountRule retrieves the AccountRule value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetAccountRule() (result AccountRuleResourceAccountRule, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "AccountRule" {
-		result = *u.AccountRule
-		ok = true
-	}
-
-	return
-}
-
 // MustAtomicSwapBid retrieves the AtomicSwapBid value from the union,
 // panicing if the value is not set.
 func (u AccountRuleResource) MustAtomicSwapBid() AccountRuleResourceAtomicSwapBid {
@@ -2695,6 +1046,31 @@ func (u AccountRuleResource) GetAtomicSwapBid() (result AccountRuleResourceAtomi
 
 	if armName == "AtomicSwapBid" {
 		result = *u.AtomicSwapBid
+		ok = true
+	}
+
+	return
+}
+
+// MustExt retrieves the Ext value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResource) MustExt() EmptyExt {
+	val, ok := u.GetExt()
+
+	if !ok {
+		panic("arm Ext is not set")
+	}
+
+	return val
+}
+
+// GetExt retrieves the Ext value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Ext" {
+		result = *u.Ext
 		ok = true
 	}
 
@@ -36705,6 +35081,133 @@ type TransactionResult struct {
 	Ext        TransactionResultExt    `json:"ext,omitempty"`
 }
 
+// LedgerVersion is an XDR Enum defines as:
+//
+//   enum LedgerVersion {
+//    	EMPTY_VERSION = 0
+//    };
+//
+type LedgerVersion int32
+
+const (
+	LedgerVersionEmptyVersion LedgerVersion = 0
+)
+
+var LedgerVersionAll = []LedgerVersion{
+	LedgerVersionEmptyVersion,
+}
+
+var ledgerVersionMap = map[int32]string{
+	0: "LedgerVersionEmptyVersion",
+}
+
+var ledgerVersionShortMap = map[int32]string{
+	0: "empty_version",
+}
+
+var ledgerVersionRevMap = map[string]int32{
+	"LedgerVersionEmptyVersion": 0,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for LedgerVersion
+func (e LedgerVersion) ValidEnum(v int32) bool {
+	_, ok := ledgerVersionMap[v]
+	return ok
+}
+func (e LedgerVersion) isFlag() bool {
+	for i := len(LedgerVersionAll) - 1; i >= 0; i-- {
+		expected := LedgerVersion(2) << uint64(len(LedgerVersionAll)-1) >> uint64(len(LedgerVersionAll)-i)
+		if expected != LedgerVersionAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e LedgerVersion) String() string {
+	name, _ := ledgerVersionMap[int32(e)]
+	return name
+}
+
+func (e LedgerVersion) ShortString() string {
+	name, _ := ledgerVersionShortMap[int32(e)]
+	return name
+}
+
+func (e LedgerVersion) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range LedgerVersionAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *LedgerVersion) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = LedgerVersion(t.Value)
+	return nil
+}
+
+// EmptyExt is an XDR Union defines as:
+//
+//   union EmptyExt switch (LedgerVersion v)
+//    {
+//    case EMPTY_VERSION:
+//        void;
+//    };
+//
+type EmptyExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u EmptyExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of EmptyExt
+func (u EmptyExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewEmptyExt creates a new  EmptyExt.
+func NewEmptyExt(v LedgerVersion, value interface{}) (result EmptyExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
 // Hash is an XDR Typedef defines as:
 //
 //   typedef opaque Hash[32];
@@ -37233,95 +35736,6 @@ func (e *LedgerEntryType) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = LedgerEntryType(t.Value)
-	return nil
-}
-
-// LedgerVersion is an XDR Enum defines as:
-//
-//   enum LedgerVersion {
-//    	EMPTY_VERSION = 0
-//    };
-//
-type LedgerVersion int32
-
-const (
-	LedgerVersionEmptyVersion LedgerVersion = 0
-)
-
-var LedgerVersionAll = []LedgerVersion{
-	LedgerVersionEmptyVersion,
-}
-
-var ledgerVersionMap = map[int32]string{
-	0: "LedgerVersionEmptyVersion",
-}
-
-var ledgerVersionShortMap = map[int32]string{
-	0: "empty_version",
-}
-
-var ledgerVersionRevMap = map[string]int32{
-	"LedgerVersionEmptyVersion": 0,
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for LedgerVersion
-func (e LedgerVersion) ValidEnum(v int32) bool {
-	_, ok := ledgerVersionMap[v]
-	return ok
-}
-func (e LedgerVersion) isFlag() bool {
-	for i := len(LedgerVersionAll) - 1; i >= 0; i-- {
-		expected := LedgerVersion(2) << uint64(len(LedgerVersionAll)-1) >> uint64(len(LedgerVersionAll)-i)
-		if expected != LedgerVersionAll[i] {
-			return false
-		}
-	}
-	return true
-}
-
-// String returns the name of `e`
-func (e LedgerVersion) String() string {
-	name, _ := ledgerVersionMap[int32(e)]
-	return name
-}
-
-func (e LedgerVersion) ShortString() string {
-	name, _ := ledgerVersionShortMap[int32(e)]
-	return name
-}
-
-func (e LedgerVersion) MarshalJSON() ([]byte, error) {
-	if e.isFlag() {
-		// marshal as mask
-		result := flag{
-			Value: int32(e),
-		}
-		for _, value := range LedgerVersionAll {
-			if (value & e) == value {
-				result.Flags = append(result.Flags, flagValue{
-					Value: int32(value),
-					Name:  value.ShortString(),
-				})
-			}
-		}
-		return json.Marshal(&result)
-	} else {
-		// marshal as enum
-		result := enum{
-			Value:  int32(e),
-			String: e.ShortString(),
-		}
-		return json.Marshal(&result)
-	}
-}
-
-func (e *LedgerVersion) UnmarshalJSON(data []byte) error {
-	var t value
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
-	}
-	*e = LedgerVersion(t.Value)
 	return nil
 }
 
@@ -37915,4 +36329,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "941f4d0faf1c8c09edb84d273066c6c0b65cac21"
+var Revision = "7f328ee2da4ea10324fccecef0bcb894efe957dd"
