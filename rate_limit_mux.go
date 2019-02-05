@@ -3,6 +3,8 @@ package horizon
 import (
 	"net/http"
 
+	"gitlab.com/distributed_lab/kit/janus"
+
 	"math"
 	"strconv"
 
@@ -18,6 +20,7 @@ type RateLimitedMux struct {
 	*web.Mux
 
 	limiter throttled.RateLimiter
+	janus   *janus.Janus
 }
 
 func NewRateLimitedMux(app *App) (*RateLimitedMux, error) {
@@ -37,6 +40,7 @@ func NewRateLimitedMux(app *App) (*RateLimitedMux, error) {
 	return &RateLimitedMux{
 		Mux:     web.New(),
 		limiter: rateLimiter,
+		janus:   app.config.Janus(),
 	}, nil
 }
 
@@ -98,10 +102,12 @@ func (m *RateLimitedMux) Get(pattern web.PatternType, handler web.Handler, limit
 	m.Mux.Get(pattern, func(c web.C, w http.ResponseWriter, r *http.Request) {
 		m.rateLimit(c, w, r, limits, handler)
 	})
+	m.janus.RegisterGojiEndpoint(pattern.(string), "GET")
 }
 
 func (m *RateLimitedMux) Post(pattern web.PatternType, handler web.Handler, limits ...int) {
 	m.Mux.Post(pattern, func(c web.C, w http.ResponseWriter, r *http.Request) {
 		m.rateLimit(c, w, r, limits, handler)
 	})
+	m.janus.RegisterGojiEndpoint(pattern.(string), "POST")
 }

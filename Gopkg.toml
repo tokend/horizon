@@ -70,7 +70,7 @@
   name = "github.com/spf13/cobra"
   version = "0.0.1"
 
-[[constraint]]
+[[override]]
   name = "github.com/spf13/viper"
   version = "1.0.0"
 
@@ -87,7 +87,7 @@
   name = "gitlab.com/distributed_lab/corer"
 
 [[constraint]]
-  branch = "feature/janus"
+  branch = "master"
   name = "gitlab.com/distributed_lab/kit"
 
 

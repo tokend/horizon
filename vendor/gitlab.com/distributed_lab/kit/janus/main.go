@@ -47,40 +47,69 @@ func (j *Janus) RegisterChi(r chi.Router) error {
 	}
 
 	for _, candidate := range services {
-		// check if service already exists
-		remote, err := j.client.GetAPI(candidate.Name)
-		if err != nil {
-			return errors.Wrap(err, "failed to get remote service")
-		}
-		if remote != nil {
-			if remote.Surname != j.upstream.Surname {
-				return ErrAlreadyExists
-			}
-
-			// modify remote service
-
-			// TODO check if upstream is duplicate
-
-			remote.Proxy.Upstreams.Targets = append(
-				remote.Proxy.Upstreams.Targets,
-				internal.Target{Target: j.upstream.Target})
-
-			if err := j.client.UpdateAPI(remote.Name, remote); err != nil {
-				return errors.Wrap(err, "failed to update remote service")
-			}
-			continue
-		}
-
-		// add new service definition
-		candidate.Surname = j.upstream.Surname
-		candidate.Proxy.Upstreams = internal.Upstreams{
-			Balancing: "weight",
-			Targets:   []internal.Target{{Target: j.upstream.Target, Weight: 10}},
-		}
-		if err := j.client.AddAPI(&candidate); err != nil {
+		if err := j.register(candidate); err != nil {
 			return errors.Wrap(err, "failed to register service")
 		}
 	}
 
+	return nil
+}
+
+func (j *Janus) register(service internal.Service) error {
+	// check if service already exists
+	remote, err := j.client.GetAPI(service.Name)
+	if err != nil {
+		return errors.Wrap(err, "failed to get remote service")
+	}
+	if remote != nil {
+		if remote.Surname != j.upstream.Surname {
+			return ErrAlreadyExists
+		}
+
+		// TODO check if upstream is duplicate
+
+		// modify remote service
+		remote.Proxy.Upstreams.Targets = append(
+			remote.Proxy.Upstreams.Targets,
+			internal.Target{Target: j.upstream.Target})
+
+		if err := j.client.UpdateAPI(remote.Name, remote); err != nil {
+			return errors.Wrap(err, "failed to update remote service")
+		}
+		return nil
+	}
+
+	// add new service definition
+	service.Surname = j.upstream.Surname
+	service.Proxy.Upstreams = internal.Upstreams{
+		Balancing: "weight",
+		Targets:   []internal.Target{{Target: j.upstream.Target, Weight: 10}},
+	}
+	if err := j.client.AddAPI(&service); err != nil {
+		return errors.Wrap(err, "failed to add new service")
+	}
+	return nil
+}
+
+func (j *Janus) RegisterGojiEndpoint(endpoint, method string) error {
+	if j.disabled {
+		return nil
+	}
+	route := internal.GetRouteForGoji(endpoint)
+	name := internal.GetName(route, method)
+	methods := []string{method}
+	service := internal.Service{
+		Name:   name,
+		Active: true,
+		Proxy: internal.Proxy{
+			AppendPath: true,
+			ListenPath: route,
+			Methods:    methods,
+		},
+	}
+
+	if err := j.register(service); err != nil {
+		return errors.Wrap(err, "failed to register service")
+	}
 	return nil
 }
