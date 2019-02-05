@@ -12,29 +12,29 @@ import (
 func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 	switch request.RequestType {
 	case xdr.ReviewableRequestTypeUpdateAsset:
-		return newAssetUpdateRequest(request.ID, *request.Details.AssetUpdate)
+		return newAssetUpdateRequest(request.ID, *request.Details.UpdateAsset)
 	case xdr.ReviewableRequestTypeCreatePreIssuance:
-		return newPreIssuanceRequest(request.ID, *request.Details.PreIssuanceCreate)
+		return newPreIssuanceRequest(request.ID, *request.Details.CreatePreIssuance)
 	case xdr.ReviewableRequestTypeCreateIssuance:
-		return newIssuanceRequest(request.ID, *request.Details.IssuanceCreate)
+		return newIssuanceRequest(request.ID, *request.Details.CreateIssuance)
 	case xdr.ReviewableRequestTypeCreateWithdraw:
-		return newWithdrawalRequest(request.ID, *request.Details.Withdraw)
+		return newWithdrawalRequest(request.ID, *request.Details.CreateWithdraw)
 	case xdr.ReviewableRequestTypeCreateSale:
-		return newSaleRequest(request.ID, *request.Details.Sale)
+		return newSaleRequest(request.ID, *request.Details.CreateSale)
 	case xdr.ReviewableRequestTypeUpdateLimits:
-		return newLimitsUpdateRequest(request.ID, *request.Details.LimitsUpdate)
+		return newLimitsUpdateRequest(request.ID, *request.Details.UpdateLimits)
 	case xdr.ReviewableRequestTypeCreateAmlAlert:
-		return newAmlAlertRequest(request.ID, *request.Details.AmlAlert)
+		return newAmlAlertRequest(request.ID, *request.Details.CreateAmlAlert)
 	case xdr.ReviewableRequestTypeChangeRole:
 		return newChangeRoleRequest(request.ID, *request.Details.ChangeRole)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		return newUpdateSaleDetailsRequest(request.ID, *request.Details.UpdateSaleDetails)
 	case xdr.ReviewableRequestTypeCreateAsset:
-		return newAssetCreateRequest(request.ID, *request.Details.AssetCreation)
+		return newAssetCreateRequest(request.ID, *request.Details.CreateAsset)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		return newAtomicSwapBidRequest(request.ID, *request.Details.AtomicSwapBidCreation)
+		return newAtomicSwapBidRequest(request.ID, *request.Details.CreateAtomicSwapBid)
 	case xdr.ReviewableRequestTypeCreateAtomicSwap:
-		return newAtomicSwapRequest(request.ID, *request.Details.AtomicSwap)
+		return newAtomicSwapRequest(request.ID, *request.Details.CreateAtomicSwap)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -43,7 +43,7 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 	return nil
 }
 
-func newAmlAlertRequest(id int64, details history2.AmlAlertRequest) *regources.CreateAmlAlertRequest {
+func newAmlAlertRequest(id int64, details history2.CreateAmlAlertRequest) *regources.CreateAmlAlertRequest {
 	return &regources.CreateAmlAlertRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAMLAlert),
 		Attributes: regources.CreateAmlAlertRequestAttrs{
@@ -55,7 +55,7 @@ func newAmlAlertRequest(id int64, details history2.AmlAlertRequest) *regources.C
 		},
 	}
 }
-func newAssetCreateRequest(id int64, details history2.AssetCreationRequest) *regources.CreateAssetRequest {
+func newAssetCreateRequest(id int64, details history2.CreateAssetRequest) *regources.CreateAssetRequest {
 	return &regources.CreateAssetRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAssetCreate),
 		Attributes: regources.CreateAssetRequestAttrs{
@@ -68,7 +68,7 @@ func newAssetCreateRequest(id int64, details history2.AssetCreationRequest) *reg
 		},
 	}
 }
-func newAssetUpdateRequest(id int64, details history2.AssetUpdateRequest) *regources.UpdateAssetRequest {
+func newAssetUpdateRequest(id int64, details history2.UpdateAssetRequest) *regources.UpdateAssetRequest {
 	return &regources.UpdateAssetRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAssetUpdate),
 		Attributes: regources.AssetUpdateRequestAttrs{
@@ -80,7 +80,7 @@ func newAssetUpdateRequest(id int64, details history2.AssetUpdateRequest) *regou
 		},
 	}
 }
-func newAtomicSwapRequest(id int64, details history2.AtomicSwap) *regources.CreateAtomicSwapRequest {
+func newAtomicSwapRequest(id int64, details history2.CreateAtomicSwapRequest) *regources.CreateAtomicSwapRequest {
 	return &regources.CreateAtomicSwapRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAtomicSwap),
 		Attributes: regources.CreateAtomicSwapRequestAttrs{
@@ -92,7 +92,7 @@ func newAtomicSwapRequest(id int64, details history2.AtomicSwap) *regources.Crea
 		},
 	}
 }
-func newAtomicSwapBidRequest(id int64, details history2.AtomicSwapBidCreation) *regources.CreateAtomicSwapBidRequest {
+func newAtomicSwapBidRequest(id int64, details history2.CreateAtomicSwapBidRequest) *regources.CreateAtomicSwapBidRequest {
 	quoteAssets := &regources.RelationCollection{
 		Data: make([]regources.Key, 0, len(details.QuoteAssets)),
 	}
@@ -112,7 +112,7 @@ func newAtomicSwapBidRequest(id int64, details history2.AtomicSwapBidCreation) *
 		},
 	}
 }
-func newIssuanceRequest(id int64, details history2.IssuanceRequest) *regources.CreateIssuanceRequest {
+func newIssuanceRequest(id int64, details history2.CreateIssuanceRequest) *regources.CreateIssuanceRequest {
 	return &regources.CreateIssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsIssuance),
 		Attributes: regources.CreateIssuanceRequestAttrs{
@@ -125,7 +125,7 @@ func newIssuanceRequest(id int64, details history2.IssuanceRequest) *regources.C
 		},
 	}
 }
-func newLimitsUpdateRequest(id int64, details history2.LimitsUpdateRequest) *regources.UpdateLimitsRequest {
+func newLimitsUpdateRequest(id int64, details history2.UpdateLimitsRequest) *regources.UpdateLimitsRequest {
 	return &regources.UpdateLimitsRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsLimitsUpdate),
 		Attributes: regources.UpdateLimitsRequestAttrs{
@@ -134,7 +134,7 @@ func newLimitsUpdateRequest(id int64, details history2.LimitsUpdateRequest) *reg
 		},
 	}
 }
-func newPreIssuanceRequest(id int64, details history2.PreIssuanceRequest) *regources.CreatePreIssuanceRequest {
+func newPreIssuanceRequest(id int64, details history2.CreatePreIssuanceRequest) *regources.CreatePreIssuanceRequest {
 	return &regources.CreatePreIssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsPreIssuance),
 		Attributes: regources.CreatePreIssuanceRequestAttrs{
@@ -147,7 +147,7 @@ func newPreIssuanceRequest(id int64, details history2.PreIssuanceRequest) *regou
 		},
 	}
 }
-func newSaleRequest(id int64, details history2.SaleRequest) *regources.CreateSaleRequest {
+func newSaleRequest(id int64, details history2.CreateSaleRequest) *regources.CreateSaleRequest {
 	quoteAssets := &regources.RelationCollection{
 		Data: make([]regources.Key, 0, len(details.QuoteAssets)),
 	}
@@ -195,7 +195,7 @@ func newUpdateSaleDetailsRequest(id int64, details history2.UpdateSaleDetailsReq
 		},
 	}
 }
-func newWithdrawalRequest(id int64, details history2.WithdrawalRequest) *regources.CreateWithdrawalRequest {
+func newWithdrawalRequest(id int64, details history2.CreateWithdrawalRequest) *regources.CreateWithdrawalRequest {
 	return &regources.CreateWithdrawalRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsWithdrawal),
 		Attributes: regources.CreateWithdrawalRequestAttrs{

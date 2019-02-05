@@ -8,12 +8,12 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
-// Sale is helper struct to operate with `sales`
+// CreateSale is helper struct to operate with `sales`
 type Sale struct {
 	repo *db2.Repo
 }
 
-// NewSale - creates new instance of the `Sale`
+// NewSale - creates new instance of the `CreateSale`
 func NewSale(repo *db2.Repo) *Sale {
 	return &Sale{
 		repo: repo,

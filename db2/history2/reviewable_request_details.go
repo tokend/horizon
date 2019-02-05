@@ -13,20 +13,19 @@ import (
 
 //ReviewableRequestDetails - stores in union switch details of the reviewable requests
 type ReviewableRequestDetails struct {
-	Type                  xdr.ReviewableRequestType `json:"type"`
-	AssetCreation         *AssetCreationRequest     `json:"asset_create,omitempty"`
-	AssetUpdate           *AssetUpdateRequest       `json:"asset_update,omitempty"`
-	PreIssuanceCreate     *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
-	IssuanceCreate        *IssuanceRequest          `json:"issuance_create,omitempty"`
-	Withdraw              *WithdrawalRequest        `json:"withdraw,omitempty"`
-	TwoStepWithdraw       *WithdrawalRequest        `json:"two_step_withdrawal"`
-	Sale                  *SaleRequest              `json:"sale,omitempty"`
-	LimitsUpdate          *LimitsUpdateRequest      `json:"limits_update"`
-	AmlAlert              *AmlAlertRequest          `json:"aml_alert"`
-	ChangeRole            *ChangeRoleRequest        `json:"change_role,omitempty"`
-	UpdateSaleDetails     *UpdateSaleDetailsRequest `json:"update_sale_details"`
-	AtomicSwapBidCreation *AtomicSwapBidCreation    `json:"atomic_swap_bid_creation"`
-	AtomicSwap            *AtomicSwap               `json:"atomic_swap"`
+	Type                xdr.ReviewableRequestType   `json:"type"`
+	CreateAsset         *CreateAssetRequest         `json:"create_asset,omitempty"`
+	UpdateAsset         *UpdateAssetRequest         `json:"update_asset,omitempty"`
+	CreatePreIssuance   *CreatePreIssuanceRequest   `json:"create_pre_issuance,omitempty"`
+	CreateIssuance      *CreateIssuanceRequest      `json:"create_issuance,omitempty"`
+	CreateWithdraw      *CreateWithdrawalRequest    `json:"create_withdraw,omitempty"`
+	CreateSale          *CreateSaleRequest          `json:"create_sale,omitempty"`
+	UpdateLimits        *UpdateLimitsRequest        `json:"update_limits"`
+	CreateAmlAlert      *CreateAmlAlertRequest      `json:"create_aml_alert"`
+	ChangeRole          *ChangeRoleRequest          `json:"change_role,omitempty"`
+	UpdateSaleDetails   *UpdateSaleDetailsRequest   `json:"update_sale_details"`
+	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid"`
+	CreateAtomicSwap    *CreateAtomicSwapRequest    `json:"create_atomic_swap"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -49,8 +48,8 @@ func (r *ReviewableRequestDetails) Scan(src interface{}) error {
 	return nil
 }
 
-//AssetCreationRequest - asset creation request details
-type AssetCreationRequest struct {
+//CreateAssetRequest - asset creation request details
+type CreateAssetRequest struct {
 	Asset                  string            `json:"asset"`
 	Policies               int32             `json:"policies"`
 	PreIssuedAssetSigner   string            `json:"pre_issued_asset_signer"`
@@ -59,15 +58,15 @@ type AssetCreationRequest struct {
 	CreatorDetails         regources.Details `json:"details"`
 }
 
-//AssetUpdateRequest - asset update request details
-type AssetUpdateRequest struct {
+//UpdateAssetRequest - asset update request details
+type UpdateAssetRequest struct {
 	Asset          string            `json:"asset"`
 	Policies       int32             `json:"policies"`
 	CreatorDetails regources.Details `json:"details"`
 }
 
-//PreIssuanceRequest - request details
-type PreIssuanceRequest struct {
+//CreatePreIssuanceRequest - request details
+type CreatePreIssuanceRequest struct {
 	Asset          string            `json:"asset"`
 	Amount         string            `json:"amount"`
 	Signature      string            `json:"signature"`
@@ -75,16 +74,16 @@ type PreIssuanceRequest struct {
 	CreatorDetails regources.Details `json:"creator_details"`
 }
 
-//IssuanceRequest - request details
-type IssuanceRequest struct {
+//CreateIssuanceRequest - request details
+type CreateIssuanceRequest struct {
 	Asset          string            `json:"asset"`
 	Amount         string            `json:"amount"`
 	Receiver       string            `json:"receiver"`
 	CreatorDetails regources.Details `json:"external_details"`
 }
 
-//WithdrawalRequest - request details
-type WithdrawalRequest struct {
+//CreateWithdrawalRequest - request details
+type CreateWithdrawalRequest struct {
 	BalanceID       string            `json:"balance_id"`
 	Amount          string            `json:"amount"`
 	FixedFee        string            `json:"fixed_fee"`
@@ -93,8 +92,8 @@ type WithdrawalRequest struct {
 	ReviewerDetails regources.Details `json:"reviewer_details"`
 }
 
-//SaleRequest - request details
-type SaleRequest struct {
+//CreateSaleRequest - request details
+type CreateSaleRequest struct {
 	BaseAsset           string                 `json:"base_asset"`
 	DefaultQuoteAsset   string                 `json:"quote_asset"`
 	StartTime           time.Time              `json:"start_time"`
@@ -107,14 +106,14 @@ type SaleRequest struct {
 	BaseAssetForHardCap string                 `json:"base_asset_for_hard_cap"`
 }
 
-//LimitsUpdateRequest - request details
-type LimitsUpdateRequest struct {
+//UpdateLimitsRequest - request details
+type UpdateLimitsRequest struct {
 	DocumentHash   string            `json:"document_hash"`
 	CreatorDetails regources.Details `json:"creator_details"`
 }
 
-//AmlAlertRequest - request details
-type AmlAlertRequest struct {
+//CreateAmlAlertRequest - request details
+type CreateAmlAlertRequest struct {
 	BalanceID      string `json:"balance_id"`
 	Amount         string `json:"amount"`
 	CreatorDetails string `json:"creator_details"`
@@ -135,16 +134,16 @@ type UpdateSaleDetailsRequest struct {
 	CreatorDetails regources.Details `json:"creator_details"`
 }
 
-//AtomicSwapBidCreation - request details
-type AtomicSwapBidCreation struct {
+//CreateAtomicSwapBidRequest - request details
+type CreateAtomicSwapBidRequest struct {
 	BaseBalance    string                 `json:"base_balance"`
 	BaseAmount     uint64                 `json:"base_amount"`
 	CreatorDetails regources.Details      `json:"creator_details"`
 	QuoteAssets    []regources.AssetPrice `json:"quote_assets"`
 }
 
-//AtomicSwap - request details
-type AtomicSwap struct {
+//CreateAtomicSwapRequest - request details
+type CreateAtomicSwapRequest struct {
 	BidID          uint64            `json:"bid_id"`
 	BaseAmount     uint64            `json:"base_amount"`
 	QuoteAsset     string            `json:"quote_asset"`

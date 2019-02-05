@@ -246,8 +246,8 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 	return &result, nil
 }
 
-func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRequest) *history.AssetCreationRequest {
-	return &history.AssetCreationRequest{
+func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRequest) *history.CreateAssetRequest {
+	return &history.CreateAssetRequest{
 		Asset:                  string(request.Code),
 		Policies:               int32(request.Policies),
 		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
@@ -257,15 +257,15 @@ func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRe
 	}
 }
 
-func (c *reviewableRequestHandler) getAssetUpdate(request *xdr.AssetUpdateRequest) *history.AssetUpdateRequest {
-	return &history.AssetUpdateRequest{
+func (c *reviewableRequestHandler) getAssetUpdate(request *xdr.AssetUpdateRequest) *history.UpdateAssetRequest {
+	return &history.UpdateAssetRequest{
 		Asset:          string(request.Code),
 		Policies:       int32(request.Policies),
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
 
-func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (*history.PreIssuanceRequest,
+func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (*history.CreatePreIssuanceRequest,
 	error) {
 
 	signature, err := xdr.MarshalBase64(request.Signature)
@@ -273,7 +273,7 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 		return nil, errors.Wrap(err, "failed to marshal signature")
 	}
 
-	return &history.PreIssuanceRequest{
+	return &history.CreatePreIssuanceRequest{
 		Asset:     string(request.Asset),
 		Amount:    amount.StringU(uint64(request.Amount)),
 		Signature: signature,
@@ -281,8 +281,8 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 	}, nil
 }
 
-func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
-	return &history.IssuanceRequest{
+func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceRequest) *history.CreateIssuanceRequest {
+	return &history.CreateIssuanceRequest{
 		Asset:          string(request.Asset),
 		Amount:         amount.StringU(uint64(request.Amount)),
 		Receiver:       request.Receiver.AsString(),
@@ -290,8 +290,8 @@ func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceReque
 	}
 }
 
-func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.WithdrawalRequest {
-	return &history.WithdrawalRequest{
+func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.CreateWithdrawalRequest {
+	return &history.CreateWithdrawalRequest{
 		BalanceID:      request.Balance.AsString(),
 		Amount:         amount.StringU(uint64(request.Amount)),
 		FixedFee:       amount.StringU(uint64(request.Fee.Fixed)),
@@ -300,15 +300,15 @@ func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalR
 	}
 }
 
-func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
-	return &history.AmlAlertRequest{
+func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.CreateAmlAlertRequest {
+	return &history.CreateAmlAlertRequest{
 		BalanceID:      request.BalanceId.AsString(),
 		Amount:         amount.StringU(uint64(request.Amount)),
 		CreatorDetails: string(request.CreatorDetails),
 	}
 }
 
-func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
+func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationRequest) *history.CreateSaleRequest {
 	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for i := range request.QuoteAssets {
 		quoteAssets = append(quoteAssets, regources.AssetPrice{
@@ -320,7 +320,7 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 	saleType := request.SaleTypeExt.SaleType
 	baseAssetForHardCap := uint64(request.RequiredBaseAssetForHardCap)
 
-	return &history.SaleRequest{
+	return &history.CreateSaleRequest{
 		BaseAsset:           string(request.BaseAsset),
 		DefaultQuoteAsset:   string(request.DefaultQuoteAsset),
 		StartTime:           unixToTime(int64(request.StartTime)),
@@ -335,9 +335,9 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 }
 
 func (c *reviewableRequestHandler) getLimitsUpdateRequest(
-	request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
+	request *xdr.LimitsUpdateRequest) *history.UpdateLimitsRequest {
 
-	return &history.LimitsUpdateRequest{
+	return &history.UpdateLimitsRequest{
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 		DocumentHash:   hex.EncodeToString(request.DeprecatedDocumentHash[:]),
 	}
@@ -361,7 +361,7 @@ func (c *reviewableRequestHandler) getUpdateSaleDetailsRequest(
 }
 
 func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
-) *history.AtomicSwapBidCreation {
+) *history.CreateAtomicSwapBidRequest {
 	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for _, quoteAsset := range request.QuoteAssets {
 		quoteAssets = append(quoteAssets, regources.AssetPrice{
@@ -370,7 +370,7 @@ func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.
 		})
 	}
 
-	return &history.AtomicSwapBidCreation{
+	return &history.CreateAtomicSwapBidRequest{
 		BaseBalance:    request.BaseBalance.AsString(),
 		BaseAmount:     uint64(request.Amount),
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
@@ -379,8 +379,8 @@ func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.
 }
 
 func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.ASwapRequest,
-) *history.AtomicSwap {
-	return &history.AtomicSwap{
+) *history.CreateAtomicSwapRequest {
+	return &history.CreateAtomicSwapRequest{
 		BidID:      uint64(request.BidId),
 		BaseAmount: uint64(request.BaseAmount),
 		QuoteAsset: string(request.QuoteAsset),
@@ -397,32 +397,32 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	var err error
 	switch body.Type {
 	case xdr.ReviewableRequestTypeCreateAsset:
-		details.AssetCreation = c.getAssetCreation(body.AssetCreationRequest)
+		details.CreateAsset = c.getAssetCreation(body.AssetCreationRequest)
 	case xdr.ReviewableRequestTypeUpdateAsset:
-		details.AssetUpdate = c.getAssetUpdate(body.AssetUpdateRequest)
+		details.UpdateAsset = c.getAssetUpdate(body.AssetUpdateRequest)
 	case xdr.ReviewableRequestTypeCreateIssuance:
-		details.IssuanceCreate = c.getIssuanceRequest(body.IssuanceRequest)
+		details.CreateIssuance = c.getIssuanceRequest(body.IssuanceRequest)
 	case xdr.ReviewableRequestTypeCreatePreIssuance:
-		details.PreIssuanceCreate, err = c.getPreIssuanceRequest(body.PreIssuanceRequest)
+		details.CreatePreIssuance, err = c.getPreIssuanceRequest(body.PreIssuanceRequest)
 		if err != nil {
 			return details, errors.Wrap(err, "failed to get pre issuance request")
 		}
 	case xdr.ReviewableRequestTypeCreateWithdraw:
-		details.Withdraw = c.getWithdrawalRequest(body.WithdrawalRequest)
+		details.CreateWithdraw = c.getWithdrawalRequest(body.WithdrawalRequest)
 	case xdr.ReviewableRequestTypeCreateSale:
-		details.Sale = c.getSaleRequest(body.SaleCreationRequest)
+		details.CreateSale = c.getSaleRequest(body.SaleCreationRequest)
 	case xdr.ReviewableRequestTypeUpdateLimits:
-		details.LimitsUpdate = c.getLimitsUpdateRequest(body.LimitsUpdateRequest)
+		details.UpdateLimits = c.getLimitsUpdateRequest(body.LimitsUpdateRequest)
 	case xdr.ReviewableRequestTypeCreateAmlAlert:
-		details.AmlAlert = c.getAmlAlertRequest(body.AmlAlertRequest)
+		details.CreateAmlAlert = c.getAmlAlertRequest(body.AmlAlertRequest)
 	case xdr.ReviewableRequestTypeChangeRole:
 		details.ChangeRole = c.getChangeRoleRequest(body.ChangeRoleRequest)
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = c.getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		details.AtomicSwapBidCreation = c.getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
+		details.CreateAtomicSwapBid = c.getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwap:
-		details.AtomicSwap = c.getAtomicSwapRequest(body.ASwapRequest)
+		details.CreateAtomicSwap = c.getAtomicSwapRequest(body.ASwapRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

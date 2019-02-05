@@ -358,7 +358,7 @@ func initWebActions(app *App) {
 	r.Get("/sales", &SaleIndexAction{})
 	r.Get("/core_sales", &CoreSalesAction{})
 
-	// Sale antes actions
+	// CreateSale antes actions
 	r.Get("/sale_antes", &SaleAnteAction{})
 
 	// Atomic swap bid actions
