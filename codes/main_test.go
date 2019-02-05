@@ -187,7 +187,7 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
-	Convey("Cancel Sale Request", t, func() {
+	Convey("Cancel CreateSale Request", t, func() {
 		for _, code := range xdr.CancelSaleCreationRequestResultCodeAll {
 			checkCode(t, code)
 		}

@@ -14,28 +14,28 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 	d.RequestTypeName = requestType.ShortString()
 	d.RequestType = int32(requestType)
 	switch requestType {
-	case xdr.ReviewableRequestTypeAssetCreate:
+	case xdr.ReviewableRequestTypeCreateAsset:
 		d.AssetCreate, err = PopulateAssetCreationRequest(*h.AssetCreation)
 		return
-	case xdr.ReviewableRequestTypeAssetUpdate:
+	case xdr.ReviewableRequestTypeUpdateAsset:
 		d.AssetUpdate, err = PopulateAssetUpdateRequest(*h.AssetUpdate)
 		return
-	case xdr.ReviewableRequestTypePreIssuanceCreate:
+	case xdr.ReviewableRequestTypeCreatePreIssuance:
 		d.PreIssuanceCreate, err = PopulatePreIssuanceRequest(*h.PreIssuanceCreate)
 		return
-	case xdr.ReviewableRequestTypeIssuanceCreate:
+	case xdr.ReviewableRequestTypeCreateIssuance:
 		d.IssuanceCreate, err = PopulateIssuanceRequest(*h.IssuanceCreate)
 		return
-	case xdr.ReviewableRequestTypeWithdraw:
+	case xdr.ReviewableRequestTypeCreateWithdraw:
 		d.Withdraw, err = PopulateWithdrawalRequest(*h.Withdraw)
 		return
-	case xdr.ReviewableRequestTypeSale:
+	case xdr.ReviewableRequestTypeCreateSale:
 		d.Sale, err = PopulateSaleCreationRequest(*h.Sale)
 		return
-	case xdr.ReviewableRequestTypeLimitsUpdate:
+	case xdr.ReviewableRequestTypeUpdateLimits:
 		d.LimitsUpdate, err = PopulateLimitsUpdateRequest(*h.LimitsUpdate)
 		return
-	case xdr.ReviewableRequestTypeAmlAlert:
+	case xdr.ReviewableRequestTypeCreateAmlAlert:
 		d.AMLAlert, err = PopulateAmlAlertRequest(*h.AmlAlert)
 		return
 	case xdr.ReviewableRequestTypeChangeRole:
@@ -44,16 +44,16 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		d.UpdateSaleDetails, err = PopulateUpdateSaleDetailsRequest(*h.UpdateSaleDetails)
 		return
-	case xdr.ReviewableRequestTypeInvoice:
+	case xdr.ReviewableRequestTypeCreateInvoice:
 		d.Invoice, err = PopulateInvoiceRequest(*h.Invoice)
 		return
-	case xdr.ReviewableRequestTypeContract:
+	case xdr.ReviewableRequestTypeManageContract:
 		d.Contract, err = PopulateContractRequest(*h.Contract)
 		return
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
 		d.AtomicSwapBidCreation, err = PopulateASwapBidCreationRequest(*h.AtomicSwapBidCreation)
 		return
-	case xdr.ReviewableRequestTypeAtomicSwap:
+	case xdr.ReviewableRequestTypeCreateAtomicSwap:
 		d.AtomicSwap, err = PopulateASwapRequest(*h.AtomicSwap)
 		return
 	default:

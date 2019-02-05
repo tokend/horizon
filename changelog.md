@@ -4,15 +4,16 @@
 
 ### Added
 
-* ingest handler for manage account rule and role operations
-
 ### Changed
 
-* Rename KYC request to change role
+* `Details`/`Reason`/`NewDetails` field names in reviewable request types unified to `creatorDetails`
+* Corresponding messages in `messages` map
 
 ### Deprecated 
 
 ### Removed
+
+* `UpdateSaleEndTimeRequest` type
 
 ### Fixed 
 

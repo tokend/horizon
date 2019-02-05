@@ -73,14 +73,14 @@ func (action *ReviewableRequestIndexAction) checkAllowed() {
 	constrains := []doorman.SignerConstraint{}
 	extentions := []doorman.SignerExtension{}
 	for _, actionType := range action.RequestTypes {
-		if actionType == xdr.ReviewableRequestTypeIssuanceCreate {
+		if actionType == xdr.ReviewableRequestTypeCreateIssuance {
 			extentions = append(extentions, doorman.SignerExternsionPendingIssuance, doorman.SignerExternsionIssuanceHistory)
 		}
 		if actionType == xdr.ReviewableRequestTypeChangeRole {
 			extentions = append(extentions, doorman.SignerExternsionPendingKYC, doorman.SignerExternsionKYCHistory)
 
 		}
-		if actionType == xdr.ReviewableRequestTypeSale {
+		if actionType == xdr.ReviewableRequestTypeCreateSale {
 			extentions = append(extentions, doorman.SignerExternsionCrowdfundingCampaign)
 		}
 	}

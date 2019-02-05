@@ -96,10 +96,10 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  revision = "50ee265dae70021273b685f018a40d34c17241e6"
+  revision = "339913479ae5d30cf60786ace40b3c39762a62f8"
 
 [[constraint]]
-  branch = "feature/account_role"
+  branch = "refactor/details"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
@@ -121,6 +121,10 @@
 [[constraint]]
   name = "gitlab.com/distributed_lab/ape"
   version = "0.8.0"
+
+[[constraint]]
+  name = "gitlab.com/distributed_lab/kit"
+  branch = "master"
 
 [[override]]
   name = "github.com/google/jsonapi"

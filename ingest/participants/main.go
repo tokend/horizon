@@ -99,7 +99,7 @@ func ForOperation(
 			break
 		}
 
-		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeAtomicSwap.ShortString() {
+		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeCreateAtomicSwap.ShortString() {
 			result = append(result, Participant{
 				AccountID: request.Requestor,
 				BalanceID: nil,
@@ -163,7 +163,7 @@ func ForOperation(
 			result = append(result, Participant{
 				AccountID: updateKYCRequestData.AccountToUpdateKyc,
 				BalanceID: nil,
-				Details:   nil,
+				CreatorDetails:   nil,
 			})
 		}*/
 	case xdr.OperationTypePaymentV2:

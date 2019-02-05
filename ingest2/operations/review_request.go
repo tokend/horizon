@@ -32,27 +32,27 @@ func newReviewRequestOpHandler(pubKeyProvider IDProvider, balanceProvider balanc
 		pubKeyProvider:  pubKeyProvider,
 		balanceProvider: balanceProvider,
 		allRequestHandlers: map[xdr.ReviewableRequestType]reviewRequestHandler{
-			xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{
+			xdr.ReviewableRequestTypeCreateIssuance: &issuanceHandler{
 				balanceProvider: balanceProvider,
 			},
-			xdr.ReviewableRequestTypeWithdraw: &withdrawHandler{
+			xdr.ReviewableRequestTypeCreateWithdraw: &withdrawHandler{
 				balanceProvider: balanceProvider,
 			},
-			xdr.ReviewableRequestTypeAmlAlert: &amlAlertHandler{
+			xdr.ReviewableRequestTypeCreateAmlAlert: &amlAlertHandler{
 				balanceProvider: balanceProvider,
 			},
-			xdr.ReviewableRequestTypeAtomicSwap: &atomicSwapHandler{
+			xdr.ReviewableRequestTypeCreateAtomicSwap: &atomicSwapHandler{
 				pubKeyProvider: pubKeyProvider,
 			},
-			xdr.ReviewableRequestTypeAssetCreate:         &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeAssetUpdate:         &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypePreIssuanceCreate:   &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeSale:                &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeLimitsUpdate:        &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeCreateAsset:         &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeUpdateAsset:         &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeCreatePreIssuance:   &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeCreateSale:          &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeUpdateLimits:        &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeChangeRole:          &reviewableRequestHandlerStub{},
 			xdr.ReviewableRequestTypeUpdateSaleDetails:   &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeInvoice:             &deprecatedReviewRequestHandler{},
-			xdr.ReviewableRequestTypeContract:            &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeCreateInvoice:       &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeManageContract:      &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &reviewableRequestHandlerStub{},
 		},
 	}

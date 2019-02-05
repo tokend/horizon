@@ -221,7 +221,7 @@ func initWebActions(app *App) {
 				action.q = action.q.AssetManagementByAsset(asset)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAssetCreate, xdr.ReviewableRequestTypeAssetUpdate},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAsset, xdr.ReviewableRequestTypeUpdateAsset},
 	})
 	r.Get("/request/preissuances", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
@@ -231,7 +231,7 @@ func initWebActions(app *App) {
 				action.q = action.q.PreIssuanceByAsset(asset)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypePreIssuanceCreate},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreatePreIssuance},
 	})
 	r.Get("/request/issuances", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
@@ -264,7 +264,7 @@ func initWebActions(app *App) {
 				return
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeIssuanceCreate},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateIssuance},
 	})
 	r.Get("/request/withdrawals", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
@@ -274,7 +274,7 @@ func initWebActions(app *App) {
 				action.q = action.q.WithdrawalByDestAsset(asset)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeWithdraw},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateWithdraw},
 	})
 	r.Get("/request/sales", &ReviewableRequestIndexAction{
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
@@ -284,11 +284,11 @@ func initWebActions(app *App) {
 				action.q = action.q.SalesByBaseAsset(asset)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeSale},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateSale},
 	})
 
 	r.Get("/request/aml_alerts", &ReviewableRequestIndexAction{
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAmlAlert},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAmlAlert},
 	})
 
 	r.Get("/request/limits_updates", &ReviewableRequestIndexAction{
@@ -299,7 +299,7 @@ func initWebActions(app *App) {
 				action.q = action.q.LimitsByDocHash(hash)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeLimitsUpdate},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeUpdateLimits},
 	})
 	r.Get("/request/update_kyc", &ReviewableRequestIndexAction{
 		CustomCheckAllowed: func(action *ReviewableRequestIndexAction) {
@@ -350,7 +350,7 @@ func initWebActions(app *App) {
 				action.q = action.q.ASwapByBidID(*bidID)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeAtomicSwap},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwap},
 	})
 
 	// Sales actions
@@ -358,7 +358,7 @@ func initWebActions(app *App) {
 	r.Get("/sales", &SaleIndexAction{})
 	r.Get("/core_sales", &CoreSalesAction{})
 
-	// Sale antes actions
+	// CreateSale antes actions
 	r.Get("/sale_antes", &SaleAnteAction{})
 
 	// Atomic swap bid actions
