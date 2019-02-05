@@ -16,12 +16,12 @@ type ChangeRoleRequestAttrs struct {
 	AccountRoleToSet uint64    `json:"account_role_to_set"`
 	KYCData          Details   `json:"kyc_data"`
 	SequenceNumber   uint32    `json:"sequence_number"`
-	ExternalDetails  []Details `json:"external_details"`
+	CreatorDetails   []Details `json:"creator_details"`
 }
 
 func (r ChangeRoleRequestAttrs) MarshalJSON() ([]byte, error) {
-	if r.ExternalDetails == nil {
-		r.ExternalDetails = []Details{}
+	if r.CreatorDetails == nil {
+		r.CreatorDetails = []Details{}
 	}
 
 	type temp ChangeRoleRequestAttrs

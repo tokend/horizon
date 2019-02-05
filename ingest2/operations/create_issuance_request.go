@@ -12,7 +12,7 @@ type createIssuanceRequestOpHandler struct {
 	balanceProvider balanceProvider
 }
 
-// Details returns details about create issuance request operation
+// CreatorDetails returns details about create issuance request operation
 func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
@@ -31,10 +31,10 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateIssuanceRequest,
 		CreateIssuanceRequest: &history2.CreateIssuanceRequestDetails{
-			Fee:       internal.FeeFromXdr(issuanceRequest.Fee),
-			Reference: utf8.Scrub(string(createIssuanceRequestOp.Reference)),
-			Amount:    regources.Amount(issuanceRequest.Amount),
-			Asset:     string(issuanceRequest.Asset),
+			Fee:                    internal.FeeFromXdr(issuanceRequest.Fee),
+			Reference:              utf8.Scrub(string(createIssuanceRequestOp.Reference)),
+			Amount:                 regources.Amount(issuanceRequest.Amount),
+			Asset:                  string(issuanceRequest.Asset),
 			ReceiverAccountAddress: createIssuanceRequestRes.Receiver.Address(),
 			ReceiverBalanceAddress: issuanceRequest.Receiver.AsString(),
 			ExternalDetails:        internal.MarshalCustomDetails(issuanceRequest.ExternalDetails),

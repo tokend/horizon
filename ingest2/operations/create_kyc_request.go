@@ -10,7 +10,7 @@ type createChangeRoleRequestOpHandler struct {
 	pubKeyProvider IDProvider
 }
 
-// Details returns details about create KYC request operation
+// CreatorDetails returns details about create KYC request operation
 func (h *createChangeRoleRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createKYCRequestOp := op.Body.MustCreateChangeRoleRequestOp()

@@ -9,8 +9,8 @@ type AssetUpdateRequest struct {
 
 // AssetUpdateRequestAttrs - attributes of the `asset update` reviewable request
 type AssetUpdateRequestAttrs struct {
-	Policies int32   `json:"policies"`
-	Details  Details `json:"details"`
+	Policies       int32   `json:"policies"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 // AssetUpdateRequestRelations - attributes of the `asset update` reviewable request

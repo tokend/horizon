@@ -9,7 +9,7 @@ type manageBalanceOpHandler struct {
 	pubKeyProvider IDProvider
 }
 
-// Details returns details about manage balance operation
+// CreatorDetails returns details about manage balance operation
 func (h *manageBalanceOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageBalanceOp := op.Body.MustManageBalanceOp()

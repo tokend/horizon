@@ -343,10 +343,10 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/account_role"
+  branch = "refactor/details"
   name = "gitlab.com/tokend/regources"
   packages = [".","v2"]
-  revision = "435aae1d9b2062d26af3faf77f4c548906a07600"
+  revision = "cbe90cd3aca06ac006bef95de8e00c0a65ae1f05"
 
 [[projects]]
   branch = "master"
@@ -399,6 +399,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4ce0dc66b3638409cd58e29eefa7770a001726a4b3aa287a80edfce775c0a4f1"
+  inputs-digest = "db8b2ede2b75bef8578cb8d7e2e30bb94cfb5156ff854848e5ab0cabaa75358c"
   solver-name = "gps-cdcl"
   solver-version = 1

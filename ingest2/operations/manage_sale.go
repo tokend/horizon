@@ -9,7 +9,7 @@ type manageSaleHandler struct {
 	manageOfferOpHandler *manageOfferOpHandler
 }
 
-// Details returns details about payout operation
+// CreatorDetails returns details about payout operation
 func (h *manageSaleHandler) Details(op rawOperation, res xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageSale := op.Body.MustManageSaleOp()

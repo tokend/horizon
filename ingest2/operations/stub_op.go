@@ -8,7 +8,7 @@ import (
 type stubOpHandler struct {
 }
 
-//Details - used as temporary solution for not handled operations
+//CreatorDetails - used as temporary solution for not handled operations
 func (h *stubOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
 	return history2.OperationDetails{
 		Type: op.Body.Type,

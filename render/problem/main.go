@@ -59,7 +59,7 @@ func Inflate(ctx context.Context, p *P) {
 }
 
 // Render writes a http response to `w`, compliant with the "Problem
-// Details for HTTP APIs" RFC:
+// CreatorDetails for HTTP APIs" RFC:
 //   https://tools.ietf.org/html/draft-ietf-appsawg-http-problem-00
 //
 // `p` is the problem, which may be either a concrete P struct, an implementor

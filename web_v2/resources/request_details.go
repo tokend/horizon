@@ -47,8 +47,8 @@ func newAmlAlertRequest(id int64, details history2.AmlAlertRequest) *regources.A
 	return &regources.AmlAlertRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAMLAlert),
 		Attributes: regources.AmlAlertRequestAttrs{
-			Amount: details.Amount,
-			Reason: details.Reason,
+			Amount:         details.Amount,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.AmlAlertRequestRelations{
 			Balance: NewBalanceKey(details.BalanceID).AsRelation(),
@@ -64,7 +64,7 @@ func newAssetCreateRequest(id int64, details history2.AssetCreationRequest) *reg
 			PreIssuanceAssetSigner: details.PreIssuedAssetSigner,
 			MaxIssuanceAmount:      details.MaxIssuanceAmount,
 			InitialPreissuedAmount: details.InitialPreissuedAmount,
-			Details:                details.Details,
+			CreatorDetails:         details.CreatorDetails,
 		},
 	}
 }
@@ -72,8 +72,8 @@ func newAssetUpdateRequest(id int64, details history2.AssetUpdateRequest) *regou
 	return &regources.AssetUpdateRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAssetUpdate),
 		Attributes: regources.AssetUpdateRequestAttrs{
-			Policies: details.Policies,
-			Details:  details.Details,
+			Policies:       details.Policies,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.AssetUpdateRequestRelations{
 			Asset: NewAssetKey(details.Asset).AsRelation(),
@@ -103,8 +103,8 @@ func newAtomicSwapBidRequest(id int64, details history2.AtomicSwapBidCreation) *
 	return &regources.AtomicSwapBidRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAtomicSwapBid),
 		Attributes: regources.AtomicSwapBidRequestAttrs{
-			BaseAmount: regources.Amount(details.BaseAmount),
-			Details:    details.Details,
+			BaseAmount:     regources.Amount(details.BaseAmount),
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.AtomicSwapBidRequestRelations{
 			BaseBalance: NewBalanceKey(details.BaseBalance).AsRelation(),
@@ -116,8 +116,8 @@ func newIssuanceRequest(id int64, details history2.IssuanceRequest) *regources.I
 	return &regources.IssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsIssuance),
 		Attributes: regources.IssuanceRequestAttrs{
-			Amount:  details.Amount,
-			Details: details.Details,
+			Amount:         details.Amount,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.IssuanceRequestRelations{
 			Asset:    NewAssetKey(details.Asset).AsRelation(),
@@ -129,8 +129,8 @@ func newLimitsUpdateRequest(id int64, details history2.LimitsUpdateRequest) *reg
 	return &regources.LimitsUpdateRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsLimitsUpdate),
 		Attributes: regources.LimitsUpdateRequestAttrs{
-			DocumentHash: details.DocumentHash,
-			Details:      details.Details,
+			DocumentHash:   details.DocumentHash,
+			CreatorDetails: details.CreatorDetails,
 		},
 	}
 }
@@ -162,7 +162,7 @@ func newSaleRequest(id int64, details history2.SaleRequest) *regources.SaleReque
 			StartTime:           details.StartTime,
 			EndTime:             details.EndTime,
 			SaleType:            details.SaleType,
-			Details:             details.Details,
+			CreatorDetails:      details.CreatorDetails,
 		},
 		Relationships: regources.SaleRequestRelations{
 			QuoteAssets:       quoteAssets,
@@ -188,7 +188,7 @@ func newUpdateSaleDetailsRequest(id int64, details history2.UpdateSaleDetailsReq
 	return &regources.UpdateSaleDetailsRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsUpdateSaleDetails),
 		Attributes: regources.UpdateSaleDetailsRequestAttrs{
-			NewDetails: details.NewDetails,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.UpdateSaleDetailsRequestRelations{
 			Sale: NewSaleKey(int64(details.SaleID)).AsRelation(),
@@ -204,7 +204,7 @@ func newWithdrawalRequest(id int64, details history2.WithdrawalRequest) *regourc
 				CalculatedPercent: details.PercentFee,
 			},
 			Amount:          details.Amount,
-			Details:         details.Details,
+			CreatorDetails:  details.CreatorDetails,
 			ReviewerDetails: details.ReviewerDetails,
 		},
 		Relationships: regources.WithdrawalRequestRelations{

@@ -237,7 +237,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}
 
-	// we use key "data" for compatibility with db2.Details
+	// we use key "data" for compatibility with db2.CreatorDetails
 	// the value for the key "data" is a slice of map[string]interface{}
 	result.ExternalDetails = map[string]interface{}{
 		"data": externalDetails,
@@ -253,15 +253,15 @@ func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRe
 		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:      amount.StringU(uint64(request.MaxIssuanceAmount)),
 		InitialPreissuedAmount: amount.StringU(uint64(request.InitialPreissuedAmount)),
-		Details:                internal.MarshalCustomDetails(request.CreatorDetails),
+		CreatorDetails:         internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
 
 func (c *reviewableRequestHandler) getAssetUpdate(request *xdr.AssetUpdateRequest) *history.AssetUpdateRequest {
 	return &history.AssetUpdateRequest{
-		Asset:    string(request.Code),
-		Policies: int32(request.Policies),
-		Details:  internal.MarshalCustomDetails(request.CreatorDetails),
+		Asset:          string(request.Code),
+		Policies:       int32(request.Policies),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
 
@@ -283,28 +283,28 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 
 func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
 	return &history.IssuanceRequest{
-		Asset:    string(request.Asset),
-		Amount:   amount.StringU(uint64(request.Amount)),
-		Receiver: request.Receiver.AsString(),
-		Details:  internal.MarshalCustomDetails(request.ExternalDetails),
+		Asset:          string(request.Asset),
+		Amount:         amount.StringU(uint64(request.Amount)),
+		Receiver:       request.Receiver.AsString(),
+		CreatorDetails: internal.MarshalCustomDetails(request.ExternalDetails),
 	}
 }
 
 func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.WithdrawalRequest {
 	return &history.WithdrawalRequest{
-		BalanceID:  request.Balance.AsString(),
-		Amount:     amount.StringU(uint64(request.Amount)),
-		FixedFee:   amount.StringU(uint64(request.Fee.Fixed)),
-		PercentFee: amount.StringU(uint64(request.Fee.Percent)),
-		Details:    internal.MarshalCustomDetails(request.CreatorDetails),
+		BalanceID:      request.Balance.AsString(),
+		Amount:         amount.StringU(uint64(request.Amount)),
+		FixedFee:       amount.StringU(uint64(request.Fee.Fixed)),
+		PercentFee:     amount.StringU(uint64(request.Fee.Percent)),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
 
 func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
 	return &history.AmlAlertRequest{
-		BalanceID: request.BalanceId.AsString(),
-		Amount:    amount.StringU(uint64(request.Amount)),
-		Reason:    string(request.CreatorDetails),
+		BalanceID:      request.BalanceId.AsString(),
+		Amount:         amount.StringU(uint64(request.Amount)),
+		CreatorDetails: string(request.CreatorDetails),
 	}
 }
 
@@ -327,7 +327,7 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 		EndTime:             unixToTime(int64(request.EndTime)),
 		SoftCap:             amount.StringU(uint64(request.SoftCap)),
 		HardCap:             amount.StringU(uint64(request.HardCap)),
-		Details:             internal.MarshalCustomDetails(request.CreatorDetails),
+		CreatorDetails:      internal.MarshalCustomDetails(request.CreatorDetails),
 		QuoteAssets:         quoteAssets,
 		SaleType:            saleType,
 		BaseAssetForHardCap: amount.StringU(baseAssetForHardCap),
@@ -338,8 +338,8 @@ func (c *reviewableRequestHandler) getLimitsUpdateRequest(
 	request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
 
 	return &history.LimitsUpdateRequest{
-		Details:      internal.MarshalCustomDetails(request.CreatorDetails),
-		DocumentHash: hex.EncodeToString(request.DeprecatedDocumentHash[:]),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+		DocumentHash:   hex.EncodeToString(request.DeprecatedDocumentHash[:]),
 	}
 }
 
@@ -355,8 +355,8 @@ func (c *reviewableRequestHandler) getChangeRoleRequest(request *xdr.ChangeRoleR
 func (c *reviewableRequestHandler) getUpdateSaleDetailsRequest(
 	request *xdr.UpdateSaleDetailsRequest) *history.UpdateSaleDetailsRequest {
 	return &history.UpdateSaleDetailsRequest{
-		SaleID:     uint64(request.SaleId),
-		NewDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+		SaleID:         uint64(request.SaleId),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
 
@@ -371,10 +371,10 @@ func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.
 	}
 
 	return &history.AtomicSwapBidCreation{
-		BaseBalance: request.BaseBalance.AsString(),
-		BaseAmount:  uint64(request.Amount),
-		Details:     internal.MarshalCustomDetails(request.CreatorDetails),
-		QuoteAssets: quoteAssets,
+		BaseBalance:    request.BaseBalance.AsString(),
+		BaseAmount:     uint64(request.Amount),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+		QuoteAssets:    quoteAssets,
 	}
 }
 

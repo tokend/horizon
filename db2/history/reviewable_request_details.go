@@ -12,23 +12,22 @@ import (
 )
 
 type ReviewableRequestDetails struct {
-	AssetCreation            *AssetCreationRequest     `json:"asset_create,omitempty"`
-	AssetUpdate              *AssetUpdateRequest       `json:"asset_update,omitempty"`
-	PreIssuanceCreate        *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
-	IssuanceCreate           *IssuanceRequest          `json:"issuance_create,omitempty"`
-	Withdraw                 *WithdrawalRequest        `json:"withdraw,omitempty"`
-	TwoStepWithdraw          *WithdrawalRequest        `json:"two_step_withdrawal"`
-	Sale                     *SaleRequest              `json:"sale,omitempty"`
-	LimitsUpdate             *LimitsUpdateRequest      `json:"limits_update"`
-	AmlAlert                 *AmlAlertRequest          `json:"aml_alert"`
-	ChangeRole               *ChangeRoleRequest        `json:"change_role,omitempty"`
-	UpdateSaleDetails        *UpdateSaleDetailsRequest `json:"update_sale_details"`
-	UpdateSaleEndTimeRequest *UpdateSaleEndTimeRequest `json:"update_sale_end_time_request"`
-	PromotionUpdate          *PromotionUpdateRequest   `json:"promotion_update"`
-	Invoice                  *InvoiceRequest           `json:"invoice"`
-	Contract                 *ContractRequest          `json:"contract"`
-	AtomicSwapBidCreation    *AtomicSwapBidCreation    `json:"atomic_swap_bid_creation"`
-	AtomicSwap               *AtomicSwap               `json:"atomic_swap"`
+	AssetCreation         *AssetCreationRequest     `json:"asset_create,omitempty"`
+	AssetUpdate           *AssetUpdateRequest       `json:"asset_update,omitempty"`
+	PreIssuanceCreate     *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
+	IssuanceCreate        *IssuanceRequest          `json:"issuance_create,omitempty"`
+	Withdraw              *WithdrawalRequest        `json:"withdraw,omitempty"`
+	TwoStepWithdraw       *WithdrawalRequest        `json:"two_step_withdrawal"`
+	Sale                  *SaleRequest              `json:"sale,omitempty"`
+	LimitsUpdate          *LimitsUpdateRequest      `json:"limits_update"`
+	AmlAlert              *AmlAlertRequest          `json:"aml_alert"`
+	ChangeRole            *ChangeRoleRequest        `json:"change_role,omitempty"`
+	UpdateSaleDetails     *UpdateSaleDetailsRequest `json:"update_sale_details"`
+	PromotionUpdate       *PromotionUpdateRequest   `json:"promotion_update"`
+	Invoice               *InvoiceRequest           `json:"invoice"`
+	Contract              *ContractRequest          `json:"contract"`
+	AtomicSwapBidCreation *AtomicSwapBidCreation    `json:"atomic_swap_bid_creation"`
+	AtomicSwap            *AtomicSwap               `json:"atomic_swap"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -140,11 +139,6 @@ type ContractRequest struct {
 	Details   map[string]interface{} `json:"details"`
 	StartTime time.Time              `json:"start_time"`
 	EndTime   time.Time              `json:"end_time"`
-}
-
-type UpdateSaleEndTimeRequest struct {
-	SaleID     uint64    `json:"sale_id"`
-	NewEndTime time.Time `json:"new_end_time"`
 }
 
 type PromotionUpdateRequest struct {

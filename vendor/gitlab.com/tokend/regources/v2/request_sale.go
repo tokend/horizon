@@ -18,7 +18,7 @@ type SaleRequestAttrs struct {
 	StartTime           time.Time    `json:"start_time"`
 	EndTime             time.Time    `json:"end_time"`
 	SaleType            xdr.SaleType `json:"sale_type"`
-	Details             Details      `json:"details"`
+	CreatorDetails      Details      `json:"creator_details"`
 }
 
 // SaleRequestRelations - attributes of the `sale` reviewable request

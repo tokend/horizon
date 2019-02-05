@@ -10,7 +10,7 @@ import (
 type deprecatedOpHandler struct {
 }
 
-//Details - returns error as deprecated op should never occur
+//CreatorDetails - returns error as deprecated op should never occur
 func (h *deprecatedOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
 	return history2.OperationDetails{}, errors.From(errors.New("Tried to ingest deprecated operation"), logan.F{
 		"op_type": op.Body.Type,

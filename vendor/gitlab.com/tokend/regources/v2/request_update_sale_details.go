@@ -9,7 +9,7 @@ type UpdateSaleDetailsRequest struct {
 
 // UpdateSaleDetailsRequestAttrs - attributes of the `update_sale_details` reviewable request
 type UpdateSaleDetailsRequestAttrs struct {
-	NewDetails Details `json:"new_details"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 // UpdateSaleDetailsRequestRelations - relationships of the `update_sale_details` reviewable request

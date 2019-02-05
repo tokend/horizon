@@ -99,7 +99,7 @@
   revision = "339913479ae5d30cf60786ace40b3c39762a62f8"
 
 [[constraint]]
-  branch = "feature/account_role"
+  branch = "refactor/details"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

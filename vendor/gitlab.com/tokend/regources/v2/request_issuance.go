@@ -9,8 +9,8 @@ type IssuanceRequest struct {
 
 // IssuanceRequestAttrs - attributes of the `issuance` reviewable request
 type IssuanceRequestAttrs struct {
-	Amount  string  `json:"amount"`
-	Details Details `json:"external_details"`
+	Amount         string  `json:"amount"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 // IssuanceRequestRelations - relationships of the `issuance` reviewable request

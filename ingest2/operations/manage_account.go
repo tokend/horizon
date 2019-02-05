@@ -9,7 +9,7 @@ type manageAccountOpHandler struct {
 	pubKeyProvider IDProvider
 }
 
-// Details returns details about manage account operation
+// CreatorDetails returns details about manage account operation
 func (h *manageAccountOpHandler) Details(op rawOperation,
 	_ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

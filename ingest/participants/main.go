@@ -163,7 +163,7 @@ func ForOperation(
 			result = append(result, Participant{
 				AccountID: updateKYCRequestData.AccountToUpdateKyc,
 				BalanceID: nil,
-				Details:   nil,
+				CreatorDetails:   nil,
 			})
 		}*/
 	case xdr.OperationTypePaymentV2:

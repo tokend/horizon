@@ -9,8 +9,8 @@ type AtomicSwapBidRequest struct {
 
 // AtomicSwapBidRequestAttrs - attributes of the `atomic swap bid` reviewable request
 type AtomicSwapBidRequestAttrs struct {
-	BaseAmount Amount  `json:"base_amount"`
-	Details    Details `json:"details"`
+	BaseAmount     Amount  `json:"base_amount"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 // AtomicSwapBidRequestRelations - relationships of the `atomic swap bid` reviewable request

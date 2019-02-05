@@ -9,7 +9,8 @@ type AtomicSwapRequest struct {
 
 // AtomicSwapRequestAttrs - attributes of the `atomic swap` reviewable request
 type AtomicSwapRequestAttrs struct {
-	BaseAmount Amount `json:"base_amount"`
+	BaseAmount     Amount  `json:"base_amount"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 // AtomicSwapRequestRelations - relationships of the `atomic swap` reviewable request

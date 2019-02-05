@@ -9,7 +9,7 @@ import (
 type createManageLimitsRequestOpHandler struct {
 }
 
-// Details returns details about create limits request operation
+// CreatorDetails returns details about create limits request operation
 func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

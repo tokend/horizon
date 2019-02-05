@@ -11,7 +11,7 @@ type cancelAtomicSwapBidOpHandler struct {
 	pubKeyProvider IDProvider
 }
 
-// Details returns details about cancel atomic swap bid operation
+// CreatorDetails returns details about cancel atomic swap bid operation
 func (h *cancelAtomicSwapBidOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

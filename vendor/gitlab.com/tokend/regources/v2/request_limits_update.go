@@ -8,6 +8,6 @@ type LimitsUpdateRequest struct {
 
 // LimitsUpdateRequestAttrs - attributes of the `limits update` reviewable request
 type LimitsUpdateRequestAttrs struct {
-	DocumentHash string  `json:"document_hash"`
-	Details      Details `json:"details"`
+	DocumentHash   string  `json:"document_hash"`
+	CreatorDetails Details `json:"creator_details"`
 }

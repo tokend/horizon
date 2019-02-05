@@ -10,7 +10,7 @@ import (
 type createSaleRequestOpHandler struct {
 }
 
-// Details returns details about create sale request operation
+// CreatorDetails returns details about create sale request operation
 func (h *createSaleRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createSaleRequest := op.Body.MustCreateSaleCreationRequestOp().Request

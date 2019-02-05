@@ -8,7 +8,7 @@ import (
 type bindExternalSystemAccountOpHandler struct {
 }
 
-// Details returns details about bind external system account operation
+// CreatorDetails returns details about bind external system account operation
 func (h *bindExternalSystemAccountOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

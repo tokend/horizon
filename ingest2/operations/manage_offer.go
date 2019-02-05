@@ -12,7 +12,7 @@ type manageOfferOpHandler struct {
 	pubKeyProvider IDProvider
 }
 
-// Details returns details about manage offer operation
+// CreatorDetails returns details about manage offer operation
 func (h *manageOfferOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageOfferOp := op.Body.MustManageOfferOp()
