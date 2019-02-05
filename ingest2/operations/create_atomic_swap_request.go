@@ -9,7 +9,7 @@ import (
 type createAtomicSwapRequestOpHandler struct {
 }
 
-// CreatorDetails returns details about create atomic swap request operation
+// Details returns details about create atomic swap request operation
 func (h *createAtomicSwapRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

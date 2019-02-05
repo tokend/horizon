@@ -11,7 +11,7 @@ type checkSaleStateOpHandler struct {
 	manageOfferOpHandler *manageOfferOpHandler
 }
 
-// CreatorDetails returns details about check sale state operation
+// Details returns details about check sale state operation
 func (h *checkSaleStateOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

@@ -9,7 +9,7 @@ type createAccountOpHandler struct {
 	pubKeyProvider IDProvider
 }
 
-// CreatorDetails returns details about create account operation
+// Details returns details about create account operation
 func (h *createAccountOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createAccOp := op.Body.MustCreateAccountOp()

@@ -23,7 +23,7 @@ type balanceProvider interface {
 
 // handler used to get info and changes from success operation
 type handler interface {
-	// CreatorDetails returns db suitable operation details,
+	// Details returns db suitable operation details,
 	// returns error if operation has not existing action (union switch)
 	Details(op rawOperation, opRes xdr.OperationResultTr) (history2.OperationDetails, error)
 	// ParticipantsEffects returns slice of participant effects of each participants

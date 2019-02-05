@@ -11,7 +11,7 @@ import (
 type manageAssetOpHandler struct {
 }
 
-// CreatorDetails returns details about manage asset operation
+// Details returns details about manage asset operation
 func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageAssetOp := op.Body.MustManageAssetOp()

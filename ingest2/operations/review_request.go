@@ -58,7 +58,7 @@ func newReviewRequestOpHandler(pubKeyProvider IDProvider, balanceProvider balanc
 	}
 }
 
-// CreatorDetails returns details about review request operation
+// Details returns details about review request operation
 func (h *reviewRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	reviewRequestOp := op.Body.MustReviewRequestOp()

@@ -12,7 +12,7 @@ type createIssuanceRequestOpHandler struct {
 	balanceProvider balanceProvider
 }
 
-// CreatorDetails returns details about create issuance request operation
+// Details returns details about create issuance request operation
 func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

@@ -10,7 +10,7 @@ import (
 type manageAccountRuleOpHandler struct {
 }
 
-// CreatorDetails returns details about bind external system account operation
+// Details returns details about bind external system account operation
 func (h *manageAccountRuleOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

@@ -11,7 +11,7 @@ import (
 type manageKeyValueOpHandler struct {
 }
 
-// CreatorDetails returns details about manage key value operation
+// Details returns details about manage key value operation
 func (h *manageKeyValueOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageKVOp := op.Body.MustManageKeyValueOp()

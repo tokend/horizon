@@ -9,7 +9,7 @@ import (
 type createPreIssuanceRequestOpHandler struct {
 }
 
-// CreatorDetails returns details about create pre issuance request operation
+// Details returns details about create pre issuance request operation
 func (h *createPreIssuanceRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

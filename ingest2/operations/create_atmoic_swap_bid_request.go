@@ -11,7 +11,7 @@ type createAtomicSwapBidRequestOpHandler struct {
 	balanceProvider balanceProvider
 }
 
-// CreatorDetails returns details about create atomic swap bid request operation
+// Details returns details about create atomic swap bid request operation
 func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr) (history2.OperationDetails, error) {
 

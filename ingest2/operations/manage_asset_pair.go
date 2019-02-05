@@ -10,7 +10,7 @@ type manageAssetPairOpHandler struct {
 	manageOfferOpHandler *manageOfferOpHandler
 }
 
-// CreatorDetails returns details about manage asset pair operation
+// Details returns details about manage asset pair operation
 func (h *manageAssetPairOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

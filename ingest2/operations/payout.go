@@ -13,7 +13,7 @@ type payoutHandler struct {
 	pubKeyProvider  IDProvider
 }
 
-// CreatorDetails returns details about payout operation
+// Details returns details about payout operation
 func (h *payoutHandler) Details(op rawOperation, res xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	payoutOp := op.Body.MustPayoutOp()

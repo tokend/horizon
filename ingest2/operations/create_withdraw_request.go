@@ -11,7 +11,7 @@ type createWithdrawRequestOpHandler struct {
 	pubKeyProvider IDProvider
 }
 
-// CreatorDetails returns details about create withdraw request operation
+// Details returns details about create withdraw request operation
 func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {

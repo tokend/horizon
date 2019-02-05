@@ -12,7 +12,7 @@ type paymentOpHandler struct {
 	pubKeyProvider IDProvider
 }
 
-// CreatorDetails returns details about payment operation
+// Details returns details about payment operation
 func (h *paymentOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	paymentOp := op.Body.MustPaymentOpV2()
