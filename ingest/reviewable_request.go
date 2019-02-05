@@ -114,7 +114,7 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTi
 		externalDetails = append(externalDetails, comment)
 	}
 
-	// we use key "data" for compatibility with db2.CreatorDetails
+	// we use key "data" for compatibility with db2.Details
 	// the value for the key "data" is a slice of map[string]interface{}
 	result.ExternalDetails = map[string]interface{}{
 		"data": externalDetails,

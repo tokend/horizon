@@ -237,7 +237,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}
 
-	// we use key "data" for compatibility with db2.CreatorDetails
+	// we use key "data" for compatibility with db2.Details
 	// the value for the key "data" is a slice of map[string]interface{}
 	result.ExternalDetails = map[string]interface{}{
 		"data": externalDetails,

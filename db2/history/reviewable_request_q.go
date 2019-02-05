@@ -63,7 +63,7 @@ type ReviewableRequestQI interface {
 	// IssuanceByAsset - filters issuance requests by asset
 	IssuanceByAsset(assetCode string) ReviewableRequestQI
 
-	// CreateWithdraw
+	// Withdraw
 	// WithdrawalByDestAsset - filters withdrawal requests by dest asset
 	WithdrawalByDestAsset(assetCode string) ReviewableRequestQI
 
@@ -389,7 +389,7 @@ func (q *ReviewableRequestQ) IssuanceByAsset(assetCode string) ReviewableRequest
 	return q
 }
 
-// CreateWithdraw
+// Withdraw
 // WithdrawalByDestAsset - filters withdrawal requests by dest asset
 func (q *ReviewableRequestQ) WithdrawalByDestAsset(assetCode string) ReviewableRequestQI {
 	if q.Err != nil {

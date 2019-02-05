@@ -34,7 +34,7 @@ type handler interface {
 }
 
 // rawOperation - inner struct to pass source with operation body
-// as one parameter in CreatorDetails method
+// as one parameter in Details method
 type rawOperation struct {
 	Source xdr.AccountId
 	Body   xdr.OperationBody

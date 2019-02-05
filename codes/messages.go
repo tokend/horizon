@@ -182,7 +182,7 @@ var messages = map[string]string{
 	"op_insufficient_fee_amount":                        "Insufficient fee amount",
 	"op_balance_to_charge_fee_from_not_found":           "Balance to charge fee from not found",
 	"op_payment_amount_is_less_than_dest_fee":           "Payment amount is less than destination fee",
-	"op_sale_not_found":                                 "CreateSale not found",
+	"op_sale_not_found":                                 "Sale not found",
 	"op_invalid_new_details":                            "New sale details is invalid JSON",
 	"op_update_details_request_already_exists":          "Update sale details request already exists",
 	"op_update_details_request_not_found":               "Update sale details request to amend not found",

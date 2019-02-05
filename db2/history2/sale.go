@@ -10,7 +10,7 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-//CreateSale - represents instance of compounding campaign
+// Sale - represents instance of compounding campaign
 type Sale struct {
 	ID                uint64       `db:"id"`
 	SoftCap           uint64       `db:"soft_cap"`

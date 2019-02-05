@@ -24,7 +24,7 @@ func (r *AssetEntry) Populate(entry xdr.AssetEntry) {
 	r.Owner = entry.Owner.Address()
 
 	r.Details = make(map[string]interface{})
-	//entry.CreatorDetails is user data and we doesn't care about if it's not valid
+	//entry.Details is user data and we doesn't care about if it's not valid
 	json.Unmarshal([]byte(entry.Details), &r.Details)
 	r.Policies.PopulateFromInt32(int32(entry.Policies))
 	r.PreissuedAssetSigner = entry.PreissuedAssetSigner.Address()
