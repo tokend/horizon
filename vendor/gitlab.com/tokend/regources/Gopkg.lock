@@ -41,19 +41,14 @@
   version = "v3.7"
 
 [[projects]]
-  branch = "master"
+  branch = "feature/account_relations"
   name = "gitlab.com/tokend/go"
-  packages = [
-    "amount",
-    "crc16",
-    "strkey",
-    "xdr"
-  ]
-  revision = "d90f075a0565130943ba3bbce1d8af7e19a1c574"
+  packages = ["amount","crc16","strkey","xdr"]
+  revision = "c614f48c4122caa9a389f77fe690f06a86633f0a"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "540792fcceb708d1d6943f05e7e2f4d97c29f0656318a3cbec15f97d33ff76dc"
+  inputs-digest = "a3720d2efe5197f18110336ff883d73ab0b37a64fa28982f25549327683ffb44"
   solver-name = "gps-cdcl"
   solver-version = 1

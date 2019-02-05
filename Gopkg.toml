@@ -96,11 +96,11 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  revision = "133c1c688cead424f460d09825e22cbdd0038e09"
+  branch = "feature/account_relations"
 
 [[constraint]]
-  branch = "product"
   name = "gitlab.com/tokend/regources"
+  branch = "feature/account_relations"
 
 [[constraint]]
   branch = "master"
@@ -127,5 +127,5 @@
   version = "1.0.0"
 
 [prune]
-  go-tests = true
   unused-packages = false
+  go-tests = true

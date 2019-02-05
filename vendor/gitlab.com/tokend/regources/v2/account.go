@@ -15,4 +15,5 @@ type AccountRelationships struct {
 	Role     *Relation           `json:"role,omitempty"`
 	Balances *RelationCollection `json:"balances,omitempty"`
 	Referrer *Relation           `json:"referrer,omitempty"`
+	Limits   *Relation           `json:"limits,omitempty"`
 }

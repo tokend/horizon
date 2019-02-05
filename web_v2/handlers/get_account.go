@@ -97,6 +97,10 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 	return &response, nil
 }
 
+func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
+	panic("implement me")
+}
+
 func (h *getAccountHandler) getReferrer(account *core2.Account, request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
 	if account.Referrer == "" {
 		return nil, nil
