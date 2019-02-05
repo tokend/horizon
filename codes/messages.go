@@ -136,7 +136,7 @@ var messages = map[string]string{
 	"op_price_is_invalid":                               "Price is invalid in some way",
 	"op_update_is_not_allowed":                          "Update is not allowed",
 	"op_sale_is_not_active":                             "IO is not active",
-	"op_invalid_creator_details":                        "CreatorDetails must be empty if approving and not empty if rejecting",
+	"op_invalid_reason":                                 "Reason (CreatorDetails) must be empty if approving and not empty if rejecting",
 	"op_hash_mismatched":                                "Request hash mismatched",
 	"op_type_mismatched":                                "Request type mismathed",
 	"op_reject_not_allowed":                             "Reject not allowed, use permanent reject",

@@ -346,7 +346,7 @@
   branch = "refactor/details"
   name = "gitlab.com/tokend/regources"
   packages = [".","v2"]
-  revision = "cbe90cd3aca06ac006bef95de8e00c0a65ae1f05"
+  revision = "58af418063cdd5edc332d0f9d4898b3934f72800"
 
 [[projects]]
   branch = "master"

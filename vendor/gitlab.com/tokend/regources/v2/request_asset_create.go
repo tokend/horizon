@@ -1,13 +1,13 @@
 package regources
 
 // AssetCreationRequest - represents details of the `asset create` reviewable request
-type AssetCreateRequest struct {
+type CreateAssetRequest struct {
 	Key
-	Attributes AssetCreateRequestAttrs `json:"attributes"`
+	Attributes CreateAssetRequestAttrs `json:"attributes"`
 }
 
 // AssetCreationRequestAttrs - attributes of the `asset create` reviewable request
-type AssetCreateRequestAttrs struct {
+type CreateAssetRequestAttrs struct {
 	Asset                  string  `json:"asset"`
 	Policies               int32   `json:"policies"`
 	PreIssuanceAssetSigner string  `json:"pre_issuance_asset_signer"`

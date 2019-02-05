@@ -1,10 +1,10 @@
 package regources
 
-// AssetUpdateRequest - represents details of the `asset update` reviewable request
-type AssetUpdateRequest struct {
+// UpdateAssetRequest - represents details of the `asset update` reviewable request
+type UpdateAssetRequest struct {
 	Key
 	Attributes    AssetUpdateRequestAttrs     `json:"attributes"`
-	Relationships AssetUpdateRequestRelations `json:"relationships"`
+	Relationships UpdateAssetRequestRelations `json:"relationships"`
 }
 
 // AssetUpdateRequestAttrs - attributes of the `asset update` reviewable request
@@ -13,7 +13,7 @@ type AssetUpdateRequestAttrs struct {
 	CreatorDetails Details `json:"creator_details"`
 }
 
-// AssetUpdateRequestRelations - attributes of the `asset update` reviewable request
-type AssetUpdateRequestRelations struct {
+// UpdateAssetRequestRelations - attributes of the `asset update` reviewable request
+type UpdateAssetRequestRelations struct {
 	Asset *Relation `json:"asset"`
 }

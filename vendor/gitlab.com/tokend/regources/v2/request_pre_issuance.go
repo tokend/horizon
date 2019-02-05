@@ -1,21 +1,21 @@
 package regources
 
-// PreIssuanceRequest - represents details of the `pre-issuance` reviewable request
-type PreIssuanceRequest struct {
+// CreatePreIssuanceRequest - represents details of the `pre-issuance` reviewable request
+type CreatePreIssuanceRequest struct {
 	Key
-	Attributes    PreIssuanceRequestAttrs     `json:"attributes"`
-	Relationships PreIssuanceRequestRelations `json:"relationships"`
+	Attributes    CreatePreIssuanceRequestAttrs     `json:"attributes"`
+	Relationships CreatePreIssuanceRequestRelations `json:"relationships"`
 }
 
-// PreIssuanceRequestAttrs - attributes of the `pre_issuance` reviewable request
-type PreIssuanceRequestAttrs struct {
+// CreatePreIssuanceRequestAttrs - attributes of the `pre_issuance` reviewable request
+type CreatePreIssuanceRequestAttrs struct {
 	Amount         string  `json:"amount"`
 	Signature      string  `json:"signature"`
 	Reference      string  `json:"reference"`
 	CreatorDetails Details `json:"creator_details"`
 }
 
-// PreIssuanceRequestRelations - relationships of the `pre_issuance` reviewable request
-type PreIssuanceRequestRelations struct {
+// CreatePreIssuanceRequestRelations - relationships of the `pre_issuance` reviewable request
+type CreatePreIssuanceRequestRelations struct {
 	Asset *Relation `json:"asset"`
 }

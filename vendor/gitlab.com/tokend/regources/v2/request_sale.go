@@ -5,15 +5,15 @@ import (
 	"time"
 )
 
-// SaleRequest - represents details of the `sale` reviewable request
-type SaleRequest struct {
+// CreateSaleRequest - represents details of the `sale` reviewable request
+type CreateSaleRequest struct {
 	Key
-	Attributes    SaleRequestAttrs     `json:"attributes"`
-	Relationships SaleRequestRelations `json:"relationships"`
+	Attributes    CreateSaleRequestAttrs     `json:"attributes"`
+	Relationships CreateSaleRequestRelations `json:"relationships"`
 }
 
-// SaleRequestAttrs - attributes of the `sale` reviewable request
-type SaleRequestAttrs struct {
+// CreateSaleRequestAttrs - attributes of the `sale` reviewable request
+type CreateSaleRequestAttrs struct {
 	BaseAssetForHardCap string       `json:"base_asset_for_hard_cap"`
 	StartTime           time.Time    `json:"start_time"`
 	EndTime             time.Time    `json:"end_time"`
@@ -21,8 +21,8 @@ type SaleRequestAttrs struct {
 	CreatorDetails      Details      `json:"creator_details"`
 }
 
-// SaleRequestRelations - attributes of the `sale` reviewable request
-type SaleRequestRelations struct {
+// CreateSaleRequestRelations - attributes of the `sale` reviewable request
+type CreateSaleRequestRelations struct {
 	BaseAsset         *Relation           `json:"base_asset"`
 	QuoteAssets       *RelationCollection `json:"quote_assets"`
 	DefaultQuoteAsset *Relation           `json:"default_quote_asset"`

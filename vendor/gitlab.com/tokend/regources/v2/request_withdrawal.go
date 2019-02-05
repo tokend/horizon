@@ -1,21 +1,21 @@
 package regources
 
-// WithdrawalRequest - represents details of the `withdrawal` reviewable request
-type WithdrawalRequest struct {
+// CreateWithdrawalRequest - represents details of the `withdrawal` reviewable request
+type CreateWithdrawalRequest struct {
 	Key
-	Attributes    WithdrawalRequestAttrs     `json:"attributes"`
-	Relationships WithdrawalRequestRelations `json:"relationships"`
+	Attributes    CreateWithdrawalRequestAttrs     `json:"attributes"`
+	Relationships CreateWithdrawalRequestRelations `json:"relationships"`
 }
 
-// WithdrawalRequestAttrs - attributes of the `withdrawal` reviewable request
-type WithdrawalRequestAttrs struct {
+// CreateWithdrawalRequestAttrs - attributes of the `withdrawal` reviewable request
+type CreateWithdrawalRequestAttrs struct {
 	Fee             FeeStr  `json:"fee"`
 	Amount          string  `json:"amount"`
 	CreatorDetails  Details `json:"creator_details"`
 	ReviewerDetails Details `json:"reviewer_details"`
 }
 
-// WithdrawalRequestRelations - relationships of the `withdrawal` reviewable request
-type WithdrawalRequestRelations struct {
+// CreateWithdrawalRequestRelations - relationships of the `withdrawal` reviewable request
+type CreateWithdrawalRequestRelations struct {
 	Balance *Relation `json:"balance"`
 }
