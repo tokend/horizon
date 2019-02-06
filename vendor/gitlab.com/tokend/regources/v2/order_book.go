@@ -19,9 +19,9 @@ type OrderBookEntry struct {
 // OrderBookEntryAttrs - represents the order book entry attributes
 type OrderBookEntryAttrs struct {
 	IsBuy       bool      `json:"is_buy"`
-	Price       string    `json:"price"`
-	BaseAmount  string    `json:"base_amount"`
-	QuoteAmount string    `json:"quote_amount"`
+	Price       Amount    `json:"price"`
+	BaseAmount  Amount    `json:"base_amount"`
+	QuoteAmount Amount    `json:"quote_amount"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 

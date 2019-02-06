@@ -2,10 +2,9 @@ package resources
 
 import "gitlab.com/tokend/regources/v2"
 
-func NewLimits() regources.Limits{
+func NewLimits() regources.Limits {
 	return regources.Limits{
-		Key: regources.Key{
-			ID:
-		}
+		Key:        regources.Key{},
+		Attributes: regources.LimitsAttr{},
 	}
 }

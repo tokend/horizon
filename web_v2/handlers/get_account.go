@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gitlab.com/tokend/horizon/db2/core"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -35,6 +36,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		requests.IncludeTypeAccountAccountReferrer,
 		requests.IncludeTypeAccountRole,
 		requests.IncludeTypeAccountRoleRules,
+		requests.IncludeTypeAccountLimits,
 	) {
 		if !isAllowed(r, w, request.Address) {
 			return
@@ -61,6 +63,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 type getAccountHandler struct {
 	AccountsQ core2.AccountsQ
 	BalancesQ core2.BalancesQ
+	LimitsQ   core.LimitsV2Q
 	Log       *logan.Entry
 }
 
@@ -98,7 +101,7 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 }
 
 func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
-	panic("implement me")
+	panic("implement me!")
 }
 
 func (h *getAccountHandler) getReferrer(account *core2.Account, request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {

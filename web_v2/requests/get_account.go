@@ -19,6 +19,8 @@ const (
 	IncludeTypeAccountRole = "role"
 	// IncludeTypeAccountRoleRules - defines if rules of the account role should be included in the response
 	IncludeTypeAccountRoleRules = "role.rules"
+	// IncludeTypeAccountLimits - defines if account limits should be included in the response
+	IncludeTypeAccountLimits = "limits"
 )
 
 var includeTypeAccountAll = map[string]struct{}{

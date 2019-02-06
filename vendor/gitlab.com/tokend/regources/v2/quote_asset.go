@@ -16,10 +16,10 @@ type SaleQuoteAsset struct {
 }
 
 type SaleQuoteAssetAttrs struct {
-	Price      Amount `json:"price"`
-	CurrentCap Amount `json:"current_cap"`
-	HardCap    Amount `json:"hard_cap"`
-	SoftCap    Amount `json:"soft_cap"`
+	Price      string `json:"price"`
+	CurrentCap string `json:"current_cap"`
+	HardCap    string `json:"hard_cap"`
+	SoftCap    string `json:"soft_cap,omitempty"`
 }
 
 type SaleQuoteAssetRelations struct {

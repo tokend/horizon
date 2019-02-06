@@ -107,7 +107,7 @@ func initWebV2Actions(app *App) {
 
 	logger := &log.DefaultLogger.Entry
 	janus := app.config.Janus()
-	err := janus.DoRegister(m, logger)
+	err := janus.RegisterChi(m)
 	if err != nil {
 		logger.WithError(err).Error("failed to register janus")
 	}

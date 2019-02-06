@@ -8,6 +8,12 @@
   version = "v1.1.1"
 
 [[projects]]
+  name = "github.com/google/go-cmp"
+  packages = ["cmp","cmp/internal/diff","cmp/internal/function","cmp/internal/value"]
+  revision = "3af367b6b30c263d47e8895973edcca9a49cf029"
+  version = "v0.2.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/nullstyle/go-xdr"
   packages = ["xdr3"]
@@ -33,10 +39,7 @@
 
 [[projects]]
   name = "gitlab.com/distributed_lab/logan"
-  packages = [
-    "v3/errors",
-    "v3/fields"
-  ]
+  packages = ["v3/errors","v3/fields"]
   revision = "4f53d466cf559df110805dd196a7c98637ce9197"
   version = "v3.7"
 
@@ -45,6 +48,12 @@
   name = "gitlab.com/tokend/go"
   packages = ["amount","crc16","strkey","xdr"]
   revision = "c614f48c4122caa9a389f77fe690f06a86633f0a"
+
+[[projects]]
+  name = "gotest.tools"
+  packages = ["assert","assert/cmp","internal/difflib","internal/format","internal/source"]
+  revision = "1083505acf35a0bd8a696b26837e1fb3187a7a83"
+  version = "v2.3.0"
 
 [solve-meta]
   analyzer-name = "dep"

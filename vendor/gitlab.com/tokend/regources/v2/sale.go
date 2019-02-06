@@ -6,40 +6,27 @@ import (
 	"time"
 )
 
-type saleState int
+type SaleState int
 
 const (
-	SaleStateOpen saleState = iota
+	SaleStateOpen SaleState = 1 << iota
 	SaleStateClosed
 	SaleStateCanceled
 )
 
-var saleStateMap = map[saleState]string{
-	SaleStateOpen:     "open",
-	SaleStateClosed:   "closed",
-	SaleStateCanceled: "canceled",
+var saleStateMap = map[int]string{
+	int(SaleStateOpen):     "open",
+	int(SaleStateClosed):   "closed",
+	int(SaleStateCanceled): "canceled",
 }
 
-func (s saleState) MarshalJSON() ([]byte, error) {
-	type flagValue struct {
-		Name  string    `json:"name"`
-		Value saleState `json:"value"`
-	}
+func (s SaleState) MarshalJSON() ([]byte, error) {
+	return json.Marshal(FlagsFromMask(int(s), saleStateMap))
+}
 
-	type flag struct {
-		Value saleState   `json:"int"`
-		Flags []flagValue `json:"flags"`
-	}
-
-	return json.Marshal(flag{
-		Value: s,
-		Flags: []flagValue{
-			{
-				Name:  saleStateMap[s],
-				Value: s,
-			},
-		},
-	})
+//String - converts int enum to string
+func (s SaleState) String() string {
+	return saleStateMap[int(s)]
 }
 
 // SaleResponse - representation of response with sale resource
@@ -76,7 +63,7 @@ type SaleAttrs struct {
 	StartTime      time.Time    `json:"start_time"`
 	EndTime        time.Time    `json:"end_time"`
 	SaleType       xdr.SaleType `json:"sale_type"`
-	SaleState      saleState    `json:"sale_state"`
+	SaleState      SaleState    `json:"sale_state"`
 	InvestorsCount uint32       `json:"investors_count"`
 	Details        Details      `json:"details"`
 }

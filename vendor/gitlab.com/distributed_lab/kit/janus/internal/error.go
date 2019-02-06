@@ -1,4 +1,4 @@
-package janus
+package internal
 
 type Status int
 type Response []byte

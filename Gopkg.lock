@@ -310,8 +310,8 @@
 [[projects]]
   branch = "master"
   name = "gitlab.com/distributed_lab/kit"
-  packages = ["comfig","kv","pgdb"]
-  revision = "80a0fe990a93101755f5c2552b65489a91a6e7e4"
+  packages = ["comfig","janus","janus/internal","kv","pgdb"]
+  revision = "865b4569a164dab1b7ed180501fb6314c1a52c04"
 
 [[projects]]
   name = "gitlab.com/distributed_lab/logan"
@@ -338,12 +338,6 @@
   revision = "c614f48c4122caa9a389f77fe690f06a86633f0a"
 
 [[projects]]
-  branch = "add-janus"
-  name = "gitlab.com/tokend/go-janus"
-  packages = ["."]
-  revision = "d29aaad2c703c945d6b78c2eaf0f83f3ac2e6d3f"
-
-[[projects]]
   branch = "master"
   name = "gitlab.com/tokend/keypair"
   packages = [".","internal","internal/crc16","internal/strkey"]
@@ -353,7 +347,7 @@
   branch = "feature/account_relations"
   name = "gitlab.com/tokend/regources"
   packages = [".","v2"]
-  revision = "6a7f8f13fbed89a2bae493e187b67098c61fa4d4"
+  revision = "c747b9b159027955459cdf43cded82e667f2c961"
 
 [[projects]]
   branch = "master"
@@ -406,6 +400,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "38260504c1a8fe7e9ea539b56c73f4293d44feeb8837ee496d432f096d14c1bc"
+  inputs-digest = "1b912f3ea7920b095dd4fe29a1bb445c629413723e13daadbdc2bbbd6d6a5b22"
   solver-name = "gps-cdcl"
   solver-version = 1
