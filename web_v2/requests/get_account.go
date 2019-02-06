@@ -30,6 +30,7 @@ var includeTypeAccountAll = map[string]struct{}{
 	IncludeTypeAccountAccountReferrer: {},
 	IncludeTypeAccountRole:            {},
 	IncludeTypeAccountRoleRules:       {},
+	IncludeTypeAccountLimits:          {},
 }
 
 //GetAccount - represents params to be specified by user for Get Account handler

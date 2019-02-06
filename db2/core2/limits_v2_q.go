@@ -29,28 +29,24 @@ func NewLimitsV2Q(repo *db2.Repo) LimitsV2Q {
 	}
 }
 
-func (l2 LimitsV2Q) GetByAccountID(accountID string) (*LimitsV2Entry, error) {
-	return l2.FilterByAccountID(accountID).Get()
-}
-
 func (l2 LimitsV2Q) FilterByAccountID(accountID string) LimitsV2Q {
 	l2.selector = l2.selector.Where("limits.account_id = ?", accountID)
 	return l2
 }
 
-// Get - loads a row from `limits_v2`
+// Select - loads a rows from `limits_v2`
 // returns nil, nil - if limits for particular account does not exists
 // returns error if more than one Account found
-func (l2 LimitsV2Q) Get() (*LimitsV2Entry, error) {
-	var result LimitsV2Entry
-	err := l2.repo.Get(&result, l2.selector)
+func (l2 LimitsV2Q) Select() ([]LimitsV2, error) {
+	var result []LimitsV2
+	err := l2.repo.Select(&result, l2.selector)
 	if err != nil {
 		if l2.repo.NoRows(err) {
 			return nil, nil
 		}
 
-		return nil, errors.Wrap(err, "failed to load limits for account")
+		return nil, errors.Wrap(err, "failed to select limits")
 	}
 
-	return &result, nil
+	return result, nil
 }

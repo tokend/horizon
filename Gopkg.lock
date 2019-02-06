@@ -335,7 +335,7 @@
   branch = "feature/account_relations"
   name = "gitlab.com/tokend/go"
   packages = ["amount","build","crc16","doorman","doorman/data","hash","keypair","network","resources","signcontrol","signcontrol/internal/httpsignatures","strkey","xdr"]
-  revision = "c614f48c4122caa9a389f77fe690f06a86633f0a"
+  revision = "4a4f778734d48baa2723fe609c6a8e00d838d36d"
 
 [[projects]]
   branch = "master"
@@ -347,7 +347,7 @@
   branch = "feature/account_relations"
   name = "gitlab.com/tokend/regources"
   packages = [".","v2"]
-  revision = "c747b9b159027955459cdf43cded82e667f2c961"
+  revision = "8df5ace3e41b015606e560df444419b372bae337"
 
 [[projects]]
   branch = "master"

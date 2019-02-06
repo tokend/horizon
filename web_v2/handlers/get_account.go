@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"gitlab.com/tokend/horizon/db2/core"
+	//"github.com/getsentry/raven-go"
+	//"gitlab.com/tokend/horizon/db2/core"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -21,6 +22,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	handler := getAccountHandler{
 		AccountsQ: core2.NewAccountsQ(coreRepo),
 		BalancesQ: core2.NewBalancesQ(coreRepo),
+		LimitsV2Q: core2.NewLimitsV2Q(coreRepo),
 		Log:       ctx.Log(r),
 	}
 
@@ -63,7 +65,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 type getAccountHandler struct {
 	AccountsQ core2.AccountsQ
 	BalancesQ core2.BalancesQ
-	LimitsQ   core.LimitsV2Q
+	LimitsV2Q core2.LimitsV2Q
 	Log       *logan.Entry
 }
 
@@ -97,11 +99,31 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		return nil, errors.Wrap(err, "failed to get referrer")
 	}
 
+	response.Data.Relationships.Limits, err = h.getLimits(request, &response.Included)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get limits")
+	}
 	return &response, nil
 }
 
-func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
-	panic("implement me!")
+func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {
+	limitsQ := h.LimitsV2Q.FilterByAccountID(request.Address)
+
+	coreLimits, err := limitsQ.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select limits for account")
+	}
+
+	result := &regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(coreLimits)),
+	}
+
+	for _, coreLimitsUnit := range coreLimits {
+		limitsUnit := resources.NewLimits(coreLimitsUnit.Id)
+		result.Data = append(result.Data, limitsUnit.Key)
+	}
+
+	return result, nil
 }
 
 func (h *getAccountHandler) getReferrer(account *core2.Account, request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
