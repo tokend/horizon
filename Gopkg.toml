@@ -128,4 +128,4 @@
 
 [prune]
   go-tests = true
-  unused-packages = false
+  unused-packages = true
