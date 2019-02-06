@@ -12,21 +12,21 @@ import (
 
 //Sale - represents instance of compounding campaign
 type Sale struct {
-	ID                uint64       `db:"id"`
-	SoftCap           uint64       `db:"soft_cap"`
-	HardCap           uint64       `db:"hard_cap"`
-	BaseCurrentCap    int64        `db:"base_current_cap"`
-	BaseHardCap       int64        `db:"base_hard_cap"`
-	SaleType          xdr.SaleType `db:"sale_type"`
-	OwnerAddress      string       `db:"owner_address"`
-	BaseAsset         string       `db:"base_asset"`
-	DefaultQuoteAsset string       `db:"default_quote_asset"`
-	StartTime         time.Time    `db:"start_time"`
-	EndTime           time.Time    `db:"end_time"`
-	CurrentCap        string
-	Details           regources.Details `db:"details"`
-	QuoteAssets       SaleQuoteAssets   `db:"quote_assets"`
-	State             SaleState         `db:"state"`
+	ID                uint64           `db:"id"`
+	SoftCap           regources.Amount `db:"soft_cap"`
+	HardCap           regources.Amount `db:"hard_cap"`
+	BaseCurrentCap    regources.Amount `db:"base_current_cap"`
+	BaseHardCap       regources.Amount `db:"base_hard_cap"`
+	SaleType          xdr.SaleType     `db:"sale_type"`
+	OwnerAddress      string           `db:"owner_address"`
+	BaseAsset         string           `db:"base_asset"`
+	DefaultQuoteAsset string           `db:"default_quote_asset"`
+	StartTime         time.Time        `db:"start_time"`
+	EndTime           time.Time        `db:"end_time"`
+	CurrentCap        regources.Amount
+	Details           regources.Details   `db:"details"`
+	QuoteAssets       SaleQuoteAssets     `db:"quote_assets"`
+	State             regources.SaleState `db:"state"`
 }
 
 //SaleQuoteAssets - assets allowed to invest in sale
@@ -56,10 +56,10 @@ func (r *SaleQuoteAssets) Scan(src interface{}) error {
 
 //SaleQuoteAsset - asset allowed to invest into sale
 type SaleQuoteAsset struct {
-	Asset           string `json:"asset"`
-	Price           string `json:"price"`
-	QuoteBalanceID  string `json:"quote_balance_id"`
-	CurrentCap      string `json:"current_cap"`
-	TotalCurrentCap string `json:"total_current_cap,omitempty"`
-	HardCap         string `json:"hard_cap,omitempty"`
+	Asset           string           `json:"asset"`
+	Price           regources.Amount `json:"price"`
+	QuoteBalanceID  string           `json:"quote_balance_id"`
+	CurrentCap      regources.Amount `json:"current_cap"`
+	TotalCurrentCap regources.Amount `json:"total_current_cap,omitempty"`
+	HardCap         regources.Amount `json:"hard_cap,omitempty"`
 }

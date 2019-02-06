@@ -3,6 +3,7 @@ package resources
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/regources/v2"
@@ -47,7 +48,7 @@ func newAmlAlertRequest(id int64, details history2.AmlAlertRequest) *regources.A
 	return &regources.AmlAlertRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAMLAlert),
 		Attributes: regources.AmlAlertRequestAttrs{
-			Amount: details.Amount,
+			Amount: regources.Amount(amount.MustParse(details.Amount)),
 			Reason: details.Reason,
 		},
 		Relationships: regources.AmlAlertRequestRelations{
@@ -116,7 +117,7 @@ func newIssuanceRequest(id int64, details history2.IssuanceRequest) *regources.I
 	return &regources.IssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsIssuance),
 		Attributes: regources.IssuanceRequestAttrs{
-			Amount:  details.Amount,
+			Amount:  regources.Amount(amount.MustParse(details.Amount)),
 			Details: details.Details,
 		},
 		Relationships: regources.IssuanceRequestRelations{
@@ -138,7 +139,7 @@ func newPreIssuanceRequest(id int64, details history2.PreIssuanceRequest) *regou
 	return &regources.PreIssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsPreIssuance),
 		Attributes: regources.PreIssuanceRequestAttrs{
-			Amount:    details.Amount,
+			Amount:    regources.Amount(amount.MustParse(details.Amount)),
 			Signature: details.Signature,
 			Reference: details.Reference,
 		},
@@ -201,9 +202,9 @@ func newWithdrawalRequest(id int64, details history2.WithdrawalRequest) *regourc
 	return &regources.WithdrawalRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsWithdrawal),
 		Attributes: regources.WithdrawalRequestAttrs{
-			Fee: regources.FeeStr{
-				Fixed:             details.FixedFee,
-				CalculatedPercent: details.PercentFee,
+			Fee: regources.Fee{
+				Fixed:             regources.Amount(amount.MustParse(details.FixedFee)),
+				CalculatedPercent: regources.Amount(amount.MustParse(details.PercentFee)),
 			},
 			Amount:          details.Amount,
 			Details:         details.Details,

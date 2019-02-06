@@ -99,7 +99,7 @@
   revision = "133c1c688cead424f460d09825e22cbdd0038e09"
 
 [[constraint]]
-  branch = "product"
+  branch = "3.0.0-x.1"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
