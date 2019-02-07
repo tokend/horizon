@@ -41,7 +41,6 @@ func New(
 		if public {
 			if e.Fee != nil {
 				e.Fee.AccountID = ""
-				e.Fee.FeeAsset = ""
 			}
 		}
 		result = e
@@ -194,7 +193,6 @@ type Fee struct {
 	Subtype     int64  `json:"subtype"`
 	LowerBound  int64  `json:"lower_bound"`
 	UpperBound  int64  `json:"upper_bound"`
-	FeeAsset    string `json:"fee_asset"`
 }
 
 type SetFees struct {
