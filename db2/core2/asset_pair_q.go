@@ -28,6 +28,11 @@ func NewAssetPairsQ(repo *db2.Repo) AssetPairsQ {
 	}
 }
 
+//SelectByAssets - selects slice of assets with FilterByAssets applied
+func (q AssetPairsQ) SelectByAssets(bases, quotes []string) ([]AssetPair, error) {
+	return q.FilterByAssets(bases, quotes).Select()
+}
+
 // FilterByBaseAsset - returns Q with filter by base
 func (q AssetPairsQ) FilterByBaseAsset(base string) AssetPairsQ {
 	q.selector = q.selector.Where("asset_pairs.base = ?", base)
@@ -49,6 +54,12 @@ func (q AssetPairsQ) FilterByAsset(code string) AssetPairsQ {
 // FilterByPolicy - returns Q with filter by policy
 func (q AssetPairsQ) FilterByPolicy(mask uint64) AssetPairsQ {
 	q.selector = q.selector.Where("asset_pairs.policies & ? = ?", mask, mask)
+	return q
+}
+
+// FilterByAssets - filters pairs by baseAsset in baseAssets and quoteAsset in quoteAssets
+func (q AssetPairsQ) FilterByAssets(baseAssets, quoteAssets []string) AssetPairsQ {
+	q.selector = q.selector.Where(sq.Eq{"base": baseAssets}).Where(sq.Eq{"quote": quoteAssets})
 	return q
 }
 

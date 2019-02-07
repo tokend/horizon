@@ -61,7 +61,7 @@ func (action *SaleShowAction) loadRecord() {
 }
 
 func (action *SaleShowAction) populateTotalCurrentCap() error {
-	converter, err := exchange.NewConverter(action.CoreQ())
+	converter, err := action.CreateConverter()
 	if err != nil {
 		return errors.Wrap(err, "failed to init converter")
 	}

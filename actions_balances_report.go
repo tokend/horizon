@@ -1,7 +1,6 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/exchange"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/regources"
@@ -45,7 +44,7 @@ func (action *BalancesReportAction) loadRecords() {
 
 	AmountFromAccount := make(map[string]int64)
 
-	converter, err := exchange.NewConverter(action.CoreQ())
+	converter, err := action.CreateConverter()
 	if err != nil {
 		action.Log.Warn("failed to create converter")
 		action.Err = &problem.ServerError

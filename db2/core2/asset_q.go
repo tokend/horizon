@@ -30,6 +30,11 @@ func (q AssetsQ) GetByCode(code string) (*Asset, error) {
 	return q.FilterByCode(code).Get()
 }
 
+//SelectByPolicy - selects slice of assets by policy mask
+func (q AssetsQ) SelectByPolicy(mask uint64) ([]Asset, error) {
+	return q.FilterByPolicy(mask).Select()
+}
+
 // FilterByCode - returns q with filter by code
 func (q AssetsQ) FilterByCode(code string) AssetsQ {
 	q.selector = q.selector.Where("assets.code = ?", code)

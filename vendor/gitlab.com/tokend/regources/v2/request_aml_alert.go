@@ -9,7 +9,7 @@ type AmlAlertRequest struct {
 
 // AmlAlertRequestAttrs - attributes of the `aml alert` reviewable request
 type AmlAlertRequestAttrs struct {
-	Amount string `json:"amount"`
+	Amount Amount `json:"amount"`
 	Reason string `json:"reason"`
 }
 

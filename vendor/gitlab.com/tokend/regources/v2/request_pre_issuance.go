@@ -9,7 +9,7 @@ type PreIssuanceRequest struct {
 
 // PreIssuanceRequestAttrs - attributes of the `pre_issuance` reviewable request
 type PreIssuanceRequestAttrs struct {
-	Amount    string `json:"amount"`
+	Amount    Amount `json:"amount"`
 	Signature string `json:"signature"`
 	Reference string `json:"reference"`
 }
