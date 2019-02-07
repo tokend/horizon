@@ -30,8 +30,12 @@
   version = "0.8.0"
 
 [[constraint]]
+<<<<<<< HEAD
   branch = "feature/account_relations"
+=======
+>>>>>>> master
   name = "gitlab.com/tokend/go"
+  branch = "3.0.2-x.0"
 
 [prune]
   go-tests = true

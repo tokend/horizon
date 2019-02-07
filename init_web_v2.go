@@ -105,6 +105,11 @@ func initWebV2Actions(app *App) {
 	m.Get("/v2/key_values", handlers.GetKeyValueList)
 	m.Get("/v2/key_values/{key}", handlers.GetKeyValue)
 
+	m.Get("/v2/sales", handlers.GetSaleList)
+	m.Get("/v2/sales/{id}", handlers.GetSale)
+
+	m.Get("/v2/order_book/{id}", handlers.GetOrderBook)
+
 	logger := &log.DefaultLogger.Entry
 	janus := app.config.Janus()
 	err := janus.RegisterChi(m)

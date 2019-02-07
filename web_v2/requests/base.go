@@ -1,8 +1,10 @@
 package requests
 
 import (
+	"gitlab.com/tokend/go/amount"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -94,13 +96,31 @@ func (r *base) marshalQuery() string {
 	return strings.TrimSuffix(builder.String(), "&")
 }
 
+var amountHook = figure.Hooks{
+	"regources.Amount": func(value interface{}) (reflect.Value, error) {
+		strVal, ok := value.(string)
+		if !ok {
+			return reflect.Value{}, errors.New("Failed to parse value as string")
+		}
+
+		intVal, err := amount.Parse(strVal)
+		if err != nil {
+			return reflect.Value{}, errors.Wrap(err, "failed to parse value as int64")
+		}
+
+		result := regources.Amount(intVal)
+
+		return reflect.ValueOf(result), nil
+	},
+}
+
 func (r *base) populateFilters(target interface{}) error {
 	filter := make(map[string]interface{})
 	for k, v := range r.filter {
 		filter[k] = v
 	}
 
-	err := figure.Out(target).From(filter).Please()
+	err := figure.Out(target).With(figure.BaseHooks, amountHook).From(filter).Please()
 
 	if err != nil {
 		return err
@@ -303,7 +323,7 @@ func (r *base) getCursorLink(cursor, limit uint64, order db2.OrderType) string {
 	return u.String()
 }
 
-func (r *base) getOffsetLink (pageNumber, limit uint64, order db2.OrderType) string {
+func (r *base) getOffsetLink(pageNumber, limit uint64, order db2.OrderType) string {
 	u := r.URL()
 	query := u.Query()
 	query.Set(pageParamNumber, strconv.FormatUint(pageNumber, 10))

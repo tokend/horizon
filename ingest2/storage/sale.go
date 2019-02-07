@@ -6,6 +6,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/regources/v2"
 )
 
 // Sale is helper struct to operate with `sales`
@@ -69,7 +70,7 @@ func (q *Sale) Update(sale history2.Sale) error {
 }
 
 // SetState - sets state
-func (q *Sale) SetState(saleID uint64, state history2.SaleState) error {
+func (q *Sale) SetState(saleID uint64, state regources.SaleState) error {
 	sql := sq.Update("sales").Set("state", state).Where("id = ?", saleID)
 	_, err := q.repo.Exec(sql)
 	if err != nil {
