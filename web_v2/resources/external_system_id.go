@@ -6,10 +6,14 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-func NewExternalSystemIDs(extSysID core2.ExternalSystemID) *regources.ExternalSystemIDs {
-	return &regources.ExternalSystemIDs{
-		Key: NewExternalSystemIDsKey(extSysID.ID),
-		Attributes: regources.ExternalSystemIDsAttr{
+// NewExternalSystemID creates new instance of ExternalSystemID from provided one
+func NewExternalSystemID(extSysID core2.ExternalSystemID) *regources.ExternalSystemID {
+	return &regources.ExternalSystemID{
+		Key: regources.Key{
+			ID:   cast.ToString(extSysID.ID),
+			Type: regources.TypeExternalSystemID,
+		},
+		Attributes: regources.ExternalSystemIDAttr{
 			AccountID:          extSysID.AccountID,
 			ExternalSystemType: extSysID.ExternalSystemType,
 			Data:               extSysID.Data,
@@ -17,12 +21,5 @@ func NewExternalSystemIDs(extSysID core2.ExternalSystemID) *regources.ExternalSy
 			ExpiresAt:          extSysID.ExpiresAt,
 			BindedAt:           extSysID.BindedAt,
 		},
-	}
-}
-
-func NewExternalSystemIDsKey(extSysIDsID uint64) regources.Key {
-	return regources.Key{
-		ID:   cast.ToString(extSysIDsID),
-		Type: regources.TypeExternalSystemIDs,
 	}
 }

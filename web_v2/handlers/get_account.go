@@ -151,7 +151,7 @@ func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, i
 	}
 
 	for _, coreExtSysIDUnit := range coreExternalSystemIDs {
-		externalSystemID := resources.NewExternalSystemIDs(coreExtSysIDUnit)
+		externalSystemID := resources.NewExternalSystemID(coreExtSysIDUnit)
 		result.Data = append(result.Data, externalSystemID.Key)
 
 		if request.ShouldInclude(requests.IncludeTypeAccountExternalSystemIDs) {

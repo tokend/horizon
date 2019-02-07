@@ -11,6 +11,8 @@ type LimitsV2Q struct {
 	selector sq.SelectBuilder
 }
 
+// NewLimitsV2Q - default constructor for LimitsV2Q which
+// creates LimitsV2Q with given db2.Repo and default selector
 func NewLimitsV2Q(repo *db2.Repo) LimitsV2Q {
 	return LimitsV2Q{
 		repo: repo,
@@ -29,6 +31,7 @@ func NewLimitsV2Q(repo *db2.Repo) LimitsV2Q {
 	}
 }
 
+// FilterByAccount - adds accountID filter for query to Limits table
 func (l2 LimitsV2Q) FilterByAccountID(accountID string) LimitsV2Q {
 	l2.selector = l2.selector.Where("limits.account_id = ?", accountID)
 	return l2

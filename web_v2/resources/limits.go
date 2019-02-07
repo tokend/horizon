@@ -6,9 +6,13 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
+// NewLimits creates new instance of Limits from provided one
 func NewLimits(limits core2.LimitsV2) *regources.Limits {
 	return &regources.Limits{
-		Key: NewLimitsKey(limits.ID),
+		Key: regources.Key{
+			ID:   cast.ToString(limits.ID),
+			Type: regources.TypeLimits,
+		},
 		Attributes: regources.LimitsAttr{
 			AccountType:     limits.AccountType,
 			AccountID:       limits.AccountId,
@@ -20,12 +24,5 @@ func NewLimits(limits core2.LimitsV2) *regources.Limits {
 			MonthlyOut:      limits.MonthlyOut,
 			AnnualOut:       limits.AnnualOut,
 		},
-	}
-}
-
-func NewLimitsKey(limitsID uint64) regources.Key {
-	return regources.Key{
-		ID:   cast.ToString(limitsID),
-		Type: regources.TypeLimits,
 	}
 }

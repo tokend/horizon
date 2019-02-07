@@ -1,11 +1,11 @@
 package regources
 
-type ExternalSystemIDs struct {
+type ExternalSystemID struct {
 	Key
-	Attributes ExternalSystemIDsAttr `json:"attributes"`
+	Attributes ExternalSystemIDAttr `json:"attributes"`
 }
 
-type ExternalSystemIDsAttr struct {
+type ExternalSystemIDAttr struct {
 	AccountID          string `json:"account_id"`
 	ExternalSystemType int32  `json:"external_system_type"`
 	Data               string `json:"data"`

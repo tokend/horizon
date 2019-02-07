@@ -11,7 +11,7 @@ const (
 	TypeAswapBid                        = "aswap-bid"
 	TypeAssetPairs                      = "asset-pairs"
 	TypeBalancesState                   = "balances-state"
-	TypeExternalSystemIDs               = "external-system-ids"
+	TypeExternalSystemID                = "external-system-id"
 	TypeFeeRules                        = "fee-rules"
 	TypeKeyValueEntries                 = "key-value-entries"
 	TypeLimits                          = "limits"

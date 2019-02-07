@@ -11,6 +11,8 @@ type ExternalSystemIDsQ struct {
 	selector sq.SelectBuilder
 }
 
+// NewExternalSystemIDsQ - default constructor for ExternalSystemIDsQ which
+// creates ExternalSystemIDsQ with given db2.Repo and default selector
 func NewExternalSystemIDsQ(repo *db2.Repo) ExternalSystemIDsQ {
 	return ExternalSystemIDsQ{
 		repo: repo,
@@ -28,6 +30,7 @@ func NewExternalSystemIDsQ(repo *db2.Repo) ExternalSystemIDsQ {
 	}
 }
 
+// FilterByAccount - adds accountID filter for query to external system IDs table
 func (esid ExternalSystemIDsQ) FilterByAccount(accountID string) ExternalSystemIDsQ {
 	esid.selector = esid.selector.Where("ext.account_id = ?", accountID)
 	return esid
