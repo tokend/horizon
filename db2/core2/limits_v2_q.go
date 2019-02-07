@@ -36,7 +36,6 @@ func (l2 LimitsV2Q) FilterByAccountID(accountID string) LimitsV2Q {
 
 // Select - loads a rows from `limits_v2`
 // returns nil, nil - if limits for particular account does not exists
-// returns error if more than one Account found
 func (l2 LimitsV2Q) Select() ([]LimitsV2, error) {
 	var result []LimitsV2
 	err := l2.repo.Select(&result, l2.selector)

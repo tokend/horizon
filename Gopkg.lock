@@ -347,7 +347,7 @@
   branch = "feature/account_relations"
   name = "gitlab.com/tokend/regources"
   packages = [".","v2"]
-  revision = "8df5ace3e41b015606e560df444419b372bae337"
+  revision = "d48b067518bc809f3290701c5f1e900b631b97c0"
 
 [[projects]]
   branch = "master"
@@ -400,6 +400,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1b912f3ea7920b095dd4fe29a1bb445c629413723e13daadbdc2bbbd6d6a5b22"
+  inputs-digest = "81ce23787ac2a73850ed19a29dca95ed72af103819007ab94a892d650fa487d6"
   solver-name = "gps-cdcl"
   solver-version = 1
