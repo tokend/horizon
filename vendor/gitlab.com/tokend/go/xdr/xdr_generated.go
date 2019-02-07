@@ -1,5 +1,5 @@
-// revision: 5ea049e04a3502d18d605f77bd96be92128592a5
-// branch:   (detached
+// revision: 82bc102060187bb11cf9b111dc2d122429c58a1f
+// branch:   3.0.1-x.0
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -35843,4 +35843,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "5ea049e04a3502d18d605f77bd96be92128592a5"
+var Revision = "82bc102060187bb11cf9b111dc2d122429c58a1f"
