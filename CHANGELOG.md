@@ -1,3 +1,9 @@
+## 3.0.1-x.0
+
+### Changed
+
+* Updated XDR
+
 ## 3.0.0-x.2
 
 ### Added
