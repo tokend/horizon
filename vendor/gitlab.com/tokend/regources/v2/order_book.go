@@ -27,7 +27,6 @@ type OrderBookEntryAttrs struct {
 
 // OrderBookEntryRelations - represents the order book entry relationships
 type OrderBookEntryRelations struct {
-	Offer      *Relation `json:"offer"`
 	BaseAsset  *Relation `json:"base_asset"`
 	QuoteAsset *Relation `json:"quote_asset"`
 }

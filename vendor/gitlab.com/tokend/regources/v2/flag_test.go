@@ -16,7 +16,7 @@ func TestFlagFromMask(t *testing.T) {
 		assert.DeepEqual(t,
 			FlagsFromMask(1, allFlags),
 			Flags{
-				Int: 1,
+				Mask: 1,
 				Values: []Flag{
 					{
 						Value: 1,
@@ -28,7 +28,7 @@ func TestFlagFromMask(t *testing.T) {
 		assert.DeepEqual(t,
 			FlagsFromMask(3, allFlags),
 			Flags{
-				Int: 3,
+				Mask: 3,
 				Values: []Flag{
 					{
 						Value: 1,

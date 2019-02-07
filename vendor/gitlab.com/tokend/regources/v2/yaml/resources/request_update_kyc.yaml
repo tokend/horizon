@@ -1,0 +1,26 @@
+name: UpdateKYCRequestDetails
+key: request-details-update-kyc
+base: request-details
+attributes:
+  -
+    name: account_type_to_set
+    type: XdrEnumValue
+  -
+    name: kyc_level
+    type: UInt32
+  -
+    name: kyc_data
+    type: Object
+  -
+    name: sequence_number
+    type: UInt32
+  -
+    name: external_details
+    type: Object
+    is_collection: true
+
+relations:
+  -
+    name: account_to_update_kyc
+    is_collection: false
+    resource: accounts

@@ -1,0 +1,10 @@
+name: OpCreateAccountDetails
+key: operations-create-account
+base: operation-details
+attributes:
+  -
+    name: account_address
+    type: String
+  -
+    name: account_type
+    type: XdrEnumValue

@@ -9,24 +9,27 @@ import (
 type SaleState int
 
 const (
-	SaleStateOpen SaleState = 1 << iota
+	SaleStateOpen SaleState = iota + 1
 	SaleStateClosed
 	SaleStateCanceled
 )
 
-var saleStateMap = map[int]string{
-	int(SaleStateOpen):     "open",
-	int(SaleStateClosed):   "closed",
-	int(SaleStateCanceled): "canceled",
+var saleStateMap = map[SaleState]string{
+	SaleStateOpen:     "open",
+	SaleStateClosed:   "closed",
+	SaleStateCanceled: "canceled",
 }
 
 func (s SaleState) MarshalJSON() ([]byte, error) {
-	return json.Marshal(FlagsFromMask(int(s), saleStateMap))
+	return json.Marshal(Flag{
+		Name:  saleStateMap[s],
+		Value: int(s),
+	})
 }
 
 //String - converts int enum to string
 func (s SaleState) String() string {
-	return saleStateMap[int(s)]
+	return saleStateMap[s]
 }
 
 // SaleResponse - representation of response with sale resource
@@ -60,12 +63,11 @@ type Sale struct {
 
 // SaleAttrs - attributes of the sale
 type SaleAttrs struct {
-	StartTime      time.Time    `json:"start_time"`
-	EndTime        time.Time    `json:"end_time"`
-	SaleType       xdr.SaleType `json:"sale_type"`
-	SaleState      SaleState    `json:"sale_state"`
-	InvestorsCount uint32       `json:"investors_count"`
-	Details        Details      `json:"details"`
+	StartTime time.Time    `json:"start_time"`
+	EndTime   time.Time    `json:"end_time"`
+	SaleType  xdr.SaleType `json:"sale_type"`
+	SaleState SaleState    `json:"sale_state"`
+	Details   Details      `json:"details"`
 }
 
 // SaleRelations - relationships of the sale

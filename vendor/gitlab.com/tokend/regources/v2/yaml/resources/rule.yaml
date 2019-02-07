@@ -1,0 +1,16 @@
+name: Rule
+key: rules
+
+attributes:
+  -
+    name: resource
+    type: String
+  -
+    name: action
+    type: String
+  -
+    name: is_forbidden
+    type: Bool
+  -
+    name: details
+    type: Object

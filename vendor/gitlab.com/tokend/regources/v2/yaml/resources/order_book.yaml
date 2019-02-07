@@ -1,0 +1,32 @@
+name: OrderBookEntry
+key: order-book-entries
+attributes:
+  -
+    name: is_buy
+    type: Bool
+  -
+    name: price
+    type: Amount
+  -
+    name: base_amount
+    type: Amount
+  -
+    name: quote_amount
+    type: Amount
+  -
+    name: created_at
+    type: Date
+
+relations:
+  -
+    name: offer
+    is_collection: false
+    resource: offers
+  -
+    name: base_asset
+    is_collection: false
+    resource: assets
+  -
+    name: quote_asset
+    is_collection: false
+    resource: assets

@@ -1,0 +1,19 @@
+name: Signer
+key: signers
+
+attributes:
+  -
+    name: weight
+    type: Int32
+  -
+    name: identity
+    type: Int32
+  -
+    name: details
+    type: Object
+
+relations:
+  -
+    name: role
+    is_collection: false
+    resource: roles

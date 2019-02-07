@@ -1,0 +1,13 @@
+name: OpManageAccountDetails
+key: operations-manage-account
+base: operation-details
+attributes:
+  -
+    name: account_address
+    type: XdrEnumValue
+  -
+    name: block_reasons_to_add
+    type: XdrEnumBitmask
+  -
+    name: block_reasons_to_remove
+    type: XdrEnumBitmask

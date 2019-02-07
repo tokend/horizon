@@ -47,7 +47,7 @@
   branch = "feature/account_relations"
   name = "gitlab.com/tokend/go"
   packages = ["amount","crc16","strkey","xdr"]
-  revision = "c614f48c4122caa9a389f77fe690f06a86633f0a"
+  revision = "af9d4535d5c77915125473df267b33d533b8f5c1"
 
 [[projects]]
   name = "gotest.tools"
