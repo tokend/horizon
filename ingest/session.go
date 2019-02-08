@@ -358,18 +358,29 @@ func (is *Session) updateReviewableRequestState(
 	req xdr.ReviewRequestOp,
 	result xdr.ReviewRequestResult,
 ) error {
+	var opState history.OperationState
 
-	switch result.Code {
-	case xdr.ReviewRequestResultCodeSuccess:
-		err := is.Ingestion.UpdateReviewableRequestState(
-			uint64(req.RequestId),
-			uint64(history.OperationStateSuccess),
-		)
-		if err != nil {
-			return errors.Wrap(err, "failed to update successful reviewable request state:", logan.F{
-				"request_id": uint64(req.RequestId),
-			})
-		}
+	if result.Code != xdr.ReviewRequestResultCodeSuccess {
+		return nil
+	}
+
+	if result.Success.Fulfilled {
+		opState = history.OperationStateSuccess
+	}
+	if req.Action == xdr.ReviewRequestOpActionPermanentReject {
+		opState = history.OperationStateRejected
+	}
+
+	err := is.Ingestion.UpdateReviewableRequestState(
+		uint64(req.RequestId),
+		uint64(opState),
+	)
+	if err != nil {
+		return errors.Wrap(err, "failed to update rejected reviewable request state:", logan.F{
+			"request_id":         uint64(req.RequestId),
+			"request_successful": opState == history.OperationStateSuccess,
+			"request_rejected":   opState == history.OperationStateRejected,
+		})
 	}
 	return nil
 }
