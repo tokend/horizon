@@ -1,9 +1,15 @@
 ## Unreleased
 
+### Added
+
+* added handler for `POST /v2/transactions`
+
 ### Changed
-* Janus config (internal)
+
+* (internal) Janus config
 
 ### Fixed
+
 * Fixed rendering success operation state when corresponding request is rejected
 
 ## 3.0.1-x.1

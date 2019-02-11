@@ -364,6 +364,7 @@ func initWebActions(app *App) {
 	r.Get("/contracts/:id", &ContractShowAction{})
 
 	r.Post("/transactions", &TransactionCreateAction{})
+	r.Post("/v2/transactions", &TransactionCreateAction{})
 }
 
 func init() {
