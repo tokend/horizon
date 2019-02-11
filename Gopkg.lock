@@ -10,17 +10,6 @@
   revision = "75cd24fc2f2c2a2088577d12123ddee5f54e0675"
 
 [[projects]]
-  branch = "master"
-  digest = "1:47ea4fbe2ab4aeb9808502c51e657041c2e49b36b83fc1c1a349135cdf16342f"
-  name = "github.com/agl/ed25519"
-  packages = [
-    ".",
-    "edwards25519",
-  ]
-  pruneopts = "UT"
-  revision = "5312a61534124124185d41f09206b9fef1d88403"
-
-[[projects]]
   digest = "1:5568509a79e74730b08af05eb7397bd770cd16e7a746e58dbb7e5277e698664a"
   name = "github.com/asaskevich/govalidator"
   packages = ["."]
@@ -518,7 +507,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:ebef2ba807dfb76b13833458d353c959ab517bb7a9753e1a761f450f9e7341f7"
+  branch = "3.0.2-x.0"
+  digest = "1:0205e1ab2fa9157f0f5bd1efd924414b118db203fefa385b11d8fad93c45187e"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -536,7 +526,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "6f68c028e5258674306b346d4bb40e47d0d6621d"
+  revision = "c63fc249bf9416b4213fef771097043f739b4e0c"
 
 [[projects]]
   branch = "master"
@@ -552,15 +542,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "product"
-  digest = "1:2d5b116b91d10015d97d61d369a835d7cf7fd00a565ead24c908ddf954302ed7"
+  branch = "3.0.1-x.0"
+  digest = "1:b9e4c991c84b0c5a2a8b2ecb5faa68bf2fedaefdba1ecd517fcb4dde4813bbc2"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "48f81071aadf45c2e6f573925f9b6dd9ae6bea96"
+  revision = "a2ad2d222f848cdae9927ca265d8ead7eeb2c01c"
 
 [[projects]]
   branch = "master"

@@ -100,7 +100,6 @@ const (
 // provided app.  All route registration should be implemented here.
 func initWebActions(app *App) {
 	operationTypesPayment := []xdr.OperationType{
-		xdr.OperationTypePayment,
 		xdr.OperationTypeCreateIssuanceRequest,
 		xdr.OperationTypeCreateWithdrawalRequest,
 		xdr.OperationTypeManageOffer,

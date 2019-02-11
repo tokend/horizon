@@ -15,7 +15,9 @@ import (
 	"gitlab.com/tokend/horizon/cache"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
+	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history"
+	"gitlab.com/tokend/horizon/exchange"
 	"gitlab.com/tokend/horizon/httpx"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/log"
@@ -38,6 +40,20 @@ type Action struct {
 	cq core.QInterface
 
 	cachedQ cache.QInterface
+}
+
+//CreateConverter - creates new version of exchange converter
+// TODO: exchange converter creation might have performance issues
+func (action *Action) CreateConverter() (*exchange.Converter, error) {
+	repo := action.App.CoreRepoLogged(&action.Log.Entry)
+	assetsProvider := struct {
+		core2.AssetsQ
+		core2.AssetPairsQ
+	}{
+		AssetsQ:     core2.NewAssetsQ(repo),
+		AssetPairsQ: core2.NewAssetPairsQ(repo),
+	}
+	return exchange.NewConverter(assetsProvider)
 }
 
 func (action *Action) GetAccountIdByBalance(balanceID string) (*string, error) {

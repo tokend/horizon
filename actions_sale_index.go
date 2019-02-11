@@ -6,7 +6,6 @@ import (
 
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/horizon/exchange"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
@@ -133,7 +132,7 @@ func (action *SaleIndexAction) loadRecord() {
 		return
 	}
 
-	converter, err := exchange.NewConverter(action.CoreQ())
+	converter, err := action.CreateConverter()
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to init converter")
 		action.Err = &problem.ServerError

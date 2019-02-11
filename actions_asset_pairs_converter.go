@@ -33,68 +33,28 @@ func (action *AssetPairsConverterAction) JSON() {
 	)
 }
 
-func (action *AssetPairsConverterAction) loadAssetPair(base, quote string) *core.AssetPair {
-	assetPair, err := action.CoreQ().AssetPairs().ByCode(base, quote)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to get asset pair by code")
-		action.Err = &problem.ServerError
-		return nil
-	}
-
-	return assetPair
-}
-
-func (action *AssetPairsConverterAction) tryLoadMatchingAssetPair() core.AssetPair {
-	assetPair := action.loadAssetPair(action.SourceAsset, action.DestAsset)
-	if action.Err != nil {
-		return core.AssetPair{}
-	}
-
-	if assetPair != nil {
-		return *assetPair
-	}
-
-	assetPair = action.loadAssetPair(action.DestAsset, action.SourceAsset)
-	if action.Err != nil {
-		return core.AssetPair{}
-	}
-
-	if assetPair == nil {
-		action.Err = &problem.NotFound
-		return core.AssetPair{}
-	}
-
-	return *assetPair
-}
-
-type assetLoader struct {
-	core.AssetQI
-}
-
-func (l assetLoader) LoadAsset(code string) (*core.Asset, error) {
-	return l.ByCode(code)
-}
-
 func (action *AssetPairsConverterAction) loadData() {
-	assetPair := action.tryLoadMatchingAssetPair()
-	if action.Err != nil {
+	converter, err := action.CreateConverter()
+	if err != nil {
+		action.Err = &problem.ServerError
+		action.Log.WithError(err).Error("failed to create converter")
 		return
 	}
 
-	result, isConverted, err := assetPair.ConvertToDestAsset(action.DestAsset,
-		action.Amount, assetLoader{AssetQI: action.CoreQ().Assets()})
+	result, err := converter.TryToConvertWithOneHop(action.Amount, action.SourceAsset, action.DestAsset)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to convert amount to dest asset")
 		action.Err = &problem.ServerError
 		return
 	}
 
-	if !isConverted {
-		action.SetInvalidField("amount", errors.New("failed to convert due to overflow"))
+	if result == nil {
+		action.SetInvalidField("amount", errors.New("failed to convert due to overflow or "+
+			"there is no asset pair path"))
 		return
 	}
 
 	hal.Render(action.W, map[string]interface{}{
-		"amount": amount.String(result),
+		"amount": amount.String(*result),
 	})
 }

@@ -15,6 +15,8 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
+var errUnknownRemoveReason = errors.New("request was removed due to unknown reason")
+
 type reviewableRequestStorage interface {
 	//Inserts Reviewable request into DB
 	Insert(request history.ReviewableRequest) error
@@ -86,7 +88,7 @@ func (c *reviewableRequestHandler) Updated(lc ledgerChange) error {
 func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	// The request is deleted in 3 cases:
 	// 1. Due to approve via reviewRequestOp
-	// 2. Due to permanentReject vai reviewRequestOp
+	// 2. Due to permanentReject via reviewRequestOp
 	// 3. Due to cancel via specific operation
 	op := lc.Operation.Body
 	switch op.Type {
@@ -95,10 +97,59 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	case xdr.OperationTypeManageAsset:
 		return c.cancel(lc)
 	case xdr.OperationTypeManageSale:
+		return c.handleRemoveOnManageSale(lc)
+	case xdr.OperationTypeCancelAswapBid:
 		return c.cancel(lc)
+	// auto review is handled by each operation separately
+	case xdr.OperationTypeCreateIssuanceRequest,
+		xdr.OperationTypeCheckSaleState,
+		xdr.OperationTypeCreateWithdrawalRequest,
+		xdr.OperationTypeCreatePreissuanceRequest,
+		xdr.OperationTypeManageLimits,
+		xdr.OperationTypeManageInvoiceRequest,
+		xdr.OperationTypeCreateSaleRequest,
+		xdr.OperationTypeCreateAmlAlert,
+		xdr.OperationTypeCreateKycRequest,
+		xdr.OperationTypeCreateAswapBidRequest:
+		return nil
+	default: // safeguard for future updates
+		return errors.From(errUnknownRemoveReason, logan.F{
+			"op_type": op.Type,
+		})
 	}
+}
 
-	return nil
+func (c *reviewableRequestHandler) handleRemoveOnManageAsset(lc ledgerChange) error {
+	op := lc.Operation.Body.MustManageAssetOp()
+	switch op.Request.Action {
+	// must be handled by operation
+	case xdr.ManageAssetActionCreateAssetCreationRequest,
+		xdr.ManageAssetActionCreateAssetUpdateRequest,
+		xdr.ManageAssetActionChangePreissuedAssetSigner,
+		xdr.ManageAssetActionUpdateMaxIssuance:
+		return nil
+	case xdr.ManageAssetActionCancelAssetRequest:
+		return c.cancel(lc)
+	default:
+		return errors.From(errUnknownRemoveReason, logan.F{
+			"manage_asset_action": op.Request.Action,
+		})
+	}
+}
+
+func (c *reviewableRequestHandler) handleRemoveOnManageSale(lc ledgerChange) error {
+	op := lc.Operation.Body.MustManageSaleOp()
+	switch op.Data.Action {
+	// must be handled by operation
+	case xdr.ManageSaleActionCreateUpdateDetailsRequest:
+		return nil
+	case xdr.ManageSaleActionCancel:
+		return c.cancel(lc)
+	default:
+		return errors.From(errUnknownRemoveReason, logan.F{
+			"manage_sale_action": op.Data.Action,
+		})
+	}
 }
 
 func (c *reviewableRequestHandler) removedOnReview(lc ledgerChange) error {
@@ -258,11 +309,11 @@ func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertReque
 }
 
 func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
-	quoteAssets := make([]regources.SaleQuoteAsset, 0, len(request.QuoteAssets))
+	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for i := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
-			Price:      regources.Amount(int64(request.QuoteAssets[i].Price)),
-			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
+		quoteAssets = append(quoteAssets, regources.AssetPrice{
+			Price: regources.Amount(int64(request.QuoteAssets[i].Price)),
+			Asset: string(request.QuoteAssets[i].QuoteAsset),
 		})
 	}
 
@@ -286,13 +337,8 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 func (c *reviewableRequestHandler) getLimitsUpdateRequest(
 	request *xdr.LimitsUpdateRequest) *history.LimitsUpdateRequest {
 
-	details, ok := request.Ext.GetDetails()
-	var detailsMap regources.Details
-	if ok {
-		detailsMap = internal.MarshalCustomDetails(details)
-	}
 	return &history.LimitsUpdateRequest{
-		Details:      detailsMap,
+		Details:      internal.MarshalCustomDetails(request.Details),
 		DocumentHash: hex.EncodeToString(request.DeprecatedDocumentHash[:]),
 	}
 }

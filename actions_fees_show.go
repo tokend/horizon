@@ -50,7 +50,7 @@ func (action *FeesShowAction) loadParams() {
 
 func (action *FeesShowAction) createConverter() {
 	var err error
-	action.converter, err = exchange.NewConverter(action.CoreQ())
+	action.converter, err = action.CreateConverter()
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to init converter")
 		action.Err = &problem.ServerError
