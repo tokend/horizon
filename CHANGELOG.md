@@ -1,5 +1,9 @@
 ## Unreleased
 
+Nothing unreleased at current stage
+
+## 3.0.1-x.2
+
 ### Added
 
 * added handler for `POST /v2/transactions`
