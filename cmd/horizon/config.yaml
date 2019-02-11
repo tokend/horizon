@@ -25,7 +25,7 @@ config:
   telegram_airdrop: http://
 
 janus:
-  url: http://
+  endpoint: http://localhost:3030
   surname: horizon
-  target: http://
+  upstream: http://localhost:3031
 
