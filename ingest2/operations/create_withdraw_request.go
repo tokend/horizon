@@ -36,10 +36,12 @@ func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	balanceIDInt := h.pubKeyProvider.MustBalanceID(withdrawRequest.Balance)
 
 	source.BalanceID = &balanceIDInt
-	source.Effect.Type = history2.EffectTypeLocked
-	source.Effect.Locked = &history2.BalanceChangeEffect{
-		Amount: regources.Amount(withdrawRequest.Amount),
-		Fee:    internal.FeeFromXdr(withdrawRequest.Fee),
+	source.Effect = &history2.Effect{
+		Type: history2.EffectTypeLocked,
+		Locked: &history2.BalanceChangeEffect{
+			Amount: regources.Amount(withdrawRequest.Amount),
+			Fee:    internal.FeeFromXdr(withdrawRequest.Fee),
+		},
 	}
 
 	return []history2.ParticipantEffect{source}, nil
