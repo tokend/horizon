@@ -31,10 +31,8 @@ type Root struct {
 	TxExpirationPeriod   int64              `json:"tx_expiration_period"`
 	CurrentTime          int64              `json:"current_time"`
 	Precision            int64              `json:"precision"`
-	HorizonRevision      string             `json:"horizon_revision"`
 }
 
-//go:generate git rev-parse HEAD
 // Populate fills in the details
 func (res *Root) PopulateLedgerState(
 	ctx context.Context,
