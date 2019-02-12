@@ -15,7 +15,7 @@
 ## Changed
 
 * (internal) Janus config
-
+* `v2`-prefixed endpoints updated to `3.0`-prefixed
 ## Fixed
 
 * Fixed rendering success operation state when corresponding request is rejected

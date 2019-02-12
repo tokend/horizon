@@ -90,25 +90,25 @@ func initWebV2Middleware(app *App) {
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
-	m.Get("/v2/accounts/{id}", handlers.GetAccount)
-	m.Get("/v2/accounts/{id}/signers", handlers.GetAccountSigners)
-	m.Get("/v2/assets/{code}", handlers.GetAsset)
-	m.Get("/v2/assets", handlers.GetAssetList)
-	m.Get("/v2/history", handlers.GetHistory)
-	m.Get("/v2/asset_pairs/{id}", handlers.GetAssetPair)
-	m.Get("/v2/asset_pairs", handlers.GetAssetPairList)
-	m.Get("/v2/offers/{id}", handlers.GetOffer)
-	m.Get("/v2/offers", handlers.GetOfferList)
-	m.Get("/v2/requests/{id}", handlers.GetReviewableRequest)
-	m.Get("/v2/requests", handlers.GetReviewableRequestList)
+	m.Get("/3.0/accounts/{id}", handlers.GetAccount)
+	m.Get("/3.0/accounts/{id}/signers", handlers.GetAccountSigners)
+	m.Get("/3.0/assets/{code}", handlers.GetAsset)
+	m.Get("/3.0/assets", handlers.GetAssetList)
+	m.Get("/3.0/history", handlers.GetHistory)
+	m.Get("/3.0/asset_pairs/{id}", handlers.GetAssetPair)
+	m.Get("/3.0/asset_pairs", handlers.GetAssetPairList)
+	m.Get("/3.0/offers/{id}", handlers.GetOffer)
+	m.Get("/3.0/offers", handlers.GetOfferList)
+	m.Get("/3.0/requests/{id}", handlers.GetReviewableRequest)
+	m.Get("/3.0/requests", handlers.GetReviewableRequestList)
 
-	m.Get("/v2/key_values", handlers.GetKeyValueList)
-	m.Get("/v2/key_values/{key}", handlers.GetKeyValue)
+	m.Get("/3.0/key_values", handlers.GetKeyValueList)
+	m.Get("/3.0/key_values/{key}", handlers.GetKeyValue)
 
-	m.Get("/v2/sales", handlers.GetSaleList)
-	m.Get("/v2/sales/{id}", handlers.GetSale)
+	m.Get("/3.0/sales", handlers.GetSaleList)
+	m.Get("/3.0/sales/{id}", handlers.GetSale)
 
-	m.Get("/v2/order_book/{id}", handlers.GetOrderBook)
+	m.Get("/3.0/order_book/{id}", handlers.GetOrderBook)
 
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {
