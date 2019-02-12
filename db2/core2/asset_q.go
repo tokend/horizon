@@ -20,7 +20,7 @@ type AssetsQ struct {
 func NewAssetsQ(repo *db2.Repo) AssetsQ {
 	return AssetsQ{
 		repo:     repo,
-		selector: sq.Select(assetColumns...).From("asset AS assets"),
+		selector: sq.Select(assetColumns...).From("asset assets"),
 	}
 }
 

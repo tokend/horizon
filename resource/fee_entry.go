@@ -18,10 +18,6 @@ func NewFeeEntry(cfee core.FeeEntry) (fee regources.FeeEntry) {
 	fee.AccountType = cfee.AccountType
 	fee.LowerBound = amount.String(cfee.LowerBound)
 	fee.UpperBound = amount.String(cfee.UpperBound)
-	fee.FeeAsset = cfee.FeeAsset
-	if fee.FeeAsset == "" {
-		fee.FeeAsset = cfee.Asset
-	}
 	fee.Exists = true
 	return fee
 }

@@ -9,6 +9,7 @@ import (
 )
 
 type manageAssetOpHandler struct {
+	effectsProvider
 }
 
 // Details returns details about manage asset operation
@@ -63,11 +64,4 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 	}
 
 	return opDetails, nil
-}
-
-//ParticipantsEffects - returns source of the operation
-func (h *manageAssetOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
-) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{source}, nil
 }
