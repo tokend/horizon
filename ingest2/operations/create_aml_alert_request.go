@@ -7,7 +7,7 @@ import (
 )
 
 type createAMLAlertReqeustOpHandler struct {
-	balanceProvider balanceProvider
+	effectsProvider
 }
 
 // Details returns details about create AML alert request operation
@@ -29,17 +29,25 @@ func (h *createAMLAlertReqeustOpHandler) Details(op rawOperation,
 // ParticipantsEffects returns `locked` effect for account
 // which is suspected in illegal obtaining of tokens
 func (h *createAMLAlertReqeustOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	amlAlertRequest := opBody.MustCreateAmlAlertRequestOp().AmlAlertRequest
-
-	effect := history2.Effect{
+	result := h.BalanceEffectWithAccount(sourceAccountID, amlAlertRequest.BalanceId, &history2.Effect{
 		Type: history2.EffectTypeLocked,
 		Locked: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(amlAlertRequest.Amount),
 		},
-	}
+	})
 
-	balance := h.balanceProvider.MustBalance(amlAlertRequest.BalanceId)
-	return populateEffects(balance, effect, source), nil
+	isFulfilled := opRes.CreateAmlAlertRequestResult.MustSuccess().Fulfilled
+	// request was fulfilled to funds has been withdrawn
+	if isFulfilled {
+		result = append(result, h.BalanceEffect(amlAlertRequest.BalanceId, &history2.Effect{
+			Type: history2.EffectTypeWithdrawn,
+			Withdrawn: &history2.BalanceChangeEffect{
+				Amount: regources.Amount(amlAlertRequest.Amount),
+			},
+		}))
+	}
+	return result, nil
 }

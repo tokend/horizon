@@ -7,6 +7,7 @@ import (
 )
 
 type manageExternalSystemPoolOpHandler struct {
+	effectsProvider
 }
 
 // Details returns details about manage external system pool operation
@@ -47,11 +48,4 @@ func (h *manageExternalSystemPoolOpHandler) Details(op rawOperation,
 	}
 
 	return operationDetails, nil
-}
-
-//ParticipantsEffects - returns source of the operation
-func (h *manageExternalSystemPoolOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
-) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{source}, nil
 }

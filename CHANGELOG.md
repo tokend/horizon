@@ -1,45 +1,48 @@
-## Unreleased
+# Unreleased
 
-Nothing unreleased at current stage
+## Fixed 
 
-## 3.0.1-x.2
+* (internal) Fixed ingest v2. Participant effect has not included asset.
+* (internal) Fixed ingest v2. Correctly handle `fulfilled` on review of request
 
-### Added
+# 3.0.1-x.2
+
+## Added
 
 * added handler for `POST /v2/transactions`
 
-### Changed
+## Changed
 
 * (internal) Janus config
 
-### Fixed
+## Fixed
 
 * Fixed rendering success operation state when corresponding request is rejected
 
-## 3.0.1-x.1
+# 3.0.1-x.1
 
-## Fixed
+# Fixed
 
 * (internal) Fixed panic on ingest_v2 create account op trying to get referrer accountID which might not exist
 * (internal) Fixed nil pointer exception on ingest_v2 on withdrawal participant effect handling
 
-## 3.0.1-x.0
+# 3.0.1-x.0
 
-### Changed
+## Changed
 
 * Updated XDR
 
-## 3.0.0-x.2
+# 3.0.0-x.2
 
-### Added
+## Added
 
 * `/sales` endpoint
 * `/order_book` endpoint
 
-### Fixed
+## Fixed
 
 * changelog format
 
-## 3.0.0-x.1
+# 3.0.0-x.1
 
 * `assets` owner is not rendering as `null` anymore

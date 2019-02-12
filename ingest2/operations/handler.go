@@ -36,8 +36,12 @@ type Handler struct {
 // details and participants effects of certain operation
 func NewOperationsHandler(operationsStorage operationsStorage, participantEffectsStorage participantEffectsStorage,
 	pubKeyProvider IDProvider, balanceProvider balanceProvider) *Handler {
+	effectsBaseHandler := effectsProvider{
+		IDProvider:      pubKeyProvider,
+		balanceProvider: balanceProvider,
+	}
 	manageOfferOpHandlerInst := &manageOfferOpHandler{
-		pubKeyProvider: pubKeyProvider,
+		effectsProvider: effectsBaseHandler,
 	}
 	return &Handler{
 		pubKeyProvider:            pubKeyProvider,
@@ -45,64 +49,86 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 		operationsStorage:         operationsStorage,
 		allHandlers: map[xdr.OperationType]handler{
 			xdr.OperationTypeCreateAccount: &createAccountOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeManageAccount: &manageAccountOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeManageExternalSystemAccountIdPoolEntry: &manageExternalSystemPoolOpHandler{},
-			xdr.OperationTypeBindExternalSystemAccountId:            &bindExternalSystemAccountOpHandler{},
+			xdr.OperationTypeManageExternalSystemAccountIdPoolEntry: &manageExternalSystemPoolOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeBindExternalSystemAccountId: &bindExternalSystemAccountOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypeManageBalance: &manageBalanceOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeManageKeyValue: &manageKeyValueOpHandler{},
+			xdr.OperationTypeManageKeyValue: &manageKeyValueOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypeManageLimits: &manageLimitsOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeManageAsset:     &manageAssetOpHandler{},
+			xdr.OperationTypeManageAsset: &manageAssetOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypeManageAssetPair: &manageAssetPairOpHandler{manageOfferOpHandlerInst},
 			xdr.OperationTypeManageOffer:     manageOfferOpHandlerInst,
 			xdr.OperationTypeSetFees: &setFeeOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeCreateKycRequest: &createKYCRequestOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreatePreissuanceRequest: &createPreIssuanceRequestOpHandler{},
+			xdr.OperationTypeCreatePreissuanceRequest: &createPreIssuanceRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypeCreateIssuanceRequest: &createIssuanceRequestOpHandler{
-				balanceProvider: balanceProvider,
+				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreateSaleRequest: &createSaleRequestOpHandler{},
+			xdr.OperationTypeCreateSaleRequest: &createSaleRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypeCreateAswapBidRequest: &createAtomicSwapBidRequestOpHandler{
-				balanceProvider: balanceProvider,
+				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreateAswapRequest: &createAtomicSwapRequestOpHandler{},
+			xdr.OperationTypeCreateAswapRequest: &createAtomicSwapRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeCreateAmlAlert: &createAMLAlertReqeustOpHandler{
-				balanceProvider: balanceProvider,
+				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreateManageLimitsRequest: &createManageLimitsRequestOpHandler{},
-			xdr.OperationTypeReviewRequest:             newReviewRequestOpHandler(pubKeyProvider, balanceProvider),
+			xdr.OperationTypeCreateManageLimitsRequest: &createManageLimitsRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeReviewRequest: newReviewRequestOpHandler(effectsBaseHandler),
 			xdr.OperationTypePaymentV2: &paymentOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{
 				manageOfferOpHandler: manageOfferOpHandlerInst,
 			},
 			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeSetOptions:           &stubOpHandler{},
+			xdr.OperationTypeSetOptions: &stubOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypeManageInvoiceRequest: &deprecatedOpHandler{},
 			xdr.OperationTypeManageSale: &manageSaleHandler{
 				manageOfferOpHandler: manageOfferOpHandlerInst,
 			},
-			xdr.OperationTypeManageContractRequest:       &deprecatedOpHandler{},
-			xdr.OperationTypeManageContract:              &deprecatedOpHandler{},
-			xdr.OperationTypeCancelSaleRequest:           &stubOpHandler{},
-			xdr.OperationTypePayout:                      &payoutHandler{},
+			xdr.OperationTypeManageContractRequest: &deprecatedOpHandler{},
+			xdr.OperationTypeManageContract:        &deprecatedOpHandler{},
+			xdr.OperationTypeCancelSaleRequest: &stubOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypePayout: &payoutHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypeManageAccountRole:           &deprecatedOpHandler{},
 			xdr.OperationTypeManageAccountRolePermission: &deprecatedOpHandler{},
 		},
@@ -184,10 +210,7 @@ func (h *Handler) convertOperation(op operation, opIDGen *generator.ID,
 			})
 	}
 
-	sourceParticipant := history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.MustAccountID(source),
-	}
-	participantsEffects, err := opHandler.ParticipantsEffects(op.Operation().Body, op.Result(), sourceParticipant,
+	participantsEffects, err := opHandler.ParticipantsEffects(op.Operation().Body, op.Result(), source,
 		op.LedgerChanges())
 	if err != nil {
 		return history2.Operation{}, nil,

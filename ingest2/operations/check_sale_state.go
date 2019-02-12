@@ -27,7 +27,7 @@ func (h *checkSaleStateOpHandler) Details(op rawOperation,
 // ParticipantsEffects returns sale owner and participants `matched` effects if sale closed
 // returns `unlocked` effects if sale canceled or updated
 func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	res := opRes.MustCheckSaleStateResult().MustSuccess()
 
@@ -53,10 +53,10 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 
 	result := make([]history2.ParticipantEffect, 0)
 	var totalBaseIssued uint64
-	ownerID := h.manageOfferOpHandler.pubKeyProvider.MustAccountID(closedRes.SaleOwner)
+	ownerID := h.manageOfferOpHandler.MustAccountID(closedRes.SaleOwner)
 	// it does not matter which base balance is used as we are sure that the operation of distribution will be clean
 	baseBalanceAddress := closedRes.Results[0].SaleBaseBalance.AsString()
-	baseBalanceID := h.manageOfferOpHandler.pubKeyProvider.MustBalanceID(closedRes.Results[0].SaleBaseBalance)
+	baseBalanceID := h.manageOfferOpHandler.MustBalanceID(closedRes.Results[0].SaleBaseBalance)
 	baseAsset := string(closedRes.Results[0].SaleDetails.BaseAsset)
 	for _, assetPairResult := range closedRes.Results {
 		sourceOffer := offer{
@@ -64,7 +64,7 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 			AccountID:           ownerID,
 			BaseBalanceID:       baseBalanceID,
 			BaseBalanceAddress:  baseBalanceAddress,
-			QuoteBalanceID:      h.manageOfferOpHandler.pubKeyProvider.MustBalanceID(assetPairResult.SaleQuoteBalance),
+			QuoteBalanceID:      h.manageOfferOpHandler.MustBalanceID(assetPairResult.SaleQuoteBalance),
 			QuoteBalanceAddress: assetPairResult.SaleQuoteBalance.AsString(),
 			BaseAsset:           baseAsset,
 			QuoteAsset:          string(assetPairResult.SaleDetails.QuoteAsset),

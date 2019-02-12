@@ -8,7 +8,7 @@ import (
 )
 
 type createAccountOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about create account operation
@@ -27,14 +27,15 @@ func (h *createAccountOpHandler) Details(op rawOperation, _ xdr.OperationResultT
 
 // ParticipantsEffects returns counterparties without effects
 func (h *createAccountOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect, changes []xdr.LedgerEntryChange,
+	_ xdr.OperationResultTr, sourceAccountID xdr.AccountId, changes []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
+	source := h.Participant(sourceAccountID)
 	participants := []history2.ParticipantEffect{source}
 
 	createAccountOp := opBody.MustCreateAccountOp()
 
 	participants = append(participants, history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.MustAccountID(createAccountOp.Destination),
+		AccountID: h.MustAccountID(createAccountOp.Destination),
 	})
 
 	referrerEffect, err := h.referrerParticipantEffect(createAccountOp, changes)
@@ -63,7 +64,7 @@ func (h *createAccountOpHandler) referrerParticipantEffect(op xdr.CreateAccountO
 	}
 
 	return &history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.MustAccountID(*account.Referrer),
+		AccountID: h.MustAccountID(*account.Referrer),
 	}, nil
 }
 
