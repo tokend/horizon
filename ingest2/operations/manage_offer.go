@@ -9,7 +9,7 @@ import (
 )
 
 type manageOfferOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about manage offer operation
@@ -45,12 +45,13 @@ func (h *manageOfferOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 // ParticipantsEffects can return `matched` and `locked` effects if offer created
 // returns `unlocked` effects if offer canceled (deleted by user)
 func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	manageOfferOp := opBody.MustManageOfferOp()
 	manageOfferOpRes := opRes.MustManageOfferResult().MustSuccess()
 
 	if manageOfferOp.Amount != 0 {
+		source := h.Participant(sourceAccountID)
 		return h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source), nil
 	}
 
@@ -71,9 +72,9 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 	participants, _ := h.getMatchesEffects(res.OffersClaimed, offer{
 		OrderBookID:         int64(op.OrderBookId),
 		AccountID:           source.AccountID,
-		BaseBalanceID:       h.pubKeyProvider.MustBalanceID(op.BaseBalance),
+		BaseBalanceID:       h.MustBalanceID(op.BaseBalance),
 		BaseBalanceAddress:  op.BaseBalance.AsString(),
-		QuoteBalanceID:      h.pubKeyProvider.MustBalanceID(op.QuoteBalance),
+		QuoteBalanceID:      h.MustBalanceID(op.QuoteBalance),
 		QuoteBalanceAddress: op.QuoteBalance.AsString(),
 		BaseAsset:           string(res.BaseAsset),
 		QuoteAsset:          string(res.QuoteAsset),
@@ -92,12 +93,12 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 		Locked: &history2.BalanceChangeEffect{},
 	}
 	if newOffer.IsBuy {
-		*source.BalanceID = h.pubKeyProvider.MustBalanceID(newOffer.QuoteBalance)
+		*source.BalanceID = h.MustBalanceID(newOffer.QuoteBalance)
 		*source.AssetCode = string(newOffer.Quote)
 		source.Effect.Locked.Amount = regources.Amount(newOffer.QuoteAmount)
 		source.Effect.Locked.Fee.CalculatedPercent = regources.Amount(newOffer.PercentFee)
 	} else {
-		*source.BalanceID = h.pubKeyProvider.MustBalanceID(newOffer.BaseBalance)
+		*source.BalanceID = h.MustBalanceID(newOffer.BaseBalance)
 		*source.AssetCode = string(newOffer.Base)
 		source.Effect.Locked.Amount = regources.Amount(newOffer.BaseAmount)
 	}
@@ -122,7 +123,7 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 		deletedOffer := change.MustState().Data.MustOffer()
 
 		participant := history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.MustAccountID(deletedOffer.OwnerId),
+			AccountID: h.MustAccountID(deletedOffer.OwnerId),
 			BalanceID: new(uint64),
 			AssetCode: new(string),
 			Effect: &history2.Effect{
@@ -132,12 +133,12 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 		}
 
 		if deletedOffer.IsBuy {
-			*participant.BalanceID = h.pubKeyProvider.MustBalanceID(deletedOffer.QuoteBalance)
+			*participant.BalanceID = h.MustBalanceID(deletedOffer.QuoteBalance)
 			*participant.AssetCode = string(deletedOffer.Quote)
 			participant.Effect.Unlocked.Amount = regources.Amount(deletedOffer.QuoteAmount)
 			participant.Effect.Unlocked.Fee.CalculatedPercent = regources.Amount(deletedOffer.PercentFee)
 		} else {
-			*participant.BalanceID = h.pubKeyProvider.MustBalanceID(deletedOffer.BaseBalance)
+			*participant.BalanceID = h.MustBalanceID(deletedOffer.BaseBalance)
 			*participant.AssetCode = string(deletedOffer.Base)
 			participant.Effect.Unlocked.Amount = regources.Amount(deletedOffer.BaseAmount)
 		}
@@ -170,9 +171,9 @@ func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOffe
 
 		result = h.addParticipantEffects(result, offer{
 			OrderBookID:         sourceOffer.OrderBookID,
-			AccountID:           h.pubKeyProvider.MustAccountID(matchedOffer.BAccountId),
-			BaseBalanceID:       h.pubKeyProvider.MustBalanceID(matchedOffer.BaseBalance),
-			QuoteBalanceID:      h.pubKeyProvider.MustBalanceID(matchedOffer.QuoteBalance),
+			AccountID:           h.MustAccountID(matchedOffer.BAccountId),
+			BaseBalanceID:       h.MustBalanceID(matchedOffer.BaseBalance),
+			QuoteBalanceID:      h.MustBalanceID(matchedOffer.QuoteBalance),
 			BaseBalanceAddress:  matchedOffer.BaseBalance.AsString(),
 			QuoteBalanceAddress: matchedOffer.QuoteBalance.AsString(),
 			BaseAsset:           sourceOffer.BaseAsset,

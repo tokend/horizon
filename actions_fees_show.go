@@ -85,21 +85,7 @@ func (action *FeesShowAction) loadData() {
 	if result == nil {
 		result = new(core.FeeEntry)
 		result.Asset = action.Asset
-		result.FeeAsset = action.Asset
 		result.FeeType = action.FeeType
-	}
-
-	if result.FeeAsset == "" {
-		result.FeeAsset = result.Asset
-	}
-
-	if result.Asset != result.FeeAsset {
-		action.Amount, err = convertAmount(am, result.Asset, result.FeeAsset, action.converter)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to convert fee")
-			action.Err = &problem.ServerError
-			return
-		}
 	}
 
 	percentFee := action.GetPercentFee(result.Percent)

@@ -20,12 +20,12 @@ config:
   project: ""
   env: ""
   migrate_up_on_start: false
-
   invest_ready: http://
   telegram_airdrop: http://
 
 janus:
-  endpoint: http://localhost:3030
+  disabled: true
+  endpoint: http://localhost:8081
+  upstream: http://localhost:8000
   surname: horizon
-  upstream: http://localhost:3031
 

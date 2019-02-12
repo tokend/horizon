@@ -1,11 +1,48 @@
-# Changelog
+# Unreleased
 
-## merging `feature/account_relations -> master`
+### Fixed
 
-### Changed
+* Allow to specify filter for primary market offers via orderBookID = -1
+* (internal) Fixed ingest v2. Participant effect has not included asset.
+* (internal) Fixed ingest v2. Correctly handle `fulfilled` on review of request
+
+# 3.0.1-x.2
+
+## Added
+
+* added handler for `POST /v2/transactions`
+
+## Changed
+
+* (internal) Janus config
+* `v2`-prefixed endpoints updated to `v3.0`-prefixed
+## Fixed
+
+* Fixed rendering success operation state when corresponding request is rejected
+
+# 3.0.1-x.1
+
+# Fixed
+
+* (internal) Fixed panic on ingest_v2 create account op trying to get referrer accountID which might not exist
+* (internal) Fixed nil pointer exception on ingest_v2 on withdrawal participant effect handling
+
+# 3.0.1-x.0
+
+## Changed
 
 * Updated XDR
 
-### Added
+# 3.0.0-x.2
+
+## Added
 
 * `Limits` and `ExternalSystemIDs` to `/accounts` endpoint
+
+## Fixed
+
+* changelog format
+
+# 3.0.0-x.1
+
+* `assets` owner is not rendering as `null` anymore

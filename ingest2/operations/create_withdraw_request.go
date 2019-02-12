@@ -8,7 +8,7 @@ import (
 )
 
 type createWithdrawRequestOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about create withdraw request operation
@@ -30,17 +30,15 @@ func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 
 // ParticipantsEffects returns source `locked` effect
 func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	_ xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	withdrawRequest := opBody.MustCreateWithdrawalRequestOp().Request
-	balanceIDInt := h.pubKeyProvider.MustBalanceID(withdrawRequest.Balance)
 
-	source.BalanceID = &balanceIDInt
-	source.Effect.Type = history2.EffectTypeLocked
-	source.Effect.Locked = &history2.BalanceChangeEffect{
-		Amount: regources.Amount(withdrawRequest.Amount),
-		Fee:    internal.FeeFromXdr(withdrawRequest.Fee),
-	}
-
-	return []history2.ParticipantEffect{source}, nil
+	return []history2.ParticipantEffect{h.BalanceEffect(withdrawRequest.Balance, &history2.Effect{
+		Type: history2.EffectTypeLocked,
+		Locked: &history2.BalanceChangeEffect{
+			Amount: regources.Amount(withdrawRequest.Amount),
+			Fee:    internal.FeeFromXdr(withdrawRequest.Fee),
+		},
+	})}, nil
 }
