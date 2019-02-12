@@ -1,11 +1,11 @@
 config:
-  stellar_core_url: http://localhost:9090
+  stellar_core_url: http://localhost:8080
   stellar_core_database_url: postgres://postgres:postgres@localhost/core?sslmode=disable
   hostname: ""
   database_url: postgres://postgres:postgres@localhost/horizon?sslmode=disable
   log_level: "warn"
   slow_query_bound: 1s
-  port: 8000
+  port: 8001
   api_backend: http://
   ingest: true
   stale_threshold: 0
