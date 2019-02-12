@@ -2,10 +2,15 @@ package horizon
 
 import (
 	"database/sql"
+	"net/http"
+	"net/http/httputil"
+	"regexp"
 
 	"github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
+	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
+	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/log"
@@ -99,6 +104,9 @@ const (
 // initWebActions installs the routing configuration of horizon onto the
 // provided app.  All route registration should be implemented here.
 func initWebActions(app *App) {
+	apiProxy := httputil.NewSingleHostReverseProxy(app.config.APIBackend)
+	templateProxy := httputil.NewSingleHostReverseProxy(app.config.TemplateBackend)
+
 	operationTypesPayment := []xdr.OperationType{
 		xdr.OperationTypeCreateIssuanceRequest,
 		xdr.OperationTypeCreateWithdrawalRequest,
@@ -141,8 +149,6 @@ func initWebActions(app *App) {
 	})
 	r.Get("/accounts/:account_id/references", &CoreReferencesAction{})
 	r.Get("/accounts/:account_id/references/:reference", &SingleReferenceAction{})
-
-	r.Get("/accounts/:account_id/transactions", &TransactionIndexAction{})
 
 	//keyValue actions
 	r.Get("/key_value", &KeyValueShowAllAction{})
@@ -363,8 +369,75 @@ func initWebActions(app *App) {
 	r.Get("/contracts", &ContractIndexAction{})
 	r.Get("/contracts/:id", &ContractShowAction{})
 
-	r.Post("/transactions", &TransactionCreateAction{})
-	r.Post("/v3.0/transactions", &TransactionCreateAction{})
+	r.Post("/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
+		// DISCLAIMER: while following is true, it does not currently applies
+		// API does not accept transactions make sure DisableAPISubmit is set to true
+		//
+		// legacy constraints:
+		// * not signed POST /transactions should trigger TFA flow if needed
+		// * not signed POST /transactions should eventually make network submission
+		//
+		// signed request submission flow:
+		// * horizon accepts only admin signed request and submits them directly
+		//   omitting pending transaction flow
+		//
+		// not signed request submission flow:
+		// * horizon accepts not signed request and proxy it to api
+		// * api handles request and make it's thing about TFA and stuff
+		// * api eventually submits transaction with admin signature to horizon
+		// * api returns response from horizon as-is
+		// * api handles pending transactions silently, cleaning up after time bounds
+		//  expired
+		//
+		// that solves most of horizon/api abstractions issues but also leads to
+		// not-so-obvious flow for some transactions, basically rules are:
+		// * clients should sign their submission requests if, and only if, their
+		//   intent is to by-pass implicit pending transactions flow
+		// * requests with transactions of user account type sources must not be
+		//   signed by client or they will be rejected
+
+		// checking if request is signed and deciding on proper handler
+		// (we rely on SignatureValidator middleware here)
+		signer := r.Header.Get(signcontrol.PublicKeyHeader)
+		if signer != "" || app.config.DisableAPISubmit {
+			TransactionCreateAction{}.ServeHTTPC(c, w, r)
+		} else {
+			apiProxy.ServeHTTP(w, r)
+		}
+	}))
+
+	r.Post("/v3.0/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
+		signer := r.Header.Get(signcontrol.PublicKeyHeader)
+		if signer != "" || app.config.DisableAPISubmit {
+			TransactionCreateAction{}.ServeHTTPC(c, w, r)
+		} else {
+			apiProxy.ServeHTTP(w, r)
+		}
+	}))
+
+	r.Get("/accounts/:account_id/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
+		// while current implementation is clearly lame, more important is to make
+		// public API clear and intuitive since it's impossible to change it later
+		query := r.URL.Query()
+		if query.Get("pending") != "" {
+			apiProxy.ServeHTTP(w, r)
+		} else {
+			TransactionIndexAction{}.ServeHTTPC(c, w, r)
+		}
+	}))
+
+	r.Handle(regexp.MustCompile(`^/templates/.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
+		return func(c web.C, w http.ResponseWriter, r *http.Request) {
+			templateProxy.ServeHTTP(w, r)
+		}
+	}())
+
+	// proxy pass every request horizon could not handle to API
+	r.Handle(regexp.MustCompile(`^.*`), func() func(web.C, http.ResponseWriter, *http.Request) {
+		return func(c web.C, w http.ResponseWriter, r *http.Request) {
+			apiProxy.ServeHTTP(w, r)
+		}
+	}())
 }
 
 func init() {
