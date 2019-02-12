@@ -465,15 +465,17 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:277e197df49474928758db774091d262c9abf42ef95fe31d16a6834868f332cd"
+  digest = "1:82f72bb5f2894890d13f8f4fb2351c78dc04a71003f29c838b5ffa5f083d3f1b"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
+    "janus",
+    "janus/internal",
     "kv",
     "pgdb",
   ]
   pruneopts = "UT"
-  revision = "80a0fe990a93101755f5c2552b65489a91a6e7e4"
+  revision = "865b4569a164dab1b7ed180501fb6314c1a52c04"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"
@@ -525,14 +527,6 @@
   ]
   pruneopts = "UT"
   revision = "c63fc249bf9416b4213fef771097043f739b4e0c"
-
-[[projects]]
-  branch = "add-janus"
-  digest = "1:c317f44de4c651d7458e0eeaf8855311db5d053550d41845c1eee8c9be9c9432"
-  name = "gitlab.com/tokend/go-janus"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "d29aaad2c703c945d6b78c2eaf0f83f3ac2e6d3f"
 
 [[projects]]
   branch = "master"
@@ -682,7 +676,6 @@
     "github.com/smartystreets/goconvey/convey",
     "github.com/spf13/cast",
     "github.com/spf13/cobra",
-    "github.com/spf13/viper",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "github.com/stretchr/testify/require",
@@ -694,6 +687,7 @@
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/figure",
     "gitlab.com/distributed_lab/kit/comfig",
+    "gitlab.com/distributed_lab/kit/janus",
     "gitlab.com/distributed_lab/kit/kv",
     "gitlab.com/distributed_lab/logan",
     "gitlab.com/distributed_lab/logan/v3",

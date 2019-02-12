@@ -1,8 +1,9 @@
 package horizon
 
 import (
-	"bytes"
 	"fmt"
+	"net/http"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/txsub"
 	"gitlab.com/tokend/go/xdr"
@@ -10,23 +11,15 @@ import (
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
 	txsubHelper "gitlab.com/tokend/horizon/txsub"
-	"io"
-	"net/http"
-	"net/url"
 )
 
 // TransactionCreateAction submits a transaction to the stellar-core network
 // on behalf of the requesting client.
 type TransactionCreateAction struct {
 	Action
-
-	APIUrl *url.URL
-
 	tx       string
 	result   txsub.Result
 	resource resource.TransactionSuccess
-
-	tfaFailed bool
 }
 
 // JSON format action handler
@@ -34,13 +27,10 @@ func (action *TransactionCreateAction) JSON() {
 	action.Do(
 		action.ValidateBodyType,
 		action.loadTX,
-		action.checkAllowed,
 		action.loadResult,
 		action.loadResource,
 		func() {
-			if !action.tfaFailed {
-				hal.Render(action.W, action.resource)
-			}
+			hal.Render(action.W, action.resource)
 		})
 }
 
@@ -48,18 +38,7 @@ func (action *TransactionCreateAction) loadTX() {
 	action.tx = action.GetNonEmptyString("tx")
 }
 
-func (action *TransactionCreateAction) checkAllowed() {
-	if action.App.config.DisableAPISubmit {
-		return
-	}
-	action.isAllowed("")
-}
-
 func (action *TransactionCreateAction) loadResult() {
-	if action.tfaFailed {
-		return
-	}
-
 	envelopeInfo, err := txsubHelper.ExtractEnvelopeInfo(action.tx, action.App.CoreInfo.NetworkPassphrase)
 	if err != nil {
 		action.Err = &problem.P{
@@ -78,22 +57,6 @@ func (action *TransactionCreateAction) loadResult() {
 		return
 	}
 
-	if !action.App.config.DisableTXTfa {
-		apiResp, err := action.checkTFA(envelopeInfo.SourceAddress, envelopeInfo.ContentHash)
-		if err != nil {
-			action.Log.WithError(err).Error("Failed to check TFA via API.")
-			action.Err = errors.Wrap(err, "Failed to check TFA using API")
-			return
-		}
-		if apiResp.StatusCode < 200 || apiResp.StatusCode >= 300 {
-			// Unsuccessful
-			action.tfaFailed = true
-			action.W.WriteHeader(apiResp.StatusCode)
-			io.Copy(action.W, apiResp.Body)
-			return
-		}
-	}
-
 	action.result = action.App.submitter.Submit(action.Ctx, envelopeInfo)
 	if action.result.HasInternalError() {
 		action.Log.WithError(action.result.Err).Error("Failed to submit tx")
@@ -107,20 +70,7 @@ func (action *TransactionCreateAction) loadResult() {
 	}
 }
 
-func (action *TransactionCreateAction) checkTFA(accountID, txHash string) (*http.Response, error) {
-	if action.APIUrl == nil {
-		return nil, errors.New("No API was obtained from config.")
-	}
-
-	checkTFAUrl := fmt.Sprintf("%s/users/%s/tfa", action.APIUrl.String(), accountID)
-	return http.Post(checkTFAUrl, "application/json", bytes.NewReader([]byte(fmt.Sprintf(`{"tx_hash":"%s"}`, txHash))))
-}
-
 func (action *TransactionCreateAction) loadResource() {
-	if action.tfaFailed {
-		return
-	}
-
 	p, err := txResultToProblem(&action.result)
 	if err != nil {
 		action.Log.WithError(err).Error("failed to craft problem")
