@@ -1,8 +1,9 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"net/http"
+
+	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -51,7 +52,7 @@ type GetOfferList struct {
 		BaseAsset    string `fig:"base_asset"`
 		QuoteAsset   string `fig:"quote_asset"`
 		Owner        string `fig:"owner"`
-		OrderBook    uint64 `fig:"order_book"`
+		OrderBook    int64  `fig:"order_book"`
 		IsBuy        bool   `fig:"is_buy"`
 	}
 	PageParams *db2.OffsetPageParams

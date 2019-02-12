@@ -1,7 +1,8 @@
 # Unreleased
 
-## Fixed 
+### Fixed
 
+* Allow to specify filter for primary market offers via orderBookID = -1
 * (internal) Fixed ingest v2. Participant effect has not included asset.
 * (internal) Fixed ingest v2. Correctly handle `fulfilled` on review of request
 
