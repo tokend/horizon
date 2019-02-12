@@ -34,7 +34,6 @@ type Root struct {
 	HorizonRevision      string             `json:"horizon_revision"`
 }
 
-//go:generate git rev-parse HEAD
 // Populate fills in the details
 func (res *Root) PopulateLedgerState(
 	ctx context.Context,
