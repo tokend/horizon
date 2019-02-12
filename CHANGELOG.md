@@ -1,6 +1,8 @@
 ## Unreleased
 
-Nothing unreleased at current stage
+### Fixed
+
+* Allow to specify filter for primary market offers via orderBookID = -1
 
 ## 3.0.1-x.2
 
