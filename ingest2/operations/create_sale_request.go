@@ -8,6 +8,7 @@ import (
 )
 
 type createSaleRequestOpHandler struct {
+	effectsProvider
 }
 
 // Details returns details about create sale request operation
@@ -28,11 +29,4 @@ func (h *createSaleRequestOpHandler) Details(op rawOperation, opRes xdr.Operatio
 			Details:           internal.MarshalCustomDetails(createSaleRequest.Details),
 		},
 	}, nil
-}
-
-//ParticipantsEffects returns source participant effect
-func (h *createSaleRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
-) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{source}, nil
 }

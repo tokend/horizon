@@ -8,7 +8,7 @@ import (
 )
 
 type cancelAtomicSwapBidOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about cancel atomic swap bid operation
@@ -26,7 +26,7 @@ func (h *cancelAtomicSwapBidOpHandler) Details(op rawOperation,
 // ParticipantsEffects returns participants effects with source effect `unlocked`
 // if atomic swap bid has zero locked amount
 func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	atomicSwapBid := h.getAtomicSwapBid(opBody.MustCancelASwapBidOp().BidId, ledgerChanges)
 
@@ -41,22 +41,15 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 	// so bid still exists
 	// we must wait for review that request
 	if atomicSwapBid.LockedAmount != 0 {
-		return []history2.ParticipantEffect{source}, nil
+		return h.effectsProvider.ParticipantsEffects(opBody, opRes, sourceAccountID, ledgerChanges)
 	}
 
-	balanceID := h.pubKeyProvider.MustBalanceID(atomicSwapBid.BaseBalance)
-
-	source.BalanceID = &balanceID
-	atomicSwapBidBaseAsset := string(atomicSwapBid.BaseAsset)
-	source.AssetCode = &atomicSwapBidBaseAsset
-	source.Effect = &history2.Effect{
+	return []history2.ParticipantEffect{h.BalanceEffect(atomicSwapBid.BaseBalance, &history2.Effect{
 		Type: history2.EffectTypeUnlocked,
 		Unlocked: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(atomicSwapBid.Amount),
 		},
-	}
-
-	return []history2.ParticipantEffect{source}, nil
+	})}, nil
 }
 
 func (h *cancelAtomicSwapBidOpHandler) getAtomicSwapBid(bidID xdr.Uint64,

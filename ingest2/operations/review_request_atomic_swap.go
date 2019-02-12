@@ -7,46 +7,36 @@ import (
 )
 
 type atomicSwapHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
-//ParticipantsEffects - returns slice of effects for participants of the operation
-func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
-	res xdr.ExtendedResult, request xdr.ReviewableRequestEntry,
-	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
-) ([]history2.ParticipantEffect, error) {
-	atomicSwapExtendedResult := res.TypeExt.MustASwapExtended()
+//PermanentReject - returns participants of fully rejected request
+func (h *atomicSwapHandler) PermanentReject(details requestDetails) ([]history2.ParticipantEffect, error) {
+	return []history2.ParticipantEffect{h.Participant(details.SourceAccountID)}, nil
+}
 
-	ownerBalanceID := h.pubKeyProvider.MustBalanceID(atomicSwapExtendedResult.BidOwnerBaseBalanceId)
+//Fulfilled - returns slice of effects for participants of the operation
+func (h *atomicSwapHandler) Fulfilled(details requestDetails) ([]history2.ParticipantEffect, error) {
+	atomicSwapExtendedResult := details.Result.TypeExt.MustASwapExtended()
 
-	baseAsset := string(atomicSwapExtendedResult.BaseAsset)
-	participants := []history2.ParticipantEffect{{
-		AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.BidOwnerId),
-		BalanceID: &ownerBalanceID,
-		AssetCode: &baseAsset,
-		Effect: &history2.Effect{
+	participants := []history2.ParticipantEffect{
+		h.BalanceEffect(atomicSwapExtendedResult.BidOwnerBaseBalanceId, &history2.Effect{
 			Type: history2.EffectTypeChargedFromLocked,
 			ChargedFromLocked: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(atomicSwapExtendedResult.BaseAmount),
 			},
-		},
-	}}
+		}),
+	}
 
-	purchaserBaseBalanceID := h.pubKeyProvider.MustBalanceID(atomicSwapExtendedResult.PurchaserBaseBalanceId)
-
-	participants = append(participants, history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.PurchaserId),
-		BalanceID: &purchaserBaseBalanceID,
-		AssetCode: &baseAsset,
-		Effect: &history2.Effect{
+	participants = append(participants,
+		h.BalanceEffect(atomicSwapExtendedResult.PurchaserBaseBalanceId, &history2.Effect{
 			Type: history2.EffectTypeFunded,
 			Funded: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(atomicSwapExtendedResult.BaseAmount),
 			},
-		},
-	})
+		}))
 
-	bid := h.getAtomicSwapBid(atomicSwapExtendedResult.BidId, ledgerChanges)
+	bid := h.getAtomicSwapBid(atomicSwapExtendedResult.BidId, details.Changes)
 	// review of bid request has not affected bid, so there is no additional effects
 	if bid == nil {
 		return participants, nil
@@ -62,17 +52,13 @@ func (h *atomicSwapHandler) ParticipantsEffects(op xdr.ReviewRequestOp,
 	bidIsRemoved := bidIsSoldOut || bindIsRemovedOnReviewAfterCancel
 	// If bid was removed, but we had to unlock some amount
 	if bidIsRemoved {
-		participants = append(participants, history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.MustAccountID(atomicSwapExtendedResult.BidOwnerId),
-			BalanceID: &ownerBalanceID,
-			AssetCode: &baseAsset,
-			Effect: &history2.Effect{
+		participants = append(participants,
+			h.BalanceEffect(atomicSwapExtendedResult.BidOwnerBaseBalanceId, &history2.Effect{
 				Type: history2.EffectTypeUnlocked,
 				Unlocked: &history2.BalanceChangeEffect{
 					Amount: regources.Amount(bid.Amount),
 				},
-			},
-		})
+			}))
 	}
 
 	return participants, nil

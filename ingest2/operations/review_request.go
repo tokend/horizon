@@ -11,49 +11,58 @@ import (
 )
 
 type reviewRequestOpHandler struct {
-	pubKeyProvider     IDProvider
-	balanceProvider    balanceProvider
+	effectsProvider
 	allRequestHandlers map[xdr.ReviewableRequestType]reviewRequestHandler
 }
 
+type requestDetails struct {
+	Op              xdr.ReviewRequestOp
+	SourceAccountID xdr.AccountId
+	Result          xdr.ExtendedResult
+	Request         xdr.ReviewableRequestEntry
+	Changes         []xdr.LedgerEntryChange
+}
+
 type reviewRequestHandler interface {
-	ParticipantsEffects(op xdr.ReviewRequestOp, res xdr.ExtendedResult,
-		request xdr.ReviewableRequestEntry, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
-	) ([]history2.ParticipantEffect, error)
+	//Fulfilled - returns participant of fully approved request
+	Fulfilled(details requestDetails) ([]history2.ParticipantEffect, error)
+	//PermanentReject - returns participants of fully rejected request
+	PermanentReject(details requestDetails) ([]history2.ParticipantEffect, error)
 }
 
 // newReviewRequestOpHandler creates new handler for review request operations
 // with specific handlers for different types
-func newReviewRequestOpHandler(pubKeyProvider IDProvider, balanceProvider balanceProvider,
-) *reviewRequestOpHandler {
+func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler {
 	// All reviewable requests must be explicitly handled here. If there is nothing to handle
 	// use reviewableRequestHandlerStub
+	stubProvider := reviewableRequestHandlerStub{
+		effectsProvider: provider,
+	}
 	return &reviewRequestOpHandler{
-		pubKeyProvider:  pubKeyProvider,
-		balanceProvider: balanceProvider,
+		effectsProvider: provider,
 		allRequestHandlers: map[xdr.ReviewableRequestType]reviewRequestHandler{
 			xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{
-				balanceProvider: balanceProvider,
+				effectsProvider: provider,
 			},
 			xdr.ReviewableRequestTypeWithdraw: &withdrawHandler{
-				balanceProvider: balanceProvider,
+				effectsProvider: provider,
 			},
 			xdr.ReviewableRequestTypeAmlAlert: &amlAlertHandler{
-				balanceProvider: balanceProvider,
+				effectsProvider: provider,
 			},
 			xdr.ReviewableRequestTypeAtomicSwap: &atomicSwapHandler{
-				pubKeyProvider: pubKeyProvider,
+				effectsProvider: provider,
 			},
-			xdr.ReviewableRequestTypeAssetCreate:         &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeAssetUpdate:         &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypePreIssuanceCreate:   &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeSale:                &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeLimitsUpdate:        &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeUpdateKyc:           &reviewableRequestHandlerStub{},
-			xdr.ReviewableRequestTypeUpdateSaleDetails:   &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeAssetCreate:         &stubProvider,
+			xdr.ReviewableRequestTypeAssetUpdate:         &stubProvider,
+			xdr.ReviewableRequestTypePreIssuanceCreate:   &stubProvider,
+			xdr.ReviewableRequestTypeSale:                &stubProvider,
+			xdr.ReviewableRequestTypeLimitsUpdate:        &stubProvider,
+			xdr.ReviewableRequestTypeUpdateKyc:           &stubProvider,
+			xdr.ReviewableRequestTypeUpdateSaleDetails:   &stubProvider,
 			xdr.ReviewableRequestTypeInvoice:             &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeContract:            &deprecatedReviewRequestHandler{},
-			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &reviewableRequestHandlerStub{},
+			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &stubProvider,
 		},
 	}
 }
@@ -90,15 +99,10 @@ func (h *reviewRequestOpHandler) Details(op rawOperation, opRes xdr.OperationRes
 // ParticipantsEffects - returns source participant if request was not fulfilled
 // finds specific handler otherwise
 func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	reviewRequestOp := opBody.MustReviewRequestOp()
 	reviewRequestRes := opRes.MustReviewRequestResult().MustSuccess()
-
-	if !reviewRequestRes.Fulfilled {
-		return []history2.ParticipantEffect{source}, nil
-	}
-
 	request := h.getReviewableRequestByID(int64(reviewRequestOp.RequestId), ledgerChanges)
 
 	if request == nil {
@@ -115,8 +119,31 @@ func (h *reviewRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		})
 	}
 
-	return specificHandler.ParticipantsEffects(reviewRequestOp,
-		reviewRequestRes, *request, source, ledgerChanges)
+	details := requestDetails{
+		Op:              reviewRequestOp,
+		SourceAccountID: sourceAccountID,
+		Result:          reviewRequestRes,
+		Request:         *request,
+		Changes:         ledgerChanges,
+	}
+
+	switch reviewRequestOp.Action {
+	case xdr.ReviewRequestOpActionApprove:
+		if !reviewRequestRes.Fulfilled {
+			return []history2.ParticipantEffect{h.Participant(sourceAccountID)}, nil
+		}
+
+		return specificHandler.Fulfilled(details)
+	case xdr.ReviewRequestOpActionReject:
+		return []history2.ParticipantEffect{h.Participant(sourceAccountID)}, nil
+	case xdr.ReviewRequestOpActionPermanentReject:
+		return specificHandler.PermanentReject(details)
+	default:
+		return nil, errors.From(errors.New("unexpected action on reivew request participants"), logan.F{
+			"action": reviewRequestOp.Action,
+		})
+
+	}
 }
 
 // Tries to get latest version of reviewable request by ID (updated first, created or state otherwise)
