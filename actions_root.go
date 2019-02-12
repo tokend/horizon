@@ -31,6 +31,6 @@ func (action *RootAction) JSON() {
 	res.OperationalAccountID = action.App.CoreInfo.OperationalAccountID
 	res.MasterExchangeName = action.App.CoreInfo.MasterExchangeName
 	res.TxExpirationPeriod = action.App.CoreInfo.TxExpirationPeriod
-	res.HorizonRevision = action.App.horizonVersion
+
 	hal.Render(action.W, res)
 }
