@@ -65,7 +65,15 @@ func (q OffersQ) FilterByOwnerID(id string) OffersQ {
 }
 
 // FilterByOrderBookID - returns q with filter by order book ID
-func (q OffersQ) FilterByOrderBookID(id uint64) OffersQ {
+// use 0 - to get all offers from secondary market
+// use -1 - to get all offers from primary market (all non zero order books)
+// use saleID - to get offers of specified sale
+func (q OffersQ) FilterByOrderBookID(id int64) OffersQ {
+	if id < 0 {
+		q.selector = q.selector.Where("offers.order_book_id <> ?", 0)
+		return q
+	}
+
 	q.selector = q.selector.Where("offers.order_book_id = ?", id)
 	return q
 }
