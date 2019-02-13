@@ -2,7 +2,7 @@
   get:
     tags:
       - Assets
-    summary: Get list of assets
+    summary: Get List of Assets
     description: |
                   Allows to get filtered list of `Asset` with corresponding details.
     operationId: getAssets
