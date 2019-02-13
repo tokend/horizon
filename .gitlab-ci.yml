@@ -59,6 +59,6 @@ pages:
   - echo 'Nothing to do...'
   artifacts:
     paths:
-    - docs/redoc-static.html
+    - docs/index.html
   only:
   - feature/docs
