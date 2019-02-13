@@ -406,7 +406,7 @@ func initWebActions(app *App) {
 		}
 	}))
 
-	r.Post("/v3.0/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
+	r.Post("/v3/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" || app.config.DisableAPISubmit {
 			TransactionCreateAction{}.ServeHTTPC(c, w, r)

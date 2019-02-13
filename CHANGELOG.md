@@ -1,5 +1,12 @@
 # Unreleased
 
+# 3.0.1-x.4
+
+## Fixed
+
+* Switched endpoint version to only track major version
+* Switched config back to default
+
 # 3.0.1-x.3
 
 ## Added
