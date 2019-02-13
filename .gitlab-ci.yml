@@ -53,6 +53,8 @@ publish dockerhub:
 
 pages:
   stage: build
+  tags:
+      - tokend
   script:
   - echo 'Nothing to do...'
   artifacts:
