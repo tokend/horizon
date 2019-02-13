@@ -1,0 +1,74 @@
+/assets:
+  get:
+    tags:
+      - Assets
+    summary: Get list of assets
+    description: |
+                  Allows to get filtered list of `Asset` with corresponding details.
+    operationId: getAssets
+    parameters:
+    - name: filter[policy]
+      in: query
+      description: |
+        Filters assets by specified bit mask. Returns page of assets where at least one bit intersects
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: integer
+    - name: filter[owner]
+      in: query
+      description: |
+        Filters assets by specified owner account address.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+    - name: include
+      in: query
+      description: |
+        Relationships may be used for the include parameter.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+          - owner
+    - $ref: '#/components/schemas/pageNumberParam'
+    - $ref: '#/components/schemas/pageLimitParam'
+    - $ref: '#/components/schemas/sortingParam'
+    responses:
+      200:
+        description: asset exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data: 
+                  type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/Asset'
+                included:
+                  $ref: '#/components/schemas/Resources'
+                links:
+                  type: object
+                  $ref: '#/components/schemas/Links'
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: asset does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

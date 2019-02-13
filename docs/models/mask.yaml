@@ -1,0 +1,22 @@
+Mask:
+  type: object
+  description: "Represents bit mask"
+  properties:
+    value:
+      type: integer
+      description: "bit mask"
+      example: 4
+    flags:
+      type: array
+      items:
+        type: object
+        description: "flag of bit mask"
+        properties:
+          name:
+            type: string
+            description: "name of the flag"
+            example: "transfarable"
+          value:
+            type: integer
+            description: "value of the flag"
+            example: 2

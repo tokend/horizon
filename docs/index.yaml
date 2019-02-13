@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  title: Horizon
+  description: |
+    Horizon is the client-facing REST API module which consumes data from the core of the system and makes it more convenient to use by
+    client facing application. It allows submitting transactions to the network,
+    read history of operations and check state of the entities.
+
+    ## Overview
+    
+
+    Horizon uses [JSON:API](https://jsonapi.org/) convention to format requests and responses.
+
+    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", 
+    and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt>).
+
+    ## Security
+    
+
+    All TokenD modules use asymmetric cryptography to perform authentication. Request signature implementation is based on [IETF HTTP Signatures draft RFC](https://tools.ietf.org/html/draft-cavage-http-signatures>) except of implicit headers parameter is not supported, clients must explicitly specify headers used for signing. Only signature algorithm supported is `ed25519-sha256` which uses public key of signer as `keyId`. Both `Signature` and `Authorization` HTTP authentication schemas are supported. The minimum recommended data to sign is the `(request-header)` and `date`.
+
+    ### Example
+    
+
+    For following request and this seed `SCDMOOXVNMO6SA22AYUMZDIGLDJMBUTVEGB73FFNTLFJILBJWIU4NQ3D`:
+
+    ```http
+        GET /users?type=2 HTTP/1.1
+        Host: api.tokend.io
+        Date: Sun, 05 Jan 2014 21:31:40 GMT
+    ```
+
+    Signing string would be:
+
+    ```text
+        date: Sun, 05 Jan 2018 21:31:40 GMT
+        (request-target): get /users?type=2
+    ```
+
+    And signature would be:
+
+    ```text
+        keyId="GBLTOG6EJS5OWDNQNSCEAVDNMPBY6F73XZHHKR27YE5AKE23ZZEXOLBK",algorithm="ed25519-sha256",signature="0cvTqLDn+5i8pInkeSR833HrNSMI4xB9m1eN7rofiDVnoutKQJvpwB9hl2GhsMPcMbVXo4beUR96Stf/qU+iAg==",headers="date (request-target)"
+    ```
+
+  contact:
+    email: dev@distributedlab.com
+    url: https://tokend.io
+    name: Support
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 3.0.0-x.0
+servers:
+- url: https://api.achilles.tokend.io
+  description: TokenD Developer Environment
+tags:
+  - name: Accounts
+    description: Defines access points to get accounts existing in the system
+  - name: Assets
+    description: Defines access points to get assets existing in the system

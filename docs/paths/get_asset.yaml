@@ -1,0 +1,56 @@
+/assets/{id}:
+  get:
+    tags:
+      - Assets
+    summary: Get Asset by ID (code)
+    description: |
+                  Allows to get `Asset` with corresponding details.
+    operationId: getAssetByID
+    parameters:
+    - name: id
+      in: path
+      description: Unique identifier of the asset
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    - name: include
+      in: query
+      description: |
+        Relationships may be used for the include parameter.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+          - owner
+    responses:
+      200:
+        description: asset exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data: 
+                  type: object
+                  $ref: '#/components/schemas/Asset'
+                included:
+                  $ref: '#/components/schemas/Resources'
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: asset does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

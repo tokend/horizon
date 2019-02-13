@@ -1,0 +1,12 @@
+Links:
+  type: object
+  description: "Provides links for pagination"
+  properties:
+    next:
+      type: string
+      description: "link to next page"
+      example: "/path to next page with query params"
+    self:
+      type: string
+      description: "link to current page"
+      example: "/path to current page with query params"

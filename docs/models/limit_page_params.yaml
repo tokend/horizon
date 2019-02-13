@@ -1,0 +1,29 @@
+pageNumberParam: 
+  in: query
+  name: page[number]
+  required: false
+  schema:
+    type: integer
+    minimum: 0
+  description: The number of page to return.
+pageLimitParam:
+  in: query
+  name: page[limit]
+  required: false
+  schema:
+    type: integer
+    minimum: 1
+    maximum: 100
+    default: 15
+    description: The numbers of items to return per page.
+sortingParam:
+  in: query
+  name: page[order]
+  required: false
+  schema:
+    type: string
+    enum:
+      - asc
+      - desc
+    default: asc
+    description: Order of records in page. Sorted by ID if not specified otherwise.
