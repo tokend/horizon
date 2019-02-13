@@ -14,15 +14,12 @@ func NewLimits(limits core2.Limits) *regources.Limits {
 			Type: regources.TypeLimits,
 		},
 		Attributes: regources.LimitsAttr{
-			AccountType:     limits.AccountType,
-			AccountID:       limits.AccountId,
 			StatsOpType:     limits.StatsOpType,
-			AssetCode:       limits.AssetCode,
 			IsConvertNeeded: limits.IsConvertNeeded,
-			DailyOut:        limits.DailyOut,
-			WeeklyOut:       limits.WeeklyOut,
-			MonthlyOut:      limits.MonthlyOut,
-			AnnualOut:       limits.AnnualOut,
+			DailyOut:        regources.Amount(limits.DailyOut),
+			WeeklyOut:       regources.Amount(limits.WeeklyOut),
+			MonthlyOut:      regources.Amount(limits.MonthlyOut),
+			AnnualOut:       regources.Amount(limits.AnnualOut),
 		},
 	}
 }

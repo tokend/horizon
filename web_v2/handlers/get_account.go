@@ -128,6 +128,11 @@ func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *re
 
 	for _, coreLimitsUnit := range coreLimits {
 		limitsUnit := resources.NewLimits(coreLimitsUnit)
+		if coreLimitsUnit.AccountId != nil {
+			limitsUnit.Relationships.Account = resources.NewAccountKey(*coreLimitsUnit.AccountId).AsRelation()
+			limitsUnit.Relationships.AccountRole = resources.NewRoleKey(*coreLimitsUnit.AccountId).AsRelation()
+		}
+		limitsUnit.Relationships.Asset = resources.NewAssetKey(coreLimitsUnit.AssetCode).AsRelation()
 		result.Data = append(result.Data, limitsUnit.Key)
 
 		if request.ShouldInclude(requests.IncludeTypeAccountLimits) {
@@ -152,6 +157,8 @@ func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, i
 
 	for _, coreExtSysIDUnit := range coreExternalSystemIDs {
 		externalSystemID := resources.NewExternalSystemID(coreExtSysIDUnit)
+		externalSystemID.Relationships.Account = resources.NewAccountKey(coreExtSysIDUnit.AccountID).AsRelation()
+
 		result.Data = append(result.Data, externalSystemID.Key)
 
 		if request.ShouldInclude(requests.IncludeTypeAccountExternalSystemIDs) {
