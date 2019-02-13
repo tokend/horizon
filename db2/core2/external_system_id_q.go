@@ -8,15 +8,15 @@ import (
 
 type ExternalSystemIDsQ struct {
 	repo     *db2.Repo
-	Selector sq.SelectBuilder
+	selector sq.SelectBuilder
 }
 
 // NewExternalSystemIDsQ - default constructor for ExternalSystemIDsQ which
-// creates ExternalSystemIDsQ with given db2.Repo and default Selector
+// creates ExternalSystemIDsQ with given db2.Repo and default selector
 func NewExternalSystemIDsQ(repo *db2.Repo) ExternalSystemIDsQ {
 	return ExternalSystemIDsQ{
 		repo: repo,
-		Selector: sq.Select(
+		selector: sq.Select(
 			"ext_pool.id",
 			"ext_pool.external_system_type",
 			"ext_pool.data",
@@ -30,7 +30,7 @@ func NewExternalSystemIDsQ(repo *db2.Repo) ExternalSystemIDsQ {
 
 // FilterByAccount - adds accountID filter for query to external system IDs table
 func (esid ExternalSystemIDsQ) FilterByAccount(accountID string) ExternalSystemIDsQ {
-	esid.Selector = esid.Selector.Where("ext_pool.account_id = ?", accountID)
+	esid.selector = esid.selector.Where("ext_pool.account_id = ?", accountID)
 	return esid
 }
 
@@ -39,7 +39,7 @@ func (esid ExternalSystemIDsQ) FilterByAccount(accountID string) ExternalSystemI
 // returns nil, nil - if external system IDs for particular account does not exists
 func (esid ExternalSystemIDsQ) Select() ([]ExternalSystemID, error) {
 	var result []ExternalSystemID
-	err := esid.repo.Select(&result, esid.Selector)
+	err := esid.repo.Select(&result, esid.selector)
 	if err != nil {
 		if esid.repo.NoRows(err) {
 			return nil, nil

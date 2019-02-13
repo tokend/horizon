@@ -12,7 +12,7 @@ type LimitsQ struct {
 }
 
 // NewLimitsQ - default constructor for LimitsQ which
-// creates LimitsQ with given db2.Repo and default Selector
+// creates LimitsQ with given db2.Repo and default selector
 func NewLimitsQ(repo *db2.Repo) LimitsQ {
 	return LimitsQ{
 		repo: repo,
