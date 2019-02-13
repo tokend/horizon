@@ -1,4 +1,4 @@
-/assets:
+/v3/assets:
   get:
     tags:
       - Assets
@@ -59,7 +59,16 @@
                   $ref: '#/components/schemas/Resources'
                 links:
                   type: object
-                  $ref: '#/components/schemas/Links'
+                  description: "Provides links for pagination"
+                  properties:
+                    next:
+                      type: string
+                      description: "link to next page"
+                      example: "/v3/assets?include=owner&page[number]=2&page[limit]=15"
+                    self:
+                      type: string
+                      description: "link to current page"
+                      example: "/v3/assets?include=owner&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

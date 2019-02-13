@@ -1,4 +1,4 @@
-/accounts/{id}:
+/v3/accounts/{id}:
   get:
     tags:
       - Accounts

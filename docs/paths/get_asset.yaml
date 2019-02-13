@@ -1,4 +1,4 @@
-/assets/{id}:
+/v3/assets/{id}:
   get:
     tags:
       - Assets
