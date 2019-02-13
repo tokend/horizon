@@ -1,5 +1,5 @@
 all: build/openapi.yaml
-	redoc-cli bundle build/openapi.yaml -o public/index.html
+	redoc-cli bundle build/openapi.yaml -o ../public/index.html
 
 define appendFilesWithTabs
 	for file in $(1); do \
