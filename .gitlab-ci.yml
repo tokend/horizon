@@ -52,7 +52,7 @@ publish dockerhub:
     - docker push $DH_IMAGE_NAME:$RELEASE
 
 pages:
-  stage: publish_docs
+  stage: build
   script:
   - echo 'Nothing to do...'
   artifacts:
