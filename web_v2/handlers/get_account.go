@@ -22,7 +22,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	handler := getAccountHandler{
 		AccountsQ:          core2.NewAccountsQ(coreRepo),
 		BalancesQ:          core2.NewBalancesQ(coreRepo),
-		LimitsV2Q:          core2.NewLimitsV2Q(coreRepo),
+		LimitsV2Q:          core2.NewLimitsQ(coreRepo),
 		ExternalSystemIDsQ: core2.NewExternalSystemIDsQ(coreRepo),
 		Log:                ctx.Log(r),
 	}
@@ -67,7 +67,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 type getAccountHandler struct {
 	AccountsQ          core2.AccountsQ
 	BalancesQ          core2.BalancesQ
-	LimitsV2Q          core2.LimitsV2Q
+	LimitsV2Q          core2.LimitsQ
 	ExternalSystemIDsQ core2.ExternalSystemIDsQ
 	Log                *logan.Entry
 }

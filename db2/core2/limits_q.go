@@ -6,15 +6,15 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-type LimitsV2Q struct {
+type LimitsQ struct {
 	repo     *db2.Repo
 	selector sq.SelectBuilder
 }
 
-// NewLimitsV2Q - default constructor for LimitsV2Q which
-// creates LimitsV2Q with given db2.Repo and default selector
-func NewLimitsV2Q(repo *db2.Repo) LimitsV2Q {
-	return LimitsV2Q{
+// NewLimitsQ - default constructor for LimitsQ which
+// creates LimitsQ with given db2.Repo and default Selector
+func NewLimitsQ(repo *db2.Repo) LimitsQ {
+	return LimitsQ{
 		repo: repo,
 		selector: sq.
 			Select("limits.id, " +
@@ -32,18 +32,18 @@ func NewLimitsV2Q(repo *db2.Repo) LimitsV2Q {
 }
 
 // FilterByAccount - adds accountID filter for query to Limits table
-func (l2 LimitsV2Q) FilterByAccountID(accountID string) LimitsV2Q {
-	l2.selector = l2.selector.Where("limits.account_id = ?", accountID)
-	return l2
+func (q LimitsQ) FilterByAccountID(accountID string) LimitsQ {
+	q.selector = q.selector.Where("limits.account_id = ?", accountID)
+	return q
 }
 
-// Select - loads a rows from `limits_v2`
+// Select - loads rows from `limits_v2`
 // returns nil, nil - if limits for particular account does not exists
-func (l2 LimitsV2Q) Select() ([]LimitsV2, error) {
-	var result []LimitsV2
-	err := l2.repo.Select(&result, l2.selector)
+func (q LimitsQ) Select() ([]Limits, error) {
+	var result []Limits
+	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if l2.repo.NoRows(err) {
+		if q.repo.NoRows(err) {
 			return nil, nil
 		}
 

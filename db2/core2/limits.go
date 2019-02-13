@@ -1,6 +1,6 @@
 package core2
 
-type LimitsV2 struct {
+type Limits struct {
 	ID              uint64  `db:"id"`
 	AccountType     *int32  `db:"account_type"`
 	AccountId       *string `db:"account_id"`

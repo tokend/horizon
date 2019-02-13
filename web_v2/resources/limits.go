@@ -7,7 +7,7 @@ import (
 )
 
 // NewLimits creates new instance of Limits from provided one
-func NewLimits(limits core2.LimitsV2) *regources.Limits {
+func NewLimits(limits core2.Limits) *regources.Limits {
 	return &regources.Limits{
 		Key: regources.Key{
 			ID:   cast.ToString(limits.ID),
