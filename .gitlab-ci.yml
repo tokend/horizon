@@ -59,6 +59,6 @@ pages:
   - echo 'Nothing to do...'
   artifacts:
     paths:
-    - public
+    - docs/public
   only:
   - feature/docs
