@@ -50,3 +50,13 @@ publish dockerhub:
     - docker pull $PG_IMAGE
     - docker tag $PG_IMAGE $DH_IMAGE_NAME:$RELEASE
     - docker push $DH_IMAGE_NAME:$RELEASE
+
+pages:
+  stage: publish_docs
+  script:
+  - echo 'Nothing to do...'
+  artifacts:
+    paths:
+    - docs/build
+  only:
+  - feature/docs
