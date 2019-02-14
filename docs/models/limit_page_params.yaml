@@ -15,7 +15,7 @@ pageLimitParam:
     minimum: 1
     maximum: 100
     default: 15
-    description: The numbers of items to return per page.
+    description: The numbers of items per page to return.
 sortingParam:
   in: query
   name: page[order]
@@ -26,4 +26,4 @@ sortingParam:
       - asc
       - desc
     default: asc
-    description: Order of records in page. Sorted by ID if not specified otherwise.
+    description: Order of records on the page. If sortingParam is not specified, order of records is, by default, sorted by ID.
