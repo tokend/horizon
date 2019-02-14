@@ -10,7 +10,7 @@ import (
 
 type AccountIndexAction struct {
 	Action
-	Types []xdr.AccountType
+	Types []xdr.Uint64
 
 	Records []core.Account
 	Page    hal.Page

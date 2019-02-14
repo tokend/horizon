@@ -45,10 +45,8 @@ const (
 	// TypeCreateAccount - details of createAccountOp
 	TypeCreateAccount                          = "operations-create-account"
 	TypePayment                                = "operations-payment"
-	TypeSetOptions                             = "operations-set-options"
 	TypeCreateIssuanceRequest                  = "operations-create-issuance-request"
 	TypeSetFees                                = "operations-set-fees"
-	TypeManageAccount                          = "operations-manage-account"
 	TypeCreateWithdrawalRequest                = "operations-create-withdrawal-request"
 	TypeManageBalance                          = "operations-manage-balance"
 	TypeManageAsset                            = "operations-manage-asset"

@@ -347,21 +347,6 @@ func (action *Action) IsAccountSigner(accountId, signer string) *bool {
 	return isSigner
 }
 
-func getSystemAccountTypes() []xdr.AccountType {
-	return []xdr.AccountType{xdr.AccountTypeOperational, xdr.AccountTypeCommission, xdr.AccountTypeMaster}
-}
-
-func isSystemAccount(accountType int32) bool {
-	sysAccountTypes := getSystemAccountTypes()
-	for _, sysAccountType := range sysAccountTypes {
-		if accountType == int32(sysAccountType) {
-			return true
-		}
-	}
-
-	return false
-}
-
 func (action *Action) Doorman() doorman.Doorman {
 	return doorman.New(false, action)
 }
@@ -397,21 +382,6 @@ func (action *Action) Signers(address string) ([]resources.Signer, error) {
 }
 
 func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
-	// all system accounts are managed by master account signers
-	if isSystemAccount(account.AccountType) && account.AccountType != int32(xdr.AccountTypeMaster) {
-		masterAccount, err := action.CoreQ().Accounts().ByAddress(action.App.CoreInfo.AdminAccountID)
-		if err != nil || masterAccount == nil {
-			if err == nil {
-				err = errors.New("Not found")
-			}
-
-			action.Log.WithError(err).Error("Failed to get master account from db")
-			return nil, err
-		}
-
-		return action.GetSigners(masterAccount)
-	}
-
 	var signers []core.Signer
 	err := action.CoreQ().SignersByAddress(&signers, account.AccountID)
 	if err != nil {
@@ -419,39 +389,14 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 		return nil, err
 	}
 
-	if !isSystemAccount(account.AccountType) {
-		// add recovery signer
-		signers = append(signers, core.Signer{
-			Accountid:  account.RecoveryID,
-			Publickey:  account.RecoveryID,
-			Weight:     255,
-			SignerType: action.getMasterSignerType(),
-			Identity:   0,
-		})
-	}
-
-	// is master key allowed
-	if account.Thresholds[0] <= 0 {
-		return signers, nil
-	}
-
 	signers = append(signers, core.Signer{
-		Accountid:  account.AccountID,
-		Publickey:  account.AccountID,
-		Weight:     int32(account.Thresholds[0]),
-		SignerType: action.getMasterSignerType(),
-		Identity:   0,
+		Accountid: account.AccountID,
+		Publickey: account.AccountID,
+		Weight:    int32(account.Thresholds[0]),
+		Identity:  0,
 	})
 
 	return signers, nil
-}
-
-func (action *Action) getMasterSignerType() int32 {
-	result := int32(0)
-	for i := range xdr.SignerTypeAll {
-		result |= int32(xdr.SignerTypeAll[i])
-	}
-	return result
 }
 
 func (action *Action) LoadParticipants(ownerAccountID string, participants map[int64]*history.OperationParticipants) {

@@ -51,9 +51,6 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCreateAccount: &createAccountOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeManageAccount: &manageAccountOpHandler{
-				effectsProvider: effectsBaseHandler,
-			},
 			xdr.OperationTypeManageExternalSystemAccountIdPoolEntry: &manageExternalSystemPoolOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
@@ -77,7 +74,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeSetFees: &setFeeOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreateChangeRoleRequest: &createKYCRequestOpHandler{
+			xdr.OperationTypeCreateChangeRoleRequest: &createChangeRoleRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeCreatePreissuanceRequest: &createPreIssuanceRequestOpHandler{
@@ -114,9 +111,6 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeSetOptions: &stubOpHandler{
-				effectsProvider: effectsBaseHandler,
-			},
 			xdr.OperationTypeManageInvoiceRequest: &deprecatedOpHandler{},
 			xdr.OperationTypeManageSale: &manageSaleHandler{
 				manageOfferOpHandler: manageOfferOpHandlerInst,
@@ -129,8 +123,12 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypePayout: &payoutHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeManageAccountRole: &manageAccountRoleOpHandler{},
-			xdr.OperationTypeManageAccountRule: &manageAccountRuleOpHandler{},
+			xdr.OperationTypeManageAccountRole: &manageAccountRoleOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeManageAccountRule: &manageAccountRuleOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 		},
 	}
 }

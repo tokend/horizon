@@ -17,7 +17,6 @@ type OperationDetails struct {
 	//NOTE: omitempty MUST be specified for each switch value
 	Type                       xdr.OperationType                  `json:"type"`
 	CreateAccount              *CreateAccountDetails              `json:"create_account,omitempty"`
-	ManageAccount              *ManageAccountDetails              `json:"manage_account,omitempty"`
 	ManageAccountRule          *ManageAccountRuleDetails          `json:"manage_account_rule,omitempty"`
 	ManageAccountRole          *ManageAccountRoleDetails          `json:"manage_account_role,omitempty"`
 	ManageBalance              *ManageBalanceDetails              `json:"manage_balance,omitempty"`
@@ -68,8 +67,8 @@ func (r *OperationDetails) Scan(src interface{}) error {
 
 // CreateAccountDetails - stores details of create account operation
 type CreateAccountDetails struct {
-	AccountAddress string          `json:"account_address"`
-	AccountType    xdr.AccountType `json:"account_type"`
+	AccountAddress string `json:"account_address"`
+	AccountRole    uint64 `json:"account_role"`
 }
 
 //ManageBalanceDetails - details of ManageBalanceOp
@@ -78,13 +77,6 @@ type ManageBalanceDetails struct {
 	Action             xdr.ManageBalanceAction `json:"action"`
 	Asset              string                  `json:"asset"`
 	BalanceAddress     string                  `json:"balance_address"`
-}
-
-//ManageAccountDetails - details of ManageAccountOp
-type ManageAccountDetails struct {
-	AccountAddress       string           `json:"account_address"`
-	BlockReasonsToAdd    xdr.BlockReasons `json:"block_reasons_to_add"`
-	BlockReasonsToRemove xdr.BlockReasons `json:"block_reasons_to_remove"`
 }
 
 // ManageAccountRuleDetails - details of ManageAccountRuleOp
@@ -131,7 +123,7 @@ type SetFeeDetails struct {
 	PercentFee     regources.Amount `json:"percent_fee"`
 	FeeType        xdr.FeeType      `json:"fee_type"`
 	AccountAddress *string          `json:"account_address,omitempty"`
-	AccountType    *xdr.AccountType `json:"account_type,omitempty"`
+	AccountRole    *xdr.Uint64      `json:"account_role,omitempty"`
 	Subtype        int64            `json:"subtype"`
 	LowerBound     regources.Amount `json:"lower_bound"`
 	UpperBound     regources.Amount `json:"upper_bound"`
@@ -162,7 +154,7 @@ type ManageLimitsDetails struct {
 
 //ManageLimitsCreationDetails - details of corresponding op
 type ManageLimitsCreationDetails struct {
-	AccountType     *xdr.AccountType `json:"account_type,omitempty"`
+	AccountRole     *xdr.Uint64      `json:"account_role,omitempty"`
 	AccountAddress  string           `json:"account_address,omitempty"`
 	StatsOpType     xdr.StatsOpType  `json:"stats_op_type"`
 	AssetCode       string           `json:"asset_code"`

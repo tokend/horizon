@@ -108,7 +108,6 @@ type CreateSaleRequest struct {
 
 //UpdateLimitsRequest - request details
 type UpdateLimitsRequest struct {
-	DocumentHash   string            `json:"document_hash"`
 	CreatorDetails regources.Details `json:"creator_details"`
 }
 

@@ -58,12 +58,6 @@ func (action *FeesAllAction) getAccountType(name string) *int32 {
 		return nil
 	}
 
-	for _, accountType := range xdr.AccountTypeAll {
-		if int32(accountType) == rawAccountType {
-			return &rawAccountType
-		}
-	}
-
 	action.SetInvalidField(name, errors.New("Invalid"))
 	return nil
 }

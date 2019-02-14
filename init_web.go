@@ -310,7 +310,6 @@ func initWebActions(app *App) {
 			maskSet := action.GetInt64("mask_set")
 			maskSetPartialEq := action.GetBool("mask_set_part_eq")
 			maskNotSet := action.GetOptionalInt64("mask_not_set")
-			accountTypeToSet := action.GetOptionalInt64("account_type_to_set")
 			if action.Err != nil {
 				return
 			}
@@ -327,10 +326,6 @@ func initWebActions(app *App) {
 			action.q = action.q.KYCByMaskSet(maskSet, maskSetPartialEq)
 			if maskNotSet != nil {
 				action.q = action.q.KYCByMaskNotSet(*maskNotSet)
-			}
-
-			if accountTypeToSet != nil {
-				action.q = action.q.KYCByAccountTypeToSet(xdr.AccountType(*accountTypeToSet))
 			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeChangeRole},

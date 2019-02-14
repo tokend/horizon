@@ -194,7 +194,8 @@ func (c *reviewableRequestHandler) cancel(lc ledgerChange) error {
 }
 
 func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.ReviewableRequestEntry,
-	ledgerCloseTime time.Time) (*history.ReviewableRequest, error) {
+	ledgerCloseTime time.Time,
+) (*history.ReviewableRequest, error) {
 
 	var reference *string
 	if request.Reference != nil {
@@ -265,8 +266,8 @@ func (c *reviewableRequestHandler) getAssetUpdate(request *xdr.AssetUpdateReques
 	}
 }
 
-func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (*history.CreatePreIssuanceRequest,
-	error) {
+func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanceRequest,
+) (*history.CreatePreIssuanceRequest, error) {
 
 	signature, err := xdr.MarshalBase64(request.Signature)
 	if err != nil {
@@ -334,16 +335,16 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 	}
 }
 
-func (c *reviewableRequestHandler) getLimitsUpdateRequest(
-	request *xdr.LimitsUpdateRequest) *history.UpdateLimitsRequest {
+func (c *reviewableRequestHandler) getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest,
+) *history.UpdateLimitsRequest {
 
 	return &history.UpdateLimitsRequest{
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
-		DocumentHash:   hex.EncodeToString(request.DeprecatedDocumentHash[:]),
 	}
 }
 
-func (c *reviewableRequestHandler) getChangeRoleRequest(request *xdr.ChangeRoleRequest) *history.ChangeRoleRequest {
+func (c *reviewableRequestHandler) getChangeRoleRequest(request *xdr.ChangeRoleRequest,
+) *history.ChangeRoleRequest {
 	return &history.ChangeRoleRequest{
 		DestinationAccount: request.DestinationAccount.Address(),
 		AccountRoleToSet:   uint64(request.AccountRoleToSet),
@@ -388,7 +389,8 @@ func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.ASwapReques
 }
 
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
-	body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
+	body *xdr.ReviewableRequestEntryBody,
+) (history.ReviewableRequestDetails, error) {
 
 	details := history.ReviewableRequestDetails{
 		Type: body.Type,

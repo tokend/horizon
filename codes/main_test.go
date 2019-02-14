@@ -38,8 +38,8 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
-	Convey("SetOptionsResultCode", t, func() {
-		for _, code := range xdr.SetOptionsResultCodeAll {
+	Convey("ManageSignerResultCode", t, func() {
+		for _, code := range xdr.ManageSignerResultCodeAll {
 			checkCode(t, code)
 		}
 	})
@@ -48,8 +48,13 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
-	Convey("ManageAccountResultCode", t, func() {
-		for _, code := range xdr.ManageAccountResultCodeAll {
+	Convey("ManageSignerRoleResultCode", t, func() {
+		for _, code := range xdr.ManageSignerRoleResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+	Convey("ManageSignerRuleResultCode", t, func() {
+		for _, code := range xdr.ManageSignerRuleResultCodeAll {
 			checkCode(t, code)
 		}
 	})

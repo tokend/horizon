@@ -73,16 +73,6 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 		})
 	}
 
-	// TODO: KILL it
-	if account.Thresholds[0] > 0 {
-		signers = append(signers, core2.Signer{
-			ID:        account.Address,
-			AccountID: account.Address,
-			Weight:    int(account.Thresholds[0]),
-			Name:      "master",
-		})
-	}
-
 	response := regources.SignersResponse{
 		Data: make([]regources.Signer, 0, len(signers)),
 	}

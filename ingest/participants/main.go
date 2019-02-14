@@ -37,13 +37,8 @@ func ForOperation(
 	switch op.Body.Type {
 	case xdr.OperationTypeCreateAccount:
 		result = append(result, Participant{op.Body.MustCreateAccountOp().Destination, nil, nil})
-	case xdr.OperationTypeSetOptions:
-		// the only direct participant is the source_account
 	case xdr.OperationTypeSetFees:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeManageAccount:
-		manageAccountOp := op.Body.MustManageAccountOp()
-		result = append(result, Participant{manageAccountOp.Account, nil, nil})
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		createWithdrawalRequest := op.Body.MustCreateWithdrawalRequestOp()
 		sourceParticipant.BalanceID = &createWithdrawalRequest.Request.Balance

@@ -8,6 +8,7 @@ import (
 )
 
 type manageAccountRoleOpHandler struct {
+	effectsProvider
 }
 
 // Details returns details about bind external system account operation
@@ -62,7 +63,7 @@ func (h *manageAccountRoleOpHandler) Details(op rawOperation,
 
 // ParticipantsEffects returns only source without effects
 func (h *manageAccountRoleOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{source}, nil
+	return []history2.ParticipantEffect{h.Participant(sourceAccountID)}, nil
 }

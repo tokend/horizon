@@ -17,7 +17,7 @@ func NewSigner(signer core2.Signer) regources.Signer {
 			Identity: signer.Identity,
 			// TODO: FIX ME after roles
 			Details: map[string]interface{}{
-				"name": signer.Name,
+				"name": signer.Details,
 			},
 		},
 	}

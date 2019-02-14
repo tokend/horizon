@@ -2,6 +2,7 @@ package core
 
 import (
 	"database/sql"
+
 	"gitlab.com/tokend/horizon/db2"
 
 	sq "github.com/lann/squirrel"
@@ -14,7 +15,7 @@ type AccountQI interface {
 	// returns nil, nil if account not found
 	ByAddress(address string) (*Account, error)
 	// filters by account type
-	ForTypes(types []xdr.AccountType) AccountQI
+	ForTypes(types []xdr.Uint64) AccountQI
 	// performs select with specified filters
 	Select(destination interface{}) error
 	// filters by account ids
@@ -54,7 +55,7 @@ func (q *AccountQ) ByAddress(address string) (*Account, error) {
 	return result, err
 }
 
-func (q *AccountQ) ForTypes(types []xdr.AccountType) AccountQI {
+func (q *AccountQ) ForTypes(types []xdr.Uint64) AccountQI {
 	if q.Err != nil {
 		return q
 	}
@@ -82,7 +83,7 @@ func (q *AccountQ) WithAccountKYC() AccountQI {
 	return q
 }
 
-func (q *AccountQ)PageV2(page db2.PageQueryV2) AccountQI {
+func (q *AccountQ) PageV2(page db2.PageQueryV2) AccountQI {
 	if q.Err != nil {
 		return q
 	}

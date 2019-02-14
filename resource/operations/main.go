@@ -28,13 +28,6 @@ func New(
 			e.Referrer = nil
 		}
 		result = e
-	case xdr.OperationTypeSetOptions:
-		e := SetOptions{Base: base}
-		err = row.UnmarshalDetails(&e)
-		if public {
-			e.SignerKey = ""
-		}
-		result = e
 	case xdr.OperationTypeSetFees:
 		e := SetFees{Base: base}
 		err = row.UnmarshalDetails(&e)
@@ -42,13 +35,6 @@ func New(
 			if e.Fee != nil {
 				e.Fee.AccountID = ""
 			}
-		}
-		result = e
-	case xdr.OperationTypeManageAccount:
-		e := ManageAccount{Base: base}
-		err = row.UnmarshalDetails(&e)
-		if public {
-			e.Account = ""
 		}
 		result = e
 	case xdr.OperationTypeCreateWithdrawalRequest:

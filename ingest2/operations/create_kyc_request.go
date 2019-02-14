@@ -43,7 +43,7 @@ func (h *createChangeRoleRequestOpHandler) ParticipantsEffects(opBody xdr.Operat
 ) ([]history2.ParticipantEffect, error) {
 	createKYCRequestOp := opBody.MustCreateChangeRoleRequestOp()
 
-	updatedAccount := h.Participant(createKYCRequestOp.AccountToUpdateKyc)
+	updatedAccount := h.Participant(createKYCRequestOp.DestinationAccount)
 
 	source := h.Participant(sourceAccountID)
 	if updatedAccount.AccountID == source.AccountID {

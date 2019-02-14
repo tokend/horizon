@@ -35,7 +35,7 @@ func (q *SignersQ) Signers(address string) ([]resources.Signer, error) {
 			Weight:     signer.Weight,
 			SignerType: signer.Type,
 			Identity:   signer.Identity,
-			Name:       signer.Name,
+			Name:       signer.Details,
 		})
 	}
 

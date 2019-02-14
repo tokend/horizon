@@ -41,27 +41,27 @@ func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler
 	return &reviewRequestOpHandler{
 		effectsProvider: provider,
 		allRequestHandlers: map[xdr.ReviewableRequestType]reviewRequestHandler{
-			xdr.ReviewableRequestTypeIssuanceCreate: &issuanceHandler{
+			xdr.ReviewableRequestTypeCreateIssuance: &issuanceHandler{
 				effectsProvider: provider,
 			},
-			xdr.ReviewableRequestTypeWithdraw: &withdrawHandler{
+			xdr.ReviewableRequestTypeCreateWithdraw: &withdrawHandler{
 				effectsProvider: provider,
 			},
-			xdr.ReviewableRequestTypeAmlAlert: &amlAlertHandler{
+			xdr.ReviewableRequestTypeCreateAmlAlert: &amlAlertHandler{
 				effectsProvider: provider,
 			},
-			xdr.ReviewableRequestTypeAtomicSwap: &atomicSwapHandler{
+			xdr.ReviewableRequestTypeCreateAtomicSwap: &atomicSwapHandler{
 				effectsProvider: provider,
 			},
-			xdr.ReviewableRequestTypeAssetCreate:         &stubProvider,
-			xdr.ReviewableRequestTypeAssetUpdate:         &stubProvider,
-			xdr.ReviewableRequestTypePreIssuanceCreate:   &stubProvider,
-			xdr.ReviewableRequestTypeSale:                &stubProvider,
-			xdr.ReviewableRequestTypeLimitsUpdate:        &stubProvider,
+			xdr.ReviewableRequestTypeCreateAsset:         &stubProvider,
+			xdr.ReviewableRequestTypeUpdateAsset:         &stubProvider,
+			xdr.ReviewableRequestTypeCreatePreIssuance:   &stubProvider,
+			xdr.ReviewableRequestTypeCreateSale:          &stubProvider,
+			xdr.ReviewableRequestTypeUpdateLimits:        &stubProvider,
 			xdr.ReviewableRequestTypeChangeRole:          &stubProvider,
 			xdr.ReviewableRequestTypeUpdateSaleDetails:   &stubProvider,
-			xdr.ReviewableRequestTypeInvoice:             &deprecatedReviewRequestHandler{},
-			xdr.ReviewableRequestTypeContract:            &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeCreateInvoice:       &deprecatedReviewRequestHandler{},
+			xdr.ReviewableRequestTypeManageContract:      &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &stubProvider,
 		},
 	}

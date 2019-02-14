@@ -17,8 +17,12 @@ type AccountsQ struct {
 func NewAccountsQ(repo *db2.Repo) AccountsQ {
 	return AccountsQ{
 		repo: repo,
-		selector: sq.Select("accounts.accountid, accounts.sequential_id, accounts.recoveryid, accounts.thresholds, accounts.account_type," +
-			" accounts.block_reasons, accounts.referrer, accounts.policies, accounts.kyc_level").From("accounts accounts"),
+		selector: sq.Select("accounts.account_id",
+			"accounts.sequential_id",
+			"accounts.referrer",
+			"accounts.sequential_id",
+			"accounts.role_id",
+		).From("accounts accounts"),
 	}
 }
 
@@ -30,7 +34,7 @@ func (q AccountsQ) GetByAddress(address string) (*Account, error) {
 
 //FilterByAddress - returns q with filter by address
 func (q AccountsQ) FilterByAddress(address string) AccountsQ {
-	q.selector = q.selector.Where("accounts.accountid = ?", address)
+	q.selector = q.selector.Where("accounts.account_id = ?", address)
 	return q
 }
 

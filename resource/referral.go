@@ -1,7 +1,6 @@
 package resource
 
 import (
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 )
 
@@ -15,5 +14,4 @@ type Referral struct {
 func (r *Referral) Populate(ca core.Account) {
 	r.AccountID = ca.AccountID
 	r.AccountTypeI = ca.AccountType
-	r.AccountType = xdr.AccountType(ca.AccountType).String()
 }

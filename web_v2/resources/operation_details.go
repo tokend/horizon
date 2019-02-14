@@ -16,19 +16,12 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 			Key:        regources.NewKeyInt64(op.ID, regources.TypeCreateAccount),
 			Attributes: regources.CreateAccountOpAttrs(*op.Details.CreateAccount),
 		}
-	case xdr.OperationTypeSetOptions:
-		return regources.NewKeyInt64(op.ID, regources.TypeSetOptions).GetKeyP()
 	case xdr.OperationTypeCreateIssuanceRequest:
 		return newCreateIssuanceOpDetails(op.ID, *op.Details.CreateIssuanceRequest)
 	case xdr.OperationTypeSetFees:
 		return &regources.SetFeeOp{
 			Key:        regources.NewKeyInt64(op.ID, regources.TypeSetFees),
 			Attributes: regources.SetFeeOpAttrs(*op.Details.SetFee),
-		}
-	case xdr.OperationTypeManageAccount:
-		return &regources.ManageAccount{
-			Key:        regources.NewKeyInt64(op.ID, regources.TypeManageAccount),
-			Attributes: regources.ManageAccountAttrs(*op.Details.ManageAccount),
 		}
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		return newCreateWithdrawalRequestOp(op.ID, *op.Details.CreateWithdrawRequest)
@@ -130,7 +123,7 @@ func newManageLimitsOp(id int64, details history2.ManageLimitsDetails) *regource
 // newManageLimitsCreationOp - creates new instance of ManageLimitsCreationOp
 func newManageLimitsCreationOp(details history2.ManageLimitsCreationDetails) *regources.ManageLimitsCreationOp {
 	return &regources.ManageLimitsCreationOp{
-		AccountType:     details.AccountType,
+		AccountRole:     details.AccountRole,
 		AccountAddress:  details.AccountAddress,
 		StatsOpType:     details.StatsOpType,
 		AssetCode:       details.AssetCode,

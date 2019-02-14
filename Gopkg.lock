@@ -542,14 +542,14 @@
 
 [[projects]]
   branch = "feature/account_role"
-  digest = "1:14a4e096406930f151d5b58472ad15eb8826cb4fb1301c5cd57b6fcd408911e9"
+  digest = "1:723a9991483bc509aceadf116afb150917d74c84ea63ab0d3c851d24563b20e6"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "4d70cc7e13575eca41f5b2fb339bd995cdf28fe9"
+  revision = "beeea6cd6407887f7f325005061185c4f78422ba"
 
 [[projects]]
   branch = "master"

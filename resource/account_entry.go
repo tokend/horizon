@@ -2,7 +2,6 @@ package resource
 
 import (
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/resource/base"
 	"gitlab.com/tokend/regources"
 )
 
@@ -24,21 +23,6 @@ type LedgerKeyAccount struct {
 
 func (r *AccountEntry) Populate(entry xdr.AccountEntry) {
 	r.AccountID = entry.AccountId.Address()
-	r.AccountTypeI = int32(entry.AccountType)
-	r.AccountType = entry.AccountType.String()
-	r.BlockReasonsI = uint32(entry.BlockReasons)
-	r.BlockReasons = base.FlagFromXdrBlockReasons(int32(entry.BlockReasons), xdr.BlockReasonsAll)
-
-	r.Policies.Populate(int32(entry.Policies))
-	r.Thresholds.Populate(entry.Thresholds)
-
-	r.Signers = make([]Signer, 0)
-	for _, xSigner := range entry.Signers {
-		sgn := Signer{}
-		sgn.FromXDR(xSigner)
-		r.Signers = append(r.Signers, sgn)
-	}
-
 }
 
 func (r *LedgerKeyAccount) Populate(xdrAcc xdr.LedgerKeyAccount) {

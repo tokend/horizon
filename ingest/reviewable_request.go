@@ -232,8 +232,7 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpd
 	// error is ignored on purpose, we should not block ingest in case of such error
 	_ = json.Unmarshal([]byte(limitsDetails), &detailsMap)
 	return &history.LimitsUpdateRequest{
-		Details:      detailsMap,
-		DocumentHash: hex.EncodeToString(request.DeprecatedDocumentHash[:]),
+		Details: detailsMap,
 	}
 }
 

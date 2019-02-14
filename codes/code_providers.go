@@ -6,9 +6,7 @@ type codeProvider func(tr xdr.OperationResultTr) shortStr
 
 var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeCreateAccount:            func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateAccountResult().Code },
-	xdr.OperationTypeSetOptions:               func(ir xdr.OperationResultTr) shortStr { return ir.MustSetOptionsResult().Code },
 	xdr.OperationTypeSetFees:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustSetFeesResult().Code },
-	xdr.OperationTypeManageAccount:            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountResult().Code },
 	xdr.OperationTypeCreateWithdrawalRequest:  func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateWithdrawalRequestResult().Code },
 	xdr.OperationTypeManageBalance:            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageBalanceResult().Code },
 	xdr.OperationTypeManageAsset:              func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAssetResult().Code },
@@ -40,4 +38,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeCreateAswapBidRequest:       func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateASwapBidCreationRequestResult().Code },
 	xdr.OperationTypeCancelAswapBid:              func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelASwapBidResult().Code },
 	xdr.OperationTypeCreateAswapRequest:          func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateASwapRequestResult().Code },
+	xdr.OperationTypeManageSigner:                func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSignerResult().Code },
+	xdr.OperationTypeManageSignerRole:            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSignerRoleResult().Code },
+	xdr.OperationTypeManageSignerRule:            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSignerRuleResult().Code },
 }

@@ -1,9 +1,7 @@
 package resource
 
 import (
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/resource/base"
 	"gitlab.com/tokend/regources"
 )
 
@@ -29,15 +27,4 @@ func (s *Signer) populate(publicKey string, weight, rawSignerType, identity int3
 	s.SignerTypeI = rawSignerType
 	s.SignerIdentity = identity
 	s.SignerName = name
-	s.SignerTypes = base.FlagFromXdrSignerType(rawSignerType, xdr.SignerTypeAll)
-}
-
-func (s *Signer) FromXDR(xSigner xdr.Signer) {
-	s.PublicKey = xSigner.PubKey.Address()
-	s.Weight = int32(xSigner.Weight)
-	s.SignerTypeI = int32(xSigner.SignerType)
-	s.SignerIdentity = int32(xSigner.Identity)
-	s.SignerName = string(xSigner.Name)
-	s.SignerTypes = base.FlagFromXdrSignerType(s.SignerTypeI, xdr.SignerTypeAll)
-
 }

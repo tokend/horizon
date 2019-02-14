@@ -3,11 +3,9 @@ package resource
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/httpx"
 	"gitlab.com/tokend/horizon/render/hal"
-	"gitlab.com/tokend/horizon/resource/base"
 	"gitlab.com/tokend/regources"
 	"golang.org/x/net/context"
 )
@@ -42,10 +40,8 @@ func (a *Account) Populate(ctx context.Context, ca core.Account) {
 	a.ID = ca.AccountID
 	a.AccountID = ca.AccountID
 	a.BlockReasonsI = ca.BlockReasons
-	a.BlockReasons = base.FlagFromXdrBlockReasons(ca.BlockReasons, xdr.BlockReasonsAll)
 	a.IsBlocked = ca.BlockReasons > 0
 	a.AccountTypeI = ca.AccountType
-	a.AccountType = xdr.AccountType(ca.AccountType).String()
 	a.Referrer = ca.Referrer
 	a.Thresholds.Populate(ca.Thresholds)
 	a.Policies.Populate(ca.Policies)
