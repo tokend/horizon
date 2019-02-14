@@ -7,7 +7,7 @@ import (
 )
 
 type createChangeRoleRequestOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about create KYC request operation
@@ -39,17 +39,16 @@ func (h *createChangeRoleRequestOpHandler) Details(op rawOperation, opRes xdr.Op
 
 //ParticipantsEffects returns source participant effect and effect for account for which KYC is updated
 func (h *createChangeRoleRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	createKYCRequestOp := opBody.MustCreateChangeRoleRequestOp()
 
-	accountIDToUpdateKYC := h.pubKeyProvider.MustAccountID(createKYCRequestOp.DestinationAccount)
+	updatedAccount := h.Participant(createKYCRequestOp.AccountToUpdateKyc)
 
-	if accountIDToUpdateKYC == source.AccountID {
+	source := h.Participant(sourceAccountID)
+	if updatedAccount.AccountID == source.AccountID {
 		return []history2.ParticipantEffect{source}, nil
 	}
 
-	return []history2.ParticipantEffect{source, {
-		AccountID: accountIDToUpdateKYC,
-	}}, nil
+	return []history2.ParticipantEffect{source, updatedAccount}, nil
 }

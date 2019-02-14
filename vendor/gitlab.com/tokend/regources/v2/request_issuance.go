@@ -9,7 +9,7 @@ type CreateIssuanceRequest struct {
 
 // CreateIssuanceRequestAttrs - attributes of the `issuance` reviewable request
 type CreateIssuanceRequestAttrs struct {
-	Amount         string  `json:"amount"`
+	Amount         Amount  `json:"amount"`
 	CreatorDetails Details `json:"creator_details"`
 }
 

@@ -12,12 +12,10 @@ variables:
   PG_DOCKERFILE: pg.dockerfile
   TEST_IMAGE: $IMAGE_NAME:$CI_COMMIT_SHA-test
   TEST_DOCKERFILE: test.dockerfile
-  DH_IMAGE_NAME: tokend/horizon:latest
+  DH_IMAGE_NAME: tokend/horizon
 
 stages:
   - build
-  # TODO fix tests
-  # - test 
   - publish
 
 # build and publish docker image to the registry
@@ -38,27 +36,29 @@ build:
     - docker build -t $PG_IMAGE -f $PG_DOCKERFILE .
     - docker push $PG_IMAGE
 
-# build testing image and run tests
-# test:
-#   image: docker:latest
-#   stage: test
-#   tags:
-#     - tokend
-#   script:
-#     - docker build --pull -t $TEST_IMAGE -f $TEST_DOCKERFILE .
-#     - docker run $IMAGE_TEST_NAME ./...
-
-publish-dh:
+publish dockerhub:
   image: docker:latest
   stage: publish
   tags:
     - tokend
   only:
-    - dockerhub
-    - dockerhub-v2
+    - /^.+\..+\..+$/
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - RELEASE=$CI_COMMIT_REF_NAME
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PWD
     - docker pull $PG_IMAGE
-    - docker tag $PG_IMAGE $DH_IMAGE_NAME
-    - docker push $DH_IMAGE_NAME
+    - docker tag $PG_IMAGE $DH_IMAGE_NAME:$RELEASE
+    - docker push $DH_IMAGE_NAME:$RELEASE
+
+pages:
+  stage: build
+  tags:
+      - tokend
+  script:
+  - echo 'Nothing to do...'
+  artifacts:
+    paths:
+    - public
+  only:
+  - master

@@ -9,7 +9,7 @@ import (
 )
 
 type createIssuanceRequestOpHandler struct {
-	balanceProvider balanceProvider
+	effectsProvider
 }
 
 // Details returns details about create issuance request operation
@@ -48,23 +48,20 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 
 // ParticipantsEffects returns source `funded` effect if request was fulfilled
 func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	issuanceRequest := opBody.MustCreateIssuanceRequestOp().Request
 	createIssuanceRequestRes := opRes.MustCreateIssuanceRequestResult().MustSuccess()
 
 	if !createIssuanceRequestRes.Fulfilled {
-		return []history2.ParticipantEffect{source}, nil
+		return []history2.ParticipantEffect{h.Participant(sourceAccountID)}, nil
 	}
 
-	effect := history2.Effect{
+	return h.BalanceEffectWithAccount(sourceAccountID, issuanceRequest.Receiver, &history2.Effect{
 		Type: history2.EffectTypeIssued,
 		Issued: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(issuanceRequest.Amount),
 			Fee:    internal.FeeFromXdr(issuanceRequest.Fee),
 		},
-	}
-
-	balance := h.balanceProvider.MustBalance(issuanceRequest.Receiver)
-	return populateEffects(balance, effect, source), nil
+	}), nil
 }

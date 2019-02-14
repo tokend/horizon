@@ -29,7 +29,7 @@ type handler interface {
 	// ParticipantsEffects returns slice of participant effects of each participants
 	// that was affected by operation, can include effects (changes) on participants balances
 	ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr,
-		source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
+		sourceID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 	) ([]history2.ParticipantEffect, error)
 }
 

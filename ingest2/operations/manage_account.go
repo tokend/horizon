@@ -6,7 +6,7 @@ import (
 )
 
 type manageAccountOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about manage account operation
@@ -27,13 +27,8 @@ func (h *manageAccountOpHandler) Details(op rawOperation,
 
 //ParticipantsEffects - returns slice of participants effected by the operation
 func (h *manageAccountOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	_ xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	participants := []history2.ParticipantEffect{source}
-
-	participants = append(participants, history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.MustAccountID(opBody.MustManageAccountOp().Account),
-	})
-
-	return participants, nil
+	source := h.effectsProvider.Participant(sourceAccountID)
+	return []history2.ParticipantEffect{source, h.effectsProvider.Participant(opBody.MustManageAccountOp().Account)}, nil
 }

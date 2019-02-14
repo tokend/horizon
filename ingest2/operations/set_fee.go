@@ -7,7 +7,7 @@ import (
 )
 
 type setFeeOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about set fee operation
@@ -43,14 +43,15 @@ func (h *setFeeOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 //ParticipantsEffects - returns source participant and counterparty for which fee has been set if one explicitly
 // specified
 func (h *setFeeOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	_ xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
+	source := h.Participant(sourceAccountID)
 	participants := []history2.ParticipantEffect{source}
 
 	setFeeOp := opBody.MustSetFeesOp()
 	if (setFeeOp.Fee != nil) && (setFeeOp.Fee.AccountId != nil) {
 		participants = append(participants, history2.ParticipantEffect{
-			AccountID: h.pubKeyProvider.MustAccountID(*setFeeOp.Fee.AccountId),
+			AccountID: h.MustAccountID(*setFeeOp.Fee.AccountId),
 		})
 	}
 

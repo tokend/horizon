@@ -1,0 +1,68 @@
+/v3/accounts/{id}:
+  get:
+    tags:
+      - Accounts
+    summary: Get Account by ID
+    description: |
+                  Allows to get `Account` with corresponding details.
+    operationId: getAccountByID
+    parameters:
+    - name: id
+      in: path
+      description: Unique identifier of the account
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    - name: include
+      in: query
+      description: |
+        🔒 The following relationships require signature of owner or admin to be included:
+        * `balances.state`
+        * `referrer`
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+          - balances
+          - balances.asset
+          - balances.state
+          - referrer 
+        example: balances,balances.asset
+    responses:
+      200:
+        description: account exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data: 
+                  type: object
+                  $ref: '#/components/schemas/Account'
+                included:
+                  $ref: '#/components/schemas/Resources'
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      401:
+        description: provided invalid siganture or signer is not authrozied to access specified resources
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: account does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

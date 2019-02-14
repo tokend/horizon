@@ -18,7 +18,7 @@ const (
 	EffectTypeIssued
 	// EffectTypeCharged - balance has been charged
 	EffectTypeCharged
-	// EffectTypeWithdrawn - balance has been charged and corresponding amount of tokens has been destroyed
+	// EffectTypeWithdrawn - balance has been charged from locked and corresponding amount of tokens has been destroyed
 	EffectTypeWithdrawn
 	// EffectTypeLocked - funds has been locked on the balance
 	EffectTypeLocked

@@ -8,7 +8,7 @@ import (
 )
 
 type manageLimitsOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about manage limits operation
@@ -51,8 +51,9 @@ func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResu
 
 //ParticipantsEffects - returns source of the operation and account for which limits were managed if they are different
 func (h *manageLimitsOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	_ xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
+	source := h.Participant(sourceAccountID)
 	participants := []history2.ParticipantEffect{source}
 
 	manageLimitsOp := opBody.MustManageLimitsOp()
@@ -67,17 +68,13 @@ func (h *manageLimitsOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		return participants, nil
 	}
 
-	accountID := h.pubKeyProvider.MustAccountID(*creationDetails.AccountId)
+	limitsParticipant := h.Participant(*creationDetails.AccountId)
 
-	if source.AccountID == accountID {
+	if source.AccountID == limitsParticipant.AccountID {
 		return participants, nil
 	}
 
-	assetCode := string(creationDetails.AssetCode)
-	participants = append(participants, history2.ParticipantEffect{
-		AccountID: accountID,
-		AssetCode: &assetCode,
-	})
+	participants = append(participants, limitsParticipant)
 
 	return participants, nil
 }

@@ -70,7 +70,7 @@
   name = "github.com/spf13/cobra"
   version = "0.0.1"
 
-[[constraint]]
+[[override]]
   name = "github.com/spf13/viper"
   version = "1.0.0"
 
@@ -86,6 +86,10 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/corer"
 
+[[constraint]]
+  branch = "master"
+  name = "gitlab.com/distributed_lab/kit"
+
 [[override]]
   name = "gitlab.com/distributed_lab/logan"
   version = "3.0"
@@ -94,12 +98,12 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[override]]
+[[constraint]]
   name = "gitlab.com/tokend/go"
-  revision = "339913479ae5d30cf60786ace40b3c39762a62f8"
+  revision = "eb669288bbef747f82b04998ae358887816863c2"
 
 [[constraint]]
-  branch = "refactor/details"
+  branch = "feature/account_role"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
@@ -121,10 +125,6 @@
 [[constraint]]
   name = "gitlab.com/distributed_lab/ape"
   version = "0.8.0"
-
-[[constraint]]
-  name = "gitlab.com/distributed_lab/kit"
-  branch = "master"
 
 [[override]]
   name = "github.com/google/jsonapi"

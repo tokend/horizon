@@ -6,7 +6,7 @@ type Flag struct {
 }
 
 type Flags struct {
-	Int    int    `json:"int"`
+	Mask   int    `json:"mask"`
 	Values []Flag `json:"flags"`
 }
 
@@ -23,7 +23,7 @@ func FlagsFromMask(mask int, allFlags map[int]string) Flags {
 	}
 
 	return Flags{
-		Int:    mask,
+		Mask:   mask,
 		Values: values,
 	}
 }

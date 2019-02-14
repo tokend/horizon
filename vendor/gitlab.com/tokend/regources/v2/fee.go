@@ -6,8 +6,3 @@ type Fee struct {
 	Fixed             Amount `json:"fixed,omitempty"`
 	CalculatedPercent Amount `json:"calculated_percent,omitempty"`
 }
-
-type FeeStr struct {
-	Fixed             string `json:"fixed"`
-	CalculatedPercent string `json:"calculated_percent"`
-}

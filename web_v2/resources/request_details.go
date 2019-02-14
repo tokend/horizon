@@ -3,6 +3,7 @@ package resources
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/regources/v2"
@@ -46,9 +47,15 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 func newAmlAlertRequest(id int64, details history2.CreateAmlAlertRequest) *regources.CreateAmlAlertRequest {
 	return &regources.CreateAmlAlertRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAMLAlert),
+<<<<<<< HEAD
 		Attributes: regources.CreateAmlAlertRequestAttrs{
 			Amount:         details.Amount,
 			CreatorDetails: details.CreatorDetails,
+=======
+		Attributes: regources.AmlAlertRequestAttrs{
+			Amount: regources.Amount(amount.MustParse(details.Amount)),
+			Reason: details.Reason,
+>>>>>>> master
 		},
 		Relationships: regources.CreateAmlAlertRequestRelations{
 			Balance: NewBalanceKey(details.BalanceID).AsRelation(),
@@ -115,9 +122,15 @@ func newAtomicSwapBidRequest(id int64, details history2.CreateAtomicSwapBidReque
 func newIssuanceRequest(id int64, details history2.CreateIssuanceRequest) *regources.CreateIssuanceRequest {
 	return &regources.CreateIssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsIssuance),
+<<<<<<< HEAD
 		Attributes: regources.CreateIssuanceRequestAttrs{
 			Amount:         details.Amount,
 			CreatorDetails: details.CreatorDetails,
+=======
+		Attributes: regources.IssuanceRequestAttrs{
+			Amount:  regources.Amount(amount.MustParse(details.Amount)),
+			Details: details.Details,
+>>>>>>> master
 		},
 		Relationships: regources.CreateIssuanceRequestRelations{
 			Asset:    NewAssetKey(details.Asset).AsRelation(),
@@ -137,8 +150,13 @@ func newLimitsUpdateRequest(id int64, details history2.UpdateLimitsRequest) *reg
 func newPreIssuanceRequest(id int64, details history2.CreatePreIssuanceRequest) *regources.CreatePreIssuanceRequest {
 	return &regources.CreatePreIssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsPreIssuance),
+<<<<<<< HEAD
 		Attributes: regources.CreatePreIssuanceRequestAttrs{
 			Amount:    details.Amount,
+=======
+		Attributes: regources.PreIssuanceRequestAttrs{
+			Amount:    regources.Amount(amount.MustParse(details.Amount)),
+>>>>>>> master
 			Signature: details.Signature,
 			Reference: details.Reference,
 		},
@@ -198,10 +216,17 @@ func newUpdateSaleDetailsRequest(id int64, details history2.UpdateSaleDetailsReq
 func newWithdrawalRequest(id int64, details history2.CreateWithdrawalRequest) *regources.CreateWithdrawalRequest {
 	return &regources.CreateWithdrawalRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsWithdrawal),
+<<<<<<< HEAD
 		Attributes: regources.CreateWithdrawalRequestAttrs{
 			Fee: regources.FeeStr{
 				Fixed:             details.FixedFee,
 				CalculatedPercent: details.PercentFee,
+=======
+		Attributes: regources.WithdrawalRequestAttrs{
+			Fee: regources.Fee{
+				Fixed:             regources.Amount(amount.MustParse(details.FixedFee)),
+				CalculatedPercent: regources.Amount(amount.MustParse(details.PercentFee)),
+>>>>>>> master
 			},
 			Amount:          details.Amount,
 			CreatorDetails:  details.CreatorDetails,

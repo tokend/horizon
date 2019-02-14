@@ -1,5 +1,5 @@
 config:
-  stellar_core_url: http://localhost:9090
+  stellar_core_url: http://localhost:8080
   stellar_core_database_url: postgres://postgres:postgres@localhost/core?sslmode=disable
   hostname: ""
   database_url: postgres://postgres:postgres@localhost/horizon?sslmode=disable
@@ -20,12 +20,12 @@ config:
   project: ""
   env: ""
   migrate_up_on_start: false
-
   invest_ready: http://
   telegram_airdrop: http://
 
 janus:
-  endpoint: http://
+  disabled: true
+  endpoint: http://localhost:8081
+  upstream: http://localhost:8000
   surname: horizon
-  upstream: http://
 

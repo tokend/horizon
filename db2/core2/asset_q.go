@@ -20,7 +20,7 @@ type AssetsQ struct {
 func NewAssetsQ(repo *db2.Repo) AssetsQ {
 	return AssetsQ{
 		repo:     repo,
-		selector: sq.Select(assetColumns...).From("asset AS assets"),
+		selector: sq.Select(assetColumns...).From("asset assets"),
 	}
 }
 
@@ -28,6 +28,11 @@ func NewAssetsQ(repo *db2.Repo) AssetsQ {
 // returns nil, nil - if such asset doesn't exists
 func (q AssetsQ) GetByCode(code string) (*Asset, error) {
 	return q.FilterByCode(code).Get()
+}
+
+//SelectByPolicy - selects slice of assets by policy mask
+func (q AssetsQ) SelectByPolicy(mask uint64) ([]Asset, error) {
+	return q.FilterByPolicy(mask).Select()
 }
 
 // FilterByCode - returns q with filter by code

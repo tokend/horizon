@@ -8,7 +8,7 @@ import (
 )
 
 type createAtomicSwapBidRequestOpHandler struct {
-	balanceProvider balanceProvider
+	effectsProvider
 }
 
 // Details returns details about create atomic swap bid request operation
@@ -38,20 +38,14 @@ func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 
 // ParticipantsEffects returns source effect with `locked` effect
 func (h *createAtomicSwapBidRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	aSwapBidRequest := opBody.MustCreateASwapBidCreationRequestOp().Request
 
-	balance := h.balanceProvider.MustBalance(aSwapBidRequest.BaseBalance)
-
-	source.BalanceID = &balance.ID
-	source.AssetCode = &balance.AssetCode
-	source.Effect = &history2.Effect{
+	return []history2.ParticipantEffect{h.BalanceEffect(aSwapBidRequest.BaseBalance, &history2.Effect{
 		Type: history2.EffectTypeLocked,
 		Locked: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(aSwapBidRequest.Amount),
 		},
-	}
-
-	return []history2.ParticipantEffect{source}, nil
+	})}, nil
 }

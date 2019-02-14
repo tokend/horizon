@@ -1,43 +1,23 @@
 package exchange
 
 import (
+	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2/core"
+	core "gitlab.com/tokend/horizon/db2/core2"
 )
 
-//go:generate mockery -case underscore -name assetProvider -inpkg -testonly
-type assetProvider interface {
-	GetAssetsForPolicy(policy uint32) ([]core.Asset, error)
-	GetAssetPairsForCodes(baseAssets []string, quoteAssets []string) ([]core.AssetPair, error)
-	LoadAsset(code string) (*core.Asset, error)
-}
-
+//Converter - helper struct which allows to convert amount in asset into amount in another asset
+// supports indirect conversion with one hop
 type Converter struct {
 	assetProvider assetProvider
 	baseAssets    []string
 }
 
-type assetProviderImpl struct {
-	q core.QInterface
-}
-
-func (p assetProviderImpl) GetAssetsForPolicy(policy uint32) ([]core.Asset, error) {
-	return p.q.Assets().ForPolicy(policy).Select()
-}
-func (p assetProviderImpl) GetAssetPairsForCodes(baseAssets []string, quoteAssets []string) ([]core.AssetPair, error) {
-	return p.q.AssetPairs().ForAssets(baseAssets, quoteAssets).Select()
-}
-func (p assetProviderImpl) LoadAsset(code string) (*core.Asset, error) {
-	return p.q.Assets().ByCode(code)
-}
-
-func NewConverter(q core.QInterface) (*Converter, error) {
-	return newConverter(assetProviderImpl{q: q})
-}
-
-func newConverter(assetProvider assetProvider) (*Converter, error) {
-	baseAssets, err := assetProvider.GetAssetsForPolicy(uint32(xdr.AssetPolicyBaseAsset))
+//NewConverter - creates new ready to work instance of Converter
+func NewConverter(assetProvider assetProvider) (*Converter, error) {
+	baseAssets, err := assetProvider.SelectByPolicy(uint64(xdr.AssetPolicyBaseAsset))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load base assets")
 	}
@@ -53,85 +33,12 @@ func newConverter(assetProvider assetProvider) (*Converter, error) {
 	return result, nil
 }
 
-func (c *Converter) loadPairsWithBaseAssets(asset string) ([]core.AssetPair, error) {
-
-	direct, err := c.assetProvider.GetAssetPairsForCodes([]string{asset}, c.baseAssets)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load direct asset pairs")
-	}
-
-	reverse, err := c.assetProvider.GetAssetPairsForCodes(c.baseAssets, []string{asset})
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load reverse asset pairs")
-	}
-
-	return append(direct, reverse...), nil
-}
-
-func (c *Converter) tryLoadDirect(fromAsset, toAsset string) (*core.AssetPair, error) {
-	pairs, err := c.assetProvider.GetAssetPairsForCodes([]string{fromAsset, toAsset}, []string{fromAsset, toAsset})
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load direct asset pairs")
-	}
-
-	for i, pair := range pairs {
-		if (pair.BaseAsset == fromAsset && pair.QuoteAsset == toAsset) ||
-			(pair.BaseAsset == toAsset && pair.QuoteAsset == fromAsset) {
-			return &pairs[i], nil
-		}
-	}
-
-	return nil, nil
-}
-
-func (c *Converter) convertWithMaxPath(amount int64, fromAsset, toAsset string, fromPairs, toPairs []core.AssetPair) (*int64, error) {
-	converted := false
-	var result int64
-	for _, fromPair := range fromPairs {
-		hopAmount, isConverted, err := fromPair.ConvertFromSourceAsset(fromAsset, amount, c.assetProvider)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to convert from asset to hop asset")
-		}
-
-		if !isConverted {
-			continue
-		}
-
-		for _, toPair := range toPairs {
-			if fromPair.IsSimilar(toPair) {
-				return nil, errors.From(errors.New("unexpected state: received same pairs"), map[string]interface{}{
-					"fromPair": fromPair,
-					"toPair":   toPair,
-				})
-			}
-			if !fromPair.IsOverlaps(toPair) {
-				continue
-			}
-
-			destAmount, isConverted, err := toPair.ConvertToDestAsset(toAsset, hopAmount, c.assetProvider)
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to convert to toAsset")
-			}
-
-			if !isConverted {
-				continue
-			}
-
-			converted = true
-			if destAmount > result {
-				result = destAmount
-			}
-		}
-	}
-
-	if converted {
-		return &result, nil
-	}
-
-	return nil, nil
-}
-
+//TryToConvertWithOneHop - tries to convert amount in fromAsset into amount in toAsset
+// if no direct conversion possible, tries to do it with one cop;
+// if several conversions are available selects one that results in maximizing converted amount
+// if fails to find path to convert - returns nil, nil
 func (c *Converter) TryToConvertWithOneHop(amount int64, fromAsset, toAsset string) (*int64, error) {
+	// converting to self
 	if fromAsset == toAsset {
 		return &amount, nil
 	}
@@ -142,7 +49,9 @@ func (c *Converter) TryToConvertWithOneHop(amount int64, fromAsset, toAsset stri
 	}
 
 	if directPair != nil {
-		result, isConverted, err := directPair.ConvertToDestAsset(toAsset, amount, c.assetProvider)
+		var result int64
+		var isConverted bool
+		result, isConverted, err = c.convertToDestAsset(*directPair, toAsset, amount)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert using direct pair")
 		}
@@ -165,4 +74,161 @@ func (c *Converter) TryToConvertWithOneHop(amount int64, fromAsset, toAsset stri
 	}
 
 	return c.convertWithMaxPath(amount, fromAsset, toAsset, fromAssetPairs, toAssetPairs)
+}
+
+func (c *Converter) loadPairsWithBaseAssets(asset string) ([]core.AssetPair, error) {
+
+	direct, err := c.assetProvider.SelectByAssets([]string{asset}, c.baseAssets)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load direct asset pairs")
+	}
+
+	reverse, err := c.assetProvider.SelectByAssets(c.baseAssets, []string{asset})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load reverse asset pairs")
+	}
+
+	return append(direct, reverse...), nil
+}
+
+func (c *Converter) tryLoadDirect(fromAsset, toAsset string) (*core.AssetPair, error) {
+	assets := []string{fromAsset, toAsset}
+	pairs, err := c.assetProvider.SelectByAssets(assets, assets)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load asset pairs by assets")
+	}
+
+	pairToFind := core.AssetPair{
+		Base:  fromAsset,
+		Quote: toAsset,
+	}
+	for i, pair := range pairs {
+		if equalsOrInverted(pair, pairToFind) {
+			return &pairs[i], nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (c *Converter) convertWithMaxPath(amount int64, fromAsset, toAsset string, fromPairs, toPairs []core.AssetPair) (*int64, error) {
+	converted := false
+	var result int64
+	for _, fromPair := range fromPairs {
+		hopAmount, isConverted, err := c.convertFromSourceAsset(fromPair, fromAsset, amount)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert from asset to hop asset")
+		}
+
+		if !isConverted {
+			continue
+		}
+
+		for _, toPair := range toPairs {
+			if equalsOrInverted(fromPair, toPair) {
+				return nil, errors.From(errors.New("unexpected state: received same pairs"), map[string]interface{}{
+					"fromPair": fromPair,
+					"toPair":   toPair,
+				})
+			}
+			if !isOverlaps(fromPair, toPair) {
+				continue
+			}
+
+			var destAmount int64
+			destAmount, isConverted, err = c.convertToDestAsset(toPair, toAsset, hopAmount)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to convert to toAsset")
+			}
+
+			if !isConverted {
+				continue
+			}
+
+			converted = true
+			if destAmount > result {
+				result = destAmount
+			}
+		}
+	}
+
+	if converted {
+		return &result, nil
+	}
+
+	return nil, nil
+}
+
+// convertToDestAsset - converts specified amount to dest asset using current price,
+// returns false - if failed
+func (c *Converter) convertToDestAsset(pair core.AssetPair, destCode string, amountToConvert int64) (int64, bool, error) {
+	if pair.CurrentPrice == 0 {
+		return 0, false, errors.New("Price is invalid")
+	}
+
+	destAsset, err := c.assetProvider.GetByCode(destCode)
+	if err != nil {
+		return 0, false, errors.From(errors.New("failed to select dest asset"), logan.F{
+			"destCode": destCode,
+		})
+	}
+
+	if destAsset == nil {
+		return 0, false, errors.From(errors.New("asset not found"), logan.F{
+			"destCode": destCode,
+		})
+	}
+
+	switch destCode {
+	case pair.Quote:
+		result, isOverflow := amount.BigDivide(amountToConvert, pair.CurrentPrice,
+			amount.One, amount.ROUND_UP, destAsset.GetMinimumAmount())
+		return result, !isOverflow, nil
+	case pair.Base:
+		result, isOverflow := amount.BigDivide(amountToConvert, amount.One,
+			pair.CurrentPrice, amount.ROUND_UP, destAsset.GetMinimumAmount())
+		return result, !isOverflow, nil
+	default:
+		return 0, false, errors.From(errors.New("unexpected dest code"), logan.F{
+			"base":        pair.Base,
+			"quote":       pair.Quote,
+			"actual dest": destCode,
+		})
+	}
+}
+
+//isOverlaps - returns true if one of the assets of anotherPair is equal to one of the assets of pair
+func isOverlaps(pair, anotherPair core.AssetPair) bool {
+	return contains(pair, anotherPair.Base) || contains(pair, anotherPair.Quote)
+}
+
+// Contains - returns true if base or quote equal to asset
+func contains(pair core.AssetPair, asset string) bool {
+	return pair.Base == asset || pair.Quote == asset
+}
+
+//equalsOrInverted - returns true if other pair is the same or inverted
+func equalsOrInverted(pair, other core.AssetPair) bool {
+	return (pair.Base == other.Base && pair.Quote == other.Quote) ||
+		(pair.Base == other.Quote && pair.Quote == other.Base)
+}
+
+// ConvertFromSourceAsset - converts specified amount from source to another asset in pair using current price,
+// returns false - if failed
+func (c *Converter) convertFromSourceAsset(pair core.AssetPair, sourceCode string, amountToConvert int64) (int64, bool, error) {
+	destCode := ""
+	switch sourceCode {
+	case pair.Base:
+		destCode = pair.Quote
+	case pair.Quote:
+		destCode = pair.Base
+	default:
+		return 0, false, errors.From(errors.New("unexpected source code"), logan.F{
+			"base":          pair.Base,
+			"quote":         pair.Quote,
+			"actual source": sourceCode,
+		})
+	}
+
+	return c.convertToDestAsset(pair, destCode, amountToConvert)
 }

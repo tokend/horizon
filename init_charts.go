@@ -11,6 +11,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/charts"
 	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/exchange"
 	"gitlab.com/tokend/horizon/log"
@@ -127,7 +128,7 @@ func initCharts(app *App) {
 		data := change.Updated.Data.Sale
 		// TODO: fix me
 		logger := log.WithField("listener", "sales_current_cap")
-		converter, err := exchange.NewConverter(app.CoreQ())
+		converter, err := createConverter(app, &logger.Entry)
 		if err != nil {
 			logger.WithError(err).Error("Failed to init converter")
 			return
@@ -163,7 +164,7 @@ func initCharts(app *App) {
 		issued := int64(data.Issued)
 		prevIssued[code] = &issued
 		logger := log.WithField("listener", "sales_current_cap")
-		converter, err := exchange.NewConverter(app.CoreQ())
+		converter, err := createConverter(app, &logger.Entry)
 		if err != nil {
 			logger.WithError(err).Error("Failed to init converter")
 			return
@@ -183,6 +184,19 @@ func initCharts(app *App) {
 	}
 
 	go listener.Run()
+}
+
+//createConverter - creates new version of exchange converter
+func createConverter(app *App, log *logan.Entry) (*exchange.Converter, error) {
+	repo := app.CoreRepoLogged(log)
+	assetsProvider := struct {
+		core2.AssetsQ
+		core2.AssetPairsQ
+	}{
+		AssetsQ:     core2.NewAssetsQ(repo),
+		AssetPairsQ: core2.NewAssetPairsQ(repo),
+	}
+	return exchange.NewConverter(assetsProvider)
 }
 
 type Charts struct {

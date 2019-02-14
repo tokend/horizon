@@ -19,7 +19,7 @@ func (h *deprecatedOpHandler) Details(op rawOperation, opRes xdr.OperationResult
 
 //ParticipantsEffects - returns errors as deprecated op should never occur
 func (h *deprecatedOpHandler) ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr,
-	source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
+	sourceAccountID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	return nil, errors.From(errors.New("Tried to ingest deprecated operation"), logan.F{
 		"op_type": opBody.Type,

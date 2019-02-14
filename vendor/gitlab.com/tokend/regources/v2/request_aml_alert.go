@@ -9,7 +9,7 @@ type CreateAmlAlertRequest struct {
 
 // CreateAmlAlertRequestAttrs - attributes of the `aml alert` reviewable request
 type CreateAmlAlertRequestAttrs struct {
-	Amount         string `json:"amount"`
+	Amount         Amount `json:"amount"`
 	CreatorDetails string `json:"creator_details"`
 }
 

@@ -6,6 +6,7 @@ import (
 )
 
 type bindExternalSystemAccountOpHandler struct {
+	effectsProvider
 }
 
 // Details returns details about bind external system account operation
@@ -20,11 +21,4 @@ func (h *bindExternalSystemAccountOpHandler) Details(op rawOperation,
 			ExternalSystemType: int32(bindExternalSystemAccountOp.ExternalSystemType),
 		},
 	}, nil
-}
-
-// ParticipantsEffects returns only source without effects
-func (h *bindExternalSystemAccountOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
-) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{source}, nil
 }
