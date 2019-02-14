@@ -6,7 +6,7 @@ import (
 )
 
 type manageBalanceOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about manage balance operation
@@ -28,18 +28,17 @@ func (h *manageBalanceOpHandler) Details(op rawOperation, opRes xdr.OperationRes
 
 //ParticipantsEffects - returns source of the operation and account for which balance was created if they differ
 func (h *manageBalanceOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	manageBalanceOp := opBody.MustManageBalanceOp()
 
-	destinationAccount := h.pubKeyProvider.MustAccountID(manageBalanceOp.Destination)
+	destinationAccount := h.Participant(manageBalanceOp.Destination)
+	source := h.Participant(sourceAccountID)
 
 	var participants []history2.ParticipantEffect
 
-	if source.AccountID != destinationAccount {
-		participants = []history2.ParticipantEffect{{
-			AccountID: destinationAccount,
-		}}
+	if source.AccountID != destinationAccount.AccountID {
+		participants = []history2.ParticipantEffect{destinationAccount}
 	}
 
 	return append(participants, source), nil

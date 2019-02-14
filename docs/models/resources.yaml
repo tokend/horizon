@@ -1,0 +1,9 @@
+Resources:
+  type: array
+  items:
+    type: object
+    oneOf:
+    - $ref: '#/components/schemas/Account'
+    - $ref: '#/components/schemas/Balance'
+    - $ref: '#/components/schemas/BalanceState'
+    - $ref: '#/components/schemas/Asset'

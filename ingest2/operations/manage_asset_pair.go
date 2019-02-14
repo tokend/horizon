@@ -31,8 +31,8 @@ func (h *manageAssetPairOpHandler) Details(op rawOperation,
 
 //ParticipantsEffects - returns source of the operation
 func (h *manageAssetPairOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	_ xdr.OperationResultTr, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
+	_ xdr.OperationResultTr, sourceAccountID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	result := h.manageOfferOpHandler.getDeletedOffersEffect(ledgerChanges)
-	return append(result, source), nil
+	return append(result, h.manageOfferOpHandler.Participant(sourceAccountID)), nil
 }

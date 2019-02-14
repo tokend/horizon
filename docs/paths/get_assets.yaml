@@ -1,0 +1,83 @@
+/v3/assets:
+  get:
+    tags:
+      - Assets
+    summary: Get List of Assets
+    description: |
+                  Allows to get a filtered list of `Asset` with the corresponding details.
+    operationId: getAssets
+    parameters:
+    - name: filter[policy]
+      in: query
+      description: |
+        Filters assets by specified bit mask. Returns page of assets where at least one bit intersects
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: integer
+    - name: filter[owner]
+      in: query
+      description: |
+        Filters assets by a specified owner's account address.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+    - name: include
+      in: query
+      description: |
+        Relationships may be used for the included parameter.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+          - owner
+    - $ref: '#/components/schemas/pageNumberParam'
+    - $ref: '#/components/schemas/pageLimitParam'
+    - $ref: '#/components/schemas/sortingParam'
+    responses:
+      200:
+        description: asset exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data: 
+                  type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/Asset'
+                included:
+                  $ref: '#/components/schemas/Resources'
+                links:
+                  type: object
+                  description: "Provides links for pagination"
+                  properties:
+                    next:
+                      type: string
+                      description: "link to the next page"
+                      example: "/v3/assets?include=owner&page[number]=2&page[limit]=15"
+                    self:
+                      type: string
+                      description: "link to the current page"
+                      example: "/v3/assets?include=owner&page[number]=1&page[limit]=15"
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: asset does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

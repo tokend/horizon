@@ -9,7 +9,7 @@ import (
 )
 
 type paymentOpHandler struct {
-	pubKeyProvider IDProvider
+	effectsProvider
 }
 
 // Details returns details about payment operation
@@ -38,7 +38,7 @@ func (h *paymentOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 
 // ParticipantsEffects returns `funded` and `charged` effects
 func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, source history2.ParticipantEffect, _ []xdr.LedgerEntryChange,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	op := opBody.MustPaymentOpV2()
 	res := opRes.MustPaymentV2Result().MustPaymentV2Response()
@@ -54,11 +54,7 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		destPercentFee = 0
 	}
 
-	sourceBalanceID := h.pubKeyProvider.MustBalanceID(op.SourceBalanceId)
-	source.BalanceID = &sourceBalanceID
-	source.AssetCode = new(string)
-	*source.AssetCode = string(res.Asset)
-	source.Effect = &history2.Effect{
+	source := h.BalanceEffect(op.SourceBalanceId, &history2.Effect{
 		Type: history2.EffectTypeCharged,
 		Charged: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(op.Amount),
@@ -67,24 +63,17 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 				CalculatedPercent: regources.Amount(sourcePercentFee),
 			},
 		},
-	}
+	})
 
-	destBalanceID := h.pubKeyProvider.MustBalanceID(res.DestinationBalanceId)
-	destination := history2.ParticipantEffect{
-		AccountID: h.pubKeyProvider.MustAccountID(res.Destination),
-		BalanceID: &destBalanceID,
-		AssetCode: source.AssetCode,
-		Effect: &history2.Effect{
-			Type: history2.EffectTypeFunded,
-			Funded: &history2.BalanceChangeEffect{
-				Amount: regources.Amount(op.Amount),
-				Fee: regources.Fee{
-					Fixed:             regources.Amount(destFixedFee),
-					CalculatedPercent: regources.Amount(destPercentFee),
-				},
+	destination := h.BalanceEffect(res.DestinationBalanceId, &history2.Effect{
+		Type: history2.EffectTypeFunded,
+		Funded: &history2.BalanceChangeEffect{
+			Amount: regources.Amount(op.Amount),
+			Fee: regources.Fee{
+				Fixed:             regources.Amount(destFixedFee),
+				CalculatedPercent: regources.Amount(destPercentFee),
 			},
 		},
-	}
-
+	})
 	return []history2.ParticipantEffect{source, destination}, nil
 }
