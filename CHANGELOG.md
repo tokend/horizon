@@ -1,6 +1,12 @@
 # Unreleased
 
-## Fixed
+### Added
+
+* Helper "test" for quick transaction envelopes unmarshal
+
+### Fixed
+
+* 500 error on /history endpoint when receiving history of payments
 * Fixed issue with balanceID not been set for balance effects
 
 # 3.0.1-x.4

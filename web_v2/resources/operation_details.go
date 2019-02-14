@@ -55,7 +55,7 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	case xdr.OperationTypeCreateKycRequest:
 		return newCreateKYCRequestOp(op.ID, *op.Details.CreateKYCRequest)
 	case xdr.OperationTypePaymentV2:
-		newPaymentOp(op.ID, *op.Details.Payment)
+		return newPaymentOp(op.ID, *op.Details.Payment)
 	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
 		return newManageExternalSystemPool(op.ID, *op.Details.ManageExternalSystemPool)
 	case xdr.OperationTypeBindExternalSystemAccountId:
@@ -98,8 +98,6 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 			"type": op.Type,
 		}))
 	}
-
-	return nil // FIXME: looks awkward
 }
 
 // newManageLimitsOp - creates new instance of ManageLimitsOp
