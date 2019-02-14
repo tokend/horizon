@@ -1,5 +1,8 @@
 # Unreleased
 
+## Fixed
+* Fixed issue with balanceID not been set for balance effects
+
 # 3.0.1-x.4
 
 ## Fixed
