@@ -1,6 +1,12 @@
 ## Unreleased
 
-Nothing unreleased at current stage
+### Added
+
+Helper "test" for quick transaction envelopes unmarshal
+
+### Fixed
+
+500 error on /history endpoint when receiving history of payments
 
 ## 3.0.1-x.2
 
