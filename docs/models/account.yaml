@@ -22,7 +22,7 @@ Account:
           - balances
         properties:
           referrer:
-            description: "Referrer is another account, that brought this account into the system."
+            description: "Referrer is another account that brought this account into the system."
             type: object
             properties:
               data:
