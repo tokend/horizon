@@ -30,9 +30,9 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//if !handler.ensureAllowed(w, r, request) {
-	//	return
-	//}
+	if !handler.ensureAllowed(w, r, request) {
+		return
+	}
 
 	result, err := handler.GetHistory(request)
 	if err != nil {
