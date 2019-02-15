@@ -1,8 +1,0 @@
-name: XdrEnumValue
-attributes:
-  -
-    name: name
-    type: String
-  -
-    name: value
-    type: Int32
