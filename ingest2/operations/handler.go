@@ -1,5 +1,6 @@
 package operations
 
+// todo maybe rename to effects
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,8 +12,8 @@ import (
 	"gitlab.com/tokend/horizon/log"
 )
 
-//go:generate mockery -case underscore -name operationsStorage -inpkg -testonly
-type operationsStorage interface {
+//go:generate mockery -case underscore -name OperationsStorage -inpkg -testonly
+type OperationsStorage interface {
 	// Insert - saves to storage operations
 	Insert(ops []history2.Operation) error
 }
@@ -27,14 +28,14 @@ type participantEffectsStorage interface {
 // to particular implementation of handler
 type Handler struct {
 	participantEffectsStorage participantEffectsStorage
-	operationsStorage         operationsStorage
+	operationsStorage         OperationsStorage
 	allHandlers               map[xdr.OperationType]handler
 	pubKeyProvider            IDProvider
 }
 
 // NewOperationsHandler returns new handler which can return
 // details and participants effects of certain operation
-func NewOperationsHandler(operationsStorage operationsStorage, participantEffectsStorage participantEffectsStorage,
+func NewOperationsHandler(operationsStorage OperationsStorage, participantEffectsStorage participantEffectsStorage,
 	pubKeyProvider IDProvider, balanceProvider balanceProvider) *Handler {
 	effectsBaseHandler := effectsProvider{
 		IDProvider:      pubKeyProvider,

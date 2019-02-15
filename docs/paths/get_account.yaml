@@ -30,8 +30,10 @@
           - balances
           - balances.asset
           - balances.state
-          - referrer 
-        example: balances,balances.asset
+          - referrer
+          - limits
+          - external_system_ids
+        example: balances,balances.asset,external-system-ids
     responses:
       200:
         description: account exists
