@@ -2,6 +2,7 @@
 
 ## Fixed
 * Fixed issue with balanceID not been set for balance effects
+* Fixed Fee 500 if asset does not exists
 
 # 3.0.1-x.4
 

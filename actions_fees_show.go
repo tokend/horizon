@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/core"
@@ -112,18 +113,21 @@ func (action *FeesShowAction) GetPercentFee(percentFee int64) int64 {
 
 	asset, err := action.CoreQ().Assets().ByCode(action.Asset)
 	if err != nil {
+		action.Log.WithError(err).Error("failed to load asset from core db")
 		action.Err = &problem.ServerError
 		return 0
 	}
 
 	if asset == nil {
-		action.SetInvalidField("asset", errors.Wrap(err, "no such asset"))
+		action.SetInvalidField("asset", errors.From(errors.New("does not exist"), logan.F{
+			"asset": action.Asset,
+		}))
 		return 0
 	}
 
 	res, isOverflow := action.CalculatePercentFee(percentFee, am, asset.GetMinimumAmount())
 	if isOverflow {
-		action.SetInvalidField("amount", errors.Wrap(err, "is too big - overflow"))
+		action.SetInvalidField("amount", errors.New("is too big - overflow"))
 		return 0
 	}
 
