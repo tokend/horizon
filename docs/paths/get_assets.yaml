@@ -4,7 +4,7 @@
       - Assets
     summary: Get List of Assets
     description: |
-                  Allows to get filtered list of `Asset` with corresponding details.
+                  Allows to get a filtered list of `Asset` with the corresponding details.
     operationId: getAssets
     parameters:
     - name: filter[policy]
@@ -19,7 +19,7 @@
     - name: filter[owner]
       in: query
       description: |
-        Filters assets by specified owner account address.
+        Filters assets by a specified owner's account address.
       required: false
       style: form
       explode: false
@@ -28,7 +28,7 @@
     - name: include
       in: query
       description: |
-        Relationships may be used for the include parameter.
+        Relationships may be used for the included parameter.
       required: false
       style: form
       explode: false
@@ -63,11 +63,11 @@
                   properties:
                     next:
                       type: string
-                      description: "link to next page"
+                      description: "link to the next page"
                       example: "/v3/assets?include=owner&page[number]=2&page[limit]=15"
                     self:
                       type: string
-                      description: "link to current page"
+                      description: "link to the current page"
                       example: "/v3/assets?include=owner&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter

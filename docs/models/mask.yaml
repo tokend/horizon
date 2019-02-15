@@ -15,7 +15,7 @@ Mask:
           name:
             type: string
             description: "name of the flag"
-            example: "transfarable"
+            example: "transferable"
           value:
             type: integer
             description: "value of the flag"
