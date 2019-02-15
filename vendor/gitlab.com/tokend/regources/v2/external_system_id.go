@@ -10,7 +10,7 @@ type ExternalSystemID struct {
 
 type ExternalSystemIDAttr struct {
 	ExternalSystemType int32     `json:"external_system_type"`
-	Data               Details   `json:"data"`
+	Data               string    `json:"data"`
 	IsDeleted          bool      `json:"is_deleted"`
 	ExpiresAt          time.Time `json:"expires_at"`
 	BindedAt           time.Time `json:"binded_at"`

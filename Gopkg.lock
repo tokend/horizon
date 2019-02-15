@@ -347,7 +347,7 @@
   branch = "feature/account_relations"
   name = "gitlab.com/tokend/regources"
   packages = [".","v2"]
-  revision = "cc3bb28e49557a88fbaa5384886a164b85980557"
+  revision = "945210c31979ac22ba28f7e4416b5983eb98b5d4"
 
 [[projects]]
   branch = "master"

@@ -35,8 +35,8 @@ ExternalSystemID:
               type: int32
               example: 1
             data:
-              type: # todo
-              example:
+              type: string
+              example: "0x34C274CA68d7F5bd39b855194Dc3382Fd99aee58"
             is_deleted:
               type: bool
               example: false
