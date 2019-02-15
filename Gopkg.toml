@@ -132,5 +132,5 @@
   version = "1.0.0"
 
 [prune]
-  unused-packages = false
+  unused-packages = true
   go-tests = true
