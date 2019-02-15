@@ -36,3 +36,19 @@ Account:
                 type: array
                 items:
                   $ref: '#/components/schemas/BalanceKey'
+          limits:
+            description: "Defines limits that are actual for this account"
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/LimitsKey'
+          external-system-ids:
+            description: "Defines external system IDs binded to this account"
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/LimitsKey'

@@ -1,0 +1,68 @@
+LimitsKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "1"
+    type:
+      type: string
+      enum:
+        - "limits"
+
+Limits:
+  allOf:
+    - $ref: '#components/schemas/LimitsKey'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - account
+            - role
+            - asset
+          properties:
+            account:
+              type: object
+              description: "account related to the particular limit"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AccountKey'
+            # role:
+              # TODO must be filled after feature/roles_rules merge
+            asset:
+              type: object
+              description: "asset balance related to the limit"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
+        attributes:
+          type: object
+          required:
+            - statsOpType
+            - isConvertNeeded
+            - dailyOut
+            - weeklyOut
+            - monthlyOut
+            - annualOut
+          properties:
+            statsOpType:
+              type: int32
+              example: 1
+            isConvertNeeded:
+              type: bool
+              example: true
+            dailyOut:
+              type: string
+              example: "10"
+            weeklyOut:
+              type: string
+              example: "11"
+            monthlyOut:
+              type: string
+              example: "12"
+            annualOut:
+              type: string
+              example: "13"

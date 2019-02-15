@@ -1,0 +1,48 @@
+ExternalSystemIDKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "1"
+    type:
+      type: string
+      enum:
+        - "external-system-ids"
+
+ExternalSystemID:
+  allOf:
+    - $ref: '#components/schemas/ExternalSystemIDKey'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - account
+          properties:
+            account:
+              type: object
+              description: "account related to the particular limit"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AccountKey'
+        attributes:
+          type: object
+          required:
+            external_system_type:
+              type: int32
+              example: 1
+            data:
+              type: # todo
+              example:
+            is_deleted:
+              type: bool
+              example: false
+            expires_at:
+              type: string
+              example: "2012-11-01T22:08:41+00:00"
+            binded_at:
+              type: string
+              example: "2012-10-30T22:08:41+00:00"
