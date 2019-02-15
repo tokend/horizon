@@ -1,13 +1,27 @@
 package regources
 
-type Rule struct {
+type AccountRule struct {
 	Key
-	Attributes RuleAttr `json:"attributes"`
+	Attributes AccountRuleAttr `json:"attributes"`
 }
 
-type RuleAttr struct {
-	Resource    string                 `json:"resource"`
-	Action      string                 `json:"action"`
-	IsForbidden string                 `json:"is_forbidden"`
-	Details     map[string]interface{} `json:"details"`
+type AccountRuleAttr struct {
+	Resource string  `json:"resource"`
+	Action   string  `json:"action"`
+	IsForbid bool    `json:"is_forbid"`
+	Details  Details `json:"details"`
+}
+
+type SignerRule struct {
+	Key
+	Attributes SignerRuleAttr `json:"attributes"`
+}
+
+type SignerRuleAttr struct {
+	Resource  string  `json:"resource"`
+	Action    string  `json:"action"`
+	IsForbid  bool    `json:"is_forbid"`
+	IsDefault bool    `json:"is_default"`
+	OwnerID   string  `json:"owner_id"`
+	Details   Details `json:"details"`
 }

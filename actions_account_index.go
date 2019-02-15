@@ -1,7 +1,6 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -10,7 +9,7 @@ import (
 
 type AccountIndexAction struct {
 	Action
-	Types []xdr.Uint64
+	Types []uint64
 
 	Records []core.Account
 	Page    hal.Page
@@ -36,7 +35,7 @@ func (action *AccountIndexAction) checkAllowed() {
 func (action *AccountIndexAction) loadRecords() {
 	// pagination is turned off intentionally, coz we can't have string cursors atm
 	err := action.CoreQ().Accounts().
-		ForTypes(action.Types).
+		ForRoles(action.Types).
 		Select(&action.Records)
 	if err != nil {
 		action.Log.WithError(err).Error("failed to load accounts")

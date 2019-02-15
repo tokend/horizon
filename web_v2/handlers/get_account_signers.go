@@ -48,9 +48,10 @@ func GetAccountSigners(w http.ResponseWriter, r *http.Request) {
 }
 
 type getAccountSignersHandler struct {
-	SignersQ core2.SignerQ
-	AccountQ core2.AccountsQ
-	Log      *logan.Entry
+	SignersQ    core2.SignerQ
+	AccountQ    core2.AccountsQ
+	SignerRoleQ core2.SignerRoleQ
+	Log         *logan.Entry
 }
 
 //GetAccountSigners - returns signers for account
@@ -76,10 +77,14 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 	response := regources.SignersResponse{
 		Data: make([]regources.Signer, 0, len(signers)),
 	}
-	for i := range signers {
-		signer := resources.NewSigner(signers[i])
+	for _, signerRaw := range signers {
+		signer := resources.NewSigner(signerRaw)
 		if request.ShouldInclude(requests.IncludeTypeSignerRoles) {
-			signer.Relationships.Role = h.getRole(request, &response.Included)
+			signer.Relationships.Role, err = h.getRole(request, &response.Included, signerRaw)
+
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get role")
+			}
 		}
 		response.Data = append(response.Data, signer)
 	}
@@ -87,44 +92,48 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 	return &response, nil
 }
 
-func (h *getAccountSignersHandler) getRole(request *requests.GetAccountSigners, includes *regources.Included) *regources.Relation {
-	result := regources.Role{
-		Key: regources.Key{
-			Type: regources.TypeSignerRoles,
-			ID:   request.Address,
-		},
-		Attributes: regources.RoleAsstr{
-			Details: map[string]interface{}{
-				"name": "Name of the Mocked Role",
-			},
-		},
+func (h *getAccountSignersHandler) getRole(request *requests.GetAccountSigners,
+	includes *regources.Included, signer core2.Signer,
+) (*regources.Relation, error) {
+	if !request.ShouldInclude(requests.IncludeTypeSignerRoles) {
+		role := resources.NewSignerRoleKey(signer.RoleID)
+		return role.AsRelation(), nil
 	}
 
+	roleRaw, err := h.SignerRoleQ.GetByID(signer.RoleID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get signer role")
+	}
+
+	if roleRaw == nil {
+		return nil, errors.New("signer role not found")
+	}
+
+	role := resources.NewSignerRole(*roleRaw)
+
 	if request.ShouldInclude(requests.IncludeTypeSignerRolesRules) {
-		rules := []regources.Rule{
+		rules := []regources.SignerRule{
 			{
 				Key: regources.Key{
 					ID:   "mocked_rule_id",
 					Type: regources.TypeSignerRules,
 				},
-				Attributes: regources.RuleAttr{
+				Attributes: regources.SignerRuleAttr{
 					Resource: "NOTE: format will be changed",
 					Action:   "view",
-					Details: map[string]interface{}{
-						"name": "Name of the mocked Rule",
-					},
+					Details:  []byte{},
 				},
 			},
 		}
 
-		result.Relationships.Rules = &regources.RelationCollection{}
+		role.Relationships.Rules = &regources.RelationCollection{}
 		for i := range rules {
-			result.Relationships.Rules.Data = append(result.Relationships.Rules.Data, rules[i].GetKey())
+			role.Relationships.Rules.Data = append(role.Relationships.Rules.Data, rules[i].GetKey())
 			includes.Add(&rules[i])
 		}
 	}
 
-	includes.Add(&result)
+	includes.Add(&role)
 
-	return result.AsRelation()
+	return role.AsRelation(), nil
 }

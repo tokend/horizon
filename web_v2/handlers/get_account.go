@@ -18,9 +18,11 @@ import (
 func GetAccount(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getAccountHandler{
-		AccountsQ: core2.NewAccountsQ(coreRepo),
-		BalancesQ: core2.NewBalancesQ(coreRepo),
-		Log:       ctx.Log(r),
+		AccountsQ:    core2.NewAccountsQ(coreRepo),
+		BalancesQ:    core2.NewBalancesQ(coreRepo),
+		AccountRoleQ: core2.NewAccountRoleQ(coreRepo),
+		AccountRuleQ: core2.NewAccountRuleQ(coreRepo),
+		Log:          ctx.Log(r),
 	}
 
 	request, err := requests.NewGetAccount(r)
@@ -59,9 +61,11 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 type getAccountHandler struct {
-	AccountsQ core2.AccountsQ
-	BalancesQ core2.BalancesQ
-	Log       *logan.Entry
+	AccountsQ    core2.AccountsQ
+	BalancesQ    core2.BalancesQ
+	AccountRoleQ core2.AccountRoleQ
+	AccountRuleQ core2.AccountRuleQ
+	Log          *logan.Entry
 }
 
 //GetAccount - returns Account resources
@@ -79,7 +83,7 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		Data: resources.NewAccount(*account),
 	}
 
-	response.Data.Relationships.Role, err = h.getRole(request, &response.Included)
+	response.Data.Relationships.Role, err = h.getRole(request, &response.Included, *account)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get role")
 	}
@@ -98,17 +102,17 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 }
 
 func (h *getAccountHandler) getReferrer(account *core2.Account, request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
-	if account.Referrer == "" {
+	if account.Referrer == nil {
 		return nil, nil
 	}
 
 	if !request.ShouldInclude(requests.IncludeTypeAccountAccountReferrer) {
-		result := resources.NewAccountKey(account.Referrer)
+		result := resources.NewAccountKey(*account.Referrer)
 
 		return result.AsRelation(), nil
 	}
 
-	referrer, err := h.AccountsQ.GetByAddress(account.Referrer)
+	referrer, err := h.AccountsQ.GetByAddress(*account.Referrer)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load referrer", logan.F{
 			"referrer_address": account.Referrer,
@@ -169,36 +173,47 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *
 	return &result, nil
 }
 
-func (h *getAccountHandler) getRole(request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
+func (h *getAccountHandler) getRole(request *requests.GetAccount,
+	includes *regources.Included, account core2.Account,
+) (*regources.Relation, error) {
 	if !request.ShouldInclude(requests.IncludeTypeAccountRole) {
-		role := resources.NewRoleKey(request.Address)
+		role := resources.NewAccountRoleKey(account.RoleID)
 		return role.AsRelation(), nil
 	}
 
-	role := resources.NewRole(request.Address)
+	roleRaw, err := h.AccountRoleQ.GetByID(account.RoleID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account role by id")
+	}
+
+	if roleRaw == nil {
+		return nil, errors.New("role not found")
+	}
+
+	role := resources.NewAccountRole(*roleRaw)
+	ruleKeys := []regources.Key(nil)
 
 	if request.ShouldInclude(requests.IncludeTypeAccountRoleRules) {
-		rules := []regources.Rule{
-			resources.NewRule(),
+		rules, err := h.AccountRuleQ.FilterByIDs(roleRaw.RuleIDs...).Select()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to select account rules")
 		}
 
-		role.Relationships.Rules = &regources.RelationCollection{
-			Data: make([]regources.Key, 0, len(rules)),
-		}
-
-		for _, rule := range rules {
-			role.Relationships.Rules.Data = append(role.Relationships.Rules.Data, rule.Key)
+		for _, ruleRaw := range rules {
+			rule := resources.NewAccountRule(ruleRaw)
+			ruleKeys = append(ruleKeys, rule.Key)
 			includes.Add(&rule)
 		}
 	} else {
-		rulesKeys := []regources.Key{
-			resources.NewRuleKey(),
-		}
-		role.Relationships.Rules = &regources.RelationCollection{
-			Data: rulesKeys,
+		for _, ruleID := range roleRaw.RuleIDs {
+			ruleKeys = append(ruleKeys, resources.NewAccountRuleKey(ruleID))
 		}
 	}
 
+	role.Relationships.Rules = &regources.RelationCollection{
+		Data: ruleKeys,
+	}
 	includes.Add(&role)
+
 	return role.AsRelation(), nil
 }

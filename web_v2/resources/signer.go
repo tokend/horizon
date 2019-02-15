@@ -9,7 +9,7 @@ import (
 func NewSigner(signer core2.Signer) regources.Signer {
 	return regources.Signer{
 		Key: regources.Key{
-			ID:   signer.ID,
+			ID:   signer.PublicKey,
 			Type: regources.TypeSigners,
 		},
 		Attributes: regources.SignerAttrs{

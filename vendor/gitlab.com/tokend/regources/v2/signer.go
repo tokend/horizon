@@ -24,9 +24,9 @@ type Signer struct {
 }
 
 type SignerAttrs struct {
-	Weight   int                    `json:"weight"`
-	Identity int                    `json:"identity"`
-	Details  map[string]interface{} `json:"details"`
+	Weight   uint32  `json:"weight"`
+	Identity uint32  `json:"identity"`
+	Details  Details `json:"details"`
 }
 
 type SignerRelation struct {

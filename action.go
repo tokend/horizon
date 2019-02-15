@@ -392,7 +392,6 @@ func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
 	signers = append(signers, core.Signer{
 		Accountid: account.AccountID,
 		Publickey: account.AccountID,
-		Weight:    int32(account.Thresholds[0]),
 		Identity:  0,
 	})
 

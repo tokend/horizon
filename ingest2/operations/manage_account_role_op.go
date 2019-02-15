@@ -41,7 +41,7 @@ func (h *manageAccountRoleOpHandler) Details(op rawOperation,
 		opDetails.ManageAccountRole.CreateDetails = creationDetails
 	case xdr.ManageAccountRoleActionUpdate:
 		details := manageAccountRoleOp.Data.MustUpdateData()
-		opDetails.ManageAccountRule.RuleID = uint64(details.RoleId)
+		opDetails.ManageAccountRole.RoleID = uint64(details.RoleId)
 
 		updateDetails := &history2.UpdateAccountRoleDetails{
 			Details: internal.MarshalCustomDetails(details.Details),
@@ -53,7 +53,7 @@ func (h *manageAccountRoleOpHandler) Details(op rawOperation,
 
 		opDetails.ManageAccountRole.UpdateDetails = updateDetails
 	case xdr.ManageAccountRoleActionRemove:
-		opDetails.ManageAccountRule.RuleID = uint64(manageAccountRoleOp.Data.MustRemoveData().AccountRoleId)
+		opDetails.ManageAccountRole.RoleID = uint64(manageAccountRoleOp.Data.MustRemoveData().AccountRoleId)
 	default:
 		return history2.OperationDetails{}, errors.New("Unexpected action on manage account role")
 	}

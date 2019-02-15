@@ -23,7 +23,7 @@ type Account struct {
 	IsBlocked     bool              `json:"is_blocked"`
 	BlockReasonsI int32             `json:"block_reasons_i"`
 	BlockReasons  []regources.Flag  `json:"block_reasons"`
-	AccountTypeI  int32             `json:"account_type_i"`
+	RoleID        uint64            `json:"role_id"`
 	AccountType   string            `json:"account_type"`
 	Referrer      string            `json:"referrer"`
 	Thresholds    AccountThresholds `json:"thresholds"`
@@ -39,12 +39,10 @@ type Account struct {
 func (a *Account) Populate(ctx context.Context, ca core.Account) {
 	a.ID = ca.AccountID
 	a.AccountID = ca.AccountID
-	a.BlockReasonsI = ca.BlockReasons
-	a.IsBlocked = ca.BlockReasons > 0
-	a.AccountTypeI = ca.AccountType
-	a.Referrer = ca.Referrer
-	a.Thresholds.Populate(ca.Thresholds)
-	a.Policies.Populate(ca.Policies)
+	a.RoleID = ca.RoleID
+	if ca.Referrer != nil {
+		a.Referrer = *ca.Referrer
+	}
 	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
 	self := fmt.Sprintf("/accounts/%s", ca.AccountID)
 	a.Links.Self = lb.Link(self)

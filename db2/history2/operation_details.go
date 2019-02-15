@@ -19,6 +19,9 @@ type OperationDetails struct {
 	CreateAccount              *CreateAccountDetails              `json:"create_account,omitempty"`
 	ManageAccountRule          *ManageAccountRuleDetails          `json:"manage_account_rule,omitempty"`
 	ManageAccountRole          *ManageAccountRoleDetails          `json:"manage_account_role,omitempty"`
+	ManageSigner               *ManageSignerDetails               `json:"manage_signer"`
+	ManageSignerRule           *ManageSignerRuleDetails           `json:"manage_signer_rule"`
+	ManageSignerRole           *ManageSignerRoleDetails           `json:"manage_signer_role"`
 	ManageBalance              *ManageBalanceDetails              `json:"manage_balance,omitempty"`
 	ManageKeyValue             *ManageKeyValueDetails             `json:"manage_key_value,omitempty"`
 	ManageAsset                *ManageAssetDetails                `json:"manage_asset,omitempty"`
@@ -105,6 +108,70 @@ type ManageAccountRoleDetails struct {
 
 // UpdateAccountR0leDetails - details of new or updated role
 type UpdateAccountRoleDetails struct {
+	RuleIDs []uint64          `json:"rule_ids"`
+	Details regources.Details `json:"details"`
+}
+
+// ManageSignerDetails - details op manage signer operation
+type ManageSignerDetails struct {
+	Action        xdr.ManageSignerAction `json:"action"`
+	PublicKey     string                 `json:"public_key"`
+	CreateDetails *UpdateSignerDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateSignerDetails   `json:"update_details,omitempty"`
+}
+
+// UpdateSignerDetails - details of new or updated signer
+type UpdateSignerDetails struct {
+	RoleID   uint64            `json:"role_id"`
+	Weight   uint32            `json:"weight"`
+	Identity uint32            `json:"identity"`
+	Details  regources.Details `json:"details"`
+}
+
+// ManageSignerRuleDetails - details of ManageAccountRuleOp
+type ManageSignerRuleDetails struct {
+	Action        xdr.ManageSignerRuleAction `json:"action"`
+	RuleID        uint64                     `json:"rule_id"`
+	CreateDetails *CreateSignerRuleDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateSignerRuleDetails   `json:"update_details,omitempty"`
+}
+
+// CreateSignerRuleDetails - details of new or updated rule
+type CreateSignerRuleDetails struct {
+	Resource   xdr.SignerRuleResource `json:"resource"`
+	Action     string                 `json:"action"`
+	IsForbid   bool                   `json:"is_forbid"`
+	IsDefault  bool                   `json:"is_default"`
+	IsReadOnly bool                   `json:"is_read_only"`
+	Details    regources.Details      `json:"details"`
+}
+
+// UpdateSignerRuleDetails - details of new or updated rule
+type UpdateSignerRuleDetails struct {
+	Resource  xdr.SignerRuleResource `json:"resource"`
+	Action    string                 `json:"action"`
+	IsForbid  bool                   `json:"is_forbid"`
+	IsDefault bool                   `json:"is_default"`
+	Details   regources.Details      `json:"details"`
+}
+
+// ManageSignerRoleDetails - details of ManageAccountRoleOp
+type ManageSignerRoleDetails struct {
+	Action        xdr.ManageSignerRoleAction `json:"action"`
+	RoleID        uint64                     `json:"role_id"`
+	CreateDetails *CreateSignerRoleDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateSignerRoleDetails   `json:"update_details,omitempty"`
+}
+
+// UpdateSignerRoleDetails - details of new or updated role
+type CreateSignerRoleDetails struct {
+	RuleIDs    []uint64          `json:"rule_ids"`
+	IsReadOnly bool              `json:"is_read_only"`
+	Details    regources.Details `json:"details"`
+}
+
+// UpdateSignerRoleDetails - details of new or updated role
+type UpdateSignerRoleDetails struct {
 	RuleIDs []uint64          `json:"rule_ids"`
 	Details regources.Details `json:"details"`
 }

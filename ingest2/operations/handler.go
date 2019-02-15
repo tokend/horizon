@@ -129,6 +129,15 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeManageAccountRule: &manageAccountRuleOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
+			xdr.OperationTypeManageSigner: &manageSignerOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeManageSignerRole: &manageSignerRoleOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeManageSignerRule: &manageSignerRuleOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 		},
 	}
 }
