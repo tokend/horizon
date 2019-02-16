@@ -20,8 +20,6 @@ Limits:
         relationships:
           type: object
           required:
-            - account
-            - role
             - asset
           properties:
             account:
@@ -34,35 +32,41 @@ Limits:
               # TODO must be filled after feature/roles_rules merge
             asset:
               type: object
-              description: "asset balance related to the limit"
+              description: "asset related to the limit"
               properties:
                 data:
                   $ref: '#/components/schemas/AssetKey'
         attributes:
           type: object
           required:
-            - statsOpType
-            - isConvertNeeded
-            - dailyOut
-            - weeklyOut
-            - monthlyOut
-            - annualOut
+            - stats_op_type
+            - is_convert_needed
+            - daily_out
+            - weekly_out
+            - monthly_out
+            - annual_out
           properties:
-            statsOpType:
+            stats_op_type:
               type: int32
+              description: "defines StatsOpType for the limit"
               example: 1
-            isConvertNeeded:
+            is_convert_needed:
               type: bool
+              description: "defines is convert needed for the limit"
               example: true
-            dailyOut:
+            daily_out:
               type: string
+              description: "defines daily out limit"
               example: "10"
-            weeklyOut:
+            weekly_out:
               type: string
+              description: "defines weekly out limit"
               example: "11"
-            monthlyOut:
+            monthly_out:
               type: string
+              description: "defines monthly out limit"
               example: "12"
-            annualOut:
+            annual_out:
               type: string
+              description: "defines annual out limit"
               example: "13"

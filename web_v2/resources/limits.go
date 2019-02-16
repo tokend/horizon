@@ -8,7 +8,7 @@ import (
 
 // NewLimits creates new instance of Limits from provided one
 func NewLimits(limits core2.Limits) *regources.Limits {
-	return &regources.Limits{
+	newLimits := &regources.Limits{
 		Key: regources.Key{
 			ID:   cast.ToString(limits.ID),
 			Type: regources.TypeLimits,
@@ -21,5 +21,15 @@ func NewLimits(limits core2.Limits) *regources.Limits {
 			MonthlyOut:      regources.Amount(limits.MonthlyOut),
 			AnnualOut:       regources.Amount(limits.AnnualOut),
 		},
+		Relationships: regources.LimitsRelations{
+			Asset: NewAssetKey(limits.AssetCode).AsRelation(),
+		},
 	}
+
+	if limits.AccountId != nil {
+		newLimits.Relationships.Account = NewAccountKey(*limits.AccountId).AsRelation()
+		newLimits.Relationships.AccountRole = NewRoleKey(*limits.AccountId).AsRelation()
+	}
+
+	return newLimits
 }
