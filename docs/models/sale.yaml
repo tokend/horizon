@@ -1,0 +1,52 @@
+SaleKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "sales"
+Sale:
+  allOf:
+    - $ref: '#/components/schemas/SaleKey'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - owner
+            - base_asset
+            - default_quote_asset
+          properties:
+            owner:
+              description: "Owner of the sale"
+              type: object
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/AccountKey'
+            base_asset:
+              description: "Base asset off the sale"
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
+            quote_assets:
+              description: "Set of quote assets of the sale"
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AssetKey'
+            default_quote_asset:
+              description: "Asset set default for the sale"
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
