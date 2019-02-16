@@ -30,7 +30,9 @@
           - balances
           - balances.asset
           - balances.state
-          - referrer 
+          - referrer
+          - limits
+          - external_system_ids
         example: balances,balances.asset
     responses:
       200:

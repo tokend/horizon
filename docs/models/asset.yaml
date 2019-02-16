@@ -37,24 +37,29 @@ Asset:
             type: string
             description: "Max volume of the asset that can be in circulation"
             example: "1000.000001"
+            format: Amount
           available_for_issuance:
             type: string
             description: "Volume of the asset that is authorized to be issued by an asset owner"
             example: "20.000000"
+            format: Amount
           issued:
             type: string
             description: "Volume of the asset that is currently in circulation"
             example: "10.000000"
+            format: Amount
           pending_issuance:
             type: string
             description: "Volume of the asset locked by the system to be distributed via [asset sale↪](https://tokend.gitbook.io/knowledge-base/platform-features/crowdfunding)"
             example: "123.000123"
+            format: Amount
           policies:
             type: object
             decription: "Defines properties of the asset"
             $ref: '#/components/schemas/Mask'
           trailing_digits:
             type: integer
+            format: int32
             description: "Number of significant digits after point"
             maximum: 6
             minimum: 0

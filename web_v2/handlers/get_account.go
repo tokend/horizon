@@ -18,9 +18,11 @@ import (
 func GetAccount(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getAccountHandler{
-		AccountsQ: core2.NewAccountsQ(coreRepo),
-		BalancesQ: core2.NewBalancesQ(coreRepo),
-		Log:       ctx.Log(r),
+		AccountsQ:          core2.NewAccountsQ(coreRepo),
+		BalancesQ:          core2.NewBalancesQ(coreRepo),
+		LimitsV2Q:          core2.NewLimitsQ(coreRepo),
+		ExternalSystemIDsQ: core2.NewExternalSystemIDsQ(coreRepo),
+		Log:                ctx.Log(r),
 	}
 
 	request, err := requests.NewGetAccount(r)
@@ -35,6 +37,8 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		requests.IncludeTypeAccountAccountReferrer,
 		requests.IncludeTypeAccountRole,
 		requests.IncludeTypeAccountRoleRules,
+		requests.IncludeTypeAccountLimits,
+		requests.IncludeTypeAccountExternalSystemIDs,
 	) {
 		if !isAllowed(r, w, request.Address) {
 			return
@@ -59,9 +63,11 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 type getAccountHandler struct {
-	AccountsQ core2.AccountsQ
-	BalancesQ core2.BalancesQ
-	Log       *logan.Entry
+	AccountsQ          core2.AccountsQ
+	BalancesQ          core2.BalancesQ
+	LimitsV2Q          core2.LimitsQ
+	ExternalSystemIDsQ core2.ExternalSystemIDsQ
+	Log                *logan.Entry
 }
 
 //GetAccount - returns Account resources
@@ -94,7 +100,64 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		return nil, errors.Wrap(err, "failed to get referrer")
 	}
 
+	response.Data.Relationships.Limits, err = h.getLimits(request, &response.Included)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get limits")
+	}
+
+	response.Data.Relationships.ExternalSystemIDs, err = h.getExternalSystemIDs(request, &response.Included)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get external system IDs")
+	}
 	return &response, nil
+}
+
+func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {
+	limitsQ := h.LimitsV2Q.FilterByAccountID(request.Address)
+
+	coreLimits, err := limitsQ.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select limits for account")
+	}
+
+	result := &regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(coreLimits)),
+	}
+
+	for _, coreLimitsUnit := range coreLimits {
+		limitsUnit := resources.NewLimits(coreLimitsUnit)
+		result.Data = append(result.Data, limitsUnit.Key)
+
+		if request.ShouldInclude(requests.IncludeTypeAccountLimits) {
+			includes.Add(limitsUnit)
+		}
+	}
+
+	return result, nil
+}
+
+func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {
+	externalSystemIDsQ := h.ExternalSystemIDsQ.FilterByAccount(request.Address)
+
+	coreExternalSystemIDs, err := externalSystemIDsQ.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select external system IDs for account")
+	}
+
+	result := regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(coreExternalSystemIDs)),
+	}
+
+	for _, coreExtSysIDUnit := range coreExternalSystemIDs {
+		externalSystemID := resources.NewExternalSystemID(coreExtSysIDUnit)
+
+		result.Data = append(result.Data, externalSystemID.Key)
+
+		if request.ShouldInclude(requests.IncludeTypeAccountExternalSystemIDs) {
+			includes.Add(externalSystemID)
+		}
+	}
+	return &result, nil
 }
 
 func (h *getAccountHandler) getReferrer(account *core2.Account, request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {

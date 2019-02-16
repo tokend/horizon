@@ -19,15 +19,21 @@ const (
 	IncludeTypeAccountRole = "role"
 	// IncludeTypeAccountRoleRules - defines if rules of the account role should be included in the response
 	IncludeTypeAccountRoleRules = "role.rules"
+	// IncludeTypeAccountLimits - defines if account limits should be included in the response
+	IncludeTypeAccountLimits = "limits"
+	// IncludeTypeAccountExternalSystemIDs - defines if account external system IDs should be included in the response
+	IncludeTypeAccountExternalSystemIDs = "external_system_ids"
 )
 
 var includeTypeAccountAll = map[string]struct{}{
-	IncludeTypeAccountBalances:        {},
-	IncludeTypeAccountBalancesAsset:   {},
-	IncludeTypeAccountBalancesState:   {},
-	IncludeTypeAccountAccountReferrer: {},
-	IncludeTypeAccountRole:            {},
-	IncludeTypeAccountRoleRules:       {},
+	IncludeTypeAccountBalances:          {},
+	IncludeTypeAccountBalancesAsset:     {},
+	IncludeTypeAccountBalancesState:     {},
+	IncludeTypeAccountAccountReferrer:   {},
+	IncludeTypeAccountRole:              {},
+	IncludeTypeAccountRoleRules:         {},
+	IncludeTypeAccountLimits:            {},
+	IncludeTypeAccountExternalSystemIDs: {},
 }
 
 //GetAccount - represents params to be specified by user for Get Account handler

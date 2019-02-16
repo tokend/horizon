@@ -61,6 +61,7 @@ Added back proxy to API
 
 ## Added
 
+* `Limits` and `ExternalSystemIDs` to `/accounts` endpoint
 * `/sales` endpoint
 * `/order_book` endpoint
 
