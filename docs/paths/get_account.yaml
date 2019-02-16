@@ -33,7 +33,7 @@
           - referrer
           - limits
           - external_system_ids
-        example: balances,balances.asset,external-system-ids
+        example: balances,balances.asset
     responses:
       200:
         description: account exists

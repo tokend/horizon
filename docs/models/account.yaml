@@ -20,6 +20,8 @@ Account:
         type: object
         required:
           - balances
+          - limits
+          - external-system-ids
         properties:
           referrer:
             description: "Referrer is another account that brought this account into the system."
@@ -43,7 +45,7 @@ Account:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LimitsKey'
+                  $ref: '#/components/schemas/LimitKey'
           external-system-ids:
             description: "Defines external system IDs binded to this account"
             type: object
