@@ -1,0 +1,104 @@
+FeeKey:
+  type: object
+  required:
+      - id
+      - type
+  properties:
+      id:
+        type: string
+        example: "a343e3cbcc72928a571778f77bf2554eb5b72c79ce28bbc9d3325c60c21e5241"
+      type:
+        type: string
+        enum: 
+          - "fees"
+
+
+CalculatedFeeKey:
+  type: object
+  required:
+      - id
+      - type
+  properties:
+      id:
+        type: string
+        example: "a343e3cbcc72928a571778f77bf2554eb5b72c79ce28bbc9d3325c60c21e5241"
+      type:
+        type: string
+        enum:
+          - "calculated-fee"
+
+CalculatedFee:
+  allOf:
+  - $ref: '#/components/schemas/CalculatedFeeKey'
+  - type: object
+    properties:
+      attributes:
+        type: object
+        properties:
+          fixed:
+            type: string
+            description: "Fixed amount to pay"
+            example: "1.123456"
+          calculated_percent:
+            type: string
+            description: "Calculated percent"
+            example: "1.250500"
+
+Fee:
+  allOf:
+  - $ref: '#/components/schemas/FeeKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        properties:
+          account:
+            type: object
+            description: "Account for which fee is set"
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountKey'
+          account_role:
+            type: object
+            description: "Account role for which fee is set"
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountRoleKey'
+      attributes:
+        type: object
+        properties:
+          fixed:
+            type: string
+            description: "Fixed amount to pay"
+            example: "1.123456"
+          percent:
+            type: string
+            description: "Percent to calculate fee with. 1.0 represents 100%, 0.21 - 21%"
+            example: "0.234"
+          applied_to:
+            type: object
+            properties:
+              asset:
+                type: string
+                description: "Unique identifier of the asset"
+                example: "USD"
+              subtype:
+                type: integer
+                description: "Subtype of the fee"
+                example: 1
+              fee_type:
+                type: integer
+                description: "Type of fee"
+                minimum: 0
+                maximum: 7
+                example: 2
+              lower_bound:
+                type: string
+                description: "lower bound for fee"
+                example: "123.123456"
+              upper_bound:
+                type: string
+                description: "upper bound for fee"
+                example: "321.654321"

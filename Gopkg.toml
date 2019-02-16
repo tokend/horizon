@@ -105,7 +105,7 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/regources"
-  branch = "feature/account_relations"
+  branch = "master"
 
 [[constraint]]
   branch = "master"

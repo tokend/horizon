@@ -19,6 +19,8 @@ const (
 	IncludeTypeAccountRole = "role"
 	// IncludeTypeAccountRoleRules - defines if rules of the account role should be included in the response
 	IncludeTypeAccountRoleRules = "role.rules"
+	//IncludeTypeAccountFees - defines if fees for the account should be included in the response
+	IncludeTypeAccountFees = "fees"
 	// IncludeTypeAccountLimits - defines if account limits should be included in the response
 	IncludeTypeAccountLimits = "limits"
 	// IncludeTypeAccountExternalSystemIDs - defines if account external system IDs should be included in the response
@@ -32,6 +34,7 @@ var includeTypeAccountAll = map[string]struct{}{
 	IncludeTypeAccountAccountReferrer:   {},
 	IncludeTypeAccountRole:              {},
 	IncludeTypeAccountRoleRules:         {},
+	IncludeTypeAccountFees:            {},
 	IncludeTypeAccountLimits:            {},
 	IncludeTypeAccountExternalSystemIDs: {},
 }
