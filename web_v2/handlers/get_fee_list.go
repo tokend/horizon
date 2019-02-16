@@ -1,0 +1,123 @@
+package handlers
+
+import (
+	"fmt"
+	"net/http"
+
+	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2/core2"
+	"gitlab.com/tokend/horizon/web_v2/ctx"
+	"gitlab.com/tokend/horizon/web_v2/requests"
+	"gitlab.com/tokend/horizon/web_v2/resources"
+	"gitlab.com/tokend/regources/v2"
+)
+
+// GetFeeList - processes request to get the list of fees
+func GetFeeList(w http.ResponseWriter, r *http.Request) {
+	coreRepo := ctx.CoreRepo(r)
+	handler := getFeeListHandler{
+		FeesQ: core2.NewFeesQ(coreRepo),
+		Log:   ctx.Log(r),
+	}
+
+	request, err := requests.NewGetFeeList(r)
+	if err != nil {
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	result, err := handler.GetFeeList(request)
+	if err != nil {
+		ctx.Log(r).WithError(err).Error("failed to get fee list", logan.F{
+			"request": request,
+		})
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+
+	ape.Render(w, result)
+}
+
+type getFeeListHandler struct {
+	FeesQ    core2.FeesQ
+	AccountQ core2.AccountsQ
+	AssetsQ  core2.AssetsQ
+	Log      *logan.Entry
+}
+
+// GetFeeList returns the list of fees with related resources
+func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources.FeesResponse, error) {
+	q := h.FeesQ.Page(*request.PageParams)
+	if request.ShouldFilter(requests.FilterTypeFeeListAccount) {
+		q = q.FilterByAddress(request.Filters.Account)
+	}
+	if request.ShouldFilter(requests.FilterTypeFeeListAccountRole) {
+		q = q.FilterByAccountType(request.Filters.AccountRole)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeFeeListAsset) {
+		q = q.FilterByAsset(request.Filters.Asset)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeFeeListSubtype) {
+		q = q.FilterBySubtype(request.Filters.Subtype)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeFeeListFeeType) {
+		q = q.FilterByType(request.Filters.FeeType)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeFeeListLowerBound) {
+		q = q.FilterByLowerBound(int64(request.Filters.LowerBound))
+	}
+
+	if request.ShouldFilter(requests.FilterTypeFeeListUpperBound) {
+		q = q.FilterByUpperBound(int64(request.Filters.UpperBound))
+	}
+
+	fees, err := q.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to get asset list")
+	}
+
+	response := &regources.FeesResponse{
+		Data:  make([]regources.FeeRecord, 0, len(fees)),
+		Links: request.GetOffsetLinks(*request.PageParams),
+	}
+
+	assets := make([]string, 0, len(fees))
+	for i := range fees {
+		fee := resources.NewFee(fees[i])
+
+		fee.Relationships.Asset = resources.NewAssetKey(fees[i].Asset).AsRelation()
+		if fees[i].AccountID != "" {
+			fee.Relationships.Account = resources.NewAccountKey(fees[i].AccountID).AsRelation()
+		} else if fees[i].AccountType != core2.GlobalAccountRole {
+			fee.Relationships.AccountRole = resources.
+				NewRoleKey(fmt.Sprintf("%d", fees[i].AccountType)).
+				AsRelation()
+		}
+		assets = append(assets, fees[i].Asset)
+		response.Data = append(response.Data, fee)
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeFeeListAsset) {
+		assetRecords, err := h.AssetsQ.FilterByCodes(assets).Select()
+		if err != nil {
+			return nil, errors.Wrap(err, "Failed to get assets")
+		}
+		if assetRecords == nil {
+			return nil, errors.New("Assets not found")
+		}
+
+		for _, v := range assetRecords {
+			asset := resources.NewAsset(v)
+			response.Included.Add(&asset)
+		}
+	}
+
+	return response, nil
+}

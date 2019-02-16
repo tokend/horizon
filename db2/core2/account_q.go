@@ -34,6 +34,12 @@ func (q AccountsQ) FilterByAddress(address string) AccountsQ {
 	return q
 }
 
+//FilterByAddresses - returns q with filter by addresses
+func (q AccountsQ) FilterByAddresses(addresses []string) AccountsQ {
+	q.selector = q.selector.Where("accounts.accountid = ?", addresses)
+	return q
+}
+
 //FilterByReferrer - returns q with filter by referrer
 func (q AccountsQ) FilterByReferrer(address string) AccountsQ {
 	q.selector = q.selector.Where("accounts.referrer = ?", address)

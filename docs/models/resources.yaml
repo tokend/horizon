@@ -7,3 +7,6 @@ Resources:
     - $ref: '#/components/schemas/Balance'
     - $ref: '#/components/schemas/BalanceState'
     - $ref: '#/components/schemas/Asset'
+    - $ref: '#/components/schemas/Fee'
+    - $ref: '#/components/schemas/Limit'
+    - $ref: '#/components/schemas/ExternalSystemID'

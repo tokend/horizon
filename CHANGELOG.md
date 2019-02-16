@@ -1,5 +1,7 @@
 # Unreleased
 
+# 3.0.1-x.5
+
 ### Added
 
 * Helper "test" for quick transaction envelopes unmarshal
@@ -61,6 +63,7 @@ Added back proxy to API
 
 ## Added
 
+* `Limits` and `ExternalSystemIDs` to `/accounts` endpoint
 * `/sales` endpoint
 * `/order_book` endpoint
 

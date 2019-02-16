@@ -2,11 +2,13 @@
 
 ## Unreleased
 
-No unreleased updates
+### Added
+
+* Relations `Limits` and `ExternalSystemIDs` to Account
 
 ## 3.0.1-x.0
 
-## Changed
+### Changed
 
 * Bumped tokend/go to `3.0.2-x.0` (switched to XDR `> 3.0.1`)
 

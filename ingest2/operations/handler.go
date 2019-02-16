@@ -1,5 +1,6 @@
 package operations
 
+// todo maybe rename to effects
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"

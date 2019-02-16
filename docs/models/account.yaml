@@ -11,6 +11,21 @@ AccountKey:
         type: string
         enum: 
         - "accounts"
+
+AccountRoleKey:
+  type: object
+  required:
+      - id
+      - type
+  properties:
+      id:
+        type: string
+        example: "GBSR6JG5AYSAW7HK6EGJFYVIVN54LVGSY3ZLJ6X3IBQZ766EJABCZQTH"
+      type:
+        type: string
+        enum:
+        - "role"
+
 Account:
   allOf:
   - $ref: '#/components/schemas/AccountKey'
@@ -20,6 +35,8 @@ Account:
         type: object
         required:
           - balances
+          - limits
+          - external-system-ids
         properties:
           referrer:
             description: "Referrer is another account that brought this account into the system."
@@ -36,3 +53,19 @@ Account:
                 type: array
                 items:
                   $ref: '#/components/schemas/BalanceKey'
+          limits:
+            description: "Defines limits that are actual for this account"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LimitKey'
+          external-system-ids:
+            description: "Defines external system IDs binded to this account"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExternalSystemIDKey'

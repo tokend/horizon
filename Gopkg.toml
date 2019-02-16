@@ -101,11 +101,11 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  branch = "3.0.2-x.0"
+  branch = "feature/account_relations"
 
 [[constraint]]
-  branch = "3.0.1-x.0"
   name = "gitlab.com/tokend/regources"
+  branch = "master"
 
 [[constraint]]
   branch = "master"
@@ -132,5 +132,5 @@
   version = "1.0.0"
 
 [prune]
-  go-tests = true
   unused-packages = true
+  go-tests = true
