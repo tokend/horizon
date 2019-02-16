@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"gitlab.com/tokend/horizon/fees/fees2"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -20,6 +22,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	handler := getAccountHandler{
 		AccountsQ:          core2.NewAccountsQ(coreRepo),
 		BalancesQ:          core2.NewBalancesQ(coreRepo),
+		FeesQ:     core2.NewFeesQ(coreRepo),
 		LimitsV2Q:          core2.NewLimitsQ(coreRepo),
 		ExternalSystemIDsQ: core2.NewExternalSystemIDsQ(coreRepo),
 		Log:                ctx.Log(r),
@@ -37,6 +40,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		requests.IncludeTypeAccountAccountReferrer,
 		requests.IncludeTypeAccountRole,
 		requests.IncludeTypeAccountRoleRules,
+		requests.IncludeTypeAccountFees,
 		requests.IncludeTypeAccountLimits,
 		requests.IncludeTypeAccountExternalSystemIDs,
 	) {
@@ -66,6 +70,7 @@ type getAccountHandler struct {
 	AccountsQ          core2.AccountsQ
 	BalancesQ          core2.BalancesQ
 	LimitsV2Q          core2.LimitsQ
+	FeesQ     core2.FeesQ
 	ExternalSystemIDsQ core2.ExternalSystemIDsQ
 	Log                *logan.Entry
 }
@@ -100,6 +105,11 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		return nil, errors.Wrap(err, "failed to get referrer")
 	}
 
+	response.Data.Relationships.Fees, err = h.getFees(request, &response.Included, account)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get fees for account")
+	}
+	
 	response.Data.Relationships.Limits, err = h.getLimits(request, &response.Included)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get limits")
@@ -264,4 +274,55 @@ func (h *getAccountHandler) getRole(request *requests.GetAccount, includes *rego
 
 	includes.Add(&role)
 	return role.AsRelation(), nil
+}
+
+func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *regources.Included, account *core2.Account) (*regources.RelationCollection, error) {
+
+	coreBalances, err := h.BalancesQ.FilterByAccount(request.Address).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select balances for account")
+	}
+
+	assets := make([]string, 0, len(coreBalances))
+	for _, coreBalance := range coreBalances {
+		assets = append(assets, coreBalance.AssetCode)
+	}
+
+	forAccount, err := h.FeesQ.FilterByAddress(request.Address).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get fees for account")
+	}
+
+	forAccountRole, err := h.FeesQ.FilterByAccountType(account.AccountType).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get fees for account role")
+	}
+
+	generalFees, err := h.FeesQ.FilterByAccountType(core2.GlobalAccountRole).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get global fees")
+	}
+
+	sft := fees2.NewSmartFeeTable(forAccount)
+	sft.Update(forAccountRole)
+	sft.Update(generalFees)
+	sft.AddZeroFees(assets)
+
+	result := regources.RelationCollection{
+		Data: make([]regources.Key, 0),
+	}
+	for _, v := range sft {
+		for _, feeRecord := range v {
+			hash := resources.CalculateFeeHash(feeRecord.Fee)
+			feeKey := resources.NewFeeKey(hash)
+			result.Data = append(result.Data, feeKey)
+
+			if request.ShouldInclude(requests.IncludeTypeAccountFees) {
+				fee := resources.NewFee(feeRecord.Fee)
+				includes.Add(&fee)
+			}
+		}
+	}
+
+	return &result, nil
 }

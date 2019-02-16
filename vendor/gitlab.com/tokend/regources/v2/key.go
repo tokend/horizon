@@ -27,6 +27,8 @@ const (
 	TypeOperations                      = "operations"
 	TypeQuoteAssets                     = "quote-assets"
 	TypeSaleQuoteAssets                 = "sale-quote-assets"
+	TypeFees                            = "fees"
+	TypeCalculatedFee                   = "calculated-fee"
 	TypeTxs                             = "transactions"
 	// TypeEffectsFunded - balance received funds from other balance
 	TypeEffectsFunded = "effects-funded"

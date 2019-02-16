@@ -21,12 +21,14 @@
         🔒 The following relationships require an owner's or admin's signature to be included:
         * `balances.state`
         * `referrer`
+        * `fees`
       required: false
       style: form
       explode: false
       schema:
         type: string
         enum:
+          - fees
           - balances
           - balances.asset
           - balances.state

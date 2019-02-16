@@ -1,0 +1,128 @@
+/v3/fees:
+  get:
+    tags:
+      - Fees
+    summary: Get List of Fees
+    description: |
+      Allows to get a filtered list of `Fee` with the corresponding details.
+    operationId: getFeesList
+    parameters:
+      - name: filter[asset]
+        in: query
+        description: |
+          Filters fees by asset. Returns page of fees for provided asset
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[fee_type]
+        in: query
+        description: |
+          Filters fees by type.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[subtype]
+        in: query
+        description: |
+          Filters fees by subtype.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[account]
+        in: query
+        description: |
+          Filters fees by account address.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[account_role]
+        in: query
+        description: |
+          Filters fees by account role.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[lower_bound]
+        in: query
+        description: |
+          Filters fees by lower_bound.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[upper_bound]
+        in: query
+        description: |
+          Filters fees by upper_bound.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: |
+          Relationships may be used for the included parameter.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          enum:
+            - asset
+      - $ref: '#/components/schemas/pageNumberParam'
+      - $ref: '#/components/schemas/pageLimitParam'
+      - $ref: '#/components/schemas/sortingParam'
+    responses:
+      200:
+        description: fees exist
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/Fee'
+                included:
+                  $ref: '#/components/schemas/Resources'
+                links:
+                  type: object
+                  description: "Provides links for pagination"
+                  properties:
+                    next:
+                      type: string
+                      description: "link to the next page"
+                      example: "/v3/fees?include=asset&page[number]=2&page[limit]=15"
+                    self:
+                      type: string
+                      description: "link to the current page"
+                      example: "/v3/fees?include=asset&page[number]=1&page[limit]=15"
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: fees do not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
