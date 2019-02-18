@@ -18,10 +18,6 @@ Sale:
       properties:
         relationships:
           type: object
-          required:
-            - owner
-            - base_asset
-            - default_quote_asset
           properties:
             owner:
               description: "Owner of the sale"

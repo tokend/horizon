@@ -14,7 +14,8 @@
       style: simple
       explode: false
       schema:
-        type: int32
+        type: integer
+        format: int64
     - name: include
       in: query
       description: |
