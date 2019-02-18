@@ -13,7 +13,6 @@ type AccountEntry struct {
 	BlockReasons  []regources.Flag  `json:"block_reasons"`
 	LimitsV2      []LimitsV2        `json:"limits"`
 	Policies      AccountPolicies   `json:"policies"`
-	Signers       []Signer          `json:"signers"`
 	Thresholds    AccountThresholds `json:"thresholds"`
 }
 

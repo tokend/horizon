@@ -260,33 +260,24 @@ func (h *getAccountHandler) getRole(request *requests.GetAccount,
 	}
 
 	if roleRaw == nil {
-		return nil, errors.New("role not found")
+		return nil, errors.From(errors.New("role not found"), logan.F{
+			"id": account.RoleID,
+		})
 	}
 
 	role := resources.NewAccountRole(*roleRaw)
-	ruleKeys := []regources.Key(nil)
+	rules, err := h.AccountRuleQ.FilterByRole(roleRaw.ID).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select account rules for role")
+	}
 
-	if request.ShouldInclude(requests.IncludeTypeAccountRoleRules) {
-		rules, err := h.AccountRuleQ.FilterByIDs(roleRaw.RuleIDs...).Select()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to select account rules")
-		}
-
-		for _, ruleRaw := range rules {
-			rule := resources.NewAccountRule(ruleRaw)
-			ruleKeys = append(ruleKeys, rule.Key)
+	for _, ruleRaw := range rules {
+		rule := resources.NewAccountRule(ruleRaw)
+		role.Relationships.Rules.Data = append(role.Relationships.Rules.Data, rule.GetKey())
+		if request.ShouldInclude(requests.IncludeTypeAccountRoleRules) {
 			includes.Add(&rule)
 		}
-	} else {
-		for _, ruleID := range roleRaw.RuleIDs {
-			ruleKeys = append(ruleKeys, resources.NewAccountRuleKey(ruleID))
-		}
 	}
-
-	role.Relationships.Rules = &regources.RelationCollection{
-		Data: ruleKeys,
-	}
-	includes.Add(&role)
 
 	return role.AsRelation(), nil
 }

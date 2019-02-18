@@ -35,6 +35,8 @@
           - referrer
           - limits
           - external_system_ids
+          - role
+          - role.rules
         example: balances,balances.asset
     responses:
       200:

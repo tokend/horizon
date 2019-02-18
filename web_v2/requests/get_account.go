@@ -13,8 +13,6 @@ const (
 	IncludeTypeAccountBalancesState = "balances.state"
 	// IncludeTypeAccountAccountReferrer - defines if the account referrer should be included in the response
 	IncludeTypeAccountAccountReferrer = "referrer"
-	// IncludeTypeAccountState - defines if the account state should be included in the response
-	IncludeTypeAccountState = "state"
 	// IncludeTypeAccountRole - defines if the account role should be included in the response
 	IncludeTypeAccountRole = "role"
 	// IncludeTypeAccountRoleRules - defines if rules of the account role should be included in the response
@@ -34,7 +32,7 @@ var includeTypeAccountAll = map[string]struct{}{
 	IncludeTypeAccountAccountReferrer:   {},
 	IncludeTypeAccountRole:              {},
 	IncludeTypeAccountRoleRules:         {},
-	IncludeTypeAccountFees:            {},
+	IncludeTypeAccountFees:              {},
 	IncludeTypeAccountLimits:            {},
 	IncludeTypeAccountExternalSystemIDs: {},
 }

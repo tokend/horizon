@@ -1,0 +1,38 @@
+AccountRoleKey:
+  type: object
+  required:
+      - id
+      - type
+  properties:
+      id:
+        type: string
+        example: "4581"
+      type:
+        type: string
+        enum: 
+          - "account-roles"
+AccountRole:
+  allOf:
+  - $ref: '#/components/schemas/AccountRoleKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        required: [rules]
+        properties:
+          rules:
+            description: "Rules applied to the role"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BalanceKey'
+      attributes:
+        type: object
+        required: [details]
+        properties:
+          details: 
+            type: object
+            description: "free-form object to attach details to the role"
+            additionalProperties: true

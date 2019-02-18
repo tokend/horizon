@@ -1,7 +1,6 @@
 package resources
 
 import (
-	"encoding/json"
 	"strconv"
 
 	"gitlab.com/tokend/horizon/db2/core2"
@@ -9,56 +8,38 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-// NewAccountRule - returns a new (mocked) instance of rule
+// NewAccountRule - returns a new instance of account rule
 func NewAccountRule(rule core2.AccountRule) regources.AccountRule {
-	var details regources.Details
-	_ = json.Unmarshal([]byte(rule.Details), &details)
 	return regources.AccountRule{
 		Key: regources.Key{
 			ID:   strconv.FormatUint(rule.ID, 10),
-			Type: regources.TypeRules,
+			Type: regources.TypeAccountRules,
 		},
 		Attributes: regources.AccountRuleAttr{
-			Resource: "NOTE: format will be changed",
+			Resource: rule.Resource,
 			Action:   rule.Action,
 			IsForbid: rule.IsForbid,
-			Details:  details,
+			Details:  rule.Details,
 		},
 	}
 }
 
-// NewAccountRuleKey - returns a new (mocked) rule key
-func NewAccountRuleKey(ruleID uint64) regources.Key {
-	return regources.Key{
-		ID:   strconv.FormatUint(ruleID, 10),
-		Type: regources.TypeRules,
-	}
-}
-
-// NewAccountRule - returns a new (mocked) instance of rule
+// NewSignerRule - returns a new instance of signer rule
 func NewSignerRule(rule core2.SignerRule) regources.SignerRule {
-	var details regources.Details
-	_ = json.Unmarshal([]byte(rule.Details), &details)
 	return regources.SignerRule{
 		Key: regources.Key{
 			ID:   strconv.FormatUint(rule.ID, 10),
 			Type: regources.TypeSignerRules,
 		},
 		Attributes: regources.SignerRuleAttr{
-			Resource:  "NOTE: format will be changed",
+			Resource:  rule.Resource,
 			Action:    rule.Action,
 			IsForbid:  rule.IsForbid,
 			IsDefault: rule.IsDefault,
-			OwnerID:   rule.OwnerID,
-			Details:   details,
+			Details:   rule.Details,
 		},
-	}
-}
-
-// NewAccountRuleKey - returns a new (mocked) rule key
-func NewSignerRuleKey(ruleID uint64) regources.Key {
-	return regources.Key{
-		ID:   strconv.FormatUint(ruleID, 10),
-		Type: regources.TypeSignerRules,
+		Relationships: regources.SignerRuleRelation{
+			Owner: NewAccountKey(rule.OwnerID).AsRelation(),
+		},
 	}
 }

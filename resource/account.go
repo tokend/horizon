@@ -20,16 +20,15 @@ type Account struct {
 	} `json:"_links"`
 
 	HistoryAccount
-	IsBlocked     bool              `json:"is_blocked"`
-	BlockReasonsI int32             `json:"block_reasons_i"`
-	BlockReasons  []regources.Flag  `json:"block_reasons"`
-	RoleID        uint64            `json:"role_id"`
-	AccountType   string            `json:"account_type"`
-	Referrer      string            `json:"referrer"`
-	Thresholds    AccountThresholds `json:"thresholds"`
-	Balances      []Balance         `json:"balances"`
-	Signers
-	Policies               AccountPolicies `json:"policies"`
+	IsBlocked              bool              `json:"is_blocked"`
+	BlockReasonsI          int32             `json:"block_reasons_i"`
+	BlockReasons           []regources.Flag  `json:"block_reasons"`
+	RoleID                 uint64            `json:"role_id"`
+	AccountType            string            `json:"account_type"`
+	Referrer               string            `json:"referrer"`
+	Thresholds             AccountThresholds `json:"thresholds"`
+	Balances               []Balance         `json:"balances"`
+	Policies               AccountPolicies   `json:"policies"`
 	AccountKYC             `json:"account_kyc"`
 	ExternalSystemAccounts []regources.ExternalSystemAccountID `json:"external_system_accounts"`
 	Referrals              []Referral                          `json:"referrals"`

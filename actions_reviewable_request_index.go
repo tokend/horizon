@@ -71,29 +71,13 @@ func (action *ReviewableRequestIndexAction) checkAllowed() {
 	}
 
 	constrains := []doorman.SignerConstraint{}
-	extentions := []doorman.SignerExtension{}
-	for _, actionType := range action.RequestTypes {
-		if actionType == xdr.ReviewableRequestTypeCreateIssuance {
-			extentions = append(extentions, doorman.SignerExternsionPendingIssuance, doorman.SignerExternsionIssuanceHistory)
-		}
-		if actionType == xdr.ReviewableRequestTypeChangeRole {
-			extentions = append(extentions, doorman.SignerExternsionPendingKYC, doorman.SignerExternsionKYCHistory)
-
-		}
-		if actionType == xdr.ReviewableRequestTypeCreateSale {
-			extentions = append(extentions, doorman.SignerExternsionCrowdfundingCampaign)
-		}
+	if action.Requestor != "" {
+		constrains = append(constrains, doorman.SignerOf(action.Requestor))
 	}
-
-	for _, ext := range extentions {
-		if action.Requestor != "" {
-			constrains = append(constrains, doorman.SignerOfWithPermission(action.Requestor, ext))
-		}
-		if action.Reviewer != "" {
-			constrains = append(constrains, doorman.SignerOfWithPermission(action.Reviewer, ext))
-		}
-		constrains = append(constrains, doorman.SignerOfWithPermission(action.App.CoreInfo.AdminAccountID, ext))
+	if action.Reviewer != "" {
+		constrains = append(constrains, doorman.SignerOf(action.Reviewer))
 	}
+	constrains = append(constrains, doorman.SignerOf(action.App.CoreInfo.AdminAccountID))
 
 	action.Doorman().Check(action.R, constrains...)
 }

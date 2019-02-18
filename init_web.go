@@ -133,13 +133,11 @@ func initWebActions(app *App) {
 	// account actions
 	r.Get("/accounts/:id", &AccountShowAction{})
 	r.Get("/accounts/:id/limits", &LimitsV2AccountShowAction{})
-	r.Get("/accounts/:id/signers", &SignersIndexAction{})
 	r.Get("/accounts/:id/account_kyc", &AccountKYCAction{})
 	r.Get("/accounts/:id/balances", &AccountBalancesAction{})
 	r.Get("/accounts/:id/balances/details", &AccountDetailedBalancesAction{})
 	r.Get("/accounts/:id/fees", &AccountFeesAction{})
 
-	r.Get("/accounts/:account_id/signers/:id", &SignerShowAction{})
 	r.Get("/accounts/:account_id/operations", &OperationIndexAction{}, 1)
 	r.Get("/accounts/:account_id/payments", &OperationIndexAction{
 		Types: operationTypesPayment,

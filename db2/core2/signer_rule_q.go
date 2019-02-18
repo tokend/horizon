@@ -24,19 +24,13 @@ func NewSignerRuleQ(repo *db2.Repo) SignerRuleQ {
 			"sr.is_default",
 			"sr.owner_id",
 			"sr.details",
-		).From("signer_rules sr"),
+		).From("signer_rules sr").Join("signer_role_rules srr on srr.rule_id = sr.id"),
 	}
 }
 
-// GetByAddress loads a row from `accounts`, by address
-// returns nil, nil - if account does not exists
-func (q SignerRuleQ) GetByID(id uint64) (*SignerRule, error) {
-	return q.FilterByIDs(id).Get()
-}
-
-//FilterByAddress - returns q with filter by address
-func (q SignerRuleQ) FilterByIDs(ids ...uint64) SignerRuleQ {
-	q.selector = q.selector.Where(sq.Eq{"ar.id": ids})
+//FilterByRole - filter rules by role ID
+func (q SignerRuleQ) FilterByRole(roleID uint64) SignerRuleQ {
+	q.selector = q.selector.Where("srr.role_id = ?", roleID)
 	return q
 }
 

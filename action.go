@@ -338,7 +338,7 @@ func (action *Action) IsAccountSigner(accountId, signer string) *bool {
 	}
 
 	for i := range signers {
-		if signer == signers[i].Publickey {
+		if signer == signers[i].PublicKey {
 			*isSigner = true
 			return isSigner
 		}
@@ -371,29 +371,23 @@ func (action *Action) Signers(address string) ([]resources.Signer, error) {
 	result := make([]resources.Signer, 0, len(signers))
 	for _, signer := range signers {
 		result = append(result, resources.Signer{
-			AccountID:  signer.Publickey,
-			Weight:     int(signer.Weight),
-			SignerType: int(signer.SignerType),
-			Identity:   int(signer.Identity),
-			Name:       signer.Name,
+			PublicKey: signer.PublicKey,
+			AccountID: signer.AccountID,
+			Weight:    int(signer.Weight),
+			Role:      signer.RoleID,
+			Identity:  signer.Identity,
 		})
 	}
 	return result, nil
 }
 
-func (action *Action) GetSigners(account *core.Account) ([]core.Signer, error) {
-	var signers []core.Signer
-	err := action.CoreQ().SignersByAddress(&signers, account.AccountID)
+func (action *Action) GetSigners(account *core.Account) ([]core2.Signer, error) {
+	var signers []core2.Signer
+	signers, err := core2.NewSignerQ(action.CoreQ().GetRepo()).FilterByAccountAddress(account.AccountID).Select()
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get signers")
 		return nil, err
 	}
-
-	signers = append(signers, core.Signer{
-		Accountid: account.AccountID,
-		Publickey: account.AccountID,
-		Identity:  0,
-	})
 
 	return signers, nil
 }

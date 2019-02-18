@@ -1,7 +1,6 @@
 package resources
 
 import (
-	"encoding/json"
 	"strconv"
 
 	"gitlab.com/tokend/horizon/db2/core2"
@@ -9,51 +8,45 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-// NewAccountRole - creates role from account address
+// NewAccountRole - creates role core account Role
 func NewAccountRole(role core2.AccountRole) regources.AccountRole {
-	var details regources.Details
-	_ = json.Unmarshal([]byte(role.Details), &details)
-
 	return regources.AccountRole{
-		Key: regources.Key{
-			ID:   strconv.FormatUint(role.ID, 10),
-			Type: regources.TypeRoles,
-		},
+		Key: NewAccountRoleKey(role.ID),
 		Attributes: regources.AccountRoleAttrs{
-			Details: details,
+			Details: role.Details,
+		},
+		Relationships: regources.RoleRelation{
+			Rules: &regources.RelationCollection{},
 		},
 	}
 }
 
-// NewAccountRoleKey - creates role key from account address
-func NewAccountRoleKey(roleID uint64) regources.Key {
+//NewAccountRoleKey - returns new instance of key for account role
+func NewAccountRoleKey(id uint64) regources.Key {
 	return regources.Key{
-		ID:   strconv.FormatUint(roleID, 10),
-		Type: regources.TypeRoles,
+		ID:   strconv.FormatUint(id, 10),
+		Type: regources.TypeAccountRoles,
 	}
 }
 
-// NewAccountRole - creates role from account address
+// NewSignerRole - maps signer role
 func NewSignerRole(role core2.SignerRole) regources.SignerRole {
-	var details regources.Details
-	_ = json.Unmarshal([]byte(role.Details), &details)
-
 	return regources.SignerRole{
-		Key: regources.Key{
-			ID:   strconv.FormatUint(role.ID, 10),
-			Type: regources.TypeRoles,
-		},
+		Key: NewSignerRoleKey(role.ID),
 		Attributes: regources.SignerRoleAttrs{
-			Details: details,
-			OwnerID: role.OwnerID,
+			Details: role.Details,
+		},
+		Relationships: regources.SignerRoleRelation{
+			Owner: NewAccountKey(role.OwnerID).AsRelation(),
+			Rules: &regources.RelationCollection{},
 		},
 	}
 }
 
-// NewAccountRoleKey - creates role key from account address
-func NewSignerRoleKey(roleID uint64) regources.Key {
+//NewSignerRoleKey - creates new key for signer role
+func NewSignerRoleKey(id uint64) regources.Key {
 	return regources.Key{
-		ID:   strconv.FormatUint(roleID, 10),
+		ID:   strconv.FormatUint(id, 10),
 		Type: regources.TypeSignerRoles,
 	}
 }

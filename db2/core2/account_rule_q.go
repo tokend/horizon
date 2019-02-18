@@ -6,14 +6,14 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-// AccountRoleQ is a helper struct to aid in configuring queries that loads
-// accountRole structs.
+// AccountRuleQ is a helper struct to aid in configuring queries that loads
+// accountRule structs.
 type AccountRuleQ struct {
 	repo     *db2.Repo
 	selector sq.SelectBuilder
 }
 
-// NewAccountRoleQ - creates new instance of AccountRoleQ
+// NewAccountRuleQ - creates new instance of AccountRuleQ
 func NewAccountRuleQ(repo *db2.Repo) AccountRuleQ {
 	return AccountRuleQ{
 		repo: repo,
@@ -22,25 +22,19 @@ func NewAccountRuleQ(repo *db2.Repo) AccountRuleQ {
 			"ar.action",
 			"ar.is_forbid",
 			"ar.details",
-		).From("account_rules ar"),
+		).From("account_rules ar").Join("account_role_rules arr on arr.rule_id = ar.id"),
 	}
 }
 
-// GetByAddress loads a row from `accounts`, by address
-// returns nil, nil - if account does not exists
-func (q AccountRuleQ) GetByID(id uint64) (*AccountRule, error) {
-	return q.FilterByIDs(id).Get()
-}
-
-//FilterByAddress - returns q with filter by address
-func (q AccountRuleQ) FilterByIDs(ids ...uint64) AccountRuleQ {
-	q.selector = q.selector.Where(sq.Eq{"ar.id": ids})
+//FilterByRole - filter rules by role ID
+func (q AccountRuleQ) FilterByRole(roleID uint64) AccountRuleQ {
+	q.selector = q.selector.Where("arr.role_id = ?", roleID)
 	return q
 }
 
-// Get - loads a row from `account_roles`
+// Get - loads a row from `account_rules`
 // returns nil, nil - if account does not exists
-// returns error if more than one AccountRole found
+// returns error if more than one AccountRule found
 func (q AccountRuleQ) Get() (*AccountRule, error) {
 	var result AccountRule
 	err := q.repo.Get(&result, q.selector)
@@ -64,7 +58,7 @@ func (q AccountRuleQ) Select() ([]AccountRule, error) {
 			return nil, nil
 		}
 
-		return nil, errors.Wrap(err, "failed to load account account rules")
+		return nil, errors.Wrap(err, "failed to load account rules")
 	}
 
 	return result, nil

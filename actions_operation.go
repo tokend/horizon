@@ -287,7 +287,7 @@ func (action *OperationIndexAction) loadPage() {
 
 func (action *OperationIndexAction) checkAllowed() {
 	err := action.Doorman().Check(action.R, doorman.SignerOf(action.AccountFilter),
-		doorman.SignerOfWithPermission(action.App.CoreInfo.AdminAccountID, doorman.SignerExternsionOperationsList))
+		doorman.SignerOf(action.App.CoreInfo.AdminAccountID))
 	if err != nil {
 		action.Err = &problem.NotAllowed
 		return
