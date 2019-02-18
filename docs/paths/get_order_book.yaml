@@ -4,12 +4,12 @@
       - OrderBooks
     summary: Get OrderBook by ID
     description: |
-                  Allows to get `OrderBook` with the corresponding details.
+                  Returns the list of the placed offers without private details.
     operationId: getOrderBookByID
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the order book
+      description: "The ID of the order book: 0 for secondary market, sale ID - otherwise"
       required: true
       style: simple
       explode: false
@@ -18,7 +18,7 @@
         format: int64
         examle: 0
     - name: base_asset
-      in: path
+      in: query
       description: The base asset of the requested offers
       required: false
       style: simple
@@ -28,7 +28,7 @@
         format: valid assetCode
         example: "BTC"
     - name: quote_asset
-      in: path
+      in: query
       description: The quote asset the requested offers
       required: false
       style: simple
@@ -38,7 +38,7 @@
         format: valid assetCode
         example: "ETH"
     - name: is_buy
-      in: path
+      in: query
       description: Defines whether searching of offer on buying `base_asset`, selling it, or both
       required: false
       style: simple
@@ -73,7 +73,9 @@
                   items:
                     $ref: '#/components/schemas/OrderBookEntry'
                 included:
-                  $ref: '#/components/schemas/Resources'
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter
         content:
