@@ -14,7 +14,9 @@
       style: simple
       explode: false
       schema:
-        type: string
+        type: integer
+        format: int64
+        examle: 0
     - name: base_asset
       in: path
       description: The base asset of the requested offers

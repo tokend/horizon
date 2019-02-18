@@ -39,10 +39,12 @@ OrderBookEntry:
             type: string
             format: float
             description: "defines base amount of the offer"
+            example: "33.050000"
           quote_amount:
             type: string
             format: float
             description: "defines quote amount of the offer"
+            example: "1092.302500"
           created_at:
             type: string
             description: "defines time when the offer was created"
