@@ -1,0 +1,148 @@
+/v3/offers:
+  get:
+    tags:
+      - Offers
+    summary: Get List of Offers
+    description: |
+                  Allows to get a filtered list of `Offer` with the corresponding details.\n
+                  🔒 Must be signed by signer of:\n
+                    1. master account if no filters applied.\n
+                    2. account by which filter was requested\n
+    operationId: getOffers
+    parameters:
+    - name: filter[base_balance]
+      in: query
+      description: |
+                    Filters offers by specified base balance ID
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        format: valid balanceID
+        example: "BDLXKLLVS6UIQEDYCZKIC5222GGQLCOTHM4BWXVCBDQMJTUWUFUATV2Q"
+    - name: filter[quote_balance]
+      in: query
+      description: |
+                    Filters offers by specified quote balance ID
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        format: valid balanceID
+        example: "BPGIKLLVS6UIQEDYCJRFH53GJ7GQLCOTHM4BWXVCBDQMJTUWUDPQTVLO"
+    - name: filter[base_asset]
+      in: query
+      description: |
+                    Filters offers by specified base asset core
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        format: valid assetCode
+        example: "BTC"
+    - name: filter[quote_asset]
+      in: query
+      description: |
+                    Filters offers by specified quote asset core
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        format: valid assetCode
+        example: "ETH"
+    - name: filter[owner]
+      in: query
+      description: |
+                    Filters offers by specified account that created the offer
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        format: valid accountID
+        example: "GAULFBQKQTFHHHZEIRMYVCGTY47FKWEW7P2BY2YT45HAEODAIJUJH23T"
+    - name: filter[order_book]
+      in: query
+      description: |
+                   Filters offers by specified account that created the offer
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: number
+        format: int64
+        example: 2
+        description: "defines whether searching of sale offers or trade offers (0 - secondary market, saleId - for specific sale, -1 - to all, except )"
+    - name: filter[is_buy]
+      in: query
+      description: |
+                    Filters offers by specified account that created the offer
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: number
+        format: int32
+        example: 1
+        description: "defines whether searching of offer on buying base_asset, selling it, or both"
+    - name: include
+      in: query
+      description: |
+                    Relationships may be used for the included parameter.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+          - base_asset
+          - quote_asset
+    - $ref: '#/components/schemas/pageNumberParam'
+    - $ref: '#/components/schemas/pageLimitParam'
+    - $ref: '#/components/schemas/sortingParam'
+    responses:
+      200:
+        description: offer exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/Offer'
+                included:
+                  $ref: '#/components/schemas/Resources'
+                links:
+                  type: object
+                  description: "Provides links for pagination"
+                  properties:
+                    next:
+                      type: string
+                      description: "link to the next page"
+                      example: "/v3/offers?include=owner&page[number]=2&page[limit]=15"
+                    self:
+                      type: string
+                      description: "link to the current page"
+                      example: "/v3/offers?include=owner&page[number]=1&page[limit]=15"
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: offer does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

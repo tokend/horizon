@@ -58,9 +58,15 @@ Offer:
             format: Amount
             description: "defines the price of offer"
           fee:
-            $ref: '#/components/schemas/CalculatedFeeKey'
+            $ref: '#/components/schemas/CalculatedFee'
       relashionships:
         type: object
+        required:
+          - owner
+          - base_asset
+          - base_balance
+          - quote_asset
+          - quote_balance
         properties:
           owner:
             type: object
