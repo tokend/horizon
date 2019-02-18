@@ -31,10 +31,10 @@ func (h *effectsProvider) BalanceEffect(balanceID xdr.BalanceId,
 	effect *history2.Effect) history2.ParticipantEffect {
 	balance := h.MustBalance(balanceID)
 	return history2.ParticipantEffect{
-		AccountID:      balance.AccountID,
-		BalanceAddress: &balance.Address,
-		AssetCode:      &balance.AssetCode,
-		Effect:         effect,
+		AccountID: balance.AccountID,
+		BalanceID: &balance.ID,
+		AssetCode: &balance.AssetCode,
+		Effect:    effect,
 	}
 }
 

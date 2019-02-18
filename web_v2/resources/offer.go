@@ -2,9 +2,10 @@ package resources
 
 import (
 	"fmt"
+	"time"
+
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/regources/v2"
-	"time"
 )
 
 // NewOffer creates new instance of Offer from provided one

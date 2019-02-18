@@ -2,19 +2,19 @@ openapi: 3.0.0
 info:
   title: Horizon
   description: |
-    Horizon is the client-facing REST API module which consumes data from the core of the system and makes it more convenient to use by
+    Horizon is the client-facing REST API module that consumes data from the core of the system and makes it more convenient to use the
     client facing application. It allows submitting transactions to the network,
-    read history of operations and check state of the entities.
+    reading history of operations, and checking the state of entities.
     ### Overview
     Horizon uses [JSON:API](https://jsonapi.org/) convention to format requests and responses.
     The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", 
     and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt>).
     ### Security
-    TokenD uses the Ed25519 algorithm for authorizing any request or read the private data. The use of such cryptographic proof allows building the system where transfer of secrets in an open form is not necessary, which significantly improves the security. Thus, an attacker who has access to one of the servers will not be able to compromise the secrets of users.
+    TokenD uses the Ed25519 algorithm for authorizing any request or read private data. The use of such cryptographic proof allows building a system where transfer of secrets in an open form is not necessary, which significantly improves security. Thus, an attacker who has access to one of the servers will not be able to compromise users' secrets.
 
-    Request signature implementation is based on IETF HTTP Signatures draft RFC except of implicit headers parameter is not supported, clients must explicitly specify headers used for signing.
+    Request signature implementation is based on IETF HTTP Signatures draft RFC. Implicit headers parameter is not supported; clients must explicitly specify headers used for signing.
 
-    The signature algorithm supported is ed25519-sha256 which uses public signer key as `keyId`.
+    The signature algorithm supported is ed25519-sha256, which uses public signer key as `keyId`.
 
     Both Signature and Authorization HTTP authentication schemas are supported.
 
@@ -35,16 +35,16 @@ info:
     (request-target): get /users?type=2
     ```
 
-    > Notice that header names and HTTP method are lowercased.
+    > Note that header names and HTTP method are lowercased.
 
-    The next step is a conversion of the signing string to a byte array using `UTF-8` encoding and taking `SHA-256` hash of it.
+    The next step is to convert the signing string to a byte array using `UTF-8` encoding and to take its `SHA-256` hash.
 
-    For the signing string above the hash would be:
+    For the signing string above, hash would be:
     ```text
     6fcbee4b0a8932784644d33b360bd3eef389ed37dfd66f17e4bfa910ba9d616a
     ```
 
-    Now you have to sign the hash with the private key and encode result in `Base64`. For seed `SCDMOOXVNMO6SA22AYUMZDIGLDJMBUTVEGB73FFNTLFJILBJWIU4NQ3D` the encoded signature would be:
+    Now, you have to sign hash with the private key and encode the result in `Base64`. For seed such as `SCDMOOXVNMO6SA22AYUMZDIGLDJMBUTVEGB73FFNTLFJILBJWIU4NQ3D`, the encoded signature would be:
 
     ```text
     w/y3EsliTmQPC6MS88N/kjU/hFVxlIdhFhzfRGv4yIsSokgMpxVqxcC/CmUsAN4t3BKpskGG7+JEWryV8NXvCg==

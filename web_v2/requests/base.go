@@ -1,12 +1,13 @@
 package requests
 
 import (
-	"gitlab.com/tokend/go/amount"
 	"net/http"
 	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"gitlab.com/tokend/go/amount"
 
 	"gitlab.com/distributed_lab/figure"
 
@@ -175,6 +176,29 @@ func (r *base) getUint64(name string) (uint64, error) {
 	}
 
 	return strconv.ParseUint(strVal, 0, 64)
+}
+
+func (r *base) getInt64(name string) (int64, error) {
+	strVal := r.getString(name)
+	if strVal == "" {
+		return 0, nil
+	}
+
+	return strconv.ParseInt(strVal, 0, 64)
+}
+
+func (r *base) getInt32(name string) (int32, error) {
+	strVal := r.getString(name)
+	if strVal == "" {
+		return 0, nil
+	}
+
+	raw, err := strconv.ParseInt(strVal, 0, 32)
+	if err != nil {
+		return 0, errors.Wrap(err, "overflow during int32 parsing")
+	}
+
+	return int32(raw), nil
 }
 
 func (r *base) getFilters(supportedFilters map[string]struct{}) (map[string]string, error) {

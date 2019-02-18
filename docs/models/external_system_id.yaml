@@ -1,0 +1,62 @@
+ExternalSystemIDKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "1"
+    type:
+      type: string
+      enum:
+        - "external-system-ids"
+
+ExternalSystemID:
+  allOf:
+  - $ref: '#/components/schemas/ExternalSystemIDKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        required:
+          - account
+        properties:
+          account:
+            type: object
+            description: "specifies to which account this external system ID is binded"
+            properties:
+              data:
+                $ref: '#/components/schemas/AccountKey'
+      attributes:
+        type: object
+        required:
+          - external_system_type
+          - data
+          - is_deleted
+          - expires_at
+          - binded_at
+        properties:
+          external_system_type:
+            type: integer
+            format: int32
+            description: "type of the external system"
+            example: 1
+          data:
+            type: string
+            description: "identifier of account in external system."
+            example: "0x34C274CA68d7F5bd39b855194Dc3382Fd99aee58"
+          is_deleted:
+            type: bool
+            description: "if true, after expiration this external system ID will not be released back to bool, but will be removed"
+            example: false
+          expires_at:
+            type: string
+            description: "after expiration time this ID can be binded to another account in the system"
+            format: "date-time"
+            example: "2012-11-01T22:08:41+00:00"
+          binded_at:
+            type: string
+            description: "when external system ID was binded"
+            example: "2012-10-30T22:08:41+00:00"
+            format: "date-time"

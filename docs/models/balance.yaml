@@ -25,10 +25,12 @@ BalanceState:
           available:
             type: string
             example: "1200.123456"
-            description: "Amount available to be spent by account"
+            format: Amount
+            description: "Amount available to be spent by the account"
           locked:
             type: string
             example: "10.123456"
+            format: Amount
             description: "Amount locked on the balance by some operation (ex: ManageOffer, CreateWithdrawalRequest, etc.) and controlled by the system."
 BalanceKey:
   type: object

@@ -9,7 +9,7 @@
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the account
+      description: Unique identifier of account
       required: true
       style: simple
       explode: false
@@ -18,19 +18,23 @@
     - name: include
       in: query
       description: |
-        🔒 The following relationships require signature of owner or admin to be included:
+        🔒 The following relationships require an owner's or admin's signature to be included:
         * `balances.state`
         * `referrer`
+        * `fees`
       required: false
       style: form
       explode: false
       schema:
         type: string
         enum:
+          - fees
           - balances
           - balances.asset
           - balances.state
-          - referrer 
+          - referrer
+          - limits
+          - external_system_ids
         example: balances,balances.asset
     responses:
       200:
@@ -55,13 +59,13 @@
             schema:
               $ref: '#/components/schemas/Errors'
       401:
-        description: provided invalid siganture or signer is not authrozied to access specified resources
+        description: invalid signature is provided or a signer is not authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:
               $ref: '#/components/schemas/Errors'
       404:
-        description: account does not exist
+        description: such an account does not exist
         content:
           application/vnd.api+json:
             schema:
