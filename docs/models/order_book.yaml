@@ -1,0 +1,65 @@
+OrderBookEntryKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "QUOTE84651:BASE899:0:f:66110000"
+    type:
+      type: string
+      enum:
+        - "order-book-entries"
+
+OrderBookEntry:
+  allOf:
+  - $ref: '#/components/schemas/OrderBookEntryKey'
+  - type: object
+    properties:
+      attributes:
+        type: object
+        required:
+          - is_buy
+          - price
+          - base_amount
+          - quote_amount
+          - created_at
+        properties:
+          is_buy:
+            type: bool
+            description: "defines whether searching of offer on buying base_asset, selling it, or both"
+            example: false
+          price:
+            type: string
+            format: float
+            description: "defines the price of the offer"
+            example: "33.050000"
+          base_amount:
+            type: string
+            format: float
+            description: "defines base amount of the offer"
+          quote_amount:
+            type: string
+            format: float
+            description: "defines quote amount of the offer"
+          created_at:
+            type: string
+            description: "defines time when the offer was created"
+            format: "date-time"
+            example: "2012-11-01T22:08:41+00:00"
+      relationships:
+        type: object
+        properties:
+          base_asset:
+            type: object
+            description: "defines the base asset of the offer"
+            properties:
+              data:
+                $ref: '#/components/schemas/Asset'
+          quote_asset:
+            type: object
+            description: "defines the quote asset of the offer"
+            properties:
+              data:
+                $ref: '#/components/schemas/Asset'
