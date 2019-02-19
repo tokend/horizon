@@ -22,13 +22,25 @@ func NewAccountRuleQ(repo *db2.Repo) AccountRuleQ {
 			"ar.action",
 			"ar.is_forbid",
 			"ar.details",
-		).From("account_rules ar").Join("account_role_rules arr on arr.rule_id = ar.id"),
+		).From("account_rules ar"),
 	}
 }
 
 //FilterByRole - filter rules by role ID
 func (q AccountRuleQ) FilterByRole(roleID uint64) AccountRuleQ {
-	q.selector = q.selector.Where("arr.role_id = ?", roleID)
+	q.selector = q.selector.Join("account_role_rules arr on arr.rule_id = ar.id").Where("arr.role_id = ?", roleID)
+	return q
+}
+
+//FilterByID - filters account rules by id
+func (q AccountRuleQ) FilterByID(id uint64) AccountRuleQ {
+	q.selector = q.selector.Where("ar.id = ?", id)
+	return q
+}
+
+// Page - returns Q with specified limit and offset params
+func (q AccountRuleQ) Page(params db2.OffsetPageParams) AccountRuleQ {
+	q.selector = params.ApplyTo(q.selector, "ar.id")
 	return q
 }
 

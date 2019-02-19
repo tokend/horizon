@@ -114,6 +114,8 @@ func initWebV2Actions(app *App) {
 
 	m.Get("/v3/account_roles/{id}", handlers.GetAccountRole)
 	m.Get("/v3/account_roles", handlers.GetAccountRoleList)
+	m.Get("/v3/account_rules/{id}", handlers.GetAccountRule)
+	m.Get("/v3/account_rules", handlers.GetAccountRuleList)
 
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {
