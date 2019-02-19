@@ -31,7 +31,7 @@ func GetFeeList(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.GetFeeList(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get fee list", logan.F{
+		ctx.Log(r).WithError(err).Error("failed to get fee list ", logan.F{
 			"request": request,
 		})
 		ape.RenderErr(w, problems.InternalError())
@@ -80,7 +80,7 @@ func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources
 
 	fees, err := q.Select()
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get asset list")
+		return nil, errors.Wrap(err, "Failed to get fee list")
 	}
 
 	response := &regources.FeesResponse{

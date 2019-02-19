@@ -28,7 +28,7 @@ func NewFeesQ(repo *db2.Repo) FeesQ {
 // Page - returns Q with specified limit and offset params
 func (q FeesQ) Page(params db2.OffsetPageParams) FeesQ {
 	order := string(params.Order)
-	orderBys := []string{"f.hash " + order, "f.lower_bound " + order, "f.upper_bound" + order}
+	orderBys := []string{"f.hash " + order, "f.lower_bound " + order, "f.upper_bound " + order}
 	q.selector = params.ApplyTo(q.selector.OrderBy(orderBys...))
 	return q
 }
