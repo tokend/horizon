@@ -178,6 +178,17 @@ func (r *base) getUint64(name string) (uint64, error) {
 	return strconv.ParseUint(strVal, 0, 64)
 }
 
+func (r *base) getUint64ID() (uint64, error) {
+	result, err := r.getUint64("id")
+	if err != nil {
+		return 0, validation.Errors{
+			"id": err,
+		}
+	}
+
+	return result, nil
+}
+
 func (r *base) getInt64(name string) (int64, error) {
 	strVal := r.getString(name)
 	if strVal == "" {

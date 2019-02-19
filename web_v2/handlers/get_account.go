@@ -40,8 +40,6 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	if request.ShouldIncludeAny(
 		requests.IncludeTypeAccountBalancesState,
 		requests.IncludeTypeAccountAccountReferrer,
-		requests.IncludeTypeAccountRole,
-		requests.IncludeTypeAccountRoleRules,
 		requests.IncludeTypeAccountFees,
 		requests.IncludeTypeAccountLimits,
 		requests.IncludeTypeAccountExternalSystemIDs,
@@ -254,7 +252,7 @@ func (h *getAccountHandler) getRole(request *requests.GetAccount,
 		return role.AsRelation(), nil
 	}
 
-	roleRaw, err := h.AccountRoleQ.GetByID(account.RoleID)
+	roleRaw, err := h.AccountRoleQ.FilterByID(account.RoleID).Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account role by id")
 	}

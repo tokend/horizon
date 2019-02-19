@@ -23,13 +23,7 @@ func NewAccountRoleQ(repo *db2.Repo) AccountRoleQ {
 	}
 }
 
-// GetByAddress loads a row from `accounts`, by address
-// returns nil, nil - if account does not exists
-func (q AccountRoleQ) GetByID(id uint64) (*AccountRole, error) {
-	return q.FilterByID(id).Get()
-}
-
-//FilterByAddress - returns q with filter by address
+//FilterByID - returns q with filter by id of account role
 func (q AccountRoleQ) FilterByID(id uint64) AccountRoleQ {
 	q.selector = q.selector.Where("ar.id = ?", id)
 	return q

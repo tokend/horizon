@@ -112,6 +112,8 @@ func initWebV2Actions(app *App) {
 
 	m.Get("/v3/order_book/{id}", handlers.GetOrderBook)
 
+	m.Get("/v3/account_roles/{id}", handlers.GetAccountRole)
+
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))

@@ -16,7 +16,7 @@ func NewAccountRole(role core2.AccountRole) regources.AccountRole {
 			Details: role.Details,
 		},
 		Relationships: regources.RoleRelation{
-			Rules: &regources.RelationCollection{},
+			Rules: regources.RelationCollection{},
 		},
 	}
 }
