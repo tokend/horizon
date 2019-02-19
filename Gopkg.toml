@@ -100,10 +100,10 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  revision = "22bb9b420a7fe8509b47db9aea926ec6a26a29e2"
+  branch = "master"
 
 [[constraint]]
-  branch = "feature/account_role"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
