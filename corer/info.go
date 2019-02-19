@@ -22,11 +22,7 @@ type Info struct {
 	BaseAssets []string `json:"base_assets"`
 
 	// MasterAccountID - account ID of master
-	MasterAccountID string `json:"master_account_id"`
-	// CommissionAccountID - account ID of commission account
-	CommissionAccountID string `json:"commission_account_id"`
-	// OperationalAccountID - account ID of operational account
-	OperationalAccountID string `json:"operational_account_id"`
+	AdminAccountID string `json:"admin_account_id"`
 
 	// MasterAccountIDXDR - masterAccountID parsed into xdr.AccountID
 	MasterAccountIDXDR xdr.AccountId `json:"-"`
@@ -46,17 +42,13 @@ func (i *Info) validate() error {
 		return errorProvider("NetworkPassphrase")
 	}
 
-	if i.MasterAccountID == "" {
-		return errorProvider("MasterAccountID")
+	if i.AdminAccountID == "" {
+		return errorProvider("AdminAccountID")
 	}
 
-	err := i.MasterAccountIDXDR.SetAddress(i.MasterAccountID)
+	err := i.MasterAccountIDXDR.SetAddress(i.AdminAccountID)
 	if err != nil {
 		return errorProvider("MasterAccountID is invalid")
-	}
-
-	if i.CommissionAccountID == "" {
-		return errorProvider("CommissionAccountID")
 	}
 
 	if i.TxExpirationPeriod <= 0 {

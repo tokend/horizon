@@ -1,6 +1,8 @@
 package resources
 
 import (
+	"strconv"
+
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/regources/v2"
 )
@@ -9,16 +11,23 @@ import (
 func NewSigner(signer core2.Signer) regources.Signer {
 	return regources.Signer{
 		Key: regources.Key{
-			ID:   signer.ID,
+			ID:   signer.PublicKey,
 			Type: regources.TypeSigners,
 		},
 		Attributes: regources.SignerAttrs{
 			Weight:   signer.Weight,
 			Identity: signer.Identity,
-			// TODO: FIX ME after roles
-			Details: map[string]interface{}{
-				"name": signer.Name,
-			},
+			Details:  signer.Details,
+		},
+		Relationships: regources.SignerRelation{
+			Role: regources.Key{
+				ID:   strconv.FormatUint(signer.RoleID, 10),
+				Type: regources.TypeSignerRoles,
+			}.AsRelation(),
+			Account: regources.Key{
+				ID:   signer.AccountID,
+				Type: regources.TypeAccounts,
+			}.AsRelation(),
 		},
 	}
 }

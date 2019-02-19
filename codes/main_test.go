@@ -20,7 +20,7 @@ func TestCodes(t *testing.T) {
 	Convey("TransactionResultCode", t, func() {
 		for _, code := range xdr.TransactionResultCodeAll {
 			message := getMessage(code.ShortString())
-			if message == "" || message == code.ShortString()  {
+			if message == "" || message == code.ShortString() {
 				t.Errorf("Expected message not to be blank for %s", code.ShortString())
 			}
 		}
@@ -28,7 +28,7 @@ func TestCodes(t *testing.T) {
 	Convey("OperationResultCode", t, func() {
 		for _, code := range xdr.OperationResultCodeAll {
 			message := getMessage(code.ShortString())
-			if message == "" || message == code.ShortString(){
+			if message == "" || message == code.ShortString() {
 				t.Errorf("Expected message not to be blank for %s", code.ShortString())
 			}
 		}
@@ -38,8 +38,8 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
-	Convey("SetOptionsResultCode", t, func() {
-		for _, code := range xdr.SetOptionsResultCodeAll {
+	Convey("ManageSignerResultCode", t, func() {
+		for _, code := range xdr.ManageSignerResultCodeAll {
 			checkCode(t, code)
 		}
 	})
@@ -48,8 +48,13 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
-	Convey("ManageAccountResultCode", t, func() {
-		for _, code := range xdr.ManageAccountResultCodeAll {
+	Convey("ManageSignerRoleResultCode", t, func() {
+		for _, code := range xdr.ManageSignerRoleResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+	Convey("ManageSignerRuleResultCode", t, func() {
+		for _, code := range xdr.ManageSignerRuleResultCodeAll {
 			checkCode(t, code)
 		}
 	})
@@ -128,7 +133,7 @@ func TestCodes(t *testing.T) {
 		}
 	})
 	Convey("Create KYC request", t, func() {
-		for _, code := range xdr.CreateUpdateKycRequestResultCodeAll {
+		for _, code := range xdr.CreateChangeRoleRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
@@ -187,7 +192,7 @@ func TestCodes(t *testing.T) {
 		}
 	})
 
-	Convey("Cancel Sale Request", t, func() {
+	Convey("Cancel CreateSale Request", t, func() {
 		for _, code := range xdr.CancelSaleCreationRequestResultCodeAll {
 			checkCode(t, code)
 		}

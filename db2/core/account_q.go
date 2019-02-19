@@ -2,10 +2,10 @@ package core
 
 import (
 	"database/sql"
+
 	"gitlab.com/tokend/horizon/db2"
 
 	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/go/xdr"
 )
 
 var _ AccountQI = &AccountQ{}
@@ -14,7 +14,7 @@ type AccountQI interface {
 	// returns nil, nil if account not found
 	ByAddress(address string) (*Account, error)
 	// filters by account type
-	ForTypes(types []xdr.AccountType) AccountQI
+	ForRoles(types []uint64) AccountQI
 	// performs select with specified filters
 	Select(destination interface{}) error
 	// filters by account ids
@@ -46,7 +46,7 @@ func (q *Q) Accounts() AccountQI {
 
 func (q *AccountQ) ByAddress(address string) (*Account, error) {
 	result := new(Account)
-	query := selectAccount.Limit(1).Where("accountid = ?", address)
+	query := selectAccount.Limit(1).Where("account_id = ?", address)
 	err := q.parent.Get(result, query)
 	if q.parent.NoRows(err) {
 		return nil, nil
@@ -54,11 +54,11 @@ func (q *AccountQ) ByAddress(address string) (*Account, error) {
 	return result, err
 }
 
-func (q *AccountQ) ForTypes(types []xdr.AccountType) AccountQI {
+func (q *AccountQ) ForRoles(types []uint64) AccountQI {
 	if q.Err != nil {
 		return q
 	}
-	q.sql = q.sql.Where(sq.Eq{"account_type": types})
+	q.sql = q.sql.Where(sq.Eq{"role_id": types})
 	return q
 }
 
@@ -77,12 +77,12 @@ func (q *AccountQ) WithAccountKYC() AccountQI {
 	}
 
 	q.sql = q.sql.
-		LeftJoin("account_KYC ak on (ak.accountid = a.accountid)").
+		LeftJoin("account_KYC ak on (ak.accountid = a.account_id)").
 		Columns("ak.KYC_data as account_kyc_data")
 	return q
 }
 
-func (q *AccountQ)PageV2(page db2.PageQueryV2) AccountQI {
+func (q *AccountQ) PageV2(page db2.PageQueryV2) AccountQI {
 	if q.Err != nil {
 		return q
 	}
@@ -102,7 +102,7 @@ func (q *AccountQ) ForAddresses(addresses ...string) AccountQI {
 	if q.Err != nil {
 		return q
 	}
-	q.sql = q.sql.Where(sq.Eq{"a.accountid": addresses})
+	q.sql = q.sql.Where(sq.Eq{"a.account_id": addresses})
 	return q
 }
 
@@ -119,12 +119,8 @@ func (q *AccountQ) First() (*Account, error) {
 }
 
 var selectAccount = sq.Select(
-	"a.accountid",
-	"a.recoveryid",
-	"a.thresholds",
-	"a.account_type",
-	"a.block_reasons",
+	"a.account_id",
 	"a.referrer",
-	"a.policies",
-	"a.kyc_level",
+	"a.sequential_id",
+	"a.role_id",
 ).From("accounts a")

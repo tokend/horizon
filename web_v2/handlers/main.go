@@ -17,7 +17,7 @@ func isAllowed(r *http.Request, w http.ResponseWriter, dataOwners ...string) boo
 	for _, dataOwner := range dataOwners {
 		constraints = append(constraints, doorman.SignerOf(dataOwner))
 	}
-	constraints = append(constraints, doorman.SignerOf(ctx.CoreInfo(r).MasterAccountID))
+	constraints = append(constraints, doorman.SignerOf(ctx.CoreInfo(r).AdminAccountID))
 
 	err := ctx.Doorman(r, constraints...)
 	switch err {

@@ -107,9 +107,10 @@ func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.Partici
 		if request.ShouldInclude(requests.IncludeTypeHistoryOperation) {
 			op := resources.NewOperation(*effects[i].Operation)
 
+			opDetails := resources.NewOperationDetails(*effects[i].Operation)
+			op.Relationships.Details = opDetails.GetKey().AsRelation()
+
 			if request.ShouldInclude(requests.IncludeTypeHistoryOperationDetails) {
-				opDetails := resources.NewOperationDetails(*effects[i].Operation)
-				op.Relationships.Details = opDetails.GetKey().AsRelation()
 				result.Included.Add(opDetails)
 			}
 
@@ -178,7 +179,7 @@ func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Requ
 		return isAllowed(httpRequest, w, account.Address)
 	}
 
-	return isAllowed(httpRequest, w, ctx.CoreInfo(httpRequest).MasterAccountID)
+	return isAllowed(httpRequest, w, ctx.CoreInfo(httpRequest).AdminAccountID)
 }
 
 func (h *getHistory) tryGetAccountForBalance(balanceAddress string) (*history2.Account, error) {

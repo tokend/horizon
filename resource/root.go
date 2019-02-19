@@ -21,16 +21,13 @@ type Root struct {
 		Transactions        hal.Link `json:"transactions"`
 	} `json:"_links"`
 
-	LedgersState         ledger.SystemState `json:"ledgers_state"`
-	NetworkPassphrase    string             `json:"network_passphrase"`
-	CommissionAccountID  string             `json:"commission_account_id"`
-	OperationalAccountID string             `json:"operational_account_id"`
-	StorageFeeAccountID  string             `json:"storage_fee_account_id"`
-	MasterAccountID      string             `json:"master_account_id"`
-	MasterExchangeName   string             `json:"master_exchange_name"`
-	TxExpirationPeriod   int64              `json:"tx_expiration_period"`
-	CurrentTime          int64              `json:"current_time"`
-	Precision            int64              `json:"precision"`
+	LedgersState       ledger.SystemState `json:"ledgers_state"`
+	NetworkPassphrase  string             `json:"network_passphrase"`
+	AdminAccountID     string             `json:"admin_account_id"`
+	MasterExchangeName string             `json:"master_exchange_name"`
+	TxExpirationPeriod int64              `json:"tx_expiration_period"`
+	CurrentTime        int64              `json:"current_time"`
+	Precision          int64              `json:"precision"`
 }
 
 // Populate fills in the details

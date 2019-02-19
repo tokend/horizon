@@ -16,19 +16,12 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 			Key:        regources.NewKeyInt64(op.ID, regources.TypeCreateAccount),
 			Attributes: regources.CreateAccountOpAttrs(*op.Details.CreateAccount),
 		}
-	case xdr.OperationTypeSetOptions:
-		return regources.NewKeyInt64(op.ID, regources.TypeSetOptions).GetKeyP()
 	case xdr.OperationTypeCreateIssuanceRequest:
 		return newCreateIssuanceOpDetails(op.ID, *op.Details.CreateIssuanceRequest)
 	case xdr.OperationTypeSetFees:
 		return &regources.SetFeeOp{
 			Key:        regources.NewKeyInt64(op.ID, regources.TypeSetFees),
 			Attributes: regources.SetFeeOpAttrs(*op.Details.SetFee),
-		}
-	case xdr.OperationTypeManageAccount:
-		return &regources.ManageAccount{
-			Key:        regources.NewKeyInt64(op.ID, regources.TypeManageAccount),
-			Attributes: regources.ManageAccountAttrs(*op.Details.ManageAccount),
 		}
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		return newCreateWithdrawalRequestOp(op.ID, *op.Details.CreateWithdrawRequest)
@@ -52,8 +45,8 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newCheckSaleStateOp(op.ID, *op.Details.CheckSaleState)
 	case xdr.OperationTypeCreateAmlAlert:
 		return newCreateAMLAlertRequestOp(op.ID, *op.Details.CreateAMLAlertRequest)
-	case xdr.OperationTypeCreateKycRequest:
-		return newCreateKYCRequestOp(op.ID, *op.Details.CreateKYCRequest)
+	case xdr.OperationTypeCreateChangeRoleRequest:
+		return newChangeRoleRequestOp(op.ID, *op.Details.CreateChangeRoleRequest)
 	case xdr.OperationTypePaymentV2:
 		return newPaymentOp(op.ID, *op.Details.Payment)
 	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
@@ -84,9 +77,9 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	case xdr.OperationTypePayout:
 		return newPayoutOp(op.ID, *op.Details.Payout)
 	case xdr.OperationTypeManageAccountRole:
-		return regources.NewKeyInt64(op.ID, regources.TypeManageAccountRole).GetKeyP()
-	case xdr.OperationTypeManageAccountRolePermission:
-		return regources.NewKeyInt64(op.ID, regources.TypeManageAccountRolePermission).GetKeyP()
+		return newManageAccountRole(op.ID, *op.Details.ManageAccountRole)
+	case xdr.OperationTypeManageAccountRule:
+		return newManageAccountRule(op.ID, *op.Details.ManageAccountRule)
 	case xdr.OperationTypeCreateAswapBidRequest:
 		return regources.NewKeyInt64(op.ID, regources.TypeCreateAswapBidRequest).GetKeyP()
 	case xdr.OperationTypeCancelAswapBid:
@@ -128,7 +121,7 @@ func newManageLimitsOp(id int64, details history2.ManageLimitsDetails) *regource
 // newManageLimitsCreationOp - creates new instance of ManageLimitsCreationOp
 func newManageLimitsCreationOp(details history2.ManageLimitsCreationDetails) *regources.ManageLimitsCreationOp {
 	return &regources.ManageLimitsCreationOp{
-		AccountType:     details.AccountType,
+		AccountRole:     details.AccountRole,
 		AccountAddress:  details.AccountAddress,
 		StatsOpType:     details.StatsOpType,
 		AssetCode:       details.AssetCode,
@@ -179,18 +172,19 @@ func newManageExternalSystemPool(id int64, details history2.ManageExternalSystem
 	return result
 }
 
-// newCreateKYCRequestOp - creates new instance of CreateKYCRequestOp
-func newCreateKYCRequestOp(id int64, details history2.CreateKYCRequestDetails) *regources.CreateKYCRequestOp {
-	return &regources.CreateKYCRequestOp{
-		Key: regources.NewKeyInt64(id, regources.TypeCreateKycRequest),
-		Attributes: regources.CreateKYCRequestOpAttrs{
-			AccountTypeToSet: details.AccountTypeToSet,
+// newChangeRoleRequest - creates new instance of CreateKYCRequestOp
+func newChangeRoleRequestOp(id int64, details history2.CreateChangeRoleRequestDetails,
+) *regources.CreateChangeRoleRequest {
+	return &regources.CreateChangeRoleRequest{
+		Key: regources.NewKeyInt64(id, regources.TypeCreateChangeRoleRequest),
+		Attributes: regources.CreateChangeRoleRequestAttrs{
+			AccountRoleToSet: details.AccountRoleToSet,
 			KYCData:          details.KYCData,
 			AllTasks:         details.AllTasks,
 		},
-		Relationships: regources.CreateKYCRequestOpRelations{
-			AccountToUpdateKYC: NewAccountKey(details.AccountAddressToUpdateKYC).AsRelation(),
-			Request:            NewRequestKey(details.RequestDetails.RequestID).AsRelation(),
+		Relationships: regources.CreateChangeRoleRequestOpRelations{
+			AccountToUpdateRole: NewAccountKey(details.DestinationAccount).AsRelation(),
+			Request:             NewRequestKey(details.RequestDetails.RequestID).AsRelation(),
 		},
 	}
 }

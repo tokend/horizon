@@ -1,28 +1,45 @@
 package resources
 
-import "gitlab.com/tokend/regources/v2"
+import (
+	"strconv"
 
-// NewRule - returns a new (mocked) instance of rule
-func NewRule() regources.Rule {
-	return regources.Rule{
+	"gitlab.com/tokend/horizon/db2/core2"
+
+	"gitlab.com/tokend/regources/v2"
+)
+
+// NewAccountRule - returns a new instance of account rule
+func NewAccountRule(rule core2.AccountRule) regources.AccountRule {
+	return regources.AccountRule{
 		Key: regources.Key{
-			ID:   "mocked_rule_id",
-			Type: regources.TypeRules,
+			ID:   strconv.FormatUint(rule.ID, 10),
+			Type: regources.TypeAccountRules,
 		},
-		Attributes: regources.RuleAttr{
-			Resource: "NOTE: format will be changed",
-			Action:   "view",
-			Details: map[string]interface{}{
-				"name": "Name of the mocked Rule",
-			},
+		Attributes: regources.AccountRuleAttr{
+			Resource: rule.Resource,
+			Action:   rule.Action,
+			IsForbid: rule.IsForbid,
+			Details:  rule.Details,
 		},
 	}
 }
 
-// NewRuleKey - returns a new (mocked) rule key
-func NewRuleKey() regources.Key {
-	return regources.Key{
-		ID:   "mocked_rule_id",
-		Type: regources.TypeRules,
+// NewSignerRule - returns a new instance of signer rule
+func NewSignerRule(rule core2.SignerRule) regources.SignerRule {
+	return regources.SignerRule{
+		Key: regources.Key{
+			ID:   strconv.FormatUint(rule.ID, 10),
+			Type: regources.TypeSignerRules,
+		},
+		Attributes: regources.SignerRuleAttr{
+			Resource:  rule.Resource,
+			Action:    rule.Action,
+			IsForbid:  rule.IsForbid,
+			IsDefault: rule.IsDefault,
+			Details:   rule.Details,
+		},
+		Relationships: regources.SignerRuleRelation{
+			Owner: NewAccountKey(rule.OwnerID).AsRelation(),
+		},
 	}
 }

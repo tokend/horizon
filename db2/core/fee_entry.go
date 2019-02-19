@@ -21,7 +21,7 @@ type FeeEntry struct {
 	Percent     int64  `db:"percent"`
 	Subtype     int64  `db:"subtype"`
 	AccountID   string `db:"account_id"`
-	AccountType int32  `db:"account_type"`
+	AccountRole int64  `db:"account_role"`
 	LowerBound  int64  `db:"lower_bound"`
 	UpperBound  int64  `db:"upper_bound"`
 	Hash        string `db:"hash"`
@@ -42,7 +42,7 @@ func getFeesSelector(feeType int, asset string, subtype int64, account *Account)
 	orderFormat := "hash = '%s' DESC"
 	if account != nil {
 		hash1 := strHash(baseString + fmt.Sprintf("accountID:%v", account.AccountID))
-		hash2 := strHash(baseString + fmt.Sprintf("accountType:%v", account.AccountType))
+		hash2 := strHash(baseString + fmt.Sprintf("accountType:%v", account.RoleID))
 		filter += fmt.Sprintf("'%s', '%s', ", hash1, hash2)
 		query = query.OrderBy(fmt.Sprintf(orderFormat, hash1), fmt.Sprintf(orderFormat, hash2))
 	}
@@ -100,7 +100,7 @@ type FeeEntryQ struct {
 
 type FeeEntryQI interface {
 	Select() ([]FeeEntry, error)
-	ForAccountType(accountType *int32) FeeEntryQI
+	ForAccountType(accountType *uint64) FeeEntryQI
 	ForAccount(account string) FeeEntryQI
 }
 
@@ -113,7 +113,7 @@ func (q *Q) FeeEntries() FeeEntryQI {
 	}
 }
 
-func (q *FeeEntryQ) ForAccountType(accountType *int32) FeeEntryQI {
+func (q *FeeEntryQ) ForAccountType(accountType *uint64) FeeEntryQI {
 	if q.Err != nil {
 		return q
 	}

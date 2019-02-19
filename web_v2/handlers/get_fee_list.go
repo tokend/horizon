@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -96,9 +95,8 @@ func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources
 		if fees[i].AccountID != "" {
 			fee.Relationships.Account = resources.NewAccountKey(fees[i].AccountID).AsRelation()
 		} else if fees[i].AccountType != core2.GlobalAccountRole {
-			fee.Relationships.AccountRole = resources.
-				NewRoleKey(fmt.Sprintf("%d", fees[i].AccountType)).
-				AsRelation()
+			fee.Relationships.AccountRole =
+				resources.NewAccountRoleKey(fees[i].AccountType).AsRelation()
 		}
 		assets = append(assets, fees[i].Asset)
 		response.Data = append(response.Data, fee)

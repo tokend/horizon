@@ -37,7 +37,7 @@ type ReviewableRequestQI interface {
 	ForState(state int64) ReviewableRequestQI
 	// ForType - filters requests by type
 	ForType(requestType int64) ReviewableRequestQI
-	// ForTypes - filters requests by request type
+	// ForRoles - filters requests by request type
 	ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI
 	// Page specifies the paging constraints for the query being built by `q`.
 	Page(page db2.PageQuery) ReviewableRequestQI
@@ -98,7 +98,7 @@ type ReviewableRequestQI interface {
 	// KYCByMaskNotSet - filters update KYC requests by mask which must not be set
 	KYCByMaskNotSet(mask int64) ReviewableRequestQI
 	// KYCByAccountTypeToSet - filters update KYC requests by account type which must be set.
-	KYCByAccountTypeToSet(accountTypeToSet xdr.AccountType) ReviewableRequestQI
+	KYCByAccountTypeToSet(accountTypeToSet xdr.Uint64) ReviewableRequestQI
 
 	// Atomic swap
 	// ASwapByBidID - filters atomic swap requests by bid id
@@ -290,7 +290,7 @@ func (q *ReviewableRequestQ) ForType(requestType int64) ReviewableRequestQI {
 	return q
 }
 
-// ForTypes - filters requests by request type
+// ForRoles - filters requests by request type
 func (q *ReviewableRequestQ) ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
@@ -521,7 +521,7 @@ func (q *ReviewableRequestQ) KYCByMaskNotSet(mask int64) ReviewableRequestQI {
 }
 
 // KYCByAccountTypeToSet - filters update KYC requests by account type which must be set.
-func (q *ReviewableRequestQ) KYCByAccountTypeToSet(accountTypeToSet xdr.AccountType) ReviewableRequestQI {
+func (q *ReviewableRequestQ) KYCByAccountTypeToSet(accountTypeToSet xdr.Uint64) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
 	}

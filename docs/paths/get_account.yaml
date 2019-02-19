@@ -22,6 +22,10 @@
         * `balances.state`
         * `referrer`
         * `fees`
+        * `role`
+        * `role.rules`
+        * `limits`
+        * `external_system_ids`
       required: false
       style: form
       explode: false
@@ -35,6 +39,8 @@
           - referrer
           - limits
           - external_system_ids
+          - role
+          - role.rules
         example: balances,balances.asset
     responses:
       200:
