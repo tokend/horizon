@@ -12,22 +12,22 @@ import (
 )
 
 type ReviewableRequestDetails struct {
-	AssetCreation         *AssetCreationRequest     `json:"asset_create,omitempty"`
-	AssetUpdate           *AssetUpdateRequest       `json:"asset_update,omitempty"`
-	PreIssuanceCreate     *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
-	IssuanceCreate        *IssuanceRequest          `json:"issuance_create,omitempty"`
-	Withdraw              *WithdrawalRequest        `json:"withdraw,omitempty"`
+	AssetCreation         *AssetCreationRequest     `json:"create_asset,omitempty"`
+	AssetUpdate           *AssetUpdateRequest       `json:"update_asset,omitempty"`
+	PreIssuanceCreate     *PreIssuanceRequest       `json:"create_pre_issuance,omitempty"`
+	IssuanceCreate        *IssuanceRequest          `json:"create_issuance,omitempty"`
+	Withdraw              *WithdrawalRequest        `json:"create_withdraw,omitempty"`
 	TwoStepWithdraw       *WithdrawalRequest        `json:"two_step_withdrawal"`
-	Sale                  *SaleRequest              `json:"sale,omitempty"`
-	LimitsUpdate          *LimitsUpdateRequest      `json:"limits_update"`
-	AmlAlert              *AmlAlertRequest          `json:"aml_alert"`
+	Sale                  *SaleRequest              `json:"create_sale,omitempty"`
+	LimitsUpdate          *LimitsUpdateRequest      `json:"update_limits,omitempty"`
+	AmlAlert              *AmlAlertRequest          `json:"create_aml_alert,omitempty"`
 	ChangeRole            *ChangeRoleRequest        `json:"change_role,omitempty"`
-	UpdateSaleDetails     *UpdateSaleDetailsRequest `json:"update_sale_details"`
+	UpdateSaleDetails     *UpdateSaleDetailsRequest `json:"update_sale_details,omitempty"`
 	PromotionUpdate       *PromotionUpdateRequest   `json:"promotion_update"`
 	Invoice               *InvoiceRequest           `json:"invoice"`
 	Contract              *ContractRequest          `json:"contract"`
-	AtomicSwapBidCreation *AtomicSwapBidCreation    `json:"atomic_swap_bid_creation"`
-	AtomicSwap            *AtomicSwap               `json:"atomic_swap"`
+	AtomicSwapBidCreation *AtomicSwapBidCreation    `json:"create_atomic_swap_bid,omitempty"`
+	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap,omitempty"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
