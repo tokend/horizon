@@ -20,6 +20,9 @@ AssetPair:
     properties:
       relationships:
         type: object
+        required:
+          - base_asset
+          - quote_asset
         properties:
           base_asset:
             type: object
@@ -35,6 +38,9 @@ AssetPair:
                 $ref: '#/components/schemas/AssetKey'
       attributes:
         type: object
+        required:
+          - price
+          - policies
         properties:
           price:
             type: string
