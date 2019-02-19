@@ -21,13 +21,13 @@ AssetPair:
       relationships:
         base_asset:
           type: object
-          description: "defines the base asset of the requested asset pair"
+          description: "defines the base asset of the asset pair"
           properties:
             data:
               $ref: '#/components/schemas/AssetKey'
         quote_asset:
           type: object
-          description: "defines the quote asset of the requested asset pair"
+          description: "defines the quote asset of the asset pair"
           properties:
             data:
               $ref: '#/components/schemas/AssetKey'
