@@ -24,15 +24,21 @@ func NewSignerRoleQ(repo *db2.Repo) SignerRoleQ {
 	}
 }
 
-// GetByAddress loads a row from `accounts`, by address
+// GetByID loads a row from `accounts`, by address
 // returns nil, nil - if account does not exists
 func (q SignerRoleQ) GetByID(id uint64) (*SignerRole, error) {
 	return q.FilterByID(id).Get()
 }
 
-//FilterByAddress - returns q with filter by address
+//FilterByID - returns q with filter by address
 func (q SignerRoleQ) FilterByID(id uint64) SignerRoleQ {
 	q.selector = q.selector.Where("sr.id = ?", id)
+	return q
+}
+
+// Page - returns Q with specified limit and offset params
+func (q SignerRoleQ) Page(params db2.OffsetPageParams) SignerRoleQ {
+	q.selector = params.ApplyTo(q.selector, "sr.id")
 	return q
 }
 
