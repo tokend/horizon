@@ -121,7 +121,9 @@
                     type: object
                     $ref: '#/components/schemas/Offer'
                 included:
-                  $ref: '#/components/schemas/Resources'
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Asset'
                 links:
                   type: object
                   description: "Provides links for pagination"
