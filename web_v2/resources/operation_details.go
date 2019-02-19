@@ -13,8 +13,11 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	switch op.Type {
 	case xdr.OperationTypeCreateAccount:
 		return &regources.CreateAccountOp{
-			Key:        regources.NewKeyInt64(op.ID, regources.TypeCreateAccount),
-			Attributes: regources.CreateAccountOpAttrs(*op.Details.CreateAccount),
+			Key: regources.NewKeyInt64(op.ID, regources.TypeCreateAccount),
+			Relationships: regources.CreateAccountOpRelation{
+				Account: NewAccountKey(op.Details.CreateAccount.AccountAddress).AsRelation(),
+				Role:    NewAccountRoleKey(op.Details.CreateAccount.AccountRole).AsRelation(),
+			},
 		}
 	case xdr.OperationTypeCreateIssuanceRequest:
 		return newCreateIssuanceOpDetails(op.ID, *op.Details.CreateIssuanceRequest)
@@ -86,6 +89,14 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return regources.NewKeyInt64(op.ID, regources.TypeCancelAswapBid).GetKeyP()
 	case xdr.OperationTypeCreateAswapRequest:
 		return regources.NewKeyInt64(op.ID, regources.TypeCreateAswapBidRequest).GetKeyP()
+	case xdr.OperationTypeManageSignerRole:
+		return newManageSignerRole(op.ID, *op.Details.ManageSignerRole)
+	case xdr.OperationTypeManageSignerRule:
+		return newManageSignerRule(op.ID, *op.Details.ManageSignerRule)
+	case xdr.OperationTypeManageSigner:
+		return newManageSigner(op.ID, *op.Details.ManageSigner)
+	case xdr.OperationTypeManageLimits:
+		return newManageLimitsOp(op.ID, *op.Details.ManageLimits)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": op.Type,
@@ -178,13 +189,13 @@ func newChangeRoleRequestOp(id int64, details history2.CreateChangeRoleRequestDe
 	return &regources.CreateChangeRoleRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeCreateChangeRoleRequest),
 		Attributes: regources.CreateChangeRoleRequestAttrs{
-			AccountRoleToSet: details.AccountRoleToSet,
-			KYCData:          details.KYCData,
-			AllTasks:         details.AllTasks,
+			KYCData:  details.KYCData,
+			AllTasks: details.AllTasks,
 		},
 		Relationships: regources.CreateChangeRoleRequestOpRelations{
 			AccountToUpdateRole: NewAccountKey(details.DestinationAccount).AsRelation(),
 			Request:             NewRequestKey(details.RequestDetails.RequestID).AsRelation(),
+			RoleToSet:           NewAccountRoleKey(details.AccountRoleToSet).AsRelation(),
 		},
 	}
 }

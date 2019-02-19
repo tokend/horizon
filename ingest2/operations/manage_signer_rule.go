@@ -16,11 +16,12 @@ func (h *manageSignerRuleOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageSignerRuleOp := op.Body.MustManageSignerRuleOp()
+	manageSignerRuleResult := opRes.MustManageSignerRuleResult().MustSuccess()
 
 	opDetails := history2.OperationDetails{
 		Type: xdr.OperationTypeManageSignerRule,
 		ManageSignerRule: &history2.ManageSignerRuleDetails{
-			RuleID: uint64(opRes.MustManageAccountRuleResult().MustSuccess().RuleId),
+			RuleID: uint64(manageSignerRuleResult.RuleId),
 			Action: manageSignerRuleOp.Data.Action,
 		},
 	}
@@ -35,7 +36,7 @@ func (h *manageSignerRuleOpHandler) Details(op rawOperation,
 			IsForbid:   details.IsForbid,
 			IsDefault:  details.IsDefault,
 			Resource:   details.Resource,
-			Action:     string(details.Action),
+			Action:     details.Action,
 		}
 	case xdr.ManageSignerRuleActionUpdate:
 		details := manageSignerRuleOp.Data.MustUpdateData()
@@ -45,7 +46,7 @@ func (h *manageSignerRuleOpHandler) Details(op rawOperation,
 			IsForbid:  details.IsForbid,
 			IsDefault: details.IsDefault,
 			Resource:  details.Resource,
-			Action:    string(details.Action),
+			Action:    details.Action,
 		}
 	case xdr.ManageSignerRuleActionRemove:
 	default:

@@ -139,7 +139,7 @@ type ManageSignerRuleDetails struct {
 // CreateSignerRuleDetails - details of new or updated rule
 type CreateSignerRuleDetails struct {
 	Resource   xdr.SignerRuleResource `json:"resource"`
-	Action     string                 `json:"action"`
+	Action     xdr.SignerRuleAction   `json:"action"`
 	IsForbid   bool                   `json:"is_forbid"`
 	IsDefault  bool                   `json:"is_default"`
 	IsReadOnly bool                   `json:"is_read_only"`
@@ -149,7 +149,7 @@ type CreateSignerRuleDetails struct {
 // UpdateSignerRuleDetails - details of new or updated rule
 type UpdateSignerRuleDetails struct {
 	Resource  xdr.SignerRuleResource `json:"resource"`
-	Action    string                 `json:"action"`
+	Action    xdr.SignerRuleAction   `json:"action"`
 	IsForbid  bool                   `json:"is_forbid"`
 	IsDefault bool                   `json:"is_default"`
 	Details   regources.Details      `json:"details"`

@@ -10,10 +10,7 @@ import (
 //NewSigner - creates new instance of signer
 func NewSigner(signer core2.Signer) regources.Signer {
 	return regources.Signer{
-		Key: regources.Key{
-			ID:   signer.PublicKey,
-			Type: regources.TypeSigners,
-		},
+		Key: NewSignerKey(signer.PublicKey),
 		Attributes: regources.SignerAttrs{
 			Weight:   signer.Weight,
 			Identity: signer.Identity,
@@ -29,5 +26,13 @@ func NewSigner(signer core2.Signer) regources.Signer {
 				Type: regources.TypeAccounts,
 			}.AsRelation(),
 		},
+	}
+}
+
+//NewSignerKey - creates new key for signer
+func NewSignerKey(publicKey string) regources.Key {
+	return regources.Key{
+		ID:   publicKey,
+		Type: regources.TypeSigners,
 	}
 }

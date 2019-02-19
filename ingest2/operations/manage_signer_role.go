@@ -24,10 +24,12 @@ func (h *manageSignerRoleOpHandler) Details(op rawOperation,
 		},
 	}
 
+	manageSignerRoleResult := opRes.MustManageSignerRoleResult().MustSuccess()
+
 	switch manageSignerRoleOp.Data.Action {
 	case xdr.ManageSignerRoleActionCreate:
 		opDetails.ManageSignerRole.RoleID =
-			uint64(opRes.MustManageAccountRoleResult().MustSuccess().RoleId)
+			uint64(manageSignerRoleResult.RoleId)
 		details := manageSignerRoleOp.Data.MustCreateData()
 
 		creationDetails := &history2.CreateSignerRoleDetails{

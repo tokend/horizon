@@ -11,16 +11,20 @@ import (
 // NewAccountRule - returns a new instance of account rule
 func NewAccountRule(rule core2.AccountRule) regources.AccountRule {
 	return regources.AccountRule{
-		Key: regources.Key{
-			ID:   strconv.FormatUint(rule.ID, 10),
-			Type: regources.TypeAccountRules,
-		},
+		Key: NewAccountRuleKey(rule.ID),
 		Attributes: regources.AccountRuleAttr{
 			Resource: rule.Resource,
 			Action:   rule.Action,
 			IsForbid: rule.IsForbid,
 			Details:  rule.Details,
 		},
+	}
+}
+
+func NewAccountRuleKey(id uint64) regources.Key {
+	return regources.Key{
+		ID:   strconv.FormatUint(id, 10),
+		Type: regources.TypeAccountRules,
 	}
 }
 
