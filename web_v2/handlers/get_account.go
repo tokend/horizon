@@ -20,14 +20,14 @@ import (
 func GetAccount(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getAccountHandler{
-		AccountsQ:    core2.NewAccountsQ(coreRepo),
-		BalancesQ:    core2.NewBalancesQ(coreRepo),
-		AccountRoleQ: core2.NewAccountRoleQ(coreRepo),
-		AccountRuleQ: core2.NewAccountRuleQ(coreRepo),
-		FeesQ:     core2.NewFeesQ(coreRepo),
+		AccountsQ:          core2.NewAccountsQ(coreRepo),
+		BalancesQ:          core2.NewBalancesQ(coreRepo),
+		AccountRoleQ:       core2.NewAccountRoleQ(coreRepo),
+		AccountRuleQ:       core2.NewAccountRuleQ(coreRepo),
+		FeesQ:              core2.NewFeesQ(coreRepo),
 		LimitsV2Q:          core2.NewLimitsQ(coreRepo),
 		ExternalSystemIDsQ: core2.NewExternalSystemIDsQ(coreRepo),
-		Log:          ctx.Log(r),
+		Log:                ctx.Log(r),
 	}
 
 	request, err := requests.NewGetAccount(r)
@@ -69,14 +69,14 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 type getAccountHandler struct {
-	AccountsQ    core2.AccountsQ
-	BalancesQ    core2.BalancesQ
-	AccountRoleQ core2.AccountRoleQ
-	AccountRuleQ core2.AccountRuleQ
+	AccountsQ          core2.AccountsQ
+	BalancesQ          core2.BalancesQ
+	AccountRoleQ       core2.AccountRoleQ
+	AccountRuleQ       core2.AccountRuleQ
 	LimitsV2Q          core2.LimitsQ
-	FeesQ     core2.FeesQ
+	FeesQ              core2.FeesQ
 	ExternalSystemIDsQ core2.ExternalSystemIDsQ
-	Log          *logan.Entry
+	Log                *logan.Entry
 }
 
 //GetAccount - returns Account resources
@@ -113,7 +113,7 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get fees for account")
 	}
-	
+
 	response.Data.Relationships.Limits, err = h.getLimits(request, &response.Included)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get limits")
@@ -299,7 +299,7 @@ func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *rego
 		return nil, errors.Wrap(err, "failed to get fees for account")
 	}
 
-	forAccountRole, err := h.FeesQ.FilterByAccountType(account.AccountType).Select()
+	forAccountRole, err := h.FeesQ.FilterByAccountType(account.RoleID).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get fees for account role")
 	}

@@ -6,7 +6,7 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-const GlobalAccountRole = -1
+const GlobalAccountRole = 0
 
 // FeesQ is a helper struct to aid in configuring queries that loads
 // fee structs.
@@ -58,8 +58,8 @@ func (q FeesQ) FilterBySubtype(subtype int64) FeesQ {
 }
 
 //FilterByAccountType - returns q with filter by account type
-func (q FeesQ) FilterByAccountType(accType int32) FeesQ {
-	q.selector = q.selector.Where("f.account_type = ?", accType)
+func (q FeesQ) FilterByAccountType(accType uint64) FeesQ {
+	q.selector = q.selector.Where("f.account_role = ?", accType)
 	return q
 }
 

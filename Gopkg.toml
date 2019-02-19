@@ -98,9 +98,9 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[constraint]]
+[[override]]
   name = "gitlab.com/tokend/go"
-  revision = "eb669288bbef747f82b04998ae358887816863c2"
+  revision = "22bb9b420a7fe8509b47db9aea926ec6a26a29e2"
 
 [[constraint]]
   branch = "feature/account_role"

@@ -348,7 +348,7 @@ func (c *reviewableRequestHandler) getChangeRoleRequest(request *xdr.ChangeRoleR
 	return &history.ChangeRoleRequest{
 		DestinationAccount: request.DestinationAccount.Address(),
 		AccountRoleToSet:   uint64(request.AccountRoleToSet),
-		KYCData:            internal.MarshalCustomDetails(request.KycData),
+		KYCData:            internal.MarshalCustomDetails(request.CreatorDetails),
 		SequenceNumber:     uint32(request.SequenceNumber),
 	}
 }

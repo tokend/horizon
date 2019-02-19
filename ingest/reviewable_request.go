@@ -239,7 +239,7 @@ func getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest) *history.LimitsUpd
 func getUpdateKYCRequest(request *xdr.ChangeRoleRequest) *history.ChangeRoleRequest {
 	var kycData map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
-	_ = json.Unmarshal([]byte(request.KycData), &kycData)
+	_ = json.Unmarshal([]byte(request.CreatorDetails), &kycData)
 
 	return &history.ChangeRoleRequest{
 		DestinationAccount: request.DestinationAccount.Address(),
