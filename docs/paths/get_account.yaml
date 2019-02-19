@@ -51,7 +51,9 @@
                   type: object
                   $ref: '#/components/schemas/Account'
                 included:
-                  $ref: '#/components/schemas/Resources'
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AccountKey'
       400:
         description: bad input parameter
         content:

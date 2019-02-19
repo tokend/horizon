@@ -101,7 +101,11 @@
                     type: object
                     $ref: '#/components/schemas/Fee'
                 included:
-                  $ref: '#/components/schemas/Resources'
+                  type: array
+                  items:
+                    oneOf:
+                    - $ref: '#/components/schemas/Account'
+                    - $ref: '#/components/schemas/Asset'
                 links:
                   type: object
                   description: "Provides links for pagination"

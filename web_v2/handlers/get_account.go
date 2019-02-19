@@ -22,7 +22,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	handler := getAccountHandler{
 		AccountsQ:          core2.NewAccountsQ(coreRepo),
 		BalancesQ:          core2.NewBalancesQ(coreRepo),
-		FeesQ:     core2.NewFeesQ(coreRepo),
+		FeesQ:              core2.NewFeesQ(coreRepo),
 		LimitsV2Q:          core2.NewLimitsQ(coreRepo),
 		ExternalSystemIDsQ: core2.NewExternalSystemIDsQ(coreRepo),
 		Log:                ctx.Log(r),
@@ -70,7 +70,7 @@ type getAccountHandler struct {
 	AccountsQ          core2.AccountsQ
 	BalancesQ          core2.BalancesQ
 	LimitsV2Q          core2.LimitsQ
-	FeesQ     core2.FeesQ
+	FeesQ              core2.FeesQ
 	ExternalSystemIDsQ core2.ExternalSystemIDsQ
 	Log                *logan.Entry
 }
@@ -109,7 +109,7 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get fees for account")
 	}
-	
+
 	response.Data.Relationships.Limits, err = h.getLimits(request, &response.Included)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get limits")
