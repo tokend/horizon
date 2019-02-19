@@ -1,11 +1,13 @@
 package core2
 
+import "gitlab.com/tokend/regources/v2"
+
 //Signer - represents Signer Entry
 type Signer struct {
-	AccountID string `db:"accountid"`
-	ID        string `db:"publickey"`
-	Weight    int    `db:"weight"`
-	Type      int    `db:"signer_type"`
-	Identity  int    `db:"identity_id"`
-	Name      string `db:"signer_name"`
+	AccountID string            `db:"account_id"`
+	PublicKey string            `db:"public_key"`
+	Weight    uint32            `db:"weight"`
+	RoleID    uint64            `db:"role_id"`
+	Identity  uint32            `db:"identity"`
+	Details   regources.Details `db:"details"`
 }

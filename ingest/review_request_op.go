@@ -51,7 +51,7 @@ func hasDeletedReviewableRequest(changes xdr.LedgerEntryChanges) bool {
 func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, res xdr.ExtendedResult,
 	changes xdr.LedgerEntryChanges) error {
 
-	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeUpdateKyc && !hasDeletedReviewableRequest(changes) {
+	if op.RequestDetails.RequestType == xdr.ReviewableRequestTypeChangeRole && !hasDeletedReviewableRequest(changes) {
 		return nil
 	}
 
@@ -65,9 +65,9 @@ func (is *Session) approveReviewableRequest(op xdr.ReviewRequestOp, res xdr.Exte
 	}
 
 	switch op.RequestDetails.RequestType {
-	case xdr.ReviewableRequestTypeWithdraw:
+	case xdr.ReviewableRequestTypeCreateWithdraw:
 		err = is.setWithdrawalDetails(uint64(op.RequestId), op.RequestDetails.Withdrawal)
-	case xdr.ReviewableRequestTypeInvoice:
+	case xdr.ReviewableRequestTypeCreateInvoice:
 		err = is.setWaitingForConfirmationState(uint64(op.RequestId))
 	}
 
@@ -89,7 +89,7 @@ func (is *Session) setWithdrawalDetails(requestID uint64, details *xdr.Withdrawa
 		return errors.From(errors.New("reviewable request not found"), fields)
 	}
 
-	if request.RequestType != xdr.ReviewableRequestTypeWithdraw {
+	if request.RequestType != xdr.ReviewableRequestTypeCreateWithdraw {
 		return errors.From(errors.New("expected withdrawal request"), fields.Add("request_type", request.RequestType))
 	}
 

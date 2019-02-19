@@ -90,7 +90,6 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/kit"
 
-
 [[override]]
   name = "gitlab.com/distributed_lab/logan"
   version = "3.0"
@@ -99,13 +98,13 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[constraint]]
+[[override]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/account_relations"
+  branch = "master"
 
 [[constraint]]
-  name = "gitlab.com/tokend/regources"
   branch = "master"
+  name = "gitlab.com/tokend/regources"
 
 [[constraint]]
   branch = "master"
@@ -132,5 +131,5 @@
   version = "1.0.0"
 
 [prune]
-  unused-packages = true
   go-tests = true
+  unused-packages = true

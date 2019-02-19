@@ -16,14 +16,19 @@ type SignerQ struct {
 func NewSignerQ(repo *db2.Repo) SignerQ {
 	return SignerQ{
 		repo: repo,
-		selector: sq.Select("signers.accountid", "signers.publickey", "signers.weight", "signers.signer_type",
-			"signers.identity_id", "signers.signer_name").From("signers"),
+		selector: sq.Select("signers.account_id",
+			"signers.public_key",
+			"signers.weight",
+			"signers.role_id",
+			"signers.identity",
+			"signers.details",
+		).From("signers"),
 	}
 }
 
 //FilterByAccountAddress - return new instance of SignerQ with filter by account address
 func (q SignerQ) FilterByAccountAddress(address string) SignerQ {
-	q.selector = q.selector.Where("signers.accountid = ?", address)
+	q.selector = q.selector.Where("signers.account_id = ?", address)
 	return q
 }
 

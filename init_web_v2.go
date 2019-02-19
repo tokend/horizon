@@ -112,6 +112,16 @@ func initWebV2Actions(app *App) {
 
 	m.Get("/v3/order_book/{id}", handlers.GetOrderBook)
 
+	m.Get("/v3/account_roles/{id}", handlers.GetAccountRole)
+	m.Get("/v3/account_roles", handlers.GetAccountRoleList)
+	m.Get("/v3/account_rules/{id}", handlers.GetAccountRule)
+	m.Get("/v3/account_rules", handlers.GetAccountRuleList)
+
+	m.Get("/v3/signer_roles/{id}", handlers.GetSignerRole)
+	m.Get("/v3/signer_roles", handlers.GetSignerRoleList)
+	m.Get("/v3/signer_rules/{id}", handlers.GetSignerRule)
+	m.Get("/v3/signer_rules", handlers.GetSignerRuleList)
+
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))

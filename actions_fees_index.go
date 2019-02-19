@@ -22,7 +22,7 @@ import (
 
 type FeesAllAction struct {
 	Action
-	AccountType *int32
+	AccountType *uint64
 	Account     string
 
 	IsOverview bool
@@ -42,7 +42,7 @@ func (action *FeesAllAction) JSON() {
 
 func (action *FeesAllAction) loadParams() {
 	action.Account = action.GetString("account_id")
-	action.AccountType = action.getAccountType("account_type")
+	action.AccountType = action.GetOptionalUint64("account_type")
 	if action.Account != "" && action.AccountType != nil {
 		action.SetInvalidField("account_type", errors.New("It's not allowed to set both filters"))
 	}
@@ -56,12 +56,6 @@ func (action *FeesAllAction) getAccountType(name string) *int32 {
 
 	if rawAccountType == 0 {
 		return nil
-	}
-
-	for _, accountType := range xdr.AccountTypeAll {
-		if int32(accountType) == rawAccountType {
-			return &rawAccountType
-		}
 	}
 
 	action.SetInvalidField(name, errors.New("Invalid"))
@@ -154,7 +148,7 @@ func (action *FeesAllAction) addDefaultEntriesForAsset(asset core.Asset, entries
 }
 
 func (action *FeesAllAction) getDefaultFee(asset string, feeType int, subType int64) regources.FeeEntry {
-	accountType := int32(-1)
+	accountType := uint64(0)
 	if action.AccountType != nil {
 		accountType = *action.AccountType
 	}
@@ -167,7 +161,7 @@ func (action *FeesAllAction) getDefaultFee(asset string, feeType int, subType in
 		Fixed:       "0",
 		LowerBound:  "0",
 		UpperBound:  "0",
-		AccountType: accountType,
+		AccountRole: accountType,
 		AccountID:   action.Account,
 		FeeAsset:    asset,
 	}

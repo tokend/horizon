@@ -1,13 +1,12 @@
 package regources
 
-// LimitsUpdateRequest - represents details of the `limits update` reviewable request
-type LimitsUpdateRequest struct {
+// UpdateLimitsRequest - represents details of the `limits update` reviewable request
+type UpdateLimitsRequest struct {
 	Key
-	Attributes LimitsUpdateRequestAttrs `json:"attributes"`
+	Attributes UpdateLimitsRequestAttrs `json:"attributes"`
 }
 
-// LimitsUpdateRequestAttrs - attributes of the `limits update` reviewable request
-type LimitsUpdateRequestAttrs struct {
-	DocumentHash string  `json:"document_hash"`
-	Details      Details `json:"details"`
+// UpdateLimitsRequestAttrs - attributes of the `limits update` reviewable request
+type UpdateLimitsRequestAttrs struct {
+	CreatorDetails Details `json:"creator_details"`
 }

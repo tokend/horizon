@@ -140,7 +140,7 @@ func (h *getCalculatedFeesHandler) getFeeForAccount(request *requests.GetCalcula
 		return nil, errors.New("Account not found")
 	}
 	//try to get fee for account type
-	fee, err = q.FilterByAccountType(targetAccount.AccountType).Get()
+	fee, err = q.FilterByAccountType(targetAccount.RoleID).Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get fee for account type")
 	}

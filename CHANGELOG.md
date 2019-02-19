@@ -1,22 +1,13 @@
 # Unreleased
 
-# 3.0.1-x.6
+### Changed
 
-### Fixed
+* `Details`/`Reason`/`NewDetails` field names in reviewable request types unified to `creatorDetails`
+* Corresponding messages in `messages` map
 
-* 500 on fees
+### Removed
 
-# 3.0.1-x.5
-
-### Added
-
-* Helper "test" for quick transaction envelopes unmarshal
-
-### Fixed
-
-* 500 error on /history endpoint when receiving history of payments
-* Fixed issue with balanceID not been set for balance effects
-* Fixed Fee 500 if asset does not exists
+* `UpdateSaleEndTimeRequest` type
 
 # 3.0.1-x.4
 
@@ -69,7 +60,6 @@ Added back proxy to API
 
 ## Added
 
-* `Limits` and `ExternalSystemIDs` to `/accounts` endpoint
 * `/sales` endpoint
 * `/order_book` endpoint
 

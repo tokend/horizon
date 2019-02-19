@@ -1,19 +1,19 @@
 package regources
 
-// AmlAlertRequest - represents details of the `aml alert` reviewable request
-type AmlAlertRequest struct {
+// CreateAmlAlertRequest - represents details of the `aml alert` reviewable request
+type CreateAmlAlertRequest struct {
 	Key
-	Attributes    AmlAlertRequestAttrs     `json:"attributes"`
-	Relationships AmlAlertRequestRelations `json:"relationships"`
+	Attributes    CreateAmlAlertRequestAttrs     `json:"attributes"`
+	Relationships CreateAmlAlertRequestRelations `json:"relationships"`
 }
 
-// AmlAlertRequestAttrs - attributes of the `aml alert` reviewable request
-type AmlAlertRequestAttrs struct {
-	Amount Amount `json:"amount"`
-	Reason string `json:"reason"`
+// CreateAmlAlertRequestAttrs - attributes of the `aml alert` reviewable request
+type CreateAmlAlertRequestAttrs struct {
+	Amount         Amount `json:"amount"`
+	CreatorDetails string `json:"creator_details"`
 }
 
-// AmlAlertRequestRelations - relationships of the `aml alert` reviewable request
-type AmlAlertRequestRelations struct {
+// CreateAmlAlertRequestRelations - relationships of the `aml alert` reviewable request
+type CreateAmlAlertRequestRelations struct {
 	Balance *Relation `json:"balance"`
 }

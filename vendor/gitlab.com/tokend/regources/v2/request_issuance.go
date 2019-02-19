@@ -1,20 +1,20 @@
 package regources
 
-// IssuanceRequest - represents details of the `issuance` reviewable request
-type IssuanceRequest struct {
+// CreateIssuanceRequest - represents details of the `issuance` reviewable request
+type CreateIssuanceRequest struct {
 	Key
-	Attributes    IssuanceRequestAttrs     `json:"attributes"`
-	Relationships IssuanceRequestRelations `json:"relationships"`
+	Attributes    CreateIssuanceRequestAttrs     `json:"attributes"`
+	Relationships CreateIssuanceRequestRelations `json:"relationships"`
 }
 
-// IssuanceRequestAttrs - attributes of the `issuance` reviewable request
-type IssuanceRequestAttrs struct {
-	Amount  Amount  `json:"amount"`
-	Details Details `json:"external_details"`
+// CreateIssuanceRequestAttrs - attributes of the `issuance` reviewable request
+type CreateIssuanceRequestAttrs struct {
+	Amount         Amount  `json:"amount"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
-// IssuanceRequestRelations - relationships of the `issuance` reviewable request
-type IssuanceRequestRelations struct {
+// CreateIssuanceRequestRelations - relationships of the `issuance` reviewable request
+type CreateIssuanceRequestRelations struct {
 	Asset    *Relation `json:"asset"`
 	Receiver *Relation `json:"receiver"`
 }
