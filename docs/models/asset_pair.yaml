@@ -1,0 +1,43 @@
+AssetPairKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      description: here comes the string of form `BASE:QUOTE`
+      example: "BTC:ETH"
+    type:
+      type: string
+      enum:
+        - "asset-pairs"
+
+AssetPair:
+  allOf:
+  - $ref: '#/components/schemas/AssetPairKey'
+  - type: object
+    properties:
+      relationships:
+        base_asset:
+          type: object
+          description: "defines the base asset of the requested asset pair"
+          properties:
+            data:
+              $ref: '#/components/schemas/AssetKey'
+        quote_asset:
+          type: object
+          description: "defines the quote asset of the requested asset pair"
+          properties:
+            data:
+              $ref: '#/components/schemas/AssetKey'
+      attributes:
+        price:
+          type: string
+          example: "3.000000"
+          format: Amount
+          description: "defines the price in asset pair as the amount of quote asset that would the 1 base asset cost"
+        policies:
+          type: object
+          decription: "Defines properties of the asset pair"
+          $ref: '#/components/schemas/Mask'
