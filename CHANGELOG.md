@@ -1,5 +1,9 @@
 # Unreleased
 
+### Added 
+* Signers endpoint
+* Account/Signer Role/Rules
+
 ### Changed
 
 * `Details`/`Reason`/`NewDetails` field names in reviewable request types unified to `creatorDetails`
