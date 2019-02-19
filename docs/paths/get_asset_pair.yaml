@@ -9,7 +9,7 @@
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the asset pair
+      description: Unique identifier of the asset pair which consists of two asset codes
       required: true
       style: simple
       explode: false

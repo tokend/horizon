@@ -54,7 +54,7 @@
     - name: include
       in: query
       description: |
-                    Relationships may be used for the included parameter.
+                    Relationships may be used for the `include` parameter.
       required: false
       style: form
       explode: false
