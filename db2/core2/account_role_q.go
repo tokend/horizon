@@ -29,6 +29,12 @@ func (q AccountRoleQ) FilterByID(id uint64) AccountRoleQ {
 	return q
 }
 
+// Page - returns Q with specified limit and offset params
+func (q AccountRoleQ) Page(params db2.OffsetPageParams) AccountRoleQ {
+	q.selector = params.ApplyTo(q.selector, "ar.id")
+	return q
+}
+
 // Get - loads a row from `account_roles`
 // returns nil, nil - if account does not exists
 // returns error if more than one AccountRole found

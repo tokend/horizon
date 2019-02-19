@@ -113,6 +113,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/order_book/{id}", handlers.GetOrderBook)
 
 	m.Get("/v3/account_roles/{id}", handlers.GetAccountRole)
+	m.Get("/v3/account_roles", handlers.GetAccountRoleList)
 
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {
