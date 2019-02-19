@@ -1,5 +1,11 @@
 # Unreleased
 
+# 3.0.1-x.6
+
+### Fixed
+
+* 500 on fees
+
 # 3.0.1-x.5
 
 ### Added
