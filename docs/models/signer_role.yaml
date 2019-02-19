@@ -1,4 +1,4 @@
-AccountRoleKey:
+SignerRoleKey:
   type: object
   required:
       - id
@@ -10,15 +10,15 @@ AccountRoleKey:
       type:
         type: string
         enum: 
-          - "account-roles"
-AccountRole:
+          - "signer-roles"
+SignerRole:
   allOf:
-  - $ref: '#/components/schemas/AccountRoleKey'
+  - $ref: '#/components/schemas/SignerRoleKey'
   - type: object
     properties:
       relationships:
         type: object
-        required: [rules]
+        required: [rules, owner]
         properties:
           rules:
             description: "Rules applied to the role"
@@ -27,7 +27,14 @@ AccountRole:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AccountRuleKey'
+                  $ref: '#/components/schemas/SignerRuleKey'
+          owner:
+            description: "Defines owner of the role"
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountKey'
       attributes:
         type: object
         required: [details]
