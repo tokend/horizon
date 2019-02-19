@@ -5,6 +5,7 @@ Mask:
     value:
       type: integer
       description: "bit mask"
+      format: int32
       example: 4
     flags:
       type: array
