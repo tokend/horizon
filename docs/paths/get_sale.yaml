@@ -43,6 +43,10 @@
                 data:
                   type: object
                   $ref: '#/components/schemas/Sale'
+                included:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter
         content:
