@@ -6,7 +6,7 @@ AssetPairKey:
   properties:
     id:
       type: string
-      description: here comes the string of form `BASE:QUOTE`
+      description: here comes the string of form `QUOTE:BASE`
       example: "BTC:ETH"
     type:
       type: string
@@ -19,25 +19,29 @@ AssetPair:
   - type: object
     properties:
       relationships:
-        base_asset:
-          type: object
-          description: "defines the base asset of the asset pair"
-          properties:
-            data:
-              $ref: '#/components/schemas/AssetKey'
-        quote_asset:
-          type: object
-          description: "defines the quote asset of the asset pair"
-          properties:
-            data:
-              $ref: '#/components/schemas/AssetKey'
+        type: object
+        properties:
+          base_asset:
+            type: object
+            description: "defines the base asset of the asset pair"
+            properties:
+              data:
+                $ref: '#/components/schemas/AssetKey'
+          quote_asset:
+            type: object
+            description: "defines the quote asset of the asset pair"
+            properties:
+              data:
+                $ref: '#/components/schemas/AssetKey'
       attributes:
-        price:
-          type: string
-          example: "3.000000"
-          format: Amount
-          description: "defines the price in asset pair as the amount of quote asset that would the 1 base asset cost"
-        policies:
-          type: object
-          decription: "Defines properties of the asset pair"
-          $ref: '#/components/schemas/Mask'
+        type: object
+        properties:
+          price:
+            type: string
+            example: "3.000000"
+            format: Amount
+            description: "defines the price in asset pair as the amount of quote asset that would the 1 base asset cost"
+          policies:
+            type: object
+            decription: "Defines properties of the asset pair"
+            $ref: '#/components/schemas/Mask'

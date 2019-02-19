@@ -1,0 +1,100 @@
+/v3/assets_pairs:
+  get:
+    tags:
+      - AssetPairs
+    summary: Get List of AssetPairs
+    description: |
+                  Allows to get a filtered list of `AssetPair` with the corresponding details.
+    operationId: getAssetPairs
+    parameters:
+    - name: filter[policy]
+      in: query
+      description: |
+                    Filters asset pairs by specified bit mask. Returns page of asset pairs where at least one bit intersects
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: integer
+        format: int32
+        example: 2
+    - name: filter[base_asset]
+      in: query
+      description: |
+                    Filters asset pairs by a specified base asset of the pair.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        example: "BTC"
+        format: valid AssetCode
+    - name: filter[quote_asset]
+      in: query
+      description: |
+                    Filters asset pairs by a specified quote asset of the pair.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        example: "ETH"
+        format: valid AssetCode
+    - name: filter[asset]
+      in: query
+      description: |
+                    Filters asset pairs by a specified asset of the pair. No matter base or quote it is
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        example: "ETH"
+        format: valid AssetCode
+    - name: include
+      in: query
+      description: |
+                    Relationships may be used for the included parameter.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        example: "base_asset,quote_asset"
+        enum:
+          - base_asset
+          - quote_asset
+    - $ref: '#/components/schemas/pageNumberParam'
+    - $ref: '#/components/schemas/pageLimitParam'
+    - $ref: '#/components/schemas/sortingParam'
+    responses:
+      200:
+        description: asset pairs which satisfies filters exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AssetPair'
+                included:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Asset'
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: asset pair does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
