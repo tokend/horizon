@@ -1,0 +1,122 @@
+KeyValueEntryKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "max_contracts_count" # TODO provide a list of valid keys and corresponding values
+    type:
+      type: string
+      enum:
+        - "key-value-entries"
+
+KeyValueEntryValueU32:
+  type: object
+  description: |
+    Defines the value of KeyValueEntry.
+    Note that the only one value field is present, according to defined `type`.
+    All other fields are `null` or absent.
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      example: "1" # TODO provide a list of valid KeyValueEntryTypes
+      format: int32
+      description: "defines the type of value stored in KeyValueEntry"
+    U32:
+      type: string
+      example: "3"
+      format: uint32
+
+KeyValueEntryValueU64:
+  type: object
+  description: |
+    Defines the value of KeyValueEntry.
+    Note that the only one value field is present, according to defined `type`.
+    All other fields are `null` or absent.
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      example: "3" # TODO provide a list of valid KeyValueEntryTypes
+      format: int32
+      description: "defines the type of value stored in KeyValueEntry"
+    U64:
+      type: string
+      example: "3"
+      format: uint64
+
+KeyValueEntryValueStr:
+  type: object
+  description: |
+    Defines the value of KeyValueEntry.
+    Note that the only one value field is present, according to defined `type`.
+    All other fields are `null` or absent.
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      example: "3" # TODO provide a list of valid KeyValueEntryTypes
+      format: int32
+      description: "defines the type of value stored in KeyValueEntry"
+    Str:
+      type: string
+      example: "ETH"
+      descriprion: |
+        KeyValueEntryValues of type string could define:
+        * transaction fee assets in KeyValueEntries
+
+
+
+KeyValueEntryValue:
+  type: object
+  description: |
+    Defines the value of KeyValueEntry.
+    Note that the only one value field is present, according to defined `type`.
+    All other fields are `null` or absent.
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      example: "3" # TODO provide a list of valid KeyValueEntryTypes
+      format: int32
+      description: "defines the type of value stored in KeyValueEntry"
+    oneOf:
+      - U32:
+          type: string
+          example: "3"
+          format: uint32
+      - U64:
+          type: string
+          example: "3"
+          format: uint64
+      - Str:
+          type: string
+          example: "ETH"
+          descriprion: |
+            KeyValueEntryValues of type string could define:
+            * transaction fee assets in KeyValueEntries
+
+KeyValueEntry:
+  allOf:
+  - $ref: '#/components/schemas/KeyValueEntryKey'
+  - type: object
+    properties:
+      attributes:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            $ref: '#/components/schemas/KeyValueEntryValue'
+#            oneOf:
+#            - $ref: '#/components/schemas/KeyValueEntryValueU32'
+#            - $ref: '#/components/schemas/KeyValueEntryValueU64'
+#            - $ref: '#/components/schemas/KeyValueEntryValueStr'
+
