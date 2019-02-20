@@ -144,7 +144,9 @@
       schema:
         type: string
         enum:
-          - owner
+          - base_asset
+          - quote_assets
+          - default_quote_asset
     - $ref: '#/components/schemas/pageNumberParam'
     - $ref: '#/components/schemas/pageLimitParam'
     - $ref: '#/components/schemas/sortingParam'

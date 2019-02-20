@@ -47,6 +47,7 @@ Sale:
               type: string
               format: "valid json"
               description: "represents user provided data"
+              example: "{ \"data\": \"some user data\"}"
         relationships:
           type: object
           properties:
