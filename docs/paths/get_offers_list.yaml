@@ -5,9 +5,9 @@
     summary: Get List of Offers
     description: |
                   Allows to get a filtered list of `Offer` with the corresponding details.\n
-                  🔒 Must be signed by signer of:\n
-                    1. master account if no filters applied.\n
-                    2. account by which filter was requested\n
+                  🔒 The signature is needed in such cases:\n
+                    1. master account's signature if no filters applied.\n
+                    2. signature of the account by which filter was requested\n
     operationId: getOffers
     parameters:
     - name: filter[base_balance]
