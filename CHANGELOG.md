@@ -1,6 +1,7 @@
-# Unreleased
+# 3.0.1-x.7
 
 ### Added 
+
 * Signers endpoint
 * Account/Signer Role/Rules
 
@@ -9,15 +10,18 @@
 * `Details`/`Reason`/`NewDetails` field names in reviewable request types unified to `creatorDetails`
 * Corresponding messages in `messages` map
 * Calculated fee response
+
 ### Removed
 
 * `UpdateSaleEndTimeRequest` type
 
 ### Fixed
+
 * Fee bounds
 * Fee calculation for account
 
 # 3.0.1-x.6
+
 ### Fixed
 * 500 on fees
 
