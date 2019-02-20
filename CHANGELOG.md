@@ -13,6 +13,10 @@
 
 * `UpdateSaleEndTimeRequest` type
 
+### Fixed
+* Fee bounds
+* Fee calculation for account
+
 # 3.0.1-x.6
 ### Fixed
 * 500 on fees
