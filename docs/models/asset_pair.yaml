@@ -48,6 +48,7 @@ AssetPair:
             format: Amount
             description: "defines the price in asset pair as the amount of quote asset that would the 1 base asset cost"
           policies:
-            type: object
-            decription: "Defines properties of the asset pair"
-            $ref: '#/components/schemas/Mask'
+            type: number
+            decription: "This bitmask of policies defines properties of the asset pair"
+            example: 6
+            format: int32
