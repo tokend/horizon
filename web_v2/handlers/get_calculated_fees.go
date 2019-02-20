@@ -6,12 +6,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"gitlab.com/tokend/go/amount"
-
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
@@ -68,8 +67,8 @@ func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalcul
 		return nil, errors.Wrap(err, "failed to calculate minimal amount for asset")
 	}
 
-	calculatedPercent, ok := amount.BigDivide(int64(request.Amount), fee.Percent, amount.One, amount.ROUND_UP, minimalAmount)
-	if !ok {
+	calculatedPercent, overflow := amount.BigDivide(int64(request.Amount), fee.Percent, 100*amount.One, amount.ROUND_UP, minimalAmount)
+	if overflow {
 		return nil, errors.New("failed to calculate fee")
 	}
 

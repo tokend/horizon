@@ -78,8 +78,8 @@ func (q FeesQ) FilterByUpperBound(upperBound int64) FeesQ {
 //FilterByAmount - returns q with filter by upper bound
 func (q FeesQ) FilterByAmount(amount int64) FeesQ {
 	q.selector = q.selector.
-		Where("f.upper_bound <= ?", amount).
-		Where("f.lower_bound >= ?", amount)
+		Where("f.upper_bound >= ?", amount).
+		Where("f.lower_bound <= ?", amount)
 	return q
 }
 
