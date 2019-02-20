@@ -4,6 +4,8 @@
 
 * Signers endpoint
 * Account/Signer Role/Rules
+* Endpoints for reviewable requests
+* Docs on reviewable requests and sale
 
 ### Changed
 

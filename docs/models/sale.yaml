@@ -1,0 +1,71 @@
+Sale:
+  - $ref: '#/components/schemas/Int64Key'
+  - type: object
+    properties:
+      attributes:
+        type: object
+        properties:
+          start_time:
+            type: string
+            description: "Start time of the sale"
+            format: "date-time"
+            example: "2012-11-01T22:08:41+00:00"
+          end_time:
+            type: string
+            description: "End time of the sale"
+            format: "date-time"
+            example: "2012-11-01T22:08:41+00:00"
+          sale_type:
+            type: integer
+            minimum: 1
+            maximum: 3
+            example: 1
+            description: |
+              * 1 - basic sale
+              * 2 - crowdfunding sale
+              * 3 - fixed price sale
+          sale_state:
+            type: integer
+            minimum: 1
+            maximum: 3
+            example: 1
+            description: |
+              * 1 - open
+              * 2 - closed
+              * 3 - cancelled
+          details:
+            type: object
+            description: "free-form object for sale details"
+      relationships:
+        type: object
+        properties:
+          owner:
+            type: object
+            description: "Owner of the sale"
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountKey'
+          base_asset:
+            type: object
+            description: "Base asset of the sale"
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AssetKey'
+          default_quote_asset:
+            type: object
+            description: "Default quote asset of the sale"
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AssetKey'
+          quote_assets:
+            type: object
+            description: "Quote assets of the sale"
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/components/schemas/AssetKey'
