@@ -60,7 +60,7 @@ func CalculateFeeHash(fee core2.Fee) string {
 	if fee.AccountID != "" {
 		data += fmt.Sprintf("account_id:%s", fee.AccountID)
 	} else {
-		data += fmt.Sprintf("account_role:%s", fee.AccountType)
+		data += fmt.Sprintf("account_role:%d", fee.AccountRole)
 	}
 
 	rawHash := sha256.Sum256([]byte(data))
