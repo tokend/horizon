@@ -1,0 +1,490 @@
+ReviewableRequestDetails:
+  oneOf:
+    - $ref: '#/components/schemas/CreateAssetDetails'
+    - $ref: '#/components/schemas/UpdateAssetDetails'
+    - $ref: '#/components/schemas/CreatePreIssuanceDetails'
+    - $ref: '#/components/schemas/CreateIssuanceDetails'
+    - $ref: '#/components/schemas/CreateWithdrawDetails'
+    - $ref: '#/components/schemas/CreateSaleDetails'
+    - $ref: '#/components/schemas/UpdateLimitsDetails'
+    - $ref: '#/components/schemas/CreateAmlAlertDetails'
+    - $ref: '#/components/schemas/ChangeRoleDetails'
+    - $ref: '#/components/schemas/UpdateSaleDetailsDetails'
+    - $ref: '#/components/schemas/CreateAtomicSwapBidDetails'
+    - $ref: '#/components/schemas/CreateAtomicSwapDetails'
+
+CreateAssetDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - asset
+          properties:
+            asset:
+              type: object
+              description: "asset"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
+        attributes:
+          type: object
+          required:
+            - asset
+            - policies
+            - pre_issuance_asset_signer
+            - max_issuance_amount
+            - initial_preissued_amount
+            - creator_details
+          properties:
+            asset:
+              type: string
+              description: "Unique asset identifier"
+              example: "USD"
+            policies:
+              type: integer
+              description: "Policies set on asset creation"
+              example: 12
+            pre_issuance_asset_signer:
+              type: string
+              description: "Address of account that performs pre issuance"
+              example: "GBSR6JG5AYSAW7HK6EGJFYVIVN54LVGSY3ZLJ6X3IBQZ766EJABCZQTH"
+            max_issuance_amount:
+              type: string
+              description: "Maximal amount to be issued"
+              example: "1000.123456"
+              format: Amount
+            initial_preissued_amount:
+              type: string
+              description: "Amount to issued on asset creation"
+              example: "1000.123456"
+              format: Amount
+            creator_details:
+              type: object
+              description: "free-form object to attach details"
+
+UpdateAssetDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - asset
+          properties:
+            asset:
+              type: object
+              description: "asset"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
+        attributes:
+          type: object
+          required:
+            - policies
+            - creator_details
+          properties:
+            policies:
+              type: integer
+              description: "Policies set on asset creation"
+              example: 12
+            creator_details:
+              type: object
+              description: "free-form object to attach details"
+
+CreatePreIssuanceDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - asset
+          properties:
+            asset:
+              type: object
+              description: "asset"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
+        attributes:
+          type: object
+          required:
+            - amount
+            - signature
+            - reference
+            - max_issuance_amount
+            - initial_preissued_amount
+            - creator_details
+          properties:
+            amount:
+              type: string
+              description: "Amount to be pre issued"
+              example: "123214.123456"
+              format: Amount
+            signature:
+              type: string
+              description: "Signature of the pre issuance signer"
+              example: "a343e3cbcc72928a571778f77bf2554eb5b72c79ce28bbc9d3325c60c21e5241"
+            reference:
+              type: string
+              description: "Reference for pre issuance request for it to not be submitted more than once"
+              example: "a343e3cbcc72928a571778f77bf2554eb5b72c79ce28bbc9d3325c60c2123451"
+            max_issuance_amount:
+              type: string
+              description: "Maximal amount to be issued"
+              example: "1000.123456"
+              format: Amount
+            initial_preissued_amount:
+              type: string
+              description: "Amount to issued on asset creation"
+              example: "300.123456"
+              format: Amount
+            creator_details:
+              type: object
+              description: "free-form object to attach details"
+
+CreateIssuanceDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - asset
+            - receiver
+          properties:
+            asset:
+              type: object
+              description: "Asset"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
+            receiver:
+              type: object
+              description: "Balance that will receive issued amount"
+              properties:
+                data:
+                  $ref: '#/components/schemas/BalanceKey'
+        attributes:
+          type: object
+          required:
+            - creator_details
+            - amount
+          properties:
+            amount:
+              type: string
+              description: "Amount to be issued"
+              example: "1000.123456"
+              format: Amount
+            creator_details:
+              type: object
+              description: "free-form object to attach details"
+
+CreateWithdrawDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - balance
+          properties:
+            balance:
+              type: object
+              description: "Balance to withdraw from"
+              properties:
+                data:
+                  $ref: '#/components/schemas/BalanceKey'
+        attributes:
+          type: object
+          required:
+            - fee
+            - amount
+            - creator_details
+            - reviewer_details
+          properties:
+            amount:
+              type: string
+              description: "Amount to be issued"
+              example: "1000.123456"
+              format: Amount
+            fee:
+              type: object
+              properties:
+                $ref: '#/components/schemas/CalculatedFee'
+            creator_details:
+              type: object
+              description: "free-form object to attach details"
+            reviewer_details:
+              type: object
+              description: "free-form object to attach reviewer details"
+
+CreateSaleDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - base_asset
+            - quote_assets
+            - default_quote_asset
+          properties:
+            base_asset:
+              type: object
+              description: "Asset to be sold"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
+            default_quote_asset:
+              type: object
+              description: "Default quote asset for sale"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
+            quote_assets:
+              description: "Assets that can be accepted"
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AssetKey'
+        attributes:
+          type: object
+          required:
+            - base_asset_for_hard_cap
+            - start_time
+            - end_time
+            - sale_type
+            - creator_details
+          properties:
+            base_asset_for_hard_cap:
+              type: string
+              description: "Maximum amount of base asset to be sold"
+              example: "1000.123456"
+              format: Amount
+            start_time:
+              type: string
+              description: "Time when sale should start"
+              format: "date-time"
+              example: "2012-11-01T22:08:41+00:00"
+            end_time:
+              type: string
+              description: "Time when sale should end"
+              format: "date-time"
+              example: "2012-11-01T22:08:41+00:00"
+            sale_type:
+              type: integer
+              minimum: 1
+              maximum: 3
+              example: 2
+              description: |
+                Defines sale type:
+                * 1 - **basic sale**
+                * 2 - **crowdfunding** sale
+                * 3 - **fixed price** sale
+            creator_details:
+              type: object
+              description: "free-form object to attach details"
+
+UpdateLimitsDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        attributes:
+          type: object
+          required:
+            - document_hash
+            - creator_details
+          properties:
+            document_hash:
+              type: string
+              description: "Hash of the document"
+              example: "13935d561f9ec54341243e6afaf0c8bf936928b07f6600204ba8ca550757d0a6"
+            creator_details:
+              type: object
+              description: "free-form object to attach details"
+
+CreateAmlAlertDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - balance
+          properties:
+            balance:
+              type: object
+              description: "Balance"
+              properties:
+                data:
+                  $ref: '#/components/schemas/BalanceKey'
+        attributes:
+          type: object
+          required:
+            - amount
+            - creator_details
+          properties:
+            amount:
+              type: string
+              description: "Amount"
+              example: "1000.123456"
+              format: Amount
+            creator_details:
+              type: string
+              example: "free form object for details"
+
+ChangeRoleDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - destination_account
+          properties:
+            destination_account:
+              type: object
+              description: "Target account whose role is to be changed"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AccountKey'
+        attributes:
+          type: object
+          required:
+            - account_role_to_set
+            - kyc_data
+            - sequence_number
+            - creator_details
+          properties:
+            account_role_to_set:
+              type: integer
+              minimum: 1
+              maximum: 10
+              description: |
+
+              example: 1
+            sequence_number:
+              type: integer
+              description: "Sequence number"
+              example: 10
+            creator_details:
+              type: array
+              items:
+                type: object
+                description: "Free form object for request specific details"
+            kyc_data:
+              type: object
+              description: "Details related to request"
+
+UpdateSaleDetailsDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - sale
+          properties:
+            sale:
+              type: object
+              description: "Sale which details should be updated"
+              properties:
+                data:
+                  $ref: '#/components/schemas/Int64Key'
+        attributes:
+          type: object
+          required:
+            - creator_details
+          properties:
+            creator_details:
+              type: object
+              description: "New details to set for sale"
+
+CreateAtomicSwapBidDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - base_balance
+            - quote_assets
+          properties:
+            base_balance:
+              type: object
+              description: "Base balance for bid"
+              properties:
+                data:
+                  $ref: '#/components/schemas/BalanceKey'
+            quote_assets:
+              description: "Assets that can be accepted"
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AssetKey'
+        attributes:
+          type: object
+          required:
+            - creator_details
+            - base_amount
+          properties:
+            base_amount:
+              type: string
+              description: "Amount of bid"
+              example: "100.000001"
+              format: Amount
+            creator_details:
+              type: object
+              description: "free-form object"
+
+CreateAtomicSwapDetails:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      properties:
+        relationships:
+          type: object
+          required:
+            - bid
+            - quote_asset
+          properties:
+            bid:
+              type: object
+              description: "Bid to create atomic swap for"
+              properties:
+                data:
+                  $ref: '#/components/schemas/Int64Key'
+            quote_asset:
+              description: "Asset used to perform atomic swap"
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
+        attributes:
+          type: object
+          required:
+            - base_amount
+          properties:
+            base_amount:
+              type: string
+              description: "Amount in base asset to perform atomic swap on"
+              example: "100.000001"
+              format: Amount

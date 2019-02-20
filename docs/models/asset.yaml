@@ -55,7 +55,7 @@ Asset:
             format: Amount
           policies:
             type: object
-            decription: "Defines properties of the asset"
+            description: "Defines properties of the asset"
             $ref: '#/components/schemas/Mask'
           trailing_digits:
             type: integer

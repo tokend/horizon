@@ -1,75 +1,91 @@
-/v3/fees:
+/v3/change_role_requests:
   get:
     tags:
-      - Fees
-    summary: Get List of Fees
+      - Requests
+    summary: Get list of change role requests
     description: |
-      Allows to get a filtered list of `Fee` with the corresponding details.
-    operationId: getFeesList
+      Allows to get a filtered list of `ChangeRoleRequest` with details
+    operationId: getChangeRoleRequests
     parameters:
-      - name: filter[asset]
+      - name: filter[requestor]
         in: query
         description: |
-          Filters fees by asset. Returns page of fees for provided asset
+          Filters requests by requestor - source of the operation.
         required: false
         style: form
         explode: false
         schema:
           type: string
-      - name: filter[fee_type]
+      - name: filter[reviewer]
         in: query
         description: |
-          Filters fees by type.
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-      - name: filter[subtype]
-        in: query
-        description: |
-          Filters fees by subtype.
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-      - name: filter[account]
-        in: query
-        description: |
-          Filters fees by account address.
+          Filters requests by reviewer - account assigned to review request.
         required: false
         style: form
         explode: false
         schema:
           type: string
-      - name: filter[account_role]
+      - name: filter[state]
         in: query
         description: |
-          Filters fees by account role.
+          Filters requests by their state.
+          * 1 - pending
+          * 2 - canceled
+          * 3 - approved
+          * 4 - rejected
+          * 5 - permanently_rejected
         required: false
         style: form
         explode: false
         schema:
           type: integer
-      - name: filter[lower_bound]
+          minimum: 1
+          maximum: 5
+      - name: filter[pending_tasks]
         in: query
         description: |
-          Filters fees by lower_bound.
+          Filters requests by pending tasks bit mask. Returns requests if all bit are set.
         required: false
         style: form
         explode: false
         schema:
           type: integer
-      - name: filter[upper_bound]
+      - name: filter[pending_tasks_not_set]
         in: query
         description: |
-          Filters fees by upper_bound.
+          Filters requests by pending tasks bit mask. Returns requests if all bits not set.
         required: false
         style: form
         explode: false
         schema:
           type: integer
+      - name: filter[pending_tasks_any_of]
+        in: query
+        description: |
+          Filters requests by pending tasks bit mask. Returns requests if at least one bit is set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[request_details.account_to_change_role]
+        in: query
+        description: |
+          Filters change_role requests by account to update kyc.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[request_details.account_role_to_set]
+        in: query
+        description: |
+          Filters change_role requests by account role to set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - name: include
         in: query
         description: |
@@ -80,13 +96,14 @@
         schema:
           type: string
           enum:
-            - asset
+            - "request_details"
+            - "request_details.destination_account"
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
-        description: fees exist
+        description: requests exist
         content:
           application/vnd.api+json:
             schema:
@@ -99,13 +116,14 @@
                   type: array
                   items:
                     type: object
-                    $ref: '#/components/schemas/Fee'
+                    $ref: '#/components/schemas/ReviewableRequest'
                 included:
                   type: array
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/Asset'
+                      - $ref: '#/components/schemas/ChangeRoleDetails'
+                      - $ref: '#/components/schemas/Account'
                 links:
                   type: object
                   description: "Provides links for pagination"
@@ -113,11 +131,11 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/fees?include=asset&page[number]=2&page[limit]=15"
+                      example: "/v3/change_role_requests?include=details&page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/fees?include=asset&page[number]=1&page[limit]=15"
+                      example: "/v3/change_role_requests?include=details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:
@@ -125,7 +143,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       404:
-        description: fees do not exist
+        description: requests do not exist
         content:
           application/vnd.api+json:
             schema:

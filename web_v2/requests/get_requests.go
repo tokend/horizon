@@ -1,7 +1,6 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -40,46 +39,39 @@ var filterTypeRequestListAll = map[string]struct{}{
 }
 
 // GetReviewableRequestList represents params to be specified by user for getReviewableRequestList handler
-type GetReviewableRequestList struct {
-	*base
-	Filters struct {
-		Requestor           string `fig:"requestor"`
-		Reviewer            string `fig:"reviewer"`
-		State               uint64 `fig:"state"`
-		Type                uint64 `fig:"type"`
-		PendingTasks        uint64 `fig:"pending_tasks"`
-		PendingTasksAnyOf   uint64 `fig:"pending_tasks_any_of"`
-		PendingTasksNotSet  uint64 `fig:"pending_tasks_not_set"`
-		MissingPendingTasks uint64 `fig:"missing_pending_tasks"`
-	}
+//type GetReviewableBaseRequestList struct {
+//	*base
+//	BaseFilters GetReviewableRequestListFilters
+//	PageParams  *db2.CursorPageParams
+//}
 
-	PageParams *db2.CursorPageParams
+type GetRequestListBaseFilters struct {
+	ID                  uint64 `fig:"id"`
+	Requestor           string `fig:"requestor"`
+	Reviewer            string `fig:"reviewer"`
+	State               uint64 `fig:"state"`
+	Type                uint64 `fig:"type"`
+	PendingTasks        uint64 `fig:"pending_tasks"`
+	PendingTasksAnyOf   uint64 `fig:"pending_tasks_any_of"`
+	PendingTasksNotSet  uint64 `fig:"pending_tasks_not_set"`
+	MissingPendingTasks uint64 `fig:"missing_pending_tasks"`
 }
 
-// NewGetReviewableRequestList - returns new instance of GetReviewableRequestList
-func NewGetReviewableRequestList(r *http.Request) (*GetReviewableRequestList, error) {
-	b, err := newBase(r, baseOpts{
-		supportedIncludes: includeTypeReviewableRequestListAll,
-		supportedFilters:  filterTypeRequestListAll,
-	})
+type GetRequests struct {
+	*GetRequestsBase
+	Filters GetRequestListBaseFilters
+}
+
+func NewGetRequests(r *http.Request) (request GetRequests, err error) {
+	request.GetRequestsBase, err = NewGetRequestsBase(
+		r,
+		&request.Filters,
+		map[string]struct{}{},
+		map[string]struct{}{},
+	)
 	if err != nil {
-		return nil, err
+		return request, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
-	if err != nil {
-		return nil, err
-	}
-
-	request := GetReviewableRequestList{
-		base:       b,
-		PageParams: pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
-	if err != nil {
-		return nil, err
-	}
-
-	return &request, nil
+	return request, nil
 }
