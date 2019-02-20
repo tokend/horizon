@@ -6,7 +6,7 @@ OrderBookEntryKey:
   properties:
     id:
       type: string
-      example: "QUOTE84651:BASE899:0:f:66110000"
+      example: "BASE84651:QUOTE899:0:f:66110000"
     type:
       type: string
       enum:
@@ -28,7 +28,7 @@ OrderBookEntry:
         properties:
           is_buy:
             type: bool
-            description: "defines whether searching of offer on buying base_asset, selling it, or both"
+            description: "defines whether searching of offer on buying base_asset or selling it" # FIXME ?
             example: false
           price:
             type: string

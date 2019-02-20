@@ -39,7 +39,7 @@
         example: "ETH"
     - name: is_buy
       in: query
-      description: Defines whether searching of offer on buying `base_asset`, selling it, or both
+      description: Defines whether searching of offer on buying `base_asset` or selling it
       required: false
       style: simple
       explode: false
