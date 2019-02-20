@@ -56,7 +56,7 @@ Asset:
           policies:
             type: object
             decription: "Defines properties of the asset"
-            $ref: '#/components/schemas/Mask'
+            $ref: '#/components/schemas/AssetPolicyMask'
           trailing_digits:
             type: integer
             format: int32

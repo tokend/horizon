@@ -15,7 +15,7 @@
       explode: false
       schema:
         type: string
-        format: QUOTE:BASE
+        format: BASE:QUOTE
         example: "BTC:ETH"
     - name: include
       in: query
