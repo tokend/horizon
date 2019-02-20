@@ -56,7 +56,7 @@ type getCalculatedFeesHandler struct {
 }
 
 // GetCalculatedFees returns calculated fee for given given parameters
-func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalculatedFees) (*regources.CalculatedFee, error) {
+func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalculatedFees) (*regources.CalculatedFeeResponse, error) {
 	fee, err := h.getFeeForAccount(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load fee for account")
@@ -78,9 +78,11 @@ func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalcul
 	}
 
 	hash := h.getHash(attributes)
-	response := &regources.CalculatedFee{
-		Key:        resources.NewCalculatedFeeKey(hash),
-		Attributes: attributes,
+	response := &regources.CalculatedFeeResponse{
+		Data: regources.CalculatedFee{
+			Key:        resources.NewCalculatedFeeKey(hash),
+			Attributes: attributes,
+		},
 	}
 
 	return response, nil

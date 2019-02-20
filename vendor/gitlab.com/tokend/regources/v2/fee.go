@@ -43,3 +43,7 @@ type CalculatedFee struct {
 	Key
 	Attributes Fee `json:"attributes"`
 }
+
+type CalculatedFeeResponse struct {
+	Data CalculatedFee `json:"data"`
+}
