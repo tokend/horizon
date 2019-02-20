@@ -11,7 +11,7 @@ import (
 )
 
 var selectFees = sq.Select("f.fee_type", "f.asset", "f.subtype", "f.fixed", "f.percent", "f.lastmodified,"+
-	"f.account_id, f.account_type, f.lower_bound, f.upper_bound, f.hash").
+	"f.account_id, f.account_role, f.lower_bound, f.upper_bound, f.hash").
 	From("fee_state f")
 
 type FeeEntry struct {

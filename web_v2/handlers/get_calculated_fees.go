@@ -157,7 +157,7 @@ func (h *getCalculatedFeesHandler) getFeeForAccount(request *requests.GetCalcula
 	}
 
 	return &core2.Fee{
-		AccountType: core2.GlobalAccountRole,
+		AccountRole: core2.GlobalAccountRole,
 		FeeType:     request.FeeType,
 		Subtype:     request.Subtype,
 		Asset:       request.Asset,
