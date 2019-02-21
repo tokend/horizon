@@ -85,8 +85,3 @@ KeyValueEntry:
         properties:
           value:
             $ref: '#/components/schemas/KeyValueEntryValueU64' # Here using specific case because we need only one value entry but the example has all three values
-#            oneOf:
-#            - $ref: '#/components/schemas/KeyValueEntryValueU32'
-#            - $ref: '#/components/schemas/KeyValueEntryValueU64'
-#            - $ref: '#/components/schemas/KeyValueEntryValueStr'
-

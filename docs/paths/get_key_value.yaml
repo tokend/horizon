@@ -28,31 +28,6 @@
               properties:
                 data:
                   $ref: '#/components/schemas/KeyValueEntry'
-#            example:
-#              - id: "u32Key"
-#                type: "key-value-entries"
-#                attributes:
-#                  type: object
-#                  properties:
-#                    value:
-#                      type: "1"
-#                      U32: "1"
-#              - id: "u64Key"
-#                type: "key-value-entries"
-#                attributes:
-#                  type: object
-#                  properties:
-#                    value:
-#                      type: "3"
-#                      U64: "2"
-#              - id: "strKey"
-#                type: "key-value-entries"
-#                attributes:
-#                  type: object
-#                  properties:
-#                    value:
-#                      type: "2"
-#                      Str: "1"
 
       400:
         description: bad input parameter
