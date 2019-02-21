@@ -76,3 +76,8 @@ tags:
     description: Defines access points to get signers
   - name: Account Roles
     description: Defines access points to get account roles
+  - name: Order Books
+    description: |
+                  An order book is an list of buy and sell orders for a specified asset pair organized by price level.
+                  An order book lists the amount of asset being bid or offered at each price point.
+                  It does not identifies the market participants behind the buy and sell orders.

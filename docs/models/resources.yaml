@@ -12,4 +12,5 @@ Resources:
     - $ref: '#/components/schemas/ExternalSystemID'
     - $ref: '#/components/schemas/AccountRole'
     - $ref: '#/components/schemas/AccountRule'
+    - $ref: '#/components/schemas/OrderBookEntry'
     - $ref: '#/components/schemas/Offer'
