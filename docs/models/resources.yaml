@@ -13,3 +13,4 @@ Resources:
     - $ref: '#/components/schemas/AccountRole'
     - $ref: '#/components/schemas/AccountRule'
     - $ref: '#/components/schemas/Offer'
+    - $ref: '#/components/schemas/SaleRequest'
