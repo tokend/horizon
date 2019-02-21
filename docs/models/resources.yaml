@@ -12,4 +12,4 @@ Resources:
     - $ref: '#/components/schemas/ExternalSystemID'
     - $ref: '#/components/schemas/AccountRole'
     - $ref: '#/components/schemas/AccountRule'
-    - $ref: '#/components/schemas/Sale'
+    - $ref: '#/components/schemas/SaleRequest'

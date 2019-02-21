@@ -100,7 +100,7 @@
                     type: object
                     anyOf:
                       - $ref: '#/components/schemas/UpdateSaleDetailsDetails'
-                      - $ref: '#/components/schemas/Sale'
+                      - $ref: '#/components/schemas/SaleRequest'
       400:
         description: bad input parameter
         content:

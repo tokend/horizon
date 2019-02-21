@@ -64,6 +64,10 @@
       in: query
       description: |
                     Filters sales by specified sale state.
+                    Available sale states:
+                    * 1 - open
+                    * 2 - closed
+                    * 3 - cancelled
       required: false
       style: form
       explode: false
@@ -128,6 +132,10 @@
       in: query
       description: |
                     Filters sales by a specified sale type.
+                    Available sale types:
+                    * 1 - basic sale
+                    * 2 - crowdfunding sale
+                    * 3 - fixed price sale
       required: false
       style: form
       explode: false
@@ -184,12 +192,6 @@
                       example: "/v3/sales?include=owner&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Errors'
-      404:
-        description: sale does not exist
         content:
           application/vnd.api+json:
             schema:
