@@ -5,15 +5,15 @@ import (
 )
 
 const (
-	// IncludeTypeSignerRoles - defines if signer roles should be included in the response
-	IncludeTypeSignerRoles      = "roles"
-	// IncludeTypeSignerRolesRules - defines if rules of signer roles should be included in the response
-	IncludeTypeSignerRolesRules = "roles.rules"
+	// IncludeTypeSignerRole - defines if signer roles should be included in the response
+	IncludeTypeSignerRole = "role"
+	// IncludeTypeSignerRoleRules - defines if rules of signer roles should be included in the response
+	IncludeTypeSignerRoleRules = "role.rules"
 )
 
 var includeTypeSignerAll = map[string]struct{}{
-	IncludeTypeSignerRoles:      {},
-	IncludeTypeSignerRolesRules: {},
+	IncludeTypeSignerRole:      {},
+	IncludeTypeSignerRoleRules: {},
 }
 
 //GetAccountSigners - represents params to be specified by user for Get Account Signers handler

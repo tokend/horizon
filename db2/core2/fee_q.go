@@ -6,7 +6,7 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-const GlobalAccountRole = -1
+const GlobalAccountRole = 0
 
 // FeesQ is a helper struct to aid in configuring queries that loads
 // fee structs.
@@ -20,7 +20,7 @@ func NewFeesQ(repo *db2.Repo) FeesQ {
 	return FeesQ{
 		repo: repo,
 		selector: sq.Select("f.fee_type", "f.asset", "f.subtype", "f.fixed", "f.percent", "f.lastmodified",
-			"f.account_id", "f.account_type", "f.lower_bound", "f.upper_bound", "f.hash").
+			"f.account_id", "f.account_role", "f.lower_bound", "f.upper_bound", "f.hash").
 			From("fee_state f"),
 	}
 }
@@ -28,7 +28,7 @@ func NewFeesQ(repo *db2.Repo) FeesQ {
 // Page - returns Q with specified limit and offset params
 func (q FeesQ) Page(params db2.OffsetPageParams) FeesQ {
 	order := string(params.Order)
-	orderBys := []string{"f.hash " + order, "f.lower_bound " + order, "f.upper_bound" + order}
+	orderBys := []string{"f.hash " + order, "f.lower_bound " + order, "f.upper_bound " + order}
 	q.selector = params.ApplyTo(q.selector.OrderBy(orderBys...))
 	return q
 }
@@ -58,8 +58,8 @@ func (q FeesQ) FilterBySubtype(subtype int64) FeesQ {
 }
 
 //FilterByAccountType - returns q with filter by account type
-func (q FeesQ) FilterByAccountType(accType int32) FeesQ {
-	q.selector = q.selector.Where("f.account_type = ?", accType)
+func (q FeesQ) FilterByAccountType(accType uint64) FeesQ {
+	q.selector = q.selector.Where("f.account_role = ?", accType)
 	return q
 }
 
@@ -78,8 +78,8 @@ func (q FeesQ) FilterByUpperBound(upperBound int64) FeesQ {
 //FilterByAmount - returns q with filter by upper bound
 func (q FeesQ) FilterByAmount(amount int64) FeesQ {
 	q.selector = q.selector.
-		Where("f.upper_bound <= ?", amount).
-		Where("f.lower_bound >= ?", amount)
+		Where("f.upper_bound >= ?", amount).
+		Where("f.lower_bound <= ?", amount)
 	return q
 }
 

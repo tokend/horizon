@@ -64,6 +64,16 @@ func (t *TransactionResultPair) Scan(src interface{}) error {
 	return safeBase64Scan(src, t)
 }
 
+// Scan reads from src into an AccountRuleResource struct
+func (r *AccountRuleResource) Scan(src interface{}) error {
+	return safeBase64Scan(src, r)
+}
+
+// Scan reads from src into an SignerRuleResource struct
+func (r *SignerRuleResource) Scan(src interface{}) error {
+	return safeBase64Scan(src, r)
+}
+
 // safeBase64Scan scans from src (which should be either a []byte or string)
 // into dest by using `SafeUnmarshalBase64`.
 func safeBase64Scan(src, dest interface{}) error {

@@ -37,13 +37,8 @@ func ForOperation(
 	switch op.Body.Type {
 	case xdr.OperationTypeCreateAccount:
 		result = append(result, Participant{op.Body.MustCreateAccountOp().Destination, nil, nil})
-	case xdr.OperationTypeSetOptions:
-		// the only direct participant is the source_account
 	case xdr.OperationTypeSetFees:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeManageAccount:
-		manageAccountOp := op.Body.MustManageAccountOp()
-		result = append(result, Participant{manageAccountOp.Account, nil, nil})
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		createWithdrawalRequest := op.Body.MustCreateWithdrawalRequestOp()
 		sourceParticipant.BalanceID = &createWithdrawalRequest.Request.Balance
@@ -99,7 +94,7 @@ func ForOperation(
 			break
 		}
 
-		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeAtomicSwap.ShortString() {
+		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeCreateAtomicSwap.ShortString() {
 			result = append(result, Participant{
 				AccountID: request.Requestor,
 				BalanceID: nil,
@@ -157,15 +152,6 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateAmlAlert:
 		// TODO add participant
-	case xdr.OperationTypeCreateKycRequest:
-		updateKYCRequestData := op.Body.MustCreateUpdateKycRequestOp().UpdateKycRequestData
-		if sourceParticipant.AccountID.Address() != updateKYCRequestData.AccountToUpdateKyc.Address() {
-			result = append(result, Participant{
-				AccountID: updateKYCRequestData.AccountToUpdateKyc,
-				BalanceID: nil,
-				Details:   nil,
-			})
-		}
 	case xdr.OperationTypePaymentV2:
 		paymentOpV2 := op.Body.MustPaymentOpV2()
 		paymentV2Response := opResult.MustPaymentV2Result().MustPaymentV2Response()
@@ -190,6 +176,20 @@ func ForOperation(
 		}
 	case xdr.OperationTypeCancelSaleRequest:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeManageAccountRule:
+	case xdr.OperationTypeManageSignerRule:
+	case xdr.OperationTypeManageSigner:
+	case xdr.OperationTypeManageAccountRole:
+	case xdr.OperationTypeManageSignerRole:
+	case xdr.OperationTypeCreateChangeRoleRequest:
+		updateKYCRequestData := op.Body.MustCreateChangeRoleRequestOp()
+		if sourceParticipant.AccountID.Address() != updateKYCRequestData.DestinationAccount.Address() {
+			result = append(result, Participant{
+				AccountID: updateKYCRequestData.DestinationAccount,
+				BalanceID: nil,
+				Details:   updateKYCRequestData.KycData,
+			})
+		}
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
