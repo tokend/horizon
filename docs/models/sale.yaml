@@ -1,5 +1,5 @@
-              type: object
 Sale:
+  allOf:
   - $ref: '#/components/schemas/Int64Key'
   - type: object
     properties:
