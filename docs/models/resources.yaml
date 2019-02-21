@@ -14,3 +14,4 @@ Resources:
     - $ref: '#/components/schemas/AccountRule'
     - $ref: '#/components/schemas/OrderBookEntry'
     - $ref: '#/components/schemas/Offer'
+    - $ref: '#/components/schemas/SaleRequest'

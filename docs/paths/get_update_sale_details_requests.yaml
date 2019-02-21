@@ -105,7 +105,7 @@
                     type: object
                     anyOf:
                       - $ref: '#/components/schemas/UpdateSaleDetailsDetails'
-                      - $ref: '#/components/schemas/Sale'
+                      - $ref: '#/components/schemas/SaleRequest'
                 links:
                   type: object
                   description: "Provides links for pagination"
