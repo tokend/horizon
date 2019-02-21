@@ -11,11 +11,11 @@ type CreateSaleRequestOp struct {
 
 //CreateSaleRequestOpAttrs -details of corresponding op
 type CreateSaleRequestOpAttrs struct {
-	StartTime time.Time `json:"start_time"`
-	EndTime   time.Time `json:"end_time"`
-	SoftCap   Amount    `json:"soft_cap"`
-	HardCap   Amount    `json:"hard_cap"`
-	Details   Details   `json:"details"`
+	StartTime      time.Time `json:"start_time"`
+	EndTime        time.Time `json:"end_time"`
+	SoftCap        Amount    `json:"soft_cap"`
+	HardCap        Amount    `json:"hard_cap"`
+	CreatorDetails Details   `json:"creator_details"`
 }
 
 // CreateSaleRequestOpAttrs - relations of corresponding op

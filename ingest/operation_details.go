@@ -193,7 +193,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		var externalDetails map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(op.Request.ExternalDetails), &externalDetails)
+		_ = json.Unmarshal([]byte(op.Request.CreatorDetails), &externalDetails)
 		details["external_details"] = externalDetails
 
 		allTasks := op.AllTasks
@@ -218,9 +218,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["balance_id"] = op.AmlAlertRequest.BalanceId.AsString()
 		details["reason"] = op.AmlAlertRequest.CreatorDetails
 		details["reference"] = op.Reference
-	case xdr.OperationTypePaymentV2:
-		op := c.Operation().Body.MustPaymentOpV2()
-		opResult := c.OperationResult().MustPaymentV2Result().MustPaymentV2Response()
+	case xdr.OperationTypePayment:
+		op := c.Operation().Body.MustPaymentOp()
+		opResult := c.OperationResult().MustPaymentResult().MustPaymentResponse()
 		details["payment_id"] = uint64(opResult.PaymentId)
 		details["from"] = source.Address()
 		details["to"] = opResult.Destination.Address()
@@ -288,7 +288,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		var kycData map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(op.KycData), &kycData)
+		_ = json.Unmarshal([]byte(op.CreatorDetails), &kycData)
 		details["kyc_data"] = kycData
 
 		if op.AllTasks != nil {

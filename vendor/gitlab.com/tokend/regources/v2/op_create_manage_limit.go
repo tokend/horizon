@@ -9,7 +9,7 @@ type CreateManageLimitsRequestOp struct {
 
 //CreateManageLimitsRequestOpAttrs - details of corresponding op
 type CreateManageLimitsRequestOpAttrs struct {
-	Data Details `json:"data"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 //CreateManageLimitsRequestOpRelations - relationships of the operation

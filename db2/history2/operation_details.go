@@ -200,16 +200,16 @@ type SetFeeDetails struct {
 
 //CreateWithdrawRequestDetails - details of corresponding op
 type CreateWithdrawRequestDetails struct {
-	BalanceAddress  string            `json:"balance_address"`
-	Amount          regources.Amount  `json:"amount"`
-	Fee             regources.Fee     `json:"fee"`
-	ExternalDetails regources.Details `json:"external_details"`
+	BalanceAddress string            `json:"balance_address"`
+	Amount         regources.Amount  `json:"amount"`
+	Fee            regources.Fee     `json:"fee"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 //CreateManageLimitsRequestDetails - details of corresponding op
 type CreateManageLimitsRequestDetails struct {
-	Data      regources.Details `json:"data"`
-	RequestID int64             `json:"request_id"`
+	CreatorDetails regources.Details `json:"creator_details"`
+	RequestID      int64             `json:"request_id"`
 }
 
 //ManageLimitsDetails - details of corresponding op
@@ -280,17 +280,18 @@ type ManageAssetDetails struct {
 	RequestID         int64                 `json:"request_id"`
 	Action            xdr.ManageAssetAction `json:"action"`
 	Policies          *xdr.AssetPolicy      `json:"policies,omitempty"`
-	Details           regources.Details     `json:"details,omitempty"`
+	CreatorDetails    regources.Details     `json:"creator_details,omitempty"`
 	PreissuedSigner   string                `json:"preissued_signer,omitempty"`
 	MaxIssuanceAmount regources.Amount      `json:"max_issuance_amount,omitempty"`
 }
 
 //CreatePreIssuanceRequestDetails - details of corresponding op
 type CreatePreIssuanceRequestDetails struct {
-	AssetCode   string           `json:"asset_code"`
-	Amount      regources.Amount `json:"amount"`
-	RequestID   int64            `json:"request_id"`
-	IsFulfilled bool             `json:"is_fulfilled"`
+	AssetCode      string            `json:"asset_code"`
+	Amount         regources.Amount  `json:"amount"`
+	CreatorDetails regources.Details `json:"creator_details"`
+	RequestID      int64             `json:"request_id"`
+	IsFulfilled    bool              `json:"is_fulfilled"`
 }
 
 //CreateIssuanceRequestDetails - details of corresponding op
@@ -301,7 +302,7 @@ type CreateIssuanceRequestDetails struct {
 	Asset                  string            `json:"asset"`
 	ReceiverAccountAddress string            `json:"receiver_account_address"`
 	ReceiverBalanceAddress string            `json:"receiver_balance_address"`
-	ExternalDetails        regources.Details `json:"external_details"`
+	CreatorDetails         regources.Details `json:"creator_details"`
 	AllTasks               *int64            `json:"all_tasks,omitempty"`
 	RequestDetails         RequestDetails    `json:"request_details"`
 }
@@ -316,7 +317,7 @@ type CreateSaleRequestDetails struct {
 	SoftCap           regources.Amount       `json:"soft_cap"`
 	HardCap           regources.Amount       `json:"hard_cap"`
 	QuoteAssets       []regources.AssetPrice `json:"quote_assets"`
-	Details           regources.Details      `json:"details"`
+	CreatorDetails    regources.Details      `json:"creator_details"`
 }
 
 //CheckSaleStateDetails - details of corresponding op
@@ -349,9 +350,9 @@ type CancelAtomicSwapBidDetails struct {
 
 //CreateAMLAlertRequestDetails - details of corresponding op
 type CreateAMLAlertRequestDetails struct {
-	Amount         regources.Amount `json:"amount"`
-	BalanceAddress string           `json:"balance_address"`
-	Reason         string           `json:"reason"`
+	Amount         regources.Amount  `json:"amount"`
+	BalanceAddress string            `json:"balance_address"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 // PaymentDetails - stores details of payment operation
@@ -392,7 +393,7 @@ type RequestDetails struct {
 type CreateChangeRoleRequestDetails struct {
 	DestinationAccount string            `json:"destination_account"`
 	AccountRoleToSet   uint64            `json:"account_role_to_set"`
-	KYCData            regources.Details `json:"kyc_data"`
+	CreatorDetails     regources.Details `json:"creator_details"`
 	AllTasks           *uint32           `json:"all_tasks"`
 	RequestDetails     RequestDetails    `json:"request_details"`
 }

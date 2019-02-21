@@ -287,7 +287,7 @@ func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceReque
 		Asset:          string(request.Asset),
 		Amount:         amount.StringU(uint64(request.Amount)),
 		Receiver:       request.Receiver.AsString(),
-		CreatorDetails: internal.MarshalCustomDetails(request.ExternalDetails),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
 

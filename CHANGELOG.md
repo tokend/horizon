@@ -1,7 +1,13 @@
 # Unreleased
 
+### Changed
+
+* Rename Details`/`Reason`/`NewDetails` field names in operation which create reqeusts unified to `creatorDetails`
+* Rename isForbid to forbids
+
 ### Fixed
 
+* Error codes
 * `request_details` format to satisfy JSON API spec
 
 # 3.0.1-x.7

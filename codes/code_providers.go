@@ -25,7 +25,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeBindExternalSystemAccountId: func(ir xdr.OperationResultTr) shortStr { return ir.MustBindExternalSystemAccountIdResult().Code },
 	xdr.OperationTypeCreateAmlAlert:              func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateAmlAlertRequestResult().Code },
 	xdr.OperationTypeCreateChangeRoleRequest:     func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateChangeRoleRequestResult().Code },
-	xdr.OperationTypePaymentV2:                   func(ir xdr.OperationResultTr) shortStr { return ir.MustPaymentV2Result().Code },
+	xdr.OperationTypePayment:                     func(ir xdr.OperationResultTr) shortStr { return ir.MustPaymentResult().Code },
 	xdr.OperationTypeManageSale:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSaleResult().Code },
 	xdr.OperationTypeManageKeyValue:              func(ir xdr.OperationResultTr) shortStr { return ir.MustManageKeyValueResult().Code },
 	xdr.OperationTypeCreateManageLimitsRequest:   func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateManageLimitsRequestResult().Code },

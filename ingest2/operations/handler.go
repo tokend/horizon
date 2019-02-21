@@ -103,7 +103,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeReviewRequest: newReviewRequestOpHandler(effectsBaseHandler),
-			xdr.OperationTypePaymentV2: &paymentOpHandler{
+			xdr.OperationTypePayment: &paymentOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{

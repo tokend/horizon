@@ -34,7 +34,7 @@ func (h *manageAccountRoleOpHandler) Details(op rawOperation,
 			Details: internal.MarshalCustomDetails(details.Details),
 		}
 
-		for _, id := range details.AccountRuleIDs {
+		for _, id := range details.RuleIDs {
 			creationDetails.RuleIDs = append(creationDetails.RuleIDs, uint64(id))
 		}
 
@@ -47,13 +47,13 @@ func (h *manageAccountRoleOpHandler) Details(op rawOperation,
 			Details: internal.MarshalCustomDetails(details.Details),
 		}
 
-		for _, id := range details.AccountRuleIDs {
+		for _, id := range details.RuleIDs {
 			updateDetails.RuleIDs = append(updateDetails.RuleIDs, uint64(id))
 		}
 
 		opDetails.ManageAccountRole.UpdateDetails = updateDetails
 	case xdr.ManageAccountRoleActionRemove:
-		opDetails.ManageAccountRole.RoleID = uint64(manageAccountRoleOp.Data.MustRemoveData().AccountRoleId)
+		opDetails.ManageAccountRole.RoleID = uint64(manageAccountRoleOp.Data.MustRemoveData().RoleId)
 	default:
 		return history2.OperationDetails{}, errors.New("Unexpected action on manage account role")
 	}

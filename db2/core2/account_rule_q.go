@@ -20,7 +20,7 @@ func NewAccountRuleQ(repo *db2.Repo) AccountRuleQ {
 		selector: sq.Select("ar.id",
 			"ar.resource",
 			"ar.action",
-			"ar.is_forbid",
+			"ar.forbids",
 			"ar.details",
 		).From("account_rules ar"),
 	}

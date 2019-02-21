@@ -152,9 +152,9 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateAmlAlert:
 		// TODO add participant
-	case xdr.OperationTypePaymentV2:
-		paymentOpV2 := op.Body.MustPaymentOpV2()
-		paymentV2Response := opResult.MustPaymentV2Result().MustPaymentV2Response()
+	case xdr.OperationTypePayment:
+		paymentOpV2 := op.Body.MustPaymentOp()
+		paymentV2Response := opResult.MustPaymentResult().MustPaymentResponse()
 
 		result = append(result, Participant{paymentV2Response.Destination, &paymentV2Response.DestinationBalanceId, nil})
 		sourceParticipant.BalanceID = &paymentOpV2.SourceBalanceId
@@ -187,7 +187,7 @@ func ForOperation(
 			result = append(result, Participant{
 				AccountID: updateKYCRequestData.DestinationAccount,
 				BalanceID: nil,
-				Details:   updateKYCRequestData.KycData,
+				Details:   updateKYCRequestData.CreatorDetails,
 			})
 		}
 	default:

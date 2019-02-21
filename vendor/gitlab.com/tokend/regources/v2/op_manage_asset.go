@@ -14,7 +14,7 @@ type ManageAssetOpAttrs struct {
 	AssetCode         string                `json:"asset_code,omitempty"`
 	Action            xdr.ManageAssetAction `json:"action"`
 	Policies          *xdr.AssetPolicy      `json:"policies,omitempty"`
-	Details           Details               `json:"details,omitempty"`
+	CreatorDetails    Details               `json:"creator_details,omitempty"`
 	PreissuedSigner   string                `json:"preissuance_signer,omitempty"`
 	MaxIssuanceAmount Amount                `json:"max_issuance_amount,omitempty"`
 }

@@ -1,5 +1,5 @@
-// revision: f710477e73ba20bbd3c19f49a274fc7668d19ff4
-// branch:   master
+// revision: 48e4c546e0ea993542c3983f6345cdee1b4bc513
+// branch:   feature/roles_rules
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -60,7 +60,7 @@
 //  xdr/Stellar-operation-manage-signer-role.x
 //  xdr/Stellar-operation-manage-signer-rule.x
 //  xdr/Stellar-operation-manage-signer.x
-//  xdr/Stellar-operation-payment-v2.x
+//  xdr/Stellar-operation-payment.x
 //  xdr/Stellar-operation-payout.x
 //  xdr/Stellar-operation-review-request.x
 //  xdr/Stellar-operation-set-fees.x
@@ -807,7 +807,7 @@ func NewAccountRuleEntryExt(v LedgerVersion, value interface{}) (result AccountR
 //        AccountRuleResource resource;
 //        AccountRuleAction action;
 //
-//        bool isForbid;
+//        bool forbids;
 //
 //        longstring details;
 //
@@ -824,7 +824,7 @@ type AccountRuleEntry struct {
 	Id       Uint64              `json:"id,omitempty"`
 	Resource AccountRuleResource `json:"resource,omitempty"`
 	Action   AccountRuleAction   `json:"action,omitempty"`
-	IsForbid bool                `json:"isForbid,omitempty"`
+	Forbids  bool                `json:"forbids,omitempty"`
 	Details  Longstring          `json:"details,omitempty"`
 	Ext      AccountRuleEntryExt `json:"ext,omitempty"`
 }
@@ -4567,7 +4567,7 @@ func NewSignerRuleEntryExt(v LedgerVersion, value interface{}) (result SignerRul
 //        SignerRuleResource resource;
 //        SignerRuleAction action;
 //
-//        bool isForbid;
+//        bool forbids;
 //        bool isDefault; // default rules will be in each role
 //
 //        longstring details;
@@ -4587,7 +4587,7 @@ type SignerRuleEntry struct {
 	Id        Uint64             `json:"id,omitempty"`
 	Resource  SignerRuleResource `json:"resource,omitempty"`
 	Action    SignerRuleAction   `json:"action,omitempty"`
-	IsForbid  bool               `json:"isForbid,omitempty"`
+	Forbids   bool               `json:"forbids,omitempty"`
 	IsDefault bool               `json:"isDefault,omitempty"`
 	Details   Longstring         `json:"details,omitempty"`
 	OwnerId   AccountId          `json:"ownerID,omitempty"`
@@ -11635,7 +11635,7 @@ type CreateAmlAlertRequestOp struct {
 //        // codes considered as "success" for the operation
 //        SUCCESS = 0,
 //        BALANCE_NOT_EXIST = 1, // balance doesn't exist
-//        INVALID_REASON = 2, //invalid reason for request
+//        INVALID_CREATOR_DETAILS = 2, //invalid reason for request
 //        UNDERFUNDED = 3, //when couldn't lock balance
 //        REFERENCE_DUPLICATION = 4, // reference already exists
 //        INVALID_AMOUNT = 5, // amount must be positive
@@ -11651,7 +11651,7 @@ type CreateAmlAlertRequestResultCode int32
 const (
 	CreateAmlAlertRequestResultCodeSuccess               CreateAmlAlertRequestResultCode = 0
 	CreateAmlAlertRequestResultCodeBalanceNotExist       CreateAmlAlertRequestResultCode = 1
-	CreateAmlAlertRequestResultCodeInvalidReason         CreateAmlAlertRequestResultCode = 2
+	CreateAmlAlertRequestResultCodeInvalidCreatorDetails CreateAmlAlertRequestResultCode = 2
 	CreateAmlAlertRequestResultCodeUnderfunded           CreateAmlAlertRequestResultCode = 3
 	CreateAmlAlertRequestResultCodeReferenceDuplication  CreateAmlAlertRequestResultCode = 4
 	CreateAmlAlertRequestResultCodeInvalidAmount         CreateAmlAlertRequestResultCode = 5
@@ -11662,7 +11662,7 @@ const (
 var CreateAmlAlertRequestResultCodeAll = []CreateAmlAlertRequestResultCode{
 	CreateAmlAlertRequestResultCodeSuccess,
 	CreateAmlAlertRequestResultCodeBalanceNotExist,
-	CreateAmlAlertRequestResultCodeInvalidReason,
+	CreateAmlAlertRequestResultCodeInvalidCreatorDetails,
 	CreateAmlAlertRequestResultCodeUnderfunded,
 	CreateAmlAlertRequestResultCodeReferenceDuplication,
 	CreateAmlAlertRequestResultCodeInvalidAmount,
@@ -11673,7 +11673,7 @@ var CreateAmlAlertRequestResultCodeAll = []CreateAmlAlertRequestResultCode{
 var createAmlAlertRequestResultCodeMap = map[int32]string{
 	0:  "CreateAmlAlertRequestResultCodeSuccess",
 	1:  "CreateAmlAlertRequestResultCodeBalanceNotExist",
-	2:  "CreateAmlAlertRequestResultCodeInvalidReason",
+	2:  "CreateAmlAlertRequestResultCodeInvalidCreatorDetails",
 	3:  "CreateAmlAlertRequestResultCodeUnderfunded",
 	4:  "CreateAmlAlertRequestResultCodeReferenceDuplication",
 	5:  "CreateAmlAlertRequestResultCodeInvalidAmount",
@@ -11684,7 +11684,7 @@ var createAmlAlertRequestResultCodeMap = map[int32]string{
 var createAmlAlertRequestResultCodeShortMap = map[int32]string{
 	0:  "success",
 	1:  "balance_not_exist",
-	2:  "invalid_reason",
+	2:  "invalid_creator_details",
 	3:  "underfunded",
 	4:  "reference_duplication",
 	5:  "invalid_amount",
@@ -11695,7 +11695,7 @@ var createAmlAlertRequestResultCodeShortMap = map[int32]string{
 var createAmlAlertRequestResultCodeRevMap = map[string]int32{
 	"CreateAmlAlertRequestResultCodeSuccess":               0,
 	"CreateAmlAlertRequestResultCodeBalanceNotExist":       1,
-	"CreateAmlAlertRequestResultCodeInvalidReason":         2,
+	"CreateAmlAlertRequestResultCodeInvalidCreatorDetails": 2,
 	"CreateAmlAlertRequestResultCodeUnderfunded":           3,
 	"CreateAmlAlertRequestResultCodeReferenceDuplication":  4,
 	"CreateAmlAlertRequestResultCodeInvalidAmount":         5,
@@ -12999,7 +12999,7 @@ func NewCreateChangeRoleRequestOpExt(v LedgerVersion, value interface{}) (result
 //
 //        AccountID destinationAccount;
 //        uint64 accountRoleToSet;
-//        longstring kycData;
+//        longstring creatorDetails;
 //
 //        uint32* allTasks;
 //
@@ -13015,7 +13015,7 @@ type CreateChangeRoleRequestOp struct {
 	RequestId          Uint64                       `json:"requestID,omitempty"`
 	DestinationAccount AccountId                    `json:"destinationAccount,omitempty"`
 	AccountRoleToSet   Uint64                       `json:"accountRoleToSet,omitempty"`
-	KycData            Longstring                   `json:"kycData,omitempty"`
+	CreatorDetails     Longstring                   `json:"creatorDetails,omitempty"`
 	AllTasks           *Uint32                      `json:"allTasks,omitempty"`
 	Ext                CreateChangeRoleRequestOpExt `json:"ext,omitempty"`
 }
@@ -13034,9 +13034,9 @@ type CreateChangeRoleRequestOp struct {
 //    	REQUEST_DOES_NOT_EXIST = -4,
 //    	PENDING_REQUEST_UPDATE_NOT_ALLOWED = -5,
 //    	NOT_ALLOWED_TO_UPDATE_REQUEST = -6, // master account can update request only through review request operation
-//    	INVALID_UPDATE_KYC_REQUEST_DATA = -7,
-//    	INVALID_KYC_DATA = -8,
-//    	KYC_RULE_NOT_FOUND = -9
+//    	INVALID_CHANGE_ROLE_REQUEST_DATA = -7,
+//    	INVALID_CREATOR_DETAILS = -8,
+//    	CHANGE_ROLE_TASKS_NOT_FOUND = -9
 //    };
 //
 type CreateChangeRoleRequestResultCode int32
@@ -13049,9 +13049,9 @@ const (
 	CreateChangeRoleRequestResultCodeRequestDoesNotExist            CreateChangeRoleRequestResultCode = -4
 	CreateChangeRoleRequestResultCodePendingRequestUpdateNotAllowed CreateChangeRoleRequestResultCode = -5
 	CreateChangeRoleRequestResultCodeNotAllowedToUpdateRequest      CreateChangeRoleRequestResultCode = -6
-	CreateChangeRoleRequestResultCodeInvalidUpdateKycRequestData    CreateChangeRoleRequestResultCode = -7
-	CreateChangeRoleRequestResultCodeInvalidKycData                 CreateChangeRoleRequestResultCode = -8
-	CreateChangeRoleRequestResultCodeKycRuleNotFound                CreateChangeRoleRequestResultCode = -9
+	CreateChangeRoleRequestResultCodeInvalidChangeRoleRequestData   CreateChangeRoleRequestResultCode = -7
+	CreateChangeRoleRequestResultCodeInvalidCreatorDetails          CreateChangeRoleRequestResultCode = -8
+	CreateChangeRoleRequestResultCodeChangeRoleTasksNotFound        CreateChangeRoleRequestResultCode = -9
 )
 
 var CreateChangeRoleRequestResultCodeAll = []CreateChangeRoleRequestResultCode{
@@ -13062,9 +13062,9 @@ var CreateChangeRoleRequestResultCodeAll = []CreateChangeRoleRequestResultCode{
 	CreateChangeRoleRequestResultCodeRequestDoesNotExist,
 	CreateChangeRoleRequestResultCodePendingRequestUpdateNotAllowed,
 	CreateChangeRoleRequestResultCodeNotAllowedToUpdateRequest,
-	CreateChangeRoleRequestResultCodeInvalidUpdateKycRequestData,
-	CreateChangeRoleRequestResultCodeInvalidKycData,
-	CreateChangeRoleRequestResultCodeKycRuleNotFound,
+	CreateChangeRoleRequestResultCodeInvalidChangeRoleRequestData,
+	CreateChangeRoleRequestResultCodeInvalidCreatorDetails,
+	CreateChangeRoleRequestResultCodeChangeRoleTasksNotFound,
 }
 
 var createChangeRoleRequestResultCodeMap = map[int32]string{
@@ -13075,9 +13075,9 @@ var createChangeRoleRequestResultCodeMap = map[int32]string{
 	-4: "CreateChangeRoleRequestResultCodeRequestDoesNotExist",
 	-5: "CreateChangeRoleRequestResultCodePendingRequestUpdateNotAllowed",
 	-6: "CreateChangeRoleRequestResultCodeNotAllowedToUpdateRequest",
-	-7: "CreateChangeRoleRequestResultCodeInvalidUpdateKycRequestData",
-	-8: "CreateChangeRoleRequestResultCodeInvalidKycData",
-	-9: "CreateChangeRoleRequestResultCodeKycRuleNotFound",
+	-7: "CreateChangeRoleRequestResultCodeInvalidChangeRoleRequestData",
+	-8: "CreateChangeRoleRequestResultCodeInvalidCreatorDetails",
+	-9: "CreateChangeRoleRequestResultCodeChangeRoleTasksNotFound",
 }
 
 var createChangeRoleRequestResultCodeShortMap = map[int32]string{
@@ -13088,9 +13088,9 @@ var createChangeRoleRequestResultCodeShortMap = map[int32]string{
 	-4: "request_does_not_exist",
 	-5: "pending_request_update_not_allowed",
 	-6: "not_allowed_to_update_request",
-	-7: "invalid_update_kyc_request_data",
-	-8: "invalid_kyc_data",
-	-9: "kyc_rule_not_found",
+	-7: "invalid_change_role_request_data",
+	-8: "invalid_creator_details",
+	-9: "change_role_tasks_not_found",
 }
 
 var createChangeRoleRequestResultCodeRevMap = map[string]int32{
@@ -13101,9 +13101,9 @@ var createChangeRoleRequestResultCodeRevMap = map[string]int32{
 	"CreateChangeRoleRequestResultCodeRequestDoesNotExist":            -4,
 	"CreateChangeRoleRequestResultCodePendingRequestUpdateNotAllowed": -5,
 	"CreateChangeRoleRequestResultCodeNotAllowedToUpdateRequest":      -6,
-	"CreateChangeRoleRequestResultCodeInvalidUpdateKycRequestData":    -7,
-	"CreateChangeRoleRequestResultCodeInvalidKycData":                 -8,
-	"CreateChangeRoleRequestResultCodeKycRuleNotFound":                -9,
+	"CreateChangeRoleRequestResultCodeInvalidChangeRoleRequestData":   -7,
+	"CreateChangeRoleRequestResultCodeInvalidCreatorDetails":          -8,
+	"CreateChangeRoleRequestResultCodeChangeRoleTasksNotFound":        -9,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -13386,7 +13386,7 @@ type CreateIssuanceRequestOp struct {
 //    	NOT_AUTHORIZED = -5,
 //    	EXCEEDS_MAX_ISSUANCE_AMOUNT = -6,
 //    	RECEIVER_FULL_LINE = -7,
-//    	INVALID_EXTERNAL_DETAILS = -8, // external details size exceeds max allowed
+//    	INVALID_CREATOR_DETAILS = -8, // external details size exceeds max allowed
 //    	FEE_EXCEEDS_AMOUNT = -9, // fee more than amount to issue
 //        REQUIRES_KYC = -10, // asset requires receiver to have KYC
 //        REQUIRES_VERIFICATION = -11, //asset requires receiver to be verified
@@ -13406,7 +13406,7 @@ const (
 	CreateIssuanceRequestResultCodeNotAuthorized            CreateIssuanceRequestResultCode = -5
 	CreateIssuanceRequestResultCodeExceedsMaxIssuanceAmount CreateIssuanceRequestResultCode = -6
 	CreateIssuanceRequestResultCodeReceiverFullLine         CreateIssuanceRequestResultCode = -7
-	CreateIssuanceRequestResultCodeInvalidExternalDetails   CreateIssuanceRequestResultCode = -8
+	CreateIssuanceRequestResultCodeInvalidCreatorDetails    CreateIssuanceRequestResultCode = -8
 	CreateIssuanceRequestResultCodeFeeExceedsAmount         CreateIssuanceRequestResultCode = -9
 	CreateIssuanceRequestResultCodeRequiresKyc              CreateIssuanceRequestResultCode = -10
 	CreateIssuanceRequestResultCodeRequiresVerification     CreateIssuanceRequestResultCode = -11
@@ -13424,7 +13424,7 @@ var CreateIssuanceRequestResultCodeAll = []CreateIssuanceRequestResultCode{
 	CreateIssuanceRequestResultCodeNotAuthorized,
 	CreateIssuanceRequestResultCodeExceedsMaxIssuanceAmount,
 	CreateIssuanceRequestResultCodeReceiverFullLine,
-	CreateIssuanceRequestResultCodeInvalidExternalDetails,
+	CreateIssuanceRequestResultCodeInvalidCreatorDetails,
 	CreateIssuanceRequestResultCodeFeeExceedsAmount,
 	CreateIssuanceRequestResultCodeRequiresKyc,
 	CreateIssuanceRequestResultCodeRequiresVerification,
@@ -13442,7 +13442,7 @@ var createIssuanceRequestResultCodeMap = map[int32]string{
 	-5:  "CreateIssuanceRequestResultCodeNotAuthorized",
 	-6:  "CreateIssuanceRequestResultCodeExceedsMaxIssuanceAmount",
 	-7:  "CreateIssuanceRequestResultCodeReceiverFullLine",
-	-8:  "CreateIssuanceRequestResultCodeInvalidExternalDetails",
+	-8:  "CreateIssuanceRequestResultCodeInvalidCreatorDetails",
 	-9:  "CreateIssuanceRequestResultCodeFeeExceedsAmount",
 	-10: "CreateIssuanceRequestResultCodeRequiresKyc",
 	-11: "CreateIssuanceRequestResultCodeRequiresVerification",
@@ -13460,7 +13460,7 @@ var createIssuanceRequestResultCodeShortMap = map[int32]string{
 	-5:  "not_authorized",
 	-6:  "exceeds_max_issuance_amount",
 	-7:  "receiver_full_line",
-	-8:  "invalid_external_details",
+	-8:  "invalid_creator_details",
 	-9:  "fee_exceeds_amount",
 	-10: "requires_kyc",
 	-11: "requires_verification",
@@ -13478,7 +13478,7 @@ var createIssuanceRequestResultCodeRevMap = map[string]int32{
 	"CreateIssuanceRequestResultCodeNotAuthorized":            -5,
 	"CreateIssuanceRequestResultCodeExceedsMaxIssuanceAmount": -6,
 	"CreateIssuanceRequestResultCodeReceiverFullLine":         -7,
-	"CreateIssuanceRequestResultCodeInvalidExternalDetails":   -8,
+	"CreateIssuanceRequestResultCodeInvalidCreatorDetails":    -8,
 	"CreateIssuanceRequestResultCodeFeeExceedsAmount":         -9,
 	"CreateIssuanceRequestResultCodeRequiresKyc":              -10,
 	"CreateIssuanceRequestResultCodeRequiresVerification":     -11,
@@ -13758,7 +13758,7 @@ type CreateManageLimitsRequestOp struct {
 //        // codes considered as "failure" for the operation
 //    	MANAGE_LIMITS_REQUEST_REFERENCE_DUPLICATION = -1,
 //        MANAGE_LIMITS_REQUEST_NOT_FOUND = -2,
-//        INVALID_DETAILS = -3, // details must be valid json
+//        INVALID_CREATOR_DETAILS = -3, // details must be valid json
 //    	LIMITS_UPDATE_TASKS_NOT_FOUND = -5,
 //        NOT_ALLOWED_TO_SET_TASKS_ON_UPDATE = -6, // can't set allTasks on request update
 //        LIMITS_UPDATE_ZERO_TASKS_NOT_ALLOWED = -7
@@ -13771,7 +13771,7 @@ const (
 	CreateManageLimitsRequestResultCodeSuccess                                 CreateManageLimitsRequestResultCode = 0
 	CreateManageLimitsRequestResultCodeManageLimitsRequestReferenceDuplication CreateManageLimitsRequestResultCode = -1
 	CreateManageLimitsRequestResultCodeManageLimitsRequestNotFound             CreateManageLimitsRequestResultCode = -2
-	CreateManageLimitsRequestResultCodeInvalidDetails                          CreateManageLimitsRequestResultCode = -3
+	CreateManageLimitsRequestResultCodeInvalidCreatorDetails                   CreateManageLimitsRequestResultCode = -3
 	CreateManageLimitsRequestResultCodeLimitsUpdateTasksNotFound               CreateManageLimitsRequestResultCode = -5
 	CreateManageLimitsRequestResultCodeNotAllowedToSetTasksOnUpdate            CreateManageLimitsRequestResultCode = -6
 	CreateManageLimitsRequestResultCodeLimitsUpdateZeroTasksNotAllowed         CreateManageLimitsRequestResultCode = -7
@@ -13781,7 +13781,7 @@ var CreateManageLimitsRequestResultCodeAll = []CreateManageLimitsRequestResultCo
 	CreateManageLimitsRequestResultCodeSuccess,
 	CreateManageLimitsRequestResultCodeManageLimitsRequestReferenceDuplication,
 	CreateManageLimitsRequestResultCodeManageLimitsRequestNotFound,
-	CreateManageLimitsRequestResultCodeInvalidDetails,
+	CreateManageLimitsRequestResultCodeInvalidCreatorDetails,
 	CreateManageLimitsRequestResultCodeLimitsUpdateTasksNotFound,
 	CreateManageLimitsRequestResultCodeNotAllowedToSetTasksOnUpdate,
 	CreateManageLimitsRequestResultCodeLimitsUpdateZeroTasksNotAllowed,
@@ -13791,7 +13791,7 @@ var createManageLimitsRequestResultCodeMap = map[int32]string{
 	0:  "CreateManageLimitsRequestResultCodeSuccess",
 	-1: "CreateManageLimitsRequestResultCodeManageLimitsRequestReferenceDuplication",
 	-2: "CreateManageLimitsRequestResultCodeManageLimitsRequestNotFound",
-	-3: "CreateManageLimitsRequestResultCodeInvalidDetails",
+	-3: "CreateManageLimitsRequestResultCodeInvalidCreatorDetails",
 	-5: "CreateManageLimitsRequestResultCodeLimitsUpdateTasksNotFound",
 	-6: "CreateManageLimitsRequestResultCodeNotAllowedToSetTasksOnUpdate",
 	-7: "CreateManageLimitsRequestResultCodeLimitsUpdateZeroTasksNotAllowed",
@@ -13801,7 +13801,7 @@ var createManageLimitsRequestResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "manage_limits_request_reference_duplication",
 	-2: "manage_limits_request_not_found",
-	-3: "invalid_details",
+	-3: "invalid_creator_details",
 	-5: "limits_update_tasks_not_found",
 	-6: "not_allowed_to_set_tasks_on_update",
 	-7: "limits_update_zero_tasks_not_allowed",
@@ -13811,7 +13811,7 @@ var createManageLimitsRequestResultCodeRevMap = map[string]int32{
 	"CreateManageLimitsRequestResultCodeSuccess":                                 0,
 	"CreateManageLimitsRequestResultCodeManageLimitsRequestReferenceDuplication": -1,
 	"CreateManageLimitsRequestResultCodeManageLimitsRequestNotFound":             -2,
-	"CreateManageLimitsRequestResultCodeInvalidDetails":                          -3,
+	"CreateManageLimitsRequestResultCodeInvalidCreatorDetails":                   -3,
 	"CreateManageLimitsRequestResultCodeLimitsUpdateTasksNotFound":               -5,
 	"CreateManageLimitsRequestResultCodeNotAllowedToSetTasksOnUpdate":            -6,
 	"CreateManageLimitsRequestResultCodeLimitsUpdateZeroTasksNotAllowed":         -7,
@@ -14096,7 +14096,8 @@ type CreatePreIssuanceRequestOp struct {
 //        INVALID_AMOUNT = -6,             // amount is 0
 //        INVALID_REFERENCE = -7,
 //        INCORRECT_AMOUNT_PRECISION = -8,  // amount does not fit to this asset's precision
-//        PREISSUANCE_TASKS_NOT_FOUND = -9
+//        PREISSUANCE_TASKS_NOT_FOUND = -9,
+//        INVALID_CREATOR_DETAILS = -10
 //    };
 //
 type CreatePreIssuanceRequestResultCode int32
@@ -14112,6 +14113,7 @@ const (
 	CreatePreIssuanceRequestResultCodeInvalidReference         CreatePreIssuanceRequestResultCode = -7
 	CreatePreIssuanceRequestResultCodeIncorrectAmountPrecision CreatePreIssuanceRequestResultCode = -8
 	CreatePreIssuanceRequestResultCodePreissuanceTasksNotFound CreatePreIssuanceRequestResultCode = -9
+	CreatePreIssuanceRequestResultCodeInvalidCreatorDetails    CreatePreIssuanceRequestResultCode = -10
 )
 
 var CreatePreIssuanceRequestResultCodeAll = []CreatePreIssuanceRequestResultCode{
@@ -14125,32 +14127,35 @@ var CreatePreIssuanceRequestResultCodeAll = []CreatePreIssuanceRequestResultCode
 	CreatePreIssuanceRequestResultCodeInvalidReference,
 	CreatePreIssuanceRequestResultCodeIncorrectAmountPrecision,
 	CreatePreIssuanceRequestResultCodePreissuanceTasksNotFound,
+	CreatePreIssuanceRequestResultCodeInvalidCreatorDetails,
 }
 
 var createPreIssuanceRequestResultCodeMap = map[int32]string{
-	0:  "CreatePreIssuanceRequestResultCodeSuccess",
-	-1: "CreatePreIssuanceRequestResultCodeAssetNotFound",
-	-2: "CreatePreIssuanceRequestResultCodeReferenceDuplication",
-	-3: "CreatePreIssuanceRequestResultCodeNotAuthorizedUpload",
-	-4: "CreatePreIssuanceRequestResultCodeInvalidSignature",
-	-5: "CreatePreIssuanceRequestResultCodeExceededMaxAmount",
-	-6: "CreatePreIssuanceRequestResultCodeInvalidAmount",
-	-7: "CreatePreIssuanceRequestResultCodeInvalidReference",
-	-8: "CreatePreIssuanceRequestResultCodeIncorrectAmountPrecision",
-	-9: "CreatePreIssuanceRequestResultCodePreissuanceTasksNotFound",
+	0:   "CreatePreIssuanceRequestResultCodeSuccess",
+	-1:  "CreatePreIssuanceRequestResultCodeAssetNotFound",
+	-2:  "CreatePreIssuanceRequestResultCodeReferenceDuplication",
+	-3:  "CreatePreIssuanceRequestResultCodeNotAuthorizedUpload",
+	-4:  "CreatePreIssuanceRequestResultCodeInvalidSignature",
+	-5:  "CreatePreIssuanceRequestResultCodeExceededMaxAmount",
+	-6:  "CreatePreIssuanceRequestResultCodeInvalidAmount",
+	-7:  "CreatePreIssuanceRequestResultCodeInvalidReference",
+	-8:  "CreatePreIssuanceRequestResultCodeIncorrectAmountPrecision",
+	-9:  "CreatePreIssuanceRequestResultCodePreissuanceTasksNotFound",
+	-10: "CreatePreIssuanceRequestResultCodeInvalidCreatorDetails",
 }
 
 var createPreIssuanceRequestResultCodeShortMap = map[int32]string{
-	0:  "success",
-	-1: "asset_not_found",
-	-2: "reference_duplication",
-	-3: "not_authorized_upload",
-	-4: "invalid_signature",
-	-5: "exceeded_max_amount",
-	-6: "invalid_amount",
-	-7: "invalid_reference",
-	-8: "incorrect_amount_precision",
-	-9: "preissuance_tasks_not_found",
+	0:   "success",
+	-1:  "asset_not_found",
+	-2:  "reference_duplication",
+	-3:  "not_authorized_upload",
+	-4:  "invalid_signature",
+	-5:  "exceeded_max_amount",
+	-6:  "invalid_amount",
+	-7:  "invalid_reference",
+	-8:  "incorrect_amount_precision",
+	-9:  "preissuance_tasks_not_found",
+	-10: "invalid_creator_details",
 }
 
 var createPreIssuanceRequestResultCodeRevMap = map[string]int32{
@@ -14164,6 +14169,7 @@ var createPreIssuanceRequestResultCodeRevMap = map[string]int32{
 	"CreatePreIssuanceRequestResultCodeInvalidReference":         -7,
 	"CreatePreIssuanceRequestResultCodeIncorrectAmountPrecision": -8,
 	"CreatePreIssuanceRequestResultCodePreissuanceTasksNotFound": -9,
+	"CreatePreIssuanceRequestResultCodeInvalidCreatorDetails":    -10,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -14451,7 +14457,7 @@ type CreateSaleCreationRequestOp struct {
 //    	INVALID_ASSET_PAIR = -9, // one of the assets has invalid code or base asset is equal to quote asset
 //    	REQUEST_OR_SALE_ALREADY_EXISTS = -10,
 //    	INSUFFICIENT_PREISSUED = -11, // amount of pre issued tokens is insufficient for hard cap
-//    	INVALID_DETAILS = -12, // details must be a valid json
+//    	INVALID_CREATOR_DETAILS = -12, // details must be a valid json
 //    	VERSION_IS_NOT_SUPPORTED_YET = -13, // version specified in request is not supported yet
 //        SALE_CREATE_TASKS_NOT_FOUND = -14,
 //        NOT_ALLOWED_TO_SET_TASKS_ON_UPDATE = -15, // can't set allTasks on request update
@@ -14473,7 +14479,7 @@ const (
 	CreateSaleCreationRequestResultCodeInvalidAssetPair                CreateSaleCreationRequestResultCode = -9
 	CreateSaleCreationRequestResultCodeRequestOrSaleAlreadyExists      CreateSaleCreationRequestResultCode = -10
 	CreateSaleCreationRequestResultCodeInsufficientPreissued           CreateSaleCreationRequestResultCode = -11
-	CreateSaleCreationRequestResultCodeInvalidDetails                  CreateSaleCreationRequestResultCode = -12
+	CreateSaleCreationRequestResultCodeInvalidCreatorDetails           CreateSaleCreationRequestResultCode = -12
 	CreateSaleCreationRequestResultCodeVersionIsNotSupportedYet        CreateSaleCreationRequestResultCode = -13
 	CreateSaleCreationRequestResultCodeSaleCreateTasksNotFound         CreateSaleCreationRequestResultCode = -14
 	CreateSaleCreationRequestResultCodeNotAllowedToSetTasksOnUpdate    CreateSaleCreationRequestResultCode = -15
@@ -14493,7 +14499,7 @@ var CreateSaleCreationRequestResultCodeAll = []CreateSaleCreationRequestResultCo
 	CreateSaleCreationRequestResultCodeInvalidAssetPair,
 	CreateSaleCreationRequestResultCodeRequestOrSaleAlreadyExists,
 	CreateSaleCreationRequestResultCodeInsufficientPreissued,
-	CreateSaleCreationRequestResultCodeInvalidDetails,
+	CreateSaleCreationRequestResultCodeInvalidCreatorDetails,
 	CreateSaleCreationRequestResultCodeVersionIsNotSupportedYet,
 	CreateSaleCreationRequestResultCodeSaleCreateTasksNotFound,
 	CreateSaleCreationRequestResultCodeNotAllowedToSetTasksOnUpdate,
@@ -14513,7 +14519,7 @@ var createSaleCreationRequestResultCodeMap = map[int32]string{
 	-9:  "CreateSaleCreationRequestResultCodeInvalidAssetPair",
 	-10: "CreateSaleCreationRequestResultCodeRequestOrSaleAlreadyExists",
 	-11: "CreateSaleCreationRequestResultCodeInsufficientPreissued",
-	-12: "CreateSaleCreationRequestResultCodeInvalidDetails",
+	-12: "CreateSaleCreationRequestResultCodeInvalidCreatorDetails",
 	-13: "CreateSaleCreationRequestResultCodeVersionIsNotSupportedYet",
 	-14: "CreateSaleCreationRequestResultCodeSaleCreateTasksNotFound",
 	-15: "CreateSaleCreationRequestResultCodeNotAllowedToSetTasksOnUpdate",
@@ -14533,7 +14539,7 @@ var createSaleCreationRequestResultCodeShortMap = map[int32]string{
 	-9:  "invalid_asset_pair",
 	-10: "request_or_sale_already_exists",
 	-11: "insufficient_preissued",
-	-12: "invalid_details",
+	-12: "invalid_creator_details",
 	-13: "version_is_not_supported_yet",
 	-14: "sale_create_tasks_not_found",
 	-15: "not_allowed_to_set_tasks_on_update",
@@ -14553,7 +14559,7 @@ var createSaleCreationRequestResultCodeRevMap = map[string]int32{
 	"CreateSaleCreationRequestResultCodeInvalidAssetPair":                -9,
 	"CreateSaleCreationRequestResultCodeRequestOrSaleAlreadyExists":      -10,
 	"CreateSaleCreationRequestResultCodeInsufficientPreissued":           -11,
-	"CreateSaleCreationRequestResultCodeInvalidDetails":                  -12,
+	"CreateSaleCreationRequestResultCodeInvalidCreatorDetails":           -12,
 	"CreateSaleCreationRequestResultCodeVersionIsNotSupportedYet":        -13,
 	"CreateSaleCreationRequestResultCodeSaleCreateTasksNotFound":         -14,
 	"CreateSaleCreationRequestResultCodeNotAllowedToSetTasksOnUpdate":    -15,
@@ -14824,7 +14830,7 @@ type CreateWithdrawalRequestOp struct {
 //
 //    	// codes considered as "failure" for the operation
 //    	INVALID_AMOUNT = -1, // amount is 0
-//    	INVALID_EXTERNAL_DETAILS = -2, // external details size exceeds max allowed
+//    	INVALID_CREATOR_DETAILS = -2, // external details size exceeds max allowed
 //    	BALANCE_NOT_FOUND = -3, // balance not found
 //    	ASSET_IS_NOT_WITHDRAWABLE = -4, // asset is not withdrawable
 //    	CONVERSION_PRICE_IS_NOT_AVAILABLE = -5, // failed to find conversion price - conversion is not allowed
@@ -14848,7 +14854,7 @@ type CreateWithdrawalRequestResultCode int32
 const (
 	CreateWithdrawalRequestResultCodeSuccess                        CreateWithdrawalRequestResultCode = 0
 	CreateWithdrawalRequestResultCodeInvalidAmount                  CreateWithdrawalRequestResultCode = -1
-	CreateWithdrawalRequestResultCodeInvalidExternalDetails         CreateWithdrawalRequestResultCode = -2
+	CreateWithdrawalRequestResultCodeInvalidCreatorDetails          CreateWithdrawalRequestResultCode = -2
 	CreateWithdrawalRequestResultCodeBalanceNotFound                CreateWithdrawalRequestResultCode = -3
 	CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable         CreateWithdrawalRequestResultCode = -4
 	CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable  CreateWithdrawalRequestResultCode = -5
@@ -14870,7 +14876,7 @@ const (
 var CreateWithdrawalRequestResultCodeAll = []CreateWithdrawalRequestResultCode{
 	CreateWithdrawalRequestResultCodeSuccess,
 	CreateWithdrawalRequestResultCodeInvalidAmount,
-	CreateWithdrawalRequestResultCodeInvalidExternalDetails,
+	CreateWithdrawalRequestResultCodeInvalidCreatorDetails,
 	CreateWithdrawalRequestResultCodeBalanceNotFound,
 	CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable,
 	CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable,
@@ -14892,7 +14898,7 @@ var CreateWithdrawalRequestResultCodeAll = []CreateWithdrawalRequestResultCode{
 var createWithdrawalRequestResultCodeMap = map[int32]string{
 	0:   "CreateWithdrawalRequestResultCodeSuccess",
 	-1:  "CreateWithdrawalRequestResultCodeInvalidAmount",
-	-2:  "CreateWithdrawalRequestResultCodeInvalidExternalDetails",
+	-2:  "CreateWithdrawalRequestResultCodeInvalidCreatorDetails",
 	-3:  "CreateWithdrawalRequestResultCodeBalanceNotFound",
 	-4:  "CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable",
 	-5:  "CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable",
@@ -14914,7 +14920,7 @@ var createWithdrawalRequestResultCodeMap = map[int32]string{
 var createWithdrawalRequestResultCodeShortMap = map[int32]string{
 	0:   "success",
 	-1:  "invalid_amount",
-	-2:  "invalid_external_details",
+	-2:  "invalid_creator_details",
 	-3:  "balance_not_found",
 	-4:  "asset_is_not_withdrawable",
 	-5:  "conversion_price_is_not_available",
@@ -14936,7 +14942,7 @@ var createWithdrawalRequestResultCodeShortMap = map[int32]string{
 var createWithdrawalRequestResultCodeRevMap = map[string]int32{
 	"CreateWithdrawalRequestResultCodeSuccess":                        0,
 	"CreateWithdrawalRequestResultCodeInvalidAmount":                  -1,
-	"CreateWithdrawalRequestResultCodeInvalidExternalDetails":         -2,
+	"CreateWithdrawalRequestResultCodeInvalidCreatorDetails":          -2,
 	"CreateWithdrawalRequestResultCodeBalanceNotFound":                -3,
 	"CreateWithdrawalRequestResultCodeAssetIsNotWithdrawable":         -4,
 	"CreateWithdrawalRequestResultCodeConversionPriceIsNotAvailable":  -5,
@@ -15293,7 +15299,7 @@ func NewCreateAccountRoleDataExt(v LedgerVersion, value interface{}) (result Cre
 //   struct CreateAccountRoleData
 //    {
 //        longstring details;
-//        uint64 accountRuleIDs<>;
+//        uint64 ruleIDs<>;
 //
 //        // reserved for future use
 //        union switch (LedgerVersion v)
@@ -15304,9 +15310,9 @@ func NewCreateAccountRoleDataExt(v LedgerVersion, value interface{}) (result Cre
 //    };
 //
 type CreateAccountRoleData struct {
-	Details        Longstring               `json:"details,omitempty"`
-	AccountRuleIDs []Uint64                 `json:"accountRuleIDs,omitempty"`
-	Ext            CreateAccountRoleDataExt `json:"ext,omitempty"`
+	Details Longstring               `json:"details,omitempty"`
+	RuleIDs []Uint64                 `json:"ruleIDs,omitempty"`
+	Ext     CreateAccountRoleDataExt `json:"ext,omitempty"`
 }
 
 // UpdateAccountRoleDataExt is an XDR NestedUnion defines as:
@@ -15353,7 +15359,7 @@ func NewUpdateAccountRoleDataExt(v LedgerVersion, value interface{}) (result Upd
 //    {
 //        uint64 roleID;
 //        longstring details;
-//        uint64 accountRuleIDs<>;
+//        uint64 ruleIDs<>;
 //
 //        // reserved for future use
 //        union switch (LedgerVersion v)
@@ -15364,10 +15370,10 @@ func NewUpdateAccountRoleDataExt(v LedgerVersion, value interface{}) (result Upd
 //    };
 //
 type UpdateAccountRoleData struct {
-	RoleId         Uint64                   `json:"roleID,omitempty"`
-	Details        Longstring               `json:"details,omitempty"`
-	AccountRuleIDs []Uint64                 `json:"accountRuleIDs,omitempty"`
-	Ext            UpdateAccountRoleDataExt `json:"ext,omitempty"`
+	RoleId  Uint64                   `json:"roleID,omitempty"`
+	Details Longstring               `json:"details,omitempty"`
+	RuleIDs []Uint64                 `json:"ruleIDs,omitempty"`
+	Ext     UpdateAccountRoleDataExt `json:"ext,omitempty"`
 }
 
 // RemoveAccountRoleDataExt is an XDR NestedUnion defines as:
@@ -15412,7 +15418,7 @@ func NewRemoveAccountRoleDataExt(v LedgerVersion, value interface{}) (result Rem
 //
 //   struct RemoveAccountRoleData
 //    {
-//        uint64 accountRoleID;
+//        uint64 roleID;
 //
 //        // reserved for future use
 //        union switch (LedgerVersion v)
@@ -15423,8 +15429,8 @@ func NewRemoveAccountRoleDataExt(v LedgerVersion, value interface{}) (result Rem
 //    };
 //
 type RemoveAccountRoleData struct {
-	AccountRoleId Uint64                   `json:"accountRoleID,omitempty"`
-	Ext           RemoveAccountRoleDataExt `json:"ext,omitempty"`
+	RoleId Uint64                   `json:"roleID,omitempty"`
+	Ext    RemoveAccountRoleDataExt `json:"ext,omitempty"`
 }
 
 // ManageAccountRoleOpData is an XDR NestedUnion defines as:
@@ -16093,7 +16099,7 @@ func NewCreateAccountRuleDataExt(v LedgerVersion, value interface{}) (result Cre
 //    {
 //        AccountRuleResource resource;
 //        AccountRuleAction action;
-//        bool isForbid;
+//        bool forbids;
 //        longstring details;
 //
 //        // reserved for future use
@@ -16107,7 +16113,7 @@ func NewCreateAccountRuleDataExt(v LedgerVersion, value interface{}) (result Cre
 type CreateAccountRuleData struct {
 	Resource AccountRuleResource      `json:"resource,omitempty"`
 	Action   AccountRuleAction        `json:"action,omitempty"`
-	IsForbid bool                     `json:"isForbid,omitempty"`
+	Forbids  bool                     `json:"forbids,omitempty"`
 	Details  Longstring               `json:"details,omitempty"`
 	Ext      CreateAccountRuleDataExt `json:"ext,omitempty"`
 }
@@ -16154,10 +16160,10 @@ func NewUpdateAccountRuleDataExt(v LedgerVersion, value interface{}) (result Upd
 //
 //   struct UpdateAccountRuleData
 //    {
-//        uint64 accountRuleID;
+//        uint64 ruleID;
 //        AccountRuleResource resource;
 //        AccountRuleAction action;
-//        bool isForbid;
+//        bool forbids;
 //        longstring details;
 //
 //        // reserved for future use
@@ -16169,12 +16175,12 @@ func NewUpdateAccountRuleDataExt(v LedgerVersion, value interface{}) (result Upd
 //    };
 //
 type UpdateAccountRuleData struct {
-	AccountRuleId Uint64                   `json:"accountRuleID,omitempty"`
-	Resource      AccountRuleResource      `json:"resource,omitempty"`
-	Action        AccountRuleAction        `json:"action,omitempty"`
-	IsForbid      bool                     `json:"isForbid,omitempty"`
-	Details       Longstring               `json:"details,omitempty"`
-	Ext           UpdateAccountRuleDataExt `json:"ext,omitempty"`
+	RuleId   Uint64                   `json:"ruleID,omitempty"`
+	Resource AccountRuleResource      `json:"resource,omitempty"`
+	Action   AccountRuleAction        `json:"action,omitempty"`
+	Forbids  bool                     `json:"forbids,omitempty"`
+	Details  Longstring               `json:"details,omitempty"`
+	Ext      UpdateAccountRuleDataExt `json:"ext,omitempty"`
 }
 
 // RemoveAccountRuleDataExt is an XDR NestedUnion defines as:
@@ -16219,7 +16225,7 @@ func NewRemoveAccountRuleDataExt(v LedgerVersion, value interface{}) (result Rem
 //
 //   struct RemoveAccountRuleData
 //    {
-//        uint64 accountRuleID;
+//        uint64 ruleID;
 //
 //        // reserved for future use
 //        union switch (LedgerVersion v)
@@ -16230,8 +16236,8 @@ func NewRemoveAccountRuleDataExt(v LedgerVersion, value interface{}) (result Rem
 //    };
 //
 type RemoveAccountRuleData struct {
-	AccountRuleId Uint64                   `json:"accountRuleID,omitempty"`
-	Ext           RemoveAccountRuleDataExt `json:"ext,omitempty"`
+	RuleId Uint64                   `json:"ruleID,omitempty"`
+	Ext    RemoveAccountRuleDataExt `json:"ext,omitempty"`
 }
 
 // ManageAccountRuleOpData is an XDR NestedUnion defines as:
@@ -17865,7 +17871,7 @@ type ManageAssetOp struct {
 //    	REQUEST_ALREADY_EXISTS = -9,      // request for creation of unique entry already exists
 //    	STATS_ASSET_ALREADY_EXISTS = -10, // statistics quote asset already exists
 //    	INITIAL_PREISSUED_EXCEEDS_MAX_ISSUANCE = -11, // initial pre issued amount exceeds max issuance amount
-//        INVALID_DETAILS = -12,                        // details must be a valid json
+//        INVALID_CREATOR_DETAILS = -12,                        // details must be a valid json
 //        INVALID_TRAILING_DIGITS_COUNT = -13,          // invalid number of trailing digits
 //        INVALID_PREISSUED_AMOUNT_PRECISION = -14,     // initial pre issued amount does not match precision set by trailing digits count
 //        INVALID_MAX_ISSUANCE_AMOUNT_PRECISION = -15,   // maximum issuance amount does not match precision set by trailing digits count
@@ -17890,7 +17896,7 @@ const (
 	ManageAssetResultCodeRequestAlreadyExists               ManageAssetResultCode = -9
 	ManageAssetResultCodeStatsAssetAlreadyExists            ManageAssetResultCode = -10
 	ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance ManageAssetResultCode = -11
-	ManageAssetResultCodeInvalidDetails                     ManageAssetResultCode = -12
+	ManageAssetResultCodeInvalidCreatorDetails              ManageAssetResultCode = -12
 	ManageAssetResultCodeInvalidTrailingDigitsCount         ManageAssetResultCode = -13
 	ManageAssetResultCodeInvalidPreissuedAmountPrecision    ManageAssetResultCode = -14
 	ManageAssetResultCodeInvalidMaxIssuanceAmountPrecision  ManageAssetResultCode = -15
@@ -17913,7 +17919,7 @@ var ManageAssetResultCodeAll = []ManageAssetResultCode{
 	ManageAssetResultCodeRequestAlreadyExists,
 	ManageAssetResultCodeStatsAssetAlreadyExists,
 	ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance,
-	ManageAssetResultCodeInvalidDetails,
+	ManageAssetResultCodeInvalidCreatorDetails,
 	ManageAssetResultCodeInvalidTrailingDigitsCount,
 	ManageAssetResultCodeInvalidPreissuedAmountPrecision,
 	ManageAssetResultCodeInvalidMaxIssuanceAmountPrecision,
@@ -17936,7 +17942,7 @@ var manageAssetResultCodeMap = map[int32]string{
 	-9:  "ManageAssetResultCodeRequestAlreadyExists",
 	-10: "ManageAssetResultCodeStatsAssetAlreadyExists",
 	-11: "ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance",
-	-12: "ManageAssetResultCodeInvalidDetails",
+	-12: "ManageAssetResultCodeInvalidCreatorDetails",
 	-13: "ManageAssetResultCodeInvalidTrailingDigitsCount",
 	-14: "ManageAssetResultCodeInvalidPreissuedAmountPrecision",
 	-15: "ManageAssetResultCodeInvalidMaxIssuanceAmountPrecision",
@@ -17959,7 +17965,7 @@ var manageAssetResultCodeShortMap = map[int32]string{
 	-9:  "request_already_exists",
 	-10: "stats_asset_already_exists",
 	-11: "initial_preissued_exceeds_max_issuance",
-	-12: "invalid_details",
+	-12: "invalid_creator_details",
 	-13: "invalid_trailing_digits_count",
 	-14: "invalid_preissued_amount_precision",
 	-15: "invalid_max_issuance_amount_precision",
@@ -17982,7 +17988,7 @@ var manageAssetResultCodeRevMap = map[string]int32{
 	"ManageAssetResultCodeRequestAlreadyExists":               -9,
 	"ManageAssetResultCodeStatsAssetAlreadyExists":            -10,
 	"ManageAssetResultCodeInitialPreissuedExceedsMaxIssuance": -11,
-	"ManageAssetResultCodeInvalidDetails":                     -12,
+	"ManageAssetResultCodeInvalidCreatorDetails":              -12,
 	"ManageAssetResultCodeInvalidTrailingDigitsCount":         -13,
 	"ManageAssetResultCodeInvalidPreissuedAmountPrecision":    -14,
 	"ManageAssetResultCodeInvalidMaxIssuanceAmountPrecision":  -15,
@@ -23702,7 +23708,7 @@ func NewUpdateSaleDetailsDataExt(v LedgerVersion, value interface{}) (result Upd
 //
 //   struct UpdateSaleDetailsData {
 //        uint64 requestID; // if requestID is 0 - create request, else - update
-//        longstring newDetails;
+//        longstring creatorDetails;
 //
 //        uint32* allTasks;
 //
@@ -23715,10 +23721,10 @@ func NewUpdateSaleDetailsDataExt(v LedgerVersion, value interface{}) (result Upd
 //    };
 //
 type UpdateSaleDetailsData struct {
-	RequestId  Uint64                   `json:"requestID,omitempty"`
-	NewDetails Longstring               `json:"newDetails,omitempty"`
-	AllTasks   *Uint32                  `json:"allTasks,omitempty"`
-	Ext        UpdateSaleDetailsDataExt `json:"ext,omitempty"`
+	RequestId      Uint64                   `json:"requestID,omitempty"`
+	CreatorDetails Longstring               `json:"creatorDetails,omitempty"`
+	AllTasks       *Uint32                  `json:"allTasks,omitempty"`
+	Ext            UpdateSaleDetailsDataExt `json:"ext,omitempty"`
 }
 
 // ManageSaleOpData is an XDR NestedUnion defines as:
@@ -23869,13 +23875,12 @@ type ManageSaleOp struct {
 //        SALE_NOT_FOUND = -1, // sale not found
 //
 //        // errors related to action "CREATE_UPDATE_DETAILS_REQUEST"
-//        INVALID_NEW_DETAILS = -2, // newDetails field is invalid JSON
+//        INVALID_CREATOR_DETAILS = -2, // newDetails field is invalid JSON
 //        UPDATE_DETAILS_REQUEST_ALREADY_EXISTS = -3,
 //        UPDATE_DETAILS_REQUEST_NOT_FOUND = -4,
-//        INVALID_UPDATE_DETAILS_REQUEST_DATA = -5, // not allowed to set allTasks on request update
+//        NOT_ALLOWED_TO_SET_TASKS_ON_UPDATE = -5, // not allowed to set allTasks on request update
 //        SALE_UPDATE_DETAILS_TASKS_NOT_FOUND = -6, // it's not allowed to set state for non master account
-//        NOT_ALLOWED_TO_SET_TASKS_ON_UPDATE = -7,
-//        PENDING_REQUEST_UPDATE_NOT_ALLOWED = -8
+//        PENDING_REQUEST_UPDATE_NOT_ALLOWED = -7
 //    };
 //
 type ManageSaleResultCode int32
@@ -23883,61 +23888,56 @@ type ManageSaleResultCode int32
 const (
 	ManageSaleResultCodeSuccess                           ManageSaleResultCode = 0
 	ManageSaleResultCodeSaleNotFound                      ManageSaleResultCode = -1
-	ManageSaleResultCodeInvalidNewDetails                 ManageSaleResultCode = -2
+	ManageSaleResultCodeInvalidCreatorDetails             ManageSaleResultCode = -2
 	ManageSaleResultCodeUpdateDetailsRequestAlreadyExists ManageSaleResultCode = -3
 	ManageSaleResultCodeUpdateDetailsRequestNotFound      ManageSaleResultCode = -4
-	ManageSaleResultCodeInvalidUpdateDetailsRequestData   ManageSaleResultCode = -5
+	ManageSaleResultCodeNotAllowedToSetTasksOnUpdate      ManageSaleResultCode = -5
 	ManageSaleResultCodeSaleUpdateDetailsTasksNotFound    ManageSaleResultCode = -6
-	ManageSaleResultCodeNotAllowedToSetTasksOnUpdate      ManageSaleResultCode = -7
-	ManageSaleResultCodePendingRequestUpdateNotAllowed    ManageSaleResultCode = -8
+	ManageSaleResultCodePendingRequestUpdateNotAllowed    ManageSaleResultCode = -7
 )
 
 var ManageSaleResultCodeAll = []ManageSaleResultCode{
 	ManageSaleResultCodeSuccess,
 	ManageSaleResultCodeSaleNotFound,
-	ManageSaleResultCodeInvalidNewDetails,
+	ManageSaleResultCodeInvalidCreatorDetails,
 	ManageSaleResultCodeUpdateDetailsRequestAlreadyExists,
 	ManageSaleResultCodeUpdateDetailsRequestNotFound,
-	ManageSaleResultCodeInvalidUpdateDetailsRequestData,
-	ManageSaleResultCodeSaleUpdateDetailsTasksNotFound,
 	ManageSaleResultCodeNotAllowedToSetTasksOnUpdate,
+	ManageSaleResultCodeSaleUpdateDetailsTasksNotFound,
 	ManageSaleResultCodePendingRequestUpdateNotAllowed,
 }
 
 var manageSaleResultCodeMap = map[int32]string{
 	0:  "ManageSaleResultCodeSuccess",
 	-1: "ManageSaleResultCodeSaleNotFound",
-	-2: "ManageSaleResultCodeInvalidNewDetails",
+	-2: "ManageSaleResultCodeInvalidCreatorDetails",
 	-3: "ManageSaleResultCodeUpdateDetailsRequestAlreadyExists",
 	-4: "ManageSaleResultCodeUpdateDetailsRequestNotFound",
-	-5: "ManageSaleResultCodeInvalidUpdateDetailsRequestData",
+	-5: "ManageSaleResultCodeNotAllowedToSetTasksOnUpdate",
 	-6: "ManageSaleResultCodeSaleUpdateDetailsTasksNotFound",
-	-7: "ManageSaleResultCodeNotAllowedToSetTasksOnUpdate",
-	-8: "ManageSaleResultCodePendingRequestUpdateNotAllowed",
+	-7: "ManageSaleResultCodePendingRequestUpdateNotAllowed",
 }
 
 var manageSaleResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "sale_not_found",
-	-2: "invalid_new_details",
+	-2: "invalid_creator_details",
 	-3: "update_details_request_already_exists",
 	-4: "update_details_request_not_found",
-	-5: "invalid_update_details_request_data",
+	-5: "not_allowed_to_set_tasks_on_update",
 	-6: "sale_update_details_tasks_not_found",
-	-7: "not_allowed_to_set_tasks_on_update",
-	-8: "pending_request_update_not_allowed",
+	-7: "pending_request_update_not_allowed",
 }
 
 var manageSaleResultCodeRevMap = map[string]int32{
 	"ManageSaleResultCodeSuccess":                           0,
 	"ManageSaleResultCodeSaleNotFound":                      -1,
-	"ManageSaleResultCodeInvalidNewDetails":                 -2,
+	"ManageSaleResultCodeInvalidCreatorDetails":             -2,
 	"ManageSaleResultCodeUpdateDetailsRequestAlreadyExists": -3,
 	"ManageSaleResultCodeUpdateDetailsRequestNotFound":      -4,
-	"ManageSaleResultCodeInvalidUpdateDetailsRequestData":   -5,
+	"ManageSaleResultCodeNotAllowedToSetTasksOnUpdate":      -5,
 	"ManageSaleResultCodeSaleUpdateDetailsTasksNotFound":    -6,
-	"ManageSaleResultCodeNotAllowedToSetTasksOnUpdate":      -7,
-	"ManageSaleResultCodePendingRequestUpdateNotAllowed":    -8,
+	"ManageSaleResultCodePendingRequestUpdateNotAllowed":    -7,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -24719,7 +24719,8 @@ type ManageSignerRoleOp struct {
 //        INVALID_DETAILS = -3,
 //        NO_SUCH_RULE = -4,
 //        RULE_ID_DUPLICATION = -5,
-//        DEFAULT_RULE_ID_DUPLICATION = -6
+//        DEFAULT_RULE_ID_DUPLICATION = -6,
+//        TOO_MANY_RULE_IDS = -7
 //    };
 //
 type ManageSignerRoleResultCode int32
@@ -24732,6 +24733,7 @@ const (
 	ManageSignerRoleResultCodeNoSuchRule               ManageSignerRoleResultCode = -4
 	ManageSignerRoleResultCodeRuleIdDuplication        ManageSignerRoleResultCode = -5
 	ManageSignerRoleResultCodeDefaultRuleIdDuplication ManageSignerRoleResultCode = -6
+	ManageSignerRoleResultCodeTooManyRuleIds           ManageSignerRoleResultCode = -7
 )
 
 var ManageSignerRoleResultCodeAll = []ManageSignerRoleResultCode{
@@ -24742,6 +24744,7 @@ var ManageSignerRoleResultCodeAll = []ManageSignerRoleResultCode{
 	ManageSignerRoleResultCodeNoSuchRule,
 	ManageSignerRoleResultCodeRuleIdDuplication,
 	ManageSignerRoleResultCodeDefaultRuleIdDuplication,
+	ManageSignerRoleResultCodeTooManyRuleIds,
 }
 
 var manageSignerRoleResultCodeMap = map[int32]string{
@@ -24752,6 +24755,7 @@ var manageSignerRoleResultCodeMap = map[int32]string{
 	-4: "ManageSignerRoleResultCodeNoSuchRule",
 	-5: "ManageSignerRoleResultCodeRuleIdDuplication",
 	-6: "ManageSignerRoleResultCodeDefaultRuleIdDuplication",
+	-7: "ManageSignerRoleResultCodeTooManyRuleIds",
 }
 
 var manageSignerRoleResultCodeShortMap = map[int32]string{
@@ -24762,6 +24766,7 @@ var manageSignerRoleResultCodeShortMap = map[int32]string{
 	-4: "no_such_rule",
 	-5: "rule_id_duplication",
 	-6: "default_rule_id_duplication",
+	-7: "too_many_rule_ids",
 }
 
 var manageSignerRoleResultCodeRevMap = map[string]int32{
@@ -24772,6 +24777,7 @@ var manageSignerRoleResultCodeRevMap = map[string]int32{
 	"ManageSignerRoleResultCodeNoSuchRule":               -4,
 	"ManageSignerRoleResultCodeRuleIdDuplication":        -5,
 	"ManageSignerRoleResultCodeDefaultRuleIdDuplication": -6,
+	"ManageSignerRoleResultCodeTooManyRuleIds":           -7,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -24912,14 +24918,17 @@ type ManageSignerRoleResultSuccess struct {
 //        case DEFAULT_RULE_ID_DUPLICATION:
 //        case NO_SUCH_RULE:
 //            uint64 ruleID;
+//        case TOO_MANY_RULE_IDS:
+//            uint64 maxRuleIDsCount;
 //        default:
 //            void;
 //    };
 //
 type ManageSignerRoleResult struct {
-	Code    ManageSignerRoleResultCode     `json:"code,omitempty"`
-	Success *ManageSignerRoleResultSuccess `json:"success,omitempty"`
-	RuleId  *Uint64                        `json:"ruleID,omitempty"`
+	Code            ManageSignerRoleResultCode     `json:"code,omitempty"`
+	Success         *ManageSignerRoleResultSuccess `json:"success,omitempty"`
+	RuleId          *Uint64                        `json:"ruleID,omitempty"`
+	MaxRuleIDsCount *Uint64                        `json:"maxRuleIDsCount,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -24940,6 +24949,8 @@ func (u ManageSignerRoleResult) ArmForSwitch(sw int32) (string, bool) {
 		return "RuleId", true
 	case ManageSignerRoleResultCodeNoSuchRule:
 		return "RuleId", true
+	case ManageSignerRoleResultCodeTooManyRuleIds:
+		return "MaxRuleIDsCount", true
 	default:
 		return "", true
 	}
@@ -24977,6 +24988,13 @@ func NewManageSignerRoleResult(code ManageSignerRoleResultCode, value interface{
 			return
 		}
 		result.RuleId = &tv
+	case ManageSignerRoleResultCodeTooManyRuleIds:
+		tv, ok := value.(Uint64)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be Uint64")
+			return
+		}
+		result.MaxRuleIDsCount = &tv
 	default:
 		// void
 	}
@@ -25027,6 +25045,31 @@ func (u ManageSignerRoleResult) GetRuleId() (result Uint64, ok bool) {
 
 	if armName == "RuleId" {
 		result = *u.RuleId
+		ok = true
+	}
+
+	return
+}
+
+// MustMaxRuleIDsCount retrieves the MaxRuleIDsCount value from the union,
+// panicing if the value is not set.
+func (u ManageSignerRoleResult) MustMaxRuleIDsCount() Uint64 {
+	val, ok := u.GetMaxRuleIDsCount()
+
+	if !ok {
+		panic("arm MaxRuleIDsCount is not set")
+	}
+
+	return val
+}
+
+// GetMaxRuleIDsCount retrieves the MaxRuleIDsCount value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageSignerRoleResult) GetMaxRuleIDsCount() (result Uint64, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "MaxRuleIDsCount" {
+		result = *u.MaxRuleIDsCount
 		ok = true
 	}
 
@@ -25179,7 +25222,7 @@ func NewCreateSignerRuleDataExt(v LedgerVersion, value interface{}) (result Crea
 //    {
 //        SignerRuleResource resource;
 //        SignerRuleAction action;
-//        bool isForbid;
+//        bool forbids;
 //        bool isDefault;
 //        bool isReadOnly;
 //        longstring details;
@@ -25195,7 +25238,7 @@ func NewCreateSignerRuleDataExt(v LedgerVersion, value interface{}) (result Crea
 type CreateSignerRuleData struct {
 	Resource   SignerRuleResource      `json:"resource,omitempty"`
 	Action     SignerRuleAction        `json:"action,omitempty"`
-	IsForbid   bool                    `json:"isForbid,omitempty"`
+	Forbids    bool                    `json:"forbids,omitempty"`
 	IsDefault  bool                    `json:"isDefault,omitempty"`
 	IsReadOnly bool                    `json:"isReadOnly,omitempty"`
 	Details    Longstring              `json:"details,omitempty"`
@@ -25247,7 +25290,7 @@ func NewUpdateSignerRuleDataExt(v LedgerVersion, value interface{}) (result Upda
 //        uint64 ruleID;
 //        SignerRuleResource resource;
 //        SignerRuleAction action;
-//        bool isForbid;
+//        bool forbids;
 //        bool isDefault;
 //        longstring details;
 //
@@ -25263,7 +25306,7 @@ type UpdateSignerRuleData struct {
 	RuleId    Uint64                  `json:"ruleID,omitempty"`
 	Resource  SignerRuleResource      `json:"resource,omitempty"`
 	Action    SignerRuleAction        `json:"action,omitempty"`
-	IsForbid  bool                    `json:"isForbid,omitempty"`
+	Forbids   bool                    `json:"forbids,omitempty"`
 	IsDefault bool                    `json:"isDefault,omitempty"`
 	Details   Longstring              `json:"details,omitempty"`
 	Ext       UpdateSignerRuleDataExt `json:"ext,omitempty"`
@@ -26327,7 +26370,7 @@ func (u ManageSignerResult) GetExt() (result EmptyExt, ok bool) {
 	return
 }
 
-// PaymentFeeDataV2Ext is an XDR NestedUnion defines as:
+// PaymentFeeDataExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
@@ -26335,19 +26378,19 @@ func (u ManageSignerResult) GetExt() (result EmptyExt, ok bool) {
 //            void;
 //        }
 //
-type PaymentFeeDataV2Ext struct {
+type PaymentFeeDataExt struct {
 	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u PaymentFeeDataV2Ext) SwitchFieldName() string {
+func (u PaymentFeeDataExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentFeeDataV2Ext
-func (u PaymentFeeDataV2Ext) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of PaymentFeeDataExt
+func (u PaymentFeeDataExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
@@ -26355,8 +26398,8 @@ func (u PaymentFeeDataV2Ext) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewPaymentFeeDataV2Ext creates a new  PaymentFeeDataV2Ext.
-func NewPaymentFeeDataV2Ext(v LedgerVersion, value interface{}) (result PaymentFeeDataV2Ext, err error) {
+// NewPaymentFeeDataExt creates a new  PaymentFeeDataExt.
+func NewPaymentFeeDataExt(v LedgerVersion, value interface{}) (result PaymentFeeDataExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
@@ -26365,9 +26408,9 @@ func NewPaymentFeeDataV2Ext(v LedgerVersion, value interface{}) (result PaymentF
 	return
 }
 
-// PaymentFeeDataV2 is an XDR Struct defines as:
+// PaymentFeeData is an XDR Struct defines as:
 //
-//   struct PaymentFeeDataV2 {
+//   struct PaymentFeeData {
 //        Fee sourceFee;
 //        Fee destinationFee;
 //
@@ -26381,11 +26424,11 @@ func NewPaymentFeeDataV2Ext(v LedgerVersion, value interface{}) (result PaymentF
 //        ext;
 //    };
 //
-type PaymentFeeDataV2 struct {
-	SourceFee         Fee                 `json:"sourceFee,omitempty"`
-	DestinationFee    Fee                 `json:"destinationFee,omitempty"`
-	SourcePaysForDest bool                `json:"sourcePaysForDest,omitempty"`
-	Ext               PaymentFeeDataV2Ext `json:"ext,omitempty"`
+type PaymentFeeData struct {
+	SourceFee         Fee               `json:"sourceFee,omitempty"`
+	DestinationFee    Fee               `json:"destinationFee,omitempty"`
+	SourcePaysForDest bool              `json:"sourcePaysForDest,omitempty"`
+	Ext               PaymentFeeDataExt `json:"ext,omitempty"`
 }
 
 // PaymentDestinationType is an XDR Enum defines as:
@@ -26483,7 +26526,7 @@ func (e *PaymentDestinationType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// PaymentOpV2Destination is an XDR NestedUnion defines as:
+// PaymentOpDestination is an XDR NestedUnion defines as:
 //
 //   union switch (PaymentDestinationType type) {
 //            case ACCOUNT:
@@ -26492,7 +26535,7 @@ func (e *PaymentDestinationType) UnmarshalJSON(data []byte) error {
 //                BalanceID balanceID;
 //        }
 //
-type PaymentOpV2Destination struct {
+type PaymentOpDestination struct {
 	Type      PaymentDestinationType `json:"type,omitempty"`
 	AccountId *AccountId             `json:"accountID,omitempty"`
 	BalanceId *BalanceId             `json:"balanceID,omitempty"`
@@ -26500,13 +26543,13 @@ type PaymentOpV2Destination struct {
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u PaymentOpV2Destination) SwitchFieldName() string {
+func (u PaymentOpDestination) SwitchFieldName() string {
 	return "Type"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentOpV2Destination
-func (u PaymentOpV2Destination) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of PaymentOpDestination
+func (u PaymentOpDestination) ArmForSwitch(sw int32) (string, bool) {
 	switch PaymentDestinationType(sw) {
 	case PaymentDestinationTypeAccount:
 		return "AccountId", true
@@ -26516,8 +26559,8 @@ func (u PaymentOpV2Destination) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewPaymentOpV2Destination creates a new  PaymentOpV2Destination.
-func NewPaymentOpV2Destination(aType PaymentDestinationType, value interface{}) (result PaymentOpV2Destination, err error) {
+// NewPaymentOpDestination creates a new  PaymentOpDestination.
+func NewPaymentOpDestination(aType PaymentDestinationType, value interface{}) (result PaymentOpDestination, err error) {
 	result.Type = aType
 	switch PaymentDestinationType(aType) {
 	case PaymentDestinationTypeAccount:
@@ -26540,7 +26583,7 @@ func NewPaymentOpV2Destination(aType PaymentDestinationType, value interface{}) 
 
 // MustAccountId retrieves the AccountId value from the union,
 // panicing if the value is not set.
-func (u PaymentOpV2Destination) MustAccountId() AccountId {
+func (u PaymentOpDestination) MustAccountId() AccountId {
 	val, ok := u.GetAccountId()
 
 	if !ok {
@@ -26552,7 +26595,7 @@ func (u PaymentOpV2Destination) MustAccountId() AccountId {
 
 // GetAccountId retrieves the AccountId value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u PaymentOpV2Destination) GetAccountId() (result AccountId, ok bool) {
+func (u PaymentOpDestination) GetAccountId() (result AccountId, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
 	if armName == "AccountId" {
@@ -26565,7 +26608,7 @@ func (u PaymentOpV2Destination) GetAccountId() (result AccountId, ok bool) {
 
 // MustBalanceId retrieves the BalanceId value from the union,
 // panicing if the value is not set.
-func (u PaymentOpV2Destination) MustBalanceId() BalanceId {
+func (u PaymentOpDestination) MustBalanceId() BalanceId {
 	val, ok := u.GetBalanceId()
 
 	if !ok {
@@ -26577,7 +26620,7 @@ func (u PaymentOpV2Destination) MustBalanceId() BalanceId {
 
 // GetBalanceId retrieves the BalanceId value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u PaymentOpV2Destination) GetBalanceId() (result BalanceId, ok bool) {
+func (u PaymentOpDestination) GetBalanceId() (result BalanceId, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
 	if armName == "BalanceId" {
@@ -26588,7 +26631,7 @@ func (u PaymentOpV2Destination) GetBalanceId() (result BalanceId, ok bool) {
 	return
 }
 
-// PaymentOpV2Ext is an XDR NestedUnion defines as:
+// PaymentOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
@@ -26596,19 +26639,19 @@ func (u PaymentOpV2Destination) GetBalanceId() (result BalanceId, ok bool) {
 //            void;
 //        }
 //
-type PaymentOpV2Ext struct {
+type PaymentOpExt struct {
 	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u PaymentOpV2Ext) SwitchFieldName() string {
+func (u PaymentOpExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentOpV2Ext
-func (u PaymentOpV2Ext) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of PaymentOpExt
+func (u PaymentOpExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
@@ -26616,8 +26659,8 @@ func (u PaymentOpV2Ext) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewPaymentOpV2Ext creates a new  PaymentOpV2Ext.
-func NewPaymentOpV2Ext(v LedgerVersion, value interface{}) (result PaymentOpV2Ext, err error) {
+// NewPaymentOpExt creates a new  PaymentOpExt.
+func NewPaymentOpExt(v LedgerVersion, value interface{}) (result PaymentOpExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
@@ -26626,9 +26669,9 @@ func NewPaymentOpV2Ext(v LedgerVersion, value interface{}) (result PaymentOpV2Ex
 	return
 }
 
-// PaymentOpV2 is an XDR Struct defines as:
+// PaymentOp is an XDR Struct defines as:
 //
-//   struct PaymentOpV2
+//   struct PaymentOp
 //    {
 //        BalanceID sourceBalanceID;
 //
@@ -26641,7 +26684,7 @@ func NewPaymentOpV2Ext(v LedgerVersion, value interface{}) (result PaymentOpV2Ex
 //
 //        uint64 amount;
 //
-//        PaymentFeeDataV2 feeData;
+//        PaymentFeeData feeData;
 //
 //        longstring subject;
 //        longstring reference;
@@ -26655,19 +26698,19 @@ func NewPaymentOpV2Ext(v LedgerVersion, value interface{}) (result PaymentOpV2Ex
 //        ext;
 //    };
 //
-type PaymentOpV2 struct {
-	SourceBalanceId BalanceId              `json:"sourceBalanceID,omitempty"`
-	Destination     PaymentOpV2Destination `json:"destination,omitempty"`
-	Amount          Uint64                 `json:"amount,omitempty"`
-	FeeData         PaymentFeeDataV2       `json:"feeData,omitempty"`
-	Subject         Longstring             `json:"subject,omitempty"`
-	Reference       Longstring             `json:"reference,omitempty"`
-	Ext             PaymentOpV2Ext         `json:"ext,omitempty"`
+type PaymentOp struct {
+	SourceBalanceId BalanceId            `json:"sourceBalanceID,omitempty"`
+	Destination     PaymentOpDestination `json:"destination,omitempty"`
+	Amount          Uint64               `json:"amount,omitempty"`
+	FeeData         PaymentFeeData       `json:"feeData,omitempty"`
+	Subject         Longstring           `json:"subject,omitempty"`
+	Reference       Longstring           `json:"reference,omitempty"`
+	Ext             PaymentOpExt         `json:"ext,omitempty"`
 }
 
-// PaymentV2ResultCode is an XDR Enum defines as:
+// PaymentResultCode is an XDR Enum defines as:
 //
-//   enum PaymentV2ResultCode
+//   enum PaymentResultCode
 //    {
 //        // codes considered as "success" for the operation
 //        SUCCESS = 0, // payment successfully completed
@@ -26688,70 +26731,68 @@ type PaymentOpV2 struct {
 //        PAYMENT_AMOUNT_IS_LESS_THAN_DEST_FEE = -13,
 //        DESTINATION_ACCOUNT_NOT_FOUND = -14,
 //        INCORRECT_AMOUNT_PRECISION = -15
-//
-//         // !!! Add new result code to review invoice op too !!!
 //    };
 //
-type PaymentV2ResultCode int32
+type PaymentResultCode int32
 
 const (
-	PaymentV2ResultCodeSuccess                        PaymentV2ResultCode = 0
-	PaymentV2ResultCodeMalformed                      PaymentV2ResultCode = -1
-	PaymentV2ResultCodeUnderfunded                    PaymentV2ResultCode = -2
-	PaymentV2ResultCodeLineFull                       PaymentV2ResultCode = -3
-	PaymentV2ResultCodeDestinationBalanceNotFound     PaymentV2ResultCode = -4
-	PaymentV2ResultCodeBalanceAssetsMismatched        PaymentV2ResultCode = -5
-	PaymentV2ResultCodeSrcBalanceNotFound             PaymentV2ResultCode = -6
-	PaymentV2ResultCodeReferenceDuplication           PaymentV2ResultCode = -7
-	PaymentV2ResultCodeStatsOverflow                  PaymentV2ResultCode = -8
-	PaymentV2ResultCodeLimitsExceeded                 PaymentV2ResultCode = -9
-	PaymentV2ResultCodeNotAllowedByAssetPolicy        PaymentV2ResultCode = -10
-	PaymentV2ResultCodeInvalidDestinationFee          PaymentV2ResultCode = -11
-	PaymentV2ResultCodeInsufficientFeeAmount          PaymentV2ResultCode = -12
-	PaymentV2ResultCodePaymentAmountIsLessThanDestFee PaymentV2ResultCode = -13
-	PaymentV2ResultCodeDestinationAccountNotFound     PaymentV2ResultCode = -14
-	PaymentV2ResultCodeIncorrectAmountPrecision       PaymentV2ResultCode = -15
+	PaymentResultCodeSuccess                        PaymentResultCode = 0
+	PaymentResultCodeMalformed                      PaymentResultCode = -1
+	PaymentResultCodeUnderfunded                    PaymentResultCode = -2
+	PaymentResultCodeLineFull                       PaymentResultCode = -3
+	PaymentResultCodeDestinationBalanceNotFound     PaymentResultCode = -4
+	PaymentResultCodeBalanceAssetsMismatched        PaymentResultCode = -5
+	PaymentResultCodeSrcBalanceNotFound             PaymentResultCode = -6
+	PaymentResultCodeReferenceDuplication           PaymentResultCode = -7
+	PaymentResultCodeStatsOverflow                  PaymentResultCode = -8
+	PaymentResultCodeLimitsExceeded                 PaymentResultCode = -9
+	PaymentResultCodeNotAllowedByAssetPolicy        PaymentResultCode = -10
+	PaymentResultCodeInvalidDestinationFee          PaymentResultCode = -11
+	PaymentResultCodeInsufficientFeeAmount          PaymentResultCode = -12
+	PaymentResultCodePaymentAmountIsLessThanDestFee PaymentResultCode = -13
+	PaymentResultCodeDestinationAccountNotFound     PaymentResultCode = -14
+	PaymentResultCodeIncorrectAmountPrecision       PaymentResultCode = -15
 )
 
-var PaymentV2ResultCodeAll = []PaymentV2ResultCode{
-	PaymentV2ResultCodeSuccess,
-	PaymentV2ResultCodeMalformed,
-	PaymentV2ResultCodeUnderfunded,
-	PaymentV2ResultCodeLineFull,
-	PaymentV2ResultCodeDestinationBalanceNotFound,
-	PaymentV2ResultCodeBalanceAssetsMismatched,
-	PaymentV2ResultCodeSrcBalanceNotFound,
-	PaymentV2ResultCodeReferenceDuplication,
-	PaymentV2ResultCodeStatsOverflow,
-	PaymentV2ResultCodeLimitsExceeded,
-	PaymentV2ResultCodeNotAllowedByAssetPolicy,
-	PaymentV2ResultCodeInvalidDestinationFee,
-	PaymentV2ResultCodeInsufficientFeeAmount,
-	PaymentV2ResultCodePaymentAmountIsLessThanDestFee,
-	PaymentV2ResultCodeDestinationAccountNotFound,
-	PaymentV2ResultCodeIncorrectAmountPrecision,
+var PaymentResultCodeAll = []PaymentResultCode{
+	PaymentResultCodeSuccess,
+	PaymentResultCodeMalformed,
+	PaymentResultCodeUnderfunded,
+	PaymentResultCodeLineFull,
+	PaymentResultCodeDestinationBalanceNotFound,
+	PaymentResultCodeBalanceAssetsMismatched,
+	PaymentResultCodeSrcBalanceNotFound,
+	PaymentResultCodeReferenceDuplication,
+	PaymentResultCodeStatsOverflow,
+	PaymentResultCodeLimitsExceeded,
+	PaymentResultCodeNotAllowedByAssetPolicy,
+	PaymentResultCodeInvalidDestinationFee,
+	PaymentResultCodeInsufficientFeeAmount,
+	PaymentResultCodePaymentAmountIsLessThanDestFee,
+	PaymentResultCodeDestinationAccountNotFound,
+	PaymentResultCodeIncorrectAmountPrecision,
 }
 
-var paymentV2ResultCodeMap = map[int32]string{
-	0:   "PaymentV2ResultCodeSuccess",
-	-1:  "PaymentV2ResultCodeMalformed",
-	-2:  "PaymentV2ResultCodeUnderfunded",
-	-3:  "PaymentV2ResultCodeLineFull",
-	-4:  "PaymentV2ResultCodeDestinationBalanceNotFound",
-	-5:  "PaymentV2ResultCodeBalanceAssetsMismatched",
-	-6:  "PaymentV2ResultCodeSrcBalanceNotFound",
-	-7:  "PaymentV2ResultCodeReferenceDuplication",
-	-8:  "PaymentV2ResultCodeStatsOverflow",
-	-9:  "PaymentV2ResultCodeLimitsExceeded",
-	-10: "PaymentV2ResultCodeNotAllowedByAssetPolicy",
-	-11: "PaymentV2ResultCodeInvalidDestinationFee",
-	-12: "PaymentV2ResultCodeInsufficientFeeAmount",
-	-13: "PaymentV2ResultCodePaymentAmountIsLessThanDestFee",
-	-14: "PaymentV2ResultCodeDestinationAccountNotFound",
-	-15: "PaymentV2ResultCodeIncorrectAmountPrecision",
+var paymentResultCodeMap = map[int32]string{
+	0:   "PaymentResultCodeSuccess",
+	-1:  "PaymentResultCodeMalformed",
+	-2:  "PaymentResultCodeUnderfunded",
+	-3:  "PaymentResultCodeLineFull",
+	-4:  "PaymentResultCodeDestinationBalanceNotFound",
+	-5:  "PaymentResultCodeBalanceAssetsMismatched",
+	-6:  "PaymentResultCodeSrcBalanceNotFound",
+	-7:  "PaymentResultCodeReferenceDuplication",
+	-8:  "PaymentResultCodeStatsOverflow",
+	-9:  "PaymentResultCodeLimitsExceeded",
+	-10: "PaymentResultCodeNotAllowedByAssetPolicy",
+	-11: "PaymentResultCodeInvalidDestinationFee",
+	-12: "PaymentResultCodeInsufficientFeeAmount",
+	-13: "PaymentResultCodePaymentAmountIsLessThanDestFee",
+	-14: "PaymentResultCodeDestinationAccountNotFound",
+	-15: "PaymentResultCodeIncorrectAmountPrecision",
 }
 
-var paymentV2ResultCodeShortMap = map[int32]string{
+var paymentResultCodeShortMap = map[int32]string{
 	0:   "success",
 	-1:  "malformed",
 	-2:  "underfunded",
@@ -26770,35 +26811,35 @@ var paymentV2ResultCodeShortMap = map[int32]string{
 	-15: "incorrect_amount_precision",
 }
 
-var paymentV2ResultCodeRevMap = map[string]int32{
-	"PaymentV2ResultCodeSuccess":                        0,
-	"PaymentV2ResultCodeMalformed":                      -1,
-	"PaymentV2ResultCodeUnderfunded":                    -2,
-	"PaymentV2ResultCodeLineFull":                       -3,
-	"PaymentV2ResultCodeDestinationBalanceNotFound":     -4,
-	"PaymentV2ResultCodeBalanceAssetsMismatched":        -5,
-	"PaymentV2ResultCodeSrcBalanceNotFound":             -6,
-	"PaymentV2ResultCodeReferenceDuplication":           -7,
-	"PaymentV2ResultCodeStatsOverflow":                  -8,
-	"PaymentV2ResultCodeLimitsExceeded":                 -9,
-	"PaymentV2ResultCodeNotAllowedByAssetPolicy":        -10,
-	"PaymentV2ResultCodeInvalidDestinationFee":          -11,
-	"PaymentV2ResultCodeInsufficientFeeAmount":          -12,
-	"PaymentV2ResultCodePaymentAmountIsLessThanDestFee": -13,
-	"PaymentV2ResultCodeDestinationAccountNotFound":     -14,
-	"PaymentV2ResultCodeIncorrectAmountPrecision":       -15,
+var paymentResultCodeRevMap = map[string]int32{
+	"PaymentResultCodeSuccess":                        0,
+	"PaymentResultCodeMalformed":                      -1,
+	"PaymentResultCodeUnderfunded":                    -2,
+	"PaymentResultCodeLineFull":                       -3,
+	"PaymentResultCodeDestinationBalanceNotFound":     -4,
+	"PaymentResultCodeBalanceAssetsMismatched":        -5,
+	"PaymentResultCodeSrcBalanceNotFound":             -6,
+	"PaymentResultCodeReferenceDuplication":           -7,
+	"PaymentResultCodeStatsOverflow":                  -8,
+	"PaymentResultCodeLimitsExceeded":                 -9,
+	"PaymentResultCodeNotAllowedByAssetPolicy":        -10,
+	"PaymentResultCodeInvalidDestinationFee":          -11,
+	"PaymentResultCodeInsufficientFeeAmount":          -12,
+	"PaymentResultCodePaymentAmountIsLessThanDestFee": -13,
+	"PaymentResultCodeDestinationAccountNotFound":     -14,
+	"PaymentResultCodeIncorrectAmountPrecision":       -15,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for PaymentV2ResultCode
-func (e PaymentV2ResultCode) ValidEnum(v int32) bool {
-	_, ok := paymentV2ResultCodeMap[v]
+// the Enum interface for PaymentResultCode
+func (e PaymentResultCode) ValidEnum(v int32) bool {
+	_, ok := paymentResultCodeMap[v]
 	return ok
 }
-func (e PaymentV2ResultCode) isFlag() bool {
-	for i := len(PaymentV2ResultCodeAll) - 1; i >= 0; i-- {
-		expected := PaymentV2ResultCode(2) << uint64(len(PaymentV2ResultCodeAll)-1) >> uint64(len(PaymentV2ResultCodeAll)-i)
-		if expected != PaymentV2ResultCodeAll[i] {
+func (e PaymentResultCode) isFlag() bool {
+	for i := len(PaymentResultCodeAll) - 1; i >= 0; i-- {
+		expected := PaymentResultCode(2) << uint64(len(PaymentResultCodeAll)-1) >> uint64(len(PaymentResultCodeAll)-i)
+		if expected != PaymentResultCodeAll[i] {
 			return false
 		}
 	}
@@ -26806,23 +26847,23 @@ func (e PaymentV2ResultCode) isFlag() bool {
 }
 
 // String returns the name of `e`
-func (e PaymentV2ResultCode) String() string {
-	name, _ := paymentV2ResultCodeMap[int32(e)]
+func (e PaymentResultCode) String() string {
+	name, _ := paymentResultCodeMap[int32(e)]
 	return name
 }
 
-func (e PaymentV2ResultCode) ShortString() string {
-	name, _ := paymentV2ResultCodeShortMap[int32(e)]
+func (e PaymentResultCode) ShortString() string {
+	name, _ := paymentResultCodeShortMap[int32(e)]
 	return name
 }
 
-func (e PaymentV2ResultCode) MarshalJSON() ([]byte, error) {
+func (e PaymentResultCode) MarshalJSON() ([]byte, error) {
 	if e.isFlag() {
 		// marshal as mask
 		result := flag{
 			Value: int32(e),
 		}
-		for _, value := range PaymentV2ResultCodeAll {
+		for _, value := range PaymentResultCodeAll {
 			if (value & e) == value {
 				result.Flags = append(result.Flags, flagValue{
 					Value: int32(value),
@@ -26841,16 +26882,16 @@ func (e PaymentV2ResultCode) MarshalJSON() ([]byte, error) {
 	}
 }
 
-func (e *PaymentV2ResultCode) UnmarshalJSON(data []byte) error {
+func (e *PaymentResultCode) UnmarshalJSON(data []byte) error {
 	var t value
 	if err := json.Unmarshal(data, &t); err != nil {
 		return err
 	}
-	*e = PaymentV2ResultCode(t.Value)
+	*e = PaymentResultCode(t.Value)
 	return nil
 }
 
-// PaymentV2ResponseExt is an XDR NestedUnion defines as:
+// PaymentResponseExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
@@ -26858,19 +26899,19 @@ func (e *PaymentV2ResultCode) UnmarshalJSON(data []byte) error {
 //            void;
 //        }
 //
-type PaymentV2ResponseExt struct {
+type PaymentResponseExt struct {
 	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u PaymentV2ResponseExt) SwitchFieldName() string {
+func (u PaymentResponseExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentV2ResponseExt
-func (u PaymentV2ResponseExt) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of PaymentResponseExt
+func (u PaymentResponseExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
@@ -26878,8 +26919,8 @@ func (u PaymentV2ResponseExt) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewPaymentV2ResponseExt creates a new  PaymentV2ResponseExt.
-func NewPaymentV2ResponseExt(v LedgerVersion, value interface{}) (result PaymentV2ResponseExt, err error) {
+// NewPaymentResponseExt creates a new  PaymentResponseExt.
+func NewPaymentResponseExt(v LedgerVersion, value interface{}) (result PaymentResponseExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
@@ -26888,9 +26929,9 @@ func NewPaymentV2ResponseExt(v LedgerVersion, value interface{}) (result Payment
 	return
 }
 
-// PaymentV2Response is an XDR Struct defines as:
+// PaymentResponse is an XDR Struct defines as:
 //
-//   struct PaymentV2Response {
+//   struct PaymentResponse {
 //        AccountID destination;
 //        BalanceID destinationBalanceID;
 //
@@ -26910,85 +26951,85 @@ func NewPaymentV2ResponseExt(v LedgerVersion, value interface{}) (result Payment
 //        ext;
 //    };
 //
-type PaymentV2Response struct {
-	Destination                 AccountId            `json:"destination,omitempty"`
-	DestinationBalanceId        BalanceId            `json:"destinationBalanceID,omitempty"`
-	Asset                       AssetCode            `json:"asset,omitempty"`
-	SourceSentUniversal         Uint64               `json:"sourceSentUniversal,omitempty"`
-	PaymentId                   Uint64               `json:"paymentID,omitempty"`
-	ActualSourcePaymentFee      Fee                  `json:"actualSourcePaymentFee,omitempty"`
-	ActualDestinationPaymentFee Fee                  `json:"actualDestinationPaymentFee,omitempty"`
-	Ext                         PaymentV2ResponseExt `json:"ext,omitempty"`
+type PaymentResponse struct {
+	Destination                 AccountId          `json:"destination,omitempty"`
+	DestinationBalanceId        BalanceId          `json:"destinationBalanceID,omitempty"`
+	Asset                       AssetCode          `json:"asset,omitempty"`
+	SourceSentUniversal         Uint64             `json:"sourceSentUniversal,omitempty"`
+	PaymentId                   Uint64             `json:"paymentID,omitempty"`
+	ActualSourcePaymentFee      Fee                `json:"actualSourcePaymentFee,omitempty"`
+	ActualDestinationPaymentFee Fee                `json:"actualDestinationPaymentFee,omitempty"`
+	Ext                         PaymentResponseExt `json:"ext,omitempty"`
 }
 
-// PaymentV2Result is an XDR Union defines as:
+// PaymentResult is an XDR Union defines as:
 //
-//   union PaymentV2Result switch (PaymentV2ResultCode code)
+//   union PaymentResult switch (PaymentResultCode code)
 //    {
 //    case SUCCESS:
-//        PaymentV2Response paymentV2Response;
+//        PaymentResponse paymentResponse;
 //    default:
 //        void;
 //    };
 //
-type PaymentV2Result struct {
-	Code              PaymentV2ResultCode `json:"code,omitempty"`
-	PaymentV2Response *PaymentV2Response  `json:"paymentV2Response,omitempty"`
+type PaymentResult struct {
+	Code            PaymentResultCode `json:"code,omitempty"`
+	PaymentResponse *PaymentResponse  `json:"paymentResponse,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u PaymentV2Result) SwitchFieldName() string {
+func (u PaymentResult) SwitchFieldName() string {
 	return "Code"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of PaymentV2Result
-func (u PaymentV2Result) ArmForSwitch(sw int32) (string, bool) {
-	switch PaymentV2ResultCode(sw) {
-	case PaymentV2ResultCodeSuccess:
-		return "PaymentV2Response", true
+// the value for an instance of PaymentResult
+func (u PaymentResult) ArmForSwitch(sw int32) (string, bool) {
+	switch PaymentResultCode(sw) {
+	case PaymentResultCodeSuccess:
+		return "PaymentResponse", true
 	default:
 		return "", true
 	}
 }
 
-// NewPaymentV2Result creates a new  PaymentV2Result.
-func NewPaymentV2Result(code PaymentV2ResultCode, value interface{}) (result PaymentV2Result, err error) {
+// NewPaymentResult creates a new  PaymentResult.
+func NewPaymentResult(code PaymentResultCode, value interface{}) (result PaymentResult, err error) {
 	result.Code = code
-	switch PaymentV2ResultCode(code) {
-	case PaymentV2ResultCodeSuccess:
-		tv, ok := value.(PaymentV2Response)
+	switch PaymentResultCode(code) {
+	case PaymentResultCodeSuccess:
+		tv, ok := value.(PaymentResponse)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be PaymentV2Response")
+			err = fmt.Errorf("invalid value, must be PaymentResponse")
 			return
 		}
-		result.PaymentV2Response = &tv
+		result.PaymentResponse = &tv
 	default:
 		// void
 	}
 	return
 }
 
-// MustPaymentV2Response retrieves the PaymentV2Response value from the union,
+// MustPaymentResponse retrieves the PaymentResponse value from the union,
 // panicing if the value is not set.
-func (u PaymentV2Result) MustPaymentV2Response() PaymentV2Response {
-	val, ok := u.GetPaymentV2Response()
+func (u PaymentResult) MustPaymentResponse() PaymentResponse {
+	val, ok := u.GetPaymentResponse()
 
 	if !ok {
-		panic("arm PaymentV2Response is not set")
+		panic("arm PaymentResponse is not set")
 	}
 
 	return val
 }
 
-// GetPaymentV2Response retrieves the PaymentV2Response value from the union,
+// GetPaymentResponse retrieves the PaymentResponse value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u PaymentV2Result) GetPaymentV2Response() (result PaymentV2Response, ok bool) {
+func (u PaymentResult) GetPaymentResponse() (result PaymentResponse, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Code))
 
-	if armName == "PaymentV2Response" {
-		result = *u.PaymentV2Response
+	if armName == "PaymentResponse" {
+		result = *u.PaymentResponse
 		ok = true
 	}
 
@@ -27812,7 +27853,7 @@ func NewBillPayDetailsExt(v LedgerVersion, value interface{}) (result BillPayDet
 // BillPayDetails is an XDR Struct defines as:
 //
 //   struct BillPayDetails {
-//        PaymentOpV2 paymentDetails;
+//        PaymentOp paymentDetails;
 //
 //        // reserved for future use
 //        union switch (LedgerVersion v)
@@ -27824,7 +27865,7 @@ func NewBillPayDetailsExt(v LedgerVersion, value interface{}) (result BillPayDet
 //    };
 //
 type BillPayDetails struct {
-	PaymentDetails PaymentOpV2       `json:"paymentDetails,omitempty"`
+	PaymentDetails PaymentOp         `json:"paymentDetails,omitempty"`
 	Ext            BillPayDetailsExt `json:"ext,omitempty"`
 }
 
@@ -30713,6 +30754,22 @@ type RequestTypedResourceIssuance struct {
 	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
+// RequestTypedResourceWithdraw is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            AssetCode assetCode;
+//            uint64 assetType;
+//
+//            EmptyExt ext;
+//        }
+//
+type RequestTypedResourceWithdraw struct {
+	AssetCode AssetCode `json:"assetCode,omitempty"`
+	AssetType Uint64    `json:"assetType,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
+}
+
 // RequestTypedResource is an XDR Union defines as:
 //
 //   union RequestTypedResource switch (ReviewableRequestType requestType)
@@ -30732,6 +30789,14 @@ type RequestTypedResourceIssuance struct {
 //
 //            EmptyExt ext;
 //        } issuance;
+//    case CREATE_WITHDRAW:
+//        struct
+//        {
+//            AssetCode assetCode;
+//            uint64 assetType;
+//
+//            EmptyExt ext;
+//        } withdraw;
 //    default:
 //        EmptyExt ext;
 //    };
@@ -30740,6 +30805,7 @@ type RequestTypedResource struct {
 	RequestType ReviewableRequestType         `json:"requestType,omitempty"`
 	Sale        *RequestTypedResourceSale     `json:"sale,omitempty"`
 	Issuance    *RequestTypedResourceIssuance `json:"issuance,omitempty"`
+	Withdraw    *RequestTypedResourceWithdraw `json:"withdraw,omitempty"`
 	Ext         *EmptyExt                     `json:"ext,omitempty"`
 }
 
@@ -30757,6 +30823,8 @@ func (u RequestTypedResource) ArmForSwitch(sw int32) (string, bool) {
 		return "Sale", true
 	case ReviewableRequestTypeCreateIssuance:
 		return "Issuance", true
+	case ReviewableRequestTypeCreateWithdraw:
+		return "Withdraw", true
 	default:
 		return "Ext", true
 	}
@@ -30780,6 +30848,13 @@ func NewRequestTypedResource(requestType ReviewableRequestType, value interface{
 			return
 		}
 		result.Issuance = &tv
+	case ReviewableRequestTypeCreateWithdraw:
+		tv, ok := value.(RequestTypedResourceWithdraw)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RequestTypedResourceWithdraw")
+			return
+		}
+		result.Withdraw = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -30835,6 +30910,31 @@ func (u RequestTypedResource) GetIssuance() (result RequestTypedResourceIssuance
 
 	if armName == "Issuance" {
 		result = *u.Issuance
+		ok = true
+	}
+
+	return
+}
+
+// MustWithdraw retrieves the Withdraw value from the union,
+// panicing if the value is not set.
+func (u RequestTypedResource) MustWithdraw() RequestTypedResourceWithdraw {
+	val, ok := u.GetWithdraw()
+
+	if !ok {
+		panic("arm Withdraw is not set")
+	}
+
+	return val
+}
+
+// GetWithdraw retrieves the Withdraw value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u RequestTypedResource) GetWithdraw() (result RequestTypedResourceWithdraw, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "Withdraw" {
+		result = *u.Withdraw
 		ok = true
 	}
 
@@ -30906,6 +31006,8 @@ type AccountRuleResourceReviewableRequest struct {
 //            AssetCode baseAssetCode;
 //            AssetCode quoteAssetCode;
 //
+//            bool isBuy;
+//
 //            EmptyExt ext;
 //        }
 //
@@ -30914,6 +31016,7 @@ type AccountRuleResourceOffer struct {
 	QuoteAssetType Uint64    `json:"quoteAssetType,omitempty"`
 	BaseAssetCode  AssetCode `json:"baseAssetCode,omitempty"`
 	QuoteAssetCode AssetCode `json:"quoteAssetCode,omitempty"`
+	IsBuy          bool      `json:"isBuy,omitempty"`
 	Ext            EmptyExt  `json:"ext,omitempty"`
 }
 
@@ -30980,6 +31083,8 @@ type AccountRuleResourceAtomicSwapBid struct {
 //
 //            AssetCode baseAssetCode;
 //            AssetCode quoteAssetCode;
+//
+//            bool isBuy;
 //
 //            EmptyExt ext;
 //        } offer;
@@ -31283,21 +31388,19 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //    {
 //        ANY = 1,
 //        CREATE = 2,
-//        MANAGE = 3,
-//        SEND = 4,
-//        WITHDRAW = 5,
-//        RECEIVE_ISSUANCE = 6,
-//        RECEIVE_PAYMENT = 7,
-//        RECEIVE_ATOMIC_SWAP = 8,
-//        CREATE_TO_SELL = 9,
-//        CREATE_TO_BUY = 10,
+//        CREATE_FOR_OTHER = 3,
+//        CREATE_WITH_TASKS = 4,
+//        MANAGE = 5,
+//        SEND = 6,
+//        WITHDRAW = 7,
+//        RECEIVE_ISSUANCE = 8,
+//        RECEIVE_PAYMENT = 9,
+//        RECEIVE_ATOMIC_SWAP = 10,
 //        PARTICIPATE = 11,
 //        BIND = 12,
 //        UPDATE_MAX_ISSUANCE = 13,
 //        CHECK = 14,
-//        CREATE_WITH_TASKS = 15,
-//        CREATE_FOR_OTHER = 16,
-//        CANCEL = 17
+//        CANCEL = 15
 //    };
 //
 type AccountRuleAction int32
@@ -31305,101 +31408,91 @@ type AccountRuleAction int32
 const (
 	AccountRuleActionAny               AccountRuleAction = 1
 	AccountRuleActionCreate            AccountRuleAction = 2
-	AccountRuleActionManage            AccountRuleAction = 3
-	AccountRuleActionSend              AccountRuleAction = 4
-	AccountRuleActionWithdraw          AccountRuleAction = 5
-	AccountRuleActionReceiveIssuance   AccountRuleAction = 6
-	AccountRuleActionReceivePayment    AccountRuleAction = 7
-	AccountRuleActionReceiveAtomicSwap AccountRuleAction = 8
-	AccountRuleActionCreateToSell      AccountRuleAction = 9
-	AccountRuleActionCreateToBuy       AccountRuleAction = 10
+	AccountRuleActionCreateForOther    AccountRuleAction = 3
+	AccountRuleActionCreateWithTasks   AccountRuleAction = 4
+	AccountRuleActionManage            AccountRuleAction = 5
+	AccountRuleActionSend              AccountRuleAction = 6
+	AccountRuleActionWithdraw          AccountRuleAction = 7
+	AccountRuleActionReceiveIssuance   AccountRuleAction = 8
+	AccountRuleActionReceivePayment    AccountRuleAction = 9
+	AccountRuleActionReceiveAtomicSwap AccountRuleAction = 10
 	AccountRuleActionParticipate       AccountRuleAction = 11
 	AccountRuleActionBind              AccountRuleAction = 12
 	AccountRuleActionUpdateMaxIssuance AccountRuleAction = 13
 	AccountRuleActionCheck             AccountRuleAction = 14
-	AccountRuleActionCreateWithTasks   AccountRuleAction = 15
-	AccountRuleActionCreateForOther    AccountRuleAction = 16
-	AccountRuleActionCancel            AccountRuleAction = 17
+	AccountRuleActionCancel            AccountRuleAction = 15
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionAny,
 	AccountRuleActionCreate,
+	AccountRuleActionCreateForOther,
+	AccountRuleActionCreateWithTasks,
 	AccountRuleActionManage,
 	AccountRuleActionSend,
 	AccountRuleActionWithdraw,
 	AccountRuleActionReceiveIssuance,
 	AccountRuleActionReceivePayment,
 	AccountRuleActionReceiveAtomicSwap,
-	AccountRuleActionCreateToSell,
-	AccountRuleActionCreateToBuy,
 	AccountRuleActionParticipate,
 	AccountRuleActionBind,
 	AccountRuleActionUpdateMaxIssuance,
 	AccountRuleActionCheck,
-	AccountRuleActionCreateWithTasks,
-	AccountRuleActionCreateForOther,
 	AccountRuleActionCancel,
 }
 
 var accountRuleActionMap = map[int32]string{
 	1:  "AccountRuleActionAny",
 	2:  "AccountRuleActionCreate",
-	3:  "AccountRuleActionManage",
-	4:  "AccountRuleActionSend",
-	5:  "AccountRuleActionWithdraw",
-	6:  "AccountRuleActionReceiveIssuance",
-	7:  "AccountRuleActionReceivePayment",
-	8:  "AccountRuleActionReceiveAtomicSwap",
-	9:  "AccountRuleActionCreateToSell",
-	10: "AccountRuleActionCreateToBuy",
+	3:  "AccountRuleActionCreateForOther",
+	4:  "AccountRuleActionCreateWithTasks",
+	5:  "AccountRuleActionManage",
+	6:  "AccountRuleActionSend",
+	7:  "AccountRuleActionWithdraw",
+	8:  "AccountRuleActionReceiveIssuance",
+	9:  "AccountRuleActionReceivePayment",
+	10: "AccountRuleActionReceiveAtomicSwap",
 	11: "AccountRuleActionParticipate",
 	12: "AccountRuleActionBind",
 	13: "AccountRuleActionUpdateMaxIssuance",
 	14: "AccountRuleActionCheck",
-	15: "AccountRuleActionCreateWithTasks",
-	16: "AccountRuleActionCreateForOther",
-	17: "AccountRuleActionCancel",
+	15: "AccountRuleActionCancel",
 }
 
 var accountRuleActionShortMap = map[int32]string{
 	1:  "any",
 	2:  "create",
-	3:  "manage",
-	4:  "send",
-	5:  "withdraw",
-	6:  "receive_issuance",
-	7:  "receive_payment",
-	8:  "receive_atomic_swap",
-	9:  "create_to_sell",
-	10: "create_to_buy",
+	3:  "create_for_other",
+	4:  "create_with_tasks",
+	5:  "manage",
+	6:  "send",
+	7:  "withdraw",
+	8:  "receive_issuance",
+	9:  "receive_payment",
+	10: "receive_atomic_swap",
 	11: "participate",
 	12: "bind",
 	13: "update_max_issuance",
 	14: "check",
-	15: "create_with_tasks",
-	16: "create_for_other",
-	17: "cancel",
+	15: "cancel",
 }
 
 var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionAny":               1,
 	"AccountRuleActionCreate":            2,
-	"AccountRuleActionManage":            3,
-	"AccountRuleActionSend":              4,
-	"AccountRuleActionWithdraw":          5,
-	"AccountRuleActionReceiveIssuance":   6,
-	"AccountRuleActionReceivePayment":    7,
-	"AccountRuleActionReceiveAtomicSwap": 8,
-	"AccountRuleActionCreateToSell":      9,
-	"AccountRuleActionCreateToBuy":       10,
+	"AccountRuleActionCreateForOther":    3,
+	"AccountRuleActionCreateWithTasks":   4,
+	"AccountRuleActionManage":            5,
+	"AccountRuleActionSend":              6,
+	"AccountRuleActionWithdraw":          7,
+	"AccountRuleActionReceiveIssuance":   8,
+	"AccountRuleActionReceivePayment":    9,
+	"AccountRuleActionReceiveAtomicSwap": 10,
 	"AccountRuleActionParticipate":       11,
 	"AccountRuleActionBind":              12,
 	"AccountRuleActionUpdateMaxIssuance": 13,
 	"AccountRuleActionCheck":             14,
-	"AccountRuleActionCreateWithTasks":   15,
-	"AccountRuleActionCreateForOther":    16,
-	"AccountRuleActionCancel":            17,
+	"AccountRuleActionCancel":            15,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -31510,6 +31603,8 @@ type SignerRuleResourceAsset struct {
 //            AssetCode baseAssetCode;
 //            AssetCode quoteAssetCode;
 //
+//            bool isBuy;
+//
 //            EmptyExt ext;
 //        }
 //
@@ -31518,6 +31613,7 @@ type SignerRuleResourceOffer struct {
 	QuoteAssetType Uint64    `json:"quoteAssetType,omitempty"`
 	BaseAssetCode  AssetCode `json:"baseAssetCode,omitempty"`
 	QuoteAssetCode AssetCode `json:"quoteAssetCode,omitempty"`
+	IsBuy          bool      `json:"isBuy,omitempty"`
 	Ext            EmptyExt  `json:"ext,omitempty"`
 }
 
@@ -31628,6 +31724,8 @@ type SignerRuleResourceSigner struct {
 //
 //            AssetCode baseAssetCode;
 //            AssetCode quoteAssetCode;
+//
+//            bool isBuy;
 //
 //            EmptyExt ext;
 //        } offer;
@@ -32022,22 +32120,18 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //    {
 //        ANY = 1,
 //        CREATE = 2,
-//        MANAGE = 3,
-//        SEND = 4,
-//        WITHDRAW = 5,
-//        ISSUE = 6,
-//        REVIEW = 7,
-//        RECEIVE_ATOMIC_SWAP = 8,
-//        CREATE_TO_SELL = 9,
-//        CREATE_TO_BUY = 10,
+//        CREATE_FOR_OTHER = 3,
+//        UPDATE = 4,
+//        MANAGE = 5,
+//        SEND = 6,
+//        REMOVE = 7,
+//        CANCEL = 8,
+//        REVIEW = 9,
+//        RECEIVE_ATOMIC_SWAP = 10,
 //        PARTICIPATE = 11,
 //        BIND = 12,
 //        UPDATE_MAX_ISSUANCE = 13,
-//        CHECK = 14,
-//         UPDATE = 15,
-//        CREATE_FOR_OTHER = 16,
-//        CANCEL = 17,
-//        REMOVE = 18
+//        CHECK = 14
 //    };
 //
 type SignerRuleAction int32
@@ -32045,106 +32139,86 @@ type SignerRuleAction int32
 const (
 	SignerRuleActionAny               SignerRuleAction = 1
 	SignerRuleActionCreate            SignerRuleAction = 2
-	SignerRuleActionManage            SignerRuleAction = 3
-	SignerRuleActionSend              SignerRuleAction = 4
-	SignerRuleActionWithdraw          SignerRuleAction = 5
-	SignerRuleActionIssue             SignerRuleAction = 6
-	SignerRuleActionReview            SignerRuleAction = 7
-	SignerRuleActionReceiveAtomicSwap SignerRuleAction = 8
-	SignerRuleActionCreateToSell      SignerRuleAction = 9
-	SignerRuleActionCreateToBuy       SignerRuleAction = 10
+	SignerRuleActionCreateForOther    SignerRuleAction = 3
+	SignerRuleActionUpdate            SignerRuleAction = 4
+	SignerRuleActionManage            SignerRuleAction = 5
+	SignerRuleActionSend              SignerRuleAction = 6
+	SignerRuleActionRemove            SignerRuleAction = 7
+	SignerRuleActionCancel            SignerRuleAction = 8
+	SignerRuleActionReview            SignerRuleAction = 9
+	SignerRuleActionReceiveAtomicSwap SignerRuleAction = 10
 	SignerRuleActionParticipate       SignerRuleAction = 11
 	SignerRuleActionBind              SignerRuleAction = 12
 	SignerRuleActionUpdateMaxIssuance SignerRuleAction = 13
 	SignerRuleActionCheck             SignerRuleAction = 14
-	SignerRuleActionUpdate            SignerRuleAction = 15
-	SignerRuleActionCreateForOther    SignerRuleAction = 16
-	SignerRuleActionCancel            SignerRuleAction = 17
-	SignerRuleActionRemove            SignerRuleAction = 18
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionAny,
 	SignerRuleActionCreate,
+	SignerRuleActionCreateForOther,
+	SignerRuleActionUpdate,
 	SignerRuleActionManage,
 	SignerRuleActionSend,
-	SignerRuleActionWithdraw,
-	SignerRuleActionIssue,
+	SignerRuleActionRemove,
+	SignerRuleActionCancel,
 	SignerRuleActionReview,
 	SignerRuleActionReceiveAtomicSwap,
-	SignerRuleActionCreateToSell,
-	SignerRuleActionCreateToBuy,
 	SignerRuleActionParticipate,
 	SignerRuleActionBind,
 	SignerRuleActionUpdateMaxIssuance,
 	SignerRuleActionCheck,
-	SignerRuleActionUpdate,
-	SignerRuleActionCreateForOther,
-	SignerRuleActionCancel,
-	SignerRuleActionRemove,
 }
 
 var signerRuleActionMap = map[int32]string{
 	1:  "SignerRuleActionAny",
 	2:  "SignerRuleActionCreate",
-	3:  "SignerRuleActionManage",
-	4:  "SignerRuleActionSend",
-	5:  "SignerRuleActionWithdraw",
-	6:  "SignerRuleActionIssue",
-	7:  "SignerRuleActionReview",
-	8:  "SignerRuleActionReceiveAtomicSwap",
-	9:  "SignerRuleActionCreateToSell",
-	10: "SignerRuleActionCreateToBuy",
+	3:  "SignerRuleActionCreateForOther",
+	4:  "SignerRuleActionUpdate",
+	5:  "SignerRuleActionManage",
+	6:  "SignerRuleActionSend",
+	7:  "SignerRuleActionRemove",
+	8:  "SignerRuleActionCancel",
+	9:  "SignerRuleActionReview",
+	10: "SignerRuleActionReceiveAtomicSwap",
 	11: "SignerRuleActionParticipate",
 	12: "SignerRuleActionBind",
 	13: "SignerRuleActionUpdateMaxIssuance",
 	14: "SignerRuleActionCheck",
-	15: "SignerRuleActionUpdate",
-	16: "SignerRuleActionCreateForOther",
-	17: "SignerRuleActionCancel",
-	18: "SignerRuleActionRemove",
 }
 
 var signerRuleActionShortMap = map[int32]string{
 	1:  "any",
 	2:  "create",
-	3:  "manage",
-	4:  "send",
-	5:  "withdraw",
-	6:  "issue",
-	7:  "review",
-	8:  "receive_atomic_swap",
-	9:  "create_to_sell",
-	10: "create_to_buy",
+	3:  "create_for_other",
+	4:  "update",
+	5:  "manage",
+	6:  "send",
+	7:  "remove",
+	8:  "cancel",
+	9:  "review",
+	10: "receive_atomic_swap",
 	11: "participate",
 	12: "bind",
 	13: "update_max_issuance",
 	14: "check",
-	15: "update",
-	16: "create_for_other",
-	17: "cancel",
-	18: "remove",
 }
 
 var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionAny":               1,
 	"SignerRuleActionCreate":            2,
-	"SignerRuleActionManage":            3,
-	"SignerRuleActionSend":              4,
-	"SignerRuleActionWithdraw":          5,
-	"SignerRuleActionIssue":             6,
-	"SignerRuleActionReview":            7,
-	"SignerRuleActionReceiveAtomicSwap": 8,
-	"SignerRuleActionCreateToSell":      9,
-	"SignerRuleActionCreateToBuy":       10,
+	"SignerRuleActionCreateForOther":    3,
+	"SignerRuleActionUpdate":            4,
+	"SignerRuleActionManage":            5,
+	"SignerRuleActionSend":              6,
+	"SignerRuleActionRemove":            7,
+	"SignerRuleActionCancel":            8,
+	"SignerRuleActionReview":            9,
+	"SignerRuleActionReceiveAtomicSwap": 10,
 	"SignerRuleActionParticipate":       11,
 	"SignerRuleActionBind":              12,
 	"SignerRuleActionUpdateMaxIssuance": 13,
 	"SignerRuleActionCheck":             14,
-	"SignerRuleActionUpdate":            15,
-	"SignerRuleActionCreateForOther":    16,
-	"SignerRuleActionCancel":            17,
-	"SignerRuleActionRemove":            18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -32908,7 +32982,7 @@ func NewIssuanceRequestExt(v LedgerVersion, value interface{}) (result IssuanceR
 //    	AssetCode asset;
 //    	uint64 amount;
 //    	BalanceID receiver;
-//    	longstring externalDetails; // details of the issuance (External system id, etc.)
+//    	longstring creatorDetails; // details of the issuance (External system id, etc.)
 //    	Fee fee; //totalFee to be payed (calculated automatically)
 //    	// reserved for future use
 //        union switch (LedgerVersion v)
@@ -32920,12 +32994,12 @@ func NewIssuanceRequestExt(v LedgerVersion, value interface{}) (result IssuanceR
 //    };
 //
 type IssuanceRequest struct {
-	Asset           AssetCode          `json:"asset,omitempty"`
-	Amount          Uint64             `json:"amount,omitempty"`
-	Receiver        BalanceId          `json:"receiver,omitempty"`
-	ExternalDetails Longstring         `json:"externalDetails,omitempty"`
-	Fee             Fee                `json:"fee,omitempty"`
-	Ext             IssuanceRequestExt `json:"ext,omitempty"`
+	Asset          AssetCode          `json:"asset,omitempty"`
+	Amount         Uint64             `json:"amount,omitempty"`
+	Receiver       BalanceId          `json:"receiver,omitempty"`
+	CreatorDetails Longstring         `json:"creatorDetails,omitempty"`
+	Fee            Fee                `json:"fee,omitempty"`
+	Ext            IssuanceRequestExt `json:"ext,omitempty"`
 }
 
 // LimitsUpdateRequestExt is an XDR NestedUnion defines as:
@@ -33292,8 +33366,8 @@ type WithdrawalRequest struct {
 //            ManageExternalSystemAccountIdPoolEntryOp manageExternalSystemAccountIdPoolEntryOp;
 //        case BIND_EXTERNAL_SYSTEM_ACCOUNT_ID:
 //            BindExternalSystemAccountIdOp bindExternalSystemAccountIdOp;
-//        case PAYMENT_V2:
-//            PaymentOpV2 paymentOpV2;
+//        case PAYMENT:
+//            PaymentOp paymentOp;
 //        case MANAGE_SALE:
 //            ManageSaleOp manageSaleOp;
 //        case CREATE_MANAGE_LIMITS_REQUEST:
@@ -33344,7 +33418,7 @@ type OperationBody struct {
 	CreateChangeRoleRequestOp                *CreateChangeRoleRequestOp                `json:"createChangeRoleRequestOp,omitempty"`
 	ManageExternalSystemAccountIdPoolEntryOp *ManageExternalSystemAccountIdPoolEntryOp `json:"manageExternalSystemAccountIdPoolEntryOp,omitempty"`
 	BindExternalSystemAccountIdOp            *BindExternalSystemAccountIdOp            `json:"bindExternalSystemAccountIdOp,omitempty"`
-	PaymentOpV2                              *PaymentOpV2                              `json:"paymentOpV2,omitempty"`
+	PaymentOp                                *PaymentOp                                `json:"paymentOp,omitempty"`
 	ManageSaleOp                             *ManageSaleOp                             `json:"manageSaleOp,omitempty"`
 	CreateManageLimitsRequestOp              *CreateManageLimitsRequestOp              `json:"createManageLimitsRequestOp,omitempty"`
 	ManageContractRequestOp                  *ManageContractRequestOp                  `json:"manageContractRequestOp,omitempty"`
@@ -33410,8 +33484,8 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageExternalSystemAccountIdPoolEntryOp", true
 	case OperationTypeBindExternalSystemAccountId:
 		return "BindExternalSystemAccountIdOp", true
-	case OperationTypePaymentV2:
-		return "PaymentOpV2", true
+	case OperationTypePayment:
+		return "PaymentOp", true
 	case OperationTypeManageSale:
 		return "ManageSaleOp", true
 	case OperationTypeCreateManageLimitsRequest:
@@ -33586,13 +33660,13 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.BindExternalSystemAccountIdOp = &tv
-	case OperationTypePaymentV2:
-		tv, ok := value.(PaymentOpV2)
+	case OperationTypePayment:
+		tv, ok := value.(PaymentOp)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be PaymentOpV2")
+			err = fmt.Errorf("invalid value, must be PaymentOp")
 			return
 		}
-		result.PaymentOpV2 = &tv
+		result.PaymentOp = &tv
 	case OperationTypeManageSale:
 		tv, ok := value.(ManageSaleOp)
 		if !ok {
@@ -34188,25 +34262,25 @@ func (u OperationBody) GetBindExternalSystemAccountIdOp() (result BindExternalSy
 	return
 }
 
-// MustPaymentOpV2 retrieves the PaymentOpV2 value from the union,
+// MustPaymentOp retrieves the PaymentOp value from the union,
 // panicing if the value is not set.
-func (u OperationBody) MustPaymentOpV2() PaymentOpV2 {
-	val, ok := u.GetPaymentOpV2()
+func (u OperationBody) MustPaymentOp() PaymentOp {
+	val, ok := u.GetPaymentOp()
 
 	if !ok {
-		panic("arm PaymentOpV2 is not set")
+		panic("arm PaymentOp is not set")
 	}
 
 	return val
 }
 
-// GetPaymentOpV2 retrieves the PaymentOpV2 value from the union,
+// GetPaymentOp retrieves the PaymentOp value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u OperationBody) GetPaymentOpV2() (result PaymentOpV2, ok bool) {
+func (u OperationBody) GetPaymentOp() (result PaymentOp, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "PaymentOpV2" {
-		result = *u.PaymentOpV2
+	if armName == "PaymentOp" {
+		result = *u.PaymentOp
 		ok = true
 	}
 
@@ -34589,8 +34663,8 @@ func (u OperationBody) GetManageSignerRuleOp() (result ManageSignerRuleOp, ok bo
 //            ManageExternalSystemAccountIdPoolEntryOp manageExternalSystemAccountIdPoolEntryOp;
 //        case BIND_EXTERNAL_SYSTEM_ACCOUNT_ID:
 //            BindExternalSystemAccountIdOp bindExternalSystemAccountIdOp;
-//        case PAYMENT_V2:
-//            PaymentOpV2 paymentOpV2;
+//        case PAYMENT:
+//            PaymentOp paymentOp;
 //        case MANAGE_SALE:
 //            ManageSaleOp manageSaleOp;
 //        case CREATE_MANAGE_LIMITS_REQUEST:
@@ -35225,8 +35299,8 @@ func (e *OperationResultCode) UnmarshalJSON(data []byte) error {
 //            ManageExternalSystemAccountIdPoolEntryResult manageExternalSystemAccountIdPoolEntryResult;
 //        case BIND_EXTERNAL_SYSTEM_ACCOUNT_ID:
 //            BindExternalSystemAccountIdResult bindExternalSystemAccountIdResult;
-//        case PAYMENT_V2:
-//            PaymentV2Result paymentV2Result;
+//        case PAYMENT:
+//            PaymentResult paymentResult;
 //        case MANAGE_SALE:
 //            ManageSaleResult manageSaleResult;
 //        case CREATE_MANAGE_LIMITS_REQUEST:
@@ -35277,7 +35351,7 @@ type OperationResultTr struct {
 	CreateChangeRoleRequestResult                *CreateChangeRoleRequestResult                `json:"createChangeRoleRequestResult,omitempty"`
 	ManageExternalSystemAccountIdPoolEntryResult *ManageExternalSystemAccountIdPoolEntryResult `json:"manageExternalSystemAccountIdPoolEntryResult,omitempty"`
 	BindExternalSystemAccountIdResult            *BindExternalSystemAccountIdResult            `json:"bindExternalSystemAccountIdResult,omitempty"`
-	PaymentV2Result                              *PaymentV2Result                              `json:"paymentV2Result,omitempty"`
+	PaymentResult                                *PaymentResult                                `json:"paymentResult,omitempty"`
 	ManageSaleResult                             *ManageSaleResult                             `json:"manageSaleResult,omitempty"`
 	CreateManageLimitsRequestResult              *CreateManageLimitsRequestResult              `json:"createManageLimitsRequestResult,omitempty"`
 	ManageContractRequestResult                  *ManageContractRequestResult                  `json:"manageContractRequestResult,omitempty"`
@@ -35343,8 +35417,8 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageExternalSystemAccountIdPoolEntryResult", true
 	case OperationTypeBindExternalSystemAccountId:
 		return "BindExternalSystemAccountIdResult", true
-	case OperationTypePaymentV2:
-		return "PaymentV2Result", true
+	case OperationTypePayment:
+		return "PaymentResult", true
 	case OperationTypeManageSale:
 		return "ManageSaleResult", true
 	case OperationTypeCreateManageLimitsRequest:
@@ -35519,13 +35593,13 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.BindExternalSystemAccountIdResult = &tv
-	case OperationTypePaymentV2:
-		tv, ok := value.(PaymentV2Result)
+	case OperationTypePayment:
+		tv, ok := value.(PaymentResult)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be PaymentV2Result")
+			err = fmt.Errorf("invalid value, must be PaymentResult")
 			return
 		}
-		result.PaymentV2Result = &tv
+		result.PaymentResult = &tv
 	case OperationTypeManageSale:
 		tv, ok := value.(ManageSaleResult)
 		if !ok {
@@ -36121,25 +36195,25 @@ func (u OperationResultTr) GetBindExternalSystemAccountIdResult() (result BindEx
 	return
 }
 
-// MustPaymentV2Result retrieves the PaymentV2Result value from the union,
+// MustPaymentResult retrieves the PaymentResult value from the union,
 // panicing if the value is not set.
-func (u OperationResultTr) MustPaymentV2Result() PaymentV2Result {
-	val, ok := u.GetPaymentV2Result()
+func (u OperationResultTr) MustPaymentResult() PaymentResult {
+	val, ok := u.GetPaymentResult()
 
 	if !ok {
-		panic("arm PaymentV2Result is not set")
+		panic("arm PaymentResult is not set")
 	}
 
 	return val
 }
 
-// GetPaymentV2Result retrieves the PaymentV2Result value from the union,
+// GetPaymentResult retrieves the PaymentResult value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u OperationResultTr) GetPaymentV2Result() (result PaymentV2Result, ok bool) {
+func (u OperationResultTr) GetPaymentResult() (result PaymentResult, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "PaymentV2Result" {
-		result = *u.PaymentV2Result
+	if armName == "PaymentResult" {
+		result = *u.PaymentResult
 		ok = true
 	}
 
@@ -36518,8 +36592,8 @@ func (u OperationResultTr) GetManageSignerRuleResult() (result ManageSignerRuleR
 //            ManageExternalSystemAccountIdPoolEntryResult manageExternalSystemAccountIdPoolEntryResult;
 //        case BIND_EXTERNAL_SYSTEM_ACCOUNT_ID:
 //            BindExternalSystemAccountIdResult bindExternalSystemAccountIdResult;
-//        case PAYMENT_V2:
-//            PaymentV2Result paymentV2Result;
+//        case PAYMENT:
+//            PaymentResult paymentResult;
 //        case MANAGE_SALE:
 //            ManageSaleResult manageSaleResult;
 //        case CREATE_MANAGE_LIMITS_REQUEST:
@@ -38033,7 +38107,7 @@ type Fee struct {
 //    	CHECK_SALE_STATE = 20,
 //        CREATE_AML_ALERT = 21,
 //        CREATE_CHANGE_ROLE_REQUEST = 22,
-//        PAYMENT_V2 = 23,
+//        PAYMENT = 23,
 //        MANAGE_EXTERNAL_SYSTEM_ACCOUNT_ID_POOL_ENTRY = 24,
 //        BIND_EXTERNAL_SYSTEM_ACCOUNT_ID = 25,
 //        MANAGE_SALE = 26,
@@ -38072,7 +38146,7 @@ const (
 	OperationTypeCheckSaleState                         OperationType = 20
 	OperationTypeCreateAmlAlert                         OperationType = 21
 	OperationTypeCreateChangeRoleRequest                OperationType = 22
-	OperationTypePaymentV2                              OperationType = 23
+	OperationTypePayment                                OperationType = 23
 	OperationTypeManageExternalSystemAccountIdPoolEntry OperationType = 24
 	OperationTypeBindExternalSystemAccountId            OperationType = 25
 	OperationTypeManageSale                             OperationType = 26
@@ -38109,7 +38183,7 @@ var OperationTypeAll = []OperationType{
 	OperationTypeCheckSaleState,
 	OperationTypeCreateAmlAlert,
 	OperationTypeCreateChangeRoleRequest,
-	OperationTypePaymentV2,
+	OperationTypePayment,
 	OperationTypeManageExternalSystemAccountIdPoolEntry,
 	OperationTypeBindExternalSystemAccountId,
 	OperationTypeManageSale,
@@ -38146,7 +38220,7 @@ var operationTypeMap = map[int32]string{
 	20: "OperationTypeCheckSaleState",
 	21: "OperationTypeCreateAmlAlert",
 	22: "OperationTypeCreateChangeRoleRequest",
-	23: "OperationTypePaymentV2",
+	23: "OperationTypePayment",
 	24: "OperationTypeManageExternalSystemAccountIdPoolEntry",
 	25: "OperationTypeBindExternalSystemAccountId",
 	26: "OperationTypeManageSale",
@@ -38183,7 +38257,7 @@ var operationTypeShortMap = map[int32]string{
 	20: "check_sale_state",
 	21: "create_aml_alert",
 	22: "create_change_role_request",
-	23: "payment_v2",
+	23: "payment",
 	24: "manage_external_system_account_id_pool_entry",
 	25: "bind_external_system_account_id",
 	26: "manage_sale",
@@ -38220,7 +38294,7 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeCheckSaleState":                         20,
 	"OperationTypeCreateAmlAlert":                         21,
 	"OperationTypeCreateChangeRoleRequest":                22,
-	"OperationTypePaymentV2":                              23,
+	"OperationTypePayment":                                23,
 	"OperationTypeManageExternalSystemAccountIdPoolEntry": 24,
 	"OperationTypeBindExternalSystemAccountId":            25,
 	"OperationTypeManageSale":                             26,
@@ -38315,4 +38389,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "f710477e73ba20bbd3c19f49a274fc7668d19ff4"
+var Revision = "48e4c546e0ea993542c3983f6345cdee1b4bc513"

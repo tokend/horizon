@@ -10,15 +10,15 @@ type AccountRule struct {
 type AccountRuleAttr struct {
 	Resource xdr.AccountRuleResource `json:"resource"`
 	Action   string                  `json:"action"`
-	IsForbid bool                    `json:"is_forbid"`
+	Forbids  bool                    `json:"forbids"`
 	Details  Details                 `json:"details"`
 }
 
 type AccountRuleResponse struct {
-	Data     AccountRule `json:"data"`
+	Data AccountRule `json:"data"`
 }
 
 type AccountRulesResponse struct {
-	Links    *Links        `json:"links"`
-	Data     []AccountRule `json:"data"`
+	Links *Links        `json:"links"`
+	Data  []AccountRule `json:"data"`
 }

@@ -33,7 +33,7 @@ func (h *manageSignerRuleOpHandler) Details(op rawOperation,
 		opDetails.ManageSignerRule.CreateDetails = &history2.CreateSignerRuleDetails{
 			Details:    internal.MarshalCustomDetails(details.Details),
 			IsReadOnly: details.IsReadOnly,
-			IsForbid:   details.IsForbid,
+			IsForbid:   details.Forbids,
 			IsDefault:  details.IsDefault,
 			Resource:   details.Resource,
 			Action:     details.Action,
@@ -43,7 +43,7 @@ func (h *manageSignerRuleOpHandler) Details(op rawOperation,
 
 		opDetails.ManageSignerRule.UpdateDetails = &history2.UpdateSignerRuleDetails{
 			Details:   internal.MarshalCustomDetails(details.Details),
-			IsForbid:  details.IsForbid,
+			IsForbid:  details.Forbids,
 			IsDefault: details.IsDefault,
 			Resource:  details.Resource,
 			Action:    details.Action,

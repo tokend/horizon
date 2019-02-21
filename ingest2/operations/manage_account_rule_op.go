@@ -33,25 +33,25 @@ func (h *manageAccountRuleOpHandler) Details(op rawOperation,
 		creationDetails := &history2.UpdateAccountRuleDetails{
 			Resource: details.Resource,
 			Action:   details.Action,
-			IsForbid: details.IsForbid,
+			IsForbid: details.Forbids,
 			Details:  internal.MarshalCustomDetails(details.Details),
 		}
 
 		opDetails.ManageAccountRule.CreateDetails = creationDetails
 	case xdr.ManageAccountRuleActionUpdate:
 		details := manageAccountRuleOp.Data.MustUpdateData()
-		opDetails.ManageAccountRule.RuleID = uint64(details.AccountRuleId)
+		opDetails.ManageAccountRule.RuleID = uint64(details.RuleId)
 
 		updateDetails := &history2.UpdateAccountRuleDetails{
 			Resource: details.Resource,
 			Action:   details.Action,
-			IsForbid: details.IsForbid,
+			IsForbid: details.Forbids,
 			Details:  internal.MarshalCustomDetails(details.Details),
 		}
 
 		opDetails.ManageAccountRule.UpdateDetails = updateDetails
 	case xdr.ManageAccountRuleActionRemove:
-		opDetails.ManageAccountRule.RuleID = uint64(manageAccountRuleOp.Data.MustRemoveData().AccountRuleId)
+		opDetails.ManageAccountRule.RuleID = uint64(manageAccountRuleOp.Data.MustRemoveData().RuleId)
 	default:
 		return history2.OperationDetails{}, errors.New("Unexpected action on manage account rule")
 	}

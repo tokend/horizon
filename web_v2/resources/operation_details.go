@@ -50,7 +50,7 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newCreateAMLAlertRequestOp(op.ID, *op.Details.CreateAMLAlertRequest)
 	case xdr.OperationTypeCreateChangeRoleRequest:
 		return newChangeRoleRequestOp(op.ID, *op.Details.CreateChangeRoleRequest)
-	case xdr.OperationTypePaymentV2:
+	case xdr.OperationTypePayment:
 		return newPaymentOp(op.ID, *op.Details.Payment)
 	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
 		return newManageExternalSystemPool(op.ID, *op.Details.ManageExternalSystemPool)
@@ -189,8 +189,8 @@ func newChangeRoleRequestOp(id int64, details history2.CreateChangeRoleRequestDe
 	return &regources.CreateChangeRoleRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeCreateChangeRoleRequest),
 		Attributes: regources.CreateChangeRoleRequestAttrs{
-			KYCData:  details.KYCData,
-			AllTasks: details.AllTasks,
+			CreatorDetails: details.CreatorDetails,
+			AllTasks:       details.AllTasks,
 		},
 		Relationships: regources.CreateChangeRoleRequestOpRelations{
 			AccountToUpdateRole: NewAccountKey(details.DestinationAccount).AsRelation(),
@@ -205,11 +205,11 @@ func newCreateIssuanceOpDetails(id int64, details history2.CreateIssuanceRequest
 	return &regources.CreateIssuanceRequestOp{
 		Key: regources.NewKeyInt64(id, regources.TypeCreateIssuanceRequest),
 		Attributes: regources.CreateIssuanceRequestOpAttrs{
-			Fee:             details.Fee,
-			Reference:       details.Reference,
-			Amount:          details.Amount,
-			ExternalDetails: details.ExternalDetails,
-			AllTasks:        details.AllTasks,
+			Fee:            details.Fee,
+			Reference:      details.Reference,
+			Amount:         details.Amount,
+			CreatorDetails: details.CreatorDetails,
+			AllTasks:       details.AllTasks,
 		},
 		Relationships: regources.CreateIssuanceRequestOpRelations{
 			Asset:           NewAssetKey(details.Asset).AsRelation(),
@@ -226,9 +226,9 @@ func newCreateWithdrawalRequestOp(id int64,
 	return &regources.CreateWithdrawRequestOp{
 		Key: regources.NewKeyInt64(id, regources.TypeCreateWithdrawalRequest),
 		Attributes: regources.CreateWithdrawRequestOpAttrs{
-			Amount:          details.Amount,
-			Fee:             details.Fee,
-			ExternalDetails: details.ExternalDetails,
+			Amount:         details.Amount,
+			Fee:            details.Fee,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreateWithdrawRequestOpRelations{
 			Balance: NewBalanceKey(details.BalanceAddress).AsRelation(),
@@ -259,7 +259,7 @@ func newManageAssetOp(id int64, details history2.ManageAssetDetails) *regources.
 			AssetCode:         details.AssetCode,
 			Action:            details.Action,
 			Policies:          details.Policies,
-			Details:           details.Details,
+			CreatorDetails:    details.CreatorDetails,
 			PreissuedSigner:   details.PreissuedSigner,
 			MaxIssuanceAmount: details.MaxIssuanceAmount,
 		},
@@ -333,11 +333,11 @@ func newCreateSaleRequestOp(id int64, details history2.CreateSaleRequestDetails)
 	return &regources.CreateSaleRequestOp{
 		Key: regources.NewKeyInt64(id, regources.TypeCreateSaleRequest),
 		Attributes: regources.CreateSaleRequestOpAttrs{
-			StartTime: details.StartTime,
-			EndTime:   details.EndTime,
-			SoftCap:   details.SoftCap,
-			HardCap:   details.HardCap,
-			Details:   details.Details,
+			StartTime:      details.StartTime,
+			EndTime:        details.EndTime,
+			SoftCap:        details.SoftCap,
+			HardCap:        details.HardCap,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreateSaleRequestOpRelations{
 			QuoteAssets:       quoteAssets,
@@ -353,8 +353,8 @@ func newCreateAMLAlertRequestOp(id int64, details history2.CreateAMLAlertRequest
 	return &regources.CreateAMLAlertRequestOp{
 		Key: regources.NewKeyInt64(id, regources.TypeCreateAmlAlert),
 		Attributes: regources.CreateAMLAlertRequestOpAttrs{
-			Amount: details.Amount,
-			Reason: details.Reason,
+			Amount:         details.Amount,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreateAMLAlertRequestOpRelations{
 			Balance: NewBalanceKey(details.BalanceAddress).AsRelation(),
@@ -404,7 +404,7 @@ func newCreateManageLimitsRequestOp(id int64, details history2.CreateManageLimit
 	return &regources.CreateManageLimitsRequestOp{
 		Key: regources.NewKeyInt64(id, regources.TypeCreateManageLimitsRequest),
 		Attributes: regources.CreateManageLimitsRequestOpAttrs{
-			Data: details.Data,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreateManageLimitsRequestOpRelations{
 			Request: NewRequestKey(details.RequestID).AsRelation(),

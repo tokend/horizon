@@ -16,7 +16,7 @@ func newManageAccountRule(id int64, details history2.ManageAccountRuleDetails,
 			Attributes: &regources.ManageAccountRuleAttrs{
 				Resource: details.CreateDetails.Resource,
 				Action:   details.CreateDetails.Action,
-				IsForbid: details.CreateDetails.IsForbid,
+				Forbids:  details.CreateDetails.IsForbid,
 				Details:  details.CreateDetails.Details,
 			},
 			Relationships: &regources.ManageAccountRuleRelation{
@@ -29,7 +29,7 @@ func newManageAccountRule(id int64, details history2.ManageAccountRuleDetails,
 			Attributes: &regources.ManageAccountRuleAttrs{
 				Resource: details.UpdateDetails.Resource,
 				Action:   details.UpdateDetails.Action,
-				IsForbid: details.UpdateDetails.IsForbid,
+				Forbids:  details.UpdateDetails.IsForbid,
 				Details:  details.UpdateDetails.Details,
 			},
 			Relationships: &regources.ManageAccountRuleRelation{
