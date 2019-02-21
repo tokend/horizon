@@ -8,6 +8,7 @@
 ### Fixed
 
 * Error codes
+* `request_details` format to satisfy JSON API spec
 
 # 3.0.1-x.7
 
