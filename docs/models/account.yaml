@@ -20,8 +20,6 @@ Account:
         type: object
         required:
           - balances
-          - limits
-          - external-system-ids
           - role
         properties:
           referrer:

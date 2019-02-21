@@ -18,6 +18,7 @@ Asset:
     properties:
       relationships:
         type: object
+        reqiired: [owner]
         properties:
           owner:
             type: object
@@ -28,6 +29,15 @@ Asset:
                 $ref: '#/components/schemas/AccountKey'
       attributes:
         type: object
+        required:
+          - pre_issuance_asset_signer
+          - details
+          - max_issuance_amount
+          - available_for_issuance
+          - issued
+          - pending_issuance
+          - policies
+          - trailing_digits
         properties:
           pre_issuance_asset_signer:
             type: string
