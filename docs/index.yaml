@@ -83,3 +83,8 @@ tags:
                   * A quote asset refers to the last amount at which 1 base asset was traded,
                   meaning the most recent price to which a buyer and seller agreed and
                   at which some 1 base asset was transacted
+  - name: Order Books
+    description: |
+                  An order book is an list of buy and sell orders for a specified asset pair organized by price level.
+                  An order book lists the amount of asset being bid or offered at each price point.
+                  It does not identifies the market participants behind the buy and sell orders.
