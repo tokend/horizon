@@ -1,7 +1,7 @@
 /v3/order_book/{id}:
   get:
     tags:
-      - OrderBooks
+      - Order Books
     summary: Get OrderBook by ID
     description: |
                   Returns the list of the placed offers without private details.
