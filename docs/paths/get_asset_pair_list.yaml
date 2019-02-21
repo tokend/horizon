@@ -1,7 +1,7 @@
 /v3/assets_pairs:
   get:
     tags:
-      - AssetPairs
+      - Asset Pairs
     summary: Get List of AssetPairs
     description: |
                   Allows to get a filtered list of `AssetPair` with the corresponding details.
