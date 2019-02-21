@@ -1,3 +1,14 @@
+# Unreleased
+
+### Changed
+
+* Rename Details`/`Reason`/`NewDetails` field names in operation which create reqeusts unified to `creatorDetails`
+* Rename isForbid to forbids
+
+### Fixed
+
+* Error codes
+
 # 3.0.1-x.7
 
 ### Added 
