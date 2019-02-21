@@ -1,26 +1,52 @@
 package resources
 
-import "gitlab.com/tokend/regources/v2"
+import (
+	"strconv"
 
-// NewRole - creates role from account address
-func NewRole(accountAddress string) regources.Role {
-	return regources.Role{
-		Key: regources.Key{
-			ID:   accountAddress,
-			Type: regources.TypeRoles,
+	"gitlab.com/tokend/horizon/db2/core2"
+
+	"gitlab.com/tokend/regources/v2"
+)
+
+// NewAccountRole - creates role core account Role
+func NewAccountRole(role core2.AccountRole) regources.AccountRole {
+	return regources.AccountRole{
+		Key: NewAccountRoleKey(role.ID),
+		Attributes: regources.AccountRoleAttrs{
+			Details: role.Details,
 		},
-		Attributes: regources.RoleAsstr{
-			Details: map[string]interface{}{
-				"name": "Name of the Mocked Role",
-			},
+		Relationships: regources.RoleRelation{
+			Rules: regources.RelationCollection{},
 		},
 	}
 }
 
-// NewRoleKey - creates role key from account address
-func NewRoleKey(accountAddress string) regources.Key {
+//NewAccountRoleKey - returns new instance of key for account role
+func NewAccountRoleKey(id uint64) regources.Key {
 	return regources.Key{
-		ID:   accountAddress,
-		Type: regources.TypeRoles,
+		ID:   strconv.FormatUint(id, 10),
+		Type: regources.TypeAccountRoles,
+	}
+}
+
+// NewSignerRole - maps signer role
+func NewSignerRole(role core2.SignerRole) regources.SignerRole {
+	return regources.SignerRole{
+		Key: NewSignerRoleKey(role.ID),
+		Attributes: regources.SignerRoleAttrs{
+			Details: role.Details,
+		},
+		Relationships: regources.SignerRoleRelation{
+			Owner: NewAccountKey(role.OwnerID).AsRelation(),
+			Rules: &regources.RelationCollection{},
+		},
+	}
+}
+
+//NewSignerRoleKey - creates new key for signer role
+func NewSignerRoleKey(id uint64) regources.Key {
+	return regources.Key{
+		ID:   strconv.FormatUint(id, 10),
+		Type: regources.TypeSignerRoles,
 	}
 }

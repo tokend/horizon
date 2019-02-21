@@ -1,0 +1,66 @@
+/v3/accounts/{id}/signers:
+  get:
+    tags:
+      - Accounts
+      - Signers
+    summary: Get Signers of the account
+    description: |
+                  Allows to get `Signers` of the account with corresponding details.
+    operationId: getSignersForAccount
+    parameters:
+    - name: id
+      in: path
+      description: Unique identifier of account
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    - name: include
+      in: query
+      description: |
+        The following relationships can be included for the signers:
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+          - role
+          - role.rules
+        example: role,role.rules
+    responses:
+      200:
+        description: account exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data: 
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Signer'
+                included:
+                  type: array
+                  items:
+                    type: object
+                    oneOf:
+                    - $ref: '#/components/schemas/Account'
+                    - $ref: '#/components/schemas/SignerRole'
+                    - $ref: '#/components/schemas/SignerRule'
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: such an account does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

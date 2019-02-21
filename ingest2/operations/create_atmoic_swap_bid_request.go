@@ -31,7 +31,7 @@ func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 			Amount:      regources.Amount(aSwapBidRequest.Amount),
 			BaseBalance: aSwapBidRequest.BaseBalance.AsString(),
 			QuoteAssets: quoteAssets,
-			Details:     internal.MarshalCustomDetails(aSwapBidRequest.Details),
+			Details:     internal.MarshalCustomDetails(aSwapBidRequest.CreatorDetails),
 		},
 	}, nil
 }

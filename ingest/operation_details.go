@@ -23,7 +23,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustCreateAccountOp()
 		details["funder"] = source.Address()
 		details["account"] = op.Destination.Address()
-		details["account_type"] = int32(op.AccountType)
 		if op.Referrer != nil {
 			details["referrer"] = (*op.Referrer).Address()
 		}
@@ -36,37 +35,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.Action.Action != xdr.ManageKvActionRemove {
 			details["value"] = op.Action.Value
 		}
-
-	case xdr.OperationTypeSetOptions:
-		op := c.Operation().Body.MustSetOptionsOp()
-
-		if op.MasterWeight != nil {
-			details["master_key_weight"] = *op.MasterWeight
-		}
-
-		if op.LowThreshold != nil {
-			details["low_threshold"] = *op.LowThreshold
-		}
-
-		if op.MedThreshold != nil {
-			details["med_threshold"] = *op.MedThreshold
-		}
-
-		if op.HighThreshold != nil {
-			details["high_threshold"] = *op.HighThreshold
-		}
-
-		if op.Signer != nil {
-			details["signer_key"] = op.Signer.PubKey.Address()
-			details["signer_weight"] = op.Signer.Weight
-			details["signer_type"] = op.Signer.SignerType
-			details["signer_identity"] = op.Signer.Identity
-		}
-
-		if op.LimitsUpdateRequestData != nil {
-			details["limits_update_request_document_hash"] = hex.EncodeToString(op.LimitsUpdateRequestData.DocumentHash[:])
-		}
-
 	case xdr.OperationTypeSetFees:
 		op := c.Operation().Body.MustSetFeesOp()
 		if op.Fee != nil {
@@ -75,25 +43,17 @@ func (is *Session) operationDetails() map[string]interface{} {
 				accountID = op.Fee.AccountId.Address()
 			}
 
-			accountType := op.Fee.AccountType
 			details["fee"] = map[string]interface{}{
-				"asset_code":   string(op.Fee.Asset),
-				"fixed_fee":    amount.String(int64(op.Fee.FixedFee)),
-				"percent_fee":  amount.String(int64(op.Fee.PercentFee)),
-				"fee_type":     int64(op.Fee.FeeType),
-				"account_id":   accountID,
-				"account_type": accountType,
-				"subtype":      int64(op.Fee.Subtype),
-				"lower_bound":  int64(op.Fee.LowerBound),
-				"upper_bound":  int64(op.Fee.UpperBound),
+				"asset_code":  string(op.Fee.Asset),
+				"fixed_fee":   amount.String(int64(op.Fee.FixedFee)),
+				"percent_fee": amount.String(int64(op.Fee.PercentFee)),
+				"fee_type":    int64(op.Fee.FeeType),
+				"account_id":  accountID,
+				"subtype":     int64(op.Fee.Subtype),
+				"lower_bound": int64(op.Fee.LowerBound),
+				"upper_bound": int64(op.Fee.UpperBound),
 			}
 		}
-
-	case xdr.OperationTypeManageAccount:
-		op := c.Operation().Body.MustManageAccountOp()
-		details["account"] = op.Account.Address()
-		details["block_reasons_to_add"] = op.BlockReasonsToAdd
-		details["block_reasons_to_remove"] = op.BlockReasonsToRemove
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		op := c.Operation().Body.MustCreateWithdrawalRequestOp()
 		request := op.Request
@@ -104,7 +64,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		var externalDetails map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(request.ExternalDetails), &externalDetails)
+		_ = json.Unmarshal([]byte(request.CreatorDetails), &externalDetails)
 		details["external_details"] = externalDetails
 	case xdr.OperationTypeManageBalance:
 		op := c.Operation().Body.MustManageBalanceOp()
@@ -113,7 +73,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeManageLimits:
 		op := c.Operation().Body.MustManageLimitsOp()
 		if op.Details.Action == xdr.ManageLimitsActionCreate {
-			details["account_type"] = op.Details.LimitsCreateDetails.AccountType
 			details["account_id"] = op.Details.LimitsCreateDetails.AccountId
 			details["stats_op_type"] = op.Details.LimitsCreateDetails.StatsOpType
 			details["asset_code"] = op.Details.LimitsCreateDetails.AssetCode
@@ -131,9 +90,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		}
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		op := c.Operation().Body.MustCreateManageLimitsRequestOp()
-		details["limits_manage_request_details"] = string(op.ManageLimitsRequest.Details)
+		details["limits_manage_request_details"] = string(op.ManageLimitsRequest.CreatorDetails)
 		details["request_id"] = uint64(op.RequestId)
-		details["limits_manage_request_document_hash"] = hex.EncodeToString(op.ManageLimitsRequest.DeprecatedDocumentHash[:])
 	case xdr.OperationTypeManageAssetPair:
 		op := c.Operation().Body.MustManageAssetPairOp()
 		details["base_asset"] = op.Base
@@ -258,24 +216,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustCreateAmlAlertRequestOp()
 		details["amount"] = amount.StringU(uint64(op.AmlAlertRequest.Amount))
 		details["balance_id"] = op.AmlAlertRequest.BalanceId.AsString()
-		details["reason"] = op.AmlAlertRequest.Reason
+		details["reason"] = op.AmlAlertRequest.CreatorDetails
 		details["reference"] = op.Reference
-	case xdr.OperationTypeCreateKycRequest:
-		op := c.Operation().Body.MustCreateUpdateKycRequestOp()
-		opResult := c.OperationResult().MustCreateUpdateKycRequestResult().MustSuccess()
-		details["request_id"] = uint64(opResult.RequestId)
-		details["account_to_update_kyc"] = op.UpdateKycRequestData.AccountToUpdateKyc.Address()
-		details["account_type_to_set"] = int32(op.UpdateKycRequestData.AccountTypeToSet)
-		details["kyc_level_to_set"] = uint32(op.UpdateKycRequestData.KycLevelToSet)
-
-		var kycData map[string]interface{}
-		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(op.UpdateKycRequestData.KycData), &kycData)
-		details["kyc_data"] = kycData
-
-		if op.AllTasks != nil {
-			details["all_tasks"] = *op.AllTasks
-		}
 	case xdr.OperationTypePaymentV2:
 		op := c.Operation().Body.MustPaymentOpV2()
 		opResult := c.OperationResult().MustPaymentV2Result().MustPaymentV2Response()
@@ -316,7 +258,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		var bidDetails map[string]interface{}
 		// error is ignored on purpose, we should not block ingest in case of such error
-		_ = json.Unmarshal([]byte(op.Request.Details), &bidDetails)
+		_ = json.Unmarshal([]byte(op.Request.CreatorDetails), &bidDetails)
 		details["details"] = bidDetails
 		details["quote_assets"] = op.Request.QuoteAssets
 		details["request_id"] = uint64(opRes.RequestId)
@@ -332,6 +274,26 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["base_amount"] = amount.StringU(uint64(op.Request.BaseAmount))
 		details["quote_asset"] = string(op.Request.QuoteAsset)
 		details["request_id"] = opRes.RequestId
+	case xdr.OperationTypeManageAccountRule:
+	case xdr.OperationTypeManageSignerRule:
+	case xdr.OperationTypeManageSigner:
+	case xdr.OperationTypeManageAccountRole:
+	case xdr.OperationTypeManageSignerRole:
+	case xdr.OperationTypeCreateChangeRoleRequest:
+		op := c.Operation().Body.MustCreateChangeRoleRequestOp()
+		opResult := c.OperationResult().MustCreateChangeRoleRequestResult().MustSuccess()
+		details["request_id"] = uint64(opResult.RequestId)
+		details["account_to_update_kyc"] = op.DestinationAccount.Address()
+		details["account_type_to_set"] = int32(op.AccountRoleToSet)
+
+		var kycData map[string]interface{}
+		// error is ignored on purpose, we should not block ingest in case of such error
+		_ = json.Unmarshal([]byte(op.KycData), &kycData)
+		details["kyc_data"] = kycData
+
+		if op.AllTasks != nil {
+			details["all_tasks"] = *op.AllTasks
+		}
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
@@ -341,7 +303,6 @@ func (is *Session) operationDetails() map[string]interface{} {
 func getReviewRequestOpDetails(requestDetails xdr.ReviewRequestOpRequestDetails) map[string]interface{} {
 	return map[string]interface{}{
 		"request_type": requestDetails.RequestType.ShortString(),
-		"update_kyc":   getUpdateKYCDetails(requestDetails.UpdateKyc),
 	}
 }
 
@@ -357,18 +318,6 @@ func getAtomicSwapDetails(atomicSwapExtendedResult xdr.ASwapExtended) map[string
 		"base_amount":                     regources.Amount(atomicSwapExtendedResult.BaseAmount),
 		"quote_amount":                    regources.Amount(atomicSwapExtendedResult.QuoteAmount),
 		"price":                           regources.Amount(atomicSwapExtendedResult.Price),
-	}
-}
-
-func getUpdateKYCDetails(details *xdr.UpdateKycDetails) map[string]interface{} {
-	if details == nil {
-		return nil
-	}
-
-	var externalDetails map[string]interface{}
-	_ = json.Unmarshal([]byte(details.ExternalDetails), externalDetails)
-	return map[string]interface{}{
-		"external_details": externalDetails,
 	}
 }
 
