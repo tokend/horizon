@@ -17,7 +17,11 @@ type OperationDetails struct {
 	//NOTE: omitempty MUST be specified for each switch value
 	Type                       xdr.OperationType                  `json:"type"`
 	CreateAccount              *CreateAccountDetails              `json:"create_account,omitempty"`
-	ManageAccount              *ManageAccountDetails              `json:"manage_account,omitempty"`
+	ManageAccountRule          *ManageAccountRuleDetails          `json:"manage_account_rule,omitempty"`
+	ManageAccountRole          *ManageAccountRoleDetails          `json:"manage_account_role,omitempty"`
+	ManageSigner               *ManageSignerDetails               `json:"manage_signer"`
+	ManageSignerRule           *ManageSignerRuleDetails           `json:"manage_signer_rule"`
+	ManageSignerRole           *ManageSignerRoleDetails           `json:"manage_signer_role"`
 	ManageBalance              *ManageBalanceDetails              `json:"manage_balance,omitempty"`
 	ManageKeyValue             *ManageKeyValueDetails             `json:"manage_key_value,omitempty"`
 	ManageAsset                *ManageAssetDetails                `json:"manage_asset,omitempty"`
@@ -31,7 +35,7 @@ type OperationDetails struct {
 	SetFee                     *SetFeeDetails                     `json:"set_fee,omitempty"`
 	CancelAtomicSwapBid        *CancelAtomicSwapBidDetails        `json:"cancel_atomic_swap_bid,omitempty"`
 	CheckSaleState             *CheckSaleStateDetails             `json:"check_sale_state,omitempty"`
-	CreateKYCRequest           *CreateKYCRequestDetails           `json:"create_kyc_request,omitempty"`
+	CreateChangeRoleRequest    *CreateChangeRoleRequestDetails    `json:"create_change_role_request,omitempty"`
 	CreatePreIssuanceRequest   *CreatePreIssuanceRequestDetails   `json:"create_pre_issuance_request,omitempty"`
 	CreateIssuanceRequest      *CreateIssuanceRequestDetails      `json:"create_issuance_request,omitempty"`
 	CreateManageLimitsRequest  *CreateManageLimitsRequestDetails  `json:"create_manage_limits_request,omitempty"`
@@ -66,8 +70,8 @@ func (r *OperationDetails) Scan(src interface{}) error {
 
 // CreateAccountDetails - stores details of create account operation
 type CreateAccountDetails struct {
-	AccountAddress string          `json:"account_address"`
-	AccountType    xdr.AccountType `json:"account_type"`
+	AccountAddress string `json:"account_address"`
+	AccountRole    uint64 `json:"account_role"`
 }
 
 //ManageBalanceDetails - details of ManageBalanceOp
@@ -78,11 +82,98 @@ type ManageBalanceDetails struct {
 	BalanceAddress     string                  `json:"balance_address"`
 }
 
-//ManageAccountDetails - details of ManageAccountOp
-type ManageAccountDetails struct {
-	AccountAddress       string           `json:"account_address"`
-	BlockReasonsToAdd    xdr.BlockReasons `json:"block_reasons_to_add"`
-	BlockReasonsToRemove xdr.BlockReasons `json:"block_reasons_to_remove"`
+// ManageAccountRuleDetails - details of ManageAccountRuleOp
+type ManageAccountRuleDetails struct {
+	Action        xdr.ManageAccountRuleAction `json:"action"`
+	RuleID        uint64                      `json:"rule_id"`
+	CreateDetails *UpdateAccountRuleDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateAccountRuleDetails   `json:"update_details,omitempty"`
+}
+
+// UpdateAccountRuleDetails - details of new or updated rule
+type UpdateAccountRuleDetails struct {
+	Resource xdr.AccountRuleResource `json:"resource"`
+	Action   xdr.AccountRuleAction   `json:"action"`
+	IsForbid bool                    `json:"is_forbid"`
+	Details  regources.Details       `json:"details"`
+}
+
+// ManageAccountRoleDetails - details of ManageAccountRoleOp
+type ManageAccountRoleDetails struct {
+	Action        xdr.ManageAccountRoleAction `json:"action"`
+	RoleID        uint64                      `json:"role_id"`
+	CreateDetails *UpdateAccountRoleDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateAccountRoleDetails   `json:"update_details,omitempty"`
+}
+
+// UpdateAccountRoleDetails - details of new or updated role
+type UpdateAccountRoleDetails struct {
+	RuleIDs []uint64          `json:"rule_ids"`
+	Details regources.Details `json:"details"`
+}
+
+// ManageSignerDetails - details op manage signer operation
+type ManageSignerDetails struct {
+	Action        xdr.ManageSignerAction `json:"action"`
+	PublicKey     string                 `json:"public_key"`
+	CreateDetails *UpdateSignerDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateSignerDetails   `json:"update_details,omitempty"`
+}
+
+// UpdateSignerDetails - details of new or updated signer
+type UpdateSignerDetails struct {
+	RoleID   uint64            `json:"role_id"`
+	Weight   uint32            `json:"weight"`
+	Identity uint32            `json:"identity"`
+	Details  regources.Details `json:"details"`
+}
+
+// ManageSignerRuleDetails - details of ManageAccountRuleOp
+type ManageSignerRuleDetails struct {
+	Action        xdr.ManageSignerRuleAction `json:"action"`
+	RuleID        uint64                     `json:"rule_id"`
+	CreateDetails *CreateSignerRuleDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateSignerRuleDetails   `json:"update_details,omitempty"`
+}
+
+// CreateSignerRuleDetails - details of new or updated rule
+type CreateSignerRuleDetails struct {
+	Resource   xdr.SignerRuleResource `json:"resource"`
+	Action     xdr.SignerRuleAction   `json:"action"`
+	IsForbid   bool                   `json:"is_forbid"`
+	IsDefault  bool                   `json:"is_default"`
+	IsReadOnly bool                   `json:"is_read_only"`
+	Details    regources.Details      `json:"details"`
+}
+
+// UpdateSignerRuleDetails - details of new or updated rule
+type UpdateSignerRuleDetails struct {
+	Resource  xdr.SignerRuleResource `json:"resource"`
+	Action    xdr.SignerRuleAction   `json:"action"`
+	IsForbid  bool                   `json:"is_forbid"`
+	IsDefault bool                   `json:"is_default"`
+	Details   regources.Details      `json:"details"`
+}
+
+// ManageSignerRoleDetails - details of ManageAccountRoleOp
+type ManageSignerRoleDetails struct {
+	Action        xdr.ManageSignerRoleAction `json:"action"`
+	RoleID        uint64                     `json:"role_id"`
+	CreateDetails *CreateSignerRoleDetails   `json:"create_details,omitempty"`
+	UpdateDetails *UpdateSignerRoleDetails   `json:"update_details,omitempty"`
+}
+
+// UpdateSignerRoleDetails - details of new or updated role
+type CreateSignerRoleDetails struct {
+	RuleIDs    []uint64          `json:"rule_ids"`
+	IsReadOnly bool              `json:"is_read_only"`
+	Details    regources.Details `json:"details"`
+}
+
+// UpdateSignerRoleDetails - details of new or updated role
+type UpdateSignerRoleDetails struct {
+	RuleIDs []uint64          `json:"rule_ids"`
+	Details regources.Details `json:"details"`
 }
 
 //ManageKeyValueDetails - details of ManageKeyValueOp
@@ -99,7 +190,7 @@ type SetFeeDetails struct {
 	PercentFee     regources.Amount `json:"percent_fee"`
 	FeeType        xdr.FeeType      `json:"fee_type"`
 	AccountAddress *string          `json:"account_address,omitempty"`
-	AccountType    *xdr.AccountType `json:"account_type,omitempty"`
+	AccountRole    *xdr.Uint64      `json:"account_role,omitempty"`
 	Subtype        int64            `json:"subtype"`
 	LowerBound     regources.Amount `json:"lower_bound"`
 	UpperBound     regources.Amount `json:"upper_bound"`
@@ -130,7 +221,7 @@ type ManageLimitsDetails struct {
 
 //ManageLimitsCreationDetails - details of corresponding op
 type ManageLimitsCreationDetails struct {
-	AccountType     *xdr.AccountType `json:"account_type,omitempty"`
+	AccountRole     *xdr.Uint64      `json:"account_role,omitempty"`
 	AccountAddress  string           `json:"account_address,omitempty"`
 	StatsOpType     xdr.StatsOpType  `json:"stats_op_type"`
 	AssetCode       string           `json:"asset_code"`
@@ -297,13 +388,13 @@ type RequestDetails struct {
 	IsFulfilled bool  `json:"is_fulfilled"`
 }
 
-//CreateKYCRequestDetails - details of corresponding op
-type CreateKYCRequestDetails struct {
-	AccountAddressToUpdateKYC string            `json:"account_address_to_update_kyc"`
-	AccountTypeToSet          xdr.AccountType   `json:"account_type_to_set"`
-	KYCData                   regources.Details `json:"kyc_data"`
-	AllTasks                  *uint32           `json:"all_tasks"`
-	RequestDetails            RequestDetails    `json:"request_details"`
+//CreateChangeRoleRequestDetails - details of corresponding op
+type CreateChangeRoleRequestDetails struct {
+	DestinationAccount string            `json:"destination_account"`
+	AccountRoleToSet   uint64            `json:"account_role_to_set"`
+	KYCData            regources.Details `json:"kyc_data"`
+	AllTasks           *uint32           `json:"all_tasks"`
+	RequestDetails     RequestDetails    `json:"request_details"`
 }
 
 //ManageExternalSystemPoolDetails - details of corresponding op

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -31,7 +30,7 @@ func GetFeeList(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.GetFeeList(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get fee list", logan.F{
+		ctx.Log(r).WithError(err).Error("failed to get fee list ", logan.F{
 			"request": request,
 		})
 		ape.RenderErr(w, problems.InternalError())
@@ -80,7 +79,7 @@ func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources
 
 	fees, err := q.Select()
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get asset list")
+		return nil, errors.Wrap(err, "Failed to get fee list")
 	}
 
 	response := &regources.FeesResponse{
@@ -95,10 +94,9 @@ func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources
 		fee.Relationships.Asset = resources.NewAssetKey(fees[i].Asset).AsRelation()
 		if fees[i].AccountID != "" {
 			fee.Relationships.Account = resources.NewAccountKey(fees[i].AccountID).AsRelation()
-		} else if fees[i].AccountType != core2.GlobalAccountRole {
-			fee.Relationships.AccountRole = resources.
-				NewRoleKey(fmt.Sprintf("%d", fees[i].AccountType)).
-				AsRelation()
+		} else if fees[i].AccountRole != core2.GlobalAccountRole {
+			fee.Relationships.AccountRole =
+				resources.NewAccountRoleKey(fees[i].AccountRole).AsRelation()
 		}
 		assets = append(assets, fees[i].Asset)
 		response.Data = append(response.Data, fee)

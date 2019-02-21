@@ -18,9 +18,11 @@ import (
 func GetAccountSigners(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getAccountSignersHandler{
-		SignersQ: core2.NewSignerQ(coreRepo),
-		AccountQ: core2.NewAccountsQ(coreRepo),
-		Log:      ctx.Log(r),
+		SignersQ:    core2.NewSignerQ(coreRepo),
+		AccountQ:    core2.NewAccountsQ(coreRepo),
+		SignerRoleQ: core2.NewSignerRoleQ(coreRepo),
+		SignerRuleQ: core2.NewSignerRuleQ(coreRepo),
+		Log:         ctx.Log(r),
 	}
 
 	request, err := requests.NewGetAccountSigners(r)
@@ -48,9 +50,11 @@ func GetAccountSigners(w http.ResponseWriter, r *http.Request) {
 }
 
 type getAccountSignersHandler struct {
-	SignersQ core2.SignerQ
-	AccountQ core2.AccountsQ
-	Log      *logan.Entry
+	SignersQ    core2.SignerQ
+	AccountQ    core2.AccountsQ
+	SignerRoleQ core2.SignerRoleQ
+	SignerRuleQ core2.SignerRuleQ
+	Log         *logan.Entry
 }
 
 //GetAccountSigners - returns signers for account
@@ -73,68 +77,58 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 		})
 	}
 
-	// TODO: KILL it
-	if account.Thresholds[0] > 0 {
-		signers = append(signers, core2.Signer{
-			ID:        account.Address,
-			AccountID: account.Address,
-			Weight:    int(account.Thresholds[0]),
-			Name:      "master",
-		})
-	}
-
 	response := regources.SignersResponse{
 		Data: make([]regources.Signer, 0, len(signers)),
 	}
-	for i := range signers {
-		signer := resources.NewSigner(signers[i])
-		if request.ShouldInclude(requests.IncludeTypeSignerRoles) {
-			signer.Relationships.Role = h.getRole(request, &response.Included)
+
+	for _, signerRaw := range signers {
+		signer := resources.NewSigner(signerRaw)
+		signer.Relationships.Role, err = h.getRole(request, &response.Included, signerRaw)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get role")
 		}
+
 		response.Data = append(response.Data, signer)
 	}
 
 	return &response, nil
 }
 
-func (h *getAccountSignersHandler) getRole(request *requests.GetAccountSigners, includes *regources.Included) *regources.Relation {
-	result := regources.Role{
-		Key: regources.Key{
-			Type: regources.TypeSignerRoles,
-			ID:   request.Address,
-		},
-		Attributes: regources.RoleAsstr{
-			Details: map[string]interface{}{
-				"name": "Name of the Mocked Role",
-			},
-		},
+func (h *getAccountSignersHandler) getRole(request *requests.GetAccountSigners,
+	includes *regources.Included, signer core2.Signer,
+) (*regources.Relation, error) {
+	if !request.ShouldInclude(requests.IncludeTypeSignerRole) {
+		role := resources.NewSignerRoleKey(signer.RoleID)
+		return role.AsRelation(), nil
 	}
 
-	if request.ShouldInclude(requests.IncludeTypeSignerRolesRules) {
-		rules := []regources.Rule{
-			{
-				Key: regources.Key{
-					ID:   "mocked_rule_id",
-					Type: regources.TypeSignerRules,
-				},
-				Attributes: regources.RuleAttr{
-					Resource: "NOTE: format will be changed",
-					Action:   "view",
-					Details: map[string]interface{}{
-						"name": "Name of the mocked Rule",
-					},
-				},
-			},
-		}
+	roleRaw, err := h.SignerRoleQ.GetByID(signer.RoleID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get signer role")
+	}
 
-		result.Relationships.Rules = &regources.RelationCollection{}
-		for i := range rules {
-			result.Relationships.Rules.Data = append(result.Relationships.Rules.Data, rules[i].GetKey())
-			includes.Add(&rules[i])
+	if roleRaw == nil {
+		return nil, errors.From(errors.New("signer role not found"), logan.F{
+			"role_id": signer.RoleID,
+		})
+	}
+
+	role := resources.NewSignerRole(*roleRaw)
+
+	rules, err := h.SignerRuleQ.FilterByRole(roleRaw.ID).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load signer role rules for role")
+	}
+
+	for _, rawRule := range rules {
+		rule := resources.NewSignerRule(rawRule)
+		role.Relationships.Rules.Data = append(role.Relationships.Rules.Data, rule.Key)
+		if request.ShouldInclude(requests.IncludeTypeSignerRoleRules) {
+			includes.Add(&rule)
 		}
 	}
 
-	includes.Add(&result)
+	includes.Add(&role)
 
-	return result.AsRelation()
+	return role.AsRelation(), nil
 }

@@ -37,6 +37,7 @@
       required: true
       style: simple
       explode: false
+      format: Amount
       schema:
         type: string
     responses:

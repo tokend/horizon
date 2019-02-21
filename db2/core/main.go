@@ -50,8 +50,6 @@ type QInterface interface {
 	// DEPRECATED
 	LatestLedger(dest interface{}) error
 	// DEPRECATED
-	SignersByAddress(dest interface{}, addy string) error
-	// DEPRECATED
 	BalancesByAddress(dest interface{}, addy string) error
 	// DEPRECATED
 	BalanceByID(dest interface{}, bid string) error

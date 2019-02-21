@@ -1,0 +1,143 @@
+/v3/create_atomic_swap_bid_requests:
+  get:
+    tags:
+      - Requests
+    summary: Get list of create_atomic_swap_bid requests
+    description: |
+      Allows to get a filtered list of `CreateAtomicSwapBidRequest` with details
+    operationId: getCreateAtomicSwapBidRequests
+    parameters:
+      - name: filter[requestor]
+        in: query
+        description: |
+          Filters requests by requestor - source of the operation.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[reviewer]
+        in: query
+        description: |
+          Filters requests by reviewer - account assigned to review request.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[state]
+        in: query
+        description: |
+          Filters requests by their state.
+          * 1 - pending
+          * 2 - canceled
+          * 3 - approved
+          * 4 - rejected
+          * 5 - permanently_rejected
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 5
+      - name: filter[pending_tasks]
+        in: query
+        description: |
+          Filters requests by pending tasks bit mask. Returns requests if all bit are set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[pending_tasks_not_set]
+        in: query
+        description: |
+          Filters requests by pending tasks bit mask. Returns requests if all bits not set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[pending_tasks_any_of]
+        in: query
+        description: |
+          Filters requests by pending tasks bit mask. Returns requests if at least one bit is set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[request_details.base_balance]
+        in: query
+        description: |
+          Filters create_atomic_swap_bid requests by balance.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: |
+          Relationships may be used for the included parameter.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          enum:
+            - "request_details"
+            - "request_details.base_balance"
+            - "request_details.quote_assets"
+      - $ref: '#/components/schemas/pageNumberParam'
+      - $ref: '#/components/schemas/pageLimitParam'
+      - $ref: '#/components/schemas/sortingParam'
+    responses:
+      200:
+        description: requests exist
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/ReviewableRequest'
+                included:
+                  type: array
+                  items:
+                    type: object
+                    anyOf:
+                      - $ref: '#/components/schemas/CreateAtomicSwapBidDetails'
+                      - $ref: '#/components/schemas/Balance'
+                      - $ref: '#/components/schemas/Asset'
+                links:
+                  type: object
+                  description: "Provides links for pagination"
+                  properties:
+                    next:
+                      type: string
+                      description: "link to the next page"
+                      example: "/v3/create_atomic_swap_bid_requests?include=details&page[number]=2&page[limit]=15"
+                    self:
+                      type: string
+                      description: "link to the current page"
+                      example: "/v3/create_atomic_swap_bid_requests?include=details&page[number]=1&page[limit]=15"
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: requests do not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

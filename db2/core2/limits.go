@@ -2,7 +2,7 @@ package core2
 
 type Limits struct {
 	ID              uint64  `db:"id"`
-	AccountType     *int32  `db:"account_type"`
+	AccountType     *uint64 `db:"account_type"`
 	AccountId       *string `db:"account_id"`
 	StatsOpType     int32   `db:"stats_op_type"`
 	AssetCode       string  `db:"asset_code"`

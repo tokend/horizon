@@ -28,7 +28,10 @@ func NewLimits(limits core2.Limits) *regources.Limits {
 
 	if limits.AccountId != nil {
 		newLimits.Relationships.Account = NewAccountKey(*limits.AccountId).AsRelation()
-		newLimits.Relationships.AccountRole = NewRoleKey(*limits.AccountId).AsRelation()
+	}
+
+	if limits.AccountType != nil {
+		newLimits.Relationships.AccountRole = NewAccountRoleKey(*limits.AccountType).AsRelation()
 	}
 
 	return newLimits

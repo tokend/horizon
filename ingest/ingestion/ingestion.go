@@ -479,7 +479,7 @@ func (ingest *Ingestion) TryIngestAccount(aid string) (result int64, err error) 
 	err = ingest.DB.GetRaw(
 		&result,
 		`INSERT INTO history_accounts (address, account_type) VALUES (?, ?) RETURNING id`,
-		aid, account.AccountType,
+		aid, account.RoleID,
 	)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to execute insert query on history_accounts table")

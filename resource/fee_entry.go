@@ -15,7 +15,7 @@ func NewFeeEntry(cfee core.FeeEntry) (fee regources.FeeEntry) {
 	fee.Percent = amount.String(cfee.Percent)
 	fee.Subtype = cfee.Subtype
 	fee.AccountID = cfee.AccountID
-	fee.AccountType = cfee.AccountType
+	fee.AccountRole = uint64(cfee.AccountRole)
 	fee.LowerBound = amount.String(cfee.LowerBound)
 	fee.UpperBound = amount.String(cfee.UpperBound)
 	fee.Exists = true

@@ -55,19 +55,19 @@ func (q ReviewableRequestsQ) FilterByReviewerAddress(address string) ReviewableR
 
 // FilterByPendingTasks - returns q with filter by pending tasks
 func (q ReviewableRequestsQ) FilterByPendingTasks(mask uint64) ReviewableRequestsQ {
-	q.selector = q.selector.Where("(details->'update_kyc'->>'pending_tasks')::integer & ? = ?", mask, mask)
+	q.selector = q.selector.Where("pending_tasks & ? = ?", mask, mask)
 	return q
 }
 
 // FilterByPendingTasksAnyOf - returns q with filter by pending tasks
 func (q ReviewableRequestsQ) FilterByPendingTasksAnyOf(mask uint64) ReviewableRequestsQ {
-	q.selector = q.selector.Where("(details->'update_kyc'->>'pending_tasks')::integer & ? <> 0", mask)
+	q.selector = q.selector.Where("pending_tasks & ? <> 0", mask)
 	return q
 }
 
 // FilterPendingTasksNotSet - returns q with filter by pending tasks that aren't set
 func (q ReviewableRequestsQ) FilterPendingTasksNotSet(mask uint64) ReviewableRequestsQ {
-	q.selector = q.selector.Where("~(details->'update_kyc'->>'pending_tasks')::integer & ? = ?", mask, mask)
+	q.selector = q.selector.Where("~pending_tasks & ? = ?", mask, mask)
 	return q
 }
 
@@ -80,6 +80,66 @@ func (q ReviewableRequestsQ) FilterByRequestType(requestType uint64) ReviewableR
 // FilterByID - returns q with filter by ID
 func (q ReviewableRequestsQ) FilterByID(id uint64) ReviewableRequestsQ {
 	q.selector = q.selector.Where("reviewable_requests.id = ?", id)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByAssetCreateAsset(asset string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_asset,asset}' = ?", asset)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByAssetUpdateAsset(asset string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{update_asset,asset}' = ?", asset)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreatePreIssuanceAsset(asset string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_pre_issuance,asset}' = ?", asset)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreateIssuanceAsset(asset string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_issuance,asset}' = ?", asset)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByWithdrawBalance(balance string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_withdraw,balance_id}' = ?", balance)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByAmlAlertBalance(balance string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_aml_alert,balance_id}' = ?", balance)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByChangeRoleAccount(account string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{change_role,destination_account}' = ?", account)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByChangeRoleToSet(accountRole int32) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{change_role,account_role_to_set}' = ?", accountRole)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreateAtomicSwapBidBalance(balance string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_atomic_swap_bid,base_balance}' = ?", balance)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByAtomicSwapQuoteAsset(code string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_atomic_swap,quote_asset}' = ?", code)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterBySaleBaseAsset(asset string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_sale,base_asset}' = ?", asset)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterBySaleQuoteAsset(asset string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{sale,quote_asset}' = ?", asset)
 	return q
 }
 
