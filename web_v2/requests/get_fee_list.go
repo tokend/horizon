@@ -3,7 +3,7 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/regources"
+	"gitlab.com/tokend/regources/v2"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
@@ -44,7 +44,7 @@ type GetFeeList struct {
 		Subtype     int64            `fig:"subtype"`
 		FeeType     int32            `fig:"fee_type"`
 		Account     string           `fig:"account"`
-		AccountRole int32            `fig:"account_role"`
+		AccountRole uint64           `fig:"account_role"`
 		LowerBound  regources.Amount `fig:"lower_bound"`
 		UpperBound  regources.Amount `fig:"upper_bound"`
 	}

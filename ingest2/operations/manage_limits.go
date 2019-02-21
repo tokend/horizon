@@ -29,7 +29,7 @@ func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResu
 
 		opDetails.ManageLimits.Creation = &history2.ManageLimitsCreationDetails{
 			AccountAddress:  creationDetails.AccountId.Address(), // Address() - smart, check for nil inside
-			AccountType:     creationDetails.AccountType,
+			AccountRole:     creationDetails.AccountRole,
 			StatsOpType:     creationDetails.StatsOpType,
 			AssetCode:       string(creationDetails.AssetCode),
 			IsConvertNeeded: creationDetails.IsConvertNeeded,

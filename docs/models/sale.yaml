@@ -1,80 +1,72 @@
-SaleKey:
-  type: object
-  required:
-    - id
-    - type
-  properties:
-    id:
-      type: string
-      example: "5"
-    type:
-      type: string
-      enum:
-        - "sales"
+              type: object
 Sale:
-  allOf:
-    - $ref: '#/components/schemas/SaleKey'
-    - type: object
-      properties:
-        attributes:
-          type: object
-          properties:
-            start_time:
-              type: string
-              description: "represents time when the sale (will) start"
-              format: "date-time"
-              example: "2012-11-01T22:08:41+00:00"
-            end_time:
-              type: string
-              description: "represents time when the sale expires"
-              format: "date-time"
-              example: "2012-11-01T22:08:41+00:00"
-            sale_type:
-              type: integer
-              format: int32
-              minimum: 1
-              maximum: 3
-              description: "represents type of sale"
-              example: 2
-            sale_state:
-              type: integer
-              format: int32
-              minimum: 1
-              maximum: 3
-              description: "represents state of sale" # todo provide list of sale states
-              example: 2
-            details:
-              type: string
-              format: "valid json"
-              description: "represents user provided data"
-              example: "{ \"data\": \"some user data\"}"
-        relationships:
-          type: object
-          properties:
-            owner:
-              description: "Owner of the sale"
-              type: object
-              properties:
-                data:
+  - $ref: '#/components/schemas/Int64Key'
+  - type: object
+    properties:
+      attributes:
+        type: object
+        properties:
+          start_time:
+            type: string
+            description: "Start time of the sale"
+            format: "date-time"
+            example: "2012-11-01T22:08:41+00:00"
+          end_time:
+            type: string
+            description: "End time of the sale"
+            format: "date-time"
+            example: "2012-11-01T22:08:41+00:00"
+          sale_type:
+            type: integer
+            minimum: 1
+            maximum: 3
+            example: 1
+            description: |
+              * 1 - basic sale
+              * 2 - crowdfunding sale
+              * 3 - fixed price sale
+          sale_state:
+            type: integer
+            minimum: 1
+            maximum: 3
+            example: 1
+            description: |
+              * 1 - open
+              * 2 - closed
+              * 3 - cancelled
+          details:
+            type: object
+            description: "free-form object for sale details"
+      relationships:
+        type: object
+        properties:
+          owner:
+            type: object
+            description: "Owner of the sale"
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountKey'
+          base_asset:
+            type: object
+            description: "Base asset of the sale"
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AssetKey'
+          default_quote_asset:
+            type: object
+            description: "Default quote asset of the sale"
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AssetKey'
+          quote_assets:
+            type: object
+            description: "Quote assets of the sale"
+            properties:
+              data:
+                type: array
+                items:
                   type: object
-                  $ref: '#/components/schemas/AccountKey'
-            base_asset:
-              description: "Base asset off the sale"
-              type: object
-              properties:
-                data:
-                  $ref: '#/components/schemas/AssetKey'
-            quote_assets:
-              description: "Set of quote assets of the sale"
-              type: object
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/AssetKey'
-            default_quote_asset:
-              description: "Asset set default for the sale"
-              type: object
-              properties:
-                data:
                   $ref: '#/components/schemas/AssetKey'

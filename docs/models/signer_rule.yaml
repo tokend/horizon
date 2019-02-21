@@ -1,0 +1,52 @@
+SignerRuleKey:
+  type: object
+  required:
+      - id
+      - type
+  properties:
+      id:
+        type: string
+        example: "7582"
+      type:
+        type: string
+        enum: 
+          - "signer-rules"
+SignerRule:
+  allOf:
+  - $ref: '#/components/schemas/SignerRuleKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        required: [owner]
+        properties:
+          owner:
+            type: object
+            required: [data]
+            properties:
+              data:
+                $ref: '#/components/schemas/AccountKey'
+      attributes:
+        type: object
+        required: [action, is_forbid,details,resource,is_default]
+        properties:
+          action:
+            type: string
+            description: "defines action to be performed over specified resource"
+            example: "manage"
+          is_forbid:
+            type: bool
+            description: "defines if specified action is forbidden"
+            example: false
+          details: 
+            type: object
+            description: "free-form object to attach details to the rule"
+            additionalProperties: true
+          resource:
+            type: object
+            additionalProperties: true
+            description: "defines resource to which rule is applied. TODO: add link to XDR"
+          is_default:
+            type: bool
+            description: "defines if this rule should be included into all new roles"
+            example: true

@@ -72,3 +72,7 @@ tags:
     description: Defines access points to get accounts existing in the system
   - name: Assets
     description: Defines access points to get assets existing in the system
+  - name: Signers
+    description: Defines access points to get signers
+  - name: Account Roles
+    description: Defines access points to get account roles

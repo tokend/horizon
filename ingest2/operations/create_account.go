@@ -20,7 +20,7 @@ func (h *createAccountOpHandler) Details(op rawOperation, _ xdr.OperationResultT
 		Type: xdr.OperationTypeCreateAccount,
 		CreateAccount: &history2.CreateAccountDetails{
 			AccountAddress: createAccOp.Destination.Address(),
-			AccountType:    createAccOp.AccountType,
+			AccountRole:    uint64(createAccOp.RoleId),
 		},
 	}, nil
 }

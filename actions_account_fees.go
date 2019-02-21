@@ -71,7 +71,7 @@ func (action *AccountFeesAction) loadFees() {
 		return
 	}
 
-	forAccountType, err := action.CoreQ().FeeEntries().ForAccountType(&action.Account.AccountType).Select()
+	forAccountType, err := action.CoreQ().FeeEntries().ForAccountType(&action.Account.RoleID).Select()
 	if err != nil {
 		action.Err = &problem.ServerError
 		action.Log.WithError(err).Error("can't get account type fees from the database")

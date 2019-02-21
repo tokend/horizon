@@ -10,4 +10,6 @@ Resources:
     - $ref: '#/components/schemas/Fee'
     - $ref: '#/components/schemas/Limit'
     - $ref: '#/components/schemas/ExternalSystemID'
+    - $ref: '#/components/schemas/AccountRole'
+    - $ref: '#/components/schemas/AccountRule'
     - $ref: '#/components/schemas/Sale'

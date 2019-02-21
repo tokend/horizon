@@ -26,7 +26,7 @@ func (h *createSaleRequestOpHandler) Details(op rawOperation, opRes xdr.Operatio
 			EndTime:           internal.TimeFromXdr(createSaleRequest.EndTime),
 			HardCap:           regources.Amount(createSaleRequest.HardCap),
 			SoftCap:           regources.Amount(createSaleRequest.SoftCap),
-			Details:           internal.MarshalCustomDetails(createSaleRequest.Details),
+			Details:           internal.MarshalCustomDetails(createSaleRequest.CreatorDetails),
 		},
 	}, nil
 }

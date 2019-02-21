@@ -63,15 +63,6 @@ func (action *AccountShowAction) loadRecord() {
 	}
 
 	action.Resource.Populate(action.Ctx, *coreRecord)
-
-	signers, err := action.GetSigners(coreRecord)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to get signers")
-		action.Err = &problem.ServerError
-		return
-	}
-
-	action.Resource.Signers.Populate(signers)
 }
 
 func (action *AccountShowAction) loadBalances() {
