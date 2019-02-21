@@ -6,12 +6,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"gitlab.com/tokend/go/amount"
-
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
@@ -57,7 +56,7 @@ type getCalculatedFeesHandler struct {
 }
 
 // GetCalculatedFees returns calculated fee for given given parameters
-func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalculatedFees) (*regources.CalculatedFee, error) {
+func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalculatedFees) (*regources.CalculatedFeeResponse, error) {
 	fee, err := h.getFeeForAccount(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load fee for account")
@@ -68,8 +67,8 @@ func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalcul
 		return nil, errors.Wrap(err, "failed to calculate minimal amount for asset")
 	}
 
-	calculatedPercent, ok := amount.BigDivide(int64(request.Amount), fee.Percent, amount.One, amount.ROUND_UP, minimalAmount)
-	if !ok {
+	calculatedPercent, overflow := amount.BigDivide(int64(request.Amount), fee.Percent, 100*amount.One, amount.ROUND_UP, minimalAmount)
+	if overflow {
 		return nil, errors.New("failed to calculate fee")
 	}
 
@@ -79,9 +78,11 @@ func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalcul
 	}
 
 	hash := h.getHash(attributes)
-	response := &regources.CalculatedFee{
-		Key:        resources.NewCalculatedFeeKey(hash),
-		Attributes: attributes,
+	response := &regources.CalculatedFeeResponse{
+		Data: regources.CalculatedFee{
+			Key:        resources.NewCalculatedFeeKey(hash),
+			Attributes: attributes,
+		},
 	}
 
 	return response, nil
@@ -140,7 +141,7 @@ func (h *getCalculatedFeesHandler) getFeeForAccount(request *requests.GetCalcula
 		return nil, errors.New("Account not found")
 	}
 	//try to get fee for account type
-	fee, err = q.FilterByAccountType(targetAccount.AccountType).Get()
+	fee, err = q.FilterByAccountType(targetAccount.RoleID).Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get fee for account type")
 	}
@@ -158,7 +159,7 @@ func (h *getCalculatedFeesHandler) getFeeForAccount(request *requests.GetCalcula
 	}
 
 	return &core2.Fee{
-		AccountType: core2.GlobalAccountRole,
+		AccountRole: core2.GlobalAccountRole,
 		FeeType:     request.FeeType,
 		Subtype:     request.Subtype,
 		Asset:       request.Asset,

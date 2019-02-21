@@ -45,7 +45,7 @@ func (i *System) ensureAccountTypes() error {
 			// and updates account type for history record
 			stmt := sq.
 				Update("history_accounts").
-				Set("account_type", coreAccount.AccountType).
+				Set("account_type", coreAccount.RoleID).
 				Where("id = ?", account.ID)
 			_, err = i.HorizonDB.Exec(stmt)
 			if err != nil {

@@ -1,8 +1,9 @@
 package horizon
 
 import (
-	"net/http"
 	"time"
+
+	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -101,8 +102,33 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/asset_pairs", handlers.GetAssetPairList)
 	m.Get("/v3/offers/{id}", handlers.GetOffer)
 	m.Get("/v3/offers", handlers.GetOfferList)
-	m.Get("/v3/requests/{id}", handlers.GetReviewableRequest)
-	m.Get("/v3/requests", handlers.GetReviewableRequestList)
+	// reviewable requests
+	m.Get("/v3/requests", handlers.GetRequests)
+	m.Get("/v3/requests/{id}", handlers.GetRequests)
+	m.Get("/v3/create_asset_requests", handlers.GetCreateAssetRequests)
+	m.Get("/v3/create_asset_requests/{id}", handlers.GetCreateAssetRequests)
+	m.Get("/v3/create_sale_requests", handlers.GetCreateSaleRequests)
+	m.Get("/v3/create_sale_requests/{id}", handlers.GetCreateSaleRequests)
+	m.Get("/v3/update_asset_requests", handlers.GetUpdateAssetRequests)
+	m.Get("/v3/update_asset_requests/{id}", handlers.GetUpdateAssetRequests)
+	m.Get("/v3/create_pre_issuance_requests", handlers.GetCreatePreIssuanceRequests)
+	m.Get("/v3/create_pre_issuance_requests/{id}", handlers.GetCreatePreIssuanceRequests)
+	m.Get("/v3/create_issuance_requests", handlers.GetCreateIssuanceRequests)
+	m.Get("/v3/create_issuance_requests/{id}", handlers.GetCreateIssuanceRequests)
+	m.Get("/v3/create_withdraw_requests", handlers.GetCreateWithdrawRequests)
+	m.Get("/v3/create_withdraw_requests/{id}", handlers.GetCreateWithdrawRequests)
+	m.Get("/v3/update_limits_requests", handlers.GetUpdateLimitsRequests)
+	m.Get("/v3/update_limits_requests/{id}", handlers.GetUpdateLimitsRequests)
+	m.Get("/v3/create_aml_alert_requests", handlers.GetCreateAmlAlertRequests)
+	m.Get("/v3/create_aml_alert_requests/{id}", handlers.GetCreateAmlAlertRequests)
+	m.Get("/v3/change_role_requests", handlers.GetChangeRoleRequests)
+	m.Get("/v3/change_role_requests/{id}", handlers.GetChangeRoleRequests)
+	m.Get("/v3/update_sale_details_requests", handlers.GetUpdateSaleDetailsRequests)
+	m.Get("/v3/update_sale_details_requests/{id}", handlers.GetUpdateSaleDetailsRequests)
+	m.Get("/v3/create_atomic_swap_bid_requests", handlers.GetCreateAtomicSwapBidRequests)
+	m.Get("/v3/create_atomic_swap_bid_requests/{id}", handlers.GetCreateAtomicSwapBidRequests)
+	m.Get("/v3/create_atomic_swap_requests", handlers.GetCreateAtomicSwapRequests)
+	m.Get("/v3/create_atomic_swap_requests{id}", handlers.GetCreateAtomicSwapRequests)
 
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)
@@ -111,6 +137,16 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/sales/{id}", handlers.GetSale)
 
 	m.Get("/v3/order_book/{id}", handlers.GetOrderBook)
+
+	m.Get("/v3/account_roles/{id}", handlers.GetAccountRole)
+	m.Get("/v3/account_roles", handlers.GetAccountRoleList)
+	m.Get("/v3/account_rules/{id}", handlers.GetAccountRule)
+	m.Get("/v3/account_rules", handlers.GetAccountRuleList)
+
+	m.Get("/v3/signer_roles/{id}", handlers.GetSignerRole)
+	m.Get("/v3/signer_roles", handlers.GetSignerRoleList)
+	m.Get("/v3/signer_rules/{id}", handlers.GetSignerRule)
+	m.Get("/v3/signer_rules", handlers.GetSignerRuleList)
 
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {

@@ -22,6 +22,8 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	handler := getAccountHandler{
 		AccountsQ:          core2.NewAccountsQ(coreRepo),
 		BalancesQ:          core2.NewBalancesQ(coreRepo),
+		AccountRoleQ:       core2.NewAccountRoleQ(coreRepo),
+		AccountRuleQ:       core2.NewAccountRuleQ(coreRepo),
 		FeesQ:              core2.NewFeesQ(coreRepo),
 		LimitsV2Q:          core2.NewLimitsQ(coreRepo),
 		ExternalSystemIDsQ: core2.NewExternalSystemIDsQ(coreRepo),
@@ -38,8 +40,6 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	if request.ShouldIncludeAny(
 		requests.IncludeTypeAccountBalancesState,
 		requests.IncludeTypeAccountAccountReferrer,
-		requests.IncludeTypeAccountRole,
-		requests.IncludeTypeAccountRoleRules,
 		requests.IncludeTypeAccountFees,
 		requests.IncludeTypeAccountLimits,
 		requests.IncludeTypeAccountExternalSystemIDs,
@@ -69,6 +69,8 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 type getAccountHandler struct {
 	AccountsQ          core2.AccountsQ
 	BalancesQ          core2.BalancesQ
+	AccountRoleQ       core2.AccountRoleQ
+	AccountRuleQ       core2.AccountRuleQ
 	LimitsV2Q          core2.LimitsQ
 	FeesQ              core2.FeesQ
 	ExternalSystemIDsQ core2.ExternalSystemIDsQ
@@ -90,7 +92,7 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		Data: resources.NewAccount(*account),
 	}
 
-	response.Data.Relationships.Role, err = h.getRole(request, &response.Included)
+	response.Data.Relationships.Role, err = h.getRole(request, &response.Included, *account)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get role")
 	}
@@ -171,17 +173,17 @@ func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, i
 }
 
 func (h *getAccountHandler) getReferrer(account *core2.Account, request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
-	if account.Referrer == "" {
+	if account.Referrer == nil {
 		return nil, nil
 	}
 
 	if !request.ShouldInclude(requests.IncludeTypeAccountAccountReferrer) {
-		result := resources.NewAccountKey(account.Referrer)
+		result := resources.NewAccountKey(*account.Referrer)
 
 		return result.AsRelation(), nil
 	}
 
-	referrer, err := h.AccountsQ.GetByAddress(account.Referrer)
+	referrer, err := h.AccountsQ.GetByAddress(*account.Referrer)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load referrer", logan.F{
 			"referrer_address": account.Referrer,
@@ -242,37 +244,39 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *
 	return &result, nil
 }
 
-func (h *getAccountHandler) getRole(request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
+func (h *getAccountHandler) getRole(request *requests.GetAccount,
+	includes *regources.Included, account core2.Account,
+) (*regources.Relation, error) {
 	if !request.ShouldInclude(requests.IncludeTypeAccountRole) {
-		role := resources.NewRoleKey(request.Address)
+		role := resources.NewAccountRoleKey(account.RoleID)
 		return role.AsRelation(), nil
 	}
 
-	role := resources.NewRole(request.Address)
+	roleRaw, err := h.AccountRoleQ.FilterByID(account.RoleID).Get()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account role by id")
+	}
 
-	if request.ShouldInclude(requests.IncludeTypeAccountRoleRules) {
-		rules := []regources.Rule{
-			resources.NewRule(),
-		}
+	if roleRaw == nil {
+		return nil, errors.From(errors.New("role not found"), logan.F{
+			"id": account.RoleID,
+		})
+	}
 
-		role.Relationships.Rules = &regources.RelationCollection{
-			Data: make([]regources.Key, 0, len(rules)),
-		}
+	role := resources.NewAccountRole(*roleRaw)
+	rules, err := h.AccountRuleQ.FilterByRole(roleRaw.ID).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select account rules for role")
+	}
 
-		for _, rule := range rules {
-			role.Relationships.Rules.Data = append(role.Relationships.Rules.Data, rule.Key)
+	for _, ruleRaw := range rules {
+		rule := resources.NewAccountRule(ruleRaw)
+		role.Relationships.Rules.Data = append(role.Relationships.Rules.Data, rule.GetKey())
+		if request.ShouldInclude(requests.IncludeTypeAccountRoleRules) {
 			includes.Add(&rule)
-		}
-	} else {
-		rulesKeys := []regources.Key{
-			resources.NewRuleKey(),
-		}
-		role.Relationships.Rules = &regources.RelationCollection{
-			Data: rulesKeys,
 		}
 	}
 
-	includes.Add(&role)
 	return role.AsRelation(), nil
 }
 
@@ -293,7 +297,7 @@ func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *rego
 		return nil, errors.Wrap(err, "failed to get fees for account")
 	}
 
-	forAccountRole, err := h.FeesQ.FilterByAccountType(account.AccountType).Select()
+	forAccountRole, err := h.FeesQ.FilterByAccountType(account.RoleID).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get fees for account role")
 	}

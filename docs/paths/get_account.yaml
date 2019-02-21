@@ -22,6 +22,10 @@
         * `balances.state`
         * `referrer`
         * `fees`
+        * `role`
+        * `role.rules`
+        * `limits`
+        * `external_system_ids`
       required: false
       style: form
       explode: false

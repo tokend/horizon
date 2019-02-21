@@ -17,15 +17,15 @@ type ManageLimitsOpAttributes struct {
 
 //ManageLimitsCreation - details of corresponding op
 type ManageLimitsCreationOp struct {
-	AccountType     *xdr.AccountType `json:"account_type,omitempty"`
-	AccountAddress  string           `json:"account_address,omitempty"`
-	StatsOpType     xdr.StatsOpType  `json:"stats_op_type"`
-	AssetCode       string           `json:"asset_code"`
-	IsConvertNeeded bool             `json:"is_convert_needed"`
-	DailyOut        Amount           `json:"daily_out"`
-	WeeklyOut       Amount           `json:"weekly_out"`
-	MonthlyOut      Amount           `json:"monthly_out"`
-	AnnualOut       Amount           `json:"annual_out"`
+	AccountRole     *xdr.Uint64     `json:"account_role,omitempty"`
+	AccountAddress  string          `json:"account_address,omitempty"`
+	StatsOpType     xdr.StatsOpType `json:"stats_op_type"`
+	AssetCode       string          `json:"asset_code"`
+	IsConvertNeeded bool            `json:"is_convert_needed"`
+	DailyOut        Amount          `json:"daily_out"`
+	WeeklyOut       Amount          `json:"weekly_out"`
+	MonthlyOut      Amount          `json:"monthly_out"`
+	AnnualOut       Amount          `json:"annual_out"`
 }
 
 //ManageLimitsRemoval - details of corresponding op

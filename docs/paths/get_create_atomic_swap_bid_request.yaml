@@ -1,0 +1,126 @@
+/v3/create_atomic_swap_bid_requests/{id}:
+  get:
+    tags:
+      - Requests
+    summary: Get create_atomic_swap_bid request by ID
+    description: |
+      Allows to get `CreateAtomicSwapBid` by ID
+    operationId: getCreateAtomicSwapBidRequest
+    parameters:
+      - name: filter[requestor]
+        in: query
+        description: |
+          Filters requests by requestor - source of the operation.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[reviewer]
+        in: query
+        description: |
+          Filters requests by reviewer - account assigned to review request.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[state]
+        in: query
+        description: |
+          Filters requests by their state.
+          * 1 - pending
+          * 2 - canceled
+          * 3 - approved
+          * 4 - rejected
+          * 5 - permanently_rejected
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 5
+      - name: filter[pending_tasks]
+        in: query
+        description: |
+          Filters requests by pending tasks bit mask. Returns requests if all bit are set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[pending_tasks_not_set]
+        in: query
+        description: |
+          Filters requests by pending tasks bit mask. Returns requests if all bits not set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[pending_tasks_any_of]
+        in: query
+        description: |
+          Filters requests by pending tasks bit mask. Returns requests if at least one bit is set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[request_details.base_balance]
+        in: query
+        description: |
+          Filters create atomic swap bid requests by base balance.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: |
+          Relationships may be used for the included parameter.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          enum:
+            - "request_details"
+            - "request_details.base_balance"
+            - "request_details.quote_assets"
+    responses:
+      200:
+        description: requests exist
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/ReviewableRequest'
+                included:
+                  type: array
+                  items:
+                    type: object
+                    anyOf:
+                      - $ref: '#/components/schemas/CreateAtomicSwapBidDetails'
+                      - $ref: '#/components/schemas/Balance'
+                      - $ref: '#/components/schemas/Asset'
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: request does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

@@ -5,20 +5,15 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-func PopulateUpdateKYCRequest(histRequest history.UpdateKYCRequest) (
-	r *regources.UpdateKYCRequest, err error,
+func PopulateChangeRoleRequest(histRequest history.ChangeRoleRequest) (
+	r *regources.ChangeRoleRequest, err error,
 ) {
-	r = &regources.UpdateKYCRequest{}
-	r.AccountToUpdateKYC = histRequest.AccountToUpdateKYC
-	r.AccountTypeToSet = regources.AccountTypeToSet{
-		Int:    int(histRequest.AccountTypeToSet),
-		String: histRequest.AccountTypeToSet.ShortString(),
-	}
-	r.KYCLevel = histRequest.KYCLevel
+	r = &regources.ChangeRoleRequest{}
+	r.DestinationAccount = histRequest.DestinationAccount
+	r.AccountRoleToSet = histRequest.AccountRoleToSet
 	r.KYCData = histRequest.KYCData
 	r.AllTasks = histRequest.AllTasks
 	r.PendingTasks = histRequest.PendingTasks
 	r.SequenceNumber = histRequest.SequenceNumber
-	r.ExternalDetails = histRequest.ExternalDetails
 	return
 }

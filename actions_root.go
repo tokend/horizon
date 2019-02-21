@@ -26,9 +26,7 @@ func (action *RootAction) JSON() {
 	res.PopulateLedgerState(action.Ctx, ledger.CurrentState())
 
 	res.NetworkPassphrase = action.App.CoreInfo.NetworkPassphrase
-	res.CommissionAccountID = action.App.CoreInfo.CommissionAccountID
-	res.MasterAccountID = action.App.CoreInfo.MasterAccountID
-	res.OperationalAccountID = action.App.CoreInfo.OperationalAccountID
+	res.AdminAccountID = action.App.CoreInfo.AdminAccountID
 	res.MasterExchangeName = action.App.CoreInfo.MasterExchangeName
 	res.TxExpirationPeriod = action.App.CoreInfo.TxExpirationPeriod
 

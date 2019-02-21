@@ -1,15 +1,13 @@
 package regources
 
-import "gitlab.com/tokend/go/xdr"
-
 //CreateAccountOp - stores details of create account operation
 type CreateAccountOp struct {
 	Key
-	Attributes CreateAccountOpAttrs `json:"attributes"`
+	Relationships CreateAccountOpRelation `json:"relationships"`
 }
 
-// CreateAccountOpAttrs - stores details of create account operation
-type CreateAccountOpAttrs struct {
-	AccountAddress string          `json:"account_address"`
-	AccountType    xdr.AccountType `json:"account_type"`
+// CreateAccountOpRelation - stores details of create account relations
+type CreateAccountOpRelation struct {
+	Account *Relation `json:"account"`
+	Role    *Relation `json:"role"`
 }

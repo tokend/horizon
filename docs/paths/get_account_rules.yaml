@@ -1,0 +1,33 @@
+/v3/account_rules:
+  get:
+    tags:
+      - Account Rules
+    summary: Get Account Rules
+    description: |
+                  Allows to get list of `Account Rule` with the corresponding details.
+    operationId: getAccountRules
+    parameters:
+    - $ref: '#/components/schemas/pageNumberParam'
+    - $ref: '#/components/schemas/pageLimitParam'
+    - $ref: '#/components/schemas/sortingParam'
+    responses:
+      200:
+        description: succesfully retrived page
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data: 
+                  type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/AccountRule'
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

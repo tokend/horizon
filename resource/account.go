@@ -3,11 +3,9 @@ package resource
 import (
 	"fmt"
 
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/httpx"
 	"gitlab.com/tokend/horizon/render/hal"
-	"gitlab.com/tokend/horizon/resource/base"
 	"gitlab.com/tokend/regources"
 	"golang.org/x/net/context"
 )
@@ -22,16 +20,15 @@ type Account struct {
 	} `json:"_links"`
 
 	HistoryAccount
-	IsBlocked     bool              `json:"is_blocked"`
-	BlockReasonsI int32             `json:"block_reasons_i"`
-	BlockReasons  []regources.Flag  `json:"block_reasons"`
-	AccountTypeI  int32             `json:"account_type_i"`
-	AccountType   string            `json:"account_type"`
-	Referrer      string            `json:"referrer"`
-	Thresholds    AccountThresholds `json:"thresholds"`
-	Balances      []Balance         `json:"balances"`
-	Signers
-	Policies               AccountPolicies `json:"policies"`
+	IsBlocked              bool              `json:"is_blocked"`
+	BlockReasonsI          int32             `json:"block_reasons_i"`
+	BlockReasons           []regources.Flag  `json:"block_reasons"`
+	RoleID                 uint64            `json:"role_id"`
+	AccountType            string            `json:"account_type"`
+	Referrer               string            `json:"referrer"`
+	Thresholds             AccountThresholds `json:"thresholds"`
+	Balances               []Balance         `json:"balances"`
+	Policies               AccountPolicies   `json:"policies"`
 	AccountKYC             `json:"account_kyc"`
 	ExternalSystemAccounts []regources.ExternalSystemAccountID `json:"external_system_accounts"`
 	Referrals              []Referral                          `json:"referrals"`
@@ -41,14 +38,10 @@ type Account struct {
 func (a *Account) Populate(ctx context.Context, ca core.Account) {
 	a.ID = ca.AccountID
 	a.AccountID = ca.AccountID
-	a.BlockReasonsI = ca.BlockReasons
-	a.BlockReasons = base.FlagFromXdrBlockReasons(ca.BlockReasons, xdr.BlockReasonsAll)
-	a.IsBlocked = ca.BlockReasons > 0
-	a.AccountTypeI = ca.AccountType
-	a.AccountType = xdr.AccountType(ca.AccountType).String()
-	a.Referrer = ca.Referrer
-	a.Thresholds.Populate(ca.Thresholds)
-	a.Policies.Populate(ca.Policies)
+	a.RoleID = ca.RoleID
+	if ca.Referrer != nil {
+		a.Referrer = *ca.Referrer
+	}
 	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
 	self := fmt.Sprintf("/accounts/%s", ca.AccountID)
 	a.Links.Self = lb.Link(self)
