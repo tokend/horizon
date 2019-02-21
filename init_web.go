@@ -113,7 +113,7 @@ func initWebActions(app *App) {
 		xdr.OperationTypeManageOffer,
 		xdr.OperationTypeCheckSaleState,
 		xdr.OperationTypeManageKeyValue,
-		xdr.OperationTypePaymentV2,
+		xdr.OperationTypePayment,
 		xdr.OperationTypeReviewRequest,
 	}
 

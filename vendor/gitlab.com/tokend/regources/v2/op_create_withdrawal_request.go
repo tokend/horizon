@@ -9,9 +9,9 @@ type CreateWithdrawRequestOp struct {
 
 //CreateWithdrawRequestOpAttrs - details of corresponding op
 type CreateWithdrawRequestOpAttrs struct {
-	Amount          Amount  `json:"amount"`
-	Fee             Fee     `json:"fee"`
-	ExternalDetails Details `json:"external_details"`
+	Amount         Amount  `json:"amount"`
+	Fee            Fee     `json:"fee"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 //CreateWithdrawRequestOpRelations - relationships of the operation

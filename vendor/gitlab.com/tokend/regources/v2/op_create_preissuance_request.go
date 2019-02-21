@@ -9,7 +9,8 @@ type CreatePreIssuanceRequestOp struct {
 
 //CreatePreIssuanceRequestOpAttrs - details of corresponding op
 type CreatePreIssuanceRequestOpAttrs struct {
-	Amount Amount `json:"amount"`
+	Amount         Amount  `json:"amount"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 type CreatePreIssuanceRequestOpRelations struct {

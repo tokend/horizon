@@ -9,8 +9,8 @@ type CreateAMLAlertRequestOp struct {
 
 //CreateAMLAlertRequestOpAttrs - details of corresponding op
 type CreateAMLAlertRequestOpAttrs struct {
-	Amount Amount `json:"amount"`
-	Reason string `json:"reason"`
+	Amount         Amount  `json:"amount"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 //CreateAMLAlertRequestOpRelations - relationships ot the operation

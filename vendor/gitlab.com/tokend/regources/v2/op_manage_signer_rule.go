@@ -18,7 +18,7 @@ type ManageSignerRuleRelation struct {
 type ManageSignerRuleAttrs struct {
 	Resource   xdr.SignerRuleResource `json:"resource"`
 	Action     xdr.SignerRuleAction   `json:"action"`
-	IsForbid   bool                   `json:"is_forbid"`
+	Forbids    bool                   `json:"forbids"`
 	IsDefault  bool                   `json:"is_default"`
 	IsReadOnly bool                   `json:"is_read_only"`
 	Details    Details                `json:"details"`

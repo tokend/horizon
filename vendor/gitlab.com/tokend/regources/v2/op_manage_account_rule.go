@@ -18,6 +18,6 @@ type ManageAccountRuleRelation struct {
 type ManageAccountRuleAttrs struct {
 	Resource xdr.AccountRuleResource `json:"resource"`
 	Action   xdr.AccountRuleAction   `json:"action"`
-	IsForbid bool                    `json:"is_forbid"`
+	Forbids  bool                    `json:"forbids"`
 	Details  Details                 `json:"details"`
 }

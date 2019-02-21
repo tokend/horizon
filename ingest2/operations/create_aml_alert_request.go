@@ -3,6 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/regources/v2"
 )
 
@@ -21,7 +22,7 @@ func (h *createAMLAlertReqeustOpHandler) Details(op rawOperation,
 		CreateAMLAlertRequest: &history2.CreateAMLAlertRequestDetails{
 			Amount:         regources.Amount(amlAlertRequest.Amount),
 			BalanceAddress: amlAlertRequest.BalanceId.AsString(),
-			Reason:         string(amlAlertRequest.CreatorDetails),
+			CreatorDetails: internal.MarshalCustomDetails(amlAlertRequest.CreatorDetails),
 		},
 	}, nil
 }
