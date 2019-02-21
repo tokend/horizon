@@ -1,6 +1,0 @@
-name: KeyValueEntry
-key: key-value-entries
-attributes:
-  -
-    name: value
-    type: KeyValueEntryValue

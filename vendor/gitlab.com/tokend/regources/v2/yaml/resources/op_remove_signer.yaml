@@ -1,3 +1,0 @@
-name: OpRemoveSignerDetails
-key: operations-remove-signer
-base: operations-manage-signer
