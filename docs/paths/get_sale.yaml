@@ -1,49 +1,52 @@
-/v3/assets/{id}:
+/v3/sales/{id}:
   get:
     tags:
-      - Assets
-    summary: Get Asset by ID (code)
+      - Sales
+    summary: Get Sale by ID
     description: |
-                  Allows to get `Asset` with the corresponding details.
-    operationId: getAssetByID
+                  Allows to get `Sale` with corresponding details.
+    operation: getSaleByID
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the asset
+      description: Unique identifier of account
       required: true
       style: simple
       explode: false
       schema:
-        type: string
+        type: integer
+        format: int64
     - name: include
       in: query
       description: |
-        Relationships may be used for the included parameter.
+                    Relationships may be used for the included parameter.
       required: false
       style: form
       explode: false
       schema:
         type: string
-        enum:
-          - owner
+      enum:
+        - base_asset
+        - quote_assets
+        - default_quote_asset
+      example: base_asset,default_quote_asset
     responses:
       200:
-        description: asset exists
+        description: sale exists
         content:
           application/vnd.api+json:
             schema:
               type: object
               required:
                 - data
-                - included
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/Asset'
+                  $ref: '#/components/schemas/Sale'
                 included:
                   type: array
                   items:
-                    $ref: '#/components/schemas/AccountKey'
+                    $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter
         content:
@@ -51,7 +54,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       404:
-        description: asset does not exist
+        description: such an sale does not exist
         content:
           application/vnd.api+json:
             schema:

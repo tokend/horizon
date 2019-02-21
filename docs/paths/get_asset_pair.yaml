@@ -1,34 +1,38 @@
-/v3/assets/{id}:
+/v3/asset_pairs/{id}:
   get:
     tags:
-      - Assets
-    summary: Get Asset by ID (code)
+      - Asset Pairs
+    summary: Get AssetPair by ID
     description: |
-                  Allows to get `Asset` with the corresponding details.
-    operationId: getAssetByID
+                  Allows to get `AssetPair` with the corresponding details.
+    operationId: getAssetPairByID
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the asset
+      description: Unique identifier of the asset pair which consists of two asset codes
       required: true
       style: simple
       explode: false
       schema:
         type: string
+        format: BASE:QUOTE
+        example: "BTC:ETH"
     - name: include
       in: query
       description: |
-        Relationships may be used for the included parameter.
+                    Relationships may be used for the `include` parameter.
       required: false
       style: form
       explode: false
       schema:
         type: string
+        example: "base_asset"
         enum:
-          - owner
+          - base_asset
+          - quote_asset
     responses:
       200:
-        description: asset exists
+        description: asset pair exists
         content:
           application/vnd.api+json:
             schema:
@@ -39,11 +43,11 @@
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/Asset'
+                  $ref: '#/components/schemas/AssetPair'
                 included:
                   type: array
                   items:
-                    $ref: '#/components/schemas/AccountKey'
+                    $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter
         content:
@@ -51,7 +55,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       404:
-        description: asset does not exist
+        description: asset pair does not exist
         content:
           application/vnd.api+json:
             schema:
