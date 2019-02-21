@@ -1,0 +1,15 @@
+name: AccountRule
+key: account-rules
+attributes:
+  -
+    name: action
+    type: String
+  -
+    name: is_forbid
+    type: Bool
+  -
+    name: details
+    type: Object
+  -
+    name: resource
+    type: Object
