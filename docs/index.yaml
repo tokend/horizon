@@ -75,4 +75,11 @@ tags:
   - name: Signers
     description: Defines access points to get signers
   - name: Account Roles
-    description: Defines access points to get account roles
+    description: Defines access points to get account role
+  - name: Asset Pairs
+    description: |
+                  * A base asset refers to the underlying assets giving value to a company, investment or loan.
+                  Base asset is not fixed. It will appreciate or depreciate according to market forces.
+                  * A quote asset refers to the last amount at which 1 base asset was traded,
+                  meaning the most recent price to which a buyer and seller agreed and
+                  at which some 1 base asset was transacted
