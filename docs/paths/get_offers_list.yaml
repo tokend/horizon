@@ -35,7 +35,7 @@
     - name: filter[base_asset]
       in: query
       description: |
-                    Filters offers by specified base asset core
+                    Filters offers by specified base asset code
       required: false
       style: form
       explode: false
@@ -46,7 +46,7 @@
     - name: filter[quote_asset]
       in: query
       description: |
-                    Filters offers by specified quote asset core
+                    Filters offers by specified quote asset code
       required: false
       style: form
       explode: false
@@ -68,7 +68,9 @@
     - name: filter[order_book]
       in: query
       description: |
-                   Filters offers by specified account that created the offer
+                   Filters offers by specified order book ID
+                   Defines whether searching of sale offers or trade offers
+                   (0 - secondary market, saleId - for specific sale, -1 - to all, except)
       required: false
       style: form
       explode: false
@@ -76,11 +78,13 @@
         type: number
         format: int64
         example: 2
-        description: "defines whether searching of sale offers or trade offers (0 - secondary market, saleId - for specific sale, -1 - to all, except )"
     - name: filter[is_buy]
       in: query
       description: |
-                    Filters offers by specified account that created the offer
+                    Defines whether searching of offer on buying base_asset, selling it, or both
+                    * if `is_buy == true` -> filtering only buying `base_asset` offers
+                    * if `is_buy == false` -> filtering only selling `base_asset` offers
+                    * if `is_buy` is not specified -> filtering both of buying & selling `base_asset` offers
       required: false
       style: form
       explode: false
@@ -88,7 +92,6 @@
         type: number
         format: int32
         example: 1
-        description: "defines whether searching of offer on buying base_asset, selling it, or both"
     - name: include
       in: query
       description: |
