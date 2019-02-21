@@ -2,7 +2,8 @@
   get:
     tags:
       - Fees
-    summary: Get calculated fee
+      - Accounts
+    summary: Calculate fee
     description: |
                   Allows to calculate fee for account.
     operationId: getCalculatedFee

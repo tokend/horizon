@@ -1,8 +1,8 @@
 /v3/create_sale_requests/{id}:
   get:
     tags:
-      - Requests
-    summary: Get create sale request by ID
+      - Crowd Investing
+    summary: Create Sale Request by ID
     description: |
       Allows to get `CreateSale` by ID
     operationId: getCreateSaleRequest

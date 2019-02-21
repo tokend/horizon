@@ -1,8 +1,8 @@
 /v3/sales:
   get:
     tags:
-      - Sales
-    summary: Get List of Sales
+      - Crowd Investing
+    summary: Sale List
     description: |
                   Allows to get a filtered list of `Sale` with the corresponding details.
     operationId: getSales

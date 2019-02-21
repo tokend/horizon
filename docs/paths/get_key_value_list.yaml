@@ -1,8 +1,8 @@
 /v3/key_values:
   get:
     tags:
-      - KeyValue Entries
-    summary: Get list of KeyValueEntry items
+      - KeyValue
+    summary: KeyValueEntry List
     description: |
       Allows to get `KeyValueEntry` with the corresponding details.
     operationId: getKeyValueList

@@ -1,8 +1,8 @@
 /v3/create_withdraw_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of create_withdraw requests
+      - Withdrawal
+    summary: Withdrawal Request List
     description: |
       Allows to get a filtered list of `CreateWithdrawRequest` with details
     operationId: getCreateWithdrawRequests

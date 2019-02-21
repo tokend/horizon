@@ -1,8 +1,8 @@
 /v3/update_limits_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of update_limits requests
+      - Limits
+    summary: Update Limits Request List
     description: |
       Allows to get a filtered list of `UpdateLimitsRequest` with details
     operationId: getUpdateLimitsRequests

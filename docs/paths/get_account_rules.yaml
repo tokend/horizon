@@ -2,7 +2,7 @@
   get:
     tags:
       - Account Rules
-    summary: Get Account Rules
+    summary: Account Rule List
     description: |
                   Allows to get list of `Account Rule` with the corresponding details.
     operationId: getAccountRules

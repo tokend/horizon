@@ -1,8 +1,8 @@
 /v3/create_atomic_swap_bid_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of create_atomic_swap_bid requests
+      - WIP
+    summary: Create Atomic Swap Bid Request List
     description: |
       Allows to get a filtered list of `CreateAtomicSwapBidRequest` with details
     operationId: getCreateAtomicSwapBidRequests

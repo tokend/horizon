@@ -2,7 +2,7 @@
   get:
     tags:
       - Requests
-    summary: Get list of asset create requests
+    summary: Asset Creation Request List
     description: |
       Allows to get a filtered list of `CreateAssetRequest` with details
     operationId: getCreateAssetRequests

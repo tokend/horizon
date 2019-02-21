@@ -2,7 +2,7 @@
   get:
     tags:
       - Order Books
-    summary: Get OrderBook by ID
+    summary: OrderBook by ID
     description: |
                   Returns the list of the placed offers without private details.
     operationId: getOrderBookByID

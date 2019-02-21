@@ -1,9 +1,9 @@
 /v3/accounts/{id}/signers:
   get:
     tags:
-      - Accounts
       - Signers
-    summary: Get Signers of the account
+      - Accounts
+    summary: Signers for Account
     description: |
                   Allows to get `Signers` of the account with corresponding details.
     operationId: getSignersForAccount
