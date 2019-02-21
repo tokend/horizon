@@ -20,7 +20,7 @@ func NewSignerRuleQ(repo *db2.Repo) SignerRuleQ {
 		selector: sq.Select("sr.id",
 			"sr.resource",
 			"sr.action",
-			"sr.is_forbid",
+			"sr.forbids",
 			"sr.is_default",
 			"sr.owner_id",
 			"sr.details",
