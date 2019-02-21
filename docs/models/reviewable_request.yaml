@@ -53,7 +53,10 @@ ReviewableRequest:
             request_details:
               description: "Details specific to concrete request"
               type: object
-              $ref: '#/components/schemas/Int64Key'
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/Int64Key'
         attributes:
           type: object
           required:
