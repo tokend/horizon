@@ -2,7 +2,7 @@
   get:
     tags:
       - Signer Rules
-    summary: Get Signer Rules
+    summary: Signer Rule List
     description: |
                   Allows to get list of `Signer Rule` with the corresponding details.
     operationId: getSignerRules

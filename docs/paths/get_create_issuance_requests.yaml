@@ -1,8 +1,8 @@
-/v3/issuance_create_requests:
+/v3/create_issuance_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of issuance create requests
+      - Issuance
+    summary: Issuance Request List
     description: |
       Allows to get a filtered list of `CreateIssuanceRequest` with details
     operationId: getCreateIssuanceRequests

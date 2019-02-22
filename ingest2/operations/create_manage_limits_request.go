@@ -16,13 +16,11 @@ func (h *createManageLimitsRequestOpHandler) Details(op rawOperation,
 ) (history2.OperationDetails, error) {
 	createManageLimitsRequestOp := op.Body.MustCreateManageLimitsRequestOp()
 
-	data := internal.MarshalCustomDetails(
-		createManageLimitsRequestOp.ManageLimitsRequest.CreatorDetails)
-
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateManageLimitsRequest,
 		CreateManageLimitsRequest: &history2.CreateManageLimitsRequestDetails{
-			Data:      data,
+			CreatorDetails: internal.MarshalCustomDetails(
+				createManageLimitsRequestOp.ManageLimitsRequest.CreatorDetails),
 			RequestID: int64(opRes.MustCreateManageLimitsRequestResult().MustSuccess().ManageLimitsRequestId),
 		},
 	}, nil

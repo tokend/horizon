@@ -1,8 +1,8 @@
 /v3/create_pre_issuance_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of asset create requests
+      - PreIssuance
+    summary: PreIssuance Request List
     description: |
       Allows to get a filtered list of `AssetCreateRequest` with details
     operationId: getRequests

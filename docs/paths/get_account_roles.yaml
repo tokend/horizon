@@ -2,7 +2,7 @@
   get:
     tags:
       - Account Roles
-    summary: Get Account Roles
+    summary: Account Role List
     description: |
                   Allows to get list of `Account Role` with the corresponding details.
     operationId: getAccountRoles

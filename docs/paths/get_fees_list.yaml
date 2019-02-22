@@ -2,7 +2,7 @@
   get:
     tags:
       - Fees
-    summary: Get List of Fees
+    summary: Fee List
     description: |
       Allows to get a filtered list of `Fee` with the corresponding details.
     operationId: getFeesList

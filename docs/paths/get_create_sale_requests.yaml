@@ -1,8 +1,8 @@
 /v3/create_sale_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of create sale requests
+      - Crowd Investing
+    summary: Create Sale Request List
     description: |
       Allows to get a filtered list of `CreateSaleRequest` with details
     operationId: getCreateSaleRequests

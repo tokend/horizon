@@ -1,8 +1,8 @@
 /v3/create_aml_alert_requests/{id}:
   get:
     tags:
-      - Requests
-    summary: Get aml alert request by ID
+      - AMLAlert
+    summary: AMLAlert by ID
     description: |
       Allows to get `CreateAmlAlert` by ID
     operationId: getCreateAmlAlertRequest

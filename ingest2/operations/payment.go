@@ -15,11 +15,11 @@ type paymentOpHandler struct {
 // Details returns details about payment operation
 func (h *paymentOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	paymentOp := op.Body.MustPaymentOpV2()
-	paymentRes := opRes.MustPaymentV2Result().MustPaymentV2Response()
+	paymentOp := op.Body.MustPaymentOp()
+	paymentRes := opRes.MustPaymentResult().MustPaymentResponse()
 
 	return history2.OperationDetails{
-		Type: xdr.OperationTypePaymentV2,
+		Type: xdr.OperationTypePayment,
 		Payment: &history2.PaymentDetails{
 			AccountFrom:             op.Source.Address(),
 			AccountTo:               paymentRes.Destination.Address(),
@@ -40,8 +40,8 @@ func (h *paymentOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	op := opBody.MustPaymentOpV2()
-	res := opRes.MustPaymentV2Result().MustPaymentV2Response()
+	op := opBody.MustPaymentOp()
+	res := opRes.MustPaymentResult().MustPaymentResponse()
 
 	sourceFixedFee := res.ActualSourcePaymentFee.Fixed
 	sourcePercentFee := res.ActualSourcePaymentFee.Percent

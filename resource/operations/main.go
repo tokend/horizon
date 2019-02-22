@@ -89,7 +89,7 @@ func New(
 		e := ReviewRequest{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e
-	case xdr.OperationTypePaymentV2:
+	case xdr.OperationTypePayment:
 		e := PaymentV2{Base: base}
 		err = row.UnmarshalDetails(&e)
 		result = e

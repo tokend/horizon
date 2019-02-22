@@ -10,6 +10,6 @@ type AccountRule struct {
 	ID       uint64                  `db:"id"`
 	Resource xdr.AccountRuleResource `db:"resource"`
 	Action   string                  `db:"action"`
-	IsForbid bool                    `db:"is_forbid"`
+	Forbids  bool                    `db:"forbids"`
 	Details  regources.Details       `db:"details"`
 }

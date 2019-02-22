@@ -2,7 +2,7 @@
   get:
     tags:
       - Signer Roles
-    summary: Get Signer Roles
+    summary: Signer Role List
     description: |
                   Allows to get list of `Signer Role` with the corresponding details.
     operationId: getSignerRoles

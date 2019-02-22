@@ -2,7 +2,7 @@
   get:
     tags:
       - Offers
-    summary: Get List of Offers
+    summary: Offers List
     description: |
                   Allows to get a filtered list of `Offer` with the corresponding details.\n
                   🔒 The signature is needed in such cases:\n

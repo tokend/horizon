@@ -13,9 +13,9 @@ func getStateIdentifier(opType xdr.OperationType, op *xdr.Operation, operationRe
 	state := history.OperationStateSuccess
 	operationIdentifier := uint64(0)
 	switch opType {
-	case xdr.OperationTypePaymentV2: // TODO paymentV2 or payment ?
-		var paymentResponse xdr.PaymentV2Response
-		paymentResponse = *operationResult.PaymentV2Result.PaymentV2Response
+	case xdr.OperationTypePayment: // TODO paymentV2 or payment ?
+		var paymentResponse xdr.PaymentResponse
+		paymentResponse = *operationResult.PaymentResult.PaymentResponse
 		operationIdentifier = uint64(paymentResponse.PaymentId)
 		return state, operationIdentifier
 	case xdr.OperationTypeCreateWithdrawalRequest:

@@ -1,8 +1,8 @@
 /v3/create_atomic_swap_bid_requests/{id}:
   get:
     tags:
-      - Requests
-    summary: Get create_atomic_swap_bid request by ID
+      - WIP
+    summary: Create Atomic Swap Bid Request by ID
     description: |
       Allows to get `CreateAtomicSwapBid` by ID
     operationId: getCreateAtomicSwapBidRequest

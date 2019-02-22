@@ -5,6 +5,9 @@ info:
     Horizon is the client-facing REST API module that consumes data from the core of the system and makes it more convenient to use the
     client facing application. It allows submitting transactions to the network,
     reading history of operations, and checking the state of entities.
+
+    > IMPORTANT: Note that endpoints not specified in this document or marked as `WIP` do not guaranty to maintain backwards compability.
+
     ### Overview
     Horizon uses [JSON:API](https://jsonapi.org/) convention to format requests and responses.
     The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", 
@@ -67,11 +70,16 @@ info:
 servers:
 - url: https://api.achilles.tokend.io
   description: TokenD Developer Environment
+# NOTE
+#
+# Add tag to x-tagGroups or it won't be displayed
 tags:
   - name: Accounts
-    description: Defines access points to get accounts existing in the system
+    description: Defines access points for accounts and related entities
   - name: Assets
-    description: Defines access points to get assets existing in the system
+    description: Defines access points for assets
+  - name: Fees
+    description: Defines access points for fees
   - name: Signers
     description: Defines access points to get signers
   - name: Account Roles
@@ -88,3 +96,46 @@ tags:
                   An order book is an list of buy and sell orders for a specified asset pair organized by price level.
                   An order book lists the amount of asset being bid or offered at each price point.
                   It does not identifies the market participants behind the buy and sell orders.
+  - name: AMLAlert
+    description: Defines access points to AMLAlert Reviewable Requests
+  - name: Issuance
+    description: Defines access points to get Issuance Reviewable Requests
+  - name: Withdrawal
+    description: Defines access points to get Withdrawal Reviewable Requests
+x-tagGroups:
+  - name: Essentials
+    tags:
+      - Accounts
+      - Assets
+      - Fees
+  - name: Asset Movements
+    tags:
+     - AMLAlert
+     - Issuance
+     - Withdrawal
+  - name: Access Control
+    tags:
+      - Signers
+      - Signer Roles
+      - Signer Rules
+  - name: KYC & AML
+    tags:
+      - Account Roles
+      - Account Rules
+      - Change Account Role Request
+      - AMLAlert
+      - Limits
+  - name: Decentralized Exchange
+    tags:
+      - Asset Pairs
+      - Offers
+      - Order Books
+      - Crowd Investing
+  - name: Advanced
+    tags:
+      - PreIssuance
+      - KeyValue
+  - name: Other
+    tags:
+      - Requests
+      - WIP

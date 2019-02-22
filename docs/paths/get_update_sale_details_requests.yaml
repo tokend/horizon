@@ -1,8 +1,8 @@
 /v3/update_sale_details_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of update sale details requests
+      - Crowd Investing
+    summary: Update Sale Details List
     description: |
       Allows to get a filtered list of `UpdateSaleDetailsRequest` with details
     operationId: getUpdateSaleDetailsRequests

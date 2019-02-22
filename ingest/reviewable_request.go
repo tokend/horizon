@@ -165,7 +165,7 @@ func getPreIssuanceRequest(request *xdr.PreIssuanceRequest) (*history.PreIssuanc
 func getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
-	_ = json.Unmarshal([]byte(request.ExternalDetails), &details)
+	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
 	return &history.IssuanceRequest{
 		Asset:           string(request.Asset),
 		Amount:          amount.StringU(uint64(request.Amount)),

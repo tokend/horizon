@@ -1,8 +1,8 @@
 /v3/change_role_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of change role requests
+      - Change Account Role Request
+    summary: Change Account Role Request List
     description: |
       Allows to get a filtered list of `ChangeRoleRequest` with details
     operationId: getChangeRoleRequests

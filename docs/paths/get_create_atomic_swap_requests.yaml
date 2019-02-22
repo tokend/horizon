@@ -1,8 +1,8 @@
 /v3/create_atomic_swap_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of atomic swap requests
+      - WIP
+    summary: Create Atomic Swap Request List
     description: |
       Allows to get a filtered list of `CreateAtomicSwapRequest` with details
     operationId: getCreateSwapRequests

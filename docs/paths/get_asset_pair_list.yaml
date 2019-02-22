@@ -2,7 +2,7 @@
   get:
     tags:
       - Asset Pairs
-    summary: Get List of AssetPairs
+    summary: AssetPair List
     description: |
                   Allows to get a filtered list of `AssetPair` with the corresponding details.
     operationId: getAssetPairs

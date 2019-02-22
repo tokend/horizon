@@ -15,7 +15,7 @@ func NewAccountRule(rule core2.AccountRule) regources.AccountRule {
 		Attributes: regources.AccountRuleAttr{
 			Resource: rule.Resource,
 			Action:   rule.Action,
-			IsForbid: rule.IsForbid,
+			Forbids:  rule.Forbids,
 			Details:  rule.Details,
 		},
 	}
@@ -38,7 +38,7 @@ func NewSignerRule(rule core2.SignerRule) regources.SignerRule {
 		Attributes: regources.SignerRuleAttr{
 			Resource:  rule.Resource,
 			Action:    rule.Action,
-			IsForbid:  rule.IsForbid,
+			Forbids:   rule.Forbids,
 			IsDefault: rule.IsDefault,
 			Details:   rule.Details,
 		},

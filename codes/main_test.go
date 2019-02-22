@@ -139,7 +139,7 @@ func TestCodes(t *testing.T) {
 	})
 
 	Convey("Payment V2", t, func() {
-		for _, code := range xdr.PaymentV2ResultCodeAll {
+		for _, code := range xdr.PaymentResultCodeAll {
 			checkCode(t, code)
 		}
 	})

@@ -9,11 +9,11 @@ type CreateIssuanceRequestOp struct {
 
 //CreateIssuanceRequestOpAttrs - details of corresponding op
 type CreateIssuanceRequestOpAttrs struct {
-	Fee             Fee     `json:"fee"`
-	Amount          Amount  `json:"amount"`
-	Reference       string  `json:"reference"`
-	AllTasks        *int64  `json:"all_tasks,omitempty"`
-	ExternalDetails Details `json:"external_details"`
+	Fee            Fee     `json:"fee"`
+	Amount         Amount  `json:"amount"`
+	Reference      string  `json:"reference"`
+	AllTasks       *int64  `json:"all_tasks,omitempty"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 // CreateIssuanceRequestOpRelations - relationships of the operation

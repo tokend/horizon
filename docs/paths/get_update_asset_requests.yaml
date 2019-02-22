@@ -1,8 +1,8 @@
 /v3/asset_update_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of asset update requests
+      - Assets
+    summary: Update Asset Request List
     description: |
       Allows to get a filtered list of `UpdateAssetRequest` with details
     operationId: getUpdateAssetRequests

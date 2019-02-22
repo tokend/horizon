@@ -1,8 +1,14 @@
 all: build/openapi.yaml
 	redoc-cli bundle build/openapi.yaml -o ../public/index.html
 
+sp :=
+
+sp += # add space
+
+my-sort = $(shell echo $(subst $(sp),'\n',$2) | sort $1 --key=1,1 -)
+
 define appendFilesWithTabs
-	for file in $(1); do \
+	for file in $(call my-sort,,$(1)); do \
 		while IFS= read -r line || [ -n "$$line" ]; do \
 			echo "$(2)$$line"; \
 		done < $$file; \

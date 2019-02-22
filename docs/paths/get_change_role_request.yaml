@@ -1,8 +1,8 @@
 /v3/change_role_requests/{id}:
   get:
     tags:
-      - Requests
-    summary: Get update kyc request by ID
+      - Change Account Role Request
+    summary: Change Account Role Request by ID
     description: |
       Allows to get `ChangeRole` by ID
     operationId: getChangeRoleRequest
@@ -71,7 +71,7 @@
       - name: filter[request_details.destination_account]
         in: query
         description: |
-          Filters change role requests by account to update kyc for.
+          Filters change role requests by account to change role for.
         required: false
         style: form
         explode: false

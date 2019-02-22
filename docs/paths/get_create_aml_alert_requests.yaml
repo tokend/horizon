@@ -1,8 +1,8 @@
 /v3/create_aml_alert_requests:
   get:
     tags:
-      - Requests
-    summary: Get list of aml alert requests
+      - AMLAlert
+    summary: AMLAlert List
     description: |
       Allows to get a filtered list of `CreateAmlAlertRequest` with details
     operationId: getCreateAmlAlertRequests

@@ -1,8 +1,8 @@
 /v3/create_asset_requests/{id}:
   get:
     tags:
-      - Requests
-    summary: Get asset create request by ID
+      - Assets
+    summary: Asset Creation Request by ID
     description: |
       Allows to get `CreateAssetRequest` by ID
     operationId: getCreateAssetRequest

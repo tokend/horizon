@@ -507,8 +507,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:1020db993a68ee0d82be71c9add321d637d9490a548dde261c8cd804eb2917e9"
+  branch = "feature/roles_rules"
+  digest = "1:7a4598bffb844676ce0522bcf5b475801dbcc617ff1c0fbd4a64df5f147ff1f1"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -526,7 +526,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "edb9b82aababa7e03ef95cedabda0b7f3664db96"
+  revision = "ea4b17532366fef881d190a059d4675d8a04a273"
 
 [[projects]]
   branch = "master"
@@ -542,15 +542,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:70f78444873780153fdd3dcee5c1c07206810705aa511e0c3d76b061df0555da"
+  branch = "feature/account_role"
+  digest = "1:56f0605ce3924ebdbdac23023049e90709749f73db7dd10084975cee06a6158f"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "500852237bca9a0c2a40f451c78258c0ca8cd84a"
+  revision = "2a37997ea0b7c38820d1551178befa3f9bf628c2"
 
 [[projects]]
   branch = "master"

@@ -20,10 +20,10 @@ func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateWithdrawalRequest,
 		CreateWithdrawRequest: &history2.CreateWithdrawRequestDetails{
-			BalanceAddress:  withdrawRequest.Balance.AsString(),
-			Amount:          regources.Amount(withdrawRequest.Amount),
-			Fee:             internal.FeeFromXdr(withdrawRequest.Fee),
-			ExternalDetails: internal.MarshalCustomDetails(withdrawRequest.CreatorDetails),
+			BalanceAddress: withdrawRequest.Balance.AsString(),
+			Amount:         regources.Amount(withdrawRequest.Amount),
+			Fee:            internal.FeeFromXdr(withdrawRequest.Fee),
+			CreatorDetails: internal.MarshalCustomDetails(withdrawRequest.CreatorDetails),
 		},
 	}, nil
 }

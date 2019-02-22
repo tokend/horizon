@@ -2,7 +2,7 @@
   get:
     tags:
       - Requests
-    summary: Get list of reviewable requests
+    summary: Reviewable Request List
     description: |
       Allows to get a filtered list of `ReviewableRequest` with details
     operationId: getRequests

@@ -31,13 +31,13 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateIssuanceRequest,
 		CreateIssuanceRequest: &history2.CreateIssuanceRequestDetails{
-			Fee:                    internal.FeeFromXdr(issuanceRequest.Fee),
-			Reference:              utf8.Scrub(string(createIssuanceRequestOp.Reference)),
-			Amount:                 regources.Amount(issuanceRequest.Amount),
-			Asset:                  string(issuanceRequest.Asset),
+			Fee:       internal.FeeFromXdr(issuanceRequest.Fee),
+			Reference: utf8.Scrub(string(createIssuanceRequestOp.Reference)),
+			Amount:    regources.Amount(issuanceRequest.Amount),
+			Asset:     string(issuanceRequest.Asset),
 			ReceiverAccountAddress: createIssuanceRequestRes.Receiver.Address(),
 			ReceiverBalanceAddress: issuanceRequest.Receiver.AsString(),
-			ExternalDetails:        internal.MarshalCustomDetails(issuanceRequest.ExternalDetails),
+			CreatorDetails:         internal.MarshalCustomDetails(issuanceRequest.CreatorDetails),
 			AllTasks:               allTasks,
 			RequestDetails: history2.RequestDetails{
 				IsFulfilled: createIssuanceRequestRes.Fulfilled,

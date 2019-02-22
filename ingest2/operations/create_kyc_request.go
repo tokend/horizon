@@ -27,7 +27,7 @@ func (h *createChangeRoleRequestOpHandler) Details(op rawOperation, opRes xdr.Op
 		CreateChangeRoleRequest: &history2.CreateChangeRoleRequestDetails{
 			DestinationAccount: createKYCRequestOp.DestinationAccount.Address(),
 			AccountRoleToSet:   uint64(createKYCRequestOp.AccountRoleToSet),
-			KYCData:            internal.MarshalCustomDetails(createKYCRequestOp.KycData),
+			CreatorDetails:     internal.MarshalCustomDetails(createKYCRequestOp.CreatorDetails),
 			AllTasks:           allTasks,
 			RequestDetails: history2.RequestDetails{
 				RequestID:   int64(createKYCRequestRes.RequestId),

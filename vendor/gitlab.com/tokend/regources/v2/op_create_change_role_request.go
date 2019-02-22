@@ -9,8 +9,8 @@ type CreateChangeRoleRequest struct {
 
 //CreateChangeRoleRequestAttrs - details of corresponding op
 type CreateChangeRoleRequestAttrs struct {
-	KYCData  Details `json:"kyc_data"`
-	AllTasks *uint32 `json:"all_tasks"`
+	CreatorDetails Details `json:"creator_details"`
+	AllTasks       *uint32 `json:"all_tasks"`
 }
 
 // CreateChangeRoleRequestOpRelations - relationships of the operation

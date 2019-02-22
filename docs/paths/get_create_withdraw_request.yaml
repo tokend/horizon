@@ -1,8 +1,8 @@
 /v3/create_withdraw_requests/{id}:
   get:
     tags:
-      - Requests
-    summary: Get create withdraw request by ID
+      - Withdrawal
+    summary: Withdrawal Request by ID
     description: |
       Allows to get `CreateWithdraw` by ID
     operationId: getCreateWithdrawRequest

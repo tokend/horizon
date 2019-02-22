@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+### Changed
+
+* Rename is_forbid to forbids
+* Rename details to creator_details in ops:
+    create_aml_alert_request
+    create_change_role_request
+    create_issuance_request
+    create_manage_limits_request
+    create_pressuance_request
+    create_sale_request
+    create_withdraw_request
+    manage_asset
+
 ### Added
 
 * Relations `Limits` and `ExternalSystemIDs` to Account

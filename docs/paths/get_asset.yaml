@@ -2,14 +2,14 @@
   get:
     tags:
       - Assets
-    summary: Get Asset by ID (code)
+    summary: Asset by ID
     description: |
                   Allows to get `Asset` with the corresponding details.
     operationId: getAssetByID
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the asset
+      description: Unique identifier of the asset (code)
       required: true
       style: simple
       explode: false
