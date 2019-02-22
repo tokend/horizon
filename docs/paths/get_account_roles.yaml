@@ -42,6 +42,18 @@
                     type: object
                     oneOf:
                     - $ref: '#/components/schemas/AccountRule'
+                links:
+                  type: object
+                  description: "Provides links for pagination"
+                  properties:
+                    next:
+                      type: string
+                      description: "link to the next page"
+                      example: "/v3/account_roles?include=rules&page[number]=2&page[limit]=15"
+                    self:
+                      type: string
+                      description: "link to the current page"
+                      example: "/v3/account_roles?include=rules&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:
