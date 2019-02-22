@@ -69,7 +69,7 @@
         explode: false
         schema:
           type: integer
-      - name: filter[request_details.account_to_change_role]
+      - name: filter[request_details.destination_account]
         in: query
         description: |
           Filters change_role requests by account to update kyc.
