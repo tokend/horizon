@@ -34,5 +34,5 @@ AccountRole:
         properties:
           details: 
             type: object
-            description: "free-form object to attach details to the role"
+            description: "free-form object to attach role details "
             additionalProperties: true
