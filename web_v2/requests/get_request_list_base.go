@@ -36,6 +36,9 @@ func NewGetRequestsBase(
 		supportedFilters:  mergedFilters,
 		supportedIncludes: mergedIncludes,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	pageParams, err := b.getCursorBasedPageParams()
 	if err != nil {
