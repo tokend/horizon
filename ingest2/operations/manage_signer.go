@@ -41,7 +41,7 @@ func (h *manageSignerOpHandler) Details(op rawOperation,
 		details := manageSignerOp.Data.MustUpdateData()
 		publicKey = xdr.AccountId(details.PublicKey)
 
-		opDetails.ManageSigner.CreateDetails = &history2.UpdateSignerDetails{
+		opDetails.ManageSigner.UpdateDetails = &history2.UpdateSignerDetails{
 			Details:  internal.MarshalCustomDetails(xdr.Longstring(details.Details)),
 			RoleID:   uint64(details.RoleId),
 			Identity: uint32(details.Identity),
