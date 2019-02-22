@@ -5,7 +5,7 @@ pageNumberParam:
   schema:
     type: integer
     minimum: 0
-  description: The number of page to return.
+  description: "Page number to return."
 pageLimitParam:
   in: query
   name: page[limit]
@@ -15,7 +15,7 @@ pageLimitParam:
     minimum: 1
     maximum: 100
     default: 15
-    description: The numbers of items per page to return.
+    description: "Numbers of items per page to return."
 sortingParam:
   in: query
   name: page[order]

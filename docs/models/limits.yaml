@@ -23,7 +23,7 @@ Limit:
         properties:
           account:
             type: object
-            description: "account related to the particular limit"
+            description: "account related to a particular limit"
             properties:
               data:
                 $ref: '#/components/schemas/AccountKey'
@@ -48,11 +48,11 @@ Limit:
           stats_op_type:
             type: integer
             format: int32
-            description: "defines operation type for which limit is applied. TODO: provide list of such operation"
+            description: "defines the type of operation for which a limit is applied. TODO: provide list of such an operation"
             example: 1
           is_convert_needed:
             type: bool
-            description: "if `true`, this limit is applied to operations in other assets beside on specified in `asset` relationships"
+            description: "if `true`, this limit is applied to operations in other assets except for those specified in `asset` relationships"
             example: true
           daily_out:
             type: string

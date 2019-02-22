@@ -13,14 +13,14 @@ KeyValueEntryKey:
         - "key-value-entries"
 
 
-# the specific example for uint64 value in kv-entry for using it in example response
-# TODO make proper one case (u32 OR u64 OR str) using in KeyValueEntryValue
+# specific example for uint64 value in the kv-entry for using it in the example response
+# TODO: make proper one case (u32 OR u64 OR str) using in KeyValueEntryValue
 KeyValueEntryValueU32:
   type: object
   description: |
-    Defines the value of KeyValueEntry.
-    Note that the only one value field is present, according to defined `type`.
-    All other fields are `null` or absent.\n
+    Defines the KeyValueEntry value .
+    Note that, according to the defined `type`, only one value field is present.
+    All other fields are either `null` or absent.\n
     Possible value fields:
     * `U32`
     * `U64`
@@ -30,18 +30,18 @@ KeyValueEntryValueU32:
   properties:
     type:
       type: object
-      descriprion: defines the type of the value stored in KV pair
+      descriprion: defines the type of value stored in the KV pair
       required:
         - name
       properties:
         name:
           type: string
           example: "uint32"
-          descriprion: defines the type name of the value stored in KV pair
+          descriprion: defines the type name of the value stored in the KV pair
         value:
           type: number
           example: 1
-          description: defines the code of type of the value stored in KV pair
+          description: defines the code of type of the value stored in the KV pair
     u_32:
       type: number
       example: 1
@@ -51,8 +51,8 @@ KeyValueEntryValueU64:
   type: object
   description: |
     Defines the value of KeyValueEntry.
-    Note that the only one value field is present, according to defined `type`.
-    All other fields are `null` or absent.\n
+    Note that according to the defined `type`, only one value field is present.
+    All other fields are either `null` or absent.\n
     Possible value fields:
     * `U32`
     * `U64`
@@ -62,18 +62,18 @@ KeyValueEntryValueU64:
   properties:
     type:
       type: object
-      descriprion: defines the type of the value stored in KV pair
+      descriprion: defines the type of the value stored in the KV pair
       required:
         - name
       properties:
         name:
           type: string
           example: "uint64"
-          descriprion: defines the type name of the value stored in KV pair
+          descriprion: defines the type name of the value stored in the KV pair
         value:
           type: number
           example: 3
-          description: defines the code of type of the value stored in KV pair
+          description: defines the code of type of the value stored in the KV pair
     u_64:
       type: number
       example: 1
@@ -84,8 +84,8 @@ KeyValueEntryValueStr:
   type: object
   description: |
     Defines the value of KeyValueEntry.
-    Note that the only one value field is present, according to defined `type`.
-    All other fields are `null` or absent.\n
+    Note that, according to the defined `type`, only one value field is present.
+    All other fields are either `null` or absent.\n
     Possible value fields:
     * `U32`
     * `U64`
@@ -95,18 +95,18 @@ KeyValueEntryValueStr:
   properties:
     type:
       type: object
-      descriprion: defines the type of the value stored in KV pair
+      descriprion: defines the type of the value stored in the KV pair
       required:
         - name
       properties:
         name:
           type: string
           example: "string"
-          descriprion: defines the type name of the value stored in KV pair
+          descriprion: defines the type name of the value stored in the KV pair
         value:
           type: number
           example: 2
-          description: defines the code of type of the value stored in KV pair
+          description: defines the code of type of the value stored in the KV pair
     str:
       type: string
       example: "example-value"
