@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -20,6 +21,7 @@ func isAllowed(r *http.Request, w http.ResponseWriter, dataOwners ...string) boo
 	constraints = append(constraints, doorman.SignerOf(ctx.CoreInfo(r).AdminAccountID))
 
 	err := ctx.Doorman(r, constraints...)
+
 	switch err {
 	case nil:
 		return true
@@ -29,6 +31,8 @@ func isAllowed(r *http.Request, w http.ResponseWriter, dataOwners ...string) boo
 		notAllowed := problems.NotAllowed()
 		notAllowed.Meta = &map[string]interface{}{
 			"cause": err.Error(),
+			// probably useful for debug
+			"checked_against": strings.Join(append(dataOwners, ctx.CoreInfo(r).AdminAccountID), ", "),
 		}
 		ape.RenderErr(w, notAllowed)
 		return false
