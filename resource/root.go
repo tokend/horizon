@@ -29,6 +29,9 @@ type Root struct {
 	CurrentTime        int64              `json:"current_time"`
 	Precision          int64              `json:"precision"`
 	XDRRevision        string             `json:"xdr_revision"`
+	HorizonRevision    string             `json:"horizon_revision"`
+	MasterAccountID    string             `json:"master_account_id"`
+	EnvironmentName    string             `json:"environment_name"`
 }
 
 // Populate fills in the details
