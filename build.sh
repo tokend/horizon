@@ -1,3 +1,9 @@
+mustOutputDir=$1
+if test -z "$mustOutputDir"; then
+	echo "Error! Output dir must be defined."
+	return
+fi
+
 mustTag=$(git tag -l --points-at HEAD)
 res=""
 
