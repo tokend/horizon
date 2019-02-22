@@ -1,4 +1,8 @@
-# Unreleased
+## Unreleased
+
+### Fixed
+
+* Returning account and signer rule action using xdr type in account and signer rules responses
 
 # 3.0.1-x.11
 
