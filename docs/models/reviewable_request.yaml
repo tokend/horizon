@@ -37,21 +37,21 @@ ReviewableRequest:
             - request_details
           properties:
             requestor:
-              description: "Requestor is a source account of the request."
+              description: "Requestor is a source account of the request (i.e., an account that created the request)."
               type: object
               properties:
                 data:
                   type: object
                   $ref: '#/components/schemas/AccountKey'
             reviewer:
-              description: "Reviewer is another account that reviews request."
+              description: "Reviewer is an account that reviews the request."
               type: object
               properties:
                 data:
                   type: object
                   $ref: '#/components/schemas/AccountKey'
             request_details:
-              description: "Details specific to concrete request"
+              description: "Details specific for a particular request"
               type: object
               properties:
                 data:
@@ -71,15 +71,15 @@ ReviewableRequest:
           properties:
             reject_reason:
               type: string
-              description: "Details on why request got rejected"
+              description: "Details on why a request has been rejected"
               example: "source account underfunded"
             hash:
               type: string
-              description: "Hash of concrete request"
+              description: "Hash of a particular request"
               example: "13935d561f9ec54341243e6afaf0c8bf936928b07f6600204ba8ca550757d0a6"
             all_tasks:
               type: integer
-              description: "All tasks that have been set for request"
+              description: "All tasks that have been set for a request"
               example: 12
             pending_tasks:
               type: integer
@@ -87,12 +87,12 @@ ReviewableRequest:
               example: 2
             created_at:
               type: string
-              description: "Time when request was submitted"
+              description: "Time when a request has been submitted"
               format: "date-time"
               example: "2012-11-01T22:08:41+00:00"
             updated_at:
               type: string
-              description: "Last time when request was updated"
+              description: "Last time when a request has been updated"
               format: "date-time"
               example: "2012-11-01T22:08:41+00:00"
             state:
@@ -109,4 +109,4 @@ ReviewableRequest:
               example: "719111a51cfc5ad214e4e90ce6610f10e1cba165fd1bc9db73a031352b3bb61c"
             external_details:
               type: object
-              description: "free-form object to attach details specific to request and/or request type"
+              description: "free-form object to attach details specific to a request and/or request type"

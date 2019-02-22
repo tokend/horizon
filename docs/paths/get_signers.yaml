@@ -10,7 +10,7 @@
     parameters:
     - name: id
       in: path
-      description: Unique identifier of account
+      description: Unique identifier of an account
       required: true
       style: simple
       explode: false
@@ -19,7 +19,7 @@
     - name: include
       in: query
       description: |
-        The following relationships can be included for the signers:
+        The following relationships can be included for signers:
       required: false
       style: form
       explode: false

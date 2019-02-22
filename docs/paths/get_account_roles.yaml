@@ -4,13 +4,13 @@
       - Account Roles
     summary: Account Role List
     description: |
-                  Allows to get list of `Account Role` with the corresponding details.
+                  Allows to get a list of `Account Role` with corresponding details.
     operationId: getAccountRoles
     parameters:
     - name: include
       in: query
       description: |
-        Relationships may be used for the included parameter.
+        Relationships that may be used for the included parameter.
       required: false
       style: form
       explode: false
@@ -22,7 +22,7 @@
     - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
-        description: succesfully retrived page
+        description: succesfully retrieved page
         content:
           application/vnd.api+json:
             schema:
@@ -42,18 +42,6 @@
                     type: object
                     oneOf:
                     - $ref: '#/components/schemas/AccountRule'
-                links:
-                  type: object
-                  description: "Provides links for pagination"
-                  properties:
-                    next:
-                      type: string
-                      description: "link to the next page"
-                      example: "/v3/account_roles?include=rules&page[number]=2&page[limit]=15"
-                    self:
-                      type: string
-                      description: "link to the current page"
-                      example: "/v3/account_roles?include=rules&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

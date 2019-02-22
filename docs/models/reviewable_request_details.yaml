@@ -45,7 +45,7 @@ CreateAssetDetails:
               example: "USD"
             policies:
               type: integer
-              description: "Policies set on asset creation"
+              description: "Policies specified for the asset creation"
               example: 12
             pre_issuance_asset_signer:
               type: string
@@ -58,7 +58,7 @@ CreateAssetDetails:
               format: Amount
             initial_preissued_amount:
               type: string
-              description: "Amount to issued on asset creation"
+              description: "Amount to be issued automatically right after the asset creation"
               example: "1000.123456"
               format: Amount
             creator_details:
@@ -89,7 +89,7 @@ UpdateAssetDetails:
           properties:
             policies:
               type: integer
-              description: "Policies set on asset creation"
+              description: "Policies specified for the asset creation"
               example: 12
             creator_details:
               type: object
@@ -117,6 +117,8 @@ CreatePreIssuanceDetails:
             - amount
             - signature
             - reference
+            - max_issuance_amount
+            - initial_preissued_amount
             - creator_details
           properties:
             amount:
@@ -130,7 +132,7 @@ CreatePreIssuanceDetails:
               example: "a343e3cbcc72928a571778f77bf2554eb5b72c79ce28bbc9d3325c60c21e5241"
             reference:
               type: string
-              description: "Reference for pre issuance request for it to not be submitted more than once"
+              description: "Reference on the pre issuance request (since it cannot be submitted more than once)"
               example: "a343e3cbcc72928a571778f77bf2554eb5b72c79ce28bbc9d3325c60c2123451"
             max_issuance_amount:
               type: string
@@ -139,7 +141,7 @@ CreatePreIssuanceDetails:
               format: Amount
             initial_preissued_amount:
               type: string
-              description: "Amount to issued on asset creation"
+              description: "Amount to be issued automatically right after the asset creation"
               example: "300.123456"
               format: Amount
             creator_details:
@@ -165,7 +167,7 @@ CreateIssuanceDetails:
                   $ref: '#/components/schemas/AssetKey'
             receiver:
               type: object
-              description: "Balance that will receive issued amount"
+              description: "Balance id that will receive the issued amount"
               properties:
                 data:
                   $ref: '#/components/schemas/BalanceKey'
@@ -196,7 +198,7 @@ CreateWithdrawDetails:
           properties:
             balance:
               type: object
-              description: "Balance to withdraw from"
+              description: "Balance id to withdraw from"
               properties:
                 data:
                   $ref: '#/components/schemas/BalanceKey'
@@ -272,12 +274,12 @@ CreateSaleDetails:
               format: Amount
             start_time:
               type: string
-              description: "Time when sale should start"
+              description: "Time when a sale should start"
               format: "date-time"
               example: "2012-11-01T22:08:41+00:00"
             end_time:
               type: string
-              description: "Time when sale should end"
+              description: "Time when a sale should end"
               format: "date-time"
               example: "2012-11-01T22:08:41+00:00"
             sale_type:
@@ -302,8 +304,13 @@ UpdateLimitsDetails:
         attributes:
           type: object
           required:
+            - document_hash
             - creator_details
           properties:
+            document_hash:
+              type: string
+              description: "Hash of a document"
+              example: "13935d561f9ec54341243e6afaf0c8bf936928b07f6600204ba8ca550757d0a6"
             creator_details:
               type: object
               description: "free-form object to attach details"
@@ -347,9 +354,9 @@ ChangeRoleDetails:
         relationships:
           type: object
           required:
-            - account_to_update_role
+            - destination_account
           properties:
-            account_to_update_role:
+            destination_account:
               type: object
               description: "Target account whose role is to be changed"
               properties:
@@ -381,7 +388,7 @@ ChangeRoleDetails:
                 description: "Free form object for request specific details"
             kyc_data:
               type: object
-              description: "Details related to request"
+              description: "Details related to a request"
 
 UpdateSaleDetailsDetails:
   allOf:
@@ -475,7 +482,6 @@ CreateAtomicSwapDetails:
           type: object
           required:
             - base_amount
-            - creator_details
           properties:
             base_amount:
               type: string

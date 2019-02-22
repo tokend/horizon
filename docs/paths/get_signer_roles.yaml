@@ -4,13 +4,13 @@
       - Signer Roles
     summary: Signer Role List
     description: |
-                  Allows to get list of `Signer Role` with the corresponding details.
+                  Allows to get a list of `Signer Role` with corresponding details.
     operationId: getSignerRoles
     parameters:
     - name: include
       in: query
       description: |
-        Relationships may be used for the included parameter.
+        Relationships that may be used for the included parameter.
       required: false
       style: form
       explode: false
