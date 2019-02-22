@@ -119,11 +119,11 @@ func (q *FeeEntryQ) ForAccountType(accountType *uint64) FeeEntryQI {
 	}
 
 	if accountType == nil {
-		q.sql = q.sql.Where("account_type = ?", -1)
+		q.sql = q.sql.Where("account_role = ?", -1)
 		return q
 	}
 
-	q.sql = q.sql.Where("account_type = ?", accountType)
+	q.sql = q.sql.Where("account_role = ?", accountType)
 	return q
 }
 
