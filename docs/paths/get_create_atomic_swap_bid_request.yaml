@@ -4,7 +4,7 @@
       - WIP
     summary: Create Atomic Swap Bid Request by ID
     description: |
-      Allows to get `CreateAtomicSwapBid` by ID
+      Allows to get `CreateAtomicSwapBid` by ID\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateAtomicSwapBidRequest
     parameters:

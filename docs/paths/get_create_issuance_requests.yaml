@@ -4,7 +4,7 @@
       - Issuance
     summary: Issuance Request List
     description: |
-      Allows to get a filtered list of `CreateIssuanceRequest` with details
+      Allows to get a filtered list of `CreateIssuanceRequest` with details\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateIssuanceRequests
     parameters:

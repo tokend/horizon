@@ -4,7 +4,7 @@
       - PreIssuance
     summary: PreIssuance Request List
     description: |
-      Allows to get a filtered list of `AssetCreateRequest` with details
+      Allows to get a filtered list of `AssetCreateRequest` with details\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getRequests
     parameters:

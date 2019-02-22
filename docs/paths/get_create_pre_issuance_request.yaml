@@ -4,7 +4,7 @@
       - PreIssuance
     summary: PreIssuance Request by ID
     description: |
-      Allows to get `CreatePreIssuance` by ID
+      Allows to get `CreatePreIssuance` by ID\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getCreatePreIssuanceRequest
     parameters:

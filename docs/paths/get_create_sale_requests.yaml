@@ -4,7 +4,7 @@
       - Crowd Investing
     summary: Create Sale Request List
     description: |
-      Allows to get a filtered list of `CreateSaleRequest` with details
+      Allows to get a filtered list of `CreateSaleRequest` with details\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateSaleRequests
     parameters:

@@ -4,7 +4,7 @@
       - WIP
     summary: Create Atomic Swap Bid Request List
     description: |
-      Allows to get a filtered list of `CreateAtomicSwapBidRequest` with details
+      Allows to get a filtered list of `CreateAtomicSwapBidRequest` with details\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateAtomicSwapBidRequests
     parameters:

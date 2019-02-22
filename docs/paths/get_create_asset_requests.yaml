@@ -4,7 +4,7 @@
       - Requests
     summary: Asset Creation Request List
     description: |
-      Allows to get a filtered list of `CreateAssetRequest` with details
+      Allows to get a filtered list of `CreateAssetRequest` with details\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateAssetRequests
     parameters:

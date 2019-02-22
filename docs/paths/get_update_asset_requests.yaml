@@ -4,8 +4,8 @@
       - Assets
     summary: Update Asset Request List
     description: |
-      Allows to get a filtered list of `UpdateAssetRequest` with details
-      🔒 Requestor's or reviewer's signature is needed
+                  Allows to get a filtered list of `UpdateAssetRequest` with details\n
+                  🔒 Requestor's or reviewer's signature is needed
     operationId: getUpdateAssetRequests
     parameters:
       - name: filter[requestor]

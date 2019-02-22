@@ -4,7 +4,7 @@
       - Assets
     summary: Update Asset Request by ID
     description: |
-      Allows to get `UpdateAssetRequest` by ID
+      Allows to get `UpdateAssetRequest` by ID\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getUpdateAssetRequest
     parameters:
