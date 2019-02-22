@@ -1,5 +1,12 @@
 # Unreleased
 
+### Fixed
+
+* 500 on `/history` when there are update signer role operations
+* pagination in docs
+* all endpoints in docs has padlocks and 401 errcode where needed
+* required & non-required fields
+
 # 3.0.1-x.10
 
 ### Added
@@ -22,10 +29,6 @@
 
 * Error codes
 * `request_details` format to satisfy JSON API spec
-* 500 on /history when there are update signer role operations
-* pagination in docs
-* all endpoints in docs has padlocks and 401 errcode where needed
-* required & non-required fields
 
 # 3.0.1-x.7
 
