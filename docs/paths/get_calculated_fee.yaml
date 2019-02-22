@@ -5,12 +5,12 @@
       - Accounts
     summary: Calculate fee
     description: |
-                  Allows to calculate fee for account.
+                  Allows to calculate a fee for an account.
     operationId: getCalculatedFee
     parameters:
     - name: asset
       in: path
-      description: Unique identifier of the asset
+      description: Unique identifier of an asset
       required: true
       style: simple
       explode: false
@@ -18,7 +18,7 @@
         type: string
     - name: fee_type
       in: path
-      description: Type of fee
+      description: Type of a fee
       required: true
       style: simple
       explode: false
@@ -26,7 +26,7 @@
         type: integer
     - name: subtype
       in: path
-      description: Subtype of fee
+      description: Subtype of a fee
       required: true
       style: simple
       explode: false
@@ -34,7 +34,7 @@
         type: integer
     - name: amount
       in: path
-      description: Amount to calculate fee based on
+      description: Amount to calculate on which a fee is based on
       required: true
       style: simple
       explode: false
@@ -43,7 +43,7 @@
         type: string
     responses:
       200:
-        description: fee exists and successfuly calculated
+        description: fee does exist and is calculated successfuly 
         content:
           application/vnd.api+json:
             schema:
@@ -59,7 +59,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       500:
-        description: internal error occured during processing of the request
+        description: internal error occured during the request processing
         content:
           application/vnd.api+json:
             schema:

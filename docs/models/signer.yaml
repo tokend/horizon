@@ -23,11 +23,11 @@ Signer:
           weight:
             type: integer
             format: uint32
-            description: "defines weight of the signature created by this signer"
+            description: "weight of the signature created by the signer"
           identity:
             type: integer
             format: uint32
-            description: "defines identity of the signer. Signatures of signers with same identity counted as one signature with max weight"
+            description: "identity of the signer (signatures of signers with the same identity are considered as one signature with max weight)"
           details:
             type: object
             additionalProperties: true
@@ -39,7 +39,7 @@ Signer:
           - account
         properties:
           role:
-            description: "Defines role of the signer"
+            description: "role of a signer"
             type: object
             properties:
               data:
@@ -47,7 +47,7 @@ Signer:
                 $ref: '#/components/schemas/SignerRoleKey'
           account:
             type: object
-            description: "Defines account which is controlled by this signer"
+            description: "account controlled by this signer"
             properties:
               data:
                 type: object

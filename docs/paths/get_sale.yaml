@@ -9,7 +9,7 @@
     parameters:
     - name: id
       in: path
-      description: Unique identifier of account
+      description: Unique identifier of an account
       required: true
       style: simple
       explode: false
@@ -19,7 +19,7 @@
     - name: include
       in: query
       description: |
-                    Relationships may be used for the included parameter.
+                    Relationships that may be used for the included parameter.
       required: false
       style: form
       explode: false
@@ -54,7 +54,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       404:
-        description: such an sale does not exist
+        description: such a sale does not exist
         content:
           application/vnd.api+json:
             schema:

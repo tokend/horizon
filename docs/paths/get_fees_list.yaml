@@ -4,7 +4,7 @@
       - Fees
     summary: Fee List
     description: |
-      Allows to get a filtered list of `Fee` with the corresponding details.
+      Allows to get a filtered list of `Fee` with corresponding details.
     operationId: getFeesList
     parameters:
       - name: filter[asset]
@@ -73,7 +73,7 @@
       - name: include
         in: query
         description: |
-          Relationships may be used for the included parameter.
+          Relationships that may be used for the included parameter.
         required: false
         style: form
         explode: false

@@ -4,7 +4,7 @@
       - Crowd Investing
     summary: Sale List
     description: |
-                  Allows to get a filtered list of `Sale` with the corresponding details.
+                  Allows to get a filtered list of `Sale` with corresponding details.
     operationId: getSales
     parameters:
     - name: filter[owner]
@@ -140,12 +140,12 @@
       style: form
       explode: false
       schema:
-        type: integer # todo provide list of sale types
+        type: integer # todo provide a list of sale types
         example: 1
     - name: include
       in: query
       description: |
-        Relationships may be used for the included parameter.
+        Relationships that may be used for the included parameter.
       required: false
       style: form
       explode: false

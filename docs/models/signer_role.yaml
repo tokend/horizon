@@ -29,7 +29,7 @@ SignerRole:
                 items:
                   $ref: '#/components/schemas/SignerRuleKey'
           owner:
-            description: "Defines owner of the role"
+            description: "Owner of the role"
             type: object
             properties:
               data:

@@ -6,8 +6,8 @@
     description: |
                   Allows to get a filtered list of `Offer` with the corresponding details.\n
                   🔒 The signature is needed in such cases:\n
-                    1. admin account's signature if no filters applied.\n
-                    2. signature of the account by which filter was requested\n
+                    1. if no filters applied, admin account's signature is required.\n
+                    2. if filters are applied, signature of the account by which the filter was requested is required\n
     operationId: getOffers
     parameters:
     - name: filter[base_balance]
@@ -57,7 +57,7 @@
     - name: filter[owner]
       in: query
       description: |
-                    Filters offers by specified account that created the offer
+                    Offers are filtered by specified account that created the offer
       required: false
       style: form
       explode: false
@@ -68,9 +68,9 @@
     - name: filter[order_book]
       in: query
       description: |
-                   Filters offers by specified order book ID
-                   Defines whether searching of sale offers or trade offers
-                   (0 - secondary market, saleId - for specific sale, -1 - to all, except)
+                   Offers are filtered by specified order book ID
+                   Defines whether offers are for sale or for trade
+                   (0 - secondary market, saleId - for specific sale)
       required: false
       style: form
       explode: false
@@ -81,10 +81,10 @@
     - name: filter[is_buy]
       in: query
       description: |
-                    Defines whether searching of offer on buying base_asset, selling it, or both
-                    * if `is_buy == true` -> filtering only buying `base_asset` offers
-                    * if `is_buy == false` -> filtering only selling `base_asset` offers
-                    * if `is_buy` is not specified -> filtering both of buying & selling `base_asset` offers
+                    Defines whether an offer is on buying or selling  base_asset, or both
+                    * if `is_buy == true` -> only buy `base_asset` offers are filtered 
+                    * if `is_buy == false` -> only sell `base_asset` offers are filtered
+                    * if `is_buy` is not specified -> both buy and sell `base_asset` offers are filtered
       required: false
       style: form
       explode: false
@@ -95,7 +95,7 @@
     - name: include
       in: query
       description: |
-                    Relationships may be used for the included parameter.
+                    Relationships that may be used for the included parameter.
       required: false
       style: form
       explode: false
@@ -146,7 +146,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       401:
-        description: invalid signature is provided or a signer is not authorized to access specified resources
+        description: either an invalid signature has been provided or a signer has not been authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:
