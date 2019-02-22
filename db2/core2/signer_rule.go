@@ -8,7 +8,7 @@ import (
 type SignerRule struct {
 	ID        uint64                 `db:"id"`
 	Resource  xdr.SignerRuleResource `db:"resource"`
-	Action    string                 `db:"action"`
+	Action    int32                  `db:"action"`
 	Forbids   bool                   `db:"forbids"`
 	IsDefault bool                   `db:"is_default"`
 	OwnerID   string                 `db:"owner_id"`

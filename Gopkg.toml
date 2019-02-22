@@ -103,7 +103,7 @@
   branch = "feature/roles_rules"
 
 [[constraint]]
-  branch = "feature/account_role"
+  branch = "fix/rules_action"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

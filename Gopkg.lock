@@ -542,15 +542,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/account_role"
-  digest = "1:56f0605ce3924ebdbdac23023049e90709749f73db7dd10084975cee06a6158f"
+  branch = "fix/rules_action"
+  digest = "1:f166857c9e9a8cfec1eca55c04837992e07d13ba5f66370c4a2d3df6caf92bcb"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "2a37997ea0b7c38820d1551178befa3f9bf628c2"
+  revision = "994091a604885cb12cabbee789ba5797e0350b82"
 
 [[projects]]
   branch = "master"

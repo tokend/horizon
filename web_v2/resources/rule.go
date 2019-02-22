@@ -3,6 +3,8 @@ package resources
 import (
 	"strconv"
 
+	"gitlab.com/tokend/go/xdr"
+
 	"gitlab.com/tokend/horizon/db2/core2"
 
 	"gitlab.com/tokend/regources/v2"
@@ -14,7 +16,7 @@ func NewAccountRule(rule core2.AccountRule) regources.AccountRule {
 		Key: NewAccountRuleKey(rule.ID),
 		Attributes: regources.AccountRuleAttr{
 			Resource: rule.Resource,
-			Action:   rule.Action,
+			Action:   xdr.AccountRuleAction(rule.Action),
 			Forbids:  rule.Forbids,
 			Details:  rule.Details,
 		},
@@ -37,7 +39,7 @@ func NewSignerRule(rule core2.SignerRule) regources.SignerRule {
 		},
 		Attributes: regources.SignerRuleAttr{
 			Resource:  rule.Resource,
-			Action:    rule.Action,
+			Action:    xdr.SignerRuleAction(rule.Action),
 			Forbids:   rule.Forbids,
 			IsDefault: rule.IsDefault,
 			Details:   rule.Details,
