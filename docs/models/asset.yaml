@@ -18,7 +18,7 @@ Asset:
     properties:
       relationships:
         type: object
-        reqiired: [owner]
+        required: [owner]
         properties:
           owner:
             type: object
