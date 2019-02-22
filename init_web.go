@@ -321,9 +321,9 @@ func initWebActions(app *App) {
 				action.q = action.q.KYCByAccountToUpdateKYC(account)
 			}
 
-			action.q = action.q.KYCByMaskSet(maskSet, maskSetPartialEq)
+			action.q = action.q.ByMaskSet(maskSet, maskSetPartialEq)
 			if maskNotSet != nil {
-				action.q = action.q.KYCByMaskNotSet(*maskNotSet)
+				action.q = action.q.ByMaskNotSet(*maskNotSet)
 			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeChangeRole},

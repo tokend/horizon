@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -29,6 +30,7 @@ func (action *RootAction) JSON() {
 	res.AdminAccountID = action.App.CoreInfo.AdminAccountID
 	res.MasterExchangeName = action.App.CoreInfo.MasterExchangeName
 	res.TxExpirationPeriod = action.App.CoreInfo.TxExpirationPeriod
+	res.XDRRevision = xdr.Revision
 
 	hal.Render(action.W, res)
 }

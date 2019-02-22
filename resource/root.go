@@ -28,6 +28,7 @@ type Root struct {
 	TxExpirationPeriod int64              `json:"tx_expiration_period"`
 	CurrentTime        int64              `json:"current_time"`
 	Precision          int64              `json:"precision"`
+	XDRRevision        string             `json:"xdr_revision"`
 }
 
 // Populate fills in the details

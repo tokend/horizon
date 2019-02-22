@@ -1,9 +1,22 @@
 # Unreleased
 
+# 3.0.1-x.10
+
+### Added
+
+* Added xdr revision to root response
+
+### Fixed
+* Fixed issue with empty filter present in url params handled as requested filter
+
+# 3.0.1-x.9
+
 ### Changed
 
 * Rename `Details`/`Reason`/`NewDetails` field names in operation which create reqeusts unified to `creatorDetails`
 * Rename isForbid to forbids
+* Fixed issues with fee
+* Fixed issues with filters by flags or dest account for change role requests in v1
 
 ### Fixed
 
