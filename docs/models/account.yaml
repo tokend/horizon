@@ -20,19 +20,17 @@ Account:
         type: object
         required:
           - balances
-          - limits
-          - external-system-ids
           - role
         properties:
           referrer:
-            description: "Referrer is another account that brought this account into the system."
+            description: "Referrer is another account that introduced this account into the system."
             type: object
             properties:
               data:
                 type: object
                 $ref: '#/components/schemas/AccountKey'
           balances:
-            description: "Defines balances that are owned by this account"
+            description: "Defines balances of this account"
             type: object
             properties:
               data:
@@ -40,7 +38,7 @@ Account:
                 items:
                   $ref: '#/components/schemas/BalanceKey'
           limits:
-            description: "Defines limits that are actual for this account"
+            description: "Defines limits specified for this account"
             type: object
             properties:
               data:
@@ -57,7 +55,7 @@ Account:
                   $ref: '#/components/schemas/ExternalSystemIDKey'
           role:
             type: object
-            description: "Defines role of this account"
+            description: "Defines the role of this account"
             properties:
               data:
                 type: object

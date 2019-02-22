@@ -4,7 +4,8 @@
       - AMLAlert
     summary: AMLAlert by ID
     description: |
-      Allows to get `CreateAmlAlert` by ID
+      Allows to get `CreateAmlAlert` by ID\n
+      🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateAmlAlertRequest
     parameters:
       - name: filter[requestor]
@@ -112,6 +113,12 @@
                       - $ref: '#/components/schemas/Balance'
       400:
         description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      401:
+        description: invalid signature is provided or a signer is not authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:

@@ -6,7 +6,7 @@ AssetPairKey:
   properties:
     id:
       type: string
-      description: here comes the string of form `BASE:QUOTE`
+      description: "string of the `BASE:QUOTE` form"
       example: "BTC:ETH"
     type:
       type: string
@@ -26,13 +26,13 @@ AssetPair:
         properties:
           base_asset:
             type: object
-            description: "defines the base asset of the asset pair"
+            description: "defines the base asset of an asset pair"
             properties:
               data:
                 $ref: '#/components/schemas/AssetKey'
           quote_asset:
             type: object
-            description: "defines the quote asset of the asset pair"
+            description: "defines the quote asset of an asset pair"
             properties:
               data:
                 $ref: '#/components/schemas/AssetKey'
@@ -46,8 +46,8 @@ AssetPair:
             type: string
             example: "3.000000"
             format: Amount
-            description: "defines the price in asset pair as the amount of quote asset that would the 1 base asset cost"
+            description: "defines an asset pair price as quote asset divided by base asset (i.e., amount of quote asset per 1 base asset)"
           policies:
             type: object
-            decription: "Defines properties of the asset pair"
+            decription: "Defines asset pair properties "
             $ref: '#/components/schemas/AssetPairPolicyMask'

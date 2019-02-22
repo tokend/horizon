@@ -6,7 +6,7 @@
     description: |
                   Allows to get a filtered list of `Offer` with the corresponding details.\n
                   🔒 The signature is needed in such cases:\n
-                    1. master account's signature if no filters applied.\n
+                    1. admin account's signature if no filters applied.\n
                     2. signature of the account by which filter was requested\n
     operationId: getOffers
     parameters:
@@ -134,19 +134,19 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/offers?include=owner&page[number]=2&page[limit]=15"
+                      example: "/v3/offers?include=base_asset&page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/offers?include=owner&page[number]=1&page[limit]=15"
+                      example: "/v3/offers?include=base_asset&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:
           application/vnd.api+json:
             schema:
               $ref: '#/components/schemas/Errors'
-      404:
-        description: offer does not exist
+      401:
+        description: invalid signature is provided or a signer is not authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:

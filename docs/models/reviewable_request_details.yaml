@@ -117,8 +117,6 @@ CreatePreIssuanceDetails:
             - amount
             - signature
             - reference
-            - max_issuance_amount
-            - initial_preissued_amount
             - creator_details
           properties:
             amount:
@@ -304,13 +302,8 @@ UpdateLimitsDetails:
         attributes:
           type: object
           required:
-            - document_hash
             - creator_details
           properties:
-            document_hash:
-              type: string
-              description: "Hash of the document"
-              example: "13935d561f9ec54341243e6afaf0c8bf936928b07f6600204ba8ca550757d0a6"
             creator_details:
               type: object
               description: "free-form object to attach details"
@@ -354,9 +347,9 @@ ChangeRoleDetails:
         relationships:
           type: object
           required:
-            - destination_account
+            - account_to_update_role
           properties:
-            destination_account:
+            account_to_update_role:
               type: object
               description: "Target account whose role is to be changed"
               properties:
@@ -482,6 +475,7 @@ CreateAtomicSwapDetails:
           type: object
           required:
             - base_amount
+            - creator_details
           properties:
             base_amount:
               type: string

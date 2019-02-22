@@ -4,7 +4,8 @@
       - Limits
     summary: Update Limits Request by ID
     description: |
-      Allows to get `UpdateLimits` by ID
+      Allows to get `UpdateLimits` by ID\n
+      🔒 Requestor's or reviewer's signature is needed
     operationId: getUpdateLimitsRequest
     parameters:
       - name: filter[requestor]
@@ -105,6 +106,7 @@
           application/vnd.api+json:
             schema:
               $ref: '#/components/schemas/Errors'
+
       404:
         description: request does not exist
         content:

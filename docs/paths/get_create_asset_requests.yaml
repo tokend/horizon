@@ -4,7 +4,8 @@
       - Requests
     summary: Asset Creation Request List
     description: |
-      Allows to get a filtered list of `CreateAssetRequest` with details
+      Allows to get a filtered list of `CreateAssetRequest` with details\n
+      🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateAssetRequests
     parameters:
       - name: filter[requestor]
@@ -129,6 +130,12 @@
                       example: "/v3/create_asset_requests?include=details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      401:
+        description: invalid signature is provided or a signer is not authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:

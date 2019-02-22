@@ -18,16 +18,26 @@ Asset:
     properties:
       relationships:
         type: object
+        required: [owner]
         properties:
           owner:
             type: object
-            description: "Owner of the asset"
+            description: "Owner of an asset"
             properties:
               data:
                 type: object
                 $ref: '#/components/schemas/AccountKey'
       attributes:
         type: object
+        required:
+          - pre_issuance_asset_signer
+          - details
+          - max_issuance_amount
+          - available_for_issuance
+          - issued
+          - pending_issuance
+          - policies
+          - trailing_digits
         properties:
           pre_issuance_asset_signer:
             type: string
@@ -35,32 +45,32 @@ Asset:
             example: "GBSR6JG5AYSAW7HK6EGJFYVIVN54LVGSY3ZLJ6X3IBQZ766EJABCZQTH"
           max_issuance_amount:
             type: string
-            description: "Max volume of the asset that can be in circulation"
+            description: "Max volume of an asset that can be in circulation"
             example: "1000.000001"
             format: Amount
           available_for_issuance:
             type: string
-            description: "Volume of the asset that is authorized to be issued by an asset owner"
+            description: "Asset volume authorized to be issued by an asset owner"
             example: "20.000000"
             format: Amount
           issued:
             type: string
-            description: "Volume of the asset that is currently in circulation"
+            description: "Asset volume that is currently in circulation"
             example: "10.000000"
             format: Amount
           pending_issuance:
             type: string
-            description: "Volume of the asset locked by the system to be distributed via [asset sale↪](https://tokend.gitbook.io/knowledge-base/platform-features/crowdfunding)"
+            description: "Asset volume to be distributed via [asset sale↪](https://tokend.gitbook.io/knowledge-base/platform-features/crowdfunding) but currently locked by the system"
             example: "123.000123"
             format: Amount
           policies:
             type: object
-            decription: "Defines properties of the asset"
+            decription: "Defines properties of an asset"
             $ref: '#/components/schemas/AssetPolicyMask'
           trailing_digits:
             type: integer
             format: int32
-            description: "Number of significant digits after point"
+            description: "Number of significant digits after the point"
             maximum: 6
             minimum: 0
             example: 2

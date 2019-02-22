@@ -93,11 +93,11 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/fees?include=asset&page[number]=2&page[limit]=15"
+                      example: "/v3/assets_pairs?include=base_asset&page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/fees?include=asset&page[number]=1&page[limit]=15"
+                      example: "/v3/assets_pairs?include=base_asset&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

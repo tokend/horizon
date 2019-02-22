@@ -26,7 +26,7 @@ BalanceState:
             type: string
             example: "1200.123456"
             format: Amount
-            description: "Amount available to be spent by the account"
+            description: "Amount available to be spent by an account"
           locked:
             type: string
             example: "10.123456"
@@ -58,7 +58,7 @@ Balance:
         properties:
           asset:
             type: object
-            description: "asset of the balance"
+            description: "asset the balance of which is shown"
             properties:
               data:
                 $ref: '#/components/schemas/AssetKey'

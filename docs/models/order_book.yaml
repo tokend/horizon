@@ -52,6 +52,9 @@ OrderBookEntry:
             example: "2012-11-01T22:08:41+00:00"
       relationships:
         type: object
+        required:
+          - base_asset
+          - quote_asset
         properties:
           base_asset:
             type: object
