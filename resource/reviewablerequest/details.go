@@ -7,7 +7,7 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-func PopulateDetails(requestType xdr.ReviewableRequestType, h history.ReviewableRequestDetails) (
+func PopulateDetails(request *history.ReviewableRequest, requestType xdr.ReviewableRequestType, h history.ReviewableRequestDetails) (
 	d *regources.ReviewableRequestDetails, err error,
 ) {
 	d = &regources.ReviewableRequestDetails{}
@@ -39,7 +39,7 @@ func PopulateDetails(requestType xdr.ReviewableRequestType, h history.Reviewable
 		d.AMLAlert, err = PopulateAmlAlertRequest(*h.AmlAlert)
 		return
 	case xdr.ReviewableRequestTypeChangeRole:
-		d.ChangeRole, err = PopulateChangeRoleRequest(*h.ChangeRole)
+		d.ChangeRole, err = PopulateChangeRoleRequest(request, *h.ChangeRole)
 		return
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		d.UpdateSaleDetails, err = PopulateUpdateSaleDetailsRequest(*h.UpdateSaleDetails)
