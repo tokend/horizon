@@ -5,6 +5,7 @@
     summary: Create Atomic Swap Bid Request by ID
     description: |
       Allows to get `CreateAtomicSwapBid` by ID
+      🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateAtomicSwapBidRequest
     parameters:
       - name: filter[requestor]
@@ -114,6 +115,12 @@
                       - $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      401:
+        description: invalid signature is provided or a signer is not authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:

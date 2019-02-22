@@ -5,6 +5,7 @@
     summary: Withdrawal Request List
     description: |
       Allows to get a filtered list of `CreateWithdrawRequest` with details
+      🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateWithdrawRequests
     parameters:
       - name: filter[requestor]
@@ -129,6 +130,12 @@
                       example: "/v3/create_withdraw_requests?include=details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      401:
+        description: invalid signature is provided or a signer is not authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:
