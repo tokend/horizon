@@ -1,9 +1,13 @@
 # Unreleased
 
+# 3.0.1-x.9
+
 ### Changed
 
 * Rename Details`/`Reason`/`NewDetails` field names in operation which create reqeusts unified to `creatorDetails`
 * Rename isForbid to forbids
+* Fixed issues with fee
+* Fixed issues with filters by flags or dest account for change role requests in v1
 
 ### Fixed
 
