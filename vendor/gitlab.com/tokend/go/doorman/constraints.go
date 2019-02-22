@@ -10,6 +10,7 @@ func SignerOf(address string) SignerConstraint {
 	return func(r *http.Request, doorman Doorman) error {
 		signer, err := signcontrol.CheckSignature(r)
 		if err != nil {
+			fmt.Printf("DEBUG: signer of %s: CheckSignature: %v\n", address, err)
 			return err
 		}
 
@@ -18,6 +19,7 @@ func SignerOf(address string) SignerConstraint {
 		}
 		signers, err := doorman.AccountSigners(address)
 		if err != nil {
+			fmt.Printf("DEBUG: signer of %s: AccountSigners: %v\n", address, err)
 			return err
 		}
 
@@ -26,6 +28,7 @@ func SignerOf(address string) SignerConstraint {
 				return nil
 			}
 		}
+		fmt.Printf("DEBUG: signer of %s: NotASigner\n", address)
 		return signcontrol.ErrNotAllowed
 	}
 }
