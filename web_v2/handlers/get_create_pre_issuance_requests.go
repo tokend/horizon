@@ -32,7 +32,7 @@ func GetCreatePreIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.Filters.Requestor, request.Filters.Reviewer) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
 		return
 	}
 
