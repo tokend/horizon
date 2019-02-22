@@ -227,6 +227,20 @@ func (r *base) getFilters(supportedFilters map[string]struct{}) (map[string]stri
 				}
 			}
 
+			if len(values) == 0 {
+				continue
+			}
+
+			if len(values) > 1 {
+				return nil, validation.Errors{
+					queryParam: errors.New("multiple values per one filter are not supported"),
+				}
+			}
+
+			if values[0] == "" {
+				continue
+			}
+
 			filters[filterKey] = values[0]
 		}
 	}
