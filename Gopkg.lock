@@ -507,8 +507,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/roles_rules"
-  digest = "1:7a4598bffb844676ce0522bcf5b475801dbcc617ff1c0fbd4a64df5f147ff1f1"
+  branch = "fix/fee_amount_precision"
+  digest = "1:0ded0b768263ac1275fac06445ff76743a8c1b252d364b430eb1c6cecb330fee"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -526,7 +526,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "ea4b17532366fef881d190a059d4675d8a04a273"
+  revision = "a59182e659b4dd1b1f5ba18958ba05408f694855"
 
 [[projects]]
   branch = "master"

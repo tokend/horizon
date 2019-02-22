@@ -100,7 +100,7 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/roles_rules"
+  branch = "fix/fee_amount_precision"
 
 [[constraint]]
   branch = "fix/rules_action"
