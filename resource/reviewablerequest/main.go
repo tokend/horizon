@@ -24,7 +24,7 @@ func PopulateReviewableRequest(request *history.ReviewableRequest) (r *regources
 	r.CreatedAt = regources.Time(request.CreatedAt)
 	r.UpdatedAt = regources.Time(request.UpdatedAt)
 
-	r.Details, err = PopulateDetails(request.RequestType, request.Details)
+	r.Details, err = PopulateDetails(request, request.RequestType, request.Details)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to populate reviewable request details")
 	}

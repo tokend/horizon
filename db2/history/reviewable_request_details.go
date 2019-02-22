@@ -115,8 +115,6 @@ type ChangeRoleRequest struct {
 	DestinationAccount string                 `json:"destination_account"`
 	AccountRoleToSet   uint64                 `json:"account_role_to_set"`
 	KYCData            map[string]interface{} `json:"kyc_data"`
-	AllTasks           uint32                 `json:"all_tasks"`
-	PendingTasks       uint32                 `json:"pending_tasks"`
 	SequenceNumber     uint32                 `json:"sequence_number"`
 }
 
