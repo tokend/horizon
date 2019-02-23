@@ -90,7 +90,7 @@ var messages = map[string]string{
 	"op_not_found":                                      "Not found",
 	"op_too_many_invoices":                              "Too many invoices",
 	"op_can_not_delete_in_progress":                     "Cannot delete request while it is progress",
-	"op_invalid_external_details":                       "External details are too long",
+	"op_invalid_external_details":                       "External details are invalid",
 	"op_asset_is_not_withdrawable":                      "It is not allowed to withdraw specified asset",
 	"op_conversion_price_is_not_available":              "Conversion price is not available",
 	"op_conversion_overflow":                            "Overflow during conversion",
