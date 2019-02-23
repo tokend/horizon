@@ -38,7 +38,7 @@ Errors:
                 example: "include"
               error:
                 type: string
-                description: "Defines what is wrong with the specifed field"
+                description: "Defines what is wrong with the specific field"
                 example: "`invalid_include` is not supported; supported values`: [balances balances.asset balances.state referrer role role.rules]"
 
           

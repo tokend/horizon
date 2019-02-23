@@ -30,7 +30,7 @@ AccountRule:
             example: false
           details: 
             type: object
-            description: "free-form object to attach the rule details"
+            description: "free-form object to attach rule details"
             additionalProperties: true
           resource:
             type: object

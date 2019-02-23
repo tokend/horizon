@@ -48,7 +48,7 @@ Limit:
           stats_op_type:
             type: integer
             format: int32
-            description: "defines the type of operation for which a limit is applied. TODO: provide list of such an operation"
+            description: "defines the type of operation for which a limit is applied. TODO: provide a list of such operations"
             example: 1
           is_convert_needed:
             type: bool
