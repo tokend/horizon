@@ -428,13 +428,12 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "fix/asset_type_in_response"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2"
   ]
-  revision = "38f01aa8a0f70772f5a9014ced2815673d28d158"
+  revision = "88415c5c235030bdc53059c0cae074239601844c"
 
 [[projects]]
   branch = "master"
@@ -518,6 +517,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3b0272923d2d9318daa08bebb12a28349cd485fbcc7b6a3d1bdeb878cf1b7d61"
+  inputs-digest = "d57e19b860f32a1ae628caa58273caf1711c632c6b5b34d3126d8f418761dbe1"
   solver-name = "gps-cdcl"
   solver-version = 1

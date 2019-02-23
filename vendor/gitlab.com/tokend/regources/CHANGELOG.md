@@ -12,8 +12,6 @@
 * (internal) proper types for reviewable requests amounts
 * (internal) removed KYCData from ChangeRoleRequest
 
-## Unreleased
-
 ### Changed
 
 * Rename is_forbid to forbids
@@ -30,6 +28,7 @@
 ### Added
 
 * Relations `Limits` and `ExternalSystemIDs` to Account
+* Extended Fee type to it as flag
 
 ## 3.0.1-x.0
 
