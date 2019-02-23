@@ -6,7 +6,6 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	history "gitlab.com/tokend/horizon/db2/history2"
@@ -252,8 +251,8 @@ func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRe
 		Asset:                  string(request.Code),
 		Policies:               int32(request.Policies),
 		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
-		MaxIssuanceAmount:      amount.StringU(uint64(request.MaxIssuanceAmount)),
-		InitialPreissuedAmount: amount.StringU(uint64(request.InitialPreissuedAmount)),
+		MaxIssuanceAmount:      regources.Amount(request.MaxIssuanceAmount),
+		InitialPreissuedAmount: regources.Amount(request.InitialPreissuedAmount),
 		CreatorDetails:         internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
@@ -276,7 +275,7 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 
 	return &history.CreatePreIssuanceRequest{
 		Asset:     string(request.Asset),
-		Amount:    amount.StringU(uint64(request.Amount)),
+		Amount:    regources.Amount(request.Amount),
 		Signature: signature,
 		Reference: string(request.Reference),
 	}, nil
@@ -285,7 +284,7 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceRequest) *history.CreateIssuanceRequest {
 	return &history.CreateIssuanceRequest{
 		Asset:          string(request.Asset),
-		Amount:         amount.StringU(uint64(request.Amount)),
+		Amount:         regources.Amount(request.Amount),
 		Receiver:       request.Receiver.AsString(),
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
@@ -293,10 +292,12 @@ func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceReque
 
 func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.CreateWithdrawalRequest {
 	return &history.CreateWithdrawalRequest{
-		BalanceID:      request.Balance.AsString(),
-		Amount:         amount.StringU(uint64(request.Amount)),
-		FixedFee:       amount.StringU(uint64(request.Fee.Fixed)),
-		PercentFee:     amount.StringU(uint64(request.Fee.Percent)),
+		BalanceID: request.Balance.AsString(),
+		Amount:    regources.Amount(request.Amount),
+		Fee: regources.Fee{
+			Fixed:             regources.Amount(request.Fee.Fixed),
+			CalculatedPercent: regources.Amount(request.Fee.Percent),
+		},
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
@@ -304,8 +305,8 @@ func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalR
 func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.CreateAmlAlertRequest {
 	return &history.CreateAmlAlertRequest{
 		BalanceID:      request.BalanceId.AsString(),
-		Amount:         amount.StringU(uint64(request.Amount)),
-		CreatorDetails: string(request.CreatorDetails),
+		Amount:         regources.Amount(request.Amount),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
 
@@ -319,19 +320,17 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 	}
 
 	saleType := request.SaleTypeExt.SaleType
-	baseAssetForHardCap := uint64(request.RequiredBaseAssetForHardCap)
-
 	return &history.CreateSaleRequest{
 		BaseAsset:           string(request.BaseAsset),
 		DefaultQuoteAsset:   string(request.DefaultQuoteAsset),
 		StartTime:           unixToTime(int64(request.StartTime)),
 		EndTime:             unixToTime(int64(request.EndTime)),
-		SoftCap:             amount.StringU(uint64(request.SoftCap)),
-		HardCap:             amount.StringU(uint64(request.HardCap)),
+		SoftCap:             regources.Amount(request.SoftCap),
+		HardCap:             regources.Amount(request.HardCap),
 		CreatorDetails:      internal.MarshalCustomDetails(request.CreatorDetails),
 		QuoteAssets:         quoteAssets,
 		SaleType:            saleType,
-		BaseAssetForHardCap: amount.StringU(baseAssetForHardCap),
+		BaseAssetForHardCap: regources.Amount(request.RequiredBaseAssetForHardCap),
 	}
 }
 
@@ -348,7 +347,7 @@ func (c *reviewableRequestHandler) getChangeRoleRequest(request *xdr.ChangeRoleR
 	return &history.ChangeRoleRequest{
 		DestinationAccount: request.DestinationAccount.Address(),
 		AccountRoleToSet:   uint64(request.AccountRoleToSet),
-		KYCData:            internal.MarshalCustomDetails(request.CreatorDetails),
+		CreatorDetails:     internal.MarshalCustomDetails(request.CreatorDetails),
 		SequenceNumber:     uint32(request.SequenceNumber),
 	}
 }
@@ -373,7 +372,7 @@ func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.
 
 	return &history.CreateAtomicSwapBidRequest{
 		BaseBalance:    request.BaseBalance.AsString(),
-		BaseAmount:     uint64(request.Amount),
+		BaseAmount:     regources.Amount(request.Amount),
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 		QuoteAssets:    quoteAssets,
 	}
@@ -383,7 +382,7 @@ func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.ASwapReques
 ) *history.CreateAtomicSwapRequest {
 	return &history.CreateAtomicSwapRequest{
 		BidID:      uint64(request.BidId),
-		BaseAmount: uint64(request.BaseAmount),
+		BaseAmount: regources.Amount(request.BaseAmount),
 		QuoteAsset: string(request.QuoteAsset),
 	}
 }
