@@ -456,12 +456,12 @@
   revision = "cbfb465258955230864e0a76aba0ff2738000782"
 
 [[projects]]
-  digest = "1:3df87a93bc69cac82db717975d6871d56b39a9d136b949f57836aecf79c2c4c4"
+  digest = "1:9f2e5773f3db6a054064e5954ecde778e40fdf46d65291343aa62cd960be9e71"
   name = "gitlab.com/distributed_lab/figure"
   packages = ["."]
   pruneopts = "UT"
-  revision = "4465722a2b24cd44606a0b8d2885077c476302be"
-  version = "v1.3"
+  revision = "051cfa07db4c210b6eccc26ba4294481cf5f5c5e"
+  version = "v2.0.0"
 
 [[projects]]
   branch = "master"
@@ -654,6 +654,7 @@
     "bitbucket.org/ww/goautoneg",
     "github.com/asaskevich/govalidator",
     "github.com/cheekybits/genny/generic",
+    "github.com/davecgh/go-spew/spew",
     "github.com/evalphobia/logrus_sentry",
     "github.com/getsentry/raven-go",
     "github.com/go-chi/chi",
