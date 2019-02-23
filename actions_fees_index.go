@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-errors/errors"
 	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
@@ -63,14 +62,6 @@ func (action *FeesAllAction) getAccountType(name string) *int32 {
 }
 
 func (action *FeesAllAction) loadData() {
-	var ledgerHeader core.LedgerHeader
-	err := action.CoreQ().LedgerHeaderBySequence(&ledgerHeader, ledger.CurrentState().Core.Latest)
-	if err != nil {
-		action.Log.WithError(err).Error("Failed to get latest ledger")
-		action.Err = &problem.ServerError
-		return
-	}
-
 	q := action.CoreQ().FeeEntries()
 	// for the overview we need to return all the fee rules we have, so we just ignore filters
 	if !action.IsOverview {

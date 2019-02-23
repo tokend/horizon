@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	"gitlab.com/tokend/go/xdr"
+
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/regources/v2"
 )
@@ -21,11 +23,12 @@ func NewFee(record core2.Fee) regources.FeeRecord {
 			Fixed:   regources.Amount(record.Fixed),
 			Percent: regources.Amount(record.Percent),
 			AppliedTo: regources.FeeAppliedTo{
-				Asset:      record.Asset,
-				Subtype:    record.Subtype,
-				FeeType:    record.FeeType,
-				LowerBound: regources.Amount(record.LowerBound),
-				UpperBound: regources.Amount(record.UpperBound),
+				Asset:           record.Asset,
+				Subtype:         record.Subtype,
+				FeeType:         record.FeeType,
+				FeeTypeExtended: xdr.FeeType(record.FeeType),
+				LowerBound:      regources.Amount(record.LowerBound),
+				UpperBound:      regources.Amount(record.UpperBound),
 			},
 		},
 	}
