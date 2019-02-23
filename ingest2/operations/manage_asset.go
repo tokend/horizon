@@ -36,6 +36,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		policies := xdr.AssetPolicy(creationDetails.Policies)
 
 		opDetails.ManageAsset.AssetCode = string(creationDetails.Code)
+		opDetails.ManageAsset.Type = uint64(creationDetails.Type)
 		opDetails.ManageAsset.CreatorDetails = internal.MarshalCustomDetails(creationDetails.CreatorDetails)
 		opDetails.ManageAsset.Policies = &policies
 		opDetails.ManageAsset.PreissuedSigner = creationDetails.PreissuedAssetSigner.Address()

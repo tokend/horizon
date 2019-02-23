@@ -65,6 +65,7 @@ func newAssetCreateRequest(id int64, details history2.CreateAssetRequest) *regou
 			MaxIssuanceAmount:      details.MaxIssuanceAmount,
 			InitialPreissuedAmount: details.InitialPreissuedAmount,
 			CreatorDetails:         details.CreatorDetails,
+			Type:                   details.Type,
 		},
 	}
 }

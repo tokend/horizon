@@ -51,6 +51,7 @@ func (r *ReviewableRequestDetails) Scan(src interface{}) error {
 //CreateAssetRequest - asset creation request details
 type CreateAssetRequest struct {
 	Asset                  string            `json:"asset"`
+	Type                   uint64            `json:"type"`
 	Policies               int32             `json:"policies"`
 	PreIssuedAssetSigner   string            `json:"pre_issued_asset_signer"`
 	MaxIssuanceAmount      regources.Amount  `json:"max_issuance_amount"`
