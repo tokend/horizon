@@ -107,6 +107,10 @@
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
+  version = "2"
+  name = "gitlab.com/distributed_lab/figure"
+
+[[constraint]]
   branch = "master"
   name = "golang.org/x/net"
 

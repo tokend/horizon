@@ -5,7 +5,7 @@ import (
 
 	"strings"
 
-	"github.com/pkg/errors"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 var (
@@ -18,22 +18,26 @@ type Tag struct {
 	IsRequired bool
 }
 
-func parseFieldTag(field reflect.StructField) (*Tag, error) {
+func parseFieldTag(field reflect.StructField, tagKey string) (*Tag, error) {
 	tag := &Tag{}
 
-	fieldTag := field.Tag.Get(keyTag)
-	if fieldTag == "" {
-		tag.Key = toSnakeCase(field.Name)
-		return tag, nil
-	}
-
+	fieldTag := field.Tag.Get(tagKey)
 	splitedTag := strings.Split(fieldTag, `,`)
-	tag.Key = splitedTag[0]
 
 	if len(splitedTag) == 1 {
-		if tag.Key == ignore {
+		if splitedTag[0] == ignore {
 			return nil, nil
 		}
+	}
+
+	if len(splitedTag) == 0 {
+		tag.Key = ""
+	} else {
+		tag.Key = splitedTag[0]
+	}
+
+	if tag.Key == "" {
+		tag.Key = toSnakeCase(field.Name)
 	}
 
 	if len(splitedTag) > 1 {
