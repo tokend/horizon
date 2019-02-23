@@ -434,7 +434,7 @@
     ".",
     "v2"
   ]
-  revision = "c235a4886bad21d4e90a884a07c25855c0a3cfa5"
+  revision = "7981f62f6afced79f74fa30556c7e1b663b885c3"
 
 [[projects]]
   branch = "master"
