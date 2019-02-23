@@ -60,12 +60,12 @@ func (q *LimitsV2Q) ForAccount(account *Account) ([]LimitsV2Entry, error) {
 	accountIDStr := fmt.Sprintf("'%s'", account.AccountID)
 
 	query := fmt.Sprintf("select distinct on (stats_op_type, asset_code, is_convert_needed)  id, "+
-		"account_role, account_id, stats_op_type, asset_code, is_convert_needed, daily_out, "+
+		"account_type, account_id, stats_op_type, asset_code, is_convert_needed, daily_out, "+
 		"weekly_out, monthly_out, annual_out "+
 		"from limits_v2 "+
-		"where (account_role=%d or account_role is null) and (account_id=%s or account_id is null)"+
+		"where (account_type=%d or account_type is null) and (account_id=%s or account_id is null)"+
 		"order by stats_op_type, asset_code, is_convert_needed, account_id = %s, "+
-		"account_role = %d asc", account.RoleID, accountIDStr, accountIDStr, account.RoleID)
+		"account_type = %d asc", account.RoleID, accountIDStr, accountIDStr, account.RoleID)
 
 	var result []LimitsV2Entry
 	err = q.parent.SelectRaw(&result, query)

@@ -3,6 +3,7 @@
 ### Changed
 
 * xdr revision
+* fix limits select
 
 # 3.0.1-x.13
 
