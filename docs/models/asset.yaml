@@ -38,6 +38,7 @@ Asset:
           - pending_issuance
           - policies
           - trailing_digits
+          - type
         properties:
           pre_issuance_asset_signer:
             type: string
@@ -73,6 +74,11 @@ Asset:
             description: "Number of significant digits after the point"
             maximum: 6
             minimum: 0
+            example: 2
+          type:
+            type: integer
+            format: uint64
+            description: "Numeric type of asset"
             example: 2
           details: 
             type: object

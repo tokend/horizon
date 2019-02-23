@@ -101,4 +101,5 @@ var selectAsset = sq.Select("a.code",
 	"a.policies",
 	"a.pending_issuance",
 	"a.trailing_digits",
+	"a.type",
 ).From("asset a")

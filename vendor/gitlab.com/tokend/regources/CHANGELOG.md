@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+* Asset type to asset, manage asset, create asset request resources
+
 ### Fixed
 
 * Use xdr.AccountRuleAction and xdr.SignerRuleAction

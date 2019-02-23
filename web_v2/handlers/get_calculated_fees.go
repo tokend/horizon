@@ -18,7 +18,7 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-const maximumTrailingDigits int64 = 6
+const maximumTrailingDigits uint32 = 6
 
 // GetCalculatedFees - processes request to get the list of fees
 func GetCalculatedFees(w http.ResponseWriter, r *http.Request) {

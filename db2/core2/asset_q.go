@@ -8,7 +8,7 @@ import (
 
 var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details",
 	"max_issuance_amount", "available_for_issueance", "issued",
-	"pending_issuance", "policies", "trailing_digits"}
+	"pending_issuance", "policies", "trailing_digits", "type"}
 
 //AssetsQ - helper struct to load assets from db
 type AssetsQ struct {

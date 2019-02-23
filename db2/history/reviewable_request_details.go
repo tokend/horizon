@@ -50,6 +50,7 @@ func (r *ReviewableRequestDetails) Scan(src interface{}) error {
 
 type AssetCreationRequest struct {
 	Asset                  string                 `json:"asset"`
+	Type                   uint64                 `json:"type"`
 	Policies               int32                  `json:"policies"`
 	PreIssuedAssetSigner   string                 `json:"pre_issued_asset_signer"`
 	MaxIssuanceAmount      string                 `json:"max_issuance_amount"`

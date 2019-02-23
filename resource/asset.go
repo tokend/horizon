@@ -1,15 +1,17 @@
 package resource
 
 import (
+	"strconv"
+
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/regources"
-	"strconv"
 )
 
 type Asset struct {
 	Code                 string `json:"code"`
+	Type                 uint64 `json:"type"`
 	Owner                string `json:"owner"`
 	AvailableForIssuance string `json:"available_for_issuance"`
 	PreissuedAssetSigner string `json:"preissued_asset_signer"`
@@ -32,6 +34,7 @@ func (a *Asset) Populate(asset *core.Asset) {
 	a.PendingIssuance = amount.StringU(asset.PendingIssuance)
 	a.Issued = amount.StringU(asset.Issued)
 	a.TrailingDigitsCount = strconv.Itoa(int(asset.TrailingDigits))
+	a.Type = asset.Type
 
 	a.Policies.Populate(*asset)
 	a.Details, _ = asset.GetDetails()

@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Added
+
+* Asset type to asset and create asset response
+
 ### Changed
 
 * xdr revision
@@ -9,6 +13,7 @@
 * Change role request creator details null
 * Fixed state of the reviewable requests
 * Added xdr type to reviewable request
+* Fees list when account type filter is not requested
 
 # 3.0.1-x.13
 

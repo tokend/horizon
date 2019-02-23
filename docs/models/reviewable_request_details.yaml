@@ -33,6 +33,7 @@ CreateAssetDetails:
           type: object
           required:
             - asset
+            - type
             - policies
             - pre_issuance_asset_signer
             - max_issuance_amount
@@ -43,6 +44,10 @@ CreateAssetDetails:
               type: string
               description: "Unique asset identifier"
               example: "USD"
+            type:
+              type: integer
+              description: "Numeric type of asset"
+              example: 1
             policies:
               type: integer
               description: "Policies specified for the asset creation"
