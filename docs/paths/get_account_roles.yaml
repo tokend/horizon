@@ -4,7 +4,7 @@
       - Account Roles
     summary: Account Role List
     description: |
-                  Allows to get a list of `Account Role` with corresponding details.
+                  Allows getting a list of `Account Role` with corresponding details.
     operationId: getAccountRoles
     parameters:
     - name: include

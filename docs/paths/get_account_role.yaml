@@ -4,12 +4,12 @@
       - Account Roles
     summary: Account Role by ID
     description: |
-                  Allows to get `Account Role` with corresponding details.
+                  Allows getting `Account Role` with corresponding details.
     operationId: getAccountRoleByID
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the account role
+      description: Unique identifier of an account role
       required: true
       style: simple
       explode: false

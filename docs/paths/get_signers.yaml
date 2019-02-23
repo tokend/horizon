@@ -5,7 +5,7 @@
       - Accounts
     summary: Signers for Account
     description: |
-                  Allows to get `Signers` of the account with corresponding details.
+                  Allows getting `Signers` of the account with corresponding details.
     operationId: getSignersForAccount
     parameters:
     - name: id
@@ -19,7 +19,7 @@
     - name: include
       in: query
       description: |
-        The following relationships can be included for signers:
+        For signers, following relationships can be included:
       required: false
       style: form
       explode: false

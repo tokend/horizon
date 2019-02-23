@@ -4,7 +4,7 @@
       - Accounts
     summary: Account by ID
     description: |
-                  Allows to get `Account` with corresponding details.
+                  Allows getting `Account` with corresponding details.
     operationId: getAccountByID
     parameters:
     - name: id
@@ -18,7 +18,7 @@
     - name: include
       in: query
       description: |
-        🔒 The following relationships require an owner's or admin's signature to be included:
+        🔒 Following relationships require an owner's or admin's signature to be included:
         * `balances.state`
         * `referrer`
         * `fees`
