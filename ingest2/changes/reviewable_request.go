@@ -94,28 +94,46 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	case xdr.OperationTypeReviewRequest:
 		return c.removedOnReview(lc)
 	case xdr.OperationTypeManageAsset:
-		return c.cancel(lc)
+		return c.handleRemoveOnManageAsset(lc)
 	case xdr.OperationTypeManageSale:
 		return c.handleRemoveOnManageSale(lc)
 	case xdr.OperationTypeCancelAswapBid:
 		return c.cancel(lc)
 	// auto review is handled by each operation separately
-	case xdr.OperationTypeCreateIssuanceRequest,
-		xdr.OperationTypeCheckSaleState,
-		xdr.OperationTypeCreateWithdrawalRequest,
-		xdr.OperationTypeCreatePreissuanceRequest,
-		xdr.OperationTypeManageLimits,
-		xdr.OperationTypeManageInvoiceRequest,
-		xdr.OperationTypeCreateSaleRequest,
-		xdr.OperationTypeCreateAmlAlert,
-		xdr.OperationTypeCreateChangeRoleRequest,
-		xdr.OperationTypeCreateAswapBidRequest:
-		return nil
+	case xdr.OperationTypeCreateIssuanceRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.MustCreateIssuanceRequestResult().MustSuccess().Fulfilled)
+	case xdr.OperationTypeCreatePreissuanceRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.MustCreatePreIssuanceRequestResult().MustSuccess().Fulfilled)
+	case xdr.OperationTypeCreateManageLimitsRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.MustCreateManageLimitsRequestResult().MustSuccess().Fulfilled)
+	case xdr.OperationTypeCreateSaleRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.MustCreateSaleCreationRequestResult().MustSuccess().Fulfilled)
+	case xdr.OperationTypeCreateAmlAlert:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.MustCreateAmlAlertRequestResult().MustSuccess().Fulfilled)
+	case xdr.OperationTypeCreateChangeRoleRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.MustCreateChangeRoleRequestResult().MustSuccess().Fulfilled)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type,
 		})
 	}
+}
+
+func (c *reviewableRequestHandler) handleRemoveOnCreationOp(lc ledgerChange, fulfilled bool) error {
+	id := uint64(lc.LedgerChange.MustRemoved().MustReviewableRequest().RequestId)
+	if !fulfilled {
+		return errors.From(errors.New("unexpected state: request has been removed on creation op, but fulfilled is false"), logan.F{
+			"id": uint64(id),
+		})
+	}
+
+	return c.storage.Approve(id)
 }
 
 func (c *reviewableRequestHandler) handleRemoveOnManageAsset(lc ledgerChange) error {
@@ -126,7 +144,8 @@ func (c *reviewableRequestHandler) handleRemoveOnManageAsset(lc ledgerChange) er
 		xdr.ManageAssetActionCreateAssetUpdateRequest,
 		xdr.ManageAssetActionChangePreissuedAssetSigner,
 		xdr.ManageAssetActionUpdateMaxIssuance:
-		return nil
+		fulfilled := lc.OperationResult.MustManageAssetResult().MustSuccess().Fulfilled
+		return c.handleRemoveOnCreationOp(lc, fulfilled)
 	case xdr.ManageAssetActionCancelAssetRequest:
 		return c.cancel(lc)
 	default:
@@ -141,7 +160,8 @@ func (c *reviewableRequestHandler) handleRemoveOnManageSale(lc ledgerChange) err
 	switch op.Data.Action {
 	// must be handled by operation
 	case xdr.ManageSaleActionCreateUpdateDetailsRequest:
-		return nil
+		fulfilled := lc.OperationResult.MustManageSaleResult().MustSuccess().Fulfilled
+		return c.handleRemoveOnCreationOp(lc, fulfilled)
 	case xdr.ManageSaleActionCancel:
 		return c.cancel(lc)
 	default:
@@ -249,6 +269,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRequest) *history.CreateAssetRequest {
 	return &history.CreateAssetRequest{
 		Asset:                  string(request.Code),
+		Type:                   uint64(request.Type),
 		Policies:               int32(request.Policies),
 		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:      regources.Amount(request.MaxIssuanceAmount),

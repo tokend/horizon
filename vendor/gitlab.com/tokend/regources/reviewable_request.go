@@ -65,6 +65,7 @@ type AMLAlertRequest struct {
 
 type AssetCreationRequest struct {
 	Code                   string                 `json:"code"`
+	Type                   uint64                 `json:"type"`
 	Policies               []Flag                 `json:"policies"`
 	PreIssuedAssetSigner   string                 `json:"pre_issued_asset_signer"`
 	MaxIssuanceAmount      Amount                 `json:"max_issuance_amount"`

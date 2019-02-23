@@ -49,7 +49,7 @@ func (q *ReviewableRequest) Insert(request history2.ReviewableRequest) error {
 
 // Update - update request using it's ID
 func (q *ReviewableRequest) Update(request history2.ReviewableRequest) error {
-	query := sq.Update("reviewable_request").SetMap(map[string]interface{}{
+	query := sq.Update("reviewable_requests").SetMap(map[string]interface{}{
 		"requestor":        request.Requestor,
 		"reviewer":         request.Reviewer,
 		"reject_reason":    request.RejectReason,
@@ -90,7 +90,7 @@ func (q *ReviewableRequest) PermanentReject(requestID uint64, rejectReason strin
 func (q *ReviewableRequest) setStateRejectReason(requestID uint64, requestState history2.ReviewableRequestState,
 	rejectReason *string) error {
 
-	query := sq.Update("reviewable_request").
+	query := sq.Update("reviewable_requests").
 		Set("request_state", requestState).Where("id = ?", requestID)
 	if rejectReason != nil {
 		query = query.Set("reject_reason", rejectReason)

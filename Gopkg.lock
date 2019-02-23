@@ -543,14 +543,14 @@
 
 [[projects]]
   branch = "fix/asset_type_in_response"
-  digest = "1:cda4c4c1ffc10edbb1636c60d9e6ae67b0d3911bd84b8ab08178324515a07093"
+  digest = "1:6550ab2af5aa9374a49d0fd58d7a1b55ff6009366cd65a39782746c7f147c856"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "4e0d3a5a9426228004e935023df84fb9e1918cab"
+  revision = "38f01aa8a0f70772f5a9014ced2815673d28d158"
 
 [[projects]]
   branch = "master"

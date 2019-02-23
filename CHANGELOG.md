@@ -11,6 +11,8 @@
 
 ### Fixed
 * Change role request creator details null
+* Fixed state of the reviewable requests
+* Added xdr type to reviewable request
 
 # 3.0.1-x.13
 
