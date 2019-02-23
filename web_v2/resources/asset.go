@@ -22,6 +22,7 @@ func NewAsset(record core2.Asset) regources.Asset {
 			PendingIssuance:        regources.Amount(record.PendingIssuance),
 			Policies:               xdr.AssetPolicy(record.Policies),
 			TrailingDigits:         record.TrailingDigits,
+			Type:                   record.Type,
 		},
 		Relationships: regources.AssetRelations{
 			Owner: NewAccountKey(record.Owner).AsRelation(),

@@ -269,6 +269,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRequest) *history.CreateAssetRequest {
 	return &history.CreateAssetRequest{
 		Asset:                  string(request.Code),
+		Type:                   uint64(request.Type),
 		Policies:               int32(request.Policies),
 		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:      regources.Amount(request.MaxIssuanceAmount),

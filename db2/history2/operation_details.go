@@ -277,6 +277,7 @@ type ReviewRequestDetails struct {
 //ManageAssetDetails - details of corresponding op
 type ManageAssetDetails struct {
 	AssetCode         string                `json:"asset_code,omitempty"`
+	Type              uint64                `json:"type,omitempty"`
 	RequestID         int64                 `json:"request_id"`
 	Action            xdr.ManageAssetAction `json:"action"`
 	Policies          *xdr.AssetPolicy      `json:"policies,omitempty"`

@@ -136,8 +136,8 @@
               $ref: '#/components/schemas/Errors'
       401:
         description: either an invalid signature has been provided or a signer has not been authorized to access specified resources
-          application/vnd.api+json:
         content:
+          application/vnd.api+json:
             schema:
               $ref: '#/components/schemas/Errors'
       404:

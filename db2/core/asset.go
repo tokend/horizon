@@ -22,6 +22,7 @@ type Asset struct {
 	PendingIssuance      uint64 `db:"pending_issuance"`
 	Details              []byte `db:"details"`
 	TrailingDigits       int32  `db:"trailing_digits"`
+	Type                 uint64 `db:"type"`
 }
 
 func (a Asset) GetDetails() (db2.Details, error) {

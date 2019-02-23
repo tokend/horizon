@@ -103,7 +103,7 @@
   branch = "master"
 
 [[constraint]]
-  branch = "master"
+  branch = "fix/asset_type_in_response"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

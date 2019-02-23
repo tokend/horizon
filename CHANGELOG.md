@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Added
+
+* Asset type to asset and create asset response
+
 ### Changed
 
 * xdr revision
