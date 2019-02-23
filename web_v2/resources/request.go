@@ -23,6 +23,8 @@ func NewRequest(record history2.ReviewableRequest) regources.ReviewableRequest {
 			ExternalDetails: record.ExternalDetails,
 			CreatedAt:       record.CreatedAt,
 			UpdatedAt:       record.UpdatedAt,
+			XDRType:         record.RequestType,
+
 			// TODO shouldn't those look like `state: {str: "", int: 2}`?
 			//  or just drop int part?
 			State:  record.RequestState.String(),
