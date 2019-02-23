@@ -38,23 +38,23 @@ type ReviewableRequestDetails struct {
 	// RequestTypeName  - string representation of request type
 	RequestTypeName string `json:"request_type"`
 
-	AssetCreate            *AssetCreationRequest     `json:"asset_create,omitempty"`
-	AssetUpdate            *AssetUpdateRequest       `json:"asset_update,omitempty"`
-	PreIssuanceCreate      *PreIssuanceRequest       `json:"pre_issuance_create,omitempty"`
-	IssuanceCreate         *IssuanceRequest          `json:"issuance_create,omitempty"`
-	Withdraw               *WithdrawalRequest        `json:"withdraw,omitempty"`
+	AssetCreate            *AssetCreationRequest     `json:"create_asset,omitempty"`
+	AssetUpdate            *AssetUpdateRequest       `json:"update_asset,omitempty"`
+	PreIssuanceCreate      *PreIssuanceRequest       `json:"create_pre_issuance,omitempty"`
+	IssuanceCreate         *IssuanceRequest          `json:"create_issuance,omitempty"`
+	Withdraw               *WithdrawalRequest        `json:"create_withdraw,omitempty"`
 	TwoStepWithdraw        *WithdrawalRequest        `json:"two_step_withdrawal,omitempty"`
 	Sale                   *SaleCreationRequest      `json:"sale,omitempty"`
-	LimitsUpdate           *LimitsUpdateRequest      `json:"limits_update,omitempty"`
-	AMLAlert               *AMLAlertRequest          `json:"aml_alert,omitempty"`
+	LimitsUpdate           *LimitsUpdateRequest      `json:"update_limits,omitempty"`
+	AMLAlert               *AMLAlertRequest          `json:"create_aml_alert,omitempty"`
 	ChangeRole             *ChangeRoleRequest        `json:"change_role,omitempty"`
 	UpdateSaleDetails      *UpdateSaleDetailsRequest `json:"update_sale_details,omitempty"`
 	UpdateSaleEndTime      *UpdateSaleEndTimeRequest `json:"update_sale_end_time,omitempty"`
 	PromotionUpdateRequest *PromotionUpdateRequest   `json:"promotion_update_request,omitempty"`
-	Invoice                *InvoiceRequest           `json:"invoice,omitempty"`
-	Contract               *ContractRequest          `json:"contract,omitempty"`
-	AtomicSwapBidCreation  *AtomicSwapBidCreation    `json:"atomic_swap_bid_creation,omitempty"`
-	AtomicSwap             *AtomicSwap               `json:"atomic_swap,omitempty"`
+	Invoice                *InvoiceRequest           `json:"create_invoice,omitempty"`
+	Contract               *ContractRequest          `json:"manage_contract,omitempty"`
+	AtomicSwapBidCreation  *AtomicSwapBidCreation    `json:"create_atomic_swap_bid,omitempty"`
+	AtomicSwap             *AtomicSwap               `json:"create_atomic_swap,omitempty"`
 }
 
 type AMLAlertRequest struct {

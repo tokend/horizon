@@ -407,7 +407,7 @@ func (q *ReviewableRequestQ) SalesByBaseAsset(assetCode string) ReviewableReques
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'sale'->>'base_asset' = ?", assetCode)
+	q.sql = q.sql.Where("details->'create_sale'->>'base_asset' = ?", assetCode)
 	return q
 }
 
