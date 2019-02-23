@@ -53,8 +53,8 @@ type CreateAssetRequest struct {
 	Asset                  string            `json:"asset"`
 	Policies               int32             `json:"policies"`
 	PreIssuedAssetSigner   string            `json:"pre_issued_asset_signer"`
-	MaxIssuanceAmount      string            `json:"max_issuance_amount"`
-	InitialPreissuedAmount string            `json:"initial_preissued_amount"`
+	MaxIssuanceAmount      regources.Amount  `json:"max_issuance_amount"`
+	InitialPreissuedAmount regources.Amount  `json:"initial_preissued_amount"`
 	CreatorDetails         regources.Details `json:"details"`
 }
 
@@ -68,7 +68,7 @@ type UpdateAssetRequest struct {
 //CreatePreIssuanceRequest - request details
 type CreatePreIssuanceRequest struct {
 	Asset          string            `json:"asset"`
-	Amount         string            `json:"amount"`
+	Amount         regources.Amount  `json:"amount"`
 	Signature      string            `json:"signature"`
 	Reference      string            `json:"reference"`
 	CreatorDetails regources.Details `json:"creator_details"`
@@ -77,19 +77,17 @@ type CreatePreIssuanceRequest struct {
 //CreateIssuanceRequest - request details
 type CreateIssuanceRequest struct {
 	Asset          string            `json:"asset"`
-	Amount         string            `json:"amount"`
+	Amount         regources.Amount  `json:"amount"`
 	Receiver       string            `json:"receiver"`
 	CreatorDetails regources.Details `json:"external_details"`
 }
 
 //CreateWithdrawalRequest - request details
 type CreateWithdrawalRequest struct {
-	BalanceID       string            `json:"balance_id"`
-	Amount          string            `json:"amount"`
-	FixedFee        string            `json:"fixed_fee"`
-	PercentFee      string            `json:"percent_fee"`
-	CreatorDetails  regources.Details `json:"creator_details"`
-	ReviewerDetails regources.Details `json:"reviewer_details"`
+	BalanceID      string            `json:"balance_id"`
+	Amount         regources.Amount  `json:"amount"`
+	Fee            regources.Fee     `json:"fee"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 //CreateSaleRequest - request details
@@ -98,12 +96,12 @@ type CreateSaleRequest struct {
 	DefaultQuoteAsset   string                 `json:"quote_asset"`
 	StartTime           time.Time              `json:"start_time"`
 	EndTime             time.Time              `json:"end_time"`
-	SoftCap             string                 `json:"soft_cap"`
-	HardCap             string                 `json:"hard_cap"`
+	SoftCap             regources.Amount       `json:"soft_cap"`
+	HardCap             regources.Amount       `json:"hard_cap"`
 	CreatorDetails      regources.Details      `json:"creator_details"`
 	QuoteAssets         []regources.AssetPrice `json:"quote_assets"`
 	SaleType            xdr.SaleType           `json:"sale_type"`
-	BaseAssetForHardCap string                 `json:"base_asset_for_hard_cap"`
+	BaseAssetForHardCap regources.Amount       `json:"base_asset_for_hard_cap"`
 }
 
 //UpdateLimitsRequest - request details
@@ -113,16 +111,15 @@ type UpdateLimitsRequest struct {
 
 //CreateAmlAlertRequest - request details
 type CreateAmlAlertRequest struct {
-	BalanceID      string `json:"balance_id"`
-	Amount         string `json:"amount"`
-	CreatorDetails string `json:"creator_details"`
+	BalanceID      string            `json:"balance_id"`
+	Amount         regources.Amount  `json:"amount"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 //ChangeRoleRequest - request details
 type ChangeRoleRequest struct {
 	DestinationAccount string            `json:"destination_account"`
 	AccountRoleToSet   uint64            `json:"account_role_to_set"`
-	KYCData            regources.Details `json:"kyc_data"`
 	SequenceNumber     uint32            `json:"sequence_number"`
 	CreatorDetails     regources.Details `json:"creator_details"`
 }
@@ -136,7 +133,7 @@ type UpdateSaleDetailsRequest struct {
 //CreateAtomicSwapBidRequest - request details
 type CreateAtomicSwapBidRequest struct {
 	BaseBalance    string                 `json:"base_balance"`
-	BaseAmount     uint64                 `json:"base_amount"`
+	BaseAmount     regources.Amount       `json:"base_amount"`
 	CreatorDetails regources.Details      `json:"creator_details"`
 	QuoteAssets    []regources.AssetPrice `json:"quote_assets"`
 }
@@ -144,7 +141,7 @@ type CreateAtomicSwapBidRequest struct {
 //CreateAtomicSwapRequest - request details
 type CreateAtomicSwapRequest struct {
 	BidID          uint64            `json:"bid_id"`
-	BaseAmount     uint64            `json:"base_amount"`
+	BaseAmount     regources.Amount  `json:"base_amount"`
 	QuoteAsset     string            `json:"quote_asset"`
 	CreatorDetails regources.Details `json:"creator_details"`
 }

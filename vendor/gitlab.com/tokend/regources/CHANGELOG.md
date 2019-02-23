@@ -4,7 +4,9 @@
 
 ### Fixed
 
-* Use xdr.
+* Use xdr.AccountRuleAction and xdr.SignerRuleAction
+* (internal) proper types for reviewable requests amounts
+* (internal) removed KYCData from ChangeRoleRequest
 
 ## Unreleased
 
