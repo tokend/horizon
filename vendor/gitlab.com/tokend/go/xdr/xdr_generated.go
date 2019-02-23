@@ -1,5 +1,5 @@
-// revision: b55ad8258aaca99da4c10414291bceb2e6df868b
-// branch:   fix/fee_amount_precision
+// revision: 48e4c546e0ea993542c3983f6345cdee1b4bc513
+// branch:   feature/roles_rules
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -29254,9 +29254,7 @@ type SetFeesOp struct {
 //    		FEE_ASSET_NOT_FOUND = -14,
 //    		ASSET_PAIR_NOT_FOUND = -15, // cannot create cross asset fee entry without existing asset pair
 //    		INVALID_ASSET_PAIR_PRICE = -16,
-//    		INVALID_FEE_HASH = -17,
-//    		//: Fixed fee amount must fit asset precision
-//    		INVALID_AMOUNT_PRECISION = -18
+//    		INVALID_FEE_HASH = -17
 //        };
 //
 type SetFeesResultCode int32
@@ -29280,7 +29278,6 @@ const (
 	SetFeesResultCodeAssetPairNotFound       SetFeesResultCode = -15
 	SetFeesResultCodeInvalidAssetPairPrice   SetFeesResultCode = -16
 	SetFeesResultCodeInvalidFeeHash          SetFeesResultCode = -17
-	SetFeesResultCodeInvalidAmountPrecision  SetFeesResultCode = -18
 )
 
 var SetFeesResultCodeAll = []SetFeesResultCode{
@@ -29302,7 +29299,6 @@ var SetFeesResultCodeAll = []SetFeesResultCode{
 	SetFeesResultCodeAssetPairNotFound,
 	SetFeesResultCodeInvalidAssetPairPrice,
 	SetFeesResultCodeInvalidFeeHash,
-	SetFeesResultCodeInvalidAmountPrecision,
 }
 
 var setFeesResultCodeMap = map[int32]string{
@@ -29324,7 +29320,6 @@ var setFeesResultCodeMap = map[int32]string{
 	-15: "SetFeesResultCodeAssetPairNotFound",
 	-16: "SetFeesResultCodeInvalidAssetPairPrice",
 	-17: "SetFeesResultCodeInvalidFeeHash",
-	-18: "SetFeesResultCodeInvalidAmountPrecision",
 }
 
 var setFeesResultCodeShortMap = map[int32]string{
@@ -29346,7 +29341,6 @@ var setFeesResultCodeShortMap = map[int32]string{
 	-15: "asset_pair_not_found",
 	-16: "invalid_asset_pair_price",
 	-17: "invalid_fee_hash",
-	-18: "invalid_amount_precision",
 }
 
 var setFeesResultCodeRevMap = map[string]int32{
@@ -29368,7 +29362,6 @@ var setFeesResultCodeRevMap = map[string]int32{
 	"SetFeesResultCodeAssetPairNotFound":       -15,
 	"SetFeesResultCodeInvalidAssetPairPrice":   -16,
 	"SetFeesResultCodeInvalidFeeHash":          -17,
-	"SetFeesResultCodeInvalidAmountPrecision":  -18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -30731,7 +30724,7 @@ func (u AuthenticatedMessage) GetV0() (result AuthenticatedMessageV0, ok bool) {
 	return
 }
 
-// ReviewableRequestResourceCreateSale is an XDR NestedStruct defines as:
+// RequestTypedResourceSale is an XDR NestedStruct defines as:
 //
 //   struct
 //        {
@@ -30740,12 +30733,12 @@ func (u AuthenticatedMessage) GetV0() (result AuthenticatedMessageV0, ok bool) {
 //            EmptyExt ext;
 //        }
 //
-type ReviewableRequestResourceCreateSale struct {
+type RequestTypedResourceSale struct {
 	Type Uint64   `json:"type,omitempty"`
 	Ext  EmptyExt `json:"ext,omitempty"`
 }
 
-// ReviewableRequestResourceCreateIssuance is an XDR NestedStruct defines as:
+// RequestTypedResourceIssuance is an XDR NestedStruct defines as:
 //
 //   struct
 //        {
@@ -30755,13 +30748,13 @@ type ReviewableRequestResourceCreateSale struct {
 //            EmptyExt ext;
 //        }
 //
-type ReviewableRequestResourceCreateIssuance struct {
+type RequestTypedResourceIssuance struct {
 	AssetCode AssetCode `json:"assetCode,omitempty"`
 	AssetType Uint64    `json:"assetType,omitempty"`
 	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
-// ReviewableRequestResourceCreateWithdraw is an XDR NestedStruct defines as:
+// RequestTypedResourceWithdraw is an XDR NestedStruct defines as:
 //
 //   struct
 //        {
@@ -30771,15 +30764,15 @@ type ReviewableRequestResourceCreateIssuance struct {
 //            EmptyExt ext;
 //        }
 //
-type ReviewableRequestResourceCreateWithdraw struct {
+type RequestTypedResourceWithdraw struct {
 	AssetCode AssetCode `json:"assetCode,omitempty"`
 	AssetType Uint64    `json:"assetType,omitempty"`
 	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
-// ReviewableRequestResource is an XDR Union defines as:
+// RequestTypedResource is an XDR Union defines as:
 //
-//   union ReviewableRequestResource switch (ReviewableRequestType requestType)
+//   union RequestTypedResource switch (ReviewableRequestType requestType)
 //    {
 //    case CREATE_SALE:
 //        struct
@@ -30787,7 +30780,7 @@ type ReviewableRequestResourceCreateWithdraw struct {
 //            uint64 type;
 //
 //            EmptyExt ext;
-//        } createSale;
+//        } sale;
 //    case CREATE_ISSUANCE:
 //        struct
 //        {
@@ -30795,7 +30788,7 @@ type ReviewableRequestResourceCreateWithdraw struct {
 //            uint64 assetType;
 //
 //            EmptyExt ext;
-//        } createIssuance;
+//        } issuance;
 //    case CREATE_WITHDRAW:
 //        struct
 //        {
@@ -30803,65 +30796,65 @@ type ReviewableRequestResourceCreateWithdraw struct {
 //            uint64 assetType;
 //
 //            EmptyExt ext;
-//        } createWithdraw;
+//        } withdraw;
 //    default:
 //        EmptyExt ext;
 //    };
 //
-type ReviewableRequestResource struct {
-	RequestType    ReviewableRequestType                    `json:"requestType,omitempty"`
-	CreateSale     *ReviewableRequestResourceCreateSale     `json:"createSale,omitempty"`
-	CreateIssuance *ReviewableRequestResourceCreateIssuance `json:"createIssuance,omitempty"`
-	CreateWithdraw *ReviewableRequestResourceCreateWithdraw `json:"createWithdraw,omitempty"`
-	Ext            *EmptyExt                                `json:"ext,omitempty"`
+type RequestTypedResource struct {
+	RequestType ReviewableRequestType         `json:"requestType,omitempty"`
+	Sale        *RequestTypedResourceSale     `json:"sale,omitempty"`
+	Issuance    *RequestTypedResourceIssuance `json:"issuance,omitempty"`
+	Withdraw    *RequestTypedResourceWithdraw `json:"withdraw,omitempty"`
+	Ext         *EmptyExt                     `json:"ext,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u ReviewableRequestResource) SwitchFieldName() string {
+func (u RequestTypedResource) SwitchFieldName() string {
 	return "RequestType"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of ReviewableRequestResource
-func (u ReviewableRequestResource) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of RequestTypedResource
+func (u RequestTypedResource) ArmForSwitch(sw int32) (string, bool) {
 	switch ReviewableRequestType(sw) {
 	case ReviewableRequestTypeCreateSale:
-		return "CreateSale", true
+		return "Sale", true
 	case ReviewableRequestTypeCreateIssuance:
-		return "CreateIssuance", true
+		return "Issuance", true
 	case ReviewableRequestTypeCreateWithdraw:
-		return "CreateWithdraw", true
+		return "Withdraw", true
 	default:
 		return "Ext", true
 	}
 }
 
-// NewReviewableRequestResource creates a new  ReviewableRequestResource.
-func NewReviewableRequestResource(requestType ReviewableRequestType, value interface{}) (result ReviewableRequestResource, err error) {
+// NewRequestTypedResource creates a new  RequestTypedResource.
+func NewRequestTypedResource(requestType ReviewableRequestType, value interface{}) (result RequestTypedResource, err error) {
 	result.RequestType = requestType
 	switch ReviewableRequestType(requestType) {
 	case ReviewableRequestTypeCreateSale:
-		tv, ok := value.(ReviewableRequestResourceCreateSale)
+		tv, ok := value.(RequestTypedResourceSale)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be ReviewableRequestResourceCreateSale")
+			err = fmt.Errorf("invalid value, must be RequestTypedResourceSale")
 			return
 		}
-		result.CreateSale = &tv
+		result.Sale = &tv
 	case ReviewableRequestTypeCreateIssuance:
-		tv, ok := value.(ReviewableRequestResourceCreateIssuance)
+		tv, ok := value.(RequestTypedResourceIssuance)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be ReviewableRequestResourceCreateIssuance")
+			err = fmt.Errorf("invalid value, must be RequestTypedResourceIssuance")
 			return
 		}
-		result.CreateIssuance = &tv
+		result.Issuance = &tv
 	case ReviewableRequestTypeCreateWithdraw:
-		tv, ok := value.(ReviewableRequestResourceCreateWithdraw)
+		tv, ok := value.(RequestTypedResourceWithdraw)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be ReviewableRequestResourceCreateWithdraw")
+			err = fmt.Errorf("invalid value, must be RequestTypedResourceWithdraw")
 			return
 		}
-		result.CreateWithdraw = &tv
+		result.Withdraw = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -30873,75 +30866,75 @@ func NewReviewableRequestResource(requestType ReviewableRequestType, value inter
 	return
 }
 
-// MustCreateSale retrieves the CreateSale value from the union,
+// MustSale retrieves the Sale value from the union,
 // panicing if the value is not set.
-func (u ReviewableRequestResource) MustCreateSale() ReviewableRequestResourceCreateSale {
-	val, ok := u.GetCreateSale()
+func (u RequestTypedResource) MustSale() RequestTypedResourceSale {
+	val, ok := u.GetSale()
 
 	if !ok {
-		panic("arm CreateSale is not set")
+		panic("arm Sale is not set")
 	}
 
 	return val
 }
 
-// GetCreateSale retrieves the CreateSale value from the union,
+// GetSale retrieves the Sale value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewableRequestResource) GetCreateSale() (result ReviewableRequestResourceCreateSale, ok bool) {
+func (u RequestTypedResource) GetSale() (result RequestTypedResourceSale, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.RequestType))
 
-	if armName == "CreateSale" {
-		result = *u.CreateSale
+	if armName == "Sale" {
+		result = *u.Sale
 		ok = true
 	}
 
 	return
 }
 
-// MustCreateIssuance retrieves the CreateIssuance value from the union,
+// MustIssuance retrieves the Issuance value from the union,
 // panicing if the value is not set.
-func (u ReviewableRequestResource) MustCreateIssuance() ReviewableRequestResourceCreateIssuance {
-	val, ok := u.GetCreateIssuance()
+func (u RequestTypedResource) MustIssuance() RequestTypedResourceIssuance {
+	val, ok := u.GetIssuance()
 
 	if !ok {
-		panic("arm CreateIssuance is not set")
+		panic("arm Issuance is not set")
 	}
 
 	return val
 }
 
-// GetCreateIssuance retrieves the CreateIssuance value from the union,
+// GetIssuance retrieves the Issuance value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewableRequestResource) GetCreateIssuance() (result ReviewableRequestResourceCreateIssuance, ok bool) {
+func (u RequestTypedResource) GetIssuance() (result RequestTypedResourceIssuance, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.RequestType))
 
-	if armName == "CreateIssuance" {
-		result = *u.CreateIssuance
+	if armName == "Issuance" {
+		result = *u.Issuance
 		ok = true
 	}
 
 	return
 }
 
-// MustCreateWithdraw retrieves the CreateWithdraw value from the union,
+// MustWithdraw retrieves the Withdraw value from the union,
 // panicing if the value is not set.
-func (u ReviewableRequestResource) MustCreateWithdraw() ReviewableRequestResourceCreateWithdraw {
-	val, ok := u.GetCreateWithdraw()
+func (u RequestTypedResource) MustWithdraw() RequestTypedResourceWithdraw {
+	val, ok := u.GetWithdraw()
 
 	if !ok {
-		panic("arm CreateWithdraw is not set")
+		panic("arm Withdraw is not set")
 	}
 
 	return val
 }
 
-// GetCreateWithdraw retrieves the CreateWithdraw value from the union,
+// GetWithdraw retrieves the Withdraw value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewableRequestResource) GetCreateWithdraw() (result ReviewableRequestResourceCreateWithdraw, ok bool) {
+func (u RequestTypedResource) GetWithdraw() (result RequestTypedResourceWithdraw, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.RequestType))
 
-	if armName == "CreateWithdraw" {
-		result = *u.CreateWithdraw
+	if armName == "Withdraw" {
+		result = *u.Withdraw
 		ok = true
 	}
 
@@ -30950,7 +30943,7 @@ func (u ReviewableRequestResource) GetCreateWithdraw() (result ReviewableRequest
 
 // MustExt retrieves the Ext value from the union,
 // panicing if the value is not set.
-func (u ReviewableRequestResource) MustExt() EmptyExt {
+func (u RequestTypedResource) MustExt() EmptyExt {
 	val, ok := u.GetExt()
 
 	if !ok {
@@ -30962,7 +30955,7 @@ func (u ReviewableRequestResource) MustExt() EmptyExt {
 
 // GetExt retrieves the Ext value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewableRequestResource) GetExt() (result EmptyExt, ok bool) {
+func (u RequestTypedResource) GetExt() (result EmptyExt, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.RequestType))
 
 	if armName == "Ext" {
@@ -30993,14 +30986,14 @@ type AccountRuleResourceAsset struct {
 //
 //   struct
 //        {
-//            ReviewableRequestResource details;
+//            RequestTypedResource details;
 //
 //            EmptyExt ext;
 //        }
 //
 type AccountRuleResourceReviewableRequest struct {
-	Details ReviewableRequestResource `json:"details,omitempty"`
-	Ext     EmptyExt                  `json:"ext,omitempty"`
+	Details RequestTypedResource `json:"details,omitempty"`
+	Ext     EmptyExt             `json:"ext,omitempty"`
 }
 
 // AccountRuleResourceOffer is an XDR NestedStruct defines as:
@@ -31059,24 +31052,12 @@ type AccountRuleResourceAtomicSwapBid struct {
 	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
-// AccountRuleResourceKeyValue is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            longstring keyPrefix;
-//
-//            EmptyExt ext;
-//        }
-//
-type AccountRuleResourceKeyValue struct {
-	KeyPrefix Longstring `json:"keyPrefix,omitempty"`
-	Ext       EmptyExt   `json:"ext,omitempty"`
-}
-
 // AccountRuleResource is an XDR Union defines as:
 //
 //   union AccountRuleResource switch (LedgerEntryType type)
 //    {
+//    case TRANSACTION:
+//        EmptyExt tx;
 //    case ASSET:
 //        struct
 //        {
@@ -31088,7 +31069,7 @@ type AccountRuleResourceKeyValue struct {
 //    case REVIEWABLE_REQUEST:
 //        struct
 //        {
-//            ReviewableRequestResource details;
+//            RequestTypedResource details;
 //
 //            EmptyExt ext;
 //        } reviewableRequest;
@@ -31123,25 +31104,18 @@ type AccountRuleResourceKeyValue struct {
 //
 //            EmptyExt ext;
 //        } atomicSwapBid;
-//    case KEY_VALUE:
-//        struct
-//        {
-//            longstring keyPrefix;
-//
-//            EmptyExt ext;
-//        } keyValue;
 //    default:
 //        EmptyExt ext;
 //    };
 //
 type AccountRuleResource struct {
 	Type              LedgerEntryType                       `json:"type,omitempty"`
+	Tx                *EmptyExt                             `json:"tx,omitempty"`
 	Asset             *AccountRuleResourceAsset             `json:"asset,omitempty"`
 	ReviewableRequest *AccountRuleResourceReviewableRequest `json:"reviewableRequest,omitempty"`
 	Offer             *AccountRuleResourceOffer             `json:"offer,omitempty"`
 	Sale              *AccountRuleResourceSale              `json:"sale,omitempty"`
 	AtomicSwapBid     *AccountRuleResourceAtomicSwapBid     `json:"atomicSwapBid,omitempty"`
-	KeyValue          *AccountRuleResourceKeyValue          `json:"keyValue,omitempty"`
 	Ext               *EmptyExt                             `json:"ext,omitempty"`
 }
 
@@ -31155,6 +31129,8 @@ func (u AccountRuleResource) SwitchFieldName() string {
 // the value for an instance of AccountRuleResource
 func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerEntryType(sw) {
+	case LedgerEntryTypeTransaction:
+		return "Tx", true
 	case LedgerEntryTypeAsset:
 		return "Asset", true
 	case LedgerEntryTypeReviewableRequest:
@@ -31167,8 +31143,6 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "Sale", true
 	case LedgerEntryTypeAtomicSwapBid:
 		return "AtomicSwapBid", true
-	case LedgerEntryTypeKeyValue:
-		return "KeyValue", true
 	default:
 		return "Ext", true
 	}
@@ -31178,6 +31152,13 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result AccountRuleResource, err error) {
 	result.Type = aType
 	switch LedgerEntryType(aType) {
+	case LedgerEntryTypeTransaction:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Tx = &tv
 	case LedgerEntryTypeAsset:
 		tv, ok := value.(AccountRuleResourceAsset)
 		if !ok {
@@ -31215,13 +31196,6 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.AtomicSwapBid = &tv
-	case LedgerEntryTypeKeyValue:
-		tv, ok := value.(AccountRuleResourceKeyValue)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be AccountRuleResourceKeyValue")
-			return
-		}
-		result.KeyValue = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -31230,6 +31204,31 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 		}
 		result.Ext = &tv
 	}
+	return
+}
+
+// MustTx retrieves the Tx value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResource) MustTx() EmptyExt {
+	val, ok := u.GetTx()
+
+	if !ok {
+		panic("arm Tx is not set")
+	}
+
+	return val
+}
+
+// GetTx retrieves the Tx value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResource) GetTx() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Tx" {
+		result = *u.Tx
+		ok = true
+	}
+
 	return
 }
 
@@ -31352,31 +31351,6 @@ func (u AccountRuleResource) GetAtomicSwapBid() (result AccountRuleResourceAtomi
 
 	if armName == "AtomicSwapBid" {
 		result = *u.AtomicSwapBid
-		ok = true
-	}
-
-	return
-}
-
-// MustKeyValue retrieves the KeyValue value from the union,
-// panicing if the value is not set.
-func (u AccountRuleResource) MustKeyValue() AccountRuleResourceKeyValue {
-	val, ok := u.GetKeyValue()
-
-	if !ok {
-		panic("arm KeyValue is not set")
-	}
-
-	return val
-}
-
-// GetKeyValue retrieves the KeyValue value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u AccountRuleResource) GetKeyValue() (result AccountRuleResourceKeyValue, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "KeyValue" {
-		result = *u.KeyValue
 		ok = true
 	}
 
@@ -31586,7 +31560,7 @@ func (e *AccountRuleAction) UnmarshalJSON(data []byte) error {
 //
 //   struct
 //        {
-//            ReviewableRequestResource details;
+//            RequestTypedResource details;
 //
 //            uint64 tasksToAdd;
 //            uint64 tasksToRemove;
@@ -31596,11 +31570,11 @@ func (e *AccountRuleAction) UnmarshalJSON(data []byte) error {
 //        }
 //
 type SignerRuleResourceReviewableRequest struct {
-	Details       ReviewableRequestResource `json:"details,omitempty"`
-	TasksToAdd    Uint64                    `json:"tasksToAdd,omitempty"`
-	TasksToRemove Uint64                    `json:"tasksToRemove,omitempty"`
-	AllTasks      Uint64                    `json:"allTasks,omitempty"`
-	Ext           EmptyExt                  `json:"ext,omitempty"`
+	Details       RequestTypedResource `json:"details,omitempty"`
+	TasksToAdd    Uint64               `json:"tasksToAdd,omitempty"`
+	TasksToRemove Uint64               `json:"tasksToRemove,omitempty"`
+	AllTasks      Uint64               `json:"allTasks,omitempty"`
+	Ext           EmptyExt             `json:"ext,omitempty"`
 }
 
 // SignerRuleResourceAsset is an XDR NestedStruct defines as:
@@ -31717,20 +31691,6 @@ type SignerRuleResourceSigner struct {
 	Ext    EmptyExt `json:"ext,omitempty"`
 }
 
-// SignerRuleResourceKeyValue is an XDR NestedStruct defines as:
-//
-//   struct
-//        {
-//            longstring keyPrefix;
-//
-//            EmptyExt ext;
-//        }
-//
-type SignerRuleResourceKeyValue struct {
-	KeyPrefix Longstring `json:"keyPrefix,omitempty"`
-	Ext       EmptyExt   `json:"ext,omitempty"`
-}
-
 // SignerRuleResource is an XDR Union defines as:
 //
 //   union SignerRuleResource switch (LedgerEntryType type)
@@ -31738,7 +31698,7 @@ type SignerRuleResourceKeyValue struct {
 //    case REVIEWABLE_REQUEST:
 //        struct
 //        {
-//            ReviewableRequestResource details;
+//            RequestTypedResource details;
 //
 //            uint64 tasksToAdd;
 //            uint64 tasksToRemove;
@@ -31806,13 +31766,6 @@ type SignerRuleResourceKeyValue struct {
 //
 //            EmptyExt ext;
 //        } signer;
-//    case KEY_VALUE:
-//        struct
-//        {
-//            longstring keyPrefix;
-//
-//            EmptyExt ext;
-//        } keyValue;
 //    default:
 //        EmptyExt ext;
 //    };
@@ -31827,7 +31780,6 @@ type SignerRuleResource struct {
 	SignerRule        *SignerRuleResourceSignerRule        `json:"signerRule,omitempty"`
 	SignerRole        *SignerRuleResourceSignerRole        `json:"signerRole,omitempty"`
 	Signer            *SignerRuleResourceSigner            `json:"signer,omitempty"`
-	KeyValue          *SignerRuleResourceKeyValue          `json:"keyValue,omitempty"`
 	Ext               *EmptyExt                            `json:"ext,omitempty"`
 }
 
@@ -31859,8 +31811,6 @@ func (u SignerRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "SignerRole", true
 	case LedgerEntryTypeSigner:
 		return "Signer", true
-	case LedgerEntryTypeKeyValue:
-		return "KeyValue", true
 	default:
 		return "Ext", true
 	}
@@ -31928,13 +31878,6 @@ func NewSignerRuleResource(aType LedgerEntryType, value interface{}) (result Sig
 			return
 		}
 		result.Signer = &tv
-	case LedgerEntryTypeKeyValue:
-		tv, ok := value.(SignerRuleResourceKeyValue)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be SignerRuleResourceKeyValue")
-			return
-		}
-		result.KeyValue = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -32140,31 +32083,6 @@ func (u SignerRuleResource) GetSigner() (result SignerRuleResourceSigner, ok boo
 
 	if armName == "Signer" {
 		result = *u.Signer
-		ok = true
-	}
-
-	return
-}
-
-// MustKeyValue retrieves the KeyValue value from the union,
-// panicing if the value is not set.
-func (u SignerRuleResource) MustKeyValue() SignerRuleResourceKeyValue {
-	val, ok := u.GetKeyValue()
-
-	if !ok {
-		panic("arm KeyValue is not set")
-	}
-
-	return val
-}
-
-// GetKeyValue retrieves the KeyValue value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u SignerRuleResource) GetKeyValue() (result SignerRuleResourceKeyValue, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "KeyValue" {
-		result = *u.KeyValue
 		ok = true
 	}
 
@@ -38471,4 +38389,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "b55ad8258aaca99da4c10414291bceb2e6df868b"
+var Revision = "48e4c546e0ea993542c3983f6345cdee1b4bc513"
