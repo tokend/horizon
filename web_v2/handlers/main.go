@@ -16,6 +16,10 @@ import (
 func isAllowed(r *http.Request, w http.ResponseWriter, dataOwners ...string) bool {
 	constraints := make([]doorman.SignerConstraint, 0, len(dataOwners))
 	for _, dataOwner := range dataOwners {
+		// invalid account address will make doorman return 401 w/o considering other constraints
+		if dataOwner == "" {
+			continue
+		}
 		constraints = append(constraints, doorman.SignerOf(dataOwner))
 	}
 	constraints = append(constraints, doorman.SignerOf(ctx.CoreInfo(r).AdminAccountID))
