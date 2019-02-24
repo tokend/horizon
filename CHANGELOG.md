@@ -15,6 +15,7 @@
 * Added xdr type to reviewable request
 * Fees list when account type filter is not requested
 * 401 on v1 operations when skipSigCheck is on
+* Ingest v2 stop on check_sale_state op
 
 
 # 3.0.1-x.13
