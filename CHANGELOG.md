@@ -3,6 +3,7 @@
 ### Added
 
 * Asset type to asset and create asset response
+* Error for v3 history, when trying to request filtration by non existing account/balance
 
 ### Changed
 
