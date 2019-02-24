@@ -118,9 +118,12 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	case xdr.OperationTypeCreateChangeRoleRequest:
 		return c.handleRemoveOnCreationOp(lc,
 			lc.OperationResult.MustCreateChangeRoleRequestResult().MustSuccess().Fulfilled)
+	case xdr.OperationTypeCheckSaleState:
+		// if check sale state was successful, all the requests created by it were fulfilled
+		return c.handleRemoveOnCreationOp(lc, true)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
-			"op_type": op.Type,
+			"op_type": op.Type.String(),
 		})
 	}
 }
