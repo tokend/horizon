@@ -3,12 +3,14 @@
 ### Added
 
 * Asset type to asset and create asset response
+* Ingest of details of LicenseOp and StampOp
 * Error for v3 history, when trying to request filtration by non existing account/balance
 
 ### Changed
 
 * xdr revision
 * fix limits select
+* Messages for error codes
 
 ### Fixed
 * Change role request creator details null

@@ -46,6 +46,7 @@ type OperationDetails struct {
 	CreateAtomicSwapRequest    *CreateAtomicSwapRequestDetails    `json:"create_atomic_swap_request,omitempty"`
 	ReviewRequest              *ReviewRequestDetails              `json:"review_request,omitempty"`
 	ManageSale                 *ManageSaleDetails                 `json:"manage_sale,omitempty"`
+	License                    *LicenseDetails                    `json:"license,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -428,4 +429,11 @@ type BindExternalSystemAccountDetails struct {
 type ManageSaleDetails struct {
 	SaleID uint64               `json:"sale_id"`
 	Action xdr.ManageSaleAction `json:"action"`
+}
+
+type LicenseDetails struct {
+	PrevLicenseHash string `json:"prev_license_hash"`
+	AdminCount      uint64 `json:"admin_count"`
+	DueDate         uint64 `json:"due_date"`
+	LedgerHash      string `json:"ledger_hash"`
 }
