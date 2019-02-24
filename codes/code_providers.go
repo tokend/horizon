@@ -41,4 +41,6 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManageSigner:                func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSignerResult().Code },
 	xdr.OperationTypeManageSignerRole:            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSignerRoleResult().Code },
 	xdr.OperationTypeManageSignerRule:            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSignerRuleResult().Code },
+	xdr.OperationTypeStamp:                       func(ir xdr.OperationResultTr) shortStr { return ir.MustStampResult().Code },
+	xdr.OperationTypeLicense:                     func(ir xdr.OperationResultTr) shortStr { return ir.MustLicenseResult().Code },
 }
