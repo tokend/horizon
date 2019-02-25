@@ -91,6 +91,8 @@ const (
 	TypeCreateAswapBidRequest                  = "operations-create-aswap-bid-request"
 	TypeCancelAswapBid                         = "operations-cancel-aswap-bid"
 	TypeCreateAswapRequest                     = "operations-create-aswap-request"
+	TypeStamp                                  = "operations-stamp"
+	TypeLicense                                = "operations-license"
 
 	TypeRequests                        = "requests"
 	TypeRequestDetailsAMLAlert          = "request-details-aml-alert"
