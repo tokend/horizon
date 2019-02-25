@@ -2,6 +2,8 @@ package operations
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/httpx"
+	"gitlab.com/tokend/horizon/render/hal"
 	"strconv"
 
 	"time"
@@ -14,6 +16,13 @@ import (
 
 // Base represents the common attributes of an operation resource
 type Base struct {
+	Links struct {
+		Self        hal.Link `json:"self"`
+		Transaction hal.Link `json:"transaction"`
+		Succeeds    hal.Link `json:"succeeds"`
+		Precedes    hal.Link `json:"precedes"`
+	} `json:"_links"`
+
 	ID                  string             `json:"id"`
 	PT                  string             `json:"paging_token"`
 	TransactionID       string             `json:"transaction_id"`
@@ -55,6 +64,13 @@ func (this *Base) Populate(
 			return err
 		}
 	}
+
+	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
+	self := fmt.Sprintf("/operations/%d", row.ID)
+	this.Links.Self = lb.Link(self)
+	this.Links.Succeeds = lb.Linkf(nil, "/effects?order=desc&cursor=%s", this.PT)
+	this.Links.Precedes = lb.Linkf(nil, "/effects?order=asc&cursor=%s", this.PT)
+	this.Links.Transaction = lb.Linkf(nil, "/transactions/")
 
 	if public {
 		this.SourceAccount = ""
