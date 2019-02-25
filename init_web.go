@@ -119,6 +119,8 @@ func initWebActions(app *App) {
 
 	r := app.web.router
 	r.Get("/", &RootAction{})
+	r.Get("/v3/info", &RootAction{})
+
 	// system summary variables too verbose to be included into /
 	r.Get("/statistics", &StatisticsAction{})
 	r.Get("/statistics/balances", &BalancesReportAction{})
@@ -407,8 +409,6 @@ func initWebActions(app *App) {
 			apiProxy.ServeHTTP(w, r)
 		}
 	}))
-
-	r.Get("/v3/info", &RootAction{})
 
 	r.Get("/accounts/:account_id/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// while current implementation is clearly lame, more important is to make

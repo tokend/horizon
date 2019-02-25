@@ -81,6 +81,7 @@ func (a *App) Serve() {
 	// it's experimental diff
 	a.web.router.Compile()
 	http.Handle("/v3/transactions", a.web.router)
+	http.Handle("/v3/info", a.web.router)
 	http.Handle("/v3/", a.webV2.mux)
 	http.Handle("/", a.web.router)
 
