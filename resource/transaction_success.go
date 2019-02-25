@@ -2,8 +2,6 @@ package resource
 
 import (
 	"gitlab.com/distributed_lab/txsub"
-	"gitlab.com/tokend/horizon/httpx"
-	"gitlab.com/tokend/horizon/render/hal"
 	"golang.org/x/net/context"
 )
 
@@ -15,7 +13,5 @@ func (res *TransactionSuccess) Populate(ctx context.Context, result txsub.Result
 	res.Result = result.ResultXDR
 	res.Meta = result.ResultMetaXDR
 
-	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
-	res.Links.Transaction = lb.Link("/transactions", result.Hash)
 	return
 }
