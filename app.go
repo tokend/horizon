@@ -78,7 +78,6 @@ func NewApp(config config.Config) (*App, error) {
 // Serve starts the horizon web server, binding it to a socket, setting up
 // the shutdown signals.
 func (a *App) Serve() {
-	// it's experimental diff
 	a.web.router.Compile()
 	http.Handle("/v3/transactions", a.web.router)
 	http.Handle("/v3/info", a.web.router)
