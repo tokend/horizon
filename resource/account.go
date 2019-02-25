@@ -1,24 +1,13 @@
 package resource
 
 import (
-	"fmt"
-
 	"gitlab.com/tokend/horizon/db2/core"
-	"gitlab.com/tokend/horizon/httpx"
-	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/regources"
 	"golang.org/x/net/context"
 )
 
 // Account is the summary of an account
 type Account struct {
-	Links struct {
-		Self         hal.Link `json:"self"`
-		Transactions hal.Link `json:"transactions"`
-		Operations   hal.Link `json:"operations"`
-		Payments     hal.Link `json:"payments"`
-	} `json:"_links"`
-
 	HistoryAccount
 	IsBlocked              bool              `json:"is_blocked"`
 	BlockReasonsI          int32             `json:"block_reasons_i"`
@@ -42,12 +31,6 @@ func (a *Account) Populate(ctx context.Context, ca core.Account) {
 	if ca.Referrer != nil {
 		a.Referrer = *ca.Referrer
 	}
-	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
-	self := fmt.Sprintf("/accounts/%s", ca.AccountID)
-	a.Links.Self = lb.Link(self)
-	a.Links.Transactions = lb.PagedLink(self, "transactions")
-	a.Links.Operations = lb.PagedLink(self, "operations")
-	a.Links.Payments = lb.PagedLink(self, "payments")
 	a.AccountKYC.Populate(*ca.AccountKYC)
 }
 

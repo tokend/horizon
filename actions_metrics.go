@@ -16,10 +16,6 @@ type MetricsAction struct {
 func (action *MetricsAction) JSON() {
 	//action.checkAllowed()
 	action.LoadSnapshot()
-	action.Snapshot["_links"] = map[string]interface{}{
-		"self": hal.NewLink("/metrics"),
-	}
-
 	hal.Render(action.W, action.Snapshot)
 }
 
