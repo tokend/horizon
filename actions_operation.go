@@ -281,6 +281,7 @@ func (action *OperationIndexAction) loadPage() {
 	action.Page.Limit = action.PagingParams.Limit
 	action.Page.Cursor = action.PagingParams.Cursor
 	action.Page.Order = action.PagingParams.Order
+	action.Page.PopulateLinks()
 }
 
 func (action *OperationIndexAction) checkAllowed() {

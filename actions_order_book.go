@@ -87,4 +87,5 @@ func (action *OrderBookAction) loadRecords() {
 
 	action.Page.BaseURL = action.BaseURL()
 	action.Page.BasePath = action.Path()
+	action.Page.PopulateLinks()
 }

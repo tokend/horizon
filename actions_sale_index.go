@@ -166,4 +166,5 @@ func (action *SaleIndexAction) loadPage() {
 	action.Page.BasePath = action.Path()
 	action.Page.Page = action.PagingParams.Page
 	action.Page.Limit = action.PagingParams.Limit
+	action.Page.PopulateLinks()
 }

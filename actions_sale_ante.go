@@ -103,4 +103,5 @@ func (action *SaleAnteAction) loadPage() {
 
 	action.Page.BaseURL = action.BaseURL()
 	action.Page.BasePath = action.Path()
+	action.Page.PopulateLinks()
 }

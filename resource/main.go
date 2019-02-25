@@ -42,6 +42,9 @@ type HistoryAccount struct {
 // TransactionSuccess represents the result of a successful transaction
 // submission.
 type TransactionSuccess struct {
+	Links struct {
+		Transaction hal.Link `json:"transaction"`
+	} `json:"_links"`
 	Hash   string `json:"hash"`
 	Ledger int32  `json:"ledger"`
 	Env    string `json:"envelope_xdr"`

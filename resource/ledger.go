@@ -1,6 +1,9 @@
 package resource
 
 import (
+	"fmt"
+	"gitlab.com/tokend/horizon/httpx"
+	"gitlab.com/tokend/horizon/render/hal"
 	"time"
 
 	"gitlab.com/tokend/go/amount"
@@ -10,6 +13,12 @@ import (
 
 // Ledger represents a single closed ledger
 type Ledger struct {
+	Links struct {
+		Self         hal.Link `json:"self"`
+		Transactions hal.Link `json:"transactions"`
+		Operations   hal.Link `json:"operations"`
+		Payments     hal.Link `json:"payments"`
+	} `json:"_links"`
 	ID               string    `json:"id"`
 	PT               string    `json:"paging_token"`
 	Hash             string    `json:"hash"`
@@ -39,6 +48,14 @@ func (this *Ledger) Populate(ctx context.Context, row history.Ledger) {
 	this.BaseFee = row.BaseFee
 	this.BaseReserve = amount.String(int64(row.BaseReserve))
 	this.MaxTxSetSize = row.MaxTxSetSize
+
+	self := fmt.Sprintf("/ledgers/%d", row.Sequence)
+	lb := hal.LinkBuilder{httpx.BaseURL(ctx)}
+	this.Links.Self = lb.Link(self)
+	this.Links.Transactions = lb.PagedLink(self, "transactions")
+	this.Links.Operations = lb.PagedLink(self, "operations")
+	this.Links.Payments = lb.PagedLink(self, "payments")
+
 	return
 }
 
