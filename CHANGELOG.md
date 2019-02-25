@@ -1,3 +1,20 @@
+## Unreleased
+
+### Added
+
+* Horizon revision to `/` endpoint
+* Master account ID to `/` endpoint
+* Environment name to `/` endpoint
+* `/v3/info` endpoint
+
+### Removed
+
+* `_links` from `/` endpoint
+
+### Changed
+
+* Docs for `/change_role_requests` endpoint (see `filter[request_details.account_to_change_role]`)
+
 ## 3.0.1-x.15
 
 ### Fixed
