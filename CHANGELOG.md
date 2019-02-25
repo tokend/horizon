@@ -1,3 +1,7 @@
+## 3.0.1-x.16
+
+* Added license op and stamp op to history
+
 ## 3.0.1-x.15
 
 ### Fixed
