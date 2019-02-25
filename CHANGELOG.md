@@ -15,6 +15,13 @@
 
 * Docs for `/change_role_requests` endpoint (see `filter[request_details.account_to_change_role]`)
 
+## 3.0.1-x.17
+* Fixed issue with 0 sale state
+
+## 3.0.1-x.16
+
+* Added license op and stamp op to history
+
 ## 3.0.1-x.15
 
 ### Fixed
