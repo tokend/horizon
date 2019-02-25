@@ -408,6 +408,8 @@ func initWebActions(app *App) {
 		}
 	}))
 
+	r.Get("/v3/info", &RootAction{})
+
 	r.Get("/accounts/:account_id/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// while current implementation is clearly lame, more important is to make
 		// public API clear and intuitive since it's impossible to change it later

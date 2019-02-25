@@ -66,7 +66,6 @@ func (action *HistoryOperationIndexAction) loadPage() {
 	action.Page.Limit = action.PagingParams.Limit
 	action.Page.Cursor = action.PagingParams.Cursor
 	action.Page.Order = action.PagingParams.Order
-	action.Page.PopulateLinks()
 }
 
 // OperationShowAction renders a ledger found by its sequence number.
