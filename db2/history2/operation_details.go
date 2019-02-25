@@ -47,6 +47,7 @@ type OperationDetails struct {
 	ReviewRequest              *ReviewRequestDetails              `json:"review_request,omitempty"`
 	ManageSale                 *ManageSaleDetails                 `json:"manage_sale,omitempty"`
 	License                    *LicenseDetails                    `json:"license,omitempty"`
+	Stamp                      *StampDetails                      `json:"stamp,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -432,8 +433,14 @@ type ManageSaleDetails struct {
 }
 
 type LicenseDetails struct {
-	PrevLicenseHash string `json:"prev_license_hash"`
-	AdminCount      uint64 `json:"admin_count"`
-	DueDate         uint64 `json:"due_date"`
-	LedgerHash      string `json:"ledger_hash"`
+	PrevLicenseHash string    `json:"prev_license_hash"`
+	AdminCount      uint64    `json:"admin_count"`
+	DueDate         time.Time `json:"due_date"`
+	LedgerHash      string    `json:"ledger_hash"`
+	Signatures      []string  `json:"signatures"`
+}
+
+type StampDetails struct {
+	LicenseHash string `json:"license_hash"`
+	LedgerHash  string `json:"ledger_hash"`
 }

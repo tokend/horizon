@@ -142,7 +142,9 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeLicense: &licenseOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeStamp: &stubOpHandler{},
+			xdr.OperationTypeStamp: &stampOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 		},
 	}
 }
