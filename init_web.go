@@ -119,7 +119,6 @@ func initWebActions(app *App) {
 
 	r := app.web.router
 	r.Get("/", &RootAction{})
-	r.Get("/v3/info", &RootAction{})
 
 	// system summary variables too verbose to be included into /
 	r.Get("/statistics", &StatisticsAction{})
@@ -405,6 +404,15 @@ func initWebActions(app *App) {
 		signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" || app.config.DisableAPISubmit {
 			TransactionCreateAction{}.ServeHTTPC(c, w, r)
+		} else {
+			apiProxy.ServeHTTP(w, r)
+		}
+	}))
+
+	r.Get("/v3/info", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
+		signer := r.Header.Get(signcontrol.PublicKeyHeader)
+		if signer != "" || app.config.DisableAPISubmit {
+			RootAction{}.ServeHTTPC(c, w, r)
 		} else {
 			apiProxy.ServeHTTP(w, r)
 		}
