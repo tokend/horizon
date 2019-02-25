@@ -305,7 +305,11 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["prev_license_hash"] = hex.EncodeToString(op.PrevLicenseHash[:])
 		details["admin_count"] = op.AdminCount
 		details["due_date"] = op.DueDate
-		details["signatures"] = op.Signatures
+		signatures := make([]string, 0, len(op.Signatures))
+		for _, v := range op.Signatures {
+			signatures = append(signatures, hex.EncodeToString(v.Signature))
+		}
+		details["signatures"] = signatures
 
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))

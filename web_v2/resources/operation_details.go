@@ -97,6 +97,10 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newManageSigner(op.ID, *op.Details.ManageSigner)
 	case xdr.OperationTypeManageLimits:
 		return newManageLimitsOp(op.ID, *op.Details.ManageLimits)
+	case xdr.OperationTypeStamp:
+		return newStampOp(op.ID, *op.Details.Stamp)
+	case xdr.OperationTypeLicense:
+		return newLicenseOp(op.ID, *op.Details.License)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": op.Type,
@@ -428,6 +432,29 @@ func newPayoutOp(id int64, details history2.PayoutDetails) *regources.PayoutOp {
 			SourceAccount: NewAccountKey(details.SourceAccountAddress).AsRelation(),
 			SourceBalance: NewBalanceKey(details.SourceBalanceAddress).AsRelation(),
 			Asset:         NewAssetKey(details.Asset).AsRelation(),
+		},
+	}
+}
+
+func newLicenseOp(id int64, details history2.LicenseDetails) *regources.LicenseOp {
+	return &regources.LicenseOp{
+		Key: regources.NewKeyInt64(id, regources.TypeLicense),
+		Attributes: regources.LicenseOpAttrs{
+			PrevLicenseHash: details.PrevLicenseHash,
+			LedgerHash:      details.LedgerHash,
+			DueDate:         details.DueDate,
+			AdminCount:      details.AdminCount,
+			Signatures:      details.Signatures,
+		},
+	}
+}
+
+func newStampOp(id int64, details history2.StampDetails) *regources.StampOp {
+	return &regources.StampOp{
+		Key: regources.NewKeyInt64(id, regources.TypeStamp),
+		Attributes: regources.StampOpAttributes{
+			LedgerHash:  details.LedgerHash,
+			LicenseHash: details.LicenseHash,
 		},
 	}
 }
