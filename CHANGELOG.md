@@ -1,3 +1,6 @@
+## 3.0.1-x.17
+* Fixed issue with 0 sale state
+
 ## 3.0.1-x.16
 
 * Added license op and stamp op to history

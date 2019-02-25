@@ -82,6 +82,7 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		SoftCap:           uint64(raw.SoftCap),
 		HardCap:           uint64(raw.HardCap),
 		Details:           saleDetails,
+		State:             history.SaleStateOpen,
 		QuoteAssets: history.QuoteAssets{
 			QuoteAssets: quoteAssets,
 		},
