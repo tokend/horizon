@@ -90,7 +90,7 @@ var messages = map[string]string{
 	"op_not_found":                                      "Not found",
 	"op_too_many_invoices":                              "Too many invoices",
 	"op_can_not_delete_in_progress":                     "Cannot delete request while it is progress",
-	"op_invalid_external_details":                       "External details are too long",
+	"op_invalid_external_details":                       "External details are invalid",
 	"op_asset_is_not_withdrawable":                      "It is not allowed to withdraw specified asset",
 	"op_conversion_price_is_not_available":              "Conversion price is not available",
 	"op_conversion_overflow":                            "Overflow during conversion",
@@ -150,7 +150,7 @@ var messages = map[string]string{
 	"op_same_acc_type_to_set":                           "Account role and are the same",
 	"op_request_does_not_exist":                         "Request does not exist",
 	"op_permanent_reject_not_allowed":                   "Permanent reject not allowed, use reject",
-	"op_pending_request_update_not_allowed":             "User not allowed to update ChangeRoleRequest if it isn't rejected",
+	"op_pending_request_update_not_allowed":             "User not allowed to update reviewable request if it isn't rejected",
 	"op_not_allowed_to_update_request":                  "Master not allowed to update ChangeRoleRequest",
 	"op_invalid_change_role_request_data":               "Not allowed to change destination account, role to set or set custom tasks on update request",
 	"op_invalid_creator_details":                        "Invalid json details or details length exceed max length",
@@ -266,6 +266,9 @@ var messages = map[string]string{
 	"op_sale_update_details_tasks_not_found":            "There is no key value for sale details update tasks",
 	"op_not_allowed_to_set_tasks_on_update":             "Not allowed to set tasks on update",
 	"op_contract_create_tasks_not_found":                "There is no key value for contract creation tasks",
+	"op_zero_value_not_allowed":                         "Not allowed to use zero in value for such key",
+	"op_license_violation":                              "License has expired. Admin operations are not allowed. Please contact enterprise@distributedlab.com",
+	"op_auto_review_failed":                             "Auto review of created request has failed",
 }
 
 func getMessage(rawCode string) string {

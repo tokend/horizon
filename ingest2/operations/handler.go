@@ -139,6 +139,10 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeManageSignerRule: &manageSignerRuleOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
+			xdr.OperationTypeLicense: &licenseOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeStamp: &stubOpHandler{},
 		},
 	}
 }

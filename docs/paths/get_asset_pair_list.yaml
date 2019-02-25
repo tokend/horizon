@@ -4,13 +4,13 @@
       - Asset Pairs
     summary: AssetPair List
     description: |
-                  Allows to get a filtered list of `AssetPair` with the corresponding details.
+                  Allows to get a filtered list of `AssetPair` with corresponding details.
     operationId: getAssetPairs
     parameters:
     - name: filter[policy]
       in: query
       description: |
-                    Filters asset pairs by specified bit mask. Returns page of asset pairs where at least one bit intersects
+                    Filters asset pairs by a specified bit mask. Returns the page of asset pairs where at least one bit intersects
       required: false
       style: form
       explode: false
@@ -43,7 +43,7 @@
     - name: filter[asset]
       in: query
       description: |
-                    Filters asset pairs by a specified asset of the pair. No matter base or quote it is
+                    Filters asset pairs by a specified asset of the pair (no matter whether it is base or quote)
       required: false
       style: form
       explode: false
@@ -54,7 +54,7 @@
     - name: include
       in: query
       description: |
-                    Relationships may be used for the `include` parameter.
+                    Relationships that may be used for the `include` parameter.
       required: false
       style: form
       explode: false
@@ -69,7 +69,7 @@
     - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
-        description: asset pairs which satisfies filters exists
+        description: asset pairs that satisfy specified filters 
         content:
           application/vnd.api+json:
             schema:

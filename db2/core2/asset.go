@@ -6,7 +6,7 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-const maximumTrailingDigits int64 = 6
+const maximumTrailingDigits uint32 = 6
 
 // Asset - db representation of asset
 type Asset struct {
@@ -19,7 +19,8 @@ type Asset struct {
 	Issued                 int64       `db:"issued"`
 	PendingIssuance        int64       `db:"pending_issuance"`
 	Policies               int32       `db:"policies"`
-	TrailingDigits         int64       `db:"trailing_digits"`
+	TrailingDigits         uint32      `db:"trailing_digits"`
+	Type                   uint64      `db:"type"`
 }
 
 //GetMinimumAmount - returns min amount support for that asset

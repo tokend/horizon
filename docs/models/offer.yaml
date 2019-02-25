@@ -30,33 +30,33 @@ Offer:
         properties:
           is_buy:
             type: bool
-            description: "defines whether offer is on buying base_asset, selling it, or both"
+            description: "defines whether an offer created is on buying or selling the base_asset, or both"
             example: true
           order_book_id:
             type: integer
             format: int64
-            description: "defines whether offer is on selling or trading. Might be `0` (secondary market) or some `saleId` (for specific sale) or `-1`" # todo provide list of order book IDs
+            description: "defines whether an offer created is on selling or trading. Could be either `0` (secondary market) or some `saleId` (for specific sale) or `-1`" # todo provide a list of order book IDs
             example: 1
           created_at:
             type: string
-            description: "defines time when the offer was created"
+            description: "defines the time when the offer was created"
             format: "date-time"
             example: "2012-11-01T22:08:41+00:00"
           base_amount:
             type: string
             example: "5.000000"
             format: Amount
-            description: "defines the amount of offer in base asset"
+            description: "defines the amount of offer in the base asset"
           quote_amount:
             type: string
             example: "15.000000"
             format: Amount
-            description: "defines the amount of offer in quote asset"
+            description: "defines the amount of offer in the quote asset"
           price:
             type: string
             example: "3.000000"
             format: Amount
-            description: "defines the price of offer"
+            description: "defines the price of an offer"
           fee:
             type: object
             properties:
@@ -81,7 +81,7 @@ Offer:
         properties:
           owner:
             type: object
-            description: "defines the owner of the requested offer"
+            description: "defines an owner of the requested offer"
             properties:
               data:
                 $ref: '#/components/schemas/AccountKey'

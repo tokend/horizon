@@ -18,7 +18,7 @@
     - name: include
       in: query
       description: |
-        Relationships may be used for the included parameter.
+        Relationships that may be used for the included parameter.
       required: false
       style: form
       explode: false

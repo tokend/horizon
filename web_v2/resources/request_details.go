@@ -3,7 +3,6 @@ package resources
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/regources/v2"
@@ -48,7 +47,7 @@ func newAmlAlertRequest(id int64, details history2.CreateAmlAlertRequest) *regou
 	return &regources.CreateAmlAlertRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsAMLAlert),
 		Attributes: regources.CreateAmlAlertRequestAttrs{
-			Amount:         regources.Amount(amount.MustParse(details.Amount)),
+			Amount:         details.Amount,
 			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreateAmlAlertRequestRelations{
@@ -66,6 +65,7 @@ func newAssetCreateRequest(id int64, details history2.CreateAssetRequest) *regou
 			MaxIssuanceAmount:      details.MaxIssuanceAmount,
 			InitialPreissuedAmount: details.InitialPreissuedAmount,
 			CreatorDetails:         details.CreatorDetails,
+			Type:                   details.Type,
 		},
 	}
 }
@@ -117,7 +117,7 @@ func newIssuanceRequest(id int64, details history2.CreateIssuanceRequest) *regou
 	return &regources.CreateIssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsIssuance),
 		Attributes: regources.CreateIssuanceRequestAttrs{
-			Amount:         regources.Amount(amount.MustParse(details.Amount)),
+			Amount:         details.Amount,
 			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreateIssuanceRequestRelations{
@@ -138,7 +138,7 @@ func newPreIssuanceRequest(id int64, details history2.CreatePreIssuanceRequest) 
 	return &regources.CreatePreIssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsPreIssuance),
 		Attributes: regources.CreatePreIssuanceRequestAttrs{
-			Amount:    regources.Amount(amount.MustParse(details.Amount)),
+			Amount:    details.Amount,
 			Signature: details.Signature,
 			Reference: details.Reference,
 		},
@@ -176,7 +176,7 @@ func newChangeRoleRequest(id int64, details history2.ChangeRoleRequest) *regourc
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsChangeRole),
 		Attributes: regources.ChangeRoleRequestAttrs{
 			AccountRoleToSet: details.AccountRoleToSet,
-			KYCData:          details.KYCData,
+			CreatorDetails:   details.CreatorDetails,
 			SequenceNumber:   details.SequenceNumber,
 		},
 		Relationships: regources.ChangeRoleRequestRelations{
@@ -199,13 +199,9 @@ func newWithdrawalRequest(id int64, details history2.CreateWithdrawalRequest) *r
 	return &regources.CreateWithdrawalRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsWithdrawal),
 		Attributes: regources.CreateWithdrawalRequestAttrs{
-			Fee: regources.Fee{
-				Fixed:             regources.Amount(amount.MustParse(details.FixedFee)),
-				CalculatedPercent: regources.Amount(amount.MustParse(details.PercentFee)),
-			},
-			Amount:          details.Amount,
-			CreatorDetails:  details.CreatorDetails,
-			ReviewerDetails: details.ReviewerDetails,
+			Fee:            details.Fee,
+			Amount:         details.Amount,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreateWithdrawalRequestRelations{
 			Balance: NewBalanceKey(details.BalanceID).AsRelation(),

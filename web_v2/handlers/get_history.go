@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/go-ozzo/ozzo-validation"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -30,7 +32,44 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !handler.ensureAllowed(w, r, request) {
+	// TODO: need to refactor
+	if request.Filters.Account != "" {
+		handler.Account, err = handler.AccountsQ.ByAddress(request.Filters.Account)
+		if err != nil {
+			ctx.Log(r).WithError(err).Error("failed to account", logan.F{
+				"account_address": request.Filters.Account,
+			})
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+
+		if handler.Account == nil {
+			ape.RenderErr(w, problems.BadRequest(validation.Errors{
+				"filter[account]": errors.New("not found"),
+			})...)
+			return
+		}
+	}
+
+	if request.Filters.Balance != "" {
+		handler.Balance, err = handler.BalanceQ.GetByAddress(request.Filters.Balance)
+		if err != nil {
+			ctx.Log(r).WithError(err).Error("failed to account", logan.F{
+				"balance_address": request.Filters.Balance,
+			})
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+
+		if handler.Balance == nil {
+			ape.RenderErr(w, problems.BadRequest(validation.Errors{
+				"filter[balance]": errors.New("not found"),
+			})...)
+			return
+		}
+	}
+
+	if !handler.ensureAllowed(w, r) {
 		return
 	}
 
@@ -45,6 +84,10 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 }
 
 type getHistory struct {
+	// cached filter entries
+	Account *history2.Account
+	Balance *history2.Balance
+
 	EffectsQ  history2.ParticipantEffectsQ
 	AccountsQ history2.AccountsQ
 	BalanceQ  history2.BalancesQ
@@ -61,34 +104,12 @@ func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.Partici
 		q = q.WithOperation()
 	}
 
-	if request.Filters.Account != "" {
-		account, err := h.AccountsQ.ByAddress(request.Filters.Account)
-		if err != nil {
-			return result, errors.Wrap(err, "failed to get account by id")
-		}
-
-		// this could happen due to invalid account address, partial history or account does not exists
-		// in any case we do not care and return empty page
-		if account == nil {
-			return result, nil
-		}
-
-		q = q.ForAccount(account.ID)
+	if h.Account != nil {
+		q = q.ForAccount(h.Account.ID)
 	}
 
-	if request.Filters.Balance != "" {
-		balance, err := h.BalanceQ.GetByAddress(request.Filters.Balance)
-		if err != nil {
-			return result, errors.Wrap(err, "failed to load balance by id")
-		}
-
-		// this could happen due to invalid balance address, partial history or balance does not exists
-		// in any case we do not care and return empty page
-		if balance == nil {
-			return result, nil
-		}
-
-		q = q.ForBalance(balance.ID)
+	if h.Balance != nil {
+		q = q.ForBalance(h.Balance.ID)
 	}
 
 	effects, err := q.Select()
@@ -157,22 +178,16 @@ func getEffect(effect history2.ParticipantEffect) regources.ParticipantEffect {
 }
 
 // ensure allowed - checks it requester is allowed to access the data. If not it renders error and returns false.
-func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Request, request *requests.GetHistory) bool {
-	if request.Filters.Account != "" {
-		return isAllowed(httpRequest, w, request.Filters.Account)
+func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Request) bool {
+	if h.Account != nil {
+		return isAllowed(httpRequest, w, h.Account.Address)
 	}
 
-	if request.Filters.Balance != "" {
-		account, err := h.tryGetAccountForBalance(request.Filters.Balance)
+	if h.Balance != nil {
+		account, err := h.tryGetAccountForBalance(h.Balance)
 		if err != nil {
 			ctx.Log(httpRequest).WithError(err).Error("failed to load account for balance")
 			ape.RenderErr(w, problems.InternalError())
-			return false
-		}
-
-		// if we failed to find account by balance address - balance does not exists, so we can render empty page
-		if account == nil {
-			ape.Render(w, regources.ParticipantEffectsResponse{})
 			return false
 		}
 
@@ -182,27 +197,18 @@ func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Requ
 	return isAllowed(httpRequest, w, ctx.CoreInfo(httpRequest).AdminAccountID)
 }
 
-func (h *getHistory) tryGetAccountForBalance(balanceAddress string) (*history2.Account, error) {
-	balance, err := h.BalanceQ.GetByAddress(balanceAddress)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load balance by address")
-	}
-
-	if balance == nil {
-		return nil, nil
-	}
-
+func (h *getHistory) tryGetAccountForBalance(balance *history2.Balance) (history2.Account, error) {
 	// TODO: fuck normalization
 	account, err := h.AccountsQ.ByID(balance.AccountID)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load account by ID")
+		return history2.Account{}, errors.Wrap(err, "failed to load account by ID")
 	}
 
 	if account == nil {
-		return nil, errors.From(errors.New("found balance, but failed to find account for it"), logan.F{
+		return history2.Account{}, errors.From(errors.New("found balance, but failed to find account for it"), logan.F{
 			"balance": balance.ID,
 		})
 	}
 
-	return account, nil
+	return *account, nil
 }

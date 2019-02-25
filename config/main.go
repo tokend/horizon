@@ -5,26 +5,21 @@ import (
 	"net/url"
 	"os"
 	"reflect"
-
-	"gitlab.com/distributed_lab/kit/kv"
-
-	"gitlab.com/distributed_lab/kit/comfig"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
-
 	"gitlab.com/distributed_lab/figure"
-
-	"time"
-
-	"github.com/pkg/errors"
+	"gitlab.com/distributed_lab/kit/comfig"
+	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // Config is the configuration for horizon.  It get's populated by the
 // app's main function and is provided to NewApp.
 type Config struct {
-	comfig.Januser
+	comfig.Januser         `fig:"-"`
 	getter                 rawGetter `fig:"-"`
 	Hostname               string    `fig:"hostname"`
 	DatabaseURL            string    `fig:"database_url,required"`

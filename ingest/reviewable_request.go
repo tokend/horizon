@@ -129,6 +129,7 @@ func getAssetCreation(request *xdr.AssetCreationRequest) *history.AssetCreationR
 	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
 	return &history.AssetCreationRequest{
 		Asset:                  string(request.Code),
+		Type:                   uint64(request.Type),
 		Policies:               int32(request.Policies),
 		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
 		MaxIssuanceAmount:      amount.StringU(uint64(request.MaxIssuanceAmount)),

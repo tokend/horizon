@@ -168,6 +168,10 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCancelAswapBid:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeStamp:
+		// the only direct participant is the source_account
+	case xdr.OperationTypeLicense:
+		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateAswapRequest:
 		// FIXME !!!!!
 		//tx.SourceAccount

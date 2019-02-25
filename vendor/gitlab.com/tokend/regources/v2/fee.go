@@ -1,5 +1,7 @@
 package regources
 
+import "gitlab.com/tokend/go/xdr"
+
 // Fee - describes fee happened on balance. Direction of fee depends on the operation (depending on effect might be
 // charged, locked, unlocked, for all incoming effects but unlocked it's always charged)
 type Fee struct {
@@ -32,11 +34,12 @@ type FeeAttrs struct {
 }
 
 type FeeAppliedTo struct {
-	Asset      string `json:"asset"`
-	Subtype    int64  `json:"subtype"`
-	FeeType    int32  `json:"fee_type"`
-	LowerBound Amount `json:"lower_bound"`
-	UpperBound Amount `json:"upper_bound"`
+	Asset           string      `json:"asset"`
+	Subtype         int64       `json:"subtype"`
+	FeeType         int32       `json:"fee_type"`
+	FeeTypeExtended xdr.FeeType `json:"fee_type_extended"`
+	LowerBound      Amount      `json:"lower_bound"`
+	UpperBound      Amount      `json:"upper_bound"`
 }
 
 type CalculatedFee struct {

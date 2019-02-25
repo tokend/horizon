@@ -32,11 +32,11 @@ SignerRule:
         properties:
           action:
             type: string
-            description: "defines action to be performed over specified resource"
+            description: "defines an action to be performed over the specified resource"
             example: "manage"
           is_forbid:
             type: bool
-            description: "defines if specified action is forbidden"
+            description: "defines whether the specified action is forbidden"
             example: false
           details: 
             type: object
@@ -45,8 +45,8 @@ SignerRule:
           resource:
             type: object
             additionalProperties: true
-            description: "defines resource to which rule is applied. TODO: add link to XDR"
+            description: "defines a resource to which the rule is applied. TODO: add link to XDR"
           is_default:
             type: bool
-            description: "defines if this rule should be included into all new roles"
+            description: "defines whether this rule should be included into all new roles"
             example: true

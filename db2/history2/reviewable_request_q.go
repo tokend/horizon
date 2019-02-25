@@ -31,7 +31,7 @@ func NewReviewableRequestsQ(repo *db2.Repo) ReviewableRequestsQ {
 			"reviewable_requests.all_tasks",
 			"reviewable_requests.pending_tasks",
 			"reviewable_requests.external_details",
-		).From("reviewable_request reviewable_requests"),
+		).From("reviewable_requests"),
 	}
 }
 

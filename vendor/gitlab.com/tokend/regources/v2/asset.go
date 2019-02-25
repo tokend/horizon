@@ -31,7 +31,8 @@ type AssetAttrs struct {
 	Issued                 Amount                 `json:"issued"`
 	PendingIssuance        Amount                 `json:"pending_issuance"`
 	Policies               xdr.AssetPolicy        `json:"policies"`
-	TrailingDigits         int64                  `json:"trailing_digits"`
+	TrailingDigits         uint32                 `json:"trailing_digits"`
+	Type                   uint64                 `json:"type"`
 }
 
 type AssetRelations struct {

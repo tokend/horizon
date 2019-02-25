@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
@@ -286,12 +285,7 @@ func (action *OperationIndexAction) loadPage() {
 }
 
 func (action *OperationIndexAction) checkAllowed() {
-	err := action.Doorman().Check(action.R, doorman.SignerOf(action.AccountFilter),
-		doorman.SignerOf(action.App.CoreInfo.AdminAccountID))
-	if err != nil {
-		action.Err = &problem.NotAllowed
-		return
-	}
+	action.IsAllowed(action.AccountFilter)
 }
 
 // OperationShowAction renders a ledger found by its sequence number.

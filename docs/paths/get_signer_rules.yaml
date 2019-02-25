@@ -4,7 +4,7 @@
       - Signer Rules
     summary: Signer Rule List
     description: |
-                  Allows to get list of `Signer Rule` with the corresponding details.
+                  Allows to get a list of `Signer Rule` with corresponding details.
     operationId: getSignerRules
     parameters:
     - $ref: '#/components/schemas/pageNumberParam'

@@ -100,11 +100,15 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/roles_rules"
+  revision = "bb40cdd15f7f9e0ab0667954aa126a4ff441564f"
 
 [[constraint]]
-  branch = "feature/account_role"
+  revision = "51a82da6eba47a75aee17f07e2cab3814425765d"
   name = "gitlab.com/tokend/regources"
+
+[[constraint]]
+  version = "2"
+  name = "gitlab.com/distributed_lab/figure"
 
 [[constraint]]
   branch = "master"

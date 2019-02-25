@@ -4,12 +4,12 @@
       - Order Books
     summary: OrderBook by ID
     description: |
-                  Returns the list of the placed offers without private details.
+                  Returns the list of placed offers without private details.
     operationId: getOrderBookByID
     parameters:
     - name: id
       in: path
-      description: "The ID of the order book: 0 for secondary market, sale ID - otherwise"
+      description: "ID of the order book: either 0 for the secondary market or sale ID otherwise"
       required: true
       style: simple
       explode: false
@@ -19,7 +19,7 @@
         examle: 0
     - name: base_asset
       in: query
-      description: The base asset of the requested offers
+      description: Base asset of requested offers
       required: false
       style: simple
       explode: false
@@ -29,7 +29,7 @@
         example: "BTC"
     - name: quote_asset
       in: query
-      description: The quote asset the requested offers
+      description: Quote asset of requested offers
       required: false
       style: simple
       explode: false
@@ -39,7 +39,7 @@
         example: "ETH"
     - name: is_buy
       in: query
-      description: Defines whether searching of offer on buying `base_asset` or selling it
+      description: Defines whether an offer is on buying or selling `base_asset`
       required: false
       style: simple
       explode: false
@@ -48,7 +48,7 @@
     - name: include
       in: query
       description: |
-                    Relationships may be used for the included parameter.
+                    Relationships that may be used for the included parameter.
       required: false
       style: form
       explode: false

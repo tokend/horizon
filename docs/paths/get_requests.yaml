@@ -11,7 +11,7 @@
       - name: filter[requestor]
         in: query
         description: |
-          Filters requests by requestor - source of the operation.
+          Requests filtered by requestor - source of the operation.
         required: false
         style: form
         explode: false
@@ -20,7 +20,7 @@
       - name: filter[reviewer]
         in: query
         description: |
-          Filters requests by reviewer - account assigned to review request.
+          Requests filtered by reviewer - account assigned to review requests.
         required: false
         style: form
         explode: false
@@ -29,7 +29,7 @@
       - name: filter[state]
         in: query
         description: |
-          Filters requests by their state.
+          Requests filtered by their state.
           * 1 - pending
           * 2 - canceled
           * 3 - approved
@@ -45,7 +45,7 @@
       - name: filter[type]
         in: query
         description: |
-          Filters requests by their type.
+          Requests filtered by their type.
           * 0 -   "none"
           * 1 -   "any"
           * 2 -   "create_pre_issuance"
@@ -72,7 +72,7 @@
       - name: filter[pending_tasks]
         in: query
         description: |
-          Filters requests by pending tasks bit mask. Returns requests if all bit are set.
+          Requests filtered by pending tasks bit mask. Returns requests if all bits are set.
         required: false
         style: form
         explode: false
@@ -81,7 +81,7 @@
       - name: filter[pending_tasks_not_set]
         in: query
         description: |
-          Filters requests by pending tasks bit mask. Returns requests if all bits not set.
+          Filters requests by pending tasks bit mask. Returns requests if none of bits is set.
         required: false
         style: form
         explode: false
@@ -99,7 +99,7 @@
       - name: include
         in: query
         description: |
-          Relationships may be used for the included parameter.
+          Relationships that may be used for the included parameter.
         required: false
         style: form
         explode: false
@@ -150,7 +150,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       401:
-        description: invalid signature is provided or a signer is not authorized to access specified resources
+        description: either an invalid signature has been provided or a signer has not been authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:

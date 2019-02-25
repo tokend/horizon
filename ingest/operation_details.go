@@ -294,6 +294,19 @@ func (is *Session) operationDetails() map[string]interface{} {
 		if op.AllTasks != nil {
 			details["all_tasks"] = *op.AllTasks
 		}
+	case xdr.OperationTypeStamp:
+		opRes := c.OperationResult().MustStampResult().
+			MustSuccess()
+		details["ledger_hash"] = hex.EncodeToString(opRes.LedgerHash[:])
+		details["license_hash"] = hex.EncodeToString(opRes.LicenseHash[:])
+	case xdr.OperationTypeLicense:
+		op := c.Operation().Body.MustLicenseOp()
+		details["ledger_hash"] = hex.EncodeToString(op.LedgerHash[:])
+		details["prev_license_hash"] = hex.EncodeToString(op.PrevLicenseHash[:])
+		details["admin_count"] = op.AdminCount
+		details["due_date"] = op.DueDate
+		details["signatures"] = op.Signatures
+
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

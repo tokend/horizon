@@ -1,6 +1,6 @@
 AssetPolicyMask:
   type: object
-  description: "Represents bit mask for asset policy"
+  description: "Represents a bit mask for the asset policy"
   properties:
     value:
       type: integer
@@ -11,7 +11,7 @@ AssetPolicyMask:
       type: array
       items:
         type: object
-        description: "flag of bit mask"
+        description: "flag of the bit mask"
         properties:
           name:
             type: string
@@ -24,7 +24,7 @@ AssetPolicyMask:
 
 AssetPairPolicyMask:
   type: object
-  description: "Represents bit mask for asset pair policy"
+  description: "Represents a bit mask for the asset pair policy"
   properties:
     value:
       type: integer
@@ -35,7 +35,7 @@ AssetPairPolicyMask:
       type: array
       items:
         type: object
-        description: "flag of bit mask"
+        description: "flag of a bit mask"
         properties:
           name:
             type: string

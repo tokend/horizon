@@ -2,6 +2,7 @@ package regources
 
 import (
 	"encoding/json"
+	"gitlab.com/tokend/go/xdr"
 	"time"
 )
 
@@ -32,16 +33,17 @@ type ReviewableRequest struct {
 }
 
 type ReviewableRequestAttrs struct {
-	Reference       *string                `json:"reference,omitempty"`
-	RejectReason    string                 `json:"reject_reason"`
-	Hash            string                 `json:"hash"`
-	AllTasks        uint32                 `json:"all_tasks"`
-	PendingTasks    uint32                 `json:"pending_tasks"`
-	ExternalDetails map[string]interface{} `json:"external_details,omitempty"`
-	CreatedAt       time.Time              `json:"created_at"`
-	UpdatedAt       time.Time              `json:"updated_at"`
-	State           string                 `json:"state"`
-	StateI          int32                  `json:"state_i"`
+	Reference       *string                   `json:"reference,omitempty"`
+	RejectReason    string                    `json:"reject_reason"`
+	Hash            string                    `json:"hash"`
+	AllTasks        uint32                    `json:"all_tasks"`
+	PendingTasks    uint32                    `json:"pending_tasks"`
+	ExternalDetails map[string]interface{}    `json:"external_details,omitempty"`
+	CreatedAt       time.Time                 `json:"created_at"`
+	UpdatedAt       time.Time                 `json:"updated_at"`
+	State           string                    `json:"state"`
+	StateI          int32                     `json:"state_i"`
+	XDRType         xdr.ReviewableRequestType `json:"xdr_type"`
 }
 
 type ReviewableRequestRelations struct {

@@ -43,7 +43,7 @@ publish dockerhub:
   tags:
     - tokend
   only:
-    - /^.+\..+\..+$/
+    - /^\d+\.\d+\.\d+.*$/
   script:
     - RELEASE=$CI_COMMIT_REF_NAME
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY

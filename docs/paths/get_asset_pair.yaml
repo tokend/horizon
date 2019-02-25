@@ -4,12 +4,12 @@
       - Asset Pairs
     summary: AssetPair by ID
     description: |
-                  Allows to get `AssetPair` with the corresponding details.
+                  Allows to get `AssetPair` with corresponding details.
     operationId: getAssetPairByID
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the asset pair which consists of two asset codes
+      description: Unique identifier of an asset pair that consists of two asset codes
       required: true
       style: simple
       explode: false
@@ -20,7 +20,7 @@
     - name: include
       in: query
       description: |
-                    Relationships may be used for the `include` parameter.
+                    Relationships that may be used for the `include` parameter.
       required: false
       style: form
       explode: false

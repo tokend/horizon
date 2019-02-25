@@ -1,4 +1,33 @@
-# Unreleased
+## Unreleased
+
+### Added
+
+* Asset type to asset and create asset response
+* Ingest of details of LicenseOp and StampOp
+* Error for v3 history, when trying to request filtration by non existing account/balance
+
+### Changed
+
+* xdr revision
+* fix limits select
+* Messages for error codes
+
+### Fixed
+* Change role request creator details null
+* Fixed state of the reviewable requests
+* Added xdr type to reviewable request
+* Fees list when account type filter is not requested
+* 401 on v1 operations when skipSigCheck is on
+* Ingest v2 stop on check_sale_state op
+
+
+# 3.0.1-x.13
+
+### Fixed
+
+* Returning account and signer rule action using xdr type in account and signer rules responses
+* (internal) proper types for reviewable requests amounts
+* Removed KYCData from ChangeRoleRequest
 
 # 3.0.1-x.11
 

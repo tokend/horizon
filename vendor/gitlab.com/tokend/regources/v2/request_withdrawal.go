@@ -9,10 +9,9 @@ type CreateWithdrawalRequest struct {
 
 // CreateWithdrawalRequestAttrs - attributes of the `withdrawal` reviewable request
 type CreateWithdrawalRequestAttrs struct {
-	Fee             Fee     `json:"fee"`
-	Amount          string  `json:"amount"`
-	CreatorDetails  Details `json:"creator_details"`
-	ReviewerDetails Details `json:"reviewer_details"`
+	Fee            Fee     `json:"fee"`
+	Amount         Amount  `json:"amount"`
+	CreatorDetails Details `json:"creator_details"`
 }
 
 // CreateWithdrawalRequestRelations - relationships of the `withdrawal` reviewable request

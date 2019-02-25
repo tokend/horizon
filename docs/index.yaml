@@ -6,14 +6,14 @@ info:
     client facing application. It allows submitting transactions to the network,
     reading history of operations, and checking the state of entities.
 
-    > IMPORTANT: Note that endpoints not specified in this document or marked as `WIP` do not guaranty to maintain backwards compability.
+    > IMPORTANT: Note that endpoints not specified in this document or marked as `WIP` do not guaranty the backwards compability maintenance.
 
     ### Overview
     Horizon uses [JSON:API](https://jsonapi.org/) convention to format requests and responses.
     The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", 
     and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt>).
     ### Security
-    TokenD uses the Ed25519 algorithm for authorizing any request or read private data. The use of such cryptographic proof allows building a system where transfer of secrets in an open form is not necessary, which significantly improves security. Thus, an attacker who has access to one of the servers will not be able to compromise users' secrets.
+    TokenD uses the Ed25519 algorithm for authorizing any request or read private data. The use of such cryptographic proof allows building a system where transfer of secrets in an open form is not necessary, which significantly improves the security. Thus, an attacker who has access to one of the servers will not be able to compromise users' secrets.
 
     Request signature implementation is based on IETF HTTP Signatures draft RFC. Implicit headers parameter is not supported; clients must explicitly specify headers used for signing.
 
@@ -47,7 +47,7 @@ info:
     6fcbee4b0a8932784644d33b360bd3eef389ed37dfd66f17e4bfa910ba9d616a
     ```
 
-    Now, you have to sign hash with the private key and encode the result in `Base64`. For seed such as `SCDMOOXVNMO6SA22AYUMZDIGLDJMBUTVEGB73FFNTLFJILBJWIU4NQ3D`, the encoded signature would be:
+    Now, you have to sign hash with a private key and encode the result in `Base64`. For a seed such as `SCDMOOXVNMO6SA22AYUMZDIGLDJMBUTVEGB73FFNTLFJILBJWIU4NQ3D`, the encoded signature would be:
 
     ```text
     w/y3EsliTmQPC6MS88N/kjU/hFVxlIdhFhzfRGv4yIsSokgMpxVqxcC/CmUsAN4t3BKpskGG7+JEWryV8NXvCg==
@@ -89,13 +89,13 @@ tags:
                   * A base asset refers to the underlying assets giving value to a company, investment or loan.
                   Base asset is not fixed. It will appreciate or depreciate according to market forces.
                   * A quote asset refers to the last amount at which 1 base asset was traded,
-                  meaning the most recent price to which a buyer and seller agreed and
+                  meaning the most recent price to which a buyer and seller have agreed as well as the price
                   at which some 1 base asset was transacted
   - name: Order Books
     description: |
-                  An order book is an list of buy and sell orders for a specified asset pair organized by price level.
+                  An order book is a list of buy and sell orders for a specified asset pair organized by price level.
                   An order book lists the amount of asset being bid or offered at each price point.
-                  It does not identifies the market participants behind the buy and sell orders.
+                  It does not identify market participants behind buy and sell orders.
   - name: AMLAlert
     description: Defines access points to AMLAlert Reviewable Requests
   - name: Issuance

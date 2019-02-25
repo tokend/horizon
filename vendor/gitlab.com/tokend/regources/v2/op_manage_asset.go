@@ -12,6 +12,7 @@ type ManageAssetOp struct {
 //ManageAssetOpAttrs - details of corresponding op
 type ManageAssetOpAttrs struct {
 	AssetCode         string                `json:"asset_code,omitempty"`
+	Type              uint64                `json:"type,omitempty"`
 	Action            xdr.ManageAssetAction `json:"action"`
 	Policies          *xdr.AssetPolicy      `json:"policies,omitempty"`
 	CreatorDetails    Details               `json:"creator_details,omitempty"`

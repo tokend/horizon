@@ -9,7 +9,7 @@ type AccountRule struct {
 
 type AccountRuleAttr struct {
 	Resource xdr.AccountRuleResource `json:"resource"`
-	Action   string                  `json:"action"`
+	Action   xdr.AccountRuleAction   `json:"action"`
 	Forbids  bool                    `json:"forbids"`
 	Details  Details                 `json:"details"`
 }
