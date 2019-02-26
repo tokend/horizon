@@ -27,7 +27,7 @@ Signer:
           identity:
             type: integer
             format: uint32
-            description: "identity of the signer (signatures of signers with the same identity are considered as one signature with max weight)"
+            description: "identity of the signer (signatures of signers with same identities are considered as one signature with max weight)"
           details:
             type: object
             additionalProperties: true

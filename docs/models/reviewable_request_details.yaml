@@ -54,7 +54,7 @@ CreateAssetDetails:
               example: 12
             pre_issuance_asset_signer:
               type: string
-              description: "Address of account that performs pre issuance"
+              description: "Address of an account that performs pre issuance"
               example: "GBSR6JG5AYSAW7HK6EGJFYVIVN54LVGSY3ZLJ6X3IBQZ766EJABCZQTH"
             max_issuance_amount:
               type: string
