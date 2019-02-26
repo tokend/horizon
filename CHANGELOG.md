@@ -1,3 +1,7 @@
+## Unreleased
+## Fixed
+* Information disclosure without permission for reviewable requests v1 
+
 ## 3.0.1-x.18
 ## Fixed
 
