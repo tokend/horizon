@@ -1,3 +1,8 @@
+## 3.0.1-x.18
+## Fixed
+
+* Ingest v2 stop on sale participation delete
+
 ## 3.0.1-x.17
 * Fixed issue with 0 sale state
 
