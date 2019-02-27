@@ -4,14 +4,14 @@
       - Requests
     summary: Reviewable Request List
     description: |
-      Allows to get a filtered list of `ReviewableRequest` with details\n
+      Allows getting a filtered list of `ReviewableRequest` with details\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getRequests
     parameters:
       - name: filter[requestor]
         in: query
         description: |
-          Requests filtered by requestor - source of the operation.
+          Filters requests by requestor - source of the operation.
         required: false
         style: form
         explode: false
@@ -20,7 +20,7 @@
       - name: filter[reviewer]
         in: query
         description: |
-          Requests filtered by reviewer - account assigned to review requests.
+          Filters requests by reviewer - account assigned to review requests.
         required: false
         style: form
         explode: false
@@ -29,7 +29,7 @@
       - name: filter[state]
         in: query
         description: |
-          Requests filtered by their state.
+          Filters requests by their state.
           * 1 - pending
           * 2 - canceled
           * 3 - approved
@@ -45,7 +45,7 @@
       - name: filter[type]
         in: query
         description: |
-          Requests filtered by their type.
+          Filters requests by their type.
           * 0 -   "none"
           * 1 -   "any"
           * 2 -   "create_pre_issuance"
@@ -72,7 +72,7 @@
       - name: filter[pending_tasks]
         in: query
         description: |
-          Requests filtered by pending tasks bit mask. Returns requests if all bits are set.
+          Filters requests by existing tasks in pending tasks bit mask. Returns requests if all bits are set.
         required: false
         style: form
         explode: false
@@ -81,7 +81,7 @@
       - name: filter[pending_tasks_not_set]
         in: query
         description: |
-          Filters requests by pending tasks bit mask. Returns requests if none of bits is set.
+          Filters requests by existing tasks in pending tasks bit mask. Returns requests if none of bits is set.
         required: false
         style: form
         explode: false
@@ -90,7 +90,7 @@
       - name: filter[pending_tasks_any_of]
         in: query
         description: |
-          Filters requests by pending tasks bit mask. Returns requests if at least one bit is set.
+          Filters requests by existing tasks in pending tasks bit mask. Returns requests if at least one bit is set.
         required: false
         style: form
         explode: false

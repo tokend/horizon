@@ -4,12 +4,12 @@
       - Assets
     summary: Asset by ID
     description: |
-                  Allows to get `Asset` with corresponding details.
+                  Allows getting `Asset` with corresponding details.
     operationId: getAssetByID
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the asset (code)
+      description: Unique identifier of an asset (code)
       required: true
       style: simple
       explode: false

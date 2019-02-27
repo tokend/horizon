@@ -4,13 +4,13 @@
       - Asset Pairs
     summary: AssetPair List
     description: |
-                  Allows to get a filtered list of `AssetPair` with corresponding details.
+                  Allows getting a filtered list of `AssetPair` with corresponding details.
     operationId: getAssetPairs
     parameters:
     - name: filter[policy]
       in: query
       description: |
-                    Filters asset pairs by a specified bit mask. Returns the page of asset pairs where at least one bit intersects
+                    Filters asset pairs by a specified bit mask. Returns the page of asset pairs where at least one bit intersects.
       required: false
       style: form
       explode: false
@@ -43,7 +43,7 @@
     - name: filter[asset]
       in: query
       description: |
-                    Filters asset pairs by a specified asset of the pair (no matter whether it is base or quote)
+                    Filters asset pairs by a specified asset of the pair (no matter whether it is a base or quote asset)
       required: false
       style: form
       explode: false

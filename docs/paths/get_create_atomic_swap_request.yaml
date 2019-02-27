@@ -4,14 +4,14 @@
       - WIP
     summary: Create Atomic Swap Request by ID
     description: |
-      Allows to get `CreateAtomicSwap` by ID\n
+      Allows getting `CreateAtomicSwap` by ID\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getCreateAtomicSwapRequest
     parameters:
       - name: filter[requestor]
         in: query
         description: |
-          Requests are filtered by requestor - source of the operation.
+          Filters requests by requestor - source of the operation.
         required: false
         style: form
         explode: false
@@ -20,7 +20,7 @@
       - name: filter[reviewer]
         in: query
         description: |
-          Requests are filtered by reviewer - account assigned to review requests.
+          Filters requests by reviewer - account assigned to review requests.
         required: false
         style: form
         explode: false
@@ -29,7 +29,7 @@
       - name: filter[state]
         in: query
         description: |
-          Requests are filtered by their state.
+          Filters requests by their state.
           * 1 - pending
           * 2 - canceled
           * 3 - approved
@@ -45,7 +45,7 @@
       - name: filter[pending_tasks]
         in: query
         description: |
-          Requests are filtered by pending tasks bit mask. Returns requests if all bits are set.
+          Filters requests by existing tasks in pending tasks bit mask. Returns requests if all bits are set.
         required: false
         style: form
         explode: false
@@ -54,7 +54,7 @@
       - name: filter[pending_tasks_not_set]
         in: query
         description: |
-          Requests are filtered by pending tasks bit mask. Returns requests if none of bits is set.
+          Filters requests by existing tasks in pending tasks bit mask. Returns requests if none of bits is set.
         required: false
         style: form
         explode: false
@@ -63,7 +63,7 @@
       - name: filter[pending_tasks_any_of]
         in: query
         description: |
-          Requests are filtered by pending tasks bit mask. Returns requests if at least one bit is set.
+          Filters requests by existing tasks in pending tasks bit mask. Returns requests if at least one bit is set.
         required: false
         style: form
         explode: false
@@ -72,7 +72,7 @@
       - name: filter[request_details.quote_asset]
         in: query
         description: |
-          Filters create atomic swap requests by quote asset.
+          Filters create_atomic_swap requests by quote asset.
         required: false
         style: form
         explode: false

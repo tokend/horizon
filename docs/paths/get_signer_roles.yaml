@@ -4,7 +4,7 @@
       - Signer Roles
     summary: Signer Role List
     description: |
-                  Allows to get a list of `Signer Role` with corresponding details.
+                  Allows getting a list of `Signer Role` with corresponding details.
     operationId: getSignerRoles
     parameters:
     - name: include
@@ -22,7 +22,7 @@
     - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
-        description: succesfully retrived page
+        description: succesfully retrieved page
         content:
           application/vnd.api+json:
             schema:

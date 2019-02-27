@@ -4,9 +4,9 @@
       - Offers
     summary: Offers List
     description: |
-                  Allows to get a filtered list of `Offer` with the corresponding details.\n
-                  🔒 The signature is needed in such cases:\n
-                    1. if no filters applied, admin account's signature is required.\n
+                  Allows getting a filtered list of `Offer` with corresponding details.\n
+                  🔒 Depending on the case, different signatures are required:\n
+                    1. if no filters are applied, admin account's signature is required.\n
                     2. if filters are applied, signature of the account by which the filter was requested is required\n
     operationId: getOffers
     parameters:
@@ -57,7 +57,7 @@
     - name: filter[owner]
       in: query
       description: |
-                    Offers are filtered by specified account that created the offer
+                    Filters offers by a specified account that created the offer
       required: false
       style: form
       explode: false
@@ -68,7 +68,7 @@
     - name: filter[order_book]
       in: query
       description: |
-                   Offers are filtered by specified order book ID
+                   Filters offers by specified order book ID
                    Defines whether offers are for sale or for trade
                    (0 - secondary market, saleId - for specific sale)
       required: false
@@ -81,7 +81,7 @@
     - name: filter[is_buy]
       in: query
       description: |
-                    Defines whether an offer is on buying or selling  base_asset, or both
+                    Defines whether an offer is on buying or selling the base_asset, or both
                     * if `is_buy == true` -> only buy `base_asset` offers are filtered 
                     * if `is_buy == false` -> only sell `base_asset` offers are filtered
                     * if `is_buy` is not specified -> both buy and sell `base_asset` offers are filtered

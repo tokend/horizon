@@ -4,7 +4,7 @@
       - KeyValue
     summary: KeyValueEntry List
     description: |
-      Allows to get `KeyValueEntry` with corresponding details.
+      Allows getting `KeyValueEntry` with corresponding details.
     operationId: getKeyValueList
     parameters:
       - $ref: '#/components/schemas/pageNumberParam'

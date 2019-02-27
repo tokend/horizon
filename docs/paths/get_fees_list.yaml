@@ -4,13 +4,13 @@
       - Fees
     summary: Fee List
     description: |
-      Allows to get a filtered list of `Fee` with corresponding details.
+      Allows getting a filtered list of `Fee` with corresponding details.
     operationId: getFeesList
     parameters:
       - name: filter[asset]
         in: query
         description: |
-          Filters fees by asset. Returns page of fees for provided asset
+          Filters fees by asset. Returns page of fees for the provided asset
         required: false
         style: form
         explode: false
