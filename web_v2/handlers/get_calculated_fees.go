@@ -150,7 +150,7 @@ func (h *getCalculatedFeesHandler) getFeeForAccount(request *requests.GetCalcula
 		return fee, nil
 	}
 
-	fee, err = q.FilterByAccountType(core2.GlobalAccountRole).Get()
+	fee, err = q.FilterGlobal().Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load general fees")
 	}
@@ -159,7 +159,7 @@ func (h *getCalculatedFeesHandler) getFeeForAccount(request *requests.GetCalcula
 	}
 
 	return &core2.Fee{
-		AccountRole: core2.GlobalAccountRole,
+		AccountRole: core2.FeesEmptyRole,
 		FeeType:     request.FeeType,
 		Subtype:     request.Subtype,
 		Asset:       request.Asset,

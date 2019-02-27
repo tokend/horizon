@@ -1,3 +1,7 @@
+## 3.0.1-x.21
+## Fixed
+* Invalid fees joined for account
+
 ## 3.0.1-x.20
 ## Fixed
 * Not valid percent amount for manage offer op
