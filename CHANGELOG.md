@@ -1,3 +1,7 @@
+## 3.0.1-x.20
+## Fixed
+* Not valid percent amount for manage offer op
+
 ## 3.0.1-x.19
 ## Added
 * Error codes for manageSigner and skiped op

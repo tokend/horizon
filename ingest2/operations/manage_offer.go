@@ -96,7 +96,7 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 		*source.BalanceID = h.MustBalanceID(newOffer.QuoteBalance)
 		*source.AssetCode = string(newOffer.Quote)
 		source.Effect.Locked.Amount = regources.Amount(newOffer.QuoteAmount)
-		source.Effect.Locked.Fee.CalculatedPercent = regources.Amount(newOffer.PercentFee)
+		source.Effect.Locked.Fee.CalculatedPercent = regources.Amount(newOffer.Fee)
 	} else {
 		*source.BalanceID = h.MustBalanceID(newOffer.BaseBalance)
 		*source.AssetCode = string(newOffer.Base)
@@ -142,7 +142,7 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 			*participant.BalanceID = h.MustBalanceID(deletedOffer.QuoteBalance)
 			*participant.AssetCode = string(deletedOffer.Quote)
 			participant.Effect.Unlocked.Amount = regources.Amount(deletedOffer.QuoteAmount)
-			participant.Effect.Unlocked.Fee.CalculatedPercent = regources.Amount(deletedOffer.PercentFee)
+			participant.Effect.Unlocked.Fee.CalculatedPercent = regources.Amount(deletedOffer.Fee)
 		} else {
 			*participant.BalanceID = h.MustBalanceID(deletedOffer.BaseBalance)
 			*participant.AssetCode = string(deletedOffer.Base)
