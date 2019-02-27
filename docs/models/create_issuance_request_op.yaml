@@ -1,0 +1,52 @@
+CreateIssuanceRequestOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-create-issuance-request"
+
+CreateIssuanceRequestOp:
+  allOf:
+  - $ref: '#/components/schemas/CreateIssuanceRequestOpKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        properties:
+          asset:
+            $ref: '#/components/schemas/AssetKey'
+          request:
+            $ref: '#/components/schemas/RequestKey'
+          receiver_account:
+            $ref: '#/components/schemas/AccountKey'
+          receiver_balance:
+            $ref: '#/components/schemas/BalanceKey'
+      attributes:
+        type: object
+        properties:
+          required:
+          - fee
+          - amount
+          - reference
+          - creator_details
+          fee:
+            $ref: '#/components/schemas/CalculatedFeeEntry'
+          reference:
+            type: string
+            description: "reference of the request"
+          amount:
+            type: string
+            format: Amount
+            example: "123.123456"
+          all_tasks:
+            type: integer
+            description: tasks set on request creation
+            example: 2
+            nullable: true
+          creator_details:
+            $ref: '#/components/schemas/Details'
+

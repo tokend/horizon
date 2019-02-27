@@ -1,0 +1,13 @@
+ManageInvoiceOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-manage-invoice"
+
+ManageInvoiceOp:
+  $ref: '#/components/schemas/ManageInvoiceOpKey'

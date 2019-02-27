@@ -67,8 +67,7 @@ CreateAssetDetails:
               example: "1000.123456"
               format: Amount
             creator_details:
-              type: object
-              description: "free-form object to attach details"
+              $ref: '#/components/schemas/Details'
 
 UpdateAssetDetails:
   allOf:
@@ -97,8 +96,7 @@ UpdateAssetDetails:
               description: "Policies specified for the asset creation"
               example: 12
             creator_details:
-              type: object
-              description: "free-form object to attach details"
+              $ref: '#/components/schemas/Details'
 
 CreatePreIssuanceDetails:
   allOf:
@@ -150,8 +148,7 @@ CreatePreIssuanceDetails:
               example: "300.123456"
               format: Amount
             creator_details:
-              type: object
-              description: "free-form object to attach details"
+              $ref: '#/components/schemas/Details'
 
 CreateIssuanceDetails:
   allOf:
@@ -188,8 +185,7 @@ CreateIssuanceDetails:
               example: "1000.123456"
               format: Amount
             creator_details:
-              type: object
-              description: "free-form object to attach details"
+              $ref: '#/components/schemas/Details'
 
 CreateWithdrawDetails:
   allOf:
@@ -225,11 +221,9 @@ CreateWithdrawDetails:
               properties:
                 $ref: '#/components/schemas/CalculatedFee'
             creator_details:
-              type: object
-              description: "free-form object to attach details"
+              $ref: '#/components/schemas/Details'
             reviewer_details:
-              type: object
-              description: "free-form object to attach reviewer details"
+              $ref: '#/components/schemas/Details'
 
 CreateSaleDetails:
   allOf:
@@ -298,8 +292,7 @@ CreateSaleDetails:
                 * 2 - **crowdfunding** sale
                 * 3 - **fixed price** sale
             creator_details:
-              type: object
-              description: "free-form object to attach details"
+              $ref: '#/components/schemas/Details'
 
 UpdateLimitsDetails:
   allOf:
@@ -317,8 +310,7 @@ UpdateLimitsDetails:
               description: "Hash of a document"
               example: "13935d561f9ec54341243e6afaf0c8bf936928b07f6600204ba8ca550757d0a6"
             creator_details:
-              type: object
-              description: "free-form object to attach details"
+              $ref: '#/components/schemas/Details'
 
 CreateAmlAlertDetails:
   allOf:
@@ -348,8 +340,7 @@ CreateAmlAlertDetails:
               example: "1000.123456"
               format: Amount
             creator_details:
-              type: string
-              example: "free form object for details"
+              $ref: '#/components/schemas/Details'
 
 ChangeRoleDetails:
   allOf:
@@ -388,8 +379,7 @@ ChangeRoleDetails:
             creator_details:
               type: array
               items:
-                type: object
-                description: "Free form object for request specific details"
+                $ref: '#/components/schemas/Details'
 
 UpdateSaleDetailsDetails:
   allOf:
@@ -413,8 +403,9 @@ UpdateSaleDetailsDetails:
             - creator_details
           properties:
             creator_details:
-              type: object
-              description: "New details to set for sale"
+              allOf:
+              - $ref: '#/components/schemas/Details'
+              - description: "New details to set for sale"
 
 CreateAtomicSwapBidDetails:
   allOf:
@@ -453,8 +444,7 @@ CreateAtomicSwapBidDetails:
               example: "100.000001"
               format: Amount
             creator_details:
-              type: object
-              description: "free-form object"
+              $ref: '#/components/schemas/Details'
 
 CreateAtomicSwapDetails:
   allOf:

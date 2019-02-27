@@ -1,0 +1,10 @@
+Enum:
+  type: object
+  properties:
+    required: [value, name]
+    value:
+      type: integer
+      example: 1
+    name:
+      type: string
+      example: "General"

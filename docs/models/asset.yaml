@@ -80,6 +80,7 @@ Asset:
             format: uint64
             description: "Numeric type of asset"
             example: 2
-          details: 
-            type: object
-            description: "free-form object to attach asset details such as a link to icon, short description, etc."
+          details:
+            allOf:
+            - $ref: '#/components/schemas/Details'
+            - description: "free-form object to attach asset details such as a link to icon, short description, etc."

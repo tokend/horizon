@@ -1,0 +1,34 @@
+CreatePreIssuanceRequestOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-create-preissuance-request"
+
+CreatePreIssuanceRequestOp:
+  allOf:
+  - $ref: '#/components/schemas/CreatePreIssuanceRequestOpKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        properties:
+          asset:
+            $ref: '#/components/schemas/AssetKey'
+          request:
+            $ref: '#/components/schemas/RequestKey'
+      attributes:
+        type: object
+        properties:
+          required:
+          - amount
+          amount:
+            type: string
+            format: Amount
+            example: "123.123456"
+
+

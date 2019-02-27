@@ -1,0 +1,15 @@
+CreateAswapBidRequestOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-create-aswap-bid-request"
+
+
+CreateAswapBidRequestOp:
+  $ref: '#/components/schemas/CreateAswapBidRequestOpKey'
+

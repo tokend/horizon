@@ -1,0 +1,13 @@
+ManageContractRequestOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-manage-contract-request"
+
+ManageContractRequestOp:
+  $ref: '#/components/schemas/ManageContractRequestOpKey'

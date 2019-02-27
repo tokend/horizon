@@ -1,0 +1,66 @@
+ManageAccountRuleOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-create-account-rule"
+        - "operations-update-account-rule"
+        - "operations-remove-account-rule"
+
+ManageAccountRuleOp:
+  allOf:
+  - $ref: '#/components/schemas/ManageAccountRuleOpKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        nullable: true
+        properties:
+          rules:
+            type: array
+            items:
+              $ref: '#/components/schemas/AccountRuleKey'
+          role:
+            $ref: '#/components/schemas/AccountRoleKey'
+      attributes:
+        nullable: true
+        type: object
+        properties:
+          required:
+          - details
+          - forbids
+          - action
+          - resource
+          forbids:
+            type: boolean
+            description: "" # todo add description
+          action:
+            allOf:
+            - $ref: '#/components/schemas/Enum'
+            - description: |
+                * 1:  "any"
+                * 2:  "create"
+                * 3:  "create_for_other"
+                * 4:  "create_with_tasks"
+                * 5:  "manage"
+                * 6:  "send"
+                * 7:  "withdraw"
+                * 8:  "receive_issuance"
+                * 9:  "receive_payment"
+                * 10: "receive_atomic_swap"
+                * 11: "participate"
+                * 12: "bind"
+                * 13: "update_max_issuance"
+                * 14: "check"
+                * 15: "cancel"
+          details:
+            $ref: '#/components/schemas/Details'
+          resource:
+            type: object
+            additionalProperties: true
+            description: "Free-form object"
+              #todo add resource

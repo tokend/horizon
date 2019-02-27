@@ -138,4 +138,5 @@ x-tagGroups:
   - name: Other
     tags:
       - Requests
+      - History
       - WIP
