@@ -9,7 +9,7 @@
     parameters:
     - name: id
       in: path
-      description: "ID of the order book: either 0 for the secondary market or sale ID otherwise"
+      description: "ID of an order book: 0 for the secondary market and sale ID otherwise"
       required: true
       style: simple
       explode: false
@@ -39,7 +39,7 @@
         example: "ETH"
     - name: is_buy
       in: query
-      description: Defines whether an offer is on buying or selling `base_asset`
+      description: Defines whether an offer is on buying or selling the `base_asset`
       required: false
       style: simple
       explode: false

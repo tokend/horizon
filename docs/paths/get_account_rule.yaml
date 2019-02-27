@@ -4,12 +4,12 @@
       - Account Rules
     summary: Account Rule by ID
     description: |
-                  Allows to get `Account Rule` with corresponding details.
+                  Allows getting `Account Rule` with corresponding details.
     operationId: getAccountRuleByID
     parameters:
     - name: id
       in: path
-      description: Unique identifier of the account rule
+      description: Unique identifier of an account rule
       required: true
       style: simple
       explode: false

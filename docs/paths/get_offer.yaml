@@ -4,13 +4,13 @@
       - Offers
     summary: Offer by ID
     description: |
-                  Allows to get `Offer` with corresponding details.\n
-                  🔒 An owner's or admin's signature is needed to get data from this endpoint
+                  Allows getting `Offer` with corresponding details.\n
+                  🔒 An owner's or admin's signature is needed to get the data from this endpoint.
     operationId: getOfferByID
     parameters:
       - name: id
         in: path
-        description: Unique identifier of the offer
+        description: Unique identifier of an offer
         required: true
         style: simple
         explode: false
