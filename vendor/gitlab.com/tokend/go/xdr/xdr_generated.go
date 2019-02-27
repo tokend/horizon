@@ -1,4 +1,4 @@
-// revision: c066c93e399f28c5a05d69477459bc87bd52fb66
+// revision: 7e0656375002477a3ea90ff178773fecc4a85dec
 // branch:   (detached
 // Package xdr is generated from:
 //
@@ -26979,18 +26979,21 @@ type ManageSignerOp struct {
 //        ALREADY_EXISTS = -2, // signer already exist
 //    	NO_SUCH_ROLE = -3,
 //    	INVALID_WEIGHT = -4, // more than 1000
-//    	NOT_FOUND = -5 // there is no signer with such public key
+//    	NOT_FOUND = -5, // there is no signer with such public key
+//    	//: only occurs on creation of signers for admins, if number of signers exceeds number specified in license
+//    	NUMBER_OF_ADMINS_EXCEEDS_LICENSE = -6
 //    };
 //
 type ManageSignerResultCode int32
 
 const (
-	ManageSignerResultCodeSuccess        ManageSignerResultCode = 0
-	ManageSignerResultCodeInvalidDetails ManageSignerResultCode = -1
-	ManageSignerResultCodeAlreadyExists  ManageSignerResultCode = -2
-	ManageSignerResultCodeNoSuchRole     ManageSignerResultCode = -3
-	ManageSignerResultCodeInvalidWeight  ManageSignerResultCode = -4
-	ManageSignerResultCodeNotFound       ManageSignerResultCode = -5
+	ManageSignerResultCodeSuccess                      ManageSignerResultCode = 0
+	ManageSignerResultCodeInvalidDetails               ManageSignerResultCode = -1
+	ManageSignerResultCodeAlreadyExists                ManageSignerResultCode = -2
+	ManageSignerResultCodeNoSuchRole                   ManageSignerResultCode = -3
+	ManageSignerResultCodeInvalidWeight                ManageSignerResultCode = -4
+	ManageSignerResultCodeNotFound                     ManageSignerResultCode = -5
+	ManageSignerResultCodeNumberOfAdminsExceedsLicense ManageSignerResultCode = -6
 )
 
 var ManageSignerResultCodeAll = []ManageSignerResultCode{
@@ -27000,6 +27003,7 @@ var ManageSignerResultCodeAll = []ManageSignerResultCode{
 	ManageSignerResultCodeNoSuchRole,
 	ManageSignerResultCodeInvalidWeight,
 	ManageSignerResultCodeNotFound,
+	ManageSignerResultCodeNumberOfAdminsExceedsLicense,
 }
 
 var manageSignerResultCodeMap = map[int32]string{
@@ -27009,6 +27013,7 @@ var manageSignerResultCodeMap = map[int32]string{
 	-3: "ManageSignerResultCodeNoSuchRole",
 	-4: "ManageSignerResultCodeInvalidWeight",
 	-5: "ManageSignerResultCodeNotFound",
+	-6: "ManageSignerResultCodeNumberOfAdminsExceedsLicense",
 }
 
 var manageSignerResultCodeShortMap = map[int32]string{
@@ -27018,15 +27023,17 @@ var manageSignerResultCodeShortMap = map[int32]string{
 	-3: "no_such_role",
 	-4: "invalid_weight",
 	-5: "not_found",
+	-6: "number_of_admins_exceeds_license",
 }
 
 var manageSignerResultCodeRevMap = map[string]int32{
-	"ManageSignerResultCodeSuccess":        0,
-	"ManageSignerResultCodeInvalidDetails": -1,
-	"ManageSignerResultCodeAlreadyExists":  -2,
-	"ManageSignerResultCodeNoSuchRole":     -3,
-	"ManageSignerResultCodeInvalidWeight":  -4,
-	"ManageSignerResultCodeNotFound":       -5,
+	"ManageSignerResultCodeSuccess":                      0,
+	"ManageSignerResultCodeInvalidDetails":               -1,
+	"ManageSignerResultCodeAlreadyExists":                -2,
+	"ManageSignerResultCodeNoSuchRole":                   -3,
+	"ManageSignerResultCodeInvalidWeight":                -4,
+	"ManageSignerResultCodeNotFound":                     -5,
+	"ManageSignerResultCodeNumberOfAdminsExceedsLicense": -6,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -36349,7 +36356,9 @@ type TransactionEnvelope struct {
 //        opNO_ROLE_PERMISSION = -9, // not allowed for this role of source account
 //        opNO_ENTRY = -10,
 //        opNOT_SUPPORTED = -11,
-//        opLICENSE_VIOLATION = -12// number of admins is greater than allowed
+//        opLICENSE_VIOLATION = -12, // number of admins is greater than allowed
+//        //: operation was skipped cause of failure validation of previous operation
+//        opSKIPPED = -13
 //    };
 //
 type OperationResultCode int32
@@ -36368,6 +36377,7 @@ const (
 	OperationResultCodeOpNoEntry               OperationResultCode = -10
 	OperationResultCodeOpNotSupported          OperationResultCode = -11
 	OperationResultCodeOpLicenseViolation      OperationResultCode = -12
+	OperationResultCodeOpSkipped               OperationResultCode = -13
 )
 
 var OperationResultCodeAll = []OperationResultCode{
@@ -36384,6 +36394,7 @@ var OperationResultCodeAll = []OperationResultCode{
 	OperationResultCodeOpNoEntry,
 	OperationResultCodeOpNotSupported,
 	OperationResultCodeOpLicenseViolation,
+	OperationResultCodeOpSkipped,
 }
 
 var operationResultCodeMap = map[int32]string{
@@ -36400,6 +36411,7 @@ var operationResultCodeMap = map[int32]string{
 	-10: "OperationResultCodeOpNoEntry",
 	-11: "OperationResultCodeOpNotSupported",
 	-12: "OperationResultCodeOpLicenseViolation",
+	-13: "OperationResultCodeOpSkipped",
 }
 
 var operationResultCodeShortMap = map[int32]string{
@@ -36416,6 +36428,7 @@ var operationResultCodeShortMap = map[int32]string{
 	-10: "op_no_entry",
 	-11: "op_not_supported",
 	-12: "op_license_violation",
+	-13: "op_skipped",
 }
 
 var operationResultCodeRevMap = map[string]int32{
@@ -36432,6 +36445,7 @@ var operationResultCodeRevMap = map[string]int32{
 	"OperationResultCodeOpNoEntry":               -10,
 	"OperationResultCodeOpNotSupported":          -11,
 	"OperationResultCodeOpLicenseViolation":      -12,
+	"OperationResultCodeOpSkipped":               -13,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -39829,4 +39843,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "c066c93e399f28c5a05d69477459bc87bd52fb66"
+var Revision = "7e0656375002477a3ea90ff178773fecc4a85dec"

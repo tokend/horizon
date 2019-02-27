@@ -4,27 +4,27 @@ import (
 	"testing"
 
 	"github.com/magiconair/properties/assert"
-	"gitlab.com/tokend/horizon/db2/core"
+	core "gitlab.com/tokend/horizon/db2/core2"
 )
 
 func TestFillFeeGaps(t *testing.T) {
 	t.Run("one gap", func(t *testing.T) {
 		primaryFees := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 0,
 					UpperBound: 5,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 10,
 					UpperBound: 15,
 				},
 			},
 		}
 		secondaryFee := FeeWrapper{
-			FeeEntry: core.FeeEntry{
+			Fee: core.Fee{
 				LowerBound: 2,
 				UpperBound: 20,
 				Percent:    2,
@@ -33,26 +33,26 @@ func TestFillFeeGaps(t *testing.T) {
 
 		expected := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 0,
 					UpperBound: 5,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 6,
 					UpperBound: 9,
 					Percent:    2,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 10,
 					UpperBound: 15,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 16,
 					UpperBound: 20,
 					Percent:    2,
@@ -67,19 +67,19 @@ func TestFillFeeGaps(t *testing.T) {
 	t.Run("two gaps", func(t *testing.T) {
 		primaryFees := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 0,
 					UpperBound: 5,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 10,
 					UpperBound: 15,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 20,
 					UpperBound: 22,
 				},
@@ -87,14 +87,14 @@ func TestFillFeeGaps(t *testing.T) {
 		}
 		secondaryFees := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 2,
 					UpperBound: 20,
 					Percent:    2,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 21,
 					UpperBound: 25,
 					Percent:    3,
@@ -104,39 +104,39 @@ func TestFillFeeGaps(t *testing.T) {
 
 		expected := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 0,
 					UpperBound: 5,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 6,
 					UpperBound: 9,
 					Percent:    2,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 10,
 					UpperBound: 15,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 16,
 					UpperBound: 19,
 					Percent:    2,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 20,
 					UpperBound: 22,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 23,
 					UpperBound: 25,
 					Percent:    3,
@@ -155,7 +155,7 @@ func TestFillFeeGaps(t *testing.T) {
 		var primaryFees []FeeWrapper
 		secondaryFees := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 2,
 					UpperBound: 20,
 					Percent:    2,
@@ -166,7 +166,7 @@ func TestFillFeeGaps(t *testing.T) {
 		expected := []FeeWrapper{
 			{
 
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 2,
 					UpperBound: 20,
 					Percent:    2,
@@ -184,13 +184,13 @@ func TestFillFeeGaps(t *testing.T) {
 	t.Run("no secondary fees", func(t *testing.T) {
 		primaryFees := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 0,
 					UpperBound: 5,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 10,
 					UpperBound: 15,
 				},
@@ -199,13 +199,13 @@ func TestFillFeeGaps(t *testing.T) {
 		var secondaryFees []FeeWrapper
 		expected := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 0,
 					UpperBound: 5,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 10,
 					UpperBound: 15,
 				},
@@ -222,20 +222,20 @@ func TestFillFeeGaps(t *testing.T) {
 	t.Run("no overlap", func(t *testing.T) {
 		primaryFees := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 0,
 					UpperBound: 5,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 10,
 					UpperBound: 15,
 				},
 			},
 		}
 		secondaryFee := FeeWrapper{
-			FeeEntry: core.FeeEntry{
+			Fee: core.Fee{
 				LowerBound: 0,
 				UpperBound: 5,
 				Percent:    2,
@@ -244,13 +244,13 @@ func TestFillFeeGaps(t *testing.T) {
 
 		expected := []FeeWrapper{
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 0,
 					UpperBound: 5,
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
+				Fee: core.Fee{
 					LowerBound: 10,
 					UpperBound: 15,
 				},

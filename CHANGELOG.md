@@ -1,4 +1,6 @@
-## Unreleased
+## 3.0.1-x.19
+## Added
+* Error codes for manageSigner and skiped op
 ## Fixed
 * Information disclosure without permission for reviewable requests v1 
 

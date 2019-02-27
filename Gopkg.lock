@@ -413,7 +413,7 @@
     "strkey",
     "xdr"
   ]
-  revision = "bb40cdd15f7f9e0ab0667954aa126a4ff441564f"
+  revision = "200e7cbbe33b6c0f0368ffe52e5b676ad69cea55"
 
 [[projects]]
   branch = "master"
@@ -432,7 +432,7 @@
     ".",
     "v2"
   ]
-  revision = "51a82da6eba47a75aee17f07e2cab3814425765d"
+  revision = "0272b10ff550b53160afecdcb19540092897851b"
 
 [[projects]]
   branch = "master"
@@ -516,6 +516,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b25a6be2af0fb6d91b73a03e55388524288d43638df73cf3f10c39dd545be649"
+  inputs-digest = "ca33feb981969eedbb391c53e23ac4f9f0290ba5a2a5e9f682e1f1097f47a81a"
   solver-name = "gps-cdcl"
   solver-version = 1

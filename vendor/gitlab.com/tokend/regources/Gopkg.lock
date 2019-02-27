@@ -66,8 +66,7 @@
   version = "v3.7"
 
 [[projects]]
-  branch = "feature/roles_rules"
-  digest = "1:31b4301b18e841f2b9a1024a9a42e41998073aded65ed4f133009120ed729026"
+  digest = "1:b41ca35b684205214815d9582b36f524a397149077e0e21dd53d68c32b59654c"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -76,7 +75,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "ea4b17532366fef881d190a059d4675d8a04a273"
+  revision = "858cff3b5a440e66e6e0ee1ebbc4573637dc9b68"
+  version = "v2.0.1"
 
 [[projects]]
   digest = "1:a5cc901b8e54c4b73a62f97dc7c8f6c46e347c148a7a38e09b2e942c2587ba03"
