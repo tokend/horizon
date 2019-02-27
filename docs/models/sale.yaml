@@ -116,8 +116,7 @@ SaleRequest:
               * 2 - closed
               * 3 - cancelled
           details:
-            type: object
-            description: "free-form object for sale details"
+            $ref: '#/components/schemas/Details'
       relationships:
         type: object
         properties:

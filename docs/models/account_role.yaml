@@ -32,7 +32,7 @@ AccountRole:
         type: object
         required: [details]
         properties:
-          details: 
-            type: object
-            description: "free-form object to attach role details "
-            additionalProperties: true
+          details:
+            allOf:
+            - $ref: '#/components/schemas/Details'
+            - description: "free-form object to attach role details "

@@ -1,0 +1,36 @@
+ManageKeyValueOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-manage-key-value"
+
+ManageKeyValueOp:
+  allOf:
+  - $ref: '#/components/schemas/ManageKeyValueOpKey'
+  - type: object
+    properties:
+      attributes:
+        type: object
+        properties:
+          required:
+          - key
+          - action
+          key:
+            type: string
+            description: "Key of key-value entry to manage"
+          action:
+            allOf:
+            - $ref: '#/components/schemas/Enum'
+            - description: |
+                * 1: "put",
+                * 2: "remove"
+          value:
+            $ref: '#/components/schemas/KeyValueEntry'
+            nullable: true
+            description: |
+              Is `null` if action is remove

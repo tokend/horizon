@@ -1,0 +1,33 @@
+ParticipantsEffectKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "lkasjdlkasjd"
+    type:
+      type: string
+      example: "participants-effect"
+
+ParticipantsEffect:
+  allOf:
+  - $ref: '#/components/schemas/ParticipantsEffectKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        properties:
+          account:
+            type: object
+            $ref: '#/components/schemas/AccountKey'
+          balance:
+            type: object
+            $ref: '#/components/schemas/BalanceKey'
+          asset:
+            type: object
+            $ref: '#/components/schemas/AssetKey'
+          operation:
+            type: object
+            $ref: '#/components/schemas/OperationKey'
+          effect:
+            type: object
+            $ref: '#/components/schemas/EffectKey'

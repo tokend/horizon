@@ -23,6 +23,19 @@ Int64Key:
         - "request-details-change-role"
         - "request-details-update-sale-details"
         - "sales"
+RequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "12345"
+    type:
+      type: string
+      enum:
+        - "requests"
 
 ReviewableRequest:
   allOf:
@@ -108,5 +121,4 @@ ReviewableRequest:
               description: "Reference for the request"
               example: "719111a51cfc5ad214e4e90ce6610f10e1cba165fd1bc9db73a031352b3bb61c"
             external_details:
-              type: object
-              description: "free-form object to attach details specific to a request and/or request type"
+              $ref: '#/components/schemas/Details'

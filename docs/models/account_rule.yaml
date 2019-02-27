@@ -28,10 +28,8 @@ AccountRule:
             type: bool
             description: "defines whether or not the specified action is forbidden"
             example: false
-          details: 
-            type: object
-            description: "free-form object to attach rule details"
-            additionalProperties: true
+          details:
+            $ref: '#/components/schemas/Details'
           resource:
             type: object
             additionalProperties: true

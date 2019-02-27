@@ -39,7 +39,7 @@ SignerRole:
         type: object
         required: [details]
         properties:
-          details: 
-            type: object
-            description: "free-form object to attach details to the role"
-            additionalProperties: true
+          details:
+            allOf:
+            - $ref: '#/components/schemas/Details'
+            - description: "free-form object to attach details to the role"

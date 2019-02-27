@@ -1,0 +1,51 @@
+PayoutOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-payout"
+
+PayoutOp:
+  allOf:
+  - $ref: '#/components/schemas/PayoutOpKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        properties:
+          source_account:
+            $ref: '#/components/schemas/AccountKey'
+          source_balance:
+            $ref: '#/components/schemas/BalanceKey'
+          asset:
+            $ref: '#/components/schemas/AssetKey'
+      attributes:
+        type: object
+        properties:
+          required:
+          - max_payout_amount
+          - min_asset_holder_amount
+          - expected_fee
+          - actual_fee
+          - actual_payout_amount
+          expected_fee:
+            $ref: '#/components/schemas/CalculatedFeeEntry'
+          actual_fee:
+            $ref: '#/components/schemas/CalculatedFeeEntry'
+          #TODO add description for amounts
+          max_payout_amount:
+            type: string
+            format: Amount
+            example: "123.123456"
+          min_asset_holder_amount:
+            type: string
+            format: Amount
+            example: "123.123456"
+          actual_payout_amount:
+            type: string
+            format: Amount
+            example: "123.123456"

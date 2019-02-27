@@ -1,0 +1,15 @@
+CancelAswapBidOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-cancel-aswap-bid"
+
+
+CancelAswapBidOp:
+  $ref: '#/components/schemas/CancelAswapBidOpKey'
+

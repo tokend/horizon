@@ -1,0 +1,53 @@
+ManageOfferOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-manage-offer"
+
+ManageOfferOp:
+  allOf:
+  - $ref: '#/components/schemas/ManageOfferOpKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        properties:
+          base_asset:
+            $ref: '#/components/schemas/AssetKey'
+          quote_asset:
+            $ref: '#/components/schemas/AssetKey'
+      attributes:
+        type: object
+        properties:
+          required:
+          - order_book_id
+          - base_amount
+          - price
+          - is_buy
+          - fee
+          - is_deleted
+          order_book_id:
+            type: integer
+            description: "ID of the order book"
+            example: 0
+          base_amount:
+            type: string
+            format: Amount
+            example: "1000.0"
+          price:
+            type: string
+            format: Amount
+            example: "12.3"
+          is_buy:
+            type: boolean
+            description: "Offer direction"
+          is_deleted:
+            type: boolean
+            example: false
+          fee:
+            $ref: '#/components/schemas/CalculatedFeeEntry'
