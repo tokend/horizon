@@ -20,8 +20,5 @@ func NewExternalSystemID(extSysID core2.ExternalSystemID) *regources.ExternalSys
 			ExpiresAt:          extSysID.ExpiresAt,
 			BindedAt:           extSysID.BindedAt,
 		},
-		//Relationships: regources.ExternalSystemIDRelations{
-		//	Account: NewAccountKey(extSysID.AccountID).AsRelation(),
-		//},
 	}
 }
