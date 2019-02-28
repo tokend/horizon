@@ -29,19 +29,17 @@ ManageAccountRuleOp:
       attributes:
         nullable: true
         type: object
-        properties:
-          required:
+        required:
           - details
           - forbids
           - action
           - resource
+        properties:
           forbids:
             type: boolean
             description: "" # todo add description
           action:
-            allOf:
-            - $ref: '#/components/schemas/Enum'
-            - description: |
+            description: |
                 * 1:  "any"
                 * 2:  "create"
                 * 3:  "create_for_other"
@@ -57,6 +55,8 @@ ManageAccountRuleOp:
                 * 13: "update_max_issuance"
                 * 14: "check"
                 * 15: "cancel"
+            allOf:
+              - $ref: '#/components/schemas/Enum'
           details:
             $ref: '#/components/schemas/Details'
           resource:

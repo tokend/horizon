@@ -21,26 +21,26 @@ ManageAssetOp:
             $ref: '#/components/schemas/RequestKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - asset_code
           - action
           - creator_details
           - preissuance_signer
           - max_issuance_amount
+        properties:
           asset_code:
             type: string
             example: "USD"
             description: "Asset to manage"
           action:
+            description: |
+              * 0: "create_asset_creation_request"
+              * 1: "create_asset_update_request"
+              * 2: "cancel_asset_request"
+              * 3: "change_preissued_asset_signer"
+              * 4: "update_max_issuance"
             allOf:
             - $ref: '#/components/schemas/Enum'
-            - description: |
-                * 0: "create_asset_creation_request"
-                * 1: "create_asset_update_request"
-                * 2: "cancel_asset_request"
-                * 3: "change_preissued_asset_signer"
-                * 4: "update_max_issuance"
           policies:
             type: integer
             nullable: true

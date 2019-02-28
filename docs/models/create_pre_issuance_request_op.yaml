@@ -23,9 +23,9 @@ CreatePreIssuanceRequestOp:
             $ref: '#/components/schemas/RequestKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - amount
+        properties:
           amount:
             type: string
             format: Amount

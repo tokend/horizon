@@ -29,13 +29,13 @@ CreateSaleRequestOp:
             $ref: '#/components/schemas/RequestKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - start_time
           - end_time
           - soft_cap
           - hard_cap
           - creator_details
+        properties:
           soft_cap:
             type: string
             format: Amount

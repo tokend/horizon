@@ -28,10 +28,10 @@ ManageSignerRoleOp:
     attributes:
       type: object
       nullable: true
-      properties:
-        required:
+      required:
         - details
         - is_read_only
+      properties:
         is_read_only:
           type: boolean
           #todo add description

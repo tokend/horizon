@@ -29,14 +29,14 @@ ManageSignerRuleOp:
       attributes:
         type: object
         nullable: true
-        properties:
-          required:
+        required:
           - details
           - is_read_only
           - is_default
           - forbids
           - action
           - resource
+        properties:
           is_read_only:
             type: boolean
             #todo add description
@@ -49,23 +49,23 @@ ManageSignerRuleOp:
           details:
             $ref: '#/components/schemas/Details'
           action:
+            description: |
+              * 1:  "any"
+              * 2:  "create"
+              * 3:  "create_for_other"
+              * 4:  "update"
+              * 5:  "manage"
+              * 6:  "send"
+              * 7:  "remove"
+              * 8:  "cancel"
+              * 9:  "review"
+              * 10: "receive_atomic_swap"
+              * 11: "participate"
+              * 12: "bind"
+              * 13: "update_max_issuance"
+              * 14: "check"
             allOf:
-            - $ref: '#/components/schemas/Enum'
-            - description: |
-                * 1:  "any"
-                * 2:  "create"
-                * 3:  "create_for_other"
-                * 4:  "update"
-                * 5:  "manage"
-                * 6:  "send"
-                * 7:  "remove"
-                * 8:  "cancel"
-                * 9:  "review"
-                * 10: "receive_atomic_swap"
-                * 11: "participate"
-                * 12: "bind"
-                * 13: "update_max_issuance"
-                * 14: "check"
+              - $ref: '#/components/schemas/Enum'
           resource:
             type: object
             additionalProperties: true

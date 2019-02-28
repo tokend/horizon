@@ -21,8 +21,8 @@ CreateManageLimitsRequestOp:
             $ref: '#/components/schemas/RequestKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - creator_details
+        properties:
           creator_details:
             $ref: '#/components/schemas/Details'

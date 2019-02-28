@@ -16,13 +16,13 @@ LicenseOp:
     properties:
       attributes:
         type: object
+        required:
+        - due_date
+        - admin_count
+        - ledger_hash
+        - prev_license_hash
+        - signatures
         properties:
-          required:
-          - due_date
-          - admin_count
-          - ledger_hash
-          - prev_license_hash
-          - signatures
           due_date:
             type: string
             description: "End of the licensed period"
