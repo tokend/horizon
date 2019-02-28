@@ -23,17 +23,17 @@ ManageBalanceOp:
             $ref: '#/components/schemas/AccountKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - action
           - balance_address
+        properties:
           balance_address:
             type: string
             description: "Address of balance to manage"
           action:
-            allOf:
-            - $ref: '#/components/schemas/Enum'
-            - description: |
+            description: |
                 * 0: "create"
                 * 1: "delete_balance"
                 * 2: "create_unique"
+            allOf:
+              - $ref: '#/components/schemas/Enum'

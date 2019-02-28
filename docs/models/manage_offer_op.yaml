@@ -23,14 +23,14 @@ ManageOfferOp:
             $ref: '#/components/schemas/AssetKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - order_book_id
           - base_amount
           - price
           - is_buy
           - fee
           - is_deleted
+        properties:
           order_book_id:
             type: integer
             description: "ID of the order book"

@@ -16,16 +16,16 @@ ManageSaleOp:
     properties:
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - sale_id
           - action
+        properties:
           sale_id:
             type: integer
             description: "ID of the sale to manage"
           action:
-            allOf:
-            - $ref: '#/components/schemas/Enum'
-            - description: |
+            description: |
                 * 1: "create_update_details_request"
                 * 2: "cancel"
+            allOf:
+              - $ref: '#/components/schemas/Enum'

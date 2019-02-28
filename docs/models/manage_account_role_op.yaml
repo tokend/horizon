@@ -27,8 +27,8 @@ ManageAccountRoleOp:
             $ref: '#/components/schemas/AccountRoleKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - details
+        properties:
           details:
             $ref: '#/components/schemas/Details'

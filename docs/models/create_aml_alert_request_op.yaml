@@ -22,10 +22,10 @@ CreateAmlAlertRequestOp:
             $ref: '#/components/schemas/BalanceKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - amount
           - creator_details
+        properties:
           amount:
             type: string
             format: Amount

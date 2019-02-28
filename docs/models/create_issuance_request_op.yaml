@@ -27,12 +27,12 @@ CreateIssuanceRequestOp:
             $ref: '#/components/schemas/BalanceKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - fee
           - amount
           - reference
           - creator_details
+        properties:
           fee:
             $ref: '#/components/schemas/CalculatedFeeEntry'
           reference:
