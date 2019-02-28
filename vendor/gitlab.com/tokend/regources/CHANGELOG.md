@@ -1,10 +1,12 @@
 # Changelog
 
-## Unreleased
+## 3.0.1-x.1
 
 ### Added
 
 * Asset type to asset, manage asset, create asset request resources
+* Relations `Limits` and `ExternalSystemIDs` to Account
+* Extended Fee type to it as flag
 
 ### Fixed
 
@@ -24,11 +26,6 @@
     create_sale_request
     create_withdraw_request
     manage_asset
-
-### Added
-
-* Relations `Limits` and `ExternalSystemIDs` to Account
-* Extended Fee type to it as flag
 
 ## 3.0.1-x.0
 

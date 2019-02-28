@@ -4,8 +4,7 @@ import "time"
 
 type ExternalSystemID struct {
 	Key
-	Attributes    ExternalSystemIDAttr      `json:"attributes"`
-	Relationships ExternalSystemIDRelations `json:"relationships"`
+	Attributes ExternalSystemIDAttr `json:"attributes"`
 }
 
 type ExternalSystemIDAttr struct {
@@ -14,8 +13,4 @@ type ExternalSystemIDAttr struct {
 	IsDeleted          bool      `json:"is_deleted"`
 	ExpiresAt          time.Time `json:"expires_at"`
 	BindedAt           time.Time `json:"binded_at"`
-}
-
-type ExternalSystemIDRelations struct {
-	Account *Relation `json:"account"`
 }
