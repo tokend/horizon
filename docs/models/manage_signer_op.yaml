@@ -27,11 +27,11 @@ ManageSignerOp:
       attributes:
         type: object
         nullable: true
-        properties:
-          required:
+        required:
           - details
           - identity
           - weight
+        properties:
           weight:
             type: integer
             example: 12

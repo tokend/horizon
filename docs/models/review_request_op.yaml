@@ -21,8 +21,7 @@ ReviewRequestOp:
             $ref: '#/components/schemas/ReviewableRequestDetails'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - action
           - reason
           - request_hash
@@ -31,13 +30,14 @@ ReviewRequestOp:
           - added_tasks
           - removed_tasks
           - external_details
-        action:
-          allOf:
-          - $ref: '#/components/schemas/Enum'
-          - description: |
+        properties:
+          action:
+            description: |
               * 1: "approve"
               * 2: "reject"
               * 3: "permanent_reject"
+            allOf:
+            - $ref: '#/components/schemas/Enum'
         reason:
           type: string
           description: "Reject reason"

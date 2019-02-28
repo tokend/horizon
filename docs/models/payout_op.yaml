@@ -25,13 +25,13 @@ PayoutOp:
             $ref: '#/components/schemas/AssetKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - max_payout_amount
           - min_asset_holder_amount
           - expected_fee
           - actual_fee
           - actual_payout_amount
+        properties:
           expected_fee:
             $ref: '#/components/schemas/CalculatedFeeEntry'
           actual_fee:

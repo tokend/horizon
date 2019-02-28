@@ -22,11 +22,11 @@ CreateWithdrawRequestOp:
             $ref: '#/components/schemas/BalanceKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - fee
           - amount
           - creator_details
+        properties:
           fee:
             $ref: '#/components/schemas/CalculatedFeeEntry'
           amount:

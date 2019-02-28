@@ -26,15 +26,15 @@ ManageLimitsOp:
 
 ManageLimitsCreationOp:
   type: object
+  required:
+    - stats_op_type
+    - asset_code
+    - is_convert_needed
+    - daily_out
+    - weekly_out
+    - monthly_out
+    - annual_out
   properties:
-    required:
-      - stats_op_type
-      - asset_code
-      - is_convert_needed
-      - daily_out
-      - weekly_out
-      - monthly_out
-      - annual_out
     account_role:
       nullable: true
       type: integer
@@ -42,14 +42,14 @@ ManageLimitsCreationOp:
     account_address:
       type: string
     stats_op_type:
+      description: |
+        * 1: "payment_out"
+        * 2: "withdraw"
+        * 3: "spend"
+        * 4: "deposit"
+        * 5: "payout"
       allOf:
       - $ref: '#/components/schemas/Enum'
-      - description: |
-          * 1: "payment_out"
-          * 2: "withdraw"
-          * 3: "spend"
-          * 4: "deposit"
-          * 5: "payout"
     asset_code:
       type: string
       example: "USD"
@@ -71,9 +71,9 @@ ManageLimitsCreationOp:
 
 ManageLimitsRemovalOp:
   type: object
+  required:
+    - limits_id
   properties:
-    required:
-      - limits_id
     limits_id:
       type: integer
       example: 12

@@ -1,7 +1,9 @@
 Enum:
   type: object
+  required:
+    - value
+    - name
   properties:
-    required: [value, name]
     value:
       type: integer
       example: 1

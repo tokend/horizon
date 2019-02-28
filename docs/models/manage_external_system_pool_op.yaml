@@ -16,14 +16,14 @@ ManageExternalSystemPoolOp:
     properties:
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - action
+        properties:
           action:
-            allOf:
-            - description: |
+            description: |
                 * 0: "create"
                 * 1: "remove"
+            allOf:
             - $ref: '#/components/schemas/Enum'
           create:
             nullable: true
@@ -34,12 +34,12 @@ ManageExternalSystemPoolOp:
 
 CreateExternalSystemPoolOp:
   type: object
-  properties:
-    required:
+  required:
     - pool_id
     - data
     - parent
     - external_system_type
+  properties:
     pool_id:
       type: integer
       description: "ID of external system pool"
@@ -50,9 +50,9 @@ CreateExternalSystemPoolOp:
 
 RemoveExternalSystemPoolOp:
   type: object
-  properties:
-    required:
+  required:
     - pool_id
+  properties:
     pool_id:
       type: integer
       description: "ID of external system pool"

@@ -21,14 +21,13 @@ CheckSaleStateOp:
             $ref: '#/components/schemas/SaleKey'
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - effect
+        properties:
           effect:
-            allOf:
-            - $ref: '#/components/schemas/Enum'
-            - description: |
+            description: |
                 * 1: "canceled"
                 * 2: "closed"
                 * 3: "updated"
-
+            allOf:
+              - $ref: '#/components/schemas/Enum'

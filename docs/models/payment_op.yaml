@@ -30,14 +30,14 @@ PaymentOp:
 
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - amount
           - source_fee
           - destination_fee
           - source_pay_for_destination_fee
           - subject
           - reference
+        properties:
           source_fee:
             $ref: '#/components/schemas/CalculatedFeeEntry'
           destination_fee:

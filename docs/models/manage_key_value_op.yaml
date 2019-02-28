@@ -16,19 +16,19 @@ ManageKeyValueOp:
     properties:
       attributes:
         type: object
-        properties:
-          required:
+        required:
           - key
           - action
+        properties:
           key:
             type: string
             description: "Key of key-value entry to manage"
           action:
-            allOf:
-            - $ref: '#/components/schemas/Enum'
-            - description: |
+            description: |
                 * 1: "put",
                 * 2: "remove"
+            allOf:
+              - $ref: '#/components/schemas/Enum'
           value:
             $ref: '#/components/schemas/KeyValueEntry'
             nullable: true
