@@ -1,5 +1,5 @@
 all: makedir build/openapi.yaml
-	redoc-cli bundle build/openapi.yaml -o ../public/index.html
+	redoc-cli bundle build/openapi.yaml -t ./html/index.hbs -o ../public/index.html
 
 sp :=
 
