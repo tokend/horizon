@@ -175,14 +175,7 @@ func (r *base) getUint64(name string) (uint64, error) {
 		return 0, nil
 	}
 
-	uint64Val, err := strconv.ParseUint(strVal, 0, 64)
-	if err != nil {
-		return 0, validation.Errors{
-			name: errors.Wrap(err, "cannot parse uint64"),
-		}
-	}
-
-	return uint64Val, nil
+	return strconv.ParseUint(strVal, 0, 64)
 }
 
 func (r *base) getUint64ID() (uint64, error) {
