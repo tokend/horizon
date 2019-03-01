@@ -1,14 +1,13 @@
 package horizon
 
 import (
-	"net/http"
-
-	"gitlab.com/distributed_lab/kit/janus"
-
 	"math"
+	"net/http"
 	"strconv"
 
+	"github.com/pkg/errors"
 	"github.com/zenazn/goji/web"
+	"gitlab.com/distributed_lab/kit/janus"
 	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -102,12 +101,16 @@ func (m *RateLimitedMux) Get(pattern web.PatternType, handler web.Handler, limit
 	m.Mux.Get(pattern, func(c web.C, w http.ResponseWriter, r *http.Request) {
 		m.rateLimit(c, w, r, limits, handler)
 	})
-	m.janus.RegisterGojiEndpoint(pattern.(string), "GET")
+	if err := m.janus.RegisterGojiEndpoint(pattern.(string), "GET"); err != nil {
+		panic(errors.Wrap(err, "failed to register service"))
+	}
 }
 
 func (m *RateLimitedMux) Post(pattern web.PatternType, handler web.Handler, limits ...int) {
 	m.Mux.Post(pattern, func(c web.C, w http.ResponseWriter, r *http.Request) {
 		m.rateLimit(c, w, r, limits, handler)
 	})
-	m.janus.RegisterGojiEndpoint(pattern.(string), "POST")
+	if err := m.janus.RegisterGojiEndpoint(pattern.(string), "POST"); err != nil {
+		panic(errors.Wrap(err, "failed to register service"))
+	}
 }

@@ -1,5 +1,6 @@
-all: build/openapi.yaml
-	redoc-cli bundle build/openapi.yaml -o ../public/index.html
+all: makedir build/openapi.yaml
+	redoc-cli bundle build/openapi.yaml -t ./html/index.hbs -o ../public/index.html \
+	    --options.theme.typography.links.color=#695de4 \
 
 sp :=
 
@@ -31,6 +32,9 @@ build/openapi.yaml: index.yaml build/paths.yaml build/models.yaml
 			echo "$$line"; \
 		done < $$file; \
 	done >> $@
+
+makedir:
+	mkdir -p build;
 
 clean:
 	rm -rf build/*
