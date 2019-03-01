@@ -66,7 +66,12 @@ func (j *Janus) register(service internal.Service) error {
 			return ErrAlreadyExists
 		}
 
-		// TODO check if upstream is duplicate
+		//  check if upstream is duplicate
+		for _, target := range remote.Proxy.Upstreams.Targets {
+			if target.Target == j.upstream.Target {
+				return nil
+			}
+		}
 
 		// modify remote service
 		remote.Proxy.Upstreams.Targets = append(

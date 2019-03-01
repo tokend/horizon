@@ -464,8 +464,7 @@
   version = "v2.0.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:82f72bb5f2894890d13f8f4fb2351c78dc04a71003f29c838b5ffa5f083d3f1b"
+  digest = "1:5e8f85fa8123d6a4aae2c928f8db7ab3ca1648c0c0ae2e9621ebcc22438d4449"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
@@ -475,7 +474,8 @@
     "pgdb",
   ]
   pruneopts = "UT"
-  revision = "865b4569a164dab1b7ed180501fb6314c1a52c04"
+  revision = "312d0d0f1014682a2c55c46683a7af80d2b09623"
+  version = "0.3.0"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"
