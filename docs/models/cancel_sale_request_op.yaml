@@ -1,0 +1,13 @@
+CancelSaleRequestOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-cancel-sale-request"
+
+CancelSaleRequestOp:
+  $ref: '#/components/schemas/CancelSaleRequestOpKey'

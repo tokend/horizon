@@ -1,0 +1,31 @@
+OperationKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "1234"
+    type:
+      type: string
+      enum:
+      - "operations"
+
+Operation:
+  type: object
+  properties:
+    $ref: '#/components/schemas/OperationKey'
+    relationships:
+      type: object
+      properties:
+        tx:
+          $ref: '#/components/schemas/TransactionKey'
+        source:
+          $ref: '#/components/schemas/AccountKey'
+        details:
+          $ref: '#/components/schemas/OperationDetailsKey'
+    attributes:
+      type: object
+      properties:
+        applied_at:
+          type: string
+          format: "date-time"
+          example: "2012-11-01T22:08:41+00:00"
