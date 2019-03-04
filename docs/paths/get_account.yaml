@@ -4,7 +4,12 @@
       - Accounts
     summary: Account by ID
     description: |
-                  Allows getting `Account` with corresponding details.
+                  Allows getting `Account` with corresponding details.\n
+                  Note that if we include `fees` filter - we will receive all the fees applied to a particular account.\n
+                  For example if someone's, say Bob, account has a several fees applied to itself:
+                    * first fee applied globally for all accounts for payments of amount from 0 to 100 `BTC` and is 1% from the payment
+                    * second fee applied exactly to Bob's account and is 2% of the payment of amounts from 100 to 200 `BTC`\n
+                  then we will receive both of them in response because they are applied to Bob's account
     operationId: getAccountByID
     parameters:
     - name: id
@@ -21,7 +26,7 @@
         🔒 Following relationships require an owner's or admin's signature to be included:
         * `balances.state`
         * `referrer`
-        * `fees` - get all the fees applied to a particular account (response also includes either all global fees or fees for the particular operations or fees set for this account/account role)
+        * `fees`
         * `role`
         * `role.rules`
         * `limits`
