@@ -37,7 +37,7 @@
       - name: filter[account]
         in: query
         description: |
-          Filters fees by account address.
+          Filters fees by account address. Returns only fees which explicitly contains this account in relationships.
         required: false
         style: form
         explode: false

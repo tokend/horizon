@@ -21,7 +21,7 @@
         🔒 Following relationships require an owner's or admin's signature to be included:
         * `balances.state`
         * `referrer`
-        * `fees`
+        * `fees` - get all the fees applied to a particular account (response also includes either all global fees or fees for the particular operations or fees set for this account/account role)
         * `role`
         * `role.rules`
         * `limits`
