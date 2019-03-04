@@ -4,7 +4,7 @@
       - Crowd Investing
     summary: Sale List
     description: |
-                  Allows to get a filtered list of `Sale` with corresponding details.
+                  Allows getting a filtered list of `Sale` with corresponding details.
     operationId: getSales
     parameters:
     - name: filter[owner]
@@ -63,7 +63,7 @@
     - name: filter[state]
       in: query
       description: |
-                    Filters sales by specified sale state.
+                    Filters sales by a specified sale state.
                     Available sale states:
                     * 1 - open
                     * 2 - closed

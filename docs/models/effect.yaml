@@ -1,0 +1,18 @@
+EffectKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+      - "effects-funded"
+      - "effects-issued"
+      - "effects-charged"
+      - "effects-withdrawn"
+      - "effects-locked"
+      - "effects-unlocked"
+      - "effects-charged-from-locked"
+      - "effects-matched"
+

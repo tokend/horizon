@@ -1,0 +1,39 @@
+ManageBalanceOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-manage-balance"
+
+ManageBalanceOp:
+  allOf:
+  - $ref: '#/components/schemas/ManageBalanceOpKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        properties:
+          asset:
+            $ref: '#/components/schemas/AssetKey'
+          destination_account:
+            $ref: '#/components/schemas/AccountKey'
+      attributes:
+        type: object
+        required:
+          - action
+          - balance_address
+        properties:
+          balance_address:
+            type: string
+            description: "Address of balance to manage"
+          action:
+            description: |
+                * 0: "create"
+                * 1: "delete_balance"
+                * 2: "create_unique"
+            allOf:
+              - $ref: '#/components/schemas/Enum'

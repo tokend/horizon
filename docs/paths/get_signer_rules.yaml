@@ -4,7 +4,7 @@
       - Signer Rules
     summary: Signer Rule List
     description: |
-                  Allows to get a list of `Signer Rule` with corresponding details.
+                  Allows getting a list of `Signer Rule` with corresponding details.
     operationId: getSignerRules
     parameters:
     - $ref: '#/components/schemas/pageNumberParam'
@@ -12,7 +12,7 @@
     - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
-        description: succesfully retrived page
+        description: succesfully retrieved page
         content:
           application/vnd.api+json:
             schema:

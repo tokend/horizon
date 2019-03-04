@@ -8,21 +8,21 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2/core"
+	core "gitlab.com/tokend/horizon/db2/core2"
 )
 
 func TestNewSmartFeeTable(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
-		fees := []core.FeeEntry{
+		fees := []core.Fee{
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 0,
 				UpperBound: 5,
 			},
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 10,
@@ -32,12 +32,12 @@ func TestNewSmartFeeTable(t *testing.T) {
 		expected := SmartFeeTable{
 			FeeGroup{
 				AssetCode: "USD",
-				FeeType:   int(xdr.FeeTypePaymentFee),
+				FeeType:   int32(xdr.FeeTypePaymentFee),
 				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
 			}: []FeeWrapper{
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 0,
@@ -45,8 +45,8 @@ func TestNewSmartFeeTable(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 10,
@@ -61,16 +61,16 @@ func TestNewSmartFeeTable(t *testing.T) {
 }
 
 func TestSmartFeeTable_GetValuesByAsset(t *testing.T) {
-	fees := []core.FeeEntry{
+	fees := []core.Fee{
 		{
-			FeeType:    int(xdr.FeeTypePaymentFee),
+			FeeType:    int32(xdr.FeeTypePaymentFee),
 			Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 			Asset:      "USD",
 			LowerBound: 0,
 			UpperBound: 5,
 		},
 		{
-			FeeType:    int(xdr.FeeTypePaymentFee),
+			FeeType:    int32(xdr.FeeTypePaymentFee),
 			Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 			Asset:      "USD",
 			LowerBound: 10,
@@ -80,8 +80,8 @@ func TestSmartFeeTable_GetValuesByAsset(t *testing.T) {
 	expected := map[string][]FeeWrapper{
 		"USD": {
 			{
-				FeeEntry: core.FeeEntry{
-					FeeType:    int(xdr.FeeTypePaymentFee),
+				Fee: core.Fee{
+					FeeType:    int32(xdr.FeeTypePaymentFee),
 					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 					Asset:      "USD",
 					LowerBound: 0,
@@ -89,8 +89,8 @@ func TestSmartFeeTable_GetValuesByAsset(t *testing.T) {
 				},
 			},
 			{
-				FeeEntry: core.FeeEntry{
-					FeeType:    int(xdr.FeeTypePaymentFee),
+				Fee: core.Fee{
+					FeeType:    int32(xdr.FeeTypePaymentFee),
 					Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 					Asset:      "USD",
 					LowerBound: 10,
@@ -107,25 +107,25 @@ func TestSmartFeeTable_GetValuesByAsset(t *testing.T) {
 
 func TestSmartFeeTable_Update(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
-		fees := []core.FeeEntry{
+		fees := []core.Fee{
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 0,
 				UpperBound: 5,
 			},
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 10,
 				UpperBound: 15,
 			},
 		}
-		secondaryFees := []core.FeeEntry{
+		secondaryFees := []core.Fee{
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 2,
@@ -133,7 +133,7 @@ func TestSmartFeeTable_Update(t *testing.T) {
 				Percent:    2,
 			},
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 21,
@@ -144,12 +144,12 @@ func TestSmartFeeTable_Update(t *testing.T) {
 		expectedFeeTable := SmartFeeTable{
 			FeeGroup{
 				AssetCode: "USD",
-				FeeType:   int(xdr.FeeTypePaymentFee),
+				FeeType:   int32(xdr.FeeTypePaymentFee),
 				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
 			}: []FeeWrapper{
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 0,
@@ -157,8 +157,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 6,
@@ -167,8 +167,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 10,
@@ -176,8 +176,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 16,
@@ -186,8 +186,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 21,
@@ -203,10 +203,10 @@ func TestSmartFeeTable_Update(t *testing.T) {
 		assert.Equal(t, sft, expectedFeeTable)
 	})
 	t.Run("no primary fees", func(t *testing.T) {
-		var primaryFees []core.FeeEntry
-		secondaryFees := []core.FeeEntry{
+		var primaryFees []core.Fee
+		secondaryFees := []core.Fee{
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 2,
@@ -214,7 +214,7 @@ func TestSmartFeeTable_Update(t *testing.T) {
 				Percent:    2,
 			},
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 21,
@@ -225,12 +225,12 @@ func TestSmartFeeTable_Update(t *testing.T) {
 		expectedFeeTable := SmartFeeTable{
 			FeeGroup{
 				AssetCode: "USD",
-				FeeType:   int(xdr.FeeTypePaymentFee),
+				FeeType:   int32(xdr.FeeTypePaymentFee),
 				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
 			}: []FeeWrapper{
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 2,
@@ -239,8 +239,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 21,
@@ -256,25 +256,25 @@ func TestSmartFeeTable_Update(t *testing.T) {
 		assert.Equal(t, sft, expectedFeeTable)
 	})
 	t.Run("different attributes of secondary fees", func(t *testing.T) {
-		fees := []core.FeeEntry{
+		fees := []core.Fee{
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 0,
 				UpperBound: 5,
 			},
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 10,
 				UpperBound: 15,
 			},
 		}
-		secondaryFees := []core.FeeEntry{
+		secondaryFees := []core.Fee{
 			{
-				FeeType:    int(xdr.FeeTypeOfferFee),
+				FeeType:    int32(xdr.FeeTypeOfferFee),
 				Subtype:    int64(0),
 				Asset:      "USD",
 				LowerBound: 2,
@@ -282,7 +282,7 @@ func TestSmartFeeTable_Update(t *testing.T) {
 				Percent:    2,
 			},
 			{
-				FeeType:    int(xdr.FeeTypeOfferFee),
+				FeeType:    int32(xdr.FeeTypeOfferFee),
 				Subtype:    int64(0),
 				Asset:      "USD",
 				LowerBound: 21,
@@ -293,12 +293,12 @@ func TestSmartFeeTable_Update(t *testing.T) {
 		expectedFeeTable := SmartFeeTable{
 			FeeGroup{
 				AssetCode: "USD",
-				FeeType:   int(xdr.FeeTypePaymentFee),
+				FeeType:   int32(xdr.FeeTypePaymentFee),
 				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
 			}: []FeeWrapper{
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 0,
@@ -306,8 +306,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 10,
@@ -318,12 +318,12 @@ func TestSmartFeeTable_Update(t *testing.T) {
 
 			FeeGroup{
 				AssetCode: "USD",
-				FeeType:   int(xdr.FeeTypeOfferFee),
+				FeeType:   int32(xdr.FeeTypeOfferFee),
 				Subtype:   int64(0),
 			}: []FeeWrapper{
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypeOfferFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypeOfferFee),
 						Subtype:    int64(0),
 						Asset:      "USD",
 						LowerBound: 2,
@@ -332,8 +332,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypeOfferFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypeOfferFee),
 						Subtype:    int64(0),
 						Asset:      "USD",
 						LowerBound: 21,
@@ -349,45 +349,45 @@ func TestSmartFeeTable_Update(t *testing.T) {
 		assert.Equal(t, sft, expectedFeeTable)
 	})
 	t.Run("both nil", func(t *testing.T) {
-		var primaryFees []core.FeeEntry
-		var secondaryFees []core.FeeEntry
+		var primaryFees []core.Fee
+		var secondaryFees []core.Fee
 		sft := NewSmartFeeTable(primaryFees)
 		sft.Update(secondaryFees)
 		assert.Empty(t, sft)
 	})
 
 	t.Run("valid", func(t *testing.T) {
-		fees := []core.FeeEntry{
+		fees := []core.Fee{
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 0,
 				UpperBound: 815 * amount.One,
 			},
 			{
-				FeeType:    int(xdr.FeeTypePaymentFee),
+				FeeType:    int32(xdr.FeeTypePaymentFee),
 				Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 				Asset:      "USD",
 				LowerBound: 816 * amount.One,
 				UpperBound: 1000 * amount.One,
 			},
 		}
-		secondaryFees := []core.FeeEntry{}
+		secondaryFees := []core.Fee{}
 		expectedFeeGroup := FeeGroup{
 			AssetCode: "USD",
-			FeeType:   int(xdr.FeeTypePaymentFee),
+			FeeType:   int32(xdr.FeeTypePaymentFee),
 			Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
 		}
 		expectedFeeTable := SmartFeeTable{
 			FeeGroup{
 				AssetCode: "USD",
-				FeeType:   int(xdr.FeeTypePaymentFee),
+				FeeType:   int32(xdr.FeeTypePaymentFee),
 				Subtype:   int64(xdr.PaymentFeeTypeOutgoing),
 			}: []FeeWrapper{
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 0,
@@ -395,8 +395,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 815*amount.One + 1,
@@ -405,8 +405,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					NotExists: true,
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 816 * amount.One,
@@ -414,8 +414,8 @@ func TestSmartFeeTable_Update(t *testing.T) {
 					},
 				},
 				{
-					FeeEntry: core.FeeEntry{
-						FeeType:    int(xdr.FeeTypePaymentFee),
+					Fee: core.Fee{
+						FeeType:    int32(xdr.FeeTypePaymentFee),
 						Subtype:    int64(xdr.PaymentFeeTypeOutgoing),
 						Asset:      "USD",
 						LowerBound: 1000*amount.One + 1,

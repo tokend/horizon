@@ -94,7 +94,7 @@ func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources
 		fee.Relationships.Asset = resources.NewAssetKey(fees[i].Asset).AsRelation()
 		if fees[i].AccountID != "" {
 			fee.Relationships.Account = resources.NewAccountKey(fees[i].AccountID).AsRelation()
-		} else if fees[i].AccountRole != core2.GlobalAccountRole {
+		} else if fees[i].AccountRole != core2.FeesEmptyRole {
 			fee.Relationships.AccountRole =
 				resources.NewAccountRoleKey(fees[i].AccountRole).AsRelation()
 		}

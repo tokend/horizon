@@ -13,13 +13,11 @@ KeyValueEntryKey:
         - "key-value-entries"
 
 
-# specific example for uint64 value in the kv-entry for using it in the example response
-# TODO: make proper one case (u32 OR u64 OR str) using in KeyValueEntryValue
 KeyValueEntryValueU32:
   type: object
   description: |
     Defines the KeyValueEntry value .
-    Note that, according to the defined `type`, only one value field is present.
+    Note that according to the defined `type`, only one value field is present.
     All other fields are either `null` or absent.\n
     Possible value fields:
     * `U32`

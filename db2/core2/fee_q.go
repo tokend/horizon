@@ -6,7 +6,9 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-const GlobalAccountRole = 0
+//FeesEmptyRole - defines is used as default in core when account role for which fee should be applied is not specified
+// (when fee is set for account or global)
+const FeesEmptyRole = 0
 
 // FeesQ is a helper struct to aid in configuring queries that loads
 // fee structs.
@@ -60,6 +62,12 @@ func (q FeesQ) FilterBySubtype(subtype int64) FeesQ {
 //FilterByAccountType - returns q with filter by account type
 func (q FeesQ) FilterByAccountType(accType uint64) FeesQ {
 	q.selector = q.selector.Where("f.account_role = ?", accType)
+	return q
+}
+
+//FilterGlobal - returns q with filter for global fees (where account_id and account_role are not set)
+func (q FeesQ) FilterGlobal() FeesQ {
+	q.selector = q.selector.Where("f.account_role =?", FeesEmptyRole).Where("f.account_id = ?", "")
 	return q
 }
 

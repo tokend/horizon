@@ -10,7 +10,7 @@ info:
 
     ### Overview
     Horizon uses [JSON:API](https://jsonapi.org/) convention to format requests and responses.
-    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", 
+    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
     and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt>).
     ### Security
     TokenD uses the Ed25519 algorithm for authorizing any request or read private data. The use of such cryptographic proof allows building a system where transfer of secrets in an open form is not necessary, which significantly improves the security. Thus, an attacker who has access to one of the servers will not be able to compromise users' secrets.
@@ -66,7 +66,11 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 3.0.1-x.4
+  version: 3.0.1
+  x-logo:
+    url: "https://tokend.io/images/logo.svg"
+    backgroundColor: "transparent"
+    altText: "TokenD"
 servers:
 - url: https://api.achilles.tokend.io
   description: TokenD Developer Environment
@@ -138,4 +142,6 @@ x-tagGroups:
   - name: Other
     tags:
       - Requests
+      - History
+      - Info
       - WIP

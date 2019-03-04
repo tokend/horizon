@@ -302,7 +302,7 @@ func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *rego
 		return nil, errors.Wrap(err, "failed to get fees for account role")
 	}
 
-	generalFees, err := h.FeesQ.FilterByAccountType(core2.GlobalAccountRole).Select()
+	generalFees, err := h.FeesQ.FilterGlobal().Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get global fees")
 	}

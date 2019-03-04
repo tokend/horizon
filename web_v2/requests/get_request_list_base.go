@@ -54,7 +54,7 @@ func NewGetRequestsBase(
 	if err != nil {
 		return nil, err
 	}
-	baseFilters.ID, err = b.getUint64("id")
+	baseFilters.ID, err = b.getUint64ID()
 	if err != nil {
 		return nil, err
 	}

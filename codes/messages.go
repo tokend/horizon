@@ -269,6 +269,8 @@ var messages = map[string]string{
 	"op_zero_value_not_allowed":                         "Not allowed to use zero in value for such key",
 	"op_license_violation":                              "License has expired. Admin operations are not allowed. Please contact enterprise@distributedlab.com",
 	"op_auto_review_failed":                             "Auto review of created request has failed",
+	"op_skipped":                                        "Operation processing has been skipped as previous operation in the same transaction failed",
+	"op_number_of_admins_exceeds_license":               "Number of admins violates license restriction. Please contact enterprise@distributedlab.com",
 }
 
 func getMessage(rawCode string) string {

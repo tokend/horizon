@@ -15,6 +15,25 @@
 
 * Docs for `/change_role_requests` endpoint (see `filter[request_details.account_to_change_role]`)
 
+## 3.0.1-x.21
+## Fixed
+* Invalid fees joined for account
+
+## 3.0.1-x.20
+## Fixed
+* Not valid percent amount for manage offer op
+
+## 3.0.1-x.19
+## Added
+* Error codes for manageSigner and skiped op
+## Fixed
+* Information disclosure without permission for reviewable requests v1 
+
+## 3.0.1-x.18
+## Fixed
+
+* Ingest v2 stop on sale participation delete
+
 ## 3.0.1-x.17
 * Fixed issue with 0 sale state
 

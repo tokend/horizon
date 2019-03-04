@@ -1,7 +1,6 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
@@ -70,16 +69,16 @@ func (action *ReviewableRequestIndexAction) checkAllowed() {
 		return
 	}
 
-	constrains := []doorman.SignerConstraint{}
+	ownersOfData := []string{action.App.CoreInfo.AdminAccountID}
 	if action.Requestor != "" {
-		constrains = append(constrains, doorman.SignerOf(action.Requestor))
+		ownersOfData = append(ownersOfData, action.Requestor)
 	}
-	if action.Reviewer != "" {
-		constrains = append(constrains, doorman.SignerOf(action.Reviewer))
-	}
-	constrains = append(constrains, doorman.SignerOf(action.App.CoreInfo.AdminAccountID))
 
-	action.Doorman().Check(action.R, constrains...)
+	if action.Reviewer != "" {
+		ownersOfData = append(ownersOfData, action.Reviewer)
+	}
+
+	action.IsAllowed(ownersOfData...)
 }
 
 func (action *ReviewableRequestIndexAction) loadRecord() {

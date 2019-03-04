@@ -96,7 +96,7 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 		*source.BalanceID = h.MustBalanceID(newOffer.QuoteBalance)
 		*source.AssetCode = string(newOffer.Quote)
 		source.Effect.Locked.Amount = regources.Amount(newOffer.QuoteAmount)
-		source.Effect.Locked.Fee.CalculatedPercent = regources.Amount(newOffer.PercentFee)
+		source.Effect.Locked.Fee.CalculatedPercent = regources.Amount(newOffer.Fee)
 	} else {
 		*source.BalanceID = h.MustBalanceID(newOffer.BaseBalance)
 		*source.AssetCode = string(newOffer.Base)
@@ -107,10 +107,16 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 	return participants
 }
 
+type offerID struct {
+	OrderBookID uint64
+	OfferID     uint64
+}
+
 // getDeletedOffersEffect - creates participant effects for all offer entries with change type `State`
 func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.LedgerEntryChange,
 ) []history2.ParticipantEffect {
-	result := make([]history2.ParticipantEffect, 0)
+
+	result := map[offerID]history2.ParticipantEffect{}
 	for _, change := range ledgerChanges {
 		if change.Type != xdr.LedgerEntryChangeTypeState {
 			continue
@@ -136,17 +142,25 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 			*participant.BalanceID = h.MustBalanceID(deletedOffer.QuoteBalance)
 			*participant.AssetCode = string(deletedOffer.Quote)
 			participant.Effect.Unlocked.Amount = regources.Amount(deletedOffer.QuoteAmount)
-			participant.Effect.Unlocked.Fee.CalculatedPercent = regources.Amount(deletedOffer.PercentFee)
+			participant.Effect.Unlocked.Fee.CalculatedPercent = regources.Amount(deletedOffer.Fee)
 		} else {
 			*participant.BalanceID = h.MustBalanceID(deletedOffer.BaseBalance)
 			*participant.AssetCode = string(deletedOffer.Base)
 			participant.Effect.Unlocked.Amount = regources.Amount(deletedOffer.BaseAmount)
 		}
 
-		result = append(result, participant)
+		result[offerID{
+			OfferID:     uint64(deletedOffer.OfferId),
+			OrderBookID: uint64(deletedOffer.OrderBookId),
+		}] = participant
 	}
 
-	return result
+	uniqueResults := make([]history2.ParticipantEffect, 0, len(result))
+	for _, participant := range result {
+		uniqueResults = append(uniqueResults, participant)
+	}
+
+	return uniqueResults
 }
 
 type offer struct {

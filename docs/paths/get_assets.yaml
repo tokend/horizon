@@ -4,7 +4,7 @@
       - Assets
     summary: Asset List
     description: |
-                  Allows to get a filtered list of `Asset` with corresponding details.
+                  Allows getting a filtered list of `Asset` with corresponding details.
     operationId: getAssets
     parameters:
     - name: filter[policy]

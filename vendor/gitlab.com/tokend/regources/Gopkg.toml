@@ -30,8 +30,8 @@
   version = "0.8.0"
 
 [[constraint]]
-  branch = "feature/roles_rules"
   name = "gitlab.com/tokend/go"
+  version = "2"
 
 [prune]
   go-tests = true

@@ -87,7 +87,7 @@
   name = "gitlab.com/distributed_lab/corer"
 
 [[constraint]]
-  branch = "master"
+  version = "0.3"
   name = "gitlab.com/distributed_lab/kit"
 
 [[override]]
@@ -100,10 +100,10 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  revision = "bb40cdd15f7f9e0ab0667954aa126a4ff441564f"
+  revision = "200e7cbbe33b6c0f0368ffe52e5b676ad69cea55"
 
 [[constraint]]
-  revision = "51a82da6eba47a75aee17f07e2cab3814425765d"
+  version = "3.0.1-x.0"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

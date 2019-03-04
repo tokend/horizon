@@ -5,7 +5,7 @@
       - Accounts
     summary: Calculate fee
     description: |
-                  Allows to calculate a fee for an account.
+                  Allows calculating a fee for an account.
     operationId: getCalculatedFee
     parameters:
     - name: asset
@@ -18,7 +18,7 @@
         type: string
     - name: fee_type
       in: path
-      description: Type of a fee
+      description: Type of fee
       required: true
       style: simple
       explode: false
@@ -26,7 +26,7 @@
         type: integer
     - name: subtype
       in: path
-      description: Subtype of a fee
+      description: Subtype of fee
       required: true
       style: simple
       explode: false
@@ -34,7 +34,7 @@
         type: integer
     - name: amount
       in: path
-      description: Amount to calculate on which a fee is based on
+      description: Amount to calculate on which fee is based on
       required: true
       style: simple
       explode: false

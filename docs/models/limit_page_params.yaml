@@ -26,4 +26,4 @@ sortingParam:
       - asc
       - desc
     default: asc
-    description: Order of records on the page. If sortingParam is not specified, order of records is, by default, sorted by ID.
+    description: Order of records on the page. If sortingParam is not specified, order of records is by default sorted by ID.

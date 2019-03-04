@@ -32,19 +32,24 @@ CalculatedFee:
   - $ref: '#/components/schemas/CalculatedFeeKey'
   - type: object
     properties:
-      attributes:
-        type: object
-        properties:
-          fixed:
-            type: string
-            description: "Fixed amount to pay"
-            example: "1.123456"
-            format: Amount
-          calculated_percent:
-            type: string
-            description: "Calculated percent"
-            example: "1.250500"
-            format: Amount
+      $ref: '#/components/schemas/CalculatedFeeEntry'
+
+CalculatedFeeEntry:
+  type: object
+  properties:
+    attributes:
+      type: object
+      properties:
+        fixed:
+          type: string
+          description: "Fixed amount to pay"
+          example: "1.123456"
+          format: Amount
+        calculated_percent:
+          type: string
+          description: "Calculated percent"
+          example: "1.250500"
+          format: Amount
 
 Fee:
   allOf:
@@ -56,14 +61,14 @@ Fee:
         properties:
           account:
             type: object
-            description: "Account for which fee is set"
+            description: "Account for which the fee is set"
             properties:
               data:
                 type: object
                 $ref: '#/components/schemas/AccountKey'
           account_role:
             type: object
-            description: "Account role for which fee is set"
+            description: "Account role for which the fee is set"
             properties:
               data:
                 type: object
@@ -79,7 +84,7 @@ Fee:
             format: Amount
           percent:
             type: string
-            description: "Percent to calculate fee with. 1.0 represents 100%, 0.21 - 21%"
+            description: "Percent to calculate the fee with (e.g., 1.0 represents 100%, 0.21 represents 21%)"
             example: "0.234"
             format: Amount
           applied_to:
@@ -93,7 +98,7 @@ Fee:
             properties:
               asset:
                 type: string
-                description: "Unique identifier of the asset"
+                description: "Unique identifier of an asset"
                 example: "USD"
               subtype:
                 type: integer
@@ -101,17 +106,17 @@ Fee:
                 example: 1
               fee_type:
                 type: integer
-                description: "Type of fee"
+                description: "Type of the fee"
                 minimum: 0
                 maximum: 7
                 example: 2
               lower_bound:
                 type: string
-                description: "lower bound for fee"
+                description: "lower bound for the fee"
                 example: "123.123456"
                 format: Amount
               upper_bound:
                 type: string
-                description: "upper bound for fee"
+                description: "upper bound for the fee"
                 example: "321.654321"
                 format: Amount
