@@ -1,8 +1,15 @@
 package horizon
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
 	"net/http"
+	"time"
+
+	"gitlab.com/tokend/horizon/db2/history"
+
+	"gitlab.com/distributed_lab/running"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/txsub"
@@ -66,6 +73,15 @@ func (action *TransactionCreateAction) loadResult() {
 
 	if action.result.Err == nil {
 		action.resource.Populate(action.Ctx, action.result)
+		running.UntilSuccess(action.Ctx, action.Log, "tx-ingest-waiter", func(ctx context.Context) (bool, error) {
+			var submittedTx history.Transaction
+			err := action.App.HistoryQ().TransactionByHash(&submittedTx, envelopeInfo.ContentHash)
+			if err == sql.ErrNoRows {
+				return false, nil
+			}
+
+			return true, nil
+		}, 100*time.Millisecond, 1*time.Second)
 		return
 	}
 }
