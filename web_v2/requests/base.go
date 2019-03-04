@@ -122,9 +122,10 @@ func (r *base) populateFilters(target interface{}) error {
 	}
 
 	err := figure.Out(target).With(figure.BaseHooks, amountHook).From(filter).Please()
-
 	if err != nil {
-		return err
+		return validation.Errors{
+			"filter": errors.Cause(err),
+		}
 	}
 
 	return nil
