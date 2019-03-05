@@ -1,4 +1,4 @@
-ManageExternalSystemPoolOpKey:
+ManageExternalSystemAccountIDPoolEntryOpKey:
   type: object
   properties:
     id:
@@ -9,9 +9,9 @@ ManageExternalSystemPoolOpKey:
       enum:
         - "operations-manage-external-system-account-id-pool-entry"
 
-ManageExternalSystemPoolOp:
+ManageExternalSystemAccountIDPoolEntryOp:
   allOf:
-  - $ref: '#/components/schemas/ManageExternalSystemPoolOpKey'
+  - $ref: '#/components/schemas/ManageExternalSystemAccountIDPoolEntryOpKey'
   - type: object
     properties:
       attributes:

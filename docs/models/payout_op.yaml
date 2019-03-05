@@ -2,9 +2,11 @@ PayoutOpKey:
   type: object
   properties:
     id:
+      deprecated: true
       type: string
       example: "123"
     type:
+      deprecated: true
       type: string
       enum:
         - "operations-payout"
@@ -16,15 +18,23 @@ PayoutOp:
     properties:
       relationships:
         type: object
+        deprecated: true
         properties:
           source_account:
-            $ref: '#/components/schemas/AccountKey'
+            deprecated: true
+            allOf:
+            - $ref: '#/components/schemas/AccountKey'
           source_balance:
-            $ref: '#/components/schemas/BalanceKey'
+            deprecated: true
+            allOf:
+            - $ref: '#/components/schemas/BalanceKey'
           asset:
-            $ref: '#/components/schemas/AssetKey'
+            deprecated: true
+            allOf:
+            - $ref: '#/components/schemas/AssetKey'
       attributes:
         type: object
+        deprecated: true
         required:
           - max_payout_amount
           - min_asset_holder_amount
@@ -33,19 +43,26 @@ PayoutOp:
           - actual_payout_amount
         properties:
           expected_fee:
-            $ref: '#/components/schemas/CalculatedFeeEntry'
+            deprecated: true
+            allOf:
+            - $ref: '#/components/schemas/CalculatedFeeEntry'
           actual_fee:
-            $ref: '#/components/schemas/CalculatedFeeEntry'
+            deprecated: true
+            allOf:
+            - $ref: '#/components/schemas/CalculatedFeeEntry'
           #TODO add description for amounts
           max_payout_amount:
+            deprecated: true
             type: string
             format: Amount
             example: "123.123456"
           min_asset_holder_amount:
+            deprecated: true
             type: string
             format: Amount
             example: "123.123456"
           actual_payout_amount:
+            deprecated: true
             type: string
             format: Amount
             example: "123.123456"
