@@ -4,6 +4,10 @@
 
 * panic on actions' `isAllowed` checking
 
+### Removed
+
+* charts, endpoint for charts etc.
+
 ## 3.0.1-x.21
 ## Fixed
 * Invalid fees joined for account
