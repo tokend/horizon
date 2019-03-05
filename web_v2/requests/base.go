@@ -38,7 +38,6 @@ const maxLimit uint64 = 100
 type base struct {
 	include           map[string]struct{}
 	supportedIncludes map[string]struct{}
-	supportedFilters  map[string]struct{}
 	filter            map[string]string
 
 	queryValues *url.Values
@@ -55,7 +54,6 @@ func newBase(r *http.Request, opts baseOpts) (*base, error) {
 	request := base{
 		request:           r,
 		supportedIncludes: opts.supportedIncludes,
-		supportedFilters:  opts.supportedFilters,
 	}
 
 	err := request.unmarshalQuery(opts)
