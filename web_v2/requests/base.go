@@ -128,9 +128,9 @@ func (r *base) populateFilters(target interface{}) error {
 		errs := validation.Errors{}
 
 		if errField, ok := fields["raw"]; ok {
-			errs[cast.ToString(errField)] = errors.Wrap(err, "one of more filters are not valid", fields)
+			errs[cast.ToString(errField)] = errors.Wrap(err, "one or more filters are not valid", fields)
 		} else {
-			errs["filter"] = errors.Wrap(err, "one of more filters are not valid", fields)
+			errs["filter"] = errors.Wrap(err, "one or more filters are not valid", fields)
 		}
 
 		return errs
