@@ -2,12 +2,15 @@ ManageContractRequestOpKey:
   type: object
   properties:
     id:
+      deprecated: true
       type: string
       example: "123"
     type:
+      deprecated: true
       type: string
       enum:
         - "operations-manage-contract-request"
 
 ManageContractRequestOp:
-  $ref: '#/components/schemas/ManageContractRequestOpKey'
+  allOf:
+    - $ref: '#/components/schemas/ManageContractRequestOpKey'
