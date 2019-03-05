@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"github.com/spf13/cast"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -37,6 +38,7 @@ const maxLimit uint64 = 100
 type base struct {
 	include           map[string]struct{}
 	supportedIncludes map[string]struct{}
+	supportedFilters  map[string]struct{}
 	filter            map[string]string
 
 	queryValues *url.Values
@@ -53,6 +55,7 @@ func newBase(r *http.Request, opts baseOpts) (*base, error) {
 	request := base{
 		request:           r,
 		supportedIncludes: opts.supportedIncludes,
+		supportedFilters:  opts.supportedFilters,
 	}
 
 	err := request.unmarshalQuery(opts)
@@ -123,9 +126,16 @@ func (r *base) populateFilters(target interface{}) error {
 
 	err := figure.Out(target).With(figure.BaseHooks, amountHook).From(filter).Please()
 	if err != nil {
-		return validation.Errors{
-			"filter": errors.Cause(err),
+		fields := errors.GetFields(err)
+		errs := validation.Errors{}
+
+		if errField, ok := fields["raw"]; ok {
+			errs[cast.ToString(errField)] = errors.Wrap(err, "one of more filters are not valid", fields)
+		} else {
+			errs["filter"] = errors.Wrap(err, "one of more filters are not valid", fields)
 		}
+
+		return errs
 	}
 
 	return nil
