@@ -1,3 +1,9 @@
+## Unreleased
+
+### Fixed
+
+* panic on actions' `isAllowed` checking
+
 ## 3.0.1-x.21
 ## Fixed
 * Invalid fees joined for account
