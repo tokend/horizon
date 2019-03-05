@@ -414,6 +414,7 @@ CreateAtomicSwapBidDetails:
       properties:
         relationships:
           type: object
+          deprecated: true
           required:
             - base_balance
             - quote_assets
@@ -421,12 +422,14 @@ CreateAtomicSwapBidDetails:
             base_balance:
               type: object
               description: "Base balance for bid"
+              deprecated: true
               properties:
                 data:
                   $ref: '#/components/schemas/BalanceKey'
             quote_assets:
               description: "Assets that can be accepted"
               type: object
+              deprecated: true
               properties:
                 data:
                   type: array
@@ -434,17 +437,21 @@ CreateAtomicSwapBidDetails:
                     $ref: '#/components/schemas/AssetKey'
         attributes:
           type: object
+          deprecated: true
           required:
             - creator_details
             - base_amount
           properties:
             base_amount:
+              deprecated: true
               type: string
               description: "Amount of bid"
               example: "100.000001"
               format: Amount
             creator_details:
-              $ref: '#/components/schemas/Details'
+              deprecated: true
+              allOf:
+              - $ref: '#/components/schemas/Details'
 
 CreateAtomicSwapDetails:
   allOf:
@@ -453,6 +460,7 @@ CreateAtomicSwapDetails:
       properties:
         relationships:
           type: object
+          deprecated: true
           required:
             - bid
             - quote_asset
@@ -460,21 +468,25 @@ CreateAtomicSwapDetails:
             bid:
               type: object
               description: "Bid to create atomic swap for"
+              deprecated: true
               properties:
                 data:
                   $ref: '#/components/schemas/Int64Key'
             quote_asset:
               description: "Asset used to perform atomic swap"
               type: object
+              deprecated: true
               properties:
                 data:
                   $ref: '#/components/schemas/AssetKey'
         attributes:
           type: object
+          deprecated: true
           required:
             - base_amount
           properties:
             base_amount:
+              deprecated: true
               type: string
               description: "Amount in base asset to perform atomic swap on"
               example: "100.000001"

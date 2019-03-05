@@ -1,7 +1,7 @@
 /v3/create_asset_requests:
   get:
     tags:
-      - Requests
+      - Assets
     summary: Asset Creation Request List
     description: |
       Allows getting a filtered list of `CreateAssetRequest` with details\n
