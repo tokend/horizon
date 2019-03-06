@@ -3,6 +3,7 @@
 ### Fixed
 
 * panic on actions' `isAllowed` checking
+* error on get reviewable request by reviewer
 
 ### Removed
 
