@@ -100,7 +100,7 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  revision = "200e7cbbe33b6c0f0368ffe52e5b676ad69cea55"
+  revision = "ca20cade02bab0902dc657c1e721eaf49835d78b"
 
 [[constraint]]
   version = "3.0.1-x.0"

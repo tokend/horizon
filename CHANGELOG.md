@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Added
+
+* Messages for new error codes
+
 ### Fixed
 
 * panic on actions' `isAllowed` checking
