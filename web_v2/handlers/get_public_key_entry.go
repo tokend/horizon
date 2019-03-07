@@ -40,6 +40,9 @@ func GetPublicKeyEntry(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
+	if result == nil {
+		ape.RenderErr(w, problems.NotFound())
+	}
 
 	ape.Render(w, result)
 }
@@ -51,12 +54,15 @@ type getPublicKeyEntryHandler struct {
 
 // GetPublicKeyEntry returns the public key entry with the list of related account keys
 func (h *getPublicKeyEntryHandler) GetPublicKeyEntry(request *requests.GetPublicKeyEntry) (*regources.PublicKeyEntryResponse, error) {
+	publicKeyEntry := resources.NewPublicKeyEntry(request.ID)
+
 	coreSigners, err := h.SignersQ.FilterByPublicKey(request.ID).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get signers list")
 	}
-
-	publicKeyEntry := resources.NewPublicKeyEntry(request.ID)
+	if len(coreSigners) == 0 {
+		return nil, nil
+	}
 
 	accounts := make([]regources.Key, 0, len(coreSigners))
 	for _, coreSigner := range coreSigners {
