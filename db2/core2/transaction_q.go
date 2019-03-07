@@ -37,3 +37,22 @@ func (q *TransactionQ) GetByLedger(seq int32) ([]Transaction, error) {
 
 	return result, nil
 }
+
+// GetByHash returns transaction for given hash. Returns nil, nil if there is no transaction with provided hash
+func (q *TransactionQ) GetByHash(hash string) (*Transaction, error) {
+	query := sq.Select("tx.txid, tx.ledgerseq, tx.txindex, tx.txbody, tx.txresult, tx.txmeta").
+		From("txhistory tx").Where("tx.txid = ?", hash)
+	var result Transaction
+	err := q.repo.Get(&result, query)
+	if err != nil {
+		if q.repo.NoRows(err) {
+			return nil, nil
+		}
+
+		return nil, errors.Wrap(err, "failed to load transaction by hash", logan.F{
+			"hash": hash,
+		})
+	}
+
+	return &result, nil
+}

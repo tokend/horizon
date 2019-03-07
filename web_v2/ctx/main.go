@@ -3,6 +3,8 @@ package ctx
 import (
 	"net/http"
 
+	"gitlab.com/tokend/horizon/txsub/v2"
+
 	"context"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -19,6 +21,7 @@ const (
 	keyLog
 	keyDoorman
 	keyCoreInfo
+	keyTxSubmitter
 )
 
 // Log - gets entry from context
@@ -86,4 +89,16 @@ func SetCoreInfo(info corer.Info) func(ctx context.Context) context.Context {
 //CoreInfo - returns core info from the context
 func CoreInfo(r *http.Request) corer.Info {
 	return r.Context().Value(keyCoreInfo).(corer.Info)
+}
+
+// Submitter - gets entry from context
+func Submitter(r *http.Request) *txsub.System {
+	return r.Context().Value(keyTxSubmitter).(*txsub.System)
+}
+
+// SetSubmitter - sets log entry into ctx
+func SetSubmitter(value *txsub.System) func(ctx context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, keyTxSubmitter, value)
+	}
 }

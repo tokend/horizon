@@ -57,6 +57,7 @@ func initWebV2Middleware(app *App) {
 			ctx.SetHistoryRepo(app.HistoryRepoLogged(nil)),
 			ctx.SetDoorman(doorman.New(app.config.SkipCheck, signersProvider)),
 			ctx.SetCoreInfo(*app.CoreInfo),
+			ctx.SetSubmitter(app.submitterV2),
 		),
 		v2middleware.WebMetrics(app),
 	)
@@ -148,6 +149,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/signer_rules/{id}", handlers.GetSignerRule)
 	m.Get("/v3/signer_rules", handlers.GetSignerRuleList)
 
+	m.Post("/v3/transactions", handlers.CreateTransaction)
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))
@@ -158,7 +160,7 @@ func init() {
 	appInit.Add(
 		"web2.init",
 		initWebV2,
-		"app-context", "core-info", "memory_cache", "ledger-state",
+		"app-context", "core-info", "memory_cache", "ledger-state", "txsub2",
 	)
 
 	appInit.Add(
