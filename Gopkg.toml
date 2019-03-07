@@ -103,7 +103,7 @@
   revision = "200e7cbbe33b6c0f0368ffe52e5b676ad69cea55"
 
 [[constraint]]
-  revision = "f2f08897b51faae2b99139dcf418da04a6e2dc9b"
+  revision = "2056335df3806a5b14cca95c12004c3ffd7833f1"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
