@@ -111,6 +111,7 @@ x-tagGroups:
     tags:
       - Accounts
       - Assets
+      - Balances
       - Fees
   - name: Asset Movements
     tags:

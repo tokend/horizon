@@ -59,7 +59,7 @@ type getBalanceListHandler struct {
 	Log       *logan.Entry
 }
 
-func (h *getBalanceListHandler) getAssetOwner (assetCode string) (string, error) {
+func (h *getBalanceListHandler) getAssetOwner(assetCode string) (string, error) {
 	if assetCode == "" {
 		return "", nil
 	}
@@ -73,7 +73,7 @@ func (h *getBalanceListHandler) getAssetOwner (assetCode string) (string, error)
 }
 
 // GetBalanceList returns list of balances with related resources
-func (h *getBalanceListHandler) GetBalanceList (request *requests.GetBalanceList) (*regources.BalancesResponse, error) {
+func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList) (*regources.BalancesResponse, error) {
 	q := h.BalancesQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeBalanceListAsset) {
 		q.FilterByAsset(request.Filters.Asset)
