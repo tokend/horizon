@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+* `BalancesResponse` type to represent the response on `/balances`
+* `PublicKeyEntryResponse` type to represent the response on `/public_key_entries`
+* `PublicKeyEntry`, `PublicKeyEntryRelationships` types
+
 ## 3.0.1-x.1
 
 ### Added

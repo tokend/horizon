@@ -111,6 +111,7 @@ x-tagGroups:
     tags:
       - Accounts
       - Assets
+      - Balances
       - Fees
   - name: Asset Movements
     tags:
@@ -143,5 +144,6 @@ x-tagGroups:
     tags:
       - Requests
       - History
+      - Public Key Entries
       - Info
       - WIP
