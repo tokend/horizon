@@ -23,6 +23,7 @@ const (
 	TypeSigners                         = "signers"
 	TypeSignerRoles                     = "signer-roles"
 	TypeSignerRules                     = "signer-rules"
+	TypePublicKeys                      = "public-keys"
 	TypeParticipantEffects              = "participant-effects"
 	TypeOperations                      = "operations"
 	TypeQuoteAssets                     = "quote-assets"
