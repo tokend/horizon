@@ -31,7 +31,7 @@ type GetBalanceList struct {
 }
 
 // NewGetBalanceList - returns new instance of GetBalanceList
-func NewGetBalanceList (r *http.Request) (*GetBalanceList, error) {
+func NewGetBalanceList(r *http.Request) (*GetBalanceList, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeBalanceListAll,
 		supportedFilters:  filterTypeBalanceListAll,
