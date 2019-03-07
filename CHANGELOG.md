@@ -3,7 +3,7 @@
 ### Added
 
 * `GetBalanceList` handler to handle `v3/balances` request
-* `GetPublicKeyEntry` handler to handle `v3/public_key_enties/{id}` request
+* `GetPublicKeyEntry` handler to handle `v3/public_key_entries/{id}` request
 
 ### Fixed
 
