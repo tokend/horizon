@@ -38,6 +38,7 @@ func (q BalancesQ) FilterByAccount(accountAddress string) BalancesQ {
 	return q
 }
 
+// FilterByAsset - returns new Q with added filter for asset
 func (q BalancesQ) FilterByAsset (asset string) BalancesQ {
 	q.selector = q.selector.Where("balances.asset = ?", asset)
 	return q
