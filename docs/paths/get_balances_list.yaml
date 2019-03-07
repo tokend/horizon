@@ -5,6 +5,8 @@
     summary: Balance List
     description: |
       Allows getting list of balances with corresponding details.
+
+      🔒 Admins signature is needed. If filter by asset is provided, the signature of asset's owner is also valid
     operationId: getBalanceList
     parameters:
       - name: filter[asset]

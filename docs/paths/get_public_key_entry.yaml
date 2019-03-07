@@ -5,6 +5,8 @@
     summary: Public Key Entry By ID
     description: |
       Returns the requested public key with accounts that have signer with such public key
+
+      🔒 Admins or public key owner signature is needed
     operationId: getPublicKeyEntryByID
     parameters:
       - name: id
