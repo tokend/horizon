@@ -5,11 +5,11 @@ import (
 )
 
 // NewPublicKeyResource creates new instance of PublicKey resource from provided publicKey
-func NewPublicKeyResource(publicKey string) regources.PublicKey {
-	return regources.PublicKey{
+func NewPublicKeyEntry(publicKey string) regources.PublicKeyEntry {
+	return regources.PublicKeyEntry{
 		Key: regources.Key{
 			ID:   publicKey,
-			Type: regources.TypePublicKey,
+			Type: regources.TypePublicKeyEntries,
 		},
 	}
 }

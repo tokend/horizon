@@ -14,15 +14,15 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-// GetPublicKeyAccountList - processes request to get the list of all accounts that has provided public key as it's signer
-func GetPublicKey(w http.ResponseWriter, r *http.Request) {
+// GetPublicKeyEntry - processes request to get the public key with the list of all accounts that have signer with provided public key
+func GetPublicKeyEntry(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
-	handler := getPublicKeyAccountListHandler{
+	handler := getPublicKeyEntryHandler{
 		SignersQ: core2.NewSignerQ(coreRepo),
-		Log:       ctx.Log(r),
+		Log:      ctx.Log(r),
 	}
 
-	request, err := requests.NewGetPublicKey(r)
+	request, err := requests.NewGetPublicKeyEntry(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
@@ -32,9 +32,9 @@ func GetPublicKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := handler.GetPublicKeyAccountList(request)
+	result, err := handler.GetPublicKeyEntry(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get account list for public key", logan.F{
+		ctx.Log(r).WithError(err).Error("failed to get public key entry", logan.F{
 			"request": request,
 		})
 		ape.RenderErr(w, problems.InternalError())
@@ -44,30 +44,31 @@ func GetPublicKey(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, result)
 }
 
-type getPublicKeyAccountListHandler struct {
+type getPublicKeyEntryHandler struct {
 	SignersQ core2.SignerQ
-	Log       *logan.Entry
+	Log      *logan.Entry
 }
 
-// GetAccountRuleList returns the list of accountRules with related resources
-func (h *getPublicKeyAccountListHandler) GetPublicKeyAccountList(request *requests.GetPublicKey) (*regources.PublicKeyResponse, error) {
+// GetPublicKeyEntry returns the public key entry with the list of related accounts
+func (h *getPublicKeyEntryHandler) GetPublicKeyEntry(request *requests.GetPublicKeyEntry) (*regources.PublicKeyEntryResponse, error) {
 	coreSigners, err := h.SignersQ.FilterByPublicKey(request.ID).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get signers list")
 	}
+
+	publicKeyEntry := resources.NewPublicKeyEntry(request.ID)
 
 	accounts := make([]regources.Key, 0, len(coreSigners))
 	for _, coreSigner := range coreSigners {
 		accounts = append(accounts, resources.NewAccountKey(coreSigner.AccountID))
 	}
 
-	publicKeyResource := resources.NewPublicKeyResource(request.ID)
-	publicKeyResource.Relationships.Accounts = &regources.RelationCollection{
+	publicKeyEntry.Relationships.Accounts = &regources.RelationCollection{
 		Data: accounts,
 	}
 
-	response := &regources.PublicKeyResponse{
-		Data: publicKeyResource,
+	response := &regources.PublicKeyEntryResponse{
+		Data: publicKeyEntry,
 	}
 
 	return response, nil
