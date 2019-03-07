@@ -4,7 +4,7 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-// NewPublicKeyEntry creates new instance of PublicKey resource from provided publicKey
+// NewPublicKeyEntry creates new instance of PublicKeyEntry resource from provided publicKey
 func NewPublicKeyEntry(publicKey string) regources.PublicKeyEntry {
 	return regources.PublicKeyEntry{
 		Key: regources.Key{

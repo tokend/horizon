@@ -81,7 +81,7 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 
 	coreBalances, err := q.Select()
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to balance list")
+		return nil, errors.Wrap(err, "Failed to get balance list")
 	}
 
 	response := &regources.BalancesResponse{

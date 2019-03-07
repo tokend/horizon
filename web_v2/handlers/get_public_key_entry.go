@@ -49,7 +49,7 @@ type getPublicKeyEntryHandler struct {
 	Log      *logan.Entry
 }
 
-// GetPublicKeyEntry returns the public key entry with the list of related accounts
+// GetPublicKeyEntry returns the public key entry with the list of related account keys
 func (h *getPublicKeyEntryHandler) GetPublicKeyEntry(request *requests.GetPublicKeyEntry) (*regources.PublicKeyEntryResponse, error) {
 	coreSigners, err := h.SignersQ.FilterByPublicKey(request.ID).Select()
 	if err != nil {
