@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"time"
 
@@ -70,10 +69,8 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if result.TxSubmitFailure != nil {
-		w.WriteHeader(result.TxSubmitFailure.Errors.Status)
+		w.WriteHeader(result.TxSubmitFailure.Status)
 	}
-	bb, _ := json.MarshalIndent(result, "", "  ")
-	ctx.Log(r).Error(string(bb))
 	ape.Render(w, result)
 }
 

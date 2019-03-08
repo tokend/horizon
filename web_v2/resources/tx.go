@@ -25,11 +25,10 @@ func NewTxSubmitKey(hash string) regources.Key {
 }
 
 func NewTxSuccess(res *txsub.Result) *regources.TxSubmitResponse {
-	key := NewTxSubmitKey(res.Hash)
 	return &regources.TxSubmitResponse{
-		Key: &key,
 		TxSubmitSuccess: &regources.TxSubmitSuccess{
-			Data: regources.TxSubmitSuccessData{
+			Key: NewTxSubmitKey(res.Hash),
+			Attributes: regources.TxSubmitSuccessAttributes{
 				LedgerSequence: res.LedgerSequence,
 				Envelope:       res.EnvelopeXDR,
 				ResultXDR:      res.ResultXDR,
@@ -40,18 +39,14 @@ func NewTxSuccess(res *txsub.Result) *regources.TxSubmitResponse {
 }
 
 func NewTxFailure(env txsub.EnvelopeInfo, err txsub.Error) *regources.TxSubmitResponse {
-	key := NewTxSubmitKey(env.ContentHash)
 	return &regources.TxSubmitResponse{
-		Key: &key,
 		TxSubmitFailure: &regources.TxSubmitFailure{
-			Errors: regources.TxSubmitError{
-				Status: err.Status(),
-				Detail: err.Details(),
-				Title:  err.Type().String(),
-				Meta: regources.TxSubmitErrorMeta{
-					Envelope:  env.RawBlob,
-					ResultXDR: err.ResultXDR(),
-				},
+			Status: err.Status(),
+			Detail: err.Details(),
+			Title:  err.Type().String(),
+			Meta: regources.TxSubmitErrorMeta{
+				Envelope:  env.RawBlob,
+				ResultXDR: err.ResultXDR(),
 			},
 		},
 	}

@@ -1,16 +1,16 @@
 package regources
 
 type TxSubmitResponse struct {
-	*Key
-	*TxSubmitSuccess
-	*TxSubmitFailure
+	*TxSubmitSuccess `json:"data"`
+	*TxSubmitFailure `json:"errors"`
 }
 
 type TxSubmitSuccess struct {
-	Data TxSubmitSuccessData `json:"data"`
+	Key
+	Attributes TxSubmitSuccessAttributes `json:"attributes"`
 }
 
-type TxSubmitSuccessData struct {
+type TxSubmitSuccessAttributes struct {
 	LedgerSequence int32  `json:"ledger"`
 	Envelope       string `json:"envelope_xdr"`
 	ResultXDR      string `json:"result_xdr"`
@@ -18,10 +18,6 @@ type TxSubmitSuccessData struct {
 }
 
 type TxSubmitFailure struct {
-	Errors TxSubmitError `json:"errors"`
-}
-
-type TxSubmitError struct {
 	Status int               `json:"status"`
 	Title  string            `json:"title"`
 	Detail string            `json:"detail"`
