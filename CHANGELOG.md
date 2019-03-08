@@ -1,3 +1,8 @@
+##Unreleased
+##Added
+* Tx submission system v2 with retry
+* `/v3/transactions` to submit txs 
+
 ## 3.0.1-x.21
 ## Fixed
 * Invalid fees joined for account
