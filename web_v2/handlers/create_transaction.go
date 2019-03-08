@@ -49,6 +49,9 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
+	if !isAllowed(r, w, request.Env.SourceAddress) {
+		return
+	}
 
 	handler.Log = handler.Log.WithFields(logan.F{
 		"tx_hash": request.Env.ContentHash,
