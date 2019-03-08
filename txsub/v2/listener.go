@@ -7,9 +7,3 @@ func send(l chan fullResult, res fullResult) <-chan fullResult {
 	close(l)
 	return l
 }
-
-func newResultListener() listener {
-	ch := make(chan fullResult, 1)
-
-	return ch
-}
