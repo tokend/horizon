@@ -3,9 +3,12 @@
 ### Added
 
 * Messages for new error codes
+* `GetBalanceList` handler to handle `v3/balances` request
+* `GetPublicKeyEntry` handler to handle `v3/public_key_entries/{id}` request
 
 ### Fixed
 
+* panic on handle set fee operation
 * panic on actions' `isAllowed` checking
 * error on get reviewable request by reviewer
 
