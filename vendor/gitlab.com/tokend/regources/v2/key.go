@@ -23,6 +23,7 @@ const (
 	TypeSigners                         = "signers"
 	TypeSignerRoles                     = "signer-roles"
 	TypeSignerRules                     = "signer-rules"
+	TypePublicKeyEntries                = "public-key-entries"
 	TypeParticipantEffects              = "participant-effects"
 	TypeOperations                      = "operations"
 	TypeQuoteAssets                     = "quote-assets"
@@ -30,6 +31,7 @@ const (
 	TypeFees                            = "fees"
 	TypeCalculatedFee                   = "calculated-fee"
 	TypeTxs                             = "transactions"
+	TypeTxSubmit                        = "transaction-submit"
 	// TypeEffectsFunded - balance received funds from other balance
 	TypeEffectsFunded = "effects-funded"
 	// TypeEffectsIssued - funds have been issued to the balance

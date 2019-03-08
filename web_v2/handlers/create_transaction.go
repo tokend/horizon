@@ -2,7 +2,17 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
+	"time"
+
+	"gitlab.com/tokend/regources/v2"
+
+	"gitlab.com/tokend/horizon/web_v2/resources"
+
+	"gitlab.com/tokend/horizon/ingest2/storage"
+
+	"github.com/lib/pq"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
@@ -25,10 +35,14 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		Core:    core2.NewTransactionQ(coreRepo),
 		History: history2.NewTransactionQ(historyRepo),
 	}
+	config := ctx.Config(r)
 	handler := createTransactionHandler{
-		Results: results,
-		Log:     ctx.Log(r),
-		Txsub:   ctx.Submitter(r),
+		Results:       results,
+		Log:           ctx.Log(r),
+		Txsub:         ctx.Submitter(r),
+		WaitForIngest: config.Ingest && config.WaitForIngest,
+		Listener: pq.NewListener(config.DatabaseURL, 3*time.Second, 8*time.Second, func(event pq.ListenerEventType, err error) {
+		}),
 	}
 
 	request, err := requests.NewCreateTransactionRequest(r)
@@ -37,9 +51,13 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	handler.Log = handler.Log.WithFields(logan.F{
+		"tx_hash": request.Env.ContentHash,
+	})
+
 	result, err := handler.createTx(r.Context(), request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to create transaction", logan.F{
+		ctx.Log(r).WithError(err).Error("failed to create transaction ", logan.F{
 			"request": request,
 		})
 		ape.RenderErr(w, problems.InternalError())
@@ -51,20 +69,64 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if result.TxSubmitFailure != nil {
+		w.WriteHeader(result.TxSubmitFailure.Errors.Status)
+	}
+	bb, _ := json.MarshalIndent(result, "", "  ")
+	ctx.Log(r).Error(string(bb))
 	ape.Render(w, result)
 }
 
 type createTransactionHandler struct {
-	Results txsub.ResultsProvider
-	Txsub   *txsub.System
-	Log     *logan.Entry
+	Results       txsub.ResultsProvider
+	Txsub         *txsub.System
+	Listener      *pq.Listener
+	WaitForIngest bool
+	Log           *logan.Entry
 }
 
-func (h *createTransactionHandler) createTx(ctx context.Context, request *requests.CreateTransaction) (*txsub.Result, error) {
-	res, err := h.Txsub.Submit(ctx, *request.Env)
+func (h *createTransactionHandler) createTx(context context.Context, request *requests.CreateTransaction) (*regources.TxSubmitResponse, error) {
+	res, err := h.Txsub.Submit(context, *request.Env)
+	if txsub.IsInternalError(err) {
+		return resources.NewTxFailure(*request.Env, err.(txsub.Error)), nil
+	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to handle create transaction request")
 	}
+	if res == nil {
+		return nil, errors.New("failed to submit transaction")
+	}
+	if !h.WaitForIngest {
+		return resources.NewTxSuccess(res), nil
+	}
 
-	return res, nil
+	err = h.Listener.Listen(storage.ChanSubmitter)
+	if err != nil {
+		h.Log.WithError(errors.Wrap(err, "failed to listen channel", logan.F{
+			"channel": storage.ChanSubmitter,
+		})).Error("Got error while waiting for tx ingest")
+		return resources.NewTxSuccess(res), nil
+	}
+
+waitForIngest:
+	for {
+		select {
+		case <-context.Done():
+			break waitForIngest
+		case <-h.Listener.Notify:
+			tx, err := h.Results.History.GetByHash(res.Hash)
+			if err != nil {
+				h.Log.
+					WithError(errors.Wrap(err, "failed to get tx by hash ")).
+					Error("Got error while waiting for tx ingestion ")
+				return resources.NewTxSuccess(res), nil
+			}
+			if tx != nil {
+				break waitForIngest
+			}
+		}
+	}
+
+	return resources.NewTxSuccess(res), nil
+
 }

@@ -3,6 +3,8 @@ package ctx
 import (
 	"net/http"
 
+	"gitlab.com/tokend/horizon/config"
+
 	"gitlab.com/tokend/horizon/txsub/v2"
 
 	"context"
@@ -22,6 +24,7 @@ const (
 	keyDoorman
 	keyCoreInfo
 	keyTxSubmitter
+	keyConfig
 )
 
 // Log - gets entry from context
@@ -96,9 +99,21 @@ func Submitter(r *http.Request) *txsub.System {
 	return r.Context().Value(keyTxSubmitter).(*txsub.System)
 }
 
-// SetSubmitter - sets log entry into ctx
+// SetSubmitter - sets submitter entry into ctx
 func SetSubmitter(value *txsub.System) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, keyTxSubmitter, value)
+	}
+}
+
+// Config - gets entry from context
+func Config(r *http.Request) *config.Config {
+	return r.Context().Value(keyConfig).(*config.Config)
+}
+
+// SetConfig - sets config into ctx
+func SetConfig(value *config.Config) func(ctx context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, keyConfig, value)
 	}
 }

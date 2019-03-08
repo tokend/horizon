@@ -1,14 +1,16 @@
 package horizon
 
 import (
-	"net/http"
-
-	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/horizon/db2/history2"
-
 	"time"
 
-	"gitlab.com/distributed_lab/corer"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+
+	"github.com/lib/pq"
+	"gitlab.com/tokend/horizon/db2/core2"
+	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/storage"
+
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/txsub/v2"
 )
@@ -17,16 +19,26 @@ func initSubmissionV2(app *App) {
 	logger := &log.WithField("service", "initSubmissionV2").Entry
 	cq := core2.NewTransactionQ(app.CoreRepoLogged(logger))
 	hq := history2.NewTransactionQ(app.HistoryRepoLogged(logger))
-	coreConnector, err := corer.NewConnector(&http.Client{
-		Timeout: time.Duration(1 * time.Minute),
-	}, app.config.StellarCoreURL)
+	coreConnector := app.CoreConnector
+
+	listener := pq.NewListener(
+		app.config.StellarCoreDatabaseURL,
+		time.Second,
+		5*time.Second,
+		func(event pq.ListenerEventType, err error) {},
+	)
+	err := listener.Listen(storage.ChanNewLedger)
 	if err != nil {
-		logger.WithError(err).Panic("Failed to create core connector")
+		panic(errors.Wrap(err, "failed to init history listener", logan.F{
+			"channel": storage.ChanNewLedger,
+		}))
 	}
 	app.submitterV2 = &txsub.System{
-		TickPeriod: time.Second,
-		Pending:    txsub.NewDefaultSubmissionList(3 * time.Second),
-		Submitter:  txsub.NewDefaultSubmitter(coreConnector),
+		Log:               &log.WithField("service", "txsub2").Entry,
+		SubmissionTimeout: time.Minute,
+		Pending:           txsub.NewDefaultSubmissionList(10 * time.Second),
+		Submitter:         txsub.NewDefaultSubmitter(*coreConnector),
+		Listener:          listener,
 		Results: &txsub.ResultsProvider{
 			Core:    cq,
 			History: hq,

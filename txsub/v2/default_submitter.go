@@ -3,9 +3,9 @@ package txsub
 import (
 	"time"
 
-	"gitlab.com/distributed_lab/corer"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/corer"
 	"golang.org/x/net/context"
 )
 
@@ -46,10 +46,10 @@ func (sub *submitter) Submit(ctx context.Context, env *EnvelopeInfo) (duration t
 	}
 
 	switch coreResponse.Status {
-	case corer.TxStatusError:
+	case "ERROR":
 		err = NewRejectedTxError(coreResponse.Error)
-	case corer.TxStatusPending, corer.TxStatusDuplicate:
-		//noop.  A nil Err indicates success
+	case "PENDING", "DUPLICATE":
+	//noop.  A nil Err indicates success
 	default:
 		err = errors.From(errors.New("Unrecognized core status response"), logan.F{
 			"status": coreResponse.Status,

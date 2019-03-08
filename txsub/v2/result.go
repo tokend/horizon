@@ -17,13 +17,3 @@ type fullResult struct {
 func (r fullResult) unwrap() (*Result, error) {
 	return &r.Result, r.Err
 }
-
-// HasInternalError - returns true if error is internal
-func (r *fullResult) hasInternalError() bool {
-	if r.Err == nil {
-		return false
-	}
-
-	_, isTxError := r.Err.(Error)
-	return !isTxError
-}

@@ -46,5 +46,6 @@ func history2TransactionBatchInsert(repo *db2.Repo, rows []history2.Transaction,
 		return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
 	}
 
+	notifyListeners(repo, ChanSubmitter)
 	return nil
 }

@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -23,8 +24,14 @@ func NewCreateTransactionRequest(r *http.Request) (*CreateTransaction, error) {
 		return nil, err
 	}
 
-	tx := b.getString("tx")
-	if tx == "" {
+	decoder := json.NewDecoder(b.request.Body)
+	jsonBody := make(map[string]string)
+	err = decoder.Decode(&jsonBody)
+	if err != nil {
+		jsonBody = map[string]string{}
+	}
+	tx, ok := jsonBody["tx"]
+	if !ok {
 		return nil, errors.New("Empty tx")
 	}
 

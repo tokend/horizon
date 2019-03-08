@@ -1,11 +1,14 @@
 package txsub
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 // ErrorType defines specific type of error
+//go:generate jsonenums -type=ErrorType
 type ErrorType int
 
 const (
@@ -13,8 +16,17 @@ const (
 	Timeout ErrorType = iota
 	// RejectedTx occurs when Tx was reject by core
 	RejectedTx
-	//DuplicateTx occurs when Tx with the same hash was already submitted
-	DuplicateTx
+)
+
+var (
+	txSubStatuses = map[ErrorType]int{
+		Timeout:    http.StatusRequestTimeout,
+		RejectedTx: http.StatusBadRequest,
+	}
+	txSubDetails = map[ErrorType]string{
+		Timeout:    "Tx submit is taking too long",
+		RejectedTx: "Tx is invalid and got rejected",
+	}
 )
 
 // An Error represents a transaction submission error.
@@ -25,6 +37,10 @@ type Error interface {
 	// ResultXDR returns base64 xdr encoded xdr.TransactionResult
 	// Returns empty string for all non rejected txs
 	ResultXDR() string
+
+	Status() int
+
+	Details() string
 }
 
 var timeoutError = &txSubError{
@@ -46,6 +62,14 @@ func (m *txSubError) ResultXDR() string {
 	return m.resultXDR
 }
 
+func (m *txSubError) Status() int {
+	return txSubStatuses[m.errorType]
+}
+
+func (m *txSubError) Details() string {
+	return txSubDetails[m.errorType]
+}
+
 // NewRejectedTxError creates error with type RejectedTx
 func NewRejectedTxError(resultXDR string) Error {
 
@@ -58,11 +82,12 @@ func NewRejectedTxError(resultXDR string) Error {
 	}
 }
 
-func NewDuplicateTxError(hash string) Error {
-	return &txSubError{
-		error: errors.From(errors.New("Tx with the same hash already exists"), logan.F{
-			"tx_hash": hash,
-		}),
-		errorType: DuplicateTx,
+// IsInternalError - returns true if error is internal
+func IsInternalError(err error) bool {
+	if err == nil {
+		return false
 	}
+
+	_, isTxError := err.(Error)
+	return isTxError
 }

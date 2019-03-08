@@ -58,6 +58,7 @@ func initWebV2Middleware(app *App) {
 			ctx.SetDoorman(doorman.New(app.config.SkipCheck, signersProvider)),
 			ctx.SetCoreInfo(*app.CoreInfo),
 			ctx.SetSubmitter(app.submitterV2),
+			ctx.SetConfig(&app.config),
 		),
 		v2middleware.WebMetrics(app),
 	)
@@ -91,6 +92,8 @@ func initWebV2Middleware(app *App) {
 
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
+
+	m.Post("/v3/transactions", handlers.CreateTransaction)
 
 	m.Get("/v3/accounts/{id}", handlers.GetAccount)
 	m.Get("/v3/accounts/{id}/signers", handlers.GetAccountSigners)
@@ -149,7 +152,6 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/signer_rules/{id}", handlers.GetSignerRule)
 	m.Get("/v3/signer_rules", handlers.GetSignerRuleList)
 
-	m.Post("/v3/transactions", handlers.CreateTransaction)
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))

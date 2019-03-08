@@ -59,6 +59,8 @@ type Config struct {
 	Env            string `fig:"env"`
 
 	MigrateUpOnStart bool `fig:"migrate_up_on_start"`
+
+	WaitForIngest bool `fig:"wait_for_tx_ingest"`
 }
 
 func (c *Config) Init() error {

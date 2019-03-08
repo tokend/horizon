@@ -4,9 +4,10 @@ import (
 	"context"
 	"time"
 
+	"github.com/lib/pq"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
-	"github.com/rcrowley/go-metrics"
 	"gitlab.com/distributed_lab/logan/v3"
 )
 
@@ -19,30 +20,8 @@ type System struct {
 	Submitter         Submitter
 	NetworkPassphrase string
 	SubmissionTimeout time.Duration
-	TickPeriod        time.Duration
 	Log               *logan.Entry
-
-	Metrics struct {
-		// SubmissionTimer exposes timing metrics about the rate and latency of
-		// submissions to stellar-core
-		SubmissionTimer metrics.Timer
-
-		// BufferedSubmissionGauge tracks the count of submissions buffered
-		// behind this system's SubmissionQueue
-		BufferedSubmissionsGauge metrics.Gauge
-
-		// OpenSubmissionsGauge tracks the count of "open" submissions (i.e.
-		// submissions whose transactions haven't been confirmed successful or failed
-		OpenSubmissionsGauge metrics.Gauge
-
-		// FailedSubmissionsMeter tracks the rate of failed transactions that have
-		// been submitted to this process
-		FailedSubmissionsMeter metrics.Meter
-
-		// SuccessfulSubmissionsMeter tracks the rate of successful transactions that
-		// have been submitted to this process
-		SuccessfulSubmissionsMeter metrics.Meter
-	}
+	Listener          *pq.Listener
 }
 
 // Submit submits the provided base64 encoded transaction envelope to the
@@ -81,18 +60,14 @@ func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo) <-chan fullRe
 }
 
 func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResult) <-chan fullResult {
-	d, err := s.Submitter.Submit(ctx, &info)
+	_, err := s.Submitter.Submit(ctx, &info)
 	if err != nil {
-		s.Metrics.FailedSubmissionsMeter.Mark(1)
-
 		return send(l,
 			fullResult{
 				Err: errors.Wrap(err, "failed to submit transaction",
 					info.GetLoganFields()),
 			})
 	}
-	s.Metrics.SuccessfulSubmissionsMeter.Mark(1)
-	s.Metrics.SubmissionTimer.Update(d)
 
 	err = s.Pending.Add(ctx, &info, l)
 	if err != nil {
@@ -133,8 +108,8 @@ func (s *System) tick(ctx context.Context) {
 						"tx_hash": hash,
 					}).
 					Error("failed to resubmit tx")
-				continue
 			}
+			continue
 		}
 
 		if res.Err != nil {
@@ -151,8 +126,7 @@ func (s *System) tick(ctx context.Context) {
 			"tx_hash": hash,
 		}).Debug("Transaction successfully submitted")
 
-		err := s.Pending.Finish(ctx, *res)
-		if err != nil {
+		if err := s.Pending.Finish(ctx, *res); err != nil {
 			s.Log.
 				WithError(res.Err).
 				WithFields(logan.F{
@@ -162,30 +136,37 @@ func (s *System) tick(ctx context.Context) {
 		}
 	}
 
-	stillOpen, err := s.Pending.Clean(ctx, s.SubmissionTimeout)
+	_, err := s.Pending.Clean(ctx, s.SubmissionTimeout)
 	if err != nil {
 		s.Log.WithError(err).Error("failed to clean expired pending txs")
 		return
 	}
-
-	s.Metrics.OpenSubmissionsGauge.Update(int64(stillOpen))
 }
 
 func (s *System) run(context context.Context) {
-	ticker := time.NewTicker(s.TickPeriod)
+	ticker := time.NewTicker(2 * s.SubmissionTimeout)
 	defer func() {
 		if rvr := recover(); rvr != nil {
-			s.Log.WithRecover(rvr).Error("TxSub2 panicked")
+			s.Log.WithRecover(rvr).Error("txsub2 panicked")
 		}
 		ticker.Stop()
 	}()
 
 	for {
-		<-ticker.C
+		s.wait(ticker)
 		s.tick(context)
 	}
 }
 
 func (s *System) Start(ctx context.Context) {
 	go s.run(ctx)
+}
+
+func (s *System) wait(ticker *time.Ticker) {
+	select {
+	case <-s.Listener.Notify:
+		return
+	case <-ticker.C:
+		return
+	}
 }
