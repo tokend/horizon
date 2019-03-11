@@ -25,7 +25,7 @@ AccountRule:
             description: "defines action to be performed over the specified resource"
             example: "manage"
           is_forbid:
-            type: bool
+            type: boolean
             description: "defines whether or not the specified action is forbidden"
             example: false
           details:

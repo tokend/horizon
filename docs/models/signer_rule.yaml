@@ -35,7 +35,7 @@ SignerRule:
             description: "defines an action to be performed over the specified resource"
             example: "manage"
           is_forbid:
-            type: bool
+            type: boolean
             description: "defines whether the specified action is forbidden"
             example: false
           details:
@@ -47,6 +47,6 @@ SignerRule:
             additionalProperties: true
             description: "defines a resource to which the rule is applied. TODO: add link to XDR"
           is_default:
-            type: bool
+            type: boolean
             description: "defines whether this rule should be included into all new roles"
             example: true

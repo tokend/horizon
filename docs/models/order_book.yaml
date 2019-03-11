@@ -27,7 +27,7 @@ OrderBookEntry:
           - created_at
         properties:
           is_buy:
-            type: bool
+            type: boolean
             description: "defines whether an offer is on buying or selling the base_asset" # FIXME ?
             example: false
           price:

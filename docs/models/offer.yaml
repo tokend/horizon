@@ -29,7 +29,7 @@ Offer:
           - fee
         properties:
           is_buy:
-            type: bool
+            type: boolean
             description: "defines whether an offer created is on buying or selling the base_asset, or both"
             example: true
           order_book_id:

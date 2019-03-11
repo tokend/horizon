@@ -47,7 +47,7 @@ ExternalSystemID:
             description: "identifier of an account in the external system."
             example: "0x34C274CA68d7F5bd39b855194Dc3382Fd99aee58"
           is_deleted:
-            type: bool
+            type: boolean
             description: "if true, this external system ID will not be released back to bool after the expiration but will rather be removed"
             example: false
           expires_at:

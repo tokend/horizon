@@ -51,7 +51,7 @@ Limit:
             description: "defines the type of operation for which a limit is applied. TODO: provide a list of such operations"
             example: 1
           is_convert_needed:
-            type: bool
+            type: boolean
             description: "if `true`, this limit is applied to operations in other assets except for those specified in `asset` relationships"
             example: true
           daily_out:
