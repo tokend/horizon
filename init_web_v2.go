@@ -96,12 +96,15 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/accounts/{id}/calculated_fees", handlers.GetCalculatedFees)
 	m.Get("/v3/assets/{code}", handlers.GetAsset)
 	m.Get("/v3/assets", handlers.GetAssetList)
+	m.Get("/v3/balances", handlers.GetBalanceList)
 	m.Get("/v3/fees", handlers.GetFeeList)
 	m.Get("/v3/history", handlers.GetHistory)
 	m.Get("/v3/asset_pairs/{id}", handlers.GetAssetPair)
 	m.Get("/v3/asset_pairs", handlers.GetAssetPairList)
 	m.Get("/v3/offers/{id}", handlers.GetOffer)
 	m.Get("/v3/offers", handlers.GetOfferList)
+	m.Get("/v3/public_key_entries/{id}", handlers.GetPublicKeyEntry)
+
 	// reviewable requests
 	m.Get("/v3/requests", handlers.GetRequests)
 	m.Get("/v3/requests/{id}", handlers.GetRequests)

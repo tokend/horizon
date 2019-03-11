@@ -271,6 +271,8 @@ var messages = map[string]string{
 	"op_auto_review_failed":                             "Auto review of created request has failed",
 	"op_skipped":                                        "Operation processing has been skipped as previous operation in the same transaction failed",
 	"op_number_of_admins_exceeds_license":               "Number of admins violates license restriction. Please contact enterprise@distributedlab.com",
+	"op_account_not_found":                              "There is no account with such id",
+	"op_role_not_found":                                 "There is no role with such id",
 }
 
 func getMessage(rawCode string) string {

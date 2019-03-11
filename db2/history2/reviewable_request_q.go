@@ -49,7 +49,7 @@ func (q ReviewableRequestsQ) FilterByRequestorAddress(address string) Reviewable
 
 // FilterByReviewerAddress - returns q with filter by reviewer
 func (q ReviewableRequestsQ) FilterByReviewerAddress(address string) ReviewableRequestsQ {
-	q.selector = q.selector.Where("reviewable_requests.reviewer", address)
+	q.selector = q.selector.Where(sq.Eq{"reviewable_requests.reviewer": address})
 	return q
 }
 

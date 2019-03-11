@@ -1,5 +1,12 @@
 package regources
 
+// BalancesResponse - response for balances list handler
+type BalancesResponse struct {
+	Links    *Links    `json:"links"`
+	Data     []Balance `json:"data"`
+	Included Included  `json:"included"`
+}
+
 // Balance - Resource object representing BalanceEntry
 type Balance struct {
 	Key

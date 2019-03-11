@@ -55,9 +55,6 @@ type App struct {
 	coreElderLedgerGauge     metrics.Gauge
 	coreConnGauge            metrics.Gauge
 	goroutineGauge           metrics.Gauge
-
-	// charts
-	charts *Charts
 }
 
 // SetVersion records the provided version string in the package level `version`
