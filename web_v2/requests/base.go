@@ -1,10 +1,12 @@
 package requests
 
 import (
+	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/cast"
 	"net/http"
 	"net/url"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -116,24 +118,34 @@ var amountHook = figure.Hooks{
 	},
 }
 
+func mkJsonTag(fieldName string) string {
+	return fmt.Sprintf("json:\"%s\"", fieldName)
+}
+
+func toSnakeCase(str string) string {
+	matchFirstCap := regexp.MustCompile("(.)([A-Z][a-z]+)")
+	matchAllCap := regexp.MustCompile("([a-z0-9])([A-Z])")
+
+	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
+	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
+
+	return strings.ToLower(snake)
+}
+
 func (r *base) populateFilters(target interface{}) error {
+	//_ = r.validateFilters(target)
 	filter := make(map[string]interface{})
 	for k, v := range r.filter {
 		filter[k] = v
 	}
 
 	err := figure.Out(target).With(figure.BaseHooks, amountHook).From(filter).Please()
+	f := errors.GetFields(err)
+	spew.Dump(f)
 	if err != nil {
-		fields := errors.GetFields(err)
-		errs := validation.Errors{}
-
-		if errField, ok := fields["raw"]; ok {
-			errs[cast.ToString(errField)] = errors.Cause(err)
-		} else {
-			errs["filter"] = errors.Cause(err)
+		return validation.Errors{
+			toSnakeCase(cast.ToString(f["field"])): err,
 		}
-
-		return errs
 	}
 
 	return nil
