@@ -1,7 +1,6 @@
 package requests
 
 import (
-	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/cast"
 	"net/http"
 	"net/url"
@@ -140,9 +139,8 @@ func (r *base) populateFilters(target interface{}) error {
 	}
 
 	err := figure.Out(target).With(figure.BaseHooks, amountHook).From(filter).Please()
-	f := errors.GetFields(err)
-	spew.Dump(f)
 	if err != nil {
+		f := errors.GetFields(err)
 		return validation.Errors{
 			toSnakeCase(cast.ToString(f["field"])): err,
 		}
