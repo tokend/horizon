@@ -2,14 +2,17 @@ CancelAswapBidOpKey:
   type: object
   properties:
     id:
+      deprecated: true
       type: string
       example: "123"
     type:
+      deprecated: true
       type: string
       enum:
         - "operations-cancel-aswap-bid"
 
 
 CancelAswapBidOp:
-  $ref: '#/components/schemas/CancelAswapBidOpKey'
+  allOf:
+  - $ref: '#/components/schemas/CancelAswapBidOpKey'
 

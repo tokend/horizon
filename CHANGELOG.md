@@ -1,7 +1,22 @@
-##Unreleased
-##Added
+## Unreleased
+
+### Added
+
+* Messages for new error codes
+* `GetBalanceList` handler to handle `v3/balances` request
+* `GetPublicKeyEntry` handler to handle `v3/public_key_entries/{id}` request
 * Tx submission system v2 with retry
-* `/v3/transactions` to submit txs 
+* `/v3/transactions` to submit txs
+
+### Fixed
+
+* panic on handle set fee operation when account or account role does not exist
+* panic on actions' `isAllowed` checking
+* error on get reviewable request by reviewer
+
+### Removed
+
+* charts, endpoint for charts etc.
 
 ## 3.0.1-x.21
 ## Fixed

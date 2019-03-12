@@ -1,25 +1,18 @@
-/v3/history:
+/v3/balances:
   get:
     tags:
-      - History
-    summary: Get history
+      - Balances
+    summary: Balance List
     description: |
-      Allows to get a filtered list of operations
-    operationId: getHistory
+      Allows getting list of balances with corresponding details.
+
+      🔒 Admins signature is needed. If filter by asset is provided, the signature of asset's owner is also valid
+    operationId: getBalanceList
     parameters:
-      - name: filter[account]
+      - name: filter[asset]
         in: query
         description: |
-          Filters history by participant account address
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: string
-      - name: filter[balance]
-        in: query
-        description: |
-          Filters history by participant's balance
+          Filters balances by asset. Returns page of balances for the provided asset
         required: false
         style: form
         explode: false
@@ -28,22 +21,19 @@
       - name: include
         in: query
         description: |
-          Relationships may be used for the included parameter.
+          Relationships that may be used for the included parameter.
         required: false
         style: form
         explode: false
         schema:
           type: string
-          enum:
-            - "effect"
-            - "operation"
-            - "operation.details"
+          enum: [state]
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
-        description: history exists
+        description: Request is successfull
         content:
           application/vnd.api+json:
             schema:
@@ -55,11 +45,10 @@
                 data:
                   type: array
                   items:
-                    $ref: '#/components/schemas/Operation'
+                    type: object
+                    $ref: '#/components/schemas/Balance'
                 included:
                   type: array
-                  items:
-                    $ref: '#/components/schemas/OperationDetails'
                 links:
                   type: object
                   description: "Provides links for pagination"
@@ -67,19 +56,19 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/history?include=operation.details&page[number]=2&page[limit]=15"
+                      example: "/v3/balances?page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/history?include=operation.details&page[number]=1&page[limit]=15"
+                      example: "/v3/balances?page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:
           application/vnd.api+json:
             schema:
               $ref: '#/components/schemas/Errors'
-      404:
-        description: operations do not exist
+      401:
+        description: either an invalid signature has been provided or a signer has not been authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:

@@ -6,7 +6,7 @@
     description: |
       Allows getting a filtered list of `AssetCreateRequest` with details\n
       🔒 Requestor's or reviewer's signature is needed
-    operationId: getRequests
+    operationId: getCreatePreissuanceRequests
     parameters:
       - name: filter[requestor]
         in: query

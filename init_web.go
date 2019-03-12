@@ -193,7 +193,6 @@ func initWebActions(app *App) {
 	r.Get("/fees/:fee_type", &FeesShowAction{})
 
 	// assets
-	r.Get("/charts/:code", &ChartsAction{})
 	r.Get("/prices/history", &PricesHistoryAction{})
 	r.Get("/assets", &AssetsIndexAction{})
 	r.Get("/assets/:code", &AssetsShowAction{})
