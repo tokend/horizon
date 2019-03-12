@@ -100,6 +100,14 @@ func (h *createTransactionHandler) createTx(context context.Context, request *re
 		return resources.NewTxSuccess(res), nil
 	}
 
+	tx, err := h.Results.History.GetByHash(request.Env.ContentHash)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get tx result from history by hash")
+	}
+	if tx != nil {
+		return resources.NewTxSuccess(res), nil
+	}
+
 	err = h.Listener.Listen(storage.ChanSubmitter)
 	if err != nil {
 		h.Log.WithError(errors.Wrap(err, "failed to listen channel", logan.F{
