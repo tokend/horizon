@@ -131,7 +131,10 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/create_atomic_swap_bid_requests", handlers.GetCreateAtomicSwapBidRequests)
 	m.Get("/v3/create_atomic_swap_bid_requests/{id}", handlers.GetCreateAtomicSwapBidRequests)
 	m.Get("/v3/create_atomic_swap_requests", handlers.GetCreateAtomicSwapRequests)
-	m.Get("/v3/create_atomic_swap_requests{id}", handlers.GetCreateAtomicSwapRequests)
+	m.Get("/v3/create_atomic_swap_requests/{id}", handlers.GetCreateAtomicSwapRequests)
+
+	m.Get("/v3/atomic_swap_bids", handlers.GetAtomicSwapBid)
+	m.Get("/v3/atomic_swap_bids/{id}", handlers.GetAtomicSwapBid)
 
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)

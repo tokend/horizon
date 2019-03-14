@@ -1,4 +1,4 @@
-package core
+package core2
 
 import (
 	sq "github.com/lann/squirrel"

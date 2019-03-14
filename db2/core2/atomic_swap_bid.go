@@ -1,6 +1,6 @@
-package core
+package core2
 
-type AtomicSwapBidEntry struct {
+type AtomicSwapBid struct {
 	BidID           int64  `db:"bid_id"`
 	OwnerID         string `db:"owner_id"`
 	BaseAsset       string `db:"base_asset_code"`
