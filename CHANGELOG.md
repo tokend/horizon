@@ -11,6 +11,7 @@
 * panic on handle set fee operation when account or account role does not exist
 * panic on actions' `isAllowed` checking
 * error on get reviewable request by reviewer
+* order book is now sorted
 
 ### Removed
 
