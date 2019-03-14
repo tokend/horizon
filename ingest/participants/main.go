@@ -191,7 +191,6 @@ func ForOperation(
 			result = append(result, Participant{
 				AccountID: updateKYCRequestData.DestinationAccount,
 				BalanceID: nil,
-				Details:   updateKYCRequestData.CreatorDetails,
 			})
 		}
 	default:

@@ -12,6 +12,7 @@
 * panic on actions' `isAllowed` checking
 * error on get reviewable request by reviewer
 * order book is now sorted
+* create change role ingestion causing 500 on operations
 
 ### Removed
 
