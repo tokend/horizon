@@ -1,5 +1,5 @@
-// revision: 5ab49bc8cec07ea2e05436d4734467d8b7e38aa3
-// branch:   fix/set_fee_account_existing
+// revision: 4cf2da11b80f514ce1bed0dce240a714f9e5e33c
+// branch:   master
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -23487,12 +23487,12 @@ type ManageLimitsOp struct {
 //        SUCCESS = 0,
 //
 //        // codes considered as "failure" for the operation
-//        //: (reserved for future use) Invalid input
-//        MALFORMED = -1,
+//        //: There is no account with passed ID
+//        ACCOUNT_NOT_FOUND = -1,
 //        //: Limits entry is not found
 //        NOT_FOUND = -2,
-//        //: (reserved for future use) Limits entry already exists
-//        ALREADY_EXISTS = -3,
+//        //: There is no role with passed ID
+//        ROLE_NOT_FOUND = -3,
 //        //: Limits cannot be created for account ID and account role simultaneously
 //        CANNOT_CREATE_FOR_ACC_ID_AND_ACC_TYPE = -4, // FIXME ACC_ROLE ?
 //        //: Limits entry is invalid (e.g. weeklyOut is less than dailyOut)
@@ -23503,45 +23503,45 @@ type ManageLimitsResultCode int32
 
 const (
 	ManageLimitsResultCodeSuccess                        ManageLimitsResultCode = 0
-	ManageLimitsResultCodeMalformed                      ManageLimitsResultCode = -1
+	ManageLimitsResultCodeAccountNotFound                ManageLimitsResultCode = -1
 	ManageLimitsResultCodeNotFound                       ManageLimitsResultCode = -2
-	ManageLimitsResultCodeAlreadyExists                  ManageLimitsResultCode = -3
+	ManageLimitsResultCodeRoleNotFound                   ManageLimitsResultCode = -3
 	ManageLimitsResultCodeCannotCreateForAccIdAndAccType ManageLimitsResultCode = -4
 	ManageLimitsResultCodeInvalidLimits                  ManageLimitsResultCode = -5
 )
 
 var ManageLimitsResultCodeAll = []ManageLimitsResultCode{
 	ManageLimitsResultCodeSuccess,
-	ManageLimitsResultCodeMalformed,
+	ManageLimitsResultCodeAccountNotFound,
 	ManageLimitsResultCodeNotFound,
-	ManageLimitsResultCodeAlreadyExists,
+	ManageLimitsResultCodeRoleNotFound,
 	ManageLimitsResultCodeCannotCreateForAccIdAndAccType,
 	ManageLimitsResultCodeInvalidLimits,
 }
 
 var manageLimitsResultCodeMap = map[int32]string{
 	0:  "ManageLimitsResultCodeSuccess",
-	-1: "ManageLimitsResultCodeMalformed",
+	-1: "ManageLimitsResultCodeAccountNotFound",
 	-2: "ManageLimitsResultCodeNotFound",
-	-3: "ManageLimitsResultCodeAlreadyExists",
+	-3: "ManageLimitsResultCodeRoleNotFound",
 	-4: "ManageLimitsResultCodeCannotCreateForAccIdAndAccType",
 	-5: "ManageLimitsResultCodeInvalidLimits",
 }
 
 var manageLimitsResultCodeShortMap = map[int32]string{
 	0:  "success",
-	-1: "malformed",
+	-1: "account_not_found",
 	-2: "not_found",
-	-3: "already_exists",
+	-3: "role_not_found",
 	-4: "cannot_create_for_acc_id_and_acc_type",
 	-5: "invalid_limits",
 }
 
 var manageLimitsResultCodeRevMap = map[string]int32{
 	"ManageLimitsResultCodeSuccess":                        0,
-	"ManageLimitsResultCodeMalformed":                      -1,
+	"ManageLimitsResultCodeAccountNotFound":                -1,
 	"ManageLimitsResultCodeNotFound":                       -2,
-	"ManageLimitsResultCodeAlreadyExists":                  -3,
+	"ManageLimitsResultCodeRoleNotFound":                   -3,
 	"ManageLimitsResultCodeCannotCreateForAccIdAndAccType": -4,
 	"ManageLimitsResultCodeInvalidLimits":                  -5,
 }
@@ -30156,6 +30156,10 @@ type ReviewRequestOp struct {
 //        CANNOT_CREATE_FOR_ACC_ID_AND_ACC_TYPE = 1300,
 //        //: Trying to set invalid limits, i.e. with dayly limit greater than weekly limit
 //        INVALID_LIMITS = 1310,
+//        //: There is no account with passed ID for limits update request
+//        ACCOUNT_NOT_FOUND = -1311,
+//        //: There is no role with passed ID for limits update request
+//        ROLE_NOT_FOUND = -1312,
 //
 //        //: Deprecated: Contract requests
 //        CONTRACT_DETAILS_TOO_LONG = -1400, // customer details reached length limit
@@ -30224,6 +30228,8 @@ const (
 	ReviewRequestResultCodeDestinationAccountNotFound               ReviewRequestResultCode = -1260
 	ReviewRequestResultCodeCannotCreateForAccIdAndAccType           ReviewRequestResultCode = 1300
 	ReviewRequestResultCodeInvalidLimits                            ReviewRequestResultCode = 1310
+	ReviewRequestResultCodeAccountNotFound                          ReviewRequestResultCode = -1311
+	ReviewRequestResultCodeRoleNotFound                             ReviewRequestResultCode = -1312
 	ReviewRequestResultCodeContractDetailsTooLong                   ReviewRequestResultCode = -1400
 	ReviewRequestResultCodeBaseAssetCannotBeSwapped                 ReviewRequestResultCode = -1500
 	ReviewRequestResultCodeQuoteAssetCannotBeSwapped                ReviewRequestResultCode = -1501
@@ -30285,6 +30291,8 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeDestinationAccountNotFound,
 	ReviewRequestResultCodeCannotCreateForAccIdAndAccType,
 	ReviewRequestResultCodeInvalidLimits,
+	ReviewRequestResultCodeAccountNotFound,
+	ReviewRequestResultCodeRoleNotFound,
 	ReviewRequestResultCodeContractDetailsTooLong,
 	ReviewRequestResultCodeBaseAssetCannotBeSwapped,
 	ReviewRequestResultCodeQuoteAssetCannotBeSwapped,
@@ -30346,6 +30354,8 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-1260: "ReviewRequestResultCodeDestinationAccountNotFound",
 	1300:  "ReviewRequestResultCodeCannotCreateForAccIdAndAccType",
 	1310:  "ReviewRequestResultCodeInvalidLimits",
+	-1311: "ReviewRequestResultCodeAccountNotFound",
+	-1312: "ReviewRequestResultCodeRoleNotFound",
 	-1400: "ReviewRequestResultCodeContractDetailsTooLong",
 	-1500: "ReviewRequestResultCodeBaseAssetCannotBeSwapped",
 	-1501: "ReviewRequestResultCodeQuoteAssetCannotBeSwapped",
@@ -30407,6 +30417,8 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-1260: "destination_account_not_found",
 	1300:  "cannot_create_for_acc_id_and_acc_type",
 	1310:  "invalid_limits",
+	-1311: "account_not_found",
+	-1312: "role_not_found",
 	-1400: "contract_details_too_long",
 	-1500: "base_asset_cannot_be_swapped",
 	-1501: "quote_asset_cannot_be_swapped",
@@ -30468,6 +30480,8 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeDestinationAccountNotFound":               -1260,
 	"ReviewRequestResultCodeCannotCreateForAccIdAndAccType":           1300,
 	"ReviewRequestResultCodeInvalidLimits":                            1310,
+	"ReviewRequestResultCodeAccountNotFound":                          -1311,
+	"ReviewRequestResultCodeRoleNotFound":                             -1312,
 	"ReviewRequestResultCodeContractDetailsTooLong":                   -1400,
 	"ReviewRequestResultCodeBaseAssetCannotBeSwapped":                 -1500,
 	"ReviewRequestResultCodeQuoteAssetCannotBeSwapped":                -1501,
@@ -40672,4 +40686,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "5ab49bc8cec07ea2e05436d4734467d8b7e38aa3"
+var Revision = "4cf2da11b80f514ce1bed0dce240a714f9e5e33c"
