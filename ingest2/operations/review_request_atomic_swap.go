@@ -12,7 +12,7 @@ type atomicSwapHandler struct {
 
 //PermanentReject - returns participants of fully rejected request
 func (h *atomicSwapHandler) PermanentReject(details requestDetails) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{h.Participant(details.SourceAccountID)}, nil
+	return h.tryHandleUnlockedEffect(details, []history2.ParticipantEffect{h.Participant(details.SourceAccountID)})
 }
 
 //Fulfilled - returns slice of effects for participants of the operation
@@ -35,6 +35,14 @@ func (h *atomicSwapHandler) Fulfilled(details requestDetails) ([]history2.Partic
 				Amount: regources.Amount(atomicSwapExtendedResult.BaseAmount),
 			},
 		}))
+
+	return h.tryHandleUnlockedEffect(details, participants)
+}
+
+func (h *atomicSwapHandler) tryHandleUnlockedEffect(details requestDetails,
+	participants []history2.ParticipantEffect,
+) ([]history2.ParticipantEffect, error) {
+	atomicSwapExtendedResult := details.Result.TypeExt.MustASwapExtended()
 
 	bid := h.getAtomicSwapBid(atomicSwapExtendedResult.BidId, details.Changes)
 	// review of bid request has not affected bid, so there is no additional effects

@@ -1,5 +1,5 @@
-// revision: 5ab49bc8cec07ea2e05436d4734467d8b7e38aa3
-// branch:   fix/set_fee_account_existing
+// revision: 0d9e8188bf9ac548aafb9ae7b324bcc3415b2537
+// branch:   feature/atomic_swap_returning
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -10872,6 +10872,8 @@ func NewCancelASwapBidResultSuccessExt(v LedgerVersion, value interface{}) (resu
 //
 //   struct CancelASwapBidResultSuccess
 //    {
+//        uint64 lockedAmount;
+//
 //        union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
@@ -10880,7 +10882,8 @@ func NewCancelASwapBidResultSuccessExt(v LedgerVersion, value interface{}) (resu
 //    };
 //
 type CancelASwapBidResultSuccess struct {
-	Ext CancelASwapBidResultSuccessExt `json:"ext,omitempty"`
+	LockedAmount Uint64                         `json:"lockedAmount,omitempty"`
+	Ext          CancelASwapBidResultSuccessExt `json:"ext,omitempty"`
 }
 
 // CancelASwapBidResult is an XDR Union defines as:
@@ -12808,6 +12811,7 @@ func NewCreateASwapBidCreationRequestOpExt(v LedgerVersion, value interface{}) (
 //    {
 //        ASwapBidCreationRequest request;
 //
+//        uint32* allTasks;
 //        union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
@@ -12817,8 +12821,9 @@ func NewCreateASwapBidCreationRequestOpExt(v LedgerVersion, value interface{}) (
 //    };
 //
 type CreateASwapBidCreationRequestOp struct {
-	Request ASwapBidCreationRequest            `json:"request,omitempty"`
-	Ext     CreateASwapBidCreationRequestOpExt `json:"ext,omitempty"`
+	Request  ASwapBidCreationRequest            `json:"request,omitempty"`
+	AllTasks *Uint32                            `json:"allTasks,omitempty"`
+	Ext      CreateASwapBidCreationRequestOpExt `json:"ext,omitempty"`
 }
 
 // CreateASwapBidCreationRequestResultCode is an XDR Enum defines as:
@@ -12841,26 +12846,30 @@ type CreateASwapBidCreationRequestOp struct {
 //        ASSETS_ARE_EQUAL = -10, // base and quote assets are the same
 //        BASE_BALANCE_UNDERFUNDED = -11,
 //        INVALID_QUOTE_ASSET = -12, // one of the quote assets is invalid
-//        NOT_ALLOWED_BY_ASSET_POLICY = -13
+//        NOT_ALLOWED_BY_ASSET_POLICY = -13,
+//        //: There is no key-value entry by `atomic_swap_bid_tasks` key in the system;
+//        //: configuration does not allow create atomic swap bids
+//        ATOMIC_SWAP_BID_TASKS_NOT_FOUND = -14
 //    };
 //
 type CreateASwapBidCreationRequestResultCode int32
 
 const (
-	CreateASwapBidCreationRequestResultCodeSuccess                   CreateASwapBidCreationRequestResultCode = 0
-	CreateASwapBidCreationRequestResultCodeInvalidAmount             CreateASwapBidCreationRequestResultCode = -1
-	CreateASwapBidCreationRequestResultCodeInvalidPrice              CreateASwapBidCreationRequestResultCode = -2
-	CreateASwapBidCreationRequestResultCodeInvalidDetails            CreateASwapBidCreationRequestResultCode = -3
-	CreateASwapBidCreationRequestResultCodeAtomicSwapBidOverflow     CreateASwapBidCreationRequestResultCode = -4
-	CreateASwapBidCreationRequestResultCodeBaseAssetNotFound         CreateASwapBidCreationRequestResultCode = -5
-	CreateASwapBidCreationRequestResultCodeBaseAssetCannotBeSwapped  CreateASwapBidCreationRequestResultCode = -6
-	CreateASwapBidCreationRequestResultCodeQuoteAssetNotFound        CreateASwapBidCreationRequestResultCode = -7
-	CreateASwapBidCreationRequestResultCodeQuoteAssetCannotBeSwapped CreateASwapBidCreationRequestResultCode = -8
-	CreateASwapBidCreationRequestResultCodeBaseBalanceNotFound       CreateASwapBidCreationRequestResultCode = -9
-	CreateASwapBidCreationRequestResultCodeAssetsAreEqual            CreateASwapBidCreationRequestResultCode = -10
-	CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded    CreateASwapBidCreationRequestResultCode = -11
-	CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset         CreateASwapBidCreationRequestResultCode = -12
-	CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy   CreateASwapBidCreationRequestResultCode = -13
+	CreateASwapBidCreationRequestResultCodeSuccess                    CreateASwapBidCreationRequestResultCode = 0
+	CreateASwapBidCreationRequestResultCodeInvalidAmount              CreateASwapBidCreationRequestResultCode = -1
+	CreateASwapBidCreationRequestResultCodeInvalidPrice               CreateASwapBidCreationRequestResultCode = -2
+	CreateASwapBidCreationRequestResultCodeInvalidDetails             CreateASwapBidCreationRequestResultCode = -3
+	CreateASwapBidCreationRequestResultCodeAtomicSwapBidOverflow      CreateASwapBidCreationRequestResultCode = -4
+	CreateASwapBidCreationRequestResultCodeBaseAssetNotFound          CreateASwapBidCreationRequestResultCode = -5
+	CreateASwapBidCreationRequestResultCodeBaseAssetCannotBeSwapped   CreateASwapBidCreationRequestResultCode = -6
+	CreateASwapBidCreationRequestResultCodeQuoteAssetNotFound         CreateASwapBidCreationRequestResultCode = -7
+	CreateASwapBidCreationRequestResultCodeQuoteAssetCannotBeSwapped  CreateASwapBidCreationRequestResultCode = -8
+	CreateASwapBidCreationRequestResultCodeBaseBalanceNotFound        CreateASwapBidCreationRequestResultCode = -9
+	CreateASwapBidCreationRequestResultCodeAssetsAreEqual             CreateASwapBidCreationRequestResultCode = -10
+	CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded     CreateASwapBidCreationRequestResultCode = -11
+	CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset          CreateASwapBidCreationRequestResultCode = -12
+	CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy    CreateASwapBidCreationRequestResultCode = -13
+	CreateASwapBidCreationRequestResultCodeAtomicSwapBidTasksNotFound CreateASwapBidCreationRequestResultCode = -14
 )
 
 var CreateASwapBidCreationRequestResultCodeAll = []CreateASwapBidCreationRequestResultCode{
@@ -12878,6 +12887,7 @@ var CreateASwapBidCreationRequestResultCodeAll = []CreateASwapBidCreationRequest
 	CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded,
 	CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset,
 	CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy,
+	CreateASwapBidCreationRequestResultCodeAtomicSwapBidTasksNotFound,
 }
 
 var createASwapBidCreationRequestResultCodeMap = map[int32]string{
@@ -12895,6 +12905,7 @@ var createASwapBidCreationRequestResultCodeMap = map[int32]string{
 	-11: "CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded",
 	-12: "CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset",
 	-13: "CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy",
+	-14: "CreateASwapBidCreationRequestResultCodeAtomicSwapBidTasksNotFound",
 }
 
 var createASwapBidCreationRequestResultCodeShortMap = map[int32]string{
@@ -12912,23 +12923,25 @@ var createASwapBidCreationRequestResultCodeShortMap = map[int32]string{
 	-11: "base_balance_underfunded",
 	-12: "invalid_quote_asset",
 	-13: "not_allowed_by_asset_policy",
+	-14: "atomic_swap_bid_tasks_not_found",
 }
 
 var createASwapBidCreationRequestResultCodeRevMap = map[string]int32{
-	"CreateASwapBidCreationRequestResultCodeSuccess":                   0,
-	"CreateASwapBidCreationRequestResultCodeInvalidAmount":             -1,
-	"CreateASwapBidCreationRequestResultCodeInvalidPrice":              -2,
-	"CreateASwapBidCreationRequestResultCodeInvalidDetails":            -3,
-	"CreateASwapBidCreationRequestResultCodeAtomicSwapBidOverflow":     -4,
-	"CreateASwapBidCreationRequestResultCodeBaseAssetNotFound":         -5,
-	"CreateASwapBidCreationRequestResultCodeBaseAssetCannotBeSwapped":  -6,
-	"CreateASwapBidCreationRequestResultCodeQuoteAssetNotFound":        -7,
-	"CreateASwapBidCreationRequestResultCodeQuoteAssetCannotBeSwapped": -8,
-	"CreateASwapBidCreationRequestResultCodeBaseBalanceNotFound":       -9,
-	"CreateASwapBidCreationRequestResultCodeAssetsAreEqual":            -10,
-	"CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded":    -11,
-	"CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset":         -12,
-	"CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy":   -13,
+	"CreateASwapBidCreationRequestResultCodeSuccess":                    0,
+	"CreateASwapBidCreationRequestResultCodeInvalidAmount":              -1,
+	"CreateASwapBidCreationRequestResultCodeInvalidPrice":               -2,
+	"CreateASwapBidCreationRequestResultCodeInvalidDetails":             -3,
+	"CreateASwapBidCreationRequestResultCodeAtomicSwapBidOverflow":      -4,
+	"CreateASwapBidCreationRequestResultCodeBaseAssetNotFound":          -5,
+	"CreateASwapBidCreationRequestResultCodeBaseAssetCannotBeSwapped":   -6,
+	"CreateASwapBidCreationRequestResultCodeQuoteAssetNotFound":         -7,
+	"CreateASwapBidCreationRequestResultCodeQuoteAssetCannotBeSwapped":  -8,
+	"CreateASwapBidCreationRequestResultCodeBaseBalanceNotFound":        -9,
+	"CreateASwapBidCreationRequestResultCodeAssetsAreEqual":             -10,
+	"CreateASwapBidCreationRequestResultCodeBaseBalanceUnderfunded":     -11,
+	"CreateASwapBidCreationRequestResultCodeInvalidQuoteAsset":          -12,
+	"CreateASwapBidCreationRequestResultCodeNotAllowedByAssetPolicy":    -13,
+	"CreateASwapBidCreationRequestResultCodeAtomicSwapBidTasksNotFound": -14,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -13036,6 +13049,7 @@ func NewCreateASwapBidCreationRequestSuccessExt(v LedgerVersion, value interface
 //    {
 //        uint64 requestID;
 //        bool fulfilled;
+//        AssetCode baseAsset;
 //
 //        union switch (LedgerVersion v)
 //        {
@@ -13047,6 +13061,7 @@ func NewCreateASwapBidCreationRequestSuccessExt(v LedgerVersion, value interface
 type CreateASwapBidCreationRequestSuccess struct {
 	RequestId Uint64                                  `json:"requestID,omitempty"`
 	Fulfilled bool                                    `json:"fulfilled,omitempty"`
+	BaseAsset AssetCode                               `json:"baseAsset,omitempty"`
 	Ext       CreateASwapBidCreationRequestSuccessExt `json:"ext,omitempty"`
 }
 
@@ -13196,7 +13211,11 @@ type CreateASwapRequestOp struct {
 //        ATOMIC_SWAP_TASKS_NOT_FOUND = -6,
 //        NOT_ALLOWED_BY_ASSET_POLICY = -7,
 //        BID_IS_CANCELLED = -8,
-//        CANNOT_CREATE_ASWAP_REQUEST_FOR_OWN_BID = -9
+//        CANNOT_CREATE_ASWAP_REQUEST_FOR_OWN_BID = -9,
+//        //: 0 value is received from key value entry by `atomic_swap_tasks` key
+//        ATOMIC_SWAP_ZERO_TASKS_NOT_ALLOWED = -10,
+//        //: Base amount precision and asset precision set in the system are mismatched
+//        INCORRECT_PRECISION = -11
 //    };
 //
 type CreateASwapRequestResultCode int32
@@ -13212,6 +13231,8 @@ const (
 	CreateASwapRequestResultCodeNotAllowedByAssetPolicy           CreateASwapRequestResultCode = -7
 	CreateASwapRequestResultCodeBidIsCancelled                    CreateASwapRequestResultCode = -8
 	CreateASwapRequestResultCodeCannotCreateAswapRequestForOwnBid CreateASwapRequestResultCode = -9
+	CreateASwapRequestResultCodeAtomicSwapZeroTasksNotAllowed     CreateASwapRequestResultCode = -10
+	CreateASwapRequestResultCodeIncorrectPrecision                CreateASwapRequestResultCode = -11
 )
 
 var CreateASwapRequestResultCodeAll = []CreateASwapRequestResultCode{
@@ -13225,32 +13246,38 @@ var CreateASwapRequestResultCodeAll = []CreateASwapRequestResultCode{
 	CreateASwapRequestResultCodeNotAllowedByAssetPolicy,
 	CreateASwapRequestResultCodeBidIsCancelled,
 	CreateASwapRequestResultCodeCannotCreateAswapRequestForOwnBid,
+	CreateASwapRequestResultCodeAtomicSwapZeroTasksNotAllowed,
+	CreateASwapRequestResultCodeIncorrectPrecision,
 }
 
 var createASwapRequestResultCodeMap = map[int32]string{
-	0:  "CreateASwapRequestResultCodeSuccess",
-	-1: "CreateASwapRequestResultCodeInvalidBaseAmount",
-	-2: "CreateASwapRequestResultCodeInvalidQuoteAsset",
-	-3: "CreateASwapRequestResultCodeBidNotFound",
-	-4: "CreateASwapRequestResultCodeQuoteAssetNotFound",
-	-5: "CreateASwapRequestResultCodeBidUnderfunded",
-	-6: "CreateASwapRequestResultCodeAtomicSwapTasksNotFound",
-	-7: "CreateASwapRequestResultCodeNotAllowedByAssetPolicy",
-	-8: "CreateASwapRequestResultCodeBidIsCancelled",
-	-9: "CreateASwapRequestResultCodeCannotCreateAswapRequestForOwnBid",
+	0:   "CreateASwapRequestResultCodeSuccess",
+	-1:  "CreateASwapRequestResultCodeInvalidBaseAmount",
+	-2:  "CreateASwapRequestResultCodeInvalidQuoteAsset",
+	-3:  "CreateASwapRequestResultCodeBidNotFound",
+	-4:  "CreateASwapRequestResultCodeQuoteAssetNotFound",
+	-5:  "CreateASwapRequestResultCodeBidUnderfunded",
+	-6:  "CreateASwapRequestResultCodeAtomicSwapTasksNotFound",
+	-7:  "CreateASwapRequestResultCodeNotAllowedByAssetPolicy",
+	-8:  "CreateASwapRequestResultCodeBidIsCancelled",
+	-9:  "CreateASwapRequestResultCodeCannotCreateAswapRequestForOwnBid",
+	-10: "CreateASwapRequestResultCodeAtomicSwapZeroTasksNotAllowed",
+	-11: "CreateASwapRequestResultCodeIncorrectPrecision",
 }
 
 var createASwapRequestResultCodeShortMap = map[int32]string{
-	0:  "success",
-	-1: "invalid_base_amount",
-	-2: "invalid_quote_asset",
-	-3: "bid_not_found",
-	-4: "quote_asset_not_found",
-	-5: "bid_underfunded",
-	-6: "atomic_swap_tasks_not_found",
-	-7: "not_allowed_by_asset_policy",
-	-8: "bid_is_cancelled",
-	-9: "cannot_create_aswap_request_for_own_bid",
+	0:   "success",
+	-1:  "invalid_base_amount",
+	-2:  "invalid_quote_asset",
+	-3:  "bid_not_found",
+	-4:  "quote_asset_not_found",
+	-5:  "bid_underfunded",
+	-6:  "atomic_swap_tasks_not_found",
+	-7:  "not_allowed_by_asset_policy",
+	-8:  "bid_is_cancelled",
+	-9:  "cannot_create_aswap_request_for_own_bid",
+	-10: "atomic_swap_zero_tasks_not_allowed",
+	-11: "incorrect_precision",
 }
 
 var createASwapRequestResultCodeRevMap = map[string]int32{
@@ -13264,6 +13291,8 @@ var createASwapRequestResultCodeRevMap = map[string]int32{
 	"CreateASwapRequestResultCodeNotAllowedByAssetPolicy":           -7,
 	"CreateASwapRequestResultCodeBidIsCancelled":                    -8,
 	"CreateASwapRequestResultCodeCannotCreateAswapRequestForOwnBid": -9,
+	"CreateASwapRequestResultCodeAtomicSwapZeroTasksNotAllowed":     -10,
+	"CreateASwapRequestResultCodeIncorrectPrecision":                -11,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -13371,6 +13400,7 @@ func NewCreateASwapRequestSuccessExt(v LedgerVersion, value interface{}) (result
 //    {
 //        uint64 requestID;
 //        AccountID bidOwnerID;
+//        uint64 quoteAmount;
 //
 //        union switch (LedgerVersion v)
 //        {
@@ -13380,9 +13410,10 @@ func NewCreateASwapRequestSuccessExt(v LedgerVersion, value interface{}) (result
 //    };
 //
 type CreateASwapRequestSuccess struct {
-	RequestId  Uint64                       `json:"requestID,omitempty"`
-	BidOwnerId AccountId                    `json:"bidOwnerID,omitempty"`
-	Ext        CreateASwapRequestSuccessExt `json:"ext,omitempty"`
+	RequestId   Uint64                       `json:"requestID,omitempty"`
+	BidOwnerId  AccountId                    `json:"bidOwnerID,omitempty"`
+	QuoteAmount Uint64                       `json:"quoteAmount,omitempty"`
+	Ext         CreateASwapRequestSuccessExt `json:"ext,omitempty"`
 }
 
 // CreateASwapRequestResult is an XDR Union defines as:
@@ -23487,12 +23518,12 @@ type ManageLimitsOp struct {
 //        SUCCESS = 0,
 //
 //        // codes considered as "failure" for the operation
-//        //: (reserved for future use) Invalid input
-//        MALFORMED = -1,
+//        //: There is no account with passed ID
+//        ACCOUNT_NOT_FOUND = -1,
 //        //: Limits entry is not found
 //        NOT_FOUND = -2,
-//        //: (reserved for future use) Limits entry already exists
-//        ALREADY_EXISTS = -3,
+//        //: There is no role with passed ID
+//        ROLE_NOT_FOUND = -3,
 //        //: Limits cannot be created for account ID and account role simultaneously
 //        CANNOT_CREATE_FOR_ACC_ID_AND_ACC_TYPE = -4, // FIXME ACC_ROLE ?
 //        //: Limits entry is invalid (e.g. weeklyOut is less than dailyOut)
@@ -23503,45 +23534,45 @@ type ManageLimitsResultCode int32
 
 const (
 	ManageLimitsResultCodeSuccess                        ManageLimitsResultCode = 0
-	ManageLimitsResultCodeMalformed                      ManageLimitsResultCode = -1
+	ManageLimitsResultCodeAccountNotFound                ManageLimitsResultCode = -1
 	ManageLimitsResultCodeNotFound                       ManageLimitsResultCode = -2
-	ManageLimitsResultCodeAlreadyExists                  ManageLimitsResultCode = -3
+	ManageLimitsResultCodeRoleNotFound                   ManageLimitsResultCode = -3
 	ManageLimitsResultCodeCannotCreateForAccIdAndAccType ManageLimitsResultCode = -4
 	ManageLimitsResultCodeInvalidLimits                  ManageLimitsResultCode = -5
 )
 
 var ManageLimitsResultCodeAll = []ManageLimitsResultCode{
 	ManageLimitsResultCodeSuccess,
-	ManageLimitsResultCodeMalformed,
+	ManageLimitsResultCodeAccountNotFound,
 	ManageLimitsResultCodeNotFound,
-	ManageLimitsResultCodeAlreadyExists,
+	ManageLimitsResultCodeRoleNotFound,
 	ManageLimitsResultCodeCannotCreateForAccIdAndAccType,
 	ManageLimitsResultCodeInvalidLimits,
 }
 
 var manageLimitsResultCodeMap = map[int32]string{
 	0:  "ManageLimitsResultCodeSuccess",
-	-1: "ManageLimitsResultCodeMalformed",
+	-1: "ManageLimitsResultCodeAccountNotFound",
 	-2: "ManageLimitsResultCodeNotFound",
-	-3: "ManageLimitsResultCodeAlreadyExists",
+	-3: "ManageLimitsResultCodeRoleNotFound",
 	-4: "ManageLimitsResultCodeCannotCreateForAccIdAndAccType",
 	-5: "ManageLimitsResultCodeInvalidLimits",
 }
 
 var manageLimitsResultCodeShortMap = map[int32]string{
 	0:  "success",
-	-1: "malformed",
+	-1: "account_not_found",
 	-2: "not_found",
-	-3: "already_exists",
+	-3: "role_not_found",
 	-4: "cannot_create_for_acc_id_and_acc_type",
 	-5: "invalid_limits",
 }
 
 var manageLimitsResultCodeRevMap = map[string]int32{
 	"ManageLimitsResultCodeSuccess":                        0,
-	"ManageLimitsResultCodeMalformed":                      -1,
+	"ManageLimitsResultCodeAccountNotFound":                -1,
 	"ManageLimitsResultCodeNotFound":                       -2,
-	"ManageLimitsResultCodeAlreadyExists":                  -3,
+	"ManageLimitsResultCodeRoleNotFound":                   -3,
 	"ManageLimitsResultCodeCannotCreateForAccIdAndAccType": -4,
 	"ManageLimitsResultCodeInvalidLimits":                  -5,
 }
@@ -30156,6 +30187,10 @@ type ReviewRequestOp struct {
 //        CANNOT_CREATE_FOR_ACC_ID_AND_ACC_TYPE = 1300,
 //        //: Trying to set invalid limits, i.e. with dayly limit greater than weekly limit
 //        INVALID_LIMITS = 1310,
+//        //: There is no account with passed ID for limits update request
+//        ACCOUNT_NOT_FOUND = -1311,
+//        //: There is no role with passed ID for limits update request
+//        ROLE_NOT_FOUND = -1312,
 //
 //        //: Deprecated: Contract requests
 //        CONTRACT_DETAILS_TOO_LONG = -1400, // customer details reached length limit
@@ -30224,6 +30259,8 @@ const (
 	ReviewRequestResultCodeDestinationAccountNotFound               ReviewRequestResultCode = -1260
 	ReviewRequestResultCodeCannotCreateForAccIdAndAccType           ReviewRequestResultCode = 1300
 	ReviewRequestResultCodeInvalidLimits                            ReviewRequestResultCode = 1310
+	ReviewRequestResultCodeAccountNotFound                          ReviewRequestResultCode = -1311
+	ReviewRequestResultCodeRoleNotFound                             ReviewRequestResultCode = -1312
 	ReviewRequestResultCodeContractDetailsTooLong                   ReviewRequestResultCode = -1400
 	ReviewRequestResultCodeBaseAssetCannotBeSwapped                 ReviewRequestResultCode = -1500
 	ReviewRequestResultCodeQuoteAssetCannotBeSwapped                ReviewRequestResultCode = -1501
@@ -30285,6 +30322,8 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeDestinationAccountNotFound,
 	ReviewRequestResultCodeCannotCreateForAccIdAndAccType,
 	ReviewRequestResultCodeInvalidLimits,
+	ReviewRequestResultCodeAccountNotFound,
+	ReviewRequestResultCodeRoleNotFound,
 	ReviewRequestResultCodeContractDetailsTooLong,
 	ReviewRequestResultCodeBaseAssetCannotBeSwapped,
 	ReviewRequestResultCodeQuoteAssetCannotBeSwapped,
@@ -30346,6 +30385,8 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-1260: "ReviewRequestResultCodeDestinationAccountNotFound",
 	1300:  "ReviewRequestResultCodeCannotCreateForAccIdAndAccType",
 	1310:  "ReviewRequestResultCodeInvalidLimits",
+	-1311: "ReviewRequestResultCodeAccountNotFound",
+	-1312: "ReviewRequestResultCodeRoleNotFound",
 	-1400: "ReviewRequestResultCodeContractDetailsTooLong",
 	-1500: "ReviewRequestResultCodeBaseAssetCannotBeSwapped",
 	-1501: "ReviewRequestResultCodeQuoteAssetCannotBeSwapped",
@@ -30407,6 +30448,8 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-1260: "destination_account_not_found",
 	1300:  "cannot_create_for_acc_id_and_acc_type",
 	1310:  "invalid_limits",
+	-1311: "account_not_found",
+	-1312: "role_not_found",
 	-1400: "contract_details_too_long",
 	-1500: "base_asset_cannot_be_swapped",
 	-1501: "quote_asset_cannot_be_swapped",
@@ -30468,6 +30511,8 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeDestinationAccountNotFound":               -1260,
 	"ReviewRequestResultCodeCannotCreateForAccIdAndAccType":           1300,
 	"ReviewRequestResultCodeInvalidLimits":                            1310,
+	"ReviewRequestResultCodeAccountNotFound":                          -1311,
+	"ReviewRequestResultCodeRoleNotFound":                             -1312,
 	"ReviewRequestResultCodeContractDetailsTooLong":                   -1400,
 	"ReviewRequestResultCodeBaseAssetCannotBeSwapped":                 -1500,
 	"ReviewRequestResultCodeQuoteAssetCannotBeSwapped":                -1501,
@@ -32542,6 +32587,25 @@ type ReviewableRequestResourceCreateWithdraw struct {
 	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
+// ReviewableRequestResourceCreateAtomicSwapBid is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: code of asset
+//            AssetCode assetCode;
+//            //: type of asset
+//            uint64 assetType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type ReviewableRequestResourceCreateAtomicSwapBid struct {
+	AssetCode AssetCode `json:"assetCode,omitempty"`
+	AssetType Uint64    `json:"assetType,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
+}
+
 // ReviewableRequestResource is an XDR Union defines as:
 //
 //   union ReviewableRequestResource switch (ReviewableRequestType requestType)
@@ -32580,17 +32644,30 @@ type ReviewableRequestResourceCreateWithdraw struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } createWithdraw;
+//    case CREATE_ATOMIC_SWAP_BID:
+//        //: is used to restrict the usage of a reviewable request with create_atomic_swap_bid type
+//        struct
+//        {
+//            //: code of asset
+//            AssetCode assetCode;
+//            //: type of asset
+//            uint64 assetType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } createAtomicSwapBid;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
 //    };
 //
 type ReviewableRequestResource struct {
-	RequestType    ReviewableRequestType                    `json:"requestType,omitempty"`
-	CreateSale     *ReviewableRequestResourceCreateSale     `json:"createSale,omitempty"`
-	CreateIssuance *ReviewableRequestResourceCreateIssuance `json:"createIssuance,omitempty"`
-	CreateWithdraw *ReviewableRequestResourceCreateWithdraw `json:"createWithdraw,omitempty"`
-	Ext            *EmptyExt                                `json:"ext,omitempty"`
+	RequestType         ReviewableRequestType                         `json:"requestType,omitempty"`
+	CreateSale          *ReviewableRequestResourceCreateSale          `json:"createSale,omitempty"`
+	CreateIssuance      *ReviewableRequestResourceCreateIssuance      `json:"createIssuance,omitempty"`
+	CreateWithdraw      *ReviewableRequestResourceCreateWithdraw      `json:"createWithdraw,omitempty"`
+	CreateAtomicSwapBid *ReviewableRequestResourceCreateAtomicSwapBid `json:"createAtomicSwapBid,omitempty"`
+	Ext                 *EmptyExt                                     `json:"ext,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -32609,6 +32686,8 @@ func (u ReviewableRequestResource) ArmForSwitch(sw int32) (string, bool) {
 		return "CreateIssuance", true
 	case ReviewableRequestTypeCreateWithdraw:
 		return "CreateWithdraw", true
+	case ReviewableRequestTypeCreateAtomicSwapBid:
+		return "CreateAtomicSwapBid", true
 	default:
 		return "Ext", true
 	}
@@ -32639,6 +32718,13 @@ func NewReviewableRequestResource(requestType ReviewableRequestType, value inter
 			return
 		}
 		result.CreateWithdraw = &tv
+	case ReviewableRequestTypeCreateAtomicSwapBid:
+		tv, ok := value.(ReviewableRequestResourceCreateAtomicSwapBid)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ReviewableRequestResourceCreateAtomicSwapBid")
+			return
+		}
+		result.CreateAtomicSwapBid = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -32719,6 +32805,31 @@ func (u ReviewableRequestResource) GetCreateWithdraw() (result ReviewableRequest
 
 	if armName == "CreateWithdraw" {
 		result = *u.CreateWithdraw
+		ok = true
+	}
+
+	return
+}
+
+// MustCreateAtomicSwapBid retrieves the CreateAtomicSwapBid value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestResource) MustCreateAtomicSwapBid() ReviewableRequestResourceCreateAtomicSwapBid {
+	val, ok := u.GetCreateAtomicSwapBid()
+
+	if !ok {
+		panic("arm CreateAtomicSwapBid is not set")
+	}
+
+	return val
+}
+
+// GetCreateAtomicSwapBid retrieves the CreateAtomicSwapBid value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestResource) GetCreateAtomicSwapBid() (result ReviewableRequestResourceCreateAtomicSwapBid, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "CreateAtomicSwapBid" {
+		result = *u.CreateAtomicSwapBid
 		ok = true
 	}
 
@@ -40672,4 +40783,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "5ab49bc8cec07ea2e05436d4734467d8b7e38aa3"
+var Revision = "0d9e8188bf9ac548aafb9ae7b324bcc3415b2537"

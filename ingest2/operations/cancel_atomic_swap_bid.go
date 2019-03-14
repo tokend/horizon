@@ -28,6 +28,15 @@ func (h *cancelAtomicSwapBidOpHandler) Details(op rawOperation,
 func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
+	opResult := opRes.MustCancelASwapBidResult().MustSuccess()
+
+	// it means that there is pending atomic swap request,
+	// so bid still exists
+	// we must wait for review that request
+	if opResult.LockedAmount != 0 {
+		return h.effectsProvider.ParticipantsEffects(opBody, opRes, sourceAccountID, ledgerChanges)
+	}
+
 	atomicSwapBid := h.getAtomicSwapBid(opBody.MustCancelASwapBidOp().BidId, ledgerChanges)
 
 	if atomicSwapBid == nil {
@@ -35,13 +44,6 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 			errors.New("expected atomic swap to be in STATE ledger changes"), map[string]interface{}{
 				"bid_id": uint64(opBody.MustCancelASwapBidOp().BidId),
 			})
-	}
-
-	// it means that there is pending atomic swap request,
-	// so bid still exists
-	// we must wait for review that request
-	if atomicSwapBid.LockedAmount != 0 {
-		return h.effectsProvider.ParticipantsEffects(opBody, opRes, sourceAccountID, ledgerChanges)
 	}
 
 	return []history2.ParticipantEffect{h.BalanceEffect(atomicSwapBid.BaseBalance, &history2.Effect{

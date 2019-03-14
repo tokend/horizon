@@ -273,6 +273,8 @@ var messages = map[string]string{
 	"op_number_of_admins_exceeds_license":               "Number of admins violates license restriction. Please contact enterprise@distributedlab.com",
 	"op_account_not_found":                              "There is no account with such id",
 	"op_role_not_found":                                 "There is no role with such id",
+	"op_atomic_swap_bid_tasks_not_found":                "There is no key value with `atomic_swap_bid_tasks` key",
+	"op_atomic_swap_zero_tasks_not_allowed":             "Zero value was received from key value by `atomic_swap_tasks` key, please contact admin",
 }
 
 func getMessage(rawCode string) string {
