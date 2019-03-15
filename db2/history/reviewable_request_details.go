@@ -9,6 +9,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/regources"
+	v2 "gitlab.com/tokend/regources/v2"
 )
 
 type ReviewableRequestDetails struct {
@@ -149,7 +150,7 @@ type AtomicSwapBidCreation struct {
 	BaseBalance string                 `json:"base_balance"`
 	BaseAmount  uint64                 `json:"base_amount"`
 	Details     map[string]interface{} `json:"details"`
-	QuoteAssets []regources.AssetPrice `json:"quote_assets"`
+	QuoteAssets []v2.AssetPrice        `json:"quote_assets"`
 }
 
 type AtomicSwap struct {

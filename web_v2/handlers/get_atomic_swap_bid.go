@@ -17,19 +17,20 @@ import (
 // GetAsset - processes request to get asset and it's details by asset code
 func GetAtomicSwapBid(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
-	handler := getAssetHandler{
-		AccountsQ: core2.NewAccountsQ(coreRepo),
-		AssetsQ:   core2.NewAssetsQ(coreRepo),
-		Log:       ctx.Log(r),
+	handler := getAtomicSwapBidHandler{
+		AssetsQ:        core2.NewAssetsQ(coreRepo),
+		AtomicSwapBidQ: core2.NewAtomicSwapBidQ(coreRepo),
+		BalanceQ:       core2.NewBalancesQ(coreRepo),
+		Log:            ctx.Log(r),
 	}
 
-	request, err := requests.NewGetAsset(r)
+	request, err := requests.NewGetAtomicSwapBid(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	result, err := handler.GetAsset(request)
+	result, err := handler.GetAtomicSwapBid(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get asset", logan.F{
 			"request": request,
@@ -46,33 +47,87 @@ func GetAtomicSwapBid(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, result)
 }
 
-type getAssetHandler struct {
-	AssetsQ   core2.AssetsQ
-	AccountsQ core2.AccountsQ
-	Log       *logan.Entry
+type getAtomicSwapBidHandler struct {
+	AssetsQ               core2.AssetsQ
+	BalanceQ              core2.BalancesQ
+	AtomicSwapBidQ        core2.AtomicSwapBidQ
+	AtomicSwapQuoteAssetQ core2.AtomicSwapQuoteAssetQ
+	Log                   *logan.Entry
 }
 
 // GetAsset returns asset with related resources
-func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*regources.AssetResponse, error) {
-	asset, err := h.AssetsQ.GetByCode(request.Code)
+func (h *getAtomicSwapBidHandler) GetAtomicSwapBid(request *requests.GetAtomicSwapBid,
+) (*regources.AtomicSwapBidResponse, error) {
+	bid, err := h.AtomicSwapBidQ.GetByID(request.ID)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get asset by code")
+		return nil, errors.Wrap(err, "failed to get atomic swap bid by id")
 	}
-	if asset == nil {
+	if bid == nil {
 		return nil, nil
 	}
 
-	assetResponse := resources.NewAsset(*asset)
-	response := &regources.AssetResponse{
-		Data: assetResponse,
+	response := &regources.AtomicSwapBidResponse{
+		Data: resources.NewAtomicSwapBid(*bid),
 	}
 
-	assetOwner := resources.NewAccountKey(asset.Owner)
-	response.Data.Relationships.Owner = assetOwner.AsRelation()
+	bidOwner := resources.NewAccountKey(bid.OwnerID)
+	response.Data.Relationships.Owner = bidOwner.AsRelation()
 
-	if request.ShouldInclude(requests.IncludeTypeAssetOwner) {
-		response.Included.Add(&assetOwner)
+	if request.ShouldInclude(requests.IncludeTypeBidOwner) {
+		response.Included.Add(&bidOwner)
 	}
+
+	baseBalanceKey := resources.NewBalanceKey(bid.BaseBalanceID)
+	response.Data.Relationships.BaseBalance = baseBalanceKey.AsRelation()
+
+	if request.ShouldInclude(requests.IncludeTypeBidBaseBalance) {
+		baseBalance := regources.Balance{
+			Key: baseBalanceKey,
+			Relationships: regources.BalanceRelation{
+				Asset: resources.NewAssetKey(bid.BaseAsset).AsRelation(),
+			},
+		}
+		response.Included.Add(&baseBalance)
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeBidBaseAsset) {
+		assetRaw, err := h.AssetsQ.GetByCode(bid.BaseAsset)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get base asset")
+		}
+		if assetRaw == nil {
+			return nil, errors.From(errors.New("base asset not found"), logan.F{
+				"asset code": bid.BaseAsset,
+			})
+		}
+
+		asset := resources.NewAsset(*assetRaw)
+		response.Included.Add(&asset)
+	}
+
+	quoteAssetsRaw, err := h.AtomicSwapQuoteAssetQ.FilterByIDs([]int64{bid.BidID}).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select bid quote assets")
+	}
+	if quoteAssetsRaw == nil {
+		return nil, errors.From(errors.New("expected bid quote assets to exists"), logan.F{
+			"bid_id": bid.BidID,
+		})
+	}
+
+	quoteAssets := &regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(quoteAssetsRaw)),
+	}
+
+	for _, quoteAssetRaw := range quoteAssetsRaw {
+		quoteAsset := resources.NewAtomicSwapBidQuoteAsset(quoteAssetRaw)
+		quoteAssets.Data = append(quoteAssets.Data, quoteAsset.Key)
+
+		if request.ShouldInclude(requests.IncludeTypeBidQuoteAssets) {
+			response.Included.Add(&quoteAsset)
+		}
+	}
+	response.Data.Relationships.QuoteAssets = quoteAssets
 
 	return response, nil
 }

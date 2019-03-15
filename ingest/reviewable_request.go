@@ -12,6 +12,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/utf8"
 	"gitlab.com/tokend/regources"
+	v2 "gitlab.com/tokend/regources/v2"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -300,11 +301,11 @@ func getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 	var details map[string]interface{}
 	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
 
-	var quoteAssets []regources.AssetPrice
+	var quoteAssets []v2.AssetPrice
 	for _, quoteAsset := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, regources.AssetPrice{
+		quoteAssets = append(quoteAssets, v2.AssetPrice{
 			Asset: string(quoteAsset.QuoteAsset),
-			Price: regources.Amount(quoteAsset.Price),
+			Price: v2.Amount(quoteAsset.Price),
 		})
 	}
 

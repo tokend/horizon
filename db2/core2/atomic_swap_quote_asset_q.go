@@ -3,55 +3,38 @@ package core2
 import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2"
 )
 
-// AtomicSwapBidQI is a helper interface to aid in configuring queries
-// that loads slices or entry of AtomicSwapBid structs.
-type AtomicSwapQuoteAssetQI interface {
-	// ByCode - returns atomic swap bid by code, if not found returns nil, nil
-	ByID(bidIDs []int64) AtomicSwapQuoteAssetQI
-	// Select - selects atomic swap bid for specified filter
-	Select() ([]AtomicSwapQuoteAsset, error)
-}
-
+// AtomicSwapQuoteAssetQ is a helper to aid in configuring queries
+// that loads slices or entry of AtomicSwapBidQuoteAsset structs.
 type AtomicSwapQuoteAssetQ struct {
-	Err    error
-	parent *Q
-	sql    sq.SelectBuilder
+	repo     *db2.Repo
+	selector sq.SelectBuilder
 }
 
-func (q *Q) AtomicSwapQuoteAsset() AtomicSwapQuoteAssetQI {
-	return &AtomicSwapQuoteAssetQ{
-		parent: q,
-		sql:    selectAtomicSwapQuoteAsset,
+func NewAtomicSwapQuoteAssetQ(repo *db2.Repo) AtomicSwapQuoteAssetQ {
+	return AtomicSwapQuoteAssetQ{
+		repo: repo,
+		selector: sq.Select(
+			"qa.bid_id",
+			"qa.quote_asset",
+			"qa.price",
+		).From("atomic_swap_quote_asset qa"),
 	}
 }
 
-func (q *AtomicSwapQuoteAssetQ) ByID(bidIDs []int64) AtomicSwapQuoteAssetQI {
-	if q.Err != nil {
-		return q
-	}
-
-	q.sql = q.sql.Where(sq.Eq{"asqa.bid_id": bidIDs})
+func (q AtomicSwapQuoteAssetQ) FilterByIDs(bidIDs []int64) AtomicSwapQuoteAssetQ {
+	q.selector = q.selector.Where(sq.Eq{"qa.bid_id": bidIDs})
 	return q
 }
 
-func (q *AtomicSwapQuoteAssetQ) Select() ([]AtomicSwapQuoteAsset, error) {
-	if q.Err != nil {
-		return nil, errors.Wrap(q.Err, "failed before select")
-	}
-
+func (q AtomicSwapQuoteAssetQ) Select() ([]AtomicSwapQuoteAsset, error) {
 	var result []AtomicSwapQuoteAsset
-	err := q.parent.Select(&result, q.sql)
+	err := q.repo.Select(&result, q.selector)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to select atomic swap quote assets")
 	}
 
 	return result, nil
 }
-
-var selectAtomicSwapQuoteAsset = sq.Select(
-	"asqa.bid_id",
-	"asqa.quote_asset",
-	"asqa.price",
-).From("atomic_swap_quote_asset asqa")

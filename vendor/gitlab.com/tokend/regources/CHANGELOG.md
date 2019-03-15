@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Changed
+
+* Rewrite atomic swap bid resource
+
+## 3.0.2-x.0
+
 ### Added
 
 * `BalancesResponse` type to represent the response on `/balances`

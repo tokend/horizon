@@ -54,8 +54,14 @@ func (q AtomicSwapBidQ) FilterByOwner(ownerID string) AtomicSwapBidQ {
 	return q
 }
 
-func (q *AtomicSwapBidQ) FilterByBaseAsset(codes []string) AtomicSwapBidQ {
+func (q AtomicSwapBidQ) FilterByBaseAssets(codes []string) AtomicSwapBidQ {
 	q.selector = q.selector.Where(sq.Eq{"b.base_asset_code": codes})
+	return q
+}
+
+func (q AtomicSwapBidQ) FilterByQuoteAssets(codes []string) AtomicSwapBidQ {
+	q.selector = q.selector.LeftJoin("atomic_swap_quote_asset qa ON qa.bid_id = b.bid_id").
+		Where(sq.Eq{"qa.quote_asset": codes})
 	return q
 }
 
