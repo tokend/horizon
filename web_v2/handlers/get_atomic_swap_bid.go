@@ -18,10 +18,11 @@ import (
 func GetAtomicSwapBid(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getAtomicSwapBidHandler{
-		AssetsQ:        core2.NewAssetsQ(coreRepo),
-		AtomicSwapBidQ: core2.NewAtomicSwapBidQ(coreRepo),
-		BalanceQ:       core2.NewBalancesQ(coreRepo),
-		Log:            ctx.Log(r),
+		AssetsQ:               core2.NewAssetsQ(coreRepo),
+		AtomicSwapBidQ:        core2.NewAtomicSwapBidQ(coreRepo),
+		AtomicSwapQuoteAssetQ: core2.NewAtomicSwapQuoteAssetQ(coreRepo),
+		BalanceQ:              core2.NewBalancesQ(coreRepo),
+		Log:                   ctx.Log(r),
 	}
 
 	request, err := requests.NewGetAtomicSwapBid(r)
