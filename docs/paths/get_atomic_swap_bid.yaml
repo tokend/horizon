@@ -1,7 +1,7 @@
 /v3/atomic_swap_bids/{id}:
   get:
     tags:
-    - Atomic Swap Bids
+    - Atomic Swap
     summary: Atomic Swap Bid by ID
     description: |
       Allows getting `Atomic Swap Bid` with corresponding details.
@@ -25,7 +25,10 @@
       schema:
         type: string
         enum:
+        - base_balance
         - owner
+        - base_asset
+        - quote_assets
     responses:
       200:
         description: atomic swap bid exists
@@ -43,7 +46,7 @@
                 included:
                   type: array
                   items:
-                    $ref: '#/components/schemas/Owner'
+                    $ref: '#/components/schemas/AccountKey'
       400:
         description: bad input parameter
         content:

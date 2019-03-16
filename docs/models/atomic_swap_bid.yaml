@@ -1,0 +1,50 @@
+AtomicSwapBidKey:
+  type: object
+  required:
+  - id
+  - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+      - "atomic-swap-bids"
+AtomicSwapBid:
+  allOf:
+  - $ref: '#/components/schemas/AtomicSwapBidKey'
+  - type: object
+    properties:
+      attributes:
+        type: object
+        properties:
+          details:
+            type: string
+            format: "valid json"
+            description: "represents user-provided data"
+            example: "{ \"data\": \"some user data\"}"
+      relationships:
+        type: object
+        properties:
+          owner:
+            description: "Owner of the sale"
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountKey'
+          base_balance:
+            description: "Base asset of the sale"
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/AssetKey'
+          quote_assets:
+            description: "Quote assets specified for the sale"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssetKey'

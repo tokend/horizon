@@ -1,16 +1,16 @@
 /v3/atomic_swap_bids:
   get:
     tags:
-    - Atomic Swap Bids
+    - Atomic Swap
     summary: Atomic Swap Bid List
     description: |
       Allows getting a filtered list of `Atomic Swap Bid` with corresponding details.
     operationId: getAtomicSwapBids
     parameters:
-    - name: filter[policy]
+    - name: filter[base_asset]
       in: query
       description: |
-        Filters assets by a specified bit mask. Returns the page of assets where at least one bit intersects
+        Filters atomic swap bids by a base asset.
       required: false
       style: form
       explode: false
@@ -19,12 +19,23 @@
     - name: filter[owner]
       in: query
       description: |
-        Filters assets by a specified owner's account address.
+        Filters atomic swap bids by a specified owner's account address.
       required: false
       style: form
       explode: false
       schema:
         type: string
+    - name: filter[quote_assets]
+      in: query
+      description: |
+        Filters atomic swap bids by quote assets. Returns the page of atomic swap bids where all quote assets present.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
     - name: include
       in: query
       description: |
@@ -35,13 +46,16 @@
       schema:
         type: string
         enum:
+        - base_balance
         - owner
+        - base_asset
+        - quote_assets
     - $ref: '#/components/schemas/pageNumberParam'
     - $ref: '#/components/schemas/pageLimitParam'
     - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
-        description: asset exists
+        description: atomic swap bid exists
         content:
           application/vnd.api+json:
             schema:
@@ -54,11 +68,11 @@
                   type: array
                   items:
                     type: object
-                    $ref: '#/components/schemas/Asset'
+                    $ref: '#/components/schemas/AtomicSwapBid'
                 included:
                   type: array
                   items:
-                    $ref: '#/components/schemas/AccountKey'
+                    $ref: '#/components/schemas/Asset'
                 links:
                   type: object
                   description: "Provides links for pagination"

@@ -118,6 +118,7 @@ x-tagGroups:
      - AMLAlert
      - Issuance
      - Withdrawal
+     - Atomic Swap
   - name: Access Control
     tags:
       - Signers
