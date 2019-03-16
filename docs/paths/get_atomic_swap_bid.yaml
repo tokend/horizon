@@ -1,0 +1,58 @@
+/v3/atomic_swap_bids/{id}:
+  get:
+    tags:
+    - Atomic Swap Bids
+    summary: Atomic Swap Bid by ID
+    description: |
+      Allows getting `Atomic Swap Bid` with corresponding details.
+    operationId: getAtomicSwapBidByID
+    parameters:
+    - name: id
+      in: path
+      description: Unique identifier of an atomic swap bid (id)
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    - name: include
+      in: query
+      description: |
+        Relationships that may be used for the included parameter.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        enum:
+        - owner
+    responses:
+      200:
+        description: atomic swap bid exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+              - data
+              - included
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/AtomicSwapBid'
+                included:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Owner'
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: asset does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

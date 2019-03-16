@@ -98,12 +98,12 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[override]]
+[[constraint]]
   name = "gitlab.com/tokend/go"
-  revision = "a43580617957d1ff155cbc43994e9a315238c4f5"
+  revision = "b11d69954b908ad1538205214c64557f120618b2"
 
 [[constraint]]
-  revision = "fffa9a362292ac7db60a9530841c0b8c3c2b3670"
+  revision = "93eda6104a3879cc2ffa7729d697d136a4db5110"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

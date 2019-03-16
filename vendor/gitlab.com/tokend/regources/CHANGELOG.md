@@ -4,7 +4,7 @@
 
 ### Changed
 
-* Rewrite atomic swap bid resource
+* Rewrite atomic swap bid resource (response)
 
 ## 3.0.2-x.0
 
