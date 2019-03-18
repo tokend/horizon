@@ -2,6 +2,17 @@
 
 ### Added
 
+* `GetAtomicSwapBidList` handler to handle `v3/atomic_swap_bids` request
+* `GetAtomicSwapBid` handler to handle `v3/atomic_swap_bids/{id}` request
+
+### Removed
+
+* handling `atomic_swap_bids` request
+
+## 3.0.2-x.0
+
+### Added
+
 * Messages for new error codes
 * `GetBalanceList` handler to handle `v3/balances` request
 * `GetPublicKeyEntry` handler to handle `v3/public_key_entries/{id}` request
