@@ -46,7 +46,18 @@
                 included:
                   type: array
                   items:
-                    $ref: '#/components/schemas/AccountKey'
+                    type: object
+                    anyOf:
+                      - type: object
+                        $ref: '#/components/schemas/Account'
+                      - type: object
+                        $ref: '#/components/schemas/Balance'
+                      - type: object
+                        properties:
+                          quote_assets:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter
         content:

@@ -24,24 +24,43 @@ AtomicSwapBid:
             format: "valid json"
             description: "represents user-provided data"
             example: "{ \"data\": \"some user data\"}"
+          available_amount:
+            type: string
+            example: "5.000000"
+            format: Amount
+            description: "Amount that can be bought through atomic swap request"
+          locked_amount:
+            type: string
+            example: "10.000000"
+            format: Amount
+            description: "Amount that that is being processed now through atomic swap requests"
+          created_at:
+            type: string
+            description: "time when the atomic swap bid was created"
+            format: "date-time"
+            example: "2012-11-01T22:08:41+00:00"
+          is_canceled:
+            type: boolean
+            description: "defines whether creating atomic swap requests for this bid is forbidden"
+            example: true
       relationships:
         type: object
         properties:
           owner:
-            description: "Owner of the sale"
+            description: "Owner of the atomic swap bid"
             type: object
             properties:
               data:
                 type: object
                 $ref: '#/components/schemas/AccountKey'
           base_balance:
-            description: "Base asset of the sale"
+            description: "Base asset of the atomic swao bid"
             type: object
             properties:
               data:
                 $ref: '#/components/schemas/AssetKey'
           quote_assets:
-            description: "Quote assets specified for the sale"
+            description: "Quote assets specified for the atomic swap bid"
             type: object
             properties:
               data:
