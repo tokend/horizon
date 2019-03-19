@@ -96,6 +96,20 @@ func (q *OfferQ) Select(dest interface{}) error {
 	return q.Err
 }
 
+func (q *OfferQ) OrderByPrice(desc bool) *OfferQ {
+	if q.Err != nil {
+		return q
+	}
+
+	order := "ASC"
+	if desc {
+		order = "DESC"
+	}
+
+	q.sql = q.sql.OrderBy("o.price " + order)
+	return q
+}
+
 var selectOffer = sq.Select(
 	"o.owner_id",
 	"o.offer_id",
