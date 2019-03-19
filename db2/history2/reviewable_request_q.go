@@ -103,6 +103,11 @@ func (q ReviewableRequestsQ) FilterByCreateIssuanceAsset(asset string) Reviewabl
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterByCreateIssuanceReceiver(receiver string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_issuance,receiver}' = ?", receiver)
+	return q
+}
+
 func (q ReviewableRequestsQ) FilterByWithdrawBalance(balance string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_withdraw,balance_id}' = ?", balance)
 	return q

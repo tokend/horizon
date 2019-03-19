@@ -5,11 +5,13 @@ import (
 )
 
 const (
-	FilterTypeCreateIssuanceRequestsAsset = "request_details.asset"
+	FilterTypeCreateIssuanceRequestsAsset    = "request_details.asset"
+	FilterTypeCreateIssuanceRequestsReceiver = "request_details.receiver"
 )
 
 var filterTypeCreateIssuanceRequests = map[string]struct{}{
-	FilterTypeCreateIssuanceRequestsAsset: {},
+	FilterTypeCreateIssuanceRequestsAsset:    {},
+	FilterTypeCreateIssuanceRequestsReceiver: {},
 }
 
 const (
@@ -22,7 +24,8 @@ var includeTypeCreateIssuanceRequests = map[string]struct{}{
 
 type GetCreateIssuanceRequestsFilter struct {
 	GetRequestListBaseFilters
-	Asset string `fig:"request_details.asset"`
+	Asset    string `fig:"request_details.asset"`
+	Receiver string `fig:"request_details.receiver"`
 }
 
 type GetCreateIssuanceRequests struct {
