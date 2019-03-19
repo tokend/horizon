@@ -5,6 +5,7 @@
 * Messages for new error codes
 * `GetBalanceList` handler to handle `v3/balances` request
 * `GetPublicKeyEntry` handler to handle `v3/public_key_entries/{id}` request
+* Receiver filter for create issuance requests
 
 ### Fixed
 
