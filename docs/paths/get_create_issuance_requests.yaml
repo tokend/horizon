@@ -5,7 +5,7 @@
     summary: Issuance Request List
     description: |
       Allows getting a filtered list of `CreateIssuanceRequest` with details\n
-      🔒 Requestor's or reviewer's signature is needed
+      🔒 Requestor's, reviewer's or receiving balance owner signature is needed
     operationId: getCreateIssuanceRequests
     parameters:
       - name: filter[requestor]
@@ -73,6 +73,15 @@
         in: query
         description: |
           Filters issuance create requests by asset code.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[request_details.receiver]
+        in: query
+        description: |
+          Filters requests by receiver balance
         required: false
         style: form
         explode: false

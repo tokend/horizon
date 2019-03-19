@@ -34,7 +34,28 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
+	constraints := []string{
+		request.GetRequestsBase.Filters.Requestor,
+		request.GetRequestsBase.Filters.Reviewer,
+	}
+
+	// receiving balance owner should be able to see issuance requests
+	if request.Filters.Receiver != "" {
+		balance, err := core2.NewBalancesQ(coreRepo).GetByAddress(request.Filters.Receiver)
+		if err != nil {
+			ctx.Log(r).
+				WithError(err).
+				WithFields(logan.F{"receiver": request.Filters.Receiver}).
+				Error("failed to get receiver balance")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		if balance != nil {
+			constraints = append(constraints, balance.AccountAddress)
+		}
+	}
+
+	if !isAllowed(r, w, constraints...) {
 		return
 	}
 
@@ -61,6 +82,10 @@ func (h *getCreateIssuanceRequestsHandler) MakeAll(w http.ResponseWriter, reques
 
 	if request.ShouldFilter(requests.FilterTypeCreateIssuanceRequestsAsset) {
 		q = q.FilterByCreateIssuanceAsset(request.Filters.Asset)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeCreateIssuanceRequestsReceiver) {
+		q = q.FilterByCreateIssuanceReceiver(request.Filters.Receiver)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
