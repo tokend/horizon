@@ -12,54 +12,52 @@ AccountKey:
         enum: 
         - "accounts"
 
-AccountRelationships:
-  type: object
-  required:
-    - balances
-    - role
-  properties:
-    referrer:
-      description: "Referrer is another account that introduced this account into the system."
-      type: object
-      properties:
-        data:
-          type: object
-          $ref: '#/components/schemas/AccountKey'
-    balances:
-      description: "Defines balances of this account"
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/BalanceKey'
-    limits:
-      description: "Defines limits specified for this account"
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/LimitKey'
-    external-system-ids:
-      description: "Defines external system IDs binded to this account"
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/ExternalSystemIDKey'
-    role:
-      type: object
-      description: "Defines the role of this account"
-      properties:
-        data:
-          type: object
-          $ref: '#/components/schemas/AccountRoleKey'
 Account:
   allOf:
   - $ref: '#/components/schemas/AccountKey'
   - type: object
     properties:
       relationships:
-        $ref: '#/components/schemas/AccountRelationships'
+        type: object
+        required:
+          - balances
+          - role
+        properties:
+          referrer:
+            description: "Referrer is another account that introduced this account into the system."
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountKey'
+          balances:
+            description: "Defines balances of this account"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BalanceKey'
+          limits:
+            description: "Defines limits specified for this account"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LimitKey'
+          external-system-ids:
+            description: "Defines external system IDs binded to this account"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExternalSystemIDKey'
+          role:
+            type: object
+            description: "Defines the role of this account"
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountRoleKey'
