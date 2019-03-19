@@ -51,7 +51,41 @@ CalculatedFeeEntry:
           example: "1.250500"
           format: Amount
 
-Fee:
+FeeAppliedTo:
+  type: object
+  required:
+    - asset
+    - subtype
+    - fee_type
+    - lower_bound
+    - upper_bound
+  properties:
+    asset:
+      type: string
+      description: "Unique identifier of an asset"
+      example: "USD"
+    subtype:
+      type: integer
+      description: "Subtype of the fee"
+      example: 1
+    fee_type:
+      type: integer
+      description: "Type of the fee"
+      minimum: 0
+      maximum: 7
+      example: 2
+    lower_bound:
+      type: string
+      description: "lower bound for the fee"
+      example: "123.123456"
+      format: Amount
+    upper_bound:
+      type: string
+      description: "upper bound for the fee"
+      example: "321.654321"
+      format: Amount
+
+FeeRecord:
   allOf:
   - $ref: '#/components/schemas/FeeKey'
   - type: object
@@ -78,45 +112,36 @@ Fee:
         required: [fixed,percent]
         properties:
           fixed:
-            type: string
+            type: integer
             description: "Fixed amount to pay"
-            example: "1.123456"
-            format: Amount
+            example: "1123456"
+            format: int64
           percent:
-            type: string
+            type: integer
             description: "Percent to calculate the fee with (e.g., 1.0 represents 100%, 0.21 represents 21%)"
-            example: "0.234"
-            format: Amount
+            example: "234"
+            format: int64
           applied_to:
             type: object
-            required:
-              - asset
-              - subtype
-              - fee_type
-              - lower_bound
-              - upper_bound
-            properties:
-              asset:
-                type: string
-                description: "Unique identifier of an asset"
-                example: "USD"
-              subtype:
-                type: integer
-                description: "Subtype of the fee"
-                example: 1
-              fee_type:
-                type: integer
-                description: "Type of the fee"
-                minimum: 0
-                maximum: 7
-                example: 2
-              lower_bound:
-                type: string
-                description: "lower bound for the fee"
-                example: "123.123456"
-                format: Amount
-              upper_bound:
-                type: string
-                description: "upper bound for the fee"
-                example: "321.654321"
-                format: Amount
+            $ref: '#/components/schemas/FeeAppliedTo'
+
+Fee:
+  type: object
+  description: |
+                Fee - describes fee happened on balance. Direction of fee depends on the operation (depending on effect might be
+                charged, locked, unlocked, for all incoming effects but unlocked it's always charged)
+  required:
+    - fixed
+    - percent
+  properties:
+    fixed:
+      type: integer
+      format: int64
+      description: "fixed fee charged for the operation"
+      example: 486000000
+    percent:
+      type: integer
+      format: int64
+      description: "percent of the operation amount"
+      example: 4000000
+

@@ -18,6 +18,7 @@ ReviewRequestOp:
         type: object
         properties:
           request_details:
+            type: object
             $ref: '#/components/schemas/ReviewableRequestDetails'
       attributes:
         type: object
