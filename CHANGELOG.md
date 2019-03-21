@@ -6,7 +6,6 @@
 * `GetBalanceList` handler to handle `v3/balances` request
 * `GetPublicKeyEntry` handler to handle `v3/public_key_entries/{id}` request
 * Receiver filter for create issuance requests
-* Now Bad Request is correctly returned in case of invalid signature
 
 ### Fixed
 
@@ -15,6 +14,7 @@
 * error on get reviewable request by reviewer
 * order book is now sorted
 * create change role ingestion causing 500 on operations
+* Now Bad Request is correctly returned in case of invalid signature
 
 ### Removed
 
