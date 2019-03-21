@@ -437,15 +437,15 @@
   version = "v1.0"
 
 [[projects]]
-  digest = "1:10ad95267c942921552532d785c6886199760a9b6d94d88a57408b5f30fbebfa"
+  digest = "1:4db50c1955d2ae5e1b432afd7342ea030bd26228560eaeffb78c8ae633c5c0a5"
   name = "gitlab.com/distributed_lab/ape"
   packages = [
     ".",
     "problems",
   ]
   pruneopts = "UT"
-  revision = "043053e47a45b8f45acc82ee055224fc1ded7fc6"
-  version = "v0.9"
+  revision = "a046b9cf477f8f00324b645ebe057fade0a3c6fe"
+  version = "v0.10"
 
 [[projects]]
   branch = "master"

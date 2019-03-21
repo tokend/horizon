@@ -128,7 +128,7 @@
 
 [[constraint]]
   name = "gitlab.com/distributed_lab/ape"
-  version = "0.9"
+  version = "0.10"
 
 [[override]]
   name = "github.com/google/jsonapi"

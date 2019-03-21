@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/jsonapi"
 	"github.com/pkg/errors"
+	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/go/signcontrol"
 )
 
@@ -33,13 +34,15 @@ func NotAllowed(errs ...error) *jsonapi.ErrorObject {
 				"reason": cause.Error(),
 			},
 		}
-	default:
-		// default sink for *doorman.Error and everything else,
-		// since 401 is our safe default
+	case *doorman.Error:
 		return &jsonapi.ErrorObject{
 			Title:  http.StatusText(http.StatusUnauthorized),
 			Status: fmt.Sprintf("%d", http.StatusUnauthorized),
 		}
+	default:
+		return &jsonapi.ErrorObject{
+			Title:  http.StatusText(http.StatusInternalServerError),
+			Status: fmt.Sprintf("%d", http.StatusInternalServerError),
+		}
 	}
-
 }
