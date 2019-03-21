@@ -32,24 +32,21 @@ CalculatedFee:
   - $ref: '#/components/schemas/CalculatedFeeKey'
   - type: object
     properties:
-      $ref: '#/components/schemas/CalculatedFeeEntry'
-
-CalculatedFeeEntry:
-  type: object
-  properties:
-    attributes:
       type: object
       properties:
-        fixed:
-          type: string
-          description: "Fixed amount to pay"
-          example: "1.123456"
-          format: Amount
-        calculated_percent:
-          type: string
-          description: "Calculated percent"
-          example: "1.250500"
-          format: Amount
+        attributes:
+          type: object
+          properties:
+            fixed:
+              type: string
+              description: "Fixed amount to pay"
+              example: "1.123456"
+              format: Amount
+            calculated_percent:
+              type: string
+              description: "Calculated percent"
+              example: "1.250500"
+              format: Amount
 
 FeeAppliedTo:
   type: object

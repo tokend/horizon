@@ -34,7 +34,7 @@ CreateIssuanceRequestOp:
           - creator_details
         properties:
           fee:
-            $ref: '#/components/schemas/CalculatedFeeEntry'
+            $ref: '#/components/schemas/Fee'
           reference:
             type: string
             description: "reference of the request"

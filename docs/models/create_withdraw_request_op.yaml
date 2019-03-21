@@ -28,7 +28,7 @@ CreateWithdrawRequestOp:
           - creator_details
         properties:
           fee:
-            $ref: '#/components/schemas/CalculatedFeeEntry'
+            $ref: '#/components/schemas/Fee'
           amount:
             type: string
             format: Amount

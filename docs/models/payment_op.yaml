@@ -39,9 +39,9 @@ PaymentOp:
           - reference
         properties:
           source_fee:
-            $ref: '#/components/schemas/CalculatedFeeEntry'
+            $ref: '#/components/schemas/Fee'
           destination_fee:
-            $ref: '#/components/schemas/CalculatedFeeEntry'
+            $ref: '#/components/schemas/Fee'
           source_pay_for_destination_fee:
             type: boolean
             example: false

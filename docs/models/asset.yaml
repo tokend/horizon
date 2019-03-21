@@ -84,3 +84,34 @@ Asset:
             allOf:
             - $ref: '#/components/schemas/Details'
             - description: "free-form object to attach asset details such as a link to icon, short description, etc."
+
+QuoteAssetKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "quote-assets"
+
+QuoteAsset:
+  allOf:
+    - $ref: '#/components/schemas/QuoteAssetKey'
+    - type: object
+      properties:
+        attributes:
+          type: object
+          required:
+            - price
+            - current_cap
+            - total_current_cap
+            - hard_cap
+          properties:
+            price:
+              type: integer
+              format: int64

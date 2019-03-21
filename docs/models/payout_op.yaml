@@ -45,11 +45,11 @@ PayoutOp:
           expected_fee:
             deprecated: true
             allOf:
-            - $ref: '#/components/schemas/CalculatedFeeEntry'
+            - $ref: '#/components/schemas/Fee'
           actual_fee:
             deprecated: true
             allOf:
-            - $ref: '#/components/schemas/CalculatedFeeEntry'
+            - $ref: '#/components/schemas/Fee'
           #TODO add description for amounts
           max_payout_amount:
             deprecated: true

@@ -150,3 +150,56 @@ SaleRequest:
                 items:
                   type: object
                   $ref: '#/components/schemas/AssetKey'
+
+
+SaleQuoteAssetKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "sale-quote-assets"
+
+SaleQuoteAsset:
+  allOf:
+    - $ref: '#/components/schemas/SaleQuoteAssetKey'
+    - type: object
+      properties:
+        attributes:
+          type: object
+          required:
+            - price
+            - current_cap
+            - total_current_cap
+            - hard_cap
+          properties:
+            price:
+              type: integer
+              format: int64
+            current_cap:
+              type: integer
+              format: int64
+            total_current_cap:
+              type: integer
+              format: int64
+            hard_cap:
+              type: integer
+              format: int64
+            soft_cap:
+              type: integer
+              format: int64
+        relationships:
+          type: object
+          properties:
+            asset:
+              type: object
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/AssetKey'

@@ -19,10 +19,10 @@ ManageLimitsOp:
         properties:
           create:
             nullable: true
-            $ref: '#components/schemas/ManageLimitsCreationOp'
+            $ref: '#/components/schemas/ManageLimitsCreationOp'
           remove:
             nullable: true
-            $ref: '#components/schemas/ManageLimitsRemovalOp'
+            $ref: '#/components/schemas/ManageLimitsRemovalOp'
 
 ManageLimitsCreationOp:
   type: object

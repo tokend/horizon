@@ -50,4 +50,4 @@ ManageOfferOp:
             type: boolean
             example: false
           fee:
-            $ref: '#/components/schemas/CalculatedFeeEntry'
+            $ref: '#/components/schemas/Fee'
