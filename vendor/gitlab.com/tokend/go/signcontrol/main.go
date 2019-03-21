@@ -19,6 +19,15 @@ const (
 
 	// SignatureAlgorithm default algorithm used to sign requests
 	SignatureAlgorithm = "ed25519-sha256"
+
+	signatureExpireAfter = 1 * time.Hour
+)
+
+var (
+	dateHeaders = map[string]struct{}{
+		"Date":   {},
+		"X-Date": {}, // https://fetch.spec.whatwg.org/#forbidden-header-name
+	}
 )
 
 type Signature struct {
@@ -59,7 +68,6 @@ func CheckSignature(request *http.Request) (string, error) {
 		return checkV2(request)
 	}
 
-	// TODO cache results to request.Context()
 	sig, ok := IsSigned(request)
 	if !ok {
 		return "", ErrNotSigned
@@ -103,5 +111,32 @@ func checkV2(request *http.Request) (string, error) {
 	if ok := signature.IsValid(request); !ok {
 		return "", ErrSignature
 	}
+
+	// check signature freshness if one of `dateHeaders` is signed
+	for _, header := range signature.Headers {
+		if _, ok := dateHeaders[http.CanonicalHeaderKey(header)]; !ok {
+			continue
+		}
+		date := request.Header.Get(header)
+		if err := checkDate(date); err != nil {
+			return "", err
+		}
+		break
+	}
+
 	return signature.KeyID, nil
+}
+
+func checkDate(raw string) error {
+	date, err := http.ParseTime(raw)
+	if err != nil {
+		return ErrDateMalformed
+	}
+
+	expireAt := date.Add(signatureExpireAfter)
+	if expireAt.Before(time.Now()) {
+		return ErrExpired
+	}
+
+	return nil
 }

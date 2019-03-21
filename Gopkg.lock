@@ -437,15 +437,15 @@
   version = "v1.0"
 
 [[projects]]
-  digest = "1:20e368367776bc9d2251e17926aff09a8b18238513185908957ad358c077e0ef"
+  digest = "1:4db50c1955d2ae5e1b432afd7342ea030bd26228560eaeffb78c8ae633c5c0a5"
   name = "gitlab.com/distributed_lab/ape"
   packages = [
     ".",
     "problems",
   ]
   pruneopts = "UT"
-  revision = "84191c4ccf54edc25ef517ae7f5f4d47fc8e818d"
-  version = "v0.8"
+  revision = "a046b9cf477f8f00324b645ebe057fade0a3c6fe"
+  version = "v0.10"
 
 [[projects]]
   branch = "master"
@@ -507,7 +507,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:e8a3f706c1caf94e1419980a98cddc7522572fa086216cfaa790a9a4d6ab63dd"
+  digest = "1:ffdca14b2302c97faecb48cddbec3b0b67e145d28e64ec162e34316c659e121e"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -525,7 +525,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "433ce0279cad5c03603f1173f4e5aeec3829d2dd"
+  revision = "fdf2839fb8b94fda8ef5ff7fcb810e40462e6a3a"
+  version = "v3.1.0"
 
 [[projects]]
   branch = "master"
@@ -541,14 +542,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:b05a7fa29c69abeee1a61c7300a32cb83df8ca5d508cbd124cc7b1142036a26d"
+  digest = "1:fcbded8ded441b46042395156966138aa50103dc705cee0b5cb164e379ef4128"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "0f994d3578ed23f78a2636ad3cd17f79435761a9"
+  revision = "1f1ad3cb00136b35773cd71d1225f364a2576615"
+  version = "v3.0.2"
 
 [[projects]]
   branch = "master"

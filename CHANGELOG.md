@@ -14,6 +14,7 @@
 * error on get reviewable request by reviewer
 * order book is now sorted
 * create change role ingestion causing 500 on operations
+* Now Bad Request is correctly returned in case of invalid signature
 
 ### Removed
 

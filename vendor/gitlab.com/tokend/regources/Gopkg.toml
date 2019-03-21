@@ -31,7 +31,7 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  revision = "433ce0279cad5c03603f1173f4e5aeec3829d2dd"
+  version = "3"
 
 [prune]
   go-tests = true
