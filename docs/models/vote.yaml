@@ -1,0 +1,45 @@
+VoteKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "1"
+    type:
+      type: string
+      enum:
+        - "votes"
+
+Vote:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "1"
+    type:
+      type: string
+      enum:
+        - "votes"
+    relationships:
+      type: object
+      properties:
+        voter:
+          type: object
+          description: "the account that submitted the vote"
+          properties:
+            data:
+              $ref: '#/components/schemas/AccountKey'
+        poll:
+          type: object
+          description: "poll where the vote was submitted to"
+          properties:
+            data:
+              $ref: '#/components/schemas/PollKey'
+    attributes:
+      type: object
+      properties:
+        choices:
+          type: array
+          items:
+            type: integer
+            format: uint64
+            example: 2

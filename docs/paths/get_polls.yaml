@@ -1,0 +1,78 @@
+/v3/polls:
+  get:
+    tags:
+      - Polls
+    summary: Polls list
+    description: |
+      Allows getting a filtered list of `Polls` with corresponding details.\n
+      🔒 Depending on the case, different signatures are required:\n
+        1. if no filters are applied, admin signature is required.\n
+        2. if filter by owner is applied, signature of owner is required\n
+    operationId: getPolls
+    parameters:
+      - name: filter[owner]
+        in: query
+        description:
+          - Filters polls by specified owner id
+        required: false
+        style: form
+        explore: false
+        schema:
+          type: string
+          format: valid accountID
+          example: "GAULFBQKQTFHHHZEIRMYVCGTY47FKWEW7P2BY2YT45HAEODAIJUJH23T"
+      - name: filter[permission_type]
+        in: query
+        description:
+          - Filters polls by specified permission type
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+          format: uint64
+      - $ref: '#/components/schemas/pageCursorParam'
+      - $ref: '#/components/schemas/pageLimitParam'
+      - $ref: '#/components/schemas/sortingParam'
+    responses:
+      200:
+        description: polls exist
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+                - included
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/Poll'
+                included:
+                    type: array
+                links:
+                  type: object
+                  description: "Provides links for pagination"
+                  properties:
+                    next:
+                      type: string
+                      description: "link to the next page"
+                      example: "/v3/polls?page[cursor]=2&page[limit]=15"
+                    self:
+                      type: string
+                      description: "link to the current page"
+                      example: "/v3/polls?page[cursor]=1&page[limit]=15"
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      401:
+        description: either an invalid signature has been provided or a signer has not been authorized to access specified resources
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
