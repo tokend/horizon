@@ -22,6 +22,7 @@ Int64Key:
         - "request-details-sale"
         - "request-details-change-role"
         - "request-details-update-sale-details"
+        - "request-details-create-poll"
         - "sales"
 RequestKey:
   type: object
