@@ -11,19 +11,17 @@ TransactionKey:
 
 Transaction:
   allOf:
-    - $ref: '#/components/schemas/TransactionKey'
     - type: object
       properties:
+        id:
+          type: string
+          example: "17179869186"
+        type:
+          type: string
+          enum:
+            - "transactions"
         attributes:
           type: object
-          required:
-            - hash
-            - ledger_sequence
-            - created_at
-            - signatures
-            - envelope_xdr
-            - result_xdr
-            - result_meta_xdr
           properties:
             hash:
               type: string
@@ -59,10 +57,6 @@ Transaction:
               example: "AAAAAAAAAAEAAAAMAAAAAwAAAAEAAAAaAAAAAAAAAAEAAAABAAAAAAAAAAEAAAACe30AAAAAAAAAAAAAAAAAAwAAAA..."
         relationships:
           type: object
-          required:
-            - operations
-            - source
-            - ledger_entry_changes
           properties:
             operations:
               description: "represents operations included to transaction"

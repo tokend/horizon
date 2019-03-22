@@ -3,7 +3,7 @@ LedgerEntryChangeKey:
   properties:
     id:
       type: string
-      example: "17179869186:17179869186:12"
+      example: "24571865181"
     type:
       type: string
       enum:
@@ -14,6 +14,13 @@ LedgerEntryChange:
     - $ref: '#/components/schemas/LedgerEntryChangeKey'
     - type: object
       properties:
+        id:
+          type: string
+          example: "24571865181"
+        type:
+          type: string
+          enum:
+            - "ledger-entry-changes"
         attributes:
           type: object
           properties:

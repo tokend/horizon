@@ -86,9 +86,6 @@
           application/vnd.api+json:
             schema:
               type: object
-              required:
-                - data
-                - included
               properties:
                 data:
                   type: array
@@ -109,7 +106,7 @@
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/history?include=ledger_entry_changes&page[cursor]=1&page[limit]=15"
+                      example: "/v3/transactions?include=ledger_entry_changes&page[cursor]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:
