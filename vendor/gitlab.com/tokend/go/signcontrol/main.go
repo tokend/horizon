@@ -106,7 +106,8 @@ func checkV2(request *http.Request) (string, error) {
 	signature, err := httpsignatures.FromRequest(request)
 	if err != nil {
 		// TODO check for no such algorithm
-		return "", err
+		// making error castable to signcontrol w/o exposing httpsignatures impl
+		return "", &Error{err.Error()}
 	}
 	if ok := signature.IsValid(request); !ok {
 		return "", ErrSignature

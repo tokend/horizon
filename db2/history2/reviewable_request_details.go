@@ -26,6 +26,7 @@ type ReviewableRequestDetails struct {
 	UpdateSaleDetails   *UpdateSaleDetailsRequest   `json:"update_sale_details"`
 	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid"`
 	CreateAtomicSwap    *CreateAtomicSwapRequest    `json:"create_atomic_swap"`
+	CreatePoll          *CreatePollRequest          `json:"create_atomic_swap"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -145,4 +146,16 @@ type CreateAtomicSwapRequest struct {
 	BaseAmount     regources.Amount  `json:"base_amount"`
 	QuoteAsset     string            `json:"quote_asset"`
 	CreatorDetails regources.Details `json:"creator_details"`
+}
+
+//CreatePollRequest - request details
+type CreatePollRequest struct {
+	PermissionType           uint64            `json:"permission_type"`
+	NumberOfChoices          uint64            `json:"number_of_choices"`
+	PollData                 xdr.PollData      `json:"poll_data"`
+	CreatorDetails           regources.Details `json:"creator_details"`
+	VoteConfirmationRequired bool              `json:"vote_confirmation_required"`
+	ResultProviderID         string            `json:"result_provider_id"`
+	StartTime                time.Time         `json:"start_time"`
+	EndTime                  time.Time         `json:"end_time"`
 }
