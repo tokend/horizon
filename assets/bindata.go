@@ -83,7 +83,7 @@ func templatesAdmin_notificationHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/admin_notification.html", size: 11, mode: os.FileMode(420), modTime: time.Unix(1539263949, 0)}
+	info := bindataFileInfo{name: "templates/admin_notification.html", size: 11, mode: os.FileMode(420), modTime: time.Unix(1541425954, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -182,7 +182,6 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
-
 var _bintree = &bintree{nil, map[string]*bintree{
 	"templates": &bintree{nil, map[string]*bintree{
 		"admin_notification.html": &bintree{templatesAdmin_notificationHtml, map[string]*bintree{}},
@@ -235,3 +234,4 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
+
