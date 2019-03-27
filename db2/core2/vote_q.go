@@ -24,7 +24,7 @@ func NewVotesQ(repo *db2.Repo) VotesQ {
 
 // Page - returns Q with specified limit and offset params
 func (q VotesQ) Page(params db2.OffsetPageParams) VotesQ {
-	q.selector = params.ApplyTo(q.selector, "votes.poll_id", "votes.voter_id")
+	q.selector = params.ApplyTo(q.selector, "v.poll_id", "v.voter_id")
 	return q
 }
 
@@ -51,7 +51,7 @@ func (q VotesQ) Get() (*Vote, error) {
 			return nil, nil
 		}
 
-		return nil, errors.Wrap(err, "failed to load poll")
+		return nil, errors.Wrap(err, "failed to load vote")
 	}
 
 	return &result, nil
@@ -66,7 +66,7 @@ func (q VotesQ) Select() ([]Vote, error) {
 			return nil, nil
 		}
 
-		return nil, errors.Wrap(err, "failed to load polls")
+		return nil, errors.Wrap(err, "failed to load votes")
 	}
 
 	return result, nil

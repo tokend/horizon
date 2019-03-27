@@ -28,7 +28,7 @@ func NewPollsQ(repo *db2.Repo) PollsQ {
 
 // Page - returns Q with specified limit and offset params
 func (q PollsQ) Page(params db2.OffsetPageParams) PollsQ {
-	q.selector = params.ApplyTo(q.selector, "polls.id")
+	q.selector = params.ApplyTo(q.selector, "p.id")
 	return q
 }
 
