@@ -1,4 +1,4 @@
-LimitKey:
+LimitsKey:
   type: object
   required:
     - id
@@ -11,9 +11,9 @@ LimitKey:
       type: string
       enum:
         - "limits"
-Limit:
+Limits:
   allOf:
-  - $ref: '#/components/schemas/LimitKey'
+  - $ref: '#/components/schemas/LimitsKey'
   - type: object
     properties:
       relationships:

@@ -45,8 +45,8 @@ Account:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LimitKey'
-          external-system-ids:
+                  $ref: '#/components/schemas/LimitsKey'
+          external_system_ids: # FIXME have a trouble with name (Ids -> IDs)
             description: "Defines external system IDs binded to this account"
             type: object
             properties:
@@ -61,3 +61,11 @@ Account:
               data:
                 type: object
                 $ref: '#/components/schemas/AccountRoleKey'
+          fees:
+            description: "Defines fees applied to this account"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeeKey'

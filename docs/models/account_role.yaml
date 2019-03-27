@@ -33,6 +33,5 @@ AccountRole:
         required: [details]
         properties:
           details:
-            allOf:
-            - $ref: '#/components/schemas/Details'
-            - description: "free-form object to attach role details "
+            $ref: '#/components/schemas/Details'
+            description: "free-form object to attach role details "

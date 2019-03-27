@@ -99,7 +99,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/UpdateLimitsDetails'
+                      - $ref: '#/components/schemas/UpdateLimitsRequest'
       400:
         description: bad input parameter
         content:

@@ -16,7 +16,16 @@ ManageLimitsOp:
     properties:
       attributes:
         type: object
+        required: [action]
         properties:
+          action:
+            type: integer
+            format: xdr.ManageLimitsAction
+            description: |
+              * 0: "create",
+              * 1: "remove"
+            allOf:
+              - $ref: '#/components/schemas/Enum'
           create:
             nullable: true
             $ref: '#/components/schemas/ManageLimitsCreationOp'
@@ -38,10 +47,13 @@ ManageLimitsCreationOp:
     account_role:
       nullable: true
       type: integer
+      format: uint64
       example: 2
     account_address:
       type: string
     stats_op_type:
+      type: integer
+      format: xdr.StatsOpType
       description: |
         * 1: "payment_out"
         * 2: "withdraw"

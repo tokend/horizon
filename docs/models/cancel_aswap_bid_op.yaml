@@ -1,4 +1,4 @@
-CancelAswapBidOpKey:
+CancelAtomicSwapBidOpKey:
   type: object
   properties:
     id:
@@ -12,7 +12,14 @@ CancelAswapBidOpKey:
         - "operations-cancel-aswap-bid"
 
 
-CancelAswapBidOp:
+CancelAtomicSwapBidOp:
   allOf:
-  - $ref: '#/components/schemas/CancelAswapBidOpKey'
-
+  - $ref: '#/components/schemas/CancelAtomicSwapBidOpKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        properties:
+          bid:
+            type: object
+            $ref: '#/components/schemas/CancelAtomicSwapBidOpKey' # FIXME it's a kostyl for proper generation

@@ -20,6 +20,7 @@ ManageExternalSystemAccountIDPoolEntryOp:
           - action
         properties:
           action:
+            format: xdr.ManageExternalSystemAccountIdPoolEntryAction
             description: |
                 * 0: "create"
                 * 1: "remove"

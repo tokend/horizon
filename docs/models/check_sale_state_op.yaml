@@ -25,6 +25,7 @@ CheckSaleStateOp:
           - effect
         properties:
           effect:
+            format: xdr.CheckSaleStateEffect
             description: |
                 * 1: "canceled"
                 * 2: "closed"

@@ -32,17 +32,17 @@ OrderBookEntry:
             example: false
           price:
             type: string
-            format: float
+            format: Amount
             description: "defines the price of an offer"
             example: "33.050000"
           base_amount:
             type: string
-            format: float
+            format: Amount
             description: "defines the base amount of an offer"
             example: "33.050000"
           quote_amount:
             type: string
-            format: float
+            format: Amount
             description: "defines the quote amount of an offer"
             example: "1092.302500"
           created_at:

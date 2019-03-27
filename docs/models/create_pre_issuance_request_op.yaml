@@ -30,5 +30,7 @@ CreatePreIssuanceRequestOp:
             type: string
             format: Amount
             example: "123.123456"
+          creator_details:
+            $ref: '#/components/schemas/Details'
 
 

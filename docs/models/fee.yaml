@@ -63,6 +63,7 @@ FeeAppliedTo:
       example: "USD"
     subtype:
       type: integer
+      format: int64
       description: "Subtype of the fee"
       example: 1
     fee_type:
@@ -71,6 +72,10 @@ FeeAppliedTo:
       minimum: 0
       maximum: 7
       example: 2
+    fee_type_extended:
+      format: xdr.FeeType
+      allOf:
+        - $ref: '#/components/schemas/Enum'
     lower_bound:
       type: string
       description: "lower bound for the fee"

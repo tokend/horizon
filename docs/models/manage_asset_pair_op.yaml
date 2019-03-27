@@ -42,6 +42,7 @@ ManageAssetPairOp:
             example: "1.1"
           policies:
             type: integer
+            format: xdr.AssetPairPolicy
             nullable: true
             description: |
               Bit mask.

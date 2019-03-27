@@ -104,8 +104,8 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/UpdateLimitsDetails'
-                      - $ref: '#/components/schemas/UpdateLimitsDetails'
+                      - $ref: '#/components/schemas/UpdateLimitsRequest'
+                      - $ref: '#/components/schemas/UpdateLimitsRequest'
                 links:
                   type: object
                   description: "Provides links for pagination"

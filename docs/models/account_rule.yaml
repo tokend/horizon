@@ -21,9 +21,25 @@ AccountRule:
         required: [action, is_forbid,details,resource]
         properties:
           action:
-            type: string
-            description: "defines action to be performed over the specified resource"
-            example: "manage"
+            type: integer
+            format: xdr.AccountRuleAction
+            description: |
+                  defines an action to be performed over the specified resource
+                  * 1:  "any"
+                  * 2:  "create"
+                  * 3:  "create_for_other"
+                  * 4:  "create_with_tasks"
+                  * 5:  "manage"
+                  * 6:  "send"
+                  * 7:  "withdraw"
+                  * 8:  "receive_issuance"
+                  * 9:  "receive_payment"
+                  * 10: "receive_atomic_swap"
+                  * 11: "participate"
+                  * 12: "bind"
+                  * 13: "update_max_issuance"
+                  * 14: "check"
+                  * 15: "cancel"
           is_forbid:
             type: boolean
             description: "defines whether or not the specified action is forbidden"
@@ -32,5 +48,5 @@ AccountRule:
             $ref: '#/components/schemas/Details'
           resource:
             type: object
-            additionalProperties: true
+            format: xdr.AccountRuleResource
             description: "defines resource to which the rule is applied. TODO: add link to XDR"

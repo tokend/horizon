@@ -21,9 +21,9 @@ ManageSignerRuleOp:
         nullable: true
         properties:
           rules:
-            type: array
             items:
               $ref: '#/components/schemas/AccountRuleKey'
+            type: array
           role:
             $ref: '#/components/schemas/AccountRoleKey'
       attributes:
@@ -49,6 +49,7 @@ ManageSignerRuleOp:
           details:
             $ref: '#/components/schemas/Details'
           action:
+            format: xdr.ManageSignerRuleAction
             description: |
               * 1:  "any"
               * 2:  "create"
@@ -68,6 +69,7 @@ ManageSignerRuleOp:
               - $ref: '#/components/schemas/Enum'
           resource:
             type: object
+            format: xdr.SignerRuleResource
             additionalProperties: true
             description: "Free-form object"
             #todo add resource

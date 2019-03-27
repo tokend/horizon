@@ -18,10 +18,13 @@ Operation:
           type: object
           properties:
             tx:
+              type: object
               $ref: '#/components/schemas/TransactionKey'
             source:
+              type: object
               $ref: '#/components/schemas/AccountKey'
             details:
+              type: object
               $ref: '#/components/schemas/OperationDetailsKey'
         attributes:
           type: object

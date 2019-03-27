@@ -22,16 +22,13 @@ PayoutOp:
         properties:
           source_account:
             deprecated: true
-            allOf:
-            - $ref: '#/components/schemas/AccountKey'
+            $ref: '#/components/schemas/AccountKey'
           source_balance:
             deprecated: true
-            allOf:
-            - $ref: '#/components/schemas/BalanceKey'
+            $ref: '#/components/schemas/BalanceKey'
           asset:
             deprecated: true
-            allOf:
-            - $ref: '#/components/schemas/AssetKey'
+            $ref: '#/components/schemas/AssetKey'
       attributes:
         type: object
         deprecated: true

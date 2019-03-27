@@ -33,6 +33,7 @@ ManageAssetOp:
             example: "USD"
             description: "Asset to manage"
           action:
+            format: xdr.ManageAssetAction
             description: |
               * 0: "create_asset_creation_request"
               * 1: "create_asset_update_request"
@@ -43,6 +44,7 @@ ManageAssetOp:
             - $ref: '#/components/schemas/Enum'
           policies:
             type: integer
+            format: xdr.AssetPolicy
             nullable: true
             description: |
               Bit mask.

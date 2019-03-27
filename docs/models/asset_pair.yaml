@@ -43,11 +43,12 @@ AssetPair:
           - policies
         properties:
           price:
-            type: string
+            type: object
             example: "3.000000"
             format: Amount
             description: "defines an asset pair price as quote asset divided by base asset (i.e., amount of quote asset per 1 base asset)"
           policies:
-            type: object
-            decription: "Defines asset pair properties "
-            $ref: '#/components/schemas/AssetPairPolicyMask'
+            format: xdr.AssetPairPolicy
+            decription: "Bit mask whose bits defines asset pair properties "
+            allOf:
+            - $ref: '#/components/schemas/Mask'

@@ -31,7 +31,7 @@ Sale:
               example: "2012-11-01T22:08:41+00:00"
             sale_type:
               type: integer
-              format: int32
+              format: xdr.SaleType
               minimum: 1
               maximum: 3
               description: "type of sale"
@@ -44,10 +44,8 @@ Sale:
               description: "state of sale" # todo provide a list of sale states
               example: 2
             details:
-              type: string
-              format: "valid json"
-              description: "represents user-provided data"
-              example: "{ \"data\": \"some user data\"}"
+              $ref: '#/components/schemas/Details'
+              description: "free-form object to attach details to the sale"
         relationships:
           type: object
           properties:
@@ -99,6 +97,7 @@ SaleRequest:
             example: "2012-11-01T22:08:41+00:00"
           sale_type:
             type: integer
+            format: xdr.SaleType
             minimum: 1
             maximum: 3
             example: 1

@@ -33,6 +33,7 @@ ReviewRequestOp:
           - external_details
         properties:
           action:
+            format: xdr.ReviewRequestOpAction
             description: |
               * 1: "approve"
               * 2: "reject"

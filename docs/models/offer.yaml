@@ -58,19 +58,8 @@ Offer:
             format: Amount
             description: "defines the price of an offer"
           fee:
-            type: object
-            properties:
-              fixed:
-                type: string
-                description: "Fixed amount to pay"
-                example: "1.123456"
-                format: Amount
-              calculated_percent:
-                type: string
-                description: "Calculated percent"
-                example: "1.250500"
-                format: Amount
-      relashionships:
+            $ref: '#/components/schemas/Fee'
+      relationships:
         type: object
         required:
           - owner

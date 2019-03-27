@@ -39,6 +39,7 @@ ManageAccountRuleOp:
             type: boolean
             description: "" # todo add description
           action:
+            format: xdr.AccountRuleAction
             description: |
                 * 1:  "any"
                 * 2:  "create"
@@ -61,6 +62,7 @@ ManageAccountRuleOp:
             $ref: '#/components/schemas/Details'
           resource:
             type: object
+            format: xdr.AccountRuleResource
             additionalProperties: true
             description: "Free-form object"
               #todo add resource

@@ -65,9 +65,10 @@ Asset:
             example: "123.000123"
             format: Amount
           policies:
-            type: object
-            decription: "Defines properties of an asset"
-            $ref: '#/components/schemas/AssetPolicyMask'
+            format: xdr.AssetPolicy
+            decription: "Bit mask whose bits defines asset properties "
+            allOf:
+            - $ref: '#/components/schemas/Mask'
           trailing_digits:
             type: integer
             format: int32
@@ -81,9 +82,8 @@ Asset:
             description: "Numeric type of asset"
             example: 2
           details:
-            allOf:
-            - $ref: '#/components/schemas/Details'
-            - description: "free-form object to attach asset details such as a link to icon, short description, etc."
+            $ref: '#/components/schemas/Details'
+            description: "free-form object to attach asset details such as a link to icon, short description, etc."
 
 QuoteAssetKey:
   type: object
@@ -114,4 +114,16 @@ QuoteAsset:
           properties:
             price:
               type: integer
-              format: int64
+              format: Amount
+            current_cap:
+              type: integer
+              format: Amount
+            total_current_cap:
+              type: integer
+              format: Amount
+            hard_cap:
+              type: integer
+              format: Amount
+            soft_cap:
+              type: integer
+              format: Amount

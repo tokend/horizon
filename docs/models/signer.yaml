@@ -29,9 +29,8 @@ Signer:
             format: uint32
             description: "identity of the signer (signatures of signers with same identities are considered as one signature with max weight)"
           details:
-            allOf:
-            - $ref: '#/components/schemas/Details'
-            - description: "free-form object to attach details to the signer"
+            $ref: '#/components/schemas/Details'
+            description: "free-form object to attach details to the signer"
       relationships:
         type: object
         required:

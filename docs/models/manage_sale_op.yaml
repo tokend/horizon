@@ -24,6 +24,7 @@ ManageSaleOp:
             type: integer
             description: "ID of the sale to manage"
           action:
+            format: xdr.ManageSaleAction
             description: |
                 * 1: "create_update_details_request"
                 * 2: "cancel"
