@@ -212,7 +212,6 @@ func newWithdrawalRequest(id int64, details history2.CreateWithdrawalRequest) *r
 }
 
 func newCreatePollRequest(id int64, details history2.CreatePollRequest) *regources.CreatePollRequest {
-	resultProvider := NewAccountKey(details.ResultProviderID).AsRelation()
 	return &regources.CreatePollRequest{
 		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsCreatePoll),
 		Attributes: regources.CreatePollRequestAttrs{
@@ -227,7 +226,7 @@ func newCreatePollRequest(id int64, details history2.CreatePollRequest) *regourc
 			CreatorDetails:           details.CreatorDetails,
 		},
 		Relationships: regources.CreatePollRequestRelations{
-			ResultProvider: *resultProvider,
+			ResultProvider: NewAccountKey(details.ResultProviderID).AsRelation(),
 		},
 	}
 }

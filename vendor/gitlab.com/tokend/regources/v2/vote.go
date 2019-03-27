@@ -1,5 +1,13 @@
 package regources
 
+import (
+	"database/sql/driver"
+	"encoding/json"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
+)
+
 //VoteResponse - response for vote handler
 type VoteResponse struct {
 	Data     Vote     `json:"data"`
@@ -20,10 +28,45 @@ type Vote struct {
 }
 
 type VoteAttrs struct {
-	Choices []uint64 `json:"choices"`
+	VoteData VoteData `json:"vote_data"`
 }
 
 type VoteRelations struct {
-	Voter Relation `json:"voter"`
-	Poll  Relation `json:"poll"`
+	Voter *Relation `json:"voter"`
+	Poll  *Relation `json:"poll"`
+}
+
+type VoteData struct {
+	Type         xdr.PollType `json:"type"`
+	SingleChoice uint64       `json:"single_choice"`
+}
+
+//Value - implements db driver method for auto marshal
+func (r VoteData) Value() (driver.Value, error) {
+	result, err := json.Marshal(r)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal vote data")
+	}
+
+	return result, nil
+}
+
+//Scan - implements db driver method for auto unmarshal
+func (r *VoteData) Scan(src interface{}) error {
+	var data []byte
+	switch rawData := src.(type) {
+	case []byte:
+		data = rawData
+	case string:
+		data = []byte(rawData)
+	default:
+		return errors.New("Unexpected type for jsonb")
+	}
+
+	err := json.Unmarshal(data, r)
+	if err != nil {
+		return errors.Wrap(err, "failed to unmarshal vote data")
+	}
+
+	return nil
 }

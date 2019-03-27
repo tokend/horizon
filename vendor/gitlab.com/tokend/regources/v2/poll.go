@@ -1,8 +1,11 @@
 package regources
 
 import (
+	"database/sql/driver"
 	"encoding/json"
 	"time"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"gitlab.com/tokend/go/xdr"
 )
@@ -51,15 +54,15 @@ type Poll struct {
 }
 
 type PollAttrs struct {
-	PollType                 xdr.PollType `json:"poll_type"`
-	PermissionType           uint64       `json:"permission_type"`
-	NumberOfChoices          uint64       `json:"number_of_choices"`
-	StartTime                time.Time    `json:"start_time"`
-	EndTime                  time.Time    `json:"end_time"`
-	VoteConfirmationRequired bool         `json:"vote_confirmation_required"`
-	Details                  Details      `json:"details"`
-	PollState                PollState    `json:"poll_state"`
-	VotesCount               []VoteCount  `json:"votes_count"`
+	PollData                 PollData    `json:"poll_data"`
+	PermissionType           uint64      `json:"permission_type"`
+	NumberOfChoices          uint64      `json:"number_of_choices"`
+	StartTime                time.Time   `json:"start_time"`
+	EndTime                  time.Time   `json:"end_time"`
+	VoteConfirmationRequired bool        `json:"vote_confirmation_required"`
+	Details                  Details     `json:"details"`
+	PollState                PollState   `json:"poll_state"`
+	VotesCount               []VoteCount `json:"votes_count"`
 }
 
 type VoteCount struct {
@@ -68,10 +71,40 @@ type VoteCount struct {
 }
 
 type PollRelations struct {
-	Owner          Relation           `json:"owner"`
-	ResultProvider Relation           `json:"result_provider"`
-	Votes          RelationCollection `json:"votes"`
+	Owner          *Relation           `json:"owner"`
+	ResultProvider *Relation           `json:"result_provider"`
+	Votes          *RelationCollection `json:"votes"`
 }
 type PollData struct {
-	Type xdr.PollType
+	Type xdr.PollType `json:"type"`
+}
+
+//Value - implements db driver method for auto marshal
+func (r PollData) Value() (driver.Value, error) {
+	result, err := json.Marshal(r)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal poll data")
+	}
+
+	return result, nil
+}
+
+//Scan - implements db driver method for auto unmarshal
+func (r *PollData) Scan(src interface{}) error {
+	var data []byte
+	switch rawData := src.(type) {
+	case []byte:
+		data = rawData
+	case string:
+		data = []byte(rawData)
+	default:
+		return errors.New("Unexpected type for jsonb")
+	}
+
+	err := json.Unmarshal(data, r)
+	if err != nil {
+		return errors.Wrap(err, "failed to unmarshal poll data")
+	}
+
+	return nil
 }

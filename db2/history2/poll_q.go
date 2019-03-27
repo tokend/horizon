@@ -23,7 +23,7 @@ func NewPollsQ(repo *db2.Repo) PollsQ {
 			"p.id",
 			"p.permission_type",
 			"p.number_of_choices",
-			"p.type",
+			"p.data",
 			"p.start_time",
 			"p.end_time",
 			"p.owner_id",
@@ -91,7 +91,7 @@ func (q PollsQ) FilterByMinEndTime(time time.Time) PollsQ {
 
 // FilterByPollType - returns q with filter by type
 func (q PollsQ) FilterByPollType(pollType uint64) PollsQ {
-	q.selector = q.selector.Where("p.type = ?", pollType)
+	q.selector = q.selector.Where("data->'type'->>'value' = ?", pollType)
 	return q
 }
 

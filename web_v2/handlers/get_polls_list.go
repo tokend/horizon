@@ -33,7 +33,7 @@ func GetPollList(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.GetPollList(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get poll list", logan.F{
+		ctx.Log(r).WithError(err).Error("failed to get poll list ", logan.F{
 			"request": request,
 		})
 		ape.RenderErr(w, problems.InternalError())

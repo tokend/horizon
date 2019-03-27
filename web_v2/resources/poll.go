@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/regources/v2"
 )
@@ -19,19 +20,19 @@ func NewPoll(record history2.Poll, votes []history2.Vote) regources.Poll {
 			StartTime:                record.StartTime,
 			EndTime:                  record.EndTime,
 			Details:                  record.Details,
-			PollType:                 record.Data.Type,
+			PollData:                 record.Data,
 			PollState:                record.State,
 			VotesCount:               VoteCount(votes),
 		},
 		Relationships: regources.PollRelations{
-			ResultProvider: *NewAccountKey(record.ResultProviderID).AsRelation(),
-			Owner:          *NewAccountKey(record.OwnerID).AsRelation(),
+			ResultProvider: NewAccountKey(record.ResultProviderID).AsRelation(),
+			Owner:          NewAccountKey(record.OwnerID).AsRelation(),
 			Votes:          VotesAsRelations(votes),
 		},
 	}
 }
 
-func VotesAsRelations(votes []history2.Vote) regources.RelationCollection {
+func VotesAsRelations(votes []history2.Vote) *regources.RelationCollection {
 	keys := make([]regources.Key, 0, len(votes))
 	for _, vote := range votes {
 		keys = append(keys, regources.Key{
@@ -40,7 +41,7 @@ func VotesAsRelations(votes []history2.Vote) regources.RelationCollection {
 		})
 	}
 
-	return regources.RelationCollection{
+	return &regources.RelationCollection{
 		Data: keys,
 	}
 }
@@ -48,10 +49,13 @@ func VotesAsRelations(votes []history2.Vote) regources.RelationCollection {
 func VoteCount(votes []history2.Vote) []regources.VoteCount {
 	voteCount := make([]regources.VoteCount, 0)
 
-	helperMap := make(map[int64]uint32)
+	helperMap := make(map[uint64]uint32)
 	for _, vote := range votes {
-		for _, choice := range vote.Choices {
-			helperMap[choice]++
+		switch vote.VoteData.Type {
+		case xdr.PollTypeSingleChoice:
+			helperMap[vote.VoteData.SingleChoice]++
+		default:
+			panic("Unexpected vote data type (poll type)")
 		}
 	}
 

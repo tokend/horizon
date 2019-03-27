@@ -87,10 +87,12 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 func (c *pollHandler) convertPoll(raw xdr.PollEntry) (*history.Poll, error) {
 
 	return &history.Poll{
-		ID:                       int64(raw.Id),
-		OwnerID:                  raw.OwnerId.Address(),
-		ResultProviderID:         raw.ResultProviderId.Address(),
-		Data:                     raw.Data,
+		ID:               int64(raw.Id),
+		OwnerID:          raw.OwnerId.Address(),
+		ResultProviderID: raw.ResultProviderId.Address(),
+		Data: regources.PollData{
+			Type: raw.Data.Type,
+		},
 		NumberOfChoices:          uint64(raw.NumberOfChoices),
 		PermissionType:           uint64(raw.PermissionType),
 		VoteConfirmationRequired: raw.VoteConfirmationRequired,
@@ -98,6 +100,5 @@ func (c *pollHandler) convertPoll(raw xdr.PollEntry) (*history.Poll, error) {
 		EndTime:                  time.Unix(int64(raw.EndTime), 0).UTC(),
 		Details:                  internal.MarshalCustomDetails(raw.Details),
 		State:                    regources.PollStateOpen,
-		Type:                     raw.Data.Type,
 	}, nil
 }

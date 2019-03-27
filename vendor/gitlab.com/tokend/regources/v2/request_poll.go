@@ -24,5 +24,5 @@ type CreatePollRequestAttrs struct {
 
 // CreatePollRequestRelations - relationships of the `issuance` reviewable request
 type CreatePollRequestRelations struct {
-	ResultProvider Relation `json:"result_provider"`
+	ResultProvider *Relation `json:"result_provider"`
 }

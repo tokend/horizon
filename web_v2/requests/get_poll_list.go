@@ -81,8 +81,15 @@ func NewGetPollList(r *http.Request) (*GetPollList, error) {
 		return nil, err
 	}
 
-	return &GetPollList{
+	request := GetPollList{
 		base:       b,
 		PageParams: pageParams,
-	}, nil
+	}
+
+	err = b.populateFilters(&request.Filters)
+	if err != nil {
+		return nil, err
+	}
+
+	return &request, nil
 }

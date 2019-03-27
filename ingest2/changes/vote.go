@@ -1,7 +1,7 @@
 package changes
 
 import (
-	"github.com/lib/pq"
+	"gitlab.com/tokend/regources/v2"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -84,15 +84,12 @@ func (c *voteHandler) Updated(lc ledgerChange) error {
 }
 
 func (c *voteHandler) convertVote(raw xdr.VoteEntry) (*history.Vote, error) {
-	choices := make(pq.Int64Array, 0)
-	pollType := raw.Data.PollType
-	switch pollType {
-	case xdr.PollTypeSingleChoice:
-		choices = append(choices, int64(raw.Data.MustSingle().Choice))
-	}
 	return &history.Vote{
 		VoterID: raw.VoterId.Address(),
 		PollID:  int64(raw.PollId),
-		Choices: choices,
+		VoteData: regources.VoteData{
+			Type:         raw.Data.PollType,
+			SingleChoice: uint64(raw.Data.MustSingle().Choice),
+		},
 	}, nil
 }

@@ -20,7 +20,7 @@ func NewVotesQ(repo *db2.Repo) VotesQ {
 		selector: sq.Select(
 			"v.poll_id",
 			"v.voter_id",
-			"v.choices",
+			"v.data",
 		).From("votes v"),
 	}
 }

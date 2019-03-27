@@ -19,8 +19,8 @@ type ManageVoteOpAttrs struct {
 }
 
 type CreateVoteOp struct {
-	PollID   int64        `json:"poll_id"`
-	VoteData xdr.VoteData `json:"vote_data"`
+	PollID   int64    `json:"poll_id"`
+	VoteData VoteData `json:"vote_data"`
 }
 
 type RemoveVoteOp struct {
@@ -29,7 +29,7 @@ type RemoveVoteOp struct {
 
 //ManageVoteOpAttrs - relationships of ManageVoteOp
 type ManageVoteOpRelations struct {
-	Poll           Relation
-	Voter          Relation
+	Poll           *Relation
+	Voter          *Relation
 	ResultProvider *Relation
 }

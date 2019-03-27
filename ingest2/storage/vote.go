@@ -27,7 +27,7 @@ func (q *Vote) Insert(vote history2.Vote) error {
 			"voter_id", "poll_id", "choices",
 		).
 		Values(
-			vote.VoterID, vote.PollID, vote.Choices,
+			vote.VoterID, vote.PollID, vote.VoteData,
 		)
 
 	_, err := q.repo.Exec(sql)
@@ -44,7 +44,7 @@ func (q *Vote) Insert(vote history2.Vote) error {
 // Update - updates existing vote
 func (q *Vote) Update(vote history2.Vote) error {
 	sql := sq.Update("votes").SetMap(map[string]interface{}{
-		"choices": vote.Choices,
+		"choices": vote.VoteData,
 	}).Where("voter_id = ?", vote.VoterID).Where("poll_id = ?", vote.PollID)
 
 	_, err := q.repo.Exec(sql)

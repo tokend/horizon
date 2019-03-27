@@ -13,18 +13,14 @@ func NewVoteKey(voterID string) regources.Key {
 }
 
 func NewVote(record history2.Vote) regources.Vote {
-	choices := make([]uint64, len(record.Choices))
-	for _, c := range record.Choices {
-		choices = append(choices, uint64(c))
-	}
 	return regources.Vote{
 		Key: NewVoteKey(record.VoterID),
 		Attributes: regources.VoteAttrs{
-			Choices: choices,
+			VoteData: record.VoteData,
 		},
 		Relationships: regources.VoteRelations{
-			Voter: *NewAccountKey(record.VoterID).AsRelation(),
-			Poll:  *NewPollKey(record.PollID).AsRelation(),
+			Voter: NewAccountKey(record.VoterID).AsRelation(),
+			Poll:  NewPollKey(record.PollID).AsRelation(),
 		},
 	}
 }
