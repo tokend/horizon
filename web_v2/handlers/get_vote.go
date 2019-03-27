@@ -28,7 +28,7 @@ func GetVote(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.getVote(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get poll", logan.F{
+		ctx.Log(r).WithError(err).Error("failed to get vote", logan.F{
 			"request": request,
 		})
 		ape.RenderErr(w, problems.InternalError())
@@ -56,7 +56,7 @@ func (h *getVoteHandler) getVote(request *requests.GetVote) (*regources.VoteResp
 		FilterByVoter(request.VoterID).
 		Get()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get poll")
+		return nil, errors.Wrap(err, "failed to get vote")
 	}
 
 	if record == nil {

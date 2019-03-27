@@ -37,7 +37,7 @@ func NewPollsQ(repo *db2.Repo) PollsQ {
 
 // FilterByID - returns q with filter by poll ID
 func (q PollsQ) FilterByID(id int64) PollsQ {
-	q.selector = q.selector.Where("polls.id = ?", id)
+	q.selector = q.selector.Where("p.id = ?", id)
 	return q
 }
 
@@ -49,67 +49,67 @@ func (q PollsQ) GetByID(id int64) (*Poll, error) {
 
 // FilterByOwner - returns q with filter by Owner
 func (q PollsQ) FilterByOwner(ownerID string) PollsQ {
-	q.selector = q.selector.Where("polls.owner_id = ?", ownerID)
+	q.selector = q.selector.Where("p.owner_id = ?", ownerID)
 	return q
 }
 
 // FilterByResultProvider - returns q with filter by Owner
 func (q PollsQ) FilterByResultProvider(resultProviderID string) PollsQ {
-	q.selector = q.selector.Where("polls.result_provider_id = ?", resultProviderID)
+	q.selector = q.selector.Where("p.result_provider_id = ?", resultProviderID)
 	return q
 }
 
 // FilterByPermissionType - returns q with filter by BaseAsset
 func (q PollsQ) FilterByPermissionType(permissionType uint64) PollsQ {
-	q.selector = q.selector.Where("polls.permission_type = ?", permissionType)
+	q.selector = q.selector.Where("p.permission_type = ?", permissionType)
 	return q
 }
 
 // FilterByMaxEndTime - returns q with filter by max end time
 func (q PollsQ) FilterByMaxEndTime(time time.Time) PollsQ {
-	q.selector = q.selector.Where("polls.end_time <= ?", time)
+	q.selector = q.selector.Where("p.end_time <= ?", time)
 	return q
 }
 
 // FilterByMaxStartTime - returns q with filter by start_time
 func (q PollsQ) FilterByMaxStartTime(time time.Time) PollsQ {
-	q.selector = q.selector.Where("polls.start_time <= ?", time)
+	q.selector = q.selector.Where("p.start_time <= ?", time)
 	return q
 }
 
 // FilterByMinStartTime - returns q with filter by start_time
 func (q PollsQ) FilterByMinStartTime(time time.Time) PollsQ {
-	q.selector = q.selector.Where("polls.start_time >= ?", time)
+	q.selector = q.selector.Where("p.start_time >= ?", time)
 	return q
 }
 
 // FilterByMinEndTime - returns q with filter by end_time
 func (q PollsQ) FilterByMinEndTime(time time.Time) PollsQ {
-	q.selector = q.selector.Where("polls.end_time >= ?", time)
+	q.selector = q.selector.Where("p.end_time >= ?", time)
 	return q
 }
 
 // FilterByPollType - returns q with filter by type
 func (q PollsQ) FilterByPollType(pollType uint64) PollsQ {
-	q.selector = q.selector.Where("polls.type = ?", pollType)
+	q.selector = q.selector.Where("p.type = ?", pollType)
 	return q
 }
 
 // FilterByPollState - returns q with filter by type
 func (q PollsQ) FilterByState(state int32) PollsQ {
-	q.selector = q.selector.Where("polls.state = ?", state)
+	q.selector = q.selector.Where("p.state = ?", state)
 	return q
 }
 
 // FilterByVoteConfirmation- returns q with filter by type
 func (q PollsQ) FilterByVoteConfirmation(voteConfirmation bool) PollsQ {
-	q.selector = q.selector.Where("polls.vote_confirmation_required = ?", voteConfirmation)
+	q.selector = q.selector.Where("p.vote_confirmation_required = ?", voteConfirmation)
 	return q
 }
 
 // Page - returns Q with specified limit and offset params
 func (q PollsQ) Page(params db2.OffsetPageParams) PollsQ {
-	q.selector = params.ApplyTo(q.selector, "polls.id")
+	q.selector = params.ApplyTo(q.selector, "p.id")
 	return q
 }
 
