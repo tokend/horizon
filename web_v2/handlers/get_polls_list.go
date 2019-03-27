@@ -33,7 +33,7 @@ func GetPollList(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.GetPollList(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get sale list", logan.F{
+		ctx.Log(r).WithError(err).Error("failed to get poll list", logan.F{
 			"request": request,
 		})
 		ape.RenderErr(w, problems.InternalError())
@@ -95,7 +95,7 @@ func (h *getPollListHandler) GetPollList(request *requests.GetPollList) (*regour
 
 	historyPolls, err := q.Page(*request.PageParams).Select()
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get asset list")
+		return nil, errors.Wrap(err, "Failed to get poll list ")
 	}
 
 	response := &regources.PollsResponse{

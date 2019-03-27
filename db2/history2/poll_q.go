@@ -24,7 +24,6 @@ func NewPollsQ(repo *db2.Repo) PollsQ {
 			"p.permission_type",
 			"p.number_of_choices",
 			"p.type",
-			"p.data",
 			"p.start_time",
 			"p.end_time",
 			"p.owner_id",
