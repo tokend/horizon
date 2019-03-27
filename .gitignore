@@ -2,7 +2,3 @@
 /_vendor-*
 /bin/*
 config.*.yaml
-
-docs/models/generated/
-
-docs/regources_generated/
