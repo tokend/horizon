@@ -10,7 +10,7 @@ create table polls (
   end_time     TIMESTAMP without time zone NOT NULL,
   owner_id varchar(56) not null,
   result_provider_id varchar(56) not null,
-  vote_confirmation_required int not null,
+  vote_confirmation_required boolean not null,
   state int not null,
   details text not null default '{}',
   primary key (id)
