@@ -2,6 +2,3 @@
 /_vendor-*
 /bin/*
 config.*.yaml
-
-/docs/*.py
-/docs/*.jar
