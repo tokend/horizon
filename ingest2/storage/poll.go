@@ -23,14 +23,15 @@ func NewPoll(repo *db2.Repo) *Poll {
 
 // Insert - inserts new poll
 func (q *Poll) Insert(poll history2.Poll) error {
+
 	sql := sq.Insert("polls").
 		Columns(
-			"id", "permission_type", "number_of_choices", "type", "data", "start_time",
+			"id", "permission_type", "number_of_choices", "type", "start_time",
 			"end_time", "owner_id", "result_provider_id",
 			"vote_confirmation_required", "details", "state",
 		).
 		Values(
-			poll.ID, poll.PermissionType, poll.NumberOfChoices, poll.Type, poll.Data, poll.StartTime,
+			poll.ID, poll.PermissionType, poll.NumberOfChoices, poll.Type, poll.StartTime,
 			poll.EndTime, poll.OwnerID, poll.ResultProviderID, poll.VoteConfirmationRequired,
 			poll.Details, poll.State,
 		)
@@ -49,7 +50,6 @@ func (q *Poll) Update(poll history2.Poll) error {
 		"permission_type":            poll.PermissionType,
 		"number_of_choices":          poll.NumberOfChoices,
 		"type":                       poll.Type,
-		"data":                       poll.Data,
 		"start_time":                 poll.StartTime,
 		"end_time":                   poll.EndTime,
 		"owner_id":                   poll.OwnerID,

@@ -6,7 +6,6 @@ create table polls (
   permission_type bigint not null,
   number_of_choices bigint not null check ( number_of_choices > 0 ),
   type int not null,
-  data text not null,
   start_time   TIMESTAMP without time zone NOT NULL,
   end_time     TIMESTAMP without time zone NOT NULL,
   owner_id varchar(56) not null,
