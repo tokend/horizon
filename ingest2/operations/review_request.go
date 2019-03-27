@@ -63,6 +63,7 @@ func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler
 			xdr.ReviewableRequestTypeCreateInvoice:       &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeManageContract:      &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &stubProvider,
+			xdr.ReviewableRequestTypeCreatePoll:          &stubProvider,
 		},
 	}
 }

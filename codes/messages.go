@@ -273,6 +273,19 @@ var messages = map[string]string{
 	"op_number_of_admins_exceeds_license":               "Number of admins violates license restriction. Please contact enterprise@distributedlab.com",
 	"op_account_not_found":                              "There is no account with such id",
 	"op_role_not_found":                                 "There is no role with such id",
+	"op_pole_not_ready":                                 "Cannot close ongoing poll",
+	"op_not_authorized_to_close_poll":                   "Only ResultProvider can close poll",
+	"op_create_poll_tasks_not_found":                    "There is no key value for create poll tasks",
+	"op_result_provider_not_found":                      "There is no account with such id",
+	"op_invalid_dates":                                  "Start time of the poll is after end time",
+	"op_invalid_start_time":                             "Start time of the poll is in the past",
+	"op_invalid_vote":                                   "Provided choice is not valid",
+	"op_poll_not_found":                                 "Poll with such ID does not exist",
+	"op_vote_exists":                                    "Voter has already submitted his choice for poll",
+	"op_poll_type_mistmatched":                          "Type of the poll and poll type specified in vote are mismatched",
+	"op_poll_not_started":                               "Poll has not started yet",
+	"op_poll_ended":                                     "Poll has ended, no votes can be accepted",
+	"op_vote_not_found":                                 "Vote to remove cannot be found",
 }
 
 func getMessage(rawCode string) string {
