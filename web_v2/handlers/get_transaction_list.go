@@ -17,6 +17,7 @@ import (
 func GetTransactions(w http.ResponseWriter, r *http.Request) {
 	historyRepo := ctx.HistoryRepo(r)
 	handler := getTransactionsHandler{
+		LedgerQ:        *history2.NewLedgerQ(historyRepo),
 		LedgerChangesQ: history2.NewLedgerChangesQ(historyRepo),
 		TransactionsQ:  history2.NewTransactionsQ(historyRepo),
 		Log:            ctx.Log(r),
@@ -45,7 +46,22 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 type getTransactionsHandler struct {
 	TransactionsQ  history2.TransactionsQ
 	LedgerChangesQ history2.LedgerChangesQ
+	LedgerQ        history2.LedgerQ
 	Log            *logan.Entry
+}
+
+func (h *getTransactionsHandler) getLatestLedger() (*history2.Ledger, error) {
+	sequence, err := h.LedgerQ.GetLatestLedgerSeq()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load latest ledger sequence")
+	}
+
+	ledger, err := h.LedgerQ.GetBySequence(sequence)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load ledger by sequence")
+	}
+
+	return ledger, nil
 }
 
 // GetTransactions returns the list of transactions with related resources
@@ -113,6 +129,16 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 		result.Links = request.GetCursorLinks(*request.PageParams, result.Data[len(result.Data)-1].ID)
 	} else {
 		result.Links = request.GetCursorLinks(*request.PageParams, "")
+	}
+
+	latestLedger, err := h.getLatestLedger()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load latest ledger")
+	}
+
+	result.Meta = regources.TransactionResponseMeta{
+		LatestLedgerCloseTime: latestLedger.ClosedAt,
+		LatestLedgerSequence: latestLedger.Sequence,
 	}
 
 	return &result, nil
