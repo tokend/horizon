@@ -37,7 +37,7 @@ func (h *manageCreatePollRequestOpHandler) Details(op rawOperation, opRes xdr.Op
 		createPollRequest := manageCreatePollRequestOp.Data.MustCreateData().Request
 		createDetails := &history2.CreatePollRequestDetails{
 			AllTasks:                 allTasks,
-			PollType:                 manageCreatePollRequestOp.Data.MustCreateData().Request.Data.Type,
+			PollType:                 createPollRequest.Data.Type,
 			VoteConfirmationRequired: createPollRequest.VoteConfirmationRequired,
 			ResultProviderID:         createPollRequest.ResultProviderId.Address(),
 			PermissionType:           uint64(createPollRequest.PermissionType),
