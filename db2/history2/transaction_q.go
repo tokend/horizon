@@ -1,7 +1,6 @@
 package history2
 
 import (
-	"fmt"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
@@ -89,9 +88,6 @@ func (q TransactionsQ) Get() (*Transaction, error) {
 //Select - selects slice from the db, if no transactions found - returns nil, nil
 func (q TransactionsQ) Select() ([]Transaction, error) {
 	var result []Transaction
-
-	fmt.Println("Result:")
-	fmt.Println(q.selector.ToSql())
 
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
