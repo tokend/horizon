@@ -104,8 +104,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/offers/{id}", handlers.GetOffer)
 	m.Get("/v3/offers", handlers.GetOfferList)
 	m.Get("/v3/public_key_entries/{id}", handlers.GetPublicKeyEntry)
-
-	m.Get("/v3/ledger", handlers.GetTransactions)
+	m.Get("/v3/transactions", handlers.GetTransactions)
 
 	// reviewable requests
 	m.Get("/v3/requests", handlers.GetRequests)
