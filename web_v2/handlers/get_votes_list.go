@@ -21,6 +21,7 @@ func GetVoteList(w http.ResponseWriter, r *http.Request) {
 
 	handler := getVoteListHandler{
 		VotesQ: history2.NewVotesQ(historyRepo),
+		PollsQ: history2.NewPollsQ(historyRepo),
 		Log:    ctx.Log(r),
 	}
 
