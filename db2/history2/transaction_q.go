@@ -86,7 +86,7 @@ func (q TransactionsQ) Get() (*Transaction, error) {
 	return &result, nil
 }
 
-//Select - selects slice from the db, if no sales found - returns nil, nil
+//Select - selects slice from the db, if no transactions found - returns nil, nil
 func (q TransactionsQ) Select() ([]Transaction, error) {
 	var result []Transaction
 
