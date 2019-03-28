@@ -12,6 +12,7 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/UpdateSaleDetailsDetails'
     - $ref: '#/components/schemas/CreateAtomicSwapBidDetails'
     - $ref: '#/components/schemas/CreateAtomicSwapDetails'
+    - $ref: '#/components/schemas/CreatePollDetails'
 
 CreateAssetDetails:
   allOf:
@@ -491,3 +492,62 @@ CreateAtomicSwapDetails:
               description: "Amount in base asset to perform atomic swap on"
               example: "100.000001"
               format: Amount
+
+CreatePollDetails:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "12"
+    type:
+      type: string
+      enum:
+        - "request-details-create-poll"
+    relationships:
+      type: object
+      properties:
+        result_provider:
+          type: object
+          description: "account that is able to finish the poll or confirm votes"
+          properties:
+            data:
+              $ref: '#/components/schemas/AccountKey'
+    attributes:
+      type: object
+      properties:
+        permission_type:
+          type: int
+          format: uint64
+          example: 4
+          description: "is used to restrict using of poll through rules"
+        number_of_choices:
+          type: integer
+          format: uint64
+          example: 2
+          description: "count of allowed choices"
+        start_time:
+          type: string
+          format: date-time
+          example: "2012-11-01T22:08:41Z"
+          description: "the date from which voting in the poll will be allowed"
+        end_time:
+          type: string
+          format: date-time
+          example: "2012-11-01T22:08:41Z"
+          description: "the date until which voting in the poll will be allowed"
+        vote_confirmation_required:
+          type: boolean
+          example: true
+          description: "defines if result provider is required to participate in poll voting"
+        poll_type:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "single-choice"
+            value:
+              type: integer
+              format: uint64
+              example: 0
+        creator_details:
+          $ref: '#/components/schemas/Details'
