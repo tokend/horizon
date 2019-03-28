@@ -1,4 +1,12 @@
 # Changelog
+## Unreleased
+
+### Added
+* `CreatePollRequest` type to represent reviewable request for poll creation
+* `Poll`, `Vote` types
+* `PollResponse`, `PollsResponse` types to handle `/polls/{id}` and `/polls`
+* `VoteResponse`, `VotesResponse` types to handle `/polls/{id}/relationships/votes/{voter}` and `/polls/{id}/relationships/votes`
+
 
 ## 3.0.2
 

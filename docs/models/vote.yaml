@@ -14,6 +14,7 @@ Vote:
   allOf:
     - $ref: '#/components/schemas/VoteKey'
     - type: object
+      required: [relationships, attributes]
       properties:
         id:
           type: string
@@ -41,11 +42,10 @@ Vote:
           type: object
           properties:
             vote_data:
+              type: object
               oneOf:
                 - $ref: '#/components/schemas/SingleChoice'
-                - $ref: '#/components/schemas/MultipleChoice'
-              discriminator:
-                propertyName: poll_type
+#                - $ref: '#/components/schemas/MultipleChoice'
 
 
 SingleChoice:
