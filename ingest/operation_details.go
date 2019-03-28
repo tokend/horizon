@@ -2,6 +2,7 @@ package ingest
 
 import (
 	"fmt"
+	regources "gitlab.com/tokend/regources/v2/generated"
 
 	"encoding/hex"
 	"encoding/json"
@@ -9,7 +10,6 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/regources"
 )
 
 // operationDetails returns the details regarding the current operation, suitable

@@ -7,38 +7,38 @@ import (
 
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/v2/generated"
 )
 
 func newManageAccountRole(id int64, details history2.ManageAccountRoleDetails,
-) *regources.ManageAccountRole {
+) *regources.ManageAccountRoleOp {
 	switch details.Action {
 	case xdr.ManageAccountRoleActionCreate:
-		return &regources.ManageAccountRole{
-			Key: regources.NewKeyInt64(id, regources.TypeCreateAccountRole),
-			Attributes: &regources.ManageAccountRoleAttrs{
+		return &regources.ManageAccountRoleOp{
+			Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_ACCOUNT_ROLE),
+			Attributes: &regources.ManageAccountRoleOpAttributes{
 				Details: details.CreateDetails.Details,
 			},
-			Relationships: regources.ManageAccountRoleRelation{
-				Rules: idsAsRelations(details.CreateDetails.RuleIDs, regources.TypeAccountRules),
+			Relationships: regources.ManageAccountRoleOpRelationships{
+				Rules: idsAsRelations(details.CreateDetails.RuleIDs, regources.ACCOUNT_RULES),
 				Role:  NewAccountRoleKey(details.RoleID).AsRelation(),
 			},
 		}
 	case xdr.ManageAccountRoleActionUpdate:
-		return &regources.ManageAccountRole{
-			Key: regources.NewKeyInt64(id, regources.TypeUpdateAccountRole),
-			Attributes: &regources.ManageAccountRoleAttrs{
+		return &regources.ManageAccountRoleOp{
+			Key: regources.NewKeyInt64(id, regources.OPERATIONS_UPDATE_ACCOUNT_ROLE),
+			Attributes: &regources.ManageAccountRoleOpAttributes{
 				Details: details.UpdateDetails.Details,
 			},
-			Relationships: regources.ManageAccountRoleRelation{
-				Rules: idsAsRelations(details.UpdateDetails.RuleIDs, regources.TypeAccountRules),
+			Relationships: regources.ManageAccountRoleOpRelationships{
+				Rules: idsAsRelations(details.UpdateDetails.RuleIDs, regources.ACCOUNT_RULES),
 				Role:  NewAccountRoleKey(details.RoleID).AsRelation(),
 			},
 		}
 	case xdr.ManageAccountRoleActionRemove:
-		return &regources.ManageAccountRole{
-			Key: regources.NewKeyInt64(id, regources.TypeRemoveAccountRole),
-			Relationships: regources.ManageAccountRoleRelation{
+		return &regources.ManageAccountRoleOp{
+			Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_ACCOUNT_ROLE),
+			Relationships: regources.ManageAccountRoleOpRelationships{
 				Role: NewAccountRoleKey(details.RoleID).AsRelation(),
 			},
 		}

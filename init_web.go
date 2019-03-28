@@ -2,6 +2,7 @@ package horizon
 
 import (
 	"database/sql"
+	"gitlab.com/tokend/regources"
 	"net/http"
 	"net/http/httputil"
 	"regexp"
@@ -17,7 +18,6 @@ import (
 	"gitlab.com/tokend/horizon/render"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
-	"gitlab.com/tokend/regources"
 )
 
 // Web contains the http server related fields for horizon: the router,

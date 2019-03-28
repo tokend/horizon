@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/v2/generated"
 )
 
 //FeeFromXdr - converts xdr fee to regources fee

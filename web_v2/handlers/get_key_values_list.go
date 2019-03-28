@@ -9,7 +9,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/v2/generated"
 )
 
 func GetKeyValueList(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +28,7 @@ func GetKeyValueList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := &regources.KeyValueEntriesResponse{
+	response := &regources.KeyValueEntrysResponse{
 		Data:  make([]regources.KeyValueEntry, 0, len(records)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

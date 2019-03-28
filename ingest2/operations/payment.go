@@ -5,7 +5,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/v2/generated"
 )
 
 type paymentOpHandler struct {

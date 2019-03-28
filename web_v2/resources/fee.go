@@ -8,7 +8,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/v2/generated"
 )
 
 //NewFee - creates new instance of Fee from provided one.
@@ -17,9 +17,9 @@ func NewFee(record core2.Fee) regources.FeeRecord {
 	return regources.FeeRecord{
 		Key: regources.Key{
 			ID:   hash,
-			Type: regources.TypeFees,
+			Type: regources.FEES,
 		},
-		Attributes: regources.FeeAttrs{
+		Attributes: regources.FeeRecordAttributes{
 			Fixed:   regources.Amount(record.Fixed),
 			Percent: regources.Amount(record.Percent),
 			AppliedTo: regources.FeeAppliedTo{
@@ -38,14 +38,14 @@ func NewFee(record core2.Fee) regources.FeeRecord {
 func NewFeeKey(hash string) regources.Key {
 	return regources.Key{
 		ID:   hash,
-		Type: regources.TypeFees,
+		Type: regources.FEES,
 	}
 }
 
 func NewCalculatedFeeKey(hash string) regources.Key {
 	return regources.Key{
 		ID:   hash,
-		Type: regources.TypeCalculatedFee,
+		Type: regources.CALCULATED_FEE,
 	}
 }
 

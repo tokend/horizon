@@ -13,7 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/v2/generated"
 )
 
 // GetHistory - processes request to get the list of participant effects
@@ -95,9 +95,9 @@ type getHistory struct {
 }
 
 // GetHistory returns the list of participant effects with related resources
-func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.ParticipantEffectsResponse, error) {
-	result := regources.ParticipantEffectsResponse{
-		Data: []regources.ParticipantEffect{},
+func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.ParticipantsEffectsResponse, error) {
+	result := regources.ParticipantsEffectsResponse{
+		Data: []regources.ParticipantsEffect{},
 	}
 	q := h.EffectsQ.WithAccount().WithBalance().Page(*request.PageParams)
 	if request.ShouldInclude(requests.IncludeTypeHistoryOperation) {
@@ -122,7 +122,7 @@ func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.Partici
 		return result, nil
 	}
 
-	result.Data = make([]regources.ParticipantEffect, 0, len(effects))
+	result.Data = make([]regources.ParticipantsEffect, 0, len(effects))
 	for i := range effects {
 		effect := getEffect(effects[i])
 		if request.ShouldInclude(requests.IncludeTypeHistoryOperation) {
@@ -154,7 +154,7 @@ func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.Partici
 	return result, nil
 }
 
-func getEffect(effect history2.ParticipantEffect) regources.ParticipantEffect {
+func getEffect(effect history2.ParticipantEffect) regources.ParticipantsEffect {
 	var balance *regources.Relation
 	if effect.BalanceAddress != nil {
 		balance = resources.NewBalanceKey(*effect.BalanceAddress).AsRelation()
@@ -165,9 +165,9 @@ func getEffect(effect history2.ParticipantEffect) regources.ParticipantEffect {
 		asset = resources.NewAssetKey(*effect.AssetCode).AsRelation()
 	}
 
-	return regources.ParticipantEffect{
+	return regources.ParticipantsEffect{
 		Key: resources.NewParticipantEffectKey(effect.ID),
-		Relationships: regources.ParticipantEffectRelation{
+		Relationships: regources.ParticipantsEffectRelationships{
 			Account:   resources.NewAccountKey(effect.AccountAddress).AsRelation(),
 			Balance:   balance,
 			Asset:     asset,

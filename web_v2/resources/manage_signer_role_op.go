@@ -5,39 +5,39 @@ import (
 
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/v2/generated"
 )
 
 func newManageSignerRole(id int64, details history2.ManageSignerRoleDetails,
-) *regources.ManageSignerRole {
+) *regources.ManageSignerRoleOp {
 	switch details.Action {
 	case xdr.ManageSignerRoleActionCreate:
-		return &regources.ManageSignerRole{
-			Key: regources.NewKeyInt64(id, regources.TypeCreateSignerRole),
-			Attributes: &regources.ManageSignerRoleAttrs{
+		return &regources.ManageSignerRoleOp{
+			Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_SIGNER_ROLE),
+			Attributes: &regources.ManageSignerRoleOpAttributes{
 				Details:    details.CreateDetails.Details,
 				IsReadOnly: details.CreateDetails.IsReadOnly,
 			},
-			Relationships: regources.ManageSignerRoleRelation{
-				Rules: idsAsRelations(details.CreateDetails.RuleIDs, regources.TypeSignerRules),
+			Relationships: regources.ManageSignerRoleOpRelationships{
+				Rules: idsAsRelations(details.CreateDetails.RuleIDs, regources.SIGNER_RULES),
 				Role:  NewSignerRoleKey(details.RoleID).AsRelation(),
 			},
 		}
 	case xdr.ManageSignerRoleActionUpdate:
-		return &regources.ManageSignerRole{
-			Key: regources.NewKeyInt64(id, regources.TypeUpdateSignerRole),
-			Attributes: &regources.ManageSignerRoleAttrs{
+		return &regources.ManageSignerRoleOp{
+			Key: regources.NewKeyInt64(id, regources.OPERATIONS_UPDATE_SIGNER_ROLE),
+			Attributes: &regources.ManageSignerRoleOpAttributes{
 				Details: details.UpdateDetails.Details,
 			},
-			Relationships: regources.ManageSignerRoleRelation{
-				Rules: idsAsRelations(details.UpdateDetails.RuleIDs, regources.TypeSignerRules),
+			Relationships: regources.ManageSignerRoleOpRelationships{
+				Rules: idsAsRelations(details.UpdateDetails.RuleIDs, regources.SIGNER_RULES),
 				Role:  NewSignerRoleKey(details.RoleID).AsRelation(),
 			},
 		}
 	case xdr.ManageSignerRoleActionRemove:
-		return &regources.ManageSignerRole{
-			Key: regources.NewKeyInt64(id, regources.TypeRemoveSignerRole),
-			Relationships: regources.ManageSignerRoleRelation{
+		return &regources.ManageSignerRoleOp{
+			Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_SIGNER_ROLE),
+			Relationships: regources.ManageSignerRoleOpRelationships{
 				Role: NewSignerRoleKey(details.RoleID).AsRelation(),
 			},
 		}

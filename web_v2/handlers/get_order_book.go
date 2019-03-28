@@ -10,7 +10,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/v2/generated"
 	"net/http"
 )
 
@@ -56,7 +56,7 @@ type getOrderBookHandler struct {
 const secondaryMarketOrderBookID = 0
 
 // GetOrderBook returns offer with related resources
-func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*regources.OrderBookEntriesResponse, error) {
+func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*regources.OrderBookEntrysResponse, error) {
 	if request.ID != secondaryMarketOrderBookID {
 		sale, err := h.SalesQ.GetByID(request.ID)
 		if err != nil {
@@ -95,7 +95,7 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 		return nil, errors.Wrap(err, "Failed to get offer list")
 	}
 
-	response := &regources.OrderBookEntriesResponse{
+	response := &regources.OrderBookEntrysResponse{
 		Data:  make([]regources.OrderBookEntry, 0, len(coreOrderBookEntries)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

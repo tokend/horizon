@@ -13,7 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/v2/generated"
 )
 
 // GetAccount - processes request to get account and it's details by address
@@ -117,7 +117,7 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		return nil, errors.Wrap(err, "failed to get limits")
 	}
 
-	response.Data.Relationships.ExternalSystemIDs, err = h.getExternalSystemIDs(request, &response.Included)
+	response.Data.Relationships.ExternalSystemIds, err = h.getExternalSystemIDs(request, &response.Included)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get external system IDs")
 	}

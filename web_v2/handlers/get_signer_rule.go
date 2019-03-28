@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/v2/generated"
 )
 
 // GetSignerRule - processes request to get signerRule and it's details by signerRule code

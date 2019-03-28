@@ -15,7 +15,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/v2/generated"
 )
 
 func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {

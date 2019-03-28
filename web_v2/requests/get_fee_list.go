@@ -3,7 +3,7 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/v2/generated"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 

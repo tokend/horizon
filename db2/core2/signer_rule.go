@@ -2,7 +2,7 @@ package core2
 
 import (
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/v2/generated"
 )
 
 type SignerRule struct {

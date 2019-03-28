@@ -1,12 +1,12 @@
 package resources
 
-import "gitlab.com/tokend/regources/v2"
+import regources "gitlab.com/tokend/regources/v2/generated"
 
 // newQuoteAssetKey - creates new key for resource type `quote-assets`
 func newQuoteAssetKey(quoteAssetCode string) regources.Key {
 	return regources.Key{
 		ID:   quoteAssetCode,
-		Type: regources.TypeQuoteAssets,
+		Type: regources.QUOTE_ASSETS,
 	}
 }
 
@@ -14,6 +14,6 @@ func newQuoteAssetKey(quoteAssetCode string) regources.Key {
 func newSaleQuoteAssetKey(quoteAssetCode string) regources.Key {
 	return regources.Key{
 		ID:   quoteAssetCode,
-		Type: regources.TypeSaleQuoteAssets,
+		Type: regources.SALE_QUOTE_ASSETS,
 	}
 }

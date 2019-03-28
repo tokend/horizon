@@ -5,7 +5,7 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/v2/generated"
 )
 
 //MarshalCustomDetails - tries to marshal details to json.RawMessage

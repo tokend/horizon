@@ -7,7 +7,7 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/v2/generated"
 )
 
 //GetCalculatedFees - represents params to be specified for Get Fees handler

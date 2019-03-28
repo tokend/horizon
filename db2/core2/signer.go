@@ -1,6 +1,6 @@
 package core2
 
-import "gitlab.com/tokend/regources/v2"
+import regources "gitlab.com/tokend/regources/v2/generated"
 
 //Signer - represents Signer Entry
 type Signer struct {
