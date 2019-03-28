@@ -9,7 +9,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 	"net/http"
 )
 
@@ -47,7 +47,7 @@ type getAssetPairListHandler struct {
 }
 
 // GetAssetPairList returns asset pair list with related resources
-func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPairList) (*regources.AssetPairsResponse, error) {
+func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPairList) (*rgenerated.AssetPairsResponse, error) {
 	q := h.AssetPairsQ.Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeAssetPairListAsset) {
@@ -79,8 +79,8 @@ func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPai
 		return nil, errors.Wrap(err, "Failed to get asset pair list")
 	}
 
-	response := &regources.AssetPairsResponse{
-		Data:  make([]regources.AssetPair, 0, len(coreAssetPairs)),
+	response := &rgenerated.AssetPairsResponse{
+		Data:  make([]rgenerated.AssetPair, 0, len(coreAssetPairs)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 

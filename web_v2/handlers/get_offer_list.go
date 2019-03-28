@@ -9,7 +9,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 	"net/http"
 )
 
@@ -53,7 +53,7 @@ type getOfferListHandler struct {
 }
 
 // GetOfferList returns offer with related resources
-func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*regources.OffersResponse, error) {
+func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*rgenerated.OffersResponse, error) {
 	q := h.OffersQ.Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeOfferListBaseBalance) {
@@ -97,8 +97,8 @@ func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*reg
 		return nil, errors.Wrap(err, "Failed to get offer list")
 	}
 
-	response := &regources.OffersResponse{
-		Data:  make([]regources.Offer, 0, len(coreOffers)),
+	response := &rgenerated.OffersResponse{
+		Data:  make([]rgenerated.Offer, 0, len(coreOffers)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 

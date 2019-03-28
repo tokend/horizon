@@ -7,7 +7,7 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 //GetCalculatedFees - represents params to be specified for Get Fees handler
@@ -17,7 +17,7 @@ type GetCalculatedFees struct {
 	Asset   string
 	Subtype int64
 	FeeType int32
-	Amount  regources.Amount
+	Amount  rgenerated.Amount
 }
 
 // NewGetCalculatedFees returns the new instance of GetCalculatedFees request
@@ -62,7 +62,7 @@ func NewGetCalculatedFees(r *http.Request) (*GetCalculatedFees, error) {
 		Asset:   asset,
 		Subtype: subtype,
 		FeeType: feeType,
-		Amount:  regources.Amount(amount),
+		Amount:  rgenerated.Amount(amount),
 	}
 
 	return &request, nil

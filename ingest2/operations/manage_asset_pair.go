@@ -3,7 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type manageAssetPairOpHandler struct {
@@ -21,9 +21,9 @@ func (h *manageAssetPairOpHandler) Details(op rawOperation,
 		ManageAssetPair: &history2.ManageAssetPairDetails{
 			BaseAsset:               string(manageAssetPairOp.Base),
 			QuoteAsset:              string(manageAssetPairOp.Quote),
-			PhysicalPrice:           regources.Amount(manageAssetPairOp.PhysicalPrice),
-			PhysicalPriceCorrection: regources.Amount(manageAssetPairOp.PhysicalPriceCorrection),
-			MaxPriceStep:            regources.Amount(manageAssetPairOp.MaxPriceStep),
+			PhysicalPrice:           rgenerated.Amount(manageAssetPairOp.PhysicalPrice),
+			PhysicalPriceCorrection: rgenerated.Amount(manageAssetPairOp.PhysicalPriceCorrection),
+			MaxPriceStep:            rgenerated.Amount(manageAssetPairOp.MaxPriceStep),
 			Policies:                xdr.AssetPairPolicy(manageAssetPairOp.Policies),
 		},
 	}, nil

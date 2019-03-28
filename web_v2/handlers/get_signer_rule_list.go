@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetSignerRuleList - processes request to get the list of signerRules
@@ -46,14 +46,14 @@ type getSignerRuleListHandler struct {
 }
 
 // GetSignerRuleList returns the list of signerRules with related resources
-func (h *getSignerRuleListHandler) GetSignerRuleList(request *requests.GetSignerRuleList) (*regources.SignerRulesResponse, error) {
+func (h *getSignerRuleListHandler) GetSignerRuleList(request *requests.GetSignerRuleList) (*rgenerated.SignerRulesResponse, error) {
 	signerRules, err := h.SignerRulesQ.Page(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get signer rule list")
 	}
 
-	response := &regources.SignerRulesResponse{
-		Data:  make([]regources.SignerRule, 0, len(signerRules)),
+	response := &rgenerated.SignerRulesResponse{
+		Data:  make([]rgenerated.SignerRule, 0, len(signerRules)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 

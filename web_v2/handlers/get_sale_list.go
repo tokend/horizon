@@ -13,7 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetSaleList - processes request to get the list of sales
@@ -59,7 +59,7 @@ type getSaleListHandler struct {
 }
 
 // GetSaleList returns the list of assets with related resources
-func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regources.SalesResponse, error) {
+func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*rgenerated.SalesResponse, error) {
 	q := h.SalesQ
 
 	if request.ShouldFilter(requests.FilterTypeSaleListOwner) {
@@ -115,8 +115,8 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 		return nil, errors.Wrap(err, "Failed to get asset list")
 	}
 
-	response := &regources.SalesResponse{
-		Data:  make([]regources.Sale, 0, len(historySales)),
+	response := &rgenerated.SalesResponse{
+		Data:  make([]rgenerated.Sale, 0, len(historySales)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 
@@ -126,8 +126,8 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to populate sale cap")
 		}
-		sale.Relationships.QuoteAssets = &regources.RelationCollection{
-			Data: make([]regources.Key, 0, len(historySale.QuoteAssets.QuoteAssets)),
+		sale.Relationships.QuoteAssets = &rgenerated.RelationCollection{
+			Data: make([]rgenerated.Key, 0, len(historySale.QuoteAssets.QuoteAssets)),
 		}
 
 		for _, historyQuoteAsset := range historySale.QuoteAssets.QuoteAssets {

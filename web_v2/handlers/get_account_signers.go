@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetAccountSigners - processes request to get account signers
@@ -58,7 +58,7 @@ type getAccountSignersHandler struct {
 }
 
 //GetAccountSigners - returns signers for account
-func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccountSigners) (*regources.SignersResponse, error) {
+func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccountSigners) (*rgenerated.SignersResponse, error) {
 	account, err := h.AccountQ.GetByAddress(request.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load account", logan.F{
@@ -77,8 +77,8 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 		})
 	}
 
-	response := regources.SignersResponse{
-		Data: make([]regources.Signer, 0, len(signers)),
+	response := rgenerated.SignersResponse{
+		Data: make([]rgenerated.Signer, 0, len(signers)),
 	}
 
 	for _, signerRaw := range signers {
@@ -95,8 +95,8 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 }
 
 func (h *getAccountSignersHandler) getRole(request *requests.GetAccountSigners,
-	includes *regources.Included, signer core2.Signer,
-) (*regources.Relation, error) {
+	includes *rgenerated.Included, signer core2.Signer,
+) (*rgenerated.Relation, error) {
 	if !request.ShouldInclude(requests.IncludeTypeSignerRole) {
 		role := resources.NewSignerRoleKey(signer.RoleID)
 		return role.AsRelation(), nil

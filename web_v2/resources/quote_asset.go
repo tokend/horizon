@@ -1,19 +1,19 @@
 package resources
 
-import regources "gitlab.com/tokend/regources/v2/generated"
+import "gitlab.com/tokend/regources/rgenerated"
 
 // newQuoteAssetKey - creates new key for resource type `quote-assets`
-func newQuoteAssetKey(quoteAssetCode string) regources.Key {
-	return regources.Key{
+func newQuoteAssetKey(quoteAssetCode string) rgenerated.Key {
+	return rgenerated.Key{
 		ID:   quoteAssetCode,
-		Type: regources.QUOTE_ASSETS,
+		Type: rgenerated.QUOTE_ASSETS,
 	}
 }
 
 // newQuoteAssetKey - creates new key for resource type `sale-quote-assets`
-func newSaleQuoteAssetKey(quoteAssetCode string) regources.Key {
-	return regources.Key{
+func newSaleQuoteAssetKey(quoteAssetCode string) rgenerated.Key {
+	return rgenerated.Key{
 		ID:   quoteAssetCode,
-		Type: regources.SALE_QUOTE_ASSETS,
+		Type: rgenerated.SALE_QUOTE_ASSETS,
 	}
 }

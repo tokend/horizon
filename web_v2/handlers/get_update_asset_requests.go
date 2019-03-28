@@ -15,7 +15,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 func GetUpdateAssetRequests(w http.ResponseWriter, r *http.Request) {
@@ -66,17 +66,17 @@ func (h *getUpdateAssetRequestsHandler) MakeAll(w http.ResponseWriter, request r
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
 }
 
-func (h *getUpdateAssetRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
+func (h *getUpdateAssetRequestsHandler) RenderRecord(included *rgenerated.Included, record history2.ReviewableRequest) (rgenerated.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeUpdateAssetRequestsAsset) {
 		asset, err := h.AssetsQ.GetByCode(record.Details.UpdateAsset.Asset)
 		if err != nil {
-			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get asset")
+			return rgenerated.ReviewableRequest{}, errors.Wrap(err, "failed to get asset")
 		}
 
 		if asset == nil {
-			return regources.ReviewableRequest{}, errors.New("asset not found")
+			return rgenerated.ReviewableRequest{}, errors.New("asset not found")
 		}
 		resource := resources.NewAsset(*asset)
 		included.Add(&resource)

@@ -9,7 +9,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 	"net/http"
 )
 
@@ -51,7 +51,7 @@ type getAssetPairHandler struct {
 }
 
 // GetAssetPair returns asset pair with related resources
-func (h *getAssetPairHandler) GetAssetPair(request *requests.GetAssetPair) (*regources.AssetPairResponse, error) {
+func (h *getAssetPairHandler) GetAssetPair(request *requests.GetAssetPair) (*rgenerated.AssetPairResponse, error) {
 	q := h.AssetPairsQ
 
 	if request.ShouldInclude(requests.IncludeTypeAssetPairBaseAsset) {
@@ -70,7 +70,7 @@ func (h *getAssetPairHandler) GetAssetPair(request *requests.GetAssetPair) (*reg
 		return nil, nil
 	}
 
-	response := &regources.AssetPairResponse{
+	response := &rgenerated.AssetPairResponse{
 		Data: resources.NewAssetPair(*coreAssetPair),
 	}
 

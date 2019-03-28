@@ -2,7 +2,7 @@ package core2
 
 import (
 	"gitlab.com/tokend/go/xdr"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 //AccountRule - defines rule applicable for account roles
@@ -11,5 +11,5 @@ type AccountRule struct {
 	Resource xdr.AccountRuleResource `db:"resource"`
 	Action   int32                   `db:"action"`
 	Forbids  bool                    `db:"forbids"`
-	Details  regources.Details       `db:"details"`
+	Details  rgenerated.Details      `db:"details"`
 }

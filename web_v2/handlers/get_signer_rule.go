@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetSignerRule - processes request to get signerRule and it's details by signerRule code
@@ -51,7 +51,7 @@ type getSignerRuleHandler struct {
 }
 
 // GetSignerRule returns signerRule with related resources
-func (h *getSignerRuleHandler) GetSignerRule(request *requests.GetSignerRule) (*regources.SignerRuleResponse, error) {
+func (h *getSignerRuleHandler) GetSignerRule(request *requests.GetSignerRule) (*rgenerated.SignerRuleResponse, error) {
 	signerRule, err := h.SignerRulesQ.FilterByID(request.ID).Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get signer rule by id")
@@ -61,7 +61,7 @@ func (h *getSignerRuleHandler) GetSignerRule(request *requests.GetSignerRule) (*
 	}
 
 	signerRuleResponse := resources.NewSignerRule(*signerRule)
-	return &regources.SignerRuleResponse{
+	return &rgenerated.SignerRuleResponse{
 		Data: signerRuleResponse,
 	}, nil
 }

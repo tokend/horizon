@@ -9,7 +9,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 func GetKeyValue(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +34,7 @@ func GetKeyValue(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resource := resources.NewKeyValue(*record)
-	response := &regources.KeyValueEntryResponse{
+	response := &rgenerated.KeyValueEntryResponse{
 		Data: resource,
 	}
 

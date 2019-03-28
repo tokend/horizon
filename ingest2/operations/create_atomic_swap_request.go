@@ -3,7 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type createAtomicSwapRequestOpHandler struct {
@@ -21,7 +21,7 @@ func (h *createAtomicSwapRequestOpHandler) Details(op rawOperation,
 		Type: xdr.OperationTypeCreateAswapRequest,
 		CreateAtomicSwapRequest: &history2.CreateAtomicSwapRequestDetails{
 			BidID:      int64(aSwapRequest.BidId),
-			BaseAmount: regources.Amount(aSwapRequest.BaseAmount),
+			BaseAmount: rgenerated.Amount(aSwapRequest.BaseAmount),
 			QuoteAsset: string(aSwapRequest.QuoteAsset),
 			RequestDetails: history2.RequestDetails{
 				RequestID: int64(successRes.RequestId),

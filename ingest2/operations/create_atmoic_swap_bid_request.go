@@ -4,7 +4,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type createAtomicSwapBidRequestOpHandler struct {
@@ -17,18 +17,18 @@ func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 
 	aSwapBidRequest := op.Body.MustCreateASwapBidCreationRequestOp().Request
 
-	quoteAssets := make([]regources.AssetPrice, 0, len(aSwapBidRequest.QuoteAssets))
+	quoteAssets := make([]rgenerated.AssetPrice, 0, len(aSwapBidRequest.QuoteAssets))
 	for _, quoteAsset := range aSwapBidRequest.QuoteAssets {
-		quoteAssets = append(quoteAssets, regources.AssetPrice{
+		quoteAssets = append(quoteAssets, rgenerated.AssetPrice{
 			Asset: string(quoteAsset.QuoteAsset),
-			Price: regources.Amount(quoteAsset.Price),
+			Price: rgenerated.Amount(quoteAsset.Price),
 		})
 	}
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAswapBidRequest,
 		CreateAtomicSwapBidRequest: &history2.CreateAtomicSwapBidRequestDetails{
-			Amount:      regources.Amount(aSwapBidRequest.Amount),
+			Amount:      rgenerated.Amount(aSwapBidRequest.Amount),
 			BaseBalance: aSwapBidRequest.BaseBalance.AsString(),
 			QuoteAssets: quoteAssets,
 			Details:     internal.MarshalCustomDetails(aSwapBidRequest.CreatorDetails),
@@ -45,7 +45,7 @@ func (h *createAtomicSwapBidRequestOpHandler) ParticipantsEffects(opBody xdr.Ope
 	return []history2.ParticipantEffect{h.BalanceEffect(aSwapBidRequest.BaseBalance, &history2.Effect{
 		Type: history2.EffectTypeLocked,
 		Locked: &history2.BalanceChangeEffect{
-			Amount: regources.Amount(aSwapBidRequest.Amount),
+			Amount: rgenerated.Amount(aSwapBidRequest.Amount),
 		},
 	})}, nil
 }

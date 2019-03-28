@@ -26,7 +26,7 @@ func SignerOf(address string) SignerConstraint {
 				return nil
 			}
 		}
-		return signcontrol.ErrNotAllowed
+		return ErrNotAllowed
 	}
 }
 
@@ -41,6 +41,6 @@ func SignatureOf(address string) SignerConstraint {
 			return nil
 		}
 
-		return signcontrol.ErrNotAllowed
+		return ErrNotAllowed
 	}
 }

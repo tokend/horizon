@@ -39,7 +39,7 @@ func (s Signer) SignRequest(keyId string, key interface{}, r *http.Request) erro
 
 func (s Signer) buildSignature(keyId string, key interface{}, r *http.Request) (*Signature, error) {
 	if r.Header.Get("date") == "" {
-		r.Header.Set("date", time.Now().UTC().Format(time.RFC3339))
+		r.Header.Set("date", time.Now().UTC().Format(http.TimeFormat))
 	}
 
 	sig := &Signature{

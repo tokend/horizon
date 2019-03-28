@@ -15,7 +15,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 func GetCreateAmlAlertRequests(w http.ResponseWriter, r *http.Request) {
@@ -66,17 +66,17 @@ func (h *getCreateAmlAlertRequestsHandler) MakeAll(w http.ResponseWriter, reques
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
 }
 
-func (h *getCreateAmlAlertRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
+func (h *getCreateAmlAlertRequestsHandler) RenderRecord(included *rgenerated.Included, record history2.ReviewableRequest) (rgenerated.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateAmlAlertRequestsBalance) {
 		balance, err := h.BalancesQ.GetByAddress(record.Details.CreateAmlAlert.BalanceID)
 		if err != nil {
-			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get balance")
+			return rgenerated.ReviewableRequest{}, errors.Wrap(err, "failed to get balance")
 		}
 
 		if balance == nil {
-			return regources.ReviewableRequest{}, errors.New("balance not found")
+			return rgenerated.ReviewableRequest{}, errors.New("balance not found")
 		}
 		resource := resources.NewBalance(balance)
 		included.Add(resource)

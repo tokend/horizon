@@ -5,7 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type manageOfferOpHandler struct {
@@ -31,11 +31,11 @@ func (h *manageOfferOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 			OrderBookID: int64(manageOfferOp.OrderBookId),
 			BaseAsset:   string(manageOfferOpRes.BaseAsset),
 			QuoteAsset:  string(manageOfferOpRes.QuoteAsset),
-			Amount:      regources.Amount(manageOfferOp.Amount),
-			Price:       regources.Amount(manageOfferOp.Price),
+			Amount:      rgenerated.Amount(manageOfferOp.Amount),
+			Price:       rgenerated.Amount(manageOfferOp.Price),
 			IsBuy:       manageOfferOp.IsBuy,
-			Fee: regources.Fee{
-				CalculatedPercent: regources.Amount(manageOfferOp.Fee),
+			Fee: rgenerated.Fee{
+				CalculatedPercent: rgenerated.Amount(manageOfferOp.Fee),
 			},
 			IsDeleted: isDeleted,
 		},
@@ -95,12 +95,12 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 	if newOffer.IsBuy {
 		*source.BalanceID = h.MustBalanceID(newOffer.QuoteBalance)
 		*source.AssetCode = string(newOffer.Quote)
-		source.Effect.Locked.Amount = regources.Amount(newOffer.QuoteAmount)
-		source.Effect.Locked.Fee.CalculatedPercent = regources.Amount(newOffer.Fee)
+		source.Effect.Locked.Amount = rgenerated.Amount(newOffer.QuoteAmount)
+		source.Effect.Locked.Fee.CalculatedPercent = rgenerated.Amount(newOffer.Fee)
 	} else {
 		*source.BalanceID = h.MustBalanceID(newOffer.BaseBalance)
 		*source.AssetCode = string(newOffer.Base)
-		source.Effect.Locked.Amount = regources.Amount(newOffer.BaseAmount)
+		source.Effect.Locked.Amount = rgenerated.Amount(newOffer.BaseAmount)
 	}
 
 	participants = append(participants, source)
@@ -141,12 +141,12 @@ func (h *manageOfferOpHandler) getDeletedOffersEffect(ledgerChanges []xdr.Ledger
 		if deletedOffer.IsBuy {
 			*participant.BalanceID = h.MustBalanceID(deletedOffer.QuoteBalance)
 			*participant.AssetCode = string(deletedOffer.Quote)
-			participant.Effect.Unlocked.Amount = regources.Amount(deletedOffer.QuoteAmount)
-			participant.Effect.Unlocked.Fee.CalculatedPercent = regources.Amount(deletedOffer.Fee)
+			participant.Effect.Unlocked.Amount = rgenerated.Amount(deletedOffer.QuoteAmount)
+			participant.Effect.Unlocked.Fee.CalculatedPercent = rgenerated.Amount(deletedOffer.Fee)
 		} else {
 			*participant.BalanceID = h.MustBalanceID(deletedOffer.BaseBalance)
 			*participant.AssetCode = string(deletedOffer.Base)
-			participant.Effect.Unlocked.Amount = regources.Amount(deletedOffer.BaseAmount)
+			participant.Effect.Unlocked.Amount = rgenerated.Amount(deletedOffer.BaseAmount)
 		}
 
 		result[offerID{
@@ -209,7 +209,7 @@ func (h *manageOfferOpHandler) addParticipantEffects(participants []history2.Par
 		BalanceAddress: offer.BaseBalanceAddress,
 		AssetCode:      offer.BaseAsset,
 		BalanceChangeEffect: history2.BalanceChangeEffect{
-			Amount: regources.Amount(baseAmount),
+			Amount: rgenerated.Amount(baseAmount),
 		},
 	}
 
@@ -217,9 +217,9 @@ func (h *manageOfferOpHandler) addParticipantEffects(participants []history2.Par
 		BalanceAddress: offer.QuoteBalanceAddress,
 		AssetCode:      offer.QuoteAsset,
 		BalanceChangeEffect: history2.BalanceChangeEffect{
-			Amount: regources.Amount(quoteAmount),
-			Fee: regources.Fee{
-				CalculatedPercent: regources.Amount(fee),
+			Amount: rgenerated.Amount(quoteAmount),
+			Fee: rgenerated.Fee{
+				CalculatedPercent: rgenerated.Amount(fee),
 			},
 		},
 	}
@@ -229,7 +229,7 @@ func (h *manageOfferOpHandler) addParticipantEffects(participants []history2.Par
 		Matched: &history2.MatchEffect{
 			OfferID:     id,
 			OrderBookID: offer.OrderBookID,
-			Price:       regources.Amount(price),
+			Price:       rgenerated.Amount(price),
 		},
 	}
 

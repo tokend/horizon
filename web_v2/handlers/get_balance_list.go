@@ -9,7 +9,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 	"net/http"
 )
 
@@ -73,7 +73,7 @@ func (h *getBalanceListHandler) getAssetOwner(assetCode string) (string, error) 
 }
 
 // GetBalanceList returns list of balances with related resources
-func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList) (*regources.BalancesResponse, error) {
+func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList) (*rgenerated.BalancesResponse, error) {
 	q := h.BalancesQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeBalanceListAsset) {
 		q = q.FilterByAsset(request.Filters.Asset)
@@ -84,8 +84,8 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 		return nil, errors.Wrap(err, "Failed to get balance list")
 	}
 
-	response := &regources.BalancesResponse{
-		Data:  make([]regources.Balance, 0, len(coreBalances)),
+	response := &rgenerated.BalancesResponse{
+		Data:  make([]rgenerated.Balance, 0, len(coreBalances)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 

@@ -15,7 +15,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 func GetChangeRoleRequests(w http.ResponseWriter, r *http.Request) {
@@ -69,17 +69,17 @@ func (h *getChangeRoleRequestsHandler) MakeAll(w http.ResponseWriter, request re
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
 }
 
-func (h *getChangeRoleRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
+func (h *getChangeRoleRequestsHandler) RenderRecord(included *rgenerated.Included, record history2.ReviewableRequest) (rgenerated.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeChangeRoleRequestsAccount) {
 		account, err := h.AccountsQ.GetByAddress(record.Details.ChangeRole.DestinationAccount)
 		if err != nil {
-			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get account")
+			return rgenerated.ReviewableRequest{}, errors.Wrap(err, "failed to get account")
 		}
 
 		if account == nil {
-			return regources.ReviewableRequest{}, errors.New("account not found")
+			return rgenerated.ReviewableRequest{}, errors.New("account not found")
 		}
 		resource := resources.NewAccount(*account)
 		included.Add(&resource)

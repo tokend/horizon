@@ -4,7 +4,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type payoutHandler struct {
@@ -23,12 +23,12 @@ func (h *payoutHandler) Details(op rawOperation, res xdr.OperationResultTr,
 			SourceAccountAddress: op.Source.Address(),
 			SourceBalanceAddress: payoutOp.SourceBalanceId.AsString(),
 			Asset:                string(payoutOp.Asset),
-			MaxPayoutAmount:      regources.Amount(payoutOp.MaxPayoutAmount),
-			MinAssetHolderAmount: regources.Amount(payoutOp.MinAssetHolderAmount),
-			MinPayoutAmount:      regources.Amount(payoutOp.MinPayoutAmount),
+			MaxPayoutAmount:      rgenerated.Amount(payoutOp.MaxPayoutAmount),
+			MinAssetHolderAmount: rgenerated.Amount(payoutOp.MinAssetHolderAmount),
+			MinPayoutAmount:      rgenerated.Amount(payoutOp.MinPayoutAmount),
 			ExpectedFee:          internal.FeeFromXdr(payoutOp.Fee),
 			ActualFee:            internal.FeeFromXdr(payoutRes.ActualFee),
-			ActualPayoutAmount:   regources.Amount(payoutRes.ActualPayoutAmount),
+			ActualPayoutAmount:   rgenerated.Amount(payoutRes.ActualPayoutAmount),
 		},
 	}, nil
 }
@@ -43,7 +43,7 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	source := h.BalanceEffect(payoutOp.SourceBalanceId, &history2.Effect{
 		Type: history2.EffectTypeCharged,
 		Charged: &history2.BalanceChangeEffect{
-			Amount: regources.Amount(payoutRes.ActualPayoutAmount),
+			Amount: rgenerated.Amount(payoutRes.ActualPayoutAmount),
 			Fee:    internal.FeeFromXdr(payoutRes.ActualFee),
 		},
 	})
@@ -55,7 +55,7 @@ func (h *payoutHandler) ParticipantsEffects(opBody xdr.OperationBody,
 		effect := history2.Effect{
 			Type: history2.EffectTypeFunded,
 			Funded: &history2.BalanceChangeEffect{
-				Amount: regources.Amount(response.ReceivedAmount),
+				Amount: rgenerated.Amount(response.ReceivedAmount),
 			},
 		}
 

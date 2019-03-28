@@ -1,15 +1,15 @@
 package resources
 
 import (
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // NewPublicKeyEntry creates new instance of PublicKeyEntry resource from provided publicKey
-func NewPublicKeyEntry(publicKey string) regources.PublicKeyEntry {
-	return regources.PublicKeyEntry{
-		Key: regources.Key{
+func NewPublicKeyEntry(publicKey string) rgenerated.PublicKeyEntry {
+	return rgenerated.PublicKeyEntry{
+		Key: rgenerated.Key{
 			ID:   publicKey,
-			Type: regources.PUBLIC_KEY_ENTRIES,
+			Type: rgenerated.PUBLIC_KEY_ENTRIES,
 		},
 	}
 }

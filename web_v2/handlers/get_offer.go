@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetOffer - processes request to get offer and it's details by it's ID
@@ -81,7 +81,7 @@ func (h *getOfferHandler) GetOffer(request requests.GetOffer) (*core2.Offer, err
 func (h *getOfferHandler) RenderResponse(r *http.Request, w http.ResponseWriter,
 	request *requests.GetOffer, coreOffer *core2.Offer) {
 
-	response := regources.OfferResponse{
+	response := rgenerated.OfferResponse{
 		Data: resources.NewOffer(*coreOffer),
 	}
 

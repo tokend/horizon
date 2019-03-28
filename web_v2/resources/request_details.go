@@ -5,11 +5,11 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // NewRequestDetails - returns new instance of reviewable request details
-func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
+func NewRequestDetails(request history2.ReviewableRequest) rgenerated.Resource {
 	switch request.RequestType {
 	case xdr.ReviewableRequestTypeUpdateAsset:
 		return newAssetUpdateRequest(request.ID, *request.Details.UpdateAsset)
@@ -43,22 +43,22 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 	return nil
 }
 
-func newAmlAlertRequest(id int64, details history2.CreateAmlAlertRequest) *regources.CreateAmlAlertRequest {
-	return &regources.CreateAmlAlertRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_AML_ALERT),
-		Attributes: regources.CreateAmlAlertRequestAttributes{
+func newAmlAlertRequest(id int64, details history2.CreateAmlAlertRequest) *rgenerated.CreateAmlAlertRequest {
+	return &rgenerated.CreateAmlAlertRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_AML_ALERT),
+		Attributes: rgenerated.CreateAmlAlertRequestAttributes{
 			Amount:         details.Amount,
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.CreateAmlAlertRequestRelationships{
+		Relationships: rgenerated.CreateAmlAlertRequestRelationships{
 			Balance: NewBalanceKey(details.BalanceID).AsRelation(),
 		},
 	}
 }
-func newAssetCreateRequest(id int64, details history2.CreateAssetRequest) *regources.CreateAssetRequest {
-	return &regources.CreateAssetRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ASSET_CREATE),
-		Attributes: regources.CreateAssetRequestAttributes{
+func newAssetCreateRequest(id int64, details history2.CreateAssetRequest) *rgenerated.CreateAssetRequest {
+	return &rgenerated.CreateAssetRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_ASSET_CREATE),
+		Attributes: rgenerated.CreateAssetRequestAttributes{
 			Asset:                  details.Asset,
 			Policies:               details.Policies,
 			PreIssuanceAssetSigner: details.PreIssuedAssetSigner,
@@ -69,141 +69,141 @@ func newAssetCreateRequest(id int64, details history2.CreateAssetRequest) *regou
 		},
 	}
 }
-func newAssetUpdateRequest(id int64, details history2.UpdateAssetRequest) *regources.UpdateAssetRequest {
-	return &regources.UpdateAssetRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ASSET_UPDATE),
-		Attributes: regources.UpdateAssetRequestAttributes{
+func newAssetUpdateRequest(id int64, details history2.UpdateAssetRequest) *rgenerated.UpdateAssetRequest {
+	return &rgenerated.UpdateAssetRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_ASSET_UPDATE),
+		Attributes: rgenerated.UpdateAssetRequestAttributes{
 			Policies:       details.Policies,
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.UpdateAssetRequestRelationships{
+		Relationships: rgenerated.UpdateAssetRequestRelationships{
 			Asset: NewAssetKey(details.Asset).AsRelation(),
 		},
 	}
 }
-func newAtomicSwapRequest(id int64, details history2.CreateAtomicSwapRequest) *regources.CreateAtomicSwapRequest {
-	return &regources.CreateAtomicSwapRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ATOMIC_SWAP),
-		Attributes: regources.CreateAtomicSwapRequestAttributes{
-			BaseAmount: regources.Amount(details.BaseAmount),
+func newAtomicSwapRequest(id int64, details history2.CreateAtomicSwapRequest) *rgenerated.CreateAtomicSwapRequest {
+	return &rgenerated.CreateAtomicSwapRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_ATOMIC_SWAP),
+		Attributes: rgenerated.CreateAtomicSwapRequestAttributes{
+			BaseAmount: rgenerated.Amount(details.BaseAmount),
 		},
-		Relationships: regources.CreateAtomicSwapRequestRelationships{
-			Bid:        regources.NewKeyInt64(int64(details.BidID), regources.ASWAP_BID).AsRelation(),
+		Relationships: rgenerated.CreateAtomicSwapRequestRelationships{
+			Bid:        rgenerated.NewKeyInt64(int64(details.BidID), rgenerated.ASWAP_BID).AsRelation(),
 			QuoteAsset: newQuoteAssetKey(details.QuoteAsset).AsRelation(),
 		},
 	}
 }
-func newAtomicSwapBidRequest(id int64, details history2.CreateAtomicSwapBidRequest) *regources.CreateAtomicSwapBidRequest {
-	quoteAssets := &regources.RelationCollection{
-		Data: make([]regources.Key, 0, len(details.QuoteAssets)),
+func newAtomicSwapBidRequest(id int64, details history2.CreateAtomicSwapBidRequest) *rgenerated.CreateAtomicSwapBidRequest {
+	quoteAssets := &rgenerated.RelationCollection{
+		Data: make([]rgenerated.Key, 0, len(details.QuoteAssets)),
 	}
 	for _, quoteAsset := range details.QuoteAssets {
 		quoteAssets.Data = append(quoteAssets.Data, newQuoteAssetKey(quoteAsset.Asset))
 	}
 
-	return &regources.CreateAtomicSwapBidRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ASWAP_BID),
-		Attributes: regources.CreateAtomicSwapBidRequestAttributes{
-			BaseAmount:     regources.Amount(details.BaseAmount),
+	return &rgenerated.CreateAtomicSwapBidRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_ASWAP_BID),
+		Attributes: rgenerated.CreateAtomicSwapBidRequestAttributes{
+			BaseAmount:     rgenerated.Amount(details.BaseAmount),
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.CreateAtomicSwapBidRequestRelationships{
+		Relationships: rgenerated.CreateAtomicSwapBidRequestRelationships{
 			BaseBalance: NewBalanceKey(details.BaseBalance).AsRelation(),
 			QuoteAssets: quoteAssets,
 		},
 	}
 }
-func newIssuanceRequest(id int64, details history2.CreateIssuanceRequest) *regources.CreateIssuanceRequest {
-	return &regources.CreateIssuanceRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ISSUANCE),
-		Attributes: regources.CreateIssuanceRequestAttributes{
+func newIssuanceRequest(id int64, details history2.CreateIssuanceRequest) *rgenerated.CreateIssuanceRequest {
+	return &rgenerated.CreateIssuanceRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_ISSUANCE),
+		Attributes: rgenerated.CreateIssuanceRequestAttributes{
 			Amount:         details.Amount,
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.CreateIssuanceRequestRelationships{
+		Relationships: rgenerated.CreateIssuanceRequestRelationships{
 			Asset:    NewAssetKey(details.Asset).AsRelation(),
 			Receiver: NewBalanceKey(details.Receiver).AsRelation(),
 		},
 	}
 }
-func newLimitsUpdateRequest(id int64, details history2.UpdateLimitsRequest) *regources.UpdateLimitsRequest {
-	return &regources.UpdateLimitsRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_LIMITS_UPDATE),
-		Attributes: regources.UpdateLimitsRequestAttributes{
+func newLimitsUpdateRequest(id int64, details history2.UpdateLimitsRequest) *rgenerated.UpdateLimitsRequest {
+	return &rgenerated.UpdateLimitsRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_LIMITS_UPDATE),
+		Attributes: rgenerated.UpdateLimitsRequestAttributes{
 			CreatorDetails: details.CreatorDetails,
 		},
 	}
 }
-func newPreIssuanceRequest(id int64, details history2.CreatePreIssuanceRequest) *regources.CreatePreIssuanceRequest {
-	return &regources.CreatePreIssuanceRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_PRE_ISSUANCE),
-		Attributes: regources.CreatePreIssuanceRequestAttributes{
+func newPreIssuanceRequest(id int64, details history2.CreatePreIssuanceRequest) *rgenerated.CreatePreIssuanceRequest {
+	return &rgenerated.CreatePreIssuanceRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_PRE_ISSUANCE),
+		Attributes: rgenerated.CreatePreIssuanceRequestAttributes{
 			Amount:    details.Amount,
 			Signature: details.Signature,
 			Reference: details.Reference,
 		},
-		Relationships: regources.CreatePreIssuanceRequestRelationships{
+		Relationships: rgenerated.CreatePreIssuanceRequestRelationships{
 			Asset: NewAssetKey(details.Asset).AsRelation(),
 		},
 	}
 }
-func newSaleRequest(id int64, details history2.CreateSaleRequest) *regources.CreateSaleRequest {
-	quoteAssets := &regources.RelationCollection{
-		Data: make([]regources.Key, 0, len(details.QuoteAssets)),
+func newSaleRequest(id int64, details history2.CreateSaleRequest) *rgenerated.CreateSaleRequest {
+	quoteAssets := &rgenerated.RelationCollection{
+		Data: make([]rgenerated.Key, 0, len(details.QuoteAssets)),
 	}
 	for _, quoteAsset := range details.QuoteAssets {
 		quoteAssets.Data = append(quoteAssets.Data, newQuoteAssetKey(quoteAsset.Asset))
 	}
 
-	return &regources.CreateSaleRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_SALE),
-		Attributes: regources.CreateSaleRequestAttributes{
+	return &rgenerated.CreateSaleRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_SALE),
+		Attributes: rgenerated.CreateSaleRequestAttributes{
 			BaseAssetForHardCap: details.BaseAssetForHardCap,
 			StartTime:           details.StartTime,
 			EndTime:             details.EndTime,
 			SaleType:            details.SaleType,
 			CreatorDetails:      details.CreatorDetails,
 		},
-		Relationships: regources.CreateSaleRequestRelationships{
+		Relationships: rgenerated.CreateSaleRequestRelationships{
 			QuoteAssets:       quoteAssets,
 			BaseAsset:         NewAssetKey(details.BaseAsset).AsRelation(),
 			DefaultQuoteAsset: newQuoteAssetKey(details.DefaultQuoteAsset).AsRelation(),
 		},
 	}
 }
-func newChangeRoleRequest(id int64, details history2.ChangeRoleRequest) *regources.ChangeRoleRequest {
-	return &regources.ChangeRoleRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CHANGE_ROLE),
-		Attributes: regources.ChangeRoleRequestAttributes{
+func newChangeRoleRequest(id int64, details history2.ChangeRoleRequest) *rgenerated.ChangeRoleRequest {
+	return &rgenerated.ChangeRoleRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_CHANGE_ROLE),
+		Attributes: rgenerated.ChangeRoleRequestAttributes{
 			AccountRoleToSet: details.AccountRoleToSet,
 			CreatorDetails:   details.CreatorDetails,
 			SequenceNumber:   details.SequenceNumber,
 		},
-		Relationships: regources.ChangeRoleRequestRelationships{
+		Relationships: rgenerated.ChangeRoleRequestRelationships{
 			AccountToUpdateRole: NewAccountKey(details.DestinationAccount).AsRelation(),
 		},
 	}
 }
-func newUpdateSaleDetailsRequest(id int64, details history2.UpdateSaleDetailsRequest) *regources.UpdateSaleDetailsRequest {
-	return &regources.UpdateSaleDetailsRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_UPDATE_SALE_DETAILS),
-		Attributes: regources.UpdateSaleDetailsRequestAttributes{
+func newUpdateSaleDetailsRequest(id int64, details history2.UpdateSaleDetailsRequest) *rgenerated.UpdateSaleDetailsRequest {
+	return &rgenerated.UpdateSaleDetailsRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_UPDATE_SALE_DETAILS),
+		Attributes: rgenerated.UpdateSaleDetailsRequestAttributes{
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.UpdateSaleDetailsRequestRelationships{
+		Relationships: rgenerated.UpdateSaleDetailsRequestRelationships{
 			Sale: NewSaleKey(int64(details.SaleID)).AsRelation(),
 		},
 	}
 }
-func newWithdrawalRequest(id int64, details history2.CreateWithdrawalRequest) *regources.CreateWithdrawRequest {
-	return &regources.CreateWithdrawRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_WITHDRAWAL),
-		Attributes: regources.CreateWithdrawRequestAttributes{
+func newWithdrawalRequest(id int64, details history2.CreateWithdrawalRequest) *rgenerated.CreateWithdrawRequest {
+	return &rgenerated.CreateWithdrawRequest{
+		Key: rgenerated.NewKeyInt64(id, rgenerated.REQUEST_DETAILS_WITHDRAWAL),
+		Attributes: rgenerated.CreateWithdrawRequestAttributes{
 			Fee:            details.Fee,
 			Amount:         details.Amount,
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.CreateWithdrawRequestRelationships{
+		Relationships: rgenerated.CreateWithdrawRequestRelationships{
 			Balance: NewBalanceKey(details.BalanceID).AsRelation(),
 		},
 	}

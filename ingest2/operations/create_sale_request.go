@@ -4,7 +4,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type createSaleRequestOpHandler struct {
@@ -24,8 +24,8 @@ func (h *createSaleRequestOpHandler) Details(op rawOperation, opRes xdr.Operatio
 			DefaultQuoteAsset: string(createSaleRequest.DefaultQuoteAsset),
 			StartTime:         internal.TimeFromXdr(createSaleRequest.StartTime),
 			EndTime:           internal.TimeFromXdr(createSaleRequest.EndTime),
-			HardCap:           regources.Amount(createSaleRequest.HardCap),
-			SoftCap:           regources.Amount(createSaleRequest.SoftCap),
+			HardCap:           rgenerated.Amount(createSaleRequest.HardCap),
+			SoftCap:           rgenerated.Amount(createSaleRequest.SoftCap),
 			CreatorDetails:    internal.MarshalCustomDetails(createSaleRequest.CreatorDetails),
 		},
 	}, nil

@@ -4,7 +4,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type manageLimitsOpHandler struct {
@@ -33,10 +33,10 @@ func (h *manageLimitsOpHandler) Details(op rawOperation, opRes xdr.OperationResu
 			StatsOpType:     creationDetails.StatsOpType,
 			AssetCode:       string(creationDetails.AssetCode),
 			IsConvertNeeded: creationDetails.IsConvertNeeded,
-			DailyOut:        regources.Amount(creationDetails.DailyOut),
-			WeeklyOut:       regources.Amount(creationDetails.WeeklyOut),
-			MonthlyOut:      regources.Amount(creationDetails.MonthlyOut),
-			AnnualOut:       regources.Amount(creationDetails.AnnualOut),
+			DailyOut:        rgenerated.Amount(creationDetails.DailyOut),
+			WeeklyOut:       rgenerated.Amount(creationDetails.WeeklyOut),
+			MonthlyOut:      rgenerated.Amount(creationDetails.MonthlyOut),
+			AnnualOut:       rgenerated.Amount(creationDetails.AnnualOut),
 		}
 	case xdr.ManageLimitsActionRemove:
 		opDetails.ManageLimits.Removal = &history2.ManageLimitsRemovalDetails{

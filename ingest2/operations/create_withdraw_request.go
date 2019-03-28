@@ -4,7 +4,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type createWithdrawRequestOpHandler struct {
@@ -21,7 +21,7 @@ func (h *createWithdrawRequestOpHandler) Details(op rawOperation,
 		Type: xdr.OperationTypeCreateWithdrawalRequest,
 		CreateWithdrawRequest: &history2.CreateWithdrawRequestDetails{
 			BalanceAddress: withdrawRequest.Balance.AsString(),
-			Amount:         regources.Amount(withdrawRequest.Amount),
+			Amount:         rgenerated.Amount(withdrawRequest.Amount),
 			Fee:            internal.FeeFromXdr(withdrawRequest.Fee),
 			CreatorDetails: internal.MarshalCustomDetails(withdrawRequest.CreatorDetails),
 		},
@@ -37,7 +37,7 @@ func (h *createWithdrawRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	return []history2.ParticipantEffect{h.BalanceEffect(withdrawRequest.Balance, &history2.Effect{
 		Type: history2.EffectTypeLocked,
 		Locked: &history2.BalanceChangeEffect{
-			Amount: regources.Amount(withdrawRequest.Amount),
+			Amount: rgenerated.Amount(withdrawRequest.Amount),
 			Fee:    internal.FeeFromXdr(withdrawRequest.Fee),
 		},
 	})}, nil

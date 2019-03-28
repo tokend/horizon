@@ -4,16 +4,16 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 func newManageSignerRule(id int64, details history2.ManageSignerRuleDetails,
-) *regources.ManageSignerRuleOp {
+) *rgenerated.ManageSignerRuleOp {
 	switch details.Action {
 	case xdr.ManageSignerRuleActionCreate:
-		return &regources.ManageSignerRuleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_SIGNER_RULE),
-			Attributes: &regources.ManageSignerRuleOpAttributes{
+		return &rgenerated.ManageSignerRuleOp{
+			Key: rgenerated.NewKeyInt64(id, rgenerated.OPERATIONS_CREATE_SIGNER_RULE),
+			Attributes: &rgenerated.ManageSignerRuleOpAttributes{
 				Resource:   details.CreateDetails.Resource,
 				Action:     details.CreateDetails.Action,
 				Forbids:    details.CreateDetails.IsForbid,
@@ -21,28 +21,28 @@ func newManageSignerRule(id int64, details history2.ManageSignerRuleDetails,
 				IsReadOnly: details.CreateDetails.IsReadOnly,
 				Details:    details.CreateDetails.Details,
 			},
-			Relationships: &regources.ManageSignerRuleOpRelationships{
+			Relationships: &rgenerated.ManageSignerRuleOpRelationships{
 				Rule: NewSignerRoleKey(details.RuleID).AsRelation(),
 			},
 		}
 	case xdr.ManageSignerRuleActionUpdate:
-		return &regources.ManageSignerRuleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_UPDATE_SIGNER_RULE),
-			Attributes: &regources.ManageSignerRuleOpAttributes{
+		return &rgenerated.ManageSignerRuleOp{
+			Key: rgenerated.NewKeyInt64(id, rgenerated.OPERATIONS_UPDATE_SIGNER_RULE),
+			Attributes: &rgenerated.ManageSignerRuleOpAttributes{
 				Resource:  details.UpdateDetails.Resource,
 				Action:    details.UpdateDetails.Action,
 				Forbids:   details.UpdateDetails.IsForbid,
 				IsDefault: details.UpdateDetails.IsDefault,
 				Details:   details.UpdateDetails.Details,
 			},
-			Relationships: &regources.ManageSignerRuleOpRelationships{
+			Relationships: &rgenerated.ManageSignerRuleOpRelationships{
 				Rule: NewSignerRoleKey(details.RuleID).AsRelation(),
 			},
 		}
 	case xdr.ManageSignerRuleActionRemove:
-		return &regources.ManageSignerRuleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_SIGNER_RULE),
-			Relationships: &regources.ManageSignerRuleOpRelationships{
+		return &rgenerated.ManageSignerRuleOp{
+			Key: rgenerated.NewKeyInt64(id, rgenerated.OPERATIONS_REMOVE_SIGNER_RULE),
+			Relationships: &rgenerated.ManageSignerRuleOpRelationships{
 				Rule: NewSignerRoleKey(details.RuleID).AsRelation(),
 			},
 		}

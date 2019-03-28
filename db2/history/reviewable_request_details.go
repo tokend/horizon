@@ -1,6 +1,7 @@
 package history
 
 import (
+	"gitlab.com/tokend/regources"
 	"time"
 
 	"database/sql/driver"
@@ -8,7 +9,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/regources"
 )
 
 type ReviewableRequestDetails struct {

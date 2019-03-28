@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetAsset - processes request to get asset and it's details by asset code
@@ -53,7 +53,7 @@ type getAssetHandler struct {
 }
 
 // GetAsset returns asset with related resources
-func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*regources.AssetResponse, error) {
+func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*rgenerated.AssetResponse, error) {
 	asset, err := h.AssetsQ.GetByCode(request.Code)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get asset by code")
@@ -63,7 +63,7 @@ func (h *getAssetHandler) GetAsset(request *requests.GetAsset) (*regources.Asset
 	}
 
 	assetResponse := resources.NewAsset(*asset)
-	response := &regources.AssetResponse{
+	response := &rgenerated.AssetResponse{
 		Data: assetResponse,
 	}
 

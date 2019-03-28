@@ -2,19 +2,19 @@ package resources
 
 import (
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 //NewRequestKey - creates new instance of request key
-func NewRequestKey(requestId int64) regources.Key {
-	return regources.NewKeyInt64(requestId, regources.REQUESTS)
+func NewRequestKey(requestId int64) rgenerated.Key {
+	return rgenerated.NewKeyInt64(requestId, rgenerated.REQUESTS)
 }
 
 //NewRequest - creates new instance of reviewable request
-func NewRequest(record history2.ReviewableRequest) regources.ReviewableRequest {
-	return regources.ReviewableRequest{
+func NewRequest(record history2.ReviewableRequest) rgenerated.ReviewableRequest {
+	return rgenerated.ReviewableRequest{
 		Key: NewRequestKey(record.ID),
-		Attributes: regources.ReviewableRequestAttributes{
+		Attributes: rgenerated.ReviewableRequestAttributes{
 			Reference:       record.Reference,
 			RejectReason:    record.RejectReason,
 			Hash:            record.Hash,
@@ -30,7 +30,7 @@ func NewRequest(record history2.ReviewableRequest) regources.ReviewableRequest {
 			State:  record.RequestState.String(),
 			StateI: int32(record.RequestState),
 		},
-		Relationships: regources.ReviewableRequestRelationships{
+		Relationships: rgenerated.ReviewableRequestRelationships{
 			Requestor: NewAccountKey(record.Requestor).AsRelation(),
 			Reviewer:  NewAccountKey(record.Reviewer).AsRelation(),
 		},

@@ -3,7 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type atomicSwapHandler struct {
@@ -23,7 +23,7 @@ func (h *atomicSwapHandler) Fulfilled(details requestDetails) ([]history2.Partic
 		h.BalanceEffect(atomicSwapExtendedResult.BidOwnerBaseBalanceId, &history2.Effect{
 			Type: history2.EffectTypeChargedFromLocked,
 			ChargedFromLocked: &history2.BalanceChangeEffect{
-				Amount: regources.Amount(atomicSwapExtendedResult.BaseAmount),
+				Amount: rgenerated.Amount(atomicSwapExtendedResult.BaseAmount),
 			},
 		}),
 	}
@@ -32,7 +32,7 @@ func (h *atomicSwapHandler) Fulfilled(details requestDetails) ([]history2.Partic
 		h.BalanceEffect(atomicSwapExtendedResult.PurchaserBaseBalanceId, &history2.Effect{
 			Type: history2.EffectTypeFunded,
 			Funded: &history2.BalanceChangeEffect{
-				Amount: regources.Amount(atomicSwapExtendedResult.BaseAmount),
+				Amount: rgenerated.Amount(atomicSwapExtendedResult.BaseAmount),
 			},
 		}))
 
@@ -56,7 +56,7 @@ func (h *atomicSwapHandler) Fulfilled(details requestDetails) ([]history2.Partic
 			h.BalanceEffect(atomicSwapExtendedResult.BidOwnerBaseBalanceId, &history2.Effect{
 				Type: history2.EffectTypeUnlocked,
 				Unlocked: &history2.BalanceChangeEffect{
-					Amount: regources.Amount(bid.Amount),
+					Amount: rgenerated.Amount(bid.Amount),
 				},
 			}))
 	}

@@ -5,7 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type manageKeyValueOpHandler struct {
@@ -17,10 +17,10 @@ func (h *manageKeyValueOpHandler) Details(op rawOperation, _ xdr.OperationResult
 ) (history2.OperationDetails, error) {
 	manageKVOp := op.Body.MustManageKeyValueOp()
 
-	var value *regources.KeyValueEntryValue
+	var value *rgenerated.KeyValueEntryValue
 	if manageKVOp.Action.Action == xdr.ManageKvActionPut {
 		valueForPtr := manageKVOp.Action.MustValue()
-		value = &regources.KeyValueEntryValue{
+		value = &rgenerated.KeyValueEntryValue{
 			Type: valueForPtr.Type,
 		}
 

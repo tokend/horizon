@@ -8,50 +8,50 @@ import (
 	"gitlab.com/tokend/go/xdr"
 
 	"gitlab.com/tokend/horizon/db2/core2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 //NewFee - creates new instance of Fee from provided one.
-func NewFee(record core2.Fee) regources.FeeRecord {
+func NewFee(record core2.Fee) rgenerated.FeeRecord {
 	hash := CalculateFeeHash(record)
-	return regources.FeeRecord{
-		Key: regources.Key{
+	return rgenerated.FeeRecord{
+		Key: rgenerated.Key{
 			ID:   hash,
-			Type: regources.FEES,
+			Type: rgenerated.FEES,
 		},
-		Attributes: regources.FeeRecordAttributes{
-			Fixed:   regources.Amount(record.Fixed),
-			Percent: regources.Amount(record.Percent),
-			AppliedTo: regources.FeeAppliedTo{
+		Attributes: rgenerated.FeeRecordAttributes{
+			Fixed:   rgenerated.Amount(record.Fixed),
+			Percent: rgenerated.Amount(record.Percent),
+			AppliedTo: rgenerated.FeeAppliedTo{
 				Asset:           record.Asset,
 				Subtype:         record.Subtype,
 				FeeType:         record.FeeType,
 				FeeTypeExtended: xdr.FeeType(record.FeeType),
-				LowerBound:      regources.Amount(record.LowerBound),
-				UpperBound:      regources.Amount(record.UpperBound),
+				LowerBound:      rgenerated.Amount(record.LowerBound),
+				UpperBound:      rgenerated.Amount(record.UpperBound),
 			},
 		},
 	}
 }
 
 //NewFeeKey - creates new Key for fee
-func NewFeeKey(hash string) regources.Key {
-	return regources.Key{
+func NewFeeKey(hash string) rgenerated.Key {
+	return rgenerated.Key{
 		ID:   hash,
-		Type: regources.FEES,
+		Type: rgenerated.FEES,
 	}
 }
 
-func NewCalculatedFeeKey(hash string) regources.Key {
-	return regources.Key{
+func NewCalculatedFeeKey(hash string) rgenerated.Key {
+	return rgenerated.Key{
 		ID:   hash,
-		Type: regources.CALCULATED_FEE,
+		Type: rgenerated.CALCULATED_FEE,
 	}
 }
 
 func CalculateFeeHash(fee core2.Fee) string {
-	lowerBound := regources.Amount(fee.LowerBound)
-	upperBound := regources.Amount(fee.UpperBound)
+	lowerBound := rgenerated.Amount(fee.LowerBound)
+	upperBound := rgenerated.Amount(fee.UpperBound)
 	data := fmt.Sprintf("type:%d:asset:%s:subtype:%d:lower_bound:%s:upper_bound:%s",
 		fee.FeeType,
 		fee.Asset,

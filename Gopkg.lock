@@ -507,7 +507,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:e8a3f706c1caf94e1419980a98cddc7522572fa086216cfaa790a9a4d6ab63dd"
+  digest = "1:1d4db53b47cd9c2e85b399a433f46cd3ffedfb131cc60e77f3c363c92ac2da7d"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -525,7 +525,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "433ce0279cad5c03603f1173f4e5aeec3829d2dd"
+  revision = "5af059262beaf22049da686f51522e3f9d6231bd"
+  version = "v3.1.1"
 
 [[projects]]
   branch = "master"
@@ -541,14 +542,14 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:b05a7fa29c69abeee1a61c7300a32cb83df8ca5d508cbd124cc7b1142036a26d"
+  digest = "1:7a97239e057f30ad2ef0eb340c807e36012fc88c60e888b6cbaec30be6419633"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
-    "v2",
+    "rgenerated",
   ]
   pruneopts = "UT"
-  revision = "0f994d3578ed23f78a2636ad3cd17f79435761a9"
+  revision = "feature/from-docs"
 
 [[projects]]
   branch = "master"
@@ -702,7 +703,7 @@
     "gitlab.com/tokend/go/strkey",
     "gitlab.com/tokend/go/xdr",
     "gitlab.com/tokend/regources",
-    "gitlab.com/tokend/regources/v2",
+    "gitlab.com/tokend/regources/rgenerated",
     "golang.org/x/net/context",
     "golang.org/x/net/http2",
     "gopkg.in/throttled/throttled.v2",

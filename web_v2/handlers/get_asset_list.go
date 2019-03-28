@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetAssetList - processes request to get the list of assets
@@ -48,7 +48,7 @@ type getAssetListHandler struct {
 }
 
 // GetAssetList returns the list of assets with related resources
-func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*regources.AssetsResponse, error) {
+func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*rgenerated.AssetsResponse, error) {
 	q := h.AssetsQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeAssetListOwner) {
 		q = q.FilterByOwner(request.Filters.Owner)
@@ -61,8 +61,8 @@ func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*reg
 		return nil, errors.Wrap(err, "Failed to get asset list")
 	}
 
-	response := &regources.AssetsResponse{
-		Data:  make([]regources.Asset, 0, len(assets)),
+	response := &rgenerated.AssetsResponse{
+		Data:  make([]rgenerated.Asset, 0, len(assets)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 

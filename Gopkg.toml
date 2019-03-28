@@ -100,10 +100,10 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  revision = "433ce0279cad5c03603f1173f4e5aeec3829d2dd"
+  version = "3"
 
-[[constraint]]
-  revision = "0f994d3578ed23f78a2636ad3cd17f79435761a9"
+[[override]]
+  revision = "feature/from-docs"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

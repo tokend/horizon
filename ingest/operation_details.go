@@ -2,7 +2,7 @@ package ingest
 
 import (
 	"fmt"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 
 	"encoding/hex"
 	"encoding/json"
@@ -332,9 +332,9 @@ func getAtomicSwapDetails(atomicSwapExtendedResult xdr.ASwapExtended) map[string
 		"purchaser_base_asset_balance_id": atomicSwapExtendedResult.PurchaserBaseBalanceId.AsString(),
 		"base_asset":                      string(atomicSwapExtendedResult.BaseAsset),
 		"quote_asset":                     string(atomicSwapExtendedResult.QuoteAsset),
-		"base_amount":                     regources.Amount(atomicSwapExtendedResult.BaseAmount),
-		"quote_amount":                    regources.Amount(atomicSwapExtendedResult.QuoteAmount),
-		"price":                           regources.Amount(atomicSwapExtendedResult.Price),
+		"base_amount":                     rgenerated.Amount(atomicSwapExtendedResult.BaseAmount),
+		"quote_amount":                    rgenerated.Amount(atomicSwapExtendedResult.QuoteAmount),
+		"price":                           rgenerated.Amount(atomicSwapExtendedResult.Price),
 	}
 }
 

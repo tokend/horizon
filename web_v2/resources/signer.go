@@ -4,35 +4,35 @@ import (
 	"strconv"
 
 	"gitlab.com/tokend/horizon/db2/core2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 //NewSigner - creates new instance of signer
-func NewSigner(signer core2.Signer) regources.Signer {
-	return regources.Signer{
+func NewSigner(signer core2.Signer) rgenerated.Signer {
+	return rgenerated.Signer{
 		Key: NewSignerKey(signer.PublicKey),
-		Attributes: regources.SignerAttributes{
+		Attributes: rgenerated.SignerAttributes{
 			Weight:   signer.Weight,
 			Identity: signer.Identity,
 			Details:  signer.Details,
 		},
-		Relationships: regources.SignerRelationships{
-			Role: regources.Key{
+		Relationships: rgenerated.SignerRelationships{
+			Role: rgenerated.Key{
 				ID:   strconv.FormatUint(signer.RoleID, 10),
-				Type: regources.SIGNER_ROLES,
+				Type: rgenerated.SIGNER_ROLES,
 			}.AsRelation(),
-			Account: regources.Key{
+			Account: rgenerated.Key{
 				ID:   signer.AccountID,
-				Type: regources.ACCOUNTS,
+				Type: rgenerated.ACCOUNTS,
 			}.AsRelation(),
 		},
 	}
 }
 
 //NewSignerKey - creates new key for signer
-func NewSignerKey(publicKey string) regources.Key {
-	return regources.Key{
+func NewSignerKey(publicKey string) rgenerated.Key {
+	return rgenerated.Key{
 		ID:   publicKey,
-		Type: regources.SIGNERS,
+		Type: rgenerated.SIGNERS,
 	}
 }

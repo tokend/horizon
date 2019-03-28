@@ -2,7 +2,7 @@ package core2
 
 import (
 	"gitlab.com/tokend/go/xdr"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type SignerRule struct {
@@ -12,5 +12,5 @@ type SignerRule struct {
 	Forbids   bool                   `db:"forbids"`
 	IsDefault bool                   `db:"is_default"`
 	OwnerID   string                 `db:"owner_id"`
-	Details   regources.Details      `db:"details"`
+	Details   rgenerated.Details     `db:"details"`
 }

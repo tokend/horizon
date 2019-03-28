@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.0.3
+
+### Added
+
+* `TransactionsResponse`, `Transaction`,  types to represent the get transactions response
+* `TransactionResponseMeta`, `TransactionAttrs`, `TransactionRelations` helping structures
+* `LedgerEntryChange`, `LedgerEntryChangeAttrs` types to represent the ledger entry change resource
+* `ledger-entry-changes` and `transactions` resource types
+
+## 3.0.2
+
 ## 3.0.2-x.0
 
 ### Added

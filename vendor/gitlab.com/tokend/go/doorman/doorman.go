@@ -5,7 +5,6 @@ import (
 
 	"gitlab.com/tokend/go/doorman/data"
 	"gitlab.com/tokend/go/resources"
-	"gitlab.com/tokend/go/signcontrol"
 )
 
 // Doorman interface only purpose is to simplify tests
@@ -36,7 +35,7 @@ func (d *doorman) Check(r *http.Request, constraints ...SignerConstraint) error 
 		case nil:
 			// request passed constraint check
 			return nil
-		case signcontrol.ErrNotAllowed:
+		case ErrNotAllowed:
 			// check failed, let's try next one
 			continue
 		default:
@@ -46,5 +45,5 @@ func (d *doorman) Check(r *http.Request, constraints ...SignerConstraint) error 
 	}
 
 	// request failed all checks
-	return signcontrol.ErrNotAllowed
+	return ErrNotAllowed
 }

@@ -3,7 +3,7 @@ package db2
 import (
 	"database/sql/driver"
 	"encoding/json"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -29,10 +29,10 @@ func (r *Details) Scan(src interface{}) error {
 	return nil
 }
 
-func (r *Details) AsRegourcesDetails() regources.Details {
+func (r *Details) AsRegourcesDetails() rgenerated.Details {
 	bytes, err := json.Marshal(r)
 	if err != nil {
 		panic(err)
 	}
-	return regources.Details(bytes)
+	return rgenerated.Details(bytes)
 }

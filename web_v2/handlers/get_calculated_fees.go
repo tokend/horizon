@@ -15,7 +15,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 const maximumTrailingDigits uint32 = 6
@@ -56,7 +56,7 @@ type getCalculatedFeesHandler struct {
 }
 
 // GetCalculatedFees returns calculated fee for given given parameters
-func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalculatedFees) (*regources.CalculatedFeeResponse, error) {
+func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalculatedFees) (*rgenerated.CalculatedFeeResponse, error) {
 	fee, err := h.getFeeForAccount(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load fee for account")
@@ -72,14 +72,14 @@ func (h *getCalculatedFeesHandler) GetCalculatedFees(request *requests.GetCalcul
 		return nil, errors.New("failed to calculate fee")
 	}
 
-	attributes := regources.Fee{
-		CalculatedPercent: regources.Amount(calculatedPercent),
-		Fixed:             regources.Amount(fee.Fixed),
+	attributes := rgenerated.Fee{
+		CalculatedPercent: rgenerated.Amount(calculatedPercent),
+		Fixed:             rgenerated.Amount(fee.Fixed),
 	}
 
 	hash := h.getHash(attributes)
-	response := &regources.CalculatedFeeResponse{
-		Data: regources.CalculatedFee{
+	response := &rgenerated.CalculatedFeeResponse{
+		Data: rgenerated.CalculatedFee{
 			Key:        resources.NewCalculatedFeeKey(hash),
 			Attributes: attributes,
 		},
@@ -110,7 +110,7 @@ func (h *getCalculatedFeesHandler) getMinimalAmount(assetCode string) (int64, er
 	return minimalAmount, nil
 }
 
-func (h *getCalculatedFeesHandler) getHash(attrs regources.Fee) string {
+func (h *getCalculatedFeesHandler) getHash(attrs rgenerated.Fee) string {
 	data := fmt.Sprintf("fixed:%s:calculated_percent:%s", attrs.Fixed.String(), attrs.CalculatedPercent.String())
 	hash := sha256.Sum256([]byte(data))
 	return hex.EncodeToString(hash[:])

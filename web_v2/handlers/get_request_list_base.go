@@ -10,14 +10,14 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type getRequestListBaseHandler struct {
 }
 
 func (h *getRequestListBaseHandler) PopulateLinks(
-	response *regources.ReviewableRequestsResponse, request requests.GetRequestsBase,
+	response *rgenerated.ReviewableRequestsResponse, request requests.GetRequestsBase,
 ) {
 	if len(response.Data) > 0 {
 		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
@@ -30,7 +30,7 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 	w http.ResponseWriter,
 	request requests.GetRequestsBase,
 	requestsQ history2.ReviewableRequestsQ,
-	renderer func(*regources.Included, history2.ReviewableRequest) (regources.ReviewableRequest, error),
+	renderer func(*rgenerated.Included, history2.ReviewableRequest) (rgenerated.ReviewableRequest, error),
 ) error {
 
 	q := h.ApplyFilters(request, requestsQ)
@@ -46,7 +46,7 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 			return nil
 		}
 
-		var response regources.ReviewableRequestResponse
+		var response rgenerated.ReviewableRequestResponse
 		response.Data, err = renderer(&response.Included, records[0])
 		if err != nil {
 			return errors.Wrap(err, "failed to render record")
@@ -55,8 +55,8 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		ape.Render(w, response)
 		return nil
 	} else {
-		response := &regources.ReviewableRequestsResponse{
-			Data: make([]regources.ReviewableRequest, 0, len(records)),
+		response := &rgenerated.ReviewableRequestsResponse{
+			Data: make([]rgenerated.ReviewableRequest, 0, len(records)),
 		}
 
 		for _, record := range records {
@@ -75,8 +75,8 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 }
 
 func (h *getRequestListBaseHandler) PopulateResource(
-	request requests.GetRequestsBase, included *regources.Included, record history2.ReviewableRequest,
-) regources.ReviewableRequest {
+	request requests.GetRequestsBase, included *rgenerated.Included, record history2.ReviewableRequest,
+) rgenerated.ReviewableRequest {
 	reviewableRequest := resources.NewRequest(record)
 	reviewableRequestDetails := resources.NewRequestDetails(record)
 	reviewableRequest.Relationships.RequestDetails = reviewableRequestDetails.GetKey().AsRelation()

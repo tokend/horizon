@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetAccountRoleList - processes request to get the list of accountRoles
@@ -48,14 +48,14 @@ type getAccountRoleListHandler struct {
 }
 
 // GetAccountRoleList returns the list of accountRoles with related resources
-func (h *getAccountRoleListHandler) GetAccountRoleList(request *requests.GetAccountRoleList) (*regources.AccountRolesResponse, error) {
+func (h *getAccountRoleListHandler) GetAccountRoleList(request *requests.GetAccountRoleList) (*rgenerated.AccountRolesResponse, error) {
 	accountRoles, err := h.AccountRolesQ.Page(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get account role list")
 	}
 
-	response := &regources.AccountRolesResponse{
-		Data:  make([]regources.AccountRole, 0, len(accountRoles)),
+	response := &rgenerated.AccountRolesResponse{
+		Data:  make([]rgenerated.AccountRole, 0, len(accountRoles)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 

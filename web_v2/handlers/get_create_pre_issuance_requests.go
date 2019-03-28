@@ -15,7 +15,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 func GetCreatePreIssuanceRequests(w http.ResponseWriter, r *http.Request) {
@@ -64,17 +64,17 @@ func (h *getCreatePreIssuanceRequestsHandler) MakeAll(w http.ResponseWriter, req
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
 }
 
-func (h *getCreatePreIssuanceRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
+func (h *getCreatePreIssuanceRequestsHandler) RenderRecord(included *rgenerated.Included, record history2.ReviewableRequest) (rgenerated.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreatePreIssuanceRequestsAsset) {
 		asset, err := h.AssetsQ.GetByCode(record.Details.CreatePreIssuance.Asset)
 		if err != nil {
-			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get asset")
+			return rgenerated.ReviewableRequest{}, errors.Wrap(err, "failed to get asset")
 		}
 
 		if asset == nil {
-			return regources.ReviewableRequest{}, errors.New("asset not found")
+			return rgenerated.ReviewableRequest{}, errors.New("asset not found")
 		}
 		resource := resources.NewAsset(*asset)
 		included.Add(&resource)

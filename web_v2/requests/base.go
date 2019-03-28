@@ -22,7 +22,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 const (
@@ -100,7 +100,7 @@ func (r *base) marshalQuery() string {
 }
 
 var amountHook = figure.Hooks{
-	"regources.Amount": func(value interface{}) (reflect.Value, error) {
+	"rgenerated.Amount": func(value interface{}) (reflect.Value, error) {
 		strVal, ok := value.(string)
 		if !ok {
 			return reflect.Value{}, errors.New("Failed to parse value as string")
@@ -111,7 +111,7 @@ var amountHook = figure.Hooks{
 			return reflect.Value{}, errors.Wrap(err, "failed to parse value as int64")
 		}
 
-		result := regources.Amount(intVal)
+		result := rgenerated.Amount(intVal)
 
 		return reflect.ValueOf(result), nil
 	},
@@ -352,8 +352,8 @@ func (r *base) getCursorBasedPageParams() (*db2.CursorPageParams, error) {
 }
 
 //GetCursorLinks - returns links for cursor based page params
-func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *regources.Links {
-	result := regources.Links{
+func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *rgenerated.Links {
+	result := rgenerated.Links{
 		Self: r.getCursorLink(p.Cursor, p.Limit, p.Order),
 		Prev: r.getCursorLink(p.Cursor, p.Limit, p.Order.Invert()),
 	}
@@ -372,8 +372,8 @@ func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *regources.Li
 }
 
 //GetOffsetLinks - returns links for offset based page params
-func (r *base) GetOffsetLinks(p db2.OffsetPageParams) *regources.Links {
-	result := regources.Links{
+func (r *base) GetOffsetLinks(p db2.OffsetPageParams) *rgenerated.Links {
+	result := rgenerated.Links{
 		Next: r.getOffsetLink(p.PageNumber+1, p.Limit, p.Order),
 		Self: r.getOffsetLink(p.PageNumber, p.Limit, p.Order),
 	}

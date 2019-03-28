@@ -12,7 +12,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetReviewableRequest - processes request to get reviewable request and it's details by it's ID
@@ -68,7 +68,7 @@ func (h *getReviewableRequestHandler) GetReviewableRequest(request requests.GetR
 func (h *getReviewableRequestHandler) RenderResponse(r *http.Request, w http.ResponseWriter,
 	request *requests.GetReviewableRequest, historyRecord *history2.ReviewableRequest) {
 
-	response := regources.ReviewableRequestResponse{
+	response := rgenerated.ReviewableRequestResponse{
 		Data: resources.NewRequest(*historyRecord),
 	}
 

@@ -5,7 +5,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
-	regources "gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 type createIssuanceRequestOpHandler struct {
@@ -33,7 +33,7 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 		CreateIssuanceRequest: &history2.CreateIssuanceRequestDetails{
 			Fee:                    internal.FeeFromXdr(issuanceRequest.Fee),
 			Reference:              utf8.Scrub(string(createIssuanceRequestOp.Reference)),
-			Amount:                 regources.Amount(issuanceRequest.Amount),
+			Amount:                 rgenerated.Amount(issuanceRequest.Amount),
 			Asset:                  string(issuanceRequest.Asset),
 			ReceiverAccountAddress: createIssuanceRequestRes.Receiver.Address(),
 			ReceiverBalanceAddress: issuanceRequest.Receiver.AsString(),
@@ -60,7 +60,7 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 	return h.BalanceEffectWithAccount(sourceAccountID, issuanceRequest.Receiver, &history2.Effect{
 		Type: history2.EffectTypeIssued,
 		Issued: &history2.BalanceChangeEffect{
-			Amount: regources.Amount(issuanceRequest.Amount),
+			Amount: rgenerated.Amount(issuanceRequest.Amount),
 			Fee:    internal.FeeFromXdr(issuanceRequest.Fee),
 		},
 	}), nil

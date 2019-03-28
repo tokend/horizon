@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2/generated"
+	"gitlab.com/tokend/regources/rgenerated"
 )
 
 // GetAccountRole - processes request to get accountRole and it's details by accountRole code
@@ -53,7 +53,7 @@ type getAccountRoleHandler struct {
 }
 
 // GetAccountRole returns accountRole with related resources
-func (h *getAccountRoleHandler) GetAccountRole(request *requests.GetAccountRole) (*regources.AccountRoleResponse, error) {
+func (h *getAccountRoleHandler) GetAccountRole(request *requests.GetAccountRole) (*rgenerated.AccountRoleResponse, error) {
 	accountRole, err := h.AccountRolesQ.FilterByID(request.ID).Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get accountRole by code")
@@ -68,7 +68,7 @@ func (h *getAccountRoleHandler) GetAccountRole(request *requests.GetAccountRole)
 	}
 
 	accountRoleResponse := resources.NewAccountRole(*accountRole)
-	var included regources.Included
+	var included rgenerated.Included
 	for _, rule := range rules {
 		ruleResponse := resources.NewAccountRule(rule)
 		accountRoleResponse.Relationships.Rules.Data = append(accountRoleResponse.Relationships.Rules.Data,
@@ -79,7 +79,7 @@ func (h *getAccountRoleHandler) GetAccountRole(request *requests.GetAccountRole)
 		}
 	}
 
-	return &regources.AccountRoleResponse{
+	return &rgenerated.AccountRoleResponse{
 		Data:     accountRoleResponse,
 		Included: included,
 	}, nil
