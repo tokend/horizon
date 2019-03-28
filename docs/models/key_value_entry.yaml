@@ -99,6 +99,7 @@ KeyValueEntry:
   allOf:
   - $ref: '#/components/schemas/KeyValueEntryKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object

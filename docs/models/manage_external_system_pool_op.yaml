@@ -13,6 +13,7 @@ ManageExternalSystemAccountIDPoolEntryOp:
   allOf:
   - $ref: '#/components/schemas/ManageExternalSystemAccountIDPoolEntryOpKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object
@@ -43,11 +44,17 @@ CreateExternalSystemPoolOp:
   properties:
     pool_id:
       type: integer
+      format: uint64
       description: "ID of external system pool"
       example: 2
     data:
       type: string
       description: "" #TODO
+    parent:
+      type: integer
+      format: uint64
+    external_system_type:
+      type: integer
 
 RemoveExternalSystemPoolOp:
   type: object
@@ -56,5 +63,6 @@ RemoveExternalSystemPoolOp:
   properties:
     pool_id:
       type: integer
+      format: uint64
       description: "ID of external system pool"
       example: 2

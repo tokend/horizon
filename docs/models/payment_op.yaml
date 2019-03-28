@@ -13,6 +13,7 @@ PaymentOp:
   allOf:
   - $ref: '#/components/schemas/PaymentOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
@@ -34,7 +35,7 @@ PaymentOp:
           - amount
           - source_fee
           - destination_fee
-          - source_pay_for_destination_fee
+          - source_pay_for_destination
           - subject
           - reference
         properties:
@@ -42,7 +43,7 @@ PaymentOp:
             $ref: '#/components/schemas/Fee'
           destination_fee:
             $ref: '#/components/schemas/Fee'
-          source_pay_for_destination_fee:
+          source_pay_for_destination:
             type: boolean
             example: false
             description: "Whether source of the payment should pay destination fee"

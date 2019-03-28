@@ -15,6 +15,7 @@ Signer:
   allOf:
   - $ref: '#/components/schemas/SignerKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       attributes:
         type: object
@@ -33,9 +34,6 @@ Signer:
             description: "free-form object to attach details to the signer"
       relationships:
         type: object
-        required:
-          - role
-          - account
         properties:
           role:
             description: "role of a signer"

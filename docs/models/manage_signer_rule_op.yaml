@@ -18,17 +18,11 @@ ManageSignerRuleOp:
     properties:
       relationships:
         type: object
-        nullable: true
         properties:
-          rules:
-            items:
-              $ref: '#/components/schemas/AccountRuleKey'
-            type: array
-          role:
-            $ref: '#/components/schemas/AccountRoleKey'
+          rule:
+            $ref: '#/components/schemas/SignerRuleKey'
       attributes:
         type: object
-        nullable: true
         required:
           - details
           - is_read_only
@@ -49,7 +43,7 @@ ManageSignerRuleOp:
           details:
             $ref: '#/components/schemas/Details'
           action:
-            format: xdr.ManageSignerRuleAction
+            format: xdr.SignerRuleAction
             description: |
               * 1:  "any"
               * 2:  "create"

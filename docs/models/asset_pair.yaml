@@ -17,12 +17,10 @@ AssetPair:
   allOf:
   - $ref: '#/components/schemas/AssetPairKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
-        required:
-          - base_asset
-          - quote_asset
         properties:
           base_asset:
             type: object

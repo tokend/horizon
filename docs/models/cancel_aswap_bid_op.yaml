@@ -16,6 +16,7 @@ CancelAtomicSwapBidOp:
   allOf:
   - $ref: '#/components/schemas/CancelAtomicSwapBidOpKey'
   - type: object
+    required: [relationships]
     properties:
       relationships:
         type: object

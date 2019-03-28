@@ -16,12 +16,10 @@ Account:
   allOf:
   - $ref: '#/components/schemas/AccountKey'
   - type: object
+    required: [relationships]
     properties:
       relationships:
         type: object
-        required:
-          - balances
-          - role
         properties:
           referrer:
             description: "Referrer is another account that introduced this account into the system."

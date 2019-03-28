@@ -13,6 +13,7 @@ ManageOfferOp:
   allOf:
   - $ref: '#/components/schemas/ManageOfferOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
@@ -24,6 +25,7 @@ ManageOfferOp:
       attributes:
         type: object
         required:
+          - offer_id
           - order_book_id
           - base_amount
           - price
@@ -31,8 +33,14 @@ ManageOfferOp:
           - fee
           - is_deleted
         properties:
+          offer_id:
+            type: integer
+            format: int64
+            description: "ID of the offer to manage"
+            example: 1
           order_book_id:
             type: integer
+            format: int64
             description: "ID of the order book"
             example: 0
           base_amount:

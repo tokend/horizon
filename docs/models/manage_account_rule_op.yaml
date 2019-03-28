@@ -18,16 +18,10 @@ ManageAccountRuleOp:
     properties:
       relationships:
         type: object
-        nullable: true
         properties:
-          rules:
-            type: array
-            items:
-              $ref: '#/components/schemas/AccountRuleKey'
-          role:
-            $ref: '#/components/schemas/AccountRoleKey'
+          rule:
+            $ref: '#/components/schemas/AccountRuleKey'
       attributes:
-        nullable: true
         type: object
         required:
           - details

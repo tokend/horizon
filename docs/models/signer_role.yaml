@@ -15,10 +15,10 @@ SignerRole:
   allOf:
   - $ref: '#/components/schemas/SignerRoleKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
-        required: [rules, owner]
         properties:
           rules:
             description: "Rules applied to the role"

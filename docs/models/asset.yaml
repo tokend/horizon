@@ -15,10 +15,10 @@ Asset:
   allOf:
   - $ref: '#/components/schemas/AssetKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
-        required: [owner]
         properties:
           owner:
             type: object
@@ -71,7 +71,7 @@ Asset:
             - $ref: '#/components/schemas/Mask'
           trailing_digits:
             type: integer
-            format: int32
+            format: uint32
             description: "Number of significant digits after the point"
             maximum: 6
             minimum: 0
@@ -103,6 +103,7 @@ QuoteAsset:
   allOf:
     - $ref: '#/components/schemas/QuoteAssetKey'
     - type: object
+      required: [attributes]
       properties:
         attributes:
           type: object

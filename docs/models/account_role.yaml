@@ -15,6 +15,7 @@ AccountRole:
   allOf:
   - $ref: '#/components/schemas/AccountRoleKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object

@@ -13,6 +13,7 @@ CheckSaleStateOp:
   allOf:
   - $ref: '#/components/schemas/CheckSaleStateOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object

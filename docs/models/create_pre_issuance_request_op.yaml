@@ -13,6 +13,7 @@ CreatePreIssuanceRequestOp:
   allOf:
   - $ref: '#/components/schemas/CreatePreIssuanceRequestOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object

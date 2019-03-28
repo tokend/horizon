@@ -15,11 +15,10 @@ Limits:
   allOf:
   - $ref: '#/components/schemas/LimitsKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
-        required:
-          - asset
         properties:
           account:
             type: object
@@ -35,6 +34,12 @@ Limits:
             properties:
               data:
                 $ref: '#/components/schemas/AssetKey'
+          account_role:
+            type: object
+            description: "role of the related account"
+            properties:
+              data:
+                $ref: '#/components/schemas/AccountKey'
       attributes:
         type: object
         required:

@@ -16,6 +16,7 @@ OrderBookEntry:
   allOf:
   - $ref: '#/components/schemas/OrderBookEntryKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       attributes:
         type: object

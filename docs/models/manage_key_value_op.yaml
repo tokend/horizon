@@ -13,6 +13,7 @@ ManageKeyValueOp:
   allOf:
   - $ref: '#/components/schemas/ManageKeyValueOpKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object

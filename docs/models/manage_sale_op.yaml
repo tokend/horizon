@@ -13,6 +13,7 @@ ManageSaleOp:
   allOf:
   - $ref: '#/components/schemas/ManageSaleOpKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object
@@ -22,6 +23,7 @@ ManageSaleOp:
         properties:
           sale_id:
             type: integer
+            format: uint64
             description: "ID of the sale to manage"
           action:
             format: xdr.ManageSaleAction

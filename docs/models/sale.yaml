@@ -11,13 +11,20 @@ SaleKey:
       type: string
       enum:
         - "sales"
+
+SaleState:
+  type: integer
+  enum:
+
 Sale:
   allOf:
     - $ref: '#/components/schemas/SaleKey'
     - type: object
+      required: [relationships, attributes]
       properties:
         attributes:
           type: object
+          required: [start_time, end_time, sale_type, sale_state, details]
           properties:
             start_time:
               type: string
@@ -38,7 +45,7 @@ Sale:
               example: 2
             sale_state:
               type: integer
-              format: int32
+              format: SaleState
               minimum: 1
               maximum: 3
               description: "state of sale" # todo provide a list of sale states
@@ -107,6 +114,7 @@ SaleRequest:
               * 3 - fixed price sale
           sale_state:
             type: integer
+            format: SaleState
             minimum: 1
             maximum: 3
             example: 1
@@ -114,6 +122,7 @@ SaleRequest:
               * 1 - open
               * 2 - closed
               * 3 - cancelled
+            $ref: '#/components/schemas/SaleState'
           details:
             $ref: '#/components/schemas/Details'
       relationships:
@@ -121,14 +130,14 @@ SaleRequest:
         properties:
           owner:
             type: object
-            description: "Owner of the sale"
+            description: "Sale owner's account key"
             properties:
               data:
                 type: object
                 $ref: '#/components/schemas/AccountKey'
           base_asset:
             type: object
-            description: "Base asset of the sale"
+            description: "Asset key of the asset of the sale"
             properties:
               data:
                 type: object
@@ -169,6 +178,7 @@ SaleQuoteAsset:
   allOf:
     - $ref: '#/components/schemas/SaleQuoteAssetKey'
     - type: object
+      required: [relationships, attributes]
       properties:
         attributes:
           type: object
@@ -177,22 +187,23 @@ SaleQuoteAsset:
             - current_cap
             - total_current_cap
             - hard_cap
+            - soft_cap
           properties:
             price:
               type: integer
-              format: int64
+              format: Amount
             current_cap:
               type: integer
-              format: int64
+              format: Amount
             total_current_cap:
               type: integer
-              format: int64
+              format: Amount
             hard_cap:
               type: integer
-              format: int64
+              format: Amount
             soft_cap:
               type: integer
-              format: int64
+              format: Amount
         relationships:
           type: object
           properties:

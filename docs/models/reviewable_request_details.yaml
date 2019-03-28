@@ -17,11 +17,10 @@ CreateAssetRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
-          required:
-            - asset
           properties:
             asset:
               type: object
@@ -46,6 +45,7 @@ CreateAssetRequest:
               example: "USD"
             type:
               type: integer
+              format: uint64
               description: "Numeric type of asset"
               example: 1
             policies:
@@ -73,11 +73,10 @@ UpdateAssetRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
-          required:
-            - asset
           properties:
             asset:
               description: "asset"
@@ -99,15 +98,14 @@ CreatePreIssuanceRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
-          required:
-            - asset
           properties:
             asset:
               type: object
-              description: "asset"
+              description: "asset which would be pre-issued"
               properties:
                 data:
                   $ref: '#/components/schemas/AssetKey'
@@ -141,12 +139,10 @@ CreateIssuanceRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
-          required:
-            - asset
-            - receiver
           properties:
             asset:
               type: object
@@ -178,11 +174,10 @@ CreateWithdrawRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
-          required:
-            - balance
           properties:
             balance:
               type: object
@@ -212,13 +207,10 @@ CreateSaleRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
-          required:
-            - base_asset
-            - quote_assets
-            - default_quote_asset
           properties:
             base_asset:
               type: object
@@ -282,6 +274,7 @@ UpdateLimitsRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [attributes]
       properties:
         attributes:
           type: object
@@ -295,11 +288,10 @@ CreateAmlAlertRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
-          required:
-            - balance
           properties:
             balance:
               type: object
@@ -325,6 +317,7 @@ ChangeRoleRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
@@ -346,12 +339,14 @@ ChangeRoleRequest:
           properties:
             account_role_to_set:
               type: integer
+              format: uint64
               minimum: 1
               maximum: 10
               description: |
               example: 1
             sequence_number:
               type: integer
+              format: uint32
               description: "Sequence number"
               example: 10
             creator_details:
@@ -362,11 +357,10 @@ UpdateSaleDetailsRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
-          required:
-            - sale
           properties:
             sale:
               type: object
@@ -387,13 +381,11 @@ CreateAtomicSwapBidRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
           deprecated: true
-          required:
-            - base_balance
-            - quote_assets
           properties:
             base_balance:
               type: object
@@ -432,13 +424,11 @@ CreateAtomicSwapRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
           deprecated: true
-          required:
-            - bid
-            - quote_asset
           properties:
             bid:
               type: object

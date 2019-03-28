@@ -15,10 +15,11 @@ AccountRule:
   allOf:
   - $ref: '#/components/schemas/AccountRuleKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object
-        required: [action, is_forbid,details,resource]
+        required: [action, forbids, details,resource]
         properties:
           action:
             type: integer
@@ -40,7 +41,7 @@ AccountRule:
                   * 13: "update_max_issuance"
                   * 14: "check"
                   * 15: "cancel"
-          is_forbid:
+          forbids:
             type: boolean
             description: "defines whether or not the specified action is forbidden"
             example: false

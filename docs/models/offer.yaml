@@ -16,6 +16,7 @@ Offer:
   allOf:
   - $ref: '#/components/schemas/OfferKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       attributes:
         type: object
@@ -33,14 +34,14 @@ Offer:
             description: "defines whether an offer created is on buying or selling the base_asset, or both"
             example: true
           order_book_id:
-            type: integer
+            type: string
             format: int64
             description: "defines whether an offer created is on selling or trading. Could be either `0` (secondary market) or some `saleId` (for specific sale) or `-1`" # todo provide a list of order book IDs
-            example: 1
+            example: "1"
           created_at:
             type: string
             description: "defines the time when the offer was created"
-            format: "date-time"
+            format: "date-time string"
             example: "2012-11-01T22:08:41+00:00"
           base_amount:
             type: string
@@ -61,12 +62,6 @@ Offer:
             $ref: '#/components/schemas/Fee'
       relationships:
         type: object
-        required:
-          - owner
-          - base_asset
-          - base_balance
-          - quote_asset
-          - quote_balance
         properties:
           owner:
             type: object

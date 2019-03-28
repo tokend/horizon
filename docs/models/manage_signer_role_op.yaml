@@ -15,6 +15,7 @@ ManageSignerRoleOp:
   allOf:
   - $ref: '#/components/schemas/ManageSignerRoleOpKey'
   - type: object
+    required: [relationships]
     properties:
       relationships:
         type: object

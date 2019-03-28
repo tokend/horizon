@@ -16,6 +16,7 @@ CreateAtomicSwapRequestOp:
   allOf:
     - $ref: '#/components/schemas/CreateAtomicSwapRequestOpKey'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object

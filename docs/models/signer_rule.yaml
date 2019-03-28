@@ -15,10 +15,10 @@ SignerRule:
   allOf:
   - $ref: '#/components/schemas/SignerRuleKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
-        required: [owner]
         properties:
           owner:
             type: object
@@ -28,7 +28,7 @@ SignerRule:
                 $ref: '#/components/schemas/AccountKey'
       attributes:
         type: object
-        required: [action, is_forbid,details,resource,is_default]
+        required: [action, forbids, details, resource, is_default]
         properties:
           action:
             type: integer
@@ -49,7 +49,7 @@ SignerRule:
                           * 12: "bind"
                           * 13: "update_max_issuance"
                           * 14: "check"
-          is_forbid:
+          forbids:
             type: boolean
             description: "defines whether the specified action is forbidden"
             example: false

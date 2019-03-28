@@ -31,22 +31,10 @@ CalculatedFee:
   allOf:
   - $ref: '#/components/schemas/CalculatedFeeKey'
   - type: object
+    required: [attributes]
     properties:
-      type: object
-      properties:
-        attributes:
-          type: object
-          properties:
-            fixed:
-              type: string
-              description: "Fixed amount to pay"
-              example: "1.123456"
-              format: Amount
-            calculated_percent:
-              type: string
-              description: "Calculated percent"
-              example: "1.250500"
-              format: Amount
+      attributes:
+        $ref: '#/components/schemas/Fee'
 
 FeeAppliedTo:
   type: object
@@ -56,6 +44,7 @@ FeeAppliedTo:
     - fee_type
     - lower_bound
     - upper_bound
+    - fee_type_extended
   properties:
     asset:
       type: string
@@ -91,10 +80,17 @@ FeeRecord:
   allOf:
   - $ref: '#/components/schemas/FeeKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
         properties:
+          asset:
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountKey'
           account:
             type: object
             description: "Account for which the fee is set"
@@ -111,18 +107,18 @@ FeeRecord:
                 $ref: '#/components/schemas/AccountRoleKey'
       attributes:
         type: object
-        required: [fixed,percent]
+        required: [fixed,percent,applied_to]
         properties:
           fixed:
             type: integer
             description: "Fixed amount to pay"
             example: "1123456"
-            format: int64
+            format: Amount
           percent:
             type: integer
             description: "Percent to calculate the fee with (e.g., 1.0 represents 100%, 0.21 represents 21%)"
             example: "234"
-            format: int64
+            format: Amount
           applied_to:
             type: object
             $ref: '#/components/schemas/FeeAppliedTo'
@@ -134,16 +130,32 @@ Fee:
                 charged, locked, unlocked, for all incoming effects but unlocked it's always charged)
   required:
     - fixed
-    - percent
+    - calculated_percent
   properties:
     fixed:
       type: integer
-      format: int64
+      format: Amount
       description: "fixed fee charged for the operation"
       example: 486000000
-    percent:
+    calculated_percent:
       type: integer
-      format: int64
+      format: Amount
       description: "percent of the operation amount"
       example: 4000000
 
+
+FeeData:
+  type: object
+  required:
+    - fixed_fee
+    - actual_payment_fee
+    - actual_payment_fee_asset_code
+  properties:
+    fixed_fee:
+      type: integer
+      format: Amount
+    actual_payment_fee:
+      type: integer
+      format: Amount
+    actual_payment_fee_asset_code:
+      type: string

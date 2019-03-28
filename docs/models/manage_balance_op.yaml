@@ -13,6 +13,7 @@ ManageBalanceOp:
   allOf:
   - $ref: '#/components/schemas/ManageBalanceOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object

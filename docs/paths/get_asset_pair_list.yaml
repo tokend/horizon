@@ -1,4 +1,4 @@
-/v3/assets_pairs:
+/v3/asset_pairs:
   get:
     tags:
       - Asset Pairs

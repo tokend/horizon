@@ -36,6 +36,10 @@ def parse_allOf(k: str, obj: dict):
         return None, None, None
     new_schema['type'] = typ
 
+    required = schema.get('required')
+    if required:
+        new_schema['required'] = required
+
     props = schema.get('properties')
     if props is None:
         log.warning(f"no properties in schema: {k}. Expected 'properties' field in body of schema")

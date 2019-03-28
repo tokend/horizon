@@ -13,6 +13,7 @@ Operation:
   allOf:
     - $ref: '#/components/schemas/OperationKey'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
@@ -28,6 +29,7 @@ Operation:
               $ref: '#/components/schemas/OperationDetailsKey'
         attributes:
           type: object
+          required: [applied_at]
           properties:
             applied_at:
               type: string
