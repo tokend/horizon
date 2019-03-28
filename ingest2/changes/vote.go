@@ -84,12 +84,13 @@ func (c *voteHandler) Updated(lc ledgerChange) error {
 }
 
 func (c *voteHandler) convertVote(raw xdr.VoteEntry) (*history.Vote, error) {
+	choice := uint64(raw.Data.MustSingle().Choice)
 	return &history.Vote{
 		VoterID: raw.VoterId.Address(),
 		PollID:  int64(raw.PollId),
 		VoteData: regources.VoteData{
-			Type:         raw.Data.PollType,
-			SingleChoice: uint64(raw.Data.MustSingle().Choice),
+			PollType:     raw.Data.PollType,
+			SingleChoice: &choice,
 		},
 	}, nil
 }

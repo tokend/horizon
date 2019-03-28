@@ -1,4 +1,4 @@
-/v3/votes/{id}:
+/v3/polls/{id}/relationships/votes/{voter}:
   get:
     tags:
       - Polls
@@ -10,7 +10,7 @@
     parameters:
       - name: id
         in: path
-        description: Unique identifier of a vote
+        description: Unique identifier of a poll
         required: true
         style: simple
         explode: false
@@ -18,6 +18,15 @@
           type: integer
           format: int64
           example: 10
+      - name: voter
+        in: path
+        description: Unique identifier of a voter account
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "GAULFBQKQTFHHHZEIRMYVCGTY47FKWEW7P2BY2YT45HAEODAIJUJH23T"
       - name: include
         in: query
         description: |

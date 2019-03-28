@@ -29,6 +29,23 @@ func GetVoteList(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
+	poll, err := handler.PollsQ.GetByID(request.PollID)
+	if err != nil {
+		ctx.Log(r).WithError(err).Error("failed to get poll for vote", logan.F{
+			"request": request,
+		})
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+
+	if poll == nil {
+		ape.RenderErr(w, problems.NotFound())
+		return
+	}
+
+	if !isAllowed(r, w, poll.OwnerID, poll.ResultProviderID) {
+		return
+	}
 
 	result, err := handler.GetVoteList(request)
 	if err != nil {
@@ -44,6 +61,7 @@ func GetVoteList(w http.ResponseWriter, r *http.Request) {
 
 type getVoteListHandler struct {
 	VotesQ history2.VotesQ
+	PollsQ history2.PollsQ
 	Log    *logan.Entry
 }
 

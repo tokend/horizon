@@ -30,6 +30,9 @@ func GetPollList(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
+	if !isAllowed(r, w, request.Filters.ResultProvider, request.Filters.Owner) {
+		return
+	}
 
 	result, err := handler.GetPollList(request)
 	if err != nil {

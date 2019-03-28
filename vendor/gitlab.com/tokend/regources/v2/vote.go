@@ -37,8 +37,8 @@ type VoteRelations struct {
 }
 
 type VoteData struct {
-	Type         xdr.PollType `json:"type"`
-	SingleChoice uint64       `json:"single_choice"`
+	PollType     xdr.PollType `json:"poll_type"`
+	SingleChoice *uint64      `json:"single_choice,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal

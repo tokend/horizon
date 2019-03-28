@@ -26,10 +26,11 @@ const (
 	FilterTypePollListMinEndTime = "min_end_time"
 	// FilterTypePollListState - defines if we need to filter response by state
 	FilterTypePollListState = "state"
-	// FilterTypePollListPollType - defines if we need to filter response by sale_type
+	// FilterTypePollListPollType - defines if we need to filter response by poll_type
 	FilterTypePollListPollType = "poll_type"
 
-	FilterTypePollListPermissionType   = "permission_type"
+	FilterTypePollListPermissionType = "permission_type"
+
 	FilterTypePollListVoteConfirmation = "vote_confirmation"
 )
 

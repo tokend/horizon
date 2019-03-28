@@ -51,9 +51,9 @@ func VoteCount(votes []history2.Vote) []regources.VoteCount {
 
 	helperMap := make(map[uint64]uint32)
 	for _, vote := range votes {
-		switch vote.VoteData.Type {
+		switch vote.VoteData.PollType {
 		case xdr.PollTypeSingleChoice:
-			helperMap[vote.VoteData.SingleChoice]++
+			helperMap[*vote.VoteData.SingleChoice]++
 		default:
 			panic("Unexpected vote data type (poll type)")
 		}
