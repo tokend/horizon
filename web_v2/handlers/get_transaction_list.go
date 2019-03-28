@@ -132,6 +132,8 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 	}
 
 	latestLedger, err := h.getLatestLedger()
+	// TODO: possible race condition may occur if new ledger will be closed between querying transactions and ledgers
+	// need to find a solution and fix somehow
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load latest ledger")
 	}
