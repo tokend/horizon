@@ -35,7 +35,7 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.GetTransactions(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get transactions list", logan.F{})
+		ctx.Log(r).WithError(err).Error("failed to get transactions list")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
