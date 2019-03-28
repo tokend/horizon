@@ -1,4 +1,4 @@
-/v3/ledger:
+/v3/transactions:
   get:
     tags:
       - History
