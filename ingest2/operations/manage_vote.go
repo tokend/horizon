@@ -39,14 +39,3 @@ func (h *manageVoteOpHandler) Details(op rawOperation, opRes xdr.OperationResult
 
 	return details, nil
 }
-
-//ParticipantsEffects - returns source of the operation and account for which balance was created if they differ
-func (h *manageVoteOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
-	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
-) ([]history2.ParticipantEffect, error) {
-
-	var participants []history2.ParticipantEffect
-	source := h.Participant(sourceAccountID)
-
-	return append(participants, source), nil
-}
