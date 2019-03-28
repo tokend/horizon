@@ -11,6 +11,8 @@
 * `GetPoll` to handle `v3/polls/{id}`
 * `GetVoteList` to handle `v3/polls/{id}/relationships/votes`
 * `GetVote` to handle `v3/polls/{id}/relationships/votes{voter}`
+* `GetCreatePollRequests` to handle `v3/create_poll_requests`
+*  Docs on polls
 
 ### Fixed
 

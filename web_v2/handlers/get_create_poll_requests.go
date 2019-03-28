@@ -3,15 +3,12 @@ package handlers
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/horizon/web_v2/resources"
-
 	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core2"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
@@ -68,7 +65,7 @@ func (h *getCreatePollRequestsHandler) MakeAll(w http.ResponseWriter, request re
 		q = q.FilterByCreatePollPermissionType(request.Filters.PermissionType)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeCreatePollRequestsVoteConfirmationRequired) {
+	if request.ShouldFilter(requests.FilterTypeCreatePollRequestsVoteConfirmation) {
 		q = q.FilterByCreatePollVoteConfirmation(request.Filters.VoteConfirmationRequired)
 	}
 	if request.ShouldFilter(requests.FilterTypeCreatePollRequestsResultProvider) {
@@ -80,19 +77,6 @@ func (h *getCreatePollRequestsHandler) MakeAll(w http.ResponseWriter, request re
 
 func (h *getCreatePollRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
-
-	if h.R.ShouldInclude(requests.IncludeTypeCreatePollRequestsResultProvider) {
-		resultProvider, err := h.AccountsQ.GetByAddress(record.Details.CreatePoll.ResultProviderID)
-		if err != nil {
-			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get account")
-		}
-
-		if resultProvider == nil {
-			return regources.ReviewableRequest{}, errors.New("account not found")
-		}
-		resource := resources.NewAccount(*resultProvider)
-		included.Add(&resource)
-	}
 
 	return resource, nil
 }

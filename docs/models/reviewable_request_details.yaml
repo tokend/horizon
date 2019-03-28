@@ -539,15 +539,18 @@ CreatePollDetails:
           type: boolean
           example: true
           description: "defines if result provider is required to participate in poll voting"
-        poll_type:
+        poll_data:
           type: object
           properties:
-            name:
-              type: string
-              example: "single-choice"
-            value:
-              type: integer
-              format: uint64
-              example: 0
+            type:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "single_choice"
+                value:
+                  type: integer
+                  format: uint64
+                  example: 0
         creator_details:
           $ref: '#/components/schemas/Details'
