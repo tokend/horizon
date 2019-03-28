@@ -1,4 +1,4 @@
-// revision: 7b923f2fae8815386d899563f66b0bc6b459d3ff
+// revision: 4bc0bedffb3c54925ae675b7f5bf3cde30e7f313
 // branch:   feature/voting
 // Package xdr is generated from:
 //
@@ -21957,6 +21957,7 @@ func NewCancelPollRequestDataExt(v LedgerVersion, value interface{}) (result Can
 //
 //   struct CancelPollRequestData
 //    {
+//        //: ID of `CREATE_POLL` request to remove
 //        uint64 requestID;
 //
 //        //: reserved for future use
@@ -22158,13 +22159,15 @@ type ManageCreatePollRequestOp struct {
 //        INVALID_CREATOR_DETAILS = -1,
 //        //: There is no `CREATE_POLL` request with such id
 //        NOT_FOUND = -2,
+//        //: Not allowed to create poll which has `endTime` not later than `startTime`
 //        INVALID_DATES = -3,
+//        //: Not allowed to create poll which `startTime` early that currentTime
 //        INVALID_START_TIME = -4,
-//        INVALID_END_TIME = -5,
+//        //: There is no account which such id
+//        RESULT_PROVIDER_NOT_FOUND = -5,
 //        //: There is no key-value entry by `create_poll_tasks:<permissionType>` key in the system;
 //        //: configuration does not allow to create `CREATE_POLL` request with such `permissionType`
-//        CREATE_POLL_TASKS_NOT_FOUND = -6,
-//        RESULT_PROVIDER_NOT_FOUND = -7
+//        CREATE_POLL_TASKS_NOT_FOUND = -6
 //    };
 //
 type ManageCreatePollRequestResultCode int32
@@ -22175,9 +22178,8 @@ const (
 	ManageCreatePollRequestResultCodeNotFound                ManageCreatePollRequestResultCode = -2
 	ManageCreatePollRequestResultCodeInvalidDates            ManageCreatePollRequestResultCode = -3
 	ManageCreatePollRequestResultCodeInvalidStartTime        ManageCreatePollRequestResultCode = -4
-	ManageCreatePollRequestResultCodeInvalidEndTime          ManageCreatePollRequestResultCode = -5
+	ManageCreatePollRequestResultCodeResultProviderNotFound  ManageCreatePollRequestResultCode = -5
 	ManageCreatePollRequestResultCodeCreatePollTasksNotFound ManageCreatePollRequestResultCode = -6
-	ManageCreatePollRequestResultCodeResultProviderNotFound  ManageCreatePollRequestResultCode = -7
 )
 
 var ManageCreatePollRequestResultCodeAll = []ManageCreatePollRequestResultCode{
@@ -22186,9 +22188,8 @@ var ManageCreatePollRequestResultCodeAll = []ManageCreatePollRequestResultCode{
 	ManageCreatePollRequestResultCodeNotFound,
 	ManageCreatePollRequestResultCodeInvalidDates,
 	ManageCreatePollRequestResultCodeInvalidStartTime,
-	ManageCreatePollRequestResultCodeInvalidEndTime,
-	ManageCreatePollRequestResultCodeCreatePollTasksNotFound,
 	ManageCreatePollRequestResultCodeResultProviderNotFound,
+	ManageCreatePollRequestResultCodeCreatePollTasksNotFound,
 }
 
 var manageCreatePollRequestResultCodeMap = map[int32]string{
@@ -22197,9 +22198,8 @@ var manageCreatePollRequestResultCodeMap = map[int32]string{
 	-2: "ManageCreatePollRequestResultCodeNotFound",
 	-3: "ManageCreatePollRequestResultCodeInvalidDates",
 	-4: "ManageCreatePollRequestResultCodeInvalidStartTime",
-	-5: "ManageCreatePollRequestResultCodeInvalidEndTime",
+	-5: "ManageCreatePollRequestResultCodeResultProviderNotFound",
 	-6: "ManageCreatePollRequestResultCodeCreatePollTasksNotFound",
-	-7: "ManageCreatePollRequestResultCodeResultProviderNotFound",
 }
 
 var manageCreatePollRequestResultCodeShortMap = map[int32]string{
@@ -22208,9 +22208,8 @@ var manageCreatePollRequestResultCodeShortMap = map[int32]string{
 	-2: "not_found",
 	-3: "invalid_dates",
 	-4: "invalid_start_time",
-	-5: "invalid_end_time",
+	-5: "result_provider_not_found",
 	-6: "create_poll_tasks_not_found",
-	-7: "result_provider_not_found",
 }
 
 var manageCreatePollRequestResultCodeRevMap = map[string]int32{
@@ -22219,9 +22218,8 @@ var manageCreatePollRequestResultCodeRevMap = map[string]int32{
 	"ManageCreatePollRequestResultCodeNotFound":                -2,
 	"ManageCreatePollRequestResultCodeInvalidDates":            -3,
 	"ManageCreatePollRequestResultCodeInvalidStartTime":        -4,
-	"ManageCreatePollRequestResultCodeInvalidEndTime":          -5,
+	"ManageCreatePollRequestResultCodeResultProviderNotFound":  -5,
 	"ManageCreatePollRequestResultCodeCreatePollTasksNotFound": -6,
-	"ManageCreatePollRequestResultCodeResultProviderNotFound":  -7,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -26625,6 +26623,7 @@ func NewManagePollOpExt(v LedgerVersion, value interface{}) (result ManagePollOp
 //        //: ID of poll to manage
 //        uint64 pollID;
 //
+//        //: data is used to pass one of `ManagePollAction` with required params
 //        union switch (ManagePollAction action)
 //        {
 //        case CLOSE:
@@ -26655,14 +26654,16 @@ type ManagePollOp struct {
 //
 //   enum ManagePollResultCode
 //    {
-//        // codes considered as "success" for the operation
+//        //: Specified action in `data` of ManagePollOp was successfully executed
 //        SUCCESS = 0,
 //
 //        // codes considered as "failure" for the operation
-//        NOT_FOUND = -1, // not found contract request, when try to remove
+//        //: There is no poll with such id
+//        NOT_FOUND = -1,
+//        //: Not allowed to close poll which
 //        POLL_NOT_READY = -2,
+//        //: Only result provider is allowed to close poll
 //        NOT_AUTHORIZED_TO_CLOSE_POLL = -3
-//
 //    };
 //
 type ManagePollResultCode int32
@@ -30104,8 +30105,8 @@ type ManageVoteOp struct {
 //        SUCCESS = 0,
 //
 //        // codes considered as "failure" for the operation
-//        //:
-//        INVALID_VOTE = -1, // vote option is invalid
+//        //: There is no vote from source account in such poll
+//        VOTE_NOT_FOUND = -1, // vote to remove  not found
 //        //: There is no with such id
 //        POLL_NOT_FOUND = -2, // poll not found
 //        //: Not allowed to create (send) two votes for one poll
@@ -30115,66 +30116,59 @@ type ManageVoteOp struct {
 //        //: Not allowed to vote in poll which not started yet
 //        POLL_NOT_STARTED = -5,
 //        //: Not allowed to vote in poll which already was ended
-//        POLL_ENDED = -6,
-//        //: There is no vote from source account in such poll
-//        VOTE_NOT_FOUND = -7 // vote to remove  not found
+//        POLL_ENDED = -6
 //    };
 //
 type ManageVoteResultCode int32
 
 const (
 	ManageVoteResultCodeSuccess            ManageVoteResultCode = 0
-	ManageVoteResultCodeInvalidVote        ManageVoteResultCode = -1
+	ManageVoteResultCodeVoteNotFound       ManageVoteResultCode = -1
 	ManageVoteResultCodePollNotFound       ManageVoteResultCode = -2
 	ManageVoteResultCodeVoteExists         ManageVoteResultCode = -3
 	ManageVoteResultCodePollTypeMismatched ManageVoteResultCode = -4
 	ManageVoteResultCodePollNotStarted     ManageVoteResultCode = -5
 	ManageVoteResultCodePollEnded          ManageVoteResultCode = -6
-	ManageVoteResultCodeVoteNotFound       ManageVoteResultCode = -7
 )
 
 var ManageVoteResultCodeAll = []ManageVoteResultCode{
 	ManageVoteResultCodeSuccess,
-	ManageVoteResultCodeInvalidVote,
+	ManageVoteResultCodeVoteNotFound,
 	ManageVoteResultCodePollNotFound,
 	ManageVoteResultCodeVoteExists,
 	ManageVoteResultCodePollTypeMismatched,
 	ManageVoteResultCodePollNotStarted,
 	ManageVoteResultCodePollEnded,
-	ManageVoteResultCodeVoteNotFound,
 }
 
 var manageVoteResultCodeMap = map[int32]string{
 	0:  "ManageVoteResultCodeSuccess",
-	-1: "ManageVoteResultCodeInvalidVote",
+	-1: "ManageVoteResultCodeVoteNotFound",
 	-2: "ManageVoteResultCodePollNotFound",
 	-3: "ManageVoteResultCodeVoteExists",
 	-4: "ManageVoteResultCodePollTypeMismatched",
 	-5: "ManageVoteResultCodePollNotStarted",
 	-6: "ManageVoteResultCodePollEnded",
-	-7: "ManageVoteResultCodeVoteNotFound",
 }
 
 var manageVoteResultCodeShortMap = map[int32]string{
 	0:  "success",
-	-1: "invalid_vote",
+	-1: "vote_not_found",
 	-2: "poll_not_found",
 	-3: "vote_exists",
 	-4: "poll_type_mismatched",
 	-5: "poll_not_started",
 	-6: "poll_ended",
-	-7: "vote_not_found",
 }
 
 var manageVoteResultCodeRevMap = map[string]int32{
 	"ManageVoteResultCodeSuccess":            0,
-	"ManageVoteResultCodeInvalidVote":        -1,
+	"ManageVoteResultCodeVoteNotFound":       -1,
 	"ManageVoteResultCodePollNotFound":       -2,
 	"ManageVoteResultCodeVoteExists":         -3,
 	"ManageVoteResultCodePollTypeMismatched": -4,
 	"ManageVoteResultCodePollNotStarted":     -5,
 	"ManageVoteResultCodePollEnded":          -6,
-	"ManageVoteResultCodeVoteNotFound":       -7,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -44073,4 +44067,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "7b923f2fae8815386d899563f66b0bc6b459d3ff"
+var Revision = "4bc0bedffb3c54925ae675b7f5bf3cde30e7f313"
