@@ -77,7 +77,14 @@ func NewApp(config config.Config) (*App, error) {
 func (a *App) Serve() {
 
 	a.web.router.Compile()
-	http.Handle("/v3/transactions", a.web.router)
+	http.Handle("/v3/transactions", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			a.web.router.ServeHTTP(w, r)
+		default:
+			a.webV2.mux.ServeHTTP(w, r)
+		}
+	}))
 	http.Handle("/v3/", a.webV2.mux)
 	http.Handle("/", a.web.router)
 
