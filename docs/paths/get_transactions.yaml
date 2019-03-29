@@ -11,7 +11,7 @@
       - name: filter[ledger_entry_changes.entry_type]
         in: query
         description: |
-          Filters transactions by ledger entry type they affected:
+          Filters transactions by ledger entry type they affected (comma-separated multiple values are supported):
           * 1  - `any`
           * 2  - `account`
           * 3  - `signer`
@@ -54,7 +54,7 @@
         in: query
         description: |
           description: |
-           Filters transactions by ledger entry change type they performed:
+           Filters transactions by ledger entry change type they performed (comma-separated multiple values are supported):
            * 0 - `created`
            * 1 - `updated`
            * 2 - `removed`

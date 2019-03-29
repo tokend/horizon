@@ -37,12 +37,6 @@ Transaction:
               format: date-time
               description: "close time of ledger where transaction belongs to"
               example: "2019-03-04T18:42:15Z"
-            signatures:
-              type: array
-              description: "list of signatures that were applied to transaction"
-              items:
-                type: string
-                example: "c8rRuUF0j3ErGiMv49ulDdECAkVu3KDRjF4gEsGpcaAsck+P2t4ZuoFQcFiLC/TEI8oRrR0yOmjIROacG47PBQ=="
             envelope_xdr:
               type: string
               description: "base-64 encoded XDR representation of transaction itself"

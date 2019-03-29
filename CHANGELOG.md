@@ -2,6 +2,7 @@
 
 ### Added
 
+* `GetTransactionList` handler to handler `v3/transactions` endpoint
 * Messages for new error codes
 * `GetBalanceList` handler to handle `v3/balances` request
 * `GetPublicKeyEntry` handler to handle `v3/public_key_entries/{id}` request
