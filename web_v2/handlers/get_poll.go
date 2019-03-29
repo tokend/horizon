@@ -21,6 +21,7 @@ func GetPoll(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
+
 	handler := getPollHandler{
 		VotesQ: history2.NewVotesQ(ctx.HistoryRepo(r)),
 		PollsQ: history2.NewPollsQ(ctx.HistoryRepo(r)),
@@ -41,7 +42,10 @@ func GetPoll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if request.ShouldInclude(requests.IncludeTypePollOutcome) {
+	if request.ShouldIncludeAny(
+		requests.IncludeTypePollOutcome,
+		requests.IncludeTypePollOutcomeVotes,
+	) {
 		if !isAllowed(r, w, result.Data.Relationships.Owner.Data.ID, result.Data.Relationships.ResultProvider.Data.ID) {
 			return
 		}
