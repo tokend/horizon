@@ -34,6 +34,9 @@ OperationDetails:
     - $ref: '#/components/schemas/ManageContractRequestOp'
     - $ref: '#/components/schemas/StampOp'
     - $ref: '#/components/schemas/LicenseOp'
+    - $ref: '#/components/schemas/ManageCreatePollRequestOp'
+    - $ref: '#/components/schemas/ManagePollOp'
+    - $ref: '#/components/schemas/ManageVoteOp'
 
 
 OperationDetailsKey:
@@ -72,3 +75,6 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/ManageInvoiceOpKey'
     - $ref: '#/components/schemas/StampOpKey'
     - $ref: '#/components/schemas/LicenseOpKey'
+    - $ref: '#/components/schemas/ManageCreatePollRequestOpKey'
+    - $ref: '#/components/schemas/ManagePollOpKey'
+    - $ref: '#/components/schemas/ManageVoteOpKey'

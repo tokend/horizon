@@ -1,0 +1,54 @@
+ManagePollOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-manage-poll"
+
+ManagePollOp:
+  allOf:
+  - $ref: '#/components/schemas/ManagePollOpKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        nullable: true
+        properties:
+          poll:
+            $ref: '#/components/schemas/PollKey'
+      attributes:
+        type: object
+        required: [action]
+        properties:
+          action:
+            description: |
+               * 0 - close
+            allOf:
+              - $ref: '#/components/schemas/Enum'
+          close:
+            allOf:
+              - $ref: '#/components/schemas/ClosePollOp'
+              - nullable: true
+
+
+
+ClosePollOp:
+  type: object
+  required: [poll_id, poll_result, details]
+  properties:
+    poll_id:
+      type: integer
+      description: "id of the poll to close"
+      example: 1
+    poll_result:
+      description: |
+        * 0 - passed
+        * 1 - failed
+      allOf:
+        - $ref: '#/components/schemas/Enum'
+    details:
+      $ref: '#components/schemas/Details'

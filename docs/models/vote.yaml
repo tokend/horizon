@@ -42,11 +42,7 @@ Vote:
           type: object
           properties:
             vote_data:
-              type: object
-              oneOf:
-                - $ref: '#/components/schemas/SingleChoice'
-#                - $ref: '#/components/schemas/MultipleChoice'
-
+              $ref: '#/components/schemas/VoteData'
 
 SingleChoice:
   type: object
@@ -93,3 +89,9 @@ MultipleChoice:
         type: integer
         description: "Choice for multiple choice poll type"
         example: 1
+
+
+VoteData:
+  oneOf:
+    - $ref: '#/components/schemas/SingleChoice'
+#    - $ref: '#/components/schemas/MultipleChoice'
