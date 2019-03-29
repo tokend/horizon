@@ -5,8 +5,8 @@
     summary: Poll by ID
     description: |
       Allows getting `Poll` with corresponding details.\n
-      🔒 Admin, poll result provider or poll owner signature is required.\n
-    operationId: getPolls
+      🔒 Admin, poll result provider or poll owner signature is required if `outcome` should be included.\n
+    operationId: getPoll
     parameters:
       - name: id
         in: path
@@ -27,7 +27,7 @@
         explode: false
         schema:
           type: string
-          enum: [votes]
+          enum: [outcome]
     responses:
       200:
         description: poll exists

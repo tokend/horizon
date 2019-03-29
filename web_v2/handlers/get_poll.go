@@ -41,8 +41,10 @@ func GetPoll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, result.Data.Relationships.Owner.Data.ID, result.Data.Relationships.ResultProvider.Data.ID) {
-		return
+	if request.ShouldInclude(requests.IncludeTypePollOutcome) {
+		if !isAllowed(r, w, result.Data.Relationships.Owner.Data.ID, result.Data.Relationships.ResultProvider.Data.ID) {
+			return
+		}
 	}
 
 	ape.Render(w, result)
@@ -66,15 +68,16 @@ func (h *getPollHandler) getPoll(request *requests.GetPoll) (*regources.PollResp
 		return nil, nil
 	}
 
-	votes, err := h.VotesQ.FilterByPollID(request.ID).Select()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get votes for poll")
-	}
-	resource := resources.NewPoll(*record, votes)
+	resource := resources.NewPoll(*record)
 	response := &regources.PollResponse{
 		Data: resource,
 	}
-	if request.ShouldInclude(requests.IncludeTypePollVotes) {
+	if request.ShouldInclude(requests.IncludeTypePollOutcome) {
+		votes, err := h.VotesQ.FilterByPollID(request.ID).Select()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get votes for poll")
+		}
+
 		for _, v := range votes {
 			vote := resources.NewVote(v)
 			response.Included.Add(&vote)

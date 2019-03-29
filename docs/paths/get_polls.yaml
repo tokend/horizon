@@ -100,23 +100,14 @@
           Filters polls by a specified poll state.
           Available poll states:
           * 1 - open
-          * 2 - closed
+          * 2 - passed
+          * 3 - failed
         required: false
         style: form
         explode: false
         schema:
           type: integer
           example: 1
-      - name: include
-        in: query
-        description: |
-          Relationships that may be used for the included parameter.
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: string
-          enum: [votes]
       - $ref: '#/components/schemas/pageCursorParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'

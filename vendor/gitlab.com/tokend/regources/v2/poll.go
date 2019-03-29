@@ -5,34 +5,12 @@ import (
 	"encoding/json"
 	"time"
 
+	"gitlab.com/tokend/regources"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"gitlab.com/tokend/go/xdr"
 )
-
-type PollState int
-
-const (
-	PollStateOpen PollState = iota + 1
-	PollStateClosed
-)
-
-var pollStateMap = map[PollState]string{
-	PollStateOpen:   "open",
-	PollStateClosed: "closed",
-}
-
-func (s PollState) MarshalJSON() ([]byte, error) {
-	return json.Marshal(Flag{
-		Name:  pollStateMap[s],
-		Value: int(s),
-	})
-}
-
-//String - converts int enum to string
-func (s PollState) String() string {
-	return pollStateMap[s]
-}
 
 //PollResponse - response for poll handler
 type PollResponse struct {
@@ -54,26 +32,20 @@ type Poll struct {
 }
 
 type PollAttrs struct {
-	PollData                 PollData    `json:"poll_data"`
-	PermissionType           uint64      `json:"permission_type"`
-	NumberOfChoices          uint64      `json:"number_of_choices"`
-	StartTime                time.Time   `json:"start_time"`
-	EndTime                  time.Time   `json:"end_time"`
-	VoteConfirmationRequired bool        `json:"vote_confirmation_required"`
-	Details                  Details     `json:"details"`
-	PollState                PollState   `json:"poll_state"`
-	VotesCount               []VoteCount `json:"votes_count"`
-}
-
-type VoteCount struct {
-	Choice uint64 `json:"choice"`
-	Count  uint32 `json:"count"`
+	PollData                 PollData  `json:"poll_data"`
+	PermissionType           uint32    `json:"permission_type"`
+	NumberOfChoices          uint32    `json:"number_of_choices"`
+	StartTime                time.Time `json:"start_time"`
+	EndTime                  time.Time `json:"end_time"`
+	VoteConfirmationRequired bool      `json:"vote_confirmation_required"`
+	Details                  Details   `json:"details"`
+	PollState                PollState `json:"poll_state"`
 }
 
 type PollRelations struct {
-	Owner          *Relation           `json:"owner"`
-	ResultProvider *Relation           `json:"result_provider"`
-	Votes          *RelationCollection `json:"votes"`
+	Owner          *Relation `json:"owner"`
+	ResultProvider *Relation `json:"result_provider"`
+	Outcome        *Relation `json:"outcome"`
 }
 type PollData struct {
 	Type xdr.PollType `json:"type"`
@@ -107,4 +79,39 @@ func (r *PollData) Scan(src interface{}) error {
 	}
 
 	return nil
+}
+
+// PollOutcome - Resource object representing outcome of the poll
+type PollOutcome struct {
+	Key
+	Attributes PollOutcomeAttrs `json:"attributes"`
+}
+
+type PollOutcomeAttrs struct {
+	Votes []Vote `json:"votes"`
+}
+
+type PollState int
+
+const (
+	PollStateOpen PollState = iota + 1
+	PollStatePassed
+	PollStateFailed
+)
+
+var pollStateStr = map[PollState]string{
+	PollStateOpen:   "open",
+	PollStatePassed: "passed",
+	PollStateFailed: "failed",
+}
+
+func (s PollState) String() string {
+	return pollStateStr[s]
+}
+
+func (s PollState) MarshalJSON() ([]byte, error) {
+	return json.Marshal(regources.Flag{
+		Name:  pollStateStr[s],
+		Value: int32(s),
+	})
 }

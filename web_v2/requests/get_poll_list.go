@@ -8,9 +8,6 @@ import (
 )
 
 const (
-	// IncludeTypePollListVotes - defines if votes should be included in the response
-	IncludeTypePollListVotes = "votes"
-
 	// FilterTypePollListOwner - defines if we need to filter resopnse by owner
 	FilterTypePollListOwner = "owner"
 
@@ -33,10 +30,6 @@ const (
 
 	FilterTypePollListVoteConfirmation = "vote_confirmation"
 )
-
-var includeTypePollListAll = map[string]struct{}{
-	IncludeTypePollListVotes: {},
-}
 
 var filterTypePollListAll = map[string]struct{}{
 	FilterTypePollListOwner:            {},
@@ -62,7 +55,7 @@ type GetPollList struct {
 		MinEndTime       *time.Time `json:"min_end_time"`
 		State            int32      `json:"state"`
 		PollType         uint64     `json:"poll_type"`
-		PermissionType   uint64     `json:"permission_type"`
+		PermissionType   uint32     `json:"permission_type"`
 		VoteConfirmation bool       `json:"vote_confirmation"`
 	}
 	PageParams *db2.OffsetPageParams
@@ -70,8 +63,7 @@ type GetPollList struct {
 
 func NewGetPollList(r *http.Request) (*GetPollList, error) {
 	b, err := newBase(r, baseOpts{
-		supportedIncludes: includeTypePollListAll,
-		supportedFilters:  filterTypePollListAll,
+		supportedFilters: filterTypePollListAll,
 	})
 	if err != nil {
 		return nil, err

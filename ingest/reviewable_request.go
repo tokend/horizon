@@ -183,7 +183,7 @@ func getPollRequest(request *xdr.CreatePollRequest) *history.Poll {
 		PollType:                 request.Data.Type,
 		ResultProvider:           request.ResultProviderId.Address(),
 		VoteConfirmationRequired: request.VoteConfirmationRequired,
-		NumberOfChoices:          uint64(request.NumberOfChoices),
+		NumberOfChoices:          uint32(request.NumberOfChoices),
 		Details:                  details,
 	}
 }

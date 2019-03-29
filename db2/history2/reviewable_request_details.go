@@ -150,8 +150,8 @@ type CreateAtomicSwapRequest struct {
 
 //CreatePollRequest - request details
 type CreatePollRequest struct {
-	PermissionType           uint64            `json:"permission_type"`
-	NumberOfChoices          uint64            `json:"number_of_choices"`
+	PermissionType           uint32            `json:"permission_type"`
+	NumberOfChoices          uint32            `json:"number_of_choices"`
 	PollData                 xdr.PollData      `json:"poll_data"`
 	CreatorDetails           regources.Details `json:"creator_details"`
 	VoteConfirmationRequired bool              `json:"vote_confirmation_required"`

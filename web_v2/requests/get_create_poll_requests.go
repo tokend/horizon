@@ -18,7 +18,7 @@ var filterTypeCreatePollRequests = map[string]struct{}{
 
 type GetCreatePollRequestsFilter struct {
 	GetRequestListBaseFilters
-	PermissionType           uint64 `fig:"request_details.permission_type"`
+	PermissionType           uint32 `fig:"request_details.permission_type"`
 	VoteConfirmationRequired bool   `fig:"request_details.vote_confirmation"`
 	ResultProvider           string `fig:"request_details.result_provider"`
 }

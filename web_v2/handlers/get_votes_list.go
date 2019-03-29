@@ -70,14 +70,13 @@ type getVoteListHandler struct {
 func (h *getVoteListHandler) GetVoteList(request *requests.GetVoteList) (*regources.VotesResponse, error) {
 	q := h.VotesQ.FilterByPollID(request.PollID)
 
-	historyVotes, err := q.Page(*request.PageParams).Select()
+	historyVotes, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get vote list")
 	}
 
 	response := &regources.VotesResponse{
-		Data:  make([]regources.Vote, 0, len(historyVotes)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Data: make([]regources.Vote, 0, len(historyVotes)),
 	}
 
 	for _, historyVote := range historyVotes {

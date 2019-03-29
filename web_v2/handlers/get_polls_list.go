@@ -21,16 +21,12 @@ func GetPollList(w http.ResponseWriter, r *http.Request) {
 
 	handler := getPollListHandler{
 		PollsQ: history2.NewPollsQ(historyRepo),
-		VotesQ: history2.NewVotesQ(historyRepo),
 		Log:    ctx.Log(r),
 	}
 
 	request, err := requests.NewGetPollList(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-	if !isAllowed(r, w, request.Filters.ResultProvider, request.Filters.Owner) {
 		return
 	}
 
@@ -48,7 +44,6 @@ func GetPollList(w http.ResponseWriter, r *http.Request) {
 
 type getPollListHandler struct {
 	PollsQ history2.PollsQ
-	VotesQ history2.VotesQ
 	Log    *logan.Entry
 }
 
@@ -107,14 +102,7 @@ func (h *getPollListHandler) GetPollList(request *requests.GetPollList) (*regour
 	}
 
 	for _, historyPoll := range historyPolls {
-		votes, err := h.VotesQ.FilterByPollID(historyPoll.ID).Select()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get votes for poll", logan.F{
-				"poll_id": historyPoll.ID,
-			})
-		}
-		poll := resources.NewPoll(historyPoll, votes)
-
+		poll := resources.NewPoll(historyPoll)
 		response.Data = append(response.Data, poll)
 	}
 

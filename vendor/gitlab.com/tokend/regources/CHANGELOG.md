@@ -4,9 +4,18 @@
 ### Added
 * `CreatePollRequest` type to represent reviewable request for poll creation
 * `Poll`, `Vote` types
-* `PollResponse`, `PollsResponse` types to handle `/polls/{id}` and `/polls`
-* `VoteResponse`, `VotesResponse` types to handle `/polls/{id}/relationships/votes/{voter}` and `/polls/{id}/relationships/votes`
+* `PollResponse`, `PollsResponse`,`VoteResponse`, `VotesResponse` 
+* `PollOutcome` type to represent voting result
 
+
+## 3.0.3
+
+### Added
+
+* `TransactionsResponse`, `Transaction`,  types to represent the get transactions response
+* `TransactionResponseMeta`, `TransactionAttrs`, `TransactionRelations` helping structures
+* `LedgerEntryChange`, `LedgerEntryChangeAttrs` types to represent the ledger entry change resource
+* `ledger-entry-changes` and `transactions` resource types
 
 ## 3.0.2
 

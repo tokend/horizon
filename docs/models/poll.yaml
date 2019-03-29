@@ -8,6 +8,16 @@ PollKey:
       type: string
       enum:
         - "polls"
+OutcomeKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "10"
+    type:
+      type: string
+      enum:
+        - "poll-outcome"
 
 Poll:
   allOf:
@@ -37,14 +47,14 @@ Poll:
               properties:
                 data:
                   $ref: '#/components/schemas/AccountKey'
-            votes:
+            outcome:
               type: object
-              description: "current votes"
+              description: "poll outcome"
               properties:
                 data:
                   type: array
                   items:
-                    $ref: '#/components/schemas/VoteKey'
+                    $ref: '#/components/schemas/OutcomeKey'
         attributes:
           type: object
           properties:
@@ -72,17 +82,21 @@ Poll:
               type: boolean
               example: true
               description: "defines if result provider is required to participate in poll voting"
-            votes_count:
-              type: array
-              items:
-                type: object
-                properties:
-                  choice:
-                    type: integer
-                    format: uint64
-                  count:
-                    type: integer
-                    format: uint32
+            poll_state:
+              type: object
+              description: |
+                * 1 - open
+                * 2 - passed
+                * 3 - failed
+              properties:
+                name:
+                  type: string
+                  description: "name of the flag"
+                  example: "open"
+                value:
+                  type: integer
+                  description: "value of the flag"
+                  example: 1
             poll_data:
               type: object
               properties:
@@ -98,3 +112,15 @@ Poll:
                       example: 0
             creator_details:
               $ref: '#/components/schemas/Details'
+
+Outcome:
+  allOf:
+    - $ref: '#/components/schemas/OutcomeKey'
+    - type: object
+      required: [attributes]
+      properties:
+        attributes:
+          votes:
+            type: array
+            items:
+              $ref: '#/components/schemas/Vote'

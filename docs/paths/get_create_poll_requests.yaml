@@ -1,7 +1,7 @@
 /v3/create_poll_requests:
   get:
     tags:
-      - Crowd Investing
+      - Polls
     summary: Create Poll Request List
     description: |
       Allows getting a filtered list of `CreatePollRequest` with details\n

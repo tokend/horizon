@@ -9,7 +9,7 @@ import (
 type GetVoteList struct {
 	*base
 	PollID     int64
-	PageParams *db2.OffsetPageParams
+	PageParams *db2.CursorPageParams
 }
 
 func NewGetVoteList(r *http.Request) (*GetVoteList, error) {
@@ -18,7 +18,7 @@ func NewGetVoteList(r *http.Request) (*GetVoteList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	pageParams, err := b.getCursorBasedPageParams()
 	if err != nil {
 		return nil, err
 	}

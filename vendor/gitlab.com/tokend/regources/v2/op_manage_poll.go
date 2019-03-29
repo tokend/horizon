@@ -14,16 +14,16 @@ type ManagePollOp struct {
 //ManagePollOpAttrs - details of ManagePollOp
 type ManagePollOpAttrs struct {
 	Action xdr.ManagePollAction `json:"action"`
-	PollID int64                `json:"poll_id"`
 	Close  *ClosePollOp         `json:"close,omitempty"`
 }
 
 type ClosePollOp struct {
+	PollID     int64          `json:"poll_id"`
 	PollResult xdr.PollResult `json:"poll_result"`
 	Details    Details        `json:"details"`
 }
 
 //ManagePollOpAttrs - relationships of ManageBalanceOp
 type ManagePollOpRelations struct {
-	Poll Relation
+	Poll *Relation `json:"poll"`
 }

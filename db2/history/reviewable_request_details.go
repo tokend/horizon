@@ -160,7 +160,7 @@ type AtomicSwap struct {
 }
 
 type Poll struct {
-	NumberOfChoices          uint64       `json:"number_of_choices"`
+	NumberOfChoices          uint32       `json:"number_of_choices"`
 	PollType                 xdr.PollType `json:"poll_type"`
 	ResultProvider           string       `json:"result_provider"`
 	VoteConfirmationRequired bool         `json:"vote_confirmation_required"`

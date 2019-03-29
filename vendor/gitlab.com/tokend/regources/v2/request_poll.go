@@ -13,8 +13,8 @@ type CreatePollRequest struct {
 
 // CreatePollRequestAttrs - attributes of the `issuance` reviewable request
 type CreatePollRequestAttrs struct {
-	PermissionType           uint64    `json:"permission_type"`
-	NumberOfChoices          uint64    `json:"number_of_choices"`
+	PermissionType           uint32    `json:"permission_type"`
+	NumberOfChoices          uint32    `json:"number_of_choices"`
 	PollData                 PollData  `json:"poll_data"`
 	VoteConfirmationRequired bool      `json:"vote_confirmation_required"`
 	StartTime                time.Time `json:"start_time"`

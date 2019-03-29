@@ -60,7 +60,7 @@ func (q PollsQ) FilterByResultProvider(resultProviderID string) PollsQ {
 }
 
 // FilterByPermissionType - returns q with filter by BaseAsset
-func (q PollsQ) FilterByPermissionType(permissionType uint64) PollsQ {
+func (q PollsQ) FilterByPermissionType(permissionType uint32) PollsQ {
 	q.selector = q.selector.Where("p.permission_type = ?", permissionType)
 	return q
 }

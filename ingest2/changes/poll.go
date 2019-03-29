@@ -56,7 +56,9 @@ func (c *pollHandler) Created(lc ledgerChange) error {
 func (c *pollHandler) Removed(lc ledgerChange) error {
 
 	pollID := uint64(lc.LedgerChange.MustRemoved().MustPoll().Id)
-	err := c.storage.SetState(pollID, regources.PollStateClosed)
+	managePollOp := lc.Operation.Body.MustManagePollOp()
+	state := c.getPollState(managePollOp)
+	err := c.storage.SetState(pollID, state)
 	if err != nil {
 		return errors.Wrap(err, "failed to set poll state")
 	}
@@ -83,6 +85,18 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 	}
 	return nil
 }
+func (c *pollHandler) getPollState(op xdr.ManagePollOp) regources.PollState {
+	var state regources.PollState
+	switch op.Data.MustClosePollData().Result {
+	case xdr.PollResultFailed:
+		state = regources.PollStateFailed
+	case xdr.PollResultPassed:
+		state = regources.PollStatePassed
+	default:
+		state = regources.PollStateOpen
+	}
+	return state
+}
 
 func (c *pollHandler) convertPoll(raw xdr.PollEntry) (*history.Poll, error) {
 
@@ -93,8 +107,8 @@ func (c *pollHandler) convertPoll(raw xdr.PollEntry) (*history.Poll, error) {
 		Data: regources.PollData{
 			Type: raw.Data.Type,
 		},
-		NumberOfChoices:          uint64(raw.NumberOfChoices),
-		PermissionType:           uint64(raw.PermissionType),
+		NumberOfChoices:          uint32(raw.NumberOfChoices),
+		PermissionType:           uint32(raw.PermissionType),
 		VoteConfirmationRequired: raw.VoteConfirmationRequired,
 		StartTime:                time.Unix(int64(raw.StartTime), 0).UTC(),
 		EndTime:                  time.Unix(int64(raw.EndTime), 0).UTC(),

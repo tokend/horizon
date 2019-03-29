@@ -2,9 +2,9 @@
 
 
 create table polls (
-	id  bigint not null check(id > 0),
-  permission_type bigint not null,
-  number_of_choices bigint not null check ( number_of_choices > 0 ),
+	id  bigint not null,
+  permission_type int not null,
+  number_of_choices int not null,
   data jsonb not null,
   start_time   TIMESTAMP without time zone NOT NULL,
   end_time     TIMESTAMP without time zone NOT NULL,
@@ -12,12 +12,13 @@ create table polls (
   result_provider_id varchar(56) not null,
   vote_confirmation_required boolean not null,
   state int not null,
-  details text not null default '{}',
+  details jsonb not null,
   primary key (id)
 	);
 
 create table votes (
-  poll_id bigint not null check( poll_id > 0),
+  id bigserial not null,
+  poll_id bigint not null,
   voter_id varchar(56) not null,
   data jsonb not null,
   primary key (poll_id, voter_id)

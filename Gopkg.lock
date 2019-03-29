@@ -543,14 +543,14 @@
 
 [[projects]]
   branch = "feature/voting"
-  digest = "1:35724d396d6d355faa129bb48c180fcf717fbe454a1a7a2b8016fa7a2c8d3a8b"
+  digest = "1:ede17fbce00226cfb05e895abc484732da91652e27f92d2662d7ef225a25cec3"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "ba7f60212e9c13bfcfec45537516162448353670"
+  revision = "f3c740fb0caee5727182cf057298b288bc7804c2"
 
 [[projects]]
   branch = "master"

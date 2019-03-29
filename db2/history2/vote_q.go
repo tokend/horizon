@@ -18,6 +18,7 @@ func NewVotesQ(repo *db2.Repo) VotesQ {
 	return VotesQ{
 		repo: repo,
 		selector: sq.Select(
+			"v.id",
 			"v.poll_id",
 			"v.voter_id",
 			"v.data",
@@ -38,8 +39,8 @@ func (q VotesQ) FilterByPollID(pollID int64) VotesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q VotesQ) Page(params db2.OffsetPageParams) VotesQ {
-	q.selector = params.ApplyTo(q.selector, "v.voter_id")
+func (q VotesQ) Page(params db2.CursorPageParams) VotesQ {
+	q.selector = params.ApplyTo(q.selector, "v.id")
 	return q
 }
 

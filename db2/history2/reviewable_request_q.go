@@ -148,7 +148,7 @@ func (q ReviewableRequestsQ) FilterBySaleQuoteAsset(asset string) ReviewableRequ
 	return q
 }
 
-func (q ReviewableRequestsQ) FilterByCreatePollPermissionType(permissionType uint64) ReviewableRequestsQ {
+func (q ReviewableRequestsQ) FilterByCreatePollPermissionType(permissionType uint32) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_poll,permissionType}' = ?", permissionType)
 	return q
 }

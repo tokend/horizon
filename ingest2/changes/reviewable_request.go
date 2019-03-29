@@ -390,10 +390,10 @@ func (c *reviewableRequestHandler) getUpdateSaleDetailsRequest(
 func (c *reviewableRequestHandler) getCreatePollRequest(
 	request *xdr.CreatePollRequest) *history.CreatePollRequest {
 	return &history.CreatePollRequest{
-		NumberOfChoices:          uint64(request.NumberOfChoices),
+		NumberOfChoices:          uint32(request.NumberOfChoices),
 		VoteConfirmationRequired: request.VoteConfirmationRequired,
 		ResultProviderID:         request.ResultProviderId.Address(),
-		PermissionType:           uint64(request.PermissionType),
+		PermissionType:           uint32(request.PermissionType),
 		PollData:                 request.Data,
 		StartTime:                unixToTime(int64(request.StartTime)),
 		EndTime:                  unixToTime(int64(request.EndTime)),

@@ -17,12 +17,11 @@ type ManageCreatePollRequestOp struct {
 type ManageCreatePollRequestOpAttrs struct {
 	Action xdr.ManageCreatePollRequestAction `json:"action"`
 	Create *CreatePollRequestOp              `json:"create,omitempty"`
-	Cancel *CancelPollRequestOp              `json:"cancel,omitempty"`
 }
 
 type CreatePollRequestOp struct {
-	PermissionType           uint64    `json:"permission_type"`
-	NumberOfChoices          uint64    `json:"number_of_choices"`
+	PermissionType           uint32    `json:"permission_type"`
+	NumberOfChoices          uint32    `json:"number_of_choices"`
 	CreatorDetails           Details   `json:"creator_details"`
 	StartTime                time.Time `json:"start_time"`
 	EndTime                  time.Time `json:"end_time"`
@@ -32,12 +31,8 @@ type CreatePollRequestOp struct {
 	AllTasks                 *uint32   `json:"all_tasks,omitempty"`
 }
 
-type CancelPollRequestOp struct {
-	RequestID uint64 `json:"request_id"`
-}
-
 //ManageCreatePollRequestOpRelations - relationships of ManageCreatePollRequestOp
 type ManageCreatePollRequestOpRelations struct {
-	Request        *Relation
-	ResultProvider *Relation
+	Request        *Relation `json:"request"`
+	ResultProvider *Relation `json:"result_provider"`
 }

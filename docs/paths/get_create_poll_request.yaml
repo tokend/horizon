@@ -1,7 +1,7 @@
 /v3/create_poll_requests/{id}:
   get:
     tags:
-      - Crowd Investing
+      - Polls
     summary: Create Poll Request by ID
     description: |
       Allows getting `CreatePoll` by ID\n
