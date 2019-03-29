@@ -13,6 +13,7 @@ type ledgerChange struct {
 	LedgerChange    xdr.LedgerEntryChange
 	Operation       *xdr.Operation
 	OperationResult *xdr.OperationResultTr
+	OperationIndex  uint32
 }
 
 func unixToTime(t int64) time.Time {

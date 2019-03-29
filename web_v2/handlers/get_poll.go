@@ -72,12 +72,25 @@ func (h *getPollHandler) getPoll(request *requests.GetPoll) (*regources.PollResp
 	response := &regources.PollResponse{
 		Data: resource,
 	}
-	if request.ShouldInclude(requests.IncludeTypePollOutcome) {
-		votes, err := h.VotesQ.FilterByPollID(request.ID).Select()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get votes for poll")
-		}
 
+	if !request.ShouldIncludeAny(
+		requests.IncludeTypePollOutcome,
+		requests.IncludeTypePollOutcomeVotes,
+	) {
+		return response, nil
+	}
+
+	votes, err := h.VotesQ.FilterByPollID(request.ID).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get votes for poll")
+	}
+
+	if request.ShouldInclude(requests.IncludeTypePollOutcome) {
+		outcomeKey := resources.NewOutcome(record.ID, votes)
+		response.Included.Add(&outcomeKey)
+	}
+
+	if request.ShouldInclude(requests.IncludeTypePollOutcomeVotes) {
 		for _, v := range votes {
 			vote := resources.NewVote(v)
 			response.Included.Add(&vote)

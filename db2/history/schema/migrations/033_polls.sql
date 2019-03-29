@@ -17,7 +17,7 @@ create table polls (
 	);
 
 create table votes (
-  id bigserial not null,
+  id bigint not null,
   poll_id bigint not null,
   voter_id varchar(56) not null,
   data jsonb not null,

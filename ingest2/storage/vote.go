@@ -24,10 +24,10 @@ func NewVote(repo *db2.Repo) *Vote {
 func (q *Vote) Insert(vote history2.Vote) error {
 	sql := sq.Insert("votes").
 		Columns(
-			"voter_id", "poll_id", "data",
+			"id", "voter_id", "poll_id", "data",
 		).
 		Values(
-			vote.VoterID, vote.PollID, vote.VoteData,
+			vote.ID, vote.VoterID, vote.PollID, vote.VoteData,
 		)
 
 	_, err := q.repo.Exec(sql)

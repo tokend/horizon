@@ -33,3 +33,15 @@ func NewPoll(record history2.Poll) regources.Poll {
 		},
 	}
 }
+func NewOutcome(id int64, historyVotes []history2.Vote) regources.PollOutcome {
+	outcome := regources.PollOutcome{
+		Key: NewOutcomeKey(id),
+	}
+	for _, v := range historyVotes {
+		vote := NewVoteKey(v.VoterID)
+		outcome.Relationships.Votes.Data = append(outcome.Relationships.Votes.Data,
+			vote)
+	}
+
+	return outcome
+}

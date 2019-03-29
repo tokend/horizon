@@ -84,11 +84,11 @@ func (r *PollData) Scan(src interface{}) error {
 // PollOutcome - Resource object representing outcome of the poll
 type PollOutcome struct {
 	Key
-	Attributes PollOutcomeAttrs `json:"attributes"`
+	Relationships PollOutcomeRelations `json:"relationships"`
 }
 
-type PollOutcomeAttrs struct {
-	Votes []Vote `json:"votes"`
+type PollOutcomeRelations struct {
+	Votes *RelationCollection `json:"votes"`
 }
 
 type PollState int

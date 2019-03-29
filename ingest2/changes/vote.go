@@ -1,6 +1,7 @@
 package changes
 
 import (
+	"gitlab.com/tokend/horizon/ingest2/generator"
 	"gitlab.com/tokend/regources/v2"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -32,7 +33,8 @@ func newVoteHandler(storage voteStorage) *voteHandler {
 func (c *voteHandler) Created(lc ledgerChange) error {
 	rawVote := lc.LedgerChange.MustCreated().Data.MustVote()
 
-	vote, err := c.convertVote(rawVote)
+	voteID := generator.MakeID(lc.LedgerSeq, lc.OperationIndex)
+	vote, err := c.convertVote(rawVote, voteID)
 	if err != nil {
 		return errors.Wrap(err, "failed to convert vote", logan.F{
 			"raw_vote":        rawVote,
@@ -68,7 +70,7 @@ func (c *voteHandler) Removed(lc ledgerChange) error {
 //Updated - handles update of the vote
 func (c *voteHandler) Updated(lc ledgerChange) error {
 	rawVote := lc.LedgerChange.MustUpdated().Data.MustVote()
-	vote, err := c.convertVote(rawVote)
+	vote, err := c.convertVote(rawVote, 0)
 	if err != nil {
 		return errors.Wrap(err, "failed to convert vote ", logan.F{
 			"raw_vote":        rawVote,
@@ -85,7 +87,7 @@ func (c *voteHandler) Updated(lc ledgerChange) error {
 	return nil
 }
 
-func (c *voteHandler) convertVote(raw xdr.VoteEntry) (*history.Vote, error) {
+func (c *voteHandler) convertVote(raw xdr.VoteEntry, ID int64) (*history.Vote, error) {
 	choice := uint64(raw.Data.MustSingle().Choice)
 	return &history.Vote{
 		VoterID: raw.VoterId.Address(),

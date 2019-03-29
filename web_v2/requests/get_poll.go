@@ -4,11 +4,13 @@ import "net/http"
 
 const (
 	// IncludeTypePollVotes - defines if votes should be included in the response
-	IncludeTypePollOutcome = "outcome"
+	IncludeTypePollOutcome      = "outcome"
+	IncludeTypePollOutcomeVotes = "outcome.votes"
 )
 
 var includeTypePollAll = map[string]struct{}{
-	IncludeTypePollOutcome: {},
+	IncludeTypePollOutcome:      {},
+	IncludeTypePollOutcomeVotes: {},
 }
 
 type GetPoll struct {
