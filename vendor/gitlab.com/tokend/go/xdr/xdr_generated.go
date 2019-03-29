@@ -1,4 +1,4 @@
-// revision: 8c9dd26712f8cd8f2c70ecaa6db8f68f55bd073a
+// revision: 331540dc7c332c3d8c233c44c11bafec8c2740ef
 // branch:   feature/voting
 // Package xdr is generated from:
 //
@@ -30114,7 +30114,7 @@ type ManageVoteOp struct {
 //        // codes considered as "failure" for the operation
 //        //: There is no vote from source account in such poll
 //        VOTE_NOT_FOUND = -1, // vote to remove  not found
-//        //: There is no with such id
+//        //: There is no poll with such id
 //        POLL_NOT_FOUND = -2, // poll not found
 //        //: Not allowed to create (send) two votes for one poll
 //        VOTE_EXISTS = -3,
@@ -35251,14 +35251,14 @@ type ReviewableRequestResourceCreateWithdraw struct {
 //   struct
 //        {
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        }
 //
 type ReviewableRequestResourceCreatePoll struct {
-	PermissionType Uint64   `json:"permissionType,omitempty"`
+	PermissionType Uint32   `json:"permissionType,omitempty"`
 	Ext            EmptyExt `json:"ext,omitempty"`
 }
 
@@ -35305,7 +35305,7 @@ type ReviewableRequestResourceCreatePoll struct {
 //        struct
 //        {
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
@@ -44074,4 +44074,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "8c9dd26712f8cd8f2c70ecaa6db8f68f55bd073a"
+var Revision = "331540dc7c332c3d8c233c44c11bafec8c2740ef"

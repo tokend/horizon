@@ -508,7 +508,7 @@
 
 [[projects]]
   branch = "feature/voting"
-  digest = "1:30f8a0d4653ea8bd9dd73c9c42b117c41b4afb46f2b19a586b9ea67dc9ccb1e6"
+  digest = "1:669e0abd7a815450bd7b3c982e7dd8bffe15536b46638b2eb5ca8bfa0184af71"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -526,7 +526,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "ab65a79c3445a3e99ea6bfd89f04a3a5fe149881"
+  revision = "9e767c58643f6d4f074b52e9e6416a191f52f4a6"
 
 [[projects]]
   branch = "master"
