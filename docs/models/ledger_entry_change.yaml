@@ -3,7 +3,7 @@ LedgerEntryChangeKey:
   properties:
     id:
       type: string
-      example: "24571865181"
+      example: "17179869186:17179869186:0"
     type:
       type: string
       enum:
@@ -16,7 +16,7 @@ LedgerEntryChange:
       properties:
         id:
           type: string
-          example: "24571865181"
+          example: "17179869186:17179869186:0"
         type:
           type: string
           enum:

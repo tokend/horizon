@@ -542,15 +542,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:fcbded8ded441b46042395156966138aa50103dc705cee0b5cb164e379ef4128"
+  digest = "1:978d5f128cb5daa484a6d4fb904971256986bf37f9f3adb942468305f974a473"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "1f1ad3cb00136b35773cd71d1225f364a2576615"
-  version = "v3.0.2"
+  revision = "6b9333377168ffe0b95fcf3eb0aef3142cfc68f3"
+  version = "v3.0.3"
 
 [[projects]]
   branch = "master"
