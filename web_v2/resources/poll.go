@@ -36,6 +36,9 @@ func NewPoll(record history2.Poll) regources.Poll {
 func NewOutcome(id int64, historyVotes []history2.Vote) regources.PollOutcome {
 	outcome := regources.PollOutcome{
 		Key: NewOutcomeKey(id),
+		Relationships: regources.PollOutcomeRelations{
+			Votes: &regources.RelationCollection{},
+		},
 	}
 	for _, v := range historyVotes {
 		vote := NewVoteKey(v.VoterID)
