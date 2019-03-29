@@ -97,14 +97,24 @@ func (h *getPollListHandler) GetPollList(request *requests.GetPollList) (*regour
 	}
 
 	response := &regources.PollsResponse{
-		Data:  make([]regources.Poll, 0, len(historyPolls)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Data: make([]regources.Poll, 0, len(historyPolls)),
 	}
 
 	for _, historyPoll := range historyPolls {
 		poll := resources.NewPoll(historyPoll)
 		response.Data = append(response.Data, poll)
 	}
+	h.PopulateLinks(response, request)
 
 	return response, nil
+}
+
+func (h *getPollListHandler) PopulateLinks(
+	response *regources.PollsResponse, request *requests.GetPollList,
+) {
+	if len(response.Data) > 0 {
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+	} else {
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
+	}
 }

@@ -108,7 +108,7 @@ func (q PollsQ) FilterByVoteConfirmation(voteConfirmation bool) PollsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q PollsQ) Page(params db2.OffsetPageParams) PollsQ {
+func (q PollsQ) Page(params db2.CursorPageParams) PollsQ {
 	q.selector = params.ApplyTo(q.selector, "p.id")
 	return q
 }

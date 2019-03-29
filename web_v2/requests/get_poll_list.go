@@ -58,7 +58,7 @@ type GetPollList struct {
 		PermissionType   uint32     `json:"permission_type"`
 		VoteConfirmation bool       `json:"vote_confirmation"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *db2.CursorPageParams
 }
 
 func NewGetPollList(r *http.Request) (*GetPollList, error) {
@@ -69,7 +69,7 @@ func NewGetPollList(r *http.Request) (*GetPollList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	pageParams, err := b.getCursorBasedPageParams()
 	if err != nil {
 		return nil, err
 	}

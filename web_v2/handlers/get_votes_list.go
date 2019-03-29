@@ -84,6 +84,16 @@ func (h *getVoteListHandler) GetVoteList(request *requests.GetVoteList) (*regour
 
 		response.Data = append(response.Data, vote)
 	}
-
+	h.PopulateLinks(response, request)
 	return response, nil
+}
+
+func (h *getVoteListHandler) PopulateLinks(
+	response *regources.VotesResponse, request *requests.GetVoteList,
+) {
+	if len(response.Data) > 0 {
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+	} else {
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
+	}
 }
