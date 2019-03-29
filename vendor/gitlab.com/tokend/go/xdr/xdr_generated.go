@@ -1,4 +1,4 @@
-// revision: a3019ca28f13ab7b42edf3cad831b682a1e66f2c
+// revision: 8c9dd26712f8cd8f2c70ecaa6db8f68f55bd073a
 // branch:   feature/voting
 // Package xdr is generated from:
 //
@@ -3225,9 +3225,9 @@ func (u PollData) GetExt() (result EmptyExt, ok bool) {
 //   struct PollEntry
 //    {
 //        uint64 id;
-//        uint64 permissionType;
+//        uint32 permissionType;
 //
-//        uint64 numberOfChoices;
+//        uint32 numberOfChoices;
 //        PollData data;
 //
 //        uint64 startTime;
@@ -3245,8 +3245,8 @@ func (u PollData) GetExt() (result EmptyExt, ok bool) {
 //
 type PollEntry struct {
 	Id                       Uint64     `json:"id,omitempty"`
-	PermissionType           Uint64     `json:"permissionType,omitempty"`
-	NumberOfChoices          Uint64     `json:"numberOfChoices,omitempty"`
+	PermissionType           Uint32     `json:"permissionType,omitempty"`
+	NumberOfChoices          Uint32     `json:"numberOfChoices,omitempty"`
 	Data                     PollData   `json:"data,omitempty"`
 	StartTime                Uint64     `json:"startTime,omitempty"`
 	EndTime                  Uint64     `json:"endTime,omitempty"`
@@ -5233,12 +5233,12 @@ type StatisticsEntry struct {
 //
 //   struct SingleChoiceVote
 //    {
-//        uint64 choice;
+//        uint32 choice;
 //        EmptyExt ext;
 //    };
 //
 type SingleChoiceVote struct {
-	Choice Uint64   `json:"choice,omitempty"`
+	Choice Uint32   `json:"choice,omitempty"`
 	Ext    EmptyExt `json:"ext,omitempty"`
 }
 
@@ -22161,13 +22161,15 @@ type ManageCreatePollRequestOp struct {
 //        NOT_FOUND = -2,
 //        //: Not allowed to create poll which has `endTime` not later than `startTime`
 //        INVALID_DATES = -3,
-//        //: Not allowed to create poll which `startTime` early that currentTime
-//        INVALID_START_TIME = -4,
+//        //: Not allowed to create poll which `endTime` early than currentTime
+//        INVALID_END_TIME = -4,
 //        //: There is no account which such id
 //        RESULT_PROVIDER_NOT_FOUND = -5,
 //        //: There is no key-value entry by `create_poll_tasks:<permissionType>` key in the system;
 //        //: configuration does not allow to create `CREATE_POLL` request with such `permissionType`
-//        CREATE_POLL_TASKS_NOT_FOUND = -6
+//        CREATE_POLL_TASKS_NOT_FOUND = -6,
+//        //: Not allowed to create poll with zero number of choices
+//        INVALID_NUMBER_OF_CHOICES = -7
 //    };
 //
 type ManageCreatePollRequestResultCode int32
@@ -22177,9 +22179,10 @@ const (
 	ManageCreatePollRequestResultCodeInvalidCreatorDetails   ManageCreatePollRequestResultCode = -1
 	ManageCreatePollRequestResultCodeNotFound                ManageCreatePollRequestResultCode = -2
 	ManageCreatePollRequestResultCodeInvalidDates            ManageCreatePollRequestResultCode = -3
-	ManageCreatePollRequestResultCodeInvalidStartTime        ManageCreatePollRequestResultCode = -4
+	ManageCreatePollRequestResultCodeInvalidEndTime          ManageCreatePollRequestResultCode = -4
 	ManageCreatePollRequestResultCodeResultProviderNotFound  ManageCreatePollRequestResultCode = -5
 	ManageCreatePollRequestResultCodeCreatePollTasksNotFound ManageCreatePollRequestResultCode = -6
+	ManageCreatePollRequestResultCodeInvalidNumberOfChoices  ManageCreatePollRequestResultCode = -7
 )
 
 var ManageCreatePollRequestResultCodeAll = []ManageCreatePollRequestResultCode{
@@ -22187,9 +22190,10 @@ var ManageCreatePollRequestResultCodeAll = []ManageCreatePollRequestResultCode{
 	ManageCreatePollRequestResultCodeInvalidCreatorDetails,
 	ManageCreatePollRequestResultCodeNotFound,
 	ManageCreatePollRequestResultCodeInvalidDates,
-	ManageCreatePollRequestResultCodeInvalidStartTime,
+	ManageCreatePollRequestResultCodeInvalidEndTime,
 	ManageCreatePollRequestResultCodeResultProviderNotFound,
 	ManageCreatePollRequestResultCodeCreatePollTasksNotFound,
+	ManageCreatePollRequestResultCodeInvalidNumberOfChoices,
 }
 
 var manageCreatePollRequestResultCodeMap = map[int32]string{
@@ -22197,9 +22201,10 @@ var manageCreatePollRequestResultCodeMap = map[int32]string{
 	-1: "ManageCreatePollRequestResultCodeInvalidCreatorDetails",
 	-2: "ManageCreatePollRequestResultCodeNotFound",
 	-3: "ManageCreatePollRequestResultCodeInvalidDates",
-	-4: "ManageCreatePollRequestResultCodeInvalidStartTime",
+	-4: "ManageCreatePollRequestResultCodeInvalidEndTime",
 	-5: "ManageCreatePollRequestResultCodeResultProviderNotFound",
 	-6: "ManageCreatePollRequestResultCodeCreatePollTasksNotFound",
+	-7: "ManageCreatePollRequestResultCodeInvalidNumberOfChoices",
 }
 
 var manageCreatePollRequestResultCodeShortMap = map[int32]string{
@@ -22207,9 +22212,10 @@ var manageCreatePollRequestResultCodeShortMap = map[int32]string{
 	-1: "invalid_creator_details",
 	-2: "not_found",
 	-3: "invalid_dates",
-	-4: "invalid_start_time",
+	-4: "invalid_end_time",
 	-5: "result_provider_not_found",
 	-6: "create_poll_tasks_not_found",
+	-7: "invalid_number_of_choices",
 }
 
 var manageCreatePollRequestResultCodeRevMap = map[string]int32{
@@ -22217,9 +22223,10 @@ var manageCreatePollRequestResultCodeRevMap = map[string]int32{
 	"ManageCreatePollRequestResultCodeInvalidCreatorDetails":   -1,
 	"ManageCreatePollRequestResultCodeNotFound":                -2,
 	"ManageCreatePollRequestResultCodeInvalidDates":            -3,
-	"ManageCreatePollRequestResultCodeInvalidStartTime":        -4,
+	"ManageCreatePollRequestResultCodeInvalidEndTime":          -4,
 	"ManageCreatePollRequestResultCodeResultProviderNotFound":  -5,
 	"ManageCreatePollRequestResultCodeCreatePollTasksNotFound": -6,
+	"ManageCreatePollRequestResultCodeInvalidNumberOfChoices":  -7,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -35627,7 +35634,7 @@ type AccountRuleResourceKeyValue struct {
 //            uint64 pollID;
 //
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
@@ -35635,7 +35642,7 @@ type AccountRuleResourceKeyValue struct {
 //
 type AccountRuleResourcePoll struct {
 	PollId         Uint64   `json:"pollID,omitempty"`
-	PermissionType Uint64   `json:"permissionType,omitempty"`
+	PermissionType Uint32   `json:"permissionType,omitempty"`
 	Ext            EmptyExt `json:"ext,omitempty"`
 }
 
@@ -35647,7 +35654,7 @@ type AccountRuleResourcePoll struct {
 //            uint64 pollID;
 //
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
@@ -35655,7 +35662,7 @@ type AccountRuleResourcePoll struct {
 //
 type AccountRuleResourceVote struct {
 	PollId         Uint64   `json:"pollID,omitempty"`
-	PermissionType Uint64   `json:"permissionType,omitempty"`
+	PermissionType Uint32   `json:"permissionType,omitempty"`
 	Ext            EmptyExt `json:"ext,omitempty"`
 }
 
@@ -35738,7 +35745,7 @@ type AccountRuleResourceVote struct {
 //            uint64 pollID;
 //
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
@@ -35750,7 +35757,7 @@ type AccountRuleResourceVote struct {
 //            uint64 pollID;
 //
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
@@ -36459,7 +36466,7 @@ type SignerRuleResourceKeyValue struct {
 //            uint64 pollID;
 //
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
@@ -36467,7 +36474,7 @@ type SignerRuleResourceKeyValue struct {
 //
 type SignerRuleResourcePoll struct {
 	PollId         Uint64   `json:"pollID,omitempty"`
-	PermissionType Uint64   `json:"permissionType,omitempty"`
+	PermissionType Uint32   `json:"permissionType,omitempty"`
 	Ext            EmptyExt `json:"ext,omitempty"`
 }
 
@@ -36479,7 +36486,7 @@ type SignerRuleResourcePoll struct {
 //            uint64 pollID;
 //
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
@@ -36487,7 +36494,7 @@ type SignerRuleResourcePoll struct {
 //
 type SignerRuleResourceVote struct {
 	PollId         Uint64   `json:"pollID,omitempty"`
-	PermissionType Uint64   `json:"permissionType,omitempty"`
+	PermissionType Uint32   `json:"permissionType,omitempty"`
 	Ext            EmptyExt `json:"ext,omitempty"`
 }
 
@@ -36600,7 +36607,7 @@ type SignerRuleResourceVote struct {
 //            uint64 pollID;
 //
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
@@ -36612,7 +36619,7 @@ type SignerRuleResourceVote struct {
 //            uint64 pollID;
 //
 //            //: permission type of poll
-//            uint64 permissionType;
+//            uint32 permissionType;
 //
 //            //: reserved for future extension
 //            EmptyExt ext;
@@ -37829,10 +37836,10 @@ func NewCreatePollRequestExt(v LedgerVersion, value interface{}) (result CreateP
 //   struct CreatePollRequest
 //    {
 //        //: is used to restrict using of poll through rules
-//        uint64 permissionType;
+//        uint32 permissionType;
 //
-//        //: Count of allowed choices
-//        uint64 numberOfChoices;
+//        //: Number of allowed choices
+//        uint32 numberOfChoices;
 //
 //        //: Specification of poll
 //        PollData data;
@@ -37862,8 +37869,8 @@ func NewCreatePollRequestExt(v LedgerVersion, value interface{}) (result CreateP
 //    };
 //
 type CreatePollRequest struct {
-	PermissionType           Uint64               `json:"permissionType,omitempty"`
-	NumberOfChoices          Uint64               `json:"numberOfChoices,omitempty"`
+	PermissionType           Uint32               `json:"permissionType,omitempty"`
+	NumberOfChoices          Uint32               `json:"numberOfChoices,omitempty"`
 	Data                     PollData             `json:"data,omitempty"`
 	CreatorDetails           Longstring           `json:"creatorDetails,omitempty"`
 	StartTime                Uint64               `json:"startTime,omitempty"`
@@ -44067,4 +44074,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "a3019ca28f13ab7b42edf3cad831b682a1e66f2c"
+var Revision = "8c9dd26712f8cd8f2c70ecaa6db8f68f55bd073a"
