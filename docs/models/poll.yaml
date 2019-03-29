@@ -117,10 +117,10 @@ Outcome:
   allOf:
     - $ref: '#/components/schemas/OutcomeKey'
     - type: object
-      required: [attributes]
+      required: [relationships]
       properties:
-        attributes:
+        relationships:
           votes:
             type: array
             items:
-              $ref: '#/components/schemas/Vote'
+              $ref: '#/components/schemas/VoteKey'
