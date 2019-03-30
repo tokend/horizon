@@ -52,3 +52,11 @@ func MakeID(significant int32, sequence uint32) int64 {
 
 	return (int64(significant) << 32) | int64(sequence)
 }
+
+func MakeIDUint16(significant int32, seq1, seq2 uint16) int64 {
+	if significant < 0 {
+		panic(errors.New("negative significant is not supported"))
+	}
+
+	return (int64(significant) << 32) | int64(seq1)<<16 | int64(seq2)
+}
