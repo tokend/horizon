@@ -96,7 +96,7 @@ func (q PollsQ) FilterByState(state int32) PollsQ {
 	return q
 }
 
-// FilterByVoteConfirmationRequired- returns q with filter by type
+// FilterByVoteConfirmationRequired- returns q with filter by voteConfirmationRequired
 func (q PollsQ) FilterByVoteConfirmationRequired(voteConfirmation bool) PollsQ {
 	q.selector = q.selector.Where("p.vote_confirmation_required = ?", voteConfirmation)
 	return q

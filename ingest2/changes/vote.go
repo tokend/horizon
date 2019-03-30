@@ -54,17 +54,25 @@ func (c *voteHandler) Created(lc ledgerChange) error {
 
 //Removed - handles state of the vote due to it was removed
 func (c *voteHandler) Removed(lc ledgerChange) error {
-	if lc.Operation.Body.Type != xdr.OperationTypeManageVote {
+	switch lc.Operation.Body.Type {
+	case xdr.OperationTypeManageVote:
+		pollID := uint64(lc.LedgerChange.MustRemoved().MustVote().PollId)
+		voterID := lc.LedgerChange.MustRemoved().MustVote().VoterId
+		err := c.storage.Remove(voterID.Address(), pollID)
+		if err != nil {
+			return errors.Wrap(err, "failed to remove vote")
+		}
 		return nil
+	case xdr.OperationTypeManagePoll:
+		return nil
+	default:
+		return errors.From(
+			errors.New("Unexpected operation triggered VoteEntry remove"),
+			logan.F{
+				"operation_type": lc.Operation.Body.Type,
+			})
 	}
-	pollID := uint64(lc.LedgerChange.MustRemoved().MustVote().PollId)
-	voterID := lc.LedgerChange.MustRemoved().MustVote().VoterId
-	err := c.storage.Remove(voterID.Address(), pollID)
-	if err != nil {
-		return errors.Wrap(err, "failed to remove vote")
 	}
-
-	return nil
 }
 
 //Updated - handles update of the vote

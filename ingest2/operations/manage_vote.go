@@ -11,7 +11,7 @@ type manageVoteOpHandler struct {
 	effectsProvider
 }
 
-// Details returns details about manage balance operation
+// Details returns details about manage vote operation
 func (h *manageVoteOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	manageVoteOp := op.Body.MustManageVoteOp()
@@ -31,7 +31,7 @@ func (h *manageVoteOpHandler) Details(op rawOperation, opRes xdr.OperationResult
 	case xdr.ManageVoteActionRemove:
 		details.ManageVote.PollID = int64(manageVoteOp.Data.MustRemoveData().PollId)
 	default:
-		return history2.OperationDetails{}, errors.From(errors.New("unexpected manage poll action"),
+		return history2.OperationDetails{}, errors.From(errors.New("unexpected manage vote action"),
 			logan.F{
 				"action": manageVoteOp.Data.Action.ShortString(),
 			})
