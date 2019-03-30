@@ -21,8 +21,11 @@ create table votes (
   poll_id bigint not null,
   voter_id text not null,
   data jsonb not null,
-  primary key (poll_id, voter_id)
+  primary key (id)
   );
+
+create index by_poll_id ON votes USING btree (poll_id);
+
 -- +migrate Down
 
 drop table if exists polls cascade;
