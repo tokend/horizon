@@ -6,7 +6,7 @@ import (
 	"gitlab.com/tokend/regources/v2"
 )
 
-// Poll - represents instance of voting campaign
+// CreatePoll - represents instance of voting campaign
 type Poll struct {
 	ID                       int64               `db:"id"`
 	PermissionType           uint32              `db:"permission_type"`

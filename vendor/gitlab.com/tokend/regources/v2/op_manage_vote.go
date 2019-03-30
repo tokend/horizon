@@ -7,12 +7,12 @@ import (
 //ManageVoteOp - stores details of manage vote operation
 type ManageVoteOp struct {
 	Key
-	Attributes    ManageVoteOpAttrs     `json:"attributes"`
-	Relationships ManageVoteOpRelations `json:"relationships"`
+	Attributes    ManageVoteOpAttributes `json:"attributes"`
+	Relationships ManageVoteOpRelations  `json:"relationships"`
 }
 
-//ManageCreateVoteRequestOpAttrs - details of ManageCreateVoteRequestOp
-type ManageVoteOpAttrs struct {
+//ManageCreateVoteRequestOpAttributes - details of ManageCreateVoteRequestOp
+type ManageVoteOpAttributes struct {
 	Action xdr.ManageVoteAction `json:"action"`
 	Create *CreateVoteOp        `json:"create,omitempty"`
 	Remove *RemoveVoteOp        `json:"remove,omitempty"`
@@ -27,7 +27,7 @@ type RemoveVoteOp struct {
 	PollID int64 `json:"poll_id"`
 }
 
-//ManageVoteOpAttrs - relationships of ManageVoteOp
+//ManageVoteOpRelations- relationships of ManageVoteOp
 type ManageVoteOpRelations struct {
 	Poll           *Relation
 	Voter          *Relation

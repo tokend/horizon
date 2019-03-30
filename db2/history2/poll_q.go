@@ -35,16 +35,11 @@ func NewPollsQ(repo *db2.Repo) PollsQ {
 	}
 }
 
-// FilterByID - returns q with filter by poll ID
-func (q PollsQ) FilterByID(id int64) PollsQ {
-	q.selector = q.selector.Where("p.id = ?", id)
-	return q
-}
-
 // GetByID loads a row from `polls`, by ID
 // returns nil, nil - if poll does not exists
 func (q PollsQ) GetByID(id int64) (*Poll, error) {
-	return q.FilterByID(id).Get()
+	q.selector = q.selector.Where("p.id = ?", id)
+	return q.Get()
 }
 
 // FilterByOwner - returns q with filter by Owner
@@ -95,14 +90,14 @@ func (q PollsQ) FilterByPollType(pollType uint64) PollsQ {
 	return q
 }
 
-// FilterByPollState - returns q with filter by type
+// FilterByPollState - returns q with filter by state
 func (q PollsQ) FilterByState(state int32) PollsQ {
 	q.selector = q.selector.Where("p.state = ?", state)
 	return q
 }
 
-// FilterByVoteConfirmation- returns q with filter by type
-func (q PollsQ) FilterByVoteConfirmation(voteConfirmation bool) PollsQ {
+// FilterByVoteConfirmationRequired- returns q with filter by type
+func (q PollsQ) FilterByVoteConfirmationRequired(voteConfirmation bool) PollsQ {
 	q.selector = q.selector.Where("p.vote_confirmation_required = ?", voteConfirmation)
 	return q
 }
@@ -115,7 +110,7 @@ func (q PollsQ) Page(params db2.CursorPageParams) PollsQ {
 
 // Get - loads a row from `polls`
 // returns nil, nil - if poll does not exists
-// returns error if more than one Poll found
+// returns error if more than one CreatePoll found
 func (q PollsQ) Get() (*Poll, error) {
 	var result Poll
 	err := q.repo.Get(&result, q.selector)

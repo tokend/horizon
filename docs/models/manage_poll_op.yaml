@@ -42,7 +42,7 @@ ClosePollOp:
   properties:
     poll_id:
       type: integer
-      description: "id of the poll to close"
+      description: "id of the closed poll"
       example: 1
     poll_result:
       description: |

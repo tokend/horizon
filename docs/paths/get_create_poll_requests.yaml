@@ -78,7 +78,7 @@
         explode: false
         schema:
           type: string
-      - name: filter[request_details.vote_confirmation]
+      - name: filter[request_details.vote_confirmation_required]
         in: query
         description: |
           Filters poll requests by a `voteConfirmationRequired` property.

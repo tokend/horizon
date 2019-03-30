@@ -26,13 +26,13 @@ func NewVotesQ(repo *db2.Repo) VotesQ {
 	}
 }
 
-// FilterByID - returns q with filter by sale ID
-func (q VotesQ) FilterByVoter(voterID string) VotesQ {
+// FilterByVoterID - returns q with filter by voter ID
+func (q VotesQ) FilterByVoterID(voterID string) VotesQ {
 	q.selector = q.selector.Where("v.voter_id = ?", voterID)
 	return q
 }
 
-// FilterByOwner - returns q with filter by Owner
+// FilterByPollID - returns q with filter by PollID
 func (q VotesQ) FilterByPollID(pollID int64) VotesQ {
 	q.selector = q.selector.Where("v.poll_id = ?", pollID)
 	return q

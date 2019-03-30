@@ -64,7 +64,7 @@ func (h *getPollListHandler) GetPollList(request *requests.GetPollList) (*regour
 	}
 
 	if request.ShouldFilter(requests.FilterTypePollListVoteConfirmation) {
-		q = q.FilterByVoteConfirmation(request.Filters.VoteConfirmation)
+		q = q.FilterByVoteConfirmationRequired(request.Filters.VoteConfirmation)
 	}
 
 	if request.ShouldFilter(requests.FilterTypePollListMaxEndTime) {

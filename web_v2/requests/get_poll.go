@@ -3,14 +3,15 @@ package requests
 import "net/http"
 
 const (
-	// IncludeTypePollVotes - defines if votes should be included in the response
-	IncludeTypePollOutcome      = "outcome"
-	IncludeTypePollOutcomeVotes = "outcome.votes"
+	// IncludeTypePollParticipation - defines if participation should be included in the response
+	IncludeTypePollParticipation = "participation"
+	// IncludeTypePollParticipation - defines if votes should be included in the response
+	IncludeTypePollParticipationVotes = "participation.votes"
 )
 
 var includeTypePollAll = map[string]struct{}{
-	IncludeTypePollOutcome:      {},
-	IncludeTypePollOutcomeVotes: {},
+	IncludeTypePollParticipation:      {},
+	IncludeTypePollParticipationVotes: {},
 }
 
 type GetPoll struct {

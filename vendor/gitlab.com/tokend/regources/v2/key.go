@@ -33,7 +33,7 @@ const (
 	TypeFees                            = "fees"
 	TypeCalculatedFee                   = "calculated-fee"
 	TypePolls                           = "polls"
-	TypePollOutcome                     = "poll-outcome"
+	TypePollsParticipation              = "polls-participation"
 	TypeVotes                           = "votes"
 	TypeTxs                             = "transactions"
 	// TypeEffectsFunded - balance received funds from other balance

@@ -23,11 +23,11 @@ type VotesResponse struct {
 // Vote - Resource object representing VoteEntry
 type Vote struct {
 	Key
-	Attributes    VoteAttrs     `json:"attributes"`
-	Relationships VoteRelations `json:"relationships"`
+	Attributes    VoteAttributes `json:"attributes"`
+	Relationships VoteRelations  `json:"relationships"`
 }
 
-type VoteAttrs struct {
+type VoteAttributes struct {
 	VoteData VoteData `json:"vote_data"`
 }
 

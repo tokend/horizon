@@ -65,8 +65,8 @@ func (h *getCreatePollRequestsHandler) MakeAll(w http.ResponseWriter, request re
 		q = q.FilterByCreatePollPermissionType(request.Filters.PermissionType)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeCreatePollRequestsVoteConfirmation) {
-		q = q.FilterByCreatePollVoteConfirmation(request.Filters.VoteConfirmationRequired)
+	if request.ShouldFilter(requests.FilterTypeCreatePollRequestsVoteConfirmationRequired) {
+		q = q.FilterByCreatePollVoteConfirmationRequired(request.Filters.VoteConfirmationRequired)
 	}
 	if request.ShouldFilter(requests.FilterTypeCreatePollRequestsResultProvider) {
 		q = q.FilterByCreatePollResultProvider(request.Filters.ResultProvider)

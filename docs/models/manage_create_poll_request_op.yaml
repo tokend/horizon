@@ -70,7 +70,7 @@ CreatePollRequestOp:
     vote_confirmation_required:
       type: boolean
       example: true
-      description: "defines if result provider is required to participate in poll voting"
+      description: "defines if result provider signature is required to participate in poll voting"
     poll_data:
       type: object
       properties:

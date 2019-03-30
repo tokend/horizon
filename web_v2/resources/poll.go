@@ -9,14 +9,14 @@ func NewPollKey(ID int64) regources.Key {
 	return regources.NewKeyInt64(ID, regources.TypePolls)
 }
 
-func NewOutcomeKey(ID int64) regources.Key {
-	return regources.NewKeyInt64(ID, regources.TypePollOutcome)
+func NewParticipationKey(ID int64) regources.Key {
+	return regources.NewKeyInt64(ID, regources.TypePollsParticipation)
 }
 
 func NewPoll(record history2.Poll) regources.Poll {
 	return regources.Poll{
 		Key: NewPollKey(record.ID),
-		Attributes: regources.PollAttrs{
+		Attributes: regources.PollAttributes{
 			VoteConfirmationRequired: record.VoteConfirmationRequired,
 			PermissionType:           record.PermissionType,
 			NumberOfChoices:          record.NumberOfChoices,
@@ -29,14 +29,14 @@ func NewPoll(record history2.Poll) regources.Poll {
 		Relationships: regources.PollRelations{
 			ResultProvider: NewAccountKey(record.ResultProviderID).AsRelation(),
 			Owner:          NewAccountKey(record.OwnerID).AsRelation(),
-			Outcome:        NewOutcomeKey(record.ID).AsRelation(),
+			Participation:  NewParticipationKey(record.ID).AsRelation(),
 		},
 	}
 }
-func NewOutcome(id int64, historyVotes []history2.Vote) regources.PollOutcome {
-	outcome := regources.PollOutcome{
-		Key: NewOutcomeKey(id),
-		Relationships: regources.PollOutcomeRelations{
+func NewParticipation(id int64, historyVotes []history2.Vote) regources.PollParticipation {
+	outcome := regources.PollParticipation{
+		Key: NewParticipationKey(id),
+		Relationships: regources.PollParticipationRelations{
 			Votes: &regources.RelationCollection{},
 		},
 	}

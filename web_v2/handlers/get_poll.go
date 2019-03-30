@@ -43,8 +43,8 @@ func GetPoll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if request.ShouldIncludeAny(
-		requests.IncludeTypePollOutcome,
-		requests.IncludeTypePollOutcomeVotes,
+		requests.IncludeTypePollParticipation,
+		requests.IncludeTypePollParticipationVotes,
 	) {
 		if !isAllowed(r, w, result.Data.Relationships.Owner.Data.ID, result.Data.Relationships.ResultProvider.Data.ID) {
 			return
@@ -78,8 +78,8 @@ func (h *getPollHandler) getPoll(request *requests.GetPoll) (*regources.PollResp
 	}
 
 	if !request.ShouldIncludeAny(
-		requests.IncludeTypePollOutcome,
-		requests.IncludeTypePollOutcomeVotes,
+		requests.IncludeTypePollParticipation,
+		requests.IncludeTypePollParticipationVotes,
 	) {
 		return response, nil
 	}
@@ -89,12 +89,12 @@ func (h *getPollHandler) getPoll(request *requests.GetPoll) (*regources.PollResp
 		return nil, errors.Wrap(err, "failed to get votes for poll")
 	}
 
-	if request.ShouldInclude(requests.IncludeTypePollOutcome) {
-		outcomeKey := resources.NewOutcome(record.ID, votes)
+	if request.ShouldInclude(requests.IncludeTypePollParticipation) {
+		outcomeKey := resources.NewParticipation(record.ID, votes)
 		response.Included.Add(&outcomeKey)
 	}
 
-	if request.ShouldInclude(requests.IncludeTypePollOutcomeVotes) {
+	if request.ShouldInclude(requests.IncludeTypePollParticipationVotes) {
 		for _, v := range votes {
 			vote := resources.NewVote(v)
 			response.Included.Add(&vote)

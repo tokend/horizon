@@ -7,12 +7,12 @@ import (
 //ManagePollOp - stores details of manage poll operation
 type ManagePollOp struct {
 	Key
-	Attributes    ManagePollOpAttrs     `json:"attributes"`
-	Relationships ManagePollOpRelations `json:"relationships"`
+	Attributes    ManagePollOpAttributes `json:"attributes"`
+	Relationships ManagePollOpRelations  `json:"relationships"`
 }
 
-//ManagePollOpAttrs - details of ManagePollOp
-type ManagePollOpAttrs struct {
+//ManagePollOpAttributes - details of ManagePollOp
+type ManagePollOpAttributes struct {
 	Action xdr.ManagePollAction `json:"action"`
 	Close  *ClosePollOp         `json:"close,omitempty"`
 }
@@ -23,7 +23,7 @@ type ClosePollOp struct {
 	Details    Details        `json:"details"`
 }
 
-//ManagePollOpAttrs - relationships of ManageBalanceOp
+//ManagePollOpAttributes - relationships of ManageBalanceOp
 type ManagePollOpRelations struct {
 	Poll *Relation `json:"poll"`
 }

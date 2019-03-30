@@ -28,7 +28,7 @@ type ReviewableRequestDetails struct {
 	Contract              *ContractRequest          `json:"contract"`
 	AtomicSwapBidCreation *AtomicSwapBidCreation    `json:"create_atomic_swap_bid,omitempty"`
 	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap,omitempty"`
-	Poll                  *Poll                     `json:"create_poll,omitempty"`
+	CreatePoll            *CreatePoll               `json:"create_poll,omitempty"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -159,7 +159,7 @@ type AtomicSwap struct {
 	QuoteAsset string `json:"quote_asset"`
 }
 
-type Poll struct {
+type CreatePoll struct {
 	NumberOfChoices          uint32       `json:"number_of_choices"`
 	PollType                 xdr.PollType `json:"poll_type"`
 	ResultProvider           string       `json:"result_provider"`

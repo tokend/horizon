@@ -73,7 +73,7 @@ func (h *getVoteHandler) getVote(request *requests.GetVote) (*regources.VoteResp
 
 	record, err := h.VotesQ.
 		FilterByPollID(request.PollID).
-		FilterByVoter(request.VoterID).
+		FilterByVoterID(request.VoterID).
 		Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get vote")

@@ -27,11 +27,11 @@ type PollsResponse struct {
 // Poll - Resource object representing PollEntry
 type Poll struct {
 	Key
-	Attributes    PollAttrs     `json:"attributes"`
-	Relationships PollRelations `json:"relationships"`
+	Attributes    PollAttributes `json:"attributes"`
+	Relationships PollRelations  `json:"relationships"`
 }
 
-type PollAttrs struct {
+type PollAttributes struct {
 	PollData                 PollData  `json:"poll_data"`
 	PermissionType           uint32    `json:"permission_type"`
 	NumberOfChoices          uint32    `json:"number_of_choices"`
@@ -45,7 +45,7 @@ type PollAttrs struct {
 type PollRelations struct {
 	Owner          *Relation `json:"owner"`
 	ResultProvider *Relation `json:"result_provider"`
-	Outcome        *Relation `json:"outcome"`
+	Participation  *Relation `json:"participation"`
 }
 type PollData struct {
 	Type xdr.PollType `json:"type"`
@@ -81,13 +81,13 @@ func (r *PollData) Scan(src interface{}) error {
 	return nil
 }
 
-// PollOutcome - Resource object representing outcome of the poll
-type PollOutcome struct {
+// PollParticipation - Resource object representing outcome of the poll
+type PollParticipation struct {
 	Key
-	Relationships PollOutcomeRelations `json:"relationships"`
+	Relationships PollParticipationRelations `json:"relationships"`
 }
 
-type PollOutcomeRelations struct {
+type PollParticipationRelations struct {
 	Votes *RelationCollection `json:"votes"`
 }
 

@@ -9,12 +9,12 @@ import (
 	regources "gitlab.com/tokend/regources/v2"
 )
 
-// Poll is helper struct to operate with `polls`
+// CreatePoll is helper struct to operate with `polls`
 type Poll struct {
 	repo *db2.Repo
 }
 
-// NewPoll - creates new instance of the `Poll`
+// NewPoll - creates new instance of the `CreatePoll`
 func NewPoll(repo *db2.Repo) *Poll {
 	return &Poll{
 		repo: repo,

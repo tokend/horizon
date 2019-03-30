@@ -149,11 +149,11 @@ func (q ReviewableRequestsQ) FilterBySaleQuoteAsset(asset string) ReviewableRequ
 }
 
 func (q ReviewableRequestsQ) FilterByCreatePollPermissionType(permissionType uint32) ReviewableRequestsQ {
-	q.selector = q.selector.Where("details#>>'{create_poll,permissionType}' = ?", permissionType)
+	q.selector = q.selector.Where("details#>>'{create_poll,permission_type}' = ?", permissionType)
 	return q
 }
 
-func (q ReviewableRequestsQ) FilterByCreatePollVoteConfirmation(voteConfirmationRequired bool) ReviewableRequestsQ {
+func (q ReviewableRequestsQ) FilterByCreatePollVoteConfirmationRequired(voteConfirmationRequired bool) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_poll,vote_confirmation_required}' = ?", voteConfirmationRequired)
 	return q
 }

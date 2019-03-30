@@ -27,7 +27,7 @@
         explode: false
         schema:
           type: string
-          enum: [outcome, outcome.votes]
+          enum: [participation, participation.votes]
     responses:
       200:
         description: poll exists

@@ -5,21 +5,21 @@ import (
 )
 
 const (
-	FilterTypeCreatePollRequestsPermissionType   = "request_details.permission_type"
-	FilterTypeCreatePollRequestsVoteConfirmation = "request_details.vote_confirmation"
-	FilterTypeCreatePollRequestsResultProvider   = "request_details.result_provider"
+	FilterTypeCreatePollRequestsPermissionType           = "request_details.permission_type"
+	FilterTypeCreatePollRequestsVoteConfirmationRequired = "request_details.vote_confirmation_required"
+	FilterTypeCreatePollRequestsResultProvider           = "request_details.result_provider"
 )
 
 var filterTypeCreatePollRequests = map[string]struct{}{
-	FilterTypeCreatePollRequestsPermissionType:   {},
-	FilterTypeCreatePollRequestsVoteConfirmation: {},
-	FilterTypeCreatePollRequestsResultProvider:   {},
+	FilterTypeCreatePollRequestsPermissionType:           {},
+	FilterTypeCreatePollRequestsVoteConfirmationRequired: {},
+	FilterTypeCreatePollRequestsResultProvider:           {},
 }
 
 type GetCreatePollRequestsFilter struct {
 	GetRequestListBaseFilters
 	PermissionType           uint32 `fig:"request_details.permission_type"`
-	VoteConfirmationRequired bool   `fig:"request_details.vote_confirmation"`
+	VoteConfirmationRequired bool   `fig:"request_details.vote_confirmation_required"`
 	ResultProvider           string `fig:"request_details.result_provider"`
 }
 
