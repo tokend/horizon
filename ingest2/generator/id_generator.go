@@ -45,7 +45,7 @@ func (g *ID) Next() int64 {
 	return (int64(g.Significant) << 32) | int64(g.seq)
 }
 
-func MakeID(significant int32, sequence uint32) int64 {
+func MakeIDUint32(significant int32, sequence uint32) int64 {
 	if significant < 0 {
 		panic(errors.New("negative significant is not supported"))
 	}
