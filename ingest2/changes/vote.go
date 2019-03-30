@@ -72,7 +72,6 @@ func (c *voteHandler) Removed(lc ledgerChange) error {
 				"operation_type": lc.Operation.Body.Type,
 			})
 	}
-	}
 }
 
 //Updated - handles update of the vote
