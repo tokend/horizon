@@ -32,8 +32,11 @@ func newVoteHandler(storage voteStorage) *voteHandler {
 //Created - handles creation of new vote
 func (c *voteHandler) Created(lc ledgerChange) error {
 	rawVote := lc.LedgerChange.MustCreated().Data.MustVote()
-
-	voteID := generator.MakeID(lc.LedgerSeq, lc.OperationIndex)
+	//TX count is restricted to 500, so we must be safe
+	// Op count in tx restricted to 100
+	txInd := uint16(lc.TxIndex)
+	opInd := uint16(lc.OperationIndex)
+	voteID := generator.MakeIDUint16(lc.LedgerSeq, txInd, opInd)
 	vote, err := c.convertVote(rawVote, voteID)
 	if err != nil {
 		return errors.Wrap(err, "failed to convert vote", logan.F{
@@ -97,6 +100,7 @@ func (c *voteHandler) Updated(lc ledgerChange) error {
 func (c *voteHandler) convertVote(raw xdr.VoteEntry, ID int64) (*history.Vote, error) {
 	choice := uint64(raw.Data.MustSingle().Choice)
 	return &history.Vote{
+		ID:      ID,
 		VoterID: raw.VoterId.Address(),
 		PollID:  int64(raw.PollId),
 		VoteData: regources.VoteData{
