@@ -1,11 +1,12 @@
 # Changelog
-## Unreleased
+
+## 3.1.0
 
 ### Added
 * `CreatePollRequest` type to represent reviewable request for poll creation
 * `Poll`, `Vote` types
-* `PollResponse`, `PollsResponse`,`VoteResponse`, `VotesResponse` 
-* `PollOutcome` type to represent voting result
+* `PollResponse`, `PollsResponse`,`VoteResponse`, `VotesResponse`
+* `PollParticipation` type to represent voting result
 
 
 ## 3.0.3

@@ -31,7 +31,7 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/voting"
+  version = "3.2"
 
 [prune]
   go-tests = true

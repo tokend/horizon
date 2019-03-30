@@ -100,10 +100,10 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/voting"
+  version = "3.2"
 
 [[override]]
-  branch = "feature/voting"
+  version = "3.1"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

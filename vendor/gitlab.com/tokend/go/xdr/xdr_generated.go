@@ -1,5 +1,5 @@
-// revision: 331540dc7c332c3d8c233c44c11bafec8c2740ef
-// branch:   feature/voting
+// revision: d48c37f8b974c6b0807de5267253f48c0e4ce4a6
+// branch:   master
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -44074,4 +44074,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "331540dc7c332c3d8c233c44c11bafec8c2740ef"
+var Revision = "d48c37f8b974c6b0807de5267253f48c0e4ce4a6"

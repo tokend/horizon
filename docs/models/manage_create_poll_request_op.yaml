@@ -3,7 +3,7 @@ ManageCreatePollRequestOpKey:
   properties:
     id:
       type: string
-      example: "123"
+      example: "2213832742"
     type:
       type: string
       enum:
