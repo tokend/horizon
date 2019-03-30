@@ -7,6 +7,13 @@
 * `GetBalanceList` handler to handle `v3/balances` request
 * `GetPublicKeyEntry` handler to handle `v3/public_key_entries/{id}` request
 * Receiver filter for create issuance requests
+* Polls and votes ingestion
+* `GetPollList` to handle `/v3/polls`
+* `GetPoll` to handle `/v3/polls/{id}`
+* `GetVoteList` to handle `/v3/polls/{id}/relationships/votes`
+* `GetVote` to handle `/v3/polls/{id}/relationships/votes{voter}`
+* `GetCreatePollRequests` to handle `/v3/create_poll_requests`, `/v3/create_poll_requests/{id}`
+*  Docs on polls
 
 ### Fixed
 

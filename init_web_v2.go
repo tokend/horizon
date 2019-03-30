@@ -133,9 +133,16 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/create_atomic_swap_bid_requests/{id}", handlers.GetCreateAtomicSwapBidRequests)
 	m.Get("/v3/create_atomic_swap_requests", handlers.GetCreateAtomicSwapRequests)
 	m.Get("/v3/create_atomic_swap_requests{id}", handlers.GetCreateAtomicSwapRequests)
+	m.Get("/v3/create_poll_requests", handlers.GetCreatePollRequests)
+	m.Get("/v3/create_poll_requests/{id}", handlers.GetCreatePollRequests)
 
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)
+
+	m.Get("/v3/polls/{id}", handlers.GetPoll)
+	m.Get("/v3/polls", handlers.GetPollList)
+	m.Get("/v3/polls/{id}/relationships/votes", handlers.GetVoteList)
+	m.Get("/v3/polls/{id}/relationships/votes/{voter}", handlers.GetVote)
 
 	m.Get("/v3/sales", handlers.GetSaleList)
 	m.Get("/v3/sales/{id}", handlers.GetSale)

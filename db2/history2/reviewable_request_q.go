@@ -148,6 +148,21 @@ func (q ReviewableRequestsQ) FilterBySaleQuoteAsset(asset string) ReviewableRequ
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterByCreatePollPermissionType(permissionType uint32) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_poll,permission_type}' = ?", permissionType)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreatePollVoteConfirmationRequired(voteConfirmationRequired bool) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_poll,vote_confirmation_required}' = ?", voteConfirmationRequired)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreatePollResultProvider(resultProviderID string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_poll,result_provider_id}' = ?", resultProviderID)
+	return q
+}
+
 // GetByID loads a row from `reviewable_requests`, by ID
 // returns nil, nil - if request does not exists
 func (q ReviewableRequestsQ) GetByID(id uint64) (*ReviewableRequest, error) {

@@ -35,6 +35,8 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newAtomicSwapBidRequest(request.ID, *request.Details.CreateAtomicSwapBid)
 	case xdr.ReviewableRequestTypeCreateAtomicSwap:
 		return newAtomicSwapRequest(request.ID, *request.Details.CreateAtomicSwap)
+	case xdr.ReviewableRequestTypeCreatePoll:
+		return newCreatePollRequest(request.ID, *request.Details.CreatePoll)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -205,6 +207,26 @@ func newWithdrawalRequest(id int64, details history2.CreateWithdrawalRequest) *r
 		},
 		Relationships: regources.CreateWithdrawalRequestRelations{
 			Balance: NewBalanceKey(details.BalanceID).AsRelation(),
+		},
+	}
+}
+
+func newCreatePollRequest(id int64, details history2.CreatePollRequest) *regources.CreatePollRequest {
+	return &regources.CreatePollRequest{
+		Key: regources.NewKeyInt64(id, regources.TypeRequestDetailsCreatePoll),
+		Attributes: regources.CreatePollRequestAttrs{
+			PollData: regources.PollData{
+				Type: details.PollData.Type,
+			},
+			StartTime:                details.StartTime,
+			EndTime:                  details.EndTime,
+			NumberOfChoices:          details.NumberOfChoices,
+			PermissionType:           details.PermissionType,
+			VoteConfirmationRequired: details.VoteConfirmationRequired,
+			CreatorDetails:           details.CreatorDetails,
+		},
+		Relationships: regources.CreatePollRequestRelations{
+			ResultProvider: NewAccountKey(details.ResultProviderID).AsRelation(),
 		},
 	}
 }

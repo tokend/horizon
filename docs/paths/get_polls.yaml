@@ -28,9 +28,86 @@
         required: false
         style: form
         explode: false
+      - name: filter[poll_type]
+        in: query
+        description: |
+          Filters polls by a specified poll type.
+          Available poll states:
+          * 0 - single choice
+        required: false
+        style: form
+        explode: false
         schema:
           type: integer
-          format: uint64
+          example: 0
+      - name: filter[vote_confirmation]
+        in: query
+        description: |
+          Filters polls by `VoteConfirmationRequired` property
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: boolean
+          example: false
+      - name: filter[min_start_time]
+        in: query
+        description: |
+          Filters polls by a specified minimum start time of the poll.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          format: "date-time"
+          example: "2012-10-30T22:08:41+00:00"
+      - name: filter[min_end_time]
+        in: query
+        description: |
+          Filters polls by a specified minimum end time of the poll.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          format: "date-time"
+          example: "2012-10-30T22:08:41+00:00"
+      - name: filter[max_start_time]
+        in: query
+        description: |
+          Filters polls by a specified maximal start time of the poll.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          format: "date-time"
+          example: "2012-10-30T22:08:41+00:00"
+      - name: filter[max_end_time]
+        in: query
+        description: |
+          Filters polls by a specified maximal end time of the poll.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          format: "date-time"
+          example: "2012-10-30T22:08:41+00:00"
+      - name: filter[state]
+        in: query
+        description: |
+          Filters polls by a specified poll state.
+          Available poll states:
+          * 1 - open
+          * 2 - passed
+          * 3 - failed
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+          example: 1
       - $ref: '#/components/schemas/pageCursorParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'

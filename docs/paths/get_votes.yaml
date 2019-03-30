@@ -1,37 +1,23 @@
-/v3/votes:
+/v3/polls/{id}/relationships/votes:
   get:
     tags:
       - Polls
     summary: Votes list
     description: |
       Allows getting a filtered list of `Votes` with corresponding details.\n
-      🔒 Depending on the case, different signatures are required:\n
-        1. if no filters are applied, admin account's signature is required.\n
-        2. if filter by voter is applied, signature of voter is required\n
-        3. if filter by poll is provided, signature of poll owner or poll results provider is requred
+      🔒 Admin, poll result provider or poll owner signature is required.\n
     operationId: getVotes
     parameters:
-      - name: filter[poll]
-        in: query
-        description:
-          - Filter votes by specified poll ID
-        required: false
-        style: form
+      - name: id
+        in: path
+        description: Unique identifier of a poll
+        required: true
+        style: simple
         explode: false
         schema:
           type: integer
-          format: uint64
-          example: 3
-      - name: filter[voter]
-        description:
-          - Filter votes by specified voter account ID
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: string
-          format: valid accountID
-          example: "GAULFBQKQTFHHHZEIRMYVCGTY47FKWEW7P2BY2YT45HAEODAIJUJH23T"
+          format: int64
+          example: 10
       - name: include
         in: query
         description: |
