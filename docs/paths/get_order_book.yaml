@@ -40,7 +40,7 @@
     - name: is_buy
       in: query
       description: Defines whether an offer is on buying or selling the `base_asset`
-      required: false
+      required: true
       style: simple
       explode: false
       schema:
@@ -57,6 +57,9 @@
         enum:
           - base_asset
           - quote_asset
+    - $ref: '#/components/schemas/pageNumberParam'
+    - $ref: '#/components/schemas/pageLimitParam'
+    - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
         description: order book exists
