@@ -95,7 +95,11 @@ func (q OrderBooksQ) FilterByOrderBookID(id uint64) OrderBooksQ {
 
 // Page - returns Q with specified limit and offset params
 func (q OrderBooksQ) Page(params db2.OffsetPageParams) OrderBooksQ {
-	q.selector = params.ApplyTo(q.selector, "order_book_entries.id")
+	q.selector = params.ApplyTo(q.selector,
+		"order_book_entries.price",
+		"order_book_entries.base_asset_code",
+		"order_book_entries.quote_asset_code",
+	)
 	return q
 }
 
