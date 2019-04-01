@@ -1,7 +1,14 @@
 import yaml
 import logging as log
+import argparse
 
-with open('build/openapi.yaml') as f:
+parser = argparse.ArgumentParser(description='Generate intermediate .yaml for regources generator')
+parser.add_argument('--path', type=str, help='path to generated openapi.yaml from horizon docs')
+parser.add_argument('--out', type=str, help='path to write generated intermediare .yaml file')
+
+args = parser.parse_args()
+
+with open(args.path) as f:
     data_map = yaml.safe_load(f)
 
 schemas = data_map['components']['schemas']
@@ -35,10 +42,6 @@ def parse_allOf(k: str, obj: dict):
         log.warning(f"no type in schema: {k}. Expected 'type' field in body of schema")
         return None, None, None
     new_schema['type'] = typ
-
-    required = schema.get('required')
-    if required:
-        new_schema['required'] = required
 
     props = schema.get('properties')
     if props is None:
@@ -80,6 +83,13 @@ def get_simple_ref(raw_ref: str):
         return raw_ref[1+raw_ref.rindex('/'):]
 
 
+def get_referenced_schema(simple_ref: str):
+    for k, v in schemas.items():
+        if k == simple_ref:
+            return v
+    return None
+
+
 def parse_oneOf(s_name: str, obj: dict) -> dict or None:
     new_schema = {
         'type': 'object',
@@ -95,14 +105,13 @@ def parse_oneOf(s_name: str, obj: dict) -> dict or None:
     if not oneOf:
         log.warning(f'no items in allOf, schema: {s_name}')
         return new_schema
-
     if not len(oneOf):
         log.warning(f'no items in allOf, schema: {s_name}')
         return None
 
     for item in oneOf:
         if '$ref' not in item:
-            log.warning(f'unknown structure of oneOf: not only $ref\' are presented: schema: {s_name}')
+            log.warning(f'unknown structure of oneOf: $ref\' is not presented: schema: {s_name}')
             return None
 
         simple_ref = get_simple_ref(item['$ref'])
@@ -111,13 +120,26 @@ def parse_oneOf(s_name: str, obj: dict) -> dict or None:
             '$ref': item['$ref'],
         }
 
+        typ = item.get('type')
+        fmt = item.get('format')
+        props = item.get('properties')
+        if props:
+            if 'type' in props:
+                if 'format' in props.get('type'):
+                    fmt = props.get('type').get('format')
+
+        if typ:
+            new_schema['properties'][simple_ref.lower()]['type'] = typ
+        if fmt:
+            new_schema['properties'][simple_ref.lower()]['format'] = fmt
+
     return new_schema
 
 
 for k, v in schemas.items():
-    # if 'allOf' not in v and 'oneOf' not in v and 'properties' not in v:
-    #     log.warning(f"Unknown schema structure. 'allOf' and 'properties' both are not body of the schema {k}")
-    #     continue
+    if 'allOf' not in v and 'oneOf' not in v and 'properties' not in v:
+        log.warning(f"Unknown schema structure. 'allOf' and 'properties' both are not body of the schema {k}")
+        continue
 
     new_schema = {}
 
@@ -146,5 +168,5 @@ data_map['info'] = None
 data_map['x-tagGroups'] = None
 data_map['tags'] = None
 
-with open('build/regenerated.yaml', "w") as f:
+with open(args.out, "w") as f:
     yaml.dump(data_map, stream=f)
