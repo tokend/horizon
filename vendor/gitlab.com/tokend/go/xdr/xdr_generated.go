@@ -1,4 +1,4 @@
-// revision: 4cf2da11b80f514ce1bed0dce240a714f9e5e33c
+// revision: d48c37f8b974c6b0807de5267253f48c0e4ce4a6
 // branch:   master
 // Package xdr is generated from:
 //
@@ -21,6 +21,7 @@
 //  xdr/Stellar-ledger-entries-limits-v2.x
 //  xdr/Stellar-ledger-entries-offer.x
 //  xdr/Stellar-ledger-entries-pending-statistics.x
+//  xdr/Stellar-ledger-entries-poll.x
 //  xdr/Stellar-ledger-entries-reference.x
 //  xdr/Stellar-ledger-entries-reviewable-request.x
 //  xdr/Stellar-ledger-entries-sale.x
@@ -30,6 +31,7 @@
 //  xdr/Stellar-ledger-entries-stamp.x
 //  xdr/Stellar-ledger-entries-statistics-v2.x
 //  xdr/Stellar-ledger-entries-statistics.x
+//  xdr/Stellar-ledger-entries-vote.x
 //  xdr/Stellar-ledger-entries.x
 //  xdr/Stellar-ledger.x
 //  xdr/Stellar-operation-bind-external-system-id.x
@@ -54,15 +56,18 @@
 //  xdr/Stellar-operation-manage-balance.x
 //  xdr/Stellar-operation-manage-contract-request.x
 //  xdr/Stellar-operation-manage-contract.x
+//  xdr/Stellar-operation-manage-create-poll-request.x
 //  xdr/Stellar-operation-manage-external-system-id-pool-entry.x
 //  xdr/Stellar-operation-manage-invoice-request.x
 //  xdr/Stellar-operation-manage-key-value.x
 //  xdr/Stellar-operation-manage-limits.x
 //  xdr/Stellar-operation-manage-offer.x
+//  xdr/Stellar-operation-manage-poll.x
 //  xdr/Stellar-operation-manage-sale.x
 //  xdr/Stellar-operation-manage-signer-role.x
 //  xdr/Stellar-operation-manage-signer-rule.x
 //  xdr/Stellar-operation-manage-signer.x
+//  xdr/Stellar-operation-manage-vote.x
 //  xdr/Stellar-operation-payment.x
 //  xdr/Stellar-operation-payout.x
 //  xdr/Stellar-operation-review-request.x
@@ -77,6 +82,7 @@
 //  xdr/Stellar-reviewable-request-atomic-swap.x
 //  xdr/Stellar-reviewable-request-change-role.x
 //  xdr/Stellar-reviewable-request-contract.x
+//  xdr/Stellar-reviewable-request-create-poll.x
 //  xdr/Stellar-reviewable-request-invoice.x
 //  xdr/Stellar-reviewable-request-issuance.x
 //  xdr/Stellar-reviewable-request-limits-update.x
@@ -3055,6 +3061,202 @@ type PendingStatisticsEntry struct {
 	Ext          PendingStatisticsEntryExt `json:"ext,omitempty"`
 }
 
+// PollType is an XDR Enum defines as:
+//
+//   enum PollType
+//    {
+//        SINGLE_CHOICE = 0
+//    };
+//
+type PollType int32
+
+const (
+	PollTypeSingleChoice PollType = 0
+)
+
+var PollTypeAll = []PollType{
+	PollTypeSingleChoice,
+}
+
+var pollTypeMap = map[int32]string{
+	0: "PollTypeSingleChoice",
+}
+
+var pollTypeShortMap = map[int32]string{
+	0: "single_choice",
+}
+
+var pollTypeRevMap = map[string]int32{
+	"PollTypeSingleChoice": 0,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for PollType
+func (e PollType) ValidEnum(v int32) bool {
+	_, ok := pollTypeMap[v]
+	return ok
+}
+func (e PollType) isFlag() bool {
+	for i := len(PollTypeAll) - 1; i >= 0; i-- {
+		expected := PollType(2) << uint64(len(PollTypeAll)-1) >> uint64(len(PollTypeAll)-i)
+		if expected != PollTypeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e PollType) String() string {
+	name, _ := pollTypeMap[int32(e)]
+	return name
+}
+
+func (e PollType) ShortString() string {
+	name, _ := pollTypeShortMap[int32(e)]
+	return name
+}
+
+func (e PollType) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range PollTypeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *PollType) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = PollType(t.Value)
+	return nil
+}
+
+// PollData is an XDR Union defines as:
+//
+//   union PollData switch (PollType type)
+//    {
+//    case SINGLE_CHOICE:
+//        EmptyExt ext;
+//    };
+//
+type PollData struct {
+	Type PollType  `json:"type,omitempty"`
+	Ext  *EmptyExt `json:"ext,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u PollData) SwitchFieldName() string {
+	return "Type"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of PollData
+func (u PollData) ArmForSwitch(sw int32) (string, bool) {
+	switch PollType(sw) {
+	case PollTypeSingleChoice:
+		return "Ext", true
+	}
+	return "-", false
+}
+
+// NewPollData creates a new  PollData.
+func NewPollData(aType PollType, value interface{}) (result PollData, err error) {
+	result.Type = aType
+	switch PollType(aType) {
+	case PollTypeSingleChoice:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Ext = &tv
+	}
+	return
+}
+
+// MustExt retrieves the Ext value from the union,
+// panicing if the value is not set.
+func (u PollData) MustExt() EmptyExt {
+	val, ok := u.GetExt()
+
+	if !ok {
+		panic("arm Ext is not set")
+	}
+
+	return val
+}
+
+// GetExt retrieves the Ext value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u PollData) GetExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Ext" {
+		result = *u.Ext
+		ok = true
+	}
+
+	return
+}
+
+// PollEntry is an XDR Struct defines as:
+//
+//   struct PollEntry
+//    {
+//        uint64 id;
+//        uint32 permissionType;
+//
+//        uint32 numberOfChoices;
+//        PollData data;
+//
+//        uint64 startTime;
+//        uint64 endTime;
+//
+//        AccountID ownerID;
+//        AccountID resultProviderID;
+//
+//        bool voteConfirmationRequired;
+//
+//        longstring details;
+//
+//        EmptyExt ext;
+//    };
+//
+type PollEntry struct {
+	Id                       Uint64     `json:"id,omitempty"`
+	PermissionType           Uint32     `json:"permissionType,omitempty"`
+	NumberOfChoices          Uint32     `json:"numberOfChoices,omitempty"`
+	Data                     PollData   `json:"data,omitempty"`
+	StartTime                Uint64     `json:"startTime,omitempty"`
+	EndTime                  Uint64     `json:"endTime,omitempty"`
+	OwnerId                  AccountId  `json:"ownerID,omitempty"`
+	ResultProviderId         AccountId  `json:"resultProviderID,omitempty"`
+	VoteConfirmationRequired bool       `json:"voteConfirmationRequired,omitempty"`
+	Details                  Longstring `json:"details,omitempty"`
+	Ext                      EmptyExt   `json:"ext,omitempty"`
+}
+
 // ReferenceEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -3133,6 +3335,7 @@ type ReferenceEntry struct {
 //    	CREATE_INVOICE = 11,
 //    	MANAGE_CONTRACT = 12,
 //    	UPDATE_ASSET = 13,
+//    	CREATE_POLL = 14,
 //    	CREATE_ATOMIC_SWAP_BID = 16,
 //    	CREATE_ATOMIC_SWAP = 17
 //    };
@@ -3154,6 +3357,7 @@ const (
 	ReviewableRequestTypeCreateInvoice       ReviewableRequestType = 11
 	ReviewableRequestTypeManageContract      ReviewableRequestType = 12
 	ReviewableRequestTypeUpdateAsset         ReviewableRequestType = 13
+	ReviewableRequestTypeCreatePoll          ReviewableRequestType = 14
 	ReviewableRequestTypeCreateAtomicSwapBid ReviewableRequestType = 16
 	ReviewableRequestTypeCreateAtomicSwap    ReviewableRequestType = 17
 )
@@ -3173,6 +3377,7 @@ var ReviewableRequestTypeAll = []ReviewableRequestType{
 	ReviewableRequestTypeCreateInvoice,
 	ReviewableRequestTypeManageContract,
 	ReviewableRequestTypeUpdateAsset,
+	ReviewableRequestTypeCreatePoll,
 	ReviewableRequestTypeCreateAtomicSwapBid,
 	ReviewableRequestTypeCreateAtomicSwap,
 }
@@ -3192,6 +3397,7 @@ var reviewableRequestTypeMap = map[int32]string{
 	11: "ReviewableRequestTypeCreateInvoice",
 	12: "ReviewableRequestTypeManageContract",
 	13: "ReviewableRequestTypeUpdateAsset",
+	14: "ReviewableRequestTypeCreatePoll",
 	16: "ReviewableRequestTypeCreateAtomicSwapBid",
 	17: "ReviewableRequestTypeCreateAtomicSwap",
 }
@@ -3211,6 +3417,7 @@ var reviewableRequestTypeShortMap = map[int32]string{
 	11: "create_invoice",
 	12: "manage_contract",
 	13: "update_asset",
+	14: "create_poll",
 	16: "create_atomic_swap_bid",
 	17: "create_atomic_swap",
 }
@@ -3230,6 +3437,7 @@ var reviewableRequestTypeRevMap = map[string]int32{
 	"ReviewableRequestTypeCreateInvoice":       11,
 	"ReviewableRequestTypeManageContract":      12,
 	"ReviewableRequestTypeUpdateAsset":         13,
+	"ReviewableRequestTypeCreatePoll":          14,
 	"ReviewableRequestTypeCreateAtomicSwapBid": 16,
 	"ReviewableRequestTypeCreateAtomicSwap":    17,
 }
@@ -3390,6 +3598,8 @@ type TasksExt struct {
 //                ASwapBidCreationRequest aSwapBidCreationRequest;
 //            case CREATE_ATOMIC_SWAP:
 //                ASwapRequest aSwapRequest;
+//            case CREATE_POLL:
+//                CreatePollRequest createPollRequest;
 //    	}
 //
 type ReviewableRequestEntryBody struct {
@@ -3408,6 +3618,7 @@ type ReviewableRequestEntryBody struct {
 	ContractRequest          *ContractRequest          `json:"contractRequest,omitempty"`
 	ASwapBidCreationRequest  *ASwapBidCreationRequest  `json:"aSwapBidCreationRequest,omitempty"`
 	ASwapRequest             *ASwapRequest             `json:"aSwapRequest,omitempty"`
+	CreatePollRequest        *CreatePollRequest        `json:"createPollRequest,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -3448,6 +3659,8 @@ func (u ReviewableRequestEntryBody) ArmForSwitch(sw int32) (string, bool) {
 		return "ASwapBidCreationRequest", true
 	case ReviewableRequestTypeCreateAtomicSwap:
 		return "ASwapRequest", true
+	case ReviewableRequestTypeCreatePoll:
+		return "CreatePollRequest", true
 	}
 	return "-", false
 }
@@ -3554,6 +3767,13 @@ func NewReviewableRequestEntryBody(aType ReviewableRequestType, value interface{
 			return
 		}
 		result.ASwapRequest = &tv
+	case ReviewableRequestTypeCreatePoll:
+		tv, ok := value.(CreatePollRequest)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreatePollRequest")
+			return
+		}
+		result.CreatePollRequest = &tv
 	}
 	return
 }
@@ -3908,6 +4128,31 @@ func (u ReviewableRequestEntryBody) GetASwapRequest() (result ASwapRequest, ok b
 	return
 }
 
+// MustCreatePollRequest retrieves the CreatePollRequest value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestEntryBody) MustCreatePollRequest() CreatePollRequest {
+	val, ok := u.GetCreatePollRequest()
+
+	if !ok {
+		panic("arm CreatePollRequest is not set")
+	}
+
+	return val
+}
+
+// GetCreatePollRequest retrieves the CreatePollRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestEntryBody) GetCreatePollRequest() (result CreatePollRequest, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreatePollRequest" {
+		result = *u.CreatePollRequest
+		ok = true
+	}
+
+	return
+}
+
 // ReviewableRequestEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -3986,6 +4231,8 @@ func NewReviewableRequestEntryExt(v LedgerVersion, value interface{}) (result Re
 //                ASwapBidCreationRequest aSwapBidCreationRequest;
 //            case CREATE_ATOMIC_SWAP:
 //                ASwapRequest aSwapRequest;
+//            case CREATE_POLL:
+//                CreatePollRequest createPollRequest;
 //    	} body;
 //
 //    	TasksExt tasks;
@@ -4982,6 +5229,110 @@ type StatisticsEntry struct {
 	Ext            StatisticsEntryExt `json:"ext,omitempty"`
 }
 
+// SingleChoiceVote is an XDR Struct defines as:
+//
+//   struct SingleChoiceVote
+//    {
+//        uint32 choice;
+//        EmptyExt ext;
+//    };
+//
+type SingleChoiceVote struct {
+	Choice Uint32   `json:"choice,omitempty"`
+	Ext    EmptyExt `json:"ext,omitempty"`
+}
+
+// VoteData is an XDR Union defines as:
+//
+//   union VoteData switch (PollType pollType)
+//    {
+//    case SINGLE_CHOICE:
+//        SingleChoiceVote single;
+//    //case MULTIPLE_CHOICE:
+//    //    MultipleChoiceVote multiple;
+//    };
+//
+type VoteData struct {
+	PollType PollType          `json:"pollType,omitempty"`
+	Single   *SingleChoiceVote `json:"single,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u VoteData) SwitchFieldName() string {
+	return "PollType"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of VoteData
+func (u VoteData) ArmForSwitch(sw int32) (string, bool) {
+	switch PollType(sw) {
+	case PollTypeSingleChoice:
+		return "Single", true
+	}
+	return "-", false
+}
+
+// NewVoteData creates a new  VoteData.
+func NewVoteData(pollType PollType, value interface{}) (result VoteData, err error) {
+	result.PollType = pollType
+	switch PollType(pollType) {
+	case PollTypeSingleChoice:
+		tv, ok := value.(SingleChoiceVote)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SingleChoiceVote")
+			return
+		}
+		result.Single = &tv
+	}
+	return
+}
+
+// MustSingle retrieves the Single value from the union,
+// panicing if the value is not set.
+func (u VoteData) MustSingle() SingleChoiceVote {
+	val, ok := u.GetSingle()
+
+	if !ok {
+		panic("arm Single is not set")
+	}
+
+	return val
+}
+
+// GetSingle retrieves the Single value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u VoteData) GetSingle() (result SingleChoiceVote, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.PollType))
+
+	if armName == "Single" {
+		result = *u.Single
+		ok = true
+	}
+
+	return
+}
+
+// VoteEntry is an XDR Struct defines as:
+//
+//   struct VoteEntry
+//    {
+//        uint64 pollID;
+//
+//        AccountID voterID;
+//
+//        VoteData data;
+//
+//        EmptyExt ext;
+//    };
+//
+type VoteEntry struct {
+	PollId  Uint64    `json:"pollID,omitempty"`
+	VoterId AccountId `json:"voterID,omitempty"`
+	Data    VoteData  `json:"data,omitempty"`
+	Ext     EmptyExt  `json:"ext,omitempty"`
+}
+
 // ThresholdIndexes is an XDR Enum defines as:
 //
 //   enum ThresholdIndexes
@@ -5148,6 +5499,10 @@ func (e *ThresholdIndexes) UnmarshalJSON(data []byte) error {
 //            LicenseEntry license;
 //        case STAMP:
 //            StampEntry stamp;
+//        case POLL:
+//            PollEntry poll;
+//        case VOTE:
+//            VoteEntry vote;
 //        }
 //
 type LedgerEntryData struct {
@@ -5179,6 +5534,8 @@ type LedgerEntryData struct {
 	SignerRole                       *SignerRoleEntry                  `json:"signerRole,omitempty"`
 	License                          *LicenseEntry                     `json:"license,omitempty"`
 	Stamp                            *StampEntry                       `json:"stamp,omitempty"`
+	Poll                             *PollEntry                        `json:"poll,omitempty"`
+	Vote                             *VoteEntry                        `json:"vote,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -5245,6 +5602,10 @@ func (u LedgerEntryData) ArmForSwitch(sw int32) (string, bool) {
 		return "License", true
 	case LedgerEntryTypeStamp:
 		return "Stamp", true
+	case LedgerEntryTypePoll:
+		return "Poll", true
+	case LedgerEntryTypeVote:
+		return "Vote", true
 	}
 	return "-", false
 }
@@ -5442,6 +5803,20 @@ func NewLedgerEntryData(aType LedgerEntryType, value interface{}) (result Ledger
 			return
 		}
 		result.Stamp = &tv
+	case LedgerEntryTypePoll:
+		tv, ok := value.(PollEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be PollEntry")
+			return
+		}
+		result.Poll = &tv
+	case LedgerEntryTypeVote:
+		tv, ok := value.(VoteEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be VoteEntry")
+			return
+		}
+		result.Vote = &tv
 	}
 	return
 }
@@ -6121,6 +6496,56 @@ func (u LedgerEntryData) GetStamp() (result StampEntry, ok bool) {
 	return
 }
 
+// MustPoll retrieves the Poll value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustPoll() PollEntry {
+	val, ok := u.GetPoll()
+
+	if !ok {
+		panic("arm Poll is not set")
+	}
+
+	return val
+}
+
+// GetPoll retrieves the Poll value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetPoll() (result PollEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Poll" {
+		result = *u.Poll
+		ok = true
+	}
+
+	return
+}
+
+// MustVote retrieves the Vote value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustVote() VoteEntry {
+	val, ok := u.GetVote()
+
+	if !ok {
+		panic("arm Vote is not set")
+	}
+
+	return val
+}
+
+// GetVote retrieves the Vote value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetVote() (result VoteEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Vote" {
+		result = *u.Vote
+		ok = true
+	}
+
+	return
+}
+
 // LedgerEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -6221,6 +6646,10 @@ func NewLedgerEntryExt(v LedgerVersion, value interface{}) (result LedgerEntryEx
 //            LicenseEntry license;
 //        case STAMP:
 //            StampEntry stamp;
+//        case POLL:
+//            PollEntry poll;
+//        case VOTE:
+//            VoteEntry vote;
 //        }
 //        data;
 //
@@ -8224,6 +8653,34 @@ type LedgerKeyLicense struct {
 	Ext         LedgerKeyLicenseExt `json:"ext,omitempty"`
 }
 
+// LedgerKeyPoll is an XDR NestedStruct defines as:
+//
+//   struct {
+//            uint64 id;
+//
+//            EmptyExt ext;
+//        }
+//
+type LedgerKeyPoll struct {
+	Id  Uint64   `json:"id,omitempty"`
+	Ext EmptyExt `json:"ext,omitempty"`
+}
+
+// LedgerKeyVote is an XDR NestedStruct defines as:
+//
+//   struct {
+//            uint64 pollID;
+//            AccountID voterID;
+//
+//            EmptyExt ext;
+//        }
+//
+type LedgerKeyVote struct {
+	PollId  Uint64    `json:"pollID,omitempty"`
+	VoterId AccountId `json:"voterID,omitempty"`
+	Ext     EmptyExt  `json:"ext,omitempty"`
+}
+
 // LedgerKey is an XDR Union defines as:
 //
 //   union LedgerKey switch (LedgerEntryType type)
@@ -8505,6 +8962,19 @@ type LedgerKeyLicense struct {
 //                void;
 //            } ext;
 //        } license;
+//    case POLL:
+//        struct {
+//            uint64 id;
+//
+//            EmptyExt ext;
+//        } poll;
+//    case VOTE:
+//        struct {
+//            uint64 pollID;
+//            AccountID voterID;
+//
+//            EmptyExt ext;
+//        } vote;
 //    };
 //
 type LedgerKey struct {
@@ -8536,6 +9006,8 @@ type LedgerKey struct {
 	SignerRule                       *LedgerKeySignerRule                       `json:"signerRule,omitempty"`
 	Stamp                            *LedgerKeyStamp                            `json:"stamp,omitempty"`
 	License                          *LedgerKeyLicense                          `json:"license,omitempty"`
+	Poll                             *LedgerKeyPoll                             `json:"poll,omitempty"`
+	Vote                             *LedgerKeyVote                             `json:"vote,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -8602,6 +9074,10 @@ func (u LedgerKey) ArmForSwitch(sw int32) (string, bool) {
 		return "Stamp", true
 	case LedgerEntryTypeLicense:
 		return "License", true
+	case LedgerEntryTypePoll:
+		return "Poll", true
+	case LedgerEntryTypeVote:
+		return "Vote", true
 	}
 	return "-", false
 }
@@ -8799,6 +9275,20 @@ func NewLedgerKey(aType LedgerEntryType, value interface{}) (result LedgerKey, e
 			return
 		}
 		result.License = &tv
+	case LedgerEntryTypePoll:
+		tv, ok := value.(LedgerKeyPoll)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be LedgerKeyPoll")
+			return
+		}
+		result.Poll = &tv
+	case LedgerEntryTypeVote:
+		tv, ok := value.(LedgerKeyVote)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be LedgerKeyVote")
+			return
+		}
+		result.Vote = &tv
 	}
 	return
 }
@@ -9472,6 +9962,56 @@ func (u LedgerKey) GetLicense() (result LedgerKeyLicense, ok bool) {
 
 	if armName == "License" {
 		result = *u.License
+		ok = true
+	}
+
+	return
+}
+
+// MustPoll retrieves the Poll value from the union,
+// panicing if the value is not set.
+func (u LedgerKey) MustPoll() LedgerKeyPoll {
+	val, ok := u.GetPoll()
+
+	if !ok {
+		panic("arm Poll is not set")
+	}
+
+	return val
+}
+
+// GetPoll retrieves the Poll value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerKey) GetPoll() (result LedgerKeyPoll, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Poll" {
+		result = *u.Poll
+		ok = true
+	}
+
+	return
+}
+
+// MustVote retrieves the Vote value from the union,
+// panicing if the value is not set.
+func (u LedgerKey) MustVote() LedgerKeyVote {
+	val, ok := u.GetVote()
+
+	if !ok {
+		panic("arm Vote is not set")
+	}
+
+	return val
+}
+
+// GetVote retrieves the Vote value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerKey) GetVote() (result LedgerKeyVote, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Vote" {
+		result = *u.Vote
 		ok = true
 	}
 
@@ -21215,6 +21755,819 @@ func (u ManageContractResult) GetResponse() (result ManageContractResponse, ok b
 	return
 }
 
+// ManageCreatePollRequestAction is an XDR Enum defines as:
+//
+//   enum ManageCreatePollRequestAction
+//    {
+//        CREATE = 0,
+//        CANCEL = 1
+//    };
+//
+type ManageCreatePollRequestAction int32
+
+const (
+	ManageCreatePollRequestActionCreate ManageCreatePollRequestAction = 0
+	ManageCreatePollRequestActionCancel ManageCreatePollRequestAction = 1
+)
+
+var ManageCreatePollRequestActionAll = []ManageCreatePollRequestAction{
+	ManageCreatePollRequestActionCreate,
+	ManageCreatePollRequestActionCancel,
+}
+
+var manageCreatePollRequestActionMap = map[int32]string{
+	0: "ManageCreatePollRequestActionCreate",
+	1: "ManageCreatePollRequestActionCancel",
+}
+
+var manageCreatePollRequestActionShortMap = map[int32]string{
+	0: "create",
+	1: "cancel",
+}
+
+var manageCreatePollRequestActionRevMap = map[string]int32{
+	"ManageCreatePollRequestActionCreate": 0,
+	"ManageCreatePollRequestActionCancel": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageCreatePollRequestAction
+func (e ManageCreatePollRequestAction) ValidEnum(v int32) bool {
+	_, ok := manageCreatePollRequestActionMap[v]
+	return ok
+}
+func (e ManageCreatePollRequestAction) isFlag() bool {
+	for i := len(ManageCreatePollRequestActionAll) - 1; i >= 0; i-- {
+		expected := ManageCreatePollRequestAction(2) << uint64(len(ManageCreatePollRequestActionAll)-1) >> uint64(len(ManageCreatePollRequestActionAll)-i)
+		if expected != ManageCreatePollRequestActionAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManageCreatePollRequestAction) String() string {
+	name, _ := manageCreatePollRequestActionMap[int32(e)]
+	return name
+}
+
+func (e ManageCreatePollRequestAction) ShortString() string {
+	name, _ := manageCreatePollRequestActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManageCreatePollRequestAction) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManageCreatePollRequestActionAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManageCreatePollRequestAction) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManageCreatePollRequestAction(t.Value)
+	return nil
+}
+
+// CreatePollRequestDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreatePollRequestDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreatePollRequestDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreatePollRequestDataExt
+func (u CreatePollRequestDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreatePollRequestDataExt creates a new  CreatePollRequestDataExt.
+func NewCreatePollRequestDataExt(v LedgerVersion, value interface{}) (result CreatePollRequestDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreatePollRequestData is an XDR Struct defines as:
+//
+//   struct CreatePollRequestData
+//    {
+//        //: Body of `CREATE_POLL` request
+//        CreatePollRequest request;
+//
+//        //: Bit mask that will be used instead of the value from key-value entry by
+//        //: `create_poll_tasks:<permissionType>` key
+//        uint32* allTasks;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CreatePollRequestData struct {
+	Request  CreatePollRequest        `json:"request,omitempty"`
+	AllTasks *Uint32                  `json:"allTasks,omitempty"`
+	Ext      CreatePollRequestDataExt `json:"ext,omitempty"`
+}
+
+// CancelPollRequestDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CancelPollRequestDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CancelPollRequestDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CancelPollRequestDataExt
+func (u CancelPollRequestDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCancelPollRequestDataExt creates a new  CancelPollRequestDataExt.
+func NewCancelPollRequestDataExt(v LedgerVersion, value interface{}) (result CancelPollRequestDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CancelPollRequestData is an XDR Struct defines as:
+//
+//   struct CancelPollRequestData
+//    {
+//        //: ID of `CREATE_POLL` request to remove
+//        uint64 requestID;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CancelPollRequestData struct {
+	RequestId Uint64                   `json:"requestID,omitempty"`
+	Ext       CancelPollRequestDataExt `json:"ext,omitempty"`
+}
+
+// ManageCreatePollRequestOpData is an XDR NestedUnion defines as:
+//
+//   union switch (ManageCreatePollRequestAction action)
+//        {
+//        case CREATE:
+//            CreatePollRequestData createData;
+//        case CANCEL:
+//            CancelPollRequestData cancelData;
+//        }
+//
+type ManageCreatePollRequestOpData struct {
+	Action     ManageCreatePollRequestAction `json:"action,omitempty"`
+	CreateData *CreatePollRequestData        `json:"createData,omitempty"`
+	CancelData *CancelPollRequestData        `json:"cancelData,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageCreatePollRequestOpData) SwitchFieldName() string {
+	return "Action"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageCreatePollRequestOpData
+func (u ManageCreatePollRequestOpData) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageCreatePollRequestAction(sw) {
+	case ManageCreatePollRequestActionCreate:
+		return "CreateData", true
+	case ManageCreatePollRequestActionCancel:
+		return "CancelData", true
+	}
+	return "-", false
+}
+
+// NewManageCreatePollRequestOpData creates a new  ManageCreatePollRequestOpData.
+func NewManageCreatePollRequestOpData(action ManageCreatePollRequestAction, value interface{}) (result ManageCreatePollRequestOpData, err error) {
+	result.Action = action
+	switch ManageCreatePollRequestAction(action) {
+	case ManageCreatePollRequestActionCreate:
+		tv, ok := value.(CreatePollRequestData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreatePollRequestData")
+			return
+		}
+		result.CreateData = &tv
+	case ManageCreatePollRequestActionCancel:
+		tv, ok := value.(CancelPollRequestData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CancelPollRequestData")
+			return
+		}
+		result.CancelData = &tv
+	}
+	return
+}
+
+// MustCreateData retrieves the CreateData value from the union,
+// panicing if the value is not set.
+func (u ManageCreatePollRequestOpData) MustCreateData() CreatePollRequestData {
+	val, ok := u.GetCreateData()
+
+	if !ok {
+		panic("arm CreateData is not set")
+	}
+
+	return val
+}
+
+// GetCreateData retrieves the CreateData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageCreatePollRequestOpData) GetCreateData() (result CreatePollRequestData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "CreateData" {
+		result = *u.CreateData
+		ok = true
+	}
+
+	return
+}
+
+// MustCancelData retrieves the CancelData value from the union,
+// panicing if the value is not set.
+func (u ManageCreatePollRequestOpData) MustCancelData() CancelPollRequestData {
+	val, ok := u.GetCancelData()
+
+	if !ok {
+		panic("arm CancelData is not set")
+	}
+
+	return val
+}
+
+// GetCancelData retrieves the CancelData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageCreatePollRequestOpData) GetCancelData() (result CancelPollRequestData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "CancelData" {
+		result = *u.CancelData
+		ok = true
+	}
+
+	return
+}
+
+// ManageCreatePollRequestOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageCreatePollRequestOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageCreatePollRequestOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageCreatePollRequestOpExt
+func (u ManageCreatePollRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageCreatePollRequestOpExt creates a new  ManageCreatePollRequestOpExt.
+func NewManageCreatePollRequestOpExt(v LedgerVersion, value interface{}) (result ManageCreatePollRequestOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageCreatePollRequestOp is an XDR Struct defines as:
+//
+//   struct ManageCreatePollRequestOp
+//    {
+//        //: data is used to pass one of `ManageCreatePollRequestAction` with required params
+//        union switch (ManageCreatePollRequestAction action)
+//        {
+//        case CREATE:
+//            CreatePollRequestData createData;
+//        case CANCEL:
+//            CancelPollRequestData cancelData;
+//        }
+//        data;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageCreatePollRequestOp struct {
+	Data ManageCreatePollRequestOpData `json:"data,omitempty"`
+	Ext  ManageCreatePollRequestOpExt  `json:"ext,omitempty"`
+}
+
+// ManageCreatePollRequestResultCode is an XDR Enum defines as:
+//
+//   enum ManageCreatePollRequestResultCode
+//    {
+//        //: `CREATE_POLL` request has either been successfully created
+//        //: or auto approved
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        //: Passed details have invalid json structure
+//        INVALID_CREATOR_DETAILS = -1,
+//        //: There is no `CREATE_POLL` request with such id
+//        NOT_FOUND = -2,
+//        //: Not allowed to create poll which has `endTime` not later than `startTime`
+//        INVALID_DATES = -3,
+//        //: Not allowed to create poll which `endTime` early than currentTime
+//        INVALID_END_TIME = -4,
+//        //: There is no account which such id
+//        RESULT_PROVIDER_NOT_FOUND = -5,
+//        //: There is no key-value entry by `create_poll_tasks:<permissionType>` key in the system;
+//        //: configuration does not allow to create `CREATE_POLL` request with such `permissionType`
+//        CREATE_POLL_TASKS_NOT_FOUND = -6,
+//        //: Not allowed to create poll with zero number of choices
+//        INVALID_NUMBER_OF_CHOICES = -7
+//    };
+//
+type ManageCreatePollRequestResultCode int32
+
+const (
+	ManageCreatePollRequestResultCodeSuccess                 ManageCreatePollRequestResultCode = 0
+	ManageCreatePollRequestResultCodeInvalidCreatorDetails   ManageCreatePollRequestResultCode = -1
+	ManageCreatePollRequestResultCodeNotFound                ManageCreatePollRequestResultCode = -2
+	ManageCreatePollRequestResultCodeInvalidDates            ManageCreatePollRequestResultCode = -3
+	ManageCreatePollRequestResultCodeInvalidEndTime          ManageCreatePollRequestResultCode = -4
+	ManageCreatePollRequestResultCodeResultProviderNotFound  ManageCreatePollRequestResultCode = -5
+	ManageCreatePollRequestResultCodeCreatePollTasksNotFound ManageCreatePollRequestResultCode = -6
+	ManageCreatePollRequestResultCodeInvalidNumberOfChoices  ManageCreatePollRequestResultCode = -7
+)
+
+var ManageCreatePollRequestResultCodeAll = []ManageCreatePollRequestResultCode{
+	ManageCreatePollRequestResultCodeSuccess,
+	ManageCreatePollRequestResultCodeInvalidCreatorDetails,
+	ManageCreatePollRequestResultCodeNotFound,
+	ManageCreatePollRequestResultCodeInvalidDates,
+	ManageCreatePollRequestResultCodeInvalidEndTime,
+	ManageCreatePollRequestResultCodeResultProviderNotFound,
+	ManageCreatePollRequestResultCodeCreatePollTasksNotFound,
+	ManageCreatePollRequestResultCodeInvalidNumberOfChoices,
+}
+
+var manageCreatePollRequestResultCodeMap = map[int32]string{
+	0:  "ManageCreatePollRequestResultCodeSuccess",
+	-1: "ManageCreatePollRequestResultCodeInvalidCreatorDetails",
+	-2: "ManageCreatePollRequestResultCodeNotFound",
+	-3: "ManageCreatePollRequestResultCodeInvalidDates",
+	-4: "ManageCreatePollRequestResultCodeInvalidEndTime",
+	-5: "ManageCreatePollRequestResultCodeResultProviderNotFound",
+	-6: "ManageCreatePollRequestResultCodeCreatePollTasksNotFound",
+	-7: "ManageCreatePollRequestResultCodeInvalidNumberOfChoices",
+}
+
+var manageCreatePollRequestResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "invalid_creator_details",
+	-2: "not_found",
+	-3: "invalid_dates",
+	-4: "invalid_end_time",
+	-5: "result_provider_not_found",
+	-6: "create_poll_tasks_not_found",
+	-7: "invalid_number_of_choices",
+}
+
+var manageCreatePollRequestResultCodeRevMap = map[string]int32{
+	"ManageCreatePollRequestResultCodeSuccess":                 0,
+	"ManageCreatePollRequestResultCodeInvalidCreatorDetails":   -1,
+	"ManageCreatePollRequestResultCodeNotFound":                -2,
+	"ManageCreatePollRequestResultCodeInvalidDates":            -3,
+	"ManageCreatePollRequestResultCodeInvalidEndTime":          -4,
+	"ManageCreatePollRequestResultCodeResultProviderNotFound":  -5,
+	"ManageCreatePollRequestResultCodeCreatePollTasksNotFound": -6,
+	"ManageCreatePollRequestResultCodeInvalidNumberOfChoices":  -7,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageCreatePollRequestResultCode
+func (e ManageCreatePollRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := manageCreatePollRequestResultCodeMap[v]
+	return ok
+}
+func (e ManageCreatePollRequestResultCode) isFlag() bool {
+	for i := len(ManageCreatePollRequestResultCodeAll) - 1; i >= 0; i-- {
+		expected := ManageCreatePollRequestResultCode(2) << uint64(len(ManageCreatePollRequestResultCodeAll)-1) >> uint64(len(ManageCreatePollRequestResultCodeAll)-i)
+		if expected != ManageCreatePollRequestResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManageCreatePollRequestResultCode) String() string {
+	name, _ := manageCreatePollRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageCreatePollRequestResultCode) ShortString() string {
+	name, _ := manageCreatePollRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageCreatePollRequestResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManageCreatePollRequestResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManageCreatePollRequestResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManageCreatePollRequestResultCode(t.Value)
+	return nil
+}
+
+// CreatePollRequestResponseExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreatePollRequestResponseExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreatePollRequestResponseExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreatePollRequestResponseExt
+func (u CreatePollRequestResponseExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreatePollRequestResponseExt creates a new  CreatePollRequestResponseExt.
+func NewCreatePollRequestResponseExt(v LedgerVersion, value interface{}) (result CreatePollRequestResponseExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreatePollRequestResponse is an XDR Struct defines as:
+//
+//   struct CreatePollRequestResponse
+//    {
+//        //: ID of a created request
+//        uint64 requestID;
+//
+//        //: Indicates whether or not the `CREATE_POLL` request was auto approved and fulfilled
+//        //: True means that poll was successfully created
+//        bool fulfilled;
+//
+//        //: reserved for the future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CreatePollRequestResponse struct {
+	RequestId Uint64                       `json:"requestID,omitempty"`
+	Fulfilled bool                         `json:"fulfilled,omitempty"`
+	Ext       CreatePollRequestResponseExt `json:"ext,omitempty"`
+}
+
+// ManageCreatePollRequestSuccessResultDetails is an XDR NestedUnion defines as:
+//
+//   union switch (ManageCreatePollRequestAction action)
+//        {
+//        case CREATE:
+//            CreatePollRequestResponse response;
+//        case CANCEL:
+//            void;
+//        }
+//
+type ManageCreatePollRequestSuccessResultDetails struct {
+	Action   ManageCreatePollRequestAction `json:"action,omitempty"`
+	Response *CreatePollRequestResponse    `json:"response,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageCreatePollRequestSuccessResultDetails) SwitchFieldName() string {
+	return "Action"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageCreatePollRequestSuccessResultDetails
+func (u ManageCreatePollRequestSuccessResultDetails) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageCreatePollRequestAction(sw) {
+	case ManageCreatePollRequestActionCreate:
+		return "Response", true
+	case ManageCreatePollRequestActionCancel:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageCreatePollRequestSuccessResultDetails creates a new  ManageCreatePollRequestSuccessResultDetails.
+func NewManageCreatePollRequestSuccessResultDetails(action ManageCreatePollRequestAction, value interface{}) (result ManageCreatePollRequestSuccessResultDetails, err error) {
+	result.Action = action
+	switch ManageCreatePollRequestAction(action) {
+	case ManageCreatePollRequestActionCreate:
+		tv, ok := value.(CreatePollRequestResponse)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreatePollRequestResponse")
+			return
+		}
+		result.Response = &tv
+	case ManageCreatePollRequestActionCancel:
+		// void
+	}
+	return
+}
+
+// MustResponse retrieves the Response value from the union,
+// panicing if the value is not set.
+func (u ManageCreatePollRequestSuccessResultDetails) MustResponse() CreatePollRequestResponse {
+	val, ok := u.GetResponse()
+
+	if !ok {
+		panic("arm Response is not set")
+	}
+
+	return val
+}
+
+// GetResponse retrieves the Response value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageCreatePollRequestSuccessResultDetails) GetResponse() (result CreatePollRequestResponse, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "Response" {
+		result = *u.Response
+		ok = true
+	}
+
+	return
+}
+
+// ManageCreatePollRequestSuccessResultExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageCreatePollRequestSuccessResultExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageCreatePollRequestSuccessResultExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageCreatePollRequestSuccessResultExt
+func (u ManageCreatePollRequestSuccessResultExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageCreatePollRequestSuccessResultExt creates a new  ManageCreatePollRequestSuccessResultExt.
+func NewManageCreatePollRequestSuccessResultExt(v LedgerVersion, value interface{}) (result ManageCreatePollRequestSuccessResultExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageCreatePollRequestSuccessResult is an XDR Struct defines as:
+//
+//   struct ManageCreatePollRequestSuccessResult
+//    {
+//        //: `details` id used to pass useful fields
+//        union switch (ManageCreatePollRequestAction action)
+//        {
+//        case CREATE:
+//            CreatePollRequestResponse response;
+//        case CANCEL:
+//            void;
+//        } details;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManageCreatePollRequestSuccessResult struct {
+	Details ManageCreatePollRequestSuccessResultDetails `json:"details,omitempty"`
+	Ext     ManageCreatePollRequestSuccessResultExt     `json:"ext,omitempty"`
+}
+
+// ManageCreatePollRequestResult is an XDR Union defines as:
+//
+//   union ManageCreatePollRequestResult switch (ManageCreatePollRequestResultCode code)
+//    {
+//    case SUCCESS:
+//        ManageCreatePollRequestSuccessResult success;
+//    default:
+//        void;
+//    };
+//
+type ManageCreatePollRequestResult struct {
+	Code    ManageCreatePollRequestResultCode     `json:"code,omitempty"`
+	Success *ManageCreatePollRequestSuccessResult `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageCreatePollRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageCreatePollRequestResult
+func (u ManageCreatePollRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageCreatePollRequestResultCode(sw) {
+	case ManageCreatePollRequestResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageCreatePollRequestResult creates a new  ManageCreatePollRequestResult.
+func NewManageCreatePollRequestResult(code ManageCreatePollRequestResultCode, value interface{}) (result ManageCreatePollRequestResult, err error) {
+	result.Code = code
+	switch ManageCreatePollRequestResultCode(code) {
+	case ManageCreatePollRequestResultCodeSuccess:
+		tv, ok := value.(ManageCreatePollRequestSuccessResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageCreatePollRequestSuccessResult")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u ManageCreatePollRequestResult) MustSuccess() ManageCreatePollRequestSuccessResult {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageCreatePollRequestResult) GetSuccess() (result ManageCreatePollRequestSuccessResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
 // ManageExternalSystemAccountIdPoolEntryAction is an XDR Enum defines as:
 //
 //   enum ManageExternalSystemAccountIdPoolEntryAction
@@ -24850,6 +26203,648 @@ func (u ManageOfferResult) GetCurrentPriceRestriction() (result ManageOfferResul
 	return
 }
 
+// ManagePollAction is an XDR Enum defines as:
+//
+//   enum ManagePollAction
+//    {
+//        CLOSE = 0
+//    //    UPDATE_END_TIME = 1,
+//    //    REMOVE = 2,
+//    };
+//
+type ManagePollAction int32
+
+const (
+	ManagePollActionClose ManagePollAction = 0
+)
+
+var ManagePollActionAll = []ManagePollAction{
+	ManagePollActionClose,
+}
+
+var managePollActionMap = map[int32]string{
+	0: "ManagePollActionClose",
+}
+
+var managePollActionShortMap = map[int32]string{
+	0: "close",
+}
+
+var managePollActionRevMap = map[string]int32{
+	"ManagePollActionClose": 0,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManagePollAction
+func (e ManagePollAction) ValidEnum(v int32) bool {
+	_, ok := managePollActionMap[v]
+	return ok
+}
+func (e ManagePollAction) isFlag() bool {
+	for i := len(ManagePollActionAll) - 1; i >= 0; i-- {
+		expected := ManagePollAction(2) << uint64(len(ManagePollActionAll)-1) >> uint64(len(ManagePollActionAll)-i)
+		if expected != ManagePollActionAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManagePollAction) String() string {
+	name, _ := managePollActionMap[int32(e)]
+	return name
+}
+
+func (e ManagePollAction) ShortString() string {
+	name, _ := managePollActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManagePollAction) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManagePollActionAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManagePollAction) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManagePollAction(t.Value)
+	return nil
+}
+
+// PollResult is an XDR Enum defines as:
+//
+//   enum PollResult
+//    {
+//        PASSED = 0,
+//        FAILED = 1
+//    };
+//
+type PollResult int32
+
+const (
+	PollResultPassed PollResult = 0
+	PollResultFailed PollResult = 1
+)
+
+var PollResultAll = []PollResult{
+	PollResultPassed,
+	PollResultFailed,
+}
+
+var pollResultMap = map[int32]string{
+	0: "PollResultPassed",
+	1: "PollResultFailed",
+}
+
+var pollResultShortMap = map[int32]string{
+	0: "passed",
+	1: "failed",
+}
+
+var pollResultRevMap = map[string]int32{
+	"PollResultPassed": 0,
+	"PollResultFailed": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for PollResult
+func (e PollResult) ValidEnum(v int32) bool {
+	_, ok := pollResultMap[v]
+	return ok
+}
+func (e PollResult) isFlag() bool {
+	for i := len(PollResultAll) - 1; i >= 0; i-- {
+		expected := PollResult(2) << uint64(len(PollResultAll)-1) >> uint64(len(PollResultAll)-i)
+		if expected != PollResultAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e PollResult) String() string {
+	name, _ := pollResultMap[int32(e)]
+	return name
+}
+
+func (e PollResult) ShortString() string {
+	name, _ := pollResultShortMap[int32(e)]
+	return name
+}
+
+func (e PollResult) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range PollResultAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *PollResult) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = PollResult(t.Value)
+	return nil
+}
+
+// ClosePollDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ClosePollDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ClosePollDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ClosePollDataExt
+func (u ClosePollDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewClosePollDataExt creates a new  ClosePollDataExt.
+func NewClosePollDataExt(v LedgerVersion, value interface{}) (result ClosePollDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ClosePollData is an XDR Struct defines as:
+//
+//   struct ClosePollData
+//    {
+//        //: result of voting
+//        PollResult result;
+//
+//        //: Arbitrary stringified json object with details about the result
+//        longstring details;
+//
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ClosePollData struct {
+	Result  PollResult       `json:"result,omitempty"`
+	Details Longstring       `json:"details,omitempty"`
+	Ext     ClosePollDataExt `json:"ext,omitempty"`
+}
+
+// UpdatePollEndTimeDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type UpdatePollEndTimeDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u UpdatePollEndTimeDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of UpdatePollEndTimeDataExt
+func (u UpdatePollEndTimeDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewUpdatePollEndTimeDataExt creates a new  UpdatePollEndTimeDataExt.
+func NewUpdatePollEndTimeDataExt(v LedgerVersion, value interface{}) (result UpdatePollEndTimeDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// UpdatePollEndTimeData is an XDR Struct defines as:
+//
+//   struct UpdatePollEndTimeData
+//    {
+//        uint64 newEndTime;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type UpdatePollEndTimeData struct {
+	NewEndTime Uint64                   `json:"newEndTime,omitempty"`
+	Ext        UpdatePollEndTimeDataExt `json:"ext,omitempty"`
+}
+
+// ManagePollOpData is an XDR NestedUnion defines as:
+//
+//   union switch (ManagePollAction action)
+//        {
+//        case CLOSE:
+//            ClosePollData closePollData;
+//    //    case UPDATE_END_TIME:
+//    //        UpdatePollEndTimeData updateTimeData;
+//    //    case REMOVE:
+//    //        EmptyExt ext;
+//        }
+//
+type ManagePollOpData struct {
+	Action        ManagePollAction `json:"action,omitempty"`
+	ClosePollData *ClosePollData   `json:"closePollData,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManagePollOpData) SwitchFieldName() string {
+	return "Action"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManagePollOpData
+func (u ManagePollOpData) ArmForSwitch(sw int32) (string, bool) {
+	switch ManagePollAction(sw) {
+	case ManagePollActionClose:
+		return "ClosePollData", true
+	}
+	return "-", false
+}
+
+// NewManagePollOpData creates a new  ManagePollOpData.
+func NewManagePollOpData(action ManagePollAction, value interface{}) (result ManagePollOpData, err error) {
+	result.Action = action
+	switch ManagePollAction(action) {
+	case ManagePollActionClose:
+		tv, ok := value.(ClosePollData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ClosePollData")
+			return
+		}
+		result.ClosePollData = &tv
+	}
+	return
+}
+
+// MustClosePollData retrieves the ClosePollData value from the union,
+// panicing if the value is not set.
+func (u ManagePollOpData) MustClosePollData() ClosePollData {
+	val, ok := u.GetClosePollData()
+
+	if !ok {
+		panic("arm ClosePollData is not set")
+	}
+
+	return val
+}
+
+// GetClosePollData retrieves the ClosePollData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManagePollOpData) GetClosePollData() (result ClosePollData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "ClosePollData" {
+		result = *u.ClosePollData
+		ok = true
+	}
+
+	return
+}
+
+// ManagePollOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManagePollOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManagePollOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManagePollOpExt
+func (u ManagePollOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManagePollOpExt creates a new  ManagePollOpExt.
+func NewManagePollOpExt(v LedgerVersion, value interface{}) (result ManagePollOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManagePollOp is an XDR Struct defines as:
+//
+//   struct ManagePollOp
+//    {
+//        //: ID of poll to manage
+//        uint64 pollID;
+//
+//        //: data is used to pass one of `ManagePollAction` with required params
+//        union switch (ManagePollAction action)
+//        {
+//        case CLOSE:
+//            ClosePollData closePollData;
+//    //    case UPDATE_END_TIME:
+//    //        UpdatePollEndTimeData updateTimeData;
+//    //    case REMOVE:
+//    //        EmptyExt ext;
+//        }
+//        data;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type ManagePollOp struct {
+	PollId Uint64           `json:"pollID,omitempty"`
+	Data   ManagePollOpData `json:"data,omitempty"`
+	Ext    ManagePollOpExt  `json:"ext,omitempty"`
+}
+
+// ManagePollResultCode is an XDR Enum defines as:
+//
+//   enum ManagePollResultCode
+//    {
+//        //: Specified action in `data` of ManagePollOp was successfully executed
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        //: There is no poll with such id
+//        NOT_FOUND = -1,
+//        //: Not allowed to close poll which
+//        POLL_NOT_READY = -2,
+//        //: Only result provider is allowed to close poll
+//        NOT_AUTHORIZED_TO_CLOSE_POLL = -3
+//    };
+//
+type ManagePollResultCode int32
+
+const (
+	ManagePollResultCodeSuccess                  ManagePollResultCode = 0
+	ManagePollResultCodeNotFound                 ManagePollResultCode = -1
+	ManagePollResultCodePollNotReady             ManagePollResultCode = -2
+	ManagePollResultCodeNotAuthorizedToClosePoll ManagePollResultCode = -3
+)
+
+var ManagePollResultCodeAll = []ManagePollResultCode{
+	ManagePollResultCodeSuccess,
+	ManagePollResultCodeNotFound,
+	ManagePollResultCodePollNotReady,
+	ManagePollResultCodeNotAuthorizedToClosePoll,
+}
+
+var managePollResultCodeMap = map[int32]string{
+	0:  "ManagePollResultCodeSuccess",
+	-1: "ManagePollResultCodeNotFound",
+	-2: "ManagePollResultCodePollNotReady",
+	-3: "ManagePollResultCodeNotAuthorizedToClosePoll",
+}
+
+var managePollResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+	-2: "poll_not_ready",
+	-3: "not_authorized_to_close_poll",
+}
+
+var managePollResultCodeRevMap = map[string]int32{
+	"ManagePollResultCodeSuccess":                  0,
+	"ManagePollResultCodeNotFound":                 -1,
+	"ManagePollResultCodePollNotReady":             -2,
+	"ManagePollResultCodeNotAuthorizedToClosePoll": -3,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManagePollResultCode
+func (e ManagePollResultCode) ValidEnum(v int32) bool {
+	_, ok := managePollResultCodeMap[v]
+	return ok
+}
+func (e ManagePollResultCode) isFlag() bool {
+	for i := len(ManagePollResultCodeAll) - 1; i >= 0; i-- {
+		expected := ManagePollResultCode(2) << uint64(len(ManagePollResultCodeAll)-1) >> uint64(len(ManagePollResultCodeAll)-i)
+		if expected != ManagePollResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManagePollResultCode) String() string {
+	name, _ := managePollResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManagePollResultCode) ShortString() string {
+	name, _ := managePollResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManagePollResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManagePollResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManagePollResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManagePollResultCode(t.Value)
+	return nil
+}
+
+// ManagePollResult is an XDR Union defines as:
+//
+//   union ManagePollResult switch (ManagePollResultCode code)
+//    {
+//    case SUCCESS:
+//        EmptyExt ext;
+//    default:
+//        void;
+//    };
+//
+type ManagePollResult struct {
+	Code ManagePollResultCode `json:"code,omitempty"`
+	Ext  *EmptyExt            `json:"ext,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManagePollResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManagePollResult
+func (u ManagePollResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManagePollResultCode(sw) {
+	case ManagePollResultCodeSuccess:
+		return "Ext", true
+	default:
+		return "", true
+	}
+}
+
+// NewManagePollResult creates a new  ManagePollResult.
+func NewManagePollResult(code ManagePollResultCode, value interface{}) (result ManagePollResult, err error) {
+	result.Code = code
+	switch ManagePollResultCode(code) {
+	case ManagePollResultCodeSuccess:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Ext = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustExt retrieves the Ext value from the union,
+// panicing if the value is not set.
+func (u ManagePollResult) MustExt() EmptyExt {
+	val, ok := u.GetExt()
+
+	if !ok {
+		panic("arm Ext is not set")
+	}
+
+	return val
+}
+
+// GetExt retrieves the Ext value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManagePollResult) GetExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Ext" {
+		result = *u.Ext
+		ok = true
+	}
+
+	return
+}
+
 // ManageSaleAction is an XDR Enum defines as:
 //
 //   enum ManageSaleAction
@@ -27721,6 +29716,603 @@ func (u ManageSignerResult) GetExt() (result EmptyExt, ok bool) {
 	return
 }
 
+// ManageVoteAction is an XDR Enum defines as:
+//
+//   enum ManageVoteAction
+//    {
+//        CREATE = 0,
+//        REMOVE = 1
+//    };
+//
+type ManageVoteAction int32
+
+const (
+	ManageVoteActionCreate ManageVoteAction = 0
+	ManageVoteActionRemove ManageVoteAction = 1
+)
+
+var ManageVoteActionAll = []ManageVoteAction{
+	ManageVoteActionCreate,
+	ManageVoteActionRemove,
+}
+
+var manageVoteActionMap = map[int32]string{
+	0: "ManageVoteActionCreate",
+	1: "ManageVoteActionRemove",
+}
+
+var manageVoteActionShortMap = map[int32]string{
+	0: "create",
+	1: "remove",
+}
+
+var manageVoteActionRevMap = map[string]int32{
+	"ManageVoteActionCreate": 0,
+	"ManageVoteActionRemove": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageVoteAction
+func (e ManageVoteAction) ValidEnum(v int32) bool {
+	_, ok := manageVoteActionMap[v]
+	return ok
+}
+func (e ManageVoteAction) isFlag() bool {
+	for i := len(ManageVoteActionAll) - 1; i >= 0; i-- {
+		expected := ManageVoteAction(2) << uint64(len(ManageVoteActionAll)-1) >> uint64(len(ManageVoteActionAll)-i)
+		if expected != ManageVoteActionAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManageVoteAction) String() string {
+	name, _ := manageVoteActionMap[int32(e)]
+	return name
+}
+
+func (e ManageVoteAction) ShortString() string {
+	name, _ := manageVoteActionShortMap[int32(e)]
+	return name
+}
+
+func (e ManageVoteAction) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManageVoteActionAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManageVoteAction) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManageVoteAction(t.Value)
+	return nil
+}
+
+// CreateVoteDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateVoteDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateVoteDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateVoteDataExt
+func (u CreateVoteDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateVoteDataExt creates a new  CreateVoteDataExt.
+func NewCreateVoteDataExt(v LedgerVersion, value interface{}) (result CreateVoteDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateVoteData is an XDR Struct defines as:
+//
+//   struct CreateVoteData
+//    {
+//        //: ID of poll to vote in
+//        uint64 pollID;
+//
+//        //: `data` is used to pass choice with functional type of poll
+//        VoteData data;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type CreateVoteData struct {
+	PollId Uint64            `json:"pollID,omitempty"`
+	Data   VoteData          `json:"data,omitempty"`
+	Ext    CreateVoteDataExt `json:"ext,omitempty"`
+}
+
+// RemoveVoteDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveVoteDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveVoteDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveVoteDataExt
+func (u RemoveVoteDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveVoteDataExt creates a new  RemoveVoteDataExt.
+func NewRemoveVoteDataExt(v LedgerVersion, value interface{}) (result RemoveVoteDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveVoteData is an XDR Struct defines as:
+//
+//   struct RemoveVoteData
+//    {
+//        //: ID of poll
+//        uint64 pollID;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type RemoveVoteData struct {
+	PollId Uint64            `json:"pollID,omitempty"`
+	Ext    RemoveVoteDataExt `json:"ext,omitempty"`
+}
+
+// ManageVoteOpData is an XDR NestedUnion defines as:
+//
+//   union switch (ManageVoteAction action)
+//        {
+//        case CREATE:
+//            CreateVoteData createData;
+//        case REMOVE:
+//            RemoveVoteData removeData;
+//        }
+//
+type ManageVoteOpData struct {
+	Action     ManageVoteAction `json:"action,omitempty"`
+	CreateData *CreateVoteData  `json:"createData,omitempty"`
+	RemoveData *RemoveVoteData  `json:"removeData,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageVoteOpData) SwitchFieldName() string {
+	return "Action"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageVoteOpData
+func (u ManageVoteOpData) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageVoteAction(sw) {
+	case ManageVoteActionCreate:
+		return "CreateData", true
+	case ManageVoteActionRemove:
+		return "RemoveData", true
+	}
+	return "-", false
+}
+
+// NewManageVoteOpData creates a new  ManageVoteOpData.
+func NewManageVoteOpData(action ManageVoteAction, value interface{}) (result ManageVoteOpData, err error) {
+	result.Action = action
+	switch ManageVoteAction(action) {
+	case ManageVoteActionCreate:
+		tv, ok := value.(CreateVoteData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateVoteData")
+			return
+		}
+		result.CreateData = &tv
+	case ManageVoteActionRemove:
+		tv, ok := value.(RemoveVoteData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveVoteData")
+			return
+		}
+		result.RemoveData = &tv
+	}
+	return
+}
+
+// MustCreateData retrieves the CreateData value from the union,
+// panicing if the value is not set.
+func (u ManageVoteOpData) MustCreateData() CreateVoteData {
+	val, ok := u.GetCreateData()
+
+	if !ok {
+		panic("arm CreateData is not set")
+	}
+
+	return val
+}
+
+// GetCreateData retrieves the CreateData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageVoteOpData) GetCreateData() (result CreateVoteData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "CreateData" {
+		result = *u.CreateData
+		ok = true
+	}
+
+	return
+}
+
+// MustRemoveData retrieves the RemoveData value from the union,
+// panicing if the value is not set.
+func (u ManageVoteOpData) MustRemoveData() RemoveVoteData {
+	val, ok := u.GetRemoveData()
+
+	if !ok {
+		panic("arm RemoveData is not set")
+	}
+
+	return val
+}
+
+// GetRemoveData retrieves the RemoveData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageVoteOpData) GetRemoveData() (result RemoveVoteData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "RemoveData" {
+		result = *u.RemoveData
+		ok = true
+	}
+
+	return
+}
+
+// ManageVoteOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type ManageVoteOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageVoteOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageVoteOpExt
+func (u ManageVoteOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewManageVoteOpExt creates a new  ManageVoteOpExt.
+func NewManageVoteOpExt(v LedgerVersion, value interface{}) (result ManageVoteOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// ManageVoteOp is an XDR Struct defines as:
+//
+//   struct ManageVoteOp
+//    {
+//        //: `data` is used to pass `ManageVoteAction` with needed params
+//        union switch (ManageVoteAction action)
+//        {
+//        case CREATE:
+//            CreateVoteData createData;
+//        case REMOVE:
+//            RemoveVoteData removeData;
+//        }
+//        data;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type ManageVoteOp struct {
+	Data ManageVoteOpData `json:"data,omitempty"`
+	Ext  ManageVoteOpExt  `json:"ext,omitempty"`
+}
+
+// ManageVoteResultCode is an XDR Enum defines as:
+//
+//   enum ManageVoteResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        //: Specified action in `data` of ManageVoteOp was successfully executed
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        //: There is no vote from source account in such poll
+//        VOTE_NOT_FOUND = -1, // vote to remove  not found
+//        //: There is no poll with such id
+//        POLL_NOT_FOUND = -2, // poll not found
+//        //: Not allowed to create (send) two votes for one poll
+//        VOTE_EXISTS = -3,
+//        //: Not allowed to create (send) vote with functional type that is different from the poll functional type
+//        POLL_TYPE_MISMATCHED = -4,
+//        //: Not allowed to vote in poll which not started yet
+//        POLL_NOT_STARTED = -5,
+//        //: Not allowed to vote in poll which already was ended
+//        POLL_ENDED = -6
+//    };
+//
+type ManageVoteResultCode int32
+
+const (
+	ManageVoteResultCodeSuccess            ManageVoteResultCode = 0
+	ManageVoteResultCodeVoteNotFound       ManageVoteResultCode = -1
+	ManageVoteResultCodePollNotFound       ManageVoteResultCode = -2
+	ManageVoteResultCodeVoteExists         ManageVoteResultCode = -3
+	ManageVoteResultCodePollTypeMismatched ManageVoteResultCode = -4
+	ManageVoteResultCodePollNotStarted     ManageVoteResultCode = -5
+	ManageVoteResultCodePollEnded          ManageVoteResultCode = -6
+)
+
+var ManageVoteResultCodeAll = []ManageVoteResultCode{
+	ManageVoteResultCodeSuccess,
+	ManageVoteResultCodeVoteNotFound,
+	ManageVoteResultCodePollNotFound,
+	ManageVoteResultCodeVoteExists,
+	ManageVoteResultCodePollTypeMismatched,
+	ManageVoteResultCodePollNotStarted,
+	ManageVoteResultCodePollEnded,
+}
+
+var manageVoteResultCodeMap = map[int32]string{
+	0:  "ManageVoteResultCodeSuccess",
+	-1: "ManageVoteResultCodeVoteNotFound",
+	-2: "ManageVoteResultCodePollNotFound",
+	-3: "ManageVoteResultCodeVoteExists",
+	-4: "ManageVoteResultCodePollTypeMismatched",
+	-5: "ManageVoteResultCodePollNotStarted",
+	-6: "ManageVoteResultCodePollEnded",
+}
+
+var manageVoteResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "vote_not_found",
+	-2: "poll_not_found",
+	-3: "vote_exists",
+	-4: "poll_type_mismatched",
+	-5: "poll_not_started",
+	-6: "poll_ended",
+}
+
+var manageVoteResultCodeRevMap = map[string]int32{
+	"ManageVoteResultCodeSuccess":            0,
+	"ManageVoteResultCodeVoteNotFound":       -1,
+	"ManageVoteResultCodePollNotFound":       -2,
+	"ManageVoteResultCodeVoteExists":         -3,
+	"ManageVoteResultCodePollTypeMismatched": -4,
+	"ManageVoteResultCodePollNotStarted":     -5,
+	"ManageVoteResultCodePollEnded":          -6,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for ManageVoteResultCode
+func (e ManageVoteResultCode) ValidEnum(v int32) bool {
+	_, ok := manageVoteResultCodeMap[v]
+	return ok
+}
+func (e ManageVoteResultCode) isFlag() bool {
+	for i := len(ManageVoteResultCodeAll) - 1; i >= 0; i-- {
+		expected := ManageVoteResultCode(2) << uint64(len(ManageVoteResultCodeAll)-1) >> uint64(len(ManageVoteResultCodeAll)-i)
+		if expected != ManageVoteResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e ManageVoteResultCode) String() string {
+	name, _ := manageVoteResultCodeMap[int32(e)]
+	return name
+}
+
+func (e ManageVoteResultCode) ShortString() string {
+	name, _ := manageVoteResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e ManageVoteResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range ManageVoteResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *ManageVoteResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = ManageVoteResultCode(t.Value)
+	return nil
+}
+
+// ManageVoteResult is an XDR Union defines as:
+//
+//   union ManageVoteResult switch (ManageVoteResultCode code)
+//    {
+//    case SUCCESS:
+//        EmptyExt ext;
+//    default:
+//        void;
+//    };
+//
+type ManageVoteResult struct {
+	Code ManageVoteResultCode `json:"code,omitempty"`
+	Ext  *EmptyExt            `json:"ext,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageVoteResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageVoteResult
+func (u ManageVoteResult) ArmForSwitch(sw int32) (string, bool) {
+	switch ManageVoteResultCode(sw) {
+	case ManageVoteResultCodeSuccess:
+		return "Ext", true
+	default:
+		return "", true
+	}
+}
+
+// NewManageVoteResult creates a new  ManageVoteResult.
+func NewManageVoteResult(code ManageVoteResultCode, value interface{}) (result ManageVoteResult, err error) {
+	result.Code = code
+	switch ManageVoteResultCode(code) {
+	case ManageVoteResultCodeSuccess:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Ext = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustExt retrieves the Ext value from the union,
+// panicing if the value is not set.
+func (u ManageVoteResult) MustExt() EmptyExt {
+	val, ok := u.GetExt()
+
+	if !ok {
+		panic("arm Ext is not set")
+	}
+
+	return val
+}
+
+// GetExt retrieves the Ext value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageVoteResult) GetExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Ext" {
+		result = *u.Ext
+		ok = true
+	}
+
+	return
+}
+
 // PaymentFeeDataExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -29441,6 +32033,65 @@ type ASwapBidExtended struct {
 	Ext   ASwapBidExtendedExt `json:"ext,omitempty"`
 }
 
+// CreatePollExtendedExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreatePollExtendedExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreatePollExtendedExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreatePollExtendedExt
+func (u CreatePollExtendedExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreatePollExtendedExt creates a new  CreatePollExtendedExt.
+func NewCreatePollExtendedExt(v LedgerVersion, value interface{}) (result CreatePollExtendedExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreatePollExtended is an XDR Struct defines as:
+//
+//   struct CreatePollExtended
+//    {
+//        //: ID of the newly created poll
+//        uint64 pollID;
+//
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CreatePollExtended struct {
+	PollId Uint64                `json:"pollID,omitempty"`
+	Ext    CreatePollExtendedExt `json:"ext,omitempty"`
+}
+
 // ASwapExtendedExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -29538,6 +32189,8 @@ type ASwapExtended struct {
 //            ASwapBidExtended aSwapBidExtended;
 //        case CREATE_ATOMIC_SWAP:
 //            ASwapExtended aSwapExtended;
+//        case CREATE_POLL:
+//            CreatePollExtended createPoll;
 //        }
 //
 type ExtendedResultTypeExt struct {
@@ -29545,6 +32198,7 @@ type ExtendedResultTypeExt struct {
 	SaleExtended     *SaleExtended         `json:"saleExtended,omitempty"`
 	ASwapBidExtended *ASwapBidExtended     `json:"aSwapBidExtended,omitempty"`
 	ASwapExtended    *ASwapExtended        `json:"aSwapExtended,omitempty"`
+	CreatePoll       *CreatePollExtended   `json:"createPoll,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -29565,6 +32219,8 @@ func (u ExtendedResultTypeExt) ArmForSwitch(sw int32) (string, bool) {
 		return "ASwapBidExtended", true
 	case ReviewableRequestTypeCreateAtomicSwap:
 		return "ASwapExtended", true
+	case ReviewableRequestTypeCreatePoll:
+		return "CreatePoll", true
 	}
 	return "-", false
 }
@@ -29596,6 +32252,13 @@ func NewExtendedResultTypeExt(requestType ReviewableRequestType, value interface
 			return
 		}
 		result.ASwapExtended = &tv
+	case ReviewableRequestTypeCreatePoll:
+		tv, ok := value.(CreatePollExtended)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreatePollExtended")
+			return
+		}
+		result.CreatePoll = &tv
 	}
 	return
 }
@@ -29675,6 +32338,31 @@ func (u ExtendedResultTypeExt) GetASwapExtended() (result ASwapExtended, ok bool
 	return
 }
 
+// MustCreatePoll retrieves the CreatePoll value from the union,
+// panicing if the value is not set.
+func (u ExtendedResultTypeExt) MustCreatePoll() CreatePollExtended {
+	val, ok := u.GetCreatePoll()
+
+	if !ok {
+		panic("arm CreatePoll is not set")
+	}
+
+	return val
+}
+
+// GetCreatePoll retrieves the CreatePoll value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ExtendedResultTypeExt) GetCreatePoll() (result CreatePollExtended, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "CreatePoll" {
+		result = *u.CreatePoll
+		ok = true
+	}
+
+	return
+}
+
 // ExtendedResultExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -29728,6 +32416,8 @@ func NewExtendedResultExt(v LedgerVersion, value interface{}) (result ExtendedRe
 //            ASwapBidExtended aSwapBidExtended;
 //        case CREATE_ATOMIC_SWAP:
 //            ASwapExtended aSwapExtended;
+//        case CREATE_POLL:
+//            CreatePollExtended createPoll;
 //        } typeExt;
 //
 //        //: Reserved for future use
@@ -32556,6 +35246,22 @@ type ReviewableRequestResourceCreateWithdraw struct {
 	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
+// ReviewableRequestResourceCreatePoll is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type ReviewableRequestResourceCreatePoll struct {
+	PermissionType Uint32   `json:"permissionType,omitempty"`
+	Ext            EmptyExt `json:"ext,omitempty"`
+}
+
 // ReviewableRequestResource is an XDR Union defines as:
 //
 //   union ReviewableRequestResource switch (ReviewableRequestType requestType)
@@ -32594,6 +35300,16 @@ type ReviewableRequestResourceCreateWithdraw struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } createWithdraw;
+//    case CREATE_POLL:
+//        //: is used to restrict the creating of a `CREATE_POLL` reviewable request type
+//        struct
+//        {
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } createPoll;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -32604,6 +35320,7 @@ type ReviewableRequestResource struct {
 	CreateSale     *ReviewableRequestResourceCreateSale     `json:"createSale,omitempty"`
 	CreateIssuance *ReviewableRequestResourceCreateIssuance `json:"createIssuance,omitempty"`
 	CreateWithdraw *ReviewableRequestResourceCreateWithdraw `json:"createWithdraw,omitempty"`
+	CreatePoll     *ReviewableRequestResourceCreatePoll     `json:"createPoll,omitempty"`
 	Ext            *EmptyExt                                `json:"ext,omitempty"`
 }
 
@@ -32623,6 +35340,8 @@ func (u ReviewableRequestResource) ArmForSwitch(sw int32) (string, bool) {
 		return "CreateIssuance", true
 	case ReviewableRequestTypeCreateWithdraw:
 		return "CreateWithdraw", true
+	case ReviewableRequestTypeCreatePoll:
+		return "CreatePoll", true
 	default:
 		return "Ext", true
 	}
@@ -32653,6 +35372,13 @@ func NewReviewableRequestResource(requestType ReviewableRequestType, value inter
 			return
 		}
 		result.CreateWithdraw = &tv
+	case ReviewableRequestTypeCreatePoll:
+		tv, ok := value.(ReviewableRequestResourceCreatePoll)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ReviewableRequestResourceCreatePoll")
+			return
+		}
+		result.CreatePoll = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -32733,6 +35459,31 @@ func (u ReviewableRequestResource) GetCreateWithdraw() (result ReviewableRequest
 
 	if armName == "CreateWithdraw" {
 		result = *u.CreateWithdraw
+		ok = true
+	}
+
+	return
+}
+
+// MustCreatePoll retrieves the CreatePoll value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestResource) MustCreatePoll() ReviewableRequestResourceCreatePoll {
+	val, ok := u.GetCreatePoll()
+
+	if !ok {
+		panic("arm CreatePoll is not set")
+	}
+
+	return val
+}
+
+// GetCreatePoll retrieves the CreatePoll value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestResource) GetCreatePoll() (result ReviewableRequestResourceCreatePoll, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "CreatePoll" {
+		result = *u.CreatePoll
 		ok = true
 	}
 
@@ -32875,6 +35626,46 @@ type AccountRuleResourceKeyValue struct {
 	Ext       EmptyExt   `json:"ext,omitempty"`
 }
 
+// AccountRuleResourcePoll is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: ID of the poll
+//            uint64 pollID;
+//
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type AccountRuleResourcePoll struct {
+	PollId         Uint64   `json:"pollID,omitempty"`
+	PermissionType Uint32   `json:"permissionType,omitempty"`
+	Ext            EmptyExt `json:"ext,omitempty"`
+}
+
+// AccountRuleResourceVote is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: ID of the poll
+//            uint64 pollID;
+//
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type AccountRuleResourceVote struct {
+	PollId         Uint64   `json:"pollID,omitempty"`
+	PermissionType Uint32   `json:"permissionType,omitempty"`
+	Ext            EmptyExt `json:"ext,omitempty"`
+}
+
 // AccountRuleResource is an XDR Union defines as:
 //
 //   union AccountRuleResource switch (LedgerEntryType type)
@@ -32947,6 +35738,30 @@ type AccountRuleResourceKeyValue struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } keyValue;
+//    case POLL:
+//        struct
+//        {
+//            //: ID of the poll
+//            uint64 pollID;
+//
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } poll;
+//    case VOTE:
+//        struct
+//        {
+//            //: ID of the poll
+//            uint64 pollID;
+//
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } vote;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -32960,6 +35775,8 @@ type AccountRuleResource struct {
 	Sale              *AccountRuleResourceSale              `json:"sale,omitempty"`
 	AtomicSwapBid     *AccountRuleResourceAtomicSwapBid     `json:"atomicSwapBid,omitempty"`
 	KeyValue          *AccountRuleResourceKeyValue          `json:"keyValue,omitempty"`
+	Poll              *AccountRuleResourcePoll              `json:"poll,omitempty"`
+	Vote              *AccountRuleResourceVote              `json:"vote,omitempty"`
 	Ext               *EmptyExt                             `json:"ext,omitempty"`
 }
 
@@ -32987,6 +35804,10 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "AtomicSwapBid", true
 	case LedgerEntryTypeKeyValue:
 		return "KeyValue", true
+	case LedgerEntryTypePoll:
+		return "Poll", true
+	case LedgerEntryTypeVote:
+		return "Vote", true
 	default:
 		return "Ext", true
 	}
@@ -33040,6 +35861,20 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.KeyValue = &tv
+	case LedgerEntryTypePoll:
+		tv, ok := value.(AccountRuleResourcePoll)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountRuleResourcePoll")
+			return
+		}
+		result.Poll = &tv
+	case LedgerEntryTypeVote:
+		tv, ok := value.(AccountRuleResourceVote)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountRuleResourceVote")
+			return
+		}
+		result.Vote = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -33201,6 +36036,56 @@ func (u AccountRuleResource) GetKeyValue() (result AccountRuleResourceKeyValue, 
 	return
 }
 
+// MustPoll retrieves the Poll value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResource) MustPoll() AccountRuleResourcePoll {
+	val, ok := u.GetPoll()
+
+	if !ok {
+		panic("arm Poll is not set")
+	}
+
+	return val
+}
+
+// GetPoll retrieves the Poll value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResource) GetPoll() (result AccountRuleResourcePoll, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Poll" {
+		result = *u.Poll
+		ok = true
+	}
+
+	return
+}
+
+// MustVote retrieves the Vote value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResource) MustVote() AccountRuleResourceVote {
+	val, ok := u.GetVote()
+
+	if !ok {
+		panic("arm Vote is not set")
+	}
+
+	return val
+}
+
+// GetVote retrieves the Vote value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResource) GetVote() (result AccountRuleResourceVote, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Vote" {
+		result = *u.Vote
+		ok = true
+	}
+
+	return
+}
+
 // MustExt retrieves the Ext value from the union,
 // panicing if the value is not set.
 func (u AccountRuleResource) MustExt() EmptyExt {
@@ -33244,7 +36129,9 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        BIND = 12,
 //        UPDATE_MAX_ISSUANCE = 13,
 //        CHECK = 14,
-//        CANCEL = 15
+//        CANCEL = 15,
+//        CLOSE = 16,
+//        REMOVE = 17
 //    };
 //
 type AccountRuleAction int32
@@ -33265,6 +36152,8 @@ const (
 	AccountRuleActionUpdateMaxIssuance AccountRuleAction = 13
 	AccountRuleActionCheck             AccountRuleAction = 14
 	AccountRuleActionCancel            AccountRuleAction = 15
+	AccountRuleActionClose             AccountRuleAction = 16
+	AccountRuleActionRemove            AccountRuleAction = 17
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -33283,6 +36172,8 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionUpdateMaxIssuance,
 	AccountRuleActionCheck,
 	AccountRuleActionCancel,
+	AccountRuleActionClose,
+	AccountRuleActionRemove,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -33301,6 +36192,8 @@ var accountRuleActionMap = map[int32]string{
 	13: "AccountRuleActionUpdateMaxIssuance",
 	14: "AccountRuleActionCheck",
 	15: "AccountRuleActionCancel",
+	16: "AccountRuleActionClose",
+	17: "AccountRuleActionRemove",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -33319,6 +36212,8 @@ var accountRuleActionShortMap = map[int32]string{
 	13: "update_max_issuance",
 	14: "check",
 	15: "cancel",
+	16: "close",
+	17: "remove",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -33337,6 +36232,8 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionUpdateMaxIssuance": 13,
 	"AccountRuleActionCheck":             14,
 	"AccountRuleActionCancel":            15,
+	"AccountRuleActionClose":             16,
+	"AccountRuleActionRemove":            17,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -33561,6 +36458,46 @@ type SignerRuleResourceKeyValue struct {
 	Ext       EmptyExt   `json:"ext,omitempty"`
 }
 
+// SignerRuleResourcePoll is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: ID of the poll
+//            uint64 pollID;
+//
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type SignerRuleResourcePoll struct {
+	PollId         Uint64   `json:"pollID,omitempty"`
+	PermissionType Uint32   `json:"permissionType,omitempty"`
+	Ext            EmptyExt `json:"ext,omitempty"`
+}
+
+// SignerRuleResourceVote is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: ID of the poll
+//            uint64 pollID;
+//
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type SignerRuleResourceVote struct {
+	PollId         Uint64   `json:"pollID,omitempty"`
+	PermissionType Uint32   `json:"permissionType,omitempty"`
+	Ext            EmptyExt `json:"ext,omitempty"`
+}
+
 // SignerRuleResource is an XDR Union defines as:
 //
 //   union SignerRuleResource switch (LedgerEntryType type)
@@ -33663,6 +36600,30 @@ type SignerRuleResourceKeyValue struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } keyValue;
+//    case POLL:
+//        struct
+//        {
+//            //: ID of the poll
+//            uint64 pollID;
+//
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } poll;
+//    case VOTE:
+//        struct
+//        {
+//            //: ID of the poll
+//            uint64 pollID;
+//
+//            //: permission type of poll
+//            uint32 permissionType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } vote;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -33679,6 +36640,8 @@ type SignerRuleResource struct {
 	SignerRole        *SignerRuleResourceSignerRole        `json:"signerRole,omitempty"`
 	Signer            *SignerRuleResourceSigner            `json:"signer,omitempty"`
 	KeyValue          *SignerRuleResourceKeyValue          `json:"keyValue,omitempty"`
+	Poll              *SignerRuleResourcePoll              `json:"poll,omitempty"`
+	Vote              *SignerRuleResourceVote              `json:"vote,omitempty"`
 	Ext               *EmptyExt                            `json:"ext,omitempty"`
 }
 
@@ -33712,6 +36675,10 @@ func (u SignerRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "Signer", true
 	case LedgerEntryTypeKeyValue:
 		return "KeyValue", true
+	case LedgerEntryTypePoll:
+		return "Poll", true
+	case LedgerEntryTypeVote:
+		return "Vote", true
 	default:
 		return "Ext", true
 	}
@@ -33786,6 +36753,20 @@ func NewSignerRuleResource(aType LedgerEntryType, value interface{}) (result Sig
 			return
 		}
 		result.KeyValue = &tv
+	case LedgerEntryTypePoll:
+		tv, ok := value.(SignerRuleResourcePoll)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SignerRuleResourcePoll")
+			return
+		}
+		result.Poll = &tv
+	case LedgerEntryTypeVote:
+		tv, ok := value.(SignerRuleResourceVote)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SignerRuleResourceVote")
+			return
+		}
+		result.Vote = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -34022,6 +37003,56 @@ func (u SignerRuleResource) GetKeyValue() (result SignerRuleResourceKeyValue, ok
 	return
 }
 
+// MustPoll retrieves the Poll value from the union,
+// panicing if the value is not set.
+func (u SignerRuleResource) MustPoll() SignerRuleResourcePoll {
+	val, ok := u.GetPoll()
+
+	if !ok {
+		panic("arm Poll is not set")
+	}
+
+	return val
+}
+
+// GetPoll retrieves the Poll value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SignerRuleResource) GetPoll() (result SignerRuleResourcePoll, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Poll" {
+		result = *u.Poll
+		ok = true
+	}
+
+	return
+}
+
+// MustVote retrieves the Vote value from the union,
+// panicing if the value is not set.
+func (u SignerRuleResource) MustVote() SignerRuleResourceVote {
+	val, ok := u.GetVote()
+
+	if !ok {
+		panic("arm Vote is not set")
+	}
+
+	return val
+}
+
+// GetVote retrieves the Vote value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SignerRuleResource) GetVote() (result SignerRuleResourceVote, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Vote" {
+		result = *u.Vote
+		ok = true
+	}
+
+	return
+}
+
 // MustExt retrieves the Ext value from the union,
 // panicing if the value is not set.
 func (u SignerRuleResource) MustExt() EmptyExt {
@@ -34064,7 +37095,8 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        PARTICIPATE = 11,
 //        BIND = 12,
 //        UPDATE_MAX_ISSUANCE = 13,
-//        CHECK = 14
+//        CHECK = 14,
+//        CLOSE = 15
 //    };
 //
 type SignerRuleAction int32
@@ -34084,6 +37116,7 @@ const (
 	SignerRuleActionBind              SignerRuleAction = 12
 	SignerRuleActionUpdateMaxIssuance SignerRuleAction = 13
 	SignerRuleActionCheck             SignerRuleAction = 14
+	SignerRuleActionClose             SignerRuleAction = 15
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -34101,6 +37134,7 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionBind,
 	SignerRuleActionUpdateMaxIssuance,
 	SignerRuleActionCheck,
+	SignerRuleActionClose,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -34118,6 +37152,7 @@ var signerRuleActionMap = map[int32]string{
 	12: "SignerRuleActionBind",
 	13: "SignerRuleActionUpdateMaxIssuance",
 	14: "SignerRuleActionCheck",
+	15: "SignerRuleActionClose",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -34135,6 +37170,7 @@ var signerRuleActionShortMap = map[int32]string{
 	12: "bind",
 	13: "update_max_issuance",
 	14: "check",
+	15: "close",
 }
 
 var signerRuleActionRevMap = map[string]int32{
@@ -34152,6 +37188,7 @@ var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionBind":              12,
 	"SignerRuleActionUpdateMaxIssuance": 13,
 	"SignerRuleActionCheck":             14,
+	"SignerRuleActionClose":             15,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -34754,6 +37791,93 @@ type ContractRequest struct {
 	StartTime      Uint64             `json:"startTime,omitempty"`
 	EndTime        Uint64             `json:"endTime,omitempty"`
 	Ext            ContractRequestExt `json:"ext,omitempty"`
+}
+
+// CreatePollRequestExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreatePollRequestExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreatePollRequestExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreatePollRequestExt
+func (u CreatePollRequestExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreatePollRequestExt creates a new  CreatePollRequestExt.
+func NewCreatePollRequestExt(v LedgerVersion, value interface{}) (result CreatePollRequestExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreatePollRequest is an XDR Struct defines as:
+//
+//   struct CreatePollRequest
+//    {
+//        //: is used to restrict using of poll through rules
+//        uint32 permissionType;
+//
+//        //: Number of allowed choices
+//        uint32 numberOfChoices;
+//
+//        //: Specification of poll
+//        PollData data;
+//
+//        //: Arbitrary stringified json object with details about the poll
+//        longstring creatorDetails; // details set by requester
+//
+//        //: The date from which voting in the poll will be allowed
+//        uint64 startTime;
+//
+//        //: The date until which voting in the poll will be allowed
+//        uint64 endTime;
+//
+//        //: ID of account which is responsible for poll result submitting
+//        AccountID resultProviderID;
+//
+//        //: True means that signature of `resultProvider` is required to participate in poll voting
+//        bool voteConfirmationRequired;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CreatePollRequest struct {
+	PermissionType           Uint32               `json:"permissionType,omitempty"`
+	NumberOfChoices          Uint32               `json:"numberOfChoices,omitempty"`
+	Data                     PollData             `json:"data,omitempty"`
+	CreatorDetails           Longstring           `json:"creatorDetails,omitempty"`
+	StartTime                Uint64               `json:"startTime,omitempty"`
+	EndTime                  Uint64               `json:"endTime,omitempty"`
+	ResultProviderId         AccountId            `json:"resultProviderID,omitempty"`
+	VoteConfirmationRequired bool                 `json:"voteConfirmationRequired,omitempty"`
+	Ext                      CreatePollRequestExt `json:"ext,omitempty"`
 }
 
 // InvoiceRequestExt is an XDR NestedUnion defines as:
@@ -35389,6 +38513,12 @@ type WithdrawalRequest struct {
 //            StampOp stampOp;
 //        case LICENSE:
 //            LicenseOp licenseOp;
+//        case MANAGE_CREATE_POLL_REQUEST:
+//            ManageCreatePollRequestOp manageCreatePollRequestOp;
+//        case MANAGE_POLL:
+//            ManagePollOp managePollOp;
+//        case MANAGE_VOTE:
+//            ManageVoteOp manageVoteOp;
 //        }
 //
 type OperationBody struct {
@@ -35429,6 +38559,9 @@ type OperationBody struct {
 	ManageSignerRuleOp                       *ManageSignerRuleOp                       `json:"manageSignerRuleOp,omitempty"`
 	StampOp                                  *StampOp                                  `json:"stampOp,omitempty"`
 	LicenseOp                                *LicenseOp                                `json:"licenseOp,omitempty"`
+	ManageCreatePollRequestOp                *ManageCreatePollRequestOp                `json:"manageCreatePollRequestOp,omitempty"`
+	ManagePollOp                             *ManagePollOp                             `json:"managePollOp,omitempty"`
+	ManageVoteOp                             *ManageVoteOp                             `json:"manageVoteOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -35513,6 +38646,12 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "StampOp", true
 	case OperationTypeLicense:
 		return "LicenseOp", true
+	case OperationTypeManageCreatePollRequest:
+		return "ManageCreatePollRequestOp", true
+	case OperationTypeManagePoll:
+		return "ManagePollOp", true
+	case OperationTypeManageVote:
+		return "ManageVoteOp", true
 	}
 	return "-", false
 }
@@ -35773,6 +38912,27 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.LicenseOp = &tv
+	case OperationTypeManageCreatePollRequest:
+		tv, ok := value.(ManageCreatePollRequestOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageCreatePollRequestOp")
+			return
+		}
+		result.ManageCreatePollRequestOp = &tv
+	case OperationTypeManagePoll:
+		tv, ok := value.(ManagePollOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManagePollOp")
+			return
+		}
+		result.ManagePollOp = &tv
+	case OperationTypeManageVote:
+		tv, ok := value.(ManageVoteOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageVoteOp")
+			return
+		}
+		result.ManageVoteOp = &tv
 	}
 	return
 }
@@ -36677,6 +39837,81 @@ func (u OperationBody) GetLicenseOp() (result LicenseOp, ok bool) {
 	return
 }
 
+// MustManageCreatePollRequestOp retrieves the ManageCreatePollRequestOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustManageCreatePollRequestOp() ManageCreatePollRequestOp {
+	val, ok := u.GetManageCreatePollRequestOp()
+
+	if !ok {
+		panic("arm ManageCreatePollRequestOp is not set")
+	}
+
+	return val
+}
+
+// GetManageCreatePollRequestOp retrieves the ManageCreatePollRequestOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetManageCreatePollRequestOp() (result ManageCreatePollRequestOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManageCreatePollRequestOp" {
+		result = *u.ManageCreatePollRequestOp
+		ok = true
+	}
+
+	return
+}
+
+// MustManagePollOp retrieves the ManagePollOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustManagePollOp() ManagePollOp {
+	val, ok := u.GetManagePollOp()
+
+	if !ok {
+		panic("arm ManagePollOp is not set")
+	}
+
+	return val
+}
+
+// GetManagePollOp retrieves the ManagePollOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetManagePollOp() (result ManagePollOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManagePollOp" {
+		result = *u.ManagePollOp
+		ok = true
+	}
+
+	return
+}
+
+// MustManageVoteOp retrieves the ManageVoteOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustManageVoteOp() ManageVoteOp {
+	val, ok := u.GetManageVoteOp()
+
+	if !ok {
+		panic("arm ManageVoteOp is not set")
+	}
+
+	return val
+}
+
+// GetManageVoteOp retrieves the ManageVoteOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetManageVoteOp() (result ManageVoteOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManageVoteOp" {
+		result = *u.ManageVoteOp
+		ok = true
+	}
+
+	return
+}
+
 // Operation is an XDR Struct defines as:
 //
 //   struct Operation
@@ -36760,6 +39995,12 @@ func (u OperationBody) GetLicenseOp() (result LicenseOp, ok bool) {
 //            StampOp stampOp;
 //        case LICENSE:
 //            LicenseOp licenseOp;
+//        case MANAGE_CREATE_POLL_REQUEST:
+//            ManageCreatePollRequestOp manageCreatePollRequestOp;
+//        case MANAGE_POLL:
+//            ManagePollOp managePollOp;
+//        case MANAGE_VOTE:
+//            ManageVoteOp manageVoteOp;
 //        }
 //        body;
 //    };
@@ -37442,6 +40683,12 @@ type AccountRuleRequirement struct {
 //            StampResult stampResult;
 //        case LICENSE:
 //            LicenseResult licenseResult;
+//        case MANAGE_POLL:
+//            ManagePollResult managePollResult;
+//        case MANAGE_CREATE_POLL_REQUEST:
+//            ManageCreatePollRequestResult manageCreatePollRequestResult;
+//        case MANAGE_VOTE:
+//            ManageVoteResult manageVoteResult;
 //        }
 //
 type OperationResultTr struct {
@@ -37482,6 +40729,9 @@ type OperationResultTr struct {
 	ManageSignerRuleResult                       *ManageSignerRuleResult                       `json:"manageSignerRuleResult,omitempty"`
 	StampResult                                  *StampResult                                  `json:"stampResult,omitempty"`
 	LicenseResult                                *LicenseResult                                `json:"licenseResult,omitempty"`
+	ManagePollResult                             *ManagePollResult                             `json:"managePollResult,omitempty"`
+	ManageCreatePollRequestResult                *ManageCreatePollRequestResult                `json:"manageCreatePollRequestResult,omitempty"`
+	ManageVoteResult                             *ManageVoteResult                             `json:"manageVoteResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -37566,6 +40816,12 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "StampResult", true
 	case OperationTypeLicense:
 		return "LicenseResult", true
+	case OperationTypeManagePoll:
+		return "ManagePollResult", true
+	case OperationTypeManageCreatePollRequest:
+		return "ManageCreatePollRequestResult", true
+	case OperationTypeManageVote:
+		return "ManageVoteResult", true
 	}
 	return "-", false
 }
@@ -37826,6 +41082,27 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.LicenseResult = &tv
+	case OperationTypeManagePoll:
+		tv, ok := value.(ManagePollResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManagePollResult")
+			return
+		}
+		result.ManagePollResult = &tv
+	case OperationTypeManageCreatePollRequest:
+		tv, ok := value.(ManageCreatePollRequestResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageCreatePollRequestResult")
+			return
+		}
+		result.ManageCreatePollRequestResult = &tv
+	case OperationTypeManageVote:
+		tv, ok := value.(ManageVoteResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageVoteResult")
+			return
+		}
+		result.ManageVoteResult = &tv
 	}
 	return
 }
@@ -38730,6 +42007,81 @@ func (u OperationResultTr) GetLicenseResult() (result LicenseResult, ok bool) {
 	return
 }
 
+// MustManagePollResult retrieves the ManagePollResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustManagePollResult() ManagePollResult {
+	val, ok := u.GetManagePollResult()
+
+	if !ok {
+		panic("arm ManagePollResult is not set")
+	}
+
+	return val
+}
+
+// GetManagePollResult retrieves the ManagePollResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetManagePollResult() (result ManagePollResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManagePollResult" {
+		result = *u.ManagePollResult
+		ok = true
+	}
+
+	return
+}
+
+// MustManageCreatePollRequestResult retrieves the ManageCreatePollRequestResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustManageCreatePollRequestResult() ManageCreatePollRequestResult {
+	val, ok := u.GetManageCreatePollRequestResult()
+
+	if !ok {
+		panic("arm ManageCreatePollRequestResult is not set")
+	}
+
+	return val
+}
+
+// GetManageCreatePollRequestResult retrieves the ManageCreatePollRequestResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetManageCreatePollRequestResult() (result ManageCreatePollRequestResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManageCreatePollRequestResult" {
+		result = *u.ManageCreatePollRequestResult
+		ok = true
+	}
+
+	return
+}
+
+// MustManageVoteResult retrieves the ManageVoteResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustManageVoteResult() ManageVoteResult {
+	val, ok := u.GetManageVoteResult()
+
+	if !ok {
+		panic("arm ManageVoteResult is not set")
+	}
+
+	return val
+}
+
+// GetManageVoteResult retrieves the ManageVoteResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetManageVoteResult() (result ManageVoteResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManageVoteResult" {
+		result = *u.ManageVoteResult
+		ok = true
+	}
+
+	return
+}
+
 // OperationResult is an XDR Union defines as:
 //
 //   union OperationResult switch (OperationResultCode code)
@@ -38809,6 +42161,12 @@ func (u OperationResultTr) GetLicenseResult() (result LicenseResult, ok bool) {
 //            StampResult stampResult;
 //        case LICENSE:
 //            LicenseResult licenseResult;
+//        case MANAGE_POLL:
+//            ManagePollResult managePollResult;
+//        case MANAGE_CREATE_POLL_REQUEST:
+//            ManageCreatePollRequestResult manageCreatePollRequestResult;
+//        case MANAGE_VOTE:
+//            ManageVoteResult manageVoteResult;
 //        }
 //        tr;
 //    case opNO_ENTRY:
@@ -39840,7 +43198,9 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //        SIGNER_RULE = 30,
 //        SIGNER_ROLE = 31,
 //        STAMP = 32,
-//        LICENSE = 33
+//        LICENSE = 33,
+//        POLL = 34,
+//        VOTE = 35
 //    };
 //
 type LedgerEntryType int32
@@ -39877,6 +43237,8 @@ const (
 	LedgerEntryTypeSignerRole                       LedgerEntryType = 31
 	LedgerEntryTypeStamp                            LedgerEntryType = 32
 	LedgerEntryTypeLicense                          LedgerEntryType = 33
+	LedgerEntryTypePoll                             LedgerEntryType = 34
+	LedgerEntryTypeVote                             LedgerEntryType = 35
 )
 
 var LedgerEntryTypeAll = []LedgerEntryType{
@@ -39911,6 +43273,8 @@ var LedgerEntryTypeAll = []LedgerEntryType{
 	LedgerEntryTypeSignerRole,
 	LedgerEntryTypeStamp,
 	LedgerEntryTypeLicense,
+	LedgerEntryTypePoll,
+	LedgerEntryTypeVote,
 }
 
 var ledgerEntryTypeMap = map[int32]string{
@@ -39945,6 +43309,8 @@ var ledgerEntryTypeMap = map[int32]string{
 	31: "LedgerEntryTypeSignerRole",
 	32: "LedgerEntryTypeStamp",
 	33: "LedgerEntryTypeLicense",
+	34: "LedgerEntryTypePoll",
+	35: "LedgerEntryTypeVote",
 }
 
 var ledgerEntryTypeShortMap = map[int32]string{
@@ -39979,6 +43345,8 @@ var ledgerEntryTypeShortMap = map[int32]string{
 	31: "signer_role",
 	32: "stamp",
 	33: "license",
+	34: "poll",
+	35: "vote",
 }
 
 var ledgerEntryTypeRevMap = map[string]int32{
@@ -40013,6 +43381,8 @@ var ledgerEntryTypeRevMap = map[string]int32{
 	"LedgerEntryTypeSignerRole":                       31,
 	"LedgerEntryTypeStamp":                            32,
 	"LedgerEntryTypeLicense":                          33,
+	"LedgerEntryTypePoll":                             34,
+	"LedgerEntryTypeVote":                             35,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -40411,7 +43781,10 @@ type Fee struct {
 //        MANAGE_SIGNER_ROLE = 39,
 //        MANAGE_SIGNER_RULE = 40,
 //        STAMP = 41,
-//        LICENSE = 42
+//        LICENSE = 42,
+//        MANAGE_CREATE_POLL_REQUEST = 43,
+//        MANAGE_POLL = 44,
+//        MANAGE_VOTE = 45
 //    };
 //
 type OperationType int32
@@ -40453,6 +43826,9 @@ const (
 	OperationTypeManageSignerRule                       OperationType = 40
 	OperationTypeStamp                                  OperationType = 41
 	OperationTypeLicense                                OperationType = 42
+	OperationTypeManageCreatePollRequest                OperationType = 43
+	OperationTypeManagePoll                             OperationType = 44
+	OperationTypeManageVote                             OperationType = 45
 )
 
 var OperationTypeAll = []OperationType{
@@ -40492,6 +43868,9 @@ var OperationTypeAll = []OperationType{
 	OperationTypeManageSignerRule,
 	OperationTypeStamp,
 	OperationTypeLicense,
+	OperationTypeManageCreatePollRequest,
+	OperationTypeManagePoll,
+	OperationTypeManageVote,
 }
 
 var operationTypeMap = map[int32]string{
@@ -40531,6 +43910,9 @@ var operationTypeMap = map[int32]string{
 	40: "OperationTypeManageSignerRule",
 	41: "OperationTypeStamp",
 	42: "OperationTypeLicense",
+	43: "OperationTypeManageCreatePollRequest",
+	44: "OperationTypeManagePoll",
+	45: "OperationTypeManageVote",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -40570,6 +43952,9 @@ var operationTypeShortMap = map[int32]string{
 	40: "manage_signer_rule",
 	41: "stamp",
 	42: "license",
+	43: "manage_create_poll_request",
+	44: "manage_poll",
+	45: "manage_vote",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -40609,6 +43994,9 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeManageSignerRule":                       40,
 	"OperationTypeStamp":                                  41,
 	"OperationTypeLicense":                                42,
+	"OperationTypeManageCreatePollRequest":                43,
+	"OperationTypeManagePoll":                             44,
+	"OperationTypeManageVote":                             45,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -40686,4 +44074,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "4cf2da11b80f514ce1bed0dce240a714f9e5e33c"
+var Revision = "d48c37f8b974c6b0807de5267253f48c0e4ce4a6"
