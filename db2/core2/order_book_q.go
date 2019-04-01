@@ -99,6 +99,7 @@ func (q OrderBooksQ) Page(params db2.OffsetPageParams) OrderBooksQ {
 		"order_book_entries.price",
 		"order_book_entries.base_asset_code",
 		"order_book_entries.quote_asset_code",
+		"order_book_entries.is_buy",
 	)
 	return q
 }
