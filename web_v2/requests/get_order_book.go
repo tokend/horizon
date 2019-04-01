@@ -37,7 +37,7 @@ type GetOrderBook struct {
 	Filters struct {
 		BaseAsset  string `fig:"base_asset"`
 		QuoteAsset string `fig:"quote_asset"`
-		IsBuy      bool   `fig:"is_buy"`
+		IsBuy      bool   `fig:"is_buy,required"`
 	}
 
 	PageParams *db2.OffsetPageParams
