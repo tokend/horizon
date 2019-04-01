@@ -100,7 +100,7 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  version = "3"
+  version = "3.2"
 
 [[override]]
   branch = "feature/from-docs"
@@ -128,7 +128,7 @@
 
 [[constraint]]
   name = "gitlab.com/distributed_lab/ape"
-  version = "0.8.0"
+  version = "0.10"
 
 [[override]]
   name = "github.com/google/jsonapi"

@@ -48,6 +48,9 @@ type OperationDetails struct {
 	ManageSale                 *ManageSaleDetails                 `json:"manage_sale,omitempty"`
 	License                    *LicenseDetails                    `json:"license,omitempty"`
 	Stamp                      *StampDetails                      `json:"stamp,omitempty"`
+	ManageCreatePollRequest    *ManageCreatePollRequestDetails    `json:"manage_create_poll_request,omitempty"`
+	ManagePoll                 *ManagePollDetails                 `json:"manage_poll,omitempty"`
+	ManageVote                 *ManageVoteDetails                 `json:"manage_vote,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -443,4 +446,45 @@ type LicenseDetails struct {
 type StampDetails struct {
 	LicenseHash string `json:"license_hash"`
 	LedgerHash  string `json:"ledger_hash"`
+}
+
+type CreatePollRequestDetails struct {
+	PollType                 xdr.PollType      `json:"poll_type"`
+	PermissionType           uint32            `json:"permission_type"`
+	NumberOfChoices          uint32            `json:"number_of_choices"`
+	CreatorDetails           regources.Details `json:"creator_details"`
+	StartTime                time.Time         `json:"start_time"`
+	EndTime                  time.Time         `json:"end_time"`
+	ResultProviderID         string            `json:"result_provider_id"`
+	VoteConfirmationRequired bool              `json:"vote_confirmation_required"`
+	PollData                 xdr.PollData      `json:"poll_data"`
+	AllTasks                 *uint32           `json:"all_tasks,omitempty"`
+	RequestDetails           RequestDetails    `json:"request_details"`
+}
+
+type CancelCreatePollRequestDetails struct {
+	RequestID int64 `json:"request_id"`
+}
+
+type ManageCreatePollRequestDetails struct {
+	Action        xdr.ManageCreatePollRequestAction `json:"action"`
+	CreateDetails *CreatePollRequestDetails         `json:"create_details,omitempty"`
+	CancelDetails *CancelCreatePollRequestDetails   `json:"cancel_details,omitempty"`
+}
+
+type ClosePollData struct {
+	PollResult xdr.PollResult    `json:"poll_result"`
+	Details    regources.Details `json:"details"`
+}
+
+type ManagePollDetails struct {
+	Action    xdr.ManagePollAction `json:"action"`
+	PollID    int64                `json:"poll_id"`
+	ClosePoll *ClosePollData       `json:"close_poll,omitempty"`
+}
+
+type ManageVoteDetails struct {
+	PollID   int64                `json:"poll_id"`
+	Action   xdr.ManageVoteAction `json:"action"`
+	VoteData *xdr.VoteData        `json:"vote_data,omitmepty"`
 }

@@ -310,10 +310,64 @@ func (is *Session) operationDetails() map[string]interface{} {
 			signatures = append(signatures, hex.EncodeToString(v.Signature))
 		}
 		details["signatures"] = signatures
+	case xdr.OperationTypeManageCreatePollRequest:
+		op := c.Operation().Body.MustManageCreatePollRequestOp()
+		opRes := c.OperationResult().MustManageCreatePollRequestResult().MustSuccess()
+		details["action"] = op.Data.Action.String()
+		switch op.Data.Action {
+		case xdr.ManageCreatePollRequestActionCreate:
+			details["poll_type"] = op.Data.MustCreateData().Request.Data.Type.String()
+			details["creator_details"] = op.Data.MustCreateData().Request.CreatorDetails
+			details["start_time"] = op.Data.MustCreateData().Request.StartTime
+			details["end_time"] = op.Data.MustCreateData().Request.EndTime
+			details["number_of_choices"] = op.Data.MustCreateData().Request.NumberOfChoices
+			details["permission_type"] = op.Data.MustCreateData().Request.PermissionType
+			details["result_provider"] = op.Data.MustCreateData().Request.ResultProviderId
+			details["vote_confirmation_required"] = op.Data.MustCreateData().Request.VoteConfirmationRequired
+			details["request_id"] = uint64(opRes.Details.MustResponse().RequestId)
+			details["fulfilled"] = opRes.Details.MustResponse().Fulfilled
+			if op.Data.MustCreateData().AllTasks != nil {
+				details["all_tasks"] = uint32(*op.Data.CreateData.AllTasks)
+			}
+		case xdr.ManageCreatePollRequestActionCancel:
+			details["request_id"] = uint64(op.Data.MustCancelData().RequestId)
+		}
+	case xdr.OperationTypeManagePoll:
+		op := c.Operation().Body.MustManagePollOp()
+		details["action"] = op.Data.Action.String()
+		details["poll_id"] = op.PollId
 
+		switch op.Data.Action {
+
+		case xdr.ManagePollActionClose:
+			details["poll_result"] = op.Data.MustClosePollData().Result.String()
+			details["details"] = op.Data.MustClosePollData().Details
+		}
+	case xdr.OperationTypeManageVote:
+		op := c.Operation().Body.MustManageVoteOp()
+		details["action"] = op.Data.Action.String()
+		switch op.Data.Action {
+		case xdr.ManageVoteActionCreate:
+			details["poll_id"] = op.Data.MustCreateData().PollId
+			details["poll_type"] = op.Data.MustCreateData().Data.PollType.String()
+			details["vote_details"] = getVoteDetils(op.Data.CreateData.Data)
+		case xdr.ManageVoteActionRemove:
+			details["poll_id"] = op.Data.MustRemoveData().PollId
+		}
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
+	return details
+}
+
+func getVoteDetils(data xdr.VoteData) map[string]interface{} {
+	details := make(map[string]interface{})
+	choices := make([]uint64, 0)
+	switch data.PollType {
+	case xdr.PollTypeSingleChoice:
+		choices = append(choices, uint64(data.Single.Choice))
+	}
+	details["choices"] = choices
 	return details
 }
 

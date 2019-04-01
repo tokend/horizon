@@ -1,0 +1,62 @@
+ManageVoteOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-manage-vote"
+
+ManageVoteOp:
+  allOf:
+  - $ref: '#/components/schemas/ManageVoteOpKey'
+  - type: object
+    properties:
+      relationships:
+        type: object
+        nullable: true
+        properties:
+          poll:
+            $ref: '#/components/schemas/PollKey'
+      attributes:
+        type: object
+        required: [action]
+        properties:
+          action:
+            description: |
+               * 0 - create
+               * 1 - remove
+            allOf:
+              - $ref: '#/components/schemas/Enum'
+          create:
+            allOf:
+              - nullable: true
+              - $ref: '#/components/schemas/CreateVoteOp'
+          remove:
+            allOf:
+              - nullable: true
+              - $ref: '#/components/schemas/RemoveVoteOp'
+
+
+
+CreateVoteOp:
+  type: object
+  required: [poll_id, vote_data]
+  properties:
+    poll_id:
+      type: integer
+      description: "id of the poll to vote in"
+      example: 1
+    vote_data:
+      - $ref: '#/components/schemas/VoteData'
+
+RemoveVoteOp:
+  type: object
+  required: [poll_id]
+  properties:
+    poll_id:
+      type: integer
+      description: "id of the poll to remove vote from"
+      example: 1

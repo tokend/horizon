@@ -27,12 +27,20 @@ type Handler struct {
 }
 
 //NewHandler - returns new instance of handler
-func NewHandler(account accountStorage, balance balanceStorage, request reviewableRequestStorage,
-	sale saleStorage, assetPair assetPairStorage) *Handler {
+func NewHandler(account accountStorage,
+	balance balanceStorage,
+	request reviewableRequestStorage,
+	sale saleStorage,
+	assetPair assetPairStorage,
+	poll pollStorage,
+	vote voteStorage,
+) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request)
 	saleHandlerInst := newSaleHandler(sale)
 	assetPairHandler := newAssetPairHandler(assetPair)
+	pollHandlerInst := newPollHandler(poll)
+	voteHandlerInst := newVoteHandler(vote)
 
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{
@@ -41,15 +49,20 @@ func NewHandler(account accountStorage, balance balanceStorage, request reviewab
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:              saleHandlerInst,
 			xdr.LedgerEntryTypeAssetPair:         assetPairHandler,
+			xdr.LedgerEntryTypePoll:              pollHandlerInst,
+			xdr.LedgerEntryTypeVote:              voteHandlerInst,
 		},
 		Update: map[xdr.LedgerEntryType]updatable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:              saleHandlerInst,
 			xdr.LedgerEntryTypeAssetPair:         assetPairHandler,
+			xdr.LedgerEntryTypePoll:              pollHandlerInst,
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:              saleHandlerInst,
+			xdr.LedgerEntryTypePoll:              pollHandlerInst,
+			xdr.LedgerEntryTypeVote:              voteHandlerInst,
 		},
 	}
 }
@@ -69,6 +82,8 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 					LedgerChange:    change,
 					Operation:       &tx.Envelope.Tx.Operations[opI],
 					OperationResult: tx.Result.Result.Result.MustResults()[opI].Tr,
+					OperationIndex:  uint32(opI),
+					TxIndex:         uint32(tx.Index),
 				})
 
 				if err != nil {

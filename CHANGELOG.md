@@ -1,11 +1,19 @@
-## Unreleased
+## 3.1.0-rc.0
 
 ### Added
 
+* `GetTransactionList` handler to handler `v3/transactions` endpoint
 * Messages for new error codes
 * `GetBalanceList` handler to handle `v3/balances` request
 * `GetPublicKeyEntry` handler to handle `v3/public_key_entries/{id}` request
 * Receiver filter for create issuance requests
+* Polls and votes ingestion
+* `GetPollList` to handle `/v3/polls`
+* `GetPoll` to handle `/v3/polls/{id}`
+* `GetVoteList` to handle `/v3/polls/{id}/relationships/votes`
+* `GetVote` to handle `/v3/polls/{id}/relationships/votes{voter}`
+* `GetCreatePollRequests` to handle `/v3/create_poll_requests`, `/v3/create_poll_requests/{id}`
+*  Docs on polls
 
 ### Fixed
 
@@ -14,6 +22,7 @@
 * error on get reviewable request by reviewer
 * order book is now sorted
 * create change role ingestion causing 500 on operations
+* Now Bad Request is correctly returned in case of invalid signature
 
 ### Removed
 

@@ -1,0 +1,51 @@
+LedgerEntryChangeKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "17179869186:17179869186:0"
+    type:
+      type: string
+      enum:
+        - "ledger-entry-changes"
+
+LedgerEntryChange:
+  allOf:
+    - $ref: '#/components/schemas/LedgerEntryChangeKey'
+    - type: object
+      properties:
+        id:
+          type: string
+          example: "17179869186:17179869186:0"
+        type:
+          type: string
+          enum:
+            - "ledger-entry-changes"
+        attributes:
+          type: object
+          properties:
+            change_type:
+              type: object
+              description: "Type of change that was applied to entry"
+              properties:
+                name:
+                  type: string
+                  example: "updated"
+                value:
+                  type: integer
+                  format: int32
+                  example: 1
+            entry_type:
+              type: object
+              description: "Type of entry that was modified"
+              properties:
+                name:
+                  type: string
+                  example: "account"
+                value:
+                  type: integer
+                  format: int32
+                  example: 2
+            payload:
+              type: string
+              example: "AAAAAwAAAAEAAAAaAAAAAAAAAAEAAAABAAAAAAAAAAEAAAACe30AAAAAAAAAAAAA"

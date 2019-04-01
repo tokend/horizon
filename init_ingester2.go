@@ -34,8 +34,15 @@ func initIngester2(app *App) {
 	accountStorage := storage.NewAccount(hRepo, coreRepo)
 	balanceStorage := storage.NewBalance(hRepo, coreRepo, accountStorage)
 
-	ledgerChangesHandler := changes.NewHandler(accountStorage, balanceStorage,
-		storage.NewReviewableRequest(hRepo), storage.NewSale(hRepo), storage.NewAssertPair(hRepo))
+	ledgerChangesHandler := changes.NewHandler(
+		accountStorage,
+		balanceStorage,
+		storage.NewReviewableRequest(hRepo),
+		storage.NewSale(hRepo),
+		storage.NewAssertPair(hRepo),
+		storage.NewPoll(hRepo),
+		storage.NewVote(hRepo),
+	)
 
 	idProvider := struct {
 		*storage.Account
