@@ -12,10 +12,6 @@ SaleKey:
       enum:
         - "sales"
 
-SaleState:
-  type: integer
-  enum:
-
 Sale:
   allOf:
     - $ref: '#/components/schemas/SaleKey'
@@ -122,7 +118,6 @@ SaleRequest:
               * 1 - open
               * 2 - closed
               * 3 - cancelled
-            $ref: '#/components/schemas/SaleState'
           details:
             $ref: '#/components/schemas/Details'
       relationships:

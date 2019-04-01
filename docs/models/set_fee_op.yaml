@@ -55,7 +55,7 @@ SetFeeOp:
               * 8: "atomic_swap_sale_fee"
               * 9: "atomic_swap_purchase_fee"
             allOf:
-            - $ref: '#/components/schemas/xdr.FeeType'
+            - $ref: '#/components/schemas/Enum'
           account_address:
             type: string
             example: "GBSR6JG5AYSAW7HK6EGJFYVIVN54LVGSY3ZLJ6X3IBQZ766EJABCZQTH"

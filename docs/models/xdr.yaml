@@ -754,3 +754,18 @@ xdr.StatsOpType:
     name:
       type: string
 
+xdr.ManagePollAction:
+  type: object
+  properties:
+    value:
+      type: integer
+    name:
+      type: string
+
+xdr.PollResult:
+  type: object
+  properties:
+    value:
+      type: integer
+    name:
+      type: string

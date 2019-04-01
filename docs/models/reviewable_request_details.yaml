@@ -1,18 +1,18 @@
 ReviewableRequestDetails:
   oneOf:
-    - $ref: '#/components/schemas/CreateAssetDetails'
-    - $ref: '#/components/schemas/UpdateAssetDetails'
-    - $ref: '#/components/schemas/CreatePreIssuanceDetails'
-    - $ref: '#/components/schemas/CreateIssuanceDetails'
-    - $ref: '#/components/schemas/CreateWithdrawDetails'
-    - $ref: '#/components/schemas/CreateSaleDetails'
-    - $ref: '#/components/schemas/UpdateLimitsDetails'
-    - $ref: '#/components/schemas/CreateAmlAlertDetails'
-    - $ref: '#/components/schemas/ChangeRoleDetails'
-    - $ref: '#/components/schemas/UpdateSaleDetailsDetails'
-    - $ref: '#/components/schemas/CreateAtomicSwapBidDetails'
-    - $ref: '#/components/schemas/CreateAtomicSwapDetails'
-    - $ref: '#/components/schemas/CreatePollDetails'
+    - $ref: '#/components/schemas/CreateAssetRequest'
+    - $ref: '#/components/schemas/UpdateAssetRequest'
+    - $ref: '#/components/schemas/CreatePreIssuanceRequest'
+    - $ref: '#/components/schemas/CreateIssuanceRequest'
+    - $ref: '#/components/schemas/CreateWithdrawRequest'
+    - $ref: '#/components/schemas/CreateSaleRequest'
+    - $ref: '#/components/schemas/UpdateLimitsRequest'
+    - $ref: '#/components/schemas/CreateAmlAlertRequest'
+    - $ref: '#/components/schemas/ChangeRoleRequest'
+    - $ref: '#/components/schemas/UpdateSaleDetailsRequest'
+    - $ref: '#/components/schemas/CreateAtomicSwapBidRequest'
+    - $ref: '#/components/schemas/CreateAtomicSwapRequest'
+    - $ref: '#/components/schemas/CreatePollRequest'
 
 CreateAssetRequest:
   allOf:
@@ -460,64 +460,50 @@ CreateAtomicSwapRequest:
             details:
               $ref: '#/components/schemas/Details'
 
-CreatePollDetails:
-  type: object
-  properties:
-    id:
-      type: string
-      example: "12"
-    type:
-      type: string
-      enum:
-        - "request-details-create-poll"
-    relationships:
-      type: object
+CreatePollRequest:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      required: [relationships, attributes]
       properties:
-        result_provider:
-          type: object
-          description: "account that is able to finish the poll or confirm votes"
-          properties:
-            data:
-              $ref: '#/components/schemas/AccountKey'
-    attributes:
-      type: object
-      properties:
-        permission_type:
-          type: int
-          format: uint64
-          example: 4
-          description: "is used to restrict using of poll through rules"
-        number_of_choices:
-          type: integer
-          format: uint64
-          example: 2
-          description: "count of allowed choices"
-        start_time:
-          type: string
-          format: date-time
-          example: "2012-11-01T22:08:41Z"
-          description: "the date from which voting in the poll will be allowed"
-        end_time:
-          type: string
-          format: date-time
-          example: "2012-11-01T22:08:41Z"
-          description: "the date until which voting in the poll will be allowed"
-        vote_confirmation_required:
-          type: boolean
-          example: true
-          description: "defines if result provider is required to participate in poll voting"
-        poll_data:
+        relationships:
           type: object
           properties:
-            type:
+            result_provider:
               type: object
+              description: "account that is able to finish the poll or confirm votes."
               properties:
-                name:
-                  type: string
-                  example: "single_choice"
-                value:
-                  type: integer
-                  format: uint64
-                  example: 0
-        creator_details:
-          $ref: '#/components/schemas/Details'
+                data:
+                  $ref: '#/components/schemas/AccountKey'
+        attributes:
+          type: object
+          required: [permission_type, number_of_choices, start_time, end_time, vote_confirmation_required, poll_data, creator_details]
+          properties:
+            permission_type:
+              type: int
+              format: uint32
+              example: 4
+              description: "is used to restrict using of poll through rules"
+            number_of_choices:
+              type: integer
+              format: uint32
+              example: 2
+              description: "count of allowed choices"
+            start_time:
+              type: string
+              format: date-time
+              example: "2012-11-01T22:08:41Z"
+              description: "the date from which voting in the poll will be allowed"
+            end_time:
+              type: string
+              format: date-time
+              example: "2012-11-01T22:08:41Z"
+              description: "the date until which voting in the poll will be allowed"
+            vote_confirmation_required:
+              type: boolean
+              example: true
+              description: "defines if result provider is required to participate in poll voting"
+            poll_data:
+              $ref: '#/components/schemas/PollData'
+            creator_details:
+              $ref: '#/components/schemas/Details'

@@ -18,13 +18,16 @@ ManageCreatePollRequestOp:
         type: object
         nullable: true
         properties:
-          poll:
-            $ref: '#/components/schemas/PollKey'
+          request:
+            $ref: '#/components/schemas/Int64Key'
+          result_provider:
+            $ref: '#/components/schemas/AccountKey'
       attributes:
         type: object
         required: [action]
         properties:
           action:
+            format: xdr.ManageCreatePollRequestAction
             description: |
               * 0 - create
               * 1 - cancel
@@ -67,27 +70,21 @@ CreatePollRequestOp:
       format: date-time
       example: "2012-11-01T22:08:41Z"
       description: "the date until which voting in the poll will be allowed"
+    result_provider_id:
+      type: string
+      example: "GBSR6JG5AYSAW7HK6EGJFYVIVN54LVGSY3ZLJ6X3IBQZ766EJABCZQTH"
+      description: "id of account who could close the poll"
     vote_confirmation_required:
       type: boolean
       example: true
       description: "defines if result provider signature is required to participate in poll voting"
     poll_data:
-      type: object
-      properties:
-        type:
-          type: object
-          properties:
-            name:
-              type: string
-              example: "single_choice"
-            value:
-              type: integer
-              format: uint64
-              example: 0
+      $ref: '#/components/schemas/PollData'
     creator_details:
       $ref: '#/components/schemas/Details'
     all_tasks:
       type: integer
+      format: uint32
       description: tasks set on request creation
       example: 2
       nullable: true

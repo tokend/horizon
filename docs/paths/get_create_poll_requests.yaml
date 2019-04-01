@@ -131,7 +131,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/CreatePollDetails'
+                      - $ref: '#/components/schemas/CreatePollRequest'
                 links:
                   type: object
                   description: "Provides links for pagination"
