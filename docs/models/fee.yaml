@@ -31,7 +31,10 @@ CalculatedFee:
   allOf:
   - $ref: '#/components/schemas/CalculatedFeeKey'
   - type: object
-    $ref: '#/components/schemas/Fee'
+    required: [attributes]
+    properties:
+      attributes:
+        $ref: '#/components/schemas/Fee'
 
 FeeAppliedTo:
   type: object
