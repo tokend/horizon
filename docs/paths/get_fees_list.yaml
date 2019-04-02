@@ -99,7 +99,7 @@
                   type: array
                   items:
                     type: object
-                    $ref: '#/components/schemas/Fee'
+                    $ref: '#/components/schemas/FeeRecord'
                 included:
                   type: array
                   items:

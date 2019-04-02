@@ -1,10 +1,11 @@
 package history
 
 import (
+	"strconv"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/toid"
-	"strconv"
 )
 
 var selectTransaction = sq.Select(

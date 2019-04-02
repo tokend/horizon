@@ -14,6 +14,7 @@ CreateWithdrawRequestOp:
   allOf:
   - $ref: '#/components/schemas/CreateWithdrawRequestOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
@@ -28,7 +29,7 @@ CreateWithdrawRequestOp:
           - creator_details
         properties:
           fee:
-            $ref: '#/components/schemas/CalculatedFeeEntry'
+            $ref: '#/components/schemas/Fee'
           amount:
             type: string
             format: Amount

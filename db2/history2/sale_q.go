@@ -1,10 +1,11 @@
 package history2
 
 import (
+	"time"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
-	"time"
 )
 
 // SalesQ is a helper struct to aid in configuring queries that loads

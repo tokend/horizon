@@ -1,4 +1,4 @@
-CreateAswapRequestOpKey:
+CreateAtomicSwapRequestOpKey:
   type: object
   properties:
     id:
@@ -12,7 +12,27 @@ CreateAswapRequestOpKey:
         - "operations-create-aswap-request"
 
 
-CreateAswapRequestOp:
+CreateAtomicSwapRequestOp:
   allOf:
-    - $ref: '#/components/schemas/CreateAswapRequestOpKey'
-
+    - $ref: '#/components/schemas/CreateAtomicSwapRequestOpKey'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        relationships:
+          type: object
+          properties:
+            request:
+              type: object
+              $ref: '#/components/schemas/Int64Key'
+            base_balance:
+              type: object
+              $ref: '#/components/schemas/BalanceKey'
+            bid:
+              type: object
+              $ref: '#/components/schemas/Int64Key'
+        attributes:
+          type: object
+          properties:
+            base_amount:
+              type: string
+              format: Amount

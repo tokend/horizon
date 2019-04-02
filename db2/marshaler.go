@@ -3,6 +3,7 @@ package db2
 import (
 	"database/sql/driver"
 	"encoding/json"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 

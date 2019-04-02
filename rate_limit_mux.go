@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
-	"gopkg.in/throttled/throttled.v2"
+	throttled "gopkg.in/throttled/throttled.v2"
 	"gopkg.in/throttled/throttled.v2/store/memstore"
 )
 

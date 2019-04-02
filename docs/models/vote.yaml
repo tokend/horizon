@@ -14,15 +14,9 @@ Vote:
   allOf:
     - $ref: '#/components/schemas/VoteKey'
     - type: object
+      x-go-scan-value: true
       required: [relationships, attributes]
       properties:
-        id:
-          type: string
-          example: "1"
-        type:
-          type: string
-          enum:
-            - "votes"
         relationships:
           type: object
           properties:
@@ -40,58 +34,20 @@ Vote:
                   $ref: '#/components/schemas/PollKey'
         attributes:
           type: object
+          required: [vote_data]
           properties:
             vote_data:
               $ref: '#/components/schemas/VoteData'
-
-SingleChoice:
-  type: object
-  required:
-    - poll_type
-  properties:
-    poll_type:
-      type: object
-      description: "poll type"
-      properties:
-        name:
-          type: string
-          description: "name of the flag"
-          example: "single_choice"
-        value:
-          type: integer
-          description: "value of the flag"
-          example: 0
-    choice:
-      type: integer
-      description: "Choice for SingleChoice poll type"
-      example: 1
-
-MultipleChoice:
-  type: object
-  required:
-    - poll_type
-  properties:
-    poll_type:
-      type: object
-      description: "poll type"
-      properties:
-        name:
-          type: string
-          description: "name of the flag"
-          example: "multiple_choice"
-        value:
-          type: integer
-          description: "value of the flag"
-          example: 1
-    choices:
-      type: array
-      items:
-        type: integer
-        description: "Choice for multiple choice poll type"
-        example: 1
-
-
 VoteData:
-  oneOf:
-    - $ref: '#/components/schemas/SingleChoice'
-#    - $ref: '#/components/schemas/MultipleChoice'
+  type: object
+  required: [poll_type]
+  properties:
+    poll_type:
+      type: integer
+      format: xdr.PollType
+      description: "type of the poll"
+    single_choice:
+      type: integer
+      format: uint64
+#    multiple_choice: TODO
+#

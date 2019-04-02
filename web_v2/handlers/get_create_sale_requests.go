@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"gitlab.com/tokend/horizon/web_v2/resources"
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/tokend/horizon/db2/core2"
 
@@ -16,7 +17,6 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/v2"
 )
 
 func GetCreateSaleRequests(w http.ResponseWriter, r *http.Request) {

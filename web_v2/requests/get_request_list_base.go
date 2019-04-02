@@ -1,8 +1,9 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"net/http"
+
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type GetRequestsBase struct {

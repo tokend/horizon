@@ -3,17 +3,17 @@ package resources
 import (
 	"github.com/spf13/cast"
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewExternalSystemID creates new instance of ExternalSystemID from provided one
-func NewExternalSystemID(extSysID core2.ExternalSystemID) *regources.ExternalSystemID {
-	return &regources.ExternalSystemID{
+func NewExternalSystemID(extSysID core2.ExternalSystemID) *regources.ExternalSystemId {
+	return &regources.ExternalSystemId{
 		Key: regources.Key{
 			ID:   cast.ToString(extSysID.ID),
-			Type: regources.TypeExternalSystemID,
+			Type: regources.EXTERNAL_SYSTEM_IDS,
 		},
-		Attributes: regources.ExternalSystemIDAttr{
+		Attributes: regources.ExternalSystemIdAttributes{
 			ExternalSystemType: extSysID.ExternalSystemType,
 			Data:               extSysID.Data,
 			IsDeleted:          extSysID.IsDeleted,

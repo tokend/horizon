@@ -32,12 +32,12 @@ func (h *manageExternalSystemPoolOpHandler) Details(op rawOperation,
 			Data:               string(creationDetails.Data),
 			ExternalSystemType: int32(creationDetails.ExternalSystemType),
 			Parent:             uint64(creationDetails.Parent),
-			PoolID: uint64(opRes.MustManageExternalSystemAccountIdPoolEntryResult().MustSuccess().
+			PoolId: uint64(opRes.MustManageExternalSystemAccountIdPoolEntryResult().MustSuccess().
 				PoolEntryId),
 		}
 	case xdr.ManageExternalSystemAccountIdPoolEntryActionRemove:
 		operationDetails.ManageExternalSystemPool.Remove = &history2.RemoveExternalSystemPoolDetails{
-			PoolID: uint64(manageExternalSystemPoolOp.ActionInput.
+			PoolId: uint64(manageExternalSystemPoolOp.ActionInput.
 				MustDeleteExternalSystemAccountIdPoolEntryActionInput().PoolEntryId),
 		}
 	default:

@@ -5,6 +5,7 @@ import (
 
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core2"
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -12,7 +13,6 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/v2"
 )
 
 func GetCreatePollRequests(w http.ResponseWriter, r *http.Request) {

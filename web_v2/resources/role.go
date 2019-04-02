@@ -5,17 +5,17 @@ import (
 
 	"gitlab.com/tokend/horizon/db2/core2"
 
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewAccountRole - creates role core account Role
 func NewAccountRole(role core2.AccountRole) regources.AccountRole {
 	return regources.AccountRole{
 		Key: NewAccountRoleKey(role.ID),
-		Attributes: regources.AccountRoleAttrs{
+		Attributes: regources.AccountRoleAttributes{
 			Details: role.Details,
 		},
-		Relationships: regources.RoleRelation{
+		Relationships: regources.AccountRoleRelationships{
 			Rules: regources.RelationCollection{},
 		},
 	}
@@ -25,7 +25,7 @@ func NewAccountRole(role core2.AccountRole) regources.AccountRole {
 func NewAccountRoleKey(id uint64) regources.Key {
 	return regources.Key{
 		ID:   strconv.FormatUint(id, 10),
-		Type: regources.TypeAccountRoles,
+		Type: regources.ACCOUNT_ROLES,
 	}
 }
 
@@ -33,10 +33,10 @@ func NewAccountRoleKey(id uint64) regources.Key {
 func NewSignerRole(role core2.SignerRole) regources.SignerRole {
 	return regources.SignerRole{
 		Key: NewSignerRoleKey(role.ID),
-		Attributes: regources.SignerRoleAttrs{
+		Attributes: regources.SignerRoleAttributes{
 			Details: role.Details,
 		},
-		Relationships: regources.SignerRoleRelation{
+		Relationships: regources.SignerRoleRelationships{
 			Owner: NewAccountKey(role.OwnerID).AsRelation(),
 			Rules: &regources.RelationCollection{},
 		},
@@ -47,6 +47,6 @@ func NewSignerRole(role core2.SignerRole) regources.SignerRole {
 func NewSignerRoleKey(id uint64) regources.Key {
 	return regources.Key{
 		ID:   strconv.FormatUint(id, 10),
-		Type: regources.TypeSignerRoles,
+		Type: regources.SIGNER_ROLES,
 	}
 }

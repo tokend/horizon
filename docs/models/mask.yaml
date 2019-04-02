@@ -1,6 +1,6 @@
-AssetPolicyMask:
+Mask:
   type: object
-  description: "Represents a bit mask for the asset policy"
+  description: "Represents a bit mask"
   properties:
     value:
       type: integer
@@ -16,32 +16,7 @@ AssetPolicyMask:
           name:
             type: string
             description: "name of the flag"
-            example: "transferable"
           value:
             type: integer
             description: "value of the flag"
             example: 2
-
-AssetPairPolicyMask:
-  type: object
-  description: "Represents a bit mask for the asset pair policy"
-  properties:
-    value:
-      type: integer
-      description: "bit mask"
-      format: int32
-      example: 4
-    flags:
-      type: array
-      items:
-        type: object
-        description: "flag of a bit mask"
-        properties:
-          name:
-            type: string
-            description: "name of the flag"
-            example: "tradeable_secondary_market"
-          value:
-            type: integer
-            description: "value of the flag"
-            example: 1

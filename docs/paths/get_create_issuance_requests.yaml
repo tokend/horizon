@@ -123,7 +123,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/CreateIssuanceDetails'
+                      - $ref: '#/components/schemas/CreateIssuanceRequest'
                       - $ref: '#/components/schemas/Asset'
                 links:
                   type: object

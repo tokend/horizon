@@ -2,6 +2,9 @@ package db2
 
 import (
 	"database/sql/driver"
+	"encoding/json"
+
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -25,4 +28,12 @@ func (r *Details) Scan(src interface{}) error {
 	}
 
 	return nil
+}
+
+func (r *Details) ToRawMessage() regources.Details {
+	bytes, err := json.Marshal(r)
+	if err != nil {
+		panic(err)
+	}
+	return regources.Details(bytes)
 }

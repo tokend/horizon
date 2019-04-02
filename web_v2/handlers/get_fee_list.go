@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetFeeList - processes request to get the list of fees
@@ -48,7 +48,7 @@ type getFeeListHandler struct {
 }
 
 // GetFeeList returns the list of fees with related resources
-func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources.FeesResponse, error) {
+func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources.FeeRecordsResponse, error) {
 	q := h.FeesQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeFeeListAccount) {
 		q = q.FilterByAddress(request.Filters.Account)
@@ -82,7 +82,7 @@ func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources
 		return nil, errors.Wrap(err, "Failed to get fee list")
 	}
 
-	response := &regources.FeesResponse{
+	response := &regources.FeeRecordsResponse{
 		Data:  make([]regources.FeeRecord, 0, len(fees)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

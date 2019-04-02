@@ -1,13 +1,14 @@
 package requests
 
 import (
-	"github.com/spf13/cast"
 	"net/http"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/spf13/cast"
 
 	"gitlab.com/tokend/go/amount"
 
@@ -18,11 +19,11 @@ import (
 	"math"
 
 	"github.com/go-chi/chi"
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 const (

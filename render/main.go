@@ -5,9 +5,9 @@ import (
 
 	"bitbucket.org/ww/goautoneg"
 	"gitlab.com/tokend/horizon/log"
-	"golang.org/x/net/context"
-	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/render/jsonapi"
+	"gitlab.com/tokend/horizon/render/problem"
+	"golang.org/x/net/context"
 )
 
 // Negotiate inspects the Accept header of the provided request and determines
