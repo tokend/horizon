@@ -286,7 +286,7 @@ type ManageAssetDetails struct {
 	Action            xdr.ManageAssetAction `json:"action"`
 	Policies          *xdr.AssetPolicy      `json:"policies,omitempty"`
 	CreatorDetails    regources.Details     `json:"creator_details,omitempty"`
-	PreissuedSigner   string                `json:"preissued_signer,omitempty"`
+	PreIssuanceSigner string                `json:"pre_issuance_signer,omitempty"`
 	MaxIssuanceAmount regources.Amount      `json:"max_issuance_amount,omitempty"`
 }
 

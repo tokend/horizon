@@ -264,7 +264,7 @@ func newManageAssetOp(id int64, details history2.ManageAssetDetails) *regources.
 			Action:            details.Action,
 			Policies:          details.Policies,
 			CreatorDetails:    details.CreatorDetails,
-			PreIssuanceSigner: details.PreissuedSigner,
+			PreIssuanceSigner: details.PreIssuanceSigner,
 			MaxIssuanceAmount: details.MaxIssuanceAmount,
 		},
 		Relationships: regources.ManageAssetOpRelationships{

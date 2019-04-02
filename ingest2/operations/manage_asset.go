@@ -39,7 +39,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		opDetails.ManageAsset.Type = uint64(creationDetails.Type)
 		opDetails.ManageAsset.CreatorDetails = internal.MarshalCustomDetails(creationDetails.CreatorDetails)
 		opDetails.ManageAsset.Policies = &policies
-		opDetails.ManageAsset.PreissuedSigner = creationDetails.PreissuedAssetSigner.Address()
+		opDetails.ManageAsset.PreIssuanceSigner = creationDetails.PreissuedAssetSigner.Address()
 		opDetails.ManageAsset.MaxIssuanceAmount = regources.Amount(creationDetails.MaxIssuanceAmount)
 	case xdr.ManageAssetActionCreateAssetUpdateRequest:
 		updateDetails := manageAssetOp.Request.MustCreateAssetUpdateRequest().UpdateAsset
@@ -54,7 +54,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		data := manageAssetOp.Request.MustChangePreissuedSigner()
 
 		opDetails.ManageAsset.AssetCode = string(data.Code)
-		opDetails.ManageAsset.PreissuedSigner = data.AccountId.Address()
+		opDetails.ManageAsset.PreIssuanceSigner = data.AccountId.Address()
 	case xdr.ManageAssetActionUpdateMaxIssuance:
 		data := manageAssetOp.Request.MustUpdateMaxIssuance()
 
