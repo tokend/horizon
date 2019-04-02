@@ -103,7 +103,7 @@
   version = "3.2"
 
 [[override]]
-  branch = "feature/from-docs"
+  version = "4"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
