@@ -1,6 +1,8 @@
 package history2
 
-import "gitlab.com/tokend/regources/v2"
+import (
+	regources "gitlab.com/tokend/regources/generated"
+)
 
 // Vote - represents choice of voting campaign participant
 type Vote struct {

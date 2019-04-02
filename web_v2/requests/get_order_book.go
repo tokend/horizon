@@ -1,8 +1,9 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"net/http"
+
+	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -66,7 +67,7 @@ func NewGetOrderBook(r *http.Request) (*GetOrderBook, error) {
 	request := GetOrderBook{
 		base:       b,
 		PageParams: pageParams,
-		ID: id,
+		ID:         id,
 	}
 
 	err = b.populateFilters(&request.Filters)

@@ -2,13 +2,12 @@ package history2
 
 import (
 	"database/sql/driver"
-
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // OperationDetails - stores details of the operation performed in union switch form.
@@ -183,23 +182,23 @@ type UpdateSignerRoleDetails struct {
 
 //ManageKeyValueDetails - details of ManageKeyValueOp
 type ManageKeyValueDetails struct {
-	Key    string                        `json:"key"`
 	Action xdr.ManageKvAction            `json:"action"`
+	Key    string                        `json:"key"`
 	Value  *regources.KeyValueEntryValue `json:"value,omitempty"`
 }
 
 //SetFeeDetails - details of SetFeeOp
 type SetFeeDetails struct {
-	AssetCode      string           `json:"asset_code"`
-	FixedFee       regources.Amount `json:"fixed_fee"`
-	PercentFee     regources.Amount `json:"percent_fee"`
-	FeeType        xdr.FeeType      `json:"fee_type"`
 	AccountAddress *string          `json:"account_address,omitempty"`
 	AccountRole    *xdr.Uint64      `json:"account_role,omitempty"`
-	Subtype        int64            `json:"subtype"`
-	LowerBound     regources.Amount `json:"lower_bound"`
-	UpperBound     regources.Amount `json:"upper_bound"`
+	AssetCode      string           `json:"asset_code"`
+	FeeType        xdr.FeeType      `json:"fee_type"`
+	FixedFee       regources.Amount `json:"fixed_fee"`
 	IsDelete       bool             `json:"is_delete"`
+	LowerBound     regources.Amount `json:"lower_bound"`
+	PercentFee     regources.Amount `json:"percent_fee"`
+	Subtype        int64            `json:"subtype"`
+	UpperBound     regources.Amount `json:"upper_bound"`
 	// FeeAsset deprecated
 }
 
@@ -287,7 +286,7 @@ type ManageAssetDetails struct {
 	Action            xdr.ManageAssetAction `json:"action"`
 	Policies          *xdr.AssetPolicy      `json:"policies,omitempty"`
 	CreatorDetails    regources.Details     `json:"creator_details,omitempty"`
-	PreissuedSigner   string                `json:"preissued_signer,omitempty"`
+	PreIssuanceSigner string                `json:"pre_issuance_signer,omitempty"`
 	MaxIssuanceAmount regources.Amount      `json:"max_issuance_amount,omitempty"`
 }
 
@@ -413,15 +412,15 @@ type ManageExternalSystemPoolDetails struct {
 
 //CreateExternalSystemPoolDetails - details of corresponding op
 type CreateExternalSystemPoolDetails struct {
-	PoolID             uint64 `json:"pool_id"`
 	Data               string `json:"data"`
-	Parent             uint64 `json:"parent"`
 	ExternalSystemType int32  `json:"external_system_type"`
+	Parent             uint64 `json:"parent"`
+	PoolId             uint64 `json:"pool_id"`
 }
 
 //RemoveExternalSystemPoolDetails - details of corresponding op
 type RemoveExternalSystemPoolDetails struct {
-	PoolID uint64 `json:"pool_id"`
+	PoolId uint64 `json:"pool_id"`
 }
 
 //BindExternalSystemAccountDetails - details of corresponding op
@@ -431,8 +430,8 @@ type BindExternalSystemAccountDetails struct {
 
 //ManageSaleDetails - details of corresponding op
 type ManageSaleDetails struct {
-	SaleID uint64               `json:"sale_id"`
 	Action xdr.ManageSaleAction `json:"action"`
+	SaleId uint64               `json:"sale_id"`
 }
 
 type LicenseDetails struct {

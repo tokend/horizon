@@ -16,3 +16,57 @@ EffectKey:
       - "effects-charged-from-locked"
       - "effects-matched"
 
+ParticularBalanceChangeEffect:
+  type: object
+  required: [amount, fee, balance_address, asset_code]
+  properties:
+    amount:
+      type: string
+      format: Amount
+    fee:
+      $ref: '#/components/schemas/Fee'
+    balance_address:
+      type: string
+    asset_code:
+      type: string
+
+
+EffectMatched:
+  allOf:
+    - $ref: '#/components/schemas/EffectKey'
+    - type: object
+      required: [attributes]
+      properties:
+        attributes:
+          type: object
+          required: [offer_id, order_book_id, price, charged, funded]
+          properties:
+            offer_id:
+              type: integer
+              format: int64
+            order_book_id:
+              type: integer
+              format: int64
+            price:
+              type: string
+              format: Amount
+            charged:
+              $ref: '#/components/schemas/ParticularBalanceChangeEffect'
+            funded:
+              $ref: '#/components/schemas/ParticularBalanceChangeEffect'
+
+EffectBalanceChange:
+  allOf:
+    - $ref: '#/components/schemas/EffectKey'
+    - type: object
+      required: [attributes]
+      properties:
+        attributes:
+          type: object
+          required: [amount, fee]
+          properties:
+            amount:
+              type: string
+              format: Amount
+            fee:
+              $ref: '#/components/schemas/Fee'

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rcrowley/go-metrics"
+	metrics "github.com/rcrowley/go-metrics"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/txsub"
@@ -23,7 +23,7 @@ import (
 	"gitlab.com/tokend/horizon/render/sse"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
-	"gopkg.in/tylerb/graceful.v1"
+	graceful "gopkg.in/tylerb/graceful.v1"
 )
 
 // You can override this variable using: gb build -ldflags "-X main.version aabbccdd"

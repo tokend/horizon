@@ -16,6 +16,7 @@ OrderBookEntry:
   allOf:
   - $ref: '#/components/schemas/OrderBookEntryKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       attributes:
         type: object
@@ -27,22 +28,22 @@ OrderBookEntry:
           - created_at
         properties:
           is_buy:
-            type: bool
+            type: boolean
             description: "defines whether an offer is on buying or selling the base_asset" # FIXME ?
             example: false
           price:
             type: string
-            format: float
+            format: Amount
             description: "defines the price of an offer"
             example: "33.050000"
           base_amount:
             type: string
-            format: float
+            format: Amount
             description: "defines the base amount of an offer"
             example: "33.050000"
           quote_amount:
             type: string
-            format: float
+            format: Amount
             description: "defines the quote amount of an offer"
             example: "1092.302500"
           created_at:

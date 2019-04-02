@@ -8,7 +8,7 @@ PollKey:
       type: string
       enum:
         - "polls"
-OutcomeKey:
+PollParticipationKey:
   type: object
   properties:
     id:
@@ -19,10 +19,22 @@ OutcomeKey:
       enum:
         - "poll-outcome"
 
+PollData:
+  type: object
+  required: [type]
+  properties:
+    type:
+      format: xdr.PollType
+      description: |
+        * 0: "single_choice"
+      allOf:
+        - $ref: '#/components/schemas/Enum'
+
 Poll:
   allOf:
     - $ref: '#/components/schemas/PollKey'
     - type: object
+      x-go-scan-value: true
       required: [relationships, attributes]
       properties:
         id:
@@ -47,25 +59,24 @@ Poll:
               properties:
                 data:
                   $ref: '#/components/schemas/AccountKey'
-            outcome:
+            participation:
               type: object
               description: "poll outcome"
               properties:
                 data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/OutcomeKey'
+                  $ref: '#/components/schemas/PollParticipationKey'
         attributes:
           type: object
+          required: [permission_type, number_of_choices, start_time, end_time, vote_confirmation_required, poll_state, poll_data, creator_details]
           properties:
             permission_type:
               type: integer
-              format: uint64
+              format: uint32
               example: 4
               description: "is used to restrict using of poll through rules"
             number_of_choices:
               type: integer
-              format: uint64
+              format: uint32
               example: 2
               description: "count of allowed choices"
             start_time:
@@ -83,44 +94,27 @@ Poll:
               example: true
               description: "defines if result provider is required to participate in poll voting"
             poll_state:
-              type: object
+              type: integer
+              format: PollState
               description: |
                 * 1 - open
                 * 2 - passed
                 * 3 - failed
-              properties:
-                name:
-                  type: string
-                  description: "name of the flag"
-                  example: "open"
-                value:
-                  type: integer
-                  description: "value of the flag"
-                  example: 1
             poll_data:
-              type: object
-              properties:
-                type:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      example: "single_choice"
-                    value:
-                      type: integer
-                      format: uint64
-                      example: 0
+              $ref: '#/components/schemas/PollData'
             creator_details:
               $ref: '#/components/schemas/Details'
 
-Outcome:
+PollParticipation:
   allOf:
-    - $ref: '#/components/schemas/OutcomeKey'
+    - $ref: '#/components/schemas/PollParticipationKey'
     - type: object
       required: [relationships]
       properties:
         relationships:
-          votes:
-            type: array
-            items:
-              $ref: '#/components/schemas/VoteKey'
+          type: object
+          properties:
+            votes:
+              type: array
+              items:
+                $ref: '#/components/schemas/VoteKey'

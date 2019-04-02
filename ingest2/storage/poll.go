@@ -6,7 +6,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // CreatePoll is helper struct to operate with `polls`

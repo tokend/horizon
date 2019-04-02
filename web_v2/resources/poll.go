@@ -2,15 +2,15 @@ package resources
 
 import (
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 func NewPollKey(ID int64) regources.Key {
-	return regources.NewKeyInt64(ID, regources.TypePolls)
+	return regources.NewKeyInt64(ID, regources.POLLS)
 }
 
 func NewParticipationKey(ID int64) regources.Key {
-	return regources.NewKeyInt64(ID, regources.TypePollsParticipation)
+	return regources.NewKeyInt64(ID, regources.POLLS_PARTICIPATION)
 }
 
 func NewPoll(record history2.Poll) regources.Poll {
@@ -22,11 +22,11 @@ func NewPoll(record history2.Poll) regources.Poll {
 			NumberOfChoices:          record.NumberOfChoices,
 			StartTime:                record.StartTime,
 			EndTime:                  record.EndTime,
-			Details:                  record.Details,
+			CreatorDetails:           record.Details,
 			PollData:                 record.Data,
 			PollState:                record.State,
 		},
-		Relationships: regources.PollRelations{
+		Relationships: regources.PollRelationships{
 			ResultProvider: NewAccountKey(record.ResultProviderID).AsRelation(),
 			Owner:          NewAccountKey(record.OwnerID).AsRelation(),
 			Participation:  NewParticipationKey(record.ID).AsRelation(),
@@ -36,14 +36,13 @@ func NewPoll(record history2.Poll) regources.Poll {
 func NewParticipation(id int64, historyVotes []history2.Vote) regources.PollParticipation {
 	outcome := regources.PollParticipation{
 		Key: NewParticipationKey(id),
-		Relationships: regources.PollParticipationRelations{
+		Relationships: regources.PollParticipationRelationships{
 			Votes: &regources.RelationCollection{},
 		},
 	}
 	for _, v := range historyVotes {
 		vote := NewVoteKey(v.VoterID)
-		outcome.Relationships.Votes.Data = append(outcome.Relationships.Votes.Data,
-			vote)
+		outcome.Relationships.Votes.Data = append(outcome.Relationships.Votes.Data, vote)
 	}
 
 	return outcome

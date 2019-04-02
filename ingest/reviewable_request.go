@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"time"
 
+	"gitlab.com/tokend/regources"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/regources"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {

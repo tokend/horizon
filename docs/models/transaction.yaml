@@ -11,17 +11,14 @@ TransactionKey:
 
 Transaction:
   allOf:
+    - $ref: '#/components/schemas/TransactionKey'
     - type: object
+      x-go-needs-meta: true
+      required: [attributes, relationships]
       properties:
-        id:
-          type: string
-          example: "17179869186"
-        type:
-          type: string
-          enum:
-            - "transactions"
         attributes:
           type: object
+          required: [hash, ledger_sequence, created_at, envelope_xdr, result_xdr, result_meta_xdr]
           properties:
             hash:
               type: string
@@ -69,3 +66,13 @@ Transaction:
               type: array
               items:
                 $ref: '#/components/schemas/LedgerEntryChangeKey'
+
+TransactionResponseMeta:
+  type: object
+  required: [latest_ledger_sequence, latest_ledger_close_time]
+  properties:
+    latest_ledger_sequence:
+      type: integer
+    latest_ledger_close_time:
+      type: string
+      format: date-time

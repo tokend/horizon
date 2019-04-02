@@ -13,6 +13,7 @@ ManageVoteOp:
   allOf:
   - $ref: '#/components/schemas/ManageVoteOpKey'
   - type: object
+    required: [attributes, relationships]
     properties:
       relationships:
         type: object
@@ -20,24 +21,25 @@ ManageVoteOp:
         properties:
           poll:
             $ref: '#/components/schemas/PollKey'
+          voter:
+            $ref: '#/components/schemas/AccountKey'
+          result_provider:
+            $ref: '#/components/schemas/AccountKey'
       attributes:
         type: object
         required: [action]
         properties:
           action:
+            format: xdr.ManageVoteAction
             description: |
                * 0 - create
                * 1 - remove
             allOf:
               - $ref: '#/components/schemas/Enum'
           create:
-            allOf:
-              - nullable: true
-              - $ref: '#/components/schemas/CreateVoteOp'
+            $ref: '#/components/schemas/CreateVoteOp'
           remove:
-            allOf:
-              - nullable: true
-              - $ref: '#/components/schemas/RemoveVoteOp'
+            $ref: '#/components/schemas/RemoveVoteOp'
 
 
 
@@ -47,10 +49,11 @@ CreateVoteOp:
   properties:
     poll_id:
       type: integer
+      format: int64
       description: "id of the poll to vote in"
       example: 1
     vote_data:
-      - $ref: '#/components/schemas/VoteData'
+      $ref: '#/components/schemas/VoteData'
 
 RemoveVoteOp:
   type: object
@@ -58,5 +61,6 @@ RemoveVoteOp:
   properties:
     poll_id:
       type: integer
+      format: int64
       description: "id of the poll to remove vote from"
       example: 1

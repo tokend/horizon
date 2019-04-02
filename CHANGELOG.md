@@ -1,3 +1,19 @@
+## Unreleased
+
+### Removed
+
+* dependency from regources/v2
+
+### Fixed
+
+* all docs for proper regources generation
+* `ManageAssetOpAttributes.PreissuanceSigner` -> `ManageAssetOpAttributes.PreIssuanceSigner`
+* json: `preissued_signer` -> `pre_issuance_signer`
+
+### Added 
+
+* generated regources/generated in vendor
+
 ## 3.1.0-rc.0
 
 ### Added

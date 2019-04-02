@@ -2,10 +2,11 @@ package resources
 
 import (
 	"fmt"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 func newLedgerEntryID(historyChange history2.LedgerChanges) string {
@@ -22,7 +23,7 @@ func newLedgerEntryID(historyChange history2.LedgerChanges) string {
 func NewLedgerEntryChangeKey(historyChange history2.LedgerChanges) regources.Key {
 	return regources.Key{
 		ID:   newLedgerEntryID(historyChange),
-		Type: regources.TypeLedgerEntryChanges,
+		Type: regources.LEDGER_ENTRY_CHANGES,
 	}
 }
 
@@ -40,7 +41,7 @@ func NewLedgerEntryChange(historyChange history2.LedgerChanges) (*regources.Ledg
 
 	return &regources.LedgerEntryChange{
 		Key: NewLedgerEntryChangeKey(historyChange),
-		Attributes: regources.LedgerEntryChangeAttrs{
+		Attributes: regources.LedgerEntryChangeAttributes{
 			Payload:    strPayload,
 			ChangeType: xdr.LedgerEntryChangeType(historyChange.Effect),
 			EntryType:  xdr.LedgerEntryType(historyChange.EntryType),

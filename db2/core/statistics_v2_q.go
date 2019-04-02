@@ -2,9 +2,10 @@ package core
 
 import (
 	"database/sql"
+	"time"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"time"
 )
 
 var selectStatisticsV2 = sq.Select("st.id",

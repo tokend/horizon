@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/go-errors/errors"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
-	"net/http"
-	"strconv"
 )
 
 type ErrorObject struct {

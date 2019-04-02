@@ -42,13 +42,10 @@ ReviewableRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
-          required:
-            - requestor
-            - reviewer
-            - request_details
           properties:
             requestor:
               description: "Requestor is a source account of the request (i.e., an account that created the request)."
@@ -82,6 +79,8 @@ ReviewableRequest:
             - updated_at
             - state
             - state_i
+            - external_details
+            - xdr_type
           properties:
             reject_reason:
               type: string
@@ -93,10 +92,12 @@ ReviewableRequest:
               example: "13935d561f9ec54341243e6afaf0c8bf936928b07f6600204ba8ca550757d0a6"
             all_tasks:
               type: integer
+              format: uint32
               description: "All tasks that have been set for a request"
               example: 12
             pending_tasks:
               type: integer
+              format: uint32
               description: "Tasks that have not been removed yet"
               example: 2
             created_at:
@@ -123,3 +124,6 @@ ReviewableRequest:
               example: "719111a51cfc5ad214e4e90ce6610f10e1cba165fd1bc9db73a031352b3bb61c"
             external_details:
               $ref: '#/components/schemas/Details'
+            xdr_type:
+              type: integer
+              format: xdr.ReviewableRequestType

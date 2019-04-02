@@ -10,4 +10,5 @@ CancelSaleRequestOpKey:
         - "operations-cancel-sale-request"
 
 CancelSaleRequestOp:
-  $ref: '#/components/schemas/CancelSaleRequestOpKey'
+  allOf:
+    - $ref: '#/components/schemas/CancelSaleRequestOpKey'

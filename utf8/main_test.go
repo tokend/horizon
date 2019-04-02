@@ -1,8 +1,9 @@
 package utf8
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestScrub(t *testing.T) {

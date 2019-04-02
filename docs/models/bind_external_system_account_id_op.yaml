@@ -13,6 +13,7 @@ BindExternalSystemAccountIdOp:
   allOf:
   - $ref: '#/components/schemas/BindExternalSystemAccountIdOpKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object

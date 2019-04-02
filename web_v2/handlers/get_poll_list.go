@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	regources "gitlab.com/tokend/regources/generated"
+
 	"gitlab.com/tokend/horizon/db2/history2"
 
 	"gitlab.com/distributed_lab/ape"
@@ -12,7 +14,6 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
 )
 
 // GetPollList - processes request to get the list of sales

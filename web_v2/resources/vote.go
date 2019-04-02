@@ -2,13 +2,13 @@ package resources
 
 import (
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 func NewVoteKey(voterID string) regources.Key {
 	return regources.Key{
 		ID:   voterID,
-		Type: regources.TypeVotes,
+		Type: regources.VOTES,
 	}
 }
 
@@ -18,7 +18,7 @@ func NewVote(record history2.Vote) regources.Vote {
 		Attributes: regources.VoteAttributes{
 			VoteData: record.VoteData,
 		},
-		Relationships: regources.VoteRelations{
+		Relationships: regources.VoteRelationships{
 			Voter: NewAccountKey(record.VoterID).AsRelation(),
 			Poll:  NewPollKey(record.PollID).AsRelation(),
 		},

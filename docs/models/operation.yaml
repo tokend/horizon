@@ -13,18 +13,23 @@ Operation:
   allOf:
     - $ref: '#/components/schemas/OperationKey'
     - type: object
+      required: [relationships, attributes]
       properties:
         relationships:
           type: object
           properties:
             tx:
+              type: object
               $ref: '#/components/schemas/TransactionKey'
             source:
+              type: object
               $ref: '#/components/schemas/AccountKey'
             details:
+              type: object
               $ref: '#/components/schemas/OperationDetailsKey'
         attributes:
           type: object
+          required: [applied_at]
           properties:
             applied_at:
               type: string

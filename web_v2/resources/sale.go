@@ -3,12 +3,12 @@ package resources
 import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //NewSaleKey - creates new Key for asset
 func NewSaleKey(id int64) regources.Key {
-	return regources.NewKeyInt64(id, regources.TypeSales)
+	return regources.NewKeyInt64(id, regources.SALES)
 }
 
 // NewSale - creates new instance of Sale
@@ -23,14 +23,14 @@ func NewSale(record history2.Sale) regources.Sale {
 
 	return regources.Sale{
 		Key: NewSaleKey(int64(record.ID)),
-		Attributes: regources.SaleAttrs{
+		Attributes: regources.SaleAttributes{
 			StartTime: record.StartTime,
 			EndTime:   record.EndTime,
 			SaleType:  record.SaleType,
 			SaleState: record.State,
 			Details:   record.Details,
 		},
-		Relationships: regources.SaleRelations{
+		Relationships: regources.SaleRelationships{
 			Owner:             NewAccountKey(record.OwnerAddress).AsRelation(),
 			BaseAsset:         NewAssetKey(record.BaseAsset).AsRelation(),
 			QuoteAssets:       quoteAssets,
@@ -43,13 +43,13 @@ func NewSale(record history2.Sale) regources.Sale {
 func NewSaleDefaultQuoteAsset(saleRecord history2.Sale) regources.SaleQuoteAsset {
 	return regources.SaleQuoteAsset{
 		Key: *NewSaleQuoteAssetKey(saleRecord.DefaultQuoteAsset).GetKeyP(),
-		Attributes: regources.SaleQuoteAssetAttrs{
+		Attributes: regources.SaleQuoteAssetAttributes{
 			Price:      amount.One,
 			CurrentCap: saleRecord.CurrentCap,
 			HardCap:    saleRecord.HardCap,
 			SoftCap:    saleRecord.SoftCap,
 		},
-		Relationships: regources.SaleQuoteAssetRelations{
+		Relationships: regources.SaleQuoteAssetRelationships{
 			Asset: NewAssetKey(saleRecord.DefaultQuoteAsset).AsRelation(),
 		},
 	}

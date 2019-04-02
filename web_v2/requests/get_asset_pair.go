@@ -1,10 +1,11 @@
 package requests
 
 import (
-	"github.com/go-ozzo/ozzo-validation"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"net/http"
 	"strings"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 const (
