@@ -18,7 +18,7 @@ func NewOffer(record core2.Offer) regources.Offer {
 		Attributes: regources.OfferAttributes{
 			IsBuy:       record.IsBuy,
 			OrderBookId: fmt.Sprint(record.OrderBookID),
-			CreatedAt:   time.Unix(record.CreatedAt, 0).UTC().Format(time.RFC3339),
+			CreatedAt:   time.Unix(record.CreatedAt, 0).UTC(),
 			BaseAmount:  regources.Amount(record.BaseAmount),
 			QuoteAmount: regources.Amount(record.QuoteAmount),
 			Price:       regources.Amount(record.Price),

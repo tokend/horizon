@@ -23,4 +23,4 @@ CancelAtomicSwapBidOp:
         properties:
           bid:
             type: object
-            $ref: '#/components/schemas/Int64Key' # FIXME it's a kostyl for proper generation
+            $ref: '#/components/schemas/Int64Key'
