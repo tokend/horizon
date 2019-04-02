@@ -9,6 +9,11 @@
 * all docs for proper regources generation
 * `ManageAssetOpAttributes.PreissuanceSigner` -> `ManageAssetOpAttributes.PreIssuanceSigner`
 * json: `preissued_signer` -> `pre_issuance_signer`
+* order book entries sorting by price in alphabetical order 
+
+### Changed
+
+* `filter[is_buy]` on `/v3/order-book/{id}` is now required
 
 ### Added 
 
