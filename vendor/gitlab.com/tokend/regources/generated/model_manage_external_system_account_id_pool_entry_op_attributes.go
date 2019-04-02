@@ -1,3 +1,7 @@
+/*
+ * GENERATED. Do not modify. Your changes might be overwritten!
+ */
+
 package regources
 
 import "gitlab.com/tokend/go/xdr"
