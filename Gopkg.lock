@@ -543,15 +543,14 @@
 
 [[projects]]
   branch = "feature/from-docs"
-  digest = "1:e1eebe8e34c70149bd4f7a650ddb852fc964cc6b910e7ab62e4be4b2c3c5d904"
+  digest = "1:28e69b3eb2c06588169dd292b838ef60a8a141a6da71d9c4da60175001bf5b77"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
-    "rgenerated",
-    "v2",
+    "generated",
   ]
   pruneopts = "UT"
-  revision = "8870d7d23c070668473c04a8c4e8047e47b8558b"
+  revision = "26b8da57aefa43dedf53a9854f006289161c7779"
 
 [[projects]]
   branch = "master"
@@ -705,8 +704,7 @@
     "gitlab.com/tokend/go/strkey",
     "gitlab.com/tokend/go/xdr",
     "gitlab.com/tokend/regources",
-    "gitlab.com/tokend/regources/rgenerated",
-    "gitlab.com/tokend/regources/v2",
+    "gitlab.com/tokend/regources/generated",
     "golang.org/x/net/context",
     "golang.org/x/net/http2",
     "gopkg.in/throttled/throttled.v2",

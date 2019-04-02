@@ -1,0 +1,9 @@
+package regources
+
+type CreateExternalSystemPoolOp struct {
+	Data               string `json:"data"`
+	ExternalSystemType int32  `json:"external_system_type"`
+	Parent             uint64 `json:"parent"`
+	// ID of external system pool
+	PoolId uint64 `json:"pool_id"`
+}
