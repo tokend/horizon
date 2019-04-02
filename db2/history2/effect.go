@@ -5,7 +5,7 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // EffectType describe the effect of some operation to the account or particular balance
@@ -69,7 +69,7 @@ func (r *Effect) Scan(src interface{}) error {
 type MatchEffect struct {
 	OfferID     int64                         `json:"offer_id"`
 	OrderBookID int64                         `json:"order_book_id"`
-	Price       rgenerated.Amount             `json:"price"`
+	Price       regources.Amount              `json:"price"`
 	Charged     ParticularBalanceChangeEffect `json:"charged"`
 	Funded      ParticularBalanceChangeEffect `json:"funded"`
 }
@@ -83,6 +83,6 @@ type ParticularBalanceChangeEffect struct {
 
 // BalanceChangeEffect - describes movement of funds
 type BalanceChangeEffect struct {
-	Amount rgenerated.Amount `json:"amount"`
-	Fee    rgenerated.Fee    `json:"fee"`
+	Amount regources.Amount `json:"amount"`
+	Fee    regources.Fee    `json:"fee"`
 }

@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -9,8 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
-	"net/http"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetTransactions - processes request to get the list of transactions (with ledger changes)
@@ -140,7 +141,7 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 
 	result.Meta = regources.TransactionResponseMeta{
 		LatestLedgerCloseTime: latestLedger.ClosedAt,
-		LatestLedgerSequence: latestLedger.Sequence,
+		LatestLedgerSequence:  latestLedger.Sequence,
 	}
 
 	return &result, nil

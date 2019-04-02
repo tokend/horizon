@@ -5,6 +5,7 @@ import (
 
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/resources"
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/tokend/go/xdr"
 
@@ -15,7 +16,6 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/rgenerated"
 )
 
 func GetCreateAtomicSwapRequests(w http.ResponseWriter, r *http.Request) {
@@ -66,16 +66,16 @@ func (h *getCreateAtomicSwapRequestsHandler) MakeAll(w http.ResponseWriter, requ
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
 }
 
-func (h *getCreateAtomicSwapRequestsHandler) RenderRecord(included *rgenerated.Included, record history2.ReviewableRequest) (rgenerated.ReviewableRequest, error) {
+func (h *getCreateAtomicSwapRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapRequestsQuoteAsset) {
 		asset, err := h.AssetsQ.FilterByCode(record.Details.CreateAtomicSwap.QuoteAsset).Get()
 		if err != nil {
-			return rgenerated.ReviewableRequest{}, errors.Wrap(err, "failed to get quote asset")
+			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get quote asset")
 		}
 		if asset == nil {
-			return rgenerated.ReviewableRequest{}, errors.New("quote asset not found")
+			return regources.ReviewableRequest{}, errors.New("quote asset not found")
 		}
 
 		resource := resources.NewAsset(*asset)

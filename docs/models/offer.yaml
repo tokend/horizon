@@ -41,7 +41,7 @@ Offer:
           created_at:
             type: string
             description: "defines the time when the offer was created"
-            format: "date-time string"
+            format: "date-time"
             example: "2012-11-01T22:08:41+00:00"
           base_amount:
             type: string

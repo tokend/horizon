@@ -2,11 +2,12 @@ package requests
 
 import (
 	"fmt"
-	"github.com/go-ozzo/ozzo-validation"
-	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 	"strconv"
 	"strings"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 const (

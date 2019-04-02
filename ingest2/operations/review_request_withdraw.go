@@ -3,7 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type withdrawHandler struct {
@@ -17,7 +17,7 @@ func (h *withdrawHandler) Fulfilled(details requestDetails) ([]history2.Particip
 	effect := history2.Effect{
 		Type: history2.EffectTypeWithdrawn,
 		Withdrawn: &history2.BalanceChangeEffect{
-			Amount: rgenerated.Amount(request.Amount),
+			Amount: regources.Amount(request.Amount),
 			Fee:    internal.FeeFromXdr(request.Fee),
 		},
 	}
@@ -32,7 +32,7 @@ func (h *withdrawHandler) PermanentReject(details requestDetails) ([]history2.Pa
 	effect := history2.Effect{
 		Type: history2.EffectTypeUnlocked,
 		Unlocked: &history2.BalanceChangeEffect{
-			Amount: rgenerated.Amount(request.Amount),
+			Amount: regources.Amount(request.Amount),
 			Fee:    internal.FeeFromXdr(request.Fee),
 		},
 	}

@@ -4,7 +4,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type checkSaleStateOpHandler struct {
@@ -85,7 +85,7 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 		Effect: &history2.Effect{
 			Type: history2.EffectTypeIssued,
 			Issued: &history2.BalanceChangeEffect{
-				Amount: rgenerated.Amount(totalBaseIssued),
+				Amount: regources.Amount(totalBaseIssued),
 			},
 		},
 	}

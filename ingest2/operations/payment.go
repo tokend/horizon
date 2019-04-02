@@ -5,7 +5,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type paymentOpHandler struct {
@@ -25,7 +25,7 @@ func (h *paymentOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 			AccountTo:               paymentRes.Destination.Address(),
 			BalanceFrom:             paymentOp.SourceBalanceId.AsString(),
 			BalanceTo:               paymentRes.DestinationBalanceId.AsString(),
-			Amount:                  rgenerated.Amount(paymentOp.Amount),
+			Amount:                  regources.Amount(paymentOp.Amount),
 			Asset:                   string(paymentRes.Asset),
 			SourceFee:               internal.FeeFromXdr(paymentRes.ActualSourcePaymentFee),
 			DestinationFee:          internal.FeeFromXdr(paymentRes.ActualDestinationPaymentFee),
@@ -57,10 +57,10 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	source := h.BalanceEffect(op.SourceBalanceId, &history2.Effect{
 		Type: history2.EffectTypeCharged,
 		Charged: &history2.BalanceChangeEffect{
-			Amount: rgenerated.Amount(op.Amount),
-			Fee: rgenerated.Fee{
-				Fixed:             rgenerated.Amount(sourceFixedFee),
-				CalculatedPercent: rgenerated.Amount(sourcePercentFee),
+			Amount: regources.Amount(op.Amount),
+			Fee: regources.Fee{
+				Fixed:             regources.Amount(sourceFixedFee),
+				CalculatedPercent: regources.Amount(sourcePercentFee),
 			},
 		},
 	})
@@ -68,10 +68,10 @@ func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	destination := h.BalanceEffect(res.DestinationBalanceId, &history2.Effect{
 		Type: history2.EffectTypeFunded,
 		Funded: &history2.BalanceChangeEffect{
-			Amount: rgenerated.Amount(op.Amount),
-			Fee: rgenerated.Fee{
-				Fixed:             rgenerated.Amount(destFixedFee),
-				CalculatedPercent: rgenerated.Amount(destPercentFee),
+			Amount: regources.Amount(op.Amount),
+			Fee: regources.Fee{
+				Fixed:             regources.Amount(destFixedFee),
+				CalculatedPercent: regources.Amount(destPercentFee),
 			},
 		},
 	})

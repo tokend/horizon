@@ -2,28 +2,28 @@ package resources
 
 import (
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewSaleQuoteAssetKey - returns new instance of SaleQuoteAssetKey
-func NewSaleQuoteAssetKey(assetCode string) rgenerated.Key {
-	return rgenerated.Key{
+func NewSaleQuoteAssetKey(assetCode string) regources.Key {
+	return regources.Key{
 		ID:   assetCode,
-		Type: rgenerated.SALE_QUOTE_ASSETS,
+		Type: regources.SALE_QUOTE_ASSETS,
 	}
 }
 
 // NewSaleQuoteAsset - returns new instance of SaleQuoteAsset
-func NewSaleQuoteAsset(qa history2.SaleQuoteAsset) rgenerated.SaleQuoteAsset {
-	return rgenerated.SaleQuoteAsset{
+func NewSaleQuoteAsset(qa history2.SaleQuoteAsset) regources.SaleQuoteAsset {
+	return regources.SaleQuoteAsset{
 		Key: NewSaleQuoteAssetKey(qa.Asset),
-		Attributes: rgenerated.SaleQuoteAssetAttributes{
+		Attributes: regources.SaleQuoteAssetAttributes{
 			Price:           qa.Price,
 			CurrentCap:      qa.CurrentCap,
 			TotalCurrentCap: qa.TotalCurrentCap,
 			HardCap:         qa.HardCap,
 		},
-		Relationships: rgenerated.SaleQuoteAssetRelationships{
+		Relationships: regources.SaleQuoteAssetRelationships{
 			Asset: NewAssetKey(qa.Asset).AsRelation(),
 		},
 	}

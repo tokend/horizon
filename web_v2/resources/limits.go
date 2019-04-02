@@ -3,25 +3,25 @@ package resources
 import (
 	"github.com/spf13/cast"
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewLimits creates new instance of Limits from provided one
-func NewLimits(limits core2.Limits) *rgenerated.Limits {
-	newLimits := &rgenerated.Limits{
-		Key: rgenerated.Key{
+func NewLimits(limits core2.Limits) *regources.Limits {
+	newLimits := &regources.Limits{
+		Key: regources.Key{
 			ID:   cast.ToString(limits.ID),
-			Type: rgenerated.LIMITS,
+			Type: regources.LIMITS,
 		},
-		Attributes: rgenerated.LimitsAttributes{
+		Attributes: regources.LimitsAttributes{
 			StatsOpType:     limits.StatsOpType,
 			IsConvertNeeded: limits.IsConvertNeeded,
-			DailyOut:        rgenerated.Amount(limits.DailyOut),
-			WeeklyOut:       rgenerated.Amount(limits.WeeklyOut),
-			MonthlyOut:      rgenerated.Amount(limits.MonthlyOut),
-			AnnualOut:       rgenerated.Amount(limits.AnnualOut),
+			DailyOut:        regources.Amount(limits.DailyOut),
+			WeeklyOut:       regources.Amount(limits.WeeklyOut),
+			MonthlyOut:      regources.Amount(limits.MonthlyOut),
+			AnnualOut:       regources.Amount(limits.AnnualOut),
 		},
-		Relationships: rgenerated.LimitsRelationships{
+		Relationships: regources.LimitsRelationships{
 			Asset: NewAssetKey(limits.AssetCode).AsRelation(),
 		},
 	}

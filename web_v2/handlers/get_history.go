@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -13,7 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetHistory - processes request to get the list of participant effects
@@ -95,9 +95,9 @@ type getHistory struct {
 }
 
 // GetHistory returns the list of participant effects with related resources
-func (h *getHistory) GetHistory(request *requests.GetHistory) (rgenerated.ParticipantsEffectsResponse, error) {
-	result := rgenerated.ParticipantsEffectsResponse{
-		Data: []rgenerated.ParticipantsEffect{},
+func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.ParticipantsEffectsResponse, error) {
+	result := regources.ParticipantsEffectsResponse{
+		Data: []regources.ParticipantsEffect{},
 	}
 	q := h.EffectsQ.WithAccount().WithBalance().Page(*request.PageParams)
 	if request.ShouldInclude(requests.IncludeTypeHistoryOperation) {
@@ -122,7 +122,7 @@ func (h *getHistory) GetHistory(request *requests.GetHistory) (rgenerated.Partic
 		return result, nil
 	}
 
-	result.Data = make([]rgenerated.ParticipantsEffect, 0, len(effects))
+	result.Data = make([]regources.ParticipantsEffect, 0, len(effects))
 	for i := range effects {
 		effect := getEffect(effects[i])
 		if request.ShouldInclude(requests.IncludeTypeHistoryOperation) {
@@ -154,20 +154,20 @@ func (h *getHistory) GetHistory(request *requests.GetHistory) (rgenerated.Partic
 	return result, nil
 }
 
-func getEffect(effect history2.ParticipantEffect) rgenerated.ParticipantsEffect {
-	var balance *rgenerated.Relation
+func getEffect(effect history2.ParticipantEffect) regources.ParticipantsEffect {
+	var balance *regources.Relation
 	if effect.BalanceAddress != nil {
 		balance = resources.NewBalanceKey(*effect.BalanceAddress).AsRelation()
 	}
 
-	var asset *rgenerated.Relation
+	var asset *regources.Relation
 	if effect.AssetCode != nil {
 		asset = resources.NewAssetKey(*effect.AssetCode).AsRelation()
 	}
 
-	return rgenerated.ParticipantsEffect{
+	return regources.ParticipantsEffect{
 		Key: resources.NewParticipantEffectKey(effect.ID),
-		Relationships: rgenerated.ParticipantsEffectRelationships{
+		Relationships: regources.ParticipantsEffectRelationships{
 			Account:   resources.NewAccountKey(effect.AccountAddress).AsRelation(),
 			Balance:   balance,
 			Asset:     asset,

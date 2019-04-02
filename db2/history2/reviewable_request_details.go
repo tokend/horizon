@@ -8,7 +8,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //ReviewableRequestDetails - stores in union switch details of the reviewable requests
@@ -51,101 +51,101 @@ func (r *ReviewableRequestDetails) Scan(src interface{}) error {
 
 //CreateAssetRequest - asset creation request details
 type CreateAssetRequest struct {
-	Asset                  string             `json:"asset"`
-	Type                   uint64             `json:"type"`
-	Policies               int32              `json:"policies"`
-	PreIssuedAssetSigner   string             `json:"pre_issued_asset_signer"`
-	MaxIssuanceAmount      rgenerated.Amount  `json:"max_issuance_amount"`
-	InitialPreissuedAmount rgenerated.Amount  `json:"initial_preissued_amount"`
-	CreatorDetails         rgenerated.Details `json:"details"`
+	Asset                  string            `json:"asset"`
+	Type                   uint64            `json:"type"`
+	Policies               int32             `json:"policies"`
+	PreIssuedAssetSigner   string            `json:"pre_issued_asset_signer"`
+	MaxIssuanceAmount      regources.Amount  `json:"max_issuance_amount"`
+	InitialPreissuedAmount regources.Amount  `json:"initial_preissued_amount"`
+	CreatorDetails         regources.Details `json:"details"`
 }
 
 //UpdateAssetRequest - asset update request details
 type UpdateAssetRequest struct {
-	Asset          string             `json:"asset"`
-	Policies       int32              `json:"policies"`
-	CreatorDetails rgenerated.Details `json:"details"`
+	Asset          string            `json:"asset"`
+	Policies       int32             `json:"policies"`
+	CreatorDetails regources.Details `json:"details"`
 }
 
 //CreatePreIssuanceRequest - request details
 type CreatePreIssuanceRequest struct {
-	Asset          string             `json:"asset"`
-	Amount         rgenerated.Amount  `json:"amount"`
-	Signature      string             `json:"signature"`
-	Reference      string             `json:"reference"`
-	CreatorDetails rgenerated.Details `json:"creator_details"`
+	Asset          string            `json:"asset"`
+	Amount         regources.Amount  `json:"amount"`
+	Signature      string            `json:"signature"`
+	Reference      string            `json:"reference"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 //CreateIssuanceRequest - request details
 type CreateIssuanceRequest struct {
-	Asset          string             `json:"asset"`
-	Amount         rgenerated.Amount  `json:"amount"`
-	Receiver       string             `json:"receiver"`
-	CreatorDetails rgenerated.Details `json:"external_details"`
+	Asset          string            `json:"asset"`
+	Amount         regources.Amount  `json:"amount"`
+	Receiver       string            `json:"receiver"`
+	CreatorDetails regources.Details `json:"external_details"`
 }
 
 //CreateWithdrawalRequest - request details
 type CreateWithdrawalRequest struct {
-	BalanceID      string             `json:"balance_id"`
-	Amount         rgenerated.Amount  `json:"amount"`
-	Fee            rgenerated.Fee     `json:"fee"`
-	CreatorDetails rgenerated.Details `json:"creator_details"`
+	BalanceID      string            `json:"balance_id"`
+	Amount         regources.Amount  `json:"amount"`
+	Fee            regources.Fee     `json:"fee"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 //CreateSaleRequest - request details
 type CreateSaleRequest struct {
-	BaseAsset           string                  `json:"base_asset"`
-	DefaultQuoteAsset   string                  `json:"quote_asset"`
-	StartTime           time.Time               `json:"start_time"`
-	EndTime             time.Time               `json:"end_time"`
-	SoftCap             rgenerated.Amount       `json:"soft_cap"`
-	HardCap             rgenerated.Amount       `json:"hard_cap"`
-	CreatorDetails      rgenerated.Details      `json:"creator_details"`
-	QuoteAssets         []rgenerated.AssetPrice `json:"quote_assets"`
-	SaleType            xdr.SaleType            `json:"sale_type"`
-	BaseAssetForHardCap rgenerated.Amount       `json:"base_asset_for_hard_cap"`
+	BaseAsset           string                 `json:"base_asset"`
+	DefaultQuoteAsset   string                 `json:"quote_asset"`
+	StartTime           time.Time              `json:"start_time"`
+	EndTime             time.Time              `json:"end_time"`
+	SoftCap             regources.Amount       `json:"soft_cap"`
+	HardCap             regources.Amount       `json:"hard_cap"`
+	CreatorDetails      regources.Details      `json:"creator_details"`
+	QuoteAssets         []regources.AssetPrice `json:"quote_assets"`
+	SaleType            xdr.SaleType           `json:"sale_type"`
+	BaseAssetForHardCap regources.Amount       `json:"base_asset_for_hard_cap"`
 }
 
 //UpdateLimitsRequest - request details
 type UpdateLimitsRequest struct {
-	CreatorDetails rgenerated.Details `json:"creator_details"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 //CreateAmlAlertRequest - request details
 type CreateAmlAlertRequest struct {
-	BalanceID      string             `json:"balance_id"`
-	Amount         rgenerated.Amount  `json:"amount"`
-	CreatorDetails rgenerated.Details `json:"creator_details"`
+	BalanceID      string            `json:"balance_id"`
+	Amount         regources.Amount  `json:"amount"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 //ChangeRoleRequest - request details
 type ChangeRoleRequest struct {
-	DestinationAccount string             `json:"destination_account"`
-	AccountRoleToSet   uint64             `json:"account_role_to_set"`
-	SequenceNumber     uint32             `json:"sequence_number"`
-	CreatorDetails     rgenerated.Details `json:"creator_details"`
+	DestinationAccount string            `json:"destination_account"`
+	AccountRoleToSet   uint64            `json:"account_role_to_set"`
+	SequenceNumber     uint32            `json:"sequence_number"`
+	CreatorDetails     regources.Details `json:"creator_details"`
 }
 
 //UpdateSaleDetailsRequest - request details
 type UpdateSaleDetailsRequest struct {
-	SaleID         uint64             `json:"sale_id"`
-	CreatorDetails rgenerated.Details `json:"creator_details"`
+	SaleID         uint64            `json:"sale_id"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 //CreateAtomicSwapBidRequest - request details
 type CreateAtomicSwapBidRequest struct {
-	BaseBalance    string                  `json:"base_balance"`
-	BaseAmount     rgenerated.Amount       `json:"base_amount"`
-	CreatorDetails rgenerated.Details      `json:"creator_details"`
-	QuoteAssets    []rgenerated.AssetPrice `json:"quote_assets"`
+	BaseBalance    string                 `json:"base_balance"`
+	BaseAmount     regources.Amount       `json:"base_amount"`
+	CreatorDetails regources.Details      `json:"creator_details"`
+	QuoteAssets    []regources.AssetPrice `json:"quote_assets"`
 }
 
 //CreateAtomicSwapRequest - request details
 type CreateAtomicSwapRequest struct {
-	BidID          uint64             `json:"bid_id"`
-	BaseAmount     rgenerated.Amount  `json:"base_amount"`
-	QuoteAsset     string             `json:"quote_asset"`
-	CreatorDetails rgenerated.Details `json:"creator_details"`
+	BidID          uint64            `json:"bid_id"`
+	BaseAmount     regources.Amount  `json:"base_amount"`
+	QuoteAsset     string            `json:"quote_asset"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }
 
 //CreatePollRequest - request details

@@ -14,7 +14,7 @@ Vote:
   allOf:
     - $ref: '#/components/schemas/VoteKey'
     - type: object
-      x-needs-db-methods: true
+      x-go-scan-value: true
       required: [relationships, attributes]
       properties:
         relationships:

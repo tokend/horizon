@@ -32,11 +32,11 @@ ManageBalanceOp:
             type: string
             description: "Address of balance to manage"
           action:
-            type: integer
             format: xdr.ManageBalanceAction
             description: |
                 * 0: "create"
                 * 1: "delete_balance"
                 * 2: "create_unique"
+            example: 0
             allOf:
               - $ref: '#/components/schemas/Enum'

@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -9,8 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/rgenerated"
-	"net/http"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetAssetPairList - processes request to get the list of asset pairs and their details
@@ -47,7 +48,7 @@ type getAssetPairListHandler struct {
 }
 
 // GetAssetPairList returns asset pair list with related resources
-func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPairList) (*rgenerated.AssetPairsResponse, error) {
+func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPairList) (*regources.AssetPairsResponse, error) {
 	q := h.AssetPairsQ.Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeAssetPairListAsset) {
@@ -79,8 +80,8 @@ func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPai
 		return nil, errors.Wrap(err, "Failed to get asset pair list")
 	}
 
-	response := &rgenerated.AssetPairsResponse{
-		Data:  make([]rgenerated.AssetPair, 0, len(coreAssetPairs)),
+	response := &regources.AssetPairsResponse{
+		Data:  make([]regources.AssetPair, 0, len(coreAssetPairs)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 

@@ -5,7 +5,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type manageAssetOpHandler struct {
@@ -40,7 +40,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		opDetails.ManageAsset.CreatorDetails = internal.MarshalCustomDetails(creationDetails.CreatorDetails)
 		opDetails.ManageAsset.Policies = &policies
 		opDetails.ManageAsset.PreissuedSigner = creationDetails.PreissuedAssetSigner.Address()
-		opDetails.ManageAsset.MaxIssuanceAmount = rgenerated.Amount(creationDetails.MaxIssuanceAmount)
+		opDetails.ManageAsset.MaxIssuanceAmount = regources.Amount(creationDetails.MaxIssuanceAmount)
 	case xdr.ManageAssetActionCreateAssetUpdateRequest:
 		updateDetails := manageAssetOp.Request.MustCreateAssetUpdateRequest().UpdateAsset
 
@@ -59,7 +59,7 @@ func (h *manageAssetOpHandler) Details(op rawOperation, opRes xdr.OperationResul
 		data := manageAssetOp.Request.MustUpdateMaxIssuance()
 
 		opDetails.ManageAsset.AssetCode = string(data.AssetCode)
-		opDetails.ManageAsset.MaxIssuanceAmount = rgenerated.Amount(data.MaxIssuanceAmount)
+		opDetails.ManageAsset.MaxIssuanceAmount = regources.Amount(data.MaxIssuanceAmount)
 	default:
 		return history2.OperationDetails{}, errors.New("unexpected manage asset action")
 	}

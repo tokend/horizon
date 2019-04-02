@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetAccountRule - processes request to get accountRule and it's details by accountRule code
@@ -51,7 +51,7 @@ type getAccountRuleHandler struct {
 }
 
 // GetAccountRule returns accountRule with related resources
-func (h *getAccountRuleHandler) GetAccountRule(request *requests.GetAccountRule) (*rgenerated.AccountRuleResponse, error) {
+func (h *getAccountRuleHandler) GetAccountRule(request *requests.GetAccountRule) (*regources.AccountRuleResponse, error) {
 	accountRule, err := h.AccountRulesQ.FilterByID(request.ID).Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get account rule by id")
@@ -61,7 +61,7 @@ func (h *getAccountRuleHandler) GetAccountRule(request *requests.GetAccountRule)
 	}
 
 	accountRuleResponse := resources.NewAccountRule(*accountRule)
-	return &rgenerated.AccountRuleResponse{
+	return &regources.AccountRuleResponse{
 		Data: accountRuleResponse,
 	}, nil
 }

@@ -4,10 +4,9 @@ import (
 	"net/http"
 
 	amount2 "gitlab.com/tokend/go/amount"
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-
-	"gitlab.com/tokend/regources/rgenerated"
 )
 
 //GetCalculatedFees - represents params to be specified for Get Fees handler
@@ -17,7 +16,7 @@ type GetCalculatedFees struct {
 	Asset   string
 	Subtype int64
 	FeeType int32
-	Amount  rgenerated.Amount
+	Amount  regources.Amount
 }
 
 // NewGetCalculatedFees returns the new instance of GetCalculatedFees request
@@ -62,7 +61,7 @@ func NewGetCalculatedFees(r *http.Request) (*GetCalculatedFees, error) {
 		Asset:   asset,
 		Subtype: subtype,
 		FeeType: feeType,
-		Amount:  rgenerated.Amount(amount),
+		Amount:  regources.Amount(amount),
 	}
 
 	return &request, nil

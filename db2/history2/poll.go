@@ -3,7 +3,7 @@ package history2
 import (
 	"time"
 
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // CreatePoll - represents instance of voting campaign

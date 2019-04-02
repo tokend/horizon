@@ -7,14 +7,14 @@ import (
 
 	"gitlab.com/tokend/horizon/db2/core2"
 
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewAccountRule - returns a new instance of account rule
-func NewAccountRule(rule core2.AccountRule) rgenerated.AccountRule {
-	return rgenerated.AccountRule{
+func NewAccountRule(rule core2.AccountRule) regources.AccountRule {
+	return regources.AccountRule{
 		Key: NewAccountRuleKey(rule.ID),
-		Attributes: rgenerated.AccountRuleAttributes{
+		Attributes: regources.AccountRuleAttributes{
 			Resource: rule.Resource,
 			Action:   xdr.AccountRuleAction(rule.Action),
 			Forbids:  rule.Forbids,
@@ -23,28 +23,28 @@ func NewAccountRule(rule core2.AccountRule) rgenerated.AccountRule {
 	}
 }
 
-func NewAccountRuleKey(id uint64) rgenerated.Key {
-	return rgenerated.Key{
+func NewAccountRuleKey(id uint64) regources.Key {
+	return regources.Key{
 		ID:   strconv.FormatUint(id, 10),
-		Type: rgenerated.ACCOUNT_RULES,
+		Type: regources.ACCOUNT_RULES,
 	}
 }
 
 // NewSignerRule - returns a new instance of signer rule
-func NewSignerRule(rule core2.SignerRule) rgenerated.SignerRule {
-	return rgenerated.SignerRule{
-		Key: rgenerated.Key{
+func NewSignerRule(rule core2.SignerRule) regources.SignerRule {
+	return regources.SignerRule{
+		Key: regources.Key{
 			ID:   strconv.FormatUint(rule.ID, 10),
-			Type: rgenerated.SIGNER_RULES,
+			Type: regources.SIGNER_RULES,
 		},
-		Attributes: rgenerated.SignerRuleAttributes{
+		Attributes: regources.SignerRuleAttributes{
 			Resource:  rule.Resource,
 			Action:    xdr.SignerRuleAction(rule.Action),
 			Forbids:   rule.Forbids,
 			IsDefault: rule.IsDefault,
 			Details:   rule.Details,
 		},
-		Relationships: rgenerated.SignerRuleRelationships{
+		Relationships: regources.SignerRuleRelationships{
 			Owner: NewAccountKey(rule.OwnerID).AsRelation(),
 		},
 	}

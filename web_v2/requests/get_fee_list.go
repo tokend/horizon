@@ -3,11 +3,10 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/regources/rgenerated"
-
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"gitlab.com/tokend/horizon/db2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 const (
@@ -40,13 +39,13 @@ var filterTypeFeeListAll = map[string]struct{}{
 type GetFeeList struct {
 	*base
 	Filters struct {
-		Asset       string            `fig:"asset"`
-		Subtype     int64             `fig:"subtype"`
-		FeeType     int32             `fig:"fee_type"`
-		Account     string            `fig:"account"`
-		AccountRole uint64            `fig:"account_role"`
-		LowerBound  rgenerated.Amount `fig:"lower_bound"`
-		UpperBound  rgenerated.Amount `fig:"upper_bound"`
+		Asset       string           `fig:"asset"`
+		Subtype     int64            `fig:"subtype"`
+		FeeType     int32            `fig:"fee_type"`
+		Account     string           `fig:"account"`
+		AccountRole uint64           `fig:"account_role"`
+		LowerBound  regources.Amount `fig:"lower_bound"`
+		UpperBound  regources.Amount `fig:"upper_bound"`
 	}
 	PageParams *db2.OffsetPageParams
 }

@@ -34,5 +34,5 @@ CreateAtomicSwapRequestOp:
           type: object
           properties:
             base_amount:
-              type: int64
+              type: string
               format: Amount

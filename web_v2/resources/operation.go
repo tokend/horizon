@@ -4,17 +4,17 @@ import (
 	"strconv"
 
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
-//NewOperation - creates new instance of rgenerated.Operation
-func NewOperation(op history2.Operation) rgenerated.Operation {
-	return rgenerated.Operation{
+//NewOperation - creates new instance of regources.Operation
+func NewOperation(op history2.Operation) regources.Operation {
+	return regources.Operation{
 		Key: NewOperationKey(op.ID),
-		Attributes: rgenerated.OperationAttributes{
+		Attributes: regources.OperationAttributes{
 			AppliedAt: op.LedgerCloseTime,
 		},
-		Relationships: rgenerated.OperationRelationships{
+		Relationships: regources.OperationRelationships{
 			Tx:     NewTxKey(op.TxID).AsRelation(),
 			Source: NewAccountKey(op.Source).AsRelation(),
 		},
@@ -22,9 +22,9 @@ func NewOperation(op history2.Operation) rgenerated.Operation {
 }
 
 //NewOperationKey - creates new key for operation
-func NewOperationKey(opID int64) rgenerated.Key {
-	return rgenerated.Key{
+func NewOperationKey(opID int64) regources.Key {
+	return regources.Key{
 		ID:   strconv.FormatInt(opID, 10),
-		Type: rgenerated.OPERATIONS,
+		Type: regources.OPERATIONS,
 	}
 }

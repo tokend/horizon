@@ -4,7 +4,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type cancelAtomicSwapBidOpHandler struct {
@@ -47,7 +47,7 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 	return []history2.ParticipantEffect{h.BalanceEffect(atomicSwapBid.BaseBalance, &history2.Effect{
 		Type: history2.EffectTypeUnlocked,
 		Unlocked: &history2.BalanceChangeEffect{
-			Amount: rgenerated.Amount(atomicSwapBid.Amount),
+			Amount: regources.Amount(atomicSwapBid.Amount),
 		},
 	})}, nil
 }

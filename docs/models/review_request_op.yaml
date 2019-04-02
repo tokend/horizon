@@ -14,13 +14,7 @@ ReviewRequestOp:
   - $ref: '#/components/schemas/ReviewRequestOpKey'
   - type: object
     required: [attributes]
-    properties: # TODO uncomment after adding proper RR details in code
-#      relationships:
-#        type: object
-#        properties:
-#          request_details:
-#            type: object
-#            $ref: '#/components/schemas/ReviewableRequestDetails'
+    properties:
       attributes:
         type: object
         required:

@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetPublicKeyEntry - processes request to get the public key with the list of all accounts that have signer with provided public key
@@ -53,7 +53,7 @@ type getPublicKeyEntryHandler struct {
 }
 
 // GetPublicKeyEntry returns the public key entry with the list of related account keys
-func (h *getPublicKeyEntryHandler) GetPublicKeyEntry(request *requests.GetPublicKeyEntry) (*rgenerated.PublicKeyEntryResponse, error) {
+func (h *getPublicKeyEntryHandler) GetPublicKeyEntry(request *requests.GetPublicKeyEntry) (*regources.PublicKeyEntryResponse, error) {
 	publicKeyEntry := resources.NewPublicKeyEntry(request.ID)
 
 	coreSigners, err := h.SignersQ.FilterByPublicKey(request.ID).Select()
@@ -64,16 +64,16 @@ func (h *getPublicKeyEntryHandler) GetPublicKeyEntry(request *requests.GetPublic
 		return nil, nil
 	}
 
-	accounts := make([]rgenerated.Key, 0, len(coreSigners))
+	accounts := make([]regources.Key, 0, len(coreSigners))
 	for _, coreSigner := range coreSigners {
 		accounts = append(accounts, resources.NewAccountKey(coreSigner.AccountID))
 	}
 
-	publicKeyEntry.Relationships.Accounts = &rgenerated.RelationCollection{
+	publicKeyEntry.Relationships.Accounts = &regources.RelationCollection{
 		Data: accounts,
 	}
 
-	response := &rgenerated.PublicKeyEntryResponse{
+	response := &regources.PublicKeyEntryResponse{
 		Data: publicKeyEntry,
 	}
 

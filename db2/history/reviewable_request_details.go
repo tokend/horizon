@@ -1,8 +1,9 @@
 package history
 
 import (
-	"gitlab.com/tokend/regources"
 	"time"
+
+	"gitlab.com/tokend/regources"
 
 	"database/sql/driver"
 

@@ -2,12 +2,13 @@ package horizon
 
 import (
 	"database/sql"
-	"gitlab.com/tokend/regources"
 	"net/http"
 	"net/http/httputil"
 	"regexp"
 
-	"github.com/rcrowley/go-metrics"
+	"gitlab.com/tokend/regources"
+
+	metrics "github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"

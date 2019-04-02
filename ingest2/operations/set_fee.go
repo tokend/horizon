@@ -3,7 +3,7 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type setFeeOpHandler struct {
@@ -27,14 +27,14 @@ func (h *setFeeOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 		Type: xdr.OperationTypeSetFees,
 		SetFee: &history2.SetFeeDetails{
 			AssetCode:      string(fee.Asset),
-			FixedFee:       rgenerated.Amount(fee.FixedFee),
-			PercentFee:     rgenerated.Amount(fee.PercentFee),
+			FixedFee:       regources.Amount(fee.FixedFee),
+			PercentFee:     regources.Amount(fee.PercentFee),
 			FeeType:        fee.FeeType,
 			AccountAddress: feeAccountAddress,
 			AccountRole:    fee.AccountRole,
 			Subtype:        int64(fee.Subtype),
-			LowerBound:     rgenerated.Amount(fee.LowerBound),
-			UpperBound:     rgenerated.Amount(fee.UpperBound),
+			LowerBound:     regources.Amount(fee.LowerBound),
+			UpperBound:     regources.Amount(fee.UpperBound),
 			IsDelete:       setFeeOp.IsDelete,
 		},
 	}, nil

@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //FeeFromXdr - converts xdr fee to regources fee
-func FeeFromXdr(data xdr.Fee) rgenerated.Fee {
-	return rgenerated.Fee{
-		Fixed:             rgenerated.Amount(data.Fixed),
-		CalculatedPercent: rgenerated.Amount(data.Percent),
+func FeeFromXdr(data xdr.Fee) regources.Fee {
+	return regources.Fee{
+		Fixed:             regources.Amount(data.Fixed),
+		CalculatedPercent: regources.Amount(data.Percent),
 	}
 }
 

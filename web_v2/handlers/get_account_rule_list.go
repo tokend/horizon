@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetAccountRuleList - processes request to get the list of accountRules
@@ -46,14 +46,14 @@ type getAccountRuleListHandler struct {
 }
 
 // GetAccountRuleList returns the list of accountRules with related resources
-func (h *getAccountRuleListHandler) GetAccountRuleList(request *requests.GetAccountRuleList) (*rgenerated.AccountRulesResponse, error) {
+func (h *getAccountRuleListHandler) GetAccountRuleList(request *requests.GetAccountRuleList) (*regources.AccountRulesResponse, error) {
 	accountRules, err := h.AccountRulesQ.Page(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get account rule list")
 	}
 
-	response := &rgenerated.AccountRulesResponse{
-		Data:  make([]rgenerated.AccountRule, 0, len(accountRules)),
+	response := &regources.AccountRulesResponse{
+		Data:  make([]regources.AccountRule, 0, len(accountRules)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 

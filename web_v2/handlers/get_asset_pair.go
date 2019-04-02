@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -9,8 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/rgenerated"
-	"net/http"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetAssetPair - processes request to get asset pair and it's details by it's ID (`base:quote`)
@@ -51,7 +52,7 @@ type getAssetPairHandler struct {
 }
 
 // GetAssetPair returns asset pair with related resources
-func (h *getAssetPairHandler) GetAssetPair(request *requests.GetAssetPair) (*rgenerated.AssetPairResponse, error) {
+func (h *getAssetPairHandler) GetAssetPair(request *requests.GetAssetPair) (*regources.AssetPairResponse, error) {
 	q := h.AssetPairsQ
 
 	if request.ShouldInclude(requests.IncludeTypeAssetPairBaseAsset) {
@@ -70,7 +71,7 @@ func (h *getAssetPairHandler) GetAssetPair(request *requests.GetAssetPair) (*rge
 		return nil, nil
 	}
 
-	response := &rgenerated.AssetPairResponse{
+	response := &regources.AssetPairResponse{
 		Data: resources.NewAssetPair(*coreAssetPair),
 	}
 

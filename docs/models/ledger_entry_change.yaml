@@ -23,10 +23,10 @@ LedgerEntryChange:
               format: xdr.LedgerEntryChangeType
               description: |
                           Type of change that was applied to entry
-                          * 0: "LedgerEntryChangeTypeCreated"
-                          * 1: "LedgerEntryChangeTypeUpdated"
-                          * 2: "LedgerEntryChangeTypeRemoved"
-                          * 3: "LedgerEntryChangeTypeState"
+                          * 0: "created"
+                          * 1: "updated"
+                          * 2: "removed"
+                          * 3: "state"
               example: 0
               allOf:
                 - $ref: '#/components/schemas/Enum'

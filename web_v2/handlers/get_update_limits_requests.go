@@ -10,7 +10,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 func GetUpdateLimitsRequests(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +54,7 @@ func (h *getUpdateLimitsRequestsHandler) MakeAll(w http.ResponseWriter, request 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
 }
 
-func (h *getUpdateLimitsRequestsHandler) RenderRecord(included *rgenerated.Included, record history2.ReviewableRequest) (rgenerated.ReviewableRequest, error) {
+func (h *getUpdateLimitsRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
 	return resource, nil

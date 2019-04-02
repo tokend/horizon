@@ -1,8 +1,9 @@
 package hal
 
 import (
-	"gitlab.com/tokend/regources"
 	"time"
+
+	"gitlab.com/tokend/regources"
 )
 
 type PageMeta struct {

@@ -5,39 +5,39 @@ import (
 
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 func newManageSignerRole(id int64, details history2.ManageSignerRoleDetails,
-) *rgenerated.ManageSignerRoleOp {
+) *regources.ManageSignerRoleOp {
 	switch details.Action {
 	case xdr.ManageSignerRoleActionCreate:
-		return &rgenerated.ManageSignerRoleOp{
-			Key: rgenerated.NewKeyInt64(id, rgenerated.OPERATIONS_CREATE_SIGNER_ROLE),
-			Attributes: &rgenerated.ManageSignerRoleOpAttributes{
+		return &regources.ManageSignerRoleOp{
+			Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_SIGNER_ROLE),
+			Attributes: &regources.ManageSignerRoleOpAttributes{
 				Details:    details.CreateDetails.Details,
 				IsReadOnly: details.CreateDetails.IsReadOnly,
 			},
-			Relationships: rgenerated.ManageSignerRoleOpRelationships{
-				Rules: idsAsRelations(details.CreateDetails.RuleIDs, rgenerated.SIGNER_RULES),
+			Relationships: regources.ManageSignerRoleOpRelationships{
+				Rules: idsAsRelations(details.CreateDetails.RuleIDs, regources.SIGNER_RULES),
 				Role:  NewSignerRoleKey(details.RoleID).AsRelation(),
 			},
 		}
 	case xdr.ManageSignerRoleActionUpdate:
-		return &rgenerated.ManageSignerRoleOp{
-			Key: rgenerated.NewKeyInt64(id, rgenerated.OPERATIONS_UPDATE_SIGNER_ROLE),
-			Attributes: &rgenerated.ManageSignerRoleOpAttributes{
+		return &regources.ManageSignerRoleOp{
+			Key: regources.NewKeyInt64(id, regources.OPERATIONS_UPDATE_SIGNER_ROLE),
+			Attributes: &regources.ManageSignerRoleOpAttributes{
 				Details: details.UpdateDetails.Details,
 			},
-			Relationships: rgenerated.ManageSignerRoleOpRelationships{
-				Rules: idsAsRelations(details.UpdateDetails.RuleIDs, rgenerated.SIGNER_RULES),
+			Relationships: regources.ManageSignerRoleOpRelationships{
+				Rules: idsAsRelations(details.UpdateDetails.RuleIDs, regources.SIGNER_RULES),
 				Role:  NewSignerRoleKey(details.RoleID).AsRelation(),
 			},
 		}
 	case xdr.ManageSignerRoleActionRemove:
-		return &rgenerated.ManageSignerRoleOp{
-			Key: rgenerated.NewKeyInt64(id, rgenerated.OPERATIONS_REMOVE_SIGNER_ROLE),
-			Relationships: rgenerated.ManageSignerRoleOpRelationships{
+		return &regources.ManageSignerRoleOp{
+			Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_SIGNER_ROLE),
+			Relationships: regources.ManageSignerRoleOpRelationships{
 				Role: NewSignerRoleKey(details.RoleID).AsRelation(),
 			},
 		}

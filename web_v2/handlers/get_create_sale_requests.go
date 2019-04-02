@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"gitlab.com/tokend/horizon/web_v2/resources"
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/tokend/horizon/db2/core2"
 
@@ -16,7 +17,6 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/rgenerated"
 )
 
 func GetCreateSaleRequests(w http.ResponseWriter, r *http.Request) {
@@ -71,17 +71,17 @@ func (h *getCreateSaleRequestsHandler) MakeAll(w http.ResponseWriter, request re
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
 }
 
-func (h *getCreateSaleRequestsHandler) RenderRecord(included *rgenerated.Included, record history2.ReviewableRequest) (rgenerated.ReviewableRequest, error) {
+func (h *getCreateSaleRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateSaleRequestsBaseAsset) {
 		base, err := h.AssetsQ.GetByCode(record.Details.CreateSale.BaseAsset)
 		if err != nil {
-			return rgenerated.ReviewableRequest{}, errors.Wrap(err, "failed to get base asset")
+			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get base asset")
 		}
 
 		if base == nil {
-			return rgenerated.ReviewableRequest{}, errors.New("base asset not found")
+			return regources.ReviewableRequest{}, errors.New("base asset not found")
 		}
 		resource := resources.NewAsset(*base)
 		included.Add(&resource)
@@ -90,11 +90,11 @@ func (h *getCreateSaleRequestsHandler) RenderRecord(included *rgenerated.Include
 	if h.R.ShouldInclude(requests.IncludeTypeCreateSaleRequestsDefaultQuoteAsset) {
 		quote, err := h.AssetsQ.GetByCode(record.Details.CreateSale.DefaultQuoteAsset)
 		if err != nil {
-			return rgenerated.ReviewableRequest{}, errors.Wrap(err, "failed to get default quote asset")
+			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get default quote asset")
 		}
 
 		if quote == nil {
-			return rgenerated.ReviewableRequest{}, errors.New("default quote asset not found")
+			return regources.ReviewableRequest{}, errors.New("default quote asset not found")
 		}
 
 		resource := resources.NewAsset(*quote)
@@ -108,11 +108,11 @@ func (h *getCreateSaleRequestsHandler) RenderRecord(included *rgenerated.Include
 		}
 		quote, err := h.AssetsQ.FilterByCodes(assetCodes).Select()
 		if err != nil {
-			return rgenerated.ReviewableRequest{}, errors.Wrap(err, "failed to get quote assets")
+			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get quote assets")
 		}
 
 		if quote == nil {
-			return rgenerated.ReviewableRequest{}, errors.New("quote assets not found")
+			return regources.ReviewableRequest{}, errors.New("quote assets not found")
 		}
 		for _, v := range quote {
 			resource := resources.NewAsset(v)

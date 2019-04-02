@@ -2,7 +2,6 @@ package ingest
 
 import (
 	"fmt"
-	"gitlab.com/tokend/regources/rgenerated"
 
 	"encoding/hex"
 	"encoding/json"
@@ -10,6 +9,7 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/utf8"
+	"gitlab.com/tokend/regources"
 )
 
 // operationDetails returns the details regarding the current operation, suitable
@@ -386,9 +386,9 @@ func getAtomicSwapDetails(atomicSwapExtendedResult xdr.ASwapExtended) map[string
 		"purchaser_base_asset_balance_id": atomicSwapExtendedResult.PurchaserBaseBalanceId.AsString(),
 		"base_asset":                      string(atomicSwapExtendedResult.BaseAsset),
 		"quote_asset":                     string(atomicSwapExtendedResult.QuoteAsset),
-		"base_amount":                     rgenerated.Amount(atomicSwapExtendedResult.BaseAmount),
-		"quote_amount":                    rgenerated.Amount(atomicSwapExtendedResult.QuoteAmount),
-		"price":                           rgenerated.Amount(atomicSwapExtendedResult.Price),
+		"base_amount":                     regources.Amount(atomicSwapExtendedResult.BaseAmount),
+		"quote_amount":                    regources.Amount(atomicSwapExtendedResult.QuoteAmount),
+		"price":                           regources.Amount(atomicSwapExtendedResult.Price),
 	}
 }
 

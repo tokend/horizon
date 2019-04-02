@@ -21,7 +21,7 @@ ParticularBalanceChangeEffect:
   required: [amount, fee, balance_address, asset_code]
   properties:
     amount:
-      type: integer
+      type: string
       format: Amount
     fee:
       $ref: '#/components/schemas/Fee'
@@ -48,7 +48,7 @@ EffectMatched:
               type: integer
               format: int64
             price:
-              type: integer
+              type: string
               format: Amount
             charged:
               $ref: '#/components/schemas/ParticularBalanceChangeEffect'
@@ -66,7 +66,7 @@ EffectBalanceChange:
           required: [amount, fee]
           properties:
             amount:
-              type: integer
+              type: string
               format: Amount
             fee:
               $ref: '#/components/schemas/Fee'

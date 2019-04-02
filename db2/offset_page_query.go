@@ -2,6 +2,7 @@ package db2
 
 import (
 	"fmt"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"

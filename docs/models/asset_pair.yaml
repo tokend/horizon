@@ -41,7 +41,7 @@ AssetPair:
           - policies
         properties:
           price:
-            type: object
+            type: string
             example: "3.000000"
             format: Amount
             description: "defines an asset pair price as quote asset divided by base asset (i.e., amount of quote asset per 1 base asset)"

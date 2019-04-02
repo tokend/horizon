@@ -5,13 +5,13 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //MarshalCustomDetails - tries to marshal details to json.RawMessage
 // if fails to marshal populates details of the error
-func MarshalCustomDetails(details xdr.Longstring) rgenerated.Details {
-	var result rgenerated.Details
+func MarshalCustomDetails(details xdr.Longstring) regources.Details {
+	var result regources.Details
 	err := json.Unmarshal([]byte(details), &result)
 	if err != nil {
 		return marshalError(details, err)
@@ -20,7 +20,7 @@ func MarshalCustomDetails(details xdr.Longstring) rgenerated.Details {
 	return result
 }
 
-func marshalError(rawData xdr.Longstring, cause error) rgenerated.Details {
+func marshalError(rawData xdr.Longstring, cause error) regources.Details {
 	data := map[string]interface{}{
 		"_meta": map[string]interface{}{
 			"raw_data": string(rawData),

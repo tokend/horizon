@@ -3,13 +3,13 @@ package resources
 import (
 	"strconv"
 
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //NewTxKey - creates new Tx Key for specified ID
-func NewTxKey(txID int64) rgenerated.Key {
-	return rgenerated.Key{
+func NewTxKey(txID int64) regources.Key {
+	return regources.Key{
 		ID:   strconv.FormatInt(txID, 10),
-		Type: rgenerated.TRANSACTIONS,
+		Type: regources.TRANSACTIONS,
 	}
 }

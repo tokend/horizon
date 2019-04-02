@@ -2,42 +2,42 @@ package resources
 
 import (
 	core "gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //NewBalance - creates new instance of balance using core balance
-func NewBalance(record *core.Balance) *rgenerated.Balance {
-	return &rgenerated.Balance{
+func NewBalance(record *core.Balance) *regources.Balance {
+	return &regources.Balance{
 		Key: NewBalanceKey(record.BalanceAddress),
 	}
 }
 
 //NewBalanceKey - creates new instance of balance key
-func NewBalanceKey(balanceAddress string) rgenerated.Key {
-	return rgenerated.Key{
-		Type: rgenerated.BALANCES,
+func NewBalanceKey(balanceAddress string) regources.Key {
+	return regources.Key{
+		Type: regources.BALANCES,
 		ID:   balanceAddress,
 	}
 }
 
 //NewBalanceState - returns new balance state
-func NewBalanceState(record *core.Balance) *rgenerated.BalanceState {
-	return &rgenerated.BalanceState{
-		Key: rgenerated.Key{
+func NewBalanceState(record *core.Balance) *regources.BalanceState {
+	return &regources.BalanceState{
+		Key: regources.Key{
 			ID:   record.BalanceAddress,
-			Type: rgenerated.BALANCES_STATE,
+			Type: regources.BALANCES_STATE,
 		},
-		Attributes: &rgenerated.BalanceStateAttributes{
-			Locked:    rgenerated.Amount(record.Locked),
-			Available: rgenerated.Amount(record.Amount),
+		Attributes: &regources.BalanceStateAttributes{
+			Locked:    regources.Amount(record.Locked),
+			Available: regources.Amount(record.Amount),
 		},
 	}
 }
 
 //NewBalanceStateKey - creates new balance state key using balance address
-func NewBalanceStateKey(balanceAddress string) rgenerated.Key {
-	return rgenerated.Key{
+func NewBalanceStateKey(balanceAddress string) regources.Key {
+	return regources.Key{
 		ID:   balanceAddress,
-		Type: rgenerated.BALANCES_STATE,
+		Type: regources.BALANCES_STATE,
 	}
 }

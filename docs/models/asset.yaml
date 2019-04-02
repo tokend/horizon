@@ -114,17 +114,17 @@ QuoteAsset:
             - hard_cap
           properties:
             price:
-              type: integer
+              type: string
               format: Amount
             current_cap:
-              type: integer
+              type: string
               format: Amount
             total_current_cap:
-              type: integer
+              type: string
               format: Amount
             hard_cap:
-              type: integer
+              type: string
               format: Amount
             soft_cap:
-              type: integer
+              type: string
               format: Amount

@@ -11,7 +11,7 @@ import (
 	history "gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 var errUnknownRemoveReason = errors.New("request was removed due to unknown reason")
@@ -258,7 +258,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 	result.AllTasks = uint32(tasksExt.AllTasks)
 	result.PendingTasks = uint32(tasksExt.PendingTasks)
 
-	externalDetails := make([]rgenerated.Details, 0, len(tasksExt.ExternalDetails))
+	externalDetails := make([]regources.Details, 0, len(tasksExt.ExternalDetails))
 	for _, item := range tasksExt.ExternalDetails {
 		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}
@@ -278,8 +278,8 @@ func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRe
 		Type:                   uint64(request.Type),
 		Policies:               int32(request.Policies),
 		PreIssuedAssetSigner:   request.PreissuedAssetSigner.Address(),
-		MaxIssuanceAmount:      rgenerated.Amount(request.MaxIssuanceAmount),
-		InitialPreissuedAmount: rgenerated.Amount(request.InitialPreissuedAmount),
+		MaxIssuanceAmount:      regources.Amount(request.MaxIssuanceAmount),
+		InitialPreissuedAmount: regources.Amount(request.InitialPreissuedAmount),
 		CreatorDetails:         internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
@@ -302,7 +302,7 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 
 	return &history.CreatePreIssuanceRequest{
 		Asset:     string(request.Asset),
-		Amount:    rgenerated.Amount(request.Amount),
+		Amount:    regources.Amount(request.Amount),
 		Signature: signature,
 		Reference: string(request.Reference),
 	}, nil
@@ -311,7 +311,7 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceRequest) *history.CreateIssuanceRequest {
 	return &history.CreateIssuanceRequest{
 		Asset:          string(request.Asset),
-		Amount:         rgenerated.Amount(request.Amount),
+		Amount:         regources.Amount(request.Amount),
 		Receiver:       request.Receiver.AsString(),
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
@@ -320,10 +320,10 @@ func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceReque
 func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.CreateWithdrawalRequest {
 	return &history.CreateWithdrawalRequest{
 		BalanceID: request.Balance.AsString(),
-		Amount:    rgenerated.Amount(request.Amount),
-		Fee: rgenerated.Fee{
-			Fixed:             rgenerated.Amount(request.Fee.Fixed),
-			CalculatedPercent: rgenerated.Amount(request.Fee.Percent),
+		Amount:    regources.Amount(request.Amount),
+		Fee: regources.Fee{
+			Fixed:             regources.Amount(request.Fee.Fixed),
+			CalculatedPercent: regources.Amount(request.Fee.Percent),
 		},
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
@@ -332,16 +332,16 @@ func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalR
 func (c *reviewableRequestHandler) getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.CreateAmlAlertRequest {
 	return &history.CreateAmlAlertRequest{
 		BalanceID:      request.BalanceId.AsString(),
-		Amount:         rgenerated.Amount(request.Amount),
+		Amount:         regources.Amount(request.Amount),
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
 
 func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationRequest) *history.CreateSaleRequest {
-	quoteAssets := make([]rgenerated.AssetPrice, 0, len(request.QuoteAssets))
+	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for i := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, rgenerated.AssetPrice{
-			Price: rgenerated.Amount(int64(request.QuoteAssets[i].Price)),
+		quoteAssets = append(quoteAssets, regources.AssetPrice{
+			Price: regources.Amount(int64(request.QuoteAssets[i].Price)),
 			Asset: string(request.QuoteAssets[i].QuoteAsset),
 		})
 	}
@@ -352,12 +352,12 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 		DefaultQuoteAsset:   string(request.DefaultQuoteAsset),
 		StartTime:           unixToTime(int64(request.StartTime)),
 		EndTime:             unixToTime(int64(request.EndTime)),
-		SoftCap:             rgenerated.Amount(request.SoftCap),
-		HardCap:             rgenerated.Amount(request.HardCap),
+		SoftCap:             regources.Amount(request.SoftCap),
+		HardCap:             regources.Amount(request.HardCap),
 		CreatorDetails:      internal.MarshalCustomDetails(request.CreatorDetails),
 		QuoteAssets:         quoteAssets,
 		SaleType:            saleType,
-		BaseAssetForHardCap: rgenerated.Amount(request.RequiredBaseAssetForHardCap),
+		BaseAssetForHardCap: regources.Amount(request.RequiredBaseAssetForHardCap),
 	}
 }
 
@@ -403,17 +403,17 @@ func (c *reviewableRequestHandler) getCreatePollRequest(
 
 func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 ) *history.CreateAtomicSwapBidRequest {
-	quoteAssets := make([]rgenerated.AssetPrice, 0, len(request.QuoteAssets))
+	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for _, quoteAsset := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, rgenerated.AssetPrice{
+		quoteAssets = append(quoteAssets, regources.AssetPrice{
 			Asset: string(quoteAsset.QuoteAsset),
-			Price: rgenerated.Amount(quoteAsset.Price),
+			Price: regources.Amount(quoteAsset.Price),
 		})
 	}
 
 	return &history.CreateAtomicSwapBidRequest{
 		BaseBalance:    request.BaseBalance.AsString(),
-		BaseAmount:     rgenerated.Amount(request.Amount),
+		BaseAmount:     regources.Amount(request.Amount),
 		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 		QuoteAssets:    quoteAssets,
 	}
@@ -423,7 +423,7 @@ func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.ASwapReques
 ) *history.CreateAtomicSwapRequest {
 	return &history.CreateAtomicSwapRequest{
 		BidID:      uint64(request.BidId),
-		BaseAmount: rgenerated.Amount(request.BaseAmount),
+		BaseAmount: regources.Amount(request.BaseAmount),
 		QuoteAsset: string(request.QuoteAsset),
 	}
 }

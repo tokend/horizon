@@ -110,12 +110,12 @@ FeeRecord:
         required: [fixed,percent,applied_to]
         properties:
           fixed:
-            type: integer
+            type: string
             description: "Fixed amount to pay"
             example: "1123456"
             format: Amount
           percent:
-            type: integer
+            type: string
             description: "Percent to calculate the fee with (e.g., 1.0 represents 100%, 0.21 represents 21%)"
             example: "234"
             format: Amount
@@ -133,12 +133,12 @@ Fee:
     - calculated_percent
   properties:
     fixed:
-      type: integer
+      type: string
       format: Amount
       description: "fixed fee charged for the operation"
       example: 486000000
     calculated_percent:
-      type: integer
+      type: string
       format: Amount
       description: "percent of the operation amount"
       example: 4000000
@@ -152,10 +152,10 @@ FeeData:
     - actual_payment_fee_asset_code
   properties:
     fixed_fee:
-      type: integer
+      type: string
       format: Amount
     actual_payment_fee:
-      type: integer
+      type: string
       format: Amount
     actual_payment_fee_asset_code:
       type: string

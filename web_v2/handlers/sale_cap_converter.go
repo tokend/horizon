@@ -12,7 +12,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/exchange"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // saleCapConverter - helper struct to populate current caps for the sale
@@ -60,7 +60,7 @@ func (c *saleCapConverter) PopulateSaleCap(sale *history2.Sale) error {
 		})
 	}
 
-	sale.CurrentCap = rgenerated.Amount(totalCapInDefaultQuoteAsset)
+	sale.CurrentCap = regources.Amount(totalCapInDefaultQuoteAsset)
 
 	for i := range sale.QuoteAssets.QuoteAssets {
 		quoteAsset := &sale.QuoteAssets.QuoteAssets[i]
@@ -89,7 +89,7 @@ func (c *saleCapConverter) populateQuoteAssetCap(quoteAsset *history2.SaleQuoteA
 		return errors.New("failed to convert total cap in default to quote: failed to find path")
 	}
 
-	quoteAsset.TotalCurrentCap = rgenerated.Amount(*totalCapInQuote)
+	quoteAsset.TotalCurrentCap = regources.Amount(*totalCapInQuote)
 
 	var hardCapInQuote *int64
 	hardCapInQuote, err = c.converter.TryToConvertWithOneHop(int64(sale.HardCap), sale.DefaultQuoteAsset, quoteAsset.Asset)
@@ -101,7 +101,7 @@ func (c *saleCapConverter) populateQuoteAssetCap(quoteAsset *history2.SaleQuoteA
 		return errors.New("failed to convert hard cap to quote asset")
 	}
 
-	quoteAsset.HardCap = rgenerated.Amount(*hardCapInQuote)
+	quoteAsset.HardCap = regources.Amount(*hardCapInQuote)
 	return nil
 }
 

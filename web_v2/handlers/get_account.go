@@ -13,7 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetAccount - processes request to get account and it's details by address
@@ -78,7 +78,7 @@ type getAccountHandler struct {
 }
 
 //GetAccount - returns Account resources
-func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*rgenerated.AccountResponse, error) {
+func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources.AccountResponse, error) {
 	account, err := h.AccountsQ.GetByAddress(request.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account by address")
@@ -88,7 +88,7 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*rgenerate
 		return nil, nil
 	}
 
-	response := rgenerated.AccountResponse{
+	response := regources.AccountResponse{
 		Data: resources.NewAccount(*account),
 	}
 
@@ -124,7 +124,7 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*rgenerate
 	return &response, nil
 }
 
-func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *rgenerated.Included) (*rgenerated.RelationCollection, error) {
+func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {
 	limitsQ := h.LimitsV2Q.FilterByAccountID(request.Address)
 
 	coreLimits, err := limitsQ.Select()
@@ -132,8 +132,8 @@ func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *rg
 		return nil, errors.Wrap(err, "failed to select limits for account")
 	}
 
-	result := &rgenerated.RelationCollection{
-		Data: make([]rgenerated.Key, 0, len(coreLimits)),
+	result := &regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(coreLimits)),
 	}
 
 	for _, coreLimitsUnit := range coreLimits {
@@ -148,7 +148,7 @@ func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *rg
 	return result, nil
 }
 
-func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, includes *rgenerated.Included) (*rgenerated.RelationCollection, error) {
+func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {
 	externalSystemIDsQ := h.ExternalSystemIDsQ.FilterByAccount(request.Address)
 
 	coreExternalSystemIDs, err := externalSystemIDsQ.Select()
@@ -156,8 +156,8 @@ func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, i
 		return nil, errors.Wrap(err, "failed to select external system IDs for account")
 	}
 
-	result := rgenerated.RelationCollection{
-		Data: make([]rgenerated.Key, 0, len(coreExternalSystemIDs)),
+	result := regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(coreExternalSystemIDs)),
 	}
 
 	for _, coreExtSysIDUnit := range coreExternalSystemIDs {
@@ -172,7 +172,7 @@ func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, i
 	return &result, nil
 }
 
-func (h *getAccountHandler) getReferrer(account *core2.Account, request *requests.GetAccount, includes *rgenerated.Included) (*rgenerated.Relation, error) {
+func (h *getAccountHandler) getReferrer(account *core2.Account, request *requests.GetAccount, includes *regources.Included) (*regources.Relation, error) {
 	if account.Referrer == nil {
 		return nil, nil
 	}
@@ -203,7 +203,7 @@ func (h *getAccountHandler) getReferrer(account *core2.Account, request *request
 	return result.AsRelation(), nil
 }
 
-func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *rgenerated.Included) (*rgenerated.RelationCollection, error) {
+func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {
 	balancesQ := h.BalancesQ.FilterByAccount(request.Address)
 
 	if request.ShouldInclude(requests.IncludeTypeAccountBalancesAsset) {
@@ -215,8 +215,8 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *
 		return nil, errors.Wrap(err, "failed to select balances for account")
 	}
 
-	result := rgenerated.RelationCollection{
-		Data: make([]rgenerated.Key, 0, len(coreBalances)),
+	result := regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(coreBalances)),
 	}
 
 	for i, coreBalance := range coreBalances {
@@ -245,8 +245,8 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *
 }
 
 func (h *getAccountHandler) getRole(request *requests.GetAccount,
-	includes *rgenerated.Included, account core2.Account,
-) (*rgenerated.Relation, error) {
+	includes *regources.Included, account core2.Account,
+) (*regources.Relation, error) {
 	if !request.ShouldInclude(requests.IncludeTypeAccountRole) {
 		role := resources.NewAccountRoleKey(account.RoleID)
 		return role.AsRelation(), nil
@@ -280,7 +280,7 @@ func (h *getAccountHandler) getRole(request *requests.GetAccount,
 	return role.AsRelation(), nil
 }
 
-func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *rgenerated.Included, account *core2.Account) (*rgenerated.RelationCollection, error) {
+func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *regources.Included, account *core2.Account) (*regources.RelationCollection, error) {
 
 	coreBalances, err := h.BalancesQ.FilterByAccount(request.Address).Select()
 	if err != nil {
@@ -312,8 +312,8 @@ func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *rgen
 	sft.Update(generalFees)
 	sft.AddZeroFees(assets)
 
-	result := rgenerated.RelationCollection{
-		Data: make([]rgenerated.Key, 0),
+	result := regources.RelationCollection{
+		Data: make([]regources.Key, 0),
 	}
 	for _, v := range sft {
 		for _, feeRecord := range v {

@@ -2,29 +2,29 @@ package resources
 
 import (
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewOrderBookEntryKey - returns new instance of OrderBookEntryKey
-func NewOrderBookEntryKey(id string) rgenerated.Key {
-	return rgenerated.Key{
+func NewOrderBookEntryKey(id string) regources.Key {
+	return regources.Key{
 		ID:   id,
-		Type: rgenerated.ORDER_BOOK_ENTRIES,
+		Type: regources.ORDER_BOOK_ENTRIES,
 	}
 }
 
 // NewOrderBookEntry - returns new instance of OrderBookEntry
-func NewOrderBookEntry(record core2.OrderBookEntry) rgenerated.OrderBookEntry {
-	return rgenerated.OrderBookEntry{
+func NewOrderBookEntry(record core2.OrderBookEntry) regources.OrderBookEntry {
+	return regources.OrderBookEntry{
 		Key: NewOrderBookEntryKey(record.ID),
-		Attributes: rgenerated.OrderBookEntryAttributes{
+		Attributes: regources.OrderBookEntryAttributes{
 			IsBuy:       record.IsBuy,
-			Price:       rgenerated.Amount(record.Price),
-			BaseAmount:  rgenerated.Amount(record.BaseAmount),
-			QuoteAmount: rgenerated.Amount(record.QuoteAmount),
+			Price:       regources.Amount(record.Price),
+			BaseAmount:  regources.Amount(record.BaseAmount),
+			QuoteAmount: regources.Amount(record.QuoteAmount),
 			CreatedAt:   record.CreatedAt,
 		},
-		Relationships: rgenerated.OrderBookEntryRelationships{
+		Relationships: regources.OrderBookEntryRelationships{
 			BaseAsset:  NewAssetKey(record.BaseAssetCode).AsRelation(),
 			QuoteAsset: NewAssetKey(record.QuoteAssetCode).AsRelation(),
 		},

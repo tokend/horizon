@@ -2,23 +2,23 @@ package resources
 
 import (
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //NewAccount - creates new instance of account
-func NewAccount(core core2.Account) rgenerated.Account {
-	return rgenerated.Account{
-		Key: rgenerated.Key{
+func NewAccount(core core2.Account) regources.Account {
+	return regources.Account{
+		Key: regources.Key{
 			ID:   core.Address,
-			Type: rgenerated.ACCOUNTS,
+			Type: regources.ACCOUNTS,
 		},
 	}
 }
 
 //NewAccountKey - creates account key from address
-func NewAccountKey(address string) rgenerated.Key {
-	return rgenerated.Key{
+func NewAccountKey(address string) regources.Key {
+	return regources.Key{
 		ID:   address,
-		Type: rgenerated.ACCOUNTS,
+		Type: regources.ACCOUNTS,
 	}
 }

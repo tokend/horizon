@@ -26,7 +26,7 @@ ManageAssetOp:
           - asset_code
           - action
           - creator_details
-          - preissued_signer
+          - pre_issuance_signer
           - max_issuance_amount
         properties:
           asset_code:
@@ -58,9 +58,9 @@ ManageAssetOp:
               * 64: "can_be_quote_in_atomic_swap"
           creator_details:
             $ref: '#/components/schemas/Details'
-          preissued_signer:
+          pre_issuance_signer:
             type: string
-            description: "Address of preissuance signer"
+            description: "Address of pre-issuance signer"
           max_issuance_amount:
             type: string
             format: Amount

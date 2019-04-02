@@ -34,7 +34,7 @@ Poll:
   allOf:
     - $ref: '#/components/schemas/PollKey'
     - type: object
-      x-needs-db-methods: true
+      x-go-scan-value: true
       required: [relationships, attributes]
       properties:
         id:
@@ -59,14 +59,12 @@ Poll:
               properties:
                 data:
                   $ref: '#/components/schemas/AccountKey'
-            outcome:
+            participation:
               type: object
               description: "poll outcome"
               properties:
                 data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/PollParticipationKey'
+                  $ref: '#/components/schemas/PollParticipationKey'
         attributes:
           type: object
           required: [permission_type, number_of_choices, start_time, end_time, vote_confirmation_required, poll_state, poll_data, creator_details]

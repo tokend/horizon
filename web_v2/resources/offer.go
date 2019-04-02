@@ -5,25 +5,25 @@ import (
 	"time"
 
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewOffer creates new instance of Offer from provided one
-func NewOffer(record core2.Offer) rgenerated.Offer {
-	return rgenerated.Offer{
-		Key: rgenerated.Key{
+func NewOffer(record core2.Offer) regources.Offer {
+	return regources.Offer{
+		Key: regources.Key{
 			ID:   fmt.Sprint(record.OfferID),
-			Type: rgenerated.OFFERS,
+			Type: regources.OFFERS,
 		},
-		Attributes: rgenerated.OfferAttributes{
+		Attributes: regources.OfferAttributes{
 			IsBuy:       record.IsBuy,
 			OrderBookId: fmt.Sprint(record.OrderBookID),
 			CreatedAt:   time.Unix(record.CreatedAt, 0).UTC().Format(time.RFC3339),
-			BaseAmount:  rgenerated.Amount(record.BaseAmount),
-			QuoteAmount: rgenerated.Amount(record.QuoteAmount),
-			Price:       rgenerated.Amount(record.Price),
-			Fee: rgenerated.Fee{
-				CalculatedPercent: rgenerated.Amount(record.Fee),
+			BaseAmount:  regources.Amount(record.BaseAmount),
+			QuoteAmount: regources.Amount(record.QuoteAmount),
+			Price:       regources.Amount(record.Price),
+			Fee: regources.Fee{
+				CalculatedPercent: regources.Amount(record.Fee),
 			},
 		},
 	}

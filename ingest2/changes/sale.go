@@ -1,8 +1,9 @@
 package changes
 
 import (
-	"gitlab.com/tokend/regources/rgenerated"
 	"time"
+
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -17,7 +18,7 @@ type saleStorage interface {
 	//Updates sale
 	Update(sale history.Sale) error
 	// SetState - sets state
-	SetState(saleID uint64, state rgenerated.SaleState) error
+	SetState(saleID uint64, state regources.SaleState) error
 }
 
 type saleHandler struct {
@@ -56,11 +57,11 @@ func (c *saleHandler) Created(lc ledgerChange) error {
 func (c *saleHandler) Removed(lc ledgerChange) error {
 	// sale can be removed by check sale state or cancel sale
 	// so we can handle approve of the sale and by default mark is as cancelled
-	saleState := rgenerated.SaleStateCanceled
+	saleState := regources.SaleStateCanceled
 	if lc.OperationResult.Type == xdr.OperationTypeCheckSaleState {
 		opEffect := lc.OperationResult.MustCheckSaleStateResult().MustSuccess().Effect
 		if opEffect.Effect == xdr.CheckSaleStateEffectClosed {
-			saleState = rgenerated.SaleStateClosed
+			saleState = regources.SaleStateClosed
 		}
 	}
 
@@ -98,9 +99,9 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 	for i := range raw.QuoteAssets {
 		quoteAssets = append(quoteAssets, history.SaleQuoteAsset{
 			Asset:          string(raw.QuoteAssets[i].QuoteAsset),
-			Price:          rgenerated.Amount(raw.QuoteAssets[i].Price),
+			Price:          regources.Amount(raw.QuoteAssets[i].Price),
 			QuoteBalanceID: raw.QuoteAssets[i].QuoteBalance.AsString(),
-			CurrentCap:     rgenerated.Amount(raw.QuoteAssets[i].CurrentCap),
+			CurrentCap:     regources.Amount(raw.QuoteAssets[i].CurrentCap),
 		})
 	}
 
@@ -113,16 +114,16 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		DefaultQuoteAsset: string(raw.DefaultQuoteAsset),
 		StartTime:         time.Unix(int64(raw.StartTime), 0).UTC(),
 		EndTime:           time.Unix(int64(raw.EndTime), 0).UTC(),
-		SoftCap:           rgenerated.Amount(raw.SoftCap),
-		HardCap:           rgenerated.Amount(raw.HardCap),
+		SoftCap:           regources.Amount(raw.SoftCap),
+		HardCap:           regources.Amount(raw.HardCap),
 		Details:           internal.MarshalCustomDetails(raw.Details),
 		QuoteAssets: history.SaleQuoteAssets{
 			QuoteAssets: quoteAssets,
 		},
-		BaseCurrentCap: rgenerated.Amount(raw.CurrentCapInBase),
-		BaseHardCap:    rgenerated.Amount(raw.MaxAmountToBeSold),
+		BaseCurrentCap: regources.Amount(raw.CurrentCapInBase),
+		BaseHardCap:    regources.Amount(raw.MaxAmountToBeSold),
 		SaleType:       saleType,
 		// if sale still exists in core db - it is open
-		State: rgenerated.SaleStateOpen,
+		State: regources.SaleStateOpen,
 	}, nil
 }

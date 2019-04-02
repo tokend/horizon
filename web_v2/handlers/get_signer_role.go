@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/rgenerated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetSignerRole - processes request to get signerRole and it's details by signerRole code
@@ -53,7 +53,7 @@ type getSignerRoleHandler struct {
 }
 
 // GetSignerRole returns signerRole with related resources
-func (h *getSignerRoleHandler) GetSignerRole(request *requests.GetSignerRole) (*rgenerated.SignerRoleResponse, error) {
+func (h *getSignerRoleHandler) GetSignerRole(request *requests.GetSignerRole) (*regources.SignerRoleResponse, error) {
 	signerRole, err := h.SignerRolesQ.FilterByID(request.ID).Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get signerRole by code")
@@ -68,7 +68,7 @@ func (h *getSignerRoleHandler) GetSignerRole(request *requests.GetSignerRole) (*
 	}
 
 	signerRoleResponse := resources.NewSignerRole(*signerRole)
-	var included rgenerated.Included
+	var included regources.Included
 	for _, rule := range rules {
 		ruleResponse := resources.NewSignerRule(rule)
 		signerRoleResponse.Relationships.Rules.Data = append(signerRoleResponse.Relationships.Rules.Data,
@@ -79,7 +79,7 @@ func (h *getSignerRoleHandler) GetSignerRole(request *requests.GetSignerRole) (*
 		}
 	}
 
-	return &rgenerated.SignerRoleResponse{
+	return &regources.SignerRoleResponse{
 		Data:     signerRoleResponse,
 		Included: included,
 	}, nil

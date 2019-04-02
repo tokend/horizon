@@ -3,12 +3,13 @@ package changes
 import (
 	"time"
 
+	regources "gitlab.com/tokend/regources/generated"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	history "gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
-	"gitlab.com/tokend/regources/v2"
 )
 
 type pollStorage interface {

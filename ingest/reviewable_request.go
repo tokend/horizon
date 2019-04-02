@@ -3,8 +3,9 @@ package ingest
 import (
 	"encoding/hex"
 	"encoding/json"
-	"gitlab.com/tokend/regources"
 	"time"
+
+	"gitlab.com/tokend/regources"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
