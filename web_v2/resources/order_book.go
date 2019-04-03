@@ -1,17 +1,21 @@
 package resources
 
 import (
+	"fmt"
 	"gitlab.com/tokend/regources/generated"
 )
 
 // NewOrderBookKey - creates new Key for OrderBook
-func NewOrderBookKey(id int64) regources.Key {
-	return regources.NewKeyInt64(id, "order-books")
+func NewOrderBookKey(base string, quote string, id uint64) regources.Key {
+	return regources.Key{
+		ID: fmt.Sprintf("%s:%s:%d", base, quote, id),
+		Type: "order-books", // TODO: was not generated for some reason
+	}
 }
 
 // NewOrderBook - creates new instance of OrderBook
-func NewOrderBook(id int64) regources.OrderBook {
+func NewOrderBook(base string, quote string, id uint64) regources.OrderBook {
 	return regources.OrderBook{
-		Key: NewOrderBookKey(id),
+		Key: NewOrderBookKey(base, quote, id),
 	}
 }

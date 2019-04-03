@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -13,7 +12,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	regources "gitlab.com/tokend/regources/generated"
+	"gitlab.com/tokend/regources/generated"
 )
 
 // GetOrderBookV4 - processes request to get order book
@@ -76,7 +75,6 @@ func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4)
 	sellEntriesQ := q.FilterByIsBuy(false)
 
 	if request.ShouldInclude(requests.IncludeTypeOrderBookV4BuyEntriesBaseAssets) {
-		fmt.Println("inside if")
 		buyEntriesQ = buyEntriesQ.WithBaseAsset()
 	}
 
@@ -103,15 +101,14 @@ func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4)
 	}
 
 	response := &regources.OrderBookResponse{
-		Data: regources.OrderBook{
-			Relationships: regources.OrderBookRelationships{
-				BuyEntries: &regources.RelationCollection{
-					Data: make([]regources.Key, 0, len(coreBuyEntries)),
-				},
-				SellEntries: &regources.RelationCollection{
-					Data: make([]regources.Key, 0, len(coreSellEntries)),
-				},
-			},
+		Data: resources.NewOrderBook(request.BaseAsset, request.QuoteAsset, request.OrderBookID),
+	}
+	response.Data.Relationships = regources.OrderBookRelationships{
+		BuyEntries: &regources.RelationCollection{
+			Data: make([]regources.Key, 0, len(coreBuyEntries)),
+		},
+		SellEntries: &regources.RelationCollection{
+			Data: make([]regources.Key, 0, len(coreSellEntries)),
 		},
 	}
 
