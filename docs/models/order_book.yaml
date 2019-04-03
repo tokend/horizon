@@ -23,6 +23,7 @@ OrderBook:
         properties:
           buy_entries:
             type: object
+            description: "buy entries of the order book entry"
             properties:
               data:
                 type: array
@@ -30,6 +31,7 @@ OrderBook:
                   $ref: '#/components/schemas/OrderBookEntryKey'
           sell_entries:
             type: object
+            description: "sell entries of the order book entry"
             properties:
               data:
                 type: array
