@@ -28,8 +28,10 @@
         type: string
         enum:
           - buy_entries
-          - sell_entries
           - buy_entries.base_asset
+          - buy_entries.quote_asset
+          - sell_entries
+          - sell_entries.base_asset
           - sell_entries.quote_asset
     responses:
       200:
