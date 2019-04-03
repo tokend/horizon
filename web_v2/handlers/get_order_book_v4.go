@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -71,23 +72,32 @@ func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4)
 		FilterByBaseAssetCode(request.BaseAsset).
 		FilterByQuoteAssetCode(request.QuoteAsset)
 
-	if request.ShouldInclude(requests.IncludeTypeOrderBookV4BaseAssets) {
-		q = q.WithBaseAsset()
+	buyEntriesQ := q.FilterByIsBuy(true)
+	sellEntriesQ := q.FilterByIsBuy(false)
+
+	if request.ShouldInclude(requests.IncludeTypeOrderBookV4BuyEntriesBaseAssets) {
+		fmt.Println("inside if")
+		buyEntriesQ = buyEntriesQ.WithBaseAsset()
 	}
 
-	if request.ShouldInclude(requests.IncludeTypeOrderBookV4QuoteAssets) {
-		q = q.WithQuoteAsset()
+	if request.ShouldInclude(requests.IncludeTypeOrderBookV4BuyEntriesQuoteAssets) {
+		buyEntriesQ = buyEntriesQ.WithQuoteAsset()
 	}
 
-	isBuyQ := q.FilterByIsBuy(true)
-	isSellQ := q.FilterByIsBuy(false)
+	if request.ShouldInclude(requests.IncludeTypeOrderBookV4SellEntriesBaseAssets) {
+		sellEntriesQ = sellEntriesQ.WithBaseAsset()
+	}
 
-	coreBuyEntries, err := isBuyQ.Select()
+	if request.ShouldInclude(requests.IncludeTypeOrderBookV4SellEntriesQuoteAssets) {
+		sellEntriesQ = sellEntriesQ.WithQuoteAsset()
+	}
+
+	coreBuyEntries, err := buyEntriesQ.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get buy order book entries")
 	}
 
-	coreSellEntries, err := isSellQ.Select()
+	coreSellEntries, err := sellEntriesQ.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sell order book entries")
 	}
@@ -105,46 +115,46 @@ func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4)
 		},
 	}
 
-	for _, coreEntry := range coreBuyEntries {
+	for _, coreBuyEntry := range coreBuyEntries {
 		response.Data.Relationships.BuyEntries.Data = append(
 			response.Data.Relationships.BuyEntries.Data,
-			resources.NewOrderBookEntryKey(coreEntry.ID),
+			resources.NewOrderBookEntryKey(coreBuyEntry.ID),
 		)
 
-		if request.ShouldInclude(requests.IncludeTypeOrderBookV4OrderBookEntries) {
-			entry := resources.NewOrderBookEntry(coreEntry)
+		if request.ShouldInclude(requests.IncludeTypeOrderBookV4BuyEntries) {
+			entry := resources.NewOrderBookEntry(coreBuyEntry)
 			response.Included.Add(&entry)
 		}
 
-		if request.ShouldInclude(requests.IncludeTypeOrderBookV4BaseAssets) {
-			baseAsset := resources.NewAsset(*coreEntry.BaseAsset)
+		if request.ShouldInclude(requests.IncludeTypeOrderBookV4BuyEntriesBaseAssets) {
+			baseAsset := resources.NewAsset(*coreBuyEntry.BaseAsset)
 			response.Included.Add(&baseAsset)
 		}
 
-		if request.ShouldInclude(requests.IncludeTypeOrderBookV4QuoteAssets) {
-			quoteAsset := resources.NewAsset(*coreEntry.QuoteAsset)
+		if request.ShouldInclude(requests.IncludeTypeOrderBookV4BuyEntriesQuoteAssets) {
+			quoteAsset := resources.NewAsset(*coreBuyEntry.QuoteAsset)
 			response.Included.Add(&quoteAsset)
 		}
 	}
 
-	for _, coreEntry := range coreSellEntries {
+	for _, coreSellEntry := range coreSellEntries {
 		response.Data.Relationships.SellEntries.Data = append(
 			response.Data.Relationships.BuyEntries.Data,
-			resources.NewOrderBookEntryKey(coreEntry.ID),
+			resources.NewOrderBookEntryKey(coreSellEntry.ID),
 		)
 
-		if request.ShouldInclude(requests.IncludeTypeOrderBookV4OrderBookEntries) {
-			entry := resources.NewOrderBookEntry(coreEntry)
+		if request.ShouldInclude(requests.IncludeTypeOrderBookV4SellEntries) {
+			entry := resources.NewOrderBookEntry(coreSellEntry)
 			response.Included.Add(&entry)
 		}
 
-		if request.ShouldInclude(requests.IncludeTypeOrderBookV4BaseAssets) {
-			baseAsset := resources.NewAsset(*coreEntry.BaseAsset)
+		if request.ShouldInclude(requests.IncludeTypeOrderBookV4SellEntriesBaseAssets) {
+			baseAsset := resources.NewAsset(*coreSellEntry.BaseAsset)
 			response.Included.Add(&baseAsset)
 		}
 
-		if request.ShouldInclude(requests.IncludeTypeOrderBookV4QuoteAssets) {
-			quoteAsset := resources.NewAsset(*coreEntry.QuoteAsset)
+		if request.ShouldInclude(requests.IncludeTypeOrderBookV4SellEntriesQuoteAssets) {
+			quoteAsset := resources.NewAsset(*coreSellEntry.QuoteAsset)
 			response.Included.Add(&quoteAsset)
 		}
 	}

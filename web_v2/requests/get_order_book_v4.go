@@ -7,18 +7,28 @@ import (
 )
 
 const (
-	// IncludeTypeOrderBookV4OrderBookEntries
-	IncludeTypeOrderBookV4OrderBookEntries = "order_book_entries"
-	// IncludeTypeOrderBookV4BaseAssets - defines if base assets should be included in the response
-	IncludeTypeOrderBookV4BaseAssets = "order_book_entries.base_asset"
-	// IncludeTypeOrderBookV4QuoteAssets = defines if quote assets should be included in the response
-	IncludeTypeOrderBookV4QuoteAssets = "order_book_entries.quote_asset"
+	// IncludeTypeOrderBookV4BuyEntries - defines if buy entries should be included in the response
+	IncludeTypeOrderBookV4BuyEntries = "buy_entries"
+	// IncludeTypeOrderBookV4BuyEntriesBaseAssets - defines if base asset of buy entries should be included in the response
+	IncludeTypeOrderBookV4BuyEntriesBaseAssets = "buy_entries.base_asset"
+	// IncludeTypeOrderBookV4BuyEntriesQuoteAssets - defines if quote asset of buy entries should be included in the response
+	IncludeTypeOrderBookV4BuyEntriesQuoteAssets = "buy_entries.quote_asset"
+
+	// IncludeTypeOrderBookV4SellEntries - defines if sell entries should be included in the response
+	IncludeTypeOrderBookV4SellEntries = "sell_entries"
+	// IncludeTypeOrderBookV4SellEntriesBaseAsset - defines if base asset of sell entries should be included in the response
+	IncludeTypeOrderBookV4SellEntriesBaseAssets = "sell_entries.base_asset"
+	// IncludeTypeOrderBookV4SellEntriesQuoteAsset - defines if quote asset of sell entries should be included in the response
+	IncludeTypeOrderBookV4SellEntriesQuoteAssets = "sell_entries.quote_asset"
 )
 
 var includeTypeOrderBookV4All = map[string]struct{}{
-	IncludeTypeOrderBookV4OrderBookEntries: {},
-	IncludeTypeOrderBookV4BaseAssets:       {},
-	IncludeTypeOrderBookV4QuoteAssets:      {},
+	IncludeTypeOrderBookV4BuyEntries:             {},
+	IncludeTypeOrderBookV4BuyEntriesBaseAssets:   {},
+	IncludeTypeOrderBookV4BuyEntriesQuoteAssets:  {},
+	IncludeTypeOrderBookV4SellEntries:            {},
+	IncludeTypeOrderBookV4SellEntriesBaseAssets:  {},
+	IncludeTypeOrderBookV4SellEntriesQuoteAssets: {},
 }
 
 // GetOrderBookV4 represents params to be specified by user for getOrderBookV4 handler
