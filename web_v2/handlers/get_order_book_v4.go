@@ -55,7 +55,7 @@ type getOrderBookV4Handler struct {
 }
 
 // GetOrderBookV4 returns order book with related resources
-func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4) (*resources.OrderBookResponse, error) {
+func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4) (*regources.OrderBookResponse, error) {
 	if request.OrderBookID != secondaryMarketOrderBookID {
 		sale, err := h.SalesQ.GetByID(request.OrderBookID)
 		if err != nil {
@@ -92,9 +92,9 @@ func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4)
 		return nil, errors.Wrap(err, "Failed to get sell order book entries")
 	}
 
-	response := &resources.OrderBookResponse{
-		Data: resources.OrderBook{
-			Relationships: resources.OrderBookRelations{
+	response := &regources.OrderBookResponse{
+		Data: regources.OrderBook{
+			Relationships: regources.OrderBookRelationships{
 				BuyEntries: &regources.RelationCollection{
 					Data: make([]regources.Key, 0, len(coreBuyEntries)),
 				},
@@ -127,7 +127,6 @@ func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4)
 		}
 	}
 
-	// TODO: reduce duplication
 	for _, coreEntry := range coreSellEntries {
 		response.Data.Relationships.SellEntries.Data = append(
 			response.Data.Relationships.BuyEntries.Data,
