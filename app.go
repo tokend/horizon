@@ -86,6 +86,7 @@ func (a *App) Serve() {
 		}
 	}))
 	http.Handle("/v3/", a.webV2.mux)
+	http.Handle("/v4/", a.webV2.mux)
 	http.Handle("/", a.web.router)
 
 	addr := fmt.Sprintf(":%d", a.config.Port)
