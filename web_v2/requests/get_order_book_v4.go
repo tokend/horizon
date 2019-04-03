@@ -39,13 +39,13 @@ func NewGetOrderBookV4(r *http.Request) (*GetOrderBookV4, error) {
 		return nil, err
 	}
 
-	baseAsset := b.getString("base_asset")
+	baseAsset := b.getString("base")
 	if baseAsset == "" {
 		return nil, validation.Errors{
 			"id": errors.New("id format is: 'base:quote:order_book_id', but base is empty"),
 		}
 	}
-	quoteAsset := b.getString("quote_asset")
+	quoteAsset := b.getString("quote")
 	if baseAsset == "" {
 		return nil, validation.Errors{
 			"id": errors.New("id format is: 'base:quote:order_book_id', but quote is empty"),
