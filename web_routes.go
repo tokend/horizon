@@ -62,7 +62,7 @@ func registerV3Routes(r chi.Router) {
 	r.Get("/sales", handlers.GetSaleList)
 	r.Get("/sales/{id}", handlers.GetSale)
 
-	r.Get("/order_book/{id}", handlers.GetOrderBook)
+	r.Get("/order_book/{id}", handlers.DeprecatedGetOrderBook)
 
 	r.Get("/account_roles/{id}", handlers.GetAccountRole)
 	r.Get("/account_roles", handlers.GetAccountRoleList)

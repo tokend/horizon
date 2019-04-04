@@ -15,24 +15,24 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-// GetOrderBook - processes request to get order book entries
-func GetOrderBook(w http.ResponseWriter, r *http.Request) {
+// DeprecatedGetOrderBook - processes request to get order book entries
+func DeprecatedGetOrderBook(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	historyRepo := ctx.HistoryRepo(r)
 
-	handler := getOrderBookHandler{
+	handler := deprecatedGetOrderBookHandler{
 		OrderBooksQ: core2.NewOrderBooksQ(coreRepo),
 		SalesQ:      history2.NewSalesQ(historyRepo),
 		Log:         ctx.Log(r),
 	}
 
-	request, err := requests.NewGetOrderBook(r)
+	request, err := requests.NewDeprecatedGetOrderBook(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	result, err := handler.GetOrderBook(request)
+	result, err := handler.DeprecatedGetOrderBook(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get order book entries", logan.F{
 			"request": request,
@@ -48,7 +48,7 @@ func GetOrderBook(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, result)
 }
 
-type getOrderBookHandler struct {
+type deprecatedGetOrderBookHandler struct {
 	OrderBooksQ core2.OrderBooksQ
 	SalesQ      history2.SalesQ
 	Log         *logan.Entry
@@ -56,8 +56,8 @@ type getOrderBookHandler struct {
 
 const secondaryMarketOrderBookID = 0
 
-// GetOrderBook returns offer with related resources
-func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*regources.OrderBookEntrysResponse, error) {
+// DeprecatedGetOrderBook returns offer with related resources
+func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests.DeprecatedGetOrderBook) (*regources.OrderBookEntrysResponse, error) {
 	if request.ID != secondaryMarketOrderBookID {
 		sale, err := h.SalesQ.GetByID(request.ID)
 		if err != nil {
@@ -70,23 +70,23 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 
 	q := h.OrderBooksQ.Page(*request.PageParams).FilterByOrderBookID(request.ID)
 
-	if request.ShouldInclude(requests.IncludeTypeOrderBookBaseAssets) {
+	if request.ShouldInclude(requests.DeprecatedIncludeTypeOrderBookBaseAssets) {
 		q = q.WithBaseAsset()
 	}
 
-	if request.ShouldInclude(requests.IncludeTypeOrderBookQuoteAssets) {
+	if request.ShouldInclude(requests.DeprecatedIncludeTypeOrderBookQuoteAssets) {
 		q = q.WithQuoteAsset()
 	}
 
-	if request.ShouldFilter(requests.FilterTypeOrderBookBaseAsset) {
+	if request.ShouldFilter(requests.DeprecatedFilterTypeOrderBookBaseAsset) {
 		q = q.FilterByBaseAssetCode(request.Filters.BaseAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeOrderBookQuoteAsset) {
+	if request.ShouldFilter(requests.DeprecatedFilterTypeOrderBookQuoteAsset) {
 		q = q.FilterByQuoteAssetCode(request.Filters.QuoteAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeOrderBookIsBuy) {
+	if request.ShouldFilter(requests.DeprecatedFilterTypeOrderBookIsBuy) {
 		q = q.FilterByIsBuy(request.Filters.IsBuy)
 	}
 
@@ -104,12 +104,12 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 	for _, coreOrderBookEntry := range coreOrderBookEntries {
 		response.Data = append(response.Data, resources.NewOrderBookEntry(coreOrderBookEntry))
 
-		if request.ShouldInclude(requests.IncludeTypeOrderBookBaseAssets) {
+		if request.ShouldInclude(requests.DeprecatedIncludeTypeOrderBookBaseAssets) {
 			baseAsset := resources.NewAsset(*coreOrderBookEntry.BaseAsset)
 			response.Included.Add(&baseAsset)
 		}
 
-		if request.ShouldInclude(requests.IncludeTypeOrderBookQuoteAssets) {
+		if request.ShouldInclude(requests.DeprecatedIncludeTypeOrderBookQuoteAssets) {
 			quoteAsset := resources.NewAsset(*coreOrderBookEntry.QuoteAsset)
 			response.Included.Add(&quoteAsset)
 		}
