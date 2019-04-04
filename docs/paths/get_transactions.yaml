@@ -43,6 +43,8 @@
           * 31 - `signer_role`
           * 32 - `stamp`
           * 33 - `license`
+          * 34 - `poll`
+          * 35 - `vote`
         required: false
         style: form
         explode: false
