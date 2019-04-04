@@ -15,6 +15,8 @@
 ### Added 
 
 * generated regources/generated in vendor
+* new endpoint `/v3/order_books/{id}`
+* old endpoint `/v3/order_book/{id}` marked as deprecated 
 
 ## 3.1.0-rc.0
 
