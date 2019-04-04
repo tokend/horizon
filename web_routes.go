@@ -76,5 +76,5 @@ func registerV3Routes(r chi.Router) {
 }
 
 func registerV4Routes(r chi.Router) {
-	r.Get("/order_book/{base}:{quote}:{order_book_id}", handlers.GetOrderBookV4)
+	r.Get("/order_book/{base}:{quote}:{order_book_id}", handlers.GetOrderBook)
 }

@@ -15,25 +15,25 @@ import (
 	"gitlab.com/tokend/regources/generated"
 )
 
-// GetOrderBookV4 - processes request to get order book
-func GetOrderBookV4(w http.ResponseWriter, r *http.Request) {
+// GetOrderBook - processes request to get order book
+func GetOrderBook(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	historyRepo := ctx.HistoryRepo(r)
 
-	handler := getOrderBookV4Handler{
+	handler := getOrderBookHandler{
 		AssetsQ:     core2.NewAssetsQ(coreRepo),
 		OrderBooksQ: core2.NewOrderBooksQ(coreRepo),
 		SalesQ:      history2.NewSalesQ(historyRepo),
 		Log:         ctx.Log(r),
 	}
 
-	request, err := requests.NewGetOrderBookV4(r)
+	request, err := requests.NewGetOrderBook(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	result, err := handler.GetOrderBookV4(request)
+	result, err := handler.GetOrderBook(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get order book", logan.F{
 			"request": request,
@@ -49,15 +49,15 @@ func GetOrderBookV4(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, result)
 }
 
-type getOrderBookV4Handler struct {
+type getOrderBookHandler struct {
 	OrderBooksQ core2.OrderBooksQ
 	SalesQ      history2.SalesQ
 	AssetsQ     core2.AssetsQ
 	Log         *logan.Entry
 }
 
-// GetOrderBookV4 returns order book with related resources
-func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4) (*regources.OrderBookResponse, error) {
+// GetOrderBook returns order book with related resources
+func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*regources.OrderBookResponse, error) {
 	if request.OrderBookID != secondaryMarketOrderBookID {
 		coreSale, err := h.SalesQ.GetByID(request.OrderBookID)
 		if err != nil {
@@ -94,12 +94,12 @@ func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4)
 		Data: []regources.Key{},
 	}
 
-	if request.ShouldInclude(requests.IncludeTypeOrderBookV4BaseAsset) {
+	if request.ShouldInclude(requests.IncludeTypeOrderBookBaseAsset) {
 		baseAsset := resources.NewAsset(*coreBaseAsset)
 		response.Included.Add(&baseAsset)
 	}
 
-	if request.ShouldInclude(requests.IncludeTypeOrderBookV4QuoteAsset) {
+	if request.ShouldInclude(requests.IncludeTypeOrderBookQuoteAsset) {
 		quoteAsset := resources.NewAsset(*coreQuoteAsset)
 		response.Included.Add(&quoteAsset)
 	}
@@ -121,7 +121,7 @@ func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4)
 				response.Data.Relationships.BuyEntries.Data,
 				orderBookEntry.Key,
 			)
-			if request.ShouldInclude(requests.IncludeTypeOrderBookV4BuyEntries) {
+			if request.ShouldInclude(requests.IncludeTypeOrderBookBuyEntries) {
 				response.Included.Add(&orderBookEntry)
 			}
 		} else {
@@ -129,7 +129,7 @@ func (h *getOrderBookV4Handler) GetOrderBookV4(request *requests.GetOrderBookV4)
 				response.Data.Relationships.SellEntries.Data,
 				orderBookEntry.Key,
 			)
-			if request.ShouldInclude(requests.IncludeTypeOrderBookV4SellEntries) {
+			if request.ShouldInclude(requests.IncludeTypeOrderBookSellEntries) {
 				response.Included.Add(&orderBookEntry)
 			}
 		}
