@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+* generated all existing models from openapi spec
+* generated `OrderBook`, `OrderBookRelationships`, `OrderBookResponse`, `OrderBooksResponse` types to represent order book
+
 ## 3.1.0
 
 ### Added
