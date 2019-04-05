@@ -104,34 +104,40 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 		response.Included.Add(&quoteAsset)
 	}
 
-	coreOrderBookEntries, err := h.OrderBooksQ.
+	q := h.
+		OrderBooksQ.
 		FilterByOrderBookID(request.OrderBookID).
 		FilterByBaseAssetCode(request.BaseAsset).
-		FilterByQuoteAssetCode(request.QuoteAsset).
-		Select()
+		FilterByQuoteAssetCode(request.QuoteAsset)
 
+	buyQ := q.FilterByIsBuy(true).OrderByPrice("desc")
+	sellQ := q.FilterByIsBuy(false).OrderByPrice("asc")
+
+	coreBuyEntries, err := buyQ.Select()
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get order book entries")
+		return nil, errors.Wrap(err, "Failed to get buy entries")
 	}
 
-	for _, coreOrderBookEntry := range coreOrderBookEntries {
-		orderBookEntry := resources.NewOrderBookEntry(coreOrderBookEntry)
-		if orderBookEntry.Attributes.IsBuy {
-			response.Data.Relationships.BuyEntries.Data = append(
-				response.Data.Relationships.BuyEntries.Data,
-				orderBookEntry.Key,
-			)
-			if request.ShouldInclude(requests.IncludeTypeOrderBookBuyEntries) {
-				response.Included.Add(&orderBookEntry)
-			}
-		} else {
-			response.Data.Relationships.SellEntries.Data = append(
-				response.Data.Relationships.SellEntries.Data,
-				orderBookEntry.Key,
-			)
-			if request.ShouldInclude(requests.IncludeTypeOrderBookSellEntries) {
-				response.Included.Add(&orderBookEntry)
-			}
+	coreSellEntries, err := sellQ.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to get sell entries")
+	}
+
+	for _, coreBuyEntry := range coreBuyEntries {
+		entry := resources.NewOrderBookEntry(coreBuyEntry)
+		response.Data.Relationships.BuyEntries.Data = append(response.Data.Relationships.BuyEntries.Data, entry.Key)
+
+		if request.ShouldInclude(requests.IncludeTypeOrderBookBuyEntries) {
+			response.Included.Add(&entry)
+		}
+	}
+
+	for _, coreSellEntry := range coreSellEntries {
+		entry := resources.NewOrderBookEntry(coreSellEntry)
+		response.Data.Relationships.SellEntries.Data = append(response.Data.Relationships.SellEntries.Data, entry.Key)
+
+		if request.ShouldInclude(requests.IncludeTypeOrderBookSellEntries) {
+			response.Included.Add(&entry)
 		}
 	}
 

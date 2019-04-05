@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"fmt"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
@@ -84,6 +85,12 @@ func (q OrderBooksQ) FilterByQuoteAssetCode(code string) OrderBooksQ {
 // FilterByIsBuy - returns q with filter by is_buy
 func (q OrderBooksQ) FilterByIsBuy(isBuy bool) OrderBooksQ {
 	q.selector = q.selector.Where("order_book_entries.is_buy = ?", isBuy)
+	return q
+}
+
+// FilterByOrderBookID - returns q with order by price
+func (q OrderBooksQ) OrderByPrice(order string) OrderBooksQ {
+	q.selector = q.selector.OrderBy(fmt.Sprintf("%s %s", "order_book_entries.price", order))
 	return q
 }
 
