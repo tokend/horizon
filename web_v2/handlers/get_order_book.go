@@ -108,7 +108,8 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 		OrderBooksQ.
 		FilterByOrderBookID(request.OrderBookID).
 		FilterByBaseAssetCode(request.BaseAsset).
-		FilterByQuoteAssetCode(request.QuoteAsset)
+		FilterByQuoteAssetCode(request.QuoteAsset).
+		Limit(request.MaxEntries)
 
 	coreBuyEntries, err := q.FilterByIsBuy(true).OrderByPrice("desc").Select()
 	if err != nil {

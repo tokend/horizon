@@ -100,6 +100,12 @@ func (q OrderBooksQ) FilterByOrderBookID(id uint64) OrderBooksQ {
 	return q
 }
 
+// Limit - returns q with applied limit param
+func (q OrderBooksQ) Limit (limit uint64) OrderBooksQ {
+	q.selector = q.selector.Limit(limit)
+	return q
+}
+
 // Page - returns Q with specified limit and offset params
 func (q OrderBooksQ) Page(params db2.OffsetPageParams) OrderBooksQ {
 	q.selector = params.ApplyTo(q.selector,
