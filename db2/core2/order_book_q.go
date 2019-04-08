@@ -61,6 +61,23 @@ func (q OrderBooksQ) WithBaseAsset() OrderBooksQ {
 	return q
 }
 
+// WithCumulativeAmounts - returns q with calculated cumulative amounts
+func (q OrderBooksQ) WithCumulativeAmounts (isBuy bool) OrderBooksQ {
+	var order string
+	if isBuy {
+		order = "desc"
+	} else {
+		order = "asc"
+	}
+
+	q.selector = q.selector.Columns(
+		fmt.Sprintf("sum(order_book_entries.base_amount) over(order by price %s) cumulative_base_amount", order),
+		fmt.Sprintf("sum(order_book_entries.quote_amount) over(order by price %s) cumulative_quote_amount", order),
+	)
+
+	return q
+}
+
 // WithQuoteAsset - joins quote asset
 func (q OrderBooksQ) WithQuoteAsset() OrderBooksQ {
 	q.selector = q.selector.
@@ -101,7 +118,7 @@ func (q OrderBooksQ) FilterByOrderBookID(id uint64) OrderBooksQ {
 }
 
 // Limit - returns q with applied limit param
-func (q OrderBooksQ) Limit (limit uint64) OrderBooksQ {
+func (q OrderBooksQ) Limit(limit uint64) OrderBooksQ {
 	q.selector = q.selector.Limit(limit)
 	return q
 }

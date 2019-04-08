@@ -111,12 +111,22 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 		FilterByQuoteAssetCode(request.QuoteAsset).
 		Limit(request.MaxEntries)
 
-	coreBuyEntries, err := q.FilterByIsBuy(true).OrderByPrice("desc").Select()
+	coreBuyEntries, err := q.
+		WithCumulativeAmounts(true).
+		FilterByIsBuy(true).
+		OrderByPrice("desc").
+		Select()
+
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get buy entries")
 	}
 
-	coreSellEntries, err := q.FilterByIsBuy(false).OrderByPrice("asc").Select()
+	coreSellEntries, err := q.
+		WithCumulativeAmounts(false).
+		FilterByIsBuy(false).
+		OrderByPrice("asc").
+		Select()
+
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sell entries")
 	}
