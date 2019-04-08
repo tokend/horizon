@@ -110,15 +110,12 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 		FilterByBaseAssetCode(request.BaseAsset).
 		FilterByQuoteAssetCode(request.QuoteAsset)
 
-	buyQ := q.FilterByIsBuy(true).OrderByPrice("desc")
-	sellQ := q.FilterByIsBuy(false).OrderByPrice("asc")
-
-	coreBuyEntries, err := buyQ.Select()
+	coreBuyEntries, err := q.FilterByIsBuy(true).OrderByPrice("desc").Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get buy entries")
 	}
 
-	coreSellEntries, err := sellQ.Select()
+	coreSellEntries, err := q.FilterByIsBuy(false).OrderByPrice("asc").Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sell entries")
 	}
