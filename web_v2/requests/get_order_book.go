@@ -60,7 +60,6 @@ func NewGetOrderBook(r *http.Request) (*GetOrderBook, error) {
 	if err != nil {
 		return nil, validation.Errors{
 			"id":   errors.New("id format is: 'base:quote:order_book_id', but order_book_id is invalid"),
-			"meta": err,
 		}
 	}
 
