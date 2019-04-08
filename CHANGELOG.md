@@ -10,6 +10,7 @@
 * all docs for proper regources generation
 * `ManageAssetOpAttributes.PreissuanceSigner` -> `ManageAssetOpAttributes.PreIssuanceSigner`
 * json: `preissued_signer` -> `pre_issuance_signer`
+* missing poll id in create poll request response
 
 ### Added 
 
