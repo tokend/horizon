@@ -113,8 +113,6 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 
 	coreBuyEntries, err := q.
 		WithCumulativeAmounts(true).
-		FilterByIsBuy(true).
-		OrderByPrice("desc").
 		Select()
 
 	if err != nil {
@@ -123,8 +121,6 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 
 	coreSellEntries, err := q.
 		WithCumulativeAmounts(false).
-		FilterByIsBuy(false).
-		OrderByPrice("asc").
 		Select()
 
 	if err != nil {

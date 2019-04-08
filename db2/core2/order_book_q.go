@@ -62,7 +62,7 @@ func (q OrderBooksQ) WithBaseAsset() OrderBooksQ {
 }
 
 // WithCumulativeAmounts - returns q with calculated cumulative amounts
-func (q OrderBooksQ) WithCumulativeAmounts (isBuy bool) OrderBooksQ {
+func (q OrderBooksQ) WithCumulativeAmounts(isBuy bool) OrderBooksQ {
 	var order string
 	if isBuy {
 		order = "desc"
@@ -70,12 +70,14 @@ func (q OrderBooksQ) WithCumulativeAmounts (isBuy bool) OrderBooksQ {
 		order = "asc"
 	}
 
-	q.selector = q.selector.Columns(
-		fmt.Sprintf("sum(order_book_entries.base_amount) over(order by price %s) cumulative_base_amount", order),
-		fmt.Sprintf("sum(order_book_entries.quote_amount) over(order by price %s) cumulative_quote_amount", order),
-	)
+	q.selector = q.selector.
+		Columns(
+			fmt.Sprintf("sum(order_book_entries.base_amount) over(order by price %s) cumulative_base_amount", order),
+			fmt.Sprintf("sum(order_book_entries.quote_amount) over(order by price %s) cumulative_quote_amount", order),
+		).
+		OrderBy(fmt.Sprintf("order_book_entries.price %s", order))
 
-	return q
+	return q.FilterByIsBuy(isBuy)
 }
 
 // WithQuoteAsset - joins quote asset
@@ -102,12 +104,6 @@ func (q OrderBooksQ) FilterByQuoteAssetCode(code string) OrderBooksQ {
 // FilterByIsBuy - returns q with filter by is_buy
 func (q OrderBooksQ) FilterByIsBuy(isBuy bool) OrderBooksQ {
 	q.selector = q.selector.Where("order_book_entries.is_buy = ?", isBuy)
-	return q
-}
-
-// FilterByOrderBookID - returns q with order by price
-func (q OrderBooksQ) OrderByPrice(order string) OrderBooksQ {
-	q.selector = q.selector.OrderBy(fmt.Sprintf("%s %s", "order_book_entries.price", order))
 	return q
 }
 
