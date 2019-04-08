@@ -26,6 +26,8 @@ OrderBookEntry:
             - base_amount
             - quote_amount
             - created_at
+            - cumulative_base_amount
+            - cumulative_quote_amount
           properties:
             is_buy:
               type: boolean
