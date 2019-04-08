@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"gitlab.com/tokend/horizon/web_v2/handlers"
 	"time"
 
 	"net/http"
@@ -17,7 +18,6 @@ import (
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/web_v2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
-	"gitlab.com/tokend/horizon/web_v2/handlers"
 	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
 )
 
@@ -147,7 +147,8 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/sales", handlers.GetSaleList)
 	m.Get("/v3/sales/{id}", handlers.GetSale)
 
-	m.Get("/v3/order_book/{id}", handlers.GetOrderBook)
+	m.Get("/v3/order_book/{id}", handlers.DeprecatedGetOrderBook)
+	m.Get("/v3/order_books/{base}:{quote}:{order_book_id}", handlers.GetOrderBook)
 
 	m.Get("/v3/account_roles/{id}", handlers.GetAccountRole)
 	m.Get("/v3/account_roles", handlers.GetAccountRoleList)

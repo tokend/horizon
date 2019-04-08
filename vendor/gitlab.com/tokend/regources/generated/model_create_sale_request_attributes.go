@@ -4,10 +4,9 @@
 
 package regources
 
+import "gitlab.com/tokend/go/xdr"
 import (
 	"time"
-
-	"gitlab.com/tokend/go/xdr"
 )
 
 type CreateSaleRequestAttributes struct {
