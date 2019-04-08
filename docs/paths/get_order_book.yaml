@@ -17,6 +17,17 @@
       schema:
         type: string
         example: "BTC:ETH:0"
+    - name: max_entries
+      in: query
+      description: |
+         Defines quantity of entries that will be returned in the response
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: integer
+        format: uint64
+        example: 10
     - name: include
       in: query
       description: |
