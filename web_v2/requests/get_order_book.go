@@ -51,7 +51,7 @@ func NewGetOrderBook(r *http.Request) (*GetOrderBook, error) {
 		}
 	}
 	quoteAsset := b.getString("quote")
-	if baseAsset == "" {
+	if quoteAsset	 == "" {
 		return nil, validation.Errors{
 			"id": errors.New("id format is: 'base:quote:order_book_id', but quote is empty"),
 		}
