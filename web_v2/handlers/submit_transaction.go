@@ -149,7 +149,7 @@ waitForIngest:
 	for {
 		select {
 		case <-context.Done():
-			break waitForIngest
+			return nil, nil
 		case <-h.Listener.Notify:
 			tx, err = h.Results.History.GetByHash(res.Hash)
 			if err != nil {
