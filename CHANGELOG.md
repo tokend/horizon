@@ -6,6 +6,7 @@
 
 ### Fixed
 
+* dropped influx
 * saving equal values to transaction's `result_meta_xdr` and `result_xdr` 
 * all docs for proper regources generation
 * `ManageAssetOpAttributes.PreissuanceSigner` -> `ManageAssetOpAttributes.PreIssuanceSigner`

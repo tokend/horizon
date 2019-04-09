@@ -162,18 +162,6 @@
   version = "v1.0"
 
 [[projects]]
-  digest = "1:9813d5a93abcc5690fa5830bf7186c835493516986be7a2b11b46e7b12e13317"
-  name = "github.com/influxdata/influxdb"
-  packages = [
-    "client/v2",
-    "models",
-    "pkg/escape",
-  ]
-  pruneopts = "UT"
-  revision = "2d474a3089bcfce6b472779be9470a1f0ef3d5e4"
-  version = "v1.3.7"
-
-[[projects]]
   branch = "master"
   digest = "1:7678f7cde4090e4c979877491805ee636f8ddb3ac8d02c413e1fccaaffc8e465"
   name = "github.com/jmoiron/sqlx"
@@ -662,7 +650,6 @@
     "github.com/go-ozzo/ozzo-validation",
     "github.com/goji/context",
     "github.com/guregu/null",
-    "github.com/influxdata/influxdb/client/v2",
     "github.com/jmoiron/sqlx",
     "github.com/lann/squirrel",
     "github.com/lib/pq",
