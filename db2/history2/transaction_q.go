@@ -6,16 +6,16 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-// TransactionQ is a helper struct to aid in configuring queries that loads
-// tx structures.
-type TransactionQ struct {
+// TransactionsQ is a helper struct to aid in configuring queries that loads
+// transactions structures.
+type TransactionsQ struct {
 	repo     *db2.Repo
 	selector sq.SelectBuilder
 }
 
-// NewTransactionQ - creates new instance of TransactionQ
-func NewTransactionQ(repo *db2.Repo) *TransactionQ {
-	return &TransactionQ{
+// NewTransactionsQ - creates new instance of TransactionsQ
+func NewTransactionsQ(repo *db2.Repo) TransactionsQ {
+	return TransactionsQ{
 		repo: repo,
 		selector: sq.Select(
 			"transactions.id",
@@ -30,14 +30,48 @@ func NewTransactionQ(repo *db2.Repo) *TransactionQ {
 			"transactions.meta",
 			"transactions.valid_after",
 			"transactions.valid_before",
-		).From("transactions"),
+		).
+			From("transactions").
+			// To apply filters on ledger_changes properties:
+			Distinct().
+			LeftJoin("ledger_changes ON ledger_changes.tx_id = transactions.id"),
 	}
 }
 
+// FilterByLedgerEntryTypes - returns q with filter by entry types
+func (q TransactionsQ) FilterByLedgerEntryTypes(types ...int) TransactionsQ {
+	q.selector = q.selector.Where(sq.Eq{"ledger_changes.entry_type": types})
+	return q
+}
+
+// FilterByLedgerEntryTypes - returns q with filter by effect(ledger entry change) types
+func (q TransactionsQ) FilterByEffectTypes(types ...int) TransactionsQ {
+	q.selector = q.selector.Where(sq.Eq{"ledger_changes.effect": types})
+	return q
+}
+
+// FilterByID - returns q with filter by transaction ID
+func (q TransactionsQ) FilterByID(id uint64) TransactionsQ {
+	q.selector = q.selector.Where("transactions.id = ?", id)
+	return q
+}
+
+// GetByID loads a row from `transactions`, by ID
+// returns nil, nil - if transaction does not exists
+func (q TransactionsQ) GetByID(id uint64) (*Transaction, error) {
+	return q.FilterByID(id).Get()
+}
+
+// Page - returns Q with specified limit and cursor params
+func (q TransactionsQ) Page(params db2.CursorPageParams) TransactionsQ {
+	q.selector = params.ApplyTo(q.selector, "transactions.id")
+	return q
+}
+
 // Get - loads a row from `transactions`
-// returns nil, nil - if tx does not exists
-// returns error if more than one transaction found
-func (q TransactionQ) Get() (*Transaction, error) {
+// returns nil, nil - if transaction does not exists
+// returns error if more than one Transaction found
+func (q TransactionsQ) Get() (*Transaction, error) {
 	var result Transaction
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
@@ -45,15 +79,16 @@ func (q TransactionQ) Get() (*Transaction, error) {
 			return nil, nil
 		}
 
-		return nil, errors.Wrap(err, "failed to load tx")
+		return nil, errors.Wrap(err, "failed to load transaction")
 	}
 
 	return &result, nil
 }
 
 //Select - selects slice from the db, if no transactions found - returns nil, nil
-func (q TransactionQ) Select() ([]Transaction, error) {
+func (q TransactionsQ) Select() ([]Transaction, error) {
 	var result []Transaction
+
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load transactions")
@@ -62,7 +97,7 @@ func (q TransactionQ) Select() ([]Transaction, error) {
 	return result, nil
 }
 
-func (q *TransactionQ) GetByHash(hash string) (*Transaction, error) {
+func (q *TransactionsQ) GetByHash(hash string) (*Transaction, error) {
 	q.selector = q.selector.Where("transactions.hash = ?", hash)
 	return q.Get()
 }

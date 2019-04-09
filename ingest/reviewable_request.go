@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"time"
 
+	"gitlab.com/tokend/regources"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/regources"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -172,6 +173,19 @@ func getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
 		Amount:          amount.StringU(uint64(request.Amount)),
 		Receiver:        request.Receiver.AsString(),
 		ExternalDetails: details,
+	}
+}
+
+func getPollRequest(request *xdr.CreatePollRequest) *history.CreatePoll {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
+	return &history.CreatePoll{
+		PollType:                 request.Data.Type,
+		ResultProvider:           request.ResultProviderId.Address(),
+		VoteConfirmationRequired: request.VoteConfirmationRequired,
+		NumberOfChoices:          uint32(request.NumberOfChoices),
+		Details:                  details,
 	}
 }
 
@@ -360,6 +374,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.AtomicSwapBidCreation = getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwap:
 		details.AtomicSwap = getAtomicSwapRequest(body.ASwapRequest)
+	case xdr.ReviewableRequestTypeCreatePoll:
+		details.CreatePoll = getPollRequest(body.CreatePollRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

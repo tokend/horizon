@@ -1,53 +1,33 @@
 package resources
 
 import (
+	"fmt"
+	"net/http"
 	"strconv"
 
-	"gitlab.com/tokend/horizon/txsub/v2"
+	"github.com/google/jsonapi"
 
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/horizon/txsub/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //NewTxKey - creates new Tx Key for specified ID
 func NewTxKey(txID int64) regources.Key {
 	return regources.Key{
 		ID:   strconv.FormatInt(txID, 10),
-		Type: regources.TypeTxs,
+		Type: regources.TRANSACTIONS,
 	}
 }
 
-//NewTxKey - creates new Tx Key for specified ID
-func NewTxSubmitKey(hash string) regources.Key {
-	return regources.Key{
-		ID:   hash,
-		Type: regources.TypeTxSubmit,
-	}
-}
-
-func NewTxSuccess(res *txsub.Result) *regources.TxSubmitResponse {
-	return &regources.TxSubmitResponse{
-		TxSubmitSuccess: &regources.TxSubmitSuccess{
-			Key: NewTxSubmitKey(res.Hash),
-			Attributes: regources.TxSubmitSuccessAttributes{
-				LedgerSequence: res.LedgerSequence,
-				Envelope:       res.EnvelopeXDR,
-				ResultXDR:      res.ResultXDR,
-				Meta:           res.ResultMetaXDR,
-			},
-		},
-	}
-}
-
-func NewTxFailure(env txsub.EnvelopeInfo, err txsub.Error) *regources.TxSubmitResponse {
-	return &regources.TxSubmitResponse{
-		TxSubmitFailure: &regources.TxSubmitFailure{
-			Status: err.Status(),
-			Detail: err.Details(),
-			Title:  err.Type().String(),
-			Meta: regources.TxSubmitErrorMeta{
-				Envelope:  env.RawBlob,
-				ResultXDR: err.ResultXDR(),
-			},
-		},
+func NewTxFailure(env txsub.EnvelopeInfo, err txsub.Error) error {
+	meta := make(map[string]interface{})
+	meta["envelope"] = env.RawBlob
+	meta["result_xdr"] = err.ResultXDR()
+	return &jsonapi.ErrorObject{
+		Status: http.StatusText(err.Code()),
+		Detail: err.Details(),
+		Code:   fmt.Sprintf("%d", err.Code()),
+		Title:  "Transaction submit failed",
+		Meta:   &meta,
 	}
 }

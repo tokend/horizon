@@ -3,8 +3,9 @@ package core2
 import (
 	"encoding/json"
 	"fmt"
-	"gitlab.com/tokend/go/xdr"
 	"testing"
+
+	"gitlab.com/tokend/go/xdr"
 )
 
 func TestTransactionEnvelope(t *testing.T) {

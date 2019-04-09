@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 	"gitlab.com/tokend/go/strkey"
 )
 

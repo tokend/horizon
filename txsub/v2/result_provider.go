@@ -15,7 +15,7 @@ import (
 // connected horizon and stellar core databases.
 type ResultsProvider struct {
 	Core    *core2.TransactionQ
-	History *history2.TransactionQ
+	History history2.TransactionsQ
 }
 
 // ResultByHash implements txsub.ResultProvider

@@ -13,12 +13,8 @@ ReviewRequestOp:
   allOf:
   - $ref: '#/components/schemas/ReviewRequestOpKey'
   - type: object
+    required: [attributes]
     properties:
-      relationships:
-        type: object
-        properties:
-          request_details:
-            $ref: '#/components/schemas/ReviewableRequestDetails'
       attributes:
         type: object
         required:
@@ -32,6 +28,7 @@ ReviewRequestOp:
           - external_details
         properties:
           action:
+            format: xdr.ReviewRequestOpAction
             description: |
               * 1: "approve"
               * 2: "reject"
@@ -48,6 +45,7 @@ ReviewRequestOp:
             example: "13935d561f9ec54341243e6afaf0c8bf936928b07f6600204ba8ca550757d0a6"
           request_id:
             type: integer
+            format: int64
             description: "ID of the request being reviewed"
             example: 2
           is_fulfilled:
@@ -56,10 +54,12 @@ ReviewRequestOp:
             example: false
           added_tasks:
             type: integer
+            format: uint32
             description: "Tasks that were added on the request review"
             example: 16
           removed_tasks:
             type: integer
+            format: uint32
             description: "Tasks that were removed on the request review"
             example: 1
           external_details:

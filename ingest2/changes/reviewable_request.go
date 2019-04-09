@@ -11,7 +11,7 @@ import (
 	history "gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 var errUnknownRemoveReason = errors.New("request was removed due to unknown reason")
@@ -387,6 +387,20 @@ func (c *reviewableRequestHandler) getUpdateSaleDetailsRequest(
 	}
 }
 
+func (c *reviewableRequestHandler) getCreatePollRequest(
+	request *xdr.CreatePollRequest) *history.CreatePollRequest {
+	return &history.CreatePollRequest{
+		NumberOfChoices:          uint32(request.NumberOfChoices),
+		VoteConfirmationRequired: request.VoteConfirmationRequired,
+		ResultProviderID:         request.ResultProviderId.Address(),
+		PermissionType:           uint32(request.PermissionType),
+		PollData:                 request.Data,
+		StartTime:                unixToTime(int64(request.StartTime)),
+		EndTime:                  unixToTime(int64(request.EndTime)),
+		CreatorDetails:           internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
+
 func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 ) *history.CreateAtomicSwapBidRequest {
 	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
@@ -451,6 +465,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.CreateAtomicSwapBid = c.getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwap:
 		details.CreateAtomicSwap = c.getAtomicSwapRequest(body.ASwapRequest)
+	case xdr.ReviewableRequestTypeCreatePoll:
+		details.CreatePoll = c.getCreatePollRequest(body.CreatePollRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

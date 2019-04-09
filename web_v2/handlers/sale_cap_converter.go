@@ -12,7 +12,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/exchange"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // saleCapConverter - helper struct to populate current caps for the sale

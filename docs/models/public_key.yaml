@@ -16,11 +16,10 @@ PublicKeyEntry:
   allOf:
     - $ref: '#/components/schemas/PublicKeyEntryKey'
     - type: object
+      required: [relationships]
       properties:
         relationships:
           type: object
-          required:
-            - accounts
           properties:
             accounts:
               type: object

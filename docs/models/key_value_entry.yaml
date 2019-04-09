@@ -12,17 +12,8 @@ KeyValueEntryKey:
       enum:
         - "key-value-entries"
 
-
-KeyValueEntryValueU32:
+U32:
   type: object
-  description: |
-    Defines the KeyValueEntry value .
-    Note that according to the defined `type`, only one value field is present.
-    All other fields are either `null` or absent.\n
-    Possible value fields:
-    * `U32`
-    * `U64`
-    * `Str`
   required:
     - type
   properties:
@@ -45,16 +36,8 @@ KeyValueEntryValueU32:
       example: 1
       format: uint32
 
-KeyValueEntryValueU64:
+U64:
   type: object
-  description: |
-    Defines the value of KeyValueEntry.
-    Note that according to the defined `type`, only one value field is present.
-    All other fields are either `null` or absent.\n
-    Possible value fields:
-    * `U32`
-    * `U64`
-    * `Str`
   required:
     - type
   properties:
@@ -78,16 +61,8 @@ KeyValueEntryValueU64:
       format: uint64
 
 
-KeyValueEntryValueStr:
+Str:
   type: object
-  description: |
-    Defines the value of KeyValueEntry.
-    Note that, according to the defined `type`, only one value field is present.
-    All other fields are either `null` or absent.\n
-    Possible value fields:
-    * `U32`
-    * `U64`
-    * `Str`
   required:
     - type
   properties:
@@ -111,10 +86,20 @@ KeyValueEntryValueStr:
 
 
 
+KeyValueEntryValue:
+  oneOf:
+  - $ref: '#/components/schemas/U32'
+    format: uint32
+  - $ref: '#/components/schemas/U64'
+    format: uint64
+  - $ref: '#/components/schemas/Str'
+    format: string
+
 KeyValueEntry:
   allOf:
   - $ref: '#/components/schemas/KeyValueEntryKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object
@@ -122,7 +107,14 @@ KeyValueEntry:
           - value
         properties:
           value:
-            oneOf:
-            - $ref: '#/components/schemas/KeyValueEntryValueU32'
-            - $ref: '#/components/schemas/KeyValueEntryValueU64'
-            - $ref: '#/components/schemas/KeyValueEntryValueStr'
+            type: object
+            description: |
+              Defines the value of KeyValueEntry.
+              Note that, according to the defined `type`, only one value field is present.
+              All other fields are either `null` or absent.\n
+              Possible value fields:
+              * `U32`
+              * `U64`
+              * `Str`
+            $ref: '#/components/schemas/KeyValueEntryValue'
+

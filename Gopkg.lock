@@ -437,15 +437,15 @@
   version = "v1.0"
 
 [[projects]]
-  digest = "1:20e368367776bc9d2251e17926aff09a8b18238513185908957ad358c077e0ef"
+  digest = "1:4db50c1955d2ae5e1b432afd7342ea030bd26228560eaeffb78c8ae633c5c0a5"
   name = "gitlab.com/distributed_lab/ape"
   packages = [
     ".",
     "problems",
   ]
   pruneopts = "UT"
-  revision = "84191c4ccf54edc25ef517ae7f5f4d47fc8e818d"
-  version = "v0.8"
+  revision = "a046b9cf477f8f00324b645ebe057fade0a3c6fe"
+  version = "v0.10"
 
 [[projects]]
   branch = "master"
@@ -507,7 +507,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:9f1c599bb5ade05b5fa065b9e7f8b78712506e6d000340d7228dc44f9d887d7e"
+  digest = "1:e1671639aa4947ad655ca0e150033d72e75eb6a7a7f78575706a1e4eb4f85d94"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -525,7 +525,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "ca20cade02bab0902dc657c1e721eaf49835d78b"
+  revision = "552e3872c05ee4e0621377daf9c46a699d9bb0c5"
+  version = "v3.2.0"
 
 [[projects]]
   branch = "master"
@@ -541,14 +542,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:3c0648278372e7564c632ff07ebb0ae2b710fe3fed6591a0541cd1024ae1c68d"
+  branch = "feature/tx_result"
+  digest = "1:3a2c90aa44a550295d9cf144af66a2fcdd787c7a2e2dfc23d8efaa736a656e1d"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
-    "v2",
+    "generated",
   ]
   pruneopts = "UT"
-  revision = "2056335df3806a5b14cca95c12004c3ffd7833f1"
+  revision = "33c563e264e3fab45ff4a87ac97ce4bf93fd54c0"
 
 [[projects]]
   branch = "master"
@@ -659,6 +661,7 @@
     "github.com/go-errors/errors",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/goji/context",
+    "github.com/google/jsonapi",
     "github.com/guregu/null",
     "github.com/influxdata/influxdb/client/v2",
     "github.com/jmoiron/sqlx",
@@ -702,7 +705,7 @@
     "gitlab.com/tokend/go/strkey",
     "gitlab.com/tokend/go/xdr",
     "gitlab.com/tokend/regources",
-    "gitlab.com/tokend/regources/v2",
+    "gitlab.com/tokend/regources/generated",
     "golang.org/x/net/context",
     "golang.org/x/net/http2",
     "gopkg.in/throttled/throttled.v2",

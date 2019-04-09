@@ -1,0 +1,49 @@
+/v3/transactions:
+  post:
+    tags:
+      - Submit
+    summary: Submit transaction
+    description: |
+      Allows to submit transaction to the network
+    operationId: submitTransaction
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubmitTransactionBody'
+    responses:
+      200:
+        description: successfully submitted
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Transaction'
+                included:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/LedgerEntryChange'
+      202:
+        description: transaction has been successfully accepted
+      400:
+        description: bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      408:
+        description: request has timed out
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      500:
+        description: internal server error
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+

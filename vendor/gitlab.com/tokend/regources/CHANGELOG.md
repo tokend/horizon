@@ -1,12 +1,45 @@
 # Changelog
 
-## Unreleased
+## 4.1.0
+
+### Added
+
+* generated `OrderBook`, `OrderBookRelationships`, `OrderBookResponse`, `OrderBooksResponse` types to represent order book
+
+## 4.0.0
+
+### Added
+
+* generated all existing models from openapi spec
+
+## 3.1.0
+
+### Added
+* `CreatePollRequest` type to represent reviewable request for poll creation
+* `Poll`, `Vote` types
+* `PollResponse`, `PollsResponse`,`VoteResponse`, `VotesResponse`
+* `PollParticipation` type to represent voting result
+
+
+## 3.0.3
+
+### Added
+
+* `TransactionsResponse`, `Transaction`,  types to represent the get transactions response
+* `TransactionResponseMeta`, `TransactionAttrs`, `TransactionRelations` helping structures
+* `LedgerEntryChange`, `LedgerEntryChangeAttrs` types to represent the ledger entry change resource
+* `ledger-entry-changes` and `transactions` resource types
+
+## 3.0.2
+
+## 3.0.2-x.0
 
 ### Added
 
 * `BalancesResponse` type to represent the response on `/balances`
 * `PublicKeyEntryResponse` type to represent the response on `/public_key_entries`
 * `PublicKeyEntry`, `PublicKeyEntryRelationships` types
+* `TxSubmitResponse`, `TxSubmitSuccess`, `TxSubmitSuccessAttributes`, `TxSubmitFailure`, `TxSubmitErrorMeta` types
 
 ## 3.0.1-x.1
 

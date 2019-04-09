@@ -13,6 +13,7 @@ CreateAccountOp:
   allOf:
   - $ref: '#/components/schemas/CreateAccountOpKey'
   - type: object
+    required: [relationships]
     properties:
       relationships:
         type: object

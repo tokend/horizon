@@ -13,6 +13,7 @@ SetFeeOp:
   allOf:
   - $ref: '#/components/schemas/SetFeeOpKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object
@@ -41,6 +42,7 @@ SetFeeOp:
             description: "Percent to pay"
             example: "2"
           fee_type:
+            format: xdr.FeeType
             description: |
               * 0: "payment_fee"
               * 1: "offer_fee"
@@ -59,9 +61,11 @@ SetFeeOp:
             example: "GBSR6JG5AYSAW7HK6EGJFYVIVN54LVGSY3ZLJ6X3IBQZ766EJABCZQTH"
           account_role:
             type: integer
+            format: xdr.Uint64
             example: 2
           subtype:
             type: integer
+            format: int64
             description: "Subtype of the fee"
             example: 0
           lower_bound:

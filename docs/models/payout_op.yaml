@@ -15,6 +15,7 @@ PayoutOp:
   allOf:
   - $ref: '#/components/schemas/PayoutOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
@@ -22,21 +23,19 @@ PayoutOp:
         properties:
           source_account:
             deprecated: true
-            allOf:
-            - $ref: '#/components/schemas/AccountKey'
+            $ref: '#/components/schemas/AccountKey'
           source_balance:
             deprecated: true
-            allOf:
-            - $ref: '#/components/schemas/BalanceKey'
+            $ref: '#/components/schemas/BalanceKey'
           asset:
             deprecated: true
-            allOf:
-            - $ref: '#/components/schemas/AssetKey'
+            $ref: '#/components/schemas/AssetKey'
       attributes:
         type: object
         deprecated: true
         required:
           - max_payout_amount
+          - min_payout_amount
           - min_asset_holder_amount
           - expected_fee
           - actual_fee
@@ -45,12 +44,16 @@ PayoutOp:
           expected_fee:
             deprecated: true
             allOf:
-            - $ref: '#/components/schemas/CalculatedFeeEntry'
+            - $ref: '#/components/schemas/Fee'
           actual_fee:
             deprecated: true
             allOf:
-            - $ref: '#/components/schemas/CalculatedFeeEntry'
+            - $ref: '#/components/schemas/Fee'
           #TODO add description for amounts
+          min_payout_amount:
+            type: string
+            format: Amount
+            example: "123.123456"
           max_payout_amount:
             deprecated: true
             type: string

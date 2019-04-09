@@ -1,6 +1,8 @@
 package operations
 
-import "gitlab.com/tokend/regources"
+import (
+	"gitlab.com/tokend/regources"
+)
 
 type PaymentV2 struct {
 	Base

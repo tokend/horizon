@@ -142,8 +142,10 @@ x-tagGroups:
       - KeyValue
   - name: Other
     tags:
+      - Polls
       - Requests
       - History
       - Public Key Entries
       - Info
+      - Submit
       - WIP

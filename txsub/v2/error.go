@@ -19,7 +19,7 @@ const (
 )
 
 var (
-	txSubStatuses = map[ErrorType]int{
+	txSubCodes = map[ErrorType]int{
 		Timeout:    http.StatusRequestTimeout,
 		RejectedTx: http.StatusBadRequest,
 	}
@@ -38,7 +38,7 @@ type Error interface {
 	// Returns empty string for all non rejected txs
 	ResultXDR() string
 
-	Status() int
+	Code() int
 
 	Details() string
 }
@@ -62,8 +62,8 @@ func (m *txSubError) ResultXDR() string {
 	return m.resultXDR
 }
 
-func (m *txSubError) Status() int {
-	return txSubStatuses[m.errorType]
+func (m *txSubError) Code() int {
+	return txSubCodes[m.errorType]
 }
 
 func (m *txSubError) Details() string {

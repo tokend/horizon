@@ -18,7 +18,7 @@ import (
 func initSubmissionV2(app *App) {
 	logger := &log.WithField("service", "initSubmissionV2").Entry
 	cq := core2.NewTransactionQ(app.CoreRepoLogged(logger))
-	hq := history2.NewTransactionQ(app.HistoryRepoLogged(logger))
+	hq := history2.NewTransactionsQ(app.HistoryRepoLogged(logger))
 	coreConnector := app.CoreConnector
 
 	listener := pq.NewListener(

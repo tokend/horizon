@@ -3,11 +3,10 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/regources/v2"
-
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"gitlab.com/tokend/horizon/db2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 const (

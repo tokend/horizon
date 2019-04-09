@@ -44,7 +44,7 @@ func TestAssetPairHandler(t *testing.T) {
 	}
 
 	storage := mockAssetPairStorage{}
-	handler := NewHandler(nil, nil, nil, nil, &storage)
+	handler := NewHandler(nil, nil, nil, nil, &storage, nil, nil)
 
 	t.Run("created", func(t *testing.T) {
 		defer storage.AssertExpectations(t)
