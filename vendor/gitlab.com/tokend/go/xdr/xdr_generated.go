@@ -1,4 +1,4 @@
-// revision: d48c37f8b974c6b0807de5267253f48c0e4ce4a6
+// revision: 91680467ba4dcc7e1f66a1e33b760283407b212a
 // branch:   master
 // Package xdr is generated from:
 //
@@ -22339,6 +22339,9 @@ func NewCreatePollRequestResponseExt(v LedgerVersion, value interface{}) (result
 //        //: True means that poll was successfully created
 //        bool fulfilled;
 //
+//        //: ID of created poll if request was fulfilled
+//        uint64* pollID;
+//
 //        //: reserved for the future use
 //        union switch (LedgerVersion v)
 //        {
@@ -22351,6 +22354,7 @@ func NewCreatePollRequestResponseExt(v LedgerVersion, value interface{}) (result
 type CreatePollRequestResponse struct {
 	RequestId Uint64                       `json:"requestID,omitempty"`
 	Fulfilled bool                         `json:"fulfilled,omitempty"`
+	PollId    *Uint64                      `json:"pollID,omitempty"`
 	Ext       CreatePollRequestResponseExt `json:"ext,omitempty"`
 }
 
@@ -44074,4 +44078,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "d48c37f8b974c6b0807de5267253f48c0e4ce4a6"
+var Revision = "91680467ba4dcc7e1f66a1e33b760283407b212a"

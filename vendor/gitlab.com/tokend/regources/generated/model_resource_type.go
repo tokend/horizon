@@ -20,6 +20,7 @@ const (
 	LIMITS                                                  ResourceType = "limits"
 	LEDGER_ENTRY_CHANGES                                    ResourceType = "ledger-entry-changes"
 	OFFERS                                                  ResourceType = "offers"
+	ORDER_BOOKS                                             ResourceType = "order-books"
 	ORDER_BOOK_ENTRIES                                      ResourceType = "order-book-entries"
 	ACCOUNT_ROLES                                           ResourceType = "account-roles"
 	ACCOUNT_RULES                                           ResourceType = "account-rules"

@@ -3,6 +3,8 @@ package horizon
 import (
 	"time"
 
+	"gitlab.com/tokend/horizon/web_v2/handlers"
+
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -17,7 +19,6 @@ import (
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/web_v2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
-	"gitlab.com/tokend/horizon/web_v2/handlers"
 	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
 )
 
@@ -136,7 +137,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/create_atomic_swap_bid_requests", handlers.GetCreateAtomicSwapBidRequests)
 	m.Get("/v3/create_atomic_swap_bid_requests/{id}", handlers.GetCreateAtomicSwapBidRequests)
 	m.Get("/v3/create_atomic_swap_requests", handlers.GetCreateAtomicSwapRequests)
-	m.Get("/v3/create_atomic_swap_requests{id}", handlers.GetCreateAtomicSwapRequests)
+	m.Get("/v3/create_atomic_swap_requests/{id}", handlers.GetCreateAtomicSwapRequests)
 	m.Get("/v3/create_poll_requests", handlers.GetCreatePollRequests)
 	m.Get("/v3/create_poll_requests/{id}", handlers.GetCreatePollRequests)
 
@@ -151,7 +152,8 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/sales", handlers.GetSaleList)
 	m.Get("/v3/sales/{id}", handlers.GetSale)
 
-	m.Get("/v3/order_book/{id}", handlers.GetOrderBook)
+	m.Get("/v3/order_book/{id}", handlers.DeprecatedGetOrderBook)
+	m.Get("/v3/order_books/{base}:{quote}:{order_book_id}", handlers.GetOrderBook)
 
 	m.Get("/v3/account_roles/{id}", handlers.GetAccountRole)
 	m.Get("/v3/account_roles", handlers.GetAccountRoleList)

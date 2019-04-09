@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"fmt"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
@@ -60,6 +61,25 @@ func (q OrderBooksQ) WithBaseAsset() OrderBooksQ {
 	return q
 }
 
+// WithCumulativeAmounts - returns q with calculated cumulative amounts
+func (q OrderBooksQ) WithCumulativeAmounts(isBuy bool) OrderBooksQ {
+	var order string
+	if isBuy {
+		order = "desc"
+	} else {
+		order = "asc"
+	}
+
+	q.selector = q.selector.
+		Columns(
+			fmt.Sprintf("sum(order_book_entries.base_amount) over(order by price %s) cumulative_base_amount", order),
+			fmt.Sprintf("sum(order_book_entries.quote_amount) over(order by price %s) cumulative_quote_amount", order),
+		).
+		OrderBy(fmt.Sprintf("order_book_entries.price %s", order))
+
+	return q.FilterByIsBuy(isBuy)
+}
+
 // WithQuoteAsset - joins quote asset
 func (q OrderBooksQ) WithQuoteAsset() OrderBooksQ {
 	q.selector = q.selector.
@@ -93,9 +113,20 @@ func (q OrderBooksQ) FilterByOrderBookID(id uint64) OrderBooksQ {
 	return q
 }
 
+// Limit - returns q with applied limit param
+func (q OrderBooksQ) Limit(limit uint64) OrderBooksQ {
+	q.selector = q.selector.Limit(limit)
+	return q
+}
+
 // Page - returns Q with specified limit and offset params
 func (q OrderBooksQ) Page(params db2.OffsetPageParams) OrderBooksQ {
-	q.selector = params.ApplyTo(q.selector, "order_book_entries.id")
+	q.selector = params.ApplyTo(q.selector,
+		"order_book_entries.price",
+		"order_book_entries.base_asset_code",
+		"order_book_entries.quote_asset_code",
+		"order_book_entries.is_buy",
+	)
 	return q
 }
 

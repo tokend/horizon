@@ -2,7 +2,7 @@ package resources
 
 import (
 	"gitlab.com/tokend/horizon/db2/core2"
-	regources "gitlab.com/tokend/regources/generated"
+	"gitlab.com/tokend/regources/generated"
 )
 
 // NewOrderBookEntryKey - returns new instance of OrderBookEntryKey
@@ -23,6 +23,8 @@ func NewOrderBookEntry(record core2.OrderBookEntry) regources.OrderBookEntry {
 			BaseAmount:  regources.Amount(record.BaseAmount),
 			QuoteAmount: regources.Amount(record.QuoteAmount),
 			CreatedAt:   record.CreatedAt,
+			CumulativeBaseAmount: regources.Amount(record.CumulativeBaseAmount),
+			CumulativeQuoteAmount: regources.Amount(record.CumulativeQuoteAmount),
 		},
 		Relationships: regources.OrderBookEntryRelationships{
 			BaseAsset:  NewAssetKey(record.BaseAssetCode).AsRelation(),
