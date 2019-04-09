@@ -22,6 +22,12 @@
 
 * old endpoint `/v3/order_book/{id}` marked as deprecated
 
+## 3.1.1
+
+### Fixed
+
+* psql error on poll ingesting
+
 ## 3.1.0-rc.0
 
 ### Added
