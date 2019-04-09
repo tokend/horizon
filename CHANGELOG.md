@@ -1,3 +1,9 @@
+## Unreleased
+
+### Fixed
+
+* psql error on poll ingesting
+
 ## 3.1.0-rc.0
 
 ### Added
