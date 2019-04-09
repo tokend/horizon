@@ -6,7 +6,6 @@
 
 ### Fixed
 
-* dropped influx
 * saving equal values to transaction's `result_meta_xdr` and `result_xdr` 
 * all docs for proper regources generation
 * `ManageAssetOpAttributes.PreissuanceSigner` -> `ManageAssetOpAttributes.PreIssuanceSigner`
@@ -52,6 +51,7 @@
 ### Removed
 
 * charts, endpoint for charts etc.
+* influx
 
 ## 3.0.1-x.21
 ## Fixed
