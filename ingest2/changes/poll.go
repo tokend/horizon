@@ -105,7 +105,7 @@ func (c *pollHandler) convertPoll(raw xdr.PollEntry) (*history.Poll, error) {
 		ID:               int64(raw.Id),
 		OwnerID:          raw.OwnerId.Address(),
 		ResultProviderID: raw.ResultProviderId.Address(),
-		Data: regources.PollData{
+		Data: history.PollData{
 			Type: raw.Data.Type,
 		},
 		NumberOfChoices:          uint32(raw.NumberOfChoices),
