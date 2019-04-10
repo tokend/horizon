@@ -64,9 +64,11 @@ func (h *getBalanceHandler) GetBalance(request *requests.GetBalance) (*regources
 		Data: *resources.NewBalance(balance),
 	}
 
-	response.Data.Relationships.Account = resources.NewAccountKey(balance.AccountAddress).AsRelation()
-	response.Data.Relationships.Asset = resources.NewAssetKey(balance.AssetCode).AsRelation()
-	response.Data.Relationships.State = resources.NewBalanceState(balance).AsRelation()
+	response.Data.Relationships = &regources.BalanceRelationships{
+		Account: resources.NewAccountKey(balance.AccountAddress).AsRelation(),
+		Asset:   resources.NewAssetKey(balance.AssetCode).AsRelation(),
+		State:   resources.NewBalanceState(balance).AsRelation(),
+	}
 
 	return &response, nil
 }
