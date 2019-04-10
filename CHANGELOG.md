@@ -1,3 +1,10 @@
+## 3.2.0-x.4
+
+### Fixed
+
+* 500 for `GET /accounts?include=balances` because of nil pointer on balance relationships
+* Panics on manage vote/manage poll/manage poll creation requests operation details 
+
 ## 3.2.0-x.0
 
 ### Removed

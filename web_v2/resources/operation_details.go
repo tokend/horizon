@@ -101,11 +101,120 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newStampOp(op.ID, *op.Details.Stamp)
 	case xdr.OperationTypeLicense:
 		return newLicenseOp(op.ID, *op.Details.License)
+	case xdr.OperationTypeManageCreatePollRequest:
+		return newManageCreatePollRequestOp(op.ID, *op.Details.ManageCreatePollRequest)
+	case xdr.OperationTypeManagePoll:
+		return newManagePollOp(op.ID, *op.Details.ManagePoll)
+	case xdr.OperationTypeManageVote:
+		return newManageVoteOp(op.ID, *op.Details.ManageVote)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": op.Type,
 		}))
 	}
+}
+
+func newManageCreatePollRequestOp(id int64, details history2.ManageCreatePollRequestDetails) *regources.ManageCreatePollRequestOp {
+	manageCreateRequestPollOp := regources.ManageCreatePollRequestOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_CREATE_POLL_REQUEST),
+		Attributes: &regources.ManageCreatePollRequestOpAttributes{
+			Action: details.Action,
+		},
+	}
+
+	switch details.Action {
+	case xdr.ManageCreatePollRequestActionCreate:
+		manageCreateRequestPollOp.Attributes.Create = &regources.CreatePollRequestOp{
+			AllTasks:        details.CreateDetails.AllTasks,
+			CreatorDetails:  details.CreateDetails.CreatorDetails,
+			EndTime:         details.CreateDetails.EndTime,
+			NumberOfChoices: uint64(details.CreateDetails.NumberOfChoices),
+			PermissionType:  uint64(details.CreateDetails.PermissionType),
+			PollData: regources.PollData{
+				Type: details.CreateDetails.PollData.Type,
+			},
+			ResultProviderId:         details.CreateDetails.ResultProviderID,
+			StartTime:                details.CreateDetails.StartTime,
+			VoteConfirmationRequired: details.CreateDetails.VoteConfirmationRequired,
+		}
+		manageCreateRequestPollOp.Relationships = &regources.ManageCreatePollRequestOpRelationships{
+			Request:        NewRequestKey(details.CreateDetails.RequestDetails.RequestID).AsRelation(),
+			ResultProvider: NewAccountKey(details.CreateDetails.ResultProviderID).AsRelation(),
+		}
+	case xdr.ManageCreatePollRequestActionCancel:
+		manageCreateRequestPollOp.Relationships = &regources.ManageCreatePollRequestOpRelationships{
+			Request: NewRequestKey(details.CancelDetails.RequestID).AsRelation(),
+		}
+	default:
+		panic(errors.From(errors.New("unexpected poll request action"), logan.F{
+			"action": details.Action,
+		}))
+	}
+
+	return &manageCreateRequestPollOp
+}
+
+func newManagePollOp(id int64, details history2.ManagePollDetails) *regources.ManagePollOp {
+	managePollOp := regources.ManagePollOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_POLL),
+		Attributes: regources.ManagePollOpAttributes{
+			Action: details.Action,
+		},
+		Relationships: regources.ManagePollOpRelationships{
+			Poll: NewPollKey(details.PollID).AsRelation(),
+		},
+	}
+
+	switch details.Action {
+	case xdr.ManagePollActionClose:
+		managePollOp.Attributes.Close = &regources.ClosePollOp{
+			Details:    regources.Details(details.ClosePoll.Details),
+			PollId:     details.PollID,
+			PollResult: details.ClosePoll.PollResult,
+		}
+	default:
+		panic(errors.From(errors.New("unexpected manage poll action"), logan.F{
+			"action": details.Action,
+		}))
+	}
+
+	return &managePollOp
+}
+
+func newManageVoteOp(id int64, details history2.ManageVoteDetails) *regources.ManageVoteOp {
+	manageVoteOp := regources.ManageVoteOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_VOTE),
+		Attributes: regources.ManageVoteOpAttributes{
+			Action: details.Action,
+		},
+		Relationships: regources.ManageVoteOpRelationships{
+			Poll: NewPollKey(details.PollID).AsRelation(),
+		},
+	}
+
+	switch details.Action {
+	case xdr.ManageVoteActionCreate:
+		choice := uint64(details.VoteData.Single.Choice)
+		manageVoteOp.Attributes.Create = &regources.CreateVoteOp{
+			PollId: details.PollID,
+		}
+		if details.VoteData != nil {
+			manageVoteOp.Attributes.Create.VoteData = regources.VoteData{
+				PollType:     details.VoteData.PollType,
+				SingleChoice: &choice,
+			}
+		}
+	case xdr.ManageVoteActionRemove:
+		manageVoteOp.Attributes.Remove = &regources.RemoveVoteOp{
+			PollId: details.PollID,
+		}
+	default:
+		panic(errors.From(errors.New("unexpected manage vote action"), logan.F{
+			"action": details.Action,
+		}))
+	}
+
+	return &manageVoteOp
 }
 
 // newManageLimitsOp - creates new instance of ManageLimitsOp

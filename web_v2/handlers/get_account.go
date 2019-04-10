@@ -224,6 +224,7 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *
 		result.Data = append(result.Data, balance.Key)
 
 		if request.ShouldInclude(requests.IncludeTypeAccountBalances) {
+			balance.Relationships = &regources.BalanceRelationships{}
 			balance.Relationships.State = resources.NewBalanceStateKey(coreBalance.BalanceAddress).AsRelation()
 			balance.Relationships.Asset = resources.NewAssetKey(coreBalance.AssetCode).AsRelation()
 
