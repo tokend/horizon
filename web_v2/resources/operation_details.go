@@ -145,6 +145,10 @@ func newManageCreatePollRequestOp(id int64, details history2.ManageCreatePollReq
 		manageCreateRequestPollOp.Relationships = &regources.ManageCreatePollRequestOpRelationships{
 			Request: NewRequestKey(details.CancelDetails.RequestID).AsRelation(),
 		}
+	default:
+		panic(errors.From(errors.New("unexpected poll request action"), logan.F{
+			"action": details.Action,
+		}))
 	}
 
 	return &manageCreateRequestPollOp
@@ -161,12 +165,17 @@ func newManagePollOp(id int64, details history2.ManagePollDetails) *regources.Ma
 		},
 	}
 
-	if details.Action == xdr.ManagePollActionClose {
+	switch details.Action {
+	case xdr.ManagePollActionClose:
 		managePollOp.Attributes.Close = &regources.ClosePollOp{
 			Details:    regources.Details(details.ClosePoll.Details),
 			PollId:     details.PollID,
 			PollResult: details.ClosePoll.PollResult,
 		}
+	default:
+		panic(errors.From(errors.New("unexpected manage poll action"), logan.F{
+			"action": details.Action,
+		}))
 	}
 
 	return &managePollOp
@@ -199,6 +208,10 @@ func newManageVoteOp(id int64, details history2.ManageVoteDetails) *regources.Ma
 		manageVoteOp.Attributes.Remove = &regources.RemoveVoteOp{
 			PollId: details.PollID,
 		}
+	default:
+		panic(errors.From(errors.New("unexpected manage vote action"), logan.F{
+			"action": details.Action,
+		}))
 	}
 
 	return &manageVoteOp
