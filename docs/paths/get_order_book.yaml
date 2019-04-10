@@ -1,4 +1,4 @@
-/v3/order_book/{id}:
+/v3/order_books/{id}:
   get:
     tags:
       - Order Books
@@ -9,42 +9,25 @@
     parameters:
     - name: id
       in: path
-      description: "ID of an order book: 0 for the secondary market and sale ID otherwise"
+      description: |
+        ID of the resource, formatted as `base:quote:order_book_id`, where `order_book_id` is `0` for secondary market, sale ID otherwise
       required: true
       style: simple
       explode: false
       schema:
+        type: string
+        example: "BTC:ETH:0"
+    - name: max_entries
+      in: query
+      description: |
+         Defines quantity of entries that will be returned in the response
+      required: false
+      style: form
+      explode: false
+      schema:
         type: integer
-        format: int64
-        examle: 0
-    - name: base_asset
-      in: query
-      description: Base asset of requested offers
-      required: false
-      style: simple
-      explode: false
-      schema:
-        type: string
-        format: valid assetCode
-        example: "BTC"
-    - name: quote_asset
-      in: query
-      description: Quote asset of requested offers
-      required: false
-      style: simple
-      explode: false
-      schema:
-        type: string
-        format: valid assetCode
-        example: "ETH"
-    - name: is_buy
-      in: query
-      description: Defines whether an offer is on buying or selling the `base_asset`
-      required: false
-      style: simple
-      explode: false
-      schema:
-        type: number
+        format: uint64
+        example: 10
     - name: include
       in: query
       description: |
@@ -55,6 +38,8 @@
       schema:
         type: string
         enum:
+          - buy_entries
+          - sell_entries
           - base_asset
           - quote_asset
     responses:
@@ -69,25 +54,14 @@
                 - included
               properties:
                 data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/OrderBookEntry'
+                  type: object
+                  $ref: '#/components/schemas/OrderBook'
                 included:
                   type: array
                   items:
-                    $ref: '#/components/schemas/Asset'
-                links:
-                  type: object
-                  description: "Provides links for pagination"
-                  properties:
-                    next:
-                      type: string
-                      description: "link to the next page"
-                      example: "/v3/order_book/0?include=base_asset&page[number]=2&page[limit]=15"
-                    self:
-                      type: string
-                      description: "link to the current page"
-                      example: "/v3/order_book/0?include=base_asset&page[number]=1&page[limit]=15"
+                    oneOf:
+                    - $ref: '#/components/schemas/OrderBookEntry'
+                    - $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter
         content:

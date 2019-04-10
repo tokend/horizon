@@ -23,7 +23,7 @@ func NewPoll(record history2.Poll) regources.Poll {
 			StartTime:                record.StartTime,
 			EndTime:                  record.EndTime,
 			CreatorDetails:           record.Details,
-			PollData:                 record.Data,
+			PollData:                 regources.PollData(record.Data),
 			PollState:                record.State,
 		},
 		Relationships: regources.PollRelationships{

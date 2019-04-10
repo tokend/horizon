@@ -1,4 +1,11 @@
-## Unreleased
+## 3.2.0-x.4
+
+### Fixed
+
+* 500 for `GET /accounts?include=balances` because of nil pointer on balance relationships
+* Panics on manage vote/manage poll/manage poll creation requests operation details 
+
+## 3.2.0-x.0
 
 ### Removed
 
@@ -10,10 +17,23 @@
 * all docs for proper regources generation
 * `ManageAssetOpAttributes.PreissuanceSigner` -> `ManageAssetOpAttributes.PreIssuanceSigner`
 * json: `preissued_signer` -> `pre_issuance_signer`
+* missing poll id in create poll request response
+* order book entries sorting by price in alphabetical order 
 
 ### Added 
 
 * generated regources/generated in vendor
+* new endpoint `/v3/order_books/{id}` 
+
+### Changed
+
+* old endpoint `/v3/order_book/{id}` marked as deprecated
+
+## 3.1.1
+
+### Fixed
+
+* psql error on poll ingesting
 
 ## 3.1.0-rc.0
 

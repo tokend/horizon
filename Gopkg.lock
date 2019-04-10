@@ -464,7 +464,7 @@
   version = "v2.0.0"
 
 [[projects]]
-  digest = "1:5e8f85fa8123d6a4aae2c928f8db7ab3ca1648c0c0ae2e9621ebcc22438d4449"
+  digest = "1:fb0f7303826f54d8e5439da81c4c01125da381904559580a227fed1aa453aafa"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
@@ -474,8 +474,8 @@
     "pgdb",
   ]
   pruneopts = "UT"
-  revision = "312d0d0f1014682a2c55c46683a7af80d2b09623"
-  version = "0.3.0"
+  revision = "983afb19d5c2762943fcba9f8727ff81c2b7e5a2"
+  version = "v0.5.0"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"
@@ -507,7 +507,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:e1671639aa4947ad655ca0e150033d72e75eb6a7a7f78575706a1e4eb4f85d94"
+  digest = "1:e89d38df026651c122eb14e4dd96331e2b736379c33b9d9f5589433048bbfce4"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -525,8 +525,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "552e3872c05ee4e0621377daf9c46a699d9bb0c5"
-  version = "v3.2.0"
+  revision = "37830e08742fa3c398c31f33b5bc3dd230c96acb"
+  version = "v3.2.1"
 
 [[projects]]
   branch = "master"

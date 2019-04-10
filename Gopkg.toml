@@ -87,7 +87,7 @@
   name = "gitlab.com/distributed_lab/corer"
 
 [[constraint]]
-  version = "0.3"
+  version = "0.5"
   name = "gitlab.com/distributed_lab/kit"
 
 [[override]]
@@ -100,7 +100,7 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  version = "3.2"
+  version = "3.2.1"
 
 [[constraint]]
   version = "4"

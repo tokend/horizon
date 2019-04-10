@@ -13,6 +13,7 @@ ResourceType:
     "limits",
     "ledger-entry-changes",
     "offers",
+    "order-books",
     "order-book-entries",
     "account-roles",
     "account-rules",

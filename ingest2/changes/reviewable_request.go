@@ -123,7 +123,8 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.handleRemoveOnCreationOp(lc, true)
 	case xdr.OperationTypeCancelSaleRequest:
 		return c.cancel(lc)
-
+	case xdr.OperationTypeManageCreatePollRequest:
+		return c.handleRemoveOnManageCreatePollRequest(lc)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
@@ -140,6 +141,23 @@ func (c *reviewableRequestHandler) handleRemoveOnCreationOp(lc ledgerChange, ful
 	}
 
 	return c.storage.Approve(id)
+}
+
+func (c *reviewableRequestHandler) handleRemoveOnManageCreatePollRequest(lc ledgerChange) error {
+	data := lc.Operation.Body.MustManageCreatePollRequestOp().Data
+	switch data.Action {
+	case xdr.ManageCreatePollRequestActionCreate:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.MustManageCreatePollRequestResult().
+				MustSuccess().Details.MustResponse().Fulfilled)
+	case xdr.ManageCreatePollRequestActionCancel:
+		return c.cancel(lc)
+	default:
+		return errors.Wrap(errUnknownRemoveReason,
+			"Unexpected manage create poll request action", logan.F{
+				"action": data.Action.String(),
+			})
+	}
 }
 
 func (c *reviewableRequestHandler) handleRemoveOnManageAsset(lc ledgerChange) error {
