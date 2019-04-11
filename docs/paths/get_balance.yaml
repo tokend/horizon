@@ -64,7 +64,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       404:
-        description: such an balance does not exist
+        description: such a balance does not exist
         content:
           application/vnd.api+json:
             schema:
