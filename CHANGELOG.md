@@ -1,3 +1,14 @@
+## Unreleased
+
+### Added 
+
+* `/v3/balances/{id}` endpoint
+* docs for `/v3/balances/{id}` endpoint
+
+### Fixed
+
+* 500 for `GET /balances`  because of nil pointer on balance relationships
+
 ## 3.2.0-x.4
 
 ### Fixed
