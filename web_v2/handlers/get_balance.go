@@ -17,6 +17,8 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 
 	handler := getBalanceHandler{
+		AssetsQ:   core2.NewAssetsQ(coreRepo),
+		AccountsQ: core2.NewAccountsQ(coreRepo),
 		BalancesQ: core2.NewBalancesQ(coreRepo),
 		Log:       ctx.Log(r),
 	}
@@ -24,11 +26,6 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewGetBalance(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
-		return
-	}
-
-	if !isAllowed(r, w) {
-		ape.RenderErr(w, problems.NotAllowed())
 		return
 	}
 
@@ -46,20 +43,29 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if request.ShouldInclude(
+		requests.IncludeTypeBalanceState,
+	) {
+		if !isAllowed(r, w, result.Data.Relationships.Owner.Data.ID) {
+			return
+		}
+	}
+
 	ape.Render(w, result)
 }
 
 type getBalanceHandler struct {
 	BalancesQ core2.BalancesQ
+	AccountsQ core2.AccountsQ
 	AssetsQ   core2.AssetsQ
 	Log       *logan.Entry
 }
 
 func (h *getBalanceHandler) GetBalance(request *requests.GetBalance) (*regources.BalanceResponse, error) {
-	balance, err := h.BalancesQ.GetByAddress(request.ID)
+	balance, err := h.BalancesQ.GetByAddress(request.BalanceID)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot filter balances by ID", logan.F{
-			"id": request.ID,
+			"id": request.BalanceID,
 		})
 	}
 	if balance == nil {
@@ -71,10 +77,60 @@ func (h *getBalanceHandler) GetBalance(request *requests.GetBalance) (*regources
 	}
 
 	response.Data.Relationships = &regources.BalanceRelationships{
-		Account: resources.NewAccountKey(balance.AccountAddress).AsRelation(),
-		Asset:   resources.NewAssetKey(balance.AssetCode).AsRelation(),
-		State:   resources.NewBalanceState(balance).AsRelation(),
+		Owner: resources.NewAccountKey(balance.AccountAddress).AsRelation(),
+		Asset: resources.NewAssetKey(balance.AssetCode).AsRelation(),
+		State: resources.NewBalanceState(balance).AsRelation(),
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeBalanceAsset) {
+		if err = h.includeAsset(balance.AssetCode, &response.Included); err != nil {
+			return nil, errors.Wrap(err, "failed to include asset")
+		}
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeBalanceOwner) {
+		if err = h.includeOwner(balance.AccountAddress, &response.Included); err != nil {
+			return nil, errors.Wrap(err, "failed to include owner")
+		}
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeBalanceState) {
+		response.Included.Add(resources.NewBalanceState(balance))
 	}
 
 	return &response, nil
+}
+
+func (h *getBalanceHandler) includeOwner(accountID string, included *regources.Included) error {
+	account, err := h.AccountsQ.GetByAddress(accountID)
+	if err != nil {
+		return errors.Wrap(err, "cannot get account by address", logan.F{
+			"address": accountID,
+		})
+	}
+
+	accountResource := resources.NewAccount(*account)
+	accountResource.Relationships = regources.AccountRelationships{
+		Role: resources.NewAccountRoleKey(account.RoleID).AsRelation(),
+	}
+	if account.Referrer != nil {
+		accountResource.Relationships.Role = resources.NewAccountKey(*account.Referrer).AsRelation()
+	}
+
+	included.Add(&accountResource)
+	return nil
+}
+
+func (h *getBalanceHandler) includeAsset(assetCode string, included *regources.Included) error {
+	asset, err := h.AssetsQ.GetByCode(assetCode)
+	if err != nil {
+		return errors.Wrap(err, "cannot get asset by code", logan.F{
+			"asset_code": assetCode,
+		})
+	}
+
+	assetResource := resources.NewAsset(*asset)
+	included.Add(&assetResource)
+
+	return nil
 }

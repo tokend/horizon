@@ -4,13 +4,28 @@ import (
 	"net/http"
 )
 
+const (
+	// IncludeTypeBalanceListState - defines if the state of the balance should be included in the response
+	IncludeTypeBalanceState = "state"
+	IncludeTypeBalanceOwner = "owner"
+	IncludeTypeBalanceAsset = "asset"
+)
+
+var includeTypeBalanceAll = map[string]struct{}{
+	IncludeTypeBalanceState: {},
+	IncludeTypeBalanceOwner: {},
+	IncludeTypeBalanceAsset: {},
+}
+
 type GetBalance struct {
 	*base
-	ID string
+	BalanceID string
 }
 
 func NewGetBalance(r *http.Request) (*GetBalance, error) {
-	b, err := newBase(r, baseOpts{})
+	b, err := newBase(r, baseOpts{
+		supportedIncludes: includeTypeBalanceAll,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +36,7 @@ func NewGetBalance(r *http.Request) (*GetBalance, error) {
 	}
 
 	return &GetBalance{
-		base: b,
-		ID:   id,
+		base:      b,
+		BalanceID: id,
 	}, nil
 }

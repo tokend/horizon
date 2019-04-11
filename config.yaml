@@ -9,7 +9,7 @@ config:
   api_backend: http://
   ingest: true
   stale_threshold: 0
-  sign_checkskip: true
+  sign_checkskip: false
   cors_enabled: true
   disable_api_submit: true
   disable_tx_tfa: true

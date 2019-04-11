@@ -5,7 +5,7 @@
 package regources
 
 type BalanceRelationships struct {
-	Account *Relation `json:"account,omitempty"`
-	Asset   *Relation `json:"asset,omitempty"`
-	State   *Relation `json:"state,omitempty"`
+	Asset *Relation `json:"asset,omitempty"`
+	Owner *Relation `json:"owner,omitempty"`
+	State *Relation `json:"state,omitempty"`
 }

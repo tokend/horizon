@@ -66,9 +66,9 @@ Balance:
             properties:
               data:
                 $ref: '#/components/schemas/BalanceStateKey'
-          account:
+          owner:
             type: object
-            description: "ID of the account who is the owner of the balance"
+            description: "owner of the balance"
             properties:
               data:
                 $ref: '#/components/schemas/AccountKey'
