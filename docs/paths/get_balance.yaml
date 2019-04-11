@@ -26,10 +26,9 @@
         schema:
           type: string
           enum:
-            - owner
             - asset
             - state
-          example: owner,asset
+          example: asset
     responses:
       200:
         description: balance exists
@@ -48,7 +47,6 @@
                   type: array
                   items:
                     oneOf:
-                      - $ref: '#/components/schemas/Account'
                       - $ref: '#/components/schemas/Asset'
                       - $ref: '#/components/schemas/BalanceState'
       400:

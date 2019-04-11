@@ -18,7 +18,6 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 
 	handler := getBalanceHandler{
 		AssetsQ:   core2.NewAssetsQ(coreRepo),
-		AccountsQ: core2.NewAccountsQ(coreRepo),
 		BalancesQ: core2.NewBalancesQ(coreRepo),
 		Log:       ctx.Log(r),
 	}
@@ -56,7 +55,6 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 
 type getBalanceHandler struct {
 	BalancesQ core2.BalancesQ
-	AccountsQ core2.AccountsQ
 	AssetsQ   core2.AssetsQ
 	Log       *logan.Entry
 }
@@ -88,37 +86,11 @@ func (h *getBalanceHandler) GetBalance(request *requests.GetBalance) (*regources
 		}
 	}
 
-	if request.ShouldInclude(requests.IncludeTypeBalanceOwner) {
-		if err = h.includeOwner(balance.AccountAddress, &response.Included); err != nil {
-			return nil, errors.Wrap(err, "failed to include owner")
-		}
-	}
-
 	if request.ShouldInclude(requests.IncludeTypeBalanceState) {
 		response.Included.Add(resources.NewBalanceState(balance))
 	}
 
 	return &response, nil
-}
-
-func (h *getBalanceHandler) includeOwner(accountID string, included *regources.Included) error {
-	account, err := h.AccountsQ.GetByAddress(accountID)
-	if err != nil {
-		return errors.Wrap(err, "cannot get account by address", logan.F{
-			"address": accountID,
-		})
-	}
-
-	accountResource := resources.NewAccount(*account)
-	accountResource.Relationships = regources.AccountRelationships{
-		Role: resources.NewAccountRoleKey(account.RoleID).AsRelation(),
-	}
-	if account.Referrer != nil {
-		accountResource.Relationships.Role = resources.NewAccountKey(*account.Referrer).AsRelation()
-	}
-
-	included.Add(&accountResource)
-	return nil
 }
 
 func (h *getBalanceHandler) includeAsset(assetCode string, included *regources.Included) error {
