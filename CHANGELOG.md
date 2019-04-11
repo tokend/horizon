@@ -1,3 +1,10 @@
+## Unreleased
+
+### Added 
+
+* `/v3/balances/{id}` endpoint
+* docs for `/v3/balances/{id}` endpoint
+
 ## 3.2.0-x.4
 
 ### Fixed
