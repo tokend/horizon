@@ -7,13 +7,11 @@ import (
 const (
 	// IncludeTypeBalanceListState - defines if the state of the balance should be included in the response
 	IncludeTypeBalanceState = "state"
-	IncludeTypeBalanceOwner = "owner"
 	IncludeTypeBalanceAsset = "asset"
 )
 
 var includeTypeBalanceAll = map[string]struct{}{
 	IncludeTypeBalanceState: {},
-	IncludeTypeBalanceOwner: {},
 	IncludeTypeBalanceAsset: {},
 }
 
