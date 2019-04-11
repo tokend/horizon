@@ -27,6 +27,11 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isAllowed(r, w) {
+		ape.RenderErr(w, problems.NotAllowed())
+		return
+	}
+
 	result, err := handler.GetBalance(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get balance", logan.F{
@@ -46,6 +51,7 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 
 type getBalanceHandler struct {
 	BalancesQ core2.BalancesQ
+	AssetsQ   core2.AssetsQ
 	Log       *logan.Entry
 }
 
