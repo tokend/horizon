@@ -170,7 +170,7 @@ func (h *createTransactionHandler) prepareFromHistory(transaction *history2.Tran
 
 func (h *createTransactionHandler) prepareFromResult(result *txsub.Result) *regources.TransactionResponse {
 	response := &regources.TransactionResponse{}
-	txdata := regources.Transaction{
+	data := regources.Transaction{
 		Key: resources.NewTxKey(result.TransactionID),
 		Attributes: regources.TransactionAttributes{
 			EnvelopeXdr:    result.EnvelopeXDR,
@@ -180,7 +180,11 @@ func (h *createTransactionHandler) prepareFromResult(result *txsub.Result) *rego
 			ResultXdr:      result.ResultXDR,
 		},
 	}
-	response.Data = txdata
+	response.Data = data
+	meta := h.getTransactionMeta()
+	if meta != nil {
+		response.Meta = *meta
+	}
 	return response
 }
 
