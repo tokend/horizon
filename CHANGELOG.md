@@ -75,6 +75,7 @@
 ### Removed
 
 * charts, endpoint for charts etc.
+* influx
 
 ## 3.0.1-x.21
 ## Fixed
