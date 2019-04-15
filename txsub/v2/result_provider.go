@@ -5,6 +5,8 @@ import (
 	"context"
 	"encoding/base64"
 
+	"gitlab.com/tokend/horizon/ingest2/generator"
+
 	"github.com/pkg/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core2"
@@ -49,6 +51,7 @@ func (rp *ResultsProvider) ResultByHash(ctx context.Context, hash string) *fullR
 func txResultFromHistory(tx history2.Transaction) *fullResult {
 	return &fullResult{
 		Result: Result{
+			TransactionID:  tx.ID,
 			Hash:           tx.Hash,
 			LedgerSequence: tx.LedgerSequence,
 			EnvelopeXDR:    tx.Envelope,
@@ -73,6 +76,7 @@ func txResultFromCore(tx core2.Transaction) *fullResult {
 	if tx.Result.Result.Result.Code == xdr.TransactionResultCodeTxSuccess {
 		return &fullResult{
 			Result: Result{
+				TransactionID:  generator.MakeIDUint32(tx.LedgerSequence, uint32(tx.Index)),
 				Hash:           tx.TransactionHash,
 				LedgerSequence: tx.LedgerSequence,
 				EnvelopeXDR:    tx.MustEnvelopeXDR(),

@@ -4,6 +4,7 @@ package txsub
 type Result struct {
 	Hash           string
 	LedgerSequence int32
+	TransactionID  int64
 	EnvelopeXDR    string
 	ResultXDR      string
 	ResultMetaXDR  string

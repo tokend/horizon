@@ -20,7 +20,7 @@ type CreateTransaction struct {
 	WaitForIngest bool
 }
 
-// NewGetAccountRule returns new instance of GetAsset request
+// NewCreateTransactionRequest returns new instance of NewCreateTransation request
 func NewCreateTransactionRequest(r *http.Request) (*CreateTransaction, error) {
 	b, err := newBase(r, baseOpts{})
 	if err != nil {
