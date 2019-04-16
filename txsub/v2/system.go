@@ -183,6 +183,11 @@ func (s *System) tickHistory(ctx context.Context) {
 }
 
 func (s *System) history(ctx context.Context) {
+	defer func() {
+		if rvr := recover(); rvr != nil {
+			s.Log.WithRecover(rvr).Error("txsub2 panicked")
+		}
+	}()
 	for {
 		select {
 		case <-s.HistoryListener.Notify:
@@ -194,6 +199,12 @@ func (s *System) history(ctx context.Context) {
 }
 
 func (s *System) core(ctx context.Context) {
+	defer func() {
+		if rvr := recover(); rvr != nil {
+			s.Log.WithRecover(rvr).Error("txsub2 panicked")
+		}
+	}()
+
 	for {
 		select {
 		case <-s.CoreListener.Notify:
