@@ -543,14 +543,14 @@
 
 [[projects]]
   branch = "feature/submit_tx_body"
-  digest = "1:d083e0154fead30532e24b576d616f74ce31b98f645ded2506f2f49a8a71484e"
+  digest = "1:f1e4f2f6784d76298b02446a2fd6d08e13aa8b29406ec7241267c1dd746d509b"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "f99a51f2858344a6b238931c0bdb7e5114953550"
+  revision = "a977dd16d0f6f9520c6a17835d6b0ee388ba7d54"
 
 [[projects]]
   branch = "master"

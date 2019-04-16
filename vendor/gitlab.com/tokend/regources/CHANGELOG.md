@@ -5,6 +5,7 @@
 ### Added 
 
 * `Owner` relation to `Balance` (ID of the owner's account)
+* `SubmitTransactionBody` type to represent body of transaction submit request
 
 ## 4.1.0
 
