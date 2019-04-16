@@ -82,6 +82,13 @@ func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResp
 		Data: resources.NewSale(*historySale),
 	}
 
+	defaultQuoteAsset := resources.NewSaleDefaultQuoteAsset(*historySale)
+	response.Data.Relationships.DefaultQuoteAsset = defaultQuoteAsset.AsRelation()
+
+	if request.ShouldInclude(requests.IncludeTypeSaleDefaultQuoteAsset) {
+		response.Included.Add(&defaultQuoteAsset)
+	}
+
 	quoteAssets := &regources.RelationCollection{
 		Data: make([]regources.Key, 0, len(historySale.QuoteAssets.QuoteAssets)),
 	}
@@ -95,13 +102,6 @@ func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResp
 		}
 	}
 	response.Data.Relationships.QuoteAssets = quoteAssets
-
-	defaultQuoteAsset := resources.NewSaleDefaultQuoteAsset(*historySale)
-	response.Data.Relationships.DefaultQuoteAsset = defaultQuoteAsset.AsRelation()
-
-	if request.ShouldInclude(requests.IncludeTypeSaleDefaultQuoteAsset) {
-		response.Included.Add(&defaultQuoteAsset)
-	}
 
 	if request.ShouldInclude(requests.IncludeTypeSaleBaseAsset) {
 		// FIXME: ingest assets to history and join

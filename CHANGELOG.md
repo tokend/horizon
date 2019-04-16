@@ -8,6 +8,7 @@
 ### Fixed
 
 * 500 for `GET /balances`  because of nil pointer on balance relationships
+* Default quote asset include for `v3/sales`
 
 ## 3.2.0-x.4
 
