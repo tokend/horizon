@@ -102,6 +102,9 @@ func (s *SubmissionList) Clean(maxAge time.Duration) int {
 	for _, os := range s.submissions {
 		if time.Since(os.SubmittedAt) > maxAge {
 			delete(s.submissions, os.Envelope.ContentHash)
+			delete(s.core, os.Envelope.ContentHash)
+			delete(s.history, os.Envelope.ContentHash)
+
 			for _, l := range os.Listeners {
 				l <- fullResult{Err: timeoutError}
 				close(l)
