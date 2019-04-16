@@ -17,12 +17,14 @@ import (
 // GetTransaction - processes request to get the transaction by id or hash
 func GetTransaction(w http.ResponseWriter, r *http.Request) {
 	historyRepo := ctx.HistoryRepo(r)
-	handler := getTransactionsHandler{
-		TransactionsQ: history2.NewTransactionsQ(historyRepo),
-		Log:           ctx.Log(r),
+	handler := getTransactionHandler{
+		TransactionsQ:  history2.NewTransactionsQ(historyRepo),
+		LedgerChangesQ: history2.NewLedgerChangesQ(historyRepo),
+		LedgerQ:        *history2.NewLedgerQ(historyRepo),
+		Log:            ctx.Log(r),
 	}
 
-	request, err := requests.NewGetTransactions(r)
+	request, err := requests.NewGetTransaction(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
@@ -32,7 +34,7 @@ func GetTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := handler.GetTransactions(request)
+	result, err := handler.GetTransaction(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get transactions list")
 		ape.RenderErr(w, problems.InternalError())
