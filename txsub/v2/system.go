@@ -182,7 +182,29 @@ func (s *System) tickHistory(ctx context.Context) {
 	}
 }
 
-func (s *System) run(context context.Context) {
+func (s *System) history(ctx context.Context) {
+	for {
+		select {
+		case <-s.HistoryListener.Notify:
+			s.tickHistory(ctx)
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+func (s *System) core(ctx context.Context) {
+	for {
+		select {
+		case <-s.CoreListener.Notify:
+			s.tickCore(ctx)
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+func (s *System) cleaner(ctx context.Context) {
 	ticker := time.NewTicker(s.SubmissionTimeout)
 	defer func() {
 		if rvr := recover(); rvr != nil {
@@ -193,16 +215,16 @@ func (s *System) run(context context.Context) {
 
 	for {
 		select {
-		case <-s.HistoryListener.Notify:
-			s.tickHistory(context)
-		case <-s.CoreListener.Notify:
-			s.tickCore(context)
 		case <-ticker.C:
 			s.List.Clean(s.SubmissionTimeout)
+		case <-ctx.Done():
+			return
 		}
 	}
 }
 
 func (s *System) Start(ctx context.Context) {
-	go s.run(ctx)
+	go s.cleaner(ctx)
+	go s.core(ctx)
+	go s.history(ctx)
 }
