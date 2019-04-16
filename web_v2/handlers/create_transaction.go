@@ -40,7 +40,6 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		History:   &hist,
 		Log:       ctx.Log(r),
 		Submitter: ctx.Submitter(r),
-		LedgerQ:   *history2.NewLedgerQ(historyRepo),
 	}
 
 	handler.Log = handler.Log.WithFields(logan.F{
@@ -74,7 +73,6 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 type createTransactionHandler struct {
 	History   *history2.TransactionsQ
 	Core      *core2.TransactionQ
-	LedgerQ   history2.LedgerQ
 	Submitter *txsub.System
 	Log       *logan.Entry
 }
@@ -111,10 +109,6 @@ func (h *createTransactionHandler) prepareFromHistory(ID uint64) (*regources.Tra
 
 	response := &regources.TransactionResponse{}
 	response.Data = resources.NewTransaction(*tx)
-	meta := h.getTransactionMeta()
-	if meta != nil {
-		response.Meta = *meta
-	}
 	return response, nil
 }
 
@@ -131,36 +125,5 @@ func (h *createTransactionHandler) prepareFromResult(result *txsub.Result) (*reg
 		},
 	}
 	response.Data = data
-	meta := h.getTransactionMeta()
-	if meta != nil {
-		response.Meta = *meta
-	}
 	return response, nil
-}
-
-func (h *createTransactionHandler) getLatestLedger() (*history2.Ledger, error) {
-	sequence, err := h.LedgerQ.GetLatestLedgerSeq()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load latest ledger sequence")
-	}
-
-	ledger, err := h.LedgerQ.GetBySequence(sequence)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load ledger by sequence")
-	}
-
-	return ledger, nil
-}
-
-func (h *createTransactionHandler) getTransactionMeta() *regources.TransactionResponseMeta {
-	ledger, err := h.getLatestLedger()
-	if err != nil {
-		h.Log.WithError(err).Error("Failed to get latest ledger")
-		return nil
-	}
-
-	return &regources.TransactionResponseMeta{
-		LatestLedgerCloseTime: ledger.ClosedAt,
-		LatestLedgerSequence:  ledger.Sequence,
-	}
 }
