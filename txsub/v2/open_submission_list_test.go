@@ -60,14 +60,6 @@ func TestDefaultSubmissionList(t *testing.T) {
 				err := list.Add(ctx, &wrongEnvelope, listeners[0])
 				So(err, ShouldNotBeNil)
 			})
-
-			Convey("errors when the provided hash is not hexadecimal string", func() {
-				wrongEnvelope := EnvelopeInfo{
-					ContentHash: "kalsfjdsjhkf hsdkhfksdhfk",
-				}
-				err := list.Add(ctx, &wrongEnvelope, listeners[0])
-				So(err, ShouldNotBeNil)
-			})
 		})
 
 		Convey("Finish()", func() {
@@ -116,9 +108,8 @@ func TestDefaultSubmissionList(t *testing.T) {
 			So(list.Add(ctx, &hashes[0], listeners[0]), ShouldBeNil)
 			<-time.After(200 * time.Millisecond)
 			So(list.Add(ctx, &hashes[1], listeners[1]), ShouldBeNil)
-			left, err := list.Clean(ctx, 200*time.Millisecond)
+			left := list.Clean(ctx, 200*time.Millisecond)
 
-			So(err, ShouldBeNil)
 			So(left, ShouldEqual, 1)
 
 			Convey("removes submissions older than the maxAge provided", func() {
@@ -143,12 +134,12 @@ func TestDefaultSubmissionList(t *testing.T) {
 			})
 		})
 
-		Convey("Pending() works as expected", func() {
-			So(len(list.Pending(ctx)), ShouldEqual, 0)
+		Convey("List() works as expected", func() {
+			So(len(list.Pending()), ShouldEqual, 0)
 			So(list.Add(ctx, &hashes[0], listeners[0]), ShouldBeNil)
-			So(len(list.Pending(ctx)), ShouldEqual, 1)
+			So(len(list.Pending()), ShouldEqual, 1)
 			So(list.Add(ctx, &hashes[1], listeners[1]), ShouldBeNil)
-			So(len(list.Pending(ctx)), ShouldEqual, 2)
+			So(len(list.Pending()), ShouldEqual, 2)
 		})
 	})
 }

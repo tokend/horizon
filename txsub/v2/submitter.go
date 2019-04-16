@@ -27,21 +27,21 @@ type resultProvider interface {
 type openSubmissionList interface {
 	// Add registers the provided listener as interested in being notified when a
 	// result is available for the provided transaction hash.
-	Add(context.Context, *EnvelopeInfo, listener) error
+	Add(*EnvelopeInfo, listener) error
 
 	// Finish forwards the provided result on to any listeners and cleans up any
 	// resources associated with the transaction that this result is for
-	Finish(context.Context, fullResult) error
+	Finish(fullResult) error
 
 	// Clean removes any open submissions over the provided age.
-	Clean(context.Context, time.Duration) (int, error)
+	Clean(time.Duration) int
 
 	// Pending return a list of transaction hashes that have at least one
 	// listener registered to them in this list.
-	Pending(context.Context) []string
+	Pending() []string
 
-	//ShouldRetry checks whether or not submission should be resubmitted
-	ShouldRetry(context.Context, string, time.Time) bool
+	//ShouldRetry checks whether or not transaction should be resubmitted
+	ShouldRetry(string, time.Time) bool
 
 	//Envelope returns EnvelopeInfo of open submission by hash
 	// If there is no submission with such tx hash, returns nil

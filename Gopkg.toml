@@ -87,7 +87,7 @@
   name = "gitlab.com/distributed_lab/corer"
 
 [[constraint]]
-  version = "0.3"
+  version = "0.5"
   name = "gitlab.com/distributed_lab/kit"
 
 [[override]]
@@ -103,7 +103,7 @@
   version = "3.2"
 
 [[constraint]]
-  branch = "feature/tx_result"
+  branch = "feature/submit_tx_body"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

@@ -8,7 +8,6 @@ config:
   port: 8000
   api_backend: http://
   ingest: true
-  wait_for_tx_ingest: true
   stale_threshold: 0
   sign_checkskip: true
   cors_enabled: true

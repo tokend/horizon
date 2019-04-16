@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added 
+
+* `Owner` relation to `Balance` (ID of the owner's account)
+
 ## 4.1.0
 
 ### Added
@@ -39,7 +45,6 @@
 * `BalancesResponse` type to represent the response on `/balances`
 * `PublicKeyEntryResponse` type to represent the response on `/public_key_entries`
 * `PublicKeyEntry`, `PublicKeyEntryRelationships` types
-* `TxSubmitResponse`, `TxSubmitSuccess`, `TxSubmitSuccessAttributes`, `TxSubmitFailure`, `TxSubmitErrorMeta` types
 
 ## 3.0.1-x.1
 

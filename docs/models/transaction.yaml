@@ -87,5 +87,5 @@ SubmitTransactionBody:
       example: "AAAAAEHCX5tmu0fXlkE9GLIOLO185ih5QI7V+PZ1mtb1tnzSA59veKFdUjsAAAAAAAAAAAAAAABchp31A..."
     wait_for_ingest:
       type: boolean
-      description: "defines whether to wait for ingest of transaction or not. If set to false, will return 202 Accepted on successful submit"
+      description: "defines whether to wait for ingest of transaction or not"
       default: false

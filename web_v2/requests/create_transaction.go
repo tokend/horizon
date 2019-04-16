@@ -30,6 +30,9 @@ func NewCreateTransactionRequest(r *http.Request) (*CreateTransaction, error) {
 	decoder := json.NewDecoder(b.request.Body)
 	var body regources.SubmitTransactionBody
 	err = decoder.Decode(&body)
+	if err != nil {
+		return nil, err
+	}
 	if body.Tx == "" {
 		return nil, errors.New("Envelope missing in the body of request")
 	}

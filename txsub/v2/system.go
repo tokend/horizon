@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"gitlab.com/tokend/horizon/log"
+
 	"github.com/lib/pq"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -15,12 +17,12 @@ import (
 // Its methods tie together the various pieces used to reliably submit transactions
 // to a core instance.
 type System struct {
-	Pending           openSubmissionList
+	List              openSubmissionList
 	Results           resultProvider
 	Submitter         Submitter
 	NetworkPassphrase string
 	SubmissionTimeout time.Duration
-	Log               *logan.Entry
+	Log               *log.Entry
 	Listener          *pq.Listener
 }
 
@@ -69,7 +71,7 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 			})
 	}
 
-	err = s.Pending.Add(ctx, &info, l)
+	err = s.List.Add(&info, l)
 	if err != nil {
 		return send(l,
 			fullResult{
@@ -82,11 +84,11 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 }
 
 func (s *System) tryResubmit(ctx context.Context, hash string) error {
-	if !s.Pending.ShouldRetry(ctx, hash, time.Now()) {
+	if !s.List.ShouldRetry(hash, time.Now()) {
 		return nil
 	}
 
-	env := s.Pending.Envelope(hash)
+	env := s.List.Envelope(hash)
 	if env == nil {
 		return errors.New("trying to resubmit tx which is not in pending list")
 	}
@@ -97,7 +99,7 @@ func (s *System) tryResubmit(ctx context.Context, hash string) error {
 
 func (s *System) tick(ctx context.Context) {
 
-	for _, hash := range s.Pending.Pending(ctx) {
+	for _, hash := range s.List.Pending() {
 		res := s.Results.ResultByHash(ctx, hash)
 		if res == nil {
 			err := s.tryResubmit(ctx, hash)
@@ -113,22 +115,16 @@ func (s *System) tick(ctx context.Context) {
 		}
 
 		if res.Err != nil {
-			s.Log.
-				WithError(res.Err).
-				WithFields(logan.F{
-					"tx_hash": hash,
-				}).
-				Error("failed to submit tx")
 			continue
 		}
 
-		s.Log.WithFields(logan.F{
+		s.Log.WithFields(log.F{
 			"tx_hash": hash,
 		}).Debug("Transaction successfully submitted")
 
-		if err := s.Pending.Finish(ctx, *res); err != nil {
+		if err := s.List.Finish(*res); err != nil {
 			s.Log.
-				WithError(res.Err).
+				WithError(err).
 				WithFields(logan.F{
 					"tx_hash": hash,
 				}).
@@ -136,11 +132,7 @@ func (s *System) tick(ctx context.Context) {
 		}
 	}
 
-	_, err := s.Pending.Clean(ctx, s.SubmissionTimeout)
-	if err != nil {
-		s.Log.WithError(err).Error("failed to clean expired pending txs")
-		return
-	}
+	s.List.Clean(s.SubmissionTimeout)
 }
 
 func (s *System) run(context context.Context) {

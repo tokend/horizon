@@ -542,15 +542,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:9857e9b9d7ea6fce19d69329ae17ed1723382baab120d602faddc09b28dbf277"
+  branch = "feature/submit_tx_body"
+  digest = "1:d083e0154fead30532e24b576d616f74ce31b98f645ded2506f2f49a8a71484e"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "ebcf3409be3cd8c98a30e7ec14a6e002a3607672"
-  version = "v4.1.0"
+  revision = "f99a51f2858344a6b238931c0bdb7e5114953550"
 
 [[projects]]
   branch = "master"
@@ -661,6 +661,7 @@
     "github.com/go-errors/errors",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/goji/context",
+    "github.com/google/jsonapi",
     "github.com/guregu/null",
     "github.com/influxdata/influxdb/client/v2",
     "github.com/jmoiron/sqlx",

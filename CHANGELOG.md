@@ -1,3 +1,22 @@
+## Unreleased
+
+### Added 
+
+* `/v3/transactions` endpoint to submit transactions
+* `/v3/balances/{id}` endpoint
+* docs for `/v3/balances/{id}` endpoint
+
+### Fixed
+
+* 500 for `GET /balances`  because of nil pointer on balance relationships
+
+## 3.2.0-x.4
+
+### Fixed
+
+* 500 for `GET /accounts?include=balances` because of nil pointer on balance relationships
+* Panics on manage vote/manage poll/manage poll creation requests operation details 
+
 ## 3.2.0-x.0
 
 ### Removed
@@ -22,24 +41,12 @@
 
 * old endpoint `/v3/order_book/{id}` marked as deprecated
 
-## 3.1.0-rc.0
-
-### Removed
-
-* dependency from regources/v2
+## 3.1.1
 
 ### Fixed
 
-* saving equal values to transaction's `result_meta_xdr` and `result_xdr` 
-* all docs for proper regources generation
-* `ManageAssetOpAttributes.PreissuanceSigner` -> `ManageAssetOpAttributes.PreIssuanceSigner`
-* json: `preissued_signer` -> `pre_issuance_signer`
+* psql error on poll ingesting
 
-### Added 
-
-* generated regources/generated in vendor
-* Tx submission system v2 with retry
-* `/v3/transactions` to submit txs
 ## 3.1.0-rc.0
 
 ### Added

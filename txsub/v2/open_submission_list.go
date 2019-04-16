@@ -1,12 +1,10 @@
 package txsub
 
 import (
-	"regexp"
 	"sync"
 	"time"
 
 	"github.com/go-errors/errors"
-	"golang.org/x/net/context"
 )
 
 // NewDefaultSubmissionList returns a list that manages open submissions purely
@@ -27,28 +25,26 @@ type openSubmission struct {
 }
 
 type SubmissionList struct {
-	sync.Mutex
+	sync.RWMutex
 	submissions  map[string]*openSubmission
 	retryTimeout time.Duration
 }
 
 func (s *SubmissionList) Envelope(hash string) *EnvelopeInfo {
+	s.RLock()
+	defer s.RUnlock()
 	if os, ok := s.submissions[hash]; ok {
 		return os.Envelope
 	}
 	return nil
 }
 
-func (s *SubmissionList) Add(ctx context.Context, envelope *EnvelopeInfo, l listener) error {
+func (s *SubmissionList) Add(envelope *EnvelopeInfo, l listener) error {
 	s.Lock()
 	defer s.Unlock()
 
 	if cap(l) == 0 {
 		panic("Unbuffered listener cannot be added to openSubmissionList")
-	}
-	regex := regexp.MustCompile("[[:xdigit:]]+")
-	if !regex.MatchString(envelope.ContentHash) {
-		return errors.New("Unexpected character sequence in hash: must be hexadecimal")
 	}
 
 	if len(envelope.ContentHash) != 64 {
@@ -71,7 +67,7 @@ func (s *SubmissionList) Add(ctx context.Context, envelope *EnvelopeInfo, l list
 	return nil
 }
 
-func (s *SubmissionList) Finish(ctx context.Context, r fullResult) error {
+func (s *SubmissionList) Finish(r fullResult) error {
 	s.Lock()
 	defer s.Unlock()
 
@@ -89,7 +85,7 @@ func (s *SubmissionList) Finish(ctx context.Context, r fullResult) error {
 	return nil
 }
 
-func (s *SubmissionList) Clean(ctx context.Context, maxAge time.Duration) (int, error) {
+func (s *SubmissionList) Clean(maxAge time.Duration) int {
 	s.Lock()
 	defer s.Unlock()
 
@@ -103,12 +99,12 @@ func (s *SubmissionList) Clean(ctx context.Context, maxAge time.Duration) (int, 
 		}
 	}
 
-	return len(s.submissions), nil
+	return len(s.submissions)
 }
 
-func (s *SubmissionList) Pending(ctx context.Context) []string {
-	s.Lock()
-	defer s.Unlock()
+func (s *SubmissionList) Pending() []string {
+	s.RLock()
+	defer s.RUnlock()
 	pendingHashes := make([]string, 0, len(s.submissions))
 
 	for hash := range s.submissions {
@@ -118,7 +114,7 @@ func (s *SubmissionList) Pending(ctx context.Context) []string {
 	return pendingHashes
 }
 
-func (s *SubmissionList) ShouldRetry(ctx context.Context, hash string, t time.Time) bool {
+func (s *SubmissionList) ShouldRetry(hash string, t time.Time) bool {
 	s.Lock()
 	defer s.Unlock()
 	submission := s.submissions[hash]

@@ -11,10 +11,6 @@ import (
 
 	"gitlab.com/tokend/horizon/web_v2/resources"
 
-	"gitlab.com/tokend/horizon/ingest2/storage"
-
-	"github.com/lib/pq"
-
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"gitlab.com/tokend/horizon/db2/history2"
@@ -35,16 +31,6 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-	if !isAllowed(r, w, request.Env.SourceAddress) {
-		return
-	}
-	config := ctx.Config(r)
-	var listener *pq.Listener
-	if request.WaitForIngest {
-		listener = pq.NewListener(config.DatabaseURL, 3*time.Second, 8*time.Second,
-			func(event pq.ListenerEventType, err error) {})
-		defer listener.Close()
-	}
 
 	coreRepo := ctx.CoreRepo(r)
 	historyRepo := ctx.HistoryRepo(r)
@@ -56,7 +42,6 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		Results:   results,
 		Log:       ctx.Log(r),
 		Submitter: ctx.Submitter(r),
-		Listener:  listener,
 		LedgerQ:   *history2.NewLedgerQ(historyRepo),
 	}
 
@@ -78,6 +63,9 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if result == nil {
+		ctx.Log(r).Error("got empty result", logan.F{
+			"request": request,
+		})
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
@@ -89,7 +77,6 @@ type createTransactionHandler struct {
 	Results   txsub.ResultsProvider
 	LedgerQ   history2.LedgerQ
 	Submitter *txsub.System
-	Listener  *pq.Listener
 	Log       *logan.Entry
 }
 
@@ -125,37 +112,24 @@ func (h *createTransactionHandler) tryGetFromHistory(hash string) (*history2.Tra
 }
 
 func (h *createTransactionHandler) waitIngest(context context.Context, result *txsub.Result) (*regources.TransactionResponse, error) {
-	if h.Listener == nil {
-		return nil, errors.New("Cannot wait for ingest, listener has not been initialized")
-	}
-
 	tx, ok := h.tryGetFromHistory(result.Hash)
 	if ok {
 		return h.prepareFromHistory(tx), nil
 	}
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
 
-	err := h.Listener.Listen(storage.ChanSubmitter)
-	if err != nil {
-		h.Log.WithError(errors.Wrap(err, "failed to listen channel", logan.F{
-			"channel": storage.ChanSubmitter,
-		})).Error("Got error while waiting for tx ingest")
-		return h.prepareFromResult(result), nil
-	}
-
-waitForIngest:
 	for {
 		select {
 		case <-context.Done():
 			return nil, nil
-		case <-h.Listener.Notify:
+		case <-ticker.C:
 			tx, ok = h.tryGetFromHistory(result.Hash)
 			if ok {
-				break waitForIngest
+				return h.prepareFromHistory(tx), nil
 			}
 		}
 	}
-
-	return h.prepareFromHistory(tx), nil
 }
 
 func (h *createTransactionHandler) prepareFromHistory(transaction *history2.Transaction) *regources.TransactionResponse {
