@@ -1,5 +1,7 @@
-## Unreleased
+## 3.2.0-x.6
+
 ### Added
+
 * `/v3/transactions/{id}` endpoint to get transaction by hash or ID
 
 ## 3.2.0-x.5
