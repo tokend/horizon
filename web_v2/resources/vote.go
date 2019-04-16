@@ -16,7 +16,7 @@ func NewVote(record history2.Vote) regources.Vote {
 	return regources.Vote{
 		Key: NewVoteKey(record.VoterID),
 		Attributes: regources.VoteAttributes{
-			VoteData: record.VoteData,
+			VoteData: regources.VoteData(record.VoteData),
 		},
 		Relationships: regources.VoteRelationships{
 			Voter: NewAccountKey(record.VoterID).AsRelation(),

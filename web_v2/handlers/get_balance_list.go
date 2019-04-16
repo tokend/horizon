@@ -92,8 +92,10 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 
 	for _, coreBalance := range coreBalances {
 		balance := resources.NewBalance(&coreBalance)
-		balance.Relationships.Asset = resources.NewAssetKey(coreBalance.AssetCode).AsRelation()
-		balance.Relationships.State = resources.NewBalanceStateKey(coreBalance.BalanceAddress).AsRelation()
+		balance.Relationships = &regources.BalanceRelationships{
+			Asset: resources.NewAssetKey(coreBalance.AssetCode).AsRelation(),
+			State: resources.NewBalanceStateKey(coreBalance.BalanceAddress).AsRelation(),
+		}
 
 		if request.ShouldInclude(requests.IncludeTypeBalanceListState) {
 			response.Included.Add(resources.NewBalanceState(&coreBalance))
