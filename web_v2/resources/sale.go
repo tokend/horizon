@@ -41,6 +41,12 @@ func NewSale(record history2.Sale) regources.Sale {
 
 // NewSaleDefaultQuoteAsset - extracts the default quote asset details from the sale
 func NewSaleDefaultQuoteAsset(saleRecord history2.Sale) regources.SaleQuoteAsset {
+	for _, quoteAsset := range saleRecord.QuoteAssets.QuoteAssets {
+		if quoteAsset.Asset == saleRecord.DefaultQuoteAsset {
+			return NewSaleQuoteAsset(quoteAsset)
+		}
+	}
+
 	return regources.SaleQuoteAsset{
 		Key: *NewSaleQuoteAssetKey(saleRecord.DefaultQuoteAsset).GetKeyP(),
 		Attributes: regources.SaleQuoteAssetAttributes{
