@@ -2,7 +2,6 @@ package txsub
 
 import (
 	"bytes"
-	"context"
 	"encoding/base64"
 
 	"gitlab.com/tokend/horizon/ingest2/generator"
@@ -20,82 +19,65 @@ type ResultsProvider struct {
 	History history2.TransactionsQ
 }
 
-// ResultByHash implements txsub.ResultProvider
-func (rp *ResultsProvider) ResultByHash(ctx context.Context, hash string) *fullResult {
-	// query history database
+func (rp *ResultsProvider) FromHistory(hash string) (*Result, error) {
 	hr, err := rp.History.GetByHash(hash)
 	if err != nil {
-		return &fullResult{
-			Err: errors.Wrap(err, "failed to get history transaction by hash"),
-		}
+		return nil, errors.Wrap(err, "failed to get history transaction by hash")
 	}
 	if hr != nil {
 		return txResultFromHistory(*hr)
 	}
 
-	// query core database
+	return nil, nil
+}
+
+func (rp *ResultsProvider) FromCore(hash string) (*Result, error) {
 	cr, err := rp.Core.GetByHash(hash)
 	if err != nil {
-		return &fullResult{
-			Err: errors.Wrap(err, "failed to get core transaction by hash"),
-		}
+		return nil, errors.Wrap(err, "failed to get core transaction by hash")
 	}
 	if cr != nil {
 		return txResultFromCore(*cr)
 	}
 
 	// if no result was found in either db, return nil
-	return nil
+	return nil, nil
 }
 
-func txResultFromHistory(tx history2.Transaction) *fullResult {
-	return &fullResult{
-		Result: Result{
-			TransactionID:  tx.ID,
-			Hash:           tx.Hash,
-			LedgerSequence: tx.LedgerSequence,
-			EnvelopeXDR:    tx.Envelope,
-			ResultXDR:      tx.Result,
-			ResultMetaXDR:  tx.Meta,
-		},
-	}
+func txResultFromHistory(tx history2.Transaction) (*Result, error) {
+	return &Result{
+		TransactionID:  tx.ID,
+		Hash:           tx.Hash,
+		LedgerSequence: tx.LedgerSequence,
+		EnvelopeXDR:    tx.Envelope,
+		ResultXDR:      tx.Result,
+		ResultMetaXDR:  tx.Meta,
+	}, nil
 }
 
-func txResultFromCore(tx core2.Transaction) *fullResult {
+func txResultFromCore(tx core2.Transaction) (*Result, error) {
 	// re-encode result to base64
 	var raw bytes.Buffer
 	_, err := xdr.Marshal(&raw, tx.Result.Result)
 
 	if err != nil {
-		return &fullResult{Err: errors.Wrap(err, "Failed to marshal tx result into xdr")}
+		return nil, errors.Wrap(err, "Failed to marshal tx result into xdr")
 	}
 
 	trx := base64.StdEncoding.EncodeToString(raw.Bytes())
 
 	// if result is success, send a normal response
 	if tx.Result.Result.Result.Code == xdr.TransactionResultCodeTxSuccess {
-		return &fullResult{
-			Result: Result{
-				TransactionID:  generator.MakeIDUint32(tx.LedgerSequence, uint32(tx.Index)),
-				Hash:           tx.TransactionHash,
-				LedgerSequence: tx.LedgerSequence,
-				EnvelopeXDR:    tx.MustEnvelopeXDR(),
-				ResultXDR:      trx,
-				ResultMetaXDR:  tx.MustResultMetaXDR(),
-			},
-		}
-	}
-
-	// if failed, produce a FailedTransactionError
-	return &fullResult{
-		Err: NewRejectedTxError(trx),
-		Result: Result{
+		return &Result{
+			TransactionID:  generator.MakeIDUint32(tx.LedgerSequence, uint32(tx.Index)),
 			Hash:           tx.TransactionHash,
 			LedgerSequence: tx.LedgerSequence,
 			EnvelopeXDR:    tx.MustEnvelopeXDR(),
 			ResultXDR:      trx,
 			ResultMetaXDR:  tx.MustResultMetaXDR(),
-		},
+		}, nil
 	}
+	// if failed, produce a FailedTransactionError
+	return nil, NewRejectedTxError(trx)
 
 }

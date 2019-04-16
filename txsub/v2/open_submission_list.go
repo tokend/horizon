@@ -21,6 +21,7 @@ func NewDefaultSubmissionList(retry time.Duration) openSubmissionList {
 type openSubmission struct {
 	Envelope    *EnvelopeInfo
 	SubmittedAt time.Time
+	Ingest      bool
 	Listeners   []listener
 }
 
@@ -39,7 +40,7 @@ func (s *SubmissionList) Envelope(hash string) *EnvelopeInfo {
 	return nil
 }
 
-func (s *SubmissionList) Add(envelope *EnvelopeInfo, l listener) error {
+func (s *SubmissionList) Add(envelope *EnvelopeInfo, ingest bool, l listener) error {
 	s.Lock()
 	defer s.Unlock()
 
@@ -58,6 +59,7 @@ func (s *SubmissionList) Add(envelope *EnvelopeInfo, l listener) error {
 			Envelope:    envelope,
 			SubmittedAt: time.Now(),
 			Listeners:   []listener{},
+			Ingest:      ingest,
 		}
 		s.submissions[envelope.ContentHash] = os
 	}
@@ -102,21 +104,36 @@ func (s *SubmissionList) Clean(maxAge time.Duration) int {
 	return len(s.submissions)
 }
 
-func (s *SubmissionList) Pending() []string {
+func (s *SubmissionList) PendingCore() []string {
 	s.RLock()
 	defer s.RUnlock()
 	pendingHashes := make([]string, 0, len(s.submissions))
 
-	for hash := range s.submissions {
-		pendingHashes = append(pendingHashes, hash)
+	for hash, submission := range s.submissions {
+		if !submission.Ingest {
+			pendingHashes = append(pendingHashes, hash)
+		}
+	}
+
+	return pendingHashes
+}
+func (s *SubmissionList) PendingHistory() []string {
+	s.RLock()
+	defer s.RUnlock()
+	pendingHashes := make([]string, 0, len(s.submissions))
+
+	for hash, submission := range s.submissions {
+		if submission.Ingest {
+			pendingHashes = append(pendingHashes, hash)
+		}
 	}
 
 	return pendingHashes
 }
 
 func (s *SubmissionList) ShouldRetry(hash string, t time.Time) bool {
-	s.Lock()
-	defer s.Unlock()
+	s.RLock()
+	defer s.RUnlock()
 	submission := s.submissions[hash]
 
 	return t.After(submission.SubmittedAt.Add(s.retryTimeout))

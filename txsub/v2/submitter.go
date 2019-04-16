@@ -13,7 +13,8 @@ import (
 // of each transaction in the open submission list at each tick (i.e. ledger close)
 type resultProvider interface {
 	// Look up a result by transaction hash. If result is not found returns nil
-	ResultByHash(context.Context, string) *fullResult
+	FromHistory(string) (*Result, error)
+	FromCore(string) (*Result, error)
 }
 
 // openSubmissionList represents the structure that tracks pending transactions
@@ -27,7 +28,8 @@ type resultProvider interface {
 type openSubmissionList interface {
 	// Add registers the provided listener as interested in being notified when a
 	// result is available for the provided transaction hash.
-	Add(*EnvelopeInfo, listener) error
+	//Boolean indicates whether or not list should wait for tx ingestion
+	Add(*EnvelopeInfo, bool, listener) error
 
 	// Finish forwards the provided result on to any listeners and cleans up any
 	// resources associated with the transaction that this result is for
@@ -38,7 +40,8 @@ type openSubmissionList interface {
 
 	// Pending return a list of transaction hashes that have at least one
 	// listener registered to them in this list.
-	Pending() []string
+	PendingCore() []string
+	PendingHistory() []string
 
 	//ShouldRetry checks whether or not transaction should be resubmitted
 	ShouldRetry(string, time.Time) bool

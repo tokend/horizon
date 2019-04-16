@@ -23,13 +23,14 @@ type System struct {
 	NetworkPassphrase string
 	SubmissionTimeout time.Duration
 	Log               *log.Entry
-	Listener          *pq.Listener
+	CoreListener      *pq.Listener
+	HistoryListener   *pq.Listener
 }
 
 // Submit submits the provided base64 encoded transaction envelope to the
 // network using this submission system.
-func (s *System) Submit(ctx context.Context, envelope EnvelopeInfo) (*Result, error) {
-	submission := s.trySubmit(ctx, envelope)
+func (s *System) Submit(ctx context.Context, envelope EnvelopeInfo, waitIngest bool) (*Result, error) {
+	submission := s.trySubmit(ctx, envelope, waitIngest)
 	select {
 	case result := <-submission:
 		return result.unwrap()
@@ -40,28 +41,30 @@ func (s *System) Submit(ctx context.Context, envelope EnvelopeInfo) (*Result, er
 	}
 }
 
-func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo) <-chan fullResult {
+func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo, waitIngest bool) <-chan fullResult {
 	listener := make(chan fullResult, 1)
 
 	// check for tx duplication
-	result := s.Results.ResultByHash(ctx, info.ContentHash)
-	//No duplication
-	if result == nil {
-		return s.submit(ctx, info, listener)
-	}
-
-	if result.Err != nil {
-		err := errors.Wrap(result.Err,
+	result, err := s.Results.FromCore(info.ContentHash)
+	if err != nil {
+		err = errors.Wrap(err,
 			"failed to check for tx duplication",
 			info.GetLoganFields())
-		result.Err = err
-		return send(listener, *result)
+		return send(listener, fullResult{
+			Err: err,
+		})
+	}
+	//No duplication
+	if result == nil {
+		return s.submit(ctx, info, listener, waitIngest)
 	}
 
-	return send(listener, *result)
+	return send(listener, fullResult{
+		Result: *result,
+	})
 }
 
-func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResult) <-chan fullResult {
+func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResult, waitIngest bool) <-chan fullResult {
 	_, err := s.Submitter.Submit(ctx, &info)
 	if err != nil {
 		return send(l,
@@ -71,7 +74,7 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 			})
 	}
 
-	err = s.List.Add(&info, l)
+	err = s.List.Add(&info, waitIngest, l)
 	if err != nil {
 		return send(l,
 			fullResult{
@@ -97,10 +100,19 @@ func (s *System) tryResubmit(ctx context.Context, hash string) error {
 	return err
 }
 
-func (s *System) tick(ctx context.Context) {
+func (s *System) tickCore(ctx context.Context) {
+	for _, hash := range s.List.PendingCore() {
+		res, err := s.Results.FromCore(hash)
+		if err != nil {
+			s.Log.
+				WithError(err).
+				WithFields(logan.F{
+					"tx_hash": hash,
+				}).
+				Error("failed to get result from core")
+			continue
+		}
 
-	for _, hash := range s.List.Pending() {
-		res := s.Results.ResultByHash(ctx, hash)
 		if res == nil {
 			err := s.tryResubmit(ctx, hash)
 			if err != nil {
@@ -114,15 +126,11 @@ func (s *System) tick(ctx context.Context) {
 			continue
 		}
 
-		if res.Err != nil {
-			continue
-		}
-
 		s.Log.WithFields(log.F{
 			"tx_hash": hash,
 		}).Debug("Transaction successfully submitted")
 
-		if err := s.List.Finish(*res); err != nil {
+		if err := s.List.Finish(fullResult{Result: *res}); err != nil {
 			s.Log.
 				WithError(err).
 				WithFields(logan.F{
@@ -131,12 +139,51 @@ func (s *System) tick(ctx context.Context) {
 				Error("failed to remove tx from pending list")
 		}
 	}
+}
 
-	s.List.Clean(s.SubmissionTimeout)
+func (s *System) tickHistory(ctx context.Context) {
+	for _, hash := range s.List.PendingHistory() {
+		res, err := s.Results.FromHistory(hash)
+		if err != nil {
+			s.Log.
+				WithError(err).
+				WithFields(logan.F{
+					"tx_hash": hash,
+				}).
+				Error("failed to get result from history")
+			continue
+		}
+
+		if res == nil {
+			err := s.tryResubmit(ctx, hash)
+			if err != nil {
+				s.Log.
+					WithError(err).
+					WithFields(logan.F{
+						"tx_hash": hash,
+					}).
+					Error("failed to resubmit tx")
+			}
+			continue
+		}
+
+		s.Log.WithFields(log.F{
+			"tx_hash": hash,
+		}).Debug("Transaction successfully submitted")
+
+		if err := s.List.Finish(fullResult{Result: *res}); err != nil {
+			s.Log.
+				WithError(err).
+				WithFields(logan.F{
+					"tx_hash": hash,
+				}).
+				Error("failed to remove tx from pending list")
+		}
+	}
 }
 
 func (s *System) run(context context.Context) {
-	ticker := time.NewTicker(2 * s.SubmissionTimeout)
+	ticker := time.NewTicker(s.SubmissionTimeout)
 	defer func() {
 		if rvr := recover(); rvr != nil {
 			s.Log.WithRecover(rvr).Error("txsub2 panicked")
@@ -145,20 +192,17 @@ func (s *System) run(context context.Context) {
 	}()
 
 	for {
-		s.wait(ticker)
-		s.tick(context)
+		select {
+		case <-s.HistoryListener.Notify:
+			s.tickHistory(context)
+		case <-s.CoreListener.Notify:
+			s.tickCore(context)
+		case <-ticker.C:
+			s.List.Clean(s.SubmissionTimeout)
+		}
 	}
 }
 
 func (s *System) Start(ctx context.Context) {
 	go s.run(ctx)
-}
-
-func (s *System) wait(ticker *time.Ticker) {
-	select {
-	case <-s.Listener.Notify:
-		return
-	case <-ticker.C:
-		return
-	}
 }

@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/google/jsonapi"
 
@@ -34,12 +33,11 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 	coreRepo := ctx.CoreRepo(r)
 	historyRepo := ctx.HistoryRepo(r)
-	results := txsub.ResultsProvider{
-		Core:    core2.NewTransactionQ(coreRepo),
-		History: history2.NewTransactionsQ(historyRepo),
-	}
+	hist := history2.NewTransactionsQ(historyRepo)
+
 	handler := createTransactionHandler{
-		Results:   results,
+		Core:      core2.NewTransactionQ(coreRepo),
+		History:   &hist,
 		Log:       ctx.Log(r),
 		Submitter: ctx.Submitter(r),
 		LedgerQ:   *history2.NewLedgerQ(historyRepo),
@@ -74,14 +72,15 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 }
 
 type createTransactionHandler struct {
-	Results   txsub.ResultsProvider
+	History   *history2.TransactionsQ
+	Core      *core2.TransactionQ
 	LedgerQ   history2.LedgerQ
 	Submitter *txsub.System
 	Log       *logan.Entry
 }
 
 func (h *createTransactionHandler) createTx(context context.Context, request *requests.CreateTransaction) (*regources.TransactionResponse, error) {
-	res, err := h.Submitter.Submit(context, *request.Env)
+	res, err := h.Submitter.Submit(context, *request.Env, request.WaitForIngest)
 	if txsub.IsInternalError(err) {
 		return nil, resources.NewTxFailure(*request.Env, err.(txsub.Error))
 	}
@@ -92,57 +91,34 @@ func (h *createTransactionHandler) createTx(context context.Context, request *re
 		return nil, errors.New("failed to submit transaction")
 	}
 
-	if !request.WaitForIngest {
-		return h.prepareFromResult(res), nil
+	if request.WaitForIngest {
+		return h.prepareFromHistory(uint64(res.TransactionID))
 	}
 
-	return h.waitIngest(context, res)
+	return h.prepareFromResult(res)
 }
 
-func (h *createTransactionHandler) tryGetFromHistory(hash string) (*history2.Transaction, bool) {
-	tx, err := h.Results.History.GetByHash(hash)
+func (h *createTransactionHandler) prepareFromHistory(ID uint64) (*regources.TransactionResponse, error) {
+	tx, err := h.History.GetByID(ID)
 	if err != nil {
-		h.Log.
-			WithError(err).
-			Error("failed to get tx by hash")
-		return nil, false
+		return nil, errors.Wrap(err, "failed to get tx by id", logan.F{
+			"tx_id": ID,
+		})
+	}
+	if tx == nil {
+		return nil, nil
 	}
 
-	return tx, tx != nil
-}
-
-func (h *createTransactionHandler) waitIngest(context context.Context, result *txsub.Result) (*regources.TransactionResponse, error) {
-	tx, ok := h.tryGetFromHistory(result.Hash)
-	if ok {
-		return h.prepareFromHistory(tx), nil
-	}
-	ticker := time.NewTicker(2 * time.Second)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-context.Done():
-			return nil, nil
-		case <-ticker.C:
-			tx, ok = h.tryGetFromHistory(result.Hash)
-			if ok {
-				return h.prepareFromHistory(tx), nil
-			}
-		}
-	}
-}
-
-func (h *createTransactionHandler) prepareFromHistory(transaction *history2.Transaction) *regources.TransactionResponse {
 	response := &regources.TransactionResponse{}
-	response.Data = resources.NewTransaction(*transaction)
+	response.Data = resources.NewTransaction(*tx)
 	meta := h.getTransactionMeta()
 	if meta != nil {
 		response.Meta = *meta
 	}
-	return response
+	return response, nil
 }
 
-func (h *createTransactionHandler) prepareFromResult(result *txsub.Result) *regources.TransactionResponse {
+func (h *createTransactionHandler) prepareFromResult(result *txsub.Result) (*regources.TransactionResponse, error) {
 	response := &regources.TransactionResponse{}
 	data := regources.Transaction{
 		Key: resources.NewTxKey(result.TransactionID),
@@ -159,7 +135,7 @@ func (h *createTransactionHandler) prepareFromResult(result *txsub.Result) *rego
 	if meta != nil {
 		response.Meta = *meta
 	}
-	return response
+	return response, nil
 }
 
 func (h *createTransactionHandler) getLatestLedger() (*history2.Ledger, error) {

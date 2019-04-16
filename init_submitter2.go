@@ -22,16 +22,30 @@ func initSubmissionV2(app *App) {
 	hq := history2.NewTransactionsQ(app.HistoryRepoLogged(&logger.Entry))
 	coreConnector := app.CoreConnector
 
-	listener := pq.NewListener(
+	coreListener := pq.NewListener(
 		app.config.StellarCoreDatabaseURL,
 		time.Second,
 		5*time.Second,
 		log.PQEvent(logger),
 	)
-	err := listener.Listen(storage.ChanNewLedgerSeq)
+
+	histListener := pq.NewListener(
+		app.config.DatabaseURL,
+		time.Second,
+		5*time.Second,
+		log.PQEvent(logger),
+	)
+	err := coreListener.Listen(storage.ChanNewLedgerSeq)
 	if err != nil {
 		panic(errors.Wrap(err, "failed to init history listener", logan.F{
 			"channel": storage.ChanNewLedgerSeq,
+		}))
+	}
+
+	err = histListener.Listen(storage.ChanNewHistoryLedgerSeq)
+	if err != nil {
+		panic(errors.Wrap(err, "failed to init history listener", logan.F{
+			"channel": storage.ChanNewHistoryLedgerSeq,
 		}))
 	}
 	app.submitterV2 = &txsub.System{
@@ -39,7 +53,8 @@ func initSubmissionV2(app *App) {
 		SubmissionTimeout: time.Minute,
 		List:              txsub.NewDefaultSubmissionList(10 * time.Second),
 		Submitter:         txsub.NewDefaultSubmitter(*coreConnector),
-		Listener:          listener,
+		CoreListener:      coreListener,
+		HistoryListener:   histListener,
 		Results: &txsub.ResultsProvider{
 			Core:    cq,
 			History: hq,
