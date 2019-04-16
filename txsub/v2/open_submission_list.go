@@ -92,6 +92,8 @@ func (s *SubmissionList) Finish(r fullResult) error {
 	}
 
 	delete(s.submissions, r.Hash)
+	delete(s.core, os.Envelope.ContentHash)
+	delete(s.history, os.Envelope.ContentHash)
 	return nil
 }
 

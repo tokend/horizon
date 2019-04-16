@@ -24,9 +24,9 @@ func NewTxFailure(env txsub.EnvelopeInfo, err txsub.Error) error {
 	meta["envelope"] = env.RawBlob
 	meta["result_xdr"] = err.ResultXDR()
 	return &jsonapi.ErrorObject{
-		Status: http.StatusText(err.Code()),
+		Status: fmt.Sprintf("%d", err.Code()),
 		Detail: err.Details(),
-		Code:   fmt.Sprintf("%d", err.Code()),
+		Code:   http.StatusText(err.Code()),
 		Title:  "Transaction submit failed",
 		Meta:   &meta,
 	}
