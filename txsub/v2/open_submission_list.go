@@ -12,6 +12,8 @@ import (
 func NewDefaultSubmissionList(retry time.Duration) openSubmissionList {
 	return &SubmissionList{
 		submissions:  map[string]*openSubmission{},
+		core:         make(map[string]bool),
+		history:      make(map[string]bool),
 		retryTimeout: retry,
 	}
 }
@@ -21,13 +23,15 @@ func NewDefaultSubmissionList(retry time.Duration) openSubmissionList {
 type openSubmission struct {
 	Envelope    *EnvelopeInfo
 	SubmittedAt time.Time
-	Ingest      bool
 	Listeners   []listener
 }
 
 type SubmissionList struct {
 	sync.RWMutex
-	submissions  map[string]*openSubmission
+	submissions map[string]*openSubmission
+	core        map[string]bool
+	history     map[string]bool
+
 	retryTimeout time.Duration
 }
 
@@ -51,6 +55,11 @@ func (s *SubmissionList) Add(envelope *EnvelopeInfo, ingest bool, l listener) er
 	if len(envelope.ContentHash) != 64 {
 		return errors.New("Unexpected transaction hash length: must be 64 hex characters")
 	}
+	if ingest {
+		s.history[envelope.ContentHash] = true
+	} else {
+		s.core[envelope.ContentHash] = true
+	}
 
 	os, ok := s.submissions[envelope.ContentHash]
 
@@ -59,7 +68,6 @@ func (s *SubmissionList) Add(envelope *EnvelopeInfo, ingest bool, l listener) er
 			Envelope:    envelope,
 			SubmittedAt: time.Now(),
 			Listeners:   []listener{},
-			Ingest:      ingest,
 		}
 		s.submissions[envelope.ContentHash] = os
 	}
@@ -107,12 +115,10 @@ func (s *SubmissionList) Clean(maxAge time.Duration) int {
 func (s *SubmissionList) PendingCore() []string {
 	s.RLock()
 	defer s.RUnlock()
-	pendingHashes := make([]string, 0, len(s.submissions))
+	pendingHashes := make([]string, 0, len(s.core))
 
-	for hash, submission := range s.submissions {
-		if !submission.Ingest {
-			pendingHashes = append(pendingHashes, hash)
-		}
+	for hash := range s.core {
+		pendingHashes = append(pendingHashes, hash)
 	}
 
 	return pendingHashes
@@ -120,12 +126,10 @@ func (s *SubmissionList) PendingCore() []string {
 func (s *SubmissionList) PendingHistory() []string {
 	s.RLock()
 	defer s.RUnlock()
-	pendingHashes := make([]string, 0, len(s.submissions))
+	pendingHashes := make([]string, 0, len(s.history))
 
-	for hash, submission := range s.submissions {
-		if submission.Ingest {
-			pendingHashes = append(pendingHashes, hash)
-		}
+	for hash := range s.history {
+		pendingHashes = append(pendingHashes, hash)
 	}
 
 	return pendingHashes
