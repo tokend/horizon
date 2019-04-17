@@ -69,7 +69,7 @@ type getVoteListHandler struct {
 
 // GetVoteList returns the list of assets with related resources
 func (h *getVoteListHandler) GetVoteList(request *requests.GetVoteList) (*regources.VotesResponse, error) {
-	q := h.VotesQ.FilterByPollID(request.PollID)
+	q := h.VotesQ.FilterByPollID(request.PollID).Page(*request.PageParams)
 
 	historyVotes, err := q.Select()
 	if err != nil {
