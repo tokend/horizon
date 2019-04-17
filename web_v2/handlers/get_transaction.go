@@ -96,7 +96,7 @@ func (h *getTransactionHandler) GetTransaction(request *requests.GetTransaction)
 	}
 
 	var result regources.TransactionResponse
-	result.Data, err = getPopulatedTx(*historyTx, h.LedgerChangesQ, request, result.Included)
+	result.Data, err = getPopulatedTx(*historyTx, h.LedgerChangesQ, request, &result.Included)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to populated tx")
 	}
