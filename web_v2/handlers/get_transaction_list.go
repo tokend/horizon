@@ -90,7 +90,7 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 
 	for _, historyTransaction := range historyTransactions {
 		var transaction regources.Transaction
-		transaction, err = getPopulatedTx(historyTransaction, h.LedgerChangesQ, request, result.Included)
+		transaction, err = getPopulatedTx(historyTransaction, h.LedgerChangesQ, request, &result.Included)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to populate tx")
 		}
@@ -123,7 +123,7 @@ type baseRequest interface {
 	ShouldInclude(string) bool
 }
 
-func getPopulatedTx(tx history.Transaction, ledgerChangesQ history.LedgerChangesQ, request baseRequest, include regources.Included) (regources.Transaction, error) {
+func getPopulatedTx(tx history.Transaction, ledgerChangesQ history.LedgerChangesQ, request baseRequest, include *regources.Included) (regources.Transaction, error) {
 	historyChanges, err := ledgerChangesQ.FilterByTransactionID(tx.ID).Select()
 	if err != nil {
 		return regources.Transaction{}, errors.Wrap(err, "failed to load ledger changes")
