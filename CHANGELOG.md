@@ -1,3 +1,9 @@
+## 3.2.0-x.7
+
+### Fixed
+
+* Always `/v3/votes` ignoring page params and always returning all the votes 
+
 ## 3.2.0-x.6
 
 ### Added
