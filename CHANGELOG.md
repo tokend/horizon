@@ -1,3 +1,7 @@
+## 3.2.0-x.8
+
+* `/v3/sales` was setting the wrong caps if default quote asset was also in the list of quote assets
+
 ## 3.2.0-x.7
 
 ### Fixed
