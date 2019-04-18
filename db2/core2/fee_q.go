@@ -59,9 +59,9 @@ func (q FeesQ) FilterBySubtype(subtype int64) FeesQ {
 	return q
 }
 
-//FilterByAccountType - returns q with filter by account type
-func (q FeesQ) FilterByAccountType(accType uint64) FeesQ {
-	q.selector = q.selector.Where("f.account_role = ?", accType)
+//FilterByAccountRole - returns q with filter by account type
+func (q FeesQ) FilterByAccountRole(role uint64) FeesQ {
+	q.selector = q.selector.Where("f.account_role = ?", role)
 	return q
 }
 
