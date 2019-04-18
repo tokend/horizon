@@ -56,6 +56,12 @@ func (q TransactionsQ) FilterByID(id uint64) TransactionsQ {
 	return q
 }
 
+//FilterByHash - filters transaction by hash
+func (q TransactionsQ) FilterByHash(hash string) TransactionsQ {
+	q.selector = q.selector.Where("transactions.hash = ?", hash)
+	return q
+}
+
 // GetByID loads a row from `transactions`, by ID
 // returns nil, nil - if transaction does not exists
 func (q TransactionsQ) GetByID(id uint64) (*Transaction, error) {

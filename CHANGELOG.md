@@ -1,4 +1,28 @@
-## Unreleased
+## 3.2.0-x.9
+
+## Fixed
+
+* `/v3/transactions/` includes were never populated
+
+## 3.2.0-x.8
+
+## Fixed
+
+* `/v3/sales` was setting the wrong caps if default quote asset was also in the list of quote assets
+
+## 3.2.0-x.7
+
+### Fixed
+
+* `/v3/votes` ignoring page params and always returning all the votes 
+
+## 3.2.0-x.6
+
+### Added
+
+* `/v3/transactions/{id}` endpoint to get transaction by hash or ID
+
+## 3.2.0-x.5
 
 ### Added 
 
@@ -9,6 +33,7 @@
 ### Fixed
 
 * 500 for `GET /balances`  because of nil pointer on balance relationships
+* Default quote asset include for `v3/sales`
 
 ## 3.2.0-x.4
 
@@ -76,6 +101,7 @@
 ### Removed
 
 * charts, endpoint for charts etc.
+* influx
 
 ## 3.0.1-x.21
 ## Fixed

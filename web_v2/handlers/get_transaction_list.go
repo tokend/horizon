@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	history "gitlab.com/tokend/horizon/db2/history2"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -11,7 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	regources "gitlab.com/tokend/regources/generated"
+	"gitlab.com/tokend/regources/generated"
 )
 
 // GetTransactions - processes request to get the list of transactions (with ledger changes)
@@ -87,40 +89,10 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 	}
 
 	for _, historyTransaction := range historyTransactions {
-		historyChanges, err := h.LedgerChangesQ.FilterByTransactionID(historyTransaction.ID).Select()
+		var transaction regources.Transaction
+		transaction, err = getPopulatedTx(historyTransaction, h.LedgerChangesQ, request, &result.Included)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to load ledger changes")
-		}
-
-		transaction := resources.NewTransaction(historyTransaction)
-		transaction.Relationships.Source = resources.NewAccountKey(historyTransaction.Account).AsRelation()
-		transaction.Relationships.LedgerEntryChanges = &regources.RelationCollection{
-			Data: make([]regources.Key, 0, len(historyChanges)),
-		}
-
-		operations := make(map[int64]regources.Key)
-
-		for _, historyChange := range historyChanges {
-			change, err := resources.NewLedgerEntryChange(historyChange)
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to parse ledger entry change")
-			}
-			transaction.Relationships.LedgerEntryChanges.Data = append(
-				transaction.Relationships.LedgerEntryChanges.Data, change.Key,
-			)
-			if request.ShouldInclude(requests.IncludeTypeTransactionListLedgerEntryChanges) {
-				result.Included.Add(change)
-			}
-			operations[historyChange.OperationID] = resources.NewOperationKey(historyChange.OperationID)
-		}
-
-		transaction.Relationships.Operations = &regources.RelationCollection{
-			Data: make([]regources.Key, 0, len(operations)),
-		}
-		for _, operation := range operations {
-			transaction.Relationships.Operations.Data = append(
-				transaction.Relationships.Operations.Data, operation,
-			)
+			return nil, errors.Wrap(err, "failed to populate tx")
 		}
 
 		result.Data = append(result.Data, transaction)
@@ -145,4 +117,50 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 	}
 
 	return &result, nil
+}
+
+type baseRequest interface {
+	ShouldInclude(string) bool
+}
+
+func getPopulatedTx(tx history.Transaction, ledgerChangesQ history.LedgerChangesQ, request baseRequest, include *regources.Included) (regources.Transaction, error) {
+	historyChanges, err := ledgerChangesQ.FilterByTransactionID(tx.ID).Select()
+	if err != nil {
+		return regources.Transaction{}, errors.Wrap(err, "failed to load ledger changes")
+	}
+
+	transaction := resources.NewTransaction(tx)
+	transaction.Relationships.Source = resources.NewAccountKey(tx.Account).AsRelation()
+	transaction.Relationships.LedgerEntryChanges = &regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(historyChanges)),
+	}
+
+	operations := make(map[int64]regources.Key)
+
+	for _, historyChange := range historyChanges {
+		var change *regources.LedgerEntryChange
+		change, err = resources.NewLedgerEntryChange(historyChange)
+		if err != nil {
+			return regources.Transaction{}, errors.Wrap(err, "failed to parse ledger entry change")
+		}
+		transaction.Relationships.LedgerEntryChanges.Data = append(
+			transaction.Relationships.LedgerEntryChanges.Data, change.Key,
+		)
+
+		if request.ShouldInclude(requests.IncludeTypeTransactionListLedgerEntryChanges) {
+			include.Add(change)
+		}
+		operations[historyChange.OperationID] = resources.NewOperationKey(historyChange.OperationID)
+	}
+
+	transaction.Relationships.Operations = &regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(operations)),
+	}
+	for _, operation := range operations {
+		transaction.Relationships.Operations.Data = append(
+			transaction.Relationships.Operations.Data, operation,
+		)
+	}
+
+	return transaction, nil
 }

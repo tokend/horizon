@@ -130,6 +130,13 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 			Data: make([]regources.Key, 0, len(historySale.QuoteAssets.QuoteAssets)),
 		}
 
+		defaultQuoteAsset := resources.NewSaleDefaultQuoteAsset(historySale)
+		sale.Relationships.DefaultQuoteAsset = defaultQuoteAsset.AsRelation()
+
+		if request.ShouldInclude(requests.IncludeTypeSaleDefaultQuoteAsset) {
+			response.Included.Add(&defaultQuoteAsset)
+		}
+
 		for _, historyQuoteAsset := range historySale.QuoteAssets.QuoteAssets {
 			quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset)
 			sale.Relationships.QuoteAssets.Data = append(sale.Relationships.QuoteAssets.Data, quoteAsset.Key)
@@ -137,13 +144,6 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 			if request.ShouldInclude(requests.IncludeTypeSaleQuoteAssets) {
 				response.Included.Add(&quoteAsset)
 			}
-		}
-
-		defaultQuoteAsset := resources.NewSaleDefaultQuoteAsset(historySale)
-		sale.Relationships.DefaultQuoteAsset = defaultQuoteAsset.AsRelation()
-
-		if request.ShouldInclude(requests.IncludeTypeSaleDefaultQuoteAsset) {
-			response.Included.Add(&defaultQuoteAsset)
 		}
 
 		if request.ShouldInclude(requests.IncludeTypeSaleListBaseAssets) {
