@@ -8,7 +8,10 @@ import (
 
 	"github.com/spf13/cobra"
 	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/history/schema"
 )
+
+const CurrentReingestVersion = 0
 
 type Migrator func(*sql.DB, db2.MigrateDir, int) (int, error)
 
@@ -50,5 +53,29 @@ func migrate(direction string, count int, migrator Migrator, dbConnectionURL str
 		log.Fatal(err)
 	} else {
 		log.Printf("Applied %d migration", applied)
+	}
+}
+
+func applyMigration() {
+	db, err := sql.Open("postgres", conf.DatabaseURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer db.Close()
+
+	var dbReingestVersion = 0
+	// we expect that migration up have been executed
+	row := db.QueryRow("select reingest_version from support_params")
+
+	err = row.Scan(&dbReingestVersion)
+	if (err != nil) && (err != sql.ErrNoRows) {
+		log.Fatal(err, ". Run migrate up, please")
+	}
+
+	if dbReingestVersion < CurrentReingestVersion {
+		migrate("down", 0, schema.Migrate, conf.DatabaseURL)
+		migrate("up", 0, schema.Migrate, conf.DatabaseURL)
+		db.Exec("insert into support_params (reingest_version) values ($1)", CurrentReingestVersion)
 	}
 }
