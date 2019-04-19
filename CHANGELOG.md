@@ -1,6 +1,8 @@
 ## Unreleased
 
-## Added
+### Added
+
+* Allow forcing reingest on application start up (see ingest2/main.go)
 * `/v3/limits` endpoint to get limits list with filters
 
 ## Fixed
