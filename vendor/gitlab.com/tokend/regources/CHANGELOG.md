@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added 
+
+* `Owner` relation to `Balance` (ID of the owner's account)
+
 ## 4.1.0
 
 ### Added
