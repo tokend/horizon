@@ -6,12 +6,12 @@ import (
 	"os"
 	"strconv"
 
+	"gitlab.com/tokend/horizon/ingest2"
+
 	"github.com/spf13/cobra"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history/schema"
 )
-
-const CurrentReingestVersion = 0
 
 type Migrator func(*sql.DB, db2.MigrateDir, int) (int, error)
 
@@ -64,18 +64,18 @@ func tryToEmptyDB() {
 
 	defer db.Close()
 
-	var dbReingestVersion = 0
+	var dbIngestVersion = 0
 	// we expect that migration up have been executed
 	row := db.QueryRow("select reingest_version from support_params")
 
-	err = row.Scan(&dbReingestVersion)
+	err = row.Scan(&dbIngestVersion)
 	if (err != nil) && (err != sql.ErrNoRows) {
 		log.Fatal(err, ". Run migrate up, please")
 	}
 
-	if dbReingestVersion < CurrentReingestVersion {
+	if dbIngestVersion != ingest2.CurrentIngestVersion {
 		migrate("down", 0, schema.Migrate, conf.DatabaseURL)
 		migrate("up", 0, schema.Migrate, conf.DatabaseURL)
-		db.Exec("insert into support_params (reingest_version) values ($1)", CurrentReingestVersion)
+		db.Exec("insert into support_params (reingest_version) values ($1)", ingest2.CurrentIngestVersion)
 	}
 }

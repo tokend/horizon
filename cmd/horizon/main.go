@@ -50,8 +50,8 @@ func initApp(cmd *cobra.Command, args []string) {
 
 	if conf.MigrateUpOnStart {
 		migrate("up", 0, schema.Migrate, conf.DatabaseURL)
+		tryToEmptyDB()
 	}
-	tryToEmptyDB()
 
 	app, err = horizon.NewApp(conf)
 
