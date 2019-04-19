@@ -776,7 +776,7 @@ func migrations035_reingest_versionSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "migrations/035_reingest_version.sql", size: 163, mode: os.FileMode(436), modTime: time.Unix(1555676494, 0)}
+	info := bindataFileInfo{name: "migrations/035_reingest_version.sql", size: 163, mode: os.FileMode(436), modTime: time.Unix(1555682120, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

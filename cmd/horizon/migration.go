@@ -66,16 +66,19 @@ func tryToEmptyDB() {
 
 	var dbIngestVersion = 0
 	// we expect that migration up have been executed
-	row := db.QueryRow("select reingest_version from support_params")
+	row := db.QueryRow("select ingest_version from support_params")
 
 	err = row.Scan(&dbIngestVersion)
 	if (err != nil) && (err != sql.ErrNoRows) {
-		log.Fatal(err, ". Run migrate up, please")
+		log.Fatal(err)
 	}
 
 	if dbIngestVersion != ingest2.CurrentIngestVersion {
 		migrate("down", 0, schema.Migrate, conf.DatabaseURL)
 		migrate("up", 0, schema.Migrate, conf.DatabaseURL)
-		db.Exec("insert into support_params (reingest_version) values ($1)", ingest2.CurrentIngestVersion)
+		_, err = db.Exec("insert into support_params (ingest_version) values ($1)", ingest2.CurrentIngestVersion)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
