@@ -56,7 +56,7 @@ func migrate(direction string, count int, migrator Migrator, dbConnectionURL str
 	}
 }
 
-func applyMigration() {
+func tryToEmptyDB() {
 	db, err := sql.Open("postgres", conf.DatabaseURL)
 	if err != nil {
 		log.Fatal(err)

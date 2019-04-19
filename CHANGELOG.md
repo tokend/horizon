@@ -1,3 +1,9 @@
+## Unreleased
+
+### Added
+
+* Allow forcing reingest on application start up
+
 ## 3.2.0-x.9
 
 ## Fixed
