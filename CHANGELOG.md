@@ -3,6 +3,10 @@
 ### Added
 
 * Allow forcing reingest on application start up
+* `/v3/limits` endpoint to get limits list with filters
+
+## Fixed
+* `/v3/account` to include all limits imposed for account
 
 ## 3.2.0-x.9
 
