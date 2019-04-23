@@ -1,16 +1,16 @@
-/v3/history:
+/v3/movements:
   get:
     tags:
       - History
-    summary: Get history
+    summary: Get movements
     description: |
-      Allows to get a filtered list of participants effects
-    operationId: getHistory
+      Allows to get a filtered list of participants effects related to balances only - movements
+    operationId: getMovements
     parameters:
       - name: filter[account]
         in: query
         description: |
-          Filters history by participant account address
+          Filters movements by participant account address
         required: false
         style: form
         explode: false
@@ -19,7 +19,7 @@
       - name: filter[balance]
         in: query
         description: |
-          Filters history by participant's balance
+          Filters movements by participant's balance
         required: false
         style: form
         explode: false
@@ -43,7 +43,7 @@
       - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
-        description: history exists
+        description: movements exist
         content:
           application/vnd.api+json:
             schema:
@@ -71,11 +71,11 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/history?include=operation.details&page[number]=2&page[limit]=15"
+                      example: "/v3/movements?include=operation.details&page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/history?include=operation.details&page[number]=1&page[limit]=15"
+                      example: "/v3/movements?include=operation.details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:
@@ -83,7 +83,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       404:
-        description: effects do not exist
+        description: operations do not exist
         content:
           application/vnd.api+json:
             schema:
