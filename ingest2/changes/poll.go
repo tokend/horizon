@@ -88,11 +88,18 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 }
 func (c *pollHandler) getPollState(op xdr.ManagePollOp) regources.PollState {
 	var state regources.PollState
-	switch op.Data.MustClosePollData().Result {
-	case xdr.PollResultFailed:
-		state = regources.PollStateFailed
-	case xdr.PollResultPassed:
-		state = regources.PollStatePassed
+	switch op.Data.Action {
+	case xdr.ManagePollActionCancel:
+		state = regources.PollStateCancelled
+	case xdr.ManagePollActionClose:
+		switch op.Data.MustClosePollData().Result {
+		case xdr.PollResultFailed:
+			state = regources.PollStateFailed
+		case xdr.PollResultPassed:
+			state = regources.PollStatePassed
+		default:
+			state = regources.PollStateOpen
+		}
 	default:
 		state = regources.PollStateOpen
 	}

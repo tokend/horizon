@@ -531,14 +531,14 @@
 
 [[projects]]
   branch = "feature/poll_update_cancel"
-  digest = "1:e5af07d020919bf1f40affa620192177085d34791406abb1d4ddb53c3d318959"
+  digest = "1:3fa4dd4d7d23f7f7f30dca8bcb416cab22504c2b4b2f7cc225912ed7d3b7de86"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "e3b61387b7154ff415766d95af305d20a066c707"
+  revision = "b60000e5cf77781d8c603fadb5db6df84c14b651"
 
 [[projects]]
   branch = "master"
