@@ -48,6 +48,12 @@ func (q ParticipantEffectsQ) ForBalance(id uint64) ParticipantEffectsQ {
 	return q
 }
 
+//Movements - filters out non movement effects
+func (q ParticipantEffectsQ) Movements() ParticipantEffectsQ {
+	q.selector = q.selector.Where("effects.balance_id is not null")
+	return q
+}
+
 //ForAccount - adds filter by accounts ID
 func (q ParticipantEffectsQ) ForAccount(id uint64) ParticipantEffectsQ {
 	q.selector = q.selector.Where("effects.account_id = ?", id)
