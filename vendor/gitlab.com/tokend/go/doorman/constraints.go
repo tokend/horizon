@@ -13,9 +13,6 @@ func SignerOf(address string) SignerConstraint {
 			return err
 		}
 
-		if signer == address {
-			return nil
-		}
 		signers, err := doorman.AccountSigners(address)
 		if err != nil {
 			return err

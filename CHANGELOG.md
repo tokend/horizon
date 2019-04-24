@@ -1,10 +1,18 @@
 ## Unreleased
 
-## Added
+### Added
+
+* Allow forcing reingest on application start up (see ingest2/main.go)
 * `/v3/limits` endpoint to get limits list with filters
+* Squash matches with the same price in history
+* `/v3/movements` endpoint to get participants effect related to balance movements
+* Cancel poll and update poll end time ingestion
 
 ## Fixed
 * `/v3/account` to include all limits imposed for account
+* Issue with `/v3/assets` for assets with max_uint64 fields
+* Issues with balances and limits having fields types for amount int64 instead of uint64. 
+* Update doorman with SignerOf check fixed
 
 ## 3.2.0-x.9
 
@@ -22,7 +30,7 @@
 
 ### Fixed
 
-* `/v3/votes` ignoring page params and always returning all the votes 
+* `/v3/votes` ignoring page params and always returning all the votes
 
 ## 3.2.0-x.6
 
@@ -32,7 +40,7 @@
 
 ## 3.2.0-x.5
 
-### Added 
+### Added
 
 * `/v3/balances/{id}` endpoint
 * docs for `/v3/balances/{id}` endpoint
@@ -47,7 +55,7 @@
 ### Fixed
 
 * 500 for `GET /accounts?include=balances` because of nil pointer on balance relationships
-* Panics on manage vote/manage poll/manage poll creation requests operation details 
+* Panics on manage vote/manage poll/manage poll creation requests operation details
 
 ## 3.2.0-x.0
 
@@ -57,17 +65,17 @@
 
 ### Fixed
 
-* saving equal values to transaction's `result_meta_xdr` and `result_xdr` 
+* saving equal values to transaction's `result_meta_xdr` and `result_xdr`
 * all docs for proper regources generation
 * `ManageAssetOpAttributes.PreissuanceSigner` -> `ManageAssetOpAttributes.PreIssuanceSigner`
 * json: `preissued_signer` -> `pre_issuance_signer`
 * missing poll id in create poll request response
-* order book entries sorting by price in alphabetical order 
+* order book entries sorting by price in alphabetical order
 
-### Added 
+### Added
 
 * generated regources/generated in vendor
-* new endpoint `/v3/order_books/{id}` 
+* new endpoint `/v3/order_books/{id}`
 
 ### Changed
 
@@ -122,7 +130,7 @@
 ## Added
 * Error codes for manageSigner and skiped op
 ## Fixed
-* Information disclosure without permission for reviewable requests v1 
+* Information disclosure without permission for reviewable requests v1
 
 ## 3.0.1-x.18
 ## Fixed
@@ -206,7 +214,7 @@
 
 # 3.0.1-x.7
 
-### Added 
+### Added
 
 * Signers endpoint
 * Account/Signer Role/Rules
