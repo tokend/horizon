@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strings"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -24,23 +23,15 @@ func isAllowed(r *http.Request, w http.ResponseWriter, dataOwners ...string) boo
 	}
 	constraints = append(constraints, doorman.SignerOf(ctx.CoreInfo(r).AdminAccountID))
 
-	err := ctx.Doorman(r, constraints...)
-
-	switch err {
+	switch err := ctx.Doorman(r, constraints...); err.(type) {
 	case nil:
 		return true
-	case signcontrol.ErrNotAllowed, signcontrol.ErrNotSigned, signcontrol.ErrValidUntil, signcontrol.ErrExpired,
-		signcontrol.ErrSignerKey, signcontrol.ErrSignature:
-
-		notAllowed := problems.NotAllowed()
-		notAllowed.Meta = &map[string]interface{}{
-			"cause": err.Error(),
-			// probably useful for debug
-			"checked_against": strings.Join(append(dataOwners, ctx.CoreInfo(r).AdminAccountID), ", "),
-		}
-		ape.RenderErr(w, notAllowed)
+	case *signcontrol.Error, *doorman.Error:
+		ape.RenderErr(w, problems.NotAllowed(err))
 		return false
 	default:
+		// while problems.NotAllowed will handle that as well,
+		// there is no easy way to get that log in case of error
 		ctx.Log(r).WithError(err).Error("failed to perform signature check")
 		ape.RenderErr(w, problems.InternalError())
 		return false

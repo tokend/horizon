@@ -6,7 +6,9 @@ import (
 	"net/http/httputil"
 	"regexp"
 
-	"github.com/rcrowley/go-metrics"
+	"gitlab.com/tokend/regources"
+
+	metrics "github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
@@ -17,7 +19,6 @@ import (
 	"gitlab.com/tokend/horizon/render"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
-	"gitlab.com/tokend/regources"
 )
 
 // Web contains the http server related fields for horizon: the router,
@@ -193,7 +194,6 @@ func initWebActions(app *App) {
 	r.Get("/fees/:fee_type", &FeesShowAction{})
 
 	// assets
-	r.Get("/charts/:code", &ChartsAction{})
 	r.Get("/prices/history", &PricesHistoryAction{})
 	r.Get("/assets", &AssetsIndexAction{})
 	r.Get("/assets/:code", &AssetsShowAction{})

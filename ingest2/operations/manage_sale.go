@@ -17,7 +17,7 @@ func (h *manageSaleHandler) Details(op rawOperation, res xdr.OperationResultTr,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeManageSale,
 		ManageSale: &history2.ManageSaleDetails{
-			SaleID: uint64(manageSale.SaleId),
+			SaleId: uint64(manageSale.SaleId),
 			Action: manageSale.Data.Action,
 		},
 	}, nil

@@ -6,8 +6,11 @@ import (
 	"os"
 	"strconv"
 
+	"gitlab.com/tokend/horizon/ingest2"
+
 	"github.com/spf13/cobra"
 	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/db2/history/schema"
 )
 
 type Migrator func(*sql.DB, db2.MigrateDir, int) (int, error)
@@ -50,5 +53,32 @@ func migrate(direction string, count int, migrator Migrator, dbConnectionURL str
 		log.Fatal(err)
 	} else {
 		log.Printf("Applied %d migration", applied)
+	}
+}
+
+func tryToEmptyDB() {
+	db, err := sql.Open("postgres", conf.DatabaseURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer db.Close()
+
+	var dbIngestVersion = 0
+	// we expect that migration up have been executed
+	row := db.QueryRow("select ingest_version from support_params")
+
+	err = row.Scan(&dbIngestVersion)
+	if (err != nil) && (err != sql.ErrNoRows) {
+		log.Fatal(err)
+	}
+
+	if dbIngestVersion != ingest2.CurrentIngestVersion {
+		migrate("down", 0, schema.Migrate, conf.DatabaseURL)
+		migrate("up", 0, schema.Migrate, conf.DatabaseURL)
+		_, err = db.Exec("insert into support_params (ingest_version) values ($1)", ingest2.CurrentIngestVersion)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }

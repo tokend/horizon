@@ -4,10 +4,11 @@ import (
 	"log"
 	"runtime"
 
+	"gitlab.com/tokend/horizon/db2/history/schema"
+
 	"github.com/spf13/cobra"
 	"gitlab.com/tokend/horizon"
 	"gitlab.com/tokend/horizon/config"
-	"gitlab.com/tokend/horizon/db2/history/schema"
 )
 
 var app *horizon.App
@@ -49,6 +50,7 @@ func initApp(cmd *cobra.Command, args []string) {
 
 	if conf.MigrateUpOnStart {
 		migrate("up", 0, schema.Migrate, conf.DatabaseURL)
+		tryToEmptyDB()
 	}
 
 	app, err = horizon.NewApp(conf)

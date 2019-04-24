@@ -118,7 +118,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/ChangeRoleDetails'
+                      - $ref: '#/components/schemas/ChangeRoleRequest'
                       - $ref: '#/components/schemas/Account'
       400:
         description: bad input parameter

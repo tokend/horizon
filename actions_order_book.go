@@ -68,7 +68,7 @@ func (action *OrderBookAction) loadRecords() {
 		q = q.ForOrderBookID(*action.OrderBookID)
 	}
 
-	err := q.Select(&action.CoreRecords)
+	err := q.OrderByPrice(action.IsBuy).Select(&action.CoreRecords)
 	if err != nil {
 		action.Log.WithError(err).Error("Failed to get offers from core DB")
 		action.Err = &problem.ServerError

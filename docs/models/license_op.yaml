@@ -13,6 +13,7 @@ LicenseOp:
   allOf:
   - $ref: '#/components/schemas/LicenseOpKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object
@@ -30,6 +31,7 @@ LicenseOp:
             example: "2012-11-01T22:08:41+00:00"
           admin_count:
             type: integer
+            format: uint64
             example: 20
             description: "Allowed number of admins to set"
           ledger_hash:

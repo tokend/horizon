@@ -4,7 +4,7 @@
       - History
     summary: Get history
     description: |
-      Allows to get a filtered list of operations
+      Allows to get a filtered list of participants effects
     operationId: getHistory
     parameters:
       - name: filter[account]
@@ -55,11 +55,15 @@
                 data:
                   type: array
                   items:
-                    $ref: '#/components/schemas/Operation'
+                    $ref: '#/components/schemas/ParticipantsEffect'
                 included:
                   type: array
                   items:
-                    $ref: '#/components/schemas/OperationDetails'
+                    oneOf:
+                    - $ref: '#/components/schemas/Operation'
+                    - $ref: '#/components/schemas/OperationDetails'
+                    - $ref: '#/components/schemas/EffectMatched'
+                    - $ref: '#/components/schemas/EffectBalanceChange'
                 links:
                   type: object
                   description: "Provides links for pagination"
@@ -79,7 +83,7 @@
             schema:
               $ref: '#/components/schemas/Errors'
       404:
-        description: operations do not exist
+        description: effects do not exist
         content:
           application/vnd.api+json:
             schema:

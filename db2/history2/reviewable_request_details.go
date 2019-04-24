@@ -8,7 +8,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //ReviewableRequestDetails - stores in union switch details of the reviewable requests
@@ -20,12 +20,13 @@ type ReviewableRequestDetails struct {
 	CreateIssuance      *CreateIssuanceRequest      `json:"create_issuance,omitempty"`
 	CreateWithdraw      *CreateWithdrawalRequest    `json:"create_withdraw,omitempty"`
 	CreateSale          *CreateSaleRequest          `json:"create_sale,omitempty"`
-	UpdateLimits        *UpdateLimitsRequest        `json:"update_limits"`
-	CreateAmlAlert      *CreateAmlAlertRequest      `json:"create_aml_alert"`
+	UpdateLimits        *UpdateLimitsRequest        `json:"update_limits,omitempty"`
+	CreateAmlAlert      *CreateAmlAlertRequest      `json:"create_aml_alert,omitempty"`
 	ChangeRole          *ChangeRoleRequest          `json:"change_role,omitempty"`
-	UpdateSaleDetails   *UpdateSaleDetailsRequest   `json:"update_sale_details"`
-	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid"`
-	CreateAtomicSwap    *CreateAtomicSwapRequest    `json:"create_atomic_swap"`
+	UpdateSaleDetails   *UpdateSaleDetailsRequest   `json:"update_sale_details,omitempty"`
+	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid,omitempty"`
+	CreateAtomicSwap    *CreateAtomicSwapRequest    `json:"create_atomic_swap,omitempty"`
+	CreatePoll          *CreatePollRequest          `json:"create_poll,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -145,4 +146,16 @@ type CreateAtomicSwapRequest struct {
 	BaseAmount     regources.Amount  `json:"base_amount"`
 	QuoteAsset     string            `json:"quote_asset"`
 	CreatorDetails regources.Details `json:"creator_details"`
+}
+
+//CreatePollRequest - request details
+type CreatePollRequest struct {
+	PermissionType           uint32            `json:"permission_type"`
+	NumberOfChoices          uint32            `json:"number_of_choices"`
+	PollData                 xdr.PollData      `json:"poll_data"`
+	CreatorDetails           regources.Details `json:"creator_details"`
+	VoteConfirmationRequired bool              `json:"vote_confirmation_required"`
+	ResultProviderID         string            `json:"result_provider_id"`
+	StartTime                time.Time         `json:"start_time"`
+	EndTime                  time.Time         `json:"end_time"`
 }

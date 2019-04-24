@@ -3,14 +3,13 @@ package handlers
 import (
 	"net/http"
 
-	"gitlab.com/tokend/regources/v2"
-
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 func GetRequests(w http.ResponseWriter, r *http.Request) {

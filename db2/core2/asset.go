@@ -14,10 +14,10 @@ type Asset struct {
 	Owner                  string      `db:"owner"`
 	PreIssuanceAssetSigner string      `db:"preissued_asset_signer"`
 	Details                db2.Details `db:"details"`
-	MaxIssuanceAmount      int64       `db:"max_issuance_amount"`
-	AvailableForIssuance   int64       `db:"available_for_issueance"`
-	Issued                 int64       `db:"issued"`
-	PendingIssuance        int64       `db:"pending_issuance"`
+	MaxIssuanceAmount      uint64      `db:"max_issuance_amount"`
+	AvailableForIssuance   uint64      `db:"available_for_issueance"`
+	Issued                 uint64      `db:"issued"`
+	PendingIssuance        uint64      `db:"pending_issuance"`
 	Policies               int32       `db:"policies"`
 	TrailingDigits         uint32      `db:"trailing_digits"`
 	Type                   uint64      `db:"type"`

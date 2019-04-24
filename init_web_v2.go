@@ -3,6 +3,8 @@ package horizon
 import (
 	"time"
 
+	"gitlab.com/tokend/horizon/web_v2/handlers"
+
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -17,7 +19,6 @@ import (
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/web_v2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
-	"gitlab.com/tokend/horizon/web_v2/handlers"
 	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
 )
 
@@ -96,12 +97,20 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/accounts/{id}/calculated_fees", handlers.GetCalculatedFees)
 	m.Get("/v3/assets/{code}", handlers.GetAsset)
 	m.Get("/v3/assets", handlers.GetAssetList)
+	m.Get("/v3/balances/{id}", handlers.GetBalance)
+	m.Get("/v3/balances", handlers.GetBalanceList)
 	m.Get("/v3/fees", handlers.GetFeeList)
+	m.Get("/v3/limits", handlers.GetLimitsList)
 	m.Get("/v3/history", handlers.GetHistory)
+	m.Get("/v3/movements", handlers.GetMovements)
 	m.Get("/v3/asset_pairs/{id}", handlers.GetAssetPair)
 	m.Get("/v3/asset_pairs", handlers.GetAssetPairList)
 	m.Get("/v3/offers/{id}", handlers.GetOffer)
 	m.Get("/v3/offers", handlers.GetOfferList)
+	m.Get("/v3/public_key_entries/{id}", handlers.GetPublicKeyEntry)
+	m.Get("/v3/transactions", handlers.GetTransactions)
+	m.Get("/v3/transactions/{id}", handlers.GetTransaction)
+
 	// reviewable requests
 	m.Get("/v3/requests", handlers.GetRequests)
 	m.Get("/v3/requests/{id}", handlers.GetRequests)
@@ -128,15 +137,23 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/create_atomic_swap_bid_requests", handlers.GetCreateAtomicSwapBidRequests)
 	m.Get("/v3/create_atomic_swap_bid_requests/{id}", handlers.GetCreateAtomicSwapBidRequests)
 	m.Get("/v3/create_atomic_swap_requests", handlers.GetCreateAtomicSwapRequests)
-	m.Get("/v3/create_atomic_swap_requests{id}", handlers.GetCreateAtomicSwapRequests)
+	m.Get("/v3/create_atomic_swap_requests/{id}", handlers.GetCreateAtomicSwapRequests)
+	m.Get("/v3/create_poll_requests", handlers.GetCreatePollRequests)
+	m.Get("/v3/create_poll_requests/{id}", handlers.GetCreatePollRequests)
 
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)
 
+	m.Get("/v3/polls/{id}", handlers.GetPoll)
+	m.Get("/v3/polls", handlers.GetPollList)
+	m.Get("/v3/polls/{id}/relationships/votes", handlers.GetVoteList)
+	m.Get("/v3/polls/{id}/relationships/votes/{voter}", handlers.GetVote)
+
 	m.Get("/v3/sales", handlers.GetSaleList)
 	m.Get("/v3/sales/{id}", handlers.GetSale)
 
-	m.Get("/v3/order_book/{id}", handlers.GetOrderBook)
+	m.Get("/v3/order_book/{id}", handlers.DeprecatedGetOrderBook)
+	m.Get("/v3/order_books/{base}:{quote}:{order_book_id}", handlers.GetOrderBook)
 
 	m.Get("/v3/account_roles/{id}", handlers.GetAccountRole)
 	m.Get("/v3/account_roles", handlers.GetAccountRoleList)

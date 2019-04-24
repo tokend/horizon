@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rcrowley/go-metrics"
+	metrics "github.com/rcrowley/go-metrics"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/txsub"
@@ -23,7 +23,7 @@ import (
 	"gitlab.com/tokend/horizon/render/sse"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
-	"gopkg.in/tylerb/graceful.v1"
+	graceful "gopkg.in/tylerb/graceful.v1"
 )
 
 // You can override this variable using: gb build -ldflags "-X main.version aabbccdd"
@@ -55,9 +55,6 @@ type App struct {
 	coreElderLedgerGauge     metrics.Gauge
 	coreConnGauge            metrics.Gauge
 	goroutineGauge           metrics.Gauge
-
-	// charts
-	charts *Charts
 }
 
 // SetVersion records the provided version string in the package level `version`
@@ -80,7 +77,14 @@ func NewApp(config config.Config) (*App, error) {
 func (a *App) Serve() {
 
 	a.web.router.Compile()
-	http.Handle("/v3/transactions", a.web.router)
+	http.Handle("/v3/transactions", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			a.web.router.ServeHTTP(w, r)
+		default:
+			a.webV2.mux.ServeHTTP(w, r)
+		}
+	}))
 	http.Handle("/v3/", a.webV2.mux)
 	http.Handle("/", a.web.router)
 
