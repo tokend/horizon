@@ -54,7 +54,7 @@ func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources
 		q = q.FilterByAddress(request.Filters.Account)
 	}
 	if request.ShouldFilter(requests.FilterTypeFeeListAccountRole) {
-		q = q.FilterByAccountType(request.Filters.AccountRole)
+		q = q.FilterByAccountRole(request.Filters.AccountRole)
 	}
 
 	if request.ShouldFilter(requests.FilterTypeFeeListAsset) {

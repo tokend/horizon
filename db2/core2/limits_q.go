@@ -32,8 +32,38 @@ func NewLimitsQ(repo *db2.Repo) LimitsQ {
 }
 
 // FilterByAccount - adds accountID filter for query to Limits table
-func (q LimitsQ) FilterByAccountID(accountID string) LimitsQ {
+func (q LimitsQ) FilterByAccount(accountID string) LimitsQ {
 	q.selector = q.selector.Where("limits.account_id = ?", accountID)
+	return q
+}
+
+//FilterByAccountRole - returns q with filter by account role
+func (q LimitsQ) FilterByAccountRole(role uint64) LimitsQ {
+	q.selector = q.selector.Where("limits.account_type = ?", role)
+	return q
+}
+
+//General
+func (q LimitsQ) General() LimitsQ {
+	q.selector = q.selector.Where("limits.account_type is null and limits.account_id is null")
+	return q
+}
+
+// Page - returns Q with specified limit and offset params
+func (q LimitsQ) Page(params db2.OffsetPageParams) LimitsQ {
+	q.selector = params.ApplyTo(q.selector, "limits.id")
+	return q
+}
+
+//FilterByAsset - returns q with filter by asset
+func (q LimitsQ) FilterByAsset(asset string) LimitsQ {
+	q.selector = q.selector.Where("limits.asset_code = ?", asset)
+	return q
+}
+
+//FilterByStatsOpType - returns q with filter by stats op type
+func (q LimitsQ) FilterByStatsOpType(statsOpType int32) LimitsQ {
+	q.selector = q.selector.Where("limits.stats_op_type = ?", statsOpType)
 	return q
 }
 

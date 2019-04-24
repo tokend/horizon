@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
-	. "gitlab.com/tokend/horizon/fees"
+	"gitlab.com/tokend/horizon/helper/fees"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
@@ -20,7 +20,7 @@ type AccountFeesAction struct {
 	Action
 	Account *core.Account
 
-	Records  SmartFeeTable
+	Records  fees.SmartFeeTable
 	Assets   []string
 	Response resource.FeesResponse
 }
@@ -87,7 +87,7 @@ func (action *AccountFeesAction) loadFees() {
 		return
 	}
 
-	sft := NewSmartFeeTable(forAccount)
+	sft := fees.NewSmartFeeTable(forAccount)
 	sft.Update(forAccountType)
 	sft.Update(generalFees)
 	sft.AddZeroFees(action.Assets)
