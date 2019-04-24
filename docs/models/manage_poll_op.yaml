@@ -23,8 +23,13 @@ ManagePollOp:
             $ref: '#/components/schemas/PollKey'
       attributes:
         type: object
-        required: [action]
+        required: [action, poll_id]
         properties:
+          poll_id:
+            type: integer
+            format: int64
+            description: "ID of the poll to manage"
+            example: 10
           action:
             format: xdr.ManagePollAction
             description: |

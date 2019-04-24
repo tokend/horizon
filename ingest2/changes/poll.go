@@ -98,10 +98,10 @@ func (c *pollHandler) getPollState(op xdr.ManagePollOp) regources.PollState {
 		case xdr.PollResultPassed:
 			state = regources.PollStatePassed
 		default:
-			state = regources.PollStateOpen
+			panic("Unexpected poll result")
 		}
 	default:
-		state = regources.PollStateOpen
+		panic("Unexpected manage poll action")
 	}
 	return state
 }

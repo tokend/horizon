@@ -159,6 +159,7 @@ func newManagePollOp(id int64, details history2.ManagePollDetails) *regources.Ma
 		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_POLL),
 		Attributes: regources.ManagePollOpAttributes{
 			Action: details.Action,
+			PollId: details.PollID,
 		},
 		Relationships: regources.ManagePollOpRelationships{
 			Poll: NewPollKey(details.PollID).AsRelation(),

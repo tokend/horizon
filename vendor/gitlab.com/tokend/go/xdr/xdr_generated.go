@@ -1,4 +1,4 @@
-// revision: 8e34047141bd8de3510e312ac74fe9f8eccaccb5
+// revision: 4791728601df87aea5ac51f30ef128f9cc5f60e2
 // branch:   feature/poll_update_cancel
 // Package xdr is generated from:
 //
@@ -26756,17 +26756,23 @@ type ManagePollOp struct {
 //        //: Only result provider is allowed to close poll
 //        NOT_AUTHORIZED_TO_CLOSE_POLL = -3,
 //        //: End time is in the past
-//        INVALID_END_TIME = -4
+//        INVALID_END_TIME = -4,
+//        //:Only poll owner and admin can cancel poll
+//        NOT_AUTHORIZED_TO_CANCEL_POLL = -5,
+//        //:Only poll owner can update end time
+//        NOT_AUTHORIZED_TO_UPDATE_POLL_END_TIME = -6
 //    };
 //
 type ManagePollResultCode int32
 
 const (
-	ManagePollResultCodeSuccess                  ManagePollResultCode = 0
-	ManagePollResultCodeNotFound                 ManagePollResultCode = -1
-	ManagePollResultCodePollNotReady             ManagePollResultCode = -2
-	ManagePollResultCodeNotAuthorizedToClosePoll ManagePollResultCode = -3
-	ManagePollResultCodeInvalidEndTime           ManagePollResultCode = -4
+	ManagePollResultCodeSuccess                          ManagePollResultCode = 0
+	ManagePollResultCodeNotFound                         ManagePollResultCode = -1
+	ManagePollResultCodePollNotReady                     ManagePollResultCode = -2
+	ManagePollResultCodeNotAuthorizedToClosePoll         ManagePollResultCode = -3
+	ManagePollResultCodeInvalidEndTime                   ManagePollResultCode = -4
+	ManagePollResultCodeNotAuthorizedToCancelPoll        ManagePollResultCode = -5
+	ManagePollResultCodeNotAuthorizedToUpdatePollEndTime ManagePollResultCode = -6
 )
 
 var ManagePollResultCodeAll = []ManagePollResultCode{
@@ -26775,6 +26781,8 @@ var ManagePollResultCodeAll = []ManagePollResultCode{
 	ManagePollResultCodePollNotReady,
 	ManagePollResultCodeNotAuthorizedToClosePoll,
 	ManagePollResultCodeInvalidEndTime,
+	ManagePollResultCodeNotAuthorizedToCancelPoll,
+	ManagePollResultCodeNotAuthorizedToUpdatePollEndTime,
 }
 
 var managePollResultCodeMap = map[int32]string{
@@ -26783,6 +26791,8 @@ var managePollResultCodeMap = map[int32]string{
 	-2: "ManagePollResultCodePollNotReady",
 	-3: "ManagePollResultCodeNotAuthorizedToClosePoll",
 	-4: "ManagePollResultCodeInvalidEndTime",
+	-5: "ManagePollResultCodeNotAuthorizedToCancelPoll",
+	-6: "ManagePollResultCodeNotAuthorizedToUpdatePollEndTime",
 }
 
 var managePollResultCodeShortMap = map[int32]string{
@@ -26791,14 +26801,18 @@ var managePollResultCodeShortMap = map[int32]string{
 	-2: "poll_not_ready",
 	-3: "not_authorized_to_close_poll",
 	-4: "invalid_end_time",
+	-5: "not_authorized_to_cancel_poll",
+	-6: "not_authorized_to_update_poll_end_time",
 }
 
 var managePollResultCodeRevMap = map[string]int32{
-	"ManagePollResultCodeSuccess":                  0,
-	"ManagePollResultCodeNotFound":                 -1,
-	"ManagePollResultCodePollNotReady":             -2,
-	"ManagePollResultCodeNotAuthorizedToClosePoll": -3,
-	"ManagePollResultCodeInvalidEndTime":           -4,
+	"ManagePollResultCodeSuccess":                          0,
+	"ManagePollResultCodeNotFound":                         -1,
+	"ManagePollResultCodePollNotReady":                     -2,
+	"ManagePollResultCodeNotAuthorizedToClosePoll":         -3,
+	"ManagePollResultCodeInvalidEndTime":                   -4,
+	"ManagePollResultCodeNotAuthorizedToCancelPoll":        -5,
+	"ManagePollResultCodeNotAuthorizedToUpdatePollEndTime": -6,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -36222,7 +36236,8 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CHECK = 14,
 //        CANCEL = 15,
 //        CLOSE = 16,
-//        REMOVE = 17
+//        REMOVE = 17,
+//        UPDATE_END_TIME = 18
 //    };
 //
 type AccountRuleAction int32
@@ -36245,6 +36260,7 @@ const (
 	AccountRuleActionCancel            AccountRuleAction = 15
 	AccountRuleActionClose             AccountRuleAction = 16
 	AccountRuleActionRemove            AccountRuleAction = 17
+	AccountRuleActionUpdateEndTime     AccountRuleAction = 18
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -36265,6 +36281,7 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionCancel,
 	AccountRuleActionClose,
 	AccountRuleActionRemove,
+	AccountRuleActionUpdateEndTime,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -36285,6 +36302,7 @@ var accountRuleActionMap = map[int32]string{
 	15: "AccountRuleActionCancel",
 	16: "AccountRuleActionClose",
 	17: "AccountRuleActionRemove",
+	18: "AccountRuleActionUpdateEndTime",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -36305,6 +36323,7 @@ var accountRuleActionShortMap = map[int32]string{
 	15: "cancel",
 	16: "close",
 	17: "remove",
+	18: "update_end_time",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -36325,6 +36344,7 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionCancel":            15,
 	"AccountRuleActionClose":             16,
 	"AccountRuleActionRemove":            17,
+	"AccountRuleActionUpdateEndTime":     18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -37187,7 +37207,8 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        BIND = 12,
 //        UPDATE_MAX_ISSUANCE = 13,
 //        CHECK = 14,
-//        CLOSE = 15
+//        CLOSE = 15,
+//        UPDATE_END_TIME = 16
 //    };
 //
 type SignerRuleAction int32
@@ -37208,6 +37229,7 @@ const (
 	SignerRuleActionUpdateMaxIssuance SignerRuleAction = 13
 	SignerRuleActionCheck             SignerRuleAction = 14
 	SignerRuleActionClose             SignerRuleAction = 15
+	SignerRuleActionUpdateEndTime     SignerRuleAction = 16
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -37226,6 +37248,7 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionUpdateMaxIssuance,
 	SignerRuleActionCheck,
 	SignerRuleActionClose,
+	SignerRuleActionUpdateEndTime,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -37244,6 +37267,7 @@ var signerRuleActionMap = map[int32]string{
 	13: "SignerRuleActionUpdateMaxIssuance",
 	14: "SignerRuleActionCheck",
 	15: "SignerRuleActionClose",
+	16: "SignerRuleActionUpdateEndTime",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -37262,6 +37286,7 @@ var signerRuleActionShortMap = map[int32]string{
 	13: "update_max_issuance",
 	14: "check",
 	15: "close",
+	16: "update_end_time",
 }
 
 var signerRuleActionRevMap = map[string]int32{
@@ -37280,6 +37305,7 @@ var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionUpdateMaxIssuance": 13,
 	"SignerRuleActionCheck":             14,
 	"SignerRuleActionClose":             15,
+	"SignerRuleActionUpdateEndTime":     16,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -44171,4 +44197,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "8e34047141bd8de3510e312ac74fe9f8eccaccb5"
+var Revision = "4791728601df87aea5ac51f30ef128f9cc5f60e2"
