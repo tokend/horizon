@@ -11,6 +11,4 @@ import (
 type UpdatePollEndTimeOp struct {
 	// new end time of the poll
 	NewEndTime time.Time `json:"new_end_time"`
-	// id of the poll to update end time
-	PollId int64 `json:"poll_id"`
 }

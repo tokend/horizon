@@ -94,12 +94,12 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[constraint]]
+[[override]]
   name = "gitlab.com/tokend/go"
-  version = "3"
+  branch = "feature/poll_update_cancel"
 
-[[constraint]]
-  version = "4"
+[[override]]
+  branch = "feature/poll_update_cancel"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

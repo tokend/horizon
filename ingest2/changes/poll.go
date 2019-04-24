@@ -58,8 +58,11 @@ func (c *pollHandler) Removed(lc ledgerChange) error {
 
 	pollID := uint64(lc.LedgerChange.MustRemoved().MustPoll().Id)
 	managePollOp := lc.Operation.Body.MustManagePollOp()
-	state := c.getPollState(managePollOp)
-	err := c.storage.SetState(pollID, state)
+	state, err := c.getPollState(managePollOp)
+	if err != nil {
+		return errors.Wrap(err, "failed to get poll state")
+	}
+	err = c.storage.SetState(pollID, state)
 	if err != nil {
 		return errors.Wrap(err, "failed to set poll state")
 	}
@@ -86,11 +89,13 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 	}
 	return nil
 }
-func (c *pollHandler) getPollState(op xdr.ManagePollOp) regources.PollState {
+func (c *pollHandler) getPollState(op xdr.ManagePollOp) (regources.PollState, error) {
 	var state regources.PollState
 	switch op.Data.Action {
 	case xdr.ManagePollActionCancel:
 		state = regources.PollStateCancelled
+	case xdr.ManagePollActionUpdateEndTime:
+		state = regources.PollStateOpen
 	case xdr.ManagePollActionClose:
 		switch op.Data.MustClosePollData().Result {
 		case xdr.PollResultFailed:
@@ -98,12 +103,16 @@ func (c *pollHandler) getPollState(op xdr.ManagePollOp) regources.PollState {
 		case xdr.PollResultPassed:
 			state = regources.PollStatePassed
 		default:
-			panic("Unexpected poll result")
+			return state, errors.From(errors.New("Unexpected poll result"), logan.F{
+				"poll_result": op.Data.MustClosePollData().Result,
+			})
 		}
 	default:
-		panic("Unexpected manage poll action")
+		return state, errors.From(errors.New("Unexpected manage poll action"), logan.F{
+			"action": op.Data.Action,
+		})
 	}
-	return state
+	return state, nil
 }
 
 func (c *pollHandler) convertPoll(raw xdr.PollEntry) (*history.Poll, error) {

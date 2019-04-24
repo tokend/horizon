@@ -68,13 +68,8 @@ ClosePollOp:
 
 UpdatePollEndTimeOp:
   type: object
-  required: [poll_id, new_end_time]
+  required: [new_end_time]
   properties:
-    poll_id:
-      type: integer
-      format: int64
-      description: "id of the poll to update end time"
-      example: 1
     new_end_time:
       type: string
       description: "new end time of the poll"

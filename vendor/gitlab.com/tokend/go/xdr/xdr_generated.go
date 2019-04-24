@@ -1,4 +1,4 @@
-// revision: 4791728601df87aea5ac51f30ef128f9cc5f60e2
+// revision: 7eca922cd6edc4e7936d1c8a6da146333454df38
 // branch:   feature/poll_update_cancel
 // Package xdr is generated from:
 //
@@ -26757,22 +26757,19 @@ type ManagePollOp struct {
 //        NOT_AUTHORIZED_TO_CLOSE_POLL = -3,
 //        //: End time is in the past
 //        INVALID_END_TIME = -4,
-//        //:Only poll owner and admin can cancel poll
-//        NOT_AUTHORIZED_TO_CANCEL_POLL = -5,
-//        //:Only poll owner can update end time
-//        NOT_AUTHORIZED_TO_UPDATE_POLL_END_TIME = -6
+//        //: Only poll owner and admin are allowed to cancel poll and update end time
+//        NOT_AUTHORIZED = -5
 //    };
 //
 type ManagePollResultCode int32
 
 const (
-	ManagePollResultCodeSuccess                          ManagePollResultCode = 0
-	ManagePollResultCodeNotFound                         ManagePollResultCode = -1
-	ManagePollResultCodePollNotReady                     ManagePollResultCode = -2
-	ManagePollResultCodeNotAuthorizedToClosePoll         ManagePollResultCode = -3
-	ManagePollResultCodeInvalidEndTime                   ManagePollResultCode = -4
-	ManagePollResultCodeNotAuthorizedToCancelPoll        ManagePollResultCode = -5
-	ManagePollResultCodeNotAuthorizedToUpdatePollEndTime ManagePollResultCode = -6
+	ManagePollResultCodeSuccess                  ManagePollResultCode = 0
+	ManagePollResultCodeNotFound                 ManagePollResultCode = -1
+	ManagePollResultCodePollNotReady             ManagePollResultCode = -2
+	ManagePollResultCodeNotAuthorizedToClosePoll ManagePollResultCode = -3
+	ManagePollResultCodeInvalidEndTime           ManagePollResultCode = -4
+	ManagePollResultCodeNotAuthorized            ManagePollResultCode = -5
 )
 
 var ManagePollResultCodeAll = []ManagePollResultCode{
@@ -26781,8 +26778,7 @@ var ManagePollResultCodeAll = []ManagePollResultCode{
 	ManagePollResultCodePollNotReady,
 	ManagePollResultCodeNotAuthorizedToClosePoll,
 	ManagePollResultCodeInvalidEndTime,
-	ManagePollResultCodeNotAuthorizedToCancelPoll,
-	ManagePollResultCodeNotAuthorizedToUpdatePollEndTime,
+	ManagePollResultCodeNotAuthorized,
 }
 
 var managePollResultCodeMap = map[int32]string{
@@ -26791,8 +26787,7 @@ var managePollResultCodeMap = map[int32]string{
 	-2: "ManagePollResultCodePollNotReady",
 	-3: "ManagePollResultCodeNotAuthorizedToClosePoll",
 	-4: "ManagePollResultCodeInvalidEndTime",
-	-5: "ManagePollResultCodeNotAuthorizedToCancelPoll",
-	-6: "ManagePollResultCodeNotAuthorizedToUpdatePollEndTime",
+	-5: "ManagePollResultCodeNotAuthorized",
 }
 
 var managePollResultCodeShortMap = map[int32]string{
@@ -26801,18 +26796,16 @@ var managePollResultCodeShortMap = map[int32]string{
 	-2: "poll_not_ready",
 	-3: "not_authorized_to_close_poll",
 	-4: "invalid_end_time",
-	-5: "not_authorized_to_cancel_poll",
-	-6: "not_authorized_to_update_poll_end_time",
+	-5: "not_authorized",
 }
 
 var managePollResultCodeRevMap = map[string]int32{
-	"ManagePollResultCodeSuccess":                          0,
-	"ManagePollResultCodeNotFound":                         -1,
-	"ManagePollResultCodePollNotReady":                     -2,
-	"ManagePollResultCodeNotAuthorizedToClosePoll":         -3,
-	"ManagePollResultCodeInvalidEndTime":                   -4,
-	"ManagePollResultCodeNotAuthorizedToCancelPoll":        -5,
-	"ManagePollResultCodeNotAuthorizedToUpdatePollEndTime": -6,
+	"ManagePollResultCodeSuccess":                  0,
+	"ManagePollResultCodeNotFound":                 -1,
+	"ManagePollResultCodePollNotReady":             -2,
+	"ManagePollResultCodeNotAuthorizedToClosePoll": -3,
+	"ManagePollResultCodeInvalidEndTime":           -4,
+	"ManagePollResultCodeNotAuthorized":            -5,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -44197,4 +44190,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "4791728601df87aea5ac51f30ef128f9cc5f60e2"
+var Revision = "7eca922cd6edc4e7936d1c8a6da146333454df38"
