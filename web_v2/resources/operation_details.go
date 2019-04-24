@@ -176,7 +176,6 @@ func newManagePollOp(id int64, details history2.ManagePollDetails) *regources.Ma
 	case xdr.ManagePollActionUpdateEndTime:
 		managePollOp.Attributes.UpdateEndTime = &regources.UpdatePollEndTimeOp{
 			NewEndTime: details.UpdatePollEndTime.EndTime,
-			PollId:     details.PollID,
 		}
 	case xdr.ManagePollActionCancel:
 	default:
