@@ -107,7 +107,7 @@ var messages = map[string]string{
 	"op_insufficient_max_issuance":                      "Max number of tokens can be issued is not sufficient to fulfill soft cap",
 	"op_invalid_asset_pair":                             "One of the assets (base or quote) has invalid code or they are equal",
 	"op_request_or_sale_already_exists":                 "IO creation request or IO already exists for specified token",
-	"op_not_authorized":                                 "Account not authorized to perform issuance of the asset",
+	"op_not_authorized":                                 "Account not authorized to perform operation",
 	"op_exceeds_max_issuance_amount":                    "Maximal issuance amount will be exceeded after issuance",
 	"op_receiver_full_line":                             "Total funds of receiver will exceed UINT64_MAX after issuance",
 	"op_fee_exceeds_amount":                             "Fee is more than amount to issue",
