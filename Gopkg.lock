@@ -495,8 +495,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/poll_update_cancel"
-  digest = "1:b62eb623fea99843086b0c8fdaffa0e73f568b1e2fd3c50c327bc781839c4241"
+  digest = "1:fcc88392992f583deee415ff6f13c32a7903d99461162bd45c5522ab39819fea"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -514,7 +513,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "f1cfa0e93781012d5895aade6706257afd1c8428"
+  revision = "0e0a9e57a4a271207eb39aa52e946658d48ff261"
+  version = "v3.3.1"
 
 [[projects]]
   branch = "master"
@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/poll_update_cancel"
-  digest = "1:c7c70d3e8c42e19aed158feda6f39c320f7acd9ece465702fef57f6dd59ac61d"
+  digest = "1:9857e9b9d7ea6fce19d69329ae17ed1723382baab120d602faddc09b28dbf277"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "efd9ba15d4d0709a2f0cba0376e73efc5c83c873"
+  revision = "ebcf3409be3cd8c98a30e7ec14a6e002a3607672"
+  version = "v4.1.0"
 
 [[projects]]
   branch = "master"
