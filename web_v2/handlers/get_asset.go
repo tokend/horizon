@@ -31,9 +31,7 @@ func GetAsset(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.GetAsset(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get asset", logan.F{
-			"request": request,
-		})
+		ctx.Log(r).WithError(err).WithField("request", request).Error("failed to get asset")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

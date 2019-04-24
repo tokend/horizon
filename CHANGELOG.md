@@ -9,6 +9,8 @@
 
 ## Fixed
 * `/v3/account` to include all limits imposed for account
+* Issue with `/v3/assets` for assets with max_uint64 fields
+* Issues with balances and limits having fields types for amount int64 instead of uint64. 
 
 ## 3.2.0-x.9
 
