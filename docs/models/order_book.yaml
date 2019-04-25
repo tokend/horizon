@@ -1,4 +1,4 @@
-OrderBookEntryKey:
+OrderBookKey:
   type: object
   required:
     - id
@@ -6,62 +6,46 @@ OrderBookEntryKey:
   properties:
     id:
       type: string
-      example: "BASE84651:QUOTE899:0:f:66110000"
+      example: "BTC:ETH:0"
     type:
       type: string
       enum:
-        - "order-book-entries"
+        - "order-books"
 
-OrderBookEntry:
+OrderBook:
   allOf:
-  - $ref: '#/components/schemas/OrderBookEntryKey'
+  - $ref: '#/components/schemas/OrderBookKey'
   - type: object
+    required: [relationships]
     properties:
-      attributes:
-        type: object
-        required:
-          - is_buy
-          - price
-          - base_amount
-          - quote_amount
-          - created_at
-        properties:
-          is_buy:
-            type: bool
-            description: "defines whether an offer is on buying or selling the base_asset" # FIXME ?
-            example: false
-          price:
-            type: string
-            format: float
-            description: "defines the price of an offer"
-            example: "33.050000"
-          base_amount:
-            type: string
-            format: float
-            description: "defines the base amount of an offer"
-            example: "33.050000"
-          quote_amount:
-            type: string
-            format: float
-            description: "defines the quote amount of an offer"
-            example: "1092.302500"
-          created_at:
-            type: string
-            description: "defines the time when the offer was created"
-            format: "date-time"
-            example: "2012-11-01T22:08:41+00:00"
       relationships:
         type: object
         properties:
           base_asset:
             type: object
-            description: "defines the base asset of an offer"
+            description: "defines base asset of order book"
             properties:
               data:
-                $ref: '#/components/schemas/Asset'
+                $ref: '#/components/schemas/AssetKey'
           quote_asset:
             type: object
-            description: "defines the quote asset of an offer"
+            description: "defines quote asset of order book"
             properties:
               data:
-                $ref: '#/components/schemas/Asset'
+                $ref: '#/components/schemas/AssetKey'
+          buy_entries:
+            type: object
+            description: "buy entries of the order book entry"
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderBookEntryKey'
+          sell_entries:
+            type: object
+            description: "sell entries of the order book entry"
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderBookEntryKey'

@@ -109,7 +109,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/CreateAtomicSwapDetails'
+                      - $ref: '#/components/schemas/CreateAtomicSwapRequest'
                       - $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter

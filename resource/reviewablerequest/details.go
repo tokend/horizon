@@ -56,6 +56,8 @@ func PopulateDetails(request *history.ReviewableRequest, requestType xdr.Reviewa
 	case xdr.ReviewableRequestTypeCreateAtomicSwap:
 		d.AtomicSwap, err = PopulateASwapRequest(*h.AtomicSwap)
 		return
+	case xdr.ReviewableRequestTypeCreatePoll:
+		return
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),

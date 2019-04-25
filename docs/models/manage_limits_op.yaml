@@ -13,22 +13,33 @@ ManageLimitsOp:
   allOf:
   - $ref: '#/components/schemas/ManageLimitsOpKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object
+        required: [action]
         properties:
+          action:
+            type: integer
+            format: xdr.ManageLimitsAction
+            description: |
+              * 0: "create",
+              * 1: "remove"
+            allOf:
+              - $ref: '#/components/schemas/Enum'
           create:
             nullable: true
-            $ref: '#components/schemas/ManageLimitsCreationOp'
+            $ref: '#/components/schemas/ManageLimitsCreationOp'
           remove:
             nullable: true
-            $ref: '#components/schemas/ManageLimitsRemovalOp'
+            $ref: '#/components/schemas/ManageLimitsRemovalOp'
 
 ManageLimitsCreationOp:
   type: object
   required:
     - stats_op_type
     - asset_code
+    - account_address
     - is_convert_needed
     - daily_out
     - weekly_out
@@ -38,10 +49,13 @@ ManageLimitsCreationOp:
     account_role:
       nullable: true
       type: integer
+      format: xdr.Uint64
       example: 2
     account_address:
       type: string
     stats_op_type:
+      type: integer
+      format: xdr.StatsOpType
       description: |
         * 1: "payment_out"
         * 2: "withdraw"
@@ -76,5 +90,6 @@ ManageLimitsRemovalOp:
   properties:
     limits_id:
       type: integer
+      format: int64
       example: 12
       description: "ID of limits entry to remove"

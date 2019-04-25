@@ -49,7 +49,7 @@ func (q ReviewableRequestsQ) FilterByRequestorAddress(address string) Reviewable
 
 // FilterByReviewerAddress - returns q with filter by reviewer
 func (q ReviewableRequestsQ) FilterByReviewerAddress(address string) ReviewableRequestsQ {
-	q.selector = q.selector.Where("reviewable_requests.reviewer", address)
+	q.selector = q.selector.Where(sq.Eq{"reviewable_requests.reviewer": address})
 	return q
 }
 
@@ -103,6 +103,11 @@ func (q ReviewableRequestsQ) FilterByCreateIssuanceAsset(asset string) Reviewabl
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterByCreateIssuanceReceiver(receiver string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_issuance,receiver}' = ?", receiver)
+	return q
+}
+
 func (q ReviewableRequestsQ) FilterByWithdrawBalance(balance string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_withdraw,balance_id}' = ?", balance)
 	return q
@@ -140,6 +145,21 @@ func (q ReviewableRequestsQ) FilterBySaleBaseAsset(asset string) ReviewableReque
 
 func (q ReviewableRequestsQ) FilterBySaleQuoteAsset(asset string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{sale,quote_asset}' = ?", asset)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreatePollPermissionType(permissionType uint32) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_poll,permission_type}' = ?", permissionType)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreatePollVoteConfirmationRequired(voteConfirmationRequired bool) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_poll,vote_confirmation_required}' = ?", voteConfirmationRequired)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreatePollResultProvider(resultProviderID string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_poll,result_provider_id}' = ?", resultProviderID)
 	return q
 }
 

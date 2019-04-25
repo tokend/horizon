@@ -26,6 +26,12 @@ func NewSignerQ(repo *db2.Repo) SignerQ {
 	}
 }
 
+//FilterByPublicKey - return new instance of SignerQ with filter by public key
+func (q SignerQ) FilterByPublicKey(publicKey string) SignerQ {
+	q.selector = q.selector.Where("signers.public_key = ?", publicKey)
+	return q
+}
+
 //FilterByAccountAddress - return new instance of SignerQ with filter by account address
 func (q SignerQ) FilterByAccountAddress(address string) SignerQ {
 	q.selector = q.selector.Where("signers.account_id = ?", address)

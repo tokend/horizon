@@ -2,5 +2,3 @@
 /_vendor-*
 /bin/*
 config.*.yaml
-
-cmd/horizon/horizon

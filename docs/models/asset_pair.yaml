@@ -17,12 +17,10 @@ AssetPair:
   allOf:
   - $ref: '#/components/schemas/AssetPairKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
-        required:
-          - base_asset
-          - quote_asset
         properties:
           base_asset:
             type: object
@@ -48,6 +46,7 @@ AssetPair:
             format: Amount
             description: "defines an asset pair price as quote asset divided by base asset (i.e., amount of quote asset per 1 base asset)"
           policies:
-            type: object
-            decription: "Defines asset pair properties "
-            $ref: '#/components/schemas/AssetPairPolicyMask'
+            format: xdr.AssetPairPolicy
+            decription: "Bit mask whose bits defines asset pair properties "
+            allOf:
+            - $ref: '#/components/schemas/Mask'

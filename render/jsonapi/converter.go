@@ -1,8 +1,9 @@
 package jsonapi
 
 import (
-	"gitlab.com/tokend/horizon/render/problem"
 	"strconv"
+
+	"gitlab.com/tokend/horizon/render/problem"
 )
 
 func FromProblem(p problem.P) *ErrorObject {

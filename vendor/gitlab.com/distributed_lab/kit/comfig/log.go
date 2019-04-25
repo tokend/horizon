@@ -19,15 +19,21 @@ type Logger interface {
 }
 
 type logger struct {
-	getter kv.Getter
-	once   sync.Once
-	value  *logan.Entry
-	err    error
+	getter  kv.Getter
+	once    sync.Once
+	value   *logan.Entry
+	options LoggerOpts
+	err     error
 }
 
-func NewLogger(getter kv.Getter) Logger {
+type LoggerOpts struct {
+	Release string
+}
+
+func NewLogger(getter kv.Getter, options LoggerOpts) Logger {
 	return &logger{
-		getter: getter,
+		getter:  getter,
+		options: options,
 	}
 }
 
@@ -52,7 +58,7 @@ func (l *logger) Log() *logan.Entry {
 		entry := logan.New().Level(config.Level)
 
 		if !config.DisableSentry {
-			sentry := NewSentrier(l.getter).Sentry()
+			sentry := NewSentrier(l.getter, SentryOpts{Release: l.options.Release}).Sentry()
 
 			// TODO set sentry level?
 			levels := []logrus.Level{

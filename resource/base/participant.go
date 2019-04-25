@@ -1,7 +1,8 @@
 package base
 
 import (
-	"github.com/go-errors/errors"
+	"fmt"
+
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history"
 )
@@ -53,7 +54,7 @@ func (f *Participant) PopulateEffects(p *history.Participant, opType xdr.Operati
 		f.Effects = MatchEffects{}
 		err = p.UnmarshalEffects(&f.Effects)
 	default:
-		err = errors.New("Unexpected effects type")
+		err = fmt.Errorf("unexpected effects type for op %d: %v", p.OperationID, opType)
 	}
 
 	return err

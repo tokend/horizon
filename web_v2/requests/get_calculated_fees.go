@@ -4,10 +4,9 @@ import (
 	"net/http"
 
 	amount2 "gitlab.com/tokend/go/amount"
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-
-	"gitlab.com/tokend/regources/v2"
 )
 
 //GetCalculatedFees - represents params to be specified for Get Fees handler

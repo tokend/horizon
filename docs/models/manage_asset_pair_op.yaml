@@ -13,6 +13,7 @@ ManageAssetPairOp:
   allOf:
   - $ref: '#/components/schemas/ManageAssetPairOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
@@ -24,6 +25,7 @@ ManageAssetPairOp:
       attributes:
         type: object
         required:
+          - policies
           - physical_price
           - physical_price_correction
           - max_price_step
@@ -42,6 +44,7 @@ ManageAssetPairOp:
             example: "1.1"
           policies:
             type: integer
+            format: xdr.AssetPairPolicy
             nullable: true
             description: |
               Bit mask.

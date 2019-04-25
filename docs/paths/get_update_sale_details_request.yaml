@@ -100,8 +100,8 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/UpdateSaleDetailsDetails'
-                      - $ref: '#/components/schemas/SaleRequest'
+                      - $ref: '#/components/schemas/UpdateSaleDetailsRequest'
+                      - $ref: '#/components/schemas/Sale'
       400:
         description: bad input parameter
         content:

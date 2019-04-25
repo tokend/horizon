@@ -13,6 +13,7 @@ CreatePreIssuanceRequestOp:
   allOf:
   - $ref: '#/components/schemas/CreatePreIssuanceRequestOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
@@ -30,5 +31,7 @@ CreatePreIssuanceRequestOp:
             type: string
             format: Amount
             example: "123.123456"
+          creator_details:
+            $ref: '#/components/schemas/Details'
 
 

@@ -1,15 +1,45 @@
-CreateAswapBidRequestOpKey:
+CreateAtomicSwapBidRequestOpKey:
   type: object
   properties:
     id:
+      deprecated: true
       type: string
       example: "123"
     type:
+      deprecated: true
       type: string
       enum:
         - "operations-create-aswap-bid-request"
 
 
-CreateAswapBidRequestOp:
-  $ref: '#/components/schemas/CreateAswapBidRequestOpKey'
+CreateAtomicSwapBidRequestOp:
+  allOf:
+  - $ref: '#/components/schemas/CreateAtomicSwapBidRequestOpKey'
+  - type: object
+    required: [relationships, attributes]
+    properties:
+      relationships:
+        type: object
+        properties:
+          request:
+            type: object
+            $ref: '#/components/schemas/Int64Key'
+          base_balance:
+            type: object
+            $ref: '#/components/schemas/BalanceKey'
+          quote_assets:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssetKey'
+      attributes:
+        type: object
+        properties:
+          amount:
+            type: int64
+          details:
+            type: object
+            $ref: '#/components/schemas/OperationDetailsKey'
 

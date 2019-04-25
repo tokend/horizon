@@ -145,6 +145,15 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeStamp: &stampOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
+			xdr.OperationTypeManageCreatePollRequest: &manageCreatePollRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeManagePoll: &managePollOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeManageVote: &manageVoteOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 		},
 	}
 }
