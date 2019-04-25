@@ -220,6 +220,14 @@ func (action *Action) Prepare(c web.C, w http.ResponseWriter, r *http.Request) {
 	base.Prepare(c, w, r)
 	action.App = action.GojiCtx.Env["app"].(*App)
 
+	if action.App == nil {
+		action.Err = errors.New("failed to get App from context")
+	}
+
+	if action.App.CoreInfo == nil {
+		action.Err = errors.New("failed to get core info on action preparing")
+	}
+
 	base.SkipCheck = action.App.config.SkipCheck //pass config variable to base (since base can't read one)
 
 	base.Signer, _ = signcontrol.CheckSignature(r)

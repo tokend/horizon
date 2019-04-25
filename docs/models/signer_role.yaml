@@ -15,10 +15,10 @@ SignerRole:
   allOf:
   - $ref: '#/components/schemas/SignerRoleKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
-        required: [rules, owner]
         properties:
           rules:
             description: "Rules applied to the role"
@@ -40,6 +40,5 @@ SignerRole:
         required: [details]
         properties:
           details:
-            allOf:
-            - $ref: '#/components/schemas/Details'
-            - description: "free-form object to attach details to the role"
+            $ref: '#/components/schemas/Details'
+            description: "free-form object to attach details to the role"

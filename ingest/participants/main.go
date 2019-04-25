@@ -172,6 +172,10 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeLicense:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeManagePoll:
+	case xdr.OperationTypeManageCreatePollRequest:
+	case xdr.OperationTypeManageVote:
+		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateAswapRequest:
 		// FIXME !!!!!
 		//tx.SourceAccount
@@ -191,7 +195,6 @@ func ForOperation(
 			result = append(result, Participant{
 				AccountID: updateKYCRequestData.DestinationAccount,
 				BalanceID: nil,
-				Details:   updateKYCRequestData.CreatorDetails,
 			})
 		}
 	default:

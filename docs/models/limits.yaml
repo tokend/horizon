@@ -1,4 +1,4 @@
-LimitKey:
+LimitsKey:
   type: object
   required:
     - id
@@ -11,15 +11,14 @@ LimitKey:
       type: string
       enum:
         - "limits"
-Limit:
+Limits:
   allOf:
-  - $ref: '#/components/schemas/LimitKey'
+  - $ref: '#/components/schemas/LimitsKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
-        required:
-          - asset
         properties:
           account:
             type: object
@@ -35,6 +34,12 @@ Limit:
             properties:
               data:
                 $ref: '#/components/schemas/AssetKey'
+          account_role:
+            type: object
+            description: "role of the related account"
+            properties:
+              data:
+                $ref: '#/components/schemas/AccountKey'
       attributes:
         type: object
         required:
@@ -51,7 +56,7 @@ Limit:
             description: "defines the type of operation for which a limit is applied. TODO: provide a list of such operations"
             example: 1
           is_convert_needed:
-            type: bool
+            type: boolean
             description: "if `true`, this limit is applied to operations in other assets except for those specified in `asset` relationships"
             example: true
           daily_out:

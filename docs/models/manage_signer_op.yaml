@@ -32,8 +32,12 @@ ManageSignerOp:
           - identity
           - weight
         properties:
+          identity:
+            type: integer
+            format: uint32
           weight:
             type: integer
+            format: uint32
             example: 12
             minimum: 1
             maximum: 255

@@ -1,10 +1,11 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/regources/v2"
 	"net/http"
 	"time"
+
+	"gitlab.com/tokend/horizon/db2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 const (
@@ -66,18 +67,18 @@ var filterTypeSaleListAll = map[string]struct{}{
 type GetSaleList struct {
 	*base
 	Filters struct {
-		Owner         string           `json:"owner"`
-		BaseAsset     string           `json:"base_asset"`
-		MaxEndTime    *time.Time       `json:"max_end_time"`
-		MaxStartTime  *time.Time       `json:"max_start_time"`
-		MinStartTime  *time.Time       `json:"min_start_time"`
-		MinEndTime    *time.Time       `json:"min_end_time"`
-		State         uint64           `json:"state"`
-		SaleType      uint64           `json:"sale_type"`
-		MinHardCap    regources.Amount `json:"min_hard_cap"`
-		MinSoftCap    regources.Amount `json:"min_soft_cap"`
-		MaxHardCap    regources.Amount `json:"max_hard_cap"`
-		MaxSoftCap    regources.Amount `json:"max_soft_cap"`
+		Owner        string           `json:"owner"`
+		BaseAsset    string           `json:"base_asset"`
+		MaxEndTime   *time.Time       `json:"max_end_time"`
+		MaxStartTime *time.Time       `json:"max_start_time"`
+		MinStartTime *time.Time       `json:"min_start_time"`
+		MinEndTime   *time.Time       `json:"min_end_time"`
+		State        uint64           `json:"state"`
+		SaleType     uint64           `json:"sale_type"`
+		MinHardCap   regources.Amount `json:"min_hard_cap"`
+		MinSoftCap   regources.Amount `json:"min_soft_cap"`
+		MaxHardCap   regources.Amount `json:"max_hard_cap"`
+		MaxSoftCap   regources.Amount `json:"max_soft_cap"`
 	}
 	PageParams *db2.OffsetPageParams
 }

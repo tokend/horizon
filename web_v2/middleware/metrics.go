@@ -1,9 +1,10 @@
 package middleware
 
 import (
-	"github.com/go-chi/chi/middleware"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/middleware"
 )
 
 type webV2MetricsUpdater interface {

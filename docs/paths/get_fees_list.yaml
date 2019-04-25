@@ -37,7 +37,13 @@
       - name: filter[account]
         in: query
         description: |
-          Filters fees by account address.
+          Filters fees by account address. Returns only fees which explicitly contains this account in relationships.
+          This means that if the fee was applied *exactly* for this account - it would be returned in the response.
+          Global fees, fees for account roles and other system-wide fees would be omitted.\n
+          For example if someone's, say Bob, account has a several fees applied to itself:
+          * first fee applied globally for all accounts for payments from 0 to 100 `BTC` and is 1% from the payment
+          * second fee applied exactly to Bob's account and is 2% of the payment for amounts from 100 to 200 `BTC`\n
+          then we will receive only the second fee in response only it is applied to Bob's account
         required: false
         style: form
         explode: false
@@ -99,7 +105,7 @@
                   type: array
                   items:
                     type: object
-                    $ref: '#/components/schemas/Fee'
+                    $ref: '#/components/schemas/FeeRecord'
                 included:
                   type: array
                   items:

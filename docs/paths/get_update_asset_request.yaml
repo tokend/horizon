@@ -109,7 +109,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/UpdateAssetDetails'
+                      - $ref: '#/components/schemas/UpdateAssetRequest'
                       - $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter

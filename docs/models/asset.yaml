@@ -15,10 +15,10 @@ Asset:
   allOf:
   - $ref: '#/components/schemas/AssetKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
-        required: [owner]
         properties:
           owner:
             type: object
@@ -65,12 +65,13 @@ Asset:
             example: "123.000123"
             format: Amount
           policies:
-            type: object
-            decription: "Defines properties of an asset"
-            $ref: '#/components/schemas/AssetPolicyMask'
+            format: xdr.AssetPolicy
+            decription: "Bit mask whose bits defines asset properties "
+            allOf:
+            - $ref: '#/components/schemas/Mask'
           trailing_digits:
             type: integer
-            format: int32
+            format: uint32
             description: "Number of significant digits after the point"
             maximum: 6
             minimum: 0
@@ -81,6 +82,49 @@ Asset:
             description: "Numeric type of asset"
             example: 2
           details:
-            allOf:
-            - $ref: '#/components/schemas/Details'
-            - description: "free-form object to attach asset details such as a link to icon, short description, etc."
+            $ref: '#/components/schemas/Details'
+            description: "free-form object to attach asset details such as a link to icon, short description, etc."
+
+QuoteAssetKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "quote-assets"
+
+QuoteAsset:
+  allOf:
+    - $ref: '#/components/schemas/QuoteAssetKey'
+    - type: object
+      required: [attributes]
+      properties:
+        attributes:
+          type: object
+          required:
+            - price
+            - current_cap
+            - total_current_cap
+            - hard_cap
+          properties:
+            price:
+              type: string
+              format: Amount
+            current_cap:
+              type: string
+              format: Amount
+            total_current_cap:
+              type: string
+              format: Amount
+            hard_cap:
+              type: string
+              format: Amount
+            soft_cap:
+              type: string
+              format: Amount

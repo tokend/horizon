@@ -3,9 +3,9 @@ package doorman
 import (
 	"net/http"
 
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/doorman/data"
 	"gitlab.com/tokend/go/resources"
-	"gitlab.com/tokend/go/signcontrol"
 )
 
 // Doorman interface only purpose is to simplify tests
@@ -15,8 +15,8 @@ type Doorman interface {
 }
 
 type doorman struct {
-	// PassAllChecks disable constraints validation completely, any request will succeed
-	PassAllChecks bool
+	// SkipChecker check if it's needed to disable constraints validation completely, any request will succeed
+	SkipChecker data.SkipChecker
 	// AccountQ used to get account details during constraint checks
 	AccountQ data.AccountQ
 }
@@ -26,8 +26,14 @@ func (d *doorman) AccountSigners(address string) ([]resources.Signer, error) {
 }
 
 // Check ensures request passes at least one constraint
+// return non-doorman error if checker failed to get skip_check value
 func (d *doorman) Check(r *http.Request, constraints ...SignerConstraint) error {
-	if d.PassAllChecks {
+	passAllChecks, err := d.SkipChecker.GetSkipCheck(r.Context())
+	if err != nil {
+		return errors.Wrap(err, "failed to get skip_check value")
+	}
+
+	if passAllChecks {
 		return nil
 	}
 
@@ -36,7 +42,7 @@ func (d *doorman) Check(r *http.Request, constraints ...SignerConstraint) error 
 		case nil:
 			// request passed constraint check
 			return nil
-		case signcontrol.ErrNotAllowed:
+		case ErrNotAllowed:
 			// check failed, let's try next one
 			continue
 		default:
@@ -46,5 +52,5 @@ func (d *doorman) Check(r *http.Request, constraints ...SignerConstraint) error 
 	}
 
 	// request failed all checks
-	return signcontrol.ErrNotAllowed
+	return ErrNotAllowed
 }

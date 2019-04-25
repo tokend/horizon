@@ -15,6 +15,7 @@ BalanceState:
   allOf:
   - $ref: '#/components/schemas/BalanceStateKey'
   - type: object
+    required: [relationships]
     properties:
       attributes:
         type: object
@@ -52,9 +53,6 @@ Balance:
     properties:
       relationships:
         type: object
-        required:
-          - asset
-          - state
         properties:
           asset:
             type: object
@@ -68,3 +66,9 @@ Balance:
             properties:
               data:
                 $ref: '#/components/schemas/BalanceStateKey'
+          owner:
+            type: object
+            description: "owner of the balance"
+            properties:
+              data:
+                $ref: '#/components/schemas/AccountKey'

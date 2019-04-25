@@ -5,7 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -13,8 +13,8 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	switch op.Type {
 	case xdr.OperationTypeCreateAccount:
 		return &regources.CreateAccountOp{
-			Key: regources.NewKeyInt64(op.ID, regources.TypeCreateAccount),
-			Relationships: regources.CreateAccountOpRelation{
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ACCOUNT),
+			Relationships: regources.CreateAccountOpRelationships{
 				Account: NewAccountKey(op.Details.CreateAccount.AccountAddress).AsRelation(),
 				Role:    NewAccountRoleKey(op.Details.CreateAccount.AccountRole).AsRelation(),
 			},
@@ -23,8 +23,8 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newCreateIssuanceOpDetails(op.ID, *op.Details.CreateIssuanceRequest)
 	case xdr.OperationTypeSetFees:
 		return &regources.SetFeeOp{
-			Key:        regources.NewKeyInt64(op.ID, regources.TypeSetFees),
-			Attributes: regources.SetFeeOpAttrs(*op.Details.SetFee),
+			Key:        regources.NewKeyInt64(op.ID, regources.OPERATIONS_SET_FEES),
+			Attributes: regources.SetFeeOpAttributes(*op.Details.SetFee),
 		}
 	case xdr.OperationTypeCreateWithdrawalRequest:
 		return newCreateWithdrawalRequestOp(op.ID, *op.Details.CreateWithdrawRequest)
@@ -39,7 +39,7 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	case xdr.OperationTypeManageOffer:
 		return newManageOfferOp(op.ID, *op.Details.ManageOffer)
 	case xdr.OperationTypeManageInvoiceRequest:
-		return regources.NewKeyInt64(op.ID, regources.TypeManageInvoiceRequest).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_INVOICE_REQUEST).GetKeyP()
 	case xdr.OperationTypeReviewRequest:
 		return newReviewRequestOp(op.ID, *op.Details.ReviewRequest)
 	case xdr.OperationTypeCreateSaleRequest:
@@ -55,28 +55,28 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	case xdr.OperationTypeManageExternalSystemAccountIdPoolEntry:
 		return newManageExternalSystemPool(op.ID, *op.Details.ManageExternalSystemPool)
 	case xdr.OperationTypeBindExternalSystemAccountId:
-		return &regources.BindExternalSystemAccountOp{
-			Key:        regources.NewKeyInt64(op.ID, regources.TypeBindExternalSystemAccountID),
-			Attributes: regources.BindExternalSystemAccountOpAttrs(*op.Details.BindExternalSystemAccount),
+		return &regources.BindExternalSystemAccountIdOp{
+			Key:        regources.NewKeyInt64(op.ID, regources.OPERATIONS_BIND_EXTERNAL_SYSTEM_ACCOUNT_ID),
+			Attributes: regources.BindExternalSystemAccountIdOpAttributes(*op.Details.BindExternalSystemAccount),
 		}
 	case xdr.OperationTypeManageSale:
 		return &regources.ManageSaleOp{
-			Key:        regources.NewKeyInt64(op.ID, regources.TypeManageSale),
-			Attributes: regources.ManageSaleOpAttrs(*op.Details.ManageSale),
+			Key:        regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_SALE),
+			Attributes: regources.ManageSaleOpAttributes(*op.Details.ManageSale),
 		}
 	case xdr.OperationTypeManageKeyValue:
 		return &regources.ManageKeyValueOp{
-			Key:        regources.NewKeyInt64(op.ID, regources.TypeManageKeyValue),
-			Attributes: regources.ManageKeyValueOpAttrs(*op.Details.ManageKeyValue),
+			Key:        regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_KEY_VALUE),
+			Attributes: regources.ManageKeyValueOpAttributes(*op.Details.ManageKeyValue),
 		}
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		return newCreateManageLimitsRequestOp(op.ID, *op.Details.CreateManageLimitsRequest)
 	case xdr.OperationTypeManageContractRequest:
-		return regources.NewKeyInt64(op.ID, regources.TypeManageContractRequest).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_CONTRACT_REQUEST).GetKeyP()
 	case xdr.OperationTypeManageContract:
-		return regources.NewKeyInt64(op.ID, regources.TypeManageContract).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_CONTRACT).GetKeyP()
 	case xdr.OperationTypeCancelSaleRequest:
-		return regources.NewKeyInt64(op.ID, regources.TypeCancelSaleRequest).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_SALE_REQUEST).GetKeyP()
 	case xdr.OperationTypePayout:
 		return newPayoutOp(op.ID, *op.Details.Payout)
 	case xdr.OperationTypeManageAccountRole:
@@ -84,11 +84,11 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	case xdr.OperationTypeManageAccountRule:
 		return newManageAccountRule(op.ID, *op.Details.ManageAccountRule)
 	case xdr.OperationTypeCreateAswapBidRequest:
-		return regources.NewKeyInt64(op.ID, regources.TypeCreateAswapBidRequest).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ASWAP_BID_REQUEST).GetKeyP()
 	case xdr.OperationTypeCancelAswapBid:
-		return regources.NewKeyInt64(op.ID, regources.TypeCancelAswapBid).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_ASWAP_BID).GetKeyP()
 	case xdr.OperationTypeCreateAswapRequest:
-		return regources.NewKeyInt64(op.ID, regources.TypeCreateAswapRequest).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ASWAP_REQUEST).GetKeyP()
 	case xdr.OperationTypeManageSignerRole:
 		return newManageSignerRole(op.ID, *op.Details.ManageSignerRole)
 	case xdr.OperationTypeManageSignerRule:
@@ -101,6 +101,12 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newStampOp(op.ID, *op.Details.Stamp)
 	case xdr.OperationTypeLicense:
 		return newLicenseOp(op.ID, *op.Details.License)
+	case xdr.OperationTypeManageCreatePollRequest:
+		return newManageCreatePollRequestOp(op.ID, *op.Details.ManageCreatePollRequest)
+	case xdr.OperationTypeManagePoll:
+		return newManagePollOp(op.ID, *op.Details.ManagePoll)
+	case xdr.OperationTypeManageVote:
+		return newManageVoteOp(op.ID, *op.Details.ManageVote)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": op.Type,
@@ -108,10 +114,113 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	}
 }
 
+func newManageCreatePollRequestOp(id int64, details history2.ManageCreatePollRequestDetails) *regources.ManageCreatePollRequestOp {
+	manageCreateRequestPollOp := regources.ManageCreatePollRequestOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_CREATE_POLL_REQUEST),
+		Attributes: &regources.ManageCreatePollRequestOpAttributes{
+			Action: details.Action,
+		},
+	}
+
+	switch details.Action {
+	case xdr.ManageCreatePollRequestActionCreate:
+		manageCreateRequestPollOp.Attributes.Create = &regources.CreatePollRequestOp{
+			AllTasks:        details.CreateDetails.AllTasks,
+			CreatorDetails:  details.CreateDetails.CreatorDetails,
+			EndTime:         details.CreateDetails.EndTime,
+			NumberOfChoices: uint64(details.CreateDetails.NumberOfChoices),
+			PermissionType:  uint64(details.CreateDetails.PermissionType),
+			PollData: regources.PollData{
+				Type: details.CreateDetails.PollData.Type,
+			},
+			ResultProviderId:         details.CreateDetails.ResultProviderID,
+			StartTime:                details.CreateDetails.StartTime,
+			VoteConfirmationRequired: details.CreateDetails.VoteConfirmationRequired,
+		}
+		manageCreateRequestPollOp.Relationships = &regources.ManageCreatePollRequestOpRelationships{
+			Request:        NewRequestKey(details.CreateDetails.RequestDetails.RequestID).AsRelation(),
+			ResultProvider: NewAccountKey(details.CreateDetails.ResultProviderID).AsRelation(),
+		}
+	case xdr.ManageCreatePollRequestActionCancel:
+		manageCreateRequestPollOp.Relationships = &regources.ManageCreatePollRequestOpRelationships{
+			Request: NewRequestKey(details.CancelDetails.RequestID).AsRelation(),
+		}
+	default:
+		panic(errors.From(errors.New("unexpected poll request action"), logan.F{
+			"action": details.Action,
+		}))
+	}
+
+	return &manageCreateRequestPollOp
+}
+
+func newManagePollOp(id int64, details history2.ManagePollDetails) *regources.ManagePollOp {
+	managePollOp := regources.ManagePollOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_POLL),
+		Attributes: regources.ManagePollOpAttributes{
+			Action: details.Action,
+		},
+		Relationships: regources.ManagePollOpRelationships{
+			Poll: NewPollKey(details.PollID).AsRelation(),
+		},
+	}
+
+	switch details.Action {
+	case xdr.ManagePollActionClose:
+		managePollOp.Attributes.Close = &regources.ClosePollOp{
+			Details:    regources.Details(details.ClosePoll.Details),
+			PollId:     details.PollID,
+			PollResult: details.ClosePoll.PollResult,
+		}
+	default:
+		panic(errors.From(errors.New("unexpected manage poll action"), logan.F{
+			"action": details.Action,
+		}))
+	}
+
+	return &managePollOp
+}
+
+func newManageVoteOp(id int64, details history2.ManageVoteDetails) *regources.ManageVoteOp {
+	manageVoteOp := regources.ManageVoteOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_VOTE),
+		Attributes: regources.ManageVoteOpAttributes{
+			Action: details.Action,
+		},
+		Relationships: regources.ManageVoteOpRelationships{
+			Poll: NewPollKey(details.PollID).AsRelation(),
+		},
+	}
+
+	switch details.Action {
+	case xdr.ManageVoteActionCreate:
+		choice := uint64(details.VoteData.Single.Choice)
+		manageVoteOp.Attributes.Create = &regources.CreateVoteOp{
+			PollId: details.PollID,
+		}
+		if details.VoteData != nil {
+			manageVoteOp.Attributes.Create.VoteData = regources.VoteData{
+				PollType:     details.VoteData.PollType,
+				SingleChoice: &choice,
+			}
+		}
+	case xdr.ManageVoteActionRemove:
+		manageVoteOp.Attributes.Remove = &regources.RemoveVoteOp{
+			PollId: details.PollID,
+		}
+	default:
+		panic(errors.From(errors.New("unexpected manage vote action"), logan.F{
+			"action": details.Action,
+		}))
+	}
+
+	return &manageVoteOp
+}
+
 // newManageLimitsOp - creates new instance of ManageLimitsOp
 func newManageLimitsOp(id int64, details history2.ManageLimitsDetails) *regources.ManageLimitsOp {
 	result := regources.ManageLimitsOp{
-		Key: regources.NewKeyInt64(id, regources.TypeManageLimits),
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_LIMITS),
 		Attributes: regources.ManageLimitsOpAttributes{
 			Action: details.Action,
 		},
@@ -122,7 +231,7 @@ func newManageLimitsOp(id int64, details history2.ManageLimitsDetails) *regource
 		result.Attributes.Create = newManageLimitsCreationOp(*details.Creation)
 	case xdr.ManageLimitsActionRemove:
 		result.Attributes.Remove = &regources.ManageLimitsRemovalOp{
-			LimitsID: details.Removal.LimitsID,
+			LimitsId: details.Removal.LimitsID,
 		}
 	default:
 		panic(errors.From(errors.New("unexpected manage limits action"), logan.F{
@@ -151,12 +260,12 @@ func newManageLimitsCreationOp(details history2.ManageLimitsCreationDetails) *re
 // newReviewRequestOp - creates new instance of ReviewRequestOp
 func newReviewRequestOp(id int64, details history2.ReviewRequestDetails) *regources.ReviewRequestOp {
 	return &regources.ReviewRequestOp{
-		Key: regources.NewKeyInt64(id, regources.TypeReviewRequest),
-		Attributes: regources.ReviewRequestOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_REVIEW_REQUEST),
+		Attributes: regources.ReviewRequestOpAttributes{
 			Action:          details.Action,
 			Reason:          details.Reason,
 			RequestHash:     details.RequestHash,
-			RequestID:       details.RequestID,
+			RequestId:       details.RequestID,
 			IsFulfilled:     details.IsFulfilled,
 			AddedTasks:      details.AddedTasks,
 			RemovedTasks:    details.RemovedTasks,
@@ -166,9 +275,9 @@ func newReviewRequestOp(id int64, details history2.ReviewRequestDetails) *regour
 }
 
 // newManageExternalSystemPool - creates new instance of ManageExternalSystemPoolOp
-func newManageExternalSystemPool(id int64, details history2.ManageExternalSystemPoolDetails) *regources.ManageExternalSystemPoolOp {
-	result := &regources.ManageExternalSystemPoolOp{
-		Key: regources.NewKeyInt64(id, regources.TypeManageExternalSystemAccountIDPoolEntry),
+func newManageExternalSystemPool(id int64, details history2.ManageExternalSystemPoolDetails) *regources.ManageExternalSystemAccountIdPoolEntryOp {
+	result := &regources.ManageExternalSystemAccountIdPoolEntryOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_EXTERNAL_SYSTEM_ACCOUNT_ID_POOL_ENTRY),
 	}
 
 	switch details.Action {
@@ -189,14 +298,14 @@ func newManageExternalSystemPool(id int64, details history2.ManageExternalSystem
 
 // newChangeRoleRequest - creates new instance of CreateKYCRequestOp
 func newChangeRoleRequestOp(id int64, details history2.CreateChangeRoleRequestDetails,
-) *regources.CreateChangeRoleRequest {
-	return &regources.CreateChangeRoleRequest{
-		Key: regources.NewKeyInt64(id, regources.TypeCreateChangeRoleRequest),
-		Attributes: regources.CreateChangeRoleRequestAttrs{
+) *regources.CreateChangeRoleRequestOp {
+	return &regources.CreateChangeRoleRequestOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_CHANGE_ROLE_REQUEST),
+		Attributes: regources.CreateChangeRoleRequestOpAttributes{
 			CreatorDetails: details.CreatorDetails,
 			AllTasks:       details.AllTasks,
 		},
-		Relationships: regources.CreateChangeRoleRequestOpRelations{
+		Relationships: regources.CreateChangeRoleRequestOpRelationships{
 			AccountToUpdateRole: NewAccountKey(details.DestinationAccount).AsRelation(),
 			Request:             NewRequestKey(details.RequestDetails.RequestID).AsRelation(),
 			RoleToSet:           NewAccountRoleKey(details.AccountRoleToSet).AsRelation(),
@@ -207,15 +316,15 @@ func newChangeRoleRequestOp(id int64, details history2.CreateChangeRoleRequestDe
 // newCreateIssuanceOpDetails - creates new instance of CreateIssuanceRequestOp
 func newCreateIssuanceOpDetails(id int64, details history2.CreateIssuanceRequestDetails) *regources.CreateIssuanceRequestOp {
 	return &regources.CreateIssuanceRequestOp{
-		Key: regources.NewKeyInt64(id, regources.TypeCreateIssuanceRequest),
-		Attributes: regources.CreateIssuanceRequestOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_ISSUANCE_REQUEST),
+		Attributes: regources.CreateIssuanceRequestOpAttributes{
 			Fee:            details.Fee,
 			Reference:      details.Reference,
 			Amount:         details.Amount,
 			CreatorDetails: details.CreatorDetails,
 			AllTasks:       details.AllTasks,
 		},
-		Relationships: regources.CreateIssuanceRequestOpRelations{
+		Relationships: regources.CreateIssuanceRequestOpRelationships{
 			Asset:           NewAssetKey(details.Asset).AsRelation(),
 			ReceiverAccount: NewAccountKey(details.ReceiverAccountAddress).AsRelation(),
 			ReceiverBalance: NewBalanceKey(details.ReceiverBalanceAddress).AsRelation(),
@@ -228,13 +337,13 @@ func newCreateIssuanceOpDetails(id int64, details history2.CreateIssuanceRequest
 func newCreateWithdrawalRequestOp(id int64,
 	details history2.CreateWithdrawRequestDetails) *regources.CreateWithdrawRequestOp {
 	return &regources.CreateWithdrawRequestOp{
-		Key: regources.NewKeyInt64(id, regources.TypeCreateWithdrawalRequest),
-		Attributes: regources.CreateWithdrawRequestOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_WITHDRAWAL_REQUEST),
+		Attributes: regources.CreateWithdrawRequestOpAttributes{
 			Amount:         details.Amount,
 			Fee:            details.Fee,
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.CreateWithdrawRequestOpRelations{
+		Relationships: regources.CreateWithdrawRequestOpRelationships{
 			Balance: NewBalanceKey(details.BalanceAddress).AsRelation(),
 		},
 	}
@@ -243,12 +352,12 @@ func newCreateWithdrawalRequestOp(id int64,
 // newManageBalanceOp - creates new instance of ManageBalanceOp
 func newManageBalanceOp(id int64, details history2.ManageBalanceDetails) *regources.ManageBalanceOp {
 	return &regources.ManageBalanceOp{
-		Key: regources.NewKeyInt64(id, regources.TypeManageBalance),
-		Attributes: regources.ManageBalanceOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_BALANCE),
+		Attributes: regources.ManageBalanceOpAttributes{
 			Action:         details.Action,
 			BalanceAddress: details.BalanceAddress,
 		},
-		Relationships: regources.ManageBalanceOpRelations{
+		Relationships: regources.ManageBalanceOpRelationships{
 			DestinationAccount: NewAccountKey(details.DestinationAccount).AsRelation(),
 			Asset:              NewAssetKey(details.Asset).AsRelation(),
 		},
@@ -258,16 +367,16 @@ func newManageBalanceOp(id int64, details history2.ManageBalanceDetails) *regour
 // newManageAssetOp - creates new instance of ManageAsset
 func newManageAssetOp(id int64, details history2.ManageAssetDetails) *regources.ManageAssetOp {
 	return &regources.ManageAssetOp{
-		Key: regources.NewKeyInt64(id, regources.TypeManageAsset),
-		Attributes: regources.ManageAssetOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_ASSET),
+		Attributes: regources.ManageAssetOpAttributes{
 			AssetCode:         details.AssetCode,
 			Action:            details.Action,
 			Policies:          details.Policies,
 			CreatorDetails:    details.CreatorDetails,
-			PreissuedSigner:   details.PreissuedSigner,
+			PreIssuanceSigner: details.PreIssuanceSigner,
 			MaxIssuanceAmount: details.MaxIssuanceAmount,
 		},
-		Relationships: regources.ManageAssetOpRelations{
+		Relationships: regources.ManageAssetOpRelationships{
 			Request: NewRequestKey(details.RequestID).AsRelation(),
 		},
 	}
@@ -276,11 +385,11 @@ func newManageAssetOp(id int64, details history2.ManageAssetDetails) *regources.
 // newPreIssuanceRequestOp - creates new instance of CreatePreIssuanceRequestOp
 func newPreIssuanceRequestOp(id int64, details history2.CreatePreIssuanceRequestDetails) *regources.CreatePreIssuanceRequestOp {
 	return &regources.CreatePreIssuanceRequestOp{
-		Key: regources.NewKeyInt64(id, regources.TypeCreatePreissuanceRequest),
-		Attributes: regources.CreatePreIssuanceRequestOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_PREISSUANCE_REQUEST),
+		Attributes: regources.CreatePreIssuanceRequestOpAttributes{
 			Amount: details.Amount,
 		},
-		Relationships: regources.CreatePreIssuanceRequestOpRelations{
+		Relationships: regources.CreatePreIssuanceRequestOpRelationships{
 			Asset:   NewAssetKey(details.AssetCode).AsRelation(),
 			Request: NewRequestKey(details.RequestID).AsRelation(),
 		},
@@ -290,14 +399,14 @@ func newPreIssuanceRequestOp(id int64, details history2.CreatePreIssuanceRequest
 // newManageAssetPairOp - creates new instance of ManageAssetPairOp
 func newManageAssetPairOp(id int64, details history2.ManageAssetPairDetails) *regources.ManageAssetPairOp {
 	return &regources.ManageAssetPairOp{
-		Key: regources.NewKeyInt64(id, regources.TypeManageAssetPair),
-		Attributes: regources.ManageAssetPairOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_ASSET_PAIR),
+		Attributes: regources.ManageAssetPairOpAttributes{
 			PhysicalPrice:           details.PhysicalPrice,
 			PhysicalPriceCorrection: details.PhysicalPriceCorrection,
 			MaxPriceStep:            details.MaxPriceStep,
 			Policies:                details.Policies,
 		},
-		Relationships: regources.ManageAssetPairOpRelations{
+		Relationships: regources.ManageAssetPairOpRelationships{
 			BaseAsset:  NewAssetKey(details.BaseAsset).AsRelation(),
 			QuoteAsset: NewAssetKey(details.QuoteAsset).AsRelation(),
 		},
@@ -307,17 +416,17 @@ func newManageAssetPairOp(id int64, details history2.ManageAssetPairDetails) *re
 // newManageOfferOp - creates new instance of ManageOfferOp
 func newManageOfferOp(id int64, details history2.ManageOfferDetails) *regources.ManageOfferOp {
 	return &regources.ManageOfferOp{
-		Key: regources.NewKeyInt64(id, regources.TypeManageOffer),
-		Attributes: regources.ManageOfferOpAttrs{
-			OfferID:     details.OfferID,
-			OrderBookID: details.OrderBookID,
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_OFFER),
+		Attributes: regources.ManageOfferOpAttributes{
+			OfferId:     details.OfferID,
+			OrderBookId: details.OrderBookID,
 			BaseAmount:  details.Amount,
 			Price:       details.Price,
 			IsBuy:       details.IsBuy,
 			Fee:         details.Fee,
 			IsDeleted:   details.IsDeleted,
 		},
-		Relationships: regources.ManageOfferOpRelations{
+		Relationships: regources.ManageOfferOpRelationships{
 			BaseAsset:  NewAssetKey(details.BaseAsset).AsRelation(),
 			QuoteAsset: NewAssetKey(details.QuoteAsset).AsRelation(),
 		},
@@ -335,15 +444,15 @@ func newCreateSaleRequestOp(id int64, details history2.CreateSaleRequestDetails)
 	}
 
 	return &regources.CreateSaleRequestOp{
-		Key: regources.NewKeyInt64(id, regources.TypeCreateSaleRequest),
-		Attributes: regources.CreateSaleRequestOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_SALE_REQUEST),
+		Attributes: regources.CreateSaleRequestOpAttributes{
 			StartTime:      details.StartTime,
 			EndTime:        details.EndTime,
 			SoftCap:        details.SoftCap,
 			HardCap:        details.HardCap,
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.CreateSaleRequestOpRelations{
+		Relationships: regources.CreateSaleRequestOpRelationships{
 			QuoteAssets:       quoteAssets,
 			Request:           NewRequestKey(details.RequestID).AsRelation(),
 			BaseAsset:         NewAssetKey(details.BaseAsset).AsRelation(),
@@ -353,14 +462,14 @@ func newCreateSaleRequestOp(id int64, details history2.CreateSaleRequestDetails)
 }
 
 // newCreateAMLAlertRequestOp - creates new instance of CreateAMLAlertRequestOp
-func newCreateAMLAlertRequestOp(id int64, details history2.CreateAMLAlertRequestDetails) *regources.CreateAMLAlertRequestOp {
-	return &regources.CreateAMLAlertRequestOp{
-		Key: regources.NewKeyInt64(id, regources.TypeCreateAmlAlert),
-		Attributes: regources.CreateAMLAlertRequestOpAttrs{
+func newCreateAMLAlertRequestOp(id int64, details history2.CreateAMLAlertRequestDetails) *regources.CreateAmlAlertRequestOp {
+	return &regources.CreateAmlAlertRequestOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_AML_ALERT),
+		Attributes: regources.CreateAmlAlertRequestOpAttributes{
 			Amount:         details.Amount,
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.CreateAMLAlertRequestOpRelations{
+		Relationships: regources.CreateAmlAlertRequestOpRelationships{
 			Balance: NewBalanceKey(details.BalanceAddress).AsRelation(),
 		},
 	}
@@ -369,11 +478,11 @@ func newCreateAMLAlertRequestOp(id int64, details history2.CreateAMLAlertRequest
 // newCheckSaleStateOp - creates new instance of CheckSaleStateOp
 func newCheckSaleStateOp(id int64, details history2.CheckSaleStateDetails) *regources.CheckSaleStateOp {
 	return &regources.CheckSaleStateOp{
-		Key: regources.NewKeyInt64(id, regources.TypeCheckSaleState),
-		Attributes: regources.CheckSaleStateOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CHECK_SALE_STATE),
+		Attributes: regources.CheckSaleStateOpAttributes{
 			Effect: details.Effect,
 		},
-		Relationships: regources.CheckSaleStateOpRelations{
+		Relationships: regources.CheckSaleStateOpRelationships{
 			Sale: NewSaleKey(details.SaleID).AsRelation(),
 		},
 	}
@@ -383,8 +492,8 @@ func newCheckSaleStateOp(id int64, details history2.CheckSaleStateDetails) *rego
 // newPaymentOp - creates new instance of PaymentOp
 func newPaymentOp(id int64, details history2.PaymentDetails) *regources.PaymentOp {
 	return &regources.PaymentOp{
-		Key: regources.NewKeyInt64(id, regources.TypePaymentV2),
-		Attributes: regources.PaymentOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_PAYMENT_V2),
+		Attributes: regources.PaymentOpAttributes{
 			Amount:                  details.Amount,
 			SourceFee:               details.SourceFee,
 			DestinationFee:          details.DestinationFee,
@@ -392,7 +501,7 @@ func newPaymentOp(id int64, details history2.PaymentDetails) *regources.PaymentO
 			Subject:                 details.Subject,
 			Reference:               details.Reference,
 		},
-		Relationships: regources.PaymentOpRelations{
+		Relationships: regources.PaymentOpRelationships{
 			AccountFrom: NewAccountKey(details.AccountFrom).AsRelation(),
 			AccountTo:   NewAccountKey(details.AccountTo).AsRelation(),
 			BalanceFrom: NewBalanceKey(details.BalanceFrom).AsRelation(),
@@ -406,11 +515,11 @@ func newPaymentOp(id int64, details history2.PaymentDetails) *regources.PaymentO
 // newCreateManageLimitsRequestOp - creates new instance of CreateManageLimitsRequestOp
 func newCreateManageLimitsRequestOp(id int64, details history2.CreateManageLimitsRequestDetails) *regources.CreateManageLimitsRequestOp {
 	return &regources.CreateManageLimitsRequestOp{
-		Key: regources.NewKeyInt64(id, regources.TypeCreateManageLimitsRequest),
-		Attributes: regources.CreateManageLimitsRequestOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_MANAGE_LIMITS_REQUEST),
+		Attributes: regources.CreateManageLimitsRequestOpAttributes{
 			CreatorDetails: details.CreatorDetails,
 		},
-		Relationships: regources.CreateManageLimitsRequestOpRelations{
+		Relationships: regources.CreateManageLimitsRequestOpRelationships{
 			Request: NewRequestKey(details.RequestID).AsRelation(),
 		},
 	}
@@ -419,8 +528,8 @@ func newCreateManageLimitsRequestOp(id int64, details history2.CreateManageLimit
 // newPayoutOp - creates new instance of PayoutOp
 func newPayoutOp(id int64, details history2.PayoutDetails) *regources.PayoutOp {
 	return &regources.PayoutOp{
-		Key: regources.NewKeyInt64(id, regources.TypePayout),
-		Attributes: regources.PayoutOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_PAYOUT),
+		Attributes: regources.PayoutOpAttributes{
 			MaxPayoutAmount:      details.MaxPayoutAmount,
 			MinAssetHolderAmount: details.MinAssetHolderAmount,
 			MinPayoutAmount:      details.MinPayoutAmount,
@@ -428,7 +537,7 @@ func newPayoutOp(id int64, details history2.PayoutDetails) *regources.PayoutOp {
 			ActualFee:            details.ActualFee,
 			ActualPayoutAmount:   details.ActualPayoutAmount,
 		},
-		Relationships: regources.PayoutOpRelations{
+		Relationships: regources.PayoutOpRelationships{
 			SourceAccount: NewAccountKey(details.SourceAccountAddress).AsRelation(),
 			SourceBalance: NewBalanceKey(details.SourceBalanceAddress).AsRelation(),
 			Asset:         NewAssetKey(details.Asset).AsRelation(),
@@ -438,8 +547,8 @@ func newPayoutOp(id int64, details history2.PayoutDetails) *regources.PayoutOp {
 
 func newLicenseOp(id int64, details history2.LicenseDetails) *regources.LicenseOp {
 	return &regources.LicenseOp{
-		Key: regources.NewKeyInt64(id, regources.TypeLicense),
-		Attributes: regources.LicenseOpAttrs{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_LICENSE),
+		Attributes: regources.LicenseOpAttributes{
 			PrevLicenseHash: details.PrevLicenseHash,
 			LedgerHash:      details.LedgerHash,
 			DueDate:         details.DueDate,
@@ -451,7 +560,7 @@ func newLicenseOp(id int64, details history2.LicenseDetails) *regources.LicenseO
 
 func newStampOp(id int64, details history2.StampDetails) *regources.StampOp {
 	return &regources.StampOp{
-		Key: regources.NewKeyInt64(id, regources.TypeStamp),
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_STAMP),
 		Attributes: regources.StampOpAttributes{
 			LedgerHash:  details.LedgerHash,
 			LicenseHash: details.LicenseHash,

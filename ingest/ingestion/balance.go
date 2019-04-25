@@ -1,9 +1,10 @@
 package ingestion
 
 import (
+	"time"
+
 	"github.com/lann/squirrel"
 	"github.com/pkg/errors"
-	"time"
 )
 
 func (ingest *Ingestion) TryIngestBalance(

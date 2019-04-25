@@ -1,8 +1,9 @@
 package web_v2
 
 import (
-	"github.com/rcrowley/go-metrics"
 	"time"
+
+	metrics "github.com/rcrowley/go-metrics"
 )
 
 // WebMetrics represents request metrics

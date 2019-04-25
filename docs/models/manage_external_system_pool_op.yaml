@@ -1,4 +1,4 @@
-ManageExternalSystemPoolOpKey:
+ManageExternalSystemAccountIDPoolEntryOpKey:
   type: object
   properties:
     id:
@@ -9,10 +9,11 @@ ManageExternalSystemPoolOpKey:
       enum:
         - "operations-manage-external-system-account-id-pool-entry"
 
-ManageExternalSystemPoolOp:
+ManageExternalSystemAccountIDPoolEntryOp:
   allOf:
-  - $ref: '#/components/schemas/ManageExternalSystemPoolOpKey'
+  - $ref: '#/components/schemas/ManageExternalSystemAccountIDPoolEntryOpKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object
@@ -20,6 +21,7 @@ ManageExternalSystemPoolOp:
           - action
         properties:
           action:
+            format: xdr.ManageExternalSystemAccountIdPoolEntryAction
             description: |
                 * 0: "create"
                 * 1: "remove"
@@ -42,11 +44,17 @@ CreateExternalSystemPoolOp:
   properties:
     pool_id:
       type: integer
+      format: uint64
       description: "ID of external system pool"
       example: 2
     data:
       type: string
       description: "" #TODO
+    parent:
+      type: integer
+      format: uint64
+    external_system_type:
+      type: integer
 
 RemoveExternalSystemPoolOp:
   type: object
@@ -55,5 +63,6 @@ RemoveExternalSystemPoolOp:
   properties:
     pool_id:
       type: integer
+      format: uint64
       description: "ID of external system pool"
       example: 2

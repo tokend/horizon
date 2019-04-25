@@ -110,7 +110,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/CreateAtomicSwapBidDetails'
+                      - $ref: '#/components/schemas/CreateAtomicSwapBidRequest'
                       - $ref: '#/components/schemas/Balance'
                       - $ref: '#/components/schemas/Asset'
       400:

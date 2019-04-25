@@ -281,14 +281,15 @@ func (r *Repo) log(typ string, start time.Time, query string, args []interface{}
 	dur := time.Since(start)
 
 	lEntry := r.getLog()
-	lEntry.WithFields(logan.F{
+	fields := logan.F{
 		"args": args,
 		"sql":  query,
 		"dur":  dur.String(),
-	}).Debugf("sql: %s", typ)
+	}
+	lEntry.WithFields(fields).Debugf("sql: %s", typ)
 
 	if dur > log.SlowQueryBound {
-		lEntry.WithField("type", typ).Warn("too slow sql")
+		lEntry.WithField("type", typ).WithFields(fields).Warn("too slow sql")
 	}
 }
 

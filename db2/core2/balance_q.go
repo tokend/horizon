@@ -38,6 +38,18 @@ func (q BalancesQ) FilterByAccount(accountAddress string) BalancesQ {
 	return q
 }
 
+// FilterByAsset - returns new Q with added filter for asset
+func (q BalancesQ) FilterByAsset(asset string) BalancesQ {
+	q.selector = q.selector.Where("balances.asset = ?", asset)
+	return q
+}
+
+// Page - returns Q with specified limit and offset params
+func (q BalancesQ) Page(params db2.OffsetPageParams) BalancesQ {
+	q.selector = params.ApplyTo(q.selector, "balances.balance_id")
+	return q
+}
+
 //WithAsset - joins asset
 func (q BalancesQ) WithAsset() BalancesQ {
 	q.selector = q.selector.Columns(db2.GetColumnsForJoin(assetColumns, "assets")...).

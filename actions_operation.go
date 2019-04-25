@@ -261,8 +261,10 @@ func (action *OperationIndexAction) loadPage() {
 		var res hal.Pageable
 		opParticipants := action.Participants[record.ID]
 
-		res, action.Err = resource.NewOperation(action.Ctx, record, opParticipants.Participants)
-		if action.Err != nil {
+		res, err := resource.NewOperation(action.Ctx, record, opParticipants.Participants)
+		if err != nil {
+			action.Log.WithError(err).Error("failed to populate operation")
+			action.Err = &problem.ServerError
 			return
 		}
 
@@ -302,8 +304,10 @@ func (action *OperationShowAction) loadParams() {
 }
 
 func (action *OperationShowAction) loadRecord() {
-	action.Err = action.HistoryQ().OperationByID(&action.Record, action.ID)
-	if action.Err != nil {
+	err := action.HistoryQ().OperationByID(&action.Record, action.ID)
+	if err != nil {
+		action.Log.WithError(err).Error("failed to load record")
+		action.Err = &problem.ServerError
 		return
 	}
 

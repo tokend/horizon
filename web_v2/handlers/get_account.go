@@ -3,17 +3,18 @@ package handlers
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/fees/fees2"
+	fees "gitlab.com/tokend/horizon/helper/fees2"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core2"
+	"gitlab.com/tokend/horizon/helper/limits"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetAccount - processes request to get account and it's details by address
@@ -112,31 +113,44 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		return nil, errors.Wrap(err, "failed to get fees for account")
 	}
 
-	response.Data.Relationships.Limits, err = h.getLimits(request, &response.Included)
+	response.Data.Relationships.Limits, err = h.getLimits(request, &response.Included, account)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get limits")
 	}
 
-	response.Data.Relationships.ExternalSystemIDs, err = h.getExternalSystemIDs(request, &response.Included)
+	response.Data.Relationships.ExternalSystemIds, err = h.getExternalSystemIDs(request, &response.Included)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get external system IDs")
 	}
 	return &response, nil
 }
 
-func (h *getAccountHandler) getLimits(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {
-	limitsQ := h.LimitsV2Q.FilterByAccountID(request.Address)
+func (h *getAccountHandler) getLimits(request *requests.GetAccount,
+	includes *regources.Included,
+	account *core2.Account) (*regources.RelationCollection, error) {
 
-	coreLimits, err := limitsQ.Select()
+	generalLimits, err := h.LimitsV2Q.General().Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select general limits")
+	}
+	roleLimits, err := h.LimitsV2Q.FilterByAccountRole(account.RoleID).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select role limits")
+	}
+	accountLimits, err := h.LimitsV2Q.FilterByAccount(request.Address).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to select limits for account")
 	}
 
+	lt := limits.NewTable(generalLimits)
+	lt.Update(roleLimits)
+	lt.Update(accountLimits)
+
 	result := &regources.RelationCollection{
-		Data: make([]regources.Key, 0, len(coreLimits)),
+		Data: make([]regources.Key, 0, len(lt)),
 	}
 
-	for _, coreLimitsUnit := range coreLimits {
+	for _, coreLimitsUnit := range lt {
 		limitsUnit := resources.NewLimits(coreLimitsUnit)
 		result.Data = append(result.Data, limitsUnit.Key)
 
@@ -224,6 +238,7 @@ func (h *getAccountHandler) getBalances(request *requests.GetAccount, includes *
 		result.Data = append(result.Data, balance.Key)
 
 		if request.ShouldInclude(requests.IncludeTypeAccountBalances) {
+			balance.Relationships = &regources.BalanceRelationships{}
 			balance.Relationships.State = resources.NewBalanceStateKey(coreBalance.BalanceAddress).AsRelation()
 			balance.Relationships.Asset = resources.NewAssetKey(coreBalance.AssetCode).AsRelation()
 
@@ -297,7 +312,7 @@ func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *rego
 		return nil, errors.Wrap(err, "failed to get fees for account")
 	}
 
-	forAccountRole, err := h.FeesQ.FilterByAccountType(account.RoleID).Select()
+	forAccountRole, err := h.FeesQ.FilterByAccountRole(account.RoleID).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get fees for account role")
 	}
@@ -307,7 +322,7 @@ func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *rego
 		return nil, errors.Wrap(err, "failed to get global fees")
 	}
 
-	sft := fees2.NewSmartFeeTable(forAccount)
+	sft := fees.NewSmartFeeTable(forAccount)
 	sft.Update(forAccountRole)
 	sft.Update(generalFees)
 	sft.AddZeroFees(assets)

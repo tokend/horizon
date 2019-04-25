@@ -4,26 +4,26 @@ import (
 	"strconv"
 
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //NewSigner - creates new instance of signer
 func NewSigner(signer core2.Signer) regources.Signer {
 	return regources.Signer{
 		Key: NewSignerKey(signer.PublicKey),
-		Attributes: regources.SignerAttrs{
+		Attributes: regources.SignerAttributes{
 			Weight:   signer.Weight,
 			Identity: signer.Identity,
 			Details:  signer.Details,
 		},
-		Relationships: regources.SignerRelation{
+		Relationships: regources.SignerRelationships{
 			Role: regources.Key{
 				ID:   strconv.FormatUint(signer.RoleID, 10),
-				Type: regources.TypeSignerRoles,
+				Type: regources.SIGNER_ROLES,
 			}.AsRelation(),
 			Account: regources.Key{
 				ID:   signer.AccountID,
-				Type: regources.TypeAccounts,
+				Type: regources.ACCOUNTS,
 			}.AsRelation(),
 		},
 	}
@@ -33,6 +33,6 @@ func NewSigner(signer core2.Signer) regources.Signer {
 func NewSignerKey(publicKey string) regources.Key {
 	return regources.Key{
 		ID:   publicKey,
-		Type: regources.TypeSigners,
+		Type: regources.SIGNERS,
 	}
 }
