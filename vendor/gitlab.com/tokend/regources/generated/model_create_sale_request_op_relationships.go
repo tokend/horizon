@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type CreateSaleRequestOpRelationships struct {
 	BaseAsset         *Relation           `json:"base_asset,omitempty"`

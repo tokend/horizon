@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type CreateAtomicSwapRequestRelationships struct {
 	Bid        *Relation `json:"bid,omitempty"`

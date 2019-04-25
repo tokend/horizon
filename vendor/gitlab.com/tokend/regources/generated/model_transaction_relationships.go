@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type TransactionRelationships struct {
 	LedgerEntryChanges *RelationCollection `json:"ledger_entry_changes,omitempty"`

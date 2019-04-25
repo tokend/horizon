@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type SaleQuoteAssetAttributes struct {
 	CurrentCap      Amount `json:"current_cap"`

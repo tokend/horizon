@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 // Fee - describes fee happened on balance. Direction of fee depends on the operation (depending on effect might be charged, locked, unlocked, for all incoming effects but unlocked it's always charged)
 type Fee struct {

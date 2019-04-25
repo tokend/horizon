@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type ChangeRoleRequestAttributes struct {
 	AccountRoleToSet uint64  `json:"account_role_to_set"`

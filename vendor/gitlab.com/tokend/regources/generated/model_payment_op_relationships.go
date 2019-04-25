@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type PaymentOpRelationships struct {
 	AccountFrom *Relation `json:"account_from,omitempty"`

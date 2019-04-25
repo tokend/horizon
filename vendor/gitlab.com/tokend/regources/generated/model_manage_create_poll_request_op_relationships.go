@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type ManageCreatePollRequestOpRelationships struct {
 	Request        *Relation `json:"request,omitempty"`

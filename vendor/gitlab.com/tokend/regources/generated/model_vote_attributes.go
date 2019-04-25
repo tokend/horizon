@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type VoteAttributes struct {
 	VoteData VoteData `json:"vote_data"`

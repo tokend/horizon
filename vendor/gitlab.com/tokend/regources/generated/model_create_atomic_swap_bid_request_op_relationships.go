@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type CreateAtomicSwapBidRequestOpRelationships struct {
 	BaseBalance *Relation           `json:"base_balance,omitempty"`

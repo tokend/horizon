@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package regources
+package resources
 
 type ReviewableRequestRelationships struct {
 	RequestDetails *Relation `json:"request_details,omitempty"`
