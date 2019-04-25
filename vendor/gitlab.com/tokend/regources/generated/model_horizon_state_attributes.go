@@ -23,9 +23,11 @@ type HorizonStateAttributes struct {
 	// TokenD network identificator. Shows in which network horizon is working.
 	NetworkPassphrase string `json:"network_passphrase"`
 	// default asset precision in system
-	Precision float32 `json:"precision"`
+	Precision int64 `json:"precision"`
 	// Defines max allowed duration between timeBounds.maxTime & close time
 	TxExpirationPeriod int64 `json:"tx_expiration_period"`
 	// revision of xdr used by Horizon
 	XdrRevision string `json:"xdr_revision"`
+	// version of the TokenD core to which this horizon is connected
+	CoreVersion string `json:"core_version"`
 }

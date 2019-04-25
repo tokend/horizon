@@ -13,6 +13,7 @@ HorizonStateKey:
         - "horizon-state"
 LedgerInfo:
   type: object
+  required: [latest, oldest_on_start, last_ledger_increase_time]
   properties:
     latest:
       type: integer
@@ -76,8 +77,12 @@ HorizonState:
           precision:
             type: number
             description: "default asset precision in system"
+            format: int64
             example: 6
           xdr_revision:
             type: string
             example: "7e0659466026577a3ea90ff178773fecc4a85dec"
             description: "revision of xdr used by Horizon"
+          core_version:
+            type: string
+            description: "version of the TokenD core to which this horizon is connected"

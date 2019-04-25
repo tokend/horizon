@@ -10,9 +10,9 @@ import (
 
 type LedgerInfo struct {
 	// time at which latest known ledger has been increased last time
-	LastLedgerIncreaseTime *time.Time `json:"last_ledger_increase_time,omitempty"`
+	LastLedgerIncreaseTime time.Time `json:"last_ledger_increase_time"`
 	// latest known ledger
-	Latest *uint64 `json:"latest,omitempty"`
+	Latest uint64 `json:"latest"`
 	// sequence of oldest ledger available
-	OldestOnStart *uint64 `json:"oldest_on_start,omitempty"`
+	OldestOnStart uint64 `json:"oldest_on_start"`
 }

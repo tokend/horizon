@@ -174,12 +174,14 @@ func (a *App) UpdateCoreInfo() error {
 		return nil
 	}
 
-	var err error
-	a.CoreInfo, err = a.CoreConnector.GetCoreInfo()
+	var info *corer.Info
+	info, err := a.CoreConnector.GetCoreInfo()
 	if err != nil {
 		log.WithField("service", "core-info").WithError(err).Error("could not load stellar-core info")
 		return errors.Wrap(err, "could not load stellar-core info")
 	}
+
+	a.CoreInfo = info
 
 	return nil
 }
