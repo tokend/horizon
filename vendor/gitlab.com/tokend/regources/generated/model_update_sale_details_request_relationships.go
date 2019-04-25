@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package resources
+package regources
 
 type UpdateSaleDetailsRequestRelationships struct {
 	Sale *Relation `json:"sale,omitempty"`

@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package resources
+package regources
 
 type FeeRecordAttributes struct {
 	AppliedTo FeeAppliedTo `json:"applied_to"`

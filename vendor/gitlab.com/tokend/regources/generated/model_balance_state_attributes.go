@@ -2,7 +2,7 @@
  * GENERATED. Do not modify. Your changes might be overwritten!
  */
 
-package resources
+package regources
 
 type BalanceStateAttributes struct {
 	// Amount available to be spent by an account
