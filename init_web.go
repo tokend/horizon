@@ -409,15 +409,6 @@ func initWebActions(app *App) {
 		}
 	}))
 
-	r.Get("/v3/info", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
-		signer := r.Header.Get(signcontrol.PublicKeyHeader)
-		if signer != "" || app.config.DisableAPISubmit {
-			RootAction{}.ServeHTTPC(c, w, r)
-		} else {
-			apiProxy.ServeHTTP(w, r)
-		}
-	}))
-
 	r.Get("/accounts/:account_id/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		// while current implementation is clearly lame, more important is to make
 		// public API clear and intuitive since it's impossible to change it later
