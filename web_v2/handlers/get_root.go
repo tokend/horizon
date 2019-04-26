@@ -20,7 +20,7 @@ import (
 func GetRoot(w http.ResponseWriter, r *http.Request) {
 	coreInfo := ctx.CoreInfo(r)
 	currentState := ledger.CurrentState()
-	currentTime := time.Now()
+	currentTime := time.Unix(time.Now().Unix(), 0).UTC()
 	response := regources.HorizonStateAttributes{
 		Core:               stateToLedgerInfo(currentState.Core),
 		History:            stateToLedgerInfo(currentState.History),
@@ -39,7 +39,7 @@ func GetRoot(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, regources.HorizonStateResponse{
 		Data: regources.HorizonState{
 			Key: regources.Key{
-				ID:   currentTime.UTC().Format(time.RFC3339),
+				ID:   currentTime.Format(time.RFC3339),
 				Type: regources.HORIZON_STATE,
 			},
 			Attributes: response,
@@ -49,7 +49,7 @@ func GetRoot(w http.ResponseWriter, r *http.Request) {
 
 func stateToLedgerInfo(state ledger.State) regources.LedgerInfo {
 	return regources.LedgerInfo{
-		LastLedgerIncreaseTime: state.LastLedgerIncreaseTime,
+		LastLedgerIncreaseTime: time.Unix(state.LastLedgerIncreaseTime.Unix(), 0).UTC(),
 		Latest:                 uint64(state.Latest),
 		OldestOnStart:          uint64(state.OldestOnStart),
 	}
