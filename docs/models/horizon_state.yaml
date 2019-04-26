@@ -38,7 +38,7 @@ HorizonState:
     properties:
       attributes:
         type: object
-        required: [core, history, history_v2, network_passphrase, master_account_id, environment_name,tx_expiration_period, current_time, current_time_unix, precision, xdr_revision]
+        required: [core, history, history_v2, network_passphrase, master_account_id, environment_name,tx_expiration_period, current_time, current_time_unix, precision, xdr_revision, core_version]
         properties:
           core:
             $ref: '#/components/schemas/LedgerInfo'
@@ -75,7 +75,7 @@ HorizonState:
             format: int64
             description: "current horizon time in unix timestamp"
           precision:
-            type: number
+            type: integer
             description: "default asset precision in system"
             format: int64
             example: 6
