@@ -22,9 +22,9 @@ func GetRoot(w http.ResponseWriter, r *http.Request) {
 	currentState := ledger.CurrentState()
 	currentTime := time.Now()
 	response := regources.HorizonStateAttributes{
-		Core:               ledgerInfoToState(currentState.Core),
-		History:            ledgerInfoToState(currentState.History),
-		HistoryV2:          ledgerInfoToState(currentState.History2),
+		Core:               stateToLedgerInfo(currentState.Core),
+		History:            stateToLedgerInfo(currentState.History),
+		HistoryV2:          stateToLedgerInfo(currentState.History2),
 		CurrentTime:        currentTime,
 		CurrentTimeUnix:    currentTime.Unix(),
 		EnvironmentName:    coreInfo.MasterExchangeName,
@@ -39,7 +39,7 @@ func GetRoot(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, regources.HorizonStateResponse{
 		Data: regources.HorizonState{
 			Key: regources.Key{
-				ID:   currentTime.UTC().Format(time.RFC3339Nano),
+				ID:   currentTime.UTC().Format(time.RFC3339),
 				Type: regources.HORIZON_STATE,
 			},
 			Attributes: response,
@@ -47,7 +47,7 @@ func GetRoot(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func ledgerInfoToState(state ledger.State) regources.LedgerInfo {
+func stateToLedgerInfo(state ledger.State) regources.LedgerInfo {
 	return regources.LedgerInfo{
 		LastLedgerIncreaseTime: state.LastLedgerIncreaseTime,
 		Latest:                 uint64(state.Latest),

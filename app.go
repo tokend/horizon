@@ -76,7 +76,6 @@ func NewApp(config config.Config) (*App, error) {
 // the shutdown signals.
 func (a *App) Serve() {
 	a.web.router.Compile()
-	http.Handle("/v3/info", a.web.router)
 	http.Handle("/v3/transactions", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "POST":
