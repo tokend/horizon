@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/go-ozzo/ozzo-validation"
+
 	"gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -33,24 +35,30 @@ func NewCreateTransactionRequest(r *http.Request) (*CreateTransaction, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if body.Tx == "" {
-		return nil, errors.New("Envelope missing in the body of request")
+		return nil, validation.Errors{
+			"tx": errors.New("missing in the body of request"),
+		}
 	}
 	info := ctx.CoreInfo(r)
 
 	envelopeInfo, err := txsub.ExtractEnvelopeInfo(body.Tx, info.NetworkPassphrase)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to extract envelope info")
+		return nil, validation.Errors{
+			"tx": errors.Wrap(err, "failed to extract envelope info"),
+		}
 	}
 
-	var waitForIngest bool
-	if body.WaitForIngest != nil {
-		waitForIngest = *body.WaitForIngest && ctx.Config(r).Ingest
+	if body.WaitForIngest && !ctx.Config(r).Ingest {
+		return nil, validation.Errors{
+			"wait_for_ingest": errors.New("wait for ingest is not allowed as this horizon does not perform ingest"),
+		}
 	}
 
 	return &CreateTransaction{
 		base:          b,
 		Env:           envelopeInfo,
-		WaitForIngest: waitForIngest,
+		WaitForIngest: body.WaitForIngest,
 	}, nil
 }

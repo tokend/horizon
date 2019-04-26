@@ -120,6 +120,7 @@ func initWebActions(app *App) {
 
 	r := app.web.router
 	r.Get("/", &RootAction{})
+
 	// system summary variables too verbose to be included into /
 	r.Get("/statistics", &StatisticsAction{})
 	r.Get("/statistics/balances", &BalancesReportAction{})

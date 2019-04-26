@@ -52,17 +52,17 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to create transaction ", logan.F{
+		ctx.Log(r).WithError(err).WithFields(logan.F{
 			"request": request,
-		})
+		}).Error("failed to create transaction ")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	if result == nil {
-		ctx.Log(r).Error("got empty result", logan.F{
+		ctx.Log(r).WithFields(logan.F{
 			"request": request,
-		})
+		}).Error("got empty result")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

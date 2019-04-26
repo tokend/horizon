@@ -83,9 +83,9 @@ func SetDoorman(d doorman.Doorman) func(ctx context.Context) context.Context {
 }
 
 //SetCoreInfo - adds core info to context
-func SetCoreInfo(info corer.Info) func(ctx context.Context) context.Context {
+func SetCoreInfo(coreInfoProvider func() corer.Info) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, keyCoreInfo, info)
+		return context.WithValue(ctx, keyCoreInfo, coreInfoProvider())
 	}
 }
 

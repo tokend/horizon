@@ -72,7 +72,7 @@ func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger
 	}
 	// normalPeriod is set to 0 to ensure that we are aggressive during catchup. If we failed to get ledger from core
 	// runOnce will handle waiting period
-	go running.WithBackOff(ctx, l.log, "ingest_producer", l.runOnce, time.Duration(0),
+	go running.WithBackOff(ctx, l.log, "ingest_producer", l.runOnce, time.Duration(1)*time.Millisecond,
 		minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
 	return l.data
 }

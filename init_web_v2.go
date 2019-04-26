@@ -3,6 +3,8 @@ package horizon
 import (
 	"time"
 
+	"gitlab.com/tokend/horizon/corer"
+
 	"gitlab.com/tokend/horizon/web_v2/handlers"
 
 	"net/http"
@@ -57,7 +59,14 @@ func initWebV2Middleware(app *App) {
 			// log will be set by logger setter on handler call
 			ctx.SetHistoryRepo(app.HistoryRepoLogged(nil)),
 			ctx.SetDoorman(doorman.New(app.config.SkipCheck, signersProvider)),
-			ctx.SetCoreInfo(*app.CoreInfo),
+			ctx.SetCoreInfo(func() corer.Info {
+				// required to make sure that we return most recent core info
+				if app.CoreInfo == nil {
+					panic("unexpected state: core info is nil, while we are preparing context for the request")
+				}
+
+				return *app.CoreInfo
+			}),
 			ctx.SetSubmitter(app.submitterV2),
 			ctx.SetConfig(&app.config),
 		),
@@ -94,6 +103,7 @@ func initWebV2Middleware(app *App) {
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
+	m.Get("/v3", handlers.GetRoot)
 	m.Post("/v3/transactions", handlers.CreateTransaction)
 
 	m.Get("/v3/accounts/{id}", handlers.GetAccount)
