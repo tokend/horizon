@@ -75,7 +75,6 @@ func NewApp(config config.Config) (*App, error) {
 // Serve starts the horizon web server, binding it to a socket, setting up
 // the shutdown signals.
 func (a *App) Serve() {
-
 	a.web.router.Compile()
 	http.Handle("/v3/transactions", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -174,12 +173,14 @@ func (a *App) UpdateCoreInfo() error {
 		return nil
 	}
 
-	var err error
-	a.CoreInfo, err = a.CoreConnector.GetCoreInfo()
+	var info *corer.Info
+	info, err := a.CoreConnector.GetCoreInfo()
 	if err != nil {
 		log.WithField("service", "core-info").WithError(err).Error("could not load stellar-core info")
 		return errors.Wrap(err, "could not load stellar-core info")
 	}
+
+	a.CoreInfo = info
 
 	return nil
 }

@@ -2,7 +2,6 @@ package resource
 
 import (
 	"fmt"
-
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/httpx"
 	"gitlab.com/tokend/horizon/render/hal"
