@@ -15,7 +15,7 @@ import (
 // ResultsProvider provides transaction submission results by querying the
 // connected horizon and stellar core databases.
 type ResultsProvider struct {
-	Core    *core2.TransactionQ
+	Core    core2.TransactionQ
 	History history2.TransactionsQ
 }
 

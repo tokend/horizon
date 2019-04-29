@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"gitlab.com/distributed_lab/running"
+
 	"gitlab.com/tokend/horizon/log"
 
 	"github.com/lib/pq"
@@ -69,8 +71,7 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 	if err != nil {
 		return send(l,
 			fullResult{
-				Err: errors.Wrap(err, "failed to submit transaction",
-					info.GetLoganFields()),
+				Err: err,
 			})
 	}
 
@@ -78,8 +79,7 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 	if err != nil {
 		return send(l,
 			fullResult{
-				Err: errors.Wrap(err, "failed to add tx to pending list",
-					info.GetLoganFields()),
+				Err: errors.Wrap(err, "failed to add tx to pending list"),
 			})
 	}
 
@@ -185,7 +185,7 @@ func (s *System) tickHistory(ctx context.Context) {
 func (s *System) history(ctx context.Context) {
 	defer func() {
 		if rvr := recover(); rvr != nil {
-			s.Log.WithRecover(rvr).Error("txsub2 panicked")
+			s.Log.WithRecover(rvr).Error("panicked")
 		}
 	}()
 	for {
@@ -201,7 +201,7 @@ func (s *System) history(ctx context.Context) {
 func (s *System) core(ctx context.Context) {
 	defer func() {
 		if rvr := recover(); rvr != nil {
-			s.Log.WithRecover(rvr).Error("txsub2 panicked")
+			s.Log.WithRecover(rvr).Error("panicked")
 		}
 	}()
 
@@ -216,22 +216,16 @@ func (s *System) core(ctx context.Context) {
 }
 
 func (s *System) cleaner(ctx context.Context) {
-	ticker := time.NewTicker(s.SubmissionTimeout)
 	defer func() {
 		if rvr := recover(); rvr != nil {
-			s.Log.WithRecover(rvr).Error("txsub2 panicked")
+			s.Log.WithRecover(rvr).Error("panicked")
 		}
-		ticker.Stop()
 	}()
 
-	for {
-		select {
-		case <-ticker.C:
-			s.List.Clean(s.SubmissionTimeout)
-		case <-ctx.Done():
-			return
-		}
-	}
+	running.WithBackOff(ctx, s.Log, "submitter_v2_cleaner", func(ctx context.Context) error {
+		s.List.Clean(s.SubmissionTimeout)
+		return nil
+	}, s.SubmissionTimeout, time.Second, 2*s.SubmissionTimeout)
 }
 
 func (s *System) Start(ctx context.Context) {

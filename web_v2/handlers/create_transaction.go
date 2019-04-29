@@ -33,11 +33,10 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 	coreRepo := ctx.CoreRepo(r)
 	historyRepo := ctx.HistoryRepo(r)
-	hist := history2.NewTransactionsQ(historyRepo)
 
 	handler := createTransactionHandler{
 		Core:      core2.NewTransactionQ(coreRepo),
-		History:   &hist,
+		History:   history2.NewTransactionsQ(historyRepo),
 		Log:       ctx.Log(r),
 		Submitter: ctx.Submitter(r),
 	}
@@ -71,8 +70,8 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 }
 
 type createTransactionHandler struct {
-	History   *history2.TransactionsQ
-	Core      *core2.TransactionQ
+	History   history2.TransactionsQ
+	Core      core2.TransactionQ
 	Submitter *txsub.System
 	Log       *logan.Entry
 }

@@ -49,7 +49,7 @@ func initSubmissionV2(app *App) {
 		}))
 	}
 	app.submitterV2 = &txsub.System{
-		Log:               log.WithField("service", "txsub2"),
+		Log:               logger,
 		SubmissionTimeout: time.Minute,
 		List:              txsub.NewDefaultSubmissionList(10 * time.Second),
 		Submitter:         txsub.NewDefaultSubmitter(*coreConnector),
@@ -66,5 +66,5 @@ func initSubmissionV2(app *App) {
 }
 
 func init() {
-	appInit.Add("txsub2", initSubmissionV2, "app-context", "log", "horizon-db", "core-db", "core-info")
+	appInit.Add("submitter_v2", initSubmissionV2, "app-context", "log", "horizon-db", "core-db", "core-info")
 }
