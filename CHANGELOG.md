@@ -1,6 +1,12 @@
 ## Unreleased
 
 ### Added
+* Tx submission system v2 with retry
+* `/v3/transactions` to submit txs
+
+## 3.3.0-x.0
+
+### Added
 
 * Allow forcing reingest on application start up (see ingest2/main.go)
 * `/v3/limits` endpoint to get limits list with filters
