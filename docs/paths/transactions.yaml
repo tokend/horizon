@@ -27,19 +27,19 @@
         content:
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/TransactionSubmitFailure'
+              $ref: '#/components/schemas/Errors'
       408:
         description: request has timed out
         content:
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/TransactionSubmitFailure'
+              $ref: '#/components/schemas/Errors'
       500:
         description: internal server error
         content:
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/TransactionSubmitFailure'
+              $ref: '#/components/schemas/Errors'
   get:
     tags:
       - History

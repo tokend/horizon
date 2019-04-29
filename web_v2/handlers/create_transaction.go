@@ -46,7 +46,10 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	})
 
 	result, err := handler.createTx(r.Context(), request)
-	if errObj, ok := err.(*jsonapi.ErrorObject); ok {
+	if errObj, ok := errors.Cause(err).(*jsonapi.ErrorObject); ok {
+		ctx.Log(r).WithError(err).WithFields(logan.F{
+			"request": request,
+		}).Error("failed to create transaction ")
 		ape.RenderErr(w, errObj)
 		return
 	}

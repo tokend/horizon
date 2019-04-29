@@ -71,7 +71,8 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 	if err != nil {
 		return send(l,
 			fullResult{
-				Err: err,
+				Err: errors.Wrap(err, "failed to submit transaction",
+					info.GetLoganFields()),
 			})
 	}
 
@@ -79,7 +80,9 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 	if err != nil {
 		return send(l,
 			fullResult{
-				Err: errors.Wrap(err, "failed to add tx to pending list"),
+				Err: errors.Wrap(err, "failed to add tx to pending list",
+					info.GetLoganFields(),
+				),
 			})
 	}
 
@@ -185,7 +188,7 @@ func (s *System) tickHistory(ctx context.Context) {
 func (s *System) history(ctx context.Context) {
 	defer func() {
 		if rvr := recover(); rvr != nil {
-			s.Log.WithRecover(rvr).Error("panicked")
+			s.Log.WithRecover(rvr).Error("submitter_v2 panicked")
 		}
 	}()
 	for {
@@ -201,7 +204,7 @@ func (s *System) history(ctx context.Context) {
 func (s *System) core(ctx context.Context) {
 	defer func() {
 		if rvr := recover(); rvr != nil {
-			s.Log.WithRecover(rvr).Error("panicked")
+			s.Log.WithRecover(rvr).Error("submitter_v2 panicked")
 		}
 	}()
 
@@ -218,7 +221,7 @@ func (s *System) core(ctx context.Context) {
 func (s *System) cleaner(ctx context.Context) {
 	defer func() {
 		if rvr := recover(); rvr != nil {
-			s.Log.WithRecover(rvr).Error("panicked")
+			s.Log.WithRecover(rvr).Error("submitter_v2 panicked")
 		}
 	}()
 

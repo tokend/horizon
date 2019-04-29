@@ -89,35 +89,3 @@ SubmitTransactionBody:
       type: boolean
       description: "defines whether to wait for ingest of transaction or not"
       default: false
-
-TransactionSubmitFailure:
-  type: object
-  required: [status, title, detail, meta]
-  properties:
-    title:
-      type: string
-      description: "HTTP status"
-      example: "Bad Request"
-    status:
-      type: string
-      description: "HTTP status code"
-      example: "400"
-    detail:
-      type: string
-      description: "Detail on reasons of transaction submit failure"
-    meta:
-      type: object
-      required: [envelope_xdr, result_xdr, result_meta_xdr, parsed_result, parsed_envelope]
-      properties:
-        envelope_xdr:
-          type: string
-        result_xdr:
-          type: string
-        result_meta_xdr:
-          type: string
-        parsed_result:
-          type: object
-          format: xdr.TransactionResult
-        parsed_envelope:
-          type: object
-          format: xdr.TransactionEnvelope
