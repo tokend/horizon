@@ -29,7 +29,8 @@ func initIngester2(app *App) {
 	}
 
 	hRepo := app.HistoryRepoLogged(logger)
-	ledgersChan := ingest2.NewProducer(txProvider, history2.NewLedgerQ(hRepo), logger).Start(ctx, 1000, ledger.CurrentState())
+	ledgersChan := ingest2.NewProducer(txProvider, history2.NewLedgerQ(hRepo), logger).
+		Start(ctx, 1000, ledger.CurrentState())
 
 	accountStorage := storage.NewAccount(hRepo, coreRepo)
 	balanceStorage := storage.NewBalance(hRepo, coreRepo, accountStorage)

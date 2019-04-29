@@ -70,27 +70,48 @@ func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger
 	if err != nil {
 		l.log.WithError(err).Panic("Failed to ensure consistency of core and horizon chains")
 	}
-	// normalPeriod is set to 0 to ensure that we are aggressive during catchup. If we failed to get ledger from core
-	// runOnce will handle waiting period
-	go running.WithBackOff(ctx, l.log, "ingest_producer", l.runOnce, time.Duration(1)*time.Millisecond,
-		minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
+	go func() {
+		l.catchup(ctx)
+		l.startListeningNewBlocks(ctx, waitForLedgerPeriod)
+	}()
 	return l.data
 }
 
-func (l *Producer) runOnce(ctx context.Context) error {
-	isSent, err := l.trySendBlock(ctx, l.currentLedger)
-	if err != nil {
-		return errors.Wrap(err, "failed to send block", logan.F{"seq": l.currentLedger})
+func (l *Producer) catchup(ctx context.Context) {
+	for {
+		if !l.trySendNewBlock(ctx) {
+			return
+		}
 	}
+}
+
+func (l *Producer) startListeningNewBlocks(ctx context.Context, period time.Duration) {
+	ticker := time.NewTicker(period)
+
+	for {
+		select {
+		case <-ticker.C:
+			l.trySendNewBlock(ctx)
+		case <-ctx.Done():
+			l.log.Info("Context is canceled - stopping ingest_producer.")
+			return
+		}
+	}
+}
+
+func (l *Producer) trySendNewBlock(ctx context.Context) bool {
+	var isSent bool
+	running.UntilSuccess(ctx, l.log, "ingest_producer", func(ctx context.Context) (bool, error) {
+		var err error
+		isSent, err = l.trySendBlock(ctx, l.currentLedger)
+		return err == nil, err
+	}, minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
 
 	if isSent {
 		l.currentLedger++
-		return nil
 	}
 
-	// ledger is not available yet in the core, so we can sleep for a sec
-	time.Sleep(waitForLedgerPeriod)
-	return nil
+	return isSent
 }
 
 func (l *Producer) trySendBlock(ctx context.Context, seq int32) (bool, error) {
