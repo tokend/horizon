@@ -22,30 +22,24 @@
               properties:
                 data:
                   $ref: '#/components/schemas/Transaction'
-                included:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/LedgerEntryChange'
-      202:
-        description: transaction has been successfully accepted
       400:
         description: bad input parameter
         content:
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/Errors'
+              $ref: '#/components/schemas/TransactionSubmitFailure'
       408:
         description: request has timed out
         content:
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/Errors'
+              $ref: '#/components/schemas/TransactionSubmitFailure'
       500:
         description: internal server error
         content:
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/Errors'
+              $ref: '#/components/schemas/TransactionSubmitFailure'
   get:
     tags:
       - History
