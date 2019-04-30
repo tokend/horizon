@@ -5,6 +5,7 @@
 ### Added 
 
 * `Owner` relation to `Balance` (ID of the owner's account)
+* `Horizon-State` resource for `/v3` endpoint (info regarding horizon and it's dependencies state)
 
 ## 4.1.0
 

@@ -2,12 +2,12 @@ package resource
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/httpx"
+	"gitlab.com/tokend/horizon/render/hal"
 	"time"
 
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/horizon/httpx"
-	"gitlab.com/tokend/horizon/render/hal"
 	"golang.org/x/net/context"
 )
 
