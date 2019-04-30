@@ -2,17 +2,19 @@ package ingest2
 
 import (
 	"context"
+	"gitlab.com/distributed_lab/running"
+	"math"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/distributed_lab/running"
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ledger"
 )
 
 const (
+	maxBatchSize = 1000
 	waitForLedgerPeriod    = time.Second
 	minErrorRecoveryPeriod = time.Second * 2
 	maxErrorRecoveryPeriod = time.Minute * 10
@@ -25,12 +27,10 @@ type historyLedgerProvider interface {
 
 // txProvider - specifies methods required to get data from core db needed for ingest
 type txProvider interface {
-	// GetByLedger returns slice of transaction for given ledger sequence. Returns empty slice,
-	// nil if there is no transactions
-	GetByLedger(seq int32) ([]core.Transaction, error)
-	// GetBySequence returns *core.LedgerHeader by its sequence. Returns nil, nil if ledgerHeader
-	// does not exists
+	GetLatestLedgerSeq() (int32, error)
+	GetByLedgerRange(fromSeq int32, toSeq int32) ([]core.Transaction, error)
 	GetBySequence(seq int32) (*core.LedgerHeader, error)
+	GetBySequenceRange(fromSeq int32, toSeq int32) ([]core.LedgerHeader, error)
 }
 
 // Producer - worker which is responsible for loading sequence of ledgers and transactions and sending them
@@ -40,7 +40,7 @@ type Producer struct {
 	hLedgerProvider historyLedgerProvider
 	log             *logan.Entry
 
-	data          chan LedgerBundle
+	data          chan []LedgerBundle
 	currentLedger int32
 }
 
@@ -54,12 +54,12 @@ func NewProducer(txProvider txProvider, hLedgerProvider historyLedgerProvider, l
 }
 
 // Start - starts the Producer in new goroutine. Panics on initialization step if already started.
-func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger.SystemState) chan LedgerBundle {
+func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger.SystemState) chan []LedgerBundle {
 	if l.data != nil {
 		l.log.Panic("Already started")
 	}
 
-	l.data = make(chan LedgerBundle, bufferSize)
+	l.data = make(chan []LedgerBundle, bufferSize)
 	var err error
 	l.currentLedger, err = l.getLedgerSeqToStartFrom(ledgerState)
 	if err != nil {
@@ -70,92 +70,60 @@ func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger
 	if err != nil {
 		l.log.WithError(err).Panic("Failed to ensure consistency of core and horizon chains")
 	}
-	go func() {
-		l.catchup(ctx)
-		l.startListeningNewBlocks(ctx, waitForLedgerPeriod)
-	}()
+	go running.WithBackOff(ctx, l.log, "ingest_producer", l.checkForNewLedgers, waitForLedgerPeriod,
+		minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
+
 	return l.data
 }
 
-func (l *Producer) catchup(ctx context.Context) {
-	for {
-		if !l.trySendNewBlock(ctx) {
-			return
-		}
-	}
-}
-
-func (l *Producer) startListeningNewBlocks(ctx context.Context, period time.Duration) {
-	ticker := time.NewTicker(period)
-
-	for {
-		select {
-		case <-ticker.C:
-			l.trySendNewBlock(ctx)
-		case <-ctx.Done():
-			l.log.Info("Context is canceled - stopping ingest_producer.")
-			return
-		}
-	}
-}
-
-func (l *Producer) trySendNewBlock(ctx context.Context) bool {
-	var isSent bool
-	running.UntilSuccess(ctx, l.log, "ingest_producer", func(ctx context.Context) (bool, error) {
-		var err error
-		isSent, err = l.trySendBlock(ctx, l.currentLedger)
-		return err == nil, err
-	}, minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
-
-	if isSent {
-		l.currentLedger++
-	}
-
-	return isSent
-}
-
-func (l *Producer) trySendBlock(ctx context.Context, seq int32) (bool, error) {
-	ledgerHeader, err := l.txProvider.GetBySequence(seq)
+func (l *Producer) checkForNewLedgers(ctx context.Context) error {
+	currentSeq, err := l.txProvider.GetLatestLedgerSeq()
 	if err != nil {
-		return false, errors.Wrap(err, "failed to load ledger header", logan.F{"ledger_seq": seq})
+		return errors.Wrap(err, "failed to load current ledger sequence")
 	}
 
-	// ledger still does not exists
-	if ledgerHeader == nil {
-		return false, nil
-	}
-
-	txs, err := l.loadSuccessTxs(seq)
-	if err != nil {
-		return false, errors.Wrap(err, "failed to load successful transactions for ledger",
-			logan.F{"ledger_seq": seq})
-	}
-
-	select {
-	case <-ctx.Done():
-		return false, nil
-	case l.data <- newLedgerBundle(*ledgerHeader, txs):
-		return true, nil
-	}
-}
-
-func (l *Producer) loadSuccessTxs(seq int32) ([]core.Transaction, error) {
-	txs, err := l.txProvider.GetByLedger(seq)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load transactions for ledger",
-			logan.F{"ledger_seq": seq})
-	}
-
-	successTxs := make([]core.Transaction, 0, len(txs))
-	for i := range txs {
-		if !txs[i].IsSuccessful() {
-			continue
+	if l.currentLedger < currentSeq {
+		fromSeq := l.currentLedger + 1
+		toSeq := int32(math.Min(float64(currentSeq), float64(l.currentLedger + maxBatchSize)))
+		batch, err := l.getBatch(fromSeq, toSeq)
+		if err != nil {
+			return err
 		}
 
-		successTxs = append(successTxs, txs[i])
+		l.data <- batch
+		l.currentLedger = toSeq
 	}
 
-	return successTxs, nil
+	return nil
+}
+
+func (l *Producer) getBatch(fromSeq int32, toSeq int32) ([]LedgerBundle, error) {
+	headers, err := l.txProvider.GetBySequenceRange(fromSeq, toSeq)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load ledger headers")
+	}
+	txs, err := l.txProvider.GetByLedgerRange(fromSeq, toSeq)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load ledger transactions")
+	}
+	result := make([]LedgerBundle, 0, len(headers))
+
+	for _, header := range headers {
+		result = append(result, LedgerBundle{
+			Header: header,
+			Transactions: make([]core.Transaction, 0, len(txs)),
+		})
+	}
+
+	for _, tx := range txs {
+		if tx.IsSuccessful() {
+			bundle := result[tx.LedgerSequence - fromSeq]
+			bundle.Transactions = append(bundle.Transactions, tx)
+			result[tx.LedgerSequence - fromSeq] = bundle
+		}
+	}
+
+	return result, nil
 }
 
 // ensureChainIsConsistent - ensures that we'll end up with consistent chain of blocks in both core and horizon.
