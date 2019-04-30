@@ -22,7 +22,7 @@ func initIngester2(app *App) {
 
 	txProvider := struct {
 		*core2.LedgerHeaderQ
-		*core2.TransactionQ
+		core2.TransactionQ
 	}{
 		LedgerHeaderQ: core2.NewLedgerHeaderQ(coreRepo),
 		TransactionQ:  core2.NewTransactionQ(coreRepo),

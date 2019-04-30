@@ -1,4 +1,9 @@
 ## Unreleased
+
+### Added
+* Tx submission system v2 with retry
+* `/v3/transactions` to submit txs
+
 ### Fixed
 * Fixed `null` messages on failed transaction submit
 

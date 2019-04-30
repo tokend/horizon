@@ -21,16 +21,16 @@ type notificationListener struct {
 	lock   *sync.RWMutex
 }
 
-func startNewListener(ctx context.Context, log *log.Entry, lock *sync.RWMutex, state *State, chanelName,
+func startNewListener(ctx context.Context, logger *log.Entry, lock *sync.RWMutex, state *State, chanelName,
 	dbConnString string) error {
 	listener := &notificationListener{
 		state:  state,
-		log:    log,
+		log:    logger,
 		chanel: chanelName,
 		lock:   lock,
 	}
 
-	pqListener := pq.NewListener(dbConnString, time.Second, time.Duration(30)*time.Second, listener.logEvent)
+	pqListener := pq.NewListener(dbConnString, time.Second, time.Duration(30)*time.Second, log.PQEvent(listener.log))
 	err := pqListener.Listen(chanelName)
 	if err != nil {
 		_ = pqListener.Close()
@@ -40,26 +40,6 @@ func startNewListener(ctx context.Context, log *log.Entry, lock *sync.RWMutex, s
 	listener.startHealthChecker(ctx)
 	go listener.listen(ctx, pqListener)
 	return nil
-}
-
-func (l *notificationListener) logEvent(event pq.ListenerEventType, err error) {
-	switch event {
-	case pq.ListenerEventConnected:
-		l.log.Info("connected to db")
-		return
-	case pq.ListenerEventDisconnected:
-		l.log.WithError(err).Error("disconnected")
-		return
-	case pq.ListenerEventReconnected:
-		l.log.Info("reconnected")
-		return
-	case pq.ListenerEventConnectionAttemptFailed:
-		l.log.WithError(err).Error("failed to connect")
-		return
-	default:
-		l.log.WithField("event_type", event).Error("unknown event")
-		return
-	}
 }
 
 const healthCheckPeriod = time.Duration(30) * time.Second

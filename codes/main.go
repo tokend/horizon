@@ -43,7 +43,7 @@ func ForTxResult(txResult xdr.TransactionResult) (txResultCode string, opResultC
 	txResultCode = txResult.Result.Code.ShortString()
 
 	if txResult.Result.Results == nil {
-		messages = []string{getMessage(txResultCode)}
+		opResultCodes = []string{getMessage(txResultCode)}
 		return
 	}
 
