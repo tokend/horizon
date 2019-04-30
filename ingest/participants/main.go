@@ -197,6 +197,7 @@ func ForOperation(
 				BalanceID: nil,
 			})
 		}
+	case xdr.OperationTypeManageAccountSpecificRule:
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

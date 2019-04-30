@@ -286,6 +286,11 @@ var messages = map[string]string{
 	"op_poll_not_started":                               "CreatePoll has not started yet",
 	"op_poll_ended":                                     "CreatePoll has ended, no votes can be accepted",
 	"op_vote_not_found":                                 "Vote to remove cannot be found",
+	"op_no_specific_rule_to_participate":                "There is no rule for sale participation for source account",
+	"op_specific_rule_forbids":                          "Existing rule forbids to participate in sale",
+	"op_exceeded_max_rules_size":                        "Not allowed to pass more rules than max size which set in key value",
+	"op_global_specific_rule_duplication":               "Not allowed to pass two or more global rules (without accountID)",
+	"op_account_specific_rule_duplication":              "Not allowed to pass identical or conflicting rules",
 }
 
 func getMessage(rawCode string) string {

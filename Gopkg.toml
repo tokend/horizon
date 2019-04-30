@@ -94,12 +94,14 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[constraint]]
+[[override]]
   name = "gitlab.com/tokend/go"
-  version = "3"
+  #version = "3"
+  branch = "feature/whitelist_management"
 
 [[constraint]]
-  version = "4"
+  #version = "4"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

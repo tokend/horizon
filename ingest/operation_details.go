@@ -354,6 +354,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		case xdr.ManageVoteActionRemove:
 			details["poll_id"] = op.Data.MustRemoveData().PollId
 		}
+	case xdr.OperationTypeManageAccountSpecificRule:
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

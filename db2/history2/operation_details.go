@@ -18,9 +18,10 @@ type OperationDetails struct {
 	CreateAccount              *CreateAccountDetails              `json:"create_account,omitempty"`
 	ManageAccountRule          *ManageAccountRuleDetails          `json:"manage_account_rule,omitempty"`
 	ManageAccountRole          *ManageAccountRoleDetails          `json:"manage_account_role,omitempty"`
-	ManageSigner               *ManageSignerDetails               `json:"manage_signer"`
-	ManageSignerRule           *ManageSignerRuleDetails           `json:"manage_signer_rule"`
-	ManageSignerRole           *ManageSignerRoleDetails           `json:"manage_signer_role"`
+	ManageAccountSpecificRule  *ManageAccountSpecificRuleDetails  `json:"manage_account_specific_rule,omitempty"`
+	ManageSigner               *ManageSignerDetails               `json:"manage_signer,omitempty"`
+	ManageSignerRule           *ManageSignerRuleDetails           `json:"manage_signer_rule,omitempty"`
+	ManageSignerRole           *ManageSignerRoleDetails           `json:"manage_signer_role,omitempty"`
 	ManageBalance              *ManageBalanceDetails              `json:"manage_balance,omitempty"`
 	ManageKeyValue             *ManageKeyValueDetails             `json:"manage_key_value,omitempty"`
 	ManageAsset                *ManageAssetDetails                `json:"manage_asset,omitempty"`
@@ -100,6 +101,20 @@ type UpdateAccountRuleDetails struct {
 	Action   xdr.AccountRuleAction   `json:"action"`
 	IsForbid bool                    `json:"is_forbid"`
 	Details  regources.Details       `json:"details"`
+}
+
+// ManageAccountRuleDetails - details of ManageAccountRuleOp
+type ManageAccountSpecificRuleDetails struct {
+	Action        xdr.ManageAccountSpecificRuleAction `json:"action"`
+	RuleID        uint64                              `json:"rule_id"`
+	CreateDetails *CreateAccountSpecificRuleDetails   `json:"create_details,omitempty"`
+}
+
+// UpdateAccountRuleDetails - details of new or updated rule
+type CreateAccountSpecificRuleDetails struct {
+	LedgerKey xdr.LedgerKey `json:"ledger_key"`
+	Forbids   bool          `json:"forbids"`
+	AccountID string        `json:"account_id"`
 }
 
 // ManageAccountRoleDetails - details of ManageAccountRoleOp

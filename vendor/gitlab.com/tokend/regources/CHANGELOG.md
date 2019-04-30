@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added 
+
+* `Owner` relation to `Balance` (ID of the owner's account)
+* `Horizon-State` resource for `/v3` endpoint (info regarding horizon and it's dependencies state)
+* `SubmitTransactionBody` resource for `POST /v3/transactions` endpoint (now possible to specify if we should wait for tx to be ingested)
+
 ## 4.1.0
 
 ### Added

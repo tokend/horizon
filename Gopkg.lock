@@ -495,7 +495,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:fcc88392992f583deee415ff6f13c32a7903d99461162bd45c5522ab39819fea"
+  branch = "feature/whitelist_management"
+  digest = "1:ee6459f31da6db926d2bc1107efe5138e210a2f88b2c8e6cb9bd6f92afa04090"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -513,8 +514,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "0e0a9e57a4a271207eb39aa52e946658d48ff261"
-  version = "v3.3.1"
+  revision = "bcfba86b6afb017caf4a997762707d6f5a09676a"
 
 [[projects]]
   branch = "master"
@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:9857e9b9d7ea6fce19d69329ae17ed1723382baab120d602faddc09b28dbf277"
+  branch = "master"
+  digest = "1:45fe09bbe22f5e576b6f5459982bf74d439bcc67f58dcfe53a20f24076691323"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "ebcf3409be3cd8c98a30e7ec14a6e002a3607672"
-  version = "v4.1.0"
+  revision = "5b1ecd7708d013d964d422d1511c4306aa22426e"
 
 [[projects]]
   branch = "master"
