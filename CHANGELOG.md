@@ -4,6 +4,9 @@
 * Tx submission system v2 with retry
 * `/v3/transactions` to submit txs
 
+### Fixed
+* Fixed `null` messages on failed transaction submit
+
 ## 3.3.0-x.0
 
 ### Added
@@ -49,7 +52,6 @@
 
 ### Added
 
-* `/v3/transactions` endpoint to submit transactions
 * `/v3/balances/{id}` endpoint
 * docs for `/v3/balances/{id}` endpoint
 
