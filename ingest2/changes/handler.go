@@ -34,6 +34,7 @@ func NewHandler(account accountStorage,
 	assetPair assetPairStorage,
 	poll pollStorage,
 	vote voteStorage,
+	accountSpecificRule accountSpecificRuleStorage,
 ) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request)
@@ -41,16 +42,18 @@ func NewHandler(account accountStorage,
 	assetPairHandler := newAssetPairHandler(assetPair)
 	pollHandlerInst := newPollHandler(poll)
 	voteHandlerInst := newVoteHandler(vote)
+	accountSpecificRuleHandlerInst := newAccountSpecificRuleHandler(accountSpecificRule)
 
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{
-			xdr.LedgerEntryTypeAccount:           newAccountHandler(account),
-			xdr.LedgerEntryTypeBalance:           newBalanceHandler(account, balance),
-			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
-			xdr.LedgerEntryTypeSale:              saleHandlerInst,
-			xdr.LedgerEntryTypeAssetPair:         assetPairHandler,
-			xdr.LedgerEntryTypePoll:              pollHandlerInst,
-			xdr.LedgerEntryTypeVote:              voteHandlerInst,
+			xdr.LedgerEntryTypeAccount:             newAccountHandler(account),
+			xdr.LedgerEntryTypeBalance:             newBalanceHandler(account, balance),
+			xdr.LedgerEntryTypeReviewableRequest:   reviewRequestHandlerInst,
+			xdr.LedgerEntryTypeSale:                saleHandlerInst,
+			xdr.LedgerEntryTypeAssetPair:           assetPairHandler,
+			xdr.LedgerEntryTypePoll:                pollHandlerInst,
+			xdr.LedgerEntryTypeVote:                voteHandlerInst,
+			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 		},
 		Update: map[xdr.LedgerEntryType]updatable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
@@ -59,10 +62,11 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypePoll:              pollHandlerInst,
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
-			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
-			xdr.LedgerEntryTypeSale:              saleHandlerInst,
-			xdr.LedgerEntryTypePoll:              pollHandlerInst,
-			xdr.LedgerEntryTypeVote:              voteHandlerInst,
+			xdr.LedgerEntryTypeReviewableRequest:   reviewRequestHandlerInst,
+			xdr.LedgerEntryTypeSale:                saleHandlerInst,
+			xdr.LedgerEntryTypePoll:                pollHandlerInst,
+			xdr.LedgerEntryTypeVote:                voteHandlerInst,
+			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 		},
 	}
 }
