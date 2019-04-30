@@ -189,7 +189,7 @@ func init() {
 	appInit.Add(
 		"web2.init",
 		initWebV2,
-		"app-context", "core-info", "memory_cache", "ledger-state", "txsub2",
+		"app-context", "core-info", "memory_cache", "ledger-state", "submitter_v2",
 	)
 
 	appInit.Add(
