@@ -2,12 +2,12 @@ package ingest2
 
 import (
 	"context"
-	"gitlab.com/distributed_lab/running"
 	"math"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/distributed_lab/running"
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ledger"
@@ -40,7 +40,7 @@ type Producer struct {
 	hLedgerProvider historyLedgerProvider
 	log             *logan.Entry
 
-	data          chan []LedgerBundle
+	data          chan LedgerBundle
 	currentLedger int32
 }
 
@@ -54,12 +54,12 @@ func NewProducer(txProvider txProvider, hLedgerProvider historyLedgerProvider, l
 }
 
 // Start - starts the Producer in new goroutine. Panics on initialization step if already started.
-func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger.SystemState) chan []LedgerBundle {
+func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger.SystemState) chan LedgerBundle {
 	if l.data != nil {
 		l.log.Panic("Already started")
 	}
 
-	l.data = make(chan []LedgerBundle, bufferSize)
+	l.data = make(chan LedgerBundle, bufferSize)
 	var err error
 	l.currentLedger, err = l.getLedgerSeqToStartFrom(ledgerState)
 	if err != nil {
@@ -77,20 +77,22 @@ func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger
 }
 
 func (l *Producer) checkForNewLedgers(ctx context.Context) error {
-	currentSeq, err := l.txProvider.GetLatestLedgerSeq()
+	latestLedger, err := l.txProvider.GetLatestLedgerSeq()
 	if err != nil {
 		return errors.Wrap(err, "failed to load current ledger sequence")
 	}
 
-	if l.currentLedger < currentSeq {
+	if latestLedger > l.currentLedger {
 		fromSeq := l.currentLedger + 1
-		toSeq := int32(math.Min(float64(currentSeq), float64(l.currentLedger + maxBatchSize)))
+		toSeq := int32(math.Min(float64(latestLedger), float64(l.currentLedger + maxBatchSize)))
 		batch, err := l.getBatch(fromSeq, toSeq)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to load batch")
 		}
 
-		l.data <- batch
+		for _, bundle := range batch {
+			l.data <- bundle
+		}
 		l.currentLedger = toSeq
 	}
 
@@ -111,7 +113,7 @@ func (l *Producer) getBatch(fromSeq int32, toSeq int32) ([]LedgerBundle, error) 
 	for _, header := range headers {
 		result = append(result, LedgerBundle{
 			Header: header,
-			Transactions: make([]core.Transaction, 0, len(txs)),
+			Transactions: make([]core.Transaction, 0, header.Data.MaxTxSetSize),
 		})
 	}
 

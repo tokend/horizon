@@ -36,14 +36,14 @@ type Handler interface {
 type Consumer struct {
 	log         *logan.Entry
 	dbTxManager dbTxManager
-	dataSource  <-chan []LedgerBundle
+	dataSource  <-chan LedgerBundle
 	handlers    []Handler
 	corer       corer
 }
 
 // NewConsumer - creates new instance of consumer
 func NewConsumer(log *logan.Entry, dbTxManager dbTxManager, corer corer, handlers []Handler,
-	dataSource <-chan []LedgerBundle) *Consumer {
+	dataSource <-chan LedgerBundle) *Consumer {
 	return &Consumer{
 		log:         log.WithField("service", "ingest_consumer"),
 		dbTxManager: dbTxManager,
@@ -87,11 +87,43 @@ func (c *Consumer) run(ctx context.Context) {
 }
 
 func (c *Consumer) readBatch(ctx context.Context) []LedgerBundle {
+	const maxBatchSize = 1000
+	bundles := c.readAtLeastOne(ctx)
+	for {
+		select {
+		case ledgerBundle, ok := <-c.dataSource:
+			if !ok {
+				return bundles
+			}
+
+			bundles = append(bundles, ledgerBundle)
+			if len(bundles) >= maxBatchSize {
+				return bundles
+			}
+
+		case <-ctx.Done():
+			return nil
+		default:
+			return bundles
+		}
+	}
+}
+
+func (c *Consumer) readAtLeastOne(ctx context.Context) []LedgerBundle {
 	select {
-	case batch := <-c.dataSource:
-		return batch
+	case bundle, ok := <-c.dataSource:
+		{
+			if !ok {
+				return nil
+			}
+
+			bundles := make([]LedgerBundle, 0, len(c.dataSource)+1)
+			bundles = append(bundles, bundle)
+			return bundles
+		}
 	case <-ctx.Done():
 		return nil
+
 	}
 }
 

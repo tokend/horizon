@@ -27,18 +27,24 @@ func NewTransactionQ(repo *db2.Repo) TransactionQ {
 	}
 }
 
+// FilterByLedgerSeq returns TransactionQ filtered by ledger sequence
 func (q TransactionQ) FilterByLedgerSeq(seq int32) TransactionQ {
 	q.selector = q.selector.Where("ledgerseq = ?", seq)
 	return q
 }
 
+// FilterByLedgerSeqRange returns TransactionQ filtered by range of ledger sequences, including boundaries.
 func (q TransactionQ) FilterByLedgerSeqRange(fromSeq int32, toSeq int32) TransactionQ {
 	q.selector = q.selector.Where("ledgerseq >= ? AND ledgerseq <= ?", fromSeq, toSeq)
 	return q
 }
 
+// GetByLedgerRange returns ordered slice of transaction filtered by range of ledger sequences, including boundaries.
+// Returns nil, nil if transactions do not exist
 func (q TransactionQ) GetByLedgerRange(fromSeq int32, toSeq int32) ([]Transaction, error) {
-	return q.FilterByLedgerSeqRange(fromSeq, toSeq).Select()
+	q.selector = q.FilterByLedgerSeqRange(fromSeq, toSeq).selector.
+		OrderBy("ledgerseq ASC")
+	return q.Select()
 }
 
 func (q TransactionQ) Get() (*Transaction, error) {

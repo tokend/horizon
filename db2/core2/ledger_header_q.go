@@ -45,8 +45,11 @@ func (q *LedgerHeaderQ) GetBySequence(seq int32) (*LedgerHeader, error) {
 	return &header, nil
 }
 
+// GetBySequenceRange returns ordered slice of ledger headers inside specified range of sequences, including boundaries.
+// Returns nil, nil if ledgerHeaders do not exist
 func (q *LedgerHeaderQ) GetBySequenceRange(fromSeq int32, toSeq int32) ([]LedgerHeader, error) {
-	query := q.selector.Where("ledgerseq >= ? AND ledgerseq <= ?", fromSeq, toSeq)
+	query := q.selector.Where("ledgerseq >= ? AND ledgerseq <= ?", fromSeq, toSeq).
+		OrderBy("ledgerseq ASC")
 	var headers []LedgerHeader
 	err := q.repo.Select(&headers, query)
 	if err != nil {
