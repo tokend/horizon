@@ -1,3 +1,7 @@
+## Unreleased
+### Fixed
+* Fixed `null` messages on failed transaction submit
+
 ## 3.3.0-x.0
 
 ### Added
