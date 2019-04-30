@@ -21,6 +21,7 @@ import (
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/sse"
+	txsub2 "gitlab.com/tokend/horizon/txsub/v2"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
 	graceful "gopkg.in/tylerb/graceful.v1"
@@ -39,6 +40,7 @@ type App struct {
 	ctx            context.Context
 	cancel         func()
 	submitter      *txsub.System
+	submitterV2    *txsub2.System
 	ingester       *ingest.System
 	ticks          *time.Ticker
 	CoreInfo       *corer.Info
@@ -76,14 +78,6 @@ func NewApp(config config.Config) (*App, error) {
 // the shutdown signals.
 func (a *App) Serve() {
 	a.web.router.Compile()
-	http.Handle("/v3/transactions", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "POST":
-			a.web.router.ServeHTTP(w, r)
-		default:
-			a.webV2.mux.ServeHTTP(w, r)
-		}
-	}))
 	http.Handle("/v3/", a.webV2.mux)
 	http.Handle("/", a.web.router)
 

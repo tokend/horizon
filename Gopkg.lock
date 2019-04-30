@@ -530,14 +530,14 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:299767654b9da880926b906b4c8b8517eb9fadf41f1ad8836cb72489636eb599"
+  digest = "1:45fe09bbe22f5e576b6f5459982bf74d439bcc67f58dcfe53a20f24076691323"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "90bfc9ddd2fa03872942144bb5712e322176fefb"
+  revision = "5b1ecd7708d013d964d422d1511c4306aa22426e"
 
 [[projects]]
   branch = "master"
@@ -648,6 +648,7 @@
     "github.com/go-errors/errors",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/goji/context",
+    "github.com/google/jsonapi",
     "github.com/guregu/null",
     "github.com/jmoiron/sqlx",
     "github.com/lann/squirrel",

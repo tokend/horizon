@@ -67,6 +67,8 @@ func initWebV2Middleware(app *App) {
 
 				return *app.CoreInfo
 			}),
+			ctx.SetSubmitter(app.submitterV2),
+			ctx.SetConfig(&app.config),
 		),
 		v2middleware.WebMetrics(app),
 	)
@@ -102,6 +104,8 @@ func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
 	m.Get("/v3", handlers.GetRoot)
+	m.Post("/v3/transactions", handlers.CreateTransaction)
+
 	m.Get("/v3/accounts/{id}", handlers.GetAccount)
 	m.Get("/v3/accounts/{id}/signers", handlers.GetAccountSigners)
 	m.Get("/v3/accounts/{id}/calculated_fees", handlers.GetCalculatedFees)
@@ -185,7 +189,7 @@ func init() {
 	appInit.Add(
 		"web2.init",
 		initWebV2,
-		"app-context", "core-info", "memory_cache", "ledger-state",
+		"app-context", "core-info", "memory_cache", "ledger-state", "submitter_v2",
 	)
 
 	appInit.Add(
