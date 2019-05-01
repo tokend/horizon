@@ -18,6 +18,9 @@
           type: integer
           format: int64
           example: 10
+      - $ref: '#/components/schemas/pageCursorParam'
+      - $ref: '#/components/schemas/pageLimitParam'
+      - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
         description: participation exists
@@ -27,8 +30,9 @@
               type: object
               properties:
                 data:
-                  type: object
-                  $ref: '#/components/schemas/SaleParticipation'
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SaleParticipation'
       400:
         description: bad input parameter
         content:

@@ -7,13 +7,13 @@ import (
 )
 
 // GetSaleList - represents params to be specified by user for getSaleList handler
-type GetSaleList struct {
+type GetSaleListForAccount struct {
 	SalesBase
-	PageParams *db2.OffsetPageParams
+	PageParams *db2.CursorPageParams
 }
 
-// NewGetSaleList returns new instance of GetSaleList request
-func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
+// NewGetSaleListForAccount returns new instance of GetSaleListForAccount request
+func NewGetSaleListForAccount(r *http.Request) (*GetSaleListForAccount, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeSaleListAll,
 		supportedFilters:  filterTypeSaleListAll,
@@ -22,12 +22,12 @@ func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	pageParams, err := b.getCursorBasedPageParams()
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetSaleList{
+	request := GetSaleListForAccount{
 		SalesBase: SalesBase{
 			base: b,
 		},

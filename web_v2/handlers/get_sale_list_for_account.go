@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+
+	"gitlab.com/tokend/horizon/db2/core2"
 
 	"gitlab.com/tokend/horizon/db2/history2"
 
@@ -9,14 +12,13 @@ import (
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-// GetSaleList - processes request to get the list of sales
-func GetSaleList(w http.ResponseWriter, r *http.Request) {
+// GetSaleListForAccount - processes request to get the list of sales
+func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 	historyRepo := ctx.HistoryRepo(r)
 	coreRepo := ctx.CoreRepo(r)
 
@@ -25,7 +27,8 @@ func GetSaleList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	handler := getSaleListHandler{
+	handler := getSaleListForAccountHandler{
+		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(historyRepo),
 		salesBaseHandler: salesBaseHandler{
 			SalesQ:           history2.NewSalesQ(historyRepo),
 			AssetsQ:          core2.NewAssetsQ(coreRepo),
@@ -34,13 +37,13 @@ func GetSaleList(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	request, err := requests.NewGetSaleList(r)
+	request, err := requests.NewGetSaleListForAccount(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	result, err := handler.GetSaleList(request)
+	result, err := handler.GetSaleListForAccount(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get sale list", logan.F{
 			"request": request,
@@ -52,22 +55,23 @@ func GetSaleList(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, result)
 }
 
-type getSaleListHandler struct {
+type getSaleListForAccountHandler struct {
 	salesBaseHandler
+	AccountSpecificRulesQ history2.AccountSpecificRulesQ
 }
 
-// GetSaleList returns the list of assets with related resources
-func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regources.SalesResponse, error) {
+// GetSaleListForAccount returns the list of assets with related resources
+func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.GetSaleListForAccount) (*regources.SalesResponse, error) {
 	q := request.ApplyFilters(h.SalesQ)
 
-	historySales, err := q.Page(*request.PageParams).Select()
+	historySales, err := q.CursorPage(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get asset list")
 	}
-
+	last := fmt.Sprintf("%d", historySales[len(historySales)-1].ID)
 	response := &regources.SalesResponse{
 		Data:  make([]regources.Sale, 0, len(historySales)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetCursorLinks(*request.PageParams, last),
 	}
 
 	err = h.populateResponse(historySales, request.SalesBase, response)

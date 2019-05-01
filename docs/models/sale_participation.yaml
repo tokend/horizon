@@ -4,11 +4,11 @@ SaleParticipationKey:
   properties:
     id:
       type: string
-      description: "Address of participant"
+      description: "ID of sale participation"
       example: 42
     type:
       enum:
-        - "sales-participation"
+        - "sale-participation"
 
 SaleParticipation:
   allOf:
@@ -22,6 +22,12 @@ SaleParticipation:
           quote_asset:
             type: object
             description: "quote asset of the participation"
+            properties:
+              data:
+                $ref: '#/components/schemas/AssetKey'
+          base_asset:
+            type: object
+            description: "base asset of the participation"
             properties:
               data:
                 $ref: '#/components/schemas/AssetKey'
@@ -39,4 +45,4 @@ SaleParticipation:
             type: string
             example: "15.000000"
             format: Amount
-            description: "defines the amount of participation"
+            description: "defines the amount of participation in quote asset"

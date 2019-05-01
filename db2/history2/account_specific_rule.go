@@ -13,6 +13,7 @@ import (
 type AccountSpecificRule struct {
 	ID        uint64        `db:"id"`
 	Address   *string       `db:"address"`
+	Forbids   bool          `db:"forbids"`
 	EntryType int32         `db:"entry_type"`
 	Key       xdr.LedgerKey `db:"key"`
 }

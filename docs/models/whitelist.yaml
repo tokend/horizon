@@ -1,18 +1,17 @@
 SaleWhitelistKey:
   type: object
   required:
-    - id
-    - type
+      - id
+      - type
   properties:
-    id:
-      type: integer
-      format: uint64
-      description: "ID of the sale"
-      example: 42
-    type:
-      type: string
-      enum:
-      - "sales-whitelist"
+      id:
+        type: string
+        description: "Address of whitelisted account"
+        example: "GAULFBQKQTFHHHZEIRMYVCGTY47FKWEW7P2BY2YT45HAEODAIJUJH23T"
+      type:
+        type: string
+        enum:
+        - "sale-whitelist"
 
 SaleWhitelist:
   allOf:

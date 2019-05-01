@@ -38,6 +38,12 @@ func NewSalesQ(repo *db2.Repo) SalesQ {
 	}
 }
 
+//func (q SalesQ) Whitelisted(address string) SalesQ {
+//	q.selector = q.selector.LeftJoin("account_specific_rules sr ON sales.id = sr.key#>>'{sale,saleID}").
+//		Where("sales.")
+//	return q
+//}
+
 // FilterByID - returns q with filter by sale ID
 func (q SalesQ) FilterByID(id uint64) SalesQ {
 	q.selector = q.selector.Where("sales.id = ?", id)
@@ -124,6 +130,12 @@ func (q SalesQ) FilterByMaxSoftCap(value uint64) SalesQ {
 
 // Page - returns Q with specified limit and offset params
 func (q SalesQ) Page(params db2.OffsetPageParams) SalesQ {
+	q.selector = params.ApplyTo(q.selector, "sales.id")
+	return q
+}
+
+// CursorPage - returns Q with specified limit and offset params
+func (q SalesQ) CursorPage(params db2.CursorPageParams) SalesQ {
 	q.selector = params.ApplyTo(q.selector, "sales.id")
 	return q
 }

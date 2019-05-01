@@ -3,6 +3,9 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/google/jsonapi"
+	"gitlab.com/tokend/horizon/web_v2/resources"
+
 	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/tokend/horizon/db2/history2"
@@ -15,8 +18,8 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/requests"
 )
 
-func GetSaleWhiteList(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewGetSaleWhiteList(r)
+func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
+	request, err := requests.NewGetSaleWhitelist(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
@@ -40,6 +43,10 @@ func GetSaleWhiteList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result, err := handler.getSaleWhiteList(request)
+	if errObj, ok := err.(*jsonapi.ErrorObject); ok {
+		ape.RenderErr(w, errObj)
+		return
+	}
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get whitelist", logan.F{
 			"request": request,
@@ -63,23 +70,30 @@ type getSaleWhiteListHandler struct {
 }
 
 // GetSale returns sale with related resources
-func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhitelist) (*regources.SaleWhitelistResponse, error) {
-	rules, err := h.AccountSpecificRulesQ.ForSale(request.SaleID)
+func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhitelist) (*regources.SaleWhitelistsResponse, error) {
+	rules, err := h.AccountSpecificRulesQ.
+		ForSale(request.SaleID).
+		Permission(false).
+		Page(*request.PageParams).
+		Select()
+
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account specific rules for sale")
 	}
 
-	whitelist := make([]string, 0, len(rules))
-	for _, rule := range rules {
-		if rule.Address != nil {
-			whitelist = append(whitelist, *rule.Address)
-		}
+	if rules == nil {
+		return nil, nil
 	}
 
-	//resource := resources.*record)
-	//response := &regources.SaleWhiteListResponse{
-	//	Data: resource,
-	//}
+	response := &regources.SaleWhitelistsResponse{}
 
-	return nil, nil
+	for _, rule := range rules {
+		if rule.Address == nil {
+			continue
+		}
+
+		response.Data = append(response.Data, resources.NewSaleWhitelist(request.SaleID, *rule.Address))
+	}
+
+	return response, nil
 }

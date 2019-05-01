@@ -1,13 +1,18 @@
 package requests
 
-import "net/http"
+import (
+	"net/http"
+
+	"gitlab.com/tokend/horizon/db2"
+)
 
 type GetSaleWhitelist struct {
 	*base
-	SaleID uint64
+	SaleID     uint64
+	PageParams *db2.CursorPageParams
 }
 
-func NewGetSaleWhiteList(r *http.Request) (*GetSaleWhitelist, error) {
+func NewGetSaleWhitelist(r *http.Request) (*GetSaleWhitelist, error) {
 	b, err := newBase(r, baseOpts{})
 	if err != nil {
 		return nil, err
