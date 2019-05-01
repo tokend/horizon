@@ -7,7 +7,7 @@ import (
 )
 
 type manageAccountSpecificRuleOpHandler struct {
-	effectsProvider
+	manageOfferOpHandler *manageOfferOpHandler
 }
 
 // Details returns details about bind external system account operation
@@ -43,4 +43,22 @@ func (h *manageAccountSpecificRuleOpHandler) Details(op rawOperation,
 	}
 
 	return opDetails, nil
+}
+
+func (h *manageAccountSpecificRuleOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
+) ([]history2.ParticipantEffect, error) {
+	opData := opBody.MustManageAccountSpecificRuleOp().Data
+
+	switch opData.Action {
+	case xdr.ManageAccountSpecificRuleActionCreate:
+		return []history2.ParticipantEffect{h.manageOfferOpHandler.Participant(sourceAccountID)}, nil
+	case xdr.ManageAccountSpecificRuleActionRemove:
+		return h.manageOfferOpHandler.getDeletedOffersEffect(ledgerChanges), nil
+	default:
+		return nil, errors.From(errors.New("unexpected manage account specific rule action"),
+			map[string]interface{}{
+				"action_i": int32(opData.Action),
+			})
+	}
 }

@@ -131,7 +131,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeManageAccountSpecificRule: &manageAccountSpecificRuleOpHandler{
-				effectsProvider: effectsBaseHandler,
+				manageOfferOpHandler: manageOfferOpHandlerInst,
 			},
 			xdr.OperationTypeManageSigner: &manageSignerOpHandler{
 				effectsProvider: effectsBaseHandler,

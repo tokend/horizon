@@ -496,7 +496,7 @@
 
 [[projects]]
   branch = "feature/whitelist_management"
-  digest = "1:ee6459f31da6db926d2bc1107efe5138e210a2f88b2c8e6cb9bd6f92afa04090"
+  digest = "1:01e9a3dc65107307324558c4080ab9a62f43ad137620ff843775ba0e9dd7c1f9"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -514,7 +514,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "bcfba86b6afb017caf4a997762707d6f5a09676a"
+  revision = "d4e6470efc9c422b09cee8d138519aac0060bb8f"
 
 [[projects]]
   branch = "master"
