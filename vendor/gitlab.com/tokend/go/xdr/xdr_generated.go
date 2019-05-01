@@ -1,4 +1,4 @@
-// revision: 96983557e5b06c6cc8679ac316c0d5fd6ace094f
+// revision: 6b712ee855f480653156067ad23cdbd35c589595
 // branch:   feature/whitelist_management
 // Package xdr is generated from:
 //
@@ -18928,19 +18928,25 @@ type ManageAccountSpecificRuleOp struct {
 //        NOT_AUTHORIZED = -3,
 //        ALREADY_EXISTS = -4,
 //        REVERSED_ALREADY_EXISTS = -5,
-//        ENTRY_TYPE_NOT_SUPPORTED = -6
+//        ENTRY_TYPE_NOT_SUPPORTED = -6,
+//        ACCOUNT_NOT_FOUND = -7,
+//        SPECIFIC_RULE_NOT_SUPPORTED = -8,
+//        REMOVING_GLOBAL_RULE_FORBIDDEN = -9
 //    };
 //
 type ManageAccountSpecificRuleResultCode int32
 
 const (
-	ManageAccountSpecificRuleResultCodeSuccess               ManageAccountSpecificRuleResultCode = 0
-	ManageAccountSpecificRuleResultCodeNotFound              ManageAccountSpecificRuleResultCode = -1
-	ManageAccountSpecificRuleResultCodeSaleNotFound          ManageAccountSpecificRuleResultCode = -2
-	ManageAccountSpecificRuleResultCodeNotAuthorized         ManageAccountSpecificRuleResultCode = -3
-	ManageAccountSpecificRuleResultCodeAlreadyExists         ManageAccountSpecificRuleResultCode = -4
-	ManageAccountSpecificRuleResultCodeReversedAlreadyExists ManageAccountSpecificRuleResultCode = -5
-	ManageAccountSpecificRuleResultCodeEntryTypeNotSupported ManageAccountSpecificRuleResultCode = -6
+	ManageAccountSpecificRuleResultCodeSuccess                     ManageAccountSpecificRuleResultCode = 0
+	ManageAccountSpecificRuleResultCodeNotFound                    ManageAccountSpecificRuleResultCode = -1
+	ManageAccountSpecificRuleResultCodeSaleNotFound                ManageAccountSpecificRuleResultCode = -2
+	ManageAccountSpecificRuleResultCodeNotAuthorized               ManageAccountSpecificRuleResultCode = -3
+	ManageAccountSpecificRuleResultCodeAlreadyExists               ManageAccountSpecificRuleResultCode = -4
+	ManageAccountSpecificRuleResultCodeReversedAlreadyExists       ManageAccountSpecificRuleResultCode = -5
+	ManageAccountSpecificRuleResultCodeEntryTypeNotSupported       ManageAccountSpecificRuleResultCode = -6
+	ManageAccountSpecificRuleResultCodeAccountNotFound             ManageAccountSpecificRuleResultCode = -7
+	ManageAccountSpecificRuleResultCodeSpecificRuleNotSupported    ManageAccountSpecificRuleResultCode = -8
+	ManageAccountSpecificRuleResultCodeRemovingGlobalRuleForbidden ManageAccountSpecificRuleResultCode = -9
 )
 
 var ManageAccountSpecificRuleResultCodeAll = []ManageAccountSpecificRuleResultCode{
@@ -18951,6 +18957,9 @@ var ManageAccountSpecificRuleResultCodeAll = []ManageAccountSpecificRuleResultCo
 	ManageAccountSpecificRuleResultCodeAlreadyExists,
 	ManageAccountSpecificRuleResultCodeReversedAlreadyExists,
 	ManageAccountSpecificRuleResultCodeEntryTypeNotSupported,
+	ManageAccountSpecificRuleResultCodeAccountNotFound,
+	ManageAccountSpecificRuleResultCodeSpecificRuleNotSupported,
+	ManageAccountSpecificRuleResultCodeRemovingGlobalRuleForbidden,
 }
 
 var manageAccountSpecificRuleResultCodeMap = map[int32]string{
@@ -18961,6 +18970,9 @@ var manageAccountSpecificRuleResultCodeMap = map[int32]string{
 	-4: "ManageAccountSpecificRuleResultCodeAlreadyExists",
 	-5: "ManageAccountSpecificRuleResultCodeReversedAlreadyExists",
 	-6: "ManageAccountSpecificRuleResultCodeEntryTypeNotSupported",
+	-7: "ManageAccountSpecificRuleResultCodeAccountNotFound",
+	-8: "ManageAccountSpecificRuleResultCodeSpecificRuleNotSupported",
+	-9: "ManageAccountSpecificRuleResultCodeRemovingGlobalRuleForbidden",
 }
 
 var manageAccountSpecificRuleResultCodeShortMap = map[int32]string{
@@ -18971,16 +18983,22 @@ var manageAccountSpecificRuleResultCodeShortMap = map[int32]string{
 	-4: "already_exists",
 	-5: "reversed_already_exists",
 	-6: "entry_type_not_supported",
+	-7: "account_not_found",
+	-8: "specific_rule_not_supported",
+	-9: "removing_global_rule_forbidden",
 }
 
 var manageAccountSpecificRuleResultCodeRevMap = map[string]int32{
-	"ManageAccountSpecificRuleResultCodeSuccess":               0,
-	"ManageAccountSpecificRuleResultCodeNotFound":              -1,
-	"ManageAccountSpecificRuleResultCodeSaleNotFound":          -2,
-	"ManageAccountSpecificRuleResultCodeNotAuthorized":         -3,
-	"ManageAccountSpecificRuleResultCodeAlreadyExists":         -4,
-	"ManageAccountSpecificRuleResultCodeReversedAlreadyExists": -5,
-	"ManageAccountSpecificRuleResultCodeEntryTypeNotSupported": -6,
+	"ManageAccountSpecificRuleResultCodeSuccess":                     0,
+	"ManageAccountSpecificRuleResultCodeNotFound":                    -1,
+	"ManageAccountSpecificRuleResultCodeSaleNotFound":                -2,
+	"ManageAccountSpecificRuleResultCodeNotAuthorized":               -3,
+	"ManageAccountSpecificRuleResultCodeAlreadyExists":               -4,
+	"ManageAccountSpecificRuleResultCodeReversedAlreadyExists":       -5,
+	"ManageAccountSpecificRuleResultCodeEntryTypeNotSupported":       -6,
+	"ManageAccountSpecificRuleResultCodeAccountNotFound":             -7,
+	"ManageAccountSpecificRuleResultCodeSpecificRuleNotSupported":    -8,
+	"ManageAccountSpecificRuleResultCodeRemovingGlobalRuleForbidden": -9,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -45141,4 +45159,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "96983557e5b06c6cc8679ac316c0d5fd6ace094f"
+var Revision = "6b712ee855f480653156067ad23cdbd35c589595"
