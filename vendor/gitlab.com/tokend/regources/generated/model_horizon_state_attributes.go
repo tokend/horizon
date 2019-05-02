@@ -10,6 +10,8 @@ import (
 
 type HorizonStateAttributes struct {
 	Core LedgerInfo `json:"core"`
+	// version of the TokenD core to which this horizon is connected
+	CoreVersion string `json:"core_version"`
 	// current horizon time
 	CurrentTime time.Time `json:"current_time"`
 	// current horizon time in unix timestamp
@@ -28,6 +30,4 @@ type HorizonStateAttributes struct {
 	TxExpirationPeriod int64 `json:"tx_expiration_period"`
 	// revision of xdr used by Horizon
 	XdrRevision string `json:"xdr_revision"`
-	// version of the TokenD core to which this horizon is connected
-	CoreVersion string `json:"core_version"`
 }

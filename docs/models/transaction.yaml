@@ -76,3 +76,16 @@ TransactionResponseMeta:
     latest_ledger_close_time:
       type: string
       format: date-time
+
+SubmitTransactionBody:
+  type: object
+  required: [tx, wait_for_ingest]
+  properties:
+    tx:
+      type: string
+      description: "base-64 encoded XDR representation of transaction itself"
+      example: "AAAAAEHCX5tmu0fXlkE9GLIOLO185ih5QI7V+PZ1mtb1tnzSA59veKFdUjsAAAAAAAAAAAAAAABchp31A..."
+    wait_for_ingest:
+      type: boolean
+      description: "defines whether to wait for ingest of transaction or not"
+      default: false
