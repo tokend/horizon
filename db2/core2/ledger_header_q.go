@@ -10,19 +10,28 @@ import (
 // LedgerHeaderQ - helper struct to get ledger headers from db
 type LedgerHeaderQ struct {
 	repo *db2.Repo
+	selector sq.SelectBuilder
 }
 
 // NewLedgerHeaderQ - creates new instance of LedgerHeaderQ
 func NewLedgerHeaderQ(repo *db2.Repo) *LedgerHeaderQ {
 	return &LedgerHeaderQ{
 		repo: repo,
+		selector: sq.Select(
+			"l.ledgerhash",
+			"l.prevhash",
+			"l.bucketlisthash",
+			"l.closetime",
+			"l.ledgerseq",
+			"l.version",
+			"l.data",
+			).From("ledgerheaders l"),
 	}
 }
 
 // GetBySequence returns *core.LedgerHeader by its sequence. Returns nil, nil if ledgerHeader does not exists
 func (q *LedgerHeaderQ) GetBySequence(seq int32) (*LedgerHeader, error) {
-	query := sq.Select("l.ledgerhash, l.prevhash, l.bucketlisthash, l.closetime, l.ledgerseq, l.version, l.data").
-		From("ledgerheaders l").Where("ledgerseq = ?", seq)
+	query := q.selector.Where("ledgerseq = ?", seq)
 	var header LedgerHeader
 	err := q.repo.Get(&header, query)
 	if err != nil {
@@ -34,6 +43,24 @@ func (q *LedgerHeaderQ) GetBySequence(seq int32) (*LedgerHeader, error) {
 	}
 
 	return &header, nil
+}
+
+// GetBySequenceRange returns ordered slice of ledger headers inside specified range of sequences, including boundaries.
+// Returns nil, nil if ledgerHeaders do not exist
+func (q *LedgerHeaderQ) GetBySequenceRange(fromSeq int32, toSeq int32) ([]LedgerHeader, error) {
+	query := q.selector.Where("ledgerseq >= ? AND ledgerseq <= ?", fromSeq, toSeq).
+		OrderBy("ledgerseq ASC")
+	var headers []LedgerHeader
+	err := q.repo.Select(&headers, query)
+	if err != nil {
+		if q.repo.NoRows(err) {
+			return nil, nil
+		}
+
+		return nil, errors.Wrap(err, "failed to load ledger by sequence", logan.F{"fromSeq": fromSeq, "toSeq": toSeq})
+	}
+
+	return headers, nil
 }
 
 // GetLatestLedgerSeq - returns latest ledger sequence available in DB

@@ -27,14 +27,30 @@ func NewTransactionQ(repo *db2.Repo) TransactionQ {
 	}
 }
 
+// FilterByLedgerSeq returns TransactionQ filtered by ledger sequence
 func (q TransactionQ) FilterByLedgerSeq(seq int32) TransactionQ {
 	q.selector = q.selector.Where("ledgerseq = ?", seq)
 	return q
 }
 
-// GetByLedger returns slice of transaction for given ledger sequence. Returns empty slice, nil if there is no transactions
-func (q TransactionQ) GetByLedger(seq int32) ([]Transaction, error) {
-	return q.FilterByLedgerSeq(seq).Select()
+// FilterByLedgerSeqRange returns TransactionQ filtered by range of ledger sequences, including boundaries.
+func (q TransactionQ) FilterByLedgerSeqRange(fromSeq int32, toSeq int32) TransactionQ {
+	q.selector = q.selector.Where("ledgerseq >= ? AND ledgerseq <= ?", fromSeq, toSeq)
+	return q
+}
+
+// OrderByLedgerSeq - returns TransactionQ with ordered by sequence
+func (q TransactionQ) OrderByLedgerSeq() TransactionQ {
+	q.selector = q.selector.OrderBy("ledgerseq ASC")
+	return q
+}
+
+// GetByLedgerRange returns ordered slice of transaction filtered by range of ledger sequences, including boundaries.
+// Returns nil, nil if transactions do not exist
+func (q TransactionQ) GetByLedgerRange(fromSeq int32, toSeq int32) ([]Transaction, error) {
+	return q.FilterByLedgerSeqRange(fromSeq, toSeq).
+		OrderByLedgerSeq().
+		Select()
 }
 
 func (q TransactionQ) Get() (*Transaction, error) {
