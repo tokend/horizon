@@ -27,6 +27,7 @@ type Sale struct {
 	Details           regources.Details   `db:"details"`
 	QuoteAssets       SaleQuoteAssets     `db:"quote_assets"`
 	State             regources.SaleState `db:"state"`
+	Version           int32               `db:"version"`
 }
 
 //SaleQuoteAssets - assets allowed to invest in sale

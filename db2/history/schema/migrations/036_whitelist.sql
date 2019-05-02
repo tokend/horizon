@@ -21,7 +21,10 @@ create table sale_participation (
     primary key (id)
 );
 
+alter table sales add column version int not null default 0;
+
 -- +migrate Down
 
-drop table if exists account_specific_rules cascade;
+alter table sales drop column version;
 drop table if exists sale_participation cascade;
+drop table if exists account_specific_rules cascade;

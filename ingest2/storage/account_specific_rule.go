@@ -22,10 +22,10 @@ func NewAccountSpecificRules(repo *db2.Repo) *AccountSpecificRules {
 
 //Insert - stores account specific rule into db
 func (q *AccountSpecificRules) Insert(rule history2.AccountSpecificRule) error {
-	columns := []string{"id", "address", "entry_type", "key"}
+	columns := []string{"id", "address", "entry_type", "forbids", "key"}
 	sql := sq.Insert("account_specific_rules").
 		Columns(columns...).
-		Values(rule.ID, rule.Address, rule.EntryType, rule.Key)
+		Values(rule.ID, rule.Address, rule.EntryType, rule.Forbids, rule.Key)
 
 	_, err := q.repo.Exec(sql)
 	if err != nil {

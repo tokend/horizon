@@ -107,3 +107,13 @@ func (h *getSaleParticipationHandler) getSaleParticipation(sale *history2.Sale, 
 	}
 	return response, nil
 }
+
+func (h *getSaleParticipationHandler) PopulateLinks(
+	response *regources.SaleParticipationsResponse, request *requests.GetSaleParticipation,
+) {
+	if len(response.Data) > 0 {
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+	} else {
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
+	}
+}

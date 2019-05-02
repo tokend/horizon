@@ -47,7 +47,7 @@ func (q AccountSpecificRulesQ) Permission(forbids bool) AccountSpecificRulesQ {
 }
 
 func (q AccountSpecificRulesQ) ForSale(saleID uint64) AccountSpecificRulesQ {
-	q.selector = q.selector.Where("sr.key#>>'{sale,saleID} = ?", saleID)
+	q.selector = q.selector.Where("sr.key#>>'{sale,saleID}' = ?", saleID)
 	return q
 }
 

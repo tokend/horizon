@@ -28,11 +28,16 @@ type participationStorage interface {
 type saleHandler struct {
 	storage       saleStorage
 	participation participationStorage
+	specificRule  accountSpecificRuleStorage
 }
 
-func newSaleHandler(storage saleStorage) *saleHandler {
+func newSaleHandler(storage saleStorage,
+	participation participationStorage,
+	specificRule accountSpecificRuleStorage) *saleHandler {
 	return &saleHandler{
-		storage: storage,
+		storage:       storage,
+		participation: participation,
+		specificRule:  specificRule,
 	}
 }
 
@@ -135,7 +140,8 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		BaseHardCap:    regources.Amount(raw.MaxAmountToBeSold),
 		SaleType:       saleType,
 		// if sale still exists in core db - it is open
-		State: regources.SaleStateOpen,
+		State:   regources.SaleStateOpen,
+		Version: int32(raw.Ext.V),
 	}, nil
 }
 

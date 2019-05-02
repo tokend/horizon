@@ -22,9 +22,14 @@ func NewGetSaleWhitelist(r *http.Request) (*GetSaleWhitelist, error) {
 	if err != nil {
 		return nil, err
 	}
+	pageParams, err := b.getCursorBasedPageParams()
+	if err != nil {
+		return nil, err
+	}
 
 	return &GetSaleWhitelist{
-		base:   b,
-		SaleID: id,
+		base:       b,
+		SaleID:     id,
+		PageParams: pageParams,
 	}, nil
 }

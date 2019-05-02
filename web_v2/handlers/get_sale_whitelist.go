@@ -95,5 +95,17 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 		response.Data = append(response.Data, resources.NewSaleWhitelist(request.SaleID, *rule.Address))
 	}
 
+	h.PopulateLinks(response, request)
+
 	return response, nil
+}
+
+func (h *getSaleWhiteListHandler) PopulateLinks(
+	response *regources.SaleWhitelistsResponse, request *requests.GetSaleWhitelist,
+) {
+	if len(response.Data) > 0 {
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+	} else {
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
+	}
 }

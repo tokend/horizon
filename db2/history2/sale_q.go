@@ -3,6 +3,8 @@ package history2
 import (
 	"time"
 
+	"gitlab.com/tokend/go/xdr"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
@@ -38,11 +40,17 @@ func NewSalesQ(repo *db2.Repo) SalesQ {
 	}
 }
 
-//func (q SalesQ) Whitelisted(address string) SalesQ {
-//	q.selector = q.selector.LeftJoin("account_specific_rules sr ON sales.id = sr.key#>>'{sale,saleID}").
-//		Where("sales.")
-//	return q
-//}
+func (q SalesQ) Whitelisted(address string) SalesQ {
+	subQuery := sq.StatementBuilder.
+		Select("(sr.key#>>'{sale,saleID}')::int").
+		From("account_specific_rules sr").
+		Where(sq.Or{sq.Expr("sr.address = ?", address), sq.Expr("sr.address is null")}).
+		GroupBy("sr.key#>>'{sale,saleID}'").Having("bool_and(not sr.forbids)").
+		Prefix("sales.id in (").
+		Suffix(")")
+	q.selector = q.selector.Where(subQuery.Suffix(" or sales.version < ?", int32(xdr.LedgerVersionAddSaleWhitelists)))
+	return q
+}
 
 // FilterByID - returns q with filter by sale ID
 func (q SalesQ) FilterByID(id uint64) SalesQ {

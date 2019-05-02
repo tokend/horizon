@@ -23,8 +23,14 @@ func NewGetSaleParticipation(r *http.Request) (*GetSaleParticipation, error) {
 		return nil, err
 	}
 
+	pageParams, err := b.getCursorBasedPageParams()
+	if err != nil {
+		return nil, err
+	}
+
 	return &GetSaleParticipation{
-		base:   b,
-		SaleID: id,
+		base:       b,
+		SaleID:     id,
+		PageParams: pageParams,
 	}, nil
 }

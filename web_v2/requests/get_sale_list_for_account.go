@@ -9,6 +9,7 @@ import (
 // GetSaleList - represents params to be specified by user for getSaleList handler
 type GetSaleListForAccount struct {
 	SalesBase
+	Address    string
 	PageParams *db2.CursorPageParams
 }
 
@@ -27,7 +28,13 @@ func NewGetSaleListForAccount(r *http.Request) (*GetSaleListForAccount, error) {
 		return nil, err
 	}
 
+	address, err := newAccountAddress(b, "id")
+	if err != nil {
+		return nil, err
+	}
+
 	request := GetSaleListForAccount{
+		Address: address,
 		SalesBase: SalesBase{
 			base: b,
 		},
