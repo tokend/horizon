@@ -43,8 +43,20 @@ func (q SaleParticipationQ) GetByID(id uint64) (*SaleParticipation, error) {
 }
 
 // FilterByOwner - returns q with filter by participant
-func (q SaleParticipationQ) FilterByAddress(address string) SaleParticipationQ {
+func (q SaleParticipationQ) FilterByParticipant(address string) SaleParticipationQ {
 	q.selector = q.selector.Where("sp.participant_id = ?", address)
+	return q
+}
+
+// FilterByBaseAsset - returns q with filter by base asset
+func (q SaleParticipationQ) FilterByBaseAsset(asset string) SaleParticipationQ {
+	q.selector = q.selector.Where("sp.base_asset = ?", asset)
+	return q
+}
+
+// FilterByBaseAsset - returns q with filter by base asset
+func (q SaleParticipationQ) FilterByQuoteAsset(asset string) SaleParticipationQ {
+	q.selector = q.selector.Where("sp.quote_asset = ?", asset)
 	return q
 }
 

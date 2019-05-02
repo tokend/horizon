@@ -99,9 +99,9 @@
   #version = "3"
   branch = "feature/whitelist_management"
 
-[[constraint]]
+[[override]]
   #version = "4"
-  branch = "master"
+  branch = "feature/whitelist_management"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

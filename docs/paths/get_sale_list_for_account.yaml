@@ -4,7 +4,7 @@
       - Crowd Investing
     summary: Sale List for account
     description: |
-                  Allows getting a filtered list of `Sale` in to which account can invest with corresponding details.
+                  Allows getting a filtered list of `Sale` with corresponding details into which account can invest.
     operationId: getSales
     parameters:
     - name: filter[owner]
@@ -155,7 +155,7 @@
           - base_asset
           - quote_assets
           - default_quote_asset
-    - $ref: '#/components/schemas/pageNumberParam'
+    - $ref: '#/components/schemas/pageCursorParam'
     - $ref: '#/components/schemas/pageLimitParam'
     - $ref: '#/components/schemas/sortingParam'
     responses:
@@ -185,11 +185,11 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/accounts/{id}/sales?include=default_quote_asset&page[number]=2&page[limit]=15"
+                      example: "/v3/accounts/{id}/sales?include=default_quote_asset&?page[cursor]=1&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/accounts/{id}/sales?include=default_quote_asset&page[number]=1&page[limit]=15"
+                      example: "/v3/accounts/{id}/sales?include=default_quote_asset&?page[cursor]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

@@ -113,4 +113,5 @@ const (
 	REQUEST_DETAILS_UPDATE_SALE_DETAILS                     ResourceType = "request-details-update-sale-details"
 	REQUEST_DETAILS_UPDATE_SALE_END_TIME                    ResourceType = "request-details-update-sale-end-time"
 	REQUEST_DETAILS_WITHDRAWAL                              ResourceType = "request-details-withdrawal"
+	HORIZON_STATE                                           ResourceType = "horizon-state"
 )

@@ -18,6 +18,37 @@
           type: integer
           format: int64
           example: 10
+      - name: filter[participant]
+        in: query
+        description: |
+          Filters sale participation by a specified participants's account address.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[quote_asset]
+        in: query
+        description: |
+          Filters sale participations by a specified quote asset.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          example: "BTC36174"
+      - name: include
+        in: query
+        description: |
+          Relationships that may be used for the included parameter.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          enum:
+            - base_asset
+            - quote_asset
       - $ref: '#/components/schemas/pageCursorParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
@@ -33,6 +64,22 @@
                   type: array
                   items:
                     $ref: '#/components/schemas/SaleParticipation'
+                included:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Asset'
+                links:
+                  type: object
+                  description: "Provides links for pagination"
+                  properties:
+                    next:
+                      type: string
+                      description: "link to the next page"
+                      example: "/v3/sales/{id}/relationships/participation?page[cursor]=1&page[limit]=15"
+                    self:
+                      type: string
+                      description: "link to the current page"
+                      example: "/v3/sales/{id}/relationships/participation?page[cursor]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

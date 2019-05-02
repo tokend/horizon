@@ -27,6 +27,7 @@ func GetSaleParticipation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler := getSaleParticipationHandler{
+		AssetsQ:        core2.NewAssetsQ(ctx.CoreRepo(r)),
 		SalesQ:         history2.NewSalesQ(ctx.HistoryRepo(r)),
 		ParticipationQ: history2.NewSaleParticipationQ(ctx.HistoryRepo(r)),
 		OffersQ:        core2.NewOffersQ(ctx.CoreRepo(r)),
@@ -70,6 +71,7 @@ func GetSaleParticipation(w http.ResponseWriter, r *http.Request) {
 type getSaleParticipationHandler struct {
 	SalesQ         history2.SalesQ
 	OffersQ        core2.OffersQ
+	AssetsQ        core2.AssetsQ
 	ParticipationQ history2.SaleParticipationQ
 	Log            *logan.Entry
 }
@@ -80,7 +82,8 @@ func (h *getSaleParticipationHandler) getSaleParticipation(sale *history2.Sale, 
 
 	switch sale.State {
 	case regources.SaleStateOpen:
-		offers, err := h.OffersQ.
+		q := populteOfferFilters(h.OffersQ, request)
+		offers, err := q.
 			FilterByIsBuy(true).
 			FilterByOrderBookID(int64(request.SaleID)).
 			CursorPage(*request.PageParams).
@@ -89,22 +92,34 @@ func (h *getSaleParticipationHandler) getSaleParticipation(sale *history2.Sale, 
 			return nil, errors.Wrap(err, "failed to load sale participations from core")
 		}
 
-		response.Data = resources.SaleParticipationsFromCore(offers)
-
+		err = h.fromCore(offers, request, response)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to populate response")
+		}
 	case regources.SaleStateCanceled:
 		return nil, nil
 	case regources.SaleStateClosed:
-		participations, err := h.ParticipationQ.FilterBySale(request.SaleID).Page(*request.PageParams).Select()
+		q := populateSaleParticipationFilters(h.ParticipationQ, request)
+		participations, err := q.
+			FilterBySale(request.SaleID).
+			Page(*request.PageParams).
+			Select()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to load participations from history")
 		}
 
-		response.Data = resources.SaleParticipationsFromHistory(participations)
+		err = h.fromHistory(participations, request, response)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to populate response")
+		}
 	default:
 		return nil, errors.From(errors.New("unexpected sale state"), logan.F{
 			"sale_state": sale.State,
 		})
 	}
+
+	h.populateLinks(response, request)
+
 	return response, nil
 }
 
@@ -116,4 +131,141 @@ func (h *getSaleParticipationHandler) populateLinks(
 	} else {
 		response.Links = request.GetCursorLinks(*request.PageParams, "")
 	}
+}
+
+func populteOfferFilters(q core2.OffersQ, request *requests.GetSaleParticipation) core2.OffersQ {
+	if request.ShouldFilter(requests.FilterTypeSaleParticipationParticipant) {
+		q = q.FilterByOwnerID(request.Filters.Participant)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeSaleParticipationQuoteAsset) {
+		q = q.FilterByQuoteAssetCode(request.Filters.QuoteAsset)
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeSaleParticipationQuoteAsset) {
+		q = q.WithQuoteAsset()
+	}
+	if request.ShouldInclude(requests.IncludeTypeSaleParticipationBaseAsset) {
+		q = q.WithBaseAsset()
+	}
+
+	return q
+}
+
+func populateSaleParticipationFilters(q history2.SaleParticipationQ, request *requests.GetSaleParticipation) history2.SaleParticipationQ {
+	if request.ShouldFilter(requests.FilterTypeSaleParticipationParticipant) {
+		q = q.FilterByParticipant(request.Filters.Participant)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeSaleParticipationQuoteAsset) {
+		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset)
+	}
+
+	return q
+}
+
+func (h *getSaleParticipationHandler) fromHistory(
+	participations []history2.SaleParticipation,
+	request *requests.GetSaleParticipation,
+	response *regources.SaleParticipationsResponse) error {
+
+	for _, p := range participations {
+		response.Data = append(response.Data,
+			resources.NewSaleParticipation(p.ID,
+				p.ParticipantID,
+				p.BaseAsset,
+				p.QuoteAsset,
+				uint64(p.QuoteAmount)))
+		err := h.populateIncludes(p.BaseAsset, p.QuoteAsset, request, response)
+		if err != nil {
+			return errors.Wrap(err, "failed to populate includes")
+		}
+	}
+
+	return nil
+}
+
+func (h *getSaleParticipationHandler) populateIncludes(
+	baseAsset, quoteAsset string,
+	request *requests.GetSaleParticipation,
+	response *regources.SaleParticipationsResponse) error {
+
+	if request.ShouldInclude(requests.IncludeTypeSaleParticipationBaseAsset) {
+		baseRaw, err := h.AssetsQ.GetByCode(baseAsset)
+		if err != nil {
+			return errors.Wrap(err, "failed to get asset by code", logan.F{
+				"code": baseAsset,
+			})
+		}
+		if baseRaw == nil {
+			return errors.From(errors.New("asset not found"), logan.F{
+				"code": baseAsset,
+			})
+		}
+
+		base := resources.NewAsset(*baseRaw)
+
+		response.Included.Add(&base)
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeSaleParticipationQuoteAsset) {
+		quoteRaw, err := h.AssetsQ.GetByCode(quoteAsset)
+		if err != nil {
+			return errors.Wrap(err, "failed to get asset by code", logan.F{
+				"code": quoteAsset,
+			})
+		}
+		if quoteRaw == nil {
+			return errors.From(errors.New("asset not found"), logan.F{
+				"code": quoteAsset,
+			})
+		}
+
+		quote := resources.NewAsset(*quoteRaw)
+
+		response.Included.Add(&quote)
+	}
+	return nil
+}
+
+func (h *getSaleParticipationHandler) fromCore(
+	offers []core2.Offer,
+	request *requests.GetSaleParticipation,
+	response *regources.SaleParticipationsResponse) error {
+
+	result := make([]regources.SaleParticipation, 0, len(offers))
+	for _, offer := range offers {
+		result = append(result,
+			resources.NewSaleParticipation(offer.OfferID,
+				offer.OwnerID,
+				offer.BaseAssetCode,
+				offer.QuoteAssetCode,
+				offer.QuoteAmount))
+
+		if request.ShouldInclude(requests.IncludeTypeSaleParticipationQuoteAsset) {
+			if offer.QuoteAsset == nil {
+				return errors.From(errors.New("asset not found"), logan.F{
+					"code": offer.QuoteAssetCode,
+				})
+			}
+
+			quote := resources.NewAsset(*offer.QuoteAsset)
+
+			response.Included.Add(&quote)
+		}
+
+		if request.ShouldInclude(requests.IncludeTypeSaleParticipationBaseAsset) {
+			if offer.BaseAsset == nil {
+				return errors.From(errors.New("asset not found"), logan.F{
+					"code": offer.BaseAssetCode,
+				})
+			}
+
+			base := resources.NewAsset(*offer.BaseAsset)
+
+			response.Included.Add(&base)
+		}
+	}
+
+	return nil
 }

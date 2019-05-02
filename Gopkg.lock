@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:45fe09bbe22f5e576b6f5459982bf74d439bcc67f58dcfe53a20f24076691323"
+  branch = "feature/whitelist_management"
+  digest = "1:b956ed700733b9488c30e6443c27f6e86f342941c5fc603ce02c70651e118cd4"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "5b1ecd7708d013d964d422d1511c4306aa22426e"
+  revision = "a1e4c8fbb287d5129a37b19847d16f08c4ce4356"
 
 [[projects]]
   branch = "master"
@@ -649,6 +649,7 @@
     "github.com/go-errors/errors",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/goji/context",
+    "github.com/google/jsonapi",
     "github.com/guregu/null",
     "github.com/jmoiron/sqlx",
     "github.com/lann/squirrel",
