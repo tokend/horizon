@@ -55,6 +55,14 @@ func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if result == nil {
+		ctx.Log(r).WithError(err).Error("sale list not found", logan.F{
+			"request": request,
+		})
+		ape.RenderErr(w, problems.NotFound())
+		return
+	}
+
 	ape.Render(w, result)
 }
 
