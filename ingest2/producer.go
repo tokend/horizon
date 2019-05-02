@@ -2,7 +2,6 @@ package ingest2
 
 import (
 	"context"
-	"math"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -26,8 +25,6 @@ type historyLedgerProvider interface {
 
 // txProvider - specifies methods required to get data from core db needed for ingest
 type txProvider interface {
-	// GetLatestLedgerSeq - returns latest ledger seq available in core
-	GetLatestLedgerSeq() (int32, error)
 	// GetByLedgerRange - returns range of transactions applied in ledgers with sequence in [fromSeq,toSeq]
 	GetByLedgerRange(fromSeq int32, toSeq int32) ([]core.Transaction, error)
 	// GetBySequence - returns ledger header by it's seq
@@ -100,10 +97,10 @@ func (l *Producer) runOnce(ctx context.Context) error {
 	}
 
 	fromSeq := l.currentLedger + 1
-	toSeq := int32(math.Min(float64(coreLatestVersion), float64(l.currentLedger+l.batchSize)))
+	toSeq := minOf(coreLatestVersion, l.currentLedger+l.batchSize)
 	batch, err := l.getBatch(fromSeq, toSeq)
 	if err != nil {
-		return errors.Wrap(err, "failed to load batch")
+		return errors.Wrap(err, "failed to load batch", logan.F{"fromSeq": fromSeq, "toSeq": toSeq})
 	}
 
 	for _, bundle := range batch {
@@ -112,6 +109,22 @@ func (l *Producer) runOnce(ctx context.Context) error {
 	l.currentLedger = toSeq
 
 	return nil
+}
+
+func minOf(values ...int32) int32 {
+	if len(values) < 1 {
+		panic("Incorrect number of arguments")
+	}
+
+	min := values[0]
+
+	for _, value := range values {
+		if value < min {
+			min = value
+		}
+	}
+
+	return min
 }
 
 func (l *Producer) getBatch(fromSeq int32, toSeq int32) ([]LedgerBundle, error) {

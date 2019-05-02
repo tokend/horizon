@@ -39,12 +39,18 @@ func (q TransactionQ) FilterByLedgerSeqRange(fromSeq int32, toSeq int32) Transac
 	return q
 }
 
+// OrderByLedgerSeq - returns TransactionQ with ordered by sequence
+func (q TransactionQ) OrderByLedgerSeq() TransactionQ {
+	q.selector = q.selector.OrderBy("ledgerseq ASC")
+	return q
+}
+
 // GetByLedgerRange returns ordered slice of transaction filtered by range of ledger sequences, including boundaries.
 // Returns nil, nil if transactions do not exist
 func (q TransactionQ) GetByLedgerRange(fromSeq int32, toSeq int32) ([]Transaction, error) {
-	q.selector = q.FilterByLedgerSeqRange(fromSeq, toSeq).selector.
-		OrderBy("ledgerseq ASC")
-	return q.Select()
+	return q.FilterByLedgerSeqRange(fromSeq, toSeq).
+		OrderByLedgerSeq().
+		Select()
 }
 
 func (q TransactionQ) Get() (*Transaction, error) {
