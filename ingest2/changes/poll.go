@@ -43,7 +43,7 @@ func (c *pollHandler) Created(lc ledgerChange) error {
 		})
 	}
 
-	err = c.storage.Insert(*poll)
+	err = c.storage.Insert(poll)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert poll into DB", logan.F{
 			"poll": poll,
@@ -81,7 +81,14 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 		})
 	}
 
-	err = c.storage.Update(*poll)
+	managePollOp := lc.Operation.Body.MustManagePollOp()
+	state, err := c.getPollState(managePollOp)
+	if err != nil {
+		return errors.Wrap(err, "failed to get poll state")
+	}
+	poll.State = state
+
+	err = c.storage.Update(poll)
 	if err != nil {
 		return errors.Wrap(err, "failed to update poll", logan.F{
 			"poll": poll,
@@ -115,9 +122,9 @@ func (c *pollHandler) getPollState(op xdr.ManagePollOp) (regources.PollState, er
 	return state, nil
 }
 
-func (c *pollHandler) convertPoll(raw xdr.PollEntry) (*history.Poll, error) {
+func (c *pollHandler) convertPoll(raw xdr.PollEntry) (history.Poll, error) {
 
-	return &history.Poll{
+	return history.Poll{
 		ID:               int64(raw.Id),
 		OwnerID:          raw.OwnerId.Address(),
 		ResultProviderID: raw.ResultProviderId.Address(),
