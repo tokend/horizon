@@ -23,20 +23,29 @@ ManagePollOp:
             $ref: '#/components/schemas/PollKey'
       attributes:
         type: object
-        required: [action]
+        required: [action, poll_id]
         properties:
+          poll_id:
+            type: integer
+            format: int64
+            description: "ID of the poll to manage"
+            example: 10
           action:
             format: xdr.ManagePollAction
             description: |
                * 0 - close
+               * 1 - update end time
+               * 2 - cancel
             allOf:
               - $ref: '#/components/schemas/Enum'
           close:
             allOf:
               - $ref: '#/components/schemas/ClosePollOp'
               - nullable: true
-
-
+          update_end_time:
+            allOf:
+              - $ref: '#/components/schemas/UpdatePollEndTimeOp'
+              - nullable: true
 
 ClosePollOp:
   type: object
@@ -56,3 +65,13 @@ ClosePollOp:
         - $ref: '#/components/schemas/Enum'
     details:
       $ref: '#/components/schemas/Details'
+
+UpdatePollEndTimeOp:
+  type: object
+  required: [new_end_time]
+  properties:
+    new_end_time:
+      type: string
+      description: "new end time of the poll"
+      format: "date-time"
+      example: "2012-11-01T22:08:41+00:00"

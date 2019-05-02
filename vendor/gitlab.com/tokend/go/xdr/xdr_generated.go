@@ -1,4 +1,4 @@
-// revision: 91680467ba4dcc7e1f66a1e33b760283407b212a
+// revision: 73064c40ce0bf38821038aa479ad7829c834b2b3
 // branch:   master
 // Package xdr is generated from:
 //
@@ -19884,7 +19884,7 @@ func (u ManageAssetResult) GetSuccess() (result ManageAssetSuccess, ok bool) {
 //    {
 //        //: Create new balance
 //        CREATE = 0,
-//        //: Delete existing balance by ID
+//        //: Delete existing balance by ID. Is reserved and not implemented yet.
 //        DELETE_BALANCE = 1,
 //        //: Ensures that the balance will not be created if the balance of the provided asset exists and is attached to the provided account
 //        CREATE_UNIQUE = 2
@@ -20025,7 +20025,7 @@ func NewManageBalanceOpExt(v LedgerVersion, value interface{}) (result ManageBal
 //
 //   struct ManageBalanceOp
 //    {
-//        //: Defines a ManageBalanceAction to be performed
+//        //: Defines a ManageBalanceAction to be performed. `DELETE_BALANCE` is reserved and not implemented yet.
 //        ManageBalanceAction action;
 //        //: Defines an account whose balance will be managed
 //        AccountID destination;
@@ -26211,31 +26211,41 @@ func (u ManageOfferResult) GetCurrentPriceRestriction() (result ManageOfferResul
 //
 //   enum ManagePollAction
 //    {
-//        CLOSE = 0
-//    //    UPDATE_END_TIME = 1,
-//    //    REMOVE = 2,
+//        CLOSE = 0,
+//        UPDATE_END_TIME = 1,
+//        CANCEL = 2
 //    };
 //
 type ManagePollAction int32
 
 const (
-	ManagePollActionClose ManagePollAction = 0
+	ManagePollActionClose         ManagePollAction = 0
+	ManagePollActionUpdateEndTime ManagePollAction = 1
+	ManagePollActionCancel        ManagePollAction = 2
 )
 
 var ManagePollActionAll = []ManagePollAction{
 	ManagePollActionClose,
+	ManagePollActionUpdateEndTime,
+	ManagePollActionCancel,
 }
 
 var managePollActionMap = map[int32]string{
 	0: "ManagePollActionClose",
+	1: "ManagePollActionUpdateEndTime",
+	2: "ManagePollActionCancel",
 }
 
 var managePollActionShortMap = map[int32]string{
 	0: "close",
+	1: "update_end_time",
+	2: "cancel",
 }
 
 var managePollActionRevMap = map[string]int32{
-	"ManagePollActionClose": 0,
+	"ManagePollActionClose":         0,
+	"ManagePollActionUpdateEndTime": 1,
+	"ManagePollActionCancel":        2,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -26522,15 +26532,17 @@ type UpdatePollEndTimeData struct {
 //        {
 //        case CLOSE:
 //            ClosePollData closePollData;
-//    //    case UPDATE_END_TIME:
-//    //        UpdatePollEndTimeData updateTimeData;
-//    //    case REMOVE:
-//    //        EmptyExt ext;
+//        case UPDATE_END_TIME:
+//            UpdatePollEndTimeData updateTimeData;
+//        case CANCEL:
+//            EmptyExt ext;
 //        }
 //
 type ManagePollOpData struct {
-	Action        ManagePollAction `json:"action,omitempty"`
-	ClosePollData *ClosePollData   `json:"closePollData,omitempty"`
+	Action         ManagePollAction       `json:"action,omitempty"`
+	ClosePollData  *ClosePollData         `json:"closePollData,omitempty"`
+	UpdateTimeData *UpdatePollEndTimeData `json:"updateTimeData,omitempty"`
+	Ext            *EmptyExt              `json:"ext,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -26545,6 +26557,10 @@ func (u ManagePollOpData) ArmForSwitch(sw int32) (string, bool) {
 	switch ManagePollAction(sw) {
 	case ManagePollActionClose:
 		return "ClosePollData", true
+	case ManagePollActionUpdateEndTime:
+		return "UpdateTimeData", true
+	case ManagePollActionCancel:
+		return "Ext", true
 	}
 	return "-", false
 }
@@ -26560,6 +26576,20 @@ func NewManagePollOpData(action ManagePollAction, value interface{}) (result Man
 			return
 		}
 		result.ClosePollData = &tv
+	case ManagePollActionUpdateEndTime:
+		tv, ok := value.(UpdatePollEndTimeData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be UpdatePollEndTimeData")
+			return
+		}
+		result.UpdateTimeData = &tv
+	case ManagePollActionCancel:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Ext = &tv
 	}
 	return
 }
@@ -26583,6 +26613,56 @@ func (u ManagePollOpData) GetClosePollData() (result ClosePollData, ok bool) {
 
 	if armName == "ClosePollData" {
 		result = *u.ClosePollData
+		ok = true
+	}
+
+	return
+}
+
+// MustUpdateTimeData retrieves the UpdateTimeData value from the union,
+// panicing if the value is not set.
+func (u ManagePollOpData) MustUpdateTimeData() UpdatePollEndTimeData {
+	val, ok := u.GetUpdateTimeData()
+
+	if !ok {
+		panic("arm UpdateTimeData is not set")
+	}
+
+	return val
+}
+
+// GetUpdateTimeData retrieves the UpdateTimeData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManagePollOpData) GetUpdateTimeData() (result UpdatePollEndTimeData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "UpdateTimeData" {
+		result = *u.UpdateTimeData
+		ok = true
+	}
+
+	return
+}
+
+// MustExt retrieves the Ext value from the union,
+// panicing if the value is not set.
+func (u ManagePollOpData) MustExt() EmptyExt {
+	val, ok := u.GetExt()
+
+	if !ok {
+		panic("arm Ext is not set")
+	}
+
+	return val
+}
+
+// GetExt retrieves the Ext value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManagePollOpData) GetExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "Ext" {
+		result = *u.Ext
 		ok = true
 	}
 
@@ -26639,10 +26719,10 @@ func NewManagePollOpExt(v LedgerVersion, value interface{}) (result ManagePollOp
 //        {
 //        case CLOSE:
 //            ClosePollData closePollData;
-//    //    case UPDATE_END_TIME:
-//    //        UpdatePollEndTimeData updateTimeData;
-//    //    case REMOVE:
-//    //        EmptyExt ext;
+//        case UPDATE_END_TIME:
+//            UpdatePollEndTimeData updateTimeData;
+//        case CANCEL:
+//            EmptyExt ext;
 //        }
 //        data;
 //
@@ -26674,7 +26754,11 @@ type ManagePollOp struct {
 //        //: Not allowed to close poll which
 //        POLL_NOT_READY = -2,
 //        //: Only result provider is allowed to close poll
-//        NOT_AUTHORIZED_TO_CLOSE_POLL = -3
+//        NOT_AUTHORIZED_TO_CLOSE_POLL = -3,
+//        //: End time is in the past
+//        INVALID_END_TIME = -4,
+//        //: Only poll owner and admin are allowed to cancel poll and update end time
+//        NOT_AUTHORIZED = -5
 //    };
 //
 type ManagePollResultCode int32
@@ -26684,6 +26768,8 @@ const (
 	ManagePollResultCodeNotFound                 ManagePollResultCode = -1
 	ManagePollResultCodePollNotReady             ManagePollResultCode = -2
 	ManagePollResultCodeNotAuthorizedToClosePoll ManagePollResultCode = -3
+	ManagePollResultCodeInvalidEndTime           ManagePollResultCode = -4
+	ManagePollResultCodeNotAuthorized            ManagePollResultCode = -5
 )
 
 var ManagePollResultCodeAll = []ManagePollResultCode{
@@ -26691,6 +26777,8 @@ var ManagePollResultCodeAll = []ManagePollResultCode{
 	ManagePollResultCodeNotFound,
 	ManagePollResultCodePollNotReady,
 	ManagePollResultCodeNotAuthorizedToClosePoll,
+	ManagePollResultCodeInvalidEndTime,
+	ManagePollResultCodeNotAuthorized,
 }
 
 var managePollResultCodeMap = map[int32]string{
@@ -26698,6 +26786,8 @@ var managePollResultCodeMap = map[int32]string{
 	-1: "ManagePollResultCodeNotFound",
 	-2: "ManagePollResultCodePollNotReady",
 	-3: "ManagePollResultCodeNotAuthorizedToClosePoll",
+	-4: "ManagePollResultCodeInvalidEndTime",
+	-5: "ManagePollResultCodeNotAuthorized",
 }
 
 var managePollResultCodeShortMap = map[int32]string{
@@ -26705,6 +26795,8 @@ var managePollResultCodeShortMap = map[int32]string{
 	-1: "not_found",
 	-2: "poll_not_ready",
 	-3: "not_authorized_to_close_poll",
+	-4: "invalid_end_time",
+	-5: "not_authorized",
 }
 
 var managePollResultCodeRevMap = map[string]int32{
@@ -26712,6 +26804,8 @@ var managePollResultCodeRevMap = map[string]int32{
 	"ManagePollResultCodeNotFound":                 -1,
 	"ManagePollResultCodePollNotReady":             -2,
 	"ManagePollResultCodeNotAuthorizedToClosePoll": -3,
+	"ManagePollResultCodeInvalidEndTime":           -4,
+	"ManagePollResultCodeNotAuthorized":            -5,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -36135,7 +36229,8 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CHECK = 14,
 //        CANCEL = 15,
 //        CLOSE = 16,
-//        REMOVE = 17
+//        REMOVE = 17,
+//        UPDATE_END_TIME = 18
 //    };
 //
 type AccountRuleAction int32
@@ -36158,6 +36253,7 @@ const (
 	AccountRuleActionCancel            AccountRuleAction = 15
 	AccountRuleActionClose             AccountRuleAction = 16
 	AccountRuleActionRemove            AccountRuleAction = 17
+	AccountRuleActionUpdateEndTime     AccountRuleAction = 18
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -36178,6 +36274,7 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionCancel,
 	AccountRuleActionClose,
 	AccountRuleActionRemove,
+	AccountRuleActionUpdateEndTime,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -36198,6 +36295,7 @@ var accountRuleActionMap = map[int32]string{
 	15: "AccountRuleActionCancel",
 	16: "AccountRuleActionClose",
 	17: "AccountRuleActionRemove",
+	18: "AccountRuleActionUpdateEndTime",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -36218,6 +36316,7 @@ var accountRuleActionShortMap = map[int32]string{
 	15: "cancel",
 	16: "close",
 	17: "remove",
+	18: "update_end_time",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -36238,6 +36337,7 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionCancel":            15,
 	"AccountRuleActionClose":             16,
 	"AccountRuleActionRemove":            17,
+	"AccountRuleActionUpdateEndTime":     18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -37100,7 +37200,8 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        BIND = 12,
 //        UPDATE_MAX_ISSUANCE = 13,
 //        CHECK = 14,
-//        CLOSE = 15
+//        CLOSE = 15,
+//        UPDATE_END_TIME = 16
 //    };
 //
 type SignerRuleAction int32
@@ -37121,6 +37222,7 @@ const (
 	SignerRuleActionUpdateMaxIssuance SignerRuleAction = 13
 	SignerRuleActionCheck             SignerRuleAction = 14
 	SignerRuleActionClose             SignerRuleAction = 15
+	SignerRuleActionUpdateEndTime     SignerRuleAction = 16
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -37139,6 +37241,7 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionUpdateMaxIssuance,
 	SignerRuleActionCheck,
 	SignerRuleActionClose,
+	SignerRuleActionUpdateEndTime,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -37157,6 +37260,7 @@ var signerRuleActionMap = map[int32]string{
 	13: "SignerRuleActionUpdateMaxIssuance",
 	14: "SignerRuleActionCheck",
 	15: "SignerRuleActionClose",
+	16: "SignerRuleActionUpdateEndTime",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -37175,6 +37279,7 @@ var signerRuleActionShortMap = map[int32]string{
 	13: "update_max_issuance",
 	14: "check",
 	15: "close",
+	16: "update_end_time",
 }
 
 var signerRuleActionRevMap = map[string]int32{
@@ -37193,6 +37298,7 @@ var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionUpdateMaxIssuance": 13,
 	"SignerRuleActionCheck":             14,
 	"SignerRuleActionClose":             15,
+	"SignerRuleActionUpdateEndTime":     16,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -42754,7 +42860,9 @@ type TransactionResult struct {
 //
 //   enum LedgerVersion {
 //    	EMPTY_VERSION = 0,
-//    	CHECK_SET_FEE_ACCOUNT_EXISTING = 1
+//    	CHECK_SET_FEE_ACCOUNT_EXISTING = 1,
+//    	FIX_PAYMENT_STATS = 2,
+//    	ADD_INVEST_FEE = 3
 //    };
 //
 type LedgerVersion int32
@@ -42762,26 +42870,36 @@ type LedgerVersion int32
 const (
 	LedgerVersionEmptyVersion               LedgerVersion = 0
 	LedgerVersionCheckSetFeeAccountExisting LedgerVersion = 1
+	LedgerVersionFixPaymentStats            LedgerVersion = 2
+	LedgerVersionAddInvestFee               LedgerVersion = 3
 )
 
 var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionEmptyVersion,
 	LedgerVersionCheckSetFeeAccountExisting,
+	LedgerVersionFixPaymentStats,
+	LedgerVersionAddInvestFee,
 }
 
 var ledgerVersionMap = map[int32]string{
 	0: "LedgerVersionEmptyVersion",
 	1: "LedgerVersionCheckSetFeeAccountExisting",
+	2: "LedgerVersionFixPaymentStats",
+	3: "LedgerVersionAddInvestFee",
 }
 
 var ledgerVersionShortMap = map[int32]string{
 	0: "empty_version",
 	1: "check_set_fee_account_existing",
+	2: "fix_payment_stats",
+	3: "add_invest_fee",
 }
 
 var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionEmptyVersion":               0,
 	"LedgerVersionCheckSetFeeAccountExisting": 1,
+	"LedgerVersionFixPaymentStats":            2,
+	"LedgerVersionAddInvestFee":               3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -44078,4 +44196,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "91680467ba4dcc7e1f66a1e33b760283407b212a"
+var Revision = "73064c40ce0bf38821038aa479ad7829c834b2b3"

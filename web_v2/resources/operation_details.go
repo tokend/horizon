@@ -159,6 +159,7 @@ func newManagePollOp(id int64, details history2.ManagePollDetails) *regources.Ma
 		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_POLL),
 		Attributes: regources.ManagePollOpAttributes{
 			Action: details.Action,
+			PollId: details.PollID,
 		},
 		Relationships: regources.ManagePollOpRelationships{
 			Poll: NewPollKey(details.PollID).AsRelation(),
@@ -172,6 +173,11 @@ func newManagePollOp(id int64, details history2.ManagePollDetails) *regources.Ma
 			PollId:     details.PollID,
 			PollResult: details.ClosePoll.PollResult,
 		}
+	case xdr.ManagePollActionUpdateEndTime:
+		managePollOp.Attributes.UpdateEndTime = &regources.UpdatePollEndTimeOp{
+			NewEndTime: details.UpdatePollEndTime.EndTime,
+		}
+	case xdr.ManagePollActionCancel:
 	default:
 		panic(errors.From(errors.New("unexpected manage poll action"), logan.F{
 			"action": details.Action,

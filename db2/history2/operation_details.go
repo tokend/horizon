@@ -476,10 +476,15 @@ type ClosePollData struct {
 	Details    regources.Details `json:"details"`
 }
 
+type UpdatePollEndTimeData struct {
+	EndTime time.Time `json:"new_end_time"`
+}
+
 type ManagePollDetails struct {
-	Action    xdr.ManagePollAction `json:"action"`
-	PollID    int64                `json:"poll_id"`
-	ClosePoll *ClosePollData       `json:"close_poll,omitempty"`
+	PollID            int64                  `json:"poll_id"`
+	Action            xdr.ManagePollAction   `json:"action"`
+	ClosePoll         *ClosePollData         `json:"close_poll,omitempty"`
+	UpdatePollEndTime *UpdatePollEndTimeData `json:"update_poll_end_time,omitempty"`
 }
 
 type ManageVoteDetails struct {
