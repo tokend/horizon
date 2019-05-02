@@ -292,6 +292,7 @@ var messages = map[string]string{
 	"op_global_specific_rule_duplication":               "Not allowed to pass two or more global rules (without accountID)",
 	"op_account_specific_rule_duplication":              "Not allowed to pass identical or conflicting rules",
 	"op_invalid_end_time":                               "New end time is in the past",
+	"op_global_specific_rule_required":                  "Not allowed to create sale without rule with null account id",
 }
 
 func getMessage(rawCode string) string {

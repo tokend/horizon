@@ -531,14 +531,14 @@
 
 [[projects]]
   branch = "feature/whitelist_management"
-  digest = "1:b956ed700733b9488c30e6443c27f6e86f342941c5fc603ce02c70651e118cd4"
+  digest = "1:d2bc35b7e438e190065e36bf8cf53bc040b0756b2000f8aa2ee5c1bc7823109c"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "a1e4c8fbb287d5129a37b19847d16f08c4ce4356"
+  revision = "a759f7bc92d235058e0d594949454aede73fdfc6"
 
 [[projects]]
   branch = "master"
