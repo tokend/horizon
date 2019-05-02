@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Added
+
+* Endpoints for whitelist management and sale participants
+
 ## 3.3.0
 
 ### Added
