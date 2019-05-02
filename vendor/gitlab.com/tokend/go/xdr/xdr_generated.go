@@ -1,4 +1,4 @@
-// revision: 6b712ee855f480653156067ad23cdbd35c589595
+// revision: 6da80385aa81c2db787778b9ca9908385df3d340
 // branch:   feature/whitelist_management
 // Package xdr is generated from:
 //
@@ -4797,6 +4797,7 @@ type SaleQuoteAsset struct {
 //   union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
+//            void;
 //        case ADD_SALE_WHITELISTS:
 //            void;
 //        }
@@ -4859,6 +4860,7 @@ func NewSaleEntryExt(v LedgerVersion, value interface{}) (result SaleEntryExt, e
 //    	union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
+//            void;
 //        case ADD_SALE_WHITELISTS:
 //            void;
 //        }
@@ -15763,10 +15765,16 @@ type CreateSaleCreationRequestOp struct {
 //        NOT_ALLOWED_TO_SET_TASKS_ON_UPDATE = -15,
 //        //: Auto review failed due to a particular reason (e.g., hard cap exceeded either max issuance amount or preissued amount of an asset)
 //        AUTO_REVIEW_FAILED = -16,
+//        //: Not allowed to pass more account sale rule than allowed by `max_sale_rules_number` key value
 //        EXCEEDED_MAX_RULES_SIZE = -17,
+//        //: Not allowed to pass rules with the same ledger key and null accountID
 //        GLOBAL_SPECIFIC_RULE_DUPLICATION = -18,
-//        ACCOUNT_SPECIFIC_RULE_DUPLICATION = -19
-//
+//        //: Not allowed to pass rules with the same accountID and ledger key
+//        ACCOUNT_SPECIFIC_RULE_DUPLICATION = -19,
+//        //: Not allowed to pass rules with out global one (`accountID == null`)
+//        GLOBAL_SPECIFIC_RULE_REQUIRED = -20,
+//        //: There is no account with id specified in sale rules
+//        ACCOUNT_NOT_FOUND = -21
 //    };
 //
 type CreateSaleCreationRequestResultCode int32
@@ -15792,6 +15800,8 @@ const (
 	CreateSaleCreationRequestResultCodeExceededMaxRulesSize            CreateSaleCreationRequestResultCode = -17
 	CreateSaleCreationRequestResultCodeGlobalSpecificRuleDuplication   CreateSaleCreationRequestResultCode = -18
 	CreateSaleCreationRequestResultCodeAccountSpecificRuleDuplication  CreateSaleCreationRequestResultCode = -19
+	CreateSaleCreationRequestResultCodeGlobalSpecificRuleRequired      CreateSaleCreationRequestResultCode = -20
+	CreateSaleCreationRequestResultCodeAccountNotFound                 CreateSaleCreationRequestResultCode = -21
 )
 
 var CreateSaleCreationRequestResultCodeAll = []CreateSaleCreationRequestResultCode{
@@ -15815,6 +15825,8 @@ var CreateSaleCreationRequestResultCodeAll = []CreateSaleCreationRequestResultCo
 	CreateSaleCreationRequestResultCodeExceededMaxRulesSize,
 	CreateSaleCreationRequestResultCodeGlobalSpecificRuleDuplication,
 	CreateSaleCreationRequestResultCodeAccountSpecificRuleDuplication,
+	CreateSaleCreationRequestResultCodeGlobalSpecificRuleRequired,
+	CreateSaleCreationRequestResultCodeAccountNotFound,
 }
 
 var createSaleCreationRequestResultCodeMap = map[int32]string{
@@ -15838,6 +15850,8 @@ var createSaleCreationRequestResultCodeMap = map[int32]string{
 	-17: "CreateSaleCreationRequestResultCodeExceededMaxRulesSize",
 	-18: "CreateSaleCreationRequestResultCodeGlobalSpecificRuleDuplication",
 	-19: "CreateSaleCreationRequestResultCodeAccountSpecificRuleDuplication",
+	-20: "CreateSaleCreationRequestResultCodeGlobalSpecificRuleRequired",
+	-21: "CreateSaleCreationRequestResultCodeAccountNotFound",
 }
 
 var createSaleCreationRequestResultCodeShortMap = map[int32]string{
@@ -15861,6 +15875,8 @@ var createSaleCreationRequestResultCodeShortMap = map[int32]string{
 	-17: "exceeded_max_rules_size",
 	-18: "global_specific_rule_duplication",
 	-19: "account_specific_rule_duplication",
+	-20: "global_specific_rule_required",
+	-21: "account_not_found",
 }
 
 var createSaleCreationRequestResultCodeRevMap = map[string]int32{
@@ -15884,6 +15900,8 @@ var createSaleCreationRequestResultCodeRevMap = map[string]int32{
 	"CreateSaleCreationRequestResultCodeExceededMaxRulesSize":            -17,
 	"CreateSaleCreationRequestResultCodeGlobalSpecificRuleDuplication":   -18,
 	"CreateSaleCreationRequestResultCodeAccountSpecificRuleDuplication":  -19,
+	"CreateSaleCreationRequestResultCodeGlobalSpecificRuleRequired":      -20,
+	"CreateSaleCreationRequestResultCodeAccountNotFound":                 -21,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -18663,11 +18681,11 @@ func NewCreateAccountSpecificRuleDataExt(v LedgerVersion, value interface{}) (re
 //
 //   struct CreateAccountSpecificRuleData
 //    {
-//        //: Resource is used to specify an entity (for some - with properties) that can be managed through operations
+//        //: ledgerKey is used to specify an entity with primary key that can be used through operations
 //        LedgerKey ledgerKey;
-//        //: Value from enum that can be applied to `resource`
+//        //: Certain account for which rule is applied, null means rule is global
 //        AccountID* accountID;
-//        //: True if such `action` on such `resource` is prohibited, otherwise allows
+//        //: True if such rule is deniable, otherwise allows
 //        bool forbids;
 //
 //        //: reserved for future use
@@ -18727,7 +18745,7 @@ func NewRemoveAccountSpecificRuleDataExt(v LedgerVersion, value interface{}) (re
 //
 //   struct RemoveAccountSpecificRuleData
 //    {
-//        //: Identifier of existing account rule
+//        //: Identifier of existing account specific rule
 //        uint64 ruleID;
 //
 //        //: reserved for future use
@@ -18891,7 +18909,7 @@ func NewManageAccountSpecificRuleOpExt(v LedgerVersion, value interface{}) (resu
 //
 //   struct ManageAccountSpecificRuleOp
 //    {
-//        //: data is used to pass one of `ManageAccountRuleAction` with required params
+//        //: data is used to pass one of `ManageAccountSpecificRuleAction` with required params
 //        union switch (ManageAccountSpecificRuleAction action)
 //        {
 //        case CREATE:
@@ -18918,19 +18936,27 @@ type ManageAccountSpecificRuleOp struct {
 //
 //   enum ManageAccountSpecificRuleResultCode
 //    {
-//        //: Means that specified action in `data` of ManageAccountRuleOp was successfully performed
+//        //: Means that specified action in `data` of ManageAccountSpecificRuleOp was successfully performed
 //        SUCCESS = 0,
 //
 //        // codes considered as "failure" for the operation
-//        //: There is no account rule with such id
+//        //: There is no rule with such id
 //        NOT_FOUND = -1,
+//        //: There is no sale with such id
 //        SALE_NOT_FOUND = -2,
+//        //: Only entry (sale) owner or admin can perform such operation
 //        NOT_AUTHORIZED = -3,
+//        //: Not allowed to create duplicated rules
 //        ALREADY_EXISTS = -4,
+//        //: Not allowed to create rule with the same accountID and ledger key, but different forbids value
 //        REVERSED_ALREADY_EXISTS = -5,
+//        //: Not allowed to use such entry type in ledger key
 //        ENTRY_TYPE_NOT_SUPPORTED = -6,
+//        //: There is no account rule with such id
 //        ACCOUNT_NOT_FOUND = -7,
+//        //: Version of entry does not allow to add specific rules
 //        SPECIFIC_RULE_NOT_SUPPORTED = -8,
+//        //: Not allowed to remove global rule
 //        REMOVING_GLOBAL_RULE_FORBIDDEN = -9
 //    };
 //
@@ -20751,7 +20777,7 @@ func (u ManageAssetResult) GetSuccess() (result ManageAssetSuccess, ok bool) {
 //    {
 //        //: Create new balance
 //        CREATE = 0,
-//        //: Delete existing balance by ID
+//        //: Delete existing balance by ID. Is reserved and not implemented yet.
 //        DELETE_BALANCE = 1,
 //        //: Ensures that the balance will not be created if the balance of the provided asset exists and is attached to the provided account
 //        CREATE_UNIQUE = 2
@@ -20892,7 +20918,7 @@ func NewManageBalanceOpExt(v LedgerVersion, value interface{}) (result ManageBal
 //
 //   struct ManageBalanceOp
 //    {
-//        //: Defines a ManageBalanceAction to be performed
+//        //: Defines a ManageBalanceAction to be performed. `DELETE_BALANCE` is reserved and not implemented yet.
 //        ManageBalanceAction action;
 //        //: Defines an account whose balance will be managed
 //        AccountID destination;
@@ -26216,44 +26242,43 @@ type ManageOfferOp struct {
 //        REQUIRES_VERIFICATION = -27,
 //        //: Precision set in the system and precision of the amount are mismatched
 //        INCORRECT_AMOUNT_PRECISION = -28,
-//        NO_SPECIFIC_RULE_TO_PARTICIPATE = -29,
-//        SPECIFIC_RULE_FORBIDS = -30
+//        //: Sale specific rule forbids to participate in sale for source account
+//        SPECIFIC_RULE_FORBIDS = -29
 //    };
 //
 type ManageOfferResultCode int32
 
 const (
-	ManageOfferResultCodeSuccess                     ManageOfferResultCode = 0
-	ManageOfferResultCodeMalformed                   ManageOfferResultCode = -1
-	ManageOfferResultCodePairNotTraded               ManageOfferResultCode = -2
-	ManageOfferResultCodeBalanceNotFound             ManageOfferResultCode = -3
-	ManageOfferResultCodeUnderfunded                 ManageOfferResultCode = -4
-	ManageOfferResultCodeCrossSelf                   ManageOfferResultCode = -5
-	ManageOfferResultCodeOfferOverflow               ManageOfferResultCode = -6
-	ManageOfferResultCodeAssetPairNotTradable        ManageOfferResultCode = -7
-	ManageOfferResultCodePhysicalPriceRestriction    ManageOfferResultCode = -8
-	ManageOfferResultCodeCurrentPriceRestriction     ManageOfferResultCode = -9
-	ManageOfferResultCodeNotFound                    ManageOfferResultCode = -10
-	ManageOfferResultCodeInvalidPercentFee           ManageOfferResultCode = -11
-	ManageOfferResultCodeInsufficientPrice           ManageOfferResultCode = -12
-	ManageOfferResultCodeOrderBookDoesNotExists      ManageOfferResultCode = -13
-	ManageOfferResultCodeSaleIsNotStartedYet         ManageOfferResultCode = -14
-	ManageOfferResultCodeSaleAlreadyEnded            ManageOfferResultCode = -15
-	ManageOfferResultCodeOrderViolatesHardCap        ManageOfferResultCode = -16
-	ManageOfferResultCodeCantParticipateOwnSale      ManageOfferResultCode = -17
-	ManageOfferResultCodeAssetMismatched             ManageOfferResultCode = -18
-	ManageOfferResultCodePriceDoesNotMatch           ManageOfferResultCode = -19
-	ManageOfferResultCodePriceIsInvalid              ManageOfferResultCode = -20
-	ManageOfferResultCodeUpdateIsNotAllowed          ManageOfferResultCode = -21
-	ManageOfferResultCodeInvalidAmount               ManageOfferResultCode = -22
-	ManageOfferResultCodeSaleIsNotActive             ManageOfferResultCode = -23
-	ManageOfferResultCodeRequiresKyc                 ManageOfferResultCode = -24
-	ManageOfferResultCodeSourceUnderfunded           ManageOfferResultCode = -25
-	ManageOfferResultCodeSourceBalanceLockOverflow   ManageOfferResultCode = -26
-	ManageOfferResultCodeRequiresVerification        ManageOfferResultCode = -27
-	ManageOfferResultCodeIncorrectAmountPrecision    ManageOfferResultCode = -28
-	ManageOfferResultCodeNoSpecificRuleToParticipate ManageOfferResultCode = -29
-	ManageOfferResultCodeSpecificRuleForbids         ManageOfferResultCode = -30
+	ManageOfferResultCodeSuccess                   ManageOfferResultCode = 0
+	ManageOfferResultCodeMalformed                 ManageOfferResultCode = -1
+	ManageOfferResultCodePairNotTraded             ManageOfferResultCode = -2
+	ManageOfferResultCodeBalanceNotFound           ManageOfferResultCode = -3
+	ManageOfferResultCodeUnderfunded               ManageOfferResultCode = -4
+	ManageOfferResultCodeCrossSelf                 ManageOfferResultCode = -5
+	ManageOfferResultCodeOfferOverflow             ManageOfferResultCode = -6
+	ManageOfferResultCodeAssetPairNotTradable      ManageOfferResultCode = -7
+	ManageOfferResultCodePhysicalPriceRestriction  ManageOfferResultCode = -8
+	ManageOfferResultCodeCurrentPriceRestriction   ManageOfferResultCode = -9
+	ManageOfferResultCodeNotFound                  ManageOfferResultCode = -10
+	ManageOfferResultCodeInvalidPercentFee         ManageOfferResultCode = -11
+	ManageOfferResultCodeInsufficientPrice         ManageOfferResultCode = -12
+	ManageOfferResultCodeOrderBookDoesNotExists    ManageOfferResultCode = -13
+	ManageOfferResultCodeSaleIsNotStartedYet       ManageOfferResultCode = -14
+	ManageOfferResultCodeSaleAlreadyEnded          ManageOfferResultCode = -15
+	ManageOfferResultCodeOrderViolatesHardCap      ManageOfferResultCode = -16
+	ManageOfferResultCodeCantParticipateOwnSale    ManageOfferResultCode = -17
+	ManageOfferResultCodeAssetMismatched           ManageOfferResultCode = -18
+	ManageOfferResultCodePriceDoesNotMatch         ManageOfferResultCode = -19
+	ManageOfferResultCodePriceIsInvalid            ManageOfferResultCode = -20
+	ManageOfferResultCodeUpdateIsNotAllowed        ManageOfferResultCode = -21
+	ManageOfferResultCodeInvalidAmount             ManageOfferResultCode = -22
+	ManageOfferResultCodeSaleIsNotActive           ManageOfferResultCode = -23
+	ManageOfferResultCodeRequiresKyc               ManageOfferResultCode = -24
+	ManageOfferResultCodeSourceUnderfunded         ManageOfferResultCode = -25
+	ManageOfferResultCodeSourceBalanceLockOverflow ManageOfferResultCode = -26
+	ManageOfferResultCodeRequiresVerification      ManageOfferResultCode = -27
+	ManageOfferResultCodeIncorrectAmountPrecision  ManageOfferResultCode = -28
+	ManageOfferResultCodeSpecificRuleForbids       ManageOfferResultCode = -29
 )
 
 var ManageOfferResultCodeAll = []ManageOfferResultCode{
@@ -26286,7 +26311,6 @@ var ManageOfferResultCodeAll = []ManageOfferResultCode{
 	ManageOfferResultCodeSourceBalanceLockOverflow,
 	ManageOfferResultCodeRequiresVerification,
 	ManageOfferResultCodeIncorrectAmountPrecision,
-	ManageOfferResultCodeNoSpecificRuleToParticipate,
 	ManageOfferResultCodeSpecificRuleForbids,
 }
 
@@ -26320,8 +26344,7 @@ var manageOfferResultCodeMap = map[int32]string{
 	-26: "ManageOfferResultCodeSourceBalanceLockOverflow",
 	-27: "ManageOfferResultCodeRequiresVerification",
 	-28: "ManageOfferResultCodeIncorrectAmountPrecision",
-	-29: "ManageOfferResultCodeNoSpecificRuleToParticipate",
-	-30: "ManageOfferResultCodeSpecificRuleForbids",
+	-29: "ManageOfferResultCodeSpecificRuleForbids",
 }
 
 var manageOfferResultCodeShortMap = map[int32]string{
@@ -26354,42 +26377,40 @@ var manageOfferResultCodeShortMap = map[int32]string{
 	-26: "source_balance_lock_overflow",
 	-27: "requires_verification",
 	-28: "incorrect_amount_precision",
-	-29: "no_specific_rule_to_participate",
-	-30: "specific_rule_forbids",
+	-29: "specific_rule_forbids",
 }
 
 var manageOfferResultCodeRevMap = map[string]int32{
-	"ManageOfferResultCodeSuccess":                     0,
-	"ManageOfferResultCodeMalformed":                   -1,
-	"ManageOfferResultCodePairNotTraded":               -2,
-	"ManageOfferResultCodeBalanceNotFound":             -3,
-	"ManageOfferResultCodeUnderfunded":                 -4,
-	"ManageOfferResultCodeCrossSelf":                   -5,
-	"ManageOfferResultCodeOfferOverflow":               -6,
-	"ManageOfferResultCodeAssetPairNotTradable":        -7,
-	"ManageOfferResultCodePhysicalPriceRestriction":    -8,
-	"ManageOfferResultCodeCurrentPriceRestriction":     -9,
-	"ManageOfferResultCodeNotFound":                    -10,
-	"ManageOfferResultCodeInvalidPercentFee":           -11,
-	"ManageOfferResultCodeInsufficientPrice":           -12,
-	"ManageOfferResultCodeOrderBookDoesNotExists":      -13,
-	"ManageOfferResultCodeSaleIsNotStartedYet":         -14,
-	"ManageOfferResultCodeSaleAlreadyEnded":            -15,
-	"ManageOfferResultCodeOrderViolatesHardCap":        -16,
-	"ManageOfferResultCodeCantParticipateOwnSale":      -17,
-	"ManageOfferResultCodeAssetMismatched":             -18,
-	"ManageOfferResultCodePriceDoesNotMatch":           -19,
-	"ManageOfferResultCodePriceIsInvalid":              -20,
-	"ManageOfferResultCodeUpdateIsNotAllowed":          -21,
-	"ManageOfferResultCodeInvalidAmount":               -22,
-	"ManageOfferResultCodeSaleIsNotActive":             -23,
-	"ManageOfferResultCodeRequiresKyc":                 -24,
-	"ManageOfferResultCodeSourceUnderfunded":           -25,
-	"ManageOfferResultCodeSourceBalanceLockOverflow":   -26,
-	"ManageOfferResultCodeRequiresVerification":        -27,
-	"ManageOfferResultCodeIncorrectAmountPrecision":    -28,
-	"ManageOfferResultCodeNoSpecificRuleToParticipate": -29,
-	"ManageOfferResultCodeSpecificRuleForbids":         -30,
+	"ManageOfferResultCodeSuccess":                   0,
+	"ManageOfferResultCodeMalformed":                 -1,
+	"ManageOfferResultCodePairNotTraded":             -2,
+	"ManageOfferResultCodeBalanceNotFound":           -3,
+	"ManageOfferResultCodeUnderfunded":               -4,
+	"ManageOfferResultCodeCrossSelf":                 -5,
+	"ManageOfferResultCodeOfferOverflow":             -6,
+	"ManageOfferResultCodeAssetPairNotTradable":      -7,
+	"ManageOfferResultCodePhysicalPriceRestriction":  -8,
+	"ManageOfferResultCodeCurrentPriceRestriction":   -9,
+	"ManageOfferResultCodeNotFound":                  -10,
+	"ManageOfferResultCodeInvalidPercentFee":         -11,
+	"ManageOfferResultCodeInsufficientPrice":         -12,
+	"ManageOfferResultCodeOrderBookDoesNotExists":    -13,
+	"ManageOfferResultCodeSaleIsNotStartedYet":       -14,
+	"ManageOfferResultCodeSaleAlreadyEnded":          -15,
+	"ManageOfferResultCodeOrderViolatesHardCap":      -16,
+	"ManageOfferResultCodeCantParticipateOwnSale":    -17,
+	"ManageOfferResultCodeAssetMismatched":           -18,
+	"ManageOfferResultCodePriceDoesNotMatch":         -19,
+	"ManageOfferResultCodePriceIsInvalid":            -20,
+	"ManageOfferResultCodeUpdateIsNotAllowed":        -21,
+	"ManageOfferResultCodeInvalidAmount":             -22,
+	"ManageOfferResultCodeSaleIsNotActive":           -23,
+	"ManageOfferResultCodeRequiresKyc":               -24,
+	"ManageOfferResultCodeSourceUnderfunded":         -25,
+	"ManageOfferResultCodeSourceBalanceLockOverflow": -26,
+	"ManageOfferResultCodeRequiresVerification":      -27,
+	"ManageOfferResultCodeIncorrectAmountPrecision":  -28,
+	"ManageOfferResultCodeSpecificRuleForbids":       -29,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -27090,31 +27111,41 @@ func (u ManageOfferResult) GetCurrentPriceRestriction() (result ManageOfferResul
 //
 //   enum ManagePollAction
 //    {
-//        CLOSE = 0
-//    //    UPDATE_END_TIME = 1,
-//    //    REMOVE = 2,
+//        CLOSE = 0,
+//        UPDATE_END_TIME = 1,
+//        CANCEL = 2
 //    };
 //
 type ManagePollAction int32
 
 const (
-	ManagePollActionClose ManagePollAction = 0
+	ManagePollActionClose         ManagePollAction = 0
+	ManagePollActionUpdateEndTime ManagePollAction = 1
+	ManagePollActionCancel        ManagePollAction = 2
 )
 
 var ManagePollActionAll = []ManagePollAction{
 	ManagePollActionClose,
+	ManagePollActionUpdateEndTime,
+	ManagePollActionCancel,
 }
 
 var managePollActionMap = map[int32]string{
 	0: "ManagePollActionClose",
+	1: "ManagePollActionUpdateEndTime",
+	2: "ManagePollActionCancel",
 }
 
 var managePollActionShortMap = map[int32]string{
 	0: "close",
+	1: "update_end_time",
+	2: "cancel",
 }
 
 var managePollActionRevMap = map[string]int32{
-	"ManagePollActionClose": 0,
+	"ManagePollActionClose":         0,
+	"ManagePollActionUpdateEndTime": 1,
+	"ManagePollActionCancel":        2,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -27401,15 +27432,17 @@ type UpdatePollEndTimeData struct {
 //        {
 //        case CLOSE:
 //            ClosePollData closePollData;
-//    //    case UPDATE_END_TIME:
-//    //        UpdatePollEndTimeData updateTimeData;
-//    //    case REMOVE:
-//    //        EmptyExt ext;
+//        case UPDATE_END_TIME:
+//            UpdatePollEndTimeData updateTimeData;
+//        case CANCEL:
+//            EmptyExt ext;
 //        }
 //
 type ManagePollOpData struct {
-	Action        ManagePollAction `json:"action,omitempty"`
-	ClosePollData *ClosePollData   `json:"closePollData,omitempty"`
+	Action         ManagePollAction       `json:"action,omitempty"`
+	ClosePollData  *ClosePollData         `json:"closePollData,omitempty"`
+	UpdateTimeData *UpdatePollEndTimeData `json:"updateTimeData,omitempty"`
+	Ext            *EmptyExt              `json:"ext,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -27424,6 +27457,10 @@ func (u ManagePollOpData) ArmForSwitch(sw int32) (string, bool) {
 	switch ManagePollAction(sw) {
 	case ManagePollActionClose:
 		return "ClosePollData", true
+	case ManagePollActionUpdateEndTime:
+		return "UpdateTimeData", true
+	case ManagePollActionCancel:
+		return "Ext", true
 	}
 	return "-", false
 }
@@ -27439,6 +27476,20 @@ func NewManagePollOpData(action ManagePollAction, value interface{}) (result Man
 			return
 		}
 		result.ClosePollData = &tv
+	case ManagePollActionUpdateEndTime:
+		tv, ok := value.(UpdatePollEndTimeData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be UpdatePollEndTimeData")
+			return
+		}
+		result.UpdateTimeData = &tv
+	case ManagePollActionCancel:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Ext = &tv
 	}
 	return
 }
@@ -27462,6 +27513,56 @@ func (u ManagePollOpData) GetClosePollData() (result ClosePollData, ok bool) {
 
 	if armName == "ClosePollData" {
 		result = *u.ClosePollData
+		ok = true
+	}
+
+	return
+}
+
+// MustUpdateTimeData retrieves the UpdateTimeData value from the union,
+// panicing if the value is not set.
+func (u ManagePollOpData) MustUpdateTimeData() UpdatePollEndTimeData {
+	val, ok := u.GetUpdateTimeData()
+
+	if !ok {
+		panic("arm UpdateTimeData is not set")
+	}
+
+	return val
+}
+
+// GetUpdateTimeData retrieves the UpdateTimeData value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManagePollOpData) GetUpdateTimeData() (result UpdatePollEndTimeData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "UpdateTimeData" {
+		result = *u.UpdateTimeData
+		ok = true
+	}
+
+	return
+}
+
+// MustExt retrieves the Ext value from the union,
+// panicing if the value is not set.
+func (u ManagePollOpData) MustExt() EmptyExt {
+	val, ok := u.GetExt()
+
+	if !ok {
+		panic("arm Ext is not set")
+	}
+
+	return val
+}
+
+// GetExt retrieves the Ext value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManagePollOpData) GetExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "Ext" {
+		result = *u.Ext
 		ok = true
 	}
 
@@ -27518,10 +27619,10 @@ func NewManagePollOpExt(v LedgerVersion, value interface{}) (result ManagePollOp
 //        {
 //        case CLOSE:
 //            ClosePollData closePollData;
-//    //    case UPDATE_END_TIME:
-//    //        UpdatePollEndTimeData updateTimeData;
-//    //    case REMOVE:
-//    //        EmptyExt ext;
+//        case UPDATE_END_TIME:
+//            UpdatePollEndTimeData updateTimeData;
+//        case CANCEL:
+//            EmptyExt ext;
 //        }
 //        data;
 //
@@ -27553,7 +27654,11 @@ type ManagePollOp struct {
 //        //: Not allowed to close poll which
 //        POLL_NOT_READY = -2,
 //        //: Only result provider is allowed to close poll
-//        NOT_AUTHORIZED_TO_CLOSE_POLL = -3
+//        NOT_AUTHORIZED_TO_CLOSE_POLL = -3,
+//        //: End time is in the past
+//        INVALID_END_TIME = -4,
+//        //: Only poll owner and admin are allowed to cancel poll and update end time
+//        NOT_AUTHORIZED = -5
 //    };
 //
 type ManagePollResultCode int32
@@ -27563,6 +27668,8 @@ const (
 	ManagePollResultCodeNotFound                 ManagePollResultCode = -1
 	ManagePollResultCodePollNotReady             ManagePollResultCode = -2
 	ManagePollResultCodeNotAuthorizedToClosePoll ManagePollResultCode = -3
+	ManagePollResultCodeInvalidEndTime           ManagePollResultCode = -4
+	ManagePollResultCodeNotAuthorized            ManagePollResultCode = -5
 )
 
 var ManagePollResultCodeAll = []ManagePollResultCode{
@@ -27570,6 +27677,8 @@ var ManagePollResultCodeAll = []ManagePollResultCode{
 	ManagePollResultCodeNotFound,
 	ManagePollResultCodePollNotReady,
 	ManagePollResultCodeNotAuthorizedToClosePoll,
+	ManagePollResultCodeInvalidEndTime,
+	ManagePollResultCodeNotAuthorized,
 }
 
 var managePollResultCodeMap = map[int32]string{
@@ -27577,6 +27686,8 @@ var managePollResultCodeMap = map[int32]string{
 	-1: "ManagePollResultCodeNotFound",
 	-2: "ManagePollResultCodePollNotReady",
 	-3: "ManagePollResultCodeNotAuthorizedToClosePoll",
+	-4: "ManagePollResultCodeInvalidEndTime",
+	-5: "ManagePollResultCodeNotAuthorized",
 }
 
 var managePollResultCodeShortMap = map[int32]string{
@@ -27584,6 +27695,8 @@ var managePollResultCodeShortMap = map[int32]string{
 	-1: "not_found",
 	-2: "poll_not_ready",
 	-3: "not_authorized_to_close_poll",
+	-4: "invalid_end_time",
+	-5: "not_authorized",
 }
 
 var managePollResultCodeRevMap = map[string]int32{
@@ -27591,6 +27704,8 @@ var managePollResultCodeRevMap = map[string]int32{
 	"ManagePollResultCodeNotFound":                 -1,
 	"ManagePollResultCodePollNotReady":             -2,
 	"ManagePollResultCodeNotAuthorizedToClosePoll": -3,
+	"ManagePollResultCodeInvalidEndTime":           -4,
+	"ManagePollResultCodeNotAuthorized":            -5,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -37014,7 +37129,8 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CHECK = 14,
 //        CANCEL = 15,
 //        CLOSE = 16,
-//        REMOVE = 17
+//        REMOVE = 17,
+//        UPDATE_END_TIME = 18
 //    };
 //
 type AccountRuleAction int32
@@ -37037,6 +37153,7 @@ const (
 	AccountRuleActionCancel            AccountRuleAction = 15
 	AccountRuleActionClose             AccountRuleAction = 16
 	AccountRuleActionRemove            AccountRuleAction = 17
+	AccountRuleActionUpdateEndTime     AccountRuleAction = 18
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -37057,6 +37174,7 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionCancel,
 	AccountRuleActionClose,
 	AccountRuleActionRemove,
+	AccountRuleActionUpdateEndTime,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -37077,6 +37195,7 @@ var accountRuleActionMap = map[int32]string{
 	15: "AccountRuleActionCancel",
 	16: "AccountRuleActionClose",
 	17: "AccountRuleActionRemove",
+	18: "AccountRuleActionUpdateEndTime",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -37097,6 +37216,7 @@ var accountRuleActionShortMap = map[int32]string{
 	15: "cancel",
 	16: "close",
 	17: "remove",
+	18: "update_end_time",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -37117,6 +37237,7 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionCancel":            15,
 	"AccountRuleActionClose":             16,
 	"AccountRuleActionRemove":            17,
+	"AccountRuleActionUpdateEndTime":     18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -37979,7 +38100,8 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        BIND = 12,
 //        UPDATE_MAX_ISSUANCE = 13,
 //        CHECK = 14,
-//        CLOSE = 15
+//        CLOSE = 15,
+//        UPDATE_END_TIME = 16
 //    };
 //
 type SignerRuleAction int32
@@ -38000,6 +38122,7 @@ const (
 	SignerRuleActionUpdateMaxIssuance SignerRuleAction = 13
 	SignerRuleActionCheck             SignerRuleAction = 14
 	SignerRuleActionClose             SignerRuleAction = 15
+	SignerRuleActionUpdateEndTime     SignerRuleAction = 16
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -38018,6 +38141,7 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionUpdateMaxIssuance,
 	SignerRuleActionCheck,
 	SignerRuleActionClose,
+	SignerRuleActionUpdateEndTime,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -38036,6 +38160,7 @@ var signerRuleActionMap = map[int32]string{
 	13: "SignerRuleActionUpdateMaxIssuance",
 	14: "SignerRuleActionCheck",
 	15: "SignerRuleActionClose",
+	16: "SignerRuleActionUpdateEndTime",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -38054,6 +38179,7 @@ var signerRuleActionShortMap = map[int32]string{
 	13: "update_max_issuance",
 	14: "check",
 	15: "close",
+	16: "update_end_time",
 }
 
 var signerRuleActionRevMap = map[string]int32{
@@ -38072,6 +38198,7 @@ var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionUpdateMaxIssuance": 13,
 	"SignerRuleActionCheck":             14,
 	"SignerRuleActionClose":             15,
+	"SignerRuleActionUpdateEndTime":     16,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -39135,9 +39262,9 @@ func NewCreateAccountSaleRuleDataExt(v LedgerVersion, value interface{}) (result
 //
 //   struct CreateAccountSaleRuleData
 //    {
-//        //: Value from enum that can be applied to `resource`
+//        //: Certain account for which rule is applied, null means rule is global
 //        AccountID* accountID;
-//        //: True if such `action` on such `resource` is prohibited, otherwise allows
+//        //: True if such rule is deniable, otherwise allows
 //        bool forbids;
 //
 //        //: reserved for future use
@@ -39161,6 +39288,7 @@ type CreateAccountSaleRuleData struct {
 //        case EMPTY_VERSION:
 //            void;
 //        case ADD_SALE_WHITELISTS:
+//            //: array of rules which determine sale participation
 //            CreateAccountSaleRuleData saleRules<>;
 //        }
 //
@@ -39260,12 +39388,14 @@ func (u SaleCreationRequestExt) GetSaleRules() (result []CreateAccountSaleRuleDa
 //        uint32 sequenceNumber;
 //        //: Array of quote assets that are available for participation
 //        SaleCreationRequestQuoteAsset quoteAssets<100>;
-//        //: Reserved for future use
+//        //: Use `EMPTY_VERSION` to allow anyone participate in sale,
+//        //: use `ADD_SALE_WHITELISTS` to specify sale participation rules
 //        union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
 //            void;
 //        case ADD_SALE_WHITELISTS:
+//            //: array of rules which determine sale participation
 //            CreateAccountSaleRuleData saleRules<>;
 //        }
 //        ext;
@@ -43809,11 +43939,13 @@ type TransactionResult struct {
 
 // LedgerVersion is an XDR Enum defines as:
 //
-//   enum LedgerVersion {
-//    	EMPTY_VERSION = 0,
-//    	CHECK_SET_FEE_ACCOUNT_EXISTING = 1,
-//    	FIX_PAYMENT_STATS = 2,
-//    	ADD_SALE_WHITELISTS = 3
+//   enum LedgerVersion
+//    {
+//        EMPTY_VERSION = 0,
+//        CHECK_SET_FEE_ACCOUNT_EXISTING = 1,
+//        FIX_PAYMENT_STATS = 2,
+//        ADD_INVEST_FEE = 3,
+//        ADD_SALE_WHITELISTS = 4
 //    };
 //
 type LedgerVersion int32
@@ -43822,13 +43954,15 @@ const (
 	LedgerVersionEmptyVersion               LedgerVersion = 0
 	LedgerVersionCheckSetFeeAccountExisting LedgerVersion = 1
 	LedgerVersionFixPaymentStats            LedgerVersion = 2
-	LedgerVersionAddSaleWhitelists          LedgerVersion = 3
+	LedgerVersionAddInvestFee               LedgerVersion = 3
+	LedgerVersionAddSaleWhitelists          LedgerVersion = 4
 )
 
 var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionEmptyVersion,
 	LedgerVersionCheckSetFeeAccountExisting,
 	LedgerVersionFixPaymentStats,
+	LedgerVersionAddInvestFee,
 	LedgerVersionAddSaleWhitelists,
 }
 
@@ -43836,21 +43970,24 @@ var ledgerVersionMap = map[int32]string{
 	0: "LedgerVersionEmptyVersion",
 	1: "LedgerVersionCheckSetFeeAccountExisting",
 	2: "LedgerVersionFixPaymentStats",
-	3: "LedgerVersionAddSaleWhitelists",
+	3: "LedgerVersionAddInvestFee",
+	4: "LedgerVersionAddSaleWhitelists",
 }
 
 var ledgerVersionShortMap = map[int32]string{
 	0: "empty_version",
 	1: "check_set_fee_account_existing",
 	2: "fix_payment_stats",
-	3: "add_sale_whitelists",
+	3: "add_invest_fee",
+	4: "add_sale_whitelists",
 }
 
 var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionEmptyVersion":               0,
 	"LedgerVersionCheckSetFeeAccountExisting": 1,
 	"LedgerVersionFixPaymentStats":            2,
-	"LedgerVersionAddSaleWhitelists":          3,
+	"LedgerVersionAddInvestFee":               3,
+	"LedgerVersionAddSaleWhitelists":          4,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -45159,4 +45296,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "6b712ee855f480653156067ad23cdbd35c589595"
+var Revision = "6da80385aa81c2db787778b9ca9908385df3d340"
