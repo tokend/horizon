@@ -45,10 +45,12 @@ func (q SalesQ) Whitelisted(address string) SalesQ {
 		Select("(sr.key#>>'{sale,saleID}')::int").
 		From("account_specific_rules sr").
 		Where(sq.Or{sq.Expr("sr.address = ?", address), sq.Expr("sr.address is null")}).
-		GroupBy("sr.key#>>'{sale,saleID}'").Having("bool_and(not sr.forbids)").
-		Prefix("sales.id in (").
-		Suffix(")")
-	q.selector = q.selector.Where(subQuery.Suffix(" or sales.version < ?", int32(xdr.LedgerVersionAddSaleWhitelists)))
+		GroupBy("sr.key#>>'{sale,saleID}'").Having("bool_and(not sr.forbids)")
+	q.selector = q.selector.Where(
+		subQuery.
+			Prefix("sales.id in (").
+			Suffix(") or sales.version < ?",
+				int32(xdr.LedgerVersionAddSaleWhitelists)))
 	return q
 }
 

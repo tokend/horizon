@@ -95,12 +95,12 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 		response.Data = append(response.Data, resources.NewSaleWhitelist(request.SaleID, *rule.Address))
 	}
 
-	h.PopulateLinks(response, request)
+	h.populateLinks(response, request)
 
 	return response, nil
 }
 
-func (h *getSaleWhiteListHandler) PopulateLinks(
+func (h *getSaleWhiteListHandler) populateLinks(
 	response *regources.SaleWhitelistsResponse, request *requests.GetSaleWhitelist,
 ) {
 	if len(response.Data) > 0 {

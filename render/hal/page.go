@@ -28,7 +28,7 @@ func (p *BasePage) Init() {
 }
 
 // Page represents the common page configuration (i.e. has self, next, and prev
-// links) and has a helper method `PopulateLinks` to automate their
+// links) and has a helper method `populateLinks` to automate their
 // initialization.
 type Page struct {
 	Links struct {
@@ -46,7 +46,7 @@ type Page struct {
 	Filters  map[string]string `json:"-"`
 }
 
-// PopulateLinks sets the common links for a page.
+// populateLinks sets the common links for a page.
 func (p *Page) PopulateLinks() {
 	p.Init()
 	fmts := p.BasePath + "?order=%s&limit=%d&cursor=%s"

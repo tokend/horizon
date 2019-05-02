@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"gitlab.com/tokend/horizon/db2/core2"
@@ -68,10 +67,12 @@ func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.G
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sales list")
 	}
-	last := fmt.Sprintf("%d", historySales[len(historySales)-1].ID)
+	if historySales == nil {
+		return nil, nil
+	}
+
 	response := &regources.SalesResponse{
-		Data:  make([]regources.Sale, 0, len(historySales)),
-		Links: request.GetCursorLinks(*request.PageParams, last),
+		Data: make([]regources.Sale, 0, len(historySales)),
 	}
 
 	err = h.populateResponse(historySales, request.SalesBase, response)
@@ -79,5 +80,17 @@ func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.G
 		return nil, errors.Wrap(err, "failed to populate response")
 	}
 
+	h.populateLinks(response, request)
+
 	return response, nil
+}
+
+func (h *getSaleListForAccountHandler) populateLinks(
+	response *regources.SalesResponse, request *requests.GetSaleListForAccount,
+) {
+	if len(response.Data) > 0 {
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+	} else {
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
+	}
 }

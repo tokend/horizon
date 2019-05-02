@@ -108,7 +108,7 @@ func (h *getSaleParticipationHandler) getSaleParticipation(sale *history2.Sale, 
 	return response, nil
 }
 
-func (h *getSaleParticipationHandler) PopulateLinks(
+func (h *getSaleParticipationHandler) populateLinks(
 	response *regources.SaleParticipationsResponse, request *requests.GetSaleParticipation,
 ) {
 	if len(response.Data) > 0 {
