@@ -495,7 +495,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:fcc88392992f583deee415ff6f13c32a7903d99461162bd45c5522ab39819fea"
+  digest = "1:727fcb0441c55ed85b761c59bd0bf78d8e642c42bef8d5f4e62d64e769542511"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -513,8 +513,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "0e0a9e57a4a271207eb39aa52e946658d48ff261"
-  version = "v3.3.1"
+  revision = "e0464f6ef0fda2ae81e16322fce9732e02ff12b2"
+  version = "3.3.3"
 
 [[projects]]
   branch = "master"
@@ -530,14 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:45fe09bbe22f5e576b6f5459982bf74d439bcc67f58dcfe53a20f24076691323"
+  digest = "1:01816490c715dd9798696af872ba508e081fb31ed320afc9158eeb33cbdc1455"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "5b1ecd7708d013d964d422d1511c4306aa22426e"
+  revision = "b895b137e1311e59ce18738918bdef61dfa93541"
+  version = "4.2.0"
 
 [[projects]]
   branch = "master"

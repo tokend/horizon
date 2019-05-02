@@ -1,5 +1,5 @@
-// revision: 7eca922cd6edc4e7936d1c8a6da146333454df38
-// branch:   feature/poll_update_cancel
+// revision: 73064c40ce0bf38821038aa479ad7829c834b2b3
+// branch:   master
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -19884,7 +19884,7 @@ func (u ManageAssetResult) GetSuccess() (result ManageAssetSuccess, ok bool) {
 //    {
 //        //: Create new balance
 //        CREATE = 0,
-//        //: Delete existing balance by ID
+//        //: Delete existing balance by ID. Is reserved and not implemented yet.
 //        DELETE_BALANCE = 1,
 //        //: Ensures that the balance will not be created if the balance of the provided asset exists and is attached to the provided account
 //        CREATE_UNIQUE = 2
@@ -20025,7 +20025,7 @@ func NewManageBalanceOpExt(v LedgerVersion, value interface{}) (result ManageBal
 //
 //   struct ManageBalanceOp
 //    {
-//        //: Defines a ManageBalanceAction to be performed
+//        //: Defines a ManageBalanceAction to be performed. `DELETE_BALANCE` is reserved and not implemented yet.
 //        ManageBalanceAction action;
 //        //: Defines an account whose balance will be managed
 //        AccountID destination;
@@ -42861,7 +42861,8 @@ type TransactionResult struct {
 //   enum LedgerVersion {
 //    	EMPTY_VERSION = 0,
 //    	CHECK_SET_FEE_ACCOUNT_EXISTING = 1,
-//    	FIX_PAYMENT_STATS = 2
+//    	FIX_PAYMENT_STATS = 2,
+//    	ADD_INVEST_FEE = 3
 //    };
 //
 type LedgerVersion int32
@@ -42870,30 +42871,35 @@ const (
 	LedgerVersionEmptyVersion               LedgerVersion = 0
 	LedgerVersionCheckSetFeeAccountExisting LedgerVersion = 1
 	LedgerVersionFixPaymentStats            LedgerVersion = 2
+	LedgerVersionAddInvestFee               LedgerVersion = 3
 )
 
 var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionEmptyVersion,
 	LedgerVersionCheckSetFeeAccountExisting,
 	LedgerVersionFixPaymentStats,
+	LedgerVersionAddInvestFee,
 }
 
 var ledgerVersionMap = map[int32]string{
 	0: "LedgerVersionEmptyVersion",
 	1: "LedgerVersionCheckSetFeeAccountExisting",
 	2: "LedgerVersionFixPaymentStats",
+	3: "LedgerVersionAddInvestFee",
 }
 
 var ledgerVersionShortMap = map[int32]string{
 	0: "empty_version",
 	1: "check_set_fee_account_existing",
 	2: "fix_payment_stats",
+	3: "add_invest_fee",
 }
 
 var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionEmptyVersion":               0,
 	"LedgerVersionCheckSetFeeAccountExisting": 1,
 	"LedgerVersionFixPaymentStats":            2,
+	"LedgerVersionAddInvestFee":               3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -44190,4 +44196,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "7eca922cd6edc4e7936d1c8a6da146333454df38"
+var Revision = "73064c40ce0bf38821038aa479ad7829c834b2b3"
