@@ -28,9 +28,11 @@ func (action *RootAction) JSON() {
 
 	res.NetworkPassphrase = action.App.CoreInfo.NetworkPassphrase
 	res.AdminAccountID = action.App.CoreInfo.AdminAccountID
+	res.MasterAccountID = action.App.CoreInfo.AdminAccountID
 	res.MasterExchangeName = action.App.CoreInfo.MasterExchangeName
+	res.EnvironmentName = action.App.CoreInfo.MasterExchangeName
 	res.TxExpirationPeriod = action.App.CoreInfo.TxExpirationPeriod
 	res.XDRRevision = xdr.Revision
-
+	res.HorizonRevision = action.App.horizonVersion
 	hal.Render(action.W, res)
 }

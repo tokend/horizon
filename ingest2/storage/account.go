@@ -12,7 +12,7 @@ import (
 // Account is helper struct to aid in loading accounts and storing accounts
 // it uses lazy change, which stores all selected or inserted accounts locally.
 type Account struct {
-	accounts map[xdr.AccountId]*history2.Account
+	accounts map[[32]byte]*history2.Account
 
 	accountQ     history2.AccountsQ
 	coreAccounts core2.AccountsQ
@@ -24,7 +24,7 @@ func NewAccount(repo *db2.Repo, coreRepo *db2.Repo) *Account {
 	return &Account{
 		repo:         repo,
 		accountQ:     history2.NewAccountsQ(repo),
-		accounts:     make(map[xdr.AccountId]*history2.Account),
+		accounts:     make(map[[32]byte]*history2.Account),
 		coreAccounts: core2.NewAccountsQ(coreRepo),
 	}
 }
@@ -41,7 +41,7 @@ func (a *Account) MustAccount(rawAddress xdr.AccountId) history2.Account {
 }
 
 func (a *Account) getAccount(rawAddress xdr.AccountId) (history2.Account, error) {
-	account, ok := a.accounts[rawAddress]
+	account, ok := a.accounts[*rawAddress.Ed25519]
 	if ok {
 		return *account, nil
 	}
@@ -63,7 +63,7 @@ func (a *Account) getAccount(rawAddress xdr.AccountId) (history2.Account, error)
 		}
 	}
 
-	a.accounts[rawAddress] = account
+	a.accounts[*rawAddress.Ed25519] = account
 	return *account, nil
 }
 
@@ -92,7 +92,7 @@ func (a *Account) getAccountFromCore(rawAddress xdr.AccountId, address string) (
 func (a *Account) InsertAccount(rawAccountID xdr.AccountId, account history2.Account) error {
 	// it's ok if the account already exists in the map.
 	// Such case could occur during roll back of transaction and retry to process same ledger
-	a.accounts[rawAccountID] = &account
+	a.accounts[*rawAccountID.Ed25519] = &account
 	_, err := a.repo.ExecRaw("INSERT INTO accounts (id, address) VALUES($1, $2)", account.ID, account.Address)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert new account", logan.F{

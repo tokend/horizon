@@ -107,7 +107,7 @@ var messages = map[string]string{
 	"op_insufficient_max_issuance":                      "Max number of tokens can be issued is not sufficient to fulfill soft cap",
 	"op_invalid_asset_pair":                             "One of the assets (base or quote) has invalid code or they are equal",
 	"op_request_or_sale_already_exists":                 "IO creation request or IO already exists for specified token",
-	"op_not_authorized":                                 "Account not authorized to perform issuance of the asset",
+	"op_not_authorized":                                 "Account not authorized to perform operation",
 	"op_exceeds_max_issuance_amount":                    "Maximal issuance amount will be exceeded after issuance",
 	"op_receiver_full_line":                             "Total funds of receiver will exceed UINT64_MAX after issuance",
 	"op_fee_exceeds_amount":                             "Fee is more than amount to issue",
@@ -282,7 +282,7 @@ var messages = map[string]string{
 	"op_invalid_vote":                                   "Provided choice is not valid",
 	"op_poll_not_found":                                 "CreatePoll with such ID does not exist",
 	"op_vote_exists":                                    "Voter has already submitted his choice for poll",
-	"op_poll_type_mistmatched":                          "Type of the poll and poll type specified in vote are mismatched",
+	"op_poll_type_mismatched":                           "Type of the poll and poll type specified in vote are mismatched",
 	"op_poll_not_started":                               "CreatePoll has not started yet",
 	"op_poll_ended":                                     "CreatePoll has ended, no votes can be accepted",
 	"op_vote_not_found":                                 "Vote to remove cannot be found",
@@ -291,6 +291,7 @@ var messages = map[string]string{
 	"op_exceeded_max_rules_size":                        "Not allowed to pass more rules than max size which set in key value",
 	"op_global_specific_rule_duplication":               "Not allowed to pass two or more global rules (without accountID)",
 	"op_account_specific_rule_duplication":              "Not allowed to pass identical or conflicting rules",
+	"op_invalid_end_time":                               "New end time is in the past",
 }
 
 func getMessage(rawCode string) string {

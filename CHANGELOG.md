@@ -1,17 +1,25 @@
 ## Unreleased
 
+## 3.3.0
+
 ### Added
 
 * Allow forcing reingest on application start up (see ingest2/main.go)
 * `/v3/limits` endpoint to get limits list with filters
 * Squash matches with the same price in history
 * `/v3/movements` endpoint to get participants effect related to balance movements
+* `/v3` endpoint to get horizon info
+* Tx submission system v2 with retry
+* `/v3/transactions` to submit txs
+* Cancel poll and update poll end time ingestion
 
 ## Fixed
 * `/v3/account` to include all limits imposed for account
 * Issue with `/v3/assets` for assets with max_uint64 fields
 * Issues with balances and limits having fields types for amount int64 instead of uint64. 
 * Update doorman with SignerOf check fixed
+* Problem with CPU usage on OS X
+* Fixed `null` messages on failed transaction submit
 
 ## 3.2.0-x.9
 

@@ -105,5 +105,6 @@ ResourceType:
     "request-details-change-role",
     "request-details-update-sale-details",
     "request-details-update-sale-end-time",
-    "request-details-withdrawal"
+    "request-details-withdrawal",
+    "horizon-state"
   ]

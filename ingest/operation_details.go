@@ -339,9 +339,13 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 		switch op.Data.Action {
 
+		case xdr.ManagePollActionUpdateEndTime:
+			details["end_time"] = op.Data.MustUpdateTimeData().NewEndTime
+
 		case xdr.ManagePollActionClose:
 			details["poll_result"] = op.Data.MustClosePollData().Result.String()
 			details["details"] = op.Data.MustClosePollData().Details
+		case xdr.ManagePollActionCancel:
 		}
 	case xdr.OperationTypeManageVote:
 		op := c.Operation().Body.MustManageVoteOp()

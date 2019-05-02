@@ -32,6 +32,12 @@ func (h *managePollOpHandler) Details(op rawOperation, opRes xdr.OperationResult
 			PollResult: managePollOp.Data.MustClosePollData().Result,
 		}
 		details.ManagePoll.ClosePoll = closeDetails
+	case xdr.ManagePollActionUpdateEndTime:
+		updateEndTimeDetails := &history2.UpdatePollEndTimeData{
+			EndTime: internal.TimeFromXdr(managePollOp.Data.UpdateTimeData.NewEndTime),
+		}
+		details.ManagePoll.UpdatePollEndTime = updateEndTimeDetails
+	case xdr.ManagePollActionCancel:
 	default:
 		return history2.OperationDetails{}, errors.From(errors.New("unexpected manage poll action"),
 			logan.F{
