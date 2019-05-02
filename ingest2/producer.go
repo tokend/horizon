@@ -14,7 +14,6 @@ import (
 )
 
 const (
-	maxBatchSize = 1000
 	waitForLedgerPeriod    = time.Second
 	minErrorRecoveryPeriod = time.Second * 2
 	maxErrorRecoveryPeriod = time.Minute * 10
@@ -27,9 +26,13 @@ type historyLedgerProvider interface {
 
 // txProvider - specifies methods required to get data from core db needed for ingest
 type txProvider interface {
+	// GetLatestLedgerSeq - returns latest ledger seq available in core
 	GetLatestLedgerSeq() (int32, error)
+	// GetByLedgerRange - returns range of transactions applied in ledgers with sequence in [fromSeq,toSeq]
 	GetByLedgerRange(fromSeq int32, toSeq int32) ([]core.Transaction, error)
+	// GetBySequence - returns ledger header by it's seq
 	GetBySequence(seq int32) (*core.LedgerHeader, error)
+	// GetBySequenceRange - returns range of ledger headers with sequence in [fromSeq,toSeq]
 	GetBySequenceRange(fromSeq int32, toSeq int32) ([]core.LedgerHeader, error)
 }
 
@@ -40,26 +43,33 @@ type Producer struct {
 	hLedgerProvider historyLedgerProvider
 	log             *logan.Entry
 
-	data          chan LedgerBundle
-	currentLedger int32
+	data           chan LedgerBundle
+	currentLedger  int32
+	batchSize      int32
+	getLedgerState func() ledger.SystemState
 }
 
 // NewProducer - creates new instance of ingest data produce
-func NewProducer(txProvider txProvider, hLedgerProvider historyLedgerProvider, log *logan.Entry) *Producer {
+func NewProducer(txProvider txProvider, hLedgerProvider historyLedgerProvider, log *logan.Entry, batchSize int32,
+	getLedgerState func() ledger.SystemState) *Producer {
+
 	return &Producer{
 		log:             log,
 		txProvider:      txProvider,
 		hLedgerProvider: hLedgerProvider,
+		batchSize:       batchSize,
+		getLedgerState:  getLedgerState,
 	}
 }
 
 // Start - starts the Producer in new goroutine. Panics on initialization step if already started.
-func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger.SystemState) chan LedgerBundle {
+func (l *Producer) Start(ctx context.Context) chan LedgerBundle {
 	if l.data != nil {
 		l.log.Panic("Already started")
 	}
 
-	l.data = make(chan LedgerBundle, bufferSize)
+	l.data = make(chan LedgerBundle, l.batchSize)
+	ledgerState := l.getLedgerState()
 	var err error
 	l.currentLedger, err = l.getLedgerSeqToStartFrom(ledgerState)
 	if err != nil {
@@ -70,31 +80,36 @@ func (l *Producer) Start(ctx context.Context, bufferSize int, ledgerState ledger
 	if err != nil {
 		l.log.WithError(err).Panic("Failed to ensure consistency of core and horizon chains")
 	}
-	go running.WithBackOff(ctx, l.log, "ingest_producer", l.checkForNewLedgers, waitForLedgerPeriod,
+	go running.WithBackOff(ctx, l.log, "ingest_producer", l.runOnce, waitForLedgerPeriod,
 		minErrorRecoveryPeriod, maxErrorRecoveryPeriod)
 
 	return l.data
 }
 
-func (l *Producer) checkForNewLedgers(ctx context.Context) error {
-	latestLedger, err := l.txProvider.GetLatestLedgerSeq()
+func (l *Producer) runOnce(ctx context.Context) error {
+	coreLatestVersion := l.getLedgerState().Core.Latest
+	if coreLatestVersion < l.currentLedger {
+		return errors.From(errors.New("Unexpected state: latest ledger in core is below current ledger in horizon"), logan.F{
+			"core_latest":    coreLatestVersion,
+			"horizon_latest": l.currentLedger,
+		})
+	}
+
+	if coreLatestVersion == l.currentLedger {
+		return nil
+	}
+
+	fromSeq := l.currentLedger + 1
+	toSeq := int32(math.Min(float64(coreLatestVersion), float64(l.currentLedger+l.batchSize)))
+	batch, err := l.getBatch(fromSeq, toSeq)
 	if err != nil {
-		return errors.Wrap(err, "failed to load current ledger sequence")
+		return errors.Wrap(err, "failed to load batch")
 	}
 
-	if latestLedger > l.currentLedger {
-		fromSeq := l.currentLedger + 1
-		toSeq := int32(math.Min(float64(latestLedger), float64(l.currentLedger + maxBatchSize)))
-		batch, err := l.getBatch(fromSeq, toSeq)
-		if err != nil {
-			return errors.Wrap(err, "failed to load batch")
-		}
-
-		for _, bundle := range batch {
-			l.data <- bundle
-		}
-		l.currentLedger = toSeq
+	for _, bundle := range batch {
+		l.data <- bundle
 	}
+	l.currentLedger = toSeq
 
 	return nil
 }
@@ -104,24 +119,25 @@ func (l *Producer) getBatch(fromSeq int32, toSeq int32) ([]LedgerBundle, error) 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load ledger headers")
 	}
+
 	txs, err := l.txProvider.GetByLedgerRange(fromSeq, toSeq)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load ledger transactions")
 	}
-	result := make([]LedgerBundle, 0, len(headers))
 
+	result := make([]LedgerBundle, 0, len(headers))
 	for _, header := range headers {
 		result = append(result, LedgerBundle{
-			Header: header,
+			Header:       header,
 			Transactions: make([]core.Transaction, 0, header.Data.MaxTxSetSize),
 		})
 	}
 
 	for _, tx := range txs {
 		if tx.IsSuccessful() {
-			bundle := result[tx.LedgerSequence - fromSeq]
+			bundle := result[tx.LedgerSequence-fromSeq]
 			bundle.Transactions = append(bundle.Transactions, tx)
-			result[tx.LedgerSequence - fromSeq] = bundle
+			result[tx.LedgerSequence-fromSeq] = bundle
 		}
 	}
 
