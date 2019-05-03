@@ -75,6 +75,10 @@ type getSaleWhiteListHandler struct {
 
 // GetSale returns sale with related resources
 func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhitelist) (*regources.SaleWhitelistsResponse, error) {
+	response := &regources.SaleWhitelistsResponse{
+		Data: make([]regources.SaleWhitelist, 0),
+	}
+
 	rules, err := h.AccountSpecificRulesQ.
 		ForSale(request.SaleID).
 		Permission(false).
@@ -84,12 +88,6 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account specific rules for sale")
 	}
-
-	if rules == nil {
-		return nil, nil
-	}
-
-	response := &regources.SaleWhitelistsResponse{}
 
 	for _, rule := range rules {
 		if rule.Address == nil {

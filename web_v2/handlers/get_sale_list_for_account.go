@@ -55,11 +55,6 @@ func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if result == nil {
-		ape.RenderErr(w, problems.NotFound())
-		return
-	}
-
 	ape.Render(w, result)
 }
 

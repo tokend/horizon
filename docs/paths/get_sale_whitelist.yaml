@@ -2,11 +2,11 @@
   get:
     tags:
       - Crowd Investing
-    summary: Get whitelist for sale
+    summary: Whitelist for sale
     description: |
       Allows getting whitelist for sale.\n
       🔒 Admin or sale owner signature is required.\n
-    operationId: getSaleWhitelist
+    operationId: saleWhitelist
     parameters:
       - name: id
         in: path

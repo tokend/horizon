@@ -2,11 +2,11 @@
   get:
     tags:
       - Crowd Investing
-    summary: Get participations for the sale
+    summary: Participations for the sale
     description: |
       Allows getting participation for sale.\n
       🔒 Admin or sale owner signature is required.\n
-    operationId: getSaleParticipation
+    operationId: saleParticipation
     parameters:
       - name: id
         in: path
