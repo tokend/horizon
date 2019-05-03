@@ -31,6 +31,8 @@ ResourceType:
     "polls",
     "polls-participation",
     "votes",
+    "sale-whitelist",
+    "sale-participation",
     "transactions",
     "effects-funded",
     "effects-issued",

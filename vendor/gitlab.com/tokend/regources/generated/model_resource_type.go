@@ -38,6 +38,8 @@ const (
 	POLLS                                                   ResourceType = "polls"
 	POLLS_PARTICIPATION                                     ResourceType = "polls-participation"
 	VOTES                                                   ResourceType = "votes"
+	SALE_WHITELIST                                          ResourceType = "sale-whitelist"
+	SALE_PARTICIPATION                                      ResourceType = "sale-participation"
 	TRANSACTIONS                                            ResourceType = "transactions"
 	EFFECTS_FUNDED                                          ResourceType = "effects-funded"
 	EFFECTS_ISSUED                                          ResourceType = "effects-issued"

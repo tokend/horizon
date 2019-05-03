@@ -34,6 +34,7 @@
 // migrations/033_polls.sql
 // migrations/034_poll_permission_type.sql
 // migrations/035_reingest_version.sql
+// migrations/036_whitelist.sql
 // DO NOT EDIT!
 
 package schema
@@ -776,7 +777,27 @@ func migrations035_reingest_versionSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "migrations/035_reingest_version.sql", size: 163, mode: os.FileMode(436), modTime: time.Unix(1555682120, 0)}
+	info := bindataFileInfo{name: "migrations/035_reingest_version.sql", size: 163, mode: os.FileMode(436), modTime: time.Unix(1556277174, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _migrations036_whitelistSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x94\x92\x41\x6e\xe3\x30\x0c\x45\xf7\x3a\x05\x97\x0e\x26\x01\x32\x03\xcc\x6c\xb2\x9d\x2b\x74\x6d\xd0\x12\x9d\xb2\x95\x25\x95\xa4\xd3\xfa\xf6\x85\x1d\x24\x75\x5c\xa7\x45\x77\x82\xf8\xf9\xf9\xf0\xc9\xdd\x0e\x7e\x75\x7c\x14\x34\x82\x87\xe2\x9c\x17\x1a\x9f\x86\x4d\x24\x40\xef\x73\x9f\xac\xd6\x42\x9e\x5b\xf6\xb5\xf4\x91\x14\x2a\x07\xc0\x01\xa0\xe1\x23\x27\x83\x94\x0d\x52\x1f\xe3\xd6\x01\x60\x08\x42\xaa\x70\x42\xf1\x8f\x28\xd5\xdf\x7f\x9b\xf1\xbb\xcd\xd2\x70\x50\x68\x72\x8e\x84\xe9\xa6\x85\x92\xc9\x50\xdb\x50\x08\x96\x6e\xcf\x34\xc0\x93\xe6\xd4\xdc\xfc\x16\xe1\x0e\x65\x98\xaa\x15\x87\x8d\xdb\x1c\x16\xdc\x8a\x91\xea\x82\x62\xec\xb9\xa0\x71\x4e\x13\xf3\x44\xbd\x02\x0d\x70\xd5\x26\xab\x39\xcc\xe9\x17\xc2\xc9\xf9\x9e\x4b\x83\x4a\x35\x76\x63\x64\x90\xfa\x8e\x84\x7d\xf5\x67\xbf\xdd\x2f\x4d\x5e\xfa\x6c\x3f\x11\xaa\x92\x5d\x99\x7e\x7f\x62\x3a\x8f\xfd\x46\x54\x84\x3d\x7d\x39\x6c\x35\x56\x8c\x46\x32\x4b\x55\xc7\x0d\x83\xcf\xb1\xef\x12\x9c\x48\x74\xcc\x76\x9e\x04\x04\x6a\xb1\x8f\x06\xfb\x83\x73\xf3\xe3\xfa\x9f\x5f\xd3\x9a\x5f\x90\x5c\x2e\x86\xdc\x02\xbd\xb1\x9a\x5e\xac\x0f\x6e\x2a\x9f\xf5\x1f\xd5\x95\xfd\x7a\x54\x8f\x81\xee\x34\xdc\x39\xe4\x6b\xd3\x7b\x00\x00\x00\xff\xff\x15\x83\xee\x93\x06\x03\x00\x00")
+
+func migrations036_whitelistSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations036_whitelistSql,
+		"migrations/036_whitelist.sql",
+	)
+}
+
+func migrations036_whitelistSql() (*asset, error) {
+	bytes, err := migrations036_whitelistSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/036_whitelist.sql", size: 774, mode: os.FileMode(436), modTime: time.Unix(1556808554, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -867,6 +888,7 @@ var _bindata = map[string]func() (*asset, error){
 	"migrations/033_polls.sql": migrations033_pollsSql,
 	"migrations/034_poll_permission_type.sql": migrations034_poll_permission_typeSql,
 	"migrations/035_reingest_version.sql": migrations035_reingest_versionSql,
+	"migrations/036_whitelist.sql": migrations036_whitelistSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -944,6 +966,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"033_polls.sql": &bintree{migrations033_pollsSql, map[string]*bintree{}},
 		"034_poll_permission_type.sql": &bintree{migrations034_poll_permission_typeSql, map[string]*bintree{}},
 		"035_reingest_version.sql": &bintree{migrations035_reingest_versionSql, map[string]*bintree{}},
+		"036_whitelist.sql": &bintree{migrations036_whitelistSql, map[string]*bintree{}},
 	}},
 }}
 

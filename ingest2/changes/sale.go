@@ -21,13 +21,23 @@ type saleStorage interface {
 	SetState(saleID uint64, state regources.SaleState) error
 }
 
-type saleHandler struct {
-	storage saleStorage
+type participationStorage interface {
+	Insert(participations []history.SaleParticipation) error
 }
 
-func newSaleHandler(storage saleStorage) *saleHandler {
+type saleHandler struct {
+	storage       saleStorage
+	participation participationStorage
+	specificRule  accountSpecificRuleStorage
+}
+
+func newSaleHandler(storage saleStorage,
+	participation participationStorage,
+	specificRule accountSpecificRuleStorage) *saleHandler {
 	return &saleHandler{
-		storage: storage,
+		storage:       storage,
+		participation: participation,
+		specificRule:  specificRule,
 	}
 }
 
@@ -55,6 +65,7 @@ func (c *saleHandler) Created(lc ledgerChange) error {
 
 //Removed - handles state of the sale due to it was removed
 func (c *saleHandler) Removed(lc ledgerChange) error {
+	saleID := uint64(lc.LedgerChange.MustRemoved().MustSale().SaleId)
 	// sale can be removed by check sale state or cancel sale
 	// so we can handle approve of the sale and by default mark is as cancelled
 	saleState := regources.SaleStateCanceled
@@ -62,10 +73,15 @@ func (c *saleHandler) Removed(lc ledgerChange) error {
 		opEffect := lc.OperationResult.MustCheckSaleStateResult().MustSuccess().Effect
 		if opEffect.Effect == xdr.CheckSaleStateEffectClosed {
 			saleState = regources.SaleStateClosed
+			saleResults := opEffect.MustSaleClosed().Results
+			participations := c.convertParticipations(saleID, saleResults)
+			err := c.participation.Insert(participations)
+			if err != nil {
+				return errors.Wrap(err, "failed to insert sale participation into db")
+			}
 		}
 	}
 
-	saleID := uint64(lc.LedgerChange.MustRemoved().MustSale().SaleId)
 	err := c.storage.SetState(saleID, saleState)
 	if err != nil {
 		return errors.Wrap(err, "failed to set sale state")
@@ -124,6 +140,21 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		BaseHardCap:    regources.Amount(raw.MaxAmountToBeSold),
 		SaleType:       saleType,
 		// if sale still exists in core db - it is open
-		State: regources.SaleStateOpen,
+		State:   regources.SaleStateOpen,
+		Version: int32(raw.Ext.V),
 	}, nil
+}
+
+func (c *saleHandler) convertParticipations(saleID uint64, saleResults []xdr.CheckSubSaleClosedResult) []history.SaleParticipation {
+	var participations []history.SaleParticipation
+	for _, subResult := range saleResults {
+		saleResult := subResult.SaleDetails
+		quote := string(saleResult.QuoteAsset)
+		base := string(saleResult.BaseAsset)
+		for _, atom := range saleResult.OffersClaimed {
+			participations = append(participations, history.NewSaleParticipation(base, quote, saleID, atom))
+		}
+	}
+
+	return participations
 }
