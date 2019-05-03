@@ -96,7 +96,7 @@ func (q OffersQ) Page(params db2.OffsetPageParams) OffersQ {
 	return q
 }
 
-// Page - returns Q with specified limit and offset params
+// CursorPage - returns Q with specified limit and offset params
 func (q OffersQ) CursorPage(params db2.CursorPageParams) OffersQ {
 	q.selector = params.ApplyTo(q.selector, "offers.offer_id")
 	return q

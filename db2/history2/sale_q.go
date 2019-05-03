@@ -36,6 +36,7 @@ func NewSalesQ(repo *db2.Repo) SalesQ {
 			"sales.details",
 			"sales.state",
 			"sales.quote_assets",
+			"sales.version",
 		).From("sales"),
 	}
 }
