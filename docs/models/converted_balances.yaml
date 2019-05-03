@@ -49,29 +49,37 @@ ConvertedBalanceState:
   allOf:
     - $ref: '#/components/schemas/ConvertedBalanceStateKey'
     - type: object
-      required: [relationships]
+      required:
+        - attributes
+        - relationships
       properties:
         attributes:
           type: object
           required:
-            - available
-            - locked
+            - initial_amounts
+            - converted_amounts
             - is_converted
+            - price
           properties:
-            available:
+            price:
               type: string
-              description: "Available amount converted to requested asset"
-              example: "123.000123"
               format: Amount
-            locked:
-              type: string
-              description: "Locked amount converted to requested asset"
-              example: "221.092100"
-              format: Amount
+              example: "2.331001"
+              description: "Price that was used to convert amounts"
+            initial_amounts:
+              allOf:
+              - $ref: '#/components/schemas/BalanceStateAttributeAmounts'
+              - type: object
+                description: "Amounts values in the balance's asset"
+            converted_amounts:
+              allOf:
+                - $ref: '#/components/schemas/BalanceStateAttributeAmounts'
+                - type: object
+                  description: "Amount values converted to requested asset"
             is_converted:
               type: boolean
-              description: "if `false` - the price doesn't exist and conversion is not possible"
               example: true
+              description: "if `false` - the price doesn't exist and conversion is not possible"
         relationships:
           type: object
           properties:
@@ -87,3 +95,20 @@ ConvertedBalanceState:
               properties:
                 data:
                   $ref: '#/components/schemas/AssetKey'
+
+BalanceStateAttributeAmounts:
+  type: object
+  required:
+    - available
+    - locked
+  properties:
+    available:
+      type: string
+      description: "Available amount"
+      example: "123.000123"
+      format: Amount
+    locked:
+      type: string
+      description: "Locked amount"
+      example: "221.092100"
+      format: Amount
