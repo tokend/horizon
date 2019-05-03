@@ -1,6 +1,12 @@
 # Changelog
 
 ## Unreleased
+## 4.2.2
+### Fixed
+* Updated tokend/go to 3.3.4
+## 4.2.1
+### Added
+* Manage Account Specific Rules for Sale
 ## 4.2.0
 
 ### Added 
