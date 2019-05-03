@@ -34,6 +34,10 @@ func (h accountSpecificRuleHandler) Removed(change ledgerChange) error {
 					"rule_id": id,
 				})
 			}
+		default:
+			return errors.From(errors.New("Unexpected manage account specific rule action"), logan.F{
+				"action": body.Data.Action,
+			})
 		}
 
 	case xdr.OperationTypeManageSale:

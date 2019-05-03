@@ -6,16 +6,16 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-func NewSaleWhitelistKey(saleID uint64) regources.Key {
+func NewSaleWhitelistKey(ruleID uint64) regources.Key {
 	return regources.Key{
-		ID:   fmt.Sprintf("%d", saleID),
+		ID:   fmt.Sprintf("%d", ruleID),
 		Type: regources.SALE_WHITELIST,
 	}
 }
 
-func NewSaleWhitelist(saleID uint64, address string) regources.SaleWhitelist {
+func NewSaleWhitelist(ruleId uint64, address string) regources.SaleWhitelist {
 	return regources.SaleWhitelist{
-		Key: NewSaleWhitelistKey(saleID),
+		Key: NewSaleWhitelistKey(ruleId),
 		Relationships: regources.SaleWhitelistRelationships{
 			Participant: NewAccountKey(address).AsRelation(),
 		},

@@ -54,7 +54,8 @@ func (h *manageAccountSpecificRuleOpHandler) ParticipantsEffects(opBody xdr.Oper
 	case xdr.ManageAccountSpecificRuleActionCreate:
 		return []history2.ParticipantEffect{h.manageOfferOpHandler.Participant(sourceAccountID)}, nil
 	case xdr.ManageAccountSpecificRuleActionRemove:
-		return h.manageOfferOpHandler.getDeletedOffersEffect(ledgerChanges), nil
+		return append(h.manageOfferOpHandler.getDeletedOffersEffect(ledgerChanges),
+			h.manageOfferOpHandler.Participant(sourceAccountID)), nil
 	default:
 		return nil, errors.From(errors.New("unexpected manage account specific rule action"),
 			map[string]interface{}{

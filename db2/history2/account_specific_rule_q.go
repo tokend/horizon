@@ -6,14 +6,6 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-var accountSpecificRulesColumns = []string{
-	"id",
-	"address",
-	"entry_type",
-	"forbids",
-	"key",
-}
-
 // AccountSpecificRulesQ is a helper struct to aid in configuring queries that loads accounts
 type AccountSpecificRulesQ struct {
 	repo     *db2.Repo
@@ -41,11 +33,13 @@ func (q AccountSpecificRulesQ) ByAddress(address string) AccountSpecificRulesQ {
 	return q
 }
 
+//Permission returns q with filter by `forbids`
 func (q AccountSpecificRulesQ) Permission(forbids bool) AccountSpecificRulesQ {
 	q.selector = q.selector.Where("sr.forbids = ?", forbids)
 	return q
 }
 
+//ForSale - returns q with filter by sale id
 func (q AccountSpecificRulesQ) ForSale(saleID uint64) AccountSpecificRulesQ {
 	q.selector = q.selector.Where("sr.key#>>'{sale,saleID}' = ?", saleID)
 	return q
@@ -66,6 +60,7 @@ func (q AccountSpecificRulesQ) Get() (*AccountSpecificRule, error) {
 	return &result, nil
 }
 
+// Page - returns Q with specified limit and offset params
 func (q AccountSpecificRulesQ) Page(params db2.CursorPageParams) AccountSpecificRulesQ {
 	q.selector = params.ApplyTo(q.selector, "sr.id")
 	return q

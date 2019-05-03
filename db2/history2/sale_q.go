@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"fmt"
 	"time"
 
 	"gitlab.com/tokend/go/xdr"
@@ -41,17 +42,46 @@ func NewSalesQ(repo *db2.Repo) SalesQ {
 	}
 }
 
+//Whitelisted - returns q with filter by sales whitelisted for address
 func (q SalesQ) Whitelisted(address string) SalesQ {
-	subQuery := sq.StatementBuilder.
+	//selects sale ids for which account was explicitly whitelisted
+	explicitlyAllowed, _, _ := sq.StatementBuilder.
 		Select("(sr.key#>>'{sale,saleID}')::int").
-		From("account_specific_rules sr").
-		Where(sq.Or{sq.Expr("sr.address = ?", address), sq.Expr("sr.address is null")}).
-		GroupBy("sr.key#>>'{sale,saleID}'").Having("bool_and(sr.forbids)")
+		Distinct().From("account_specific_rules sr").
+		Where("sr.address = ?").
+		Where("not sr.forbids").ToSql()
+
+	//selects sale ids with global whitelist
+	globalAllowed, _, _ := sq.StatementBuilder.
+		Select("(sr.key#>>'{sale,saleID}')::int").
+		Distinct().From("account_specific_rules sr").
+		Where("sr.address is null").
+		Where("not sr.forbids").ToSql()
+
+	//selects sale ids for which account was explicitly blacklisted
+	explicitlyForbidden, _, _ := sq.StatementBuilder.
+		Select("(sr.key#>>'{sale,saleID}')::int").
+		Distinct().From("account_specific_rules sr").
+		Where("sr.address = ?", address).
+		Where("sr.forbids").ToSql()
+
+	/*
+		query go get whitelisted sale ids
+		whitelisted = explicitly allowed + (globally allowed - explicitly forbidden)
+		will give us exactly sales with account whitelisted
+	*/
+	whitelist := fmt.Sprintf(
+		`(sales.id in ( %s union (%s except %s)))`,
+		explicitlyAllowed,
+		globalAllowed,
+		explicitlyForbidden)
+
 	q.selector = q.selector.Where(
-		subQuery.
-			Prefix("sales.id not in (").
-			Suffix(") or sales.version < ?",
-				int32(xdr.LedgerVersionAddSaleWhitelists)))
+		sq.Or{
+			//we have 2 placeholder symbols in `whitelist` query (see above), thus we need 2 arguments (both address)
+			sq.Expr(whitelist, address, address),
+			sq.Expr("sales.version < ?", int32(xdr.LedgerVersionAddSaleWhitelists)),
+		})
 	return q
 }
 

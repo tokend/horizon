@@ -96,7 +96,7 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 			continue
 		}
 
-		response.Data = append(response.Data, resources.NewSaleWhitelist(request.SaleID, *rule.Address))
+		response.Data = append(response.Data, resources.NewSaleWhitelist(rule.ID, *rule.Address))
 	}
 
 	h.populateLinks(response, request)

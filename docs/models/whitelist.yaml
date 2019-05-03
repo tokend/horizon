@@ -6,8 +6,8 @@ SaleWhitelistKey:
   properties:
       id:
         type: string
-        description: "Address of whitelisted account"
-        example: "GAULFBQKQTFHHHZEIRMYVCGTY47FKWEW7P2BY2YT45HAEODAIJUJH23T"
+        description: "Unique identifier of whitelist rule"
+        example: ""
       type:
         type: string
         enum:
