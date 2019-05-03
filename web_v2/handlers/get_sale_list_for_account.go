@@ -71,7 +71,7 @@ type getSaleListForAccountHandler struct {
 // GetSaleListForAccount returns the list of assets with related resources
 func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.GetSaleListForAccount) (*regources.SalesResponse, error) {
 
-	q := request.ApplyFilters(h.SalesQ).Whitelisted(request.Address)
+	q := applySaleFilters(request.SalesBase, h.SalesQ).Whitelisted(request.Address)
 
 	historySales, err := q.CursorPage(*request.PageParams).Select()
 	if err != nil {

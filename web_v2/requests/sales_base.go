@@ -3,8 +3,6 @@ package requests
 import (
 	"time"
 
-	history "gitlab.com/tokend/horizon/db2/history2"
-
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -79,56 +77,4 @@ type SalesBase struct {
 		MaxHardCap   regources.Amount `json:"max_hard_cap"`
 		MaxSoftCap   regources.Amount `json:"max_soft_cap"`
 	}
-}
-
-func (s *SalesBase) ApplyFilters(q history.SalesQ) history.SalesQ {
-	if s.ShouldFilter(FilterTypeSaleListOwner) {
-		q = q.FilterByOwner(s.Filters.Owner)
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListBaseAsset) {
-		q = q.FilterByBaseAsset(s.Filters.BaseAsset)
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListMaxEndTime) {
-		q = q.FilterByMaxEndTime(*s.Filters.MaxEndTime)
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListMaxStartTime) {
-		q = q.FilterByMaxStartTime(*s.Filters.MaxStartTime)
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListMinStartTime) {
-		q = q.FilterByMinStartTime(*s.Filters.MinStartTime)
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListMinEndTime) {
-		q = q.FilterByMinEndTime(*s.Filters.MinEndTime)
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListState) {
-		q = q.FilterByState(s.Filters.State)
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListSaleType) {
-		q = q.FilterBySaleType(s.Filters.SaleType)
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListMinHardCap) {
-		q = q.FilterByMinHardCap(uint64(s.Filters.MinHardCap))
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListMinSoftCap) {
-		q = q.FilterByMinSoftCap(uint64(s.Filters.MinSoftCap))
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListMaxHardCap) {
-		q = q.FilterByMaxHardCap(uint64(s.Filters.MaxHardCap))
-	}
-
-	if s.ShouldFilter(FilterTypeSaleListMaxSoftCap) {
-		q = q.FilterByMaxSoftCap(uint64(s.Filters.MaxSoftCap))
-	}
-
-	return q
 }
