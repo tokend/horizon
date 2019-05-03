@@ -2,7 +2,14 @@
 
 ### Added
 
-* Endpoints for whitelist management and sale participants
+* `/v3/accounts/{id}/sales` endpoint to get list of sales account is allowed to participate in
+* `/v3/sales/{id}/relationships/whitelist` endpoint to get list of accounts explicitly granted 
+permission to participate in sale.
+* `/v3/sales/{id}/relationships/participation` endpoint to get list of sale participations
+* Sale participation on sale close ingestion
+* Account specific rules ingestion
+* Sale version ingestion
+* Bumped up ingest version
 
 ## 3.3.0
 
