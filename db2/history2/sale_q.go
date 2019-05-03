@@ -36,6 +36,7 @@ func NewSalesQ(repo *db2.Repo) SalesQ {
 			"sales.details",
 			"sales.state",
 			"sales.quote_assets",
+			"sales.version",
 		).From("sales"),
 	}
 }
@@ -45,10 +46,10 @@ func (q SalesQ) Whitelisted(address string) SalesQ {
 		Select("(sr.key#>>'{sale,saleID}')::int").
 		From("account_specific_rules sr").
 		Where(sq.Or{sq.Expr("sr.address = ?", address), sq.Expr("sr.address is null")}).
-		GroupBy("sr.key#>>'{sale,saleID}'").Having("bool_and(not sr.forbids)")
+		GroupBy("sr.key#>>'{sale,saleID}'").Having("bool_and(sr.forbids)")
 	q.selector = q.selector.Where(
 		subQuery.
-			Prefix("sales.id in (").
+			Prefix("sales.id not in (").
 			Suffix(") or sales.version < ?",
 				int32(xdr.LedgerVersionAddSaleWhitelists)))
 	return q

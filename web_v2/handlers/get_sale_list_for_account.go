@@ -56,9 +56,6 @@ func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if result == nil {
-		ctx.Log(r).WithError(err).Error("sale list not found", logan.F{
-			"request": request,
-		})
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
@@ -73,16 +70,13 @@ type getSaleListForAccountHandler struct {
 
 // GetSaleListForAccount returns the list of assets with related resources
 func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.GetSaleListForAccount) (*regources.SalesResponse, error) {
-	q := request.ApplyFilters(h.SalesQ).Whitelisted(request.Address)
+
+	q := applySaleFilters(request.SalesBase, h.SalesQ).Whitelisted(request.Address)
 
 	historySales, err := q.CursorPage(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sales list")
 	}
-	if historySales == nil {
-		return nil, nil
-	}
-
 	response := &regources.SalesResponse{
 		Data: make([]regources.Sale, 0, len(historySales)),
 	}

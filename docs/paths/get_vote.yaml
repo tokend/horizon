@@ -26,7 +26,7 @@
         explode: false
         schema:
           type: string
-          example: ""
+          example: "GAULFBQKQTFHHHZEIRMYVCGTY47FKWEW7P2BY2YT45HAEODAIJUJH23T"
       - name: include
         in: query
         description: |

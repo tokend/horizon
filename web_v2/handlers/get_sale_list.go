@@ -58,7 +58,7 @@ type getSaleListHandler struct {
 
 // GetSaleList returns the list of assets with related resources
 func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regources.SalesResponse, error) {
-	q := request.ApplyFilters(h.SalesQ)
+	q := applySaleFilters(request.SalesBase, h.SalesQ)
 
 	historySales, err := q.Page(*request.PageParams).Select()
 	if err != nil {
