@@ -37,6 +37,10 @@ func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
 			"sale_id": request.SaleID,
 		}).Error("failed to get sale by ID")
 	}
+	if sale == nil {
+		ape.RenderErr(w, problems.NotFound())
+		return
+	}
 
 	if !isAllowed(r, w, sale.OwnerAddress) {
 		return

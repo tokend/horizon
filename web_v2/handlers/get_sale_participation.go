@@ -60,11 +60,6 @@ func GetSaleParticipation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if result == nil {
-		ape.RenderErr(w, problems.NotFound())
-		return
-	}
-
 	ape.Render(w, result)
 }
 
@@ -78,7 +73,9 @@ type getSaleParticipationHandler struct {
 
 // GetSale returns sale with related resources
 func (h *getSaleParticipationHandler) getSaleParticipation(sale *history2.Sale, request *requests.GetSaleParticipation) (*regources.SaleParticipationsResponse, error) {
-	response := &regources.SaleParticipationsResponse{}
+	response := &regources.SaleParticipationsResponse{
+		Data: make([]regources.SaleParticipation, 0),
+	}
 
 	switch sale.State {
 	case regources.SaleStateOpen:
@@ -97,7 +94,6 @@ func (h *getSaleParticipationHandler) getSaleParticipation(sale *history2.Sale, 
 			return nil, errors.Wrap(err, "failed to populate response")
 		}
 	case regources.SaleStateCanceled:
-		return nil, nil
 	case regources.SaleStateClosed:
 		q := populateSaleParticipationFilters(h.ParticipationQ, request)
 		participations, err := q.
