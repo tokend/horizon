@@ -530,15 +530,14 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:cdf085bedb4b24cf06bc61f7f2b199549ef9bef37d537aa17941a3fb6717f861"
+  digest = "1:d3ff51d9575524337b3a5f4d1ca464aa43e34c79c4c1c1326a05c8f127336e6f"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "b14b778235e9c479971f7f981dbfe6bece8e6eb2"
-  version = "4.2.2"
+  revision = "39471667829cdfa58b2531bfc1869c9a2bed33e3"
 
 [[projects]]
   branch = "master"

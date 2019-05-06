@@ -14,6 +14,8 @@ const (
 	ASWAP_BID                                               ResourceType = "aswap-bid"
 	ASSET_PAIRS                                             ResourceType = "asset-pairs"
 	BALANCES_STATE                                          ResourceType = "balances-state"
+	CONVERTED_BALANCES_COLLECTIONS                          ResourceType = "converted-balances-collections"
+	CONVERTED_BALANCE_STATES                                ResourceType = "converted-balance-states"
 	EXTERNAL_SYSTEM_IDS                                     ResourceType = "external-system-ids"
 	FEE_RULES                                               ResourceType = "fee-rules"
 	KEY_VALUE_ENTRIES                                       ResourceType = "key-value-entries"
