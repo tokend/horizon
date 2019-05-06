@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -73,7 +72,6 @@ func (h *getConvertedBalancesHandler) GetConvertedBalances(request *requests.Get
 		return nil, errors.Wrap(err, "failed to get account by address")
 	}
 	if coreAccount == nil {
-		fmt.Println(request.AccountAddress)
 		return nil, nil
 	}
 
