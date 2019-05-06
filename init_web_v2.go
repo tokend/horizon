@@ -110,6 +110,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/accounts/{id}/signers", handlers.GetAccountSigners)
 	m.Get("/v3/accounts/{id}/calculated_fees", handlers.GetCalculatedFees)
 	m.Get("/v3/accounts/{id}/sales", handlers.GetSaleListForAccount)
+	m.Get("/v3/accounts/{id}/converted_balances/{asset_code}", handlers.GetConvertedBalances)
 	m.Get("/v3/assets/{code}", handlers.GetAsset)
 	m.Get("/v3/assets", handlers.GetAssetList)
 	m.Get("/v3/balances/{id}", handlers.GetBalance)
