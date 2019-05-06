@@ -537,7 +537,8 @@
     "generated",
   ]
   pruneopts = "UT"
-  revision = "e7e2440205f76a77a7a1d34abe428692fa8b5be4"
+  revision = "ce7e47d32250c0779c99b4bd66045628e992baf9"
+  version = "4.2.3"
 
 [[projects]]
   branch = "master"
