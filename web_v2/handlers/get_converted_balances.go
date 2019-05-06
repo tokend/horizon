@@ -83,7 +83,13 @@ func (h *getConvertedBalancesHandler) GetConvertedBalances(request *requests.Get
 		return nil, nil
 	}
 
-	coreBalances, err := h.BalancesQ.FilterByAccount(request.AccountAddress).Select()
+	q := h.BalancesQ.FilterByAccount(request.AccountAddress)
+
+	if request.ShouldInclude(requests.IncludeTypeConvertedBalancesBalanceAsset) {
+		q = q.WithAsset()
+	}
+
+	coreBalances, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get balances by account address")
 	}
@@ -103,6 +109,24 @@ func (h *getConvertedBalancesHandler) GetConvertedBalances(request *requests.Get
 			return nil, errors.Wrap(err, "failed to get converted balance state")
 		}
 		convertedStates = append(convertedStates, *convertedState)
+
+		if request.ShouldInclude(requests.IncludeTypeConvertedBalancesBalance) {
+			balance := resources.NewBalance(&coreBalance)
+			balance.Relationships = &regources.BalanceRelationships{}
+			balance.Relationships.Asset = resources.NewAssetKey(coreBalance.AssetCode).AsRelation()
+			balance.Relationships.State = resources.NewBalanceStateKey(coreBalance.BalanceAddress).AsRelation()
+
+			response.Included.Add(balance)
+		}
+
+		if request.ShouldInclude(requests.IncludeTypeConvertedBalancesBalanceState) {
+			response.Included.Add(resources.NewBalanceState(&coreBalance))
+		}
+
+		if request.ShouldInclude(requests.IncludeTypeConvertedBalancesBalanceAsset) {
+			asset := resources.NewAsset(*coreBalance.Asset)
+			response.Included.Add(&asset)
+		}
 	}
 
 	sortedConvertedStates := SortConvertedStates(convertedStates)

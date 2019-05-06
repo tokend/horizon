@@ -7,10 +7,19 @@ import (
 const (
 	// IncludeTypeConvertedBalancesStates - defines if converted balances states should be included in the response
 	IncludeTypeConvertedBalancesStates = "states"
+	// IncludeTypeConvertedBalancesBalance - defines if balances states should be included in the response
+	IncludeTypeConvertedBalancesBalance = "balance"
+	// IncludeTypeConvertedBalancesBalanceState - defines if balances states should be included in the response
+	IncludeTypeConvertedBalancesBalanceState = "balance.state"
+	// IncludeTypeConvertedBalancesBalanceAsset - defines if balances assets should be included in the response
+	IncludeTypeConvertedBalancesBalanceAsset = "balance.asset"
 )
 
 var includeTypeConvertedBalancesAll = map[string]struct{}{
-	IncludeTypeConvertedBalancesStates: {},
+	IncludeTypeConvertedBalancesStates:       {},
+	IncludeTypeConvertedBalancesBalance:      {},
+	IncludeTypeConvertedBalancesBalanceState: {},
+	IncludeTypeConvertedBalancesBalanceAsset: {},
 }
 
 // GetConvertedBalances - represents params to be specified by user for GetConvertedBalances handler
