@@ -6,15 +6,9 @@ import (
 )
 
 func SortConvertedStates(states []regources.ConvertedBalanceState) []regources.ConvertedBalanceState {
-	s := make(sortableConvertedStates, 0, len(states))
+	sort.Sort(sortableConvertedStates(states))
 
-	for _, state := range states {
-		s = append(s, state)
-	}
-
-	sort.Sort(&s)
-
-	return s
+	return states
 }
 
 type sortableConvertedStates []regources.ConvertedBalanceState
