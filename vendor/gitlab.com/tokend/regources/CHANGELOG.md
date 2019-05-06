@@ -1,6 +1,11 @@
 # Changelog
 
 ## Unreleased
+
+## 4.2.3
+## Added
+* `ConvertedBalancesCollection` and `ConvertedBalanceState` resources
+
 ## 4.2.2
 ### Fixed
 * Updated tokend/go to 3.3.4
