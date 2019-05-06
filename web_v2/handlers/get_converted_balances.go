@@ -18,8 +18,10 @@ import (
 func GetConvertedBalances(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 
-	converter := newBalanceStateConverterForHandler(w, r)
-	if converter == nil {
+	converter, err := newBalanceStateConverterForHandler(coreRepo)
+	if err != nil {
+		ctx.Log(r).WithError(err).Error("failed failed to create balance state converted")
+		ape.Render(w, problems.InternalError())
 		return
 	}
 

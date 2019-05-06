@@ -1,15 +1,12 @@
 package handlers
 
 import (
-	"gitlab.com/distributed_lab/ape"
-	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/exchange"
-	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/resources"
 	"gitlab.com/tokend/regources/generated"
-	"net/http"
 )
 
 // balanceStateConverter - helper struct to convert balance states to different assets
@@ -19,24 +16,21 @@ type balanceStateConverter struct {
 
 // newBalanceStateConverterForHandler - creates new instance of balanceStateConverter.
 // returns nil and renders server error if failed to create
-func newBalanceStateConverterForHandler(w http.ResponseWriter, r *http.Request) *balanceStateConverter {
-	repo := ctx.CoreRepo(r)
+func newBalanceStateConverterForHandler(coreRepo *db2.Repo) (*balanceStateConverter, error) {
 	assetsProvider := struct {
 		core2.AssetsQ
 		core2.AssetPairsQ
 	}{
-		AssetsQ:     core2.NewAssetsQ(repo),
-		AssetPairsQ: core2.NewAssetPairsQ(repo),
+		AssetsQ:     core2.NewAssetsQ(coreRepo),
+		AssetPairsQ: core2.NewAssetPairsQ(coreRepo),
 	}
 
 	converter, err := exchange.NewConverter(assetsProvider)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to create new converter")
-		ape.Render(w, problems.InternalError())
-		return nil
+		return nil, errors.Wrap(err, "failed to create new converter")
 	}
 
-	return newBalanceStateConverted(converter)
+	return newBalanceStateConverted(converter), nil
 }
 
 // newBalanceStateConverted - creates new instance of balanceStateConverter
