@@ -2,261 +2,156 @@ package handlers
 
 import (
 	"github.com/magiconair/properties/assert"
+	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/regources/generated"
 	"testing"
 )
 
+type sortEntry struct {
+	convertedAvailable string
+	initialAvailable   string
+	isConverted        bool
+}
+
+func fromSortEntries(states []sortEntry) []regources.ConvertedBalanceState {
+	res := make([]regources.ConvertedBalanceState, 0, len(states))
+
+	for _, state := range states {
+		res = append(res, regources.ConvertedBalanceState{
+			Attributes: regources.ConvertedBalanceStateAttributes{
+				InitialAmounts: regources.BalanceStateAttributeAmounts{
+					Available: regources.Amount(amount.MustParseU(state.initialAvailable)),
+				},
+				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
+					Available: regources.Amount(amount.MustParseU(state.convertedAvailable)),
+				},
+				IsConverted: state.isConverted,
+			},
+		})
+	}
+
+	return res
+}
+
 func TestSortConvertedStates(t *testing.T) {
-	initialStates := []regources.ConvertedBalanceState{
+	initialStates := []sortEntry{
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "0",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(200000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "0.200000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(3500000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "3.500000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(4000000),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(5000000),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "4.000000",
+			initialAvailable:   "5.000000",
+			isConverted:        true,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(4000000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "4.000000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(2000000),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(3000000),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "2.000000",
+			initialAvailable:   "3.000000",
+			isConverted:        true,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(6000000),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(7000000),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "6.000000",
+			initialAvailable:   "7.000000",
+			isConverted:        true,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(3200000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "3.200000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(5000000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "5.000000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(5500000),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(72000000),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "5.500000",
+			initialAvailable:   "72.000000",
+			isConverted:        true,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "0",
+			isConverted:        true,
 		},
 	}
 
-	expectedStates := []regources.ConvertedBalanceState{
+	expectedStates := []sortEntry{
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(6000000),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(7000000),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "6.000000",
+			initialAvailable:   "7.000000",
+			isConverted:        true,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(5500000),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(72000000),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "5.500000",
+			initialAvailable:   "72.000000",
+			isConverted:        true,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(4000000),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(5000000),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "4.000000",
+			initialAvailable:   "5.000000",
+			isConverted:        true,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(2000000),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(3000000),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "2.000000",
+			initialAvailable:   "3.000000",
+			isConverted:        true,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(5000000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "5.000000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(4000000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "4.000000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(3500000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "3.500000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(3200000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "3.200000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(200000),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "0.200000",
+			isConverted:        false,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				IsConverted: true,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "0",
+			isConverted:        true,
 		},
 		{
-			Attributes: regources.ConvertedBalanceStateAttributes{
-				ConvertedAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				InitialAmounts: regources.BalanceStateAttributeAmounts{
-					Available: regources.Amount(0),
-				},
-				IsConverted: false,
-			},
+			convertedAvailable: "0",
+			initialAvailable:   "0",
+			isConverted:        false,
 		},
 	}
 
 	t.Run("correctly sort the state", func(t *testing.T) {
-		sortedStates := SortConvertedStates(initialStates)
-		assert.Equal(t, sortedStates, expectedStates)
+		sortedStates := SortConvertedStates(fromSortEntries(initialStates))
+		assert.Equal(t, sortedStates, fromSortEntries(expectedStates))
 	})
 }
