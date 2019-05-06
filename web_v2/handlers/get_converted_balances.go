@@ -39,6 +39,10 @@ func GetConvertedBalances(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isAllowed(r, w, request.AccountAddress) {
+		return
+	}
+
 	result, err := handler.GetConvertedBalances(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).WithField("request", request).Error("failed to get converted balances")
