@@ -99,7 +99,7 @@
   version = "3.3.4"
 
 [[constraint]]
-  version = "4.2.3"
+  revision = "89acb7b5aa178747e3a10b7f967eb71a2893e3fb"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

@@ -51,6 +51,7 @@ const (
 	EFFECTS_UNLOCKED                                        ResourceType = "effects-unlocked"
 	EFFECTS_CHARGED_FROM_LOCKED                             ResourceType = "effects-charged-from-locked"
 	EFFECTS_MATCHED                                         ResourceType = "effects-matched"
+	MATCHES                                                 ResourceType = "matches"
 	OPERATIONS_CREATE_ACCOUNT                               ResourceType = "operations-create-account"
 	OPERATIONS_CREATE_ISSUANCE_REQUEST                      ResourceType = "operations-create-issuance-request"
 	OPERATIONS_SET_FEES                                     ResourceType = "operations-set-fees"
