@@ -11,6 +11,7 @@ permission to participate in sale.
 * Account specific rules ingestion
 * Sale version ingestion
 * Bumped up ingest version
+* `has_whitelist` attribute to sale
 
 ## 3.3.0
 
