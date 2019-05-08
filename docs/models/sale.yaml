@@ -20,7 +20,7 @@ Sale:
       properties:
         attributes:
           type: object
-          required: [start_time, end_time, sale_type, sale_state, details]
+          required: [start_time, end_time, sale_type, sale_state, has_whitelist, details]
           properties:
             start_time:
               type: string
@@ -46,6 +46,10 @@ Sale:
               maximum: 3
               description: "state of sale" # todo provide a list of sale states
               example: 2
+            has_whitelist:
+              type: boolean
+              example: true
+              description: "indicates whether or not sale is whitelisted"
             details:
               $ref: '#/components/schemas/Details'
               description: "free-form object to attach details to the sale"

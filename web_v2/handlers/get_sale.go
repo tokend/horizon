@@ -27,10 +27,11 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler := getSaleHandler{
-		SalesQ:           history2.NewSalesQ(historyRepo),
-		AssetsQ:          core2.NewAssetsQ(coreRepo),
-		saleCapConverter: converter,
-		Log:              ctx.Log(r),
+		SalesQ:                history2.NewSalesQ(historyRepo),
+		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(historyRepo),
+		AssetsQ:               core2.NewAssetsQ(coreRepo),
+		saleCapConverter:      converter,
+		Log:                   ctx.Log(r),
 	}
 
 	request, err := requests.NewGetSale(r)
@@ -57,10 +58,11 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 }
 
 type getSaleHandler struct {
-	SalesQ           history2.SalesQ
-	AssetsQ          core2.AssetsQ
-	saleCapConverter *saleCapConverter
-	Log              *logan.Entry
+	SalesQ                history2.SalesQ
+	AssetsQ               core2.AssetsQ
+	AccountSpecificRulesQ history2.AccountSpecificRulesQ
+	saleCapConverter      *saleCapConverter
+	Log                   *logan.Entry
 }
 
 // GetSale returns sale with related resources
@@ -78,8 +80,17 @@ func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResp
 		return nil, errors.Wrap(err, "failed to populate sale cap")
 	}
 
+	rule, err := h.AccountSpecificRulesQ.ForSale(historySale.ID).Global().Get()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get global rule for sale")
+	}
+	var hasWhitelist bool
+	if rule != nil {
+		hasWhitelist = rule.Forbids
+	}
+
 	response := &regources.SaleResponse{
-		Data: resources.NewSale(*historySale),
+		Data: resources.NewSale(*historySale, hasWhitelist),
 	}
 
 	defaultQuoteAsset := resources.NewSaleDefaultQuoteAsset(*historySale)

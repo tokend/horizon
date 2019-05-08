@@ -13,6 +13,8 @@ type SaleAttributes struct {
 	Details Details `json:"details"`
 	// time when the sale expires
 	EndTime time.Time `json:"end_time"`
+	// indicates whether or not sale is whitelisted
+	HasWhitelist bool `json:"has_whitelist"`
 	// state of sale
 	SaleState SaleState `json:"sale_state"`
 	// type of sale

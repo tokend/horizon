@@ -12,7 +12,7 @@ func NewSaleKey(id int64) regources.Key {
 }
 
 // NewSale - creates new instance of Sale
-func NewSale(record history2.Sale) regources.Sale {
+func NewSale(record history2.Sale, hasWhitelist bool) regources.Sale {
 	quoteAssets := &regources.RelationCollection{
 		Data: make([]regources.Key, 0, len(record.QuoteAssets.QuoteAssets)),
 	}
@@ -24,11 +24,12 @@ func NewSale(record history2.Sale) regources.Sale {
 	return regources.Sale{
 		Key: NewSaleKey(int64(record.ID)),
 		Attributes: regources.SaleAttributes{
-			StartTime: record.StartTime,
-			EndTime:   record.EndTime,
-			SaleType:  record.SaleType,
-			SaleState: record.State,
-			Details:   record.Details,
+			StartTime:    record.StartTime,
+			EndTime:      record.EndTime,
+			SaleType:     record.SaleType,
+			SaleState:    record.State,
+			Details:      record.Details,
+			HasWhitelist: hasWhitelist,
 		},
 		Relationships: regources.SaleRelationships{
 			Owner:             NewAccountKey(record.OwnerAddress).AsRelation(),

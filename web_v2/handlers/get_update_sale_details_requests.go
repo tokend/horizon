@@ -27,10 +27,11 @@ func GetUpdateSaleDetailsRequests(w http.ResponseWriter, r *http.Request) {
 
 	historyRepo := ctx.HistoryRepo(r)
 	handler := getUpdateSaleDetailsRequestsHandler{
-		R:         request,
-		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
-		SalesQ:    history2.NewSalesQ(historyRepo),
-		Log:       ctx.Log(r),
+		R:                     request,
+		RequestsQ:             history2.NewReviewableRequestsQ(historyRepo),
+		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(historyRepo),
+		SalesQ:                history2.NewSalesQ(historyRepo),
+		Log:                   ctx.Log(r),
 	}
 
 	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
@@ -48,11 +49,12 @@ func GetUpdateSaleDetailsRequests(w http.ResponseWriter, r *http.Request) {
 }
 
 type getUpdateSaleDetailsRequestsHandler struct {
-	R         requests.GetUpdateSaleDetailsRequests
-	Base      getRequestListBaseHandler
-	RequestsQ history2.ReviewableRequestsQ
-	SalesQ    history2.SalesQ
-	Log       *logan.Entry
+	R                     requests.GetUpdateSaleDetailsRequests
+	Base                  getRequestListBaseHandler
+	RequestsQ             history2.ReviewableRequestsQ
+	AccountSpecificRulesQ history2.AccountSpecificRulesQ
+	SalesQ                history2.SalesQ
+	Log                   *logan.Entry
 }
 
 func (h *getUpdateSaleDetailsRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetUpdateSaleDetailsRequests) error {
@@ -72,7 +74,17 @@ func (h *getUpdateSaleDetailsRequestsHandler) RenderRecord(included *regources.I
 		if record == nil {
 			return regources.ReviewableRequest{}, errors.New("sale not found")
 		}
-		sale := resources.NewSale(*record)
+
+		rule, err := h.AccountSpecificRulesQ.ForSale(record.ID).Global().Get()
+		if err != nil {
+			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get global rule for sale")
+		}
+		var hasWhitelist bool
+		if rule != nil {
+			hasWhitelist = rule.Forbids
+		}
+
+		sale := resources.NewSale(*record, hasWhitelist)
 		included.Add(&sale)
 	}
 	return resource, nil

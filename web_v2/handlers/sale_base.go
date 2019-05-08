@@ -11,11 +11,11 @@ import (
 )
 
 type salesBaseHandler struct {
-	SalesQ  history2.SalesQ
-	AssetsQ core2.AssetsQ
-
-	saleCapConverter *saleCapConverter
-	Log              *logan.Entry
+	SalesQ                history2.SalesQ
+	AssetsQ               core2.AssetsQ
+	AccountSpecificRulesQ history2.AccountSpecificRulesQ
+	saleCapConverter      *saleCapConverter
+	Log                   *logan.Entry
 }
 
 func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
@@ -23,8 +23,18 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	response *regources.SalesResponse) error {
 
 	for _, historySale := range historySales {
-		sale := resources.NewSale(historySale)
-		err := h.saleCapConverter.PopulateSaleCap(&historySale)
+		rule, err := h.AccountSpecificRulesQ.ForSale(historySale.ID).Global().Get()
+		if err != nil {
+			return errors.Wrap(err, "failed to get global rule for sale")
+		}
+		var hasWhitelist bool
+		if rule != nil {
+			hasWhitelist = rule.Forbids
+		}
+
+		sale := resources.NewSale(historySale, hasWhitelist)
+
+		err = h.saleCapConverter.PopulateSaleCap(&historySale)
 		if err != nil {
 			return errors.Wrap(err, "failed to populate sale cap")
 		}

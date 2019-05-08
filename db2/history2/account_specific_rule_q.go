@@ -26,10 +26,15 @@ func NewAccountSpecificRulesQ(repo *db2.Repo) AccountSpecificRulesQ {
 	}
 }
 
-// ByAddress loads a row from `accounts`, by address
-// returns nil, nil - if account does not exists
+// ByAddress returns q with filter by account address
 func (q AccountSpecificRulesQ) ByAddress(address string) AccountSpecificRulesQ {
 	q.selector = q.selector.Where("sr.address = ?", address)
+	return q
+}
+
+//Global returns q with filter to only global rules - where address is null
+func (q AccountSpecificRulesQ) Global() AccountSpecificRulesQ {
+	q.selector = q.selector.Where("sr.address is null")
 	return q
 }
 

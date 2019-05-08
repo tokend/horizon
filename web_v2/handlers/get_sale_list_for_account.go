@@ -27,12 +27,12 @@ func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler := getSaleListForAccountHandler{
-		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(historyRepo),
 		salesBaseHandler: salesBaseHandler{
-			SalesQ:           history2.NewSalesQ(historyRepo),
-			AssetsQ:          core2.NewAssetsQ(coreRepo),
-			saleCapConverter: converter,
-			Log:              ctx.Log(r),
+			SalesQ:                history2.NewSalesQ(historyRepo),
+			AssetsQ:               core2.NewAssetsQ(coreRepo),
+			AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(historyRepo),
+			saleCapConverter:      converter,
+			Log:                   ctx.Log(r),
 		},
 	}
 
@@ -60,7 +60,6 @@ func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 
 type getSaleListForAccountHandler struct {
 	salesBaseHandler
-	AccountSpecificRulesQ history2.AccountSpecificRulesQ
 }
 
 // GetSaleListForAccount returns the list of assets with related resources
