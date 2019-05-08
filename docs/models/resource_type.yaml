@@ -44,6 +44,7 @@ ResourceType:
     "effects-unlocked",
     "effects-charged-from-locked",
     "effects-matched",
+    "matches",
     "operations-create-account",
     "operations-create-issuance-request",
     "operations-set-fees",
