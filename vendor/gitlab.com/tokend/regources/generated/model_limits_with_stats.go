@@ -6,6 +6,7 @@ package regources
 
 type LimitsWithStats struct {
 	Key
+	Attributes    LimitsWithStatsAttributes    `json:"attributes"`
 	Relationships LimitsWithStatsRelationships `json:"relationships"`
 }
 type LimitsWithStatsResponse struct {

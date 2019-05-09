@@ -16,8 +16,20 @@ LimitsWithStats:
   allOf:
     - $ref: '#/components/schemas/LimitsWithStatsKey'
     - type: object
-      required: [relationships]
+      required: [attributes,relationships]
       properties:
+        attributes:
+          type: object
+          required: [statistics]
+          properties:
+            limits:
+              description: "defines limits related to a particular account"
+              type: object
+              $ref: '#/components/schemas/Limits'
+            statistics:
+              description: "defines statistics related to a particular account"
+              type: object
+              $ref: '#/components/schemas/Statistics'
         relationships:
           type: object
           properties:
@@ -27,15 +39,3 @@ LimitsWithStats:
               properties:
                 data:
                   $ref: '#/components/schemas/AccountKey'
-            limits:
-              description: "defines limits related to a particular account"
-              type: object
-              properties:
-                data:
-                  $ref: '#/components/schemas/LimitsKey'
-            statistics:
-              description:
-              type: object
-              properties:
-                data:
-                  $ref: '#/components/schemas/StatisticsKey'

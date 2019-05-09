@@ -5,7 +5,5 @@
 package regources
 
 type LimitsWithStatsRelationships struct {
-	Account    *Relation `json:"account,omitempty"`
-	Limits     *Relation `json:"limits,omitempty"`
-	Statistics *Relation `json:"statistics,omitempty"`
+	Account *Relation `json:"account,omitempty"`
 }

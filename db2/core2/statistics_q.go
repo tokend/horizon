@@ -21,7 +21,7 @@ var selectStatistics = sq.Select("st.id",
 	"st.updated_at").From("statistics_v2 st")
 
 type StatisticsQI interface {
-	FilterByAccount(accountID string) ([]StatisticsEntry, error)
+	FilterByAccount(accountID string) ([]Statistics, error)
 }
 
 type StatisticsQ struct {
@@ -29,9 +29,9 @@ type StatisticsQ struct {
 	selector sq.SelectBuilder
 }
 
-func (q *StatisticsQ) FilterByAccount(accountID string) ([]StatisticsEntry, error) {
+func (q *StatisticsQ) FilterByAccount(accountID string) ([]Statistics, error) {
 	query := selectStatistics.Where("st.account_id = ?", accountID)
-	var result []StatisticsEntry
+	var result []Statistics
 	err := q.repo.Select(&result, query)
 	if err == sql.ErrNoRows {
 		return nil, nil

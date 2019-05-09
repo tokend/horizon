@@ -6,9 +6,9 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-func NewStatistics(stats core2.StatisticsEntry) *regources.Statistics {
-	return &regources.Statistics{
-		Key: NewStatisticKey(stats.Id),
+func NewStatistics(stats core2.Statistics) regources.Statistics {
+	return regources.Statistics{
+		Key: NewStatisticKey(stats.ID),
 		Attributes: regources.StatisticsAttributes{
 			StatsOpType:     stats.StatsOpType,
 			IsConvertNeeded: stats.IsConvertNeeded,
@@ -18,7 +18,7 @@ func NewStatistics(stats core2.StatisticsEntry) *regources.Statistics {
 			AnnualOut:       regources.Amount(stats.AnnualOutcome),
 		},
 		Relationships: regources.StatisticsRelationships{
-			Account: NewAccountKey(stats.AccountId).AsRelation(),
+			Account: NewAccountKey(stats.AccountID).AsRelation(),
 			Asset:   NewAssetKey(stats.AssetCode).AsRelation(),
 		},
 	}

@@ -8,17 +8,24 @@ import (
 func ToCoreStatsLimitsUnitList(table Table) []core2.LimitsWithStatsEntry {
 	res := make([]core2.LimitsWithStatsEntry, 0, len(table))
 
-	for g, unit := range table {
+	for g, coreUnit := range table {
+		var limitsID string
+
+		if coreUnit.Limits != nil {
+			limitsID = cast.ToString(coreUnit.Limits.ID)
+		}
+
 		res = append(res, core2.LimitsWithStatsEntry{
-			ID: g.AssetCode + ":" +
-				cast.ToString(unit.Limits.ID) + ":" +
-				cast.ToString(unit.Stats.Id),
-			AccountID:   unit.Stats.AccountId,
+			ID: g.AssetCode + ":" + // todo rm before send to review
+				limitsID + ":" +
+				cast.ToString(coreUnit.Stats.ID),
+			AccountID:   coreUnit.Stats.AccountID,
 			StatsOpType: g.StatsOpType,
 			AssetCode:   g.AssetCode,
-			Limits:      unit.Limits,
-			Statistics:  unit.Stats,
+			Limits:      coreUnit.Limits,
+			Statistics:  coreUnit.Stats,
 		})
+
 	}
 
 	return res

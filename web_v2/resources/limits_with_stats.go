@@ -11,11 +11,15 @@ func NewLimitsWithStats(record *core2.LimitsWithStatsEntry) *regources.LimitsWit
 			ID:   record.ID,
 			Type: regources.LIMITS_WITH_STATS,
 		},
-		Relationships: regources.LimitsWithStatsRelationships{
-			Account:    NewAccountKey(record.AccountID).AsRelation(),
-			Limits:     NewLimitsKey(record.Limits.ID).AsRelation(),
-			Statistics: NewStatisticKey(record.Statistics.Id).AsRelation(),
+		Attributes: regources.LimitsWithStatsAttributes{
+			Statistics: NewStatistics(record.Statistics),
 		},
+		Relationships: regources.LimitsWithStatsRelationships{
+			Account: NewAccountKey(record.AccountID).AsRelation(),
+		},
+	}
+	if record.Limits != nil {
+		res.Attributes.Limits = NewLimits(*record.Limits)
 	}
 
 	return res

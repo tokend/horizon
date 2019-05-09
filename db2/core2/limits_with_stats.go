@@ -5,6 +5,6 @@ type LimitsWithStatsEntry struct {
 	AccountID   string
 	AssetCode   string
 	StatsOpType int32
-	Statistics  StatisticsEntry
-	Limits      Limits
+	Statistics  Statistics
+	Limits      *Limits
 }

@@ -13,13 +13,13 @@ type (
 		StatsOpType int32
 	}
 	LimitsWithStats struct {
-		Limits core2.Limits
-		Stats  core2.StatisticsEntry
+		Limits *core2.Limits
+		Stats  core2.Statistics
 	}
 	Table map[Group]LimitsWithStats
 )
 
-func NewTable(limits []core2.Limits, stats []core2.StatisticsEntry) (lt Table) {
+func NewTable(limits []core2.Limits, stats []core2.Statistics) (lt Table) {
 	lt = Table{}
 	for _, entry := range limits {
 		key := Group{
@@ -28,7 +28,7 @@ func NewTable(limits []core2.Limits, stats []core2.StatisticsEntry) (lt Table) {
 		}
 
 		limitsEntry := LimitsWithStats{
-			Limits: entry,
+			Limits: &entry,
 		}
 
 		lt[key] = limitsEntry
@@ -59,7 +59,7 @@ func (lt Table) UpdateLimits(limits []core2.Limits) {
 		}
 
 		lt[key] = LimitsWithStats{
-			Limits: v,
+			Limits: &v,
 			Stats:  lt[key].Stats,
 		}
 	}

@@ -2,9 +2,9 @@ package core2
 
 import "time"
 
-type StatisticsEntry struct {
-	Id              uint64 `db:"id"`
-	AccountId       string `db:"account_id"`
+type Statistics struct {
+	ID              uint64 `db:"id"`
+	AccountID       string `db:"account_id"`
 	StatsOpType     int32  `db:"stats_op_type"`
 	AssetCode       string `db:"asset_code"`
 	IsConvertNeeded bool   `db:"is_convert_needed"`
@@ -32,7 +32,7 @@ func isWeekPassed(updateAt, currentTime time.Time) bool {
 	return currentTime.Weekday() < updateAt.Weekday()
 }
 
-func (s *StatisticsEntry) ClearObsolete(currentTime time.Time) {
+func (s *Statistics) ClearObsolete(currentTime time.Time) {
 	if s == nil {
 		return
 	}

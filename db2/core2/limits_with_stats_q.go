@@ -33,8 +33,8 @@ func NewStatsQ(repo *db2.Repo) StatsQ {
 	}
 }
 
-func (q StatsQ) FilterByAccount(accountID string) ([]StatisticsEntry, error) {
-	var stats []StatisticsEntry
+func (q StatsQ) FilterByAccount(accountID string) ([]Statistics, error) {
+	var stats []Statistics
 
 	statsStmt := q.selector.Where(sq.Eq{"account_id": accountID})
 	err := q.repo.Select(&stats, statsStmt)
