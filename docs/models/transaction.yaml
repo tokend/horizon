@@ -79,7 +79,7 @@ TransactionResponseMeta:
 
 SubmitTransactionBody:
   type: object
-  required: [tx, wait_for_ingest]
+  required: [tx]
   properties:
     tx:
       type: string
