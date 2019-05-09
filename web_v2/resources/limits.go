@@ -9,10 +9,7 @@ import (
 // NewLimits creates new instance of Limits from provided one
 func NewLimits(limits core2.Limits) *regources.Limits {
 	newLimits := &regources.Limits{
-		Key: regources.Key{
-			ID:   cast.ToString(limits.ID),
-			Type: regources.LIMITS,
-		},
+		Key: NewLimitsKey(limits.ID),
 		Attributes: regources.LimitsAttributes{
 			StatsOpType:     limits.StatsOpType,
 			IsConvertNeeded: limits.IsConvertNeeded,
@@ -35,4 +32,11 @@ func NewLimits(limits core2.Limits) *regources.Limits {
 	}
 
 	return newLimits
+}
+
+func NewLimitsKey(id uint64) regources.Key {
+	return regources.Key{
+		ID:   cast.ToString(id),
+		Type: regources.LIMITS,
+	}
 }
