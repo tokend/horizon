@@ -50,9 +50,7 @@ func NewCreateTransactionRequest(r *http.Request) (*CreateTransaction, error) {
 		}
 	}
 
-	waitForIngest := body.WaitForIngest != nil && *body.WaitForIngest
-
-	if waitForIngest && !ctx.Config(r).Ingest {
+	if body.WaitForIngest && !ctx.Config(r).Ingest {
 		return nil, validation.Errors{
 			"wait_for_ingest": errors.New("wait for ingest is not allowed as this horizon does not perform ingest"),
 		}
@@ -61,6 +59,6 @@ func NewCreateTransactionRequest(r *http.Request) (*CreateTransaction, error) {
 	return &CreateTransaction{
 		base:          b,
 		Env:           envelopeInfo,
-		WaitForIngest: waitForIngest,
+		WaitForIngest: body.WaitForIngest,
 	}, nil
 }
