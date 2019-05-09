@@ -1,6 +1,6 @@
 package core2
 
-type LimitsWithStatsEntry struct {
+type LimitsWithStats struct {
 	ID          string
 	AccountID   string
 	AssetCode   string

@@ -5,7 +5,7 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-func NewLimitsWithStats(record *core2.LimitsWithStatsEntry) *regources.LimitsWithStats {
+func NewLimitsWithStats(record *core2.LimitsWithStats) *regources.LimitsWithStats {
 	res := &regources.LimitsWithStats{
 		Key: regources.Key{
 			ID:   record.ID,

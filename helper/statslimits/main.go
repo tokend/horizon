@@ -5,8 +5,8 @@ import (
 	"gitlab.com/tokend/horizon/db2/core2"
 )
 
-func ToCoreStatsLimitsUnitList(table Table) []core2.LimitsWithStatsEntry {
-	res := make([]core2.LimitsWithStatsEntry, 0, len(table))
+func ToCoreStatsLimitsUnitList(table Table) []core2.LimitsWithStats {
+	res := make([]core2.LimitsWithStats, 0, len(table))
 
 	for g, coreUnit := range table {
 		var limitsID string
@@ -15,7 +15,7 @@ func ToCoreStatsLimitsUnitList(table Table) []core2.LimitsWithStatsEntry {
 			limitsID = cast.ToString(coreUnit.Limits.ID)
 		}
 
-		res = append(res, core2.LimitsWithStatsEntry{
+		res = append(res, core2.LimitsWithStats{
 			ID: g.AssetCode + ":" + // todo rm before send to review
 				limitsID + ":" +
 				cast.ToString(coreUnit.Stats.ID),
