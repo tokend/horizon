@@ -24,19 +24,30 @@ type participantEffectsStorage interface {
 	Insert(participants []history2.ParticipantEffect) error
 }
 
+type matchesStorage interface {
+	// Insert - saves match to
+	Insert(matches history2.Match) error
+}
+
 //Handler - handles txs to create operation details and participant effects. Routes operation
 // to particular implementation of handler
 type Handler struct {
 	participantEffectsStorage participantEffectsStorage
 	operationsStorage         operationsStorage
 	allHandlers               map[xdr.OperationType]handler
+	specificHandlers          map[xdr.OperationType]specificHandler
 	pubKeyProvider            IDProvider
 }
 
 // NewOperationsHandler returns new handler which can return
 // details and participants effects of certain operation
-func NewOperationsHandler(operationsStorage operationsStorage, participantEffectsStorage participantEffectsStorage,
-	pubKeyProvider IDProvider, balanceProvider balanceProvider) *Handler {
+func NewOperationsHandler(
+	operationsStorage operationsStorage,
+	participantEffectsStorage participantEffectsStorage,
+	matchesStorage matchesStorage,
+	pubKeyProvider IDProvider,
+	balanceProvider balanceProvider,
+) *Handler {
 	effectsBaseHandler := effectsProvider{
 		IDProvider:      pubKeyProvider,
 		balanceProvider: balanceProvider,
@@ -48,6 +59,11 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 		pubKeyProvider:            pubKeyProvider,
 		participantEffectsStorage: participantEffectsStorage,
 		operationsStorage:         operationsStorage,
+		specificHandlers: map[xdr.OperationType]specificHandler{
+			xdr.OperationTypeManageOffer: &manageOfferMatchSaver{
+				storage: matchesStorage,
+			},
+		},
 		allHandlers: map[xdr.OperationType]handler{
 			xdr.OperationTypeCreateAccount: &createAccountOpHandler{
 				effectsProvider: effectsBaseHandler,
@@ -173,12 +189,23 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 		txID := txIDGen.Next()
 		ops := tx.Envelope.Tx.Operations
 		for opI := range ops {
-			opDetails, participants, err := h.convertOperation(operation{
+			op := operation{
 				tx:  tx,
 				opI: opI,
-			}, opIDGen, participantEffectIDGen)
+			}
+
+			err := h.processOperationIfNeeded(op)
 			if err != nil {
-				return errors.Wrap(err, "failed to process ledger change", log.F{
+				return errors.Wrap(err, "failed to process operation", log.F{
+					"ledger_seq": header.Sequence,
+					"tx_i":       txI,
+					"op_i":       opI,
+				})
+			}
+
+			opDetails, participants, err := h.convertOperation(op, opIDGen, participantEffectIDGen)
+			if err != nil {
+				return errors.Wrap(err, "failed to convert operation", log.F{
 					"ledger_seq": header.Sequence,
 					"tx_i":       txI,
 					"op_i":       opI,
@@ -209,6 +236,18 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 	}
 
 	return nil
+}
+
+// processOperationIfNeeded - handlers specific operation if there is a specific handler for it
+func (h *Handler) processOperationIfNeeded(op operation) error {
+	opType := op.Operation().Body.Type
+
+	opHandler, ok := h.specificHandlers[opType]
+	if !ok {
+		return nil
+	}
+
+	return opHandler.Handle(op)
 }
 
 // convertOperation transforms xdr operation data to db suitable Operation and Participants Effects

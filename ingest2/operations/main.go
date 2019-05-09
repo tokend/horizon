@@ -33,6 +33,12 @@ type handler interface {
 	) ([]history2.ParticipantEffect, error)
 }
 
+// handler used to handle specific operations that require to perform actions other than updating
+// `participant_effects` of `operation_details` tables
+type specificHandler interface {
+	Handle(operation) error
+}
+
 // rawOperation - inner struct to pass source with operation body
 // as one parameter in Details method
 type rawOperation struct {

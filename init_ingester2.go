@@ -55,7 +55,13 @@ func initIngester2(app *App) {
 		Account: accountStorage,
 		Balance: balanceStorage,
 	}
-	opHandler := operations.NewOperationsHandler(storage.NewOperationDetails(hRepo), storage.NewOpParticipants(hRepo), &idProvider, balanceStorage)
+	opHandler := operations.NewOperationsHandler(
+		storage.NewOperationDetails(hRepo),
+		storage.NewOpParticipants(hRepo),
+		storage.NewMatch(hRepo),
+		&idProvider,
+		balanceStorage,
+	)
 
 	consumer := ingest2.NewConsumer(logger.WithField("service", "ingest_data_consumer"), hRepo, app.CoreConnector, []ingest2.Handler{
 		ingest2.NewLedgerHandler(storage.NewLedger(hRepo)),

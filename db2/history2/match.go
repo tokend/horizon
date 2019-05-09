@@ -2,17 +2,19 @@ package history2
 
 import (
 	"gitlab.com/tokend/go/xdr"
+	"time"
 )
 
 // Match is a row of data from the `matches` table
 type Match struct {
-	OrderBookID   uint64 `db:"order_book_id"`
-	ParticipantID string `db:"participant_id"`
-	BaseAmount    int64  `db:"base_amount"`
-	QuoteAmount   int64  `db:"quote_amount"`
-	BaseAsset     string `db:"base_asset"`
-	QuoteAsset    string `db:"quote_asset"`
-	Price         int64  `db:"price"`
+	OrderBookID   uint64     `db:"order_book_id"`
+	ParticipantID string     `db:"participant_id"`
+	BaseAmount    int64      `db:"base_amount"`
+	QuoteAmount   int64      `db:"quote_amount"`
+	BaseAsset     string     `db:"base_asset"`
+	QuoteAsset    string     `db:"quote_asset"`
+	Price         int64      `db:"price"`
+	CreatedAt     *time.Time `db:"created_at"`
 }
 
 func NewMatch(base, quote xdr.AssetCode, orderBookID xdr.Uint64, atom xdr.ClaimOfferAtom) Match {
