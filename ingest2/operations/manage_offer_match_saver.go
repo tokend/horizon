@@ -22,7 +22,7 @@ func (h *manageOfferMatchSaver) Handle(op operation) error {
 			atom,
 		))
 		if err != nil {
-			return errors.New("failed to insert match")
+			return errors.Wrap(err,"failed to insert match")
 		}
 	}
 
