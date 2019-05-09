@@ -36,14 +36,14 @@ Account:
                 type: array
                 items:
                   $ref: '#/components/schemas/BalanceKey'
-          limits:
-            description: "Defines limits specified for this account"
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/LimitsKey'
+#          limits:
+#            description: "Defines limits specified for this account"
+#            type: object
+#            properties:
+#              data:
+#                type: array
+#                items:
+#                  $ref: '#/components/schemas/LimitsKey'
           external_system_ids: # FIXME have a trouble with name (Ids -> IDs)
             description: "Defines external system IDs binded to this account"
             type: object
@@ -67,3 +67,11 @@ Account:
                 type: array
                 items:
                   $ref: '#/components/schemas/FeeKey'
+          limits_with_stats:
+            description: "Defines limits specified for and outcome statistics of a particular account"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LimitsWithStatsKey'
