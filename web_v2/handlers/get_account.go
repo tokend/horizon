@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gitlab.com/tokend/horizon/helper/limits"
 	"net/http"
 
 	fees "gitlab.com/tokend/horizon/helper/fees2"
@@ -43,6 +44,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		requests.IncludeTypeAccountBalancesState,
 		requests.IncludeTypeAccountAccountReferrer,
 		requests.IncludeTypeAccountFees,
+		requests.IncludeTypeAccountLimits,
 		requests.IncludeTypeAccountExternalSystemIDs,
 		requests.IncludeTypeAccountLimitsWithStats,
 	) {
@@ -115,6 +117,11 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		return nil, errors.Wrap(err, "failed to get fees for account")
 	}
 
+	response.Data.Relationships.Limits, err = h.getLimits(request, &response.Included, account)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get limits")
+	}
+
 	response.Data.Relationships.ExternalSystemIds, err = h.getExternalSystemIDs(request, &response.Included)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get external system IDs")
@@ -126,6 +133,43 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 	}
 
 	return &response, nil
+}
+
+func (h *getAccountHandler) getLimits(request *requests.GetAccount,
+	includes *regources.Included,
+	account *core2.Account) (*regources.RelationCollection, error) {
+
+	generalLimits, err := h.LimitsV2Q.General().Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select general limits")
+	}
+	roleLimits, err := h.LimitsV2Q.FilterByAccountRole(account.RoleID).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select role limits")
+	}
+	accountLimits, err := h.LimitsV2Q.FilterByAccount(request.Address).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select limits for account")
+	}
+
+	lt := limits.NewTable(generalLimits)
+	lt.Update(roleLimits)
+	lt.Update(accountLimits)
+
+	result := &regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(lt)),
+	}
+
+	for _, coreLimitsUnit := range lt {
+		limitsUnit := resources.NewLimits(coreLimitsUnit)
+		result.Data = append(result.Data, limitsUnit.Key)
+
+		if request.ShouldInclude(requests.IncludeTypeAccountLimits) {
+			includes.Add(limitsUnit)
+		}
+	}
+
+	return result, nil
 }
 
 func (h *getAccountHandler) getLimitsWithStats(request *requests.GetAccount,
