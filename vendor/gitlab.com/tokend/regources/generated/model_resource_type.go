@@ -61,6 +61,7 @@ const (
 	LEDGER_ENTRY_CHANGES                                    ResourceType = "ledger-entry-changes"
 	OPERATIONS_LICENSE                                      ResourceType = "operations-license"
 	LIMITS                                                  ResourceType = "limits"
+	LIMITS_WITH_STATS                                       ResourceType = "limits-with-stats"
 	OPERATIONS_CREATE_ACCOUNT_ROLE                          ResourceType = "operations-create-account-role"
 	OPERATIONS_UPDATE_ACCOUNT_ROLE                          ResourceType = "operations-update-account-role"
 	OPERATIONS_REMOVE_ACCOUNT_ROLE                          ResourceType = "operations-remove-account-role"

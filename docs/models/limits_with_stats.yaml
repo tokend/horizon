@@ -1,0 +1,41 @@
+LimitsWithStatsKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "1"
+    type:
+      type: string
+      enum:
+        - "limits-with-stats"
+
+LimitsWithStats:
+  allOf:
+    - $ref: '#/components/schemas/LimitsWithStatsKey'
+    - type: object
+      required: [relationships]
+      properties:
+        relationships:
+          type: object
+          properties:
+            account:
+              type: object
+              description: "account related to a particular entry"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AccountKey'
+            limits:
+              description: "defines limits related to a particular account"
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/LimitsKey'
+            statistics:
+              description:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/StatisticsKey'
