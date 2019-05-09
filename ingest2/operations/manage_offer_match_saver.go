@@ -10,7 +10,7 @@ type manageOfferMatchSaver struct {
 }
 
 // Handle - Handles manage offer op by storing result matches
-func (h *manageOfferMatchSaver) Handle(op operation) error {
+func (h *manageOfferMatchSaver) Handle(opID int64, op operation) error {
 	manageOfferOp := op.Operation().Body.MustManageOfferOp()
 	manageOfferOpResult := op.Result().MustManageOfferResult().MustSuccess()
 
@@ -19,6 +19,7 @@ func (h *manageOfferMatchSaver) Handle(op operation) error {
 			manageOfferOpResult.BaseAsset,
 			manageOfferOpResult.QuoteAsset,
 			manageOfferOp.OrderBookId,
+			opID,
 			atom,
 		))
 		if err != nil {

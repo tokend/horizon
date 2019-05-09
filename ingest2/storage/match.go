@@ -23,6 +23,7 @@ func NewMatch(repo *db2.Repo) *Match {
 func (q *Match) Insert(match history2.Match) error {
 	query := sq.Insert("matches").SetMap(map[string]interface{}{
 		"order_book_id":  match.OrderBookID,
+		"operation_id":   match.OperationID,
 		"participant_id": match.ParticipantID,
 		"base_amount":    match.BaseAmount,
 		"quote_amount":   match.QuoteAmount,

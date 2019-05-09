@@ -36,7 +36,7 @@ type handler interface {
 // handler used to handle specific operations that require to perform actions other than updating
 // `participant_effects` of `operation_details` tables
 type specificHandler interface {
-	Handle(operation) error
+	Handle(opID int64, op operation) error
 }
 
 // rawOperation - inner struct to pass source with operation body

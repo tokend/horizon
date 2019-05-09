@@ -194,15 +194,6 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 				opI: opI,
 			}
 
-			err := h.processOperationIfNeeded(op)
-			if err != nil {
-				return errors.Wrap(err, "failed to process operation", log.F{
-					"ledger_seq": header.Sequence,
-					"tx_i":       txI,
-					"op_i":       opI,
-				})
-			}
-
 			opDetails, participants, err := h.convertOperation(op, opIDGen, participantEffectIDGen)
 			if err != nil {
 				return errors.Wrap(err, "failed to convert operation", log.F{
@@ -216,6 +207,15 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 			opDetails.LedgerCloseTime = internal.TimeFromXdr(xdr.Uint64(header.CloseTime))
 			ledgerOperations = append(ledgerOperations, opDetails)
 			ledgerParticipants = append(ledgerParticipants, participants...)
+
+			err = h.processOperationIfNeeded(opDetails.ID, op)
+			if err != nil {
+				return errors.Wrap(err, "failed to process operation", log.F{
+					"ledger_seq": header.Sequence,
+					"tx_i":       txI,
+					"op_i":       opI,
+				})
+			}
 		}
 	}
 
@@ -239,7 +239,7 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 }
 
 // processOperationIfNeeded - handlers specific operation if there is a specific handler for it
-func (h *Handler) processOperationIfNeeded(op operation) error {
+func (h *Handler) processOperationIfNeeded(opID int64, op operation) error {
 	opType := op.Operation().Body.Type
 
 	opHandler, ok := h.specificHandlers[opType]
@@ -247,7 +247,7 @@ func (h *Handler) processOperationIfNeeded(op operation) error {
 		return nil
 	}
 
-	return opHandler.Handle(op)
+	return opHandler.Handle(opID, op)
 }
 
 // convertOperation transforms xdr operation data to db suitable Operation and Participants Effects
