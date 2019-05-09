@@ -52,11 +52,12 @@ func (is *Session) Run() {
 		return
 	}
 
-	err = is.CoreConnector.SetCursor("HORIZON", is.Cursor.LastLedger)
-	if err != nil {
-		is.log.WithError(err).Error("failed to set cursor")
-		return
-	}
+	// Intentionally commented to disable core's "feature" of deleting processed blocks:
+	// err = is.CoreConnector.SetCursor("HORIZON", is.Cursor.LastLedger)
+	// if err != nil {
+	//	is.log.WithError(err).Error("failed to set cursor")
+	//	return
+	// }
 }
 
 func (is *Session) flush() (err error) {
