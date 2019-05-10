@@ -21,6 +21,8 @@ const (
 	OPERATIONS_CANCEL_ASWAP_BID                             ResourceType = "operations-cancel-aswap-bid"
 	OPERATIONS_CANCEL_SALE_REQUEST                          ResourceType = "operations-cancel-sale-request"
 	OPERATIONS_CHECK_SALE_STATE                             ResourceType = "operations-check-sale-state"
+	CONVERTED_BALANCE_STATES                                ResourceType = "converted-balance-states"
+	CONVERTED_BALANCES_COLLECTIONS                          ResourceType = "converted-balances-collections"
 	OPERATIONS_CREATE_ACCOUNT                               ResourceType = "operations-create-account"
 	OPERATIONS_CREATE_AML_ALERT                             ResourceType = "operations-create-aml-alert"
 	OPERATIONS_CREATE_ASWAP_BID_REQUEST                     ResourceType = "operations-create-aswap-bid-request"
