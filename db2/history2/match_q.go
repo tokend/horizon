@@ -28,6 +28,31 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 	}
 }
 
+// NewSquashedMatchesQ returns new instance of MatchQ with matches grouped by operation id and price
+func NewSquashedMatchesQ(repo *db2.Repo) MatchQ {
+	return MatchQ{
+		repo: repo,
+		selector: sq.Select(
+			"encode(format('%s:%s:%s:%s:%s', op.id, m.price, m.base_asset, m.quote_asset, m.order_book_id)::bytea, 'base64') id",
+			"m.order_book_id",
+			"sum(m.base_amount) base_amount",
+			"sum(m.quote_amount) quote_amount",
+			"m.base_asset",
+			"m.quote_asset",
+			"m.price",
+		).
+			LeftJoin("operations o ON m.operation_id = o.id").
+			Columns("o.ledger_close_time created_at").
+			GroupBy(
+				"op.id",
+				"m.price",
+				"m.base_asset",
+				"m.quote_asset",
+				"m.order_book_id",
+			),
+	}
+}
+
 // FilterByOrderBookID - returns Q with filter by order book ID
 func (q MatchQ) FilterByOrderBookID(id uint64) MatchQ {
 	q.selector = q.selector.Where("m.order_book_id = ?", id)
@@ -49,7 +74,7 @@ func (q MatchQ) FilterByQuoteAsset(asset string) MatchQ {
 // WithCreatedAt - returns q with added column for created_at
 func (q MatchQ) WithCreatedAt() MatchQ {
 	q.selector = q.selector.
-		LeftJoin("operations o").
+		LeftJoin("operations o ON m.operation_id = o.id").
 		Columns("o.ledger_close_time created_at")
 
 	return q

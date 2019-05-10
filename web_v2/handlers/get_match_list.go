@@ -17,7 +17,7 @@ import (
 func GetMatchList(w http.ResponseWriter, r *http.Request) {
 	historyRepo := ctx.HistoryRepo(r)
 	handler := getMatchListHandler{
-		MatchQ: history2.NewMatchQ(historyRepo),
+		MatchQ: history2.NewSquashedMatchesQ(historyRepo),
 	}
 
 	request, err := requests.NewGetMatchList(r)
