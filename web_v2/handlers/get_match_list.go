@@ -45,7 +45,7 @@ type getMatchListHandler struct {
 
 // GetMatchList returns list of matches with related resources
 func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*regources.MatchsResponse, error) {
-	q := h.MatchQ.WithCreatedAt()
+	q := h.MatchQ
 
 	if request.ShouldFilter(requests.FilterTypeMatchListBaseAsset) {
 		q = q.FilterByBaseAsset(request.Filters.BaseAsset)

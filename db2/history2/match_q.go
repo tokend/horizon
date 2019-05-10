@@ -40,9 +40,10 @@ func NewSquashedMatchesQ(repo *db2.Repo) MatchQ {
 			"m.base_asset",
 			"m.quote_asset",
 			"m.price",
+			"op.ledger_close_time created_at",
 		).
-			LeftJoin("operations o ON m.operation_id = o.id").
-			Columns("o.ledger_close_time created_at").
+			From("matches m").
+			LeftJoin("operations op ON m.operation_id = op.id").
 			GroupBy(
 				"op.id",
 				"m.price",
@@ -71,15 +72,6 @@ func (q MatchQ) FilterByQuoteAsset(asset string) MatchQ {
 	return q
 }
 
-// WithCreatedAt - returns q with added column for created_at
-func (q MatchQ) WithCreatedAt() MatchQ {
-	q.selector = q.selector.
-		LeftJoin("operations o ON m.operation_id = o.id").
-		Columns("o.ledger_close_time created_at")
-
-	return q
-}
-
 // Select - selects slice from the db, if no matches found - returns nil, nil
 func (q MatchQ) Select() ([]Match, error) {
 	var result []Match
@@ -89,7 +81,7 @@ func (q MatchQ) Select() ([]Match, error) {
 			return nil, nil
 		}
 
-		return nil, errors.Wrap(err, "failed to load assets")
+		return nil, errors.Wrap(err, "failed to load matches")
 	}
 
 	return result, nil
