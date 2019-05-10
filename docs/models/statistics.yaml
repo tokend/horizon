@@ -49,9 +49,11 @@ Statistics:
         ]
         properties:
           stats_op_type:
+            description: "defines the type of operation for which a statistics entry exists"
             type: integer
             format: int32
           is_convert_needed:
+            description: "if `true`, this statistics entry exists in connection with operations in other assets except for those specified in `asset` relationships"
             type: boolean
             example: true
           daily_out:

@@ -1,16 +1,15 @@
 package handlers
 
 import (
-	"gitlab.com/tokend/horizon/helper/limits"
 	"net/http"
-
-	fees "gitlab.com/tokend/horizon/helper/fees2"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core2"
+	fees "gitlab.com/tokend/horizon/helper/fees2"
+	"gitlab.com/tokend/horizon/helper/limits"
 	"gitlab.com/tokend/horizon/helper/statslimits"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
@@ -165,7 +164,7 @@ func (h *getAccountHandler) getLimits(request *requests.GetAccount,
 		result.Data = append(result.Data, limitsUnit.Key)
 
 		if request.ShouldInclude(requests.IncludeTypeAccountLimits) {
-			includes.Add(limitsUnit)
+			includes.Add(&limitsUnit)
 		}
 	}
 
@@ -188,14 +187,16 @@ func (h *getAccountHandler) getLimitsWithStats(request *requests.GetAccount,
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to select limits for account")
 	}
-	accountStats, err := h.StatsQ.FilterByAccount(request.Address)
+	accountStats, err := h.StatsQ.FilterByAccount(request.Address).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to select statistics for account")
 	}
 
 	lt := statslimits.NewTable(generalLimits, accountStats)
-	lt.UpdateLimits(roleLimits)
-	lt.UpdateLimits(accountLimits)
+	lt.Update(roleLimits)
+	lt.Update(accountLimits)
+	lt.FulfillEmptyLimits()
+
 	coreLimitsWithStatsList := statslimits.ToCoreStatsLimitsUnitList(lt)
 
 	result := regources.RelationCollection{
@@ -208,7 +209,7 @@ func (h *getAccountHandler) getLimitsWithStats(request *requests.GetAccount,
 		result.Data = append(result.Data, limitsWithStatsUnit.Key)
 
 		if request.ShouldInclude(requests.IncludeTypeAccountLimitsWithStats) {
-			included.Add(limitsWithStatsUnit)
+			included.Add(&limitsWithStatsUnit)
 		}
 	}
 	return &result, nil

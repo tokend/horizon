@@ -87,7 +87,7 @@ func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*
 			limit.Relationships.AccountRole = resources.NewAccountRoleKey(*limits[i].AccountType).AsRelation()
 		}
 		assets = append(assets, limits[i].AssetCode)
-		response.Data = append(response.Data, *limit)
+		response.Data = append(response.Data, limit)
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeLimitsListAsset) {

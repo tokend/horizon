@@ -20,10 +20,12 @@ LimitsWithStats:
       properties:
         attributes:
           type: object
-          required: [statistics]
+          required: [limits,statistics]
           properties:
             limits:
-              description: "defines limits related to a particular account"
+              description: |
+                            Defines limits related to a particular account.
+                            If there are no limits applied to the account - have INT64_MAX in all numeric fields
               type: object
               $ref: '#/components/schemas/Limits'
             statistics:

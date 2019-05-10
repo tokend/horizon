@@ -6,5 +6,5 @@ type LimitsWithStats struct {
 	AssetCode   string
 	StatsOpType int32
 	Statistics  Statistics
-	Limits      *Limits
+	Limits      Limits
 }
