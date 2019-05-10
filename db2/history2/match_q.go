@@ -18,6 +18,7 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 		repo: repo,
 		selector: sq.Select(
 			"m.participant_id",
+			"m.offer_id",
 			"m.order_book_id",
 			"m.base_amount",
 			"m.quote_amount",
