@@ -13,11 +13,10 @@ type MatchQ struct {
 }
 
 // NewMatchQ returns new instance of MatchQ
-func NewMatchQ(repo *db2.Repo) *MatchQ {
-	return &MatchQ{
+func NewMatchQ(repo *db2.Repo) MatchQ {
+	return MatchQ{
 		repo: repo,
 		selector: sq.Select(
-			"m.id",
 			"m.participant_id",
 			"m.order_book_id",
 			"m.base_amount",

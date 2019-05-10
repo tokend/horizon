@@ -7,6 +7,8 @@ import (
 
 // Match is a row of data from the `matches` table
 type Match struct {
+	ID string `db:"id"`
+
 	OrderBookID   uint64     `db:"order_book_id"`
 	OperationID   int64      `db:"operation_id"`
 	ParticipantID string     `db:"participant_id"`
