@@ -5,6 +5,6 @@
 package regources
 
 type MatchRelationships struct {
-	BaseAsset  *Relation `json:"base_asset,omitempty"`
-	QuoteAsset *Relation `json:"quote_asset,omitempty"`
+	BaseAsset  Relation `json:"base_asset"`
+	QuoteAsset Relation `json:"quote_asset"`
 }

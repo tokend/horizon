@@ -20,6 +20,11 @@ Match:
       properties:
         attributes:
           type: object
+          required:
+            - order_book_id
+            - quote_amount
+            - base_amount
+            - price
           properties:
             order_book_id:
               type: string
@@ -43,6 +48,9 @@ Match:
               example: "51.150509"
         relationships:
           type: object
+          required:
+            - base_asset
+            - quote_asset
           properties:
             base_asset:
               type: object
