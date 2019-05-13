@@ -3,7 +3,7 @@ package core2
 type Statistics struct {
 	ID              uint64 `db:"id"`
 	AccountID       string `db:"account_id"`
-	StatsOpType     int32  `db:"stats_op_type"`
+	OperationType   int32  `db:"stats_op_type"`
 	AssetCode       string `db:"asset_code"`
 	IsConvertNeeded bool   `db:"is_convert_needed"`
 	DailyOutcome    uint64 `db:"daily_out"`

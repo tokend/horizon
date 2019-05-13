@@ -192,12 +192,12 @@ func (h *getAccountHandler) getLimitsWithStats(request *requests.GetAccount,
 		return nil, errors.Wrap(err, "failed to select statistics for account")
 	}
 
-	lt := statslimits.NewTable(generalLimits, accountStats)
-	lt.Update(roleLimits)
-	lt.Update(accountLimits)
-	lt.FulfillEmptyLimits()
+	statsLimitsTable := statslimits.NewTable(generalLimits, accountStats)
+	statsLimitsTable.Update(roleLimits)
+	statsLimitsTable.Update(accountLimits)
+	statsLimitsTable.FulfillEmptyLimits()
 
-	coreLimitsWithStatsList := statslimits.ToCoreStatsLimitsUnitList(lt)
+	coreLimitsWithStatsList := statsLimitsTable.CoreUnitsList()
 
 	result := regources.RelationCollection{
 		Data: make([]regources.Key, 0, len(coreLimitsWithStatsList)),

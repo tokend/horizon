@@ -39,7 +39,7 @@ Statistics:
       attributes:
         type: object
         required: [
-          stats_op_type,
+          operation_type,
           is_convert_needed,
           daily_out,
           weekly_out,
@@ -48,7 +48,7 @@ Statistics:
           updated_at
         ]
         properties:
-          stats_op_type:
+          operation_type:
             description: "defines the type of operation statistics which entry exists for"
             type: integer
             format: int32

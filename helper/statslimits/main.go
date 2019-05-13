@@ -2,24 +2,15 @@ package statslimits
 
 import (
 	"fmt"
-	"github.com/spf13/cast"
 	"gitlab.com/tokend/horizon/db2/core2"
 )
 
-func ToCoreStatsLimitsUnitList(table Table) []core2.LimitsWithStats {
-	res := make([]core2.LimitsWithStats, 0, len(table))
+func (statslimitsTable Table) CoreUnitsList() []core2.LimitsWithStats {
+	res := make([]core2.LimitsWithStats, 0, len(statslimitsTable))
 
-	for g, coreUnit := range table {
-		var limitsID, statsID string
-		if coreUnit.Limits.ID != 0 {
-			limitsID = cast.ToString(coreUnit.Limits.ID)
-		}
-		if coreUnit.Stats.ID != 0 {
-			statsID = cast.ToString(coreUnit.Stats.ID)
-		}
-
+	for g, coreUnit := range statslimitsTable {
 		res = append(res, core2.LimitsWithStats{
-			ID:          fmt.Sprintf("%s:%s", limitsID, statsID),
+			ID:          fmt.Sprintf("%d:%d", coreUnit.Limits.ID, coreUnit.Stats.ID),
 			AccountID:   coreUnit.Stats.AccountID,
 			StatsOpType: g.StatsOpType,
 			AssetCode:   g.AssetCode,

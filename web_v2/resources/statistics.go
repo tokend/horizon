@@ -10,7 +10,7 @@ func NewStatistics(stats core2.Statistics) regources.Statistics {
 	return regources.Statistics{
 		Key: NewStatisticKey(stats.ID),
 		Attributes: regources.StatisticsAttributes{
-			StatsOpType:     stats.StatsOpType,
+			OperationType:   stats.OperationType,
 			IsConvertNeeded: stats.IsConvertNeeded,
 			DailyOut:        regources.Amount(stats.DailyOutcome),
 			WeeklyOut:       regources.Amount(stats.WeeklyOutcome),

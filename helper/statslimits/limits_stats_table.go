@@ -45,7 +45,7 @@ func NewTable(limits []core2.Limits, stats []core2.Statistics) (lt Table) {
 	for _, entry := range stats {
 		key := Group{
 			AssetCode:   entry.AssetCode,
-			StatsOpType: entry.StatsOpType,
+			StatsOpType: entry.OperationType,
 		}
 
 		limitsWithStatsEntry := LimitsWithStats{
@@ -59,33 +59,33 @@ func NewTable(limits []core2.Limits, stats []core2.Statistics) (lt Table) {
 	return lt
 }
 
-func (lt Table) Update(limits []core2.Limits) {
+func (statslimitsTable Table) Update(limits []core2.Limits) {
 	for _, v := range limits {
 		key := Group{
 			AssetCode:   v.AssetCode,
 			StatsOpType: v.StatsOpType,
 		}
 
-		entry, ok := lt[key]
+		entry, ok := statslimitsTable[key]
 		if !ok {
 			entry = LimitsWithStats{
 				Stats: core2.Statistics{},
 			}
 		}
 
-		lt[key] = LimitsWithStats{
+		statslimitsTable[key] = LimitsWithStats{
 			Limits: v,
 			Stats:  entry.Stats,
 		}
 	}
 }
 
-func (lt Table) FulfillEmptyLimits() {
-	for k, v := range lt {
+func (statslimitsTable Table) FulfillEmptyLimits() {
+	for k, v := range statslimitsTable {
 		if v.Limits.ID != 0 {
 			continue
 		}
-		lt[k] = LimitsWithStats{
+		statslimitsTable[k] = LimitsWithStats{
 			Limits: maxLimits,
 			Stats:  v.Stats,
 		}

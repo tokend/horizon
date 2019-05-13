@@ -10,7 +10,7 @@ permission to participate in sale.
 * Account specific rules ingestion
 * Sale version ingestion
 * Bumped up ingest version
-* Added `limits_with_stats` to `account` resource
+* `limits_with_stats` to `account` resource
 
 ## 3.3.0
 

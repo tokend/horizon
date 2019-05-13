@@ -15,7 +15,7 @@ type StatisticsAttributes struct {
 	IsConvertNeeded bool   `json:"is_convert_needed"`
 	MonthlyOut      Amount `json:"monthly_out"`
 	// defines the type of operation statistics which entry exists for
-	StatsOpType int32     `json:"stats_op_type"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	WeeklyOut   Amount    `json:"weekly_out"`
+	OperationType int32     `json:"operation_type"`
+	UpdatedAt     time.Time `json:"updated_at"`
+	WeeklyOut     Amount    `json:"weekly_out"`
 }

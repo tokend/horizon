@@ -531,14 +531,14 @@
 
 [[projects]]
   branch = "feature/limits-with-stats"
-  digest = "1:1b33d3e36a08638337cff98fdff43d49a7daebdc58ced25f6b78935dd4cf90b4"
+  digest = "1:29e8cd32e034e6d740c83882e9c3b94db94a7bdd7ae7ba52e192c95a449cedd2"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "ef49f9b410b9875f723691818325368b51b08559"
+  revision = "a93ea512f7f9f5b144a1bfa9b1278e5056b2c3cd"
 
 [[projects]]
   branch = "master"
