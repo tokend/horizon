@@ -4,9 +4,15 @@
 
 package regources
 
+import (
+	"time"
+)
+
 type MatchAttributes struct {
 	// defines quote amount of the match
 	BaseAmount Amount `json:"base_amount"`
+	// time when the match was happened
+	CreatedAt time.Time `json:"created_at"`
 	// defines whether match is a secondary market match or match after sale end. `0` - secondary market, `saleId` - (for specific sale) or `-1`
 	OrderBookId string `json:"order_book_id"`
 	// defines price of the match

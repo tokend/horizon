@@ -20,6 +20,7 @@ func NewMatch(record history2.Match) regources.Match {
 			OrderBookId: fmt.Sprintf("%d", record.OrderBookID),
 			Price:       regources.Amount(record.Price),
 			QuoteAmount: regources.Amount(record.QuoteAmount),
+			CreatedAt:   *record.CreatedAt,
 		},
 		Relationships: regources.MatchRelationships{
 			BaseAsset:  *NewAssetKey(record.BaseAsset).AsRelation(),
