@@ -2,6 +2,7 @@ package history2
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -17,6 +18,7 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 	return MatchQ{
 		repo: repo,
 		selector: sq.Select(
+			"m.id match_id",
 			"m.participant_id",
 			"m.offer_id",
 			"m.order_book_id",
@@ -29,12 +31,11 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 	}
 }
 
-// NewSquashedMatchesQ returns new instance of MatchQ with matches grouped by operation id and price
-func NewSquashedMatchesQ(repo *db2.Repo) MatchQ {
-	return MatchQ{
+// NewSquashedMatchesQ returns new instance of MatchQ with squashed matches and ready to be paginated
+func NewSquashedMatchesQ(repo *db2.Repo, pageParams db2.CursorPageParams) MatchQ {
+	q := MatchQ{
 		repo: repo,
 		selector: sq.Select(
-			"encode(format('%s:%s:%s:%s:%s', op.id, m.price, m.base_asset, m.quote_asset, m.order_book_id)::bytea, 'base64') id",
 			"m.order_book_id",
 			"sum(m.base_amount) base_amount",
 			"sum(m.quote_amount) quote_amount",
@@ -53,6 +54,25 @@ func NewSquashedMatchesQ(repo *db2.Repo) MatchQ {
 				"m.order_book_id",
 			),
 	}
+
+	switch pageParams.Order {
+	case db2.OrderDesc:
+		q.selector = q.selector.
+			Where("m.id < ?", pageParams.Cursor).
+			Columns("min(m.id) match_id").
+			OrderBy("match_id asc")
+	case db2.OrderAsc:
+		q.selector = q.selector.
+			Where("m.id > ", pageParams.Cursor).
+			Columns("max(m.id) match_id").
+			OrderBy("match_id asc")
+	default:
+		panic(errors.From(errors.New("unexpected order type"), logan.F{
+			"order_type": pageParams.Order,
+		}))
+	}
+
+	return q
 }
 
 // FilterByOrderBookID - returns Q with filter by order book ID
@@ -75,6 +95,7 @@ func (q MatchQ) FilterByQuoteAsset(asset string) MatchQ {
 
 // Select - selects slice from the db, if no matches found - returns nil, nil
 func (q MatchQ) Select() ([]Match, error) {
+
 	var result []Match
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {

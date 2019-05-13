@@ -1,8 +1,7 @@
 -- +migrate Up
 
 create table matches (
-  id int not null,
-  participant_id varchar(56) not null,
+  id bigint not null,
   order_book_id bigint not null,
   operation_id bigint not null,
   offer_id bigint not null,

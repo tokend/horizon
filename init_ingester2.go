@@ -58,9 +58,11 @@ func initIngester2(app *App) {
 	opHandler := operations.NewOperationsHandler(
 		storage.NewOperationDetails(hRepo),
 		storage.NewOpParticipants(hRepo),
-		storage.NewMatch(hRepo),
 		&idProvider,
 		balanceStorage,
+	)
+	matchesHandler := ingest2.NewMatchesSaver(
+		storage.NewMatches(hRepo),
 	)
 
 	consumer := ingest2.NewConsumer(logger.WithField("service", "ingest_data_consumer"), hRepo, app.CoreConnector, []ingest2.Handler{
@@ -68,6 +70,7 @@ func initIngester2(app *App) {
 		ingest2.NewTxSaver(storage.NewTx(hRepo)),
 		ingest2.NewLedgerChangesHandler(storage.NewLedgerChange(hRepo)),
 		ledgerChangesHandler,
+		matchesHandler,
 		opHandler,
 	}, ledgersChan)
 

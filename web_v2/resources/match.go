@@ -7,11 +7,8 @@ import (
 )
 
 // NewMatchKey - creates new Key for OrderBook
-func NewMatchKey(id string) regources.Key {
-	return regources.Key{
-		ID:   id,
-		Type: regources.ORDER_BOOKS,
-	}
+func NewMatchKey(id int64) regources.Key {
+	return regources.NewKeyInt64(id, regources.MATCHES)
 }
 
 // NewMatch - returns new instance of `Match` resource
