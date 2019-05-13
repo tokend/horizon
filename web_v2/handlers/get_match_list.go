@@ -15,15 +15,15 @@ import (
 
 // GetMatchList - processes request to get the list of matches
 func GetMatchList(w http.ResponseWriter, r *http.Request) {
-	historyRepo := ctx.HistoryRepo(r)
-	handler := getMatchListHandler{
-		MatchQ: history2.NewSquashedMatchesQ(historyRepo),
-	}
-
 	request, err := requests.NewGetMatchList(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
+	}
+
+	historyRepo := ctx.HistoryRepo(r)
+	handler := getMatchListHandler{
+		MatchQ: history2.NewSquashedMatchesQ(historyRepo, *request.PageParams),
 	}
 
 	result, err := handler.GetMatchList(request)
@@ -64,11 +64,16 @@ func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*reg
 
 	response := regources.MatchsResponse{
 		Data: make([]regources.Match, 0, len(coreMatches)),
-		// TODO: includes
 	}
 
 	for _, coreMatch := range coreMatches {
 		response.Data = append(response.Data, resources.NewMatch(coreMatch))
+	}
+
+	if len(response.Data) > 0 {
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+	} else {
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
 	}
 
 	return &response, nil
