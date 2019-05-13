@@ -23,7 +23,7 @@ func GetMatchList(w http.ResponseWriter, r *http.Request) {
 
 	historyRepo := ctx.HistoryRepo(r)
 	handler := getMatchListHandler{
-		MatchQ: history2.NewSquashedMatchesQ(historyRepo, *request.PageParams),
+		MatchQ: history2.NewMatchQ(historyRepo),
 	}
 
 	result, err := handler.GetMatchList(request)
@@ -45,7 +45,7 @@ type getMatchListHandler struct {
 
 // GetMatchList returns list of matches with related resources
 func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*regources.MatchsResponse, error) {
-	q := h.MatchQ
+	q := h.MatchQ.Page(*request.PageParams).WithCreatedAt()
 
 	if request.ShouldFilter(requests.FilterTypeMatchListBaseAsset) {
 		q = q.FilterByBaseAsset(request.Filters.BaseAsset)

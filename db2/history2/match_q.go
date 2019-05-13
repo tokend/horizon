@@ -2,7 +2,6 @@ package history2
 
 import (
 	sq "github.com/lann/squirrel"
-	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -18,10 +17,10 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 	return MatchQ{
 		repo: repo,
 		selector: sq.Select(
-			"m.id match_id",
-			"m.participant_id",
-			"m.offer_id",
+			"m.id",
 			"m.order_book_id",
+			"m.operation_id",
+			"m.offer_id",
 			"m.base_amount",
 			"m.quote_amount",
 			"m.base_asset",
@@ -31,47 +30,9 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 	}
 }
 
-// NewSquashedMatchesQ returns new instance of MatchQ with squashed matches and ready to be paginated
-func NewSquashedMatchesQ(repo *db2.Repo, pageParams db2.CursorPageParams) MatchQ {
-	q := MatchQ{
-		repo: repo,
-		selector: sq.Select(
-			"m.order_book_id",
-			"sum(m.base_amount) base_amount",
-			"sum(m.quote_amount) quote_amount",
-			"m.base_asset",
-			"m.quote_asset",
-			"m.price",
-			"op.ledger_close_time created_at",
-		).
-			From("matches m").
-			LeftJoin("operations op ON m.operation_id = op.id").
-			GroupBy(
-				"op.id",
-				"m.price",
-				"m.base_asset",
-				"m.quote_asset",
-				"m.order_book_id",
-			),
-	}
-
-	switch pageParams.Order {
-	case db2.OrderDesc:
-		q.selector = q.selector.
-			Where("m.id < ?", pageParams.Cursor).
-			Columns("min(m.id) match_id").
-			OrderBy("match_id asc")
-	case db2.OrderAsc:
-		q.selector = q.selector.
-			Where("m.id > ", pageParams.Cursor).
-			Columns("max(m.id) match_id").
-			OrderBy("match_id asc")
-	default:
-		panic(errors.From(errors.New("unexpected order type"), logan.F{
-			"order_type": pageParams.Order,
-		}))
-	}
-
+// WithCreatedAt - returns q with `created_at` column
+func (q MatchQ) WithCreatedAt() MatchQ {
+	q.selector = q.selector.Join("operations op ON op.id = m.operation_id").Columns("ledger_close_time created_at")
 	return q
 }
 
@@ -90,6 +51,12 @@ func (q MatchQ) FilterByBaseAsset(asset string) MatchQ {
 // FilterByQuoteAsset - returns Q with filter by quote asset
 func (q MatchQ) FilterByQuoteAsset(asset string) MatchQ {
 	q.selector = q.selector.Where("m.quote_asset = ?", asset)
+	return q
+}
+
+// Page - apply paging params to the query
+func (q MatchQ) Page(pageParams db2.CursorPageParams) MatchQ {
+	q.selector = pageParams.ApplyTo(q.selector, "m.id")
 	return q
 }
 
