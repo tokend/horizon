@@ -10,14 +10,11 @@ const (
 	FilterTypeMatchListBaseAsset = "base_asset"
 	// FilterTypeMatchListQuoteAsset - defines if we need to filter the list by quote asset
 	FilterTypeMatchListQuoteAsset = "quote_asset"
-	// FilterTypeMatchListOrderBook - defines if we need to filter the list by order book
-	FilterTypeMatchListOrderBook = "order_book"
 )
 
 var filterTypeMatchListAll = map[string]struct{}{
 	FilterTypeMatchListBaseAsset:  {},
 	FilterTypeMatchListQuoteAsset: {},
-	FilterTypeMatchListOrderBook:  {},
 }
 
 // GetMatchList represents params to be specified by user for getMatchList handler

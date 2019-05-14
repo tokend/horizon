@@ -36,19 +36,17 @@ func (h *MatchesSaver) Handle(header *core.LedgerHeader, txs []core.Transaction)
 		for opI, op := range ops {
 			opID := opIDGen.Next()
 			if op.Body.Type == xdr.OperationTypeManageOffer {
-				manageOfferOp := op.Body.MustManageOfferOp()
-				manageOfferOpResult := tx.Result.Result.Result.MustResults()[opI].MustTr().MustManageOfferResult().MustSuccess()
+				opResult := tx.Result.Result.Result.MustResults()[opI].MustTr().MustManageOfferResult().MustSuccess()
 
 				var opMatches []history2.Match
 				var ok bool
-				for _, atom := range manageOfferOpResult.OffersClaimed {
+				for _, atom := range opResult.OffersClaimed {
 					if opMatches, ok = trySquash(opMatches, atom); !ok {
 						opMatches = append(opMatches, history2.NewMatch(
 							matchIDGen.Next(),
-							manageOfferOpResult.BaseAsset,
-							manageOfferOpResult.QuoteAsset,
-							manageOfferOp.OrderBookId,
 							opID,
+							opResult.BaseAsset,
+							opResult.QuoteAsset,
 							atom,
 						))
 					}

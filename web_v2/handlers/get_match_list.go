@@ -53,9 +53,6 @@ func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*reg
 	if request.ShouldFilter(requests.FilterTypeMatchListQuoteAsset) {
 		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset)
 	}
-	if request.ShouldFilter(requests.FilterTypeMatchListOrderBook) {
-		q = q.FilterByOrderBookID(request.Filters.OrderBook)
-	}
 
 	coreMatches, err := q.Select()
 	if err != nil {

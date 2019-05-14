@@ -8,7 +8,6 @@ import (
 // Match is a row of data from the `matches` table
 type Match struct {
 	ID          int64      `db:"id"`
-	OrderBookID uint64     `db:"order_book_id"`
 	OperationID int64      `db:"operation_id"`
 	OfferID     uint64     `db:"offer_id"`
 	BaseAmount  int64      `db:"base_amount"`
@@ -20,16 +19,9 @@ type Match struct {
 }
 
 // NewMatch returns new instance of Match
-func NewMatch(
-	matchID int64,
-	base, quote xdr.AssetCode,
-	orderBookID xdr.Uint64,
-	operationID int64,
-	atom xdr.ClaimOfferAtom,
-) Match {
+func NewMatch(matchID int64, operationID int64, base, quote xdr.AssetCode, atom xdr.ClaimOfferAtom) Match {
 	return Match{
 		ID:          matchID,
-		OrderBookID: uint64(orderBookID),
 		OperationID: operationID,
 		OfferID:     uint64(atom.OfferId),
 		BaseAmount:  int64(atom.BaseAmount),

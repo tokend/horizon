@@ -21,7 +21,6 @@ Match:
         attributes:
           type: object
           required:
-            - order_book_id
             - quote_amount
             - base_amount
             - created_at
@@ -32,11 +31,6 @@ Match:
               description: "time when the match was happened"
               format: "date-time"
               example: "2018-11-01T22:11:41Z"
-            order_book_id:
-              type: string
-              format: int64
-              description: "defines whether match is a secondary market match or match after sale end. `0` - secondary market, `saleId` - (for specific sale) or `-1`"
-              example: "1"
             quote_amount:
               type: string
               format: Amount

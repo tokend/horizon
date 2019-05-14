@@ -1,7 +1,6 @@
 package resources
 
 import (
-	"fmt"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/regources/generated"
 )
@@ -17,7 +16,6 @@ func NewMatch(record history2.Match) regources.Match {
 		Key: NewMatchKey(record.ID),
 		Attributes: regources.MatchAttributes{
 			BaseAmount:  regources.Amount(record.BaseAmount),
-			OrderBookId: fmt.Sprintf("%d", record.OrderBookID),
 			Price:       regources.Amount(record.Price),
 			QuoteAmount: regources.Amount(record.QuoteAmount),
 			CreatedAt:   *record.CreatedAt,

@@ -21,7 +21,6 @@ func NewMatches(repo *db2.Repo) *Matches {
 func convertMatch(match history2.Match) []interface{} {
 	return []interface{}{
 		match.ID,
-		match.OrderBookID,
 		match.OperationID,
 		match.OfferID,
 		match.BaseAmount,
@@ -36,7 +35,6 @@ func convertMatch(match history2.Match) []interface{} {
 func (s *Matches) Insert(matches []history2.Match) error {
 	columns := []string{
 		"id",
-		"order_book_id",
 		"operation_id",
 		"offer_id",
 		"base_amount",

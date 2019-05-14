@@ -18,7 +18,6 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 		repo: repo,
 		selector: sq.Select(
 			"m.id",
-			"m.order_book_id",
 			"m.operation_id",
 			"m.offer_id",
 			"m.base_amount",
@@ -33,12 +32,6 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 // WithCreatedAt - returns Q with `created_at` column
 func (q MatchQ) WithCreatedAt() MatchQ {
 	q.selector = q.selector.Join("operations op ON op.id = m.operation_id").Columns("ledger_close_time created_at")
-	return q
-}
-
-// FilterByOrderBookID - returns Q with filter by order book ID
-func (q MatchQ) FilterByOrderBookID(id uint64) MatchQ {
-	q.selector = q.selector.Where("m.order_book_id = ?", id)
 	return q
 }
 
