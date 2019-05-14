@@ -1,5 +1,6 @@
 -- +migrate Up
 
+create index participant_effects_sale_participations_idx on participant_effects using btree (((effect#>>'{matched,order_book_id}')::int), asset_code, ((effect#>>'{matched,offer_id}')::int)) where (effect#>>'{type}')::int = 8 and (effect#>>'{matched,order_book_id}')::int != 0;
 drop table if exists sale_participation cascade;
 
 -- +migrate Down
@@ -15,3 +16,5 @@ create table sale_participation (
     price numeric(20,0) not null,
     primary key (id)
 );
+
+drop index participant_effects_sale_participations_idx;

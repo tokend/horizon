@@ -76,7 +76,15 @@ func (h *getSaleParticipationsHandler) GetClosedSaleParticipations(request *requ
 }
 
 func (h *getSaleParticipationsHandler) getMatches(request *requests.GetSaleParticipations) ([]history2.SaleParticipation, error) {
-	q := h.ParticipationQ.FilterBySale(request.SaleID).Page(*request.PageParams)
+	sale, err := h.getSale(request.SaleID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load sale")
+	}
+
+	q := h.ParticipationQ.
+		FilterBySale(request.SaleID).
+		FilterByBaseAsset(sale.BaseAsset).
+		Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeSaleParticipationsParticipant) {
 		q = q.FilterByParticipant(request.Filters.Participant)

@@ -26,18 +26,21 @@ func NewSaleParticipationQ(repo *db2.Repo) SaleParticipationQ {
 			"pe.effect#>>'{matched,funded,asset_code}' base_asset",
 			"pe.effect#>>'{matched,funded,amount}' base_amount",
 		).
-			Distinct().
 			From("participant_effects pe").
 			Join("accounts a ON pe.account_id = a.id").
-			Where("(pe.effect#>>'{type}')::int = ?", EffectTypeMatched).
-			Where("(pe.effect#>>'{matched,offer_id}')::int != ?", 0),
+			Where("(pe.effect#>>'{type}')::int = ?", EffectTypeMatched),
 	}
+}
+
+// FilterByBaseAsset - returns q with filter by base asset
+func (q SaleParticipationQ) FilterByBaseAsset(asset string) SaleParticipationQ {
+	q.selector = q.selector.Where("pe.asset_code = ?", asset)
+	return q
 }
 
 // FilterByQuoteAsset - returns q with filter by quote asset
 func (q SaleParticipationQ) FilterByQuoteAsset(asset string) SaleParticipationQ {
 	q.selector = q.selector.Where("pe.effect#>>'{matched,charged,asset_code}' = ?", asset)
-
 	return q
 }
 
