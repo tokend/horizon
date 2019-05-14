@@ -12,7 +12,7 @@ import (
 )
 
 // GetClosedSaleParticipations - returns closed sale participations by completed matches
-func (h *getSaleParticipationHandler) GetClosedSaleParticipations(request *requests.GetSaleParticipation) (*regources.SaleParticipationsResponse, error) {
+func (h *getSaleParticipationsHandler) GetClosedSaleParticipations(request *requests.GetSaleParticipations) (*regources.SaleParticipationsResponse, error) {
 	matches, err := h.getMatches(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get matches")
@@ -31,7 +31,7 @@ func (h *getSaleParticipationHandler) GetClosedSaleParticipations(request *reque
 			amount.MustParseU(m.QuoteAmount),
 		))
 
-		if request.ShouldInclude(requests.IncludeTypeSaleParticipationBaseAsset) {
+		if request.ShouldInclude(requests.IncludeTypeSaleParticipationsBaseAsset) {
 			coreBaseAsset, err := h.AssetsQ.GetByCode(m.BaseAsset)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get asset by code", logan.F{
@@ -48,7 +48,7 @@ func (h *getSaleParticipationHandler) GetClosedSaleParticipations(request *reque
 			response.Included.Add(&base)
 		}
 
-		if request.ShouldInclude(requests.IncludeTypeSaleParticipationQuoteAsset) {
+		if request.ShouldInclude(requests.IncludeTypeSaleParticipationsQuoteAsset) {
 			coreQuoteAsset, err := h.AssetsQ.GetByCode(m.QuoteAsset)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get asset by code", logan.F{
@@ -75,14 +75,14 @@ func (h *getSaleParticipationHandler) GetClosedSaleParticipations(request *reque
 	return &response, nil
 }
 
-func (h *getSaleParticipationHandler) getMatches(request *requests.GetSaleParticipation) ([]history2.SaleParticipation, error) {
+func (h *getSaleParticipationsHandler) getMatches(request *requests.GetSaleParticipations) ([]history2.SaleParticipation, error) {
 	q := h.ParticipationQ.FilterBySale(request.SaleID).Page(*request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeSaleParticipationParticipant) {
+	if request.ShouldFilter(requests.FilterTypeSaleParticipationsParticipant) {
 		q = q.FilterByParticipant(request.Filters.Participant)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSaleParticipationQuoteAsset) {
+	if request.ShouldFilter(requests.FilterTypeSaleParticipationsQuoteAsset) {
 		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset)
 	}
 

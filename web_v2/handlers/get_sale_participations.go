@@ -14,15 +14,15 @@ import (
 	"gitlab.com/tokend/regources/generated"
 )
 
-// GetSaleParticipation - processes request to get list of sale participations
-func GetSaleParticipation(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewGetSaleParticipation(r)
+// GetSaleParticipations - processes request to get list of sale participations
+func GetSaleParticipations(w http.ResponseWriter, r *http.Request) {
+	request, err := requests.NewGetSaleParticipations(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	handler := getSaleParticipationHandler{
+	handler := getSaleParticipationsHandler{
 		AssetsQ:        core2.NewAssetsQ(ctx.CoreRepo(r)),
 		SalesQ:         history2.NewSalesQ(ctx.HistoryRepo(r)),
 		ParticipationQ: history2.NewSaleParticipationQ(ctx.HistoryRepo(r)),
@@ -63,7 +63,7 @@ func GetSaleParticipation(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, result)
 }
 
-type getSaleParticipationHandler struct {
+type getSaleParticipationsHandler struct {
 	SalesQ         history2.SalesQ
 	OffersQ        core2.OffersQ
 	AssetsQ        core2.AssetsQ
@@ -72,7 +72,7 @@ type getSaleParticipationHandler struct {
 }
 
 // GetSaleParticipations returns sale with related resources
-func (h *getSaleParticipationHandler) GetSaleParticipations(sale *history2.Sale, request *requests.GetSaleParticipation) (*regources.SaleParticipationsResponse, error) {
+func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale, request *requests.GetSaleParticipations) (*regources.SaleParticipationsResponse, error) {
 	switch sale.State {
 	case regources.SaleStateOpen:
 		return h.GetPendingSaleParticipations(request)
@@ -87,7 +87,7 @@ func (h *getSaleParticipationHandler) GetSaleParticipations(sale *history2.Sale,
 	}
 }
 
-func (h *getSaleParticipationHandler) getSale(id uint64) (*history2.Sale, error) {
+func (h *getSaleParticipationsHandler) getSale(id uint64) (*history2.Sale, error) {
 	sale, err := h.SalesQ.GetByID(id)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load sale from db", logan.F{
