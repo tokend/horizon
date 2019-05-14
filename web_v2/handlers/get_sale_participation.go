@@ -227,16 +227,18 @@ func (h *getSaleParticipationHandler) populateIncludes(
 func (h *getSaleParticipationHandler) fromCore(
 	offers []core2.Offer,
 	request *requests.GetSaleParticipation,
-	response *regources.SaleParticipationsResponse) error {
-
-	result := make([]regources.SaleParticipation, 0, len(offers))
+	response *regources.SaleParticipationsResponse,
+) error {
+	response.Data = make([]regources.SaleParticipation, 0, len(offers))
 	for _, offer := range offers {
-		result = append(result,
+		response.Data = append(response.Data,
 			resources.NewSaleParticipation(offer.OfferID,
 				offer.OwnerID,
 				offer.BaseAssetCode,
 				offer.QuoteAssetCode,
-				offer.QuoteAmount))
+				offer.QuoteAmount,
+			),
+		)
 
 		if request.ShouldInclude(requests.IncludeTypeSaleParticipationQuoteAsset) {
 			if offer.QuoteAsset == nil {

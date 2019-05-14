@@ -1,3 +1,10 @@
+## Unreleased
+
+### Fixed
+
+* Sale participation response rendering
+
+
 ## 3.3.1-x.0
 
 ### Added
