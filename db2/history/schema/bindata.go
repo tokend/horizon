@@ -36,6 +36,7 @@
 // migrations/035_reingest_version.sql
 // migrations/036_whitelist.sql
 // migrations/037_matches.sql
+// migrations/038_remove_sale_participations.sql
 // DO NOT EDIT!
 
 package schema
@@ -823,6 +824,26 @@ func migrations037_matchesSql() (*asset, error) {
 	return a, nil
 }
 
+var _migrations038_remove_sale_participationsSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x94\x8e\xbb\x4e\x03\x41\x0c\x45\x7b\x7f\xc5\x2d\x77\x45\x22\x05\x24\x68\xd2\xf2\x0b\xd4\x2b\xef\x8c\x09\x16\x3b\x0f\x3c\x1e\x20\x7f\x8f\x92\x48\x11\x0a\x2f\x51\xda\x3e\x3e\xf7\xae\xd7\xb8\x4a\xba\x33\x76\xc1\x43\x25\x8a\x56\x2a\x9c\xe7\x45\xa0\x8f\x90\x77\x6d\xde\xd0\x78\x91\xa9\xb2\xb9\x06\xad\xec\x5a\x32\x02\xb7\xc0\x51\xb6\x44\x9f\x0d\xf7\xe5\x2d\x13\x05\x93\xc3\x70\xb2\x7c\xf3\x3b\x10\x00\x68\xc4\xac\x3b\xcd\x8e\x5c\x1c\xb9\x2f\xcb\xea\xb8\x3f\xb3\xd9\x27\x8d\x78\x65\x0b\x4f\x6c\xc3\xed\xdd\x78\x01\x1e\xcd\x3f\x59\x66\x6e\x32\x71\x2a\xfd\x70\xe9\x49\x4c\xc3\x70\xb3\x59\x6d\x2e\x25\x2f\xbd\xf8\x7f\xc0\xd6\xc4\xcf\x9d\xae\xbf\x74\x3a\xc5\xfe\x01\x55\xd3\x20\xbf\x86\x55\xd3\xc4\xb6\xc7\xb3\xec\x31\x68\x1c\x69\xdc\xd2\x47\x00\x00\x00\xff\xff\xff\xef\x2d\x95\xaa\x01\x00\x00")
+
+func migrations038_remove_sale_participationsSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations038_remove_sale_participationsSql,
+		"migrations/038_remove_sale_participations.sql",
+	)
+}
+
+func migrations038_remove_sale_participationsSql() (*asset, error) {
+	bytes, err := migrations038_remove_sale_participationsSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/038_remove_sale_participations.sql", size: 426, mode: os.FileMode(420), modTime: time.Unix(1557845836, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 // Asset loads and returns the asset for the given name.
 // It returns an error if the asset could not be found or
 // could not be loaded.
@@ -911,6 +932,7 @@ var _bindata = map[string]func() (*asset, error){
 	"migrations/035_reingest_version.sql": migrations035_reingest_versionSql,
 	"migrations/036_whitelist.sql": migrations036_whitelistSql,
 	"migrations/037_matches.sql": migrations037_matchesSql,
+	"migrations/038_remove_sale_participations.sql": migrations038_remove_sale_participationsSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -990,6 +1012,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"035_reingest_version.sql": &bintree{migrations035_reingest_versionSql, map[string]*bintree{}},
 		"036_whitelist.sql": &bintree{migrations036_whitelistSql, map[string]*bintree{}},
 		"037_matches.sql": &bintree{migrations037_matchesSql, map[string]*bintree{}},
+		"038_remove_sale_participations.sql": &bintree{migrations038_remove_sale_participationsSql, map[string]*bintree{}},
 	}},
 }}
 

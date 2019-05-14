@@ -75,7 +75,7 @@ func (h *getSaleParticipationHandler) GetClosedSaleParticipations(request *reque
 	return &response, nil
 }
 
-func (h *getSaleParticipationHandler) getMatches(request *requests.GetSaleParticipation) ([]history2.SaleParticipation2, error) {
+func (h *getSaleParticipationHandler) getMatches(request *requests.GetSaleParticipation) ([]history2.SaleParticipation, error) {
 	q := h.ParticipationQ.FilterBySale(request.SaleID).Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeSaleParticipationParticipant) {

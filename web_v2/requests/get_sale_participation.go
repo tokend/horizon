@@ -12,9 +12,9 @@ const (
 	// IncludeTypeSaleParticipationQuoteAsset - defines if the quote asset should be included in the response
 	IncludeTypeSaleParticipationQuoteAsset = "quote_asset"
 
-	// FilterTypeSaleListParticipant - defines if we need to filter response by participant
+	// FilterTypeSaleParticipationParticipant - defines if we need to filter response by participant
 	FilterTypeSaleParticipationParticipant = "participant"
-	// FilterTypeSaleListQuoteAsset - defines if we need to filter response by quote_asset
+	// FilterTypeSaleParticipationQuoteAsset - defines if we need to filter response by quote_asset
 	FilterTypeSaleParticipationQuoteAsset = "quote_asset"
 )
 
@@ -28,6 +28,7 @@ var filterTypeSaleParticipationAll = map[string]struct{}{
 	FilterTypeSaleParticipationQuoteAsset:  {},
 }
 
+// GetSaleParticipation - represents params to be specified by user for getSaleParticipation handler
 type GetSaleParticipation struct {
 	*base
 	SaleID  uint64
@@ -38,6 +39,7 @@ type GetSaleParticipation struct {
 	PageParams *db2.CursorPageParams
 }
 
+// NewGetSaleParticipation returns new instance of GetSaleParticipation
 func NewGetSaleParticipation(r *http.Request) (*GetSaleParticipation, error) {
 	b, err := newBase(r, baseOpts{
 		supportedFilters:  filterTypeSaleParticipationAll,

@@ -45,7 +45,6 @@ func initIngester2(app *App) {
 		storage.NewPoll(hRepo),
 		storage.NewVote(hRepo),
 		storage.NewAccountSpecificRules(hRepo),
-		storage.NewSaleParticipation(hRepo),
 	)
 
 	idProvider := struct {

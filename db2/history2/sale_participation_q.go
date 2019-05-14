@@ -60,8 +60,8 @@ func (q SaleParticipationQ) Page(params db2.CursorPageParams) SaleParticipationQ
 }
 
 // Select - selects slice from the db, if no sales found - returns nil, nil
-func (q SaleParticipationQ) Select() ([]SaleParticipation2, error) {
-	var result []SaleParticipation2
+func (q SaleParticipationQ) Select() ([]SaleParticipation, error) {
+	var result []SaleParticipation
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load sale participations")
