@@ -6,8 +6,8 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-// SaleParticipationQ is a helper struct to aid in configuring queries that loads
-// sale participation structures.
+// SaleParticipationQ is a helper struct to aid in configuring queries that load
+// sale participation structures from `participant_effects` table`.
 type SaleParticipationQ struct {
 	repo     *db2.Repo
 	selector sq.SelectBuilder
@@ -18,83 +18,53 @@ func NewSaleParticipationQ(repo *db2.Repo) SaleParticipationQ {
 	return SaleParticipationQ{
 		repo: repo,
 		selector: sq.Select(
-			"sp.id",
-			"sp.participant_id",
-			"sp.sale_id",
-			"sp.base_amount",
-			"sp.quote_amount",
-			"sp.base_asset",
-			"sp.quote_asset",
-			"sp.price",
-		).From("sale_participation sp"),
+			"(pe.effect#>>'{matched,offer_id}')::int id",
+			"a.address participant_id",
+			"(pe.effect#>>'{matched,order_book_id}')::int sale_id",
+			"pe.effect#>>'{matched,charged,asset_code}' quote_asset",
+			"pe.effect#>>'{matched,charged,amount}' quote_amount",
+			"pe.effect#>>'{matched,funded,asset_code}' base_asset",
+			"pe.effect#>>'{matched,funded,amount}' base_amount",
+		).
+			Distinct().
+			From("participant_effects pe").
+			Join("accounts a ON pe.account_id = a.id").
+			Where("(pe.effect#>>'{type}')::int = ?", EffectTypeMatched).
+			Where("(pe.effect#>>'{matched,offer_id}')::int != ?", 0),
 	}
 }
 
-// FilterByID - returns q with filter by sale ID
-func (q SaleParticipationQ) FilterByID(id uint64) SaleParticipationQ {
-	q.selector = q.selector.Where("sp.id = ?", id)
-	return q
-}
-
-// GetByID loads a row from `sales`, by ID
-// returns nil, nil - if sale does not exists
-func (q SaleParticipationQ) GetByID(id uint64) (*SaleParticipation, error) {
-	return q.FilterByID(id).Get()
-}
-
-// FilterByOwner - returns q with filter by participant
-func (q SaleParticipationQ) FilterByParticipant(address string) SaleParticipationQ {
-	q.selector = q.selector.Where("sp.participant_id = ?", address)
-	return q
-}
-
-// FilterByBaseAsset - returns q with filter by base asset
-func (q SaleParticipationQ) FilterByBaseAsset(asset string) SaleParticipationQ {
-	q.selector = q.selector.Where("sp.base_asset = ?", asset)
-	return q
-}
-
-// FilterByBaseAsset - returns q with filter by base asset
+// FilterByQuoteAsset - returns q with filter by quote asset
 func (q SaleParticipationQ) FilterByQuoteAsset(asset string) SaleParticipationQ {
-	q.selector = q.selector.Where("sp.quote_asset = ?", asset)
+	q.selector = q.selector.Where("pe.effect#>>'{matched,charged,asset_code}' = ?", asset)
+
 	return q
 }
 
-// FilterBySaleID- returns q with filter by sale id
-func (q SaleParticipationQ) FilterBySale(saleID uint64) SaleParticipationQ {
-	q.selector = q.selector.Where("sp.sale_id = ?", saleID)
+// FilterByParticipant - returns q with filter by participant
+func (q SaleParticipationQ) FilterByParticipant(id string) SaleParticipationQ {
+	q.selector = q.selector.Where("a.address = ?", id)
 	return q
 }
 
-// Page - returns Q with specified limit and offset params
+// FilterBySaleID - returns q with filter by sale id
+func (q SaleParticipationQ) FilterBySale(id uint64) SaleParticipationQ {
+	q.selector = q.selector.Where("(pe.effect#>>'{matched,order_book_id}')::int = ?", id)
+	return q
+}
+
+// Page - returns Q with specified cursor params
 func (q SaleParticipationQ) Page(params db2.CursorPageParams) SaleParticipationQ {
-	q.selector = params.ApplyTo(q.selector, "sp.id")
+	q.selector = params.ApplyTo(q.selector, "(pe.effect#>>'{matched,offer_id}')::int")
 	return q
 }
 
-// Get - loads a row from `sales`
-// returns nil, nil - if sale does not exists
-// returns error if more than one Sale found
-func (q SaleParticipationQ) Get() (*SaleParticipation, error) {
-	var result SaleParticipation
-	err := q.repo.Get(&result, q.selector)
-	if err != nil {
-		if q.repo.NoRows(err) {
-			return nil, nil
-		}
-
-		return nil, errors.Wrap(err, "failed to load sale participation")
-	}
-
-	return &result, nil
-}
-
-//Select - selects slice from the db, if no sales found - returns nil, nil
-func (q SaleParticipationQ) Select() ([]SaleParticipation, error) {
-	var result []SaleParticipation
+// Select - selects slice from the db, if no sales found - returns nil, nil
+func (q SaleParticipationQ) Select() ([]SaleParticipation2, error) {
+	var result []SaleParticipation2
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load sale participation")
+		return nil, errors.Wrap(err, "failed to load sale participations")
 	}
 
 	return result, nil

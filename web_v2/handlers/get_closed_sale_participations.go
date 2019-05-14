@@ -3,6 +3,7 @@ package handlers
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/amount"
 
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
@@ -27,7 +28,7 @@ func (h *getSaleParticipationHandler) GetClosedSaleParticipations(request *reque
 			m.ParticipantID,
 			m.BaseAsset,
 			m.QuoteAsset,
-			uint64(m.QuoteAmount),
+			amount.MustParseU(m.QuoteAmount),
 		))
 
 		if request.ShouldInclude(requests.IncludeTypeSaleParticipationBaseAsset) {
@@ -74,7 +75,7 @@ func (h *getSaleParticipationHandler) GetClosedSaleParticipations(request *reque
 	return &response, nil
 }
 
-func (h *getSaleParticipationHandler) getMatches(request *requests.GetSaleParticipation) ([]history2.SaleParticipation, error) {
+func (h *getSaleParticipationHandler) getMatches(request *requests.GetSaleParticipation) ([]history2.SaleParticipation2, error) {
 	q := h.ParticipationQ.FilterBySale(request.SaleID).Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeSaleParticipationParticipant) {
