@@ -24,7 +24,6 @@ type GetMatchList struct {
 	Filters struct {
 		BaseAsset  string `fig:"base_asset,required"`
 		QuoteAsset string `fig:"quote_asset,required"`
-		OrderBook  uint64 `fig:"order_book,required"`
 	}
 
 	PageParams *db2.CursorPageParams
