@@ -30,7 +30,7 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 	}
 }
 
-// WithCreatedAt - returns q with `created_at` column
+// WithCreatedAt - returns Q with `created_at` column
 func (q MatchQ) WithCreatedAt() MatchQ {
 	q.selector = q.selector.Join("operations op ON op.id = m.operation_id").Columns("ledger_close_time created_at")
 	return q

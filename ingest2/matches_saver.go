@@ -70,12 +70,12 @@ func (h *MatchesSaver) Handle(header *core.LedgerHeader, txs []core.Transaction)
 }
 
 func trySquash(matches []history2.Match, atom xdr.ClaimOfferAtom) (m []history2.Match, ok bool) {
-	for index, squashedMatch := range matches {
-		if squashedMatch.Price == int64(atom.CurrentPrice) {
-			squashedMatch.BaseAmount += int64(atom.BaseAmount)
-			squashedMatch.QuoteAmount += int64(atom.QuoteAmount)
+	for i, match := range matches {
+		if match.Price == int64(atom.CurrentPrice) {
+			match.BaseAmount += int64(atom.BaseAmount)
+			match.QuoteAmount += int64(atom.QuoteAmount)
 
-			matches[index] = squashedMatch
+			matches[i] = match
 
 			return matches, true
 		}

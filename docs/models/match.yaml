@@ -6,7 +6,7 @@ MatchKey:
   properties:
     id:
       type: string
-      example: "17179869186" # define if valid
+      example: "17179869186"
     type:
       type: string
       enum:
