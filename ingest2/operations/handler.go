@@ -130,6 +130,9 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeManageAccountRule: &manageAccountRuleOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
+			xdr.OperationTypeManageAccountSpecificRule: &manageAccountSpecificRuleOpHandler{
+				manageOfferOpHandler: manageOfferOpHandlerInst,
+			},
 			xdr.OperationTypeManageSigner: &manageSignerOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
@@ -143,6 +146,15 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeStamp: &stampOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeManageCreatePollRequest: &manageCreatePollRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeManagePoll: &managePollOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeManageVote: &manageVoteOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 		},

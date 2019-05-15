@@ -1,10 +1,14 @@
 package history2
 
 import (
+	"fmt"
+	"time"
+
+	"gitlab.com/tokend/go/xdr"
+
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
-	"time"
 )
 
 // SalesQ is a helper struct to aid in configuring queries that loads
@@ -33,8 +37,52 @@ func NewSalesQ(repo *db2.Repo) SalesQ {
 			"sales.details",
 			"sales.state",
 			"sales.quote_assets",
+			"sales.version",
 		).From("sales"),
 	}
+}
+
+//Whitelisted - returns q with filter by sales whitelisted for address
+func (q SalesQ) Whitelisted(address string) SalesQ {
+	//selects sale ids for which account was explicitly whitelisted
+	explicitlyAllowed, _, _ := sq.StatementBuilder.
+		Select("(sr.key#>>'{sale,saleID}')::int").
+		Distinct().From("account_specific_rules sr").
+		Where("sr.address = ?").
+		Where("not sr.forbids").ToSql()
+
+	//selects sale ids with global whitelist
+	globalAllowed, _, _ := sq.StatementBuilder.
+		Select("(sr.key#>>'{sale,saleID}')::int").
+		Distinct().From("account_specific_rules sr").
+		Where("sr.address is null").
+		Where("not sr.forbids").ToSql()
+
+	//selects sale ids for which account was explicitly blacklisted
+	explicitlyForbidden, _, _ := sq.StatementBuilder.
+		Select("(sr.key#>>'{sale,saleID}')::int").
+		Distinct().From("account_specific_rules sr").
+		Where("sr.address = ?", address).
+		Where("sr.forbids").ToSql()
+
+	/*
+		query go get whitelisted sale ids
+		whitelisted = explicitly allowed + (globally allowed - explicitly forbidden)
+		will give us exactly sales with account whitelisted
+	*/
+	whitelist := fmt.Sprintf(
+		`(sales.id in ( %s union (%s except %s)))`,
+		explicitlyAllowed,
+		globalAllowed,
+		explicitlyForbidden)
+
+	q.selector = q.selector.Where(
+		sq.Or{
+			//we have 2 placeholder symbols in `whitelist` query (see above), thus we need 2 arguments (both address)
+			sq.Expr(whitelist, address, address),
+			sq.Expr("sales.version < ?", int32(xdr.LedgerVersionAddSaleWhitelists)),
+		})
+	return q
 }
 
 // FilterByID - returns q with filter by sale ID
@@ -123,6 +171,12 @@ func (q SalesQ) FilterByMaxSoftCap(value uint64) SalesQ {
 
 // Page - returns Q with specified limit and offset params
 func (q SalesQ) Page(params db2.OffsetPageParams) SalesQ {
+	q.selector = params.ApplyTo(q.selector, "sales.id")
+	return q
+}
+
+// CursorPage - returns Q with specified limit and offset params
+func (q SalesQ) CursorPage(params db2.CursorPageParams) SalesQ {
 	q.selector = params.ApplyTo(q.selector, "sales.id")
 	return q
 }

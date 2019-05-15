@@ -2,3 +2,6 @@
 // for the client side applications. Main entry points are `producer` - fetches data from the core and
 // `consumer` - handles the data and stores it into horizon db
 package ingest2
+
+// increase it if you want force reingest (after backward not compatible changes)
+const CurrentIngestVersion = 1

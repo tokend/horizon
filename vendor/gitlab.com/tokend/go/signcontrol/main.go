@@ -19,6 +19,17 @@ const (
 
 	// SignatureAlgorithm default algorithm used to sign requests
 	SignatureAlgorithm = "ed25519-sha256"
+
+	signatureExpireAfter = 1 * time.Hour
+
+	realRequestTargetHeader = "Real-Request-Target"
+)
+
+var (
+	dateHeaders = map[string]struct{}{
+		"Date":   {},
+		"X-Date": {}, // https://fetch.spec.whatwg.org/#forbidden-header-name
+	}
 )
 
 type Signature struct {
@@ -46,7 +57,19 @@ func SignRequest(request *http.Request, kp keypair.KP) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to get signature algorithm")
 	}
-	signer := httpsignatures.NewSigner(algorithm, "date", httpsignatures.RequestTarget)
+
+	if request.Header.Get(realRequestTargetHeader) == "" {
+		request.Header.Set(
+			realRequestTargetHeader,
+			httpsignatures.RequestTargetValue(request.Method, request.URL.RequestURI()),
+		)
+	}
+
+	if request.Header.Get("date") == "" {
+		request.Header.Set("date", time.Now().UTC().Format(http.TimeFormat))
+	}
+
+	signer := httpsignatures.NewSigner(algorithm, "date", realRequestTargetHeader)
 	if err = signer.SignRequest(kp.Address(), kp, request); err != nil {
 		return err
 	}
@@ -59,7 +82,6 @@ func CheckSignature(request *http.Request) (string, error) {
 		return checkV2(request)
 	}
 
-	// TODO cache results to request.Context()
 	sig, ok := IsSigned(request)
 	if !ok {
 		return "", ErrNotSigned
@@ -98,10 +120,38 @@ func checkV2(request *http.Request) (string, error) {
 	signature, err := httpsignatures.FromRequest(request)
 	if err != nil {
 		// TODO check for no such algorithm
-		return "", err
+		// making error castable to signcontrol w/o exposing httpsignatures impl
+		return "", &Error{err.Error()}
 	}
 	if ok := signature.IsValid(request); !ok {
 		return "", ErrSignature
 	}
+
+	// check signature freshness if one of `dateHeaders` is signed
+	for _, header := range signature.Headers {
+		if _, ok := dateHeaders[http.CanonicalHeaderKey(header)]; !ok {
+			continue
+		}
+		date := request.Header.Get(header)
+		if err := checkDate(date); err != nil {
+			return "", err
+		}
+		break
+	}
+
 	return signature.KeyID, nil
+}
+
+func checkDate(raw string) error {
+	date, err := http.ParseTime(raw)
+	if err != nil {
+		return ErrDateMalformed
+	}
+
+	expireAt := date.Add(signatureExpireAfter)
+	if expireAt.Before(time.Now()) {
+		return ErrExpired
+	}
+
+	return nil
 }

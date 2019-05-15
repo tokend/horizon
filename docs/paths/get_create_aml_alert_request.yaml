@@ -109,7 +109,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/CreateAmlAlertDetails'
+                      - $ref: '#/components/schemas/CreateAmlAlertRequest'
                       - $ref: '#/components/schemas/Balance'
       400:
         description: bad input parameter

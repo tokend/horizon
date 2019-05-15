@@ -7,8 +7,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-
-
 //driverValue - converts interface into db supported type
 func driverValue(data interface{}) (driver.Value, error) {
 	data, err := json.Marshal(data)

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/cheekybits/genny/generic"
-	"github.com/patrickmn/go-cache"
+	cache "github.com/patrickmn/go-cache"
 )
 
 //go:generate genny -in=$GOFILE -out=asset_cache_generated.go gen "ValueType=core.Asset"

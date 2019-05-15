@@ -172,6 +172,10 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeLicense:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeManagePoll:
+	case xdr.OperationTypeManageCreatePollRequest:
+	case xdr.OperationTypeManageVote:
+		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateAswapRequest:
 		// FIXME !!!!!
 		//tx.SourceAccount
@@ -193,6 +197,7 @@ func ForOperation(
 				BalanceID: nil,
 			})
 		}
+	case xdr.OperationTypeManageAccountSpecificRule:
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

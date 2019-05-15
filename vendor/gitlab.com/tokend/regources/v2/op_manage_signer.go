@@ -15,7 +15,7 @@ type ManageSignerRelation struct {
 
 // ManageSignerAttrs - details of new or updated rule
 type ManageSignerAttrs struct {
-	Weight    uint32  `json:"weight"`
-	Identity  uint32  `json:"identity"`
-	Details   Details `json:"details"`
+	Weight   uint32  `json:"weight"`
+	Identity uint32  `json:"identity"`
+	Details  Details `json:"details"`
 }

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rcrowley/go-metrics"
+	metrics "github.com/rcrowley/go-metrics"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/txsub"
@@ -21,9 +21,10 @@ import (
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/sse"
+	txsub2 "gitlab.com/tokend/horizon/txsub/v2"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
-	"gopkg.in/tylerb/graceful.v1"
+	graceful "gopkg.in/tylerb/graceful.v1"
 )
 
 // You can override this variable using: gb build -ldflags "-X main.version aabbccdd"
@@ -39,6 +40,7 @@ type App struct {
 	ctx            context.Context
 	cancel         func()
 	submitter      *txsub.System
+	submitterV2    *txsub2.System
 	ingester       *ingest.System
 	ticks          *time.Ticker
 	CoreInfo       *corer.Info
@@ -75,9 +77,7 @@ func NewApp(config config.Config) (*App, error) {
 // Serve starts the horizon web server, binding it to a socket, setting up
 // the shutdown signals.
 func (a *App) Serve() {
-
 	a.web.router.Compile()
-	http.Handle("/v3/transactions", a.web.router)
 	http.Handle("/v3/", a.webV2.mux)
 	http.Handle("/", a.web.router)
 
@@ -167,12 +167,14 @@ func (a *App) UpdateCoreInfo() error {
 		return nil
 	}
 
-	var err error
-	a.CoreInfo, err = a.CoreConnector.GetCoreInfo()
+	var info *corer.Info
+	info, err := a.CoreConnector.GetCoreInfo()
 	if err != nil {
 		log.WithField("service", "core-info").WithError(err).Error("could not load stellar-core info")
 		return errors.Wrap(err, "could not load stellar-core info")
 	}
+
+	a.CoreInfo = info
 
 	return nil
 }

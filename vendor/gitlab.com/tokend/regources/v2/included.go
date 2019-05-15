@@ -17,7 +17,7 @@ type Included struct {
 }
 
 // Add - adds new include into collection. If one already present - skips it
-func (c *Included) Add(includes... Resource) {
+func (c *Included) Add(includes ...Resource) {
 	for i := range includes {
 		c.add(includes[i])
 	}
@@ -104,7 +104,7 @@ func (c *Included) tryFindEntry(key Key, entry Resource) bool {
 	if entry.GetKey() != key {
 		panic(errors.From(errors.New("keys mismatched"), map[string]interface{}{
 			"expected_key": key,
-			"actual_key": entry.GetKey(),
+			"actual_key":   entry.GetKey(),
 		}))
 	}
 

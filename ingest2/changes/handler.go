@@ -27,29 +27,47 @@ type Handler struct {
 }
 
 //NewHandler - returns new instance of handler
-func NewHandler(account accountStorage, balance balanceStorage, request reviewableRequestStorage,
-	sale saleStorage, assetPair assetPairStorage) *Handler {
+func NewHandler(account accountStorage,
+	balance balanceStorage,
+	request reviewableRequestStorage,
+	sale saleStorage,
+	assetPair assetPairStorage,
+	poll pollStorage,
+	vote voteStorage,
+	accountSpecificRule accountSpecificRuleStorage,
+	participation participationStorage,
+) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request)
-	saleHandlerInst := newSaleHandler(sale)
+	saleHandlerInst := newSaleHandler(sale, participation, accountSpecificRule)
 	assetPairHandler := newAssetPairHandler(assetPair)
+	pollHandlerInst := newPollHandler(poll)
+	voteHandlerInst := newVoteHandler(vote)
+	accountSpecificRuleHandlerInst := newAccountSpecificRuleHandler(accountSpecificRule)
 
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{
-			xdr.LedgerEntryTypeAccount:           newAccountHandler(account),
-			xdr.LedgerEntryTypeBalance:           newBalanceHandler(account, balance),
-			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
-			xdr.LedgerEntryTypeSale:              saleHandlerInst,
-			xdr.LedgerEntryTypeAssetPair:         assetPairHandler,
+			xdr.LedgerEntryTypeAccount:             newAccountHandler(account),
+			xdr.LedgerEntryTypeBalance:             newBalanceHandler(account, balance),
+			xdr.LedgerEntryTypeReviewableRequest:   reviewRequestHandlerInst,
+			xdr.LedgerEntryTypeSale:                saleHandlerInst,
+			xdr.LedgerEntryTypeAssetPair:           assetPairHandler,
+			xdr.LedgerEntryTypePoll:                pollHandlerInst,
+			xdr.LedgerEntryTypeVote:                voteHandlerInst,
+			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 		},
 		Update: map[xdr.LedgerEntryType]updatable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:              saleHandlerInst,
 			xdr.LedgerEntryTypeAssetPair:         assetPairHandler,
+			xdr.LedgerEntryTypePoll:              pollHandlerInst,
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
-			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
-			xdr.LedgerEntryTypeSale:              saleHandlerInst,
+			xdr.LedgerEntryTypeReviewableRequest:   reviewRequestHandlerInst,
+			xdr.LedgerEntryTypeSale:                saleHandlerInst,
+			xdr.LedgerEntryTypePoll:                pollHandlerInst,
+			xdr.LedgerEntryTypeVote:                voteHandlerInst,
+			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 		},
 	}
 }
@@ -69,6 +87,8 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 					LedgerChange:    change,
 					Operation:       &tx.Envelope.Tx.Operations[opI],
 					OperationResult: tx.Result.Result.Result.MustResults()[opI].Tr,
+					OperationIndex:  uint32(opI),
+					TxIndex:         uint32(tx.Index),
 				})
 
 				if err != nil {

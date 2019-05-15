@@ -6,7 +6,9 @@ import (
 	"net/http/httputil"
 	"regexp"
 
-	"github.com/rcrowley/go-metrics"
+	"gitlab.com/tokend/regources"
+
+	metrics "github.com/rcrowley/go-metrics"
 	"github.com/rs/cors"
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"
@@ -17,7 +19,6 @@ import (
 	"gitlab.com/tokend/horizon/render"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
-	"gitlab.com/tokend/regources"
 )
 
 // Web contains the http server related fields for horizon: the router,
@@ -119,6 +120,7 @@ func initWebActions(app *App) {
 
 	r := app.web.router
 	r.Get("/", &RootAction{})
+
 	// system summary variables too verbose to be included into /
 	r.Get("/statistics", &StatisticsAction{})
 	r.Get("/statistics/balances", &BalancesReportAction{})
@@ -386,15 +388,6 @@ func initWebActions(app *App) {
 
 		// checking if request is signed and deciding on proper handler
 		// (we rely on SignatureValidator middleware here)
-		signer := r.Header.Get(signcontrol.PublicKeyHeader)
-		if signer != "" || app.config.DisableAPISubmit {
-			TransactionCreateAction{}.ServeHTTPC(c, w, r)
-		} else {
-			apiProxy.ServeHTTP(w, r)
-		}
-	}))
-
-	r.Post("/v3/transactions", web.HandlerFunc(func(c web.C, w http.ResponseWriter, r *http.Request) {
 		signer := r.Header.Get(signcontrol.PublicKeyHeader)
 		if signer != "" || app.config.DisableAPISubmit {
 			TransactionCreateAction{}.ServeHTTPC(c, w, r)

@@ -6,6 +6,14 @@ pageNumberParam:
     type: integer
     minimum: 0
   description: "Page number to return."
+pageCursorParam:
+  in: query
+  name: page[cursor]
+  required: false
+  schema:
+    type: integer
+    minimum: 0
+  description: "Cursor point to the end of the previous page"
 pageLimitParam:
   in: query
   name: page[limit]

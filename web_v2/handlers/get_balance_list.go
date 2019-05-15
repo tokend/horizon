@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -9,8 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
-	"net/http"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetBalanceList - processes request to get the list of balances
@@ -91,8 +92,10 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 
 	for _, coreBalance := range coreBalances {
 		balance := resources.NewBalance(&coreBalance)
-		balance.Relationships.Asset = resources.NewAssetKey(coreBalance.AssetCode).AsRelation()
-		balance.Relationships.State = resources.NewBalanceStateKey(coreBalance.BalanceAddress).AsRelation()
+		balance.Relationships = &regources.BalanceRelationships{
+			Asset: resources.NewAssetKey(coreBalance.AssetCode).AsRelation(),
+			State: resources.NewBalanceStateKey(coreBalance.BalanceAddress).AsRelation(),
+		}
 
 		if request.ShouldInclude(requests.IncludeTypeBalanceListState) {
 			response.Included.Add(resources.NewBalanceState(&coreBalance))

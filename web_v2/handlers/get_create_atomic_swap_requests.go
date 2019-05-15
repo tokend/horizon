@@ -5,6 +5,7 @@ import (
 
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/resources"
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/tokend/go/xdr"
 
@@ -15,7 +16,6 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/regources/v2"
 )
 
 func GetCreateAtomicSwapRequests(w http.ResponseWriter, r *http.Request) {

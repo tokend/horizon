@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/evalphobia/logrus_sentry"
-	"github.com/getsentry/raven-go"
+	raven "github.com/getsentry/raven-go"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"

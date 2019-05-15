@@ -22,20 +22,31 @@ func initIngester2(app *App) {
 
 	txProvider := struct {
 		*core2.LedgerHeaderQ
-		*core2.TransactionQ
+		core2.TransactionQ
 	}{
 		LedgerHeaderQ: core2.NewLedgerHeaderQ(coreRepo),
 		TransactionQ:  core2.NewTransactionQ(coreRepo),
 	}
 
 	hRepo := app.HistoryRepoLogged(logger)
-	ledgersChan := ingest2.NewProducer(txProvider, history2.NewLedgerQ(hRepo), logger).Start(ctx, 1000, ledger.CurrentState())
+	const batchSize = 100
+	ledgersChan := ingest2.NewProducer(txProvider, history2.NewLedgerQ(hRepo), logger, batchSize, ledger.CurrentState).
+		Start(ctx)
 
 	accountStorage := storage.NewAccount(hRepo, coreRepo)
 	balanceStorage := storage.NewBalance(hRepo, coreRepo, accountStorage)
 
-	ledgerChangesHandler := changes.NewHandler(accountStorage, balanceStorage,
-		storage.NewReviewableRequest(hRepo), storage.NewSale(hRepo), storage.NewAssertPair(hRepo))
+	ledgerChangesHandler := changes.NewHandler(
+		accountStorage,
+		balanceStorage,
+		storage.NewReviewableRequest(hRepo),
+		storage.NewSale(hRepo),
+		storage.NewAssertPair(hRepo),
+		storage.NewPoll(hRepo),
+		storage.NewVote(hRepo),
+		storage.NewAccountSpecificRules(hRepo),
+		storage.NewSaleParticipation(hRepo),
+	)
 
 	idProvider := struct {
 		*storage.Account

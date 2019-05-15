@@ -5,7 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/generated"
 )
 
 type manageOfferOpHandler struct {
@@ -180,24 +180,38 @@ func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOffe
 	sourceOffer offer) ([]history2.ParticipantEffect, uint64) {
 	var totalBaseAmount uint64
 	result := make([]history2.ParticipantEffect, 0, len(claimOfferAtoms)*4)
+
+	priceLevels := make(map[xdr.Int64][]xdr.ClaimOfferAtom)
 	for _, matchedOffer := range claimOfferAtoms {
-		totalBaseAmount += uint64(matchedOffer.BaseAmount)
+		priceLevels[matchedOffer.CurrentPrice] = append(priceLevels[matchedOffer.CurrentPrice], matchedOffer)
+	}
 
-		result = h.addParticipantEffects(result, offer{
-			OrderBookID:         sourceOffer.OrderBookID,
-			AccountID:           h.MustAccountID(matchedOffer.BAccountId),
-			BaseBalanceID:       h.MustBalanceID(matchedOffer.BaseBalance),
-			QuoteBalanceID:      h.MustBalanceID(matchedOffer.QuoteBalance),
-			BaseBalanceAddress:  matchedOffer.BaseBalance.AsString(),
-			QuoteBalanceAddress: matchedOffer.QuoteBalance.AsString(),
-			BaseAsset:           sourceOffer.BaseAsset,
-			QuoteAsset:          sourceOffer.QuoteAsset,
-			IsBuy:               !sourceOffer.IsBuy,
-		}, int64(matchedOffer.OfferId), matchedOffer.BaseAmount, matchedOffer.QuoteAmount, matchedOffer.CurrentPrice,
-			matchedOffer.BFeePaid)
+	for price, matches := range priceLevels {
+		var levelBaseAmount xdr.Int64 = 0
+		var levelQuoteAmount xdr.Int64 = 0
+		var levelFee xdr.Int64 = 0
+		for _, match := range matches {
+			result = h.addParticipantEffects(result, offer{
+				OrderBookID:         sourceOffer.OrderBookID,
+				AccountID:           h.MustAccountID(match.BAccountId),
+				BaseBalanceID:       h.MustBalanceID(match.BaseBalance),
+				QuoteBalanceID:      h.MustBalanceID(match.QuoteBalance),
+				BaseBalanceAddress:  match.BaseBalance.AsString(),
+				QuoteBalanceAddress: match.QuoteBalance.AsString(),
+				BaseAsset:           sourceOffer.BaseAsset,
+				QuoteAsset:          sourceOffer.QuoteAsset,
+				IsBuy:               !sourceOffer.IsBuy,
+			}, int64(match.OfferId), match.BaseAmount, match.QuoteAmount, match.CurrentPrice, match.BFeePaid)
 
-		result = h.addParticipantEffects(result, sourceOffer, 0, matchedOffer.BaseAmount,
-			matchedOffer.QuoteAmount, matchedOffer.CurrentPrice, matchedOffer.AFeePaid)
+			levelBaseAmount += match.BaseAmount
+			levelQuoteAmount += match.QuoteAmount
+			levelFee += match.AFeePaid
+		}
+
+		result = h.addParticipantEffects(result, sourceOffer, 0, levelBaseAmount,
+			levelQuoteAmount, price, levelFee)
+
+		totalBaseAmount += uint64(levelBaseAmount)
 	}
 
 	return result, totalBaseAmount

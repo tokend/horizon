@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetAsset - processes request to get asset and it's details by asset code
@@ -31,9 +31,7 @@ func GetAsset(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.GetAsset(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get asset", logan.F{
-			"request": request,
-		})
+		ctx.Log(r).WithError(err).WithField("request", request).Error("failed to get asset")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

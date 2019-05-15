@@ -1,10 +1,66 @@
 # Changelog
 
-## Unreleased
+## 4.3.0
 
-### Changed
+## Added
+* `Statistics` resource
+* `LimitsWithStats` resource
 
-* Rewrite atomic swap bid resource (response)
+## Removed
+* `Asset` relation from `ConvertedBalanceStateRelationships`
+
+## 4.2.3
+## Added
+* `ConvertedBalancesCollection` and `ConvertedBalanceState` resources
+
+## 4.2.2
+### Fixed
+* Updated tokend/go to 3.3.4
+## 4.2.1
+### Added
+* Manage Account Specific Rules for Sale
+## 4.2.0
+
+### Added 
+
+* `Owner` relation to `Balance` (ID of the owner's account)
+* `Horizon-State` resource for `/v3` endpoint (info regarding horizon and it's dependencies state)
+* `SubmitTransactionBody` resource for `POST /v3/transactions` endpoint (now possible to specify if we should wait for tx to be ingested)
+* `Cancelled` poll state
+* `UpdatePollEndTimeOp` type
+* `PollId` moved to `ManagePollOp`
+
+## 4.1.0
+
+### Added
+
+* generated `OrderBook`, `OrderBookRelationships`, `OrderBookResponse`, `OrderBooksResponse` types to represent order book
+
+## 4.0.0
+
+### Added
+
+* generated all existing models from openapi spec
+
+## 3.1.0
+
+### Added
+* `CreatePollRequest` type to represent reviewable request for poll creation
+* `Poll`, `Vote` types
+* `PollResponse`, `PollsResponse`,`VoteResponse`, `VotesResponse`
+* `PollParticipation` type to represent voting result
+
+
+## 3.0.3
+
+### Added
+
+* `TransactionsResponse`, `Transaction`,  types to represent the get transactions response
+* `TransactionResponseMeta`, `TransactionAttrs`, `TransactionRelations` helping structures
+* `LedgerEntryChange`, `LedgerEntryChangeAttrs` types to represent the ledger entry change resource
+* `ledger-entry-changes` and `transactions` resource types
+
+## 3.0.2
 
 ## 3.0.2-x.0
 

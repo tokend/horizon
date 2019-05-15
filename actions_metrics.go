@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"github.com/rcrowley/go-metrics"
+	metrics "github.com/rcrowley/go-metrics"
 	"gitlab.com/tokend/horizon/render/hal"
 )
 

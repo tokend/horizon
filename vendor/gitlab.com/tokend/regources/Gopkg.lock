@@ -66,7 +66,7 @@
   version = "v3.7"
 
 [[projects]]
-  digest = "1:1402cf37a329084bc3aecccc5bd957920d614b17363b753e0aa17ad662e42b48"
+  digest = "1:7ceb47c79a66686b3187e0154b05a709adc8d8495d1cb2d6d98be924b57176cb"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -75,10 +75,10 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "b11d69954b908ad1538205214c64557f120618b2"
+  revision = "ea1e8a9f2f7558be41eaf22fdb3d3c0fa396eca3"
 
 [[projects]]
-  digest = "1:a5cc901b8e54c4b73a62f97dc7c8f6c46e347c148a7a38e09b2e942c2587ba03"
+  digest = "1:2ad5e4bbe42ffd64b10babe1ec1ac99d64122170cb2524326ad81708ebd0b9cc"
   name = "gotest.tools"
   packages = [
     "assert",

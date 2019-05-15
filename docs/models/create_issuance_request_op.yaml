@@ -13,6 +13,7 @@ CreateIssuanceRequestOp:
   allOf:
   - $ref: '#/components/schemas/CreateIssuanceRequestOpKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       relationships:
         type: object
@@ -34,7 +35,7 @@ CreateIssuanceRequestOp:
           - creator_details
         properties:
           fee:
-            $ref: '#/components/schemas/CalculatedFeeEntry'
+            $ref: '#/components/schemas/Fee'
           reference:
             type: string
             description: "reference of the request"
@@ -44,6 +45,7 @@ CreateIssuanceRequestOp:
             example: "123.123456"
           all_tasks:
             type: integer
+            format: int64
             description: tasks set on request creation
             example: 2
             nullable: true

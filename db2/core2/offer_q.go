@@ -96,6 +96,12 @@ func (q OffersQ) Page(params db2.OffsetPageParams) OffersQ {
 	return q
 }
 
+// CursorPage - returns Q with specified limit and offset params
+func (q OffersQ) CursorPage(params db2.CursorPageParams) OffersQ {
+	q.selector = params.ApplyTo(q.selector, "offers.offer_id")
+	return q
+}
+
 // GetByOfferID - loads a row from `offers` found with offer ID
 // returns nil, nil - if such offer doesn't exist
 func (q OffersQ) GetByOfferID(id uint64) (*Offer, error) {

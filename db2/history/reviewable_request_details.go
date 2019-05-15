@@ -18,17 +18,18 @@ type ReviewableRequestDetails struct {
 	PreIssuanceCreate     *PreIssuanceRequest       `json:"create_pre_issuance,omitempty"`
 	IssuanceCreate        *IssuanceRequest          `json:"create_issuance,omitempty"`
 	Withdraw              *WithdrawalRequest        `json:"create_withdraw,omitempty"`
-	TwoStepWithdraw       *WithdrawalRequest        `json:"two_step_withdrawal"`
+	TwoStepWithdraw       *WithdrawalRequest        `json:"two_step_withdrawal,omitempty"`
 	Sale                  *SaleRequest              `json:"create_sale,omitempty"`
 	LimitsUpdate          *LimitsUpdateRequest      `json:"update_limits,omitempty"`
 	AmlAlert              *AmlAlertRequest          `json:"create_aml_alert,omitempty"`
 	ChangeRole            *ChangeRoleRequest        `json:"change_role,omitempty"`
 	UpdateSaleDetails     *UpdateSaleDetailsRequest `json:"update_sale_details,omitempty"`
-	PromotionUpdate       *PromotionUpdateRequest   `json:"promotion_update"`
-	Invoice               *InvoiceRequest           `json:"invoice"`
-	Contract              *ContractRequest          `json:"contract"`
+	PromotionUpdate       *PromotionUpdateRequest   `json:"promotion_update,omitempty"`
+	Invoice               *InvoiceRequest           `json:"invoice,omitempty"`
+	Contract              *ContractRequest          `json:"contract,omitempty"`
 	AtomicSwapBidCreation *AtomicSwapBidCreation    `json:"create_atomic_swap_bid,omitempty"`
 	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap,omitempty"`
+	CreatePoll            *CreatePoll               `json:"create_poll,omitempty"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -157,4 +158,12 @@ type AtomicSwap struct {
 	BidID      uint64 `json:"bid_id"`
 	BaseAmount uint64 `json:"base_amount"`
 	QuoteAsset string `json:"quote_asset"`
+}
+
+type CreatePoll struct {
+	NumberOfChoices          uint32       `json:"number_of_choices"`
+	PollType                 xdr.PollType `json:"poll_type"`
+	ResultProvider           string       `json:"result_provider"`
+	VoteConfirmationRequired bool         `json:"vote_confirmation_required"`
+	Details                  map[string]interface{}
 }

@@ -15,6 +15,7 @@ const (
 	TypeFeeRules                        = "fee-rules"
 	TypeKeyValueEntries                 = "key-value-entries"
 	TypeLimits                          = "limits"
+	TypeLedgerEntryChanges              = "ledger-entry-changes"
 	TypeOffers                          = "offers"
 	TypeOrderBookEntries                = "order-book-entries"
 	TypeAccountRoles                    = "account-roles"
@@ -28,8 +29,12 @@ const (
 	TypeOperations                      = "operations"
 	TypeQuoteAssets                     = "quote-assets"
 	TypeSaleQuoteAssets                 = "sale-quote-assets"
+	TypeTransactions                    = "transactions"
 	TypeFees                            = "fees"
 	TypeCalculatedFee                   = "calculated-fee"
+	TypePolls                           = "polls"
+	TypePollsParticipation              = "polls-participation"
+	TypeVotes                           = "votes"
 	TypeTxs                             = "transactions"
 	// TypeEffectsFunded - balance received funds from other balance
 	TypeEffectsFunded = "effects-funded"
@@ -94,6 +99,9 @@ const (
 	TypeCreateAswapRequest                     = "operations-create-aswap-request"
 	TypeStamp                                  = "operations-stamp"
 	TypeLicense                                = "operations-license"
+	TypeManageCreatePollRequest                = "operations-manage-create-poll-request"
+	TypeManagePoll                             = "operations-manage-poll"
+	TypeManageVote                             = "operations-manage-vote"
 
 	TypeRequests                        = "requests"
 	TypeRequestDetailsAMLAlert          = "request-details-aml-alert"
@@ -109,6 +117,7 @@ const (
 	TypeRequestDetailsUpdateSaleDetails = "request-details-update-sale-details"
 	TypeRequestDetailsUpdateSaleEndTime = "request-details-update-sale-end-time"
 	TypeRequestDetailsWithdrawal        = "request-details-withdrawal"
+	TypeRequestDetailsCreatePoll        = "request-details-create-poll"
 )
 
 // Key - identifier of the Resource

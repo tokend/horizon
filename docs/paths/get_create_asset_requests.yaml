@@ -114,7 +114,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/CreateAssetDetails'
+                      - $ref: '#/components/schemas/CreateAssetRequest'
                       - $ref: '#/components/schemas/Asset'
                 links:
                   type: object

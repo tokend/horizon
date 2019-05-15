@@ -43,7 +43,7 @@ func (h *TxSaver) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 			Account:          tx.Envelope.Tx.SourceAccount.Address(),
 			OperationCount:   int32(len(tx.Envelope.Tx.Operations)),
 			Envelope:         tx.MustEnvelopeXDR(),
-			Result:           tx.MustResultMetaXDR(),
+			Result:           tx.MustResultXDR(),
 			Meta:             tx.MustResultMetaXDR(),
 			ValidAfter:       time.Unix(int64(tx.Envelope.Tx.TimeBounds.MinTime), 0).UTC(),
 			ValidBefore:      time.Unix(int64(tx.Envelope.Tx.TimeBounds.MaxTime), 0).UTC(),

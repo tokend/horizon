@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -9,8 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
-	"net/http"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetOfferList - processes request to get the list of offers
@@ -29,7 +30,7 @@ func GetOfferList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w,request.Filters.Owner) {
+	if !isAllowed(r, w, request.Filters.Owner) {
 		return
 	}
 
@@ -92,7 +93,7 @@ func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*reg
 		q = q.WithQuoteAsset()
 	}
 
-	coreOffers,err  := q.Select()
+	coreOffers, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get offer list")
 	}

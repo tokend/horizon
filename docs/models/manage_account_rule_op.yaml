@@ -18,16 +18,10 @@ ManageAccountRuleOp:
     properties:
       relationships:
         type: object
-        nullable: true
         properties:
-          rules:
-            type: array
-            items:
-              $ref: '#/components/schemas/AccountRuleKey'
-          role:
-            $ref: '#/components/schemas/AccountRoleKey'
+          rule:
+            $ref: '#/components/schemas/AccountRuleKey'
       attributes:
-        nullable: true
         type: object
         required:
           - details
@@ -39,6 +33,7 @@ ManageAccountRuleOp:
             type: boolean
             description: "" # todo add description
           action:
+            format: xdr.AccountRuleAction
             description: |
                 * 1:  "any"
                 * 2:  "create"
@@ -61,6 +56,7 @@ ManageAccountRuleOp:
             $ref: '#/components/schemas/Details'
           resource:
             type: object
+            format: xdr.AccountRuleResource
             additionalProperties: true
             description: "Free-form object"
               #todo add resource

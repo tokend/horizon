@@ -23,10 +23,6 @@
   version = "3.2.0"
 
 [[constraint]]
-  name = "github.com/influxdata/influxdb"
-  version = "1.3.7"
-
-[[constraint]]
   branch = "master"
   name = "github.com/jmoiron/sqlx"
 
@@ -87,7 +83,7 @@
   name = "gitlab.com/distributed_lab/corer"
 
 [[constraint]]
-  version = "0.3"
+  version = "0.5"
   name = "gitlab.com/distributed_lab/kit"
 
 [[override]]
@@ -100,10 +96,10 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  revision = "b11d69954b908ad1538205214c64557f120618b2"
+  revision = "ea1e8a9f2f7558be41eaf22fdb3d3c0fa396eca3"
 
 [[constraint]]
-  revision = "6088d786776dc44d58a1e01eb0b00fd042b04535"
+  revision = "8749ef049a45d5324a712ca3b65cbf428cca836f"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
@@ -128,7 +124,7 @@
 
 [[constraint]]
   name = "gitlab.com/distributed_lab/ape"
-  version = "0.8.0"
+  version = "0.10"
 
 [[override]]
   name = "github.com/google/jsonapi"

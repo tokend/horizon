@@ -13,6 +13,7 @@ StampOp:
   allOf:
   - $ref: '#/components/schemas/StampOpKey'
   - type: object
+    required: [attributes]
     properties:
       attributes:
         type: object

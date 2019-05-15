@@ -3,6 +3,10 @@ package horizon
 import (
 	"time"
 
+	"gitlab.com/tokend/horizon/corer"
+
+	"gitlab.com/tokend/horizon/web_v2/handlers"
+
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -17,7 +21,6 @@ import (
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/web_v2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
-	"gitlab.com/tokend/horizon/web_v2/handlers"
 	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
 )
 
@@ -56,7 +59,16 @@ func initWebV2Middleware(app *App) {
 			// log will be set by logger setter on handler call
 			ctx.SetHistoryRepo(app.HistoryRepoLogged(nil)),
 			ctx.SetDoorman(doorman.New(app.config.SkipCheck, signersProvider)),
-			ctx.SetCoreInfo(*app.CoreInfo),
+			ctx.SetCoreInfo(func() corer.Info {
+				// required to make sure that we return most recent core info
+				if app.CoreInfo == nil {
+					panic("unexpected state: core info is nil, while we are preparing context for the request")
+				}
+
+				return *app.CoreInfo
+			}),
+			ctx.SetSubmitter(app.submitterV2),
+			ctx.SetConfig(&app.config),
 		),
 		v2middleware.WebMetrics(app),
 	)
@@ -91,19 +103,29 @@ func initWebV2Middleware(app *App) {
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
+	m.Get("/v3", handlers.GetRoot)
+	m.Post("/v3/transactions", handlers.CreateTransaction)
+
 	m.Get("/v3/accounts/{id}", handlers.GetAccount)
 	m.Get("/v3/accounts/{id}/signers", handlers.GetAccountSigners)
 	m.Get("/v3/accounts/{id}/calculated_fees", handlers.GetCalculatedFees)
+	m.Get("/v3/accounts/{id}/sales", handlers.GetSaleListForAccount)
+	m.Get("/v3/accounts/{id}/converted_balances/{asset_code}", handlers.GetConvertedBalances)
 	m.Get("/v3/assets/{code}", handlers.GetAsset)
 	m.Get("/v3/assets", handlers.GetAssetList)
+	m.Get("/v3/balances/{id}", handlers.GetBalance)
 	m.Get("/v3/balances", handlers.GetBalanceList)
 	m.Get("/v3/fees", handlers.GetFeeList)
+	m.Get("/v3/limits", handlers.GetLimitsList)
 	m.Get("/v3/history", handlers.GetHistory)
+	m.Get("/v3/movements", handlers.GetMovements)
 	m.Get("/v3/asset_pairs/{id}", handlers.GetAssetPair)
 	m.Get("/v3/asset_pairs", handlers.GetAssetPairList)
 	m.Get("/v3/offers/{id}", handlers.GetOffer)
 	m.Get("/v3/offers", handlers.GetOfferList)
 	m.Get("/v3/public_key_entries/{id}", handlers.GetPublicKeyEntry)
+	m.Get("/v3/transactions", handlers.GetTransactions)
+	m.Get("/v3/transactions/{id}", handlers.GetTransaction)
 
 	// reviewable requests
 	m.Get("/v3/requests", handlers.GetRequests)
@@ -136,13 +158,24 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/atomic_swap_bids/{id}", handlers.GetAtomicSwapBid)
 	m.Get("/v3/atomic_swap_bids", handlers.GetAtomicSwapBidList)
 
+	m.Get("/v3/create_poll_requests", handlers.GetCreatePollRequests)
+	m.Get("/v3/create_poll_requests/{id}", handlers.GetCreatePollRequests)
+
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)
 
+	m.Get("/v3/polls/{id}", handlers.GetPoll)
+	m.Get("/v3/polls", handlers.GetPollList)
+	m.Get("/v3/polls/{id}/relationships/votes", handlers.GetVoteList)
+	m.Get("/v3/polls/{id}/relationships/votes/{voter}", handlers.GetVote)
+
 	m.Get("/v3/sales", handlers.GetSaleList)
 	m.Get("/v3/sales/{id}", handlers.GetSale)
+	m.Get("/v3/sales/{id}/relationships/whitelist", handlers.GetSaleWhitelist)
+	m.Get("/v3/sales/{id}/relationships/participation", handlers.GetSaleParticipation)
 
-	m.Get("/v3/order_book/{id}", handlers.GetOrderBook)
+	m.Get("/v3/order_book/{id}", handlers.DeprecatedGetOrderBook)
+	m.Get("/v3/order_books/{base}:{quote}:{order_book_id}", handlers.GetOrderBook)
 
 	m.Get("/v3/account_roles/{id}", handlers.GetAccountRole)
 	m.Get("/v3/account_roles", handlers.GetAccountRoleList)
@@ -164,7 +197,7 @@ func init() {
 	appInit.Add(
 		"web2.init",
 		initWebV2,
-		"app-context", "core-info", "memory_cache", "ledger-state",
+		"app-context", "core-info", "memory_cache", "ledger-state", "submitter_v2",
 	)
 
 	appInit.Add(

@@ -176,6 +176,19 @@ func getIssuanceRequest(request *xdr.IssuanceRequest) *history.IssuanceRequest {
 	}
 }
 
+func getPollRequest(request *xdr.CreatePollRequest) *history.CreatePoll {
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
+	return &history.CreatePoll{
+		PollType:                 request.Data.Type,
+		ResultProvider:           request.ResultProviderId.Address(),
+		VoteConfirmationRequired: request.VoteConfirmationRequired,
+		NumberOfChoices:          uint32(request.NumberOfChoices),
+		Details:                  details,
+	}
+}
+
 func getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.WithdrawalRequest {
 	var details map[string]interface{}
 	// error is ignored on purpose, we should not block ingest in case of such error
@@ -361,6 +374,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.AtomicSwapBidCreation = getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwap:
 		details.AtomicSwap = getAtomicSwapRequest(body.ASwapRequest)
+	case xdr.ReviewableRequestTypeCreatePoll:
+		details.CreatePoll = getPollRequest(body.CreatePollRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

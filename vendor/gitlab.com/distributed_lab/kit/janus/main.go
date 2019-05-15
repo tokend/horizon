@@ -3,6 +3,7 @@ package janus
 import (
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/kit/janus/internal"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
@@ -63,7 +64,7 @@ func (j *Janus) register(service internal.Service) error {
 	}
 	if remote != nil {
 		if remote.Surname != j.upstream.Surname {
-			return ErrAlreadyExists
+			return errors.From(err, logan.F{"existing": remote.Surname})
 		}
 
 		//  check if upstream is duplicate
@@ -76,7 +77,7 @@ func (j *Janus) register(service internal.Service) error {
 		// modify remote service
 		remote.Proxy.Upstreams.Targets = append(
 			remote.Proxy.Upstreams.Targets,
-			internal.Target{Target: j.upstream.Target})
+			internal.Target{Target: j.upstream.Target, Weight: 10})
 
 		if err := j.client.UpdateAPI(remote.Name, remote); err != nil {
 			return errors.Wrap(err, "failed to update remote service")

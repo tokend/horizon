@@ -162,18 +162,6 @@
   version = "v1.0"
 
 [[projects]]
-  digest = "1:9813d5a93abcc5690fa5830bf7186c835493516986be7a2b11b46e7b12e13317"
-  name = "github.com/influxdata/influxdb"
-  packages = [
-    "client/v2",
-    "models",
-    "pkg/escape",
-  ]
-  pruneopts = "UT"
-  revision = "2d474a3089bcfce6b472779be9470a1f0ef3d5e4"
-  version = "v1.3.7"
-
-[[projects]]
   branch = "master"
   digest = "1:7678f7cde4090e4c979877491805ee636f8ddb3ac8d02c413e1fccaaffc8e465"
   name = "github.com/jmoiron/sqlx"
@@ -437,15 +425,15 @@
   version = "v1.0"
 
 [[projects]]
-  digest = "1:20e368367776bc9d2251e17926aff09a8b18238513185908957ad358c077e0ef"
+  digest = "1:4db50c1955d2ae5e1b432afd7342ea030bd26228560eaeffb78c8ae633c5c0a5"
   name = "gitlab.com/distributed_lab/ape"
   packages = [
     ".",
     "problems",
   ]
   pruneopts = "UT"
-  revision = "84191c4ccf54edc25ef517ae7f5f4d47fc8e818d"
-  version = "v0.8"
+  revision = "a046b9cf477f8f00324b645ebe057fade0a3c6fe"
+  version = "v0.10"
 
 [[projects]]
   branch = "master"
@@ -464,7 +452,7 @@
   version = "v2.0.0"
 
 [[projects]]
-  digest = "1:5e8f85fa8123d6a4aae2c928f8db7ab3ca1648c0c0ae2e9621ebcc22438d4449"
+  digest = "1:fb0f7303826f54d8e5439da81c4c01125da381904559580a227fed1aa453aafa"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
@@ -474,8 +462,8 @@
     "pgdb",
   ]
   pruneopts = "UT"
-  revision = "312d0d0f1014682a2c55c46683a7af80d2b09623"
-  version = "0.3.0"
+  revision = "983afb19d5c2762943fcba9f8727ff81c2b7e5a2"
+  version = "v0.5.0"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"
@@ -507,7 +495,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:e49069dab51d41664c951c83fc4a936db6e833ce335133749137da6181c637cb"
+  digest = "1:e6285d8c9d360627ea3adf33712f3fe4efbacee16577ff776e5d8c2c0c6c231e"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -525,7 +513,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "b11d69954b908ad1538205214c64557f120618b2"
+  revision = "ea1e8a9f2f7558be41eaf22fdb3d3c0fa396eca3"
 
 [[projects]]
   branch = "master"
@@ -541,14 +529,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:d2405846edf58edfa1a107121c970da5e5e509674aa3eff4f558e527b2266909"
+  digest = "1:c6860533e92840eb2ce6ba99b06f06ccf3bc039707f65a364a66879b4847be27"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
+    "generated",
     "v2",
   ]
   pruneopts = "UT"
-  revision = "6088d786776dc44d58a1e01eb0b00fd042b04535"
+  revision = "8749ef049a45d5324a712ca3b65cbf428cca836f"
 
 [[projects]]
   branch = "master"
@@ -659,8 +648,8 @@
     "github.com/go-errors/errors",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/goji/context",
+    "github.com/google/jsonapi",
     "github.com/guregu/null",
-    "github.com/influxdata/influxdb/client/v2",
     "github.com/jmoiron/sqlx",
     "github.com/lann/squirrel",
     "github.com/lib/pq",
@@ -702,6 +691,7 @@
     "gitlab.com/tokend/go/strkey",
     "gitlab.com/tokend/go/xdr",
     "gitlab.com/tokend/regources",
+    "gitlab.com/tokend/regources/generated",
     "gitlab.com/tokend/regources/v2",
     "golang.org/x/net/context",
     "golang.org/x/net/http2",

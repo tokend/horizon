@@ -3,6 +3,10 @@ package ctx
 import (
 	"net/http"
 
+	"gitlab.com/tokend/horizon/config"
+
+	"gitlab.com/tokend/horizon/txsub/v2"
+
 	"context"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -19,6 +23,8 @@ const (
 	keyLog
 	keyDoorman
 	keyCoreInfo
+	keyTxSubmitter
+	keyConfig
 )
 
 // Log - gets entry from context
@@ -77,13 +83,37 @@ func SetDoorman(d doorman.Doorman) func(ctx context.Context) context.Context {
 }
 
 //SetCoreInfo - adds core info to context
-func SetCoreInfo(info corer.Info) func(ctx context.Context) context.Context {
+func SetCoreInfo(coreInfoProvider func() corer.Info) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, keyCoreInfo, info)
+		return context.WithValue(ctx, keyCoreInfo, coreInfoProvider())
 	}
 }
 
 //CoreInfo - returns core info from the context
 func CoreInfo(r *http.Request) corer.Info {
 	return r.Context().Value(keyCoreInfo).(corer.Info)
+}
+
+// Submitter - gets entry from context
+func Submitter(r *http.Request) *txsub.System {
+	return r.Context().Value(keyTxSubmitter).(*txsub.System)
+}
+
+// SetSubmitter - sets submitter entry into ctx
+func SetSubmitter(value *txsub.System) func(ctx context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, keyTxSubmitter, value)
+	}
+}
+
+// Config - gets entry from context
+func Config(r *http.Request) *config.Config {
+	return r.Context().Value(keyConfig).(*config.Config)
+}
+
+// SetConfig - sets config into ctx
+func SetConfig(value *config.Config) func(ctx context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, keyConfig, value)
+	}
 }

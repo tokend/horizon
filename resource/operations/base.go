@@ -2,14 +2,14 @@ package operations
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/httpx"
+	"gitlab.com/tokend/horizon/render/hal"
 	"strconv"
 
 	"time"
 
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/horizon/db2/history"
-	"gitlab.com/tokend/horizon/httpx"
-	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/resource/base"
 	"golang.org/x/net/context"
 )
