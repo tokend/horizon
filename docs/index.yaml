@@ -130,6 +130,7 @@ x-tagGroups:
       - Change Account Role Request
       - AMLAlert
       - Limits
+      - KYC Recovery
   - name: Decentralized Exchange
     tags:
       - Asset Pairs

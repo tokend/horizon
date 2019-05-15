@@ -13,7 +13,7 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/CreateAtomicSwapBidRequest'
     - $ref: '#/components/schemas/CreateAtomicSwapRequest'
     - $ref: '#/components/schemas/CreatePollRequest'
-    - $ref: '#/components/schemas/CreateKYCRecoveryRequest'
+    - $ref: '#/components/schemas/KYCRecoveryRequest'
 
 CreateAssetRequest:
   allOf:
@@ -509,7 +509,7 @@ CreatePollRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
-CreateKYCRecoveryRequest:
+KYCRecoveryRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object

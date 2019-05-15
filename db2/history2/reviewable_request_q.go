@@ -163,6 +163,11 @@ func (q ReviewableRequestsQ) FilterByCreatePollResultProvider(resultProviderID s
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterByKYCRecoveryTargetAccount(address string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{kyc_recovery,account}' = ?", address)
+	return q
+}
+
 // GetByID loads a row from `reviewable_requests`, by ID
 // returns nil, nil - if request does not exists
 func (q ReviewableRequestsQ) GetByID(id uint64) (*ReviewableRequest, error) {

@@ -38,7 +38,7 @@ OperationDetails:
     - $ref: '#/components/schemas/ManagePollOp'
     - $ref: '#/components/schemas/ManageVoteOp'
     - $ref: '#/components/schemas/InitiateKYCRecoveryOp'
-    - $ref: '#/components/schemas/CreateKYCRecoveryRequest'
+    - $ref: '#/components/schemas/CreateKYCRecoveryRequestOp'
 
 OperationDetailsKey:
   oneOf:
