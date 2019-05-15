@@ -11,7 +11,7 @@ create table matches (
   price numeric(20,0) not null,
   created_at timestamp without time zone,
 
-  primary key (id)
+  primary key (id, base_asset, quote_asset)
 );
 
 -- +migrate Down
