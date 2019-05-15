@@ -34,34 +34,38 @@ func (h *MatchesSaver) Handle(header *core.LedgerHeader, txs []core.Transaction)
 	for _, tx := range txs {
 		ops := tx.Envelope.Tx.Operations
 		for opI, op := range ops {
-			opID := opIDGen.Next()
-			if op.Body.Type == xdr.OperationTypeManageOffer {
-				opResult := tx.Result.Result.Result.MustResults()[opI].MustTr().MustManageOfferResult().MustSuccess()
-
-				var opMatches []history2.Match
-				var ok bool
-				for _, atom := range opResult.OffersClaimed {
-					if opMatches, ok = trySquash(opMatches, atom); !ok {
-						opMatches = append(opMatches, history2.NewMatch(
-							matchIDGen.Next(),
-							opID,
-							opResult.BaseAsset,
-							opResult.QuoteAsset,
-							atom,
-						))
-					}
-				}
-
-				ledgerMatches = append(ledgerMatches, opMatches...)
+			if op.Body.Type != xdr.OperationTypeManageOffer {
+				continue
 			}
+
+			opID := opIDGen.Next()
+			opResult := tx.Result.Result.Result.MustResults()[opI].MustTr().MustManageOfferResult().MustSuccess()
+
+			var opMatches []history2.Match
+			var ok bool
+			for _, atom := range opResult.OffersClaimed {
+				if opMatches, ok = trySquash(opMatches, atom); !ok {
+					opMatches = append(opMatches, history2.NewMatch(
+						matchIDGen.Next(),
+						opID,
+						opResult.BaseAsset,
+						opResult.QuoteAsset,
+						atom,
+					))
+				}
+			}
+
+			ledgerMatches = append(ledgerMatches, opMatches...)
 		}
 	}
 
-	if len(ledgerMatches) > 0 {
-		err := h.storage.Insert(ledgerMatches)
-		if err != nil {
-			return errors.Wrap(err, "failed to insert matches")
-		}
+	if len(ledgerMatches) == 0 {
+		return nil
+	}
+
+	err := h.storage.Insert(ledgerMatches)
+	if err != nil {
+		return errors.Wrap(err, "failed to insert matches")
 	}
 
 	return nil
