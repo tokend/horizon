@@ -48,7 +48,7 @@ type getLimitsListHandler struct {
 }
 
 // GetLimitsList returns the list of fees with related resources
-func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*regources.LimitssResponse, error) {
+func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*regources.LimitsListResponse, error) {
 	q := h.LimitsQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeLimitsListAccount) {
 		q = q.FilterByAccount(request.Filters.Account)
@@ -70,7 +70,7 @@ func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*
 		return nil, errors.Wrap(err, "Failed to get fee list")
 	}
 
-	response := &regources.LimitssResponse{
+	response := &regources.LimitsListResponse{
 		Data:  make([]regources.Limits, 0, len(limits)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
@@ -87,7 +87,7 @@ func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*
 			limit.Relationships.AccountRole = resources.NewAccountRoleKey(*limits[i].AccountType).AsRelation()
 		}
 		assets = append(assets, limits[i].AssetCode)
-		response.Data = append(response.Data, *limit)
+		response.Data = append(response.Data, limit)
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeLimitsListAsset) {

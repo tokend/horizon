@@ -57,7 +57,7 @@ type deprecatedGetOrderBookHandler struct {
 const secondaryMarketOrderBookID = 0
 
 // DeprecatedGetOrderBook returns offer with related resources
-func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests.DeprecatedGetOrderBook) (*regources.OrderBookEntrysResponse, error) {
+func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests.DeprecatedGetOrderBook) (*regources.OrderBookEntryListResponse, error) {
 	if request.ID != secondaryMarketOrderBookID {
 		sale, err := h.SalesQ.GetByID(request.ID)
 		if err != nil {
@@ -96,7 +96,7 @@ func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests
 		return nil, errors.Wrap(err, "Failed to get offer list")
 	}
 
-	response := &regources.OrderBookEntrysResponse{
+	response := &regources.OrderBookEntryListResponse{
 		Data:  make([]regources.OrderBookEntry, 0, len(coreOrderBookEntries)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

@@ -46,13 +46,13 @@ type getAccountRuleListHandler struct {
 }
 
 // GetAccountRuleList returns the list of accountRules with related resources
-func (h *getAccountRuleListHandler) GetAccountRuleList(request *requests.GetAccountRuleList) (*regources.AccountRulesResponse, error) {
+func (h *getAccountRuleListHandler) GetAccountRuleList(request *requests.GetAccountRuleList) (*regources.AccountRuleListResponse, error) {
 	accountRules, err := h.AccountRulesQ.Page(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get account rule list")
 	}
 
-	response := &regources.AccountRulesResponse{
+	response := &regources.AccountRuleListResponse{
 		Data:  make([]regources.AccountRule, 0, len(accountRules)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

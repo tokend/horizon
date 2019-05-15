@@ -33,7 +33,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetHistory returns the list of participant effects with related resources
-func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.ParticipantsEffectsResponse, error) {
+func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.ParticipantsEffectListResponse, error) {
 	q := h.ApplyFilters(request, h.EffectsQ)
 	result, err := h.SelectAndPopulate(request, q)
 	if err != nil {
