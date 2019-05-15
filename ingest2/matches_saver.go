@@ -6,6 +6,7 @@ import (
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/generator"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 )
 
 type matchesStorage interface {
@@ -39,21 +40,8 @@ func (h *MatchesSaver) Handle(header *core.LedgerHeader, txs []core.Transaction)
 			}
 
 			opID := opIDGen.Next()
-			opResult := tx.Result.Result.Result.MustResults()[opI].MustTr().MustManageOfferResult().MustSuccess()
-
-			var opMatches []history2.Match
-			var ok bool
-			for _, atom := range opResult.OffersClaimed {
-				if opMatches, ok = trySquash(opMatches, atom); !ok {
-					opMatches = append(opMatches, history2.NewMatch(
-						matchIDGen.Next(),
-						opID,
-						opResult.BaseAsset,
-						opResult.QuoteAsset,
-						atom,
-					))
-				}
-			}
+			opResult := tx.Result.Result.Result.MustResults()[opI].MustTr()
+			opMatches := getOpMatches(opResult, opID, header.CloseTime, matchIDGen)
 
 			ledgerMatches = append(ledgerMatches, opMatches...)
 		}
@@ -69,6 +57,28 @@ func (h *MatchesSaver) Handle(header *core.LedgerHeader, txs []core.Transaction)
 	}
 
 	return nil
+}
+
+func getOpMatches(opResult xdr.OperationResultTr, opID int64, ledgerCloseTime int64, matchIDGen *generator.ID) []history2.Match {
+	manageOfferResult := opResult.MustManageOfferResult().MustSuccess()
+
+	var result []history2.Match
+
+	for _, atom := range manageOfferResult.OffersClaimed {
+		var ok bool
+		if result, ok = trySquash(result, atom); !ok {
+			result = append(result, history2.NewMatch(
+				matchIDGen.Next(),
+				opID,
+				manageOfferResult.BaseAsset,
+				manageOfferResult.QuoteAsset,
+				internal.TimeFromXdr(xdr.Uint64(ledgerCloseTime)),
+				atom,
+			))
+		}
+	}
+
+	return result
 }
 
 func trySquash(matches []history2.Match, atom xdr.ClaimOfferAtom) (m []history2.Match, ok bool) {
