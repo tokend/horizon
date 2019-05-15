@@ -138,9 +138,17 @@ func (h *getAccountHandler) getLimits(request *requests.GetAccount,
 	includes *regources.Included,
 	account *core2.Account) (*regources.RelationCollection, error) {
 
-	generalLimits, roleLimits, accountLimits, err := h.getLimitsByLevels(request, account)
+	generalLimits, err := h.LimitsV2Q.General().Select()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to select limits")
+		return nil, errors.Wrap(err, "failed to select general limits")
+	}
+	roleLimits, err := h.LimitsV2Q.FilterByAccountRole(account.RoleID).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select role limits")
+	}
+	accountLimits, err := h.LimitsV2Q.FilterByAccount(request.Address).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select limits for account")
 	}
 
 	lt := limits.NewTable(generalLimits)
@@ -167,11 +175,18 @@ func (h *getAccountHandler) getLimitsWithStats(request *requests.GetAccount,
 	included *regources.Included,
 	account *core2.Account) (*regources.RelationCollection, error) {
 
-	generalLimits, roleLimits, accountLimits, err := h.getLimitsByLevels(request, account)
+	generalLimits, err := h.LimitsV2Q.General().Select()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to select limits")
+		return nil, errors.Wrap(err, "failed to select general limits")
 	}
-
+	roleLimits, err := h.LimitsV2Q.FilterByAccountRole(account.RoleID).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select role limits")
+	}
+	accountLimits, err := h.LimitsV2Q.FilterByAccount(request.Address).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select limits for account")
+	}
 	accountStats, err := h.StatsQ.FilterByAccount(request.Address).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to select statistics for account")
@@ -198,34 +213,6 @@ func (h *getAccountHandler) getLimitsWithStats(request *requests.GetAccount,
 		}
 	}
 	return &result, nil
-}
-
-func (h *getAccountHandler) getLimitsByLevels(request *requests.GetAccount, acc *core2.Account) (
-	general, role, account []core2.Limits, err error) {
-
-	general, err = h.LimitsV2Q.General().Select()
-	if err != nil {
-		return nil,
-			nil,
-			nil,
-			errors.Wrap(err, "failed to select general limits")
-	}
-	role, err = h.LimitsV2Q.FilterByAccountRole(acc.RoleID).Select()
-	if err != nil {
-		return nil,
-			nil,
-			nil,
-			errors.Wrap(err, "failed to select role limits")
-	}
-	account, err = h.LimitsV2Q.FilterByAccount(request.Address).Select()
-	if err != nil {
-		return nil,
-			nil,
-			nil,
-			errors.Wrap(err, "failed to select limits for account")
-	}
-
-	return general, role, account, nil
 }
 
 func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {
