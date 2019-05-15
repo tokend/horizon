@@ -28,6 +28,7 @@ func convertMatch(match history2.Match) []interface{} {
 		match.BaseAsset,
 		match.QuoteAsset,
 		match.Price,
+		match.CreatedAt,
 	}
 }
 
@@ -42,6 +43,7 @@ func (s *Matches) Insert(matches []history2.Match) error {
 		"base_asset",
 		"quote_asset",
 		"price",
+		"created_at",
 	}
 
 	err := matchesBatchInsert(s.repo, matches, "matches", columns, convertMatch)

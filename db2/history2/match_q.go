@@ -25,14 +25,9 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 			"m.base_asset",
 			"m.quote_asset",
 			"m.price",
+			"m.created_at",
 		).From("matches m"),
 	}
-}
-
-// WithCreatedAt - returns Q with `created_at` column
-func (q MatchQ) WithCreatedAt() MatchQ {
-	q.selector = q.selector.Join("operations op ON op.id = m.operation_id").Columns("ledger_close_time created_at")
-	return q
 }
 
 // FilterByBaseAsset - returns Q with filter by base asset

@@ -18,7 +18,7 @@ func NewMatch(record history2.Match) regources.Match {
 			BaseAmount:  regources.Amount(record.BaseAmount),
 			Price:       regources.Amount(record.Price),
 			QuoteAmount: regources.Amount(record.QuoteAmount),
-			CreatedAt:   *record.CreatedAt,
+			CreatedAt:   record.CreatedAt,
 		},
 		Relationships: regources.MatchRelationships{
 			BaseAsset:  *NewAssetKey(record.BaseAsset).AsRelation(),

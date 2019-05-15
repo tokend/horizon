@@ -9,6 +9,8 @@ create table matches (
   base_asset varchar(16) not null,
   quote_asset varchar(16) not null,
   price numeric(20,0) not null,
+  created_at timestamp without time zone,
+
   primary key (id)
 );
 
