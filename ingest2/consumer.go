@@ -155,15 +155,6 @@ func (c *Consumer) processBatch(ctx context.Context, bundles []LedgerBundle) err
 		return errors.Wrap(err, "failed to commit db tx")
 	}
 
-	// Intentionally commented to disable core's "feature" of deleting processed blocks:
-	// err = c.corer.SetCursor("HORIZON2", bundles[len(bundles)-1].Header.Sequence)
-	// // we are not fully handing error here to ensure that we'll not try to reprocess whole batch
-	// // as it was already committed
-	// if err != nil {
-	//	c.log.WithError(err).Warn("Failed to set cursor")
-	//	return nil
-	// }
-
 	return nil
 }
 
