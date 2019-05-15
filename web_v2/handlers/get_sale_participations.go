@@ -77,7 +77,9 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 	case regources.SaleStateOpen:
 		return h.GetPendingSaleParticipations(request)
 	case regources.SaleStateCanceled:
-		return nil, nil
+		return &regources.SaleParticipationsResponse{
+			Data: make([]regources.SaleParticipation, 0),
+		}, nil
 	case regources.SaleStateClosed:
 		return h.GetClosedSaleParticipations(request)
 	default:
