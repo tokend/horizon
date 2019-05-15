@@ -45,14 +45,7 @@ type getMatchListHandler struct {
 
 // GetMatchList returns list of matches with related resources
 func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*regources.MatchsResponse, error) {
-	q := h.MatchQ.Page(*request.PageParams)
-
-	if request.ShouldFilter(requests.FilterTypeMatchListBaseAsset) {
-		q = q.FilterByBaseAsset(request.Filters.BaseAsset)
-	}
-	if request.ShouldFilter(requests.FilterTypeMatchListQuoteAsset) {
-		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset)
-	}
+	q := h.MatchQ.Page(*request.PageParams).FilterByAssetPair(request.Filters.BaseAsset, request.Filters.QuoteAsset)
 
 	coreMatches, err := q.Select()
 	if err != nil {

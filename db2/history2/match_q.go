@@ -30,15 +30,11 @@ func NewMatchQ(repo *db2.Repo) MatchQ {
 	}
 }
 
-// FilterByBaseAsset - returns Q with filter by base asset
-func (q MatchQ) FilterByBaseAsset(asset string) MatchQ {
-	q.selector = q.selector.Where("m.base_asset = ?", asset)
-	return q
-}
-
-// FilterByQuoteAsset - returns Q with filter by quote asset
-func (q MatchQ) FilterByQuoteAsset(asset string) MatchQ {
-	q.selector = q.selector.Where("m.quote_asset = ?", asset)
+// FilterByAssetPair - returns Q with filter by asset pair
+func (q MatchQ) FilterByAssetPair(base, quote string) MatchQ {
+	q.selector = q.selector.
+		Where("m.base_asset = ?", base).
+		Where("m.quote_asset = ?", quote)
 	return q
 }
 
