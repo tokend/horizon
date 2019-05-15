@@ -51,7 +51,6 @@ func NewConvertedBalanceState(
 		},
 		Relationships: regources.ConvertedBalanceStateRelationships{
 			Balance: NewBalanceKey(balance.BalanceAddress).AsRelation(),
-			Asset:   NewAssetKey(balance.AssetCode).AsRelation(),
 		},
 	}
 }

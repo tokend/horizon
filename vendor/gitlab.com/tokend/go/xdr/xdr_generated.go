@@ -1,5 +1,5 @@
-// revision: 6da80385aa81c2db787778b9ca9908385df3d340
-// branch:   feature/whitelist_management
+// revision: 01feacef6ae3e6c37a2708e99ecc6558a90bdea6
+// branch:   feature/kyc-recovery
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -46,10 +46,12 @@
 //  xdr/Stellar-operation-create-aswap-request.x
 //  xdr/Stellar-operation-create-change-role-request.x
 //  xdr/Stellar-operation-create-issuance-request.x
+//  xdr/Stellar-operation-create-kyc-recovery-request.x
 //  xdr/Stellar-operation-create-manage-limits-request.x
 //  xdr/Stellar-operation-create-preissuance-request.x
 //  xdr/Stellar-operation-create-sale-creation-request.x
 //  xdr/Stellar-operation-create-withdrawal-request.x
+//  xdr/Stellar-operation-initiate-kyc-recovery.x
 //  xdr/Stellar-operation-license.x
 //  xdr/Stellar-operation-manage-account-role.x
 //  xdr/Stellar-operation-manage-account-rule.x
@@ -88,6 +90,7 @@
 //  xdr/Stellar-reviewable-request-create-poll.x
 //  xdr/Stellar-reviewable-request-invoice.x
 //  xdr/Stellar-reviewable-request-issuance.x
+//  xdr/Stellar-reviewable-request-kyc-recovery.x
 //  xdr/Stellar-reviewable-request-limits-update.x
 //  xdr/Stellar-reviewable-request-sale.x
 //  xdr/Stellar-reviewable-request-update-sale-details.x
@@ -3405,7 +3408,8 @@ type ReferenceEntry struct {
 //    	UPDATE_ASSET = 13,
 //    	CREATE_POLL = 14,
 //    	CREATE_ATOMIC_SWAP_BID = 16,
-//    	CREATE_ATOMIC_SWAP = 17
+//    	CREATE_ATOMIC_SWAP = 17,
+//    	KYC_RECOVERY = 18
 //    };
 //
 type ReviewableRequestType int32
@@ -3428,6 +3432,7 @@ const (
 	ReviewableRequestTypeCreatePoll          ReviewableRequestType = 14
 	ReviewableRequestTypeCreateAtomicSwapBid ReviewableRequestType = 16
 	ReviewableRequestTypeCreateAtomicSwap    ReviewableRequestType = 17
+	ReviewableRequestTypeKycRecovery         ReviewableRequestType = 18
 )
 
 var ReviewableRequestTypeAll = []ReviewableRequestType{
@@ -3448,6 +3453,7 @@ var ReviewableRequestTypeAll = []ReviewableRequestType{
 	ReviewableRequestTypeCreatePoll,
 	ReviewableRequestTypeCreateAtomicSwapBid,
 	ReviewableRequestTypeCreateAtomicSwap,
+	ReviewableRequestTypeKycRecovery,
 }
 
 var reviewableRequestTypeMap = map[int32]string{
@@ -3468,6 +3474,7 @@ var reviewableRequestTypeMap = map[int32]string{
 	14: "ReviewableRequestTypeCreatePoll",
 	16: "ReviewableRequestTypeCreateAtomicSwapBid",
 	17: "ReviewableRequestTypeCreateAtomicSwap",
+	18: "ReviewableRequestTypeKycRecovery",
 }
 
 var reviewableRequestTypeShortMap = map[int32]string{
@@ -3488,6 +3495,7 @@ var reviewableRequestTypeShortMap = map[int32]string{
 	14: "create_poll",
 	16: "create_atomic_swap_bid",
 	17: "create_atomic_swap",
+	18: "kyc_recovery",
 }
 
 var reviewableRequestTypeRevMap = map[string]int32{
@@ -3508,6 +3516,7 @@ var reviewableRequestTypeRevMap = map[string]int32{
 	"ReviewableRequestTypeCreatePoll":          14,
 	"ReviewableRequestTypeCreateAtomicSwapBid": 16,
 	"ReviewableRequestTypeCreateAtomicSwap":    17,
+	"ReviewableRequestTypeKycRecovery":         18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -3668,6 +3677,8 @@ type TasksExt struct {
 //                ASwapRequest aSwapRequest;
 //            case CREATE_POLL:
 //                CreatePollRequest createPollRequest;
+//            case KYC_RECOVERY:
+//                KYCRecoveryRequest kycRecoveryRequest;
 //    	}
 //
 type ReviewableRequestEntryBody struct {
@@ -3687,6 +3698,7 @@ type ReviewableRequestEntryBody struct {
 	ASwapBidCreationRequest  *ASwapBidCreationRequest  `json:"aSwapBidCreationRequest,omitempty"`
 	ASwapRequest             *ASwapRequest             `json:"aSwapRequest,omitempty"`
 	CreatePollRequest        *CreatePollRequest        `json:"createPollRequest,omitempty"`
+	KycRecoveryRequest       *KycRecoveryRequest       `json:"kycRecoveryRequest,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -3729,6 +3741,8 @@ func (u ReviewableRequestEntryBody) ArmForSwitch(sw int32) (string, bool) {
 		return "ASwapRequest", true
 	case ReviewableRequestTypeCreatePoll:
 		return "CreatePollRequest", true
+	case ReviewableRequestTypeKycRecovery:
+		return "KycRecoveryRequest", true
 	}
 	return "-", false
 }
@@ -3842,6 +3856,13 @@ func NewReviewableRequestEntryBody(aType ReviewableRequestType, value interface{
 			return
 		}
 		result.CreatePollRequest = &tv
+	case ReviewableRequestTypeKycRecovery:
+		tv, ok := value.(KycRecoveryRequest)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be KycRecoveryRequest")
+			return
+		}
+		result.KycRecoveryRequest = &tv
 	}
 	return
 }
@@ -4221,6 +4242,31 @@ func (u ReviewableRequestEntryBody) GetCreatePollRequest() (result CreatePollReq
 	return
 }
 
+// MustKycRecoveryRequest retrieves the KycRecoveryRequest value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestEntryBody) MustKycRecoveryRequest() KycRecoveryRequest {
+	val, ok := u.GetKycRecoveryRequest()
+
+	if !ok {
+		panic("arm KycRecoveryRequest is not set")
+	}
+
+	return val
+}
+
+// GetKycRecoveryRequest retrieves the KycRecoveryRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestEntryBody) GetKycRecoveryRequest() (result KycRecoveryRequest, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "KycRecoveryRequest" {
+		result = *u.KycRecoveryRequest
+		ok = true
+	}
+
+	return
+}
+
 // ReviewableRequestEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -4301,6 +4347,8 @@ func NewReviewableRequestEntryExt(v LedgerVersion, value interface{}) (result Re
 //                ASwapRequest aSwapRequest;
 //            case CREATE_POLL:
 //                CreatePollRequest createPollRequest;
+//            case KYC_RECOVERY:
+//                KYCRecoveryRequest kycRecoveryRequest;
 //    	} body;
 //
 //    	TasksExt tasks;
@@ -14266,7 +14314,9 @@ type CreateChangeRoleRequestOp struct {
 //        INVALID_CREATOR_DETAILS = -8,
 //        //: There is no key-value entry by `change_role_tasks` key in the system;
 //        //: configuration does not allow changing the role from current to `accountRoleToSet`
-//        CHANGE_ROLE_TASKS_NOT_FOUND = -9
+//        CHANGE_ROLE_TASKS_NOT_FOUND = -9,
+//        //: There is no account role with provided id
+//        ACCOUNT_ROLE_TO_SET_DOES_NOT_EXIST = -10
 //    };
 //
 type CreateChangeRoleRequestResultCode int32
@@ -14280,6 +14330,7 @@ const (
 	CreateChangeRoleRequestResultCodeInvalidChangeRoleRequestData CreateChangeRoleRequestResultCode = -7
 	CreateChangeRoleRequestResultCodeInvalidCreatorDetails        CreateChangeRoleRequestResultCode = -8
 	CreateChangeRoleRequestResultCodeChangeRoleTasksNotFound      CreateChangeRoleRequestResultCode = -9
+	CreateChangeRoleRequestResultCodeAccountRoleToSetDoesNotExist CreateChangeRoleRequestResultCode = -10
 )
 
 var CreateChangeRoleRequestResultCodeAll = []CreateChangeRoleRequestResultCode{
@@ -14291,28 +14342,31 @@ var CreateChangeRoleRequestResultCodeAll = []CreateChangeRoleRequestResultCode{
 	CreateChangeRoleRequestResultCodeInvalidChangeRoleRequestData,
 	CreateChangeRoleRequestResultCodeInvalidCreatorDetails,
 	CreateChangeRoleRequestResultCodeChangeRoleTasksNotFound,
+	CreateChangeRoleRequestResultCodeAccountRoleToSetDoesNotExist,
 }
 
 var createChangeRoleRequestResultCodeMap = map[int32]string{
-	0:  "CreateChangeRoleRequestResultCodeSuccess",
-	-1: "CreateChangeRoleRequestResultCodeAccToUpdateDoesNotExist",
-	-2: "CreateChangeRoleRequestResultCodeRequestAlreadyExists",
-	-4: "CreateChangeRoleRequestResultCodeRequestDoesNotExist",
-	-6: "CreateChangeRoleRequestResultCodeNotAllowedToUpdateRequest",
-	-7: "CreateChangeRoleRequestResultCodeInvalidChangeRoleRequestData",
-	-8: "CreateChangeRoleRequestResultCodeInvalidCreatorDetails",
-	-9: "CreateChangeRoleRequestResultCodeChangeRoleTasksNotFound",
+	0:   "CreateChangeRoleRequestResultCodeSuccess",
+	-1:  "CreateChangeRoleRequestResultCodeAccToUpdateDoesNotExist",
+	-2:  "CreateChangeRoleRequestResultCodeRequestAlreadyExists",
+	-4:  "CreateChangeRoleRequestResultCodeRequestDoesNotExist",
+	-6:  "CreateChangeRoleRequestResultCodeNotAllowedToUpdateRequest",
+	-7:  "CreateChangeRoleRequestResultCodeInvalidChangeRoleRequestData",
+	-8:  "CreateChangeRoleRequestResultCodeInvalidCreatorDetails",
+	-9:  "CreateChangeRoleRequestResultCodeChangeRoleTasksNotFound",
+	-10: "CreateChangeRoleRequestResultCodeAccountRoleToSetDoesNotExist",
 }
 
 var createChangeRoleRequestResultCodeShortMap = map[int32]string{
-	0:  "success",
-	-1: "acc_to_update_does_not_exist",
-	-2: "request_already_exists",
-	-4: "request_does_not_exist",
-	-6: "not_allowed_to_update_request",
-	-7: "invalid_change_role_request_data",
-	-8: "invalid_creator_details",
-	-9: "change_role_tasks_not_found",
+	0:   "success",
+	-1:  "acc_to_update_does_not_exist",
+	-2:  "request_already_exists",
+	-4:  "request_does_not_exist",
+	-6:  "not_allowed_to_update_request",
+	-7:  "invalid_change_role_request_data",
+	-8:  "invalid_creator_details",
+	-9:  "change_role_tasks_not_found",
+	-10: "account_role_to_set_does_not_exist",
 }
 
 var createChangeRoleRequestResultCodeRevMap = map[string]int32{
@@ -14324,6 +14378,7 @@ var createChangeRoleRequestResultCodeRevMap = map[string]int32{
 	"CreateChangeRoleRequestResultCodeInvalidChangeRoleRequestData": -7,
 	"CreateChangeRoleRequestResultCodeInvalidCreatorDetails":        -8,
 	"CreateChangeRoleRequestResultCodeChangeRoleTasksNotFound":      -9,
+	"CreateChangeRoleRequestResultCodeAccountRoleToSetDoesNotExist": -10,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -14922,6 +14977,435 @@ func (u CreateIssuanceRequestResult) MustSuccess() CreateIssuanceRequestSuccess 
 // GetSuccess retrieves the Success value from the union,
 // returning ok if the union's switch indicated the value is valid.
 func (u CreateIssuanceRequestResult) GetSuccess() (result CreateIssuanceRequestSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// CreateKycRecoveryRequestOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateKycRecoveryRequestOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateKycRecoveryRequestOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateKycRecoveryRequestOpExt
+func (u CreateKycRecoveryRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateKycRecoveryRequestOpExt creates a new  CreateKycRecoveryRequestOpExt.
+func NewCreateKycRecoveryRequestOpExt(v LedgerVersion, value interface{}) (result CreateKycRecoveryRequestOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateKycRecoveryRequestOp is an XDR Struct defines as:
+//
+//   struct CreateKYCRecoveryRequestOp
+//    {
+//        //: ID of a reviewable request. If set 0, request is created, else - request is updated
+//        uint64 requestID;
+//        //: Account for which signers will be set
+//        AccountID targetAccount;
+//        //: New signers to set
+//        UpdateSignerData signersData<>;
+//
+//         //: Arbitrary stringified json object that can be used to attach data to be reviewed by an admin
+//        longstring creatorDetails; // details set by requester
+//
+//        //: (optional) Bit mask whose flags must be cleared in order for PreIssuanceRequest to be approved, which will be used by key `preissuance_tasks`
+//        //: instead of key-value
+//        uint32* allTasks;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type CreateKycRecoveryRequestOp struct {
+	RequestId      Uint64                        `json:"requestID,omitempty"`
+	TargetAccount  AccountId                     `json:"targetAccount,omitempty"`
+	SignersData    []UpdateSignerData            `json:"signersData,omitempty"`
+	CreatorDetails Longstring                    `json:"creatorDetails,omitempty"`
+	AllTasks       *Uint32                       `json:"allTasks,omitempty"`
+	Ext            CreateKycRecoveryRequestOpExt `json:"ext,omitempty"`
+}
+
+// CreateKycRecoveryRequestResultCode is an XDR Enum defines as:
+//
+//   enum CreateKYCRecoveryRequestResultCode
+//    {
+//        //: Means that specified action in `data` of ManageAccountSpecificRuleOp was successfully performed
+//        SUCCESS = 0,
+//
+//        //: Creator details are not in a valid JSON format
+//        INVALID_CREATOR_DETAILS = -1,
+//        //: KYC recovery tasks are not set in the system
+//        KYC_RECOVERY_TASKS_NOT_FOUND = -2,
+//        //: Not allowed to set tasks
+//        NOT_ALLOWED_TO_SET_KYC_RECOVERY_TASKS = -3,
+//        //: Not allowed to provide empty slice of signers
+//        INVALID_SIGNER_DATA = -4,
+//        //: Signer has weight > threshold
+//        INVALID_WEIGHT = -5,
+//        //: Signer has invalid details
+//        INVALID_DETAILS = -6,
+//        //: Request with provided parameters already exists
+//        REQUEST_ALREADY_EXISTS = -7,
+//        //: Account with provided account address does not exist
+//        TARGET_ACCOUNT_NOT_FOUND = -8,
+//        //: Either target account or admin can submit this operation
+//        NOT_AUTHORIZED = -9,
+//        //: System configuration forbids KYC recovery
+//        RECOVERY_NOT_ALLOWED = -10,
+//        //: Either, there is no entry by key `kyc_recovery_account_role`, or such role does not exists
+//        RECOVERY_ACCOUNT_ROLE_NOT_FOUND = -11,
+//        //: Account role differs from expected
+//        TARGET_ACCOUNT_NOT_IN_RECOVERY_ROLE = -12,
+//        //: Only target account can update rejected request
+//        NOT_ALLOWED_TO_UPDATE_REQUEST = -13,
+//        //: There is no request with such ID
+//        KYC_RECOVERY_REQUEST_NOT_FOUND = -16,
+//        //: It is forbidden to change target account on update
+//        INVALID_UPDATE_DATA = -17,
+//        //: It is forbidden to set `allTasks` on update
+//        NOT_ALLOWED_TO_SET_TASKS_ON_UPDATE = -18
+//
+//    };
+//
+type CreateKycRecoveryRequestResultCode int32
+
+const (
+	CreateKycRecoveryRequestResultCodeSuccess                         CreateKycRecoveryRequestResultCode = 0
+	CreateKycRecoveryRequestResultCodeInvalidCreatorDetails           CreateKycRecoveryRequestResultCode = -1
+	CreateKycRecoveryRequestResultCodeKycRecoveryTasksNotFound        CreateKycRecoveryRequestResultCode = -2
+	CreateKycRecoveryRequestResultCodeNotAllowedToSetKycRecoveryTasks CreateKycRecoveryRequestResultCode = -3
+	CreateKycRecoveryRequestResultCodeInvalidSignerData               CreateKycRecoveryRequestResultCode = -4
+	CreateKycRecoveryRequestResultCodeInvalidWeight                   CreateKycRecoveryRequestResultCode = -5
+	CreateKycRecoveryRequestResultCodeInvalidDetails                  CreateKycRecoveryRequestResultCode = -6
+	CreateKycRecoveryRequestResultCodeRequestAlreadyExists            CreateKycRecoveryRequestResultCode = -7
+	CreateKycRecoveryRequestResultCodeTargetAccountNotFound           CreateKycRecoveryRequestResultCode = -8
+	CreateKycRecoveryRequestResultCodeNotAuthorized                   CreateKycRecoveryRequestResultCode = -9
+	CreateKycRecoveryRequestResultCodeRecoveryNotAllowed              CreateKycRecoveryRequestResultCode = -10
+	CreateKycRecoveryRequestResultCodeRecoveryAccountRoleNotFound     CreateKycRecoveryRequestResultCode = -11
+	CreateKycRecoveryRequestResultCodeTargetAccountNotInRecoveryRole  CreateKycRecoveryRequestResultCode = -12
+	CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest       CreateKycRecoveryRequestResultCode = -13
+	CreateKycRecoveryRequestResultCodeKycRecoveryRequestNotFound      CreateKycRecoveryRequestResultCode = -16
+	CreateKycRecoveryRequestResultCodeInvalidUpdateData               CreateKycRecoveryRequestResultCode = -17
+	CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate    CreateKycRecoveryRequestResultCode = -18
+)
+
+var CreateKycRecoveryRequestResultCodeAll = []CreateKycRecoveryRequestResultCode{
+	CreateKycRecoveryRequestResultCodeSuccess,
+	CreateKycRecoveryRequestResultCodeInvalidCreatorDetails,
+	CreateKycRecoveryRequestResultCodeKycRecoveryTasksNotFound,
+	CreateKycRecoveryRequestResultCodeNotAllowedToSetKycRecoveryTasks,
+	CreateKycRecoveryRequestResultCodeInvalidSignerData,
+	CreateKycRecoveryRequestResultCodeInvalidWeight,
+	CreateKycRecoveryRequestResultCodeInvalidDetails,
+	CreateKycRecoveryRequestResultCodeRequestAlreadyExists,
+	CreateKycRecoveryRequestResultCodeTargetAccountNotFound,
+	CreateKycRecoveryRequestResultCodeNotAuthorized,
+	CreateKycRecoveryRequestResultCodeRecoveryNotAllowed,
+	CreateKycRecoveryRequestResultCodeRecoveryAccountRoleNotFound,
+	CreateKycRecoveryRequestResultCodeTargetAccountNotInRecoveryRole,
+	CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest,
+	CreateKycRecoveryRequestResultCodeKycRecoveryRequestNotFound,
+	CreateKycRecoveryRequestResultCodeInvalidUpdateData,
+	CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate,
+}
+
+var createKycRecoveryRequestResultCodeMap = map[int32]string{
+	0:   "CreateKycRecoveryRequestResultCodeSuccess",
+	-1:  "CreateKycRecoveryRequestResultCodeInvalidCreatorDetails",
+	-2:  "CreateKycRecoveryRequestResultCodeKycRecoveryTasksNotFound",
+	-3:  "CreateKycRecoveryRequestResultCodeNotAllowedToSetKycRecoveryTasks",
+	-4:  "CreateKycRecoveryRequestResultCodeInvalidSignerData",
+	-5:  "CreateKycRecoveryRequestResultCodeInvalidWeight",
+	-6:  "CreateKycRecoveryRequestResultCodeInvalidDetails",
+	-7:  "CreateKycRecoveryRequestResultCodeRequestAlreadyExists",
+	-8:  "CreateKycRecoveryRequestResultCodeTargetAccountNotFound",
+	-9:  "CreateKycRecoveryRequestResultCodeNotAuthorized",
+	-10: "CreateKycRecoveryRequestResultCodeRecoveryNotAllowed",
+	-11: "CreateKycRecoveryRequestResultCodeRecoveryAccountRoleNotFound",
+	-12: "CreateKycRecoveryRequestResultCodeTargetAccountNotInRecoveryRole",
+	-13: "CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest",
+	-16: "CreateKycRecoveryRequestResultCodeKycRecoveryRequestNotFound",
+	-17: "CreateKycRecoveryRequestResultCodeInvalidUpdateData",
+	-18: "CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate",
+}
+
+var createKycRecoveryRequestResultCodeShortMap = map[int32]string{
+	0:   "success",
+	-1:  "invalid_creator_details",
+	-2:  "kyc_recovery_tasks_not_found",
+	-3:  "not_allowed_to_set_kyc_recovery_tasks",
+	-4:  "invalid_signer_data",
+	-5:  "invalid_weight",
+	-6:  "invalid_details",
+	-7:  "request_already_exists",
+	-8:  "target_account_not_found",
+	-9:  "not_authorized",
+	-10: "recovery_not_allowed",
+	-11: "recovery_account_role_not_found",
+	-12: "target_account_not_in_recovery_role",
+	-13: "not_allowed_to_update_request",
+	-16: "kyc_recovery_request_not_found",
+	-17: "invalid_update_data",
+	-18: "not_allowed_to_set_tasks_on_update",
+}
+
+var createKycRecoveryRequestResultCodeRevMap = map[string]int32{
+	"CreateKycRecoveryRequestResultCodeSuccess":                         0,
+	"CreateKycRecoveryRequestResultCodeInvalidCreatorDetails":           -1,
+	"CreateKycRecoveryRequestResultCodeKycRecoveryTasksNotFound":        -2,
+	"CreateKycRecoveryRequestResultCodeNotAllowedToSetKycRecoveryTasks": -3,
+	"CreateKycRecoveryRequestResultCodeInvalidSignerData":               -4,
+	"CreateKycRecoveryRequestResultCodeInvalidWeight":                   -5,
+	"CreateKycRecoveryRequestResultCodeInvalidDetails":                  -6,
+	"CreateKycRecoveryRequestResultCodeRequestAlreadyExists":            -7,
+	"CreateKycRecoveryRequestResultCodeTargetAccountNotFound":           -8,
+	"CreateKycRecoveryRequestResultCodeNotAuthorized":                   -9,
+	"CreateKycRecoveryRequestResultCodeRecoveryNotAllowed":              -10,
+	"CreateKycRecoveryRequestResultCodeRecoveryAccountRoleNotFound":     -11,
+	"CreateKycRecoveryRequestResultCodeTargetAccountNotInRecoveryRole":  -12,
+	"CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest":       -13,
+	"CreateKycRecoveryRequestResultCodeKycRecoveryRequestNotFound":      -16,
+	"CreateKycRecoveryRequestResultCodeInvalidUpdateData":               -17,
+	"CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate":    -18,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CreateKycRecoveryRequestResultCode
+func (e CreateKycRecoveryRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := createKycRecoveryRequestResultCodeMap[v]
+	return ok
+}
+func (e CreateKycRecoveryRequestResultCode) isFlag() bool {
+	for i := len(CreateKycRecoveryRequestResultCodeAll) - 1; i >= 0; i-- {
+		expected := CreateKycRecoveryRequestResultCode(2) << uint64(len(CreateKycRecoveryRequestResultCodeAll)-1) >> uint64(len(CreateKycRecoveryRequestResultCodeAll)-i)
+		if expected != CreateKycRecoveryRequestResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CreateKycRecoveryRequestResultCode) String() string {
+	name, _ := createKycRecoveryRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CreateKycRecoveryRequestResultCode) ShortString() string {
+	name, _ := createKycRecoveryRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CreateKycRecoveryRequestResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range CreateKycRecoveryRequestResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CreateKycRecoveryRequestResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CreateKycRecoveryRequestResultCode(t.Value)
+	return nil
+}
+
+// CreateKycRecoveryRequestResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//            {
+//            case EMPTY_VERSION:
+//                void;
+//            }
+//
+type CreateKycRecoveryRequestResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateKycRecoveryRequestResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateKycRecoveryRequestResultSuccessExt
+func (u CreateKycRecoveryRequestResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateKycRecoveryRequestResultSuccessExt creates a new  CreateKycRecoveryRequestResultSuccessExt.
+func NewCreateKycRecoveryRequestResultSuccessExt(v LedgerVersion, value interface{}) (result CreateKycRecoveryRequestResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateKycRecoveryRequestResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct {
+//            //: id of the created request
+//            uint64 requestID;
+//
+//            //: Indicates whether or not the KYC Recovery request was auto approved and fulfilled
+//            bool fulfilled;
+//
+//            //: reserved for future use
+//            union switch (LedgerVersion v)
+//            {
+//            case EMPTY_VERSION:
+//                void;
+//            }
+//            ext;
+//        }
+//
+type CreateKycRecoveryRequestResultSuccess struct {
+	RequestId Uint64                                   `json:"requestID,omitempty"`
+	Fulfilled bool                                     `json:"fulfilled,omitempty"`
+	Ext       CreateKycRecoveryRequestResultSuccessExt `json:"ext,omitempty"`
+}
+
+// CreateKycRecoveryRequestResult is an XDR Union defines as:
+//
+//   union CreateKYCRecoveryRequestResult switch (CreateKYCRecoveryRequestResultCode code)
+//    {
+//    case SUCCESS:
+//        //: Is used to pass useful params if operation is success
+//        struct {
+//            //: id of the created request
+//            uint64 requestID;
+//
+//            //: Indicates whether or not the KYC Recovery request was auto approved and fulfilled
+//            bool fulfilled;
+//
+//            //: reserved for future use
+//            union switch (LedgerVersion v)
+//            {
+//            case EMPTY_VERSION:
+//                void;
+//            }
+//            ext;
+//        } success;
+//    default:
+//        void;
+//    };
+//
+type CreateKycRecoveryRequestResult struct {
+	Code    CreateKycRecoveryRequestResultCode     `json:"code,omitempty"`
+	Success *CreateKycRecoveryRequestResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateKycRecoveryRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateKycRecoveryRequestResult
+func (u CreateKycRecoveryRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CreateKycRecoveryRequestResultCode(sw) {
+	case CreateKycRecoveryRequestResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewCreateKycRecoveryRequestResult creates a new  CreateKycRecoveryRequestResult.
+func NewCreateKycRecoveryRequestResult(code CreateKycRecoveryRequestResultCode, value interface{}) (result CreateKycRecoveryRequestResult, err error) {
+	result.Code = code
+	switch CreateKycRecoveryRequestResultCode(code) {
+	case CreateKycRecoveryRequestResultCodeSuccess:
+		tv, ok := value.(CreateKycRecoveryRequestResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateKycRecoveryRequestResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u CreateKycRecoveryRequestResult) MustSuccess() CreateKycRecoveryRequestResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreateKycRecoveryRequestResult) GetSuccess() (result CreateKycRecoveryRequestResultSuccess, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Code))
 
 	if armName == "Success" {
@@ -16602,6 +17086,323 @@ func (u CreateWithdrawalRequestResult) MustSuccess() CreateWithdrawalSuccess {
 // GetSuccess retrieves the Success value from the union,
 // returning ok if the union's switch indicated the value is valid.
 func (u CreateWithdrawalRequestResult) GetSuccess() (result CreateWithdrawalSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// InitiateKycRecoveryOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type InitiateKycRecoveryOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u InitiateKycRecoveryOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of InitiateKycRecoveryOpExt
+func (u InitiateKycRecoveryOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewInitiateKycRecoveryOpExt creates a new  InitiateKycRecoveryOpExt.
+func NewInitiateKycRecoveryOpExt(v LedgerVersion, value interface{}) (result InitiateKycRecoveryOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// InitiateKycRecoveryOp is an XDR Struct defines as:
+//
+//   struct InitiateKYCRecoveryOp
+//    {
+//        //: Address of account to be recovered
+//        AccountID account;
+//        //: New signer to set
+//        PublicKey singer;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type InitiateKycRecoveryOp struct {
+	Account AccountId                `json:"account,omitempty"`
+	Singer  PublicKey                `json:"singer,omitempty"`
+	Ext     InitiateKycRecoveryOpExt `json:"ext,omitempty"`
+}
+
+// InitiateKycRecoveryResultCode is an XDR Enum defines as:
+//
+//   enum InitiateKYCRecoveryResultCode
+//    {
+//        //: Means that KYC recovery was successfully initiated
+//        SUCCESS = 0,
+//
+//        //: KYC target account not found
+//        NOT_FOUND = -1,
+//        //: Only admin can submit InitiateKYCRecovery
+//        NOT_AUTHORIZED = -2,
+//        //: System configuration forbids KYC recovery
+//        RECOVERY_NOT_ALLOWED = -3,
+//        //: Either, there is no entry by key `kyc_recovery_account_role`, or such role does not exists
+//        RECOVERY_ACCOUNT_ROLE_NOT_FOUND = -4
+//    };
+//
+type InitiateKycRecoveryResultCode int32
+
+const (
+	InitiateKycRecoveryResultCodeSuccess                     InitiateKycRecoveryResultCode = 0
+	InitiateKycRecoveryResultCodeNotFound                    InitiateKycRecoveryResultCode = -1
+	InitiateKycRecoveryResultCodeNotAuthorized               InitiateKycRecoveryResultCode = -2
+	InitiateKycRecoveryResultCodeRecoveryNotAllowed          InitiateKycRecoveryResultCode = -3
+	InitiateKycRecoveryResultCodeRecoveryAccountRoleNotFound InitiateKycRecoveryResultCode = -4
+)
+
+var InitiateKycRecoveryResultCodeAll = []InitiateKycRecoveryResultCode{
+	InitiateKycRecoveryResultCodeSuccess,
+	InitiateKycRecoveryResultCodeNotFound,
+	InitiateKycRecoveryResultCodeNotAuthorized,
+	InitiateKycRecoveryResultCodeRecoveryNotAllowed,
+	InitiateKycRecoveryResultCodeRecoveryAccountRoleNotFound,
+}
+
+var initiateKycRecoveryResultCodeMap = map[int32]string{
+	0:  "InitiateKycRecoveryResultCodeSuccess",
+	-1: "InitiateKycRecoveryResultCodeNotFound",
+	-2: "InitiateKycRecoveryResultCodeNotAuthorized",
+	-3: "InitiateKycRecoveryResultCodeRecoveryNotAllowed",
+	-4: "InitiateKycRecoveryResultCodeRecoveryAccountRoleNotFound",
+}
+
+var initiateKycRecoveryResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+	-2: "not_authorized",
+	-3: "recovery_not_allowed",
+	-4: "recovery_account_role_not_found",
+}
+
+var initiateKycRecoveryResultCodeRevMap = map[string]int32{
+	"InitiateKycRecoveryResultCodeSuccess":                     0,
+	"InitiateKycRecoveryResultCodeNotFound":                    -1,
+	"InitiateKycRecoveryResultCodeNotAuthorized":               -2,
+	"InitiateKycRecoveryResultCodeRecoveryNotAllowed":          -3,
+	"InitiateKycRecoveryResultCodeRecoveryAccountRoleNotFound": -4,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for InitiateKycRecoveryResultCode
+func (e InitiateKycRecoveryResultCode) ValidEnum(v int32) bool {
+	_, ok := initiateKycRecoveryResultCodeMap[v]
+	return ok
+}
+func (e InitiateKycRecoveryResultCode) isFlag() bool {
+	for i := len(InitiateKycRecoveryResultCodeAll) - 1; i >= 0; i-- {
+		expected := InitiateKycRecoveryResultCode(2) << uint64(len(InitiateKycRecoveryResultCodeAll)-1) >> uint64(len(InitiateKycRecoveryResultCodeAll)-i)
+		if expected != InitiateKycRecoveryResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e InitiateKycRecoveryResultCode) String() string {
+	name, _ := initiateKycRecoveryResultCodeMap[int32(e)]
+	return name
+}
+
+func (e InitiateKycRecoveryResultCode) ShortString() string {
+	name, _ := initiateKycRecoveryResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e InitiateKycRecoveryResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+		}
+		for _, value := range InitiateKycRecoveryResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *InitiateKycRecoveryResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = InitiateKycRecoveryResultCode(t.Value)
+	return nil
+}
+
+// InitiateKycRecoveryResultSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//             {
+//             case EMPTY_VERSION:
+//                 void;
+//             }
+//
+type InitiateKycRecoveryResultSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u InitiateKycRecoveryResultSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of InitiateKycRecoveryResultSuccessExt
+func (u InitiateKycRecoveryResultSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewInitiateKycRecoveryResultSuccessExt creates a new  InitiateKycRecoveryResultSuccessExt.
+func NewInitiateKycRecoveryResultSuccessExt(v LedgerVersion, value interface{}) (result InitiateKycRecoveryResultSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// InitiateKycRecoveryResultSuccess is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//             //: reserved for future use
+//             union switch (LedgerVersion v)
+//             {
+//             case EMPTY_VERSION:
+//                 void;
+//             } ext;
+//        }
+//
+type InitiateKycRecoveryResultSuccess struct {
+	Ext InitiateKycRecoveryResultSuccessExt `json:"ext,omitempty"`
+}
+
+// InitiateKycRecoveryResult is an XDR Union defines as:
+//
+//   union InitiateKYCRecoveryResult switch (InitiateKYCRecoveryResultCode code)
+//    {
+//    case SUCCESS:
+//        struct
+//        {
+//             //: reserved for future use
+//             union switch (LedgerVersion v)
+//             {
+//             case EMPTY_VERSION:
+//                 void;
+//             } ext;
+//        } success;
+//    default:
+//        void;
+//    };
+//
+type InitiateKycRecoveryResult struct {
+	Code    InitiateKycRecoveryResultCode     `json:"code,omitempty"`
+	Success *InitiateKycRecoveryResultSuccess `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u InitiateKycRecoveryResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of InitiateKycRecoveryResult
+func (u InitiateKycRecoveryResult) ArmForSwitch(sw int32) (string, bool) {
+	switch InitiateKycRecoveryResultCode(sw) {
+	case InitiateKycRecoveryResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewInitiateKycRecoveryResult creates a new  InitiateKycRecoveryResult.
+func NewInitiateKycRecoveryResult(code InitiateKycRecoveryResultCode, value interface{}) (result InitiateKycRecoveryResult, err error) {
+	result.Code = code
+	switch InitiateKycRecoveryResultCode(code) {
+	case InitiateKycRecoveryResultCodeSuccess:
+		tv, ok := value.(InitiateKycRecoveryResultSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be InitiateKycRecoveryResultSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u InitiateKycRecoveryResult) MustSuccess() InitiateKycRecoveryResultSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u InitiateKycRecoveryResult) GetSuccess() (result InitiateKycRecoveryResultSuccess, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Code))
 
 	if armName == "Success" {
@@ -33804,6 +34605,9 @@ type ReviewRequestOp struct {
 //        //: Change role
 //        //: Trying to remove zero tasks
 //        NON_ZERO_TASKS_TO_REMOVE_NOT_ALLOWED = -600,
+//        //: There is no account role with provided id
+//        ACCOUNT_ROLE_TO_SET_DOES_NOT_EXIST = -610,
+//
 //
 //        //: Update sale details
 //        //: Trying to update details of a non-existing sale
@@ -33857,7 +34661,10 @@ type ReviewRequestOp struct {
 //        QUOTE_ASSET_CANNOT_BE_SWAPPED = -1501,
 //        ASSETS_ARE_EQUAL = -1502,
 //        ASWAP_BID_UNDERFUNDED = -1503,
-//        ASWAP_PURCHASER_FULL_LINE = -1504
+//        ASWAP_PURCHASER_FULL_LINE = -1504,
+//
+//        //KYC
+//        INVALID_SIGNER_DATA = -1600
 //
 //    };
 //
@@ -33888,6 +34695,7 @@ const (
 	ReviewRequestResultCodeBaseAssetNotFound                        ReviewRequestResultCode = -530
 	ReviewRequestResultCodeQuoteAssetNotFound                       ReviewRequestResultCode = -550
 	ReviewRequestResultCodeNonZeroTasksToRemoveNotAllowed           ReviewRequestResultCode = -600
+	ReviewRequestResultCodeAccountRoleToSetDoesNotExist             ReviewRequestResultCode = -610
 	ReviewRequestResultCodeSaleNotFound                             ReviewRequestResultCode = -700
 	ReviewRequestResultCodeAmountMismatched                         ReviewRequestResultCode = -1010
 	ReviewRequestResultCodeDestinationBalanceMismatched             ReviewRequestResultCode = -1020
@@ -33924,6 +34732,7 @@ const (
 	ReviewRequestResultCodeAssetsAreEqual                           ReviewRequestResultCode = -1502
 	ReviewRequestResultCodeAswapBidUnderfunded                      ReviewRequestResultCode = -1503
 	ReviewRequestResultCodeAswapPurchaserFullLine                   ReviewRequestResultCode = -1504
+	ReviewRequestResultCodeInvalidSignerData                        ReviewRequestResultCode = -1600
 )
 
 var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
@@ -33951,6 +34760,7 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeBaseAssetNotFound,
 	ReviewRequestResultCodeQuoteAssetNotFound,
 	ReviewRequestResultCodeNonZeroTasksToRemoveNotAllowed,
+	ReviewRequestResultCodeAccountRoleToSetDoesNotExist,
 	ReviewRequestResultCodeSaleNotFound,
 	ReviewRequestResultCodeAmountMismatched,
 	ReviewRequestResultCodeDestinationBalanceMismatched,
@@ -33987,6 +34797,7 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeAssetsAreEqual,
 	ReviewRequestResultCodeAswapBidUnderfunded,
 	ReviewRequestResultCodeAswapPurchaserFullLine,
+	ReviewRequestResultCodeInvalidSignerData,
 }
 
 var reviewRequestResultCodeMap = map[int32]string{
@@ -34014,6 +34825,7 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-530:  "ReviewRequestResultCodeBaseAssetNotFound",
 	-550:  "ReviewRequestResultCodeQuoteAssetNotFound",
 	-600:  "ReviewRequestResultCodeNonZeroTasksToRemoveNotAllowed",
+	-610:  "ReviewRequestResultCodeAccountRoleToSetDoesNotExist",
 	-700:  "ReviewRequestResultCodeSaleNotFound",
 	-1010: "ReviewRequestResultCodeAmountMismatched",
 	-1020: "ReviewRequestResultCodeDestinationBalanceMismatched",
@@ -34050,6 +34862,7 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-1502: "ReviewRequestResultCodeAssetsAreEqual",
 	-1503: "ReviewRequestResultCodeAswapBidUnderfunded",
 	-1504: "ReviewRequestResultCodeAswapPurchaserFullLine",
+	-1600: "ReviewRequestResultCodeInvalidSignerData",
 }
 
 var reviewRequestResultCodeShortMap = map[int32]string{
@@ -34077,6 +34890,7 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-530:  "base_asset_not_found",
 	-550:  "quote_asset_not_found",
 	-600:  "non_zero_tasks_to_remove_not_allowed",
+	-610:  "account_role_to_set_does_not_exist",
 	-700:  "sale_not_found",
 	-1010: "amount_mismatched",
 	-1020: "destination_balance_mismatched",
@@ -34113,6 +34927,7 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-1502: "assets_are_equal",
 	-1503: "aswap_bid_underfunded",
 	-1504: "aswap_purchaser_full_line",
+	-1600: "invalid_signer_data",
 }
 
 var reviewRequestResultCodeRevMap = map[string]int32{
@@ -34140,6 +34955,7 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeBaseAssetNotFound":                        -530,
 	"ReviewRequestResultCodeQuoteAssetNotFound":                       -550,
 	"ReviewRequestResultCodeNonZeroTasksToRemoveNotAllowed":           -600,
+	"ReviewRequestResultCodeAccountRoleToSetDoesNotExist":             -610,
 	"ReviewRequestResultCodeSaleNotFound":                             -700,
 	"ReviewRequestResultCodeAmountMismatched":                         -1010,
 	"ReviewRequestResultCodeDestinationBalanceMismatched":             -1020,
@@ -34176,6 +34992,7 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeAssetsAreEqual":                           -1502,
 	"ReviewRequestResultCodeAswapBidUnderfunded":                      -1503,
 	"ReviewRequestResultCodeAswapPurchaserFullLine":                   -1504,
+	"ReviewRequestResultCodeInvalidSignerData":                        -1600,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -39101,6 +39918,74 @@ type IssuanceRequest struct {
 	Ext            IssuanceRequestExt `json:"ext,omitempty"`
 }
 
+// KycRecoveryRequestExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type KycRecoveryRequestExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u KycRecoveryRequestExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of KycRecoveryRequestExt
+func (u KycRecoveryRequestExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewKycRecoveryRequestExt creates a new  KycRecoveryRequestExt.
+func NewKycRecoveryRequestExt(v LedgerVersion, value interface{}) (result KycRecoveryRequestExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// KycRecoveryRequest is an XDR Struct defines as:
+//
+//   struct KYCRecoveryRequest {
+//        //: Account to be recovered
+//        AccountID targetAccount;
+//        //: New signers for the target account
+//        UpdateSignerData signersData<>;
+//
+//        //: Arbitrary stringified json object that can be used to attach data to be reviewed by an admin
+//        longstring creatorDetails; // details set by requester
+//        //: Sequence number increases when request is rejected
+//        uint32 sequenceNumber;
+//
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type KycRecoveryRequest struct {
+	TargetAccount  AccountId             `json:"targetAccount,omitempty"`
+	SignersData    []UpdateSignerData    `json:"signersData,omitempty"`
+	CreatorDetails Longstring            `json:"creatorDetails,omitempty"`
+	SequenceNumber Uint32                `json:"sequenceNumber,omitempty"`
+	Ext            KycRecoveryRequestExt `json:"ext,omitempty"`
+}
+
 // LimitsUpdateRequestExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -39288,7 +40173,7 @@ type CreateAccountSaleRuleData struct {
 //        case EMPTY_VERSION:
 //            void;
 //        case ADD_SALE_WHITELISTS:
-//            //: array of rules which determine sale participation
+//            //: array of rules that define participation rules. One global rule must be specified.
 //            CreateAccountSaleRuleData saleRules<>;
 //        }
 //
@@ -39395,7 +40280,7 @@ func (u SaleCreationRequestExt) GetSaleRules() (result []CreateAccountSaleRuleDa
 //        case EMPTY_VERSION:
 //            void;
 //        case ADD_SALE_WHITELISTS:
-//            //: array of rules which determine sale participation
+//            //: array of rules that define participation rules. One global rule must be specified.
 //            CreateAccountSaleRuleData saleRules<>;
 //        }
 //        ext;
@@ -39634,6 +40519,10 @@ type WithdrawalRequest struct {
 //            ManageVoteOp manageVoteOp;
 //        case MANAGE_ACCOUNT_SPECIFIC_RULE:
 //            ManageAccountSpecificRuleOp manageAccountSpecificRuleOp;
+//        case INITIATE_KYC_RECOVERY:
+//            InitiateKYCRecoveryOp initiateKYCRecoveryOp;
+//        case CREATE_KYC_RECOVERY_REQUEST:
+//            CreateKYCRecoveryRequestOp createKYCRecoveryRequestOp;
 //        }
 //
 type OperationBody struct {
@@ -39678,6 +40567,8 @@ type OperationBody struct {
 	ManagePollOp                             *ManagePollOp                             `json:"managePollOp,omitempty"`
 	ManageVoteOp                             *ManageVoteOp                             `json:"manageVoteOp,omitempty"`
 	ManageAccountSpecificRuleOp              *ManageAccountSpecificRuleOp              `json:"manageAccountSpecificRuleOp,omitempty"`
+	InitiateKycRecoveryOp                    *InitiateKycRecoveryOp                    `json:"initiateKYCRecoveryOp,omitempty"`
+	CreateKycRecoveryRequestOp               *CreateKycRecoveryRequestOp               `json:"createKYCRecoveryRequestOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -39770,6 +40661,10 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageVoteOp", true
 	case OperationTypeManageAccountSpecificRule:
 		return "ManageAccountSpecificRuleOp", true
+	case OperationTypeInitiateKycRecovery:
+		return "InitiateKycRecoveryOp", true
+	case OperationTypeCreateKycRecoveryRequest:
+		return "CreateKycRecoveryRequestOp", true
 	}
 	return "-", false
 }
@@ -40058,6 +40953,20 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.ManageAccountSpecificRuleOp = &tv
+	case OperationTypeInitiateKycRecovery:
+		tv, ok := value.(InitiateKycRecoveryOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be InitiateKycRecoveryOp")
+			return
+		}
+		result.InitiateKycRecoveryOp = &tv
+	case OperationTypeCreateKycRecoveryRequest:
+		tv, ok := value.(CreateKycRecoveryRequestOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateKycRecoveryRequestOp")
+			return
+		}
+		result.CreateKycRecoveryRequestOp = &tv
 	}
 	return
 }
@@ -41062,6 +41971,56 @@ func (u OperationBody) GetManageAccountSpecificRuleOp() (result ManageAccountSpe
 	return
 }
 
+// MustInitiateKycRecoveryOp retrieves the InitiateKycRecoveryOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustInitiateKycRecoveryOp() InitiateKycRecoveryOp {
+	val, ok := u.GetInitiateKycRecoveryOp()
+
+	if !ok {
+		panic("arm InitiateKycRecoveryOp is not set")
+	}
+
+	return val
+}
+
+// GetInitiateKycRecoveryOp retrieves the InitiateKycRecoveryOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetInitiateKycRecoveryOp() (result InitiateKycRecoveryOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "InitiateKycRecoveryOp" {
+		result = *u.InitiateKycRecoveryOp
+		ok = true
+	}
+
+	return
+}
+
+// MustCreateKycRecoveryRequestOp retrieves the CreateKycRecoveryRequestOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustCreateKycRecoveryRequestOp() CreateKycRecoveryRequestOp {
+	val, ok := u.GetCreateKycRecoveryRequestOp()
+
+	if !ok {
+		panic("arm CreateKycRecoveryRequestOp is not set")
+	}
+
+	return val
+}
+
+// GetCreateKycRecoveryRequestOp retrieves the CreateKycRecoveryRequestOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetCreateKycRecoveryRequestOp() (result CreateKycRecoveryRequestOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreateKycRecoveryRequestOp" {
+		result = *u.CreateKycRecoveryRequestOp
+		ok = true
+	}
+
+	return
+}
+
 // Operation is an XDR Struct defines as:
 //
 //   struct Operation
@@ -41153,6 +42112,10 @@ func (u OperationBody) GetManageAccountSpecificRuleOp() (result ManageAccountSpe
 //            ManageVoteOp manageVoteOp;
 //        case MANAGE_ACCOUNT_SPECIFIC_RULE:
 //            ManageAccountSpecificRuleOp manageAccountSpecificRuleOp;
+//        case INITIATE_KYC_RECOVERY:
+//            InitiateKYCRecoveryOp initiateKYCRecoveryOp;
+//        case CREATE_KYC_RECOVERY_REQUEST:
+//            CreateKYCRecoveryRequestOp createKYCRecoveryRequestOp;
 //        }
 //        body;
 //    };
@@ -41843,6 +42806,10 @@ type AccountRuleRequirement struct {
 //            ManageVoteResult manageVoteResult;
 //        case MANAGE_ACCOUNT_SPECIFIC_RULE:
 //            ManageAccountSpecificRuleResult manageAccountSpecificRuleResult;
+//        case CREATE_KYC_RECOVERY_REQUEST:
+//            CreateKYCRecoveryRequestResult createKYCRecoveryRequestResult;
+//        case INITIATE_KYC_RECOVERY:
+//            InitiateKYCRecoveryResult initiateKYCRecoveryResult;
 //        }
 //
 type OperationResultTr struct {
@@ -41887,6 +42854,8 @@ type OperationResultTr struct {
 	ManageCreatePollRequestResult                *ManageCreatePollRequestResult                `json:"manageCreatePollRequestResult,omitempty"`
 	ManageVoteResult                             *ManageVoteResult                             `json:"manageVoteResult,omitempty"`
 	ManageAccountSpecificRuleResult              *ManageAccountSpecificRuleResult              `json:"manageAccountSpecificRuleResult,omitempty"`
+	CreateKycRecoveryRequestResult               *CreateKycRecoveryRequestResult               `json:"createKYCRecoveryRequestResult,omitempty"`
+	InitiateKycRecoveryResult                    *InitiateKycRecoveryResult                    `json:"initiateKYCRecoveryResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -41979,6 +42948,10 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageVoteResult", true
 	case OperationTypeManageAccountSpecificRule:
 		return "ManageAccountSpecificRuleResult", true
+	case OperationTypeCreateKycRecoveryRequest:
+		return "CreateKycRecoveryRequestResult", true
+	case OperationTypeInitiateKycRecovery:
+		return "InitiateKycRecoveryResult", true
 	}
 	return "-", false
 }
@@ -42267,6 +43240,20 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.ManageAccountSpecificRuleResult = &tv
+	case OperationTypeCreateKycRecoveryRequest:
+		tv, ok := value.(CreateKycRecoveryRequestResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateKycRecoveryRequestResult")
+			return
+		}
+		result.CreateKycRecoveryRequestResult = &tv
+	case OperationTypeInitiateKycRecovery:
+		tv, ok := value.(InitiateKycRecoveryResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be InitiateKycRecoveryResult")
+			return
+		}
+		result.InitiateKycRecoveryResult = &tv
 	}
 	return
 }
@@ -43271,6 +44258,56 @@ func (u OperationResultTr) GetManageAccountSpecificRuleResult() (result ManageAc
 	return
 }
 
+// MustCreateKycRecoveryRequestResult retrieves the CreateKycRecoveryRequestResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustCreateKycRecoveryRequestResult() CreateKycRecoveryRequestResult {
+	val, ok := u.GetCreateKycRecoveryRequestResult()
+
+	if !ok {
+		panic("arm CreateKycRecoveryRequestResult is not set")
+	}
+
+	return val
+}
+
+// GetCreateKycRecoveryRequestResult retrieves the CreateKycRecoveryRequestResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetCreateKycRecoveryRequestResult() (result CreateKycRecoveryRequestResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreateKycRecoveryRequestResult" {
+		result = *u.CreateKycRecoveryRequestResult
+		ok = true
+	}
+
+	return
+}
+
+// MustInitiateKycRecoveryResult retrieves the InitiateKycRecoveryResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustInitiateKycRecoveryResult() InitiateKycRecoveryResult {
+	val, ok := u.GetInitiateKycRecoveryResult()
+
+	if !ok {
+		panic("arm InitiateKycRecoveryResult is not set")
+	}
+
+	return val
+}
+
+// GetInitiateKycRecoveryResult retrieves the InitiateKycRecoveryResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetInitiateKycRecoveryResult() (result InitiateKycRecoveryResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "InitiateKycRecoveryResult" {
+		result = *u.InitiateKycRecoveryResult
+		ok = true
+	}
+
+	return
+}
+
 // OperationResult is an XDR Union defines as:
 //
 //   union OperationResult switch (OperationResultCode code)
@@ -43358,6 +44395,10 @@ func (u OperationResultTr) GetManageAccountSpecificRuleResult() (result ManageAc
 //            ManageVoteResult manageVoteResult;
 //        case MANAGE_ACCOUNT_SPECIFIC_RULE:
 //            ManageAccountSpecificRuleResult manageAccountSpecificRuleResult;
+//        case CREATE_KYC_RECOVERY_REQUEST:
+//            CreateKYCRecoveryRequestResult createKYCRecoveryRequestResult;
+//        case INITIATE_KYC_RECOVERY:
+//            InitiateKYCRecoveryResult initiateKYCRecoveryResult;
 //        }
 //        tr;
 //    case opNO_ENTRY:
@@ -43945,7 +44986,10 @@ type TransactionResult struct {
 //        CHECK_SET_FEE_ACCOUNT_EXISTING = 1,
 //        FIX_PAYMENT_STATS = 2,
 //        ADD_INVEST_FEE = 3,
-//        ADD_SALE_WHITELISTS = 4
+//        ADD_SALE_WHITELISTS = 4,
+//        ASSET_PAIR_RESTRICTIONS = 5,
+//        FIX_CHANGE_TO_NON_EXISTING_ROLE = 6
+//
 //    };
 //
 type LedgerVersion int32
@@ -43956,6 +45000,8 @@ const (
 	LedgerVersionFixPaymentStats            LedgerVersion = 2
 	LedgerVersionAddInvestFee               LedgerVersion = 3
 	LedgerVersionAddSaleWhitelists          LedgerVersion = 4
+	LedgerVersionAssetPairRestrictions      LedgerVersion = 5
+	LedgerVersionFixChangeToNonExistingRole LedgerVersion = 6
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -43964,6 +45010,8 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixPaymentStats,
 	LedgerVersionAddInvestFee,
 	LedgerVersionAddSaleWhitelists,
+	LedgerVersionAssetPairRestrictions,
+	LedgerVersionFixChangeToNonExistingRole,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -43972,6 +45020,8 @@ var ledgerVersionMap = map[int32]string{
 	2: "LedgerVersionFixPaymentStats",
 	3: "LedgerVersionAddInvestFee",
 	4: "LedgerVersionAddSaleWhitelists",
+	5: "LedgerVersionAssetPairRestrictions",
+	6: "LedgerVersionFixChangeToNonExistingRole",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -43980,6 +45030,8 @@ var ledgerVersionShortMap = map[int32]string{
 	2: "fix_payment_stats",
 	3: "add_invest_fee",
 	4: "add_sale_whitelists",
+	5: "asset_pair_restrictions",
+	6: "fix_change_to_non_existing_role",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -43988,6 +45040,8 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixPaymentStats":            2,
 	"LedgerVersionAddInvestFee":               3,
 	"LedgerVersionAddSaleWhitelists":          4,
+	"LedgerVersionAssetPairRestrictions":      5,
+	"LedgerVersionFixChangeToNonExistingRole": 6,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -45001,7 +46055,9 @@ type Fee struct {
 //        MANAGE_CREATE_POLL_REQUEST = 43,
 //        MANAGE_POLL = 44,
 //        MANAGE_VOTE = 45,
-//        MANAGE_ACCOUNT_SPECIFIC_RULE = 46
+//        MANAGE_ACCOUNT_SPECIFIC_RULE = 46,
+//        INITIATE_KYC_RECOVERY = 47,
+//        CREATE_KYC_RECOVERY_REQUEST = 48
 //    };
 //
 type OperationType int32
@@ -45047,6 +46103,8 @@ const (
 	OperationTypeManagePoll                             OperationType = 44
 	OperationTypeManageVote                             OperationType = 45
 	OperationTypeManageAccountSpecificRule              OperationType = 46
+	OperationTypeInitiateKycRecovery                    OperationType = 47
+	OperationTypeCreateKycRecoveryRequest               OperationType = 48
 )
 
 var OperationTypeAll = []OperationType{
@@ -45090,6 +46148,8 @@ var OperationTypeAll = []OperationType{
 	OperationTypeManagePoll,
 	OperationTypeManageVote,
 	OperationTypeManageAccountSpecificRule,
+	OperationTypeInitiateKycRecovery,
+	OperationTypeCreateKycRecoveryRequest,
 }
 
 var operationTypeMap = map[int32]string{
@@ -45133,6 +46193,8 @@ var operationTypeMap = map[int32]string{
 	44: "OperationTypeManagePoll",
 	45: "OperationTypeManageVote",
 	46: "OperationTypeManageAccountSpecificRule",
+	47: "OperationTypeInitiateKycRecovery",
+	48: "OperationTypeCreateKycRecoveryRequest",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -45176,6 +46238,8 @@ var operationTypeShortMap = map[int32]string{
 	44: "manage_poll",
 	45: "manage_vote",
 	46: "manage_account_specific_rule",
+	47: "initiate_kyc_recovery",
+	48: "create_kyc_recovery_request",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -45219,6 +46283,8 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeManagePoll":                             44,
 	"OperationTypeManageVote":                             45,
 	"OperationTypeManageAccountSpecificRule":              46,
+	"OperationTypeInitiateKycRecovery":                    47,
+	"OperationTypeCreateKycRecoveryRequest":               48,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -45296,4 +46362,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "6da80385aa81c2db787778b9ca9908385df3d340"
+var Revision = "01feacef6ae3e6c37a2708e99ecc6558a90bdea6"

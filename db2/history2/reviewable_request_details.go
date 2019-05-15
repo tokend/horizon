@@ -27,6 +27,7 @@ type ReviewableRequestDetails struct {
 	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid,omitempty"`
 	CreateAtomicSwap    *CreateAtomicSwapRequest    `json:"create_atomic_swap,omitempty"`
 	CreatePoll          *CreatePollRequest          `json:"create_poll,omitempty"`
+	KYCRecovery         *KYCRecoveryRequest         `json:"kyc_recovery,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -158,4 +159,11 @@ type CreatePollRequest struct {
 	ResultProviderID         string            `json:"result_provider_id"`
 	StartTime                time.Time         `json:"start_time"`
 	EndTime                  time.Time         `json:"end_time"`
+}
+
+type KYCRecoveryRequest struct {
+	TargetAccount  string                `json:"target_account"`
+	SignersData    []UpdateSignerDetails `json:"signers_data"`
+	CreatorDetails regources.Details     `json:"creator_details"`
+	SequenceNumber uint32                `json:"sequence_number"`
 }

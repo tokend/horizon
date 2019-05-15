@@ -125,11 +125,18 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.cancel(lc)
 	case xdr.OperationTypeManageCreatePollRequest:
 		return c.handleRemoveOnManageCreatePollRequest(lc)
+	case xdr.OperationTypeInitiateKycRecovery:
+		return c.handleInitiateKycRecovery(lc)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
 		})
 	}
+}
+
+func (c *reviewableRequestHandler) handleInitiateKycRecovery(lc ledgerChange) error {
+	id := uint64(lc.LedgerChange.MustRemoved().MustReviewableRequest().RequestId)
+	return c.storage.Cancel(id)
 }
 
 func (c *reviewableRequestHandler) handleRemoveOnCreationOp(lc ledgerChange, fulfilled bool) error {
@@ -446,6 +453,26 @@ func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.ASwapReques
 	}
 }
 
+func (c *reviewableRequestHandler) getKYCRecovery(request *xdr.KycRecoveryRequest,
+) *history.KYCRecoveryRequest {
+	signersData := make([]history.UpdateSignerDetails, 0, len(request.SignersData))
+	for _, signer := range request.SignersData {
+		signersData = append(signersData, history.UpdateSignerDetails{
+			Details:  internal.MarshalCustomDetails(signer.Details),
+			RoleID:   uint64(signer.RoleId),
+			Identity: uint32(signer.Identity),
+			Weight:   uint32(signer.Weight),
+		})
+	}
+
+	return &history.KYCRecoveryRequest{
+		TargetAccount:  request.TargetAccount.Address(),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+		SequenceNumber: uint32(request.SequenceNumber),
+		SignersData:    signersData,
+	}
+}
+
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -485,6 +512,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.CreateAtomicSwap = c.getAtomicSwapRequest(body.ASwapRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = c.getCreatePollRequest(body.CreatePollRequest)
+	case xdr.ReviewableRequestTypeKycRecovery:
+		details.KYCRecovery = c.getKYCRecovery(body.KycRecoveryRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

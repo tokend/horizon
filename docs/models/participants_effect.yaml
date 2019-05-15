@@ -6,7 +6,8 @@ ParticipantsEffectKey:
       example: "lkasjdlkasjd"
     type:
       type: string
-      example: "participants-effect"
+      enum:
+        - "participants-effect"
 
 ParticipantsEffect:
   allOf:

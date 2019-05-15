@@ -498,7 +498,7 @@ func newCheckSaleStateOp(id int64, details history2.CheckSaleStateDetails) *rego
 // newPaymentOp - creates new instance of PaymentOp
 func newPaymentOp(id int64, details history2.PaymentDetails) *regources.PaymentOp {
 	return &regources.PaymentOp{
-		Key: regources.NewKeyInt64(id, regources.OPERATIONS_PAYMENT_V2),
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_PAYMENT),
 		Attributes: regources.PaymentOpAttributes{
 			Amount:                  details.Amount,
 			SourceFee:               details.SourceFee,
