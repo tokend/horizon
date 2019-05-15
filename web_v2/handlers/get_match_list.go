@@ -44,7 +44,7 @@ type getMatchListHandler struct {
 }
 
 // GetMatchList returns list of matches with related resources
-func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*regources.MatchsResponse, error) {
+func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*regources.MatchListResponse, error) {
 	q := h.MatchQ.Page(*request.PageParams).FilterByAssetPair(request.Filters.BaseAsset, request.Filters.QuoteAsset)
 
 	coreMatches, err := q.Select()
@@ -52,7 +52,7 @@ func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*reg
 		return nil, errors.Wrap(err, "failed to get matches from db")
 	}
 
-	response := regources.MatchsResponse{
+	response := regources.MatchListResponse{
 		Data: make([]regources.Match, 0, len(coreMatches)),
 	}
 

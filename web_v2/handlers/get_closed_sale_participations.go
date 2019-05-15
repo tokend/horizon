@@ -12,13 +12,13 @@ import (
 )
 
 // GetClosedSaleParticipations - returns closed sale participations by completed matches
-func (h *getSaleParticipationsHandler) GetClosedSaleParticipations(request *requests.GetSaleParticipations) (*regources.SaleParticipationsResponse, error) {
+func (h *getSaleParticipationsHandler) GetClosedSaleParticipations(request *requests.GetSaleParticipations) (*regources.SaleParticipationListResponse, error) {
 	matches, err := h.getMatches(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get matches")
 	}
 
-	response := regources.SaleParticipationsResponse{
+	response := regources.SaleParticipationListResponse{
 		Data: make([]regources.SaleParticipation, 0, len(matches)),
 	}
 

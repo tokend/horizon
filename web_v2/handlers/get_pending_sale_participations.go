@@ -10,13 +10,13 @@ import (
 )
 
 // GetPendingSaleParticipations - returns pending sale participations by open offers
-func (h *getSaleParticipationsHandler) GetPendingSaleParticipations(request *requests.GetSaleParticipations) (*regources.SaleParticipationsResponse, error) {
+func (h *getSaleParticipationsHandler) GetPendingSaleParticipations(request *requests.GetSaleParticipations) (*regources.SaleParticipationListResponse, error) {
 	offers, err := h.getPendingOffers(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get offers")
 	}
 
-	response := regources.SaleParticipationsResponse{
+	response := regources.SaleParticipationListResponse{
 		Data: make([]regources.SaleParticipation, 0, len(offers)),
 	}
 

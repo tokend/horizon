@@ -72,12 +72,12 @@ type getSaleParticipationsHandler struct {
 }
 
 // GetSaleParticipations returns sale with related resources
-func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale, request *requests.GetSaleParticipations) (*regources.SaleParticipationsResponse, error) {
+func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale, request *requests.GetSaleParticipations) (*regources.SaleParticipationListResponse, error) {
 	switch sale.State {
 	case regources.SaleStateOpen:
 		return h.GetPendingSaleParticipations(request)
 	case regources.SaleStateCanceled:
-		return &regources.SaleParticipationsResponse{
+		return &regources.SaleParticipationListResponse{
 			Data: make([]regources.SaleParticipation, 0),
 		}, nil
 	case regources.SaleStateClosed:
