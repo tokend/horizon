@@ -11,10 +11,6 @@ type StatsQ struct {
 	selector sq.SelectBuilder
 }
 
-func (q StatsQ) New() StatsQ {
-	return NewStatsQ(q.repo)
-}
-
 func NewStatsQ(repo *db2.Repo) StatsQ {
 	return StatsQ{
 		repo: repo,

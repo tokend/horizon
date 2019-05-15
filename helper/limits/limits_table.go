@@ -4,6 +4,9 @@ import (
 	"gitlab.com/tokend/horizon/db2/core2"
 )
 
+//Table is used to built complete limits overview,
+//using different level limits
+
 type (
 	Group struct {
 		AssetCode   string

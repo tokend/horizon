@@ -1,8 +1,9 @@
 package statslimits
 
 import (
-	"gitlab.com/tokend/horizon/db2/core2"
 	"math"
+
+	"gitlab.com/tokend/horizon/db2/core2"
 )
 
 //Table is used to built complete limits & stats overview,
