@@ -99,7 +99,7 @@
   version = "3.3.4"
 
 [[constraint]]
-  branch = "feature/limits-with-stats"
+  version = "4.3.0"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
