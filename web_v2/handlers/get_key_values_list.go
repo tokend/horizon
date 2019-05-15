@@ -28,7 +28,7 @@ func GetKeyValueList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := &regources.KeyValueEntrysResponse{
+	response := &regources.KeyValueEntryListResponse{
 		Data:  make([]regources.KeyValueEntry, 0, len(records)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

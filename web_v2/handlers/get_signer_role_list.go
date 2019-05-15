@@ -48,13 +48,13 @@ type getSignerRoleListHandler struct {
 }
 
 // GetSignerRoleList returns the list of signerRoles with related resources
-func (h *getSignerRoleListHandler) GetSignerRoleList(request *requests.GetSignerRoleList) (*regources.SignerRolesResponse, error) {
+func (h *getSignerRoleListHandler) GetSignerRoleList(request *requests.GetSignerRoleList) (*regources.SignerRoleListResponse, error) {
 	signerRoles, err := h.SignerRolesQ.Page(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get signer role list")
 	}
 
-	response := &regources.SignerRolesResponse{
+	response := &regources.SignerRoleListResponse{
 		Data:  make([]regources.SignerRole, 0, len(signerRoles)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

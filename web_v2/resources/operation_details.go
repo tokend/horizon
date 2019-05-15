@@ -39,7 +39,7 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	case xdr.OperationTypeManageOffer:
 		return newManageOfferOp(op.ID, *op.Details.ManageOffer)
 	case xdr.OperationTypeManageInvoiceRequest:
-		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_INVOICE_REQUEST).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_INVOICE).GetKeyP()
 	case xdr.OperationTypeReviewRequest:
 		return newReviewRequestOp(op.ID, *op.Details.ReviewRequest)
 	case xdr.OperationTypeCreateSaleRequest:
@@ -498,7 +498,7 @@ func newCheckSaleStateOp(id int64, details history2.CheckSaleStateDetails) *rego
 // newPaymentOp - creates new instance of PaymentOp
 func newPaymentOp(id int64, details history2.PaymentDetails) *regources.PaymentOp {
 	return &regources.PaymentOp{
-		Key: regources.NewKeyInt64(id, regources.OPERATIONS_PAYMENT_V2),
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_PAYMENT),
 		Attributes: regources.PaymentOpAttributes{
 			Amount:                  details.Amount,
 			SourceFee:               details.SourceFee,

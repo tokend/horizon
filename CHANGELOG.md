@@ -3,7 +3,7 @@
 ### Fixed
 
 * Sale participation response rendering
-
+* Names of multiple resources responses changed (e.g. `AccountsResponse` -> `AccountListResponse`)
 
 ## 3.3.1-x.0
 
@@ -18,6 +18,7 @@ permission to participate in sale.
 * Account specific rules ingestion
 * Sale version ingestion
 * Bumped up ingest version
+* `limits_with_stats` to `account` resource
 
 ## 3.3.0
 
