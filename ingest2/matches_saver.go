@@ -83,9 +83,9 @@ func getOpMatches(opResult xdr.OperationResultTr, opID int64, ledgerCloseTime in
 
 func trySquash(matches []history2.Match, atom xdr.ClaimOfferAtom) (m []history2.Match, ok bool) {
 	for i, match := range matches {
-		if match.Price == int64(atom.CurrentPrice) {
-			match.BaseAmount += int64(atom.BaseAmount)
-			match.QuoteAmount += int64(atom.QuoteAmount)
+		if match.Price == uint64(atom.CurrentPrice) {
+			match.BaseAmount += uint64(atom.BaseAmount)
+			match.QuoteAmount += uint64(atom.QuoteAmount)
 
 			matches[i] = match
 
