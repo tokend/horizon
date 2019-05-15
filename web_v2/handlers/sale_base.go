@@ -20,7 +20,7 @@ type salesBaseHandler struct {
 
 func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	request requests.SalesBase,
-	response *regources.SalesResponse) error {
+	response *regources.SaleListResponse) error {
 
 	for _, historySale := range historySales {
 		sale := resources.NewSale(historySale)

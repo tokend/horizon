@@ -64,7 +64,7 @@ type getSaleListForAccountHandler struct {
 }
 
 // GetSaleListForAccount returns the list of assets with related resources
-func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.GetSaleListForAccount) (*regources.SalesResponse, error) {
+func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.GetSaleListForAccount) (*regources.SaleListResponse, error) {
 
 	q := applySaleFilters(request.SalesBase, h.SalesQ).Whitelisted(request.Address)
 
@@ -72,7 +72,7 @@ func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.G
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sales list")
 	}
-	response := &regources.SalesResponse{
+	response := &regources.SaleListResponse{
 		Data: make([]regources.Sale, 0, len(historySales)),
 	}
 
@@ -87,7 +87,7 @@ func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.G
 }
 
 func (h *getSaleListForAccountHandler) populateLinks(
-	response *regources.SalesResponse, request *requests.GetSaleListForAccount,
+	response *regources.SaleListResponse, request *requests.GetSaleListForAccount,
 ) {
 	if len(response.Data) > 0 {
 		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)

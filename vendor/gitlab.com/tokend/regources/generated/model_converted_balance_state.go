@@ -14,7 +14,7 @@ type ConvertedBalanceStateResponse struct {
 	Included Included              `json:"included"`
 }
 
-type ConvertedBalanceStatesResponse struct {
+type ConvertedBalanceStateListResponse struct {
 	Data     []ConvertedBalanceState `json:"data"`
 	Included Included                `json:"included"`
 	Links    *Links                  `json:"links"`

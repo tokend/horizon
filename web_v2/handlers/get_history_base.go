@@ -112,9 +112,9 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 func (h *getHistory) SelectAndPopulate(
 	request *requests.GetHistory,
 	effectsQ history2.ParticipantEffectsQ,
-) (regources.ParticipantsEffectsResponse, error) {
+) (regources.ParticipantsEffectListResponse, error) {
 
-	result := regources.ParticipantsEffectsResponse{
+	result := regources.ParticipantsEffectListResponse{
 		Data: []regources.ParticipantsEffect{},
 	}
 

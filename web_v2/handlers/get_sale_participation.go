@@ -72,8 +72,8 @@ type getSaleParticipationHandler struct {
 }
 
 // GetSale returns sale with related resources
-func (h *getSaleParticipationHandler) getSaleParticipation(sale *history2.Sale, request *requests.GetSaleParticipation) (*regources.SaleParticipationsResponse, error) {
-	response := &regources.SaleParticipationsResponse{
+func (h *getSaleParticipationHandler) getSaleParticipation(sale *history2.Sale, request *requests.GetSaleParticipation) (*regources.SaleParticipationListResponse, error) {
+	response := &regources.SaleParticipationListResponse{
 		Data: make([]regources.SaleParticipation, 0),
 	}
 
@@ -120,7 +120,7 @@ func (h *getSaleParticipationHandler) getSaleParticipation(sale *history2.Sale, 
 }
 
 func (h *getSaleParticipationHandler) populateLinks(
-	response *regources.SaleParticipationsResponse, request *requests.GetSaleParticipation,
+	response *regources.SaleParticipationListResponse, request *requests.GetSaleParticipation,
 ) {
 	if len(response.Data) > 0 {
 		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
@@ -163,7 +163,7 @@ func populateSaleParticipationFilters(q history2.SaleParticipationQ, request *re
 func (h *getSaleParticipationHandler) fromHistory(
 	participations []history2.SaleParticipation,
 	request *requests.GetSaleParticipation,
-	response *regources.SaleParticipationsResponse) error {
+	response *regources.SaleParticipationListResponse) error {
 
 	for _, p := range participations {
 		response.Data = append(response.Data,
@@ -184,7 +184,7 @@ func (h *getSaleParticipationHandler) fromHistory(
 func (h *getSaleParticipationHandler) populateIncludes(
 	baseAsset, quoteAsset string,
 	request *requests.GetSaleParticipation,
-	response *regources.SaleParticipationsResponse) error {
+	response *regources.SaleParticipationListResponse) error {
 
 	if request.ShouldInclude(requests.IncludeTypeSaleParticipationBaseAsset) {
 		baseRaw, err := h.AssetsQ.GetByCode(baseAsset)
@@ -227,7 +227,7 @@ func (h *getSaleParticipationHandler) populateIncludes(
 func (h *getSaleParticipationHandler) fromCore(
 	offers []core2.Offer,
 	request *requests.GetSaleParticipation,
-	response *regources.SaleParticipationsResponse) error {
+	response *regources.SaleParticipationListResponse) error {
 
 	result := make([]regources.SaleParticipation, 0, len(offers))
 	for _, offer := range offers {
