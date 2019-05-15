@@ -32,12 +32,6 @@ func NewSaleParticipationQ(repo *db2.Repo) SaleParticipationQ {
 	}
 }
 
-// FilterByBaseAsset - returns q with filter by base asset
-func (q SaleParticipationQ) FilterByBaseAsset(asset string) SaleParticipationQ {
-	q.selector = q.selector.Where("pe.asset_code = ?", asset)
-	return q
-}
-
 // FilterByQuoteAsset - returns q with filter by quote asset
 func (q SaleParticipationQ) FilterByQuoteAsset(asset string) SaleParticipationQ {
 	q.selector = q.selector.Where("pe.effect#>>'{matched,charged,asset_code}' = ?", asset)
@@ -50,9 +44,12 @@ func (q SaleParticipationQ) FilterByParticipant(id string) SaleParticipationQ {
 	return q
 }
 
-// FilterBySaleID - returns q with filter by sale id
-func (q SaleParticipationQ) FilterBySale(id uint64) SaleParticipationQ {
-	q.selector = q.selector.Where("(pe.effect#>>'{matched,order_book_id}')::int = ?", id)
+// FilterBySaleParams - returns q with filter by sale params
+func (q SaleParticipationQ) FilterBySaleParams(id uint64, baseAsset string) SaleParticipationQ {
+	q.selector = q.selector.
+		Where("(pe.effect#>>'{matched,order_book_id}')::int = ?", id).
+		Where("pe.asset_code = ?", baseAsset)
+
 	return q
 }
 

@@ -81,10 +81,7 @@ func (h *getSaleParticipationsHandler) getMatches(request *requests.GetSaleParti
 		return nil, errors.Wrap(err, "failed to load sale")
 	}
 
-	q := h.ParticipationQ.
-		FilterBySale(request.SaleID).
-		FilterByBaseAsset(sale.BaseAsset).
-		Page(*request.PageParams)
+	q := h.ParticipationQ.FilterBySaleParams(sale.ID, sale.BaseAsset).Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeSaleParticipationsParticipant) {
 		q = q.FilterByParticipant(request.Filters.Participant)
