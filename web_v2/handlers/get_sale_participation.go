@@ -229,7 +229,6 @@ func (h *getSaleParticipationHandler) fromCore(
 	request *requests.GetSaleParticipation,
 	response *regources.SaleParticipationListResponse) error {
 
-	result := make([]regources.SaleParticipation, 0, len(offers))
 	for _, offer := range offers {
 		response.Data = append(response.Data,
 			resources.NewSaleParticipation(offer.OfferID,
