@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"gitlab.com/tokend/regources"
-
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"gitlab.com/tokend/go/xdr"
@@ -110,8 +108,8 @@ func (s PollState) String() string {
 }
 
 func (s PollState) MarshalJSON() ([]byte, error) {
-	return json.Marshal(regources.Flag{
+	return json.Marshal(Flag{
 		Name:  pollStateStr[s],
-		Value: int32(s),
+		Value: int(s),
 	})
 }

@@ -99,7 +99,7 @@
   revision = "ea1e8a9f2f7558be41eaf22fdb3d3c0fa396eca3"
 
 [[constraint]]
-  revision = "8749ef049a45d5324a712ca3b65cbf428cca836f"
+  revision = "9acb1b52fffd29912ae80aebb280236dbc7e0156"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
