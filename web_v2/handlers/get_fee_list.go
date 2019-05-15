@@ -48,7 +48,7 @@ type getFeeListHandler struct {
 }
 
 // GetFeeList returns the list of fees with related resources
-func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources.FeeRecordsResponse, error) {
+func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources.FeeRecordListResponse, error) {
 	q := h.FeesQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeFeeListAccount) {
 		q = q.FilterByAddress(request.Filters.Account)
@@ -82,7 +82,7 @@ func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources
 		return nil, errors.Wrap(err, "Failed to get fee list")
 	}
 
-	response := &regources.FeeRecordsResponse{
+	response := &regources.FeeRecordListResponse{
 		Data:  make([]regources.FeeRecord, 0, len(fees)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

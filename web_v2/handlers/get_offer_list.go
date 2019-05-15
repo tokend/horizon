@@ -54,7 +54,7 @@ type getOfferListHandler struct {
 }
 
 // GetOfferList returns offer with related resources
-func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*regources.OffersResponse, error) {
+func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*regources.OfferListResponse, error) {
 	q := h.OffersQ.Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeOfferListBaseBalance) {
@@ -98,7 +98,7 @@ func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*reg
 		return nil, errors.Wrap(err, "Failed to get offer list")
 	}
 
-	response := &regources.OffersResponse{
+	response := &regources.OfferListResponse{
 		Data:  make([]regources.Offer, 0, len(coreOffers)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

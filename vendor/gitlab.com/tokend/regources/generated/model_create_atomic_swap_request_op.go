@@ -14,7 +14,7 @@ type CreateAtomicSwapRequestOpResponse struct {
 	Included Included                  `json:"included"`
 }
 
-type CreateAtomicSwapRequestOpsResponse struct {
+type CreateAtomicSwapRequestOpListResponse struct {
 	Data     []CreateAtomicSwapRequestOp `json:"data"`
 	Included Included                    `json:"included"`
 	Links    *Links                      `json:"links"`

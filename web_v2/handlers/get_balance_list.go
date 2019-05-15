@@ -74,7 +74,7 @@ func (h *getBalanceListHandler) getAssetOwner(assetCode string) (string, error) 
 }
 
 // GetBalanceList returns list of balances with related resources
-func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList) (*regources.BalancesResponse, error) {
+func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList) (*regources.BalanceListResponse, error) {
 	q := h.BalancesQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeBalanceListAsset) {
 		q = q.FilterByAsset(request.Filters.Asset)
@@ -85,7 +85,7 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 		return nil, errors.Wrap(err, "Failed to get balance list")
 	}
 
-	response := &regources.BalancesResponse{
+	response := &regources.BalanceListResponse{
 		Data:  make([]regources.Balance, 0, len(coreBalances)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
