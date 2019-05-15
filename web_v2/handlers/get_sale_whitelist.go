@@ -28,7 +28,7 @@ func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
 	handler := getSaleWhiteListHandler{
 		SalesQ:                history2.NewSalesQ(ctx.HistoryRepo(r)),
 		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(ctx.HistoryRepo(r)),
-		Log: ctx.Log(r),
+		Log:                   ctx.Log(r),
 	}
 
 	sale, err := handler.SalesQ.GetByID(request.SaleID)
@@ -74,8 +74,8 @@ type getSaleWhiteListHandler struct {
 }
 
 // GetSale returns sale with related resources
-func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhitelist) (*regources.SaleWhitelistsResponse, error) {
-	response := &regources.SaleWhitelistsResponse{
+func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhitelist) (*regources.SaleWhitelistListResponse, error) {
+	response := &regources.SaleWhitelistListResponse{
 		Data: make([]regources.SaleWhitelist, 0),
 	}
 
@@ -103,7 +103,7 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 }
 
 func (h *getSaleWhiteListHandler) populateLinks(
-	response *regources.SaleWhitelistsResponse, request *requests.GetSaleWhitelist,
+	response *regources.SaleWhitelistListResponse, request *requests.GetSaleWhitelist,
 ) {
 	if len(response.Data) > 0 {
 		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)

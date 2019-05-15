@@ -7,8 +7,6 @@ ResourceType:
     "aswap-bid",
     "asset-pairs",
     "balances-state",
-    "converted-balances-collections",
-    "converted-balance-states",
     "external-system-ids",
     "fee-rules",
     "key-value-entries",

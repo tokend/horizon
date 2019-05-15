@@ -13,7 +13,7 @@ type HorizonStateResponse struct {
 	Included Included     `json:"included"`
 }
 
-type HorizonStatesResponse struct {
+type HorizonStateListResponse struct {
 	Data     []HorizonState `json:"data"`
 	Included Included       `json:"included"`
 	Links    *Links         `json:"links"`

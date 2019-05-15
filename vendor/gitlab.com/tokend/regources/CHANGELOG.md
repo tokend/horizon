@@ -1,6 +1,13 @@
 # Changelog
 
-## Unreleased
+## 4.3.0
+
+## Added
+* `Statistics` resource
+* `LimitsWithStats` resource
+
+## Removed
+* `Asset` relation from `ConvertedBalanceStateRelationships`
 
 ## 4.2.3
 ## Added

@@ -13,7 +13,7 @@ type CancelAtomicSwapBidOpResponse struct {
 	Included Included              `json:"included"`
 }
 
-type CancelAtomicSwapBidOpsResponse struct {
+type CancelAtomicSwapBidOpListResponse struct {
 	Data     []CancelAtomicSwapBidOp `json:"data"`
 	Included Included                `json:"included"`
 	Links    *Links                  `json:"links"`

@@ -58,7 +58,7 @@ type getAccountSignersHandler struct {
 }
 
 //GetAccountSigners - returns signers for account
-func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccountSigners) (*regources.SignersResponse, error) {
+func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccountSigners) (*regources.SignerListResponse, error) {
 	account, err := h.AccountQ.GetByAddress(request.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load account", logan.F{
@@ -77,7 +77,7 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 		})
 	}
 
-	response := regources.SignersResponse{
+	response := regources.SignerListResponse{
 		Data: make([]regources.Signer, 0, len(signers)),
 	}
 
