@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"net/http"
-
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -11,7 +9,9 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
+	"gitlab.com/tokend/horizon/web_v2/resources"
 	"gitlab.com/tokend/regources/generated"
+	"net/http"
 )
 
 // GetSaleParticipations - processes request to get list of sale participations
@@ -23,10 +23,10 @@ func GetSaleParticipations(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler := getSaleParticipationsHandler{
-		AssetsQ:        core2.NewAssetsQ(ctx.CoreRepo(r)),
-		SalesQ:         history2.NewSalesQ(ctx.HistoryRepo(r)),
 		ParticipationQ: history2.NewSaleParticipationQ(ctx.HistoryRepo(r)),
 		OffersQ:        core2.NewOffersQ(ctx.CoreRepo(r)),
+		AssetsQ:        core2.NewAssetsQ(ctx.CoreRepo(r)),
+		SalesQ:         history2.NewSalesQ(ctx.HistoryRepo(r)),
 		Log:            ctx.Log(r),
 	}
 
@@ -38,6 +38,7 @@ func GetSaleParticipations(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
+
 	if sale == nil {
 		ape.RenderErr(w, problems.NotFound())
 		return
@@ -55,38 +56,132 @@ func GetSaleParticipations(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	if result == nil {
-		ape.RenderErr(w, problems.NotFound())
-		return
-	}
 
 	ape.Render(w, result)
 }
 
 type getSaleParticipationsHandler struct {
+	Log            *logan.Entry
 	SalesQ         history2.SalesQ
 	OffersQ        core2.OffersQ
 	AssetsQ        core2.AssetsQ
 	ParticipationQ history2.SaleParticipationQ
-	Log            *logan.Entry
+}
+
+type participationsQI interface {
+	// FilterByParticipant - filters out participations by participant address
+	FilterByParticipant(id string) participationsQI
+	// FilterByQuoteAsset - filters out participations by quote asset
+	FilterByQuoteAsset(code string) participationsQI
+	// Select - select records from db and wraps them to participations
+	Select() ([]regources.SaleParticipation, error)
 }
 
 // GetSaleParticipations returns sale with related resources
 func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale, request *requests.GetSaleParticipations) (*regources.SaleParticipationListResponse, error) {
+	response := regources.SaleParticipationListResponse{
+		Data: make([]regources.SaleParticipation, 0),
+	}
+
+	var participationsQ participationsQI
+
 	switch sale.State {
-	case regources.SaleStateOpen:
-		return h.GetPendingSaleParticipations(request)
 	case regources.SaleStateCanceled:
-		return &regources.SaleParticipationListResponse{
-			Data: make([]regources.SaleParticipation, 0),
-		}, nil
+		return &response, nil
+	case regources.SaleStateOpen:
+		participationsQ = newPendingParticipationQ(request, h.OffersQ)
 	case regources.SaleStateClosed:
-		return h.GetClosedSaleParticipations(request)
+		participationsQ = newClosedParticipationQ(request, h.ParticipationQ, sale)
 	default:
 		return nil, errors.From(errors.New("unexpected sale state"), logan.F{
 			"sale_state": sale.State,
 		})
 	}
+
+	if request.ShouldFilter(requests.FilterTypeSaleParticipationsParticipant) {
+		participationsQ = participationsQ.FilterByParticipant(request.Filters.Participant)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeSaleParticipationsQuoteAsset) {
+		participationsQ = participationsQ.FilterByQuoteAsset(request.Filters.QuoteAsset)
+	}
+
+	var err error
+	response.Data, err = participationsQ.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load participations")
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeSaleParticipationsBaseAsset) && len(response.Data) != 0 {
+		baseAsset, err := h.getAsset(sale.BaseAsset)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to load asset")
+		}
+
+		response.Included.Add(baseAsset)
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeSaleParticipationsQuoteAsset) {
+		assetsCodesSet := make(map[string]struct{})
+		for _, participation := range response.Data {
+			assetsCodesSet[participation.Relationships.QuoteAsset.Data.ID] = struct{}{}
+		}
+
+		assetCodes := make([]string, 0)
+		for code := range assetsCodesSet {
+			assetCodes = append(assetCodes, code)
+		}
+
+		assets, err := h.getAssets(assetCodes...)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get assets")
+		}
+
+		for _, asset := range assets {
+			response.Included.Add(&asset)
+		}
+	}
+
+	if len(response.Data) > 0 {
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+	} else {
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
+	}
+
+	return &response, nil
+}
+
+func (h *getSaleParticipationsHandler) getAssets(codes ...string) ([]regources.Asset, error) {
+	assets, err := h.AssetsQ.FilterByCodes(codes).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load assets")
+	}
+
+	result := make([]regources.Asset, 0, len(assets))
+	for _, asset := range assets {
+		result = append(result, resources.NewAsset(asset))
+	}
+
+	return result, nil
+}
+
+func (h *getSaleParticipationsHandler) getAsset(code string) (*regources.Asset, error) {
+	coreAsset, err := h.AssetsQ.GetByCode(code)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load asset by code", logan.F{
+			"code": code,
+		})
+	}
+
+	if coreAsset == nil {
+		return nil, errors.From(errors.New("asset not found"), logan.F{
+			"code": code,
+		})
+	}
+
+	asset := resources.NewAsset(*coreAsset)
+
+	return &asset, nil
 }
 
 func (h *getSaleParticipationsHandler) getSale(id uint64) (*history2.Sale, error) {
