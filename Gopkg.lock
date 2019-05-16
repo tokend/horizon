@@ -531,14 +531,14 @@
 
 [[projects]]
   branch = "feature/atomic_swap_returning"
-  digest = "1:0ebcb071c119213e85d301e57bf882fbe42f2e91c78ff3223b8f43492c6d8a37"
+  digest = "1:9395ad9ff3a5576d2af0e5a6dd78e5c6fcbac06289d5da552f25fba8d31256c1"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "7e32aa31a748052d9211108538d2c27065bd8017"
+  revision = "b27a828dde91840a9dba612192e55f144ba6dfdf"
 
 [[projects]]
   branch = "master"

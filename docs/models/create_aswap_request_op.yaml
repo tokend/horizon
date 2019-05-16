@@ -9,7 +9,7 @@ CreateAtomicSwapRequestOpKey:
       deprecated: true
       type: string
       enum:
-        - "operations-create-aswap-request"
+        - "operations-create-atomic-swap-request"
 
 
 CreateAtomicSwapRequestOp:

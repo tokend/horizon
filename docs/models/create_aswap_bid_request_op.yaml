@@ -9,7 +9,7 @@ CreateAtomicSwapBidRequestOpKey:
       deprecated: true
       type: string
       enum:
-        - "operations-create-aswap-bid-request"
+        - "operations-create-atomic-swap-bid-request"
 
 
 CreateAtomicSwapBidRequestOp:

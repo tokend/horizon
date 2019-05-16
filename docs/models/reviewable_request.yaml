@@ -15,7 +15,7 @@ Int64Key:
         - "request-details-asset-create"
         - "request-details-asset-update"
         - "request-details-atomic-swap"
-        - "request-details-aswap-bid"
+        - "request-details-atomic-swap-bid"
         - "request-details-issuance"
         - "request-details-limits-update"
         - "request-details-pre-issuance"

@@ -84,11 +84,11 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	case xdr.OperationTypeManageAccountRule:
 		return newManageAccountRule(op.ID, *op.Details.ManageAccountRule)
 	case xdr.OperationTypeCreateAtomicSwapBidRequest:
-		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ASWAP_BID_REQUEST).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ATOMIC_SWAP_BID_REQUEST).GetKeyP()
 	case xdr.OperationTypeCancelAtomicSwapBid:
-		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_ASWAP_BID).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_ATOMIC_SWAP_BID).GetKeyP()
 	case xdr.OperationTypeCreateAtomicSwapRequest:
-		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ASWAP_REQUEST).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ATOMIC_SWAP_REQUEST).GetKeyP()
 	case xdr.OperationTypeManageSignerRole:
 		return newManageSignerRole(op.ID, *op.Details.ManageSignerRole)
 	case xdr.OperationTypeManageSignerRule:

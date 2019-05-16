@@ -13,7 +13,7 @@ func NewAtomicSwapBid(core core2.AtomicSwapBid) regources.AtomicSwapBid {
 	return regources.AtomicSwapBid{
 		Key: regources.Key{
 			ID:   fmt.Sprint(core.BidID),
-			Type: regources.ASWAP_BID,
+			Type: regources.ATOMIC_SWAP_BID,
 		},
 		Attributes: regources.AtomicSwapBidAttributes{
 			AvailableAmount: regources.Amount(core.AvailableAmount),
@@ -29,7 +29,7 @@ func NewAtomicSwapBid(core core2.AtomicSwapBid) regources.AtomicSwapBid {
 func NewAtomicSwapBidKey(id uint64) regources.Key {
 	return regources.Key{
 		ID:   fmt.Sprint(id),
-		Type: regources.ASWAP_BID,
+		Type: regources.ATOMIC_SWAP_BID,
 	}
 }
 
