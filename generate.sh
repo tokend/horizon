@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-GENERATOR_IMAGE=registry.gitlab.com/tokend/openapi-go-generator:9654fd0643257d6bcb7d98125e85e8dd8f910854
+GENERATOR_IMAGE=registry.gitlab.com/tokend/openapi-go-generator:9654fd0643257d6bcb7d98125e85e8dd8f910854 # latest generator commit in master
 
 GENERATED="${GOPATH}/src/gitlab.com/tokend/regources/generated"
 OPENAPI_DIR="${GOPATH}/src/gitlab.com/tokend/horizon/docs/build"
