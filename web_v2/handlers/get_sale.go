@@ -94,7 +94,7 @@ func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResp
 	}
 
 	for _, historyQuoteAsset := range historySale.QuoteAssets.QuoteAssets {
-		quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset)
+		quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset, historySale.ID)
 		quoteAssets.Data = append(quoteAssets.Data, quoteAsset.Key)
 
 		if request.ShouldInclude(requests.IncludeTypeSaleQuoteAssets) {

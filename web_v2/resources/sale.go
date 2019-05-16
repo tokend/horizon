@@ -51,7 +51,7 @@ func NewSaleDefaultQuoteAsset(saleRecord history2.Sale) regources.SaleQuoteAsset
 	}
 
 	return regources.SaleQuoteAsset{
-		Key: *NewSaleQuoteAssetKey(saleRecord.DefaultQuoteAsset).GetKeyP(),
+		Key: *NewSaleQuoteAssetKey(saleRecord.DefaultQuoteAsset, saleRecord.ID).GetKeyP(),
 		Attributes: regources.SaleQuoteAssetAttributes{
 			Price:      price,
 			CurrentCap: saleRecord.CurrentCap,
