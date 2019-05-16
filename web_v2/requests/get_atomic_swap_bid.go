@@ -5,7 +5,6 @@ import (
 )
 
 const (
-	// IncludeTypeAssetOwner - defines if the asset owner should be included in the response
 	IncludeTypeBidBaseBalance = "base_balance"
 	IncludeTypeBidOwner       = "owner"
 	IncludeTypeBidBaseAsset   = "base_asset"
@@ -19,13 +18,13 @@ var includeTypeBidAll = map[string]struct{}{
 	IncludeTypeBidQuoteAssets: {},
 }
 
-// GetAsset - represents params to be specified by user for Get Asset handler
+// GetAtomicSwapBid - represents params to be specified by user for Get AtomicSwapBid handler
 type GetAtomicSwapBid struct {
 	*base
 	ID uint64
 }
 
-// NewGetAsset returns new instance of GetAsset request
+// NewGetAtomicSwapBid returns new instance of GetAtomicSwapBid request
 func NewGetAtomicSwapBid(r *http.Request) (*GetAtomicSwapBid, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeBidAll,

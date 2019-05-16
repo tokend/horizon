@@ -7,13 +7,11 @@ import (
 )
 
 const (
-	// IncludeTypeAssetOwner - defines if the asset owner should be included in the response
 	IncludeTypeBidListBaseBalances = "base_balance"
 	IncludeTypeBidListOwners       = "owner"
 	IncludeTypeBidListBaseAssets   = "base_asset"
 	IncludeTypeBidListQuoteAssets  = "quote_assets"
 
-	// FilterTypeAssetListOwner - defines if we need to filter the list by owner
 	FilterTypeBidListOwner       = "owner"
 	FilterTypeBidListBaseAsset   = "base_asset"
 	FilterTypeBidListQuoteAssets = "quote_assets"
@@ -32,7 +30,7 @@ var filterTypeBidListAll = map[string]struct{}{
 	FilterTypeBidListQuoteAssets: {},
 }
 
-// GetAsset - represents params to be specified by user for Get Asset handler
+// GetAtomicSwapBidList - represents params to be specified by user for Get AtomicSwapBidList handler
 type GetAtomicSwapBidList struct {
 	*base
 	Filters struct {
@@ -43,7 +41,7 @@ type GetAtomicSwapBidList struct {
 	PageParams *db2.OffsetPageParams
 }
 
-// NewGetAsset returns new instance of GetAsset request
+// NewGetAtomicSwapBidList returns new instance of GetAtomicSwapBidList request
 func NewGetAtomicSwapBidList(r *http.Request) (*GetAtomicSwapBidList, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeBidListAll,

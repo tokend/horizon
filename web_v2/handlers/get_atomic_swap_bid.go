@@ -14,7 +14,7 @@ import (
 	"gitlab.com/tokend/regources/generated"
 )
 
-// GetAsset - processes request to get asset and it's details by asset code
+// GetAtomicSwapBid - processes request to get atomic swap bid and it's details by id
 func GetAtomicSwapBid(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getAtomicSwapBidHandler{
@@ -56,7 +56,7 @@ type getAtomicSwapBidHandler struct {
 	Log                   *logan.Entry
 }
 
-// GetAsset returns asset with related resources
+// GetAtomicSwapBid returns atomic swap bid with related resources
 func (h *getAtomicSwapBidHandler) GetAtomicSwapBid(request *requests.GetAtomicSwapBid,
 ) (*regources.AtomicSwapBidResponse, error) {
 	bid, err := h.AtomicSwapBidQ.GetByID(request.ID)

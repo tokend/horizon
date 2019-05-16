@@ -3,7 +3,7 @@ package regources
 import (
 	"encoding/json"
 
-	"gitlab.com/tokend/regources/v2"
+	generated "gitlab.com/tokend/regources/generated"
 )
 
 // Represents Reviewable request
@@ -238,7 +238,7 @@ type AtomicSwapBidCreation struct {
 	BaseBalance string                 `json:"base_balance"`
 	BaseAmount  Amount                 `json:"base_amount"`
 	Details     map[string]interface{} `json:"details"`
-	QuoteAssets []regources.AssetPrice `json:"quote_assets"`
+	QuoteAssets []generated.AssetPrice `json:"quote_assets"`
 }
 
 type AtomicSwap struct {
