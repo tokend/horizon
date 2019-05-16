@@ -112,7 +112,17 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 		return nil, errors.Wrap(err, "failed to load participations")
 	}
 
-	if request.ShouldInclude(requests.IncludeTypeSaleParticipationsBaseAsset) && len(response.Data) != 0 {
+	if len(response.Data) > 0 {
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+	} else {
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
+	}
+
+	if len(response.Data) == 0 {
+		return &response, nil
+	}
+
+	if request.ShouldInclude(requests.IncludeTypeSaleParticipationsBaseAsset) {
 		baseAsset, err := h.getAsset(sale.BaseAsset)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to load asset")
@@ -122,17 +132,7 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeSaleParticipationsQuoteAsset) {
-		assetsCodesSet := make(map[string]struct{})
-		for _, participation := range response.Data {
-			assetsCodesSet[participation.Relationships.QuoteAsset.Data.ID] = struct{}{}
-		}
-
-		assetCodes := make([]string, 0)
-		for code := range assetsCodesSet {
-			assetCodes = append(assetCodes, code)
-		}
-
-		assets, err := h.getAssets(assetCodes...)
+		assets, err := h.getAssets(response.Data)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get assets")
 		}
@@ -142,19 +142,29 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 		}
 	}
 
-	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
-	} else {
-		response.Links = request.GetCursorLinks(*request.PageParams, "")
-	}
-
 	return &response, nil
 }
 
-func (h *getSaleParticipationsHandler) getAssets(codes ...string) ([]regources.Asset, error) {
+func (h *getSaleParticipationsHandler) getAssets(participations []regources.SaleParticipation) ([]regources.Asset, error) {
+	codesSet := make(map[string]struct{})
+	for _, participation := range participations {
+		codesSet[participation.Relationships.QuoteAsset.Data.ID] = struct{}{}
+	}
+
+	codes := make([]string, 0)
+	for code := range codesSet {
+		codes = append(codes, code)
+	}
+
 	assets, err := h.AssetsQ.FilterByCodes(codes).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load assets")
+	}
+
+	if len(assets) != len(codes) {
+		return nil, errors.From(errors.New("some assets have not been found"), logan.F{
+			"asset_codes": codes,
+		})
 	}
 
 	result := make([]regources.Asset, 0, len(assets))
