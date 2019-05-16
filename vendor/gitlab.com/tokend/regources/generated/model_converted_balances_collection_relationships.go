@@ -5,5 +5,6 @@
 package regources
 
 type ConvertedBalancesCollectionRelationships struct {
+	Asset  Relation           `json:"asset"`
 	States RelationCollection `json:"states"`
 }

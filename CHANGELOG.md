@@ -4,6 +4,19 @@
 
 * Sale participation response rendering
 * Names of multiple resources responses changed (e.g. `AccountsResponse` -> `AccountListResponse`)
+### Added
+
+* `/v3/matches` endpoint to get the history of secondary market matches
+* `asset` relationship to `converted-balances-collections` resource type
+* `asset` include parameter to `/v3/accounts/{id}/converted_balances{asset_code}`
+
+### Removed
+
+* Sale participation on sale close ingestion
+
+### Changed
+
+* Sale participations are not taken from `participant_effects` table
 
 ## 3.3.1-x.0
 
@@ -14,11 +27,11 @@
 permission to participate in sale.
 * `/v3/sales/{id}/relationships/participation` endpoint to get list of sale participations
 * `/v3/account/{id}/converted_balances/{asset_code}` endpoint to get collection of converted balances
+* Sale participation on sale close ingestion
 * Account specific rules ingestion
 * Sale version ingestion
 * Bumped up ingest version
 * `limits_with_stats` to `account` resource
-* `/v3/matches` endpoint to get the history of secondary market matches
 
 ## 3.3.0
 

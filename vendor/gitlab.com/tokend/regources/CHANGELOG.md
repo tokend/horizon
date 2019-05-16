@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.2
+
+### Added
+
+* `Asset` relationship to `ConvertedBalancesCollection`
+
 ## 4.3.1
 
 ### Added
