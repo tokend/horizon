@@ -4,6 +4,7 @@
 
 * Sale participation response rendering
 * Names of multiple resources responses changed (e.g. `AccountsResponse` -> `AccountListResponse`)
+
 ### Added
 
 * `/v3/matches` endpoint to get the history of secondary market matches
@@ -17,6 +18,12 @@
 ### Changed
 
 * Sale participations are not taken from `participant_effects` table
+
+## 3.3.1-x.1
+
+### Fixed
+
+* Empty response on `/v3/sale/relationships/participation` when sale state is opened
 
 ## 3.3.1-x.0
 
