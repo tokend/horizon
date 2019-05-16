@@ -22,13 +22,13 @@ func newClosedParticipationQ(request *requests.GetSaleParticipations, q history2
 }
 
 // FilterByParticipant - filters out participations by participant address
-func (q closedParticipationsQ) FilterByParticipant(id string) participationsQI {
+func (q closedParticipationsQ) FilterByParticipant(id string) participationsQ {
 	q.participationQ = q.participationQ.FilterByParticipant(id)
 	return q
 }
 
 // FilterByQuoteAsset - filters out participations by quote asset
-func (q closedParticipationsQ) FilterByQuoteAsset(code string) participationsQI {
+func (q closedParticipationsQ) FilterByQuoteAsset(code string) participationsQ {
 	q.participationQ = q.participationQ.FilterByQuoteAsset(code)
 	return q
 }

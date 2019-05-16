@@ -24,13 +24,13 @@ func newPendingParticipationQ(request *requests.GetSaleParticipations, q core2.O
 }
 
 // FilterByParticipant - filters out participations by participant address
-func (p pendingParticipationsQ) FilterByParticipant(address string) participationsQI {
+func (p pendingParticipationsQ) FilterByParticipant(address string) participationsQ {
 	p.offersQ = p.offersQ.FilterByOwnerID(address)
 	return p
 }
 
 // FilterByQuoteAsset - filters out participations by quote asset
-func (p pendingParticipationsQ) FilterByQuoteAsset(code string) participationsQI {
+func (p pendingParticipationsQ) FilterByQuoteAsset(code string) participationsQ {
 	p.offersQ = p.offersQ.FilterByQuoteAssetCode(code)
 	return p
 }

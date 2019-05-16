@@ -68,11 +68,11 @@ type getSaleParticipationsHandler struct {
 	ParticipationQ history2.SaleParticipationQ
 }
 
-type participationsQI interface {
+type participationsQ interface {
 	// FilterByParticipant - filters out participations by participant address
-	FilterByParticipant(id string) participationsQI
+	FilterByParticipant(id string) participationsQ
 	// FilterByQuoteAsset - filters out participations by quote asset
-	FilterByQuoteAsset(code string) participationsQI
+	FilterByQuoteAsset(code string) participationsQ
 	// Select - select records from db and wraps them to participations
 	Select() ([]regources.SaleParticipation, error)
 }
@@ -83,15 +83,15 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 		Data: make([]regources.SaleParticipation, 0),
 	}
 
-	var participationsQ participationsQI
+	var q participationsQ
 
 	switch sale.State {
 	case regources.SaleStateCanceled:
 		return &response, nil
 	case regources.SaleStateOpen:
-		participationsQ = newPendingParticipationQ(request, h.OffersQ)
+		q = newPendingParticipationQ(request, h.OffersQ)
 	case regources.SaleStateClosed:
-		participationsQ = newClosedParticipationQ(request, h.ParticipationQ, sale)
+		q = newClosedParticipationQ(request, h.ParticipationQ, sale)
 	default:
 		return nil, errors.From(errors.New("unexpected sale state"), logan.F{
 			"sale_state": sale.State,
@@ -99,15 +99,15 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 	}
 
 	if request.ShouldFilter(requests.FilterTypeSaleParticipationsParticipant) {
-		participationsQ = participationsQ.FilterByParticipant(request.Filters.Participant)
+		q = q.FilterByParticipant(request.Filters.Participant)
 	}
 
 	if request.ShouldFilter(requests.FilterTypeSaleParticipationsQuoteAsset) {
-		participationsQ = participationsQ.FilterByQuoteAsset(request.Filters.QuoteAsset)
+		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset)
 	}
 
 	var err error
-	response.Data, err = participationsQ.Select()
+	response.Data, err = q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load participations")
 	}
@@ -125,7 +125,7 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 	if request.ShouldInclude(requests.IncludeTypeSaleParticipationsBaseAsset) {
 		baseAsset, err := h.getAsset(sale.BaseAsset)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to load asset")
+			return nil, errors.Wrap(err, "failed to get asset")
 		}
 
 		response.Included.Add(baseAsset)
