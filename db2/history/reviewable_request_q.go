@@ -101,8 +101,8 @@ type ReviewableRequestQI interface {
 	KYCByAccountTypeToSet(accountTypeToSet xdr.Uint64) ReviewableRequestQI
 
 	// Atomic swap
-	// ASwapByBidID - filters atomic swap requests by bid id
-	ASwapByBidID(bidID int64) ReviewableRequestQI
+	// AtomicSwapByBidID - filters atomic swap requests by bid id
+	AtomicSwapByBidID(bidID int64) ReviewableRequestQI
 }
 
 type ReviewableRequestQ struct {
@@ -475,7 +475,7 @@ func (q *ReviewableRequestQ) UpdateInvoicesStates(state ReviewableRequestState,
 	return err
 }
 
-func (q *ReviewableRequestQ) ASwapByBidID(bidID int64) ReviewableRequestQI {
+func (q *ReviewableRequestQ) AtomicSwapByBidID(bidID int64) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
 	}

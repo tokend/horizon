@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/generated"
 )
 
 // GetAssetList - processes request to get the list of assets
@@ -53,7 +53,7 @@ type getAtomicSwapBidListHandler struct {
 
 // GetAssetList returns the list of assets with related resources
 func (h *getAtomicSwapBidListHandler) GetAtomicSwapBidList(request *requests.GetAtomicSwapBidList,
-) (*regources.AtomicSwapBidsResponse, error) {
+) (*regources.AtomicSwapBidListResponse, error) {
 	q := h.AtomicSwapBidQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeBidListOwner) {
 		q = q.FilterByOwner(request.Filters.Owner)
@@ -69,7 +69,7 @@ func (h *getAtomicSwapBidListHandler) GetAtomicSwapBidList(request *requests.Get
 		return nil, errors.Wrap(err, "Failed to get asset list")
 	}
 
-	response := &regources.AtomicSwapBidsResponse{
+	response := &regources.AtomicSwapBidListResponse{
 		Data:  make([]regources.AtomicSwapBid, 0, len(bids)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}
@@ -89,7 +89,7 @@ func (h *getAtomicSwapBidListHandler) GetAtomicSwapBidList(request *requests.Get
 		if request.ShouldInclude(requests.IncludeTypeBidBaseBalance) {
 			baseBalance := regources.Balance{
 				Key: baseBalanceKey,
-				Relationships: regources.BalanceRelation{
+				Relationships: &regources.BalanceRelationships{
 					Asset: resources.NewAssetKey(bid.BaseAsset).AsRelation(),
 				},
 			}

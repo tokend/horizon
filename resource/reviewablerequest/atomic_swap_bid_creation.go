@@ -5,7 +5,7 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-func PopulateASwapBidCreationRequest(histRequest history.AtomicSwapBidCreation) (
+func PopulateAtomicSwapBidCreationRequest(histRequest history.AtomicSwapBidCreation) (
 	*regources.AtomicSwapBidCreation, error,
 ) {
 	return &regources.AtomicSwapBidCreation{

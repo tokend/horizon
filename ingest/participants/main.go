@@ -108,7 +108,7 @@ func ForOperation(
 			break
 		}
 
-		atomicSwapExtendedResult, ok := extendedResult.TypeExt.GetASwapExtended()
+		atomicSwapExtendedResult, ok := extendedResult.TypeExt.GetAtomicSwapExtended()
 		if !ok {
 			break
 		}
@@ -164,9 +164,9 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeCreateAswapBidRequest:
+	case xdr.OperationTypeCreateAtomicSwapBidRequest:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeCancelAswapBid:
+	case xdr.OperationTypeCancelAtomicSwapBid:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeStamp:
 		// the only direct participant is the source_account
@@ -176,11 +176,11 @@ func ForOperation(
 	case xdr.OperationTypeManageCreatePollRequest:
 	case xdr.OperationTypeManageVote:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeCreateAswapRequest:
+	case xdr.OperationTypeCreateAtomicSwapRequest:
 		// FIXME !!!!!
 		//tx.SourceAccount
-		if sourceParticipant.AccountID.Address() != opResult.MustCreateASwapRequestResult().Success.BidOwnerId.Address() {
-			result = append(result, Participant{opResult.MustCreateASwapRequestResult().Success.BidOwnerId, nil, nil})
+		if sourceParticipant.AccountID.Address() != opResult.MustCreateAtomicSwapRequestResult().Success.BidOwnerId.Address() {
+			result = append(result, Participant{opResult.MustCreateAtomicSwapRequestResult().Success.BidOwnerId, nil, nil})
 		}
 	case xdr.OperationTypeCancelSaleRequest:
 		// the only direct participant is the source_account

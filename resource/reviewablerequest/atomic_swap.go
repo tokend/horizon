@@ -7,7 +7,7 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-func PopulateASwapRequest(histRequest history.AtomicSwap) (
+func PopulateAtomicSwapRequest(histRequest history.AtomicSwap) (
 	*regources.AtomicSwap, error,
 ) {
 	return &regources.AtomicSwap{

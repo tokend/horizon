@@ -9,7 +9,7 @@ CancelAtomicSwapBidOpKey:
       deprecated: true
       type: string
       enum:
-        - "operations-cancel-aswap-bid"
+        - "operations-cancel-atomic-swap-bid"
 
 
 CancelAtomicSwapBidOp:

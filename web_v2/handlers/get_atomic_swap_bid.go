@@ -11,7 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/generated"
 )
 
 // GetAsset - processes request to get asset and it's details by asset code
@@ -84,7 +84,7 @@ func (h *getAtomicSwapBidHandler) GetAtomicSwapBid(request *requests.GetAtomicSw
 	if request.ShouldInclude(requests.IncludeTypeBidBaseBalance) {
 		baseBalance := regources.Balance{
 			Key: baseBalanceKey,
-			Relationships: regources.BalanceRelation{
+			Relationships: &regources.BalanceRelationships{
 				Asset: resources.NewAssetKey(bid.BaseAsset).AsRelation(),
 			},
 		}

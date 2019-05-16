@@ -1,6 +1,6 @@
 package core2
 
-import "gitlab.com/tokend/regources/v2"
+import "gitlab.com/tokend/regources/generated"
 
 type AtomicSwapBid struct {
 	BidID           int64             `db:"bid_id"`

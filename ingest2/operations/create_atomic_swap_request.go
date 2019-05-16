@@ -14,11 +14,11 @@ type createAtomicSwapRequestOpHandler struct {
 func (h *createAtomicSwapRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	aSwapRequest := op.Body.MustCreateASwapRequestOp().Request
-	successRes := opRes.MustCreateASwapRequestResult().MustSuccess()
+	aSwapRequest := op.Body.MustCreateAtomicSwapRequestOp().Request
+	successRes := opRes.MustCreateAtomicSwapRequestResult().MustSuccess()
 
 	return history2.OperationDetails{
-		Type: xdr.OperationTypeCreateAswapRequest,
+		Type: xdr.OperationTypeCreateAtomicSwapRequest,
 		CreateAtomicSwapRequest: &history2.CreateAtomicSwapRequestDetails{
 			BidID:      int64(aSwapRequest.BidId),
 			BaseAmount: regources.Amount(aSwapRequest.BaseAmount),

@@ -87,10 +87,10 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCreateSaleRequest: &createSaleRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreateAswapBidRequest: &createAtomicSwapBidRequestOpHandler{
+			xdr.OperationTypeCreateAtomicSwapBidRequest: &createAtomicSwapBidRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreateAswapRequest: &createAtomicSwapRequestOpHandler{
+			xdr.OperationTypeCreateAtomicSwapRequest: &createAtomicSwapRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
@@ -109,7 +109,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{
 				manageOfferOpHandler: manageOfferOpHandlerInst,
 			},
-			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
+			xdr.OperationTypeCancelAtomicSwapBid: &cancelAtomicSwapBidOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeManageInvoiceRequest: &deprecatedOpHandler{},

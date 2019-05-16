@@ -17,7 +17,7 @@ func (h *atomicSwapHandler) PermanentReject(details requestDetails) ([]history2.
 
 //Fulfilled - returns slice of effects for participants of the operation
 func (h *atomicSwapHandler) Fulfilled(details requestDetails) ([]history2.ParticipantEffect, error) {
-	atomicSwapExtendedResult := details.Result.TypeExt.MustASwapExtended()
+	atomicSwapExtendedResult := details.Result.TypeExt.MustAtomicSwapExtended()
 
 	participants := []history2.ParticipantEffect{
 		h.BalanceEffect(atomicSwapExtendedResult.BidOwnerBaseBalanceId, &history2.Effect{
@@ -42,7 +42,7 @@ func (h *atomicSwapHandler) Fulfilled(details requestDetails) ([]history2.Partic
 func (h *atomicSwapHandler) tryHandleUnlockedEffect(details requestDetails,
 	participants []history2.ParticipantEffect,
 ) ([]history2.ParticipantEffect, error) {
-	atomicSwapExtendedResult := details.Result.TypeExt.MustASwapExtended()
+	atomicSwapExtendedResult := details.Result.TypeExt.MustAtomicSwapExtended()
 
 	bid := h.getAtomicSwapBid(atomicSwapExtendedResult.BidId, details.Changes)
 	// review of bid request has not affected bid, so there is no additional effects

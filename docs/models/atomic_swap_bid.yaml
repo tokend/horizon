@@ -10,15 +10,22 @@ AtomicSwapBidKey:
     type:
       type: string
       enum:
-      - "aswap-bid"
+      - "atomic-swap-bid"
 
 AtomicSwapBid:
   allOf:
   - $ref: '#/components/schemas/AtomicSwapBidKey'
   - type: object
+    required: [relationships, attributes]
     properties:
       attributes:
         type: object
+        required:
+        - details
+        - available_amount
+        - locked_amount
+        - created_at
+        - is_canceled
         properties:
           details:
             type: string
@@ -55,7 +62,7 @@ AtomicSwapBid:
                 type: object
                 $ref: '#/components/schemas/AccountKey'
           base_balance:
-            description: "Base asset of the atomic swao bid"
+            description: "Base asset of the atomic swap bid"
             type: object
             properties:
               data:

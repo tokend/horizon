@@ -309,7 +309,7 @@ func getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
 	}
 }
 
-func getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
+func getAtomicSwapBidCreationRequest(request *xdr.AtomicSwapBidCreationRequest,
 ) *history.AtomicSwapBidCreation {
 	var details map[string]interface{}
 	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
@@ -330,7 +330,7 @@ func getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 	}
 }
 
-func getAtomicSwapRequest(request *xdr.ASwapRequest,
+func getAtomicSwapRequest(request *xdr.AtomicSwapRequest,
 ) *history.AtomicSwap {
 	return &history.AtomicSwap{
 		BidID:      uint64(request.BidId),
@@ -371,9 +371,9 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 	case xdr.ReviewableRequestTypeManageContract:
 		details.Contract = getContractRequest(body.ContractRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		details.AtomicSwapBidCreation = getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
+		details.AtomicSwapBidCreation = getAtomicSwapBidCreationRequest(body.AtomicSwapBidCreationRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwap:
-		details.AtomicSwap = getAtomicSwapRequest(body.ASwapRequest)
+		details.AtomicSwap = getAtomicSwapRequest(body.AtomicSwapRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = getPollRequest(body.CreatePollRequest)
 	default:

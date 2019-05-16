@@ -16,9 +16,9 @@ func (h *cancelAtomicSwapBidOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	return history2.OperationDetails{
-		Type: xdr.OperationTypeCancelAswapBid,
+		Type: xdr.OperationTypeCancelAtomicSwapBid,
 		CancelAtomicSwapBid: &history2.CancelAtomicSwapBidDetails{
-			BidID: int64(op.Body.MustCancelASwapBidOp().BidId),
+			BidID: int64(op.Body.MustCancelAtomicSwapBidOp().BidId),
 		},
 	}, nil
 }
@@ -28,7 +28,7 @@ func (h *cancelAtomicSwapBidOpHandler) Details(op rawOperation,
 func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	opResult := opRes.MustCancelASwapBidResult().MustSuccess()
+	opResult := opRes.MustCancelAtomicSwapBidResult().MustSuccess()
 
 	// it means that there is pending atomic swap request,
 	// so bid still exists
@@ -37,12 +37,12 @@ func (h *cancelAtomicSwapBidOpHandler) ParticipantsEffects(opBody xdr.OperationB
 		return h.effectsProvider.ParticipantsEffects(opBody, opRes, sourceAccountID, ledgerChanges)
 	}
 
-	atomicSwapBid := h.getAtomicSwapBid(opBody.MustCancelASwapBidOp().BidId, ledgerChanges)
+	atomicSwapBid := h.getAtomicSwapBid(opBody.MustCancelAtomicSwapBidOp().BidId, ledgerChanges)
 
 	if atomicSwapBid == nil {
 		return nil, errors.From(
 			errors.New("expected atomic swap to be in STATE ledger changes"), map[string]interface{}{
-				"bid_id": uint64(opBody.MustCancelASwapBidOp().BidId),
+				"bid_id": uint64(opBody.MustCancelAtomicSwapBidOp().BidId),
 			})
 	}
 

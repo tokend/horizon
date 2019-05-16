@@ -341,7 +341,7 @@ func initWebActions(app *App) {
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			bidID := action.GetOptionalInt64("bid_id")
 			if bidID != nil {
-				action.q = action.q.ASwapByBidID(*bidID)
+				action.q = action.q.AtomicSwapByBidID(*bidID)
 			}
 		},
 		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwap},

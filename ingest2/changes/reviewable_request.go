@@ -97,7 +97,7 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.handleRemoveOnManageAsset(lc)
 	case xdr.OperationTypeManageSale:
 		return c.handleRemoveOnManageSale(lc)
-	case xdr.OperationTypeCancelAswapBid:
+	case xdr.OperationTypeCancelAtomicSwapBid:
 		return c.cancel(lc)
 	// auto review is handled by each operation separately
 	case xdr.OperationTypeCreateIssuanceRequest:
@@ -419,7 +419,7 @@ func (c *reviewableRequestHandler) getCreatePollRequest(
 	}
 }
 
-func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
+func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.AtomicSwapBidCreationRequest,
 ) *history.CreateAtomicSwapBidRequest {
 	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for _, quoteAsset := range request.QuoteAssets {
@@ -437,7 +437,7 @@ func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.
 	}
 }
 
-func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.ASwapRequest,
+func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.AtomicSwapRequest,
 ) *history.CreateAtomicSwapRequest {
 	return &history.CreateAtomicSwapRequest{
 		BidID:      uint64(request.BidId),
@@ -480,9 +480,9 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = c.getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		details.CreateAtomicSwapBid = c.getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
+		details.CreateAtomicSwapBid = c.getAtomicSwapBidCreationRequest(body.AtomicSwapBidCreationRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwap:
-		details.CreateAtomicSwap = c.getAtomicSwapRequest(body.ASwapRequest)
+		details.CreateAtomicSwap = c.getAtomicSwapRequest(body.AtomicSwapRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = c.getCreatePollRequest(body.CreatePollRequest)
 	default:

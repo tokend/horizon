@@ -31,7 +31,7 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  revision = "ea1e8a9f2f7558be41eaf22fdb3d3c0fa396eca3"
+  branch = "feature/atomic_swap_returning"
 
 [prune]
   go-tests = true

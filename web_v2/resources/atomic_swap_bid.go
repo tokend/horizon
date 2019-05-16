@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/v2"
+	"gitlab.com/tokend/regources/generated"
 )
 
 //NewAccount - creates new instance of account
@@ -13,9 +13,9 @@ func NewAtomicSwapBid(core core2.AtomicSwapBid) regources.AtomicSwapBid {
 	return regources.AtomicSwapBid{
 		Key: regources.Key{
 			ID:   fmt.Sprint(core.BidID),
-			Type: regources.TypeAtomicSwapBids,
+			Type: regources.ASWAP_BID,
 		},
-		Attributes: regources.AtomicSwapBidAttrs{
+		Attributes: regources.AtomicSwapBidAttributes{
 			AvailableAmount: regources.Amount(core.AvailableAmount),
 			LockedAmount:    regources.Amount(core.LockedAmount),
 			CreatedAt:       time.Unix(int64(core.CreatedAt), 0).UTC(),
@@ -29,7 +29,7 @@ func NewAtomicSwapBid(core core2.AtomicSwapBid) regources.AtomicSwapBid {
 func NewAtomicSwapBidKey(id uint64) regources.Key {
 	return regources.Key{
 		ID:   fmt.Sprint(id),
-		Type: regources.TypeAtomicSwapBids,
+		Type: regources.ASWAP_BID,
 	}
 }
 
@@ -37,9 +37,9 @@ func NewAtomicSwapBidQuoteAsset(raw core2.AtomicSwapQuoteAsset) regources.QuoteA
 	return regources.QuoteAsset{
 		Key: regources.Key{
 			ID:   raw.QuoteAsset,
-			Type: regources.TypeQuoteAssets,
+			Type: regources.QUOTE_ASSETS,
 		},
-		Attributes: regources.QuoteAssetAttrs{
+		Attributes: regources.QuoteAssetAttributes{
 			Price: regources.Amount(raw.Price),
 		},
 	}
