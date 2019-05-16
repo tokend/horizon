@@ -15,8 +15,12 @@ type CreateSaleRequestAttributes struct {
 	CreatorDetails      Details `json:"creator_details"`
 	// Time when a sale should end
 	EndTime time.Time `json:"end_time"`
+	// Maximal amount in base asset to be sold on sale
+	HardCap Amount `json:"hard_cap"`
 	// Defines sale type: * 1 - **basic sale** * 2 - **crowdfunding** sale * 3 - **fixed price** sale
 	SaleType xdr.SaleType `json:"sale_type"`
+	// Minimal amount in base asset for sale to reach to be considered successful
+	SoftCap Amount `json:"soft_cap"`
 	// Time when a sale should start
 	StartTime time.Time `json:"start_time"`
 }
