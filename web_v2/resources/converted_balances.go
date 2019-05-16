@@ -17,6 +17,9 @@ func NewConvertedBalancesCollectionKey(assetCode string) regources.Key {
 func NewConvertedBalanceCollection(assetCode string) regources.ConvertedBalancesCollection {
 	return regources.ConvertedBalancesCollection{
 		Key: NewConvertedBalancesCollectionKey(assetCode),
+		Relationships: regources.ConvertedBalancesCollectionRelationships{
+			Asset: *NewAssetKey(assetCode).AsRelation(),
+		},
 	}
 }
 

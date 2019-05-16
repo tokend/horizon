@@ -101,6 +101,11 @@ func (h *getConvertedBalancesHandler) GetConvertedBalances(request *requests.Get
 		Data: make([]regources.Key, 0, len(coreBalances)),
 	}
 
+	if request.ShouldInclude(requests.IncludeTypeConvertedBalancesAsset) {
+		asset := resources.NewAsset(*coreAsset)
+		response.Included.Add(&asset)
+	}
+
 	convertedStates := make([]regources.ConvertedBalanceState, 0, len(coreBalances))
 
 	for _, coreBalance := range coreBalances {
