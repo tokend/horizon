@@ -55,9 +55,7 @@ func (h *atomicSwapHandler) tryHandleUnlockedEffect(details requestDetails,
 		return participants, nil
 	}
 
-	bidIsSoldOut := (bid.Amount == 0) && (bid.LockedAmount == 0)
-	bindIsRemovedOnReviewAfterCancel := bid.IsCancelled && bid.LockedAmount == 0
-	bidIsRemoved := bidIsSoldOut || bindIsRemovedOnReviewAfterCancel
+	bidIsRemoved := bid.IsCancelled && (bid.LockedAmount == 0)
 	// If bid was removed, but we had to unlock some amount
 	if bidIsRemoved {
 		participants = append(participants,
