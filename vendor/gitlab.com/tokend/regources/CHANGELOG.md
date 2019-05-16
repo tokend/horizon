@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.3.3
+
+### Added
+
+* `BaseHardCap` to `SaleAttributes` resource
+* `SoftCap` and `HardCap` `CreateSaleRequestAttributes`
+
 ## 4.3.2
 
 ### Added
