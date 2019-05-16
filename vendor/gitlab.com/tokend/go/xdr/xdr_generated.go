@@ -1,4 +1,4 @@
-// revision: 9c52f2c32a284a36c17dd6296a0578e0dfc19700
+// revision: f22cbd8d540982b4b4485d9b0b1e8d4c15cfabb9
 // branch:   feature/atomic_swap_returning
 // Package xdr is generated from:
 //
@@ -45547,4 +45547,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "9c52f2c32a284a36c17dd6296a0578e0dfc19700"
+var Revision = "f22cbd8d540982b4b4485d9b0b1e8d4c15cfabb9"

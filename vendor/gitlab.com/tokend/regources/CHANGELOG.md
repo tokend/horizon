@@ -1,8 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Added
+* `Atomic swap bid` resource
+
+## 4.3.1
+
+### Added
+* `Match` resource
+
 ## 4.3.0
 
-## Added
+### Added
 * `Statistics` resource
 * `LimitsWithStats` resource
 
@@ -10,7 +20,7 @@
 * `Asset` relation from `ConvertedBalanceStateRelationships`
 
 ## 4.2.3
-## Added
+### Added
 * `ConvertedBalancesCollection` and `ConvertedBalanceState` resources
 
 ## 4.2.2
