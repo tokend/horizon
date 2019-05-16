@@ -104,7 +104,7 @@ func newAtomicSwapBidRequest(id int64, details history2.CreateAtomicSwapBidReque
 	}
 
 	return &regources.CreateAtomicSwapBidRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ASWAP_BID),
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ATOMIC_SWAP_BID),
 		Attributes: regources.CreateAtomicSwapBidRequestAttributes{
 			BaseAmount:     regources.Amount(details.BaseAmount),
 			CreatorDetails: details.CreatorDetails,
