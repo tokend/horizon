@@ -8,8 +8,8 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	"gitlab.com/tokend/regources"
-	v2 "gitlab.com/tokend/regources/v2"
+	v1 "gitlab.com/tokend/regources"
+	"gitlab.com/tokend/regources/generated"
 )
 
 type ReviewableRequestDetails struct {
@@ -91,16 +91,16 @@ type WithdrawalRequest struct {
 }
 
 type SaleRequest struct {
-	BaseAsset           string                     `json:"base_asset"`
-	DefaultQuoteAsset   string                     `json:"quote_asset"`
-	StartTime           time.Time                  `json:"start_time"`
-	EndTime             time.Time                  `json:"end_time"`
-	SoftCap             string                     `json:"soft_cap"`
-	HardCap             string                     `json:"hard_cap"`
-	Details             map[string]interface{}     `json:"details"`
-	QuoteAssets         []regources.SaleQuoteAsset `json:"quote_assets"`
-	SaleType            xdr.SaleType               `json:"sale_type"`
-	BaseAssetForHardCap string                     `json:"base_asset_for_hard_cap"`
+	BaseAsset           string                 `json:"base_asset"`
+	DefaultQuoteAsset   string                 `json:"quote_asset"`
+	StartTime           time.Time              `json:"start_time"`
+	EndTime             time.Time              `json:"end_time"`
+	SoftCap             string                 `json:"soft_cap"`
+	HardCap             string                 `json:"hard_cap"`
+	Details             map[string]interface{} `json:"details"`
+	QuoteAssets         []v1.SaleQuoteAsset    `json:"quote_assets"`
+	SaleType            xdr.SaleType           `json:"sale_type"`
+	BaseAssetForHardCap string                 `json:"base_asset_for_hard_cap"`
 }
 
 type LimitsUpdateRequest struct {
@@ -151,7 +151,7 @@ type AtomicSwapBidCreation struct {
 	BaseBalance string                 `json:"base_balance"`
 	BaseAmount  uint64                 `json:"base_amount"`
 	Details     map[string]interface{} `json:"details"`
-	QuoteAssets []v2.AssetPrice        `json:"quote_assets"`
+	QuoteAssets []regources.AssetPrice `json:"quote_assets"`
 }
 
 type AtomicSwap struct {

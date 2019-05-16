@@ -11,8 +11,8 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/utf8"
-	"gitlab.com/tokend/regources"
-	v2 "gitlab.com/tokend/regources/v2"
+	v1 "gitlab.com/tokend/regources"
+	"gitlab.com/tokend/regources/generated"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -212,10 +212,10 @@ func getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
 }
 
 func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
-	var quoteAssets []regources.SaleQuoteAsset
+	var quoteAssets []v1.SaleQuoteAsset
 	for i := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
-			Price:      regources.Amount(int64(request.QuoteAssets[i].Price)),
+		quoteAssets = append(quoteAssets, v1.SaleQuoteAsset{
+			Price:      v1.Amount(int64(request.QuoteAssets[i].Price)),
 			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
 		})
 	}
@@ -314,11 +314,11 @@ func getAtomicSwapBidCreationRequest(request *xdr.AtomicSwapBidCreationRequest,
 	var details map[string]interface{}
 	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
 
-	var quoteAssets []v2.AssetPrice
+	var quoteAssets []regources.AssetPrice
 	for _, quoteAsset := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, v2.AssetPrice{
+		quoteAssets = append(quoteAssets, regources.AssetPrice{
 			Asset: string(quoteAsset.QuoteAsset),
-			Price: v2.Amount(quoteAsset.Price),
+			Price: regources.Amount(quoteAsset.Price),
 		})
 	}
 

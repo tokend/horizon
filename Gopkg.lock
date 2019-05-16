@@ -531,12 +531,11 @@
 
 [[projects]]
   branch = "feature/atomic_swap_returning"
-  digest = "1:63cd963a279b22738e09b21e120b1133091a0112823c0cabf1646c5c16692276"
+  digest = "1:6cc7db2f119f6a3423cee4dad421771f56b23f362c9629f2ff763b54994e5125"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
-    "v2",
   ]
   pruneopts = "UT"
   revision = "ad75dcc36fedb100ba39d8e9b4f257bc1d81a77e"
@@ -694,7 +693,6 @@
     "gitlab.com/tokend/go/xdr",
     "gitlab.com/tokend/regources",
     "gitlab.com/tokend/regources/generated",
-    "gitlab.com/tokend/regources/v2",
     "golang.org/x/net/context",
     "golang.org/x/net/http2",
     "gopkg.in/throttled/throttled.v2",
