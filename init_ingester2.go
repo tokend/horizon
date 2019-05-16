@@ -45,7 +45,6 @@ func initIngester2(app *App) {
 		storage.NewPoll(hRepo),
 		storage.NewVote(hRepo),
 		storage.NewAccountSpecificRules(hRepo),
-		storage.NewSaleParticipation(hRepo),
 	)
 
 	idProvider := struct {
@@ -55,13 +54,22 @@ func initIngester2(app *App) {
 		Account: accountStorage,
 		Balance: balanceStorage,
 	}
-	opHandler := operations.NewOperationsHandler(storage.NewOperationDetails(hRepo), storage.NewOpParticipants(hRepo), &idProvider, balanceStorage)
+	opHandler := operations.NewOperationsHandler(
+		storage.NewOperationDetails(hRepo),
+		storage.NewOpParticipants(hRepo),
+		&idProvider,
+		balanceStorage,
+	)
+	matchesHandler := ingest2.NewMatchesSaver(
+		storage.NewMatches(hRepo),
+	)
 
 	consumer := ingest2.NewConsumer(logger.WithField("service", "ingest_data_consumer"), hRepo, app.CoreConnector, []ingest2.Handler{
 		ingest2.NewLedgerHandler(storage.NewLedger(hRepo)),
 		ingest2.NewTxSaver(storage.NewTx(hRepo)),
 		ingest2.NewLedgerChangesHandler(storage.NewLedgerChange(hRepo)),
 		ledgerChangesHandler,
+		matchesHandler,
 		opHandler,
 	}, ledgersChan)
 

@@ -49,7 +49,7 @@ const (
 	REQUEST_DETAILS_ASSET_CREATE                            ResourceType = "request-details-asset-create"
 	REQUEST_DETAILS_ASSET_UPDATE                            ResourceType = "request-details-asset-update"
 	REQUEST_DETAILS_ATOMIC_SWAP                             ResourceType = "request-details-atomic-swap"
-	REQUEST_DETAILS_ASWAP_BID                               ResourceType = "request-details-aswap-bid"
+	REQUEST_DETAILS_ATOMIC_SWAP_BID                         ResourceType = "request-details-atomic-swap-bid"
 	REQUEST_DETAILS_ISSUANCE                                ResourceType = "request-details-issuance"
 	REQUEST_DETAILS_LIMITS_UPDATE                           ResourceType = "request-details-limits-update"
 	REQUEST_DETAILS_PRE_ISSUANCE                            ResourceType = "request-details-pre-issuance"

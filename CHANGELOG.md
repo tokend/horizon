@@ -23,11 +23,11 @@
 permission to participate in sale.
 * `/v3/sales/{id}/relationships/participation` endpoint to get list of sale participations
 * `/v3/account/{id}/converted_balances/{asset_code}` endpoint to get collection of converted balances
-* Sale participation on sale close ingestion
 * Account specific rules ingestion
 * Sale version ingestion
 * Bumped up ingest version
 * `limits_with_stats` to `account` resource
+* `/v3/matches` endpoint to get the history of secondary market matches
 
 ## 3.3.0
 
