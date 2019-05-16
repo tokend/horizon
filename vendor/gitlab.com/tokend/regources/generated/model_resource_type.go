@@ -93,6 +93,7 @@ const (
 	OPERATIONS_UPDATE_SIGNER_RULE                           ResourceType = "operations-update-signer-rule"
 	OPERATIONS_REMOVE_SIGNER_RULE                           ResourceType = "operations-remove-signer-rule"
 	OPERATIONS_MANAGE_VOTE                                  ResourceType = "operations-manage-vote"
+	MATCHES                                                 ResourceType = "matches"
 	OFFERS                                                  ResourceType = "offers"
 	OPERATIONS                                              ResourceType = "operations"
 	ORDER_BOOK_ENTRIES                                      ResourceType = "order-book-entries"

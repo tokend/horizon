@@ -35,11 +35,10 @@ func NewHandler(account accountStorage,
 	poll pollStorage,
 	vote voteStorage,
 	accountSpecificRule accountSpecificRuleStorage,
-	participation participationStorage,
 ) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request)
-	saleHandlerInst := newSaleHandler(sale, participation, accountSpecificRule)
+	saleHandlerInst := newSaleHandler(sale, accountSpecificRule)
 	assetPairHandler := newAssetPairHandler(assetPair)
 	pollHandlerInst := newPollHandler(poll)
 	voteHandlerInst := newVoteHandler(vote)
