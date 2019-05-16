@@ -4,6 +4,9 @@
 
 * Sale participation response rendering
 * Names of multiple resources responses changed (e.g. `AccountsResponse` -> `AccountListResponse`)
+* Missing `base_hard_cap` in sale attributes
+* Non-unique identifiers for `sale-quote-assets` resources
+* Missing soft and hard caps in sale request details
 
 ### Added
 

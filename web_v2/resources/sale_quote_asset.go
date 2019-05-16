@@ -1,22 +1,23 @@
 package resources
 
 import (
+	"fmt"
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewSaleQuoteAssetKey - returns new instance of SaleQuoteAssetKey
-func NewSaleQuoteAssetKey(assetCode string) regources.Key {
+func NewSaleQuoteAssetKey(assetCode string, saleID uint64) regources.Key {
 	return regources.Key{
-		ID:   assetCode,
+		ID:   fmt.Sprintf("%s:%d", assetCode, saleID),
 		Type: regources.SALE_QUOTE_ASSETS,
 	}
 }
 
 // NewSaleQuoteAsset - returns new instance of SaleQuoteAsset
-func NewSaleQuoteAsset(qa history2.SaleQuoteAsset) regources.SaleQuoteAsset {
+func NewSaleQuoteAsset(qa history2.SaleQuoteAsset, saleID uint64) regources.SaleQuoteAsset {
 	return regources.SaleQuoteAsset{
-		Key: NewSaleQuoteAssetKey(qa.Asset),
+		Key: NewSaleQuoteAssetKey(qa.Asset, saleID),
 		Attributes: regources.SaleQuoteAssetAttributes{
 			Price:           qa.Price,
 			CurrentCap:      qa.CurrentCap,

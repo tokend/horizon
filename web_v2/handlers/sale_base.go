@@ -40,7 +40,7 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 		}
 
 		for _, historyQuoteAsset := range historySale.QuoteAssets.QuoteAssets {
-			quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset)
+			quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset, historySale.ID)
 			sale.Relationships.QuoteAssets.Data = append(sale.Relationships.QuoteAssets.Data, quoteAsset.Key)
 
 			if request.ShouldInclude(requests.IncludeTypeSaleQuoteAssets) {

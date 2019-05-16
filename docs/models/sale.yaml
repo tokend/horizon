@@ -20,8 +20,13 @@ Sale:
       properties:
         attributes:
           type: object
-          required: [start_time, end_time, sale_type, sale_state, details]
+          required: [start_time, end_time, sale_type, sale_state, details, base_hard_cap]
           properties:
+            base_hard_cap:
+              type: string
+              format: Amount
+              description: "Hard cap calculated in base asset"
+              example: "140000.000000"
             start_time:
               type: string
               description: "time when the sale starts"

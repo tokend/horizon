@@ -161,6 +161,8 @@ func newSaleRequest(id int64, details history2.CreateSaleRequest) *regources.Cre
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_SALE),
 		Attributes: regources.CreateSaleRequestAttributes{
 			BaseAssetForHardCap: details.BaseAssetForHardCap,
+			SoftCap:             details.SoftCap,
+			HardCap:             details.HardCap,
 			StartTime:           details.StartTime,
 			EndTime:             details.EndTime,
 			SaleType:            details.SaleType,
