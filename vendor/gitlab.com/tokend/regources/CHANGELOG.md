@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+* `AccessDefinitionType` attribute to sale
+
 ## 4.3.3
 
 ### Added
