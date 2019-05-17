@@ -1,3 +1,9 @@
+## Unreleased
+
+### Added
+
+* Filter by address to `/v3/sales/{id}/relationships/whitelist`
+
 ## 3.3.1-x.2
 
 ### Fixed

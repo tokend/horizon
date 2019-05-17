@@ -18,6 +18,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/requests"
 )
 
+// GetSaleWhitelist - processes request to get sale whitelist
 func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewGetSaleWhitelist(r)
 	if err != nil {
@@ -28,7 +29,7 @@ func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
 	handler := getSaleWhiteListHandler{
 		SalesQ:                history2.NewSalesQ(ctx.HistoryRepo(r)),
 		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(ctx.HistoryRepo(r)),
-		Log:                   ctx.Log(r),
+		Log: ctx.Log(r),
 	}
 
 	sale, err := handler.SalesQ.GetByID(request.SaleID)
@@ -73,18 +74,22 @@ type getSaleWhiteListHandler struct {
 	Log                   *logan.Entry
 }
 
-// GetSale returns sale with related resources
+// getSaleWhiteList returns sale whitelist
 func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhitelist) (*regources.SaleWhitelistListResponse, error) {
 	response := &regources.SaleWhitelistListResponse{
 		Data: make([]regources.SaleWhitelist, 0),
 	}
 
-	rules, err := h.AccountSpecificRulesQ.
-		ForSale(request.SaleID).
-		Permission(false).
-		Page(*request.PageParams).
-		Select()
+	q := h.AccountSpecificRulesQ.
+		FilterBySale(request.SaleID).
+		FilterByPermission(false).
+		Page(*request.PageParams)
 
+	if request.ShouldFilter(requests.FilterTypeSaleWhitelistAddress) {
+		q = q.FilterByAddress(request.Filters.Address)
+	}
+
+	rules, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account specific rules for sale")
 	}

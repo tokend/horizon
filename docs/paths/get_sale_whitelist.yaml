@@ -18,6 +18,17 @@
           type: integer
           format: int64
           example: 10
+      - name: filter[address]
+        in: query
+        description: |
+          Filters entries by account address where they applied
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+          format: valid accountID
+          example: "GBSR6JG5AYSAW7HK6EGJFYVIVN54LVGSY3ZLJ6X3IBQZ766EJABCZQTH"
       - $ref: '#/components/schemas/pageCursorParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
