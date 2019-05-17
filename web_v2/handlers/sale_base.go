@@ -20,7 +20,7 @@ type salesBaseHandler struct {
 
 func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	request requests.SalesBase,
-	response *regources.SalesResponse) error {
+	response *regources.SaleListResponse) error {
 
 	for _, historySale := range historySales {
 		rule, err := h.AccountSpecificRulesQ.ForSale(historySale.ID).Global().Get()
@@ -50,7 +50,7 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 		}
 
 		for _, historyQuoteAsset := range historySale.QuoteAssets.QuoteAssets {
-			quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset)
+			quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset, historySale.ID)
 			sale.Relationships.QuoteAssets.Data = append(sale.Relationships.QuoteAssets.Data, quoteAsset.Key)
 
 			if request.ShouldInclude(requests.IncludeTypeSaleQuoteAssets) {

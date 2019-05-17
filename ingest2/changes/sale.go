@@ -21,23 +21,15 @@ type saleStorage interface {
 	SetState(saleID uint64, state regources.SaleState) error
 }
 
-type participationStorage interface {
-	Insert(participations []history.SaleParticipation) error
-}
-
 type saleHandler struct {
-	storage       saleStorage
-	participation participationStorage
-	specificRule  accountSpecificRuleStorage
+	storage      saleStorage
+	specificRule accountSpecificRuleStorage
 }
 
-func newSaleHandler(storage saleStorage,
-	participation participationStorage,
-	specificRule accountSpecificRuleStorage) *saleHandler {
+func newSaleHandler(storage saleStorage, specificRule accountSpecificRuleStorage) *saleHandler {
 	return &saleHandler{
-		storage:       storage,
-		participation: participation,
-		specificRule:  specificRule,
+		storage:      storage,
+		specificRule: specificRule,
 	}
 }
 
@@ -73,12 +65,6 @@ func (c *saleHandler) Removed(lc ledgerChange) error {
 		opEffect := lc.OperationResult.MustCheckSaleStateResult().MustSuccess().Effect
 		if opEffect.Effect == xdr.CheckSaleStateEffectClosed {
 			saleState = regources.SaleStateClosed
-			saleResults := opEffect.MustSaleClosed().Results
-			participations := c.convertParticipations(saleID, saleResults)
-			err := c.participation.Insert(participations)
-			if err != nil {
-				return errors.Wrap(err, "failed to insert sale participation into db")
-			}
 		}
 	}
 
@@ -143,18 +129,4 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		State:   regources.SaleStateOpen,
 		Version: int32(raw.Ext.V),
 	}, nil
-}
-
-func (c *saleHandler) convertParticipations(saleID uint64, saleResults []xdr.CheckSubSaleClosedResult) []history.SaleParticipation {
-	var participations []history.SaleParticipation
-	for _, subResult := range saleResults {
-		saleResult := subResult.SaleDetails
-		quote := string(saleResult.QuoteAsset)
-		base := string(saleResult.BaseAsset)
-		for _, atom := range saleResult.OffersClaimed {
-			participations = append(participations, history.NewSaleParticipation(base, quote, saleID, atom))
-		}
-	}
-
-	return participations
 }

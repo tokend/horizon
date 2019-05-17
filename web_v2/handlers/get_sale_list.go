@@ -58,7 +58,7 @@ type getSaleListHandler struct {
 }
 
 // GetSaleList returns the list of assets with related resources
-func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regources.SalesResponse, error) {
+func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regources.SaleListResponse, error) {
 	q := applySaleFilters(request.SalesBase, h.SalesQ)
 
 	historySales, err := q.Page(*request.PageParams).Select()
@@ -66,7 +66,7 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 		return nil, errors.Wrap(err, "Failed to get asset list")
 	}
 
-	response := &regources.SalesResponse{
+	response := &regources.SaleListResponse{
 		Data:  make([]regources.Sale, 0, len(historySales)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

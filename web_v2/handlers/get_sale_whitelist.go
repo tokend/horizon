@@ -18,6 +18,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/requests"
 )
 
+// GetSaleWhitelist - processes request to get sale whitelist
 func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewGetSaleWhitelist(r)
 	if err != nil {
@@ -73,18 +74,22 @@ type getSaleWhiteListHandler struct {
 	Log                   *logan.Entry
 }
 
-// GetSale returns sale with related resources
-func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhitelist) (*regources.SaleWhitelistsResponse, error) {
-	response := &regources.SaleWhitelistsResponse{
+// getSaleWhiteList returns sale whitelist
+func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhitelist) (*regources.SaleWhitelistListResponse, error) {
+	response := &regources.SaleWhitelistListResponse{
 		Data: make([]regources.SaleWhitelist, 0),
 	}
 
-	rules, err := h.AccountSpecificRulesQ.
-		ForSale(request.SaleID).
-		Permission(false).
-		Page(*request.PageParams).
-		Select()
+	q := h.AccountSpecificRulesQ.
+		FilterBySale(request.SaleID).
+		FilterByPermission(false).
+		Page(*request.PageParams)
 
+	if request.ShouldFilter(requests.FilterTypeSaleWhitelistAddress) {
+		q = q.FilterByAddress(request.Filters.Address)
+	}
+
+	rules, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account specific rules for sale")
 	}
@@ -103,7 +108,7 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 }
 
 func (h *getSaleWhiteListHandler) populateLinks(
-	response *regources.SaleWhitelistsResponse, request *requests.GetSaleWhitelist,
+	response *regources.SaleWhitelistListResponse, request *requests.GetSaleWhitelist,
 ) {
 	if len(response.Data) > 0 {
 		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)

@@ -51,12 +51,6 @@ func (is *Session) Run() {
 		is.log.WithError(err).Error("failed to close ingestion")
 		return
 	}
-
-	err = is.CoreConnector.SetCursor("HORIZON", is.Cursor.LastLedger)
-	if err != nil {
-		is.log.WithError(err).Error("failed to set cursor")
-		return
-	}
 }
 
 func (is *Session) flush() (err error) {

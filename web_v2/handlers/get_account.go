@@ -3,14 +3,14 @@ package handlers
 import (
 	"net/http"
 
-	fees "gitlab.com/tokend/horizon/helper/fees2"
-
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core2"
+	fees "gitlab.com/tokend/horizon/helper/fees2"
 	"gitlab.com/tokend/horizon/helper/limits"
+	"gitlab.com/tokend/horizon/helper/statslimits"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
@@ -28,6 +28,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		FeesQ:              core2.NewFeesQ(coreRepo),
 		LimitsV2Q:          core2.NewLimitsQ(coreRepo),
 		ExternalSystemIDsQ: core2.NewExternalSystemIDsQ(coreRepo),
+		StatsQ:             core2.NewStatsQ(coreRepo),
 		Log:                ctx.Log(r),
 	}
 
@@ -44,6 +45,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		requests.IncludeTypeAccountFees,
 		requests.IncludeTypeAccountLimits,
 		requests.IncludeTypeAccountExternalSystemIDs,
+		requests.IncludeTypeAccountLimitsWithStats,
 	) {
 		if !isAllowed(r, w, request.Address) {
 			return
@@ -75,6 +77,7 @@ type getAccountHandler struct {
 	LimitsV2Q          core2.LimitsQ
 	FeesQ              core2.FeesQ
 	ExternalSystemIDsQ core2.ExternalSystemIDsQ
+	StatsQ             core2.StatsQ
 	Log                *logan.Entry
 }
 
@@ -122,6 +125,12 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get external system IDs")
 	}
+
+	response.Data.Relationships.LimitsWithStats, err = h.getLimitsWithStats(request, &response.Included, account)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get limits and stats for account")
+	}
+
 	return &response, nil
 }
 
@@ -155,11 +164,55 @@ func (h *getAccountHandler) getLimits(request *requests.GetAccount,
 		result.Data = append(result.Data, limitsUnit.Key)
 
 		if request.ShouldInclude(requests.IncludeTypeAccountLimits) {
-			includes.Add(limitsUnit)
+			includes.Add(&limitsUnit)
 		}
 	}
 
 	return result, nil
+}
+
+func (h *getAccountHandler) getLimitsWithStats(request *requests.GetAccount,
+	included *regources.Included,
+	account *core2.Account) (*regources.RelationCollection, error) {
+
+	generalLimits, err := h.LimitsV2Q.General().Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select general limits")
+	}
+	roleLimits, err := h.LimitsV2Q.FilterByAccountRole(account.RoleID).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select role limits")
+	}
+	accountLimits, err := h.LimitsV2Q.FilterByAccount(request.Address).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select limits for account")
+	}
+	accountStats, err := h.StatsQ.FilterByAccount(request.Address).Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select statistics for account")
+	}
+
+	statsLimitsTable := statslimits.NewTable(generalLimits, accountStats)
+	statsLimitsTable.Update(roleLimits)
+	statsLimitsTable.Update(accountLimits)
+	statsLimitsTable.FulfillEmptyLimits()
+
+	coreLimitsWithStatsList := statsLimitsTable.CoreUnitsList()
+
+	result := regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(coreLimitsWithStatsList)),
+	}
+
+	for _, coreLimitsWithStatsUnit := range coreLimitsWithStatsList {
+		limitsWithStatsUnit := resources.NewLimitsWithStats(&coreLimitsWithStatsUnit)
+
+		result.Data = append(result.Data, limitsWithStatsUnit.Key)
+
+		if request.ShouldInclude(requests.IncludeTypeAccountLimitsWithStats) {
+			included.Add(&limitsWithStatsUnit)
+		}
+	}
+	return &result, nil
 }
 
 func (h *getAccountHandler) getExternalSystemIDs(request *requests.GetAccount, includes *regources.Included) (*regources.RelationCollection, error) {

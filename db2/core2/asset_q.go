@@ -43,7 +43,7 @@ func (q AssetsQ) FilterByCode(code string) AssetsQ {
 
 // FilterByCodes - returns q with filter by codes
 func (q AssetsQ) FilterByCodes(codes []string) AssetsQ {
-	q.selector = q.selector.Where("assets.code = ?", codes)
+	q.selector = q.selector.Where(sq.Eq{"assets.code": codes})
 	return q
 }
 

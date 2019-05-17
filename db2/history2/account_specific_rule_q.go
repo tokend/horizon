@@ -26,8 +26,8 @@ func NewAccountSpecificRulesQ(repo *db2.Repo) AccountSpecificRulesQ {
 	}
 }
 
-// ByAddress returns q with filter by account address
-func (q AccountSpecificRulesQ) ByAddress(address string) AccountSpecificRulesQ {
+// FilterByAddress returns q with filter by address
+func (q AccountSpecificRulesQ) FilterByAddress(address string) AccountSpecificRulesQ {
 	q.selector = q.selector.Where("sr.address = ?", address)
 	return q
 }
@@ -38,14 +38,14 @@ func (q AccountSpecificRulesQ) Global() AccountSpecificRulesQ {
 	return q
 }
 
-//Permission returns q with filter by `forbids`
-func (q AccountSpecificRulesQ) Permission(forbids bool) AccountSpecificRulesQ {
+// FilterByPermission returns q with filter by `forbids`
+func (q AccountSpecificRulesQ) FilterByPermission(forbids bool) AccountSpecificRulesQ {
 	q.selector = q.selector.Where("sr.forbids = ?", forbids)
 	return q
 }
 
-//ForSale - returns q with filter by sale id
-func (q AccountSpecificRulesQ) ForSale(saleID uint64) AccountSpecificRulesQ {
+// FilterBySale - returns q with filter by sale id
+func (q AccountSpecificRulesQ) FilterBySale(saleID uint64) AccountSpecificRulesQ {
 	q.selector = q.selector.Where("sr.key#>>'{sale,saleID}' = ?", saleID)
 	return q
 }

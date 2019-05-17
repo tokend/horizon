@@ -68,7 +68,7 @@ type getVoteListHandler struct {
 }
 
 // GetVoteList returns the list of assets with related resources
-func (h *getVoteListHandler) GetVoteList(request *requests.GetVoteList) (*regources.VotesResponse, error) {
+func (h *getVoteListHandler) GetVoteList(request *requests.GetVoteList) (*regources.VoteListResponse, error) {
 	q := h.VotesQ.FilterByPollID(request.PollID).Page(*request.PageParams)
 
 	historyVotes, err := q.Select()
@@ -76,7 +76,7 @@ func (h *getVoteListHandler) GetVoteList(request *requests.GetVoteList) (*regour
 		return nil, errors.Wrap(err, "Failed to get vote list")
 	}
 
-	response := &regources.VotesResponse{
+	response := &regources.VoteListResponse{
 		Data: make([]regources.Vote, 0, len(historyVotes)),
 	}
 

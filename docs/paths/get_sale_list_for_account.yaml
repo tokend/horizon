@@ -5,7 +5,7 @@
     summary: Sale List for account
     description: |
                   Allows getting a filtered list of `Sale` with corresponding details into which account can invest.
-    operationId: getSales
+    operationId: getSaleListForAccount
     parameters:
     - name: filter[owner]
       in: query

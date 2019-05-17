@@ -5,6 +5,9 @@ import (
 )
 
 const (
+
+	// IncludeTypeConvertedBalancesAsset - defines if conversion asset should be included in the response
+	IncludeTypeConvertedBalancesAsset = "asset"
 	// IncludeTypeConvertedBalancesStates - defines if converted balances states should be included in the response
 	IncludeTypeConvertedBalancesStates = "states"
 	// IncludeTypeConvertedBalancesBalance - defines if balances states should be included in the response
@@ -16,6 +19,7 @@ const (
 )
 
 var includeTypeConvertedBalancesAll = map[string]struct{}{
+	IncludeTypeConvertedBalancesAsset:        {},
 	IncludeTypeConvertedBalancesStates:       {},
 	IncludeTypeConvertedBalancesBalance:      {},
 	IncludeTypeConvertedBalancesBalanceState: {},

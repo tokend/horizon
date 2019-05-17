@@ -24,6 +24,7 @@ func NewSale(record history2.Sale, hasWhitelist bool) regources.Sale {
 	return regources.Sale{
 		Key: NewSaleKey(int64(record.ID)),
 		Attributes: regources.SaleAttributes{
+			BaseHardCap:  record.BaseHardCap,
 			StartTime:    record.StartTime,
 			EndTime:      record.EndTime,
 			SaleType:     record.SaleType,
@@ -51,7 +52,7 @@ func NewSaleDefaultQuoteAsset(saleRecord history2.Sale) regources.SaleQuoteAsset
 	}
 
 	return regources.SaleQuoteAsset{
-		Key: *NewSaleQuoteAssetKey(saleRecord.DefaultQuoteAsset).GetKeyP(),
+		Key: *NewSaleQuoteAssetKey(saleRecord.DefaultQuoteAsset, saleRecord.ID).GetKeyP(),
 		Attributes: regources.SaleQuoteAssetAttributes{
 			Price:      price,
 			CurrentCap: saleRecord.CurrentCap,

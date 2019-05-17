@@ -21,7 +21,7 @@ type VoteResponse struct {
 	Included Included `json:"included"`
 }
 
-type VotesResponse struct {
+type VoteListResponse struct {
 	Data     []Vote   `json:"data"`
 	Included Included `json:"included"`
 	Links    *Links   `json:"links"`

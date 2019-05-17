@@ -17,7 +17,7 @@ type getRequestListBaseHandler struct {
 }
 
 func (h *getRequestListBaseHandler) PopulateLinks(
-	response *regources.ReviewableRequestsResponse, request requests.GetRequestsBase,
+	response *regources.ReviewableRequestListResponse, request requests.GetRequestsBase,
 ) {
 	if len(response.Data) > 0 {
 		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
@@ -55,7 +55,7 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		ape.Render(w, response)
 		return nil
 	} else {
-		response := &regources.ReviewableRequestsResponse{
+		response := &regources.ReviewableRequestListResponse{
 			Data: make([]regources.ReviewableRequest, 0, len(records)),
 		}
 
