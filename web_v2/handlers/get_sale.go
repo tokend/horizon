@@ -80,7 +80,7 @@ func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResp
 		return nil, errors.Wrap(err, "failed to populate sale cap")
 	}
 
-	rule, err := h.AccountSpecificRulesQ.ForSale(historySale.ID).Global().Get()
+	rule, err := h.AccountSpecificRulesQ.FilterBySale(historySale.ID).Global().Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get global rule for sale")
 	}

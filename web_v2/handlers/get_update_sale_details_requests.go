@@ -75,7 +75,7 @@ func (h *getUpdateSaleDetailsRequestsHandler) RenderRecord(included *regources.I
 			return regources.ReviewableRequest{}, errors.New("sale not found")
 		}
 
-		rule, err := h.AccountSpecificRulesQ.ForSale(record.ID).Global().Get()
+		rule, err := h.AccountSpecificRulesQ.FilterBySale(record.ID).Global().Get()
 		if err != nil {
 			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get global rule for sale")
 		}

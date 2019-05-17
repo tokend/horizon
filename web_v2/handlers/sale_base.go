@@ -23,7 +23,7 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	response *regources.SaleListResponse) error {
 
 	for _, historySale := range historySales {
-		rule, err := h.AccountSpecificRulesQ.ForSale(historySale.ID).Global().Get()
+		rule, err := h.AccountSpecificRulesQ.FilterBySale(historySale.ID).Global().Get()
 		if err != nil {
 			return errors.Wrap(err, "failed to get global rule for sale")
 		}
