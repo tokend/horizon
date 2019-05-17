@@ -80,8 +80,8 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 	}
 
 	rules, err := h.AccountSpecificRulesQ.
-		ForSale(request.SaleID).
-		Permission(false).
+		FilterBySale(request.SaleID).
+		FilterByPermission(false).
 		Page(*request.PageParams).
 		Select()
 
