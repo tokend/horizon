@@ -96,7 +96,7 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  version = "3.3.4"
+  version = "3.5.0"
 
 [[constraint]]
   revision = "35ab5c5a21c5a933905992b239e56f2e9ef544e4"
