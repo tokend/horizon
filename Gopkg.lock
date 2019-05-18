@@ -496,7 +496,7 @@
 
 [[projects]]
   branch = "feature/kyc-recovery"
-  digest = "1:e43a0110780f4726e41f2529be6aeed35da52dd1245cf5764141043b32307d1e"
+  digest = "1:040977a285a30d1f4f273cb7053c5eef3a3ae7749de7701f876dde4d2523a532"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -514,7 +514,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "b30b348a587eefcfdac92225be0da6112c49f567"
+  revision = "8b6f546db797219aafd65ae493071da0e4cc8417"
 
 [[projects]]
   branch = "master"

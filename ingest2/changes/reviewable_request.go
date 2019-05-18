@@ -15,6 +15,7 @@ import (
 )
 
 var errUnknownRemoveReason = errors.New("request was removed due to unknown reason")
+var removeOnKYCRecoveryInit = "New KYC recovery was initiated"
 
 type reviewableRequestStorage interface {
 	//Inserts Reviewable request into DB
@@ -136,7 +137,7 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 
 func (c *reviewableRequestHandler) handleInitiateKycRecovery(lc ledgerChange) error {
 	id := uint64(lc.LedgerChange.MustRemoved().MustReviewableRequest().RequestId)
-	return c.storage.Cancel(id)
+	return c.storage.PermanentReject(id, removeOnKYCRecoveryInit)
 }
 
 func (c *reviewableRequestHandler) handleRemoveOnCreationOp(lc ledgerChange, fulfilled bool) error {

@@ -4,7 +4,7 @@
 
 package regources
 
-type CreateKycRecoveryRequestAttributes struct {
+type KycRecoveryRequestAttributes struct {
 	CreatorDetails Details `json:"creator_details"`
 	// Sequence number
 	SequenceNumber uint32             `json:"sequence_number"`

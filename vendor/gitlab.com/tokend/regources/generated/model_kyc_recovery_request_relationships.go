@@ -4,6 +4,6 @@
 
 package regources
 
-type CreateKycRecoveryRequestRelationships struct {
+type KycRecoveryRequestRelationships struct {
 	TargetAccount *Relation `json:"target_account,omitempty"`
 }

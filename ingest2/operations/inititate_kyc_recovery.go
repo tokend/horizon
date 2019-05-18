@@ -14,7 +14,7 @@ func (h *initiateKycRecoveryOpHandler) Details(op rawOperation, opRes xdr.Operat
 ) (history2.OperationDetails, error) {
 	initiateKycRecoveryOp := op.Body.MustInitiateKycRecoveryOp()
 
-	publicKey := xdr.AccountId(initiateKycRecoveryOp.Singer)
+	publicKey := xdr.AccountId(initiateKycRecoveryOp.Signer)
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeInitiateKycRecovery,
