@@ -75,16 +75,7 @@ func (h *getUpdateSaleDetailsRequestsHandler) RenderRecord(included *regources.I
 			return regources.ReviewableRequest{}, errors.New("sale not found")
 		}
 
-		rule, err := h.AccountSpecificRulesQ.FilterBySale(record.ID).Global().Get()
-		if err != nil {
-			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get global rule for sale")
-		}
-		var hasWhitelist bool
-		if rule != nil {
-			hasWhitelist = rule.Forbids
-		}
-
-		sale := resources.NewSale(*record, hasWhitelist)
+		sale := resources.NewSale(*record)
 		included.Add(&sale)
 	}
 	return resource, nil

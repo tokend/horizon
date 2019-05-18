@@ -23,18 +23,9 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	response *regources.SaleListResponse) error {
 
 	for _, historySale := range historySales {
-		rule, err := h.AccountSpecificRulesQ.FilterBySale(historySale.ID).Global().Get()
-		if err != nil {
-			return errors.Wrap(err, "failed to get global rule for sale")
-		}
-		var hasWhitelist bool
-		if rule != nil {
-			hasWhitelist = rule.Forbids
-		}
+		sale := resources.NewSale(historySale)
 
-		sale := resources.NewSale(historySale, hasWhitelist)
-
-		err = h.saleCapConverter.PopulateSaleCap(&historySale)
+		err := h.saleCapConverter.PopulateSaleCap(&historySale)
 		if err != nil {
 			return errors.Wrap(err, "failed to populate sale cap")
 		}
