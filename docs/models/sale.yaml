@@ -53,12 +53,14 @@ Sale:
               example: 2
             access_definition_type:
               type: string
-              example: "whitelist"
-              description: "indicates access definition type of the sale"
-              enum:
-                - "whitelist"
-                - "blacklist"
-                - "none"
+              format: SaleAccessDefinitionType
+              minimum: 1
+              maximum: 3
+              description: |
+                indicates access definition type of the sale
+                * 0 - none
+                * 1 - whitelist
+                * 2 - blacklist
             details:
               $ref: '#/components/schemas/Details'
               description: "free-form object to attach details to the sale"
