@@ -382,9 +382,9 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 	}
 }
 
-func getSaleAccessDefinitionType(request *xdr.SaleCreationRequest) history.SaleAccessDefinitionType {
+func getSaleAccessDefinitionType(request *xdr.SaleCreationRequest) regources.SaleAccessDefinitionType {
 	if request.Ext.SaleRules == nil {
-		return history.SaleAccessDefinitionTypeNone
+		return regources.SaleAccessDefinitionTypeNone
 	}
 
 	for _, rule := range *request.Ext.SaleRules {
@@ -392,13 +392,13 @@ func getSaleAccessDefinitionType(request *xdr.SaleCreationRequest) history.SaleA
 			continue
 		}
 		if rule.Forbids {
-			return history.SaleAccessDefinitionTypeWhitelist
+			return regources.SaleAccessDefinitionTypeWhitelist
 		} else {
-			return history.SaleAccessDefinitionTypeBlacklist
+			return regources.SaleAccessDefinitionTypeBlacklist
 		}
 	}
 
-	return history.SaleAccessDefinitionTypeNone
+	return regources.SaleAccessDefinitionTypeNone
 }
 
 func (c *reviewableRequestHandler) getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest,

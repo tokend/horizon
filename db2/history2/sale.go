@@ -24,11 +24,11 @@ type Sale struct {
 	StartTime            time.Time        `db:"start_time"`
 	EndTime              time.Time        `db:"end_time"`
 	CurrentCap           regources.Amount
-	Details              regources.Details        `db:"details"`
-	QuoteAssets          SaleQuoteAssets          `db:"quote_assets"`
-	State                regources.SaleState      `db:"state"`
-	AccessDefinitionType SaleAccessDefinitionType `db:"access_definition_type"`
-	Version              int32                    `db:"version"`
+	Details              regources.Details                  `db:"details"`
+	QuoteAssets          SaleQuoteAssets                    `db:"quote_assets"`
+	State                regources.SaleState                `db:"state"`
+	AccessDefinitionType regources.SaleAccessDefinitionType `db:"access_definition_type"`
+	Version              int32                              `db:"version"`
 }
 
 //SaleQuoteAssets - assets allowed to invest in sale

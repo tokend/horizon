@@ -97,7 +97,7 @@ func (c *saleHandler) Updated(lc ledgerChange) error {
 	return nil
 }
 
-func (c *saleHandler) getAccessDefinitionType(lc ledgerChange) history.SaleAccessDefinitionType {
+func (c *saleHandler) getAccessDefinitionType(lc ledgerChange) regources.SaleAccessDefinitionType {
 	for _, change := range lc.OpChanges {
 		if change.Type != xdr.LedgerEntryChangeTypeCreated {
 			continue
@@ -107,13 +107,13 @@ func (c *saleHandler) getAccessDefinitionType(lc ledgerChange) history.SaleAcces
 		}
 
 		if change.MustCreated().Data.MustAccountSpecificRule().Forbids {
-			return history.SaleAccessDefinitionTypeWhitelist
+			return regources.SaleAccessDefinitionTypeWhitelist
 		} else {
-			return history.SaleAccessDefinitionTypeBlacklist
+			return regources.SaleAccessDefinitionTypeBlacklist
 		}
 	}
 
-	return history.SaleAccessDefinitionTypeNone
+	return regources.SaleAccessDefinitionTypeNone
 }
 
 func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
