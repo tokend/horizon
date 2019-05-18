@@ -44,6 +44,7 @@ func (c *saleHandler) Created(lc ledgerChange) error {
 			"ledger_sequence": lc.LedgerSeq,
 		})
 	}
+	sale.AccessDefinitionType = c.getAccessDefinitionType(lc)
 
 	err = c.storage.Insert(*sale)
 	if err != nil {
@@ -94,6 +95,25 @@ func (c *saleHandler) Updated(lc ledgerChange) error {
 		})
 	}
 	return nil
+}
+
+func (c *saleHandler) getAccessDefinitionType(lc ledgerChange) history.SaleAccessDefinitionType {
+	for _, change := range lc.OpChanges {
+		if change.Type != xdr.LedgerEntryChangeTypeCreated {
+			continue
+		}
+		if change.MustCreated().Data.Type != xdr.LedgerEntryTypeAccountSpecificRule {
+			continue
+		}
+
+		if change.MustCreated().Data.MustAccountSpecificRule().Forbids {
+			return history.SaleAccessDefinitionTypeWhitelist
+		} else {
+			return history.SaleAccessDefinitionTypeBlacklist
+		}
+	}
+
+	return history.SaleAccessDefinitionTypeNone
 }
 
 func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
