@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"gitlab.com/tokend/regources"
+	regources2 "gitlab.com/tokend/regources/generated"
 
 	"database/sql/driver"
 
@@ -30,6 +31,7 @@ type ReviewableRequestDetails struct {
 	AtomicSwapBidCreation *AtomicSwapBidCreation    `json:"create_atomic_swap_bid,omitempty"`
 	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap,omitempty"`
 	CreatePoll            *CreatePoll               `json:"create_poll,omitempty"`
+	KYCRecovery           *KYCRecovery              `json:"kyc_recovery,omitempty"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -166,4 +168,11 @@ type CreatePoll struct {
 	ResultProvider           string       `json:"result_provider"`
 	VoteConfirmationRequired bool         `json:"vote_confirmation_required"`
 	Details                  map[string]interface{}
+}
+
+type KYCRecovery struct {
+	TargetAccount  string                        `json:"target_account"`
+	SignersData    []regources2.UpdateSignerData `json:"signers_data"`
+	SequenceNumber uint32                        `json:"sequence_number"`
+	Details        map[string]interface{}
 }

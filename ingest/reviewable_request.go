@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"gitlab.com/tokend/regources"
+	regources2 "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
@@ -339,6 +340,27 @@ func getAtomicSwapRequest(request *xdr.ASwapRequest,
 	}
 }
 
+func getKycRecovery(request *xdr.KycRecoveryRequest) *history.KYCRecovery {
+	signersData := make([]regources2.UpdateSignerData, 0, len(request.SignersData))
+	for _, signer := range request.SignersData {
+		signersData = append(signersData, regources2.UpdateSignerData{
+			Details:  regources2.Details(signer.Details),
+			Identity: uint32(signer.Identity),
+			RoleId:   uint64(signer.RoleId),
+			Weight:   uint32(signer.Weight),
+		})
+	}
+	var details map[string]interface{}
+	// error is ignored on purpose, we should not block ingest in case of such error
+	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
+	return &history.KYCRecovery{
+		SignersData:    signersData,
+		Details:        details,
+		TargetAccount:  request.TargetAccount.Address(),
+		SequenceNumber: uint32(request.SequenceNumber),
+	}
+}
+
 func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
 	var details history.ReviewableRequestDetails
 	var err error
@@ -376,6 +398,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.AtomicSwap = getAtomicSwapRequest(body.ASwapRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = getPollRequest(body.CreatePollRequest)
+	case xdr.ReviewableRequestTypeKycRecovery:
+		details.KYCRecovery = getKycRecovery(body.KycRecoveryRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),
