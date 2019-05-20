@@ -10,6 +10,8 @@ import (
 )
 
 type SaleAttributes struct {
+	// indicates access definition type of the sale * 0 - none * 1 - whitelist * 2 - blacklist
+	AccessDefinitionType SaleAccessDefinitionType `json:"access_definition_type"`
 	// Hard cap calculated in base asset
 	BaseHardCap Amount  `json:"base_hard_cap"`
 	Details     Details `json:"details"`

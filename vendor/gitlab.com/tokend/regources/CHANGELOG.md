@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.3.4
+
+### Added
+
+* `AccessDefinitionType` attribute to sale
+
+### Changed
+
+* Switched to go 3.5.0
+
 ## 4.3.3
 
 ### Added

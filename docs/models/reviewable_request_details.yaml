@@ -236,6 +236,7 @@ CreateSaleRequest:
         attributes:
           type: object
           required:
+            - access_definition_type
             - base_asset_for_hard_cap
             - start_time
             - end_time
@@ -244,6 +245,16 @@ CreateSaleRequest:
             - soft_cap
             - hard_cap
           properties:
+            access_definition_type:
+              type: string
+              format: SaleAccessDefinitionType
+              minimum: 1
+              maximum: 3
+              description: |
+                indicates access definition type of the sale
+                * 0 - none
+                * 1 - whitelist
+                * 2 - blacklist
             base_asset_for_hard_cap:
               type: string
               description: "Maximum amount of base asset to be sold"

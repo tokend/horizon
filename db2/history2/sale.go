@@ -12,22 +12,23 @@ import (
 
 // Sale - represents instance of compounding campaign
 type Sale struct {
-	ID                uint64           `db:"id"`
-	SoftCap           regources.Amount `db:"soft_cap"`
-	HardCap           regources.Amount `db:"hard_cap"`
-	BaseCurrentCap    regources.Amount `db:"base_current_cap"`
-	BaseHardCap       regources.Amount `db:"base_hard_cap"`
-	SaleType          xdr.SaleType     `db:"sale_type"`
-	OwnerAddress      string           `db:"owner_address"`
-	BaseAsset         string           `db:"base_asset"`
-	DefaultQuoteAsset string           `db:"default_quote_asset"`
-	StartTime         time.Time        `db:"start_time"`
-	EndTime           time.Time        `db:"end_time"`
-	CurrentCap        regources.Amount
-	Details           regources.Details   `db:"details"`
-	QuoteAssets       SaleQuoteAssets     `db:"quote_assets"`
-	State             regources.SaleState `db:"state"`
-	Version           int32               `db:"version"`
+	ID                   uint64           `db:"id"`
+	SoftCap              regources.Amount `db:"soft_cap"`
+	HardCap              regources.Amount `db:"hard_cap"`
+	BaseCurrentCap       regources.Amount `db:"base_current_cap"`
+	BaseHardCap          regources.Amount `db:"base_hard_cap"`
+	SaleType             xdr.SaleType     `db:"sale_type"`
+	OwnerAddress         string           `db:"owner_address"`
+	BaseAsset            string           `db:"base_asset"`
+	DefaultQuoteAsset    string           `db:"default_quote_asset"`
+	StartTime            time.Time        `db:"start_time"`
+	EndTime              time.Time        `db:"end_time"`
+	CurrentCap           regources.Amount
+	Details              regources.Details                  `db:"details"`
+	QuoteAssets          SaleQuoteAssets                    `db:"quote_assets"`
+	State                regources.SaleState                `db:"state"`
+	AccessDefinitionType regources.SaleAccessDefinitionType `db:"access_definition_type"`
+	Version              int32                              `db:"version"`
 }
 
 //SaleQuoteAssets - assets allowed to invest in sale

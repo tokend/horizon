@@ -37,6 +37,7 @@
 // migrations/036_whitelist.sql
 // migrations/037_matches.sql
 // migrations/038_remove_sale_participations.sql
+// migrations/039_sale_access_definition_type.sql
 // DO NOT EDIT!
 
 package schema
@@ -819,7 +820,7 @@ func migrations037_matchesSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "migrations/037_matches.sql", size: 448, mode: os.FileMode(420), modTime: time.Unix(1557942108, 0)}
+	info := bindataFileInfo{name: "migrations/037_matches.sql", size: 448, mode: os.FileMode(420), modTime: time.Unix(1558104218, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -839,7 +840,27 @@ func migrations038_remove_sale_participationsSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "migrations/038_remove_sale_participations.sql", size: 760, mode: os.FileMode(420), modTime: time.Unix(1557930040, 0)}
+	info := bindataFileInfo{name: "migrations/038_remove_sale_participations.sql", size: 760, mode: os.FileMode(420), modTime: time.Unix(1558104218, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _migrations039_sale_access_definition_typeSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\xcc\xb1\x0a\x02\x31\x0c\x06\xe0\xbd\x4f\xf1\xef\x72\xe0\x7e\xab\xaf\xe0\x7c\xc4\x6b\x2a\x81\x5c\x52\x9a\x14\xf5\xed\x9d\x04\x07\x7d\x81\x6f\x59\x70\x3a\xe4\x3e\x28\x19\xd7\x5e\x0a\x69\xf2\x40\xd2\x4d\x19\x41\xca\x01\xaa\x15\xbb\xeb\x3c\x0c\xb4\xef\x1c\xb1\x55\x6e\x62\x92\xe2\xb6\xe5\xab\x33\xc4\x12\xe6\x09\x9b\xaa\x6b\x29\xdf\xe4\xc5\x1f\xf6\x0b\xad\xc3\xfb\x47\x95\x06\x7e\x4a\x64\xfc\xf3\x2b\x37\x9a\x9a\x38\xaf\xe5\x1d\x00\x00\xff\xff\x99\x77\xee\x11\xaf\x00\x00\x00")
+
+func migrations039_sale_access_definition_typeSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations039_sale_access_definition_typeSql,
+		"migrations/039_sale_access_definition_type.sql",
+	)
+}
+
+func migrations039_sale_access_definition_typeSql() (*asset, error) {
+	bytes, err := migrations039_sale_access_definition_typeSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/039_sale_access_definition_type.sql", size: 175, mode: os.FileMode(420), modTime: time.Unix(1558352906, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -933,6 +954,7 @@ var _bindata = map[string]func() (*asset, error){
 	"migrations/036_whitelist.sql": migrations036_whitelistSql,
 	"migrations/037_matches.sql": migrations037_matchesSql,
 	"migrations/038_remove_sale_participations.sql": migrations038_remove_sale_participationsSql,
+	"migrations/039_sale_access_definition_type.sql": migrations039_sale_access_definition_typeSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -1013,6 +1035,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"036_whitelist.sql": &bintree{migrations036_whitelistSql, map[string]*bintree{}},
 		"037_matches.sql": &bintree{migrations037_matchesSql, map[string]*bintree{}},
 		"038_remove_sale_participations.sql": &bintree{migrations038_remove_sale_participationsSql, map[string]*bintree{}},
+		"039_sale_access_definition_type.sql": &bintree{migrations039_sale_access_definition_typeSql, map[string]*bintree{}},
 	}},
 }}
 

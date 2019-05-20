@@ -293,6 +293,7 @@ var messages = map[string]string{
 	"op_account_specific_rule_duplication":              "Not allowed to pass identical or conflicting rules",
 	"op_invalid_end_time":                               "New end time is in the past",
 	"op_global_specific_rule_required":                  "Not allowed to create sale without rule with null account id",
+	"op_account_role_to_set_does_not_exist":             "Account role to set does not exist",
 }
 
 func getMessage(rawCode string) string {
