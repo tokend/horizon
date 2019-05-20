@@ -531,14 +531,14 @@
 
 [[projects]]
   branch = "feature/cancel-change-role"
-  digest = "1:3964d0488ef47f9b6c70885c4438176e8259b9c7358c4ada366066b70221f4c2"
+  digest = "1:bf1dc06b5dc938b8aefebcf5bdc64026d7c049680d9ab6beb78b176ce4096fbe"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "1a21861aacc01eeb14aa7532e70db26c4b242860"
+  revision = "2a0117a5e9d92a2be1eeb73fe557842fd75ae5e1"
 
 [[projects]]
   branch = "master"

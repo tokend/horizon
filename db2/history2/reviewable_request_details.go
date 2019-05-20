@@ -94,16 +94,17 @@ type CreateWithdrawalRequest struct {
 
 //CreateSaleRequest - request details
 type CreateSaleRequest struct {
-	BaseAsset           string                 `json:"base_asset"`
-	DefaultQuoteAsset   string                 `json:"quote_asset"`
-	StartTime           time.Time              `json:"start_time"`
-	EndTime             time.Time              `json:"end_time"`
-	SoftCap             regources.Amount       `json:"soft_cap"`
-	HardCap             regources.Amount       `json:"hard_cap"`
-	CreatorDetails      regources.Details      `json:"creator_details"`
-	QuoteAssets         []regources.AssetPrice `json:"quote_assets"`
-	SaleType            xdr.SaleType           `json:"sale_type"`
-	BaseAssetForHardCap regources.Amount       `json:"base_asset_for_hard_cap"`
+	BaseAsset            string                             `json:"base_asset"`
+	DefaultQuoteAsset    string                             `json:"quote_asset"`
+	StartTime            time.Time                          `json:"start_time"`
+	EndTime              time.Time                          `json:"end_time"`
+	SoftCap              regources.Amount                   `json:"soft_cap"`
+	HardCap              regources.Amount                   `json:"hard_cap"`
+	CreatorDetails       regources.Details                  `json:"creator_details"`
+	QuoteAssets          []regources.AssetPrice             `json:"quote_assets"`
+	SaleType             xdr.SaleType                       `json:"sale_type"`
+	BaseAssetForHardCap  regources.Amount                   `json:"base_asset_for_hard_cap"`
+	AccessDefinitionType regources.SaleAccessDefinitionType `json:"access_definition_type"`
 }
 
 //UpdateLimitsRequest - request details

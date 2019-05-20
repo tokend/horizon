@@ -1,8 +1,15 @@
-## Unreleased
+## 3.3.2
+
+### Fixed
+
+* Syntax error in `sale_access_definition` migration
+
+## 3.3.1
 
 ### Added
 
 * Filter by address to `/v3/sales/{id}/relationships/whitelist`
+* `access_definition_type` attribute to sale and create sale request resources
 
 ## 3.3.1-x.2
 

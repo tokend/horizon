@@ -367,18 +367,40 @@ func (c *reviewableRequestHandler) getSaleRequest(request *xdr.SaleCreationReque
 	}
 
 	saleType := request.SaleTypeExt.SaleType
+	accessDefinitionType := getSaleAccessDefinitionType(request)
+
 	return &history.CreateSaleRequest{
-		BaseAsset:           string(request.BaseAsset),
-		DefaultQuoteAsset:   string(request.DefaultQuoteAsset),
-		StartTime:           unixToTime(int64(request.StartTime)),
-		EndTime:             unixToTime(int64(request.EndTime)),
-		SoftCap:             regources.Amount(request.SoftCap),
-		HardCap:             regources.Amount(request.HardCap),
-		CreatorDetails:      internal.MarshalCustomDetails(request.CreatorDetails),
-		QuoteAssets:         quoteAssets,
-		SaleType:            saleType,
-		BaseAssetForHardCap: regources.Amount(request.RequiredBaseAssetForHardCap),
+		BaseAsset:            string(request.BaseAsset),
+		DefaultQuoteAsset:    string(request.DefaultQuoteAsset),
+		StartTime:            unixToTime(int64(request.StartTime)),
+		EndTime:              unixToTime(int64(request.EndTime)),
+		SoftCap:              regources.Amount(request.SoftCap),
+		HardCap:              regources.Amount(request.HardCap),
+		CreatorDetails:       internal.MarshalCustomDetails(request.CreatorDetails),
+		QuoteAssets:          quoteAssets,
+		SaleType:             saleType,
+		BaseAssetForHardCap:  regources.Amount(request.RequiredBaseAssetForHardCap),
+		AccessDefinitionType: accessDefinitionType,
 	}
+}
+
+func getSaleAccessDefinitionType(request *xdr.SaleCreationRequest) regources.SaleAccessDefinitionType {
+	if request.Ext.SaleRules == nil {
+		return regources.SaleAccessDefinitionTypeNone
+	}
+
+	for _, rule := range *request.Ext.SaleRules {
+		if rule.AccountId != nil {
+			continue
+		}
+		if rule.Forbids {
+			return regources.SaleAccessDefinitionTypeWhitelist
+		} else {
+			return regources.SaleAccessDefinitionTypeBlacklist
+		}
+	}
+
+	return regources.SaleAccessDefinitionTypeNone
 }
 
 func (c *reviewableRequestHandler) getLimitsUpdateRequest(request *xdr.LimitsUpdateRequest,

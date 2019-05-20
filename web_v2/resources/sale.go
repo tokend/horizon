@@ -24,12 +24,13 @@ func NewSale(record history2.Sale) regources.Sale {
 	return regources.Sale{
 		Key: NewSaleKey(int64(record.ID)),
 		Attributes: regources.SaleAttributes{
-			BaseHardCap: record.BaseHardCap,
-			StartTime:   record.StartTime,
-			EndTime:     record.EndTime,
-			SaleType:    record.SaleType,
-			SaleState:   record.State,
-			Details:     record.Details,
+			AccessDefinitionType: record.AccessDefinitionType,
+			BaseHardCap:          record.BaseHardCap,
+			StartTime:            record.StartTime,
+			EndTime:              record.EndTime,
+			SaleType:             record.SaleType,
+			SaleState:            record.State,
+			Details:              record.Details,
 		},
 		Relationships: regources.SaleRelationships{
 			Owner:             NewAccountKey(record.OwnerAddress).AsRelation(),

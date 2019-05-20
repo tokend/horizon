@@ -10,6 +10,8 @@ import (
 )
 
 type CreateSaleRequestAttributes struct {
+	// indicates access definition type of the sale * 0 - none * 1 - whitelist * 2 - blacklist
+	AccessDefinitionType SaleAccessDefinitionType `json:"access_definition_type"`
 	// Maximum amount of base asset to be sold
 	BaseAssetForHardCap Amount  `json:"base_asset_for_hard_cap"`
 	CreatorDetails      Details `json:"creator_details"`
