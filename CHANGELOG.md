@@ -13,12 +13,6 @@
 
 ## 3.3.1-x.2
 
-### Added
-
-* `InitiateKYCRecovery`, `CreateKYCRecoveryRequest`  operations ingestion
-* `/v3/kyc_recovery_requests` endpoint to get filtered list of KYC Recovery requests
-* `/v3/kyc_recovery_requests/{id` endpoint to get KYC Recovery request by id
-
 ### Fixed
 
 * Sale participation response rendering

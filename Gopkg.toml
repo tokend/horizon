@@ -94,9 +94,9 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[override]]
+[[constraint]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/kyc-recovery"
+  version = "3.5.0"
 
 [[constraint]]
   version = "4.3.4"
