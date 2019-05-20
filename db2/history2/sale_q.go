@@ -38,6 +38,7 @@ func NewSalesQ(repo *db2.Repo) SalesQ {
 			"sales.state",
 			"sales.quote_assets",
 			"sales.version",
+			"sales.access_definition_type",
 		).From("sales"),
 	}
 }
