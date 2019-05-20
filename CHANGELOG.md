@@ -3,7 +3,7 @@
 ### Added
 
 * Filter by address to `/v3/sales/{id}/relationships/whitelist`
-* `has_whitelist` attribute to sale
+* `access_definition_type` attribute to sale and create sale request resources
 
 ## 3.3.1-x.2
 
