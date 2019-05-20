@@ -10,7 +10,7 @@ func NewPollKey(ID int64) regources.Key {
 }
 
 func NewParticipationKey(ID int64) regources.Key {
-	return regources.NewKeyInt64(ID, regources.POLL_OUTCOME)
+	return regources.NewKeyInt64(ID, regources.POLLS_PARTICIPATION)
 }
 
 func NewPoll(record history2.Poll) regources.Poll {

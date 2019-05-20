@@ -39,7 +39,7 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 	case xdr.OperationTypeManageOffer:
 		return newManageOfferOp(op.ID, *op.Details.ManageOffer)
 	case xdr.OperationTypeManageInvoiceRequest:
-		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_INVOICE).GetKeyP()
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_INVOICE_REQUEST).GetKeyP()
 	case xdr.OperationTypeReviewRequest:
 		return newReviewRequestOp(op.ID, *op.Details.ReviewRequest)
 	case xdr.OperationTypeCreateSaleRequest:
