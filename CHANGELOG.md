@@ -1,3 +1,9 @@
+## 3.3.2
+
+### Fixed
+
+* Syntax error in `sale_access_definition` migration
+
 ## 3.3.1
 
 ### Added
