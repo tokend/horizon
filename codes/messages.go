@@ -151,7 +151,7 @@ var messages = map[string]string{
 	"op_request_does_not_exist":                         "Request does not exist",
 	"op_permanent_reject_not_allowed":                   "Permanent reject not allowed, use reject",
 	"op_pending_request_update_not_allowed":             "User not allowed to update reviewable request if it isn't rejected",
-	"op_not_allowed_to_update_request":                  "Master not allowed to update ChangeRoleRequest",
+	"op_not_allowed_to_update_request":                  "Source account of the operation not allowed to update request",
 	"op_invalid_change_role_request_data":               "Not allowed to change destination account, role to set or set custom tasks on update request",
 	"op_invalid_creator_details":                        "Invalid json details or details length exceed max length",
 	"op_non_zero_tasks_to_remove_not_allowed":           "Non-zero value of tasksToRemove field is not allowed in reject reviewable request",
@@ -293,6 +293,12 @@ var messages = map[string]string{
 	"op_account_specific_rule_duplication":              "Not allowed to pass identical or conflicting rules",
 	"op_invalid_end_time":                               "New end time is in the past",
 	"op_global_specific_rule_required":                  "Not allowed to create sale without rule with null account id",
+	"op_kyc_recovery_tasks_not_found":                   "There is no key value by key \"create_kyc_recovery_tasks\" ",
+	"op_signer_duplication":                             "It is not allowed to add same signer twice",
+	"op_target_account_not_found":                       "Account address specified in operation is not found",
+	"op_recovery_not_allowed":                           "System configuration forbids performing kyc recovery",
+	"op_recovery_signer_role_not_found":                 "There is no key value by key \"kyc_recovery_signer_role\" ",
+	"op_invalid_update_data":                            "It is not allowed to change target account on request update",
 }
 
 func getMessage(rawCode string) string {
