@@ -66,7 +66,8 @@
   version = "v3.7"
 
 [[projects]]
-  digest = "1:cf3894d2f4d3626820e5a07978478dc9bcaafc862509221c2ff2c4aa5d515f0e"
+  branch = "feature/cancel-change-role"
+  digest = "1:016a45dc43ab5514b6b23af913999068775557cf1fedc22decc5ae8637be1034"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -75,8 +76,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "62bd66405dcc6cefb6f467d9381809e919e27cdc"
-  version = "3.3.4"
+  revision = "8258035424096fb1639fe34eee107d1f459ce363"
 
 [[projects]]
   digest = "1:2ad5e4bbe42ffd64b10babe1ec1ac99d64122170cb2524326ad81708ebd0b9cc"

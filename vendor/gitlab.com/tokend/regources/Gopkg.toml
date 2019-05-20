@@ -30,8 +30,8 @@
   version = "0.8.0"
 
 [[constraint]]
+  branch = "feature/cancel-change-role"
   name = "gitlab.com/tokend/go"
-  version = "3.3.4"
 
 [prune]
   go-tests = true
