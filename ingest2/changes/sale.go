@@ -106,7 +106,13 @@ func (c *saleHandler) getAccessDefinitionType(lc ledgerChange) regources.SaleAcc
 			continue
 		}
 
-		if change.MustCreated().Data.MustAccountSpecificRule().Forbids {
+		rule := change.MustCreated().Data.MustAccountSpecificRule()
+
+		if rule.AccountId != nil {
+			continue
+		}
+
+		if rule.Forbids {
 			return regources.SaleAccessDefinitionTypeWhitelist
 		} else {
 			return regources.SaleAccessDefinitionTypeBlacklist
