@@ -34,7 +34,7 @@ func (s SaleAccessDefinitionType) MarshalJSON() ([]byte, error) {
 func (s *SaleAccessDefinitionType) UnmarshalJSON(data []byte) error {
 	var flag Flag
 	if err := json.Unmarshal(data, &flag); err != nil {
-		return errors.New("failed to unmarshal sale definition type to byte")
+		return errors.Wrap(err, "failed to unmarshal sale definition type to byte")
 	}
 
 	*s = SaleAccessDefinitionType(flag.Value)
