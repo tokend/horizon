@@ -16,11 +16,6 @@ func (h *createKycRecoveryRequestOpHandler) Details(op rawOperation, opRes xdr.O
 	createKYCRecoveryRequestOp := op.Body.MustCreateKycRecoveryRequestOp()
 	createKYCRequestRes := opRes.MustCreateKycRecoveryRequestResult().MustSuccess()
 
-	var allTasks *uint32
-	if createKYCRecoveryRequestOp.AllTasks != nil {
-		allTasksInt := uint32(*createKYCRecoveryRequestOp.AllTasks)
-		allTasks = &allTasksInt
-	}
 	signersData := make([]history2.UpdateSignerDetails, 0, len(createKYCRecoveryRequestOp.SignersData))
 	for _, signer := range createKYCRecoveryRequestOp.SignersData {
 		signersData = append(signersData, history2.UpdateSignerDetails{
@@ -37,7 +32,7 @@ func (h *createKycRecoveryRequestOpHandler) Details(op rawOperation, opRes xdr.O
 			TargetAccount:  createKYCRecoveryRequestOp.TargetAccount.Address(),
 			SignersData:    signersData,
 			CreatorDetails: internal.MarshalCustomDetails(createKYCRecoveryRequestOp.CreatorDetails),
-			AllTasks:       allTasks,
+			AllTasks:       (*uint32)(createKYCRecoveryRequestOp.AllTasks),
 			RequestDetails: history2.RequestDetails{
 				RequestID:   int64(createKYCRequestRes.RequestId),
 				IsFulfilled: createKYCRequestRes.Fulfilled,

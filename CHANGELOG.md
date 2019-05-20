@@ -1,4 +1,17 @@
-## Unreleased
+## 3.3.2
+
+### Fixed
+
+* Syntax error in `sale_access_definition` migration
+
+## 3.3.1
+
+### Added
+
+* Filter by address to `/v3/sales/{id}/relationships/whitelist`
+* `access_definition_type` attribute to sale and create sale request resources
+
+## 3.3.1-x.2
 
 ### Added
 
@@ -9,7 +22,30 @@
 ### Fixed
 
 * Sale participation response rendering
+* Names of multiple resources responses changed (e.g. `AccountsResponse` -> `AccountListResponse`)
+* Missing `base_hard_cap` in sale attributes
+* Non-unique identifiers for `sale-quote-assets` resources
+* Missing soft and hard caps in sale request details
 
+### Added
+
+* `/v3/matches` endpoint to get the history of secondary market matches
+* `asset` relationship to `converted-balances-collections` resource type
+* `asset` include parameter to `/v3/accounts/{id}/converted_balances{asset_code}`
+
+### Removed
+
+* Sale participation on sale close ingestion
+
+### Changed
+
+* Sale participations are not taken from `participant_effects` table
+
+## 3.3.1-x.1
+
+### Fixed
+
+* Empty response on `/v3/sale/relationships/participation` when sale state is opened
 
 ## 3.3.1-x.0
 
@@ -24,6 +60,7 @@ permission to participate in sale.
 * Account specific rules ingestion
 * Sale version ingestion
 * Bumped up ingest version
+* `limits_with_stats` to `account` resource
 
 ## 3.3.0
 

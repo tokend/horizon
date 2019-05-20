@@ -67,3 +67,11 @@ Account:
                 type: array
                 items:
                   $ref: '#/components/schemas/FeeKey'
+          limits_with_stats:
+            description: "Defines limits specified for a particular account and outcome statistics of this account"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LimitsWithStatsKey'

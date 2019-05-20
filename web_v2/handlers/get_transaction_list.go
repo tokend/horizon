@@ -68,7 +68,7 @@ func (h *getTransactionsHandler) getLatestLedger() (*history2.Ledger, error) {
 }
 
 // GetTransactions returns the list of transactions with related resources
-func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactions) (*regources.TransactionsResponse, error) {
+func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactions) (*regources.TransactionListResponse, error) {
 	q := h.TransactionsQ.Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeTransactionListLedgerChangeTypes) {
@@ -84,7 +84,7 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 		return nil, errors.Wrap(err, "failed to load transactions")
 	}
 
-	result := regources.TransactionsResponse{
+	result := regources.TransactionListResponse{
 		Data: make([]regources.Transaction, 0, len(historyTransactions)),
 	}
 

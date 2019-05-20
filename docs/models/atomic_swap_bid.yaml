@@ -1,0 +1,13 @@
+AtomicSwapBidKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "4"
+    type:
+      type: string
+      enum:
+        - "aswap-bid"

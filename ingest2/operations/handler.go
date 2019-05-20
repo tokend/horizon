@@ -37,6 +37,7 @@ type Handler struct {
 // details and participants effects of certain operation
 func NewOperationsHandler(operationsStorage operationsStorage, participantEffectsStorage participantEffectsStorage,
 	pubKeyProvider IDProvider, balanceProvider balanceProvider) *Handler {
+
 	effectsBaseHandler := effectsProvider{
 		IDProvider:      pubKeyProvider,
 		balanceProvider: balanceProvider,
@@ -184,7 +185,7 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 				opI: opI,
 			}, opIDGen, participantEffectIDGen)
 			if err != nil {
-				return errors.Wrap(err, "failed to process ledger change", log.F{
+				return errors.Wrap(err, "failed to convert operation", log.F{
 					"ledger_seq": header.Sequence,
 					"tx_i":       txI,
 					"op_i":       opI,

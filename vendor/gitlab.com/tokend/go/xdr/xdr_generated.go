@@ -1,4 +1,4 @@
-// revision: 3eeaee41e521fd962b282b39059ffa0bad7bc66e
+// revision: 6cdd47afcbee3e83f49f1a4195b7faddafb8cd2e
 // branch:   feature/kyc-recovery
 // Package xdr is generated from:
 //
@@ -15468,7 +15468,7 @@ func NewCreateKycRecoveryRequestOpExt(v LedgerVersion, value interface{}) (resul
 //         //: Arbitrary stringified json object that can be used to attach data to be reviewed by an admin
 //        longstring creatorDetails; // details set by requester
 //
-//        //: (optional) Bit mask whose flags must be cleared in order for PreIssuanceRequest to be approved, which will be used by key `preissuance_tasks`
+//        //: (optional) Bit mask whose flags must be cleared in order for KYC recovery request to be approved, which will be used by key `create_kyc_recovery_tasks`
 //        //: instead of key-value
 //        uint32* allTasks;
 //
@@ -15515,39 +15515,33 @@ type CreateKycRecoveryRequestOp struct {
 //        TARGET_ACCOUNT_NOT_FOUND = -8,
 //        //: System configuration forbids KYC recovery
 //        RECOVERY_NOT_ALLOWED = -10,
-//        //: Either, there is no entry by key `kyc_recovery_account_role`, or such role does not exists
-//        RECOVERY_ACCOUNT_ROLE_NOT_FOUND = -11,
-//        //: Account role differs from expected
-//        TARGET_ACCOUNT_NOT_IN_RECOVERY_ROLE = -12,
-//        //: Only target account can update rejected request
-//        NOT_ALLOWED_TO_UPDATE_REQUEST = -13,
+//        //: Only target account can update request
+//        NOT_ALLOWED_TO_UPDATE_REQUEST = -11,
 //        //: There is no request with such ID
-//        KYC_RECOVERY_REQUEST_NOT_FOUND = -16,
+//        REQUEST_NOT_FOUND = -12,
 //        //: It is forbidden to change target account on update
-//        INVALID_UPDATE_DATA = -17,
+//        INVALID_UPDATE_DATA = -13,
 //        //: It is forbidden to set `allTasks` on update
-//        NOT_ALLOWED_TO_SET_TASKS_ON_UPDATE = -18
+//        NOT_ALLOWED_TO_SET_TASKS_ON_UPDATE = -14
 //    };
 //
 type CreateKycRecoveryRequestResultCode int32
 
 const (
-	CreateKycRecoveryRequestResultCodeSuccess                        CreateKycRecoveryRequestResultCode = 0
-	CreateKycRecoveryRequestResultCodeInvalidCreatorDetails          CreateKycRecoveryRequestResultCode = -1
-	CreateKycRecoveryRequestResultCodeKycRecoveryTasksNotFound       CreateKycRecoveryRequestResultCode = -2
-	CreateKycRecoveryRequestResultCodeNoSignerData                   CreateKycRecoveryRequestResultCode = -3
-	CreateKycRecoveryRequestResultCodeSignerDuplication              CreateKycRecoveryRequestResultCode = -4
-	CreateKycRecoveryRequestResultCodeInvalidWeight                  CreateKycRecoveryRequestResultCode = -5
-	CreateKycRecoveryRequestResultCodeInvalidDetails                 CreateKycRecoveryRequestResultCode = -6
-	CreateKycRecoveryRequestResultCodeRequestAlreadyExists           CreateKycRecoveryRequestResultCode = -7
-	CreateKycRecoveryRequestResultCodeTargetAccountNotFound          CreateKycRecoveryRequestResultCode = -8
-	CreateKycRecoveryRequestResultCodeRecoveryNotAllowed             CreateKycRecoveryRequestResultCode = -10
-	CreateKycRecoveryRequestResultCodeRecoveryAccountRoleNotFound    CreateKycRecoveryRequestResultCode = -11
-	CreateKycRecoveryRequestResultCodeTargetAccountNotInRecoveryRole CreateKycRecoveryRequestResultCode = -12
-	CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest      CreateKycRecoveryRequestResultCode = -13
-	CreateKycRecoveryRequestResultCodeKycRecoveryRequestNotFound     CreateKycRecoveryRequestResultCode = -16
-	CreateKycRecoveryRequestResultCodeInvalidUpdateData              CreateKycRecoveryRequestResultCode = -17
-	CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate   CreateKycRecoveryRequestResultCode = -18
+	CreateKycRecoveryRequestResultCodeSuccess                      CreateKycRecoveryRequestResultCode = 0
+	CreateKycRecoveryRequestResultCodeInvalidCreatorDetails        CreateKycRecoveryRequestResultCode = -1
+	CreateKycRecoveryRequestResultCodeKycRecoveryTasksNotFound     CreateKycRecoveryRequestResultCode = -2
+	CreateKycRecoveryRequestResultCodeNoSignerData                 CreateKycRecoveryRequestResultCode = -3
+	CreateKycRecoveryRequestResultCodeSignerDuplication            CreateKycRecoveryRequestResultCode = -4
+	CreateKycRecoveryRequestResultCodeInvalidWeight                CreateKycRecoveryRequestResultCode = -5
+	CreateKycRecoveryRequestResultCodeInvalidDetails               CreateKycRecoveryRequestResultCode = -6
+	CreateKycRecoveryRequestResultCodeRequestAlreadyExists         CreateKycRecoveryRequestResultCode = -7
+	CreateKycRecoveryRequestResultCodeTargetAccountNotFound        CreateKycRecoveryRequestResultCode = -8
+	CreateKycRecoveryRequestResultCodeRecoveryNotAllowed           CreateKycRecoveryRequestResultCode = -10
+	CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest    CreateKycRecoveryRequestResultCode = -11
+	CreateKycRecoveryRequestResultCodeRequestNotFound              CreateKycRecoveryRequestResultCode = -12
+	CreateKycRecoveryRequestResultCodeInvalidUpdateData            CreateKycRecoveryRequestResultCode = -13
+	CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate CreateKycRecoveryRequestResultCode = -14
 )
 
 var CreateKycRecoveryRequestResultCodeAll = []CreateKycRecoveryRequestResultCode{
@@ -15561,10 +15555,8 @@ var CreateKycRecoveryRequestResultCodeAll = []CreateKycRecoveryRequestResultCode
 	CreateKycRecoveryRequestResultCodeRequestAlreadyExists,
 	CreateKycRecoveryRequestResultCodeTargetAccountNotFound,
 	CreateKycRecoveryRequestResultCodeRecoveryNotAllowed,
-	CreateKycRecoveryRequestResultCodeRecoveryAccountRoleNotFound,
-	CreateKycRecoveryRequestResultCodeTargetAccountNotInRecoveryRole,
 	CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest,
-	CreateKycRecoveryRequestResultCodeKycRecoveryRequestNotFound,
+	CreateKycRecoveryRequestResultCodeRequestNotFound,
 	CreateKycRecoveryRequestResultCodeInvalidUpdateData,
 	CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate,
 }
@@ -15580,12 +15572,10 @@ var createKycRecoveryRequestResultCodeMap = map[int32]string{
 	-7:  "CreateKycRecoveryRequestResultCodeRequestAlreadyExists",
 	-8:  "CreateKycRecoveryRequestResultCodeTargetAccountNotFound",
 	-10: "CreateKycRecoveryRequestResultCodeRecoveryNotAllowed",
-	-11: "CreateKycRecoveryRequestResultCodeRecoveryAccountRoleNotFound",
-	-12: "CreateKycRecoveryRequestResultCodeTargetAccountNotInRecoveryRole",
-	-13: "CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest",
-	-16: "CreateKycRecoveryRequestResultCodeKycRecoveryRequestNotFound",
-	-17: "CreateKycRecoveryRequestResultCodeInvalidUpdateData",
-	-18: "CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate",
+	-11: "CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest",
+	-12: "CreateKycRecoveryRequestResultCodeRequestNotFound",
+	-13: "CreateKycRecoveryRequestResultCodeInvalidUpdateData",
+	-14: "CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate",
 }
 
 var createKycRecoveryRequestResultCodeShortMap = map[int32]string{
@@ -15599,31 +15589,27 @@ var createKycRecoveryRequestResultCodeShortMap = map[int32]string{
 	-7:  "request_already_exists",
 	-8:  "target_account_not_found",
 	-10: "recovery_not_allowed",
-	-11: "recovery_account_role_not_found",
-	-12: "target_account_not_in_recovery_role",
-	-13: "not_allowed_to_update_request",
-	-16: "kyc_recovery_request_not_found",
-	-17: "invalid_update_data",
-	-18: "not_allowed_to_set_tasks_on_update",
+	-11: "not_allowed_to_update_request",
+	-12: "request_not_found",
+	-13: "invalid_update_data",
+	-14: "not_allowed_to_set_tasks_on_update",
 }
 
 var createKycRecoveryRequestResultCodeRevMap = map[string]int32{
-	"CreateKycRecoveryRequestResultCodeSuccess":                        0,
-	"CreateKycRecoveryRequestResultCodeInvalidCreatorDetails":          -1,
-	"CreateKycRecoveryRequestResultCodeKycRecoveryTasksNotFound":       -2,
-	"CreateKycRecoveryRequestResultCodeNoSignerData":                   -3,
-	"CreateKycRecoveryRequestResultCodeSignerDuplication":              -4,
-	"CreateKycRecoveryRequestResultCodeInvalidWeight":                  -5,
-	"CreateKycRecoveryRequestResultCodeInvalidDetails":                 -6,
-	"CreateKycRecoveryRequestResultCodeRequestAlreadyExists":           -7,
-	"CreateKycRecoveryRequestResultCodeTargetAccountNotFound":          -8,
-	"CreateKycRecoveryRequestResultCodeRecoveryNotAllowed":             -10,
-	"CreateKycRecoveryRequestResultCodeRecoveryAccountRoleNotFound":    -11,
-	"CreateKycRecoveryRequestResultCodeTargetAccountNotInRecoveryRole": -12,
-	"CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest":      -13,
-	"CreateKycRecoveryRequestResultCodeKycRecoveryRequestNotFound":     -16,
-	"CreateKycRecoveryRequestResultCodeInvalidUpdateData":              -17,
-	"CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate":   -18,
+	"CreateKycRecoveryRequestResultCodeSuccess":                      0,
+	"CreateKycRecoveryRequestResultCodeInvalidCreatorDetails":        -1,
+	"CreateKycRecoveryRequestResultCodeKycRecoveryTasksNotFound":     -2,
+	"CreateKycRecoveryRequestResultCodeNoSignerData":                 -3,
+	"CreateKycRecoveryRequestResultCodeSignerDuplication":            -4,
+	"CreateKycRecoveryRequestResultCodeInvalidWeight":                -5,
+	"CreateKycRecoveryRequestResultCodeInvalidDetails":               -6,
+	"CreateKycRecoveryRequestResultCodeRequestAlreadyExists":         -7,
+	"CreateKycRecoveryRequestResultCodeTargetAccountNotFound":        -8,
+	"CreateKycRecoveryRequestResultCodeRecoveryNotAllowed":           -10,
+	"CreateKycRecoveryRequestResultCodeNotAllowedToUpdateRequest":    -11,
+	"CreateKycRecoveryRequestResultCodeRequestNotFound":              -12,
+	"CreateKycRecoveryRequestResultCodeInvalidUpdateData":            -13,
+	"CreateKycRecoveryRequestResultCodeNotAllowedToSetTasksOnUpdate": -14,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -17611,49 +17597,42 @@ type InitiateKycRecoveryOp struct {
 //        //: Means that KYC recovery was successfully initiated
 //        SUCCESS = 0,
 //
-//        //: KYC target account not found
-//        NOT_FOUND = -1,
 //        //: System configuration forbids KYC recovery
-//        RECOVERY_NOT_ALLOWED = -2,
+//        RECOVERY_NOT_ALLOWED = -1,
 //        //: Either, there is no entry by key `kyc_recovery_signer_role`, or such role does not exists
-//        RECOVERY_SIGNER_ROLE_NOT_FOUND = -3
+//        RECOVERY_SIGNER_ROLE_NOT_FOUND = -2
 //    };
 //
 type InitiateKycRecoveryResultCode int32
 
 const (
 	InitiateKycRecoveryResultCodeSuccess                    InitiateKycRecoveryResultCode = 0
-	InitiateKycRecoveryResultCodeNotFound                   InitiateKycRecoveryResultCode = -1
-	InitiateKycRecoveryResultCodeRecoveryNotAllowed         InitiateKycRecoveryResultCode = -2
-	InitiateKycRecoveryResultCodeRecoverySignerRoleNotFound InitiateKycRecoveryResultCode = -3
+	InitiateKycRecoveryResultCodeRecoveryNotAllowed         InitiateKycRecoveryResultCode = -1
+	InitiateKycRecoveryResultCodeRecoverySignerRoleNotFound InitiateKycRecoveryResultCode = -2
 )
 
 var InitiateKycRecoveryResultCodeAll = []InitiateKycRecoveryResultCode{
 	InitiateKycRecoveryResultCodeSuccess,
-	InitiateKycRecoveryResultCodeNotFound,
 	InitiateKycRecoveryResultCodeRecoveryNotAllowed,
 	InitiateKycRecoveryResultCodeRecoverySignerRoleNotFound,
 }
 
 var initiateKycRecoveryResultCodeMap = map[int32]string{
 	0:  "InitiateKycRecoveryResultCodeSuccess",
-	-1: "InitiateKycRecoveryResultCodeNotFound",
-	-2: "InitiateKycRecoveryResultCodeRecoveryNotAllowed",
-	-3: "InitiateKycRecoveryResultCodeRecoverySignerRoleNotFound",
+	-1: "InitiateKycRecoveryResultCodeRecoveryNotAllowed",
+	-2: "InitiateKycRecoveryResultCodeRecoverySignerRoleNotFound",
 }
 
 var initiateKycRecoveryResultCodeShortMap = map[int32]string{
 	0:  "success",
-	-1: "not_found",
-	-2: "recovery_not_allowed",
-	-3: "recovery_signer_role_not_found",
+	-1: "recovery_not_allowed",
+	-2: "recovery_signer_role_not_found",
 }
 
 var initiateKycRecoveryResultCodeRevMap = map[string]int32{
 	"InitiateKycRecoveryResultCodeSuccess":                    0,
-	"InitiateKycRecoveryResultCodeNotFound":                   -1,
-	"InitiateKycRecoveryResultCodeRecoveryNotAllowed":         -2,
-	"InitiateKycRecoveryResultCodeRecoverySignerRoleNotFound": -3,
+	"InitiateKycRecoveryResultCodeRecoveryNotAllowed":         -1,
+	"InitiateKycRecoveryResultCodeRecoverySignerRoleNotFound": -2,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -38117,6 +38096,22 @@ type AccountRuleResourceVote struct {
 	Ext            EmptyExt `json:"ext,omitempty"`
 }
 
+// AccountRuleResourceInitiateKycRecovery is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: Role id
+//            uint64 roleID;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type AccountRuleResourceInitiateKycRecovery struct {
+	RoleId Uint64   `json:"roleID,omitempty"`
+	Ext    EmptyExt `json:"ext,omitempty"`
+}
+
 // AccountRuleResource is an XDR Union defines as:
 //
 //   //: Describes properties of some entries that can be used to restrict the usage of entries
@@ -38214,22 +38209,32 @@ type AccountRuleResourceVote struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } vote;
+//    case INITIATE_KYC_RECOVERY:
+//        struct
+//        {
+//            //: Role id
+//            uint64 roleID;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } initiateKYCRecovery;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
 //    };
 //
 type AccountRuleResource struct {
-	Type              LedgerEntryType                       `json:"type,omitempty"`
-	Asset             *AccountRuleResourceAsset             `json:"asset,omitempty"`
-	ReviewableRequest *AccountRuleResourceReviewableRequest `json:"reviewableRequest,omitempty"`
-	Offer             *AccountRuleResourceOffer             `json:"offer,omitempty"`
-	Sale              *AccountRuleResourceSale              `json:"sale,omitempty"`
-	AtomicSwapBid     *AccountRuleResourceAtomicSwapBid     `json:"atomicSwapBid,omitempty"`
-	KeyValue          *AccountRuleResourceKeyValue          `json:"keyValue,omitempty"`
-	Poll              *AccountRuleResourcePoll              `json:"poll,omitempty"`
-	Vote              *AccountRuleResourceVote              `json:"vote,omitempty"`
-	Ext               *EmptyExt                             `json:"ext,omitempty"`
+	Type                LedgerEntryType                         `json:"type,omitempty"`
+	Asset               *AccountRuleResourceAsset               `json:"asset,omitempty"`
+	ReviewableRequest   *AccountRuleResourceReviewableRequest   `json:"reviewableRequest,omitempty"`
+	Offer               *AccountRuleResourceOffer               `json:"offer,omitempty"`
+	Sale                *AccountRuleResourceSale                `json:"sale,omitempty"`
+	AtomicSwapBid       *AccountRuleResourceAtomicSwapBid       `json:"atomicSwapBid,omitempty"`
+	KeyValue            *AccountRuleResourceKeyValue            `json:"keyValue,omitempty"`
+	Poll                *AccountRuleResourcePoll                `json:"poll,omitempty"`
+	Vote                *AccountRuleResourceVote                `json:"vote,omitempty"`
+	InitiateKycRecovery *AccountRuleResourceInitiateKycRecovery `json:"initiateKYCRecovery,omitempty"`
+	Ext                 *EmptyExt                               `json:"ext,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -38260,6 +38265,8 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "Poll", true
 	case LedgerEntryTypeVote:
 		return "Vote", true
+	case LedgerEntryTypeInitiateKycRecovery:
+		return "InitiateKycRecovery", true
 	default:
 		return "Ext", true
 	}
@@ -38327,6 +38334,13 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.Vote = &tv
+	case LedgerEntryTypeInitiateKycRecovery:
+		tv, ok := value.(AccountRuleResourceInitiateKycRecovery)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountRuleResourceInitiateKycRecovery")
+			return
+		}
+		result.InitiateKycRecovery = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -38532,6 +38546,31 @@ func (u AccountRuleResource) GetVote() (result AccountRuleResourceVote, ok bool)
 
 	if armName == "Vote" {
 		result = *u.Vote
+		ok = true
+	}
+
+	return
+}
+
+// MustInitiateKycRecovery retrieves the InitiateKycRecovery value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResource) MustInitiateKycRecovery() AccountRuleResourceInitiateKycRecovery {
+	val, ok := u.GetInitiateKycRecovery()
+
+	if !ok {
+		panic("arm InitiateKycRecovery is not set")
+	}
+
+	return val
+}
+
+// GetInitiateKycRecovery retrieves the InitiateKycRecovery value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResource) GetInitiateKycRecovery() (result AccountRuleResourceInitiateKycRecovery, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "InitiateKycRecovery" {
+		result = *u.InitiateKycRecovery
 		ok = true
 	}
 
@@ -38970,10 +39009,14 @@ type SignerRuleResourceVote struct {
 //        {
 //            //: Role id
 //            uint64 roleID;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
 //        }
 //
 type SignerRuleResourceInitiateKycRecovery struct {
-	RoleId Uint64 `json:"roleID,omitempty"`
+	RoleId Uint64   `json:"roleID,omitempty"`
+	Ext    EmptyExt `json:"ext,omitempty"`
 }
 
 // SignerRuleResource is an XDR Union defines as:
@@ -39108,6 +39151,9 @@ type SignerRuleResourceInitiateKycRecovery struct {
 //        {
 //            //: Role id
 //            uint64 roleID;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
 //        } initiateKYCRecovery;
 //    default:
 //        //: reserved for future extension
@@ -39618,28 +39664,32 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        UPDATE_MAX_ISSUANCE = 13,
 //        CHECK = 14,
 //        CLOSE = 15,
-//        UPDATE_END_TIME = 16
+//        UPDATE_END_TIME = 16,
+//        CREATE_WITH_TASKS = 17,
+//        CREATE_FOR_OTHER_WITH_TASKS = 18
 //    };
 //
 type SignerRuleAction int32
 
 const (
-	SignerRuleActionAny               SignerRuleAction = 1
-	SignerRuleActionCreate            SignerRuleAction = 2
-	SignerRuleActionCreateForOther    SignerRuleAction = 3
-	SignerRuleActionUpdate            SignerRuleAction = 4
-	SignerRuleActionManage            SignerRuleAction = 5
-	SignerRuleActionSend              SignerRuleAction = 6
-	SignerRuleActionRemove            SignerRuleAction = 7
-	SignerRuleActionCancel            SignerRuleAction = 8
-	SignerRuleActionReview            SignerRuleAction = 9
-	SignerRuleActionReceiveAtomicSwap SignerRuleAction = 10
-	SignerRuleActionParticipate       SignerRuleAction = 11
-	SignerRuleActionBind              SignerRuleAction = 12
-	SignerRuleActionUpdateMaxIssuance SignerRuleAction = 13
-	SignerRuleActionCheck             SignerRuleAction = 14
-	SignerRuleActionClose             SignerRuleAction = 15
-	SignerRuleActionUpdateEndTime     SignerRuleAction = 16
+	SignerRuleActionAny                     SignerRuleAction = 1
+	SignerRuleActionCreate                  SignerRuleAction = 2
+	SignerRuleActionCreateForOther          SignerRuleAction = 3
+	SignerRuleActionUpdate                  SignerRuleAction = 4
+	SignerRuleActionManage                  SignerRuleAction = 5
+	SignerRuleActionSend                    SignerRuleAction = 6
+	SignerRuleActionRemove                  SignerRuleAction = 7
+	SignerRuleActionCancel                  SignerRuleAction = 8
+	SignerRuleActionReview                  SignerRuleAction = 9
+	SignerRuleActionReceiveAtomicSwap       SignerRuleAction = 10
+	SignerRuleActionParticipate             SignerRuleAction = 11
+	SignerRuleActionBind                    SignerRuleAction = 12
+	SignerRuleActionUpdateMaxIssuance       SignerRuleAction = 13
+	SignerRuleActionCheck                   SignerRuleAction = 14
+	SignerRuleActionClose                   SignerRuleAction = 15
+	SignerRuleActionUpdateEndTime           SignerRuleAction = 16
+	SignerRuleActionCreateWithTasks         SignerRuleAction = 17
+	SignerRuleActionCreateForOtherWithTasks SignerRuleAction = 18
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -39659,6 +39709,8 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionCheck,
 	SignerRuleActionClose,
 	SignerRuleActionUpdateEndTime,
+	SignerRuleActionCreateWithTasks,
+	SignerRuleActionCreateForOtherWithTasks,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -39678,6 +39730,8 @@ var signerRuleActionMap = map[int32]string{
 	14: "SignerRuleActionCheck",
 	15: "SignerRuleActionClose",
 	16: "SignerRuleActionUpdateEndTime",
+	17: "SignerRuleActionCreateWithTasks",
+	18: "SignerRuleActionCreateForOtherWithTasks",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -39697,25 +39751,29 @@ var signerRuleActionShortMap = map[int32]string{
 	14: "check",
 	15: "close",
 	16: "update_end_time",
+	17: "create_with_tasks",
+	18: "create_for_other_with_tasks",
 }
 
 var signerRuleActionRevMap = map[string]int32{
-	"SignerRuleActionAny":               1,
-	"SignerRuleActionCreate":            2,
-	"SignerRuleActionCreateForOther":    3,
-	"SignerRuleActionUpdate":            4,
-	"SignerRuleActionManage":            5,
-	"SignerRuleActionSend":              6,
-	"SignerRuleActionRemove":            7,
-	"SignerRuleActionCancel":            8,
-	"SignerRuleActionReview":            9,
-	"SignerRuleActionReceiveAtomicSwap": 10,
-	"SignerRuleActionParticipate":       11,
-	"SignerRuleActionBind":              12,
-	"SignerRuleActionUpdateMaxIssuance": 13,
-	"SignerRuleActionCheck":             14,
-	"SignerRuleActionClose":             15,
-	"SignerRuleActionUpdateEndTime":     16,
+	"SignerRuleActionAny":                     1,
+	"SignerRuleActionCreate":                  2,
+	"SignerRuleActionCreateForOther":          3,
+	"SignerRuleActionUpdate":                  4,
+	"SignerRuleActionManage":                  5,
+	"SignerRuleActionSend":                    6,
+	"SignerRuleActionRemove":                  7,
+	"SignerRuleActionCancel":                  8,
+	"SignerRuleActionReview":                  9,
+	"SignerRuleActionReceiveAtomicSwap":       10,
+	"SignerRuleActionParticipate":             11,
+	"SignerRuleActionBind":                    12,
+	"SignerRuleActionUpdateMaxIssuance":       13,
+	"SignerRuleActionCheck":                   14,
+	"SignerRuleActionClose":                   15,
+	"SignerRuleActionUpdateEndTime":           16,
+	"SignerRuleActionCreateWithTasks":         17,
+	"SignerRuleActionCreateForOtherWithTasks": 18,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -47211,4 +47269,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "3eeaee41e521fd962b282b39059ffa0bad7bc66e"
+var Revision = "6cdd47afcbee3e83f49f1a4195b7faddafb8cd2e"

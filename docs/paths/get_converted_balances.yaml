@@ -36,6 +36,7 @@
           type: string
           example: "states"
           enum:
+            - asset
             - states
             - balance
             - balance.state

@@ -1,9 +1,44 @@
 # Changelog
 
-## Unreleased
+## 4.3.4
+
+### Added
+
+* `AccessDefinitionType` attribute to sale
+
+### Changed
+
+* Switched to go 3.5.0
+
+## 4.3.3
+
+### Added
+
+* `BaseHardCap` to `SaleAttributes` resource
+* `SoftCap` and `HardCap` `CreateSaleRequestAttributes`
+
+## 4.3.2
+
+### Added
+
+* `Asset` relationship to `ConvertedBalancesCollection`
+
+## 4.3.1
+
+### Added
+* `Match` resource
+
+## 4.3.0
+
+### Added
+* `Statistics` resource
+* `LimitsWithStats` resource
+
+## Removed
+* `Asset` relation from `ConvertedBalanceStateRelationships`
 
 ## 4.2.3
-## Added
+### Added
 * `ConvertedBalancesCollection` and `ConvertedBalanceState` resources
 
 ## 4.2.2

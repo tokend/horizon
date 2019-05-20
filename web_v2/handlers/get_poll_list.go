@@ -49,7 +49,7 @@ type getPollListHandler struct {
 }
 
 // GetPollList returns the list of assets with related resources
-func (h *getPollListHandler) GetPollList(request *requests.GetPollList) (*regources.PollsResponse, error) {
+func (h *getPollListHandler) GetPollList(request *requests.GetPollList) (*regources.PollListResponse, error) {
 	q := h.PollsQ
 
 	if request.ShouldFilter(requests.FilterTypePollListOwner) {
@@ -97,7 +97,7 @@ func (h *getPollListHandler) GetPollList(request *requests.GetPollList) (*regour
 		return nil, errors.Wrap(err, "Failed to get poll list ")
 	}
 
-	response := &regources.PollsResponse{
+	response := &regources.PollListResponse{
 		Data: make([]regources.Poll, 0, len(historyPolls)),
 	}
 
@@ -111,7 +111,7 @@ func (h *getPollListHandler) GetPollList(request *requests.GetPollList) (*regour
 }
 
 func (h *getPollListHandler) PopulateLinks(
-	response *regources.PollsResponse, request *requests.GetPollList,
+	response *regources.PollListResponse, request *requests.GetPollList,
 ) {
 	if len(response.Data) > 0 {
 		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)

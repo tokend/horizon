@@ -118,6 +118,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/fees", handlers.GetFeeList)
 	m.Get("/v3/limits", handlers.GetLimitsList)
 	m.Get("/v3/history", handlers.GetHistory)
+	m.Get("/v3/matches", handlers.GetMatchList)
 	m.Get("/v3/movements", handlers.GetMovements)
 	m.Get("/v3/asset_pairs/{id}", handlers.GetAssetPair)
 	m.Get("/v3/asset_pairs", handlers.GetAssetPairList)
@@ -170,7 +171,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/sales", handlers.GetSaleList)
 	m.Get("/v3/sales/{id}", handlers.GetSale)
 	m.Get("/v3/sales/{id}/relationships/whitelist", handlers.GetSaleWhitelist)
-	m.Get("/v3/sales/{id}/relationships/participation", handlers.GetSaleParticipation)
+	m.Get("/v3/sales/{id}/relationships/participation", handlers.GetSaleParticipations)
 
 	m.Get("/v3/order_book/{id}", handlers.DeprecatedGetOrderBook)
 	m.Get("/v3/order_books/{base}:{quote}:{order_book_id}", handlers.GetOrderBook)

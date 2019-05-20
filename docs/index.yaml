@@ -137,6 +137,7 @@ x-tagGroups:
       - Offers
       - Order Books
       - Crowd Investing
+      - Matches
   - name: Advanced
     tags:
       - PreIssuance

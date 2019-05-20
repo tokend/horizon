@@ -7,7 +7,7 @@ SaleWhitelistKey:
       id:
         type: string
         description: "Unique identifier of whitelist rule"
-        example: ""
+        example: "1"
       type:
         type: string
         enum:

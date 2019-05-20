@@ -96,11 +96,10 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-#  version = "3.3.4"
   branch = "feature/kyc-recovery"
 
 [[constraint]]
-  version = "4.2.3"
+  version = "4.3.4"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

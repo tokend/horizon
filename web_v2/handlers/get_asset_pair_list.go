@@ -48,7 +48,7 @@ type getAssetPairListHandler struct {
 }
 
 // GetAssetPairList returns asset pair list with related resources
-func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPairList) (*regources.AssetPairsResponse, error) {
+func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPairList) (*regources.AssetPairListResponse, error) {
 	q := h.AssetPairsQ.Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeAssetPairListAsset) {
@@ -80,7 +80,7 @@ func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPai
 		return nil, errors.Wrap(err, "Failed to get asset pair list")
 	}
 
-	response := &regources.AssetPairsResponse{
+	response := &regources.AssetPairListResponse{
 		Data:  make([]regources.AssetPair, 0, len(coreAssetPairs)),
 		Links: request.GetOffsetLinks(*request.PageParams),
 	}

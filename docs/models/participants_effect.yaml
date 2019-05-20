@@ -7,7 +7,7 @@ ParticipantsEffectKey:
     type:
       type: string
       enum:
-        - "participants-effect"
+        - "participant-effects"
 
 ParticipantsEffect:
   allOf:

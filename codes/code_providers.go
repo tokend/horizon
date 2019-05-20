@@ -47,6 +47,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManagePoll:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustManagePollResult().Code },
 	xdr.OperationTypeManageVote:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustManageVoteResult().Code },
 	xdr.OperationTypeManageAccountSpecificRule:   func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountSpecificRuleResult().Code },
+	xdr.OperationTypeCancelChangeRoleRequest:     func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelChangeRoleRequestResult().Code },
 	xdr.OperationTypeInitiateKycRecovery:         func(ir xdr.OperationResultTr) shortStr { return ir.MustInitiateKycRecoveryResult().Code },
-	//xdr.OperationTypeCreateKycRecoveryRequest:    func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateKycRecoveryRequestResult().Code },
+	xdr.OperationTypeCreateKycRecoveryRequest:    func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateKycRecoveryRequestResult().Code },
 }

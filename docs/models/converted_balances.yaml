@@ -20,8 +20,14 @@ ConvertedBalancesCollection:
       properties:
         relationships:
           type: object
-          required: [states]
+          required: [states, asset]
           properties:
+            asset:
+              type: object
+              description: "asset to which balances are converted"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
             states:
               type: object
               properties:

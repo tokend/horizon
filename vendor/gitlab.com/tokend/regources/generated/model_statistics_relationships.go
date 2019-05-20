@@ -4,6 +4,7 @@
 
 package regources
 
-type InitiateKycRecoveryOpRelationships struct {
+type StatisticsRelationships struct {
 	Account *Relation `json:"account,omitempty"`
+	Asset   *Relation `json:"asset,omitempty"`
 }

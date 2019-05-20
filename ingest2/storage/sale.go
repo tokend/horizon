@@ -27,12 +27,12 @@ func (q *Sale) Insert(sale history2.Sale) error {
 		Columns(
 			"id", "owner_address", "base_asset", "default_quote_asset", "start_time", "end_time",
 			"quote_assets", "soft_cap", "hard_cap", "details", "base_current_cap",
-			"base_hard_cap", "sale_type", "state", "version",
+			"base_hard_cap", "sale_type", "state", "version", "access_definition_type",
 		).
 		Values(
 			sale.ID, sale.OwnerAddress, sale.BaseAsset, sale.DefaultQuoteAsset, sale.StartTime, sale.EndTime,
 			sale.QuoteAssets, sale.SoftCap, sale.HardCap, sale.Details,
-			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType, sale.State, sale.Version,
+			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType, sale.State, sale.Version, sale.AccessDefinitionType,
 		)
 
 	_, err := q.repo.Exec(sql)

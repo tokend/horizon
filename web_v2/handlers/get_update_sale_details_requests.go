@@ -72,6 +72,7 @@ func (h *getUpdateSaleDetailsRequestsHandler) RenderRecord(included *regources.I
 		if record == nil {
 			return regources.ReviewableRequest{}, errors.New("sale not found")
 		}
+
 		sale := resources.NewSale(*record)
 		included.Add(&sale)
 	}

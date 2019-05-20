@@ -21,23 +21,15 @@ type saleStorage interface {
 	SetState(saleID uint64, state regources.SaleState) error
 }
 
-type participationStorage interface {
-	Insert(participations []history.SaleParticipation) error
-}
-
 type saleHandler struct {
-	storage       saleStorage
-	participation participationStorage
-	specificRule  accountSpecificRuleStorage
+	storage      saleStorage
+	specificRule accountSpecificRuleStorage
 }
 
-func newSaleHandler(storage saleStorage,
-	participation participationStorage,
-	specificRule accountSpecificRuleStorage) *saleHandler {
+func newSaleHandler(storage saleStorage, specificRule accountSpecificRuleStorage) *saleHandler {
 	return &saleHandler{
-		storage:       storage,
-		participation: participation,
-		specificRule:  specificRule,
+		storage:      storage,
+		specificRule: specificRule,
 	}
 }
 
@@ -52,6 +44,7 @@ func (c *saleHandler) Created(lc ledgerChange) error {
 			"ledger_sequence": lc.LedgerSeq,
 		})
 	}
+	sale.AccessDefinitionType = c.getAccessDefinitionType(lc)
 
 	err = c.storage.Insert(*sale)
 	if err != nil {
@@ -73,12 +66,6 @@ func (c *saleHandler) Removed(lc ledgerChange) error {
 		opEffect := lc.OperationResult.MustCheckSaleStateResult().MustSuccess().Effect
 		if opEffect.Effect == xdr.CheckSaleStateEffectClosed {
 			saleState = regources.SaleStateClosed
-			saleResults := opEffect.MustSaleClosed().Results
-			participations := c.convertParticipations(saleID, saleResults)
-			err := c.participation.Insert(participations)
-			if err != nil {
-				return errors.Wrap(err, "failed to insert sale participation into db")
-			}
 		}
 	}
 
@@ -108,6 +95,31 @@ func (c *saleHandler) Updated(lc ledgerChange) error {
 		})
 	}
 	return nil
+}
+
+func (c *saleHandler) getAccessDefinitionType(lc ledgerChange) regources.SaleAccessDefinitionType {
+	for _, change := range lc.OpChanges {
+		if change.Type != xdr.LedgerEntryChangeTypeCreated {
+			continue
+		}
+		if change.MustCreated().Data.Type != xdr.LedgerEntryTypeAccountSpecificRule {
+			continue
+		}
+
+		rule := change.MustCreated().Data.MustAccountSpecificRule()
+
+		if rule.AccountId != nil {
+			continue
+		}
+
+		if rule.Forbids {
+			return regources.SaleAccessDefinitionTypeWhitelist
+		} else {
+			return regources.SaleAccessDefinitionTypeBlacklist
+		}
+	}
+
+	return regources.SaleAccessDefinitionTypeNone
 }
 
 func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
@@ -143,18 +155,4 @@ func (c *saleHandler) convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		State:   regources.SaleStateOpen,
 		Version: int32(raw.Ext.V),
 	}, nil
-}
-
-func (c *saleHandler) convertParticipations(saleID uint64, saleResults []xdr.CheckSubSaleClosedResult) []history.SaleParticipation {
-	var participations []history.SaleParticipation
-	for _, subResult := range saleResults {
-		saleResult := subResult.SaleDetails
-		quote := string(saleResult.QuoteAsset)
-		base := string(saleResult.BaseAsset)
-		for _, atom := range saleResult.OffersClaimed {
-			participations = append(participations, history.NewSaleParticipation(base, quote, saleID, atom))
-		}
-	}
-
-	return participations
 }

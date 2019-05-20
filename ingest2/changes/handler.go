@@ -35,11 +35,10 @@ func NewHandler(account accountStorage,
 	poll pollStorage,
 	vote voteStorage,
 	accountSpecificRule accountSpecificRuleStorage,
-	participation participationStorage,
 ) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request)
-	saleHandlerInst := newSaleHandler(sale, participation, accountSpecificRule)
+	saleHandlerInst := newSaleHandler(sale, accountSpecificRule)
 	assetPairHandler := newAssetPairHandler(assetPair)
 	pollHandlerInst := newPollHandler(poll)
 	voteHandlerInst := newVoteHandler(vote)
@@ -88,6 +87,7 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 					Operation:       &tx.Envelope.Tx.Operations[opI],
 					OperationResult: tx.Result.Result.Result.MustResults()[opI].Tr,
 					OperationIndex:  uint32(opI),
+					OpChanges:       op.Changes,
 					TxIndex:         uint32(tx.Index),
 				})
 

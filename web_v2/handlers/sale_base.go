@@ -11,19 +11,19 @@ import (
 )
 
 type salesBaseHandler struct {
-	SalesQ  history2.SalesQ
-	AssetsQ core2.AssetsQ
-
+	SalesQ           history2.SalesQ
+	AssetsQ          core2.AssetsQ
 	saleCapConverter *saleCapConverter
 	Log              *logan.Entry
 }
 
 func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	request requests.SalesBase,
-	response *regources.SalesResponse) error {
+	response *regources.SaleListResponse) error {
 
 	for _, historySale := range historySales {
 		sale := resources.NewSale(historySale)
+
 		err := h.saleCapConverter.PopulateSaleCap(&historySale)
 		if err != nil {
 			return errors.Wrap(err, "failed to populate sale cap")
@@ -40,7 +40,7 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 		}
 
 		for _, historyQuoteAsset := range historySale.QuoteAssets.QuoteAssets {
-			quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset)
+			quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset, historySale.ID)
 			sale.Relationships.QuoteAssets.Data = append(sale.Relationships.QuoteAssets.Data, quoteAsset.Key)
 
 			if request.ShouldInclude(requests.IncludeTypeSaleQuoteAssets) {
