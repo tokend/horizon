@@ -4,7 +4,11 @@
 
 package regources
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
+)
 
 type SaleAccessDefinitionType int
 
@@ -27,7 +31,18 @@ func (s SaleAccessDefinitionType) MarshalJSON() ([]byte, error) {
 	})
 }
 
-//String - converts int enum to string
+func (s *SaleAccessDefinitionType) UnmarshalJSON(data []byte) error {
+	var flag Flag
+	if err := json.Unmarshal(data, &flag); err != nil {
+		return errors.New("failed to unmarshal sale definition type to byte")
+	}
+
+	*s = SaleAccessDefinitionType(flag.Value)
+
+	return nil
+}
+
+// String - converts int enum to string
 func (s SaleAccessDefinitionType) String() string {
 	return saleAccessDefinitionTypeMap[s]
 }

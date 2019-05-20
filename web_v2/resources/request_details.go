@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"fmt"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
@@ -157,16 +158,19 @@ func newSaleRequest(id int64, details history2.CreateSaleRequest) *regources.Cre
 		quoteAssets.Data = append(quoteAssets.Data, newQuoteAssetKey(quoteAsset.Asset))
 	}
 
+	fmt.Println(details.AccessDefinitionType)
+
 	return &regources.CreateSaleRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_SALE),
 		Attributes: regources.CreateSaleRequestAttributes{
-			BaseAssetForHardCap: details.BaseAssetForHardCap,
-			SoftCap:             details.SoftCap,
-			HardCap:             details.HardCap,
-			StartTime:           details.StartTime,
-			EndTime:             details.EndTime,
-			SaleType:            details.SaleType,
-			CreatorDetails:      details.CreatorDetails,
+			AccessDefinitionType: details.AccessDefinitionType,
+			BaseAssetForHardCap:  details.BaseAssetForHardCap,
+			SoftCap:              details.SoftCap,
+			HardCap:              details.HardCap,
+			StartTime:            details.StartTime,
+			EndTime:              details.EndTime,
+			SaleType:             details.SaleType,
+			CreatorDetails:       details.CreatorDetails,
 		},
 		Relationships: regources.CreateSaleRequestRelationships{
 			QuoteAssets:       quoteAssets,
