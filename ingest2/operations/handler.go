@@ -122,6 +122,9 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCancelSaleRequest: &stubOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
+			xdr.OperationTypeCancelChangeRoleRequest: &stubOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypePayout: &payoutHandler{
 				effectsProvider: effectsBaseHandler,
 			},
