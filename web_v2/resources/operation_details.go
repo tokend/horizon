@@ -77,6 +77,8 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_CONTRACT).GetKeyP()
 	case xdr.OperationTypeCancelSaleRequest:
 		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_SALE_REQUEST).GetKeyP()
+	case xdr.OperationTypeCancelChangeRoleRequest:
+		return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_CHANGE_ROLE_REQUEST).GetKeyP()
 	case xdr.OperationTypePayout:
 		return newPayoutOp(op.ID, *op.Details.Payout)
 	case xdr.OperationTypeManageAccountRole:
