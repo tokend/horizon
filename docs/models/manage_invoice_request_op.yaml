@@ -9,7 +9,7 @@ ManageInvoiceOpKey:
       deprecated: true
       type: string
       enum:
-        - "operations-manage-invoice-request"
+        - "operations-manage-invoice"
 
 ManageInvoiceOp:
   allOf:

@@ -17,7 +17,7 @@ PollParticipationKey:
     type:
       type: string
       enum:
-        - "polls-participation"
+        - "poll-outcome"
 
 PollData:
   type: object
