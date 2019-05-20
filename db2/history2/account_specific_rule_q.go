@@ -32,12 +32,6 @@ func (q AccountSpecificRulesQ) FilterByAddress(address string) AccountSpecificRu
 	return q
 }
 
-//Global returns q with filter to only global rules - where address is null
-func (q AccountSpecificRulesQ) Global() AccountSpecificRulesQ {
-	q.selector = q.selector.Where("sr.address is null")
-	return q
-}
-
 // FilterByPermission returns q with filter by `forbids`
 func (q AccountSpecificRulesQ) FilterByPermission(forbids bool) AccountSpecificRulesQ {
 	q.selector = q.selector.Where("sr.forbids = ?", forbids)

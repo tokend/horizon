@@ -27,11 +27,10 @@ func GetUpdateSaleDetailsRequests(w http.ResponseWriter, r *http.Request) {
 
 	historyRepo := ctx.HistoryRepo(r)
 	handler := getUpdateSaleDetailsRequestsHandler{
-		R:                     request,
-		RequestsQ:             history2.NewReviewableRequestsQ(historyRepo),
-		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(historyRepo),
-		SalesQ:                history2.NewSalesQ(historyRepo),
-		Log:                   ctx.Log(r),
+		R:         request,
+		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
+		SalesQ:    history2.NewSalesQ(historyRepo),
+		Log:       ctx.Log(r),
 	}
 
 	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
@@ -49,12 +48,11 @@ func GetUpdateSaleDetailsRequests(w http.ResponseWriter, r *http.Request) {
 }
 
 type getUpdateSaleDetailsRequestsHandler struct {
-	R                     requests.GetUpdateSaleDetailsRequests
-	Base                  getRequestListBaseHandler
-	RequestsQ             history2.ReviewableRequestsQ
-	AccountSpecificRulesQ history2.AccountSpecificRulesQ
-	SalesQ                history2.SalesQ
-	Log                   *logan.Entry
+	R         requests.GetUpdateSaleDetailsRequests
+	Base      getRequestListBaseHandler
+	RequestsQ history2.ReviewableRequestsQ
+	SalesQ    history2.SalesQ
+	Log       *logan.Entry
 }
 
 func (h *getUpdateSaleDetailsRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetUpdateSaleDetailsRequests) error {

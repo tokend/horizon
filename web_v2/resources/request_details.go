@@ -1,12 +1,11 @@
 package resources
 
 import (
-	"fmt"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	regources "gitlab.com/tokend/regources/generated"
+	"gitlab.com/tokend/regources/generated"
 )
 
 // NewRequestDetails - returns new instance of reviewable request details
@@ -157,8 +156,6 @@ func newSaleRequest(id int64, details history2.CreateSaleRequest) *regources.Cre
 	for _, quoteAsset := range details.QuoteAssets {
 		quoteAssets.Data = append(quoteAssets.Data, newQuoteAssetKey(quoteAsset.Asset))
 	}
-
-	fmt.Println(details.AccessDefinitionType)
 
 	return &regources.CreateSaleRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_SALE),

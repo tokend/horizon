@@ -27,11 +27,10 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler := getSaleHandler{
-		SalesQ:                history2.NewSalesQ(historyRepo),
-		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(historyRepo),
-		AssetsQ:               core2.NewAssetsQ(coreRepo),
-		saleCapConverter:      converter,
-		Log:                   ctx.Log(r),
+		SalesQ:           history2.NewSalesQ(historyRepo),
+		AssetsQ:          core2.NewAssetsQ(coreRepo),
+		saleCapConverter: converter,
+		Log:              ctx.Log(r),
 	}
 
 	request, err := requests.NewGetSale(r)
@@ -58,11 +57,10 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 }
 
 type getSaleHandler struct {
-	SalesQ                history2.SalesQ
-	AssetsQ               core2.AssetsQ
-	AccountSpecificRulesQ history2.AccountSpecificRulesQ
-	saleCapConverter      *saleCapConverter
-	Log                   *logan.Entry
+	SalesQ           history2.SalesQ
+	AssetsQ          core2.AssetsQ
+	saleCapConverter *saleCapConverter
+	Log              *logan.Entry
 }
 
 // GetSale returns sale with related resources

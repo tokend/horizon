@@ -28,11 +28,10 @@ func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 
 	handler := getSaleListForAccountHandler{
 		salesBaseHandler: salesBaseHandler{
-			SalesQ:                history2.NewSalesQ(historyRepo),
-			AssetsQ:               core2.NewAssetsQ(coreRepo),
-			AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(historyRepo),
-			saleCapConverter:      converter,
-			Log:                   ctx.Log(r),
+			SalesQ:           history2.NewSalesQ(historyRepo),
+			AssetsQ:          core2.NewAssetsQ(coreRepo),
+			saleCapConverter: converter,
+			Log:              ctx.Log(r),
 		},
 	}
 

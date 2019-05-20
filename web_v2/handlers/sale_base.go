@@ -11,11 +11,10 @@ import (
 )
 
 type salesBaseHandler struct {
-	SalesQ                history2.SalesQ
-	AssetsQ               core2.AssetsQ
-	AccountSpecificRulesQ history2.AccountSpecificRulesQ
-	saleCapConverter      *saleCapConverter
-	Log                   *logan.Entry
+	SalesQ           history2.SalesQ
+	AssetsQ          core2.AssetsQ
+	saleCapConverter *saleCapConverter
+	Log              *logan.Entry
 }
 
 func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
