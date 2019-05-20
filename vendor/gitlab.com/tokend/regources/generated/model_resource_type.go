@@ -19,6 +19,7 @@ const (
 	OPERATIONS_BIND_EXTERNAL_SYSTEM_ACCOUNT_ID              ResourceType = "operations-bind-external-system-account-id"
 	CALCULATED_FEE                                          ResourceType = "calculated-fee"
 	OPERATIONS_CANCEL_ASWAP_BID                             ResourceType = "operations-cancel-aswap-bid"
+	OPERATIONS_CANCEL_CHANGE_ROLE_REQUEST                   ResourceType = "operations-cancel-change-role-request"
 	OPERATIONS_CANCEL_SALE_REQUEST                          ResourceType = "operations-cancel-sale-request"
 	OPERATIONS_CHECK_SALE_STATE                             ResourceType = "operations-check-sale-state"
 	CONVERTED_BALANCE_STATES                                ResourceType = "converted-balance-states"
