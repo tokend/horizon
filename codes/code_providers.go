@@ -47,4 +47,5 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManagePoll:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustManagePollResult().Code },
 	xdr.OperationTypeManageVote:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustManageVoteResult().Code },
 	xdr.OperationTypeManageAccountSpecificRule:   func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountSpecificRuleResult().Code },
+	xdr.OperationTypeCancelChangeRoleRequest:     func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelChangeRoleRequestResult().Code },
 }

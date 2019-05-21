@@ -24,11 +24,13 @@ func NewSale(record history2.Sale) regources.Sale {
 	return regources.Sale{
 		Key: NewSaleKey(int64(record.ID)),
 		Attributes: regources.SaleAttributes{
-			StartTime: record.StartTime,
-			EndTime:   record.EndTime,
-			SaleType:  record.SaleType,
-			SaleState: record.State,
-			Details:   record.Details,
+			AccessDefinitionType: record.AccessDefinitionType,
+			BaseHardCap:          record.BaseHardCap,
+			StartTime:            record.StartTime,
+			EndTime:              record.EndTime,
+			SaleType:             record.SaleType,
+			SaleState:            record.State,
+			Details:              record.Details,
 		},
 		Relationships: regources.SaleRelationships{
 			Owner:             NewAccountKey(record.OwnerAddress).AsRelation(),
@@ -50,7 +52,7 @@ func NewSaleDefaultQuoteAsset(saleRecord history2.Sale) regources.SaleQuoteAsset
 	}
 
 	return regources.SaleQuoteAsset{
-		Key: *NewSaleQuoteAssetKey(saleRecord.DefaultQuoteAsset).GetKeyP(),
+		Key: *NewSaleQuoteAssetKey(saleRecord.DefaultQuoteAsset, saleRecord.ID).GetKeyP(),
 		Attributes: regources.SaleQuoteAssetAttributes{
 			Price:      price,
 			CurrentCap: saleRecord.CurrentCap,

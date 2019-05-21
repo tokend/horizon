@@ -5,6 +5,29 @@
 ### Added
 * `Atomic swap bid` resource
 
+## 4.3.4
+
+### Added
+
+* `AccessDefinitionType` attribute to sale
+
+### Changed
+
+* Switched to go 3.5.0
+
+## 4.3.3
+
+### Added
+
+* `BaseHardCap` to `SaleAttributes` resource
+* `SoftCap` and `HardCap` `CreateSaleRequestAttributes`
+
+## 4.3.2
+
+### Added
+
+* `Asset` relationship to `ConvertedBalancesCollection`
+
 ## 4.3.1
 
 ### Added

@@ -87,6 +87,7 @@ func (h *Handler) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 					Operation:       &tx.Envelope.Tx.Operations[opI],
 					OperationResult: tx.Result.Result.Result.MustResults()[opI].Tr,
 					OperationIndex:  uint32(opI),
+					OpChanges:       op.Changes,
 					TxIndex:         uint32(tx.Index),
 				})
 

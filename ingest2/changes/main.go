@@ -14,6 +14,7 @@ type ledgerChange struct {
 	Operation       *xdr.Operation
 	OperationResult *xdr.OperationResultTr
 	OperationIndex  uint32
+	OpChanges       xdr.LedgerEntryChanges
 	TxIndex         uint32
 }
 

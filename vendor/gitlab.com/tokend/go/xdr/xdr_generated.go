@@ -1,4 +1,4 @@
-// revision: f50a946f5d57b9d531e54a72975a3477b86eab08
+// revision: 6b49beb5dae8cee4207c03fee48b262f630e10d2
 // branch:   feature/atomic_swap_returning
 // Package xdr is generated from:
 //
@@ -38,6 +38,7 @@
 //  xdr/Stellar-ledger.x
 //  xdr/Stellar-operation-bind-external-system-id.x
 //  xdr/Stellar-operation-cancel-atomic-swap-bid.x
+//  xdr/Stellar-operation-cancel-change-role-request.x
 //  xdr/Stellar-operation-cancel-sale-creation-request.x
 //  xdr/Stellar-operation-check-sale-state.x
 //  xdr/Stellar-operation-create-AML-alert-request.x
@@ -11722,6 +11723,309 @@ func (u CancelAtomicSwapBidResult) GetSuccess() (result CancelAtomicSwapBidResul
 	return
 }
 
+// CancelChangeRoleRequestOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CancelChangeRoleRequestOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CancelChangeRoleRequestOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CancelChangeRoleRequestOpExt
+func (u CancelChangeRoleRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCancelChangeRoleRequestOpExt creates a new  CancelChangeRoleRequestOpExt.
+func NewCancelChangeRoleRequestOpExt(v LedgerVersion, value interface{}) (result CancelChangeRoleRequestOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CancelChangeRoleRequestOp is an XDR Struct defines as:
+//
+//   //: CancelChangeRoleRequestOp is used to cancel reviwable request for changing role.
+//    //: If successful, request with the corresponding ID will be deleted
+//    struct CancelChangeRoleRequestOp
+//    {
+//        //: ID of the ChangeRoleRequest request to be canceled
+//        uint64 requestID;
+//
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//
+//    };
+//
+type CancelChangeRoleRequestOp struct {
+	RequestId Uint64                       `json:"requestID,omitempty"`
+	Ext       CancelChangeRoleRequestOpExt `json:"ext,omitempty"`
+}
+
+// CancelChangeRoleRequestResultCode is an XDR Enum defines as:
+//
+//   //: Result codes for CancelChangeRoleRequest operation
+//    enum CancelChangeRoleRequestResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        //: Operation is successfully applied
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        //: ID of a request cannot be 0
+//        REQUEST_ID_INVALID = -1, // request id can not be equal zero
+//        //: ChangeRole request with provided ID is not found
+//        REQUEST_NOT_FOUND = -2 // trying to cancel not existing reviewable request
+//    };
+//
+type CancelChangeRoleRequestResultCode int32
+
+const (
+	CancelChangeRoleRequestResultCodeSuccess          CancelChangeRoleRequestResultCode = 0
+	CancelChangeRoleRequestResultCodeRequestIdInvalid CancelChangeRoleRequestResultCode = -1
+	CancelChangeRoleRequestResultCodeRequestNotFound  CancelChangeRoleRequestResultCode = -2
+)
+
+var CancelChangeRoleRequestResultCodeAll = []CancelChangeRoleRequestResultCode{
+	CancelChangeRoleRequestResultCodeSuccess,
+	CancelChangeRoleRequestResultCodeRequestIdInvalid,
+	CancelChangeRoleRequestResultCodeRequestNotFound,
+}
+
+var cancelChangeRoleRequestResultCodeMap = map[int32]string{
+	0:  "CancelChangeRoleRequestResultCodeSuccess",
+	-1: "CancelChangeRoleRequestResultCodeRequestIdInvalid",
+	-2: "CancelChangeRoleRequestResultCodeRequestNotFound",
+}
+
+var cancelChangeRoleRequestResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "request_id_invalid",
+	-2: "request_not_found",
+}
+
+var cancelChangeRoleRequestResultCodeRevMap = map[string]int32{
+	"CancelChangeRoleRequestResultCodeSuccess":          0,
+	"CancelChangeRoleRequestResultCodeRequestIdInvalid": -1,
+	"CancelChangeRoleRequestResultCodeRequestNotFound":  -2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CancelChangeRoleRequestResultCode
+func (e CancelChangeRoleRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := cancelChangeRoleRequestResultCodeMap[v]
+	return ok
+}
+func (e CancelChangeRoleRequestResultCode) isFlag() bool {
+	for i := len(CancelChangeRoleRequestResultCodeAll) - 1; i >= 0; i-- {
+		expected := CancelChangeRoleRequestResultCode(2) << uint64(len(CancelChangeRoleRequestResultCodeAll)-1) >> uint64(len(CancelChangeRoleRequestResultCodeAll)-i)
+		if expected != CancelChangeRoleRequestResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CancelChangeRoleRequestResultCode) String() string {
+	name, _ := cancelChangeRoleRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CancelChangeRoleRequestResultCode) ShortString() string {
+	name, _ := cancelChangeRoleRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CancelChangeRoleRequestResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range CancelChangeRoleRequestResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CancelChangeRoleRequestResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CancelChangeRoleRequestResultCode(t.Value)
+	return nil
+}
+
+// CancelChangeRoleSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CancelChangeRoleSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CancelChangeRoleSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CancelChangeRoleSuccessExt
+func (u CancelChangeRoleSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCancelChangeRoleSuccessExt creates a new  CancelChangeRoleSuccessExt.
+func NewCancelChangeRoleSuccessExt(v LedgerVersion, value interface{}) (result CancelChangeRoleSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CancelChangeRoleSuccess is an XDR Struct defines as:
+//
+//   //: Result of successful `CancelChangeRoleRequestOp` application
+//    struct CancelChangeRoleSuccess {
+//
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CancelChangeRoleSuccess struct {
+	Ext CancelChangeRoleSuccessExt `json:"ext,omitempty"`
+}
+
+// CancelChangeRoleRequestResult is an XDR Union defines as:
+//
+//   //: Result of CancelChangeRoleRequest operation application along with the result code
+//    union CancelChangeRoleRequestResult switch (CancelChangeRoleRequestResultCode code)
+//    {
+//        case SUCCESS:
+//            CancelSaleCreationSuccess success;
+//        default:
+//            void;
+//    };
+//
+type CancelChangeRoleRequestResult struct {
+	Code    CancelChangeRoleRequestResultCode `json:"code,omitempty"`
+	Success *CancelSaleCreationSuccess        `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CancelChangeRoleRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CancelChangeRoleRequestResult
+func (u CancelChangeRoleRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CancelChangeRoleRequestResultCode(sw) {
+	case CancelChangeRoleRequestResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewCancelChangeRoleRequestResult creates a new  CancelChangeRoleRequestResult.
+func NewCancelChangeRoleRequestResult(code CancelChangeRoleRequestResultCode, value interface{}) (result CancelChangeRoleRequestResult, err error) {
+	result.Code = code
+	switch CancelChangeRoleRequestResultCode(code) {
+	case CancelChangeRoleRequestResultCodeSuccess:
+		tv, ok := value.(CancelSaleCreationSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CancelSaleCreationSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u CancelChangeRoleRequestResult) MustSuccess() CancelSaleCreationSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CancelChangeRoleRequestResult) GetSuccess() (result CancelSaleCreationSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
 // CancelSaleCreationRequestOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -12902,80 +13206,122 @@ type CreateAmlAlertRequestOp struct {
 //        // codes considered as "success" for the operation
 //        //: Operation has been successfully performed
 //        SUCCESS = 0,
-//        //: Balance with provided balance ID does not exist
-//        BALANCE_NOT_EXIST = 1, // balance doesn't exist
-//        //: Creator details are not in a valid JSON format
-//        INVALID_CREATOR_DETAILS = 2, //invalid reason for request
-//        //: Specified amount is greater than the amount on the balance
-//        UNDERFUNDED = 3, //when couldn't lock balance
-//        //: AML Alert request with the same reference already exists
-//        REFERENCE_DUPLICATION = 4, // reference already exists
-//        //: Amount must be positive
-//        INVALID_AMOUNT = 5, // amount must be positive
-//        //: Amount precision and asset precision set in the system are mismatched
-//        INCORRECT_PRECISION = 6,
+//        //: DEPRECATED: Balance with provided balance ID does not exist
+//        OLD_BALANCE_NOT_EXIST = 1, // balance doesn't exist
+//        //: DEPRECATED: Creator details are not in a valid JSON format
+//        OLD_INVALID_CREATOR_DETAILS = 2, //invalid reason for request
+//        //: DEPRECATED: Specified amount is greater than the amount on the balance
+//        OLD_UNDERFUNDED = 3, //when couldn't lock balance
+//        //: DEPRECATED: AML Alert request with the same reference already exists
+//        OLD_REFERENCE_DUPLICATION = 4, // reference already exists
+//        //: DEPRECATED: Amount must be positive
+//        OLD_INVALID_AMOUNT = 5, // amount must be positive
+//        //: DEPRECATED: Amount precision and asset precision set in the system are mismatched
+//        OLD_INCORRECT_PRECISION = 6,
 //
 //        //codes considered as "failure" for the operation
 //        //: Update aml alert tasks are not set in the system, i.e. it's not allowed to perform aml alert
-//        AML_ALERT_TASKS_NOT_FOUND = -1
+//        AML_ALERT_TASKS_NOT_FOUND = -1,
+//        //: Balance with provided balance ID does not exist
+//        BALANCE_NOT_EXIST = -2, // balance doesn't exist
+//        //: Creator details are not in a valid JSON format
+//        INVALID_CREATOR_DETAILS = -3, //invalid reason for request
+//        //: Specified amount is greater than the amount on the balance
+//        UNDERFUNDED = -4, //when couldn't lock balance
+//        //: AML Alert request with the same reference already exists
+//        REFERENCE_DUPLICATION = -5, // reference already exists
+//        //: Amount must be positive
+//        INVALID_AMOUNT = -6, // amount must be positive
+//        //: Amount precision and asset precision set in the system are mismatched
+//        INCORRECT_PRECISION = -7
 //
 //    };
 //
 type CreateAmlAlertRequestResultCode int32
 
 const (
-	CreateAmlAlertRequestResultCodeSuccess               CreateAmlAlertRequestResultCode = 0
-	CreateAmlAlertRequestResultCodeBalanceNotExist       CreateAmlAlertRequestResultCode = 1
-	CreateAmlAlertRequestResultCodeInvalidCreatorDetails CreateAmlAlertRequestResultCode = 2
-	CreateAmlAlertRequestResultCodeUnderfunded           CreateAmlAlertRequestResultCode = 3
-	CreateAmlAlertRequestResultCodeReferenceDuplication  CreateAmlAlertRequestResultCode = 4
-	CreateAmlAlertRequestResultCodeInvalidAmount         CreateAmlAlertRequestResultCode = 5
-	CreateAmlAlertRequestResultCodeIncorrectPrecision    CreateAmlAlertRequestResultCode = 6
-	CreateAmlAlertRequestResultCodeAmlAlertTasksNotFound CreateAmlAlertRequestResultCode = -1
+	CreateAmlAlertRequestResultCodeSuccess                  CreateAmlAlertRequestResultCode = 0
+	CreateAmlAlertRequestResultCodeOldBalanceNotExist       CreateAmlAlertRequestResultCode = 1
+	CreateAmlAlertRequestResultCodeOldInvalidCreatorDetails CreateAmlAlertRequestResultCode = 2
+	CreateAmlAlertRequestResultCodeOldUnderfunded           CreateAmlAlertRequestResultCode = 3
+	CreateAmlAlertRequestResultCodeOldReferenceDuplication  CreateAmlAlertRequestResultCode = 4
+	CreateAmlAlertRequestResultCodeOldInvalidAmount         CreateAmlAlertRequestResultCode = 5
+	CreateAmlAlertRequestResultCodeOldIncorrectPrecision    CreateAmlAlertRequestResultCode = 6
+	CreateAmlAlertRequestResultCodeAmlAlertTasksNotFound    CreateAmlAlertRequestResultCode = -1
+	CreateAmlAlertRequestResultCodeBalanceNotExist          CreateAmlAlertRequestResultCode = -2
+	CreateAmlAlertRequestResultCodeInvalidCreatorDetails    CreateAmlAlertRequestResultCode = -3
+	CreateAmlAlertRequestResultCodeUnderfunded              CreateAmlAlertRequestResultCode = -4
+	CreateAmlAlertRequestResultCodeReferenceDuplication     CreateAmlAlertRequestResultCode = -5
+	CreateAmlAlertRequestResultCodeInvalidAmount            CreateAmlAlertRequestResultCode = -6
+	CreateAmlAlertRequestResultCodeIncorrectPrecision       CreateAmlAlertRequestResultCode = -7
 )
 
 var CreateAmlAlertRequestResultCodeAll = []CreateAmlAlertRequestResultCode{
 	CreateAmlAlertRequestResultCodeSuccess,
+	CreateAmlAlertRequestResultCodeOldBalanceNotExist,
+	CreateAmlAlertRequestResultCodeOldInvalidCreatorDetails,
+	CreateAmlAlertRequestResultCodeOldUnderfunded,
+	CreateAmlAlertRequestResultCodeOldReferenceDuplication,
+	CreateAmlAlertRequestResultCodeOldInvalidAmount,
+	CreateAmlAlertRequestResultCodeOldIncorrectPrecision,
+	CreateAmlAlertRequestResultCodeAmlAlertTasksNotFound,
 	CreateAmlAlertRequestResultCodeBalanceNotExist,
 	CreateAmlAlertRequestResultCodeInvalidCreatorDetails,
 	CreateAmlAlertRequestResultCodeUnderfunded,
 	CreateAmlAlertRequestResultCodeReferenceDuplication,
 	CreateAmlAlertRequestResultCodeInvalidAmount,
 	CreateAmlAlertRequestResultCodeIncorrectPrecision,
-	CreateAmlAlertRequestResultCodeAmlAlertTasksNotFound,
 }
 
 var createAmlAlertRequestResultCodeMap = map[int32]string{
 	0:  "CreateAmlAlertRequestResultCodeSuccess",
-	1:  "CreateAmlAlertRequestResultCodeBalanceNotExist",
-	2:  "CreateAmlAlertRequestResultCodeInvalidCreatorDetails",
-	3:  "CreateAmlAlertRequestResultCodeUnderfunded",
-	4:  "CreateAmlAlertRequestResultCodeReferenceDuplication",
-	5:  "CreateAmlAlertRequestResultCodeInvalidAmount",
-	6:  "CreateAmlAlertRequestResultCodeIncorrectPrecision",
+	1:  "CreateAmlAlertRequestResultCodeOldBalanceNotExist",
+	2:  "CreateAmlAlertRequestResultCodeOldInvalidCreatorDetails",
+	3:  "CreateAmlAlertRequestResultCodeOldUnderfunded",
+	4:  "CreateAmlAlertRequestResultCodeOldReferenceDuplication",
+	5:  "CreateAmlAlertRequestResultCodeOldInvalidAmount",
+	6:  "CreateAmlAlertRequestResultCodeOldIncorrectPrecision",
 	-1: "CreateAmlAlertRequestResultCodeAmlAlertTasksNotFound",
+	-2: "CreateAmlAlertRequestResultCodeBalanceNotExist",
+	-3: "CreateAmlAlertRequestResultCodeInvalidCreatorDetails",
+	-4: "CreateAmlAlertRequestResultCodeUnderfunded",
+	-5: "CreateAmlAlertRequestResultCodeReferenceDuplication",
+	-6: "CreateAmlAlertRequestResultCodeInvalidAmount",
+	-7: "CreateAmlAlertRequestResultCodeIncorrectPrecision",
 }
 
 var createAmlAlertRequestResultCodeShortMap = map[int32]string{
 	0:  "success",
-	1:  "balance_not_exist",
-	2:  "invalid_creator_details",
-	3:  "underfunded",
-	4:  "reference_duplication",
-	5:  "invalid_amount",
-	6:  "incorrect_precision",
+	1:  "old_balance_not_exist",
+	2:  "old_invalid_creator_details",
+	3:  "old_underfunded",
+	4:  "old_reference_duplication",
+	5:  "old_invalid_amount",
+	6:  "old_incorrect_precision",
 	-1: "aml_alert_tasks_not_found",
+	-2: "balance_not_exist",
+	-3: "invalid_creator_details",
+	-4: "underfunded",
+	-5: "reference_duplication",
+	-6: "invalid_amount",
+	-7: "incorrect_precision",
 }
 
 var createAmlAlertRequestResultCodeRevMap = map[string]int32{
-	"CreateAmlAlertRequestResultCodeSuccess":               0,
-	"CreateAmlAlertRequestResultCodeBalanceNotExist":       1,
-	"CreateAmlAlertRequestResultCodeInvalidCreatorDetails": 2,
-	"CreateAmlAlertRequestResultCodeUnderfunded":           3,
-	"CreateAmlAlertRequestResultCodeReferenceDuplication":  4,
-	"CreateAmlAlertRequestResultCodeInvalidAmount":         5,
-	"CreateAmlAlertRequestResultCodeIncorrectPrecision":    6,
-	"CreateAmlAlertRequestResultCodeAmlAlertTasksNotFound": -1,
+	"CreateAmlAlertRequestResultCodeSuccess":                  0,
+	"CreateAmlAlertRequestResultCodeOldBalanceNotExist":       1,
+	"CreateAmlAlertRequestResultCodeOldInvalidCreatorDetails": 2,
+	"CreateAmlAlertRequestResultCodeOldUnderfunded":           3,
+	"CreateAmlAlertRequestResultCodeOldReferenceDuplication":  4,
+	"CreateAmlAlertRequestResultCodeOldInvalidAmount":         5,
+	"CreateAmlAlertRequestResultCodeOldIncorrectPrecision":    6,
+	"CreateAmlAlertRequestResultCodeAmlAlertTasksNotFound":    -1,
+	"CreateAmlAlertRequestResultCodeBalanceNotExist":          -2,
+	"CreateAmlAlertRequestResultCodeInvalidCreatorDetails":    -3,
+	"CreateAmlAlertRequestResultCodeUnderfunded":              -4,
+	"CreateAmlAlertRequestResultCodeReferenceDuplication":     -5,
+	"CreateAmlAlertRequestResultCodeInvalidAmount":            -6,
+	"CreateAmlAlertRequestResultCodeIncorrectPrecision":       -7,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -40362,6 +40708,8 @@ type WithdrawalRequest struct {
 //            ManageVoteOp manageVoteOp;
 //        case MANAGE_ACCOUNT_SPECIFIC_RULE:
 //            ManageAccountSpecificRuleOp manageAccountSpecificRuleOp;
+//        case CANCEL_CHANGE_ROLE_REQUEST:
+//            CancelChangeRoleRequestOp cancelChangeRoleRequestOp;
 //        }
 //
 type OperationBody struct {
@@ -40406,6 +40754,7 @@ type OperationBody struct {
 	ManagePollOp                             *ManagePollOp                             `json:"managePollOp,omitempty"`
 	ManageVoteOp                             *ManageVoteOp                             `json:"manageVoteOp,omitempty"`
 	ManageAccountSpecificRuleOp              *ManageAccountSpecificRuleOp              `json:"manageAccountSpecificRuleOp,omitempty"`
+	CancelChangeRoleRequestOp                *CancelChangeRoleRequestOp                `json:"cancelChangeRoleRequestOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -40498,6 +40847,8 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageVoteOp", true
 	case OperationTypeManageAccountSpecificRule:
 		return "ManageAccountSpecificRuleOp", true
+	case OperationTypeCancelChangeRoleRequest:
+		return "CancelChangeRoleRequestOp", true
 	}
 	return "-", false
 }
@@ -40786,6 +41137,13 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.ManageAccountSpecificRuleOp = &tv
+	case OperationTypeCancelChangeRoleRequest:
+		tv, ok := value.(CancelChangeRoleRequestOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CancelChangeRoleRequestOp")
+			return
+		}
+		result.CancelChangeRoleRequestOp = &tv
 	}
 	return
 }
@@ -41790,6 +42148,31 @@ func (u OperationBody) GetManageAccountSpecificRuleOp() (result ManageAccountSpe
 	return
 }
 
+// MustCancelChangeRoleRequestOp retrieves the CancelChangeRoleRequestOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustCancelChangeRoleRequestOp() CancelChangeRoleRequestOp {
+	val, ok := u.GetCancelChangeRoleRequestOp()
+
+	if !ok {
+		panic("arm CancelChangeRoleRequestOp is not set")
+	}
+
+	return val
+}
+
+// GetCancelChangeRoleRequestOp retrieves the CancelChangeRoleRequestOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetCancelChangeRoleRequestOp() (result CancelChangeRoleRequestOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CancelChangeRoleRequestOp" {
+		result = *u.CancelChangeRoleRequestOp
+		ok = true
+	}
+
+	return
+}
+
 // Operation is an XDR Struct defines as:
 //
 //   //: An operation is the lowest unit of work that a transaction does
@@ -41882,6 +42265,8 @@ func (u OperationBody) GetManageAccountSpecificRuleOp() (result ManageAccountSpe
 //            ManageVoteOp manageVoteOp;
 //        case MANAGE_ACCOUNT_SPECIFIC_RULE:
 //            ManageAccountSpecificRuleOp manageAccountSpecificRuleOp;
+//        case CANCEL_CHANGE_ROLE_REQUEST:
+//            CancelChangeRoleRequestOp cancelChangeRoleRequestOp;
 //        }
 //        body;
 //    };
@@ -42579,6 +42964,8 @@ type AccountRuleRequirement struct {
 //            ManageVoteResult manageVoteResult;
 //        case MANAGE_ACCOUNT_SPECIFIC_RULE:
 //            ManageAccountSpecificRuleResult manageAccountSpecificRuleResult;
+//        case CANCEL_CHANGE_ROLE_REQUEST:
+//            CancelChangeRoleRequestResult cancelChangeRoleRequestResult;
 //        }
 //
 type OperationResultTr struct {
@@ -42623,6 +43010,7 @@ type OperationResultTr struct {
 	ManageCreatePollRequestResult                *ManageCreatePollRequestResult                `json:"manageCreatePollRequestResult,omitempty"`
 	ManageVoteResult                             *ManageVoteResult                             `json:"manageVoteResult,omitempty"`
 	ManageAccountSpecificRuleResult              *ManageAccountSpecificRuleResult              `json:"manageAccountSpecificRuleResult,omitempty"`
+	CancelChangeRoleRequestResult                *CancelChangeRoleRequestResult                `json:"cancelChangeRoleRequestResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -42715,6 +43103,8 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageVoteResult", true
 	case OperationTypeManageAccountSpecificRule:
 		return "ManageAccountSpecificRuleResult", true
+	case OperationTypeCancelChangeRoleRequest:
+		return "CancelChangeRoleRequestResult", true
 	}
 	return "-", false
 }
@@ -43003,6 +43393,13 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.ManageAccountSpecificRuleResult = &tv
+	case OperationTypeCancelChangeRoleRequest:
+		tv, ok := value.(CancelChangeRoleRequestResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CancelChangeRoleRequestResult")
+			return
+		}
+		result.CancelChangeRoleRequestResult = &tv
 	}
 	return
 }
@@ -44007,6 +44404,31 @@ func (u OperationResultTr) GetManageAccountSpecificRuleResult() (result ManageAc
 	return
 }
 
+// MustCancelChangeRoleRequestResult retrieves the CancelChangeRoleRequestResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustCancelChangeRoleRequestResult() CancelChangeRoleRequestResult {
+	val, ok := u.GetCancelChangeRoleRequestResult()
+
+	if !ok {
+		panic("arm CancelChangeRoleRequestResult is not set")
+	}
+
+	return val
+}
+
+// GetCancelChangeRoleRequestResult retrieves the CancelChangeRoleRequestResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetCancelChangeRoleRequestResult() (result CancelChangeRoleRequestResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CancelChangeRoleRequestResult" {
+		result = *u.CancelChangeRoleRequestResult
+		ok = true
+	}
+
+	return
+}
+
 // OperationResult is an XDR Union defines as:
 //
 //   union OperationResult switch (OperationResultCode code)
@@ -44094,6 +44516,8 @@ func (u OperationResultTr) GetManageAccountSpecificRuleResult() (result ManageAc
 //            ManageVoteResult manageVoteResult;
 //        case MANAGE_ACCOUNT_SPECIFIC_RULE:
 //            ManageAccountSpecificRuleResult manageAccountSpecificRuleResult;
+//        case CANCEL_CHANGE_ROLE_REQUEST:
+//            CancelChangeRoleRequestResult cancelChangeRoleRequestResult;
 //        }
 //        tr;
 //    case opNO_ENTRY:
@@ -44685,20 +45109,30 @@ type TransactionResult struct {
 //        ADD_SALE_WHITELISTS = 4,
 //        ASSET_PAIR_RESTRICTIONS = 5,
 //        FIX_CHANGE_TO_NON_EXISTING_ROLE = 6,
-//        ATOMIC_SWAP_RETURNING = 7
+//        FIX_REVERSE_SALE_PAIR = 7,
+//        FIX_NOT_CHECKING_SET_TASKS_PERMISSIONS = 8,
+//        UNLIMITED_ADMIN_COUNT = 9,
+//        FIX_AML_ALERT_ERROR_CODES = 10,
+//        FIX_EXT_SYS_ACC_EXPIRATION_TIME = 11,
+//        ATOMIC_SWAP_RETURNING = 12
 //    };
 //
 type LedgerVersion int32
 
 const (
-	LedgerVersionEmptyVersion               LedgerVersion = 0
-	LedgerVersionCheckSetFeeAccountExisting LedgerVersion = 1
-	LedgerVersionFixPaymentStats            LedgerVersion = 2
-	LedgerVersionAddInvestFee               LedgerVersion = 3
-	LedgerVersionAddSaleWhitelists          LedgerVersion = 4
-	LedgerVersionAssetPairRestrictions      LedgerVersion = 5
-	LedgerVersionFixChangeToNonExistingRole LedgerVersion = 6
-	LedgerVersionAtomicSwapReturning        LedgerVersion = 7
+	LedgerVersionEmptyVersion                      LedgerVersion = 0
+	LedgerVersionCheckSetFeeAccountExisting        LedgerVersion = 1
+	LedgerVersionFixPaymentStats                   LedgerVersion = 2
+	LedgerVersionAddInvestFee                      LedgerVersion = 3
+	LedgerVersionAddSaleWhitelists                 LedgerVersion = 4
+	LedgerVersionAssetPairRestrictions             LedgerVersion = 5
+	LedgerVersionFixChangeToNonExistingRole        LedgerVersion = 6
+	LedgerVersionFixReverseSalePair                LedgerVersion = 7
+	LedgerVersionFixNotCheckingSetTasksPermissions LedgerVersion = 8
+	LedgerVersionUnlimitedAdminCount               LedgerVersion = 9
+	LedgerVersionFixAmlAlertErrorCodes             LedgerVersion = 10
+	LedgerVersionFixExtSysAccExpirationTime        LedgerVersion = 11
+	LedgerVersionAtomicSwapReturning               LedgerVersion = 12
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -44709,40 +45143,60 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionAddSaleWhitelists,
 	LedgerVersionAssetPairRestrictions,
 	LedgerVersionFixChangeToNonExistingRole,
+	LedgerVersionFixReverseSalePair,
+	LedgerVersionFixNotCheckingSetTasksPermissions,
+	LedgerVersionUnlimitedAdminCount,
+	LedgerVersionFixAmlAlertErrorCodes,
+	LedgerVersionFixExtSysAccExpirationTime,
 	LedgerVersionAtomicSwapReturning,
 }
 
 var ledgerVersionMap = map[int32]string{
-	0: "LedgerVersionEmptyVersion",
-	1: "LedgerVersionCheckSetFeeAccountExisting",
-	2: "LedgerVersionFixPaymentStats",
-	3: "LedgerVersionAddInvestFee",
-	4: "LedgerVersionAddSaleWhitelists",
-	5: "LedgerVersionAssetPairRestrictions",
-	6: "LedgerVersionFixChangeToNonExistingRole",
-	7: "LedgerVersionAtomicSwapReturning",
+	0:  "LedgerVersionEmptyVersion",
+	1:  "LedgerVersionCheckSetFeeAccountExisting",
+	2:  "LedgerVersionFixPaymentStats",
+	3:  "LedgerVersionAddInvestFee",
+	4:  "LedgerVersionAddSaleWhitelists",
+	5:  "LedgerVersionAssetPairRestrictions",
+	6:  "LedgerVersionFixChangeToNonExistingRole",
+	7:  "LedgerVersionFixReverseSalePair",
+	8:  "LedgerVersionFixNotCheckingSetTasksPermissions",
+	9:  "LedgerVersionUnlimitedAdminCount",
+	10: "LedgerVersionFixAmlAlertErrorCodes",
+	11: "LedgerVersionFixExtSysAccExpirationTime",
+	12: "LedgerVersionAtomicSwapReturning",
 }
 
 var ledgerVersionShortMap = map[int32]string{
-	0: "empty_version",
-	1: "check_set_fee_account_existing",
-	2: "fix_payment_stats",
-	3: "add_invest_fee",
-	4: "add_sale_whitelists",
-	5: "asset_pair_restrictions",
-	6: "fix_change_to_non_existing_role",
-	7: "atomic_swap_returning",
+	0:  "empty_version",
+	1:  "check_set_fee_account_existing",
+	2:  "fix_payment_stats",
+	3:  "add_invest_fee",
+	4:  "add_sale_whitelists",
+	5:  "asset_pair_restrictions",
+	6:  "fix_change_to_non_existing_role",
+	7:  "fix_reverse_sale_pair",
+	8:  "fix_not_checking_set_tasks_permissions",
+	9:  "unlimited_admin_count",
+	10: "fix_aml_alert_error_codes",
+	11: "fix_ext_sys_acc_expiration_time",
+	12: "atomic_swap_returning",
 }
 
 var ledgerVersionRevMap = map[string]int32{
-	"LedgerVersionEmptyVersion":               0,
-	"LedgerVersionCheckSetFeeAccountExisting": 1,
-	"LedgerVersionFixPaymentStats":            2,
-	"LedgerVersionAddInvestFee":               3,
-	"LedgerVersionAddSaleWhitelists":          4,
-	"LedgerVersionAssetPairRestrictions":      5,
-	"LedgerVersionFixChangeToNonExistingRole": 6,
-	"LedgerVersionAtomicSwapReturning":        7,
+	"LedgerVersionEmptyVersion":                      0,
+	"LedgerVersionCheckSetFeeAccountExisting":        1,
+	"LedgerVersionFixPaymentStats":                   2,
+	"LedgerVersionAddInvestFee":                      3,
+	"LedgerVersionAddSaleWhitelists":                 4,
+	"LedgerVersionAssetPairRestrictions":             5,
+	"LedgerVersionFixChangeToNonExistingRole":        6,
+	"LedgerVersionFixReverseSalePair":                7,
+	"LedgerVersionFixNotCheckingSetTasksPermissions": 8,
+	"LedgerVersionUnlimitedAdminCount":               9,
+	"LedgerVersionFixAmlAlertErrorCodes":             10,
+	"LedgerVersionFixExtSysAccExpirationTime":        11,
+	"LedgerVersionAtomicSwapReturning":               12,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -45761,7 +46215,8 @@ type Fee struct {
 //        MANAGE_CREATE_POLL_REQUEST = 43,
 //        MANAGE_POLL = 44,
 //        MANAGE_VOTE = 45,
-//        MANAGE_ACCOUNT_SPECIFIC_RULE = 46
+//        MANAGE_ACCOUNT_SPECIFIC_RULE = 46,
+//        CANCEL_CHANGE_ROLE_REQUEST = 47
 //    };
 //
 type OperationType int32
@@ -45807,6 +46262,7 @@ const (
 	OperationTypeManagePoll                             OperationType = 44
 	OperationTypeManageVote                             OperationType = 45
 	OperationTypeManageAccountSpecificRule              OperationType = 46
+	OperationTypeCancelChangeRoleRequest                OperationType = 47
 )
 
 var OperationTypeAll = []OperationType{
@@ -45850,6 +46306,7 @@ var OperationTypeAll = []OperationType{
 	OperationTypeManagePoll,
 	OperationTypeManageVote,
 	OperationTypeManageAccountSpecificRule,
+	OperationTypeCancelChangeRoleRequest,
 }
 
 var operationTypeMap = map[int32]string{
@@ -45893,6 +46350,7 @@ var operationTypeMap = map[int32]string{
 	44: "OperationTypeManagePoll",
 	45: "OperationTypeManageVote",
 	46: "OperationTypeManageAccountSpecificRule",
+	47: "OperationTypeCancelChangeRoleRequest",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -45936,6 +46394,7 @@ var operationTypeShortMap = map[int32]string{
 	44: "manage_poll",
 	45: "manage_vote",
 	46: "manage_account_specific_rule",
+	47: "cancel_change_role_request",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -45979,6 +46438,7 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeManagePoll":                             44,
 	"OperationTypeManageVote":                             45,
 	"OperationTypeManageAccountSpecificRule":              46,
+	"OperationTypeCancelChangeRoleRequest":                47,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -46057,4 +46517,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "f50a946f5d57b9d531e54a72975a3477b86eab08"
+var Revision = "6b49beb5dae8cee4207c03fee48b262f630e10d2"
