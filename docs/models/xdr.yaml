@@ -71,7 +71,7 @@ xdr.AssetPairPolicy:
       type: string
 
 
-xdr.CreateAtomicSwapBidCreationRequestResultCode:
+xdr.CreateAtomicSwapBidRequestResultCode:
   type: object
   properties:
     value:
@@ -80,7 +80,7 @@ xdr.CreateAtomicSwapBidCreationRequestResultCode:
       type: string
 
 
-xdr.CreateAtomicSwapRequestResultCode:
+xdr.CreateAtomicSwapAskRequestResultCode:
   type: object
   properties:
     value:

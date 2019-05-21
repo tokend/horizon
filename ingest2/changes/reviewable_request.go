@@ -97,8 +97,6 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.handleRemoveOnManageAsset(lc)
 	case xdr.OperationTypeManageSale:
 		return c.handleRemoveOnManageSale(lc)
-	case xdr.OperationTypeCancelAtomicSwapBid:
-		return c.cancel(lc)
 	// auto review is handled by each operation separately
 	case xdr.OperationTypeCreateIssuanceRequest:
 		return c.handleRemoveOnCreationOp(lc,
@@ -118,6 +116,9 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	case xdr.OperationTypeCreateChangeRoleRequest:
 		return c.handleRemoveOnCreationOp(lc,
 			lc.OperationResult.MustCreateChangeRoleRequestResult().MustSuccess().Fulfilled)
+	case xdr.OperationTypeCreateAtomicSwapBidRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.MustCreateAtomicSwapBidRequestResult().MustSuccess().Fulfilled)
 	case xdr.OperationTypeCheckSaleState:
 		// if check sale state was successful, all the requests created by it were fulfilled
 		return c.handleRemoveOnCreationOp(lc, true)
@@ -419,7 +420,7 @@ func (c *reviewableRequestHandler) getCreatePollRequest(
 	}
 }
 
-func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.AtomicSwapBidCreationRequest,
+func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.CreateAtomicSwapBidRequest,
 ) *history.CreateAtomicSwapBidRequest {
 	quoteAssets := make([]regources.AssetPrice, 0, len(request.QuoteAssets))
 	for _, quoteAsset := range request.QuoteAssets {
@@ -437,7 +438,7 @@ func (c *reviewableRequestHandler) getAtomicSwapBidCreationRequest(request *xdr.
 	}
 }
 
-func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.AtomicSwapRequest,
+func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.CreateAtomicSwapAskRequest,
 ) *history.CreateAtomicSwapRequest {
 	return &history.CreateAtomicSwapRequest{
 		BidID:      uint64(request.BidId),
@@ -480,9 +481,9 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	case xdr.ReviewableRequestTypeUpdateSaleDetails:
 		details.UpdateSaleDetails = c.getUpdateSaleDetailsRequest(body.UpdateSaleDetailsRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		details.CreateAtomicSwapBid = c.getAtomicSwapBidCreationRequest(body.AtomicSwapBidCreationRequest)
-	case xdr.ReviewableRequestTypeCreateAtomicSwap:
-		details.CreateAtomicSwap = c.getAtomicSwapRequest(body.AtomicSwapRequest)
+		details.CreateAtomicSwapBid = c.getAtomicSwapBidCreationRequest(body.CreateAtomicSwapBidRequest)
+	case xdr.ReviewableRequestTypeCreateAtomicSwapAsk:
+		details.CreateAtomicSwap = c.getAtomicSwapRequest(body.CreateAtomicSwapAskRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = c.getCreatePollRequest(body.CreatePollRequest)
 	default:

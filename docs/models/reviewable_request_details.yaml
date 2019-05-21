@@ -11,7 +11,7 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/ChangeRoleRequest'
     - $ref: '#/components/schemas/UpdateSaleDetailsRequest'
     - $ref: '#/components/schemas/CreateAtomicSwapBidRequest'
-    - $ref: '#/components/schemas/CreateAtomicSwapRequest'
+    - $ref: '#/components/schemas/CreateAtomicSwapAskRequest'
     - $ref: '#/components/schemas/CreatePollRequest'
 
 CreateAssetRequest:
@@ -421,7 +421,7 @@ CreateAtomicSwapBidRequest:
               deprecated: true
               $ref: '#/components/schemas/Details'
 
-CreateAtomicSwapRequest:
+CreateAtomicSwapAskRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object

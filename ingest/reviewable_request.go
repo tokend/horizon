@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"time"
 
+	"gitlab.com/tokend/regources"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/utf8"
-	v1 "gitlab.com/tokend/regources"
-	"gitlab.com/tokend/regources/generated"
 )
 
 func reviewableRequestCreate(is *Session, ledgerEntry *xdr.LedgerEntry) error {
@@ -212,10 +212,10 @@ func getAmlAlertRequest(request *xdr.AmlAlertRequest) *history.AmlAlertRequest {
 }
 
 func getSaleRequest(request *xdr.SaleCreationRequest) *history.SaleRequest {
-	var quoteAssets []v1.SaleQuoteAsset
+	var quoteAssets []regources.SaleQuoteAsset
 	for i := range request.QuoteAssets {
-		quoteAssets = append(quoteAssets, v1.SaleQuoteAsset{
-			Price:      v1.Amount(int64(request.QuoteAssets[i].Price)),
+		quoteAssets = append(quoteAssets, regources.SaleQuoteAsset{
+			Price:      regources.Amount(int64(request.QuoteAssets[i].Price)),
 			QuoteAsset: string(request.QuoteAssets[i].QuoteAsset),
 		})
 	}
@@ -309,7 +309,7 @@ func getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
 	}
 }
 
-func getAtomicSwapBidCreationRequest(request *xdr.AtomicSwapBidCreationRequest,
+func getAtomicSwapBidCreationRequest(request *xdr.CreateAtomicSwapBidRequest,
 ) *history.AtomicSwapBidCreation {
 	var details map[string]interface{}
 	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
@@ -330,7 +330,7 @@ func getAtomicSwapBidCreationRequest(request *xdr.AtomicSwapBidCreationRequest,
 	}
 }
 
-func getAtomicSwapRequest(request *xdr.AtomicSwapRequest,
+func getAtomicSwapRequest(request *xdr.CreateAtomicSwapAskRequest,
 ) *history.AtomicSwap {
 	return &history.AtomicSwap{
 		BidID:      uint64(request.BidId),
@@ -371,9 +371,9 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 	case xdr.ReviewableRequestTypeManageContract:
 		details.Contract = getContractRequest(body.ContractRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		details.AtomicSwapBidCreation = getAtomicSwapBidCreationRequest(body.AtomicSwapBidCreationRequest)
-	case xdr.ReviewableRequestTypeCreateAtomicSwap:
-		details.AtomicSwap = getAtomicSwapRequest(body.AtomicSwapRequest)
+		details.AtomicSwapBidCreation = getAtomicSwapBidCreationRequest(body.CreateAtomicSwapBidRequest)
+	case xdr.ReviewableRequestTypeCreateAtomicSwapAsk:
+		details.AtomicSwap = getAtomicSwapRequest(body.CreateAtomicSwapAskRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = getPollRequest(body.CreatePollRequest)
 	default:

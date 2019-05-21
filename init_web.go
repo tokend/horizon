@@ -344,7 +344,7 @@ func initWebActions(app *App) {
 				action.q = action.q.AtomicSwapByBidID(*bidID)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwap},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwapAsk},
 	})
 
 	// Sales actions

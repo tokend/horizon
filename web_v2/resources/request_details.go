@@ -33,7 +33,7 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newAssetCreateRequest(request.ID, *request.Details.CreateAsset)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
 		return newAtomicSwapBidRequest(request.ID, *request.Details.CreateAtomicSwapBid)
-	case xdr.ReviewableRequestTypeCreateAtomicSwap:
+	case xdr.ReviewableRequestTypeCreateAtomicSwapAsk:
 		return newAtomicSwapRequest(request.ID, *request.Details.CreateAtomicSwap)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		return newCreatePollRequest(request.ID, *request.Details.CreatePoll)
@@ -83,13 +83,13 @@ func newAssetUpdateRequest(id int64, details history2.UpdateAssetRequest) *regou
 		},
 	}
 }
-func newAtomicSwapRequest(id int64, details history2.CreateAtomicSwapRequest) *regources.CreateAtomicSwapRequest {
-	return &regources.CreateAtomicSwapRequest{
-		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ATOMIC_SWAP),
-		Attributes: regources.CreateAtomicSwapRequestAttributes{
+func newAtomicSwapRequest(id int64, details history2.CreateAtomicSwapRequest) *regources.CreateAtomicSwapAskRequest {
+	return &regources.CreateAtomicSwapAskRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ATOMIC_SWAP_ASK),
+		Attributes: regources.CreateAtomicSwapAskRequestAttributes{
 			BaseAmount: regources.Amount(details.BaseAmount),
 		},
-		Relationships: regources.CreateAtomicSwapRequestRelationships{
+		Relationships: regources.CreateAtomicSwapAskRequestRelationships{
 			Bid:        regources.NewKeyInt64(int64(details.BidID), regources.ATOMIC_SWAP_BID).AsRelation(),
 			QuoteAsset: newQuoteAssetKey(details.QuoteAsset).AsRelation(),
 		},

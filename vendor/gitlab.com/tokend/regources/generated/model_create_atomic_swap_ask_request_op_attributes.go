@@ -4,6 +4,6 @@
 
 package regources
 
-type CreateAtomicSwapRequestOpAttributes struct {
+type CreateAtomicSwapAskRequestOpAttributes struct {
 	BaseAmount *Amount `json:"base_amount,omitempty"`
 }

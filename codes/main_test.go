@@ -175,7 +175,7 @@ func TestCodes(t *testing.T) {
 	})
 
 	Convey("Create Atomic Swap Bid Creation Request", t, func() {
-		for _, code := range xdr.CreateAtomicSwapBidCreationRequestResultCodeAll {
+		for _, code := range xdr.CreateAtomicSwapBidRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
@@ -187,7 +187,7 @@ func TestCodes(t *testing.T) {
 	})
 
 	Convey("Create Atomic Swap Request", t, func() {
-		for _, code := range xdr.CreateAtomicSwapRequestResultCodeAll {
+		for _, code := range xdr.CreateAtomicSwapAskRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})

@@ -1,4 +1,4 @@
-CreateAtomicSwapRequestOpKey:
+CreateAtomicSwapAskRequestOpKey:
   type: object
   properties:
     id:
@@ -9,12 +9,12 @@ CreateAtomicSwapRequestOpKey:
       deprecated: true
       type: string
       enum:
-        - "operations-create-atomic-swap-request"
+        - "operations-create-atomic-swap-ask-request"
 
 
-CreateAtomicSwapRequestOp:
+CreateAtomicSwapAskRequestOp:
   allOf:
-    - $ref: '#/components/schemas/CreateAtomicSwapRequestOpKey'
+    - $ref: '#/components/schemas/CreateAtomicSwapAskRequestOpKey'
     - type: object
       required: [relationships, attributes]
       properties:

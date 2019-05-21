@@ -94,7 +94,7 @@ func ForOperation(
 			break
 		}
 
-		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeCreateAtomicSwap.ShortString() {
+		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeCreateAtomicSwapAsk.ShortString() {
 			result = append(result, Participant{
 				AccountID: request.Requestor,
 				BalanceID: nil,
@@ -108,7 +108,7 @@ func ForOperation(
 			break
 		}
 
-		atomicSwapExtendedResult, ok := extendedResult.TypeExt.GetAtomicSwapExtended()
+		atomicSwapExtendedResult, ok := extendedResult.TypeExt.GetAtomicSwapAskExtended()
 		if !ok {
 			break
 		}
@@ -120,8 +120,8 @@ func ForOperation(
 		})
 
 		result = append(result, Participant{
-			AccountID: atomicSwapExtendedResult.PurchaserId,
-			BalanceID: &atomicSwapExtendedResult.PurchaserBaseBalanceId,
+			AccountID: atomicSwapExtendedResult.AskOwnerId,
+			BalanceID: &atomicSwapExtendedResult.AskOwnerBaseBalanceId,
 			Details:   nil,
 		})
 	case xdr.OperationTypeCreatePreissuanceRequest:
@@ -176,11 +176,11 @@ func ForOperation(
 	case xdr.OperationTypeManageCreatePollRequest:
 	case xdr.OperationTypeManageVote:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeCreateAtomicSwapRequest:
+	case xdr.OperationTypeCreateAtomicSwapAskRequest:
 		// FIXME !!!!!
 		//tx.SourceAccount
-		if sourceParticipant.AccountID.Address() != opResult.MustCreateAtomicSwapRequestResult().Success.BidOwnerId.Address() {
-			result = append(result, Participant{opResult.MustCreateAtomicSwapRequestResult().Success.BidOwnerId, nil, nil})
+		if sourceParticipant.AccountID.Address() != opResult.MustCreateAtomicSwapAskRequestResult().Success.BidOwnerId.Address() {
+			result = append(result, Participant{opResult.MustCreateAtomicSwapAskRequestResult().Success.BidOwnerId, nil, nil})
 		}
 	case xdr.OperationTypeCancelSaleRequest:
 		// the only direct participant is the source_account

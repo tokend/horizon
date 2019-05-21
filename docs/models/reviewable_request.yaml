@@ -14,7 +14,7 @@ Int64Key:
         - "request-details-aml-alert"
         - "request-details-asset-create"
         - "request-details-asset-update"
-        - "request-details-atomic-swap"
+        - "request-details-atomic-swap-ask"
         - "request-details-atomic-swap-bid"
         - "request-details-issuance"
         - "request-details-limits-update"

@@ -57,7 +57,7 @@ type getCreateAtomicSwapRequestsHandler struct {
 }
 
 func (h *getCreateAtomicSwapRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateAtomicSwapRequests) error {
-	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateAtomicSwap))
+	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateAtomicSwapAsk))
 
 	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapRequestsQuoteAsset) {
 		q = q.FilterByAtomicSwapQuoteAsset(request.Filters.QuoteAsset)

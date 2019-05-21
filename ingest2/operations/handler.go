@@ -91,7 +91,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCreateAtomicSwapBidRequest: &createAtomicSwapBidRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreateAtomicSwapRequest: &createAtomicSwapRequestOpHandler{
+			xdr.OperationTypeCreateAtomicSwapAskRequest: &createAtomicSwapRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{

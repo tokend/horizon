@@ -3,13 +3,13 @@ package history
 import (
 	"time"
 
+	"gitlab.com/tokend/regources"
+
 	"database/sql/driver"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2"
-	v1 "gitlab.com/tokend/regources"
-	"gitlab.com/tokend/regources/generated"
 )
 
 type ReviewableRequestDetails struct {
@@ -18,15 +18,15 @@ type ReviewableRequestDetails struct {
 	PreIssuanceCreate     *PreIssuanceRequest       `json:"create_pre_issuance,omitempty"`
 	IssuanceCreate        *IssuanceRequest          `json:"create_issuance,omitempty"`
 	Withdraw              *WithdrawalRequest        `json:"create_withdraw,omitempty"`
-	TwoStepWithdraw       *WithdrawalRequest        `json:"two_step_withdrawal,omitempty"`
+	TwoStepWithdraw       *WithdrawalRequest        `json:"two_step_withdrawal"`
 	Sale                  *SaleRequest              `json:"create_sale,omitempty"`
 	LimitsUpdate          *LimitsUpdateRequest      `json:"update_limits,omitempty"`
 	AmlAlert              *AmlAlertRequest          `json:"create_aml_alert,omitempty"`
 	ChangeRole            *ChangeRoleRequest        `json:"change_role,omitempty"`
 	UpdateSaleDetails     *UpdateSaleDetailsRequest `json:"update_sale_details,omitempty"`
-	PromotionUpdate       *PromotionUpdateRequest   `json:"promotion_update,omitempty"`
-	Invoice               *InvoiceRequest           `json:"invoice,omitempty"`
-	Contract              *ContractRequest          `json:"contract,omitempty"`
+	PromotionUpdate       *PromotionUpdateRequest   `json:"promotion_update"`
+	Invoice               *InvoiceRequest           `json:"invoice"`
+	Contract              *ContractRequest          `json:"contract"`
 	AtomicSwapBidCreation *AtomicSwapBidCreation    `json:"create_atomic_swap_bid,omitempty"`
 	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap,omitempty"`
 	CreatePoll            *CreatePoll               `json:"create_poll,omitempty"`
@@ -91,16 +91,16 @@ type WithdrawalRequest struct {
 }
 
 type SaleRequest struct {
-	BaseAsset           string                 `json:"base_asset"`
-	DefaultQuoteAsset   string                 `json:"quote_asset"`
-	StartTime           time.Time              `json:"start_time"`
-	EndTime             time.Time              `json:"end_time"`
-	SoftCap             string                 `json:"soft_cap"`
-	HardCap             string                 `json:"hard_cap"`
-	Details             map[string]interface{} `json:"details"`
-	QuoteAssets         []v1.SaleQuoteAsset    `json:"quote_assets"`
-	SaleType            xdr.SaleType           `json:"sale_type"`
-	BaseAssetForHardCap string                 `json:"base_asset_for_hard_cap"`
+	BaseAsset           string                     `json:"base_asset"`
+	DefaultQuoteAsset   string                     `json:"quote_asset"`
+	StartTime           time.Time                  `json:"start_time"`
+	EndTime             time.Time                  `json:"end_time"`
+	SoftCap             string                     `json:"soft_cap"`
+	HardCap             string                     `json:"hard_cap"`
+	Details             map[string]interface{}     `json:"details"`
+	QuoteAssets         []regources.SaleQuoteAsset `json:"quote_assets"`
+	SaleType            xdr.SaleType               `json:"sale_type"`
+	BaseAssetForHardCap string                     `json:"base_asset_for_hard_cap"`
 }
 
 type LimitsUpdateRequest struct {

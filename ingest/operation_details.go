@@ -169,7 +169,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		opResult := c.OperationResult().MustReviewRequestResult().MustSuccess()
 		details["is_fulfilled"] = opResult.Fulfilled
 
-		aSwapExtended, ok := opResult.TypeExt.GetAtomicSwapExtended()
+		aSwapExtended, ok := opResult.TypeExt.GetAtomicSwapAskExtended()
 		if !ok {
 			break
 		}
@@ -250,8 +250,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustCancelSaleCreationRequestOp()
 		details["request_id"] = uint64(op.RequestId)
 	case xdr.OperationTypeCreateAtomicSwapBidRequest:
-		op := c.Operation().Body.MustCreateAtomicSwapBidCreationRequestOp()
-		opRes := c.OperationResult().MustCreateAtomicSwapBidCreationRequestResult().
+		op := c.Operation().Body.MustCreateAtomicSwapBidRequestOp()
+		opRes := c.OperationResult().MustCreateAtomicSwapBidRequestResult().
 			MustSuccess()
 		details["base_balance_id"] = op.Request.BaseBalance
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
@@ -266,9 +266,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustCancelAtomicSwapBidOp()
 
 		details["bid_id"] = uint64(op.BidId)
-	case xdr.OperationTypeCreateAtomicSwapRequest:
-		op := c.Operation().Body.MustCreateAtomicSwapRequestOp()
-		opRes := c.OperationResult().MustCreateAtomicSwapRequestResult().
+	case xdr.OperationTypeCreateAtomicSwapAskRequest:
+		op := c.Operation().Body.MustCreateAtomicSwapAskRequestOp()
+		opRes := c.OperationResult().MustCreateAtomicSwapAskRequestResult().
 			MustSuccess()
 		details["bid_id"] = op.Request.BidId
 		details["base_amount"] = amount.StringU(uint64(op.Request.BaseAmount))
@@ -382,13 +382,13 @@ func getReviewRequestOpDetails(requestDetails xdr.ReviewRequestOpRequestDetails)
 	}
 }
 
-func getAtomicSwapDetails(atomicSwapExtendedResult xdr.AtomicSwapExtended) map[string]interface{} {
+func getAtomicSwapDetails(atomicSwapExtendedResult xdr.AtomicSwapAskExtended) map[string]interface{} {
 	return map[string]interface{}{
 		"bid_id":                          uint64(atomicSwapExtendedResult.BidId),
 		"bid_owner_id":                    atomicSwapExtendedResult.BidOwnerId.Address(),
 		"bid_owner_base_asset_balance_id": atomicSwapExtendedResult.BidOwnerBaseBalanceId.AsString(),
-		"purchaser_id":                    atomicSwapExtendedResult.PurchaserId.Address(),
-		"purchaser_base_asset_balance_id": atomicSwapExtendedResult.PurchaserBaseBalanceId.AsString(),
+		"purchaser_id":                    atomicSwapExtendedResult.AskOwnerId.Address(),
+		"purchaser_base_asset_balance_id": atomicSwapExtendedResult.AskOwnerBaseBalanceId.AsString(),
 		"base_asset":                      string(atomicSwapExtendedResult.BaseAsset),
 		"quote_asset":                     string(atomicSwapExtendedResult.QuoteAsset),
 		"base_amount":                     regources.Amount(atomicSwapExtendedResult.BaseAmount),

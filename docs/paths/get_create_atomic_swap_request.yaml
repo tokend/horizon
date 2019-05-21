@@ -1,12 +1,12 @@
-/v3/create_atomic_swap_requests/{id}:
+/v3/create_atomic_swap_ask_requests/{id}:
   get:
     tags:
       - WIP
-    summary: Create Atomic Swap Request by ID
+    summary: Create Atomic Swap Ask Request by ID
     description: |
-      Allows getting `CreateAtomicSwap` by ID\n
+      Allows getting `CreateAtomicSwapAsk` by ID\n
       🔒 Requestor's or reviewer's signature is needed
-    operationId: getCreateAtomicSwapRequest
+    operationId: getCreateAtomicSwapAskRequest
     parameters:
       - name: filter[requestor]
         in: query
@@ -109,7 +109,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/CreateAtomicSwapRequest'
+                      - $ref: '#/components/schemas/CreateAtomicSwapAskRequest'
                       - $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter
