@@ -4,7 +4,7 @@
 * `InitiateKYCRecovery` operation ingestion
 * `CreateKYCRecoveryRequest` operation ingestion
 * `KYCRecovery` reviewable request ingestion
-* `GetKYCRecoveryRequests` to handle `/v3/create_kyc_recovery_requests`, `/v3/create_kyc_recovery_requests/{id}`
+* `GetKYCRecoveryRequests` to handle `/v3/kyc_recovery_requests`, `/v3/kyc_recovery_requests/{id}`
 * Docs on kyc recovery
 
 ## 3.3.2

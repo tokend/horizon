@@ -95,12 +95,6 @@ ConvertedBalanceState:
               properties:
                 data:
                   $ref: '#/components/schemas/BalanceKey'
-            asset:
-              type: object
-              description: "defines the asset of the balance"
-              properties:
-                data:
-                  $ref: '#/components/schemas/AssetKey'
 
 BalanceStateAttributeAmounts:
   type: object

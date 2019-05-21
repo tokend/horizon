@@ -123,11 +123,11 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/kyc_recovery_requests?include=details&page[number]=2&page[limit]=15"
+                      example: "/v3/kyc_recovery_requests?include=request_details&page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/kyc_recovery_requests?include=details&page[number]=1&page[limit]=15"
+                      example: "/v3/kyc_recovery_requests?include=request_details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:
