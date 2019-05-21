@@ -184,6 +184,7 @@ func ForOperation(
 		}
 	case xdr.OperationTypeCancelSaleRequest:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeCancelChangeRoleRequest:
 	case xdr.OperationTypeManageAccountRule:
 	case xdr.OperationTypeManageSignerRule:
 	case xdr.OperationTypeManageSigner:
