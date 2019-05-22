@@ -71,7 +71,7 @@ CreateAssetRequest:
             trailing_digits_count:
               type: integer
               format: uint32
-              description: "Policies specified for the asset creation"
+              description: "Number of digits after point (comma)"
               example: 2
               maximum: 6
               minimum: 0
