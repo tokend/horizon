@@ -35,6 +35,15 @@ xdr.CancelASwapBidResultCode:
       type: string
 
 
+xdr.RemoveAssetPairResultCode:
+  type: object
+  properties:
+    value:
+      type: integer
+    name:
+      type: string
+
+
 xdr.CancelSaleCreationRequestResultCode:
   type: object
   properties:
