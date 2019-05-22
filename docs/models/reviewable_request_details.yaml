@@ -186,6 +186,12 @@ CreateWithdrawRequest:
               properties:
                 data:
                   $ref: '#/components/schemas/BalanceKey'
+            asset:
+              type: object
+              description: "Withdrawn asset"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
         attributes:
           type: object
           required:

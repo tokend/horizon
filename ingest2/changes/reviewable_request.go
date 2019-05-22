@@ -29,13 +29,20 @@ type reviewableRequestStorage interface {
 	Cancel(id uint64) error
 }
 
-type reviewableRequestHandler struct {
-	storage reviewableRequestStorage
+type balanceProvider interface {
+	// MustBalance returns history balance struct for specific balance id
+	MustBalance(balanceID xdr.BalanceId) history.Balance
 }
 
-func newReviewableRequestHandler(storage reviewableRequestStorage) *reviewableRequestHandler {
+type reviewableRequestHandler struct {
+	storage  reviewableRequestStorage
+	balances balanceProvider
+}
+
+func newReviewableRequestHandler(storage reviewableRequestStorage, balances balanceProvider) *reviewableRequestHandler {
 	return &reviewableRequestHandler{
-		storage: storage,
+		storage:  storage,
+		balances: balances,
 	}
 }
 
@@ -336,7 +343,10 @@ func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceReque
 }
 
 func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.CreateWithdrawalRequest {
+	histBalance := c.balances.MustBalance(request.Balance)
+
 	return &history.CreateWithdrawalRequest{
+		Asset:     histBalance.AssetCode,
 		BalanceID: request.Balance.AsString(),
 		Amount:    regources.Amount(request.Amount),
 		Fee: regources.Fee{

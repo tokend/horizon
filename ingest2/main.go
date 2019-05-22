@@ -4,4 +4,4 @@
 package ingest2
 
 // increase it if you want force reingest (after backward not compatible changes)
-const CurrentIngestVersion = 1
+const CurrentIngestVersion = 2

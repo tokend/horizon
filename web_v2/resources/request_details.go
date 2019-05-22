@@ -210,6 +210,7 @@ func newWithdrawalRequest(id int64, details history2.CreateWithdrawalRequest) *r
 		},
 		Relationships: regources.CreateWithdrawRequestRelationships{
 			Balance: NewBalanceKey(details.BalanceID).AsRelation(),
+			Asset:   NewAssetKey(details.Asset).AsRelation(),
 		},
 	}
 }

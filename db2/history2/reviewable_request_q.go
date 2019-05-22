@@ -113,6 +113,11 @@ func (q ReviewableRequestsQ) FilterByWithdrawBalance(balance string) ReviewableR
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterByWithdrawAsset(asset string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_withdraw,asset}' = ?", asset)
+	return q
+}
+
 func (q ReviewableRequestsQ) FilterByAmlAlertBalance(balance string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_aml_alert,balance_id}' = ?", balance)
 	return q
