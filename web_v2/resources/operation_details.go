@@ -597,14 +597,15 @@ func newCreateKYCRecoveryRequestOp(id int64, details history2.CreateKYCRecoveryR
 			Details:  s.Details,
 			Identity: s.Identity,
 			Weight:   s.Weight,
-			RoleId:   s.RoleID,
+			RoleId:   s.RoleId,
 		})
 	}
 	return &regources.CreateKycRecoveryRequestOp{
 		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_KYC_RECOVERY_REQUEST),
 		Attributes: &regources.CreateKycRecoveryRequestOpAttributes{
-			AllTasks:    details.AllTasks,
-			SignersData: signersData,
+			AllTasks:       details.AllTasks,
+			SignersData:    signersData,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: &regources.CreateKycRecoveryRequestOpRelationships{
 			TargetAccount: NewAccountKey(details.TargetAccount).AsRelation(),
