@@ -107,6 +107,10 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newManagePollOp(op.ID, *op.Details.ManagePoll)
 	case xdr.OperationTypeManageVote:
 		return newManageVoteOp(op.ID, *op.Details.ManageVote)
+	case xdr.OperationTypeInitiateKycRecovery:
+		return newInitiateKYCRecoveryOp(op.ID, *op.Details.InitiateKYCRecovery)
+	case xdr.OperationTypeCreateKycRecoveryRequest:
+		return newCreateKYCRecoveryRequestOp(op.ID, *op.Details.CreateKYCRecoveryRequest)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": op.Type,
@@ -570,6 +574,41 @@ func newStampOp(id int64, details history2.StampDetails) *regources.StampOp {
 		Attributes: regources.StampOpAttributes{
 			LedgerHash:  details.LedgerHash,
 			LicenseHash: details.LicenseHash,
+		},
+	}
+}
+
+func newInitiateKYCRecoveryOp(id int64, details history2.InitiateKYCRecoveryDetails) *regources.InitiateKycRecoveryOp {
+	return &regources.InitiateKycRecoveryOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_INITIATE_KYC_RECOVERY),
+		Attributes: &regources.InitiateKycRecoveryOpAttributes{
+			Signer: details.Signer,
+		},
+		Relationships: &regources.InitiateKycRecoveryOpRelationships{
+			Account: NewAccountKey(details.Account).AsRelation(),
+		},
+	}
+}
+
+func newCreateKYCRecoveryRequestOp(id int64, details history2.CreateKYCRecoveryRequestDetails) *regources.CreateKycRecoveryRequestOp {
+	signersData := make([]regources.UpdateSignerData, 0, len(details.SignersData))
+	for _, s := range details.SignersData {
+		signersData = append(signersData, regources.UpdateSignerData{
+			Details:  s.Details,
+			Identity: s.Identity,
+			Weight:   s.Weight,
+			RoleId:   s.RoleID,
+		})
+	}
+	return &regources.CreateKycRecoveryRequestOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_KYC_RECOVERY_REQUEST),
+		Attributes: &regources.CreateKycRecoveryRequestOpAttributes{
+			AllTasks:    details.AllTasks,
+			SignersData: signersData,
+		},
+		Relationships: &regources.CreateKycRecoveryRequestOpRelationships{
+			TargetAccount: NewAccountKey(details.TargetAccount).AsRelation(),
+			Request:       NewRequestKey(int64(details.RequestDetails.RequestID)).AsRelation(),
 		},
 	}
 }
