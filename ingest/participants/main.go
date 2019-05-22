@@ -198,6 +198,7 @@ func ForOperation(
 			})
 		}
 	case xdr.OperationTypeManageAccountSpecificRule:
+	case xdr.OperationTypeRemoveAssetPair:
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

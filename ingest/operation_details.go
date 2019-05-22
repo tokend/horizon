@@ -359,6 +359,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["poll_id"] = op.Data.MustRemoveData().PollId
 		}
 	case xdr.OperationTypeManageAccountSpecificRule:
+	case xdr.OperationTypeRemoveAssetPair:
+		op := c.Operation().Body.MustRemoveAssetPairOp()
+		details["base"] = op.Base
+		details["quote"] = op.Quote
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
