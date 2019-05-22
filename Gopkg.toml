@@ -96,10 +96,10 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  version = "3.5.0"
+  branch = "feature/remove-asset-pair"
 
 [[constraint]]
-  version = "4.3.4"
+  branch = "feature/remove-asset-pair"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
