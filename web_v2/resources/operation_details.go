@@ -591,20 +591,11 @@ func newInitiateKYCRecoveryOp(id int64, details history2.InitiateKYCRecoveryDeta
 }
 
 func newCreateKYCRecoveryRequestOp(id int64, details history2.CreateKYCRecoveryRequestDetails) *regources.CreateKycRecoveryRequestOp {
-	signersData := make([]regources.UpdateSignerData, 0, len(details.SignersData))
-	for _, s := range details.SignersData {
-		signersData = append(signersData, regources.UpdateSignerData{
-			Details:  s.Details,
-			Identity: s.Identity,
-			Weight:   s.Weight,
-			RoleId:   s.RoleId,
-		})
-	}
 	return &regources.CreateKycRecoveryRequestOp{
 		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_KYC_RECOVERY_REQUEST),
 		Attributes: &regources.CreateKycRecoveryRequestOpAttributes{
 			AllTasks:       details.AllTasks,
-			SignersData:    signersData,
+			SignersData:    details.SignersData,
 			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: &regources.CreateKycRecoveryRequestOpRelationships{
