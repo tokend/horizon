@@ -29,7 +29,6 @@ ManageAccountSpecificRuleOp:
     - $ref: '#/components/schemas/ManageAccountSpecificRuleOpKey'
     - type: object
       properties:
-        required
         relationships:
           type: object
           properties:

@@ -1,3 +1,9 @@
+## Unreleased
+
+### Fixed
+
+* Panic on `/v3/history` handling `ManageAccountSpecificRuleOp` details
+
 ## 3.3.2
 
 ### Fixed
