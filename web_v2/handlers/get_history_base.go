@@ -211,6 +211,8 @@ func getEffect(effect history2.ParticipantEffect) regources.ParticipantsEffect {
 }
 
 // ensure allowed - checks it requester is allowed to access the data. If not it renders error and returns false.
+// The logic behind this is that if multiple filters provided all resource owners have access to data, as we
+// returning smaller subset of effects/movements
 func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Request) bool {
 	constraints := make([]string, 0)
 	if h.Account != nil {
@@ -231,7 +233,7 @@ func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Requ
 	if h.Asset != nil {
 		constraints = append(constraints, h.Asset.Owner)
 	}
-
+	// Admin is added implicitly to constraints in `isAllowed`, so no need to add it explicitly
 	return isAllowed(httpRequest, w, constraints...)
 }
 
