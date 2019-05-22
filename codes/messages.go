@@ -294,6 +294,8 @@ var messages = map[string]string{
 	"op_invalid_end_time":                               "New end time is in the past",
 	"op_global_specific_rule_required":                  "Not allowed to create sale without rule with null account id",
 	"op_account_role_to_set_does_not_exist":             "Account role to set does not exist",
+	"op_has_active_offers":                              "Asset pair with active offers can't be deleted",
+	"op_has_active_sales":                               "Asset pair with active sales can't be deleted",
 }
 
 func getMessage(rawCode string) string {
