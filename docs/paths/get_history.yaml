@@ -25,10 +25,10 @@
         explode: false
         schema:
           type: string
-      - name: filter[balance]
+      - name: filter[asset]
         in: query
         description: |
-          Filters history by participant's balance
+          Filters history by involved asset
         required: false
         style: form
         explode: false
