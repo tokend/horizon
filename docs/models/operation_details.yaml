@@ -37,6 +37,7 @@ OperationDetails:
     - $ref: '#/components/schemas/ManageCreatePollRequestOp'
     - $ref: '#/components/schemas/ManagePollOp'
     - $ref: '#/components/schemas/ManageVoteOp'
+    - $ref: '#/components/schemas/ManageAccountSpecificRuleOp'
 
 
 OperationDetailsKey:
@@ -78,3 +79,4 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/ManageCreatePollRequestOpKey'
     - $ref: '#/components/schemas/ManagePollOpKey'
     - $ref: '#/components/schemas/ManageVoteOpKey'
+    - $ref: '#/components/schemas/ManageAccountSpecificRuleOpKey'
