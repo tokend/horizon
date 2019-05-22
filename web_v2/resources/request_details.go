@@ -68,6 +68,7 @@ func newAssetCreateRequest(id int64, details history2.CreateAssetRequest) *regou
 			InitialPreissuedAmount: details.InitialPreissuedAmount,
 			CreatorDetails:         details.CreatorDetails,
 			Type:                   details.Type,
+			TrailingDigitsCount:    details.TrailingDigitsCount,
 		},
 	}
 }

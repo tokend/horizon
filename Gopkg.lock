@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:f0c99e116fb3aba3bb6af4a6584bb0fb3f2bc4d2377abcd75570d9516d0c4242"
+  branch = "fix/asset_creation_request_fields"
+  digest = "1:fdc4ea9a020dc1c05320087d524cfaa1c07698afbcb85f7738515445c37ff58a"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "8ff15db46cb17ff0ba98b5e3feaecd17ae9fe21b"
-  version = "v4.3.4"
+  revision = "679b8ddb86e4987430bebd5e296c8e779644ff2a"
 
 [[projects]]
   branch = "master"

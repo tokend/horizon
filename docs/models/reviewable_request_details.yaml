@@ -39,6 +39,7 @@ CreateAssetRequest:
             - max_issuance_amount
             - initial_preissued_amount
             - creator_details
+            - trailing_digits_count
           properties:
             asset:
               type: string
@@ -67,6 +68,13 @@ CreateAssetRequest:
               description: "Amount to be issued automatically right after the asset creation"
               example: "1000.123456"
               format: Amount
+            trailing_digits_count:
+              type: integer
+              format: uint32
+              description: "Policies specified for the asset creation"
+              example: 2
+              maximum: 6
+              minimum: 0
             creator_details:
               $ref: '#/components/schemas/Details'
 

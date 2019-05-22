@@ -1,3 +1,14 @@
+## Unreleased
+
+### Fixed
+
+* docs key value u32 value
+* add `trailing_digits_count` to asset creation request
+
+### Changed
+
+* `CurrentIngestVersion` increased
+
 ## 3.3.2
 
 ### Fixed

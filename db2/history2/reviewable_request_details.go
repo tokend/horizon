@@ -58,6 +58,7 @@ type CreateAssetRequest struct {
 	MaxIssuanceAmount      regources.Amount  `json:"max_issuance_amount"`
 	InitialPreissuedAmount regources.Amount  `json:"initial_preissued_amount"`
 	CreatorDetails         regources.Details `json:"details"`
+	TrailingDigitsCount    uint32            `json:"trailing_digits_count"`
 }
 
 //UpdateAssetRequest - asset update request details
