@@ -1,3 +1,9 @@
+## Unreleased
+
+## Added
+
+* Option for asset issuer to access all history/movements through `/v3/history` or `/v3/movements` using filter by asset
+
 ## 3.3.2
 
 ### Fixed

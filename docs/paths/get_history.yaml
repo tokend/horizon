@@ -25,6 +25,15 @@
         explode: false
         schema:
           type: string
+      - name: filter[balance]
+        in: query
+        description: |
+          Filters history by participant's balance
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - name: include
         in: query
         description: |
