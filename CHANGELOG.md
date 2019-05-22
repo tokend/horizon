@@ -1,3 +1,10 @@
+## Unreleased
+
+### Added 
+* `Asset` to withdraw request relationships
+* Filter by asset for `/v3/create_withdraw_requests` and `/v3/create_withdraw_requests/{id}`
+* Ability to include asset in responses`/v3/create_withdraw_requests` and `/v3/create_withdraw_requests/{id}`
+
 ## 3.3.2
 
 ### Fixed
