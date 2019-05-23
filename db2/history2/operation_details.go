@@ -51,6 +51,8 @@ type OperationDetails struct {
 	ManageCreatePollRequest    *ManageCreatePollRequestDetails    `json:"manage_create_poll_request,omitempty"`
 	ManagePoll                 *ManagePollDetails                 `json:"manage_poll,omitempty"`
 	ManageVote                 *ManageVoteDetails                 `json:"manage_vote,omitempty"`
+	InitiateKYCRecovery        *InitiateKYCRecoveryDetails        `json:"initiate_kyc_recovery,omitempty"`
+	CreateKYCRecoveryRequest   *CreateKYCRecoveryRequestDetails   `json:"create_kyc_recovery_request,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -506,4 +508,17 @@ type ManageVoteDetails struct {
 	PollID   int64                `json:"poll_id"`
 	Action   xdr.ManageVoteAction `json:"action"`
 	VoteData *xdr.VoteData        `json:"vote_data,omitmepty"`
+}
+
+type InitiateKYCRecoveryDetails struct {
+	Account string `json:"account"`
+	Signer  string `json:"signer"`
+}
+
+type CreateKYCRecoveryRequestDetails struct {
+	TargetAccount  string                       `json:"target_account"`
+	SignersData    []regources.UpdateSignerData `json:"signers_data"`
+	CreatorDetails regources.Details            `json:"creator_details"`
+	AllTasks       *uint32                      `json:"all_tasks"`
+	RequestDetails RequestDetails               `json:"request_details"`
 }

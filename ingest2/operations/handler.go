@@ -158,6 +158,12 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeManageVote: &manageVoteOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
+			xdr.OperationTypeInitiateKycRecovery: &initiateKycRecoveryOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeCreateKycRecoveryRequest: &createKycRecoveryRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 		},
 	}
 }
