@@ -1,5 +1,5 @@
-// revision: 6cdd47afcbee3e83f49f1a4195b7faddafb8cd2e
-// branch:   feature/kyc-recovery
+// revision: 151b0f11c3fea164176a7afc83a5b3d993b71977
+// branch:   master
 // Package xdr is generated from:
 //
 //  xdr/Stellar-SCP.x
@@ -45853,7 +45853,8 @@ type TransactionResult struct {
 //        FIX_NOT_CHECKING_SET_TASKS_PERMISSIONS = 8,
 //        UNLIMITED_ADMIN_COUNT = 9,
 //        FIX_AML_ALERT_ERROR_CODES = 10,
-//        FIX_EXT_SYS_ACC_EXPIRATION_TIME = 11
+//        FIX_EXT_SYS_ACC_EXPIRATION_TIME = 11,
+//        FIX_CHANGE_ROLE_REJECT_TASKS = 12
 //    };
 //
 type LedgerVersion int32
@@ -45871,6 +45872,7 @@ const (
 	LedgerVersionUnlimitedAdminCount               LedgerVersion = 9
 	LedgerVersionFixAmlAlertErrorCodes             LedgerVersion = 10
 	LedgerVersionFixExtSysAccExpirationTime        LedgerVersion = 11
+	LedgerVersionFixChangeRoleRejectTasks          LedgerVersion = 12
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -45886,6 +45888,7 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionUnlimitedAdminCount,
 	LedgerVersionFixAmlAlertErrorCodes,
 	LedgerVersionFixExtSysAccExpirationTime,
+	LedgerVersionFixChangeRoleRejectTasks,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -45901,6 +45904,7 @@ var ledgerVersionMap = map[int32]string{
 	9:  "LedgerVersionUnlimitedAdminCount",
 	10: "LedgerVersionFixAmlAlertErrorCodes",
 	11: "LedgerVersionFixExtSysAccExpirationTime",
+	12: "LedgerVersionFixChangeRoleRejectTasks",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -45916,6 +45920,7 @@ var ledgerVersionShortMap = map[int32]string{
 	9:  "unlimited_admin_count",
 	10: "fix_aml_alert_error_codes",
 	11: "fix_ext_sys_acc_expiration_time",
+	12: "fix_change_role_reject_tasks",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -45931,6 +45936,7 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionUnlimitedAdminCount":               9,
 	"LedgerVersionFixAmlAlertErrorCodes":             10,
 	"LedgerVersionFixExtSysAccExpirationTime":        11,
+	"LedgerVersionFixChangeRoleRejectTasks":          12,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -47269,4 +47275,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "6cdd47afcbee3e83f49f1a4195b7faddafb8cd2e"
+var Revision = "151b0f11c3fea164176a7afc83a5b3d993b71977"
