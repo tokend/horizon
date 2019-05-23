@@ -531,14 +531,14 @@
 
 [[projects]]
   branch = "feature/remove-asset-pair"
-  digest = "1:3b5d9693e0289e92156a80e86cc66f601f2743395e788cef9c2bafc9a66e618a"
+  digest = "1:18464c7d111e3f7ee1903f2a63f8c787a517359b57c6a325b6a4792f94d81fd0"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "bb2c42b9a0b3071749796e64dcd42d4165690fb6"
+  revision = "113f72894e014cfcda91554aa9061c3a47ce7830"
 
 [[projects]]
   branch = "master"

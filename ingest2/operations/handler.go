@@ -158,7 +158,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeManageVote: &manageVoteOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeRemoveAssetPair: &stubOpHandler{
+			xdr.OperationTypeRemoveAssetPair: &removeAssetPairOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 		},

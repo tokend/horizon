@@ -107,6 +107,8 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newManagePollOp(op.ID, *op.Details.ManagePoll)
 	case xdr.OperationTypeManageVote:
 		return newManageVoteOp(op.ID, *op.Details.ManageVote)
+	case xdr.OperationTypeRemoveAssetPair:
+		return newRemoveAssetPairOp(op.ID, *op.Details.RemoveAssetPair)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": op.Type,
@@ -570,6 +572,16 @@ func newStampOp(id int64, details history2.StampDetails) *regources.StampOp {
 		Attributes: regources.StampOpAttributes{
 			LedgerHash:  details.LedgerHash,
 			LicenseHash: details.LicenseHash,
+		},
+	}
+}
+
+func newRemoveAssetPairOp(id int64, details history2.RemoveAssetPairDetails) *regources.RemoveAssetPairOp {
+	return &regources.RemoveAssetPairOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_ASSET_PAIR),
+		Relationships: regources.RemoveAssetPairOpRelationships{
+			Base:  NewAssetKey(details.Base).AsRelation(),
+			Quote: NewAssetKey(details.Quote).AsRelation(),
 		},
 	}
 }
