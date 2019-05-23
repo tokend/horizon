@@ -1,4 +1,4 @@
-## Unreleased 
+## Unreleased
 
 ### Added 
 * `InitiateKYCRecovery` operation ingestion
@@ -9,7 +9,13 @@
 
 ### Fixed
 
+* docs key value u32 value
+* add `trailing_digits_count` to asset creation request
 * Panic on `/v3/history` handling `ManageAccountSpecificRuleOp` details
+
+### Changed
+
+* `CurrentIngestVersion` increased
 
 ## 3.3.2
 

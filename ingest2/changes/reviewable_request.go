@@ -307,6 +307,7 @@ func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRe
 		MaxIssuanceAmount:      regources.Amount(request.MaxIssuanceAmount),
 		InitialPreissuedAmount: regources.Amount(request.InitialPreissuedAmount),
 		CreatorDetails:         internal.MarshalCustomDetails(request.CreatorDetails),
+		TrailingDigitsCount:    uint32(request.TrailingDigitsCount),
 	}
 }
 
