@@ -107,6 +107,12 @@ func NewOperationDetails(op history2.Operation) regources.Resource {
 		return newManagePollOp(op.ID, *op.Details.ManagePoll)
 	case xdr.OperationTypeManageVote:
 		return newManageVoteOp(op.ID, *op.Details.ManageVote)
+	case xdr.OperationTypeManageAccountSpecificRule:
+		return newManageAccountSpecificRule(op.ID, *op.Details.ManageAccountSpecificRule)
+	case xdr.OperationTypeInitiateKycRecovery:
+		return newInitiateKYCRecoveryOp(op.ID, *op.Details.InitiateKYCRecovery)
+	case xdr.OperationTypeCreateKycRecoveryRequest:
+		return newCreateKYCRecoveryRequestOp(op.ID, *op.Details.CreateKYCRecoveryRequest)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": op.Type,
@@ -570,6 +576,57 @@ func newStampOp(id int64, details history2.StampDetails) *regources.StampOp {
 		Attributes: regources.StampOpAttributes{
 			LedgerHash:  details.LedgerHash,
 			LicenseHash: details.LicenseHash,
+		},
+	}
+}
+
+func newManageAccountSpecificRule(id int64, details history2.ManageAccountSpecificRuleDetails) *regources.ManageAccountSpecificRuleOp {
+	manageAccSpecificRuleOp := &regources.ManageAccountSpecificRuleOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_MANAGE_ACCOUNT_SPECIFIC_RULE),
+		Attributes: &regources.ManageAccountSpecificRuleOpAttributes{
+			Action: details.Action,
+		},
+		Relationships: &regources.ManageAccountSpecificRuleOpRelationships{
+			Rule: regources.NewKeyInt64(int64(details.RuleID), regources.ACCOUNT_SPECIFIC_RULES).AsRelation(),
+		},
+	}
+	switch details.Action {
+	case xdr.ManageAccountSpecificRuleActionCreate:
+		manageAccSpecificRuleOp.Attributes.CreateData = &regources.CreateAccountSpecificRuleData{
+			Forbids:   details.CreateDetails.Forbids,
+			LedgerKey: details.CreateDetails.LedgerKey,
+		}
+		if details.CreateDetails.AccountID != "" {
+			manageAccSpecificRuleOp.Attributes.CreateData.AccountId = &details.CreateDetails.AccountID
+		}
+	case xdr.ManageAccountSpecificRuleActionRemove:
+	}
+	return manageAccSpecificRuleOp
+}
+
+func newInitiateKYCRecoveryOp(id int64, details history2.InitiateKYCRecoveryDetails) *regources.InitiateKycRecoveryOp {
+	return &regources.InitiateKycRecoveryOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_INITIATE_KYC_RECOVERY),
+		Attributes: &regources.InitiateKycRecoveryOpAttributes{
+			Signer: details.Signer,
+		},
+		Relationships: &regources.InitiateKycRecoveryOpRelationships{
+			Account: NewAccountKey(details.Account).AsRelation(),
+		},
+	}
+}
+
+func newCreateKYCRecoveryRequestOp(id int64, details history2.CreateKYCRecoveryRequestDetails) *regources.CreateKycRecoveryRequestOp {
+	return &regources.CreateKycRecoveryRequestOp{
+		Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_KYC_RECOVERY_REQUEST),
+		Attributes: &regources.CreateKycRecoveryRequestOpAttributes{
+			AllTasks:       details.AllTasks,
+			SignersData:    details.SignersData,
+			CreatorDetails: details.CreatorDetails,
+		},
+		Relationships: &regources.CreateKycRecoveryRequestOpRelationships{
+			TargetAccount: NewAccountKey(details.TargetAccount).AsRelation(),
+			Request:       NewRequestKey(int64(details.RequestDetails.RequestID)).AsRelation(),
 		},
 	}
 }

@@ -1,8 +1,22 @@
 ## Unreleased
 
-## Added
-
+### Added 
+* `InitiateKYCRecovery` operation ingestion
+* `CreateKYCRecoveryRequest` operation ingestion
+* `KYCRecovery` reviewable request ingestion
+* `GetKYCRecoveryRequests` to handle `/v3/kyc_recovery_requests`, `/v3/kyc_recovery_requests/{id}`
+* Docs on kyc recovery
 * Option for asset issuer to access all history/movements through `/v3/history` or `/v3/movements` using filter by asset
+
+### Fixed
+
+* docs key value u32 value
+* add `trailing_digits_count` to asset creation request
+* Panic on `/v3/history` handling `ManageAccountSpecificRuleOp` details
+
+### Changed
+
+* `CurrentIngestVersion` increased
 
 ## 3.3.2
 

@@ -92,6 +92,8 @@ ResourceType:
     "operations-create-aswap-request",
     "operations-stamp",
     "operations-license",
+    "operations-initiate-kyc-recovery",
+    "operations-create-kyc-recovery-request",
     "requests",
     "request-details-aml-alert",
     "request-details-asset-create",
@@ -107,5 +109,6 @@ ResourceType:
     "request-details-update-sale-details",
     "request-details-update-sale-end-time",
     "request-details-withdrawal",
+    "request-details-kyc-recovery",
     "horizon-state"
   ]

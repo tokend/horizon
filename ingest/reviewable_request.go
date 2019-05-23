@@ -376,6 +376,7 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.AtomicSwap = getAtomicSwapRequest(body.ASwapRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = getPollRequest(body.CreatePollRequest)
+	case xdr.ReviewableRequestTypeKycRecovery:
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),
