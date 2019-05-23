@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 4.4.1
+
+### Fixed
+
+* CreateKycRecoveryRequestOpAttributes
+
 ## 4.4.0
 
 ### Added
