@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.4.0
+
+### Added
+
+* `ManageAccountSpecificRuleOp` resource to handle `/v3/history`
+
 ## 4.3.4
 
 ### Added

@@ -7,6 +7,10 @@
 * `GetKYCRecoveryRequests` to handle `/v3/kyc_recovery_requests`, `/v3/kyc_recovery_requests/{id}`
 * Docs on kyc recovery
 
+### Fixed
+
+* Panic on `/v3/history` handling `ManageAccountSpecificRuleOp` details
+
 ## 3.3.2
 
 ### Fixed
