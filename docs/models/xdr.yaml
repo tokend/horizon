@@ -769,3 +769,11 @@ xdr.PollResult:
       type: integer
     name:
       type: string
+
+xdr.ManageAccountSpecificRuleAction:
+  type: object
+  properties:
+    value:
+      type: integer
+    name:
+      type: string

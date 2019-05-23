@@ -495,7 +495,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:cca97323029fda98eddf5a78cf1806063fd131c280382134da1ea597b4b7abff"
+  digest = "1:7947c2a0b1f1a5b35355d2866a5f018afb3a5dd5e84ca5e9952d3011dccc2299"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -513,8 +513,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "b402dbdbfb331a0aa401b53076f55e2d78aa26a3"
-  version = "3.5.0"
+  revision = "0155a8b97ec8d21e8549dc2bb944955b478b3539"
+  version = "v3.6.0"
 
 [[projects]]
   branch = "master"
@@ -531,14 +531,14 @@
 
 [[projects]]
   branch = "fix/asset_creation_request_fields"
-  digest = "1:fdc4ea9a020dc1c05320087d524cfaa1c07698afbcb85f7738515445c37ff58a"
+  digest = "1:c575f18f694be88dd4ffc1a43353b2e1dd728a2e3e8962d3756d1689f18fefcb"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "679b8ddb86e4987430bebd5e296c8e779644ff2a"
+  revision = "2e96102999e8117e09b8ae6de8b13505c8dfb759"
 
 [[projects]]
   branch = "master"
