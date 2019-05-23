@@ -1,4 +1,11 @@
-## Unreleased
+## Unreleased 
+
+### Added 
+* `InitiateKYCRecovery` operation ingestion
+* `CreateKYCRecoveryRequest` operation ingestion
+* `KYCRecovery` reviewable request ingestion
+* `GetKYCRecoveryRequests` to handle `/v3/kyc_recovery_requests`, `/v3/kyc_recovery_requests/{id}`
+* Docs on kyc recovery
 
 ### Fixed
 

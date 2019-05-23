@@ -58,6 +58,8 @@ func PopulateDetails(request *history.ReviewableRequest, requestType xdr.Reviewa
 		return
 	case xdr.ReviewableRequestTypeCreatePoll:
 		return
+	case xdr.ReviewableRequestTypeKycRecovery:
+		return
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),
