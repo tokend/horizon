@@ -516,9 +516,9 @@ type InitiateKYCRecoveryDetails struct {
 }
 
 type CreateKYCRecoveryRequestDetails struct {
-	TargetAccount  string                `json:"target_account"`
-	SignersData    []UpdateSignerDetails `json:"signers_data"`
-	CreatorDetails regources.Details     `json:"creator_details"`
-	AllTasks       *uint32               `json:"all_tasks"`
-	RequestDetails RequestDetails        `json:"request_details"`
+	TargetAccount  string                       `json:"target_account"`
+	SignersData    []regources.UpdateSignerData `json:"signers_data"`
+	CreatorDetails regources.Details            `json:"creator_details"`
+	AllTasks       *uint32                      `json:"all_tasks"`
+	RequestDetails RequestDetails               `json:"request_details"`
 }

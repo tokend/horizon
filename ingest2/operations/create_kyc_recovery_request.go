@@ -4,6 +4,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type createKycRecoveryRequestOpHandler struct {
@@ -16,11 +17,11 @@ func (h *createKycRecoveryRequestOpHandler) Details(op rawOperation, opRes xdr.O
 	createKYCRecoveryRequestOp := op.Body.MustCreateKycRecoveryRequestOp()
 	createKYCRequestRes := opRes.MustCreateKycRecoveryRequestResult().MustSuccess()
 
-	signersData := make([]history2.UpdateSignerDetails, 0, len(createKYCRecoveryRequestOp.SignersData))
+	signersData := make([]regources.UpdateSignerData, 0, len(createKYCRecoveryRequestOp.SignersData))
 	for _, signer := range createKYCRecoveryRequestOp.SignersData {
-		signersData = append(signersData, history2.UpdateSignerDetails{
+		signersData = append(signersData, regources.UpdateSignerData{
 			Details:  internal.MarshalCustomDetails(signer.Details),
-			RoleID:   uint64(signer.RoleId),
+			RoleId:   uint64(signer.RoleId),
 			Identity: uint32(signer.Identity),
 			Weight:   uint32(signer.Weight),
 		})
