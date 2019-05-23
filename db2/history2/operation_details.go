@@ -52,6 +52,8 @@ type OperationDetails struct {
 	ManagePoll                 *ManagePollDetails                 `json:"manage_poll,omitempty"`
 	ManageVote                 *ManageVoteDetails                 `json:"manage_vote,omitempty"`
 	RemoveAssetPair            *RemoveAssetPairDetails            `json:"remove_asset_pair,omitempty"`
+	InitiateKYCRecovery        *InitiateKYCRecoveryDetails        `json:"initiate_kyc_recovery,omitempty"`
+	CreateKYCRecoveryRequest   *CreateKYCRecoveryRequestDetails   `json:"create_kyc_recovery_request,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -512,4 +514,17 @@ type ManageVoteDetails struct {
 type RemoveAssetPairDetails struct {
 	Base  string `json:"base"`
 	Quote string `json:"quote"`
+}
+
+type InitiateKYCRecoveryDetails struct {
+	Account string `json:"account"`
+	Signer  string `json:"signer"`
+}
+
+type CreateKYCRecoveryRequestDetails struct {
+	TargetAccount  string                       `json:"target_account"`
+	SignersData    []regources.UpdateSignerData `json:"signers_data"`
+	CreatorDetails regources.Details            `json:"creator_details"`
+	AllTasks       *uint32                      `json:"all_tasks"`
+	RequestDetails RequestDetails               `json:"request_details"`
 }

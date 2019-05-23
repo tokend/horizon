@@ -363,6 +363,19 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustRemoveAssetPairOp()
 		details["base"] = op.Base
 		details["quote"] = op.Quote
+	case xdr.OperationTypeCreateKycRecoveryRequest:
+		op := c.Operation().Body.MustCreateKycRecoveryRequestOp()
+		details["target_account"] = op.TargetAccount
+		details["signers_data"] = op.SignersData
+		details["request_id"] = op.RequestId
+		details["creator_details"] = op.CreatorDetails
+		if op.AllTasks != nil {
+			details["all_tasks"] = op.AllTasks
+		}
+	case xdr.OperationTypeInitiateKycRecovery:
+		op := c.Operation().Body.MustInitiateKycRecoveryOp()
+		details["account"] = op.Account
+		details["signer"] = op.Signer
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

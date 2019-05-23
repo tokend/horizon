@@ -161,6 +161,12 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeRemoveAssetPair: &removeAssetPairOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
+			xdr.OperationTypeInitiateKycRecovery: &initiateKycRecoveryOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeCreateKycRecoveryRequest: &createKycRecoveryRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 		},
 	}
 }

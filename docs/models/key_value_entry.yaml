@@ -31,7 +31,7 @@ U32:
           type: number
           example: 1
           description: defines the code of type of the value stored in the KV pair
-    u_32:
+    u32:
       type: number
       example: 1
       format: uint32
@@ -55,7 +55,7 @@ U64:
           type: number
           example: 3
           description: defines the code of type of the value stored in the KV pair
-    u_64:
+    u64:
       type: number
       example: 1
       format: uint64

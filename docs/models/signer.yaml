@@ -49,3 +49,24 @@ Signer:
               data:
                 type: object
                 $ref: '#/components/schemas/AccountKey'
+
+UpdateSignerData:
+  type: object
+  required: [identity, weight, role_id, details]
+  properties:
+    identity:
+      type: integer
+      format: uint32
+    role_id:
+      type: integer
+      format: uint64
+      example: 1
+    weight:
+      type: integer
+      format: uint32
+      example: 12
+      minimum: 1
+      maximum: 1000
+      description: "Weight of the signer of the account"
+    details:
+      $ref: '#/components/schemas/Details'
