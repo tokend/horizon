@@ -83,7 +83,7 @@ func (q SalesQ) Whitelisted(address string) SalesQ {
 			sq.Expr(whitelist, address, address),
 			sq.Expr("sales.version < ?", int32(xdr.LedgerVersionAddSaleWhitelists)),
 			//Exclude sale owner
-			sq.Expr("sales.owner != ?", address),
+			sq.Expr("sales.owner_address != ?", address),
 		})
 	return q
 }
