@@ -25,6 +25,8 @@ const (
 	IncludeTypeAccountExternalSystemIDs = "external_system_ids"
 	// IncludeTypeAccountLimits - defines if account limits and statistics should be included in the response
 	IncludeTypeAccountLimitsWithStats = "limits_with_stats"
+	//IncludeTypeAccountKycData - defines if kyc data should be included in the response
+	IncludeTypeAccountKycData = "kyc_data"
 )
 
 var includeTypeAccountAll = map[string]struct{}{
@@ -38,6 +40,7 @@ var includeTypeAccountAll = map[string]struct{}{
 	IncludeTypeAccountLimits:            {},
 	IncludeTypeAccountExternalSystemIDs: {},
 	IncludeTypeAccountLimitsWithStats:   {},
+	IncludeTypeAccountKycData:           {},
 }
 
 //GetAccount - represents params to be specified by user for Get Account handler

@@ -29,6 +29,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		LimitsV2Q:          core2.NewLimitsQ(coreRepo),
 		ExternalSystemIDsQ: core2.NewExternalSystemIDsQ(coreRepo),
 		StatsQ:             core2.NewStatsQ(coreRepo),
+		KycQ:               core2.NewAccountsKycQ(coreRepo),
 		Log:                ctx.Log(r),
 	}
 
@@ -78,6 +79,7 @@ type getAccountHandler struct {
 	FeesQ              core2.FeesQ
 	ExternalSystemIDsQ core2.ExternalSystemIDsQ
 	StatsQ             core2.StatsQ
+	KycQ               core2.AccountsKycQ
 	Log                *logan.Entry
 }
 
@@ -129,6 +131,11 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 	response.Data.Relationships.LimitsWithStats, err = h.getLimitsWithStats(request, &response.Included, account)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get limits and stats for account")
+	}
+
+	response.Data.Relationships.KycData, err = h.getKycData(request, &response.Included, account)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get kyc data for account")
 	}
 
 	return &response, nil
@@ -397,4 +404,23 @@ func (h *getAccountHandler) getFees(request *requests.GetAccount, includes *rego
 	}
 
 	return &result, nil
+}
+
+func (h *getAccountHandler) getKycData(request *requests.GetAccount, includes *regources.Included, account *core2.Account) (*regources.Relation, error) {
+	kycDataRaw, err := h.KycQ.GetByAddress(account.Address)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get kyc data for account", logan.F{
+			"address": account.Address,
+		})
+	}
+	if kycDataRaw == nil {
+		return nil, nil
+	}
+	kycData := resources.NewAccountKYC(*kycDataRaw)
+
+	if request.ShouldInclude(requests.IncludeTypeAccountKycData) {
+		includes.Add(&kycData)
+	}
+
+	return kycData.AsRelation(), nil
 }

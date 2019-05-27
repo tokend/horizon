@@ -8,6 +8,7 @@ type ResourceType string
 
 // List of ResourceType
 const (
+	ACCOUNT_KYC                                             ResourceType = "account-kyc"
 	ACCOUNTS                                                ResourceType = "accounts"
 	ACCOUNT_ROLES                                           ResourceType = "account-roles"
 	ACCOUNT_RULES                                           ResourceType = "account-rules"

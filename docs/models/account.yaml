@@ -75,3 +75,10 @@ Account:
                 type: array
                 items:
                   $ref: '#/components/schemas/LimitsWithStatsKey'
+          kyc_data:
+            description: "KYC data for a particular account"
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountKYCKey'
