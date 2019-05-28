@@ -17,7 +17,6 @@ type getSaleBase struct {
 	Log              *logan.Entry
 }
 
-// GetSale returns sale with related resources
 func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *requests.GetSale) (*regources.SaleResponse, error) {
 	historySale, err := q.Get()
 	if err != nil {
