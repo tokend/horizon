@@ -7,6 +7,14 @@
                   Allows getting a filtered list of `Sale` with corresponding details into which account can invest.
     operationId: getSaleListForAccount
     parameters:
+    - name: id
+      in: path
+      description: Unique identifier of an account
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
     - name: filter[owner]
       in: query
       description: |

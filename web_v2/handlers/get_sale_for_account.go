@@ -15,7 +15,7 @@ import (
 )
 
 // GetSale - processes request to get sale and it's details by sale ID
-func GetSale(w http.ResponseWriter, r *http.Request) {
+func GetSaleForAccount(w http.ResponseWriter, r *http.Request) {
 	historyRepo := ctx.HistoryRepo(r)
 	coreRepo := ctx.CoreRepo(r)
 
@@ -24,7 +24,7 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	handler := getSaleHandler{
+	handler := getSaleForAccountHandler{
 		getSaleBase{
 			SalesQ:           history2.NewSalesQ(historyRepo),
 			AssetsQ:          core2.NewAssetsQ(coreRepo),
@@ -33,7 +33,7 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	request, err := requests.NewGetSale(r)
+	request, err := requests.NewGetSaleForAccount(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
@@ -56,12 +56,12 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, result)
 }
 
-type getSaleHandler struct {
+type getSaleForAccountHandler struct {
 	getSaleBase
 }
 
 // GetSale returns sale with related resources
-func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResponse, error) {
-	q := h.SalesQ.FilterByID(request.ID)
-	return h.getAndPopulateResponse(q, request)
+func (h *getSaleForAccountHandler) GetSale(request *requests.GetSaleForAccount) (*regources.SaleResponse, error) {
+	q := h.SalesQ.Whitelisted(request.Address).FilterByID(request.ID)
+	return h.getAndPopulateResponse(q, &request.GetSale)
 }
