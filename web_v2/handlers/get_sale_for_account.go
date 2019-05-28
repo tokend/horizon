@@ -14,7 +14,7 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-// GetSale - processes request to get sale and it's details by sale ID
+// GetSaleForAccount - processes request to get sale and it's details by sale ID
 func GetSaleForAccount(w http.ResponseWriter, r *http.Request) {
 	historyRepo := ctx.HistoryRepo(r)
 	coreRepo := ctx.CoreRepo(r)
