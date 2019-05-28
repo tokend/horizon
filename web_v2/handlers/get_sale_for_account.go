@@ -39,6 +39,10 @@ func GetSaleForAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isAllowed(r, w, request.Address) {
+		return
+	}
+
 	result, err := handler.GetSale(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get sale", logan.F{
