@@ -2,9 +2,10 @@
   get:
     tags:
       - Crowd Investing
-    summary: Sale by ID for account
+    summary: Sale by ID For Account
     description: |
                   Allows getting `Sale` with corresponding details.
+                  🔒 Account owner's signature is needed
     operation: getSaleByIDForAccount
     parameters:
     - name: id

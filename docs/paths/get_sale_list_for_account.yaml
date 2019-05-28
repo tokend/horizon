@@ -2,9 +2,10 @@
   get:
     tags:
       - Crowd Investing
-    summary: Sale List for account
+    summary: Sale List For Account
     description: |
                   Allows getting a filtered list of `Sale` with corresponding details into which account can invest.
+                  🔒 Account owner's signature is needed
     operationId: getSaleListForAccount
     parameters:
     - name: id
