@@ -3,9 +3,9 @@ package history
 import (
 	"time"
 
-	"gitlab.com/tokend/regources"
-
 	"database/sql/driver"
+
+	"gitlab.com/tokend/regources"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"

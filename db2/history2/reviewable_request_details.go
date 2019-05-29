@@ -27,6 +27,7 @@ type ReviewableRequestDetails struct {
 	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid,omitempty"`
 	CreateAtomicSwap    *CreateAtomicSwapRequest    `json:"create_atomic_swap,omitempty"`
 	CreatePoll          *CreatePollRequest          `json:"create_poll,omitempty"`
+	KYCRecovery         *KYCRecoveryRequest         `json:"kyc_recovery,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -58,6 +59,7 @@ type CreateAssetRequest struct {
 	MaxIssuanceAmount      regources.Amount  `json:"max_issuance_amount"`
 	InitialPreissuedAmount regources.Amount  `json:"initial_preissued_amount"`
 	CreatorDetails         regources.Details `json:"details"`
+	TrailingDigitsCount    uint32            `json:"trailing_digits_count"`
 }
 
 //UpdateAssetRequest - asset update request details
@@ -86,6 +88,7 @@ type CreateIssuanceRequest struct {
 
 //CreateWithdrawalRequest - request details
 type CreateWithdrawalRequest struct {
+	Asset          string            `json:"asset"`
 	BalanceID      string            `json:"balance_id"`
 	Amount         regources.Amount  `json:"amount"`
 	Fee            regources.Fee     `json:"fee"`
@@ -159,4 +162,11 @@ type CreatePollRequest struct {
 	ResultProviderID         string            `json:"result_provider_id"`
 	StartTime                time.Time         `json:"start_time"`
 	EndTime                  time.Time         `json:"end_time"`
+}
+
+type KYCRecoveryRequest struct {
+	TargetAccount  string                `json:"target_account"`
+	SignersData    []UpdateSignerDetails `json:"signers_data"`
+	CreatorDetails regources.Details     `json:"creator_details"`
+	SequenceNumber uint32                `json:"sequence_number"`
 }

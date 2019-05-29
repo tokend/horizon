@@ -13,6 +13,7 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/CreateAtomicSwapBidRequest'
     - $ref: '#/components/schemas/CreateAtomicSwapRequest'
     - $ref: '#/components/schemas/CreatePollRequest'
+    - $ref: '#/components/schemas/KYCRecoveryRequest'
 
 CreateAssetRequest:
   allOf:
@@ -39,6 +40,7 @@ CreateAssetRequest:
             - max_issuance_amount
             - initial_preissued_amount
             - creator_details
+            - trailing_digits_count
           properties:
             asset:
               type: string
@@ -67,6 +69,13 @@ CreateAssetRequest:
               description: "Amount to be issued automatically right after the asset creation"
               example: "1000.123456"
               format: Amount
+            trailing_digits_count:
+              type: integer
+              format: uint32
+              description: "Number of digits after point (comma)"
+              example: 2
+              maximum: 6
+              minimum: 0
             creator_details:
               $ref: '#/components/schemas/Details'
 
@@ -186,6 +195,12 @@ CreateWithdrawRequest:
               properties:
                 data:
                   $ref: '#/components/schemas/BalanceKey'
+            asset:
+              type: object
+              description: "Withdrawn asset"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
         attributes:
           type: object
           required:
@@ -528,5 +543,36 @@ CreatePollRequest:
               description: "defines if result provider is required to participate in poll voting"
             poll_data:
               $ref: '#/components/schemas/PollData'
+            creator_details:
+              $ref: '#/components/schemas/Details'
+
+KYCRecoveryRequest:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        relationships:
+          type: object
+          properties:
+            target_account:
+              type: object
+              description: "account to recover"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AccountKey'
+        attributes:
+          type: object
+          required: [sequence_number, signers_data, creator_details]
+          properties:
+            sequence_number:
+              type: int
+              format: uint32
+              example: 4
+              description: "Sequence number"
+            signers_data:
+              type: array
+              items:
+                $ref: '#/components/schemas/UpdateSignerData'
             creator_details:
               $ref: '#/components/schemas/Details'

@@ -495,8 +495,7 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/cancel-change-role"
-  digest = "1:6db5f1692a3f93299559b8601f5f1ea7b1e05dde2d19e77cba1795e5b93cfdbe"
+  digest = "1:7947c2a0b1f1a5b35355d2866a5f018afb3a5dd5e84ca5e9952d3011dccc2299"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -514,7 +513,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "8258035424096fb1639fe34eee107d1f459ce363"
+  revision = "8309f76450df3636b6efd54ca4b080eca2e80feb"
+  version = "v3.7.0"
 
 [[projects]]
   branch = "master"
@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/cancel-change-role"
-  digest = "1:bf1dc06b5dc938b8aefebcf5bdc64026d7c049680d9ab6beb78b176ce4096fbe"
+  branch = "master"
+  digest = "1:2225ac0afac5e3d993f847a1d378936f5f48331bfc0d725ae8832771a2345937"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "2a0117a5e9d92a2be1eeb73fe557842fd75ae5e1"
+  revision = "09bf5c3ef05df8a660ff8fcb36765638a8a20a8a"
 
 [[projects]]
   branch = "master"

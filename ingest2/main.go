@@ -3,5 +3,12 @@
 // `consumer` - handles the data and stores it into horizon db
 package ingest2
 
-// increase it if you want force reingest (after backward not compatible changes)
-const CurrentIngestVersion = 1
+// Add new version and assign it to `CurrentIngestVersion` if you want force reingest (after backward not compatible changes)
+const CurrentIngestVersion = IngestVersionAssetWithdrawRequest
+
+const (
+	IngestVersionInitial = iota
+	IngestVersionSaleParticipation
+	IngestVersionTrailingDigitsCountAssetCreateRequest
+	IngestVersionAssetWithdrawRequest
+)

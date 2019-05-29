@@ -1,5 +1,24 @@
 # Changelog
 
+## 4.5.0
+
+### Added
+
+* `trailing_digits_count` to asset creation request attributes
+* `Asset` relationship to create withdraw request relationships
+
+## 4.4.1
+
+### Fixed
+
+* CreateKycRecoveryRequestOpAttributes
+
+## 4.4.0
+
+### Added
+
+* `ManageAccountSpecificRuleOp` resource to handle `/v3/history`
+
 ## 4.3.4
 
 ### Added

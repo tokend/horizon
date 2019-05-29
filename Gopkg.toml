@@ -96,10 +96,10 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/cancel-change-role"
+  version = "3.7.0"
 
 [[constraint]]
-  branch = "feature/cancel-change-role"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

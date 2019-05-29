@@ -15,6 +15,7 @@ import (
 )
 
 var errUnknownRemoveReason = errors.New("request was removed due to unknown reason")
+var removeOnKYCRecoveryInit = "New KYC recovery was initiated"
 
 type reviewableRequestStorage interface {
 	//Inserts Reviewable request into DB
@@ -29,13 +30,20 @@ type reviewableRequestStorage interface {
 	Cancel(id uint64) error
 }
 
-type reviewableRequestHandler struct {
-	storage reviewableRequestStorage
+type balanceProvider interface {
+	// MustBalance returns history balance struct for specific balance id
+	MustBalance(balanceID xdr.BalanceId) history.Balance
 }
 
-func newReviewableRequestHandler(storage reviewableRequestStorage) *reviewableRequestHandler {
+type reviewableRequestHandler struct {
+	storage  reviewableRequestStorage
+	balances balanceProvider
+}
+
+func newReviewableRequestHandler(storage reviewableRequestStorage, balances balanceProvider) *reviewableRequestHandler {
 	return &reviewableRequestHandler{
-		storage: storage,
+		storage:  storage,
+		balances: balances,
 	}
 }
 
@@ -127,11 +135,18 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.handleRemoveOnManageCreatePollRequest(lc)
 	case xdr.OperationTypeCancelChangeRoleRequest:
 		return c.cancel(lc)
+	case xdr.OperationTypeInitiateKycRecovery:
+		return c.handleInitiateKycRecovery(lc)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
 		})
 	}
+}
+
+func (c *reviewableRequestHandler) handleInitiateKycRecovery(lc ledgerChange) error {
+	id := uint64(lc.LedgerChange.MustRemoved().MustReviewableRequest().RequestId)
+	return c.storage.PermanentReject(id, removeOnKYCRecoveryInit)
 }
 
 func (c *reviewableRequestHandler) handleRemoveOnCreationOp(lc ledgerChange, fulfilled bool) error {
@@ -301,6 +316,7 @@ func (c *reviewableRequestHandler) getAssetCreation(request *xdr.AssetCreationRe
 		MaxIssuanceAmount:      regources.Amount(request.MaxIssuanceAmount),
 		InitialPreissuedAmount: regources.Amount(request.InitialPreissuedAmount),
 		CreatorDetails:         internal.MarshalCustomDetails(request.CreatorDetails),
+		TrailingDigitsCount:    uint32(request.TrailingDigitsCount),
 	}
 }
 
@@ -338,7 +354,10 @@ func (c *reviewableRequestHandler) getIssuanceRequest(request *xdr.IssuanceReque
 }
 
 func (c *reviewableRequestHandler) getWithdrawalRequest(request *xdr.WithdrawalRequest) *history.CreateWithdrawalRequest {
+	histBalance := c.balances.MustBalance(request.Balance)
+
 	return &history.CreateWithdrawalRequest{
+		Asset:     histBalance.AssetCode,
 		BalanceID: request.Balance.AsString(),
 		Amount:    regources.Amount(request.Amount),
 		Fee: regources.Fee{
@@ -470,6 +489,26 @@ func (c *reviewableRequestHandler) getAtomicSwapRequest(request *xdr.ASwapReques
 	}
 }
 
+func (c *reviewableRequestHandler) getKYCRecovery(request *xdr.KycRecoveryRequest,
+) *history.KYCRecoveryRequest {
+	signersData := make([]history.UpdateSignerDetails, 0, len(request.SignersData))
+	for _, signer := range request.SignersData {
+		signersData = append(signersData, history.UpdateSignerDetails{
+			Details:  internal.MarshalCustomDetails(signer.Details),
+			RoleID:   uint64(signer.RoleId),
+			Identity: uint32(signer.Identity),
+			Weight:   uint32(signer.Weight),
+		})
+	}
+
+	return &history.KYCRecoveryRequest{
+		TargetAccount:  request.TargetAccount.Address(),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+		SequenceNumber: uint32(request.SequenceNumber),
+		SignersData:    signersData,
+	}
+}
+
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -509,6 +548,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.CreateAtomicSwap = c.getAtomicSwapRequest(body.ASwapRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = c.getCreatePollRequest(body.CreatePollRequest)
+	case xdr.ReviewableRequestTypeKycRecovery:
+		details.KYCRecovery = c.getKYCRecovery(body.KycRecoveryRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),
