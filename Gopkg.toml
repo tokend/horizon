@@ -96,10 +96,10 @@
 
 [[constraint]]
   name = "gitlab.com/tokend/go"
-  version = "3.6.0"
+  version = "3.7.0"
 
 [[constraint]]
-  version = "4.5.0"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

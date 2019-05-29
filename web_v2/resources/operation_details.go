@@ -51,9 +51,9 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeManagePoll:                             newManagePollOp,
 	xdr.OperationTypeManageVote:                             newManageVoteOp,
 	xdr.OperationTypeManageAccountSpecificRule:              newManageAccountSpecificRule,
-	//xdr.OperationTypeCancelChangeRoleRequest:
-	xdr.OperationTypeInitiateKycRecovery:      newInitiateKYCRecoveryOp,
-	xdr.OperationTypeCreateKycRecoveryRequest: newCreateKYCRecoveryRequestOp,
+	xdr.OperationTypeCancelChangeRoleRequest:                newCancelChangeRoleRequest,
+	xdr.OperationTypeInitiateKycRecovery:                    newInitiateKYCRecoveryOp,
+	xdr.OperationTypeCreateKycRecoveryRequest:               newCreateKYCRecoveryRequestOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -570,6 +570,11 @@ func newManageAccountSpecificRule(op history2.Operation) regources.Resource {
 	case xdr.ManageAccountSpecificRuleActionRemove:
 	}
 	return manageAccSpecificRuleOp
+}
+
+func newCancelChangeRoleRequest(op history2.Operation) regources.Resource {
+	key := regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_CHANGE_ROLE_REQUEST)
+	return &key
 }
 
 func newInitiateKYCRecoveryOp(op history2.Operation) regources.Resource {

@@ -199,6 +199,13 @@ func (is *Session) operation() error {
 		if err != nil {
 			return errors.Wrap(err, "failed to process cancel sale request")
 		}
+	case xdr.OperationTypeCancelChangeRoleRequest:
+		err = is.processCancelChangeRoleRequest(
+			is.Cursor.Operation().Body.MustCancelChangeRoleRequestOp(),
+			is.Cursor.OperationResult().MustCancelChangeRoleRequestResult())
+		if err != nil {
+			return errors.Wrap(err, "failed to process cancel change role request")
+		}
 	}
 	return nil
 }

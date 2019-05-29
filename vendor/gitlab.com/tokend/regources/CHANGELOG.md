@@ -5,6 +5,7 @@
 ### Added
 
 * `trailing_digits_count` to asset creation request attributes
+* `Asset` relationship to create withdraw request relationships
 
 ## 4.4.1
 

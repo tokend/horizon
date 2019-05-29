@@ -513,8 +513,8 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "0155a8b97ec8d21e8549dc2bb944955b478b3539"
-  version = "v3.6.0"
+  revision = "8309f76450df3636b6efd54ca4b080eca2e80feb"
+  version = "v3.7.0"
 
 [[projects]]
   branch = "master"
@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:8dcdb72648373a5c9e1fbf2964040b1265070b625d8fd52d5ce45fcc0adb50cd"
+  branch = "master"
+  digest = "1:2225ac0afac5e3d993f847a1d378936f5f48331bfc0d725ae8832771a2345937"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "908faddd5e0067ea694d5243ccad8c4f604cea95"
-  version = "v4.5.0"
+  revision = "09bf5c3ef05df8a660ff8fcb36765638a8a20a8a"
 
 [[projects]]
   branch = "master"

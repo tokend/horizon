@@ -43,6 +43,14 @@ xdr.CancelSaleCreationRequestResultCode:
     name:
       type: string
 
+xdr.CancelChangeRoleRequestResultCode:
+  type: object
+  properties:
+    value:
+      type: integer
+    name:
+      type: string
+
 
 xdr.CheckSaleStateEffect:
   type: object

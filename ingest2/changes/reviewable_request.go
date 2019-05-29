@@ -133,6 +133,8 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.cancel(lc)
 	case xdr.OperationTypeManageCreatePollRequest:
 		return c.handleRemoveOnManageCreatePollRequest(lc)
+	case xdr.OperationTypeCancelChangeRoleRequest:
+		return c.cancel(lc)
 	case xdr.OperationTypeInitiateKycRecovery:
 		return c.handleInitiateKycRecovery(lc)
 	default: // safeguard for future updates
