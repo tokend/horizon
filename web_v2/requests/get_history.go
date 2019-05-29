@@ -18,6 +18,8 @@ const (
 	FilterTypeHistoryAccount = "account"
 	// FilterTypeHistoryBalance - defines if we need to filter the list by participating balance
 	FilterTypeHistoryBalance = "balance"
+	// FilterTypeHistoryAsset - defines if we need to filter the list by asset
+	FilterTypeHistoryAsset = "asset"
 )
 
 //GetHistory - represents params to be specified for Get History handler
@@ -27,6 +29,7 @@ type GetHistory struct {
 	Filters    struct {
 		Account string `fig:"account"`
 		Balance string `fig:"balance"`
+		Asset   string `fig:"asset"`
 	}
 }
 
@@ -41,6 +44,7 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 		supportedFilters: map[string]struct{}{
 			FilterTypeHistoryAccount: {},
 			FilterTypeHistoryBalance: {},
+			FilterTypeHistoryAsset:   {},
 		},
 	})
 	if err != nil {

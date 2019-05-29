@@ -25,6 +25,15 @@
         explode: false
         schema:
           type: string
+      - name: filter[asset]
+        in: query
+        description: |
+          Filters movements by involved asset
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - name: include
         in: query
         description: |

@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"gitlab.com/tokend/horizon/db2/core2"
+
 	validation "github.com/go-ozzo/ozzo-validation"
 
 	"gitlab.com/distributed_lab/ape"
@@ -20,7 +22,9 @@ type getHistory struct {
 	// cached filter entries
 	Account *history2.Account
 	Balance *history2.Balance
+	Asset   *core2.Asset
 
+	AssetsQ   core2.AssetsQ
 	EffectsQ  history2.ParticipantEffectsQ
 	AccountsQ history2.AccountsQ
 	BalanceQ  history2.BalancesQ
@@ -30,6 +34,7 @@ type getHistory struct {
 func newHistoryHandler(r *http.Request) getHistory {
 	historyRepo := ctx.HistoryRepo(r)
 	handler := getHistory{
+		AssetsQ:   core2.NewAssetsQ(ctx.CoreRepo(r)),
 		EffectsQ:  history2.NewParticipantEffectsQ(historyRepo),
 		AccountsQ: history2.NewAccountsQ(historyRepo),
 		BalanceQ:  history2.NewBalancesQ(historyRepo),
@@ -48,10 +53,10 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 	}
 
 	// TODO: need to refactor
-	if request.Filters.Account != "" {
+	if request.ShouldFilter(requests.FilterTypeHistoryAccount) {
 		h.Account, err = h.AccountsQ.ByAddress(request.Filters.Account)
 		if err != nil {
-			ctx.Log(r).WithError(err).Error("failed to account", logan.F{
+			ctx.Log(r).WithError(err).Error("failed to get account", logan.F{
 				"account_address": request.Filters.Account,
 			})
 			ape.RenderErr(w, problems.InternalError())
@@ -66,10 +71,10 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 		}
 	}
 
-	if request.Filters.Balance != "" {
+	if request.ShouldFilter(requests.FilterTypeHistoryBalance) {
 		h.Balance, err = h.BalanceQ.GetByAddress(request.Filters.Balance)
 		if err != nil {
-			ctx.Log(r).WithError(err).Error("failed to account", logan.F{
+			ctx.Log(r).WithError(err).Error("failed to get balance", logan.F{
 				"balance_address": request.Filters.Balance,
 			})
 			ape.RenderErr(w, problems.InternalError())
@@ -79,6 +84,24 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 		if h.Balance == nil {
 			ape.RenderErr(w, problems.BadRequest(validation.Errors{
 				"filter[balance]": errors.New("not found"),
+			})...)
+			return nil, false
+		}
+	}
+
+	if request.ShouldFilter(requests.FilterTypeHistoryAsset) {
+		h.Asset, err = h.AssetsQ.GetByCode(request.Filters.Asset)
+		if err != nil {
+			ctx.Log(r).WithError(err).Error("failed to get asset", logan.F{
+				"asset_code": request.Filters.Asset,
+			})
+			ape.RenderErr(w, problems.InternalError())
+			return nil, false
+		}
+
+		if h.Asset == nil {
+			ape.RenderErr(w, problems.BadRequest(validation.Errors{
+				"filter[asset]": errors.New("not found"),
 			})...)
 			return nil, false
 		}
@@ -104,6 +127,10 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 
 	if h.Balance != nil {
 		q = q.ForBalance(h.Balance.ID)
+	}
+
+	if h.Asset != nil {
+		q = q.ForAsset(h.Asset.Code)
 	}
 
 	return q
@@ -184,9 +211,12 @@ func getEffect(effect history2.ParticipantEffect) regources.ParticipantsEffect {
 }
 
 // ensure allowed - checks it requester is allowed to access the data. If not it renders error and returns false.
+// The logic behind this is that if multiple filters provided all resource owners have access to data, as we
+// returning smaller subset of effects/movements
 func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Request) bool {
+	constraints := make([]string, 0)
 	if h.Account != nil {
-		return isAllowed(httpRequest, w, h.Account.Address)
+		constraints = append(constraints, h.Account.Address)
 	}
 
 	if h.Balance != nil {
@@ -197,10 +227,14 @@ func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Requ
 			return false
 		}
 
-		return isAllowed(httpRequest, w, account.Address)
+		constraints = append(constraints, account.Address)
 	}
 
-	return isAllowed(httpRequest, w, ctx.CoreInfo(httpRequest).AdminAccountID)
+	if h.Asset != nil {
+		constraints = append(constraints, h.Asset.Owner)
+	}
+	// Admin is added implicitly to constraints in `isAllowed`, so no need to add it explicitly
+	return isAllowed(httpRequest, w, constraints...)
 }
 
 func (h *getHistory) tryGetAccountForBalance(balance *history2.Balance) (history2.Account, error) {
