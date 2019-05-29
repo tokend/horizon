@@ -10,6 +10,66 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
+type getSaleBase struct {
+	SalesQ           history2.SalesQ
+	AssetsQ          core2.AssetsQ
+	saleCapConverter *saleCapConverter
+	Log              *logan.Entry
+}
+
+func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *requests.GetSale) (*regources.SaleResponse, error) {
+	historySale, err := q.Get()
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to get sale by ID")
+	}
+	if historySale == nil {
+		return nil, nil
+	}
+
+	err = h.saleCapConverter.PopulateSaleCap(historySale)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to populate sale cap")
+	}
+
+	response := &regources.SaleResponse{
+		Data: resources.NewSale(*historySale),
+	}
+
+	defaultQuoteAsset := resources.NewSaleDefaultQuoteAsset(*historySale)
+	response.Data.Relationships.DefaultQuoteAsset = defaultQuoteAsset.AsRelation()
+
+	if request.ShouldInclude(requests.IncludeTypeSaleDefaultQuoteAsset) {
+		response.Included.Add(&defaultQuoteAsset)
+	}
+
+	quoteAssets := &regources.RelationCollection{
+		Data: make([]regources.Key, 0, len(historySale.QuoteAssets.QuoteAssets)),
+	}
+
+	for _, historyQuoteAsset := range historySale.QuoteAssets.QuoteAssets {
+		quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset, historySale.ID)
+		quoteAssets.Data = append(quoteAssets.Data, quoteAsset.Key)
+
+		if request.ShouldInclude(requests.IncludeTypeSaleQuoteAssets) {
+			response.Included.Add(&quoteAsset)
+		}
+	}
+	response.Data.Relationships.QuoteAssets = quoteAssets
+
+	if request.ShouldInclude(requests.IncludeTypeSaleBaseAsset) {
+		// FIXME: ingest assets to history and join
+		coreAsset, err := h.AssetsQ.GetByCode(historySale.BaseAsset)
+		if err != nil {
+			return nil, errors.Wrap(err, "Failed to get base asset by code")
+		}
+
+		asset := resources.NewAsset(*coreAsset)
+		response.Included.Add(&asset)
+	}
+
+	return response, nil
+}
+
 type salesBaseHandler struct {
 	SalesQ           history2.SalesQ
 	AssetsQ          core2.AssetsQ
