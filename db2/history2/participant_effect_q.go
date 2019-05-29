@@ -48,6 +48,12 @@ func (q ParticipantEffectsQ) ForBalance(id uint64) ParticipantEffectsQ {
 	return q
 }
 
+//ForAsset - adds filter by asset
+func (q ParticipantEffectsQ) ForAsset(asset string) ParticipantEffectsQ {
+	q.selector = q.selector.Where("effects.asset_code = ?", asset)
+	return q
+}
+
 //Movements - filters out non movement effects
 func (q ParticipantEffectsQ) Movements() ParticipantEffectsQ {
 	q.selector = q.selector.Where("effects.balance_id is not null")
