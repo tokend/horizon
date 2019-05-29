@@ -6,6 +6,9 @@
 * `KYCRecovery` reviewable request ingestion
 * `GetKYCRecoveryRequests` to handle `/v3/kyc_recovery_requests`, `/v3/kyc_recovery_requests/{id}`
 * Docs on kyc recovery
+* `Asset` to withdraw request relationships
+* Filter by asset for `/v3/create_withdraw_requests` and `/v3/create_withdraw_requests/{id}`
+* Ability to include asset in responses`/v3/create_withdraw_requests` and `/v3/create_withdraw_requests/{id}`
 
 ### Fixed
 

@@ -88,6 +88,7 @@ type CreateIssuanceRequest struct {
 
 //CreateWithdrawalRequest - request details
 type CreateWithdrawalRequest struct {
+	Asset          string            `json:"asset"`
 	BalanceID      string            `json:"balance_id"`
 	Amount         regources.Amount  `json:"amount"`
 	Fee            regources.Fee     `json:"fee"`
