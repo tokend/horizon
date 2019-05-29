@@ -4,4 +4,11 @@
 package ingest2
 
 // increase it if you want force reingest (after backward not compatible changes)
-const CurrentIngestVersion = 3
+const CurrentIngestVersion = IngestVersionAssetWithdrawRequest
+
+const (
+	IngestVersionInitial = iota
+	IngestVersionSaleParticipation
+	IngestVersionTrailingDigitsCountAssetCreateRequest
+	IngestVersionAssetWithdrawRequest
+)
