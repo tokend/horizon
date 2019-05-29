@@ -363,7 +363,7 @@ func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) Reviewable
 		return q
 	}
 
-	q.sql = q.sql.Where("(rr.details->'asset_create'->>'asset' = ? OR rr.details->'asset_update'->>'asset' = ?)", assetCode, assetCode)
+	q.sql = q.sql.Where("(rr.details->'create_asset'->>'asset' = ? OR rr.details->'update_asset'->>'asset' = ?)", assetCode, assetCode)
 	return q
 }
 
@@ -374,7 +374,7 @@ func (q *ReviewableRequestQ) PreIssuanceByAsset(assetCode string) ReviewableRequ
 		return q
 	}
 
-	q.sql = q.sql.Where("rr.details->'pre_issuance_create'->>'asset' = ?", assetCode)
+	q.sql = q.sql.Where("rr.details->'create_pre_issuance'->>'asset' = ?", assetCode)
 	return q
 }
 
@@ -385,7 +385,7 @@ func (q *ReviewableRequestQ) IssuanceByAsset(assetCode string) ReviewableRequest
 		return q
 	}
 
-	q.sql = q.sql.Where("rr.details->'issuance_create'->>'asset' = ?", assetCode)
+	q.sql = q.sql.Where("rr.details->'create_issuance'->>'asset' = ?", assetCode)
 	return q
 }
 
@@ -418,7 +418,7 @@ func (q *ReviewableRequestQ) LimitsByDocHash(hash string) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("rr.details->'limits_update'->>'document_hash' = ?", hash)
+	q.sql = q.sql.Where("rr.details->'update_limits'->>'document_hash' = ?", hash)
 	return q
 }
 
@@ -480,7 +480,7 @@ func (q *ReviewableRequestQ) ASwapByBidID(bidID int64) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("rr.details->'atomic_swap'->>'bid_id' = ?", bidID)
+	q.sql = q.sql.Where("rr.details->'create_atomic_swap'->>'bid_id' = ?", bidID)
 	return q
 }
 
