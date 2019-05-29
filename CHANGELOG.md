@@ -12,6 +12,7 @@
 * docs key value u32 value
 * add `trailing_digits_count` to asset creation request
 * Panic on `/v3/history` handling `ManageAccountSpecificRuleOp` details
+* Own sales appearing on `/v3/account/{id}/sales`
 
 ### Changed
 
