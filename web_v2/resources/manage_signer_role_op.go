@@ -8,12 +8,12 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-func newManageSignerRole(id int64, details history2.ManageSignerRoleDetails,
-) *regources.ManageSignerRoleOp {
+func newManageSignerRoleOp(op history2.Operation) regources.Resource {
+	details := op.Details.ManageSignerRole
 	switch details.Action {
 	case xdr.ManageSignerRoleActionCreate:
 		return &regources.ManageSignerRoleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_SIGNER_ROLE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_SIGNER_ROLE),
 			Attributes: &regources.ManageSignerRoleOpAttributes{
 				Details:    details.CreateDetails.Details,
 				IsReadOnly: details.CreateDetails.IsReadOnly,
@@ -25,7 +25,7 @@ func newManageSignerRole(id int64, details history2.ManageSignerRoleDetails,
 		}
 	case xdr.ManageSignerRoleActionUpdate:
 		return &regources.ManageSignerRoleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_UPDATE_SIGNER_ROLE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_UPDATE_SIGNER_ROLE),
 			Attributes: &regources.ManageSignerRoleOpAttributes{
 				Details: details.UpdateDetails.Details,
 			},
@@ -36,7 +36,7 @@ func newManageSignerRole(id int64, details history2.ManageSignerRoleDetails,
 		}
 	case xdr.ManageSignerRoleActionRemove:
 		return &regources.ManageSignerRoleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_SIGNER_ROLE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_SIGNER_ROLE),
 			Relationships: regources.ManageSignerRoleOpRelationships{
 				Role: NewSignerRoleKey(details.RoleID).AsRelation(),
 			},
