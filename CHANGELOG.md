@@ -11,6 +11,7 @@
 * `Asset` to withdraw request relationships
 * Filter by asset for `/v3/create_withdraw_requests` and `/v3/create_withdraw_requests/{id}`
 * Ability to include asset in responses`/v3/create_withdraw_requests` and `/v3/create_withdraw_requests/{id}`
+* Option for asset issuer to access all history/movements through `/v3/history` or `/v3/movements` using filter by asset
 
 ### Fixed
 
