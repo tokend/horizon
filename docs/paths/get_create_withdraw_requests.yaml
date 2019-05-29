@@ -78,6 +78,15 @@
         explode: false
         schema:
           type: string
+      - name: filter[request_details.asset]
+        in: query
+        description: |
+          Filters create withdraw requests by asset.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - name: include
         in: query
         description: |
@@ -90,6 +99,7 @@
           enum:
             - "request_details"
             - "request_details.balance"
+            - "request_details.asset"
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
@@ -116,6 +126,7 @@
                     anyOf:
                       - $ref: '#/components/schemas/CreateWithdrawRequest'
                       - $ref: '#/components/schemas/Balance'
+                      - $ref: '#/components/schemas/Asset'
                 links:
                   type: object
                   description: "Provides links for pagination"

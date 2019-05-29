@@ -6,23 +6,28 @@ import (
 
 const (
 	IncludeTypeCreateWithdrawRequestsBalance = "request_details.balance"
+	IncludeTypeCreateWithdrawRequestsAsset   = "request_details.asset"
 )
 
 var includeTypeCreateWithdrawRequests = map[string]struct{}{
 	IncludeTypeCreateWithdrawRequestsBalance: {},
+	IncludeTypeCreateWithdrawRequestsAsset:   {},
 }
 
 const (
 	FilterTypeCreateWithdrawRequestsBalance = "request_details.balance"
+	FilterTypeCreateWithdrawRequestsAsset   = "request_details.asset"
 )
 
 var filterTypeCreateWithdrawRequests = map[string]struct{}{
 	FilterTypeCreateWithdrawRequestsBalance: {},
+	FilterTypeCreateWithdrawRequestsAsset:   {},
 }
 
 type GetCreateWithdrawRequestsFilter struct {
 	GetRequestListBaseFilters
 	Balance string `fig:"request_details.balance"`
+	Asset   string `fig:"request_details.asset"`
 }
 
 type GetCreateWithdrawRequests struct {

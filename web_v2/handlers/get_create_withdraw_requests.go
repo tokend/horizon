@@ -31,6 +31,7 @@ func GetCreateWithdrawRequests(w http.ResponseWriter, r *http.Request) {
 		R:         request,
 		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
 		BalancesQ: core2.NewBalancesQ(coreRepo),
+		AssetsQ:   core2.NewAssetsQ(coreRepo),
 		Log:       ctx.Log(r),
 	}
 
@@ -53,6 +54,7 @@ type getCreateWithdrawRequestsHandler struct {
 	Base      getRequestListBaseHandler
 	RequestsQ history2.ReviewableRequestsQ
 	BalancesQ core2.BalancesQ
+	AssetsQ   core2.AssetsQ
 	Log       *logan.Entry
 }
 
@@ -61,6 +63,9 @@ func (h *getCreateWithdrawRequestsHandler) MakeAll(w http.ResponseWriter, reques
 
 	if request.ShouldFilter(requests.FilterTypeCreateWithdrawRequestsBalance) {
 		q = q.FilterByWithdrawBalance(request.Filters.Balance)
+	}
+	if request.ShouldFilter(requests.FilterTypeCreateWithdrawRequestsAsset) {
+		q = q.FilterByWithdrawAsset(request.Filters.Asset)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
@@ -80,6 +85,19 @@ func (h *getCreateWithdrawRequestsHandler) RenderRecord(included *regources.Incl
 		}
 		resource := resources.NewBalance(balance)
 		included.Add(resource)
+	}
+
+	if h.R.ShouldInclude(requests.IncludeTypeCreateWithdrawRequestsAsset) {
+		asset, err := h.AssetsQ.GetByCode(record.Details.CreateWithdraw.Asset)
+		if err != nil {
+			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get asset")
+		}
+
+		if asset == nil {
+			return regources.ReviewableRequest{}, errors.New("asset not found")
+		}
+		resource := resources.NewAsset(*asset)
+		included.Add(&resource)
 	}
 
 	return resource, nil

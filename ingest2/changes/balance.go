@@ -9,6 +9,7 @@ import (
 
 type balanceStorage interface {
 	InsertBalance(rawID xdr.BalanceId, balance history2.Balance) error
+	MustBalance(rawID xdr.BalanceId) history2.Balance
 }
 
 type balanceHandler struct {

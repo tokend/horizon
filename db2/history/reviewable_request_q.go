@@ -181,7 +181,7 @@ func (q *ReviewableRequestQ) ByID(requestID uint64) (*ReviewableRequest, error) 
 		return nil, q.Err
 	}
 
-	query := q.sql.Where("id = ?", requestID)
+	query := q.sql.Where("rr.id = ?", requestID)
 
 	var result ReviewableRequest
 	err := q.parent.Get(&result, query)
@@ -201,7 +201,7 @@ func (q *ReviewableRequestQ) ByIDs(requestIDs []int64) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql = q.sql.Where(sq.Eq{"id": requestIDs})
+	q.sql = q.sql.Where(sq.Eq{"rr.id": requestIDs})
 	return q
 }
 
@@ -247,7 +247,7 @@ func (q *ReviewableRequestQ) ForRequestor(requestor string) ReviewableRequestQI 
 		return q
 	}
 
-	q.sql = q.sql.Where("requestor = ?", requestor)
+	q.sql = q.sql.Where("rr.requestor = ?", requestor)
 	return q
 }
 
@@ -257,7 +257,7 @@ func (q *ReviewableRequestQ) ForReviewer(reviewer string) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("reviewer = ?", reviewer)
+	q.sql = q.sql.Where("rr.reviewer = ?", reviewer)
 	return q
 }
 
@@ -266,7 +266,7 @@ func (q *ReviewableRequestQ) ForCounterparty(counterparty string) ReviewableRequ
 		return q
 	}
 
-	q.sql = q.sql.Where("((reviewer = ?) or (requestor = ?))", counterparty, counterparty)
+	q.sql = q.sql.Where("((rr.reviewer = ?) or (rr.requestor = ?))", counterparty, counterparty)
 	return q
 }
 
@@ -276,7 +276,7 @@ func (q *ReviewableRequestQ) ForState(state int64) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("request_state = ?", state)
+	q.sql = q.sql.Where("rr.request_state = ?", state)
 	return q
 }
 
@@ -286,7 +286,7 @@ func (q *ReviewableRequestQ) ForType(requestType int64) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("request_type = ?", requestType)
+	q.sql = q.sql.Where("rr.request_type = ?", requestType)
 	return q
 }
 
@@ -300,7 +300,7 @@ func (q *ReviewableRequestQ) ForTypes(requestTypes []xdr.ReviewableRequestType) 
 		return q
 	}
 
-	query, values := sqx.InForReviewableRequestTypes("request_type", requestTypes...)
+	query, values := sqx.InForReviewableRequestTypes("rr.request_type", requestTypes...)
 
 	q.sql = q.sql.Where(query, values...)
 	return q
@@ -315,7 +315,7 @@ func (q *ReviewableRequestQ) UpdatedAfter(timestamp int64) ReviewableRequestQI {
 	tm := time.Unix(timestamp, 0)
 	tmf := tm.Format(time.RFC3339)
 
-	q.sql = q.sql.Where("updated_at >= ?::timestamp", tmf)
+	q.sql = q.sql.Where("rr.updated_at >= ?::timestamp", tmf)
 	return q
 }
 
@@ -325,7 +325,7 @@ func (q *ReviewableRequestQ) Page(page db2.PageQuery) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql, q.Err = page.ApplyTo(q.sql, "id")
+	q.sql, q.Err = page.ApplyTo(q.sql, "rr.id")
 	return q
 }
 
@@ -344,7 +344,7 @@ func (q *ReviewableRequestQ) CountQuery() ReviewableRequestQI {
 	if q.Err != nil {
 		return q
 	}
-	q.sql = sq.Select("COUNT(*)").From("reviewable_request")
+	q.sql = sq.Select("COUNT(*)").From("reviewable_request rr")
 	return q
 }
 
@@ -363,7 +363,7 @@ func (q *ReviewableRequestQ) AssetManagementByAsset(assetCode string) Reviewable
 		return q
 	}
 
-	q.sql = q.sql.Where("(details->'asset_create'->>'asset' = ? OR details->'asset_update'->>'asset' = ?)", assetCode, assetCode)
+	q.sql = q.sql.Where("(rr.details->'create_asset'->>'asset' = ? OR rr.details->'update_asset'->>'asset' = ?)", assetCode, assetCode)
 	return q
 }
 
@@ -374,7 +374,7 @@ func (q *ReviewableRequestQ) PreIssuanceByAsset(assetCode string) ReviewableRequ
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'pre_issuance_create'->>'asset' = ?", assetCode)
+	q.sql = q.sql.Where("rr.details->'create_pre_issuance'->>'asset' = ?", assetCode)
 	return q
 }
 
@@ -385,7 +385,7 @@ func (q *ReviewableRequestQ) IssuanceByAsset(assetCode string) ReviewableRequest
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'issuance_create'->>'asset' = ?", assetCode)
+	q.sql = q.sql.Where("rr.details->'create_issuance'->>'asset' = ?", assetCode)
 	return q
 }
 
@@ -396,7 +396,7 @@ func (q *ReviewableRequestQ) WithdrawalByDestAsset(assetCode string) ReviewableR
 		return q
 	}
 
-	q.sql = q.sql.Where("(details->'withdraw'->>'dest_asset_code' = ? OR details->'two_step_withdrawal'->>'dest_asset_code' = ?)", assetCode, assetCode)
+	q.sql = q.sql.Join("history_balances hb on details #>> '{create_withdraw, balance_id}' = (hb.balance_id) OR details #>> '{two_step_withdrawal, balance_id}' = (hb.balance_id)").Where("hb.asset = ?", assetCode)
 	return q
 }
 
@@ -407,7 +407,7 @@ func (q *ReviewableRequestQ) SalesByBaseAsset(assetCode string) ReviewableReques
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'create_sale'->>'base_asset' = ?", assetCode)
+	q.sql = q.sql.Where("rr.details->'create_sale'->>'base_asset' = ?", assetCode)
 	return q
 }
 
@@ -418,7 +418,7 @@ func (q *ReviewableRequestQ) LimitsByDocHash(hash string) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'limits_update'->>'document_hash' = ?", hash)
+	q.sql = q.sql.Where("rr.details->'update_limits'->>'document_hash' = ?", hash)
 	return q
 }
 
@@ -427,7 +427,7 @@ func (q *ReviewableRequestQ) ContractsByContractNumber(contractNumber string) Re
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'contract'->'details'->>'contract_number' = ?", contractNumber)
+	q.sql = q.sql.Where("rr.details->'contract'->'details'->>'contract_number' = ?", contractNumber)
 	return q
 }
 
@@ -454,7 +454,7 @@ func (q *ReviewableRequestQ) InvoicesByContract(contractID int64) ReviewableRequ
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'invoice'->>'contract_id' = ?", contractID)
+	q.sql = q.sql.Where("rr.details->'invoice'->>'contract_id' = ?", contractID)
 	return q
 }
 
@@ -480,7 +480,7 @@ func (q *ReviewableRequestQ) ASwapByBidID(bidID int64) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("details->'atomic_swap'->>'bid_id' = ?", bidID)
+	q.sql = q.sql.Where("rr.details->'create_atomic_swap'->>'bid_id' = ?", bidID)
 	return q
 }
 
@@ -503,9 +503,9 @@ func (q *ReviewableRequestQ) ByMaskSet(mask int64, maskSetPartialEq bool) Review
 	}
 
 	if maskSetPartialEq {
-		q.sql = q.sql.Where("pending_tasks & ? <> 0", mask)
+		q.sql = q.sql.Where("rr.pending_tasks & ? <> 0", mask)
 	} else {
-		q.sql = q.sql.Where("pending_tasks & ? = ?", mask, mask)
+		q.sql = q.sql.Where("rr.pending_tasks & ? = ?", mask, mask)
 	}
 	return q
 }
@@ -516,7 +516,7 @@ func (q *ReviewableRequestQ) ByMaskNotSet(mask int64) ReviewableRequestQI {
 		return q
 	}
 
-	q.sql = q.sql.Where("~pending_tasks & ? = ?", mask, mask)
+	q.sql = q.sql.Where("~rr.pending_tasks & ? = ?", mask, mask)
 	return q
 }
 
@@ -526,10 +526,10 @@ func (q *ReviewableRequestQ) KYCByAccountTypeToSet(accountTypeToSet xdr.Uint64) 
 		return q
 	}
 
-	q.sql = q.sql.Where("(details->'change_role'->'account_role_to_set'->>'int')::integer = ?", int32(accountTypeToSet))
+	q.sql = q.sql.Where("(rr.details->'change_role'->'account_role_to_set'->>'int')::integer = ?", int32(accountTypeToSet))
 	return q
 }
 
-var selectReviewableRequest = sq.Select("id", "requestor", "reviewer", "reference", "reject_reason",
-	"request_type", "request_state", "hash", "details", "created_at", "updated_at", "all_tasks", "pending_tasks",
-	"external_details").From("reviewable_request")
+var selectReviewableRequest = sq.Select("rr.id", "rr.requestor", "rr.reviewer", "rr.reference", "rr.reject_reason",
+	"rr.request_type", "rr.request_state", "rr.hash", "rr.details", "rr.created_at", "rr.updated_at", "rr.all_tasks", "rr.pending_tasks",
+	"rr.external_details").From("reviewable_request rr")
