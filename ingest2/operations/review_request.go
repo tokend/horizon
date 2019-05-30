@@ -50,7 +50,7 @@ func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler
 			xdr.ReviewableRequestTypeCreateAmlAlert: &amlAlertHandler{
 				effectsProvider: provider,
 			},
-			xdr.ReviewableRequestTypeCreateAtomicSwapAsk: &atomicSwapHandler{
+			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &atomicSwapHandler{
 				effectsProvider: provider,
 			},
 			xdr.ReviewableRequestTypeCreateAsset:         &stubProvider,
@@ -62,7 +62,7 @@ func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler
 			xdr.ReviewableRequestTypeUpdateSaleDetails:   &stubProvider,
 			xdr.ReviewableRequestTypeCreateInvoice:       &deprecatedReviewRequestHandler{},
 			xdr.ReviewableRequestTypeManageContract:      &deprecatedReviewRequestHandler{},
-			xdr.ReviewableRequestTypeCreateAtomicSwapBid: &stubProvider,
+			xdr.ReviewableRequestTypeCreateAtomicSwapAsk: &stubProvider,
 			xdr.ReviewableRequestTypeCreatePoll:          &stubProvider,
 			xdr.ReviewableRequestTypeKycRecovery:         &stubProvider,
 		},

@@ -370,9 +370,9 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.Invoice = getInvoiceRequest(body.InvoiceRequest)
 	case xdr.ReviewableRequestTypeManageContract:
 		details.Contract = getContractRequest(body.ContractRequest)
-	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		details.AtomicSwapBidCreation = getAtomicSwapAskCreationRequest(body.CreateAtomicSwapAskRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapAsk:
+		details.AtomicSwapAskCreation = getAtomicSwapAskCreationRequest(body.CreateAtomicSwapAskRequest)
+	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
 		details.AtomicSwap = getAtomicSwapRequest(body.CreateAtomicSwapBidRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = getPollRequest(body.CreatePollRequest)

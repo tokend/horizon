@@ -27,8 +27,8 @@ type ReviewableRequestDetails struct {
 	PromotionUpdate       *PromotionUpdateRequest   `json:"promotion_update"`
 	Invoice               *InvoiceRequest           `json:"invoice"`
 	Contract              *ContractRequest          `json:"contract"`
-	AtomicSwapBidCreation *AtomicSwapAskCreation    `json:"create_atomic_swap_bid,omitempty"`
-	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap,omitempty"`
+	AtomicSwapAskCreation *AtomicSwapAskCreation    `json:"create_atomic_swap_ask,omitempty"`
+	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap_bid,omitempty"`
 	CreatePoll            *CreatePoll               `json:"create_poll,omitempty"`
 }
 

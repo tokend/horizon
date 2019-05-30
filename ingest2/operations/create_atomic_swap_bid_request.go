@@ -15,7 +15,7 @@ func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	aSwapRequest := op.Body.MustCreateAtomicSwapBidRequestOp().Request
-	successRes := opRes.MustCreateAtomicSwapAskRequestResult().MustSuccess()
+	successRes := opRes.MustCreateAtomicSwapBidRequestResult().MustSuccess()
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAtomicSwapBidRequest,

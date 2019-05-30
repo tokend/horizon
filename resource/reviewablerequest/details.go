@@ -50,10 +50,10 @@ func PopulateDetails(request *history.ReviewableRequest, requestType xdr.Reviewa
 	case xdr.ReviewableRequestTypeManageContract:
 		d.Contract, err = PopulateContractRequest(*h.Contract)
 		return
-	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		d.AtomicSwapBidCreation, err = PopulateAtomicSwapBidCreationRequest(*h.AtomicSwapBidCreation)
-		return
 	case xdr.ReviewableRequestTypeCreateAtomicSwapAsk:
+		d.AtomicSwapBidCreation, err = PopulateAtomicSwapAskCreationRequest(*h.AtomicSwapAskCreation)
+		return
+	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
 		d.AtomicSwap, err = PopulateAtomicSwapRequest(*h.AtomicSwap)
 		return
 	case xdr.ReviewableRequestTypeCreatePoll:
