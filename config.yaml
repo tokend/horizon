@@ -5,7 +5,7 @@ config:
   database_url: postgres://postgres:postgres@localhost/horizon?sslmode=disable
   log_level: "warn"
   slow_query_bound: 1s
-  port: 8000
+  port: 8001
   api_backend: http://
   ingest: true
   stale_threshold: 0

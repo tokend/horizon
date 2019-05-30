@@ -23,9 +23,9 @@ OperationDetails:
     - $ref: '#/components/schemas/ManageSaleOp'
     - $ref: '#/components/schemas/ManageAccountRoleOp'
     - $ref: '#/components/schemas/ManageAccountRuleOp'
-    - $ref: '#/components/schemas/CreateAtomicSwapBidRequestOp'
     - $ref: '#/components/schemas/CreateAtomicSwapAskRequestOp'
-    - $ref: '#/components/schemas/CancelAtomicSwapBidOp'
+    - $ref: '#/components/schemas/CreateAtomicSwapBidRequestOp'
+    - $ref: '#/components/schemas/CancelAtomicSwapAskOp'
     - $ref: '#/components/schemas/ManageSignerRoleOp'
     - $ref: '#/components/schemas/ManageSignerRuleOp'
     - $ref: '#/components/schemas/ManageSignerOp'
@@ -37,7 +37,9 @@ OperationDetails:
     - $ref: '#/components/schemas/ManageCreatePollRequestOp'
     - $ref: '#/components/schemas/ManagePollOp'
     - $ref: '#/components/schemas/ManageVoteOp'
-
+    - $ref: '#/components/schemas/InitiateKYCRecoveryOp'
+    - $ref: '#/components/schemas/CreateKYCRecoveryRequestOp'
+    - $ref: '#/components/schemas/ManageAccountSpecificRuleOp'
 
 OperationDetailsKey:
   oneOf:
@@ -64,9 +66,9 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/ManageSaleOpKey'
     - $ref: '#/components/schemas/ManageAccountRoleOpKey'
     - $ref: '#/components/schemas/ManageAccountRuleOpKey'
-    - $ref: '#/components/schemas/CreateAtomicSwapBidRequestOpKey'
     - $ref: '#/components/schemas/CreateAtomicSwapAskRequestOpKey'
-    - $ref: '#/components/schemas/CancelAtomicSwapBidOpKey'
+    - $ref: '#/components/schemas/CreateAtomicSwapBidRequestOpKey'
+    - $ref: '#/components/schemas/CancelAtomicSwapAskOpKey'
     - $ref: '#/components/schemas/ManageSignerRoleOpKey'
     - $ref: '#/components/schemas/ManageSignerRuleOpKey'
     - $ref: '#/components/schemas/ManageSignerOpKey'
@@ -78,3 +80,6 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/ManageCreatePollRequestOpKey'
     - $ref: '#/components/schemas/ManagePollOpKey'
     - $ref: '#/components/schemas/ManageVoteOpKey'
+    - $ref: '#/components/schemas/InitiateKYCRecoveryOpKey'
+    - $ref: '#/components/schemas/CreateKYCRecoveryRequestOpKey'
+    - $ref: '#/components/schemas/ManageAccountSpecificRuleOpKey'

@@ -9,6 +9,33 @@
 
 * handling `/atomic_swap_bids` request
 
+### Added 
+* `InitiateKYCRecovery` operation ingestion
+* `CreateKYCRecoveryRequest` operation ingestion
+* `KYCRecovery` reviewable request ingestion
+* `GetKYCRecoveryRequests` to handle `/v3/kyc_recovery_requests`, `/v3/kyc_recovery_requests/{id}`
+* Docs on kyc recovery
+* Tests for operation details handling
+* `/v3/accounts/{id}/sales/{sale_id}` endpoint to get sale by id, if account is allowed to participate
+* `GetSaleForAccount` to handle `/v3/accounts/{id}/sales/{sale_id}`
+* `Asset` to withdraw request relationships
+* Filter by asset for `/v3/create_withdraw_requests` and `/v3/create_withdraw_requests/{id}`
+* Ability to include asset in responses`/v3/create_withdraw_requests` and `/v3/create_withdraw_requests/{id}`
+* Option for asset issuer to access all history/movements through `/v3/history` or `/v3/movements` using filter by asset
+
+### Fixed
+
+* docs key value u32 value
+* add `trailing_digits_count` to asset creation request
+* Panic on `/v3/history` handling `ManageAccountSpecificRuleOp` details
+* Own sales appearing on `/v3/account/{id}/sales`
+* Legacy withdraw requests endpoint asset filter
+
+### Changed
+
+* `CurrentIngestVersion` increased
+* Operation Details resource handling
+
 ## 3.3.2
 
 ### Fixed

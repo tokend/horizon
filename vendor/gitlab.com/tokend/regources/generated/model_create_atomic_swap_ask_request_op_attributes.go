@@ -5,5 +5,6 @@
 package regources
 
 type CreateAtomicSwapAskRequestOpAttributes struct {
-	BaseAmount *Amount `json:"base_amount,omitempty"`
+	Amount         Amount  `json:"amount"`
+	CreatorDetails Details `json:"creator_details"`
 }

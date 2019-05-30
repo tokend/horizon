@@ -113,6 +113,11 @@ func (q ReviewableRequestsQ) FilterByWithdrawBalance(balance string) ReviewableR
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterByWithdrawAsset(asset string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_withdraw,asset}' = ?", asset)
+	return q
+}
+
 func (q ReviewableRequestsQ) FilterByAmlAlertBalance(balance string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_aml_alert,balance_id}' = ?", balance)
 	return q
@@ -128,7 +133,7 @@ func (q ReviewableRequestsQ) FilterByChangeRoleToSet(accountRole int32) Reviewab
 	return q
 }
 
-func (q ReviewableRequestsQ) FilterByCreateAtomicSwapBidBalance(balance string) ReviewableRequestsQ {
+func (q ReviewableRequestsQ) FilterByCreateAtomicSwapAskBalance(balance string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_atomic_swap_bid,base_balance}' = ?", balance)
 	return q
 }
@@ -160,6 +165,11 @@ func (q ReviewableRequestsQ) FilterByCreatePollVoteConfirmationRequired(voteConf
 
 func (q ReviewableRequestsQ) FilterByCreatePollResultProvider(resultProviderID string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_poll,result_provider_id}' = ?", resultProviderID)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByKYCRecoveryTargetAccount(address string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{kyc_recovery,account}' = ?", address)
 	return q
 }
 

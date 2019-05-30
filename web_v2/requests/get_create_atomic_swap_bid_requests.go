@@ -5,26 +5,24 @@ import (
 )
 
 const (
-	IncludeTypeCreateAtomicSwapBidRequestsBalance     = "request_details.base_balance"
-	IncludeTypeCreateAtomicSwapBidRequestsQuoteAssets = "request_details.quote_assets"
+	IncludeTypeCreateAtomicSwapBidRequestsQuoteAsset = "request_details.quote_asset"
 )
 
 var includeTypeCreateAtomicSwapBidRequests = map[string]struct{}{
-	IncludeTypeCreateAtomicSwapBidRequestsBalance:     {},
-	IncludeTypeCreateAtomicSwapBidRequestsQuoteAssets: {},
+	IncludeTypeCreateAtomicSwapBidRequestsQuoteAsset: {},
 }
 
 const (
-	FilterTypeCreateAtomicSwapBidRequestsBalance = "request_details.base_balance"
+	FilterTypeCreateAtomicSwapBidRequestsQuoteAsset = "request_details.quote_asset"
 )
 
 var filterTypeCreateAtomicSwapBidRequests = map[string]struct{}{
-	FilterTypeCreateAtomicSwapBidRequestsBalance: {},
+	FilterTypeCreateAtomicSwapBidRequestsQuoteAsset: {},
 }
 
 type GetCreateAtomicSwapBidRequestsFilter struct {
 	GetRequestListBaseFilters
-	BaseBalance string `fig:"request_details.base_balance"`
+	QuoteAsset string `fig:"request_details.quote_asset"`
 }
 
 type GetCreateAtomicSwapBidRequests struct {

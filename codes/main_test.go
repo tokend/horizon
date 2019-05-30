@@ -181,7 +181,7 @@ func TestCodes(t *testing.T) {
 	})
 
 	Convey("Cancel atomic swap bid", t, func() {
-		for _, code := range xdr.CancelAtomicSwapBidResultCodeAll {
+		for _, code := range xdr.CancelAtomicSwapAskResultCodeAll {
 			checkCode(t, code)
 		}
 	})

@@ -5,37 +5,37 @@ import (
 )
 
 const (
-	IncludeTypeBidBaseBalance = "base_balance"
-	IncludeTypeBidOwner       = "owner"
-	IncludeTypeBidBaseAsset   = "base_asset"
-	IncludeTypeBidQuoteAssets = "quote_assets"
+	IncludeTypeAskBaseBalance = "base_balance"
+	IncludeTypeAskOwner       = "owner"
+	IncludeTypeAskBaseAsset   = "base_asset"
+	IncludeTypeAskQuoteAssets = "quote_assets"
 )
 
-var includeTypeBidAll = map[string]struct{}{
-	IncludeTypeBidBaseBalance: {},
-	IncludeTypeBidOwner:       {},
-	IncludeTypeBidBaseAsset:   {},
-	IncludeTypeBidQuoteAssets: {},
+var includeTypeAskAll = map[string]struct{}{
+	IncludeTypeAskBaseBalance: {},
+	IncludeTypeAskOwner:       {},
+	IncludeTypeAskBaseAsset:   {},
+	IncludeTypeAskQuoteAssets: {},
 }
 
-// GetAtomicSwapBid - represents params to be specified by user for Get AtomicSwapBid handler
-type GetAtomicSwapBid struct {
+// GetAtomicSwapAsk - represents params to be specified by user for Get AtomicSwapBid handler
+type GetAtomicSwapAsk struct {
 	*base
 	ID uint64
 }
 
-// NewGetAtomicSwapBid returns new instance of GetAtomicSwapBid request
-func NewGetAtomicSwapBid(r *http.Request) (*GetAtomicSwapBid, error) {
+// NewGetAtomicSwapAsk returns new instance of GetAtomicSwapAsk request
+func NewGetAtomicSwapAsk(r *http.Request) (*GetAtomicSwapAsk, error) {
 	b, err := newBase(r, baseOpts{
-		supportedIncludes: includeTypeBidAll,
+		supportedIncludes: includeTypeAskAll,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	// bid relations has not asset relation, we use balance relation
-	if _, ok := b.include[IncludeTypeBidBaseAsset]; ok {
-		b.include[IncludeTypeBidBaseBalance] = struct{}{}
+	if _, ok := b.include[IncludeTypeAskBaseAsset]; ok {
+		b.include[IncludeTypeAskBaseBalance] = struct{}{}
 	}
 
 	id, err := b.getUint64ID()
@@ -43,7 +43,7 @@ func NewGetAtomicSwapBid(r *http.Request) (*GetAtomicSwapBid, error) {
 		return nil, err
 	}
 
-	return &GetAtomicSwapBid{
+	return &GetAtomicSwapAsk{
 		base: b,
 		ID:   id,
 	}, nil

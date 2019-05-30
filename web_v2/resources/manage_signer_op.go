@@ -7,12 +7,12 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-func newManageSigner(id int64, details history2.ManageSignerDetails,
-) *regources.ManageSignerOp {
+func newManageSignerOp(op history2.Operation) regources.Resource {
+	details := op.Details.ManageSigner
 	switch details.Action {
 	case xdr.ManageSignerActionCreate:
 		return &regources.ManageSignerOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_SIGNER),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_SIGNER),
 			Attributes: &regources.ManageSignerOpAttributes{
 				Details:  details.CreateDetails.Details,
 				Weight:   details.CreateDetails.Weight,
@@ -25,7 +25,7 @@ func newManageSigner(id int64, details history2.ManageSignerDetails,
 		}
 	case xdr.ManageSignerActionUpdate:
 		return &regources.ManageSignerOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_UPDATE_SIGNER),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_UPDATE_SIGNER),
 			Attributes: &regources.ManageSignerOpAttributes{
 				Details:  details.UpdateDetails.Details,
 				Weight:   details.UpdateDetails.Weight,
@@ -38,7 +38,7 @@ func newManageSigner(id int64, details history2.ManageSignerDetails,
 		}
 	case xdr.ManageSignerActionRemove:
 		return &regources.ManageSignerOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_SIGNER),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_SIGNER),
 			Relationships: &regources.ManageSignerOpRelationships{
 				Signer: NewSignerKey(details.PublicKey).AsRelation(),
 			},

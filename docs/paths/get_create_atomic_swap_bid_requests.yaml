@@ -69,10 +69,10 @@
         explode: false
         schema:
           type: integer
-      - name: filter[request_details.base_balance]
+      - name: filter[request_details.quote_asset]
         in: query
         description: |
-          Filters create_atomic_swap_bid requests by balance.
+          Filters atomic swap bid requests by quote asset.
         required: false
         style: form
         explode: false
@@ -89,8 +89,7 @@
           type: string
           enum:
             - "request_details"
-            - "request_details.base_balance"
-            - "request_details.quote_assets"
+            - "request_details.quote_asset"
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
@@ -116,7 +115,6 @@
                     type: object
                     anyOf:
                       - $ref: '#/components/schemas/CreateAtomicSwapBidRequest'
-                      - $ref: '#/components/schemas/Balance'
                       - $ref: '#/components/schemas/Asset'
                 links:
                   type: object
@@ -125,11 +123,11 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/create_atomic_swap_bid_requests?include=details&page[number]=2&page[limit]=15"
+                      example: "/v3/create_atomic_swap_requests?include=details&page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/create_atomic_swap_bid_requests?include=details&page[number]=1&page[limit]=15"
+                      example: "/v3/create_atomic_swap_requests?include=details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

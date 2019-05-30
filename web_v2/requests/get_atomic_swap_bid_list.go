@@ -7,31 +7,31 @@ import (
 )
 
 const (
-	IncludeTypeBidListBaseBalances = "base_balance"
-	IncludeTypeBidListOwners       = "owner"
-	IncludeTypeBidListBaseAssets   = "base_asset"
-	IncludeTypeBidListQuoteAssets  = "quote_assets"
+	IncludeTypeAskListBaseBalances = "base_balance"
+	IncludeTypeAskListOwners       = "owner"
+	IncludeTypeAskListBaseAssets   = "base_asset"
+	IncludeTypeAskListQuoteAssets  = "quote_assets"
 
-	FilterTypeBidListOwner       = "owner"
-	FilterTypeBidListBaseAsset   = "base_asset"
-	FilterTypeBidListQuoteAssets = "quote_assets"
+	FilterTypeAskListOwner       = "owner"
+	FilterTypeAskListBaseAsset   = "base_asset"
+	FilterTypeAskListQuoteAssets = "quote_assets"
 )
 
-var includeTypeBidListAll = map[string]struct{}{
-	IncludeTypeBidListBaseBalances: {},
-	IncludeTypeBidListOwners:       {},
-	IncludeTypeBidListBaseAssets:   {},
-	IncludeTypeBidListQuoteAssets:  {},
+var includeTypeAskListAll = map[string]struct{}{
+	IncludeTypeAskListBaseBalances: {},
+	IncludeTypeAskListOwners:       {},
+	IncludeTypeAskListBaseAssets:   {},
+	IncludeTypeAskListQuoteAssets:  {},
 }
 
-var filterTypeBidListAll = map[string]struct{}{
-	FilterTypeBidListOwner:       {},
-	FilterTypeBidListBaseAsset:   {},
-	FilterTypeBidListQuoteAssets: {},
+var filterTypeAskListAll = map[string]struct{}{
+	FilterTypeAskListOwner:       {},
+	FilterTypeAskListBaseAsset:   {},
+	FilterTypeAskListQuoteAssets: {},
 }
 
-// GetAtomicSwapBidList - represents params to be specified by user for Get AtomicSwapBidList handler
-type GetAtomicSwapBidList struct {
+// GetAtomicSwapAskList - represents params to be specified by user for Get AtomicSwapAskList handler
+type GetAtomicSwapAskList struct {
 	*base
 	Filters struct {
 		Owner       string   `fig:"owner"`
@@ -41,19 +41,19 @@ type GetAtomicSwapBidList struct {
 	PageParams *db2.OffsetPageParams
 }
 
-// NewGetAtomicSwapBidList returns new instance of GetAtomicSwapBidList request
-func NewGetAtomicSwapBidList(r *http.Request) (*GetAtomicSwapBidList, error) {
+// NewGetAtomicSwapAskList returns new instance of GetAtomicSwapAskList request
+func NewGetAtomicSwapAskList(r *http.Request) (*GetAtomicSwapAskList, error) {
 	b, err := newBase(r, baseOpts{
-		supportedIncludes: includeTypeBidListAll,
-		supportedFilters:  filterTypeBidListAll,
+		supportedIncludes: includeTypeAskListAll,
+		supportedFilters:  filterTypeAskListAll,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	// bid relations has not asset relation, we use balance relation
-	if _, ok := b.include[IncludeTypeBidBaseAsset]; ok {
-		b.include[IncludeTypeBidBaseBalance] = struct{}{}
+	if _, ok := b.include[IncludeTypeAskBaseAsset]; ok {
+		b.include[IncludeTypeAskBaseBalance] = struct{}{}
 	}
 
 	pageParams, err := b.getOffsetBasedPageParams()
@@ -61,7 +61,7 @@ func NewGetAtomicSwapBidList(r *http.Request) (*GetAtomicSwapBidList, error) {
 		return nil, err
 	}
 
-	request := GetAtomicSwapBidList{
+	request := GetAtomicSwapAskList{
 		base:       b,
 		PageParams: pageParams,
 	}

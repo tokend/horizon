@@ -17,7 +17,7 @@ func NewAtomicSwapQuoteAssetQ(repo *db2.Repo) AtomicSwapQuoteAssetQ {
 	return AtomicSwapQuoteAssetQ{
 		repo: repo,
 		selector: sq.Select(
-			"qa.bid_id",
+			"qa.ask_id",
 			"qa.quote_asset",
 			"qa.price",
 		).From("atomic_swap_quote_asset qa"),
@@ -25,7 +25,7 @@ func NewAtomicSwapQuoteAssetQ(repo *db2.Repo) AtomicSwapQuoteAssetQ {
 }
 
 func (q AtomicSwapQuoteAssetQ) FilterByIDs(bidIDs []int64) AtomicSwapQuoteAssetQ {
-	q.selector = q.selector.Where(sq.Eq{"qa.bid_id": bidIDs})
+	q.selector = q.selector.Where(sq.Eq{"qa.ask_id": bidIDs})
 	return q
 }
 

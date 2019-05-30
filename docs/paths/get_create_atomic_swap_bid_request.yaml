@@ -69,10 +69,10 @@
         explode: false
         schema:
           type: integer
-      - name: filter[request_details.base_balance]
+      - name: filter[request_details.quote_asset]
         in: query
         description: |
-           Filters create_atomic_swap_bid requests by base balance.
+          Filters create_atomic_swap_bid requests by quote asset.
         required: false
         style: form
         explode: false
@@ -89,8 +89,7 @@
           type: string
           enum:
             - "request_details"
-            - "request_details.base_balance"
-            - "request_details.quote_assets"
+            - "request_details.quote_asset"
     responses:
       200:
         description: requests exist
@@ -111,7 +110,6 @@
                     type: object
                     anyOf:
                       - $ref: '#/components/schemas/CreateAtomicSwapBidRequest'
-                      - $ref: '#/components/schemas/Balance'
                       - $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter

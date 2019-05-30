@@ -5,7 +5,7 @@
 package regources
 
 type CreateAtomicSwapAskRequestOpRelationships struct {
-	BaseBalance *Relation `json:"base_balance,omitempty"`
-	Bid         *Relation `json:"bid,omitempty"`
-	Request     *Relation `json:"request,omitempty"`
+	BaseBalance *Relation           `json:"base_balance,omitempty"`
+	QuoteAssets *RelationCollection `json:"quote_assets,omitempty"`
+	Request     *Relation           `json:"request,omitempty"`
 }

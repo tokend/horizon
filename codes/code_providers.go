@@ -36,7 +36,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManageAccountRole:           func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountRoleResult().Code },
 	xdr.OperationTypeManageAccountRule:           func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountRuleResult().Code },
 	xdr.OperationTypeCreateAtomicSwapBidRequest:  func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateAtomicSwapBidRequestResult().Code },
-	xdr.OperationTypeCancelAtomicSwapBid:         func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelAtomicSwapBidResult().Code },
+	xdr.OperationTypeCancelAtomicSwapAsk:         func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelAtomicSwapAskResult().Code },
 	xdr.OperationTypeCreateAtomicSwapAskRequest:  func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateAtomicSwapAskRequestResult().Code },
 	xdr.OperationTypeManageSigner:                func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSignerResult().Code },
 	xdr.OperationTypeManageSignerRole:            func(ir xdr.OperationResultTr) shortStr { return ir.MustManageSignerRoleResult().Code },
@@ -48,4 +48,6 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeManageVote:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustManageVoteResult().Code },
 	xdr.OperationTypeManageAccountSpecificRule:   func(ir xdr.OperationResultTr) shortStr { return ir.MustManageAccountSpecificRuleResult().Code },
 	xdr.OperationTypeCancelChangeRoleRequest:     func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelChangeRoleRequestResult().Code },
+	xdr.OperationTypeInitiateKycRecovery:         func(ir xdr.OperationResultTr) shortStr { return ir.MustInitiateKycRecoveryResult().Code },
+	xdr.OperationTypeCreateKycRecoveryRequest:    func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateKycRecoveryRequestResult().Code },
 }

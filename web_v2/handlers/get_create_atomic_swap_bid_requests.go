@@ -30,7 +30,6 @@ func GetCreateAtomicSwapBidRequests(w http.ResponseWriter, r *http.Request) {
 	handler := getCreateAtomicSwapBidRequestsHandler{
 		R:         request,
 		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
-		BalancesQ: core2.NewBalancesQ(coreRepo),
 		AssetsQ:   core2.NewAssetsQ(coreRepo),
 		Log:       ctx.Log(r),
 	}
@@ -53,7 +52,6 @@ type getCreateAtomicSwapBidRequestsHandler struct {
 	R         requests.GetCreateAtomicSwapBidRequests
 	Base      getRequestListBaseHandler
 	RequestsQ history2.ReviewableRequestsQ
-	BalancesQ core2.BalancesQ
 	AssetsQ   core2.AssetsQ
 	Log       *logan.Entry
 }
@@ -61,8 +59,8 @@ type getCreateAtomicSwapBidRequestsHandler struct {
 func (h *getCreateAtomicSwapBidRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateAtomicSwapBidRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateAtomicSwapBid))
 
-	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsBalance) {
-		q = q.FilterByCreateAtomicSwapBidBalance(request.Filters.BaseBalance)
+	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsQuoteAsset) {
+		q = q.FilterByAtomicSwapQuoteAsset(request.Filters.QuoteAsset)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
@@ -71,36 +69,17 @@ func (h *getCreateAtomicSwapBidRequestsHandler) MakeAll(w http.ResponseWriter, r
 func (h *getCreateAtomicSwapBidRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
-	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapBidRequestsBalance) {
-		balance, err := h.BalancesQ.GetByAddress(record.Details.CreateAtomicSwapBid.BaseBalance)
+	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapBidRequestsQuoteAsset) {
+		asset, err := h.AssetsQ.FilterByCode(record.Details.CreateAtomicSwapBid.QuoteAsset).Get()
 		if err != nil {
-			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get balance")
+			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get quote asset")
+		}
+		if asset == nil {
+			return regources.ReviewableRequest{}, errors.New("quote asset not found")
 		}
 
-		if balance == nil {
-			return regources.ReviewableRequest{}, errors.New("balance not found")
-		}
-		resource := resources.NewBalance(balance)
-		included.Add(resource)
-	}
-
-	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapBidRequestsQuoteAssets) {
-		codes := make([]string, 0, len(record.Details.CreateAtomicSwapBid.QuoteAssets))
-		for _, v := range record.Details.CreateAtomicSwapBid.QuoteAssets {
-			codes = append(codes, v.Asset)
-		}
-		assets, err := h.AssetsQ.FilterByCodes(codes).Select()
-		if err != nil {
-			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get assets")
-		}
-
-		if assets == nil {
-			return regources.ReviewableRequest{}, errors.New("assets not found")
-		}
-		for _, record := range assets {
-			asset := resources.NewAsset(record)
-			included.Add(&asset)
-		}
+		resource := resources.NewAsset(*asset)
+		included.Add(&resource)
 	}
 
 	return resource, nil

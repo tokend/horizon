@@ -7,12 +7,12 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-func newManageAccountRule(id int64, details history2.ManageAccountRuleDetails,
-) *regources.ManageAccountRuleOp {
+func newManageAccountRuleOp(op history2.Operation) regources.Resource {
+	details := op.Details.ManageAccountRule
 	switch details.Action {
 	case xdr.ManageAccountRuleActionCreate:
 		return &regources.ManageAccountRuleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_ACCOUNT_RULE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ACCOUNT_RULE),
 			Attributes: &regources.ManageAccountRuleOpAttributes{
 				Resource: details.CreateDetails.Resource,
 				Action:   details.CreateDetails.Action,
@@ -25,7 +25,7 @@ func newManageAccountRule(id int64, details history2.ManageAccountRuleDetails,
 		}
 	case xdr.ManageAccountRuleActionUpdate:
 		return &regources.ManageAccountRuleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_UPDATE_ACCOUNT_RULE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_UPDATE_ACCOUNT_RULE),
 			Attributes: &regources.ManageAccountRuleOpAttributes{
 				Resource: details.UpdateDetails.Resource,
 				Action:   details.UpdateDetails.Action,
@@ -38,7 +38,7 @@ func newManageAccountRule(id int64, details history2.ManageAccountRuleDetails,
 		}
 	case xdr.ManageAccountRuleActionRemove:
 		return &regources.ManageAccountRuleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_ACCOUNT_RULE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_ACCOUNT_RULE),
 			Relationships: &regources.ManageAccountRuleOpRelationships{
 				Rule: NewAccountRoleKey(details.RuleID).AsRelation(),
 			},

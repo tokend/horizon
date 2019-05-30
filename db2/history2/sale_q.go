@@ -82,6 +82,8 @@ func (q SalesQ) Whitelisted(address string) SalesQ {
 			//we have 2 placeholder symbols in `whitelist` query (see above), thus we need 2 arguments (both address)
 			sq.Expr(whitelist, address, address),
 			sq.Expr("sales.version < ?", int32(xdr.LedgerVersionAddSaleWhitelists)),
+			//Exclude sale owner
+			sq.Expr("sales.owner_address != ?", address),
 		})
 	return q
 }
