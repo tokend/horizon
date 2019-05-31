@@ -1,4 +1,4 @@
-// revision: 040cabaa604c8b2eb0d875d0bdce69c307d458d5
+// revision: f837ba578b958da1f984e6a47f78cdd781e60c49
 // branch:   feature/atomic_swap_returning
 // Package xdr is generated from:
 //
@@ -37784,7 +37784,7 @@ type ReviewableRequestResourceCreateAtomicSwapAskExtCreateAtomicSwapAsk struct {
 //        case EMPTY_VERSION:
 //            void;
 //        case ATOMIC_SWAP_RETURNING:
-//            //: is used to restrict the usage of a reviewable request with create_atomic_swap_bid type
+//            //: is used to restrict the usage of a reviewable request with create_atomic_swap_ask type
 //            struct
 //            {
 //                //: code of asset
@@ -38028,7 +38028,7 @@ type ReviewableRequestResourceCreatePoll struct {
 //        case EMPTY_VERSION:
 //            void;
 //        case ATOMIC_SWAP_RETURNING:
-//            //: is used to restrict the usage of a reviewable request with create_atomic_swap_bid type
+//            //: is used to restrict the usage of a reviewable request with create_atomic_swap_ask type
 //            struct
 //            {
 //                //: code of asset
@@ -47695,4 +47695,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "040cabaa604c8b2eb0d875d0bdce69c307d458d5"
+var Revision = "f837ba578b958da1f984e6a47f78cdd781e60c49"

@@ -496,7 +496,7 @@
 
 [[projects]]
   branch = "feature/atomic_swap_returning"
-  digest = "1:1693af9824d21421609648b4594ca757457b5d26be2f865b376dddc49a17a2ac"
+  digest = "1:7602868cc4af7325783674be29b6c07c7a36477addabdca1bc16a105bac708cb"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -514,7 +514,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "b19a0bf1f6e07e8efb0c74e2cb33adec2be5e2dd"
+  revision = "f6a02b2d048a991926704509490b80dff11229c2"
 
 [[projects]]
   branch = "master"
