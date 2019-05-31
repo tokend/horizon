@@ -6,21 +6,21 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-type createAtomicSwapRequestOpHandler struct {
+type createAtomicSwapBidRequestOpHandler struct {
 	effectsProvider
 }
 
 // Details returns details about create atomic swap request operation
-func (h *createAtomicSwapRequestOpHandler) Details(op rawOperation,
+func (h *createAtomicSwapBidRequestOpHandler) Details(op rawOperation,
 	opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	aSwapRequest := op.Body.MustCreateASwapRequestOp().Request
-	successRes := opRes.MustCreateASwapRequestResult().MustSuccess()
+	aSwapRequest := op.Body.MustCreateAtomicSwapBidRequestOp().Request
+	successRes := opRes.MustCreateAtomicSwapBidRequestResult().MustSuccess()
 
 	return history2.OperationDetails{
-		Type: xdr.OperationTypeCreateAswapRequest,
-		CreateAtomicSwapRequest: &history2.CreateAtomicSwapRequestDetails{
-			BidID:      int64(aSwapRequest.BidId),
+		Type: xdr.OperationTypeCreateAtomicSwapBidRequest,
+		CreateAtomicSwapBidRequest: &history2.CreateAtomicSwapBidRequestDetails{
+			AskID:      int64(aSwapRequest.AskId),
 			BaseAmount: regources.Amount(aSwapRequest.BaseAmount),
 			QuoteAsset: string(aSwapRequest.QuoteAsset),
 			RequestDetails: history2.RequestDetails{

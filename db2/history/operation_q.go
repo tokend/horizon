@@ -283,7 +283,7 @@ func (q *OperationsQ) OnlyReviewOfAtomicSwapRequest() OperationsQI {
 	}
 
 	q.sql = q.sql.Where("ho.request_type IS NULL OR ho.request_type == ?",
-		xdr.ReviewableRequestTypeCreateAtomicSwap.ShortString())
+		xdr.ReviewableRequestTypeCreateAtomicSwapAsk.ShortString())
 	return q
 }
 

@@ -39,9 +39,9 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypePayout:                                 newPayoutOp,
 	xdr.OperationTypeManageAccountRole:                      newManageAccountRoleOp,
 	xdr.OperationTypeManageAccountRule:                      newManageAccountRuleOp,
-	xdr.OperationTypeCreateAswapBidRequest:                  newCreateASwapBidRequestOp,
-	xdr.OperationTypeCancelAswapBid:                         newCancelASwapBidOp,
-	xdr.OperationTypeCreateAswapRequest:                     newCreateASwapRequestOp,
+	xdr.OperationTypeCreateAtomicSwapAskRequest:             newCreateASwapAskRequestOp,
+	xdr.OperationTypeCancelAtomicSwapAsk:                    newCancelASwapAskOp,
+	xdr.OperationTypeCreateAtomicSwapBidRequest:             newCreateASwapBidRequestOp,
 	xdr.OperationTypeManageSigner:                           newManageSignerOp,
 	xdr.OperationTypeManageSignerRole:                       newManageSignerRoleOp,
 	xdr.OperationTypeManageSignerRule:                       newManageSignerRuleOp,
@@ -676,16 +676,44 @@ func newManageContractOp(op history2.Operation) regources.Resource {
 	return regources.NewKeyInt64(op.ID, regources.OPERATIONS_MANAGE_CONTRACT).GetKeyP()
 }
 
+func newCreateASwapAskRequestOp(op history2.Operation) regources.Resource {
+	data := make([]regources.Key, 0, len(op.Details.CreateAtomicSwapAskRequest.QuoteAssets))
+
+	for _, quoteAssetRaw := range op.Details.CreateAtomicSwapAskRequest.QuoteAssets {
+		data = append(data, NewAssetKey(quoteAssetRaw.Asset))
+	}
+
+	return &regources.CreateAtomicSwapAskRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ATOMIC_SWAP_ASK_REQUEST),
+		Attributes: regources.CreateAtomicSwapAskRequestOpAttributes{
+			Amount:         op.Details.CreateAtomicSwapAskRequest.Amount,
+			CreatorDetails: op.Details.CreateAtomicSwapAskRequest.Details,
+		},
+		Relationships: regources.CreateAtomicSwapAskRequestOpRelationships{
+			BaseBalance: NewBalanceKey(op.Details.CreateAtomicSwapAskRequest.BaseBalance).AsRelation(),
+			QuoteAssets: &regources.RelationCollection{
+				Data: data,
+			},
+		},
+	}
+}
+
 func newCreateASwapBidRequestOp(op history2.Operation) regources.Resource {
-	return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ASWAP_BID_REQUEST).GetKeyP()
+	return &regources.CreateAtomicSwapBidRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ATOMIC_SWAP_BID_REQUEST),
+		Attributes: regources.CreateAtomicSwapBidRequestOpAttributes{
+			BaseAmount:     op.Details.CreateAtomicSwapBidRequest.BaseAmount,
+			CreatorDetails: op.Details.CreateAtomicSwapBidRequest.Details,
+		},
+		Relationships: regources.CreateAtomicSwapBidRequestOpRelationships{
+			Ask:        NewAtomicSwapAskKey(uint64(op.Details.CreateAtomicSwapBidRequest.AskID)).AsRelation(),
+			QuoteAsset: NewAssetKey(op.Details.CreateAtomicSwapBidRequest.QuoteAsset).AsRelation(),
+		},
+	}
 }
 
-func newCreateASwapRequestOp(op history2.Operation) regources.Resource {
-	return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ASWAP_REQUEST).GetKeyP()
-}
-
-func newCancelASwapBidOp(op history2.Operation) regources.Resource {
-	return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_ASWAP_BID).GetKeyP()
+func newCancelASwapAskOp(op history2.Operation) regources.Resource {
+	return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_ATOMIC_SWAP_ASK).GetKeyP()
 }
 
 func newCancelSaleRequestOp(op history2.Operation) regources.Resource {

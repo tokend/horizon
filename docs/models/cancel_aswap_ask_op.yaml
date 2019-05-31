@@ -1,4 +1,4 @@
-CancelAtomicSwapBidOpKey:
+CancelAtomicSwapAskOpKey:
   type: object
   properties:
     id:
@@ -9,18 +9,18 @@ CancelAtomicSwapBidOpKey:
       deprecated: true
       type: string
       enum:
-        - "operations-cancel-aswap-bid"
+        - "operations-cancel-atomic-swap-ask"
 
 
-CancelAtomicSwapBidOp:
+CancelAtomicSwapAskOp:
   allOf:
-  - $ref: '#/components/schemas/CancelAtomicSwapBidOpKey'
+  - $ref: '#/components/schemas/CancelAtomicSwapAskOpKey'
   - type: object
     required: [relationships]
     properties:
       relationships:
         type: object
         properties:
-          bid:
+          ask:
             type: object
-            $ref: '#/components/schemas/Int64Key'
+            $ref: '#/components/schemas/AtomicSwapAskKey'

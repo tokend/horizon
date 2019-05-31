@@ -133,7 +133,7 @@ func (q ReviewableRequestsQ) FilterByChangeRoleToSet(accountRole int32) Reviewab
 	return q
 }
 
-func (q ReviewableRequestsQ) FilterByCreateAtomicSwapBidBalance(balance string) ReviewableRequestsQ {
+func (q ReviewableRequestsQ) FilterByCreateAtomicSwapAskBalance(balance string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_atomic_swap_bid,base_balance}' = ?", balance)
 	return q
 }

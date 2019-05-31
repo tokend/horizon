@@ -33,7 +33,7 @@ type OperationDetails struct {
 	Payment                    *PaymentDetails                    `json:"payment,omitempty"`
 	Payout                     *PayoutDetails                     `json:"payout,omitempty"`
 	SetFee                     *SetFeeDetails                     `json:"set_fee,omitempty"`
-	CancelAtomicSwapBid        *CancelAtomicSwapBidDetails        `json:"cancel_atomic_swap_bid,omitempty"`
+	CancelAtomicSwapAsk        *CancelAtomicSwapAskDetails        `json:"cancel_atomic_swap_ask,omitempty"`
 	CheckSaleState             *CheckSaleStateDetails             `json:"check_sale_state,omitempty"`
 	CreateChangeRoleRequest    *CreateChangeRoleRequestDetails    `json:"create_change_role_request,omitempty"`
 	CreatePreIssuanceRequest   *CreatePreIssuanceRequestDetails   `json:"create_pre_issuance_request,omitempty"`
@@ -42,8 +42,8 @@ type OperationDetails struct {
 	CreateWithdrawRequest      *CreateWithdrawRequestDetails      `json:"create_withdraw_request,omitempty"`
 	CreateAMLAlertRequest      *CreateAMLAlertRequestDetails      `json:"create_aml_alert_request,omitempty"`
 	CreateSaleRequest          *CreateSaleRequestDetails          `json:"create_sale_request,omitempty"`
+	CreateAtomicSwapAskRequest *CreateAtomicSwapAskRequestDetails `json:"create_atomic_swap_ask_request,omitempty"`
 	CreateAtomicSwapBidRequest *CreateAtomicSwapBidRequestDetails `json:"create_atomic_swap_bid_request,omitempty"`
-	CreateAtomicSwapRequest    *CreateAtomicSwapRequestDetails    `json:"create_atomic_swap_request,omitempty"`
 	ReviewRequest              *ReviewRequestDetails              `json:"review_request,omitempty"`
 	ManageSale                 *ManageSaleDetails                 `json:"manage_sale,omitempty"`
 	License                    *LicenseDetails                    `json:"license,omitempty"`
@@ -348,25 +348,26 @@ type CheckSaleStateDetails struct {
 	Effect xdr.CheckSaleStateEffect
 }
 
-//CreateAtomicSwapBidRequestDetails - details of corresponding op
-type CreateAtomicSwapBidRequestDetails struct {
+//CreateAtomicSwapAskRequestDetails - details of corresponding op
+type CreateAtomicSwapAskRequestDetails struct {
 	Amount         regources.Amount       `json:"amount"`
 	BaseBalance    string                 `json:"base_balance"`
 	QuoteAssets    []regources.AssetPrice `json:"quote_assets"`
-	Details        regources.Details      `json:"details"`
+	Details        regources.Details      `json:"creator_details"`
 	RequestDetails RequestDetails         `json:"request_details"`
 }
 
-//CreateAtomicSwapRequestDetails - details of corresponding op
-type CreateAtomicSwapRequestDetails struct {
-	BidID          int64            `json:"bid_id"`
-	BaseAmount     regources.Amount `json:"base_amount"`
-	QuoteAsset     string           `json:"quote_asset"`
-	RequestDetails RequestDetails   `json:"request_details"`
+//CreateAtomicSwapBidRequestDetails - details of corresponding op
+type CreateAtomicSwapBidRequestDetails struct {
+	AskID          int64             `json:"ask_id"`
+	BaseAmount     regources.Amount  `json:"base_amount"`
+	QuoteAsset     string            `json:"quote_asset"`
+	RequestDetails RequestDetails    `json:"request_details"`
+	Details        regources.Details `json:"creator_details"`
 }
 
-//CancelAtomicSwapBidDetails - details of corresponding op
-type CancelAtomicSwapBidDetails struct {
+//CancelAtomicSwapAskDetails - details of corresponding op
+type CancelAtomicSwapAskDetails struct {
 	BidID int64 `json:"bid_id"`
 }
 

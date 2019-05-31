@@ -1,12 +1,12 @@
-/v3/create_atomic_swap_requests:
+/v3/create_atomic_swap_ask_requests:
   get:
     tags:
       - WIP
-    summary: Create Atomic Swap Request List
+    summary: Create Atomic Swap Ask Request List
     description: |
-      Allows getting a filtered list of `CreateAtomicSwapRequest` with details\n
+      Allows getting a filtered list of `CreateAtomicSwapAskRequest` with details\n
       🔒 Requestor's or reviewer's signature is needed
-    operationId: getCreateSwapRequests
+    operationId: getCreateAtomicSwapAskRequests
     parameters:
       - name: filter[requestor]
         in: query
@@ -69,10 +69,10 @@
         explode: false
         schema:
           type: integer
-      - name: filter[request_details.quote_asset]
+      - name: filter[request_details.base_balance]
         in: query
         description: |
-          Filters atomic swap requests by quote asset.
+          Filters create_atomic_swap_ask requests by balance.
         required: false
         style: form
         explode: false
@@ -89,7 +89,8 @@
           type: string
           enum:
             - "request_details"
-            - "request_details.quote_asset"
+            - "request_details.base_balance"
+            - "request_details.quote_assets"
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
@@ -114,7 +115,8 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/CreateAtomicSwapRequest'
+                      - $ref: '#/components/schemas/CreateAtomicSwapAskRequest'
+                      - $ref: '#/components/schemas/Balance'
                       - $ref: '#/components/schemas/Asset'
                 links:
                   type: object
@@ -123,11 +125,11 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/create_atomic_swap_requests?include=details&page[number]=2&page[limit]=15"
+                      example: "/v3/create_atomic_swap_bid_requests?include=details&page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/create_atomic_swap_requests?include=details&page[number]=1&page[limit]=15"
+                      example: "/v3/create_atomic_swap_bid_requests?include=details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

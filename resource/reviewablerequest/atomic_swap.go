@@ -7,11 +7,11 @@ import (
 	"gitlab.com/tokend/regources"
 )
 
-func PopulateASwapRequest(histRequest history.AtomicSwap) (
+func PopulateAtomicSwapRequest(histRequest history.AtomicSwap) (
 	*regources.AtomicSwap, error,
 ) {
 	return &regources.AtomicSwap{
-		BidID:      strconv.FormatUint(histRequest.BidID, 10),
+		BidID:      strconv.FormatUint(histRequest.AskID, 10),
 		BaseAmount: regources.Amount(histRequest.BaseAmount),
 		QuoteAsset: histRequest.QuoteAsset,
 	}, nil

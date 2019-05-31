@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+* `Atomic swap ask` resource
+
 ## 4.5.0
 
 ### Added

@@ -1,6 +1,12 @@
 ## Unreleased
 
-### Added 
+### Removed
+
+* handling `/atomic_swap_bids` request
+
+### Added
+* `GetAtomicSwapAskList` handler to handle `v3/atomic_swap_asks` request
+* `GetAtomicSwapAsk` handler to handle `v3/atomic_swap_asks/{id}` request
 * `InitiateKYCRecovery` operation ingestion
 * `CreateKYCRecoveryRequest` operation ingestion
 * `KYCRecovery` reviewable request ingestion
@@ -26,6 +32,7 @@
 
 * `CurrentIngestVersion` increased
 * Operation Details resource handling
+* swap `v3/create_atomic_swap_bid_requests` and `v3/create_atomic_swap_ask_requests` names
 
 ## 3.3.2
 

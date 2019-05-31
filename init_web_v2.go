@@ -152,10 +152,14 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/change_role_requests/{id}", handlers.GetChangeRoleRequests)
 	m.Get("/v3/update_sale_details_requests", handlers.GetUpdateSaleDetailsRequests)
 	m.Get("/v3/update_sale_details_requests/{id}", handlers.GetUpdateSaleDetailsRequests)
+	m.Get("/v3/create_atomic_swap_ask_requests", handlers.GetCreateAtomicSwapAskRequests)
+	m.Get("/v3/create_atomic_swap_ask_requests/{id}", handlers.GetCreateAtomicSwapAskRequests)
 	m.Get("/v3/create_atomic_swap_bid_requests", handlers.GetCreateAtomicSwapBidRequests)
 	m.Get("/v3/create_atomic_swap_bid_requests/{id}", handlers.GetCreateAtomicSwapBidRequests)
-	m.Get("/v3/create_atomic_swap_requests", handlers.GetCreateAtomicSwapRequests)
-	m.Get("/v3/create_atomic_swap_requests/{id}", handlers.GetCreateAtomicSwapRequests)
+
+	m.Get("/v3/atomic_swap_asks/{id}", handlers.GetAtomicSwapAsk)
+	m.Get("/v3/atomic_swap_asks", handlers.GetAtomicSwapAskList)
+
 	m.Get("/v3/create_poll_requests", handlers.GetCreatePollRequests)
 	m.Get("/v3/create_poll_requests/{id}", handlers.GetCreatePollRequests)
 	m.Get("/v3/kyc_recovery_requests", handlers.GetKYCRecoveryRequests)

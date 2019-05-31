@@ -30,8 +30,9 @@
   version = "0.8.0"
 
 [[constraint]]
-  version = "3.7.0"
+  #version = "3.7.0"
   name = "gitlab.com/tokend/go"
+  branch = "feature/atomic_swap_returning"
 
 [prune]
   go-tests = true

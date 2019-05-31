@@ -1,0 +1,77 @@
+AtomicSwapAskKey:
+  type: object
+  required:
+  - id
+  - type
+  properties:
+    id:
+      type: string
+      example: "4"
+    type:
+      type: string
+      enum:
+      - "atomic-swap-ask"
+
+AtomicSwapAsk:
+  allOf:
+  - $ref: '#/components/schemas/AtomicSwapAskKey'
+  - type: object
+    required: [relationships, attributes]
+    properties:
+      attributes:
+        type: object
+        required:
+        - details
+        - available_amount
+        - locked_amount
+        - created_at
+        - is_canceled
+        properties:
+          details:
+            type: string
+            format: "valid json"
+            description: "represents user-provided data"
+            example: "{ \"data\": \"some user data\"}"
+          available_amount:
+            type: string
+            example: "5.000000"
+            format: Amount
+            description: "Amount that can be bought through atomic swap bid request"
+          locked_amount:
+            type: string
+            example: "10.000000"
+            format: Amount
+            description: "Amount that that is being processed now through atomic swap bid requests"
+          created_at:
+            type: string
+            description: "time when the atomic swap ask was created"
+            format: "date-time"
+            example: "2012-11-01T22:08:41+00:00"
+          is_canceled:
+            type: boolean
+            description: "defines whether creating atomic swap requests for this ask is forbidden"
+            example: true
+      relationships:
+        type: object
+        properties:
+          owner:
+            description: "Owner of the atomic swap ask"
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/AccountKey'
+          base_balance:
+            description: "Base asset of the atomic swap ask"
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/AssetKey'
+          quote_assets:
+            description: "Quote assets specified for the atomic swap ask"
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssetKey'

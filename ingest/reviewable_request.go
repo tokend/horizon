@@ -309,8 +309,8 @@ func getContractRequest(request *xdr.ContractRequest) *history.ContractRequest {
 	}
 }
 
-func getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
-) *history.AtomicSwapBidCreation {
+func getAtomicSwapAskCreationRequest(request *xdr.CreateAtomicSwapAskRequest,
+) *history.AtomicSwapAskCreation {
 	var details map[string]interface{}
 	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
 
@@ -322,7 +322,7 @@ func getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 		})
 	}
 
-	return &history.AtomicSwapBidCreation{
+	return &history.AtomicSwapAskCreation{
 		BaseBalance: request.BaseBalance.AsString(),
 		BaseAmount:  uint64(request.Amount),
 		Details:     details,
@@ -330,10 +330,10 @@ func getAtomicSwapBidCreationRequest(request *xdr.ASwapBidCreationRequest,
 	}
 }
 
-func getAtomicSwapRequest(request *xdr.ASwapRequest,
+func getAtomicSwapRequest(request *xdr.CreateAtomicSwapBidRequest,
 ) *history.AtomicSwap {
 	return &history.AtomicSwap{
-		BidID:      uint64(request.BidId),
+		AskID:      uint64(request.AskId),
 		BaseAmount: uint64(request.BaseAmount),
 		QuoteAsset: string(request.QuoteAsset),
 	}
@@ -370,10 +370,10 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 		details.Invoice = getInvoiceRequest(body.InvoiceRequest)
 	case xdr.ReviewableRequestTypeManageContract:
 		details.Contract = getContractRequest(body.ContractRequest)
+	case xdr.ReviewableRequestTypeCreateAtomicSwapAsk:
+		details.AtomicSwapAskCreation = getAtomicSwapAskCreationRequest(body.CreateAtomicSwapAskRequest)
 	case xdr.ReviewableRequestTypeCreateAtomicSwapBid:
-		details.AtomicSwapBidCreation = getAtomicSwapBidCreationRequest(body.ASwapBidCreationRequest)
-	case xdr.ReviewableRequestTypeCreateAtomicSwap:
-		details.AtomicSwap = getAtomicSwapRequest(body.ASwapRequest)
+		details.AtomicSwap = getAtomicSwapRequest(body.CreateAtomicSwapBidRequest)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		details.CreatePoll = getPollRequest(body.CreatePollRequest)
 	case xdr.ReviewableRequestTypeKycRecovery:
