@@ -4,7 +4,7 @@
 
 package regources
 
-type CreateAtomicSwapRequestRelationships struct {
+type CreateAtomicSwapAskRequestRelationships struct {
 	Bid        *Relation `json:"bid,omitempty"`
 	QuoteAsset *Relation `json:"quote_asset,omitempty"`
 }

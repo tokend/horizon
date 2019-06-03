@@ -8,7 +8,7 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-//go:generate go-bindata -ignore .+\.go$ -pkg schema -o bindata.go ./...
+//go:generate go-bindata -nometadata -ignore .+\.go$ -pkg schema -o bindata.go ./...
 
 // Migrations represents all of the schema migration for horizon
 var Migrations migrate.MigrationSource = &migrate.AssetMigrationSource{

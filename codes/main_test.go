@@ -175,25 +175,31 @@ func TestCodes(t *testing.T) {
 	})
 
 	Convey("Create Atomic Swap Bid Creation Request", t, func() {
-		for _, code := range xdr.CreateASwapBidCreationRequestResultCodeAll {
+		for _, code := range xdr.CreateAtomicSwapBidRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
 
 	Convey("Cancel atomic swap bid", t, func() {
-		for _, code := range xdr.CancelASwapBidResultCodeAll {
+		for _, code := range xdr.CancelAtomicSwapAskResultCodeAll {
 			checkCode(t, code)
 		}
 	})
 
 	Convey("Create Atomic Swap Request", t, func() {
-		for _, code := range xdr.CreateASwapRequestResultCodeAll {
+		for _, code := range xdr.CreateAtomicSwapAskRequestResultCodeAll {
 			checkCode(t, code)
 		}
 	})
 
 	Convey("Cancel CreateSale Request", t, func() {
 		for _, code := range xdr.CancelSaleCreationRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Remove asset pair", t, func() {
+		for _, code := range xdr.RemoveAssetPairResultCodeAll {
 			checkCode(t, code)
 		}
 	})

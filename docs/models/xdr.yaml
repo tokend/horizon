@@ -26,7 +26,7 @@ xdr.BucketEntryType:
       type: string
 
 
-xdr.CancelASwapBidResultCode:
+xdr.CancelAtomicSwapBidResultCode:
   type: object
   properties:
     value:
@@ -45,6 +45,14 @@ xdr.RemoveAssetPairResultCode:
 
 
 xdr.CancelSaleCreationRequestResultCode:
+  type: object
+  properties:
+    value:
+      type: integer
+    name:
+      type: string
+
+xdr.CancelChangeRoleRequestResultCode:
   type: object
   properties:
     value:
@@ -80,7 +88,7 @@ xdr.AssetPairPolicy:
       type: string
 
 
-xdr.CreateASwapBidCreationRequestResultCode:
+xdr.CreateAtomicSwapBidRequestResultCode:
   type: object
   properties:
     value:
@@ -89,7 +97,7 @@ xdr.CreateASwapBidCreationRequestResultCode:
       type: string
 
 
-xdr.CreateASwapRequestResultCode:
+xdr.CreateAtomicSwapAskRequestResultCode:
   type: object
   properties:
     value:

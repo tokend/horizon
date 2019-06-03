@@ -4,6 +4,6 @@
 
 package regources
 
-type CancelAtomicSwapBidOpRelationships struct {
-	Bid *Relation `json:"bid,omitempty"`
+type CancelAtomicSwapAskOpRelationships struct {
+	Ask *Relation `json:"ask,omitempty"`
 }

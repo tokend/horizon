@@ -1,12 +1,12 @@
-/v3/create_atomic_swap_requests/{id}:
+/v3/create_atomic_swap_ask_requests/{id}:
   get:
     tags:
       - WIP
-    summary: Create Atomic Swap Request by ID
+    summary: Create Atomic Swap Ask Request by ID
     description: |
-      Allows getting `CreateAtomicSwap` by ID\n
+      Allows getting `CreateAtomicSwapAsk` by ID\n
       🔒 Requestor's or reviewer's signature is needed
-    operationId: getCreateAtomicSwapRequest
+    operationId: getCreateAtomicSwapAskRequest
     parameters:
       - name: filter[requestor]
         in: query
@@ -69,10 +69,10 @@
         explode: false
         schema:
           type: integer
-      - name: filter[request_details.quote_asset]
+      - name: filter[request_details.base_balance]
         in: query
         description: |
-          Filters create_atomic_swap requests by quote asset.
+           Filters create_atomic_swap_bid requests by base balance.
         required: false
         style: form
         explode: false
@@ -89,7 +89,8 @@
           type: string
           enum:
             - "request_details"
-            - "request_details.quote_asset"
+            - "request_details.base_balance"
+            - "request_details.quote_assets"
     responses:
       200:
         description: requests exist
@@ -109,7 +110,8 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/CreateAtomicSwapRequest'
+                      - $ref: '#/components/schemas/CreateAtomicSwapAskRequest'
+                      - $ref: '#/components/schemas/Balance'
                       - $ref: '#/components/schemas/Asset'
       400:
         description: bad input parameter

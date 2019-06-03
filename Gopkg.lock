@@ -496,7 +496,7 @@
 
 [[projects]]
   branch = "feature/remove-asset-pair"
-  digest = "1:3d13aa54611b53b4570d7c5efb07cd2b0dbf0da425cd127f2f9141ac6d7c28cc"
+  digest = "1:adc772b2a4909ff9220dc367389345cc3aa1ff84283cca01304ae93c5a7651fa"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -514,7 +514,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "c992e0ceff0ac5aa6cf84959824c61e906a827ea"
+  revision = "f5819f27f9db6a3eeb91325dbc4860104d992479"
 
 [[projects]]
   branch = "master"
@@ -531,14 +531,14 @@
 
 [[projects]]
   branch = "feature/remove-asset-pair"
-  digest = "1:cbb480401ad9857786f2f1a6ea721feac792410d6871632692959f157cb0a991"
+  digest = "1:3e89935bc609b0d4a5fc40e237ff7013b597d4ad4f81b5dd7774b237c9e028a9"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "0a3ced10816c5dcd53efe135169d94e90b405d56"
+  revision = "1d931399d817af562713a3dc9f38fdc284c1823b"
 
 [[projects]]
   branch = "master"

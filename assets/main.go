@@ -10,7 +10,7 @@ import (
 	"gitlab.com/tokend/horizon/log"
 )
 
-//go:generate go-bindata -ignore .+\.go$ -pkg assets -o bindata.go ./...
+//go:generate go-bindata -nometadata -ignore .+\.go$ -pkg assets -o bindata.go ./...
 
 func init() {
 	Templates = NewTemplatesLoader()

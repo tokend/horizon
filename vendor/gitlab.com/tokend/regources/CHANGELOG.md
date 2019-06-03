@@ -5,12 +5,14 @@
 ### Added
 
 * Operation to remove asset pair
+* `Atomic swap ask` resource
 
 ## 4.5.0
 
 ### Added
 
 * `trailing_digits_count` to asset creation request attributes
+* `Asset` relationship to create withdraw request relationships
 
 ## 4.4.1
 

@@ -94,7 +94,7 @@ func ForOperation(
 			break
 		}
 
-		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeCreateAtomicSwap.ShortString() {
+		if request.Body.Type.ShortString() != xdr.ReviewableRequestTypeCreateAtomicSwapBid.ShortString() {
 			result = append(result, Participant{
 				AccountID: request.Requestor,
 				BalanceID: nil,
@@ -108,7 +108,7 @@ func ForOperation(
 			break
 		}
 
-		atomicSwapExtendedResult, ok := extendedResult.TypeExt.GetASwapExtended()
+		atomicSwapExtendedResult, ok := extendedResult.TypeExt.GetAtomicSwapBidExtended()
 		if !ok {
 			break
 		}
@@ -120,8 +120,8 @@ func ForOperation(
 		})
 
 		result = append(result, Participant{
-			AccountID: atomicSwapExtendedResult.PurchaserId,
-			BalanceID: &atomicSwapExtendedResult.PurchaserBaseBalanceId,
+			AccountID: atomicSwapExtendedResult.AskOwnerId,
+			BalanceID: &atomicSwapExtendedResult.AskOwnerBaseBalanceId,
 			Details:   nil,
 		})
 	case xdr.OperationTypeCreatePreissuanceRequest:
@@ -164,9 +164,9 @@ func ForOperation(
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateManageLimitsRequest:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeCreateAswapBidRequest:
+	case xdr.OperationTypeCreateAtomicSwapAskRequest:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeCancelAswapBid:
+	case xdr.OperationTypeCancelAtomicSwapAsk:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeStamp:
 		// the only direct participant is the source_account
@@ -176,14 +176,15 @@ func ForOperation(
 	case xdr.OperationTypeManageCreatePollRequest:
 	case xdr.OperationTypeManageVote:
 		// the only direct participant is the source_account
-	case xdr.OperationTypeCreateAswapRequest:
+	case xdr.OperationTypeCreateAtomicSwapBidRequest:
 		// FIXME !!!!!
 		//tx.SourceAccount
-		if sourceParticipant.AccountID.Address() != opResult.MustCreateASwapRequestResult().Success.BidOwnerId.Address() {
-			result = append(result, Participant{opResult.MustCreateASwapRequestResult().Success.BidOwnerId, nil, nil})
+		if sourceParticipant.AccountID.Address() != opResult.MustCreateAtomicSwapBidRequestResult().Success.AskOwnerId.Address() {
+			result = append(result, Participant{opResult.MustCreateAtomicSwapBidRequestResult().Success.AskOwnerId, nil, nil})
 		}
 	case xdr.OperationTypeCancelSaleRequest:
 		// the only direct participant is the source_account
+	case xdr.OperationTypeCancelChangeRoleRequest:
 	case xdr.OperationTypeManageAccountRule:
 	case xdr.OperationTypeManageSignerRule:
 	case xdr.OperationTypeManageSigner:

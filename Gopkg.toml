@@ -94,7 +94,7 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[constraint]]
+[[override]]
   name = "gitlab.com/tokend/go"
   branch = "feature/remove-asset-pair"
 

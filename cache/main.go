@@ -8,6 +8,6 @@ type Provider struct {
 
 func NewProvider() *Provider {
 	return &Provider{
-		assetCache: newCoreAssetCache(time.Duration(1)*time.Hour, time.Duration(1)*time.Hour),
+		assetCache: newcoreAssetCache(time.Duration(1)*time.Hour, time.Duration(1)*time.Hour),
 	}
 }

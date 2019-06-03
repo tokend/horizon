@@ -9,10 +9,8 @@ import (
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
-	"gitlab.com/tokend/horizon/web_v2/resources"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -27,10 +25,12 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler := getSaleHandler{
-		SalesQ:           history2.NewSalesQ(historyRepo),
-		AssetsQ:          core2.NewAssetsQ(coreRepo),
-		saleCapConverter: converter,
-		Log:              ctx.Log(r),
+		getSaleBase{
+			SalesQ:           history2.NewSalesQ(historyRepo),
+			AssetsQ:          core2.NewAssetsQ(coreRepo),
+			saleCapConverter: converter,
+			Log:              ctx.Log(r),
+		},
 	}
 
 	request, err := requests.NewGetSale(r)
@@ -57,62 +57,11 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 }
 
 type getSaleHandler struct {
-	SalesQ           history2.SalesQ
-	AssetsQ          core2.AssetsQ
-	saleCapConverter *saleCapConverter
-	Log              *logan.Entry
+	getSaleBase
 }
 
 // GetSale returns sale with related resources
 func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResponse, error) {
-	historySale, err := h.SalesQ.GetByID(request.ID)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get sale by ID")
-	}
-	if historySale == nil {
-		return nil, nil
-	}
-
-	err = h.saleCapConverter.PopulateSaleCap(historySale)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to populate sale cap")
-	}
-
-	response := &regources.SaleResponse{
-		Data: resources.NewSale(*historySale),
-	}
-
-	defaultQuoteAsset := resources.NewSaleDefaultQuoteAsset(*historySale)
-	response.Data.Relationships.DefaultQuoteAsset = defaultQuoteAsset.AsRelation()
-
-	if request.ShouldInclude(requests.IncludeTypeSaleDefaultQuoteAsset) {
-		response.Included.Add(&defaultQuoteAsset)
-	}
-
-	quoteAssets := &regources.RelationCollection{
-		Data: make([]regources.Key, 0, len(historySale.QuoteAssets.QuoteAssets)),
-	}
-
-	for _, historyQuoteAsset := range historySale.QuoteAssets.QuoteAssets {
-		quoteAsset := resources.NewSaleQuoteAsset(historyQuoteAsset, historySale.ID)
-		quoteAssets.Data = append(quoteAssets.Data, quoteAsset.Key)
-
-		if request.ShouldInclude(requests.IncludeTypeSaleQuoteAssets) {
-			response.Included.Add(&quoteAsset)
-		}
-	}
-	response.Data.Relationships.QuoteAssets = quoteAssets
-
-	if request.ShouldInclude(requests.IncludeTypeSaleBaseAsset) {
-		// FIXME: ingest assets to history and join
-		coreAsset, err := h.AssetsQ.GetByCode(historySale.BaseAsset)
-		if err != nil {
-			return nil, errors.Wrap(err, "Failed to get base asset by code")
-		}
-
-		asset := resources.NewAsset(*coreAsset)
-		response.Included.Add(&asset)
-	}
-
-	return response, nil
+	q := h.SalesQ.FilterByID(request.ID)
+	return h.getAndPopulateResponse(q, request)
 }
