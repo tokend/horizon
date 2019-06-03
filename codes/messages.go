@@ -302,6 +302,7 @@ var messages = map[string]string{
 	"op_recovery_signer_role_not_found":                 "There is no key value by key \"kyc_recovery_signer_role\" ",
 	"op_invalid_update_data":                            "It is not allowed to change target account on request update",
 	"op_same_asset":                                     "Not allowed to create asset pair with equal base and quote assets",
+	"op_invalid_asset_code": "Not allowed to pass invalid base or quote asset code",
 }
 
 func getMessage(rawCode string) string {
