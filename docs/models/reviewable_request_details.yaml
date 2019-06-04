@@ -11,7 +11,7 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/ChangeRoleRequest'
     - $ref: '#/components/schemas/UpdateSaleDetailsRequest'
     - $ref: '#/components/schemas/CreateAtomicSwapBidRequest'
-    - $ref: '#/components/schemas/CreateAtomicSwapRequest'
+    - $ref: '#/components/schemas/CreateAtomicSwapAskRequest'
     - $ref: '#/components/schemas/CreatePollRequest'
     - $ref: '#/components/schemas/KYCRecoveryRequest'
 
@@ -195,6 +195,12 @@ CreateWithdrawRequest:
               properties:
                 data:
                   $ref: '#/components/schemas/BalanceKey'
+            asset:
+              type: object
+              description: "Withdrawn asset"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AssetKey'
         attributes:
           type: object
           required:
@@ -453,7 +459,7 @@ CreateAtomicSwapBidRequest:
               deprecated: true
               $ref: '#/components/schemas/Details'
 
-CreateAtomicSwapRequest:
+CreateAtomicSwapAskRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
     - type: object

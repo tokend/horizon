@@ -61,7 +61,7 @@ type getSaleListForAccountHandler struct {
 	salesBaseHandler
 }
 
-// GetSaleListForAccount returns the list of assets with related resources
+// GetSaleListForAccount returns the list of sales with related resources
 func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.GetSaleListForAccount) (*regources.SaleListResponse, error) {
 
 	q := applySaleFilters(request.SalesBase, h.SalesQ).Whitelisted(request.Address)

@@ -10,12 +10,12 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-func newManageAccountRole(id int64, details history2.ManageAccountRoleDetails,
-) *regources.ManageAccountRoleOp {
+func newManageAccountRoleOp(op history2.Operation) regources.Resource {
+	details := op.Details.ManageAccountRole
 	switch details.Action {
 	case xdr.ManageAccountRoleActionCreate:
 		return &regources.ManageAccountRoleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_ACCOUNT_ROLE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_ACCOUNT_ROLE),
 			Attributes: &regources.ManageAccountRoleOpAttributes{
 				Details: details.CreateDetails.Details,
 			},
@@ -26,7 +26,7 @@ func newManageAccountRole(id int64, details history2.ManageAccountRoleDetails,
 		}
 	case xdr.ManageAccountRoleActionUpdate:
 		return &regources.ManageAccountRoleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_UPDATE_ACCOUNT_ROLE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_UPDATE_ACCOUNT_ROLE),
 			Attributes: &regources.ManageAccountRoleOpAttributes{
 				Details: details.UpdateDetails.Details,
 			},
@@ -37,7 +37,7 @@ func newManageAccountRole(id int64, details history2.ManageAccountRoleDetails,
 		}
 	case xdr.ManageAccountRoleActionRemove:
 		return &regources.ManageAccountRoleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_ACCOUNT_ROLE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_ACCOUNT_ROLE),
 			Relationships: regources.ManageAccountRoleOpRelationships{
 				Role: NewAccountRoleKey(details.RoleID).AsRelation(),
 			},

@@ -39,6 +39,11 @@ func (p *assetPairHandler) Updated(lc ledgerChange) error {
 	return nil
 }
 
+func (p *assetPairHandler) Removed(lc ledgerChange) error {
+	// Nothing to do on asset pair remove
+	return nil
+}
+
 func (p *assetPairHandler) insert(entry xdr.AssetPairEntry, ts time.Time) error {
 	newAssetPair := history.NewAssetPair(string(entry.Base), string(entry.Quote), int64(entry.CurrentPrice), ts)
 	err := p.storage.InsertAssetPair(newAssetPair)

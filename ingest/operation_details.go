@@ -169,7 +169,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 		opResult := c.OperationResult().MustReviewRequestResult().MustSuccess()
 		details["is_fulfilled"] = opResult.Fulfilled
 
-		aSwapExtended, ok := opResult.TypeExt.GetASwapExtended()
+		aSwapExtended, ok := opResult.TypeExt.GetAtomicSwapBidExtended()
 		if !ok {
 			break
 		}
@@ -249,9 +249,12 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeCancelSaleRequest:
 		op := c.Operation().Body.MustCancelSaleCreationRequestOp()
 		details["request_id"] = uint64(op.RequestId)
-	case xdr.OperationTypeCreateAswapBidRequest:
-		op := c.Operation().Body.MustCreateASwapBidCreationRequestOp()
-		opRes := c.OperationResult().MustCreateASwapBidCreationRequestResult().
+	case xdr.OperationTypeCancelChangeRoleRequest:
+		op := c.Operation().Body.MustCancelChangeRoleRequestOp()
+		details["request_id"] = uint64(op.RequestId)
+	case xdr.OperationTypeCreateAtomicSwapAskRequest:
+		op := c.Operation().Body.MustCreateAtomicSwapAskRequestOp()
+		opRes := c.OperationResult().MustCreateAtomicSwapAskRequestResult().
 			MustSuccess()
 		details["base_balance_id"] = op.Request.BaseBalance
 		details["amount"] = amount.StringU(uint64(op.Request.Amount))
@@ -262,15 +265,15 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["details"] = bidDetails
 		details["quote_assets"] = op.Request.QuoteAssets
 		details["request_id"] = uint64(opRes.RequestId)
-	case xdr.OperationTypeCancelAswapBid:
-		op := c.Operation().Body.MustCancelASwapBidOp()
+	case xdr.OperationTypeCancelAtomicSwapAsk:
+		op := c.Operation().Body.MustCancelAtomicSwapAskOp()
 
-		details["bid_id"] = uint64(op.BidId)
-	case xdr.OperationTypeCreateAswapRequest:
-		op := c.Operation().Body.MustCreateASwapRequestOp()
-		opRes := c.OperationResult().MustCreateASwapRequestResult().
+		details["ask_id"] = uint64(op.AskId)
+	case xdr.OperationTypeCreateAtomicSwapBidRequest:
+		op := c.Operation().Body.MustCreateAtomicSwapBidRequestOp()
+		opRes := c.OperationResult().MustCreateAtomicSwapBidRequestResult().
 			MustSuccess()
-		details["bid_id"] = op.Request.BidId
+		details["ask_id"] = op.Request.AskId
 		details["base_amount"] = amount.StringU(uint64(op.Request.BaseAmount))
 		details["quote_asset"] = string(op.Request.QuoteAsset)
 		details["request_id"] = opRes.RequestId
@@ -359,6 +362,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 			details["poll_id"] = op.Data.MustRemoveData().PollId
 		}
 	case xdr.OperationTypeManageAccountSpecificRule:
+	case xdr.OperationTypeRemoveAssetPair:
+		op := c.Operation().Body.MustRemoveAssetPairOp()
+		details["base"] = op.Base
+		details["quote"] = op.Quote
 	case xdr.OperationTypeCreateKycRecoveryRequest:
 		op := c.Operation().Body.MustCreateKycRecoveryRequestOp()
 		details["target_account"] = op.TargetAccount
@@ -395,13 +402,13 @@ func getReviewRequestOpDetails(requestDetails xdr.ReviewRequestOpRequestDetails)
 	}
 }
 
-func getAtomicSwapDetails(atomicSwapExtendedResult xdr.ASwapExtended) map[string]interface{} {
+func getAtomicSwapDetails(atomicSwapExtendedResult xdr.AtomicSwapBidExtended) map[string]interface{} {
 	return map[string]interface{}{
-		"bid_id":                          uint64(atomicSwapExtendedResult.BidId),
+		"ask_id":                          uint64(atomicSwapExtendedResult.AskId),
 		"bid_owner_id":                    atomicSwapExtendedResult.BidOwnerId.Address(),
 		"bid_owner_base_asset_balance_id": atomicSwapExtendedResult.BidOwnerBaseBalanceId.AsString(),
-		"purchaser_id":                    atomicSwapExtendedResult.PurchaserId.Address(),
-		"purchaser_base_asset_balance_id": atomicSwapExtendedResult.PurchaserBaseBalanceId.AsString(),
+		"ask_owner_id":                    atomicSwapExtendedResult.AskOwnerId.Address(),
+		"ask_owner_base_asset_balance_id": atomicSwapExtendedResult.AskOwnerBaseBalanceId.AsString(),
 		"base_asset":                      string(atomicSwapExtendedResult.BaseAsset),
 		"quote_asset":                     string(atomicSwapExtendedResult.QuoteAsset),
 		"base_amount":                     regources.Amount(atomicSwapExtendedResult.BaseAmount),

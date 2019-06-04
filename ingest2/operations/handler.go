@@ -88,10 +88,10 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCreateSaleRequest: &createSaleRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreateAswapBidRequest: &createAtomicSwapBidRequestOpHandler{
+			xdr.OperationTypeCreateAtomicSwapAskRequest: &createAtomicSwapAskRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeCreateAswapRequest: &createAtomicSwapRequestOpHandler{
+			xdr.OperationTypeCreateAtomicSwapBidRequest: &createAtomicSwapBidRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeCreateWithdrawalRequest: &createWithdrawRequestOpHandler{
@@ -110,7 +110,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCheckSaleState: &checkSaleStateOpHandler{
 				manageOfferOpHandler: manageOfferOpHandlerInst,
 			},
-			xdr.OperationTypeCancelAswapBid: &cancelAtomicSwapBidOpHandler{
+			xdr.OperationTypeCancelAtomicSwapAsk: &cancelAtomicSwapAskOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeManageInvoiceRequest: &deprecatedOpHandler{},
@@ -120,6 +120,9 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeManageContractRequest: &deprecatedOpHandler{},
 			xdr.OperationTypeManageContract:        &deprecatedOpHandler{},
 			xdr.OperationTypeCancelSaleRequest: &stubOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeCancelChangeRoleRequest: &stubOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypePayout: &payoutHandler{
@@ -156,6 +159,9 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeManageVote: &manageVoteOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeRemoveAssetPair: &removeAssetPairOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeInitiateKycRecovery: &initiateKycRecoveryOpHandler{

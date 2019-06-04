@@ -24,8 +24,8 @@ type ReviewableRequestDetails struct {
 	CreateAmlAlert      *CreateAmlAlertRequest      `json:"create_aml_alert,omitempty"`
 	ChangeRole          *ChangeRoleRequest          `json:"change_role,omitempty"`
 	UpdateSaleDetails   *UpdateSaleDetailsRequest   `json:"update_sale_details,omitempty"`
+	CreateAtomicSwapAsk *CreateAtomicSwapAskRequest `json:"create_atomic_swap_ask,omitempty"`
 	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid,omitempty"`
-	CreateAtomicSwap    *CreateAtomicSwapRequest    `json:"create_atomic_swap,omitempty"`
 	CreatePoll          *CreatePollRequest          `json:"create_poll,omitempty"`
 	KYCRecovery         *KYCRecoveryRequest         `json:"kyc_recovery,omitempty"`
 }
@@ -88,6 +88,7 @@ type CreateIssuanceRequest struct {
 
 //CreateWithdrawalRequest - request details
 type CreateWithdrawalRequest struct {
+	Asset          string            `json:"asset"`
 	BalanceID      string            `json:"balance_id"`
 	Amount         regources.Amount  `json:"amount"`
 	Fee            regources.Fee     `json:"fee"`
@@ -135,17 +136,17 @@ type UpdateSaleDetailsRequest struct {
 	CreatorDetails regources.Details `json:"creator_details"`
 }
 
-//CreateAtomicSwapBidRequest - request details
-type CreateAtomicSwapBidRequest struct {
+//CreateAtomicSwapAskRequest - request details
+type CreateAtomicSwapAskRequest struct {
 	BaseBalance    string                 `json:"base_balance"`
 	BaseAmount     regources.Amount       `json:"base_amount"`
 	CreatorDetails regources.Details      `json:"creator_details"`
 	QuoteAssets    []regources.AssetPrice `json:"quote_assets"`
 }
 
-//CreateAtomicSwapRequest - request details
-type CreateAtomicSwapRequest struct {
-	BidID          uint64            `json:"bid_id"`
+//CreateAtomicSwapAskRequest - request details
+type CreateAtomicSwapBidRequest struct {
+	AskID          uint64            `json:"bid_id"`
 	BaseAmount     regources.Amount  `json:"base_amount"`
 	QuoteAsset     string            `json:"quote_asset"`
 	CreatorDetails regources.Details `json:"creator_details"`

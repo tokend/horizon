@@ -341,10 +341,10 @@ func initWebActions(app *App) {
 		CustomFilter: func(action *ReviewableRequestIndexAction) {
 			bidID := action.GetOptionalInt64("bid_id")
 			if bidID != nil {
-				action.q = action.q.ASwapByBidID(*bidID)
+				action.q = action.q.AtomicSwapByBidID(*bidID)
 			}
 		},
-		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwap},
+		RequestTypes: []xdr.ReviewableRequestType{xdr.ReviewableRequestTypeCreateAtomicSwapAsk},
 	})
 
 	// Sales actions
@@ -354,10 +354,6 @@ func initWebActions(app *App) {
 
 	// CreateSale antes actions
 	r.Get("/sale_antes", &SaleAnteAction{})
-
-	// Atomic swap bid actions
-	r.Get("/atomic_swap_bids", &ASwapBidIndexAction{})
-	r.Get("/atomic_swap_bids/:id", &ASwapBidShowAction{})
 
 	// Contracts actions
 	r.Get("/contracts", &ContractIndexAction{})

@@ -37,7 +37,7 @@ func NewHandler(account accountStorage,
 	accountSpecificRule accountSpecificRuleStorage,
 ) *Handler {
 
-	reviewRequestHandlerInst := newReviewableRequestHandler(request)
+	reviewRequestHandlerInst := newReviewableRequestHandler(request, balance)
 	saleHandlerInst := newSaleHandler(sale, accountSpecificRule)
 	assetPairHandler := newAssetPairHandler(assetPair)
 	pollHandlerInst := newPollHandler(poll)
@@ -66,6 +66,7 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeSale:                saleHandlerInst,
 			xdr.LedgerEntryTypePoll:                pollHandlerInst,
 			xdr.LedgerEntryTypeVote:                voteHandlerInst,
+			xdr.LedgerEntryTypeAssetPair:           assetPairHandler,
 			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 		},
 	}

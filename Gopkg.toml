@@ -94,12 +94,12 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/txsub"
 
-[[constraint]]
+[[override]]
   name = "gitlab.com/tokend/go"
-  version = "3.6.0"
+  branch = "feature/remove-asset-pair"
 
 [[constraint]]
-  version = "4.5.0"
+  branch = "feature/account-kyc-data-relation"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

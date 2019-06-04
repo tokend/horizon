@@ -371,3 +371,23 @@ func (is *Session) updateReviewableRequestState(
 	}
 	return nil
 }
+
+func (is *Session) processCancelChangeRoleRequest(
+	op xdr.CancelChangeRoleRequestOp,
+	result xdr.CancelChangeRoleRequestResult,
+) error {
+	if result.Code != xdr.CancelChangeRoleRequestResultCodeSuccess {
+		return nil
+	}
+
+	err := is.Ingestion.HistoryQ().ReviewableRequests().
+		Cancel(uint64(op.RequestId))
+	if err != nil {
+		return errors.Wrap(err,
+			"failed to cancel change role request", logan.F{
+				"request_id": uint64(op.RequestId),
+			})
+	}
+
+	return nil
+}

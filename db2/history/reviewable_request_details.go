@@ -27,8 +27,8 @@ type ReviewableRequestDetails struct {
 	PromotionUpdate       *PromotionUpdateRequest   `json:"promotion_update"`
 	Invoice               *InvoiceRequest           `json:"invoice"`
 	Contract              *ContractRequest          `json:"contract"`
-	AtomicSwapBidCreation *AtomicSwapBidCreation    `json:"create_atomic_swap_bid,omitempty"`
-	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap,omitempty"`
+	AtomicSwapAskCreation *AtomicSwapAskCreation    `json:"create_atomic_swap_ask,omitempty"`
+	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap_bid,omitempty"`
 	CreatePoll            *CreatePoll               `json:"create_poll,omitempty"`
 }
 
@@ -147,7 +147,7 @@ type PromotionUpdateRequest struct {
 	NewPromotionData SaleRequest `json:"new_promotion_data"`
 }
 
-type AtomicSwapBidCreation struct {
+type AtomicSwapAskCreation struct {
 	BaseBalance string                 `json:"base_balance"`
 	BaseAmount  uint64                 `json:"base_amount"`
 	Details     map[string]interface{} `json:"details"`
@@ -155,7 +155,7 @@ type AtomicSwapBidCreation struct {
 }
 
 type AtomicSwap struct {
-	BidID      uint64 `json:"bid_id"`
+	AskID      uint64 `json:"bid_id"`
 	BaseAmount uint64 `json:"base_amount"`
 	QuoteAsset string `json:"quote_asset"`
 }

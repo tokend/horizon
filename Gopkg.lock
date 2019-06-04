@@ -495,7 +495,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  digest = "1:7947c2a0b1f1a5b35355d2866a5f018afb3a5dd5e84ca5e9952d3011dccc2299"
+  branch = "feature/remove-asset-pair"
+  digest = "1:adc772b2a4909ff9220dc367389345cc3aa1ff84283cca01304ae93c5a7651fa"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -513,8 +514,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "0155a8b97ec8d21e8549dc2bb944955b478b3539"
-  version = "v3.6.0"
+  revision = "f5819f27f9db6a3eeb91325dbc4860104d992479"
 
 [[projects]]
   branch = "master"
@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  digest = "1:8dcdb72648373a5c9e1fbf2964040b1265070b625d8fd52d5ce45fcc0adb50cd"
+  branch = "feature/account-kyc-data-relation"
+  digest = "1:2ce0d53c6f40bfaa6aeff66b66570966c0ccecb0714d4fd170d3cdfd71a05f25"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "908faddd5e0067ea694d5243ccad8c4f604cea95"
-  version = "v4.5.0"
+  revision = "ea4a780bcf8927edce307863e6e07dc5d85325b1"
 
 [[projects]]
   branch = "master"

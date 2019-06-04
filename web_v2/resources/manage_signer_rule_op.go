@@ -7,12 +7,12 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-func newManageSignerRule(id int64, details history2.ManageSignerRuleDetails,
-) *regources.ManageSignerRuleOp {
+func newManageSignerRuleOp(op history2.Operation) regources.Resource {
+	details := op.Details.ManageSignerRule
 	switch details.Action {
 	case xdr.ManageSignerRuleActionCreate:
 		return &regources.ManageSignerRuleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_CREATE_SIGNER_RULE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_SIGNER_RULE),
 			Attributes: &regources.ManageSignerRuleOpAttributes{
 				Resource:   details.CreateDetails.Resource,
 				Action:     details.CreateDetails.Action,
@@ -27,7 +27,7 @@ func newManageSignerRule(id int64, details history2.ManageSignerRuleDetails,
 		}
 	case xdr.ManageSignerRuleActionUpdate:
 		return &regources.ManageSignerRuleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_UPDATE_SIGNER_RULE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_UPDATE_SIGNER_RULE),
 			Attributes: &regources.ManageSignerRuleOpAttributes{
 				Resource:  details.UpdateDetails.Resource,
 				Action:    details.UpdateDetails.Action,
@@ -41,7 +41,7 @@ func newManageSignerRule(id int64, details history2.ManageSignerRuleDetails,
 		}
 	case xdr.ManageSignerRuleActionRemove:
 		return &regources.ManageSignerRuleOp{
-			Key: regources.NewKeyInt64(id, regources.OPERATIONS_REMOVE_SIGNER_RULE),
+			Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_SIGNER_RULE),
 			Relationships: &regources.ManageSignerRuleOpRelationships{
 				Rule: NewSignerRoleKey(details.RuleID).AsRelation(),
 			},
