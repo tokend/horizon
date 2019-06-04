@@ -66,6 +66,7 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeSale:                saleHandlerInst,
 			xdr.LedgerEntryTypePoll:                pollHandlerInst,
 			xdr.LedgerEntryTypeVote:                voteHandlerInst,
+			xdr.LedgerEntryTypeAssetPair:           assetPairHandler,
 			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 		},
 	}

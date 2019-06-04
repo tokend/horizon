@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+
+* Operation to remove asset pair
 * `Atomic swap ask` resource
 
 ## 4.5.0

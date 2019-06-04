@@ -54,6 +54,7 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeCancelChangeRoleRequest:                newCancelChangeRoleRequest,
 	xdr.OperationTypeInitiateKycRecovery:                    newInitiateKYCRecoveryOp,
 	xdr.OperationTypeCreateKycRecoveryRequest:               newCreateKYCRecoveryRequestOp,
+	xdr.OperationTypeRemoveAssetPair: newRemoveAssetPairOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -543,6 +544,17 @@ func newStampOp(op history2.Operation) regources.Resource {
 		Attributes: regources.StampOpAttributes{
 			LedgerHash:  details.LedgerHash,
 			LicenseHash: details.LicenseHash,
+		},
+	}
+}
+
+func newRemoveAssetPairOp(op history2.Operation) regources.Resource {
+	details := op.Details.RemoveAssetPair
+	return &regources.RemoveAssetPairOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_ASSET_PAIR),
+		Relationships: regources.RemoveAssetPairOpRelationships{
+			Base:  NewAssetKey(details.Base).AsRelation(),
+			Quote: NewAssetKey(details.Quote).AsRelation(),
 		},
 	}
 }

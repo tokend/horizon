@@ -40,6 +40,7 @@ OperationDetails:
     - $ref: '#/components/schemas/InitiateKYCRecoveryOp'
     - $ref: '#/components/schemas/CreateKYCRecoveryRequestOp'
     - $ref: '#/components/schemas/ManageAccountSpecificRuleOp'
+    - $ref: '#/components/schemas/RemoveAssetPairOp'
 
 OperationDetailsKey:
   oneOf:
@@ -83,3 +84,4 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/InitiateKYCRecoveryOpKey'
     - $ref: '#/components/schemas/CreateKYCRecoveryRequestOpKey'
     - $ref: '#/components/schemas/ManageAccountSpecificRuleOpKey'
+    - $ref: '#/components/schemas/RemoveAssetPairOpKey'

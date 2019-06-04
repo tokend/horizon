@@ -96,10 +96,10 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/atomic_swap_returning"
+  branch = "feature/remove-asset-pair"
 
 [[constraint]]
-  branch = "feature/atomic_swap_returning"
+  branch = "feature/remove-asset-pair"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

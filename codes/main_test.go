@@ -197,4 +197,10 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
+
+	Convey("Remove asset pair", t, func() {
+		for _, code := range xdr.RemoveAssetPairResultCodeAll {
+			checkCode(t, code)
+		}
+	})
 }

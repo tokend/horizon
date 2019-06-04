@@ -12,6 +12,7 @@
 * `KYCRecovery` reviewable request ingestion
 * `GetKYCRecoveryRequests` to handle `/v3/kyc_recovery_requests`, `/v3/kyc_recovery_requests/{id}`
 * Docs on kyc recovery
+* `RemoveAssetPairOp` operation ingestion
 * Tests for operation details handling
 * `/v3/accounts/{id}/sales/{sale_id}` endpoint to get sale by id, if account is allowed to participate
 * `GetSaleForAccount` to handle `/v3/accounts/{id}/sales/{sale_id}`

@@ -199,6 +199,7 @@ func ForOperation(
 			})
 		}
 	case xdr.OperationTypeManageAccountSpecificRule:
+	case xdr.OperationTypeRemoveAssetPair:
 	case xdr.OperationTypeCreateKycRecoveryRequest:
 	case xdr.OperationTypeInitiateKycRecovery:
 	default:

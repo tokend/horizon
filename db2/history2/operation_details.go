@@ -51,6 +51,7 @@ type OperationDetails struct {
 	ManageCreatePollRequest    *ManageCreatePollRequestDetails    `json:"manage_create_poll_request,omitempty"`
 	ManagePoll                 *ManagePollDetails                 `json:"manage_poll,omitempty"`
 	ManageVote                 *ManageVoteDetails                 `json:"manage_vote,omitempty"`
+	RemoveAssetPair            *RemoveAssetPairDetails            `json:"remove_asset_pair,omitempty"`
 	InitiateKYCRecovery        *InitiateKYCRecoveryDetails        `json:"initiate_kyc_recovery,omitempty"`
 	CreateKYCRecoveryRequest   *CreateKYCRecoveryRequestDetails   `json:"create_kyc_recovery_request,omitempty"`
 }
@@ -509,6 +510,11 @@ type ManageVoteDetails struct {
 	PollID   int64                `json:"poll_id"`
 	Action   xdr.ManageVoteAction `json:"action"`
 	VoteData *xdr.VoteData        `json:"vote_data,omitmepty"`
+}
+
+type RemoveAssetPairDetails struct {
+	Base  string `json:"base"`
+	Quote string `json:"quote"`
 }
 
 type InitiateKYCRecoveryDetails struct {

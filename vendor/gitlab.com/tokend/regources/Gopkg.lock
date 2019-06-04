@@ -66,8 +66,8 @@
   version = "v3.7"
 
 [[projects]]
-  branch = "feature/atomic_swap_returning"
-  digest = "1:56e866a877babbde7bd3e5331ccb148ae2665edbfaf5a94768df084c22a58177"
+  branch = "feature/remove-asset-pair"
+  digest = "1:92705efaf0004d4e5222f65024e7290d74f629ecab87fcc41ef1a758d84da283"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -76,7 +76,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "b19a0bf1f6e07e8efb0c74e2cb33adec2be5e2dd"
+  revision = "f5819f27f9db6a3eeb91325dbc4860104d992479"
 
 [[projects]]
   digest = "1:2ad5e4bbe42ffd64b10babe1ec1ac99d64122170cb2524326ad81708ebd0b9cc"

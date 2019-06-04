@@ -1,103 +1,104 @@
-// revision: f837ba578b958da1f984e6a47f78cdd781e60c49
-// branch:   feature/atomic_swap_returning
+// revision: 9199f20369f8ca208e0a69372f3a4592aa50b9e5
+// branch:   feature/remove-asset-pair
 // Package xdr is generated from:
 //
-//  xdr/Stellar-SCP.x
-//  xdr/Stellar-ledger-entries-account-KYC.x
-//  xdr/Stellar-ledger-entries-account-limits.x
-//  xdr/Stellar-ledger-entries-account-role.x
-//  xdr/Stellar-ledger-entries-account-rule.x
-//  xdr/Stellar-ledger-entries-account-specific-rule.x
-//  xdr/Stellar-ledger-entries-account.x
-//  xdr/Stellar-ledger-entries-asset-pair.x
-//  xdr/Stellar-ledger-entries-asset.x
-//  xdr/Stellar-ledger-entries-atomic-swap-ask.x
-//  xdr/Stellar-ledger-entries-balance.x
-//  xdr/Stellar-ledger-entries-contract.x
-//  xdr/Stellar-ledger-entries-external-system-id-pool-entry.x
-//  xdr/Stellar-ledger-entries-external-system-id.x
-//  xdr/Stellar-ledger-entries-fee.x
-//  xdr/Stellar-ledger-entries-key-value.x
-//  xdr/Stellar-ledger-entries-license.x
-//  xdr/Stellar-ledger-entries-limits-v2.x
-//  xdr/Stellar-ledger-entries-offer.x
-//  xdr/Stellar-ledger-entries-pending-statistics.x
-//  xdr/Stellar-ledger-entries-poll.x
-//  xdr/Stellar-ledger-entries-reference.x
-//  xdr/Stellar-ledger-entries-reviewable-request.x
-//  xdr/Stellar-ledger-entries-sale.x
-//  xdr/Stellar-ledger-entries-signer-role.x
-//  xdr/Stellar-ledger-entries-signer-rule.x
-//  xdr/Stellar-ledger-entries-signer.x
-//  xdr/Stellar-ledger-entries-stamp.x
-//  xdr/Stellar-ledger-entries-statistics-v2.x
-//  xdr/Stellar-ledger-entries-statistics.x
-//  xdr/Stellar-ledger-entries-vote.x
-//  xdr/Stellar-ledger-entries.x
-//  xdr/Stellar-ledger-keys.x
-//  xdr/Stellar-ledger.x
-//  xdr/Stellar-operation-bind-external-system-id.x
-//  xdr/Stellar-operation-cancel-atomic-swap-ask.x
-//  xdr/Stellar-operation-cancel-change-role-request.x
-//  xdr/Stellar-operation-cancel-sale-creation-request.x
-//  xdr/Stellar-operation-check-sale-state.x
-//  xdr/Stellar-operation-create-AML-alert-request.x
-//  xdr/Stellar-operation-create-account.x
-//  xdr/Stellar-operation-create-atomic-swap-ask-request.x
-//  xdr/Stellar-operation-create-atomic-swap-bid-request.x
-//  xdr/Stellar-operation-create-change-role-request.x
-//  xdr/Stellar-operation-create-issuance-request.x
-//  xdr/Stellar-operation-create-kyc-recovery-request.x
-//  xdr/Stellar-operation-create-manage-limits-request.x
-//  xdr/Stellar-operation-create-preissuance-request.x
-//  xdr/Stellar-operation-create-sale-creation-request.x
-//  xdr/Stellar-operation-create-withdrawal-request.x
-//  xdr/Stellar-operation-initiate-kyc-recovery.x
-//  xdr/Stellar-operation-license.x
-//  xdr/Stellar-operation-manage-account-role.x
-//  xdr/Stellar-operation-manage-account-rule.x
-//  xdr/Stellar-operation-manage-account-specific-rule.x
-//  xdr/Stellar-operation-manage-asset-pair.x
-//  xdr/Stellar-operation-manage-asset.x
-//  xdr/Stellar-operation-manage-balance.x
-//  xdr/Stellar-operation-manage-contract-request.x
-//  xdr/Stellar-operation-manage-contract.x
-//  xdr/Stellar-operation-manage-create-poll-request.x
-//  xdr/Stellar-operation-manage-external-system-id-pool-entry.x
-//  xdr/Stellar-operation-manage-invoice-request.x
-//  xdr/Stellar-operation-manage-key-value.x
-//  xdr/Stellar-operation-manage-limits.x
-//  xdr/Stellar-operation-manage-offer.x
-//  xdr/Stellar-operation-manage-poll.x
-//  xdr/Stellar-operation-manage-sale.x
-//  xdr/Stellar-operation-manage-signer-role.x
-//  xdr/Stellar-operation-manage-signer-rule.x
-//  xdr/Stellar-operation-manage-signer.x
-//  xdr/Stellar-operation-manage-vote.x
-//  xdr/Stellar-operation-payment.x
-//  xdr/Stellar-operation-payout.x
-//  xdr/Stellar-operation-review-request.x
-//  xdr/Stellar-operation-set-fees.x
-//  xdr/Stellar-operation-stamp.x
-//  xdr/Stellar-overlay.x
-//  xdr/Stellar-resource-account-rule.x
-//  xdr/Stellar-resource-signer-rule.x
-//  xdr/Stellar-reviewable-request-AML-alert.x
-//  xdr/Stellar-reviewable-request-asset.x
-//  xdr/Stellar-reviewable-request-atomic-swap-ask.x
-//  xdr/Stellar-reviewable-request-atomic-swap-bid.x
-//  xdr/Stellar-reviewable-request-change-role.x
-//  xdr/Stellar-reviewable-request-contract.x
-//  xdr/Stellar-reviewable-request-create-poll.x
-//  xdr/Stellar-reviewable-request-invoice.x
-//  xdr/Stellar-reviewable-request-issuance.x
-//  xdr/Stellar-reviewable-request-kyc-recovery.x
-//  xdr/Stellar-reviewable-request-limits-update.x
-//  xdr/Stellar-reviewable-request-sale.x
-//  xdr/Stellar-reviewable-request-update-sale-details.x
-//  xdr/Stellar-reviewable-request-withdrawal.x
-//  xdr/Stellar-transaction.x
-//  xdr/Stellar-types.x
+//  xdr/SCP.x
+//  xdr/ledger-entries-account-KYC.x
+//  xdr/ledger-entries-account-limits.x
+//  xdr/ledger-entries-account-role.x
+//  xdr/ledger-entries-account-rule.x
+//  xdr/ledger-entries-account-specific-rule.x
+//  xdr/ledger-entries-account.x
+//  xdr/ledger-entries-asset-pair.x
+//  xdr/ledger-entries-asset.x
+//  xdr/ledger-entries-atomic-swap-ask.x
+//  xdr/ledger-entries-balance.x
+//  xdr/ledger-entries-contract.x
+//  xdr/ledger-entries-external-system-id-pool-entry.x
+//  xdr/ledger-entries-external-system-id.x
+//  xdr/ledger-entries-fee.x
+//  xdr/ledger-entries-key-value.x
+//  xdr/ledger-entries-license.x
+//  xdr/ledger-entries-limits-v2.x
+//  xdr/ledger-entries-offer.x
+//  xdr/ledger-entries-pending-statistics.x
+//  xdr/ledger-entries-poll.x
+//  xdr/ledger-entries-reference.x
+//  xdr/ledger-entries-reviewable-request.x
+//  xdr/ledger-entries-sale.x
+//  xdr/ledger-entries-signer-role.x
+//  xdr/ledger-entries-signer-rule.x
+//  xdr/ledger-entries-signer.x
+//  xdr/ledger-entries-stamp.x
+//  xdr/ledger-entries-statistics-v2.x
+//  xdr/ledger-entries-statistics.x
+//  xdr/ledger-entries-vote.x
+//  xdr/ledger-entries.x
+//  xdr/ledger-keys.x
+//  xdr/ledger.x
+//  xdr/operation-bind-external-system-id.x
+//  xdr/operation-cancel-atomic-swap-ask.x
+//  xdr/operation-cancel-change-role-request.x
+//  xdr/operation-cancel-sale-creation-request.x
+//  xdr/operation-check-sale-state.x
+//  xdr/operation-create-AML-alert-request.x
+//  xdr/operation-create-account.x
+//  xdr/operation-create-atomic-swap-ask-request.x
+//  xdr/operation-create-atomic-swap-bid-request.x
+//  xdr/operation-create-change-role-request.x
+//  xdr/operation-create-issuance-request.x
+//  xdr/operation-create-kyc-recovery-request.x
+//  xdr/operation-create-manage-limits-request.x
+//  xdr/operation-create-preissuance-request.x
+//  xdr/operation-create-sale-creation-request.x
+//  xdr/operation-create-withdrawal-request.x
+//  xdr/operation-initiate-kyc-recovery.x
+//  xdr/operation-license.x
+//  xdr/operation-manage-account-role.x
+//  xdr/operation-manage-account-rule.x
+//  xdr/operation-manage-account-specific-rule.x
+//  xdr/operation-manage-asset-pair.x
+//  xdr/operation-manage-asset.x
+//  xdr/operation-manage-balance.x
+//  xdr/operation-manage-contract-request.x
+//  xdr/operation-manage-contract.x
+//  xdr/operation-manage-create-poll-request.x
+//  xdr/operation-manage-external-system-id-pool-entry.x
+//  xdr/operation-manage-invoice-request.x
+//  xdr/operation-manage-key-value.x
+//  xdr/operation-manage-limits.x
+//  xdr/operation-manage-offer.x
+//  xdr/operation-manage-poll.x
+//  xdr/operation-manage-sale.x
+//  xdr/operation-manage-signer-role.x
+//  xdr/operation-manage-signer-rule.x
+//  xdr/operation-manage-signer.x
+//  xdr/operation-manage-vote.x
+//  xdr/operation-payment.x
+//  xdr/operation-payout.x
+//  xdr/operation-remove-asset-pair.x
+//  xdr/operation-review-request.x
+//  xdr/operation-set-fees.x
+//  xdr/operation-stamp.x
+//  xdr/overlay.x
+//  xdr/resource-account-rule.x
+//  xdr/resource-signer-rule.x
+//  xdr/reviewable-request-AML-alert.x
+//  xdr/reviewable-request-asset.x
+//  xdr/reviewable-request-atomic-swap-ask.x
+//  xdr/reviewable-request-atomic-swap-bid.x
+//  xdr/reviewable-request-change-role.x
+//  xdr/reviewable-request-contract.x
+//  xdr/reviewable-request-create-poll.x
+//  xdr/reviewable-request-invoice.x
+//  xdr/reviewable-request-issuance.x
+//  xdr/reviewable-request-kyc-recovery.x
+//  xdr/reviewable-request-limits-update.x
+//  xdr/reviewable-request-sale.x
+//  xdr/reviewable-request-update-sale-details.x
+//  xdr/reviewable-request-withdrawal.x
+//  xdr/transaction.x
+//  xdr/types.x
 //
 // DO NOT EDIT or your changes may be overwritten
 package xdr
@@ -33939,6 +33940,320 @@ func (u PayoutResult) GetSuccess() (result PayoutSuccessResult, ok bool) {
 	return
 }
 
+// RemoveAssetPairOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveAssetPairOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAssetPairOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAssetPairOpExt
+func (u RemoveAssetPairOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveAssetPairOpExt creates a new  RemoveAssetPairOpExt.
+func NewRemoveAssetPairOpExt(v LedgerVersion, value interface{}) (result RemoveAssetPairOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveAssetPairOp is an XDR Struct defines as:
+//
+//   //: `RemoveAssetPairOp` removes specified asset pair
+//    struct RemoveAssetPairOp
+//    {
+//        //: Defines a base asset of an asset pair
+//        AssetCode base;
+//        //: Defines a base asset of an asset pair
+//        AssetCode quote;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type RemoveAssetPairOp struct {
+	Base  AssetCode            `json:"base,omitempty"`
+	Quote AssetCode            `json:"quote,omitempty"`
+	Ext   RemoveAssetPairOpExt `json:"ext,omitempty"`
+}
+
+// RemoveAssetPairResultCode is an XDR Enum defines as:
+//
+//   //: Result codes for `RemoveAssetPairOp`
+//    enum RemoveAssetPairResultCode
+//    {
+//        //: Operation is successfully applied
+//        SUCCESS = 0,
+//        //: Asset pair not found
+//        NOT_FOUND = -1,
+//        //: Asset pair can't be deleted as it has active orders
+//        HAS_ACTIVE_OFFERS = -2,
+//        //: Asset pair can't be deleted as it has active sales
+//        HAS_ACTIVE_SALES = -3,
+//        //: Base or Quote asset is invalid
+//        INVALID_ASSET_CODE = -4
+//    };
+//
+type RemoveAssetPairResultCode int32
+
+const (
+	RemoveAssetPairResultCodeSuccess          RemoveAssetPairResultCode = 0
+	RemoveAssetPairResultCodeNotFound         RemoveAssetPairResultCode = -1
+	RemoveAssetPairResultCodeHasActiveOffers  RemoveAssetPairResultCode = -2
+	RemoveAssetPairResultCodeHasActiveSales   RemoveAssetPairResultCode = -3
+	RemoveAssetPairResultCodeInvalidAssetCode RemoveAssetPairResultCode = -4
+)
+
+var RemoveAssetPairResultCodeAll = []RemoveAssetPairResultCode{
+	RemoveAssetPairResultCodeSuccess,
+	RemoveAssetPairResultCodeNotFound,
+	RemoveAssetPairResultCodeHasActiveOffers,
+	RemoveAssetPairResultCodeHasActiveSales,
+	RemoveAssetPairResultCodeInvalidAssetCode,
+}
+
+var removeAssetPairResultCodeMap = map[int32]string{
+	0:  "RemoveAssetPairResultCodeSuccess",
+	-1: "RemoveAssetPairResultCodeNotFound",
+	-2: "RemoveAssetPairResultCodeHasActiveOffers",
+	-3: "RemoveAssetPairResultCodeHasActiveSales",
+	-4: "RemoveAssetPairResultCodeInvalidAssetCode",
+}
+
+var removeAssetPairResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+	-2: "has_active_offers",
+	-3: "has_active_sales",
+	-4: "invalid_asset_code",
+}
+
+var removeAssetPairResultCodeRevMap = map[string]int32{
+	"RemoveAssetPairResultCodeSuccess":          0,
+	"RemoveAssetPairResultCodeNotFound":         -1,
+	"RemoveAssetPairResultCodeHasActiveOffers":  -2,
+	"RemoveAssetPairResultCodeHasActiveSales":   -3,
+	"RemoveAssetPairResultCodeInvalidAssetCode": -4,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for RemoveAssetPairResultCode
+func (e RemoveAssetPairResultCode) ValidEnum(v int32) bool {
+	_, ok := removeAssetPairResultCodeMap[v]
+	return ok
+}
+func (e RemoveAssetPairResultCode) isFlag() bool {
+	for i := len(RemoveAssetPairResultCodeAll) - 1; i >= 0; i-- {
+		expected := RemoveAssetPairResultCode(2) << uint64(len(RemoveAssetPairResultCodeAll)-1) >> uint64(len(RemoveAssetPairResultCodeAll)-i)
+		if expected != RemoveAssetPairResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e RemoveAssetPairResultCode) String() string {
+	name, _ := removeAssetPairResultCodeMap[int32(e)]
+	return name
+}
+
+func (e RemoveAssetPairResultCode) ShortString() string {
+	name, _ := removeAssetPairResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e RemoveAssetPairResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range RemoveAssetPairResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *RemoveAssetPairResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = RemoveAssetPairResultCode(t.Value)
+	return nil
+}
+
+// RemoveAssetPairSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveAssetPairSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAssetPairSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAssetPairSuccessExt
+func (u RemoveAssetPairSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveAssetPairSuccessExt creates a new  RemoveAssetPairSuccessExt.
+func NewRemoveAssetPairSuccessExt(v LedgerVersion, value interface{}) (result RemoveAssetPairSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveAssetPairSuccess is an XDR Struct defines as:
+//
+//   //: Result of successful `RemoveAssetPairOp` application
+//    struct RemoveAssetPairSuccess
+//    {
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type RemoveAssetPairSuccess struct {
+	Ext RemoveAssetPairSuccessExt `json:"ext,omitempty"`
+}
+
+// RemoveAssetPairResult is an XDR Union defines as:
+//
+//   //: Result of RemoveAssetPair operation application along with the result code
+//    union RemoveAssetPairResult switch (RemoveAssetPairResultCode code) {
+//        case SUCCESS:
+//            RemoveAssetPairSuccess success;
+//        default:
+//            void;
+//    };
+//
+type RemoveAssetPairResult struct {
+	Code    RemoveAssetPairResultCode `json:"code,omitempty"`
+	Success *RemoveAssetPairSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAssetPairResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAssetPairResult
+func (u RemoveAssetPairResult) ArmForSwitch(sw int32) (string, bool) {
+	switch RemoveAssetPairResultCode(sw) {
+	case RemoveAssetPairResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewRemoveAssetPairResult creates a new  RemoveAssetPairResult.
+func NewRemoveAssetPairResult(code RemoveAssetPairResultCode, value interface{}) (result RemoveAssetPairResult, err error) {
+	result.Code = code
+	switch RemoveAssetPairResultCode(code) {
+	case RemoveAssetPairResultCodeSuccess:
+		tv, ok := value.(RemoveAssetPairSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAssetPairSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u RemoveAssetPairResult) MustSuccess() RemoveAssetPairSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u RemoveAssetPairResult) GetSuccess() (result RemoveAssetPairSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
 // ReviewRequestOpAction is an XDR Enum defines as:
 //
 //   //: Actions that can be performed on request that is being reviewed
@@ -41702,6 +42017,8 @@ type WithdrawalRequest struct {
 //            ManageAccountSpecificRuleOp manageAccountSpecificRuleOp;
 //        case CANCEL_CHANGE_ROLE_REQUEST:
 //            CancelChangeRoleRequestOp cancelChangeRoleRequestOp;
+//        case REMOVE_ASSET_PAIR:
+//            RemoveAssetPairOp removeAssetPairOp;
 //        case INITIATE_KYC_RECOVERY:
 //            InitiateKYCRecoveryOp initiateKYCRecoveryOp;
 //        case CREATE_KYC_RECOVERY_REQUEST:
@@ -41751,6 +42068,7 @@ type OperationBody struct {
 	ManageVoteOp                             *ManageVoteOp                             `json:"manageVoteOp,omitempty"`
 	ManageAccountSpecificRuleOp              *ManageAccountSpecificRuleOp              `json:"manageAccountSpecificRuleOp,omitempty"`
 	CancelChangeRoleRequestOp                *CancelChangeRoleRequestOp                `json:"cancelChangeRoleRequestOp,omitempty"`
+	RemoveAssetPairOp                        *RemoveAssetPairOp                        `json:"removeAssetPairOp,omitempty"`
 	InitiateKycRecoveryOp                    *InitiateKycRecoveryOp                    `json:"initiateKYCRecoveryOp,omitempty"`
 	CreateKycRecoveryRequestOp               *CreateKycRecoveryRequestOp               `json:"createKYCRecoveryRequestOp,omitempty"`
 }
@@ -41847,6 +42165,8 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageAccountSpecificRuleOp", true
 	case OperationTypeCancelChangeRoleRequest:
 		return "CancelChangeRoleRequestOp", true
+	case OperationTypeRemoveAssetPair:
+		return "RemoveAssetPairOp", true
 	case OperationTypeInitiateKycRecovery:
 		return "InitiateKycRecoveryOp", true
 	case OperationTypeCreateKycRecoveryRequest:
@@ -42146,6 +42466,13 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.CancelChangeRoleRequestOp = &tv
+	case OperationTypeRemoveAssetPair:
+		tv, ok := value.(RemoveAssetPairOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAssetPairOp")
+			return
+		}
+		result.RemoveAssetPairOp = &tv
 	case OperationTypeInitiateKycRecovery:
 		tv, ok := value.(InitiateKycRecoveryOp)
 		if !ok {
@@ -43189,6 +43516,31 @@ func (u OperationBody) GetCancelChangeRoleRequestOp() (result CancelChangeRoleRe
 	return
 }
 
+// MustRemoveAssetPairOp retrieves the RemoveAssetPairOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustRemoveAssetPairOp() RemoveAssetPairOp {
+	val, ok := u.GetRemoveAssetPairOp()
+
+	if !ok {
+		panic("arm RemoveAssetPairOp is not set")
+	}
+
+	return val
+}
+
+// GetRemoveAssetPairOp retrieves the RemoveAssetPairOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetRemoveAssetPairOp() (result RemoveAssetPairOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "RemoveAssetPairOp" {
+		result = *u.RemoveAssetPairOp
+		ok = true
+	}
+
+	return
+}
+
 // MustInitiateKycRecoveryOp retrieves the InitiateKycRecoveryOp value from the union,
 // panicing if the value is not set.
 func (u OperationBody) MustInitiateKycRecoveryOp() InitiateKycRecoveryOp {
@@ -43333,6 +43685,8 @@ func (u OperationBody) GetCreateKycRecoveryRequestOp() (result CreateKycRecovery
 //            ManageAccountSpecificRuleOp manageAccountSpecificRuleOp;
 //        case CANCEL_CHANGE_ROLE_REQUEST:
 //            CancelChangeRoleRequestOp cancelChangeRoleRequestOp;
+//        case REMOVE_ASSET_PAIR:
+//            RemoveAssetPairOp removeAssetPairOp;
 //        case INITIATE_KYC_RECOVERY:
 //            InitiateKYCRecoveryOp initiateKYCRecoveryOp;
 //        case CREATE_KYC_RECOVERY_REQUEST:
@@ -44036,6 +44390,8 @@ type AccountRuleRequirement struct {
 //            ManageAccountSpecificRuleResult manageAccountSpecificRuleResult;
 //        case CANCEL_CHANGE_ROLE_REQUEST:
 //            CancelChangeRoleRequestResult cancelChangeRoleRequestResult;
+//        case REMOVE_ASSET_PAIR:
+//            RemoveAssetPairResult removeAssetPairResult;
 //        case CREATE_KYC_RECOVERY_REQUEST:
 //            CreateKYCRecoveryRequestResult createKYCRecoveryRequestResult;
 //        case INITIATE_KYC_RECOVERY:
@@ -44085,6 +44441,7 @@ type OperationResultTr struct {
 	ManageVoteResult                             *ManageVoteResult                             `json:"manageVoteResult,omitempty"`
 	ManageAccountSpecificRuleResult              *ManageAccountSpecificRuleResult              `json:"manageAccountSpecificRuleResult,omitempty"`
 	CancelChangeRoleRequestResult                *CancelChangeRoleRequestResult                `json:"cancelChangeRoleRequestResult,omitempty"`
+	RemoveAssetPairResult                        *RemoveAssetPairResult                        `json:"removeAssetPairResult,omitempty"`
 	CreateKycRecoveryRequestResult               *CreateKycRecoveryRequestResult               `json:"createKYCRecoveryRequestResult,omitempty"`
 	InitiateKycRecoveryResult                    *InitiateKycRecoveryResult                    `json:"initiateKYCRecoveryResult,omitempty"`
 }
@@ -44181,6 +44538,8 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "ManageAccountSpecificRuleResult", true
 	case OperationTypeCancelChangeRoleRequest:
 		return "CancelChangeRoleRequestResult", true
+	case OperationTypeRemoveAssetPair:
+		return "RemoveAssetPairResult", true
 	case OperationTypeCreateKycRecoveryRequest:
 		return "CreateKycRecoveryRequestResult", true
 	case OperationTypeInitiateKycRecovery:
@@ -44480,6 +44839,13 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.CancelChangeRoleRequestResult = &tv
+	case OperationTypeRemoveAssetPair:
+		tv, ok := value.(RemoveAssetPairResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAssetPairResult")
+			return
+		}
+		result.RemoveAssetPairResult = &tv
 	case OperationTypeCreateKycRecoveryRequest:
 		tv, ok := value.(CreateKycRecoveryRequestResult)
 		if !ok {
@@ -45523,6 +45889,31 @@ func (u OperationResultTr) GetCancelChangeRoleRequestResult() (result CancelChan
 	return
 }
 
+// MustRemoveAssetPairResult retrieves the RemoveAssetPairResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustRemoveAssetPairResult() RemoveAssetPairResult {
+	val, ok := u.GetRemoveAssetPairResult()
+
+	if !ok {
+		panic("arm RemoveAssetPairResult is not set")
+	}
+
+	return val
+}
+
+// GetRemoveAssetPairResult retrieves the RemoveAssetPairResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetRemoveAssetPairResult() (result RemoveAssetPairResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "RemoveAssetPairResult" {
+		result = *u.RemoveAssetPairResult
+		ok = true
+	}
+
+	return
+}
+
 // MustCreateKycRecoveryRequestResult retrieves the CreateKycRecoveryRequestResult value from the union,
 // panicing if the value is not set.
 func (u OperationResultTr) MustCreateKycRecoveryRequestResult() CreateKycRecoveryRequestResult {
@@ -45662,6 +46053,8 @@ func (u OperationResultTr) GetInitiateKycRecoveryResult() (result InitiateKycRec
 //            ManageAccountSpecificRuleResult manageAccountSpecificRuleResult;
 //        case CANCEL_CHANGE_ROLE_REQUEST:
 //            CancelChangeRoleRequestResult cancelChangeRoleRequestResult;
+//        case REMOVE_ASSET_PAIR:
+//            RemoveAssetPairResult removeAssetPairResult;
 //        case CREATE_KYC_RECOVERY_REQUEST:
 //            CreateKYCRecoveryRequestResult createKYCRecoveryRequestResult;
 //        case INITIATE_KYC_RECOVERY:
@@ -46264,7 +46657,8 @@ type TransactionResult struct {
 //        FIX_EXT_SYS_ACC_EXPIRATION_TIME = 11,
 //        FIX_CHANGE_ROLE_REJECT_TASKS = 12,
 //        FIX_SAME_ASSET_PAIR = 13,
-//        ATOMIC_SWAP_RETURNING = 14
+//        ATOMIC_SWAP_RETURNING = 14,
+//        FIX_INVEST_FEE = 15
 //    };
 //
 type LedgerVersion int32
@@ -46285,6 +46679,7 @@ const (
 	LedgerVersionFixChangeRoleRejectTasks          LedgerVersion = 12
 	LedgerVersionFixSameAssetPair                  LedgerVersion = 13
 	LedgerVersionAtomicSwapReturning               LedgerVersion = 14
+	LedgerVersionFixInvestFee                      LedgerVersion = 15
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -46303,6 +46698,7 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixChangeRoleRejectTasks,
 	LedgerVersionFixSameAssetPair,
 	LedgerVersionAtomicSwapReturning,
+	LedgerVersionFixInvestFee,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -46321,6 +46717,7 @@ var ledgerVersionMap = map[int32]string{
 	12: "LedgerVersionFixChangeRoleRejectTasks",
 	13: "LedgerVersionFixSameAssetPair",
 	14: "LedgerVersionAtomicSwapReturning",
+	15: "LedgerVersionFixInvestFee",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -46339,6 +46736,7 @@ var ledgerVersionShortMap = map[int32]string{
 	12: "fix_change_role_reject_tasks",
 	13: "fix_same_asset_pair",
 	14: "atomic_swap_returning",
+	15: "fix_invest_fee",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -46357,6 +46755,7 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixChangeRoleRejectTasks":          12,
 	"LedgerVersionFixSameAssetPair":                  13,
 	"LedgerVersionAtomicSwapReturning":               14,
+	"LedgerVersionFixInvestFee":                      15,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -47384,7 +47783,8 @@ type Fee struct {
 //        MANAGE_ACCOUNT_SPECIFIC_RULE = 46,
 //        CANCEL_CHANGE_ROLE_REQUEST = 47,
 //        INITIATE_KYC_RECOVERY = 48,
-//        CREATE_KYC_RECOVERY_REQUEST = 49
+//        CREATE_KYC_RECOVERY_REQUEST = 49,
+//        REMOVE_ASSET_PAIR = 50
 //    };
 //
 type OperationType int32
@@ -47433,6 +47833,7 @@ const (
 	OperationTypeCancelChangeRoleRequest                OperationType = 47
 	OperationTypeInitiateKycRecovery                    OperationType = 48
 	OperationTypeCreateKycRecoveryRequest               OperationType = 49
+	OperationTypeRemoveAssetPair                        OperationType = 50
 )
 
 var OperationTypeAll = []OperationType{
@@ -47479,6 +47880,7 @@ var OperationTypeAll = []OperationType{
 	OperationTypeCancelChangeRoleRequest,
 	OperationTypeInitiateKycRecovery,
 	OperationTypeCreateKycRecoveryRequest,
+	OperationTypeRemoveAssetPair,
 }
 
 var operationTypeMap = map[int32]string{
@@ -47525,6 +47927,7 @@ var operationTypeMap = map[int32]string{
 	47: "OperationTypeCancelChangeRoleRequest",
 	48: "OperationTypeInitiateKycRecovery",
 	49: "OperationTypeCreateKycRecoveryRequest",
+	50: "OperationTypeRemoveAssetPair",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -47571,6 +47974,7 @@ var operationTypeShortMap = map[int32]string{
 	47: "cancel_change_role_request",
 	48: "initiate_kyc_recovery",
 	49: "create_kyc_recovery_request",
+	50: "remove_asset_pair",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -47617,6 +48021,7 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeCancelChangeRoleRequest":                47,
 	"OperationTypeInitiateKycRecovery":                    48,
 	"OperationTypeCreateKycRecoveryRequest":               49,
+	"OperationTypeRemoveAssetPair":                        50,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -47695,4 +48100,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "f837ba578b958da1f984e6a47f78cdd781e60c49"
+var Revision = "9199f20369f8ca208e0a69372f3a4592aa50b9e5"

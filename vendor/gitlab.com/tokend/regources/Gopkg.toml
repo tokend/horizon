@@ -32,7 +32,7 @@
 [[constraint]]
   #version = "3.7.0"
   name = "gitlab.com/tokend/go"
-  branch = "feature/atomic_swap_returning"
+  branch = "feature/remove-asset-pair"
 
 [prune]
   go-tests = true
