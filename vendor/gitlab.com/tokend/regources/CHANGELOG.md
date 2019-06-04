@@ -4,6 +4,7 @@
 
 ### Added
 
+* `AccountKyc` resource to handle kyc data for account
 * Operation to remove asset pair
 * `Atomic swap ask` resource
 

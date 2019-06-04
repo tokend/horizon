@@ -99,7 +99,7 @@
   branch = "feature/remove-asset-pair"
 
 [[constraint]]
-  branch = "feature/remove-asset-pair"
+  branch = "feature/account-kyc-data-relation"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/remove-asset-pair"
-  digest = "1:3e89935bc609b0d4a5fc40e237ff7013b597d4ad4f81b5dd7774b237c9e028a9"
+  branch = "feature/account-kyc-data-relation"
+  digest = "1:2ce0d53c6f40bfaa6aeff66b66570966c0ccecb0714d4fd170d3cdfd71a05f25"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "1d931399d817af562713a3dc9f38fdc284c1823b"
+  revision = "ea4a780bcf8927edce307863e6e07dc5d85325b1"
 
 [[projects]]
   branch = "master"
