@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"gitlab.com/tokend/horizon/db2/history2"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -22,6 +24,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getAccountHandler{
 		AccountsQ:          core2.NewAccountsQ(coreRepo),
+		HistoryAccountsQ:   history2.NewAccountsQ(ctx.HistoryRepo(r)),
 		BalancesQ:          core2.NewBalancesQ(coreRepo),
 		AccountRoleQ:       core2.NewAccountRoleQ(coreRepo),
 		AccountRuleQ:       core2.NewAccountRuleQ(coreRepo),
@@ -80,6 +83,7 @@ type getAccountHandler struct {
 	ExternalSystemIDsQ core2.ExternalSystemIDsQ
 	StatsQ             core2.StatsQ
 	KycQ               core2.AccountsKycQ
+	HistoryAccountsQ   history2.AccountsQ
 	Log                *logan.Entry
 }
 
@@ -94,8 +98,12 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		return nil, nil
 	}
 
+	accountStatus, err := h.HistoryAccountsQ.ByAddress(request.Address)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get account status")
+	}
 	response := regources.AccountResponse{
-		Data: resources.NewAccount(*account),
+		Data: resources.NewAccount(*account, regources.KYCRecoveryStatus(accountStatus.KycRecoveryStatus)),
 	}
 
 	response.Data.Relationships.Role, err = h.getRole(request, &response.Included, *account)

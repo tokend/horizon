@@ -16,8 +16,21 @@ Account:
   allOf:
   - $ref: '#/components/schemas/AccountKey'
   - type: object
-    required: [relationships]
+    required: [attributes, relationships]
     properties:
+      attributes:
+        type: object
+        required: [kyc_recovery_status]
+        properties:
+          kyc_recovery_status:
+            type: string
+            format: KYCRecoveryStatus
+            minimum: 0
+            maximum: 1
+            description: |
+              indicates access definition type of the sale
+              * 0 - none
+              * 1 - ongoing
       relationships:
         type: object
         properties:
