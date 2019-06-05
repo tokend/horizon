@@ -105,6 +105,8 @@ func addSentryHook(config config.Config, entry *logan.Entry) (*logan.Entry, erro
 		return fmt.Sprintf("%d - %s", i, http.StatusText(i))
 	})
 
+	hook.SetRelease(version)
+
 	wrapperHook := sentryWrapperHook{
 		SentryHook: hook,
 	}
