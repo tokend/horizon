@@ -102,8 +102,9 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account status")
 	}
+	recoveryStatus := regources.KYCRecoveryStatus(accountStatus.KycRecoveryStatus)
 	response := regources.AccountResponse{
-		Data: resources.NewAccount(*account, regources.KYCRecoveryStatus(accountStatus.KycRecoveryStatus)),
+		Data: resources.NewAccount(*account, &recoveryStatus),
 	}
 
 	response.Data.Relationships.Role, err = h.getRole(request, &response.Included, *account)
@@ -279,7 +280,7 @@ func (h *getAccountHandler) getReferrer(account *core2.Account, request *request
 		})
 	}
 
-	result := resources.NewAccount(*referrer)
+	result := resources.NewAccount(*referrer, nil)
 	includes.Add(&result)
 
 	return result.AsRelation(), nil

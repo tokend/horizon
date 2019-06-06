@@ -6,5 +6,5 @@ package regources
 
 type AccountAttributes struct {
 	// indicates access definition type of the sale * 0 - none * 1 - ongoing
-	KycRecoveryStatus string `json:"kyc_recovery_status"`
+	KycRecoveryStatus *KYCRecoveryStatus `json:"kyc_recovery_status,omitempty"`
 }

@@ -38,7 +38,7 @@ type balanceProvider interface {
 type reviewableRequestHandler struct {
 	storage  reviewableRequestStorage
 	balances balanceProvider
-	accounts accountStateStorage
+	accounts accountStatusStorage
 }
 
 func newReviewableRequestHandler(storage reviewableRequestStorage, balances balanceProvider) *reviewableRequestHandler {

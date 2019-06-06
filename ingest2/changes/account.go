@@ -9,7 +9,6 @@ import (
 type accountStorage interface {
 	InsertAccount(rawAccountID xdr.AccountId, account history.Account) error
 	MustAccount(address xdr.AccountId) history.Account
-	SetRecovery(address string, inProgress bool) error
 }
 
 type accountHandler struct {

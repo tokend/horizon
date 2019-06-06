@@ -22,7 +22,7 @@ func (s KYCRecoveryStatus) String() string {
 	return kycRecoveryStatusStr[s]
 }
 
-func (s PollState) MarshalJSON() ([]byte, error) {
+func (s KYCRecoveryStatus) MarshalJSON() ([]byte, error) {
 	return json.Marshal(Flag{
 		Name:  kycRecoveryStatusStr[s],
 		Value: int32(s),

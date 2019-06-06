@@ -20,13 +20,9 @@ Account:
     properties:
       attributes:
         type: object
-        required: [kyc_recovery_status]
         properties:
           kyc_recovery_status:
-            type: string
             format: KYCRecoveryStatus
-            minimum: 0
-            maximum: 1
             description: |
               indicates access definition type of the sale
               * 0 - none

@@ -35,6 +35,7 @@ func NewHandler(account accountStorage,
 	poll pollStorage,
 	vote voteStorage,
 	accountSpecificRule accountSpecificRuleStorage,
+	accountStatus accountStatusStorage,
 ) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request, balance)
@@ -43,7 +44,7 @@ func NewHandler(account accountStorage,
 	pollHandlerInst := newPollHandler(poll)
 	voteHandlerInst := newVoteHandler(vote)
 	accountSpecificRuleHandlerInst := newAccountSpecificRuleHandler(accountSpecificRule)
-	signerHandlerInst := newSignerHandler(account)
+	signerHandlerInst := newSignerHandler(accountStatus)
 
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{

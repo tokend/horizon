@@ -6,16 +6,20 @@ import (
 )
 
 //NewAccount - creates new instance of account
-func NewAccount(core core2.Account, accountStatus regources.KYCRecoveryStatus) regources.Account {
-	return regources.Account{
+func NewAccount(core core2.Account, accountStatus *regources.KYCRecoveryStatus) regources.Account {
+
+	account := regources.Account{
 		Key: regources.Key{
 			ID:   core.Address,
 			Type: regources.ACCOUNTS,
 		},
-		Attributes: regources.AccountAttributes{
-			KycRecoveryStatus: accountStatus.String(),
-		},
 	}
+	if accountStatus != nil {
+		account.Attributes = regources.AccountAttributes{
+			KycRecoveryStatus: accountStatus,
+		}
+	}
+	return account
 }
 
 //NewAccountKey - creates account key from address

@@ -1,18 +1,21 @@
 package changes
 
-import "gitlab.com/tokend/go/xdr"
+import (
+	"gitlab.com/tokend/go/xdr"
+	regources "gitlab.com/tokend/regources/generated"
+)
 
-type accountStateStorage interface {
-	SetRecovery(address string, inProgress bool) error
+type accountStatusStorage interface {
+	SetKYCRecoveryStatus(address string, status int) error
 }
 
 type signerHandler struct {
-	accountStateStorage accountStateStorage
+	accountStatusStorage accountStatusStorage
 }
 
-func newSignerHandler(storage accountStateStorage) *signerHandler {
+func newSignerHandler(storage accountStatusStorage) *signerHandler {
 	return &signerHandler{
-		accountStateStorage: storage,
+		accountStatusStorage: storage,
 	}
 }
 
@@ -22,7 +25,8 @@ func (p *signerHandler) Removed(lc ledgerChange) error {
 	switch op.Body.Type {
 	case xdr.OperationTypeInitiateKycRecovery:
 		initKycRecovery := op.Body.MustInitiateKycRecoveryOp()
-		return p.accountStateStorage.SetRecovery(initKycRecovery.Account.Address(), true)
+		return p.accountStatusStorage.SetKYCRecoveryStatus(initKycRecovery.Account.Address(),
+			int(regources.KYCRecoveryStatusOngoing))
 	}
 	return nil
 }
@@ -30,13 +34,14 @@ func (p *signerHandler) Removed(lc ledgerChange) error {
 //We don't care about other causes
 func (p *signerHandler) Created(lc ledgerChange) error {
 	op := lc.Operation
-	address := lc.LedgerChange.MustRemoved().MustSigner().AccountId.Address()
+	accID := lc.LedgerChange.MustRemoved().MustSigner().AccountId
 	switch op.Body.Type {
 	case xdr.OperationTypeReviewRequest:
 		reviewRequestOp := op.Body.MustReviewRequestOp()
 		switch reviewRequestOp.RequestDetails.RequestType {
 		case xdr.ReviewableRequestTypeKycRecovery:
-			return p.accountStateStorage.SetRecovery(address, false)
+			return p.accountStatusStorage.SetKYCRecoveryStatus(accID.Address(),
+				int(regources.KYCRecoveryStatusOngoing))
 		}
 	}
 
