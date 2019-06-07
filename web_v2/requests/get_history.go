@@ -13,6 +13,8 @@ const (
 	IncludeTypeHistoryEffect = "effect"
 	//IncludeTypeHistoryOperationDetails - defines if the operation details should be included
 	IncludeTypeHistoryOperationDetails = "operation.details"
+	//IncludeTypeHistoryAsset - defines if the asset should be included
+	IncludeTypeHistoryAsset = "asset"
 
 	// FilterTypeHistoryAccount - defines if we need to filter the list by participant account address
 	FilterTypeHistoryAccount = "account"
@@ -40,6 +42,7 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 			IncludeTypeHistoryOperation:        {},
 			IncludeTypeHistoryEffect:           {},
 			IncludeTypeHistoryOperationDetails: {},
+			IncludeTypeHistoryAsset:            {},
 		},
 		supportedFilters: map[string]struct{}{
 			FilterTypeHistoryAccount: {},

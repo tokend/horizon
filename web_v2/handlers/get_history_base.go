@@ -139,6 +139,7 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 func (h *getHistory) SelectAndPopulate(
 	request *requests.GetHistory,
 	effectsQ history2.ParticipantEffectsQ,
+	assetQ core2.AssetsQ,
 ) (regources.ParticipantsEffectListResponse, error) {
 
 	result := regources.ParticipantsEffectListResponse{
@@ -176,6 +177,17 @@ func (h *getHistory) SelectAndPopulate(
 			effect.Relationships.Effect = change.GetKey().AsRelation()
 			if request.ShouldInclude(requests.IncludeTypeHistoryEffect) {
 				result.Included.Add(change)
+			}
+		}
+
+		if effects[i].AssetCode != nil {
+			if request.ShouldInclude(requests.IncludeTypeHistoryAsset) {
+				rawAsset, err := assetQ.GetByCode(*effects[i].AssetCode)
+				if err != nil {
+					return result, errors.Wrap(err, "failed to load asset")
+				}
+				asset := resources.NewAsset(*rawAsset)
+				result.Included.Add(&asset)
 			}
 		}
 
