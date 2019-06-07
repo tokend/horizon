@@ -33,7 +33,7 @@ type Sale struct {
 
 //SaleQuoteAssets - assets allowed to invest in sale
 type SaleQuoteAssets struct {
-	QuoteAssets []SaleQuoteAsset `json:"quote_assets"`
+	QuoteAssets []SaleQuoteAsset `json:"quote_assets"` // fixme?: move to Sale struct to avoid sale.QuoteAssets.QuoteAssets
 }
 
 //Value - implements db driver method for auto marshal

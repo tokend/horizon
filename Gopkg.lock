@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/account-kyc-data-relation"
-  digest = "1:2ce0d53c6f40bfaa6aeff66b66570966c0ccecb0714d4fd170d3cdfd71a05f25"
+  branch = "fix/missing-data-v3-ep"
+  digest = "1:3ac58953f75e147115755468e2eed641160ae214c64c1fff56ed9d9aa04a21c9"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "ea4a780bcf8927edce307863e6e07dc5d85325b1"
+  revision = "8d1179eddf63a730ecd72b0bf1892a9862ff7132"
 
 [[projects]]
   branch = "master"
