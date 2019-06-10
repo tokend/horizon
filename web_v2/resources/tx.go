@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"gitlab.com/tokend/horizon/resource"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 
@@ -23,27 +25,27 @@ func NewTxKey(txID int64) regources.Key {
 }
 
 func NewTxFailure(env txsub.EnvelopeInfo, txSubErr txsub.Error) error {
-	//var parsedResult xdr.TransactionResult
-	//err := xdr.SafeUnmarshalBase64(txSubErr.ResultXDR(), &parsedResult)
-	//if err != nil {
-	//	return errors.Wrap(err, "Failed to get parse tx result")
-	//}
+	var parsedResult xdr.TransactionResult
+	err := xdr.SafeUnmarshalBase64(txSubErr.ResultXDR(), &parsedResult)
+	if err != nil {
+		return errors.Wrap(err, "Failed to get parse tx result")
+	}
 
 	var parsedEnvelope xdr.TransactionEnvelope
-	err := xdr.SafeUnmarshalBase64(env.RawBlob, &parsedEnvelope)
+	err = xdr.SafeUnmarshalBase64(env.RawBlob, &parsedEnvelope)
 	if err != nil {
 		return errors.Wrap(err, "Failed to unmarshal tx envelope")
 	}
-	//resultCodes, err := resource.NewTransactionResultCodes(parsedResult)
-	//if err != nil {
-	//	return errors.Wrap(err, "Failed to create transaction result codes")
-	//}
+	resultCodes, err := resource.NewTransactionResultCodes(parsedResult)
+	if err != nil {
+		return errors.Wrap(err, "Failed to create transaction result codes")
+	}
 	meta := map[string]interface{}{
 		"envelope":        env.RawBlob,
 		"result_xdr":      txSubErr.ResultXDR(),
 		"parsed_envelope": parsedEnvelope,
-		//"parsed_result":   parsedResult,
-		//"result_codes": resultCodes,
+		"parsed_result":   parsedResult,
+		"result_codes":    resultCodes,
 	}
 
 	return &jsonapi.ErrorObject{

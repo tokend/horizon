@@ -107,7 +107,7 @@ func (s *System) tickCore(ctx context.Context) {
 	for _, hash := range s.List.PendingCore() {
 		res, err := s.Results.FromCore(hash)
 		if IsInternalError(errors.Cause(err)) {
-			s.List.Finish(fullResult{Err: err})
+			s.List.Finish(fullResult{Result: Result{Hash: hash}, Err: err})
 			continue
 		}
 		if err != nil {
@@ -123,7 +123,7 @@ func (s *System) tickCore(ctx context.Context) {
 		if res == nil {
 			err := s.tryResubmit(ctx, hash)
 			if IsInternalError(errors.Cause(err)) {
-				s.List.Finish(fullResult{Err: err})
+				s.List.Finish(fullResult{Result: Result{Hash: hash}, Err: err})
 				continue
 			}
 			if err != nil {
@@ -160,7 +160,7 @@ func (s *System) tickHistory(ctx context.Context) {
 		if res == nil {
 			err := s.tryResubmit(ctx, hash)
 			if IsInternalError(errors.Cause(err)) {
-				s.List.Finish(fullResult{Err: err})
+				s.List.Finish(fullResult{Result: Result{Hash: hash}, Err: err})
 				continue
 			}
 			if err != nil {
