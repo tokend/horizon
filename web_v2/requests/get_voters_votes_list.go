@@ -32,7 +32,7 @@ func NewGetVotersVotes(r *http.Request) (*GetVoterVoteList, error) {
 		return nil, err
 	}
 
-	id := b.getString("voter-id")
+	id := b.getString("voter")
 
 	return &GetVoterVoteList{
 		base:       b,

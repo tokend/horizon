@@ -173,7 +173,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/polls/{id}/relationships/votes", handlers.GetVoteList)
 	m.Get("/v3/polls/{id}/relationships/votes/{voter}", handlers.GetVote)
 
-	m.Get("/v3/votes/{voter-id}", handlers.GetVoterVotesList)
+	m.Get("/v3/votes/{voter}", handlers.GetVoterVotesList)
 
 	m.Get("/v3/sales", handlers.GetSaleList)
 	m.Get("/v3/sales/{id}", handlers.GetSale)
