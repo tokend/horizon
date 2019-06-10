@@ -81,8 +81,8 @@ type createTransactionHandler struct {
 
 func (h *createTransactionHandler) createTx(context context.Context, request *requests.CreateTransaction) (*regources.TransactionResponse, error) {
 	res, err := h.Submitter.Submit(context, *request.Env, request.WaitForIngest)
-	if txsub.IsInternalError(err) {
-		return nil, resources.NewTxFailure(*request.Env, err.(txsub.Error))
+	if txsub.IsInternalError(errors.Cause(err)) {
+		return nil, resources.NewTxFailure(*request.Env, errors.Cause(err).(txsub.Error))
 	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to handle create transaction request")

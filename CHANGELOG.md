@@ -1,3 +1,8 @@
+## Unreleased
+
+### Fixed
+* Transaction failure response for `/v3/transactions`
+
 ## 3.4.0-x.0
 
 ### Removed
