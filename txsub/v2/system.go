@@ -106,6 +106,10 @@ func (s *System) tryResubmit(ctx context.Context, hash string) error {
 func (s *System) tickCore(ctx context.Context) {
 	for _, hash := range s.List.PendingCore() {
 		res, err := s.Results.FromCore(hash)
+		if IsInternalError(errors.Cause(err)) {
+			s.List.Finish(fullResult{Err: err})
+			continue
+		}
 		if err != nil {
 			s.Log.
 				WithError(err).
@@ -113,14 +117,15 @@ func (s *System) tickCore(ctx context.Context) {
 					"tx_hash": hash,
 				}).
 				Error("failed to get result from core")
-		}
-		if IsInternalError(errors.Cause(err)) {
-			s.List.Finish(fullResult{Err: err})
 			continue
 		}
 
 		if res == nil {
 			err := s.tryResubmit(ctx, hash)
+			if IsInternalError(errors.Cause(err)) {
+				s.List.Finish(fullResult{Err: err})
+				continue
+			}
 			if err != nil {
 				s.Log.
 					WithError(err).
@@ -129,10 +134,7 @@ func (s *System) tickCore(ctx context.Context) {
 					}).
 					Error("failed to resubmit tx")
 			}
-			if IsInternalError(errors.Cause(err)) {
-				s.List.Finish(fullResult{Err: err})
-				continue
-			}
+			continue
 		}
 
 		s.Log.WithFields(log.F{
@@ -157,6 +159,10 @@ func (s *System) tickHistory(ctx context.Context) {
 
 		if res == nil {
 			err := s.tryResubmit(ctx, hash)
+			if IsInternalError(errors.Cause(err)) {
+				s.List.Finish(fullResult{Err: err})
+				continue
+			}
 			if err != nil {
 				s.Log.
 					WithError(err).
@@ -164,9 +170,6 @@ func (s *System) tickHistory(ctx context.Context) {
 						"tx_hash": hash,
 					}).
 					Error("failed to resubmit tx")
-			}
-			if IsInternalError(errors.Cause(err)) {
-				s.List.Finish(fullResult{Err: err})
 				continue
 			}
 		}
