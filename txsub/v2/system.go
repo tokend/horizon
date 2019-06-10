@@ -116,6 +116,7 @@ func (s *System) tickCore(ctx context.Context) {
 		}
 		if IsInternalError(errors.Cause(err)) {
 			s.List.Finish(fullResult{Err: err})
+			continue
 		}
 
 		if res == nil {
@@ -128,7 +129,10 @@ func (s *System) tickCore(ctx context.Context) {
 					}).
 					Error("failed to resubmit tx")
 			}
-			continue
+			if IsInternalError(errors.Cause(err)) {
+				s.List.Finish(fullResult{Err: err})
+				continue
+			}
 		}
 
 		s.Log.WithFields(log.F{
@@ -150,9 +154,6 @@ func (s *System) tickHistory(ctx context.Context) {
 				}).
 				Error("failed to get result from history")
 		}
-		if IsInternalError(errors.Cause(err)) {
-			s.List.Finish(fullResult{Err: err})
-		}
 
 		if res == nil {
 			err := s.tryResubmit(ctx, hash)
@@ -164,7 +165,10 @@ func (s *System) tickHistory(ctx context.Context) {
 					}).
 					Error("failed to resubmit tx")
 			}
-			continue
+			if IsInternalError(errors.Cause(err)) {
+				s.List.Finish(fullResult{Err: err})
+				continue
+			}
 		}
 
 		s.Log.WithFields(log.F{
