@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/db2/core2"
 	"net/http"
 
 	"gitlab.com/tokend/horizon/db2/history2"
@@ -62,9 +63,10 @@ func GetVoteList(w http.ResponseWriter, r *http.Request) {
 }
 
 type getVoteListHandler struct {
-	VotesQ history2.VotesQ
-	PollsQ history2.PollsQ
-	Log    *logan.Entry
+	VotesQ    history2.VotesQ
+	PollsQ    history2.PollsQ
+	AccountsQ core2.AccountsQ
+	Log       *logan.Entry
 }
 
 // GetVoteList returns the list of assets with related resources
