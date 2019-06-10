@@ -170,8 +170,8 @@ func (s *System) tickHistory(ctx context.Context) {
 						"tx_hash": hash,
 					}).
 					Error("failed to resubmit tx")
-				continue
 			}
+			continue
 		}
 
 		s.Log.WithFields(log.F{
