@@ -114,7 +114,7 @@ func (s *System) tickCore(ctx context.Context) {
 				}).
 				Error("failed to get result from core")
 		}
-		if IsInternalError(err) {
+		if IsInternalError(errors.Cause(err)) {
 			s.List.Finish(fullResult{Err: err})
 		}
 
@@ -150,7 +150,7 @@ func (s *System) tickHistory(ctx context.Context) {
 				}).
 				Error("failed to get result from history")
 		}
-		if IsInternalError(err) {
+		if IsInternalError(errors.Cause(err)) {
 			s.List.Finish(fullResult{Err: err})
 		}
 
