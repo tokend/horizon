@@ -113,7 +113,9 @@ func (s *System) tickCore(ctx context.Context) {
 					"tx_hash": hash,
 				}).
 				Error("failed to get result from core")
-			continue
+		}
+		if IsInternalError(err) {
+			s.List.Finish(fullResult{Err: err})
 		}
 
 		if res == nil {
@@ -133,14 +135,7 @@ func (s *System) tickCore(ctx context.Context) {
 			"tx_hash": hash,
 		}).Debug("Transaction successfully submitted")
 
-		if err := s.List.Finish(fullResult{Result: *res}); err != nil {
-			s.Log.
-				WithError(err).
-				WithFields(logan.F{
-					"tx_hash": hash,
-				}).
-				Error("failed to remove tx from pending list")
-		}
+		s.List.Finish(fullResult{Result: *res})
 	}
 }
 
@@ -154,7 +149,9 @@ func (s *System) tickHistory(ctx context.Context) {
 					"tx_hash": hash,
 				}).
 				Error("failed to get result from history")
-			continue
+		}
+		if IsInternalError(err) {
+			s.List.Finish(fullResult{Err: err})
 		}
 
 		if res == nil {
@@ -174,14 +171,7 @@ func (s *System) tickHistory(ctx context.Context) {
 			"tx_hash": hash,
 		}).Debug("Transaction successfully submitted")
 
-		if err := s.List.Finish(fullResult{Result: *res}); err != nil {
-			s.Log.
-				WithError(err).
-				WithFields(logan.F{
-					"tx_hash": hash,
-				}).
-				Error("failed to remove tx from pending list")
-		}
+		s.List.Finish(fullResult{Result: *res})
 	}
 }
 
