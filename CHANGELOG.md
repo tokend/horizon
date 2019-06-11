@@ -1,3 +1,9 @@
+## Unreleased
+
+### Fixed
+
+* Sales not allowed to participate in appearing on`/v3/account/{id}/sales` 
+
 ## 3.4.0-x.0
 
 ### Removed
