@@ -6,7 +6,8 @@
 
 ### Fixed
 
-* Sales not allowed to participate in appearing on`/v3/account/{id}/sales` 
+* Sales not allowed to participate in appearing on`/v3/account/{id}/sales`
+* Transaction failure response for `/v3/transactions`
 
 ## 3.4.0-x.0
 
