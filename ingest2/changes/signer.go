@@ -34,14 +34,17 @@ func (p *signerHandler) Removed(lc ledgerChange) error {
 //We don't care about other causes
 func (p *signerHandler) Created(lc ledgerChange) error {
 	op := lc.Operation
-	accID := lc.LedgerChange.MustRemoved().MustSigner().AccountId
+	accID := lc.LedgerChange.MustCreated().Data.MustSigner().AccountId
 	switch op.Body.Type {
 	case xdr.OperationTypeReviewRequest:
 		reviewRequestOp := op.Body.MustReviewRequestOp()
 		switch reviewRequestOp.RequestDetails.RequestType {
 		case xdr.ReviewableRequestTypeKycRecovery:
+			if lc.LedgerChange.Removed.ReviewableRequest == nil {
+				return nil
+			}
 			return p.accountStatusStorage.SetKYCRecoveryStatus(accID.Address(),
-				int(regources.KYCRecoveryStatusOngoing))
+				int(regources.KYCRecoveryStatusNone))
 		}
 	}
 
