@@ -1,5 +1,16 @@
 ## Unreleased
 
+## Added
+
+* Endpoint `/v3/votes/{voter}` which returns all the _votes_ created by specific _voter_ with relationships `Poll` (_poll_ where the _vote_ was created) and `Account` (_voter_ account)
+
+### Fixed
+
+* Sales not allowed to participate in appearing on`/v3/account/{id}/sales`
+* Transaction failure response for `/v3/transactions`
+
+## 3.4.0-x.0
+
 ### Removed
 
 * handling `/atomic_swap_bids` request

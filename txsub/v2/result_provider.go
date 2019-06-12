@@ -40,7 +40,6 @@ func (rp *ResultsProvider) FromCore(hash string) (*Result, error) {
 		return txResultFromCore(*cr)
 	}
 
-	// if no result was found in either db, return nil
 	return nil, nil
 }
 

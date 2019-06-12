@@ -35,7 +35,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 // GetHistory returns the list of participant effects with related resources
 func (h *getHistory) GetHistory(request *requests.GetHistory) (regources.ParticipantsEffectListResponse, error) {
 	q := h.ApplyFilters(request, h.EffectsQ)
-	result, err := h.SelectAndPopulate(request, q)
+	result, err := h.SelectAndPopulate(request, q, h.AssetsQ)
 	if err != nil {
 		return result, errors.Wrap(err, "failed to select and populate participant effects")
 	}
