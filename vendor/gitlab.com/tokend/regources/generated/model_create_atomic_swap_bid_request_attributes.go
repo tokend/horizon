@@ -5,7 +5,7 @@
 package regources
 
 type CreateAtomicSwapBidRequestAttributes struct {
-	// Amount of bid
-	BaseAmount     Amount  `json:"base_amount"`
-	CreatorDetails Details `json:"creator_details"`
+	// Amount in base asset to perform atomic swap on
+	BaseAmount Amount   `json:"base_amount"`
+	Details    *Details `json:"details,omitempty"`
 }

@@ -112,7 +112,7 @@
                     anyOf:
                       - $ref: '#/components/schemas/CreateAtomicSwapAskRequest'
                       - $ref: '#/components/schemas/Balance'
-                      - $ref: '#/components/schemas/Asset'
+                      - $ref: '#/components/schemas/QuoteAsset'
       400:
         description: bad input parameter
         content:

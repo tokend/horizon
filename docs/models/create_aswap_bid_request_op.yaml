@@ -2,11 +2,9 @@ CreateAtomicSwapBidRequestOpKey:
   type: object
   properties:
     id:
-      deprecated: true
       type: string
       example: "123"
     type:
-      deprecated: true
       type: string
       enum:
         - "operations-create-atomic-swap-bid-request"
