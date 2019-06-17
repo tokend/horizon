@@ -119,8 +119,10 @@ func (c *pollHandler) updatePollDetails(dst *history.Poll, op xdr.ManagePollOp) 
 		if err != nil {
 			return errors.Wrap(err, "failed to marshal merged details")
 		}
+
 	default:
 	}
+
 	return
 }
 
