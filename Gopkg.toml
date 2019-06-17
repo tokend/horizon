@@ -99,7 +99,7 @@
   branch = "feature/remove-asset-pair"
 
 [[constraint]]
-  branch = "fix/missing-data-v3-ep"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

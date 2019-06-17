@@ -530,7 +530,7 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "fix/missing-data-v3-ep"
+  branch = "master"
   digest = "1:3ac58953f75e147115755468e2eed641160ae214c64c1fff56ed9d9aa04a21c9"
   name = "gitlab.com/tokend/regources"
   packages = [
@@ -538,7 +538,7 @@
     "generated",
   ]
   pruneopts = "UT"
-  revision = "8d1179eddf63a730ecd72b0bf1892a9862ff7132"
+  revision = "460dd9b1cd3df70213a17a6fa0347488b123cf4d"
 
 [[projects]]
   branch = "master"
