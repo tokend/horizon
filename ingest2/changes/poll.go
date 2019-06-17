@@ -104,7 +104,6 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 }
 
 func (c *pollHandler) updatePollDetails(dst *history.Poll, op xdr.ManagePollOp) (err error) {
-
 	switch op.Data.Action {
 	case xdr.ManagePollActionClose:
 		var existingDetails map[string]json.RawMessage
@@ -121,8 +120,8 @@ func (c *pollHandler) updatePollDetails(dst *history.Poll, op xdr.ManagePollOp) 
 			return errors.Wrap(err, "failed to marshal merged details")
 		}
 	default:
-		return
 	}
+	return
 }
 
 func (c *pollHandler) getPollState(op xdr.ManagePollOp) (regources.PollState, error) {
