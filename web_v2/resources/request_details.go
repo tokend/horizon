@@ -89,6 +89,7 @@ func newAtomicSwapBidRequest(id int64, details history2.CreateAtomicSwapBidReque
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ATOMIC_SWAP_BID),
 		Attributes: regources.CreateAtomicSwapBidRequestAttributes{
 			BaseAmount: regources.Amount(details.BaseAmount),
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreateAtomicSwapBidRequestRelationships{
 			Ask:        regources.NewKeyInt64(int64(details.AskID), regources.ATOMIC_SWAP_ASK).AsRelation(),

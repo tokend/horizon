@@ -478,13 +478,14 @@ CreateAtomicSwapBidRequest:
           type: object
           required:
             - base_amount
+            - creator_details
           properties:
             base_amount:
               type: string
               description: "Amount in base asset to perform atomic swap on"
               example: "100.000001"
               format: Amount
-            details:
+            creator_details:
               $ref: '#/components/schemas/Details'
 
 CreatePollRequest:
