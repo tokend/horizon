@@ -77,13 +77,13 @@ func (s *SubmissionList) Add(envelope *EnvelopeInfo, ingest bool, l listener) er
 	return nil
 }
 
-func (s *SubmissionList) Finish(r fullResult) error {
+func (s *SubmissionList) Finish(r fullResult) {
 	s.Lock()
 	defer s.Unlock()
 
 	os, ok := s.submissions[r.Hash]
 	if !ok {
-		return nil
+		return
 	}
 
 	for _, l := range os.Listeners {
@@ -94,7 +94,7 @@ func (s *SubmissionList) Finish(r fullResult) error {
 	delete(s.submissions, r.Hash)
 	delete(s.core, os.Envelope.ContentHash)
 	delete(s.history, os.Envelope.ContentHash)
-	return nil
+	return
 }
 
 func (s *SubmissionList) Clean(maxAge time.Duration) int {

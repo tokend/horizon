@@ -46,7 +46,7 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	})
 
 	result, err := handler.createTx(r.Context(), request)
-	if errObj, ok := errors.Cause(err).(*jsonapi.ErrorObject); ok {
+	if errObj, ok := err.(*jsonapi.ErrorObject); ok {
 		ctx.Log(r).WithError(err).WithFields(logan.F{
 			"request": request,
 		}).Error("failed to create transaction ")
@@ -81,8 +81,8 @@ type createTransactionHandler struct {
 
 func (h *createTransactionHandler) createTx(context context.Context, request *requests.CreateTransaction) (*regources.TransactionResponse, error) {
 	res, err := h.Submitter.Submit(context, *request.Env, request.WaitForIngest)
-	if txsub.IsInternalError(err) {
-		return nil, resources.NewTxFailure(*request.Env, err.(txsub.Error))
+	if txsub.IsInternalError(errors.Cause(err)) {
+		return nil, resources.NewTxFailure(*request.Env, errors.Cause(err).(txsub.Error))
 	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to handle create transaction request")

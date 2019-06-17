@@ -34,7 +34,7 @@ func GetMovements(w http.ResponseWriter, r *http.Request) {
 // GetMovements returns the list of participant effects with related resources
 func (h *getHistory) GetMovements(request *requests.GetHistory) (regources.ParticipantsEffectListResponse, error) {
 	q := h.ApplyFilters(request, h.EffectsQ).Movements()
-	result, err := h.SelectAndPopulate(request, q)
+	result, err := h.SelectAndPopulate(request, q, h.AssetsQ)
 	if err != nil {
 		return result, errors.Wrap(err, "failed to select and populate participant effects")
 	}

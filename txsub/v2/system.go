@@ -106,6 +106,10 @@ func (s *System) tryResubmit(ctx context.Context, hash string) error {
 func (s *System) tickCore(ctx context.Context) {
 	for _, hash := range s.List.PendingCore() {
 		res, err := s.Results.FromCore(hash)
+		if IsInternalError(errors.Cause(err)) {
+			s.List.Finish(fullResult{Result: Result{Hash: hash}, Err: err})
+			continue
+		}
 		if err != nil {
 			s.Log.
 				WithError(err).
@@ -118,6 +122,10 @@ func (s *System) tickCore(ctx context.Context) {
 
 		if res == nil {
 			err := s.tryResubmit(ctx, hash)
+			if IsInternalError(errors.Cause(err)) {
+				s.List.Finish(fullResult{Result: Result{Hash: hash}, Err: err})
+				continue
+			}
 			if err != nil {
 				s.Log.
 					WithError(err).
@@ -133,14 +141,7 @@ func (s *System) tickCore(ctx context.Context) {
 			"tx_hash": hash,
 		}).Debug("Transaction successfully submitted")
 
-		if err := s.List.Finish(fullResult{Result: *res}); err != nil {
-			s.Log.
-				WithError(err).
-				WithFields(logan.F{
-					"tx_hash": hash,
-				}).
-				Error("failed to remove tx from pending list")
-		}
+		s.List.Finish(fullResult{Result: *res})
 	}
 }
 
@@ -154,11 +155,14 @@ func (s *System) tickHistory(ctx context.Context) {
 					"tx_hash": hash,
 				}).
 				Error("failed to get result from history")
-			continue
 		}
 
 		if res == nil {
 			err := s.tryResubmit(ctx, hash)
+			if IsInternalError(errors.Cause(err)) {
+				s.List.Finish(fullResult{Result: Result{Hash: hash}, Err: err})
+				continue
+			}
 			if err != nil {
 				s.Log.
 					WithError(err).
@@ -174,14 +178,7 @@ func (s *System) tickHistory(ctx context.Context) {
 			"tx_hash": hash,
 		}).Debug("Transaction successfully submitted")
 
-		if err := s.List.Finish(fullResult{Result: *res}); err != nil {
-			s.Log.
-				WithError(err).
-				WithFields(logan.F{
-					"tx_hash": hash,
-				}).
-				Error("failed to remove tx from pending list")
-		}
+		s.List.Finish(fullResult{Result: *res})
 	}
 }
 

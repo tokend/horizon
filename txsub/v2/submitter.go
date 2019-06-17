@@ -33,7 +33,7 @@ type openSubmissionList interface {
 
 	// Finish forwards the provided result on to any listeners and cleans up any
 	// resources associated with the transaction that this result is for
-	Finish(fullResult) error
+	Finish(fullResult)
 
 	// Clean removes any open submissions over the provided age.
 	Clean(time.Duration) int
