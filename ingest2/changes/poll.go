@@ -104,22 +104,25 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 }
 
 func (c *pollHandler) updatePollDetails(dst *history.Poll, op xdr.ManagePollOp) (err error) {
-	var existingDetails map[string]json.RawMessage
 
-	if err = json.Unmarshal([]byte(dst.Details), &existingDetails); err != nil {
-		return errors.Wrap(err, "failed to unmarshal existing details")
+	switch op.Data.Action {
+	case xdr.ManagePollActionClose:
+		var existingDetails map[string]json.RawMessage
+		if err = json.Unmarshal([]byte(dst.Details), &existingDetails); err != nil {
+			return errors.Wrap(err, "failed to unmarshal existing details")
+		}
+
+		if err = json.Unmarshal([]byte(op.Data.ClosePollData.Details), &existingDetails); err != nil {
+			return errors.Wrap(err, "failed to unmarshal op details")
+		}
+
+		dst.Details, err = json.Marshal(existingDetails)
+		if err != nil {
+			return errors.Wrap(err, "failed to marshal merged details")
+		}
+	default:
+		return
 	}
-
-	if err = json.Unmarshal([]byte(op.Data.ClosePollData.Details), &existingDetails); err != nil {
-		return errors.Wrap(err, "failed to unmarshal op details")
-	}
-
-	dst.Details, err = json.Marshal(existingDetails)
-	if err != nil {
-		return errors.Wrap(err, "failed to marshal merged details")
-	}
-
-	return nil
 }
 
 func (c *pollHandler) getPollState(op xdr.ManagePollOp) (regources.PollState, error) {
