@@ -1,6 +1,7 @@
 package changes
 
 import (
+	"encoding/json"
 	"time"
 
 	regources "gitlab.com/tokend/regources/generated"
@@ -88,6 +89,11 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 	}
 	poll.State = state
 
+	err = c.updatePollDetails(&poll, managePollOp)
+	if err != nil {
+		return errors.Wrap(err, "failed to merge update poll details")
+	}
+
 	err = c.storage.Update(poll)
 	if err != nil {
 		return errors.Wrap(err, "failed to update poll", logan.F{
@@ -96,6 +102,26 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 	}
 	return nil
 }
+
+func (c *pollHandler) updatePollDetails(dst *history.Poll, op xdr.ManagePollOp) (err error) {
+	var existingDetails map[string]json.RawMessage
+
+	if err = json.Unmarshal([]byte(dst.Details), &existingDetails); err != nil {
+		return errors.Wrap(err, "failed to unmarshal existing details")
+	}
+
+	if err = json.Unmarshal([]byte(op.Data.ClosePollData.Details), &existingDetails); err != nil {
+		return errors.Wrap(err, "failed to unmarshal op details")
+	}
+
+	dst.Details, err = json.Marshal(existingDetails)
+	if err != nil {
+		return errors.Wrap(err, "failed to marshal merged details")
+	}
+
+	return nil
+}
+
 func (c *pollHandler) getPollState(op xdr.ManagePollOp) (regources.PollState, error) {
 	var state regources.PollState
 	switch op.Data.Action {
