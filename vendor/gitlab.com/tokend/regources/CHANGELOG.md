@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+* Atomic swap ask and bid typo issue
+
 ## 4.6.0
 
 ### Added

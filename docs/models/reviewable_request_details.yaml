@@ -416,49 +416,6 @@ UpdateSaleDetailsRequest:
               $ref: '#/components/schemas/Details'
               description: "New details to set for sale"
 
-CreateAtomicSwapBidRequest:
-  allOf:
-    - $ref: '#/components/schemas/Int64Key'
-    - type: object
-      required: [relationships, attributes]
-      properties:
-        relationships:
-          type: object
-          deprecated: true
-          properties:
-            base_balance:
-              type: object
-              description: "Base balance for bid"
-              deprecated: true
-              properties:
-                data:
-                  $ref: '#/components/schemas/BalanceKey'
-            quote_assets:
-              description: "Assets that can be accepted"
-              type: object
-              deprecated: true
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/AssetKey'
-        attributes:
-          type: object
-          deprecated: true
-          required:
-            - creator_details
-            - base_amount
-          properties:
-            base_amount:
-              deprecated: true
-              type: string
-              description: "Amount of bid"
-              example: "100.000001"
-              format: Amount
-            creator_details:
-              deprecated: true
-              $ref: '#/components/schemas/Details'
-
 CreateAtomicSwapAskRequest:
   allOf:
     - $ref: '#/components/schemas/Int64Key'
@@ -467,35 +424,68 @@ CreateAtomicSwapAskRequest:
       properties:
         relationships:
           type: object
-          deprecated: true
           properties:
-            bid:
+            base_balance:
               type: object
-              description: "Bid to create atomic swap for"
-              deprecated: true
+              description: "Base balance for ask"
+              properties:
+                data:
+                  $ref: '#/components/schemas/BalanceKey'
+            quote_assets:
+              description: "Assets that can be accepted"
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AssetKey'
+        attributes:
+          type: object
+          required:
+            - creator_details
+            - base_amount
+          properties:
+            base_amount:
+              type: string
+              description: "Amount of ask"
+              example: "100.000001"
+              format: Amount
+            creator_details:
+              $ref: '#/components/schemas/Details'
+
+CreateAtomicSwapBidRequest:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        relationships:
+          type: object
+          properties:
+            ask:
+              type: object
+              description: "Ask to create atomic swap for"
               properties:
                 data:
                   $ref: '#/components/schemas/Int64Key'
             quote_asset:
               description: "Asset used to perform atomic swap"
               type: object
-              deprecated: true
               properties:
                 data:
                   $ref: '#/components/schemas/AssetKey'
         attributes:
           type: object
-          deprecated: true
           required:
             - base_amount
+            - creator_details
           properties:
             base_amount:
-              deprecated: true
               type: string
               description: "Amount in base asset to perform atomic swap on"
               example: "100.000001"
               format: Amount
-            details:
+            creator_details:
               $ref: '#/components/schemas/Details'
 
 CreatePollRequest:
