@@ -43,20 +43,25 @@ func (s *System) Submit(ctx context.Context, envelope EnvelopeInfo, waitIngest b
 	}
 }
 
+func (s *System) checkForDuplicates(hash string) (*Result, error) {
+	// check for tx duplication
+	result, err := s.Results.FromCore(hash)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo, waitIngest bool) <-chan fullResult {
 	listener := make(chan fullResult, 1)
 
-	// check for tx duplication
-	result, err := s.Results.FromCore(info.ContentHash)
+	result, err := s.checkForDuplicates(info.ContentHash)
 	if err != nil {
-		err = errors.Wrap(err,
+		return send(listener, fullResult{Err: errors.Wrap(err,
 			"failed to check for tx duplication",
-			info.GetLoganFields())
-		return send(listener, fullResult{
-			Err: err,
+			info.GetLoganFields()),
 		})
 	}
-	//No duplication
 	if result == nil {
 		return s.submit(ctx, info, listener, waitIngest)
 	}
@@ -94,11 +99,22 @@ func (s *System) tryResubmit(ctx context.Context, hash string) error {
 		return nil
 	}
 
+	res, err := s.checkForDuplicates(hash)
+	if err != nil {
+		return errors.Wrap(err,
+			"failed to check for tx duplication", logan.F{
+				"tx_hash": hash,
+			})
+	}
+	if res != nil {
+		return nil
+	}
+
 	env := s.List.Envelope(hash)
 	if env == nil {
 		return errors.New("trying to resubmit tx which is not in pending list")
 	}
-	_, err := s.Submitter.Submit(ctx, env)
+	_, err = s.Submitter.Submit(ctx, env)
 
 	return err
 }
