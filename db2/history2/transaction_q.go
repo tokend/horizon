@@ -103,7 +103,7 @@ func (q TransactionsQ) Select() ([]Transaction, error) {
 	return result, nil
 }
 
-func (q *TransactionsQ) GetByHash(hash string) (*Transaction, error) {
+func (q TransactionsQ) GetByHash(hash string) (*Transaction, error) {
 	q.selector = q.selector.Where("transactions.hash = ?", hash)
 	return q.Get()
 }
