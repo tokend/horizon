@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Fixed
+
+* Atomic swap ask and bid typo issue
+
+## 4.6.0
+
 ### Added
 
 * `AccountKyc` resource to handle kyc data for account

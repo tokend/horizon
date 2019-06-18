@@ -16,8 +16,10 @@ func NewAssetPair(record core2.AssetPair) regources.AssetPair {
 			Type: regources.ASSET_PAIRS,
 		},
 		Attributes: regources.AssetPairAttributes{
-			Price:    regources.Amount(record.CurrentPrice),
-			Policies: xdr.AssetPairPolicy(record.Policies),
+			Price:                   regources.Amount(record.CurrentPrice),
+			Policies:                xdr.AssetPairPolicy(record.Policies),
+			MaxPriceStep:            regources.Amount(record.MaxPriceStep),
+			PhysicalPriceCorrection: regources.Amount(record.PhysicalPriceCorrection),
 		},
 	}
 }

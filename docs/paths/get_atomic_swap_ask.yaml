@@ -57,7 +57,7 @@
                           quote_assets:
                             type: array
                             items:
-                              $ref: '#/components/schemas/Asset'
+                              $ref: '#/components/schemas/QuoteAsset'
       400:
         description: bad input parameter
         content:

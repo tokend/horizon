@@ -121,7 +121,7 @@ func (c *saleCapConverter) PopulateSalesCaps(sales []history2.Sale) error {
 }
 
 func (c *saleCapConverter) getCurrentCapInDefaultQuote(sale history2.Sale) (int64, error) {
-	totalCapInDefaultQuoteAsset := int64(0)
+	var totalCapInDefaultQuoteAsset int64
 	for _, quoteAsset := range sale.QuoteAssets.QuoteAssets {
 
 		currentCapInDefaultQuoteAsset, err := c.converter.TryToConvertWithOneHop(int64(quoteAsset.CurrentCap),
