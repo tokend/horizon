@@ -9,6 +9,7 @@
 * Sales not allowed to participate in appearing on`/v3/account/{id}/sales`
 * Transaction failure response for `/v3/transactions`
 * request details for create atomic swap ask and bid requests
+* response on `v3/create_atomic_swap_aks_requests` (quote assets include)
 
 ## 3.4.0-x.0
 

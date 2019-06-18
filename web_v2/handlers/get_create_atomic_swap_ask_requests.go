@@ -86,20 +86,13 @@ func (h *getCreateAtomicSwapAskRequestsHandler) RenderRecord(included *regources
 	}
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapAskRequestsQuoteAssets) {
-		codes := make([]string, 0, len(record.Details.CreateAtomicSwapAsk.QuoteAssets))
-		for _, v := range record.Details.CreateAtomicSwapAsk.QuoteAssets {
-			codes = append(codes, v.Asset)
-		}
-		assets, err := h.AssetsQ.FilterByCodes(codes).Select()
-		if err != nil {
-			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get assets")
-		}
-
-		if assets == nil {
-			return regources.ReviewableRequest{}, errors.New("assets not found")
-		}
-		for _, record := range assets {
-			asset := resources.NewAsset(record)
+		for _, record := range record.Details.CreateAtomicSwapAsk.QuoteAssets {
+			quoteAsset := core2.AtomicSwapQuoteAsset{
+				AskID: 0,
+				QuoteAsset: record.Asset,
+				Price: uint64(record.Price),
+			}
+			asset := resources.NewAtomicSwapAskQuoteAsset(quoteAsset)
 			included.Add(&asset)
 		}
 	}

@@ -473,7 +473,7 @@ CreateAtomicSwapBidRequest:
               type: object
               properties:
                 data:
-                  $ref: '#/components/schemas/AssetKey'
+                  $ref: '#/components/schemas/QuoteAssetKey'
         attributes:
           type: object
           required:
