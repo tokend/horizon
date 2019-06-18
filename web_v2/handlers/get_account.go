@@ -102,6 +102,9 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account status")
 	}
+	if accountStatus == nil {
+		return nil, errors.Wrap(err, "account not found in history")
+	}
 	recoveryStatus := regources.KYCRecoveryStatus(accountStatus.KycRecoveryStatus)
 	response := regources.AccountResponse{
 		Data: resources.NewAccount(*account, &recoveryStatus),

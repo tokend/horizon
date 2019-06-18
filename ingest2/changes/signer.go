@@ -20,18 +20,6 @@ func newSignerHandler(storage accountStatusStorage) *signerHandler {
 }
 
 //We don't care about other causes
-func (p *signerHandler) Removed(lc ledgerChange) error {
-	op := lc.Operation
-	switch op.Body.Type {
-	case xdr.OperationTypeInitiateKycRecovery:
-		initKycRecovery := op.Body.MustInitiateKycRecoveryOp()
-		return p.accountStatusStorage.SetKYCRecoveryStatus(initKycRecovery.Account.Address(),
-			int(regources.KYCRecoveryStatusOngoing))
-	}
-	return nil
-}
-
-//We don't care about other causes
 func (p *signerHandler) Created(lc ledgerChange) error {
 	op := lc.Operation
 	accID := lc.LedgerChange.MustCreated().Data.MustSigner().AccountId
@@ -46,6 +34,10 @@ func (p *signerHandler) Created(lc ledgerChange) error {
 			return p.accountStatusStorage.SetKYCRecoveryStatus(accID.Address(),
 				int(regources.KYCRecoveryStatusNone))
 		}
+	case xdr.OperationTypeInitiateKycRecovery:
+		initKycRecovery := op.Body.MustInitiateKycRecoveryOp()
+		return p.accountStatusStorage.SetKYCRecoveryStatus(initKycRecovery.Account.Address(),
+			int(regources.KYCRecoveryStatusOngoing))
 	}
 
 	return nil
