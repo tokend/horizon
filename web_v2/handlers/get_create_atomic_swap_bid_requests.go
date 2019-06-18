@@ -78,7 +78,7 @@ func (h *getCreateAtomicSwapBidRequestsHandler) RenderRecord(included *regources
 			return regources.ReviewableRequest{}, errors.New("quote asset not found")
 		}
 
-		resource := resources.NewAsset(*asset)
+		resource := resources.NewAtomicSwapAskQuoteAsset(*asset)
 		included.Add(&resource)
 	}
 
