@@ -24,7 +24,7 @@ Account:
           kyc_recovery_status:
             format: KYCRecoveryStatus
             description: |
-              indicates access definition type of the sale
+              Indicates kyc recovery status of the account
               * 0 - none
               * 1 - initiated
               * 2 - pending
