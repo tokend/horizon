@@ -26,7 +26,10 @@ Account:
             description: |
               indicates access definition type of the sale
               * 0 - none
-              * 1 - ongoing
+              * 1 - initiated
+              * 2 - pending
+              * 3 - rejected
+              * 4 - permanently_rejected
       relationships:
         type: object
         properties:
