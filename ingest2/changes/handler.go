@@ -38,7 +38,7 @@ func NewHandler(account accountStorage,
 	accountStatus accountStatusStorage,
 ) *Handler {
 
-	reviewRequestHandlerInst := newReviewableRequestHandler(request, balance)
+	reviewRequestHandlerInst := newReviewableRequestHandler(request, balance, accountStatus)
 	saleHandlerInst := newSaleHandler(sale, accountSpecificRule)
 	assetPairHandler := newAssetPairHandler(assetPair)
 	pollHandlerInst := newPollHandler(poll)

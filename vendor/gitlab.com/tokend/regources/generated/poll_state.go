@@ -32,3 +32,14 @@ func (s PollState) MarshalJSON() ([]byte, error) {
 		Value: int32(s),
 	})
 }
+
+func (s *PollState) UnmarshalJSON(b []byte) error {
+	var res Flag
+	err := json.Unmarshal(b, &res)
+	if err != nil {
+		return err
+	}
+
+	*s = PollState(res.Value)
+	return nil
+}

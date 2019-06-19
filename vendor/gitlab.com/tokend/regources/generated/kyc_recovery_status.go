@@ -4,18 +4,26 @@
 
 package regources
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type KYCRecoveryStatus int
 
 const (
 	KYCRecoveryStatusNone KYCRecoveryStatus = iota
-	KYCRecoveryStatusOngoing
+	KYCRecoveryStatusInitiated
+	KYCRecoveryStatusPending
+	KYCRecoveryStatusRejected
+	KYCRecoveryStatusPermanentlyRejected
 )
 
 var kycRecoveryStatusStr = map[KYCRecoveryStatus]string{
-	KYCRecoveryStatusNone:    "none",
-	KYCRecoveryStatusOngoing: "ongoing",
+	KYCRecoveryStatusNone:                "none",
+	KYCRecoveryStatusInitiated:           "initiated",
+	KYCRecoveryStatusPending:             "pending",
+	KYCRecoveryStatusRejected:            "rejected",
+	KYCRecoveryStatusPermanentlyRejected: "permanently_rejected",
 }
 
 func (s KYCRecoveryStatus) String() string {
@@ -27,4 +35,15 @@ func (s KYCRecoveryStatus) MarshalJSON() ([]byte, error) {
 		Name:  kycRecoveryStatusStr[s],
 		Value: int32(s),
 	})
+}
+
+func (s *KYCRecoveryStatus) UnmarshalJSON(b []byte) error {
+	var res Flag
+	err := json.Unmarshal(b, &res)
+	if err != nil {
+		return err
+	}
+
+	*s = KYCRecoveryStatus(res.Value)
+	return nil
 }

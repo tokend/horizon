@@ -28,16 +28,13 @@ func (p *signerHandler) Created(lc ledgerChange) error {
 		reviewRequestOp := op.Body.MustReviewRequestOp()
 		switch reviewRequestOp.RequestDetails.RequestType {
 		case xdr.ReviewableRequestTypeKycRecovery:
-			if lc.LedgerChange.Removed.ReviewableRequest == nil {
-				return nil
-			}
 			return p.accountStatusStorage.SetKYCRecoveryStatus(accID.Address(),
 				int(regources.KYCRecoveryStatusNone))
 		}
 	case xdr.OperationTypeInitiateKycRecovery:
 		initKycRecovery := op.Body.MustInitiateKycRecoveryOp()
 		return p.accountStatusStorage.SetKYCRecoveryStatus(initKycRecovery.Account.Address(),
-			int(regources.KYCRecoveryStatusOngoing))
+			int(regources.KYCRecoveryStatusInitiated))
 	}
 
 	return nil
