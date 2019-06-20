@@ -54,7 +54,7 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeCancelChangeRoleRequest:                newCancelChangeRoleRequest,
 	xdr.OperationTypeInitiateKycRecovery:                    newInitiateKYCRecoveryOp,
 	xdr.OperationTypeCreateKycRecoveryRequest:               newCreateKYCRecoveryRequestOp,
-	xdr.OperationTypeRemoveAssetPair: newRemoveAssetPairOp,
+	xdr.OperationTypeRemoveAssetPair:                        newRemoveAssetPairOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
