@@ -12,6 +12,9 @@ const (
 
 	// FilterTypeBalanceListAsset - defines if we need to filter the list by asset
 	FilterTypeBalanceListAsset = "asset"
+
+	// FilterTypeBalanceListAssetOwner - defines if we need to filter the list by asset owner
+	FilterTypeBalanceListAssetOwner = "asset_owner"
 )
 
 var includeTypeBalanceListAll = map[string]struct{}{
@@ -19,14 +22,16 @@ var includeTypeBalanceListAll = map[string]struct{}{
 }
 
 var filterTypeBalanceListAll = map[string]struct{}{
-	FilterTypeBalanceListAsset: {},
+	FilterTypeBalanceListAsset:      {},
+	FilterTypeBalanceListAssetOwner: {},
 }
 
 // GetBalanceList - represents params to be specified by user for getBalanceList handler
 type GetBalanceList struct {
 	*base
 	Filters struct {
-		Asset string `fig:"asset"`
+		Asset      string `fig:"asset"`
+		AssetOwner string `json:"asset_owner"`
 	}
 	PageParams *db2.OffsetPageParams
 }

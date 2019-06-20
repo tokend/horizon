@@ -18,6 +18,15 @@
         explode: false
         schema:
           type: string
+      - name: filter[asset_owner]
+        in: query
+        description: |
+          Filters balances by asset owner. Returns page of balances for the provided asset owner
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - name: include
         in: query
         description: |

@@ -26,6 +26,12 @@ func (q BalancesQ) GetByAddress(address string) (*Balance, error) {
 	return q.FilterByAddress(address).Get()
 }
 
+//FilterAssetOwner - returns new Q with added filter for asset owner
+func (q BalancesQ) FilterByAssetOwner(ownerID string) BalancesQ {
+	q.selector = q.selector.Join("asset a on a.code = balances.asset").Where("a.owner = ?", ownerID)
+	return q
+}
+
 // FilterByAddress - returns new Q with added filter for balance address
 func (q BalancesQ) FilterByAddress(address string) BalancesQ {
 	q.selector = q.selector.Where("balances.balance_id = ?", address)
