@@ -81,7 +81,7 @@ func (h *getKYCRecoveryRequestsHandler) RenderRecord(included *regources.Include
 		if account == nil {
 			return regources.ReviewableRequest{}, errors.New("account not found")
 		}
-		resource := resources.NewAccount(*account)
+		resource := resources.NewAccount(*account, nil)
 		included.Add(&resource)
 	}
 

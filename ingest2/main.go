@@ -4,11 +4,12 @@
 package ingest2
 
 // Add new version and assign it to `CurrentIngestVersion` if you want force reingest (after backward not compatible changes)
-const CurrentIngestVersion = IngestVersionAssetWithdrawRequest
+const CurrentIngestVersion = IngestVersionRecoveryState
 
 const (
 	IngestVersionInitial = iota
 	IngestVersionSaleParticipation
 	IngestVersionTrailingDigitsCountAssetCreateRequest
 	IngestVersionAssetWithdrawRequest
+	IngestVersionRecoveryState
 )

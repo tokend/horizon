@@ -80,7 +80,7 @@ func (h *getVoteListHandler) GetVoterVotesList(request *requests.GetVoterVoteLis
 				return nil, errors.Wrap(err, "cannot get voter account")
 			}
 
-			account := resources.NewAccount(*coreAccount)
+			account := resources.NewAccount(*coreAccount, nil)
 			response.Included.Add(&account)
 		}
 

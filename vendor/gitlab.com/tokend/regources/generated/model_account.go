@@ -6,6 +6,7 @@ package regources
 
 type Account struct {
 	Key
+	Attributes    AccountAttributes    `json:"attributes"`
 	Relationships AccountRelationships `json:"relationships"`
 }
 type AccountResponse struct {

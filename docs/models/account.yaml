@@ -16,8 +16,20 @@ Account:
   allOf:
   - $ref: '#/components/schemas/AccountKey'
   - type: object
-    required: [relationships]
+    required: [attributes, relationships]
     properties:
+      attributes:
+        type: object
+        properties:
+          kyc_recovery_status:
+            format: KYCRecoveryStatus
+            description: |
+              Indicates kyc recovery status of the account
+              * 0 - none
+              * 1 - initiated
+              * 2 - pending
+              * 3 - rejected
+              * 4 - permanently_rejected
       relationships:
         type: object
         properties:

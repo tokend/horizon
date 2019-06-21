@@ -48,4 +48,4 @@ func (q AccountsQ) Get() (*Account, error) {
 	return &result, nil
 }
 
-var accountColumns = []string{"accounts.id", "accounts.address"}
+var accountColumns = []string{"accounts.id", "accounts.address", "accounts.kyc_recovery_status"}

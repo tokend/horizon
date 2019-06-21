@@ -104,6 +104,17 @@ func (a *Account) InsertAccount(rawAccountID xdr.AccountId, account history2.Acc
 	return nil
 }
 
+func (a *Account) SetKYCRecoveryStatus(address string, status int) error {
+	_, err := a.repo.ExecRaw("UPDATE accounts set kyc_recovery_status = ? where address = ?", status, address)
+	if err != nil {
+		return errors.Wrap(err, "failed to update account state", logan.F{
+			"address":             address,
+			"kyc_recovery_status": status,
+		})
+	}
+	return nil
+}
+
 // MustAccountID returns int value which corresponds to xdr.AccountId
 func (a *Account) MustAccountID(raw xdr.AccountId) uint64 {
 	return a.MustAccount(raw).ID

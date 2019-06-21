@@ -37,6 +37,8 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newAtomicSwapBidRequest(request.ID, *request.Details.CreateAtomicSwapBid)
 	case xdr.ReviewableRequestTypeCreatePoll:
 		return newCreatePollRequest(request.ID, *request.Details.CreatePoll)
+	case xdr.ReviewableRequestTypeKycRecovery:
+		return newKYCRecoveryRequest(request.ID, *request.Details.KYCRecovery)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -88,7 +90,7 @@ func newAtomicSwapBidRequest(id int64, details history2.CreateAtomicSwapBidReque
 	return &regources.CreateAtomicSwapBidRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_ATOMIC_SWAP_BID),
 		Attributes: regources.CreateAtomicSwapBidRequestAttributes{
-			BaseAmount: regources.Amount(details.BaseAmount),
+			BaseAmount:     regources.Amount(details.BaseAmount),
 			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreateAtomicSwapBidRequestRelationships{
@@ -233,6 +235,30 @@ func newCreatePollRequest(id int64, details history2.CreatePollRequest) *regourc
 		},
 		Relationships: regources.CreatePollRequestRelationships{
 			ResultProvider: NewAccountKey(details.ResultProviderID).AsRelation(),
+		},
+	}
+}
+
+func newKYCRecoveryRequest(id int64, details history2.KYCRecoveryRequest) *regources.KycRecoveryRequest {
+	signersData := make([]regources.UpdateSignerData, 0, len(details.SignersData))
+	for _, signer := range details.SignersData {
+		signersData = append(signersData, regources.UpdateSignerData{
+			Details:  signer.Details,
+			RoleId:   signer.RoleID,
+			Identity: signer.Identity,
+			Weight:   signer.Weight,
+		})
+	}
+	return &regources.KycRecoveryRequest{
+
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_KYC_RECOVERY),
+		Attributes: regources.KycRecoveryRequestAttributes{
+			SignersData:    signersData,
+			CreatorDetails: details.CreatorDetails,
+			SequenceNumber: details.SequenceNumber,
+		},
+		Relationships: regources.KycRecoveryRequestRelationships{
+			TargetAccount: NewAccountKey(details.TargetAccount).AsRelation(),
 		},
 	}
 }

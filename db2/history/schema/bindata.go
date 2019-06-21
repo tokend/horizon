@@ -39,6 +39,7 @@
 // migrations/038_remove_sale_participations.sql
 // migrations/039_sale_access_definition_type.sql
 // migrations/040_offers_state_index.sql
+// migrations/041_recovery_state_for_account.sql
 // DO NOT EDIT!
 
 package schema
@@ -886,6 +887,26 @@ func migrations040_offers_state_indexSql() (*asset, error) {
 	return a, nil
 }
 
+var _migrations041_recovery_state_for_accountSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\xcd\x31\x0e\xc2\x30\x0c\x05\xd0\x3d\xa7\xf8\x3b\xaa\xc4\xde\x95\x2b\x30\x57\x26\x71\xab\x08\xd7\xae\x1c\x07\xc8\xed\x99\x90\x18\xe0\x04\x6f\x9a\x70\xda\xeb\xe6\x14\x8c\xeb\x91\x12\x49\xb0\x23\xe8\x26\x0c\xca\xd9\xba\x46\x03\x95\x82\x6c\xd2\x77\xc5\x7d\xe4\xc5\x39\xdb\x83\x7d\x2c\x2d\x28\x7a\x43\xd5\xe0\x8d\x1d\x6a\x01\xed\x22\x28\xbc\x52\x97\xc0\x79\x4e\xe9\x1b\xb8\xd8\x53\xff\x10\xc5\xed\xf8\x18\x75\x05\xbf\x6a\x8b\xf6\x4b\x9b\xd3\x3b\x00\x00\xff\xff\x3f\xcb\x4c\x0f\xb3\x00\x00\x00")
+
+func migrations041_recovery_state_for_accountSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations041_recovery_state_for_accountSql,
+		"migrations/041_recovery_state_for_account.sql",
+	)
+}
+
+func migrations041_recovery_state_for_accountSql() (*asset, error) {
+	bytes, err := migrations041_recovery_state_for_accountSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/041_recovery_state_for_account.sql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 // Asset loads and returns the asset for the given name.
 // It returns an error if the asset could not be found or
 // could not be loaded.
@@ -977,6 +998,7 @@ var _bindata = map[string]func() (*asset, error){
 	"migrations/038_remove_sale_participations.sql": migrations038_remove_sale_participationsSql,
 	"migrations/039_sale_access_definition_type.sql": migrations039_sale_access_definition_typeSql,
 	"migrations/040_offers_state_index.sql": migrations040_offers_state_indexSql,
+	"migrations/041_recovery_state_for_account.sql": migrations041_recovery_state_for_accountSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -1059,6 +1081,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"038_remove_sale_participations.sql": &bintree{migrations038_remove_sale_participationsSql, map[string]*bintree{}},
 		"039_sale_access_definition_type.sql": &bintree{migrations039_sale_access_definition_typeSql, map[string]*bintree{}},
 		"040_offers_state_index.sql": &bintree{migrations040_offers_state_indexSql, map[string]*bintree{}},
+		"041_recovery_state_for_account.sql": &bintree{migrations041_recovery_state_for_accountSql, map[string]*bintree{}},
 	}},
 }}
 
