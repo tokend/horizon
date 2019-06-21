@@ -80,6 +80,10 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 		q = q.FilterByAsset(request.Filters.Asset)
 	}
 
+	if request.ShouldFilter(requests.FilterTypeBalanceListAssetOwner) {
+		q = q.FilterByAssetOwner(request.Filters.AssetOwner)
+	}
+
 	coreBalances, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get balance list")

@@ -29,6 +29,11 @@ func (q AtomicSwapQuoteAssetQ) FilterByIDs(bidIDs []int64) AtomicSwapQuoteAssetQ
 	return q
 }
 
+func (q AtomicSwapQuoteAssetQ) FilterByCodes(quoteAsset []string) AtomicSwapQuoteAssetQ {
+	q.selector = q.selector.Where(sq.Eq{"qa.quote_asset": quoteAsset})
+	return q
+}
+
 func (q AtomicSwapQuoteAssetQ) Select() ([]AtomicSwapQuoteAsset, error) {
 	var result []AtomicSwapQuoteAsset
 	err := q.repo.Select(&result, q.selector)
@@ -37,4 +42,18 @@ func (q AtomicSwapQuoteAssetQ) Select() ([]AtomicSwapQuoteAsset, error) {
 	}
 
 	return result, nil
+}
+
+func (q AtomicSwapQuoteAssetQ) Get() (*AtomicSwapQuoteAsset, error) {
+	var result AtomicSwapQuoteAsset
+	err := q.repo.Get(&result, q.selector)
+	if err != nil {
+		if q.repo.NoRows(err) {
+			return nil, nil
+		}
+
+		return nil, errors.Wrap(err, "failed to load atomic swap ask quote asset")
+	}
+
+	return &result, nil
 }

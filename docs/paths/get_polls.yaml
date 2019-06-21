@@ -21,6 +21,17 @@
           type: string
           format: valid accountID
           example: "GAULFBQKQTFHHHZEIRMYVCGTY47FKWEW7P2BY2YT45HAEODAIJUJH23T"
+      - name: filter[result_provider]
+        in: query
+        description:
+          - Filters polls by specified result provider id
+        required: false
+        style: form
+        explore: false
+        schema:
+          type: string
+          format: valid accountID
+          example: "GBULFBQKQTFHHHZEIRMYVCGTY47FKWEW7P2BY2YT45HAEODAIJUJH23E"
       - name: filter[permission_type]
         in: query
         description:
