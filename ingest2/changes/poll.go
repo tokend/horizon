@@ -2,6 +2,7 @@ package changes
 
 import (
 	"encoding/json"
+	"gitlab.com/tokend/horizon/ingest2/storage"
 	"time"
 
 	regources "gitlab.com/tokend/regources/generated"
@@ -19,7 +20,11 @@ type pollStorage interface {
 	//Updates poll
 	Update(poll history.Poll) error
 	// SetState - sets state
-	SetState(pollID uint64, state regources.PollState) error
+	SetState(state regources.PollState) *storage.Poll
+	// SetDetails - sets poll details
+	SetDetails(details json.RawMessage) *storage.Poll
+	// UpdateWhere - updates poll with values set by setters. Second parameter allows not to reset query after execution
+	UpdateWhere(pollID uint64, shouldResetUpdater bool) error
 }
 
 type pollHandler struct {
@@ -56,16 +61,20 @@ func (c *pollHandler) Created(lc ledgerChange) error {
 
 //Removed - handles state of the poll due to it was removed
 func (c *pollHandler) Removed(lc ledgerChange) error {
-
 	pollID := uint64(lc.LedgerChange.MustRemoved().MustPoll().Id)
 	managePollOp := lc.Operation.Body.MustManagePollOp()
 	state, err := c.getPollState(managePollOp)
 	if err != nil {
 		return errors.Wrap(err, "failed to get poll state")
 	}
-	err = c.storage.SetState(pollID, state)
+
+	outcome := json.RawMessage(managePollOp.Data.ClosePollData.Details)
+	err = c.storage.
+		SetState(state).
+		SetDetails(outcome).
+		UpdateWhere(pollID, true)
 	if err != nil {
-		return errors.Wrap(err, "failed to set poll state")
+		return errors.Wrap(err, "failed to set poll outcome")
 	}
 
 	return nil
@@ -89,11 +98,6 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 	}
 	poll.State = state
 
-	err = c.updatePollDetails(&poll, managePollOp)
-	if err != nil {
-		return errors.Wrap(err, "failed to merge update poll details")
-	}
-
 	err = c.storage.Update(poll)
 	if err != nil {
 		return errors.Wrap(err, "failed to update poll", logan.F{
@@ -101,29 +105,6 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 		})
 	}
 	return nil
-}
-
-func (c *pollHandler) updatePollDetails(dst *history.Poll, op xdr.ManagePollOp) (err error) {
-	switch op.Data.Action {
-	case xdr.ManagePollActionClose:
-		var existingDetails map[string]json.RawMessage
-		if err = json.Unmarshal([]byte(dst.Details), &existingDetails); err != nil {
-			return errors.Wrap(err, "failed to unmarshal existing details")
-		}
-
-		if err = json.Unmarshal([]byte(op.Data.ClosePollData.Details), &existingDetails); err != nil {
-			return errors.Wrap(err, "failed to unmarshal op details")
-		}
-
-		dst.Details, err = json.Marshal(existingDetails)
-		if err != nil {
-			return errors.Wrap(err, "failed to marshal merged details")
-		}
-
-	default:
-	}
-
-	return
 }
 
 func (c *pollHandler) getPollState(op xdr.ManagePollOp) (regources.PollState, error) {
