@@ -2,6 +2,7 @@
 
 ## Added
 
+* Adding `details` from `ClosePollOp` to `creator_details` of polls after its closing
 * filter `asset_owner` for balances list
 * Endpoint `/v3/votes/{voter}` which returns all the _votes_ created by specific _voter_ with relationships `Poll` (_poll_ where the _vote_ was created) and `Account` (_voter_ account)
 
