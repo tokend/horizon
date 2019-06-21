@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"encoding/json"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,13 +12,15 @@ import (
 
 // CreatePoll is helper struct to operate with `polls`
 type Poll struct {
-	repo *db2.Repo
+	repo    *db2.Repo
+	updater sq.UpdateBuilder
 }
 
 // NewPoll - creates new instance of the `CreatePoll`
 func NewPoll(repo *db2.Repo) *Poll {
 	return &Poll{
-		repo: repo,
+		repo:    repo,
+		updater: sq.Update("polls"),
 	}
 }
 
@@ -67,12 +70,25 @@ func (q *Poll) Update(poll history2.Poll) error {
 	return nil
 }
 
-// SetState - sets state
-func (q *Poll) SetState(pollID uint64, state regources.PollState) error {
-	sql := sq.Update("polls").Set("state", state).Where("id = ?", pollID)
-	_, err := q.repo.Exec(sql)
+func (q *Poll) SetState(state regources.PollState) *Poll {
+	q.updater = q.updater.Set("state", state)
+	return q
+}
+
+func (q *Poll) SetDetails(details json.RawMessage) *Poll {
+	q.updater = q.updater.Set("details", details)
+	return q
+}
+
+func (q *Poll) UpdateWhere(pollID uint64, shouldResetUpdater bool) error {
+	q.updater = q.updater.Where(sq.Eq{"id": pollID})
+	_, err := q.repo.Exec(q.updater)
 	if err != nil {
-		return errors.Wrap(err, "failed to set state", logan.F{"poll_id": pollID})
+		return errors.Wrap(err, "failed to update poll", logan.F{"poll_id": pollID})
+	}
+
+	if shouldResetUpdater {
+		q.updater = sq.Update("polls")
 	}
 
 	return nil

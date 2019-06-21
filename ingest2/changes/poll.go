@@ -1,6 +1,8 @@
 package changes
 
 import (
+	"encoding/json"
+	"gitlab.com/tokend/horizon/ingest2/storage"
 	"time"
 
 	regources "gitlab.com/tokend/regources/generated"
@@ -18,7 +20,11 @@ type pollStorage interface {
 	//Updates poll
 	Update(poll history.Poll) error
 	// SetState - sets state
-	SetState(pollID uint64, state regources.PollState) error
+	SetState(state regources.PollState) *storage.Poll
+	// SetDetails - sets poll details
+	SetDetails(details json.RawMessage) *storage.Poll
+	// UpdateWhere - updates poll with values set by setters. Second parameter allows not to reset query after execution
+	UpdateWhere(pollID uint64, shouldResetUpdater bool) error
 }
 
 type pollHandler struct {
@@ -55,16 +61,20 @@ func (c *pollHandler) Created(lc ledgerChange) error {
 
 //Removed - handles state of the poll due to it was removed
 func (c *pollHandler) Removed(lc ledgerChange) error {
-
 	pollID := uint64(lc.LedgerChange.MustRemoved().MustPoll().Id)
 	managePollOp := lc.Operation.Body.MustManagePollOp()
 	state, err := c.getPollState(managePollOp)
 	if err != nil {
 		return errors.Wrap(err, "failed to get poll state")
 	}
-	err = c.storage.SetState(pollID, state)
+
+	outcome := json.RawMessage(managePollOp.Data.ClosePollData.Details)
+	err = c.storage.
+		SetState(state).
+		SetDetails(outcome).
+		UpdateWhere(pollID, true)
 	if err != nil {
-		return errors.Wrap(err, "failed to set poll state")
+		return errors.Wrap(err, "failed to set poll outcome")
 	}
 
 	return nil
@@ -96,6 +106,7 @@ func (c *pollHandler) Updated(lc ledgerChange) error {
 	}
 	return nil
 }
+
 func (c *pollHandler) getPollState(op xdr.ManagePollOp) (regources.PollState, error) {
 	var state regources.PollState
 	switch op.Data.Action {

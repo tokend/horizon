@@ -31,6 +31,7 @@ func GetCreateAtomicSwapBidRequests(w http.ResponseWriter, r *http.Request) {
 		R:         request,
 		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
 		AssetsQ:   core2.NewAssetsQ(coreRepo),
+		QuoteAssetsQ: core2.NewAtomicSwapQuoteAssetQ(coreRepo),
 		Log:       ctx.Log(r),
 	}
 
@@ -53,6 +54,7 @@ type getCreateAtomicSwapBidRequestsHandler struct {
 	Base      getRequestListBaseHandler
 	RequestsQ history2.ReviewableRequestsQ
 	AssetsQ   core2.AssetsQ
+	QuoteAssetsQ core2.AtomicSwapQuoteAssetQ
 	Log       *logan.Entry
 }
 
@@ -70,7 +72,9 @@ func (h *getCreateAtomicSwapBidRequestsHandler) RenderRecord(included *regources
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapBidRequestsQuoteAsset) {
-		asset, err := h.AssetsQ.FilterByCode(record.Details.CreateAtomicSwapBid.QuoteAsset).Get()
+		bid := record.Details.CreateAtomicSwapBid
+		asset, err := h.QuoteAssetsQ.FilterByIDs([]int64{int64(bid.AskID)}).
+			FilterByCodes([]string{bid.QuoteAsset}).Get()
 		if err != nil {
 			return regources.ReviewableRequest{}, errors.Wrap(err, "failed to get quote asset")
 		}
@@ -78,7 +82,7 @@ func (h *getCreateAtomicSwapBidRequestsHandler) RenderRecord(included *regources
 			return regources.ReviewableRequest{}, errors.New("quote asset not found")
 		}
 
-		resource := resources.NewAsset(*asset)
+		resource := resources.NewAtomicSwapAskQuoteAsset(*asset)
 		included.Add(&resource)
 	}
 
