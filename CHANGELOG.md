@@ -14,7 +14,7 @@
 * request details for create atomic swap ask and bid requests
 * response on `v3/create_atomic_swap_aks_requests` (quote assets include)
 
-## 3.4.0-x.0
+## 3.4.0
 
 ### Removed
 
