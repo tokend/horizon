@@ -3,18 +3,19 @@ package resources
 import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
+	"strconv"
 )
 
-func NewVoteKey(voterID string) regources.Key {
+func NewVoteKey(voteID int64) regources.Key {
 	return regources.Key{
-		ID:   voterID,
+		ID:   strconv.FormatInt(voteID, 10),
 		Type: regources.VOTES,
 	}
 }
 
 func NewVote(record history2.Vote) regources.Vote {
 	return regources.Vote{
-		Key: NewVoteKey(record.VoterID),
+		Key: NewVoteKey(record.ID),
 		Attributes: regources.VoteAttributes{
 			VoteData: regources.VoteData(record.VoteData),
 		},
