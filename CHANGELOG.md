@@ -1,3 +1,9 @@
+## Unreleased
+
+### Added
+
+* filter `owner` for balances list
+
 ## 3.5.0-x.0
 
 ## Added

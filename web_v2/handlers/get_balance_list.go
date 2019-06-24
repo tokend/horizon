@@ -84,6 +84,10 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 		q = q.FilterByAssetOwner(request.Filters.AssetOwner)
 	}
 
+	if request.ShouldFilter(requests.FilterTypeBalanceListOwner) {
+		q = q.FilterByAccount(request.Filters.Owner)
+	}
+
 	coreBalances, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get balance list")
@@ -99,6 +103,7 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 		balance.Relationships = &regources.BalanceRelationships{
 			Asset: resources.NewAssetKey(coreBalance.AssetCode).AsRelation(),
 			State: resources.NewBalanceStateKey(coreBalance.BalanceAddress).AsRelation(),
+			Owner: resources.NewAccountKey(coreBalance.AccountAddress).AsRelation(),
 		}
 
 		if request.ShouldInclude(requests.IncludeTypeBalanceListState) {
