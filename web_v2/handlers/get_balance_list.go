@@ -123,7 +123,7 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 			}
 
 			if account == nil {
-				return nil, errors.Wrap(err, "owner not found")
+				return nil, errors.New("owner not found")
 			}
 
 			accountStatus, err := h.HistoryAccountsQ.ByAddress(coreBalance.AccountAddress)
