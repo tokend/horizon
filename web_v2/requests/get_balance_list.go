@@ -10,6 +10,9 @@ const (
 	// IncludeTypeBalanceListState - defines if the state of the balance should be included in the response
 	IncludeTypeBalanceListState = "state"
 
+	// IncludeTypeBalanceListOwner - defines if the owner of the balance should be included in the response
+	IncludeTypeBalanceListOwner = "owner"
+
 	// FilterTypeBalanceListAsset - defines if we need to filter the list by asset
 	FilterTypeBalanceListAsset = "asset"
 
@@ -22,6 +25,7 @@ const (
 
 var includeTypeBalanceListAll = map[string]struct{}{
 	IncludeTypeBalanceListState: {},
+	IncludeTypeBalanceListOwner: {},
 }
 
 var filterTypeBalanceListAll = map[string]struct{}{

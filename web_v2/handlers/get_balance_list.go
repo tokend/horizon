@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"gitlab.com/tokend/horizon/db2/history2"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -18,9 +20,11 @@ import (
 func GetBalanceList(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getBalanceListHandler{
-		AssetsQ:   core2.NewAssetsQ(coreRepo),
-		BalancesQ: core2.NewBalancesQ(coreRepo),
-		Log:       ctx.Log(r),
+		AssetsQ:          core2.NewAssetsQ(coreRepo),
+		BalancesQ:        core2.NewBalancesQ(coreRepo),
+		AccountsQ:        core2.NewAccountsQ(coreRepo),
+		HistoryAccountsQ: history2.NewAccountsQ(ctx.HistoryRepo(r)),
+		Log:              ctx.Log(r),
 	}
 
 	request, err := requests.NewGetBalanceList(r)
@@ -55,9 +59,11 @@ func GetBalanceList(w http.ResponseWriter, r *http.Request) {
 }
 
 type getBalanceListHandler struct {
-	BalancesQ core2.BalancesQ
-	AssetsQ   core2.AssetsQ
-	Log       *logan.Entry
+	BalancesQ        core2.BalancesQ
+	AssetsQ          core2.AssetsQ
+	AccountsQ        core2.AccountsQ
+	HistoryAccountsQ history2.AccountsQ
+	Log              *logan.Entry
 }
 
 func (h *getBalanceListHandler) getAssetOwner(assetCode string) (string, error) {
@@ -108,6 +114,28 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 
 		if request.ShouldInclude(requests.IncludeTypeBalanceListState) {
 			response.Included.Add(resources.NewBalanceState(&coreBalance))
+		}
+
+		if request.ShouldInclude(requests.IncludeTypeBalanceListOwner) {
+			account, err := h.AccountsQ.GetByAddress(coreBalance.AccountAddress)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get account by address")
+			}
+
+			if account == nil {
+				return nil, nil
+			}
+
+			accountStatus, err := h.HistoryAccountsQ.ByAddress(coreBalance.AccountAddress)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get account status")
+			}
+			if accountStatus == nil {
+				return nil, errors.Wrap(err, "account not found in history")
+			}
+			recoveryStatus := regources.KYCRecoveryStatus(accountStatus.KycRecoveryStatus)
+			owner := resources.NewAccount(*account, &recoveryStatus)
+			response.Included.Add(&owner)
 		}
 
 		response.Data = append(response.Data, *balance)
