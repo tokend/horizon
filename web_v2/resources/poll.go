@@ -41,7 +41,7 @@ func NewParticipation(id int64, historyVotes []history2.Vote) regources.PollPart
 		},
 	}
 	for _, v := range historyVotes {
-		vote := NewVoteKey(v.VoterID)
+		vote := NewVoteKey(v.ID)
 		outcome.Relationships.Votes.Data = append(outcome.Relationships.Votes.Data, vote)
 	}
 
