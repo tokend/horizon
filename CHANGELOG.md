@@ -1,6 +1,12 @@
+## Unreleased
+
+### Fixed
+
+* vote id in `v3/votes` response
+
 ## 3.5.0-x.0
 
-## Added
+### Added
 
 * Adding `details` from `ClosePollOp` to `creator_details` of polls after its closing
 * filter `asset_owner` for balances list
