@@ -10,8 +10,14 @@ const (
 	// IncludeTypeBalanceListState - defines if the state of the balance should be included in the response
 	IncludeTypeBalanceListState = "state"
 
+	// IncludeTypeBalanceListOwner - defines if the owner of the balance should be included in the response
+	IncludeTypeBalanceListOwner = "owner"
+
 	// FilterTypeBalanceListAsset - defines if we need to filter the list by asset
 	FilterTypeBalanceListAsset = "asset"
+
+	// FilterTypeBalanceListOwner - defines if we need to filter the list by owner
+	FilterTypeBalanceListOwner = "owner"
 
 	// FilterTypeBalanceListAssetOwner - defines if we need to filter the list by asset owner
 	FilterTypeBalanceListAssetOwner = "asset_owner"
@@ -19,11 +25,13 @@ const (
 
 var includeTypeBalanceListAll = map[string]struct{}{
 	IncludeTypeBalanceListState: {},
+	IncludeTypeBalanceListOwner: {},
 }
 
 var filterTypeBalanceListAll = map[string]struct{}{
 	FilterTypeBalanceListAsset:      {},
 	FilterTypeBalanceListAssetOwner: {},
+	FilterTypeBalanceListOwner:      {},
 }
 
 // GetBalanceList - represents params to be specified by user for getBalanceList handler
@@ -32,6 +40,7 @@ type GetBalanceList struct {
 	Filters struct {
 		Asset      string `fig:"asset"`
 		AssetOwner string `json:"asset_owner"`
+		Owner      string `json:"owner"`
 	}
 	PageParams *db2.OffsetPageParams
 }

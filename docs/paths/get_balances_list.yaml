@@ -22,6 +22,10 @@
         in: query
         description: |
           Filters balances by asset owner. Returns page of balances for the provided asset owner
+      - name: filter[owner]
+        in: query
+        description: |
+          Filters balances by owner. Returns page of balances for the provided owner
         required: false
         style: form
         explode: false
@@ -36,7 +40,7 @@
         explode: false
         schema:
           type: string
-          enum: [state]
+          enum: [state, owner]
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
