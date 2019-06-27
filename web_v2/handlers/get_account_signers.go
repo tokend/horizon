@@ -78,7 +78,8 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 	}
 
 	response := regources.SignerListResponse{
-		Data: make([]regources.Signer, 0, len(signers)),
+		Data:  make([]regources.Signer, 0, len(signers)),
+		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 
 	for _, signerRaw := range signers {
