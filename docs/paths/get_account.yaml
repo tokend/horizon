@@ -47,6 +47,7 @@
           - external_system_ids
           - role
           - role.rules
+          - kyc_data
         example: balances,balances.asset
     responses:
       200:
@@ -73,6 +74,7 @@
                     - $ref: '#/components/schemas/Limits'
                     - $ref: '#/components/schemas/AccountRole'
                     - $ref: '#/components/schemas/AccountRule'
+                    - $ref: '#/components/schemas/AccountKYC'
 
       400:
         description: bad input parameter
