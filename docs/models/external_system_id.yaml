@@ -62,6 +62,7 @@ ExternalSystemID:
 
 ExternalSystemDataEntry:
   type: object
+  x-go-scan-value: true
   required: [address]
   properties:
     address:
@@ -71,13 +72,14 @@ ExternalSystemDataEntry:
 
 ExternalSystemData:
   type: object
+  x-go-scan-value: true
   required: [type, data]
   properties:
     type:
       format: ExternalDataType
       description: |
         Possible values:
-        * 1 - address
-        * 2 - address_with_payload
+        * address
+        * address_with_payload
     data:
       $ref: '#/components/schemas/ExternalSystemDataEntry'

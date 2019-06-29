@@ -21,7 +21,7 @@ type ExternalSystemData struct {
 func (r ExternalSystemData) Value() (driver.Value, error) {
 	result, err := json.Marshal(r)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to marshal ExternalDataType data")
+		return nil, errors.Wrap(err, "failed to marshal ExternalSystemData data")
 	}
 
 	return result, nil
