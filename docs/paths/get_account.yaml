@@ -31,6 +31,7 @@
         * `role.rules`
         * `limits`
         * `external_system_ids`
+        * `kyc_data`
       required: false
       style: form
       explode: false
@@ -44,6 +45,9 @@
           - referrer
           - limits
           - external_system_ids
+          - role
+          - role.rules
+          - kyc_data
         example: balances,balances.asset
     responses:
       200:
@@ -63,11 +67,14 @@
                   type: array
                   items:
                     oneOf:
-                    - $ref: '#/components/schemas/AccountKey'
-                    - $ref: '#/components/schemas/BalanceStateKey'
-                    - $ref: '#/components/schemas/FeeKey'
-                    - $ref: '#/components/schemas/ExternalSystemIDKey'
-                    - $ref: '#/components/schemas/LimitsKey'
+                    - $ref: '#/components/schemas/Account'
+                    - $ref: '#/components/schemas/BalanceState'
+                    - $ref: '#/components/schemas/Fee'
+                    - $ref: '#/components/schemas/ExternalSystemID'
+                    - $ref: '#/components/schemas/Limits'
+                    - $ref: '#/components/schemas/AccountRole'
+                    - $ref: '#/components/schemas/AccountRule'
+                    - $ref: '#/components/schemas/AccountKYC'
 
       400:
         description: bad input parameter
