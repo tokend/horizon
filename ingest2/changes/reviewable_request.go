@@ -128,13 +128,21 @@ func (c *reviewableRequestHandler) Stated(lc ledgerChange) error {
 		case xdr.ReviewableRequestTypeKycRecovery:
 			kycRec := request.Body.MustKycRecoveryRequest()
 			address := kycRec.TargetAccount.Address()
+			var err error
 			switch op.ReviewRequestOp.Action {
 			case xdr.ReviewRequestOpActionApprove:
 				if lc.OperationResult.MustReviewRequestResult().MustSuccess().Fulfilled {
-					return c.accounts.SetKYCRecoveryStatus(address, int(regources.KYCRecoveryStatusNone))
+					err = c.accounts.SetKYCRecoveryStatus(address, int(regources.KYCRecoveryStatusNone))
 				}
 			case xdr.ReviewRequestOpActionPermanentReject:
-				return c.accounts.SetKYCRecoveryStatus(address, int(regources.KYCRecoveryStatusPermanentlyRejected))
+				err = c.accounts.SetKYCRecoveryStatus(address, int(regources.KYCRecoveryStatusPermanentlyRejected))
+			}
+
+			if err != nil {
+				return errors.Wrap(err, "failed to update account status on remove", logan.F{
+					"request":         request,
+					"ledger_sequence": lc.LedgerSeq,
+				})
 			}
 		}
 	}
@@ -191,7 +199,7 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.handleInitiateKycRecovery(lc)
 	case xdr.OperationTypeCreateKycRecoveryRequest:
 		account := op.MustCreateKycRecoveryRequestOp().TargetAccount
-		return c.accounts.SetKYCRecoveryStatus(account.Address(), int(regources.KYCRecoveryStatusPending))
+		return c.accounts.SetKYCRecoveryStatus(account.Address(), int(regources.KYCRecoveryStatusNone))
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
