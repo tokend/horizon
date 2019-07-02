@@ -5,6 +5,10 @@
 * filter `owner` for balances list
 * endpoint `/v3/accounts/{account-id}/requests/{request-id}`
 
+### Fixed
+
+* panic on ingesting reviewable requests
+
 ## 3.5.0-x.1
 
 ### Fixed

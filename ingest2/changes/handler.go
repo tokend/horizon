@@ -18,12 +18,16 @@ type updatable interface {
 type removable interface {
 	Removed(change ledgerChange) error
 }
+type statable interface {
+	Stated(change ledgerChange) error
+}
 
 // Handler - handles ledger changes to populate changes for entries
 type Handler struct {
 	Create map[xdr.LedgerEntryType]creatable
 	Update map[xdr.LedgerEntryType]updatable
 	Remove map[xdr.LedgerEntryType]removable
+	State  map[xdr.LedgerEntryType]statable
 }
 
 //NewHandler - returns new instance of handler
@@ -71,6 +75,9 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeVote:                voteHandlerInst,
 			xdr.LedgerEntryTypeAssetPair:           assetPairHandler,
 			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
+		},
+		State: map[xdr.LedgerEntryType]statable{
+			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 		},
 	}
 }
@@ -121,7 +128,7 @@ func (h *Handler) handle(lc ledgerChange) error {
 	case xdr.LedgerEntryChangeTypeRemoved:
 		return h.removed(lc)
 	case xdr.LedgerEntryChangeTypeState:
-		return nil
+		return h.stated(lc)
 	default:
 		return errors.From(errors.New("Unrecognized ledger entry change type"), logan.F{
 			"change_type": lc.LedgerChange.Type,
@@ -154,6 +161,15 @@ func (h *Handler) removed(lc ledgerChange) error {
 	}
 
 	return handler.Removed(lc)
+}
+
+func (h *Handler) stated(lc ledgerChange) error {
+	handler, ok := h.State[lc.LedgerChange.State.Data.Type]
+	if !ok {
+		return nil
+	}
+
+	return handler.Stated(lc)
 }
 
 //Name - name of the handler
