@@ -98,16 +98,18 @@ func (h *getAccountHandler) GetAccount(request *requests.GetAccount) (*regources
 		return nil, nil
 	}
 
+	response := regources.AccountResponse{
+		Data: resources.NewAccount(*account, nil),
+	}
+
 	accountStatus, err := h.HistoryAccountsQ.ByAddress(request.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get account status")
 	}
-	if accountStatus == nil {
-		return nil, errors.New("account not found in history")
-	}
-	recoveryStatus := regources.KYCRecoveryStatus(accountStatus.KycRecoveryStatus)
-	response := regources.AccountResponse{
-		Data: resources.NewAccount(*account, &recoveryStatus),
+
+	if accountStatus != nil {
+		recoveryStatus := regources.KYCRecoveryStatus(accountStatus.KycRecoveryStatus)
+		response.Data.Attributes.KycRecoveryStatus = &recoveryStatus
 	}
 
 	response.Data.Relationships.Role, err = h.getRole(request, &response.Included, *account)
