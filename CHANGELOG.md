@@ -7,6 +7,7 @@
 
 ### Fixed
 
+* panic on ingesting reviewable requests
 * internal error on `v3/accounts` 
 
 ## 3.5.0-x.1
