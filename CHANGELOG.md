@@ -4,6 +4,7 @@
 
 * filter `owner` for balances list
 * endpoint `/v3/accounts/{account-id}/requests/{request-id}`
+* `base_asset` to `AtomicSwapAsk` relationships
 
 ### Fixed
 
