@@ -1,7 +1,12 @@
 ## Unreleased
 
+### Removed
+
+* `/v3` (now `/v3/info`)
+
 ### Added
 
+* `/v3/info`
 * filter `owner` for balances list
 * endpoint `/v3/accounts/{account-id}/requests/{request-id}`
 * `base_asset` to `AtomicSwapAsk` relationships
