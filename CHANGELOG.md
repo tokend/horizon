@@ -1,8 +1,8 @@
 ## Unreleased
 
-### Removed
+### Changed
 
-* `/v3` (now `/v3/info`)
+* deprecate `/v3`
 
 ### Added
 
