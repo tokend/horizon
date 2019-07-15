@@ -103,6 +103,7 @@ func initWebV2Middleware(app *App) {
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
+	m.Get("/v3", handlers.GetRoot)
 	m.Get("/v3/info", handlers.GetRoot)
 	m.Post("/v3/transactions", handlers.CreateTransaction)
 
