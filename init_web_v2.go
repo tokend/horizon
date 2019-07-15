@@ -103,7 +103,10 @@ func initWebV2Middleware(app *App) {
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
+	// DEPRECATED
 	m.Get("/v3", handlers.GetRoot)
+
+	m.Get("/v3/info", handlers.GetRoot)
 	m.Post("/v3/transactions", handlers.CreateTransaction)
 
 	m.Get("/v3/accounts/{id}", handlers.GetAccount)
