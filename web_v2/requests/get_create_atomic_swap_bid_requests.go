@@ -14,15 +14,18 @@ var includeTypeCreateAtomicSwapBidRequests = map[string]struct{}{
 
 const (
 	FilterTypeCreateAtomicSwapBidRequestsQuoteAsset = "request_details.quote_asset"
+	FilterTypeCreateAtomicSwapBidRequestsAskID = "request_details.ask_id"
 )
 
 var filterTypeCreateAtomicSwapBidRequests = map[string]struct{}{
 	FilterTypeCreateAtomicSwapBidRequestsQuoteAsset: {},
+	FilterTypeCreateAtomicSwapBidRequestsAskID: {},
 }
 
 type GetCreateAtomicSwapBidRequestsFilter struct {
 	GetRequestListBaseFilters
 	QuoteAsset string `fig:"request_details.quote_asset"`
+	AskID uint64 `fig:"request_details.ask_id"`
 }
 
 type GetCreateAtomicSwapBidRequests struct {

@@ -7,10 +7,12 @@
 ### Added
 
 * `/v3/info`
+* `request_details.ask_id` filter for `/v3/create_atomic_swap_bid_requests`
 
 ### Fixed
 
 * get reviewable requests docs
+* atomic swap request filters
 
 ## 3.5.1-x.0
 

@@ -134,12 +134,17 @@ func (q ReviewableRequestsQ) FilterByChangeRoleToSet(accountRole int32) Reviewab
 }
 
 func (q ReviewableRequestsQ) FilterByCreateAtomicSwapAskBalance(balance string) ReviewableRequestsQ {
-	q.selector = q.selector.Where("details#>>'{create_atomic_swap_bid,base_balance}' = ?", balance)
+	q.selector = q.selector.Where("details#>>'{create_atomic_swap_ask,base_balance}' = ?", balance)
 	return q
 }
 
 func (q ReviewableRequestsQ) FilterByAtomicSwapQuoteAsset(code string) ReviewableRequestsQ {
-	q.selector = q.selector.Where("details#>>'{create_atomic_swap,quote_asset}' = ?", code)
+	q.selector = q.selector.Where("details#>>'{create_atomic_swap_bid,quote_asset}' = ?", code)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByAtomicSwapAskID(id uint64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_atomic_swap_bid,bid_id}' = ?", id) //bid_id because there is mistake in reviewable request details
 	return q
 }
 
