@@ -7,6 +7,15 @@
 ### Added
 
 * `/v3/info`
+
+### Fixed
+
+* get reviewable requests docs
+
+## 3.5.1-x.0
+
+### Added
+
 * filter `owner` for balances list
 * endpoint `/v3/accounts/{account-id}/requests/{request-id}`
 * `base_asset` to `AtomicSwapAsk` relationships
