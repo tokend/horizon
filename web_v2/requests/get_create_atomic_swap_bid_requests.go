@@ -6,12 +6,10 @@ import (
 
 const (
 	IncludeTypeCreateAtomicSwapBidRequestsQuoteAsset = "request_details.quote_asset"
-	IncludeTypeCreateAtomicSwapBidRequestsAsk = "request_details.ask"
 )
 
 var includeTypeCreateAtomicSwapBidRequests = map[string]struct{}{
 	IncludeTypeCreateAtomicSwapBidRequestsQuoteAsset: {},
-	IncludeTypeCreateAtomicSwapBidRequestsAsk: {},
 }
 
 const (
