@@ -64,6 +64,9 @@ func (h *getCreateAtomicSwapBidRequestsHandler) MakeAll(w http.ResponseWriter, r
 	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsQuoteAsset) {
 		q = q.FilterByAtomicSwapQuoteAsset(request.Filters.QuoteAsset)
 	}
+	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsAskID) {
+		q = q.FilterByAtomicSwapAskID(request.Filters.AskID)
+	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
 }

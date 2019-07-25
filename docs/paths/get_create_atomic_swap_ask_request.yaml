@@ -1,7 +1,7 @@
 /v3/create_atomic_swap_ask_requests/{id}:
   get:
     tags:
-      - WIP
+      - Atomic Swap
     summary: Create Atomic Swap Ask Request by ID
     description: |
       Allows getting `CreateAtomicSwapAsk` by ID\n
@@ -72,7 +72,7 @@
       - name: filter[request_details.base_balance]
         in: query
         description: |
-           Filters create_atomic_swap_bid requests by base balance.
+           Filters create_atomic_swap_ask requests by base balance.
         required: false
         style: form
         explode: false
