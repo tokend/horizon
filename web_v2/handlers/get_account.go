@@ -50,6 +50,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		requests.IncludeTypeAccountLimits,
 		requests.IncludeTypeAccountExternalSystemIDs,
 		requests.IncludeTypeAccountLimitsWithStats,
+		requests.IncludeTypeAccountKycData,
 	) {
 		if !isAllowed(r, w, request.Address) {
 			return
