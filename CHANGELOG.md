@@ -1,5 +1,11 @@
 ## Unreleased
 
+## Fixed
+
+* checking signature on `/v3/accounts` if kyc_data included
+
+## 3.5.1-x.1
+
 ### Changed
 
 * deprecate `/v3`
