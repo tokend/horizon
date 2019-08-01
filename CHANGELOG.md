@@ -1,8 +1,13 @@
 ## Unreleased
 
+## Added
+
+* `request_details.ask_owner` filter for `/v3/create_atomic_swap_bid_requests`
+
 ## Fixed
 
 * checking signature on `/v3/accounts` if kyc_data included
+* checking signature on `/v3/create_atomic_swap_bid_requests` for ask owner
 
 ## 3.5.1-x.1
 

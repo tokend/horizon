@@ -87,6 +87,15 @@
         explode: false
         schema:
           type: integer
+      - name: filter[request_details.ask_owner]
+        in: query
+        description: |
+          Filters atomic swap bid requests by atomic swap ask owner id.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
       - name: include
         in: query
         description: |

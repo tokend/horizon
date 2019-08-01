@@ -14,18 +14,21 @@ var includeTypeCreateAtomicSwapBidRequests = map[string]struct{}{
 
 const (
 	FilterTypeCreateAtomicSwapBidRequestsQuoteAsset = "request_details.quote_asset"
-	FilterTypeCreateAtomicSwapBidRequestsAskID = "request_details.ask_id"
+	FilterTypeCreateAtomicSwapBidRequestsAskID      = "request_details.ask_id"
+	FilterTypeCreateAtomicSwapBidRequestsAskOwner   = "request_details.ask_owner"
 )
 
 var filterTypeCreateAtomicSwapBidRequests = map[string]struct{}{
 	FilterTypeCreateAtomicSwapBidRequestsQuoteAsset: {},
-	FilterTypeCreateAtomicSwapBidRequestsAskID: {},
+	FilterTypeCreateAtomicSwapBidRequestsAskID:      {},
+	FilterTypeCreateAtomicSwapBidRequestsAskOwner:   {},
 }
 
 type GetCreateAtomicSwapBidRequestsFilter struct {
 	GetRequestListBaseFilters
 	QuoteAsset string `fig:"request_details.quote_asset"`
-	AskID uint64 `fig:"request_details.ask_id"`
+	AskID      uint64 `fig:"request_details.ask_id"`
+	AskOwner   string `fig:"request_details.ask_owner"`
 }
 
 type GetCreateAtomicSwapBidRequests struct {
