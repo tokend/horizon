@@ -148,6 +148,11 @@ func (q ReviewableRequestsQ) FilterByAtomicSwapAskID(id uint64) ReviewableReques
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterByAtomicSwapAskIDs(ids []uint64) ReviewableRequestsQ {
+	q.selector = q.selector.Where(sq.Eq{"details#>>'{create_atomic_swap_bid,bid_id}'": ids}) //bid_id because there is mistake in reviewable request details
+	return q
+}
+
 func (q ReviewableRequestsQ) FilterBySaleBaseAsset(asset string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_sale,base_asset}' = ?", asset)
 	return q

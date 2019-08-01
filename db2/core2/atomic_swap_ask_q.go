@@ -54,6 +54,11 @@ func (q AtomicSwapAskQ) FilterByOwner(ownerID string) AtomicSwapAskQ {
 	return q
 }
 
+func (q AtomicSwapAskQ) IDSelector() AtomicSwapAskQ {
+	q.selector = sq.Select("b.id").From("atomic_swap_ask b")
+	return q
+}
+
 func (q AtomicSwapAskQ) FilterByBaseAssets(codes []string) AtomicSwapAskQ {
 	q.selector = q.selector.Where(sq.Eq{"b.base_asset_code": codes})
 	return q
@@ -97,6 +102,20 @@ func (q *AtomicSwapAskQ) Select() ([]AtomicSwapAsk, error) {
 		}
 
 		return nil, errors.Wrap(err, "failed to load atomic swap asks")
+	}
+
+	return result, nil
+}
+
+func (q AtomicSwapAskQ) SelectIDs() ([]uint64, error) {
+	var result []uint64
+	err := q.repo.Select(&result, q.selector)
+	if err != nil {
+		if q.repo.NoRows(err) {
+			return nil, nil
+		}
+
+		return nil, errors.Wrap(err, "failed to load atomic swap ask ids")
 	}
 
 	return result, nil
