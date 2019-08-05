@@ -15,10 +15,13 @@ func NewExternalSystemID(extSysID core2.ExternalSystemID) *regources.ExternalSys
 		},
 		Attributes: regources.ExternalSystemIdAttributes{
 			ExternalSystemType: extSysID.ExternalSystemType,
-			Data:               extSysID.Data,
-			IsDeleted:          extSysID.IsDeleted,
-			ExpiresAt:          extSysID.ExpiresAt,
-			BindedAt:           extSysID.BindedAt,
+			Data: regources.ExternalSystemData{
+				Data: extSysID.Data.Data,
+				Type: extSysID.Data.Type,
+			},
+			IsDeleted: extSysID.IsDeleted,
+			ExpiresAt: extSysID.ExpiresAt,
+			BindedAt:  extSysID.BindedAt,
 		},
 	}
 }
