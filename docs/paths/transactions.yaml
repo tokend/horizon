@@ -49,11 +49,10 @@
       🔒 Admin account's signature is required.\n
     operationId: getTransactions
     parameters:
-      - name: filter[ledger_entry_changes.entry_type]
+      - name: filter[ledger_entry_changes.entry_types]
         in: query
         description: |
           Filters transactions by ledger entry type they affected (comma-separated multiple values are supported):
-          * 1  - `any`
           * 2  - `account`
           * 3  - `signer`
           * 4  - `fee`
@@ -91,9 +90,9 @@
         explode: false
         schema:
           type: integer
-          minimum: 1
-          maximum: 33
-      - name: filter[ledger_entry_changes.change_type]
+          minimum: 2
+          maximum: 35
+      - name: filter[ledger_entry_changes.change_types]
         in: query
         description: |
           description: |
@@ -107,7 +106,7 @@
         explode: false
         schema:
           type: integer
-          minimum: 1
+          minimum: 0
           maximum: 3
       - name: include
         in: query

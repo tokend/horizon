@@ -1,7 +1,7 @@
 /v3/create_atomic_swap_ask_requests:
   get:
     tags:
-      - WIP
+      - Atomic Swap
     summary: Create Atomic Swap Ask Request List
     description: |
       Allows getting a filtered list of `CreateAtomicSwapAskRequest` with details\n

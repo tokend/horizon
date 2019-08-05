@@ -98,7 +98,7 @@
           type: string
           enum:
             - "request_details"
-            - "request_details.destination_account"
+            - "request_details.account"
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'

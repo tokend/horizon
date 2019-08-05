@@ -1,7 +1,7 @@
 /v3/create_atomic_swap_bid_requests:
   get:
     tags:
-      - WIP
+      - Atomic Swap
     summary: Create Atomic Swap Bid Request List
     description: |
       Allows getting a filtered list of `CreateAtomicSwapBidRequest` with details\n
@@ -78,6 +78,24 @@
         explode: false
         schema:
           type: string
+      - name: filter[request_details.ask_id]
+        in: query
+        description: |
+          Filters atomic swap bid requests by atomic swap ask id.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[request_details.ask_owner]
+        in: query
+        description: |
+          Filters atomic swap bid requests by atomic swap ask owner id.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
       - name: include
         in: query
         description: |

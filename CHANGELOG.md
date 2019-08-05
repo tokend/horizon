@@ -1,9 +1,42 @@
 ## Unreleased
 
+## Added
+
+* `request_details.ask_owner` filter for `/v3/create_atomic_swap_bid_requests`
+
+## Fixed
+
+* checking signature on `/v3/accounts` if kyc_data included
+* checking signature on `/v3/create_atomic_swap_bid_requests` for ask owner
+
+## 3.5.1-x.1
+
+### Changed
+
+* deprecate `/v3`
+
+### Added
+
+* `/v3/info`
+* `request_details.ask_id` filter for `/v3/create_atomic_swap_bid_requests`
+
+### Fixed
+
+* get reviewable requests docs
+* atomic swap request filters
+
+## 3.5.1-x.0
+
 ### Added
 
 * filter `owner` for balances list
 * endpoint `/v3/accounts/{account-id}/requests/{request-id}`
+* `base_asset` to `AtomicSwapAsk` relationships
+
+### Fixed
+
+* panic on ingesting reviewable requests
+* internal error on `v3/accounts` 
 
 ## 3.5.0-x.1
 

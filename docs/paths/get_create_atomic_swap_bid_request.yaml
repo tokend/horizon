@@ -1,7 +1,7 @@
 /v3/create_atomic_swap_bid_requests/{id}:
   get:
     tags:
-      - WIP
+      - Atomic Swap
     summary: Create Atomic Swap Bid Request by ID
     description: |
       Allows getting `CreateAtomicSwapBid` by ID\n

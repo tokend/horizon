@@ -91,17 +91,17 @@ func (h *getAtomicSwapAskHandler) GetAtomicSwapAsk(request *requests.GetAtomicSw
 		response.Included.Add(&baseBalance)
 	}
 
+	assetRaw, err := h.AssetsQ.GetByCode(bid.BaseAsset)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get base asset")
+	}
+	if assetRaw == nil {
+		return nil, errors.From(errors.New("base asset not found"), logan.F{
+			"asset code": bid.BaseAsset,
+		})
+	}
+	response.Data.Relationships.BaseAsset = resources.NewAssetKey(assetRaw.Code).AsRelation()
 	if request.ShouldInclude(requests.IncludeTypeAskBaseAsset) {
-		assetRaw, err := h.AssetsQ.GetByCode(bid.BaseAsset)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get base asset")
-		}
-		if assetRaw == nil {
-			return nil, errors.From(errors.New("base asset not found"), logan.F{
-				"asset code": bid.BaseAsset,
-			})
-		}
-
 		asset := resources.NewAsset(*assetRaw)
 		response.Included.Add(&asset)
 	}

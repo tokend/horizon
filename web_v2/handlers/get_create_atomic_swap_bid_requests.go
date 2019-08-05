@@ -28,14 +28,17 @@ func GetCreateAtomicSwapBidRequests(w http.ResponseWriter, r *http.Request) {
 	historyRepo := ctx.HistoryRepo(r)
 	coreRepo := ctx.CoreRepo(r)
 	handler := getCreateAtomicSwapBidRequestsHandler{
-		R:         request,
-		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
-		AssetsQ:   core2.NewAssetsQ(coreRepo),
+		R:            request,
+		RequestsQ:    history2.NewReviewableRequestsQ(historyRepo),
+		AssetsQ:      core2.NewAssetsQ(coreRepo),
 		QuoteAssetsQ: core2.NewAtomicSwapQuoteAssetQ(coreRepo),
-		Log:       ctx.Log(r),
+		AsksQ:        core2.NewAtomicSwapAskQ(coreRepo),
+		Log:          ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor,
+		request.GetRequestsBase.Filters.Reviewer, request.Filters.AskOwner,
+	) {
 		return
 	}
 
@@ -50,25 +53,42 @@ func GetCreateAtomicSwapBidRequests(w http.ResponseWriter, r *http.Request) {
 }
 
 type getCreateAtomicSwapBidRequestsHandler struct {
-	R         requests.GetCreateAtomicSwapBidRequests
-	Base      getRequestListBaseHandler
-	RequestsQ history2.ReviewableRequestsQ
-	AssetsQ   core2.AssetsQ
+	R            requests.GetCreateAtomicSwapBidRequests
+	Base         getRequestListBaseHandler
+	RequestsQ    history2.ReviewableRequestsQ
+	AssetsQ      core2.AssetsQ
 	QuoteAssetsQ core2.AtomicSwapQuoteAssetQ
-	Log       *logan.Entry
+	AsksQ        core2.AtomicSwapAskQ
+	Log          *logan.Entry
 }
 
 func (h *getCreateAtomicSwapBidRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateAtomicSwapBidRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateAtomicSwapBid))
+	var ids []uint64
 
 	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsQuoteAsset) {
 		q = q.FilterByAtomicSwapQuoteAsset(request.Filters.QuoteAsset)
+	}
+	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsAskOwner) {
+		var err error
+		ids, err = h.AsksQ.IDSelector().FilterByOwner(request.Filters.AskOwner).SelectIDs()
+		if err != nil {
+			return errors.Wrap(err, "failed to load ask ids by owner", logan.F{
+				"owner": request.Filters.AskOwner,
+			})
+		}
+
+		q = q.FilterByAtomicSwapAskIDs(ids)
+	}
+	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsAskID) {
+		q = q.FilterByAtomicSwapAskID(request.Filters.AskID)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
 }
 
-func (h *getCreateAtomicSwapBidRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
+func (h *getCreateAtomicSwapBidRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest,
+) (regources.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapBidRequestsQuoteAsset) {

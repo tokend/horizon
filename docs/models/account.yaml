@@ -88,7 +88,7 @@ Account:
                 items:
                   $ref: '#/components/schemas/LimitsWithStatsKey'
           kyc_data:
-            description: "KYC data for a particular account"
+            description: "KYC data for a particular account (contains creator details of approved change role request)"
             type: object
             properties:
               data:
