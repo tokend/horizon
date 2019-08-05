@@ -99,7 +99,7 @@
   branch = "feature/remove-asset-pair"
 
 [[constraint]]
-  branch = "fix/atomic_swap_docs"
+  branch = "feature/external-system-type"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

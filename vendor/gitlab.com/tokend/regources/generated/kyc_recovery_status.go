@@ -4,7 +4,9 @@
 
 package regources
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type KYCRecoveryStatus int
 
@@ -33,15 +35,4 @@ func (s KYCRecoveryStatus) MarshalJSON() ([]byte, error) {
 		Name:  kycRecoveryStatusStr[s],
 		Value: int32(s),
 	})
-}
-
-func (s *KYCRecoveryStatus) UnmarshalJSON(b []byte) error {
-	var res Flag
-	err := json.Unmarshal(b, &res)
-	if err != nil {
-		return err
-	}
-
-	*s = KYCRecoveryStatus(res.Value)
-	return nil
 }

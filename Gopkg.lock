@@ -530,15 +530,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "fix/atomic_swap_docs"
-  digest = "1:030a4971bf2f761311490bf81ca2cc695e4ff528bbbd18fbfaefe09809fef4da"
+  branch = "feature/external-system-type"
+  digest = "1:345f18b2f1fe78f75915ef2c8c730d1524bd965e4d52572dfca1a41bb9077878"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "6edbe6f18205e616f2652d12c30900cdc7ff6a5b"
+  revision = "2d369cdc18dfb53b363a835e03e3fb0f1cf13c9c"
 
 [[projects]]
   branch = "master"

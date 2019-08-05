@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased
+## 4.7.0
+
+### Added 
+
+* `KYCRecoveryStatus`
+* `AccountAttributes`
 
 ### Fixed
 
