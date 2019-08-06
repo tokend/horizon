@@ -38,7 +38,7 @@ func GetConvertedBalances(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, request.AccountAddress) {
+	if !isAllowed(r, w, request.AccountAddress, request.Filters.AssetOwner) {
 		return
 	}
 
@@ -84,6 +84,10 @@ func (h *getConvertedBalancesHandler) GetConvertedBalances(request *requests.Get
 	}
 
 	q := h.BalancesQ.FilterByAccount(request.AccountAddress)
+
+	if request.ShouldFilter(requests.FilterTypeConvertedBalancesAssetOwner) {
+		q = q.FilterByAssetOwner(request.Filters.AssetOwner)
+	}
 
 	if request.ShouldInclude(requests.IncludeTypeConvertedBalancesBalanceAsset) {
 		q = q.WithAsset()

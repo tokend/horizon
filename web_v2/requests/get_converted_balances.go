@@ -5,6 +5,8 @@ import (
 )
 
 const (
+	// FilterTypeConvertedBalancesAssetOwner - defines if we need to filter the list by asset owner
+	FilterTypeConvertedBalancesAssetOwner = "asset_owner"
 
 	// IncludeTypeConvertedBalancesAsset - defines if conversion asset should be included in the response
 	IncludeTypeConvertedBalancesAsset = "asset"
@@ -26,9 +28,16 @@ var includeTypeConvertedBalancesAll = map[string]struct{}{
 	IncludeTypeConvertedBalancesBalanceAsset: {},
 }
 
+var filterTypeConvertedBalancesAll = map[string]struct{}{
+	FilterTypeBalanceListAssetOwner: {},
+}
+
 // GetConvertedBalances - represents params to be specified by user for GetConvertedBalances handler
 type GetConvertedBalances struct {
 	*base
+	Filters struct {
+		AssetOwner string `json:"asset_owner"`
+	}
 	AssetCode      string
 	AccountAddress string
 }
@@ -37,6 +46,7 @@ type GetConvertedBalances struct {
 func NewGetConvertedBalances(r *http.Request) (*GetConvertedBalances, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeConvertedBalancesAll,
+		supportedFilters:filterTypeConvertedBalancesAll,
 	})
 	if err != nil {
 		return nil, err
@@ -45,9 +55,16 @@ func NewGetConvertedBalances(r *http.Request) (*GetConvertedBalances, error) {
 	accountAddress := b.getString("id")
 	assetCode := b.getString("asset_code")
 
-	return &GetConvertedBalances{
+	request := &GetConvertedBalances{
 		base:           b,
 		AccountAddress: accountAddress,
 		AssetCode:      assetCode,
-	}, nil
+	}
+
+	err = b.populateFilters(&request.Filters)
+	if err != nil {
+		return nil, err
+	}
+
+	return request, nil
 }
