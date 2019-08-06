@@ -6,7 +6,7 @@
     description: |
       Allows getting list of balances converted to provided asset.
 
-      🔒 Either account or admin signature is needed.
+      🔒 Either account or admin signature is needed.  If filter by asset owner is provided, the signature of asset's owner is also valid
     operationId: getConvertedBalancesCollection
     parameters:
       - name: account_id
@@ -25,6 +25,10 @@
         explode: false
         schema:
           type: string
+      - name: filter[asset_owner]
+        in: query
+        description: |
+          Filters balances by asset owner. Returns page of balances for the provided asset owner
       - name: include
         in: query
         description: |
