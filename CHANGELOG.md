@@ -1,15 +1,6 @@
 ## Unreleased
 
-## Added
-
-* `request_details.ask_owner` filter for `/v3/create_atomic_swap_bid_requests`
-
-## Fixed
-
-* checking signature on `/v3/accounts` if kyc_data included
-* checking signature on `/v3/create_atomic_swap_bid_requests` for ask owner
-
-## 3.5.1-x.1
+## 3.5.1
 
 ### Changed
 
@@ -17,34 +8,23 @@
 
 ### Added
 
-* `/v3/info`
-* `request_details.ask_id` filter for `/v3/create_atomic_swap_bid_requests`
-
-### Fixed
-
-* get reviewable requests docs
-* atomic swap request filters
-
-## 3.5.1-x.0
-
-### Added
-
 * filter `owner` for balances list
 * endpoint `/v3/accounts/{account-id}/requests/{request-id}`
 * `base_asset` to `AtomicSwapAsk` relationships
+* `/v3/info`
+* `request_details.ask_id` filter for `/v3/create_atomic_swap_bid_requests`
+* `request_details.ask_owner` filter for `/v3/create_atomic_swap_bid_requests`
 
 ### Fixed
 
 * panic on ingesting reviewable requests
-* internal error on `v3/accounts` 
+* internal error on `v3/accounts`
+* get reviewable requests docs
+* atomic swap request filters
+* checking signature on `/v3/accounts` if kyc_data included
+* checking signature on `/v3/create_atomic_swap_bid_requests` for ask owner
 
-## 3.5.0-x.1
-
-### Fixed
-
-* vote id in `v3/votes` response
-
-## 3.5.0-x.0
+## 3.5.0
 
 ### Added
 
@@ -59,6 +39,7 @@
 * Waiting for transaction ingestion for `/v3/transactions`
 * request details for create atomic swap ask and bid requests
 * response on `v3/create_atomic_swap_aks_requests` (quote assets include)
+* vote id in `v3/votes` response
 
 ## 3.4.0
 
