@@ -66,8 +66,7 @@
   version = "v3.7"
 
 [[projects]]
-  branch = "feature/remove-asset-pair"
-  digest = "1:92705efaf0004d4e5222f65024e7290d74f629ecab87fcc41ef1a758d84da283"
+  digest = "1:7420ffc7b7f00279294fb8d276be471fc7e3dffe82356633dcb8a872c204e6f6"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -76,10 +75,11 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "f5819f27f9db6a3eeb91325dbc4860104d992479"
+  revision = "0b56b8b441982976d9f9bcbbd838e1791cb13fd0"
+  version = "v3.9.0"
 
 [[projects]]
-  digest = "1:2ad5e4bbe42ffd64b10babe1ec1ac99d64122170cb2524326ad81708ebd0b9cc"
+  digest = "1:a5cc901b8e54c4b73a62f97dc7c8f6c46e347c148a7a38e09b2e942c2587ba03"
   name = "gotest.tools"
   packages = [
     "assert",

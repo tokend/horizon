@@ -16,6 +16,7 @@ const (
 	ASSETS                                                  ResourceType = "assets"
 	ASSET_PAIRS                                             ResourceType = "asset-pairs"
 	ATOMIC_SWAP_ASK                                         ResourceType = "atomic-swap-ask"
+	ATOMIC_SWAP_QUOTE_ASSETS                                ResourceType = "atomic-swap-quote-assets"
 	BALANCES                                                ResourceType = "balances"
 	BALANCES_STATE                                          ResourceType = "balances-state"
 	OPERATIONS_BIND_EXTERNAL_SYSTEM_ACCOUNT_ID              ResourceType = "operations-bind-external-system-account-id"
