@@ -36,3 +36,18 @@ func (s KYCRecoveryStatus) MarshalJSON() ([]byte, error) {
 		Value: int32(s),
 	})
 }
+
+func (s *KYCRecoveryStatus) UnmarshalJSON(b []byte) error {
+	var res Flag
+	err := json.Unmarshal(b, &res)
+	if err != nil {
+		return err
+	}
+
+	*s = KYCRecoveryStatus(res.Value)
+	return nil
+}
+
+func (s KYCRecoveryStatus) IsFlag() bool {
+	return true
+}
