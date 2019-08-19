@@ -35,7 +35,7 @@ func NewAtomicSwapAskQuoteAsset(raw core2.AtomicSwapQuoteAsset) regources.Atomic
 		Key: regources.Key{
 			// TODO: Use artificial ID
 			ID:   fmt.Sprintf("%s:%d", raw.QuoteAsset, raw.AskID),
-			Type: regources.QUOTE_ASSETS,
+			Type: regources.ATOMIC_SWAP_QUOTE_ASSETS,
 		},
 		Attributes: regources.AtomicSwapQuoteAssetAttributes{
 			Price:      regources.Amount(raw.Price),
