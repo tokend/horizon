@@ -292,8 +292,8 @@ var messages = map[string]string{
 	"op_account_specific_rule_duplication":              "Not allowed to pass identical or conflicting rules",
 	"op_invalid_end_time":                               "New end time is in the past",
 	"op_global_specific_rule_required":                  "Not allowed to create sale without rule with null account id",
-	"op_has_active_offers":                              "Asset pair with active offers can't be deleted",
-	"op_has_active_sales":                               "Asset pair with active sales can't be deleted",
+	"op_has_active_offers":                              "Asset or asset pair with active offers can't be deleted",
+	"op_has_active_sales":                               "Asset or asset pair with active sales can't be deleted",
 	"op_account_role_to_set_does_not_exist":             "Not allowed to create change role request with destination role which does not exist",
 	"op_kyc_recovery_tasks_not_found":                   "There is no key value by key \"create_kyc_recovery_tasks\" ",
 	"op_signer_duplication":                             "It is not allowed to add same signer twice",
@@ -302,7 +302,8 @@ var messages = map[string]string{
 	"op_recovery_signer_role_not_found":                 "There is no key value by key \"kyc_recovery_signer_role\" ",
 	"op_invalid_update_data":                            "It is not allowed to change target account on request update",
 	"op_same_asset":                                     "Not allowed to create asset pair with equal base and quote assets",
-	"op_invalid_asset_code": "Not allowed to pass invalid base or quote asset code",
+	"op_invalid_asset_code":                             "Not allowed to pass invalid base or quote asset code",
+	"op_has_pair":                                       "Cannot delete asset, it is used in some asset pair",
 }
 
 func getMessage(rawCode string) string {

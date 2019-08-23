@@ -1,5 +1,5 @@
-// revision: 9199f20369f8ca208e0a69372f3a4592aa50b9e5
-// branch:   feature/remove-asset-pair
+// revision: be194d6153bc1e7fe66b4bb6a6bb0f0bc7265389
+// branch:   feature/remove-asset
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -77,6 +77,7 @@
 //  xdr/operation-payment.x
 //  xdr/operation-payout.x
 //  xdr/operation-remove-asset-pair.x
+//  xdr/operation-remove-asset.x
 //  xdr/operation-review-request.x
 //  xdr/operation-set-fees.x
 //  xdr/operation-stamp.x
@@ -12006,14 +12007,14 @@ type CancelChangeRoleSuccess struct {
 //    union CancelChangeRoleRequestResult switch (CancelChangeRoleRequestResultCode code)
 //    {
 //        case SUCCESS:
-//            CancelSaleCreationSuccess success;
+//            CancelChangeRoleSuccess success;
 //        default:
 //            void;
 //    };
 //
 type CancelChangeRoleRequestResult struct {
 	Code    CancelChangeRoleRequestResultCode `json:"code,omitempty"`
-	Success *CancelSaleCreationSuccess        `json:"success,omitempty"`
+	Success *CancelChangeRoleSuccess          `json:"success,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -12038,9 +12039,9 @@ func NewCancelChangeRoleRequestResult(code CancelChangeRoleRequestResultCode, va
 	result.Code = code
 	switch CancelChangeRoleRequestResultCode(code) {
 	case CancelChangeRoleRequestResultCodeSuccess:
-		tv, ok := value.(CancelSaleCreationSuccess)
+		tv, ok := value.(CancelChangeRoleSuccess)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be CancelSaleCreationSuccess")
+			err = fmt.Errorf("invalid value, must be CancelChangeRoleSuccess")
 			return
 		}
 		result.Success = &tv
@@ -12052,7 +12053,7 @@ func NewCancelChangeRoleRequestResult(code CancelChangeRoleRequestResultCode, va
 
 // MustSuccess retrieves the Success value from the union,
 // panicing if the value is not set.
-func (u CancelChangeRoleRequestResult) MustSuccess() CancelSaleCreationSuccess {
+func (u CancelChangeRoleRequestResult) MustSuccess() CancelChangeRoleSuccess {
 	val, ok := u.GetSuccess()
 
 	if !ok {
@@ -12064,7 +12065,7 @@ func (u CancelChangeRoleRequestResult) MustSuccess() CancelSaleCreationSuccess {
 
 // GetSuccess retrieves the Success value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u CancelChangeRoleRequestResult) GetSuccess() (result CancelSaleCreationSuccess, ok bool) {
+func (u CancelChangeRoleRequestResult) GetSuccess() (result CancelChangeRoleSuccess, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Code))
 
 	if armName == "Success" {
@@ -34254,6 +34255,310 @@ func (u RemoveAssetPairResult) GetSuccess() (result RemoveAssetPairSuccess, ok b
 	return
 }
 
+// RemoveAssetOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveAssetOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAssetOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAssetOpExt
+func (u RemoveAssetOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveAssetOpExt creates a new  RemoveAssetOpExt.
+func NewRemoveAssetOpExt(v LedgerVersion, value interface{}) (result RemoveAssetOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveAssetOp is an XDR Struct defines as:
+//
+//   //: `RemoveAssetOp` removes specified asset pair
+//    struct RemoveAssetOp
+//    {
+//        //: Defines an asset
+//        AssetCode code;
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type RemoveAssetOp struct {
+	Code AssetCode        `json:"code,omitempty"`
+	Ext  RemoveAssetOpExt `json:"ext,omitempty"`
+}
+
+// RemoveAssetResultCode is an XDR Enum defines as:
+//
+//   //: Result codes for `RemoveAssetOp`
+//    enum RemoveAssetResultCode
+//    {
+//        //: Operation is successfully applied
+//        SUCCESS = 0,
+//        //: Asset not found
+//        //: Asset can't be deleted as there exist asset pairs with it
+//        HAS_PAIR = -1,
+//        //: Asset can't be deleted as it has active offers
+//        HAS_ACTIVE_OFFERS = -2,
+//        //: Asset can't be deleted as it has active sales
+//        HAS_ACTIVE_SALES = -3
+//    };
+//
+type RemoveAssetResultCode int32
+
+const (
+	RemoveAssetResultCodeSuccess         RemoveAssetResultCode = 0
+	RemoveAssetResultCodeHasPair         RemoveAssetResultCode = -1
+	RemoveAssetResultCodeHasActiveOffers RemoveAssetResultCode = -2
+	RemoveAssetResultCodeHasActiveSales  RemoveAssetResultCode = -3
+)
+
+var RemoveAssetResultCodeAll = []RemoveAssetResultCode{
+	RemoveAssetResultCodeSuccess,
+	RemoveAssetResultCodeHasPair,
+	RemoveAssetResultCodeHasActiveOffers,
+	RemoveAssetResultCodeHasActiveSales,
+}
+
+var removeAssetResultCodeMap = map[int32]string{
+	0:  "RemoveAssetResultCodeSuccess",
+	-1: "RemoveAssetResultCodeHasPair",
+	-2: "RemoveAssetResultCodeHasActiveOffers",
+	-3: "RemoveAssetResultCodeHasActiveSales",
+}
+
+var removeAssetResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "has_pair",
+	-2: "has_active_offers",
+	-3: "has_active_sales",
+}
+
+var removeAssetResultCodeRevMap = map[string]int32{
+	"RemoveAssetResultCodeSuccess":         0,
+	"RemoveAssetResultCodeHasPair":         -1,
+	"RemoveAssetResultCodeHasActiveOffers": -2,
+	"RemoveAssetResultCodeHasActiveSales":  -3,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for RemoveAssetResultCode
+func (e RemoveAssetResultCode) ValidEnum(v int32) bool {
+	_, ok := removeAssetResultCodeMap[v]
+	return ok
+}
+func (e RemoveAssetResultCode) isFlag() bool {
+	for i := len(RemoveAssetResultCodeAll) - 1; i >= 0; i-- {
+		expected := RemoveAssetResultCode(2) << uint64(len(RemoveAssetResultCodeAll)-1) >> uint64(len(RemoveAssetResultCodeAll)-i)
+		if expected != RemoveAssetResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e RemoveAssetResultCode) String() string {
+	name, _ := removeAssetResultCodeMap[int32(e)]
+	return name
+}
+
+func (e RemoveAssetResultCode) ShortString() string {
+	name, _ := removeAssetResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e RemoveAssetResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range RemoveAssetResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *RemoveAssetResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = RemoveAssetResultCode(t.Value)
+	return nil
+}
+
+// RemoveAssetSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveAssetSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAssetSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAssetSuccessExt
+func (u RemoveAssetSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveAssetSuccessExt creates a new  RemoveAssetSuccessExt.
+func NewRemoveAssetSuccessExt(v LedgerVersion, value interface{}) (result RemoveAssetSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveAssetSuccess is an XDR Struct defines as:
+//
+//   //: Result of successful `RemoveAssetOp` application
+//    struct RemoveAssetSuccess
+//    {
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type RemoveAssetSuccess struct {
+	Ext RemoveAssetSuccessExt `json:"ext,omitempty"`
+}
+
+// RemoveAssetResult is an XDR Union defines as:
+//
+//   //: Result of RemoveAsset operation application along with the result code
+//    union RemoveAssetResult switch (RemoveAssetResultCode code) {
+//        case SUCCESS:
+//            RemoveAssetSuccess success;
+//        default:
+//            void;
+//    };
+//
+type RemoveAssetResult struct {
+	Code    RemoveAssetResultCode `json:"code,omitempty"`
+	Success *RemoveAssetSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAssetResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAssetResult
+func (u RemoveAssetResult) ArmForSwitch(sw int32) (string, bool) {
+	switch RemoveAssetResultCode(sw) {
+	case RemoveAssetResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewRemoveAssetResult creates a new  RemoveAssetResult.
+func NewRemoveAssetResult(code RemoveAssetResultCode, value interface{}) (result RemoveAssetResult, err error) {
+	result.Code = code
+	switch RemoveAssetResultCode(code) {
+	case RemoveAssetResultCodeSuccess:
+		tv, ok := value.(RemoveAssetSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAssetSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u RemoveAssetResult) MustSuccess() RemoveAssetSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u RemoveAssetResult) GetSuccess() (result RemoveAssetSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
 // ReviewRequestOpAction is an XDR Enum defines as:
 //
 //   //: Actions that can be performed on request that is being reviewed
@@ -35609,6 +35914,8 @@ type ReviewRequestOp struct {
 //        INSUFFICIENT_PREISSUED_FOR_HARD_CAP = -520,
 //        //: Trying to create a sale for a base asset that cannot be found
 //        BASE_ASSET_NOT_FOUND = -530,
+//        //: There is no asset pair between default quote asset and quote asset
+//        ASSET_PAIR_NOT_FOUND = -540,
 //        //: Trying to create a sale with one of the quote assets that doesn't exist
 //        QUOTE_ASSET_NOT_FOUND = -550,
 //
@@ -35702,6 +36009,7 @@ const (
 	ReviewRequestResultCodeHardCapWillExceedMaxIssuance             ReviewRequestResultCode = -510
 	ReviewRequestResultCodeInsufficientPreissuedForHardCap          ReviewRequestResultCode = -520
 	ReviewRequestResultCodeBaseAssetNotFound                        ReviewRequestResultCode = -530
+	ReviewRequestResultCodeAssetPairNotFound                        ReviewRequestResultCode = -540
 	ReviewRequestResultCodeQuoteAssetNotFound                       ReviewRequestResultCode = -550
 	ReviewRequestResultCodeNonZeroTasksToRemoveNotAllowed           ReviewRequestResultCode = -600
 	ReviewRequestResultCodeAccountRoleToSetDoesNotExist             ReviewRequestResultCode = -610
@@ -35765,6 +36073,7 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeHardCapWillExceedMaxIssuance,
 	ReviewRequestResultCodeInsufficientPreissuedForHardCap,
 	ReviewRequestResultCodeBaseAssetNotFound,
+	ReviewRequestResultCodeAssetPairNotFound,
 	ReviewRequestResultCodeQuoteAssetNotFound,
 	ReviewRequestResultCodeNonZeroTasksToRemoveNotAllowed,
 	ReviewRequestResultCodeAccountRoleToSetDoesNotExist,
@@ -35828,6 +36137,7 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-510:  "ReviewRequestResultCodeHardCapWillExceedMaxIssuance",
 	-520:  "ReviewRequestResultCodeInsufficientPreissuedForHardCap",
 	-530:  "ReviewRequestResultCodeBaseAssetNotFound",
+	-540:  "ReviewRequestResultCodeAssetPairNotFound",
 	-550:  "ReviewRequestResultCodeQuoteAssetNotFound",
 	-600:  "ReviewRequestResultCodeNonZeroTasksToRemoveNotAllowed",
 	-610:  "ReviewRequestResultCodeAccountRoleToSetDoesNotExist",
@@ -35891,6 +36201,7 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-510:  "hard_cap_will_exceed_max_issuance",
 	-520:  "insufficient_preissued_for_hard_cap",
 	-530:  "base_asset_not_found",
+	-540:  "asset_pair_not_found",
 	-550:  "quote_asset_not_found",
 	-600:  "non_zero_tasks_to_remove_not_allowed",
 	-610:  "account_role_to_set_does_not_exist",
@@ -35954,6 +36265,7 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeHardCapWillExceedMaxIssuance":             -510,
 	"ReviewRequestResultCodeInsufficientPreissuedForHardCap":          -520,
 	"ReviewRequestResultCodeBaseAssetNotFound":                        -530,
+	"ReviewRequestResultCodeAssetPairNotFound":                        -540,
 	"ReviewRequestResultCodeQuoteAssetNotFound":                       -550,
 	"ReviewRequestResultCodeNonZeroTasksToRemoveNotAllowed":           -600,
 	"ReviewRequestResultCodeAccountRoleToSetDoesNotExist":             -610,
@@ -38825,6 +39137,106 @@ type AccountRuleResourceInitiateKycRecovery struct {
 	Ext    EmptyExt `json:"ext,omitempty"`
 }
 
+// AccountRuleResourceAccountSpecificRuleExtAccountSpecificRule is an XDR NestedStruct defines as:
+//
+//   struct
+//            {
+//                //: Describes properties of some ledger key that
+//                //: can be used to restrict the usage of account specific rules
+//                LedgerKey ledgerKey;
+//
+//                //: reserved for future extension
+//                EmptyExt ext;
+//            }
+//
+type AccountRuleResourceAccountSpecificRuleExtAccountSpecificRule struct {
+	LedgerKey LedgerKey `json:"ledgerKey,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
+}
+
+// AccountRuleResourceAccountSpecificRuleExt is an XDR NestedUnion defines as:
+//
+//   union switch(LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case ADD_ACC_SPECIFIC_RULE_RESOURCE:
+//            struct
+//            {
+//                //: Describes properties of some ledger key that
+//                //: can be used to restrict the usage of account specific rules
+//                LedgerKey ledgerKey;
+//
+//                //: reserved for future extension
+//                EmptyExt ext;
+//            } accountSpecificRule;
+//        }
+//
+type AccountRuleResourceAccountSpecificRuleExt struct {
+	V                   LedgerVersion                                                 `json:"v,omitempty"`
+	AccountSpecificRule *AccountRuleResourceAccountSpecificRuleExtAccountSpecificRule `json:"accountSpecificRule,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u AccountRuleResourceAccountSpecificRuleExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of AccountRuleResourceAccountSpecificRuleExt
+func (u AccountRuleResourceAccountSpecificRuleExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	case LedgerVersionAddAccSpecificRuleResource:
+		return "AccountSpecificRule", true
+	}
+	return "-", false
+}
+
+// NewAccountRuleResourceAccountSpecificRuleExt creates a new  AccountRuleResourceAccountSpecificRuleExt.
+func NewAccountRuleResourceAccountSpecificRuleExt(v LedgerVersion, value interface{}) (result AccountRuleResourceAccountSpecificRuleExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	case LedgerVersionAddAccSpecificRuleResource:
+		tv, ok := value.(AccountRuleResourceAccountSpecificRuleExtAccountSpecificRule)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountRuleResourceAccountSpecificRuleExtAccountSpecificRule")
+			return
+		}
+		result.AccountSpecificRule = &tv
+	}
+	return
+}
+
+// MustAccountSpecificRule retrieves the AccountSpecificRule value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResourceAccountSpecificRuleExt) MustAccountSpecificRule() AccountRuleResourceAccountSpecificRuleExtAccountSpecificRule {
+	val, ok := u.GetAccountSpecificRule()
+
+	if !ok {
+		panic("arm AccountSpecificRule is not set")
+	}
+
+	return val
+}
+
+// GetAccountSpecificRule retrieves the AccountSpecificRule value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResourceAccountSpecificRuleExt) GetAccountSpecificRule() (result AccountRuleResourceAccountSpecificRuleExtAccountSpecificRule, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.V))
+
+	if armName == "AccountSpecificRule" {
+		result = *u.AccountSpecificRule
+		ok = true
+	}
+
+	return
+}
+
 // AccountRuleResource is an XDR Union defines as:
 //
 //   //: Describes properties of some entries that can be used to restrict the usage of entries
@@ -38931,23 +39343,40 @@ type AccountRuleResourceInitiateKycRecovery struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } initiateKYCRecovery;
+//    case ACCOUNT_SPECIFIC_RULE:
+//        union switch(LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case ADD_ACC_SPECIFIC_RULE_RESOURCE:
+//            struct
+//            {
+//                //: Describes properties of some ledger key that
+//                //: can be used to restrict the usage of account specific rules
+//                LedgerKey ledgerKey;
+//
+//                //: reserved for future extension
+//                EmptyExt ext;
+//            } accountSpecificRule;
+//        } accountSpecificRuleExt;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
 //    };
 //
 type AccountRuleResource struct {
-	Type                LedgerEntryType                         `json:"type,omitempty"`
-	Asset               *AccountRuleResourceAsset               `json:"asset,omitempty"`
-	ReviewableRequest   *AccountRuleResourceReviewableRequest   `json:"reviewableRequest,omitempty"`
-	Offer               *AccountRuleResourceOffer               `json:"offer,omitempty"`
-	Sale                *AccountRuleResourceSale                `json:"sale,omitempty"`
-	AtomicSwapAsk       *AccountRuleResourceAtomicSwapAsk       `json:"atomicSwapAsk,omitempty"`
-	KeyValue            *AccountRuleResourceKeyValue            `json:"keyValue,omitempty"`
-	Poll                *AccountRuleResourcePoll                `json:"poll,omitempty"`
-	Vote                *AccountRuleResourceVote                `json:"vote,omitempty"`
-	InitiateKycRecovery *AccountRuleResourceInitiateKycRecovery `json:"initiateKYCRecovery,omitempty"`
-	Ext                 *EmptyExt                               `json:"ext,omitempty"`
+	Type                   LedgerEntryType                            `json:"type,omitempty"`
+	Asset                  *AccountRuleResourceAsset                  `json:"asset,omitempty"`
+	ReviewableRequest      *AccountRuleResourceReviewableRequest      `json:"reviewableRequest,omitempty"`
+	Offer                  *AccountRuleResourceOffer                  `json:"offer,omitempty"`
+	Sale                   *AccountRuleResourceSale                   `json:"sale,omitempty"`
+	AtomicSwapAsk          *AccountRuleResourceAtomicSwapAsk          `json:"atomicSwapAsk,omitempty"`
+	KeyValue               *AccountRuleResourceKeyValue               `json:"keyValue,omitempty"`
+	Poll                   *AccountRuleResourcePoll                   `json:"poll,omitempty"`
+	Vote                   *AccountRuleResourceVote                   `json:"vote,omitempty"`
+	InitiateKycRecovery    *AccountRuleResourceInitiateKycRecovery    `json:"initiateKYCRecovery,omitempty"`
+	AccountSpecificRuleExt *AccountRuleResourceAccountSpecificRuleExt `json:"accountSpecificRuleExt,omitempty"`
+	Ext                    *EmptyExt                                  `json:"ext,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -38980,6 +39409,8 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "Vote", true
 	case LedgerEntryTypeInitiateKycRecovery:
 		return "InitiateKycRecovery", true
+	case LedgerEntryTypeAccountSpecificRule:
+		return "AccountSpecificRuleExt", true
 	default:
 		return "Ext", true
 	}
@@ -39054,6 +39485,13 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.InitiateKycRecovery = &tv
+	case LedgerEntryTypeAccountSpecificRule:
+		tv, ok := value.(AccountRuleResourceAccountSpecificRuleExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountRuleResourceAccountSpecificRuleExt")
+			return
+		}
+		result.AccountSpecificRuleExt = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -39284,6 +39722,31 @@ func (u AccountRuleResource) GetInitiateKycRecovery() (result AccountRuleResourc
 
 	if armName == "InitiateKycRecovery" {
 		result = *u.InitiateKycRecovery
+		ok = true
+	}
+
+	return
+}
+
+// MustAccountSpecificRuleExt retrieves the AccountSpecificRuleExt value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResource) MustAccountSpecificRuleExt() AccountRuleResourceAccountSpecificRuleExt {
+	val, ok := u.GetAccountSpecificRuleExt()
+
+	if !ok {
+		panic("arm AccountSpecificRuleExt is not set")
+	}
+
+	return val
+}
+
+// GetAccountSpecificRuleExt retrieves the AccountSpecificRuleExt value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResource) GetAccountSpecificRuleExt() (result AccountRuleResourceAccountSpecificRuleExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AccountSpecificRuleExt" {
+		result = *u.AccountSpecificRuleExt
 		ok = true
 	}
 
@@ -39732,6 +40195,106 @@ type SignerRuleResourceInitiateKycRecovery struct {
 	Ext    EmptyExt `json:"ext,omitempty"`
 }
 
+// SignerRuleResourceAccountSpecificRuleExtAccountSpecificRule is an XDR NestedStruct defines as:
+//
+//   struct
+//            {
+//                //: Describes properties of some ledger key that
+//                //: can be used to restrict the usage of account specific rules
+//                LedgerKey ledgerKey;
+//
+//                //: reserved for future extension
+//                EmptyExt ext;
+//            }
+//
+type SignerRuleResourceAccountSpecificRuleExtAccountSpecificRule struct {
+	LedgerKey LedgerKey `json:"ledgerKey,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
+}
+
+// SignerRuleResourceAccountSpecificRuleExt is an XDR NestedUnion defines as:
+//
+//   union switch(LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case ADD_ACC_SPECIFIC_RULE_RESOURCE:
+//            struct
+//            {
+//                //: Describes properties of some ledger key that
+//                //: can be used to restrict the usage of account specific rules
+//                LedgerKey ledgerKey;
+//
+//                //: reserved for future extension
+//                EmptyExt ext;
+//            } accountSpecificRule;
+//        }
+//
+type SignerRuleResourceAccountSpecificRuleExt struct {
+	V                   LedgerVersion                                                `json:"v,omitempty"`
+	AccountSpecificRule *SignerRuleResourceAccountSpecificRuleExtAccountSpecificRule `json:"accountSpecificRule,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u SignerRuleResourceAccountSpecificRuleExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of SignerRuleResourceAccountSpecificRuleExt
+func (u SignerRuleResourceAccountSpecificRuleExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	case LedgerVersionAddAccSpecificRuleResource:
+		return "AccountSpecificRule", true
+	}
+	return "-", false
+}
+
+// NewSignerRuleResourceAccountSpecificRuleExt creates a new  SignerRuleResourceAccountSpecificRuleExt.
+func NewSignerRuleResourceAccountSpecificRuleExt(v LedgerVersion, value interface{}) (result SignerRuleResourceAccountSpecificRuleExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	case LedgerVersionAddAccSpecificRuleResource:
+		tv, ok := value.(SignerRuleResourceAccountSpecificRuleExtAccountSpecificRule)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SignerRuleResourceAccountSpecificRuleExtAccountSpecificRule")
+			return
+		}
+		result.AccountSpecificRule = &tv
+	}
+	return
+}
+
+// MustAccountSpecificRule retrieves the AccountSpecificRule value from the union,
+// panicing if the value is not set.
+func (u SignerRuleResourceAccountSpecificRuleExt) MustAccountSpecificRule() SignerRuleResourceAccountSpecificRuleExtAccountSpecificRule {
+	val, ok := u.GetAccountSpecificRule()
+
+	if !ok {
+		panic("arm AccountSpecificRule is not set")
+	}
+
+	return val
+}
+
+// GetAccountSpecificRule retrieves the AccountSpecificRule value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SignerRuleResourceAccountSpecificRuleExt) GetAccountSpecificRule() (result SignerRuleResourceAccountSpecificRuleExtAccountSpecificRule, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.V))
+
+	if armName == "AccountSpecificRule" {
+		result = *u.AccountSpecificRule
+		ok = true
+	}
+
+	return
+}
+
 // SignerRuleResource is an XDR Union defines as:
 //
 //   //: Describes properties of some entries that can be used to restrict the usage of entries
@@ -39868,26 +40431,44 @@ type SignerRuleResourceInitiateKycRecovery struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } initiateKYCRecovery;
+//    case ACCOUNT_SPECIFIC_RULE:
+//        //: reserved for future extension
+//        union switch(LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case ADD_ACC_SPECIFIC_RULE_RESOURCE:
+//            struct
+//            {
+//                //: Describes properties of some ledger key that
+//                //: can be used to restrict the usage of account specific rules
+//                LedgerKey ledgerKey;
+//
+//                //: reserved for future extension
+//                EmptyExt ext;
+//            } accountSpecificRule;
+//        } accountSpecificRuleExt;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
 //    };
 //
 type SignerRuleResource struct {
-	Type                LedgerEntryType                        `json:"type,omitempty"`
-	ReviewableRequest   *SignerRuleResourceReviewableRequest   `json:"reviewableRequest,omitempty"`
-	Asset               *SignerRuleResourceAsset               `json:"asset,omitempty"`
-	Offer               *SignerRuleResourceOffer               `json:"offer,omitempty"`
-	Sale                *SignerRuleResourceSale                `json:"sale,omitempty"`
-	AtomicSwapAsk       *SignerRuleResourceAtomicSwapAsk       `json:"atomicSwapAsk,omitempty"`
-	SignerRule          *SignerRuleResourceSignerRule          `json:"signerRule,omitempty"`
-	SignerRole          *SignerRuleResourceSignerRole          `json:"signerRole,omitempty"`
-	Signer              *SignerRuleResourceSigner              `json:"signer,omitempty"`
-	KeyValue            *SignerRuleResourceKeyValue            `json:"keyValue,omitempty"`
-	Poll                *SignerRuleResourcePoll                `json:"poll,omitempty"`
-	Vote                *SignerRuleResourceVote                `json:"vote,omitempty"`
-	InitiateKycRecovery *SignerRuleResourceInitiateKycRecovery `json:"initiateKYCRecovery,omitempty"`
-	Ext                 *EmptyExt                              `json:"ext,omitempty"`
+	Type                   LedgerEntryType                           `json:"type,omitempty"`
+	ReviewableRequest      *SignerRuleResourceReviewableRequest      `json:"reviewableRequest,omitempty"`
+	Asset                  *SignerRuleResourceAsset                  `json:"asset,omitempty"`
+	Offer                  *SignerRuleResourceOffer                  `json:"offer,omitempty"`
+	Sale                   *SignerRuleResourceSale                   `json:"sale,omitempty"`
+	AtomicSwapAsk          *SignerRuleResourceAtomicSwapAsk          `json:"atomicSwapAsk,omitempty"`
+	SignerRule             *SignerRuleResourceSignerRule             `json:"signerRule,omitempty"`
+	SignerRole             *SignerRuleResourceSignerRole             `json:"signerRole,omitempty"`
+	Signer                 *SignerRuleResourceSigner                 `json:"signer,omitempty"`
+	KeyValue               *SignerRuleResourceKeyValue               `json:"keyValue,omitempty"`
+	Poll                   *SignerRuleResourcePoll                   `json:"poll,omitempty"`
+	Vote                   *SignerRuleResourceVote                   `json:"vote,omitempty"`
+	InitiateKycRecovery    *SignerRuleResourceInitiateKycRecovery    `json:"initiateKYCRecovery,omitempty"`
+	AccountSpecificRuleExt *SignerRuleResourceAccountSpecificRuleExt `json:"accountSpecificRuleExt,omitempty"`
+	Ext                    *EmptyExt                                 `json:"ext,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -39926,6 +40507,8 @@ func (u SignerRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "Vote", true
 	case LedgerEntryTypeInitiateKycRecovery:
 		return "InitiateKycRecovery", true
+	case LedgerEntryTypeAccountSpecificRule:
+		return "AccountSpecificRuleExt", true
 	default:
 		return "Ext", true
 	}
@@ -40021,6 +40604,13 @@ func NewSignerRuleResource(aType LedgerEntryType, value interface{}) (result Sig
 			return
 		}
 		result.InitiateKycRecovery = &tv
+	case LedgerEntryTypeAccountSpecificRule:
+		tv, ok := value.(SignerRuleResourceAccountSpecificRuleExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SignerRuleResourceAccountSpecificRuleExt")
+			return
+		}
+		result.AccountSpecificRuleExt = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -40326,6 +40916,31 @@ func (u SignerRuleResource) GetInitiateKycRecovery() (result SignerRuleResourceI
 
 	if armName == "InitiateKycRecovery" {
 		result = *u.InitiateKycRecovery
+		ok = true
+	}
+
+	return
+}
+
+// MustAccountSpecificRuleExt retrieves the AccountSpecificRuleExt value from the union,
+// panicing if the value is not set.
+func (u SignerRuleResource) MustAccountSpecificRuleExt() SignerRuleResourceAccountSpecificRuleExt {
+	val, ok := u.GetAccountSpecificRuleExt()
+
+	if !ok {
+		panic("arm AccountSpecificRuleExt is not set")
+	}
+
+	return val
+}
+
+// GetAccountSpecificRuleExt retrieves the AccountSpecificRuleExt value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SignerRuleResource) GetAccountSpecificRuleExt() (result SignerRuleResourceAccountSpecificRuleExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AccountSpecificRuleExt" {
+		result = *u.AccountSpecificRuleExt
 		ok = true
 	}
 
@@ -41740,10 +42355,7 @@ func (u SaleCreationRequestExt) GetSaleRules() (result []CreateAccountSaleRuleDa
 //   //: SaleCreationRequest is used to create a sale with provided parameters
 //    struct SaleCreationRequest
 //    {
-//        //: Type of sale
-//        //: 1: basic sale
-//        //: 2: crowdfunding sale
-//        //: 3: fixed price sale
+//        //: Some custom sale type that can be used while setting account rules
 //        uint64 saleType;
 //        //: Asset code of an asset to sell on sale
 //        AssetCode baseAsset; // asset for which sale will be performed
@@ -42023,6 +42635,8 @@ type WithdrawalRequest struct {
 //            InitiateKYCRecoveryOp initiateKYCRecoveryOp;
 //        case CREATE_KYC_RECOVERY_REQUEST:
 //            CreateKYCRecoveryRequestOp createKYCRecoveryRequestOp;
+//        case REMOVE_ASSET:
+//            RemoveAssetOp removeAssetOp;
 //        }
 //
 type OperationBody struct {
@@ -42071,6 +42685,7 @@ type OperationBody struct {
 	RemoveAssetPairOp                        *RemoveAssetPairOp                        `json:"removeAssetPairOp,omitempty"`
 	InitiateKycRecoveryOp                    *InitiateKycRecoveryOp                    `json:"initiateKYCRecoveryOp,omitempty"`
 	CreateKycRecoveryRequestOp               *CreateKycRecoveryRequestOp               `json:"createKYCRecoveryRequestOp,omitempty"`
+	RemoveAssetOp                            *RemoveAssetOp                            `json:"removeAssetOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -42171,6 +42786,8 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "InitiateKycRecoveryOp", true
 	case OperationTypeCreateKycRecoveryRequest:
 		return "CreateKycRecoveryRequestOp", true
+	case OperationTypeRemoveAsset:
+		return "RemoveAssetOp", true
 	}
 	return "-", false
 }
@@ -42487,6 +43104,13 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.CreateKycRecoveryRequestOp = &tv
+	case OperationTypeRemoveAsset:
+		tv, ok := value.(RemoveAssetOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAssetOp")
+			return
+		}
+		result.RemoveAssetOp = &tv
 	}
 	return
 }
@@ -43591,6 +44215,31 @@ func (u OperationBody) GetCreateKycRecoveryRequestOp() (result CreateKycRecovery
 	return
 }
 
+// MustRemoveAssetOp retrieves the RemoveAssetOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustRemoveAssetOp() RemoveAssetOp {
+	val, ok := u.GetRemoveAssetOp()
+
+	if !ok {
+		panic("arm RemoveAssetOp is not set")
+	}
+
+	return val
+}
+
+// GetRemoveAssetOp retrieves the RemoveAssetOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetRemoveAssetOp() (result RemoveAssetOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "RemoveAssetOp" {
+		result = *u.RemoveAssetOp
+		ok = true
+	}
+
+	return
+}
+
 // Operation is an XDR Struct defines as:
 //
 //   //: An operation is the lowest unit of work that a transaction does
@@ -43691,6 +44340,8 @@ func (u OperationBody) GetCreateKycRecoveryRequestOp() (result CreateKycRecovery
 //            InitiateKYCRecoveryOp initiateKYCRecoveryOp;
 //        case CREATE_KYC_RECOVERY_REQUEST:
 //            CreateKYCRecoveryRequestOp createKYCRecoveryRequestOp;
+//        case REMOVE_ASSET:
+//            RemoveAssetOp removeAssetOp;
 //        }
 //        body;
 //    };
@@ -44396,6 +45047,8 @@ type AccountRuleRequirement struct {
 //            CreateKYCRecoveryRequestResult createKYCRecoveryRequestResult;
 //        case INITIATE_KYC_RECOVERY:
 //            InitiateKYCRecoveryResult initiateKYCRecoveryResult;
+//        case REMOVE_ASSET:
+//            RemoveAssetResult removeAssetResult;
 //        }
 //
 type OperationResultTr struct {
@@ -44444,6 +45097,7 @@ type OperationResultTr struct {
 	RemoveAssetPairResult                        *RemoveAssetPairResult                        `json:"removeAssetPairResult,omitempty"`
 	CreateKycRecoveryRequestResult               *CreateKycRecoveryRequestResult               `json:"createKYCRecoveryRequestResult,omitempty"`
 	InitiateKycRecoveryResult                    *InitiateKycRecoveryResult                    `json:"initiateKYCRecoveryResult,omitempty"`
+	RemoveAssetResult                            *RemoveAssetResult                            `json:"removeAssetResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -44544,6 +45198,8 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "CreateKycRecoveryRequestResult", true
 	case OperationTypeInitiateKycRecovery:
 		return "InitiateKycRecoveryResult", true
+	case OperationTypeRemoveAsset:
+		return "RemoveAssetResult", true
 	}
 	return "-", false
 }
@@ -44860,6 +45516,13 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.InitiateKycRecoveryResult = &tv
+	case OperationTypeRemoveAsset:
+		tv, ok := value.(RemoveAssetResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAssetResult")
+			return
+		}
+		result.RemoveAssetResult = &tv
 	}
 	return
 }
@@ -45964,6 +46627,31 @@ func (u OperationResultTr) GetInitiateKycRecoveryResult() (result InitiateKycRec
 	return
 }
 
+// MustRemoveAssetResult retrieves the RemoveAssetResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustRemoveAssetResult() RemoveAssetResult {
+	val, ok := u.GetRemoveAssetResult()
+
+	if !ok {
+		panic("arm RemoveAssetResult is not set")
+	}
+
+	return val
+}
+
+// GetRemoveAssetResult retrieves the RemoveAssetResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetRemoveAssetResult() (result RemoveAssetResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "RemoveAssetResult" {
+		result = *u.RemoveAssetResult
+		ok = true
+	}
+
+	return
+}
+
 // OperationResult is an XDR Union defines as:
 //
 //   union OperationResult switch (OperationResultCode code)
@@ -46059,6 +46747,8 @@ func (u OperationResultTr) GetInitiateKycRecoveryResult() (result InitiateKycRec
 //            CreateKYCRecoveryRequestResult createKYCRecoveryRequestResult;
 //        case INITIATE_KYC_RECOVERY:
 //            InitiateKYCRecoveryResult initiateKYCRecoveryResult;
+//        case REMOVE_ASSET:
+//            RemoveAssetResult removeAssetResult;
 //        }
 //        tr;
 //    case opNO_ENTRY:
@@ -46658,7 +47348,12 @@ type TransactionResult struct {
 //        FIX_CHANGE_ROLE_REJECT_TASKS = 12,
 //        FIX_SAME_ASSET_PAIR = 13,
 //        ATOMIC_SWAP_RETURNING = 14,
-//        FIX_INVEST_FEE = 15
+//        FIX_INVEST_FEE = 15,
+//        ADD_ACC_SPECIFIC_RULE_RESOURCE = 16,
+//        FIX_SIGNER_CHANGES_REMOVE = 17,
+//        FIX_DEPOSIT_STATS = 18,
+//        FIX_CREATE_KYC_RECOVERY_PERMISSIONS = 19,
+//        CLEAR_DATABASE_CACHE = 20
 //    };
 //
 type LedgerVersion int32
@@ -46680,6 +47375,11 @@ const (
 	LedgerVersionFixSameAssetPair                  LedgerVersion = 13
 	LedgerVersionAtomicSwapReturning               LedgerVersion = 14
 	LedgerVersionFixInvestFee                      LedgerVersion = 15
+	LedgerVersionAddAccSpecificRuleResource        LedgerVersion = 16
+	LedgerVersionFixSignerChangesRemove            LedgerVersion = 17
+	LedgerVersionFixDepositStats                   LedgerVersion = 18
+	LedgerVersionFixCreateKycRecoveryPermissions   LedgerVersion = 19
+	LedgerVersionClearDatabaseCache                LedgerVersion = 20
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -46699,6 +47399,11 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixSameAssetPair,
 	LedgerVersionAtomicSwapReturning,
 	LedgerVersionFixInvestFee,
+	LedgerVersionAddAccSpecificRuleResource,
+	LedgerVersionFixSignerChangesRemove,
+	LedgerVersionFixDepositStats,
+	LedgerVersionFixCreateKycRecoveryPermissions,
+	LedgerVersionClearDatabaseCache,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -46718,6 +47423,11 @@ var ledgerVersionMap = map[int32]string{
 	13: "LedgerVersionFixSameAssetPair",
 	14: "LedgerVersionAtomicSwapReturning",
 	15: "LedgerVersionFixInvestFee",
+	16: "LedgerVersionAddAccSpecificRuleResource",
+	17: "LedgerVersionFixSignerChangesRemove",
+	18: "LedgerVersionFixDepositStats",
+	19: "LedgerVersionFixCreateKycRecoveryPermissions",
+	20: "LedgerVersionClearDatabaseCache",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -46737,6 +47447,11 @@ var ledgerVersionShortMap = map[int32]string{
 	13: "fix_same_asset_pair",
 	14: "atomic_swap_returning",
 	15: "fix_invest_fee",
+	16: "add_acc_specific_rule_resource",
+	17: "fix_signer_changes_remove",
+	18: "fix_deposit_stats",
+	19: "fix_create_kyc_recovery_permissions",
+	20: "clear_database_cache",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -46756,6 +47471,11 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixSameAssetPair":                  13,
 	"LedgerVersionAtomicSwapReturning":               14,
 	"LedgerVersionFixInvestFee":                      15,
+	"LedgerVersionAddAccSpecificRuleResource":        16,
+	"LedgerVersionFixSignerChangesRemove":            17,
+	"LedgerVersionFixDepositStats":                   18,
+	"LedgerVersionFixCreateKycRecoveryPermissions":   19,
+	"LedgerVersionClearDatabaseCache":                20,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -47784,7 +48504,8 @@ type Fee struct {
 //        CANCEL_CHANGE_ROLE_REQUEST = 47,
 //        INITIATE_KYC_RECOVERY = 48,
 //        CREATE_KYC_RECOVERY_REQUEST = 49,
-//        REMOVE_ASSET_PAIR = 50
+//        REMOVE_ASSET_PAIR = 50,
+//        REMOVE_ASSET = 51
 //    };
 //
 type OperationType int32
@@ -47834,6 +48555,7 @@ const (
 	OperationTypeInitiateKycRecovery                    OperationType = 48
 	OperationTypeCreateKycRecoveryRequest               OperationType = 49
 	OperationTypeRemoveAssetPair                        OperationType = 50
+	OperationTypeRemoveAsset                            OperationType = 51
 )
 
 var OperationTypeAll = []OperationType{
@@ -47881,6 +48603,7 @@ var OperationTypeAll = []OperationType{
 	OperationTypeInitiateKycRecovery,
 	OperationTypeCreateKycRecoveryRequest,
 	OperationTypeRemoveAssetPair,
+	OperationTypeRemoveAsset,
 }
 
 var operationTypeMap = map[int32]string{
@@ -47928,6 +48651,7 @@ var operationTypeMap = map[int32]string{
 	48: "OperationTypeInitiateKycRecovery",
 	49: "OperationTypeCreateKycRecoveryRequest",
 	50: "OperationTypeRemoveAssetPair",
+	51: "OperationTypeRemoveAsset",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -47975,6 +48699,7 @@ var operationTypeShortMap = map[int32]string{
 	48: "initiate_kyc_recovery",
 	49: "create_kyc_recovery_request",
 	50: "remove_asset_pair",
+	51: "remove_asset",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -48022,6 +48747,7 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeInitiateKycRecovery":                    48,
 	"OperationTypeCreateKycRecoveryRequest":               49,
 	"OperationTypeRemoveAssetPair":                        50,
+	"OperationTypeRemoveAsset":                            51,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -48100,4 +48826,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "9199f20369f8ca208e0a69372f3a4592aa50b9e5"
+var Revision = "be194d6153bc1e7fe66b4bb6a6bb0f0bc7265389"

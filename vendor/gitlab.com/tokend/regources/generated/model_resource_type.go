@@ -113,6 +113,7 @@ const (
 	POLL_OUTCOME                                            ResourceType = "poll-outcome"
 	PUBLIC_KEY_ENTRIES                                      ResourceType = "public-key-entries"
 	QUOTE_ASSETS                                            ResourceType = "quote-assets"
+	OPERATIONS_REMOVE_ASSET                                 ResourceType = "operations-remove-asset"
 	OPERATIONS_REMOVE_ASSET_PAIR                            ResourceType = "operations-remove-asset-pair"
 	OPERATIONS_REVIEW_REQUEST                               ResourceType = "operations-review-request"
 	SALE_PARTICIPATION                                      ResourceType = "sale-participation"
