@@ -175,6 +175,7 @@ func ForOperation(
 	case xdr.OperationTypeManagePoll:
 	case xdr.OperationTypeManageCreatePollRequest:
 	case xdr.OperationTypeManageVote:
+	case xdr.OperationTypeRemoveAsset:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateAtomicSwapBidRequest:
 		// FIXME !!!!!
