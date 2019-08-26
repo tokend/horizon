@@ -9,6 +9,7 @@ import (
 
 type balanceStorage interface {
 	InsertBalance(rawID xdr.BalanceId, balance history2.Balance) error
+	RemoveBalance(rawID xdr.BalanceId) error
 	MustBalance(rawID xdr.BalanceId) history2.Balance
 }
 
@@ -34,6 +35,18 @@ func (c *balanceHandler) Created(lc ledgerChange) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to insert balance", logan.F{
 			"balance_address": newBalance.Address,
+		})
+	}
+	return nil
+}
+
+//Created - stores new instance of balance
+func (c *balanceHandler) Removed(lc ledgerChange) error {
+	balance := lc.LedgerChange.MustRemoved().MustBalance()
+	err := c.storage.RemoveBalance(balance.BalanceId)
+	if err != nil {
+		return errors.Wrap(err, "failed to insert balance", logan.F{
+			"balance_address": balance.BalanceId.AsString(),
 		})
 	}
 	return nil

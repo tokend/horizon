@@ -122,6 +122,22 @@ func (s *Balance) InsertBalance(rawBalanceID xdr.BalanceId, balance history2.Bal
 	return nil
 }
 
+// RemoveBalance - removes balance from storage
+func (s *Balance) RemoveBalance(rawBalanceID xdr.BalanceId) error {
+	// it's ok if the balance already exists in the map.
+	// Such case could occur during roll back of transaction and retry to process same ledger
+	delete(s.balances, rawBalanceID)
+	_, err := s.historyRepo.ExecRaw("DELETE FROM balances where id = $1",
+		rawBalanceID.AsString())
+	if err != nil {
+		return errors.Wrap(err, "failed to remove balance", logan.F{
+			"id": rawBalanceID.AsString(),
+		})
+	}
+
+	return nil
+}
+
 //MustBalanceID - returns balanceID. Panics if fails to find one.
 func (s *Balance) MustBalanceID(rawBalanceID xdr.BalanceId) uint64 {
 	return s.MustBalance(rawBalanceID).ID
