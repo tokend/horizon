@@ -496,7 +496,7 @@
 
 [[projects]]
   branch = "feature/remove-asset"
-  digest = "1:de1965cb4abc84a01d5edd5ec43926561a52397b625f8de0d0dbc33103199776"
+  digest = "1:30fada857a565b696c44d0e9c927da3cf7dc0face2280432dc876a13e737249c"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -514,7 +514,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "d9969ab400c009a1d7b418ee6df49736f8d85d00"
+  revision = "9e268280ec19f2d9cc08876e4e0ab925fd058adb"
 
 [[projects]]
   branch = "master"

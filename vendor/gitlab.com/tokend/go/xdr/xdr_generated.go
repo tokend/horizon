@@ -1,4 +1,4 @@
-// revision: be194d6153bc1e7fe66b4bb6a6bb0f0bc7265389
+// revision: 9a6375ef68a58ee2ca3d8e634c0ff531e493f131
 // branch:   feature/remove-asset
 // Package xdr is generated from:
 //
@@ -1244,12 +1244,19 @@ type AssetPairEntry struct {
 //
 //   enum AssetPolicy
 //    {
+//        //: Defines whether or not asset can be transfered using payments
 //    	TRANSFERABLE = 1,
+//    	//: Defines whether or not asset is considered base
 //    	BASE_ASSET = 2,
+//    	//: [[Deprecated]]
 //    	STATS_QUOTE_ASSET = 4,
+//    	//: Defines whether or not asset can be withdrawed from the system
 //    	WITHDRAWABLE = 8,
+//    	//: Defines whether or not manual review for issuance of asset is required
 //    	ISSUANCE_MANUAL_REVIEW_REQUIRED = 16,
+//    	//: Defines whether or not asset can be base in atomic swap
 //    	CAN_BE_BASE_IN_ATOMIC_SWAP = 32,
+//    	//: Defines whether or not asset can be quote in atomic swap
 //    	CAN_BE_QUOTE_IN_ATOMIC_SWAP = 64
 //    };
 //
@@ -1367,82 +1374,50 @@ func (e *AssetPolicy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// AssetEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type AssetEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AssetEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AssetEntryExt
-func (u AssetEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAssetEntryExt creates a new  AssetEntryExt.
-func NewAssetEntryExt(v LedgerVersion, value interface{}) (result AssetEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
 // AssetEntry is an XDR Struct defines as:
 //
 //   struct AssetEntry
 //    {
+//        //: Code of the asset
 //        AssetCode code;
+//        //: Owner(creator) of the asset
 //    	AccountID owner;
-//    	AccountID preissuedAssetSigner; // signer of pre issuance tokens
+//    	//: Account responsible for preissuance of the asset
+//    	AccountID preissuedAssetSigner;
+//        //: Arbitrary stringified JSON object that can be used to attach data to asset
 //    	longstring details;
-//    	uint64 maxIssuanceAmount; // max number of tokens to be issued
-//    	uint64 availableForIssueance; // pre issued tokens available for issuance
-//    	uint64 issued; // number of issued tokens
-//    	uint64 pendingIssuance; // number of tokens locked for entries like token sale. lockedIssuance + issued can not be > maxIssuanceAmount
+//    	//: Maximal amount of tokens that can be issued
+//    	uint64 maxIssuanceAmount;
+//    	//: Amount of tokens available for issuance
+//    	uint64 availableForIssueance;
+//    	//: Amount of tokens issued already
+//    	uint64 issued;
+//    	//: Amount of tokens to be issued which is locked. `pendingIssuance+issued <= maxIssuanceAmount`
+//    	uint64 pendingIssuance;
+//    	//: Policies of the asset
 //        uint32 policies;
-//        uint64 type; // use instead policies that limit usage, use in account rules
+//        //: Used to restrict usage. Used in account rules
+//        uint64 type;
+//        //: Number of decimal places. Must be <= 6
 //        uint32 trailingDigitsCount;
 //
-//        // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
+//        //: Reserved for future use
+//        EmptyExt ext;
 //    };
 //
 type AssetEntry struct {
-	Code                  AssetCode     `json:"code,omitempty"`
-	Owner                 AccountId     `json:"owner,omitempty"`
-	PreissuedAssetSigner  AccountId     `json:"preissuedAssetSigner,omitempty"`
-	Details               Longstring    `json:"details,omitempty"`
-	MaxIssuanceAmount     Uint64        `json:"maxIssuanceAmount,omitempty"`
-	AvailableForIssueance Uint64        `json:"availableForIssueance,omitempty"`
-	Issued                Uint64        `json:"issued,omitempty"`
-	PendingIssuance       Uint64        `json:"pendingIssuance,omitempty"`
-	Policies              Uint32        `json:"policies,omitempty"`
-	Type                  Uint64        `json:"type,omitempty"`
-	TrailingDigitsCount   Uint32        `json:"trailingDigitsCount,omitempty"`
-	Ext                   AssetEntryExt `json:"ext,omitempty"`
+	Code                  AssetCode  `json:"code,omitempty"`
+	Owner                 AccountId  `json:"owner,omitempty"`
+	PreissuedAssetSigner  AccountId  `json:"preissuedAssetSigner,omitempty"`
+	Details               Longstring `json:"details,omitempty"`
+	MaxIssuanceAmount     Uint64     `json:"maxIssuanceAmount,omitempty"`
+	AvailableForIssueance Uint64     `json:"availableForIssueance,omitempty"`
+	Issued                Uint64     `json:"issued,omitempty"`
+	PendingIssuance       Uint64     `json:"pendingIssuance,omitempty"`
+	Policies              Uint32     `json:"policies,omitempty"`
+	Type                  Uint64     `json:"type,omitempty"`
+	TrailingDigitsCount   Uint32     `json:"trailingDigitsCount,omitempty"`
+	Ext                   EmptyExt   `json:"ext,omitempty"`
 }
 
 // AtomicSwapAskQuoteAssetExt is an XDR NestedUnion defines as:
@@ -39801,7 +39776,8 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CLOSE = 16,
 //        REMOVE = 17,
 //        UPDATE_END_TIME = 18,
-//        CREATE_FOR_OTHER_WITH_TASKS = 19
+//        CREATE_FOR_OTHER_WITH_TASKS = 19,
+//        REMOVE_FOR_OTHER = 20
 //    };
 //
 type AccountRuleAction int32
@@ -39826,6 +39802,7 @@ const (
 	AccountRuleActionRemove                  AccountRuleAction = 17
 	AccountRuleActionUpdateEndTime           AccountRuleAction = 18
 	AccountRuleActionCreateForOtherWithTasks AccountRuleAction = 19
+	AccountRuleActionRemoveForOther          AccountRuleAction = 20
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -39848,6 +39825,7 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionRemove,
 	AccountRuleActionUpdateEndTime,
 	AccountRuleActionCreateForOtherWithTasks,
+	AccountRuleActionRemoveForOther,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -39870,6 +39848,7 @@ var accountRuleActionMap = map[int32]string{
 	17: "AccountRuleActionRemove",
 	18: "AccountRuleActionUpdateEndTime",
 	19: "AccountRuleActionCreateForOtherWithTasks",
+	20: "AccountRuleActionRemoveForOther",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -39892,6 +39871,7 @@ var accountRuleActionShortMap = map[int32]string{
 	17: "remove",
 	18: "update_end_time",
 	19: "create_for_other_with_tasks",
+	20: "remove_for_other",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -39914,6 +39894,7 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionRemove":                  17,
 	"AccountRuleActionUpdateEndTime":           18,
 	"AccountRuleActionCreateForOtherWithTasks": 19,
+	"AccountRuleActionRemoveForOther":          20,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -48826,4 +48807,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "be194d6153bc1e7fe66b4bb6a6bb0f0bc7265389"
+var Revision = "9a6375ef68a58ee2ca3d8e634c0ff531e493f131"
