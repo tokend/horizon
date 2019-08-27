@@ -30,13 +30,17 @@ func NewAtomicSwapAskKey(id uint64) regources.Key {
 	}
 }
 
+func NewAtomicSwapAskQuoteAssetKey(quoteAsset string, askID uint64) regources.Key {
+	return regources.Key{
+		// TODO: Use artificial ID
+		ID:   fmt.Sprintf("%s:%d", quoteAsset, askID),
+		Type: regources.ATOMIC_SWAP_QUOTE_ASSETS,
+	}
+}
+
 func NewAtomicSwapAskQuoteAsset(raw core2.AtomicSwapQuoteAsset) regources.AtomicSwapQuoteAsset {
 	return regources.AtomicSwapQuoteAsset{
-		Key: regources.Key{
-			// TODO: Use artificial ID
-			ID:   fmt.Sprintf("%s:%d", raw.QuoteAsset, raw.AskID),
-			Type: regources.ATOMIC_SWAP_QUOTE_ASSETS,
-		},
+		Key: NewAtomicSwapAskQuoteAssetKey(raw.QuoteAsset, uint64(raw.AskID)),
 		Attributes: regources.AtomicSwapQuoteAssetAttributes{
 			Price:      regources.Amount(raw.Price),
 			QuoteAsset: raw.QuoteAsset,
