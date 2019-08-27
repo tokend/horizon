@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Fixed
+
+* Key for atomic swap ask quote asset relation
+
 ## 3.5.1
 
 ### Changed

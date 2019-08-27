@@ -5,7 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewRequestDetails - returns new instance of reviewable request details
@@ -95,7 +95,7 @@ func newAtomicSwapBidRequest(id int64, details history2.CreateAtomicSwapBidReque
 		},
 		Relationships: regources.CreateAtomicSwapBidRequestRelationships{
 			Ask:        regources.NewKeyInt64(int64(details.AskID), regources.ATOMIC_SWAP_ASK).AsRelation(),
-			QuoteAsset: newQuoteAssetKey(details.QuoteAsset).AsRelation(),
+			QuoteAsset: NewAtomicSwapAskQuoteAssetKey(details.QuoteAsset, details.AskID).AsRelation(),
 		},
 	}
 }
