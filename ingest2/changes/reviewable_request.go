@@ -574,6 +574,35 @@ func (c *reviewableRequestHandler) getKYCRecovery(request *xdr.KycRecoveryReques
 	}
 }
 
+func (c *reviewableRequestHandler) getManageOfferRequest(request *xdr.ManageOfferRequest,
+) *history.ManageOfferRequest {
+	manageOfferOp := request.Op
+	return &history.ManageOfferRequest{
+		OfferID:     int64(manageOfferOp.OfferId),
+		OrderBookID: int64(manageOfferOp.OrderBookId),
+		Amount:      regources.Amount(manageOfferOp.Amount),
+		Price:       regources.Amount(manageOfferOp.Price),
+		IsBuy:       manageOfferOp.IsBuy,
+		Fee: regources.Fee{
+			CalculatedPercent: regources.Amount(manageOfferOp.Fee),
+		},
+	}
+}
+
+func (c *reviewableRequestHandler) getCreatePaymentRequest(request *xdr.CreatePaymentRequest,
+) *history.CreatePaymentRequest {
+	paymentOp := request.PaymentOp
+	return &history.CreatePaymentRequest{
+		BalanceFrom:             paymentOp.SourceBalanceId.AsString(),
+		Amount:                  regources.Amount(paymentOp.Amount),
+		SourceFee:               internal.FeeFromXdr(paymentOp.FeeData.SourceFee),
+		DestinationFee:          internal.FeeFromXdr(paymentOp.FeeData.DestinationFee),
+		SourcePayForDestination: paymentOp.FeeData.SourcePaysForDest,
+		Subject:                 string(paymentOp.Subject),
+		Reference:               utf8.Scrub(string(paymentOp.Reference)),
+	}
+}
+
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -615,6 +644,10 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.CreatePoll = c.getCreatePollRequest(body.CreatePollRequest)
 	case xdr.ReviewableRequestTypeKycRecovery:
 		details.KYCRecovery = c.getKYCRecovery(body.KycRecoveryRequest)
+	case xdr.ReviewableRequestTypeManageOffer:
+		details.ManageOffer = c.getManageOfferRequest(body.ManageOfferRequest)
+	case xdr.ReviewableRequestTypeCreatePayment:
+		details.CreatePayment = c.getCreatePaymentRequest(body.CreatePaymentRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

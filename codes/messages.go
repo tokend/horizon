@@ -302,7 +302,13 @@ var messages = map[string]string{
 	"op_recovery_signer_role_not_found":                 "There is no key value by key \"kyc_recovery_signer_role\" ",
 	"op_invalid_update_data":                            "It is not allowed to change target account on request update",
 	"op_same_asset":                                     "Not allowed to create asset pair with equal base and quote assets",
-	"op_invalid_asset_code": "Not allowed to pass invalid base or quote asset code",
+	"op_invalid_asset_code":                             "Not allowed to pass invalid base or quote asset code",
+	"op_manage_offer_failed":                            "Manage offer operation application failed (see manageOfferCode for more details)",
+	"op_invalid_offer":                                  "Manage offer operation is invalid (see manageOfferCode for more details)",
+	"op_payment_failed":                                 "Payment operation application failed (see paymentCode for more details)",
+	"op_invalid_payment":                                "Payment operation is invalid (see paymentCode for more details)",
+	"op_manage_offer_tasks_not_found":                   "There is no key value by key `create_offer_tasks`, `remove_offer_tasks`, `create_sale_participation_tasks` or `remove_sale_participation_tasks`",
+	"op_payment_tasks_not_found":                        "There is no key value by key `payment_tasks`",
 }
 
 func getMessage(rawCode string) string {

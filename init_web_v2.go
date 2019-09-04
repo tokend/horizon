@@ -168,6 +168,10 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/create_poll_requests/{id}", handlers.GetCreatePollRequests)
 	m.Get("/v3/kyc_recovery_requests", handlers.GetKYCRecoveryRequests)
 	m.Get("/v3/kyc_recovery_requests/{id}", handlers.GetKYCRecoveryRequests)
+	m.Get("/v3/manage_offer_requests", handlers.GetManageOfferRequests)
+	m.Get("/v3/manage_offer_requests/{id}", handlers.GetManageOfferRequests)
+	m.Get("/v3/create_payment_requests", handlers.GetCreatePaymentRequests)
+	m.Get("/v3/create_payment_requests/{id}", handlers.GetCreatePaymentRequests)
 
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)

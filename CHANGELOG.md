@@ -1,5 +1,10 @@
 ## Unreleased
 
+### Added
+
+* `/v3/manage_offer_requests` endpoint
+* `/v3/create_payment_requests` endpoint
+
 ### Fixed
 
 * Key for atomic swap ask quote asset relation
