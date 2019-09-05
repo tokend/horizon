@@ -73,7 +73,11 @@ func (h *getBalanceListHandler) getAssetOwner(assetCode string) (string, error) 
 
 	coreAsset, err := h.AssetsQ.GetByCode(assetCode)
 	if err != nil {
-		return "", errors.Wrap(err, "Failed to get asset")
+		return "", errors.Wrap(err, "failed to get asset")
+	}
+
+	if coreAsset == nil {
+		return "", nil
 	}
 
 	return coreAsset.Owner, nil
