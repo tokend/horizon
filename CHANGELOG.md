@@ -1,3 +1,9 @@
+## Unreleased
+
+### Fixed
+
+* panic on `v3/balances`
+
 ## 3.5.2-x.0
 
 ### Fixed
