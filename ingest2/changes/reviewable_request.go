@@ -200,6 +200,10 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	case xdr.OperationTypeCreateKycRecoveryRequest:
 		account := op.MustCreateKycRecoveryRequestOp().TargetAccount
 		return c.accounts.SetKYCRecoveryStatus(account.Address(), int(regources.KYCRecoveryStatusNone))
+	case xdr.OperationTypeCreateManageOfferRequest:
+		return c.handleRemoveOnCreationOp(lc, true)
+	case xdr.OperationTypeCreatePaymentRequest:
+		return c.handleRemoveOnCreationOp(lc, true)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),

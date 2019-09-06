@@ -379,6 +379,8 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustInitiateKycRecoveryOp()
 		details["account"] = op.Account
 		details["signer"] = op.Signer
+	case xdr.OperationTypeCreateManageOfferRequest:
+	case xdr.OperationTypeCreatePaymentRequest:
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
