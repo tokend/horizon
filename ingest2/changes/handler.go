@@ -70,7 +70,6 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypePoll:              pollHandlerInst,
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
-			xdr.LedgerEntryTypeBalance:             balanceHandlerInst,
 			xdr.LedgerEntryTypeReviewableRequest:   reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:                saleHandlerInst,
 			xdr.LedgerEntryTypePoll:                pollHandlerInst,
