@@ -65,8 +65,11 @@ func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler
 			xdr.ReviewableRequestTypeCreateAtomicSwapAsk: &stubProvider,
 			xdr.ReviewableRequestTypeCreatePoll:          &stubProvider,
 			xdr.ReviewableRequestTypeKycRecovery:         &stubProvider,
-			xdr.ReviewableRequestTypeManageOffer:         &stubProvider,
-			xdr.ReviewableRequestTypeCreatePayment:       &stubProvider,
+			xdr.ReviewableRequestTypeManageOffer: &manageOfferRequestHandler{
+				&manageOfferOpHandler{provider}},
+			xdr.ReviewableRequestTypeCreatePayment: &paymentRequestHandler{
+				&paymentOpHandler{provider},
+			},
 		},
 	}
 }
