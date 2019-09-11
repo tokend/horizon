@@ -1,4 +1,4 @@
-// revision: 8c1985d0a97f37f2979ab2006790382259c4dad7
+// revision: 86df6e229b25ab950af81ed2b1004b5be77d4f07
 // branch:   feature/reviewable_requests_for_movements
 // Package xdr is generated from:
 //
@@ -16542,13 +16542,16 @@ func (e *CreateManageOfferRequestResultCode) UnmarshalJSON(data []byte) error {
 //        uint64 requestID;
 //        bool fulfilled;
 //
+//        ManageOfferResult* manageOfferResult;
+//
 //        EmptyExt ext;
 //    };
 //
 type CreateManagerOfferRequestSuccessResult struct {
-	RequestId Uint64   `json:"requestID,omitempty"`
-	Fulfilled bool     `json:"fulfilled,omitempty"`
-	Ext       EmptyExt `json:"ext,omitempty"`
+	RequestId         Uint64             `json:"requestID,omitempty"`
+	Fulfilled         bool               `json:"fulfilled,omitempty"`
+	ManageOfferResult *ManageOfferResult `json:"manageOfferResult,omitempty"`
+	Ext               EmptyExt           `json:"ext,omitempty"`
 }
 
 // CreateManageOfferRequestResult is an XDR Union defines as:
@@ -16790,13 +16793,16 @@ func (e *CreatePaymentRequestResultCode) UnmarshalJSON(data []byte) error {
 //        uint64 requestID;
 //        bool fulfilled;
 //
+//        PaymentResult* paymentResult;
+//
 //        EmptyExt ext;
 //    };
 //
 type CreatePaymentRequestSuccessResult struct {
-	RequestId Uint64   `json:"requestID,omitempty"`
-	Fulfilled bool     `json:"fulfilled,omitempty"`
-	Ext       EmptyExt `json:"ext,omitempty"`
+	RequestId     Uint64         `json:"requestID,omitempty"`
+	Fulfilled     bool           `json:"fulfilled,omitempty"`
+	PaymentResult *PaymentResult `json:"paymentResult,omitempty"`
+	Ext           EmptyExt       `json:"ext,omitempty"`
 }
 
 // CreatePaymentRequestResult is an XDR Union defines as:
@@ -49598,4 +49604,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "8c1985d0a97f37f2979ab2006790382259c4dad7"
+var Revision = "86df6e229b25ab950af81ed2b1004b5be77d4f07"

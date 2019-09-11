@@ -496,7 +496,7 @@
 
 [[projects]]
   branch = "feature/reviewable_requests_for_movements"
-  digest = "1:dc4aab272ff93e0f58cdb08c74d00b774d2603b1746783369179987fca03114f"
+  digest = "1:8159c3ac7c286597975fd74fbd2e6728bd000c35357e5eb0e19513d1b4aeb3ba"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -514,7 +514,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "2d53dcaec5732eb089bcdfba409f5496480295e4"
+  revision = "e1158bfdcd1a784a725b7ec4c5b1373a4ae2adf8"
 
 [[projects]]
   branch = "master"
