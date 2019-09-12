@@ -12,6 +12,12 @@
 
 ### Fixed
 
+* panic on `v3/balances`
+
+## 3.5.2-x.0
+
+### Fixed
+
 * Key for atomic swap ask quote asset relation
 * Panic on `ManagePoll` ingestion
 
