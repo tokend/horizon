@@ -1,4 +1,4 @@
-// revision: 86df6e229b25ab950af81ed2b1004b5be77d4f07
+// revision: d12bfbbe00535e6a3a310a8ef950495be490cd4a
 // branch:   feature/reviewable_requests_for_movements
 // Package xdr is generated from:
 //
@@ -16418,10 +16418,14 @@ func (u CreateManageLimitsRequestResult) GetSuccess() (result CreateManageLimits
 //
 //   struct CreateManageOfferRequestOp
 //    {
+//        //: ManageOfferRequest details
 //        ManageOfferRequest request;
 //
+//        //: (optional) Bit mask whose flags must be cleared in order for CreateSale request to be approved, which will be used by key sale_create_tasks:<asset_code>
+//        //: instead of key-value
 //        uint32* allTasks;
 //
+//        //: reserved for future extension
 //        EmptyExt ext;
 //    };
 //
@@ -16435,9 +16439,12 @@ type CreateManageOfferRequestOp struct {
 //
 //   enum CreateManageOfferRequestResultCode
 //    {
+//        //: CreateManageOfferRequestOp was successfully applied
 //        SUCCESS = 0,
 //
+//        //: Offer is invalid
 //        INVALID_OFFER = -1,
+//        //: Tasks for the manage offer request were neither provided in the request nor loaded through KeyValue
 //        MANAGE_OFFER_TASKS_NOT_FOUND = -2
 //    };
 //
@@ -16539,11 +16546,15 @@ func (e *CreateManageOfferRequestResultCode) UnmarshalJSON(data []byte) error {
 //
 //   struct CreateManagerOfferRequestSuccessResult
 //    {
+//        //: ID of the ManageOfferRequest
 //        uint64 requestID;
+//        //: Indicates whether or not the manage offer request was auto approved
 //        bool fulfilled;
 //
+//        //: Result of manage offer application
 //        ManageOfferResult* manageOfferResult;
 //
+//        //: Reserved for future extension
 //        EmptyExt ext;
 //    };
 //
@@ -16669,10 +16680,14 @@ func (u CreateManageOfferRequestResult) GetManageOfferCode() (result ManageOffer
 //
 //   struct CreatePaymentRequestOp
 //    {
+//        //: Payment request details
 //        CreatePaymentRequest request;
 //
+//        //: (optional) Bit mask whose flags must be cleared in order for CreateSale request to be approved, which will be used by key sale_create_tasks:<asset_code>
+//        //: instead of key-value
 //        uint32* allTasks;
 //
+//        //: reserved for future extension
 //        EmptyExt ext;
 //    };
 //
@@ -16686,9 +16701,12 @@ type CreatePaymentRequestOp struct {
 //
 //   enum CreatePaymentRequestResultCode
 //    {
+//        //: CreatePaymentRequestOp was successfully applied
 //        SUCCESS = 0,
 //
+//        //: Payment is invalid
 //        INVALID_PAYMENT = -1,
+//        //: Tasks for the payment request were neither provided in the request nor loaded through KeyValue
 //        PAYMENT_TASKS_NOT_FOUND = -2
 //    };
 //
@@ -16788,13 +16806,18 @@ func (e *CreatePaymentRequestResultCode) UnmarshalJSON(data []byte) error {
 
 // CreatePaymentRequestSuccessResult is an XDR Struct defines as:
 //
-//   struct CreatePaymentRequestSuccessResult
+//   //: Result of the successful payment request creation
+//    struct CreatePaymentRequestSuccessResult
 //    {
+//        //: ID of the Payment request
 //        uint64 requestID;
+//        //: Indicates whether or not the payment request was auto approved
 //        bool fulfilled;
 //
+//        //: Result of the payment application
 //        PaymentResult* paymentResult;
 //
+//        //: reserved for future extension
 //        EmptyExt ext;
 //    };
 //
@@ -16807,7 +16830,8 @@ type CreatePaymentRequestSuccessResult struct {
 
 // CreatePaymentRequestResult is an XDR Union defines as:
 //
-//   union CreatePaymentRequestResult switch (CreatePaymentRequestResultCode code)
+//   //: Result of CreatePaymentRequestOp application
+//    union CreatePaymentRequestResult switch (CreatePaymentRequestResultCode code)
 //    {
 //    case SUCCESS:
 //        CreatePaymentRequestSuccessResult success;
@@ -39143,6 +39167,9 @@ type ReviewableRequestResourceCreatePoll struct {
 //            //: UINT32_MAX means any action.
 //            uint32 manageAction;
 //
+//            //: ID of the order book.
+//            uint64 orderBookID;
+//
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        }
@@ -39154,6 +39181,7 @@ type ReviewableRequestResourceManageOffer struct {
 	QuoteAssetCode AssetCode `json:"quoteAssetCode,omitempty"`
 	IsBuy          bool      `json:"isBuy,omitempty"`
 	ManageAction   Uint32    `json:"manageAction,omitempty"`
+	OrderBookId    Uint64    `json:"orderBookID,omitempty"`
 	Ext            EmptyExt  `json:"ext,omitempty"`
 }
 
@@ -39161,9 +39189,12 @@ type ReviewableRequestResourceManageOffer struct {
 //
 //   struct
 //        {
+//            //: Code of asset in which payment is being made
 //            AssetCode assetCode;
+//            //: Type of asset in which payment is being made
 //            uint64 assetType;
 //
+//            //: reserved for future extension
 //            EmptyExt ext;
 //        }
 //
@@ -39280,15 +39311,21 @@ type ReviewableRequestResourceCreatePayment struct {
 //            //: UINT32_MAX means any action.
 //            uint32 manageAction;
 //
+//            //: ID of the order book.
+//            uint64 orderBookID;
+//
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } manageOffer;
 //    case CREATE_PAYMENT:
 //        struct
 //        {
+//            //: Code of asset in which payment is being made
 //            AssetCode assetCode;
+//            //: Type of asset in which payment is being made
 //            uint64 assetType;
 //
+//            //: reserved for future extension
 //            EmptyExt ext;
 //        } createPayment;
 //    default:
@@ -49604,4 +49641,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "86df6e229b25ab950af81ed2b1004b5be77d4f07"
+var Revision = "d12bfbbe00535e6a3a310a8ef950495be490cd4a"

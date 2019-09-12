@@ -4,10 +4,16 @@
 
 * `/v3/manage_offer_requests` endpoint
 * `/v3/create_payment_requests` endpoint
+* `CreateManageOfferRequestOp` ingestion
+* `CreatePaymentRequestOp` ingestion
+* `CreatePaymentRequestOp` ingestion
+* `PaymentRequest` ingestion
+* `ManageOfferRequest` ingestion
 
 ### Fixed
 
 * Key for atomic swap ask quote asset relation
+* Panic on `ManagePoll` ingestion
 
 ## 3.5.1
 
