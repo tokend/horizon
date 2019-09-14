@@ -1,4 +1,11 @@
+# Changelog
+
 ## Unreleased
+
+## Added
+
+* `RemoveAssetOp` ingestion
+
 
 ## 3.5.1
 
