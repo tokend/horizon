@@ -2,8 +2,9 @@ package changes
 
 import (
 	"encoding/json"
-	"gitlab.com/tokend/horizon/ingest2/storage"
 	"time"
+
+	"gitlab.com/tokend/horizon/ingest2/storage"
 
 	regources "gitlab.com/tokend/regources/generated"
 
@@ -67,12 +68,25 @@ func (c *pollHandler) Removed(lc ledgerChange) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to get poll state")
 	}
+	switch managePollOp.Data.Action {
+	case xdr.ManagePollActionClose:
+		{
 
-	outcome := json.RawMessage(managePollOp.Data.ClosePollData.Details)
-	err = c.storage.
-		SetState(state).
-		SetDetails(outcome).
-		UpdateWhere(pollID, true)
+			outcome := json.RawMessage(managePollOp.Data.ClosePollData.Details)
+			err = c.storage.
+				SetState(state).
+				SetDetails(outcome).
+				UpdateWhere(pollID, true)
+		}
+	case xdr.ManagePollActionCancel:
+		{
+			err = c.storage.
+				SetState(state).
+				UpdateWhere(pollID, true)
+		}
+
+	}
+
 	if err != nil {
 		return errors.Wrap(err, "failed to set poll outcome")
 	}

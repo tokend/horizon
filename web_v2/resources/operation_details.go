@@ -55,6 +55,8 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeInitiateKycRecovery:                    newInitiateKYCRecoveryOp,
 	xdr.OperationTypeCreateKycRecoveryRequest:               newCreateKYCRecoveryRequestOp,
 	xdr.OperationTypeRemoveAssetPair:                        newRemoveAssetPairOp,
+	xdr.OperationTypeCreateManageOfferRequest:               newCreateManageOfferRequestOp,
+	xdr.OperationTypeCreatePaymentRequest:                   newCreatePaymentRequestOp,
 	xdr.OperationTypeRemoveAsset:                            newRemoveAssetOp,
 }
 
@@ -731,6 +733,45 @@ func newCancelASwapAskOp(op history2.Operation) regources.Resource {
 
 func newCancelSaleRequestOp(op history2.Operation) regources.Resource {
 	return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_SALE_REQUEST).GetKeyP()
+}
+
+func newCreateManageOfferRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateManageOfferRequest
+	return &regources.CreateManageOfferRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_MANAGE_OFFER_REQUEST),
+		Relationships: regources.CreateManageOfferRequestOpRelationships{
+			Request: NewRequestKey(int64(body.RequestDetails.RequestID)).AsRelation(),
+		},
+		Attributes: regources.CreateManageOfferRequestOpAttributes{
+			BaseAmount:  body.ManageOfferDetails.Amount,
+			IsBuy:       body.ManageOfferDetails.IsBuy,
+			OfferId:     body.ManageOfferDetails.OfferID,
+			OrderBookId: body.ManageOfferDetails.OrderBookID,
+			Price:       body.ManageOfferDetails.Price,
+			Fee:         body.ManageOfferDetails.Fee,
+		},
+	}
+
+}
+
+func newCreatePaymentRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreatePaymentRequest
+	return &regources.CreatePaymentRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_PAYMENT_REQUEST),
+		Relationships: regources.CreatePaymentRequestOpRelationships{
+			AccountFrom: NewAccountKey(body.PaymentDetails.AccountFrom).AsRelation(),
+			BalanceFrom: NewBalanceKey(body.PaymentDetails.BalanceFrom).AsRelation(),
+			Request:     NewRequestKey(body.RequestDetails.RequestID).AsRelation(),
+		},
+		Attributes: regources.CreatePaymentRequestOpAttributes{
+			Amount:                  body.PaymentDetails.Amount,
+			Reference:               body.PaymentDetails.Reference,
+			Subject:                 body.PaymentDetails.Subject,
+			SourceFee:               body.PaymentDetails.SourceFee,
+			DestinationFee:          body.PaymentDetails.DestinationFee,
+			SourcePayForDestination: body.PaymentDetails.SourcePayForDestination,
+		},
+	}
 }
 
 func newRemoveAssetOp(op history2.Operation) regources.Resource {

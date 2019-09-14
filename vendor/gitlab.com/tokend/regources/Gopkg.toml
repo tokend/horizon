@@ -30,7 +30,7 @@
   version = "0.8.0"
 
 [[constraint]]
-  version = "3.9.0"
+  version = "3.11.0"
   name = "gitlab.com/tokend/go"
 
 [prune]

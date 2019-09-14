@@ -203,6 +203,8 @@ func ForOperation(
 	case xdr.OperationTypeRemoveAssetPair:
 	case xdr.OperationTypeCreateKycRecoveryRequest:
 	case xdr.OperationTypeInitiateKycRecovery:
+	case xdr.OperationTypeCreatePaymentRequest:
+	case xdr.OperationTypeCreateManageOfferRequest:
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

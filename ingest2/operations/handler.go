@@ -170,6 +170,12 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCreateKycRecoveryRequest: &createKycRecoveryRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
+			xdr.OperationTypeCreateManageOfferRequest: &createManageOfferRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeCreatePaymentRequest: &createPaymentRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 			xdr.OperationTypeRemoveAsset: &removeAssetOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},

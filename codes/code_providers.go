@@ -51,5 +51,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeRemoveAssetPair:             func(ir xdr.OperationResultTr) shortStr { return ir.MustRemoveAssetPairResult().Code },
 	xdr.OperationTypeInitiateKycRecovery:         func(ir xdr.OperationResultTr) shortStr { return ir.MustInitiateKycRecoveryResult().Code },
 	xdr.OperationTypeCreateKycRecoveryRequest:    func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateKycRecoveryRequestResult().Code },
+	xdr.OperationTypeCreateManageOfferRequest:    func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateManageOfferRequestResult().Code },
+	xdr.OperationTypeCreatePaymentRequest:        func(ir xdr.OperationResultTr) shortStr { return ir.MustCreatePaymentRequestResult().Code },
 	xdr.OperationTypeRemoveAsset:                 func(ir xdr.OperationResultTr) shortStr { return ir.MustRemoveAssetResult().Code },
 }

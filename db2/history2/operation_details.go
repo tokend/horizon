@@ -54,6 +54,8 @@ type OperationDetails struct {
 	RemoveAssetPair            *RemoveAssetPairDetails            `json:"remove_asset_pair,omitempty"`
 	InitiateKYCRecovery        *InitiateKYCRecoveryDetails        `json:"initiate_kyc_recovery,omitempty"`
 	CreateKYCRecoveryRequest   *CreateKYCRecoveryRequestDetails   `json:"create_kyc_recovery_request,omitempty"`
+	CreateManageOfferRequest   *CreateManageOfferRequestDetails   `json:"create_manage_offer_request,omitempty"`
+	CreatePaymentRequest       *CreatePaymentRequestDetails       `json:"create_payment_request,omitempty"`
 	RemoveAsset                *RemoveAssetDetails                `json:"remove_asset,omitempty"`
 }
 
@@ -529,6 +531,29 @@ type CreateKYCRecoveryRequestDetails struct {
 	CreatorDetails regources.Details            `json:"creator_details"`
 	AllTasks       *uint32                      `json:"all_tasks"`
 	RequestDetails RequestDetails               `json:"request_details"`
+}
+
+type CreateManageOfferRequestDetails struct {
+	ManageOfferDetails ManageOfferRequest `json:"manage_offer_details"`
+	AllTasks           *uint32            `json:"all_tasks"`
+	RequestDetails     RequestDetails     `json:"request_details"`
+}
+
+type PaymentRequestDetails struct {
+	AccountFrom             string           `json:"account_from"`
+	BalanceFrom             string           `json:"balance_from"`
+	Amount                  regources.Amount `json:"amount"`
+	SourceFee               regources.Fee    `json:"source_fee"`
+	DestinationFee          regources.Fee    `json:"destination_fee"`
+	SourcePayForDestination bool             `json:"source_pay_for_destination"`
+	Subject                 string           `json:"subject"`
+	Reference               string           `json:"reference"`
+}
+
+type CreatePaymentRequestDetails struct {
+	PaymentDetails PaymentRequestDetails `json:"payment_details"`
+	AllTasks       *uint32               `json:"all_tasks"`
+	RequestDetails RequestDetails        `json:"request_details"`
 }
 
 type RemoveAssetDetails struct {

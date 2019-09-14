@@ -14,6 +14,8 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/CreateAtomicSwapAskRequest'
     - $ref: '#/components/schemas/CreatePollRequest'
     - $ref: '#/components/schemas/KYCRecoveryRequest'
+    - $ref: '#/components/schemas/ManageOfferRequest'
+    - $ref: '#/components/schemas/CreatePaymentRequest'
 
 CreateAssetRequest:
   allOf:
@@ -566,3 +568,84 @@ KYCRecoveryRequest:
                 $ref: '#/components/schemas/UpdateSignerData'
             creator_details:
               $ref: '#/components/schemas/Details'
+
+CreatePaymentRequest:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        relationships:
+          type: object
+          properties:
+            balance_from:
+              $ref: '#/components/schemas/BalanceKey'
+        attributes:
+          type: object
+          required:
+            - amount
+            - source_fee
+            - destination_fee
+            - source_pay_for_destination
+            - subject
+            - reference
+          properties:
+            source_fee:
+              $ref: '#/components/schemas/Fee'
+            destination_fee:
+              $ref: '#/components/schemas/Fee'
+            source_pay_for_destination:
+              type: boolean
+              example: true
+              description: "Whether source of the payment should pay destination fee"
+            amount:
+              type: string
+              format: Amount
+              example: "13.123956"
+            reference:
+              type: string
+              description: "Reference for the payment"
+            subject:
+              type: string
+              example: "Dividends"
+              description: "Subject of the payment"
+
+ManageOfferRequest:
+  allOf:
+    - $ref: '#/components/schemas/Int64Key'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        attributes:
+          type: object
+          required:
+            - offer_id
+            - order_book_id
+            - base_amount
+            - price
+            - is_buy
+            - fee
+          properties:
+            offer_id:
+              type: integer
+              format: int64
+              description: "ID of the offer to manage"
+              example: 1
+            order_book_id:
+              type: integer
+              format: int64
+              description: "ID of the order book"
+              example: 0
+            base_amount:
+              type: string
+              format: Amount
+              example: "1000.0"
+            price:
+              type: string
+              format: Amount
+              example: "12.3"
+            is_buy:
+              type: boolean
+              description: "Offer direction"
+            fee:
+              $ref: '#/components/schemas/Fee'

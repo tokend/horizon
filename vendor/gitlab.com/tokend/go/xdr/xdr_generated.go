@@ -1,5 +1,5 @@
-// revision: 9a6375ef68a58ee2ca3d8e634c0ff531e493f131
-// branch:   feature/remove-asset
+// revision: 47ee60cab248c2e15b099c8e7d6fb46cf4f2d388
+// branch:   master
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -49,6 +49,8 @@
 //  xdr/operation-create-issuance-request.x
 //  xdr/operation-create-kyc-recovery-request.x
 //  xdr/operation-create-manage-limits-request.x
+//  xdr/operation-create-manage-offer-request.x
+//  xdr/operation-create-payment-request.x
 //  xdr/operation-create-preissuance-request.x
 //  xdr/operation-create-sale-creation-request.x
 //  xdr/operation-create-withdrawal-request.x
@@ -95,6 +97,8 @@
 //  xdr/reviewable-request-issuance.x
 //  xdr/reviewable-request-kyc-recovery.x
 //  xdr/reviewable-request-limits-update.x
+//  xdr/reviewable-request-manage-offer.x
+//  xdr/reviewable-request-payment.x
 //  xdr/reviewable-request-sale.x
 //  xdr/reviewable-request-update-sale-details.x
 //  xdr/reviewable-request-withdrawal.x
@@ -3416,7 +3420,9 @@ type ReferenceEntry struct {
 //    	CREATE_POLL = 14,
 //    	CREATE_ATOMIC_SWAP_ASK = 16,
 //    	CREATE_ATOMIC_SWAP_BID = 17,
-//    	KYC_RECOVERY = 18
+//    	KYC_RECOVERY = 18,
+//    	MANAGE_OFFER = 19,
+//    	CREATE_PAYMENT = 20
 //    };
 //
 type ReviewableRequestType int32
@@ -3440,6 +3446,8 @@ const (
 	ReviewableRequestTypeCreateAtomicSwapAsk ReviewableRequestType = 16
 	ReviewableRequestTypeCreateAtomicSwapBid ReviewableRequestType = 17
 	ReviewableRequestTypeKycRecovery         ReviewableRequestType = 18
+	ReviewableRequestTypeManageOffer         ReviewableRequestType = 19
+	ReviewableRequestTypeCreatePayment       ReviewableRequestType = 20
 )
 
 var ReviewableRequestTypeAll = []ReviewableRequestType{
@@ -3461,6 +3469,8 @@ var ReviewableRequestTypeAll = []ReviewableRequestType{
 	ReviewableRequestTypeCreateAtomicSwapAsk,
 	ReviewableRequestTypeCreateAtomicSwapBid,
 	ReviewableRequestTypeKycRecovery,
+	ReviewableRequestTypeManageOffer,
+	ReviewableRequestTypeCreatePayment,
 }
 
 var reviewableRequestTypeMap = map[int32]string{
@@ -3482,6 +3492,8 @@ var reviewableRequestTypeMap = map[int32]string{
 	16: "ReviewableRequestTypeCreateAtomicSwapAsk",
 	17: "ReviewableRequestTypeCreateAtomicSwapBid",
 	18: "ReviewableRequestTypeKycRecovery",
+	19: "ReviewableRequestTypeManageOffer",
+	20: "ReviewableRequestTypeCreatePayment",
 }
 
 var reviewableRequestTypeShortMap = map[int32]string{
@@ -3503,6 +3515,8 @@ var reviewableRequestTypeShortMap = map[int32]string{
 	16: "create_atomic_swap_ask",
 	17: "create_atomic_swap_bid",
 	18: "kyc_recovery",
+	19: "manage_offer",
+	20: "create_payment",
 }
 
 var reviewableRequestTypeRevMap = map[string]int32{
@@ -3524,6 +3538,8 @@ var reviewableRequestTypeRevMap = map[string]int32{
 	"ReviewableRequestTypeCreateAtomicSwapAsk": 16,
 	"ReviewableRequestTypeCreateAtomicSwapBid": 17,
 	"ReviewableRequestTypeKycRecovery":         18,
+	"ReviewableRequestTypeManageOffer":         19,
+	"ReviewableRequestTypeCreatePayment":       20,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -3687,6 +3703,10 @@ type TasksExt struct {
 //                CreatePollRequest createPollRequest;
 //            case KYC_RECOVERY:
 //                KYCRecoveryRequest kycRecoveryRequest;
+//    		case MANAGE_OFFER:
+//    			ManageOfferRequest manageOfferRequest;
+//    		case CREATE_PAYMENT:
+//    			CreatePaymentRequest createPaymentRequest;
 //    	}
 //
 type ReviewableRequestEntryBody struct {
@@ -3707,6 +3727,8 @@ type ReviewableRequestEntryBody struct {
 	CreateAtomicSwapBidRequest *CreateAtomicSwapBidRequest `json:"createAtomicSwapBidRequest,omitempty"`
 	CreatePollRequest          *CreatePollRequest          `json:"createPollRequest,omitempty"`
 	KycRecoveryRequest         *KycRecoveryRequest         `json:"kycRecoveryRequest,omitempty"`
+	ManageOfferRequest         *ManageOfferRequest         `json:"manageOfferRequest,omitempty"`
+	CreatePaymentRequest       *CreatePaymentRequest       `json:"createPaymentRequest,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -3751,6 +3773,10 @@ func (u ReviewableRequestEntryBody) ArmForSwitch(sw int32) (string, bool) {
 		return "CreatePollRequest", true
 	case ReviewableRequestTypeKycRecovery:
 		return "KycRecoveryRequest", true
+	case ReviewableRequestTypeManageOffer:
+		return "ManageOfferRequest", true
+	case ReviewableRequestTypeCreatePayment:
+		return "CreatePaymentRequest", true
 	}
 	return "-", false
 }
@@ -3871,6 +3897,20 @@ func NewReviewableRequestEntryBody(aType ReviewableRequestType, value interface{
 			return
 		}
 		result.KycRecoveryRequest = &tv
+	case ReviewableRequestTypeManageOffer:
+		tv, ok := value.(ManageOfferRequest)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageOfferRequest")
+			return
+		}
+		result.ManageOfferRequest = &tv
+	case ReviewableRequestTypeCreatePayment:
+		tv, ok := value.(CreatePaymentRequest)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreatePaymentRequest")
+			return
+		}
+		result.CreatePaymentRequest = &tv
 	}
 	return
 }
@@ -4275,6 +4315,56 @@ func (u ReviewableRequestEntryBody) GetKycRecoveryRequest() (result KycRecoveryR
 	return
 }
 
+// MustManageOfferRequest retrieves the ManageOfferRequest value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestEntryBody) MustManageOfferRequest() ManageOfferRequest {
+	val, ok := u.GetManageOfferRequest()
+
+	if !ok {
+		panic("arm ManageOfferRequest is not set")
+	}
+
+	return val
+}
+
+// GetManageOfferRequest retrieves the ManageOfferRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestEntryBody) GetManageOfferRequest() (result ManageOfferRequest, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "ManageOfferRequest" {
+		result = *u.ManageOfferRequest
+		ok = true
+	}
+
+	return
+}
+
+// MustCreatePaymentRequest retrieves the CreatePaymentRequest value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestEntryBody) MustCreatePaymentRequest() CreatePaymentRequest {
+	val, ok := u.GetCreatePaymentRequest()
+
+	if !ok {
+		panic("arm CreatePaymentRequest is not set")
+	}
+
+	return val
+}
+
+// GetCreatePaymentRequest retrieves the CreatePaymentRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestEntryBody) GetCreatePaymentRequest() (result CreatePaymentRequest, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreatePaymentRequest" {
+		result = *u.CreatePaymentRequest
+		ok = true
+	}
+
+	return
+}
+
 // ReviewableRequestEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -4357,6 +4447,10 @@ func NewReviewableRequestEntryExt(v LedgerVersion, value interface{}) (result Re
 //                CreatePollRequest createPollRequest;
 //            case KYC_RECOVERY:
 //                KYCRecoveryRequest kycRecoveryRequest;
+//    		case MANAGE_OFFER:
+//    			ManageOfferRequest manageOfferRequest;
+//    		case CREATE_PAYMENT:
+//    			CreatePaymentRequest createPaymentRequest;
 //    	} body;
 //
 //    	TasksExt tasks;
@@ -4389,7 +4483,9 @@ type ReviewableRequestEntry struct {
 //    	BASIC_SALE = 1, // sale creator specifies price for each quote asset
 //    	CROWD_FUNDING = 2, // sale creator does not specify price,
 //    	                  // price is defined on sale close based on amount of base asset to be sold and amount of quote assets collected
-//        FIXED_PRICE=3
+//        FIXED_PRICE=3,
+//
+//        IMMEDIATE=4
 //    };
 //
 type SaleType int32
@@ -4398,30 +4494,35 @@ const (
 	SaleTypeBasicSale    SaleType = 1
 	SaleTypeCrowdFunding SaleType = 2
 	SaleTypeFixedPrice   SaleType = 3
+	SaleTypeImmediate    SaleType = 4
 )
 
 var SaleTypeAll = []SaleType{
 	SaleTypeBasicSale,
 	SaleTypeCrowdFunding,
 	SaleTypeFixedPrice,
+	SaleTypeImmediate,
 }
 
 var saleTypeMap = map[int32]string{
 	1: "SaleTypeBasicSale",
 	2: "SaleTypeCrowdFunding",
 	3: "SaleTypeFixedPrice",
+	4: "SaleTypeImmediate",
 }
 
 var saleTypeShortMap = map[int32]string{
 	1: "basic_sale",
 	2: "crowd_funding",
 	3: "fixed_price",
+	4: "immediate",
 }
 
 var saleTypeRevMap = map[string]int32{
 	"SaleTypeBasicSale":    1,
 	"SaleTypeCrowdFunding": 2,
 	"SaleTypeFixedPrice":   3,
+	"SaleTypeImmediate":    4,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -4645,6 +4746,16 @@ type BasicSale struct {
 	Ext BasicSaleExt `json:"ext,omitempty"`
 }
 
+// ImmediateSale is an XDR Struct defines as:
+//
+//   struct ImmediateSale {
+//        EmptyExt ext;
+//    };
+//
+type ImmediateSale struct {
+	Ext EmptyExt `json:"ext,omitempty"`
+}
+
 // SaleTypeExt is an XDR Union defines as:
 //
 //   union SaleTypeExt switch (SaleType saleType)
@@ -4655,6 +4766,8 @@ type BasicSale struct {
 //    		CrowdFundingSale crowdFundingSale;
 //    	case FIXED_PRICE:
 //    		FixedPriceSale fixedPriceSale;
+//        case IMMEDIATE:
+//            ImmediateSale immediateSale;
 //    };
 //
 type SaleTypeExt struct {
@@ -4662,6 +4775,7 @@ type SaleTypeExt struct {
 	BasicSale        *BasicSale        `json:"basicSale,omitempty"`
 	CrowdFundingSale *CrowdFundingSale `json:"crowdFundingSale,omitempty"`
 	FixedPriceSale   *FixedPriceSale   `json:"fixedPriceSale,omitempty"`
+	ImmediateSale    *ImmediateSale    `json:"immediateSale,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -4680,6 +4794,8 @@ func (u SaleTypeExt) ArmForSwitch(sw int32) (string, bool) {
 		return "CrowdFundingSale", true
 	case SaleTypeFixedPrice:
 		return "FixedPriceSale", true
+	case SaleTypeImmediate:
+		return "ImmediateSale", true
 	}
 	return "-", false
 }
@@ -4709,6 +4825,13 @@ func NewSaleTypeExt(saleType SaleType, value interface{}) (result SaleTypeExt, e
 			return
 		}
 		result.FixedPriceSale = &tv
+	case SaleTypeImmediate:
+		tv, ok := value.(ImmediateSale)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ImmediateSale")
+			return
+		}
+		result.ImmediateSale = &tv
 	}
 	return
 }
@@ -4782,6 +4905,31 @@ func (u SaleTypeExt) GetFixedPriceSale() (result FixedPriceSale, ok bool) {
 
 	if armName == "FixedPriceSale" {
 		result = *u.FixedPriceSale
+		ok = true
+	}
+
+	return
+}
+
+// MustImmediateSale retrieves the ImmediateSale value from the union,
+// panicing if the value is not set.
+func (u SaleTypeExt) MustImmediateSale() ImmediateSale {
+	val, ok := u.GetImmediateSale()
+
+	if !ok {
+		panic("arm ImmediateSale is not set")
+	}
+
+	return val
+}
+
+// GetImmediateSale retrieves the ImmediateSale value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SaleTypeExt) GetImmediateSale() (result ImmediateSale, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.SaleType))
+
+	if armName == "ImmediateSale" {
+		result = *u.ImmediateSale
 		ok = true
 	}
 
@@ -16236,6 +16384,532 @@ func (u CreateManageLimitsRequestResult) GetSuccess() (result CreateManageLimits
 
 	if armName == "Success" {
 		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// CreateManageOfferRequestOp is an XDR Struct defines as:
+//
+//   struct CreateManageOfferRequestOp
+//    {
+//        //: ManageOfferRequest details
+//        ManageOfferRequest request;
+//
+//        //: (optional) Bit mask whose flags must be cleared in order for CreateSale request to be approved, which will be used by key sale_create_tasks:<asset_code>
+//        //: instead of key-value
+//        uint32* allTasks;
+//
+//        //: reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type CreateManageOfferRequestOp struct {
+	Request  ManageOfferRequest `json:"request,omitempty"`
+	AllTasks *Uint32            `json:"allTasks,omitempty"`
+	Ext      EmptyExt           `json:"ext,omitempty"`
+}
+
+// CreateManageOfferRequestResultCode is an XDR Enum defines as:
+//
+//   enum CreateManageOfferRequestResultCode
+//    {
+//        //: CreateManageOfferRequestOp was successfully applied
+//        SUCCESS = 0,
+//
+//        //: Offer is invalid
+//        INVALID_OFFER = -1,
+//        //: Tasks for the manage offer request were neither provided in the request nor loaded through KeyValue
+//        MANAGE_OFFER_TASKS_NOT_FOUND = -2
+//    };
+//
+type CreateManageOfferRequestResultCode int32
+
+const (
+	CreateManageOfferRequestResultCodeSuccess                  CreateManageOfferRequestResultCode = 0
+	CreateManageOfferRequestResultCodeInvalidOffer             CreateManageOfferRequestResultCode = -1
+	CreateManageOfferRequestResultCodeManageOfferTasksNotFound CreateManageOfferRequestResultCode = -2
+)
+
+var CreateManageOfferRequestResultCodeAll = []CreateManageOfferRequestResultCode{
+	CreateManageOfferRequestResultCodeSuccess,
+	CreateManageOfferRequestResultCodeInvalidOffer,
+	CreateManageOfferRequestResultCodeManageOfferTasksNotFound,
+}
+
+var createManageOfferRequestResultCodeMap = map[int32]string{
+	0:  "CreateManageOfferRequestResultCodeSuccess",
+	-1: "CreateManageOfferRequestResultCodeInvalidOffer",
+	-2: "CreateManageOfferRequestResultCodeManageOfferTasksNotFound",
+}
+
+var createManageOfferRequestResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "invalid_offer",
+	-2: "manage_offer_tasks_not_found",
+}
+
+var createManageOfferRequestResultCodeRevMap = map[string]int32{
+	"CreateManageOfferRequestResultCodeSuccess":                  0,
+	"CreateManageOfferRequestResultCodeInvalidOffer":             -1,
+	"CreateManageOfferRequestResultCodeManageOfferTasksNotFound": -2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CreateManageOfferRequestResultCode
+func (e CreateManageOfferRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := createManageOfferRequestResultCodeMap[v]
+	return ok
+}
+func (e CreateManageOfferRequestResultCode) isFlag() bool {
+	for i := len(CreateManageOfferRequestResultCodeAll) - 1; i >= 0; i-- {
+		expected := CreateManageOfferRequestResultCode(2) << uint64(len(CreateManageOfferRequestResultCodeAll)-1) >> uint64(len(CreateManageOfferRequestResultCodeAll)-i)
+		if expected != CreateManageOfferRequestResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CreateManageOfferRequestResultCode) String() string {
+	name, _ := createManageOfferRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CreateManageOfferRequestResultCode) ShortString() string {
+	name, _ := createManageOfferRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CreateManageOfferRequestResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range CreateManageOfferRequestResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CreateManageOfferRequestResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CreateManageOfferRequestResultCode(t.Value)
+	return nil
+}
+
+// CreateManagerOfferRequestSuccessResult is an XDR Struct defines as:
+//
+//   struct CreateManagerOfferRequestSuccessResult
+//    {
+//        //: ID of the ManageOfferRequest
+//        uint64 requestID;
+//        //: Indicates whether or not the manage offer request was auto approved
+//        bool fulfilled;
+//
+//        //: Result of manage offer application
+//        ManageOfferResult* manageOfferResult;
+//
+//        //: Reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type CreateManagerOfferRequestSuccessResult struct {
+	RequestId         Uint64             `json:"requestID,omitempty"`
+	Fulfilled         bool               `json:"fulfilled,omitempty"`
+	ManageOfferResult *ManageOfferResult `json:"manageOfferResult,omitempty"`
+	Ext               EmptyExt           `json:"ext,omitempty"`
+}
+
+// CreateManageOfferRequestResult is an XDR Union defines as:
+//
+//   union CreateManageOfferRequestResult switch (CreateManageOfferRequestResultCode code)
+//    {
+//    case SUCCESS:
+//        CreateManagerOfferRequestSuccessResult success;
+//    case INVALID_OFFER:
+//        ManageOfferResultCode manageOfferCode;
+//    default:
+//        void;
+//    };
+//
+type CreateManageOfferRequestResult struct {
+	Code            CreateManageOfferRequestResultCode      `json:"code,omitempty"`
+	Success         *CreateManagerOfferRequestSuccessResult `json:"success,omitempty"`
+	ManageOfferCode *ManageOfferResultCode                  `json:"manageOfferCode,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateManageOfferRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateManageOfferRequestResult
+func (u CreateManageOfferRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CreateManageOfferRequestResultCode(sw) {
+	case CreateManageOfferRequestResultCodeSuccess:
+		return "Success", true
+	case CreateManageOfferRequestResultCodeInvalidOffer:
+		return "ManageOfferCode", true
+	default:
+		return "", true
+	}
+}
+
+// NewCreateManageOfferRequestResult creates a new  CreateManageOfferRequestResult.
+func NewCreateManageOfferRequestResult(code CreateManageOfferRequestResultCode, value interface{}) (result CreateManageOfferRequestResult, err error) {
+	result.Code = code
+	switch CreateManageOfferRequestResultCode(code) {
+	case CreateManageOfferRequestResultCodeSuccess:
+		tv, ok := value.(CreateManagerOfferRequestSuccessResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateManagerOfferRequestSuccessResult")
+			return
+		}
+		result.Success = &tv
+	case CreateManageOfferRequestResultCodeInvalidOffer:
+		tv, ok := value.(ManageOfferResultCode)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageOfferResultCode")
+			return
+		}
+		result.ManageOfferCode = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u CreateManageOfferRequestResult) MustSuccess() CreateManagerOfferRequestSuccessResult {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreateManageOfferRequestResult) GetSuccess() (result CreateManagerOfferRequestSuccessResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// MustManageOfferCode retrieves the ManageOfferCode value from the union,
+// panicing if the value is not set.
+func (u CreateManageOfferRequestResult) MustManageOfferCode() ManageOfferResultCode {
+	val, ok := u.GetManageOfferCode()
+
+	if !ok {
+		panic("arm ManageOfferCode is not set")
+	}
+
+	return val
+}
+
+// GetManageOfferCode retrieves the ManageOfferCode value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreateManageOfferRequestResult) GetManageOfferCode() (result ManageOfferResultCode, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "ManageOfferCode" {
+		result = *u.ManageOfferCode
+		ok = true
+	}
+
+	return
+}
+
+// CreatePaymentRequestOp is an XDR Struct defines as:
+//
+//   struct CreatePaymentRequestOp
+//    {
+//        //: Payment request details
+//        CreatePaymentRequest request;
+//
+//        //: (optional) Bit mask whose flags must be cleared in order for CreateSale request to be approved, which will be used by key sale_create_tasks:<asset_code>
+//        //: instead of key-value
+//        uint32* allTasks;
+//
+//        //: reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type CreatePaymentRequestOp struct {
+	Request  CreatePaymentRequest `json:"request,omitempty"`
+	AllTasks *Uint32              `json:"allTasks,omitempty"`
+	Ext      EmptyExt             `json:"ext,omitempty"`
+}
+
+// CreatePaymentRequestResultCode is an XDR Enum defines as:
+//
+//   enum CreatePaymentRequestResultCode
+//    {
+//        //: CreatePaymentRequestOp was successfully applied
+//        SUCCESS = 0,
+//
+//        //: Payment is invalid
+//        INVALID_PAYMENT = -1,
+//        //: Tasks for the payment request were neither provided in the request nor loaded through KeyValue
+//        PAYMENT_TASKS_NOT_FOUND = -2
+//    };
+//
+type CreatePaymentRequestResultCode int32
+
+const (
+	CreatePaymentRequestResultCodeSuccess              CreatePaymentRequestResultCode = 0
+	CreatePaymentRequestResultCodeInvalidPayment       CreatePaymentRequestResultCode = -1
+	CreatePaymentRequestResultCodePaymentTasksNotFound CreatePaymentRequestResultCode = -2
+)
+
+var CreatePaymentRequestResultCodeAll = []CreatePaymentRequestResultCode{
+	CreatePaymentRequestResultCodeSuccess,
+	CreatePaymentRequestResultCodeInvalidPayment,
+	CreatePaymentRequestResultCodePaymentTasksNotFound,
+}
+
+var createPaymentRequestResultCodeMap = map[int32]string{
+	0:  "CreatePaymentRequestResultCodeSuccess",
+	-1: "CreatePaymentRequestResultCodeInvalidPayment",
+	-2: "CreatePaymentRequestResultCodePaymentTasksNotFound",
+}
+
+var createPaymentRequestResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "invalid_payment",
+	-2: "payment_tasks_not_found",
+}
+
+var createPaymentRequestResultCodeRevMap = map[string]int32{
+	"CreatePaymentRequestResultCodeSuccess":              0,
+	"CreatePaymentRequestResultCodeInvalidPayment":       -1,
+	"CreatePaymentRequestResultCodePaymentTasksNotFound": -2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CreatePaymentRequestResultCode
+func (e CreatePaymentRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := createPaymentRequestResultCodeMap[v]
+	return ok
+}
+func (e CreatePaymentRequestResultCode) isFlag() bool {
+	for i := len(CreatePaymentRequestResultCodeAll) - 1; i >= 0; i-- {
+		expected := CreatePaymentRequestResultCode(2) << uint64(len(CreatePaymentRequestResultCodeAll)-1) >> uint64(len(CreatePaymentRequestResultCodeAll)-i)
+		if expected != CreatePaymentRequestResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CreatePaymentRequestResultCode) String() string {
+	name, _ := createPaymentRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CreatePaymentRequestResultCode) ShortString() string {
+	name, _ := createPaymentRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CreatePaymentRequestResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range CreatePaymentRequestResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CreatePaymentRequestResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CreatePaymentRequestResultCode(t.Value)
+	return nil
+}
+
+// CreatePaymentRequestSuccessResult is an XDR Struct defines as:
+//
+//   //: Result of the successful payment request creation
+//    struct CreatePaymentRequestSuccessResult
+//    {
+//        //: ID of the Payment request
+//        uint64 requestID;
+//        //: Indicates whether or not the payment request was auto approved
+//        bool fulfilled;
+//
+//        //: Result of the payment application
+//        PaymentResult* paymentResult;
+//
+//        //: reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type CreatePaymentRequestSuccessResult struct {
+	RequestId     Uint64         `json:"requestID,omitempty"`
+	Fulfilled     bool           `json:"fulfilled,omitempty"`
+	PaymentResult *PaymentResult `json:"paymentResult,omitempty"`
+	Ext           EmptyExt       `json:"ext,omitempty"`
+}
+
+// CreatePaymentRequestResult is an XDR Union defines as:
+//
+//   //: Result of CreatePaymentRequestOp application
+//    union CreatePaymentRequestResult switch (CreatePaymentRequestResultCode code)
+//    {
+//    case SUCCESS:
+//        CreatePaymentRequestSuccessResult success;
+//    case INVALID_PAYMENT:
+//        PaymentResultCode paymentCode;
+//    default:
+//        void;
+//    };
+//
+type CreatePaymentRequestResult struct {
+	Code        CreatePaymentRequestResultCode     `json:"code,omitempty"`
+	Success     *CreatePaymentRequestSuccessResult `json:"success,omitempty"`
+	PaymentCode *PaymentResultCode                 `json:"paymentCode,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreatePaymentRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreatePaymentRequestResult
+func (u CreatePaymentRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CreatePaymentRequestResultCode(sw) {
+	case CreatePaymentRequestResultCodeSuccess:
+		return "Success", true
+	case CreatePaymentRequestResultCodeInvalidPayment:
+		return "PaymentCode", true
+	default:
+		return "", true
+	}
+}
+
+// NewCreatePaymentRequestResult creates a new  CreatePaymentRequestResult.
+func NewCreatePaymentRequestResult(code CreatePaymentRequestResultCode, value interface{}) (result CreatePaymentRequestResult, err error) {
+	result.Code = code
+	switch CreatePaymentRequestResultCode(code) {
+	case CreatePaymentRequestResultCodeSuccess:
+		tv, ok := value.(CreatePaymentRequestSuccessResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreatePaymentRequestSuccessResult")
+			return
+		}
+		result.Success = &tv
+	case CreatePaymentRequestResultCodeInvalidPayment:
+		tv, ok := value.(PaymentResultCode)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be PaymentResultCode")
+			return
+		}
+		result.PaymentCode = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u CreatePaymentRequestResult) MustSuccess() CreatePaymentRequestSuccessResult {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreatePaymentRequestResult) GetSuccess() (result CreatePaymentRequestSuccessResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// MustPaymentCode retrieves the PaymentCode value from the union,
+// panicing if the value is not set.
+func (u CreatePaymentRequestResult) MustPaymentCode() PaymentResultCode {
+	val, ok := u.GetPaymentCode()
+
+	if !ok {
+		panic("arm PaymentCode is not set")
+	}
+
+	return val
+}
+
+// GetPaymentCode retrieves the PaymentCode value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreatePaymentRequestResult) GetPaymentCode() (result PaymentResultCode, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "PaymentCode" {
+		result = *u.PaymentCode
 		ok = true
 	}
 
@@ -34296,26 +34970,30 @@ type RemoveAssetOp struct {
 //    {
 //        //: Operation is successfully applied
 //        SUCCESS = 0,
-//        //: Asset not found
+//        //: Asset code is invalid
+//        INVALID_ASSET_CODE = -1,
 //        //: Asset can't be deleted as there exist asset pairs with it
-//        HAS_PAIR = -1,
+//        HAS_PAIR = -2,
 //        //: Asset can't be deleted as it has active offers
-//        HAS_ACTIVE_OFFERS = -2,
+//        HAS_ACTIVE_OFFERS = -3,
 //        //: Asset can't be deleted as it has active sales
-//        HAS_ACTIVE_SALES = -3
+//        HAS_ACTIVE_SALES = -4
+//
 //    };
 //
 type RemoveAssetResultCode int32
 
 const (
-	RemoveAssetResultCodeSuccess         RemoveAssetResultCode = 0
-	RemoveAssetResultCodeHasPair         RemoveAssetResultCode = -1
-	RemoveAssetResultCodeHasActiveOffers RemoveAssetResultCode = -2
-	RemoveAssetResultCodeHasActiveSales  RemoveAssetResultCode = -3
+	RemoveAssetResultCodeSuccess          RemoveAssetResultCode = 0
+	RemoveAssetResultCodeInvalidAssetCode RemoveAssetResultCode = -1
+	RemoveAssetResultCodeHasPair          RemoveAssetResultCode = -2
+	RemoveAssetResultCodeHasActiveOffers  RemoveAssetResultCode = -3
+	RemoveAssetResultCodeHasActiveSales   RemoveAssetResultCode = -4
 )
 
 var RemoveAssetResultCodeAll = []RemoveAssetResultCode{
 	RemoveAssetResultCodeSuccess,
+	RemoveAssetResultCodeInvalidAssetCode,
 	RemoveAssetResultCodeHasPair,
 	RemoveAssetResultCodeHasActiveOffers,
 	RemoveAssetResultCodeHasActiveSales,
@@ -34323,23 +35001,26 @@ var RemoveAssetResultCodeAll = []RemoveAssetResultCode{
 
 var removeAssetResultCodeMap = map[int32]string{
 	0:  "RemoveAssetResultCodeSuccess",
-	-1: "RemoveAssetResultCodeHasPair",
-	-2: "RemoveAssetResultCodeHasActiveOffers",
-	-3: "RemoveAssetResultCodeHasActiveSales",
+	-1: "RemoveAssetResultCodeInvalidAssetCode",
+	-2: "RemoveAssetResultCodeHasPair",
+	-3: "RemoveAssetResultCodeHasActiveOffers",
+	-4: "RemoveAssetResultCodeHasActiveSales",
 }
 
 var removeAssetResultCodeShortMap = map[int32]string{
 	0:  "success",
-	-1: "has_pair",
-	-2: "has_active_offers",
-	-3: "has_active_sales",
+	-1: "invalid_asset_code",
+	-2: "has_pair",
+	-3: "has_active_offers",
+	-4: "has_active_sales",
 }
 
 var removeAssetResultCodeRevMap = map[string]int32{
-	"RemoveAssetResultCodeSuccess":         0,
-	"RemoveAssetResultCodeHasPair":         -1,
-	"RemoveAssetResultCodeHasActiveOffers": -2,
-	"RemoveAssetResultCodeHasActiveSales":  -3,
+	"RemoveAssetResultCodeSuccess":          0,
+	"RemoveAssetResultCodeInvalidAssetCode": -1,
+	"RemoveAssetResultCodeHasPair":          -2,
+	"RemoveAssetResultCodeHasActiveOffers":  -3,
+	"RemoveAssetResultCodeHasActiveSales":   -4,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -35277,6 +35958,10 @@ type AtomicSwapBidExtended struct {
 //            AtomicSwapAskExtended atomicSwapAskExtended;
 //        case CREATE_POLL:
 //            CreatePollExtended createPoll;
+//        case MANAGE_OFFER:
+//            ManageOfferResult manageOfferResult;
+//        case CREATE_PAYMENT:
+//            PaymentResult paymentResult;
 //        }
 //
 type ExtendedResultTypeExt struct {
@@ -35285,6 +35970,8 @@ type ExtendedResultTypeExt struct {
 	AtomicSwapBidExtended *AtomicSwapBidExtended `json:"atomicSwapBidExtended,omitempty"`
 	AtomicSwapAskExtended *AtomicSwapAskExtended `json:"atomicSwapAskExtended,omitempty"`
 	CreatePoll            *CreatePollExtended    `json:"createPoll,omitempty"`
+	ManageOfferResult     *ManageOfferResult     `json:"manageOfferResult,omitempty"`
+	PaymentResult         *PaymentResult         `json:"paymentResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -35307,6 +35994,10 @@ func (u ExtendedResultTypeExt) ArmForSwitch(sw int32) (string, bool) {
 		return "AtomicSwapAskExtended", true
 	case ReviewableRequestTypeCreatePoll:
 		return "CreatePoll", true
+	case ReviewableRequestTypeManageOffer:
+		return "ManageOfferResult", true
+	case ReviewableRequestTypeCreatePayment:
+		return "PaymentResult", true
 	}
 	return "-", false
 }
@@ -35345,6 +36036,20 @@ func NewExtendedResultTypeExt(requestType ReviewableRequestType, value interface
 			return
 		}
 		result.CreatePoll = &tv
+	case ReviewableRequestTypeManageOffer:
+		tv, ok := value.(ManageOfferResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageOfferResult")
+			return
+		}
+		result.ManageOfferResult = &tv
+	case ReviewableRequestTypeCreatePayment:
+		tv, ok := value.(PaymentResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be PaymentResult")
+			return
+		}
+		result.PaymentResult = &tv
 	}
 	return
 }
@@ -35449,6 +36154,56 @@ func (u ExtendedResultTypeExt) GetCreatePoll() (result CreatePollExtended, ok bo
 	return
 }
 
+// MustManageOfferResult retrieves the ManageOfferResult value from the union,
+// panicing if the value is not set.
+func (u ExtendedResultTypeExt) MustManageOfferResult() ManageOfferResult {
+	val, ok := u.GetManageOfferResult()
+
+	if !ok {
+		panic("arm ManageOfferResult is not set")
+	}
+
+	return val
+}
+
+// GetManageOfferResult retrieves the ManageOfferResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ExtendedResultTypeExt) GetManageOfferResult() (result ManageOfferResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "ManageOfferResult" {
+		result = *u.ManageOfferResult
+		ok = true
+	}
+
+	return
+}
+
+// MustPaymentResult retrieves the PaymentResult value from the union,
+// panicing if the value is not set.
+func (u ExtendedResultTypeExt) MustPaymentResult() PaymentResult {
+	val, ok := u.GetPaymentResult()
+
+	if !ok {
+		panic("arm PaymentResult is not set")
+	}
+
+	return val
+}
+
+// GetPaymentResult retrieves the PaymentResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ExtendedResultTypeExt) GetPaymentResult() (result PaymentResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "PaymentResult" {
+		result = *u.PaymentResult
+		ok = true
+	}
+
+	return
+}
+
 // ExtendedResultExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -35505,6 +36260,10 @@ func NewExtendedResultExt(v LedgerVersion, value interface{}) (result ExtendedRe
 //            AtomicSwapAskExtended atomicSwapAskExtended;
 //        case CREATE_POLL:
 //            CreatePollExtended createPoll;
+//        case MANAGE_OFFER:
+//            ManageOfferResult manageOfferResult;
+//        case CREATE_PAYMENT:
+//            PaymentResult paymentResult;
 //        } typeExt;
 //
 //        //: Reserved for future use
@@ -35955,8 +36714,13 @@ type ReviewRequestOp struct {
 //
 //        //KYC
 //        //:Signer data is invalid - either weight is wrong or details are invalid
-//        INVALID_SIGNER_DATA = -1600
+//        INVALID_SIGNER_DATA = -1600,
 //
+//        // offer
+//        MANAGE_OFFER_FAILED = -1700,
+//
+//        // payment
+//        PAYMENT_FAILED = -1800
 //    };
 //
 type ReviewRequestResultCode int32
@@ -36023,6 +36787,8 @@ const (
 	ReviewRequestResultCodeQuoteAssetCannotBeSwapped                ReviewRequestResultCode = -1501
 	ReviewRequestResultCodeAtomicSwapBidOwnerFullLine               ReviewRequestResultCode = -1504
 	ReviewRequestResultCodeInvalidSignerData                        ReviewRequestResultCode = -1600
+	ReviewRequestResultCodeManageOfferFailed                        ReviewRequestResultCode = -1700
+	ReviewRequestResultCodePaymentFailed                            ReviewRequestResultCode = -1800
 )
 
 var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
@@ -36087,6 +36853,8 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeQuoteAssetCannotBeSwapped,
 	ReviewRequestResultCodeAtomicSwapBidOwnerFullLine,
 	ReviewRequestResultCodeInvalidSignerData,
+	ReviewRequestResultCodeManageOfferFailed,
+	ReviewRequestResultCodePaymentFailed,
 }
 
 var reviewRequestResultCodeMap = map[int32]string{
@@ -36151,6 +36919,8 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-1501: "ReviewRequestResultCodeQuoteAssetCannotBeSwapped",
 	-1504: "ReviewRequestResultCodeAtomicSwapBidOwnerFullLine",
 	-1600: "ReviewRequestResultCodeInvalidSignerData",
+	-1700: "ReviewRequestResultCodeManageOfferFailed",
+	-1800: "ReviewRequestResultCodePaymentFailed",
 }
 
 var reviewRequestResultCodeShortMap = map[int32]string{
@@ -36215,6 +36985,8 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-1501: "quote_asset_cannot_be_swapped",
 	-1504: "atomic_swap_bid_owner_full_line",
 	-1600: "invalid_signer_data",
+	-1700: "manage_offer_failed",
+	-1800: "payment_failed",
 }
 
 var reviewRequestResultCodeRevMap = map[string]int32{
@@ -36279,6 +37051,8 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeQuoteAssetCannotBeSwapped":                -1501,
 	"ReviewRequestResultCodeAtomicSwapBidOwnerFullLine":               -1504,
 	"ReviewRequestResultCodeInvalidSignerData":                        -1600,
+	"ReviewRequestResultCodeManageOfferFailed":                        -1700,
+	"ReviewRequestResultCodePaymentFailed":                            -1800,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -36350,13 +37124,19 @@ func (e *ReviewRequestResultCode) UnmarshalJSON(data []byte) error {
 //    {
 //    case SUCCESS:
 //        ExtendedResult success;
+//    case MANAGE_OFFER_FAILED:
+//        ManageOfferResultCode manageOfferCode;
+//    case PAYMENT_FAILED:
+//        PaymentResultCode paymentCode;
 //    default:
 //        void;
 //    };
 //
 type ReviewRequestResult struct {
-	Code    ReviewRequestResultCode `json:"code,omitempty"`
-	Success *ExtendedResult         `json:"success,omitempty"`
+	Code            ReviewRequestResultCode `json:"code,omitempty"`
+	Success         *ExtendedResult         `json:"success,omitempty"`
+	ManageOfferCode *ManageOfferResultCode  `json:"manageOfferCode,omitempty"`
+	PaymentCode     *PaymentResultCode      `json:"paymentCode,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -36371,6 +37151,10 @@ func (u ReviewRequestResult) ArmForSwitch(sw int32) (string, bool) {
 	switch ReviewRequestResultCode(sw) {
 	case ReviewRequestResultCodeSuccess:
 		return "Success", true
+	case ReviewRequestResultCodeManageOfferFailed:
+		return "ManageOfferCode", true
+	case ReviewRequestResultCodePaymentFailed:
+		return "PaymentCode", true
 	default:
 		return "", true
 	}
@@ -36387,6 +37171,20 @@ func NewReviewRequestResult(code ReviewRequestResultCode, value interface{}) (re
 			return
 		}
 		result.Success = &tv
+	case ReviewRequestResultCodeManageOfferFailed:
+		tv, ok := value.(ManageOfferResultCode)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ManageOfferResultCode")
+			return
+		}
+		result.ManageOfferCode = &tv
+	case ReviewRequestResultCodePaymentFailed:
+		tv, ok := value.(PaymentResultCode)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be PaymentResultCode")
+			return
+		}
+		result.PaymentCode = &tv
 	default:
 		// void
 	}
@@ -36412,6 +37210,56 @@ func (u ReviewRequestResult) GetSuccess() (result ExtendedResult, ok bool) {
 
 	if armName == "Success" {
 		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// MustManageOfferCode retrieves the ManageOfferCode value from the union,
+// panicing if the value is not set.
+func (u ReviewRequestResult) MustManageOfferCode() ManageOfferResultCode {
+	val, ok := u.GetManageOfferCode()
+
+	if !ok {
+		panic("arm ManageOfferCode is not set")
+	}
+
+	return val
+}
+
+// GetManageOfferCode retrieves the ManageOfferCode value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewRequestResult) GetManageOfferCode() (result ManageOfferResultCode, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "ManageOfferCode" {
+		result = *u.ManageOfferCode
+		ok = true
+	}
+
+	return
+}
+
+// MustPaymentCode retrieves the PaymentCode value from the union,
+// panicing if the value is not set.
+func (u ReviewRequestResult) MustPaymentCode() PaymentResultCode {
+	val, ok := u.GetPaymentCode()
+
+	if !ok {
+		panic("arm PaymentCode is not set")
+	}
+
+	return val
+}
+
+// GetPaymentCode retrieves the PaymentCode value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewRequestResult) GetPaymentCode() (result PaymentResultCode, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "PaymentCode" {
+		result = *u.PaymentCode
 		ok = true
 	}
 
@@ -38584,6 +39432,65 @@ type ReviewableRequestResourceCreatePoll struct {
 	Ext            EmptyExt `json:"ext,omitempty"`
 }
 
+// ReviewableRequestResourceManageOffer is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: type of base asset
+//            uint64 baseAssetType;
+//            //: type of quote asset
+//            uint64 quoteAssetType;
+//
+//            //: code of base asset
+//            AssetCode baseAssetCode;
+//            //: code of quote asset
+//            AssetCode quoteAssetCode;
+//
+//            bool isBuy;
+//            //: 0 means creation,
+//            //: 1 means removing,
+//            //: 2 means participate in sale,
+//            //: 3 means remove participation in sale,
+//            //: UINT32_MAX means any action.
+//            uint32 manageAction;
+//
+//            //: ID of the order book.
+//            uint64 orderBookID;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type ReviewableRequestResourceManageOffer struct {
+	BaseAssetType  Uint64    `json:"baseAssetType,omitempty"`
+	QuoteAssetType Uint64    `json:"quoteAssetType,omitempty"`
+	BaseAssetCode  AssetCode `json:"baseAssetCode,omitempty"`
+	QuoteAssetCode AssetCode `json:"quoteAssetCode,omitempty"`
+	IsBuy          bool      `json:"isBuy,omitempty"`
+	ManageAction   Uint32    `json:"manageAction,omitempty"`
+	OrderBookId    Uint64    `json:"orderBookID,omitempty"`
+	Ext            EmptyExt  `json:"ext,omitempty"`
+}
+
+// ReviewableRequestResourceCreatePayment is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: Code of asset in which payment is being made
+//            AssetCode assetCode;
+//            //: Type of asset in which payment is being made
+//            uint64 assetType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type ReviewableRequestResourceCreatePayment struct {
+	AssetCode AssetCode `json:"assetCode,omitempty"`
+	AssetType Uint64    `json:"assetType,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
+}
+
 // ReviewableRequestResource is an XDR Union defines as:
 //
 //   //: Describes properties of some reviewable request types that
@@ -38670,6 +39577,44 @@ type ReviewableRequestResourceCreatePoll struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } createPoll;
+//    case MANAGE_OFFER:
+//        struct
+//        {
+//            //: type of base asset
+//            uint64 baseAssetType;
+//            //: type of quote asset
+//            uint64 quoteAssetType;
+//
+//            //: code of base asset
+//            AssetCode baseAssetCode;
+//            //: code of quote asset
+//            AssetCode quoteAssetCode;
+//
+//            bool isBuy;
+//            //: 0 means creation,
+//            //: 1 means removing,
+//            //: 2 means participate in sale,
+//            //: 3 means remove participation in sale,
+//            //: UINT32_MAX means any action.
+//            uint32 manageAction;
+//
+//            //: ID of the order book.
+//            uint64 orderBookID;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } manageOffer;
+//    case CREATE_PAYMENT:
+//        struct
+//        {
+//            //: Code of asset in which payment is being made
+//            AssetCode assetCode;
+//            //: Type of asset in which payment is being made
+//            uint64 assetType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } createPayment;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -38683,6 +39628,8 @@ type ReviewableRequestResource struct {
 	CreateAtomicSwapAskExt *ReviewableRequestResourceCreateAtomicSwapAskExt `json:"createAtomicSwapAskExt,omitempty"`
 	CreateAtomicSwapBidExt *ReviewableRequestResourceCreateAtomicSwapBidExt `json:"createAtomicSwapBidExt,omitempty"`
 	CreatePoll             *ReviewableRequestResourceCreatePoll             `json:"createPoll,omitempty"`
+	ManageOffer            *ReviewableRequestResourceManageOffer            `json:"manageOffer,omitempty"`
+	CreatePayment          *ReviewableRequestResourceCreatePayment          `json:"createPayment,omitempty"`
 	Ext                    *EmptyExt                                        `json:"ext,omitempty"`
 }
 
@@ -38708,6 +39655,10 @@ func (u ReviewableRequestResource) ArmForSwitch(sw int32) (string, bool) {
 		return "CreateAtomicSwapBidExt", true
 	case ReviewableRequestTypeCreatePoll:
 		return "CreatePoll", true
+	case ReviewableRequestTypeManageOffer:
+		return "ManageOffer", true
+	case ReviewableRequestTypeCreatePayment:
+		return "CreatePayment", true
 	default:
 		return "Ext", true
 	}
@@ -38759,6 +39710,20 @@ func NewReviewableRequestResource(requestType ReviewableRequestType, value inter
 			return
 		}
 		result.CreatePoll = &tv
+	case ReviewableRequestTypeManageOffer:
+		tv, ok := value.(ReviewableRequestResourceManageOffer)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ReviewableRequestResourceManageOffer")
+			return
+		}
+		result.ManageOffer = &tv
+	case ReviewableRequestTypeCreatePayment:
+		tv, ok := value.(ReviewableRequestResourceCreatePayment)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ReviewableRequestResourceCreatePayment")
+			return
+		}
+		result.CreatePayment = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -38914,6 +39879,56 @@ func (u ReviewableRequestResource) GetCreatePoll() (result ReviewableRequestReso
 
 	if armName == "CreatePoll" {
 		result = *u.CreatePoll
+		ok = true
+	}
+
+	return
+}
+
+// MustManageOffer retrieves the ManageOffer value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestResource) MustManageOffer() ReviewableRequestResourceManageOffer {
+	val, ok := u.GetManageOffer()
+
+	if !ok {
+		panic("arm ManageOffer is not set")
+	}
+
+	return val
+}
+
+// GetManageOffer retrieves the ManageOffer value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestResource) GetManageOffer() (result ReviewableRequestResourceManageOffer, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "ManageOffer" {
+		result = *u.ManageOffer
+		ok = true
+	}
+
+	return
+}
+
+// MustCreatePayment retrieves the CreatePayment value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestResource) MustCreatePayment() ReviewableRequestResourceCreatePayment {
+	val, ok := u.GetCreatePayment()
+
+	if !ok {
+		panic("arm CreatePayment is not set")
+	}
+
+	return val
+}
+
+// GetCreatePayment retrieves the CreatePayment value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestResource) GetCreatePayment() (result ReviewableRequestResourceCreatePayment, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "CreatePayment" {
+		result = *u.CreatePayment
 		ok = true
 	}
 
@@ -40975,7 +41990,8 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CLOSE = 15,
 //        UPDATE_END_TIME = 16,
 //        CREATE_WITH_TASKS = 17,
-//        CREATE_FOR_OTHER_WITH_TASKS = 18
+//        CREATE_FOR_OTHER_WITH_TASKS = 18,
+//        REMOVE_FOR_OTHER = 19
 //    };
 //
 type SignerRuleAction int32
@@ -40999,6 +42015,7 @@ const (
 	SignerRuleActionUpdateEndTime           SignerRuleAction = 16
 	SignerRuleActionCreateWithTasks         SignerRuleAction = 17
 	SignerRuleActionCreateForOtherWithTasks SignerRuleAction = 18
+	SignerRuleActionRemoveForOther          SignerRuleAction = 19
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -41020,6 +42037,7 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionUpdateEndTime,
 	SignerRuleActionCreateWithTasks,
 	SignerRuleActionCreateForOtherWithTasks,
+	SignerRuleActionRemoveForOther,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -41041,6 +42059,7 @@ var signerRuleActionMap = map[int32]string{
 	16: "SignerRuleActionUpdateEndTime",
 	17: "SignerRuleActionCreateWithTasks",
 	18: "SignerRuleActionCreateForOtherWithTasks",
+	19: "SignerRuleActionRemoveForOther",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -41062,6 +42081,7 @@ var signerRuleActionShortMap = map[int32]string{
 	16: "update_end_time",
 	17: "create_with_tasks",
 	18: "create_for_other_with_tasks",
+	19: "remove_for_other",
 }
 
 var signerRuleActionRevMap = map[string]int32{
@@ -41083,6 +42103,7 @@ var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionUpdateEndTime":           16,
 	"SignerRuleActionCreateWithTasks":         17,
 	"SignerRuleActionCreateForOtherWithTasks": 18,
+	"SignerRuleActionRemoveForOther":          19,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -42132,6 +43153,34 @@ type LimitsUpdateRequest struct {
 	Ext            LimitsUpdateRequestExt `json:"ext,omitempty"`
 }
 
+// ManageOfferRequest is an XDR Struct defines as:
+//
+//   struct ManageOfferRequest
+//    {
+//        ManageOfferOp op;
+//
+//        EmptyExt ext;
+//    };
+//
+type ManageOfferRequest struct {
+	Op  ManageOfferOp `json:"op,omitempty"`
+	Ext EmptyExt      `json:"ext,omitempty"`
+}
+
+// CreatePaymentRequest is an XDR Struct defines as:
+//
+//   struct CreatePaymentRequest
+//    {
+//        PaymentOp paymentOp;
+//
+//        EmptyExt ext;
+//    };
+//
+type CreatePaymentRequest struct {
+	PaymentOp PaymentOp `json:"paymentOp,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
+}
+
 // SaleCreationRequestQuoteAssetExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -42616,6 +43665,10 @@ type WithdrawalRequest struct {
 //            InitiateKYCRecoveryOp initiateKYCRecoveryOp;
 //        case CREATE_KYC_RECOVERY_REQUEST:
 //            CreateKYCRecoveryRequestOp createKYCRecoveryRequestOp;
+//        case CREATE_MANAGE_OFFER_REQUEST:
+//            CreateManageOfferRequestOp createManageOfferRequestOp;
+//        case CREATE_PAYMENT_REQUEST:
+//            CreatePaymentRequestOp createPaymentRequestOp;
 //        case REMOVE_ASSET:
 //            RemoveAssetOp removeAssetOp;
 //        }
@@ -42666,6 +43719,8 @@ type OperationBody struct {
 	RemoveAssetPairOp                        *RemoveAssetPairOp                        `json:"removeAssetPairOp,omitempty"`
 	InitiateKycRecoveryOp                    *InitiateKycRecoveryOp                    `json:"initiateKYCRecoveryOp,omitempty"`
 	CreateKycRecoveryRequestOp               *CreateKycRecoveryRequestOp               `json:"createKYCRecoveryRequestOp,omitempty"`
+	CreateManageOfferRequestOp               *CreateManageOfferRequestOp               `json:"createManageOfferRequestOp,omitempty"`
+	CreatePaymentRequestOp                   *CreatePaymentRequestOp                   `json:"createPaymentRequestOp,omitempty"`
 	RemoveAssetOp                            *RemoveAssetOp                            `json:"removeAssetOp,omitempty"`
 }
 
@@ -42767,6 +43822,10 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "InitiateKycRecoveryOp", true
 	case OperationTypeCreateKycRecoveryRequest:
 		return "CreateKycRecoveryRequestOp", true
+	case OperationTypeCreateManageOfferRequest:
+		return "CreateManageOfferRequestOp", true
+	case OperationTypeCreatePaymentRequest:
+		return "CreatePaymentRequestOp", true
 	case OperationTypeRemoveAsset:
 		return "RemoveAssetOp", true
 	}
@@ -43085,6 +44144,20 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.CreateKycRecoveryRequestOp = &tv
+	case OperationTypeCreateManageOfferRequest:
+		tv, ok := value.(CreateManageOfferRequestOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateManageOfferRequestOp")
+			return
+		}
+		result.CreateManageOfferRequestOp = &tv
+	case OperationTypeCreatePaymentRequest:
+		tv, ok := value.(CreatePaymentRequestOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreatePaymentRequestOp")
+			return
+		}
+		result.CreatePaymentRequestOp = &tv
 	case OperationTypeRemoveAsset:
 		tv, ok := value.(RemoveAssetOp)
 		if !ok {
@@ -44196,6 +45269,56 @@ func (u OperationBody) GetCreateKycRecoveryRequestOp() (result CreateKycRecovery
 	return
 }
 
+// MustCreateManageOfferRequestOp retrieves the CreateManageOfferRequestOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustCreateManageOfferRequestOp() CreateManageOfferRequestOp {
+	val, ok := u.GetCreateManageOfferRequestOp()
+
+	if !ok {
+		panic("arm CreateManageOfferRequestOp is not set")
+	}
+
+	return val
+}
+
+// GetCreateManageOfferRequestOp retrieves the CreateManageOfferRequestOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetCreateManageOfferRequestOp() (result CreateManageOfferRequestOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreateManageOfferRequestOp" {
+		result = *u.CreateManageOfferRequestOp
+		ok = true
+	}
+
+	return
+}
+
+// MustCreatePaymentRequestOp retrieves the CreatePaymentRequestOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustCreatePaymentRequestOp() CreatePaymentRequestOp {
+	val, ok := u.GetCreatePaymentRequestOp()
+
+	if !ok {
+		panic("arm CreatePaymentRequestOp is not set")
+	}
+
+	return val
+}
+
+// GetCreatePaymentRequestOp retrieves the CreatePaymentRequestOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetCreatePaymentRequestOp() (result CreatePaymentRequestOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreatePaymentRequestOp" {
+		result = *u.CreatePaymentRequestOp
+		ok = true
+	}
+
+	return
+}
+
 // MustRemoveAssetOp retrieves the RemoveAssetOp value from the union,
 // panicing if the value is not set.
 func (u OperationBody) MustRemoveAssetOp() RemoveAssetOp {
@@ -44321,6 +45444,10 @@ func (u OperationBody) GetRemoveAssetOp() (result RemoveAssetOp, ok bool) {
 //            InitiateKYCRecoveryOp initiateKYCRecoveryOp;
 //        case CREATE_KYC_RECOVERY_REQUEST:
 //            CreateKYCRecoveryRequestOp createKYCRecoveryRequestOp;
+//        case CREATE_MANAGE_OFFER_REQUEST:
+//            CreateManageOfferRequestOp createManageOfferRequestOp;
+//        case CREATE_PAYMENT_REQUEST:
+//            CreatePaymentRequestOp createPaymentRequestOp;
 //        case REMOVE_ASSET:
 //            RemoveAssetOp removeAssetOp;
 //        }
@@ -45028,6 +46155,10 @@ type AccountRuleRequirement struct {
 //            CreateKYCRecoveryRequestResult createKYCRecoveryRequestResult;
 //        case INITIATE_KYC_RECOVERY:
 //            InitiateKYCRecoveryResult initiateKYCRecoveryResult;
+//        case CREATE_MANAGE_OFFER_REQUEST:
+//            CreateManageOfferRequestResult createManageOfferRequestResult;
+//        case CREATE_PAYMENT_REQUEST:
+//            CreatePaymentRequestResult createPaymentRequestResult;
 //        case REMOVE_ASSET:
 //            RemoveAssetResult removeAssetResult;
 //        }
@@ -45078,6 +46209,8 @@ type OperationResultTr struct {
 	RemoveAssetPairResult                        *RemoveAssetPairResult                        `json:"removeAssetPairResult,omitempty"`
 	CreateKycRecoveryRequestResult               *CreateKycRecoveryRequestResult               `json:"createKYCRecoveryRequestResult,omitempty"`
 	InitiateKycRecoveryResult                    *InitiateKycRecoveryResult                    `json:"initiateKYCRecoveryResult,omitempty"`
+	CreateManageOfferRequestResult               *CreateManageOfferRequestResult               `json:"createManageOfferRequestResult,omitempty"`
+	CreatePaymentRequestResult                   *CreatePaymentRequestResult                   `json:"createPaymentRequestResult,omitempty"`
 	RemoveAssetResult                            *RemoveAssetResult                            `json:"removeAssetResult,omitempty"`
 }
 
@@ -45179,6 +46312,10 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "CreateKycRecoveryRequestResult", true
 	case OperationTypeInitiateKycRecovery:
 		return "InitiateKycRecoveryResult", true
+	case OperationTypeCreateManageOfferRequest:
+		return "CreateManageOfferRequestResult", true
+	case OperationTypeCreatePaymentRequest:
+		return "CreatePaymentRequestResult", true
 	case OperationTypeRemoveAsset:
 		return "RemoveAssetResult", true
 	}
@@ -45497,6 +46634,20 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.InitiateKycRecoveryResult = &tv
+	case OperationTypeCreateManageOfferRequest:
+		tv, ok := value.(CreateManageOfferRequestResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateManageOfferRequestResult")
+			return
+		}
+		result.CreateManageOfferRequestResult = &tv
+	case OperationTypeCreatePaymentRequest:
+		tv, ok := value.(CreatePaymentRequestResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreatePaymentRequestResult")
+			return
+		}
+		result.CreatePaymentRequestResult = &tv
 	case OperationTypeRemoveAsset:
 		tv, ok := value.(RemoveAssetResult)
 		if !ok {
@@ -46608,6 +47759,56 @@ func (u OperationResultTr) GetInitiateKycRecoveryResult() (result InitiateKycRec
 	return
 }
 
+// MustCreateManageOfferRequestResult retrieves the CreateManageOfferRequestResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustCreateManageOfferRequestResult() CreateManageOfferRequestResult {
+	val, ok := u.GetCreateManageOfferRequestResult()
+
+	if !ok {
+		panic("arm CreateManageOfferRequestResult is not set")
+	}
+
+	return val
+}
+
+// GetCreateManageOfferRequestResult retrieves the CreateManageOfferRequestResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetCreateManageOfferRequestResult() (result CreateManageOfferRequestResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreateManageOfferRequestResult" {
+		result = *u.CreateManageOfferRequestResult
+		ok = true
+	}
+
+	return
+}
+
+// MustCreatePaymentRequestResult retrieves the CreatePaymentRequestResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustCreatePaymentRequestResult() CreatePaymentRequestResult {
+	val, ok := u.GetCreatePaymentRequestResult()
+
+	if !ok {
+		panic("arm CreatePaymentRequestResult is not set")
+	}
+
+	return val
+}
+
+// GetCreatePaymentRequestResult retrieves the CreatePaymentRequestResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetCreatePaymentRequestResult() (result CreatePaymentRequestResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreatePaymentRequestResult" {
+		result = *u.CreatePaymentRequestResult
+		ok = true
+	}
+
+	return
+}
+
 // MustRemoveAssetResult retrieves the RemoveAssetResult value from the union,
 // panicing if the value is not set.
 func (u OperationResultTr) MustRemoveAssetResult() RemoveAssetResult {
@@ -46728,6 +47929,10 @@ func (u OperationResultTr) GetRemoveAssetResult() (result RemoveAssetResult, ok 
 //            CreateKYCRecoveryRequestResult createKYCRecoveryRequestResult;
 //        case INITIATE_KYC_RECOVERY:
 //            InitiateKYCRecoveryResult initiateKYCRecoveryResult;
+//        case CREATE_MANAGE_OFFER_REQUEST:
+//            CreateManageOfferRequestResult createManageOfferRequestResult;
+//        case CREATE_PAYMENT_REQUEST:
+//            CreatePaymentRequestResult createPaymentRequestResult;
 //        case REMOVE_ASSET:
 //            RemoveAssetResult removeAssetResult;
 //        }
@@ -48486,7 +49691,9 @@ type Fee struct {
 //        INITIATE_KYC_RECOVERY = 48,
 //        CREATE_KYC_RECOVERY_REQUEST = 49,
 //        REMOVE_ASSET_PAIR = 50,
-//        REMOVE_ASSET = 51
+//        CREATE_MANAGE_OFFER_REQUEST = 51,
+//        CREATE_PAYMENT_REQUEST = 52,
+//        REMOVE_ASSET = 53
 //    };
 //
 type OperationType int32
@@ -48536,7 +49743,9 @@ const (
 	OperationTypeInitiateKycRecovery                    OperationType = 48
 	OperationTypeCreateKycRecoveryRequest               OperationType = 49
 	OperationTypeRemoveAssetPair                        OperationType = 50
-	OperationTypeRemoveAsset                            OperationType = 51
+	OperationTypeCreateManageOfferRequest               OperationType = 51
+	OperationTypeCreatePaymentRequest                   OperationType = 52
+	OperationTypeRemoveAsset                            OperationType = 53
 )
 
 var OperationTypeAll = []OperationType{
@@ -48584,6 +49793,8 @@ var OperationTypeAll = []OperationType{
 	OperationTypeInitiateKycRecovery,
 	OperationTypeCreateKycRecoveryRequest,
 	OperationTypeRemoveAssetPair,
+	OperationTypeCreateManageOfferRequest,
+	OperationTypeCreatePaymentRequest,
 	OperationTypeRemoveAsset,
 }
 
@@ -48632,7 +49843,9 @@ var operationTypeMap = map[int32]string{
 	48: "OperationTypeInitiateKycRecovery",
 	49: "OperationTypeCreateKycRecoveryRequest",
 	50: "OperationTypeRemoveAssetPair",
-	51: "OperationTypeRemoveAsset",
+	51: "OperationTypeCreateManageOfferRequest",
+	52: "OperationTypeCreatePaymentRequest",
+	53: "OperationTypeRemoveAsset",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -48680,7 +49893,9 @@ var operationTypeShortMap = map[int32]string{
 	48: "initiate_kyc_recovery",
 	49: "create_kyc_recovery_request",
 	50: "remove_asset_pair",
-	51: "remove_asset",
+	51: "create_manage_offer_request",
+	52: "create_payment_request",
+	53: "remove_asset",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -48728,7 +49943,9 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeInitiateKycRecovery":                    48,
 	"OperationTypeCreateKycRecoveryRequest":               49,
 	"OperationTypeRemoveAssetPair":                        50,
-	"OperationTypeRemoveAsset":                            51,
+	"OperationTypeCreateManageOfferRequest":               51,
+	"OperationTypeCreatePaymentRequest":                   52,
+	"OperationTypeRemoveAsset":                            53,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -48807,4 +50024,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "9a6375ef68a58ee2ca3d8e634c0ff531e493f131"
+var Revision = "47ee60cab248c2e15b099c8e7d6fb46cf4f2d388"
