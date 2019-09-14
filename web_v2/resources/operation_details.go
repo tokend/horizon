@@ -57,6 +57,7 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeRemoveAssetPair:                        newRemoveAssetPairOp,
 	xdr.OperationTypeCreateManageOfferRequest:               newCreateManageOfferRequestOp,
 	xdr.OperationTypeCreatePaymentRequest:                   newCreatePaymentRequestOp,
+	xdr.OperationTypeRemoveAsset:                            newRemoveAssetOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -769,6 +770,15 @@ func newCreatePaymentRequestOp(op history2.Operation) regources.Resource {
 			SourceFee:               body.PaymentDetails.SourceFee,
 			DestinationFee:          body.PaymentDetails.DestinationFee,
 			SourcePayForDestination: body.PaymentDetails.SourcePayForDestination,
+		},
+	}
+}
+
+func newRemoveAssetOp(op history2.Operation) regources.Resource {
+	return &regources.RemoveAssetOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_ASSET),
+		Relationships: regources.RemoveAssetOpRelationships{
+			Asset: NewAssetKey(op.Details.RemoveAsset.Code).AsRelation(),
 		},
 	}
 }

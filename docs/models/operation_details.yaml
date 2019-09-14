@@ -43,6 +43,8 @@ OperationDetails:
     - $ref: '#/components/schemas/RemoveAssetPairOp'
     - $ref: '#/components/schemas/CreateManageOfferRequestOp'
     - $ref: '#/components/schemas/CreatePaymentRequestOp'
+    - $ref: '#/components/schemas/RemoveAssetOp'
+
 
 OperationDetailsKey:
   oneOf:
@@ -89,3 +91,5 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/RemoveAssetPairOpKey'
     - $ref: '#/components/schemas/CreateManageOfferRequestOpKey'
     - $ref: '#/components/schemas/CreatePaymentRequestOpKey'
+    - $ref: '#/components/schemas/RemoveAssetOpKey'
+

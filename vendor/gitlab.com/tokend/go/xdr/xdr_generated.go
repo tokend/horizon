@@ -1,5 +1,5 @@
-// revision: d12bfbbe00535e6a3a310a8ef950495be490cd4a
-// branch:   feature/reviewable_requests_for_movements
+// revision: 47ee60cab248c2e15b099c8e7d6fb46cf4f2d388
+// branch:   master
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -79,6 +79,7 @@
 //  xdr/operation-payment.x
 //  xdr/operation-payout.x
 //  xdr/operation-remove-asset-pair.x
+//  xdr/operation-remove-asset.x
 //  xdr/operation-review-request.x
 //  xdr/operation-set-fees.x
 //  xdr/operation-stamp.x
@@ -1247,12 +1248,19 @@ type AssetPairEntry struct {
 //
 //   enum AssetPolicy
 //    {
+//        //: Defines whether or not asset can be transfered using payments
 //    	TRANSFERABLE = 1,
+//    	//: Defines whether or not asset is considered base
 //    	BASE_ASSET = 2,
+//    	//: [[Deprecated]]
 //    	STATS_QUOTE_ASSET = 4,
+//    	//: Defines whether or not asset can be withdrawed from the system
 //    	WITHDRAWABLE = 8,
+//    	//: Defines whether or not manual review for issuance of asset is required
 //    	ISSUANCE_MANUAL_REVIEW_REQUIRED = 16,
+//    	//: Defines whether or not asset can be base in atomic swap
 //    	CAN_BE_BASE_IN_ATOMIC_SWAP = 32,
+//    	//: Defines whether or not asset can be quote in atomic swap
 //    	CAN_BE_QUOTE_IN_ATOMIC_SWAP = 64
 //    };
 //
@@ -1370,82 +1378,50 @@ func (e *AssetPolicy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// AssetEntryExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type AssetEntryExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u AssetEntryExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of AssetEntryExt
-func (u AssetEntryExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewAssetEntryExt creates a new  AssetEntryExt.
-func NewAssetEntryExt(v LedgerVersion, value interface{}) (result AssetEntryExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
 // AssetEntry is an XDR Struct defines as:
 //
 //   struct AssetEntry
 //    {
+//        //: Code of the asset
 //        AssetCode code;
+//        //: Owner(creator) of the asset
 //    	AccountID owner;
-//    	AccountID preissuedAssetSigner; // signer of pre issuance tokens
+//    	//: Account responsible for preissuance of the asset
+//    	AccountID preissuedAssetSigner;
+//        //: Arbitrary stringified JSON object that can be used to attach data to asset
 //    	longstring details;
-//    	uint64 maxIssuanceAmount; // max number of tokens to be issued
-//    	uint64 availableForIssueance; // pre issued tokens available for issuance
-//    	uint64 issued; // number of issued tokens
-//    	uint64 pendingIssuance; // number of tokens locked for entries like token sale. lockedIssuance + issued can not be > maxIssuanceAmount
+//    	//: Maximal amount of tokens that can be issued
+//    	uint64 maxIssuanceAmount;
+//    	//: Amount of tokens available for issuance
+//    	uint64 availableForIssueance;
+//    	//: Amount of tokens issued already
+//    	uint64 issued;
+//    	//: Amount of tokens to be issued which is locked. `pendingIssuance+issued <= maxIssuanceAmount`
+//    	uint64 pendingIssuance;
+//    	//: Policies of the asset
 //        uint32 policies;
-//        uint64 type; // use instead policies that limit usage, use in account rules
+//        //: Used to restrict usage. Used in account rules
+//        uint64 type;
+//        //: Number of decimal places. Must be <= 6
 //        uint32 trailingDigitsCount;
 //
-//        // reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
+//        //: Reserved for future use
+//        EmptyExt ext;
 //    };
 //
 type AssetEntry struct {
-	Code                  AssetCode     `json:"code,omitempty"`
-	Owner                 AccountId     `json:"owner,omitempty"`
-	PreissuedAssetSigner  AccountId     `json:"preissuedAssetSigner,omitempty"`
-	Details               Longstring    `json:"details,omitempty"`
-	MaxIssuanceAmount     Uint64        `json:"maxIssuanceAmount,omitempty"`
-	AvailableForIssueance Uint64        `json:"availableForIssueance,omitempty"`
-	Issued                Uint64        `json:"issued,omitempty"`
-	PendingIssuance       Uint64        `json:"pendingIssuance,omitempty"`
-	Policies              Uint32        `json:"policies,omitempty"`
-	Type                  Uint64        `json:"type,omitempty"`
-	TrailingDigitsCount   Uint32        `json:"trailingDigitsCount,omitempty"`
-	Ext                   AssetEntryExt `json:"ext,omitempty"`
+	Code                  AssetCode  `json:"code,omitempty"`
+	Owner                 AccountId  `json:"owner,omitempty"`
+	PreissuedAssetSigner  AccountId  `json:"preissuedAssetSigner,omitempty"`
+	Details               Longstring `json:"details,omitempty"`
+	MaxIssuanceAmount     Uint64     `json:"maxIssuanceAmount,omitempty"`
+	AvailableForIssueance Uint64     `json:"availableForIssueance,omitempty"`
+	Issued                Uint64     `json:"issued,omitempty"`
+	PendingIssuance       Uint64     `json:"pendingIssuance,omitempty"`
+	Policies              Uint32     `json:"policies,omitempty"`
+	Type                  Uint64     `json:"type,omitempty"`
+	TrailingDigitsCount   Uint32     `json:"trailingDigitsCount,omitempty"`
+	Ext                   EmptyExt   `json:"ext,omitempty"`
 }
 
 // AtomicSwapAskQuoteAssetExt is an XDR NestedUnion defines as:
@@ -34928,6 +34904,317 @@ func (u RemoveAssetPairResult) GetSuccess() (result RemoveAssetPairSuccess, ok b
 	return
 }
 
+// RemoveAssetOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveAssetOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAssetOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAssetOpExt
+func (u RemoveAssetOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveAssetOpExt creates a new  RemoveAssetOpExt.
+func NewRemoveAssetOpExt(v LedgerVersion, value interface{}) (result RemoveAssetOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveAssetOp is an XDR Struct defines as:
+//
+//   //: `RemoveAssetOp` removes specified asset pair
+//    struct RemoveAssetOp
+//    {
+//        //: Defines an asset
+//        AssetCode code;
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type RemoveAssetOp struct {
+	Code AssetCode        `json:"code,omitempty"`
+	Ext  RemoveAssetOpExt `json:"ext,omitempty"`
+}
+
+// RemoveAssetResultCode is an XDR Enum defines as:
+//
+//   //: Result codes for `RemoveAssetOp`
+//    enum RemoveAssetResultCode
+//    {
+//        //: Operation is successfully applied
+//        SUCCESS = 0,
+//        //: Asset code is invalid
+//        INVALID_ASSET_CODE = -1,
+//        //: Asset can't be deleted as there exist asset pairs with it
+//        HAS_PAIR = -2,
+//        //: Asset can't be deleted as it has active offers
+//        HAS_ACTIVE_OFFERS = -3,
+//        //: Asset can't be deleted as it has active sales
+//        HAS_ACTIVE_SALES = -4
+//
+//    };
+//
+type RemoveAssetResultCode int32
+
+const (
+	RemoveAssetResultCodeSuccess          RemoveAssetResultCode = 0
+	RemoveAssetResultCodeInvalidAssetCode RemoveAssetResultCode = -1
+	RemoveAssetResultCodeHasPair          RemoveAssetResultCode = -2
+	RemoveAssetResultCodeHasActiveOffers  RemoveAssetResultCode = -3
+	RemoveAssetResultCodeHasActiveSales   RemoveAssetResultCode = -4
+)
+
+var RemoveAssetResultCodeAll = []RemoveAssetResultCode{
+	RemoveAssetResultCodeSuccess,
+	RemoveAssetResultCodeInvalidAssetCode,
+	RemoveAssetResultCodeHasPair,
+	RemoveAssetResultCodeHasActiveOffers,
+	RemoveAssetResultCodeHasActiveSales,
+}
+
+var removeAssetResultCodeMap = map[int32]string{
+	0:  "RemoveAssetResultCodeSuccess",
+	-1: "RemoveAssetResultCodeInvalidAssetCode",
+	-2: "RemoveAssetResultCodeHasPair",
+	-3: "RemoveAssetResultCodeHasActiveOffers",
+	-4: "RemoveAssetResultCodeHasActiveSales",
+}
+
+var removeAssetResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "invalid_asset_code",
+	-2: "has_pair",
+	-3: "has_active_offers",
+	-4: "has_active_sales",
+}
+
+var removeAssetResultCodeRevMap = map[string]int32{
+	"RemoveAssetResultCodeSuccess":          0,
+	"RemoveAssetResultCodeInvalidAssetCode": -1,
+	"RemoveAssetResultCodeHasPair":          -2,
+	"RemoveAssetResultCodeHasActiveOffers":  -3,
+	"RemoveAssetResultCodeHasActiveSales":   -4,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for RemoveAssetResultCode
+func (e RemoveAssetResultCode) ValidEnum(v int32) bool {
+	_, ok := removeAssetResultCodeMap[v]
+	return ok
+}
+func (e RemoveAssetResultCode) isFlag() bool {
+	for i := len(RemoveAssetResultCodeAll) - 1; i >= 0; i-- {
+		expected := RemoveAssetResultCode(2) << uint64(len(RemoveAssetResultCodeAll)-1) >> uint64(len(RemoveAssetResultCodeAll)-i)
+		if expected != RemoveAssetResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e RemoveAssetResultCode) String() string {
+	name, _ := removeAssetResultCodeMap[int32(e)]
+	return name
+}
+
+func (e RemoveAssetResultCode) ShortString() string {
+	name, _ := removeAssetResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e RemoveAssetResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range RemoveAssetResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *RemoveAssetResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = RemoveAssetResultCode(t.Value)
+	return nil
+}
+
+// RemoveAssetSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveAssetSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAssetSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAssetSuccessExt
+func (u RemoveAssetSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveAssetSuccessExt creates a new  RemoveAssetSuccessExt.
+func NewRemoveAssetSuccessExt(v LedgerVersion, value interface{}) (result RemoveAssetSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveAssetSuccess is an XDR Struct defines as:
+//
+//   //: Result of successful `RemoveAssetOp` application
+//    struct RemoveAssetSuccess
+//    {
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type RemoveAssetSuccess struct {
+	Ext RemoveAssetSuccessExt `json:"ext,omitempty"`
+}
+
+// RemoveAssetResult is an XDR Union defines as:
+//
+//   //: Result of RemoveAsset operation application along with the result code
+//    union RemoveAssetResult switch (RemoveAssetResultCode code) {
+//        case SUCCESS:
+//            RemoveAssetSuccess success;
+//        default:
+//            void;
+//    };
+//
+type RemoveAssetResult struct {
+	Code    RemoveAssetResultCode `json:"code,omitempty"`
+	Success *RemoveAssetSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveAssetResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveAssetResult
+func (u RemoveAssetResult) ArmForSwitch(sw int32) (string, bool) {
+	switch RemoveAssetResultCode(sw) {
+	case RemoveAssetResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewRemoveAssetResult creates a new  RemoveAssetResult.
+func NewRemoveAssetResult(code RemoveAssetResultCode, value interface{}) (result RemoveAssetResult, err error) {
+	result.Code = code
+	switch RemoveAssetResultCode(code) {
+	case RemoveAssetResultCodeSuccess:
+		tv, ok := value.(RemoveAssetSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAssetSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u RemoveAssetResult) MustSuccess() RemoveAssetSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u RemoveAssetResult) GetSuccess() (result RemoveAssetSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
 // ReviewRequestOpAction is an XDR Enum defines as:
 //
 //   //: Actions that can be performed on request that is being reviewed
@@ -40504,7 +40791,8 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CLOSE = 16,
 //        REMOVE = 17,
 //        UPDATE_END_TIME = 18,
-//        CREATE_FOR_OTHER_WITH_TASKS = 19
+//        CREATE_FOR_OTHER_WITH_TASKS = 19,
+//        REMOVE_FOR_OTHER = 20
 //    };
 //
 type AccountRuleAction int32
@@ -40529,6 +40817,7 @@ const (
 	AccountRuleActionRemove                  AccountRuleAction = 17
 	AccountRuleActionUpdateEndTime           AccountRuleAction = 18
 	AccountRuleActionCreateForOtherWithTasks AccountRuleAction = 19
+	AccountRuleActionRemoveForOther          AccountRuleAction = 20
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -40551,6 +40840,7 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionRemove,
 	AccountRuleActionUpdateEndTime,
 	AccountRuleActionCreateForOtherWithTasks,
+	AccountRuleActionRemoveForOther,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -40573,6 +40863,7 @@ var accountRuleActionMap = map[int32]string{
 	17: "AccountRuleActionRemove",
 	18: "AccountRuleActionUpdateEndTime",
 	19: "AccountRuleActionCreateForOtherWithTasks",
+	20: "AccountRuleActionRemoveForOther",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -40595,6 +40886,7 @@ var accountRuleActionShortMap = map[int32]string{
 	17: "remove",
 	18: "update_end_time",
 	19: "create_for_other_with_tasks",
+	20: "remove_for_other",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -40617,6 +40909,7 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionRemove":                  17,
 	"AccountRuleActionUpdateEndTime":           18,
 	"AccountRuleActionCreateForOtherWithTasks": 19,
+	"AccountRuleActionRemoveForOther":          20,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -41697,7 +41990,8 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CLOSE = 15,
 //        UPDATE_END_TIME = 16,
 //        CREATE_WITH_TASKS = 17,
-//        CREATE_FOR_OTHER_WITH_TASKS = 18
+//        CREATE_FOR_OTHER_WITH_TASKS = 18,
+//        REMOVE_FOR_OTHER = 19
 //    };
 //
 type SignerRuleAction int32
@@ -41721,6 +42015,7 @@ const (
 	SignerRuleActionUpdateEndTime           SignerRuleAction = 16
 	SignerRuleActionCreateWithTasks         SignerRuleAction = 17
 	SignerRuleActionCreateForOtherWithTasks SignerRuleAction = 18
+	SignerRuleActionRemoveForOther          SignerRuleAction = 19
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -41742,6 +42037,7 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionUpdateEndTime,
 	SignerRuleActionCreateWithTasks,
 	SignerRuleActionCreateForOtherWithTasks,
+	SignerRuleActionRemoveForOther,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -41763,6 +42059,7 @@ var signerRuleActionMap = map[int32]string{
 	16: "SignerRuleActionUpdateEndTime",
 	17: "SignerRuleActionCreateWithTasks",
 	18: "SignerRuleActionCreateForOtherWithTasks",
+	19: "SignerRuleActionRemoveForOther",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -41784,6 +42081,7 @@ var signerRuleActionShortMap = map[int32]string{
 	16: "update_end_time",
 	17: "create_with_tasks",
 	18: "create_for_other_with_tasks",
+	19: "remove_for_other",
 }
 
 var signerRuleActionRevMap = map[string]int32{
@@ -41805,6 +42103,7 @@ var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionUpdateEndTime":           16,
 	"SignerRuleActionCreateWithTasks":         17,
 	"SignerRuleActionCreateForOtherWithTasks": 18,
+	"SignerRuleActionRemoveForOther":          19,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -43370,6 +43669,8 @@ type WithdrawalRequest struct {
 //            CreateManageOfferRequestOp createManageOfferRequestOp;
 //        case CREATE_PAYMENT_REQUEST:
 //            CreatePaymentRequestOp createPaymentRequestOp;
+//        case REMOVE_ASSET:
+//            RemoveAssetOp removeAssetOp;
 //        }
 //
 type OperationBody struct {
@@ -43420,6 +43721,7 @@ type OperationBody struct {
 	CreateKycRecoveryRequestOp               *CreateKycRecoveryRequestOp               `json:"createKYCRecoveryRequestOp,omitempty"`
 	CreateManageOfferRequestOp               *CreateManageOfferRequestOp               `json:"createManageOfferRequestOp,omitempty"`
 	CreatePaymentRequestOp                   *CreatePaymentRequestOp                   `json:"createPaymentRequestOp,omitempty"`
+	RemoveAssetOp                            *RemoveAssetOp                            `json:"removeAssetOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -43524,6 +43826,8 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "CreateManageOfferRequestOp", true
 	case OperationTypeCreatePaymentRequest:
 		return "CreatePaymentRequestOp", true
+	case OperationTypeRemoveAsset:
+		return "RemoveAssetOp", true
 	}
 	return "-", false
 }
@@ -43854,6 +44158,13 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.CreatePaymentRequestOp = &tv
+	case OperationTypeRemoveAsset:
+		tv, ok := value.(RemoveAssetOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAssetOp")
+			return
+		}
+		result.RemoveAssetOp = &tv
 	}
 	return
 }
@@ -45008,6 +45319,31 @@ func (u OperationBody) GetCreatePaymentRequestOp() (result CreatePaymentRequestO
 	return
 }
 
+// MustRemoveAssetOp retrieves the RemoveAssetOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustRemoveAssetOp() RemoveAssetOp {
+	val, ok := u.GetRemoveAssetOp()
+
+	if !ok {
+		panic("arm RemoveAssetOp is not set")
+	}
+
+	return val
+}
+
+// GetRemoveAssetOp retrieves the RemoveAssetOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetRemoveAssetOp() (result RemoveAssetOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "RemoveAssetOp" {
+		result = *u.RemoveAssetOp
+		ok = true
+	}
+
+	return
+}
+
 // Operation is an XDR Struct defines as:
 //
 //   //: An operation is the lowest unit of work that a transaction does
@@ -45112,6 +45448,8 @@ func (u OperationBody) GetCreatePaymentRequestOp() (result CreatePaymentRequestO
 //            CreateManageOfferRequestOp createManageOfferRequestOp;
 //        case CREATE_PAYMENT_REQUEST:
 //            CreatePaymentRequestOp createPaymentRequestOp;
+//        case REMOVE_ASSET:
+//            RemoveAssetOp removeAssetOp;
 //        }
 //        body;
 //    };
@@ -45821,6 +46159,8 @@ type AccountRuleRequirement struct {
 //            CreateManageOfferRequestResult createManageOfferRequestResult;
 //        case CREATE_PAYMENT_REQUEST:
 //            CreatePaymentRequestResult createPaymentRequestResult;
+//        case REMOVE_ASSET:
+//            RemoveAssetResult removeAssetResult;
 //        }
 //
 type OperationResultTr struct {
@@ -45871,6 +46211,7 @@ type OperationResultTr struct {
 	InitiateKycRecoveryResult                    *InitiateKycRecoveryResult                    `json:"initiateKYCRecoveryResult,omitempty"`
 	CreateManageOfferRequestResult               *CreateManageOfferRequestResult               `json:"createManageOfferRequestResult,omitempty"`
 	CreatePaymentRequestResult                   *CreatePaymentRequestResult                   `json:"createPaymentRequestResult,omitempty"`
+	RemoveAssetResult                            *RemoveAssetResult                            `json:"removeAssetResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -45975,6 +46316,8 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "CreateManageOfferRequestResult", true
 	case OperationTypeCreatePaymentRequest:
 		return "CreatePaymentRequestResult", true
+	case OperationTypeRemoveAsset:
+		return "RemoveAssetResult", true
 	}
 	return "-", false
 }
@@ -46305,6 +46648,13 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.CreatePaymentRequestResult = &tv
+	case OperationTypeRemoveAsset:
+		tv, ok := value.(RemoveAssetResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveAssetResult")
+			return
+		}
+		result.RemoveAssetResult = &tv
 	}
 	return
 }
@@ -47459,6 +47809,31 @@ func (u OperationResultTr) GetCreatePaymentRequestResult() (result CreatePayment
 	return
 }
 
+// MustRemoveAssetResult retrieves the RemoveAssetResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustRemoveAssetResult() RemoveAssetResult {
+	val, ok := u.GetRemoveAssetResult()
+
+	if !ok {
+		panic("arm RemoveAssetResult is not set")
+	}
+
+	return val
+}
+
+// GetRemoveAssetResult retrieves the RemoveAssetResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetRemoveAssetResult() (result RemoveAssetResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "RemoveAssetResult" {
+		result = *u.RemoveAssetResult
+		ok = true
+	}
+
+	return
+}
+
 // OperationResult is an XDR Union defines as:
 //
 //   union OperationResult switch (OperationResultCode code)
@@ -47558,6 +47933,8 @@ func (u OperationResultTr) GetCreatePaymentRequestResult() (result CreatePayment
 //            CreateManageOfferRequestResult createManageOfferRequestResult;
 //        case CREATE_PAYMENT_REQUEST:
 //            CreatePaymentRequestResult createPaymentRequestResult;
+//        case REMOVE_ASSET:
+//            RemoveAssetResult removeAssetResult;
 //        }
 //        tr;
 //    case opNO_ENTRY:
@@ -49315,7 +49692,8 @@ type Fee struct {
 //        CREATE_KYC_RECOVERY_REQUEST = 49,
 //        REMOVE_ASSET_PAIR = 50,
 //        CREATE_MANAGE_OFFER_REQUEST = 51,
-//        CREATE_PAYMENT_REQUEST = 52
+//        CREATE_PAYMENT_REQUEST = 52,
+//        REMOVE_ASSET = 53
 //    };
 //
 type OperationType int32
@@ -49367,6 +49745,7 @@ const (
 	OperationTypeRemoveAssetPair                        OperationType = 50
 	OperationTypeCreateManageOfferRequest               OperationType = 51
 	OperationTypeCreatePaymentRequest                   OperationType = 52
+	OperationTypeRemoveAsset                            OperationType = 53
 )
 
 var OperationTypeAll = []OperationType{
@@ -49416,6 +49795,7 @@ var OperationTypeAll = []OperationType{
 	OperationTypeRemoveAssetPair,
 	OperationTypeCreateManageOfferRequest,
 	OperationTypeCreatePaymentRequest,
+	OperationTypeRemoveAsset,
 }
 
 var operationTypeMap = map[int32]string{
@@ -49465,6 +49845,7 @@ var operationTypeMap = map[int32]string{
 	50: "OperationTypeRemoveAssetPair",
 	51: "OperationTypeCreateManageOfferRequest",
 	52: "OperationTypeCreatePaymentRequest",
+	53: "OperationTypeRemoveAsset",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -49514,6 +49895,7 @@ var operationTypeShortMap = map[int32]string{
 	50: "remove_asset_pair",
 	51: "create_manage_offer_request",
 	52: "create_payment_request",
+	53: "remove_asset",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -49563,6 +49945,7 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeRemoveAssetPair":                        50,
 	"OperationTypeCreateManageOfferRequest":               51,
 	"OperationTypeCreatePaymentRequest":                   52,
+	"OperationTypeRemoveAsset":                            53,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -49641,4 +50024,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "d12bfbbe00535e6a3a310a8ef950495be490cd4a"
+var Revision = "47ee60cab248c2e15b099c8e7d6fb46cf4f2d388"
