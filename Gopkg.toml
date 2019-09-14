@@ -96,10 +96,10 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/remove-asset-pair"
+  branch = "feature/reviewable_requests_for_movements"
 
 [[constraint]]
-  branch = "master"
+  branch = "feature/reviewable_requests_for_movements"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

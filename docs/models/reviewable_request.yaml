@@ -25,6 +25,8 @@ Int64Key:
         - "request-details-create-poll"
         - "request-details-withdrawal"
         - "request-details-kyc-recovery"
+        - "request-details-manage-offer"
+        - "request-details-create-payment"
         - "sales"
 RequestKey:
   type: object

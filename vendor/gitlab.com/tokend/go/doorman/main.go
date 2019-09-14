@@ -21,3 +21,14 @@ func NewWithChecker(skipChecker data.SkipChecker, accountQ data.AccountQ) Doorma
 		AccountQ:    accountQ,
 	}
 }
+
+type SignerOfOpts struct {
+	Constraints []SignerOfExt
+}
+
+func NewWithOpts(accountQ data.AccountQ, opts SignerOfOpts) Doorman {
+	return &doorman{
+		AccountQ:     accountQ,
+		signerOfExts: opts.Constraints,
+	}
+}

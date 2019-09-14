@@ -12,3 +12,7 @@ type Error struct {
 func (e *Error) Error() string {
 	return e.msg
 }
+
+func (e *Error) NotAllowed() bool {
+	return true
+}

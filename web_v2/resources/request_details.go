@@ -39,6 +39,10 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newCreatePollRequest(request.ID, *request.Details.CreatePoll)
 	case xdr.ReviewableRequestTypeKycRecovery:
 		return newKYCRecoveryRequest(request.ID, *request.Details.KYCRecovery)
+	case xdr.ReviewableRequestTypeManageOffer:
+		return newManageOfferRequest(request.ID, *request.Details.ManageOffer)
+	case xdr.ReviewableRequestTypeCreatePayment:
+		return newCreatePaymentRequest(request.ID, *request.Details.CreatePayment)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -259,6 +263,37 @@ func newKYCRecoveryRequest(id int64, details history2.KYCRecoveryRequest) *regou
 		},
 		Relationships: regources.KycRecoveryRequestRelationships{
 			TargetAccount: NewAccountKey(details.TargetAccount).AsRelation(),
+		},
+	}
+}
+
+func newManageOfferRequest(id int64, details history2.ManageOfferRequest) *regources.ManageOfferRequest {
+	return &regources.ManageOfferRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_MANAGE_OFFER),
+		Attributes: regources.ManageOfferRequestAttributes{
+			BaseAmount:  details.Amount,
+			Fee:         details.Fee,
+			IsBuy:       details.IsBuy,
+			OfferId:     details.OfferID,
+			OrderBookId: details.OrderBookID,
+			Price:       details.Price,
+		},
+	}
+}
+
+func newCreatePaymentRequest(id int64, details history2.CreatePaymentRequest) *regources.CreatePaymentRequest {
+	return &regources.CreatePaymentRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CREATE_PAYMENT),
+		Attributes: regources.CreatePaymentRequestAttributes{
+			Amount:                  details.Amount,
+			SourceFee:               details.SourceFee,
+			DestinationFee:          details.DestinationFee,
+			SourcePayForDestination: details.SourcePayForDestination,
+			Reference:               details.Reference,
+			Subject:                 details.Subject,
+		},
+		Relationships: regources.CreatePaymentRequestRelationships{
+			BalanceFrom: NewBalanceKey(details.BalanceFrom).AsRelation(),
 		},
 	}
 }

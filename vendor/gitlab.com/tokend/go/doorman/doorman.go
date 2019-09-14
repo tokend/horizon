@@ -12,6 +12,7 @@ import (
 type Doorman interface {
 	Check(*http.Request, ...SignerConstraint) error
 	AccountSigners(string) ([]resources.Signer, error)
+	DefaultSignerOfConstraints() []SignerOfExt
 }
 
 type doorman struct {
@@ -19,6 +20,8 @@ type doorman struct {
 	SkipChecker data.SkipChecker
 	// AccountQ used to get account details during constraint checks
 	AccountQ data.AccountQ
+	// signerOfExts are used to specify list of constraints for SignerOf
+	signerOfExts []SignerOfExt
 }
 
 func (d *doorman) AccountSigners(address string) ([]resources.Signer, error) {
@@ -53,4 +56,24 @@ func (d *doorman) Check(r *http.Request, constraints ...SignerConstraint) error 
 
 	// request failed all checks
 	return ErrNotAllowed
+}
+
+func (d *doorman) DefaultSignerOfConstraints() []SignerOfExt {
+	return d.signerOfExts
+}
+
+type RoleConstraint struct {
+	RoleID uint64
+}
+
+func (c *RoleConstraint) Check(signer resources.Signer) bool {
+	return c.RoleID == signer.Role
+}
+
+type RestrictedRoleConstraint struct {
+	RoleID uint64
+}
+
+func (c *RestrictedRoleConstraint) Check(signer resources.Signer) bool {
+	return c.RoleID != signer.Role
 }

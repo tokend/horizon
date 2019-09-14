@@ -40,8 +40,14 @@ func (h *paymentOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 func (h *paymentOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	op := opBody.MustPaymentOp()
-	res := opRes.MustPaymentResult().MustPaymentResponse()
+	return h.participantEffects(opBody.MustPaymentOp(),
+		opRes.MustPaymentResult().MustPaymentResponse(),
+		sourceAccountID)
+}
+
+func (h *paymentOpHandler) participantEffects(op xdr.PaymentOp,
+	res xdr.PaymentResponse, sourceAccountID xdr.AccountId,
+) ([]history2.ParticipantEffect, error) {
 
 	sourceFixedFee := res.ActualSourcePaymentFee.Fixed
 	sourcePercentFee := res.ActualSourcePaymentFee.Percent
