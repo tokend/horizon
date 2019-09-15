@@ -56,6 +56,7 @@ type OperationDetails struct {
 	CreateKYCRecoveryRequest   *CreateKYCRecoveryRequestDetails   `json:"create_kyc_recovery_request,omitempty"`
 	CreateManageOfferRequest   *CreateManageOfferRequestDetails   `json:"create_manage_offer_request,omitempty"`
 	CreatePaymentRequest       *CreatePaymentRequestDetails       `json:"create_payment_request,omitempty"`
+	RemoveAsset                *RemoveAssetDetails                `json:"remove_asset,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -553,4 +554,8 @@ type CreatePaymentRequestDetails struct {
 	PaymentDetails PaymentRequestDetails `json:"payment_details"`
 	AllTasks       *uint32               `json:"all_tasks"`
 	RequestDetails RequestDetails        `json:"request_details"`
+}
+
+type RemoveAssetDetails struct {
+	Code string `json:"code"`
 }

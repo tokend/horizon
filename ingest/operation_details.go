@@ -381,6 +381,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["signer"] = op.Signer
 	case xdr.OperationTypeCreateManageOfferRequest:
 	case xdr.OperationTypeCreatePaymentRequest:
+	case xdr.OperationTypeRemoveAsset:
+		op := c.Operation().Body.MustRemoveAssetOp()
+		details["code"] = op.Code
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

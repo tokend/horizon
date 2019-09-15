@@ -96,10 +96,9 @@
 
 [[override]]
   name = "gitlab.com/tokend/go"
-  branch = "feature/reviewable_requests_for_movements"
-
+  version = "3.11.0"
 [[constraint]]
-  branch = "feature/reviewable_requests_for_movements"
+  version = "4.9.0"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

@@ -1,3 +1,5 @@
+# Changelog
+
 ## Unreleased
 
 ### Added
@@ -9,6 +11,8 @@
 * `CreatePaymentRequestOp` ingestion
 * `PaymentRequest` ingestion
 * `ManageOfferRequest` ingestion
+* `RemoveAssetOp` ingestion
+
 
 ### Fixed
 

@@ -49,11 +49,12 @@ func NewHandler(account accountStorage,
 	voteHandlerInst := newVoteHandler(vote)
 	accountSpecificRuleHandlerInst := newAccountSpecificRuleHandler(accountSpecificRule)
 	signerHandlerInst := newSignerHandler(accountStatus)
+	balanceHandlerInst := newBalanceHandler(account, balance)
 
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{
 			xdr.LedgerEntryTypeAccount:             newAccountHandler(account),
-			xdr.LedgerEntryTypeBalance:             newBalanceHandler(account, balance),
+			xdr.LedgerEntryTypeBalance:             balanceHandlerInst,
 			xdr.LedgerEntryTypeReviewableRequest:   reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:                saleHandlerInst,
 			xdr.LedgerEntryTypeAssetPair:           assetPairHandler,
