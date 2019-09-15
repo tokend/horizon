@@ -21,6 +21,12 @@ type balanceProvider interface {
 	MustBalance(balanceID xdr.BalanceId) history2.Balance
 }
 
+//go:generate mockery -case underscore -name swapProvider -inpkg -testonly
+type swapProvider interface {
+	// MustBalance returns history balance struct for specific balance id
+	MustSwap(id int64) history2.Swap
+}
+
 // handler used to get info and changes from success operation
 type handler interface {
 	// Details returns db suitable operation details,

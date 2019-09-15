@@ -57,6 +57,8 @@ type OperationDetails struct {
 	CreateManageOfferRequest   *CreateManageOfferRequestDetails   `json:"create_manage_offer_request,omitempty"`
 	CreatePaymentRequest       *CreatePaymentRequestDetails       `json:"create_payment_request,omitempty"`
 	RemoveAsset                *RemoveAssetDetails                `json:"remove_asset,omitempty"`
+	OpenSwap                   *OpenSwapDetails                   `json:"open_swap,omitempty"`
+	CloseSwap                  *CloseSwapDetails                  `json:"close_swap,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -558,4 +560,24 @@ type CreatePaymentRequestDetails struct {
 
 type RemoveAssetDetails struct {
 	Code string `json:"code"`
+}
+
+type OpenSwapDetails struct {
+	AccountFrom             string            `json:"account_from"`
+	AccountTo               string            `json:"account_to"`
+	BalanceFrom             string            `json:"balance_from"`
+	BalanceTo               string            `json:"balance_to"`
+	Amount                  regources.Amount  `json:"amount"`
+	Asset                   string            `json:"asset"`
+	SourceFee               regources.Fee     `json:"source_fee"`
+	DestinationFee          regources.Fee     `json:"destination_fee"`
+	SourcePayForDestination bool              `json:"source_pay_for_destination"`
+	SecretHash              string            `json:"secret_hash"`
+	LockTime                time.Time         `json:"lock_time"`
+	Details                 regources.Details `db:"details"`
+}
+
+type CloseSwapDetails struct {
+	ID     int64   `json:"id"`
+	Secret *string `json:"secret"`
 }
