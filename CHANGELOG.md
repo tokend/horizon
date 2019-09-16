@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.6.0-x.0
 
 ### Added
 
@@ -18,7 +18,7 @@
 
 * panic on `v3/balances`
 
-## 3.5.2-x.0
+## 3.5.2
 
 ### Fixed
 
