@@ -119,6 +119,7 @@ x-tagGroups:
      - Issuance
      - Withdrawal
      - Atomic Swap
+     - Swaps
   - name: Access Control
     tags:
       - Signers
