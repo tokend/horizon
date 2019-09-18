@@ -12,7 +12,11 @@
 * `PaymentRequest` ingestion
 * `ManageOfferRequest` ingestion
 * `RemoveAssetOp` ingestion
-
+* `OpenSwapOp` ingestion
+* `CloseSwapOp` ingestion
+* `Swap` ingestion
+* `/v3/swaps` endpoint to get filtered list of swaps
+* `/v3/swaps/{id}` endpoint to get swap by id
 
 ### Fixed
 
