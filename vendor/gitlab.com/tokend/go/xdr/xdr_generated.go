@@ -1,4 +1,4 @@
-// revision: 518344935267df8a5c409d5abd84bc5a00ba909c
+// revision: dcb0962ff5cc056c96c54b6678f34278a66eeddd
 // branch:   feature/swap
 // Package xdr is generated from:
 //
@@ -34079,7 +34079,8 @@ type OpenSwapOp struct {
 //        //: Amount precision and asset precision are mismatched
 //        INCORRECT_AMOUNT_PRECISION = -9,
 //        INVALID_DETAILS = -10,
-//        INVALID_LOCK_TIME = -11
+//        INVALID_LOCK_TIME = -11,
+//        INVALID_AMOUNT = -12
 //
 //    };
 //
@@ -34098,6 +34099,7 @@ const (
 	OpenSwapResultCodeIncorrectAmountPrecision OpenSwapResultCode = -9
 	OpenSwapResultCodeInvalidDetails           OpenSwapResultCode = -10
 	OpenSwapResultCodeInvalidLockTime          OpenSwapResultCode = -11
+	OpenSwapResultCodeInvalidAmount            OpenSwapResultCode = -12
 )
 
 var OpenSwapResultCodeAll = []OpenSwapResultCode{
@@ -34113,6 +34115,7 @@ var OpenSwapResultCodeAll = []OpenSwapResultCode{
 	OpenSwapResultCodeIncorrectAmountPrecision,
 	OpenSwapResultCodeInvalidDetails,
 	OpenSwapResultCodeInvalidLockTime,
+	OpenSwapResultCodeInvalidAmount,
 }
 
 var openSwapResultCodeMap = map[int32]string{
@@ -34128,6 +34131,7 @@ var openSwapResultCodeMap = map[int32]string{
 	-9:  "OpenSwapResultCodeIncorrectAmountPrecision",
 	-10: "OpenSwapResultCodeInvalidDetails",
 	-11: "OpenSwapResultCodeInvalidLockTime",
+	-12: "OpenSwapResultCodeInvalidAmount",
 }
 
 var openSwapResultCodeShortMap = map[int32]string{
@@ -34143,6 +34147,7 @@ var openSwapResultCodeShortMap = map[int32]string{
 	-9:  "incorrect_amount_precision",
 	-10: "invalid_details",
 	-11: "invalid_lock_time",
+	-12: "invalid_amount",
 }
 
 var openSwapResultCodeRevMap = map[string]int32{
@@ -34158,6 +34163,7 @@ var openSwapResultCodeRevMap = map[string]int32{
 	"OpenSwapResultCodeIncorrectAmountPrecision": -9,
 	"OpenSwapResultCodeInvalidDetails":           -10,
 	"OpenSwapResultCodeInvalidLockTime":          -11,
+	"OpenSwapResultCodeInvalidAmount":            -12,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -51235,4 +51241,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "518344935267df8a5c409d5abd84bc5a00ba909c"
+var Revision = "dcb0962ff5cc056c96c54b6678f34278a66eeddd"

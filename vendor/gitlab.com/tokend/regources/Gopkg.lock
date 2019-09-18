@@ -67,7 +67,7 @@
 
 [[projects]]
   branch = "feature/swap"
-  digest = "1:1bc81da24c2aaa9a69ce817918985945f718ffb7cff9409f8ba7975177a729a6"
+  digest = "1:ad324e5249add3e5f95ea09ad96b3de7ecbd7acf33d487a7de27b6fc9e119584"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -76,7 +76,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "63fec835352eee1afc83dd884a891b1e736e3b71"
+  revision = "8f1d82de24b083cc7985bbfb12c2c054bcf7e405"
 
 [[projects]]
   digest = "1:a5cc901b8e54c4b73a62f97dc7c8f6c46e347c148a7a38e09b2e942c2587ba03"
