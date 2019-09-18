@@ -39,7 +39,7 @@ func (c *swapHandler) Created(lc ledgerChange) error {
 	swap, err := c.convertSwap(rawSwap, op, opRes)
 	if err != nil {
 		return errors.Wrap(err, "failed to convert swap", logan.F{
-			"raw_swap":        rawSwap,
+			"swap_id":         rawSwap.Id,
 			"ledger_sequence": lc.LedgerSeq,
 		})
 	}
