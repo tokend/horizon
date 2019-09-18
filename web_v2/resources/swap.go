@@ -33,8 +33,8 @@ func NewSwap(record history2.Swap) regources.Swap {
 			Asset:              NewAssetKey(record.Asset).AsRelation(),
 			Destination:        NewAccountKey(record.DestinationAccount).AsRelation(),
 			DestinationBalance: NewBalanceKey(record.DestinationBalance).AsRelation(),
-			Source:             NewAccountKey(record.DestinationAccount).AsRelation(),
-			SourceBalance:      NewBalanceKey(record.DestinationBalance).AsRelation(),
+			Source:             NewAccountKey(record.SourceAccount).AsRelation(),
+			SourceBalance:      NewBalanceKey(record.SourceBalance).AsRelation(),
 		},
 	}
 }

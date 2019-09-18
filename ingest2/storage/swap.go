@@ -11,8 +11,7 @@ import (
 
 // CreateSwap is helper struct to operate with `swaps`
 type Swap struct {
-	repo    *db2.Repo
-	updater sq.UpdateBuilder
+	repo *db2.Repo
 
 	swapQ history2.SwapsQ
 }
@@ -20,8 +19,8 @@ type Swap struct {
 // NewSwap - creates new instance of the `CreateSwap`
 func NewSwap(repo *db2.Repo) *Swap {
 	return &Swap{
-		repo:    repo,
-		updater: sq.Update("swaps"),
+		repo:  repo,
+		swapQ: history2.NewSwapsQ(repo),
 	}
 }
 

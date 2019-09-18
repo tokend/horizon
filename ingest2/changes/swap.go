@@ -56,7 +56,7 @@ func (c *swapHandler) Created(lc ledgerChange) error {
 
 //Removed - handles state of the swap due to it was removed
 func (c *swapHandler) Removed(lc ledgerChange) error {
-	swapID := int64(lc.LedgerChange.MustRemoved().MustSwap().SwapId)
+	swapID := int64(lc.LedgerChange.MustRemoved().MustSwap().Id)
 	closeSwapOp := lc.Operation.Body.MustCloseSwapOp()
 	res := lc.OperationResult.MustCloseSwapResult()
 	state, err := c.getSwapState(closeSwapOp, res)
@@ -101,7 +101,7 @@ func (c *swapHandler) convertSwap(raw xdr.SwapEntry, op xdr.OpenSwapOp, res xdr.
 	secretHash := hex.EncodeToString(op.SecretHash[:])
 
 	return history.Swap{
-		ID:                    int64(raw.SwapId),
+		ID:                    int64(raw.Id),
 		SourceAccount:         raw.Source.Address(),
 		CreatedAt:             internal.TimeFromXdr(xdr.Uint64(raw.CreatedAt)),
 		LockTime:              internal.TimeFromXdr(xdr.Uint64(raw.LockTime)),

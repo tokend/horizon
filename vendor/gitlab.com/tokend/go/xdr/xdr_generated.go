@@ -1,4 +1,4 @@
-// revision: a56b2b2224be942764d8a4380f11233a24f0953f
+// revision: 518344935267df8a5c409d5abd84bc5a00ba909c
 // branch:   feature/swap
 // Package xdr is generated from:
 //
@@ -5529,7 +5529,7 @@ type StatisticsEntry struct {
 //
 //   struct SwapEntry
 //    {
-//        uint64 swapID;
+//        uint64 id;
 //
 //        Hash secretHash;
 //
@@ -5551,7 +5551,7 @@ type StatisticsEntry struct {
 //    };
 //
 type SwapEntry struct {
-	SwapId             Uint64     `json:"swapID,omitempty"`
+	Id                 Uint64     `json:"id,omitempty"`
 	SecretHash         Hash       `json:"secretHash,omitempty"`
 	Source             AccountId  `json:"source,omitempty"`
 	SourceBalance      BalanceId  `json:"sourceBalance,omitempty"`
@@ -8692,11 +8692,14 @@ type LedgerKeyAccountSpecificRule struct {
 //
 //   struct
 //        {
-//            uint64 swapID;
+//            uint64 id;
+//
+//            EmptyExt ext;
 //        }
 //
 type LedgerKeySwap struct {
-	SwapId Uint64 `json:"swapID,omitempty"`
+	Id  Uint64   `json:"id,omitempty"`
+	Ext EmptyExt `json:"ext,omitempty"`
 }
 
 // LedgerKey is an XDR Union defines as:
@@ -9002,7 +9005,9 @@ type LedgerKeySwap struct {
 //    case SWAP:
 //        struct
 //        {
-//            uint64 swapID;
+//            uint64 id;
+//
+//            EmptyExt ext;
 //        } swap;
 //    };
 //
@@ -13475,9 +13480,7 @@ type CloseSwapOp struct {
 //        INVALID_SECRET = -2,
 //        //: After the swap fulfillment, the destination balance will exceed the limit (total amount on the balance will be greater than UINT64_MAX)
 //        LINE_FULL = -3,
-//        NOT_AUTHORIZED = -4,
-//        NOT_READY = -5
-//
+//        NOT_AUTHORIZED = -4
 //    };
 //
 type CloseSwapResultCode int32
@@ -13488,7 +13491,6 @@ const (
 	CloseSwapResultCodeInvalidSecret CloseSwapResultCode = -2
 	CloseSwapResultCodeLineFull      CloseSwapResultCode = -3
 	CloseSwapResultCodeNotAuthorized CloseSwapResultCode = -4
-	CloseSwapResultCodeNotReady      CloseSwapResultCode = -5
 )
 
 var CloseSwapResultCodeAll = []CloseSwapResultCode{
@@ -13497,7 +13499,6 @@ var CloseSwapResultCodeAll = []CloseSwapResultCode{
 	CloseSwapResultCodeInvalidSecret,
 	CloseSwapResultCodeLineFull,
 	CloseSwapResultCodeNotAuthorized,
-	CloseSwapResultCodeNotReady,
 }
 
 var closeSwapResultCodeMap = map[int32]string{
@@ -13506,7 +13507,6 @@ var closeSwapResultCodeMap = map[int32]string{
 	-2: "CloseSwapResultCodeInvalidSecret",
 	-3: "CloseSwapResultCodeLineFull",
 	-4: "CloseSwapResultCodeNotAuthorized",
-	-5: "CloseSwapResultCodeNotReady",
 }
 
 var closeSwapResultCodeShortMap = map[int32]string{
@@ -13515,7 +13515,6 @@ var closeSwapResultCodeShortMap = map[int32]string{
 	-2: "invalid_secret",
 	-3: "line_full",
 	-4: "not_authorized",
-	-5: "not_ready",
 }
 
 var closeSwapResultCodeRevMap = map[string]int32{
@@ -13524,7 +13523,6 @@ var closeSwapResultCodeRevMap = map[string]int32{
 	"CloseSwapResultCodeInvalidSecret": -2,
 	"CloseSwapResultCodeLineFull":      -3,
 	"CloseSwapResultCodeNotAuthorized": -4,
-	"CloseSwapResultCodeNotReady":      -5,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -34065,107 +34063,101 @@ type OpenSwapOp struct {
 //        //: Not enough funds in the source account
 //        UNDERFUNDED = -2,
 //        //: There is no balance found with an ID provided in `destinations.balanceID`
-//        DESTINATION_BALANCE_NOT_FOUND = -3,
 //        //: Sender balance asset and receiver balance asset are not equal
-//        BALANCE_ASSETS_MISMATCHED = -4,
+//        BALANCE_ASSETS_MISMATCHED = -3,
 //        //: There is no balance found with ID provided in `sourceBalanceID`
-//        SRC_BALANCE_NOT_FOUND = -5,
+//        SRC_BALANCE_NOT_FOUND = -4,
 //        //: Payment asset does not have a `SWAPPABLE` policy set
-//        NOT_ALLOWED_BY_ASSET_POLICY = -6,
+//        NOT_ALLOWED_BY_ASSET_POLICY = -5,
 //        //: Overflow during total fee calculation
-//        INVALID_DESTINATION_FEE = -7,
+//        INVALID_DESTINATION_FEE = -6,
 //        //: Payment fee amount is insufficient
-//        INSUFFICIENT_FEE_AMOUNT = -8,
+//        INSUFFICIENT_FEE_AMOUNT = -7,
 //        //: Fee charged from destination balance is greater than the amount
-//        AMOUNT_IS_LESS_THAN_DEST_FEE = -9,
+//        AMOUNT_IS_LESS_THAN_DEST_FEE = -8,
 //        //: There is no account found with an ID provided in `destination.accountID`
-//        DESTINATION_ACCOUNT_NOT_FOUND = -10,
 //        //: Amount precision and asset precision are mismatched
-//        INCORRECT_AMOUNT_PRECISION = -11,
-//        INVALID_DETAILS = -12
+//        INCORRECT_AMOUNT_PRECISION = -9,
+//        INVALID_DETAILS = -10,
+//        INVALID_LOCK_TIME = -11
 //
 //    };
 //
 type OpenSwapResultCode int32
 
 const (
-	OpenSwapResultCodeSuccess                    OpenSwapResultCode = 0
-	OpenSwapResultCodeMalformed                  OpenSwapResultCode = -1
-	OpenSwapResultCodeUnderfunded                OpenSwapResultCode = -2
-	OpenSwapResultCodeDestinationBalanceNotFound OpenSwapResultCode = -3
-	OpenSwapResultCodeBalanceAssetsMismatched    OpenSwapResultCode = -4
-	OpenSwapResultCodeSrcBalanceNotFound         OpenSwapResultCode = -5
-	OpenSwapResultCodeNotAllowedByAssetPolicy    OpenSwapResultCode = -6
-	OpenSwapResultCodeInvalidDestinationFee      OpenSwapResultCode = -7
-	OpenSwapResultCodeInsufficientFeeAmount      OpenSwapResultCode = -8
-	OpenSwapResultCodeAmountIsLessThanDestFee    OpenSwapResultCode = -9
-	OpenSwapResultCodeDestinationAccountNotFound OpenSwapResultCode = -10
-	OpenSwapResultCodeIncorrectAmountPrecision   OpenSwapResultCode = -11
-	OpenSwapResultCodeInvalidDetails             OpenSwapResultCode = -12
+	OpenSwapResultCodeSuccess                  OpenSwapResultCode = 0
+	OpenSwapResultCodeMalformed                OpenSwapResultCode = -1
+	OpenSwapResultCodeUnderfunded              OpenSwapResultCode = -2
+	OpenSwapResultCodeBalanceAssetsMismatched  OpenSwapResultCode = -3
+	OpenSwapResultCodeSrcBalanceNotFound       OpenSwapResultCode = -4
+	OpenSwapResultCodeNotAllowedByAssetPolicy  OpenSwapResultCode = -5
+	OpenSwapResultCodeInvalidDestinationFee    OpenSwapResultCode = -6
+	OpenSwapResultCodeInsufficientFeeAmount    OpenSwapResultCode = -7
+	OpenSwapResultCodeAmountIsLessThanDestFee  OpenSwapResultCode = -8
+	OpenSwapResultCodeIncorrectAmountPrecision OpenSwapResultCode = -9
+	OpenSwapResultCodeInvalidDetails           OpenSwapResultCode = -10
+	OpenSwapResultCodeInvalidLockTime          OpenSwapResultCode = -11
 )
 
 var OpenSwapResultCodeAll = []OpenSwapResultCode{
 	OpenSwapResultCodeSuccess,
 	OpenSwapResultCodeMalformed,
 	OpenSwapResultCodeUnderfunded,
-	OpenSwapResultCodeDestinationBalanceNotFound,
 	OpenSwapResultCodeBalanceAssetsMismatched,
 	OpenSwapResultCodeSrcBalanceNotFound,
 	OpenSwapResultCodeNotAllowedByAssetPolicy,
 	OpenSwapResultCodeInvalidDestinationFee,
 	OpenSwapResultCodeInsufficientFeeAmount,
 	OpenSwapResultCodeAmountIsLessThanDestFee,
-	OpenSwapResultCodeDestinationAccountNotFound,
 	OpenSwapResultCodeIncorrectAmountPrecision,
 	OpenSwapResultCodeInvalidDetails,
+	OpenSwapResultCodeInvalidLockTime,
 }
 
 var openSwapResultCodeMap = map[int32]string{
 	0:   "OpenSwapResultCodeSuccess",
 	-1:  "OpenSwapResultCodeMalformed",
 	-2:  "OpenSwapResultCodeUnderfunded",
-	-3:  "OpenSwapResultCodeDestinationBalanceNotFound",
-	-4:  "OpenSwapResultCodeBalanceAssetsMismatched",
-	-5:  "OpenSwapResultCodeSrcBalanceNotFound",
-	-6:  "OpenSwapResultCodeNotAllowedByAssetPolicy",
-	-7:  "OpenSwapResultCodeInvalidDestinationFee",
-	-8:  "OpenSwapResultCodeInsufficientFeeAmount",
-	-9:  "OpenSwapResultCodeAmountIsLessThanDestFee",
-	-10: "OpenSwapResultCodeDestinationAccountNotFound",
-	-11: "OpenSwapResultCodeIncorrectAmountPrecision",
-	-12: "OpenSwapResultCodeInvalidDetails",
+	-3:  "OpenSwapResultCodeBalanceAssetsMismatched",
+	-4:  "OpenSwapResultCodeSrcBalanceNotFound",
+	-5:  "OpenSwapResultCodeNotAllowedByAssetPolicy",
+	-6:  "OpenSwapResultCodeInvalidDestinationFee",
+	-7:  "OpenSwapResultCodeInsufficientFeeAmount",
+	-8:  "OpenSwapResultCodeAmountIsLessThanDestFee",
+	-9:  "OpenSwapResultCodeIncorrectAmountPrecision",
+	-10: "OpenSwapResultCodeInvalidDetails",
+	-11: "OpenSwapResultCodeInvalidLockTime",
 }
 
 var openSwapResultCodeShortMap = map[int32]string{
 	0:   "success",
 	-1:  "malformed",
 	-2:  "underfunded",
-	-3:  "destination_balance_not_found",
-	-4:  "balance_assets_mismatched",
-	-5:  "src_balance_not_found",
-	-6:  "not_allowed_by_asset_policy",
-	-7:  "invalid_destination_fee",
-	-8:  "insufficient_fee_amount",
-	-9:  "amount_is_less_than_dest_fee",
-	-10: "destination_account_not_found",
-	-11: "incorrect_amount_precision",
-	-12: "invalid_details",
+	-3:  "balance_assets_mismatched",
+	-4:  "src_balance_not_found",
+	-5:  "not_allowed_by_asset_policy",
+	-6:  "invalid_destination_fee",
+	-7:  "insufficient_fee_amount",
+	-8:  "amount_is_less_than_dest_fee",
+	-9:  "incorrect_amount_precision",
+	-10: "invalid_details",
+	-11: "invalid_lock_time",
 }
 
 var openSwapResultCodeRevMap = map[string]int32{
-	"OpenSwapResultCodeSuccess":                    0,
-	"OpenSwapResultCodeMalformed":                  -1,
-	"OpenSwapResultCodeUnderfunded":                -2,
-	"OpenSwapResultCodeDestinationBalanceNotFound": -3,
-	"OpenSwapResultCodeBalanceAssetsMismatched":    -4,
-	"OpenSwapResultCodeSrcBalanceNotFound":         -5,
-	"OpenSwapResultCodeNotAllowedByAssetPolicy":    -6,
-	"OpenSwapResultCodeInvalidDestinationFee":      -7,
-	"OpenSwapResultCodeInsufficientFeeAmount":      -8,
-	"OpenSwapResultCodeAmountIsLessThanDestFee":    -9,
-	"OpenSwapResultCodeDestinationAccountNotFound": -10,
-	"OpenSwapResultCodeIncorrectAmountPrecision":   -11,
-	"OpenSwapResultCodeInvalidDetails":             -12,
+	"OpenSwapResultCodeSuccess":                  0,
+	"OpenSwapResultCodeMalformed":                -1,
+	"OpenSwapResultCodeUnderfunded":              -2,
+	"OpenSwapResultCodeBalanceAssetsMismatched":  -3,
+	"OpenSwapResultCodeSrcBalanceNotFound":       -4,
+	"OpenSwapResultCodeNotAllowedByAssetPolicy":  -5,
+	"OpenSwapResultCodeInvalidDestinationFee":    -6,
+	"OpenSwapResultCodeInsufficientFeeAmount":    -7,
+	"OpenSwapResultCodeAmountIsLessThanDestFee":  -8,
+	"OpenSwapResultCodeIncorrectAmountPrecision": -9,
+	"OpenSwapResultCodeInvalidDetails":           -10,
+	"OpenSwapResultCodeInvalidLockTime":          -11,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -51243,4 +51235,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "a56b2b2224be942764d8a4380f11233a24f0953f"
+var Revision = "518344935267df8a5c409d5abd84bc5a00ba909c"

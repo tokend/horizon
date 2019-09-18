@@ -98,7 +98,7 @@
   branch = "feature/swap"
   name = "gitlab.com/tokend/go"
 [[constraint]]
-  version = "4.9.0"
+  branch = "feature/swap"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
