@@ -17,6 +17,7 @@
 ### Fixed
 
 * panic on `v3/balances`
+* error on reviewable request ingestion
 
 ## 3.5.2
 
