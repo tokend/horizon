@@ -205,7 +205,7 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	case xdr.OperationTypeCreatePaymentRequest:
 		return c.handleRemoveOnCreationOp(lc, true)
 	case xdr.OperationTypeManageOffer:
-		return c.handleRemoveOnCreationOp(lc, true)
+		return c.handleRemovedOnManageOffer(lc)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
@@ -226,6 +226,17 @@ func (c *reviewableRequestHandler) handleRemoveOnCreationOp(lc ledgerChange, ful
 		})
 	}
 
+	return c.storage.Approve(id)
+}
+
+func (c *reviewableRequestHandler) handleRemovedOnManageOffer(lc ledgerChange) error {
+	id := uint64(lc.LedgerChange.MustRemoved().MustReviewableRequest().RequestId)
+	if lc.Operation.Body.MustManageOfferOp().OrderBookId == 0 {
+		return errors.From(errors.New("unexpected state: request has been removed on manage offer op, "+
+			"but order book is secondary"), logan.F{
+			"id": uint64(id),
+		})
+	}
 	return c.storage.Approve(id)
 }
 
