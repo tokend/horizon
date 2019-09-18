@@ -4,10 +4,6 @@
 
 package regources
 
-type Flagger interface {
-	IsFlag() bool
-}
-
 type Flag struct {
 	Name  string `json:"name"`
 	Value int32  `json:"value"`

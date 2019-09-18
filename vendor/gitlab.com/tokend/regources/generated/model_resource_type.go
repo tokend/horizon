@@ -25,6 +25,7 @@ const (
 	OPERATIONS_CANCEL_CHANGE_ROLE_REQUEST                   ResourceType = "operations-cancel-change-role-request"
 	OPERATIONS_CANCEL_SALE_REQUEST                          ResourceType = "operations-cancel-sale-request"
 	OPERATIONS_CHECK_SALE_STATE                             ResourceType = "operations-check-sale-state"
+	OPERATIONS_CLOSE_SWAP                                   ResourceType = "operations-close-swap"
 	CONVERTED_BALANCE_STATES                                ResourceType = "converted-balance-states"
 	CONVERTED_BALANCES_COLLECTIONS                          ResourceType = "converted-balances-collections"
 	OPERATIONS_CREATE_ACCOUNT                               ResourceType = "operations-create-account"
@@ -107,6 +108,7 @@ const (
 	OPERATIONS_MANAGE_VOTE                                  ResourceType = "operations-manage-vote"
 	MATCHES                                                 ResourceType = "matches"
 	OFFERS                                                  ResourceType = "offers"
+	OPERATIONS_OPEN_SWAP                                    ResourceType = "operations-open-swap"
 	OPERATIONS                                              ResourceType = "operations"
 	ORDER_BOOK_ENTRIES                                      ResourceType = "order-book-entries"
 	ORDER_BOOKS                                             ResourceType = "order-books"
@@ -129,6 +131,7 @@ const (
 	SIGNER_RULES                                            ResourceType = "signer-rules"
 	OPERATIONS_STAMP                                        ResourceType = "operations-stamp"
 	STATISTICS                                              ResourceType = "statistics"
+	SWAPS                                                   ResourceType = "swaps"
 	TRANSACTIONS                                            ResourceType = "transactions"
 	VOTES                                                   ResourceType = "votes"
 )

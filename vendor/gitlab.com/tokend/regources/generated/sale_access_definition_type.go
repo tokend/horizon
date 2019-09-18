@@ -46,7 +46,3 @@ func (s *SaleAccessDefinitionType) UnmarshalJSON(data []byte) error {
 func (s SaleAccessDefinitionType) String() string {
 	return saleAccessDefinitionTypeMap[s]
 }
-
-func (s SaleAccessDefinitionType) IsFlag() bool {
-	return true
-}

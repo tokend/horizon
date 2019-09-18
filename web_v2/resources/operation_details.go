@@ -55,9 +55,11 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeInitiateKycRecovery:                    newInitiateKYCRecoveryOp,
 	xdr.OperationTypeCreateKycRecoveryRequest:               newCreateKYCRecoveryRequestOp,
 	xdr.OperationTypeRemoveAssetPair:                        newRemoveAssetPairOp,
+	xdr.OperationTypeRemoveAsset:                            newRemoveAssetOp,
 	xdr.OperationTypeCreateManageOfferRequest:               newCreateManageOfferRequestOp,
 	xdr.OperationTypeCreatePaymentRequest:                   newCreatePaymentRequestOp,
-	xdr.OperationTypeRemoveAsset:                            newRemoveAssetOp,
+	xdr.OperationTypeOpenSwap:                               newOpenSwapOp,
+	xdr.OperationTypeCloseSwap:                              newCloseSwapOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -779,6 +781,42 @@ func newRemoveAssetOp(op history2.Operation) regources.Resource {
 		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_ASSET),
 		Relationships: regources.RemoveAssetOpRelationships{
 			Asset: NewAssetKey(op.Details.RemoveAsset.Code).AsRelation(),
+		},
+	}
+}
+
+func newOpenSwapOp(op history2.Operation) regources.Resource {
+	body := op.Details.OpenSwap
+	return &regources.OpenSwapOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_OPEN_SWAP),
+		Attributes: regources.OpenSwapOpAttributes{
+			Amount:                  body.Amount,
+			DestinationFee:          body.DestinationFee,
+			Details:                 body.Details,
+			LockTime:                body.LockTime,
+			SecretHash:              body.SecretHash,
+			SourceFee:               body.SourceFee,
+			SourcePayForDestination: body.SourcePayForDestination,
+		},
+		Relationships: regources.OpenSwapOpRelationships{
+			Asset:              NewAssetKey(body.Asset).AsRelation(),
+			Destination:        NewAccountKey(body.AccountTo).AsRelation(),
+			DestinationBalance: NewBalanceKey(body.BalanceTo).AsRelation(),
+			Source:             NewAccountKey(body.AccountFrom).AsRelation(),
+			SourceBalance:      NewBalanceKey(body.BalanceFrom).AsRelation(),
+		},
+	}
+}
+
+func newCloseSwapOp(op history2.Operation) regources.Resource {
+	body := op.Details.CloseSwap
+	return &regources.CloseSwapOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CLOSE_SWAP),
+		Attributes: regources.CloseSwapOpAttributes{
+			Secret: body.Secret,
+		},
+		Relationships: regources.CloseSwapOpRelationships{
+			Swap: NewSwapKey(body.ID).AsRelation(),
 		},
 	}
 }

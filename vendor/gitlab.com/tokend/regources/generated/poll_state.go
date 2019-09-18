@@ -43,7 +43,3 @@ func (s *PollState) UnmarshalJSON(b []byte) error {
 	*s = PollState(res.Value)
 	return nil
 }
-
-func (s PollState) IsFlag() bool {
-	return true
-}

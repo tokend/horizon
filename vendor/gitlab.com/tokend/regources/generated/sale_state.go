@@ -42,7 +42,3 @@ func (s *SaleState) UnmarshalJSON(b []byte) error {
 	*s = SaleState(res.Value)
 	return nil
 }
-
-func (s SaleState) IsFlag() bool {
-	return true
-}

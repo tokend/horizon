@@ -95,10 +95,10 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
+  branch = "feature/swap"
   name = "gitlab.com/tokend/go"
-  version = "3.11.0"
 [[constraint]]
-  version = "4.9.0"
+  branch = "feature/swap"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

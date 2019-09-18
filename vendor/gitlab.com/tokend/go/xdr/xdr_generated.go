@@ -1,5 +1,5 @@
-// revision: 47ee60cab248c2e15b099c8e7d6fb46cf4f2d388
-// branch:   master
+// revision: dcb0962ff5cc056c96c54b6678f34278a66eeddd
+// branch:   feature/swap
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -32,6 +32,7 @@
 //  xdr/ledger-entries-stamp.x
 //  xdr/ledger-entries-statistics-v2.x
 //  xdr/ledger-entries-statistics.x
+//  xdr/ledger-entries-swap.x
 //  xdr/ledger-entries-vote.x
 //  xdr/ledger-entries.x
 //  xdr/ledger-keys.x
@@ -41,6 +42,7 @@
 //  xdr/operation-cancel-change-role-request.x
 //  xdr/operation-cancel-sale-creation-request.x
 //  xdr/operation-check-sale-state.x
+//  xdr/operation-close-swap.x
 //  xdr/operation-create-AML-alert-request.x
 //  xdr/operation-create-account.x
 //  xdr/operation-create-atomic-swap-ask-request.x
@@ -76,6 +78,7 @@
 //  xdr/operation-manage-signer-rule.x
 //  xdr/operation-manage-signer.x
 //  xdr/operation-manage-vote.x
+//  xdr/operation-open-swap.x
 //  xdr/operation-payment.x
 //  xdr/operation-payout.x
 //  xdr/operation-remove-asset-pair.x
@@ -1261,7 +1264,8 @@ type AssetPairEntry struct {
 //    	//: Defines whether or not asset can be base in atomic swap
 //    	CAN_BE_BASE_IN_ATOMIC_SWAP = 32,
 //    	//: Defines whether or not asset can be quote in atomic swap
-//    	CAN_BE_QUOTE_IN_ATOMIC_SWAP = 64
+//    	CAN_BE_QUOTE_IN_ATOMIC_SWAP = 64,
+//        SWAPPABLE = 128
 //    };
 //
 type AssetPolicy int32
@@ -1274,6 +1278,7 @@ const (
 	AssetPolicyIssuanceManualReviewRequired AssetPolicy = 16
 	AssetPolicyCanBeBaseInAtomicSwap        AssetPolicy = 32
 	AssetPolicyCanBeQuoteInAtomicSwap       AssetPolicy = 64
+	AssetPolicySwappable                    AssetPolicy = 128
 )
 
 var AssetPolicyAll = []AssetPolicy{
@@ -1284,26 +1289,29 @@ var AssetPolicyAll = []AssetPolicy{
 	AssetPolicyIssuanceManualReviewRequired,
 	AssetPolicyCanBeBaseInAtomicSwap,
 	AssetPolicyCanBeQuoteInAtomicSwap,
+	AssetPolicySwappable,
 }
 
 var assetPolicyMap = map[int32]string{
-	1:  "AssetPolicyTransferable",
-	2:  "AssetPolicyBaseAsset",
-	4:  "AssetPolicyStatsQuoteAsset",
-	8:  "AssetPolicyWithdrawable",
-	16: "AssetPolicyIssuanceManualReviewRequired",
-	32: "AssetPolicyCanBeBaseInAtomicSwap",
-	64: "AssetPolicyCanBeQuoteInAtomicSwap",
+	1:   "AssetPolicyTransferable",
+	2:   "AssetPolicyBaseAsset",
+	4:   "AssetPolicyStatsQuoteAsset",
+	8:   "AssetPolicyWithdrawable",
+	16:  "AssetPolicyIssuanceManualReviewRequired",
+	32:  "AssetPolicyCanBeBaseInAtomicSwap",
+	64:  "AssetPolicyCanBeQuoteInAtomicSwap",
+	128: "AssetPolicySwappable",
 }
 
 var assetPolicyShortMap = map[int32]string{
-	1:  "transferable",
-	2:  "base_asset",
-	4:  "stats_quote_asset",
-	8:  "withdrawable",
-	16: "issuance_manual_review_required",
-	32: "can_be_base_in_atomic_swap",
-	64: "can_be_quote_in_atomic_swap",
+	1:   "transferable",
+	2:   "base_asset",
+	4:   "stats_quote_asset",
+	8:   "withdrawable",
+	16:  "issuance_manual_review_required",
+	32:  "can_be_base_in_atomic_swap",
+	64:  "can_be_quote_in_atomic_swap",
+	128: "swappable",
 }
 
 var assetPolicyRevMap = map[string]int32{
@@ -1314,6 +1322,7 @@ var assetPolicyRevMap = map[string]int32{
 	"AssetPolicyIssuanceManualReviewRequired": 16,
 	"AssetPolicyCanBeBaseInAtomicSwap":        32,
 	"AssetPolicyCanBeQuoteInAtomicSwap":       64,
+	"AssetPolicySwappable":                    128,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -1983,7 +1992,8 @@ type ExternalSystemAccountId struct {
 //        OPERATION_FEE = 6,
 //        PAYOUT_FEE = 7,
 //        ATOMIC_SWAP_SALE_FEE = 8,
-//        ATOMIC_SWAP_PURCHASE_FEE = 9
+//        ATOMIC_SWAP_PURCHASE_FEE = 9,
+//        SWAP_FEE = 10
 //    };
 //
 type FeeType int32
@@ -1999,6 +2009,7 @@ const (
 	FeeTypePayoutFee             FeeType = 7
 	FeeTypeAtomicSwapSaleFee     FeeType = 8
 	FeeTypeAtomicSwapPurchaseFee FeeType = 9
+	FeeTypeSwapFee               FeeType = 10
 )
 
 var FeeTypeAll = []FeeType{
@@ -2012,32 +2023,35 @@ var FeeTypeAll = []FeeType{
 	FeeTypePayoutFee,
 	FeeTypeAtomicSwapSaleFee,
 	FeeTypeAtomicSwapPurchaseFee,
+	FeeTypeSwapFee,
 }
 
 var feeTypeMap = map[int32]string{
-	0: "FeeTypePaymentFee",
-	1: "FeeTypeOfferFee",
-	2: "FeeTypeWithdrawalFee",
-	3: "FeeTypeIssuanceFee",
-	4: "FeeTypeInvestFee",
-	5: "FeeTypeCapitalDeploymentFee",
-	6: "FeeTypeOperationFee",
-	7: "FeeTypePayoutFee",
-	8: "FeeTypeAtomicSwapSaleFee",
-	9: "FeeTypeAtomicSwapPurchaseFee",
+	0:  "FeeTypePaymentFee",
+	1:  "FeeTypeOfferFee",
+	2:  "FeeTypeWithdrawalFee",
+	3:  "FeeTypeIssuanceFee",
+	4:  "FeeTypeInvestFee",
+	5:  "FeeTypeCapitalDeploymentFee",
+	6:  "FeeTypeOperationFee",
+	7:  "FeeTypePayoutFee",
+	8:  "FeeTypeAtomicSwapSaleFee",
+	9:  "FeeTypeAtomicSwapPurchaseFee",
+	10: "FeeTypeSwapFee",
 }
 
 var feeTypeShortMap = map[int32]string{
-	0: "payment_fee",
-	1: "offer_fee",
-	2: "withdrawal_fee",
-	3: "issuance_fee",
-	4: "invest_fee",
-	5: "capital_deployment_fee",
-	6: "operation_fee",
-	7: "payout_fee",
-	8: "atomic_swap_sale_fee",
-	9: "atomic_swap_purchase_fee",
+	0:  "payment_fee",
+	1:  "offer_fee",
+	2:  "withdrawal_fee",
+	3:  "issuance_fee",
+	4:  "invest_fee",
+	5:  "capital_deployment_fee",
+	6:  "operation_fee",
+	7:  "payout_fee",
+	8:  "atomic_swap_sale_fee",
+	9:  "atomic_swap_purchase_fee",
+	10: "swap_fee",
 }
 
 var feeTypeRevMap = map[string]int32{
@@ -2051,6 +2065,7 @@ var feeTypeRevMap = map[string]int32{
 	"FeeTypePayoutFee":             7,
 	"FeeTypeAtomicSwapSaleFee":     8,
 	"FeeTypeAtomicSwapPurchaseFee": 9,
+	"FeeTypeSwapFee":               10,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -5510,6 +5525,45 @@ type StatisticsEntry struct {
 	Ext            StatisticsEntryExt `json:"ext,omitempty"`
 }
 
+// SwapEntry is an XDR Struct defines as:
+//
+//   struct SwapEntry
+//    {
+//        uint64 id;
+//
+//        Hash secretHash;
+//
+//        AccountID source;
+//        BalanceID sourceBalance;
+//
+//        BalanceID destinationBalance;
+//
+//        longstring details;
+//
+//        uint64 amount;
+//
+//        int64 createdAt;
+//        int64 lockTime;
+//
+//    	uint64 fee;
+//
+//        EmptyExt ext;
+//    };
+//
+type SwapEntry struct {
+	Id                 Uint64     `json:"id,omitempty"`
+	SecretHash         Hash       `json:"secretHash,omitempty"`
+	Source             AccountId  `json:"source,omitempty"`
+	SourceBalance      BalanceId  `json:"sourceBalance,omitempty"`
+	DestinationBalance BalanceId  `json:"destinationBalance,omitempty"`
+	Details            Longstring `json:"details,omitempty"`
+	Amount             Uint64     `json:"amount,omitempty"`
+	CreatedAt          Int64      `json:"createdAt,omitempty"`
+	LockTime           Int64      `json:"lockTime,omitempty"`
+	Fee                Uint64     `json:"fee,omitempty"`
+	Ext                EmptyExt   `json:"ext,omitempty"`
+}
+
 // SingleChoiceVote is an XDR Struct defines as:
 //
 //   struct SingleChoiceVote
@@ -5787,6 +5841,8 @@ func (e *ThresholdIndexes) UnmarshalJSON(data []byte) error {
 //            VoteEntry vote;
 //        case ACCOUNT_SPECIFIC_RULE:
 //            AccountSpecificRuleEntry accountSpecificRule;
+//        case SWAP:
+//            SwapEntry swap;
 //        }
 //
 type LedgerEntryData struct {
@@ -5821,6 +5877,7 @@ type LedgerEntryData struct {
 	Poll                             *PollEntry                        `json:"poll,omitempty"`
 	Vote                             *VoteEntry                        `json:"vote,omitempty"`
 	AccountSpecificRule              *AccountSpecificRuleEntry         `json:"accountSpecificRule,omitempty"`
+	Swap                             *SwapEntry                        `json:"swap,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -5893,6 +5950,8 @@ func (u LedgerEntryData) ArmForSwitch(sw int32) (string, bool) {
 		return "Vote", true
 	case LedgerEntryTypeAccountSpecificRule:
 		return "AccountSpecificRule", true
+	case LedgerEntryTypeSwap:
+		return "Swap", true
 	}
 	return "-", false
 }
@@ -6111,6 +6170,13 @@ func NewLedgerEntryData(aType LedgerEntryType, value interface{}) (result Ledger
 			return
 		}
 		result.AccountSpecificRule = &tv
+	case LedgerEntryTypeSwap:
+		tv, ok := value.(SwapEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SwapEntry")
+			return
+		}
+		result.Swap = &tv
 	}
 	return
 }
@@ -6865,6 +6931,31 @@ func (u LedgerEntryData) GetAccountSpecificRule() (result AccountSpecificRuleEnt
 	return
 }
 
+// MustSwap retrieves the Swap value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustSwap() SwapEntry {
+	val, ok := u.GetSwap()
+
+	if !ok {
+		panic("arm Swap is not set")
+	}
+
+	return val
+}
+
+// GetSwap retrieves the Swap value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetSwap() (result SwapEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Swap" {
+		result = *u.Swap
+		ok = true
+	}
+
+	return
+}
+
 // LedgerEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -6971,6 +7062,8 @@ func NewLedgerEntryExt(v LedgerVersion, value interface{}) (result LedgerEntryEx
 //            VoteEntry vote;
 //        case ACCOUNT_SPECIFIC_RULE:
 //            AccountSpecificRuleEntry accountSpecificRule;
+//        case SWAP:
+//            SwapEntry swap;
 //        }
 //        data;
 //
@@ -8595,6 +8688,20 @@ type LedgerKeyAccountSpecificRule struct {
 	Ext EmptyExt `json:"ext,omitempty"`
 }
 
+// LedgerKeySwap is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            uint64 id;
+//
+//            EmptyExt ext;
+//        }
+//
+type LedgerKeySwap struct {
+	Id  Uint64   `json:"id,omitempty"`
+	Ext EmptyExt `json:"ext,omitempty"`
+}
+
 // LedgerKey is an XDR Union defines as:
 //
 //   union LedgerKey switch (LedgerEntryType type)
@@ -8895,6 +9002,13 @@ type LedgerKeyAccountSpecificRule struct {
 //
 //            EmptyExt ext;
 //        } accountSpecificRule;
+//    case SWAP:
+//        struct
+//        {
+//            uint64 id;
+//
+//            EmptyExt ext;
+//        } swap;
 //    };
 //
 type LedgerKey struct {
@@ -8929,6 +9043,7 @@ type LedgerKey struct {
 	Poll                             *LedgerKeyPoll                             `json:"poll,omitempty"`
 	Vote                             *LedgerKeyVote                             `json:"vote,omitempty"`
 	AccountSpecificRule              *LedgerKeyAccountSpecificRule              `json:"accountSpecificRule,omitempty"`
+	Swap                             *LedgerKeySwap                             `json:"swap,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -9001,6 +9116,8 @@ func (u LedgerKey) ArmForSwitch(sw int32) (string, bool) {
 		return "Vote", true
 	case LedgerEntryTypeAccountSpecificRule:
 		return "AccountSpecificRule", true
+	case LedgerEntryTypeSwap:
+		return "Swap", true
 	}
 	return "-", false
 }
@@ -9219,6 +9336,13 @@ func NewLedgerKey(aType LedgerEntryType, value interface{}) (result LedgerKey, e
 			return
 		}
 		result.AccountSpecificRule = &tv
+	case LedgerEntryTypeSwap:
+		tv, ok := value.(LedgerKeySwap)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be LedgerKeySwap")
+			return
+		}
+		result.Swap = &tv
 	}
 	return
 }
@@ -9967,6 +10091,31 @@ func (u LedgerKey) GetAccountSpecificRule() (result LedgerKeyAccountSpecificRule
 
 	if armName == "AccountSpecificRule" {
 		result = *u.AccountSpecificRule
+		ok = true
+	}
+
+	return
+}
+
+// MustSwap retrieves the Swap value from the union,
+// panicing if the value is not set.
+func (u LedgerKey) MustSwap() LedgerKeySwap {
+	val, ok := u.GetSwap()
+
+	if !ok {
+		panic("arm Swap is not set")
+	}
+
+	return val
+}
+
+// GetSwap retrieves the Swap value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerKey) GetSwap() (result LedgerKeySwap, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Swap" {
+		result = *u.Swap
 		ok = true
 	}
 
@@ -13292,6 +13441,330 @@ func (u CheckSaleStateResult) MustSuccess() CheckSaleStateSuccess {
 // GetSuccess retrieves the Success value from the union,
 // returning ok if the union's switch indicated the value is valid.
 func (u CheckSaleStateResult) GetSuccess() (result CheckSaleStateSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// CloseSwapOp is an XDR Struct defines as:
+//
+//   struct CloseSwapOp
+//    {
+//        uint64 swapID;
+//
+//        Hash* secret;
+//
+//        //: reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type CloseSwapOp struct {
+	SwapId Uint64   `json:"swapID,omitempty"`
+	Secret *Hash    `json:"secret,omitempty"`
+	Ext    EmptyExt `json:"ext,omitempty"`
+}
+
+// CloseSwapResultCode is an XDR Enum defines as:
+//
+//   enum CloseSwapResultCode
+//    {
+//        //: CloseSwap was successful
+//        SUCCESS = 0,
+//
+//        SWAP_EXPIRED = -1,
+//        INVALID_SECRET = -2,
+//        //: After the swap fulfillment, the destination balance will exceed the limit (total amount on the balance will be greater than UINT64_MAX)
+//        LINE_FULL = -3,
+//        NOT_AUTHORIZED = -4
+//    };
+//
+type CloseSwapResultCode int32
+
+const (
+	CloseSwapResultCodeSuccess       CloseSwapResultCode = 0
+	CloseSwapResultCodeSwapExpired   CloseSwapResultCode = -1
+	CloseSwapResultCodeInvalidSecret CloseSwapResultCode = -2
+	CloseSwapResultCodeLineFull      CloseSwapResultCode = -3
+	CloseSwapResultCodeNotAuthorized CloseSwapResultCode = -4
+)
+
+var CloseSwapResultCodeAll = []CloseSwapResultCode{
+	CloseSwapResultCodeSuccess,
+	CloseSwapResultCodeSwapExpired,
+	CloseSwapResultCodeInvalidSecret,
+	CloseSwapResultCodeLineFull,
+	CloseSwapResultCodeNotAuthorized,
+}
+
+var closeSwapResultCodeMap = map[int32]string{
+	0:  "CloseSwapResultCodeSuccess",
+	-1: "CloseSwapResultCodeSwapExpired",
+	-2: "CloseSwapResultCodeInvalidSecret",
+	-3: "CloseSwapResultCodeLineFull",
+	-4: "CloseSwapResultCodeNotAuthorized",
+}
+
+var closeSwapResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "swap_expired",
+	-2: "invalid_secret",
+	-3: "line_full",
+	-4: "not_authorized",
+}
+
+var closeSwapResultCodeRevMap = map[string]int32{
+	"CloseSwapResultCodeSuccess":       0,
+	"CloseSwapResultCodeSwapExpired":   -1,
+	"CloseSwapResultCodeInvalidSecret": -2,
+	"CloseSwapResultCodeLineFull":      -3,
+	"CloseSwapResultCodeNotAuthorized": -4,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CloseSwapResultCode
+func (e CloseSwapResultCode) ValidEnum(v int32) bool {
+	_, ok := closeSwapResultCodeMap[v]
+	return ok
+}
+func (e CloseSwapResultCode) isFlag() bool {
+	for i := len(CloseSwapResultCodeAll) - 1; i >= 0; i-- {
+		expected := CloseSwapResultCode(2) << uint64(len(CloseSwapResultCodeAll)-1) >> uint64(len(CloseSwapResultCodeAll)-i)
+		if expected != CloseSwapResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CloseSwapResultCode) String() string {
+	name, _ := closeSwapResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CloseSwapResultCode) ShortString() string {
+	name, _ := closeSwapResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CloseSwapResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range CloseSwapResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CloseSwapResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CloseSwapResultCode(t.Value)
+	return nil
+}
+
+// CloseSwapEffect is an XDR Enum defines as:
+//
+//   enum CloseSwapEffect
+//    {
+//        //: Swap closed
+//        CLOSED = 0,
+//        //: Swap cancelled updated
+//        CANCELLED = 1
+//    };
+//
+type CloseSwapEffect int32
+
+const (
+	CloseSwapEffectClosed    CloseSwapEffect = 0
+	CloseSwapEffectCancelled CloseSwapEffect = 1
+)
+
+var CloseSwapEffectAll = []CloseSwapEffect{
+	CloseSwapEffectClosed,
+	CloseSwapEffectCancelled,
+}
+
+var closeSwapEffectMap = map[int32]string{
+	0: "CloseSwapEffectClosed",
+	1: "CloseSwapEffectCancelled",
+}
+
+var closeSwapEffectShortMap = map[int32]string{
+	0: "closed",
+	1: "cancelled",
+}
+
+var closeSwapEffectRevMap = map[string]int32{
+	"CloseSwapEffectClosed":    0,
+	"CloseSwapEffectCancelled": 1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CloseSwapEffect
+func (e CloseSwapEffect) ValidEnum(v int32) bool {
+	_, ok := closeSwapEffectMap[v]
+	return ok
+}
+func (e CloseSwapEffect) isFlag() bool {
+	for i := len(CloseSwapEffectAll) - 1; i >= 0; i-- {
+		expected := CloseSwapEffect(2) << uint64(len(CloseSwapEffectAll)-1) >> uint64(len(CloseSwapEffectAll)-i)
+		if expected != CloseSwapEffectAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CloseSwapEffect) String() string {
+	name, _ := closeSwapEffectMap[int32(e)]
+	return name
+}
+
+func (e CloseSwapEffect) ShortString() string {
+	name, _ := closeSwapEffectShortMap[int32(e)]
+	return name
+}
+
+func (e CloseSwapEffect) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range CloseSwapEffectAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CloseSwapEffect) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CloseSwapEffect(t.Value)
+	return nil
+}
+
+// CloseSwapSuccess is an XDR Struct defines as:
+//
+//   //: CloseSwapSuccess is used to pass saved ledger hash and license hash
+//    struct CloseSwapSuccess {
+//        CloseSwapEffect effect;
+//
+//        EmptyExt ext;
+//    };
+//
+type CloseSwapSuccess struct {
+	Effect CloseSwapEffect `json:"effect,omitempty"`
+	Ext    EmptyExt        `json:"ext,omitempty"`
+}
+
+// CloseSwapResult is an XDR Union defines as:
+//
+//   //: CloseSwapResult is a result of CloseSwap operation application
+//    union CloseSwapResult switch (CloseSwapResultCode code)
+//    {
+//    case SUCCESS:
+//        CloseSwapSuccess success;
+//    default:
+//        void;
+//    };
+//
+type CloseSwapResult struct {
+	Code    CloseSwapResultCode `json:"code,omitempty"`
+	Success *CloseSwapSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CloseSwapResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CloseSwapResult
+func (u CloseSwapResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CloseSwapResultCode(sw) {
+	case CloseSwapResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewCloseSwapResult creates a new  CloseSwapResult.
+func NewCloseSwapResult(code CloseSwapResultCode, value interface{}) (result CloseSwapResult, err error) {
+	result.Code = code
+	switch CloseSwapResultCode(code) {
+	case CloseSwapResultCodeSuccess:
+		tv, ok := value.(CloseSwapSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CloseSwapSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u CloseSwapResult) MustSuccess() CloseSwapSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CloseSwapResult) GetSuccess() (result CloseSwapSuccess, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Code))
 
 	if armName == "Success" {
@@ -33435,6 +33908,434 @@ func (u ManageVoteResult) GetExt() (result EmptyExt, ok bool) {
 	return
 }
 
+// OpenSwapOpDestination is an XDR NestedUnion defines as:
+//
+//   union switch (PaymentDestinationType type) {
+//           case ACCOUNT:
+//               AccountID accountID;
+//           case BALANCE:
+//               BalanceID balanceID;
+//       }
+//
+type OpenSwapOpDestination struct {
+	Type      PaymentDestinationType `json:"type,omitempty"`
+	AccountId *AccountId             `json:"accountID,omitempty"`
+	BalanceId *BalanceId             `json:"balanceID,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u OpenSwapOpDestination) SwitchFieldName() string {
+	return "Type"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of OpenSwapOpDestination
+func (u OpenSwapOpDestination) ArmForSwitch(sw int32) (string, bool) {
+	switch PaymentDestinationType(sw) {
+	case PaymentDestinationTypeAccount:
+		return "AccountId", true
+	case PaymentDestinationTypeBalance:
+		return "BalanceId", true
+	}
+	return "-", false
+}
+
+// NewOpenSwapOpDestination creates a new  OpenSwapOpDestination.
+func NewOpenSwapOpDestination(aType PaymentDestinationType, value interface{}) (result OpenSwapOpDestination, err error) {
+	result.Type = aType
+	switch PaymentDestinationType(aType) {
+	case PaymentDestinationTypeAccount:
+		tv, ok := value.(AccountId)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountId")
+			return
+		}
+		result.AccountId = &tv
+	case PaymentDestinationTypeBalance:
+		tv, ok := value.(BalanceId)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be BalanceId")
+			return
+		}
+		result.BalanceId = &tv
+	}
+	return
+}
+
+// MustAccountId retrieves the AccountId value from the union,
+// panicing if the value is not set.
+func (u OpenSwapOpDestination) MustAccountId() AccountId {
+	val, ok := u.GetAccountId()
+
+	if !ok {
+		panic("arm AccountId is not set")
+	}
+
+	return val
+}
+
+// GetAccountId retrieves the AccountId value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OpenSwapOpDestination) GetAccountId() (result AccountId, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "AccountId" {
+		result = *u.AccountId
+		ok = true
+	}
+
+	return
+}
+
+// MustBalanceId retrieves the BalanceId value from the union,
+// panicing if the value is not set.
+func (u OpenSwapOpDestination) MustBalanceId() BalanceId {
+	val, ok := u.GetBalanceId()
+
+	if !ok {
+		panic("arm BalanceId is not set")
+	}
+
+	return val
+}
+
+// GetBalanceId retrieves the BalanceId value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OpenSwapOpDestination) GetBalanceId() (result BalanceId, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "BalanceId" {
+		result = *u.BalanceId
+		ok = true
+	}
+
+	return
+}
+
+// OpenSwapOp is an XDR Struct defines as:
+//
+//   struct OpenSwapOp
+//    {
+//        BalanceID sourceBalance;
+//
+//        uint64 amount;
+//
+//       //: `destination` defines the type of instance that receives the payment based on given PaymentDestinationType
+//       union switch (PaymentDestinationType type) {
+//           case ACCOUNT:
+//               AccountID accountID;
+//           case BALANCE:
+//               BalanceID balanceID;
+//       } destination;
+//
+//        PaymentFeeData feeData;
+//
+//        longstring details;
+//
+//        Hash secretHash;
+//
+//        int64 lockTime;
+//
+//        //: reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type OpenSwapOp struct {
+	SourceBalance BalanceId             `json:"sourceBalance,omitempty"`
+	Amount        Uint64                `json:"amount,omitempty"`
+	Destination   OpenSwapOpDestination `json:"destination,omitempty"`
+	FeeData       PaymentFeeData        `json:"feeData,omitempty"`
+	Details       Longstring            `json:"details,omitempty"`
+	SecretHash    Hash                  `json:"secretHash,omitempty"`
+	LockTime      Int64                 `json:"lockTime,omitempty"`
+	Ext           EmptyExt              `json:"ext,omitempty"`
+}
+
+// OpenSwapResultCode is an XDR Enum defines as:
+//
+//   enum OpenSwapResultCode
+//    {
+//        //: OpenSwap was successful
+//        SUCCESS = 0,
+//
+//        MALFORMED = -1,
+//        //: Not enough funds in the source account
+//        UNDERFUNDED = -2,
+//        //: There is no balance found with an ID provided in `destinations.balanceID`
+//        //: Sender balance asset and receiver balance asset are not equal
+//        BALANCE_ASSETS_MISMATCHED = -3,
+//        //: There is no balance found with ID provided in `sourceBalanceID`
+//        SRC_BALANCE_NOT_FOUND = -4,
+//        //: Payment asset does not have a `SWAPPABLE` policy set
+//        NOT_ALLOWED_BY_ASSET_POLICY = -5,
+//        //: Overflow during total fee calculation
+//        INVALID_DESTINATION_FEE = -6,
+//        //: Payment fee amount is insufficient
+//        INSUFFICIENT_FEE_AMOUNT = -7,
+//        //: Fee charged from destination balance is greater than the amount
+//        AMOUNT_IS_LESS_THAN_DEST_FEE = -8,
+//        //: There is no account found with an ID provided in `destination.accountID`
+//        //: Amount precision and asset precision are mismatched
+//        INCORRECT_AMOUNT_PRECISION = -9,
+//        INVALID_DETAILS = -10,
+//        INVALID_LOCK_TIME = -11,
+//        INVALID_AMOUNT = -12
+//
+//    };
+//
+type OpenSwapResultCode int32
+
+const (
+	OpenSwapResultCodeSuccess                  OpenSwapResultCode = 0
+	OpenSwapResultCodeMalformed                OpenSwapResultCode = -1
+	OpenSwapResultCodeUnderfunded              OpenSwapResultCode = -2
+	OpenSwapResultCodeBalanceAssetsMismatched  OpenSwapResultCode = -3
+	OpenSwapResultCodeSrcBalanceNotFound       OpenSwapResultCode = -4
+	OpenSwapResultCodeNotAllowedByAssetPolicy  OpenSwapResultCode = -5
+	OpenSwapResultCodeInvalidDestinationFee    OpenSwapResultCode = -6
+	OpenSwapResultCodeInsufficientFeeAmount    OpenSwapResultCode = -7
+	OpenSwapResultCodeAmountIsLessThanDestFee  OpenSwapResultCode = -8
+	OpenSwapResultCodeIncorrectAmountPrecision OpenSwapResultCode = -9
+	OpenSwapResultCodeInvalidDetails           OpenSwapResultCode = -10
+	OpenSwapResultCodeInvalidLockTime          OpenSwapResultCode = -11
+	OpenSwapResultCodeInvalidAmount            OpenSwapResultCode = -12
+)
+
+var OpenSwapResultCodeAll = []OpenSwapResultCode{
+	OpenSwapResultCodeSuccess,
+	OpenSwapResultCodeMalformed,
+	OpenSwapResultCodeUnderfunded,
+	OpenSwapResultCodeBalanceAssetsMismatched,
+	OpenSwapResultCodeSrcBalanceNotFound,
+	OpenSwapResultCodeNotAllowedByAssetPolicy,
+	OpenSwapResultCodeInvalidDestinationFee,
+	OpenSwapResultCodeInsufficientFeeAmount,
+	OpenSwapResultCodeAmountIsLessThanDestFee,
+	OpenSwapResultCodeIncorrectAmountPrecision,
+	OpenSwapResultCodeInvalidDetails,
+	OpenSwapResultCodeInvalidLockTime,
+	OpenSwapResultCodeInvalidAmount,
+}
+
+var openSwapResultCodeMap = map[int32]string{
+	0:   "OpenSwapResultCodeSuccess",
+	-1:  "OpenSwapResultCodeMalformed",
+	-2:  "OpenSwapResultCodeUnderfunded",
+	-3:  "OpenSwapResultCodeBalanceAssetsMismatched",
+	-4:  "OpenSwapResultCodeSrcBalanceNotFound",
+	-5:  "OpenSwapResultCodeNotAllowedByAssetPolicy",
+	-6:  "OpenSwapResultCodeInvalidDestinationFee",
+	-7:  "OpenSwapResultCodeInsufficientFeeAmount",
+	-8:  "OpenSwapResultCodeAmountIsLessThanDestFee",
+	-9:  "OpenSwapResultCodeIncorrectAmountPrecision",
+	-10: "OpenSwapResultCodeInvalidDetails",
+	-11: "OpenSwapResultCodeInvalidLockTime",
+	-12: "OpenSwapResultCodeInvalidAmount",
+}
+
+var openSwapResultCodeShortMap = map[int32]string{
+	0:   "success",
+	-1:  "malformed",
+	-2:  "underfunded",
+	-3:  "balance_assets_mismatched",
+	-4:  "src_balance_not_found",
+	-5:  "not_allowed_by_asset_policy",
+	-6:  "invalid_destination_fee",
+	-7:  "insufficient_fee_amount",
+	-8:  "amount_is_less_than_dest_fee",
+	-9:  "incorrect_amount_precision",
+	-10: "invalid_details",
+	-11: "invalid_lock_time",
+	-12: "invalid_amount",
+}
+
+var openSwapResultCodeRevMap = map[string]int32{
+	"OpenSwapResultCodeSuccess":                  0,
+	"OpenSwapResultCodeMalformed":                -1,
+	"OpenSwapResultCodeUnderfunded":              -2,
+	"OpenSwapResultCodeBalanceAssetsMismatched":  -3,
+	"OpenSwapResultCodeSrcBalanceNotFound":       -4,
+	"OpenSwapResultCodeNotAllowedByAssetPolicy":  -5,
+	"OpenSwapResultCodeInvalidDestinationFee":    -6,
+	"OpenSwapResultCodeInsufficientFeeAmount":    -7,
+	"OpenSwapResultCodeAmountIsLessThanDestFee":  -8,
+	"OpenSwapResultCodeIncorrectAmountPrecision": -9,
+	"OpenSwapResultCodeInvalidDetails":           -10,
+	"OpenSwapResultCodeInvalidLockTime":          -11,
+	"OpenSwapResultCodeInvalidAmount":            -12,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for OpenSwapResultCode
+func (e OpenSwapResultCode) ValidEnum(v int32) bool {
+	_, ok := openSwapResultCodeMap[v]
+	return ok
+}
+func (e OpenSwapResultCode) isFlag() bool {
+	for i := len(OpenSwapResultCodeAll) - 1; i >= 0; i-- {
+		expected := OpenSwapResultCode(2) << uint64(len(OpenSwapResultCodeAll)-1) >> uint64(len(OpenSwapResultCodeAll)-i)
+		if expected != OpenSwapResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e OpenSwapResultCode) String() string {
+	name, _ := openSwapResultCodeMap[int32(e)]
+	return name
+}
+
+func (e OpenSwapResultCode) ShortString() string {
+	name, _ := openSwapResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e OpenSwapResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range OpenSwapResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *OpenSwapResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = OpenSwapResultCode(t.Value)
+	return nil
+}
+
+// OpenSwapSuccess is an XDR Struct defines as:
+//
+//   //: OpenSwapSuccess is used to pass saved ledger hash and license hash
+//    struct OpenSwapSuccess {
+//        uint64 swapID;
+//
+//        //: ID of the destination account
+//        AccountID destination;
+//        //: ID of the destination balance
+//        BalanceID destinationBalance;
+//
+//        //: Code of an asset used in swap
+//        AssetCode asset;
+//
+//        //: Fee to be charged from the source balance
+//        Fee actualSourceFee;
+//        //: Fee to be charged from the destination balance
+//        Fee actualDestinationFee;
+//
+//        //: reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type OpenSwapSuccess struct {
+	SwapId               Uint64    `json:"swapID,omitempty"`
+	Destination          AccountId `json:"destination,omitempty"`
+	DestinationBalance   BalanceId `json:"destinationBalance,omitempty"`
+	Asset                AssetCode `json:"asset,omitempty"`
+	ActualSourceFee      Fee       `json:"actualSourceFee,omitempty"`
+	ActualDestinationFee Fee       `json:"actualDestinationFee,omitempty"`
+	Ext                  EmptyExt  `json:"ext,omitempty"`
+}
+
+// OpenSwapResult is an XDR Union defines as:
+//
+//   //: OpenSwapResult is a result of OpenSwap operation application
+//    union OpenSwapResult switch (OpenSwapResultCode code)
+//    {
+//    case SUCCESS:
+//        OpenSwapSuccess success;
+//    default:
+//        void;
+//    };
+//
+type OpenSwapResult struct {
+	Code    OpenSwapResultCode `json:"code,omitempty"`
+	Success *OpenSwapSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u OpenSwapResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of OpenSwapResult
+func (u OpenSwapResult) ArmForSwitch(sw int32) (string, bool) {
+	switch OpenSwapResultCode(sw) {
+	case OpenSwapResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewOpenSwapResult creates a new  OpenSwapResult.
+func NewOpenSwapResult(code OpenSwapResultCode, value interface{}) (result OpenSwapResult, err error) {
+	result.Code = code
+	switch OpenSwapResultCode(code) {
+	case OpenSwapResultCodeSuccess:
+		tv, ok := value.(OpenSwapSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be OpenSwapSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u OpenSwapResult) MustSuccess() OpenSwapSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OpenSwapResult) GetSuccess() (result OpenSwapSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
 // PaymentFeeDataExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -40227,6 +41128,25 @@ func (u AccountRuleResourceAccountSpecificRuleExt) GetAccountSpecificRule() (res
 	return
 }
 
+// AccountRuleResourceSwap is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: code of the asset
+//            AssetCode assetCode;
+//            //: type of asset
+//            uint64 assetType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type AccountRuleResourceSwap struct {
+	AssetCode AssetCode `json:"assetCode,omitempty"`
+	AssetType Uint64    `json:"assetType,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
+}
+
 // AccountRuleResource is an XDR Union defines as:
 //
 //   //: Describes properties of some entries that can be used to restrict the usage of entries
@@ -40349,6 +41269,17 @@ func (u AccountRuleResourceAccountSpecificRuleExt) GetAccountSpecificRule() (res
 //                EmptyExt ext;
 //            } accountSpecificRule;
 //        } accountSpecificRuleExt;
+//    case SWAP:
+//        struct
+//        {
+//            //: code of the asset
+//            AssetCode assetCode;
+//            //: type of asset
+//            uint64 assetType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } swap;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -40366,6 +41297,7 @@ type AccountRuleResource struct {
 	Vote                   *AccountRuleResourceVote                   `json:"vote,omitempty"`
 	InitiateKycRecovery    *AccountRuleResourceInitiateKycRecovery    `json:"initiateKYCRecovery,omitempty"`
 	AccountSpecificRuleExt *AccountRuleResourceAccountSpecificRuleExt `json:"accountSpecificRuleExt,omitempty"`
+	Swap                   *AccountRuleResourceSwap                   `json:"swap,omitempty"`
 	Ext                    *EmptyExt                                  `json:"ext,omitempty"`
 }
 
@@ -40401,6 +41333,8 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "InitiateKycRecovery", true
 	case LedgerEntryTypeAccountSpecificRule:
 		return "AccountSpecificRuleExt", true
+	case LedgerEntryTypeSwap:
+		return "Swap", true
 	default:
 		return "Ext", true
 	}
@@ -40482,6 +41416,13 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.AccountSpecificRuleExt = &tv
+	case LedgerEntryTypeSwap:
+		tv, ok := value.(AccountRuleResourceSwap)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountRuleResourceSwap")
+			return
+		}
+		result.Swap = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -40743,6 +41684,31 @@ func (u AccountRuleResource) GetAccountSpecificRuleExt() (result AccountRuleReso
 	return
 }
 
+// MustSwap retrieves the Swap value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResource) MustSwap() AccountRuleResourceSwap {
+	val, ok := u.GetSwap()
+
+	if !ok {
+		panic("arm Swap is not set")
+	}
+
+	return val
+}
+
+// GetSwap retrieves the Swap value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResource) GetSwap() (result AccountRuleResourceSwap, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Swap" {
+		result = *u.Swap
+		ok = true
+	}
+
+	return
+}
+
 // MustExt retrieves the Ext value from the union,
 // panicing if the value is not set.
 func (u AccountRuleResource) MustExt() EmptyExt {
@@ -40792,7 +41758,8 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        REMOVE = 17,
 //        UPDATE_END_TIME = 18,
 //        CREATE_FOR_OTHER_WITH_TASKS = 19,
-//        REMOVE_FOR_OTHER = 20
+//        REMOVE_FOR_OTHER = 20,
+//        EXCHANGE = 21
 //    };
 //
 type AccountRuleAction int32
@@ -40818,6 +41785,7 @@ const (
 	AccountRuleActionUpdateEndTime           AccountRuleAction = 18
 	AccountRuleActionCreateForOtherWithTasks AccountRuleAction = 19
 	AccountRuleActionRemoveForOther          AccountRuleAction = 20
+	AccountRuleActionExchange                AccountRuleAction = 21
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -40841,6 +41809,7 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionUpdateEndTime,
 	AccountRuleActionCreateForOtherWithTasks,
 	AccountRuleActionRemoveForOther,
+	AccountRuleActionExchange,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -40864,6 +41833,7 @@ var accountRuleActionMap = map[int32]string{
 	18: "AccountRuleActionUpdateEndTime",
 	19: "AccountRuleActionCreateForOtherWithTasks",
 	20: "AccountRuleActionRemoveForOther",
+	21: "AccountRuleActionExchange",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -40887,6 +41857,7 @@ var accountRuleActionShortMap = map[int32]string{
 	18: "update_end_time",
 	19: "create_for_other_with_tasks",
 	20: "remove_for_other",
+	21: "exchange",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -40910,6 +41881,7 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionUpdateEndTime":           18,
 	"AccountRuleActionCreateForOtherWithTasks": 19,
 	"AccountRuleActionRemoveForOther":          20,
+	"AccountRuleActionExchange":                21,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -41291,6 +42263,25 @@ func (u SignerRuleResourceAccountSpecificRuleExt) GetAccountSpecificRule() (resu
 	return
 }
 
+// SignerRuleResourceSwap is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: code of the asset
+//            AssetCode assetCode;
+//            //: type of the asset
+//            uint64 assetType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type SignerRuleResourceSwap struct {
+	AssetCode AssetCode `json:"assetCode,omitempty"`
+	AssetType Uint64    `json:"assetType,omitempty"`
+	Ext       EmptyExt  `json:"ext,omitempty"`
+}
+
 // SignerRuleResource is an XDR Union defines as:
 //
 //   //: Describes properties of some entries that can be used to restrict the usage of entries
@@ -41444,6 +42435,17 @@ func (u SignerRuleResourceAccountSpecificRuleExt) GetAccountSpecificRule() (resu
 //                EmptyExt ext;
 //            } accountSpecificRule;
 //        } accountSpecificRuleExt;
+//    case SWAP:
+//        struct
+//        {
+//            //: code of the asset
+//            AssetCode assetCode;
+//            //: type of the asset
+//            uint64 assetType;
+//
+//            //: reserved for future extension
+//            EmptyExt ext;
+//        } swap;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -41464,6 +42466,7 @@ type SignerRuleResource struct {
 	Vote                   *SignerRuleResourceVote                   `json:"vote,omitempty"`
 	InitiateKycRecovery    *SignerRuleResourceInitiateKycRecovery    `json:"initiateKYCRecovery,omitempty"`
 	AccountSpecificRuleExt *SignerRuleResourceAccountSpecificRuleExt `json:"accountSpecificRuleExt,omitempty"`
+	Swap                   *SignerRuleResourceSwap                   `json:"swap,omitempty"`
 	Ext                    *EmptyExt                                 `json:"ext,omitempty"`
 }
 
@@ -41505,6 +42508,8 @@ func (u SignerRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "InitiateKycRecovery", true
 	case LedgerEntryTypeAccountSpecificRule:
 		return "AccountSpecificRuleExt", true
+	case LedgerEntryTypeSwap:
+		return "Swap", true
 	default:
 		return "Ext", true
 	}
@@ -41607,6 +42612,13 @@ func NewSignerRuleResource(aType LedgerEntryType, value interface{}) (result Sig
 			return
 		}
 		result.AccountSpecificRuleExt = &tv
+	case LedgerEntryTypeSwap:
+		tv, ok := value.(SignerRuleResourceSwap)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SignerRuleResourceSwap")
+			return
+		}
+		result.Swap = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -41943,6 +42955,31 @@ func (u SignerRuleResource) GetAccountSpecificRuleExt() (result SignerRuleResour
 	return
 }
 
+// MustSwap retrieves the Swap value from the union,
+// panicing if the value is not set.
+func (u SignerRuleResource) MustSwap() SignerRuleResourceSwap {
+	val, ok := u.GetSwap()
+
+	if !ok {
+		panic("arm Swap is not set")
+	}
+
+	return val
+}
+
+// GetSwap retrieves the Swap value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SignerRuleResource) GetSwap() (result SignerRuleResourceSwap, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Swap" {
+		result = *u.Swap
+		ok = true
+	}
+
+	return
+}
+
 // MustExt retrieves the Ext value from the union,
 // panicing if the value is not set.
 func (u SignerRuleResource) MustExt() EmptyExt {
@@ -41991,7 +43028,8 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        UPDATE_END_TIME = 16,
 //        CREATE_WITH_TASKS = 17,
 //        CREATE_FOR_OTHER_WITH_TASKS = 18,
-//        REMOVE_FOR_OTHER = 19
+//        REMOVE_FOR_OTHER = 19,
+//        EXCHANGE = 20
 //    };
 //
 type SignerRuleAction int32
@@ -42016,6 +43054,7 @@ const (
 	SignerRuleActionCreateWithTasks         SignerRuleAction = 17
 	SignerRuleActionCreateForOtherWithTasks SignerRuleAction = 18
 	SignerRuleActionRemoveForOther          SignerRuleAction = 19
+	SignerRuleActionExchange                SignerRuleAction = 20
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -42038,6 +43077,7 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionCreateWithTasks,
 	SignerRuleActionCreateForOtherWithTasks,
 	SignerRuleActionRemoveForOther,
+	SignerRuleActionExchange,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -42060,6 +43100,7 @@ var signerRuleActionMap = map[int32]string{
 	17: "SignerRuleActionCreateWithTasks",
 	18: "SignerRuleActionCreateForOtherWithTasks",
 	19: "SignerRuleActionRemoveForOther",
+	20: "SignerRuleActionExchange",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -42082,6 +43123,7 @@ var signerRuleActionShortMap = map[int32]string{
 	17: "create_with_tasks",
 	18: "create_for_other_with_tasks",
 	19: "remove_for_other",
+	20: "exchange",
 }
 
 var signerRuleActionRevMap = map[string]int32{
@@ -42104,6 +43146,7 @@ var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionCreateWithTasks":         17,
 	"SignerRuleActionCreateForOtherWithTasks": 18,
 	"SignerRuleActionRemoveForOther":          19,
+	"SignerRuleActionExchange":                20,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -43671,6 +44714,10 @@ type WithdrawalRequest struct {
 //            CreatePaymentRequestOp createPaymentRequestOp;
 //        case REMOVE_ASSET:
 //            RemoveAssetOp removeAssetOp;
+//        case OPEN_SWAP:
+//            OpenSwapOp openSwapOp;
+//        case CLOSE_SWAP:
+//            CloseSwapOp closeSwapOp;
 //        }
 //
 type OperationBody struct {
@@ -43722,6 +44769,8 @@ type OperationBody struct {
 	CreateManageOfferRequestOp               *CreateManageOfferRequestOp               `json:"createManageOfferRequestOp,omitempty"`
 	CreatePaymentRequestOp                   *CreatePaymentRequestOp                   `json:"createPaymentRequestOp,omitempty"`
 	RemoveAssetOp                            *RemoveAssetOp                            `json:"removeAssetOp,omitempty"`
+	OpenSwapOp                               *OpenSwapOp                               `json:"openSwapOp,omitempty"`
+	CloseSwapOp                              *CloseSwapOp                              `json:"closeSwapOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -43828,6 +44877,10 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "CreatePaymentRequestOp", true
 	case OperationTypeRemoveAsset:
 		return "RemoveAssetOp", true
+	case OperationTypeOpenSwap:
+		return "OpenSwapOp", true
+	case OperationTypeCloseSwap:
+		return "CloseSwapOp", true
 	}
 	return "-", false
 }
@@ -44165,6 +45218,20 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.RemoveAssetOp = &tv
+	case OperationTypeOpenSwap:
+		tv, ok := value.(OpenSwapOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be OpenSwapOp")
+			return
+		}
+		result.OpenSwapOp = &tv
+	case OperationTypeCloseSwap:
+		tv, ok := value.(CloseSwapOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CloseSwapOp")
+			return
+		}
+		result.CloseSwapOp = &tv
 	}
 	return
 }
@@ -45344,6 +46411,56 @@ func (u OperationBody) GetRemoveAssetOp() (result RemoveAssetOp, ok bool) {
 	return
 }
 
+// MustOpenSwapOp retrieves the OpenSwapOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustOpenSwapOp() OpenSwapOp {
+	val, ok := u.GetOpenSwapOp()
+
+	if !ok {
+		panic("arm OpenSwapOp is not set")
+	}
+
+	return val
+}
+
+// GetOpenSwapOp retrieves the OpenSwapOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetOpenSwapOp() (result OpenSwapOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "OpenSwapOp" {
+		result = *u.OpenSwapOp
+		ok = true
+	}
+
+	return
+}
+
+// MustCloseSwapOp retrieves the CloseSwapOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustCloseSwapOp() CloseSwapOp {
+	val, ok := u.GetCloseSwapOp()
+
+	if !ok {
+		panic("arm CloseSwapOp is not set")
+	}
+
+	return val
+}
+
+// GetCloseSwapOp retrieves the CloseSwapOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetCloseSwapOp() (result CloseSwapOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CloseSwapOp" {
+		result = *u.CloseSwapOp
+		ok = true
+	}
+
+	return
+}
+
 // Operation is an XDR Struct defines as:
 //
 //   //: An operation is the lowest unit of work that a transaction does
@@ -45450,6 +46567,10 @@ func (u OperationBody) GetRemoveAssetOp() (result RemoveAssetOp, ok bool) {
 //            CreatePaymentRequestOp createPaymentRequestOp;
 //        case REMOVE_ASSET:
 //            RemoveAssetOp removeAssetOp;
+//        case OPEN_SWAP:
+//            OpenSwapOp openSwapOp;
+//        case CLOSE_SWAP:
+//            CloseSwapOp closeSwapOp;
 //        }
 //        body;
 //    };
@@ -46161,6 +47282,10 @@ type AccountRuleRequirement struct {
 //            CreatePaymentRequestResult createPaymentRequestResult;
 //        case REMOVE_ASSET:
 //            RemoveAssetResult removeAssetResult;
+//        case OPEN_SWAP:
+//            OpenSwapResult openSwapResult;
+//        case CLOSE_SWAP:
+//            CloseSwapResult closeSwapResult;
 //        }
 //
 type OperationResultTr struct {
@@ -46212,6 +47337,8 @@ type OperationResultTr struct {
 	CreateManageOfferRequestResult               *CreateManageOfferRequestResult               `json:"createManageOfferRequestResult,omitempty"`
 	CreatePaymentRequestResult                   *CreatePaymentRequestResult                   `json:"createPaymentRequestResult,omitempty"`
 	RemoveAssetResult                            *RemoveAssetResult                            `json:"removeAssetResult,omitempty"`
+	OpenSwapResult                               *OpenSwapResult                               `json:"openSwapResult,omitempty"`
+	CloseSwapResult                              *CloseSwapResult                              `json:"closeSwapResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -46318,6 +47445,10 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "CreatePaymentRequestResult", true
 	case OperationTypeRemoveAsset:
 		return "RemoveAssetResult", true
+	case OperationTypeOpenSwap:
+		return "OpenSwapResult", true
+	case OperationTypeCloseSwap:
+		return "CloseSwapResult", true
 	}
 	return "-", false
 }
@@ -46655,6 +47786,20 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.RemoveAssetResult = &tv
+	case OperationTypeOpenSwap:
+		tv, ok := value.(OpenSwapResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be OpenSwapResult")
+			return
+		}
+		result.OpenSwapResult = &tv
+	case OperationTypeCloseSwap:
+		tv, ok := value.(CloseSwapResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CloseSwapResult")
+			return
+		}
+		result.CloseSwapResult = &tv
 	}
 	return
 }
@@ -47834,6 +48979,56 @@ func (u OperationResultTr) GetRemoveAssetResult() (result RemoveAssetResult, ok 
 	return
 }
 
+// MustOpenSwapResult retrieves the OpenSwapResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustOpenSwapResult() OpenSwapResult {
+	val, ok := u.GetOpenSwapResult()
+
+	if !ok {
+		panic("arm OpenSwapResult is not set")
+	}
+
+	return val
+}
+
+// GetOpenSwapResult retrieves the OpenSwapResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetOpenSwapResult() (result OpenSwapResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "OpenSwapResult" {
+		result = *u.OpenSwapResult
+		ok = true
+	}
+
+	return
+}
+
+// MustCloseSwapResult retrieves the CloseSwapResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustCloseSwapResult() CloseSwapResult {
+	val, ok := u.GetCloseSwapResult()
+
+	if !ok {
+		panic("arm CloseSwapResult is not set")
+	}
+
+	return val
+}
+
+// GetCloseSwapResult retrieves the CloseSwapResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetCloseSwapResult() (result CloseSwapResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CloseSwapResult" {
+		result = *u.CloseSwapResult
+		ok = true
+	}
+
+	return
+}
+
 // OperationResult is an XDR Union defines as:
 //
 //   union OperationResult switch (OperationResultCode code)
@@ -47935,6 +49130,10 @@ func (u OperationResultTr) GetRemoveAssetResult() (result RemoveAssetResult, ok 
 //            CreatePaymentRequestResult createPaymentRequestResult;
 //        case REMOVE_ASSET:
 //            RemoveAssetResult removeAssetResult;
+//        case OPEN_SWAP:
+//            OpenSwapResult openSwapResult;
+//        case CLOSE_SWAP:
+//            CloseSwapResult closeSwapResult;
 //        }
 //        tr;
 //    case opNO_ENTRY:
@@ -49089,7 +50288,8 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //        POLL = 34,
 //        VOTE = 35,
 //        ACCOUNT_SPECIFIC_RULE = 36,
-//        INITIATE_KYC_RECOVERY = 37
+//        INITIATE_KYC_RECOVERY = 37,
+//        SWAP = 38
 //    };
 //
 type LedgerEntryType int32
@@ -49130,6 +50330,7 @@ const (
 	LedgerEntryTypeVote                             LedgerEntryType = 35
 	LedgerEntryTypeAccountSpecificRule              LedgerEntryType = 36
 	LedgerEntryTypeInitiateKycRecovery              LedgerEntryType = 37
+	LedgerEntryTypeSwap                             LedgerEntryType = 38
 )
 
 var LedgerEntryTypeAll = []LedgerEntryType{
@@ -49168,6 +50369,7 @@ var LedgerEntryTypeAll = []LedgerEntryType{
 	LedgerEntryTypeVote,
 	LedgerEntryTypeAccountSpecificRule,
 	LedgerEntryTypeInitiateKycRecovery,
+	LedgerEntryTypeSwap,
 }
 
 var ledgerEntryTypeMap = map[int32]string{
@@ -49206,6 +50408,7 @@ var ledgerEntryTypeMap = map[int32]string{
 	35: "LedgerEntryTypeVote",
 	36: "LedgerEntryTypeAccountSpecificRule",
 	37: "LedgerEntryTypeInitiateKycRecovery",
+	38: "LedgerEntryTypeSwap",
 }
 
 var ledgerEntryTypeShortMap = map[int32]string{
@@ -49244,6 +50447,7 @@ var ledgerEntryTypeShortMap = map[int32]string{
 	35: "vote",
 	36: "account_specific_rule",
 	37: "initiate_kyc_recovery",
+	38: "swap",
 }
 
 var ledgerEntryTypeRevMap = map[string]int32{
@@ -49282,6 +50486,7 @@ var ledgerEntryTypeRevMap = map[string]int32{
 	"LedgerEntryTypeVote":                             35,
 	"LedgerEntryTypeAccountSpecificRule":              36,
 	"LedgerEntryTypeInitiateKycRecovery":              37,
+	"LedgerEntryTypeSwap":                             38,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -49693,7 +50898,9 @@ type Fee struct {
 //        REMOVE_ASSET_PAIR = 50,
 //        CREATE_MANAGE_OFFER_REQUEST = 51,
 //        CREATE_PAYMENT_REQUEST = 52,
-//        REMOVE_ASSET = 53
+//        REMOVE_ASSET = 53,
+//        OPEN_SWAP = 54,
+//        CLOSE_SWAP = 55
 //    };
 //
 type OperationType int32
@@ -49746,6 +50953,8 @@ const (
 	OperationTypeCreateManageOfferRequest               OperationType = 51
 	OperationTypeCreatePaymentRequest                   OperationType = 52
 	OperationTypeRemoveAsset                            OperationType = 53
+	OperationTypeOpenSwap                               OperationType = 54
+	OperationTypeCloseSwap                              OperationType = 55
 )
 
 var OperationTypeAll = []OperationType{
@@ -49796,6 +51005,8 @@ var OperationTypeAll = []OperationType{
 	OperationTypeCreateManageOfferRequest,
 	OperationTypeCreatePaymentRequest,
 	OperationTypeRemoveAsset,
+	OperationTypeOpenSwap,
+	OperationTypeCloseSwap,
 }
 
 var operationTypeMap = map[int32]string{
@@ -49846,6 +51057,8 @@ var operationTypeMap = map[int32]string{
 	51: "OperationTypeCreateManageOfferRequest",
 	52: "OperationTypeCreatePaymentRequest",
 	53: "OperationTypeRemoveAsset",
+	54: "OperationTypeOpenSwap",
+	55: "OperationTypeCloseSwap",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -49896,6 +51109,8 @@ var operationTypeShortMap = map[int32]string{
 	51: "create_manage_offer_request",
 	52: "create_payment_request",
 	53: "remove_asset",
+	54: "open_swap",
+	55: "close_swap",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -49946,6 +51161,8 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeCreateManageOfferRequest":               51,
 	"OperationTypeCreatePaymentRequest":                   52,
 	"OperationTypeRemoveAsset":                            53,
+	"OperationTypeOpenSwap":                               54,
+	"OperationTypeCloseSwap":                              55,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -50024,4 +51241,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "47ee60cab248c2e15b099c8e7d6fb46cf4f2d388"
+var Revision = "dcb0962ff5cc056c96c54b6678f34278a66eeddd"

@@ -201,6 +201,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/signer_rules/{id}", handlers.GetSignerRule)
 	m.Get("/v3/signer_rules", handlers.GetSignerRuleList)
 
+	m.Get("/v3/swaps/{id}", handlers.GetSwap)
+	m.Get("/v3/swaps", handlers.GetSwapList)
+
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))

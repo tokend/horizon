@@ -4,9 +4,7 @@
 
 package regources
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
 type KYCRecoveryStatus int
 
@@ -46,8 +44,4 @@ func (s *KYCRecoveryStatus) UnmarshalJSON(b []byte) error {
 
 	*s = KYCRecoveryStatus(res.Value)
 	return nil
-}
-
-func (s KYCRecoveryStatus) IsFlag() bool {
-	return true
 }

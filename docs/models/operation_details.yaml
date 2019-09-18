@@ -44,6 +44,8 @@ OperationDetails:
     - $ref: '#/components/schemas/CreateManageOfferRequestOp'
     - $ref: '#/components/schemas/CreatePaymentRequestOp'
     - $ref: '#/components/schemas/RemoveAssetOp'
+    - $ref: '#/components/schemas/OpenSwapOp'
+    - $ref: '#/components/schemas/CloseSwapOp'
 
 
 OperationDetailsKey:
@@ -92,4 +94,6 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/CreateManageOfferRequestOpKey'
     - $ref: '#/components/schemas/CreatePaymentRequestOpKey'
     - $ref: '#/components/schemas/RemoveAssetOpKey'
+    - $ref: '#/components/schemas/OpenSwapOpKey'
+    - $ref: '#/components/schemas/CloseSwapOpKey'
 
