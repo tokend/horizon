@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+* RequestID in create issuance request operation details
+
 ## 3.6.0-x.0
 
 ### Added
