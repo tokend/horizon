@@ -96,7 +96,7 @@ func (h *getSwapHandler) getSwap(request *requests.GetSwap) (*regources.SwapResp
 	if request.ShouldInclude(requests.IncludeTypeSwapSourceBalance) {
 		histBalance, err := h.BalancesQ.GetByAddress(record.SourceBalance)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get balance for swap")
+			return nil, errors.Wrap(err, "failed to get source balance for swap")
 		}
 		if histBalance == nil {
 			return nil, errors.New("Expected balance to exist")
@@ -106,9 +106,9 @@ func (h *getSwapHandler) getSwap(request *requests.GetSwap) (*regources.SwapResp
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeSwapDestinationBalance) {
-		histBalance, err := h.BalancesQ.GetByAddress(record.SourceBalance)
+		histBalance, err := h.BalancesQ.GetByAddress(record.DestinationAccount)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get balance for swap")
+			return nil, errors.Wrap(err, "failed to get destination balance for swap")
 		}
 		if histBalance == nil {
 			return nil, errors.New("Expected balance to exist")
