@@ -95,41 +95,41 @@ func (h *getSwapListHandler) GetSwapList(request *requests.GetSwapList) (*regour
 		swap := resources.NewSwap(historySwap)
 		response.Data = append(response.Data, swap)
 
-		//if request.ShouldInclude(requests.IncludeTypeSwapAsset) {
-		//	histAsset, err := h.AssetsQ.GetByCode(historySwap.Asset)
-		//	if err != nil {
-		//		return nil, errors.Wrap(err, "failed to get asset for swap")
-		//	}
-		//	if histAsset == nil {
-		//		return nil, errors.New("Expected asset to exist")
-		//	}
-		//	asset := resources.NewAsset(*histAsset)
-		//	response.Included.Add(&asset)
-		//}
-		//
-		//if request.ShouldInclude(requests.IncludeTypeSwapSourceBalance) {
-		//	histBalance, err := h.BalancesQ.GetByAddress(historySwap.SourceBalance)
-		//	if err != nil {
-		//		return nil, errors.Wrap(err, "failed to get balance for swap")
-		//	}
-		//	if histBalance == nil {
-		//		return nil, errors.New("Expected balance to exist")
-		//	}
-		//	balance := resources.NewBalance(histBalance)
-		//	response.Included.Add(balance)
-		//}
-		//
-		//if request.ShouldInclude(requests.IncludeTypeSwapDestinationBalance) {
-		//	histBalance, err := h.BalancesQ.GetByAddress(historySwap.SourceBalance)
-		//	if err != nil {
-		//		return nil, errors.Wrap(err, "failed to get balance for swap")
-		//	}
-		//	if histBalance == nil {
-		//		return nil, errors.New("Expected balance to exist")
-		//	}
-		//	balance := resources.NewBalance(histBalance)
-		//	response.Included.Add(balance)
-		//}
+		if request.ShouldInclude(requests.IncludeTypeSwapAsset) {
+			histAsset, err := h.AssetsQ.GetByCode(historySwap.Asset)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get asset for swap")
+			}
+			if histAsset == nil {
+				return nil, errors.New("Expected asset to exist")
+			}
+			asset := resources.NewAsset(*histAsset)
+			response.Included.Add(&asset)
+		}
+
+		if request.ShouldInclude(requests.IncludeTypeSwapSourceBalance) {
+			histBalance, err := h.BalancesQ.GetByAddress(historySwap.SourceBalance)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get balance for swap")
+			}
+			if histBalance == nil {
+				return nil, errors.New("Expected balance to exist")
+			}
+			balance := resources.NewBalance(histBalance)
+			response.Included.Add(balance)
+		}
+
+		if request.ShouldInclude(requests.IncludeTypeSwapDestinationBalance) {
+			histBalance, err := h.BalancesQ.GetByAddress(historySwap.SourceBalance)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get balance for swap")
+			}
+			if histBalance == nil {
+				return nil, errors.New("Expected balance to exist")
+			}
+			balance := resources.NewBalance(histBalance)
+			response.Included.Add(balance)
+		}
 	}
 	h.PopulateLinks(response, request)
 
