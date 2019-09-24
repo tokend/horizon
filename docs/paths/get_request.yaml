@@ -46,8 +46,6 @@
         in: query
         description: |
           Filters requests by their type.
-          * 0 -  "none"
-          * 1 -  "any"
           * 2 -  "create_pre_issuance"
           * 3 -  "create_issuance"
           * 4 -  "create_withdraw"
@@ -67,6 +65,8 @@
         explode: false
         schema:
           type: integer
+          minimum: 2
+          maximum: 17
       - name: filter[pending_tasks]
         in: query
         description: |

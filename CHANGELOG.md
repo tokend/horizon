@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Removed
+
+* Request for account endpoint (`/v3/accounts/{id}/requests/{request_id}`)
+
 ### Fixed
 
 * RequestID in create issuance request operation details
