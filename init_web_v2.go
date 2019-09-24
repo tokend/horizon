@@ -107,6 +107,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3", handlers.GetRoot)
 
 	m.Get("/v3/info", handlers.GetRoot)
+
+	m.Get("/v3/license", handlers.GetCurrentLicenseInfo)
+
 	m.Post("/v3/transactions", handlers.CreateTransaction)
 
 	m.Get("/v3/accounts/{id}", handlers.GetAccount)

@@ -73,6 +73,7 @@ const (
 	SALES                                                   ResourceType = "sales"
 	KEY_VALUE_ENTRIES                                       ResourceType = "key-value-entries"
 	LEDGER_ENTRY_CHANGES                                    ResourceType = "ledger-entry-changes"
+	LICENSE_INFO                                            ResourceType = "license-info"
 	OPERATIONS_LICENSE                                      ResourceType = "operations-license"
 	LIMITS                                                  ResourceType = "limits"
 	LIMITS_WITH_STATS                                       ResourceType = "limits-with-stats"
