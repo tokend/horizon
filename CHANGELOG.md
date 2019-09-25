@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Added
+
+* `/v3/license` endpoint to return current license info
+
 ## Removed
 
 * Request for account endpoint (`/v3/accounts/{id}/requests/{request_id}`)

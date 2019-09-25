@@ -144,6 +144,7 @@ x-tagGroups:
     tags:
       - PreIssuance
       - KeyValue
+      - License
   - name: Other
     tags:
       - Polls
