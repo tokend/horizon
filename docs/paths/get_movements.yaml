@@ -5,6 +5,15 @@
     summary: Get movements
     description: |
       Allows to get a filtered list of participants effects related to balances only - movements
+
+      🔒 Permissions:
+
+      | Filters                              | Signature              |
+      | -------------------------------------|------------------------|
+      | -                                    | admin                  |
+      | `filter[asset]`                      | admin or asset owner   |
+      | `filter[balance]`, `filter[account]` | admin or account owner |
+
     operationId: getMovements
     parameters:
       - name: filter[account]
