@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type PollParticipation struct {
 	Key
 	Relationships PollParticipationRelationships `json:"relationships"`
@@ -17,6 +19,16 @@ type PollParticipationListResponse struct {
 	Data     []PollParticipation `json:"data"`
 	Included Included            `json:"included"`
 	Links    *Links              `json:"links"`
+	Meta     json.RawMessage     `json:"meta,omitempty"`
+}
+
+func (r *PollParticipationListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *PollParticipationListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustPollParticipation - returns PollParticipation from include collection.

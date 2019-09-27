@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type SaleWhitelist struct {
 	Key
 	Relationships SaleWhitelistRelationships `json:"relationships"`
@@ -17,6 +19,16 @@ type SaleWhitelistListResponse struct {
 	Data     []SaleWhitelist `json:"data"`
 	Included Included        `json:"included"`
 	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *SaleWhitelistListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *SaleWhitelistListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustSaleWhitelist - returns SaleWhitelist from include collection.

@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type ManageSaleOp struct {
 	Key
 	Attributes ManageSaleOpAttributes `json:"attributes"`
@@ -14,9 +16,19 @@ type ManageSaleOpResponse struct {
 }
 
 type ManageSaleOpListResponse struct {
-	Data     []ManageSaleOp `json:"data"`
-	Included Included       `json:"included"`
-	Links    *Links         `json:"links"`
+	Data     []ManageSaleOp  `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *ManageSaleOpListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *ManageSaleOpListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustManageSaleOp - returns ManageSaleOp from include collection.

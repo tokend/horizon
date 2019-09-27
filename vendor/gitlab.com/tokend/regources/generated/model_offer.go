@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type Offer struct {
 	Key
 	Attributes    OfferAttributes    `json:"attributes"`
@@ -15,9 +17,19 @@ type OfferResponse struct {
 }
 
 type OfferListResponse struct {
-	Data     []Offer  `json:"data"`
-	Included Included `json:"included"`
-	Links    *Links   `json:"links"`
+	Data     []Offer         `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *OfferListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *OfferListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustOffer - returns Offer from include collection.

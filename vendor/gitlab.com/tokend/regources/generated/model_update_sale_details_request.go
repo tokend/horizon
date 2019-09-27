@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type UpdateSaleDetailsRequest struct {
 	Key
 	Attributes    UpdateSaleDetailsRequestAttributes    `json:"attributes"`
@@ -18,6 +20,16 @@ type UpdateSaleDetailsRequestListResponse struct {
 	Data     []UpdateSaleDetailsRequest `json:"data"`
 	Included Included                   `json:"included"`
 	Links    *Links                     `json:"links"`
+	Meta     json.RawMessage            `json:"meta,omitempty"`
+}
+
+func (r *UpdateSaleDetailsRequestListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *UpdateSaleDetailsRequestListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustUpdateSaleDetailsRequest - returns UpdateSaleDetailsRequest from include collection.

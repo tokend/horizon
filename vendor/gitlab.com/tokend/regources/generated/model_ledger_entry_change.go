@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type LedgerEntryChange struct {
 	Key
 	Attributes LedgerEntryChangeAttributes `json:"attributes"`
@@ -17,6 +19,16 @@ type LedgerEntryChangeListResponse struct {
 	Data     []LedgerEntryChange `json:"data"`
 	Included Included            `json:"included"`
 	Links    *Links              `json:"links"`
+	Meta     json.RawMessage     `json:"meta,omitempty"`
+}
+
+func (r *LedgerEntryChangeListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *LedgerEntryChangeListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustLedgerEntryChange - returns LedgerEntryChange from include collection.

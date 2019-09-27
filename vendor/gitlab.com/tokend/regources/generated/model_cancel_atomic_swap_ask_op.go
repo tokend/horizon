@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type CancelAtomicSwapAskOp struct {
 	Key
 	Relationships CancelAtomicSwapAskOpRelationships `json:"relationships"`
@@ -17,6 +19,16 @@ type CancelAtomicSwapAskOpListResponse struct {
 	Data     []CancelAtomicSwapAskOp `json:"data"`
 	Included Included                `json:"included"`
 	Links    *Links                  `json:"links"`
+	Meta     json.RawMessage         `json:"meta,omitempty"`
+}
+
+func (r *CancelAtomicSwapAskOpListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *CancelAtomicSwapAskOpListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustCancelAtomicSwapAskOp - returns CancelAtomicSwapAskOp from include collection.

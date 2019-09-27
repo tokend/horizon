@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type Operation struct {
 	Key
 	Attributes    OperationAttributes    `json:"attributes"`
@@ -15,9 +17,19 @@ type OperationResponse struct {
 }
 
 type OperationListResponse struct {
-	Data     []Operation `json:"data"`
-	Included Included    `json:"included"`
-	Links    *Links      `json:"links"`
+	Data     []Operation     `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *OperationListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *OperationListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustOperation - returns Operation from include collection.

@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type OpenSwapOp struct {
 	Key
 	Attributes    OpenSwapOpAttributes    `json:"attributes"`
@@ -15,9 +17,19 @@ type OpenSwapOpResponse struct {
 }
 
 type OpenSwapOpListResponse struct {
-	Data     []OpenSwapOp `json:"data"`
-	Included Included     `json:"included"`
-	Links    *Links       `json:"links"`
+	Data     []OpenSwapOp    `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *OpenSwapOpListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *OpenSwapOpListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustOpenSwapOp - returns OpenSwapOp from include collection.

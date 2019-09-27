@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type EffectBalanceChange struct {
 	Key
 	Attributes EffectBalanceChangeAttributes `json:"attributes"`
@@ -17,6 +19,16 @@ type EffectBalanceChangeListResponse struct {
 	Data     []EffectBalanceChange `json:"data"`
 	Included Included              `json:"included"`
 	Links    *Links                `json:"links"`
+	Meta     json.RawMessage       `json:"meta,omitempty"`
+}
+
+func (r *EffectBalanceChangeListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *EffectBalanceChangeListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustEffectBalanceChange - returns EffectBalanceChange from include collection.
