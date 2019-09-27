@@ -39,7 +39,11 @@ func GetCalculatedFees(w http.ResponseWriter, r *http.Request) {
 	result, err := handler.GetCalculatedFees(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to calculate fee", logan.F{
-			"request": request,
+			"address":  request.Address,
+			"amount":   request.Amount,
+			"fee_type": request.FeeType,
+			"subtype":  request.Subtype,
+			"asset":    request.Asset,
 		})
 		ape.RenderErr(w, problems.InternalError())
 		return

@@ -1,13 +1,14 @@
 package requests
 
 import (
-	. "github.com/go-ozzo/ozzo-validation"
 	"net/http"
 
+	. "github.com/go-ozzo/ozzo-validation"
+	"github.com/spf13/cast"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	addr "gitlab.com/tokend/go/address"
 	amount2 "gitlab.com/tokend/go/amount"
 	regources "gitlab.com/tokend/regources/generated"
-
-	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 //GetCalculatedFees - represents params to be specified for Get Fees handler
@@ -26,57 +27,71 @@ func NewGetCalculatedFees(r *http.Request) (*GetCalculatedFees, error) {
 	if err != nil {
 		return nil, err
 	}
-	address, err := newAccountAddress(b, "id")
-	if err != nil {
-		return nil, err
-	}
 
+	return makeCalculatedFees(b)
+}
+
+func makeCalculatedFees(b *base) (*GetCalculatedFees, error) {
+	address := b.getString("id")
 	asset := b.getString("asset")
-	if asset == "" {
-		return nil, errors.New("asset code is required")
-	}
+	amountRaw := b.getString("amount")
 
 	subtype, err := b.getInt64("subtype")
 	if err != nil {
-		return nil, errors.Wrap(err, "fee subtype is required")
+		return nil, errors.Wrap(err, "failed to parse subtype")
 	}
 
 	feeType, err := b.getInt32("fee_type")
 	if err != nil {
-		return nil, errors.Wrap(err, "fee type is required")
+		return nil, errors.Wrap(err, "failed to parse fee_type")
 	}
 
-	amountRaw := b.getString("amount")
-	if amountRaw == "" {
-		return nil, errors.New("amount is required")
+	data := struct {
+		address addr.Address
+		asset   string
+		amount  string
+		subtype int64
+		feeType int32 `json:"fee_type"`
+	}{
+		address: addr.Address(address),
+		asset:   asset,
+		amount:  amountRaw,
+		subtype: subtype,
+		feeType: feeType,
 	}
 
-	amount, err := parseAmount(amountRaw)
+	err = ValidateStruct(&data,
+		Field(&data.address, Required, addr.IsAddress),
+		Field(&data.asset, Required),
+		Field(&data.amount, Required, &isNonNegAmount{}),
+		Field(&data.feeType, Required),
+		Field(&data.subtype, Required),
+	)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse amount")
+		return nil, err
 	}
 
-	request := GetCalculatedFees{
+	return &GetCalculatedFees{
 		base:    b,
-		Address: address,
-		Asset:   asset,
-		Subtype: subtype,
-		FeeType: feeType,
-		Amount:  regources.Amount(amount),
-	}
-
-	return &request, nil
+		Address: data.address.String(),
+		Amount:  regources.Amount(amount2.MustParseU(data.amount)),
+		Asset:   data.asset,
+		FeeType: data.feeType,
+		Subtype: data.subtype,
+	}, nil
 }
 
-func parseAmount(raw string) (uint64, error) {
-	amount, err := amount2.Parse(raw)
+type isNonNegAmount struct{}
+
+func (ia *isNonNegAmount) Validate(value interface{}) error {
+	a, err := cast.ToInt64E(value)
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to parse amount")
+		return Errors{"amount": err}
 	}
 
-	if amount < 0 {
-		return 0, errors.New("amount >= 0 required")
+	if a < 0 {
+		return Errors{"amount": errors.New("must be >= 0")}
 	}
 
-	return uint64(amount), nil
+	return nil
 }
