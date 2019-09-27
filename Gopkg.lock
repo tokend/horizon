@@ -495,10 +495,11 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/swap"
-  digest = "1:a51d6cc561d6b72624aa81942f1d06fbdc16694e8a998c94302db65eebb5a14d"
+  branch = "feature/address"
+  digest = "1:e40b0fea4794afd5574259667152a21aa0067db7c720bc9a206251da98b5afef"
   name = "gitlab.com/tokend/go"
   packages = [
+    "address",
     "amount",
     "build",
     "crc16",
@@ -514,7 +515,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "8f1d82de24b083cc7985bbfb12c2c054bcf7e405"
+  revision = "dee174aabaf0f6d0975edc9acd4d0937b8b00472"
 
 [[projects]]
   branch = "master"
@@ -530,15 +531,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/swap"
-  digest = "1:cd23fe2d21c740672c4aad78969432b8cdcaee56093152259e6cb7180e999f3c"
+  branch = "fix/license-info"
+  digest = "1:4707e28c7abf59477e9fe0485fb54a046316a1d5ac357e06c4d75b684c2be05a"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "5ff0f678511bd44dc30df4f5690eb4e151254297"
+  revision = "80a9d759e29d23b9f7c67ffe36dcb1b3ac9e05c3"
 
 [[projects]]
   branch = "master"
@@ -683,6 +684,7 @@
     "gitlab.com/distributed_lab/logan/v3/errors",
     "gitlab.com/distributed_lab/running",
     "gitlab.com/distributed_lab/txsub",
+    "gitlab.com/tokend/go/address",
     "gitlab.com/tokend/go/amount",
     "gitlab.com/tokend/go/build",
     "gitlab.com/tokend/go/doorman",

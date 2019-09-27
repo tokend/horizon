@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type ManageAccountSpecificRuleOp struct {
 	Key
 	Attributes    *ManageAccountSpecificRuleOpAttributes    `json:"attributes,omitempty"`
@@ -18,6 +20,16 @@ type ManageAccountSpecificRuleOpListResponse struct {
 	Data     []ManageAccountSpecificRuleOp `json:"data"`
 	Included Included                      `json:"included"`
 	Links    *Links                        `json:"links"`
+	Meta     json.RawMessage               `json:"meta,omitempty"`
+}
+
+func (r *ManageAccountSpecificRuleOpListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *ManageAccountSpecificRuleOpListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustManageAccountSpecificRuleOp - returns ManageAccountSpecificRuleOp from include collection.

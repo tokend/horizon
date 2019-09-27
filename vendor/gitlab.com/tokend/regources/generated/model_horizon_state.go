@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type HorizonState struct {
 	Key
 	Attributes HorizonStateAttributes `json:"attributes"`
@@ -14,9 +16,19 @@ type HorizonStateResponse struct {
 }
 
 type HorizonStateListResponse struct {
-	Data     []HorizonState `json:"data"`
-	Included Included       `json:"included"`
-	Links    *Links         `json:"links"`
+	Data     []HorizonState  `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *HorizonStateListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *HorizonStateListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustHorizonState - returns HorizonState from include collection.

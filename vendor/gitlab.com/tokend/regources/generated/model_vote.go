@@ -22,9 +22,19 @@ type VoteResponse struct {
 }
 
 type VoteListResponse struct {
-	Data     []Vote   `json:"data"`
-	Included Included `json:"included"`
-	Links    *Links   `json:"links"`
+	Data     []Vote          `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *VoteListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *VoteListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustVote - returns Vote from include collection.

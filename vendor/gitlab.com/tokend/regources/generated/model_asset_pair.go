@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type AssetPair struct {
 	Key
 	Attributes    AssetPairAttributes    `json:"attributes"`
@@ -15,9 +17,19 @@ type AssetPairResponse struct {
 }
 
 type AssetPairListResponse struct {
-	Data     []AssetPair `json:"data"`
-	Included Included    `json:"included"`
-	Links    *Links      `json:"links"`
+	Data     []AssetPair     `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *AssetPairListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *AssetPairListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustAssetPair - returns AssetPair from include collection.

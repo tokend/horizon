@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type PaymentOp struct {
 	Key
 	Attributes    PaymentOpAttributes    `json:"attributes"`
@@ -15,9 +17,19 @@ type PaymentOpResponse struct {
 }
 
 type PaymentOpListResponse struct {
-	Data     []PaymentOp `json:"data"`
-	Included Included    `json:"included"`
-	Links    *Links      `json:"links"`
+	Data     []PaymentOp     `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *PaymentOpListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *PaymentOpListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustPaymentOp - returns PaymentOp from include collection.

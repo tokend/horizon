@@ -95,10 +95,11 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/swap"
+  branch = "feature/address"
   name = "gitlab.com/tokend/go"
+
 [[constraint]]
-  branch = "feature/swap"
+  branch = "fix/license-info"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

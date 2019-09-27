@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type CloseSwapOp struct {
 	Key
 	Attributes    CloseSwapOpAttributes    `json:"attributes"`
@@ -15,9 +17,19 @@ type CloseSwapOpResponse struct {
 }
 
 type CloseSwapOpListResponse struct {
-	Data     []CloseSwapOp `json:"data"`
-	Included Included      `json:"included"`
-	Links    *Links        `json:"links"`
+	Data     []CloseSwapOp   `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *CloseSwapOpListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *CloseSwapOpListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustCloseSwapOp - returns CloseSwapOp from include collection.

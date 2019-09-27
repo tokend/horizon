@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type ManagePollOp struct {
 	Key
 	Attributes    ManagePollOpAttributes    `json:"attributes"`
@@ -15,9 +17,19 @@ type ManagePollOpResponse struct {
 }
 
 type ManagePollOpListResponse struct {
-	Data     []ManagePollOp `json:"data"`
-	Included Included       `json:"included"`
-	Links    *Links         `json:"links"`
+	Data     []ManagePollOp  `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *ManagePollOpListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *ManagePollOpListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustManagePollOp - returns ManagePollOp from include collection.

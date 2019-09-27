@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type AccountRule struct {
 	Key
 	Attributes AccountRuleAttributes `json:"attributes"`
@@ -14,9 +16,19 @@ type AccountRuleResponse struct {
 }
 
 type AccountRuleListResponse struct {
-	Data     []AccountRule `json:"data"`
-	Included Included      `json:"included"`
-	Links    *Links        `json:"links"`
+	Data     []AccountRule   `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *AccountRuleListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *AccountRuleListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustAccountRule - returns AccountRule from include collection.
