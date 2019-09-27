@@ -1,6 +1,7 @@
 package requests
 
 import (
+	. "github.com/go-ozzo/ozzo-validation"
 	"net/http"
 
 	amount2 "gitlab.com/tokend/go/amount"
@@ -50,7 +51,7 @@ func NewGetCalculatedFees(r *http.Request) (*GetCalculatedFees, error) {
 		return nil, errors.New("amount is required")
 	}
 
-	amount, err := amount2.Parse(amountRaw)
+	amount, err := parseAmount(amountRaw)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse amount")
 	}
@@ -65,4 +66,17 @@ func NewGetCalculatedFees(r *http.Request) (*GetCalculatedFees, error) {
 	}
 
 	return &request, nil
+}
+
+func parseAmount(raw string) (uint64, error) {
+	amount, err := amount2.Parse(raw)
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to parse amount")
+	}
+
+	if amount < 0 {
+		return 0, errors.New("amount >= 0 required")
+	}
+
+	return uint64(amount), nil
 }
