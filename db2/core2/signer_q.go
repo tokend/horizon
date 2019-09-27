@@ -65,3 +65,9 @@ func (q SignerQ) Select() ([]Signer, error) {
 
 	return result, nil
 }
+
+// Page - returns Q with specified limit and offset params
+func (q SignerQ) Page(params db2.OffsetPageParams) SignerQ {
+	q.selector = params.ApplyTo(q.selector)
+	return q
+}
