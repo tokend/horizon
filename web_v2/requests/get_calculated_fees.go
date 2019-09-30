@@ -64,8 +64,6 @@ func makeCalculatedFees(b *base) (*GetCalculatedFees, error) {
 		Field(&data.address, Required, addr.IsAddress),
 		Field(&data.asset, Required),
 		Field(&data.amount, Required, &isNonNegAmount{}),
-		Field(&data.feeType, Required),
-		Field(&data.subtype, Required),
 	)
 	if err != nil {
 		return nil, err
