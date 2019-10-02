@@ -3,6 +3,8 @@ package horizon
 import (
 	"time"
 
+	"gitlab.com/tokend/go/xdr"
+
 	"gitlab.com/tokend/horizon/corer"
 
 	"gitlab.com/tokend/horizon/web_v2/handlers"
@@ -22,6 +24,10 @@ import (
 	"gitlab.com/tokend/horizon/web_v2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
+)
+
+const (
+	kvKeyLicenseAdminSignerRole = "license_admin_signer_role"
 )
 
 type WebV2 struct {
@@ -44,7 +50,10 @@ func initWebV2Middleware(app *App) {
 
 	logger := &log.DefaultLogger.Entry
 
-	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
+	doorman, err := createDoorman(app)
+	if err != nil {
+		panic(errors.Wrap(err, "failed to init doorman, stopping"))
+	}
 
 	m.Use(
 		middleware.StripSlashes,
@@ -58,7 +67,7 @@ func initWebV2Middleware(app *App) {
 			ctx.SetCoreRepo(app.CoreRepoLogged(nil)),
 			// log will be set by logger setter on handler call
 			ctx.SetHistoryRepo(app.HistoryRepoLogged(nil)),
-			ctx.SetDoorman(doorman.New(app.config.SkipCheck, signersProvider)),
+			ctx.SetDoorman(doorman),
 			ctx.SetCoreInfo(func() corer.Info {
 				// required to make sure that we return most recent core info
 				if app.CoreInfo == nil {
@@ -98,6 +107,33 @@ func initWebV2Middleware(app *App) {
 		}
 		ape.RenderErr(w, err)
 	})
+}
+
+func createDoorman(app *App) (doorman.Doorman, error) {
+	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
+	kvQ := core2.NewKeyValueQ(app.CoreRepoLogged(nil))
+
+	licenseAdminSignerRoleKV, err := kvQ.ByKey(kvKeyLicenseAdminSignerRole)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot get key value from core")
+	}
+
+	var licenseAdminSignerRole uint64
+	if licenseAdminSignerRoleKV.Value.Type != xdr.KeyValueEntryTypeUint64 {
+		return nil, errors.New("kv type is invalid, check terraform")
+	}
+	if licenseAdminSignerRoleKV.Value.Ui64Value == nil {
+		return nil, errors.New("kv value is nil, check terraform")
+	}
+	licenseAdminSignerRole = uint64(*licenseAdminSignerRoleKV.Value.Ui64Value)
+
+	return doorman.NewWithOpts(app.config.SkipCheck, signersProvider, doorman.SignerOfOpts{
+		Constraints: []doorman.SignerOfExt{
+			&doorman.RestrictedRoleConstraint{
+				RoleID: licenseAdminSignerRole,
+			},
+		},
+	}), nil
 }
 
 func initWebV2Actions(app *App) {
