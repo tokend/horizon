@@ -114,12 +114,13 @@ func createDoorman(app *App) (doorman.Doorman, error) {
 		kvQ := core2.NewKeyValueQ(app.CoreRepoLogged(nil))
 		constraints := make([]doorman.SignerOfExt, 0, 10)
 
-		licenseAdminVal, err := getKVValue(kvQ, kvKeyLicenseAdminSignerRole, xdr.KeyValueEntryTypeUint64)
+		licenseAdminSignerRoleVal, err := getKVValue(kvQ, kvKeyLicenseAdminSignerRole, xdr.KeyValueEntryTypeUint64)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get license admin kv value")
 		}
+		licenseAdminSignerRole := uint64(*licenseAdminSignerRoleVal.Ui64Value)
 		constraints = append(constraints, &doorman.RestrictedRoleConstraint{
-			RoleID: uint64(*licenseAdminVal.Ui64Value),
+			RoleID: licenseAdminSignerRole,
 		})
 
 		kycRecvEnabledVal, err := getKVValue(kvQ, kvKeyKycRecoveryEnabled, xdr.KeyValueEntryTypeUint32)
@@ -127,13 +128,15 @@ func createDoorman(app *App) (doorman.Doorman, error) {
 			return nil, errors.Wrap(err, "failed to get kyc recovery enabled kv value")
 		}
 
-		if uint32(*kycRecvEnabledVal.Ui32Value) != 0 {
+		kycRecvEnabled := uint32(*kycRecvEnabledVal.Ui32Value)
+		if kycRecvEnabled != 0 {
 			kycRecvSignerVal, err := getKVValue(kvQ, kvKeyKycRecoverySignerRole, xdr.KeyValueEntryTypeUint64)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get license admin kv value")
 			}
+			kycRecvSignerRole := uint64(*kycRecvSignerVal.Ui64Value)
 			constraints = append(constraints, &doorman.RestrictedRoleConstraint{
-				RoleID: uint64(*kycRecvSignerVal.Ui64Value),
+				RoleID: kycRecvSignerRole,
 			})
 		}
 
