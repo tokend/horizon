@@ -117,14 +117,14 @@ func createDoorman(app *App) (doorman.Doorman, error) {
 		return nil, errors.Wrap(err, "cannot get key value from core")
 	}
 
-	var licenseAdminSignerRole uint64
 	if licenseAdminSignerRoleKV.Value.Type != xdr.KeyValueEntryTypeUint64 {
 		return nil, errors.New("license admin signer role kv type is invalid, check terraform")
 	}
 	if licenseAdminSignerRoleKV.Value.Ui64Value == nil {
 		return nil, errors.New("license admin signer role kv value is nil, check terraform")
 	}
-	licenseAdminSignerRole = uint64(*licenseAdminSignerRoleKV.Value.Ui64Value)
+
+	licenseAdminSignerRole := uint64(*licenseAdminSignerRoleKV.Value.Ui64Value)
 
 	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
 	return doorman.NewWithOpts(app.config.SkipCheck, signersProvider, doorman.SignerOfOpts{
