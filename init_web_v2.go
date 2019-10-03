@@ -110,7 +110,6 @@ func initWebV2Middleware(app *App) {
 }
 
 func createDoorman(app *App) (doorman.Doorman, error) {
-	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
 	kvQ := core2.NewKeyValueQ(app.CoreRepoLogged(nil))
 
 	licenseAdminSignerRoleKV, err := kvQ.ByKey(kvKeyLicenseAdminSignerRole)
@@ -120,13 +119,14 @@ func createDoorman(app *App) (doorman.Doorman, error) {
 
 	var licenseAdminSignerRole uint64
 	if licenseAdminSignerRoleKV.Value.Type != xdr.KeyValueEntryTypeUint64 {
-		return nil, errors.New("kv type is invalid, check terraform")
+		return nil, errors.New("license admin signer role kv type is invalid, check terraform")
 	}
 	if licenseAdminSignerRoleKV.Value.Ui64Value == nil {
-		return nil, errors.New("kv value is nil, check terraform")
+		return nil, errors.New("license admin signer role kv value is nil, check terraform")
 	}
 	licenseAdminSignerRole = uint64(*licenseAdminSignerRoleKV.Value.Ui64Value)
 
+	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
 	return doorman.NewWithOpts(app.config.SkipCheck, signersProvider, doorman.SignerOfOpts{
 		Constraints: []doorman.SignerOfExt{
 			&doorman.RestrictedRoleConstraint{
