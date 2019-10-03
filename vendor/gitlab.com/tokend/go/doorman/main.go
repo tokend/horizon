@@ -7,6 +7,7 @@ import (
 )
 
 type SignerConstraint func(*http.Request, Doorman) error
+type LazySignerOfOpts func() (*SignerOfOpts, error)
 
 func New(passAllChecks bool, accountQ data.AccountQ) Doorman {
 	return &doorman{
@@ -31,5 +32,13 @@ func NewWithOpts(passAllChecks bool, accountQ data.AccountQ, opts SignerOfOpts) 
 		SkipChecker:  data.NewChecker(passAllChecks),
 		AccountQ:     accountQ,
 		signerOfExts: opts.Constraints,
+	}
+}
+
+func NewLazy(passAllChecks bool, accountQ data.AccountQ, lazy LazySignerOfOpts) Doorman {
+	return &doorman{
+		SkipChecker: data.NewChecker(passAllChecks),
+		AccountQ:    accountQ,
+		lazyOpts:    lazy,
 	}
 }

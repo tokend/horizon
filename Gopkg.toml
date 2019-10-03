@@ -95,7 +95,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/address"
+  branch = "feature/lazy-opts"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

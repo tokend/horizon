@@ -1,9 +1,9 @@
 package doorman
 
 import (
-	"gitlab.com/tokend/go/resources"
 	"net/http"
 
+	"gitlab.com/tokend/go/resources"
 	"gitlab.com/tokend/go/signcontrol"
 )
 
