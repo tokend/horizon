@@ -76,6 +76,7 @@ ExternalSystemData:
   required: [type, data]
   properties:
     type:
+      type: string
       format: ExternalDataType
       description: |
         Possible values:

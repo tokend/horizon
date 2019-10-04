@@ -99,7 +99,7 @@
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "fix/license-info"
+  branch = "fix/docs_for_kotlin_generator"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

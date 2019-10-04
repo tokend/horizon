@@ -74,13 +74,13 @@ AtomicSwapAsk:
                 data:
                   type: array
                   items:
-                    $ref: '#/components/schemas/AtomicSwapQuoteAsset'
+                    $ref: '#/components/schemas/AtomicSwapQuoteAssetKey'
             base_asset:
               description: "Base asset of the atomic swap ask"
               type: object
               properties:
                 data:
-                  $ref: '#/components/schemas/QuoteAssetKey'
+                  $ref: '#/components/schemas/AssetKey'
 
 AtomicSwapQuoteAssetKey:
   type: object

@@ -14,6 +14,7 @@
 
 * RequestID in create issuance request operation details
 * includes for swaps (`/v3/swaps`)
+* docs consistency with actual responses
 
 ## 3.6.0-x.0
 

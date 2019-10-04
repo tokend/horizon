@@ -21,7 +21,7 @@ CreateAtomicSwapAskRequestOp:
         properties:
           request:
             type: object
-            $ref: '#/components/schemas/Int64Key'
+            $ref: '#/components/schemas/RequestKey'
           base_balance:
             type: object
             $ref: '#/components/schemas/BalanceKey'

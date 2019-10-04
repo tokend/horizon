@@ -531,15 +531,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "fix/license-info"
-  digest = "1:4707e28c7abf59477e9fe0485fb54a046316a1d5ac357e06c4d75b684c2be05a"
+  branch = "fix/docs_for_kotlin_generator"
+  digest = "1:eedd1a27b302e71ea8d764d9eeaa4f3afc06b7f441cad2bf76d48dbc9348e569"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "80a9d759e29d23b9f7c67ffe36dcb1b3ac9e05c3"
+  revision = "f445dc4cf8ac422acfc83010619d0378ee4737ae"
 
 [[projects]]
   branch = "master"

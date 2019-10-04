@@ -30,7 +30,8 @@ AccountSpecificRule:
               description: "defines whether or not it is forbidden to access resource"
               example: false
             ledger_key:
+              allOf:
+                - $ref: '#/components/schemas/Details'
               type: object
               format: xdr.LedgerKey
-              additionalProperties: true
               description: "Ledger entry key"
