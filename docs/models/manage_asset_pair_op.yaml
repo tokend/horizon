@@ -43,7 +43,8 @@ ManageAssetPairOp:
             format: Amount
             example: "1.1"
           policies:
-            type: integer
+            allOf:
+              - $ref: '#/components/schemas/Mask'
             format: xdr.AssetPairPolicy
             nullable: true
             description: |

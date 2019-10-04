@@ -1,4 +1,9 @@
 EffectKey:
+  oneOf:
+    - $ref: '#/components/schemas/EffectBalanceChangeKey'
+    - $ref: '#/components/schemas/EffectMatchedKey'
+
+EffectBalanceChangeKey:
   type: object
   properties:
     id:
@@ -14,7 +19,17 @@ EffectKey:
       - "effects-locked"
       - "effects-unlocked"
       - "effects-charged-from-locked"
-      - "effects-matched"
+
+EffectMatchedKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "effects-matched"
 
 ParticularBalanceChangeEffect:
   type: object
@@ -30,10 +45,14 @@ ParticularBalanceChangeEffect:
     asset_code:
       type: string
 
+Effect:
+  oneOf:
+    - $ref: '#/components/schemas/EffectMatched'
+    - $ref: '#/components/schemas/EffectBalanceChange'
 
 EffectMatched:
   allOf:
-    - $ref: '#/components/schemas/EffectKey'
+    - $ref: '#/components/schemas/EffectMatchedKey'
     - type: object
       required: [attributes]
       properties:
@@ -57,7 +76,7 @@ EffectMatched:
 
 EffectBalanceChange:
   allOf:
-    - $ref: '#/components/schemas/EffectKey'
+    - $ref: '#/components/schemas/EffectBalanceChangeKey'
     - type: object
       required: [attributes]
       properties:

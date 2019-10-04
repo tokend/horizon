@@ -44,7 +44,8 @@ ManageAssetOp:
             allOf:
             - $ref: '#/components/schemas/Enum'
           policies:
-            type: integer
+            allOf:
+              - $ref: '#/components/schemas/Mask'
             format: xdr.AssetPolicy
             nullable: true
             description: |

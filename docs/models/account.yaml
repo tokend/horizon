@@ -22,6 +22,8 @@ Account:
         type: object
         properties:
           kyc_recovery_status:
+            allOf:
+              - $ref: '#/components/schemas/Enum'
             format: KYCRecoveryStatus
             description: |
               Indicates kyc recovery status of the account

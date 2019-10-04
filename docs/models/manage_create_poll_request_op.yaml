@@ -19,7 +19,7 @@ ManageCreatePollRequestOp:
         nullable: true
         properties:
           request:
-            $ref: '#/components/schemas/Int64Key'
+            $ref: '#/components/schemas/RequestKey'
           result_provider:
             $ref: '#/components/schemas/AccountKey'
       attributes:
