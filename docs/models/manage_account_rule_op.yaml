@@ -55,8 +55,9 @@ ManageAccountRuleOp:
           details:
             $ref: '#/components/schemas/Details'
           resource:
+            allOf:
+              - $ref: '#/components/schemas/Details'
             type: object
             format: xdr.AccountRuleResource
-            additionalProperties: true
             description: "Free-form object"
               #todo add resource

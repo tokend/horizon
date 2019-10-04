@@ -80,8 +80,7 @@
                     oneOf:
                     - $ref: '#/components/schemas/Operation'
                     - $ref: '#/components/schemas/OperationDetails'
-                    - $ref: '#/components/schemas/EffectMatched'
-                    - $ref: '#/components/schemas/EffectBalanceChange'
+                    - $ref: '#/components/schemas/Effect'
                 links:
                   type: object
                   description: "Provides links for pagination"

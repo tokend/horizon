@@ -94,7 +94,8 @@ Poll:
               example: true
               description: "defines if result provider is required to participate in poll voting"
             poll_state:
-              type: integer
+              allOf:
+                - $ref: '#/components/schemas/Enum'
               format: PollState
               description: |
                 * 1 - open
