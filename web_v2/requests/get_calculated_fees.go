@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	. "github.com/go-ozzo/ozzo-validation"
-	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	addr "gitlab.com/tokend/go/address"
 	amount2 "gitlab.com/tokend/go/amount"
@@ -82,7 +81,12 @@ func makeCalculatedFees(b *base) (*GetCalculatedFees, error) {
 type isNonNegAmount struct{}
 
 func (ia *isNonNegAmount) Validate(value interface{}) error {
-	a, err := cast.ToInt64E(value)
+	strVal, ok := value.(string)
+	if !ok {
+		return Errors{"amount": errors.New("amount is not string")}
+	}
+
+	a, err := amount2.Parse(strVal)
 	if err != nil {
 		return Errors{"amount": err}
 	}
