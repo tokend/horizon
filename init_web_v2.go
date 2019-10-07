@@ -3,6 +3,8 @@ package horizon
 import (
 	"time"
 
+	"gitlab.com/tokend/horizon/cache"
+
 	"gitlab.com/tokend/horizon/corer"
 
 	"gitlab.com/tokend/horizon/web_v2/handlers"
@@ -13,6 +15,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/pkg/errors"
 	"github.com/rs/cors"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/tokend/go/doorman"
@@ -46,6 +49,8 @@ func initWebV2Middleware(app *App) {
 
 	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
 
+	cacher := cache.NewMiddlewareCache(app.config.CacheSize, app.config.CachePeriod)
+
 	m.Use(
 		middleware.StripSlashes,
 		middleware.SetHeader(upstreamHeader, app.config.Hostname),
@@ -53,6 +58,7 @@ func initWebV2Middleware(app *App) {
 		ape.LoganMiddleware(logger, time.Second, ape.LoggerSetter(ctx.SetLog),
 			ape.RequestIDProvider(middleware.GetReqID)),
 		ape.RecoverMiddleware(logger),
+		cacher.Middleware,
 		ape.CtxMiddleWare(
 			// log will be set by logger setter on handler call
 			ctx.SetCoreRepo(app.CoreRepoLogged(nil)),
