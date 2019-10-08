@@ -69,6 +69,10 @@ func (c *MiddlewareCache) Middleware(next http.Handler) http.Handler {
 
 		next.ServeHTTP(ww, r)
 
+		if (ww.Status() >= 300) || (ww.Status() < 200) {
+			return
+		}
+
 		value := value{
 			expiration: time.Now().Add(c.expirationPeriod),
 			response:   raw.Bytes(),
