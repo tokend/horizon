@@ -20,6 +20,8 @@ config:
   project: ""
   env: ""
   migrate_up_on_start: false
+  cache_period: 5s
+  cache_size: 10000
   invest_ready: http://
   telegram_airdrop: http://
 

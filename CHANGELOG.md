@@ -2,11 +2,17 @@
 
 ## Unreleased
 
-## Added
+### Added
+
+* Cache for `GET` requests
+
+## 3.6.1-x.0
+
+### Added
 
 * `/v3/license` endpoint to return current license info
 
-## Removed
+### Removed
 
 * Request for account endpoint (`/v3/accounts/{id}/requests/{request_id}`)
 
