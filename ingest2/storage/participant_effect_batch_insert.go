@@ -31,7 +31,7 @@ func history2ParticipantEffectBatchInsert(repo *db2.Repo, rows []history2.Partic
 			}
 
 			sql = sq.Insert(tableName).Columns(columns...)
-			paramsInQueue = 0
+			paramsInQueue = len(columns)
 		}
 
 		sql = sql.Values(converter(row)...)

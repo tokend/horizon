@@ -6,6 +6,9 @@
 
 * Cache for `GET` requests
 
+### Fixed
+* Batch inserter corner case
+
 ## 3.6.1-x.0
 
 ### Added
