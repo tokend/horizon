@@ -31,7 +31,7 @@ func history2TransactionBatchInsert(repo *db2.Repo, rows []history2.Transaction,
 			}
 
 			sql = sq.Insert(tableName).Columns(columns...)
-			paramsInQueue = 0
+			paramsInQueue = len(columns)
 		}
 
 		sql = sql.Values(converter(row)...)

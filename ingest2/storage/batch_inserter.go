@@ -34,7 +34,7 @@ func valueTypeBatchInsert(repo *db2.Repo, rows []valueType, tableName string, co
 			}
 
 			sql = sq.Insert(tableName).Columns(columns...)
-			paramsInQueue = 0
+			paramsInQueue = len(columns)
 		}
 
 		sql = sql.Values(converter(row)...)
