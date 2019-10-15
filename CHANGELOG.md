@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 3.6.2-x.0
+
 ### Added
 
 * Cache for `GET` requests
@@ -9,7 +11,7 @@
 ### Fixed
 * Batch inserter corner case
 
-## 3.6.1-x.0
+## 3.6.1
 
 ### Added
 
@@ -25,7 +27,7 @@
 * includes for swaps (`/v3/swaps`)
 * docs consistency with actual responses
 
-## 3.6.0-x.0
+## 3.6.0
 
 ### Added
 
