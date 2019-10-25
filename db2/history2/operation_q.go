@@ -28,12 +28,10 @@ func NewOperationQ(repo *db2.Repo) OperationQ {
 	}
 }
 
-//
-//func (q OperationQ) FilterByOperationsTypes() OperationQ {
-//	q.selector = q.selector.
-//
-//	return q
-//}
+func (q OperationQ) FilterByOperationsTypes(types []int) OperationQ {
+	q.selector = q.selector.Where(sq.Eq{"op.type": types})
+	return q
+}
 
 // Page - apply paging params to the query
 func (q OperationQ) Page(pageParams db2.CursorPageParams) OperationQ {
