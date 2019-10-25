@@ -6,13 +6,14 @@
 
 * Operations endpoint (`/v3/operations`)
 
-## 3.6.2-x.0
+## 3.6.2
 
 ### Added
 
 * Cache for `GET` requests
 
 ### Fixed
+
 * Batch inserter corner case
 
 ## 3.6.1
