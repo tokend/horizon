@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added  
+
+* Operations endpoint (`/v3/operations`)
+
 ## 3.6.2-x.0
 
 ### Added
