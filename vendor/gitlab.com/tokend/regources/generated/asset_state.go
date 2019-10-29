@@ -39,3 +39,7 @@ func (s *AssetState) UnmarshalJSON(b []byte) error {
 	*s = AssetState(res.Value)
 	return nil
 }
+
+func (s AssetState) IsFlag() bool {
+	return true
+}

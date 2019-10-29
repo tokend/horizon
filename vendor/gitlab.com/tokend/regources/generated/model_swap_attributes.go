@@ -22,5 +22,5 @@ type SwapAttributes struct {
 	SecretHash string `json:"secret_hash"`
 	SourceFee  Fee    `json:"source_fee"`
 	// * 0 - \"open\" * 1 - \"closed\" * 2 - \"cancelled\"
-	State int32 `json:"state"`
+	State SwapState `json:"state"`
 }
