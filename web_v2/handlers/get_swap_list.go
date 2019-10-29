@@ -25,7 +25,7 @@ func GetSwapList(w http.ResponseWriter, r *http.Request) {
 	handler := getSwapListHandler{
 		SwapsQ:    history2.NewSwapsQ(historyRepo),
 		AssetsQ:   core2.NewAssetsQ(ctx.CoreRepo(r)),
-		BalancesQ: core2.NewBalancesQ(ctx.CoreRepo(r)),
+		BalancesQ: history2.NewBalancesQ(ctx.HistoryRepo(r)),
 		Log:       ctx.Log(r),
 	}
 
@@ -50,7 +50,7 @@ func GetSwapList(w http.ResponseWriter, r *http.Request) {
 type getSwapListHandler struct {
 	SwapsQ    history2.SwapsQ
 	AssetsQ   core2.AssetsQ
-	BalancesQ core2.BalancesQ
+	BalancesQ history2.BalancesQ
 	Log       *logan.Entry
 }
 
@@ -115,7 +115,9 @@ func (h *getSwapListHandler) GetSwapList(request *requests.GetSwapList) (*regour
 			if histBalance == nil {
 				return nil, errors.New("Expected balance to exist")
 			}
-			balance := resources.NewBalance(histBalance)
+			balance := &regources.Balance{
+				Key: resources.NewBalanceKey(histBalance.Address),
+			}
 			response.Included.Add(balance)
 		}
 
@@ -127,7 +129,9 @@ func (h *getSwapListHandler) GetSwapList(request *requests.GetSwapList) (*regour
 			if histBalance == nil {
 				return nil, errors.New("Expected balance to exist")
 			}
-			balance := resources.NewBalance(histBalance)
+			balance := &regources.Balance{
+				Key: resources.NewBalanceKey(histBalance.Address),
+			}
 			response.Included.Add(balance)
 		}
 	}

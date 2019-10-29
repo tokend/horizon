@@ -30,7 +30,7 @@ func GetCreateAtomicSwapAskRequests(w http.ResponseWriter, r *http.Request) {
 	handler := getCreateAtomicSwapAskRequestsHandler{
 		R:         request,
 		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
-		BalancesQ: core2.NewBalancesQ(coreRepo),
+		BalancesQ: history2.NewBalancesQ(historyRepo),
 		AssetsQ:   core2.NewAssetsQ(coreRepo),
 		Log:       ctx.Log(r),
 	}
@@ -53,7 +53,7 @@ type getCreateAtomicSwapAskRequestsHandler struct {
 	R         requests.GetCreateAtomicSwapAskRequests
 	Base      getRequestListBaseHandler
 	RequestsQ history2.ReviewableRequestsQ
-	BalancesQ core2.BalancesQ
+	BalancesQ history2.BalancesQ
 	AssetsQ   core2.AssetsQ
 	Log       *logan.Entry
 }
@@ -81,16 +81,18 @@ func (h *getCreateAtomicSwapAskRequestsHandler) RenderRecord(included *regources
 		if balance == nil {
 			return regources.ReviewableRequest{}, errors.New("balance not found")
 		}
-		resource := resources.NewBalance(balance)
+		resource := &regources.Balance{
+			Key: resources.NewBalanceKey(balance.Address),
+		}
 		included.Add(resource)
 	}
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapAskRequestsQuoteAssets) {
 		for _, record := range record.Details.CreateAtomicSwapAsk.QuoteAssets {
 			quoteAsset := core2.AtomicSwapQuoteAsset{
-				AskID: 0,
+				AskID:      0,
 				QuoteAsset: record.Asset,
-				Price: uint64(record.Price),
+				Price:      uint64(record.Price),
 			}
 			asset := resources.NewAtomicSwapAskQuoteAsset(quoteAsset)
 			included.Add(&asset)

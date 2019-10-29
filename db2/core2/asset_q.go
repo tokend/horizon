@@ -8,7 +8,7 @@ import (
 
 var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details",
 	"max_issuance_amount", "available_for_issueance", "issued",
-	"pending_issuance", "policies", "trailing_digits", "type"}
+	"pending_issuance", "policies", "trailing_digits", "type", "state"}
 
 //AssetsQ - helper struct to load assets from db
 type AssetsQ struct {
@@ -50,6 +50,12 @@ func (q AssetsQ) FilterByCodes(codes []string) AssetsQ {
 // FilterByOwner - returns q with filter by owner ID
 func (q AssetsQ) FilterByOwner(ownerID string) AssetsQ {
 	q.selector = q.selector.Where("assets.owner = ?", ownerID)
+	return q
+}
+
+// FilterByState - returns q with filter by owner ID
+func (q AssetsQ) FilterByState(state uint32) AssetsQ {
+	q.selector = q.selector.Where("assets.state = ?", state)
 	return q
 }
 
