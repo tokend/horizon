@@ -1,5 +1,5 @@
-// revision: dcb0962ff5cc056c96c54b6678f34278a66eeddd
-// branch:   feature/swap
+// revision: 45798300de3799cc05fe16c940ec28f206d0da37
+// branch:   fix/asset-removal
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -13455,8 +13455,9 @@ func (u CheckSaleStateResult) GetSuccess() (result CheckSaleStateSuccess, ok boo
 //
 //   struct CloseSwapOp
 //    {
+//        //: ID of the swap to close
 //        uint64 swapID;
-//
+//        //: (optional) Secret of the swap. Must be provided in order for destination of the swap to receive funds
 //        Hash* secret;
 //
 //        //: reserved for future extension
@@ -13475,11 +13476,13 @@ type CloseSwapOp struct {
 //    {
 //        //: CloseSwap was successful
 //        SUCCESS = 0,
-//
+//        //: Too late to close swap
 //        SWAP_EXPIRED = -1,
+//        //: Provided secret is invalid
 //        INVALID_SECRET = -2,
 //        //: After the swap fulfillment, the destination balance will exceed the limit (total amount on the balance will be greater than UINT64_MAX)
 //        LINE_FULL = -3,
+//        //: Source account is not authorized to close swap
 //        NOT_AUTHORIZED = -4
 //    };
 //
@@ -13593,7 +13596,7 @@ func (e *CloseSwapResultCode) UnmarshalJSON(data []byte) error {
 //    {
 //        //: Swap closed
 //        CLOSED = 0,
-//        //: Swap cancelled updated
+//        //: Swap cancelled
 //        CANCELLED = 1
 //    };
 //
@@ -13690,6 +13693,7 @@ func (e *CloseSwapEffect) UnmarshalJSON(data []byte) error {
 //
 //   //: CloseSwapSuccess is used to pass saved ledger hash and license hash
 //    struct CloseSwapSuccess {
+//        //: Effect of CloseSwap application
 //        CloseSwapEffect effect;
 //
 //        EmptyExt ext;
@@ -28285,7 +28289,9 @@ type ManageLimitsOp struct {
 //        //: Limits cannot be created for account ID and account role simultaneously
 //        CANNOT_CREATE_FOR_ACC_ID_AND_ACC_TYPE = -4, // FIXME ACC_ROLE ?
 //        //: Limits entry is invalid (e.g. weeklyOut is less than dailyOut)
-//        INVALID_LIMITS = -5
+//        INVALID_LIMITS = -5,
+//        //: Asset with provided asset code does not exist
+//        ASSET_NOT_FOUND = -6
 //    };
 //
 type ManageLimitsResultCode int32
@@ -28297,6 +28303,7 @@ const (
 	ManageLimitsResultCodeRoleNotFound                   ManageLimitsResultCode = -3
 	ManageLimitsResultCodeCannotCreateForAccIdAndAccType ManageLimitsResultCode = -4
 	ManageLimitsResultCodeInvalidLimits                  ManageLimitsResultCode = -5
+	ManageLimitsResultCodeAssetNotFound                  ManageLimitsResultCode = -6
 )
 
 var ManageLimitsResultCodeAll = []ManageLimitsResultCode{
@@ -28306,6 +28313,7 @@ var ManageLimitsResultCodeAll = []ManageLimitsResultCode{
 	ManageLimitsResultCodeRoleNotFound,
 	ManageLimitsResultCodeCannotCreateForAccIdAndAccType,
 	ManageLimitsResultCodeInvalidLimits,
+	ManageLimitsResultCodeAssetNotFound,
 }
 
 var manageLimitsResultCodeMap = map[int32]string{
@@ -28315,6 +28323,7 @@ var manageLimitsResultCodeMap = map[int32]string{
 	-3: "ManageLimitsResultCodeRoleNotFound",
 	-4: "ManageLimitsResultCodeCannotCreateForAccIdAndAccType",
 	-5: "ManageLimitsResultCodeInvalidLimits",
+	-6: "ManageLimitsResultCodeAssetNotFound",
 }
 
 var manageLimitsResultCodeShortMap = map[int32]string{
@@ -28324,6 +28333,7 @@ var manageLimitsResultCodeShortMap = map[int32]string{
 	-3: "role_not_found",
 	-4: "cannot_create_for_acc_id_and_acc_type",
 	-5: "invalid_limits",
+	-6: "asset_not_found",
 }
 
 var manageLimitsResultCodeRevMap = map[string]int32{
@@ -28333,6 +28343,7 @@ var manageLimitsResultCodeRevMap = map[string]int32{
 	"ManageLimitsResultCodeRoleNotFound":                   -3,
 	"ManageLimitsResultCodeCannotCreateForAccIdAndAccType": -4,
 	"ManageLimitsResultCodeInvalidLimits":                  -5,
+	"ManageLimitsResultCodeAssetNotFound":                  -6,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -34017,11 +34028,12 @@ func (u OpenSwapOpDestination) GetBalanceId() (result BalanceId, ok bool) {
 //
 //   struct OpenSwapOp
 //    {
+//        //: Source balance of the swap
 //        BalanceID sourceBalance;
-//
+//        //: Amount to send in swap
 //        uint64 amount;
 //
-//       //: `destination` defines the type of instance that receives the payment based on given PaymentDestinationType
+//       //: `destination` defines the type of instance that receives amount based on given PaymentDestinationType
 //       union switch (PaymentDestinationType type) {
 //           case ACCOUNT:
 //               AccountID accountID;
@@ -34029,12 +34041,14 @@ func (u OpenSwapOpDestination) GetBalanceId() (result BalanceId, ok bool) {
 //               BalanceID balanceID;
 //       } destination;
 //
+//        //: Fee data for the swap
 //        PaymentFeeData feeData;
-//
+//        //: Arbitrary stringified json object provided by swap source
 //        longstring details;
 //
+//        //: Hash of the secret
 //        Hash secretHash;
-//
+//        //: Time till which swapped funds can be received by destination if valid secret is provided
 //        int64 lockTime;
 //
 //        //: reserved for future extension
@@ -34059,6 +34073,7 @@ type OpenSwapOp struct {
 //        //: OpenSwap was successful
 //        SUCCESS = 0,
 //
+//        //: Source and destination balances are the same
 //        MALFORMED = -1,
 //        //: Not enough funds in the source account
 //        UNDERFUNDED = -2,
@@ -34078,8 +34093,11 @@ type OpenSwapOp struct {
 //        //: There is no account found with an ID provided in `destination.accountID`
 //        //: Amount precision and asset precision are mismatched
 //        INCORRECT_AMOUNT_PRECISION = -9,
+//        //: Not allowed to create swap with invalid json details
 //        INVALID_DETAILS = -10,
+//        //: Lock time is in the past
 //        INVALID_LOCK_TIME = -11,
+//        //: Zero amount is not allowed
 //        INVALID_AMOUNT = -12
 //
 //    };
@@ -35878,18 +35896,29 @@ type RemoveAssetOp struct {
 //        //: Asset can't be deleted as it has active offers
 //        HAS_ACTIVE_OFFERS = -3,
 //        //: Asset can't be deleted as it has active sales
-//        HAS_ACTIVE_SALES = -4
-//
+//        HAS_ACTIVE_SALES = -4,
+//        //: Asset can't be deleted as it has active atomic swaps
+//        HAS_ACTIVE_ATOMIC_SWAPS = -5,
+//        //: Asset can't be deleted as it has active swaps
+//        HAS_ACTIVE_SWAPS = -6,
+//        //: Asset can't be deleted as it is stats quote asset
+//        CANNOT_REMOVE_STATS_QUOTE_ASSET = -7,
+//        //: Cannot delete asset, as some balances in target asset have non-empty locked amount
+//        HAS_PENDING_MOVEMENTS = -8
 //    };
 //
 type RemoveAssetResultCode int32
 
 const (
-	RemoveAssetResultCodeSuccess          RemoveAssetResultCode = 0
-	RemoveAssetResultCodeInvalidAssetCode RemoveAssetResultCode = -1
-	RemoveAssetResultCodeHasPair          RemoveAssetResultCode = -2
-	RemoveAssetResultCodeHasActiveOffers  RemoveAssetResultCode = -3
-	RemoveAssetResultCodeHasActiveSales   RemoveAssetResultCode = -4
+	RemoveAssetResultCodeSuccess                     RemoveAssetResultCode = 0
+	RemoveAssetResultCodeInvalidAssetCode            RemoveAssetResultCode = -1
+	RemoveAssetResultCodeHasPair                     RemoveAssetResultCode = -2
+	RemoveAssetResultCodeHasActiveOffers             RemoveAssetResultCode = -3
+	RemoveAssetResultCodeHasActiveSales              RemoveAssetResultCode = -4
+	RemoveAssetResultCodeHasActiveAtomicSwaps        RemoveAssetResultCode = -5
+	RemoveAssetResultCodeHasActiveSwaps              RemoveAssetResultCode = -6
+	RemoveAssetResultCodeCannotRemoveStatsQuoteAsset RemoveAssetResultCode = -7
+	RemoveAssetResultCodeHasPendingMovements         RemoveAssetResultCode = -8
 )
 
 var RemoveAssetResultCodeAll = []RemoveAssetResultCode{
@@ -35898,6 +35927,10 @@ var RemoveAssetResultCodeAll = []RemoveAssetResultCode{
 	RemoveAssetResultCodeHasPair,
 	RemoveAssetResultCodeHasActiveOffers,
 	RemoveAssetResultCodeHasActiveSales,
+	RemoveAssetResultCodeHasActiveAtomicSwaps,
+	RemoveAssetResultCodeHasActiveSwaps,
+	RemoveAssetResultCodeCannotRemoveStatsQuoteAsset,
+	RemoveAssetResultCodeHasPendingMovements,
 }
 
 var removeAssetResultCodeMap = map[int32]string{
@@ -35906,6 +35939,10 @@ var removeAssetResultCodeMap = map[int32]string{
 	-2: "RemoveAssetResultCodeHasPair",
 	-3: "RemoveAssetResultCodeHasActiveOffers",
 	-4: "RemoveAssetResultCodeHasActiveSales",
+	-5: "RemoveAssetResultCodeHasActiveAtomicSwaps",
+	-6: "RemoveAssetResultCodeHasActiveSwaps",
+	-7: "RemoveAssetResultCodeCannotRemoveStatsQuoteAsset",
+	-8: "RemoveAssetResultCodeHasPendingMovements",
 }
 
 var removeAssetResultCodeShortMap = map[int32]string{
@@ -35914,14 +35951,22 @@ var removeAssetResultCodeShortMap = map[int32]string{
 	-2: "has_pair",
 	-3: "has_active_offers",
 	-4: "has_active_sales",
+	-5: "has_active_atomic_swaps",
+	-6: "has_active_swaps",
+	-7: "cannot_remove_stats_quote_asset",
+	-8: "has_pending_movements",
 }
 
 var removeAssetResultCodeRevMap = map[string]int32{
-	"RemoveAssetResultCodeSuccess":          0,
-	"RemoveAssetResultCodeInvalidAssetCode": -1,
-	"RemoveAssetResultCodeHasPair":          -2,
-	"RemoveAssetResultCodeHasActiveOffers":  -3,
-	"RemoveAssetResultCodeHasActiveSales":   -4,
+	"RemoveAssetResultCodeSuccess":                     0,
+	"RemoveAssetResultCodeInvalidAssetCode":            -1,
+	"RemoveAssetResultCodeHasPair":                     -2,
+	"RemoveAssetResultCodeHasActiveOffers":             -3,
+	"RemoveAssetResultCodeHasActiveSales":              -4,
+	"RemoveAssetResultCodeHasActiveAtomicSwaps":        -5,
+	"RemoveAssetResultCodeHasActiveSwaps":              -6,
+	"RemoveAssetResultCodeCannotRemoveStatsQuoteAsset": -7,
+	"RemoveAssetResultCodeHasPendingMovements":         -8,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -49738,7 +49783,9 @@ type TransactionResult struct {
 //        FIX_SIGNER_CHANGES_REMOVE = 17,
 //        FIX_DEPOSIT_STATS = 18,
 //        FIX_CREATE_KYC_RECOVERY_PERMISSIONS = 19,
-//        CLEAR_DATABASE_CACHE = 20
+//        CLEAR_DATABASE_CACHE = 20,
+//        FIX_ISSUANCE_REVIEWER = 21,
+//        MARK_ASSET_AS_DELETED = 22
 //    };
 //
 type LedgerVersion int32
@@ -49765,6 +49812,8 @@ const (
 	LedgerVersionFixDepositStats                   LedgerVersion = 18
 	LedgerVersionFixCreateKycRecoveryPermissions   LedgerVersion = 19
 	LedgerVersionClearDatabaseCache                LedgerVersion = 20
+	LedgerVersionFixIssuanceReviewer               LedgerVersion = 21
+	LedgerVersionMarkAssetAsDeleted                LedgerVersion = 22
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -49789,6 +49838,8 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixDepositStats,
 	LedgerVersionFixCreateKycRecoveryPermissions,
 	LedgerVersionClearDatabaseCache,
+	LedgerVersionFixIssuanceReviewer,
+	LedgerVersionMarkAssetAsDeleted,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -49813,6 +49864,8 @@ var ledgerVersionMap = map[int32]string{
 	18: "LedgerVersionFixDepositStats",
 	19: "LedgerVersionFixCreateKycRecoveryPermissions",
 	20: "LedgerVersionClearDatabaseCache",
+	21: "LedgerVersionFixIssuanceReviewer",
+	22: "LedgerVersionMarkAssetAsDeleted",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -49837,6 +49890,8 @@ var ledgerVersionShortMap = map[int32]string{
 	18: "fix_deposit_stats",
 	19: "fix_create_kyc_recovery_permissions",
 	20: "clear_database_cache",
+	21: "fix_issuance_reviewer",
+	22: "mark_asset_as_deleted",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -49861,6 +49916,8 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixDepositStats":                   18,
 	"LedgerVersionFixCreateKycRecoveryPermissions":   19,
 	"LedgerVersionClearDatabaseCache":                20,
+	"LedgerVersionFixIssuanceReviewer":               21,
+	"LedgerVersionMarkAssetAsDeleted":                22,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -51241,4 +51298,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "dcb0962ff5cc056c96c54b6678f34278a66eeddd"
+var Revision = "45798300de3799cc05fe16c940ec28f206d0da37"

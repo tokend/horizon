@@ -30,7 +30,7 @@
   version = "0.8.0"
 
 [[constraint]]
-  branch = "feature/swap"
+  branch = "fix/asset-removal"
   name = "gitlab.com/tokend/go"
 
 [prune]
