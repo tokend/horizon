@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed 
+
+* ingest of participant effects for sale
+
 ## 3.6.2
 
 ### Added
