@@ -1,3 +1,22 @@
+ReviewableRequestDetailsKey:
+  oneOf: 
+    - $ref: '#/components/schemas/CreateAssetRequestKey'
+    - $ref: '#/components/schemas/UpdateAssetRequestKey'
+    - $ref: '#/components/schemas/CreatePreIssuanceRequestKey'
+    - $ref: '#/components/schemas/CreateIssuanceRequestKey'
+    - $ref: '#/components/schemas/CreateWithdrawRequestKey'
+    - $ref: '#/components/schemas/CreateSaleRequestKey'
+    - $ref: '#/components/schemas/UpdateLimitsRequestKey'
+    - $ref: '#/components/schemas/CreateAmlAlertRequestKey'
+    - $ref: '#/components/schemas/ChangeRoleRequestKey'
+    - $ref: '#/components/schemas/UpdateSaleDetailsRequestKey'
+    - $ref: '#/components/schemas/CreateAtomicSwapBidRequestKey'
+    - $ref: '#/components/schemas/CreateAtomicSwapAskRequestKey'
+    - $ref: '#/components/schemas/CreatePollRequestKey'
+    - $ref: '#/components/schemas/KYCRecoveryRequestKey'
+    - $ref: '#/components/schemas/ManageOfferRequestKey'
+    - $ref: '#/components/schemas/CreatePaymentRequestKey'
+
 ReviewableRequestDetails:
   oneOf:
     - $ref: '#/components/schemas/CreateAssetRequest'
@@ -14,10 +33,26 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/CreateAtomicSwapAskRequest'
     - $ref: '#/components/schemas/CreatePollRequest'
     - $ref: '#/components/schemas/KYCRecoveryRequest'
+    - $ref: '#/components/schemas/ManageOfferRequest'
+    - $ref: '#/components/schemas/CreatePaymentRequest'
+
+CreateAssetRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-asset-create"
 
 CreateAssetRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/CreateAssetRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -79,9 +114,23 @@ CreateAssetRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+UpdateAssetRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-asset-update"
+
 UpdateAssetRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/UpdateAssetRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -104,9 +153,23 @@ UpdateAssetRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+CreatePreIssuanceRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-pre-issuance"
+
 CreatePreIssuanceRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/CreatePreIssuanceRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -145,9 +208,23 @@ CreatePreIssuanceRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+CreateIssuanceRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-issuance"
+
 CreateIssuanceRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/CreateIssuanceRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -180,9 +257,23 @@ CreateIssuanceRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+CreateWithdrawRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-withdrawal"
+
 CreateWithdrawRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/CreateWithdrawRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -219,9 +310,23 @@ CreateWithdrawRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+CreateSaleRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-sale"
+
 CreateSaleRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/CreateSaleRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -296,7 +401,8 @@ CreateSaleRequest:
               format: "date-time"
               example: "2012-11-01T22:08:41+00:00"
             sale_type:
-              type: integer
+              allOf:
+                - $ref: '#/components/schemas/Enum'
               format: xdr.SaleType
               minimum: 1
               maximum: 3
@@ -309,9 +415,23 @@ CreateSaleRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+UpdateLimitsRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-limits-update"
+
 UpdateLimitsRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/UpdateLimitsRequestKey'
     - type: object
       required: [attributes]
       properties:
@@ -323,9 +443,23 @@ UpdateLimitsRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+CreateAmlAlertRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-aml-alert"
+
 CreateAmlAlertRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/CreateAmlAlertRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -352,9 +486,23 @@ CreateAmlAlertRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+ChangeRoleRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-change-role"
+
 ChangeRoleRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/ChangeRoleRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -392,9 +540,23 @@ ChangeRoleRequest:
               description: "free-form object to attach details to the reviewable request"
               $ref: '#/components/schemas/Details'
 
+UpdateSaleDetailsRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-update-sale-details"
+
 UpdateSaleDetailsRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/UpdateSaleDetailsRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -406,7 +568,7 @@ UpdateSaleDetailsRequest:
               description: "Sale which details should be updated"
               properties:
                 data:
-                  $ref: '#/components/schemas/Int64Key'
+                  $ref: '#/components/schemas/SaleKey'
         attributes:
           type: object
           required:
@@ -416,9 +578,23 @@ UpdateSaleDetailsRequest:
               $ref: '#/components/schemas/Details'
               description: "New details to set for sale"
 
+CreateAtomicSwapAskRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-atomic-swap-ask"
+
 CreateAtomicSwapAskRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/CreateAtomicSwapAskRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -453,9 +629,23 @@ CreateAtomicSwapAskRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+CreateAtomicSwapBidRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-atomic-swap-bid"
+
 CreateAtomicSwapBidRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/CreateAtomicSwapBidRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -467,7 +657,7 @@ CreateAtomicSwapBidRequest:
               description: "Ask to create atomic swap for"
               properties:
                 data:
-                  $ref: '#/components/schemas/Int64Key'
+                  $ref: '#/components/schemas/AtomicSwapAskKey'
             quote_asset:
               description: "Asset used to perform atomic swap"
               type: object
@@ -488,9 +678,23 @@ CreateAtomicSwapBidRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+CreatePollRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-create-poll"
+
 CreatePollRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/CreatePollRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -536,9 +740,23 @@ CreatePollRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+KYCRecoveryRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-kyc-recovery"
+
 KYCRecoveryRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/KYCRecoveryRequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -566,3 +784,112 @@ KYCRecoveryRequest:
                 $ref: '#/components/schemas/UpdateSignerData'
             creator_details:
               $ref: '#/components/schemas/Details'
+
+CreatePaymentRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-create-payment"
+
+CreatePaymentRequest:
+  allOf:
+    - $ref: '#/components/schemas/CreatePaymentRequestKey'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        relationships:
+          type: object
+          properties:
+            balance_from:
+              $ref: '#/components/schemas/BalanceKey'
+        attributes:
+          type: object
+          required:
+            - amount
+            - source_fee
+            - destination_fee
+            - source_pay_for_destination
+            - subject
+            - reference
+          properties:
+            source_fee:
+              $ref: '#/components/schemas/Fee'
+            destination_fee:
+              $ref: '#/components/schemas/Fee'
+            source_pay_for_destination:
+              type: boolean
+              example: true
+              description: "Whether source of the payment should pay destination fee"
+            amount:
+              type: string
+              format: Amount
+              example: "13.123956"
+            reference:
+              type: string
+              description: "Reference for the payment"
+            subject:
+              type: string
+              example: "Dividends"
+              description: "Subject of the payment"
+
+ManageOfferRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-manage-offer"
+
+ManageOfferRequest:
+  allOf:
+    - $ref: '#/components/schemas/ManageOfferRequestKey'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        attributes:
+          type: object
+          required:
+            - offer_id
+            - order_book_id
+            - base_amount
+            - price
+            - is_buy
+            - fee
+          properties:
+            offer_id:
+              type: integer
+              format: int64
+              description: "ID of the offer to manage"
+              example: 1
+            order_book_id:
+              type: integer
+              format: int64
+              description: "ID of the order book"
+              example: 0
+            base_amount:
+              type: string
+              format: Amount
+              example: "1000.0"
+            price:
+              type: string
+              format: Amount
+              example: "12.3"
+            is_buy:
+              type: boolean
+              description: "Offer direction"
+            fee:
+              $ref: '#/components/schemas/Fee'

@@ -28,6 +28,8 @@ type ReviewableRequestDetails struct {
 	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid,omitempty"`
 	CreatePoll          *CreatePollRequest          `json:"create_poll,omitempty"`
 	KYCRecovery         *KYCRecoveryRequest         `json:"kyc_recovery,omitempty"`
+	ManageOffer         *ManageOfferRequest         `json:"manage_offer,omitempty"`
+	CreatePayment       *CreatePaymentRequest       `json:"create_payment,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -169,4 +171,23 @@ type KYCRecoveryRequest struct {
 	SignersData    []UpdateSignerDetails `json:"signers_data"`
 	CreatorDetails regources.Details     `json:"creator_details"`
 	SequenceNumber uint32                `json:"sequence_number"`
+}
+
+type ManageOfferRequest struct {
+	OfferID     int64            `json:"offer_id,omitempty"`
+	OrderBookID int64            `json:"order_book_id"`
+	Amount      regources.Amount `json:"base_amount"`
+	Price       regources.Amount `json:"price"`
+	IsBuy       bool             `json:"is_buy"`
+	Fee         regources.Fee    `json:"fee"`
+}
+
+type CreatePaymentRequest struct {
+	BalanceFrom             string           `json:"balance_from"`
+	Amount                  regources.Amount `json:"amount"`
+	SourceFee               regources.Fee    `json:"source_fee"`
+	DestinationFee          regources.Fee    `json:"destination_fee"`
+	SourcePayForDestination bool             `json:"source_pay_for_destination"`
+	Subject                 string           `json:"subject"`
+	Reference               string           `json:"reference"`
 }

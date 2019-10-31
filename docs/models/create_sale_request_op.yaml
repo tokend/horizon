@@ -11,7 +11,7 @@ CreateSaleRequestOpKey:
 
 CreateSaleRequestOp:
   allOf:
-  - $ref: '#/components/schemas/CreateIssuanceRequestOpKey'
+  - $ref: '#/components/schemas/CreateSaleRequestOpKey'
   - type: object
     required: [relationships, attributes]
     properties:

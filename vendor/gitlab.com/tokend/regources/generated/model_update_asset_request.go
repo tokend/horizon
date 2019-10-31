@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type UpdateAssetRequest struct {
 	Key
 	Attributes    UpdateAssetRequestAttributes    `json:"attributes"`
@@ -18,6 +20,16 @@ type UpdateAssetRequestListResponse struct {
 	Data     []UpdateAssetRequest `json:"data"`
 	Included Included             `json:"included"`
 	Links    *Links               `json:"links"`
+	Meta     json.RawMessage      `json:"meta,omitempty"`
+}
+
+func (r *UpdateAssetRequestListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *UpdateAssetRequestListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustUpdateAssetRequest - returns UpdateAssetRequest from include collection.

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	history "gitlab.com/tokend/horizon/db2/history2"
@@ -13,7 +14,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetTransactions - processes request to get the list of transactions (with ledger changes)
@@ -111,9 +112,11 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 		return nil, errors.Wrap(err, "failed to load latest ledger")
 	}
 
-	result.Meta = regources.TransactionResponseMeta{
+	if result.Meta, err = json.Marshal(regources.TransactionResponseMeta{
 		LatestLedgerCloseTime: latestLedger.ClosedAt,
 		LatestLedgerSequence:  latestLedger.Sequence,
+	}); err != nil {
+		return nil, errors.Wrap(err, "failed to marshal meta")
 	}
 
 	return &result, nil

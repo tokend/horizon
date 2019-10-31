@@ -203,4 +203,16 @@ func TestCodes(t *testing.T) {
 			checkCode(t, code)
 		}
 	})
+
+	Convey("Create Manage Offer Request", t, func() {
+		for _, code := range xdr.CreateManageOfferRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
+
+	Convey("Create Payment Request", t, func() {
+		for _, code := range xdr.CreatePaymentRequestResultCodeAll {
+			checkCode(t, code)
+		}
+	})
 }

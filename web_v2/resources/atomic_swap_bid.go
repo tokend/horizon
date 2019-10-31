@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 //NewAccount - creates new instance of account
@@ -30,14 +30,20 @@ func NewAtomicSwapAskKey(id uint64) regources.Key {
 	}
 }
 
-func NewAtomicSwapAskQuoteAsset(raw core2.AtomicSwapQuoteAsset) regources.QuoteAsset {
-	return regources.QuoteAsset{
-		Key: regources.Key{
-			ID:   raw.QuoteAsset,
-			Type: regources.QUOTE_ASSETS,
-		},
-		Attributes: regources.QuoteAssetAttributes{
-			Price: regources.Amount(raw.Price),
+func NewAtomicSwapAskQuoteAssetKey(quoteAsset string, askID uint64) regources.Key {
+	return regources.Key{
+		// TODO: Use artificial ID
+		ID:   fmt.Sprintf("%s:%d", quoteAsset, askID),
+		Type: regources.ATOMIC_SWAP_QUOTE_ASSETS,
+	}
+}
+
+func NewAtomicSwapAskQuoteAsset(raw core2.AtomicSwapQuoteAsset) regources.AtomicSwapQuoteAsset {
+	return regources.AtomicSwapQuoteAsset{
+		Key: NewAtomicSwapAskQuoteAssetKey(raw.QuoteAsset, uint64(raw.AskID)),
+		Attributes: regources.AtomicSwapQuoteAssetAttributes{
+			Price:      regources.Amount(raw.Price),
+			QuoteAsset: raw.QuoteAsset,
 		},
 	}
 }

@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type LicenseOp struct {
 	Key
 	Attributes LicenseOpAttributes `json:"attributes"`
@@ -14,9 +16,19 @@ type LicenseOpResponse struct {
 }
 
 type LicenseOpListResponse struct {
-	Data     []LicenseOp `json:"data"`
-	Included Included    `json:"included"`
-	Links    *Links      `json:"links"`
+	Data     []LicenseOp     `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *LicenseOpListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *LicenseOpListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustLicenseOp - returns LicenseOp from include collection.

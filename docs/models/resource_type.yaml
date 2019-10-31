@@ -94,6 +94,8 @@ ResourceType:
     "operations-license",
     "operations-initiate-kyc-recovery",
     "operations-create-kyc-recovery-request",
+    "operations-create-manage-offer-request",
+    "operations-create-payment-request",
     "requests",
     "request-details-aml-alert",
     "request-details-asset-create",
@@ -110,5 +112,7 @@ ResourceType:
     "request-details-update-sale-end-time",
     "request-details-withdrawal",
     "request-details-kyc-recovery",
+    "request-details-manage-offer",
+    "request-details-create-payment",
     "horizon-state"
   ]

@@ -74,10 +74,42 @@ AtomicSwapAsk:
                 data:
                   type: array
                   items:
-                    $ref: '#/components/schemas/QuoteAssetKey'
+                    $ref: '#/components/schemas/AtomicSwapQuoteAssetKey'
             base_asset:
               description: "Base asset of the atomic swap ask"
               type: object
               properties:
                 data:
-                  $ref: '#/components/schemas/QuoteAssetKey'
+                  $ref: '#/components/schemas/AssetKey'
+
+AtomicSwapQuoteAssetKey:
+  type: object
+  required:
+  - id
+  - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+      - "atomic-swap-quote-assets"
+
+AtomicSwapQuoteAsset:
+  allOf:
+  - $ref: '#/components/schemas/AtomicSwapQuoteAssetKey'
+  - type: object
+    required: [attributes]
+    properties:
+      attributes:
+        type: object
+        required:
+        - quote_asset
+        - price
+        properties:
+          price:
+            type: string
+            format: Amount
+          quote_asset:
+            type: string

@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type KeyValueEntry struct {
 	Key
 	Attributes KeyValueEntryAttributes `json:"attributes"`
@@ -17,6 +19,16 @@ type KeyValueEntryListResponse struct {
 	Data     []KeyValueEntry `json:"data"`
 	Included Included        `json:"included"`
 	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *KeyValueEntryListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *KeyValueEntryListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustKeyValueEntry - returns KeyValueEntry from include collection.

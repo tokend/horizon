@@ -59,6 +59,9 @@ type Config struct {
 	Env            string `fig:"env"`
 
 	MigrateUpOnStart bool `fig:"migrate_up_on_start"`
+
+	CacheSize   int           `fig:"cache_size"`
+	CachePeriod time.Duration `fig:"cache_period"`
 }
 
 func (c *Config) Init() error {
@@ -108,6 +111,8 @@ func newViperConfig(raw rawGetter) Config {
 		Env:             "",
 		SkipCheck:       false,
 		Januser:         comfig.NewJanuser(raw),
+		CacheSize:       1,
+		CachePeriod:     5 * time.Second,
 	}
 
 	config.getter = raw

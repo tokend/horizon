@@ -3,6 +3,8 @@ package horizon
 import (
 	"time"
 
+	"gitlab.com/tokend/horizon/cache"
+
 	"gitlab.com/tokend/horizon/corer"
 
 	"gitlab.com/tokend/horizon/web_v2/handlers"
@@ -13,6 +15,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/pkg/errors"
 	"github.com/rs/cors"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/tokend/go/doorman"
@@ -46,6 +49,8 @@ func initWebV2Middleware(app *App) {
 
 	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
 
+	cacher := cache.NewMiddlewareCache(app.config.CacheSize, app.config.CachePeriod)
+
 	m.Use(
 		middleware.StripSlashes,
 		middleware.SetHeader(upstreamHeader, app.config.Hostname),
@@ -53,6 +58,7 @@ func initWebV2Middleware(app *App) {
 		ape.LoganMiddleware(logger, time.Second, ape.LoggerSetter(ctx.SetLog),
 			ape.RequestIDProvider(middleware.GetReqID)),
 		ape.RecoverMiddleware(logger),
+		cacher.Middleware,
 		ape.CtxMiddleWare(
 			// log will be set by logger setter on handler call
 			ctx.SetCoreRepo(app.CoreRepoLogged(nil)),
@@ -107,6 +113,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3", handlers.GetRoot)
 
 	m.Get("/v3/info", handlers.GetRoot)
+
+	m.Get("/v3/license", handlers.GetCurrentLicenseInfo)
+
 	m.Post("/v3/transactions", handlers.CreateTransaction)
 
 	m.Get("/v3/accounts/{id}", handlers.GetAccount)
@@ -115,7 +124,6 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/accounts/{id}/sales", handlers.GetSaleListForAccount)
 	m.Get("/v3/accounts/{id}/sales/{sale_id}", handlers.GetSaleForAccount)
 	m.Get("/v3/accounts/{id}/converted_balances/{asset_code}", handlers.GetConvertedBalances)
-	m.Get("/v3/accounts/{id}/requests/{request_id}", handlers.GetRequestForAccount)
 	m.Get("/v3/assets/{code}", handlers.GetAsset)
 	m.Get("/v3/assets", handlers.GetAssetList)
 	m.Get("/v3/balances/{id}", handlers.GetBalance)
@@ -168,6 +176,10 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/create_poll_requests/{id}", handlers.GetCreatePollRequests)
 	m.Get("/v3/kyc_recovery_requests", handlers.GetKYCRecoveryRequests)
 	m.Get("/v3/kyc_recovery_requests/{id}", handlers.GetKYCRecoveryRequests)
+	m.Get("/v3/manage_offer_requests", handlers.GetManageOfferRequests)
+	m.Get("/v3/manage_offer_requests/{id}", handlers.GetManageOfferRequests)
+	m.Get("/v3/create_payment_requests", handlers.GetCreatePaymentRequests)
+	m.Get("/v3/create_payment_requests/{id}", handlers.GetCreatePaymentRequests)
 
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)
@@ -196,6 +208,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/signer_roles", handlers.GetSignerRoleList)
 	m.Get("/v3/signer_rules/{id}", handlers.GetSignerRule)
 	m.Get("/v3/signer_rules", handlers.GetSignerRuleList)
+
+	m.Get("/v3/swaps/{id}", handlers.GetSwap)
+	m.Get("/v3/swaps", handlers.GetSwapList)
 
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {

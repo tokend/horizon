@@ -95,11 +95,11 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
+  branch = "feature/address"
   name = "gitlab.com/tokend/go"
-  branch = "feature/remove-asset-pair"
 
 [[constraint]]
-  branch = "feature/external-system-type"
+  branch = "fix/docs_for_kotlin_generator"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

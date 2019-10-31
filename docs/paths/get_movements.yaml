@@ -5,6 +5,15 @@
     summary: Get movements
     description: |
       Allows to get a filtered list of participants effects related to balances only - movements
+
+      🔒 Permissions:
+
+      | Filters                              | Signature              |
+      | -------------------------------------|------------------------|
+      | -                                    | admin                  |
+      | `filter[asset]`                      | admin or asset owner   |
+      | `filter[balance]`, `filter[account]` | admin or account owner |
+
     operationId: getMovements
     parameters:
       - name: filter[account]
@@ -47,6 +56,7 @@
             - "effect"
             - "operation"
             - "operation.details"
+            - "asset"
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
@@ -71,8 +81,10 @@
                     oneOf:
                     - $ref: '#/components/schemas/Operation'
                     - $ref: '#/components/schemas/OperationDetails'
+                    - $ref: '#/components/schemas/Effect'
                     - $ref: '#/components/schemas/EffectMatched'
                     - $ref: '#/components/schemas/EffectBalanceChange'
+                    - $ref: '#/components/schemas/Asset'
                 links:
                   type: object
                   description: "Provides links for pagination"

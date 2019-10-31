@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.8.0
+
+* `Flagger`
+
 ## 4.7.0
 
 ### Added 

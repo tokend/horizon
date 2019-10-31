@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type InitiateKycRecoveryOp struct {
 	Key
 	Attributes    *InitiateKycRecoveryOpAttributes    `json:"attributes,omitempty"`
@@ -18,6 +20,16 @@ type InitiateKycRecoveryOpListResponse struct {
 	Data     []InitiateKycRecoveryOp `json:"data"`
 	Included Included                `json:"included"`
 	Links    *Links                  `json:"links"`
+	Meta     json.RawMessage         `json:"meta,omitempty"`
+}
+
+func (r *InitiateKycRecoveryOpListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *InitiateKycRecoveryOpListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustInitiateKycRecoveryOp - returns InitiateKycRecoveryOp from include collection.

@@ -36,7 +36,7 @@ type Handler struct {
 // NewOperationsHandler returns new handler which can return
 // details and participants effects of certain operation
 func NewOperationsHandler(operationsStorage operationsStorage, participantEffectsStorage participantEffectsStorage,
-	pubKeyProvider IDProvider, balanceProvider balanceProvider) *Handler {
+	pubKeyProvider IDProvider, balanceProvider balanceProvider, swapProvider swapProvider) *Handler {
 
 	effectsBaseHandler := effectsProvider{
 		IDProvider:      pubKeyProvider,
@@ -169,6 +169,22 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			},
 			xdr.OperationTypeCreateKycRecoveryRequest: &createKycRecoveryRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeCreateManageOfferRequest: &createManageOfferRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeCreatePaymentRequest: &createPaymentRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeRemoveAsset: &removeAssetOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeOpenSwap: &openSwapOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
+			xdr.OperationTypeCloseSwap: &closeSwapOpHandler{
+				effectsProvider: effectsBaseHandler,
+				swapProvider:    swapProvider,
 			},
 		},
 	}

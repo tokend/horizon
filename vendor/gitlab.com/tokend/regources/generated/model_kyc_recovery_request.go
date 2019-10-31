@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type KycRecoveryRequest struct {
 	Key
 	Attributes    KycRecoveryRequestAttributes    `json:"attributes"`
@@ -18,6 +20,16 @@ type KycRecoveryRequestListResponse struct {
 	Data     []KycRecoveryRequest `json:"data"`
 	Included Included             `json:"included"`
 	Links    *Links               `json:"links"`
+	Meta     json.RawMessage      `json:"meta,omitempty"`
+}
+
+func (r *KycRecoveryRequestListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *KycRecoveryRequestListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustKycRecoveryRequest - returns KycRecoveryRequest from include collection.
