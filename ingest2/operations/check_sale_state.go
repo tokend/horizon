@@ -83,7 +83,6 @@ func (h *checkSaleStateOpHandler) getParticipationChanges(orderBookID int64, clo
 			if match.Effect.Type != history2.EffectTypeMatched {
 				continue
 			}
-			delete(removedOffers, match.Effect.Matched.OfferID)
 		}
 
 		totalBaseIssued += baseIssued
