@@ -1,5 +1,15 @@
 ## Unreleased
 
+# 3.5.2
+
+### Fixed 
+
+* KYC recovery request ingestion
+
+### Added 
+
+* Ingest version
+
 ## 3.5.1
 
 ### Changed
