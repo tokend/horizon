@@ -503,8 +503,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/address"
-  digest = "1:e40b0fea4794afd5574259667152a21aa0067db7c720bc9a206251da98b5afef"
+  branch = "master"
+  digest = "1:23d2ca4c8bff41f7cca0c356d405ee8a69f5b8466fb066de8aaf4aaa5919d3d3"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -523,7 +523,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "dee174aabaf0f6d0975edc9acd4d0937b8b00472"
+  revision = "7be3fec11336c740d4c7501c33c5132a75fb1e00"
 
 [[projects]]
   branch = "master"
@@ -539,15 +539,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "fix/docs_for_kotlin_generator"
-  digest = "1:eedd1a27b302e71ea8d764d9eeaa4f3afc06b7f441cad2bf76d48dbc9348e569"
+  branch = "master"
+  digest = "1:dafb8373d3146945e974f35e7bbd345a5d8e262d7d0ddd868e9a41bcec2a5e0a"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "f445dc4cf8ac422acfc83010619d0378ee4737ae"
+  revision = "febc2638361c6ab170cb61a0a5bacc7a3053cd74"
 
 [[projects]]
   branch = "master"

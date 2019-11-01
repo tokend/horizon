@@ -27,7 +27,7 @@ func NewSwap(record history2.Swap) regources.Swap {
 				Fixed:             regources.Amount(record.SourceFixedFee),
 				CalculatedPercent: regources.Amount(record.SourcePercentFee),
 			},
-			State: int32(record.State),
+			State: record.State,
 		},
 		Relationships: regources.SwapRelationships{
 			Asset:              NewAssetKey(record.Asset).AsRelation(),

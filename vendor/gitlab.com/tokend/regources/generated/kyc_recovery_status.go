@@ -45,3 +45,7 @@ func (s *KYCRecoveryStatus) UnmarshalJSON(b []byte) error {
 	*s = KYCRecoveryStatus(res.Value)
 	return nil
 }
+
+func (s KYCRecoveryStatus) IsFlag() bool {
+	return true
+}

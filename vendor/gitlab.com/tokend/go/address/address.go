@@ -1,17 +1,32 @@
 package address
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation"
+	"net/http"
+
+	"github.com/go-chi/chi"
+
+	. "github.com/go-ozzo/ozzo-validation"
 	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/strkey"
 )
 
 var (
-	ErrAddressInvalid = validation.Errors{"address": errors.New("address is invalid")}
+	ErrAddressInvalid = Errors{"address": errors.New("address is invalid")}
 )
 
 type Address string
+
+func FromRequest(r *http.Request, paramName string) (*Address, error) {
+	a := chi.URLParam(r, paramName)
+	if a == "" {
+		return nil, Errors{paramName: errors.New("empty string")}
+	}
+
+	addr := Address(a)
+
+	return &addr, addr.Validate()
+}
 
 func (a Address) String() string {
 	return string(a)
