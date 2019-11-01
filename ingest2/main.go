@@ -12,5 +12,6 @@ const (
 	IngestVersionTrailingDigitsCountAssetCreateRequest
 	IngestVersionAssetWithdrawRequest
 	IngestVersionRecoveryState
+	IngestVersionKYCRecoveryAutoApprove
 	IngestVersionUnmatchedSaleParticipation
 )
