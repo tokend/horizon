@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"gitlab.com/tokend/go/signcontrol"
+
 	"github.com/pkg/errors"
 
 	"github.com/go-chi/chi/middleware"
@@ -28,7 +30,7 @@ func NewMiddlewareCache(maxEntries int, expPer time.Duration) *MiddlewareCache {
 
 func (c *MiddlewareCache) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
+		if r.Method != http.MethodGet || signcontrol.IsSigned(r) {
 			next.ServeHTTP(w, r)
 			return
 		}

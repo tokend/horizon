@@ -95,11 +95,11 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/address"
+  branch = "master"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "fix/docs_for_kotlin_generator"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
