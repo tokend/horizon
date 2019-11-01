@@ -59,7 +59,6 @@ func (h *checkSaleStateOpHandler) getParticipationChanges(orderBookID int64, clo
 	baseBalanceAddress := closedRes.Results[0].SaleBaseBalance.AsString()
 	baseBalanceID := h.manageOfferOpHandler.MustBalanceID(closedRes.Results[0].SaleBaseBalance)
 	baseAsset := string(closedRes.Results[0].SaleDetails.BaseAsset)
-	removedOffers := h.getRemovedOfferEntries(ledgerChanges)
 	for _, assetPairResult := range closedRes.Results {
 		sourceOffer := offer{
 			OrderBookID:         orderBookID,
@@ -75,20 +74,10 @@ func (h *checkSaleStateOpHandler) getParticipationChanges(orderBookID int64, clo
 		assetPairMatches, baseIssued := h.manageOfferOpHandler.getMatchesEffects(
 			assetPairResult.SaleDetails.OffersClaimed, sourceOffer)
 
-		//We must filter offers deleted because of matches from the leftovers from sale, which were deleted
-		for _, match := range assetPairMatches {
-			if match.Effect == nil {
-				continue
-			}
-			if match.Effect.Type != history2.EffectTypeMatched {
-				continue
-			}
-		}
-
 		totalBaseIssued += baseIssued
 		result = append(result, assetPairMatches...)
 	}
-
+	removedOffers := h.getRemovedOfferEntries(ledgerChanges)
 	removedOfferEffects := h.getUnlockedEffects(removedOffers)
 	result = append(result, removedOfferEffects...)
 
