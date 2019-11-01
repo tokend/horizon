@@ -4,7 +4,7 @@
 package ingest2
 
 // Add new version and assign it to `CurrentIngestVersion` if you want force reingest (after backward not compatible changes)
-const CurrentIngestVersion = IngestVersionKYCRecoveryAutoApprove
+const CurrentIngestVersion = IngestVersionUnmatchedSaleParticipation
 
 const (
 	IngestVersionInitial = iota
@@ -13,4 +13,5 @@ const (
 	IngestVersionAssetWithdrawRequest
 	IngestVersionRecoveryState
 	IngestVersionKYCRecoveryAutoApprove
+	IngestVersionUnmatchedSaleParticipation
 )

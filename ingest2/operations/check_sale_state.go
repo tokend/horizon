@@ -35,7 +35,7 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	case xdr.CheckSaleStateEffectCanceled, xdr.CheckSaleStateEffectUpdated:
 		return h.manageOfferOpHandler.getDeletedOffersEffect(ledgerChanges), nil
 	case xdr.CheckSaleStateEffectClosed:
-		return h.getApprovedParticipants(int64(opBody.MustCheckSaleStateOp().SaleId), res.Effect.MustSaleClosed()), nil
+		return h.getParticipationChanges(int64(opBody.MustCheckSaleStateOp().SaleId), res.Effect.MustSaleClosed(), ledgerChanges), nil
 	default:
 		return nil, errors.From(errors.New("unexpected check sale state result effect"), map[string]interface{}{
 			"effect_i": int32(res.Effect.Effect),
@@ -44,7 +44,8 @@ func (h *checkSaleStateOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	}
 }
 
-func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, closedRes xdr.CheckSaleClosedResult,
+func (h *checkSaleStateOpHandler) getParticipationChanges(orderBookID int64, closedRes xdr.CheckSaleClosedResult,
+	ledgerChanges []xdr.LedgerEntryChange,
 ) []history2.ParticipantEffect {
 	// TODO: we are not handling here cases that some parts of offers might be canceled due to rounding
 	if len(closedRes.Results) == 0 {
@@ -76,6 +77,9 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 		totalBaseIssued += baseIssued
 		result = append(result, assetPairMatches...)
 	}
+	removedOffers := h.getRemovedOfferEntries(ledgerChanges)
+	removedOfferEffects := h.getUnlockedEffects(removedOffers)
+	result = append(result, removedOfferEffects...)
 
 	// we need to show explicitly that issuance has been perform to ensure that balance history is consistent
 	issuanceEffect := history2.ParticipantEffect{
@@ -95,4 +99,74 @@ func (h *checkSaleStateOpHandler) getApprovedParticipants(orderBookID int64, clo
 	result[0] = issuanceEffect
 
 	return result
+}
+
+func (h *checkSaleStateOpHandler) getRemovedOfferEntries(changes []xdr.LedgerEntryChange) map[int64]xdr.OfferEntry {
+	statedOffers := make(map[int64]xdr.OfferEntry)
+	result := make(map[int64]xdr.OfferEntry)
+	removedOffers := make(map[int64]bool)
+	for _, change := range changes {
+		switch change.Type {
+		case xdr.LedgerEntryChangeTypeRemoved:
+			{
+				if change.Removed.Type != xdr.LedgerEntryTypeOfferEntry {
+					continue
+				}
+				removedOffers[int64(change.Removed.MustOffer().OfferId)] = true
+			}
+		case xdr.LedgerEntryChangeTypeState:
+
+			{
+				if change.State.Data.Type != xdr.LedgerEntryTypeOfferEntry {
+					continue
+				}
+				statedOffers[int64(change.State.Data.MustOffer().OfferId)] = change.State.Data.MustOffer()
+			}
+		}
+	}
+
+	for id := range removedOffers {
+		if offer, ok := statedOffers[id]; ok {
+			result[id] = offer
+		}
+	}
+
+	return result
+}
+
+func (h *checkSaleStateOpHandler) getUnlockedEffects(removedOffers map[int64]xdr.OfferEntry) []history2.ParticipantEffect {
+	result := map[offerID]history2.ParticipantEffect{}
+	for _, off := range removedOffers {
+		balanceID := off.BaseBalance
+		if off.IsBuy {
+			balanceID = off.QuoteBalance
+		}
+		unlockedAmount := off.BaseAmount
+		if off.IsBuy {
+			unlockedAmount = off.QuoteAmount
+		}
+
+		participant := h.manageOfferOpHandler.BalanceEffect(balanceID, &history2.Effect{
+			Type: history2.EffectTypeUnlocked,
+			Unlocked: &history2.BalanceChangeEffect{
+				Amount: regources.Amount(unlockedAmount),
+			},
+		})
+
+		if off.IsBuy {
+			participant.Effect.Unlocked.Fee.CalculatedPercent = regources.Amount(off.Fee)
+		}
+
+		result[offerID{
+			OrderBookID: uint64(off.OrderBookId),
+			OfferID:     uint64(off.OfferId),
+		}] = participant
+	}
+
+	uniqueResults := make([]history2.ParticipantEffect, 0, len(result))
+	for _, participant := range result {
+		uniqueResults = append(uniqueResults, participant)
+	}
+
+	return uniqueResults
 }
