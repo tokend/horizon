@@ -28,7 +28,7 @@ func GetSwap(w http.ResponseWriter, r *http.Request) {
 	handler := getSwapHandler{
 		SwapsQ:    history2.NewSwapsQ(ctx.HistoryRepo(r)),
 		AssetsQ:   core2.NewAssetsQ(ctx.CoreRepo(r)),
-		BalancesQ: core2.NewBalancesQ(ctx.CoreRepo(r)),
+		BalancesQ: history2.NewBalancesQ(ctx.HistoryRepo(r)),
 		Log:       ctx.Log(r),
 	}
 
@@ -61,7 +61,7 @@ func GetSwap(w http.ResponseWriter, r *http.Request) {
 type getSwapHandler struct {
 	SwapsQ    history2.SwapsQ
 	AssetsQ   core2.AssetsQ
-	BalancesQ core2.BalancesQ
+	BalancesQ history2.BalancesQ
 	Log       *logan.Entry
 }
 
@@ -101,7 +101,9 @@ func (h *getSwapHandler) getSwap(request *requests.GetSwap) (*regources.SwapResp
 		if histBalance == nil {
 			return nil, errors.New("Expected balance to exist")
 		}
-		balance := resources.NewBalance(histBalance)
+		balance := &regources.Balance{
+			Key: resources.NewBalanceKey(histBalance.Address),
+		}
 		response.Included.Add(balance)
 	}
 
@@ -113,7 +115,9 @@ func (h *getSwapHandler) getSwap(request *requests.GetSwap) (*regources.SwapResp
 		if histBalance == nil {
 			return nil, errors.New("Expected balance to exist")
 		}
-		balance := resources.NewBalance(histBalance)
+		balance := &regources.Balance{
+			Key: resources.NewBalanceKey(histBalance.Address),
+		}
 		response.Included.Add(balance)
 	}
 

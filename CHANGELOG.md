@@ -2,9 +2,14 @@
 
 ## Unreleased
 
+### Added
+
+* Filter by status for asset endpoint
+
 ### Fixed 
 
 * ingest of participant effects for sale
+* 500 error on endpoints that include deleted assets
 
 ## 3.6.2
 
