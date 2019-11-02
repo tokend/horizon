@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed 
+
+* ingest of participant effects for sale
+
 ## 3.6.2
 
 ### Added
@@ -57,6 +61,16 @@
 
 * Key for atomic swap ask quote asset relation
 * Panic on `ManagePoll` ingestion
+
+# 3.5.1.2
+
+### Fixed 
+
+* KYC recovery request ingestion
+
+### Added 
+
+* Ingest version
 
 ## 3.5.1
 

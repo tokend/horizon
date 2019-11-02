@@ -1,5 +1,5 @@
-// revision: 45798300de3799cc05fe16c940ec28f206d0da37
-// branch:   fix/asset-removal
+// revision: 78afc239f2506186b9f73d65a8ac13a50db870ce
+// branch:   master
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -51298,4 +51298,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "45798300de3799cc05fe16c940ec28f206d0da37"
+var Revision = "78afc239f2506186b9f73d65a8ac13a50db870ce"

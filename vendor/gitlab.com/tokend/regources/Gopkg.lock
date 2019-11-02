@@ -66,8 +66,8 @@
   version = "v3.7"
 
 [[projects]]
-  branch = "fix/asset-removal"
-  digest = "1:d6d0b0651b6b2a0e3de65864da5767e2f99a7c3091038a3e6081d650f7d8f91e"
+  branch = "master"
+  digest = "1:110de75ee7517fdef857d9f276d8fa02e6e39ecd7d6474fafa99d064c2f473ee"
   name = "gitlab.com/tokend/go"
   packages = [
     "amount",
@@ -76,7 +76,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "5137e330037e294b120155ff68bead206b615e0a"
+  revision = "f86b6f1c126ca545259b8287410fbfee893fc173"
 
 [[projects]]
   digest = "1:a5cc901b8e54c4b73a62f97dc7c8f6c46e347c148a7a38e09b2e942c2587ba03"

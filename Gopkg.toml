@@ -95,11 +95,11 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "fix/asset-removal"
+  branch = "master"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "fix/asset-removal"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
