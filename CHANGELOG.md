@@ -5,6 +5,12 @@
 ### Added  
 
 * Operations endpoint (`/v3/operations`)
+* Filter by status for asset endpoint
+
+### Fixed 
+
+* ingest of participant effects for sale
+* 500 error on endpoints that include deleted assets
 
 ## 3.6.2
 
@@ -61,6 +67,16 @@
 
 * Key for atomic swap ask quote asset relation
 * Panic on `ManagePoll` ingestion
+
+# 3.5.1.2
+
+### Fixed 
+
+* KYC recovery request ingestion
+
+### Added 
+
+* Ingest version
 
 ## 3.5.1
 

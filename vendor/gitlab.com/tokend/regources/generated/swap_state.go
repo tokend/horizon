@@ -42,3 +42,7 @@ func (s *SwapState) UnmarshalJSON(b []byte) error {
 	*s = SwapState(res.Value)
 	return nil
 }
+
+func (s SwapState) IsFlag() bool {
+	return true
+}

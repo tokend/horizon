@@ -14,6 +14,8 @@ const (
 	FilterTypeAssetListOwner = "owner"
 	// FilterTypeAssetListPolicy - defines if we need to filter the list by policy
 	FilterTypeAssetListPolicy = "policy"
+	//FilterTypeAssetListState - defines if we need to filter the list by asset state
+	FilterTypeAssetListState = "State"
 )
 
 var includeTypeAssetListAll = map[string]struct{}{
@@ -23,6 +25,7 @@ var includeTypeAssetListAll = map[string]struct{}{
 var filterTypeAssetListAll = map[string]struct{}{
 	FilterTypeAssetListOwner:  {},
 	FilterTypeAssetListPolicy: {},
+	FilterTypeAssetListState:  {},
 }
 
 //GetAssetList - represents params to be specified for Get Assets handler
@@ -31,6 +34,7 @@ type GetAssetList struct {
 	Filters struct {
 		Policy uint64 `fig:"policy"`
 		Owner  string `fig:"owner"`
+		State  uint32 `fig:"state"`
 	}
 	PageParams *db2.OffsetPageParams
 }

@@ -58,7 +58,6 @@ func initWebV2Middleware(app *App) {
 		ape.LoganMiddleware(logger, time.Second, ape.LoggerSetter(ctx.SetLog),
 			ape.RequestIDProvider(middleware.GetReqID)),
 		ape.RecoverMiddleware(logger),
-		cacher.Middleware,
 		ape.CtxMiddleWare(
 			// log will be set by logger setter on handler call
 			ctx.SetCoreRepo(app.CoreRepoLogged(nil)),
@@ -77,6 +76,7 @@ func initWebV2Middleware(app *App) {
 			ctx.SetConfig(&app.config),
 		),
 		v2middleware.WebMetrics(app),
+		cacher.Middleware,
 	)
 
 	if app.config.CORSEnabled {
