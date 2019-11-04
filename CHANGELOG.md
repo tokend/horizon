@@ -2,8 +2,9 @@
 
 ## Unreleased
 
-### Added
+### Added  
 
+* Operations endpoint (`/v3/operations`)
 * Filter by status for asset endpoint
 
 ### Fixed 
