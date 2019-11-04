@@ -11,57 +11,7 @@
       - name: filter[types]
         in: query
         description: |
-          Filters operations by types (comma-separated multiple values are supported):
-          * 2  - `account`
-          * 1 = `create_account`
-          * 3 = `create_issuance_request`
-          * 5 = `set_fees`
-          * 7 = `create_withdrawal_request`
-          * 9 = `manage_balance`
-          * 11 = `manage_asset`
-          * 12 = `create_preissuance_request`
-          * 13 = `manage_limits`
-          * 15 = `manage_asset_pair`
-          * 16 = `manage_offer`
-          * 17 = `manage_invoice_request`
-          * 18 = `review_request`
-          * 19 = `create_sale_request`
-          * 20 = `check_sale_state`
-          * 21 = `create_aml_alert`
-          * 22 = `create_change_role_request`
-          * 23 = `payment`
-          * 24 = `manage_external_system_account_id_pool_entry`
-          * 25 = `bind_external_system_account_id`
-          * 26 = `manage_sale`
-          * 27 = `manage_key_value`
-          * 28 = `create_manage_limits_request`
-          * 29 = `manage_contract_request`
-          * 30 = `manage_contract`
-          * 31 = `cancel_sale_request`
-          * 32 = `payout`
-          * 33 = `manage_account_role`
-          * 34 = `manage_account_rule`
-          * 35 = `create_atomic_swap_ask_request`
-          * 36 = `cancel_atomic_swap_ask`
-          * 37 = `create_atomic_swap_bid_request`
-          * 38 = `manage_signer`
-          * 39 = `manage_signer_role`
-          * 40 = `manage_signer_rule`
-          * 41 = `stamp`
-          * 42 = `license`
-          * 43 = `manage_create_poll_request`
-          * 44 = `manage_poll`
-          * 45 = `manage_vote`
-          * 46 = `manage_account_specific_rule`
-          * 47 = `cancel_change_role_request`
-          * 48 = `initiate_kyc_recovery`
-          * 49 = `create_kyc_recovery_request`
-          * 50 = `remove_asset_pair`
-          * 51 = `create_manage_offer_request`
-          * 52 = `create_payment_request`
-          * 53 = `remove_asset`
-          * 54 = `open_swap`
-          * 55 = `close_swap`
+          Filters operations by types (comma-separated multiple values are supported). All operation types can be found [here](https://github.com/tokend/xdr/blob/master/types.x)
         required: false
         style: form
         explode: false
