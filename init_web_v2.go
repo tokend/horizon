@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"gitlab.com/tokend/go/resources"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
@@ -110,44 +112,66 @@ func initWebV2Middleware(app *App) {
 }
 
 func createDoorman(app *App) (doorman.Doorman, error) {
-	lazyOpts := func() (*doorman.SignerOfOpts, error) {
-		kvQ := core2.NewKeyValueQ(app.CoreRepoLogged(nil))
-		constraints := make([]doorman.SignerOfExt, 0, 10)
+	lazyKYCSignerConstrain := newLazySignerConstrain(
+		core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
+		kvKeyLicenseAdminSignerRole,
+		kycRecoveryEnabled(app),
+	)
 
-		licenseAdminSignerRoleVal, err := getKVValue(kvQ, kvKeyLicenseAdminSignerRole, xdr.KeyValueEntryTypeUint64)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get license admin kv value")
-		}
-		licenseAdminSignerRole := uint64(*licenseAdminSignerRoleVal.Ui64Value)
-		constraints = append(constraints, &doorman.RestrictedRoleConstraint{
-			RoleID: licenseAdminSignerRole,
-		})
+	lazyLicenseSignerConstrain := newLazySignerConstrain(
+		core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
+		kvKeyLicenseAdminSignerRole,
+		true,
+	)
 
-		kycRecvEnabledVal, err := getKVValue(kvQ, kvKeyKycRecoveryEnabled, xdr.KeyValueEntryTypeUint32)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get kyc recovery enabled kv value")
-		}
-
-		kycRecvEnabled := uint32(*kycRecvEnabledVal.Ui32Value)
-		if kycRecvEnabled != 0 {
-			kycRecvSignerVal, err := getKVValue(kvQ, kvKeyKycRecoverySignerRole, xdr.KeyValueEntryTypeUint64)
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to get license admin kv value")
-			}
-			kycRecvSignerRole := uint64(*kycRecvSignerVal.Ui64Value)
-			constraints = append(constraints, &doorman.RestrictedRoleConstraint{
-				RoleID: kycRecvSignerRole,
-			})
-		}
-
-		return &doorman.SignerOfOpts{
-			Constraints: constraints,
-		}, nil
+	constrains := []doorman.SignerOfExt{
+		lazyKYCSignerConstrain, lazyLicenseSignerConstrain,
 	}
 
 	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
+	return doorman.NewWithOpts(app.Conf().SkipCheck, signersProvider, doorman.SignerOfOpts{Constraints: constrains}), nil
+}
 
-	return doorman.NewLazy(app.config.SkipCheck, signersProvider, lazyOpts), nil
+type lazyRestrictedRoleConstrain struct {
+	kvQ     *core2.KeyValueQ
+	kvKey   string
+	enabled bool
+}
+
+func kycRecoveryEnabled(app *App) bool {
+	kycRecvEnabledVal, err := getKVValue(core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
+		kvKeyKycRecoveryEnabled, xdr.KeyValueEntryTypeUint32)
+	if err != nil {
+		panic(err)
+	}
+
+	kycRecvEnabled := uint32(*kycRecvEnabledVal.Ui32Value)
+	return kycRecvEnabled != 0
+}
+
+func newLazySignerConstrain(kvQ *core2.KeyValueQ, kvKey string, shouldCheck bool) *lazyRestrictedRoleConstrain {
+	return &lazyRestrictedRoleConstrain{
+		kvQ:     kvQ,
+		kvKey:   kvKey,
+		enabled: shouldCheck,
+	}
+}
+
+func (l *lazyRestrictedRoleConstrain) Check(signer resources.Signer) bool {
+	if !l.enabled {
+		return true
+	}
+
+	roleVal, err := getKVValue(l.kvQ, l.kvKey, xdr.KeyValueEntryTypeUint64)
+	if err != nil {
+		panic(errors.Wrap(err, "failed to get role kv value", logan.F{
+			"key":  l.kvKey,
+			"type": xdr.KeyValueEntryTypeUint64,
+		}))
+	}
+
+	lazyRestrictedRole := uint64(*roleVal.Ui64Value)
+	return lazyRestrictedRole != signer.Role
 }
 
 func getKVValue(kvQ *core2.KeyValueQ, key string, typ xdr.KeyValueEntryType) (*xdr.KeyValueEntryValue, error) {
