@@ -22,7 +22,8 @@ AccountRule:
         required: [action, forbids, details,resource]
         properties:
           action:
-            type: integer
+            allOf:
+              - $ref: '#/components/schemas/Enum'
             format: xdr.AccountRuleAction
             description: |
                   defines an action to be performed over the specified resource
@@ -48,6 +49,8 @@ AccountRule:
           details:
             $ref: '#/components/schemas/Details'
           resource:
+            allOf:
+              - $ref: '#/components/schemas/Details'
             type: object
             format: xdr.AccountRuleResource
             description: "defines resource to which the rule is applied. TODO: add link to XDR"

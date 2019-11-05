@@ -21,7 +21,7 @@ CreateAtomicSwapBidRequestOp:
           properties:
             request:
               type: object
-              $ref: '#/components/schemas/Int64Key'
+              $ref: '#/components/schemas/RequestKey'
             quote_asset:
               $ref: '#/components/schemas/AssetKey'
             ask:

@@ -39,6 +39,7 @@ Asset:
           - policies
           - trailing_digits
           - type
+          - state
         properties:
           pre_issuance_asset_signer:
             type: string
@@ -81,6 +82,14 @@ Asset:
             format: uint64
             description: "Numeric type of asset"
             example: 2
+          state:
+            format: AssetState
+            description: |
+              Asset state
+              * 0 - active
+              * 1 - deleted
+            allOf:
+            - $ref: '#/components/schemas/Enum'
           details:
             $ref: '#/components/schemas/Details'
             description: "free-form object to attach asset details such as a link to icon, short description, etc."

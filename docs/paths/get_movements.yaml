@@ -56,6 +56,7 @@
             - "effect"
             - "operation"
             - "operation.details"
+            - "asset"
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
@@ -80,8 +81,10 @@
                     oneOf:
                     - $ref: '#/components/schemas/Operation'
                     - $ref: '#/components/schemas/OperationDetails'
+                    - $ref: '#/components/schemas/Effect'
                     - $ref: '#/components/schemas/EffectMatched'
                     - $ref: '#/components/schemas/EffectBalanceChange'
+                    - $ref: '#/components/schemas/Asset'
                 links:
                   type: object
                   description: "Provides links for pagination"

@@ -19,9 +19,10 @@ CreateAccountSpecificRuleData:
     forbids:
       type: boolean
     ledger_key:
+      allOf:
+        - $ref: '#/components/schemas/Details'
       type: object
       format: xdr.LedgerKey
-      additionalProperties: true
       description: "Ledger entry key"
 
 ManageAccountSpecificRuleOp:

@@ -95,11 +95,15 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
+<<<<<<< HEAD
   branch = "feature/lazy-opts"
+=======
+  branch = "master"
+>>>>>>> master
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "fix/license-info"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

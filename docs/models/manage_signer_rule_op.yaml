@@ -62,8 +62,9 @@ ManageSignerRuleOp:
             allOf:
               - $ref: '#/components/schemas/Enum'
           resource:
+            allOf:
+              - $ref: '#/components/schemas/Details'
             type: object
             format: xdr.SignerRuleResource
-            additionalProperties: true
             description: "Free-form object"
             #todo add resource

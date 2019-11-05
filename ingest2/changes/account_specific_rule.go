@@ -55,6 +55,15 @@ func (h accountSpecificRuleHandler) Created(change ledgerChange) error {
 	op := change.Operation
 
 	switch op.Body.Type {
+	case xdr.OperationTypeCreateSaleRequest:
+		rawRule := change.LedgerChange.Created.Data.MustAccountSpecificRule()
+		rule := history.NewAccountSpecificRule(rawRule)
+		err := h.storage.Insert(rule)
+		if err != nil {
+			return errors.Wrap(err, "failed to insert account specific rule", logan.F{
+				"rule_id": rule.ID,
+			})
+		}
 	case xdr.OperationTypeReviewRequest:
 		reviewRequestOp := op.Body.MustReviewRequestOp()
 		switch reviewRequestOp.Action {

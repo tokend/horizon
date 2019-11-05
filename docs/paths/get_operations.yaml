@@ -1,39 +1,24 @@
-/v3/history:
+/v3/operations:
   get:
     tags:
       - History
-    summary: Get history
+    summary: Get operations
     description: |
-      Allows to get a filtered list of participants effects
-    operationId: getHistory
+      Allows to get a filtered list of operations \n
+      🔒 Admin account's signature is required.\n
+    operationId: getOperations
     parameters:
-      - name: filter[account]
+      - name: filter[types]
         in: query
         description: |
-          Filters history by participant account address
+          Filters operations by types (comma-separated multiple values are supported). All operation types can be found [here](https://github.com/tokend/xdr/blob/master/types.x)
         required: false
         style: form
         explode: false
         schema:
-          type: string
-      - name: filter[balance]
-        in: query
-        description: |
-          Filters history by participant's balance
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: string
-      - name: filter[asset]
-        in: query
-        description: |
-          Filters history by involved asset
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: string
+          type: integer
+          minimum: 2
+          maximum: 55
       - name: include
         in: query
         description: |
@@ -44,36 +29,27 @@
         schema:
           type: string
           enum:
-            - "effect"
-            - "operation"
             - "operation.details"
-            - "asset"
-      - $ref: '#/components/schemas/pageNumberParam'
+      - $ref: '#/components/schemas/pageCursorParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
     responses:
       200:
-        description: history exists
+        description: operations exist
         content:
           application/vnd.api+json:
             schema:
               type: object
-              required:
-                - data
-                - included
               properties:
                 data:
                   type: array
                   items:
-                    $ref: '#/components/schemas/ParticipantsEffect'
+                    $ref: '#/components/schemas/Operation'
                 included:
                   type: array
                   items:
                     oneOf:
-                    - $ref: '#/components/schemas/Operation'
-                    - $ref: '#/components/schemas/OperationDetails'
-                    - $ref: '#/components/schemas/Effect'
-                    - $ref: '#/components/schemas/Asset'
+                      - $ref: '#/components/schemas/OperationDetails'
                 links:
                   type: object
                   description: "Provides links for pagination"
@@ -81,19 +57,19 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/history?include=operation.details&page[number]=2&page[limit]=15"
+                      example: "/v3/operations?page[cursor]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/history?include=operation.details&page[number]=1&page[limit]=15"
+                      example: "/v3/operations?page[limit]=15"
       400:
         description: bad input parameter
         content:
           application/vnd.api+json:
             schema:
               $ref: '#/components/schemas/Errors'
-      404:
-        description: effects do not exist
+      401:
+        description: either an invalid signature has been provided or a signer has not been authorized to access specified resources
         content:
           application/vnd.api+json:
             schema:

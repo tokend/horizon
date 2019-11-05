@@ -4,6 +4,9 @@ import (
 	"net/http"
 	"time"
 
+	"gitlab.com/tokend/horizon/cache"
+
+	"gitlab.com/tokend/horizon/corer"
 	"gitlab.com/tokend/go/resources"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -12,6 +15,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/rs/cors"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/tokend/go/doorman"
@@ -57,6 +61,8 @@ func initWebV2Middleware(app *App) {
 		panic(errors.Wrap(err, "failed to init doorman, stopping"))
 	}
 
+	cacher := cache.NewMiddlewareCache(app.config.CacheSize, app.config.CachePeriod)
+
 	m.Use(
 		middleware.StripSlashes,
 		middleware.SetHeader(upstreamHeader, app.config.Hostname),
@@ -82,6 +88,7 @@ func initWebV2Middleware(app *App) {
 			ctx.SetConfig(&app.config),
 		),
 		v2middleware.WebMetrics(app),
+		cacher.Middleware,
 	)
 
 	if app.config.CORSEnabled {
@@ -317,6 +324,8 @@ func initWebV2Actions(app *App) {
 
 	m.Get("/v3/swaps/{id}", handlers.GetSwap)
 	m.Get("/v3/swaps", handlers.GetSwapList)
+
+	m.Get("/v3/operations", handlers.GetOperations)
 
 	janus := app.config.Janus()
 	if err := janus.RegisterChi(m); err != nil {
