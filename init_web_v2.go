@@ -6,8 +6,8 @@ import (
 
 	"gitlab.com/tokend/horizon/cache"
 
-	"gitlab.com/tokend/horizon/corer"
 	"gitlab.com/tokend/go/resources"
+	"gitlab.com/tokend/horizon/corer"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -20,7 +20,6 @@ import (
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/corer"
 	"gitlab.com/tokend/horizon/db2/core2"
 	hdoorman "gitlab.com/tokend/horizon/doorman"
 	"gitlab.com/tokend/horizon/log"
@@ -121,7 +120,7 @@ func initWebV2Middleware(app *App) {
 func createDoorman(app *App) (doorman.Doorman, error) {
 	lazyKYCSignerConstrain := newLazySignerConstrain(
 		core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
-		kvKeyLicenseAdminSignerRole,
+		kvKeyKycRecoverySignerRole,
 		kycRecoveryEnabled(app),
 	)
 
@@ -140,9 +139,10 @@ func createDoorman(app *App) (doorman.Doorman, error) {
 }
 
 type lazyRestrictedRoleConstrain struct {
-	kvQ     *core2.KeyValueQ
-	kvKey   string
-	enabled bool
+	kvQ      *core2.KeyValueQ
+	kvKey    string
+	enabled  bool
+	lazyRole *uint64
 }
 
 func kycRecoveryEnabled(app *App) bool {
@@ -169,16 +169,20 @@ func (l *lazyRestrictedRoleConstrain) Check(signer resources.Signer) bool {
 		return true
 	}
 
-	roleVal, err := getKVValue(l.kvQ, l.kvKey, xdr.KeyValueEntryTypeUint64)
-	if err != nil {
-		panic(errors.Wrap(err, "failed to get role kv value", logan.F{
-			"key":  l.kvKey,
-			"type": xdr.KeyValueEntryTypeUint64,
-		}))
+	for l.lazyRole == nil {
+		roleVal, err := getKVValue(l.kvQ, l.kvKey, xdr.KeyValueEntryTypeUint64)
+		if err != nil {
+			panic(errors.Wrap(err, "failed to get role kv value", logan.F{
+				"key":  l.kvKey,
+				"type": xdr.KeyValueEntryTypeUint64,
+			}))
+		}
+
+		lazyRestrictedRole := uint64(*roleVal.Ui64Value)
+		l.lazyRole = &lazyRestrictedRole
 	}
 
-	lazyRestrictedRole := uint64(*roleVal.Ui64Value)
-	return lazyRestrictedRole != signer.Role
+	return *l.lazyRole != signer.Role
 }
 
 func getKVValue(kvQ *core2.KeyValueQ, key string, typ xdr.KeyValueEntryType) (*xdr.KeyValueEntryValue, error) {
