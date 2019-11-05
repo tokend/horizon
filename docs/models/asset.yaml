@@ -83,13 +83,13 @@ Asset:
             description: "Numeric type of asset"
             example: 2
           state:
-            type: integer
             format: AssetState
             description: |
               Asset state
               * 0 - active
               * 1 - deleted
-            example: 0
+            allOf:
+            - $ref: '#/components/schemas/Enum'
           details:
             $ref: '#/components/schemas/Details'
             description: "free-form object to attach asset details such as a link to icon, short description, etc."
