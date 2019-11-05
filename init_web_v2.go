@@ -121,13 +121,15 @@ func createDoorman(app *App) (doorman.Doorman, error) {
 	lazyKYCSignerConstrain := newLazySignerConstrain(
 		core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
 		kvKeyKycRecoverySignerRole,
-		kycRecoveryEnabled(app),
+		kycRecoveryEnabled,
 	)
 
 	lazyLicenseSignerConstrain := newLazySignerConstrain(
 		core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
 		kvKeyLicenseAdminSignerRole,
-		true,
+		func(_ *core2.KeyValueQ) bool {
+			return true
+		},
 	)
 
 	constrains := []doorman.SignerOfExt{
@@ -139,15 +141,20 @@ func createDoorman(app *App) (doorman.Doorman, error) {
 }
 
 type lazyRestrictedRoleConstrain struct {
-	kvQ      *core2.KeyValueQ
-	kvKey    string
-	enabled  bool
+	kvQ   *core2.KeyValueQ
+	kvKey string
+
+	// check prerequisites
+	// should be executed once and save result into `enabled` field on success
+	// if error occurs while ensuring - should panic
+	mustEnsureEnabled func(app *core2.KeyValueQ) bool
+	enabled           *bool
+
 	lazyRole *uint64
 }
 
-func kycRecoveryEnabled(app *App) bool {
-	kycRecvEnabledVal, err := getKVValue(core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
-		kvKeyKycRecoveryEnabled, xdr.KeyValueEntryTypeUint32)
+func kycRecoveryEnabled(q *core2.KeyValueQ) bool {
+	kycRecvEnabledVal, err := getKVValue(q, kvKeyKycRecoveryEnabled, xdr.KeyValueEntryTypeUint32)
 	if err != nil {
 		panic(err)
 	}
@@ -156,20 +163,26 @@ func kycRecoveryEnabled(app *App) bool {
 	return kycRecvEnabled != 0
 }
 
-func newLazySignerConstrain(kvQ *core2.KeyValueQ, kvKey string, shouldCheck bool) *lazyRestrictedRoleConstrain {
+func newLazySignerConstrain(kvQ *core2.KeyValueQ, kvKey string, shouldCheck func(kvQ *core2.KeyValueQ) bool) *lazyRestrictedRoleConstrain {
 	return &lazyRestrictedRoleConstrain{
-		kvQ:     kvQ,
-		kvKey:   kvKey,
-		enabled: shouldCheck,
+		kvQ:               kvQ,
+		kvKey:             kvKey,
+		mustEnsureEnabled: shouldCheck,
 	}
 }
 
 func (l *lazyRestrictedRoleConstrain) Check(signer resources.Signer) bool {
-	if !l.enabled {
+	if l.enabled == nil {
+		enabled := l.mustEnsureEnabled(l.kvQ)
+		l.enabled = &enabled
+	}
+
+	isEnabled := *l.enabled
+	if !isEnabled {
 		return true
 	}
 
-	for l.lazyRole == nil {
+	if l.lazyRole == nil {
 		roleVal, err := getKVValue(l.kvQ, l.kvKey, xdr.KeyValueEntryTypeUint64)
 		if err != nil {
 			panic(errors.Wrap(err, "failed to get role kv value", logan.F{
