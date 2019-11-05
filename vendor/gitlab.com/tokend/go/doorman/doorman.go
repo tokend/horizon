@@ -3,7 +3,6 @@ package doorman
 import (
 	"net/http"
 
-	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/doorman/data"
 	"gitlab.com/tokend/go/resources"
@@ -23,9 +22,6 @@ type doorman struct {
 	AccountQ data.AccountQ
 	// signerOfExts are used to specify list of constraints for SignerOf
 	signerOfExts []SignerOfExt
-	// lazyOpts are used to initialize default signerOfExts once on doorman first call
-	lazyOpts LazySignerOfOpts
-	opts     comfig.Once
 }
 
 func (d *doorman) AccountSigners(address string) ([]resources.Signer, error) {
@@ -63,26 +59,7 @@ func (d *doorman) Check(r *http.Request, constraints ...SignerConstraint) error 
 }
 
 func (d *doorman) DefaultSignerOfConstraints() []SignerOfExt {
-	return d.opts.Do(func() interface{} {
-		if d.lazyOpts == nil {
-			return d.signerOfExts
-		}
-
-		lazy, err := d.lazyOpts()
-		if err != nil {
-			panic(err)
-		}
-
-		if d.signerOfExts == nil {
-			d.signerOfExts = make([]SignerOfExt, 0, len(lazy.Constraints))
-		}
-
-		for _, con := range lazy.Constraints {
-			d.signerOfExts = append(d.signerOfExts, con)
-		}
-
-		return d.signerOfExts
-	}).([]SignerOfExt)
+	return d.signerOfExts
 }
 
 type RoleConstraint struct {
