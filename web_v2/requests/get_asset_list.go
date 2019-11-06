@@ -15,7 +15,7 @@ const (
 	// FilterTypeAssetListPolicy - defines if we need to filter the list by policy
 	FilterTypeAssetListPolicy = "policy"
 	//FilterTypeAssetListState - defines if we need to filter the list by asset state
-	FilterTypeAssetListState = "State"
+	FilterTypeAssetListState = "state"
 )
 
 var includeTypeAssetListAll = map[string]struct{}{
