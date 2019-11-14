@@ -11,6 +11,7 @@
 
 * ingest of participant effects for sale
 * 500 error on endpoints that include deleted assets
+* returning 404 when cannot find tx
 
 ## 3.6.2
 
