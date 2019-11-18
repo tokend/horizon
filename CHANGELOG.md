@@ -13,6 +13,10 @@
 * 500 error on endpoints that include deleted assets
 * returning 404 when cannot find tx
 
+### Changed
+
+* increased speed of ingest v2
+
 ## 3.6.2
 
 ### Added
