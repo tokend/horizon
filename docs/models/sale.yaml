@@ -50,10 +50,9 @@ Sale:
               description: "state of sale" # todo provide a list of sale states
               example: 2
             access_definition_type:
-              type: string
+              allOf:
+                - $ref: '#/components/schemas/Enum'
               format: SaleAccessDefinitionType
-              minimum: 1
-              maximum: 3
               description: |
                 indicates access definition type of the sale
                 * 0 - none
