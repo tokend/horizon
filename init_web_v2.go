@@ -118,12 +118,7 @@ func initWebV2Middleware(app *App) {
 }
 
 func createDoorman(app *App) (doorman.Doorman, error) {
-	lazyKYCSignerConstrain := newLazySignerConstrain(
-		core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
-		kvKeyKycRecoverySignerRole,
-		kycRecoveryEnabled,
-	)
-
+	// TODO: Add constraint for KYC recovery signer when clients will be fully ready
 	lazyLicenseSignerConstrain := newLazySignerConstrain(
 		core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
 		kvKeyLicenseAdminSignerRole,
@@ -133,7 +128,7 @@ func createDoorman(app *App) (doorman.Doorman, error) {
 	)
 
 	constrains := []doorman.SignerOfExt{
-		lazyKYCSignerConstrain, lazyLicenseSignerConstrain,
+		lazyLicenseSignerConstrain,
 	}
 
 	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
@@ -151,16 +146,6 @@ type lazyRestrictedRoleConstrain struct {
 	enabled           *bool
 
 	lazyRole *uint64
-}
-
-func kycRecoveryEnabled(q *core2.KeyValueQ) bool {
-	kycRecvEnabledVal, err := getKVValue(q, kvKeyKycRecoveryEnabled, xdr.KeyValueEntryTypeUint32)
-	if err != nil {
-		panic(err)
-	}
-
-	kycRecvEnabled := uint32(*kycRecvEnabledVal.Ui32Value)
-	return kycRecvEnabled != 0
 }
 
 func newLazySignerConstrain(kvQ *core2.KeyValueQ, kvKey string, shouldCheck func(kvQ *core2.KeyValueQ) bool) *lazyRestrictedRoleConstrain {
