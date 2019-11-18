@@ -29,7 +29,7 @@ func initIngester2(app *App) {
 	}
 
 	hRepo := app.HistoryRepoLogged(logger)
-	const batchSize = 100
+	const batchSize = 1000
 	ledgersChan := ingest2.NewProducer(txProvider, history2.NewLedgerQ(hRepo), logger, batchSize, ledger.CurrentState).
 		Start(ctx)
 
