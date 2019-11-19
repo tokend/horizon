@@ -310,6 +310,7 @@ var messages = map[string]string{
 	"op_manage_offer_tasks_not_found":                   "There is no key value by key `create_offer_tasks`, `remove_offer_tasks`, `create_sale_participation_tasks` or `remove_sale_participation_tasks`",
 	"op_payment_tasks_not_found":                        "There is no key value by key `payment_tasks`",
 	"op_has_pair":                                       "Cannot delete asset, it is used in some asset pair",
+	"op_invalid_subject":                                "Too much signs in subject",
 }
 
 func getMessage(rawCode string) string {
