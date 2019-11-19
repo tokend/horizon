@@ -95,7 +95,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "master"
+  branch = "fix/max-signs"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

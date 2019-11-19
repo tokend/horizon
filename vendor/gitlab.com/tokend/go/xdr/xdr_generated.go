@@ -1,5 +1,5 @@
-// revision: 78afc239f2506186b9f73d65a8ac13a50db870ce
-// branch:   master
+// revision: 9d9573a54ca216fec769215e9647ba770211dccb
+// branch:   fix/max-signs
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -34742,7 +34742,9 @@ type PaymentOp struct {
 //        //: There is no account found with an ID provided in `destination.accountID`
 //        DESTINATION_ACCOUNT_NOT_FOUND = -14,
 //        //: Amount precision and asset precision are mismatched
-//        INCORRECT_AMOUNT_PRECISION = -15
+//        INCORRECT_AMOUNT_PRECISION = -15,
+//        //: Too much signs in subject
+//        INVALID_SUBJECT = -16
 //    };
 //
 type PaymentResultCode int32
@@ -34764,6 +34766,7 @@ const (
 	PaymentResultCodePaymentAmountIsLessThanDestFee PaymentResultCode = -13
 	PaymentResultCodeDestinationAccountNotFound     PaymentResultCode = -14
 	PaymentResultCodeIncorrectAmountPrecision       PaymentResultCode = -15
+	PaymentResultCodeInvalidSubject                 PaymentResultCode = -16
 )
 
 var PaymentResultCodeAll = []PaymentResultCode{
@@ -34783,6 +34786,7 @@ var PaymentResultCodeAll = []PaymentResultCode{
 	PaymentResultCodePaymentAmountIsLessThanDestFee,
 	PaymentResultCodeDestinationAccountNotFound,
 	PaymentResultCodeIncorrectAmountPrecision,
+	PaymentResultCodeInvalidSubject,
 }
 
 var paymentResultCodeMap = map[int32]string{
@@ -34802,6 +34806,7 @@ var paymentResultCodeMap = map[int32]string{
 	-13: "PaymentResultCodePaymentAmountIsLessThanDestFee",
 	-14: "PaymentResultCodeDestinationAccountNotFound",
 	-15: "PaymentResultCodeIncorrectAmountPrecision",
+	-16: "PaymentResultCodeInvalidSubject",
 }
 
 var paymentResultCodeShortMap = map[int32]string{
@@ -34821,6 +34826,7 @@ var paymentResultCodeShortMap = map[int32]string{
 	-13: "payment_amount_is_less_than_dest_fee",
 	-14: "destination_account_not_found",
 	-15: "incorrect_amount_precision",
+	-16: "invalid_subject",
 }
 
 var paymentResultCodeRevMap = map[string]int32{
@@ -34840,6 +34846,7 @@ var paymentResultCodeRevMap = map[string]int32{
 	"PaymentResultCodePaymentAmountIsLessThanDestFee": -13,
 	"PaymentResultCodeDestinationAccountNotFound":     -14,
 	"PaymentResultCodeIncorrectAmountPrecision":       -15,
+	"PaymentResultCodeInvalidSubject":                 -16,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -49785,7 +49792,8 @@ type TransactionResult struct {
 //        FIX_CREATE_KYC_RECOVERY_PERMISSIONS = 19,
 //        CLEAR_DATABASE_CACHE = 20,
 //        FIX_ISSUANCE_REVIEWER = 21,
-//        MARK_ASSET_AS_DELETED = 22
+//        MARK_ASSET_AS_DELETED = 22,
+//        FIX_MAX_SUBJECT_SIZE = 23
 //    };
 //
 type LedgerVersion int32
@@ -49814,6 +49822,7 @@ const (
 	LedgerVersionClearDatabaseCache                LedgerVersion = 20
 	LedgerVersionFixIssuanceReviewer               LedgerVersion = 21
 	LedgerVersionMarkAssetAsDeleted                LedgerVersion = 22
+	LedgerVersionFixMaxSubjectSize                 LedgerVersion = 23
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -49840,6 +49849,7 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionClearDatabaseCache,
 	LedgerVersionFixIssuanceReviewer,
 	LedgerVersionMarkAssetAsDeleted,
+	LedgerVersionFixMaxSubjectSize,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -49866,6 +49876,7 @@ var ledgerVersionMap = map[int32]string{
 	20: "LedgerVersionClearDatabaseCache",
 	21: "LedgerVersionFixIssuanceReviewer",
 	22: "LedgerVersionMarkAssetAsDeleted",
+	23: "LedgerVersionFixMaxSubjectSize",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -49892,6 +49903,7 @@ var ledgerVersionShortMap = map[int32]string{
 	20: "clear_database_cache",
 	21: "fix_issuance_reviewer",
 	22: "mark_asset_as_deleted",
+	23: "fix_max_subject_size",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -49918,6 +49930,7 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionClearDatabaseCache":                20,
 	"LedgerVersionFixIssuanceReviewer":               21,
 	"LedgerVersionMarkAssetAsDeleted":                22,
+	"LedgerVersionFixMaxSubjectSize":                 23,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -51298,4 +51311,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "78afc239f2506186b9f73d65a8ac13a50db870ce"
+var Revision = "9d9573a54ca216fec769215e9647ba770211dccb"
