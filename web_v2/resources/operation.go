@@ -17,6 +17,7 @@ func NewOperation(op history2.Operation) regources.Operation {
 		Relationships: regources.OperationRelationships{
 			Tx:     NewTxKey(op.TxID).AsRelation(),
 			Source: NewAccountKey(op.Source).AsRelation(),
+			Details: NewOperationDetails(op).GetKey().AsRelation(),
 		},
 	}
 }
