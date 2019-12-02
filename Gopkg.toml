@@ -82,8 +82,8 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/corer"
 
-[[constraint]]
-  version = "0.5"
+[[override]]
+  branch = "feature/traefik"
   name = "gitlab.com/distributed_lab/kit"
 
 [[override]]
