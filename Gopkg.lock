@@ -539,15 +539,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:455baae8af64f53eaa55f76b78fe07ee8d7a6f955364b48816dc7be4011422b3"
+  branch = "feature/redemption-rr"
+  digest = "1:0a45b721bcc4b66dc79407eaff547e1297f12f4abe4be2b792866ad8acd84e55"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "a7f31b922b6964fbe0e25deef3fa5e8009d68324"
+  revision = "c177aab6c3569e2b6a9a3509616460734b03d4cc"
 
 [[projects]]
   branch = "master"
