@@ -627,6 +627,15 @@ func (c *reviewableRequestHandler) getCreatePaymentRequest(request *xdr.CreatePa
 	}
 }
 
+func (c *reviewableRequestHandler) getRedemption(request *xdr.RedemptionRequest) *history.RedemptionRequest {
+	return &history.RedemptionRequest{
+		SourceBalanceID:      request.SourceBalanceId.AsString(),
+		DestinationAccountID: request.Destination.Address(),
+		Amount:               regources.Amount(request.Amount),
+		CreatorDetails:       regources.Details(request.CreatorDetails),
+	}
+}
+
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -672,6 +681,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.ManageOffer = c.getManageOfferRequest(body.ManageOfferRequest)
 	case xdr.ReviewableRequestTypeCreatePayment:
 		details.CreatePayment = c.getCreatePaymentRequest(body.CreatePaymentRequest)
+	case xdr.ReviewableRequestTypePerformRedemption:
+		details.Redemption = c.getRedemption(body.RedemptionRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),
