@@ -1,12 +1,12 @@
-/v3/requests:
+/v3/redemption_requests:
   get:
     tags:
-      - Requests
-    summary: Reviewable Request List
+      - Redemption
+    summary: Redemption Request List
     description: |
-      Allows getting a filtered list of `ReviewableRequest` with details\n
+      Allows getting a filtered list of `Redemption` with details\n
       🔒 Requestor's or reviewer's signature is needed
-    operationId: getRequests
+    operationId: getRedemptionRequests
     parameters:
       - name: filter[requestor]
         in: query
@@ -42,35 +42,6 @@
           type: integer
           minimum: 1
           maximum: 5
-      - name: filter[type]
-        in: query
-        description: |
-          Filters requests by their type.
-          * 2 -   "create_pre_issuance"
-          * 3 -   "create_issuance"
-          * 4 -   "create_withdraw"
-          * 5 -   "create_sale"
-          * 6 -   "update_limits"
-          * 7 -   "create_aml_alert"
-          * 8 -   "change_role"
-          * 9 -   "update_sale_details"
-          * 10 -  "create_asset"
-          * 11 -  "create_invoice"
-          * 12 -  "manage_contract"
-          * 13 -  "update_asset"
-          * 16 -  "create_atomic_swap_bid"
-          * 17 -  "create_atomic_swap"
-          * 18 -  "kyc_recovery"
-          * 19 -  "manage_offer"
-          * 20 -  "create_payment"
-          * 21 -  "perform_redemption"
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-          minimum: 2
-          maximum: 17
       - name: filter[pending_tasks]
         in: query
         description: |
@@ -98,6 +69,24 @@
         explode: false
         schema:
           type: integer
+      - name: filter[request_details.base_asset]
+        in: query
+        description: |
+          Filters sale requests by base asset.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[request_details.default_quote_asset]
+        in: query
+        description: |
+          Filters sale requests by a default quote asset.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - name: include
         in: query
         description: |
@@ -109,6 +98,9 @@
           type: string
           enum:
             - "request_details"
+            - "request_details.base_asset"
+            - "request_details.default_quote_asset"
+            - "request_details.quote_assets"
       - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
@@ -132,7 +124,10 @@
                   type: array
                   items:
                     type: object
-                    $ref: '#/components/schemas/ReviewableRequestDetails'
+                    anyOf:
+                      - $ref: '#/components/schemas/RedemptionRequest'
+                      - $ref: '#/components/schemas/Balance'
+                      - $ref: '#/components/schemas/Account'
                 links:
                   type: object
                   description: "Provides links for pagination"
@@ -140,11 +135,11 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/requests?include=details&page[number]=2&page[limit]=15"
+                      example: "/v3/redemption_requests?include=details&page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/requests?include=details&page[number]=1&page[limit]=15"
+                      example: "/v3/redemption_requests?include=details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

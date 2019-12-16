@@ -16,6 +16,7 @@ ReviewableRequestDetailsKey:
     - $ref: '#/components/schemas/KYCRecoveryRequestKey'
     - $ref: '#/components/schemas/ManageOfferRequestKey'
     - $ref: '#/components/schemas/CreatePaymentRequestKey'
+    - $ref: '#/components/schemas/RedemptionRequestKey'
 
 ReviewableRequestDetails:
   oneOf:
@@ -35,6 +36,7 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/KYCRecoveryRequest'
     - $ref: '#/components/schemas/ManageOfferRequest'
     - $ref: '#/components/schemas/CreatePaymentRequest'
+    - $ref: '#/components/schemas/RedemptionRequest'
 
 CreateAssetRequestKey:
   type: object
@@ -472,6 +474,58 @@ CreateAmlAlertRequest:
               properties:
                 data:
                   $ref: '#/components/schemas/BalanceKey'
+        attributes:
+          type: object
+          required:
+            - amount
+            - creator_details
+          properties:
+            amount:
+              type: string
+              description: "Amount"
+              example: "1000.123456"
+              format: Amount
+            creator_details:
+              $ref: '#/components/schemas/Details'
+
+RedemptionRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-redemption"
+
+RedemptionRequest:
+  allOf:
+    - $ref: '#/components/schemas/RedemptionRequestKey'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        relationships:
+          type: object
+          required:
+            - source_balance
+            - destination
+          properties:
+            source_balance:
+              type: object
+              description: "balance to charge funds from (current holder's balance)"
+              properties:
+                data:
+                  $ref: '#/components/schemas/BalanceKey'
+            destination:
+              type: object
+              description: "account to fund assets on request approval"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AccountKey'
         attributes:
           type: object
           required:

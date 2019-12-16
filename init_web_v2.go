@@ -296,6 +296,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/create_payment_requests", handlers.GetCreatePaymentRequests)
 	m.Get("/v3/create_payment_requests/{id}", handlers.GetCreatePaymentRequests)
 
+	m.Get("/v3/redemption_requests", handlers.GetRedemptionRequests)
+	m.Get("/v3/redemption_requests/{id}", handlers.GetRedemptionRequests)
+
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)
 
