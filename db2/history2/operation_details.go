@@ -588,6 +588,6 @@ type RedemptionDetails struct {
 	AccountTo      string            `json:"account_to"`
 	Amount         regources.Amount  `json:"amount"`
 	Asset          string            `json:"asset"`
-	Details        regources.Details `db:"details"`
+	Details        regources.Details `json:"details"`
 	RequestDetails RequestDetails    `json:"request_details"`
 }
