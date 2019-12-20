@@ -503,8 +503,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/redemption-rr"
-  digest = "1:04906a4a0bea3262ade946b0fad60d14493b5a3b13520a9a24c1a65799cfda6a"
+  branch = "fix/redemption"
+  digest = "1:598d80945109ef679ac110d257a5e26d1e52c56132766bd5d47f939733280b81"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -523,7 +523,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "edde8bf3aa11f286f5e5f4d336ea6e79742aaf27"
+  revision = "91b56d745583584bce1aab04b7a8bad54a648d2d"
 
 [[projects]]
   branch = "master"
