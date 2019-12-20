@@ -1,5 +1,5 @@
-// revision: 5cf21644b65d3e0119a7164d24e81e7f5ceefae3
-// branch:   feature/redemption-rr
+// revision: 96acd1f254f5155c0d9eab316244742dfe4a21c3
+// branch:   master
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -17921,24 +17921,27 @@ type CreateRedemptionRequestOp struct {
 //        //: No destination with provided account ID
 //        DST_ACCOUNT_NOT_FOUND = -10,
 //        //: Not allowed to set zero tasks for request
-//        REDEMPTION_ZERO_TASKS_NOT_ALLOWED = -11
+//        REDEMPTION_ZERO_TASKS_NOT_ALLOWED = -11,
+//        //: Not allowed to redeem non-owned asset
+//        REDEMPTION_NON_OWNED_ASSET_FORBIDDEN = -12
 //    };
 //
 type CreateRedemptionRequestResultCode int32
 
 const (
-	CreateRedemptionRequestResultCodeSuccess                       CreateRedemptionRequestResultCode = 0
-	CreateRedemptionRequestResultCodeInvalidRedemption             CreateRedemptionRequestResultCode = -1
-	CreateRedemptionRequestResultCodeRedemptionTasksNotFound       CreateRedemptionRequestResultCode = -2
-	CreateRedemptionRequestResultCodeInvalidCreatorDetails         CreateRedemptionRequestResultCode = -3
-	CreateRedemptionRequestResultCodeInvalidAmount                 CreateRedemptionRequestResultCode = -4
-	CreateRedemptionRequestResultCodeInvalidReference              CreateRedemptionRequestResultCode = -5
-	CreateRedemptionRequestResultCodeSourceBalanceNotExist         CreateRedemptionRequestResultCode = -6
-	CreateRedemptionRequestResultCodeIncorrectPrecision            CreateRedemptionRequestResultCode = -7
-	CreateRedemptionRequestResultCodeUnderfunded                   CreateRedemptionRequestResultCode = -8
-	CreateRedemptionRequestResultCodeReferenceDuplication          CreateRedemptionRequestResultCode = -9
-	CreateRedemptionRequestResultCodeDstAccountNotFound            CreateRedemptionRequestResultCode = -10
-	CreateRedemptionRequestResultCodeRedemptionZeroTasksNotAllowed CreateRedemptionRequestResultCode = -11
+	CreateRedemptionRequestResultCodeSuccess                          CreateRedemptionRequestResultCode = 0
+	CreateRedemptionRequestResultCodeInvalidRedemption                CreateRedemptionRequestResultCode = -1
+	CreateRedemptionRequestResultCodeRedemptionTasksNotFound          CreateRedemptionRequestResultCode = -2
+	CreateRedemptionRequestResultCodeInvalidCreatorDetails            CreateRedemptionRequestResultCode = -3
+	CreateRedemptionRequestResultCodeInvalidAmount                    CreateRedemptionRequestResultCode = -4
+	CreateRedemptionRequestResultCodeInvalidReference                 CreateRedemptionRequestResultCode = -5
+	CreateRedemptionRequestResultCodeSourceBalanceNotExist            CreateRedemptionRequestResultCode = -6
+	CreateRedemptionRequestResultCodeIncorrectPrecision               CreateRedemptionRequestResultCode = -7
+	CreateRedemptionRequestResultCodeUnderfunded                      CreateRedemptionRequestResultCode = -8
+	CreateRedemptionRequestResultCodeReferenceDuplication             CreateRedemptionRequestResultCode = -9
+	CreateRedemptionRequestResultCodeDstAccountNotFound               CreateRedemptionRequestResultCode = -10
+	CreateRedemptionRequestResultCodeRedemptionZeroTasksNotAllowed    CreateRedemptionRequestResultCode = -11
+	CreateRedemptionRequestResultCodeRedemptionNonOwnedAssetForbidden CreateRedemptionRequestResultCode = -12
 )
 
 var CreateRedemptionRequestResultCodeAll = []CreateRedemptionRequestResultCode{
@@ -17954,6 +17957,7 @@ var CreateRedemptionRequestResultCodeAll = []CreateRedemptionRequestResultCode{
 	CreateRedemptionRequestResultCodeReferenceDuplication,
 	CreateRedemptionRequestResultCodeDstAccountNotFound,
 	CreateRedemptionRequestResultCodeRedemptionZeroTasksNotAllowed,
+	CreateRedemptionRequestResultCodeRedemptionNonOwnedAssetForbidden,
 }
 
 var createRedemptionRequestResultCodeMap = map[int32]string{
@@ -17969,6 +17973,7 @@ var createRedemptionRequestResultCodeMap = map[int32]string{
 	-9:  "CreateRedemptionRequestResultCodeReferenceDuplication",
 	-10: "CreateRedemptionRequestResultCodeDstAccountNotFound",
 	-11: "CreateRedemptionRequestResultCodeRedemptionZeroTasksNotAllowed",
+	-12: "CreateRedemptionRequestResultCodeRedemptionNonOwnedAssetForbidden",
 }
 
 var createRedemptionRequestResultCodeShortMap = map[int32]string{
@@ -17984,21 +17989,23 @@ var createRedemptionRequestResultCodeShortMap = map[int32]string{
 	-9:  "reference_duplication",
 	-10: "dst_account_not_found",
 	-11: "redemption_zero_tasks_not_allowed",
+	-12: "redemption_non_owned_asset_forbidden",
 }
 
 var createRedemptionRequestResultCodeRevMap = map[string]int32{
-	"CreateRedemptionRequestResultCodeSuccess":                       0,
-	"CreateRedemptionRequestResultCodeInvalidRedemption":             -1,
-	"CreateRedemptionRequestResultCodeRedemptionTasksNotFound":       -2,
-	"CreateRedemptionRequestResultCodeInvalidCreatorDetails":         -3,
-	"CreateRedemptionRequestResultCodeInvalidAmount":                 -4,
-	"CreateRedemptionRequestResultCodeInvalidReference":              -5,
-	"CreateRedemptionRequestResultCodeSourceBalanceNotExist":         -6,
-	"CreateRedemptionRequestResultCodeIncorrectPrecision":            -7,
-	"CreateRedemptionRequestResultCodeUnderfunded":                   -8,
-	"CreateRedemptionRequestResultCodeReferenceDuplication":          -9,
-	"CreateRedemptionRequestResultCodeDstAccountNotFound":            -10,
-	"CreateRedemptionRequestResultCodeRedemptionZeroTasksNotAllowed": -11,
+	"CreateRedemptionRequestResultCodeSuccess":                          0,
+	"CreateRedemptionRequestResultCodeInvalidRedemption":                -1,
+	"CreateRedemptionRequestResultCodeRedemptionTasksNotFound":          -2,
+	"CreateRedemptionRequestResultCodeInvalidCreatorDetails":            -3,
+	"CreateRedemptionRequestResultCodeInvalidAmount":                    -4,
+	"CreateRedemptionRequestResultCodeInvalidReference":                 -5,
+	"CreateRedemptionRequestResultCodeSourceBalanceNotExist":            -6,
+	"CreateRedemptionRequestResultCodeIncorrectPrecision":               -7,
+	"CreateRedemptionRequestResultCodeUnderfunded":                      -8,
+	"CreateRedemptionRequestResultCodeReferenceDuplication":             -9,
+	"CreateRedemptionRequestResultCodeDstAccountNotFound":               -10,
+	"CreateRedemptionRequestResultCodeRedemptionZeroTasksNotAllowed":    -11,
+	"CreateRedemptionRequestResultCodeRedemptionNonOwnedAssetForbidden": -12,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -52010,4 +52017,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "5cf21644b65d3e0119a7164d24e81e7f5ceefae3"
+var Revision = "96acd1f254f5155c0d9eab316244742dfe4a21c3"
