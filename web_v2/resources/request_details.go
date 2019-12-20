@@ -43,6 +43,8 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newManageOfferRequest(request.ID, *request.Details.ManageOffer)
 	case xdr.ReviewableRequestTypeCreatePayment:
 		return newCreatePaymentRequest(request.ID, *request.Details.CreatePayment)
+	case xdr.ReviewableRequestTypePerformRedemption:
+		return newRedemptionRequest(request.ID, *request.Details.Redemption)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -294,6 +296,20 @@ func newCreatePaymentRequest(id int64, details history2.CreatePaymentRequest) *r
 		},
 		Relationships: regources.CreatePaymentRequestRelationships{
 			BalanceFrom: NewBalanceKey(details.BalanceFrom).AsRelation(),
+		},
+	}
+}
+
+func newRedemptionRequest(id int64, details history2.RedemptionRequest) *regources.RedemptionRequest {
+	return &regources.RedemptionRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_REDEMPTION),
+		Attributes: regources.RedemptionRequestAttributes{
+			Amount:         details.Amount,
+			CreatorDetails: details.CreatorDetails,
+		},
+		Relationships: regources.RedemptionRequestRelationships{
+			Destination:   *NewAccountKey(details.DestinationAccountID).AsRelation(),
+			SourceBalance: *NewBalanceKey(details.SourceBalanceID).AsRelation(),
 		},
 	}
 }
