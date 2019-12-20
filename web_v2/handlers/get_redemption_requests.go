@@ -57,7 +57,7 @@ type getRedemptionRequestsHandler struct {
 }
 
 func (h *getRedemptionRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetRedemptionRequests) error {
-	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeUpdateAsset))
+	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypePerformRedemption))
 
 	if request.ShouldFilter(requests.FilterTypeRedemptionRequestsDestinationAccount) {
 		q = q.FilterByAssetUpdateAsset(request.Filters.DestinationAccount)
