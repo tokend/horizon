@@ -70,6 +70,9 @@ func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler
 			xdr.ReviewableRequestTypeCreatePayment: &paymentRequestHandler{
 				&paymentOpHandler{provider},
 			},
+			xdr.ReviewableRequestTypePerformRedemption: &redemptionHandler{
+				effectsProvider: provider,
+			},
 		},
 	}
 }

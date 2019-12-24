@@ -30,6 +30,7 @@ type ReviewableRequestDetails struct {
 	KYCRecovery         *KYCRecoveryRequest         `json:"kyc_recovery,omitempty"`
 	ManageOffer         *ManageOfferRequest         `json:"manage_offer,omitempty"`
 	CreatePayment       *CreatePaymentRequest       `json:"create_payment,omitempty"`
+	Redemption          *RedemptionRequest          `json:"redemption,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -190,4 +191,11 @@ type CreatePaymentRequest struct {
 	SourcePayForDestination bool             `json:"source_pay_for_destination"`
 	Subject                 string           `json:"subject"`
 	Reference               string           `json:"reference"`
+}
+
+type RedemptionRequest struct {
+	SourceBalanceID      string            `json:"source_balance_id"`
+	DestinationAccountID string            `json:"destination_account_id"`
+	Amount               regources.Amount  `json:"amount"`
+	CreatorDetails       regources.Details `json:"creator_details"`
 }

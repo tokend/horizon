@@ -1,6 +1,18 @@
 # Changelog
 
-## 3.7.0-x.0
+## Unreleased
+
+### Fixed
+
+* Can see the unlocking amount transaction when an order is matched on the price less than was locked
+
+## 3.7.1
+
+### Added
+
+* Endpoints for redemption reviewable request
+
+## 3.7.0
 
 ### Added  
 

@@ -120,6 +120,7 @@ x-tagGroups:
      - Withdrawal
      - Atomic Swap
      - Swaps
+     - Redemption
   - name: Access Control
     tags:
       - Signers

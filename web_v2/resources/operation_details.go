@@ -60,6 +60,7 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeCreatePaymentRequest:                   newCreatePaymentRequestOp,
 	xdr.OperationTypeOpenSwap:                               newOpenSwapOp,
 	xdr.OperationTypeCloseSwap:                              newCloseSwapOp,
+	xdr.OperationTypeCreateRedemptionRequest:                newCreateRedemptionRequestOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -817,6 +818,23 @@ func newCloseSwapOp(op history2.Operation) regources.Resource {
 		},
 		Relationships: regources.CloseSwapOpRelationships{
 			Swap: NewSwapKey(body.ID).AsRelation(),
+		},
+	}
+}
+
+func newCreateRedemptionRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.Redemption
+
+	return &regources.CreateRedemptionRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_REDEMPTION_REQUEST),
+		Attributes: regources.CreateRedemptionRequestOpAttributes{
+			Amount:         body.Amount,
+			CreatorDetails: body.Details,
+		},
+		Relationships: regources.CreateRedemptionRequestOpRelationships{
+			BalanceFrom: NewBalanceKey(body.BalanceFrom).AsRelation(),
+			AccountTo:   NewAccountKey(body.AccountTo).AsRelation(),
+			Request:     NewRequestKey(body.RequestDetails.RequestID).AsRelation(),
 		},
 	}
 }

@@ -7,8 +7,8 @@ package regources
 import "encoding/json"
 
 type Sale struct {
-	Key
-	Attributes    SaleAttributes    `json:"attributes"`
+    Key
+	Attributes SaleAttributes `json:"attributes"`
 	Relationships SaleRelationships `json:"relationships"`
 }
 type SaleResponse struct {
@@ -36,9 +36,10 @@ func (r *SaleListResponse) GetMeta(out interface{}) error {
 // if entry with specified key does not exist - returns nil
 // if entry with specified key exists but type or ID mismatches - panics
 func (c *Included) MustSale(key Key) *Sale {
-	var sale Sale
-	if c.tryFindEntry(key, &sale) {
-		return &sale
-	}
-	return nil
+    var sale Sale
+    if c.tryFindEntry(key, &sale) {
+        return &sale
+    }
+    return nil
 }
+

@@ -186,6 +186,9 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				effectsProvider: effectsBaseHandler,
 				swapProvider:    swapProvider,
 			},
+			xdr.OperationTypeCreateRedemptionRequest: &createRedemptionRequestOpHandler{
+				effectsProvider: effectsBaseHandler,
+			},
 		},
 	}
 }

@@ -207,6 +207,8 @@ func ForOperation(
 	case xdr.OperationTypeCreateManageOfferRequest:
 	case xdr.OperationTypeOpenSwap:
 	case xdr.OperationTypeCloseSwap:
+	case xdr.OperationTypeCreateRedemptionRequest:
+		// TODO add participant
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
