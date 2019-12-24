@@ -460,8 +460,7 @@
   version = "v2.0.0"
 
 [[projects]]
-  branch = "feature/traefik"
-  digest = "1:6c585a1ee59c244326e5c23833390bb7fdf2209da585af217ea9dcaa9a6a5ea4"
+  digest = "1:71c54bb75cb44ac1e70eba2cd50e8f21588cf80359cca90689e0e11a9e5e7aab"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
@@ -469,7 +468,8 @@
     "kv",
   ]
   pruneopts = "UT"
-  revision = "437abd71d903c420242af25bc91964d3eade4bcc"
+  revision = "d3f3742ebc1caa4aee945f61cdfe1e0c8892fa22"
+  version = "v1.5.0"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"

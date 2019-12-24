@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+
+	"gitlab.com/distributed_lab/logan/v3"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -36,18 +39,24 @@ func (c *Client) AddService(service Service) error {
 		return errors.Wrap(err, "failed to marshal request")
 	}
 
-	url := fmt.Sprintf("%s/integrations/traefik/services", c.Endpoint)
+	url := fmt.Sprintf("%s/cop/services", c.Endpoint)
 	resp, err := http.DefaultClient.Post(url, "application/json", bytes.NewBuffer(request))
 	if err != nil {
 		return errors.Wrap(err, "failed to send request")
 	}
 
-	switch resp.StatusCode {
-	case http.StatusInternalServerError:
-		return errors.New("failed to add service")
-	case http.StatusBadRequest:
-		return errors.New("invalid request")
-	default:
-		return nil
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "failed to read response body")
 	}
+
+	if resp.StatusCode > 300 {
+		return errors.From(errors.New("failed to add service"),
+			logan.F{"status": resp.StatusCode,
+				"body": string(body),
+			})
+	}
+
+	return nil
 }

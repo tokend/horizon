@@ -12,10 +12,11 @@ import (
 )
 
 type CopConfig struct {
-	Endpoint    string `fig:"endpoint"`
-	Upstream    string `fig:"upstream"`
-	ServiceName string `fig:"service_name"`
-	ServicePort string `fig:"service_port"`
+	Endpoint      string `fig:"endpoint,required"`
+	Upstream      string `fig:"upstream,required"`
+	ServiceName   string `fig:"service_name,required"`
+	ServicePort   string `fig:"service_port,required"`
+	ServicePrefix string `fig:"service_prefix"`
 }
 
 type Cop struct {
@@ -75,7 +76,7 @@ func (c *Cop) RegisterChi(r chi.Router) error {
 		return nil
 	}
 
-	rule, err := GetRule(r)
+	rule, err := c.GetRule(r)
 	if err != nil {
 		return errors.Wrap(err, "failed to get rule")
 	}
@@ -99,7 +100,12 @@ func (c *Cop) RegisterChi(r chi.Router) error {
 	return nil
 }
 
-func GetRule(r chi.Router) (string, error) {
+func (c *Cop) GetRule(r chi.Router) (string, error) {
+	if c.config.ServicePrefix != "" {
+		rule := fmt.Sprintf("PathPrefix(`%s`)", c.config.ServicePrefix)
+		return rule, nil
+	}
+
 	var routes []string
 	walk := func(method, route string, _ http.Handler, _ ...func(http.Handler) http.Handler) error {
 		route = strings.Replace(route, "/*/", "/", -1)
@@ -107,7 +113,7 @@ func GetRule(r chi.Router) (string, error) {
 			route = strings.TrimRight(route, "/")
 		}
 
-		routes = append(routes, fmt.Sprintf("Path(`%s`)", route))
+		routes = append(routes, fmt.Sprintf("(Path(`%s`)&&Method(`%s`))", route, method))
 		return nil
 	}
 
