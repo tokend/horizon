@@ -32,7 +32,7 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeBindExternalSystemAccountId:            newBindExternalSystemAccountIDOp,
 	xdr.OperationTypeManageSale:                             newManageSaleOp,
 	xdr.OperationTypeManageKeyValue:                         newManageKeyValueOp,
-	xdr.OperationTypeCreateManageLimitsRequest:              newManageLimitsOp,
+	xdr.OperationTypeCreateManageLimitsRequest:              newCreateManageLimitsRequestOp,
 	xdr.OperationTypeManageContractRequest:                  newManageContractRequestOp,
 	xdr.OperationTypeManageContract:                         newManageContractOp,
 	xdr.OperationTypeCancelSaleRequest:                      newCancelSaleRequestOp,

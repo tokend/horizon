@@ -5,6 +5,7 @@
 ### Fixed
 
 * Can see the unlocking amount transaction when an order is matched on the price less than was locked
+* 500 on get history (create manage limits request)
 
 ## 3.7.1
 
