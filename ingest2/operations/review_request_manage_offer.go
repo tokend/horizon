@@ -22,7 +22,7 @@ func (h *manageOfferRequestHandler) Fulfilled(details requestDetails) ([]history
 
 	if manageOfferOp.Amount != 0 {
 		source := h.offerHandler.Participant(details.SourceAccountID)
-		return h.offerHandler.getNewOfferEffect(manageOfferOp, result.MustSuccess(), source), nil
+		return h.offerHandler.getNewOfferEffect(manageOfferOp, result.MustSuccess(), source, details.Changes), nil
 	}
 
 	deletedOfferEffects := h.offerHandler.getDeletedOffersEffect(details.Changes)

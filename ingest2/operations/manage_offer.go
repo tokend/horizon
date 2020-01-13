@@ -52,7 +52,7 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	if manageOfferOp.Amount != 0 {
 		source := h.Participant(sourceAccountID)
-		return h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source), nil
+		return h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source, ledgerChanges), nil
 	}
 
 	deletedOfferEffects := h.getDeletedOffersEffect(ledgerChanges)
@@ -67,9 +67,31 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 }
 
 func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
-	res xdr.ManageOfferSuccessResult, source history2.ParticipantEffect,
+	res xdr.ManageOfferSuccessResult, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) []history2.ParticipantEffect {
-	participants, _ := h.getMatchesEffects(res.OffersClaimed, offer{
+	participants := make([]history2.ParticipantEffect, 0, 4)
+
+	if op.OrderBookId != 0 {
+		sale := getImmediateSale(ledgerChanges, op.OrderBookId)
+		if sale != nil {
+			participants = append(participants, h.BalanceEffect(sale.BaseBalance, &history2.Effect{
+				Type: history2.EffectTypeIssued,
+				Issued: &history2.BalanceChangeEffect{
+					Amount: regources.Amount(op.Amount),
+					Fee:    regources.Fee{},
+				},
+			}), h.BalanceEffect(sale.BaseBalance, &history2.Effect{
+				Type: history2.EffectTypeLocked,
+				Locked: &history2.BalanceChangeEffect{
+					Amount: regources.Amount(op.Amount),
+					// we do not fee because we locked base (fee in quote)
+					Fee: regources.Fee{},
+				},
+			}))
+		}
+	}
+
+	matchedParticipants, _ := h.getMatchesEffects(res.OffersClaimed, offer{
 		OrderBookID:         int64(op.OrderBookId),
 		AccountID:           source.AccountID,
 		BaseBalanceID:       h.MustBalanceID(op.BaseBalance),
@@ -80,6 +102,7 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 		QuoteAsset:          string(res.QuoteAsset),
 		IsBuy:               op.IsBuy,
 	})
+	participants = append(participants, matchedParticipants...)
 	if res.Offer.Effect == xdr.ManageOfferEffectDeleted {
 		return participants
 	}
@@ -301,4 +324,29 @@ func setUnlocked(offer offer, balanceEffect history2.ParticularBalanceChangeEffe
 		Effect:    &unlockedEffect,
 	}
 
+}
+
+func getImmediateSale(changes []xdr.LedgerEntryChange, saleID xdr.Uint64) *xdr.SaleEntry {
+	for _, change := range changes {
+		if change.Type != xdr.LedgerEntryChangeTypeState {
+			continue
+		}
+
+		if change.MustState().Data.Type != xdr.LedgerEntryTypeSale {
+			continue
+		}
+
+		sale := change.MustState().Data.MustSale()
+		if sale.SaleId != saleID {
+			continue
+		}
+
+		if sale.SaleTypeExt.SaleType != xdr.SaleTypeImmediate {
+			return nil
+		}
+
+		return &sale
+	}
+
+	return nil
 }
