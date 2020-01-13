@@ -5,6 +5,7 @@ import (
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
@@ -90,6 +91,10 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 		return &response, nil
 	case regources.SaleStateOpen:
 		q = newPendingParticipationQ(request, h.OffersQ)
+		// on immediate sale offers matched right away after creating participation, so we can use only history
+		if sale.SaleType == xdr.SaleTypeImmediate {
+			q = newClosedParticipationQ(request, h.ParticipationQ, sale)
+		}
 	case regources.SaleStateClosed:
 		q = newClosedParticipationQ(request, h.ParticipationQ, sale)
 	default:
