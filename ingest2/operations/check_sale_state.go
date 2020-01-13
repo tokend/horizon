@@ -52,13 +52,30 @@ func (h *checkSaleStateOpHandler) getParticipationChanges(orderBookID int64, clo
 		return nil
 	}
 
-	result := make([]history2.ParticipantEffect, 0)
+	result := make([]history2.ParticipantEffect, 0, len(closedRes.Results)+1)
 	var totalBaseIssued uint64
 	ownerID := h.manageOfferOpHandler.MustAccountID(closedRes.SaleOwner)
 	// it does not matter which base balance is used as we are sure that the operation of distribution will be clean
 	baseBalanceAddress := closedRes.Results[0].SaleBaseBalance.AsString()
 	baseBalanceID := h.manageOfferOpHandler.MustBalanceID(closedRes.Results[0].SaleBaseBalance)
 	baseAsset := string(closedRes.Results[0].SaleDetails.BaseAsset)
+
+	// we need to show explicitly that issuance has been perform to ensure that balance history is consistent
+	// amount will be updated later
+	result = append(result, history2.ParticipantEffect{
+		AccountID: ownerID,
+		BalanceID: &baseBalanceID,
+		AssetCode: &baseAsset,
+		Effect: &history2.Effect{
+			Type: history2.EffectTypeIssued,
+			Issued: &history2.BalanceChangeEffect{
+				Amount: regources.Amount(0),
+			},
+		},
+	})
+
+	matchedOfferIDs := make(map[int64]struct{}, len(closedRes.Results)+1)
+
 	for _, assetPairResult := range closedRes.Results {
 		sourceOffer := offer{
 			OrderBookID:         orderBookID,
@@ -76,52 +93,54 @@ func (h *checkSaleStateOpHandler) getParticipationChanges(orderBookID int64, clo
 
 		totalBaseIssued += baseIssued
 		result = append(result, assetPairMatches...)
+
+		for _, claimedOffer := range assetPairResult.SaleDetails.OffersClaimed {
+			matchedOfferIDs[int64(claimedOffer.OfferId)] = struct{}{}
+		}
 	}
-	removedOffers := h.getRemovedOfferEntries(ledgerChanges)
+
+	// participant effects for offers not matched on sale close
+	removedOffers := h.getRemovedOfferEntries(ledgerChanges, matchedOfferIDs)
 	removedOfferEffects := h.getUnlockedEffects(removedOffers)
 	result = append(result, removedOfferEffects...)
 
-	// we need to show explicitly that issuance has been perform to ensure that balance history is consistent
-	issuanceEffect := history2.ParticipantEffect{
-		AccountID: ownerID,
-		BalanceID: &baseBalanceID,
-		AssetCode: &baseAsset,
-		Effect: &history2.Effect{
-			Type: history2.EffectTypeIssued,
-			Issued: &history2.BalanceChangeEffect{
-				Amount: regources.Amount(totalBaseIssued),
-			},
-		},
-	}
-
-	// prepend
-	result = append(result, result[0])
-	result[0] = issuanceEffect
+	result[0].Effect.Issued.Amount = regources.Amount(totalBaseIssued)
 
 	return result
 }
 
-func (h *checkSaleStateOpHandler) getRemovedOfferEntries(changes []xdr.LedgerEntryChange) map[int64]xdr.OfferEntry {
+func (h *checkSaleStateOpHandler) getRemovedOfferEntries(changes []xdr.LedgerEntryChange, matchedOfferIDs map[int64]struct{},
+) map[int64]xdr.OfferEntry {
 	statedOffers := make(map[int64]xdr.OfferEntry)
 	result := make(map[int64]xdr.OfferEntry)
 	removedOffers := make(map[int64]bool)
+
 	for _, change := range changes {
 		switch change.Type {
 		case xdr.LedgerEntryChangeTypeRemoved:
-			{
-				if change.Removed.Type != xdr.LedgerEntryTypeOfferEntry {
-					continue
-				}
-				removedOffers[int64(change.Removed.MustOffer().OfferId)] = true
+			if change.Removed.Type != xdr.LedgerEntryTypeOfferEntry {
+				continue
 			}
-		case xdr.LedgerEntryChangeTypeState:
 
-			{
-				if change.State.Data.Type != xdr.LedgerEntryTypeOfferEntry {
-					continue
-				}
-				statedOffers[int64(change.State.Data.MustOffer().OfferId)] = change.State.Data.MustOffer()
+			offerID := int64(change.Removed.MustOffer().OfferId)
+
+			if _, ok := matchedOfferIDs[offerID]; ok {
+				continue
 			}
+
+			removedOffers[offerID] = true
+		case xdr.LedgerEntryChangeTypeState:
+			if change.State.Data.Type != xdr.LedgerEntryTypeOfferEntry {
+				continue
+			}
+
+			offerID := int64(change.State.Data.MustOffer().OfferId)
+
+			if _, ok := matchedOfferIDs[offerID]; ok {
+				continue
+			}
+
+			statedOffers[offerID] = change.State.Data.MustOffer()
 		}
 	}
 
