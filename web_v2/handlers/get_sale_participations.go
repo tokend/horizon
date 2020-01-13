@@ -90,10 +90,12 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 	case regources.SaleStateCanceled:
 		return &response, nil
 	case regources.SaleStateOpen:
-		q = newPendingParticipationQ(request, h.OffersQ)
-		// on immediate sale offers matched right away after creating participation, so we can use only history
-		if sale.SaleType == xdr.SaleTypeImmediate {
+		switch sale.SaleType {
+		case xdr.SaleTypeImmediate:
+			// on immediate sale offers matched right away after creating participation, so we can use only history
 			q = newClosedParticipationQ(request, h.ParticipationQ, sale)
+		default:
+			q = newPendingParticipationQ(request, h.OffersQ)
 		}
 	case regources.SaleStateClosed:
 		q = newClosedParticipationQ(request, h.ParticipationQ, sale)
