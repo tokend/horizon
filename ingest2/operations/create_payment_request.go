@@ -1,6 +1,7 @@
 package operations
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
@@ -9,7 +10,7 @@ import (
 )
 
 type createPaymentRequestOpHandler struct {
-	effectsProvider
+	paymentHandler *paymentOpHandler
 }
 
 // Details returns details about create limits request operation
@@ -46,4 +47,22 @@ func (h *createPaymentRequestOpHandler) Details(op rawOperation,
 			},
 		},
 	}, nil
+}
+
+func (h *createPaymentRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
+) ([]history2.ParticipantEffect, error) {
+	paymentOp := opBody.MustCreatePaymentRequestOp().Request.PaymentOp
+	result := opRes.MustCreatePaymentRequestResult().MustSuccess()
+
+	if !result.Fulfilled {
+		return []history2.ParticipantEffect{h.paymentHandler.Participant(sourceAccountID)}, nil
+	}
+
+	if result.PaymentResult == nil {
+		return nil, errors.New("unexpected nil payment result")
+	}
+
+	return h.paymentHandler.participantEffects(paymentOp,
+		result.PaymentResult.MustPaymentResponse(), sourceAccountID)
 }

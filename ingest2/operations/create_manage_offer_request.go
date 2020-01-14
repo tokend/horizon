@@ -1,13 +1,15 @@
 package operations
 
 import (
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 type createManageOfferRequestOpHandler struct {
-	effectsProvider
+	offerHandler *manageOfferOpHandler
 }
 
 // Details returns details about create limits request operation
@@ -44,4 +46,33 @@ func (h *createManageOfferRequestOpHandler) Details(op rawOperation,
 			},
 		},
 	}, nil
+}
+
+func (h *createManageOfferRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
+	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, changes []xdr.LedgerEntryChange,
+) ([]history2.ParticipantEffect, error) {
+	manageOfferOp := opBody.MustCreateManageOfferRequestOp().Request.Op
+	result := opRes.MustCreateManageOfferRequestResult().MustSuccess()
+
+	if !result.Fulfilled {
+		return []history2.ParticipantEffect{h.offerHandler.Participant(sourceAccountID)}, nil
+	}
+
+	if manageOfferOp.Amount != 0 {
+		source := h.offerHandler.Participant(sourceAccountID)
+		if result.ManageOfferResult == nil {
+			return nil, errors.New("unexpected nil manage offer result")
+		}
+		return h.offerHandler.getNewOfferEffect(manageOfferOp, result.ManageOfferResult.MustSuccess(), source, changes), nil
+	}
+
+	deletedOfferEffects := h.offerHandler.getDeletedOffersEffect(changes)
+	if len(deletedOfferEffects) != 1 {
+		return nil, errors.From(errors.New("Unexpected number of deleted offer for delete offer though request"), logan.F{
+			"expected": 1,
+			"actual":   len(deletedOfferEffects),
+		})
+	}
+
+	return deletedOfferEffects, nil
 }
