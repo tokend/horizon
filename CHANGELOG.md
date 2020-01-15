@@ -9,6 +9,7 @@
 * participants statistics for immediate sale
 * empty sale participants effects in admin panel
 * participant effects for manage offer and payment requests
+* 500 on `/v3/create_withdraw_requests`
 
 ## 3.7.1
 
