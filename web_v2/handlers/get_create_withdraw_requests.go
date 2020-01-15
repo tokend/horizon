@@ -30,7 +30,7 @@ func GetCreateWithdrawRequests(w http.ResponseWriter, r *http.Request) {
 	handler := getCreateWithdrawRequestsHandler{
 		R:         request,
 		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
-		BalancesQ: history2.NewBalancesQ(coreRepo),
+		BalancesQ: history2.NewBalancesQ(historyRepo),
 		AssetsQ:   core2.NewAssetsQ(coreRepo),
 		Log:       ctx.Log(r),
 	}
