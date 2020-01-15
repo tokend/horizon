@@ -65,7 +65,6 @@ const (
 	FEES                                                    ResourceType = "fees"
 	HORIZON_STATE                                           ResourceType = "horizon-state"
 	OPERATIONS_INITIATE_KYC_RECOVERY                        ResourceType = "operations-initiate-kyc-recovery"
-	INVESTMENT                                              ResourceType = "investment"
 	REQUEST_DETAILS_KYC_RECOVERY                            ResourceType = "request-details-kyc-recovery"
 	KEY_VALUE_ENTRIES                                       ResourceType = "key-value-entries"
 	LEDGER_ENTRY_CHANGES                                    ResourceType = "ledger-entry-changes"
