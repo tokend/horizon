@@ -1,0 +1,42 @@
+InvestmentKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "investment"
+
+Investment:
+  allOf:
+    - $ref: '#/components/schemas/InvestmentKey'
+    - type: object
+      required: [attributes]
+      properties:
+        attributes:
+          type: object
+          required:
+            - amount
+            - asset
+          properties:
+            free_amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            opened_sale_amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            closed_sale_amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            asset:
+              type: string
+              example: "USD"
+
