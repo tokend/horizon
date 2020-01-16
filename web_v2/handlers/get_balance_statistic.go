@@ -102,7 +102,9 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		if err != nil {
 			return nil, errors.Wrap(err, "fialed to convert sale amount")
 		}
-
+		if converted == nil {
+			continue
+		}
 		closedSaleResult += *converted
 	}
 
@@ -112,7 +114,9 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		if err != nil {
 			return nil, errors.Wrap(err, "fialed to convert sale amount")
 		}
-
+		if converted == nil {
+			continue
+		}
 		pendingSaleResult += *converted
 	}
 	var fullBalanceResult int64
@@ -120,6 +124,9 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		converted, err := h.balanceStateConverter.converter.TryToConvertWithOneHop(int64(coreBalance.Amount), coreBalance.AssetCode, request.AssetCode)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get converted balance state")
+		}
+		if converted == nil {
+			continue
 		}
 		fullBalanceResult = *converted
 	}
