@@ -1,4 +1,4 @@
-InvestmentKey:
+BalancesStatisticKey:
   type: object
   required:
     - id
@@ -10,29 +10,31 @@ InvestmentKey:
     type:
       type: string
       enum:
-        - "investment"
+        - "balances-statistic"
 
-Investment:
+BalancesStatistic:
   allOf:
-    - $ref: '#/components/schemas/InvestmentKey'
+    - $ref: '#/components/schemas/BalancesStatisticKey'
     - type: object
       required: [attributes]
       properties:
         attributes:
           type: object
           required:
-            - amount
+            - pending_sales_amount
+            - full_amount
+            - closed_sales_amount
             - asset
           properties:
-            free_amount:
+            full_amount:
               type: string
               format: Amount
               example: "123.123456"
-            opened_sale_amount:
+            pending_sales_amount:
               type: string
               format: Amount
               example: "123.123456"
-            closed_sale_amount:
+            closed_sales_amount:
               type: string
               format: Amount
               example: "123.123456"

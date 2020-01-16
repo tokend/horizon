@@ -2,13 +2,13 @@ package requests
 
 import "net/http"
 
-type GetInvestments struct {
+type GetBalancesStatistic struct {
 	*base
 	AssetCode      string
 	AccountAddress string
 }
 
-func NewGetInvestments(r *http.Request) (*GetInvestments, error) {
+func NewGetBalancesStatistic(r *http.Request) (*GetBalancesStatistic, error) {
 	b, err := newBase(r, baseOpts{})
 	if err != nil {
 		return nil, err
@@ -17,7 +17,7 @@ func NewGetInvestments(r *http.Request) (*GetInvestments, error) {
 	accountAddress := b.getString("id")
 	assetCode := b.getString("asset_code")
 
-	request := &GetInvestments{
+	request := &GetBalancesStatistic{
 		base:           b,
 		AccountAddress: accountAddress,
 		AssetCode:      assetCode,
