@@ -31,6 +31,7 @@ func GetBalanceStatistic(w http.ResponseWriter, r *http.Request) {
 	handler := getBalancesStatisticHandler{
 		balanceStateConverter: converter,
 		AssetsQ:               core2.NewAssetsQ(coreRepo),
+		BalancesQ:             core2.NewBalancesQ(coreRepo),
 		saleParticipationQ:    history2.NewSaleParticipationQ(ctx.HistoryRepo(r)),
 		offersQ:               core2.NewOffersQ(ctx.CoreRepo(r)),
 		Log:                   ctx.Log(r),
@@ -48,7 +49,7 @@ func GetBalanceStatistic(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.GetBalancesStatistic(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).WithField("request", request).Error("failed to get converted balances")
+		ctx.Log(r).WithError(err).WithField("request", request).Error("failed to get balances statistic")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
@@ -124,6 +125,10 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 	}
 
 	var response regources.BalancesStatisticResponse
+	response.Data.Key = regources.Key{
+		ID:   request.AccountAddress,
+		Type: regources.BALANCES_STATISTIC,
+	}
 	response.Data.Attributes = regources.BalancesStatisticAttributes{
 		Asset:              request.AssetCode,
 		ClosedSalesAmount:  regources.Amount(closedSaleResult),
