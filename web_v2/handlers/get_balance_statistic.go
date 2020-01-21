@@ -29,12 +29,12 @@ func GetBalanceStatistic(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler := getBalancesStatisticHandler{
-		balanceStateConverter: converter,
-		AssetsQ:               core2.NewAssetsQ(coreRepo),
-		BalancesQ:             core2.NewBalancesQ(coreRepo),
-		saleParticipationQ:    history2.NewSaleParticipationQ(ctx.HistoryRepo(r)),
-		offersQ:               core2.NewOffersQ(ctx.CoreRepo(r)),
-		Log:                   ctx.Log(r),
+		balanceStateConverter:  converter,
+		AssetsQ:                core2.NewAssetsQ(coreRepo),
+		BalancesQ:              core2.NewBalancesQ(coreRepo),
+		saleConvertedBalancesQ: history2.NewSaleConvertedBalancesQ(ctx.HistoryRepo(r)),
+		offersQ:                core2.NewOffersQ(ctx.CoreRepo(r)),
+		Log:                    ctx.Log(r),
 	}
 
 	request, err := requests.NewGetBalancesStatistic(r)
@@ -63,12 +63,12 @@ func GetBalanceStatistic(w http.ResponseWriter, r *http.Request) {
 }
 
 type getBalancesStatisticHandler struct {
-	AssetsQ               core2.AssetsQ
-	saleParticipationQ    history2.SaleParticipationQ
-	offersQ               core2.OffersQ
-	BalancesQ             core2.BalancesQ
-	Log                   *logan.Entry
-	balanceStateConverter *balanceStateConverter
+	AssetsQ                core2.AssetsQ
+	saleConvertedBalancesQ history2.SaleConvertedBalancesQ
+	offersQ                core2.OffersQ
+	BalancesQ              core2.BalancesQ
+	Log                    *logan.Entry
+	balanceStateConverter  *balanceStateConverter
 }
 
 func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.GetBalancesStatistic) (*regources.BalancesStatisticResponse, error) {
@@ -85,7 +85,7 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		return nil, errors.Wrap(err, "failed to get balances by account address")
 	}
 
-	closedSalesParticipations, err := h.saleParticipationQ.FilterByParticipant(request.AccountAddress).Select()
+	closedSalesParticipations, err := h.saleConvertedBalancesQ.FilterByParticipant(request.AccountAddress).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load closed sale participations")
 	}
