@@ -27,7 +27,7 @@ func NewSaleConvertedBalancesQ(repo *db2.Repo) SaleConvertedBalancesQ {
 			Join("accounts a ON pe.account_id = a.id").
 			Join("sale s ON (pe.effect#>>'{matched,order_book_id}')::int = s.id").
 			Where("(pe.effect#>>'{type}')::int = ?", EffectTypeMatched).
-			Where("pe.effect#>>'{matched,charged,asset_code}' = s.base_asset"),
+			Where("pe.asset_code = s.base_asset"),
 	}
 }
 
