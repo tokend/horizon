@@ -45,17 +45,18 @@ func (q SaleParticipationQ) FilterByParticipant(id string) SaleParticipationQ {
 }
 
 // FilterBySaleParams - returns q with filter by sale params
-func (q SaleParticipationQ) FilterBySaleParams(id uint64, baseAsset string) SaleParticipationQ {
+func (q SaleParticipationQ) FilterBySaleParams(id uint64, baseAsset, owner string) SaleParticipationQ {
 	q.selector = q.selector.
 		Where("(pe.effect#>>'{matched,order_book_id}')::int = ?", id).
-		Where("pe.asset_code = ?", baseAsset)
+		Where("pe.asset_code = ?", baseAsset).
+		Where("a.address != ?", owner)
 
 	return q
 }
 
 // Page - returns Q with specified cursor params
 func (q SaleParticipationQ) Page(params db2.CursorPageParams) SaleParticipationQ {
-	q.selector = params.ApplyTo(q.selector, "(pe.effect#>>'{matched,offer_id}')::int")
+	q.selector = params.ApplyTo(q.selector, "pe.id")
 	return q
 }
 

@@ -1,10 +1,15 @@
 # Changelog
 
-## Unreleased
+## 3.7.2
 
 ### Fixed
 
 * Can see the unlocking amount transaction when an order is matched on the price less than was locked
+* 500 on get history (create manage limits request)
+* participants statistics for immediate sale
+* empty sale participants effects in admin panel
+* participant effects for manage offer and payment requests
+* 500 on `/v3/create_withdraw_requests`
 
 ## 3.7.1
 
