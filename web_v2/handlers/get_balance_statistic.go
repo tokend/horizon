@@ -129,8 +129,18 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		if converted == nil {
 			continue
 		}
-		availableBalanceResult = *converted
-		fullBalanceResult = availableBalanceResult + int64(coreBalance.Locked)
+		availableBalanceResult += *converted
+		fullBalanceResult += *converted
+
+		convertedLocked, err := h.balanceStateConverter.converter.TryToConvertWithOneHop(int64(coreBalance.Locked), coreBalance.AssetCode, request.AssetCode)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get converted balance state")
+		}
+		if convertedLocked == nil {
+			continue
+		}
+
+		fullBalanceResult += *convertedLocked
 	}
 
 	var response regources.BalancesStatisticResponse
