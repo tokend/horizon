@@ -120,6 +120,7 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		pendingSaleResult += *converted
 	}
 	var fullBalanceResult int64
+	var availableBalanceResult int64
 	for _, coreBalance := range coreBalances {
 		converted, err := h.balanceStateConverter.converter.TryToConvertWithOneHop(int64(coreBalance.Amount), coreBalance.AssetCode, request.AssetCode)
 		if err != nil {
@@ -128,7 +129,8 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		if converted == nil {
 			continue
 		}
-		fullBalanceResult = *converted
+		availableBalanceResult = *converted
+		fullBalanceResult = availableBalanceResult + int64(coreBalance.Locked)
 	}
 
 	var response regources.BalancesStatisticResponse
@@ -141,6 +143,7 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		ClosedSalesAmount:  regources.Amount(closedSaleResult),
 		PendingSalesAmount: regources.Amount(pendingSaleResult),
 		FullAmount:         regources.Amount(fullBalanceResult),
+		AvailableAmount:    regources.Amount(availableBalanceResult),
 	}
 
 	return &response, nil
