@@ -103,7 +103,7 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 			return nil, errors.Wrap(err, "failed to convert sale amount")
 		}
 		if converted == nil {
-			continue
+			return nil, errors.New("no converted closed sale participation")
 		}
 		var isOk bool
 		closedSaleResult, isOk = amount.SafePositiveSum(closedSaleResult, *converted)
@@ -136,7 +136,7 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 			return nil, errors.Wrap(err, "failed to get converted balance state")
 		}
 		if converted == nil {
-			continue
+			return nil, errors.New("no converted balance")
 		}
 		var isOk bool
 		availableBalanceResult, isOk = amount.SafePositiveSum(availableBalanceResult, *converted)
@@ -154,7 +154,7 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 			return nil, errors.Wrap(err, "failed to get converted balance state")
 		}
 		if convertedLocked == nil {
-			continue
+			return nil, errors.New("no converted locked")
 		}
 
 		fullBalanceResult, isOk = amount.SafePositiveSum(fullBalanceResult, *convertedLocked)
