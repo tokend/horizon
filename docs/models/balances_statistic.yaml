@@ -23,9 +23,14 @@ BalancesStatistic:
           required:
             - pending_sales_amount
             - full_amount
+            - available_amount
             - closed_sales_amount
             - asset
           properties:
+            available_amount:
+              type: string
+              format: Amount
+              example: "123.123456"
             full_amount:
               type: string
               format: Amount

@@ -538,14 +538,14 @@
 
 [[projects]]
   branch = "feature/balance-statistic"
-  digest = "1:1d51b96e06effb133722fbe8a1d0a2a576bfc0ab1be7cb6ec85f30abcec9d7dd"
+  digest = "1:335be21a9a6f1cc5deea40b9fbcce3e5e45d4a8dc9e186e27ebbac435e5d208f"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "9dbbad3eeb540d02f8953450862663598765f251"
+  revision = "9c2050029dabba0f6a79a778bdeb68b6f5a0d815"
 
 [[projects]]
   branch = "master"

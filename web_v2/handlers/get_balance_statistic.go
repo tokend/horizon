@@ -100,35 +100,67 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		baseAmount := amount.MustParseU(participation.BaseAmount)
 		converted, err := h.balanceStateConverter.converter.TryToConvertWithOneHop(int64(baseAmount), participation.BaseAsset, request.AssetCode)
 		if err != nil {
-			return nil, errors.Wrap(err, "fialed to convert sale amount")
+			return nil, errors.Wrap(err, "failed to convert sale amount")
 		}
 		if converted == nil {
-			continue
+			return nil, errors.New("no converted closed sale participation")
 		}
-		closedSaleResult += *converted
+		var isOk bool
+		closedSaleResult, isOk = amount.SafePositiveSum(closedSaleResult, *converted)
+		if !isOk {
+			return nil, errors.New("failed to find closed sale sum: overflow")
+		}
 	}
 
 	var pendingSaleResult int64
 	for _, participation := range pendingSaleParticipations {
-		converted, err := h.balanceStateConverter.converter.TryToConvertWithOneHop(int64(participation.BaseAmount), participation.BaseAssetCode, request.AssetCode)
+		converted, err := h.balanceStateConverter.converter.TryToConvertWithOneHop(int64(participation.QuoteAmount), participation.QuoteAssetCode, request.AssetCode)
 		if err != nil {
-			return nil, errors.Wrap(err, "fialed to convert sale amount")
+			return nil, errors.Wrap(err, "failed to convert sale amount")
 		}
 		if converted == nil {
-			continue
+			return nil, errors.New("no converted pending sale participation")
 		}
-		pendingSaleResult += *converted
+
+		var isOk bool
+		pendingSaleResult, isOk = amount.SafePositiveSum(pendingSaleResult, *converted)
+		if !isOk {
+			return nil, errors.New("failed to find pending sale sum: overflow")
+		}
 	}
 	var fullBalanceResult int64
+	var availableBalanceResult int64
 	for _, coreBalance := range coreBalances {
 		converted, err := h.balanceStateConverter.converter.TryToConvertWithOneHop(int64(coreBalance.Amount), coreBalance.AssetCode, request.AssetCode)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get converted balance state")
 		}
 		if converted == nil {
-			continue
+			return nil, errors.New("no converted balance")
 		}
-		fullBalanceResult = *converted
+		var isOk bool
+		availableBalanceResult, isOk = amount.SafePositiveSum(availableBalanceResult, *converted)
+		if !isOk {
+			return nil, errors.New("failed to find available amount sum: overflow")
+		}
+
+		fullBalanceResult, isOk = amount.SafePositiveSum(fullBalanceResult, *converted)
+		if !isOk {
+			return nil, errors.New("failed to find full amount sum: overflow")
+		}
+
+		convertedLocked, err := h.balanceStateConverter.converter.TryToConvertWithOneHop(int64(coreBalance.Locked), coreBalance.AssetCode, request.AssetCode)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get converted balance state")
+		}
+		if convertedLocked == nil {
+			return nil, errors.New("no converted locked")
+		}
+
+		fullBalanceResult, isOk = amount.SafePositiveSum(fullBalanceResult, *convertedLocked)
+		if !isOk {
+			return nil, errors.New("failed to find sum of full amount and locked: overflow")
+		}
 	}
 
 	var response regources.BalancesStatisticResponse
@@ -141,6 +173,7 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 		ClosedSalesAmount:  regources.Amount(closedSaleResult),
 		PendingSalesAmount: regources.Amount(pendingSaleResult),
 		FullAmount:         regources.Amount(fullBalanceResult),
+		AvailableAmount:    regources.Amount(availableBalanceResult),
 	}
 
 	return &response, nil
