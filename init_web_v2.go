@@ -233,6 +233,7 @@ func initWebV2Actions(app *App) {
 
 	m.Post("/v3/transactions", handlers.CreateTransaction)
 
+	m.Get("/v3/accounts", handlers.GetAccountList)
 	m.Get("/v3/accounts/{id}", handlers.GetAccount)
 	m.Get("/v3/accounts/{id}/signers", handlers.GetAccountSigners)
 	m.Get("/v3/accounts/{id}/calculated_fees", handlers.GetCalculatedFees)

@@ -39,14 +39,26 @@ func (q AccountsQ) FilterByAddress(address string) AccountsQ {
 }
 
 //FilterByAddresses - returns q with filter by addresses
-func (q AccountsQ) FilterByAddresses(addresses []string) AccountsQ {
-	q.selector = q.selector.Where("accounts.accountid = ?", addresses)
+func (q AccountsQ) FilterByAddresses(addresses ...string) AccountsQ {
+	q.selector = q.selector.Where(sq.Eq{"accounts.account_id": addresses})
 	return q
 }
 
 //FilterByReferrer - returns q with filter by referrer
 func (q AccountsQ) FilterByReferrer(address string) AccountsQ {
 	q.selector = q.selector.Where("accounts.referrer = ?", address)
+	return q
+}
+
+// FilterByRole - returns q with filter by role
+func (q AccountsQ) FilterByRole(ids ...uint64) AccountsQ {
+	q.selector = q.selector.Where(sq.Eq{"accounts.role_id": ids})
+	return q
+}
+
+// Page - returns Q with specified limit and offset params
+func (q AccountsQ) Page(params db2.OffsetPageParams) AccountsQ {
+	q.selector = params.ApplyTo(q.selector, "accounts.sequential_id")
 	return q
 }
 
