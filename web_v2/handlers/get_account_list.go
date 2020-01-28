@@ -31,6 +31,10 @@ func GetAccountList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isAllowed(r, w) {
+		return
+	}
+
 	response, err := handler.GetAccountList(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get account", logan.F{
