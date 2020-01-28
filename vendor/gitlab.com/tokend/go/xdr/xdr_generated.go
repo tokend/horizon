@@ -1,5 +1,5 @@
-// revision: 96acd1f254f5155c0d9eab316244742dfe4a21c3
-// branch:   master
+// revision: 1237c32bd475780b8180f8d3cae6b1b6a7e4fcfb
+// branch:   fix/license-signatures
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -19576,7 +19576,8 @@ type LicenseOp struct {
 //        //: Provided due date is in the past.
 //        INVALID_DUE_DATE = -2,
 //        //: Not enough valid signatures to submit a license (at least one valid signature is required)
-//        INVALID_SIGNATURE = -3
+//        INVALID_SIGNATURE = -3,
+//        EXTRA_SIGNATURES = -4
 //    };
 //
 type LicenseResultCode int32
@@ -19586,6 +19587,7 @@ const (
 	LicenseResultCodeInvalidStamp     LicenseResultCode = -1
 	LicenseResultCodeInvalidDueDate   LicenseResultCode = -2
 	LicenseResultCodeInvalidSignature LicenseResultCode = -3
+	LicenseResultCodeExtraSignatures  LicenseResultCode = -4
 )
 
 var LicenseResultCodeAll = []LicenseResultCode{
@@ -19593,6 +19595,7 @@ var LicenseResultCodeAll = []LicenseResultCode{
 	LicenseResultCodeInvalidStamp,
 	LicenseResultCodeInvalidDueDate,
 	LicenseResultCodeInvalidSignature,
+	LicenseResultCodeExtraSignatures,
 }
 
 var licenseResultCodeMap = map[int32]string{
@@ -19600,6 +19603,7 @@ var licenseResultCodeMap = map[int32]string{
 	-1: "LicenseResultCodeInvalidStamp",
 	-2: "LicenseResultCodeInvalidDueDate",
 	-3: "LicenseResultCodeInvalidSignature",
+	-4: "LicenseResultCodeExtraSignatures",
 }
 
 var licenseResultCodeShortMap = map[int32]string{
@@ -19607,6 +19611,7 @@ var licenseResultCodeShortMap = map[int32]string{
 	-1: "invalid_stamp",
 	-2: "invalid_due_date",
 	-3: "invalid_signature",
+	-4: "extra_signatures",
 }
 
 var licenseResultCodeRevMap = map[string]int32{
@@ -19614,6 +19619,7 @@ var licenseResultCodeRevMap = map[string]int32{
 	"LicenseResultCodeInvalidStamp":     -1,
 	"LicenseResultCodeInvalidDueDate":   -2,
 	"LicenseResultCodeInvalidSignature": -3,
+	"LicenseResultCodeExtraSignatures":  -4,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -50493,7 +50499,9 @@ type TransactionResult struct {
 //        CLEAR_DATABASE_CACHE = 20,
 //        FIX_ISSUANCE_REVIEWER = 21,
 //        MARK_ASSET_AS_DELETED = 22,
-//        FIX_MAX_SUBJECT_SIZE = 23
+//        FIX_MAX_SUBJECT_SIZE = 23,
+//        FIX_MOVEMENT_REVIEW = 24,
+//        FIX_SIGNATURE_CHECK = 25
 //    };
 //
 type LedgerVersion int32
@@ -50523,6 +50531,8 @@ const (
 	LedgerVersionFixIssuanceReviewer               LedgerVersion = 21
 	LedgerVersionMarkAssetAsDeleted                LedgerVersion = 22
 	LedgerVersionFixMaxSubjectSize                 LedgerVersion = 23
+	LedgerVersionFixMovementReview                 LedgerVersion = 24
+	LedgerVersionFixSignatureCheck                 LedgerVersion = 25
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -50550,6 +50560,8 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixIssuanceReviewer,
 	LedgerVersionMarkAssetAsDeleted,
 	LedgerVersionFixMaxSubjectSize,
+	LedgerVersionFixMovementReview,
+	LedgerVersionFixSignatureCheck,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -50577,6 +50589,8 @@ var ledgerVersionMap = map[int32]string{
 	21: "LedgerVersionFixIssuanceReviewer",
 	22: "LedgerVersionMarkAssetAsDeleted",
 	23: "LedgerVersionFixMaxSubjectSize",
+	24: "LedgerVersionFixMovementReview",
+	25: "LedgerVersionFixSignatureCheck",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -50604,6 +50618,8 @@ var ledgerVersionShortMap = map[int32]string{
 	21: "fix_issuance_reviewer",
 	22: "mark_asset_as_deleted",
 	23: "fix_max_subject_size",
+	24: "fix_movement_review",
+	25: "fix_signature_check",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -50631,6 +50647,8 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixIssuanceReviewer":               21,
 	"LedgerVersionMarkAssetAsDeleted":                22,
 	"LedgerVersionFixMaxSubjectSize":                 23,
+	"LedgerVersionFixMovementReview":                 24,
+	"LedgerVersionFixSignatureCheck":                 25,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -52017,4 +52035,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "96acd1f254f5155c0d9eab316244742dfe4a21c3"
+var Revision = "1237c32bd475780b8180f8d3cae6b1b6a7e4fcfb"

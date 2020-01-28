@@ -501,8 +501,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "fix/redemption"
-  digest = "1:598d80945109ef679ac110d257a5e26d1e52c56132766bd5d47f939733280b81"
+  branch = "fix/license-signatures"
+  digest = "1:0ccca1a330c913ad9d272b1ce4b2d5f53d7f1db5fd1a0b3a21b30a55d64a3e34"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -521,7 +521,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "91b56d745583584bce1aab04b7a8bad54a648d2d"
+  revision = "df1de90f38cd24777ca135accd22d0d79ee55ac6"
 
 [[projects]]
   branch = "master"
