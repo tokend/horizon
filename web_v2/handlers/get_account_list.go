@@ -51,10 +51,10 @@ func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*reg
 	q := h.AccountsQ.Page(r.PageParams)
 
 	if r.ShouldFilter(requests.FilterTypeAccountListAccount) {
-		q = q.FilterByAddresses(r.Filters.Account)
+		q = q.FilterByAddresses(r.Filters.Account...)
 	}
 	if r.ShouldFilter(requests.FilterTypeAccountListRole) {
-		q = q.FilterByRole(r.Filters.Role)
+		q = q.FilterByRole(r.Filters.Role...)
 	}
 
 	accounts, err := q.Select()

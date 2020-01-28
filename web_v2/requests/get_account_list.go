@@ -21,8 +21,8 @@ var filterTypeAccountListAll = map[string]struct{}{
 type GetAccountList struct {
 	*base
 	Filters struct {
-		Account string `fig:"account"`
-		Role    uint64 `fig:"role"`
+		Account []string `fig:"account"`
+		Role    []uint64 `fig:"role"`
 	}
 	PageParams db2.OffsetPageParams
 }

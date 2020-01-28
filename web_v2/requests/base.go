@@ -100,7 +100,7 @@ func (r *base) marshalQuery() string {
 	return strings.TrimSuffix(builder.String(), "&")
 }
 
-var amountHook = figure.Hooks{
+var hooks = figure.Hooks{
 	"regources.Amount": func(value interface{}) (reflect.Value, error) {
 		strVal, ok := value.(string)
 		if !ok {
@@ -113,6 +113,35 @@ var amountHook = figure.Hooks{
 		}
 
 		result := regources.Amount(intVal)
+
+		return reflect.ValueOf(result), nil
+	},
+	"[]string": func(value interface{}) (reflect.Value, error) {
+		strVal, ok := value.(string)
+		if !ok {
+			return reflect.Value{}, errors.New("Failed to parse value as string")
+		}
+
+		slice := strings.Split(strVal, ",")
+
+		return reflect.ValueOf(slice), nil
+	},
+	"[]uint64": func(value interface{}) (reflect.Value, error) {
+		strVal, ok := value.(string)
+		if !ok {
+			return reflect.Value{}, errors.New("Failed to parse value as string")
+		}
+
+		slice := strings.Split(strVal, ",")
+
+		result := make([]uint64, 0, len(slice))
+		for _, val := range slice {
+			intVal, err := cast.ToUint64E(val)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			result = append(result, intVal)
+		}
 
 		return reflect.ValueOf(result), nil
 	},
@@ -139,7 +168,7 @@ func (r *base) populateFilters(target interface{}) error {
 		filter[k] = v
 	}
 
-	err := figure.Out(target).With(figure.BaseHooks, amountHook).From(filter).Please()
+	err := figure.Out(target).With(figure.BaseHooks, hooks).From(filter).Please()
 	if err != nil {
 		f := errors.GetFields(err)
 		return validation.Errors{
