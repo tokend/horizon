@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	//
+	// FilterTypeAccountListAccount - defines if we need to filter list by account id
 	FilterTypeAccountListAccount = "account"
-	FilterTypeAccountListRole    = "role"
+	// FilterTypeAccountListRole - defines if we need to filter list by role
+	FilterTypeAccountListRole = "role"
 )
 
 var filterTypeAccountListAll = map[string]struct{}{
