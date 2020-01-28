@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+* Redemption reviewable request
+
 ## 4.8.0
 
 * `Flagger`

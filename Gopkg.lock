@@ -460,18 +460,16 @@
   version = "v2.0.0"
 
 [[projects]]
-  digest = "1:fb0f7303826f54d8e5439da81c4c01125da381904559580a227fed1aa453aafa"
+  digest = "1:71c54bb75cb44ac1e70eba2cd50e8f21588cf80359cca90689e0e11a9e5e7aab"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
-    "janus",
-    "janus/internal",
+    "cop",
     "kv",
-    "pgdb",
   ]
   pruneopts = "UT"
-  revision = "983afb19d5c2762943fcba9f8727ff81c2b7e5a2"
-  version = "v0.5.0"
+  revision = "d3f3742ebc1caa4aee945f61cdfe1e0c8892fa22"
+  version = "v1.5.0"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"
@@ -539,15 +537,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/redemption-rr"
-  digest = "1:0a45b721bcc4b66dc79407eaff547e1297f12f4abe4be2b792866ad8acd84e55"
+  branch = "feature/balance-statistic"
+  digest = "1:335be21a9a6f1cc5deea40b9fbcce3e5e45d4a8dc9e186e27ebbac435e5d208f"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "c177aab6c3569e2b6a9a3509616460734b03d4cc"
+  revision = "9c2050029dabba0f6a79a778bdeb68b6f5a0d815"
 
 [[projects]]
   branch = "master"
@@ -685,8 +683,7 @@
     "gitlab.com/distributed_lab/ape/problems",
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/figure",
-    "gitlab.com/distributed_lab/kit/comfig",
-    "gitlab.com/distributed_lab/kit/janus",
+    "gitlab.com/distributed_lab/kit/cop",
     "gitlab.com/distributed_lab/kit/kv",
     "gitlab.com/distributed_lab/logan",
     "gitlab.com/distributed_lab/logan/v3",

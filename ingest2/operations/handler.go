@@ -171,10 +171,10 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				effectsProvider: effectsBaseHandler,
 			},
 			xdr.OperationTypeCreateManageOfferRequest: &createManageOfferRequestOpHandler{
-				effectsProvider: effectsBaseHandler,
+				offerHandler: &manageOfferOpHandler{effectsBaseHandler},
 			},
 			xdr.OperationTypeCreatePaymentRequest: &createPaymentRequestOpHandler{
-				effectsProvider: effectsBaseHandler,
+				paymentHandler: &paymentOpHandler{effectsProvider: effectsBaseHandler},
 			},
 			xdr.OperationTypeRemoveAsset: &removeAssetOpHandler{
 				effectsProvider: effectsBaseHandler,

@@ -5,6 +5,7 @@ import (
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
@@ -78,7 +79,8 @@ type participationsQ interface {
 }
 
 // GetSaleParticipations returns sale with related resources
-func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale, request *requests.GetSaleParticipations) (*regources.SaleParticipationListResponse, error) {
+func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale, request *requests.GetSaleParticipations,
+) (*regources.SaleParticipationListResponse, error) {
 	response := regources.SaleParticipationListResponse{
 		Data: make([]regources.SaleParticipation, 0),
 	}
@@ -89,7 +91,17 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 	case regources.SaleStateCanceled:
 		return &response, nil
 	case regources.SaleStateOpen:
-		q = newPendingParticipationQ(request, h.OffersQ)
+		switch sale.SaleType {
+		case xdr.SaleTypeImmediate:
+			// on immediate sale offers matched right away after creating participation, so we can use only history
+			q = newClosedParticipationQ(request, h.ParticipationQ, sale)
+		case xdr.SaleTypeBasicSale, xdr.SaleTypeCrowdFunding, xdr.SaleTypeFixedPrice:
+			q = newPendingParticipationQ(request, h.OffersQ)
+		default:
+			return nil, errors.From(errors.New("unexpected sale type"), logan.F{
+				"sale_type": sale.SaleType.String(),
+			})
+		}
 	case regources.SaleStateClosed:
 		q = newClosedParticipationQ(request, h.ParticipationQ, sale)
 	default:

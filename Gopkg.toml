@@ -82,9 +82,9 @@
   branch = "master"
   name = "gitlab.com/distributed_lab/corer"
 
-[[constraint]]
-  version = "0.5"
+[[override]]
   name = "gitlab.com/distributed_lab/kit"
+  version = "1.5.0"
 
 [[override]]
   name = "gitlab.com/distributed_lab/logan"
@@ -99,7 +99,7 @@
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "feature/redemption-rr"
+  branch = "feature/balance-statistic"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
