@@ -1,3 +1,9 @@
+## 3.5.3
+
+###Fixed
+
+* slow `/v3/transactions` get requests
+
 ## 3.5.2-x.0
 
 ### Fixed

@@ -2,7 +2,7 @@ package history2
 
 import (
 	sq "github.com/lann/squirrel"
-	"gitlab.com/distributed_lab/logan"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -22,7 +22,8 @@ func NewLedgerQ(repo *db2.Repo) *LedgerQ {
 // GetLatestLedgerSeq - returns latest ledger sequence available in DB
 func (q *LedgerQ) GetLatestLedgerSeq() (int32, error) {
 	var result int32
-	err := q.repo.GetRaw(&result, "SELECT COALESCE(MAX(sequence), 0) FROM ledgers")
+	// we must use id because id column has indexing
+	err := q.repo.GetRaw(&result, "SELECT COALESCE(MAX(id), 0) FROM ledgers")
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get latest ledger seq")
 	}
@@ -33,7 +34,8 @@ func (q *LedgerQ) GetLatestLedgerSeq() (int32, error) {
 // GetOldestLedgerSeq - returns oldest ledger sequence
 func (q *LedgerQ) GetOldestLedgerSeq() (int32, error) {
 	var result int32
-	err := q.repo.GetRaw(&result, "SELECT COALESCE(MIN(sequence), 0) FROM ledgers")
+	// we must use id because id column has indexing
+	err := q.repo.GetRaw(&result, "SELECT COALESCE(MIN(id), 0) FROM ledgers")
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get oldest ledger seq")
 	}
