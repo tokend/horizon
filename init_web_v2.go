@@ -1,27 +1,38 @@
 package horizon
 
 import (
+	"net/http"
 	"time"
 
+	"gitlab.com/tokend/horizon/cache"
+
+	"gitlab.com/tokend/go/resources"
 	"gitlab.com/tokend/horizon/corer"
 
-	"gitlab.com/tokend/horizon/web_v2/handlers"
-
-	"net/http"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/pkg/errors"
 	"github.com/rs/cors"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/tokend/go/doorman"
+	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core2"
 	hdoorman "gitlab.com/tokend/horizon/doorman"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/web_v2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
+	"gitlab.com/tokend/horizon/web_v2/handlers"
 	v2middleware "gitlab.com/tokend/horizon/web_v2/middleware"
+)
+
+const (
+	kvKeyLicenseAdminSignerRole = "license_admin_signer_role"
+	kvKeyKycRecoverySignerRole  = "kyc_recovery_signer_role"
+	kvKeyKycRecoveryEnabled     = "kyc_recovery_enabled"
 )
 
 type WebV2 struct {
@@ -44,7 +55,12 @@ func initWebV2Middleware(app *App) {
 
 	logger := &log.DefaultLogger.Entry
 
-	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
+	drm, err := createDoorman(app)
+	if err != nil {
+		panic(errors.Wrap(err, "failed to init doorman, stopping"))
+	}
+
+	cacher := cache.NewMiddlewareCache(app.config.CacheSize, app.config.CachePeriod)
 
 	m.Use(
 		middleware.StripSlashes,
@@ -58,7 +74,7 @@ func initWebV2Middleware(app *App) {
 			ctx.SetCoreRepo(app.CoreRepoLogged(nil)),
 			// log will be set by logger setter on handler call
 			ctx.SetHistoryRepo(app.HistoryRepoLogged(nil)),
-			ctx.SetDoorman(doorman.New(app.config.SkipCheck, signersProvider)),
+			ctx.SetDoorman(drm),
 			ctx.SetCoreInfo(func() corer.Info {
 				// required to make sure that we return most recent core info
 				if app.CoreInfo == nil {
@@ -71,6 +87,7 @@ func initWebV2Middleware(app *App) {
 			ctx.SetConfig(&app.config),
 		),
 		v2middleware.WebMetrics(app),
+		cacher.Middleware,
 	)
 
 	if app.config.CORSEnabled {
@@ -100,6 +117,110 @@ func initWebV2Middleware(app *App) {
 	})
 }
 
+func createDoorman(app *App) (doorman.Doorman, error) {
+	// TODO: Add constraint for KYC recovery signer when clients will be fully ready
+	lazyLicenseSignerConstrain := newLazySignerConstrain(
+		core2.NewKeyValueQ(app.CoreRepoLogged(nil)),
+		kvKeyLicenseAdminSignerRole,
+		func(_ *core2.KeyValueQ) bool {
+			return true
+		},
+	)
+
+	constrains := []doorman.SignerOfExt{
+		lazyLicenseSignerConstrain,
+	}
+
+	signersProvider := hdoorman.NewSignersQ(core2.NewSignerQ(app.CoreRepoLogged(nil)))
+	return doorman.NewWithOpts(app.Conf().SkipCheck, signersProvider, doorman.SignerOfOpts{Constraints: constrains}), nil
+}
+
+type lazyRestrictedRoleConstrain struct {
+	kvQ   *core2.KeyValueQ
+	kvKey string
+
+	// check prerequisites
+	// should be executed once and save result into `enabled` field on success
+	// if error occurs while ensuring - should panic
+	mustEnsureEnabled func(app *core2.KeyValueQ) bool
+	enabled           *bool
+
+	lazyRole *uint64
+}
+
+func newLazySignerConstrain(kvQ *core2.KeyValueQ, kvKey string, shouldCheck func(kvQ *core2.KeyValueQ) bool) *lazyRestrictedRoleConstrain {
+	return &lazyRestrictedRoleConstrain{
+		kvQ:               kvQ,
+		kvKey:             kvKey,
+		mustEnsureEnabled: shouldCheck,
+	}
+}
+
+func (l *lazyRestrictedRoleConstrain) Check(signer resources.Signer) bool {
+	if l.enabled == nil {
+		enabled := l.mustEnsureEnabled(l.kvQ)
+		l.enabled = &enabled
+	}
+
+	isEnabled := *l.enabled
+	if !isEnabled {
+		return true
+	}
+
+	if l.lazyRole == nil {
+		roleVal, err := getKVValue(l.kvQ, l.kvKey, xdr.KeyValueEntryTypeUint64)
+		if err != nil {
+			panic(errors.Wrap(err, "failed to get role kv value", logan.F{
+				"key":  l.kvKey,
+				"type": xdr.KeyValueEntryTypeUint64,
+			}))
+		}
+
+		lazyRestrictedRole := uint64(*roleVal.Ui64Value)
+		l.lazyRole = &lazyRestrictedRole
+	}
+
+	return *l.lazyRole != signer.Role
+}
+
+func getKVValue(kvQ *core2.KeyValueQ, key string, typ xdr.KeyValueEntryType) (*xdr.KeyValueEntryValue, error) {
+	kv, err := kvQ.ByKey(key)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot get key value from core")
+	}
+
+	if kv == nil {
+		return nil, errors.New("kv not found in db")
+	}
+
+	if kv.Value.Type != typ {
+		return nil, errors.From(errors.New("provided kv type conflicts with one got from db, check terraform"), logan.F{
+			"expected_type": typ.String(),
+			"got_type":      kv.Value.Type.String(),
+		})
+	}
+
+	switch kv.Value.Type {
+	case xdr.KeyValueEntryTypeUint32:
+		if kv.Value.Ui32Value == nil {
+			return nil, errors.New("u32 kv value is nil, check terraform")
+		}
+	case xdr.KeyValueEntryTypeUint64:
+		if kv.Value.Ui64Value == nil {
+			return nil, errors.New("u64 kv value is nil, check terraform")
+		}
+	case xdr.KeyValueEntryTypeString:
+		if kv.Value.StringValue == nil {
+			return nil, errors.New("string kv value is nil, check terraform")
+		}
+	default:
+		return nil, errors.New("invalid kv type") // should never happen unless new kv types arrive
+	}
+
+	value := xdr.KeyValueEntryValue(kv.Value)
+	return &value, nil
+}
+
 func initWebV2Actions(app *App) {
 	m := app.webV2.mux
 
@@ -107,15 +228,19 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3", handlers.GetRoot)
 
 	m.Get("/v3/info", handlers.GetRoot)
+
+	m.Get("/v3/license", handlers.GetCurrentLicenseInfo)
+
 	m.Post("/v3/transactions", handlers.CreateTransaction)
 
+	m.Get("/v3/accounts", handlers.GetAccountList)
 	m.Get("/v3/accounts/{id}", handlers.GetAccount)
 	m.Get("/v3/accounts/{id}/signers", handlers.GetAccountSigners)
 	m.Get("/v3/accounts/{id}/calculated_fees", handlers.GetCalculatedFees)
 	m.Get("/v3/accounts/{id}/sales", handlers.GetSaleListForAccount)
 	m.Get("/v3/accounts/{id}/sales/{sale_id}", handlers.GetSaleForAccount)
 	m.Get("/v3/accounts/{id}/converted_balances/{asset_code}", handlers.GetConvertedBalances)
-	m.Get("/v3/accounts/{id}/requests/{request_id}", handlers.GetRequestForAccount)
+	m.Get("/v3/accounts/{id}/balances_statistic/{asset_code}", handlers.GetBalanceStatistic)
 	m.Get("/v3/assets/{code}", handlers.GetAsset)
 	m.Get("/v3/assets", handlers.GetAssetList)
 	m.Get("/v3/balances/{id}", handlers.GetBalance)
@@ -168,6 +293,13 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/create_poll_requests/{id}", handlers.GetCreatePollRequests)
 	m.Get("/v3/kyc_recovery_requests", handlers.GetKYCRecoveryRequests)
 	m.Get("/v3/kyc_recovery_requests/{id}", handlers.GetKYCRecoveryRequests)
+	m.Get("/v3/manage_offer_requests", handlers.GetManageOfferRequests)
+	m.Get("/v3/manage_offer_requests/{id}", handlers.GetManageOfferRequests)
+	m.Get("/v3/create_payment_requests", handlers.GetCreatePaymentRequests)
+	m.Get("/v3/create_payment_requests/{id}", handlers.GetCreatePaymentRequests)
+
+	m.Get("/v3/redemption_requests", handlers.GetRedemptionRequests)
+	m.Get("/v3/redemption_requests/{id}", handlers.GetRedemptionRequests)
 
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)
@@ -197,8 +329,13 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/signer_rules/{id}", handlers.GetSignerRule)
 	m.Get("/v3/signer_rules", handlers.GetSignerRuleList)
 
-	janus := app.config.Janus()
-	if err := janus.RegisterChi(m); err != nil {
+	m.Get("/v3/swaps/{id}", handlers.GetSwap)
+	m.Get("/v3/swaps", handlers.GetSwapList)
+
+	m.Get("/v3/operations", handlers.GetOperations)
+
+	cop := app.config.Cop()
+	if err := cop.RegisterChi(m); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))
 	}
 }

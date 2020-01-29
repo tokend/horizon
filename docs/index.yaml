@@ -119,6 +119,8 @@ x-tagGroups:
      - Issuance
      - Withdrawal
      - Atomic Swap
+     - Swaps
+     - Redemption
   - name: Access Control
     tags:
       - Signers
@@ -143,6 +145,7 @@ x-tagGroups:
     tags:
       - PreIssuance
       - KeyValue
+      - License
   - name: Other
     tags:
       - Polls

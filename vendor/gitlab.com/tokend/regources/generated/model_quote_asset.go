@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type QuoteAsset struct {
 	Key
 	Attributes QuoteAssetAttributes `json:"attributes"`
@@ -14,9 +16,19 @@ type QuoteAssetResponse struct {
 }
 
 type QuoteAssetListResponse struct {
-	Data     []QuoteAsset `json:"data"`
-	Included Included     `json:"included"`
-	Links    *Links       `json:"links"`
+	Data     []QuoteAsset    `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *QuoteAssetListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *QuoteAssetListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustQuoteAsset - returns QuoteAsset from include collection.

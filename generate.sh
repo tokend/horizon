@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-GENERATOR_IMAGE=registry.gitlab.com/tokend/openapi-go-generator:aa176df22dae5ff654e5a8e94733f579fd833ae0 # latest generator commit in master
+GENERATOR_IMAGE=registry.gitlab.com/tokend/openapi-go-generator:70ac6903671870a543635bcb40a6d8eeb671164e # latest generator commit in master
 
 GENERATED="${GOPATH}/src/gitlab.com/tokend/regources/generated"
 OPENAPI_DIR="${GOPATH}/src/gitlab.com/tokend/horizon/docs/build"
@@ -52,7 +52,7 @@ function parseArgs {
 }
 
 function generate {
-    docker run -v ${OPENAPI_DIR}:/openapi -v ${GENERATED}:/generated ${GENERATOR_IMAGE} generate
+    docker run -v ${OPENAPI_DIR}:/openapi -v ${GENERATED}:/generated ${GENERATOR_IMAGE} generate --generate-horizon-stuff --meta-for-lists
 }
 
 parseArgs $@

@@ -10,13 +10,6 @@ Mask:
     flags:
       type: array
       items:
-        type: object
         description: "flag of the bit mask"
-        properties:
-          name:
-            type: string
-            description: "name of the flag"
-          value:
-            type: integer
-            description: "value of the flag"
-            example: 2
+        allOf:
+          - $ref: '#/components/schemas/Enum'

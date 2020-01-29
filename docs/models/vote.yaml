@@ -43,7 +43,8 @@ VoteData:
   required: [poll_type]
   properties:
     poll_type:
-      type: integer
+      allOf:
+        - $ref: '#/components/schemas/Enum'
       format: xdr.PollType
       description: "type of the poll"
     single_choice:

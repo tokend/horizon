@@ -1,31 +1,3 @@
-Int64Key:
-  type: object
-  required:
-    - id
-    - type
-  properties:
-    id:
-      type: string
-      example: "12345"
-    type:
-      type: string
-      enum:
-        - "requests"
-        - "request-details-aml-alert"
-        - "request-details-asset-create"
-        - "request-details-asset-update"
-        - "request-details-atomic-swap-ask"
-        - "request-details-atomic-swap-bid"
-        - "request-details-issuance"
-        - "request-details-limits-update"
-        - "request-details-pre-issuance"
-        - "request-details-sale"
-        - "request-details-change-role"
-        - "request-details-update-sale-details"
-        - "request-details-create-poll"
-        - "request-details-withdrawal"
-        - "request-details-kyc-recovery"
-        - "sales"
 RequestKey:
   type: object
   required:
@@ -42,7 +14,7 @@ RequestKey:
 
 ReviewableRequest:
   allOf:
-    - $ref: '#/components/schemas/Int64Key'
+    - $ref: '#/components/schemas/RequestKey'
     - type: object
       required: [relationships, attributes]
       properties:
@@ -69,7 +41,7 @@ ReviewableRequest:
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/Int64Key'
+                  $ref: '#/components/schemas/ReviewableRequestDetailsKey'
         attributes:
           type: object
           required:
@@ -127,5 +99,6 @@ ReviewableRequest:
             external_details:
               $ref: '#/components/schemas/Details'
             xdr_type:
-              type: integer
+              allOf:
+                - $ref: '#/components/schemas/Enum'
               format: xdr.ReviewableRequestType

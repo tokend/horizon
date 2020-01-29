@@ -20,12 +20,14 @@ config:
   project: ""
   env: ""
   migrate_up_on_start: false
+  cache_period: 5s
+  cache_size: 10000
   invest_ready: http://
   telegram_airdrop: http://
 
-janus:
+traefik:
   disabled: true
-  endpoint: http://localhost:8081
-  upstream: http://localhost:8000
-  surname: horizon
-
+  endpoint: http://traefik_api
+  upstream: http://dns
+  service_name: horizon
+  service_port: 80

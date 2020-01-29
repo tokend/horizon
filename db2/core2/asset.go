@@ -21,6 +21,7 @@ type Asset struct {
 	Policies               int32       `db:"policies"`
 	TrailingDigits         uint32      `db:"trailing_digits"`
 	Type                   uint64      `db:"type"`
+	State                  uint32      `db:"state"`
 }
 
 //GetMinimumAmount - returns min amount support for that asset

@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type LimitsWithStats struct {
 	Key
 	Attributes    LimitsWithStatsAttributes    `json:"attributes"`
@@ -18,6 +20,16 @@ type LimitsWithStatsListResponse struct {
 	Data     []LimitsWithStats `json:"data"`
 	Included Included          `json:"included"`
 	Links    *Links            `json:"links"`
+	Meta     json.RawMessage   `json:"meta,omitempty"`
+}
+
+func (r *LimitsWithStatsListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *LimitsWithStatsListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustLimitsWithStats - returns LimitsWithStats from include collection.

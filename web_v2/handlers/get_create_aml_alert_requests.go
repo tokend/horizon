@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/resources"
 	regources "gitlab.com/tokend/regources/generated"
 
@@ -26,11 +25,10 @@ func GetCreateAmlAlertRequests(w http.ResponseWriter, r *http.Request) {
 	}
 
 	historyRepo := ctx.HistoryRepo(r)
-	coreRepo := ctx.CoreRepo(r)
 	handler := getCreateAmlAlertRequestsHandler{
 		R:         request,
 		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
-		BalancesQ: core2.NewBalancesQ(coreRepo),
+		BalancesQ: history2.NewBalancesQ(historyRepo),
 		Log:       ctx.Log(r),
 	}
 
@@ -52,7 +50,7 @@ type getCreateAmlAlertRequestsHandler struct {
 	R         requests.GetCreateAmlAlertRequests
 	Base      getRequestListBaseHandler
 	RequestsQ history2.ReviewableRequestsQ
-	BalancesQ core2.BalancesQ
+	BalancesQ history2.BalancesQ
 	Log       *logan.Entry
 }
 
@@ -78,7 +76,9 @@ func (h *getCreateAmlAlertRequestsHandler) RenderRecord(included *regources.Incl
 		if balance == nil {
 			return regources.ReviewableRequest{}, errors.New("balance not found")
 		}
-		resource := resources.NewBalance(balance)
+		resource := &regources.Balance{
+			Key: resources.NewBalanceKey(balance.Address),
+		}
 		included.Add(resource)
 	}
 

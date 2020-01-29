@@ -379,6 +379,20 @@ func (is *Session) operationDetails() map[string]interface{} {
 		op := c.Operation().Body.MustInitiateKycRecoveryOp()
 		details["account"] = op.Account
 		details["signer"] = op.Signer
+	case xdr.OperationTypeCreateManageOfferRequest:
+	case xdr.OperationTypeCreatePaymentRequest:
+	case xdr.OperationTypeRemoveAsset:
+		op := c.Operation().Body.MustRemoveAssetOp()
+		details["code"] = op.Code
+	case xdr.OperationTypeOpenSwap:
+	case xdr.OperationTypeCloseSwap:
+	case xdr.OperationTypeCreateRedemptionRequest:
+		op := c.Operation().Body.MustCreateRedemptionRequestOp()
+		details["amount"] = amount.StringU(uint64(op.RedemptionRequest.Amount))
+		details["source_balance_id"] = op.RedemptionRequest.SourceBalanceId.AsString()
+		details["dest_account_id"] = op.RedemptionRequest.Destination.Address()
+		details["reason"] = op.RedemptionRequest.CreatorDetails
+		details["reference"] = op.Reference
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"gitlab.com/tokend/horizon/db2/history2"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -20,7 +22,7 @@ func GetAtomicSwapAskList(w http.ResponseWriter, r *http.Request) {
 	handler := getAtomicSwapAskListHandler{
 		AtomicSwapAskQ:        core2.NewAtomicSwapAskQ(coreRepo),
 		AtomicSwapQuoteAssetQ: core2.NewAtomicSwapQuoteAssetQ(coreRepo),
-		BalanceQ:              core2.NewBalancesQ(coreRepo),
+		BalanceQ:              history2.NewBalancesQ(ctx.HistoryRepo(r)),
 		AssetsQ:               core2.NewAssetsQ(coreRepo),
 		Log:                   ctx.Log(r),
 	}
@@ -45,7 +47,7 @@ func GetAtomicSwapAskList(w http.ResponseWriter, r *http.Request) {
 
 type getAtomicSwapAskListHandler struct {
 	AssetsQ               core2.AssetsQ
-	BalanceQ              core2.BalancesQ
+	BalanceQ              history2.BalancesQ
 	AtomicSwapAskQ        core2.AtomicSwapAskQ
 	AtomicSwapQuoteAssetQ core2.AtomicSwapQuoteAssetQ
 	Log                   *logan.Entry

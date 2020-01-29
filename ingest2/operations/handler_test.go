@@ -8,7 +8,7 @@ import (
 
 func TestAllOperationsHandled(t *testing.T) {
 	opsHandler := NewOperationsHandler(&mockOperationsStorage{}, &mockParticipantEffectsStorage{},
-		&MockIDProvider{}, &mockBalanceProvider{})
+		&MockIDProvider{}, &mockBalanceProvider{}, &mockSwapProvider{})
 	for _, opType := range xdr.OperationTypeAll {
 		_, ok := opsHandler.allHandlers[opType]
 		if !ok {

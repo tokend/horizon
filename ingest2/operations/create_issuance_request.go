@@ -31,7 +31,7 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateIssuanceRequest,
 		CreateIssuanceRequest: &history2.CreateIssuanceRequestDetails{
-			Fee:                    internal.FeeFromXdr(issuanceRequest.Fee),
+			Fee:                    internal.FeeFromXdr(createIssuanceRequestRes.Fee),
 			Reference:              utf8.Scrub(string(createIssuanceRequestOp.Reference)),
 			Amount:                 regources.Amount(issuanceRequest.Amount),
 			Asset:                  string(issuanceRequest.Asset),
@@ -41,6 +41,7 @@ func (h *createIssuanceRequestOpHandler) Details(op rawOperation,
 			AllTasks:               allTasks,
 			RequestDetails: history2.RequestDetails{
 				IsFulfilled: createIssuanceRequestRes.Fulfilled,
+				RequestID:   int64(createIssuanceRequestRes.RequestId),
 			},
 		},
 	}, nil
@@ -61,7 +62,7 @@ func (h *createIssuanceRequestOpHandler) ParticipantsEffects(opBody xdr.Operatio
 		Type: history2.EffectTypeIssued,
 		Issued: &history2.BalanceChangeEffect{
 			Amount: regources.Amount(issuanceRequest.Amount),
-			Fee:    internal.FeeFromXdr(issuanceRequest.Fee),
+			Fee:    internal.FeeFromXdr(createIssuanceRequestRes.Fee),
 		},
 	}), nil
 }

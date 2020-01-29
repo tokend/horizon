@@ -41,6 +41,13 @@ OperationDetails:
     - $ref: '#/components/schemas/CreateKYCRecoveryRequestOp'
     - $ref: '#/components/schemas/ManageAccountSpecificRuleOp'
     - $ref: '#/components/schemas/RemoveAssetPairOp'
+    - $ref: '#/components/schemas/CreateManageOfferRequestOp'
+    - $ref: '#/components/schemas/CreatePaymentRequestOp'
+    - $ref: '#/components/schemas/CreateRedemptionRequestOp'
+    - $ref: '#/components/schemas/RemoveAssetOp'
+    - $ref: '#/components/schemas/OpenSwapOp'
+    - $ref: '#/components/schemas/CloseSwapOp'
+
 
 OperationDetailsKey:
   oneOf:
@@ -85,3 +92,10 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/CreateKYCRecoveryRequestOpKey'
     - $ref: '#/components/schemas/ManageAccountSpecificRuleOpKey'
     - $ref: '#/components/schemas/RemoveAssetPairOpKey'
+    - $ref: '#/components/schemas/CreateManageOfferRequestOpKey'
+    - $ref: '#/components/schemas/CreatePaymentRequestOpKey'
+    - $ref: '#/components/schemas/CreateRedemptionRequestOpKey'
+    - $ref: '#/components/schemas/RemoveAssetOpKey'
+    - $ref: '#/components/schemas/OpenSwapOpKey'
+    - $ref: '#/components/schemas/CloseSwapOpKey'
+

@@ -1,14 +1,121 @@
+# Changelog
+
+## Unreleased
+
+## Added
+
+* Endpoint for getting account list `v3/accounts`
+
+## Fixed
+
+* Parsing array query parameters
+* slow `/v3/transactions` get requests (same as 3.5.3)
+
+## 3.7.2
+
+### Fixed
+
+* Can see the unlocking amount transaction when an order is matched on the price less than was locked
+* 500 on get history (create manage limits request)
+* participants statistics for immediate sale
+* empty sale participants effects in admin panel
+* participant effects for manage offer and payment requests
+* 500 on `/v3/create_withdraw_requests`
+
+## 3.7.1
+
+### Added
+
+* Endpoints for redemption reviewable request
+
+## 3.7.0
+
+### Added  
+
+* Operations endpoint (`/v3/operations`)
+* Filter by status for asset endpoint
+
+### Fixed 
+
+* ingest of participant effects for sale
+* 500 error on endpoints that include deleted assets
+* returning 404 when cannot find tx
+
+### Changed
+
+* increased speed of ingest v2
+
+## 3.6.2
+
+### Added
+
+* Cache for `GET` requests
+
+### Fixed
+
+* Batch inserter corner case
+
+## 3.6.1
+
+### Added
+
+* `/v3/license` endpoint to return current license info
+
+### Removed
+
+* Request for account endpoint (`/v3/accounts/{id}/requests/{request_id}`)
+
+### Fixed
+
+* RequestID in create issuance request operation details
+* includes for swaps (`/v3/swaps`)
+* docs consistency with actual responses
+
+## 3.6.0
+
+### Added
+
+* `/v3/manage_offer_requests` endpoint
+* `/v3/create_payment_requests` endpoint
+* `CreateManageOfferRequestOp` ingestion
+* `CreatePaymentRequestOp` ingestion
+* `CreatePaymentRequestOp` ingestion
+* `PaymentRequest` ingestion
+* `ManageOfferRequest` ingestion
+* `RemoveAssetOp` ingestion
+* `OpenSwapOp` ingestion
+* `CloseSwapOp` ingestion
+* `Swap` ingestion
+* `/v3/swaps` endpoint to get filtered list of swaps
+* `/v3/swaps/{id}` endpoint to get swap by id
+
+### Fixed
+
+* panic on `v3/balances`
+* error on reviewable request ingestion
+
 ## 3.5.3
 
 ###Fixed
 
 * slow `/v3/transactions` get requests
 
-## 3.5.2-x.0
+## 3.5.2
 
 ### Fixed
 
 * Key for atomic swap ask quote asset relation
+* Panic on `ManagePoll` ingestion
+
+# 3.5.1.2
+
+### Fixed 
+
+* KYC recovery request ingestion
+
+### Added 
+
+* Ingest version
 
 ## 3.5.1
 

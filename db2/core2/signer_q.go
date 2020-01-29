@@ -26,6 +26,19 @@ func NewSignerQ(repo *db2.Repo) SignerQ {
 	}
 }
 
+func (q SignerQ) Count(address string) (int64, error) {
+	q.selector = sq.Select("COUNT(*)").From("signers").Where("signers.account_id = ?", address)
+
+	var result int64
+	err := q.repo.Get(&result, q.selector)
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to load signers count")
+	}
+
+	return result, nil
+
+}
+
 //FilterByPublicKey - return new instance of SignerQ with filter by public key
 func (q SignerQ) FilterByPublicKey(publicKey string) SignerQ {
 	q.selector = q.selector.Where("signers.public_key = ?", publicKey)
@@ -51,4 +64,10 @@ func (q SignerQ) Select() ([]Signer, error) {
 	}
 
 	return result, nil
+}
+
+// Page - returns Q with specified limit and offset params
+func (q SignerQ) Page(params db2.OffsetPageParams) SignerQ {
+	q.selector = params.ApplyTo(q.selector)
+	return q
 }

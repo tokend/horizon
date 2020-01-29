@@ -175,6 +175,7 @@ func ForOperation(
 	case xdr.OperationTypeManagePoll:
 	case xdr.OperationTypeManageCreatePollRequest:
 	case xdr.OperationTypeManageVote:
+	case xdr.OperationTypeRemoveAsset:
 		// the only direct participant is the source_account
 	case xdr.OperationTypeCreateAtomicSwapBidRequest:
 		// FIXME !!!!!
@@ -202,6 +203,12 @@ func ForOperation(
 	case xdr.OperationTypeRemoveAssetPair:
 	case xdr.OperationTypeCreateKycRecoveryRequest:
 	case xdr.OperationTypeInitiateKycRecovery:
+	case xdr.OperationTypeCreatePaymentRequest:
+	case xdr.OperationTypeCreateManageOfferRequest:
+	case xdr.OperationTypeOpenSwap:
+	case xdr.OperationTypeCloseSwap:
+	case xdr.OperationTypeCreateRedemptionRequest:
+		// TODO add participant
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

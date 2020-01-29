@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type Statistics struct {
 	Key
 	Attributes    StatisticsAttributes    `json:"attributes"`
@@ -15,9 +17,19 @@ type StatisticsResponse struct {
 }
 
 type StatisticsListResponse struct {
-	Data     []Statistics `json:"data"`
-	Included Included     `json:"included"`
-	Links    *Links       `json:"links"`
+	Data     []Statistics    `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *StatisticsListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *StatisticsListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustStatistics - returns Statistics from include collection.

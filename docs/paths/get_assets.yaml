@@ -25,6 +25,17 @@
       explode: false
       schema:
         type: string
+    - name: filter[state]
+      in: query
+      description: |
+        Filters assets by state.
+        * 0 - active
+        * 1 - deleted
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
     - name: include
       in: query
       description: |
@@ -50,7 +61,7 @@
                 - data
                 - included
               properties:
-                data: 
+                data:
                   type: array
                   items:
                     type: object

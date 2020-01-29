@@ -198,8 +198,21 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 	case xdr.OperationTypeInitiateKycRecovery:
 		return c.handleInitiateKycRecovery(lc)
 	case xdr.OperationTypeCreateKycRecoveryRequest:
-		account := op.MustCreateKycRecoveryRequestOp().TargetAccount
-		return c.accounts.SetKYCRecoveryStatus(account.Address(), int(regources.KYCRecoveryStatusNone))
+		{
+			err := c.handleRemoveOnCreationOp(lc,
+				lc.OperationResult.MustCreateKycRecoveryRequestResult().MustSuccess().Fulfilled)
+			if err != nil {
+				return err
+			}
+			account := op.MustCreateKycRecoveryRequestOp().TargetAccount
+			return c.accounts.SetKYCRecoveryStatus(account.Address(), int(regources.KYCRecoveryStatusNone))
+		}
+	case xdr.OperationTypeCreateManageOfferRequest:
+		return c.handleRemoveOnCreationOp(lc, true)
+	case xdr.OperationTypeCreatePaymentRequest:
+		return c.handleRemoveOnCreationOp(lc, true)
+	case xdr.OperationTypeManageOffer:
+		return c.handleRemovedOnManageOffer(lc)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
@@ -220,6 +233,17 @@ func (c *reviewableRequestHandler) handleRemoveOnCreationOp(lc ledgerChange, ful
 		})
 	}
 
+	return c.storage.Approve(id)
+}
+
+func (c *reviewableRequestHandler) handleRemovedOnManageOffer(lc ledgerChange) error {
+	id := uint64(lc.LedgerChange.MustRemoved().MustReviewableRequest().RequestId)
+	if lc.Operation.Body.MustManageOfferOp().OrderBookId == 0 {
+		return errors.From(errors.New("unexpected state: request has been removed on manage offer op, "+
+			"but order book is secondary"), logan.F{
+			"id": uint64(id),
+		})
+	}
 	return c.storage.Approve(id)
 }
 
@@ -574,6 +598,44 @@ func (c *reviewableRequestHandler) getKYCRecovery(request *xdr.KycRecoveryReques
 	}
 }
 
+func (c *reviewableRequestHandler) getManageOfferRequest(request *xdr.ManageOfferRequest,
+) *history.ManageOfferRequest {
+	manageOfferOp := request.Op
+	return &history.ManageOfferRequest{
+		OfferID:     int64(manageOfferOp.OfferId),
+		OrderBookID: int64(manageOfferOp.OrderBookId),
+		Amount:      regources.Amount(manageOfferOp.Amount),
+		Price:       regources.Amount(manageOfferOp.Price),
+		IsBuy:       manageOfferOp.IsBuy,
+		Fee: regources.Fee{
+			CalculatedPercent: regources.Amount(manageOfferOp.Fee),
+		},
+	}
+}
+
+func (c *reviewableRequestHandler) getCreatePaymentRequest(request *xdr.CreatePaymentRequest,
+) *history.CreatePaymentRequest {
+	paymentOp := request.PaymentOp
+	return &history.CreatePaymentRequest{
+		BalanceFrom:             paymentOp.SourceBalanceId.AsString(),
+		Amount:                  regources.Amount(paymentOp.Amount),
+		SourceFee:               internal.FeeFromXdr(paymentOp.FeeData.SourceFee),
+		DestinationFee:          internal.FeeFromXdr(paymentOp.FeeData.DestinationFee),
+		SourcePayForDestination: paymentOp.FeeData.SourcePaysForDest,
+		Subject:                 string(paymentOp.Subject),
+		Reference:               utf8.Scrub(string(paymentOp.Reference)),
+	}
+}
+
+func (c *reviewableRequestHandler) getRedemption(request *xdr.RedemptionRequest) *history.RedemptionRequest {
+	return &history.RedemptionRequest{
+		SourceBalanceID:      request.SourceBalanceId.AsString(),
+		DestinationAccountID: request.Destination.Address(),
+		Amount:               regources.Amount(request.Amount),
+		CreatorDetails:       regources.Details(request.CreatorDetails),
+	}
+}
+
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -615,6 +677,12 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.CreatePoll = c.getCreatePollRequest(body.CreatePollRequest)
 	case xdr.ReviewableRequestTypeKycRecovery:
 		details.KYCRecovery = c.getKYCRecovery(body.KycRecoveryRequest)
+	case xdr.ReviewableRequestTypeManageOffer:
+		details.ManageOffer = c.getManageOfferRequest(body.ManageOfferRequest)
+	case xdr.ReviewableRequestTypeCreatePayment:
+		details.CreatePayment = c.getCreatePaymentRequest(body.CreatePaymentRequest)
+	case xdr.ReviewableRequestTypePerformRedemption:
+		details.Redemption = c.getRedemption(body.RedemptionRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type AtomicSwapQuoteAsset struct {
 	Key
 	Attributes AtomicSwapQuoteAssetAttributes `json:"attributes"`
@@ -17,6 +19,16 @@ type AtomicSwapQuoteAssetListResponse struct {
 	Data     []AtomicSwapQuoteAsset `json:"data"`
 	Included Included               `json:"included"`
 	Links    *Links                 `json:"links"`
+	Meta     json.RawMessage        `json:"meta,omitempty"`
+}
+
+func (r *AtomicSwapQuoteAssetListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *AtomicSwapQuoteAssetListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustAtomicSwapQuoteAsset - returns AtomicSwapQuoteAsset from include collection.

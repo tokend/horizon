@@ -5,7 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type manageOfferOpHandler struct {
@@ -52,7 +52,7 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 
 	if manageOfferOp.Amount != 0 {
 		source := h.Participant(sourceAccountID)
-		return h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source), nil
+		return h.getNewOfferEffect(manageOfferOp, manageOfferOpRes, source, ledgerChanges), nil
 	}
 
 	deletedOfferEffects := h.getDeletedOffersEffect(ledgerChanges)
@@ -67,9 +67,31 @@ func (h *manageOfferOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 }
 
 func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
-	res xdr.ManageOfferSuccessResult, source history2.ParticipantEffect,
+	res xdr.ManageOfferSuccessResult, source history2.ParticipantEffect, ledgerChanges []xdr.LedgerEntryChange,
 ) []history2.ParticipantEffect {
-	participants, _ := h.getMatchesEffects(res.OffersClaimed, offer{
+	participants := make([]history2.ParticipantEffect, 0, 4)
+
+	if op.OrderBookId != 0 {
+		sale := getImmediateSale(ledgerChanges, op.OrderBookId)
+		if sale != nil {
+			participants = append(participants, h.BalanceEffect(sale.BaseBalance, &history2.Effect{
+				Type: history2.EffectTypeIssued,
+				Issued: &history2.BalanceChangeEffect{
+					Amount: regources.Amount(op.Amount),
+					Fee:    regources.Fee{},
+				},
+			}), h.BalanceEffect(sale.BaseBalance, &history2.Effect{
+				Type: history2.EffectTypeLocked,
+				Locked: &history2.BalanceChangeEffect{
+					Amount: regources.Amount(op.Amount),
+					// we do not fee because we locked base (fee in quote)
+					Fee: regources.Fee{},
+				},
+			}))
+		}
+	}
+
+	matchedParticipants, _ := h.getMatchesEffects(res.OffersClaimed, offer{
 		OrderBookID:         int64(op.OrderBookId),
 		AccountID:           source.AccountID,
 		BaseBalanceID:       h.MustBalanceID(op.BaseBalance),
@@ -80,6 +102,7 @@ func (h *manageOfferOpHandler) getNewOfferEffect(op xdr.ManageOfferOp,
 		QuoteAsset:          string(res.QuoteAsset),
 		IsBuy:               op.IsBuy,
 	})
+	participants = append(participants, matchedParticipants...)
 	if res.Offer.Effect == xdr.ManageOfferEffectDeleted {
 		return participants
 	}
@@ -201,7 +224,7 @@ func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOffe
 				BaseAsset:           sourceOffer.BaseAsset,
 				QuoteAsset:          sourceOffer.QuoteAsset,
 				IsBuy:               !sourceOffer.IsBuy,
-			}, int64(match.OfferId), match.BaseAmount, match.QuoteAmount, match.CurrentPrice, match.BFeePaid)
+			}, int64(match.OfferId), match.BaseAmount, match.QuoteAmount, match.CurrentPrice, match.BFeePaid, true)
 
 			levelBaseAmount += match.BaseAmount
 			levelQuoteAmount += match.QuoteAmount
@@ -209,7 +232,7 @@ func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOffe
 		}
 
 		result = h.addParticipantEffects(result, sourceOffer, 0, levelBaseAmount,
-			levelQuoteAmount, price, levelFee)
+			levelQuoteAmount, price, levelFee, false)
 
 		totalBaseAmount += uint64(levelBaseAmount)
 	}
@@ -218,7 +241,8 @@ func (h *manageOfferOpHandler) getMatchesEffects(claimOfferAtoms []xdr.ClaimOffe
 }
 
 func (h *manageOfferOpHandler) addParticipantEffects(participants []history2.ParticipantEffect,
-	offer offer, id int64, baseAmount, quoteAmount, price, fee xdr.Int64) []history2.ParticipantEffect {
+	offer offer, id int64, baseAmount, quoteAmount, price, fee xdr.Int64, IsUnlocked bool,
+) []history2.ParticipantEffect {
 	baseBalanceEffect := history2.ParticularBalanceChangeEffect{
 		BalanceAddress: offer.BaseBalanceAddress,
 		AssetCode:      offer.BaseAsset,
@@ -250,20 +274,79 @@ func (h *manageOfferOpHandler) addParticipantEffects(participants []history2.Par
 	if offer.IsBuy {
 		matchedOfferEffect.Matched.Funded = baseBalanceEffect
 		matchedOfferEffect.Matched.Charged = quoteBalanceEffect
+		if IsUnlocked {
+			participants = append(participants, setUnlocked(offer, quoteBalanceEffect, true))
+		}
 	} else {
 		matchedOfferEffect.Matched.Funded = quoteBalanceEffect
 		matchedOfferEffect.Matched.Charged = baseBalanceEffect
+		if IsUnlocked {
+			participants = append(participants, setUnlocked(offer, baseBalanceEffect, false))
+		}
 	}
 
-	return append(participants, history2.ParticipantEffect{
+	return append(participants,
+		history2.ParticipantEffect{
+			AccountID: offer.AccountID,
+			BalanceID: &offer.BaseBalanceID,
+			AssetCode: &offer.BaseAsset,
+			Effect:    &matchedOfferEffect,
+		}, history2.ParticipantEffect{
+			AccountID: offer.AccountID,
+			BalanceID: &offer.QuoteBalanceID,
+			AssetCode: &offer.QuoteAsset,
+			Effect:    &matchedOfferEffect,
+		})
+}
+
+func setUnlocked(offer offer, balanceEffect history2.ParticularBalanceChangeEffect,
+	IsQuote bool,
+) history2.ParticipantEffect {
+	unlockedEffect := history2.Effect{
+		Type: history2.EffectTypeUnlocked,
+		Unlocked: &history2.BalanceChangeEffect{
+			Amount: balanceEffect.Amount,
+		},
+	}
+
+	if IsQuote {
+		return history2.ParticipantEffect{
+			AccountID: offer.AccountID,
+			BalanceID: &offer.QuoteBalanceID,
+			AssetCode: &offer.QuoteAsset,
+			Effect:    &unlockedEffect}
+	}
+
+	return history2.ParticipantEffect{
 		AccountID: offer.AccountID,
 		BalanceID: &offer.BaseBalanceID,
 		AssetCode: &offer.BaseAsset,
-		Effect:    &matchedOfferEffect,
-	}, history2.ParticipantEffect{
-		AccountID: offer.AccountID,
-		BalanceID: &offer.QuoteBalanceID,
-		AssetCode: &offer.QuoteAsset,
-		Effect:    &matchedOfferEffect,
-	})
+		Effect:    &unlockedEffect,
+	}
+
+}
+
+func getImmediateSale(changes []xdr.LedgerEntryChange, saleID xdr.Uint64) *xdr.SaleEntry {
+	for _, change := range changes {
+		if change.Type != xdr.LedgerEntryChangeTypeState {
+			continue
+		}
+
+		if change.MustState().Data.Type != xdr.LedgerEntryTypeSale {
+			continue
+		}
+
+		sale := change.MustState().Data.MustSale()
+		if sale.SaleId != saleID {
+			continue
+		}
+
+		if sale.SaleTypeExt.SaleType != xdr.SaleTypeImmediate {
+			return nil
+		}
+
+		return &sale
+	}
+
+	return nil
 }

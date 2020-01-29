@@ -32,7 +32,7 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeBindExternalSystemAccountId:            newBindExternalSystemAccountIDOp,
 	xdr.OperationTypeManageSale:                             newManageSaleOp,
 	xdr.OperationTypeManageKeyValue:                         newManageKeyValueOp,
-	xdr.OperationTypeCreateManageLimitsRequest:              newManageLimitsOp,
+	xdr.OperationTypeCreateManageLimitsRequest:              newCreateManageLimitsRequestOp,
 	xdr.OperationTypeManageContractRequest:                  newManageContractRequestOp,
 	xdr.OperationTypeManageContract:                         newManageContractOp,
 	xdr.OperationTypeCancelSaleRequest:                      newCancelSaleRequestOp,
@@ -55,6 +55,12 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeInitiateKycRecovery:                    newInitiateKYCRecoveryOp,
 	xdr.OperationTypeCreateKycRecoveryRequest:               newCreateKYCRecoveryRequestOp,
 	xdr.OperationTypeRemoveAssetPair:                        newRemoveAssetPairOp,
+	xdr.OperationTypeRemoveAsset:                            newRemoveAssetOp,
+	xdr.OperationTypeCreateManageOfferRequest:               newCreateManageOfferRequestOp,
+	xdr.OperationTypeCreatePaymentRequest:                   newCreatePaymentRequestOp,
+	xdr.OperationTypeOpenSwap:                               newOpenSwapOp,
+	xdr.OperationTypeCloseSwap:                              newCloseSwapOp,
+	xdr.OperationTypeCreateRedemptionRequest:                newCreateRedemptionRequestOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -730,4 +736,105 @@ func newCancelASwapAskOp(op history2.Operation) regources.Resource {
 
 func newCancelSaleRequestOp(op history2.Operation) regources.Resource {
 	return regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_SALE_REQUEST).GetKeyP()
+}
+
+func newCreateManageOfferRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateManageOfferRequest
+	return &regources.CreateManageOfferRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_MANAGE_OFFER_REQUEST),
+		Relationships: regources.CreateManageOfferRequestOpRelationships{
+			Request: NewRequestKey(int64(body.RequestDetails.RequestID)).AsRelation(),
+		},
+		Attributes: regources.CreateManageOfferRequestOpAttributes{
+			BaseAmount:  body.ManageOfferDetails.Amount,
+			IsBuy:       body.ManageOfferDetails.IsBuy,
+			OfferId:     body.ManageOfferDetails.OfferID,
+			OrderBookId: body.ManageOfferDetails.OrderBookID,
+			Price:       body.ManageOfferDetails.Price,
+			Fee:         body.ManageOfferDetails.Fee,
+		},
+	}
+
+}
+
+func newCreatePaymentRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreatePaymentRequest
+	return &regources.CreatePaymentRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_PAYMENT_REQUEST),
+		Relationships: regources.CreatePaymentRequestOpRelationships{
+			AccountFrom: NewAccountKey(body.PaymentDetails.AccountFrom).AsRelation(),
+			BalanceFrom: NewBalanceKey(body.PaymentDetails.BalanceFrom).AsRelation(),
+			Request:     NewRequestKey(body.RequestDetails.RequestID).AsRelation(),
+		},
+		Attributes: regources.CreatePaymentRequestOpAttributes{
+			Amount:                  body.PaymentDetails.Amount,
+			Reference:               body.PaymentDetails.Reference,
+			Subject:                 body.PaymentDetails.Subject,
+			SourceFee:               body.PaymentDetails.SourceFee,
+			DestinationFee:          body.PaymentDetails.DestinationFee,
+			SourcePayForDestination: body.PaymentDetails.SourcePayForDestination,
+		},
+	}
+}
+
+func newRemoveAssetOp(op history2.Operation) regources.Resource {
+	return &regources.RemoveAssetOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_ASSET),
+		Relationships: regources.RemoveAssetOpRelationships{
+			Asset: NewAssetKey(op.Details.RemoveAsset.Code).AsRelation(),
+		},
+	}
+}
+
+func newOpenSwapOp(op history2.Operation) regources.Resource {
+	body := op.Details.OpenSwap
+	return &regources.OpenSwapOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_OPEN_SWAP),
+		Attributes: regources.OpenSwapOpAttributes{
+			Amount:                  body.Amount,
+			DestinationFee:          body.DestinationFee,
+			Details:                 body.Details,
+			LockTime:                body.LockTime,
+			SecretHash:              body.SecretHash,
+			SourceFee:               body.SourceFee,
+			SourcePayForDestination: body.SourcePayForDestination,
+		},
+		Relationships: regources.OpenSwapOpRelationships{
+			Asset:              NewAssetKey(body.Asset).AsRelation(),
+			Destination:        NewAccountKey(body.AccountTo).AsRelation(),
+			DestinationBalance: NewBalanceKey(body.BalanceTo).AsRelation(),
+			Source:             NewAccountKey(body.AccountFrom).AsRelation(),
+			SourceBalance:      NewBalanceKey(body.BalanceFrom).AsRelation(),
+		},
+	}
+}
+
+func newCloseSwapOp(op history2.Operation) regources.Resource {
+	body := op.Details.CloseSwap
+	return &regources.CloseSwapOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CLOSE_SWAP),
+		Attributes: regources.CloseSwapOpAttributes{
+			Secret: body.Secret,
+		},
+		Relationships: regources.CloseSwapOpRelationships{
+			Swap: NewSwapKey(body.ID).AsRelation(),
+		},
+	}
+}
+
+func newCreateRedemptionRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.Redemption
+
+	return &regources.CreateRedemptionRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_REDEMPTION_REQUEST),
+		Attributes: regources.CreateRedemptionRequestOpAttributes{
+			Amount:         body.Amount,
+			CreatorDetails: body.Details,
+		},
+		Relationships: regources.CreateRedemptionRequestOpRelationships{
+			BalanceFrom: NewBalanceKey(body.BalanceFrom).AsRelation(),
+			AccountTo:   NewAccountKey(body.AccountTo).AsRelation(),
+			Request:     NewRequestKey(body.RequestDetails.RequestID).AsRelation(),
+		},
+	}
 }

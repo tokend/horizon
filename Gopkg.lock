@@ -101,6 +101,14 @@
   revision = "68b83f7b0439800daff361aeff573ecad1b26cbe"
 
 [[projects]]
+  branch = "master"
+  digest = "1:b7cb6054d3dff43b38ad2e92492f220f57ae6087ee797dca298139776749ace8"
+  name = "github.com/golang/groupcache"
+  packages = ["lru"]
+  pruneopts = "UT"
+  revision = "404acd9df4cc9859d64fb9eed42e5c026187287a"
+
+[[projects]]
   digest = "1:a712b5079fa7fd942a077341757265836063980331c0186360d463d61ffa2223"
   name = "github.com/google/jsonapi"
   packages = ["."]
@@ -452,18 +460,16 @@
   version = "v2.0.0"
 
 [[projects]]
-  digest = "1:fb0f7303826f54d8e5439da81c4c01125da381904559580a227fed1aa453aafa"
+  digest = "1:71c54bb75cb44ac1e70eba2cd50e8f21588cf80359cca90689e0e11a9e5e7aab"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
-    "janus",
-    "janus/internal",
+    "cop",
     "kv",
-    "pgdb",
   ]
   pruneopts = "UT"
-  revision = "983afb19d5c2762943fcba9f8727ff81c2b7e5a2"
-  version = "v0.5.0"
+  revision = "d3f3742ebc1caa4aee945f61cdfe1e0c8892fa22"
+  version = "v1.5.0"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"
@@ -495,10 +501,11 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "feature/remove-asset-pair"
-  digest = "1:adc772b2a4909ff9220dc367389345cc3aa1ff84283cca01304ae93c5a7651fa"
+  branch = "fix/redemption"
+  digest = "1:598d80945109ef679ac110d257a5e26d1e52c56132766bd5d47f939733280b81"
   name = "gitlab.com/tokend/go"
   packages = [
+    "address",
     "amount",
     "build",
     "crc16",
@@ -514,7 +521,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "f5819f27f9db6a3eeb91325dbc4860104d992479"
+  revision = "91b56d745583584bce1aab04b7a8bad54a648d2d"
 
 [[projects]]
   branch = "master"
@@ -530,15 +537,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:c76fbd52eefd4e33d0e5153e55cf28f5a22ef28181b6da93b6a221ea8a9dd88a"
+  branch = "feature/balance-statistic"
+  digest = "1:335be21a9a6f1cc5deea40b9fbcce3e5e45d4a8dc9e186e27ebbac435e5d208f"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "388e5209484d6b8d43b27c61b0dcf964bd9ef5b6"
+  revision = "9c2050029dabba0f6a79a778bdeb68b6f5a0d815"
 
 [[projects]]
   branch = "master"
@@ -649,6 +656,7 @@
     "github.com/go-errors/errors",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/goji/context",
+    "github.com/golang/groupcache/lru",
     "github.com/google/jsonapi",
     "github.com/guregu/null",
     "github.com/jmoiron/sqlx",
@@ -675,14 +683,14 @@
     "gitlab.com/distributed_lab/ape/problems",
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/figure",
-    "gitlab.com/distributed_lab/kit/comfig",
-    "gitlab.com/distributed_lab/kit/janus",
+    "gitlab.com/distributed_lab/kit/cop",
     "gitlab.com/distributed_lab/kit/kv",
     "gitlab.com/distributed_lab/logan",
     "gitlab.com/distributed_lab/logan/v3",
     "gitlab.com/distributed_lab/logan/v3/errors",
     "gitlab.com/distributed_lab/running",
     "gitlab.com/distributed_lab/txsub",
+    "gitlab.com/tokend/go/address",
     "gitlab.com/tokend/go/amount",
     "gitlab.com/tokend/go/build",
     "gitlab.com/tokend/go/doorman",

@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type ConvertedBalancesCollection struct {
 	Key
 	Relationships ConvertedBalancesCollectionRelationships `json:"relationships"`
@@ -17,6 +19,16 @@ type ConvertedBalancesCollectionListResponse struct {
 	Data     []ConvertedBalancesCollection `json:"data"`
 	Included Included                      `json:"included"`
 	Links    *Links                        `json:"links"`
+	Meta     json.RawMessage               `json:"meta,omitempty"`
+}
+
+func (r *ConvertedBalancesCollectionListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *ConvertedBalancesCollectionListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustConvertedBalancesCollection - returns ConvertedBalancesCollection from include collection.

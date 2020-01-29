@@ -1,4 +1,4 @@
-/v3/accounts/{account_address}/converted_balances/{asset_code}:
+/v3/accounts/{id}/converted_balances/{asset_code}:
   get:
     tags:
       - Balances
@@ -9,7 +9,7 @@
       🔒 Either account or admin signature is needed.  If filter by asset owner is provided, the signature of asset's owner is also valid
     operationId: getConvertedBalancesCollection
     parameters:
-      - name: account_id
+      - name: id
         in: path
         description: "ID of the account"
         required: true

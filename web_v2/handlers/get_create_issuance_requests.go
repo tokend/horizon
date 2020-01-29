@@ -41,7 +41,7 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 
 	// receiving balance owner should be able to see issuance requests
 	if request.Filters.Receiver != "" {
-		balance, err := core2.NewBalancesQ(coreRepo).GetByAddress(request.Filters.Receiver)
+		balance, err := history2.NewBalancesQ(historyRepo).GetByAddress(request.Filters.Receiver)
 		if err != nil {
 			ctx.Log(r).
 				WithError(err).
@@ -51,8 +51,21 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if balance != nil {
-			constraints = append(constraints, balance.AccountAddress)
+			ape.RenderErr(w, problems.NotFound())
+			return
 		}
+		account, err := history2.NewAccountsQ(historyRepo).ByID(balance.AccountID)
+		if err != nil {
+			ctx.Log(r).
+				WithError(err).
+				WithFields(logan.F{"receiver": request.Filters.Receiver}).
+				Error("failed to get receiver account")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+
+		constraints = append(constraints, account.Address)
+
 	}
 
 	if !isAllowed(r, w, constraints...) {

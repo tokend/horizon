@@ -60,6 +60,10 @@
           * 13 -  "update_asset"
           * 16 -  "create_atomic_swap_bid"
           * 17 -  "create_atomic_swap"
+          * 18 -  "kyc_recovery"
+          * 19 -  "manage_offer"
+          * 20 -  "create_payment"
+          * 21 -  "perform_redemption"
         required: false
         style: form
         explode: false

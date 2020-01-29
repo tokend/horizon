@@ -4,6 +4,8 @@
 
 package regources
 
+import "encoding/json"
+
 type FeeRecord struct {
 	Key
 	Attributes    FeeRecordAttributes    `json:"attributes"`
@@ -15,9 +17,19 @@ type FeeRecordResponse struct {
 }
 
 type FeeRecordListResponse struct {
-	Data     []FeeRecord `json:"data"`
-	Included Included    `json:"included"`
-	Links    *Links      `json:"links"`
+	Data     []FeeRecord     `json:"data"`
+	Included Included        `json:"included"`
+	Links    *Links          `json:"links"`
+	Meta     json.RawMessage `json:"meta,omitempty"`
+}
+
+func (r *FeeRecordListResponse) PutMeta(v interface{}) (err error) {
+	r.Meta, err = json.Marshal(v)
+	return err
+}
+
+func (r *FeeRecordListResponse) GetMeta(out interface{}) error {
+	return json.Unmarshal(r.Meta, out)
 }
 
 // MustFeeRecord - returns FeeRecord from include collection.

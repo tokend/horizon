@@ -4,9 +4,7 @@
 
 package regources
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
 type KYCRecoveryStatus int
 

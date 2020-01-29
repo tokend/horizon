@@ -13,8 +13,9 @@ type closedParticipationsQ struct {
 	participationQ history2.SaleParticipationQ
 }
 
-func newClosedParticipationQ(request *requests.GetSaleParticipations, q history2.SaleParticipationQ, sale *history2.Sale) closedParticipationsQ {
-	q = q.FilterBySaleParams(sale.ID, sale.BaseAsset).Page(*request.PageParams)
+func newClosedParticipationQ(request *requests.GetSaleParticipations, q history2.SaleParticipationQ, sale *history2.Sale,
+) closedParticipationsQ {
+	q = q.FilterBySaleParams(sale.ID, sale.BaseAsset, sale.OwnerAddress).Page(*request.PageParams)
 
 	return closedParticipationsQ{
 		participationQ: q,

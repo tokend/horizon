@@ -38,24 +38,21 @@ Sale:
               format: "date-time"
               example: "2012-11-01T22:08:41+00:00"
             sale_type:
-              type: integer
+              allOf:
+                - $ref: '#/components/schemas/Enum'
               format: xdr.SaleType
-              minimum: 1
-              maximum: 3
               description: "type of sale"
               example: 2
             sale_state:
-              type: integer
+              allOf:
+                - $ref: '#/components/schemas/Enum'
               format: SaleState
-              minimum: 1
-              maximum: 3
               description: "state of sale" # todo provide a list of sale states
               example: 2
             access_definition_type:
-              type: string
+              allOf:
+                - $ref: '#/components/schemas/Enum'
               format: SaleAccessDefinitionType
-              minimum: 1
-              maximum: 3
               description: |
                 indicates access definition type of the sale
                 * 0 - none
@@ -87,88 +84,13 @@ Sale:
                 data:
                   type: array
                   items:
-                    $ref: '#/components/schemas/AssetKey'
+                    $ref: '#/components/schemas/SaleQuoteAssetKey'
             default_quote_asset:
               description: "Quote asset specified as default for the sale" 
               type: object
               properties:
                 data:
-                  $ref: '#/components/schemas/AssetKey'
-
-SaleRequest:
-  allOf:
-  - $ref: '#/components/schemas/Int64Key'
-  - type: object
-    properties:
-      attributes:
-        type: object
-        properties:
-          start_time:
-            type: string
-            description: "Start time of the sale"
-            format: "date-time"
-            example: "2012-11-01T22:08:41+00:00"
-          end_time:
-            type: string
-            description: "End time of the sale"
-            format: "date-time"
-            example: "2012-11-01T22:08:41+00:00"
-          sale_type:
-            type: integer
-            format: xdr.SaleType
-            minimum: 1
-            maximum: 3
-            example: 1
-            description: |
-              * 1 - basic sale
-              * 2 - crowdfunding sale
-              * 3 - fixed price sale
-          sale_state:
-            type: integer
-            format: SaleState
-            minimum: 1
-            maximum: 3
-            example: 1
-            description: |
-              * 1 - open
-              * 2 - closed
-              * 3 - cancelled
-          details:
-            $ref: '#/components/schemas/Details'
-      relationships:
-        type: object
-        properties:
-          owner:
-            type: object
-            description: "Sale owner's account key"
-            properties:
-              data:
-                type: object
-                $ref: '#/components/schemas/AccountKey'
-          base_asset:
-            type: object
-            description: "Asset key of the asset of the sale"
-            properties:
-              data:
-                type: object
-                $ref: '#/components/schemas/AssetKey'
-          default_quote_asset:
-            type: object
-            description: "Default quote asset of the sale"
-            properties:
-              data:
-                type: object
-                $ref: '#/components/schemas/AssetKey'
-          quote_assets:
-            type: object
-            description: "Quote assets of the sale"
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  $ref: '#/components/schemas/AssetKey'
-
+                  $ref: '#/components/schemas/SaleQuoteAssetKey'
 
 SaleQuoteAssetKey:
   type: object

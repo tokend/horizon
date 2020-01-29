@@ -18,19 +18,9 @@ U32:
     - type
   properties:
     type:
-      type: object
       descriprion: defines the type of value stored in the KV pair
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          example: "uint32"
-          descriprion: defines the type name of the value stored in the KV pair
-        value:
-          type: number
-          example: 1
-          description: defines the code of type of the value stored in the KV pair
+      allOf:
+        - $ref: '#/components/schemas/Enum'
     u32:
       type: number
       example: 1
@@ -42,19 +32,9 @@ U64:
     - type
   properties:
     type:
-      type: object
-      descriprion: defines the type of the value stored in the KV pair
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          example: "uint64"
-          descriprion: defines the type name of the value stored in the KV pair
-        value:
-          type: number
-          example: 3
-          description: defines the code of type of the value stored in the KV pair
+      descriprion: defines the type of value stored in the KV pair
+      allOf:
+        - $ref: '#/components/schemas/Enum'
     u64:
       type: number
       example: 1
@@ -67,19 +47,9 @@ Str:
     - type
   properties:
     type:
-      type: object
-      descriprion: defines the type of the value stored in the KV pair
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          example: "string"
-          descriprion: defines the type name of the value stored in the KV pair
-        value:
-          type: number
-          example: 2
-          description: defines the code of type of the value stored in the KV pair
+      descriprion: defines the type of value stored in the KV pair
+      allOf:
+        - $ref: '#/components/schemas/Enum'
     str:
       type: string
       example: "example-value"

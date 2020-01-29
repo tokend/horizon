@@ -30,7 +30,7 @@ func GetCreateWithdrawRequests(w http.ResponseWriter, r *http.Request) {
 	handler := getCreateWithdrawRequestsHandler{
 		R:         request,
 		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
-		BalancesQ: core2.NewBalancesQ(coreRepo),
+		BalancesQ: history2.NewBalancesQ(historyRepo),
 		AssetsQ:   core2.NewAssetsQ(coreRepo),
 		Log:       ctx.Log(r),
 	}
@@ -53,7 +53,7 @@ type getCreateWithdrawRequestsHandler struct {
 	R         requests.GetCreateWithdrawRequests
 	Base      getRequestListBaseHandler
 	RequestsQ history2.ReviewableRequestsQ
-	BalancesQ core2.BalancesQ
+	BalancesQ history2.BalancesQ
 	AssetsQ   core2.AssetsQ
 	Log       *logan.Entry
 }
@@ -83,7 +83,9 @@ func (h *getCreateWithdrawRequestsHandler) RenderRecord(included *regources.Incl
 		if balance == nil {
 			return regources.ReviewableRequest{}, errors.New("balance not found")
 		}
-		resource := resources.NewBalance(balance)
+		resource := &regources.Balance{
+			Key: resources.NewBalanceKey(balance.Address),
+		}
 		included.Add(resource)
 	}
 
