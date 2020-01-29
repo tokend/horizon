@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+## Added
+
+* Endpoint for getting account list `v3/accounts`
+
+## Fixed
+
+* Parsing array query parameters
+
 ## 3.7.2
 
 ### Fixed
