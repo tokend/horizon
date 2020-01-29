@@ -9,6 +9,7 @@
 ## Fixed
 
 * Parsing array query parameters
+* slow `/v3/transactions` get requests (same as 3.5.3)
 
 ## 3.7.2
 
@@ -92,6 +93,12 @@
 
 * panic on `v3/balances`
 * error on reviewable request ingestion
+
+## 3.5.3
+
+###Fixed
+
+* slow `/v3/transactions` get requests
 
 ## 3.5.2
 
