@@ -95,6 +95,12 @@ func (q SalesQ) FilterByID(id uint64) SalesQ {
 	return q
 }
 
+// FilterByIDs - returns q with filter by ids
+func (q SalesQ) FilterByIDs(ids []uint64) SalesQ {
+	q.selector = q.selector.Where(sq.Eq{"sales.id": ids})
+	return q
+}
+
 // GetByID loads a row from `sales`, by ID
 // returns nil, nil - if sale does not exists
 func (q SalesQ) GetByID(id uint64) (*Sale, error) {

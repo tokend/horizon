@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"fmt"
 	"net/http"
 
 	"gitlab.com/tokend/horizon/db2"
@@ -38,6 +39,12 @@ func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	ids, err := b.getUint64Slice(fmt.Sprintf("filter[%s]", FilterTypeSaleListIDs))
+	if err != nil {
+		return nil, err
+	}
+	request.Filters.IDs = ids
 
 	return &request, nil
 }

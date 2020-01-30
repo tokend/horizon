@@ -502,3 +502,51 @@ func (r *base) getCursor() (uint64, error) {
 
 	return result, nil
 }
+
+func (r *base) getUint64Slice(name string) ([]uint64, error) {
+	valuesStr := strings.Split(r.getString(name), ",")
+
+	if len(valuesStr) > 0 {
+		valuesInt := make([]uint64, 0, len(valuesStr))
+		for _, v := range valuesStr {
+			if v != "" {
+				valueInt, err := cast.ToUint64E(v)
+				if err != nil {
+					return nil, validation.Errors{
+						v: err,
+					}
+				}
+
+				valuesInt = append(valuesInt, valueInt)
+			}
+		}
+
+		return valuesInt, nil
+	}
+
+	return []uint64{}, nil
+}
+
+func (r *base) getIntSlice(name string) ([]int, error) {
+	valuesStr := strings.Split(r.getString(name), ",")
+
+	if len(valuesStr) > 0 {
+		valuesInt := make([]int, 0, len(valuesStr))
+		for _, v := range valuesStr {
+			if v != "" {
+				valueInt, err := strconv.Atoi(v)
+				if err != nil {
+					return nil, validation.Errors{
+						v: err,
+					}
+				}
+
+				valuesInt = append(valuesInt, valueInt)
+			}
+		}
+
+		return valuesInt, nil
+	}
+
+	return []int{}, nil
+}

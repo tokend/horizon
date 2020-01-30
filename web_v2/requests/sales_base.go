@@ -38,6 +38,8 @@ const (
 	FilterTypeSaleListMaxHardCap = "max_hard_cap"
 	// FilterTypeSaleListMaxSoftCap - defines if we need to filter response by max_soft_cap
 	FilterTypeSaleListMaxSoftCap = "max_soft_cap"
+	// FilterTypeSaleListIDs - defines if we need to filter response by ids
+	FilterTypeSaleListIDs = "ids"
 )
 
 var includeTypeSaleListAll = map[string]struct{}{
@@ -59,6 +61,7 @@ var filterTypeSaleListAll = map[string]struct{}{
 	FilterTypeSaleListMinSoftCap:   {},
 	FilterTypeSaleListMaxHardCap:   {},
 	FilterTypeSaleListMaxSoftCap:   {},
+	FilterTypeSaleListIDs:          {},
 }
 
 type SalesBase struct {
@@ -76,5 +79,6 @@ type SalesBase struct {
 		MinSoftCap   regources.Amount `json:"min_soft_cap"`
 		MaxHardCap   regources.Amount `json:"max_hard_cap"`
 		MaxSoftCap   regources.Amount `json:"max_soft_cap"`
+		IDs          []uint64         `json:"ids"`
 	}
 }
