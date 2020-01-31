@@ -16,7 +16,7 @@ func (h *redemptionHandler) Fulfilled(details requestDetails) ([]history2.Partic
 	source := h.effectsProvider.BalanceEffect(redemptionRequest.SourceBalanceId,
 		&history2.Effect{
 			Type: history2.EffectTypeChargedFromLocked,
-			Charged: &history2.BalanceChangeEffect{
+			ChargedFromLocked: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(redemptionRequest.Amount),
 			},
 		})

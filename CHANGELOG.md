@@ -11,6 +11,7 @@
 * Parsing array query parameters
 * slow `/v3/transactions` get requests (same as 3.5.3)
 * incorrect `/v3/asset_pairs` filtering
+* panic on `/v3/history`
 
 ## 3.7.2
 
