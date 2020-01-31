@@ -31,7 +31,7 @@ func (h *createRedemptionRequestOpHandler) Details(op rawOperation, opRes xdr.Op
 	}, nil
 }
 
-func (h *createRedemptionRequestOpHandler) ParticipantEffects(opBody xdr.OperationBody,
+func (h *createRedemptionRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
 	op := opBody.MustCreateRedemptionRequestOp()
@@ -43,5 +43,4 @@ func (h *createRedemptionRequestOpHandler) ParticipantEffects(opBody xdr.Operati
 				Amount: regources.Amount(op.RedemptionRequest.Amount),
 			}}),
 	}, nil
-
 }
