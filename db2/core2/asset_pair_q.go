@@ -47,7 +47,7 @@ func (q AssetPairsQ) FilterByQuoteAsset(quote string) AssetPairsQ {
 
 // FilterByAsset - returns Q with filter by asset (no matter base or quote)
 func (q AssetPairsQ) FilterByAsset(code string) AssetPairsQ {
-	q.selector = q.selector.Where("asset_pairs.base = ? OR asset_pairs.quote = ?", code, code)
+	q.selector = q.selector.Where("(asset_pairs.base = ? OR asset_pairs.quote = ?)", code, code)
 	return q
 }
 
