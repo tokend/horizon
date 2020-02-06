@@ -78,6 +78,9 @@ func newAssetCreateRequest(id int64, details history2.CreateAssetRequest) *regou
 			Type:                   details.Type,
 			TrailingDigitsCount:    details.TrailingDigitsCount,
 		},
+		Relationships: regources.CreateAssetRequestRelationships{
+			Asset: NewAssetKey(details.Asset).AsRelation(),
+		},
 	}
 }
 func newAssetUpdateRequest(id int64, details history2.UpdateAssetRequest) *regources.UpdateAssetRequest {
