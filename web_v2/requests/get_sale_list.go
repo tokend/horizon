@@ -70,3 +70,9 @@ func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 
 	return &request, nil
 }
+
+func (g GetSaleList) GetLoganFields() map[string]interface{} {
+	return map[string]interface{}{
+		"participant": g.SpecialFilters.Participant,
+	}
+}

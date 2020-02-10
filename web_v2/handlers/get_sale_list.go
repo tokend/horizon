@@ -43,7 +43,7 @@ func GetSaleList(w http.ResponseWriter, r *http.Request) {
 
 	result, err := handler.GetSaleList(request)
 	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get sale list", logan.F{
+		ctx.Log(r).WithError(err).Error("failed to get sale list ", logan.F{
 			"request": request,
 		})
 		ape.RenderErr(w, problems.InternalError())
@@ -69,7 +69,7 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 
 	historySales, err := q.Page(*request.PageParams).Select()
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get asset list")
+		return nil, errors.Wrap(err, "Failed to get sale list")
 	}
 
 	response := &regources.SaleListResponse{
