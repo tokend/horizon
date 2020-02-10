@@ -2,6 +2,7 @@ package history2
 
 import (
 	"fmt"
+	regources "gitlab.com/tokend/regources/generated"
 	"time"
 
 	"gitlab.com/tokend/go/xdr"
@@ -164,6 +165,12 @@ func (q SalesQ) FilterByMinSoftCap(value uint64) SalesQ {
 // FilterByMaxHardCap - returns q with filter by max hard cap
 func (q SalesQ) FilterByMaxHardCap(value uint64) SalesQ {
 	q.selector = q.selector.Where("sales.hard_cap <= ?", value)
+	return q
+}
+
+func (q SalesQ) FilterByParticipant(participant string, saleIDs []int64) SalesQ {
+	q.selector = q.selector.LeftJoin("participants_effects pe on (sales.id = (pe.effect#>>'{matched,order_book_id}')::int and sales.state = ?)", regources.SaleStateClosed).
+		Where(sq.Or{sq.Eq{"pe.account_id": participant}, sq.Eq{"sales.id": saleIDs}})
 	return q
 }
 

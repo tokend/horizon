@@ -32,6 +32,7 @@ func GetSaleList(w http.ResponseWriter, r *http.Request) {
 			saleCapConverter: converter,
 			Log:              ctx.Log(r),
 		},
+		OffersQ: core2.NewOffersQ(coreRepo),
 	}
 
 	request, err := requests.NewGetSaleList(r)
@@ -54,11 +55,17 @@ func GetSaleList(w http.ResponseWriter, r *http.Request) {
 
 type getSaleListHandler struct {
 	salesBaseHandler
+	OffersQ core2.OffersQ
 }
 
 // GetSaleList returns the list of assets with related resources
 func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regources.SaleListResponse, error) {
 	q := applySaleFilters(request.SalesBase, h.SalesQ)
+	var err error
+	q, err = applyParticipantFilter(request, q, h.OffersQ)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to apply participant filter")
+	}
 
 	historySales, err := q.Page(*request.PageParams).Select()
 	if err != nil {
@@ -76,4 +83,19 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 	}
 
 	return response, nil
+}
+
+func applyParticipantFilter(s *requests.GetSaleList, q history2.SalesQ, offerQ core2.OffersQ,
+) (history2.SalesQ, error) {
+	if s.ShouldInclude(requests.FilterTypeSaleListParticipant) {
+		orderBookIDs, err := offerQ.OrderBookID().FilterByOrderBookID(-1).
+			FilterByOwnerID(s.SpecialFilters.Participant).SelectID()
+		if err != nil {
+			return q, errors.Wrap(err, "failed to select sale ids")
+		}
+
+		q = q.FilterByParticipant(s.SpecialFilters.Participant, orderBookIDs)
+	}
+
+	return q, nil
 }

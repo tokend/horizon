@@ -6,9 +6,33 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
+const (
+	// FilterTypeSaleListOwner - defines if we need to filter response by participant
+	FilterTypeSaleListParticipant = "participant"
+)
+
+var filterTypeSaleListAllWithParticipant = map[string]struct{}{
+	FilterTypeSaleListOwner:        {},
+	FilterTypeSaleListBaseAsset:    {},
+	FilterTypeSaleListMaxEndTime:   {},
+	FilterTypeSaleListMaxStartTime: {},
+	FilterTypeSaleListMinStartTime: {},
+	FilterTypeSaleListMinEndTime:   {},
+	FilterTypeSaleListState:        {},
+	FilterTypeSaleListSaleType:     {},
+	FilterTypeSaleListMinHardCap:   {},
+	FilterTypeSaleListMinSoftCap:   {},
+	FilterTypeSaleListMaxHardCap:   {},
+	FilterTypeSaleListMaxSoftCap:   {},
+	FilterTypeSaleListParticipant:  {},
+}
+
 // GetSaleList - represents params to be specified by user for getSaleList handler
 type GetSaleList struct {
 	SalesBase
+	SpecialFilters struct {
+		Participant string `json:"participant"`
+	}
 	PageParams *db2.OffsetPageParams
 }
 
@@ -16,7 +40,7 @@ type GetSaleList struct {
 func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeSaleListAll,
-		supportedFilters:  filterTypeSaleListAll,
+		supportedFilters:  filterTypeSaleListAllWithParticipant,
 	})
 	if err != nil {
 		return nil, err
@@ -35,6 +59,11 @@ func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 	}
 
 	err = b.populateFilters(&request.Filters)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.populateFilters(&request.SpecialFilters)
 	if err != nil {
 		return nil, err
 	}

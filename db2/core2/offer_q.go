@@ -157,3 +157,22 @@ func (q OffersQ) Select() ([]Offer, error) {
 
 	return result, nil
 }
+
+func (q OffersQ) OrderBookID() OffersQ {
+	q.selector = sq.Select("offers.order_book_id").From("offer offers")
+	return q
+}
+
+func (q OffersQ) SelectID() ([]int64, error) {
+	var result []int64
+	err := q.repo.Select(&result, q.selector)
+	if err != nil {
+		if q.repo.NoRows(err) {
+			return nil, nil
+		}
+
+		return nil, errors.Wrap(err, "failed to load order book ids")
+	}
+
+	return result, nil
+}

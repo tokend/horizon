@@ -5,6 +5,7 @@
 ## Added
 
 * Endpoint for getting account list `v3/accounts`
+* Filter by participant for `/v3/sales`
 
 ## Fixed
 
