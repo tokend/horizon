@@ -170,7 +170,8 @@ func (q SalesQ) FilterByMaxHardCap(value uint64) SalesQ {
 
 func (q SalesQ) FilterByParticipant(participant string, saleIDs []int64) SalesQ {
 	q.selector = q.selector.LeftJoin("participant_effects pe on (sales.id = (pe.effect#>>'{matched,order_book_id}')::int and sales.state = ?)", regources.SaleStateClosed).
-		Where(sq.Or{sq.Eq{"pe.account_id": participant}, sq.Eq{"sales.id": saleIDs}})
+		Join("accounts a ON pe.account_id = a.id").
+		Where(sq.Or{sq.Eq{"a.address": participant}, sq.Eq{"sales.id": saleIDs}})
 	return q
 }
 
