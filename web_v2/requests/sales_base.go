@@ -79,6 +79,6 @@ type SalesBase struct {
 		MinSoftCap   regources.Amount `json:"min_soft_cap"`
 		MaxHardCap   regources.Amount `json:"max_hard_cap"`
 		MaxSoftCap   regources.Amount `json:"max_soft_cap"`
-		IDs          []uint64         `json:"ids"`
+		IDs          []uint64         `json:"ids" fig:"ids"`
 	}
 }
