@@ -95,7 +95,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "fix/redemption"
+  branch = "fix/license-signatures"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
