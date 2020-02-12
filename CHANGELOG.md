@@ -6,6 +6,8 @@
 
 * Endpoint for getting account list `v3/accounts`
 * Filter by participant for `/v3/sales`
+* Filter by asset codes (`v3/assets`)
+* Filter by sales ids (`v3/sales`)
 
 ## Fixed
 

@@ -173,5 +173,9 @@ func applySaleFilters(s requests.SalesBase, q history2.SalesQ) history2.SalesQ {
 		q = q.FilterByMaxSoftCap(uint64(s.Filters.MaxSoftCap))
 	}
 
+	if s.ShouldFilter(requests.FilterTypeSaleListIDs) {
+		q = q.FilterByIDs(s.Filters.IDs)
+	}
+
 	return q
 }
