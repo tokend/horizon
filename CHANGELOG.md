@@ -2,13 +2,19 @@
 
 ## Unreleased
 
-## Added
+### Added
+
+* Traefik
+
+## 3.8.0
+
+### Added
 
 * Endpoint for getting account list `v3/accounts`
 * Filter by asset codes (`v3/assets`)
 * Filter by sales ids (`v3/sales`)
 
-## Fixed
+### Fixed
 
 * Parsing array query parameters
 * slow `/v3/transactions` get requests (same as 3.5.3)
