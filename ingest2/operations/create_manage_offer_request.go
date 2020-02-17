@@ -5,6 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -18,6 +19,7 @@ func (h *createManageOfferRequestOpHandler) Details(op rawOperation,
 ) (history2.OperationDetails, error) {
 	createManageOfferRequestOp := op.Body.MustCreateManageOfferRequestOp()
 	createManageOfferRequestRes := opRes.MustCreateManageOfferRequestResult().MustSuccess()
+	request := createManageOfferRequestOp.Request
 	manageOfferOp := createManageOfferRequestOp.Request.Op
 
 	var allTasks *uint32
@@ -26,15 +28,27 @@ func (h *createManageOfferRequestOpHandler) Details(op rawOperation,
 		allTasks = &tasks
 	}
 
+	creatorDetails := regources.Details("{}")
+	switch request.Ext.V {
+	case xdr.LedgerVersionMovementRequestsDetails:
+		creatorDetails = internal.MarshalCustomDetails(request.Ext.MustCreatorDetails())
+	case xdr.LedgerVersionEmptyVersion:
+	default:
+		panic(errors.From(errors.New("unexpected version of payment request"), logan.F{
+			"ledger_version": request.Ext.V,
+		}))
+	}
+
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateManageOfferRequest,
 		CreateManageOfferRequest: &history2.CreateManageOfferRequestDetails{
 			ManageOfferDetails: history2.ManageOfferRequest{
-				OfferID:     int64(manageOfferOp.OfferId),
-				OrderBookID: int64(manageOfferOp.OrderBookId),
-				Amount:      regources.Amount(manageOfferOp.Amount),
-				Price:       regources.Amount(manageOfferOp.Price),
-				IsBuy:       manageOfferOp.IsBuy,
+				CreatorDetails: creatorDetails,
+				OfferID:        int64(manageOfferOp.OfferId),
+				OrderBookID:    int64(manageOfferOp.OrderBookId),
+				Amount:         regources.Amount(manageOfferOp.Amount),
+				Price:          regources.Amount(manageOfferOp.Price),
+				IsBuy:          manageOfferOp.IsBuy,
 				Fee: regources.Fee{
 					CalculatedPercent: regources.Amount(manageOfferOp.Fee),
 				},

@@ -5,6 +5,8 @@
 ### Added
 
 * Traefik
+* Ingest version bumped up
+* Creator details in `PaymentReviewableRequest`, `ManageOfferReviewableRequest`
 
 ## 3.8.0
 

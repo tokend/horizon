@@ -276,12 +276,13 @@ func newManageOfferRequest(id int64, details history2.ManageOfferRequest) *regou
 	return &regources.ManageOfferRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_MANAGE_OFFER),
 		Attributes: regources.ManageOfferRequestAttributes{
-			BaseAmount:  details.Amount,
-			Fee:         details.Fee,
-			IsBuy:       details.IsBuy,
-			OfferId:     details.OfferID,
-			OrderBookId: details.OrderBookID,
-			Price:       details.Price,
+			CreatorDetails: details.CreatorDetails,
+			BaseAmount:     details.Amount,
+			Fee:            details.Fee,
+			IsBuy:          details.IsBuy,
+			OfferId:        details.OfferID,
+			OrderBookId:    details.OrderBookID,
+			Price:          details.Price,
 		},
 	}
 }
@@ -290,6 +291,7 @@ func newCreatePaymentRequest(id int64, details history2.CreatePaymentRequest) *r
 	return &regources.CreatePaymentRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CREATE_PAYMENT),
 		Attributes: regources.CreatePaymentRequestAttributes{
+			CreatorDetails:          details.CreatorDetails,
 			Amount:                  details.Amount,
 			SourceFee:               details.SourceFee,
 			DestinationFee:          details.DestinationFee,

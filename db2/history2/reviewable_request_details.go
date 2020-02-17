@@ -175,22 +175,24 @@ type KYCRecoveryRequest struct {
 }
 
 type ManageOfferRequest struct {
-	OfferID     int64            `json:"offer_id,omitempty"`
-	OrderBookID int64            `json:"order_book_id"`
-	Amount      regources.Amount `json:"base_amount"`
-	Price       regources.Amount `json:"price"`
-	IsBuy       bool             `json:"is_buy"`
-	Fee         regources.Fee    `json:"fee"`
+	CreatorDetails regources.Details `json:"creator_details"`
+	OfferID        int64             `json:"offer_id,omitempty"`
+	OrderBookID    int64             `json:"order_book_id"`
+	Amount         regources.Amount  `json:"base_amount"`
+	Price          regources.Amount  `json:"price"`
+	IsBuy          bool              `json:"is_buy"`
+	Fee            regources.Fee     `json:"fee"`
 }
 
 type CreatePaymentRequest struct {
-	BalanceFrom             string           `json:"balance_from"`
-	Amount                  regources.Amount `json:"amount"`
-	SourceFee               regources.Fee    `json:"source_fee"`
-	DestinationFee          regources.Fee    `json:"destination_fee"`
-	SourcePayForDestination bool             `json:"source_pay_for_destination"`
-	Subject                 string           `json:"subject"`
-	Reference               string           `json:"reference"`
+	CreatorDetails          regources.Details `json:"creator_details"`
+	BalanceFrom             string            `json:"balance_from"`
+	Amount                  regources.Amount  `json:"amount"`
+	SourceFee               regources.Fee     `json:"source_fee"`
+	DestinationFee          regources.Fee     `json:"destination_fee"`
+	SourcePayForDestination bool              `json:"source_pay_for_destination"`
+	Subject                 string            `json:"subject"`
+	Reference               string            `json:"reference"`
 }
 
 type RedemptionRequest struct {

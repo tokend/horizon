@@ -34,7 +34,10 @@ CreatePaymentRequestOp:
             - source_pay_for_destination
             - subject
             - reference
+            - creator_details
           properties:
+            creator_details:
+              $ref: '#/components/schemas/Details'
             source_fee:
               $ref: '#/components/schemas/Fee'
             destination_fee:

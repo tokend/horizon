@@ -601,12 +601,25 @@ func (c *reviewableRequestHandler) getKYCRecovery(request *xdr.KycRecoveryReques
 func (c *reviewableRequestHandler) getManageOfferRequest(request *xdr.ManageOfferRequest,
 ) *history.ManageOfferRequest {
 	manageOfferOp := request.Op
+
+	creatorDetails := regources.Details("{}")
+	switch request.Ext.V {
+	case xdr.LedgerVersionMovementRequestsDetails:
+		creatorDetails = internal.MarshalCustomDetails(request.Ext.MustCreatorDetails())
+	case xdr.LedgerVersionEmptyVersion:
+	default:
+		panic(errors.From(errors.New("unexpected version of manage offer request"), logan.F{
+			"ledger_version": request.Ext.V,
+		}))
+	}
+
 	return &history.ManageOfferRequest{
-		OfferID:     int64(manageOfferOp.OfferId),
-		OrderBookID: int64(manageOfferOp.OrderBookId),
-		Amount:      regources.Amount(manageOfferOp.Amount),
-		Price:       regources.Amount(manageOfferOp.Price),
-		IsBuy:       manageOfferOp.IsBuy,
+		CreatorDetails: creatorDetails,
+		OfferID:        int64(manageOfferOp.OfferId),
+		OrderBookID:    int64(manageOfferOp.OrderBookId),
+		Amount:         regources.Amount(manageOfferOp.Amount),
+		Price:          regources.Amount(manageOfferOp.Price),
+		IsBuy:          manageOfferOp.IsBuy,
 		Fee: regources.Fee{
 			CalculatedPercent: regources.Amount(manageOfferOp.Fee),
 		},
@@ -616,7 +629,20 @@ func (c *reviewableRequestHandler) getManageOfferRequest(request *xdr.ManageOffe
 func (c *reviewableRequestHandler) getCreatePaymentRequest(request *xdr.CreatePaymentRequest,
 ) *history.CreatePaymentRequest {
 	paymentOp := request.PaymentOp
+
+	creatorDetails := regources.Details("{}")
+	switch request.Ext.V {
+	case xdr.LedgerVersionMovementRequestsDetails:
+		creatorDetails = internal.MarshalCustomDetails(request.Ext.MustCreatorDetails())
+	case xdr.LedgerVersionEmptyVersion:
+	default:
+		panic(errors.From(errors.New("unexpected version of payment request"), logan.F{
+			"ledger_version": request.Ext.V,
+		}))
+	}
+
 	return &history.CreatePaymentRequest{
+		CreatorDetails:          creatorDetails,
 		BalanceFrom:             paymentOp.SourceBalanceId.AsString(),
 		Amount:                  regources.Amount(paymentOp.Amount),
 		SourceFee:               internal.FeeFromXdr(paymentOp.FeeData.SourceFee),
