@@ -425,10 +425,11 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 	}
 
 	return &history.CreatePreIssuanceRequest{
-		Asset:     string(request.Asset),
-		Amount:    regources.Amount(request.Amount),
-		Signature: signature,
-		Reference: string(request.Reference),
+		Asset:          string(request.Asset),
+		Amount:         regources.Amount(request.Amount),
+		Signature:      signature,
+		Reference:      string(request.Reference),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}, nil
 }
 

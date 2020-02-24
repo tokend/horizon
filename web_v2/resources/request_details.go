@@ -153,9 +153,10 @@ func newPreIssuanceRequest(id int64, details history2.CreatePreIssuanceRequest) 
 	return &regources.CreatePreIssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_PRE_ISSUANCE),
 		Attributes: regources.CreatePreIssuanceRequestAttributes{
-			Amount:    details.Amount,
-			Signature: details.Signature,
-			Reference: details.Reference,
+			Amount:         details.Amount,
+			Signature:      details.Signature,
+			Reference:      details.Reference,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreatePreIssuanceRequestRelationships{
 			Asset: NewAssetKey(details.Asset).AsRelation(),
