@@ -543,14 +543,15 @@ type CreateManageOfferRequestDetails struct {
 }
 
 type PaymentRequestDetails struct {
-	AccountFrom             string           `json:"account_from"`
-	BalanceFrom             string           `json:"balance_from"`
-	Amount                  regources.Amount `json:"amount"`
-	SourceFee               regources.Fee    `json:"source_fee"`
-	DestinationFee          regources.Fee    `json:"destination_fee"`
-	SourcePayForDestination bool             `json:"source_pay_for_destination"`
-	Subject                 string           `json:"subject"`
-	Reference               string           `json:"reference"`
+	CreatorDetails          regources.Details `json:"creator_details"`
+	AccountFrom             string            `json:"account_from"`
+	BalanceFrom             string            `json:"balance_from"`
+	Amount                  regources.Amount  `json:"amount"`
+	SourceFee               regources.Fee     `json:"source_fee"`
+	DestinationFee          regources.Fee     `json:"destination_fee"`
+	SourcePayForDestination bool              `json:"source_pay_for_destination"`
+	Subject                 string            `json:"subject"`
+	Reference               string            `json:"reference"`
 }
 
 type CreatePaymentRequestDetails struct {

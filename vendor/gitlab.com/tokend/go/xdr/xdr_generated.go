@@ -1,5 +1,5 @@
-// revision: 1237c32bd475780b8180f8d3cae6b1b6a7e4fcfb
-// branch:   fix/license-signatures
+// revision: cb9934f17765fd65f2c5ecaf7b177c8b39408888
+// branch:   feature/movements-rr-details
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -16945,7 +16945,9 @@ type CreateManageOfferRequestOp struct {
 //        //: Offer is invalid
 //        INVALID_OFFER = -1,
 //        //: Tasks for the manage offer request were neither provided in the request nor loaded through KeyValue
-//        MANAGE_OFFER_TASKS_NOT_FOUND = -2
+//        MANAGE_OFFER_TASKS_NOT_FOUND = -2,
+//        //: Creator details are not in a valid JSON format
+//        INVALID_CREATOR_DETAILS = -3
 //    };
 //
 type CreateManageOfferRequestResultCode int32
@@ -16954,30 +16956,35 @@ const (
 	CreateManageOfferRequestResultCodeSuccess                  CreateManageOfferRequestResultCode = 0
 	CreateManageOfferRequestResultCodeInvalidOffer             CreateManageOfferRequestResultCode = -1
 	CreateManageOfferRequestResultCodeManageOfferTasksNotFound CreateManageOfferRequestResultCode = -2
+	CreateManageOfferRequestResultCodeInvalidCreatorDetails    CreateManageOfferRequestResultCode = -3
 )
 
 var CreateManageOfferRequestResultCodeAll = []CreateManageOfferRequestResultCode{
 	CreateManageOfferRequestResultCodeSuccess,
 	CreateManageOfferRequestResultCodeInvalidOffer,
 	CreateManageOfferRequestResultCodeManageOfferTasksNotFound,
+	CreateManageOfferRequestResultCodeInvalidCreatorDetails,
 }
 
 var createManageOfferRequestResultCodeMap = map[int32]string{
 	0:  "CreateManageOfferRequestResultCodeSuccess",
 	-1: "CreateManageOfferRequestResultCodeInvalidOffer",
 	-2: "CreateManageOfferRequestResultCodeManageOfferTasksNotFound",
+	-3: "CreateManageOfferRequestResultCodeInvalidCreatorDetails",
 }
 
 var createManageOfferRequestResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "invalid_offer",
 	-2: "manage_offer_tasks_not_found",
+	-3: "invalid_creator_details",
 }
 
 var createManageOfferRequestResultCodeRevMap = map[string]int32{
 	"CreateManageOfferRequestResultCodeSuccess":                  0,
 	"CreateManageOfferRequestResultCodeInvalidOffer":             -1,
 	"CreateManageOfferRequestResultCodeManageOfferTasksNotFound": -2,
+	"CreateManageOfferRequestResultCodeInvalidCreatorDetails":    -3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -17207,39 +17214,46 @@ type CreatePaymentRequestOp struct {
 //        //: Payment is invalid
 //        INVALID_PAYMENT = -1,
 //        //: Tasks for the payment request were neither provided in the request nor loaded through KeyValue
-//        PAYMENT_TASKS_NOT_FOUND = -2
+//        PAYMENT_TASKS_NOT_FOUND = -2,
+//        //: Creator details are not in a valid JSON format
+//        INVALID_CREATOR_DETAILS = -3
 //    };
 //
 type CreatePaymentRequestResultCode int32
 
 const (
-	CreatePaymentRequestResultCodeSuccess              CreatePaymentRequestResultCode = 0
-	CreatePaymentRequestResultCodeInvalidPayment       CreatePaymentRequestResultCode = -1
-	CreatePaymentRequestResultCodePaymentTasksNotFound CreatePaymentRequestResultCode = -2
+	CreatePaymentRequestResultCodeSuccess               CreatePaymentRequestResultCode = 0
+	CreatePaymentRequestResultCodeInvalidPayment        CreatePaymentRequestResultCode = -1
+	CreatePaymentRequestResultCodePaymentTasksNotFound  CreatePaymentRequestResultCode = -2
+	CreatePaymentRequestResultCodeInvalidCreatorDetails CreatePaymentRequestResultCode = -3
 )
 
 var CreatePaymentRequestResultCodeAll = []CreatePaymentRequestResultCode{
 	CreatePaymentRequestResultCodeSuccess,
 	CreatePaymentRequestResultCodeInvalidPayment,
 	CreatePaymentRequestResultCodePaymentTasksNotFound,
+	CreatePaymentRequestResultCodeInvalidCreatorDetails,
 }
 
 var createPaymentRequestResultCodeMap = map[int32]string{
 	0:  "CreatePaymentRequestResultCodeSuccess",
 	-1: "CreatePaymentRequestResultCodeInvalidPayment",
 	-2: "CreatePaymentRequestResultCodePaymentTasksNotFound",
+	-3: "CreatePaymentRequestResultCodeInvalidCreatorDetails",
 }
 
 var createPaymentRequestResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "invalid_payment",
 	-2: "payment_tasks_not_found",
+	-3: "invalid_creator_details",
 }
 
 var createPaymentRequestResultCodeRevMap = map[string]int32{
-	"CreatePaymentRequestResultCodeSuccess":              0,
-	"CreatePaymentRequestResultCodeInvalidPayment":       -1,
-	"CreatePaymentRequestResultCodePaymentTasksNotFound": -2,
+	"CreatePaymentRequestResultCodeSuccess":               0,
+	"CreatePaymentRequestResultCodeInvalidPayment":        -1,
+	"CreatePaymentRequestResultCodePaymentTasksNotFound":  -2,
+	"CreatePaymentRequestResultCodeInvalidCreatorDetails": -3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -36318,7 +36332,7 @@ func NewRemoveAssetOpExt(v LedgerVersion, value interface{}) (result RemoveAsset
 
 // RemoveAssetOp is an XDR Struct defines as:
 //
-//   //: `RemoveAssetOp` removes specified asset pair
+//   //: `RemoveAssetOp` changes the state of specified asset to removed
 //    struct RemoveAssetOp
 //    {
 //        //: Defines an asset
@@ -44806,18 +44820,174 @@ type LimitsUpdateRequest struct {
 	Ext            LimitsUpdateRequestExt `json:"ext,omitempty"`
 }
 
+// ManageOfferRequestExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case MOVEMENT_REQUESTS_DETAILS:
+//            longstring creatorDetails;
+//        }
+//
+type ManageOfferRequestExt struct {
+	V              LedgerVersion `json:"v,omitempty"`
+	CreatorDetails *Longstring   `json:"creatorDetails,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u ManageOfferRequestExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of ManageOfferRequestExt
+func (u ManageOfferRequestExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	case LedgerVersionMovementRequestsDetails:
+		return "CreatorDetails", true
+	}
+	return "-", false
+}
+
+// NewManageOfferRequestExt creates a new  ManageOfferRequestExt.
+func NewManageOfferRequestExt(v LedgerVersion, value interface{}) (result ManageOfferRequestExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	case LedgerVersionMovementRequestsDetails:
+		tv, ok := value.(Longstring)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be Longstring")
+			return
+		}
+		result.CreatorDetails = &tv
+	}
+	return
+}
+
+// MustCreatorDetails retrieves the CreatorDetails value from the union,
+// panicing if the value is not set.
+func (u ManageOfferRequestExt) MustCreatorDetails() Longstring {
+	val, ok := u.GetCreatorDetails()
+
+	if !ok {
+		panic("arm CreatorDetails is not set")
+	}
+
+	return val
+}
+
+// GetCreatorDetails retrieves the CreatorDetails value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageOfferRequestExt) GetCreatorDetails() (result Longstring, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.V))
+
+	if armName == "CreatorDetails" {
+		result = *u.CreatorDetails
+		ok = true
+	}
+
+	return
+}
+
 // ManageOfferRequest is an XDR Struct defines as:
 //
 //   struct ManageOfferRequest
 //    {
 //        ManageOfferOp op;
 //
-//        EmptyExt ext;
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case MOVEMENT_REQUESTS_DETAILS:
+//            longstring creatorDetails;
+//        } ext;
 //    };
 //
 type ManageOfferRequest struct {
-	Op  ManageOfferOp `json:"op,omitempty"`
-	Ext EmptyExt      `json:"ext,omitempty"`
+	Op  ManageOfferOp         `json:"op,omitempty"`
+	Ext ManageOfferRequestExt `json:"ext,omitempty"`
+}
+
+// CreatePaymentRequestExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case MOVEMENT_REQUESTS_DETAILS:
+//            longstring creatorDetails;
+//        }
+//
+type CreatePaymentRequestExt struct {
+	V              LedgerVersion `json:"v,omitempty"`
+	CreatorDetails *Longstring   `json:"creatorDetails,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreatePaymentRequestExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreatePaymentRequestExt
+func (u CreatePaymentRequestExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	case LedgerVersionMovementRequestsDetails:
+		return "CreatorDetails", true
+	}
+	return "-", false
+}
+
+// NewCreatePaymentRequestExt creates a new  CreatePaymentRequestExt.
+func NewCreatePaymentRequestExt(v LedgerVersion, value interface{}) (result CreatePaymentRequestExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	case LedgerVersionMovementRequestsDetails:
+		tv, ok := value.(Longstring)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be Longstring")
+			return
+		}
+		result.CreatorDetails = &tv
+	}
+	return
+}
+
+// MustCreatorDetails retrieves the CreatorDetails value from the union,
+// panicing if the value is not set.
+func (u CreatePaymentRequestExt) MustCreatorDetails() Longstring {
+	val, ok := u.GetCreatorDetails()
+
+	if !ok {
+		panic("arm CreatorDetails is not set")
+	}
+
+	return val
+}
+
+// GetCreatorDetails retrieves the CreatorDetails value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreatePaymentRequestExt) GetCreatorDetails() (result Longstring, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.V))
+
+	if armName == "CreatorDetails" {
+		result = *u.CreatorDetails
+		ok = true
+	}
+
+	return
 }
 
 // CreatePaymentRequest is an XDR Struct defines as:
@@ -44826,12 +44996,18 @@ type ManageOfferRequest struct {
 //    {
 //        PaymentOp paymentOp;
 //
-//        EmptyExt ext;
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        case MOVEMENT_REQUESTS_DETAILS:
+//            longstring creatorDetails;
+//        } ext;
 //    };
 //
 type CreatePaymentRequest struct {
-	PaymentOp PaymentOp `json:"paymentOp,omitempty"`
-	Ext       EmptyExt  `json:"ext,omitempty"`
+	PaymentOp PaymentOp               `json:"paymentOp,omitempty"`
+	Ext       CreatePaymentRequestExt `json:"ext,omitempty"`
 }
 
 // RedemptionRequestExt is an XDR NestedUnion defines as:
@@ -50501,7 +50677,9 @@ type TransactionResult struct {
 //        MARK_ASSET_AS_DELETED = 22,
 //        FIX_MAX_SUBJECT_SIZE = 23,
 //        FIX_MOVEMENT_REVIEW = 24,
-//        FIX_SIGNATURE_CHECK = 25
+//        FIX_SIGNATURE_CHECK = 25,
+//        FIX_AUTOREVIEW = 26,
+//        MOVEMENT_REQUESTS_DETAILS = 27
 //    };
 //
 type LedgerVersion int32
@@ -50533,6 +50711,8 @@ const (
 	LedgerVersionFixMaxSubjectSize                 LedgerVersion = 23
 	LedgerVersionFixMovementReview                 LedgerVersion = 24
 	LedgerVersionFixSignatureCheck                 LedgerVersion = 25
+	LedgerVersionFixAutoreview                     LedgerVersion = 26
+	LedgerVersionMovementRequestsDetails           LedgerVersion = 27
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -50562,6 +50742,8 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixMaxSubjectSize,
 	LedgerVersionFixMovementReview,
 	LedgerVersionFixSignatureCheck,
+	LedgerVersionFixAutoreview,
+	LedgerVersionMovementRequestsDetails,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -50591,6 +50773,8 @@ var ledgerVersionMap = map[int32]string{
 	23: "LedgerVersionFixMaxSubjectSize",
 	24: "LedgerVersionFixMovementReview",
 	25: "LedgerVersionFixSignatureCheck",
+	26: "LedgerVersionFixAutoreview",
+	27: "LedgerVersionMovementRequestsDetails",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -50620,6 +50804,8 @@ var ledgerVersionShortMap = map[int32]string{
 	23: "fix_max_subject_size",
 	24: "fix_movement_review",
 	25: "fix_signature_check",
+	26: "fix_autoreview",
+	27: "movement_requests_details",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -50649,6 +50835,8 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixMaxSubjectSize":                 23,
 	"LedgerVersionFixMovementReview":                 24,
 	"LedgerVersionFixSignatureCheck":                 25,
+	"LedgerVersionFixAutoreview":                     26,
+	"LedgerVersionMovementRequestsDetails":           27,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -52035,4 +52223,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "1237c32bd475780b8180f8d3cae6b1b6a7e4fcfb"
+var Revision = "cb9934f17765fd65f2c5ecaf7b177c8b39408888"

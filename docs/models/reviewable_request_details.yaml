@@ -873,7 +873,10 @@ CreatePaymentRequest:
             - source_pay_for_destination
             - subject
             - reference
+            - creator_details
           properties:
+            creator_details:
+              $ref: '#/components/schemas/Details'
             source_fee:
               $ref: '#/components/schemas/Fee'
             destination_fee:
@@ -923,7 +926,10 @@ ManageOfferRequest:
             - price
             - is_buy
             - fee
+            - creator_details
           properties:
+            creator_details:
+              $ref: '#/components/schemas/Details'
             offer_id:
               type: integer
               format: int64

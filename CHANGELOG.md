@@ -5,6 +5,8 @@
 ### Added
 
 * Traefik
+* Ingest version bumped up
+* Creator details in `PaymentReviewableRequest`, `ManageOfferReviewableRequest`
 
 ### Fixed 
 * Ingest of preissuance request details.
