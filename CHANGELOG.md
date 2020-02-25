@@ -6,6 +6,9 @@
 
 * Traefik
 
+### Fixed 
+* Ingest of preissuance request details.
+
 ## 3.8.0
 
 ### Added
