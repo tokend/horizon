@@ -16,5 +16,6 @@ const (
 	IngestVersionUnmatchedSaleParticipation
 	IngestVersionUnlockedEffectAfterLocked
 	IngestVersionImmediateSaleParticipation
+	IngestVersionPreissuanceRequestDetails
 	IngestVersionMovementsReviewableRequestDetails
 )

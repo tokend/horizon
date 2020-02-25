@@ -8,11 +8,15 @@
 * Ingest version bumped up
 * Creator details in `PaymentReviewableRequest`, `ManageOfferReviewableRequest`
 
+### Fixed 
+* Ingest of preissuance request details.
+
 ## 3.8.0
 
 ### Added
 
 * Endpoint for getting account list `v3/accounts`
+* Filter by participant for `/v3/sales`
 * Filter by asset codes (`v3/assets`)
 * Filter by sales ids (`v3/sales`)
 
