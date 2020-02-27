@@ -460,16 +460,18 @@
   version = "v2.0.0"
 
 [[projects]]
-  digest = "1:71c54bb75cb44ac1e70eba2cd50e8f21588cf80359cca90689e0e11a9e5e7aab"
+  digest = "1:fb0f7303826f54d8e5439da81c4c01125da381904559580a227fed1aa453aafa"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
-    "cop",
+    "janus",
+    "janus/internal",
     "kv",
+    "pgdb",
   ]
   pruneopts = "UT"
-  revision = "d3f3742ebc1caa4aee945f61cdfe1e0c8892fa22"
-  version = "v1.5.0"
+  revision = "983afb19d5c2762943fcba9f8727ff81c2b7e5a2"
+  version = "v0.5.0"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"
@@ -683,7 +685,8 @@
     "gitlab.com/distributed_lab/ape/problems",
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/figure",
-    "gitlab.com/distributed_lab/kit/cop",
+    "gitlab.com/distributed_lab/kit/comfig",
+    "gitlab.com/distributed_lab/kit/janus",
     "gitlab.com/distributed_lab/kit/kv",
     "gitlab.com/distributed_lab/logan",
     "gitlab.com/distributed_lab/logan/v3",
