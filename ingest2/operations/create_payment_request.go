@@ -1,6 +1,7 @@
 package operations
 
 import (
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
@@ -20,17 +21,29 @@ func (h *createPaymentRequestOpHandler) Details(op rawOperation,
 	createPaymentRequestOp := op.Body.MustCreatePaymentRequestOp()
 	createPaymentRequestRes := opRes.MustCreatePaymentRequestResult().MustSuccess()
 	paymentOp := createPaymentRequestOp.Request.PaymentOp
-
+	request := createPaymentRequestOp.Request
 	var allTasks *uint32
 	if createPaymentRequestOp.AllTasks != nil {
 		tasks := uint32(*createPaymentRequestOp.AllTasks)
 		allTasks = &tasks
 	}
 
+	creatorDetails := regources.Details("{}")
+	switch request.Ext.V {
+	case xdr.LedgerVersionMovementRequestsDetails:
+		creatorDetails = internal.MarshalCustomDetails(request.Ext.MustCreatorDetails())
+	case xdr.LedgerVersionEmptyVersion:
+	default:
+		panic(errors.From(errors.New("unexpected version of payment request"), logan.F{
+			"ledger_version": request.Ext.V,
+		}))
+	}
+
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreatePaymentRequest,
 		CreatePaymentRequest: &history2.CreatePaymentRequestDetails{
 			PaymentDetails: history2.PaymentRequestDetails{
+				CreatorDetails:          creatorDetails,
 				AccountFrom:             op.Source.Address(),
 				BalanceFrom:             paymentOp.SourceBalanceId.AsString(),
 				Amount:                  regources.Amount(paymentOp.Amount),

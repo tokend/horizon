@@ -5,8 +5,9 @@
 package regources
 
 type ManageOfferRequestAttributes struct {
-	BaseAmount Amount `json:"base_amount"`
-	Fee        Fee    `json:"fee"`
+	BaseAmount     Amount  `json:"base_amount"`
+	CreatorDetails Details `json:"creator_details"`
+	Fee            Fee     `json:"fee"`
 	// Offer direction
 	IsBuy bool `json:"is_buy"`
 	// ID of the offer to manage

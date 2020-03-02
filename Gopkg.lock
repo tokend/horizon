@@ -503,8 +503,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "fix/license-signatures"
-  digest = "1:0ccca1a330c913ad9d272b1ce4b2d5f53d7f1db5fd1a0b3a21b30a55d64a3e34"
+  branch = "feature/movements-rr-details"
+  digest = "1:66de5c4cc3294a34d4c76031ad211127d6e7cb2183c85f978b24dd574b02293e"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -523,7 +523,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "df1de90f38cd24777ca135accd22d0d79ee55ac6"
+  revision = "fcf1884230410216209dffb68fbc97ae198c82b3"
 
 [[projects]]
   branch = "master"
@@ -539,15 +539,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/balance-statistic"
-  digest = "1:335be21a9a6f1cc5deea40b9fbcce3e5e45d4a8dc9e186e27ebbac435e5d208f"
+  branch = "feature/movements-rr-details"
+  digest = "1:84b5da729b7f0032777ad3e3c8bd9a652e2a83bf2a9956eff4f3618742693b8c"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "9c2050029dabba0f6a79a778bdeb68b6f5a0d815"
+  revision = "6c72b4710ff0917b44dc1029852910608e9bb00b"
 
 [[projects]]
   branch = "master"

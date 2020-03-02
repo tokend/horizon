@@ -95,11 +95,11 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "fix/license-signatures"
+  branch = "feature/movements-rr-details"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "feature/balance-statistic"
+  branch = "feature/movements-rr-details"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
