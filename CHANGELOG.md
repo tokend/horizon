@@ -1,10 +1,15 @@
 # Changelog
 
-## Unreleased
+## Ureleased
 
 ### Added
 
 * Traefik
+
+## 3.8.3
+
+### Added
+
 * Ingest version bumped up
 * Creator details in `PaymentReviewableRequest`, `ManageOfferReviewableRequest`
 
