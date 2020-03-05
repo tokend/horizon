@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	regources "gitlab.com/tokend/regources/generated"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -12,7 +14,6 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	regources "gitlab.com/tokend/regources/generated"
 )
 
 // DeprecatedGetOrderBook - processes request to get order book entries
