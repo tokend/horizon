@@ -6,6 +6,10 @@
 
 * Traefik
 
+### Fixed 
+
+* Overflow quote amount `/v3/order_books/{base}:{quote}:{order_book_id}`
+
 ## 3.8.3
 
 ### Added
@@ -14,6 +18,7 @@
 * Creator details in `PaymentReviewableRequest`, `ManageOfferReviewableRequest`
 
 ### Fixed 
+
 * Ingest of preissuance request details.
 
 ## 3.8.0
