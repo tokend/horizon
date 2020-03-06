@@ -50,7 +50,7 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 			ape.RenderErr(w, problems.InternalError())
 			return
 		}
-		if balance != nil {
+		if balance == nil {
 			ape.RenderErr(w, problems.NotFound())
 			return
 		}
