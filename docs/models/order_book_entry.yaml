@@ -45,7 +45,7 @@ OrderBookEntry:
               example: "33.050000"
             quote_amount:
               type: string
-              format: Amount
+              format: string
               description: "defines the quote amount of an offer"
               example: "1092.302500"
             cumulative_base_amount:
@@ -55,7 +55,7 @@ OrderBookEntry:
               example: "59.153000"
             cumulative_quote_amount:
               type: string
-              format: Amount
+              format: string
               description: "defines the quote amount of current entry plus quote amounts of more beneficial entries"
               example: "5813.004120"
             created_at:
