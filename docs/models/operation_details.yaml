@@ -47,6 +47,9 @@ OperationDetails:
     - $ref: '#/components/schemas/RemoveAssetOp'
     - $ref: '#/components/schemas/OpenSwapOp'
     - $ref: '#/components/schemas/CloseSwapOp'
+    - $ref: '#/components/schemas/CreateDataOp'
+    - $ref: '#/components/schemas/UpdateDataOp'
+    - $ref: '#/components/schemas/RemoveDataOp'
 
 
 OperationDetailsKey:
@@ -98,4 +101,7 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/RemoveAssetOpKey'
     - $ref: '#/components/schemas/OpenSwapOpKey'
     - $ref: '#/components/schemas/CloseSwapOpKey'
+    - $ref: '#/components/schemas/CreateDataOpKey'
+    - $ref: '#/components/schemas/UpdateDataOpKey'
+    - $ref: '#/components/schemas/RemoveDataOpKey'
 

@@ -1,5 +1,5 @@
-// revision: cb9934f17765fd65f2c5ecaf7b177c8b39408888
-// branch:   feature/movements-rr-details
+// revision: 49353b335197a0c2a0008bf74c2d1cca076afa4a
+// branch:   feature/manage-data
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -14,6 +14,7 @@
 //  xdr/ledger-entries-atomic-swap-ask.x
 //  xdr/ledger-entries-balance.x
 //  xdr/ledger-entries-contract.x
+//  xdr/ledger-entries-data.x
 //  xdr/ledger-entries-external-system-id-pool-entry.x
 //  xdr/ledger-entries-external-system-id.x
 //  xdr/ledger-entries-fee.x
@@ -48,6 +49,7 @@
 //  xdr/operation-create-atomic-swap-ask-request.x
 //  xdr/operation-create-atomic-swap-bid-request.x
 //  xdr/operation-create-change-role-request.x
+//  xdr/operation-create-data.x
 //  xdr/operation-create-issuance-request.x
 //  xdr/operation-create-kyc-recovery-request.x
 //  xdr/operation-create-manage-limits-request.x
@@ -84,9 +86,11 @@
 //  xdr/operation-payout.x
 //  xdr/operation-remove-asset-pair.x
 //  xdr/operation-remove-asset.x
+//  xdr/operation-remove-data.x
 //  xdr/operation-review-request.x
 //  xdr/operation-set-fees.x
 //  xdr/operation-stamp.x
+//  xdr/operation-update-data.x
 //  xdr/overlay.x
 //  xdr/resource-account-rule.x
 //  xdr/resource-signer-rule.x
@@ -1843,6 +1847,31 @@ type ContractEntry struct {
 	State              Uint32           `json:"state,omitempty"`
 	CustomerDetails    Longstring       `json:"customerDetails,omitempty"`
 	Ext                ContractEntryExt `json:"ext,omitempty"`
+}
+
+// DataEntry is an XDR Struct defines as:
+//
+//   struct DataEntry
+//    {
+//        //: ID of the data entry
+//        uint64 id;
+//        //: Numeric type, used for access control
+//        uint64 type;
+//        //: Value stored
+//        longstring value;
+//
+//        //: Creator of the entry
+//        AccountID owner;
+//        //: Reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type DataEntry struct {
+	Id    Uint64     `json:"id,omitempty"`
+	Type  Uint64     `json:"type,omitempty"`
+	Value Longstring `json:"value,omitempty"`
+	Owner AccountId  `json:"owner,omitempty"`
+	Ext   EmptyExt   `json:"ext,omitempty"`
 }
 
 // ExternalSystemAccountIdPoolEntryExt is an XDR NestedUnion defines as:
@@ -5890,6 +5919,8 @@ func (e *ThresholdIndexes) UnmarshalJSON(data []byte) error {
 //            AccountSpecificRuleEntry accountSpecificRule;
 //        case SWAP:
 //            SwapEntry swap;
+//        case DATA:
+//            DataEntry data;
 //        }
 //
 type LedgerEntryData struct {
@@ -5925,6 +5956,7 @@ type LedgerEntryData struct {
 	Vote                             *VoteEntry                        `json:"vote,omitempty"`
 	AccountSpecificRule              *AccountSpecificRuleEntry         `json:"accountSpecificRule,omitempty"`
 	Swap                             *SwapEntry                        `json:"swap,omitempty"`
+	Data                             *DataEntry                        `json:"data,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -5999,6 +6031,8 @@ func (u LedgerEntryData) ArmForSwitch(sw int32) (string, bool) {
 		return "AccountSpecificRule", true
 	case LedgerEntryTypeSwap:
 		return "Swap", true
+	case LedgerEntryTypeData:
+		return "Data", true
 	}
 	return "-", false
 }
@@ -6224,6 +6258,13 @@ func NewLedgerEntryData(aType LedgerEntryType, value interface{}) (result Ledger
 			return
 		}
 		result.Swap = &tv
+	case LedgerEntryTypeData:
+		tv, ok := value.(DataEntry)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be DataEntry")
+			return
+		}
+		result.Data = &tv
 	}
 	return
 }
@@ -7003,6 +7044,31 @@ func (u LedgerEntryData) GetSwap() (result SwapEntry, ok bool) {
 	return
 }
 
+// MustData retrieves the Data value from the union,
+// panicing if the value is not set.
+func (u LedgerEntryData) MustData() DataEntry {
+	val, ok := u.GetData()
+
+	if !ok {
+		panic("arm Data is not set")
+	}
+
+	return val
+}
+
+// GetData retrieves the Data value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerEntryData) GetData() (result DataEntry, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Data" {
+		result = *u.Data
+		ok = true
+	}
+
+	return
+}
+
 // LedgerEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -7111,6 +7177,8 @@ func NewLedgerEntryExt(v LedgerVersion, value interface{}) (result LedgerEntryEx
 //            AccountSpecificRuleEntry accountSpecificRule;
 //        case SWAP:
 //            SwapEntry swap;
+//        case DATA:
+//            DataEntry data;
 //        }
 //        data;
 //
@@ -8749,6 +8817,19 @@ type LedgerKeySwap struct {
 	Ext EmptyExt `json:"ext,omitempty"`
 }
 
+// LedgerKeyData is an XDR NestedStruct defines as:
+//
+//   struct {
+//            uint64 id;
+//
+//            EmptyExt ext;
+//        }
+//
+type LedgerKeyData struct {
+	Id  Uint64   `json:"id,omitempty"`
+	Ext EmptyExt `json:"ext,omitempty"`
+}
+
 // LedgerKey is an XDR Union defines as:
 //
 //   union LedgerKey switch (LedgerEntryType type)
@@ -9056,6 +9137,12 @@ type LedgerKeySwap struct {
 //
 //            EmptyExt ext;
 //        } swap;
+//    case DATA:
+//        struct {
+//            uint64 id;
+//
+//            EmptyExt ext;
+//        } data;
 //    };
 //
 type LedgerKey struct {
@@ -9091,6 +9178,7 @@ type LedgerKey struct {
 	Vote                             *LedgerKeyVote                             `json:"vote,omitempty"`
 	AccountSpecificRule              *LedgerKeyAccountSpecificRule              `json:"accountSpecificRule,omitempty"`
 	Swap                             *LedgerKeySwap                             `json:"swap,omitempty"`
+	Data                             *LedgerKeyData                             `json:"data,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -9165,6 +9253,8 @@ func (u LedgerKey) ArmForSwitch(sw int32) (string, bool) {
 		return "AccountSpecificRule", true
 	case LedgerEntryTypeSwap:
 		return "Swap", true
+	case LedgerEntryTypeData:
+		return "Data", true
 	}
 	return "-", false
 }
@@ -9390,6 +9480,13 @@ func NewLedgerKey(aType LedgerEntryType, value interface{}) (result LedgerKey, e
 			return
 		}
 		result.Swap = &tv
+	case LedgerEntryTypeData:
+		tv, ok := value.(LedgerKeyData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be LedgerKeyData")
+			return
+		}
+		result.Data = &tv
 	}
 	return
 }
@@ -10163,6 +10260,31 @@ func (u LedgerKey) GetSwap() (result LedgerKeySwap, ok bool) {
 
 	if armName == "Swap" {
 		result = *u.Swap
+		ok = true
+	}
+
+	return
+}
+
+// MustData retrieves the Data value from the union,
+// panicing if the value is not set.
+func (u LedgerKey) MustData() LedgerKeyData {
+	val, ok := u.GetData()
+
+	if !ok {
+		panic("arm Data is not set")
+	}
+
+	return val
+}
+
+// GetData retrieves the Data value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u LedgerKey) GetData() (result LedgerKeyData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Data" {
+		result = *u.Data
 		ok = true
 	}
 
@@ -15737,6 +15859,215 @@ func (u CreateChangeRoleRequestResult) MustSuccess() CreateChangeRoleRequestResu
 // GetSuccess retrieves the Success value from the union,
 // returning ok if the union's switch indicated the value is valid.
 func (u CreateChangeRoleRequestResult) GetSuccess() (result CreateChangeRoleRequestResultSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
+// CreateDataOp is an XDR Struct defines as:
+//
+//   struct CreateDataOp
+//    {
+//        //: Numeric type, used for access control
+//        uint64 type;
+//        //: Value to store
+//        longstring value;
+//
+//        //: Reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type CreateDataOp struct {
+	Type  Uint64     `json:"type,omitempty"`
+	Value Longstring `json:"value,omitempty"`
+	Ext   EmptyExt   `json:"ext,omitempty"`
+}
+
+// CreateDataResultCode is an XDR Enum defines as:
+//
+//   enum CreateDataResultCode
+//    {
+//        //: Data entry was successfully created
+//        SUCCESS = 0,
+//        //: `value` must be in a valid JSON format
+//        INVALID_DATA = -1
+//    };
+//
+type CreateDataResultCode int32
+
+const (
+	CreateDataResultCodeSuccess     CreateDataResultCode = 0
+	CreateDataResultCodeInvalidData CreateDataResultCode = -1
+)
+
+var CreateDataResultCodeAll = []CreateDataResultCode{
+	CreateDataResultCodeSuccess,
+	CreateDataResultCodeInvalidData,
+}
+
+var createDataResultCodeMap = map[int32]string{
+	0:  "CreateDataResultCodeSuccess",
+	-1: "CreateDataResultCodeInvalidData",
+}
+
+var createDataResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "invalid_data",
+}
+
+var createDataResultCodeRevMap = map[string]int32{
+	"CreateDataResultCodeSuccess":     0,
+	"CreateDataResultCodeInvalidData": -1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CreateDataResultCode
+func (e CreateDataResultCode) ValidEnum(v int32) bool {
+	_, ok := createDataResultCodeMap[v]
+	return ok
+}
+func (e CreateDataResultCode) isFlag() bool {
+	for i := len(CreateDataResultCodeAll) - 1; i >= 0; i-- {
+		expected := CreateDataResultCode(2) << uint64(len(CreateDataResultCodeAll)-1) >> uint64(len(CreateDataResultCodeAll)-i)
+		if expected != CreateDataResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CreateDataResultCode) String() string {
+	name, _ := createDataResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CreateDataResultCode) ShortString() string {
+	name, _ := createDataResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CreateDataResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range CreateDataResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CreateDataResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CreateDataResultCode(t.Value)
+	return nil
+}
+
+// CreateDataSuccess is an XDR Struct defines as:
+//
+//   struct CreateDataSuccess
+//    {
+//        //: ID of created data entry
+//        uint64 dataID;
+//        //: Reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type CreateDataSuccess struct {
+	DataId Uint64   `json:"dataID,omitempty"`
+	Ext    EmptyExt `json:"ext,omitempty"`
+}
+
+// CreateDataResult is an XDR Union defines as:
+//
+//   //: Result of operation application
+//    union CreateDataResult switch (CreateDataResultCode code)
+//    {
+//        case SUCCESS:
+//            //: Result of successful operation application
+//            CreateDataSuccess success;
+//        default:
+//            void;
+//    };
+//
+type CreateDataResult struct {
+	Code    CreateDataResultCode `json:"code,omitempty"`
+	Success *CreateDataSuccess   `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateDataResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateDataResult
+func (u CreateDataResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CreateDataResultCode(sw) {
+	case CreateDataResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewCreateDataResult creates a new  CreateDataResult.
+func NewCreateDataResult(code CreateDataResultCode, value interface{}) (result CreateDataResult, err error) {
+	result.Code = code
+	switch CreateDataResultCode(code) {
+	case CreateDataResultCodeSuccess:
+		tv, ok := value.(CreateDataSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateDataSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u CreateDataResult) MustSuccess() CreateDataSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreateDataResult) GetSuccess() (result CreateDataSuccess, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Code))
 
 	if armName == "Success" {
@@ -36630,6 +36961,196 @@ func (u RemoveAssetResult) GetSuccess() (result RemoveAssetSuccess, ok bool) {
 	return
 }
 
+// RemoveDataOp is an XDR Struct defines as:
+//
+//   struct RemoveDataOp
+//    {
+//        //: ID of the data to remove
+//        uint64 dataID;
+//        //: Reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type RemoveDataOp struct {
+	DataId Uint64   `json:"dataID,omitempty"`
+	Ext    EmptyExt `json:"ext,omitempty"`
+}
+
+// RemoveDataResultCode is an XDR Enum defines as:
+//
+//   enum RemoveDataResultCode
+//    {
+//        //: Data successfully removed
+//        SUCCESS = 0,
+//        //: Entry with provided ID does not exist
+//        NOT_FOUND = -1
+//    };
+//
+type RemoveDataResultCode int32
+
+const (
+	RemoveDataResultCodeSuccess  RemoveDataResultCode = 0
+	RemoveDataResultCodeNotFound RemoveDataResultCode = -1
+)
+
+var RemoveDataResultCodeAll = []RemoveDataResultCode{
+	RemoveDataResultCodeSuccess,
+	RemoveDataResultCodeNotFound,
+}
+
+var removeDataResultCodeMap = map[int32]string{
+	0:  "RemoveDataResultCodeSuccess",
+	-1: "RemoveDataResultCodeNotFound",
+}
+
+var removeDataResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "not_found",
+}
+
+var removeDataResultCodeRevMap = map[string]int32{
+	"RemoveDataResultCodeSuccess":  0,
+	"RemoveDataResultCodeNotFound": -1,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for RemoveDataResultCode
+func (e RemoveDataResultCode) ValidEnum(v int32) bool {
+	_, ok := removeDataResultCodeMap[v]
+	return ok
+}
+func (e RemoveDataResultCode) isFlag() bool {
+	for i := len(RemoveDataResultCodeAll) - 1; i >= 0; i-- {
+		expected := RemoveDataResultCode(2) << uint64(len(RemoveDataResultCodeAll)-1) >> uint64(len(RemoveDataResultCodeAll)-i)
+		if expected != RemoveDataResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e RemoveDataResultCode) String() string {
+	name, _ := removeDataResultCodeMap[int32(e)]
+	return name
+}
+
+func (e RemoveDataResultCode) ShortString() string {
+	name, _ := removeDataResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e RemoveDataResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range RemoveDataResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *RemoveDataResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = RemoveDataResultCode(t.Value)
+	return nil
+}
+
+// RemoveDataResult is an XDR Union defines as:
+//
+//   //: Result of operation application
+//    union RemoveDataResult switch (RemoveDataResultCode code)
+//    {
+//    case SUCCESS:
+//        //: Reserved for future extension
+//        EmptyExt ext;
+//    default:
+//        void;
+//    };
+//
+type RemoveDataResult struct {
+	Code RemoveDataResultCode `json:"code,omitempty"`
+	Ext  *EmptyExt            `json:"ext,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveDataResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveDataResult
+func (u RemoveDataResult) ArmForSwitch(sw int32) (string, bool) {
+	switch RemoveDataResultCode(sw) {
+	case RemoveDataResultCodeSuccess:
+		return "Ext", true
+	default:
+		return "", true
+	}
+}
+
+// NewRemoveDataResult creates a new  RemoveDataResult.
+func NewRemoveDataResult(code RemoveDataResultCode, value interface{}) (result RemoveDataResult, err error) {
+	result.Code = code
+	switch RemoveDataResultCode(code) {
+	case RemoveDataResultCodeSuccess:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Ext = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustExt retrieves the Ext value from the union,
+// panicing if the value is not set.
+func (u RemoveDataResult) MustExt() EmptyExt {
+	val, ok := u.GetExt()
+
+	if !ok {
+		panic("arm Ext is not set")
+	}
+
+	return val
+}
+
+// GetExt retrieves the Ext value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u RemoveDataResult) GetExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Ext" {
+		result = *u.Ext
+		ok = true
+	}
+
+	return
+}
+
 // ReviewRequestOpAction is an XDR Enum defines as:
 //
 //   //: Actions that can be performed on request that is being reviewed
@@ -39442,6 +39963,206 @@ func (u StampResult) GetSuccess() (result StampSuccess, ok bool) {
 	return
 }
 
+// UpdateDataOp is an XDR Struct defines as:
+//
+//   struct UpdateDataOp
+//    {
+//        //: ID of the data entry to update
+//        uint64 dataID;
+//        //: New value to set
+//        longstring value;
+//        //: Reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type UpdateDataOp struct {
+	DataId Uint64     `json:"dataID,omitempty"`
+	Value  Longstring `json:"value,omitempty"`
+	Ext    EmptyExt   `json:"ext,omitempty"`
+}
+
+// UpdateDataResultCode is an XDR Enum defines as:
+//
+//   enum UpdateDataResultCode
+//    {
+//        //: Data was successfully updated
+//        SUCCESS = 0,
+//        //: `value` must be in a valid JSON format
+//        INVALID_DATA = -1,
+//        //: Entry with provided ID does not exist
+//        NOT_FOUND = -2
+//    };
+//
+type UpdateDataResultCode int32
+
+const (
+	UpdateDataResultCodeSuccess     UpdateDataResultCode = 0
+	UpdateDataResultCodeInvalidData UpdateDataResultCode = -1
+	UpdateDataResultCodeNotFound    UpdateDataResultCode = -2
+)
+
+var UpdateDataResultCodeAll = []UpdateDataResultCode{
+	UpdateDataResultCodeSuccess,
+	UpdateDataResultCodeInvalidData,
+	UpdateDataResultCodeNotFound,
+}
+
+var updateDataResultCodeMap = map[int32]string{
+	0:  "UpdateDataResultCodeSuccess",
+	-1: "UpdateDataResultCodeInvalidData",
+	-2: "UpdateDataResultCodeNotFound",
+}
+
+var updateDataResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "invalid_data",
+	-2: "not_found",
+}
+
+var updateDataResultCodeRevMap = map[string]int32{
+	"UpdateDataResultCodeSuccess":     0,
+	"UpdateDataResultCodeInvalidData": -1,
+	"UpdateDataResultCodeNotFound":    -2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for UpdateDataResultCode
+func (e UpdateDataResultCode) ValidEnum(v int32) bool {
+	_, ok := updateDataResultCodeMap[v]
+	return ok
+}
+func (e UpdateDataResultCode) isFlag() bool {
+	for i := len(UpdateDataResultCodeAll) - 1; i >= 0; i-- {
+		expected := UpdateDataResultCode(2) << uint64(len(UpdateDataResultCodeAll)-1) >> uint64(len(UpdateDataResultCodeAll)-i)
+		if expected != UpdateDataResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e UpdateDataResultCode) String() string {
+	name, _ := updateDataResultCodeMap[int32(e)]
+	return name
+}
+
+func (e UpdateDataResultCode) ShortString() string {
+	name, _ := updateDataResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e UpdateDataResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range UpdateDataResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *UpdateDataResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = UpdateDataResultCode(t.Value)
+	return nil
+}
+
+// UpdateDataResult is an XDR Union defines as:
+//
+//   //: Result of operation application
+//    union UpdateDataResult switch (UpdateDataResultCode code)
+//    {
+//    case SUCCESS:
+//        //: Reserved for future extension
+//        EmptyExt ext;
+//    default:
+//        void;
+//    };
+//
+type UpdateDataResult struct {
+	Code UpdateDataResultCode `json:"code,omitempty"`
+	Ext  *EmptyExt            `json:"ext,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u UpdateDataResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of UpdateDataResult
+func (u UpdateDataResult) ArmForSwitch(sw int32) (string, bool) {
+	switch UpdateDataResultCode(sw) {
+	case UpdateDataResultCodeSuccess:
+		return "Ext", true
+	default:
+		return "", true
+	}
+}
+
+// NewUpdateDataResult creates a new  UpdateDataResult.
+func NewUpdateDataResult(code UpdateDataResultCode, value interface{}) (result UpdateDataResult, err error) {
+	result.Code = code
+	switch UpdateDataResultCode(code) {
+	case UpdateDataResultCodeSuccess:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.Ext = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustExt retrieves the Ext value from the union,
+// panicing if the value is not set.
+func (u UpdateDataResult) MustExt() EmptyExt {
+	val, ok := u.GetExt()
+
+	if !ok {
+		panic("arm Ext is not set")
+	}
+
+	return val
+}
+
+// GetExt retrieves the Ext value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u UpdateDataResult) GetExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Ext" {
+		result = *u.Ext
+		ok = true
+	}
+
+	return
+}
+
 // ErrorCode is an XDR Enum defines as:
 //
 //   enum ErrorCode
@@ -41765,6 +42486,21 @@ type AccountRuleResourceSwap struct {
 	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
+// AccountRuleResourceData is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: Numeric type of the data
+//            uint64 type;
+//            //: Reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type AccountRuleResourceData struct {
+	Type Uint64   `json:"type,omitempty"`
+	Ext  EmptyExt `json:"ext,omitempty"`
+}
+
 // AccountRuleResource is an XDR Union defines as:
 //
 //   //: Describes properties of some entries that can be used to restrict the usage of entries
@@ -41898,6 +42634,14 @@ type AccountRuleResourceSwap struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } swap;
+//    case DATA:
+//        struct
+//        {
+//            //: Numeric type of the data
+//            uint64 type;
+//            //: Reserved for future extension
+//            EmptyExt ext;
+//        } data;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -41916,6 +42660,7 @@ type AccountRuleResource struct {
 	InitiateKycRecovery    *AccountRuleResourceInitiateKycRecovery    `json:"initiateKYCRecovery,omitempty"`
 	AccountSpecificRuleExt *AccountRuleResourceAccountSpecificRuleExt `json:"accountSpecificRuleExt,omitempty"`
 	Swap                   *AccountRuleResourceSwap                   `json:"swap,omitempty"`
+	Data                   *AccountRuleResourceData                   `json:"data,omitempty"`
 	Ext                    *EmptyExt                                  `json:"ext,omitempty"`
 }
 
@@ -41953,6 +42698,8 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "AccountSpecificRuleExt", true
 	case LedgerEntryTypeSwap:
 		return "Swap", true
+	case LedgerEntryTypeData:
+		return "Data", true
 	default:
 		return "Ext", true
 	}
@@ -42041,6 +42788,13 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.Swap = &tv
+	case LedgerEntryTypeData:
+		tv, ok := value.(AccountRuleResourceData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be AccountRuleResourceData")
+			return
+		}
+		result.Data = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -42327,6 +43081,31 @@ func (u AccountRuleResource) GetSwap() (result AccountRuleResourceSwap, ok bool)
 	return
 }
 
+// MustData retrieves the Data value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResource) MustData() AccountRuleResourceData {
+	val, ok := u.GetData()
+
+	if !ok {
+		panic("arm Data is not set")
+	}
+
+	return val
+}
+
+// GetData retrieves the Data value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResource) GetData() (result AccountRuleResourceData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Data" {
+		result = *u.Data
+		ok = true
+	}
+
+	return
+}
+
 // MustExt retrieves the Ext value from the union,
 // panicing if the value is not set.
 func (u AccountRuleResource) MustExt() EmptyExt {
@@ -42378,7 +43157,8 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CREATE_FOR_OTHER_WITH_TASKS = 19,
 //        REMOVE_FOR_OTHER = 20,
 //        EXCHANGE = 21,
-//        RECEIVE_REDEMPTION = 22
+//        RECEIVE_REDEMPTION = 22,
+//        UPDATE = 23
 //    };
 //
 type AccountRuleAction int32
@@ -42406,6 +43186,7 @@ const (
 	AccountRuleActionRemoveForOther          AccountRuleAction = 20
 	AccountRuleActionExchange                AccountRuleAction = 21
 	AccountRuleActionReceiveRedemption       AccountRuleAction = 22
+	AccountRuleActionUpdate                  AccountRuleAction = 23
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -42431,6 +43212,7 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionRemoveForOther,
 	AccountRuleActionExchange,
 	AccountRuleActionReceiveRedemption,
+	AccountRuleActionUpdate,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -42456,6 +43238,7 @@ var accountRuleActionMap = map[int32]string{
 	20: "AccountRuleActionRemoveForOther",
 	21: "AccountRuleActionExchange",
 	22: "AccountRuleActionReceiveRedemption",
+	23: "AccountRuleActionUpdate",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -42481,6 +43264,7 @@ var accountRuleActionShortMap = map[int32]string{
 	20: "remove_for_other",
 	21: "exchange",
 	22: "receive_redemption",
+	23: "update",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -42506,6 +43290,7 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionRemoveForOther":          20,
 	"AccountRuleActionExchange":                21,
 	"AccountRuleActionReceiveRedemption":       22,
+	"AccountRuleActionUpdate":                  23,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -42906,6 +43691,21 @@ type SignerRuleResourceSwap struct {
 	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
+// SignerRuleResourceData is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: Numeric type of the data
+//            uint64 type;
+//            //: Reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type SignerRuleResourceData struct {
+	Type Uint64   `json:"type,omitempty"`
+	Ext  EmptyExt `json:"ext,omitempty"`
+}
+
 // SignerRuleResource is an XDR Union defines as:
 //
 //   //: Describes properties of some entries that can be used to restrict the usage of entries
@@ -43070,6 +43870,14 @@ type SignerRuleResourceSwap struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } swap;
+//    case DATA:
+//        struct
+//        {
+//            //: Numeric type of the data
+//            uint64 type;
+//            //: Reserved for future extension
+//            EmptyExt ext;
+//        } data;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -43091,6 +43899,7 @@ type SignerRuleResource struct {
 	InitiateKycRecovery    *SignerRuleResourceInitiateKycRecovery    `json:"initiateKYCRecovery,omitempty"`
 	AccountSpecificRuleExt *SignerRuleResourceAccountSpecificRuleExt `json:"accountSpecificRuleExt,omitempty"`
 	Swap                   *SignerRuleResourceSwap                   `json:"swap,omitempty"`
+	Data                   *SignerRuleResourceData                   `json:"data,omitempty"`
 	Ext                    *EmptyExt                                 `json:"ext,omitempty"`
 }
 
@@ -43134,6 +43943,8 @@ func (u SignerRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "AccountSpecificRuleExt", true
 	case LedgerEntryTypeSwap:
 		return "Swap", true
+	case LedgerEntryTypeData:
+		return "Data", true
 	default:
 		return "Ext", true
 	}
@@ -43243,6 +44054,13 @@ func NewSignerRuleResource(aType LedgerEntryType, value interface{}) (result Sig
 			return
 		}
 		result.Swap = &tv
+	case LedgerEntryTypeData:
+		tv, ok := value.(SignerRuleResourceData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be SignerRuleResourceData")
+			return
+		}
+		result.Data = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -43598,6 +44416,31 @@ func (u SignerRuleResource) GetSwap() (result SignerRuleResourceSwap, ok bool) {
 
 	if armName == "Swap" {
 		result = *u.Swap
+		ok = true
+	}
+
+	return
+}
+
+// MustData retrieves the Data value from the union,
+// panicing if the value is not set.
+func (u SignerRuleResource) MustData() SignerRuleResourceData {
+	val, ok := u.GetData()
+
+	if !ok {
+		panic("arm Data is not set")
+	}
+
+	return val
+}
+
+// GetData retrieves the Data value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SignerRuleResource) GetData() (result SignerRuleResourceData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Data" {
+		result = *u.Data
 		ok = true
 	}
 
@@ -45576,6 +46419,12 @@ type WithdrawalRequest struct {
 //            CloseSwapOp closeSwapOp;
 //        case CREATE_REDEMPTION_REQUEST:
 //            CreateRedemptionRequestOp createRedemptionRequestOp;
+//        case CREATE_DATA:
+//            CreateDataOp createDataOp;
+//        case UPDATE_DATA:
+//            UpdateDataOp updateDataOp;
+//        case REMOVE_DATA:
+//            RemoveDataOp removeDataOp;
 //        }
 //
 type OperationBody struct {
@@ -45630,6 +46479,9 @@ type OperationBody struct {
 	OpenSwapOp                               *OpenSwapOp                               `json:"openSwapOp,omitempty"`
 	CloseSwapOp                              *CloseSwapOp                              `json:"closeSwapOp,omitempty"`
 	CreateRedemptionRequestOp                *CreateRedemptionRequestOp                `json:"createRedemptionRequestOp,omitempty"`
+	CreateDataOp                             *CreateDataOp                             `json:"createDataOp,omitempty"`
+	UpdateDataOp                             *UpdateDataOp                             `json:"updateDataOp,omitempty"`
+	RemoveDataOp                             *RemoveDataOp                             `json:"removeDataOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -45742,6 +46594,12 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "CloseSwapOp", true
 	case OperationTypeCreateRedemptionRequest:
 		return "CreateRedemptionRequestOp", true
+	case OperationTypeCreateData:
+		return "CreateDataOp", true
+	case OperationTypeUpdateData:
+		return "UpdateDataOp", true
+	case OperationTypeRemoveData:
+		return "RemoveDataOp", true
 	}
 	return "-", false
 }
@@ -46100,6 +46958,27 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.CreateRedemptionRequestOp = &tv
+	case OperationTypeCreateData:
+		tv, ok := value.(CreateDataOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateDataOp")
+			return
+		}
+		result.CreateDataOp = &tv
+	case OperationTypeUpdateData:
+		tv, ok := value.(UpdateDataOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be UpdateDataOp")
+			return
+		}
+		result.UpdateDataOp = &tv
+	case OperationTypeRemoveData:
+		tv, ok := value.(RemoveDataOp)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveDataOp")
+			return
+		}
+		result.RemoveDataOp = &tv
 	}
 	return
 }
@@ -47354,6 +48233,81 @@ func (u OperationBody) GetCreateRedemptionRequestOp() (result CreateRedemptionRe
 	return
 }
 
+// MustCreateDataOp retrieves the CreateDataOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustCreateDataOp() CreateDataOp {
+	val, ok := u.GetCreateDataOp()
+
+	if !ok {
+		panic("arm CreateDataOp is not set")
+	}
+
+	return val
+}
+
+// GetCreateDataOp retrieves the CreateDataOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetCreateDataOp() (result CreateDataOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreateDataOp" {
+		result = *u.CreateDataOp
+		ok = true
+	}
+
+	return
+}
+
+// MustUpdateDataOp retrieves the UpdateDataOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustUpdateDataOp() UpdateDataOp {
+	val, ok := u.GetUpdateDataOp()
+
+	if !ok {
+		panic("arm UpdateDataOp is not set")
+	}
+
+	return val
+}
+
+// GetUpdateDataOp retrieves the UpdateDataOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetUpdateDataOp() (result UpdateDataOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "UpdateDataOp" {
+		result = *u.UpdateDataOp
+		ok = true
+	}
+
+	return
+}
+
+// MustRemoveDataOp retrieves the RemoveDataOp value from the union,
+// panicing if the value is not set.
+func (u OperationBody) MustRemoveDataOp() RemoveDataOp {
+	val, ok := u.GetRemoveDataOp()
+
+	if !ok {
+		panic("arm RemoveDataOp is not set")
+	}
+
+	return val
+}
+
+// GetRemoveDataOp retrieves the RemoveDataOp value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationBody) GetRemoveDataOp() (result RemoveDataOp, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "RemoveDataOp" {
+		result = *u.RemoveDataOp
+		ok = true
+	}
+
+	return
+}
+
 // Operation is an XDR Struct defines as:
 //
 //   //: An operation is the lowest unit of work that a transaction does
@@ -47466,6 +48420,12 @@ func (u OperationBody) GetCreateRedemptionRequestOp() (result CreateRedemptionRe
 //            CloseSwapOp closeSwapOp;
 //        case CREATE_REDEMPTION_REQUEST:
 //            CreateRedemptionRequestOp createRedemptionRequestOp;
+//        case CREATE_DATA:
+//            CreateDataOp createDataOp;
+//        case UPDATE_DATA:
+//            UpdateDataOp updateDataOp;
+//        case REMOVE_DATA:
+//            RemoveDataOp removeDataOp;
 //        }
 //        body;
 //    };
@@ -48183,6 +49143,12 @@ type AccountRuleRequirement struct {
 //            CloseSwapResult closeSwapResult;
 //        case CREATE_REDEMPTION_REQUEST:
 //            CreateRedemptionRequestResult createRedemptionRequestResult;
+//        case CREATE_DATA:
+//            CreateDataResult createDataResult;
+//        case UPDATE_DATA:
+//            UpdateDataResult updateDataResult;
+//        case REMOVE_DATA:
+//            RemoveDataResult removeDataResult;
 //        }
 //
 type OperationResultTr struct {
@@ -48237,6 +49203,9 @@ type OperationResultTr struct {
 	OpenSwapResult                               *OpenSwapResult                               `json:"openSwapResult,omitempty"`
 	CloseSwapResult                              *CloseSwapResult                              `json:"closeSwapResult,omitempty"`
 	CreateRedemptionRequestResult                *CreateRedemptionRequestResult                `json:"createRedemptionRequestResult,omitempty"`
+	CreateDataResult                             *CreateDataResult                             `json:"createDataResult,omitempty"`
+	UpdateDataResult                             *UpdateDataResult                             `json:"updateDataResult,omitempty"`
+	RemoveDataResult                             *RemoveDataResult                             `json:"removeDataResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -48349,6 +49318,12 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "CloseSwapResult", true
 	case OperationTypeCreateRedemptionRequest:
 		return "CreateRedemptionRequestResult", true
+	case OperationTypeCreateData:
+		return "CreateDataResult", true
+	case OperationTypeUpdateData:
+		return "UpdateDataResult", true
+	case OperationTypeRemoveData:
+		return "RemoveDataResult", true
 	}
 	return "-", false
 }
@@ -48707,6 +49682,27 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.CreateRedemptionRequestResult = &tv
+	case OperationTypeCreateData:
+		tv, ok := value.(CreateDataResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateDataResult")
+			return
+		}
+		result.CreateDataResult = &tv
+	case OperationTypeUpdateData:
+		tv, ok := value.(UpdateDataResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be UpdateDataResult")
+			return
+		}
+		result.UpdateDataResult = &tv
+	case OperationTypeRemoveData:
+		tv, ok := value.(RemoveDataResult)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveDataResult")
+			return
+		}
+		result.RemoveDataResult = &tv
 	}
 	return
 }
@@ -49961,6 +50957,81 @@ func (u OperationResultTr) GetCreateRedemptionRequestResult() (result CreateRede
 	return
 }
 
+// MustCreateDataResult retrieves the CreateDataResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustCreateDataResult() CreateDataResult {
+	val, ok := u.GetCreateDataResult()
+
+	if !ok {
+		panic("arm CreateDataResult is not set")
+	}
+
+	return val
+}
+
+// GetCreateDataResult retrieves the CreateDataResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetCreateDataResult() (result CreateDataResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreateDataResult" {
+		result = *u.CreateDataResult
+		ok = true
+	}
+
+	return
+}
+
+// MustUpdateDataResult retrieves the UpdateDataResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustUpdateDataResult() UpdateDataResult {
+	val, ok := u.GetUpdateDataResult()
+
+	if !ok {
+		panic("arm UpdateDataResult is not set")
+	}
+
+	return val
+}
+
+// GetUpdateDataResult retrieves the UpdateDataResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetUpdateDataResult() (result UpdateDataResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "UpdateDataResult" {
+		result = *u.UpdateDataResult
+		ok = true
+	}
+
+	return
+}
+
+// MustRemoveDataResult retrieves the RemoveDataResult value from the union,
+// panicing if the value is not set.
+func (u OperationResultTr) MustRemoveDataResult() RemoveDataResult {
+	val, ok := u.GetRemoveDataResult()
+
+	if !ok {
+		panic("arm RemoveDataResult is not set")
+	}
+
+	return val
+}
+
+// GetRemoveDataResult retrieves the RemoveDataResult value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u OperationResultTr) GetRemoveDataResult() (result RemoveDataResult, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "RemoveDataResult" {
+		result = *u.RemoveDataResult
+		ok = true
+	}
+
+	return
+}
+
 // OperationResult is an XDR Union defines as:
 //
 //   union OperationResult switch (OperationResultCode code)
@@ -50068,6 +51139,12 @@ func (u OperationResultTr) GetCreateRedemptionRequestResult() (result CreateRede
 //            CloseSwapResult closeSwapResult;
 //        case CREATE_REDEMPTION_REQUEST:
 //            CreateRedemptionRequestResult createRedemptionRequestResult;
+//        case CREATE_DATA:
+//            CreateDataResult createDataResult;
+//        case UPDATE_DATA:
+//            UpdateDataResult updateDataResult;
+//        case REMOVE_DATA:
+//            RemoveDataResult removeDataResult;
 //        }
 //        tr;
 //    case opNO_ENTRY:
@@ -50679,7 +51756,8 @@ type TransactionResult struct {
 //        FIX_MOVEMENT_REVIEW = 24,
 //        FIX_SIGNATURE_CHECK = 25,
 //        FIX_AUTOREVIEW = 26,
-//        MOVEMENT_REQUESTS_DETAILS = 27
+//        MOVEMENT_REQUESTS_DETAILS = 27,
+//        FIX_CRASH_CORE_WITH_PAYMENT = 28
 //    };
 //
 type LedgerVersion int32
@@ -50713,6 +51791,7 @@ const (
 	LedgerVersionFixSignatureCheck                 LedgerVersion = 25
 	LedgerVersionFixAutoreview                     LedgerVersion = 26
 	LedgerVersionMovementRequestsDetails           LedgerVersion = 27
+	LedgerVersionFixCrashCoreWithPayment           LedgerVersion = 28
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -50744,6 +51823,7 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixSignatureCheck,
 	LedgerVersionFixAutoreview,
 	LedgerVersionMovementRequestsDetails,
+	LedgerVersionFixCrashCoreWithPayment,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -50775,6 +51855,7 @@ var ledgerVersionMap = map[int32]string{
 	25: "LedgerVersionFixSignatureCheck",
 	26: "LedgerVersionFixAutoreview",
 	27: "LedgerVersionMovementRequestsDetails",
+	28: "LedgerVersionFixCrashCoreWithPayment",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -50806,6 +51887,7 @@ var ledgerVersionShortMap = map[int32]string{
 	25: "fix_signature_check",
 	26: "fix_autoreview",
 	27: "movement_requests_details",
+	28: "fix_crash_core_with_payment",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -50837,6 +51919,7 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixSignatureCheck":                 25,
 	"LedgerVersionFixAutoreview":                     26,
 	"LedgerVersionMovementRequestsDetails":           27,
+	"LedgerVersionFixCrashCoreWithPayment":           28,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -51265,7 +52348,8 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //        VOTE = 35,
 //        ACCOUNT_SPECIFIC_RULE = 36,
 //        INITIATE_KYC_RECOVERY = 37,
-//        SWAP = 38
+//        SWAP = 38,
+//        DATA = 39
 //    };
 //
 type LedgerEntryType int32
@@ -51307,6 +52391,7 @@ const (
 	LedgerEntryTypeAccountSpecificRule              LedgerEntryType = 36
 	LedgerEntryTypeInitiateKycRecovery              LedgerEntryType = 37
 	LedgerEntryTypeSwap                             LedgerEntryType = 38
+	LedgerEntryTypeData                             LedgerEntryType = 39
 )
 
 var LedgerEntryTypeAll = []LedgerEntryType{
@@ -51346,6 +52431,7 @@ var LedgerEntryTypeAll = []LedgerEntryType{
 	LedgerEntryTypeAccountSpecificRule,
 	LedgerEntryTypeInitiateKycRecovery,
 	LedgerEntryTypeSwap,
+	LedgerEntryTypeData,
 }
 
 var ledgerEntryTypeMap = map[int32]string{
@@ -51385,6 +52471,7 @@ var ledgerEntryTypeMap = map[int32]string{
 	36: "LedgerEntryTypeAccountSpecificRule",
 	37: "LedgerEntryTypeInitiateKycRecovery",
 	38: "LedgerEntryTypeSwap",
+	39: "LedgerEntryTypeData",
 }
 
 var ledgerEntryTypeShortMap = map[int32]string{
@@ -51424,6 +52511,7 @@ var ledgerEntryTypeShortMap = map[int32]string{
 	36: "account_specific_rule",
 	37: "initiate_kyc_recovery",
 	38: "swap",
+	39: "data",
 }
 
 var ledgerEntryTypeRevMap = map[string]int32{
@@ -51463,6 +52551,7 @@ var ledgerEntryTypeRevMap = map[string]int32{
 	"LedgerEntryTypeAccountSpecificRule":              36,
 	"LedgerEntryTypeInitiateKycRecovery":              37,
 	"LedgerEntryTypeSwap":                             38,
+	"LedgerEntryTypeData":                             39,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -51877,7 +52966,10 @@ type Fee struct {
 //        REMOVE_ASSET = 53,
 //        OPEN_SWAP = 54,
 //        CLOSE_SWAP = 55,
-//        CREATE_REDEMPTION_REQUEST = 56
+//        CREATE_REDEMPTION_REQUEST = 56,
+//        CREATE_DATA = 57,
+//        UPDATE_DATA = 58,
+//        REMOVE_DATA = 59
 //    };
 //
 type OperationType int32
@@ -51933,6 +53025,9 @@ const (
 	OperationTypeOpenSwap                               OperationType = 54
 	OperationTypeCloseSwap                              OperationType = 55
 	OperationTypeCreateRedemptionRequest                OperationType = 56
+	OperationTypeCreateData                             OperationType = 57
+	OperationTypeUpdateData                             OperationType = 58
+	OperationTypeRemoveData                             OperationType = 59
 )
 
 var OperationTypeAll = []OperationType{
@@ -51986,6 +53081,9 @@ var OperationTypeAll = []OperationType{
 	OperationTypeOpenSwap,
 	OperationTypeCloseSwap,
 	OperationTypeCreateRedemptionRequest,
+	OperationTypeCreateData,
+	OperationTypeUpdateData,
+	OperationTypeRemoveData,
 }
 
 var operationTypeMap = map[int32]string{
@@ -52039,6 +53137,9 @@ var operationTypeMap = map[int32]string{
 	54: "OperationTypeOpenSwap",
 	55: "OperationTypeCloseSwap",
 	56: "OperationTypeCreateRedemptionRequest",
+	57: "OperationTypeCreateData",
+	58: "OperationTypeUpdateData",
+	59: "OperationTypeRemoveData",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -52092,6 +53193,9 @@ var operationTypeShortMap = map[int32]string{
 	54: "open_swap",
 	55: "close_swap",
 	56: "create_redemption_request",
+	57: "create_data",
+	58: "update_data",
+	59: "remove_data",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -52145,6 +53249,9 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeOpenSwap":                               54,
 	"OperationTypeCloseSwap":                              55,
 	"OperationTypeCreateRedemptionRequest":                56,
+	"OperationTypeCreateData":                             57,
+	"OperationTypeUpdateData":                             58,
+	"OperationTypeRemoveData":                             59,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -52223,4 +53330,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "cb9934f17765fd65f2c5ecaf7b177c8b39408888"
+var Revision = "49353b335197a0c2a0008bf74c2d1cca076afa4a"

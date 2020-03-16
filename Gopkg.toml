@@ -95,7 +95,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/movements-rr-details"
+  branch = "feature/manage-data"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

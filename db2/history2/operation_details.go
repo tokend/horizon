@@ -60,6 +60,9 @@ type OperationDetails struct {
 	OpenSwap                   *OpenSwapDetails                   `json:"open_swap,omitempty"`
 	CloseSwap                  *CloseSwapDetails                  `json:"close_swap,omitempty"`
 	Redemption                 *RedemptionDetails                 `json:"redemption,omitempty"`
+	CreateData                 *CreateDataDetails                 `json:"create_data,omitempty"`
+	UpdateData                 *UpdateDataDetails                 `json:"update_data,omitempty"`
+	RemoveData                 *RemoveDataDetails                 `json:"remove_data,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -591,4 +594,18 @@ type RedemptionDetails struct {
 	Asset          string            `json:"asset"`
 	Details        regources.Details `json:"details"`
 	RequestDetails RequestDetails    `json:"request_details"`
+}
+
+type CreateDataDetails struct {
+	Type  uint64            `json:"type"`
+	Value regources.Details `json:"value"`
+}
+
+type UpdateDataDetails struct {
+	ID    uint64            `json:"id"`
+	Value regources.Details `json:"value"`
+}
+
+type RemoveDataDetails struct {
+	ID uint64 `json:"id"`
 }
