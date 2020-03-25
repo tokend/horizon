@@ -28,6 +28,11 @@ func NewOperationQ(repo *db2.Repo) OperationQ {
 	}
 }
 
+func (q OperationQ) FilterByID(ids ...uint64) OperationQ {
+	q.selector = q.selector.Where(sq.Eq{"op.id": ids})
+	return q
+}
+
 func (q OperationQ) FilterByOperationsTypes(types []int) OperationQ {
 	q.selector = q.selector.Where(sq.Eq{"op.type": types})
 	return q
@@ -53,4 +58,21 @@ func (q OperationQ) Select() ([]Operation, error) {
 	}
 
 	return result, nil
+}
+
+// Get - loads a row
+// returns nil, nil - if row does not exists
+// returns error if more than one row found
+func (q OperationQ) Get() (*Operation, error) {
+	var result Operation
+	err := q.repo.Get(&result, q.selector)
+	if err != nil {
+		if q.repo.NoRows(err) {
+			return nil, nil
+		}
+
+		return nil, errors.Wrap(err, "failed to load poll")
+	}
+
+	return &result, nil
 }

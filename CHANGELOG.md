@@ -5,6 +5,7 @@
 ### Added
 
 * Traefik
+* Endpoint to get operation `/v3/operations/{id}`
 
 ### Fixed 
 
