@@ -32,6 +32,7 @@ type GetHistory struct {
 		Account string `fig:"account"`
 		Balance string `fig:"balance"`
 		Asset   string `fig:"asset"`
+		ID      uint64
 	}
 }
 
@@ -65,6 +66,11 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 	}
 
 	err = b.populateFilters(&request.Filters)
+	if err != nil {
+		return nil, err
+	}
+
+	request.Filters.ID, err = b.getUint64ID()
 	if err != nil {
 		return nil, err
 	}

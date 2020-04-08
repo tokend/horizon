@@ -133,6 +133,10 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 		q = q.ForAsset(h.Asset.Code)
 	}
 
+	if request.Filters.ID != 0 {
+		q = q.ForID(request.Filters.ID)
+	}
+
 	return q
 }
 

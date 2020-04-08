@@ -66,6 +66,11 @@ func (q ParticipantEffectsQ) ForAccount(id uint64) ParticipantEffectsQ {
 	return q
 }
 
+func (q ParticipantEffectsQ) ForID(id uint64) ParticipantEffectsQ {
+	q.selector = q.selector.Where("effects.id = ?", id)
+	return q
+}
+
 //Page - apply paging params to the query
 func (q ParticipantEffectsQ) Page(pageParams db2.CursorPageParams) ParticipantEffectsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "effects.id")
