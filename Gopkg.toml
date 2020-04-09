@@ -60,7 +60,7 @@
 
 [[constraint]]
   name = "github.com/smartystreets/goconvey"
-  version = "1.6.3"
+  version = "v1.6.4"
 
 [[constraint]]
   name = "github.com/spf13/cobra"
@@ -99,7 +99,7 @@
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "feature/movements-rr-details"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
@@ -129,6 +129,14 @@
 [[override]]
   name = "github.com/google/jsonapi"
   version = "1.0.0"
+
+[[override]]
+  name = "github.com/smartystreets/assertions"
+  branch = "master"
+
+[[override]]
+  name = "github.com/jtolds/gls"
+  branch = "master"
 
 [prune]
   go-tests = true
