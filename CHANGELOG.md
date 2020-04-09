@@ -6,6 +6,7 @@
 
 * Endpoint to get participant effect `/v3/history/{id}`
 * Traefik
+* Endpoint to get operation `/v3/operations/{id}`
 
 ### Fixed 
 

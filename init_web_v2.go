@@ -334,6 +334,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/swaps", handlers.GetSwapList)
 
 	m.Get("/v3/operations", handlers.GetOperations)
+	m.Get("/v3/operations/{id}", handlers.GetOperation)
 
 	cop := app.config.Cop()
 	if err := cop.RegisterChi(m); err != nil {
