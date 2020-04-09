@@ -22,6 +22,8 @@ const (
 	FilterTypeHistoryBalance = "balance"
 	// FilterTypeHistoryAsset - defines if we need to filter the list by asset
 	FilterTypeHistoryAsset = "asset"
+	// FilterTypeHistoryIDs
+	FilterTypeHistoryIDs = "id"
 )
 
 //GetHistory - represents params to be specified for Get History handler
