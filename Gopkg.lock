@@ -537,15 +537,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "feature/movements-rr-details"
-  digest = "1:84b5da729b7f0032777ad3e3c8bd9a652e2a83bf2a9956eff4f3618742693b8c"
+  branch = "master"
+  digest = "1:cbaa66ff55298c6dffd85ef7ec71522eece7cd0ed5f4f6b4db436bb9800ddd89"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "6c72b4710ff0917b44dc1029852910608e9bb00b"
+  revision = "cc06bfd28bfc9755e04c05543472d1fb4b8c6e26"
 
 [[projects]]
   branch = "master"
