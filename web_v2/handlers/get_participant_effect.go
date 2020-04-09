@@ -14,6 +14,7 @@ import (
 	"net/http"
 )
 
+// GetParticipantEffect - processes request to get the participant effect by id
 func GetParticipantEffect(w http.ResponseWriter, r *http.Request) {
 	handler := newParticipantEffectHandler(r)
 
@@ -53,7 +54,7 @@ func newParticipantEffectHandler(r *http.Request) getParticipantEffectHandler {
 	return handler
 }
 
-// GetParicipantEffect returns the participant effect with related resources by id
+// GetParticipantEffect returns the participant effect with related resources by id
 func (h *getParticipantEffectHandler) GetParticipantEffect(request *requests.GetParticipantEffect) (regources.ParticipantsEffectResponse, error) {
 
 	result := regources.ParticipantsEffectResponse{}

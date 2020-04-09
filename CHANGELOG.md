@@ -4,6 +4,7 @@
 
 ### Added
 
+* Endpoint to get participant effect `/v3/history/{id}`
 * Traefik
 
 ### Fixed 
