@@ -22,6 +22,11 @@ func GetParticipantEffect(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
+
+	if !isAllowed(r, w) {
+		return
+	}
+
 	result, err := handler.GetParticipantEffect(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get participant effect list", logan.F{})
@@ -40,7 +45,7 @@ type getParticipantEffectHandler struct {
 	Log       *logan.Entry
 }
 
-func newParticipantEffectHandler(r *http.Request) getParticipantEffectHandler {
+func newParticipantEffectHandler(r *http.Request) *getParticipantEffectHandler {
 	historyRepo := ctx.HistoryRepo(r)
 	handler := getParticipantEffectHandler{
 		AssetsQ:   core2.NewAssetsQ(ctx.CoreRepo(r)),
@@ -50,17 +55,29 @@ func newParticipantEffectHandler(r *http.Request) getParticipantEffectHandler {
 		Log:       ctx.Log(r),
 	}
 
-	return handler
+	return &handler
 }
 
-// GetParicipantEffect returns the participant effect with related resources by id
 func (h *getParticipantEffectHandler) GetParticipantEffect(request *requests.GetParticipantEffect) (regources.ParticipantsEffectResponse, error) {
+	h.EffectsQ = h.ApplyIncludes(request, h.EffectsQ)
+	result, err := h.GetAndPopulate(request)
+	if err != nil {
+		return result, errors.Wrap(err, "failed to get and populate participant effect")
+	}
 
+	return result, nil
+}
+
+func (h *getParticipantEffectHandler) GetAndPopulate(request *requests.GetParticipantEffect) (regources.ParticipantsEffectResponse, error) {
 	result := regources.ParticipantsEffectResponse{}
 
 	effect, err := h.EffectsQ.FilterByID(request.ID).Get()
 	if err != nil {
-		return result, errors.Wrap(err, "failed to load participant effects")
+		return result, errors.Wrap(err, "failed to get participant effect")
+	}
+
+	if effect == nil {
+		return result, nil
 	}
 
 	resEffect := getEffect(*effect)
@@ -97,5 +114,17 @@ func (h *getParticipantEffectHandler) GetParticipantEffect(request *requests.Get
 		}
 	}
 
+	result.Data = resEffect
+
 	return result, nil
+}
+
+func (h *getParticipantEffectHandler) ApplyIncludes(request *requests.GetParticipantEffect,
+	q history2.ParticipantEffectsQ) history2.ParticipantEffectsQ {
+	q = q.WithAccount().WithBalance()
+	if request.ShouldInclude(requests.IncludeTypeHistoryOperation) {
+		q = q.WithOperation()
+	}
+
+	return q
 }
