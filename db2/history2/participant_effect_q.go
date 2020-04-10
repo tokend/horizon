@@ -66,6 +66,11 @@ func (q ParticipantEffectsQ) ForAccount(id uint64) ParticipantEffectsQ {
 	return q
 }
 
+func (q ParticipantEffectsQ) FilterByID(ids ...uint64) ParticipantEffectsQ {
+	q.selector = q.selector.Where(sq.Eq{"effects.id": ids})
+	return q
+}
+
 //Page - apply paging params to the query
 func (q ParticipantEffectsQ) Page(pageParams db2.CursorPageParams) ParticipantEffectsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "effects.id")
@@ -85,4 +90,19 @@ func (q ParticipantEffectsQ) Select() ([]ParticipantEffect, error) {
 	}
 
 	return result, nil
+}
+
+func (q ParticipantEffectsQ) Get() (*ParticipantEffect, error) {
+	var result ParticipantEffect
+
+	err := q.repo.Get(&result, q.selector)
+	if err != nil {
+		if q.repo.NoRows(err) {
+			return nil, nil
+		}
+
+		return nil, errors.Wrap(err, "failed to load poll")
+	}
+
+	return &result, nil
 }
