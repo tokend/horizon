@@ -25,8 +25,9 @@ func (q *Asset) Insert(asset history2.Asset) error {
 			"code",
 			"owner",
 			"preissued_asset_signer",
-			"details.max_issuance_amount",
-			"available_for_issueance",
+			"details",
+			"max_issuance_amount",
+			"available_for_issuance",
 			"issued",
 			"pending_issuance",
 			"policies",
@@ -38,9 +39,9 @@ func (q *Asset) Insert(asset history2.Asset) error {
 			asset.Code,
 			asset.Owner,
 			asset.PreIssuanceAssetSigner,
-			asset.MaxIssuanceAmount,
-			asset.PendingIssuance,
 			asset.Details,
+			asset.MaxIssuanceAmount,
+			asset.AvailableForIssuance,
 			asset.Issued,
 			asset.PendingIssuance,
 			asset.Policies,
@@ -52,7 +53,7 @@ func (q *Asset) Insert(asset history2.Asset) error {
 	_, err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert asset", logan.F{
-			"asset_code":  asset.Code,
+			"asset_code": asset.Code,
 		})
 	}
 
@@ -69,19 +70,20 @@ func (q *Asset) SetState(code string, state regources.AssetState) error {
 	return nil
 }
 
-func (q *Asset) Update(asset history2.Asset) error{
+func (q *Asset) Update(asset history2.Asset) error {
 	sql := sq.Update("asset").SetMap(
 		map[string]interface{}{
-			"owner":                       asset.Owner,
-			"preissued_asset_signer":      asset.PreIssuanceAssetSigner,
-			"details.max_issuance_amount": asset.Details,
-			"available_for_issueance":     asset.AvailableForIssuance,
-			"issued":                      asset.Issued,
-			"pending_issuance":            asset.PendingIssuance,
-			"policies":                    asset.Policies,
-			"trailing_digits":             asset.TrailingDigits,
-			"type":                        asset.Type,
-			"state":                       asset.State,
+			"owner":                  asset.Owner,
+			"preissued_asset_signer": asset.PreIssuanceAssetSigner,
+			"details":                asset.Details,
+			"max_issuance_amount":    asset.MaxIssuanceAmount,
+			"available_for_issuance": asset.AvailableForIssuance,
+			"issued":                 asset.Issued,
+			"pending_issuance":       asset.PendingIssuance,
+			"policies":               asset.Policies,
+			"trailing_digits":        asset.TrailingDigits,
+			"type":                   asset.Type,
+			"state":                  asset.State,
 		}).Where("code = ?", asset.Code)
 
 	_, err := q.repo.Exec(sql)

@@ -10,7 +10,8 @@ var assetColumns = []string{
 	"asset.code",
 	"asset.owner",
 	"asset.preissued_asset_signer",
-	"asset.details.max_issuance_amount",
+	"asset.details",
+	"asset.max_issuance_amount",
 	"asset.available_for_issueance",
 	"asset.issued",
 	"asset.pending_issuance",
@@ -34,13 +35,13 @@ func NewAssetQ(repo *db2.Repo) AssetQ {
 	}
 }
 
-// ByCode - get asset by code
-func (q AssetQ) ByCode(code string) (*Asset, error) {
+// GetByCode - get asset by code
+func (q AssetQ) GetByCode(code string) (*Asset, error) {
 	q.selector = q.selector.Where("asset.code = ?", code)
 	return q.Get()
 }
 
-//ByOwner - gets account by owner address, returns nil, nil if one does not exist
+//GetByOwner - gets account by owner address, returns nil, nil if one does not exist
 func (q AssetQ) ByOwner(address string) (*Asset, error) {
 	q.selector = q.selector.Where("accounts.owner = ?", address)
 	return q.Get()

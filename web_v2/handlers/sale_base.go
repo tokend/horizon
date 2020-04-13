@@ -3,7 +3,6 @@ package handlers
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
@@ -12,7 +11,7 @@ import (
 
 type getSaleBase struct {
 	SalesQ           history2.SalesQ
-	AssetsQ          core2.AssetsQ
+	AssetsQ          history2.AssetQ
 	saleCapConverter *saleCapConverter
 	Log              *logan.Entry
 }
@@ -58,12 +57,12 @@ func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *request
 
 	if request.ShouldInclude(requests.IncludeTypeSaleBaseAsset) {
 		// FIXME: ingest assets to history and join
-		coreAsset, err := h.AssetsQ.GetByCode(historySale.BaseAsset)
+		historyAsset, err := h.AssetsQ.GetByCode(historySale.BaseAsset)
 		if err != nil {
 			return nil, errors.Wrap(err, "Failed to get base asset by code")
 		}
 
-		asset := resources.NewAsset(*coreAsset)
+		asset := resources.NewAssetV2(*historyAsset)
 		response.Included.Add(&asset)
 	}
 
@@ -72,7 +71,7 @@ func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *request
 
 type salesBaseHandler struct {
 	SalesQ           history2.SalesQ
-	AssetsQ          core2.AssetsQ
+	AssetsQ          history2.AssetQ
 	saleCapConverter *saleCapConverter
 	Log              *logan.Entry
 }
@@ -110,12 +109,12 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 
 		if request.ShouldInclude(requests.IncludeTypeSaleListBaseAssets) {
 			// FIXME: ingest assets to history and join
-			coreAsset, err := h.AssetsQ.GetByCode(historySale.BaseAsset)
+			historyAsset, err := h.AssetsQ.GetByCode(historySale.BaseAsset)
 			if err != nil {
 				return errors.Wrap(err, "Failed to get base asset by code")
 			}
 
-			asset := resources.NewAsset(*coreAsset)
+			asset := resources.NewAssetV2(*historyAsset)
 			response.Included.Add(&asset)
 		}
 
