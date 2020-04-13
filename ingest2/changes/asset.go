@@ -36,7 +36,7 @@ func (h *assetHandler) Created(lc ledgerChange) error {
 func (h *assetHandler) Updated(lc ledgerChange) error {
 	rawAsset := lc.LedgerChange.MustUpdated().Data.MustAsset()
 	asset := h.convertAsset(rawAsset)
-	if err := h.storage.Insert(asset); err != nil {
+	if err := h.storage.Update(asset); err != nil {
 		return errors.Wrap(err, "failed to insert from updated")
 	}
 	return nil

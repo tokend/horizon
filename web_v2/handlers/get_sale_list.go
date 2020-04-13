@@ -28,7 +28,7 @@ func GetSaleList(w http.ResponseWriter, r *http.Request) {
 	handler := getSaleListHandler{
 		salesBaseHandler: salesBaseHandler{
 			SalesQ:           history2.NewSalesQ(historyRepo),
-			AssetsQ:          core2.NewAssetsQ(coreRepo),
+			AssetsQ:          history2.NewAssetQ(historyRepo),
 			saleCapConverter: converter,
 			Log:              ctx.Log(r),
 		},

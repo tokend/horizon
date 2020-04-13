@@ -3,8 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2/core2"
-
 	"gitlab.com/tokend/horizon/db2/history2"
 
 	"gitlab.com/distributed_lab/ape"
@@ -19,7 +17,6 @@ import (
 // GetSaleListForAccount - processes request to get the list of sales
 func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 	historyRepo := ctx.HistoryRepo(r)
-	coreRepo := ctx.CoreRepo(r)
 
 	converter := newSaleCapConverterForHandler(w, r)
 	if converter == nil {
@@ -29,7 +26,7 @@ func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 	handler := getSaleListForAccountHandler{
 		salesBaseHandler: salesBaseHandler{
 			SalesQ:           history2.NewSalesQ(historyRepo),
-			AssetsQ:          core2.NewAssetsQ(coreRepo),
+			AssetsQ:          history2.NewAssetQ(historyRepo),
 			saleCapConverter: converter,
 			Log:              ctx.Log(r),
 		},
