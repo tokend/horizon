@@ -11,7 +11,7 @@ type Asset struct {
 	PreIssuanceAssetSigner string          `db:"preissued_asset_signer"`
 	Details                json.RawMessage `db:"details"`
 	MaxIssuanceAmount      uint64          `db:"max_issuance_amount"`
-	AvailableForIssuance   uint64          `db:"available_for_issueance"`
+	AvailableForIssuance   uint64          `db:"available_for_issuance"`
 	Issued                 uint64          `db:"issued"`
 	PendingIssuance        uint64          `db:"pending_issuance"`
 	Policies               uint32           `db:"policies"`

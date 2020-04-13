@@ -12,7 +12,7 @@ var assetColumns = []string{
 	"asset.preissued_asset_signer",
 	"asset.details",
 	"asset.max_issuance_amount",
-	"asset.available_for_issueance",
+	"asset.available_for_issuance",
 	"asset.issued",
 	"asset.pending_issuance",
 	"asset.policies",
