@@ -48,6 +48,7 @@ func initIngester2(app *App) {
 		storage.NewAccountSpecificRules(hRepo),
 		accountStorage,
 		swapStorage,
+		storage.NewAsset(hRepo),
 	)
 
 	idProvider := struct {

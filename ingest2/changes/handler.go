@@ -41,6 +41,7 @@ func NewHandler(account accountStorage,
 	accountSpecificRule accountSpecificRuleStorage,
 	accountStatus accountStatusStorage,
 	swap swapStorage,
+	asset assetStorage,
 ) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request, balance, accountStatus)
@@ -51,6 +52,7 @@ func NewHandler(account accountStorage,
 	accountSpecificRuleHandlerInst := newAccountSpecificRuleHandler(accountSpecificRule)
 	signerHandlerInst := newSignerHandler(accountStatus)
 	swapHandlerInst := newSwapHandler(swap)
+	assetHandlerInst := newAssetHandler(asset)
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{
 			xdr.LedgerEntryTypeAccount:             newAccountHandler(account),
@@ -63,12 +65,14 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 			xdr.LedgerEntryTypeSigner:              signerHandlerInst,
 			xdr.LedgerEntryTypeSwap:                swapHandlerInst,
+			xdr.LedgerEntryTypeAsset:               assetHandlerInst,
 		},
 		Update: map[xdr.LedgerEntryType]updatable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:              saleHandlerInst,
 			xdr.LedgerEntryTypeAssetPair:         assetPairHandler,
 			xdr.LedgerEntryTypePoll:              pollHandlerInst,
+			xdr.LedgerEntryTypeAsset:             assetHandlerInst,
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
 			xdr.LedgerEntryTypeReviewableRequest:   reviewRequestHandlerInst,
@@ -78,6 +82,7 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeAssetPair:           assetPairHandler,
 			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 			xdr.LedgerEntryTypeSwap:                swapHandlerInst,
+			xdr.LedgerEntryTypeAsset:               assetHandlerInst,
 		},
 		State: map[xdr.LedgerEntryType]statable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
