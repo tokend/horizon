@@ -71,6 +71,9 @@ func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.G
 		Data: make([]regources.Sale, 0, len(historySales)),
 	}
 
+	q = applySaleIncludes(request.SalesBase, q)
+
+
 	err = h.populateResponse(historySales, request.SalesBase, response)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to populate response")

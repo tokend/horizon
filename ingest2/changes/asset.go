@@ -42,12 +42,12 @@ func (h *assetHandler) Updated(lc ledgerChange) error {
 	return nil
 }
 
-func (h *assetHandler) Removed(lc ledgerChange) error {
-	assetCode := string(lc.LedgerChange.MustRemoved().MustAsset().Code)
-
-	err := h.storage.SetState(assetCode, regources.AssetStateDeleted)
-	if err != nil {
-		return errors.Wrap(err, "failed to set swap state")
+func (h *assetHandler) Stated(lc ledgerChange) error {
+	op := lc.Operation.Body
+	if op.Type == xdr.OperationTypeRemoveAsset {
+		if err := h.storage.SetState(string(op.RemoveAssetOp.Code), regources.AssetStateDeleted); err != nil {
+			return errors.Wrap(err, "failed to insert from updated")
+		}
 	}
 
 	return nil

@@ -67,6 +67,8 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 		return nil, errors.Wrap(err, "failed to apply participant filter")
 	}
 
+	q = applySaleIncludes(request.SalesBase, q)
+
 	historySales, err := q.Page(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sale list")

@@ -61,5 +61,6 @@ type getSaleHandler struct {
 // GetSale returns sale with related resources
 func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResponse, error) {
 	q := h.SalesQ.FilterByID(request.ID)
+
 	return h.getAndPopulateResponse(q, request)
 }

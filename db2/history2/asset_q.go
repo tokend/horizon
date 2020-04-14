@@ -7,18 +7,18 @@ import (
 )
 
 var assetColumns = []string{
-	"asset.code",
-	"asset.owner",
-	"asset.preissued_asset_signer",
-	"asset.details",
-	"asset.max_issuance_amount",
-	"asset.available_for_issuance",
-	"asset.issued",
-	"asset.pending_issuance",
-	"asset.policies",
-	"asset.trailing_digits",
-	"asset.type",
-	"asset.state",
+	"code",
+	"owner",
+	"preissued_asset_signer",
+	"details",
+	"max_issuance_amount",
+	"available_for_issuance",
+	"issued",
+	"pending_issuance",
+	"policies",
+	"trailing_digits",
+	"type",
+	"state",
 }
 
 // AssetQ is a helper struct to aid in configuring queries that loads assets
@@ -31,7 +31,19 @@ type AssetQ struct {
 func NewAssetQ(repo *db2.Repo) AssetQ {
 	return AssetQ{
 		repo:     repo,
-		selector: sq.Select(assetColumns...).From("asset asset"),
+		selector: sq.Select(
+			"asset.code",
+			"asset.owner",
+			"asset.details",
+			"asset.max_issuance_amount",
+			"asset.available_for_issuance",
+			"asset.issued",
+			"asset.pending_issuance",
+			"asset.policies",
+			"asset.trailing_digits",
+			"asset.type",
+			"asset.state",
+			).From("asset asset"),
 	}
 }
 

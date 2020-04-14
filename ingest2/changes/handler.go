@@ -82,10 +82,10 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeAssetPair:           assetPairHandler,
 			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 			xdr.LedgerEntryTypeSwap:                swapHandlerInst,
-			xdr.LedgerEntryTypeAsset:               assetHandlerInst,
 		},
 		State: map[xdr.LedgerEntryType]statable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
+			xdr.LedgerEntryTypeAsset:             assetHandlerInst,
 		},
 	}
 }
