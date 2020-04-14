@@ -35,6 +35,7 @@ func NewAssetQ(repo *db2.Repo) AssetQ {
 			"asset.code",
 			"asset.owner",
 			"asset.details",
+			"asset.preissued_asset_signer",
 			"asset.max_issuance_amount",
 			"asset.available_for_issuance",
 			"asset.issued",
