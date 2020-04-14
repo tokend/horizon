@@ -37,7 +37,7 @@ func (h *assetHandler) Updated(lc ledgerChange) error {
 	rawAsset := lc.LedgerChange.MustUpdated().Data.MustAsset()
 	asset := h.convertAsset(rawAsset)
 	if err := h.storage.Update(asset); err != nil {
-		return errors.Wrap(err, "failed to insert from updated")
+		return errors.Wrap(err, "failed to update from updated")
 	}
 	return nil
 }
@@ -46,7 +46,7 @@ func (h *assetHandler) Stated(lc ledgerChange) error {
 	op := lc.Operation.Body
 	if op.Type == xdr.OperationTypeRemoveAsset {
 		if err := h.storage.SetState(string(op.RemoveAssetOp.Code), regources.AssetStateDeleted); err != nil {
-			return errors.Wrap(err, "failed to insert from updated")
+			return errors.Wrap(err, "failed to set state from stated")
 		}
 	}
 

@@ -54,13 +54,13 @@ func (q AssetQ) GetByCode(code string) (*Asset, error) {
 	return q.Get()
 }
 
-//GetByOwner - gets account by owner address, returns nil, nil if one does not exist
+//GetByOwner - gets asset by owner address, returns nil, nil if one does not exist
 func (q AssetQ) ByOwner(address string) (*Asset, error) {
-	q.selector = q.selector.Where("accounts.owner = ?", address)
+	q.selector = q.selector.Where("asset.owner = ?", address)
 	return q.Get()
 }
 
-//Get - selects account from db, returns nil, nil if one does not exists
+//Get - selects asset from db, returns nil, nil if one does not exists
 func (q AssetQ) Get() (*Asset, error) {
 	var result Asset
 	err := q.repo.Get(&result, q.selector)
@@ -69,7 +69,7 @@ func (q AssetQ) Get() (*Asset, error) {
 			return nil, nil
 		}
 
-		return nil, errors.Wrap(err, "failed to load account")
+		return nil, errors.Wrap(err, "failed to load asset")
 	}
 
 	return &result, nil

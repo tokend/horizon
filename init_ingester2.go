@@ -42,7 +42,7 @@ func initIngester2(app *App) {
 		balanceStorage,
 		storage.NewReviewableRequest(hRepo),
 		storage.NewSale(hRepo),
-		storage.NewAssertPair(hRepo),
+		storage.NewAssetPair(hRepo),
 		storage.NewPoll(hRepo),
 		storage.NewVote(hRepo),
 		storage.NewAccountSpecificRules(hRepo),
