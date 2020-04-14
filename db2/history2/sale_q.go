@@ -40,7 +40,7 @@ func NewSalesQ(repo *db2.Repo) SalesQ {
 			"sales.quote_assets",
 			"sales.version",
 			"sales.access_definition_type",
-		).From("sales"),
+		).From("sales sales"),
 	}
 }
 
@@ -99,6 +99,12 @@ func (q SalesQ) FilterByID(id uint64) SalesQ {
 // FilterByIDs - returns q with filter by ids
 func (q SalesQ) FilterByIDs(ids []uint64) SalesQ {
 	q.selector = q.selector.Where(sq.Eq{"sales.id": ids})
+	return q
+}
+
+func (q SalesQ) WithAsset() SalesQ {
+	q.selector = q.selector.Columns(db2.GetColumnsForJoin(assetColumns, "asset")...).
+		LeftJoin("asset asset ON asset.code = sales.base_asset")
 	return q
 }
 

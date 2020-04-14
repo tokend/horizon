@@ -12,7 +12,7 @@ type AssetPair struct {
 	repo *db2.Repo
 }
 
-func NewAssertPair(repo *db2.Repo) *AssetPair {
+func NewAssetPair(repo *db2.Repo) *AssetPair {
 	return &AssetPair{
 		repo: repo,
 	}

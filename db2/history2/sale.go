@@ -29,6 +29,8 @@ type Sale struct {
 	State                regources.SaleState                `db:"state"`
 	AccessDefinitionType regources.SaleAccessDefinitionType `db:"access_definition_type"`
 	Version              int32                              `db:"version"`
+
+	*Asset `db:"asset"`
 }
 
 //SaleQuoteAssets - assets allowed to invest in sale
