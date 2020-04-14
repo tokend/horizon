@@ -6,10 +6,10 @@ create table asset
     owner                   varchar(56)                 not null,
     preissued_asset_signer  varchar(56)                 not null,
 
-    max_issuance_amount     numeric(23,0)               not null,
-    issued                  numeric(23,0)               not null,
-    available_for_issuance  numeric(23,0)               not null,
-    pending_issuance        numeric(23,0)               not null,
+    max_issuance_amount     numeric(20,0)               not null,
+    issued                  numeric(20,0)               not null,
+    available_for_issuance  numeric(20,0)               not null,
+    pending_issuance        numeric(20,0)               not null,
     type                    bigint                      not null,
     policies                int                         not null,
 
