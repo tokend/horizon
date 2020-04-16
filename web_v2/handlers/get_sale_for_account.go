@@ -65,5 +65,10 @@ type getSaleForAccountHandler struct {
 // GetSale returns sale with related resources
 func (h *getSaleForAccountHandler) GetSale(request *requests.GetSaleForAccount) (*regources.SaleResponse, error) {
 	q := h.SalesQ.Whitelisted(request.Address).FilterByID(request.ID)
+
+	if request.ShouldInclude(requests.IncludeTypeSaleListBaseAssets) {
+		q = q.WithAsset()
+	}
+
 	return h.getAndPopulateResponse(q, &request.GetSale)
 }
