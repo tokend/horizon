@@ -62,5 +62,9 @@ type getSaleHandler struct {
 func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResponse, error) {
 	q := h.SalesQ.FilterByID(request.ID)
 
+	if request.ShouldInclude(requests.IncludeTypeSaleListBaseAssets) {
+		q = q.WithAsset()
+	}
+
 	return h.getAndPopulateResponse(q, request)
 }
