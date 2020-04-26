@@ -1,9 +1,8 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -33,7 +32,7 @@ type GetSaleList struct {
 	SpecialFilters struct {
 		Participant string `json:"participant"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *bridge.OffsetPageParams
 }
 
 // NewGetSaleList returns new instance of GetSaleList request

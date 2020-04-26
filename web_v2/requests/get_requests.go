@@ -42,7 +42,7 @@ var filterTypeRequestListAll = map[string]struct{}{
 //type GetReviewableBaseRequestList struct {
 //	*base
 //	BaseFilters GetReviewableRequestListFilters
-//	PageParams  *db2.CursorPageParams
+//	PageParams  *bridge.CursorPageParams
 //}
 
 type GetRequestListBaseFilters struct {

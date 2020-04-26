@@ -2,11 +2,11 @@ package history2
 
 import (
 	"database/sql/driver"
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -40,7 +40,7 @@ type SaleQuoteAssets struct {
 
 //Value - implements db driver method for auto marshal
 func (r SaleQuoteAssets) Value() (driver.Value, error) {
-	result, err := db2.DriverValue(r)
+	result, err := bridge.DriverValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal quote assets")
 	}
@@ -50,7 +50,7 @@ func (r SaleQuoteAssets) Value() (driver.Value, error) {
 
 //Scan - implements db driver method for auto unmarshal
 func (r *SaleQuoteAssets) Scan(src interface{}) error {
-	err := db2.DriveScan(src, r)
+	err := bridge.DriveScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan quote assets")
 	}

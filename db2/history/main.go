@@ -3,9 +3,8 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // EffectType is the numeric type for an effect, used as the `type` field in the
@@ -15,15 +14,15 @@ type EffectType int
 // Q is a helper struct on which to hang common queries against a history
 // portion of the horizon database.
 type Q struct {
-	*db2.Repo
+	*bridge.Mediator
 }
 
-func (q *Q) GetRepo() *db2.Repo {
-	return q.Repo
+func (q *Q) GetRepo() *bridge.Mediator {
+	return q.Mediator
 }
 
 type QInterface interface {
-	GetRepo() *db2.Repo
+	GetRepo() *bridge.Mediator
 	NoRows(err error) bool
 
 	ElderLedger(dest interface{}) error

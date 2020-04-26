@@ -1,10 +1,10 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"strconv"
 
-	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/db2"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/tokend/horizon/toid"
 )
 
@@ -39,7 +39,7 @@ type TransactionsQ struct {
 type TransactionsQI interface {
 	ForAccount(aid string) TransactionsQI
 	ForLedger(seq int32) TransactionsQI
-	Page(page db2.PageQuery) TransactionsQI
+	Page(page bridge.PageQuery) TransactionsQI
 	ByTxIDs(txIDs []int64) TransactionsQI
 	Select(dest interface{}) error
 }
@@ -115,7 +115,7 @@ func (q *TransactionsQ) ForLedger(seq int32) TransactionsQI {
 }
 
 // Page specifies the paging constraints for the query being built by `q`.
-func (q *TransactionsQ) Page(page db2.PageQuery) TransactionsQI {
+func (q *TransactionsQ) Page(page bridge.PageQuery) TransactionsQI {
 	if q.Err != nil {
 		return q
 	}

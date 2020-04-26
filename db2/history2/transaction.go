@@ -1,14 +1,13 @@
 package history2
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // Transaction is a row of data from the `history_transactions` table
 type Transaction struct {
-	db2.TotalOrderID
+	bridge.TotalOrderID
 	Hash             string    `db:"hash"`
 	LedgerSequence   int32     `db:"ledger_sequence"`
 	LedgerCloseTime  time.Time `db:"ledger_close_time"`

@@ -3,9 +3,9 @@ package schema
 import (
 	"database/sql"
 	"errors"
+	"gitlab.com/tokend/horizon/bridge"
 
 	migrate "github.com/rubenv/sql-migrate"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 //go:generate go-bindata -nometadata -ignore .+\.go$ -pkg schema -o bindata.go ./...
@@ -29,13 +29,13 @@ var Migrations migrate.MigrationSource = &migrate.AssetMigrationSource{
 // - redo: migrations are first ran downard `count` times, and then are rand
 // upward back to the current version at the start of the process. If count is
 // 0, a count of 1 will be assumed.
-func Migrate(db *sql.DB, dir db2.MigrateDir, count int) (int, error) {
+func Migrate(db *sql.DB, dir bridge.MigrateDir, count int) (int, error) {
 	switch dir {
-	case db2.MigrateUp:
+	case bridge.MigrateUp:
 		return migrate.ExecMax(db, "postgres", Migrations, migrate.Up, count)
-	case db2.MigrateDown:
+	case bridge.MigrateDown:
 		return migrate.ExecMax(db, "postgres", Migrations, migrate.Down, count)
-	case db2.MigrateRedo:
+	case bridge.MigrateRedo:
 
 		if count == 0 {
 			count = 1

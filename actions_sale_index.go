@@ -2,9 +2,9 @@ package horizon
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -33,7 +33,7 @@ type SaleIndexAction struct {
 	SortType     *int64
 	Name         string
 	Records      []history.Sale
-	PagingParams db2.PageQueryV2
+	PagingParams bridge.PageQueryV2
 	Page         hal.Page
 }
 

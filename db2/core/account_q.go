@@ -2,10 +2,9 @@ package core
 
 import (
 	"database/sql"
+	"gitlab.com/tokend/horizon/bridge"
 
-	"gitlab.com/tokend/horizon/db2"
-
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 )
 
 var _ AccountQI = &AccountQ{}
@@ -26,7 +25,7 @@ type AccountQI interface {
 	// joins account KYC
 	WithAccountKYC() AccountQI
 	// applies paging params
-	PageV2(page db2.PageQueryV2) AccountQI
+	PageV2(page bridge.PageQueryV2) AccountQI
 }
 
 // AccountQ is a helper struct to aid in configuring queries that loads
@@ -82,7 +81,7 @@ func (q *AccountQ) WithAccountKYC() AccountQI {
 	return q
 }
 
-func (q *AccountQ) PageV2(page db2.PageQueryV2) AccountQI {
+func (q *AccountQ) PageV2(page bridge.PageQueryV2) AccountQI {
 	if q.Err != nil {
 		return q
 	}
@@ -95,7 +94,7 @@ func (q *AccountQ) Select(destination interface{}) error {
 	if q.Err != nil {
 		return q.Err
 	}
-	return q.parent.Repo.Select(destination, q.sql)
+	return q.parent.Mediator.Select(destination, q.sql)
 }
 
 func (q *AccountQ) ForAddresses(addresses ...string) AccountQI {
@@ -111,7 +110,7 @@ func (q *AccountQ) First() (*Account, error) {
 		return nil, q.Err
 	}
 	var result Account
-	err := q.parent.Repo.Get(&result, q.sql)
+	err := q.parent.Mediator.Get(&result, q.sql)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}

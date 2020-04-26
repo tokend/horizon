@@ -1,9 +1,8 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -40,7 +39,7 @@ type GetAssetList struct {
 		State  uint32   `fig:"state"`
 		Codes  []string `fig:"codes"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *bridge.OffsetPageParams
 }
 
 // NewGetAssetList returns the new instance of GetAssetList request

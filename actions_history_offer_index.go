@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/resource"
@@ -12,7 +12,7 @@ type HistoryOfferIndexAction struct {
 	OwnerID      string
 	BaseAsset    string
 	QuoteAsset   string
-	PagingParams db2.PageQuery
+	PagingParams bridge.PageQuery
 	Page         hal.Page
 }
 

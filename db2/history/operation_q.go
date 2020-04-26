@@ -1,14 +1,14 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"fmt"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/sqx"
 )
 
@@ -40,7 +40,7 @@ type OperationsQI interface {
 	JoinOnBalance() OperationsQI
 	// JoinOnAccount required to filter on account ID and account type
 	JoinOnAccount() OperationsQI
-	Page(page db2.PageQuery) OperationsQI
+	Page(page bridge.PageQuery) OperationsQI
 	Select(dest interface{}) error
 
 	// Manage Offer
@@ -248,7 +248,7 @@ func (q *OperationsQ) PendingOnly() OperationsQI {
 }
 
 // Page specifies the paging constraints for the query being built by `q`.
-func (q *OperationsQ) Page(page db2.PageQuery) OperationsQI {
+func (q *OperationsQ) Page(page bridge.PageQuery) OperationsQI {
 	if q.Err != nil {
 		return q
 	}

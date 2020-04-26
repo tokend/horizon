@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -22,7 +23,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -331,7 +331,7 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 	return requestIncludes, nil
 }
 
-func (r *base) getOffsetBasedPageParams() (*db2.OffsetPageParams, error) {
+func (r *base) getOffsetBasedPageParams() (*bridge.OffsetPageParams, error) {
 	limit, err := r.getLimit(defaultLimit, maxLimit)
 	if err != nil {
 		return nil, err
@@ -347,14 +347,14 @@ func (r *base) getOffsetBasedPageParams() (*db2.OffsetPageParams, error) {
 		return nil, err
 	}
 
-	return &db2.OffsetPageParams{
+	return &bridge.OffsetPageParams{
 		Order:      order,
 		Limit:      limit,
 		PageNumber: pageNumber,
 	}, nil
 }
 
-func (r *base) getCursorBasedPageParams() (*db2.CursorPageParams, error) {
+func (r *base) getCursorBasedPageParams() (*bridge.CursorPageParams, error) {
 	limit, err := r.getLimit(defaultLimit, maxLimit)
 	if err != nil {
 		return nil, err
@@ -370,11 +370,11 @@ func (r *base) getCursorBasedPageParams() (*db2.CursorPageParams, error) {
 		return nil, err
 	}
 
-	if order == db2.OrderDescending && cursor == 0 {
+	if order == bridge.OrderDescending && cursor == 0 {
 		cursor = math.MaxInt64
 	}
 
-	return &db2.CursorPageParams{
+	return &bridge.CursorPageParams{
 		Limit:  limit,
 		Order:  order,
 		Cursor: cursor,
@@ -382,7 +382,7 @@ func (r *base) getCursorBasedPageParams() (*db2.CursorPageParams, error) {
 }
 
 //GetCursorLinks - returns links for cursor based page params
-func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *regources.Links {
+func (r *base) GetCursorLinks(p bridge.CursorPageParams, last string) *regources.Links {
 	result := regources.Links{
 		Self: r.getCursorLink(p.Cursor, p.Limit, p.Order),
 		Prev: r.getCursorLink(p.Cursor, p.Limit, p.Order.Invert()),
@@ -402,7 +402,7 @@ func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *regources.Li
 }
 
 //GetOffsetLinks - returns links for offset based page params
-func (r *base) GetOffsetLinks(p db2.OffsetPageParams) *regources.Links {
+func (r *base) GetOffsetLinks(p bridge.OffsetPageParams) *regources.Links {
 	result := regources.Links{
 		Next: r.getOffsetLink(p.PageNumber+1, p.Limit, p.Order),
 		Self: r.getOffsetLink(p.PageNumber, p.Limit, p.Order),
@@ -411,7 +411,7 @@ func (r *base) GetOffsetLinks(p db2.OffsetPageParams) *regources.Links {
 	return &result
 }
 
-func (r *base) getCursorLink(cursor, limit uint64, order db2.OrderType) string {
+func (r *base) getCursorLink(cursor, limit uint64, order bridge.OrderType) string {
 	u := r.URL()
 	query := u.Query()
 	query.Set(pageParamCursor, strconv.FormatUint(cursor, 10))
@@ -421,7 +421,7 @@ func (r *base) getCursorLink(cursor, limit uint64, order db2.OrderType) string {
 	return u.String()
 }
 
-func (r *base) getOffsetLink(pageNumber, limit uint64, order db2.OrderType) string {
+func (r *base) getOffsetLink(pageNumber, limit uint64, order bridge.OrderType) string {
 	u := r.URL()
 	query := u.Query()
 	query.Set(pageParamNumber, strconv.FormatUint(pageNumber, 10))
@@ -461,16 +461,16 @@ func (r *base) getLimit(defaultLimit, maxLimit uint64) (uint64, error) {
 	return result, nil
 }
 
-func (r *base) getOrder() (db2.OrderType, error) {
+func (r *base) getOrder() (bridge.OrderType, error) {
 	order := r.getString(pageParamOrder)
 	switch order {
-	case db2.OrderAscending, db2.OrderDescending:
-		return db2.OrderType(order), nil
+	case bridge.OrderAscending, bridge.OrderDescending:
+		return bridge.OrderType(order), nil
 	case "":
-		return db2.OrderAscending, nil
+		return bridge.OrderAscending, nil
 	default:
-		return db2.OrderDescending, validation.Errors{
-			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", db2.OrderAscending, db2.OrderDescending),
+		return bridge.OrderDescending, validation.Errors{
+			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", bridge.OrderAscending, bridge.OrderDescending),
 		}
 	}
 }

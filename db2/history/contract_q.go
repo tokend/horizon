@@ -1,12 +1,12 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 var selectContracts = sq.Select(
@@ -38,7 +38,7 @@ type ContractQI interface {
 	// ByCustomerID - filters contracts by customer id
 	ByEscrowID(escrowID string) ContractQI
 	// Page - applies page params
-	Page(page db2.PageQuery) ContractQI
+	Page(page bridge.PageQuery) ContractQI
 	// Select - selects contract by specifics filters
 	Select() ([]Contract, error)
 	// ByID - get contract by contract id
@@ -114,7 +114,7 @@ func (q *ContractQ) ByCompletedState(isCompleted bool) ContractQI {
 	return q
 }
 
-func (q *ContractQ) Page(page db2.PageQuery) ContractQI {
+func (q *ContractQ) Page(page bridge.PageQuery) ContractQI {
 	if q.Err != nil {
 		return q
 	}
@@ -193,7 +193,7 @@ func (q *ContractQ) Update(contract Contract) error {
 		"state":            contract.State,
 	}).Where("id = ?", contract.ID)
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -204,7 +204,7 @@ func (q *ContractQ) AddState(contractID int64, stateToAdd int32) error {
 
 	query := "UPDATE history_contracts SET state = (state | ?) WHERE id = ?"
 
-	_, err := q.parent.ExecRaw(query, stateToAdd, contractID)
+	err := q.parent.ExecRaw(query, stateToAdd, contractID)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute contract raw")
 	}

@@ -1,19 +1,19 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // MatchQ is a helper struct to aid in configuring queries that loads matches
 type MatchQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewMatchQ returns new instance of MatchQ
-func NewMatchQ(repo *db2.Repo) MatchQ {
+func NewMatchQ(repo *bridge.Mediator) MatchQ {
 	return MatchQ{
 		repo: repo,
 		selector: sq.Select(
@@ -39,7 +39,7 @@ func (q MatchQ) FilterByAssetPair(base, quote string) MatchQ {
 }
 
 // Page - apply paging params to the query
-func (q MatchQ) Page(pageParams db2.CursorPageParams) MatchQ {
+func (q MatchQ) Page(pageParams bridge.CursorPageParams) MatchQ {
 	q.selector = pageParams.ApplyTo(q.selector, "m.id")
 	return q
 }

@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
 )
 
@@ -21,7 +21,7 @@ var includeTypeSignerAll = map[string]struct{}{
 type GetAccountSigners struct {
 	*base
 	Address    string
-	PageParams *db2.OffsetPageParams
+	PageParams *bridge.OffsetPageParams
 }
 
 //NewGetAccountSigners - returns new instance of GetAccountSigners request

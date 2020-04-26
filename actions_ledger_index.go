@@ -3,7 +3,7 @@ package horizon
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -15,7 +15,7 @@ import (
 type LedgerOperationsIndexAction struct {
 	Action
 	Types        []xdr.OperationType
-	PagingParams db2.PageQuery
+	PagingParams bridge.PageQuery
 	Records      resource.Data
 	Page         hal.Page
 }
@@ -36,7 +36,7 @@ func (action *LedgerOperationsIndexAction) loadParams() {
 	action.PagingParams = action.GetPageQuery()
 }
 
-func collectLedgers(historyQ history.QInterface, pagingParams db2.PageQuery, ctx context.Context) (result []resource.DataLedger, err error) {
+func collectLedgers(historyQ history.QInterface, pagingParams bridge.PageQuery, ctx context.Context) (result []resource.DataLedger, err error) {
 	var ledgers []history.Ledger
 	err = historyQ.Ledgers().Page(pagingParams).Select(&ledgers)
 	if err != nil {

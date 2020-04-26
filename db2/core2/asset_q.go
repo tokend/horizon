@@ -1,9 +1,9 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details",
@@ -12,12 +12,12 @@ var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details"
 
 //AssetsQ - helper struct to load assets from db
 type AssetsQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewAssetsQ - returns new instance of AssetsQ
-func NewAssetsQ(repo *db2.Repo) AssetsQ {
+func NewAssetsQ(repo *bridge.Mediator) AssetsQ {
 	return AssetsQ{
 		repo:     repo,
 		selector: sq.Select(assetColumns...).From("asset assets"),
@@ -66,7 +66,7 @@ func (q AssetsQ) FilterByPolicy(mask uint64) AssetsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AssetsQ) Page(params db2.OffsetPageParams) AssetsQ {
+func (q AssetsQ) Page(params bridge.OffsetPageParams) AssetsQ {
 	q.selector = params.ApplyTo(q.selector, "assets.code")
 	return q
 }

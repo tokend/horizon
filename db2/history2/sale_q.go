@@ -2,25 +2,25 @@ package history2
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/bridge"
 	regources "gitlab.com/tokend/regources/generated"
 	"time"
 
 	"gitlab.com/tokend/go/xdr"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // SalesQ is a helper struct to aid in configuring queries that loads
 // sales structures.
 type SalesQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewSalesQ - creates new instance of SalesQ
-func NewSalesQ(repo *db2.Repo) SalesQ {
+func NewSalesQ(repo *bridge.Mediator) SalesQ {
 	return SalesQ{
 		repo: repo,
 		selector: sq.Select(
@@ -103,7 +103,7 @@ func (q SalesQ) FilterByIDs(ids []uint64) SalesQ {
 }
 
 func (q SalesQ) WithAsset() SalesQ {
-	q.selector = q.selector.Columns(db2.GetColumnsForJoin(assetColumns, "asset")...).
+	q.selector = q.selector.Columns(bridge.GetColumnsForJoin(assetColumns, "asset")...).
 		LeftJoin("asset asset ON asset.code = sales.base_asset")
 	return q
 }
@@ -194,13 +194,13 @@ func (q SalesQ) FilterByMaxSoftCap(value uint64) SalesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SalesQ) Page(params db2.OffsetPageParams) SalesQ {
+func (q SalesQ) Page(params bridge.OffsetPageParams) SalesQ {
 	q.selector = params.ApplyTo(q.selector, "sales.id")
 	return q
 }
 
 // CursorPage - returns Q with specified limit and offset params
-func (q SalesQ) CursorPage(params db2.CursorPageParams) SalesQ {
+func (q SalesQ) CursorPage(params bridge.CursorPageParams) SalesQ {
 	q.selector = params.ApplyTo(q.selector, "sales.id")
 	return q
 }

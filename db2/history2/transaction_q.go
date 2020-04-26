@@ -1,20 +1,20 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // TransactionsQ is a helper struct to aid in configuring queries that loads
 // transactions structures.
 type TransactionsQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewTransactionsQ - creates new instance of TransactionsQ
-func NewTransactionsQ(repo *db2.Repo) TransactionsQ {
+func NewTransactionsQ(repo *bridge.Mediator) TransactionsQ {
 	return TransactionsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -69,7 +69,7 @@ func (q TransactionsQ) GetByID(id uint64) (*Transaction, error) {
 }
 
 // Page - returns Q with specified limit and cursor params
-func (q TransactionsQ) Page(params db2.CursorPageParams) TransactionsQ {
+func (q TransactionsQ) Page(params bridge.CursorPageParams) TransactionsQ {
 	q.selector = params.ApplyTo(q.selector, "transactions.id")
 	return q
 }

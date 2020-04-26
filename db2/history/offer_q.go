@@ -1,9 +1,9 @@
 package history
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 var selectOffers = sq.Select(
@@ -38,7 +38,7 @@ type OffersQI interface {
 	// Canceled filters offers that have been canceled by owner
 	Canceled(isCanceled bool) OffersQI
 	// Page - applies page params
-	Page(page db2.PageQuery) OffersQI
+	Page(page bridge.PageQuery) OffersQI
 	// Select - selects offers by specifics filters
 	Select() ([]Offer, error)
 	// Insert - add new offer to database
@@ -135,7 +135,7 @@ func (q *OffersQ) Canceled(isCanceled bool) OffersQI {
 	return q
 }
 
-func (q *OffersQ) Page(page db2.PageQuery) OffersQI {
+func (q *OffersQ) Page(page bridge.PageQuery) OffersQI {
 	if q.Err != nil {
 		return q
 	}
@@ -176,7 +176,7 @@ func (q *OffersQ) Insert(offer Offer) error {
 		"created_at":          offer.CreatedAt,
 	})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute insert query")
 	}
@@ -189,7 +189,7 @@ func (q *OffersQ) UpdateBaseAmount(baseAmount, offerID int64) error {
 		"current_base_amount": baseAmount,
 	}).Where(sq.Eq{"offer_id": offerID})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute update query")
 	}
@@ -202,7 +202,7 @@ func (q *OffersQ) Cancel(offerID int64) error {
 		Set("is_canceled", true).
 		Where(sq.Eq{"offer_id": offerID})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute update query")
 	}

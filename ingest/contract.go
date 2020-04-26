@@ -2,12 +2,12 @@ package ingest
 
 import (
 	"encoding/json"
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 )
 
@@ -129,7 +129,7 @@ func convertContract(rawContract xdr.ContractEntry) history.Contract {
 	}
 
 	return history.Contract{
-		TotalOrderID: db2.TotalOrderID{
+		TotalOrderID: bridge.TotalOrderID{
 			ID: int64(rawContract.ContractId),
 		},
 		Contractor:      rawContract.Contractor.Address(),

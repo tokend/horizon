@@ -5,6 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
+	"gitlab.com/tokend/horizon/bridge"
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/log"
 )
@@ -15,12 +16,7 @@ type corer interface {
 }
 
 type dbTxManager interface {
-	// Begin - starts new db transaction
-	Begin() error
-	// Rollback - rollbacks db transaction
-	Rollback() error
-	// Commit - commits db transaction
-	Commit() error
+	Transaction(transactionFunc bridge.TransactionFunc) error
 }
 
 //Handler - handles ledger and transactions applied for this ledger
@@ -127,33 +123,23 @@ func (c *Consumer) readAtLeastOne(ctx context.Context) []LedgerBundle {
 }
 
 func (c *Consumer) processBatch(ctx context.Context, bundles []LedgerBundle) error {
-	err := c.dbTxManager.Begin()
-	if err != nil {
-		return errors.Wrap(err, "failed to begin db tx")
-	}
 
-	defer func() {
-		_ = c.dbTxManager.Rollback()
-	}()
+	_ = c.dbTxManager.Transaction(func() (err error) {
+		for _, bundle := range bundles {
+			select {
+			case <-ctx.Done():
+				return nil
+			default:
+			}
 
-	for _, bundle := range bundles {
-		select {
-		case <-ctx.Done():
-			return nil
-		default:
+			err = c.processLedgerBundle(ctx, bundle)
+			if err != nil {
+				return errors.Wrap(err, "failed to process ledger bundle",
+					log.F{"ledger_seq": bundle.Header.Sequence})
+			}
 		}
-
-		err = c.processLedgerBundle(ctx, bundle)
-		if err != nil {
-			return errors.Wrap(err, "failed to process ledger bundle",
-				log.F{"ledger_seq": bundle.Header.Sequence})
-		}
-	}
-
-	err = c.dbTxManager.Commit()
-	if err != nil {
-		return errors.Wrap(err, "failed to commit db tx")
-	}
+		return
+	})
 
 	return nil
 }

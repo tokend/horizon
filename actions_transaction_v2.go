@@ -2,7 +2,7 @@ package horizon
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -18,7 +18,7 @@ type TransactionV2IndexAction struct {
 	Action
 	EntryTypeFilter       []int
 	EffectFilter          []int
-	PagingParams          db2.PageQuery
+	PagingParams          bridge.PageQuery
 	TransactionsV2Records []regources.Transaction
 	// It's guarantied that there is no additional changes
 	// which satisfy restriction change_time < NoUpdatesUntilLedger.ClosedAt
@@ -52,7 +52,7 @@ func (action *TransactionV2IndexAction) loadParams() {
 	action.PagingParams = action.getTxPageQuery()
 }
 
-func (action *TransactionV2IndexAction) getTxPageQuery() db2.PageQuery {
+func (action *TransactionV2IndexAction) getTxPageQuery() bridge.PageQuery {
 	pagingParams := action.GetPageQuery()
 	limit := action.GetUInt64("limit")
 	if limit > maxTxPagSize {

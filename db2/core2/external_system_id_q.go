@@ -1,19 +1,19 @@
 package core2
 
 import (
-	sq "github.com/masterminds/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 type ExternalSystemIDsQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewExternalSystemIDsQ - default constructor for ExternalSystemIDsQ which
-// creates ExternalSystemIDsQ with given db2.Repo and default selector
-func NewExternalSystemIDsQ(repo *db2.Repo) ExternalSystemIDsQ {
+// creates ExternalSystemIDsQ with given bridge.Mediator and default selector
+func NewExternalSystemIDsQ(repo *bridge.Mediator) ExternalSystemIDsQ {
 	return ExternalSystemIDsQ{
 		repo: repo,
 		selector: sq.Select(

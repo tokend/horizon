@@ -1,19 +1,19 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // BalancesQ is a helper struct to aid in configuring queries that loads balances
 type BalancesQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewBalancesQ - creates new instance of BalanceQ with no filters
-func NewBalancesQ(repo *db2.Repo) BalancesQ {
+func NewBalancesQ(repo *bridge.Mediator) BalancesQ {
 	return BalancesQ{
 		repo: repo,
 		selector: sq.Select("balances.balance_id", "balances.sequential_id", "balances.asset", "balances.account_id",
@@ -51,14 +51,14 @@ func (q BalancesQ) FilterByAsset(asset string) BalancesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q BalancesQ) Page(params db2.OffsetPageParams) BalancesQ {
+func (q BalancesQ) Page(params bridge.OffsetPageParams) BalancesQ {
 	q.selector = params.ApplyTo(q.selector, "balances.balance_id")
 	return q
 }
 
 //WithAsset - joins asset
 func (q BalancesQ) WithAsset() BalancesQ {
-	q.selector = q.selector.Columns(db2.GetColumnsForJoin(assetColumns, "assets")...).
+	q.selector = q.selector.Columns(bridge.GetColumnsForJoin(assetColumns, "assets")...).
 		LeftJoin("asset assets ON balances.asset = assets.code")
 	return q
 }

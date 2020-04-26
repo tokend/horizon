@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"gitlab.com/tokend/horizon/bridge"
 	"mime"
 	"net/http"
 	"strconv"
@@ -15,7 +16,6 @@ import (
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/strkey"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/render/problem"
 	"gitlab.com/tokend/horizon/utils"
@@ -359,12 +359,12 @@ func (base *Base) GetPagingParams() (cursor string, order string, limit uint64) 
 
 // GetPageQuery is a helper that returns a new db.PageQuery struct initialized
 // using the results from a call to GetPagingParams()
-func (base *Base) GetPageQuery() db2.PageQuery {
+func (base *Base) GetPageQuery() bridge.PageQuery {
 	if base.Err != nil {
-		return db2.PageQuery{}
+		return bridge.PageQuery{}
 	}
 
-	r, err := db2.NewPageQuery(base.GetPagingParams())
+	r, err := bridge.NewPageQuery(base.GetPagingParams())
 
 	if err != nil {
 		base.Err = err

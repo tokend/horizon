@@ -3,17 +3,17 @@ package core2
 import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // TransactionQ - helper struct to get transactions from db
 type TransactionQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewTransactionQ - creates new instance of TransactionQ
-func NewTransactionQ(repo *db2.Repo) TransactionQ {
+func NewTransactionQ(repo *bridge.Mediator) TransactionQ {
 	return TransactionQ{
 		repo: repo,
 		selector: sq.Select(

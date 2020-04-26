@@ -2,6 +2,7 @@ package horizon
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
 	"runtime"
 	"sync"
@@ -14,7 +15,6 @@ import (
 	"gitlab.com/tokend/horizon/cache"
 	"gitlab.com/tokend/horizon/config"
 	"gitlab.com/tokend/horizon/corer"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/ingest"
@@ -116,8 +116,8 @@ func (a *App) Close() {
 	a.cancel()
 	a.ticks.Stop()
 
-	a.historyQ.GetRepo().DB.Close()
-	a.coreQ.GetRepo().DB.Close()
+	a.historyQ.GetRepo().RawDB().Close()
+	a.coreQ.GetRepo().DB.RawDB().Close()
 
 }
 
@@ -134,16 +134,16 @@ func (a *App) HistoryQ() history.QInterface {
 }
 
 // CoreRepoLogged returns a new repo that loads data from the core database.
-func (a *App) CoreRepoLogged(log *logan.Entry) *db2.Repo {
-	return &db2.Repo{
+func (a *App) CoreRepoLogged(log *logan.Entry) *bridge.Mediator {
+	return &bridge.Mediator{
 		DB:  a.coreQ.GetRepo().DB,
 		Log: log,
 	}
 }
 
 // HistoryRepoLogged returns a new repo that loads data from the horizon database.
-func (a *App) HistoryRepoLogged(log *logan.Entry) *db2.Repo {
-	return &db2.Repo{
+func (a *App) HistoryRepoLogged(log *logan.Entry) *bridge.Mediator {
+	return &bridge.Mediator{
 		DB:  a.historyQ.GetRepo().DB,
 		Log: log,
 	}

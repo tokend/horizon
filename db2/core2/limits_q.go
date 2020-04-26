@@ -1,19 +1,19 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 type LimitsQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewLimitsQ - default constructor for LimitsQ which
-// creates LimitsQ with given db2.Repo and default selector
-func NewLimitsQ(repo *db2.Repo) LimitsQ {
+// creates LimitsQ with given bridge.Mediator and default selector
+func NewLimitsQ(repo *bridge.Mediator) LimitsQ {
 	return LimitsQ{
 		repo: repo,
 		selector: sq.
@@ -50,7 +50,7 @@ func (q LimitsQ) General() LimitsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q LimitsQ) Page(params db2.OffsetPageParams) LimitsQ {
+func (q LimitsQ) Page(params bridge.OffsetPageParams) LimitsQ {
 	q.selector = params.ApplyTo(q.selector, "limits.id")
 	return q
 }

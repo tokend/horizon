@@ -8,13 +8,13 @@ import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 type history2OperationConvertToValues func(row history2.Operation) []interface{}
 
-func history2OperationBatchInsert(repo *db2.Repo, rows []history2.Operation, tableName string, columns []string, converter history2OperationConvertToValues) error {
+func history2OperationBatchInsert(repo *bridge.Mediator, rows []history2.Operation, tableName string, columns []string, converter history2OperationConvertToValues) error {
 	if len(rows) == 0 {
 		return nil
 	}
@@ -25,7 +25,7 @@ func history2OperationBatchInsert(repo *db2.Repo, rows []history2.Operation, tab
 	for _, row := range rows {
 		paramsInQueue += len(columns)
 		if paramsInQueue > maxPostgresParams {
-			_, err := repo.Exec(sql)
+			err := repo.Exec(sql)
 			if err != nil {
 				return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
 			}
@@ -41,7 +41,7 @@ func history2OperationBatchInsert(repo *db2.Repo, rows []history2.Operation, tab
 		return nil
 	}
 
-	_, err := repo.Exec(sql)
+	err := repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
 	}

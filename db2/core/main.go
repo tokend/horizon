@@ -3,10 +3,10 @@
 package core
 
 import (
-	"github.com/jmoiron/sqlx"
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // LedgerHeader is row of data from the `ledgerheaders` table
@@ -23,26 +23,34 @@ type LedgerHeader struct {
 // Q is a helper struct on which to hang common queries against a stellar
 // core database.
 type Q struct {
-	*db2.Repo
+	*bridge.Mediator
 
 	err error
 	sql sq.SelectBuilder
 }
 
-func NewQ(repo *db2.Repo) *Q {
+func NewQ(repo *bridge.Mediator) *Q {
 	return &Q{
-		Repo: repo,
+		Mediator: repo,
 	}
 }
 
-func (q *Q) GetRepo() *db2.Repo {
-	return q.Repo
+func (q *Q) GetRepo() *bridge.Mediator {
+	return q.Mediator
+}
+
+func (q *Q) NoRows(err error) bool {
+	return err == sql.ErrNoRows
+}
+
+func (q *Q) Exec(query sq.Sqlizer) error {
+	return q.DB.Exec(query)
 }
 
 // Q interface helper for testing purposes mainly
 
 type QInterface interface {
-	GetRepo() *db2.Repo
+	GetRepo() *bridge.Mediator
 	// DEPRECATED
 	LedgerHeaderBySequence(dest interface{}, seq int32) error
 	// DEPRECATED
@@ -60,7 +68,7 @@ type QInterface interface {
 	// DEPRECATED
 	TransactionFeesByLedger(dest interface{}, seq int32) error
 	FeeEntries() FeeEntryQI
-	Query(query sq.Sqlizer) (*sqlx.Rows, error)
+	Exec(query sq.Sqlizer) error // Was query (sqlx.Rows, error)
 	NoRows(err error) bool
 	// Returns nil, if not found
 	FeeByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account, amount int64) (*FeeEntry, error)

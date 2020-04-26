@@ -1,11 +1,10 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -47,7 +46,7 @@ type GetFeeList struct {
 		LowerBound  regources.Amount `fig:"lower_bound"`
 		UpperBound  regources.Amount `fig:"upper_bound"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *bridge.OffsetPageParams
 }
 
 // NewGetFeeList returns the new instance of GetFeeList request

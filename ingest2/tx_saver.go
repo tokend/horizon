@@ -1,11 +1,11 @@
 package ingest2
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/generator"
@@ -33,7 +33,7 @@ func (h *TxSaver) Handle(header *core.LedgerHeader, txs []core.Transaction) erro
 	idGenerator := generator.NewID(uint32(header.Sequence))
 	for i, tx := range txs {
 		hTx := history2.Transaction{
-			TotalOrderID: db2.TotalOrderID{
+			TotalOrderID: bridge.TotalOrderID{
 				ID: idGenerator.Next(),
 			},
 			Hash:             tx.TransactionHash,

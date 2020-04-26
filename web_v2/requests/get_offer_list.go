@@ -1,9 +1,8 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -55,7 +54,7 @@ type GetOfferList struct {
 		OrderBook    int64  `fig:"order_book"`
 		IsBuy        bool   `fig:"is_buy"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *bridge.OffsetPageParams
 }
 
 // NewGetOfferList - returns new instance of GetOfferList

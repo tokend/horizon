@@ -4,17 +4,17 @@ import (
 	"github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 //Ledger - handles write operations on db level for ledgers
 type Ledger struct {
-	repo *db2.Repo
+	repo *bridge.Mediator
 }
 
 //NewLedger - creates new instance of ledger
-func NewLedger(repo *db2.Repo) *Ledger {
+func NewLedger(repo *bridge.Mediator) *Ledger {
 	return &Ledger{
 		repo: repo,
 	}
@@ -26,7 +26,7 @@ func (s *Ledger) Insert(ledger *history2.Ledger) error {
 		"tx_count", "data").Values(ledger.ID, ledger.Sequence, ledger.Hash, ledger.PreviousHash, ledger.ClosedAt,
 		ledger.TxCount, ledger.Data)
 
-	_, err := s.repo.Exec(sql)
+	err := s.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert ledger", logan.F{
 			"ledger_seq": ledger.Sequence,

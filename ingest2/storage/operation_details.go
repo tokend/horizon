@@ -2,17 +2,17 @@ package storage
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // Operation - helper struct to store operation
 type Operation struct {
-	repo *db2.Repo
+	repo *bridge.Mediator
 }
 
 // NewOperationDetails - creates new instance of `Operation`
-func NewOperationDetails(repo *db2.Repo) *Operation {
+func NewOperationDetails(repo *bridge.Mediator) *Operation {
 	return &Operation{
 		repo: repo,
 	}

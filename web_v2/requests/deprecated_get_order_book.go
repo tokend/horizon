@@ -1,9 +1,8 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -41,7 +40,7 @@ type DeprecatedGetOrderBook struct {
 		IsBuy      bool   `fig:"is_buy"`
 	}
 
-	PageParams *db2.OffsetPageParams
+	PageParams *bridge.OffsetPageParams
 }
 
 // NewDeprecatedGetOrderBook - returns new instance of DeprecatedGetOrderBook

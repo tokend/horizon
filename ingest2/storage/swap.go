@@ -1,23 +1,23 @@
 package storage
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 // CreateSwap is helper struct to operate with `swaps`
 type Swap struct {
-	repo *db2.Repo
+	repo *bridge.Mediator
 
 	swapQ history2.SwapsQ
 }
 
 // NewSwap - creates new instance of the `CreateSwap`
-func NewSwap(repo *db2.Repo) *Swap {
+func NewSwap(repo *bridge.Mediator) *Swap {
 	return &Swap{
 		repo:  repo,
 		swapQ: history2.NewSwapsQ(repo),
@@ -48,7 +48,7 @@ func (q *Swap) Insert(swap history2.Swap) error {
 			"state":                   swap.State,
 		})
 
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert swap", logan.F{"swap_id": swap.ID})
 	}
@@ -59,7 +59,7 @@ func (q *Swap) Insert(swap history2.Swap) error {
 // SetState - sets state
 func (q *Swap) SetState(id int64, state regources.SwapState) error {
 	sql := sq.Update("swaps").Set("state", state).Where("id = ?", id)
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to set state", logan.F{"swap_id": id})
 	}
@@ -70,7 +70,7 @@ func (q *Swap) SetState(id int64, state regources.SwapState) error {
 // SetSecret - sets secret
 func (q *Swap) SetSecret(id int64, secret string) error {
 	sql := sq.Update("swaps").Set("secret", secret).Where("id = ?", id)
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to set secret", logan.F{"swap_id": id})
 	}

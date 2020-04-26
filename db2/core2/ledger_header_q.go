@@ -4,17 +4,17 @@ import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // LedgerHeaderQ - helper struct to get ledger headers from db
 type LedgerHeaderQ struct {
-	repo *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewLedgerHeaderQ - creates new instance of LedgerHeaderQ
-func NewLedgerHeaderQ(repo *db2.Repo) *LedgerHeaderQ {
+func NewLedgerHeaderQ(repo *bridge.Mediator) *LedgerHeaderQ {
 	return &LedgerHeaderQ{
 		repo: repo,
 		selector: sq.Select(
@@ -25,7 +25,7 @@ func NewLedgerHeaderQ(repo *db2.Repo) *LedgerHeaderQ {
 			"l.ledgerseq",
 			"l.version",
 			"l.data",
-			).From("ledgerheaders l"),
+		).From("ledgerheaders l"),
 	}
 }
 

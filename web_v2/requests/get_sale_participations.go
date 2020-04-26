@@ -1,9 +1,8 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -36,7 +35,7 @@ type GetSaleParticipations struct {
 		QuoteAsset  string `json:"quote_asset"`
 		Participant string `json:"participant"`
 	}
-	PageParams *db2.CursorPageParams
+	PageParams *bridge.CursorPageParams
 }
 
 // NewGetSaleParticipations returns new instance of GetSaleParticipations

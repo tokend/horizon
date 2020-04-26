@@ -4,7 +4,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
@@ -21,12 +21,12 @@ type Balance struct {
 
 	balanceQ       history2.BalancesQ
 	coreBalances   core2.BalancesQ
-	historyRepo    *db2.Repo
+	historyRepo    *bridge.Mediator
 	accountStorage accountStorage
 }
 
 // NewBalance - creates new instance of Balance
-func NewBalance(repo *db2.Repo, coreRepo *db2.Repo, accountStorage accountStorage) *Balance {
+func NewBalance(repo *bridge.Mediator, coreRepo *bridge.Mediator, accountStorage accountStorage) *Balance {
 	return &Balance{
 		historyRepo:    repo,
 		balanceQ:       history2.NewBalancesQ(repo),
@@ -110,7 +110,7 @@ func (s *Balance) InsertBalance(rawBalanceID xdr.BalanceId, balance history2.Bal
 	// it's ok if the balance already exists in the map.
 	// Such case could occur during roll back of transaction and retry to process same ledger
 	s.balances[rawBalanceID] = &balance
-	_, err := s.historyRepo.ExecRaw("INSERT INTO balances (id, account_id, address, asset_code) VALUES($1, $2, $3, $4)",
+	err := s.historyRepo.ExecRaw("INSERT INTO balances (id, account_id, address, asset_code) VALUES($1, $2, $3, $4)",
 		balance.ID, balance.AccountID, balance.Address, balance.AssetCode)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert new balance", logan.F{

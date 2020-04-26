@@ -4,16 +4,16 @@ import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // BalancesQ is a helper struct to aid in configuring queries that loads balances
 type BalancesQ struct {
-	repo *db2.Repo
+	repo *bridge.Mediator
 }
 
 // NewBalancesQ - creates new instance of BalanceQ
-func NewBalancesQ(repo *db2.Repo) BalancesQ {
+func NewBalancesQ(repo *bridge.Mediator) BalancesQ {
 	return BalancesQ{
 		repo: repo,
 	}

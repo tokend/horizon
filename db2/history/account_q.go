@@ -1,8 +1,8 @@
 package history
 
 import (
-	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/db2"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 var selectAccount = sq.Select("ha.*").From("history_accounts ha")
@@ -21,7 +21,7 @@ type AccountsQ struct {
 
 type AccountsQI interface {
 	AccountsByOperationIDs(operationIDs []int64) (map[int64][]Account, error)
-	Page(page db2.PageQuery) AccountsQI
+	Page(page bridge.PageQuery) AccountsQI
 	Select(dest interface{}) error
 }
 
@@ -47,7 +47,7 @@ func (q *Q) AccountByID(dest interface{}, id int64) error {
 }
 
 // Page specifies the paging constraints for the query being built by `q`.
-func (q *AccountsQ) Page(page db2.PageQuery) AccountsQI {
+func (q *AccountsQ) Page(page bridge.PageQuery) AccountsQI {
 	if q.Err != nil {
 		return q
 	}

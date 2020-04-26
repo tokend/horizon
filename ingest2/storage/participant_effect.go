@@ -2,17 +2,17 @@ package storage
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // ParticipantEffect - helper struct to store `operation participants`
 type ParticipantEffect struct {
-	repo *db2.Repo
+	repo *bridge.Mediator
 }
 
 // NewOpParticipants - creates new instance of `ParticipantEffect`
-func NewOpParticipants(repo *db2.Repo) *ParticipantEffect {
+func NewOpParticipants(repo *bridge.Mediator) *ParticipantEffect {
 	return &ParticipantEffect{
 		repo: repo,
 	}

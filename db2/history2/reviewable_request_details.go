@@ -1,13 +1,13 @@
 package history2
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"database/sql/driver"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -35,7 +35,7 @@ type ReviewableRequestDetails struct {
 
 //Value - implements db driver method for auto marshal
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
-	result, err := db2.DriverValue(r)
+	result, err := bridge.DriverValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal details")
 	}
@@ -45,7 +45,7 @@ func (r ReviewableRequestDetails) Value() (driver.Value, error) {
 
 //Scan - implements db driver method for auto unmarshal
 func (r *ReviewableRequestDetails) Scan(src interface{}) error {
-	err := db2.DriveScan(src, r)
+	err := bridge.DriveScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan details")
 	}

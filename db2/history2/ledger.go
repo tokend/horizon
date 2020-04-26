@@ -1,14 +1,13 @@
 package history2
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // Ledger is a row of data from the `ledgers` table
 type Ledger struct {
-	db2.TotalOrderID
+	bridge.TotalOrderID
 	Sequence     int32     `db:"sequence"`
 	Hash         string    `db:"hash"`
 	PreviousHash string    `db:"previous_hash"`

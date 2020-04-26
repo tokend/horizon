@@ -2,19 +2,19 @@ package core2
 
 import (
 	"fmt"
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // OrderBooksQ is a helper struct to aid in configuring queries that loads order book entries
 type OrderBooksQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewOrderBooksQ - creates new instance of OrderBooksQ with no filters
-func NewOrderBooksQ(repo *db2.Repo) OrderBooksQ {
+func NewOrderBooksQ(repo *bridge.Mediator) OrderBooksQ {
 	subQuery := sq.Select(
 		"format('%s:%s:%s:%s:%s', offers.quote_asset_code, offers.base_asset_code, "+
 			"offers.order_book_id, offers.is_buy, offers.price) id",
@@ -55,7 +55,7 @@ func NewOrderBooksQ(repo *db2.Repo) OrderBooksQ {
 // WithBaseAsset - joins base asset
 func (q OrderBooksQ) WithBaseAsset() OrderBooksQ {
 	q.selector = q.selector.
-		Columns(db2.GetColumnsForJoin(assetColumns, "base_assets")...).
+		Columns(bridge.GetColumnsForJoin(assetColumns, "base_assets")...).
 		LeftJoin("asset base_assets ON order_book_entries.base_asset_code = base_assets.code")
 
 	return q
@@ -83,7 +83,7 @@ func (q OrderBooksQ) WithCumulativeAmounts(isBuy bool) OrderBooksQ {
 // WithQuoteAsset - joins quote asset
 func (q OrderBooksQ) WithQuoteAsset() OrderBooksQ {
 	q.selector = q.selector.
-		Columns(db2.GetColumnsForJoin(assetColumns, "quote_assets")...).
+		Columns(bridge.GetColumnsForJoin(assetColumns, "quote_assets")...).
 		LeftJoin("asset quote_assets ON order_book_entries.quote_asset_code = quote_assets.code")
 
 	return q
@@ -120,7 +120,7 @@ func (q OrderBooksQ) Limit(limit uint64) OrderBooksQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q OrderBooksQ) Page(params db2.OffsetPageParams) OrderBooksQ {
+func (q OrderBooksQ) Page(params bridge.OffsetPageParams) OrderBooksQ {
 	q.selector = params.ApplyTo(q.selector,
 		"order_book_entries.price",
 		"order_book_entries.base_asset_code",

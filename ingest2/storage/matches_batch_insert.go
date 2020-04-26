@@ -1,16 +1,16 @@
 package storage
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 type history2MatchesToValues func(row history2.Match) []interface{}
 
-func matchesBatchInsert(repo *db2.Repo, rows []history2.Match, tableName string, columns []string, converterFn history2MatchesToValues) error {
+func matchesBatchInsert(repo *bridge.Mediator, rows []history2.Match, tableName string, columns []string, converterFn history2MatchesToValues) error {
 	if len(rows) == 0 {
 		return nil
 	}
@@ -21,7 +21,7 @@ func matchesBatchInsert(repo *db2.Repo, rows []history2.Match, tableName string,
 	for _, row := range rows {
 		paramsInQueue += len(columns)
 		if paramsInQueue > maxPostgresParams {
-			_, err := repo.Exec(sql)
+			err := repo.Exec(sql)
 			if err != nil {
 				return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
 			}
@@ -37,7 +37,7 @@ func matchesBatchInsert(repo *db2.Repo, rows []history2.Match, tableName string,
 		return nil
 	}
 
-	_, err := repo.Exec(sql)
+	err := repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
 	}

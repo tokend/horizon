@@ -1,16 +1,16 @@
 package core2
 
 import (
-	"github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/db2"
+	"github.com/Masterminds/squirrel"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 type KeyValueQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector squirrel.SelectBuilder
 }
 
-func NewKeyValueQ(repo *db2.Repo) *KeyValueQ {
+func NewKeyValueQ(repo *bridge.Mediator) *KeyValueQ {
 	return &KeyValueQ{
 		repo,
 		squirrel.Select("key", "value").From("key_value_entry"),
@@ -32,7 +32,7 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 	return &result, nil
 }
 
-func (q *KeyValueQ) Page(params *db2.OffsetPageParams) *KeyValueQ {
+func (q *KeyValueQ) Page(params *bridge.OffsetPageParams) *KeyValueQ {
 	q.selector = params.ApplyTo(q.selector, "key")
 	return q
 }

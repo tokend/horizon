@@ -2,12 +2,12 @@ package requests
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
 	"strconv"
 	"strings"
 
 	validation "github.com/go-ozzo/ozzo-validation"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -18,7 +18,7 @@ const (
 
 type GetOperations struct {
 	*base
-	PageParams *db2.CursorPageParams
+	PageParams *bridge.CursorPageParams
 	Filters    struct {
 		Types []int
 	}

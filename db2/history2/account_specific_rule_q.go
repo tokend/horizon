@@ -1,19 +1,19 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // AccountSpecificRulesQ is a helper struct to aid in configuring queries that loads accounts
 type AccountSpecificRulesQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewAccountSpecificRulesQ - creates new instance of AccountSpecificRulesQ
-func NewAccountSpecificRulesQ(repo *db2.Repo) AccountSpecificRulesQ {
+func NewAccountSpecificRulesQ(repo *bridge.Mediator) AccountSpecificRulesQ {
 	return AccountSpecificRulesQ{
 		repo: repo,
 		selector: sq.Select(
@@ -60,7 +60,7 @@ func (q AccountSpecificRulesQ) Get() (*AccountSpecificRule, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AccountSpecificRulesQ) Page(params db2.CursorPageParams) AccountSpecificRulesQ {
+func (q AccountSpecificRulesQ) Page(params bridge.CursorPageParams) AccountSpecificRulesQ {
 	q.selector = params.ApplyTo(q.selector, "sr.id")
 	return q
 }

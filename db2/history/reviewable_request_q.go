@@ -1,11 +1,11 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/sqx"
 )
 
@@ -40,7 +40,7 @@ type ReviewableRequestQI interface {
 	// ForRoles - filters requests by request type
 	ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI
 	// Page specifies the paging constraints for the query being built by `q`.
-	Page(page db2.PageQuery) ReviewableRequestQI
+	Page(page bridge.PageQuery) ReviewableRequestQI
 	// UpdatedAfter - selects requests updated after given timestamp
 	UpdatedAfter(timestamp int64) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
@@ -134,7 +134,7 @@ func (q *ReviewableRequestQ) Insert(request ReviewableRequest) error {
 		"external_details": request.ExternalDetails,
 	})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -158,7 +158,7 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 		"external_details": request.ExternalDetails,
 	}).Where("id = ?", request.ID)
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -171,7 +171,7 @@ func (q *ReviewableRequestQ) UpdateStates(requestIDs []int64, state ReviewableRe
 		Set("request_state", state).
 		Where(sq.Eq{"id": requestIDs})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -214,7 +214,7 @@ func (q *ReviewableRequestQ) Cancel(requestID uint64) error {
 	query := sq.Update("reviewable_request").
 		Set("request_state", ReviewableRequestStateCanceled).Where("id = ?", requestID)
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -237,7 +237,7 @@ func (q *ReviewableRequestQ) setStateRejectReason(requestID uint64, requestState
 		Set("request_state", requestState).
 		Set("reject_reason", rejectReason).Where("id = ?", requestID)
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -320,7 +320,7 @@ func (q *ReviewableRequestQ) UpdatedAfter(timestamp int64) ReviewableRequestQI {
 }
 
 // Page specifies the paging constraints for the query being built by `q`.
-func (q *ReviewableRequestQ) Page(page db2.PageQuery) ReviewableRequestQI {
+func (q *ReviewableRequestQ) Page(page bridge.PageQuery) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
 	}
@@ -471,7 +471,7 @@ func (q *ReviewableRequestQ) UpdateInvoicesStates(state ReviewableRequestState,
 		Where("details->'invoice'->>'contract_id' = ?", contractID).
 		Where(sq.Eq{"request_state": oldStates})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 

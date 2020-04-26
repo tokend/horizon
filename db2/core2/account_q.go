@@ -1,20 +1,20 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // AccountsQ is a helper struct to aid in configuring queries that loads
 // account structs.
 type AccountsQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewAccountsQ - creates new instance of AccountsQ
-func NewAccountsQ(repo *db2.Repo) AccountsQ {
+func NewAccountsQ(repo *bridge.Mediator) AccountsQ {
 	return AccountsQ{
 		repo: repo,
 		selector: sq.Select("accounts.account_id",
@@ -57,7 +57,7 @@ func (q AccountsQ) FilterByRole(ids ...uint64) AccountsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AccountsQ) Page(params db2.OffsetPageParams) AccountsQ {
+func (q AccountsQ) Page(params bridge.OffsetPageParams) AccountsQ {
 	q.selector = params.ApplyTo(q.selector, "accounts.sequential_id")
 	return q
 }

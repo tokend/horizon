@@ -1,9 +1,9 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 //FeesEmptyRole - defines is used as default in core when account role for which fee should be applied is not specified
@@ -13,12 +13,12 @@ const FeesEmptyRole = 0
 // FeesQ is a helper struct to aid in configuring queries that loads
 // fee structs.
 type FeesQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewFeesQ - creates new instance of Feesq
-func NewFeesQ(repo *db2.Repo) FeesQ {
+func NewFeesQ(repo *bridge.Mediator) FeesQ {
 	return FeesQ{
 		repo: repo,
 		selector: sq.Select("f.fee_type", "f.asset", "f.subtype", "f.fixed", "f.percent", "f.lastmodified",
@@ -28,7 +28,7 @@ func NewFeesQ(repo *db2.Repo) FeesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q FeesQ) Page(params db2.OffsetPageParams) FeesQ {
+func (q FeesQ) Page(params bridge.OffsetPageParams) FeesQ {
 	order := string(params.Order)
 	orderBys := []string{"f.hash " + order, "f.lower_bound " + order, "f.upper_bound " + order}
 	q.selector = params.ApplyTo(q.selector.OrderBy(orderBys...))

@@ -1,20 +1,20 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // LicenseQ is a helper struct to aid in configuring queries that loads
 // license structs.
 type LicenseQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewLicenseQ - creates new instance of LicenseQ
-func NewLicenseQ(repo *db2.Repo) LicenseQ {
+func NewLicenseQ(repo *bridge.Mediator) LicenseQ {
 	return LicenseQ{
 		repo: repo,
 		selector: sq.Select("license.id",

@@ -1,19 +1,19 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // AtomicSwapQuoteAssetQ is a helper to aid in configuring queries
 // that loads slices or entry of AtomicSwapBidQuoteAsset structs.
 type AtomicSwapQuoteAssetQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
-func NewAtomicSwapQuoteAssetQ(repo *db2.Repo) AtomicSwapQuoteAssetQ {
+func NewAtomicSwapQuoteAssetQ(repo *bridge.Mediator) AtomicSwapQuoteAssetQ {
 	return AtomicSwapQuoteAssetQ{
 		repo: repo,
 		selector: sq.Select(

@@ -1,13 +1,12 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 type Offer struct {
-	db2.TotalOrderID
+	bridge.TotalOrderID
 	OfferID           int64     `db:"offer_id"`
 	OwnerID           string    `db:"owner_id"`
 	BaseAsset         string    `db:"base_asset"`

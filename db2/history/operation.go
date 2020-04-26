@@ -2,18 +2,18 @@ package history
 
 import (
 	"encoding/json"
+	"gitlab.com/tokend/horizon/bridge"
 
 	"time"
 
 	"github.com/go-errors/errors"
 	"github.com/guregu/null"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // Operation is a row of data from the `history_operations` table
 type Operation struct {
-	db2.TotalOrderID
+	bridge.TotalOrderID
 	TransactionID    int64             `db:"transaction_id"`
 	ApplicationOrder int32             `db:"application_order"`
 	Type             xdr.OperationType `db:"type"`

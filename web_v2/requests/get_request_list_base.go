@@ -1,15 +1,14 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 type GetRequestsBase struct {
 	*base
 	Filters    GetRequestListBaseFilters
-	PageParams *db2.CursorPageParams
+	PageParams *bridge.CursorPageParams
 }
 
 func NewGetRequestsBase(

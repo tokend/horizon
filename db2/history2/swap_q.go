@@ -1,20 +1,20 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // SwapsQ is a helper struct to aid in configuring queries that loads
 // swap structures.
 type SwapsQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewSwapsQ - creates new instance of SwapsQ
-func NewSwapsQ(repo *db2.Repo) SwapsQ {
+func NewSwapsQ(repo *bridge.Mediator) SwapsQ {
 	return SwapsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -83,7 +83,7 @@ func (q SwapsQ) FilterByDestination(destination string) SwapsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SwapsQ) Page(params db2.CursorPageParams) SwapsQ {
+func (q SwapsQ) Page(params bridge.CursorPageParams) SwapsQ {
 	q.selector = params.ApplyTo(q.selector, "s.id")
 	return q
 }

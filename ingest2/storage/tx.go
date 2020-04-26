@@ -2,17 +2,17 @@ package storage
 
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 //Tx - handles write operations in DB for txs
 type Tx struct {
-	repo *db2.Repo
+	repo *bridge.Mediator
 }
 
 //NewTx - creates new instance of Tx
-func NewTx(repo *db2.Repo) *Tx {
+func NewTx(repo *bridge.Mediator) *Tx {
 	return &Tx{
 		repo: repo,
 	}

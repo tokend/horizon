@@ -1,10 +1,10 @@
 package core
 
 import (
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
-	sq "github.com/lann/squirrel"
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 type CoreQMock struct {
@@ -69,9 +69,9 @@ func (q *CoreQMock) Assets() AssetQI {
 	return args.Get(0).(AssetQI)
 }
 
-func (q *CoreQMock) GetRepo() *db2.Repo {
+func (q *CoreQMock) GetRepo() *bridge.Mediator {
 	args := q.Called()
-	return args.Get(0).(*db2.Repo)
+	return args.Get(0).(*bridge.Mediator)
 }
 
 func (q *CoreQMock) AccountByAddress(dest interface{}, addy string) error {

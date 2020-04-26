@@ -1,8 +1,8 @@
 package history
 
 import (
-	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/db2"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 var selectLedger = sq.Select(
@@ -30,7 +30,7 @@ type LedgersQ struct {
 }
 
 type LedgersQI interface {
-	Page(page db2.PageQuery) LedgersQI
+	Page(page bridge.PageQuery) LedgersQI
 	Select(dest interface{}) error
 }
 
@@ -53,7 +53,7 @@ func (q *Q) LedgerBySequence(dest interface{}, seq int32) error {
 }
 
 // Page specifies the paging constraints for the query being built by `q`.
-func (q *LedgersQ) Page(page db2.PageQuery) LedgersQI {
+func (q *LedgersQ) Page(page bridge.PageQuery) LedgersQI {
 	if q.Err != nil {
 		return q
 	}

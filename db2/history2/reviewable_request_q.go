@@ -1,19 +1,19 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // ReviewableRequestsQ - helper struct to get reviewable requests from db
 type ReviewableRequestsQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewReviewableRequestsQ - creates new instance of ReviewableRequestsQ
-func NewReviewableRequestsQ(repo *db2.Repo) ReviewableRequestsQ {
+func NewReviewableRequestsQ(repo *bridge.Mediator) ReviewableRequestsQ {
 	return ReviewableRequestsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -190,7 +190,7 @@ func (q ReviewableRequestsQ) GetByID(id uint64) (*ReviewableRequest, error) {
 }
 
 // Page - apply paging params to the query
-func (q ReviewableRequestsQ) Page(pageParams db2.CursorPageParams) ReviewableRequestsQ {
+func (q ReviewableRequestsQ) Page(pageParams bridge.CursorPageParams) ReviewableRequestsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "reviewable_requests.id")
 	return q
 }

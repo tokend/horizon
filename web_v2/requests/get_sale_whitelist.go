@@ -1,9 +1,8 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -18,7 +17,7 @@ type GetSaleWhitelist struct {
 	Filters struct {
 		Address string `fig:"address"`
 	}
-	PageParams *db2.CursorPageParams
+	PageParams *bridge.CursorPageParams
 }
 
 // NewGetSaleWhitelist returns new instance of GetSaleWhitelist

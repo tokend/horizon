@@ -1,20 +1,20 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 var operationColumns = []string{"id", "tx_id", "type", "details",
 	"ledger_close_time", "source"}
 
 type OperationQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
-func NewOperationQ(repo *db2.Repo) OperationQ {
+func NewOperationQ(repo *bridge.Mediator) OperationQ {
 	return OperationQ{
 		repo: repo,
 		selector: sq.Select(
@@ -39,7 +39,7 @@ func (q OperationQ) FilterByOperationsTypes(types []int) OperationQ {
 }
 
 // Page - apply paging params to the query
-func (q OperationQ) Page(pageParams db2.CursorPageParams) OperationQ {
+func (q OperationQ) Page(pageParams bridge.CursorPageParams) OperationQ {
 	q.selector = pageParams.ApplyTo(q.selector, "op.id")
 	return q
 }

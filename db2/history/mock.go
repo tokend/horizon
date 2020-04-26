@@ -2,7 +2,7 @@ package history
 
 import (
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 type QMock struct {
@@ -25,7 +25,7 @@ type TransactionsQMock struct {
 	mock.Mock
 }
 
-func (q *QMock) GetRepo() *db2.Repo {
+func (q *QMock) GetRepo() *bridge.Mediator {
 	return nil
 }
 func (q *QMock) NoRows(err error) bool {
@@ -52,7 +52,7 @@ func (q *QMock) AccountByAddress(dest interface{}, addy string) error {
 func (q *QMock) AccountByID(dest interface{}, id int64) error {
 	return q.Called(dest, id).Error(0)
 }
-func (q *AccountsQMock) Page(page db2.PageQuery) AccountsQI {
+func (q *AccountsQMock) Page(page bridge.PageQuery) AccountsQI {
 	return q.Called(page).Get(0).(AccountsQI)
 }
 func (q *AccountsQMock) Select(dest interface{}) error {
@@ -66,7 +66,7 @@ func (q *QMock) Ledgers() LedgersQI {
 func (q *QMock) LedgerBySequence(dest interface{}, seq int32) error {
 	return q.Called(dest, seq).Error(0)
 }
-func (q *LedgersQMock) Page(page db2.PageQuery) LedgersQI {
+func (q *LedgersQMock) Page(page bridge.PageQuery) LedgersQI {
 	return q.Called(page).Get(0).(LedgersQI)
 }
 func (q *LedgersQMock) Select(dest interface{}) error {
@@ -93,7 +93,7 @@ func (q *OperationsQMock) ForTransaction(hash string) OperationsQI {
 func (q *OperationsQMock) OnlyPayments() OperationsQI {
 	return q.Called().Get(0).(OperationsQI)
 }
-func (q *OperationsQMock) Page(page db2.PageQuery) OperationsQI {
+func (q *OperationsQMock) Page(page bridge.PageQuery) OperationsQI {
 	return q.Called(page).Get(0).(OperationsQI)
 }
 func (q *OperationsQMock) Select(dest interface{}) error {
@@ -114,7 +114,7 @@ func (q *TransactionsQMock) ForAccount(aid string) TransactionsQI {
 func (q *TransactionsQMock) ForLedger(seq int32) TransactionsQI {
 	return q.Called(seq).Get(0).(TransactionsQI)
 }
-func (q *TransactionsQMock) Page(page db2.PageQuery) TransactionsQI {
+func (q *TransactionsQMock) Page(page bridge.PageQuery) TransactionsQI {
 	return q.Called(page).Get(0).(TransactionsQI)
 }
 func (q *TransactionsQMock) Select(dest interface{}) error {

@@ -1,19 +1,19 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 //SignerQ - helper struct to load signers from db
 type SignerQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 //NewSignerQ - returns new instance of SignerQ with empty filter
-func NewSignerQ(repo *db2.Repo) SignerQ {
+func NewSignerQ(repo *bridge.Mediator) SignerQ {
 	return SignerQ{
 		repo: repo,
 		selector: sq.Select("signers.account_id",
@@ -67,7 +67,7 @@ func (q SignerQ) Select() ([]Signer, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SignerQ) Page(params db2.OffsetPageParams) SignerQ {
+func (q SignerQ) Page(params bridge.OffsetPageParams) SignerQ {
 	q.selector = params.ApplyTo(q.selector)
 	return q
 }

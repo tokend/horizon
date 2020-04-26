@@ -1,20 +1,20 @@
 package history2
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 type AssetPairQ struct {
-	repo *db2.Repo
+	repo *bridge.Mediator
 }
 
-func NewAssetPairQ(repo *db2.Repo) *AssetPairQ {
+func NewAssetPairQ(repo *bridge.Mediator) *AssetPairQ {
 	return &AssetPairQ{
 		repo: repo,
 	}

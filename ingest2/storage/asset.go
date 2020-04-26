@@ -1,19 +1,19 @@
 package storage
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 type Asset struct {
-	repo *db2.Repo
+	repo *bridge.Mediator
 }
 
-func NewAsset(repo *db2.Repo) *Asset {
+func NewAsset(repo *bridge.Mediator) *Asset {
 	return &Asset{
 		repo: repo,
 	}
@@ -50,7 +50,7 @@ func (q *Asset) Insert(asset history2.Asset) error {
 			asset.State,
 		)
 
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert asset", logan.F{
 			"asset_code": asset.Code,
@@ -62,7 +62,7 @@ func (q *Asset) Insert(asset history2.Asset) error {
 
 func (q *Asset) SetState(code string, state regources.AssetState) error {
 	sql := sq.Update("asset").Set("state", state).Where("code = ?", code)
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to set state", logan.F{"asset_code": code})
 	}
@@ -86,7 +86,7 @@ func (q *Asset) Update(asset history2.Asset) error {
 			"state":                  asset.State,
 		}).Where("code = ?", asset.Code)
 
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update poll", logan.F{
 			"asset_code": asset.Code,

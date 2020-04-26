@@ -2,11 +2,11 @@ package history
 
 import (
 	"database/sql/driver"
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 type Sale struct {
@@ -19,12 +19,12 @@ type Sale struct {
 	SoftCap           uint64    `db:"soft_cap"`
 	HardCap           uint64    `db:"hard_cap"`
 	CurrentCap        string
-	Details           db2.Details  `db:"details"`
-	State             SaleState    `db:"state"`
-	QuoteAssets       QuoteAssets  `db:"quote_assets"`
-	BaseCurrentCap    int64        `db:"base_current_cap"`
-	BaseHardCap       int64        `db:"base_hard_cap"`
-	SaleType          xdr.SaleType `db:"sale_type"`
+	Details           bridge.Details `db:"details"`
+	State             SaleState      `db:"state"`
+	QuoteAssets       QuoteAssets    `db:"quote_assets"`
+	BaseCurrentCap    int64          `db:"base_current_cap"`
+	BaseHardCap       int64          `db:"base_hard_cap"`
+	SaleType          xdr.SaleType   `db:"sale_type"`
 }
 
 type QuoteAssets struct {
@@ -32,7 +32,7 @@ type QuoteAssets struct {
 }
 
 func (r QuoteAssets) Value() (driver.Value, error) {
-	result, err := db2.DriverValue(r)
+	result, err := bridge.DriverValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal quote assets")
 	}
@@ -41,7 +41,7 @@ func (r QuoteAssets) Value() (driver.Value, error) {
 }
 
 func (r *QuoteAssets) Scan(src interface{}) error {
-	err := db2.DriveScan(src, r)
+	err := bridge.DriveScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan quote assets")
 	}

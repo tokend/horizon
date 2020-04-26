@@ -10,6 +10,14 @@
   revision = "75cd24fc2f2c2a2088577d12123ddee5f54e0675"
 
 [[projects]]
+  digest = "1:971d42403bff1a4ce6e2577791ce6b780cced85e655b31a9f9b9ce28d08c628e"
+  name = "github.com/Masterminds/squirrel"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "59c11a6b2dd511b675939075e5d34d461a4f9f6d"
+  version = "v1.2.0"
+
+[[projects]]
   digest = "1:5568509a79e74730b08af05eb7397bd770cd16e7a746e58dbb7e5277e698664a"
   name = "github.com/asaskevich/govalidator"
   packages = ["."]
@@ -170,15 +178,15 @@
   version = "v1.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:7678f7cde4090e4c979877491805ee636f8ddb3ac8d02c413e1fccaaffc8e465"
+  digest = "1:6c41d4f998a03b6604227ccad36edaed6126c397e5d78709ef4814a1145a6757"
   name = "github.com/jmoiron/sqlx"
   packages = [
     ".",
     "reflectx",
   ]
   pruneopts = "UT"
-  revision = "3379e5993990b1f927fc8db926485e6f6becf2d2"
+  revision = "d161d7a76b5661016ad0b085869f77fd410f3e6a"
+  version = "v1.2.0"
 
 [[projects]]
   branch = "master"
@@ -213,15 +221,16 @@
   version = "v1.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:934d91b5854d3084cc7d45c36b5697c40e9d624d6078cc4b9cd1163504f15b04"
+  digest = "1:05de5942f7d2b280d098f18b7ebc72fdf1587d01d13979ebb413acc833cf3245"
   name = "github.com/lib/pq"
   packages = [
     ".",
     "oid",
+    "scram",
   ]
   pruneopts = "UT"
-  revision = "b609790bd85edf8e9ab7e0f8912750a786177bcf"
+  revision = "11720195feb4140252d89ec87e6ec66810ca708b"
+  version = "v1.4.0"
 
 [[projects]]
   digest = "1:bbf535fd0728dc8d9152d47aaec807f072f643ddd580f86e2181e98c3ba3fd7c"
@@ -233,14 +242,6 @@
   pruneopts = "UT"
   revision = "be5ece7dd465ab0765a9682137865547526d1dfb"
   version = "v1.7.3"
-
-[[projects]]
-  digest = "1:14a90eb1290bd0aa42848afa9ee2c9ce247abdb63c2cf614331670119760962f"
-  name = "github.com/masterminds/squirrel"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "fa735ea14f09f8685fcf5e75db091feb5a410730"
-  version = "v1.1"
 
 [[projects]]
   branch = "master"
@@ -275,12 +276,12 @@
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
+  digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
   name = "github.com/pkg/errors"
   packages = ["."]
   pruneopts = "UT"
-  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
-  version = "v0.8.0"
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
 
 [[projects]]
   digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
@@ -434,6 +435,14 @@
   version = "v1.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:f18a925f1b895e2c25821c52620aadaf1d3167888457a27a1c8680e4ef88e150"
+  name = "gitlab.com/StepanTita/kit"
+  packages = ["pgdb"]
+  pruneopts = "UT"
+  revision = "70717c8604357ede7894a129d30d6559381edf87"
+
+[[projects]]
   digest = "1:4db50c1955d2ae5e1b432afd7342ea030bd26228560eaeffb78c8ae633c5c0a5"
   name = "gitlab.com/distributed_lab/ape"
   packages = [
@@ -453,12 +462,12 @@
   revision = "cbfb465258955230864e0a76aba0ff2738000782"
 
 [[projects]]
-  digest = "1:9f2e5773f3db6a054064e5954ecde778e40fdf46d65291343aa62cd960be9e71"
+  digest = "1:dd08a3819dd8ddd8e6f76b89dc1b9bf26027f918c226eb91b8c0e7ae89d13214"
   name = "gitlab.com/distributed_lab/figure"
   packages = ["."]
   pruneopts = "UT"
-  revision = "051cfa07db4c210b6eccc26ba4294481cf5f5c5e"
-  version = "v2.0.0"
+  revision = "890e03e8bfd26b2e3cb80cd5d95d4723ef10e0e2"
+  version = "v2.1.0"
 
 [[projects]]
   digest = "1:71c54bb75cb44ac1e70eba2cd50e8f21588cf80359cca90689e0e11a9e5e7aab"
@@ -648,6 +657,7 @@
   analyzer-version = 1
   input-imports = [
     "bitbucket.org/ww/goautoneg",
+    "github.com/Masterminds/squirrel",
     "github.com/asaskevich/govalidator",
     "github.com/cheekybits/genny/generic",
     "github.com/evalphobia/logrus_sentry",
@@ -664,7 +674,6 @@
     "github.com/lann/squirrel",
     "github.com/lib/pq",
     "github.com/magiconair/properties/assert",
-    "github.com/masterminds/squirrel",
     "github.com/patrickmn/go-cache",
     "github.com/pkg/errors",
     "github.com/rcrowley/go-metrics",
@@ -680,6 +689,7 @@
     "github.com/zenazn/goji/web",
     "github.com/zenazn/goji/web/middleware",
     "github.com/zenazn/goji/web/mutil",
+    "gitlab.com/StepanTita/kit/pgdb",
     "gitlab.com/distributed_lab/ape",
     "gitlab.com/distributed_lab/ape/problems",
     "gitlab.com/distributed_lab/corer",

@@ -2,12 +2,12 @@ package horizon
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/bridge"
 	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/render/hal"
@@ -43,7 +43,7 @@ type OperationIndexAction struct {
 	ReferenceFilter string
 	SinceFilter     *time.Time
 	ToFilter        *time.Time
-	PagingParams    db2.PageQuery
+	PagingParams    bridge.PageQuery
 	Records         []history.Operation
 	Participants    map[int64]*history.OperationParticipants
 	Page            hal.Page

@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
 	"net/url"
 	"strings"
@@ -13,7 +14,6 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/actions"
 	"gitlab.com/tokend/horizon/cache"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history"
@@ -130,7 +130,7 @@ func (action *Action) isAllowed(ownerOfData string) {
 // CoreQ provides access to queries that access the stellar core database.
 func (action *Action) CoreQ() core.QInterface {
 	if action.cq == nil {
-		action.cq = &core.Q{Repo: action.App.CoreRepoLogged(&action.Log.Entry)}
+		action.cq = &core.Q{Mediator: action.App.CoreRepoLogged(&action.Log.Entry)}
 	}
 	return action.cq
 }
@@ -139,7 +139,7 @@ func (action *Action) CoreQ() core.QInterface {
 // horizon's database.
 func (action *Action) HistoryQ() history.QInterface {
 	if action.hq == nil {
-		action.hq = &history.Q{Repo: action.App.HistoryRepoLogged(&action.Log.Entry)}
+		action.hq = &history.Q{Mediator: action.App.HistoryRepoLogged(&action.Log.Entry)}
 	}
 
 	return action.hq
@@ -186,12 +186,12 @@ func (action *Action) GetPagingParamsV2() (page uint64, limit uint64) {
 
 // GetPageQuery is a helper that returns a new db.PageQuery struct initialized
 // using the results from a call to GetPagingParams()
-func (action *Action) GetPageQuery() db2.PageQuery {
+func (action *Action) GetPageQuery() bridge.PageQuery {
 	if action.Err != nil {
-		return db2.PageQuery{}
+		return bridge.PageQuery{}
 	}
 
-	r, err := db2.NewPageQuery(action.GetPagingParams())
+	r, err := bridge.NewPageQuery(action.GetPagingParams())
 
 	if err != nil {
 		action.Err = err
@@ -200,12 +200,12 @@ func (action *Action) GetPageQuery() db2.PageQuery {
 	return r
 }
 
-func (action *Action) GetPageQueryV2() db2.PageQueryV2 {
+func (action *Action) GetPageQueryV2() bridge.PageQueryV2 {
 	if action.Err != nil {
-		return db2.PageQueryV2{}
+		return bridge.PageQueryV2{}
 	}
 
-	r, err := db2.NewPageQueryV2(action.GetPagingParamsV2())
+	r, err := bridge.NewPageQueryV2(action.GetPagingParamsV2())
 
 	if err != nil {
 		action.Err = err

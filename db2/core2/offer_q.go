@@ -1,19 +1,19 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // OffersQ is a helper struct to aid in configuring queries that loads offers
 type OffersQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewOffersQ - creates new instance of OffersQ with no filters
-func NewOffersQ(repo *db2.Repo) OffersQ {
+func NewOffersQ(repo *bridge.Mediator) OffersQ {
 	return OffersQ{
 		repo: repo,
 		selector: sq.Select(
@@ -91,13 +91,13 @@ func (q OffersQ) FilterByOfferID(id uint64) OffersQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q OffersQ) Page(params db2.OffsetPageParams) OffersQ {
+func (q OffersQ) Page(params bridge.OffsetPageParams) OffersQ {
 	q.selector = params.ApplyTo(q.selector, "offers.offer_id")
 	return q
 }
 
 // CursorPage - returns Q with specified limit and offset params
-func (q OffersQ) CursorPage(params db2.CursorPageParams) OffersQ {
+func (q OffersQ) CursorPage(params bridge.CursorPageParams) OffersQ {
 	q.selector = params.ApplyTo(q.selector, "offers.offer_id")
 	return q
 }
@@ -111,7 +111,7 @@ func (q OffersQ) GetByOfferID(id uint64) (*Offer, error) {
 // WithBaseAsset - joins base asset
 func (q OffersQ) WithBaseAsset() OffersQ {
 	q.selector = q.selector.
-		Columns(db2.GetColumnsForJoin(assetColumns, "base_assets")...).
+		Columns(bridge.GetColumnsForJoin(assetColumns, "base_assets")...).
 		LeftJoin("asset base_assets ON offers.base_asset_code = base_assets.code")
 
 	return q
@@ -120,7 +120,7 @@ func (q OffersQ) WithBaseAsset() OffersQ {
 // WithQuoteAsset - joins quote asset
 func (q OffersQ) WithQuoteAsset() OffersQ {
 	q.selector = q.selector.
-		Columns(db2.GetColumnsForJoin(assetColumns, "quote_assets")...).
+		Columns(bridge.GetColumnsForJoin(assetColumns, "quote_assets")...).
 		LeftJoin("asset quote_assets ON offers.quote_asset_code = quote_assets.code")
 
 	return q

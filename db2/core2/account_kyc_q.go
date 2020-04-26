@@ -3,18 +3,18 @@ package core2
 import (
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // AccountsKycQ is a helper struct to aid in configuring queries that loads
 // account structs.
 type AccountsKycQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewAccountsKYCQ - creates new instance of AccountsKycQ
-func NewAccountsKycQ(repo *db2.Repo) AccountsKycQ {
+func NewAccountsKycQ(repo *bridge.Mediator) AccountsKycQ {
 	return AccountsKycQ{
 		repo: repo,
 		selector: sq.Select("kyc.accountid",

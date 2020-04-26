@@ -1,14 +1,14 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"fmt"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/sqx"
 )
 
@@ -34,7 +34,7 @@ type SalesQ interface {
 	OrderById(order string) SalesQ
 	// OrderByPopularity is merge with quantity of the
 	// unique investors for each sale, and sort sales by quantity.
-	OrderByPopularity(values db2.OrderBooksInvestors) SalesQ
+	OrderByPopularity(values bridge.OrderBooksInvestors) SalesQ
 	// Insert - inserts new sale
 	Insert(sale Sale) error
 	// Update - updates existing sale
@@ -48,7 +48,7 @@ type SalesQ interface {
 	// Promotions - filters promotions only
 	Promotions() SalesQ
 	// PageV2 - (limit/offset)-based paging params
-	PageV2(page db2.PageQueryV2) SalesQ
+	PageV2(page bridge.PageQueryV2) SalesQ
 }
 
 type saleQ struct {
@@ -168,7 +168,7 @@ func (q *saleQ) Insert(sale Sale) error {
 			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType,
 		)
 
-	_, err := q.parent.Exec(sql)
+	err := q.parent.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert sale")
 	}
@@ -194,7 +194,7 @@ func (q *saleQ) Update(sale Sale) error {
 		"sale_type":           sale.SaleType,
 	}).Where("id = ?", sale.ID)
 
-	_, err := q.parent.Exec(sql)
+	err := q.parent.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update sale", logan.F{"sale_id": sale.ID})
 	}
@@ -205,7 +205,7 @@ func (q *saleQ) Update(sale Sale) error {
 // SetState - sets state
 func (q *saleQ) SetState(saleID uint64, state SaleState) error {
 	sql := sq.Update("sale").Set("state", state).Where("id = ?", saleID)
-	_, err := q.parent.Exec(sql)
+	err := q.parent.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to set state", logan.F{"sale_id": saleID})
 	}
@@ -233,7 +233,7 @@ func (q *saleQ) Select() ([]Sale, error) {
 }
 
 // Page specifies the paging constraints for the query being built by `q`.
-func (q *saleQ) Page(page db2.PageQuery) SalesQ {
+func (q *saleQ) Page(page bridge.PageQuery) SalesQ {
 	if q.Err != nil {
 		return q
 	}
@@ -242,7 +242,7 @@ func (q *saleQ) Page(page db2.PageQuery) SalesQ {
 	return q
 }
 
-func (q *saleQ) PageV2(page db2.PageQueryV2) SalesQ {
+func (q *saleQ) PageV2(page bridge.PageQueryV2) SalesQ {
 	if q.Err != nil {
 		return q
 	}
@@ -297,7 +297,7 @@ func (q *saleQ) OrderByCurrentCap(desc bool) SalesQ {
 
 // OrderByPopularity is merge with quantity of the unique investors for each sale,
 // and sort sales by quantity.
-func (q *saleQ) OrderByPopularity(values db2.OrderBooksInvestors) SalesQ {
+func (q *saleQ) OrderByPopularity(values bridge.OrderBooksInvestors) SalesQ {
 	if q.Err != nil {
 		return q
 	}

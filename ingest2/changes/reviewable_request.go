@@ -2,12 +2,12 @@ package changes
 
 import (
 	"encoding/hex"
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	history "gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
@@ -362,7 +362,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 	}
 
 	result := history.ReviewableRequest{
-		TotalOrderID: db2.TotalOrderID{
+		TotalOrderID: bridge.TotalOrderID{
 			ID: int64(request.RequestId),
 		},
 		Requestor:    request.Requestor.Address(),
@@ -386,7 +386,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}
 
-	// we use key "data" for compatibility with db2.Details
+	// we use key "data" for compatibility with bridge.Details
 	// the value for the key "data" is a slice of map[string]interface{}
 	result.ExternalDetails = map[string]interface{}{
 		"data": externalDetails,

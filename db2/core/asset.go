@@ -2,10 +2,10 @@ package core
 
 import (
 	"encoding/json"
+	"gitlab.com/tokend/horizon/bridge"
 	"math"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 const maximumTrailingDigits int32 = 6
@@ -25,8 +25,8 @@ type Asset struct {
 	Type                 uint64 `db:"type"`
 }
 
-func (a Asset) GetDetails() (db2.Details, error) {
-	var result db2.Details
+func (a Asset) GetDetails() (bridge.Details, error) {
+	var result bridge.Details
 	err := json.Unmarshal(a.Details, &result)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal asset details")

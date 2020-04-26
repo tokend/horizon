@@ -22,7 +22,7 @@ func (ingest *Ingestion) UpdateOfferDetails(newOfferDetails map[string]interface
 			"state":   stateToSet,
 		}).Where("type = ? AND details->>'offer_id' = ?", xdr.OperationTypeManageOffer, newOfferDetails["offer_id"])
 
-	_, err = ingest.DB.Exec(sql)
+	err = ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update history_operations")
 	}
@@ -35,7 +35,7 @@ func (ingest *Ingestion) UpdateOfferState(offerID, state uint64) error {
 		Set("state", state).
 		Where("type = ? AND details->>'offer_id' = ?", xdr.OperationTypeManageOffer, offerID)
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update history_operations")
 	}
@@ -51,7 +51,7 @@ func (ingest *Ingestion) UpdateOrderBookState(orderBookID, state uint64, ignoreC
 		sql = sql.Where("state <> ?", history.OperationStateCanceled)
 	}
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update history_operations")
 	}
@@ -64,7 +64,7 @@ func (ingest *Ingestion) UpdateReviewableRequestState(requestId, state uint64) e
 		Set("state", state).
 		Where("identifier = ?", requestId)
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update review request state in history_operations", logan.F{
 			"request_id": requestId,

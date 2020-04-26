@@ -1,15 +1,15 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"time"
 
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // Represents Reviewable request
 type ReviewableRequest struct {
-	db2.TotalOrderID
+	bridge.TotalOrderID
 	Requestor       string                    `db:"requestor"`
 	Reviewer        string                    `db:"reviewer"`
 	Reference       *string                   `db:"reference"`
@@ -22,5 +22,5 @@ type ReviewableRequest struct {
 	Details         ReviewableRequestDetails  `db:"details"`
 	AllTasks        uint32                    `db:"all_tasks"`
 	PendingTasks    uint32                    `db:"pending_tasks"`
-	ExternalDetails db2.Details               `db:"external_details"`
+	ExternalDetails bridge.Details            `db:"external_details"`
 }

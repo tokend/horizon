@@ -1,20 +1,20 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // AccountRoleQ is a helper struct to aid in configuring queries that loads
 // accountRole structs.
 type AccountRoleQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewAccountRoleQ - creates new instance of AccountRoleQ
-func NewAccountRoleQ(repo *db2.Repo) AccountRoleQ {
+func NewAccountRoleQ(repo *bridge.Mediator) AccountRoleQ {
 	return AccountRoleQ{
 		repo: repo,
 		selector: sq.Select("ar.id",
@@ -30,7 +30,7 @@ func (q AccountRoleQ) FilterByID(id uint64) AccountRoleQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AccountRoleQ) Page(params db2.OffsetPageParams) AccountRoleQ {
+func (q AccountRoleQ) Page(params bridge.OffsetPageParams) AccountRoleQ {
 	q.selector = params.ApplyTo(q.selector, "ar.id")
 	return q
 }

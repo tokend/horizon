@@ -1,20 +1,20 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // VotesQ is a helper struct to aid in configuring queries that loads
 // poll structures.
 type VotesQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewVotesQ - creates new instance of VotesQ
-func NewVotesQ(repo *db2.Repo) VotesQ {
+func NewVotesQ(repo *bridge.Mediator) VotesQ {
 	return VotesQ{
 		repo: repo,
 		selector: sq.Select(
@@ -39,7 +39,7 @@ func (q VotesQ) FilterByPollID(pollID int64) VotesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q VotesQ) Page(params db2.CursorPageParams) VotesQ {
+func (q VotesQ) Page(params bridge.CursorPageParams) VotesQ {
 	q.selector = params.ApplyTo(q.selector, "v.id")
 	return q
 }

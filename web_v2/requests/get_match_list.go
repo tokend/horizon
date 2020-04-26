@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
 )
 
@@ -26,13 +26,13 @@ type GetMatchList struct {
 		QuoteAsset string `fig:"quote_asset,required"`
 	}
 
-	PageParams *db2.CursorPageParams
+	PageParams *bridge.CursorPageParams
 }
 
 // NewGetMatchList - returns new instance of GetMatchList
 func NewGetMatchList(r *http.Request) (*GetMatchList, error) {
 	b, err := newBase(r, baseOpts{
-		supportedFilters:  filterTypeMatchListAll,
+		supportedFilters: filterTypeMatchListAll,
 	})
 	if err != nil {
 		return nil, err

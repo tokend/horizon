@@ -1,19 +1,19 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 // AssetPairsQ is a helper struct to aid in configuring queries that loads asset pairs
 type AssetPairsQ struct {
-	repo     *db2.Repo
+	repo     *bridge.Mediator
 	selector sq.SelectBuilder
 }
 
 // NewAssetPairsQ - creates new instance of AssetPairsQ with no filters
-func NewAssetPairsQ(repo *db2.Repo) AssetPairsQ {
+func NewAssetPairsQ(repo *bridge.Mediator) AssetPairsQ {
 	return AssetPairsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -70,7 +70,7 @@ func (q AssetPairsQ) GetByBaseAndQuote(base, quote string) (*AssetPair, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AssetPairsQ) Page(params db2.OffsetPageParams) AssetPairsQ {
+func (q AssetPairsQ) Page(params bridge.OffsetPageParams) AssetPairsQ {
 	q.selector = params.ApplyTo(q.selector, "asset_pairs.base", "asset_pairs.quote")
 	return q
 }
@@ -78,7 +78,7 @@ func (q AssetPairsQ) Page(params db2.OffsetPageParams) AssetPairsQ {
 // WithBaseAsset - joins base asset
 func (q AssetPairsQ) WithBaseAsset() AssetPairsQ {
 	q.selector = q.selector.
-		Columns(db2.GetColumnsForJoin(assetColumns, "base_assets")...).
+		Columns(bridge.GetColumnsForJoin(assetColumns, "base_assets")...).
 		LeftJoin("asset base_assets ON asset_pairs.base = base_assets.code")
 
 	return q
@@ -87,7 +87,7 @@ func (q AssetPairsQ) WithBaseAsset() AssetPairsQ {
 // WithQuoteAsset - joins quote asset
 func (q AssetPairsQ) WithQuoteAsset() AssetPairsQ {
 	q.selector = q.selector.
-		Columns(db2.GetColumnsForJoin(assetColumns, "quote_assets")...).
+		Columns(bridge.GetColumnsForJoin(assetColumns, "quote_assets")...).
 		LeftJoin("asset quote_assets ON asset_pairs.quote = quote_assets.code")
 
 	return q

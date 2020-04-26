@@ -1,8 +1,8 @@
 package history
 
 import (
-	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/db2"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/tokend/horizon/bridge"
 )
 
 var selectBalance = sq.Select("hb.*").From("history_balances hb")
@@ -16,7 +16,7 @@ type BalancesQ struct {
 type BalancesQI interface {
 	ForAccount(aid string) BalancesQI
 	ForAsset(asset string) BalancesQI
-	Page(page db2.PageQuery) BalancesQI
+	Page(page bridge.PageQuery) BalancesQI
 	Select(dest interface{}) error
 }
 
@@ -52,7 +52,7 @@ func (q *BalancesQ) ForAsset(asset string) BalancesQI {
 	return q
 }
 
-func (q *BalancesQ) Page(page db2.PageQuery) BalancesQI {
+func (q *BalancesQ) Page(page bridge.PageQuery) BalancesQI {
 	if q.Err != nil {
 		return q
 	}

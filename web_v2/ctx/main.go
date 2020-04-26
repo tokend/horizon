@@ -1,6 +1,7 @@
 package ctx
 
 import (
+	"gitlab.com/tokend/horizon/bridge"
 	"net/http"
 
 	"gitlab.com/tokend/horizon/config"
@@ -12,7 +13,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/go/doorman"
 	"gitlab.com/tokend/horizon/corer"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 type ctxKey int
@@ -38,32 +38,32 @@ func SetLog(ctx context.Context, value *logan.Entry) context.Context {
 }
 
 // CoreRepo - returns new copy of repo with connection to core DB
-func CoreRepo(r *http.Request) *db2.Repo {
+func CoreRepo(r *http.Request) *bridge.Mediator {
 	return getRepo(r, keyCoreRepo)
 }
 
 // SetCoreRepo - sets core repo which be used as source for CoreRepo
-func SetCoreRepo(repo *db2.Repo) func(context.Context) context.Context {
+func SetCoreRepo(repo *bridge.Mediator) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, keyCoreRepo, repo)
 	}
 }
 
 // HistoryRepo - returns new copy of repo with connection to hisotry DB
-func HistoryRepo(r *http.Request) *db2.Repo {
+func HistoryRepo(r *http.Request) *bridge.Mediator {
 	return getRepo(r, keyHistoryRepo)
 }
 
 // SetHistoryRepo - sets history repo which be used as source for HistoryRepo
-func SetHistoryRepo(repo *db2.Repo) func(context.Context) context.Context {
+func SetHistoryRepo(repo *bridge.Mediator) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, keyHistoryRepo, repo)
 	}
 }
 
-func getRepo(r *http.Request, key ctxKey) *db2.Repo {
-	repo := r.Context().Value(key).(*db2.Repo)
-	return &db2.Repo{
+func getRepo(r *http.Request, key ctxKey) *bridge.Mediator {
+	repo := r.Context().Value(key).(*bridge.Mediator)
+	return &bridge.Mediator{
 		DB:  repo.DB,
 		Log: Log(r),
 	}
