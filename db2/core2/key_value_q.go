@@ -2,15 +2,20 @@ package core2
 
 import (
 	"github.com/Masterminds/squirrel"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type KeyValueQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector squirrel.SelectBuilder
 }
 
-func NewKeyValueQ(repo *bridge.Mediator) *KeyValueQ {
+func (q *KeyValueQ) NoRows(err error) bool {
+	return false
+}
+
+func NewKeyValueQ(repo *pgdb.DB) *KeyValueQ {
 	return &KeyValueQ{
 		repo,
 		squirrel.Select("key", "value").From("key_value_entry"),
@@ -22,7 +27,7 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 	stmt := q.selector.Where("key = ?", key)
 	err := q.repo.Get(&result, stmt)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 
@@ -32,7 +37,7 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 	return &result, nil
 }
 
-func (q *KeyValueQ) Page(params *bridge.OffsetPageParams) *KeyValueQ {
+func (q *KeyValueQ) Page(params *db2.OffsetPageParams) *KeyValueQ {
 	q.selector = params.ApplyTo(q.selector, "key")
 	return q
 }

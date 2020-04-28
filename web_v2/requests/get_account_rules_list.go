@@ -1,14 +1,14 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
 //GetAccountRuleList - represents params to be specified for Get AccountRules handler
 type GetAccountRuleList struct {
 	*base
-	PageParams *bridge.OffsetPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetAccountRuleList returns the new instance of GetAccountRuleList request

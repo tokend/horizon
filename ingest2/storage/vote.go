@@ -2,19 +2,19 @@ package storage
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // Vote is helper struct to operate with `votes`
 type Vote struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 }
 
 // NewVote - creates new instance of the `Vote`
-func NewVote(repo *bridge.Mediator) *Vote {
+func NewVote(repo *pgdb.DB) *Vote {
 	return &Vote{
 		repo: repo,
 	}

@@ -2,18 +2,23 @@ package core2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type LimitsQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *LimitsQ) NoRows(err error) bool {
+	return false
+}
+
 // NewLimitsQ - default constructor for LimitsQ which
-// creates LimitsQ with given bridge.Mediator and default selector
-func NewLimitsQ(repo *bridge.Mediator) LimitsQ {
+// creates LimitsQ with given pgdb.DB and default selector
+func NewLimitsQ(repo *pgdb.DB) LimitsQ {
 	return LimitsQ{
 		repo: repo,
 		selector: sq.
@@ -50,7 +55,7 @@ func (q LimitsQ) General() LimitsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q LimitsQ) Page(params bridge.OffsetPageParams) LimitsQ {
+func (q LimitsQ) Page(params db2.OffsetPageParams) LimitsQ {
 	q.selector = params.ApplyTo(q.selector, "limits.id")
 	return q
 }
@@ -73,7 +78,7 @@ func (q LimitsQ) Select() ([]Limits, error) {
 	var result []Limits
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

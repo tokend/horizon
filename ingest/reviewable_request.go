@@ -3,7 +3,7 @@ package ingest
 import (
 	"encoding/hex"
 	"encoding/json"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"gitlab.com/tokend/regources"
@@ -88,7 +88,7 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTi
 	}
 
 	result := history.ReviewableRequest{
-		TotalOrderID: bridge.TotalOrderID{
+		TotalOrderID: db2.TotalOrderID{
 			ID: int64(request.RequestId),
 		},
 		Requestor:    request.Requestor.Address(),

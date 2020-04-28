@@ -2,7 +2,7 @@ package history2
 
 import (
 	"database/sql/driver"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -40,7 +40,7 @@ type SaleQuoteAssets struct {
 
 //Value - implements db driver method for auto marshal
 func (r SaleQuoteAssets) Value() (driver.Value, error) {
-	result, err := bridge.DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal quote assets")
 	}
@@ -50,7 +50,7 @@ func (r SaleQuoteAssets) Value() (driver.Value, error) {
 
 //Scan - implements db driver method for auto unmarshal
 func (r *SaleQuoteAssets) Scan(src interface{}) error {
-	err := bridge.DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan quote assets")
 	}

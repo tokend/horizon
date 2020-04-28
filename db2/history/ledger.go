@@ -1,7 +1,7 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"github.com/guregu/null"
@@ -9,7 +9,7 @@ import (
 
 // Ledger is a row of data from the `history_ledgers` table
 type Ledger struct {
-	bridge.TotalOrderID
+	db2.TotalOrderID
 	Sequence           int32       `db:"sequence"`
 	ImporterVersion    int32       `db:"importer_version"`
 	LedgerHash         string      `db:"ledger_hash"`

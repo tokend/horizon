@@ -2,7 +2,7 @@ package ingest
 
 import (
 	"encoding/json"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -129,7 +129,7 @@ func convertContract(rawContract xdr.ContractEntry) history.Contract {
 	}
 
 	return history.Contract{
-		TotalOrderID: bridge.TotalOrderID{
+		TotalOrderID: db2.TotalOrderID{
 			ID: int64(rawContract.ContractId),
 		},
 		Contractor:      rawContract.Contractor.Address(),

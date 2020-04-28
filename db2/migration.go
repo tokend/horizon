@@ -1,4 +1,4 @@
-package bridge
+package db2
 
 type MigrateDir string
 

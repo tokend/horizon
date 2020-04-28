@@ -2,19 +2,24 @@ package history2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // TransactionsQ is a helper struct to aid in configuring queries that loads
 // transactions structures.
 type TransactionsQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *TransactionsQ) NoRows(err error) bool {
+	return false
+}
+
 // NewTransactionsQ - creates new instance of TransactionsQ
-func NewTransactionsQ(repo *bridge.Mediator) TransactionsQ {
+func NewTransactionsQ(repo *pgdb.DB) TransactionsQ {
 	return TransactionsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -69,7 +74,7 @@ func (q TransactionsQ) GetByID(id uint64) (*Transaction, error) {
 }
 
 // Page - returns Q with specified limit and cursor params
-func (q TransactionsQ) Page(params bridge.CursorPageParams) TransactionsQ {
+func (q TransactionsQ) Page(params db2.CursorPageParams) TransactionsQ {
 	q.selector = params.ApplyTo(q.selector, "transactions.id")
 	return q
 }
@@ -81,7 +86,7 @@ func (q TransactionsQ) Get() (*Transaction, error) {
 	var result Transaction
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

@@ -2,18 +2,23 @@ package core2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // OffersQ is a helper struct to aid in configuring queries that loads offers
 type OffersQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *OffersQ) NoRows(err error) bool {
+	return false
+}
+
 // NewOffersQ - creates new instance of OffersQ with no filters
-func NewOffersQ(repo *bridge.Mediator) OffersQ {
+func NewOffersQ(repo *pgdb.DB) OffersQ {
 	return OffersQ{
 		repo: repo,
 		selector: sq.Select(
@@ -91,13 +96,13 @@ func (q OffersQ) FilterByOfferID(id uint64) OffersQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q OffersQ) Page(params bridge.OffsetPageParams) OffersQ {
+func (q OffersQ) Page(params db2.OffsetPageParams) OffersQ {
 	q.selector = params.ApplyTo(q.selector, "offers.offer_id")
 	return q
 }
 
 // CursorPage - returns Q with specified limit and offset params
-func (q OffersQ) CursorPage(params bridge.CursorPageParams) OffersQ {
+func (q OffersQ) CursorPage(params db2.CursorPageParams) OffersQ {
 	q.selector = params.ApplyTo(q.selector, "offers.offer_id")
 	return q
 }
@@ -111,7 +116,7 @@ func (q OffersQ) GetByOfferID(id uint64) (*Offer, error) {
 // WithBaseAsset - joins base asset
 func (q OffersQ) WithBaseAsset() OffersQ {
 	q.selector = q.selector.
-		Columns(bridge.GetColumnsForJoin(assetColumns, "base_assets")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "base_assets")...).
 		LeftJoin("asset base_assets ON offers.base_asset_code = base_assets.code")
 
 	return q
@@ -120,7 +125,7 @@ func (q OffersQ) WithBaseAsset() OffersQ {
 // WithQuoteAsset - joins quote asset
 func (q OffersQ) WithQuoteAsset() OffersQ {
 	q.selector = q.selector.
-		Columns(bridge.GetColumnsForJoin(assetColumns, "quote_assets")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "quote_assets")...).
 		LeftJoin("asset quote_assets ON offers.quote_asset_code = quote_assets.code")
 
 	return q
@@ -133,7 +138,7 @@ func (q OffersQ) Get() (*Offer, error) {
 	var result Offer
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 
@@ -148,7 +153,7 @@ func (q OffersQ) Select() ([]Offer, error) {
 	var result []Offer
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 
@@ -167,7 +172,7 @@ func (q OffersQ) SelectID() ([]int64, error) {
 	var result []int64
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

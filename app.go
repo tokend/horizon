@@ -2,7 +2,7 @@ package horizon
 
 import (
 	"fmt"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 	"runtime"
 	"sync"
@@ -117,7 +117,7 @@ func (a *App) Close() {
 	a.ticks.Stop()
 
 	a.historyQ.GetRepo().RawDB().Close()
-	a.coreQ.GetRepo().DB.RawDB().Close()
+	a.coreQ.GetRepo().RawDB().Close()
 
 }
 
@@ -134,19 +134,13 @@ func (a *App) HistoryQ() history.QInterface {
 }
 
 // CoreRepoLogged returns a new repo that loads data from the core database.
-func (a *App) CoreRepoLogged(log *logan.Entry) *bridge.Mediator {
-	return &bridge.Mediator{
-		DB:  a.coreQ.GetRepo().DB,
-		Log: log,
-	}
+func (a *App) CoreRepoLogged(log *logan.Entry) *pgdb.DB {
+	return a.coreQ.GetRepo().Clone()
 }
 
 // HistoryRepoLogged returns a new repo that loads data from the horizon database.
-func (a *App) HistoryRepoLogged(log *logan.Entry) *bridge.Mediator {
-	return &bridge.Mediator{
-		DB:  a.historyQ.GetRepo().DB,
-		Log: log,
-	}
+func (a *App) HistoryRepoLogged(log *logan.Entry) *pgdb.DB {
+	return a.historyQ.GetRepo().Clone()
 }
 
 // IsHistoryStale returns true if the latest history ledger is more than

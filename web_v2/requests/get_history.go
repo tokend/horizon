@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -28,7 +28,7 @@ const (
 //GetHistory - represents params to be specified for Get History handler
 type GetHistory struct {
 	*base
-	PageParams *bridge.CursorPageParams
+	PageParams *db2.CursorPageParams
 	Filters    struct {
 		Account string `fig:"account"`
 		Balance string `fig:"balance"`

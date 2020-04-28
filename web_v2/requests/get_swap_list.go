@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -34,7 +34,7 @@ type GetSwapList struct {
 
 		State int32 `json:"state"`
 	}
-	PageParams *bridge.CursorPageParams
+	PageParams *db2.CursorPageParams
 }
 
 func NewGetSwapList(r *http.Request) (*GetSwapList, error) {

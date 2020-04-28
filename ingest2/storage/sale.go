@@ -2,20 +2,20 @@ package storage
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 // Sale is helper struct to operate with `sales`
 type Sale struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 }
 
 // NewSale - creates new instance of the `Sale`
-func NewSale(repo *bridge.Mediator) *Sale {
+func NewSale(repo *pgdb.DB) *Sale {
 	return &Sale{
 		repo: repo,
 	}

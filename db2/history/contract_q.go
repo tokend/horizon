@@ -1,7 +1,7 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -38,7 +38,7 @@ type ContractQI interface {
 	// ByCustomerID - filters contracts by customer id
 	ByEscrowID(escrowID string) ContractQI
 	// Page - applies page params
-	Page(page bridge.PageQuery) ContractQI
+	Page(page db2.PageQuery) ContractQI
 	// Select - selects contract by specifics filters
 	Select() ([]Contract, error)
 	// ByID - get contract by contract id
@@ -114,7 +114,7 @@ func (q *ContractQ) ByCompletedState(isCompleted bool) ContractQI {
 	return q
 }
 
-func (q *ContractQ) Page(page bridge.PageQuery) ContractQI {
+func (q *ContractQ) Page(page db2.PageQuery) ContractQI {
 	if q.Err != nil {
 		return q
 	}

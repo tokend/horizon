@@ -1,7 +1,7 @@
 package ctx
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 
 	"gitlab.com/tokend/horizon/config"
@@ -38,35 +38,32 @@ func SetLog(ctx context.Context, value *logan.Entry) context.Context {
 }
 
 // CoreRepo - returns new copy of repo with connection to core DB
-func CoreRepo(r *http.Request) *bridge.Mediator {
+func CoreRepo(r *http.Request) *pgdb.DB {
 	return getRepo(r, keyCoreRepo)
 }
 
 // SetCoreRepo - sets core repo which be used as source for CoreRepo
-func SetCoreRepo(repo *bridge.Mediator) func(context.Context) context.Context {
+func SetCoreRepo(repo *pgdb.DB) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, keyCoreRepo, repo)
 	}
 }
 
 // HistoryRepo - returns new copy of repo with connection to hisotry DB
-func HistoryRepo(r *http.Request) *bridge.Mediator {
+func HistoryRepo(r *http.Request) *pgdb.DB {
 	return getRepo(r, keyHistoryRepo)
 }
 
 // SetHistoryRepo - sets history repo which be used as source for HistoryRepo
-func SetHistoryRepo(repo *bridge.Mediator) func(context.Context) context.Context {
+func SetHistoryRepo(repo *pgdb.DB) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, keyHistoryRepo, repo)
 	}
 }
 
-func getRepo(r *http.Request, key ctxKey) *bridge.Mediator {
-	repo := r.Context().Value(key).(*bridge.Mediator)
-	return &bridge.Mediator{
-		DB:  repo.DB,
-		Log: Log(r),
-	}
+func getRepo(r *http.Request, key ctxKey) *pgdb.DB {
+	repo := r.Context().Value(key).(*pgdb.DB)
+	return repo.Clone()
 }
 
 //Doorman - perform signature check

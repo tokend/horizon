@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 	"time"
 )
@@ -57,7 +57,7 @@ type GetPollList struct {
 		PermissionType   uint32     `json:"permission_type"`
 		VoteConfirmation bool       `json:"vote_confirmation"`
 	}
-	PageParams *bridge.CursorPageParams
+	PageParams *db2.CursorPageParams
 }
 
 func NewGetPollList(r *http.Request) (*GetPollList, error) {

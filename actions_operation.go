@@ -2,7 +2,7 @@ package horizon
 
 import (
 	"fmt"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"strconv"
 	"time"
 
@@ -43,7 +43,7 @@ type OperationIndexAction struct {
 	ReferenceFilter string
 	SinceFilter     *time.Time
 	ToFilter        *time.Time
-	PagingParams    bridge.PageQuery
+	PagingParams    db2.PageQuery
 	Records         []history.Operation
 	Participants    map[int64]*history.OperationParticipants
 	Page            hal.Page

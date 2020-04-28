@@ -4,7 +4,7 @@
 package ingest
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"sync"
 	"time"
 
@@ -36,7 +36,7 @@ type Cursor struct {
 	// attempt to be ingested in this session.
 	LastLedger int32
 	// DB is the stellar-core db that data is ingested from.
-	CoreDB *bridge.Mediator
+	CoreDB *pgdb.DB
 
 	Metrics *IngesterMetrics
 
@@ -47,7 +47,7 @@ type Cursor struct {
 }
 
 func (c *Cursor) CoreQ() core.QInterface {
-	return &core.Q{Mediator: c.CoreDB}
+	return &core.Q{DB: c.CoreDB}
 }
 
 func (c *Cursor) LedgerCloseTime() time.Time {
@@ -67,12 +67,12 @@ type LedgerBundle struct {
 type System struct {
 	// HorizonDB is the connection to the horizon database that ingested data will
 	// be written to.
-	HorizonDB *bridge.Mediator
+	HorizonDB *pgdb.DB
 
 	// CoreDB is the stellar-core db that data is ingested from.
-	CoreDB *bridge.Mediator
+	CoreDB *pgdb.DB
 
-	APIDB *bridge.Mediator
+	APIDB *pgdb.DB
 
 	CoreConnector *corer.Connector
 
@@ -124,7 +124,7 @@ type Session struct {
 
 // New initializes the ingester, causing it to begin polling the stellar-core
 // database for now ledgers and ingesting data into the horizon database.
-func New(coreConnector *corer.Connector, coreInfo *corer.Info, core, horizon *bridge.Mediator) *System {
+func New(coreConnector *corer.Connector, coreInfo *corer.Info, core, horizon *pgdb.DB) *System {
 	i := &System{
 		CoreInfo:      coreInfo,
 		HorizonDB:     horizon,

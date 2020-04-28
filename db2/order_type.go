@@ -1,4 +1,4 @@
-package bridge
+package db2
 
 import (
 	"gitlab.com/distributed_lab/logan/v3"

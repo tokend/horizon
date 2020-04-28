@@ -2,17 +2,17 @@ package storage
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 type AssetPair struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 }
 
-func NewAssetPair(repo *bridge.Mediator) *AssetPair {
+func NewAssetPair(repo *pgdb.DB) *AssetPair {
 	return &AssetPair{
 		repo: repo,
 	}

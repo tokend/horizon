@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"log"
 	"os"
 	"strconv"
@@ -13,7 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history/schema"
 )
 
-type Migrator func(*sql.DB, bridge.MigrateDir, int) (int, error)
+type Migrator func(*sql.DB, db2.MigrateDir, int) (int, error)
 
 func migrateDB(cmd *cobra.Command, args []string, dbConnectionURL string, migrator Migrator) {
 
@@ -41,7 +41,7 @@ func migrateDB(cmd *cobra.Command, args []string, dbConnectionURL string, migrat
 }
 
 func migrate(direction string, count int, migrator Migrator, dbConnectionURL string) {
-	dir := bridge.MigrateDir(direction)
+	dir := db2.MigrateDir(direction)
 
 	db, err := sql.Open("postgres", dbConnectionURL)
 	if err != nil {

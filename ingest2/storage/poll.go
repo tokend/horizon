@@ -3,21 +3,21 @@ package storage
 import (
 	"encoding/json"
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 // CreatePoll is helper struct to operate with `polls`
 type Poll struct {
-	repo    *bridge.Mediator
+	repo    *pgdb.DB
 	updater sq.UpdateBuilder
 }
 
 // NewPoll - creates new instance of the `CreatePoll`
-func NewPoll(repo *bridge.Mediator) *Poll {
+func NewPoll(repo *pgdb.DB) *Poll {
 	return &Poll{
 		repo:    repo,
 		updater: sq.Update("polls"),

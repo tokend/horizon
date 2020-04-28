@@ -2,7 +2,7 @@ package core
 
 import (
 	sq "github.com/Masterminds/squirrel"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 const (
@@ -77,7 +77,7 @@ func (q *OfferQ) IsBuy(isBuy bool) *OfferQ {
 }
 
 // Page specifies the paging constraints for the query being built by `q`.
-func (q *OfferQ) Page(page bridge.PageQuery) *OfferQ {
+func (q *OfferQ) Page(page db2.PageQuery) *OfferQ {
 	if q.Err != nil {
 		return q
 	}

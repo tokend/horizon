@@ -2,10 +2,10 @@ package ingest2
 
 import (
 	"context"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
-	"gitlab.com/tokend/horizon/bridge"
 	core "gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/log"
 )
@@ -16,7 +16,7 @@ type corer interface {
 }
 
 type dbTxManager interface {
-	Transaction(transactionFunc bridge.TransactionFunc) error
+	Transaction(transactionFunc pgdb.TransactionFunc) error
 }
 
 //Handler - handles ledger and transactions applied for this ledger

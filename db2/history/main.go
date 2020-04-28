@@ -3,7 +3,8 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"database/sql"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 )
 
@@ -14,20 +15,24 @@ type EffectType int
 // Q is a helper struct on which to hang common queries against a history
 // portion of the horizon database.
 type Q struct {
-	*bridge.Mediator
+	*pgdb.DB
 }
 
-func (q *Q) GetRepo() *bridge.Mediator {
-	return q.Mediator
+func (q *Q) GetRepo() *pgdb.DB {
+	return q.DB
+}
+
+func (q *Q) NoRows(err error) bool {
+	return err == sql.ErrNoRows
 }
 
 type QInterface interface {
-	GetRepo() *bridge.Mediator
-	NoRows(err error) bool
+	GetRepo() *pgdb.DB
 
 	ElderLedger(dest interface{}) error
 	LatestLedger(dest interface{}) error
 	OldestOutdatedLedgers(dest interface{}, currentVersion int) error
+	NoRows(err error) bool
 
 	// Accounts
 	Accounts() AccountsQI

@@ -9,10 +9,10 @@ import (
 
 func (ingest *Ingestion) TryIngestBalance(
 	balanceID, asset, accountID string) (bool, error) {
-	result, err := ingest.DB.ExecRawWithResult(`
+	result, err := ingest.DB.ExecWithResult(squirrel.Expr(`
 		insert into history_balances (balance_id, asset, account_id)
 		values ($1, $2, $3) on conflict do nothing`,
-		balanceID, asset, accountID)
+		balanceID, asset, accountID))
 	if err != nil {
 		return false, err
 	}

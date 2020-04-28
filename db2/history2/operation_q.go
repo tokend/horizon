@@ -2,19 +2,24 @@ package history2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 var operationColumns = []string{"id", "tx_id", "type", "details",
 	"ledger_close_time", "source"}
 
 type OperationQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
-func NewOperationQ(repo *bridge.Mediator) OperationQ {
+func (q *OperationQ) NoRows(err error) bool {
+	return false
+}
+
+func NewOperationQ(repo *pgdb.DB) OperationQ {
 	return OperationQ{
 		repo: repo,
 		selector: sq.Select(
@@ -39,7 +44,7 @@ func (q OperationQ) FilterByOperationsTypes(types []int) OperationQ {
 }
 
 // Page - apply paging params to the query
-func (q OperationQ) Page(pageParams bridge.CursorPageParams) OperationQ {
+func (q OperationQ) Page(pageParams db2.CursorPageParams) OperationQ {
 	q.selector = pageParams.ApplyTo(q.selector, "op.id")
 	return q
 }
@@ -50,7 +55,7 @@ func (q OperationQ) Select() ([]Operation, error) {
 	var result []Operation
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 
@@ -67,7 +72,7 @@ func (q OperationQ) Get() (*Operation, error) {
 	var result Operation
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

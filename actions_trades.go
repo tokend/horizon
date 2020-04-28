@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -12,7 +12,7 @@ type TradesAction struct {
 	Action
 	BaseAsset    string
 	QuoteAsset   string
-	PagingParams bridge.PageQuery
+	PagingParams db2.PageQuery
 	OrderBookID  *uint64
 
 	Trades []history.Trades

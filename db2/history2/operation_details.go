@@ -2,7 +2,7 @@ package history2
 
 import (
 	"database/sql/driver"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -64,7 +64,7 @@ type OperationDetails struct {
 
 //Value - converts operation details into jsonb
 func (r OperationDetails) Value() (driver.Value, error) {
-	result, err := bridge.DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal operation details")
 	}
@@ -74,7 +74,7 @@ func (r OperationDetails) Value() (driver.Value, error) {
 
 //Scan - converts jsonb into OperationDetails
 func (r *OperationDetails) Scan(src interface{}) error {
-	err := bridge.DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan operation details")
 	}

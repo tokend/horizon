@@ -4,8 +4,7 @@ package participants
 
 import (
 	"fmt"
-	"gitlab.com/tokend/horizon/bridge"
-
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core"
@@ -21,7 +20,7 @@ type Participant struct {
 }
 
 func ForOperation(
-	DB *bridge.Mediator,
+	DB *pgdb.DB,
 	tx *xdr.Transaction,
 	op *xdr.Operation,
 	opResult xdr.OperationResultTr,
@@ -269,7 +268,7 @@ func addMatchParticipants(participants []Participant, offerSourceID xdr.AccountI
 // ForTransaction returns all the participating accounts from the provided
 // transaction.
 func ForTransaction(
-	DB *bridge.Mediator,
+	DB *pgdb.DB,
 	tx *xdr.Transaction,
 	opResults []xdr.OperationResult,
 	meta *xdr.TransactionMeta,

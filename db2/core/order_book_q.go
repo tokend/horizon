@@ -2,7 +2,7 @@ package core
 
 import (
 	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type OrderBookQ struct {
@@ -67,8 +67,8 @@ func (q *OrderBookQ) Select(dest interface{}) error {
 }
 
 // InvestorsCount returns quantity of the unique investors for each order book.
-func (q *OrderBookQ) InvestorsCount() (bridge.OrderBooksInvestors, error) {
-	dest := make([]bridge.OrderBookInvestors, 0)
+func (q *OrderBookQ) InvestorsCount() (db2.OrderBooksInvestors, error) {
+	dest := make([]db2.OrderBookInvestors, 0)
 
 	query := sq.Select("o.order_book_id, count(*) as quantity").
 		From("(SELECT DISTINCT owner_id, order_book_id from offer) AS o").

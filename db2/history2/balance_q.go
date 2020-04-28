@@ -2,18 +2,22 @@ package history2
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 )
 
 // BalancesQ is a helper struct to aid in configuring queries that loads balances
 type BalancesQ struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
+}
+
+func (q *BalancesQ) NoRows(err error) bool {
+	return false
 }
 
 // NewBalancesQ - creates new instance of BalanceQ
-func NewBalancesQ(repo *bridge.Mediator) BalancesQ {
+func NewBalancesQ(repo *pgdb.DB) BalancesQ {
 	return BalancesQ{
 		repo: repo,
 	}
@@ -26,7 +30,7 @@ func (q BalancesQ) GetByAddress(address string) (*Balance, error) {
 	err := q.repo.Get(&result, sq.Select(balanceColumns...).
 		From("balances balances").Where("balances.address = ?", address))
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

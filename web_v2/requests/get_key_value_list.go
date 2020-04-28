@@ -1,13 +1,13 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
 type GetKeyValueList struct {
 	*base
-	PageParams *bridge.OffsetPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 func NewGetKeyValueList(r *http.Request) (*GetKeyValueList, error) {

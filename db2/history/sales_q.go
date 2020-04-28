@@ -1,7 +1,7 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"fmt"
@@ -34,7 +34,7 @@ type SalesQ interface {
 	OrderById(order string) SalesQ
 	// OrderByPopularity is merge with quantity of the
 	// unique investors for each sale, and sort sales by quantity.
-	OrderByPopularity(values bridge.OrderBooksInvestors) SalesQ
+	OrderByPopularity(values db2.OrderBooksInvestors) SalesQ
 	// Insert - inserts new sale
 	Insert(sale Sale) error
 	// Update - updates existing sale
@@ -48,7 +48,7 @@ type SalesQ interface {
 	// Promotions - filters promotions only
 	Promotions() SalesQ
 	// PageV2 - (limit/offset)-based paging params
-	PageV2(page bridge.PageQueryV2) SalesQ
+	PageV2(page db2.PageQueryV2) SalesQ
 }
 
 type saleQ struct {
@@ -233,7 +233,7 @@ func (q *saleQ) Select() ([]Sale, error) {
 }
 
 // Page specifies the paging constraints for the query being built by `q`.
-func (q *saleQ) Page(page bridge.PageQuery) SalesQ {
+func (q *saleQ) Page(page db2.PageQuery) SalesQ {
 	if q.Err != nil {
 		return q
 	}
@@ -242,7 +242,7 @@ func (q *saleQ) Page(page bridge.PageQuery) SalesQ {
 	return q
 }
 
-func (q *saleQ) PageV2(page bridge.PageQueryV2) SalesQ {
+func (q *saleQ) PageV2(page db2.PageQueryV2) SalesQ {
 	if q.Err != nil {
 		return q
 	}
@@ -297,7 +297,7 @@ func (q *saleQ) OrderByCurrentCap(desc bool) SalesQ {
 
 // OrderByPopularity is merge with quantity of the unique investors for each sale,
 // and sort sales by quantity.
-func (q *saleQ) OrderByPopularity(values bridge.OrderBooksInvestors) SalesQ {
+func (q *saleQ) OrderByPopularity(values db2.OrderBooksInvestors) SalesQ {
 	if q.Err != nil {
 		return q
 	}

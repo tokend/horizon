@@ -15,8 +15,8 @@ import (
 
 func initSubmissionSystem(app *App) {
 	logger := &log.WithField("service", "initSubmissionSystem").Entry
-	cq := &core.Q{Mediator: app.CoreRepoLogged(logger)}
-	hq := &history.Q{Mediator: app.HistoryRepoLogged(logger)}
+	cq := &core.Q{DB: app.CoreRepoLogged(logger)}
+	hq := &history.Q{DB: app.HistoryRepoLogged(logger)}
 	coreConnector, err := corer.NewConnector(&http.Client{
 		Timeout: time.Duration(1 * time.Minute),
 	}, app.config.StellarCoreURL)

@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -36,7 +36,7 @@ type GetLimitsList struct {
 		Account     string `fig:"account"`
 		AccountRole uint64 `fig:"account_role"`
 	}
-	PageParams *bridge.OffsetPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetLimitsList returns the new instance of GetLimitsList request

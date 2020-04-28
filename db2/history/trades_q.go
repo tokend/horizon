@@ -2,12 +2,12 @@ package history
 
 import (
 	sq "github.com/Masterminds/squirrel"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 type TradesQI interface {
 	ForPair(base, quote string) TradesQI
-	Page(page bridge.PageQuery) TradesQI
+	Page(page db2.PageQuery) TradesQI
 	// ForOrderBook - filters trades by order book
 	ForOrderBook(orderBookID uint64) TradesQI
 	Select(dest interface{}) error
@@ -45,7 +45,7 @@ func (q *TradesQ) ForPair(base, quote string) TradesQI {
 	return q
 }
 
-func (q *TradesQ) Page(page bridge.PageQuery) TradesQI {
+func (q *TradesQ) Page(page db2.PageQuery) TradesQI {
 	if q.Err != nil {
 		return q
 	}

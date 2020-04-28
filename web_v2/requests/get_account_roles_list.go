@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -12,7 +12,7 @@ var includeTypeAccountRoleListAll = map[string]struct{}{
 //GetAccountRoleList - represents params to be specified for Get AccountRoles handler
 type GetAccountRoleList struct {
 	*base
-	PageParams *bridge.OffsetPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetAccountRoleList returns the new instance of GetAccountRoleList request

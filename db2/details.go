@@ -1,8 +1,9 @@
-package bridge
+package db2
 
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -12,7 +13,7 @@ import (
 type Details map[string]interface{}
 
 func (r Details) Value() (driver.Value, error) {
-	result, err := DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal details")
 	}
@@ -21,7 +22,7 @@ func (r Details) Value() (driver.Value, error) {
 }
 
 func (r *Details) Scan(src interface{}) error {
-	err := DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan details")
 	}

@@ -2,15 +2,15 @@ package storage
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 type history2MatchesToValues func(row history2.Match) []interface{}
 
-func matchesBatchInsert(repo *bridge.Mediator, rows []history2.Match, tableName string, columns []string, converterFn history2MatchesToValues) error {
+func matchesBatchInsert(repo *pgdb.DB, rows []history2.Match, tableName string, columns []string, converterFn history2MatchesToValues) error {
 	if len(rows) == 0 {
 		return nil
 	}

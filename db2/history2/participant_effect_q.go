@@ -2,18 +2,23 @@ package history2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 //ParticipantEffectsQ - helper struct to get participants from db
 type ParticipantEffectsQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *ParticipantEffectsQ) NoRows(err error) bool {
+	return false
+}
+
 //NewParticipantEffectsQ - creates new ParticipantEffectsQ
-func NewParticipantEffectsQ(repo *bridge.Mediator) ParticipantEffectsQ {
+func NewParticipantEffectsQ(repo *pgdb.DB) ParticipantEffectsQ {
 	return ParticipantEffectsQ{
 		repo: repo,
 		selector: sq.Select("effects.id", "effects.account_id", "effects.balance_id", "effects.asset_code",
@@ -23,7 +28,7 @@ func NewParticipantEffectsQ(repo *bridge.Mediator) ParticipantEffectsQ {
 
 //WithOperation - left joins operations
 func (q ParticipantEffectsQ) WithOperation() ParticipantEffectsQ {
-	q.selector = q.selector.Columns(bridge.GetColumnsForJoin(operationColumns, "operations")...).
+	q.selector = q.selector.Columns(db2.GetColumnsForJoin(operationColumns, "operations")...).
 		LeftJoin("operations operations ON effects.operation_id = operations.id")
 	return q
 }
@@ -72,7 +77,7 @@ func (q ParticipantEffectsQ) FilterByID(ids ...uint64) ParticipantEffectsQ {
 }
 
 //Page - apply paging params to the query
-func (q ParticipantEffectsQ) Page(pageParams bridge.CursorPageParams) ParticipantEffectsQ {
+func (q ParticipantEffectsQ) Page(pageParams db2.CursorPageParams) ParticipantEffectsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "effects.id")
 	return q
 }
@@ -82,7 +87,7 @@ func (q ParticipantEffectsQ) Select() ([]ParticipantEffect, error) {
 	var result []ParticipantEffect
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 
@@ -97,7 +102,7 @@ func (q ParticipantEffectsQ) Get() (*ParticipantEffect, error) {
 
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

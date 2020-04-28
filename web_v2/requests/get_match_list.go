@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -26,7 +26,7 @@ type GetMatchList struct {
 		QuoteAsset string `fig:"quote_asset,required"`
 	}
 
-	PageParams *bridge.CursorPageParams
+	PageParams *db2.CursorPageParams
 }
 
 // NewGetMatchList - returns new instance of GetMatchList

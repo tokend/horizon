@@ -2,7 +2,7 @@ package changes
 
 import (
 	"encoding/hex"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -362,7 +362,7 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 	}
 
 	result := history.ReviewableRequest{
-		TotalOrderID: bridge.TotalOrderID{
+		TotalOrderID: db2.TotalOrderID{
 			ID: int64(request.RequestId),
 		},
 		Requestor:    request.Requestor.Address(),

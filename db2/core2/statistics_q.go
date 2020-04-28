@@ -2,16 +2,16 @@ package core2
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 )
 
 type StatsQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
-func NewStatsQ(repo *bridge.Mediator) StatsQ {
+func NewStatsQ(repo *pgdb.DB) StatsQ {
 	return StatsQ{
 		repo: repo,
 		selector: sq.Select(

@@ -1,4 +1,4 @@
-package bridge
+package db2
 
 import (
 	sq "github.com/Masterminds/squirrel"

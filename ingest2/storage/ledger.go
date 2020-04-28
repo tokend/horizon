@@ -2,19 +2,19 @@ package storage
 
 import (
 	"github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 //Ledger - handles write operations on db level for ledgers
 type Ledger struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 }
 
 //NewLedger - creates new instance of ledger
-func NewLedger(repo *bridge.Mediator) *Ledger {
+func NewLedger(repo *pgdb.DB) *Ledger {
 	return &Ledger{
 		repo: repo,
 	}

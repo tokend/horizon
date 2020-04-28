@@ -3,7 +3,7 @@ package history
 import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 var selectOffers = sq.Select(
@@ -38,7 +38,7 @@ type OffersQI interface {
 	// Canceled filters offers that have been canceled by owner
 	Canceled(isCanceled bool) OffersQI
 	// Page - applies page params
-	Page(page bridge.PageQuery) OffersQI
+	Page(page db2.PageQuery) OffersQI
 	// Select - selects offers by specifics filters
 	Select() ([]Offer, error)
 	// Insert - add new offer to database
@@ -135,7 +135,7 @@ func (q *OffersQ) Canceled(isCanceled bool) OffersQI {
 	return q
 }
 
-func (q *OffersQ) Page(page bridge.PageQuery) OffersQI {
+func (q *OffersQ) Page(page db2.PageQuery) OffersQI {
 	if q.Err != nil {
 		return q
 	}

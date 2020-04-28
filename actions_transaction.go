@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -22,7 +22,7 @@ type TransactionIndexAction struct {
 	LedgerFilter  int32
 	AccountFilter string
 	BalanceFilter string
-	PagingParams  bridge.PageQuery
+	PagingParams  db2.PageQuery
 	Records       []history.Transaction
 	MetaLedger    history.Ledger
 	Page          hal.Page
@@ -84,7 +84,7 @@ func (action *TransactionIndexAction) loadParams() {
 	action.PagingParams = action.GetPageQuery()
 
 	limit := action.GetUInt64("limit")
-	if limit > bridge.MaxPageSize {
+	if limit > db2.MaxPageSize {
 		action.PagingParams.Limit = limit
 		if limit > maxTxPagSize {
 			action.PagingParams.Limit = maxTxPagSize

@@ -2,19 +2,19 @@ package storage
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // ParticipantEffect - helper struct to store `operation participants`
 type AccountSpecificRules struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 }
 
 // NewAccountSpecificRules - creates new instance of `AccountSpecificRules`
-func NewAccountSpecificRules(repo *bridge.Mediator) *AccountSpecificRules {
+func NewAccountSpecificRules(repo *pgdb.DB) *AccountSpecificRules {
 	return &AccountSpecificRules{
 		repo: repo,
 	}

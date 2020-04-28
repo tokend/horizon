@@ -3,7 +3,7 @@ package schema
 import (
 	"database/sql"
 	"errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 
 	migrate "github.com/rubenv/sql-migrate"
 )
@@ -29,13 +29,13 @@ var Migrations migrate.MigrationSource = &migrate.AssetMigrationSource{
 // - redo: migrations are first ran downard `count` times, and then are rand
 // upward back to the current version at the start of the process. If count is
 // 0, a count of 1 will be assumed.
-func Migrate(db *sql.DB, dir bridge.MigrateDir, count int) (int, error) {
+func Migrate(db *sql.DB, dir db2.MigrateDir, count int) (int, error) {
 	switch dir {
-	case bridge.MigrateUp:
+	case db2.MigrateUp:
 		return migrate.ExecMax(db, "postgres", Migrations, migrate.Up, count)
-	case bridge.MigrateDown:
+	case db2.MigrateDown:
 		return migrate.ExecMax(db, "postgres", Migrations, migrate.Down, count)
-	case bridge.MigrateRedo:
+	case db2.MigrateRedo:
 
 		if count == 0 {
 			count = 1

@@ -1,18 +1,18 @@
 package storage
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // LedgerChange is helper struct to operate with `ledger changes`
 type LedgerChange struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 }
 
 // NewLedgerChange - creates new instance of the `ledger change`
-func NewLedgerChange(repo *bridge.Mediator) *LedgerChange {
+func NewLedgerChange(repo *pgdb.DB) *LedgerChange {
 	return &LedgerChange{
 		repo: repo,
 	}

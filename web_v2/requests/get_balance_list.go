@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -41,7 +41,7 @@ type GetBalanceList struct {
 		AssetOwner string `json:"asset_owner"`
 		Owner      string `json:"owner"`
 	}
-	PageParams *bridge.OffsetPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetBalanceList - returns new instance of GetBalanceList

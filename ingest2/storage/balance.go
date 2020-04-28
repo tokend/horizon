@@ -1,10 +1,10 @@
 package storage
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
@@ -21,12 +21,12 @@ type Balance struct {
 
 	balanceQ       history2.BalancesQ
 	coreBalances   core2.BalancesQ
-	historyRepo    *bridge.Mediator
+	historyRepo    *pgdb.DB
 	accountStorage accountStorage
 }
 
 // NewBalance - creates new instance of Balance
-func NewBalance(repo *bridge.Mediator, coreRepo *bridge.Mediator, accountStorage accountStorage) *Balance {
+func NewBalance(repo *pgdb.DB, coreRepo *pgdb.DB, accountStorage accountStorage) *Balance {
 	return &Balance{
 		historyRepo:    repo,
 		balanceQ:       history2.NewBalancesQ(repo),

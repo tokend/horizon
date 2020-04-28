@@ -2,18 +2,22 @@ package history2
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 )
 
 // LedgerQ - is a helper struct to construct requests to ledger table
 type LedgerQ struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
+}
+
+func (q *LedgerQ) NoRows(err error) bool {
+	return false
 }
 
 // NewLedgerQ - creates new instance of LedgerQ
-func NewLedgerQ(repo *bridge.Mediator) *LedgerQ {
+func NewLedgerQ(repo *pgdb.DB) *LedgerQ {
 	return &LedgerQ{
 		repo: repo,
 	}
@@ -49,7 +53,7 @@ func (q *LedgerQ) GetBySequence(seq int32) (*Ledger, error) {
 	err := q.repo.Get(&result, sq.Select("l.id, l.sequence, l.hash, l.previous_hash", "l.closed_at", "l.tx_count", "l.data").
 		From("ledgers l").Where("l.id = ?", seq))
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

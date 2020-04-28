@@ -2,8 +2,8 @@ package history2
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 )
 
 var assetColumns = []string{
@@ -23,12 +23,16 @@ var assetColumns = []string{
 
 // AssetQ is a helper struct to aid in configuring queries that loads assets
 type AssetQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *AssetQ) NoRows(err error) bool {
+	return false
+}
+
 // NewAssetQ- creates new instance of AssetQ
-func NewAssetQ(repo *bridge.Mediator) AssetQ {
+func NewAssetQ(repo *pgdb.DB) AssetQ {
 	return AssetQ{
 		repo: repo,
 		selector: sq.Select(
@@ -65,7 +69,7 @@ func (q AssetQ) Get() (*Asset, error) {
 	var result Asset
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

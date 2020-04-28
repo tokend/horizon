@@ -1,7 +1,7 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 
 	"database/sql/driver"
@@ -33,7 +33,7 @@ type ReviewableRequestDetails struct {
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
-	result, err := bridge.DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal details")
 	}
@@ -42,7 +42,7 @@ func (r ReviewableRequestDetails) Value() (driver.Value, error) {
 }
 
 func (r *ReviewableRequestDetails) Scan(src interface{}) error {
-	err := bridge.DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan details")
 	}

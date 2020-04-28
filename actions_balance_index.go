@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -13,7 +13,7 @@ type BalanceIndexAction struct {
 	AccountFilter  string
 	ExchangeFilter string
 	Asset          string
-	PagingParams   bridge.PageQuery
+	PagingParams   db2.PageQuery
 	Records        []history.Balance
 	Page           hal.Page
 }

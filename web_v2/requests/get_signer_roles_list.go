@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -12,7 +12,7 @@ var includeTypeSignerRoleListAll = map[string]struct{}{
 //GetSignerRoleList - represents params to be specified for Get SignerRoles handler
 type GetSignerRoleList struct {
 	*base
-	PageParams *bridge.OffsetPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetSignerRoleList returns the new instance of GetSignerRoleList request

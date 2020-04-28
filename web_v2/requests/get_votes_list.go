@@ -1,14 +1,14 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
 type GetVoteList struct {
 	*base
 	PollID     int64
-	PageParams *bridge.CursorPageParams
+	PageParams *db2.CursorPageParams
 }
 
 func NewGetVoteList(r *http.Request) (*GetVoteList, error) {

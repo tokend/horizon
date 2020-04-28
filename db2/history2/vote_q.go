@@ -2,19 +2,24 @@ package history2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // VotesQ is a helper struct to aid in configuring queries that loads
 // poll structures.
 type VotesQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *VotesQ) NoRows(err error) bool {
+	return false
+}
+
 // NewVotesQ - creates new instance of VotesQ
-func NewVotesQ(repo *bridge.Mediator) VotesQ {
+func NewVotesQ(repo *pgdb.DB) VotesQ {
 	return VotesQ{
 		repo: repo,
 		selector: sq.Select(
@@ -39,7 +44,7 @@ func (q VotesQ) FilterByPollID(pollID int64) VotesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q VotesQ) Page(params bridge.CursorPageParams) VotesQ {
+func (q VotesQ) Page(params db2.CursorPageParams) VotesQ {
 	q.selector = params.ApplyTo(q.selector, "v.id")
 	return q
 }
@@ -51,7 +56,7 @@ func (q VotesQ) Get() (*Vote, error) {
 	var result Vote
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

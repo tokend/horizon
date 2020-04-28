@@ -2,19 +2,19 @@ package storage
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // ReviewableRequest is helper struct to operate with `reviewable requests`
 type ReviewableRequest struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 }
 
 //NewReviewableRequest - creates new instance
-func NewReviewableRequest(repo *bridge.Mediator) *ReviewableRequest {
+func NewReviewableRequest(repo *pgdb.DB) *ReviewableRequest {
 	return &ReviewableRequest{
 		repo: repo,
 	}

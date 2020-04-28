@@ -2,7 +2,7 @@ package history
 
 import (
 	"fmt"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -32,7 +32,7 @@ type LedgerChangesQI interface {
 	ByEntryType(entryType []int) LedgerChangesQI
 	// ByTransactionIDs filters query by specific tx_ids which based on page params,
 	// entry types, effects
-	ByTransactionIDs(page bridge.PageQuery, entryTypes []int, effects []int) LedgerChangesQI
+	ByTransactionIDs(page db2.PageQuery, entryTypes []int, effects []int) LedgerChangesQI
 	// Select loads the results of the query specified by `q` into `dest`.
 	Select(dest interface{}) error
 }
@@ -86,7 +86,7 @@ func (q *LedgerChangesQ) Select(dest interface{}) error {
 
 // ByTransactionsIDs filters ledger changes by tx_id which specifies on
 // entry types, effects and paging params
-func (q *LedgerChangesQ) ByTransactionIDs(page bridge.PageQuery, entryTypes []int, effects []int) LedgerChangesQI {
+func (q *LedgerChangesQ) ByTransactionIDs(page db2.PageQuery, entryTypes []int, effects []int) LedgerChangesQI {
 	if q.Err != nil {
 		return q
 	}

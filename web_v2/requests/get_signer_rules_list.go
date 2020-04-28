@@ -1,14 +1,14 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
 //GetSignerRuleList - represents params to be specified for Get SignerRules handler
 type GetSignerRuleList struct {
 	*base
-	PageParams *bridge.OffsetPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetSignerRuleList returns the new instance of GetSignerRuleList request

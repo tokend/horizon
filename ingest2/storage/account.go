@@ -1,10 +1,10 @@
 package storage
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
@@ -16,11 +16,11 @@ type Account struct {
 
 	accountQ     history2.AccountsQ
 	coreAccounts core2.AccountsQ
-	repo         *bridge.Mediator
+	repo         *pgdb.DB
 }
 
 // NewAccount - creates new instance of Account
-func NewAccount(repo *bridge.Mediator, coreRepo *bridge.Mediator) *Account {
+func NewAccount(repo *pgdb.DB, coreRepo *pgdb.DB) *Account {
 	return &Account{
 		repo:         repo,
 		accountQ:     history2.NewAccountsQ(repo),

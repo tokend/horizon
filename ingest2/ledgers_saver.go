@@ -1,7 +1,7 @@
 package ingest2
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -40,7 +40,7 @@ func (h *LedgerHandler) Handle(header *core.LedgerHeader, txs []core.Transaction
 	}
 
 	hHeader := history2.Ledger{
-		TotalOrderID: bridge.TotalOrderID{
+		TotalOrderID: db2.TotalOrderID{
 			ID: int64(header.Sequence), // do not change it, we use id as sequence because this column has indexing
 		},
 		Sequence:     header.Sequence,

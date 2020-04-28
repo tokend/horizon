@@ -1,24 +1,32 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/log"
 )
 
 func initHorizonDb(app *App) {
-	repo, err := bridge.Open(app.config.DatabaseURL)
+	repo, err := pgdb.Open(pgdb.Opts{
+		URL:                app.config.DatabaseURL,
+		MaxOpenConnections: 12,
+		MaxIdleConnections: 4,
+	})
 
 	if err != nil {
 		log.Panic(err)
 	}
 
-	app.historyQ = &history.Q{Mediator: repo}
+	app.historyQ = &history.Q{DB: repo}
 }
 
 func initCoreDb(app *App) {
-	repo, err := bridge.Open(app.config.StellarCoreDatabaseURL)
+	repo, err := pgdb.Open(pgdb.Opts{
+		URL:                app.config.StellarCoreDatabaseURL,
+		MaxOpenConnections: 12,
+		MaxIdleConnections: 4,
+	})
 
 	if err != nil {
 		log.Panic(err)

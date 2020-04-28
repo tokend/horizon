@@ -2,7 +2,7 @@ package history
 
 import (
 	"encoding/json"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 
 	"time"
 
@@ -13,7 +13,7 @@ import (
 
 // Operation is a row of data from the `history_operations` table
 type Operation struct {
-	bridge.TotalOrderID
+	db2.TotalOrderID
 	TransactionID    int64             `db:"transaction_id"`
 	ApplicationOrder int32             `db:"application_order"`
 	Type             xdr.OperationType `db:"type"`

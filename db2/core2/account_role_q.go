@@ -2,19 +2,24 @@ package core2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountRoleQ is a helper struct to aid in configuring queries that loads
 // accountRole structs.
 type AccountRoleQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *AccountRoleQ) NoRows(err error) bool {
+	return false
+}
+
 // NewAccountRoleQ - creates new instance of AccountRoleQ
-func NewAccountRoleQ(repo *bridge.Mediator) AccountRoleQ {
+func NewAccountRoleQ(repo *pgdb.DB) AccountRoleQ {
 	return AccountRoleQ{
 		repo: repo,
 		selector: sq.Select("ar.id",
@@ -30,7 +35,7 @@ func (q AccountRoleQ) FilterByID(id uint64) AccountRoleQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AccountRoleQ) Page(params bridge.OffsetPageParams) AccountRoleQ {
+func (q AccountRoleQ) Page(params db2.OffsetPageParams) AccountRoleQ {
 	q.selector = params.ApplyTo(q.selector, "ar.id")
 	return q
 }
@@ -42,7 +47,7 @@ func (q AccountRoleQ) Get() (*AccountRole, error) {
 	var result AccountRole
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 
@@ -57,7 +62,7 @@ func (q AccountRoleQ) Select() ([]AccountRole, error) {
 	var result []AccountRole
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

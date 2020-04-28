@@ -6,15 +6,15 @@ package storage
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 type history2TransactionConvertToValues func(row history2.Transaction) []interface{}
 
-func history2TransactionBatchInsert(repo *bridge.Mediator, rows []history2.Transaction, tableName string, columns []string, converter history2TransactionConvertToValues) error {
+func history2TransactionBatchInsert(repo *pgdb.DB, rows []history2.Transaction, tableName string, columns []string, converter history2TransactionConvertToValues) error {
 	if len(rows) == 0 {
 		return nil
 	}

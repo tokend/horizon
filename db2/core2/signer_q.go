@@ -2,18 +2,23 @@ package core2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 //SignerQ - helper struct to load signers from db
 type SignerQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *SignerQ) NoRows(err error) bool {
+	return false
+}
+
 //NewSignerQ - returns new instance of SignerQ with empty filter
-func NewSignerQ(repo *bridge.Mediator) SignerQ {
+func NewSignerQ(repo *pgdb.DB) SignerQ {
 	return SignerQ{
 		repo: repo,
 		selector: sq.Select("signers.account_id",
@@ -56,7 +61,7 @@ func (q SignerQ) Select() ([]Signer, error) {
 	var result []Signer
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 
@@ -67,7 +72,7 @@ func (q SignerQ) Select() ([]Signer, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SignerQ) Page(params bridge.OffsetPageParams) SignerQ {
+func (q SignerQ) Page(params db2.OffsetPageParams) SignerQ {
 	q.selector = params.ApplyTo(q.selector)
 	return q
 }

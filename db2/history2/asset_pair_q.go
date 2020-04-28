@@ -1,7 +1,7 @@
 package history2
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -11,10 +11,14 @@ import (
 )
 
 type AssetPairQ struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 }
 
-func NewAssetPairQ(repo *bridge.Mediator) *AssetPairQ {
+func (q *AssetPairQ) NoRows(err error) bool {
+	return false
+}
+
+func NewAssetPairQ(repo *pgdb.DB) *AssetPairQ {
 	return &AssetPairQ{
 		repo: repo,
 	}
@@ -29,7 +33,7 @@ func (q *AssetPairQ) AssetPairPriceAt(base, quote string, ts time.Time) (int64, 
 		OrderBy("ledger_close_time DESC").
 		Limit(1))
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return 0, nil
 		}
 

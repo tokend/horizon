@@ -1,7 +1,7 @@
 package history
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -40,7 +40,7 @@ type ReviewableRequestQI interface {
 	// ForRoles - filters requests by request type
 	ForTypes(requestTypes []xdr.ReviewableRequestType) ReviewableRequestQI
 	// Page specifies the paging constraints for the query being built by `q`.
-	Page(page bridge.PageQuery) ReviewableRequestQI
+	Page(page db2.PageQuery) ReviewableRequestQI
 	// UpdatedAfter - selects requests updated after given timestamp
 	UpdatedAfter(timestamp int64) ReviewableRequestQI
 	// Select loads the results of the query specified by `q`
@@ -320,7 +320,7 @@ func (q *ReviewableRequestQ) UpdatedAfter(timestamp int64) ReviewableRequestQI {
 }
 
 // Page specifies the paging constraints for the query being built by `q`.
-func (q *ReviewableRequestQ) Page(page bridge.PageQuery) ReviewableRequestQI {
+func (q *ReviewableRequestQ) Page(page db2.PageQuery) ReviewableRequestQI {
 	if q.Err != nil {
 		return q
 	}

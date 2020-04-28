@@ -4,7 +4,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 type CoreQMock struct {
@@ -69,9 +69,9 @@ func (q *CoreQMock) Assets() AssetQI {
 	return args.Get(0).(AssetQI)
 }
 
-func (q *CoreQMock) GetRepo() *bridge.Mediator {
+func (q *CoreQMock) GetRepo() *pgdb.DB {
 	args := q.Called()
-	return args.Get(0).(*bridge.Mediator)
+	return args.Get(0).(*pgdb.DB)
 }
 
 func (q *CoreQMock) AccountByAddress(dest interface{}, addy string) error {

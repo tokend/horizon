@@ -2,18 +2,22 @@ package core2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 )
 
 type ExternalSystemIDsQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *ExternalSystemIDsQ) NoRows(err error) bool {
+	return false
+}
+
 // NewExternalSystemIDsQ - default constructor for ExternalSystemIDsQ which
-// creates ExternalSystemIDsQ with given bridge.Mediator and default selector
-func NewExternalSystemIDsQ(repo *bridge.Mediator) ExternalSystemIDsQ {
+// creates ExternalSystemIDsQ with given pgdb.DB and default selector
+func NewExternalSystemIDsQ(repo *pgdb.DB) ExternalSystemIDsQ {
 	return ExternalSystemIDsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -41,7 +45,7 @@ func (esid ExternalSystemIDsQ) Select() ([]ExternalSystemID, error) {
 	var result []ExternalSystemID
 	err := esid.repo.Select(&result, esid.selector)
 	if err != nil {
-		if esid.repo.NoRows(err) {
+		if esid.NoRows(err) {
 			return nil, nil
 		}
 

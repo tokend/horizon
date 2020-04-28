@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -37,7 +37,7 @@ type GetAtomicSwapAskList struct {
 		BaseAsset   string   `fig:"base_asset"`
 		QuoteAssets []string `fig:"quote_assets"`
 	}
-	PageParams *bridge.OffsetPageParams
+	PageParams *db2.OffsetPageParams
 }
 
 // NewGetAtomicSwapAskList returns new instance of GetAtomicSwapAskList request

@@ -3,7 +3,7 @@ package ingestion
 import (
 	"encoding/json"
 	"fmt"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 
 	"github.com/guregu/null"
@@ -192,7 +192,7 @@ func (ingest *Ingestion) OperationParticipants(op int64, opParticipants []partic
 	return nil
 }
 
-func (ingest *Ingestion) TransactWithFunction(fn bridge.TransactionFunc) error {
+func (ingest *Ingestion) TransactWithFunction(fn pgdb.TransactionFunc) error {
 	return ingest.DB.Transaction(fn)
 }
 
@@ -376,7 +376,7 @@ func (ingest *Ingestion) createInsertBuilders() {
 }
 
 func (ingest *Ingestion) TryIngestAccount(aid string) (result int64, err error) {
-	q := history.Q{Mediator: ingest.DB}
+	q := history.Q{DB: ingest.DB}
 	var existing history.Account
 	err = q.AccountByAddress(&existing, aid)
 
@@ -390,7 +390,7 @@ func (ingest *Ingestion) TryIngestAccount(aid string) (result int64, err error) 
 		return result, nil
 	}
 
-	coreQ := core.Q{Mediator: ingest.CoreDB}
+	coreQ := core.Q{DB: ingest.CoreDB}
 	account, err := coreQ.Accounts().ByAddress(aid)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get core balance")

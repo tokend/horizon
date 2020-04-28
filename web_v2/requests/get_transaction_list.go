@@ -2,7 +2,7 @@ package requests
 
 import (
 	"fmt"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 	"strconv"
 	"strings"
@@ -23,7 +23,7 @@ const (
 // GetTransactions - represents params to be specified for GetTransactions handler
 type GetTransactions struct {
 	*base
-	PageParams *bridge.CursorPageParams
+	PageParams *db2.CursorPageParams
 	Filters    struct {
 		EntryTypes  []int
 		ChangeTypes []int

@@ -1,7 +1,7 @@
 package horizon
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/render/hal"
@@ -19,7 +19,7 @@ import (
 // a normal page query.
 type LedgerIndexAction struct {
 	Action
-	PagingParams bridge.PageQuery
+	PagingParams db2.PageQuery
 	Records      []history.Ledger
 	Page         hal.Page
 }

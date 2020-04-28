@@ -42,7 +42,7 @@ func (q *assetPairQ) ByCode(base, quote string) (*AssetPair, error) {
 	sql := selectAssetPair.Where("base = ? AND quote = ?", base, quote)
 	var result AssetPair
 	err := q.parent.Get(&result, sql)
-	if q.parent.Mediator.NoRows(err) {
+	if q.parent.NoRows(err) {
 		return nil, nil
 	}
 

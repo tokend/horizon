@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -24,7 +24,7 @@ type GetAccountList struct {
 		Account []string `fig:"account"`
 		Role    []uint64 `fig:"role"`
 	}
-	PageParams bridge.OffsetPageParams
+	PageParams db2.OffsetPageParams
 }
 
 // NewGetAccountList - returns new instance of GetAccountList request

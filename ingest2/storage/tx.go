@@ -1,18 +1,18 @@
 package storage
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 //Tx - handles write operations in DB for txs
 type Tx struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 }
 
 //NewTx - creates new instance of Tx
-func NewTx(repo *bridge.Mediator) *Tx {
+func NewTx(repo *pgdb.DB) *Tx {
 	return &Tx{
 		repo: repo,
 	}

@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 )
 
@@ -9,7 +9,7 @@ import (
 type GetSaleListForAccount struct {
 	SalesBase
 	Address    string
-	PageParams *bridge.CursorPageParams
+	PageParams *db2.CursorPageParams
 }
 
 // NewGetSaleListForAccount returns new instance of GetSaleListForAccount request

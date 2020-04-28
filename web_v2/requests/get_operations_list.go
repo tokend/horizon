@@ -2,7 +2,7 @@ package requests
 
 import (
 	"fmt"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 	"strconv"
 	"strings"
@@ -18,7 +18,7 @@ const (
 
 type GetOperations struct {
 	*base
-	PageParams *bridge.CursorPageParams
+	PageParams *db2.CursorPageParams
 	Filters    struct {
 		Types []int
 	}

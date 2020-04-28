@@ -2,18 +2,23 @@ package core2
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
+	"gitlab.com/tokend/horizon/db2"
 )
 
 // AssetPairsQ is a helper struct to aid in configuring queries that loads asset pairs
 type AssetPairsQ struct {
-	repo     *bridge.Mediator
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
+func (q *AssetPairsQ) NoRows(err error) bool {
+	return false
+}
+
 // NewAssetPairsQ - creates new instance of AssetPairsQ with no filters
-func NewAssetPairsQ(repo *bridge.Mediator) AssetPairsQ {
+func NewAssetPairsQ(repo *pgdb.DB) AssetPairsQ {
 	return AssetPairsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -70,7 +75,7 @@ func (q AssetPairsQ) GetByBaseAndQuote(base, quote string) (*AssetPair, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AssetPairsQ) Page(params bridge.OffsetPageParams) AssetPairsQ {
+func (q AssetPairsQ) Page(params db2.OffsetPageParams) AssetPairsQ {
 	q.selector = params.ApplyTo(q.selector, "asset_pairs.base", "asset_pairs.quote")
 	return q
 }
@@ -78,7 +83,7 @@ func (q AssetPairsQ) Page(params bridge.OffsetPageParams) AssetPairsQ {
 // WithBaseAsset - joins base asset
 func (q AssetPairsQ) WithBaseAsset() AssetPairsQ {
 	q.selector = q.selector.
-		Columns(bridge.GetColumnsForJoin(assetColumns, "base_assets")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "base_assets")...).
 		LeftJoin("asset base_assets ON asset_pairs.base = base_assets.code")
 
 	return q
@@ -87,7 +92,7 @@ func (q AssetPairsQ) WithBaseAsset() AssetPairsQ {
 // WithQuoteAsset - joins quote asset
 func (q AssetPairsQ) WithQuoteAsset() AssetPairsQ {
 	q.selector = q.selector.
-		Columns(bridge.GetColumnsForJoin(assetColumns, "quote_assets")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "quote_assets")...).
 		LeftJoin("asset quote_assets ON asset_pairs.quote = quote_assets.code")
 
 	return q
@@ -100,7 +105,7 @@ func (q AssetPairsQ) Get() (*AssetPair, error) {
 	var result AssetPair
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 
@@ -115,7 +120,7 @@ func (q AssetPairsQ) Select() ([]AssetPair, error) {
 	var result []AssetPair
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if q.NoRows(err) {
 			return nil, nil
 		}
 

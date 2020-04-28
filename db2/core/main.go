@@ -5,8 +5,8 @@ package core
 import (
 	"database/sql"
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/bridge"
 )
 
 // LedgerHeader is row of data from the `ledgerheaders` table
@@ -23,20 +23,20 @@ type LedgerHeader struct {
 // Q is a helper struct on which to hang common queries against a stellar
 // core database.
 type Q struct {
-	*bridge.Mediator
+	*pgdb.DB
 
 	err error
 	sql sq.SelectBuilder
 }
 
-func NewQ(repo *bridge.Mediator) *Q {
+func NewQ(repo *pgdb.DB) *Q {
 	return &Q{
-		Mediator: repo,
+		DB: repo,
 	}
 }
 
-func (q *Q) GetRepo() *bridge.Mediator {
-	return q.Mediator
+func (q *Q) GetRepo() *pgdb.DB {
+	return q.DB
 }
 
 func (q *Q) NoRows(err error) bool {
@@ -50,7 +50,7 @@ func (q *Q) Exec(query sq.Sqlizer) error {
 // Q interface helper for testing purposes mainly
 
 type QInterface interface {
-	GetRepo() *bridge.Mediator
+	GetRepo() *pgdb.DB
 	// DEPRECATED
 	LedgerHeaderBySequence(dest interface{}, seq int32) error
 	// DEPRECATED

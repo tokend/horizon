@@ -2,22 +2,22 @@ package storage
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/bridge"
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 // CreateSwap is helper struct to operate with `swaps`
 type Swap struct {
-	repo *bridge.Mediator
+	repo *pgdb.DB
 
 	swapQ history2.SwapsQ
 }
 
 // NewSwap - creates new instance of the `CreateSwap`
-func NewSwap(repo *bridge.Mediator) *Swap {
+func NewSwap(repo *pgdb.DB) *Swap {
 	return &Swap{
 		repo:  repo,
 		swapQ: history2.NewSwapsQ(repo),
