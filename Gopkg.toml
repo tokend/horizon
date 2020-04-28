@@ -83,8 +83,8 @@
   name = "gitlab.com/distributed_lab/corer"
 
 [[override]]
+  branch = "master"
   name = "gitlab.com/distributed_lab/kit"
-  version = "1.5.0"
 
 [[override]]
   name = "gitlab.com/distributed_lab/logan"
@@ -119,12 +119,12 @@
   version = "1.2.15"
 
 [[constraint]]
-  branch = "master"
   name = "github.com/go-chi/chi"
+  version = "4.0.2"
 
 [[constraint]]
+  branch = "master"
   name = "gitlab.com/distributed_lab/ape"
-  version = "0.10"
 
 [[override]]
   name = "github.com/google/jsonapi"
@@ -136,10 +136,6 @@
 
 [[override]]
   name = "github.com/jtolds/gls"
-  branch = "master"
-
-[[override]]
-  name = "gitlab.com/StepanTita/kit"
   branch = "master"
 
 [prune]

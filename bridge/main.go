@@ -3,7 +3,7 @@ package bridge
 import (
 	"database/sql"
 	"github.com/lann/squirrel"
-	"gitlab.com/StepanTita/kit/pgdb"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 )
 

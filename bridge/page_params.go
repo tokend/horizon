@@ -2,7 +2,7 @@ package bridge
 
 import (
 	sq "github.com/Masterminds/squirrel"
-	"gitlab.com/StepanTita/kit/pgdb"
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 type OffsetPageParams struct {

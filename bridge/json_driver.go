@@ -2,7 +2,7 @@ package bridge
 
 import (
 	"database/sql/driver"
-	"gitlab.com/StepanTita/kit/pgdb"
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 func DriverValue(data interface{}) (driver.Value, error) {
