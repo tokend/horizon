@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -16,10 +17,6 @@ const FeesEmptyRole = 0
 type FeesQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *FeesQ) NoRows(err error) bool {
-	return false
 }
 
 // NewFeesQ - creates new instance of Feesq
@@ -103,7 +100,7 @@ func (q FeesQ) Get() (*Fee, error) {
 	var result Fee
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -118,7 +115,7 @@ func (q FeesQ) Select() ([]Fee, error) {
 	var result []Fee
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

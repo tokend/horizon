@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -10,10 +11,6 @@ import (
 // LedgerQ - is a helper struct to construct requests to ledger table
 type LedgerQ struct {
 	repo *pgdb.DB
-}
-
-func (q *LedgerQ) NoRows(err error) bool {
-	return false
 }
 
 // NewLedgerQ - creates new instance of LedgerQ
@@ -53,7 +50,7 @@ func (q *LedgerQ) GetBySequence(seq int32) (*Ledger, error) {
 	err := q.repo.Get(&result, sq.Select("l.id, l.sequence, l.hash, l.previous_hash", "l.closed_at", "l.tx_count", "l.data").
 		From("ledgers l").Where("l.id = ?", seq))
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

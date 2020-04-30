@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/horizon/db2"
 	"time"
@@ -14,10 +15,6 @@ import (
 type PollsQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *PollsQ) NoRows(err error) bool {
-	return false
 }
 
 // NewPollsQ - creates new instance of PollsQ
@@ -120,7 +117,7 @@ func (q PollsQ) Get() (*Poll, error) {
 	var result Poll
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

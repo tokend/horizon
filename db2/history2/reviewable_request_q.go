@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,10 +12,6 @@ import (
 type ReviewableRequestsQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *ReviewableRequestsQ) NoRows(err error) bool {
-	return false
 }
 
 // NewReviewableRequestsQ - creates new instance of ReviewableRequestsQ
@@ -207,7 +204,7 @@ func (q ReviewableRequestsQ) Get() (*ReviewableRequest, error) {
 	var result ReviewableRequest
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -222,7 +219,7 @@ func (q ReviewableRequestsQ) Select() ([]ReviewableRequest, error) {
 	var result []ReviewableRequest
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

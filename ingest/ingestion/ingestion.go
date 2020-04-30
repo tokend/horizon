@@ -1,6 +1,7 @@
 package ingestion
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -380,12 +381,12 @@ func (ingest *Ingestion) TryIngestAccount(aid string) (result int64, err error) 
 	var existing history.Account
 	err = q.AccountByAddress(&existing, aid)
 
-	if err != nil && !q.NoRows(err) {
+	if err != nil && err != sql.ErrNoRows {
 		return 0, errors.Wrap(err, "failed to get account from DB")
 	}
 
 	// already imported, return the found value
-	if !q.NoRows(err) {
+	if err != sql.ErrNoRows {
 		result = existing.ID
 		return result, nil
 	}

@@ -127,9 +127,7 @@ func (q *CoreQMock) Query(query sq.Sqlizer) (*sqlx.Rows, error) {
 	args := q.Called(query)
 	return args.Get(0).(*sqlx.Rows), args.Error(1)
 }
-func (q *CoreQMock) NoRows(err error) bool {
-	return false
-}
+
 func (q *CoreQMock) FeeByOperationType(dest interface{}, operationType int) error {
 	args := q.Called()
 	return args.Error(0)

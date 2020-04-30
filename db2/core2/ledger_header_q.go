@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -11,10 +12,6 @@ import (
 type LedgerHeaderQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *LedgerHeaderQ) NoRows(err error) bool {
-	return false
 }
 
 // NewLedgerHeaderQ - creates new instance of LedgerHeaderQ
@@ -39,7 +36,7 @@ func (q *LedgerHeaderQ) GetBySequence(seq int32) (*LedgerHeader, error) {
 	var header LedgerHeader
 	err := q.repo.Get(&header, query)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -57,7 +54,7 @@ func (q *LedgerHeaderQ) GetBySequenceRange(fromSeq int32, toSeq int32) ([]Ledger
 	var headers []LedgerHeader
 	err := q.repo.Select(&headers, query)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

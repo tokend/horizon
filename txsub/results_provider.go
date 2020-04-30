@@ -4,6 +4,7 @@ package txsub
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/base64"
 
 	"gitlab.com/distributed_lab/logan"
@@ -30,7 +31,7 @@ func (rp *ResultsProvider) ResultByHash(ctx context.Context, hash string) *txsub
 		return txResultFromHistory(hr)
 	}
 
-	if !rp.History.NoRows(err) {
+	if err != sql.ErrNoRows {
 		return &txsub.Result{Err: logan.Wrap(err, "Failed to load tx from horizon db")}
 	}
 
@@ -41,7 +42,7 @@ func (rp *ResultsProvider) ResultByHash(ctx context.Context, hash string) *txsub
 		return txResultFromCore(cr)
 	}
 
-	if !rp.Core.NoRows(err) {
+	if err != sql.ErrNoRows {
 		return &txsub.Result{Err: logan.Wrap(err, "Failed to load tx from core db")}
 	}
 

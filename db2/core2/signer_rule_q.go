@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -12,10 +13,6 @@ import (
 type SignerRuleQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *SignerRuleQ) NoRows(err error) bool {
-	return false
 }
 
 // NewAccountRoleQ - creates new instance of AccountRoleQ
@@ -58,7 +55,7 @@ func (q SignerRuleQ) Get() (*SignerRule, error) {
 	var result SignerRule
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -73,7 +70,7 @@ func (q SignerRuleQ) Select() ([]SignerRule, error) {
 	var result []SignerRule
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

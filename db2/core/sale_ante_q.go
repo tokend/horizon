@@ -1,6 +1,9 @@
 package core
 
-import sq "github.com/lann/squirrel"
+import (
+	"database/sql"
+	sq "github.com/lann/squirrel"
+)
 
 var _ SaleAnteQI = &SaleAnteQ{}
 
@@ -32,7 +35,7 @@ func (q *SaleAnteQ) ByKey(balanceID string, saleID uint64) (*SaleAnte, error) {
 	result := new(SaleAnte)
 	query := selectSaleAnte.Limit(1).Where("sa.sale_id = ? AND sa.participant_balance_id = ?", saleID, balanceID)
 	err := q.parent.Get(result, query)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 	return result, err

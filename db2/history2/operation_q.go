@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -13,10 +14,6 @@ var operationColumns = []string{"id", "tx_id", "type", "details",
 type OperationQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *OperationQ) NoRows(err error) bool {
-	return false
 }
 
 func NewOperationQ(repo *pgdb.DB) OperationQ {
@@ -55,7 +52,7 @@ func (q OperationQ) Select() ([]Operation, error) {
 	var result []Operation
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -72,7 +69,7 @@ func (q OperationQ) Get() (*Operation, error) {
 	var result Operation
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

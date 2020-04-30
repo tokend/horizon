@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -9,10 +10,6 @@ import (
 type ExternalSystemIDsQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *ExternalSystemIDsQ) NoRows(err error) bool {
-	return false
 }
 
 // NewExternalSystemIDsQ - default constructor for ExternalSystemIDsQ which
@@ -45,7 +42,7 @@ func (esid ExternalSystemIDsQ) Select() ([]ExternalSystemID, error) {
 	var result []ExternalSystemID
 	err := esid.repo.Select(&result, esid.selector)
 	if err != nil {
-		if esid.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

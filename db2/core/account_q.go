@@ -47,7 +47,7 @@ func (q *AccountQ) ByAddress(address string) (*Account, error) {
 	result := new(Account)
 	query := selectAccount.Limit(1).Where("account_id = ?", address)
 	err := q.parent.Get(result, query)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 	return result, err

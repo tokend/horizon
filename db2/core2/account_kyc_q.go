@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,10 +12,6 @@ import (
 type AccountsKycQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *AccountsKycQ) NoRows(err error) bool {
-	return false
 }
 
 // NewAccountsKYCQ - creates new instance of AccountsKycQ
@@ -46,7 +43,7 @@ func (q AccountsKycQ) Get() (*AccountKYC, error) {
 	var result AccountKYC
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

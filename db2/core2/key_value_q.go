@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	"github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/horizon/db2"
@@ -11,14 +12,10 @@ type KeyValueQ struct {
 	selector squirrel.SelectBuilder
 }
 
-func (q *KeyValueQ) NoRows(err error) bool {
-	return false
-}
-
 func NewKeyValueQ(repo *pgdb.DB) *KeyValueQ {
 	return &KeyValueQ{
-		repo,
-		squirrel.Select("key", "value").From("key_value_entry"),
+		repo:     repo,
+		selector: squirrel.Select("key", "value").From("key_value_entry"),
 	}
 }
 
@@ -27,7 +24,7 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 	stmt := q.selector.Where("key = ?", key)
 	err := q.repo.Get(&result, stmt)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

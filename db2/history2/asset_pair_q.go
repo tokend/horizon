@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 
@@ -12,10 +13,6 @@ import (
 
 type AssetPairQ struct {
 	repo *pgdb.DB
-}
-
-func (q *AssetPairQ) NoRows(err error) bool {
-	return false
 }
 
 func NewAssetPairQ(repo *pgdb.DB) *AssetPairQ {
@@ -33,7 +30,7 @@ func (q *AssetPairQ) AssetPairPriceAt(base, quote string, ts time.Time) (int64, 
 		OrderBy("ledger_close_time DESC").
 		Limit(1))
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return 0, nil
 		}
 

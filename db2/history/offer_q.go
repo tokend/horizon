@@ -1,6 +1,7 @@
 package history
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
@@ -151,7 +152,7 @@ func (q *OffersQ) Select() ([]Offer, error) {
 
 	var offers []Offer
 	err := q.parent.Select(&offers, q.sql)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 

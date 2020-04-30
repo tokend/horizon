@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -25,10 +26,6 @@ var assetColumns = []string{
 type AssetQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *AssetQ) NoRows(err error) bool {
-	return false
 }
 
 // NewAssetQ- creates new instance of AssetQ
@@ -69,7 +66,7 @@ func (q AssetQ) Get() (*Asset, error) {
 	var result Asset
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,10 +12,6 @@ import (
 type OffersQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *OffersQ) NoRows(err error) bool {
-	return false
 }
 
 // NewOffersQ - creates new instance of OffersQ with no filters
@@ -138,7 +135,7 @@ func (q OffersQ) Get() (*Offer, error) {
 	var result Offer
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -153,7 +150,7 @@ func (q OffersQ) Select() ([]Offer, error) {
 	var result []Offer
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -172,7 +169,7 @@ func (q OffersQ) SelectID() ([]int64, error) {
 	var result []int64
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

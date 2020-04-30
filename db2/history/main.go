@@ -3,7 +3,6 @@
 package history
 
 import (
-	"database/sql"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 )
@@ -22,17 +21,12 @@ func (q *Q) GetRepo() *pgdb.DB {
 	return q.DB
 }
 
-func (q *Q) NoRows(err error) bool {
-	return err == sql.ErrNoRows
-}
-
 type QInterface interface {
 	GetRepo() *pgdb.DB
 
 	ElderLedger(dest interface{}) error
 	LatestLedger(dest interface{}) error
 	OldestOutdatedLedgers(dest interface{}, currentVersion int) error
-	NoRows(err error) bool
 
 	// Accounts
 	Accounts() AccountsQI

@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,10 +12,6 @@ import (
 type ParticipantEffectsQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *ParticipantEffectsQ) NoRows(err error) bool {
-	return false
 }
 
 //NewParticipantEffectsQ - creates new ParticipantEffectsQ
@@ -87,7 +84,7 @@ func (q ParticipantEffectsQ) Select() ([]ParticipantEffect, error) {
 	var result []ParticipantEffect
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -102,7 +99,7 @@ func (q ParticipantEffectsQ) Get() (*ParticipantEffect, error) {
 
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

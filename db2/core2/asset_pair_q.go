@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,10 +12,6 @@ import (
 type AssetPairsQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *AssetPairsQ) NoRows(err error) bool {
-	return false
 }
 
 // NewAssetPairsQ - creates new instance of AssetPairsQ with no filters
@@ -105,7 +102,7 @@ func (q AssetPairsQ) Get() (*AssetPair, error) {
 	var result AssetPair
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -120,7 +117,7 @@ func (q AssetPairsQ) Select() ([]AssetPair, error) {
 	var result []AssetPair
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

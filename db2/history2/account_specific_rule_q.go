@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,10 +12,6 @@ import (
 type AccountSpecificRulesQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *AccountSpecificRulesQ) NoRows(err error) bool {
-	return false
 }
 
 // NewAccountSpecificRulesQ - creates new instance of AccountSpecificRulesQ
@@ -54,7 +51,7 @@ func (q AccountSpecificRulesQ) Get() (*AccountSpecificRule, error) {
 	var result AccountSpecificRule
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -75,7 +72,7 @@ func (q AccountSpecificRulesQ) Select() ([]AccountSpecificRule, error) {
 	var result []AccountSpecificRule
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

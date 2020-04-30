@@ -1,6 +1,7 @@
 package history
 
 import (
+	"database/sql"
 	"gitlab.com/tokend/horizon/db2"
 	"time"
 
@@ -143,7 +144,7 @@ func (q *saleQ) ByID(saleID uint64) (*Sale, error) {
 	q.sql = q.sql.Where("id = ?", saleID)
 	var result Sale
 	err := q.parent.Get(&result, q.sql)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 
@@ -221,7 +222,7 @@ func (q *saleQ) Select() ([]Sale, error) {
 
 	var result []Sale
 	err := q.parent.Select(&result, q.sql)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 

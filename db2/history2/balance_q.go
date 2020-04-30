@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -10,10 +11,6 @@ import (
 // BalancesQ is a helper struct to aid in configuring queries that loads balances
 type BalancesQ struct {
 	repo *pgdb.DB
-}
-
-func (q *BalancesQ) NoRows(err error) bool {
-	return false
 }
 
 // NewBalancesQ - creates new instance of BalanceQ
@@ -30,7 +27,7 @@ func (q BalancesQ) GetByAddress(address string) (*Balance, error) {
 	err := q.repo.Get(&result, sq.Select(balanceColumns...).
 		From("balances balances").Where("balances.address = ?", address))
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

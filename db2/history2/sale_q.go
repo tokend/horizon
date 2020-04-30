@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	"fmt"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/horizon/db2"
@@ -18,10 +19,6 @@ import (
 type SalesQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *SalesQ) NoRows(err error) bool {
-	return false
 }
 
 // NewSalesQ - creates new instance of SalesQ
@@ -217,7 +214,7 @@ func (q SalesQ) Get() (*Sale, error) {
 	var result Sale
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

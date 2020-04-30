@@ -29,9 +29,6 @@ type TransactionsQMock struct {
 func (q *QMock) GetRepo() *pgdb.DB {
 	return nil
 }
-func (q *QMock) NoRows(err error) bool {
-	return false
-}
 
 func (q *QMock) ElderLedger(dest interface{}) error {
 	return q.Called(dest).Error(0)

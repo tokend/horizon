@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -12,10 +13,6 @@ import (
 type AccountRoleQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *AccountRoleQ) NoRows(err error) bool {
-	return false
 }
 
 // NewAccountRoleQ - creates new instance of AccountRoleQ
@@ -47,7 +44,7 @@ func (q AccountRoleQ) Get() (*AccountRole, error) {
 	var result AccountRole
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -62,7 +59,7 @@ func (q AccountRoleQ) Select() ([]AccountRole, error) {
 	var result []AccountRole
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

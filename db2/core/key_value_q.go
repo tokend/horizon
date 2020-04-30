@@ -1,6 +1,7 @@
 package core
 
 import (
+	"database/sql"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -29,7 +30,7 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 
 	var result KeyValue
 	err := q.parent.Get(&result, query)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 
@@ -48,7 +49,7 @@ func (q KeyValueQ) Select() ([]KeyValue, error) {
 
 	var result []KeyValue
 	err := q.parent.Select(&result, q.sql)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 

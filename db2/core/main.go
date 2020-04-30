@@ -3,7 +3,6 @@
 package core
 
 import (
-	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/go/xdr"
@@ -39,10 +38,6 @@ func (q *Q) GetRepo() *pgdb.DB {
 	return q.DB
 }
 
-func (q *Q) NoRows(err error) bool {
-	return err == sql.ErrNoRows
-}
-
 func (q *Q) Exec(query sq.Sqlizer) error {
 	return q.DB.Exec(query)
 }
@@ -69,7 +64,6 @@ type QInterface interface {
 	TransactionFeesByLedger(dest interface{}, seq int32) error
 	FeeEntries() FeeEntryQI
 	Exec(query sq.Sqlizer) error // Was query (sqlx.Rows, error)
-	NoRows(err error) bool
 	// Returns nil, if not found
 	FeeByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account, amount int64) (*FeeEntry, error)
 	FeesByTypeAssetAccount(feeType int, asset string, subtype int64, account *Account) ([]FeeEntry, error)

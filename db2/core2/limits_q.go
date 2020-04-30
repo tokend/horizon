@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -10,10 +11,6 @@ import (
 type LimitsQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *LimitsQ) NoRows(err error) bool {
-	return false
 }
 
 // NewLimitsQ - default constructor for LimitsQ which
@@ -78,7 +75,7 @@ func (q LimitsQ) Select() ([]Limits, error) {
 	var result []Limits
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

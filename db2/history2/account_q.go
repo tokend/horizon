@@ -1,6 +1,7 @@
 package history2
 
 import (
+	"database/sql"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -10,10 +11,6 @@ import (
 type AccountsQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *AccountsQ) NoRows(err error) bool {
-	return false
 }
 
 // NewAccountsQ - creates new instance of AccountsQ
@@ -42,7 +39,7 @@ func (q AccountsQ) Get() (*Account, error) {
 	var result Account
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

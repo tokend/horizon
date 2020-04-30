@@ -1,6 +1,7 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -11,10 +12,6 @@ import (
 type BalancesQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
-}
-
-func (q *BalancesQ) NoRows(err error) bool {
-	return false
 }
 
 // NewBalancesQ - creates new instance of BalanceQ with no filters
@@ -74,7 +71,7 @@ func (q BalancesQ) Get() (*Balance, error) {
 	var result Balance
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -89,7 +86,7 @@ func (q BalancesQ) Select() ([]Balance, error) {
 	var result []Balance
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
