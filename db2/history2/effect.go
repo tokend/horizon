@@ -2,9 +2,8 @@ package history2
 
 import (
 	"database/sql/driver"
-
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -47,7 +46,7 @@ type Effect struct {
 
 //Value - converts effect into jsonb
 func (r Effect) Value() (driver.Value, error) {
-	result, err := db2.DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal effect")
 	}
@@ -57,7 +56,7 @@ func (r Effect) Value() (driver.Value, error) {
 
 //Scan - converts json into Effect
 func (r *Effect) Scan(src interface{}) error {
-	err := db2.DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan effect")
 	}

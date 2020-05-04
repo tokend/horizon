@@ -1,26 +1,28 @@
 package history2
 
 import (
+	"database/sql"
 	"fmt"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 	"time"
 
 	"gitlab.com/tokend/go/xdr"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // SalesQ is a helper struct to aid in configuring queries that loads
 // sales structures.
 type SalesQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewSalesQ - creates new instance of SalesQ
-func NewSalesQ(repo *db2.Repo) SalesQ {
+func NewSalesQ(repo *pgdb.DB) SalesQ {
 	return SalesQ{
 		repo: repo,
 		selector: sq.Select(
@@ -212,7 +214,7 @@ func (q SalesQ) Get() (*Sale, error) {
 	var result Sale
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

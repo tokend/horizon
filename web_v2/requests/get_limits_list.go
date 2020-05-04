@@ -1,11 +1,10 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 const (

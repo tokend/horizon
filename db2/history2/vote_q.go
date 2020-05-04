@@ -1,7 +1,9 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -9,12 +11,12 @@ import (
 // VotesQ is a helper struct to aid in configuring queries that loads
 // poll structures.
 type VotesQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewVotesQ - creates new instance of VotesQ
-func NewVotesQ(repo *db2.Repo) VotesQ {
+func NewVotesQ(repo *pgdb.DB) VotesQ {
 	return VotesQ{
 		repo: repo,
 		selector: sq.Select(
@@ -51,7 +53,7 @@ func (q VotesQ) Get() (*Vote, error) {
 	var result Vote
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

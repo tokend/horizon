@@ -1,7 +1,8 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -9,12 +10,12 @@ import (
 // SaleParticipationQ is a helper struct to aid in configuring queries that load
 // sale participation structures from `participant_effects` table`.
 type SaleParticipationQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewSaleParticipationQ - creates new instance of SaleParticipationQ
-func NewSaleParticipationQ(repo *db2.Repo) SaleParticipationQ {
+func NewSaleParticipationQ(repo *pgdb.DB) SaleParticipationQ {
 	return SaleParticipationQ{
 		repo: repo,
 		selector: sq.Select(

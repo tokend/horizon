@@ -1,9 +1,8 @@
 package requests
 
 import (
-	"net/http"
-
 	"gitlab.com/tokend/horizon/db2"
+	"net/http"
 )
 
 const (
@@ -31,9 +30,9 @@ type GetHistory struct {
 	*base
 	PageParams *db2.CursorPageParams
 	Filters    struct {
-		Account string   `fig:"account"`
-		Balance string   `fig:"balance"`
-		Asset   string   `fig:"asset"`
+		Account string `fig:"account"`
+		Balance string `fig:"balance"`
+		Asset   string `fig:"asset"`
 	}
 }
 
@@ -70,7 +69,6 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 	if err != nil {
 		return nil, err
 	}
-
 
 	return &request, nil
 }

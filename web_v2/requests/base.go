@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -22,7 +23,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 

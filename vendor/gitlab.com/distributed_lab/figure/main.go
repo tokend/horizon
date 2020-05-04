@@ -10,11 +10,13 @@ import (
 
 const (
 	keyTag   = "fig"
-	required = "required"
-	ignore   = "-"
+	ignore   = "-"        // Field is omitted
+	required = "required" // Value must be presented in config
+	nonZero  = "non_zero" // Field must have non zero value. Note: zero value for pointer is nil
 )
 
 var (
+	ErrNonZeroValue  = errors.New("you must set non zero value to this field")
 	ErrRequiredValue = errors.New("you must set the value in field")
 	ErrNoHook        = errors.New("no such hook")
 	ErrNotValid      = errors.New("not valid value")
@@ -134,8 +136,12 @@ func (f *Figurator) SetField(fieldValue reflect.Value, field reflect.StructField
 		isSet = true
 	}
 
-	if !isSet && tag.IsRequired {
-		return errors.Wrap(ErrRequiredValue, "failed to get value for this field", logFields)
+	if tag.Required && !isSet {
+		return errors.Wrap(ErrRequiredValue, "failed to get value for this field", logan.F{"field": field.Name})
+	}
+
+	if tag.NonZero && isZero(fieldValue) {
+		return errors.Wrap(ErrNonZeroValue, "field has a zero value", logan.F{"field": field.Name})
 	}
 
 	return nil
@@ -197,9 +203,61 @@ func setField(fieldValue reflect.Value, field reflect.StructField, keyTag string
 		isSet = true
 	}
 
-	if !isSet && tag.IsRequired {
+	if tag.Required && !isSet {
 		return errors.Wrap(ErrRequiredValue, "failed to get value for this field", logan.F{"field": field.Name})
 	}
 
+	if tag.NonZero && isZero(fieldValue) {
+		return errors.Wrap(ErrNonZeroValue, "field has a zero value", logan.F{"field": field.Name})
+	}
+
 	return nil
+}
+
+// IsZeroer is used to check whether an object is zero to
+// determine whether it should be omitted when marshaling
+// with the omitempty flag. One notable implementation
+// is time.Time.
+type IsZeroer interface {
+	IsZero() bool
+}
+
+func isZero(v reflect.Value) bool {
+	kind := v.Kind()
+	if z, ok := v.Interface().(IsZeroer); ok {
+		if (kind == reflect.Ptr || kind == reflect.Interface) && v.IsNil() {
+			return true
+		}
+		return z.IsZero()
+	}
+	switch kind {
+	case reflect.String:
+		return len(v.String()) == 0
+	case reflect.Interface, reflect.Ptr:
+		return v.IsNil()
+	case reflect.Slice:
+		return v.Len() == 0
+	case reflect.Map:
+		return v.Len() == 0
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return v.Int() == 0
+	case reflect.Float32, reflect.Float64:
+		return v.Float() == 0
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return v.Uint() == 0
+	case reflect.Bool:
+		return !v.Bool()
+	case reflect.Struct:
+		vt := v.Type()
+		for i := v.NumField() - 1; i >= 0; i-- {
+			if vt.Field(i).PkgPath != "" {
+				continue // Private field
+			}
+			if !isZero(v.Field(i)) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
 }

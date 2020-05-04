@@ -6,13 +6,11 @@ package reap
 
 import (
 	"time"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // System represents the history reaping subsystem of horizon.
 type System struct {
-	HorizonDB      *db2.Repo
+	HorizonDB      *pgdb.DB
 	RetentionCount uint
 
 	nextRun time.Time
@@ -20,7 +18,7 @@ type System struct {
 
 // New initializes the reaper, causing it to begin polling the stellar-core
 // database for now ledgers and ingesting data into the horizon database.
-func New(retention uint, horizon *db2.Repo) *System {
+func New(retention uint, horizon *pgdb.DB) *System {
 	r := &System{
 		HorizonDB:      horizon,
 		RetentionCount: retention,

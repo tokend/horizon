@@ -1,7 +1,9 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -12,12 +14,12 @@ var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details"
 
 //AssetsQ - helper struct to load assets from db
 type AssetsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAssetsQ - returns new instance of AssetsQ
-func NewAssetsQ(repo *db2.Repo) AssetsQ {
+func NewAssetsQ(repo *pgdb.DB) AssetsQ {
 	return AssetsQ{
 		repo:     repo,
 		selector: sq.Select(assetColumns...).From("asset assets"),
@@ -76,7 +78,7 @@ func (q AssetsQ) Select() ([]Asset, error) {
 	var result []Asset
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -93,7 +95,7 @@ func (q AssetsQ) Get() (*Asset, error) {
 	var result Asset
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

@@ -1,19 +1,21 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
 
 // OffersQ is a helper struct to aid in configuring queries that loads offers
 type OffersQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewOffersQ - creates new instance of OffersQ with no filters
-func NewOffersQ(repo *db2.Repo) OffersQ {
+func NewOffersQ(repo *pgdb.DB) OffersQ {
 	return OffersQ{
 		repo: repo,
 		selector: sq.Select(
@@ -133,7 +135,7 @@ func (q OffersQ) Get() (*Offer, error) {
 	var result Offer
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -148,7 +150,7 @@ func (q OffersQ) Select() ([]Offer, error) {
 	var result []Offer
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -167,7 +169,7 @@ func (q OffersQ) SelectID() ([]int64, error) {
 	var result []int64
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

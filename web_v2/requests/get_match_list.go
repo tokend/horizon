@@ -32,7 +32,7 @@ type GetMatchList struct {
 // NewGetMatchList - returns new instance of GetMatchList
 func NewGetMatchList(r *http.Request) (*GetMatchList, error) {
 	b, err := newBase(r, baseOpts{
-		supportedFilters:  filterTypeMatchListAll,
+		supportedFilters: filterTypeMatchListAll,
 	})
 	if err != nil {
 		return nil, err

@@ -1,19 +1,21 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
 
 //SignerQ - helper struct to load signers from db
 type SignerQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 //NewSignerQ - returns new instance of SignerQ with empty filter
-func NewSignerQ(repo *db2.Repo) SignerQ {
+func NewSignerQ(repo *pgdb.DB) SignerQ {
 	return SignerQ{
 		repo: repo,
 		selector: sq.Select("signers.account_id",
@@ -56,7 +58,7 @@ func (q SignerQ) Select() ([]Signer, error) {
 	var result []Signer
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

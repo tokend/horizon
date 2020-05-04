@@ -1,9 +1,8 @@
 package requests
 
 import (
-	"net/http"
-
 	"gitlab.com/tokend/horizon/db2"
+	"net/http"
 )
 
 var includeTypeSignerRoleListAll = map[string]struct{}{

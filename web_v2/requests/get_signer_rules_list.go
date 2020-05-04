@@ -1,9 +1,8 @@
 package requests
 
 import (
-	"net/http"
-
 	"gitlab.com/tokend/horizon/db2"
+	"net/http"
 )
 
 //GetSignerRuleList - represents params to be specified for Get SignerRules handler

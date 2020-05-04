@@ -1,9 +1,8 @@
 package requests
 
 import (
-	"net/http"
-
 	"gitlab.com/tokend/horizon/db2"
+	"net/http"
 )
 
 // GetSaleList - represents params to be specified by user for getSaleList handler

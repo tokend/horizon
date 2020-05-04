@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/exchange"
 	"gitlab.com/tokend/horizon/web_v2/resources"
@@ -17,7 +17,7 @@ type balanceStateConverter struct {
 
 // newBalanceStateConverterForHandler - creates new instance of balanceStateConverter.
 // returns nil and renders server error if failed to create
-func newBalanceStateConverterForHandler(coreRepo *db2.Repo) (*balanceStateConverter, error) {
+func newBalanceStateConverterForHandler(coreRepo *pgdb.DB) (*balanceStateConverter, error) {
 	assetsProvider := struct {
 		core2.AssetsQ
 		core2.AssetPairsQ

@@ -2,12 +2,13 @@ package changes
 
 import (
 	"encoding/hex"
+	"encoding/json"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	history "gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
@@ -386,10 +387,15 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}
 
-	// we use key "data" for compatibility with db2.Details
+	// we use key "data" for compatibility with db2.Details (Deprecated)
 	// the value for the key "data" is a slice of map[string]interface{}
-	result.ExternalDetails = map[string]interface{}{
+	var resultDetails = map[string]interface{}{
 		"data": externalDetails,
+	}
+	result.ExternalDetails, err = json.Marshal(resultDetails)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &result, nil

@@ -1,7 +1,9 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -9,12 +11,12 @@ import (
 // TransactionsQ is a helper struct to aid in configuring queries that loads
 // transactions structures.
 type TransactionsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewTransactionsQ - creates new instance of TransactionsQ
-func NewTransactionsQ(repo *db2.Repo) TransactionsQ {
+func NewTransactionsQ(repo *pgdb.DB) TransactionsQ {
 	return TransactionsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -81,7 +83,7 @@ func (q TransactionsQ) Get() (*Transaction, error) {
 	var result Transaction
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

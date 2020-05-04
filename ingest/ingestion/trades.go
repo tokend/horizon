@@ -20,7 +20,7 @@ func (ingest *Ingestion) StoreTrades(orderBookID uint64, result xdr.ManageOfferS
 			int64(claimed.QuoteAmount), int64(claimed.CurrentPrice), time.Unix(ledgerCloseTime, 0).UTC())
 	}
 
-	_, err := ingest.DB.Exec(q)
+	err := ingest.DB.Exec(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert into trades")
 	}

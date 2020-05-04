@@ -1,7 +1,9 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -9,12 +11,12 @@ import (
 // AccountRuleQ is a helper struct to aid in configuring queries that loads
 // accountRule structs.
 type AccountRuleQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAccountRuleQ - creates new instance of AccountRuleQ
-func NewAccountRuleQ(repo *db2.Repo) AccountRuleQ {
+func NewAccountRuleQ(repo *pgdb.DB) AccountRuleQ {
 	return AccountRuleQ{
 		repo: repo,
 		selector: sq.Select("ar.id",
@@ -51,7 +53,7 @@ func (q AccountRuleQ) Get() (*AccountRule, error) {
 	var result AccountRule
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -66,7 +68,7 @@ func (q AccountRuleQ) Select() ([]AccountRule, error) {
 	var result []AccountRule
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

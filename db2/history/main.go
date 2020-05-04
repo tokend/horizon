@@ -3,9 +3,8 @@
 package history
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // EffectType is the numeric type for an effect, used as the `type` field in the
@@ -15,16 +14,15 @@ type EffectType int
 // Q is a helper struct on which to hang common queries against a history
 // portion of the horizon database.
 type Q struct {
-	*db2.Repo
+	*pgdb.DB
 }
 
-func (q *Q) GetRepo() *db2.Repo {
-	return q.Repo
+func (q *Q) GetRepo() *pgdb.DB {
+	return q.DB
 }
 
 type QInterface interface {
-	GetRepo() *db2.Repo
-	NoRows(err error) bool
+	GetRepo() *pgdb.DB
 
 	ElderLedger(dest interface{}) error
 	LatestLedger(dest interface{}) error

@@ -1,9 +1,10 @@
 package history2
 
 import (
+	"database/sql"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 var assetColumns = []string{
@@ -23,14 +24,14 @@ var assetColumns = []string{
 
 // AssetQ is a helper struct to aid in configuring queries that loads assets
 type AssetQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAssetQ- creates new instance of AssetQ
-func NewAssetQ(repo *db2.Repo) AssetQ {
+func NewAssetQ(repo *pgdb.DB) AssetQ {
 	return AssetQ{
-		repo:     repo,
+		repo: repo,
 		selector: sq.Select(
 			"asset.code",
 			"asset.owner",
@@ -44,7 +45,7 @@ func NewAssetQ(repo *db2.Repo) AssetQ {
 			"asset.trailing_digits",
 			"asset.type",
 			"asset.state",
-			).From("asset asset"),
+		).From("asset asset"),
 	}
 }
 
@@ -65,7 +66,7 @@ func (q AssetQ) Get() (*Asset, error) {
 	var result Asset
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

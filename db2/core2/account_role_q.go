@@ -1,7 +1,9 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -9,12 +11,12 @@ import (
 // AccountRoleQ is a helper struct to aid in configuring queries that loads
 // accountRole structs.
 type AccountRoleQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAccountRoleQ - creates new instance of AccountRoleQ
-func NewAccountRoleQ(repo *db2.Repo) AccountRoleQ {
+func NewAccountRoleQ(repo *pgdb.DB) AccountRoleQ {
 	return AccountRoleQ{
 		repo: repo,
 		selector: sq.Select("ar.id",
@@ -42,7 +44,7 @@ func (q AccountRoleQ) Get() (*AccountRole, error) {
 	var result AccountRole
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -57,7 +59,7 @@ func (q AccountRoleQ) Select() ([]AccountRole, error) {
 	var result []AccountRole
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

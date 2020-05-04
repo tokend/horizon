@@ -7,7 +7,6 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-
 //NewAsset - creates new instance of Asset from provided one using history2 package.
 func NewAssetV2(record history2.Asset) regources.Asset {
 	return regources.Asset{
@@ -42,7 +41,7 @@ func NewAsset(record core2.Asset) regources.Asset {
 		},
 		Attributes: regources.AssetAttributes{
 			PreIssuanceAssetSigner: record.PreIssuanceAssetSigner,
-			Details:                record.Details.ToRawMessage(),
+			Details:                record.Details,
 			MaxIssuanceAmount:      regources.Amount(record.MaxIssuanceAmount),
 			AvailableForIssuance:   regources.Amount(record.AvailableForIssuance),
 			Issued:                 regources.Amount(record.Issued),

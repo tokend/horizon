@@ -2,6 +2,7 @@ package history
 
 import (
 	"github.com/stretchr/testify/mock"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/horizon/db2"
 )
 
@@ -25,11 +26,8 @@ type TransactionsQMock struct {
 	mock.Mock
 }
 
-func (q *QMock) GetRepo() *db2.Repo {
+func (q *QMock) GetRepo() *pgdb.DB {
 	return nil
-}
-func (q *QMock) NoRows(err error) bool {
-	return false
 }
 
 func (q *QMock) ElderLedger(dest interface{}) error {

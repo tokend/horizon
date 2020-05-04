@@ -2,12 +2,12 @@ package horizon
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/db2"
 	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/ledger"
 	"gitlab.com/tokend/horizon/render/hal"

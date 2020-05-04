@@ -5,16 +5,16 @@
 package storage
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 type history2LedgerChangesConvertToValues func(row history2.LedgerChanges) []interface{}
 
-func history2LedgerChangesBatchInsert(repo *db2.Repo, rows []history2.LedgerChanges, tableName string, columns []string, converter history2LedgerChangesConvertToValues) error {
+func history2LedgerChangesBatchInsert(repo *pgdb.DB, rows []history2.LedgerChanges, tableName string, columns []string, converter history2LedgerChangesConvertToValues) error {
 	if len(rows) == 0 {
 		return nil
 	}
@@ -25,7 +25,7 @@ func history2LedgerChangesBatchInsert(repo *db2.Repo, rows []history2.LedgerChan
 	for _, row := range rows {
 		paramsInQueue += len(columns)
 		if paramsInQueue > maxPostgresParams {
-			_, err := repo.Exec(sql)
+			err := repo.Exec(sql)
 			if err != nil {
 				return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
 			}
@@ -41,7 +41,7 @@ func history2LedgerChangesBatchInsert(repo *db2.Repo, rows []history2.LedgerChan
 		return nil
 	}
 
-	_, err := repo.Exec(sql)
+	err := repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
 	}

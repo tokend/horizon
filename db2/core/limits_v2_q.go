@@ -138,7 +138,7 @@ func (q *LimitsV2Q) Select() ([]LimitsV2Entry, error) {
 
 	var result []LimitsV2Entry
 	err := q.parent.Select(&result, q.sql)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 

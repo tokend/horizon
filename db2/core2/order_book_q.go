@@ -2,19 +2,20 @@ package core2
 
 import (
 	"fmt"
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
 
 // OrderBooksQ is a helper struct to aid in configuring queries that loads order book entries
 type OrderBooksQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewOrderBooksQ - creates new instance of OrderBooksQ with no filters
-func NewOrderBooksQ(repo *db2.Repo) OrderBooksQ {
+func NewOrderBooksQ(repo *pgdb.DB) OrderBooksQ {
 	subQuery := sq.Select(
 		"format('%s:%s:%s:%s:%s', offers.quote_asset_code, offers.base_asset_code, "+
 			"offers.order_book_id, offers.is_buy, offers.price) id",

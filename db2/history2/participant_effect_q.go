@@ -1,19 +1,21 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
 
 //ParticipantEffectsQ - helper struct to get participants from db
 type ParticipantEffectsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 //NewParticipantEffectsQ - creates new ParticipantEffectsQ
-func NewParticipantEffectsQ(repo *db2.Repo) ParticipantEffectsQ {
+func NewParticipantEffectsQ(repo *pgdb.DB) ParticipantEffectsQ {
 	return ParticipantEffectsQ{
 		repo: repo,
 		selector: sq.Select("effects.id", "effects.account_id", "effects.balance_id", "effects.asset_code",
@@ -82,7 +84,7 @@ func (q ParticipantEffectsQ) Select() ([]ParticipantEffect, error) {
 	var result []ParticipantEffect
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -97,7 +99,7 @@ func (q ParticipantEffectsQ) Get() (*ParticipantEffect, error) {
 
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

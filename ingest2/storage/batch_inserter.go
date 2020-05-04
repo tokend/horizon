@@ -3,9 +3,9 @@ package storage
 import (
 	"github.com/cheekybits/genny/generic"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 //go:generate genny -in=$GOFILE -out=tx_batch_insert.go gen "valueType=history2.Transaction"
@@ -17,7 +17,7 @@ type valueType generic.Type
 
 type valueTypeConvertToValues func(row valueType) []interface{}
 
-func valueTypeBatchInsert(repo *db2.Repo, rows []valueType, tableName string, columns []string, converter valueTypeConvertToValues) error {
+func valueTypeBatchInsert(repo *pgdb.DB, rows []valueType, tableName string, columns []string, converter valueTypeConvertToValues) error {
 	if len(rows) == 0 {
 		return nil
 	}
@@ -28,7 +28,7 @@ func valueTypeBatchInsert(repo *db2.Repo, rows []valueType, tableName string, co
 	for _, row := range rows {
 		paramsInQueue += len(columns)
 		if paramsInQueue > maxPostgresParams {
-			_, err := repo.Exec(sql)
+			err := repo.Exec(sql)
 			if err != nil {
 				return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
 			}
@@ -44,7 +44,7 @@ func valueTypeBatchInsert(repo *db2.Repo, rows []valueType, tableName string, co
 		return nil
 	}
 
-	_, err := repo.Exec(sql)
+	err := repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to perform batch insert", logan.F{"rows_len": len(rows)})
 	}

@@ -3,6 +3,7 @@ package ingest
 import (
 	"encoding/hex"
 	"encoding/json"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"gitlab.com/tokend/regources"
@@ -10,7 +11,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/utf8"
 )
@@ -115,10 +115,15 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTi
 		externalDetails = append(externalDetails, comment)
 	}
 
-	// we use key "data" for compatibility with db2.Details
+	// we use key "data" for compatibility with db2.Details (Deprecated)
 	// the value for the key "data" is a slice of map[string]interface{}
-	result.ExternalDetails = map[string]interface{}{
+	var resultDetails = map[string]interface{}{
 		"data": externalDetails,
+	}
+	result.ExternalDetails, err = json.Marshal(resultDetails)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &result, nil

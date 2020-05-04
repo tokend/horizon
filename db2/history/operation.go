@@ -2,13 +2,13 @@ package history
 
 import (
 	"encoding/json"
+	"gitlab.com/tokend/horizon/db2"
 
 	"time"
 
 	"github.com/go-errors/errors"
 	"github.com/guregu/null"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // Operation is a row of data from the `history_operations` table

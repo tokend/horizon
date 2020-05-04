@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"math/big"
@@ -37,7 +38,14 @@ type SaleStatistics struct {
 	Investors int `json:"investors"`
 }
 
-func (s *Sale) Populate(h *history.Sale) {
+func (s *Sale) Populate(h *history.Sale) error {
+	var details map[string]interface{}
+	err := json.Unmarshal(h.Details, &details)
+
+	if err != nil {
+		return err
+	}
+
 	s.PT = strconv.FormatUint(h.ID, 10)
 	s.ID = strconv.FormatUint(h.ID, 10)
 	s.OwnerID = h.OwnerID
@@ -47,7 +55,7 @@ func (s *Sale) Populate(h *history.Sale) {
 	s.EndTime = h.EndTime
 	s.SoftCap = amount.StringU(h.SoftCap)
 	s.HardCap = amount.StringU(h.HardCap)
-	s.Details = h.Details
+	s.Details = details
 	s.State.Name = h.State.String()
 	s.State.Value = int32(h.State)
 	s.QuoteAssets = h.QuoteAssets
@@ -56,6 +64,8 @@ func (s *Sale) Populate(h *history.Sale) {
 	s.CurrentCap = h.CurrentCap
 	s.SaleType.Name = h.SaleType.ShortString()
 	s.SaleType.Value = int32(h.SaleType)
+
+	return nil
 }
 
 func (s *Sale) PopulateStat(offers []core.Offer, balances []core.Balance) error {
