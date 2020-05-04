@@ -20,7 +20,7 @@ func NewRequest(record history2.ReviewableRequest) regources.ReviewableRequest {
 			Hash:            record.Hash,
 			AllTasks:        record.AllTasks,
 			PendingTasks:    record.PendingTasks,
-			ExternalDetails: record.ExternalDetails.ToRawMessage(),
+			ExternalDetails: record.ExternalDetails,
 			CreatedAt:       record.CreatedAt,
 			UpdatedAt:       record.UpdatedAt,
 			XdrType:         record.RequestType,

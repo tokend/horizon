@@ -1,6 +1,7 @@
 package reap
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"gitlab.com/tokend/horizon/errors"
@@ -65,30 +66,30 @@ func (r *System) runOnce() {
 func (r *System) clearBefore(seq int32) error {
 	log.WithField("new_elder", seq).Info("reaper: clearing")
 
-	clear := r.HorizonDB.DeleteRange
+	clear := db2.DeleteRange
 	end := toid.New(seq, 0, 0).ToInt64()
 
-	err := clear(0, end, "history_effects", "history_operation_id")
+	err := clear(r.HorizonDB, 0, end, "history_effects", "history_operation_id")
 	if err != nil {
 		return err
 	}
-	err = clear(0, end, "history_operation_participants", "history_operation_id")
+	err = clear(r.HorizonDB, 0, end, "history_operation_participants", "history_operation_id")
 	if err != nil {
 		return err
 	}
-	err = clear(0, end, "history_operations", "id")
+	err = clear(r.HorizonDB, 0, end, "history_operations", "id")
 	if err != nil {
 		return err
 	}
-	err = clear(0, end, "history_transaction_participants", "history_transaction_id")
+	err = clear(r.HorizonDB, 0, end, "history_transaction_participants", "history_transaction_id")
 	if err != nil {
 		return err
 	}
-	err = clear(0, end, "history_transactions", "id")
+	err = clear(r.HorizonDB, 0, end, "history_transactions", "id")
 	if err != nil {
 		return err
 	}
-	err = clear(0, end, "history_ledgers", "id")
+	err = clear(r.HorizonDB, 0, end, "history_ledgers", "id")
 	if err != nil {
 		return err
 	}

@@ -2,7 +2,7 @@ package ingest
 
 import (
 	"encoding/json"
-	"gitlab.com/tokend/horizon/db2"
+	regources "gitlab.com/tokend/regources/generated"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
@@ -67,7 +67,7 @@ func convertSale(raw xdr.SaleEntry) (*history.Sale, error) {
 		})
 	}
 
-	var saleDetails db2.Details
+	var saleDetails regources.Details
 	_ = json.Unmarshal([]byte(raw.Details), &saleDetails)
 
 	saleType := raw.SaleTypeExt.SaleType

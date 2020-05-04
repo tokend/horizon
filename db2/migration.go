@@ -1,5 +1,6 @@
 package db2
 
+// MigrateDir represents a direction in which to perform schema migrations.
 type MigrateDir string
 
 const (

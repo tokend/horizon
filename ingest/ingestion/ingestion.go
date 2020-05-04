@@ -1,10 +1,11 @@
 package ingestion
 
 import (
-	"database/sql"
+	sql2 "database/sql"
 	"encoding/json"
 	"fmt"
 	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"github.com/guregu/null"
@@ -18,6 +19,49 @@ import (
 	"gitlab.com/tokend/horizon/db2/sqx"
 	"gitlab.com/tokend/horizon/ingest/participants"
 )
+
+// Clear removes data from the ledger
+func (ingest *Ingestion) Clear(start int64, end int64) error {
+	clear := db2.DeleteRange
+	err := clear(ingest.DB, start, end, "history_operation_participants", "history_operation_id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_operations_participants table")
+	}
+	err = clear(ingest.DB, start, end, "history_operations", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_operations table")
+	}
+	err = clear(ingest.DB, start, end, "history_transaction_participants", "history_transaction_id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_transactions_participants table")
+	}
+	err = clear(ingest.DB, start, end, "history_transactions", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_transactions table")
+	}
+	err = clear(ingest.DB, start, end, "history_ledgers", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_ledgers table")
+	}
+	err = clear(ingest.DB, start, end, "history_ledger_changes", "tx_id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_ledger_changes table")
+	}
+	err = clear(ingest.DB, start, end, "history_contracts", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_contract table")
+	}
+	err = clear(ingest.DB, start, end, "history_contracts_details", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_contracts_details table")
+	}
+	err = clear(ingest.DB, start, end, "history_contracts_disputes", "id")
+	if err != nil {
+		return errors.Wrap(err, "failed to clear history_contracts_disputes table")
+	}
+
+	return nil
+}
 
 // Ledger adds a ledger to the current ingestion
 func (ingest *Ingestion) Ledger(
@@ -199,11 +243,6 @@ func (ingest *Ingestion) TransactWithFunction(fn pgdb.TransactionFunc) error {
 
 // Start makes the ingestion ready, initializing the insert builders and tx
 func (ingest *Ingestion) Start() (err error) {
-	//err = ingest.DB.Begin()
-	//if err != nil {
-	//	return errors.Wrap(err, "failed to bind repo to a new transaction")
-	//}
-
 	ingest.createInsertBuilders()
 
 	return nil
@@ -381,12 +420,12 @@ func (ingest *Ingestion) TryIngestAccount(aid string) (result int64, err error) 
 	var existing history.Account
 	err = q.AccountByAddress(&existing, aid)
 
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && err != sql2.ErrNoRows {
 		return 0, errors.Wrap(err, "failed to get account from DB")
 	}
 
 	// already imported, return the found value
-	if err != sql.ErrNoRows {
+	if err != sql2.ErrNoRows {
 		result = existing.ID
 		return result, nil
 	}

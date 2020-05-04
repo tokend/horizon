@@ -115,10 +115,15 @@ func convertReviewableRequest(request *xdr.ReviewableRequestEntry, ledgerCloseTi
 		externalDetails = append(externalDetails, comment)
 	}
 
-	// we use key "data" for compatibility with bridge.Details
+	// we use key "data" for compatibility with db2.Details (Deprecated)
 	// the value for the key "data" is a slice of map[string]interface{}
-	result.ExternalDetails = map[string]interface{}{
+	var resultDetails = map[string]interface{}{
 		"data": externalDetails,
+	}
+	result.ExternalDetails, err = json.Marshal(resultDetails)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &result, nil

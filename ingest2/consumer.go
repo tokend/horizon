@@ -124,7 +124,7 @@ func (c *Consumer) readAtLeastOne(ctx context.Context) []LedgerBundle {
 
 func (c *Consumer) processBatch(ctx context.Context, bundles []LedgerBundle) error {
 
-	_ = c.dbTxManager.Transaction(func() (err error) {
+	err := c.dbTxManager.Transaction(func() (err error) {
 		for _, bundle := range bundles {
 			select {
 			case <-ctx.Done():
@@ -140,6 +140,10 @@ func (c *Consumer) processBatch(ctx context.Context, bundles []LedgerBundle) err
 		}
 		return
 	})
+
+	if err != nil {
+		return errors.Wrap(err, "transaction failed")
+	}
 
 	return nil
 }
