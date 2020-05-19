@@ -336,7 +336,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/operations", handlers.GetOperations)
 	m.Get("/v3/operations/{id}", handlers.GetOperation)
 
-	cop := app.config.Cop()
+	cop := app.config.Copus()
 	if err := cop.RegisterChi(m); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))
 	}

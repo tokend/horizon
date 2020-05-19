@@ -478,17 +478,22 @@
   version = "v2.1.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:d0956e433012a0f2711f7d487844f839c9bef416186e9c84899368bc0f02ba1f"
+  digest = "1:4f2f0b805f1f61a7d7514c8666eabbe171139460b111122ea8f6f9291c3817c8"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
-    "cop",
+    "copus",
+    "copus/cop",
+    "copus/janus",
+    "copus/types",
+    "janus",
+    "janus/internal",
     "kv",
     "pgdb",
   ]
   pruneopts = "UT"
-  revision = "e6f60ca9efca149631299586bc170f0c8b7b110b"
+  revision = "2c6bb3ef4806a7296bddcbbc61de85aa46c193cf"
+  version = "v1.7.0"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"
@@ -512,12 +517,12 @@
   version = "v0.2.0"
 
 [[projects]]
-  digest = "1:8d319987cf8a2ac092b54e3bf04cab2e6da9d574292651d1339cfbc48bd5aef5"
+  digest = "1:6dab50184d27435d4e231a2a2eba6a6f8b30c8a84c41340d902f8bfc03affcbd"
   name = "gitlab.com/distributed_lab/running"
   packages = ["."]
   pruneopts = "UT"
-  revision = "023b9c716a08001f0464f43cf1d85dffb209273c"
-  version = "v1"
+  revision = "aded59ee376f6a43be772de6cd02eb7ab3bc0899"
+  version = "v1.4"
 
 [[projects]]
   branch = "master"
@@ -706,7 +711,8 @@
     "gitlab.com/distributed_lab/ape/problems",
     "gitlab.com/distributed_lab/corer",
     "gitlab.com/distributed_lab/figure",
-    "gitlab.com/distributed_lab/kit/cop",
+    "gitlab.com/distributed_lab/kit/copus",
+    "gitlab.com/distributed_lab/kit/copus/types",
     "gitlab.com/distributed_lab/kit/kv",
     "gitlab.com/distributed_lab/kit/pgdb",
     "gitlab.com/distributed_lab/logan",

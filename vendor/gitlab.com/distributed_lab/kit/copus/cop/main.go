@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"gitlab.com/distributed_lab/kit/copus/types"
+
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -42,7 +44,7 @@ func New(config CopConfig) *Cop {
 	}
 }
 
-func (c *Cop) WithLog(log *logan.Entry) *Cop {
+func (c *Cop) WithLog(log *logan.Entry) types.Copus {
 	c.log = log
 	return c
 }

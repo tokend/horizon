@@ -3,15 +3,12 @@ package cop
 import (
 	"gitlab.com/distributed_lab/figure"
 	"gitlab.com/distributed_lab/kit/comfig"
+	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-type Coper interface {
-	Cop() *Cop
-}
-
-func NewCoper(getter kv.Getter) Coper {
+func NewCoper(getter kv.Getter) types.Copuser {
 	return &coper{
 		getter: getter,
 	}
@@ -22,7 +19,7 @@ type coper struct {
 	once   comfig.Once
 }
 
-func (c *coper) Cop() *Cop {
+func (c *coper) Copus() types.Copus {
 	return c.once.Do(func() interface{} {
 		raw := kv.MustGetStringMap(c.getter, "cop")
 

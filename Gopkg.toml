@@ -83,7 +83,7 @@
   name = "gitlab.com/distributed_lab/corer"
 
 [[override]]
-  branch = "master"
+  version = "1.7.0"
   name = "gitlab.com/distributed_lab/kit"
 
 [[override]]
