@@ -5,6 +5,7 @@
 package reap
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 )
 

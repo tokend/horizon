@@ -59,9 +59,10 @@ type getSaleListForAccountHandler struct {
 }
 
 // GetSaleListForAccount returns the list of sales with related resources
-func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.GetSaleListForAccount) (*regources.SaleListResponse, error) {
-
+func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.GetSaleListForAccount,
+) (*regources.SaleListResponse, error) {
 	q := applySaleFilters(request.SalesBase, h.SalesQ).Whitelisted(request.Address)
+	q = applySaleIncludes(request.SalesBase, q)
 
 	historySales, err := q.CursorPage(*request.PageParams).Select()
 	if err != nil {
@@ -70,9 +71,6 @@ func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.G
 	response := &regources.SaleListResponse{
 		Data: make([]regources.Sale, 0, len(historySales)),
 	}
-
-	q = applySaleIncludes(request.SalesBase, q)
-
 
 	err = h.populateResponse(historySales, request.SalesBase, response)
 	if err != nil {
