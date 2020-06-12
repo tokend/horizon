@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 3.9.1
+
+### Fixed
+
+* panic on `/v3/accounts/{id}/sales`
+
+
 ## 3.9.0
 
 ### Added
