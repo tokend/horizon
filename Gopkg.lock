@@ -533,6 +533,18 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
+  branch = "v0"
+  digest = "1:0c20c54dc81c8cb22714ef19809f504c78afdaf2c2dc77622d3028e2db1f9f33"
+  name = "gitlab.com/distributed_lab/urlval"
+  packages = [
+    ".",
+    "internal",
+    "internal/betterreflect",
+  ]
+  pruneopts = "UT"
+  revision = "ae4f439daab672eeba79402cd6dda066b77b7836"
+
+[[projects]]
   branch = "feature/movements-rr-details"
   digest = "1:66de5c4cc3294a34d4c76031ad211127d6e7cb2183c85f978b24dd574b02293e"
   name = "gitlab.com/tokend/go"
@@ -720,6 +732,7 @@
     "gitlab.com/distributed_lab/logan/v3/errors",
     "gitlab.com/distributed_lab/running",
     "gitlab.com/distributed_lab/txsub",
+    "gitlab.com/distributed_lab/urlval",
     "gitlab.com/tokend/go/address",
     "gitlab.com/tokend/go/amount",
     "gitlab.com/tokend/go/build",
