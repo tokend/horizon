@@ -32,7 +32,7 @@ func GetCreateAmlAlertRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0], request.GetRequestsBase.Filters.Reviewer[0]) {
 		return
 	}
 
@@ -58,7 +58,7 @@ func (h *getCreateAmlAlertRequestsHandler) MakeAll(w http.ResponseWriter, reques
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateAmlAlert))
 
 	if request.ShouldFilter(requests.FilterTypeCreateAmlAlertRequestsBalance) {
-		q = q.FilterByAmlAlertBalance(request.Filters.Balance)
+		q = q.FilterByAmlAlertBalance(request.Filters.Balance[0])
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // VotesQ is a helper struct to aid in configuring queries that loads
@@ -41,7 +40,7 @@ func (q VotesQ) FilterByPollID(pollID int64) VotesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q VotesQ) Page(params db2.CursorPageParams) VotesQ {
+func (q VotesQ) Page(params pgdb.CursorPageParams) VotesQ {
 	q.selector = params.ApplyTo(q.selector, "v.id")
 	return q
 }

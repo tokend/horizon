@@ -26,8 +26,8 @@ var includeTypeRedemptionRequests = map[string]struct{}{
 
 type GetRedemptionRequestsFilter struct {
 	GetRequestListBaseFilters
-	SourceBalance      string `fig:"request_details.source_balance"`
-	DestinationAccount string `fig:"request_details.dest_account"`
+	SourceBalance      []string `filter:"request_details.source_balance"`
+	DestinationAccount []string `filter:"request_details.dest_account"`
 }
 
 type GetRedemptionRequests struct {

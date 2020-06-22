@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AtomicSwapAskQ is a helper struct to aid in configuring queries that loads atomic swap bids
@@ -73,7 +72,7 @@ func (q AtomicSwapAskQ) FilterByQuoteAssets(codes []string) AtomicSwapAskQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AtomicSwapAskQ) Page(params db2.OffsetPageParams) AtomicSwapAskQ {
+func (q AtomicSwapAskQ) Page(params pgdb.OffsetPageParams) AtomicSwapAskQ {
 	q.selector = params.ApplyTo(q.selector, "b.id")
 	return q
 }

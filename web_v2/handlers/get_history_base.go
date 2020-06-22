@@ -54,7 +54,7 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 
 	// TODO: need to refactor
 	if request.ShouldFilter(requests.FilterTypeHistoryAccount) {
-		h.Account, err = h.AccountsQ.ByAddress(request.Filters.Account)
+		h.Account, err = h.AccountsQ.ByAddress(request.Filters.Account[0])
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get account", logan.F{
 				"account_address": request.Filters.Account,
@@ -72,7 +72,7 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 	}
 
 	if request.ShouldFilter(requests.FilterTypeHistoryBalance) {
-		h.Balance, err = h.BalanceQ.GetByAddress(request.Filters.Balance)
+		h.Balance, err = h.BalanceQ.GetByAddress(request.Filters.Balance[0])
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get balance", logan.F{
 				"balance_address": request.Filters.Balance,
@@ -90,7 +90,7 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 	}
 
 	if request.ShouldFilter(requests.FilterTypeHistoryAsset) {
-		h.Asset, err = h.AssetsQ.GetByCode(request.Filters.Asset)
+		h.Asset, err = h.AssetsQ.GetByCode(request.Filters.Asset[0])
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get asset", logan.F{
 				"asset_code": request.Filters.Asset,

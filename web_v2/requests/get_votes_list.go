@@ -1,14 +1,14 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 )
 
 type GetVoteList struct {
 	*base
 	PollID     int64
-	PageParams *db2.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
 
 func NewGetVoteList(r *http.Request) (*GetVoteList, error) {

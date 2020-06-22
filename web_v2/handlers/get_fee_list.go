@@ -51,23 +51,24 @@ type getFeeListHandler struct {
 func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources.FeeRecordListResponse, error) {
 	q := h.FeesQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeFeeListAccount) {
-		q = q.FilterByAddress(request.Filters.Account)
+		q = q.FilterByAddress(request.Filters.Account[0])
 	}
 	if request.ShouldFilter(requests.FilterTypeFeeListAccountRole) {
-		q = q.FilterByAccountRole(request.Filters.AccountRole)
+		q = q.FilterByAccountRole(request.Filters.AccountRole[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeFeeListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset)
+		q = q.FilterByAsset(request.Filters.Asset[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeFeeListSubtype) {
-		q = q.FilterBySubtype(request.Filters.Subtype)
+		q = q.FilterBySubtype(request.Filters.Subtype[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeFeeListFeeType) {
-		q = q.FilterByType(request.Filters.FeeType)
+		q = q.FilterByType(request.Filters.FeeType[0])
 	}
+
 
 	if request.ShouldFilter(requests.FilterTypeFeeListLowerBound) {
 		q = q.FilterByLowerBound(int64(request.Filters.LowerBound))

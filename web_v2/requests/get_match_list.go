@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 )
 
@@ -26,9 +26,12 @@ type GetMatchList struct {
 		QuoteAsset string `fig:"quote_asset,required"`
 	}
 
-	PageParams *db2.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
-
+//type GetMatchListFilters struct {
+//BaseAsset  []string `filter:"base_asset"`
+//QuoteAsset []string `filter:"quote_asset"`
+//}
 // NewGetMatchList - returns new instance of GetMatchList
 func NewGetMatchList(r *http.Request) (*GetMatchList, error) {
 	b, err := newBase(r, baseOpts{

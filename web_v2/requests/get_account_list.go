@@ -1,7 +1,8 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 	"net/http"
 )
 
@@ -21,32 +22,25 @@ var filterTypeAccountListAll = map[string]struct{}{
 type GetAccountList struct {
 	*base
 	Filters struct {
-		Account []string `fig:"account"`
-		Role    []uint64 `fig:"role"`
+		Account []string `filter:"account"`
+		Role    []uint64 `filter:"role"`
 	}
-	PageParams db2.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewGetAccountList - returns new instance of GetAccountList request
 func NewGetAccountList(r *http.Request) (*GetAccountList, error) {
 	b, err := newBase(r, baseOpts{
 		supportedFilters: filterTypeAccountListAll,
-	})
+	 	})
 	if err != nil {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
-	if err != nil {
-		return nil, err
-	}
 
-	request := GetAccountList{
-		base:       b,
-		PageParams: *pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	var request =GetAccountList{base: b}
+	request.Filters.Role=[]uint64{0}
+	err=urlval.Decode(r.URL.Query(), &request)//default sorting is "desc"
 	if err != nil {
 		return nil, err
 	}

@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 //FeesEmptyRole - defines is used as default in core when account role for which fee should be applied is not specified
@@ -30,8 +29,8 @@ func NewFeesQ(repo *pgdb.DB) FeesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q FeesQ) Page(params db2.OffsetPageParams) FeesQ {
-	order := string(params.Order)
+func (q FeesQ) Page(params pgdb.OffsetPageParams) FeesQ {
+	order := params.Order
 	orderBys := []string{"f.hash " + order, "f.lower_bound " + order, "f.upper_bound " + order}
 	q.selector = params.ApplyTo(q.selector.OrderBy(orderBys...))
 	return q

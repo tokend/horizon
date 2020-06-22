@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountRuleQ is a helper struct to aid in configuring queries that loads
@@ -41,7 +40,7 @@ func (q AccountRuleQ) FilterByID(id uint64) AccountRuleQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AccountRuleQ) Page(params db2.OffsetPageParams) AccountRuleQ {
+func (q AccountRuleQ) Page(params pgdb.OffsetPageParams) AccountRuleQ {
 	q.selector = params.ApplyTo(q.selector, "ar.id")
 	return q
 }

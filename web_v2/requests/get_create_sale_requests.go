@@ -28,8 +28,8 @@ var includeTypeCreateSaleRequests = map[string]struct{}{
 
 type GetCreateSaleRequestsFilter struct {
 	GetRequestListBaseFilters
-	BaseAsset         string `fig:"request_details.base_asset"`
-	DefaultQuoteAsset string `fig:"request_details.default_quote_asset"`
+	BaseAsset         []string `filter:"request_details.base_asset"`
+	DefaultQuoteAsset []string `filter:"request_details.default_quote_asset"`
 }
 
 type GetCreateSaleRequests struct {

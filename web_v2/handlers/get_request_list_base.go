@@ -40,7 +40,7 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		return errors.Wrap(err, "Failed to get reviewable request list")
 	}
 
-	if request.Filters.ID != 0 {
+	if request.Filters.ID[0] != 0 {
 		if len(records) == 0 {
 			ape.RenderErr(w, problems.NotFound())
 			return nil
@@ -92,35 +92,35 @@ func (h *getRequestListBaseHandler) ApplyFilters(
 ) history2.ReviewableRequestsQ {
 	q = q.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeRequestListRequestor) {
-		q = q.FilterByRequestorAddress(request.Filters.Requestor)
+		q = q.FilterByRequestorAddress(request.Filters.Requestor[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeRequestListReviewer) {
-		q = q.FilterByReviewerAddress(request.Filters.Reviewer)
+		q = q.FilterByReviewerAddress(request.Filters.Reviewer[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeRequestListState) {
-		q = q.FilterByState(request.Filters.State)
+		q = q.FilterByState(request.Filters.State[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeRequestListType) {
-		q = q.FilterByRequestType(request.Filters.Type)
+		q = q.FilterByRequestType(request.Filters.Type[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeRequestListPendingTasks) {
-		q = q.FilterByPendingTasks(request.Filters.PendingTasks)
+		q = q.FilterByPendingTasks(request.Filters.PendingTasks[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeRequestListPendingTasksNotSet) {
-		q = q.FilterPendingTasksNotSet(request.Filters.PendingTasksNotSet)
+		q = q.FilterPendingTasksNotSet(request.Filters.PendingTasksNotSet[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeRequestListPendingTasksAnyOf) {
-		q = q.FilterByPendingTasksAnyOf(request.Filters.PendingTasksAnyOf)
+		q = q.FilterByPendingTasksAnyOf(request.Filters.PendingTasksAnyOf[0])
 	}
 
-	if request.Filters.ID != 0 {
-		q = q.FilterByID(request.Filters.ID)
+	if request.Filters.ID[0] != 0 {
+		q = q.FilterByID(request.Filters.ID[0])
 	}
 
 	return q

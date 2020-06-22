@@ -32,7 +32,7 @@ func GetCreatePreIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0], request.GetRequestsBase.Filters.Reviewer[0]) {
 		return
 	}
 
@@ -58,7 +58,7 @@ func (h *getCreatePreIssuanceRequestsHandler) MakeAll(w http.ResponseWriter, req
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreatePreIssuance))
 
 	if request.ShouldFilter(requests.FilterTypeCreatePreIssuanceRequestsAsset) {
-		q = q.FilterByCreatePreIssuanceAsset(request.Filters.Asset)
+		q = q.FilterByCreatePreIssuanceAsset(request.Filters.Asset[0])
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

@@ -1,7 +1,8 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 	"net/http"
 )
 
@@ -37,11 +38,11 @@ var filterTypeBalanceListAll = map[string]struct{}{
 type GetBalanceList struct {
 	*base
 	Filters struct {
-		Asset      string `fig:"asset"`
-		AssetOwner string `json:"asset_owner"`
-		Owner      string `json:"owner"`
+		Asset      []string `filter:"asset"`
+		AssetOwner []string `filter:"asset_owner"`
+		Owner      []string `filter:"owner"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *pgdb.OffsetPageParams
 }
 
 // NewGetBalanceList - returns new instance of GetBalanceList
@@ -54,20 +55,20 @@ func NewGetBalanceList(r *http.Request) (*GetBalanceList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
-	if err != nil {
-		return nil, err
-	}
-
+	var pageParams pgdb.OffsetPageParams
+	err=urlval.Decode(r.URL.Query(), &pageParams)
 	request := GetBalanceList{
 		base:       b,
-		PageParams: pageParams,
+		PageParams: &pageParams,
 	}
 
-	err = b.populateFilters(&request.Filters)
-	if err != nil {
-		return nil, err
-	}
+  	request.Filters = struct {
+		Asset      []string `filter:"asset"`
+		AssetOwner []string `filter:"asset_owner"`
+		Owner      []string `filter:"owner"`
+	}{[]string{""},[]string{""},[]string{""}}
+
+	err=urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

@@ -32,8 +32,8 @@ func GetCreatePollRequests(w http.ResponseWriter, r *http.Request) {
 	}
 
 	constraints := []string{
-		request.GetRequestsBase.Filters.Requestor,
-		request.GetRequestsBase.Filters.Reviewer,
+		request.GetRequestsBase.Filters.Requestor[0],
+		request.GetRequestsBase.Filters.Reviewer[0],
 	}
 
 	if !isAllowed(r, w, constraints...) {
@@ -62,14 +62,14 @@ func (h *getCreatePollRequestsHandler) MakeAll(w http.ResponseWriter, request re
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreatePoll))
 
 	if request.ShouldFilter(requests.FilterTypeCreatePollRequestsPermissionType) {
-		q = q.FilterByCreatePollPermissionType(request.Filters.PermissionType)
+		q = q.FilterByCreatePollPermissionType(request.Filters.PermissionType[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeCreatePollRequestsVoteConfirmationRequired) {
-		q = q.FilterByCreatePollVoteConfirmationRequired(request.Filters.VoteConfirmationRequired)
+		q = q.FilterByCreatePollVoteConfirmationRequired(request.Filters.VoteConfirmationRequired[0])
 	}
 	if request.ShouldFilter(requests.FilterTypeCreatePollRequestsResultProvider) {
-		q = q.FilterByCreatePollResultProvider(request.Filters.ResultProvider)
+		q = q.FilterByCreatePollResultProvider(request.Filters.ResultProvider[0])
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

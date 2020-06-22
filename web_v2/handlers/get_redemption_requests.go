@@ -33,7 +33,7 @@ func GetRedemptionRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0], request.GetRequestsBase.Filters.Reviewer[0]) {
 		return
 	}
 
@@ -60,10 +60,10 @@ func (h *getRedemptionRequestsHandler) MakeAll(w http.ResponseWriter, request re
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypePerformRedemption))
 
 	if request.ShouldFilter(requests.FilterTypeRedemptionRequestsDestinationAccount) {
-		q = q.FilterByAssetUpdateAsset(request.Filters.DestinationAccount)
+		q = q.FilterByAssetUpdateAsset(request.Filters.DestinationAccount[0])
 	}
 	if request.ShouldFilter(requests.FilterTypeRedemptionRequestsSourceBalance) {
-		q = q.FilterByAssetUpdateAsset(request.Filters.SourceBalance)
+		q = q.FilterByAssetUpdateAsset(request.Filters.SourceBalance[0])
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

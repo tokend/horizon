@@ -24,8 +24,8 @@ var filterTypeChangeRoleRequests = map[string]struct{}{
 
 type GetChangeRoleRequestsFilter struct {
 	GetRequestListBaseFilters
-	Account     string `fig:"request_details.destination_account"`
-	AccountRole int32  `fig:"request_details.account_role_to_set"`
+	Account     []string `filter:"request_details.destination_account"`
+	AccountRole []int32  `filter:"request_details.account_role_to_set"`
 }
 
 type GetChangeRoleRequests struct {
@@ -34,6 +34,10 @@ type GetChangeRoleRequests struct {
 }
 
 func NewGetChangeRoleRequests(r *http.Request) (request GetChangeRoleRequests, err error) {
+	request.Filters=
+		GetChangeRoleRequestsFilter{
+		AccountRole: []int32{0},
+		}
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
 		&request.Filters,

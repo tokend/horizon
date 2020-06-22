@@ -52,19 +52,19 @@ func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPai
 	q := h.AssetPairsQ.Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeAssetPairListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset)
+		q = q.FilterByAsset(request.Filters.Asset[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeAssetPairListBaseAsset) {
-		q = q.FilterByBaseAsset(request.Filters.BaseAsset)
+		q = q.FilterByBaseAsset(request.Filters.BaseAsset[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeAssetPairListQuoteAsset) {
-		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset)
+		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeAssetPairListPolicy) {
-		q = q.FilterByPolicy(request.Filters.Policy)
+		q = q.FilterByPolicy(request.Filters.Policy[0])
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeAssetPairListBaseAssets) {

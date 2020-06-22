@@ -53,7 +53,7 @@ func (q BalancesQ) FilterByAsset(asset string) BalancesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q BalancesQ) Page(params db2.OffsetPageParams) BalancesQ {
+func (q BalancesQ) Page(params pgdb.OffsetPageParams) BalancesQ {
 	q.selector = params.ApplyTo(q.selector, "balances.balance_id")
 	return q
 }

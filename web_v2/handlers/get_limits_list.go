@@ -51,18 +51,18 @@ type getLimitsListHandler struct {
 func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*regources.LimitsListResponse, error) {
 	q := h.LimitsQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeLimitsListAccount) {
-		q = q.FilterByAccount(request.Filters.Account)
+		q = q.FilterByAccount(request.Filters.Account[0])
 	}
 	if request.ShouldFilter(requests.FilterTypeLimitsListAccountRole) {
-		q = q.FilterByAccountRole(request.Filters.AccountRole)
+		q = q.FilterByAccountRole(request.Filters.AccountRole[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeLimitsListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset)
+		q = q.FilterByAsset(request.Filters.Asset[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeLimitsListStatsOpType) {
-		q = q.FilterByStatsOpType(request.Filters.StatsOpType)
+		q = q.FilterByStatsOpType(request.Filters.StatsOpType[0])
 	}
 
 	limits, err := q.Select()

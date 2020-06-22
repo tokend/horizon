@@ -59,28 +59,53 @@ func (h *getSwapListHandler) GetSwapList(request *requests.GetSwapList) (*regour
 	q := h.SwapsQ
 
 	if request.ShouldFilter(requests.FilterTypeSwapListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset)
+		q = q.FilterByAsset(request.Filters.Asset[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeSwapListDestination) {
-		q = q.FilterByDestination(request.Filters.Destination)
+		q = q.FilterByDestination(request.Filters.Destination[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeSwapListSource) {
-		q = q.FilterBySource(request.Filters.Source)
+		q = q.FilterBySource(request.Filters.Source[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeSwapListSourceBalance) {
-		q = q.FilterBySourceBalance(request.Filters.SourceBalance)
+		q = q.FilterBySourceBalance(request.Filters.SourceBalance[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeSwapListDestinationBalance) {
-		q = q.FilterByDestinationBalance(request.Filters.DestinationBalance)
+		q = q.FilterByDestinationBalance(request.Filters.DestinationBalance[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeSwapListState) {
-		q = q.FilterByState(request.Filters.State)
+		q = q.FilterByState(request.Filters.State[0])
 	}
+
+
+	//if request.ShouldFilter(requests.FilterTypeSwapListAsset) {
+	//	q = q.FilterByAsset(request.Filters.Asset)
+	//}
+	//
+	//if request.ShouldFilter(requests.FilterTypeSwapListDestination) {
+	//	q = q.FilterByDestination(request.Filters.Destination)
+	//}
+	//
+	//if request.ShouldFilter(requests.FilterTypeSwapListSource) {
+	//	q = q.FilterBySource(request.Filters.Source)
+	//}
+	//
+	//if request.ShouldFilter(requests.FilterTypeSwapListSourceBalance) {
+	//	q = q.FilterBySourceBalance(request.Filters.SourceBalance)
+	//}
+	//
+	//if request.ShouldFilter(requests.FilterTypeSwapListDestinationBalance) {
+	//	q = q.FilterByDestinationBalance(request.Filters.DestinationBalance)
+	//}
+	//
+	//if request.ShouldFilter(requests.FilterTypeSwapListState) {
+	//	q = q.FilterByState(request.Filters.State)
+	//}
 
 	historySwaps, err := q.Page(*request.PageParams).Select()
 	if err != nil {

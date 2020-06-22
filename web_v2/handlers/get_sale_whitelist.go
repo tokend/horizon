@@ -86,7 +86,7 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 		Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeSaleWhitelistAddress) {
-		q = q.FilterByAddress(request.Filters.Address)
+		q = q.FilterByAddress(request.Filters.Address[0])
 	}
 
 	rules, err := q.Select()

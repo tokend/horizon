@@ -1,19 +1,24 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 	"net/http"
 )
 
 type GetRequestsBase struct {
 	*base
 	Filters    GetRequestListBaseFilters
-	PageParams *db2.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
 
 func NewGetRequestsBase(
-	r *http.Request, filterDst interface{}, filters map[string]struct{}, includes map[string]struct{},
+	r *http.Request,
+	filterDst interface{},
+	filters map[string]struct{},
+	includes map[string]struct{},
 ) (*GetRequestsBase, error) {
+
 	// merge filters
 	mergedFilters := map[string]struct{}{}
 	for k := range filters {
@@ -44,17 +49,25 @@ func NewGetRequestsBase(
 		return nil, err
 	}
 
-	err = b.populateFilters(filterDst)
-	if err != nil {
-		return nil, err
-	}
 
-	var baseFilters GetRequestListBaseFilters
-	err = b.populateFilters(&baseFilters)
-	if err != nil {
-		return nil, err
-	}
-	baseFilters.ID, err = b.getUint64ID()
+	err=urlval.Decode(r.URL.Query(), filterDst)
+
+	var baseFilters=
+	 	GetRequestListBaseFilters{
+		ID: []uint64{0},
+		Requestor: []string{""},
+	 	Reviewer: []string{""},
+	 	State: []uint64{0},
+	 	Type: []uint64{0},
+	 	PendingTasks: []uint64{0},
+	 	PendingTasksAnyOf: []uint64{0},
+	 	PendingTasksNotSet: []uint64{0},
+	 	MissingPendingTasks: []uint64{0},
+	 	}
+	err=urlval.Decode(r.URL.Query(),&baseFilters)
+
+	ID, err := b.getUint64ID()
+	baseFilters.ID=[]uint64{ID}
 	if err != nil {
 		return nil, err
 	}

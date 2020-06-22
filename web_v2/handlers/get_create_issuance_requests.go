@@ -35,13 +35,13 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 	}
 
 	constraints := []string{
-		request.GetRequestsBase.Filters.Requestor,
-		request.GetRequestsBase.Filters.Reviewer,
+		request.GetRequestsBase.Filters.Requestor[0],
+		request.GetRequestsBase.Filters.Reviewer[0],
 	}
 
 	// receiving balance owner should be able to see issuance requests
-	if request.Filters.Receiver != "" {
-		balance, err := history2.NewBalancesQ(historyRepo).GetByAddress(request.Filters.Receiver)
+	if request.Filters.Receiver[0] != "" {
+		balance, err := history2.NewBalancesQ(historyRepo).GetByAddress(request.Filters.Receiver[0])
 		if err != nil {
 			ctx.Log(r).
 				WithError(err).
@@ -94,11 +94,11 @@ func (h *getCreateIssuanceRequestsHandler) MakeAll(w http.ResponseWriter, reques
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateIssuance))
 
 	if request.ShouldFilter(requests.FilterTypeCreateIssuanceRequestsAsset) {
-		q = q.FilterByCreateIssuanceAsset(request.Filters.Asset)
+		q = q.FilterByCreateIssuanceAsset(request.Filters.Asset[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeCreateIssuanceRequestsReceiver) {
-		q = q.FilterByCreateIssuanceReceiver(request.Filters.Receiver)
+		q = q.FilterByCreateIssuanceReceiver(request.Filters.Receiver[0])
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

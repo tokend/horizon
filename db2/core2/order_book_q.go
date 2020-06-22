@@ -120,17 +120,6 @@ func (q OrderBooksQ) Limit(limit uint64) OrderBooksQ {
 	return q
 }
 
-// Page - returns Q with specified limit and offset params
-func (q OrderBooksQ) Page(params db2.OffsetPageParams) OrderBooksQ {
-	q.selector = params.ApplyTo(q.selector,
-		"order_book_entries.price",
-		"order_book_entries.base_asset_code",
-		"order_book_entries.quote_asset_code",
-		"order_book_entries.is_buy",
-	)
-	return q
-}
-
 // Select - selects slice from the db, if no order book entries found - returns nil, nil
 func (q OrderBooksQ) Select() ([]OrderBookEntry, error) {
 	var result []OrderBookEntry
@@ -140,4 +129,15 @@ func (q OrderBooksQ) Select() ([]OrderBookEntry, error) {
 	}
 
 	return result, nil
+}
+
+// Page - returns Q with specified limit and offset params
+func (q OrderBooksQ) Page(params pgdb.OffsetPageParams) OrderBooksQ {
+	q.selector = params.ApplyTo(q.selector,
+		"order_book_entries.price",
+		"order_book_entries.base_asset_code",
+		"order_book_entries.quote_asset_code",
+		"order_book_entries.is_buy",
+	)
+	return q
 }

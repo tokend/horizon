@@ -58,10 +58,10 @@ func (h *getAtomicSwapAskListHandler) GetAtomicSwapAskList(request *requests.Get
 ) (*regources.AtomicSwapAskListResponse, error) {
 	q := h.AtomicSwapAskQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeAskListOwner) {
-		q = q.FilterByOwner(request.Filters.Owner)
+		q = q.FilterByOwner(request.Filters.Owner[0])
 	}
 	if request.ShouldFilter(requests.FilterTypeAskListBaseAsset) {
-		q = q.FilterByBaseAssets([]string{request.Filters.BaseAsset})
+		q = q.FilterByBaseAssets(request.Filters.BaseAsset)
 	}
 	if request.ShouldFilter(requests.FilterTypeAskListQuoteAssets) {
 		q = q.FilterByQuoteAssets(request.Filters.QuoteAssets)

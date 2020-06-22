@@ -1,7 +1,8 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -331,61 +332,65 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 	return requestIncludes, nil
 }
 
-func (r *base) getOffsetBasedPageParams() (*db2.OffsetPageParams, error) {
-	limit, err := r.getLimit(defaultLimit, maxLimit)
+func (r *base) getOffsetBasedPageParams() (*pgdb.OffsetPageParams, error) {
+var pageParams pgdb.OffsetPageParams
+	err:= urlval.Decode(r.request.URL.Query(),&pageParams)
+
+	if pageParams.Limit > maxLimit {
+		pageParams.Limit,err= 0, validation.Errors{
+			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
+		}
+	} else {err=nil}
 	if err != nil {
 		return nil, err
 	}
 
-	pageNumber, err := r.getPageNumber()
-	if err != nil {
-		return nil, err
-	}
-
-	order, err := r.getOrder()
-	if err != nil {
-		return nil, err
-	}
-
-	return &db2.OffsetPageParams{
-		Order:      order,
-		Limit:      limit,
-		PageNumber: pageNumber,
-	}, nil
+	return &pageParams,nil
 }
 
-func (r *base) getCursorBasedPageParams() (*db2.CursorPageParams, error) {
-	limit, err := r.getLimit(defaultLimit, maxLimit)
-	if err != nil {
-		return nil, err
+func (r *base) getCursorBasedPageParams() (*pgdb.CursorPageParams, error) {
+var pageParams pgdb.CursorPageParams
+	err:=urlval.Decode(r.request.URL.Query(), &pageParams)
+
+	if pageParams.Order=="" {pageParams.Order=pgdb.OrderTypeAsc}
+
+	if pageParams.Limit==0 {pageParams.Limit=defaultLimit}
+	if pageParams.Limit > maxLimit {
+		pageParams.Limit,err= 0, validation.Errors{
+			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
+		}
+
+	} else {err=nil}
+	if err!=nil {
+		return nil,err
 	}
 
-	order, err := r.getOrder()
-	if err != nil {
-		return nil, err
+	if pageParams.Order == pgdb.OrderTypeDesc && pageParams.Cursor == 0 {
+		pageParams.Cursor = math.MaxInt64
 	}
 
-	cursor, err := r.getCursor()
-	if err != nil {
-		return nil, err
-	}
+	return &pageParams,nil
+}
+func  Invert(o string) string{
 
-	if order == db2.OrderDescending && cursor == 0 {
-		cursor = math.MaxInt64
-	}
+		switch o {
+	case pgdb.OrderTypeDesc:
+		return pgdb.OrderTypeAsc
+	case pgdb.OrderTypeAsc:
+		return pgdb.OrderTypeDesc
+	default:
+		panic(errors.From(errors.New("unexpected order type"), logan.F{
+		"order_type": o,
+	}))
+		}
 
-	return &db2.CursorPageParams{
-		Limit:  limit,
-		Order:  order,
-		Cursor: cursor,
-	}, nil
 }
 
 //GetCursorLinks - returns links for cursor based page params
-func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *regources.Links {
+func (r *base) GetCursorLinks(p pgdb.CursorPageParams, last string) *regources.Links {
 	result := regources.Links{
 		Self: r.getCursorLink(p.Cursor, p.Limit, p.Order),
-		Prev: r.getCursorLink(p.Cursor, p.Limit, p.Order.Invert()),
+		Prev: r.getCursorLink(p.Cursor, p.Limit, Invert(p.Order)),
 	}
 
 	if last != "" {
@@ -402,7 +407,7 @@ func (r *base) GetCursorLinks(p db2.CursorPageParams, last string) *regources.Li
 }
 
 //GetOffsetLinks - returns links for offset based page params
-func (r *base) GetOffsetLinks(p db2.OffsetPageParams) *regources.Links {
+func (r *base) GetOffsetLinks(p pgdb.OffsetPageParams) *regources.Links {
 	result := regources.Links{
 		Next: r.getOffsetLink(p.PageNumber+1, p.Limit, p.Order),
 		Self: r.getOffsetLink(p.PageNumber, p.Limit, p.Order),
@@ -411,22 +416,22 @@ func (r *base) GetOffsetLinks(p db2.OffsetPageParams) *regources.Links {
 	return &result
 }
 
-func (r *base) getCursorLink(cursor, limit uint64, order db2.OrderType) string {
+func (r *base) getCursorLink(cursor, limit uint64, order string) string {
 	u := r.URL()
 	query := u.Query()
 	query.Set(pageParamCursor, strconv.FormatUint(cursor, 10))
 	query.Set(pageParamLimit, strconv.FormatUint(limit, 10))
-	query.Set(pageParamOrder, string(order))
+	query.Set(pageParamOrder, order)
 	u.RawQuery = query.Encode()
 	return u.String()
 }
 
-func (r *base) getOffsetLink(pageNumber, limit uint64, order db2.OrderType) string {
+func (r *base) getOffsetLink(pageNumber, limit uint64, order string) string {
 	u := r.URL()
 	query := u.Query()
 	query.Set(pageParamNumber, strconv.FormatUint(pageNumber, 10))
 	query.Set(pageParamLimit, strconv.FormatUint(limit, 10))
-	query.Set(pageParamOrder, string(order))
+	query.Set(pageParamOrder, order)
 	u.RawQuery = query.Encode()
 	return u.String()
 }
@@ -461,16 +466,17 @@ func (r *base) getLimit(defaultLimit, maxLimit uint64) (uint64, error) {
 	return result, nil
 }
 
-func (r *base) getOrder() (db2.OrderType, error) {
+func (r *base) getOrder() (string, error) {
+
 	order := r.getString(pageParamOrder)
 	switch order {
-	case db2.OrderAscending, db2.OrderDescending:
-		return db2.OrderType(order), nil
+	case pgdb.OrderTypeAsc, pgdb.OrderTypeDesc:
+		return order, nil
 	case "":
-		return db2.OrderAscending, nil
+		return pgdb.OrderTypeAsc, nil
 	default:
-		return db2.OrderDescending, validation.Errors{
-			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", db2.OrderAscending, db2.OrderDescending),
+		return pgdb.OrderTypeDesc, validation.Errors{
+			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", pgdb.OrderTypeAsc, pgdb.OrderTypeDesc),
 		}
 	}
 }

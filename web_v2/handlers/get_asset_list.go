@@ -51,13 +51,13 @@ type getAssetListHandler struct {
 func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*regources.AssetListResponse, error) {
 	q := h.AssetsQ.Page(*request.PageParams)
 	if request.ShouldFilter(requests.FilterTypeAssetListOwner) {
-		q = q.FilterByOwner(request.Filters.Owner)
+		q = q.FilterByOwner(request.Filters.Owner[0])
 	}
 	if request.ShouldFilter(requests.FilterTypeAssetListPolicy) {
-		q = q.FilterByPolicy(request.Filters.Policy)
+		q = q.FilterByPolicy(request.Filters.Policy[0])
 	}
 	if request.ShouldFilter(requests.FilterTypeAssetListState) {
-		q = q.FilterByState(request.Filters.State)
+		q = q.FilterByState(request.Filters.State[0])
 	}
 	if request.ShouldFilter(requests.FilterTypeAssetListCodes) {
 		q = q.FilterByCodes(request.Filters.Codes)

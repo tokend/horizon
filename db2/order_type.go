@@ -12,9 +12,9 @@ type OrderType string
 func (o OrderType) Invert() OrderType {
 	switch o {
 	case OrderDesc:
-		return OrderAsc
+		return "asc"
 	case OrderAsc:
-		return OrderDesc
+		return "desc"
 	default:
 		panic(errors.From(errors.New("unexpected order type"), logan.F{
 			"order_type": o,

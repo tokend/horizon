@@ -24,7 +24,7 @@ var filterTypeCreateAtomicSwapAskRequests = map[string]struct{}{
 
 type GetCreateAtomicSwapAskRequestsFilter struct {
 	GetRequestListBaseFilters
-	BaseBalance string `fig:"request_details.base_balance"`
+	BaseBalance []string `filter:"request_details.base_balance"`
 }
 
 type GetCreateAtomicSwapAskRequests struct {

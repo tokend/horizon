@@ -30,7 +30,7 @@ func GetOfferList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, request.Filters.Owner) {
+	if !isAllowed(r, w, request.Filters.Owner[0]) {
 		return
 	}
 
@@ -58,31 +58,31 @@ func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*reg
 	q := h.OffersQ.Page(*request.PageParams)
 
 	if request.ShouldFilter(requests.FilterTypeOfferListBaseBalance) {
-		q = q.FilterByBaseBalanceID(request.Filters.BaseBalance)
+		q = q.FilterByBaseBalanceID(request.Filters.BaseBalance[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeOfferListQuoteBalance) {
-		q = q.FilterByQuoteBalanceID(request.Filters.QuoteBalance)
+		q = q.FilterByQuoteBalanceID(request.Filters.QuoteBalance[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeOfferListBaseAsset) {
-		q = q.FilterByBaseAssetCode(request.Filters.BaseAsset)
+		q = q.FilterByBaseAssetCode(request.Filters.BaseAsset[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeOfferListQuoteAsset) {
-		q = q.FilterByQuoteAssetCode(request.Filters.QuoteAsset)
+		q = q.FilterByQuoteAssetCode(request.Filters.QuoteAsset[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeOfferListOwner) {
-		q = q.FilterByOwnerID(request.Filters.Owner)
+		q = q.FilterByOwnerID(request.Filters.Owner[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeOfferListOrderBook) {
-		q = q.FilterByOrderBookID(request.Filters.OrderBook)
+		q = q.FilterByOrderBookID(request.Filters.OrderBook[0])
 	}
 
 	if request.ShouldFilter(requests.FilterTypeOfferListIsBuy) {
-		q = q.FilterByIsBuy(request.Filters.IsBuy)
+		q = q.FilterByIsBuy(request.Filters.IsBuy[0])
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeOfferListBaseAssets) {

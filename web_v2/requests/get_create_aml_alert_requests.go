@@ -22,7 +22,7 @@ var filterTypeCreateAmlAlertRequests = map[string]struct{}{
 
 type GetCreateAmlAlertRequestsFilter struct {
 	GetRequestListBaseFilters
-	Balance string `fig:"request_details.balance"`
+	Balance []string `filter:"request_details.balance"`
 }
 
 type GetCreateAmlAlertRequests struct {

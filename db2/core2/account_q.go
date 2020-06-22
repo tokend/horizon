@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountsQ is a helper struct to aid in configuring queries that loads
@@ -59,7 +58,7 @@ func (q AccountsQ) FilterByRole(ids ...uint64) AccountsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AccountsQ) Page(params db2.OffsetPageParams) AccountsQ {
+func (q AccountsQ) Page(params pgdb.OffsetPageParams) AccountsQ {
 	q.selector = params.ApplyTo(q.selector, "accounts.sequential_id")
 	return q
 }

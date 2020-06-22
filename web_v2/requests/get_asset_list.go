@@ -1,7 +1,8 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 	"net/http"
 )
 
@@ -34,12 +35,12 @@ var filterTypeAssetListAll = map[string]struct{}{
 type GetAssetList struct {
 	*base
 	Filters struct {
-		Policy uint64   `fig:"policy"`
-		Owner  string   `fig:"owner"`
-		State  uint32   `fig:"state"`
-		Codes  []string `fig:"codes"`
+		Policy []uint64   `filter:"policy"`
+		Owner  []string   `filter:"owner"`
+		State  []uint32   `filter:"state"`
+		Codes  []string `filter:"codes"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *pgdb.OffsetPageParams
 }
 
 // NewGetAssetList returns the new instance of GetAssetList request
@@ -52,20 +53,26 @@ func NewGetAssetList(r *http.Request) (*GetAssetList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
-	if err != nil {
-		return nil, err
-	}
 
+	var pageParams pgdb.OffsetPageParams
 	request := GetAssetList{
 		base:       b,
-		PageParams: pageParams,
+		PageParams: &pageParams,
+		Filters: struct {
+			Policy []uint64   `filter:"policy"`
+			Owner  []string   `filter:"owner"`
+			State  []uint32   `filter:"state"`
+			Codes  []string `filter:"codes"`
+		}{
+			Policy: []uint64{0},
+			Owner: []string{""},
+			State: []uint32{0},
+			Codes: []string{""},
+			},
 	}
+	err=urlval.Decode(r.URL.Query(),&request.Filters)
+	err=urlval.Decode(r.URL.Query(),request.PageParams)
 
-	err = b.populateFilters(&request.Filters)
-	if err != nil {
-		return nil, err
-	}
 
 	return &request, nil
 }

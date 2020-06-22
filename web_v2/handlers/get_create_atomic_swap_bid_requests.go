@@ -36,8 +36,8 @@ func GetCreateAtomicSwapBidRequests(w http.ResponseWriter, r *http.Request) {
 		Log:          ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor,
-		request.GetRequestsBase.Filters.Reviewer, request.Filters.AskOwner,
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0],
+		request.GetRequestsBase.Filters.Reviewer[0], request.Filters.AskOwner[0],
 	) {
 		return
 	}
@@ -67,11 +67,11 @@ func (h *getCreateAtomicSwapBidRequestsHandler) MakeAll(w http.ResponseWriter, r
 	var ids []uint64
 
 	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsQuoteAsset) {
-		q = q.FilterByAtomicSwapQuoteAsset(request.Filters.QuoteAsset)
+		q = q.FilterByAtomicSwapQuoteAsset(request.Filters.QuoteAsset[0])
 	}
 	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsAskOwner) {
 		var err error
-		ids, err = h.AsksQ.IDSelector().FilterByOwner(request.Filters.AskOwner).SelectIDs()
+		ids, err = h.AsksQ.IDSelector().FilterByOwner(request.Filters.AskOwner[0]).SelectIDs()
 		if err != nil {
 			return errors.Wrap(err, "failed to load ask ids by owner", logan.F{
 				"owner": request.Filters.AskOwner,
@@ -81,7 +81,7 @@ func (h *getCreateAtomicSwapBidRequestsHandler) MakeAll(w http.ResponseWriter, r
 		q = q.FilterByAtomicSwapAskIDs(ids)
 	}
 	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapBidRequestsAskID) {
-		q = q.FilterByAtomicSwapAskID(request.Filters.AskID)
+		q = q.FilterByAtomicSwapAskID(request.Filters.AskID[0])
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

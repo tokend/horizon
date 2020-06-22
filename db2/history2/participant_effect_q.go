@@ -74,7 +74,7 @@ func (q ParticipantEffectsQ) FilterByID(ids ...uint64) ParticipantEffectsQ {
 }
 
 //Page - apply paging params to the query
-func (q ParticipantEffectsQ) Page(pageParams db2.CursorPageParams) ParticipantEffectsQ {
+func (q ParticipantEffectsQ) Page(pageParams pgdb.CursorPageParams) ParticipantEffectsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "effects.id")
 	return q
 }

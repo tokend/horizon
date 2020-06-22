@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details",
@@ -68,7 +67,7 @@ func (q AssetsQ) FilterByPolicy(mask uint64) AssetsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AssetsQ) Page(params db2.OffsetPageParams) AssetsQ {
+func (q AssetsQ) Page(params pgdb.OffsetPageParams) AssetsQ {
 	q.selector = params.ApplyTo(q.selector, "assets.code")
 	return q
 }

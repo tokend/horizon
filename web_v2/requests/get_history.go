@@ -1,7 +1,8 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 	"net/http"
 )
 
@@ -28,14 +29,20 @@ const (
 //GetHistory - represents params to be specified for Get History handler
 type GetHistory struct {
 	*base
-	PageParams *db2.CursorPageParams
-	Filters    struct {
-		Account string `fig:"account"`
-		Balance string `fig:"balance"`
-		Asset   string `fig:"asset"`
-	}
-}
+	PageParams *pgdb.CursorPageParams
+	Filters  GetHistoryFilters
+	//Filters    struct {
+	//	Account string `fig:"account"`
+	//	Balance string `fig:"balance"`
+	//	Asset   string `fig:"asset"`
+	//}
 
+}
+type GetHistoryFilters struct{
+	Account []string `filter:"account"`
+	Balance []string `filter:"balance"`
+	Asset   []string `filter:"asset"`
+}
 // NewGetHistory returns the new instance of GetHistory request
 func NewGetHistory(r *http.Request) (*GetHistory, error) {
 	b, err := newBase(r, baseOpts{
@@ -55,20 +62,22 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 		return nil, err
 	}
 
-	pagingParams, err := b.getCursorBasedPageParams()
+	pageParams, err := b.getCursorBasedPageParams()
 	if err != nil {
 		return nil, err
 	}
 
 	request := GetHistory{
 		base:       b,
-		PageParams: pagingParams,
+		PageParams: pageParams,
 	}
 
-	err = b.populateFilters(&request.Filters)
-	if err != nil {
-		return nil, err
+	request.Filters = GetHistoryFilters {
+		[]string{""},
+		[]string{""},
+		[]string{""},
 	}
+	err=urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

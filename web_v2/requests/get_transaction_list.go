@@ -1,13 +1,9 @@
 package requests
 
 import (
-	"fmt"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 	"net/http"
-	"strconv"
-	"strings"
-
-	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 const (
@@ -23,10 +19,10 @@ const (
 // GetTransactions - represents params to be specified for GetTransactions handler
 type GetTransactions struct {
 	*base
-	PageParams *db2.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 	Filters    struct {
-		EntryTypes  []int
-		ChangeTypes []int
+		EntryTypes  []int `filter:"ledger_entry_changes.entry_types"`
+		ChangeTypes []int `filter:"ledger_entry_changes.change_types"`
 	}
 }
 
@@ -55,52 +51,56 @@ func NewGetTransactions(r *http.Request) (*GetTransactions, error) {
 		PageParams: pagingParams,
 	}
 
-	err = request.populateFilters()
-	if err != nil {
-		return nil, err
+	request.Filters =struct {
+		EntryTypes  []int `filter:"ledger_entry_changes.entry_types"`
+		ChangeTypes []int `filter:"ledger_entry_changes.change_types"`
+	}{
+		EntryTypes: []int{0},
+		ChangeTypes: []int{0},
 	}
+	err=urlval.Decode(r.URL.Query(),&request.Filters)
 
 	return &request, nil
 }
 
-func (r *GetTransactions) getIntSlice(name string) ([]int, error) {
-	valuesStr := strings.Split(r.getString(name), ",")
-
-	if len(valuesStr) > 0 {
-		valuesInt := make([]int, 0, len(valuesStr))
-		for _, v := range valuesStr {
-			if v != "" {
-				valueInt, err := strconv.Atoi(v)
-				if err != nil {
-					return nil, validation.Errors{
-						v: err,
-					}
-				}
-
-				valuesInt = append(valuesInt, valueInt)
-			}
-		}
-
-		return valuesInt, nil
-	}
-
-	return []int{}, nil
-}
-
-func (r *GetTransactions) populateFilters() (err error) {
-	r.Filters.EntryTypes, err = r.getIntSlice(
-		fmt.Sprintf("filter[%s]", FilterTypeTransactionListLedgerEntryTypes),
-	)
-	if err != nil {
-		return err
-	}
-
-	r.Filters.ChangeTypes, err = r.getIntSlice(
-		fmt.Sprintf("filter[%s]", FilterTypeTransactionListLedgerChangeTypes),
-	)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
+//func (r *GetTransactions) getIntSlice(name string) ([]int, error) {
+//	valuesStr := strings.Split(r.getString(name), ",")
+//
+//	if len(valuesStr) > 0 {
+//		valuesInt := make([]int, 0, len(valuesStr))
+//		for _, v := range valuesStr {
+//			if v != "" {
+//				valueInt, err := strconv.Atoi(v)
+//				if err != nil {
+//					return nil, validation.Errors{
+//						v: err,
+//					}
+//				}
+//
+//				valuesInt = append(valuesInt, valueInt)
+//			}
+//		}
+//
+//		return valuesInt, nil
+//	}
+//
+//	return []int{}, nil
+//}
+//
+//func (r *GetTransactions) populateFilters() (err error) {
+//	r.Filters.EntryTypes, err = r.getIntSlice(
+//		fmt.Sprintf("filter[%s]", FilterTypeTransactionListLedgerEntryTypes),
+//	)
+//	if err != nil {
+//		return err
+//	}
+//
+//	r.Filters.ChangeTypes, err = r.getIntSlice(
+//		fmt.Sprintf("filter[%s]", FilterTypeTransactionListLedgerChangeTypes),
+//	)
+//	if err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}

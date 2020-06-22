@@ -6,15 +6,15 @@ import (
 )
 
 type OffsetPageParams struct {
-	Limit      uint64
-	Order      OrderType
-	PageNumber uint64
+	Limit      uint64 `page:"limit"`
+	Order      OrderType `page:"order"`
+	PageNumber uint64 `page:"number"`
 }
 
 type CursorPageParams struct {
-	Limit  uint64
-	Order  OrderType
-	Cursor uint64
+	Limit  uint64 `page:"limit"`
+	Order  OrderType `page:"order"`
+	Cursor uint64 `page:"number"`
 }
 
 // ApplyTo returns a new SelectBuilder after applying the paging effects of

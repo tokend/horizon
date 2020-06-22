@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountSpecificRulesQ is a helper struct to aid in configuring queries that loads accounts
@@ -62,7 +61,7 @@ func (q AccountSpecificRulesQ) Get() (*AccountSpecificRule, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AccountSpecificRulesQ) Page(params db2.CursorPageParams) AccountSpecificRulesQ {
+func (q AccountSpecificRulesQ) Page(params pgdb.CursorPageParams) AccountSpecificRulesQ {
 	q.selector = params.ApplyTo(q.selector, "sr.id")
 	return q
 }
