@@ -3,9 +3,9 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/distributed_lab/urlval"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 
+	"gitlab.com/distributed_lab/kit/pgdb"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -43,13 +43,13 @@ type GetFeeList struct {
 }
 
 type GetFeeListFilters struct {
-	Asset       *string          `filter:"asset"`
-	Subtype     *int64           `filter:"subtype"`
-	FeeType     *int32           `filter:"fee_type"`
-	Account     *string          `filter:"account"`
-	AccountRole *uint64          `filter:"account_role"`
-	LowerBound  regources.Amount `filter:"lower_bound"`
-	UpperBound  regources.Amount `filter:"upper_bound"`
+	Asset       string           `fig:"asset"`
+	Subtype     int64            `fig:"subtype"`
+	FeeType     int32            `fig:"fee_type"`
+	Account     string           `fig:"account"`
+	AccountRole uint64           `fig:"account_role"`
+	LowerBound  regources.Amount `fig:"lower_bound"`
+	UpperBound  regources.Amount `fig:"upper_bound"`
 }
 
 // NewGetFeeList returns the new instance of GetFeeList request
@@ -72,7 +72,10 @@ func NewGetFeeList(r *http.Request) (*GetFeeList, error) {
 		PageParams: pageParams,
 	}
 
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
+	err = b.populateFilters(&request.Filters)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to populate filters")
+	}
 
 	return &request, nil
 }

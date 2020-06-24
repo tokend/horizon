@@ -36,7 +36,7 @@ func GetCreatePollRequests(w http.ResponseWriter, r *http.Request) {
 		request.GetRequestsBase.Filters.Reviewer,
 	}
 
-	if !isAllowed(r, w, constraints) {
+	if !isAllowed(r, w, constraints...) {
 		return
 	}
 

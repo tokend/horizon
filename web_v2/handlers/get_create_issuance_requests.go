@@ -68,7 +68,7 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	if !isAllowed(r, w, constraints) {
+	if !isAllowed(r, w, constraints...) {
 		return
 	}
 

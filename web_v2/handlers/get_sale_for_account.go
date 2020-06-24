@@ -37,7 +37,7 @@ func GetSaleForAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, request.Address) {
+	if !isAllowed(r, w, &request.Address) {
 		return
 	}
 

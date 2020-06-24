@@ -222,9 +222,6 @@ func (r *base) getString(name string) string {
 
 func (r *base) getUint64(name string) (uint64, error) {
 	strVal := r.getString(name)
-	//if strVal == "" && name=="id"{
-	//	return 0, nil
-	//}
 	if strVal == "" {
 		return 0, nil
 	}

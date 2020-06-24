@@ -125,6 +125,10 @@
 [[constraint]]
   branch = "master"
   name = "gitlab.com/distributed_lab/ape"
+  
+[[constraint]]
+  branch = "master"
+  name = "gitlab.com/distributed_lab/urlval"
 
 [[override]]
   name = "github.com/google/jsonapi"

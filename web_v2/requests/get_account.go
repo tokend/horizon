@@ -51,7 +51,6 @@ type GetAccount struct {
 
 //NewGetAccount - returns new instance of GetAccount request
 func NewGetAccount(r *http.Request) (*GetAccount, error) {
-
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeAccountAll,
 	})
@@ -68,6 +67,5 @@ func NewGetAccount(r *http.Request) (*GetAccount, error) {
 		base:    b,
 		Address: address,
 	}, nil
-
 
 }

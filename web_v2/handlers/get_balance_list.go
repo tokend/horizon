@@ -42,7 +42,7 @@ func GetBalanceList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, assetOwner) {
+	if !isAllowed(r, w, &assetOwner) {
 		return
 	}
 

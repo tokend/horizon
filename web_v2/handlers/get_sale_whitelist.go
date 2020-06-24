@@ -43,7 +43,7 @@ func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, sale.OwnerAddress) {
+	if !isAllowed(r, w, &sale.OwnerAddress) {
 		return
 	}
 

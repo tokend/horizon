@@ -43,7 +43,7 @@ func GetBalanceStatistic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, request.AccountAddress) {
+	if !isAllowed(r, w, &request.AccountAddress) {
 		return
 	}
 

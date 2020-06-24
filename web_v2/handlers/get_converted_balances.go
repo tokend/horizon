@@ -39,7 +39,7 @@ func GetConvertedBalances(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, request.AccountAddress, request.Filters.AssetOwner) {
+	if !isAllowed(r, w, &request.AccountAddress, request.Filters.AssetOwner) {
 		return
 	}
 

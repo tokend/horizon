@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -30,18 +31,11 @@ const (
 type GetHistory struct {
 	*base
 	PageParams *pgdb.CursorPageParams
-	Filters    GetHistoryFilters
-	//Filters    struct {
-	//	Account string `fig:"account"`
-	//	Balance string `fig:"balance"`
-	//	Asset   string `fig:"asset"`
-	//}
-
-}
-type GetHistoryFilters struct {
-	Account *string `filter:"account"`
-	Balance *string `filter:"balance"`
-	Asset   *string `filter:"asset"`
+	Filters    struct {
+		Account *string `filter:"account"`
+		Balance *string `filter:"balance"`
+		Asset   *string `filter:"asset"`
+	}
 }
 
 // NewGetHistory returns the new instance of GetHistory request

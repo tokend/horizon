@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -27,20 +28,13 @@ var filterTypeSwapListAll = map[string]struct{}{
 type GetSwapList struct {
 	*base
 	Filters struct {
-		Source             *string `filter:"source"`
-		SourceBalance      *string `filter:"source_balance"`
-		Destination        *string `filter:"destination"`
-		DestinationBalance *string `filter:"destination_balance"`
-		Asset              *string `filter:"asset"`
+		Source             *string `filter:"source" json:"source"`
+		SourceBalance      *string `filter:"source_balance" json:"source_balance"`
+		Destination        *string `filter:"destination" json:"destination"`
+		DestinationBalance *string `filter:"destination_balance" json:"destination_balance"`
+		Asset              *string `filter:"asset" json:"asset"`
 
-		State *int32 `filter:"state"`
-		//Source             string `json:"source"`
-		//SourceBalance      string `json:"source_balance"`
-		//Destination        string `json:"destination"`
-		//DestinationBalance string `json:"destination_balance"`
-		//Asset              string `json:"asset"`
-		//
-		//State int32 `json:"state"`
+		State *int32 `filter:"state" json:"state"`
 	}
 	PageParams *pgdb.CursorPageParams
 }

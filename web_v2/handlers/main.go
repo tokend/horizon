@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"reflect"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -13,46 +12,18 @@ import (
 
 // ensureAllowed - returns false if user is not allowed to access requested data or failed to check - renders all
 // corresponding error; returns true - if allowed
-func isAllowed(r *http.Request, w http.ResponseWriter, dataOwners ...interface{}) bool {
+func isAllowed(r *http.Request, w http.ResponseWriter, dataOwners ...*string) bool {
 	constraints := make([]doorman.SignerConstraint, 0, len(dataOwners))
 	for _, dataOwner := range dataOwners {
-		//cases for String, Pointer, Slice input
-		switch reflect.TypeOf(dataOwner).Kind() {
-		case reflect.String:
-			if reflect.ValueOf(dataOwner).String() != "" {
-				constraints = append(constraints, doorman.SignerOf(reflect.ValueOf(dataOwner).String()))
-			}
-		case reflect.Ptr:
-			if !reflect.ValueOf(dataOwner).IsNil() {
-				pointerValue := reflect.ValueOf(dataOwner).Elem().String()
-				if pointerValue != "" {
-					constraints = append(constraints, doorman.SignerOf(pointerValue))
-				}
-			}
-
-		case reflect.Slice:
-			for i := 0; i < reflect.ValueOf(dataOwner).Len(); i++ {
-				value := reflect.ValueOf(dataOwner).Index(i)
-
-				switch value.Kind() {
-				case reflect.String:
-					if value.String() != "" {
-						constraints = append(constraints, doorman.SignerOf(value.String()))
-					}
-
-				case reflect.Ptr:
-					if !value.IsNil() {
-						pointerValue := value.Elem().String()
-						if pointerValue != "" {
-							constraints = append(constraints, doorman.SignerOf(pointerValue))
-						}
-					}
-				}
-			}
-
+		if dataOwner == nil {
+			continue
 		}
-
+		if *dataOwner == "" {
+			continue
+		}
+		constraints = append(constraints, doorman.SignerOf(*dataOwner))
 	}
+
 	constraints = append(constraints, doorman.SignerOf(ctx.CoreInfo(r).AdminAccountID))
 	switch err := ctx.Doorman(r, constraints...); err.(type) {
 	case nil:

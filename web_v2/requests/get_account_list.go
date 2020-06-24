@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -37,8 +38,12 @@ func NewGetAccountList(r *http.Request) (*GetAccountList, error) {
 		return nil, err
 	}
 
-	var request = GetAccountList{base: b}
-	err = urlval.Decode(r.URL.Query(), &request) //default sorting is "desc"
+	pageParams, err := b.getOffsetBasedPageParams()
+	var request = GetAccountList{
+		base:       b,
+		PageParams: *pageParams,
+	}
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 	if err != nil {
 		return nil, err
 	}

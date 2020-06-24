@@ -379,12 +379,12 @@
   revision = "5660eeed305fe5f69c8fc6cf899132a459a97064"
 
 [[projects]]
-  digest = "1:9b28ee2984c69d78afe2ce52b1650ba91a6381f355ff08c1d0e53d9e66bd62fe"
+  digest = "1:ff4cd55a3666b6ea3a876c9e133bfb54d6c812e725409a773f2c94a0b3a92f4f"
   name = "github.com/spf13/cast"
   packages = ["."]
   pruneopts = "UT"
-  revision = "acbeb36b902d72a7a4c18e8f3241075e7ab763e4"
-  version = "v1.1.0"
+  revision = "1ffadf551085444af981432dd0f6d1160c11ec64"
+  version = "v1.3.1"
 
 [[projects]]
   digest = "1:7ffc0983035bc7e297da3688d9fe19d60a420e9c38bef23f845c53788ed6a05e"
@@ -533,8 +533,8 @@
   revision = "d7781cbc2319daf33ebc295e82281ee7368e5bd0"
 
 [[projects]]
-  branch = "v0"
-  digest = "1:0c20c54dc81c8cb22714ef19809f504c78afdaf2c2dc77622d3028e2db1f9f33"
+  branch = "master"
+  digest = "1:fc65a2166cd05c3a438df986baaeb74e06d50a0b5b56db9476c94ad11a2b41c7"
   name = "gitlab.com/distributed_lab/urlval"
   packages = [
     ".",
@@ -542,7 +542,7 @@
     "internal/betterreflect",
   ]
   pruneopts = "UT"
-  revision = "ae4f439daab672eeba79402cd6dda066b77b7836"
+  revision = "ebd58a4201e13c7dbbdbb587271cdee3c2b72f51"
 
 [[projects]]
   branch = "feature/movements-rr-details"

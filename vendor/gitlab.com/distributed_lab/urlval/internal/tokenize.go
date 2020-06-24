@@ -12,7 +12,7 @@ const (
 	TokenTypeFilter TokenType = 1 + iota
 	TokenTypeInclude
 	TokenTypePage
-	TokenTypeInvalid
+	TokenTypeCustomParameter
 )
 
 type Token struct {
@@ -24,7 +24,7 @@ type Token struct {
 // bool for consumed
 type Tokens map[Token]bool
 
-func Tokenize(values url.Values) (Tokens, error) {
+func Tokenize(values url.Values) Tokens {
 	tokens := Tokens{}
 
 	tokenizeIncludes(values, tokens)
@@ -33,26 +33,33 @@ func Tokenize(values url.Values) (Tokens, error) {
 
 	for k := range values {
 		tokens[Token{
-			Type: TokenTypeInvalid,
-			Key:  k,
+			Type:  TokenTypeCustomParameter,
+			Key:   k,
+			Value: values.Get(k),
 		}] = false
 	}
 
-	return tokens, nil
+	return tokens
 }
 
 func tokenizeIncludes(values url.Values, tokens Tokens) {
-	includes := values.Get("include")
+	includes := strings.TrimSpace(values.Get("include"))
+	values.Del("include")
 	if includes == "" {
 		return
 	}
+
 	for _, include := range strings.Split(includes, ",") {
+		// so include=a,b,c, (with comma at the end) wont produce a 4th token
+		if include == "" {
+			continue
+		}
+
 		tokens[Token{
 			Type: TokenTypeInclude,
 			Key:  include,
 		}] = false
 	}
-	values.Del("include")
 }
 
 func tokenizeFilters(values url.Values, tokens Tokens) {

@@ -226,9 +226,9 @@ func getEffect(effect history2.ParticipantEffect) regources.ParticipantsEffect {
 // The logic behind this is that if multiple filters provided all resource owners have access to data, as we
 // returning smaller subset of effects/movements
 func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Request) bool {
-	constraints := make([]string, 0)
+	constraints := make([]*string, 0)
 	if h.Account != nil {
-		constraints = append(constraints, h.Account.Address)
+		constraints = append(constraints, &h.Account.Address)
 	}
 
 	if h.Balance != nil {
@@ -239,14 +239,14 @@ func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Requ
 			return false
 		}
 
-		constraints = append(constraints, account.Address)
+		constraints = append(constraints, &account.Address)
 	}
 
 	if h.Asset != nil {
-		constraints = append(constraints, h.Asset.Owner)
+		constraints = append(constraints, &h.Asset.Owner)
 	}
 	// Admin is added implicitly to constraints in `isAllowed`, so no need to add it explicitly
-	return isAllowed(httpRequest, w, constraints)
+	return isAllowed(httpRequest, w, constraints...)
 }
 
 func (h *getHistory) tryGetAccountForBalance(balance *history2.Balance) (history2.Account, error) {

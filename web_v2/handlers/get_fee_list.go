@@ -50,23 +50,23 @@ type getFeeListHandler struct {
 // GetFeeList returns the list of fees with related resources
 func (h *getFeeListHandler) GetFeeList(request *requests.GetFeeList) (*regources.FeeRecordListResponse, error) {
 	q := h.FeesQ.Page(*request.PageParams)
-	if request.Filters.Account != nil {
-		q = q.FilterByAddress(*request.Filters.Account)
+	if request.ShouldFilter(requests.FilterTypeFeeListAccount) {
+		q = q.FilterByAddress(request.Filters.Account)
 	}
-	if request.Filters.AccountRole != nil {
-		q = q.FilterByAccountRole(*request.Filters.AccountRole)
-	}
-
-	if request.Filters.Asset != nil {
-		q = q.FilterByAsset(*request.Filters.Asset)
+	if request.ShouldFilter(requests.FilterTypeFeeListAccountRole) {
+		q = q.FilterByAccountRole(request.Filters.AccountRole)
 	}
 
-	if request.Filters.Subtype != nil {
-		q = q.FilterBySubtype(*request.Filters.Subtype)
+	if request.ShouldFilter(requests.FilterTypeFeeListAsset) {
+		q = q.FilterByAsset(request.Filters.Asset)
 	}
 
-	if request.Filters.FeeType != nil {
-		q = q.FilterByType(*request.Filters.FeeType)
+	if request.ShouldFilter(requests.FilterTypeFeeListSubtype) {
+		q = q.FilterBySubtype(request.Filters.Subtype)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeFeeListFeeType) {
+		q = q.FilterByType(request.Filters.FeeType)
 	}
 
 	if request.ShouldFilter(requests.FilterTypeFeeListLowerBound) {
