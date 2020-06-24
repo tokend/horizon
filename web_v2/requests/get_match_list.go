@@ -28,10 +28,7 @@ type GetMatchList struct {
 
 	PageParams *pgdb.CursorPageParams
 }
-//type GetMatchListFilters struct {
-//BaseAsset  []string `filter:"base_asset"`
-//QuoteAsset []string `filter:"quote_asset"`
-//}
+
 // NewGetMatchList - returns new instance of GetMatchList
 func NewGetMatchList(r *http.Request) (*GetMatchList, error) {
 	b, err := newBase(r, baseOpts{

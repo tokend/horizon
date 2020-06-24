@@ -1,8 +1,9 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/urlval"
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -37,7 +38,7 @@ var filterTypeConvertedBalancesAll = map[string]struct{}{
 type GetConvertedBalances struct {
 	*base
 	Filters struct {
-		AssetOwner []string `filter:"asset_owner" json:"asset_owner"`
+		AssetOwner *string `filter:"asset_owner" json:"asset_owner"`
 	}
 	AssetCode      string
 	AccountAddress string
@@ -47,7 +48,7 @@ type GetConvertedBalances struct {
 func NewGetConvertedBalances(r *http.Request) (*GetConvertedBalances, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeConvertedBalancesAll,
-		supportedFilters:filterTypeConvertedBalancesAll,
+		supportedFilters:  filterTypeConvertedBalancesAll,
 	})
 	if err != nil {
 		return nil, err
@@ -62,10 +63,7 @@ func NewGetConvertedBalances(r *http.Request) (*GetConvertedBalances, error) {
 		AssetCode:      assetCode,
 	}
 
-
-	request.Filters.AssetOwner=[]string{""}
-	err=urlval.Decode(r.URL.Query(),&request.Filters)
-
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

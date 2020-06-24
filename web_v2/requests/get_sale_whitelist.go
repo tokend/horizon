@@ -16,7 +16,7 @@ type GetSaleWhitelist struct {
 	*base
 	SaleID  uint64
 	Filters struct {
-		Address []string `filter:"address"`
+		Address *string `filter:"address"`
 	}
 	PageParams *pgdb.CursorPageParams
 }
@@ -47,7 +47,7 @@ func NewGetSaleWhitelist(r *http.Request) (*GetSaleWhitelist, error) {
 		PageParams: pageParams,
 	}
 
-	err=urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

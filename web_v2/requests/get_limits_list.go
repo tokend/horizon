@@ -29,15 +29,16 @@ var filterTypeLimitsListAll = map[string]struct{}{
 //GetLimitsList - represents params to be specified for Get Fees handler
 type GetLimitsList struct {
 	*base
-	Filters GetLimitsListFilters
+	Filters    GetLimitsListFilters
 	PageParams *pgdb.OffsetPageParams
 }
 type GetLimitsListFilters struct {
-	Asset       []string `filter:"asset"`
-	StatsOpType []int32  `filter:"stats_op_type"`
-	Account     []string `filter:"account"`
-	AccountRole []uint64 `filter:"account_role"`
+	Asset       *string `filter:"asset"`
+	StatsOpType *int32  `filter:"stats_op_type"`
+	Account     *string `filter:"account"`
+	AccountRole *uint64 `filter:"account_role"`
 }
+
 // NewGetLimitsList returns the new instance of GetLimitsList request
 func NewGetLimitsList(r *http.Request) (*GetLimitsList, error) {
 	b, err := newBase(r, baseOpts{
@@ -49,20 +50,14 @@ func NewGetLimitsList(r *http.Request) (*GetLimitsList, error) {
 	}
 
 	var pageParams pgdb.OffsetPageParams
-	err=urlval.Decode(r.URL.Query(), &pageParams)
+	err = urlval.Decode(r.URL.Query(), &pageParams)
 
 	request := GetLimitsList{
 		base:       b,
 		PageParams: &pageParams,
 	}
 
-	request.Filters = GetLimitsListFilters {
-		[]string{""},
-		[]int32{0},
-		[]string{""},
-		[]uint64{0},
-	}
-	err=urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

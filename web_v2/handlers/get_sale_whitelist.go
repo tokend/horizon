@@ -29,7 +29,7 @@ func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
 	handler := getSaleWhiteListHandler{
 		SalesQ:                history2.NewSalesQ(ctx.HistoryRepo(r)),
 		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(ctx.HistoryRepo(r)),
-		Log: ctx.Log(r),
+		Log:                   ctx.Log(r),
 	}
 
 	sale, err := handler.SalesQ.GetByID(request.SaleID)
@@ -85,8 +85,8 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 		FilterByPermission(false).
 		Page(*request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeSaleWhitelistAddress) {
-		q = q.FilterByAddress(request.Filters.Address[0])
+	if request.Filters.Address != nil {
+		q = q.FilterByAddress(*request.Filters.Address)
 	}
 
 	rules, err := q.Select()

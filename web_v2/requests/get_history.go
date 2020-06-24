@@ -30,7 +30,7 @@ const (
 type GetHistory struct {
 	*base
 	PageParams *pgdb.CursorPageParams
-	Filters  GetHistoryFilters
+	Filters    GetHistoryFilters
 	//Filters    struct {
 	//	Account string `fig:"account"`
 	//	Balance string `fig:"balance"`
@@ -38,11 +38,12 @@ type GetHistory struct {
 	//}
 
 }
-type GetHistoryFilters struct{
-	Account []string `filter:"account"`
-	Balance []string `filter:"balance"`
-	Asset   []string `filter:"asset"`
+type GetHistoryFilters struct {
+	Account *string `filter:"account"`
+	Balance *string `filter:"balance"`
+	Asset   *string `filter:"asset"`
 }
+
 // NewGetHistory returns the new instance of GetHistory request
 func NewGetHistory(r *http.Request) (*GetHistory, error) {
 	b, err := newBase(r, baseOpts{
@@ -72,12 +73,7 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 		PageParams: pageParams,
 	}
 
-	request.Filters = GetHistoryFilters {
-		[]string{""},
-		[]string{""},
-		[]string{""},
-	}
-	err=urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

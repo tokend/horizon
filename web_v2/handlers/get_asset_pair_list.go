@@ -51,20 +51,20 @@ type getAssetPairListHandler struct {
 func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPairList) (*regources.AssetPairListResponse, error) {
 	q := h.AssetPairsQ.Page(*request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeAssetPairListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset[0])
+	if request.Filters.Asset != nil {
+		q = q.FilterByAsset(*request.Filters.Asset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeAssetPairListBaseAsset) {
-		q = q.FilterByBaseAsset(request.Filters.BaseAsset[0])
+	if request.Filters.BaseAsset != nil {
+		q = q.FilterByBaseAsset(*request.Filters.BaseAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeAssetPairListQuoteAsset) {
-		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset[0])
+	if request.Filters.QuoteAsset != nil {
+		q = q.FilterByQuoteAsset(*request.Filters.QuoteAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeAssetPairListPolicy) {
-		q = q.FilterByPolicy(request.Filters.Policy[0])
+	if request.Filters.Policy != nil {
+		q = q.FilterByPolicy(*request.Filters.Policy)
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeAssetPairListBaseAssets) {

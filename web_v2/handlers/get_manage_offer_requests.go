@@ -28,7 +28,7 @@ func GetManageOfferRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0], request.GetRequestsBase.Filters.Reviewer[0]) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
 		return
 	}
 

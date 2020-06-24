@@ -1,14 +1,15 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/distributed_lab/urlval"
 	"net/http"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 
 	"github.com/spf13/cast"
 
@@ -221,6 +222,9 @@ func (r *base) getString(name string) string {
 
 func (r *base) getUint64(name string) (uint64, error) {
 	strVal := r.getString(name)
+	//if strVal == "" && name=="id"{
+	//	return 0, nil
+	//}
 	if strVal == "" {
 		return 0, nil
 	}
@@ -333,56 +337,87 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 }
 
 func (r *base) getOffsetBasedPageParams() (*pgdb.OffsetPageParams, error) {
-var pageParams pgdb.OffsetPageParams
-	err:= urlval.Decode(r.request.URL.Query(),&pageParams)
+	var pageParams pgdb.OffsetPageParams
+	err := urlval.Decode(r.request.URL.Query(), &pageParams)
 
-	if pageParams.Limit > maxLimit {
-		pageParams.Limit,err= 0, validation.Errors{
-			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
+	switch pageParams.Order {
+	case pgdb.OrderTypeAsc, pgdb.OrderTypeDesc:
+		err = nil
+	case "":
+		pageParams.Order, err = pgdb.OrderTypeAsc, nil
+	default:
+		pageParams.Order, err = pgdb.OrderTypeDesc, validation.Errors{
+			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", pgdb.OrderTypeAsc, pgdb.OrderTypeDesc),
 		}
-	} else {err=nil}
+	}
 	if err != nil {
 		return nil, err
 	}
 
-	return &pageParams,nil
+	if pageParams.Limit == 0 {
+		pageParams.Limit = defaultLimit
+	}
+	if pageParams.Limit > maxLimit {
+		pageParams.Limit, err = 0, validation.Errors{
+			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &pageParams, nil
 }
 
 func (r *base) getCursorBasedPageParams() (*pgdb.CursorPageParams, error) {
-var pageParams pgdb.CursorPageParams
-	err:=urlval.Decode(r.request.URL.Query(), &pageParams)
+	var pageParams pgdb.CursorPageParams
+	err := urlval.Decode(r.request.URL.Query(), &pageParams)
 
-	if pageParams.Order=="" {pageParams.Order=pgdb.OrderTypeAsc}
+	switch pageParams.Order {
+	case pgdb.OrderTypeAsc, pgdb.OrderTypeDesc:
+		err = nil
+	case "":
+		pageParams.Order, err = pgdb.OrderTypeAsc, nil
+	default:
+		pageParams.Order, err = pgdb.OrderTypeDesc, validation.Errors{
+			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", pgdb.OrderTypeAsc, pgdb.OrderTypeDesc),
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
 
-	if pageParams.Limit==0 {pageParams.Limit=defaultLimit}
+	if pageParams.Limit == 0 {
+		pageParams.Limit = defaultLimit
+	}
 	if pageParams.Limit > maxLimit {
-		pageParams.Limit,err= 0, validation.Errors{
+		pageParams.Limit, err = 0, validation.Errors{
 			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
 		}
 
-	} else {err=nil}
-	if err!=nil {
-		return nil,err
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	if pageParams.Order == pgdb.OrderTypeDesc && pageParams.Cursor == 0 {
 		pageParams.Cursor = math.MaxInt64
 	}
 
-	return &pageParams,nil
+	return &pageParams, nil
 }
-func  Invert(o string) string{
+func Invert(o string) string {
 
-		switch o {
+	switch o {
 	case pgdb.OrderTypeDesc:
 		return pgdb.OrderTypeAsc
 	case pgdb.OrderTypeAsc:
 		return pgdb.OrderTypeDesc
 	default:
 		panic(errors.From(errors.New("unexpected order type"), logan.F{
-		"order_type": o,
-	}))
-		}
+			"order_type": o,
+		}))
+	}
 
 }
 

@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 
 	regources "gitlab.com/tokend/regources/generated"
 )
@@ -37,19 +38,19 @@ var filterTypeFeeListAll = map[string]struct{}{
 //GetFeeList - represents params to be specified for Get Fees handler
 type GetFeeList struct {
 	*base
-	Filters GetFeeListFilters
+	Filters    GetFeeListFilters
 	PageParams *pgdb.OffsetPageParams
 }
 
 type GetFeeListFilters struct {
-	Asset       []string           `filter:"asset"`
-	Subtype     []int64            `filter:"subtype"`
-	FeeType     []int32            `filter:"fee_type"`
-	Account     []string           `filter:"account"`
-	AccountRole []uint64           `filter:"account_role"`
+	Asset       *string          `filter:"asset"`
+	Subtype     *int64           `filter:"subtype"`
+	FeeType     *int32           `filter:"fee_type"`
+	Account     *string          `filter:"account"`
+	AccountRole *uint64          `filter:"account_role"`
 	LowerBound  regources.Amount `filter:"lower_bound"`
 	UpperBound  regources.Amount `filter:"upper_bound"`
-	}
+}
 
 // NewGetFeeList returns the new instance of GetFeeList request
 func NewGetFeeList(r *http.Request) (*GetFeeList, error) {
@@ -61,25 +62,17 @@ func NewGetFeeList(r *http.Request) (*GetFeeList, error) {
 		return nil, err
 	}
 
-	var pageParams pgdb.OffsetPageParams
-	err=urlval.Decode(r.URL.Query(), &pageParams)
+	pageParams, err := b.getOffsetBasedPageParams()
+	if err != nil {
+		return nil, err
+	}
 
 	request := GetFeeList{
 		base:       b,
-		PageParams: &pageParams,
+		PageParams: pageParams,
 	}
 
-
-	request.Filters = GetFeeListFilters {
-		[]string{""},
-		[]int64{0},
-		[]int32{0},
-		[]string{""},
-		[]uint64{0},
-		0,
-		0,
-	}
-	err=urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

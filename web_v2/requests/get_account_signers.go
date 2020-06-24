@@ -2,7 +2,6 @@ package requests
 
 import (
 	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/distributed_lab/urlval"
 	"net/http"
 )
 
@@ -38,9 +37,7 @@ func NewGetAccountSigners(r *http.Request) (*GetAccountSigners, error) {
 		return nil, err
 	}
 
-	var pageParams pgdb.OffsetPageParams
-	//pageParams, err := b.getOffsetBasedPageParams()
-	err=urlval.Decode(r.URL.Query(),&pageParams)
+	pageParams, err := b.getOffsetBasedPageParams()
 	if err != nil {
 		return nil, err
 	}
@@ -48,6 +45,6 @@ func NewGetAccountSigners(r *http.Request) (*GetAccountSigners, error) {
 	return &GetAccountSigners{
 		base:       b,
 		Address:    address,
-		PageParams: &pageParams,
+		PageParams: pageParams,
 	}, nil
 }

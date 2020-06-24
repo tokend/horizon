@@ -82,19 +82,3 @@ type SalesBase struct {
 		IDs          []uint64         `json:"ids" fig:"ids"`
 	}
 }
-//type SalesBaseFilters struct {
-//		Owner        []string           `filter:"owner"`
-//		BaseAsset    []string           `filter:"base_asset"`
-//		MaxEndTime   *time.Time       `filter:"max_end_time"`
-//		MaxStartTime *time.Time       `filter:"max_start_time"`
-//		MinStartTime *time.Time       `filter:"min_start_time"`
-//		MinEndTime   *time.Time       `filter:"min_end_time"`
-//		State        []uint64           `filter:"state"`
-//		SaleType     []uint64           `filter:"sale_type"`
-//		MinHardCap   regources.Amount `filter:"min_hard_cap"`
-//		MinSoftCap   regources.Amount `filter:"min_soft_cap"`
-//		MaxHardCap   regources.Amount `filter:"max_hard_cap"`
-//		MaxSoftCap   regources.Amount `filter:"max_soft_cap"`
-//		IDs          []uint64         `filter:"ids"`
-//
-//}

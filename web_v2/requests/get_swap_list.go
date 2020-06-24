@@ -27,13 +27,13 @@ var filterTypeSwapListAll = map[string]struct{}{
 type GetSwapList struct {
 	*base
 	Filters struct {
-		Source             []string `filter:"source"`
-		SourceBalance      []string `filter:"source_balance"`
-		Destination        []string `filter:"destination"`
-		DestinationBalance []string `filter:"destination_balance"`
-		Asset              []string `filter:"asset"`
+		Source             *string `filter:"source"`
+		SourceBalance      *string `filter:"source_balance"`
+		Destination        *string `filter:"destination"`
+		DestinationBalance *string `filter:"destination_balance"`
+		Asset              *string `filter:"asset"`
 
-		State []int32 `filter:"state"`
+		State *int32 `filter:"state"`
 		//Source             string `json:"source"`
 		//SourceBalance      string `json:"source_balance"`
 		//Destination        string `json:"destination"`
@@ -64,8 +64,7 @@ func NewGetSwapList(r *http.Request) (*GetSwapList, error) {
 		PageParams: pageParams,
 	}
 
-	request.Filters.State=[]int32{0}
-	err=urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

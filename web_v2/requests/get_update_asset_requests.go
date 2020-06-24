@@ -22,7 +22,7 @@ var includeTypeUpdateAssetRequests = map[string]struct{}{
 
 type GetUpdateAssetRequestsFilter struct {
 	GetRequestListBaseFilters
-	Asset []string `filter:"request_details.asset"`
+	Asset *string `filter:"request_details.asset"`
 }
 
 type GetUpdateAssetRequests struct {

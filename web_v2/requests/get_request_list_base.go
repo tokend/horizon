@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 type GetRequestsBase struct {
@@ -49,25 +50,14 @@ func NewGetRequestsBase(
 		return nil, err
 	}
 
+	err = urlval.Decode(r.URL.Query(), filterDst)
 
-	err=urlval.Decode(r.URL.Query(), filterDst)
-
-	var baseFilters=
-	 	GetRequestListBaseFilters{
-		ID: []uint64{0},
-		Requestor: []string{""},
-	 	Reviewer: []string{""},
-	 	State: []uint64{0},
-	 	Type: []uint64{0},
-	 	PendingTasks: []uint64{0},
-	 	PendingTasksAnyOf: []uint64{0},
-	 	PendingTasksNotSet: []uint64{0},
-	 	MissingPendingTasks: []uint64{0},
-	 	}
-	err=urlval.Decode(r.URL.Query(),&baseFilters)
+	//var baseFilters GetRequestListBaseFilters
+	var baseFilters GetRequestListBaseFilters
+	err = urlval.Decode(r.URL.Query(), &baseFilters)
 
 	ID, err := b.getUint64ID()
-	baseFilters.ID=[]uint64{ID}
+	baseFilters.ID = &ID
 	if err != nil {
 		return nil, err
 	}

@@ -53,8 +53,8 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 	}
 
 	// TODO: need to refactor
-	if request.ShouldFilter(requests.FilterTypeHistoryAccount) {
-		h.Account, err = h.AccountsQ.ByAddress(request.Filters.Account[0])
+	if request.Filters.Account != nil {
+		h.Account, err = h.AccountsQ.ByAddress(*request.Filters.Account)
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get account", logan.F{
 				"account_address": request.Filters.Account,
@@ -71,8 +71,8 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 		}
 	}
 
-	if request.ShouldFilter(requests.FilterTypeHistoryBalance) {
-		h.Balance, err = h.BalanceQ.GetByAddress(request.Filters.Balance[0])
+	if request.Filters.Balance != nil {
+		h.Balance, err = h.BalanceQ.GetByAddress(*request.Filters.Balance)
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get balance", logan.F{
 				"balance_address": request.Filters.Balance,
@@ -89,8 +89,8 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 		}
 	}
 
-	if request.ShouldFilter(requests.FilterTypeHistoryAsset) {
-		h.Asset, err = h.AssetsQ.GetByCode(request.Filters.Asset[0])
+	if request.Filters.Asset != nil {
+		h.Asset, err = h.AssetsQ.GetByCode(*request.Filters.Asset)
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get asset", logan.F{
 				"asset_code": request.Filters.Asset,
@@ -246,7 +246,7 @@ func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Requ
 		constraints = append(constraints, h.Asset.Owner)
 	}
 	// Admin is added implicitly to constraints in `isAllowed`, so no need to add it explicitly
-	return isAllowed(httpRequest, w, constraints...)
+	return isAllowed(httpRequest, w, constraints)
 }
 
 func (h *getHistory) tryGetAccountForBalance(balance *history2.Balance) (history2.Account, error) {

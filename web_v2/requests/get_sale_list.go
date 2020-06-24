@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -31,7 +32,7 @@ var filterTypeSaleListAllWithParticipant = map[string]struct{}{
 type GetSaleList struct {
 	SalesBase
 	SpecialFilters struct {
-		Participant []string `filter:"participant"` //json:"participant"`
+		Participant *string `filter:"participant" json:"participant"`
 	}
 	PageParams *pgdb.OffsetPageParams
 }
@@ -63,15 +64,13 @@ func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 		return nil, err
 	}
 
-	request.SpecialFilters.Participant=[]string{""}
-	err=urlval.Decode(r.URL.Query(),&request.SpecialFilters)
-
+	err = urlval.Decode(r.URL.Query(), &request.SpecialFilters)
 
 	return &request, nil
 }
 
 func (g GetSaleList) GetLoganFields() map[string]interface{} {
 	return map[string]interface{}{
-		"participant": g.SpecialFilters.Participant[0],
+		"participant": *g.SpecialFilters.Participant,
 	}
 }

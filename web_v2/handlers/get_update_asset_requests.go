@@ -34,7 +34,7 @@ func GetUpdateAssetRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0], request.GetRequestsBase.Filters.Reviewer[0]) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
 		return
 	}
 
@@ -59,8 +59,8 @@ type getUpdateAssetRequestsHandler struct {
 func (h *getUpdateAssetRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetUpdateAssetRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeUpdateAsset))
 
-	if request.ShouldFilter(requests.FilterTypeUpdateAssetRequestsAsset) {
-		q = q.FilterByAssetUpdateAsset(request.Filters.Asset[0])
+	if request.Filters.Asset != nil {
+		q = q.FilterByAssetUpdateAsset(*request.Filters.Asset)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

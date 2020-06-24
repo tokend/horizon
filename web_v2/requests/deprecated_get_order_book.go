@@ -37,9 +37,9 @@ type DeprecatedGetOrderBook struct {
 	*base
 	ID      uint64
 	Filters struct {
-		BaseAsset  []string `filter:"base_asset"`
-		QuoteAsset []string `filter:"quote_asset"`
-		IsBuy      []bool   `filter:"is_buy"`
+		BaseAsset  *string `filter:"base_asset"`
+		QuoteAsset *string `filter:"quote_asset"`
+		IsBuy      *bool   `filter:"is_buy"`
 	}
 
 	PageParams *pgdb.OffsetPageParams
@@ -71,8 +71,7 @@ func NewDeprecatedGetOrderBook(r *http.Request) (*DeprecatedGetOrderBook, error)
 		ID:         id,
 	}
 
-	request.Filters.IsBuy=[]bool{false}
-	err=urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

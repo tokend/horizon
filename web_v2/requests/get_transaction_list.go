@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -41,24 +42,17 @@ func NewGetTransactions(r *http.Request) (*GetTransactions, error) {
 		return nil, err
 	}
 
-	pagingParams, err := b.getCursorBasedPageParams()
+	pageParams, err := b.getCursorBasedPageParams()
 	if err != nil {
 		return nil, err
 	}
 
 	request := GetTransactions{
 		base:       b,
-		PageParams: pagingParams,
+		PageParams: pageParams,
 	}
 
-	request.Filters =struct {
-		EntryTypes  []int `filter:"ledger_entry_changes.entry_types"`
-		ChangeTypes []int `filter:"ledger_entry_changes.change_types"`
-	}{
-		EntryTypes: []int{0},
-		ChangeTypes: []int{0},
-	}
-	err=urlval.Decode(r.URL.Query(),&request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

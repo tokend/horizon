@@ -40,7 +40,7 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		return errors.Wrap(err, "Failed to get reviewable request list")
 	}
 
-	if request.Filters.ID[0] != 0 {
+	if *request.Filters.ID != 0 {
 		if len(records) == 0 {
 			ape.RenderErr(w, problems.NotFound())
 			return nil
@@ -91,36 +91,36 @@ func (h *getRequestListBaseHandler) ApplyFilters(
 	request requests.GetRequestsBase, q history2.ReviewableRequestsQ,
 ) history2.ReviewableRequestsQ {
 	q = q.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeRequestListRequestor) {
-		q = q.FilterByRequestorAddress(request.Filters.Requestor[0])
+	if request.Filters.Requestor != nil {
+		q = q.FilterByRequestorAddress(*request.Filters.Requestor)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListReviewer) {
-		q = q.FilterByReviewerAddress(request.Filters.Reviewer[0])
+	if request.Filters.Reviewer != nil {
+		q = q.FilterByReviewerAddress(*request.Filters.Reviewer)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListState) {
-		q = q.FilterByState(request.Filters.State[0])
+	if request.Filters.State != nil {
+		q = q.FilterByState(*request.Filters.State)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListType) {
-		q = q.FilterByRequestType(request.Filters.Type[0])
+	if request.Filters.Type != nil {
+		q = q.FilterByRequestType(*request.Filters.Type)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListPendingTasks) {
-		q = q.FilterByPendingTasks(request.Filters.PendingTasks[0])
+	if request.Filters.PendingTasks != nil {
+		q = q.FilterByPendingTasks(*request.Filters.PendingTasks)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListPendingTasksNotSet) {
-		q = q.FilterPendingTasksNotSet(request.Filters.PendingTasksNotSet[0])
+	if request.Filters.PendingTasksNotSet != nil {
+		q = q.FilterPendingTasksNotSet(*request.Filters.PendingTasksNotSet)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListPendingTasksAnyOf) {
-		q = q.FilterByPendingTasksAnyOf(request.Filters.PendingTasksAnyOf[0])
+	if request.Filters.PendingTasksAnyOf != nil {
+		q = q.FilterByPendingTasksAnyOf(*request.Filters.PendingTasksAnyOf)
 	}
 
-	if request.Filters.ID[0] != 0 {
-		q = q.FilterByID(request.Filters.ID[0])
+	if request.Filters.ID != nil && *request.Filters.ID != 0 {
+		q = q.FilterByID(*request.Filters.ID)
 	}
 
 	return q

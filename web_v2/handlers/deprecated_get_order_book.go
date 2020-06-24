@@ -79,16 +79,16 @@ func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests
 		q = q.WithQuoteAsset()
 	}
 
-	if request.ShouldFilter(requests.DeprecatedFilterTypeOrderBookBaseAsset) {
-		q = q.FilterByBaseAssetCode(request.Filters.BaseAsset[0])
+	if request.Filters.BaseAsset != nil {
+		q = q.FilterByBaseAssetCode(*request.Filters.BaseAsset)
 	}
 
-	if request.ShouldFilter(requests.DeprecatedFilterTypeOrderBookQuoteAsset) {
-		q = q.FilterByQuoteAssetCode(request.Filters.QuoteAsset[0])
+	if request.Filters.QuoteAsset != nil {
+		q = q.FilterByQuoteAssetCode(*request.Filters.QuoteAsset)
 	}
 
-	if request.ShouldFilter(requests.DeprecatedFilterTypeOrderBookIsBuy) {
-		q = q.FilterByIsBuy(request.Filters.IsBuy[0])
+	if request.Filters.IsBuy != nil {
+		q = q.FilterByIsBuy(*request.Filters.IsBuy)
 	}
 
 	coreOrderBookEntries, err := q.Select()

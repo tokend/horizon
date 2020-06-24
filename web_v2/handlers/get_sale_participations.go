@@ -110,12 +110,12 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 		})
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSaleParticipationsParticipant) {
-		q = q.FilterByParticipant(request.Filters.Participant[0])
+	if request.Filters.Participant != nil {
+		q = q.FilterByParticipant(*request.Filters.Participant)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSaleParticipationsQuoteAsset) {
-		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset[0])
+	if request.Filters.QuoteAsset != nil {
+		q = q.FilterByQuoteAsset(*request.Filters.QuoteAsset)
 	}
 
 	var err error

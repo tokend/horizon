@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -38,9 +39,9 @@ var filterTypeBalanceListAll = map[string]struct{}{
 type GetBalanceList struct {
 	*base
 	Filters struct {
-		Asset      []string `filter:"asset"`
-		AssetOwner []string `filter:"asset_owner"`
-		Owner      []string `filter:"owner"`
+		Asset      *string `filter:"asset"`
+		AssetOwner *string `filter:"asset_owner"`
+		Owner      *string `filter:"owner"`
 	}
 	PageParams *pgdb.OffsetPageParams
 }
@@ -55,20 +56,16 @@ func NewGetBalanceList(r *http.Request) (*GetBalanceList, error) {
 		return nil, err
 	}
 
-	var pageParams pgdb.OffsetPageParams
-	err=urlval.Decode(r.URL.Query(), &pageParams)
+	pageParams, err := b.getOffsetBasedPageParams()
+	if err != nil {
+		return nil, err
+	}
 	request := GetBalanceList{
 		base:       b,
-		PageParams: &pageParams,
+		PageParams: pageParams,
 	}
 
-  	request.Filters = struct {
-		Asset      []string `filter:"asset"`
-		AssetOwner []string `filter:"asset_owner"`
-		Owner      []string `filter:"owner"`
-	}{[]string{""},[]string{""},[]string{""}}
-
-	err=urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

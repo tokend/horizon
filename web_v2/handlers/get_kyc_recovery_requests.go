@@ -35,9 +35,9 @@ func GetKYCRecoveryRequests(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isAllowed(r, w,
-		request.GetRequestsBase.Filters.Requestor[0],
-		request.GetRequestsBase.Filters.Reviewer[0],
-		request.Filters.Account[0]) {
+		request.GetRequestsBase.Filters.Requestor,
+		request.GetRequestsBase.Filters.Reviewer,
+		request.Filters.Account) {
 		return
 	}
 
@@ -62,8 +62,8 @@ type getKYCRecoveryRequestsHandler struct {
 func (h *getKYCRecoveryRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetKYCRecoveryRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeKycRecovery))
 
-	if request.ShouldFilter(requests.FilterTypeKYCRecoveryRequestsAccount) {
-		q = q.FilterByKYCRecoveryTargetAccount(request.Filters.Account[0])
+	if request.Filters.Account != nil {
+		q = q.FilterByKYCRecoveryTargetAccount(*request.Filters.Account)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

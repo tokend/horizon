@@ -57,13 +57,13 @@ type getAtomicSwapAskListHandler struct {
 func (h *getAtomicSwapAskListHandler) GetAtomicSwapAskList(request *requests.GetAtomicSwapAskList,
 ) (*regources.AtomicSwapAskListResponse, error) {
 	q := h.AtomicSwapAskQ.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeAskListOwner) {
-		q = q.FilterByOwner(request.Filters.Owner[0])
+	if request.Filters.Owner != nil {
+		q = q.FilterByOwner(*request.Filters.Owner)
 	}
-	if request.ShouldFilter(requests.FilterTypeAskListBaseAsset) {
+	if request.Filters.BaseAsset != nil {
 		q = q.FilterByBaseAssets(request.Filters.BaseAsset)
 	}
-	if request.ShouldFilter(requests.FilterTypeAskListQuoteAssets) {
+	if request.Filters.QuoteAssets != nil {
 		q = q.FilterByQuoteAssets(request.Filters.QuoteAssets)
 	}
 	asks, err := q.Select()

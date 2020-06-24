@@ -252,7 +252,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/matches", handlers.GetMatchList)
 	m.Get("/v3/movements", handlers.GetMovements)
 	m.Get("/v3/asset_pairs/{id}", handlers.GetAssetPair)
-	m.Get("/v3/asset_pairs", handlers.GetAssetPairList)//
+	m.Get("/v3/asset_pairs", handlers.GetAssetPairList)
 	m.Get("/v3/offers/{id}", handlers.GetOffer)
 	m.Get("/v3/offers", handlers.GetOfferList)
 	m.Get("/v3/public_key_entries/{id}", handlers.GetPublicKeyEntry)

@@ -72,11 +72,11 @@ func (h *getTransactionsHandler) getLatestLedger() (*history2.Ledger, error) {
 func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactions) (*regources.TransactionListResponse, error) {
 	q := h.TransactionsQ.Page(*request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeTransactionListLedgerChangeTypes) {
+	if request.Filters.ChangeTypes != nil {
 		q = q.FilterByEffectTypes(request.Filters.ChangeTypes...)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeTransactionListLedgerEntryTypes) {
+	if request.Filters.EntryTypes != nil {
 		q = q.FilterByLedgerEntryTypes(request.Filters.EntryTypes...)
 	}
 

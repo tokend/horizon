@@ -33,7 +33,7 @@ func GetBalanceList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assetOwner, err := handler.getAssetOwner(request.Filters.Asset[0])
+	assetOwner, err := handler.getAssetOwner(*request.Filters.Asset)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get asset owner", logan.F{
 			"request": request,
@@ -86,16 +86,16 @@ func (h *getBalanceListHandler) getAssetOwner(assetCode string) (string, error) 
 // GetBalanceList returns list of balances with related resources
 func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList) (*regources.BalanceListResponse, error) {
 	q := h.BalancesQ.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeBalanceListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset[0])
+	if request.Filters.Asset != nil {
+		q = q.FilterByAsset(*request.Filters.Asset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeBalanceListAssetOwner) {
-		q = q.FilterByAssetOwner(request.Filters.AssetOwner[0])
+	if request.Filters.AssetOwner != nil {
+		q = q.FilterByAssetOwner(*request.Filters.AssetOwner)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeBalanceListOwner) {
-		q = q.FilterByAccount(request.Filters.Owner[0])
+	if request.Filters.Owner != nil {
+		q = q.FilterByAccount(*request.Filters.Owner)
 	}
 
 	coreBalances, err := q.Select()

@@ -34,18 +34,18 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	constraints := []string{
-		request.GetRequestsBase.Filters.Requestor[0],
-		request.GetRequestsBase.Filters.Reviewer[0],
+	constraints := []*string{
+		request.GetRequestsBase.Filters.Requestor,
+		request.GetRequestsBase.Filters.Reviewer,
 	}
 
 	// receiving balance owner should be able to see issuance requests
-	if request.Filters.Receiver[0] != "" {
-		balance, err := history2.NewBalancesQ(historyRepo).GetByAddress(request.Filters.Receiver[0])
+	if request.Filters.Receiver != nil && *request.Filters.Receiver != "" {
+		balance, err := history2.NewBalancesQ(historyRepo).GetByAddress(*request.Filters.Receiver)
 		if err != nil {
 			ctx.Log(r).
 				WithError(err).
-				WithFields(logan.F{"receiver": request.Filters.Receiver}).
+				WithFields(logan.F{"receiver": *request.Filters.Receiver}).
 				Error("failed to get receiver balance")
 			ape.RenderErr(w, problems.InternalError())
 			return
@@ -58,17 +58,17 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			ctx.Log(r).
 				WithError(err).
-				WithFields(logan.F{"receiver": request.Filters.Receiver}).
+				WithFields(logan.F{"receiver": *request.Filters.Receiver}).
 				Error("failed to get receiver account")
 			ape.RenderErr(w, problems.InternalError())
 			return
 		}
 
-		constraints = append(constraints, account.Address)
+		constraints = append(constraints, &account.Address)
 
 	}
 
-	if !isAllowed(r, w, constraints...) {
+	if !isAllowed(r, w, constraints) {
 		return
 	}
 
@@ -93,12 +93,12 @@ type getCreateIssuanceRequestsHandler struct {
 func (h *getCreateIssuanceRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateIssuanceRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateIssuance))
 
-	if request.ShouldFilter(requests.FilterTypeCreateIssuanceRequestsAsset) {
-		q = q.FilterByCreateIssuanceAsset(request.Filters.Asset[0])
+	if *request.Filters.Asset != "" {
+		q = q.FilterByCreateIssuanceAsset(*request.Filters.Asset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeCreateIssuanceRequestsReceiver) {
-		q = q.FilterByCreateIssuanceReceiver(request.Filters.Receiver[0])
+	if *request.Filters.Receiver != "" {
+		q = q.FilterByCreateIssuanceReceiver(*request.Filters.Receiver)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

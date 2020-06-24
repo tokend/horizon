@@ -46,15 +46,15 @@ var filterTypeRequestListAll = map[string]struct{}{
 //}
 
 type GetRequestListBaseFilters struct {
-	ID                  []uint64 `filter:"id"`
-	Requestor           []string `filter:"requestor"`
-	Reviewer            []string `filter:"reviewer"`
-	State               []uint64 `filter:"state"`
-	Type                []uint64 `filter:"type"`
-	PendingTasks        []uint64 `filter:"pending_tasks"`
-	PendingTasksAnyOf   []uint64 `filter:"pending_tasks_any_of"`
-	PendingTasksNotSet  []uint64 `filter:"pending_tasks_not_set"`
-	MissingPendingTasks []uint64 `filter:"missing_pending_tasks"`
+	ID                  *uint64 `filter:"id"`
+	Requestor           *string `filter:"requestor"`
+	Reviewer            *string `filter:"reviewer"`
+	State               *uint64 `filter:"state"`
+	Type                *uint64 `filter:"type"`
+	PendingTasks        *uint64 `filter:"pending_tasks"`
+	PendingTasksAnyOf   *uint64 `filter:"pending_tasks_any_of"`
+	PendingTasksNotSet  *uint64 `filter:"pending_tasks_not_set"`
+	MissingPendingTasks *uint64 `filter:"missing_pending_tasks"`
 }
 type GetRequests struct {
 	*GetRequestsBase

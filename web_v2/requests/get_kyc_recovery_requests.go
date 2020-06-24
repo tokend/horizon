@@ -22,7 +22,7 @@ var filterTypeKYCRecoveryRequests = map[string]struct{}{
 
 type GetKYCRecoveryRequestsFilter struct {
 	GetRequestListBaseFilters
-	Account []string `filter:"request_details.target_account"`
+	Account *string `filter:"request_details.target_account"`
 }
 
 type GetKYCRecoveryRequests struct {
@@ -31,10 +31,6 @@ type GetKYCRecoveryRequests struct {
 }
 
 func NewGetKYCRecoveryRequests(r *http.Request) (request GetKYCRecoveryRequests, err error) {
-	request.Filters=
-		GetKYCRecoveryRequestsFilter{
-		Account: []string{},
-		}
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
 		&request.Filters,

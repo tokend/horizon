@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -37,16 +38,16 @@ var filterTypeAssetPairListAll = map[string]struct{}{
 // GetAssetPairList - represents params to be specified by user for getAssetPairList handler
 type GetAssetPairList struct {
 	*base
-	Filters GetAssetPairListFilters
+	Filters    GetAssetPairListFilters
 	PageParams *pgdb.OffsetPageParams
 }
 type GetAssetPairListFilters struct {
-	Policy     []uint64 `filter:"policy"`
-	Asset      []string `filter:"asset"`
-	BaseAsset  []string `filter:"base_asset"`
-	QuoteAsset []string `filter:"quote_asset"`
-
+	Policy     *uint64 `filter:"policy"`
+	Asset      *string `filter:"asset"`
+	BaseAsset  *string `filter:"base_asset"`
+	QuoteAsset *string `filter:"quote_asset"`
 }
+
 // NewGetAssetPairList returns new instance of GetAssetPairList request
 func NewGetAssetPairList(r *http.Request) (*GetAssetPairList, error) {
 	b, err := newBase(r, baseOpts{
@@ -66,12 +67,8 @@ func NewGetAssetPairList(r *http.Request) (*GetAssetPairList, error) {
 		base:       b,
 		PageParams: pageParams,
 	}
-  	request.Filters=
-  		GetAssetPairListFilters{
-  		Policy: []uint64{0},
-		}
-	err=urlval.Decode(r.URL.Query(),&request.Filters)
 
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

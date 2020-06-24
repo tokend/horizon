@@ -26,9 +26,9 @@ var filterTypeCreateAtomicSwapBidRequests = map[string]struct{}{
 
 type GetCreateAtomicSwapBidRequestsFilter struct {
 	GetRequestListBaseFilters
-	QuoteAsset []string `filter:"request_details.quote_asset"`
-	AskID      []uint64 `filter:"request_details.ask_id"`
-	AskOwner   []string `filter:"request_details.ask_owner"`
+	QuoteAsset *string `filter:"request_details.quote_asset"`
+	AskID      *uint64 `filter:"request_details.ask_id"`
+	AskOwner   *string `filter:"request_details.ask_owner"`
 }
 
 type GetCreateAtomicSwapBidRequests struct {
@@ -37,11 +37,6 @@ type GetCreateAtomicSwapBidRequests struct {
 }
 
 func NewGetCreateAtomicSwapBidRequests(r *http.Request) (request GetCreateAtomicSwapBidRequests, err error) {
-	request.Filters=
-		GetCreateAtomicSwapBidRequestsFilter{
-		AskID: []uint64{0},
-		AskOwner: []string{""},
-		}
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
 		&request.Filters,

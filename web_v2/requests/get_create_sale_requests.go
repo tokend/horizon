@@ -28,8 +28,8 @@ var includeTypeCreateSaleRequests = map[string]struct{}{
 
 type GetCreateSaleRequestsFilter struct {
 	GetRequestListBaseFilters
-	BaseAsset         []string `filter:"request_details.base_asset"`
-	DefaultQuoteAsset []string `filter:"request_details.default_quote_asset"`
+	BaseAsset         *string `filter:"request_details.base_asset"`
+	DefaultQuoteAsset *string `filter:"request_details.default_quote_asset"`
 }
 
 type GetCreateSaleRequests struct {
@@ -38,6 +38,7 @@ type GetCreateSaleRequests struct {
 }
 
 func NewGetCreateSaleRequests(r *http.Request) (request GetCreateSaleRequests, err error) {
+
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
 		&request.Filters,

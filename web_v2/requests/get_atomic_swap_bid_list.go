@@ -35,8 +35,8 @@ var filterTypeAskListAll = map[string]struct{}{
 type GetAtomicSwapAskList struct {
 	*base
 	Filters struct {
-		Owner       []string   `filter:"owner"`
-		BaseAsset   []string   `filter:"base_asset"`
+		Owner       *string  `filter:"owner"`
+		BaseAsset   []string `filter:"base_asset"`
 		QuoteAssets []string `filter:"quote_assets"`
 	}
 	PageParams *pgdb.OffsetPageParams
@@ -67,7 +67,7 @@ func NewGetAtomicSwapAskList(r *http.Request) (*GetAtomicSwapAskList, error) {
 		PageParams: pageParams,
 	}
 
-	err=urlval.Decode(r.URL.Query(),&request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

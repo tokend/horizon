@@ -35,7 +35,7 @@ func GetCreateSaleRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0], request.GetRequestsBase.Filters.Reviewer[0]) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
 		return
 	}
 
@@ -60,12 +60,12 @@ type getCreateSaleRequestsHandler struct {
 func (h *getCreateSaleRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateSaleRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateSale))
 
-	if request.ShouldFilter(requests.FilterTypeCreateSaleRequestsBaseAsset) {
-		q = q.FilterBySaleBaseAsset(request.Filters.BaseAsset[0])
+	if request.Filters.BaseAsset != nil {
+		q = q.FilterBySaleBaseAsset(*request.Filters.BaseAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeCreateSaleRequestsDefaultQuoteAsset) {
-		q = q.FilterBySaleQuoteAsset(request.Filters.DefaultQuoteAsset[0])
+	if request.Filters.DefaultQuoteAsset != nil {
+		q = q.FilterBySaleQuoteAsset(*request.Filters.DefaultQuoteAsset)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

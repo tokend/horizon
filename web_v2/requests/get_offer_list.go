@@ -47,13 +47,13 @@ var filterTypeOfferListAll = map[string]struct{}{
 type GetOfferList struct {
 	*base
 	Filters struct {
-		BaseBalance  []string `filter:"base_balance"`
-		QuoteBalance []string `filter:"quote_balance"`
-		BaseAsset    []string `filter:"base_asset"`
-		QuoteAsset   []string `filter:"quote_asset"`
-		Owner        []string `filter:"owner"`
-		OrderBook    []int64  `filter:"order_book"`
-		IsBuy        []bool   `filter:"is_buy"`
+		BaseBalance  *string `filter:"base_balance"`
+		QuoteBalance *string `filter:"quote_balance"`
+		BaseAsset    *string `filter:"base_asset"`
+		QuoteAsset   *string `filter:"quote_asset"`
+		Owner        *string `filter:"owner"`
+		OrderBook    *int64  `filter:"order_book"`
+		IsBuy        *bool   `filter:"is_buy"`
 	}
 	PageParams *pgdb.OffsetPageParams
 }
@@ -78,8 +78,7 @@ func NewGetOfferList(r *http.Request) (*GetOfferList, error) {
 		PageParams: pageParams,
 	}
 
-	request.Filters.Owner=[]string{""}
-	err=urlval.Decode(r.URL.Query(),&request.Filters)
-	
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
+
 	return &request, nil
 }

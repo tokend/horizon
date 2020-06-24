@@ -4,13 +4,9 @@ import (
 	"net/http"
 )
 
-type GetUpdateLimitsRequestsFilter struct {
-	GetRequestListBaseFilters
-}
-
 type GetUpdateLimitsRequests struct {
 	*GetRequestsBase
-	Filters GetUpdateLimitsRequestsFilter
+	Filters GetRequestListBaseFilters
 }
 
 func NewGetUpdateLimitsRequests(r *http.Request) (request GetUpdateLimitsRequests, err error) {

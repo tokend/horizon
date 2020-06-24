@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -43,9 +44,7 @@ func NewGetOperations(r *http.Request) (*GetOperations, error) {
 		PageParams: pagingParams,
 	}
 
-	request.Filters.Types=[]int{0}
-	err=urlval.Decode(r.URL.Query(),&request.Filters)
-
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

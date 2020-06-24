@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -33,8 +34,8 @@ type GetSaleParticipations struct {
 	*base
 	SaleID  uint64
 	Filters struct {
-		QuoteAsset  []string `filter:"quote_asset"`//`json:"quote_asset"`
-		Participant []string `filter:"participant"`//`json:"participant"`
+		QuoteAsset  *string `filter:"quote_asset" json:"quote_asset"`
+		Participant *string `filter:"participant" json:"participant"`
 	}
 	PageParams *pgdb.CursorPageParams
 }
@@ -65,7 +66,7 @@ func NewGetSaleParticipations(r *http.Request) (*GetSaleParticipations, error) {
 		PageParams: pageParams,
 	}
 
-	err=urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return request, nil
 }

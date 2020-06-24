@@ -22,7 +22,7 @@ var includeTypeCreatePreIssuanceRequests = map[string]struct{}{
 
 type GetCreatePreIssuanceRequestsFilter struct {
 	GetRequestListBaseFilters
-	Asset []string `filter:"request_details.asset"`
+	Asset *string `filter:"request_details.asset"`
 }
 
 type GetCreatePreIssuanceRequests struct {

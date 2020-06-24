@@ -34,7 +34,7 @@ func GetChangeRoleRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0], request.GetRequestsBase.Filters.Reviewer[0]) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
 		return
 	}
 
@@ -59,11 +59,11 @@ type getChangeRoleRequestsHandler struct {
 func (h *getChangeRoleRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetChangeRoleRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeChangeRole))
 
-	if request.ShouldFilter(requests.FilterTypeChangeRoleRequestsAccount) {
-		q = q.FilterByChangeRoleAccount(request.Filters.Account[0])
+	if request.Filters.Account != nil {
+		q = q.FilterByChangeRoleAccount(*request.Filters.Account)
 	}
-	if request.ShouldFilter(requests.FilterTypeChangeRoleRequestsAccountRoleToSet) {
-		q = q.FilterByChangeRoleToSet(request.Filters.AccountRole[0])
+	if request.Filters.AccountRole != nil {
+		q = q.FilterByChangeRoleToSet(*request.Filters.AccountRole)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

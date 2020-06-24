@@ -32,15 +32,13 @@ type GetAccountList struct {
 func NewGetAccountList(r *http.Request) (*GetAccountList, error) {
 	b, err := newBase(r, baseOpts{
 		supportedFilters: filterTypeAccountListAll,
-	 	})
+	})
 	if err != nil {
 		return nil, err
 	}
 
-
-	var request =GetAccountList{base: b}
-	request.Filters.Role=[]uint64{0}
-	err=urlval.Decode(r.URL.Query(), &request)//default sorting is "desc"
+	var request = GetAccountList{base: b}
+	err = urlval.Decode(r.URL.Query(), &request) //default sorting is "desc"
 	if err != nil {
 		return nil, err
 	}

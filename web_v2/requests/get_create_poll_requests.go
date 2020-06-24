@@ -18,9 +18,9 @@ var filterTypeCreatePollRequests = map[string]struct{}{
 
 type GetCreatePollRequestsFilter struct {
 	GetRequestListBaseFilters
-	PermissionType           []uint32 `filter:"request_details.permission_type"`
-	VoteConfirmationRequired []bool   `filter:"request_details.vote_confirmation_required"`
-	ResultProvider           []string `filter:"request_details.result_provider"`
+	PermissionType           *uint32 `filter:"request_details.permission_type"`
+	VoteConfirmationRequired *bool   `filter:"request_details.vote_confirmation_required"`
+	ResultProvider           *string `filter:"request_details.result_provider"`
 }
 
 type GetCreatePollRequests struct {
@@ -29,11 +29,6 @@ type GetCreatePollRequests struct {
 }
 
 func NewGetCreatePollRequests(r *http.Request) (request GetCreatePollRequests, err error) {
-	request.Filters=
-		GetCreatePollRequestsFilter{
-		PermissionType: []uint32{0},
-		VoteConfirmationRequired: []bool{false},
-		}
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
 		&request.Filters,

@@ -35,7 +35,7 @@ func GetCreateWithdrawRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0], request.GetRequestsBase.Filters.Reviewer[0]) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
 		return
 	}
 
@@ -61,11 +61,11 @@ type getCreateWithdrawRequestsHandler struct {
 func (h *getCreateWithdrawRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateWithdrawRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateWithdraw))
 
-	if request.ShouldFilter(requests.FilterTypeCreateWithdrawRequestsBalance) {
-		q = q.FilterByWithdrawBalance(request.Filters.Balance[0])
+	if request.Filters.Balance != nil {
+		q = q.FilterByWithdrawBalance(*request.Filters.Balance)
 	}
-	if request.ShouldFilter(requests.FilterTypeCreateWithdrawRequestsAsset) {
-		q = q.FilterByWithdrawAsset(request.Filters.Asset[0])
+	if request.Filters.Asset != nil {
+		q = q.FilterByWithdrawAsset(*request.Filters.Asset)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

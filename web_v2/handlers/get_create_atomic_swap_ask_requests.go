@@ -35,7 +35,7 @@ func GetCreateAtomicSwapAskRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor[0], request.GetRequestsBase.Filters.Reviewer[0]) {
+	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
 		return
 	}
 
@@ -61,8 +61,8 @@ type getCreateAtomicSwapAskRequestsHandler struct {
 func (h *getCreateAtomicSwapAskRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateAtomicSwapAskRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateAtomicSwapAsk))
 
-	if request.ShouldFilter(requests.FilterTypeCreateAtomicSwapAskRequestsBalance) {
-		q = q.FilterByCreateAtomicSwapAskBalance(request.Filters.BaseBalance[0])
+	if request.Filters.BaseBalance != nil {
+		q = q.FilterByCreateAtomicSwapAskBalance(*request.Filters.BaseBalance)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
