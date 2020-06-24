@@ -2,6 +2,7 @@ package core2
 
 import (
 	"database/sql"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -30,8 +31,7 @@ func NewFeesQ(repo *pgdb.DB) FeesQ {
 
 // Page - returns Q with specified limit and offset params
 func (q FeesQ) Page(params pgdb.OffsetPageParams) FeesQ {
-	order := params.Order
-	orderBys := []string{"f.hash " + order, "f.lower_bound " + order, "f.upper_bound " + order}
+	orderBys := []string{"f.hash " + params.Order, "f.lower_bound " + params.Order, "f.upper_bound " + params.Order}
 	q.selector = params.ApplyTo(q.selector.OrderBy(orderBys...))
 	return q
 }

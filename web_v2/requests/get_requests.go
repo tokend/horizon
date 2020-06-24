@@ -38,13 +38,6 @@ var filterTypeRequestListAll = map[string]struct{}{
 	FilterTypeRequestListPendingTasksAnyOf:  {},
 }
 
-// GetReviewableRequestList represents params to be specified by user for getReviewableRequestList handler
-//type GetReviewableBaseRequestList struct {
-//	*base
-//	BaseFilters GetReviewableRequestListFilters
-//	PageParams  *pgdb.CursorPageParams
-//}
-
 type GetRequestListBaseFilters struct {
 	ID                  *uint64 `filter:"id"`
 	Requestor           *string `filter:"requestor"`
