@@ -3,7 +3,6 @@ package requests
 import (
 	"net/http"
 	"time"
-
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
