@@ -1,9 +1,10 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 	"time"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 const (
@@ -46,16 +47,16 @@ var filterTypePollListAll = map[string]struct{}{
 type GetPollList struct {
 	*base
 	Filters struct {
-		Owner            string     `fig:"owner"`
-		ResultProvider   string     `fig:"result_provider"`
-		MaxEndTime       *time.Time `fig:"max_end_time"`
-		MaxStartTime     *time.Time `fig:"max_start_time"`
-		MinStartTime     *time.Time `fig:"min_start_time"`
-		MinEndTime       *time.Time `fig:"min_end_time"`
-		State            int32      `fig:"state"`
-		PollType         uint64     `fig:"poll_type"`
-		PermissionType   uint32     `fig:"permission_type"`
-		VoteConfirmation bool       `fig:"vote_confirmation"`
+		Owner            string     `json:"owner"`
+		ResultProvider   string     `json:"result_provider"`
+		MaxEndTime       *time.Time `json:"max_end_time"`
+		MaxStartTime     *time.Time `json:"max_start_time"`
+		MinStartTime     *time.Time `json:"min_start_time"`
+		MinEndTime       *time.Time `json:"min_end_time"`
+		State            int32      `json:"state"`
+		PollType         uint64     `json:"poll_type"`
+		PermissionType   uint32     `json:"permission_type"`
+		VoteConfirmation bool       `json:"vote_confirmation"`
 	}
 	PageParams *pgdb.CursorPageParams
 }
