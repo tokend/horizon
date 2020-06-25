@@ -26,9 +26,9 @@ var filterTypeCreateAtomicSwapBidRequests = map[string]struct{}{
 
 type GetCreateAtomicSwapBidRequestsFilter struct {
 	GetRequestListBaseFilters
-	QuoteAsset string `fig:"request_details.quote_asset"`
-	AskID      uint64 `fig:"request_details.ask_id"`
-	AskOwner   string `fig:"request_details.ask_owner"`
+	QuoteAsset *string `filter:"request_details.quote_asset"`
+	AskID      *uint64 `filter:"request_details.ask_id"`
+	AskOwner   *string `filter:"request_details.ask_owner"`
 }
 
 type GetCreateAtomicSwapBidRequests struct {

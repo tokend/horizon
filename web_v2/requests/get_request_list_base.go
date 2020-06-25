@@ -1,19 +1,25 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 type GetRequestsBase struct {
 	*base
 	Filters    GetRequestListBaseFilters
-	PageParams *db2.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
 
 func NewGetRequestsBase(
-	r *http.Request, filterDst interface{}, filters map[string]struct{}, includes map[string]struct{},
+	r *http.Request,
+	filterDst interface{},
+	filters map[string]struct{},
+	includes map[string]struct{},
 ) (*GetRequestsBase, error) {
+
 	// merge filters
 	mergedFilters := map[string]struct{}{}
 	for k := range filters {
@@ -44,17 +50,13 @@ func NewGetRequestsBase(
 		return nil, err
 	}
 
-	err = b.populateFilters(filterDst)
-	if err != nil {
-		return nil, err
-	}
+	err = urlval.Decode(r.URL.Query(), filterDst)
 
 	var baseFilters GetRequestListBaseFilters
-	err = b.populateFilters(&baseFilters)
-	if err != nil {
-		return nil, err
-	}
-	baseFilters.ID, err = b.getUint64ID()
+	err = urlval.Decode(r.URL.Query(), &baseFilters)
+
+	ID, err := b.getUint64ID()
+	baseFilters.ID = &ID
 	if err != nil {
 		return nil, err
 	}

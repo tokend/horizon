@@ -1,8 +1,10 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -30,9 +32,9 @@ var filterTypeSaleListAllWithParticipant = map[string]struct{}{
 type GetSaleList struct {
 	SalesBase
 	SpecialFilters struct {
-		Participant string `json:"participant"`
+		Participant *string `filter:"participant" json:"participant"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *pgdb.OffsetPageParams
 }
 
 // NewGetSaleList returns new instance of GetSaleList request
@@ -62,16 +64,13 @@ func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 		return nil, err
 	}
 
-	err = b.populateFilters(&request.SpecialFilters)
-	if err != nil {
-		return nil, err
-	}
+	err = urlval.Decode(r.URL.Query(), &request.SpecialFilters)
 
 	return &request, nil
 }
 
 func (g GetSaleList) GetLoganFields() map[string]interface{} {
 	return map[string]interface{}{
-		"participant": g.SpecialFilters.Participant,
+		"participant": *g.SpecialFilters.Participant,
 	}
 }

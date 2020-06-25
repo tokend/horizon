@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 )
 
@@ -26,7 +26,7 @@ type GetMatchList struct {
 		QuoteAsset string `fig:"quote_asset,required"`
 	}
 
-	PageParams *db2.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
 
 // NewGetMatchList - returns new instance of GetMatchList

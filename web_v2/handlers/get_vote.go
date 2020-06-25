@@ -42,7 +42,7 @@ func GetVote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, request.VoterID, poll.ResultProviderID, poll.OwnerID) {
+	if !isAllowed(r, w, &request.VoterID, &poll.ResultProviderID, &poll.OwnerID) {
 		return
 	}
 

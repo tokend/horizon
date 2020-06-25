@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 var operationColumns = []string{"id", "tx_id", "type", "details",
@@ -41,7 +40,7 @@ func (q OperationQ) FilterByOperationsTypes(types []int) OperationQ {
 }
 
 // Page - apply paging params to the query
-func (q OperationQ) Page(pageParams db2.CursorPageParams) OperationQ {
+func (q OperationQ) Page(pageParams pgdb.CursorPageParams) OperationQ {
 	q.selector = pageParams.ApplyTo(q.selector, "op.id")
 	return q
 }

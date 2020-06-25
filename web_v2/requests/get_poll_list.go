@@ -1,13 +1,13 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"net/http"
 	"time"
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 const (
-	// FilterTypePollListOwner - defines if we need to filter resopnse by owner
+	// FilterTypePollListOwner - defines if we need to filter response by owner
 	FilterTypePollListOwner = "owner"
 
 	FilterTypePollListResultProvider = "result_provider"
@@ -57,7 +57,7 @@ type GetPollList struct {
 		PermissionType   uint32     `json:"permission_type"`
 		VoteConfirmation bool       `json:"vote_confirmation"`
 	}
-	PageParams *db2.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
 
 func NewGetPollList(r *http.Request) (*GetPollList, error) {

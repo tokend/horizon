@@ -24,8 +24,8 @@ var filterTypeChangeRoleRequests = map[string]struct{}{
 
 type GetChangeRoleRequestsFilter struct {
 	GetRequestListBaseFilters
-	Account     string `fig:"request_details.destination_account"`
-	AccountRole int32  `fig:"request_details.account_role_to_set"`
+	Account     *string `filter:"request_details.destination_account"`
+	AccountRole *int32  `filter:"request_details.account_role_to_set"`
 }
 
 type GetChangeRoleRequests struct {

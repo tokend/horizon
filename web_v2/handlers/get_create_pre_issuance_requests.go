@@ -57,8 +57,8 @@ type getCreatePreIssuanceRequestsHandler struct {
 func (h *getCreatePreIssuanceRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreatePreIssuanceRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreatePreIssuance))
 
-	if request.ShouldFilter(requests.FilterTypeCreatePreIssuanceRequestsAsset) {
-		q = q.FilterByCreatePreIssuanceAsset(request.Filters.Asset)
+	if request.Filters.Asset != nil {
+		q = q.FilterByCreatePreIssuanceAsset(*request.Filters.Asset)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

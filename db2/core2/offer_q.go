@@ -93,13 +93,13 @@ func (q OffersQ) FilterByOfferID(id uint64) OffersQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q OffersQ) Page(params db2.OffsetPageParams) OffersQ {
+func (q OffersQ) Page(params pgdb.OffsetPageParams) OffersQ {
 	q.selector = params.ApplyTo(q.selector, "offers.offer_id")
 	return q
 }
 
 // CursorPage - returns Q with specified limit and offset params
-func (q OffersQ) CursorPage(params db2.CursorPageParams) OffersQ {
+func (q OffersQ) CursorPage(params pgdb.CursorPageParams) OffersQ {
 	q.selector = params.ApplyTo(q.selector, "offers.offer_id")
 	return q
 }

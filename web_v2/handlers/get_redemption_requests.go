@@ -59,11 +59,11 @@ type getRedemptionRequestsHandler struct {
 func (h *getRedemptionRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetRedemptionRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypePerformRedemption))
 
-	if request.ShouldFilter(requests.FilterTypeRedemptionRequestsDestinationAccount) {
-		q = q.FilterByAssetUpdateAsset(request.Filters.DestinationAccount)
+	if request.Filters.DestinationAccount != nil {
+		q = q.FilterByAssetUpdateAsset(*request.Filters.DestinationAccount)
 	}
-	if request.ShouldFilter(requests.FilterTypeRedemptionRequestsSourceBalance) {
-		q = q.FilterByAssetUpdateAsset(request.Filters.SourceBalance)
+	if request.Filters.SourceBalance != nil {
+		q = q.FilterByAssetUpdateAsset(*request.Filters.SourceBalance)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

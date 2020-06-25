@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // ReviewableRequestsQ - helper struct to get reviewable requests from db
@@ -192,7 +191,7 @@ func (q ReviewableRequestsQ) GetByID(id uint64) (*ReviewableRequest, error) {
 }
 
 // Page - apply paging params to the query
-func (q ReviewableRequestsQ) Page(pageParams db2.CursorPageParams) ReviewableRequestsQ {
+func (q ReviewableRequestsQ) Page(pageParams pgdb.CursorPageParams) ReviewableRequestsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "reviewable_requests.id")
 	return q
 }

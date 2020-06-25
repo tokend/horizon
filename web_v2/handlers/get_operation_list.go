@@ -51,7 +51,7 @@ func GetOperations(w http.ResponseWriter, r *http.Request) {
 func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*regources.OperationListResponse, error) {
 	q := h.OperationQ.Page(*request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeOperationsListTypes) {
+	if request.Filters.Types != nil {
 		q = q.FilterByOperationsTypes(request.Filters.Types)
 	}
 

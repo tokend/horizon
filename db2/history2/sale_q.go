@@ -196,13 +196,13 @@ func (q SalesQ) FilterByMaxSoftCap(value uint64) SalesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SalesQ) Page(params db2.OffsetPageParams) SalesQ {
+func (q SalesQ) Page(params pgdb.OffsetPageParams) SalesQ {
 	q.selector = params.ApplyTo(q.selector, "sales.id")
 	return q
 }
 
 // CursorPage - returns Q with specified limit and offset params
-func (q SalesQ) CursorPage(params db2.CursorPageParams) SalesQ {
+func (q SalesQ) CursorPage(params pgdb.CursorPageParams) SalesQ {
 	q.selector = params.ApplyTo(q.selector, "sales.id")
 	return q
 }

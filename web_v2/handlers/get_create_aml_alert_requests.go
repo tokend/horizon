@@ -57,8 +57,8 @@ type getCreateAmlAlertRequestsHandler struct {
 func (h *getCreateAmlAlertRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateAmlAlertRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateAmlAlert))
 
-	if request.ShouldFilter(requests.FilterTypeCreateAmlAlertRequestsBalance) {
-		q = q.FilterByAmlAlertBalance(request.Filters.Balance)
+	if request.Filters.Balance != nil {
+		q = q.FilterByAmlAlertBalance(*request.Filters.Balance)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

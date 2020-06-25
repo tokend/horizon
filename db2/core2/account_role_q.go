@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountRoleQ is a helper struct to aid in configuring queries that loads
@@ -32,7 +31,7 @@ func (q AccountRoleQ) FilterByID(id uint64) AccountRoleQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AccountRoleQ) Page(params db2.OffsetPageParams) AccountRoleQ {
+func (q AccountRoleQ) Page(params pgdb.OffsetPageParams) AccountRoleQ {
 	q.selector = params.ApplyTo(q.selector, "ar.id")
 	return q
 }

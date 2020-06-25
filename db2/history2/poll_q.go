@@ -3,7 +3,6 @@ package history2
 import (
 	"database/sql"
 	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -105,7 +104,7 @@ func (q PollsQ) FilterByVoteConfirmationRequired(voteConfirmation bool) PollsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q PollsQ) Page(params db2.CursorPageParams) PollsQ {
+func (q PollsQ) Page(params pgdb.CursorPageParams) PollsQ {
 	q.selector = params.ApplyTo(q.selector, "p.id")
 	return q
 }

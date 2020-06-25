@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 )
 
@@ -9,7 +9,7 @@ import (
 type GetSaleListForAccount struct {
 	SalesBase
 	Address    string
-	PageParams *db2.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
 
 // NewGetSaleListForAccount returns new instance of GetSaleListForAccount request
@@ -22,16 +22,14 @@ func NewGetSaleListForAccount(r *http.Request) (*GetSaleListForAccount, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
-	if err != nil {
-		return nil, err
-	}
-
 	address, err := newAccountAddress(b, "id")
 	if err != nil {
 		return nil, err
 	}
-
+	pageParams, err := b.getCursorBasedPageParams()
+	if err != nil {
+		return nil, err
+	}
 	request := GetSaleListForAccount{
 		Address: address,
 		SalesBase: SalesBase{

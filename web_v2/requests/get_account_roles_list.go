@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 )
 
@@ -12,7 +12,7 @@ var includeTypeAccountRoleListAll = map[string]struct{}{
 //GetAccountRoleList - represents params to be specified for Get AccountRoles handler
 type GetAccountRoleList struct {
 	*base
-	PageParams *db2.OffsetPageParams
+	PageParams *pgdb.OffsetPageParams
 }
 
 // NewGetAccountRoleList returns the new instance of GetAccountRoleList request

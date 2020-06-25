@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // TransactionsQ is a helper struct to aid in configuring queries that loads
@@ -71,7 +70,7 @@ func (q TransactionsQ) GetByID(id uint64) (*Transaction, error) {
 }
 
 // Page - returns Q with specified limit and cursor params
-func (q TransactionsQ) Page(params db2.CursorPageParams) TransactionsQ {
+func (q TransactionsQ) Page(params pgdb.CursorPageParams) TransactionsQ {
 	q.selector = params.ApplyTo(q.selector, "transactions.id")
 	return q
 }

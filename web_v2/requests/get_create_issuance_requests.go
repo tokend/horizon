@@ -24,8 +24,8 @@ var includeTypeCreateIssuanceRequests = map[string]struct{}{
 
 type GetCreateIssuanceRequestsFilter struct {
 	GetRequestListBaseFilters
-	Asset    string `fig:"request_details.asset"`
-	Receiver string `fig:"request_details.receiver"`
+	Asset    *string `filter:"request_details.asset"`
+	Receiver *string `filter:"request_details.receiver"`
 }
 
 type GetCreateIssuanceRequests struct {

@@ -50,17 +50,17 @@ type getAssetListHandler struct {
 // GetAssetList returns the list of assets with related resources
 func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*regources.AssetListResponse, error) {
 	q := h.AssetsQ.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeAssetListOwner) {
-		q = q.FilterByOwner(request.Filters.Owner)
+	if request.Owner != nil {
+		q = q.FilterByOwner(*request.Owner)
 	}
-	if request.ShouldFilter(requests.FilterTypeAssetListPolicy) {
-		q = q.FilterByPolicy(request.Filters.Policy)
+	if request.Policy != nil {
+		q = q.FilterByPolicy(*request.Policy)
 	}
-	if request.ShouldFilter(requests.FilterTypeAssetListState) {
-		q = q.FilterByState(request.Filters.State)
+	if request.State != nil {
+		q = q.FilterByState(*request.State)
 	}
-	if request.ShouldFilter(requests.FilterTypeAssetListCodes) {
-		q = q.FilterByCodes(request.Filters.Codes)
+	if request.Codes != nil {
+		q = q.FilterByCodes(request.Codes)
 	}
 	assets, err := q.Select()
 	if err != nil {

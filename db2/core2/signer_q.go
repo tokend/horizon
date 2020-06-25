@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 //SignerQ - helper struct to load signers from db
@@ -69,7 +68,7 @@ func (q SignerQ) Select() ([]Signer, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SignerQ) Page(params db2.OffsetPageParams) SignerQ {
+func (q SignerQ) Page(params pgdb.OffsetPageParams) SignerQ {
 	q.selector = params.ApplyTo(q.selector)
 	return q
 }

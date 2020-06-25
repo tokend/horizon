@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountRoleQ is a helper struct to aid in configuring queries that loads
@@ -43,7 +42,7 @@ func (q SignerRuleQ) FilterByID(id uint64) SignerRuleQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SignerRuleQ) Page(params db2.OffsetPageParams) SignerRuleQ {
+func (q SignerRuleQ) Page(params pgdb.OffsetPageParams) SignerRuleQ {
 	q.selector = params.ApplyTo(q.selector, "sr.id")
 	return q
 }

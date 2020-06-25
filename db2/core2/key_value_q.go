@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 type KeyValueQ struct {
@@ -34,7 +33,7 @@ func (q *KeyValueQ) ByKey(key string) (*KeyValue, error) {
 	return &result, nil
 }
 
-func (q *KeyValueQ) Page(params *db2.OffsetPageParams) *KeyValueQ {
+func (q *KeyValueQ) Page(params *pgdb.OffsetPageParams) *KeyValueQ {
 	q.selector = params.ApplyTo(q.selector, "key")
 	return q
 }

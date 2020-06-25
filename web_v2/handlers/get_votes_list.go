@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"fmt"
-	"gitlab.com/tokend/horizon/db2/core2"
 	"net/http"
+
+	"gitlab.com/tokend/horizon/db2/core2"
 
 	"gitlab.com/tokend/horizon/db2/history2"
 
@@ -46,7 +47,7 @@ func GetVoteList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, poll.OwnerID, poll.ResultProviderID) {
+	if !isAllowed(r, w, &poll.OwnerID, &poll.ResultProviderID) {
 		return
 	}
 

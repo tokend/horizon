@@ -5,7 +5,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // MatchQ is a helper struct to aid in configuring queries that loads matches
@@ -41,7 +40,7 @@ func (q MatchQ) FilterByAssetPair(base, quote string) MatchQ {
 }
 
 // Page - apply paging params to the query
-func (q MatchQ) Page(pageParams db2.CursorPageParams) MatchQ {
+func (q MatchQ) Page(pageParams pgdb.CursorPageParams) MatchQ {
 	q.selector = pageParams.ApplyTo(q.selector, "m.id")
 	return q
 }
