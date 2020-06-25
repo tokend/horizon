@@ -52,7 +52,6 @@ func NewGetRequestsBase(
 
 	err = urlval.Decode(r.URL.Query(), filterDst)
 
-	//var baseFilters GetRequestListBaseFilters
 	var baseFilters GetRequestListBaseFilters
 	err = urlval.Decode(r.URL.Query(), &baseFilters)
 
