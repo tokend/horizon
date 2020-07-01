@@ -2,7 +2,6 @@ package requests
 
 import (
 	"net/http"
-
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
 )
