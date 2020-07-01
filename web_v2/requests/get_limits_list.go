@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -49,12 +50,14 @@ func NewGetLimitsList(r *http.Request) (*GetLimitsList, error) {
 		return nil, err
 	}
 
-	var pageParams pgdb.OffsetPageParams
-	err = urlval.Decode(r.URL.Query(), &pageParams)
+	pageParams, err := b.getOffsetBasedPageParams()
+	if err != nil {
+		return nil, err
+	}
 
 	request := GetLimitsList{
 		base:       b,
-		PageParams: &pageParams,
+		PageParams: pageParams,
 	}
 
 	err = urlval.Decode(r.URL.Query(), &request.Filters)

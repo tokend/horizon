@@ -93,11 +93,11 @@ type getCreateIssuanceRequestsHandler struct {
 func (h *getCreateIssuanceRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateIssuanceRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateIssuance))
 
-	if *request.Filters.Asset != "" {
+	if request.Filters.Asset != nil && *request.Filters.Asset != "" {
 		q = q.FilterByCreateIssuanceAsset(*request.Filters.Asset)
 	}
 
-	if *request.Filters.Receiver != "" {
+	if request.Filters.Receiver != nil && *request.Filters.Receiver != "" {
 		q = q.FilterByCreateIssuanceReceiver(*request.Filters.Receiver)
 	}
 

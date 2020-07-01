@@ -40,7 +40,7 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		return errors.Wrap(err, "Failed to get reviewable request list")
 	}
 
-	if *request.Filters.ID != 0 {
+	if request.Filters.ID != nil && *request.Filters.ID != 0 {
 		if len(records) == 0 {
 			ape.RenderErr(w, problems.NotFound())
 			return nil

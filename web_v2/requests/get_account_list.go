@@ -44,9 +44,6 @@ func NewGetAccountList(r *http.Request) (*GetAccountList, error) {
 		PageParams: *pageParams,
 	}
 	err = urlval.Decode(r.URL.Query(), &request.Filters)
-	if err != nil {
-		return nil, err
-	}
 
 	return &request, nil
 }
