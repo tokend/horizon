@@ -2,6 +2,7 @@ package requests
 
 import (
 	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
 )
@@ -30,7 +31,7 @@ var filterTypeLimitsListAll = map[string]struct{}{
 type GetLimitsList struct {
 	*base
 	Filters    GetLimitsListFilters
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 type GetLimitsListFilters struct {
 	Asset       *string `filter:"asset"`
@@ -49,17 +50,18 @@ func NewGetLimitsList(r *http.Request) (*GetLimitsList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetLimitsList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetLimitsList{
-		base:       b,
-		PageParams: pageParams,
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
-
 	return &request, nil
 }
