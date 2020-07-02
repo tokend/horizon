@@ -24,6 +24,10 @@ type GetAccountSigners struct {
 	*base
 	Address    string
 	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		Role      bool `include:"role"`
+		RoleRules bool `include:"role.rules"`
+	}
 }
 
 //NewGetAccountSigners - returns new instance of GetAccountSigners request

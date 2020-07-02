@@ -23,13 +23,15 @@ var includeTypeUpdateAssetRequests = map[string]struct{}{
 }
 
 type GetUpdateAssetRequestsFilter struct {
-	GetRequestListBaseFilters
 	Asset *string `filter:"request_details.asset"`
 }
 
 type GetUpdateAssetRequests struct {
 	GetRequestsBase
-	Filters GetUpdateAssetRequestsFilter
+	Filters  GetUpdateAssetRequestsFilter
+	Includes struct {
+		RequestDetailsAsset bool `include:"request_details.asset"`
+	}
 }
 
 func NewGetUpdateAssetRequests(r *http.Request) (request GetUpdateAssetRequests, err error) {

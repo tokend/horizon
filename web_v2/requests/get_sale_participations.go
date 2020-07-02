@@ -38,6 +38,10 @@ type GetSaleParticipations struct {
 		Participant *string `filter:"participant" json:"participant"`
 	}
 	PageParams pgdb.CursorPageParams
+	Includes   struct {
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAssets bool `include:"quote_assets"`
+	}
 }
 
 // NewGetSaleParticipations returns new instance of GetSaleParticipations

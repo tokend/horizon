@@ -36,6 +36,12 @@ type GetHistory struct {
 		Balance *string `filter:"balance"`
 		Asset   *string `filter:"asset"`
 	}
+	Includes struct {
+		Operation        bool `include:"operation"`
+		Effect           bool `include:"effect"`
+		OperationDetails bool `include:"operation.details"`
+		Asset            bool `include:"asset"`
+	}
 }
 
 // NewGetHistory returns the new instance of GetHistory request

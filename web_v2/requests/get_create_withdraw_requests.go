@@ -33,7 +33,11 @@ type GetCreateWithdrawRequestsFilter struct {
 
 type GetCreateWithdrawRequests struct {
 	GetRequestsBase
-	Filters GetCreateWithdrawRequestsFilter
+	Filters  GetCreateWithdrawRequestsFilter
+	Includes struct {
+		Balance bool `include:"request_details.balance"`
+		Asset   bool `include:"request_details.asset"`
+	}
 }
 
 func NewGetCreateWithdrawRequests(r *http.Request) (request GetCreateWithdrawRequests, err error) {

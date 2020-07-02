@@ -16,6 +16,9 @@ var includeTypeAccountRoleListAll = map[string]struct{}{
 type GetAccountRoleList struct {
 	*base
 	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		Rules bool `include:"rules"`
+	}
 }
 
 // NewGetAccountRoleList returns the new instance of GetAccountRoleList request

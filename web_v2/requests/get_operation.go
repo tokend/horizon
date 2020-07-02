@@ -9,7 +9,10 @@ const (
 // GetOperation represents params to be specified by user for getOperation handler
 type GetOperation struct {
 	*base
-	ID uint64
+	ID       uint64
+	Includes struct {
+		OperationDetails bool `include:"operation.details"`
+	}
 }
 
 // NewGetOperation returns new instance of the GetOperation request

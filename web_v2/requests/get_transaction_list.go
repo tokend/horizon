@@ -24,6 +24,9 @@ type GetTransactions struct {
 		EntryTypes  []int `filter:"ledger_entry_changes.entry_types"`
 		ChangeTypes []int `filter:"ledger_entry_changes.change_types"`
 	}
+	Includes struct {
+		LedgerEntryChanges bool `include:"ledger_entry_changes"`
+	}
 	PageParams pgdb.CursorPageParams
 }
 

@@ -28,7 +28,10 @@ type GetCreateAmlAlertRequestsFilter struct {
 
 type GetCreateAmlAlertRequests struct {
 	GetRequestsBase
-	Filters GetCreateAmlAlertRequestsFilter
+	Filters  GetCreateAmlAlertRequestsFilter
+	Includes struct {
+		RequestDetailsBalance bool `include:"request_details.balance"`
+	}
 }
 
 func NewGetCreateAmlAlertRequests(r *http.Request) (request GetCreateAmlAlertRequests, err error) {

@@ -40,6 +40,10 @@ type GetAssetPairList struct {
 	*base
 	Filters    GetAssetPairListFilters
 	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		BaseAsset  bool `include:"base_asset"`
+		QuoteAsset bool `include:"quote_asset"`
+	}
 }
 type GetAssetPairListFilters struct {
 	Policy     *uint64 `filter:"policy"`

@@ -15,6 +15,9 @@ var includeTypeSignerRoleListAll = map[string]struct{}{
 type GetSignerRoleList struct {
 	*base
 	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		Rules bool `include:"rules"`
+	}
 }
 
 // NewGetSignerRoleList returns the new instance of GetSignerRoleList request

@@ -18,6 +18,10 @@ var includeTypeBalanceAll = map[string]struct{}{
 type GetBalance struct {
 	*base
 	BalanceID string
+	Includes  struct {
+		State bool `include:"state"`
+		Asset bool `include:"asset"`
+	}
 }
 
 func NewGetBalance(r *http.Request) (*GetBalance, error) {

@@ -32,6 +32,9 @@ type GetLimitsList struct {
 	*base
 	Filters    GetLimitsListFilters
 	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		Asset bool `include:"asset"`
+	}
 }
 type GetLimitsListFilters struct {
 	Asset       *string `filter:"asset"`

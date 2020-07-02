@@ -28,7 +28,10 @@ type GetKYCRecoveryRequestsFilter struct {
 
 type GetKYCRecoveryRequests struct {
 	GetRequestsBase
-	Filters GetKYCRecoveryRequestsFilter
+	Filters  GetKYCRecoveryRequestsFilter
+	Includes struct {
+		TargetAccount bool `include:"request_details.target_account"`
+	}
 }
 
 func NewGetKYCRecoveryRequests(r *http.Request) (request GetKYCRecoveryRequests, err error) {

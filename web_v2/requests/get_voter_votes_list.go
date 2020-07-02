@@ -15,6 +15,10 @@ type GetVoterVoteList struct {
 	*base
 	VoterID    string
 	PageParams *pgdb.CursorPageParams
+	Includes   struct {
+		Account bool `include:"account"`
+		Polls   bool `include:"polls"`
+	}
 }
 
 func NewGetVotersVotes(r *http.Request) (*GetVoterVoteList, error) {

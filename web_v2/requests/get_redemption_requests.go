@@ -33,7 +33,11 @@ type GetRedemptionRequestsFilter struct {
 
 type GetRedemptionRequests struct {
 	GetRequestsBase
-	Filters GetRedemptionRequestsFilter
+	Filters  GetRedemptionRequestsFilter
+	Includes struct {
+		RequestDetailsSourceBalance bool `include:"request_details.source_balance"`
+		RequestDetailsDestAccount   bool `include:"request_details.dest_account"`
+	}
 }
 
 func NewGetRedemptionRequests(r *http.Request) (request GetRedemptionRequests, err error) {

@@ -20,7 +20,12 @@ var includeTypeSaleAll = map[string]struct{}{
 // GetSale represents params to be specified by user for getSale handler
 type GetSale struct {
 	*base
-	ID uint64
+	ID       uint64
+	Includes struct {
+		BaseAsset         bool `include:"base_asset"`
+		QuoteAssets       bool `include:"quote_assets"`
+		DefaultQuoteAsset bool `include:"default_quote_asset"`
+	}
 }
 
 // NewGetSale returns new instance of the GetSale request

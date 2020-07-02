@@ -31,7 +31,10 @@ type GetChangeRoleRequestsFilter struct {
 
 type GetChangeRoleRequests struct {
 	GetRequestsBase
-	Filters GetChangeRoleRequestsFilter
+	Filters  GetChangeRoleRequestsFilter
+	Includes struct {
+		ChangeRoleRequestsAccount bool `include:"request_details.account"`
+	}
 }
 
 func NewGetChangeRoleRequests(r *http.Request) (request GetChangeRoleRequests, err error) {

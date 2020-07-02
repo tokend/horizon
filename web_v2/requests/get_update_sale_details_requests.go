@@ -16,6 +16,9 @@ var includeTypeUpdateSaleDetailsRequests = map[string]struct{}{
 
 type GetUpdateSaleDetailsRequests struct {
 	GetRequestsBase
+	Includes struct {
+		RequestDetailsSale bool `include:"request_details.sale"`
+	}
 }
 
 func NewGetUpdateSaleDetailsRequests(r *http.Request) (request GetUpdateSaleDetailsRequests, err error) {

@@ -42,6 +42,9 @@ var filterTypeRequestListAll = map[string]struct{}{
 
 type GetRequests struct {
 	GetRequestsBase
+	Includes struct {
+		RequestDetails bool `include:"request_details"`
+	}
 }
 
 func NewGetRequests(r *http.Request) (request GetRequests, err error) {

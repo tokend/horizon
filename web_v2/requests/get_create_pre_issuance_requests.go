@@ -28,7 +28,10 @@ type GetCreatePreIssuanceRequestsFilter struct {
 
 type GetCreatePreIssuanceRequests struct {
 	GetRequestsBase
-	Filters GetCreatePreIssuanceRequestsFilter
+	Filters  GetCreatePreIssuanceRequestsFilter
+	Includes struct {
+		RequestDetailsAsset bool `include:"request_details.asset"`
+	}
 }
 
 func NewGetCreatePreIssuanceRequests(r *http.Request) (request GetCreatePreIssuanceRequests, err error) {

@@ -40,6 +40,9 @@ type GetConvertedBalances struct {
 	Filters struct {
 		AssetOwner *string `filter:"asset_owner" json:"asset_owner"`
 	}
+	Includes struct {
+		AssetOwner bool `include:"asset_owner"`
+	}
 	AssetCode      string
 	AccountAddress string
 }

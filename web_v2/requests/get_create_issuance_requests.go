@@ -31,7 +31,10 @@ type GetCreateIssuanceRequestsFilter struct {
 
 type GetCreateIssuanceRequests struct {
 	GetRequestsBase
-	Filters GetCreateIssuanceRequestsFilter
+	Filters  GetCreateIssuanceRequestsFilter
+	Includes struct {
+		RequestDetailsAsset bool `include:"request_details.asset"`
+	}
 }
 
 func NewGetCreateIssuanceRequests(r *http.Request) (request GetCreateIssuanceRequests, err error) {

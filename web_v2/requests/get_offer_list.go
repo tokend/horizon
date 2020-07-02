@@ -57,6 +57,10 @@ type GetOfferList struct {
 		IsBuy        *bool   `filter:"is_buy"`
 	}
 	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAssets bool `include:"quote_assets"`
+	}
 }
 
 // NewGetOfferList - returns new instance of GetOfferList

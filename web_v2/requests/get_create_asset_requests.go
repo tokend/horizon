@@ -28,7 +28,10 @@ type GetCreateAssetRequestsFilter struct {
 
 type GetCreateAssetRequests struct {
 	GetRequestsBase
-	Filters GetCreateAssetRequestsFilter
+	Filters  GetCreateAssetRequestsFilter
+	Includes struct {
+		RequestDetailsAsset bool `include:"request_details.asset"`
+	}
 }
 
 func NewGetCreateAssetRequests(r *http.Request) (request GetCreateAssetRequests, err error) {

@@ -19,6 +19,9 @@ type GetOperations struct {
 	Filters    struct {
 		Types []int `filter:"types"`
 	}
+	Includes struct {
+		OperationDetails bool `include:"operation.details"`
+	}
 }
 
 func NewGetOperations(r *http.Request) (*GetOperations, error) {

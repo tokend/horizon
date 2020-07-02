@@ -42,6 +42,10 @@ type GetAssetList struct {
 	Codes  []string `filter:"codes"`
 
 	PageParams pgdb.OffsetPageParams
+
+	Includes struct {
+		Owner bool `include:"owner"`
+	}
 }
 
 // NewGetAssetList returns the new instance of GetAssetList request

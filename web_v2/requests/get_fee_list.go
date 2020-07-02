@@ -42,6 +42,9 @@ type GetFeeList struct {
 	*base
 	Filters    GetFeeListFilters
 	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		Asset bool `include:"asset"`
+	}
 }
 
 type GetFeeListFilters struct {

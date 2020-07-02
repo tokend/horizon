@@ -30,7 +30,11 @@ type GetCreateAtomicSwapAskRequestsFilter struct {
 
 type GetCreateAtomicSwapAskRequests struct {
 	GetRequestsBase
-	Filters GetCreateAtomicSwapAskRequestsFilter
+	Filters  GetCreateAtomicSwapAskRequestsFilter
+	Includes struct {
+		RequestDetailsBaseBalance bool `include:"request_details.base_balance"`
+		RequestDetailsQuoteAssets bool `include:"request_details.quote_assets"`
+	}
 }
 
 func NewGetCreateAtomicSwapAskRequests(r *http.Request) (request GetCreateAtomicSwapAskRequests, err error) {

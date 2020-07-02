@@ -34,7 +34,10 @@ type GetCreateAtomicSwapBidRequestsFilter struct {
 
 type GetCreateAtomicSwapBidRequests struct {
 	GetRequestsBase
-	Filters GetCreateAtomicSwapBidRequestsFilter
+	Filters  GetCreateAtomicSwapBidRequestsFilter
+	Includes struct {
+		RequestDetailsQuoteAssets bool `include:"request_details.quote_assets"`
+	}
 }
 
 func NewGetCreateAtomicSwapBidRequests(r *http.Request) (request GetCreateAtomicSwapBidRequests, err error) {

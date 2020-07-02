@@ -43,6 +43,10 @@ type GetBalanceList struct {
 		AssetOwner *string `filter:"asset_owner"`
 		Owner      *string `filter:"owner"`
 	}
+	Includes struct {
+		State bool `include:"state"`
+		Owner bool `include:"owner"`
+	}
 	PageParams pgdb.OffsetPageParams
 }
 
