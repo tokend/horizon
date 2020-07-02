@@ -28,7 +28,7 @@ func GetSaleList(w http.ResponseWriter, r *http.Request) {
 	handler := getSaleListHandler{
 		salesBaseHandler: salesBaseHandler{
 			SalesQ:           history2.NewSalesQ(historyRepo),
-			AssetsQ:          core2.NewAssetsQ(coreRepo),
+			AssetsQ:          history2.NewAssetQ(historyRepo),
 			saleCapConverter: converter,
 			Log:              ctx.Log(r),
 		},
@@ -67,6 +67,8 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 		return nil, errors.Wrap(err, "failed to apply participant filter")
 	}
 
+	q = applySaleIncludes(request.SalesBase, q)
+
 	historySales, err := q.Page(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sale list")
@@ -87,14 +89,14 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 
 func applyParticipantFilter(s *requests.GetSaleList, q history2.SalesQ, offerQ core2.OffersQ,
 ) (history2.SalesQ, error) {
-	if s.ShouldFilter(requests.FilterTypeSaleListParticipant) {
+	if s.SpecialFilters.Participant != nil {
 		orderBookIDs, err := offerQ.OrderBookID().FilterByOrderBookID(-1).
-			FilterByOwnerID(s.SpecialFilters.Participant).SelectID()
+			FilterByOwnerID(*s.SpecialFilters.Participant).SelectID()
 		if err != nil {
 			return q, errors.Wrap(err, "failed to select sale ids")
 		}
 
-		q = q.FilterByParticipant(s.SpecialFilters.Participant, orderBookIDs)
+		q = q.FilterByParticipant(*s.SpecialFilters.Participant, orderBookIDs)
 	}
 
 	return q, nil

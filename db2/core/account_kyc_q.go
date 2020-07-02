@@ -1,6 +1,7 @@
 package core
 
 import (
+	sql2 "database/sql"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -33,7 +34,7 @@ func (q *AccountKYCQ) ByAddress(accountID string) (*AccountKYC, error) {
 
 	err := q.parent.Get(&result, sql)
 
-	if q.parent.NoRows(err) {
+	if err == sql2.ErrNoRows {
 		return nil, nil
 	}
 

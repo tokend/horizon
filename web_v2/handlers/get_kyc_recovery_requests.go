@@ -62,8 +62,8 @@ type getKYCRecoveryRequestsHandler struct {
 func (h *getKYCRecoveryRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetKYCRecoveryRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeKycRecovery))
 
-	if request.ShouldFilter(requests.FilterTypeKYCRecoveryRequestsAccount) {
-		q = q.FilterByKYCRecoveryTargetAccount(request.Filters.Account)
+	if request.Filters.Account != nil {
+		q = q.FilterByKYCRecoveryTargetAccount(*request.Filters.Account)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

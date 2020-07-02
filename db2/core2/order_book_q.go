@@ -2,19 +2,20 @@ package core2
 
 import (
 	"fmt"
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
 
 // OrderBooksQ is a helper struct to aid in configuring queries that loads order book entries
 type OrderBooksQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewOrderBooksQ - creates new instance of OrderBooksQ with no filters
-func NewOrderBooksQ(repo *db2.Repo) OrderBooksQ {
+func NewOrderBooksQ(repo *pgdb.DB) OrderBooksQ {
 	subQuery := sq.Select(
 		"format('%s:%s:%s:%s:%s', offers.quote_asset_code, offers.base_asset_code, "+
 			"offers.order_book_id, offers.is_buy, offers.price) id",
@@ -119,17 +120,6 @@ func (q OrderBooksQ) Limit(limit uint64) OrderBooksQ {
 	return q
 }
 
-// Page - returns Q with specified limit and offset params
-func (q OrderBooksQ) Page(params db2.OffsetPageParams) OrderBooksQ {
-	q.selector = params.ApplyTo(q.selector,
-		"order_book_entries.price",
-		"order_book_entries.base_asset_code",
-		"order_book_entries.quote_asset_code",
-		"order_book_entries.is_buy",
-	)
-	return q
-}
-
 // Select - selects slice from the db, if no order book entries found - returns nil, nil
 func (q OrderBooksQ) Select() ([]OrderBookEntry, error) {
 	var result []OrderBookEntry
@@ -139,4 +129,15 @@ func (q OrderBooksQ) Select() ([]OrderBookEntry, error) {
 	}
 
 	return result, nil
+}
+
+// Page - returns Q with specified limit and offset params
+func (q OrderBooksQ) Page(params pgdb.OffsetPageParams) OrderBooksQ {
+	q.selector = params.ApplyTo(q.selector,
+		"order_book_entries.price",
+		"order_book_entries.base_asset_code",
+		"order_book_entries.quote_asset_code",
+		"order_book_entries.is_buy",
+	)
+	return q
 }

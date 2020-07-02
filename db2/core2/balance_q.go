@@ -1,19 +1,21 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
 
 // BalancesQ is a helper struct to aid in configuring queries that loads balances
 type BalancesQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewBalancesQ - creates new instance of BalanceQ with no filters
-func NewBalancesQ(repo *db2.Repo) BalancesQ {
+func NewBalancesQ(repo *pgdb.DB) BalancesQ {
 	return BalancesQ{
 		repo: repo,
 		selector: sq.Select("balances.balance_id", "balances.sequential_id", "balances.asset", "balances.account_id",
@@ -51,7 +53,7 @@ func (q BalancesQ) FilterByAsset(asset string) BalancesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q BalancesQ) Page(params db2.OffsetPageParams) BalancesQ {
+func (q BalancesQ) Page(params pgdb.OffsetPageParams) BalancesQ {
 	q.selector = params.ApplyTo(q.selector, "balances.balance_id")
 	return q
 }
@@ -69,7 +71,7 @@ func (q BalancesQ) Get() (*Balance, error) {
 	var result Balance
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -84,7 +86,7 @@ func (q BalancesQ) Select() ([]Balance, error) {
 	var result []Balance
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

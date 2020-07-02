@@ -1,9 +1,8 @@
 package requests
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 var includeTypeSignerRoleListAll = map[string]struct{}{
@@ -13,7 +12,7 @@ var includeTypeSignerRoleListAll = map[string]struct{}{
 //GetSignerRoleList - represents params to be specified for Get SignerRoles handler
 type GetSignerRoleList struct {
 	*base
-	PageParams *db2.OffsetPageParams
+	PageParams *pgdb.OffsetPageParams
 }
 
 // NewGetSignerRoleList returns the new instance of GetSignerRoleList request

@@ -1,22 +1,23 @@
 package history2
 
 import (
+	"database/sql"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // PollsQ is a helper struct to aid in configuring queries that loads
 // poll structures.
 type PollsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewPollsQ - creates new instance of PollsQ
-func NewPollsQ(repo *db2.Repo) PollsQ {
+func NewPollsQ(repo *pgdb.DB) PollsQ {
 	return PollsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -103,7 +104,7 @@ func (q PollsQ) FilterByVoteConfirmationRequired(voteConfirmation bool) PollsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q PollsQ) Page(params db2.CursorPageParams) PollsQ {
+func (q PollsQ) Page(params pgdb.CursorPageParams) PollsQ {
 	q.selector = params.ApplyTo(q.selector, "p.id")
 	return q
 }
@@ -115,7 +116,7 @@ func (q PollsQ) Get() (*Poll, error) {
 	var result Poll
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

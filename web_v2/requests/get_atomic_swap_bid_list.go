@@ -1,9 +1,10 @@
 package requests
 
 import (
-	"net/http"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 
-	"gitlab.com/tokend/horizon/db2"
+	"net/http"
 )
 
 const (
@@ -34,11 +35,11 @@ var filterTypeAskListAll = map[string]struct{}{
 type GetAtomicSwapAskList struct {
 	*base
 	Filters struct {
-		Owner       string   `fig:"owner"`
-		BaseAsset   string   `fig:"base_asset"`
-		QuoteAssets []string `fig:"quote_assets"`
+		Owner       *string  `filter:"owner"`
+		BaseAsset   []string `filter:"base_asset"`
+		QuoteAssets []string `filter:"quote_assets"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *pgdb.OffsetPageParams
 }
 
 // NewGetAtomicSwapAskList returns new instance of GetAtomicSwapAskList request
@@ -66,10 +67,7 @@ func NewGetAtomicSwapAskList(r *http.Request) (*GetAtomicSwapAskList, error) {
 		PageParams: pageParams,
 	}
 
-	err = b.populateFilters(&request.Filters)
-	if err != nil {
-		return nil, err
-	}
+	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

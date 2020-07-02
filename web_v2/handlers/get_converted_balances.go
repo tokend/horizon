@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -9,8 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/generated"
-	"net/http"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetConvertedBalances - processes request to get converted balances and their details by accountID and asset code
@@ -38,7 +39,7 @@ func GetConvertedBalances(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, request.AccountAddress, request.Filters.AssetOwner) {
+	if !isAllowed(r, w, &request.AccountAddress, request.Filters.AssetOwner) {
 		return
 	}
 
@@ -85,8 +86,8 @@ func (h *getConvertedBalancesHandler) GetConvertedBalances(request *requests.Get
 
 	q := h.BalancesQ.FilterByAccount(request.AccountAddress)
 
-	if request.ShouldFilter(requests.FilterTypeConvertedBalancesAssetOwner) {
-		q = q.FilterByAssetOwner(request.Filters.AssetOwner)
+	if request.Filters.AssetOwner != nil {
+		q = q.FilterByAssetOwner(*request.Filters.AssetOwner)
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeConvertedBalancesBalanceAsset) {

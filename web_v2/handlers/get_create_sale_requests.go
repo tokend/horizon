@@ -60,12 +60,12 @@ type getCreateSaleRequestsHandler struct {
 func (h *getCreateSaleRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateSaleRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateSale))
 
-	if request.ShouldFilter(requests.FilterTypeCreateSaleRequestsBaseAsset) {
-		q = q.FilterBySaleBaseAsset(request.Filters.BaseAsset)
+	if request.Filters.BaseAsset != nil {
+		q = q.FilterBySaleBaseAsset(*request.Filters.BaseAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeCreateSaleRequestsDefaultQuoteAsset) {
-		q = q.FilterBySaleQuoteAsset(request.Filters.DefaultQuoteAsset)
+	if request.Filters.DefaultQuoteAsset != nil {
+		q = q.FilterBySaleQuoteAsset(*request.Filters.DefaultQuoteAsset)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

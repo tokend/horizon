@@ -1,10 +1,10 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"github.com/guregu/null"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // Transaction is a row of data from the `history_transactions` table

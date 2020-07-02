@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"gitlab.com/distributed_lab/kit/copus/types"
+
 	"github.com/pkg/errors"
 	"github.com/zenazn/goji/web"
-	"gitlab.com/distributed_lab/kit/cop"
 	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -19,7 +20,7 @@ type RateLimitedMux struct {
 	*web.Mux
 
 	limiter throttled.RateLimiter
-	cop     *cop.Cop
+	cop     types.Copus
 }
 
 func NewRateLimitedMux(app *App) (*RateLimitedMux, error) {
@@ -39,7 +40,7 @@ func NewRateLimitedMux(app *App) (*RateLimitedMux, error) {
 	return &RateLimitedMux{
 		Mux:     web.New(),
 		limiter: rateLimiter,
-		cop:     app.config.Cop(),
+		cop:     app.config.Copus(),
 	}, nil
 }
 

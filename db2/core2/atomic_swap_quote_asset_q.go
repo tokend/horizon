@@ -1,19 +1,20 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AtomicSwapQuoteAssetQ is a helper to aid in configuring queries
 // that loads slices or entry of AtomicSwapBidQuoteAsset structs.
 type AtomicSwapQuoteAssetQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
-func NewAtomicSwapQuoteAssetQ(repo *db2.Repo) AtomicSwapQuoteAssetQ {
+func NewAtomicSwapQuoteAssetQ(repo *pgdb.DB) AtomicSwapQuoteAssetQ {
 	return AtomicSwapQuoteAssetQ{
 		repo: repo,
 		selector: sq.Select(
@@ -48,7 +49,7 @@ func (q AtomicSwapQuoteAssetQ) Get() (*AtomicSwapQuoteAsset, error) {
 	var result AtomicSwapQuoteAsset
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

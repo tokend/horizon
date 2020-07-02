@@ -1,19 +1,20 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // MatchQ is a helper struct to aid in configuring queries that loads matches
 type MatchQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewMatchQ returns new instance of MatchQ
-func NewMatchQ(repo *db2.Repo) MatchQ {
+func NewMatchQ(repo *pgdb.DB) MatchQ {
 	return MatchQ{
 		repo: repo,
 		selector: sq.Select(
@@ -39,7 +40,7 @@ func (q MatchQ) FilterByAssetPair(base, quote string) MatchQ {
 }
 
 // Page - apply paging params to the query
-func (q MatchQ) Page(pageParams db2.CursorPageParams) MatchQ {
+func (q MatchQ) Page(pageParams pgdb.CursorPageParams) MatchQ {
 	q.selector = pageParams.ApplyTo(q.selector, "m.id")
 	return q
 }
@@ -50,7 +51,7 @@ func (q MatchQ) Select() ([]Match, error) {
 	var result []Match
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

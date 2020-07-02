@@ -60,8 +60,8 @@ type getCreateAssetRequestsHandler struct {
 func (h *getCreateAssetRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateAssetRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateAsset))
 
-	if request.ShouldFilter(requests.FilterTypeCreateAssetRequestsAsset) {
-		q = q.FilterByAssetCreateAsset(request.Filters.Asset)
+	if request.Filters.Asset != nil {
+		q = q.FilterByAssetCreateAsset(*request.Filters.Asset)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

@@ -1,6 +1,7 @@
 package core
 
 import (
+	sql2 "database/sql"
 	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/sqx"
@@ -34,7 +35,7 @@ func (q *assetQ) ByCode(code string) (*Asset, error) {
 	sql := selectAsset.Where("code = ?", code)
 	var result Asset
 	err := q.parent.Get(&result, sql)
-	if q.parent.NoRows(err) {
+	if err == sql2.ErrNoRows {
 		return nil, nil
 	}
 

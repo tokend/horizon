@@ -10,7 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/figure"
-	"gitlab.com/distributed_lab/kit/cop"
+	"gitlab.com/distributed_lab/kit/copus"
+	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -19,7 +20,7 @@ import (
 // Config is the configuration for horizon.  It get's populated by the
 // app's main function and is provided to NewApp.
 type Config struct {
-	cop.Coper              `fig:"-"`
+	types.Copuser          `fig:"-"`
 	getter                 rawGetter `fig:"-"`
 	Hostname               string    `fig:"hostname"`
 	DatabaseURL            string    `fig:"database_url,required"`
@@ -110,7 +111,7 @@ func newViperConfig(raw rawGetter) Config {
 		Project:         "",
 		Env:             "",
 		SkipCheck:       false,
-		Coper:           cop.NewCoper(raw),
+		Copuser:         copus.NewCopuser(raw),
 		CacheSize:       1,
 		CachePeriod:     5 * time.Second,
 	}

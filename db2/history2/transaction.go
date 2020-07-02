@@ -1,9 +1,8 @@
 package history2
 
 import (
-	"time"
-
 	"gitlab.com/tokend/horizon/db2"
+	"time"
 )
 
 // Transaction is a row of data from the `history_transactions` table

@@ -2,12 +2,13 @@ package ingest
 
 import (
 	"encoding/json"
+	"gitlab.com/tokend/horizon/db2"
+	regources "gitlab.com/tokend/regources/generated"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 )
 
@@ -117,10 +118,10 @@ func (is *Session) updateNotRevertingContractInvoices(contractID int64) error {
 }
 
 func convertContract(rawContract xdr.ContractEntry) history.Contract {
-	var initialDetails map[string]interface{}
+	var initialDetails regources.Details
 	_ = json.Unmarshal([]byte(string(rawContract.InitialDetails)), &initialDetails)
 
-	var customerDetails map[string]interface{}
+	var customerDetails regources.Details
 	_ = json.Unmarshal([]byte(string(rawContract.CustomerDetails)), &customerDetails)
 
 	var invoices []int64
@@ -160,8 +161,9 @@ func (is *Session) processManageContract(op xdr.ManageContractOp, result xdr.Man
 }
 
 func (is *Session) addContractDetails(xdrDetails string, contractID int64) error {
-	var details map[string]interface{}
+	var details regources.Details
 	err := json.Unmarshal([]byte(xdrDetails), &details)
+
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal contract details", logan.F{
 			"contract_id": contractID,
@@ -189,8 +191,9 @@ func (is *Session) addContractDetails(xdrDetails string, contractID int64) error
 }
 
 func (is *Session) addContractDispute(xdrReason string, contractID int64) error {
-	var details map[string]interface{}
+	var details regources.Details
 	err := json.Unmarshal([]byte(xdrReason), &details)
+
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal contract dispute reason", logan.F{
 			"contract_id": contractID,

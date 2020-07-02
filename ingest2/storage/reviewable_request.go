@@ -1,20 +1,20 @@
 package storage
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // ReviewableRequest is helper struct to operate with `reviewable requests`
 type ReviewableRequest struct {
-	repo *db2.Repo
+	repo *pgdb.DB
 }
 
 //NewReviewableRequest - creates new instance
-func NewReviewableRequest(repo *db2.Repo) *ReviewableRequest {
+func NewReviewableRequest(repo *pgdb.DB) *ReviewableRequest {
 	return &ReviewableRequest{
 		repo: repo,
 	}
@@ -39,7 +39,7 @@ func (q *ReviewableRequest) Insert(request history2.ReviewableRequest) error {
 		"external_details": request.ExternalDetails,
 	})
 
-	_, err := q.repo.Exec(query)
+	err := q.repo.Exec(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert reviewable_request")
 	}
@@ -63,7 +63,7 @@ func (q *ReviewableRequest) Update(request history2.ReviewableRequest) error {
 		"external_details": request.ExternalDetails,
 	}).Where("id = ?", request.ID)
 
-	_, err := q.repo.Exec(query)
+	err := q.repo.Exec(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to do full update of reviewable_request",
 			logan.F{"request_id": request.ID})
@@ -96,7 +96,7 @@ func (q *ReviewableRequest) setStateRejectReason(requestID uint64, requestState 
 		query = query.Set("reject_reason", rejectReason)
 	}
 
-	_, err := q.repo.Exec(query)
+	err := q.repo.Exec(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to set reject reason", logan.F{
 			"request_id":    requestID,

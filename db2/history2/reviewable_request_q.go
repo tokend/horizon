@@ -1,19 +1,20 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // ReviewableRequestsQ - helper struct to get reviewable requests from db
 type ReviewableRequestsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewReviewableRequestsQ - creates new instance of ReviewableRequestsQ
-func NewReviewableRequestsQ(repo *db2.Repo) ReviewableRequestsQ {
+func NewReviewableRequestsQ(repo *pgdb.DB) ReviewableRequestsQ {
 	return ReviewableRequestsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -190,7 +191,7 @@ func (q ReviewableRequestsQ) GetByID(id uint64) (*ReviewableRequest, error) {
 }
 
 // Page - apply paging params to the query
-func (q ReviewableRequestsQ) Page(pageParams db2.CursorPageParams) ReviewableRequestsQ {
+func (q ReviewableRequestsQ) Page(pageParams pgdb.CursorPageParams) ReviewableRequestsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "reviewable_requests.id")
 	return q
 }
@@ -202,7 +203,7 @@ func (q ReviewableRequestsQ) Get() (*ReviewableRequest, error) {
 	var result ReviewableRequest
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -217,7 +218,7 @@ func (q ReviewableRequestsQ) Select() ([]ReviewableRequest, error) {
 	var result []ReviewableRequest
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

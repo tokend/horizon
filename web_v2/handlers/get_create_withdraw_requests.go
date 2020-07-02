@@ -61,11 +61,11 @@ type getCreateWithdrawRequestsHandler struct {
 func (h *getCreateWithdrawRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateWithdrawRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateWithdraw))
 
-	if request.ShouldFilter(requests.FilterTypeCreateWithdrawRequestsBalance) {
-		q = q.FilterByWithdrawBalance(request.Filters.Balance)
+	if request.Filters.Balance != nil {
+		q = q.FilterByWithdrawBalance(*request.Filters.Balance)
 	}
-	if request.ShouldFilter(requests.FilterTypeCreateWithdrawRequestsAsset) {
-		q = q.FilterByWithdrawAsset(request.Filters.Asset)
+	if request.Filters.Asset != nil {
+		q = q.FilterByWithdrawAsset(*request.Filters.Asset)
 	}
 
 	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)

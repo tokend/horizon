@@ -2,10 +2,10 @@ package history
 
 import (
 	"fmt"
-
-	sq "github.com/lann/squirrel"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
+
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 var selectLedgerChanges = sq.Select(

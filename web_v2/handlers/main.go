@@ -12,17 +12,19 @@ import (
 
 // ensureAllowed - returns false if user is not allowed to access requested data or failed to check - renders all
 // corresponding error; returns true - if allowed
-func isAllowed(r *http.Request, w http.ResponseWriter, dataOwners ...string) bool {
+func isAllowed(r *http.Request, w http.ResponseWriter, dataOwners ...*string) bool {
 	constraints := make([]doorman.SignerConstraint, 0, len(dataOwners))
 	for _, dataOwner := range dataOwners {
-		// invalid account address will make doorman return 401 w/o considering other constraints
-		if dataOwner == "" {
+		if dataOwner == nil {
 			continue
 		}
-		constraints = append(constraints, doorman.SignerOf(dataOwner))
+		if *dataOwner == "" {
+			continue
+		}
+		constraints = append(constraints, doorman.SignerOf(*dataOwner))
 	}
-	constraints = append(constraints, doorman.SignerOf(ctx.CoreInfo(r).AdminAccountID))
 
+	constraints = append(constraints, doorman.SignerOf(ctx.CoreInfo(r).AdminAccountID))
 	switch err := ctx.Doorman(r, constraints...); err.(type) {
 	case nil:
 		return true

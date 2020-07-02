@@ -2,10 +2,9 @@ package core
 
 import (
 	"database/sql"
-
 	"gitlab.com/tokend/horizon/db2"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 )
 
 var _ AccountQI = &AccountQ{}
@@ -48,7 +47,7 @@ func (q *AccountQ) ByAddress(address string) (*Account, error) {
 	result := new(Account)
 	query := selectAccount.Limit(1).Where("account_id = ?", address)
 	err := q.parent.Get(result, query)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 	return result, err
@@ -95,7 +94,7 @@ func (q *AccountQ) Select(destination interface{}) error {
 	if q.Err != nil {
 		return q.Err
 	}
-	return q.parent.Repo.Select(destination, q.sql)
+	return q.parent.DB.Select(destination, q.sql)
 }
 
 func (q *AccountQ) ForAddresses(addresses ...string) AccountQI {
@@ -111,7 +110,7 @@ func (q *AccountQ) First() (*Account, error) {
 		return nil, q.Err
 	}
 	var result Account
-	err := q.parent.Repo.Get(&result, q.sql)
+	err := q.parent.DB.Get(&result, q.sql)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}

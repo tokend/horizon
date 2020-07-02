@@ -1,20 +1,21 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // SwapsQ is a helper struct to aid in configuring queries that loads
 // swap structures.
 type SwapsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewSwapsQ - creates new instance of SwapsQ
-func NewSwapsQ(repo *db2.Repo) SwapsQ {
+func NewSwapsQ(repo *pgdb.DB) SwapsQ {
 	return SwapsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -83,7 +84,7 @@ func (q SwapsQ) FilterByDestination(destination string) SwapsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SwapsQ) Page(params db2.CursorPageParams) SwapsQ {
+func (q SwapsQ) Page(params pgdb.CursorPageParams) SwapsQ {
 	q.selector = params.ApplyTo(q.selector, "s.id")
 	return q
 }
@@ -95,7 +96,7 @@ func (q SwapsQ) Get() (*Swap, error) {
 	var result Swap
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

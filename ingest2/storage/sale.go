@@ -2,20 +2,20 @@ package storage
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 // Sale is helper struct to operate with `sales`
 type Sale struct {
-	repo *db2.Repo
+	repo *pgdb.DB
 }
 
 // NewSale - creates new instance of the `Sale`
-func NewSale(repo *db2.Repo) *Sale {
+func NewSale(repo *pgdb.DB) *Sale {
 	return &Sale{
 		repo: repo,
 	}
@@ -35,7 +35,7 @@ func (q *Sale) Insert(sale history2.Sale) error {
 			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType, sale.State, sale.Version, sale.AccessDefinitionType,
 		)
 
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert sale", logan.F{"sale_id": sale.ID})
 	}
@@ -62,7 +62,7 @@ func (q *Sale) Update(sale history2.Sale) error {
 		"version":             sale.Version,
 	}).Where("id = ?", sale.ID)
 
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update sale", logan.F{"sale_id": sale.ID})
 	}
@@ -73,7 +73,7 @@ func (q *Sale) Update(sale history2.Sale) error {
 // SetState - sets state
 func (q *Sale) SetState(saleID uint64, state regources.SaleState) error {
 	sql := sq.Update("sales").Set("state", state).Where("id = ?", saleID)
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to set state", logan.F{"sale_id": saleID})
 	}

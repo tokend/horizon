@@ -1,7 +1,8 @@
 package history
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
@@ -151,7 +152,7 @@ func (q *OffersQ) Select() ([]Offer, error) {
 
 	var offers []Offer
 	err := q.parent.Select(&offers, q.sql)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 
@@ -176,7 +177,7 @@ func (q *OffersQ) Insert(offer Offer) error {
 		"created_at":          offer.CreatedAt,
 	})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute insert query")
 	}
@@ -189,7 +190,7 @@ func (q *OffersQ) UpdateBaseAmount(baseAmount, offerID int64) error {
 		"current_base_amount": baseAmount,
 	}).Where(sq.Eq{"offer_id": offerID})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute update query")
 	}
@@ -202,7 +203,7 @@ func (q *OffersQ) Cancel(offerID int64) error {
 		Set("is_canceled", true).
 		Where(sq.Eq{"offer_id": offerID})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute update query")
 	}

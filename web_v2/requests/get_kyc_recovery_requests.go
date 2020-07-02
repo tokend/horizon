@@ -22,7 +22,7 @@ var filterTypeKYCRecoveryRequests = map[string]struct{}{
 
 type GetKYCRecoveryRequestsFilter struct {
 	GetRequestListBaseFilters
-	Account string `fig:"request_details.target_account"`
+	Account *string `filter:"request_details.target_account"`
 }
 
 type GetKYCRecoveryRequests struct {

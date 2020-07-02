@@ -12,13 +12,9 @@ var includeTypeUpdateSaleDetailsRequests = map[string]struct{}{
 	IncludeTypeUpdateSaleDetailsRequestsSale: {},
 }
 
-type GetUpdateSaleDetailsRequestsFilter struct {
-	GetRequestListBaseFilters
-}
-
 type GetUpdateSaleDetailsRequests struct {
 	*GetRequestsBase
-	Filters GetUpdateSaleDetailsRequestsFilter
+	Filters GetRequestListBaseFilters
 }
 
 func NewGetUpdateSaleDetailsRequests(r *http.Request) (request GetUpdateSaleDetailsRequests, err error) {

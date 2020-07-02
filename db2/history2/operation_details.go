@@ -2,11 +2,11 @@ package history2
 
 import (
 	"database/sql/driver"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -67,7 +67,7 @@ type OperationDetails struct {
 
 //Value - converts operation details into jsonb
 func (r OperationDetails) Value() (driver.Value, error) {
-	result, err := db2.DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal operation details")
 	}
@@ -77,7 +77,7 @@ func (r OperationDetails) Value() (driver.Value, error) {
 
 //Scan - converts jsonb into OperationDetails
 func (r *OperationDetails) Scan(src interface{}) error {
-	err := db2.DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan operation details")
 	}

@@ -50,19 +50,19 @@ type getLimitsListHandler struct {
 // GetLimitsList returns the list of fees with related resources
 func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*regources.LimitsListResponse, error) {
 	q := h.LimitsQ.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeLimitsListAccount) {
-		q = q.FilterByAccount(request.Filters.Account)
+	if request.Filters.Account != nil {
+		q = q.FilterByAccount(*request.Filters.Account)
 	}
-	if request.ShouldFilter(requests.FilterTypeLimitsListAccountRole) {
-		q = q.FilterByAccountRole(request.Filters.AccountRole)
-	}
-
-	if request.ShouldFilter(requests.FilterTypeLimitsListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset)
+	if request.Filters.AccountRole != nil {
+		q = q.FilterByAccountRole(*request.Filters.AccountRole)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeLimitsListStatsOpType) {
-		q = q.FilterByStatsOpType(request.Filters.StatsOpType)
+	if request.Filters.Asset != nil {
+		q = q.FilterByAsset(*request.Filters.Asset)
+	}
+
+	if request.Filters.StatsOpType != nil {
+		q = q.FilterByStatsOpType(*request.Filters.StatsOpType)
 	}
 
 	limits, err := q.Select()

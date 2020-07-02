@@ -2,14 +2,26 @@
 
 ## Unreleased
 
+## 3.9.1
+
+### Fixed
+
+* panic on `/v3/accounts/{id}/sales`
+
+
+## 3.9.0
+
 ### Added
 
 * Traefik
+* Endpoint to get operation `/v3/operations/{id}`
 
 ### Fixed 
 
 * Overflow quote amount `/v3/order_books/{base}:{quote}:{order_book_id}`
 * Incorrect 404 on `/v3/create_issuance_requests` with filter by receiver
+* Fee in unlocked effect 
+* Invalid conversion price `/v3/accounts/{id}/converted_balances/{asset_code}`
 
 ## 3.8.3
 

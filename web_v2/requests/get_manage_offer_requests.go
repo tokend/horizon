@@ -4,13 +4,9 @@ import (
 	"net/http"
 )
 
-type GetManageOfferRequestsFilter struct {
-	GetRequestListBaseFilters
-}
-
 type GetManageOfferRequests struct {
 	*GetRequestsBase
-	Filters GetManageOfferRequestsFilter
+	Filters GetRequestListBaseFilters
 }
 
 func NewGetManageOfferRequests(r *http.Request) (request GetManageOfferRequests, err error) {

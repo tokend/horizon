@@ -58,28 +58,28 @@ type getSwapListHandler struct {
 func (h *getSwapListHandler) GetSwapList(request *requests.GetSwapList) (*regources.SwapListResponse, error) {
 	q := h.SwapsQ
 
-	if request.ShouldFilter(requests.FilterTypeSwapListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset)
+	if request.Filters.Asset != nil {
+		q = q.FilterByAsset(*request.Filters.Asset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSwapListDestination) {
-		q = q.FilterByDestination(request.Filters.Destination)
+	if request.Filters.Destination != nil {
+		q = q.FilterByDestination(*request.Filters.Destination)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSwapListSource) {
-		q = q.FilterBySource(request.Filters.Source)
+	if request.Filters.Source != nil {
+		q = q.FilterBySource(*request.Filters.Source)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSwapListSourceBalance) {
-		q = q.FilterBySourceBalance(request.Filters.SourceBalance)
+	if request.Filters.SourceBalance != nil {
+		q = q.FilterBySourceBalance(*request.Filters.SourceBalance)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSwapListDestinationBalance) {
-		q = q.FilterByDestinationBalance(request.Filters.DestinationBalance)
+	if request.Filters.DestinationBalance != nil {
+		q = q.FilterByDestinationBalance(*request.Filters.DestinationBalance)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSwapListState) {
-		q = q.FilterByState(request.Filters.State)
+	if request.Filters.State != nil {
+		q = q.FilterByState(*request.Filters.State)
 	}
 
 	historySwaps, err := q.Page(*request.PageParams).Select()

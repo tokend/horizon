@@ -1,19 +1,20 @@
 package core2
 
 import (
-	sq "github.com/masterminds/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 type ExternalSystemIDsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewExternalSystemIDsQ - default constructor for ExternalSystemIDsQ which
-// creates ExternalSystemIDsQ with given db2.Repo and default selector
-func NewExternalSystemIDsQ(repo *db2.Repo) ExternalSystemIDsQ {
+// creates ExternalSystemIDsQ with given pgdb.DB and default selector
+func NewExternalSystemIDsQ(repo *pgdb.DB) ExternalSystemIDsQ {
 	return ExternalSystemIDsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -41,7 +42,7 @@ func (esid ExternalSystemIDsQ) Select() ([]ExternalSystemID, error) {
 	var result []ExternalSystemID
 	err := esid.repo.Select(&result, esid.selector)
 	if err != nil {
-		if esid.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
