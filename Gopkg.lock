@@ -546,7 +546,7 @@
 
 [[projects]]
   branch = "feature/manage-data"
-  digest = "1:c66a11223cec4991a03c4effe3e250ce267f57763d19de9bef278570841584e2"
+  digest = "1:7e9a2e91c156f5a1a304f167f40578487fab456835fb5c4edb3d79ff710e8ce9"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -565,7 +565,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "85a027ebfd18b0804ab3e658e76bd761b29c07c7"
+  revision = "482cac07fa100fd5538a349316266694b94f82d9"
 
 [[projects]]
   branch = "master"
@@ -581,24 +581,23 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:cbaa66ff55298c6dffd85ef7ec71522eece7cd0ed5f4f6b4db436bb9800ddd89"
+  branch = "feature/manage-data"
+  digest = "1:6e19552cdf67c63f1a58b7e8924e09b0112021deef7d9d1912ea63ba41d18f6a"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "cc06bfd28bfc9755e04c05543472d1fb4b8c6e26"
+  revision = "8939bc663bf61b605fe130047bbf3d10568369d9"
 
 [[projects]]
   branch = "master"
-  digest = "1:ac7a0a5a4bc025a772186284c8e7a3d935b7ff8f7050d21e379d6bafeac56034"
+  digest = "1:6c463ff0ea9cac4e7ad09f636bbd61393ac6179ba9b78a11a4227ead4131181c"
   name = "golang.org/x/crypto"
   packages = [
     "ed25519",
     "ed25519/internal/edwards25519",
-    "ssh/terminal",
   ]
   pruneopts = "UT"
   revision = "6a293f2d4b14b8e6d3f0539e383f6d0d30fce3fd"
@@ -619,12 +618,9 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:775a395eea3d75719a6d24610944cc78e3caedba34fa1591b6559bc7054bba15"
+  digest = "1:6f5329bf698d1c24f27988d9e70fd80fe94ea97455ffc71bf1eeaad0c4ca066e"
   name = "golang.org/x/sys"
-  packages = [
-    "unix",
-    "windows",
-  ]
+  packages = ["unix"]
   pruneopts = "UT"
   revision = "75813c647272dd855bda156405bf844a5414f5bf"
 

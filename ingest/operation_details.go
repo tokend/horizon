@@ -386,6 +386,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["code"] = op.Code
 	case xdr.OperationTypeOpenSwap:
 	case xdr.OperationTypeCloseSwap:
+	case xdr.OperationTypeCreateData:
+	case xdr.OperationTypeUpdateData:
+	case xdr.OperationTypeRemoveData:
 	case xdr.OperationTypeCreateRedemptionRequest:
 		op := c.Operation().Body.MustCreateRedemptionRequestOp()
 		details["amount"] = amount.StringU(uint64(op.RedemptionRequest.Amount))

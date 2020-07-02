@@ -11,25 +11,20 @@ UpdateDataOpKey:
 
 UpdateDataOp:
   allOf:
-  - $ref: '#/components/schemas/UpdateDataOpKey'
-  - type: object
-    required: [relationships, attributes]
-    properties:
-      relationships:
-        type: object
-        properties:
-          owner:
-            $ref: '#/components/schemas/AccountKey'
-          data:
-            $ref: '#/components/schemas/DataKey'
-      attributes:
-        type: object
-        required:
-          - id
-          - value
-        properties:
-          id:
-            type: integer
-            format: uint64
-          value:
-            $ref: '#/components/schemas/Details'
+    - $ref: '#/components/schemas/UpdateDataOpKey'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        relationships:
+          type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/DataKey'
+        attributes:
+          type: object
+          required:
+            - id
+            - value
+          properties:
+            value:
+              $ref: '#/components/schemas/Details'

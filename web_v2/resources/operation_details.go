@@ -61,6 +61,9 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeOpenSwap:                               newOpenSwapOp,
 	xdr.OperationTypeCloseSwap:                              newCloseSwapOp,
 	xdr.OperationTypeCreateRedemptionRequest:                newCreateRedemptionRequestOp,
+	xdr.OperationTypeCreateData:                             newCreateDataOp,
+	xdr.OperationTypeUpdateData:                             newUpdateDataOp,
+	xdr.OperationTypeRemoveData:                             newRemoveDataOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -835,6 +838,45 @@ func newCreateRedemptionRequestOp(op history2.Operation) regources.Resource {
 			BalanceFrom: NewBalanceKey(body.BalanceFrom).AsRelation(),
 			AccountTo:   NewAccountKey(body.AccountTo).AsRelation(),
 			Request:     NewRequestKey(body.RequestDetails.RequestID).AsRelation(),
+		},
+	}
+}
+
+func newCreateDataOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateData
+
+	return &regources.CreateDataOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_DATA),
+		Attributes: regources.CreateDataOpAttributes{
+			Type:  body.Type,
+			Value: body.Value,
+		},
+		Relationships: regources.CreateDataOpRelationships{
+			Owner: NewAccountKey(body.Owner).AsRelation(),
+		},
+	}
+}
+
+func newUpdateDataOp(op history2.Operation) regources.Resource {
+	body := op.Details.UpdateData
+
+	return &regources.UpdateDataOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_UPDATE_DATA),
+		Attributes: regources.UpdateDataOpAttributes{
+			Value: body.Value,
+		},
+		Relationships: regources.UpdateDataOpRelationships{
+			Data: NewDataKey(int64(body.ID)).AsRelation(),
+		},
+	}
+}
+func newRemoveDataOp(op history2.Operation) regources.Resource {
+	body := op.Details.RemoveData
+
+	return &regources.RemoveDataOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_DATA),
+		Relationships: regources.RemoveDataOpRelationships{
+			Data: NewDataKey(int64(body.ID)).AsRelation(),
 		},
 	}
 }

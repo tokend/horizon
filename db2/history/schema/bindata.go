@@ -42,6 +42,7 @@
 // migrations/041_recovery_state_for_account.sql
 // migrations/042_swap.sql
 // migrations/043_asset.sql
+// migrations/044_data.sql
 // DO NOT EDIT!
 
 package schema
@@ -949,6 +950,26 @@ func migrations043_assetSql() (*asset, error) {
 	return a, nil
 }
 
+var _migrations044_dataSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x7c\x90\xc1\x4e\xc4\x30\x0c\x44\xef\xf9\x8a\x39\xb6\x82\x3d\xc2\xa5\x57\x7e\x81\xf3\xca\x69\x4c\x31\x74\x9d\xca\x71\x77\xb7\x7f\x8f\x92\x22\x84\x50\x45\x0e\x51\x94\xa7\xf1\x8c\xe7\x74\xc2\xc3\x45\x26\x23\x67\xbc\x2e\x21\x8c\xc6\xf5\xe9\x14\x67\x46\x22\xa7\xd0\x05\x00\x90\x54\xef\x28\x93\xa8\xa3\x1d\xcd\x0e\x5d\xe7\xf9\xb1\x71\xdf\x16\xfe\x8f\xe7\x9b\xb2\xe1\x4a\x36\xbe\x93\x75\x4f\xcf\xfd\x1f\x7e\xa5\x79\x65\x7c\x94\xac\x11\x47\xfa\xc5\xe4\x42\xb6\xe1\x93\x37\x74\x92\xfa\xd0\x0f\x3f\x61\x45\x13\xdf\x5b\xd8\x73\xdc\xce\xbb\x53\xd6\xf6\x81\xb5\x88\x4e\x88\x6e\xcc\xe8\x1a\xea\x87\x63\x5d\xdb\xe0\x50\x56\x49\xb5\xfb\xdd\xd5\x4b\xbe\x69\x08\xc9\xf2\xf2\xdd\x95\xbc\x81\xef\x52\xbc\xec\x03\x46\x2a\x23\x25\x1e\xbe\x02\x00\x00\xff\xff\x68\xe3\x73\x19\x60\x01\x00\x00")
+
+func migrations044_dataSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_migrations044_dataSql,
+		"migrations/044_data.sql",
+	)
+}
+
+func migrations044_dataSql() (*asset, error) {
+	bytes, err := migrations044_dataSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "migrations/044_data.sql", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 // Asset loads and returns the asset for the given name.
 // It returns an error if the asset could not be found or
 // could not be loaded.
@@ -1043,6 +1064,7 @@ var _bindata = map[string]func() (*asset, error){
 	"migrations/041_recovery_state_for_account.sql": migrations041_recovery_state_for_accountSql,
 	"migrations/042_swap.sql": migrations042_swapSql,
 	"migrations/043_asset.sql": migrations043_assetSql,
+	"migrations/044_data.sql": migrations044_dataSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -1128,6 +1150,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"041_recovery_state_for_account.sql": &bintree{migrations041_recovery_state_for_accountSql, map[string]*bintree{}},
 		"042_swap.sql": &bintree{migrations042_swapSql, map[string]*bintree{}},
 		"043_asset.sql": &bintree{migrations043_assetSql, map[string]*bintree{}},
+		"044_data.sql": &bintree{migrations044_dataSql, map[string]*bintree{}},
 	}},
 }}
 

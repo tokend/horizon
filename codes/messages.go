@@ -311,6 +311,7 @@ var messages = map[string]string{
 	"op_payment_tasks_not_found":                        "There is no key value by key `payment_tasks`",
 	"op_has_pair":                                       "Cannot delete asset, it is used in some asset pair",
 	"op_invalid_subject":                                "Too much signs in subject",
+	"op_pending_issuance_less_then_amount":              "Pending issuance is less than amount",
 }
 
 func getMessage(rawCode string) string {

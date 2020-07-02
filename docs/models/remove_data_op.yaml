@@ -11,22 +11,14 @@ RemoveDataOpKey:
 
 RemoveDataOp:
   allOf:
-  - $ref: '#/components/schemas/RemoveDataOpKey'
-  - type: object
-    required: [relationships, attributes]
-    properties:
-      relationships:
-        type: object
-        properties:
-          owner:
-            $ref: '#/components/schemas/AccountKey'
-          data:
-            $ref: '#/components/schemas/DataKey'
-      attributes:
-        type: object
-        required:
-          - id
-        properties:
-          id:
-            type: integer
-            format: uint64
+    - $ref: '#/components/schemas/RemoveDataOpKey'
+    - type: object
+      required: [relationships]
+      properties:
+        relationships:
+          type: object
+          properties:
+            owner:
+              $ref: '#/components/schemas/AccountKey'
+            data:
+              $ref: '#/components/schemas/DataKey'

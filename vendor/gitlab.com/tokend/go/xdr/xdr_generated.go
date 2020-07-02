@@ -1,4 +1,4 @@
-// revision: 49353b335197a0c2a0008bf74c2d1cca076afa4a
+// revision: 09ad3e3ae73b93f67b9665a361dee8569d91bdc9
 // branch:   feature/manage-data
 // Package xdr is generated from:
 //
@@ -29589,42 +29589,45 @@ type ManageOfferOp struct {
 //        //: Precision set in the system and precision of the amount are mismatched
 //        INCORRECT_AMOUNT_PRECISION = -28,
 //        //: Sale specific rule forbids to participate in sale for source account
-//        SPECIFIC_RULE_FORBIDS = -29
+//        SPECIFIC_RULE_FORBIDS = -29,
+//        //: Amount must be less then pending issuance
+//        PENDING_ISSUANCE_LESS_THEN_AMOUNT = -30
 //    };
 //
 type ManageOfferResultCode int32
 
 const (
-	ManageOfferResultCodeSuccess                   ManageOfferResultCode = 0
-	ManageOfferResultCodeMalformed                 ManageOfferResultCode = -1
-	ManageOfferResultCodePairNotTraded             ManageOfferResultCode = -2
-	ManageOfferResultCodeBalanceNotFound           ManageOfferResultCode = -3
-	ManageOfferResultCodeUnderfunded               ManageOfferResultCode = -4
-	ManageOfferResultCodeCrossSelf                 ManageOfferResultCode = -5
-	ManageOfferResultCodeOfferOverflow             ManageOfferResultCode = -6
-	ManageOfferResultCodeAssetPairNotTradable      ManageOfferResultCode = -7
-	ManageOfferResultCodePhysicalPriceRestriction  ManageOfferResultCode = -8
-	ManageOfferResultCodeCurrentPriceRestriction   ManageOfferResultCode = -9
-	ManageOfferResultCodeNotFound                  ManageOfferResultCode = -10
-	ManageOfferResultCodeInvalidPercentFee         ManageOfferResultCode = -11
-	ManageOfferResultCodeInsufficientPrice         ManageOfferResultCode = -12
-	ManageOfferResultCodeOrderBookDoesNotExists    ManageOfferResultCode = -13
-	ManageOfferResultCodeSaleIsNotStartedYet       ManageOfferResultCode = -14
-	ManageOfferResultCodeSaleAlreadyEnded          ManageOfferResultCode = -15
-	ManageOfferResultCodeOrderViolatesHardCap      ManageOfferResultCode = -16
-	ManageOfferResultCodeCantParticipateOwnSale    ManageOfferResultCode = -17
-	ManageOfferResultCodeAssetMismatched           ManageOfferResultCode = -18
-	ManageOfferResultCodePriceDoesNotMatch         ManageOfferResultCode = -19
-	ManageOfferResultCodePriceIsInvalid            ManageOfferResultCode = -20
-	ManageOfferResultCodeUpdateIsNotAllowed        ManageOfferResultCode = -21
-	ManageOfferResultCodeInvalidAmount             ManageOfferResultCode = -22
-	ManageOfferResultCodeSaleIsNotActive           ManageOfferResultCode = -23
-	ManageOfferResultCodeRequiresKyc               ManageOfferResultCode = -24
-	ManageOfferResultCodeSourceUnderfunded         ManageOfferResultCode = -25
-	ManageOfferResultCodeSourceBalanceLockOverflow ManageOfferResultCode = -26
-	ManageOfferResultCodeRequiresVerification      ManageOfferResultCode = -27
-	ManageOfferResultCodeIncorrectAmountPrecision  ManageOfferResultCode = -28
-	ManageOfferResultCodeSpecificRuleForbids       ManageOfferResultCode = -29
+	ManageOfferResultCodeSuccess                       ManageOfferResultCode = 0
+	ManageOfferResultCodeMalformed                     ManageOfferResultCode = -1
+	ManageOfferResultCodePairNotTraded                 ManageOfferResultCode = -2
+	ManageOfferResultCodeBalanceNotFound               ManageOfferResultCode = -3
+	ManageOfferResultCodeUnderfunded                   ManageOfferResultCode = -4
+	ManageOfferResultCodeCrossSelf                     ManageOfferResultCode = -5
+	ManageOfferResultCodeOfferOverflow                 ManageOfferResultCode = -6
+	ManageOfferResultCodeAssetPairNotTradable          ManageOfferResultCode = -7
+	ManageOfferResultCodePhysicalPriceRestriction      ManageOfferResultCode = -8
+	ManageOfferResultCodeCurrentPriceRestriction       ManageOfferResultCode = -9
+	ManageOfferResultCodeNotFound                      ManageOfferResultCode = -10
+	ManageOfferResultCodeInvalidPercentFee             ManageOfferResultCode = -11
+	ManageOfferResultCodeInsufficientPrice             ManageOfferResultCode = -12
+	ManageOfferResultCodeOrderBookDoesNotExists        ManageOfferResultCode = -13
+	ManageOfferResultCodeSaleIsNotStartedYet           ManageOfferResultCode = -14
+	ManageOfferResultCodeSaleAlreadyEnded              ManageOfferResultCode = -15
+	ManageOfferResultCodeOrderViolatesHardCap          ManageOfferResultCode = -16
+	ManageOfferResultCodeCantParticipateOwnSale        ManageOfferResultCode = -17
+	ManageOfferResultCodeAssetMismatched               ManageOfferResultCode = -18
+	ManageOfferResultCodePriceDoesNotMatch             ManageOfferResultCode = -19
+	ManageOfferResultCodePriceIsInvalid                ManageOfferResultCode = -20
+	ManageOfferResultCodeUpdateIsNotAllowed            ManageOfferResultCode = -21
+	ManageOfferResultCodeInvalidAmount                 ManageOfferResultCode = -22
+	ManageOfferResultCodeSaleIsNotActive               ManageOfferResultCode = -23
+	ManageOfferResultCodeRequiresKyc                   ManageOfferResultCode = -24
+	ManageOfferResultCodeSourceUnderfunded             ManageOfferResultCode = -25
+	ManageOfferResultCodeSourceBalanceLockOverflow     ManageOfferResultCode = -26
+	ManageOfferResultCodeRequiresVerification          ManageOfferResultCode = -27
+	ManageOfferResultCodeIncorrectAmountPrecision      ManageOfferResultCode = -28
+	ManageOfferResultCodeSpecificRuleForbids           ManageOfferResultCode = -29
+	ManageOfferResultCodePendingIssuanceLessThenAmount ManageOfferResultCode = -30
 )
 
 var ManageOfferResultCodeAll = []ManageOfferResultCode{
@@ -29658,6 +29661,7 @@ var ManageOfferResultCodeAll = []ManageOfferResultCode{
 	ManageOfferResultCodeRequiresVerification,
 	ManageOfferResultCodeIncorrectAmountPrecision,
 	ManageOfferResultCodeSpecificRuleForbids,
+	ManageOfferResultCodePendingIssuanceLessThenAmount,
 }
 
 var manageOfferResultCodeMap = map[int32]string{
@@ -29691,6 +29695,7 @@ var manageOfferResultCodeMap = map[int32]string{
 	-27: "ManageOfferResultCodeRequiresVerification",
 	-28: "ManageOfferResultCodeIncorrectAmountPrecision",
 	-29: "ManageOfferResultCodeSpecificRuleForbids",
+	-30: "ManageOfferResultCodePendingIssuanceLessThenAmount",
 }
 
 var manageOfferResultCodeShortMap = map[int32]string{
@@ -29724,39 +29729,41 @@ var manageOfferResultCodeShortMap = map[int32]string{
 	-27: "requires_verification",
 	-28: "incorrect_amount_precision",
 	-29: "specific_rule_forbids",
+	-30: "pending_issuance_less_then_amount",
 }
 
 var manageOfferResultCodeRevMap = map[string]int32{
-	"ManageOfferResultCodeSuccess":                   0,
-	"ManageOfferResultCodeMalformed":                 -1,
-	"ManageOfferResultCodePairNotTraded":             -2,
-	"ManageOfferResultCodeBalanceNotFound":           -3,
-	"ManageOfferResultCodeUnderfunded":               -4,
-	"ManageOfferResultCodeCrossSelf":                 -5,
-	"ManageOfferResultCodeOfferOverflow":             -6,
-	"ManageOfferResultCodeAssetPairNotTradable":      -7,
-	"ManageOfferResultCodePhysicalPriceRestriction":  -8,
-	"ManageOfferResultCodeCurrentPriceRestriction":   -9,
-	"ManageOfferResultCodeNotFound":                  -10,
-	"ManageOfferResultCodeInvalidPercentFee":         -11,
-	"ManageOfferResultCodeInsufficientPrice":         -12,
-	"ManageOfferResultCodeOrderBookDoesNotExists":    -13,
-	"ManageOfferResultCodeSaleIsNotStartedYet":       -14,
-	"ManageOfferResultCodeSaleAlreadyEnded":          -15,
-	"ManageOfferResultCodeOrderViolatesHardCap":      -16,
-	"ManageOfferResultCodeCantParticipateOwnSale":    -17,
-	"ManageOfferResultCodeAssetMismatched":           -18,
-	"ManageOfferResultCodePriceDoesNotMatch":         -19,
-	"ManageOfferResultCodePriceIsInvalid":            -20,
-	"ManageOfferResultCodeUpdateIsNotAllowed":        -21,
-	"ManageOfferResultCodeInvalidAmount":             -22,
-	"ManageOfferResultCodeSaleIsNotActive":           -23,
-	"ManageOfferResultCodeRequiresKyc":               -24,
-	"ManageOfferResultCodeSourceUnderfunded":         -25,
-	"ManageOfferResultCodeSourceBalanceLockOverflow": -26,
-	"ManageOfferResultCodeRequiresVerification":      -27,
-	"ManageOfferResultCodeIncorrectAmountPrecision":  -28,
-	"ManageOfferResultCodeSpecificRuleForbids":       -29,
+	"ManageOfferResultCodeSuccess":                       0,
+	"ManageOfferResultCodeMalformed":                     -1,
+	"ManageOfferResultCodePairNotTraded":                 -2,
+	"ManageOfferResultCodeBalanceNotFound":               -3,
+	"ManageOfferResultCodeUnderfunded":                   -4,
+	"ManageOfferResultCodeCrossSelf":                     -5,
+	"ManageOfferResultCodeOfferOverflow":                 -6,
+	"ManageOfferResultCodeAssetPairNotTradable":          -7,
+	"ManageOfferResultCodePhysicalPriceRestriction":      -8,
+	"ManageOfferResultCodeCurrentPriceRestriction":       -9,
+	"ManageOfferResultCodeNotFound":                      -10,
+	"ManageOfferResultCodeInvalidPercentFee":             -11,
+	"ManageOfferResultCodeInsufficientPrice":             -12,
+	"ManageOfferResultCodeOrderBookDoesNotExists":        -13,
+	"ManageOfferResultCodeSaleIsNotStartedYet":           -14,
+	"ManageOfferResultCodeSaleAlreadyEnded":              -15,
+	"ManageOfferResultCodeOrderViolatesHardCap":          -16,
+	"ManageOfferResultCodeCantParticipateOwnSale":        -17,
+	"ManageOfferResultCodeAssetMismatched":               -18,
+	"ManageOfferResultCodePriceDoesNotMatch":             -19,
+	"ManageOfferResultCodePriceIsInvalid":                -20,
+	"ManageOfferResultCodeUpdateIsNotAllowed":            -21,
+	"ManageOfferResultCodeInvalidAmount":                 -22,
+	"ManageOfferResultCodeSaleIsNotActive":               -23,
+	"ManageOfferResultCodeRequiresKyc":                   -24,
+	"ManageOfferResultCodeSourceUnderfunded":             -25,
+	"ManageOfferResultCodeSourceBalanceLockOverflow":     -26,
+	"ManageOfferResultCodeRequiresVerification":          -27,
+	"ManageOfferResultCodeIncorrectAmountPrecision":      -28,
+	"ManageOfferResultCodeSpecificRuleForbids":           -29,
+	"ManageOfferResultCodePendingIssuanceLessThenAmount": -30,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -51757,7 +51764,9 @@ type TransactionResult struct {
 //        FIX_SIGNATURE_CHECK = 25,
 //        FIX_AUTOREVIEW = 26,
 //        MOVEMENT_REQUESTS_DETAILS = 27,
-//        FIX_CRASH_CORE_WITH_PAYMENT = 28
+//        FIX_CRASH_CORE_WITH_PAYMENT = 28,
+//        FIX_INVEST_TO_IMMEDIATE_SALE = 29,
+//        FIX_PAYMENT_TASKS_WILDCARD_VALUE = 30
 //    };
 //
 type LedgerVersion int32
@@ -51792,6 +51801,8 @@ const (
 	LedgerVersionFixAutoreview                     LedgerVersion = 26
 	LedgerVersionMovementRequestsDetails           LedgerVersion = 27
 	LedgerVersionFixCrashCoreWithPayment           LedgerVersion = 28
+	LedgerVersionFixInvestToImmediateSale          LedgerVersion = 29
+	LedgerVersionFixPaymentTasksWildcardValue      LedgerVersion = 30
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -51824,6 +51835,8 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixAutoreview,
 	LedgerVersionMovementRequestsDetails,
 	LedgerVersionFixCrashCoreWithPayment,
+	LedgerVersionFixInvestToImmediateSale,
+	LedgerVersionFixPaymentTasksWildcardValue,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -51856,6 +51869,8 @@ var ledgerVersionMap = map[int32]string{
 	26: "LedgerVersionFixAutoreview",
 	27: "LedgerVersionMovementRequestsDetails",
 	28: "LedgerVersionFixCrashCoreWithPayment",
+	29: "LedgerVersionFixInvestToImmediateSale",
+	30: "LedgerVersionFixPaymentTasksWildcardValue",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -51888,6 +51903,8 @@ var ledgerVersionShortMap = map[int32]string{
 	26: "fix_autoreview",
 	27: "movement_requests_details",
 	28: "fix_crash_core_with_payment",
+	29: "fix_invest_to_immediate_sale",
+	30: "fix_payment_tasks_wildcard_value",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -51920,6 +51937,8 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixAutoreview":                     26,
 	"LedgerVersionMovementRequestsDetails":           27,
 	"LedgerVersionFixCrashCoreWithPayment":           28,
+	"LedgerVersionFixInvestToImmediateSale":          29,
+	"LedgerVersionFixPaymentTasksWildcardValue":      30,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -53330,4 +53349,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "49353b335197a0c2a0008bf74c2d1cca076afa4a"
+var Revision = "09ad3e3ae73b93f67b9665a361dee8569d91bdc9"

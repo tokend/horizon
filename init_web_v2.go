@@ -333,6 +333,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/swaps/{id}", handlers.GetSwap)
 	m.Get("/v3/swaps", handlers.GetSwapList)
 
+	m.Get("/v3/data/{id}", handlers.GetData)
+	m.Get("/v3/data", handlers.GetDataList)
+
 	m.Get("/v3/operations", handlers.GetOperations)
 	m.Get("/v3/operations/{id}", handlers.GetOperation)
 

@@ -2,8 +2,9 @@ package history2
 
 import (
 	"database/sql/driver"
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
@@ -597,8 +598,10 @@ type RedemptionDetails struct {
 }
 
 type CreateDataDetails struct {
+	ID    uint64            `json:"id"`
 	Type  uint64            `json:"type"`
 	Value regources.Details `json:"value"`
+	Owner string            `json:"owner"`
 }
 
 type UpdateDataDetails struct {
