@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -18,7 +19,7 @@ type GetSaleWhitelist struct {
 	Filters struct {
 		Address *string `filter:"address"`
 	}
-	PageParams *pgdb.CursorPageParams
+	PageParams pgdb.CursorPageParams
 }
 
 // NewGetSaleWhitelist returns new instance of GetSaleWhitelist
@@ -36,18 +37,21 @@ func NewGetSaleWhitelist(r *http.Request) (*GetSaleWhitelist, error) {
 	if err != nil {
 		return nil, err
 	}
-	pageParams, err := b.getCursorBasedPageParams()
+
+	request := GetSaleWhitelist{
+		base:   b,
+		SaleID: id,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetSaleWhitelist{
-		base:       b,
-		SaleID:     id,
-		PageParams: pageParams,
+	err = SetDefaultCursorPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

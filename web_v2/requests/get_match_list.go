@@ -1,8 +1,10 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -20,13 +22,12 @@ var filterTypeMatchListAll = map[string]struct{}{
 // GetMatchList represents params to be specified by user for getMatchList handler
 type GetMatchList struct {
 	*base
-
 	Filters struct {
 		BaseAsset  string `fig:"base_asset,required"`
 		QuoteAsset string `fig:"quote_asset,required"`
 	}
 
-	PageParams *pgdb.CursorPageParams
+	PageParams pgdb.CursorPageParams
 }
 
 // NewGetMatchList - returns new instance of GetMatchList
@@ -38,17 +39,16 @@ func NewGetMatchList(r *http.Request) (*GetMatchList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
+	request := GetMatchList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetMatchList{
-		base:       b,
-		PageParams: pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = SetDefaultCursorPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

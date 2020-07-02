@@ -43,7 +43,7 @@ type GetBalanceList struct {
 		AssetOwner *string `filter:"asset_owner"`
 		Owner      *string `filter:"owner"`
 	}
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewGetBalanceList - returns new instance of GetBalanceList
@@ -56,16 +56,19 @@ func NewGetBalanceList(r *http.Request) (*GetBalanceList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetBalanceList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
-	request := GetBalanceList{
-		base:       b,
-		PageParams: pageParams,
-	}
 
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
+	}
 
 	return &request, nil
 }

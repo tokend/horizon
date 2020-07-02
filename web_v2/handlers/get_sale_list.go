@@ -69,14 +69,14 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 
 	q = applySaleIncludes(request.SalesBase, q)
 
-	historySales, err := q.Page(*request.PageParams).Select()
+	historySales, err := q.Page(request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sale list")
 	}
 
 	response := &regources.SaleListResponse{
 		Data:  make([]regources.Sale, 0, len(historySales)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	err = h.populateResponse(historySales, request.SalesBase, response)

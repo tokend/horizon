@@ -83,7 +83,7 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 	q := h.AccountSpecificRulesQ.
 		FilterBySale(request.SaleID).
 		FilterByPermission(false).
-		Page(*request.PageParams)
+		Page(request.PageParams)
 
 	if request.Filters.Address != nil {
 		q = q.FilterByAddress(*request.Filters.Address)
@@ -111,8 +111,8 @@ func (h *getSaleWhiteListHandler) populateLinks(
 	response *regources.SaleWhitelistListResponse, request *requests.GetSaleWhitelist,
 ) {
 	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+		response.Links = request.GetCursorLinks(request.PageParams, response.Data[len(response.Data)-1].ID)
 	} else {
-		response.Links = request.GetCursorLinks(*request.PageParams, "")
+		response.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 }

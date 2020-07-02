@@ -61,11 +61,11 @@ func (h *getCreateAmlAlertRequestsHandler) MakeAll(w http.ResponseWriter, reques
 		q = q.FilterByAmlAlertBalance(*request.Filters.Balance)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getCreateAmlAlertRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateAmlAlertRequestsBalance) {
 		balance, err := h.BalancesQ.GetByAddress(record.Details.CreateAmlAlert.BalanceID)

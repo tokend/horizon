@@ -126,9 +126,9 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 	}
 
 	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+		response.Links = request.GetCursorLinks(request.PageParams, response.Data[len(response.Data)-1].ID)
 	} else {
-		response.Links = request.GetCursorLinks(*request.PageParams, "")
+		response.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 
 	if len(response.Data) == 0 {

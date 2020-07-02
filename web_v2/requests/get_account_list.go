@@ -38,12 +38,19 @@ func NewGetAccountList(r *http.Request) (*GetAccountList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
 	var request = GetAccountList{
-		base:       b,
-		PageParams: *pageParams,
+		base: b,
 	}
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
+	}
 
 	return &request, nil
 }

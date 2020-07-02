@@ -1,8 +1,10 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 var includeTypeSignerRoleListAll = map[string]struct{}{
@@ -12,7 +14,7 @@ var includeTypeSignerRoleListAll = map[string]struct{}{
 //GetSignerRoleList - represents params to be specified for Get SignerRoles handler
 type GetSignerRoleList struct {
 	*base
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewGetSignerRoleList returns the new instance of GetSignerRoleList request
@@ -24,15 +26,18 @@ func NewGetSignerRoleList(r *http.Request) (*GetSignerRoleList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetSignerRoleList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetSignerRoleList{
-		base:       b,
-		PageParams: pageParams,
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
 	return &request, nil
 }

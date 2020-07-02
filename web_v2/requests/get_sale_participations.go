@@ -37,7 +37,7 @@ type GetSaleParticipations struct {
 		QuoteAsset  *string `filter:"quote_asset" json:"quote_asset"`
 		Participant *string `filter:"participant" json:"participant"`
 	}
-	PageParams *pgdb.CursorPageParams
+	PageParams pgdb.CursorPageParams
 }
 
 // NewGetSaleParticipations returns new instance of GetSaleParticipations
@@ -55,18 +55,20 @@ func NewGetSaleParticipations(r *http.Request) (*GetSaleParticipations, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
+	request := &GetSaleParticipations{
+		base:   b,
+		SaleID: id,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := &GetSaleParticipations{
-		base:       b,
-		SaleID:     id,
-		PageParams: pageParams,
+	err = SetDefaultCursorPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return request, nil
 }

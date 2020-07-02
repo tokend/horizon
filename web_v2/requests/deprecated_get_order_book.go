@@ -42,7 +42,7 @@ type DeprecatedGetOrderBook struct {
 		IsBuy      *bool   `filter:"is_buy"`
 	}
 
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewDeprecatedGetOrderBook - returns new instance of DeprecatedGetOrderBook
@@ -55,23 +55,25 @@ func NewDeprecatedGetOrderBook(r *http.Request) (*DeprecatedGetOrderBook, error)
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
-	if err != nil {
-		return nil, err
-	}
-
 	id, err := b.getUint64("id")
 	if err != nil {
 		return nil, err
 	}
 
 	request := DeprecatedGetOrderBook{
-		base:       b,
-		PageParams: pageParams,
-		ID:         id,
+		base: b,
+		ID:   id,
 	}
 
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
+	}
 
 	return &request, nil
 }

@@ -64,6 +64,9 @@ func NewGetConvertedBalances(r *http.Request) (*GetConvertedBalances, error) {
 	}
 
 	err = urlval.Decode(r.URL.Query(), &request.Filters)
+	if err != nil {
+		return nil, err
+	}
 
 	return &request, nil
 }

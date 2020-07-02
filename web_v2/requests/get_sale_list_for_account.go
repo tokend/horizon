@@ -1,15 +1,18 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 // GetSaleList - represents params to be specified by user for getSaleList handler
 type GetSaleListForAccount struct {
 	SalesBase
 	Address    string
-	PageParams *pgdb.CursorPageParams
+	PageParams pgdb.CursorPageParams
 }
 
 // NewGetSaleListForAccount returns new instance of GetSaleListForAccount request
@@ -26,16 +29,22 @@ func NewGetSaleListForAccount(r *http.Request) (*GetSaleListForAccount, error) {
 	if err != nil {
 		return nil, err
 	}
-	pageParams, err := b.getCursorBasedPageParams()
-	if err != nil {
-		return nil, err
-	}
+
 	request := GetSaleListForAccount{
 		Address: address,
 		SalesBase: SalesBase{
 			base: b,
 		},
-		PageParams: pageParams,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return nil, err
+	}
+
+	err = SetDefaultCursorPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
 
 	err = b.populateFilters(&request.Filters)

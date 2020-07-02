@@ -540,3 +540,72 @@ func (r *base) getCursor() (uint64, error) {
 
 	return result, nil
 }
+func SetDefaultCursorPageParams(pageParams *pgdb.CursorPageParams) error {
+	switch pageParams.Order {
+	case pgdb.OrderTypeAsc, pgdb.OrderTypeDesc:
+	case "":
+		pageParams.Order = pgdb.OrderTypeAsc
+	default:
+		pageParams.Order = pgdb.OrderTypeDesc
+		return validation.Errors{
+			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", pgdb.OrderTypeAsc, pgdb.OrderTypeDesc),
+		}
+	}
+
+	if pageParams.Limit == 0 {
+		pageParams.Limit = defaultLimit
+	}
+	if pageParams.Limit > maxLimit {
+		pageParams.Limit = 0
+		return validation.Errors{
+			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
+		}
+
+	}
+
+	if pageParams.Order == pgdb.OrderTypeDesc && pageParams.Cursor == 0 {
+		pageParams.Cursor = math.MaxInt64
+	}
+
+	return nil
+}
+func (r *base) SetDefaultOffsetPageParams(pageParams *pgdb.OffsetPageParams) error {
+	var err error
+
+	switch pageParams.Order {
+	case pgdb.OrderTypeDesc:
+		var containsOrder = false
+		for queryParam, _ := range *r.queryValues {
+			if strings.Contains(queryParam, "page") {
+				filterKey := strings.TrimPrefix(queryParam, "page[")
+				filterKey = strings.TrimSuffix(filterKey, "]")
+				if filterKey == "order" {
+					containsOrder = true
+					break
+				}
+			}
+		}
+		if !containsOrder {
+			pageParams.Order = pgdb.OrderTypeAsc
+		}
+	case pgdb.OrderTypeAsc:
+	default:
+		pageParams.Order, err = pgdb.OrderTypeDesc, validation.Errors{
+			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", pgdb.OrderTypeAsc, pgdb.OrderTypeDesc),
+		}
+	}
+	if err != nil {
+		return err
+	}
+
+	if pageParams.Limit > maxLimit {
+		pageParams.Limit, err = 0, validation.Errors{
+			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
+		}
+	}
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

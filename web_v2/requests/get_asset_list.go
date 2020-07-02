@@ -41,7 +41,7 @@ type GetAssetList struct {
 	State  *uint32  `filter:"state"`
 	Codes  []string `filter:"codes"`
 
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewGetAssetList returns the new instance of GetAssetList request
@@ -58,12 +58,14 @@ func NewGetAssetList(r *http.Request) (*GetAssetList, error) {
 		base: b,
 	}
 	err = urlval.Decode(r.URL.Query(), &request)
-
-	pageParams, err := b.getOffsetBasedPageParams()
 	if err != nil {
 		return nil, err
 	}
-	request.PageParams = pageParams
+
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
+	}
 
 	return &request, nil
 }

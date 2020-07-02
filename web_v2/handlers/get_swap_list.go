@@ -82,7 +82,7 @@ func (h *getSwapListHandler) GetSwapList(request *requests.GetSwapList) (*regour
 		q = q.FilterByState(*request.Filters.State)
 	}
 
-	historySwaps, err := q.Page(*request.PageParams).Select()
+	historySwaps, err := q.Page(request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get swap list ")
 	}
@@ -144,8 +144,8 @@ func (h *getSwapListHandler) PopulateLinks(
 	response *regources.SwapListResponse, request *requests.GetSwapList,
 ) {
 	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+		response.Links = request.GetCursorLinks(request.PageParams, response.Data[len(response.Data)-1].ID)
 	} else {
-		response.Links = request.GetCursorLinks(*request.PageParams, "")
+		response.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 }

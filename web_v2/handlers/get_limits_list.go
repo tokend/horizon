@@ -49,7 +49,7 @@ type getLimitsListHandler struct {
 
 // GetLimitsList returns the list of fees with related resources
 func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*regources.LimitsListResponse, error) {
-	q := h.LimitsQ.Page(*request.PageParams)
+	q := h.LimitsQ.Page(request.PageParams)
 	if request.Filters.Account != nil {
 		q = q.FilterByAccount(*request.Filters.Account)
 	}
@@ -72,7 +72,7 @@ func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*
 
 	response := &regources.LimitsListResponse{
 		Data:  make([]regources.Limits, 0, len(limits)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	assets := make([]string, 0, len(limits))

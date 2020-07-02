@@ -1,14 +1,16 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 //GetSignerRuleList - represents params to be specified for Get SignerRules handler
 type GetSignerRuleList struct {
 	*base
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewGetSignerRuleList returns the new instance of GetSignerRuleList request
@@ -18,14 +20,18 @@ func NewGetSignerRuleList(r *http.Request) (*GetSignerRuleList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetSignerRuleList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetSignerRuleList{
-		base:       b,
-		PageParams: pageParams,
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
 
 	return &request, nil

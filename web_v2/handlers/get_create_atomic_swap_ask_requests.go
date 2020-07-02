@@ -65,12 +65,12 @@ func (h *getCreateAtomicSwapAskRequestsHandler) MakeAll(w http.ResponseWriter, r
 		q = q.FilterByCreateAtomicSwapAskBalance(*request.Filters.BaseBalance)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getCreateAtomicSwapAskRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest,
 ) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapAskRequestsBalance) {
 		balance, err := h.BalancesQ.GetByAddress(record.Details.CreateAtomicSwapAsk.BaseBalance)

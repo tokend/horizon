@@ -15,7 +15,7 @@ const (
 
 type GetOperations struct {
 	*base
-	PageParams *pgdb.CursorPageParams
+	PageParams pgdb.CursorPageParams
 	Filters    struct {
 		Types []int `filter:"types"`
 	}
@@ -34,17 +34,19 @@ func NewGetOperations(r *http.Request) (*GetOperations, error) {
 		return nil, err
 	}
 
-	pagingParams, err := b.getCursorBasedPageParams()
+	request := GetOperations{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetOperations{
-		base:       b,
-		PageParams: pagingParams,
+	err = SetDefaultCursorPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

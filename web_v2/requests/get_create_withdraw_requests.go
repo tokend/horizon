@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -25,23 +27,31 @@ var filterTypeCreateWithdrawRequests = map[string]struct{}{
 }
 
 type GetCreateWithdrawRequestsFilter struct {
-	GetRequestListBaseFilters
 	Balance *string `filter:"request_details.balance"`
 	Asset   *string `filter:"request_details.asset"`
 }
 
 type GetCreateWithdrawRequests struct {
-	*GetRequestsBase
+	GetRequestsBase
 	Filters GetCreateWithdrawRequestsFilter
 }
 
 func NewGetCreateWithdrawRequests(r *http.Request) (request GetCreateWithdrawRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		filterTypeCreateWithdrawRequests,
 		includeTypeCreateWithdrawRequests,
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

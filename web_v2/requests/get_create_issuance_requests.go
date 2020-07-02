@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -23,23 +25,31 @@ var includeTypeCreateIssuanceRequests = map[string]struct{}{
 }
 
 type GetCreateIssuanceRequestsFilter struct {
-	GetRequestListBaseFilters
 	Asset    *string `filter:"request_details.asset"`
 	Receiver *string `filter:"request_details.receiver"`
 }
 
 type GetCreateIssuanceRequests struct {
-	*GetRequestsBase
+	GetRequestsBase
 	Filters GetCreateIssuanceRequestsFilter
 }
 
 func NewGetCreateIssuanceRequests(r *http.Request) (request GetCreateIssuanceRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		filterTypeCreateIssuanceRequests,
 		includeTypeCreateIssuanceRequests,
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

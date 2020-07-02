@@ -3,6 +3,8 @@ package requests
 import (
 	"net/http"
 
+	"gitlab.com/distributed_lab/urlval"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -39,7 +41,7 @@ var filterTypeFeeListAll = map[string]struct{}{
 type GetFeeList struct {
 	*base
 	Filters    GetFeeListFilters
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 type GetFeeListFilters struct {
@@ -62,14 +64,17 @@ func NewGetFeeList(r *http.Request) (*GetFeeList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetFeeList{
+		base: b,
+	}
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetFeeList{
-		base:       b,
-		PageParams: pageParams,
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
 
 	err = b.populateFilters(&request.Filters)

@@ -39,7 +39,7 @@ var filterTypeAssetPairListAll = map[string]struct{}{
 type GetAssetPairList struct {
 	*base
 	Filters    GetAssetPairListFilters
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 type GetAssetPairListFilters struct {
 	Policy     *uint64 `filter:"policy"`
@@ -58,17 +58,18 @@ func NewGetAssetPairList(r *http.Request) (*GetAssetPairList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetAssetPairList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetAssetPairList{
-		base:       b,
-		PageParams: pageParams,
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
-
 	return &request, nil
 }

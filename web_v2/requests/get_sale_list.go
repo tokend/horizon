@@ -34,7 +34,7 @@ type GetSaleList struct {
 	SpecialFilters struct {
 		Participant *string `filter:"participant" json:"participant"`
 	}
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewGetSaleList returns new instance of GetSaleList request
@@ -47,16 +47,10 @@ func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
-	if err != nil {
-		return nil, err
-	}
-
 	request := GetSaleList{
 		SalesBase: SalesBase{
 			base: b,
 		},
-		PageParams: pageParams,
 	}
 
 	err = b.populateFilters(&request.Filters)
@@ -64,7 +58,15 @@ func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 		return nil, err
 	}
 
-	err = urlval.Decode(r.URL.Query(), &request.SpecialFilters)
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
+	}
 
 	return &request, nil
 }

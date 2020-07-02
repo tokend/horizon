@@ -58,11 +58,11 @@ type getUpdateSaleDetailsRequestsHandler struct {
 func (h *getUpdateSaleDetailsRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetUpdateSaleDetailsRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeUpdateSaleDetails))
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getUpdateSaleDetailsRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeUpdateSaleDetailsRequestsSale) {
 		record, err := h.SalesQ.GetByID(record.Details.UpdateSaleDetails.SaleID)

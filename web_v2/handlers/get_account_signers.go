@@ -70,7 +70,7 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 		return nil, nil
 	}
 
-	signers, err := h.SignersQ.Page(*request.PageParams).FilterByAccountAddress(request.Address).Select()
+	signers, err := h.SignersQ.Page(request.PageParams).FilterByAccountAddress(request.Address).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load signers for account", logan.F{
 			"account_address": request.Address,
@@ -79,7 +79,7 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 
 	response := regources.SignerListResponse{
 		Data:  make([]regources.Signer, 0, len(signers)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for _, signerRaw := range signers {

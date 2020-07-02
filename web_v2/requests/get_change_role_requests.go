@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -23,23 +25,31 @@ var filterTypeChangeRoleRequests = map[string]struct{}{
 }
 
 type GetChangeRoleRequestsFilter struct {
-	GetRequestListBaseFilters
 	Account     *string `filter:"request_details.destination_account"`
 	AccountRole *int32  `filter:"request_details.account_role_to_set"`
 }
 
 type GetChangeRoleRequests struct {
-	*GetRequestsBase
+	GetRequestsBase
 	Filters GetChangeRoleRequestsFilter
 }
 
 func NewGetChangeRoleRequests(r *http.Request) (request GetChangeRoleRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		filterTypeChangeRoleRequests,
 		includeTypeChangeRoleRequests,
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}
