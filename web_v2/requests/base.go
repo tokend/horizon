@@ -570,8 +570,6 @@ func SetDefaultCursorPageParams(pageParams *pgdb.CursorPageParams) error {
 	return nil
 }
 func (r *base) SetDefaultOffsetPageParams(pageParams *pgdb.OffsetPageParams) error {
-	var err error
-
 	switch pageParams.Order {
 	case pgdb.OrderTypeDesc:
 		var containsOrder = false
@@ -590,21 +588,17 @@ func (r *base) SetDefaultOffsetPageParams(pageParams *pgdb.OffsetPageParams) err
 		}
 	case pgdb.OrderTypeAsc:
 	default:
-		pageParams.Order, err = pgdb.OrderTypeDesc, validation.Errors{
+		pageParams.Order = pgdb.OrderTypeDesc
+		return validation.Errors{
 			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", pgdb.OrderTypeAsc, pgdb.OrderTypeDesc),
 		}
 	}
-	if err != nil {
-		return err
-	}
 
 	if pageParams.Limit > maxLimit {
-		pageParams.Limit, err = 0, validation.Errors{
+		pageParams.Limit = 0
+		return validation.Errors{
 			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
 		}
-	}
-	if err != nil {
-		return err
 	}
 
 	return nil

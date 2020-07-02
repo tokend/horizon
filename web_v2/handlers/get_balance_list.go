@@ -34,19 +34,17 @@ func GetBalanceList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var assetOwner string
-	if request.Filters.Asset == nil {
-		assetOwner, err = "", nil
-	} else {
+	if request.Filters.Asset != nil {
 		assetOwner, err = handler.getAssetOwner(*request.Filters.Asset)
-	}
-	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get asset owner", logan.F{
-			"request": request,
-		})
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
 
+		if err != nil {
+			ctx.Log(r).WithError(err).Error("failed to get asset owner", logan.F{
+				"request": request,
+			})
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+	}
 	if !isAllowed(r, w, &assetOwner) {
 		return
 	}
