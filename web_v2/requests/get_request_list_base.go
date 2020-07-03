@@ -22,6 +22,9 @@ type GetRequestsBase struct {
 	*base
 	Filters    GetRequestListBaseFilters
 	PageParams pgdb.CursorPageParams
+	Includes   struct {
+		RequestDetails bool `include:"request_details"`
+	}
 }
 
 func NewGetRequestsBase(
