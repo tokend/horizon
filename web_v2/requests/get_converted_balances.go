@@ -41,7 +41,11 @@ type GetConvertedBalances struct {
 		AssetOwner *string `filter:"asset_owner" json:"asset_owner"`
 	}
 	Includes struct {
-		AssetOwner bool `include:"asset_owner"`
+		Asset        bool `include:"asset"`
+		States       bool `include:"states"`
+		Balance      bool `include:"balance"`
+		BalanceState bool `include:"balance.state"`
+		BalanceAsset bool `include:"balance.asset"`
 	}
 	AssetCode      string
 	AccountAddress string
@@ -66,7 +70,7 @@ func NewGetConvertedBalances(r *http.Request) (*GetConvertedBalances, error) {
 		AssetCode:      assetCode,
 	}
 
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
