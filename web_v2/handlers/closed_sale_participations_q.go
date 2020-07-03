@@ -6,7 +6,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type closedParticipationsQ struct {
@@ -15,7 +15,7 @@ type closedParticipationsQ struct {
 
 func newClosedParticipationQ(request *requests.GetSaleParticipations, q history2.SaleParticipationQ, sale *history2.Sale,
 ) closedParticipationsQ {
-	q = q.FilterBySaleParams(sale.ID, sale.BaseAsset, sale.OwnerAddress).Page(*request.PageParams)
+	q = q.FilterBySaleParams(sale.ID, sale.BaseAsset, sale.OwnerAddress).Page(request.PageParams)
 
 	return closedParticipationsQ{
 		participationQ: q,

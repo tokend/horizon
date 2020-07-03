@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -13,17 +15,28 @@ var includeTypeUpdateSaleDetailsRequests = map[string]struct{}{
 }
 
 type GetUpdateSaleDetailsRequests struct {
-	*GetRequestsBase
-	Filters GetRequestListBaseFilters
+	GetRequestsBase
+	Includes struct {
+		RequestDetailsSale bool `include:"request_details.sale"`
+	}
 }
 
 func NewGetUpdateSaleDetailsRequests(r *http.Request) (request GetUpdateSaleDetailsRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		map[string]struct{}{},
 		includeTypeUpdateSaleDetailsRequests,
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

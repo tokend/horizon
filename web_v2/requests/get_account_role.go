@@ -16,7 +16,10 @@ var includeTypeAccountRoleAll = map[string]struct{}{
 // GetAccountRole - represents params to be specified by user for Get account role handler
 type GetAccountRole struct {
 	*base
-	ID uint64
+	ID       uint64
+	Includes struct {
+		Rules bool `include:"rules"`
+	}
 }
 
 // NewGetAccountRole returns new instance of GetAsset request

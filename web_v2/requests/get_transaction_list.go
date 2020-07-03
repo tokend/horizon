@@ -20,11 +20,14 @@ const (
 // GetTransactions - represents params to be specified for GetTransactions handler
 type GetTransactions struct {
 	*base
-	PageParams *pgdb.CursorPageParams
-	Filters    struct {
+	Filters struct {
 		EntryTypes  []int `filter:"ledger_entry_changes.entry_types"`
 		ChangeTypes []int `filter:"ledger_entry_changes.change_types"`
 	}
+	Includes struct {
+		LedgerEntryChanges bool `include:"ledger_entry_changes"`
+	}
+	PageParams pgdb.CursorPageParams
 }
 
 // NewGetTransactions returns the new instance of GetTransactions request
@@ -42,17 +45,19 @@ func NewGetTransactions(r *http.Request) (*GetTransactions, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
+	request := GetTransactions{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetTransactions{
-		base:       b,
-		PageParams: pageParams,
+	err = SetDefaultCursorPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

@@ -33,10 +33,9 @@ type GetSwapList struct {
 		Destination        *string `filter:"destination" json:"destination"`
 		DestinationBalance *string `filter:"destination_balance" json:"destination_balance"`
 		Asset              *string `filter:"asset" json:"asset"`
-
-		State *int32 `filter:"state" json:"state"`
+		State              *int32  `filter:"state" json:"state"`
 	}
-	PageParams *pgdb.CursorPageParams
+	PageParams pgdb.CursorPageParams
 }
 
 func NewGetSwapList(r *http.Request) (*GetSwapList, error) {
@@ -48,17 +47,19 @@ func NewGetSwapList(r *http.Request) (*GetSwapList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
+	request := GetSwapList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetSwapList{
-		base:       b,
-		PageParams: pageParams,
+	err = SetDefaultCursorPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

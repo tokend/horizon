@@ -93,19 +93,19 @@ type getCreateIssuanceRequestsHandler struct {
 func (h *getCreateIssuanceRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateIssuanceRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateIssuance))
 
-	if *request.Filters.Asset != "" {
+	if request.Filters.Asset != nil && *request.Filters.Asset != "" {
 		q = q.FilterByCreateIssuanceAsset(*request.Filters.Asset)
 	}
 
-	if *request.Filters.Receiver != "" {
+	if request.Filters.Receiver != nil && *request.Filters.Receiver != "" {
 		q = q.FilterByCreateIssuanceReceiver(*request.Filters.Receiver)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getCreateIssuanceRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateIssuanceRequestsAsset) {
 		asset, err := h.AssetsQ.GetByCode(record.Details.CreateIssuance.Asset)

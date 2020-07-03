@@ -66,11 +66,11 @@ func (h *getChangeRoleRequestsHandler) MakeAll(w http.ResponseWriter, request re
 		q = q.FilterByChangeRoleToSet(*request.Filters.AccountRole)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getChangeRoleRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeChangeRoleRequestsAccount) {
 		account, err := h.AccountsQ.GetByAddress(record.Details.ChangeRole.DestinationAccount)

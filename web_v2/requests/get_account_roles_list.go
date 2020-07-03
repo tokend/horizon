@@ -1,8 +1,11 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 var includeTypeAccountRoleListAll = map[string]struct{}{
@@ -12,7 +15,10 @@ var includeTypeAccountRoleListAll = map[string]struct{}{
 //GetAccountRoleList - represents params to be specified for Get AccountRoles handler
 type GetAccountRoleList struct {
 	*base
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		Rules bool `include:"rules"`
+	}
 }
 
 // NewGetAccountRoleList returns the new instance of GetAccountRoleList request
@@ -24,14 +30,18 @@ func NewGetAccountRoleList(r *http.Request) (*GetAccountRoleList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetAccountRoleList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetAccountRoleList{
-		base:       b,
-		PageParams: pageParams,
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
 
 	return &request, nil

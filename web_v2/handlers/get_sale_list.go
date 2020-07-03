@@ -89,14 +89,14 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 
 func applyParticipantFilter(s *requests.GetSaleList, q history2.SalesQ, offerQ core2.OffersQ,
 ) (history2.SalesQ, error) {
-	if s.SpecialFilters.Participant != nil {
+	if s.ShouldFilter(requests.FilterTypeSaleListParticipant) {
 		orderBookIDs, err := offerQ.OrderBookID().FilterByOrderBookID(-1).
-			FilterByOwnerID(*s.SpecialFilters.Participant).SelectID()
+			FilterByOwnerID(s.SpecialFilters.Participant).SelectID()
 		if err != nil {
 			return q, errors.Wrap(err, "failed to select sale ids")
 		}
 
-		q = q.FilterByParticipant(*s.SpecialFilters.Participant, orderBookIDs)
+		q = q.FilterByParticipant(s.SpecialFilters.Participant, orderBookIDs)
 	}
 
 	return q, nil

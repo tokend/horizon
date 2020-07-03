@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -21,22 +23,33 @@ var filterTypeKYCRecoveryRequests = map[string]struct{}{
 }
 
 type GetKYCRecoveryRequestsFilter struct {
-	GetRequestListBaseFilters
 	Account *string `filter:"request_details.target_account"`
 }
 
 type GetKYCRecoveryRequests struct {
-	*GetRequestsBase
-	Filters GetKYCRecoveryRequestsFilter
+	GetRequestsBase
+	Filters  GetKYCRecoveryRequestsFilter
+	Includes struct {
+		TargetAccount bool `include:"request_details.target_account"`
+	}
 }
 
 func NewGetKYCRecoveryRequests(r *http.Request) (request GetKYCRecoveryRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		filterTypeKYCRecoveryRequests,
 		includeTypeKYCRecoveryRequests,
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

@@ -16,7 +16,12 @@ var includeTypeSwapAll = map[string]struct{}{
 
 type GetSwap struct {
 	*base
-	ID int64
+	ID       int64
+	Includes struct {
+		SourceBalance      bool `include:"source_balance"`
+		DestinationBalance bool `include:"destination_balance"`
+		Asset              bool `include:"asset"`
+	}
 }
 
 func NewGetSwap(r *http.Request) (*GetSwap, error) {

@@ -2,24 +2,30 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
-type GetCreatePaymentRequestsFilter struct {
-	GetRequestListBaseFilters
-}
-
 type GetCreatePaymentRequests struct {
-	*GetRequestsBase
-	Filters GetCreatePaymentRequestsFilter
+	GetRequestsBase
 }
 
 func NewGetCreatePaymentRequests(r *http.Request) (request GetCreatePaymentRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		map[string]struct{}{},
 		map[string]struct{}{},
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

@@ -72,11 +72,11 @@ func (h *getCreatePollRequestsHandler) MakeAll(w http.ResponseWriter, request re
 		q = q.FilterByCreatePollResultProvider(*request.Filters.ResultProvider)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getCreatePollRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	return resource, nil
 }

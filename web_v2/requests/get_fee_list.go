@@ -40,6 +40,9 @@ type GetFeeList struct {
 	*base
 	Filters    GetFeeListFilters
 	PageParams *pgdb.OffsetPageParams
+	Includes   struct {
+		Asset bool `include:"asset"`
+	}
 }
 
 type GetFeeListFilters struct {
@@ -64,7 +67,7 @@ func NewGetFeeList(r *http.Request) (*GetFeeList, error) {
 
 	pageParams, err := b.getOffsetBasedPageParams()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to get page params`")
 	}
 
 	request := GetFeeList{

@@ -47,14 +47,14 @@ type getSignerRuleListHandler struct {
 
 // GetSignerRuleList returns the list of signerRules with related resources
 func (h *getSignerRuleListHandler) GetSignerRuleList(request *requests.GetSignerRuleList) (*regources.SignerRuleListResponse, error) {
-	signerRules, err := h.SignerRulesQ.Page(*request.PageParams).Select()
+	signerRules, err := h.SignerRulesQ.Page(request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get signer rule list")
 	}
 
 	response := &regources.SignerRuleListResponse{
 		Data:  make([]regources.SignerRule, 0, len(signerRules)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for _, signerRule := range signerRules {

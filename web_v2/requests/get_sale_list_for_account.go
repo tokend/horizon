@@ -1,8 +1,9 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 // GetSaleList - represents params to be specified by user for getSaleList handler
@@ -22,14 +23,16 @@ func NewGetSaleListForAccount(r *http.Request) (*GetSaleListForAccount, error) {
 		return nil, err
 	}
 
-	address, err := newAccountAddress(b, "id")
-	if err != nil {
-		return nil, err
-	}
 	pageParams, err := b.getCursorBasedPageParams()
 	if err != nil {
 		return nil, err
 	}
+
+	address, err := newAccountAddress(b, "id")
+	if err != nil {
+		return nil, err
+	}
+
 	request := GetSaleListForAccount{
 		Address: address,
 		SalesBase: SalesBase{

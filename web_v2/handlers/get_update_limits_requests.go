@@ -51,11 +51,11 @@ type getUpdateLimitsRequestsHandler struct {
 func (h *getUpdateLimitsRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetUpdateLimitsRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeUpdateLimits))
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getUpdateLimitsRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	return resource, nil
 }

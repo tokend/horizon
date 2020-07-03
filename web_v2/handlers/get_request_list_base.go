@@ -20,9 +20,9 @@ func (h *getRequestListBaseHandler) PopulateLinks(
 	response *regources.ReviewableRequestListResponse, request requests.GetRequestsBase,
 ) {
 	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+		response.Links = request.GetCursorLinks(request.PageParams, response.Data[len(response.Data)-1].ID)
 	} else {
-		response.Links = request.GetCursorLinks(*request.PageParams, "")
+		response.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 }
 
@@ -40,7 +40,7 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		return errors.Wrap(err, "Failed to get reviewable request list")
 	}
 
-	if *request.Filters.ID != 0 {
+	if request.Filters.ID != nil && *request.Filters.ID != 0 {
 		if len(records) == 0 {
 			ape.RenderErr(w, problems.NotFound())
 			return nil
@@ -90,7 +90,7 @@ func (h *getRequestListBaseHandler) PopulateResource(
 func (h *getRequestListBaseHandler) ApplyFilters(
 	request requests.GetRequestsBase, q history2.ReviewableRequestsQ,
 ) history2.ReviewableRequestsQ {
-	q = q.Page(*request.PageParams)
+	q = q.Page(request.PageParams)
 	if request.Filters.Requestor != nil {
 		q = q.FilterByRequestorAddress(*request.Filters.Requestor)
 	}

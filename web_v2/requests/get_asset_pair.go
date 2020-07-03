@@ -26,6 +26,10 @@ type GetAssetPair struct {
 
 	BaseAsset  string
 	QuoteAsset string
+	Includes   struct {
+		BaseAsset  bool `include:"base_asset"`
+		QuoteAsset bool `include:"quote_asset"`
+	}
 }
 
 // NewGetAssetPair returns new instance of GetAssetPair request

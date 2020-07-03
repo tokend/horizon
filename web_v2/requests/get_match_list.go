@@ -1,8 +1,9 @@
 package requests
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 const (
@@ -20,7 +21,6 @@ var filterTypeMatchListAll = map[string]struct{}{
 // GetMatchList represents params to be specified by user for getMatchList handler
 type GetMatchList struct {
 	*base
-
 	Filters struct {
 		BaseAsset  string `fig:"base_asset,required"`
 		QuoteAsset string `fig:"quote_asset,required"`

@@ -1,9 +1,10 @@
 package requests
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"net/http"
 )
 
 const (
@@ -55,7 +56,11 @@ type GetOfferList struct {
 		OrderBook    *int64  `filter:"order_book"`
 		IsBuy        *bool   `filter:"is_buy"`
 	}
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAssets bool `include:"quote_assets"`
+	}
 }
 
 // NewGetOfferList - returns new instance of GetOfferList
@@ -68,17 +73,19 @@ func NewGetOfferList(r *http.Request) (*GetOfferList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetOfferList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetOfferList{
-		base:       b,
-		PageParams: pageParams,
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

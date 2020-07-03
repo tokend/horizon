@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -38,29 +40,26 @@ var filterTypeRequestListAll = map[string]struct{}{
 	FilterTypeRequestListPendingTasksAnyOf:  {},
 }
 
-type GetRequestListBaseFilters struct {
-	ID                  *uint64 `filter:"id"`
-	Requestor           *string `filter:"requestor"`
-	Reviewer            *string `filter:"reviewer"`
-	State               *uint64 `filter:"state"`
-	Type                *uint64 `filter:"type"`
-	PendingTasks        *uint64 `filter:"pending_tasks"`
-	PendingTasksAnyOf   *uint64 `filter:"pending_tasks_any_of"`
-	PendingTasksNotSet  *uint64 `filter:"pending_tasks_not_set"`
-	MissingPendingTasks *uint64 `filter:"missing_pending_tasks"`
-}
 type GetRequests struct {
-	*GetRequestsBase
-	Filters GetRequestListBaseFilters
+	GetRequestsBase
 }
 
 func NewGetRequests(r *http.Request) (request GetRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		map[string]struct{}{},
 		map[string]struct{}{},
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

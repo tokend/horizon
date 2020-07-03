@@ -69,7 +69,7 @@ func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests
 		}
 	}
 
-	q := h.OrderBooksQ.Page(*request.PageParams).FilterByOrderBookID(request.ID)
+	q := h.OrderBooksQ.Page(request.PageParams).FilterByOrderBookID(request.ID)
 
 	if request.ShouldInclude(requests.DeprecatedIncludeTypeOrderBookBaseAssets) {
 		q = q.WithBaseAsset()
@@ -99,7 +99,7 @@ func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests
 
 	response := &regources.OrderBookEntryListResponse{
 		Data:  make([]regources.OrderBookEntry, 0, len(coreOrderBookEntries)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for _, coreOrderBookEntry := range coreOrderBookEntries {

@@ -30,11 +30,17 @@ const (
 //GetHistory - represents params to be specified for Get History handler
 type GetHistory struct {
 	*base
-	PageParams *pgdb.CursorPageParams
+	PageParams pgdb.CursorPageParams
 	Filters    struct {
 		Account *string `filter:"account"`
 		Balance *string `filter:"balance"`
 		Asset   *string `filter:"asset"`
+	}
+	Includes struct {
+		Operation        bool `include:"operation"`
+		Effect           bool `include:"effect"`
+		OperationDetails bool `include:"operation.details"`
+		Asset            bool `include:"asset"`
 	}
 }
 
@@ -57,17 +63,19 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
+	request := GetHistory{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetHistory{
-		base:       b,
-		PageParams: pageParams,
+	err = SetDefaultCursorPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

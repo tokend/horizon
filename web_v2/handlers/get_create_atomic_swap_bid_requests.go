@@ -84,12 +84,12 @@ func (h *getCreateAtomicSwapBidRequestsHandler) MakeAll(w http.ResponseWriter, r
 		q = q.FilterByAtomicSwapAskID(*request.Filters.AskID)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getCreateAtomicSwapBidRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest,
 ) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateAtomicSwapBidRequestsQuoteAsset) {
 		bid := record.Details.CreateAtomicSwapBid

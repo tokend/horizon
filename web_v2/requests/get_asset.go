@@ -14,7 +14,10 @@ var includeTypeAssetAll = map[string]struct{}{
 // GetAsset - represents params to be specified by user for Get Asset handler
 type GetAsset struct {
 	*base
-	Code string
+	Code     string
+	Includes struct {
+		Owner bool `include:"owner"`
+	}
 }
 
 // NewGetAsset returns new instance of GetAsset request

@@ -116,7 +116,7 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 
 func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 	q history2.ParticipantEffectsQ) history2.ParticipantEffectsQ {
-	q = q.WithAccount().WithBalance().Page(*request.PageParams)
+	q = q.WithAccount().WithBalance().Page(request.PageParams)
 	if request.ShouldInclude(requests.IncludeTypeHistoryOperation) {
 		q = q.WithOperation()
 	}
@@ -152,7 +152,7 @@ func (h *getHistory) SelectAndPopulate(
 	}
 
 	if len(effects) == 0 {
-		result.Links = request.GetCursorLinks(*request.PageParams, "")
+		result.Links = request.GetCursorLinks(request.PageParams, "")
 		return result, nil
 	}
 
@@ -194,7 +194,7 @@ func (h *getHistory) SelectAndPopulate(
 		result.Data = append(result.Data, effect)
 	}
 
-	result.Links = request.GetCursorLinks(*request.PageParams, result.Data[len(result.Data)-1].ID)
+	result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
 
 	return result, nil
 }

@@ -39,7 +39,13 @@ type GetAtomicSwapAskList struct {
 		BaseAsset   []string `filter:"base_asset"`
 		QuoteAssets []string `filter:"quote_assets"`
 	}
-	PageParams *pgdb.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		BaseBalance bool `include:"base_balance"`
+		Owner       bool `include:"owner"`
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAssets bool `include:"quote_assets"`
+	}
 }
 
 // NewGetAtomicSwapAskList returns new instance of GetAtomicSwapAskList request
@@ -57,17 +63,19 @@ func NewGetAtomicSwapAskList(r *http.Request) (*GetAtomicSwapAskList, error) {
 		b.include[IncludeTypeAskBaseBalance] = struct{}{}
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetAtomicSwapAskList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetAtomicSwapAskList{
-		base:       b,
-		PageParams: pageParams,
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
 	}
-
-	err = urlval.Decode(r.URL.Query(), &request.Filters)
 
 	return &request, nil
 }

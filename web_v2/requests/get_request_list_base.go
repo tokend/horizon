@@ -4,21 +4,34 @@ import (
 	"net/http"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/distributed_lab/urlval"
 )
+
+type GetRequestListBaseFilters struct {
+	ID                  *uint64 `filter:"id"`
+	Requestor           *string `filter:"requestor"`
+	Reviewer            *string `filter:"reviewer"`
+	State               *uint64 `filter:"state"`
+	Type                *uint64 `filter:"type"`
+	PendingTasks        *uint64 `filter:"pending_tasks"`
+	PendingTasksAnyOf   *uint64 `filter:"pending_tasks_any_of"`
+	PendingTasksNotSet  *uint64 `filter:"pending_tasks_not_set"`
+	MissingPendingTasks *uint64 `filter:"missing_pending_tasks"`
+}
 
 type GetRequestsBase struct {
 	*base
 	Filters    GetRequestListBaseFilters
-	PageParams *pgdb.CursorPageParams
+	PageParams pgdb.CursorPageParams
+	Includes   struct {
+		RequestDetails bool `include:"request_details"`
+	}
 }
 
 func NewGetRequestsBase(
 	r *http.Request,
-	filterDst interface{},
 	filters map[string]struct{},
 	includes map[string]struct{},
-) (*GetRequestsBase, error) {
+) (GetRequestsBase, error) {
 
 	// merge filters
 	mergedFilters := map[string]struct{}{}
@@ -37,33 +50,30 @@ func NewGetRequestsBase(
 		mergedIncludes[k] = struct{}{}
 	}
 
-	b, err := newBase(r, baseOpts{
+	base, err := newBase(r, baseOpts{
 		supportedFilters:  mergedFilters,
 		supportedIncludes: mergedIncludes,
 	})
+	request := GetRequestsBase{base: base}
 	if err != nil {
-		return nil, err
+		return request, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
+	return request, nil
+}
+func PopulateRequest(requestsBase *GetRequestsBase) error {
+	var err error
+
+	err = SetDefaultCursorPageParams(&requestsBase.PageParams)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	err = urlval.Decode(r.URL.Query(), filterDst)
-
-	var baseFilters GetRequestListBaseFilters
-	err = urlval.Decode(r.URL.Query(), &baseFilters)
-
-	ID, err := b.getUint64ID()
-	baseFilters.ID = &ID
+	ID, err := requestsBase.base.getUint64ID()
+	requestsBase.Filters.ID = &ID
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &GetRequestsBase{
-		base:       b,
-		Filters:    baseFilters,
-		PageParams: pageParams,
-	}, nil
+	return nil
 }

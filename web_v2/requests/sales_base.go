@@ -81,4 +81,9 @@ type SalesBase struct {
 		MaxSoftCap   regources.Amount `json:"max_soft_cap"`
 		IDs          []uint64         `json:"ids" fig:"ids"`
 	}
+	Includes struct {
+		BaseAsset         bool `include:"base_asset"`
+		QuoteAssets       bool `include:"quote_assets"`
+		DefaultQuoteAsset bool `include:"default_quote_asset"`
+	}
 }
