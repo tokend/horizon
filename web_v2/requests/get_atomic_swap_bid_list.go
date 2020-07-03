@@ -40,6 +40,12 @@ type GetAtomicSwapAskList struct {
 		QuoteAssets []string `filter:"quote_assets"`
 	}
 	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		BaseBalance bool `include:"base_balance"`
+		Owner       bool `include:"owner"`
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAssets bool `include:"quote_assets"`
+	}
 }
 
 // NewGetAtomicSwapAskList returns new instance of GetAtomicSwapAskList request

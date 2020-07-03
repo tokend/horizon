@@ -46,7 +46,7 @@ type getMatchListHandler struct {
 
 // GetMatchList returns list of matches with related resources
 func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*regources.MatchListResponse, error) {
-	q := h.MatchQ.Page(request.PageParams).FilterByAssetPair(request.Filters.BaseAsset, request.Filters.QuoteAsset)
+	q := h.MatchQ.Page(*request.PageParams).FilterByAssetPair(request.Filters.BaseAsset, request.Filters.QuoteAsset)
 
 	coreMatches, err := q.Select()
 	if err != nil {
@@ -62,9 +62,9 @@ func (h *getMatchListHandler) GetMatchList(request *requests.GetMatchList) (*reg
 	}
 
 	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(request.PageParams, response.Data[len(response.Data)-1].ID)
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
 	} else {
-		response.Links = request.GetCursorLinks(request.PageParams, "")
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
 	}
 
 	return &response, nil
