@@ -69,14 +69,14 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 
 	q = applySaleIncludes(request.SalesBase, q)
 
-	historySales, err := q.Page(request.PageParams).Select()
+	historySales, err := q.Page(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sale list")
 	}
 
 	response := &regources.SaleListResponse{
 		Data:  make([]regources.Sale, 0, len(historySales)),
-		Links: request.GetOffsetLinks(request.PageParams),
+		Links: request.GetOffsetLinks(*request.PageParams),
 	}
 
 	err = h.populateResponse(historySales, request.SalesBase, response)
@@ -89,14 +89,14 @@ func (h *getSaleListHandler) GetSaleList(request *requests.GetSaleList) (*regour
 
 func applyParticipantFilter(s *requests.GetSaleList, q history2.SalesQ, offerQ core2.OffersQ,
 ) (history2.SalesQ, error) {
-	if s.SpecialFilters.Participant != nil {
+	if s.ShouldFilter(requests.FilterTypeSaleListParticipant) {
 		orderBookIDs, err := offerQ.OrderBookID().FilterByOrderBookID(-1).
-			FilterByOwnerID(*s.SpecialFilters.Participant).SelectID()
+			FilterByOwnerID(s.SpecialFilters.Participant).SelectID()
 		if err != nil {
 			return q, errors.Wrap(err, "failed to select sale ids")
 		}
 
-		q = q.FilterByParticipant(*s.SpecialFilters.Participant, orderBookIDs)
+		q = q.FilterByParticipant(s.SpecialFilters.Participant, orderBookIDs)
 	}
 
 	return q, nil

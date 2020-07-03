@@ -8,10 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/distributed_lab/urlval"
-
 	"github.com/spf13/cast"
+	"gitlab.com/distributed_lab/kit/pgdb"
 
 	"gitlab.com/tokend/go/amount"
 
@@ -334,36 +332,26 @@ func (r *base) getIncludes(supportedIncludes map[string]struct{}) (map[string]st
 }
 
 func (r *base) getOffsetBasedPageParams() (*pgdb.OffsetPageParams, error) {
-	var pageParams pgdb.OffsetPageParams
-	err := urlval.Decode(r.request.URL.Query(), &pageParams)
-
-	switch pageParams.Order {
-	case pgdb.OrderTypeAsc, pgdb.OrderTypeDesc:
-		err = nil
-	case "":
-		pageParams.Order, err = pgdb.OrderTypeAsc, nil
-	default:
-		pageParams.Order, err = pgdb.OrderTypeDesc, validation.Errors{
-			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", pgdb.OrderTypeAsc, pgdb.OrderTypeDesc),
-		}
-	}
+	limit, err := r.getLimit(defaultLimit, maxLimit)
 	if err != nil {
 		return nil, err
 	}
 
-	if pageParams.Limit == 0 {
-		pageParams.Limit = defaultLimit
-	}
-	if pageParams.Limit > maxLimit {
-		pageParams.Limit, err = 0, validation.Errors{
-			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
-		}
-	}
+	pageNumber, err := r.getPageNumber()
 	if err != nil {
 		return nil, err
 	}
 
-	return &pageParams, nil
+	order, err := r.getOrder()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pgdb.OffsetPageParams{
+		Order:      order,
+		Limit:      limit,
+		PageNumber: pageNumber,
+	}, nil
 }
 
 func (r *base) getCursorBasedPageParams() (*pgdb.CursorPageParams, error) {
