@@ -3,8 +3,6 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/distributed_lab/urlval"
-
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -41,7 +39,7 @@ var filterTypeFeeListAll = map[string]struct{}{
 type GetFeeList struct {
 	*base
 	Filters    GetFeeListFilters
-	PageParams pgdb.OffsetPageParams
+	PageParams *pgdb.OffsetPageParams
 	Includes   struct {
 		Asset bool `include:"asset"`
 	}
@@ -67,17 +65,14 @@ func NewGetFeeList(r *http.Request) (*GetFeeList, error) {
 		return nil, err
 	}
 
-	request := GetFeeList{
-		base: b,
-	}
-	err = urlval.Decode(r.URL.Query(), &request)
+	pageParams, err := b.getOffsetBasedPageParams()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to get page params`")
 	}
 
-	err = b.SetDefaultOffsetPageParams(&request.PageParams)
-	if err != nil {
-		return nil, err
+	request := GetFeeList{
+		base:       b,
+		PageParams: pageParams,
 	}
 
 	err = b.populateFilters(&request.Filters)
