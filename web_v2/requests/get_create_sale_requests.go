@@ -31,15 +31,15 @@ var includeTypeCreateSaleRequests = map[string]struct{}{
 type GetCreateSaleRequestsFilter struct {
 	BaseAsset         *string `filter:"request_details.base_asset"`
 	DefaultQuoteAsset *string `filter:"request_details.default_quote_asset"`
-	QuoteAsset        *string `filter:"request_details.quote_assets"`
 }
 
 type GetCreateSaleRequests struct {
 	GetRequestsBase
 	Filters  GetCreateSaleRequestsFilter
 	Includes struct {
-		RequestDetailsBaseBalance bool `include:"request_details.base_balance"`
-		RequestDetailsQuoteAssets bool `include:"request_details.quote_assets"`
+		BaseAsset         bool `include:"request_details.base_asset"`
+		DefaultQuoteAsset bool `include:"request_details.default_quote_asset"`
+		QuoteAssets       bool `include:"request_details.quote_assets"`
 	}
 }
 

@@ -367,41 +367,30 @@ func (r *base) getOffsetBasedPageParams() (*pgdb.OffsetPageParams, error) {
 }
 
 func (r *base) getCursorBasedPageParams() (*pgdb.CursorPageParams, error) {
-	var pageParams pgdb.CursorPageParams
-	err := urlval.Decode(r.request.URL.Query(), &pageParams)
-
-	switch pageParams.Order {
-	case pgdb.OrderTypeAsc, pgdb.OrderTypeDesc:
-		err = nil
-	case "":
-		pageParams.Order, err = pgdb.OrderTypeAsc, nil
-	default:
-		pageParams.Order, err = pgdb.OrderTypeDesc, validation.Errors{
-			pageParamOrder: fmt.Errorf("allowed order types: %s, %s", pgdb.OrderTypeAsc, pgdb.OrderTypeDesc),
-		}
-	}
+	limit, err := r.getLimit(defaultLimit, maxLimit)
 	if err != nil {
 		return nil, err
 	}
 
-	if pageParams.Limit == 0 {
-		pageParams.Limit = defaultLimit
-	}
-	if pageParams.Limit > maxLimit {
-		pageParams.Limit, err = 0, validation.Errors{
-			pageParamLimit: fmt.Errorf("limit must not exceed %d", maxLimit),
-		}
-
-	}
+	order, err := r.getOrder()
 	if err != nil {
 		return nil, err
 	}
 
-	if pageParams.Order == pgdb.OrderTypeDesc && pageParams.Cursor == 0 {
-		pageParams.Cursor = math.MaxInt64
+	cursor, err := r.getCursor()
+	if err != nil {
+		return nil, err
 	}
 
-	return &pageParams, nil
+	if order == pgdb.OrderTypeDesc && cursor == 0 {
+		cursor = math.MaxInt64
+	}
+
+	return &pgdb.CursorPageParams{
+		Limit:  limit,
+		Order:  order,
+		Cursor: cursor,
+	}, nil
 }
 func Invert(o string) string {
 

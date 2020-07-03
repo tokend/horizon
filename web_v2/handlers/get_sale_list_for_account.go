@@ -64,7 +64,7 @@ func (h *getSaleListForAccountHandler) GetSaleListForAccount(request *requests.G
 	q := applySaleFilters(request.SalesBase, h.SalesQ).Whitelisted(request.Address)
 	q = applySaleIncludes(request.SalesBase, q)
 
-	historySales, err := q.CursorPage(request.PageParams).Select()
+	historySales, err := q.CursorPage(*request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get sales list")
 	}
@@ -86,8 +86,8 @@ func (h *getSaleListForAccountHandler) populateLinks(
 	response *regources.SaleListResponse, request *requests.GetSaleListForAccount,
 ) {
 	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(request.PageParams, response.Data[len(response.Data)-1].ID)
+		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
 	} else {
-		response.Links = request.GetCursorLinks(request.PageParams, "")
+		response.Links = request.GetCursorLinks(*request.PageParams, "")
 	}
 }

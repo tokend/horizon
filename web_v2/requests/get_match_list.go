@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -27,7 +26,7 @@ type GetMatchList struct {
 		QuoteAsset string `fig:"quote_asset,required"`
 	}
 
-	PageParams pgdb.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
 
 // NewGetMatchList - returns new instance of GetMatchList
@@ -39,16 +38,17 @@ func NewGetMatchList(r *http.Request) (*GetMatchList, error) {
 		return nil, err
 	}
 
-	request := GetMatchList{
-		base: b,
-	}
-
-	err = urlval.Decode(r.URL.Query(), &request)
+	pageParams, err := b.getCursorBasedPageParams()
 	if err != nil {
 		return nil, err
 	}
 
-	err = SetDefaultCursorPageParams(&request.PageParams)
+	request := GetMatchList{
+		base:       b,
+		PageParams: pageParams,
+	}
+
+	err = b.populateFilters(&request.Filters)
 	if err != nil {
 		return nil, err
 	}

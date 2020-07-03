@@ -3,8 +3,6 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/distributed_lab/urlval"
-
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
@@ -12,7 +10,7 @@ import (
 type GetSaleListForAccount struct {
 	SalesBase
 	Address    string
-	PageParams pgdb.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
 
 // NewGetSaleListForAccount returns new instance of GetSaleListForAccount request
@@ -21,6 +19,11 @@ func NewGetSaleListForAccount(r *http.Request) (*GetSaleListForAccount, error) {
 		supportedIncludes: includeTypeSaleListAll,
 		supportedFilters:  filterTypeSaleListAll,
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	pageParams, err := b.getCursorBasedPageParams()
 	if err != nil {
 		return nil, err
 	}
@@ -35,16 +38,7 @@ func NewGetSaleListForAccount(r *http.Request) (*GetSaleListForAccount, error) {
 		SalesBase: SalesBase{
 			base: b,
 		},
-	}
-
-	err = urlval.Decode(r.URL.Query(), &request)
-	if err != nil {
-		return nil, err
-	}
-
-	err = SetDefaultCursorPageParams(&request.PageParams)
-	if err != nil {
-		return nil, err
+		PageParams: pageParams,
 	}
 
 	err = b.populateFilters(&request.Filters)
