@@ -1,4 +1,4 @@
-// revision: 09ad3e3ae73b93f67b9665a361dee8569d91bdc9
+// revision: b693339a65fcb188766e4ef86a32efa4b0b6f3bf
 // branch:   feature/manage-data
 // Package xdr is generated from:
 //
@@ -36990,34 +36990,41 @@ type RemoveDataOp struct {
 //        //: Data successfully removed
 //        SUCCESS = 0,
 //        //: Entry with provided ID does not exist
-//        NOT_FOUND = -1
+//        NOT_FOUND = -1,
+//        //: Only owner or admin can remove data.
+//        NOT_AUTHORIZED = -2
 //    };
 //
 type RemoveDataResultCode int32
 
 const (
-	RemoveDataResultCodeSuccess  RemoveDataResultCode = 0
-	RemoveDataResultCodeNotFound RemoveDataResultCode = -1
+	RemoveDataResultCodeSuccess       RemoveDataResultCode = 0
+	RemoveDataResultCodeNotFound      RemoveDataResultCode = -1
+	RemoveDataResultCodeNotAuthorized RemoveDataResultCode = -2
 )
 
 var RemoveDataResultCodeAll = []RemoveDataResultCode{
 	RemoveDataResultCodeSuccess,
 	RemoveDataResultCodeNotFound,
+	RemoveDataResultCodeNotAuthorized,
 }
 
 var removeDataResultCodeMap = map[int32]string{
 	0:  "RemoveDataResultCodeSuccess",
 	-1: "RemoveDataResultCodeNotFound",
+	-2: "RemoveDataResultCodeNotAuthorized",
 }
 
 var removeDataResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "not_found",
+	-2: "not_authorized",
 }
 
 var removeDataResultCodeRevMap = map[string]int32{
-	"RemoveDataResultCodeSuccess":  0,
-	"RemoveDataResultCodeNotFound": -1,
+	"RemoveDataResultCodeSuccess":       0,
+	"RemoveDataResultCodeNotFound":      -1,
+	"RemoveDataResultCodeNotAuthorized": -2,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -39997,39 +40004,46 @@ type UpdateDataOp struct {
 //        //: `value` must be in a valid JSON format
 //        INVALID_DATA = -1,
 //        //: Entry with provided ID does not exist
-//        NOT_FOUND = -2
+//        NOT_FOUND = -2,
+//        //: Only owner or admin can update data entry
+//        NOT_AUTHORIZED = -3
 //    };
 //
 type UpdateDataResultCode int32
 
 const (
-	UpdateDataResultCodeSuccess     UpdateDataResultCode = 0
-	UpdateDataResultCodeInvalidData UpdateDataResultCode = -1
-	UpdateDataResultCodeNotFound    UpdateDataResultCode = -2
+	UpdateDataResultCodeSuccess       UpdateDataResultCode = 0
+	UpdateDataResultCodeInvalidData   UpdateDataResultCode = -1
+	UpdateDataResultCodeNotFound      UpdateDataResultCode = -2
+	UpdateDataResultCodeNotAuthorized UpdateDataResultCode = -3
 )
 
 var UpdateDataResultCodeAll = []UpdateDataResultCode{
 	UpdateDataResultCodeSuccess,
 	UpdateDataResultCodeInvalidData,
 	UpdateDataResultCodeNotFound,
+	UpdateDataResultCodeNotAuthorized,
 }
 
 var updateDataResultCodeMap = map[int32]string{
 	0:  "UpdateDataResultCodeSuccess",
 	-1: "UpdateDataResultCodeInvalidData",
 	-2: "UpdateDataResultCodeNotFound",
+	-3: "UpdateDataResultCodeNotAuthorized",
 }
 
 var updateDataResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "invalid_data",
 	-2: "not_found",
+	-3: "not_authorized",
 }
 
 var updateDataResultCodeRevMap = map[string]int32{
-	"UpdateDataResultCodeSuccess":     0,
-	"UpdateDataResultCodeInvalidData": -1,
-	"UpdateDataResultCodeNotFound":    -2,
+	"UpdateDataResultCodeSuccess":       0,
+	"UpdateDataResultCodeInvalidData":   -1,
+	"UpdateDataResultCodeNotFound":      -2,
+	"UpdateDataResultCodeNotAuthorized": -3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -53349,4 +53363,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "09ad3e3ae73b93f67b9665a361dee8569d91bdc9"
+var Revision = "b693339a65fcb188766e4ef86a32efa4b0b6f3bf"
