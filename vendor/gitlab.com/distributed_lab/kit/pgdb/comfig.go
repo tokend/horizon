@@ -2,6 +2,8 @@ package pgdb
 
 import (
 	"database/sql"
+	"github.com/lib/pq"
+	"time"
 
 	"github.com/pkg/errors"
 	"gitlab.com/distributed_lab/figure"
@@ -12,6 +14,7 @@ import (
 type Databaser interface {
 	DB() *DB
 	RawDB() *sql.DB
+	NewListener() *pq.Listener
 }
 
 type databaser struct {
@@ -25,23 +28,34 @@ func NewDatabaser(getter kv.Getter) Databaser {
 	}
 }
 
+type databaserCfg struct {
+	URL                      string        `fig:"url,required"`
+	MaxOpenConnections       int           `fig:"max_open_connection"`
+	MaxIdleConnections       int           `fig:"max_idle_connections"`
+	ListenerMinRetryDuration time.Duration `fig:"listener_min_retry_duration"`
+	ListenerMaxRetryDuration time.Duration `fig:"listener_max_retry_duration"`
+}
+
+func (d *databaser) readConfig() databaserCfg {
+	config := databaserCfg{
+		MaxOpenConnections:       12,
+		MaxIdleConnections:       12,
+		ListenerMinRetryDuration: time.Second,
+		ListenerMaxRetryDuration: time.Minute,
+	}
+	err := figure.Out(&config).
+		From(kv.MustGetStringMap(d.getter, "db")).
+		Please()
+	if err != nil {
+		panic(errors.Wrap(err, "failed to figure out"))
+	}
+
+	return config
+}
+
 func (d *databaser) DB() *DB {
 	return d.once.Do(func() interface{} {
-		var config = struct {
-			URL                string `fig:"url,required"`
-			MaxOpenConnections int    `fig:"max_open_connection"`
-			MaxIdleConnections int    `fig:"max_idle_connections"`
-		}{
-			MaxOpenConnections: 12,
-			MaxIdleConnections: 12,
-		}
-
-		err := figure.Out(&config).
-			From(kv.MustGetStringMap(d.getter, "db")).
-			Please()
-		if err != nil {
-			panic(errors.Wrap(err, "failed to figure out"))
-		}
+		config := d.readConfig()
 
 		db, err := Open(Opts{
 			URL:                config.URL,
@@ -54,6 +68,13 @@ func (d *databaser) DB() *DB {
 
 		return db
 	}).(*DB)
+}
+
+//NewListener - returns new listener for notify events
+func (d *databaser) NewListener() *pq.Listener {
+	config := d.readConfig()
+	listener := pq.NewListener(config.URL, config.ListenerMinRetryDuration, config.ListenerMaxRetryDuration, nil)
+	return listener
 }
 
 func (d *databaser) RawDB() *sql.DB {

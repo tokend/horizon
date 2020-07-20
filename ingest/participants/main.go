@@ -4,6 +4,7 @@ package participants
 
 import (
 	"fmt"
+
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
@@ -206,6 +207,9 @@ func ForOperation(
 	case xdr.OperationTypeCreateManageOfferRequest:
 	case xdr.OperationTypeOpenSwap:
 	case xdr.OperationTypeCloseSwap:
+	case xdr.OperationTypeCreateData:
+	case xdr.OperationTypeRemoveData:
+	case xdr.OperationTypeUpdateData:
 	case xdr.OperationTypeCreateRedemptionRequest:
 		// TODO add participant
 	default:

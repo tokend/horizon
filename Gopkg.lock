@@ -10,12 +10,12 @@
   revision = "75cd24fc2f2c2a2088577d12123ddee5f54e0675"
 
 [[projects]]
-  digest = "1:971d42403bff1a4ce6e2577791ce6b780cced85e655b31a9f9b9ce28d08c628e"
+  digest = "1:e92a0c83f31f4a93377d3bc10ca9368e2b8ce1a6a6f94933f59f820fc9576417"
   name = "github.com/Masterminds/squirrel"
   packages = ["."]
   pruneopts = "UT"
-  revision = "59c11a6b2dd511b675939075e5d34d461a4f9f6d"
-  version = "v1.2.0"
+  revision = "ae9fdddf160b6c3f6dbd9c38405a06640e3633b3"
+  version = "v1.4.0"
 
 [[projects]]
   digest = "1:5568509a79e74730b08af05eb7397bd770cd16e7a746e58dbb7e5277e698664a"
@@ -74,15 +74,15 @@
   version = "v0.2.0"
 
 [[projects]]
-  digest = "1:28efe82d9e2119e4f9145c9c8cde06abe255539fc3dd96193d9edf0155979913"
+  digest = "1:278f38b03fd0a30290fd1db6dc14eda3a176229cee57f87f9cfa15fbe71049b3"
   name = "github.com/go-chi/chi"
   packages = [
     ".",
     "middleware",
   ]
   pruneopts = "UT"
-  revision = "1fafc30c1d76663042337e150b02fbacdce3466c"
-  version = "v4.1.1"
+  revision = "86f9a6e7ce9bf453eaa339b51f88f586edbccbc1"
+  version = "v4.1.2"
 
 [[projects]]
   branch = "master"
@@ -197,12 +197,12 @@
   revision = "b4936e06046bbecbb94cae9c18127ebe510a2cb9"
 
 [[projects]]
-  digest = "1:31e761d97c76151dde79e9d28964a812c46efc5baee4085b86f68f0c654450de"
+  digest = "1:09cb61dc19af93deae01587e2fdb1c081e0bf48f1a5ad5fa24f48750dc57dce8"
   name = "github.com/konsorten/go-windows-terminal-sequences"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
-  version = "v1.0.2"
+  revision = "edb144dfd453055e1e49a3d8b410a660b5a87613"
+  version = "v1.0.3"
 
 [[projects]]
   branch = "master"
@@ -229,7 +229,7 @@
   version = "v1.0"
 
 [[projects]]
-  digest = "1:05de5942f7d2b280d098f18b7ebc72fdf1587d01d13979ebb413acc833cf3245"
+  digest = "1:53fdcc6cb976299b987ca544ee5f5cea5a2348051d9211604c96dfe3ba788ac7"
   name = "github.com/lib/pq"
   packages = [
     ".",
@@ -237,8 +237,8 @@
     "scram",
   ]
   pruneopts = "UT"
-  revision = "11720195feb4140252d89ec87e6ec66810ca708b"
-  version = "v1.4.0"
+  revision = "8ae9eeaa02388a26cd5586023a0c4166c021a83d"
+  version = "v1.7.0"
 
 [[projects]]
   digest = "1:bbf535fd0728dc8d9152d47aaec807f072f643ddd580f86e2181e98c3ba3fd7c"
@@ -335,16 +335,16 @@
   revision = "27ebce5b74e63a71c82d93a37f5ce0a8e1e42714"
 
 [[projects]]
-  digest = "1:0599141a8403114d34f1e546604ad6c5361b70dfa80e80c635f438cdbf71b43a"
+  digest = "1:05eebdd5727fea23083fce0d98d307d70c86baed644178e81608aaa9f09ea469"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   pruneopts = "UT"
-  revision = "d417be0fe654de640a82370515129985b407c7e3"
-  version = "v1.5.0"
+  revision = "60c74ad9be0d874af0ab0daef6ab07c5c5911f0d"
+  version = "v1.6.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:5ba9adb2389dd55bdb3e6216146e247c90f5f560af428f609531e9704d4d916a"
+  digest = "1:83342ca78b0406ee009a2db4f69e454466ce988ae18b26c30b2e90b02521e966"
   name = "github.com/smartystreets/assertions"
   packages = [
     ".",
@@ -353,7 +353,7 @@
     "internal/oglematchers",
   ]
   pruneopts = "UT"
-  revision = "f44b269b51f6f75a2452c14c4ee76c114ad92528"
+  revision = "23e1c44ddc4aa11cf704387b16f3f11bbf5842d8"
 
 [[projects]]
   digest = "1:483aa658b8b58e357a07ebdfcbcb0202b46f0c0f91e9b63c8807f7d4f5cd30f9"
@@ -478,7 +478,7 @@
   version = "v2.1.0"
 
 [[projects]]
-  digest = "1:4f2f0b805f1f61a7d7514c8666eabbe171139460b111122ea8f6f9291c3817c8"
+  digest = "1:e27c754a706629b74c612caefdda213a3d93ea7989124e81dc3604011796edea"
   name = "gitlab.com/distributed_lab/kit"
   packages = [
     "comfig",
@@ -492,8 +492,8 @@
     "pgdb",
   ]
   pruneopts = "UT"
-  revision = "2c6bb3ef4806a7296bddcbbc61de85aa46c193cf"
-  version = "v1.7.0"
+  revision = "2e739507df849fd35767539cf160f3f689be229d"
+  version = "v1.8.1"
 
 [[projects]]
   digest = "1:b27e01e69f4ceec735b0130cc2b7d3785768c736c018faae3dbeb49a0cb41f24"
@@ -545,8 +545,8 @@
   revision = "ebd58a4201e13c7dbbdbb587271cdee3c2b72f51"
 
 [[projects]]
-  branch = "feature/movements-rr-details"
-  digest = "1:66de5c4cc3294a34d4c76031ad211127d6e7cb2183c85f978b24dd574b02293e"
+  branch = "feature/manage-data"
+  digest = "1:16c176ca349858095af1434493ee3d6a79e5af193f9f5b834df036c22e5dca67"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -565,7 +565,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "fcf1884230410216209dffb68fbc97ae198c82b3"
+  revision = "ca8a0eb41445abe2c0f84ff8350efecce17875f0"
 
 [[projects]]
   branch = "master"
@@ -581,15 +581,15 @@
   revision = "c148f15306edac6a1ad994d8b218e8ae61a0b2c1"
 
 [[projects]]
-  branch = "master"
-  digest = "1:cbaa66ff55298c6dffd85ef7ec71522eece7cd0ed5f4f6b4db436bb9800ddd89"
+  branch = "feature/manage-data"
+  digest = "1:6e19552cdf67c63f1a58b7e8924e09b0112021deef7d9d1912ea63ba41d18f6a"
   name = "gitlab.com/tokend/regources"
   packages = [
     ".",
     "generated",
   ]
   pruneopts = "UT"
-  revision = "cc06bfd28bfc9755e04c05543472d1fb4b8c6e26"
+  revision = "8939bc663bf61b605fe130047bbf3d10568369d9"
 
 [[projects]]
   branch = "master"
