@@ -42,6 +42,10 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isAllowed(r, w, &result.Owner) {
+		return
+	}
+
 	response := regources.DataResponse{
 		Data: resources.NewData(*result),
 	}

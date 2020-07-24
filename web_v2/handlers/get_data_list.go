@@ -30,6 +30,16 @@ func GetDataList(w http.ResponseWriter, r *http.Request) {
 		Log:   ctx.Log(r),
 	}
 
+	dataOwners := []*string{}
+
+	if request.ShouldFilter(requests.FilterTypeDataListOwner) {
+		dataOwners = append(dataOwners, &request.Filters.Owner)
+	}
+
+	if !isAllowed(r, w, dataOwners...) {
+		return
+	}
+
 	response, err := handler.GetDataList(request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get data")
