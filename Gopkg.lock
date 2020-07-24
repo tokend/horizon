@@ -545,8 +545,8 @@
   revision = "ebd58a4201e13c7dbbdbb587271cdee3c2b72f51"
 
 [[projects]]
-  branch = "feature/manage-data"
-  digest = "1:16c176ca349858095af1434493ee3d6a79e5af193f9f5b834df036c22e5dca67"
+  branch = "master"
+  digest = "1:29de98507d7d035f763ed45cd562fd95c305b35d2b6d69e61a31f07f4f93bd85"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -565,7 +565,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "ca8a0eb41445abe2c0f84ff8350efecce17875f0"
+  revision = "8ac07c8af8c5032b9981e0f2e1071476fbca335e"
 
 [[projects]]
   branch = "master"

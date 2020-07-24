@@ -1,5 +1,5 @@
-// revision: b693339a65fcb188766e4ef86a32efa4b0b6f3bf
-// branch:   feature/manage-data
+// revision: d639694e4cdb49f22866a506b190bd92f3e62b84
+// branch:   master
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -43179,7 +43179,8 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        REMOVE_FOR_OTHER = 20,
 //        EXCHANGE = 21,
 //        RECEIVE_REDEMPTION = 22,
-//        UPDATE = 23
+//        UPDATE = 23,
+//        UPDATE_FOR_OTHER = 24
 //    };
 //
 type AccountRuleAction int32
@@ -43208,6 +43209,7 @@ const (
 	AccountRuleActionExchange                AccountRuleAction = 21
 	AccountRuleActionReceiveRedemption       AccountRuleAction = 22
 	AccountRuleActionUpdate                  AccountRuleAction = 23
+	AccountRuleActionUpdateForOther          AccountRuleAction = 24
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -43234,6 +43236,7 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionExchange,
 	AccountRuleActionReceiveRedemption,
 	AccountRuleActionUpdate,
+	AccountRuleActionUpdateForOther,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -43260,6 +43263,7 @@ var accountRuleActionMap = map[int32]string{
 	21: "AccountRuleActionExchange",
 	22: "AccountRuleActionReceiveRedemption",
 	23: "AccountRuleActionUpdate",
+	24: "AccountRuleActionUpdateForOther",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -43286,6 +43290,7 @@ var accountRuleActionShortMap = map[int32]string{
 	21: "exchange",
 	22: "receive_redemption",
 	23: "update",
+	24: "update_for_other",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -43312,6 +43317,7 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionExchange":                21,
 	"AccountRuleActionReceiveRedemption":       22,
 	"AccountRuleActionUpdate":                  23,
+	"AccountRuleActionUpdateForOther":          24,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -44517,7 +44523,8 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CREATE_WITH_TASKS = 17,
 //        CREATE_FOR_OTHER_WITH_TASKS = 18,
 //        REMOVE_FOR_OTHER = 19,
-//        EXCHANGE = 20
+//        EXCHANGE = 20,
+//        UPDATE_FOR_OTHER = 21
 //    };
 //
 type SignerRuleAction int32
@@ -44543,6 +44550,7 @@ const (
 	SignerRuleActionCreateForOtherWithTasks SignerRuleAction = 18
 	SignerRuleActionRemoveForOther          SignerRuleAction = 19
 	SignerRuleActionExchange                SignerRuleAction = 20
+	SignerRuleActionUpdateForOther          SignerRuleAction = 21
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -44566,6 +44574,7 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionCreateForOtherWithTasks,
 	SignerRuleActionRemoveForOther,
 	SignerRuleActionExchange,
+	SignerRuleActionUpdateForOther,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -44589,6 +44598,7 @@ var signerRuleActionMap = map[int32]string{
 	18: "SignerRuleActionCreateForOtherWithTasks",
 	19: "SignerRuleActionRemoveForOther",
 	20: "SignerRuleActionExchange",
+	21: "SignerRuleActionUpdateForOther",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -44612,6 +44622,7 @@ var signerRuleActionShortMap = map[int32]string{
 	18: "create_for_other_with_tasks",
 	19: "remove_for_other",
 	20: "exchange",
+	21: "update_for_other",
 }
 
 var signerRuleActionRevMap = map[string]int32{
@@ -44635,6 +44646,7 @@ var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionCreateForOtherWithTasks": 18,
 	"SignerRuleActionRemoveForOther":          19,
 	"SignerRuleActionExchange":                20,
+	"SignerRuleActionUpdateForOther":          21,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -53363,4 +53375,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "b693339a65fcb188766e4ef86a32efa4b0b6f3bf"
+var Revision = "d639694e4cdb49f22866a506b190bd92f3e62b84"
