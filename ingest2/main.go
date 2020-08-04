@@ -19,4 +19,4 @@ const (
 	IngestVersionPreissuanceRequestDetails
 	IngestVersionMovementsReviewableRequestDetails
 	IngestVersionAddFeeInUnlockedEffect
-)
+) //TODO ADD YOUR VERSION
