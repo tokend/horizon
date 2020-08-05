@@ -95,7 +95,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "master"
+  branch = "feature/manage-data-reviewable-request"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

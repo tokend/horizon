@@ -1,5 +1,5 @@
-// revision: d639694e4cdb49f22866a506b190bd92f3e62b84
-// branch:   master
+// revision: 0102b2710d6b890aaa685bd41bd8c644e6a89d99
+// branch:   feature/manage-data-reviewable-request
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -100,6 +100,7 @@
 //  xdr/reviewable-request-atomic-swap-bid.x
 //  xdr/reviewable-request-change-role.x
 //  xdr/reviewable-request-contract.x
+//  xdr/reviewable-request-create-data.x
 //  xdr/reviewable-request-create-poll.x
 //  xdr/reviewable-request-invoice.x
 //  xdr/reviewable-request-issuance.x
@@ -108,7 +109,9 @@
 //  xdr/reviewable-request-manage-offer.x
 //  xdr/reviewable-request-payment.x
 //  xdr/reviewable-request-redemption.x
+//  xdr/reviewable-request-remove-data.x
 //  xdr/reviewable-request-sale.x
+//  xdr/reviewable-request-update-data.x
 //  xdr/reviewable-request-update-sale-details.x
 //  xdr/reviewable-request-withdrawal.x
 //  xdr/transaction.x
@@ -3469,7 +3472,10 @@ type ReferenceEntry struct {
 //    	KYC_RECOVERY = 18,
 //    	MANAGE_OFFER = 19,
 //    	CREATE_PAYMENT = 20,
-//    	PERFORM_REDEMPTION = 21
+//    	PERFORM_REDEMPTION = 21,
+//    	CREATE_DATA = 22,
+//      UPDATE_DATA = 23,
+//      REMOVE_DATA = 24
 //    };
 //
 type ReviewableRequestType int32
@@ -3496,6 +3502,9 @@ const (
 	ReviewableRequestTypeManageOffer         ReviewableRequestType = 19
 	ReviewableRequestTypeCreatePayment       ReviewableRequestType = 20
 	ReviewableRequestTypePerformRedemption   ReviewableRequestType = 21
+	ReviewableRequestTypeCreateData          ReviewableRequestType = 22
+	ReviewableRequestTypeUpdateData          ReviewableRequestType = 23
+	ReviewableRequestTypeRemoveData          ReviewableRequestType = 24
 )
 
 var ReviewableRequestTypeAll = []ReviewableRequestType{
@@ -3520,6 +3529,9 @@ var ReviewableRequestTypeAll = []ReviewableRequestType{
 	ReviewableRequestTypeManageOffer,
 	ReviewableRequestTypeCreatePayment,
 	ReviewableRequestTypePerformRedemption,
+	ReviewableRequestTypeCreateData,
+	ReviewableRequestTypeUpdateData,
+	ReviewableRequestTypeRemoveData,
 }
 
 var reviewableRequestTypeMap = map[int32]string{
@@ -3544,6 +3556,9 @@ var reviewableRequestTypeMap = map[int32]string{
 	19: "ReviewableRequestTypeManageOffer",
 	20: "ReviewableRequestTypeCreatePayment",
 	21: "ReviewableRequestTypePerformRedemption",
+	22: "ReviewableRequestTypeCreateData",
+	23: "ReviewableRequestTypeUpdateData",
+	24: "ReviewableRequestTypeRemoveData",
 }
 
 var reviewableRequestTypeShortMap = map[int32]string{
@@ -3568,6 +3583,9 @@ var reviewableRequestTypeShortMap = map[int32]string{
 	19: "manage_offer",
 	20: "create_payment",
 	21: "perform_redemption",
+	22: "create_data",
+	23: "update_data",
+	24: "remove_data",
 }
 
 var reviewableRequestTypeRevMap = map[string]int32{
@@ -3592,6 +3610,9 @@ var reviewableRequestTypeRevMap = map[string]int32{
 	"ReviewableRequestTypeManageOffer":         19,
 	"ReviewableRequestTypeCreatePayment":       20,
 	"ReviewableRequestTypePerformRedemption":   21,
+	"ReviewableRequestTypeCreateData":          22,
+	"ReviewableRequestTypeUpdateData":          23,
+	"ReviewableRequestTypeRemoveData":          24,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -3761,6 +3782,12 @@ type TasksExt struct {
 //    			CreatePaymentRequest createPaymentRequest;
 //            case PERFORM_REDEMPTION:
 //                RedemptionRequest redemptionRequest;
+//            case CREATE_DATA:
+//                CreateDataRequest createDataRequest;
+//            case UPDATE_DATA:
+//                UpdateDataRequest updateDataRequest;
+//            case REMOVE_DATA:
+//                RemoveDataRequest removeDataRequest;
 //    	}
 //
 type ReviewableRequestEntryBody struct {
@@ -3784,6 +3811,9 @@ type ReviewableRequestEntryBody struct {
 	ManageOfferRequest         *ManageOfferRequest         `json:"manageOfferRequest,omitempty"`
 	CreatePaymentRequest       *CreatePaymentRequest       `json:"createPaymentRequest,omitempty"`
 	RedemptionRequest          *RedemptionRequest          `json:"redemptionRequest,omitempty"`
+	CreateDataRequest          *CreateDataRequest          `json:"createDataRequest,omitempty"`
+	UpdateDataRequest          *UpdateDataRequest          `json:"updateDataRequest,omitempty"`
+	RemoveDataRequest          *RemoveDataRequest          `json:"removeDataRequest,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -3834,6 +3864,12 @@ func (u ReviewableRequestEntryBody) ArmForSwitch(sw int32) (string, bool) {
 		return "CreatePaymentRequest", true
 	case ReviewableRequestTypePerformRedemption:
 		return "RedemptionRequest", true
+	case ReviewableRequestTypeCreateData:
+		return "CreateDataRequest", true
+	case ReviewableRequestTypeUpdateData:
+		return "UpdateDataRequest", true
+	case ReviewableRequestTypeRemoveData:
+		return "RemoveDataRequest", true
 	}
 	return "-", false
 }
@@ -3975,6 +4011,27 @@ func NewReviewableRequestEntryBody(aType ReviewableRequestType, value interface{
 			return
 		}
 		result.RedemptionRequest = &tv
+	case ReviewableRequestTypeCreateData:
+		tv, ok := value.(CreateDataRequest)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateDataRequest")
+			return
+		}
+		result.CreateDataRequest = &tv
+	case ReviewableRequestTypeUpdateData:
+		tv, ok := value.(UpdateDataRequest)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be UpdateDataRequest")
+			return
+		}
+		result.UpdateDataRequest = &tv
+	case ReviewableRequestTypeRemoveData:
+		tv, ok := value.(RemoveDataRequest)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be RemoveDataRequest")
+			return
+		}
+		result.RemoveDataRequest = &tv
 	}
 	return
 }
@@ -4454,6 +4511,81 @@ func (u ReviewableRequestEntryBody) GetRedemptionRequest() (result RedemptionReq
 	return
 }
 
+// MustCreateDataRequest retrieves the CreateDataRequest value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestEntryBody) MustCreateDataRequest() CreateDataRequest {
+	val, ok := u.GetCreateDataRequest()
+
+	if !ok {
+		panic("arm CreateDataRequest is not set")
+	}
+
+	return val
+}
+
+// GetCreateDataRequest retrieves the CreateDataRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestEntryBody) GetCreateDataRequest() (result CreateDataRequest, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CreateDataRequest" {
+		result = *u.CreateDataRequest
+		ok = true
+	}
+
+	return
+}
+
+// MustUpdateDataRequest retrieves the UpdateDataRequest value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestEntryBody) MustUpdateDataRequest() UpdateDataRequest {
+	val, ok := u.GetUpdateDataRequest()
+
+	if !ok {
+		panic("arm UpdateDataRequest is not set")
+	}
+
+	return val
+}
+
+// GetUpdateDataRequest retrieves the UpdateDataRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestEntryBody) GetUpdateDataRequest() (result UpdateDataRequest, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "UpdateDataRequest" {
+		result = *u.UpdateDataRequest
+		ok = true
+	}
+
+	return
+}
+
+// MustRemoveDataRequest retrieves the RemoveDataRequest value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestEntryBody) MustRemoveDataRequest() RemoveDataRequest {
+	val, ok := u.GetRemoveDataRequest()
+
+	if !ok {
+		panic("arm RemoveDataRequest is not set")
+	}
+
+	return val
+}
+
+// GetRemoveDataRequest retrieves the RemoveDataRequest value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestEntryBody) GetRemoveDataRequest() (result RemoveDataRequest, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "RemoveDataRequest" {
+		result = *u.RemoveDataRequest
+		ok = true
+	}
+
+	return
+}
+
 // ReviewableRequestEntryExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -4542,6 +4674,12 @@ func NewReviewableRequestEntryExt(v LedgerVersion, value interface{}) (result Re
 //    			CreatePaymentRequest createPaymentRequest;
 //            case PERFORM_REDEMPTION:
 //                RedemptionRequest redemptionRequest;
+//            case CREATE_DATA:
+//                CreateDataRequest createDataRequest;
+//            case UPDATE_DATA:
+//                UpdateDataRequest updateDataRequest;
+//            case REMOVE_DATA:
+//                RemoveDataRequest removeDataRequest;
 //    	} body;
 //
 //    	TasksExt tasks;
@@ -38709,7 +38847,10 @@ type ReviewRequestOp struct {
 //        MANAGE_OFFER_FAILED = -1700,
 //
 //        // payment
-//        PAYMENT_FAILED = -1800
+//        PAYMENT_FAILED = -1800,
+//
+//        // data
+//        DATA_NOT_FOUND = -1900
 //    };
 //
 type ReviewRequestResultCode int32
@@ -38778,6 +38919,7 @@ const (
 	ReviewRequestResultCodeInvalidSignerData                        ReviewRequestResultCode = -1600
 	ReviewRequestResultCodeManageOfferFailed                        ReviewRequestResultCode = -1700
 	ReviewRequestResultCodePaymentFailed                            ReviewRequestResultCode = -1800
+	ReviewRequestResultCodeDataNotFound                             ReviewRequestResultCode = -1900
 )
 
 var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
@@ -38844,6 +38986,7 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeInvalidSignerData,
 	ReviewRequestResultCodeManageOfferFailed,
 	ReviewRequestResultCodePaymentFailed,
+	ReviewRequestResultCodeDataNotFound,
 }
 
 var reviewRequestResultCodeMap = map[int32]string{
@@ -38910,6 +39053,7 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-1600: "ReviewRequestResultCodeInvalidSignerData",
 	-1700: "ReviewRequestResultCodeManageOfferFailed",
 	-1800: "ReviewRequestResultCodePaymentFailed",
+	-1900: "ReviewRequestResultCodeDataNotFound",
 }
 
 var reviewRequestResultCodeShortMap = map[int32]string{
@@ -38976,6 +39120,7 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-1600: "invalid_signer_data",
 	-1700: "manage_offer_failed",
 	-1800: "payment_failed",
+	-1900: "data_not_found",
 }
 
 var reviewRequestResultCodeRevMap = map[string]int32{
@@ -39042,6 +39187,7 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeInvalidSignerData":                        -1600,
 	"ReviewRequestResultCodeManageOfferFailed":                        -1700,
 	"ReviewRequestResultCodePaymentFailed":                            -1800,
+	"ReviewRequestResultCodeDataNotFound":                             -1900,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -45266,6 +45412,72 @@ type ContractRequest struct {
 	Ext            ContractRequestExt `json:"ext,omitempty"`
 }
 
+// CreateDataRequestExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateDataRequestExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateDataRequestExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateDataRequestExt
+func (u CreateDataRequestExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateDataRequestExt creates a new  CreateDataRequestExt.
+func NewCreateDataRequestExt(v LedgerVersion, value interface{}) (result CreateDataRequestExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateDataRequest is an XDR Struct defines as:
+//
+//   struct CreateDataRequest {
+//        //: Numeric type, used for access control
+//        uint64 type;
+//
+//        //: Value stored
+//        longstring value;
+//
+//        //: Creator of the entry
+//        AccountID owner;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CreateDataRequest struct {
+	Type  Uint64               `json:"type,omitempty"`
+	Value Longstring           `json:"value,omitempty"`
+	Owner AccountId            `json:"owner,omitempty"`
+	Ext   CreateDataRequestExt `json:"ext,omitempty"`
+}
+
 // CreatePollRequestExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -45956,6 +46168,64 @@ type RedemptionRequest struct {
 	Ext             RedemptionRequestExt `json:"ext,omitempty"`
 }
 
+// RemoveDataRequestExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type RemoveDataRequestExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u RemoveDataRequestExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of RemoveDataRequestExt
+func (u RemoveDataRequestExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewRemoveDataRequestExt creates a new  RemoveDataRequestExt.
+func NewRemoveDataRequestExt(v LedgerVersion, value interface{}) (result RemoveDataRequestExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// RemoveDataRequest is an XDR Struct defines as:
+//
+//   struct RemoveDataRequest {
+//        //: ID of the data entry
+//        uint64 id;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type RemoveDataRequest struct {
+	Id  Uint64               `json:"id,omitempty"`
+	Ext RemoveDataRequestExt `json:"ext,omitempty"`
+}
+
 // SaleCreationRequestQuoteAssetExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -46211,6 +46481,68 @@ type SaleCreationRequest struct {
 	SequenceNumber              Uint32                          `json:"sequenceNumber,omitempty"`
 	QuoteAssets                 []SaleCreationRequestQuoteAsset `json:"quoteAssets,omitempty" xdrmaxsize:"100"`
 	Ext                         SaleCreationRequestExt          `json:"ext,omitempty"`
+}
+
+// UpdateDataRequestExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type UpdateDataRequestExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u UpdateDataRequestExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of UpdateDataRequestExt
+func (u UpdateDataRequestExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewUpdateDataRequestExt creates a new  UpdateDataRequestExt.
+func NewUpdateDataRequestExt(v LedgerVersion, value interface{}) (result UpdateDataRequestExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// UpdateDataRequest is an XDR Struct defines as:
+//
+//   struct UpdateDataRequest {
+//        //: ID of the data entry
+//        uint64 id;
+//
+//        //: Value stored
+//        longstring value;
+//
+//        //: reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type UpdateDataRequest struct {
+	Id    Uint64               `json:"id,omitempty"`
+	Value Longstring           `json:"value,omitempty"`
+	Ext   UpdateDataRequestExt `json:"ext,omitempty"`
 }
 
 // UpdateSaleDetailsRequestExt is an XDR NestedUnion defines as:
@@ -53014,7 +53346,10 @@ type Fee struct {
 //        CREATE_REDEMPTION_REQUEST = 56,
 //        CREATE_DATA = 57,
 //        UPDATE_DATA = 58,
-//        REMOVE_DATA = 59
+//        REMOVE_DATA = 59,
+//        CREATE_DATA_REQUEST = 60,
+//        UPDATE_DATA_REQUEST = 61,
+//        REMOVE_DATA_REQUEST = 62
 //    };
 //
 type OperationType int32
@@ -53073,6 +53408,9 @@ const (
 	OperationTypeCreateData                             OperationType = 57
 	OperationTypeUpdateData                             OperationType = 58
 	OperationTypeRemoveData                             OperationType = 59
+	OperationTypeCreateDataRequest                      OperationType = 60
+	OperationTypeUpdateDataRequest                      OperationType = 61
+	OperationTypeRemoveDataRequest                      OperationType = 62
 )
 
 var OperationTypeAll = []OperationType{
@@ -53129,6 +53467,9 @@ var OperationTypeAll = []OperationType{
 	OperationTypeCreateData,
 	OperationTypeUpdateData,
 	OperationTypeRemoveData,
+	OperationTypeCreateDataRequest,
+	OperationTypeUpdateDataRequest,
+	OperationTypeRemoveDataRequest,
 }
 
 var operationTypeMap = map[int32]string{
@@ -53185,6 +53526,9 @@ var operationTypeMap = map[int32]string{
 	57: "OperationTypeCreateData",
 	58: "OperationTypeUpdateData",
 	59: "OperationTypeRemoveData",
+	60: "OperationTypeCreateDataRequest",
+	61: "OperationTypeUpdateDataRequest",
+	62: "OperationTypeRemoveDataRequest",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -53241,6 +53585,9 @@ var operationTypeShortMap = map[int32]string{
 	57: "create_data",
 	58: "update_data",
 	59: "remove_data",
+	60: "create_data_request",
+	61: "update_data_request",
+	62: "remove_data_request",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -53297,6 +53644,9 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeCreateData":                             57,
 	"OperationTypeUpdateData":                             58,
 	"OperationTypeRemoveData":                             59,
+	"OperationTypeCreateDataRequest":                      60,
+	"OperationTypeUpdateDataRequest":                      61,
+	"OperationTypeRemoveDataRequest":                      62,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -53375,4 +53725,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "d639694e4cdb49f22866a506b190bd92f3e62b84"
+var Revision = "0102b2710d6b890aaa685bd41bd8c644e6a89d99"
