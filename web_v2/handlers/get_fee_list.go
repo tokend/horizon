@@ -18,8 +18,10 @@ import (
 func GetFeeList(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getFeeListHandler{
-		FeesQ: core2.NewFeesQ(coreRepo),
-		Log:   ctx.Log(r),
+		AccountQ: core2.NewAccountsQ(coreRepo),
+		AssetsQ:  core2.NewAssetsQ(coreRepo),
+		FeesQ:    core2.NewFeesQ(coreRepo),
+		Log:      ctx.Log(r),
 	}
 
 	request, err := requests.NewGetFeeList(r)

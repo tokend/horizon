@@ -18,8 +18,10 @@ import (
 func GetLimitsList(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getLimitsListHandler{
-		LimitsQ: core2.NewLimitsQ(coreRepo),
-		Log:     ctx.Log(r),
+		AccountQ: core2.NewAccountsQ(coreRepo),
+		AssetsQ:  core2.NewAssetsQ(coreRepo),
+		LimitsQ:  core2.NewLimitsQ(coreRepo),
+		Log:      ctx.Log(r),
 	}
 
 	request, err := requests.NewGetLimitsList(r)
