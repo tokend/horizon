@@ -534,7 +534,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:fc65a2166cd05c3a438df986baaeb74e06d50a0b5b56db9476c94ad11a2b41c7"
+  digest = "1:0d359fcf622bd2e560953014f52e5c3d1f5be5d525b57ebaa40866c52d907542"
   name = "gitlab.com/distributed_lab/urlval"
   packages = [
     ".",
@@ -542,7 +542,7 @@
     "internal/betterreflect",
   ]
   pruneopts = "UT"
-  revision = "ebd58a4201e13c7dbbdbb587271cdee3c2b72f51"
+  revision = "6e4806f41e3b9d07f79490897d60e5c782910cb8"
 
 [[projects]]
   branch = "master"
