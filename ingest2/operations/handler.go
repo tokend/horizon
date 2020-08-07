@@ -204,6 +204,9 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeUpdateDataRequest: &updateDataRequestOpHandler{
 				effectsBaseHandler,
 			},
+			xdr.OperationTypeRemoveDataRequest: &removeDataRequestOpHandler{
+				effectsBaseHandler,
+			},
 		},
 	}
 }
