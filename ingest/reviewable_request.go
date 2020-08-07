@@ -387,6 +387,8 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 	case xdr.ReviewableRequestTypeCreatePayment:
 	case xdr.ReviewableRequestTypePerformRedemption:
 	case xdr.ReviewableRequestTypeCreateData:
+	case xdr.ReviewableRequestTypeUpdateData:
+	case xdr.ReviewableRequestTypeRemoveData:
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

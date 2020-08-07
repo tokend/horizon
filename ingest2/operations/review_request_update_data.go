@@ -3,7 +3,7 @@ package operations
 import "gitlab.com/tokend/horizon/db2/history2"
 
 type updateDataHandler struct {
-	*manageUpdateDataOpHandler
+	effectsProvider
 }
 
 func (h *updateDataHandler) PermanentReject(details requestDetails) ([]history2.ParticipantEffect, error) {

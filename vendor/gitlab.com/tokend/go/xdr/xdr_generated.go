@@ -1,4 +1,4 @@
-// revision: d0ea42e6d25406af9504066bbc4fa0c173d67e5c
+// revision: f9b1b2e58097d7387c20b995c78c873b55eddc05
 // branch:   feature/manage-data-reviewable-request
 // Package xdr is generated from:
 //
@@ -16174,7 +16174,7 @@ func NewCreateDataRequestResponseExt(v LedgerVersion, value interface{}) (result
 //   struct CreateDataRequestResponse {
 //        uint64 requestID;
 //        bool fulfilled;
-//
+//        //todo add owner
 //        uint64 type;
 //        longstring value;
 //
@@ -40649,29 +40649,47 @@ type UpdateDataRequestOp struct {
 //
 //   enum UpdateDataRequestResultCode
 //    {
-//        SUCCESS = 0
+//        SUCCESS = 0,
+//        INVALID_VALUE = -1,
+//        NOT_FOUND = -2,
+//        OWNER_NOT_EXIST = -3
 //    };
 //
 type UpdateDataRequestResultCode int32
 
 const (
-	UpdateDataRequestResultCodeSuccess UpdateDataRequestResultCode = 0
+	UpdateDataRequestResultCodeSuccess       UpdateDataRequestResultCode = 0
+	UpdateDataRequestResultCodeInvalidValue  UpdateDataRequestResultCode = -1
+	UpdateDataRequestResultCodeNotFound      UpdateDataRequestResultCode = -2
+	UpdateDataRequestResultCodeOwnerNotExist UpdateDataRequestResultCode = -3
 )
 
 var UpdateDataRequestResultCodeAll = []UpdateDataRequestResultCode{
 	UpdateDataRequestResultCodeSuccess,
+	UpdateDataRequestResultCodeInvalidValue,
+	UpdateDataRequestResultCodeNotFound,
+	UpdateDataRequestResultCodeOwnerNotExist,
 }
 
 var updateDataRequestResultCodeMap = map[int32]string{
-	0: "UpdateDataRequestResultCodeSuccess",
+	0:  "UpdateDataRequestResultCodeSuccess",
+	-1: "UpdateDataRequestResultCodeInvalidValue",
+	-2: "UpdateDataRequestResultCodeNotFound",
+	-3: "UpdateDataRequestResultCodeOwnerNotExist",
 }
 
 var updateDataRequestResultCodeShortMap = map[int32]string{
-	0: "success",
+	0:  "success",
+	-1: "invalid_value",
+	-2: "not_found",
+	-3: "owner_not_exist",
 }
 
 var updateDataRequestResultCodeRevMap = map[string]int32{
-	"UpdateDataRequestResultCodeSuccess": 0,
+	"UpdateDataRequestResultCodeSuccess":       0,
+	"UpdateDataRequestResultCodeInvalidValue":  -1,
+	"UpdateDataRequestResultCodeNotFound":      -2,
+	"UpdateDataRequestResultCodeOwnerNotExist": -3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -40780,6 +40798,8 @@ func NewUpdateDataRequestResponseExt(v LedgerVersion, value interface{}) (result
 //        uint64 requestID;
 //        bool fulfilled;
 //
+//        AccountID owner;
+//        uint64 dataID;
 //        uint64 type;
 //        longstring value;
 //
@@ -40795,6 +40815,8 @@ func NewUpdateDataRequestResponseExt(v LedgerVersion, value interface{}) (result
 type UpdateDataRequestResponse struct {
 	RequestId Uint64                       `json:"requestID,omitempty"`
 	Fulfilled bool                         `json:"fulfilled,omitempty"`
+	Owner     AccountId                    `json:"owner,omitempty"`
+	DataId    Uint64                       `json:"dataID,omitempty"`
 	Type      Uint64                       `json:"type,omitempty"`
 	Value     Longstring                   `json:"value,omitempty"`
 	Ext       UpdateDataRequestResponseExt `json:"ext,omitempty"`
@@ -47278,7 +47300,8 @@ func NewUpdateDataRequestExt(v LedgerVersion, value interface{}) (result UpdateD
 //        //: ID of the data entry
 //        uint64 id;
 //
-//        //: Value stored
+//        AccountID owner;
+//        uint64 type;
 //        longstring value;
 //
 //        //: reserved for future use
@@ -47292,6 +47315,8 @@ func NewUpdateDataRequestExt(v LedgerVersion, value interface{}) (result UpdateD
 //
 type UpdateDataRequest struct {
 	Id    Uint64               `json:"id,omitempty"`
+	Owner AccountId            `json:"owner,omitempty"`
+	Type  Uint64               `json:"type,omitempty"`
 	Value Longstring           `json:"value,omitempty"`
 	Ext   UpdateDataRequestExt `json:"ext,omitempty"`
 }
@@ -54710,4 +54735,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "d0ea42e6d25406af9504066bbc4fa0c173d67e5c"
+var Revision = "f9b1b2e58097d7387c20b995c78c873b55eddc05"
