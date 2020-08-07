@@ -64,6 +64,7 @@ type OperationDetails struct {
 	CreateData                 *CreateDataDetails                 `json:"create_data,omitempty"`
 	UpdateData                 *UpdateDataDetails                 `json:"update_data,omitempty"`
 	RemoveData                 *RemoveDataDetails                 `json:"remove_data,omitempty"`
+	CreateDataRequest          *CreateDataRequestDetails          `json:"create_data_request,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -611,4 +612,11 @@ type UpdateDataDetails struct {
 
 type RemoveDataDetails struct {
 	ID uint64 `json:"id"`
+}
+
+type CreateDataRequestDetails struct {
+	ID    uint64            `json:"id"`
+	Type  uint64            `json:"type"`
+	Value regources.Details `json:"value"`
+	Owner string            `json:"owner"`
 }

@@ -3,8 +3,9 @@ package ingest
 import (
 	"encoding/hex"
 	"encoding/json"
-	"gitlab.com/tokend/horizon/db2"
 	"time"
+
+	"gitlab.com/tokend/horizon/db2"
 
 	"gitlab.com/tokend/regources"
 
@@ -385,6 +386,7 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 	case xdr.ReviewableRequestTypeManageOffer:
 	case xdr.ReviewableRequestTypeCreatePayment:
 	case xdr.ReviewableRequestTypePerformRedemption:
+	case xdr.ReviewableRequestTypeCreateData:
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

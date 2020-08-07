@@ -396,6 +396,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["dest_account_id"] = op.RedemptionRequest.Destination.Address()
 		details["reason"] = op.RedemptionRequest.CreatorDetails
 		details["reference"] = op.Reference
+	case xdr.OperationTypeCreateDataRequest:
+	case xdr.OperationTypeUpdateDataRequest:
+	case xdr.OperationTypeRemoveDataRequest:
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

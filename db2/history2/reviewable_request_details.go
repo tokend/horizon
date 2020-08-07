@@ -1,8 +1,9 @@
 package history2
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
 
 	"database/sql/driver"
 

@@ -3,8 +3,9 @@ package changes
 import (
 	"encoding/hex"
 	"encoding/json"
-	"gitlab.com/tokend/horizon/db2"
 	"time"
+
+	"gitlab.com/tokend/horizon/db2"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -716,6 +717,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.CreatePayment = c.getCreatePaymentRequest(body.CreatePaymentRequest)
 	case xdr.ReviewableRequestTypePerformRedemption:
 		details.Redemption = c.getRedemption(body.RedemptionRequest)
+	case xdr.ReviewableRequestTypeCreateData:
+		//details todo
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

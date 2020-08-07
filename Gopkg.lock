@@ -546,7 +546,7 @@
 
 [[projects]]
   branch = "feature/manage-data-reviewable-request"
-  digest = "1:b698643442150bfbb1d8ca12ae4f1fab44553f36c7b3de102f99c2a88fd0efed"
+  digest = "1:7aa02d8092e4e9429ca703d4713c7c17ab17dd06108317235179b9fbb3d5f358"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -565,7 +565,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "3b607de7e780ca52e7739e26a7f9007bd28330ef"
+  revision = "0737c863b14a26cc39d752596f5a109a629b1617"
 
 [[projects]]
   branch = "master"

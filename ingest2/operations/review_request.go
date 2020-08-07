@@ -74,16 +74,15 @@ func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler
 				effectsProvider: provider,
 			},
 			xdr.ReviewableRequestTypeCreateData: &createDataHandler{
-				&manageCreateDataOpHandler{provider},
-			},
-			xdr.ReviewableRequestTypeUpdateData: &updateDataHandler{
-				&manageUpdateDataOpHandler{provider},
-			},
-			xdr.ReviewableRequestTypeRemoveData: &removeDataHandler{
-				&manageRemoveDataOpHandler{provider},
-			},
+				effectsProvider: provider},
 		},
 	}
+	//xdr.ReviewableRequestTypeUpdateData: &updateDataHandler{
+	//	&manageUpdateDataOpHandler{provider},
+	//},
+	//xdr.ReviewableRequestTypeRemoveData: &removeDataHandler{
+	//	&manageRemoveDataOpHandler{provider},
+	//},
 }
 
 // Details returns details about review request operation
