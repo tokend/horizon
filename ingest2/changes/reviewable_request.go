@@ -683,6 +683,16 @@ func (c *reviewableRequestHandler) getDataCreationRequest(request *xdr.DataCreat
 		SequenceNumber: uint32(request.SequenceNumber),
 		Owner:          request.Owner.Address(),
 		Value:          internal.MarshalCustomDetails(request.Value),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
+
+func (c *reviewableRequestHandler) getDataUpdateRequest(request *xdr.DataUpdateRequest) *history.DataUpdateRequest {
+	return &history.DataUpdateRequest{
+		SequenceNumber: uint32(request.SequenceNumber),
+		DataID:         uint64(request.Id),
+		Value:          internal.MarshalCustomDetails(request.Value),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }
 
@@ -735,6 +745,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.Redemption = c.getRedemption(body.RedemptionRequest)
 	case xdr.ReviewableRequestTypeDataCreation:
 		details.DataCreation = c.getDataCreationRequest(body.DataCreationRequest)
+	case xdr.ReviewableRequestTypeDataUpdate:
+		details.DataUpdate = c.getDataUpdateRequest(body.DataUpdateRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

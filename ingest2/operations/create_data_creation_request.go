@@ -18,10 +18,12 @@ func (h *createDataCreationRequestHandler) Details(op rawOperation, opRes xdr.Op
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateDataCreationRequest,
 		CreateDataCreationRequest: &history2.CreateDataCreationRequest{
-			ID:    uint64(response.RequestId),
-			Type:  uint64(response.Type),
-			Value: internal.MarshalCustomDetails(response.Value),
-			Owner: createDataRequest.DataCreationRequest.Owner.Address(),
+			ID:        uint64(response.RequestId),
+			Type:      uint64(response.Type),
+			RequestID: uint64(response.RequestId),
+			Value:     internal.MarshalCustomDetails(response.Value),
+			CreatorDetails: internal.MarshalCustomDetails(createDataRequest.DataCreationRequest.CreatorDetails),
+			Owner:     createDataRequest.DataCreationRequest.Owner.Address(),
 		},
 	}, nil
 }

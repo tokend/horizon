@@ -17,6 +17,8 @@ ReviewableRequestDetailsKey:
     - $ref: '#/components/schemas/ManageOfferRequestKey'
     - $ref: '#/components/schemas/CreatePaymentRequestKey'
     - $ref: '#/components/schemas/RedemptionRequestKey'
+    - $ref: '#/components/schemas/DataCreationRequestKey'
+    - $ref: '#/components/schemas/DataUpdateRequestKey'
 
 ReviewableRequestDetails:
   oneOf:
@@ -37,6 +39,9 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/ManageOfferRequest'
     - $ref: '#/components/schemas/CreatePaymentRequest'
     - $ref: '#/components/schemas/RedemptionRequest'
+    - $ref: '#/components/schemas/RedemptionRequest'
+    - $ref: '#/components/schemas/DataCreationRequest'
+    - $ref: '#/components/schemas/DataUpdateRequest'
 
 CreateAssetRequestKey:
   type: object
@@ -953,3 +958,99 @@ ManageOfferRequest:
               description: "Offer direction"
             fee:
               $ref: '#/components/schemas/Fee'
+
+
+DataCreationRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-data-creation"
+
+DataUpdateRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-data-update"
+
+
+DataCreationRequest:
+  allOf:
+    - $ref: '#/components/schemas/DataCreationRequestKey'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        relationships:
+          type: object
+          properties:
+            owner:
+              type: object
+              description: "owner of the data"
+              properties:
+                data:
+                  $ref: '#/components/schemas/AccountKey'
+        attributes:
+          type: object
+          required:
+            - value
+            - type
+            - creator_details
+            - sequence_number
+          properties:
+            sequence_number:
+              type: integer
+              format: uint32
+              description: "Sequence number"
+              example: 10
+            creator_details:
+              $ref: '#/components/schemas/Details'
+            type:
+              type: integer
+              format: uint64
+            value:
+              $ref: '#/components/schemas/Details'
+
+DataUpdateRequest:
+  allOf:
+    - $ref: '#/components/schemas/DataCreationRequestKey'
+    - type: object
+      required: [relationships, attributes]
+      properties:
+        relationships:
+          type: object
+          properties:
+            data:
+              type: object
+              description: "data to update"
+              $ref: '#/components/schemas/DataKey'
+        attributes:
+          type: object
+          required:
+            - value
+            - sequence_number
+            - creator_details
+          properties:
+            sequence_number:
+              type: integer
+              format: uint32
+              description: "Sequence number"
+              example: 10
+            creator_details:
+              $ref: '#/components/schemas/Details'
+            value:
+              $ref: '#/components/schemas/Details'

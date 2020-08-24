@@ -64,6 +64,9 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeCreateData:                             newCreateDataOp,
 	xdr.OperationTypeUpdateData:                             newUpdateDataOp,
 	xdr.OperationTypeRemoveData:                             newRemoveDataOp,
+	xdr.OperationTypeCreateDataCreationRequest:              newCreateDataCreationRequestOp,
+	xdr.OperationTypeCreateDataUpdateRequest:                newCreateDataUpdateRequestOp,
+	xdr.OperationTypeCancelDataCreationRequest:              newCancelDataCreationRequestOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -877,6 +880,50 @@ func newRemoveDataOp(op history2.Operation) regources.Resource {
 		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_DATA),
 		Relationships: regources.RemoveDataOpRelationships{
 			Data: NewDataKey(int64(body.ID)).AsRelation(),
+		},
+	}
+}
+
+func newCreateDataCreationRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateDataCreationRequest
+
+	return &regources.CreateDataCreationRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_DATA_CREATION_REQUEST),
+		Attributes: regources.CreateDataCreationRequestOpAttributes{
+			Value:          body.Value,
+			CreatorDetails: body.CreatorDetails,
+			Type:           body.Type,
+		},
+		Relationships: regources.CreateDataCreationRequestOpRelationships{
+			Owner:   NewAccountKey(body.Owner).AsRelation(),
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCreateDataUpdateRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateDataUpdateRequest
+
+	return &regources.CreateDataUpdateRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_DATA_UPDATE_REQUEST),
+		Attributes: regources.CreateDataUpdateRequestOpAttributes{
+			Value:          body.Value,
+			CreatorDetails: body.CreatorDetails,
+		},
+		Relationships: regources.CreateDataUpdateRequestOpRelationships{
+			Data:    NewDataKey(int64(body.ID)).AsRelation(),
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCancelDataCreationRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CancelDataCreationRequest
+
+	return &regources.CancelDataCreationRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_DATA_CREATION_REQUEST),
+		Relationships: regources.CancelDataCreationRequestOpRelationships{
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
 		},
 	}
 }

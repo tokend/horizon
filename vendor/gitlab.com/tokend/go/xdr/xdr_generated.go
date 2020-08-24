@@ -1,4 +1,4 @@
-// revision: 2e039f26641d897d96716ad82dc2070c0e2e8c8d
+// revision: 9ae1c8fd7585b364b05ff951ac10c9a0ea61092b
 // branch:   feature/manage-data-reviewable-request
 // Package xdr is generated from:
 //
@@ -46369,6 +46369,9 @@ func NewDataCreationRequestExt(v LedgerVersion, value interface{}) (result DataC
 //        //: Value stored
 //        longstring value;
 //
+//        //: Arbitrary stringified json object that can be used to attach data to be reviewed by an admin
+//        longstring creatorDetails; // details set by requester
+//
 //        //: reserved for future use
 //        union switch (LedgerVersion v)
 //        {
@@ -46383,6 +46386,7 @@ type DataCreationRequest struct {
 	SequenceNumber Uint32                 `json:"sequenceNumber,omitempty"`
 	Owner          AccountId              `json:"owner,omitempty"`
 	Value          Longstring             `json:"value,omitempty"`
+	CreatorDetails Longstring             `json:"creatorDetails,omitempty"`
 	Ext            DataCreationRequestExt `json:"ext,omitempty"`
 }
 
@@ -47383,6 +47387,9 @@ func NewDataUpdateRequestExt(v LedgerVersion, value interface{}) (result DataUpd
 //        //: Value stored
 //        longstring value;
 //
+//        //: Arbitrary stringified json object that can be used to attach data to be reviewed by an admin
+//        longstring creatorDetails; // details set by requester
+//
 //        //: reserved for future use
 //        union switch (LedgerVersion v)
 //        {
@@ -47396,6 +47403,7 @@ type DataUpdateRequest struct {
 	Id             Uint64               `json:"id,omitempty"`
 	SequenceNumber Uint32               `json:"sequenceNumber,omitempty"`
 	Value          Longstring           `json:"value,omitempty"`
+	CreatorDetails Longstring           `json:"creatorDetails,omitempty"`
 	Ext            DataUpdateRequestExt `json:"ext,omitempty"`
 }
 
@@ -54814,4 +54822,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "2e039f26641d897d96716ad82dc2070c0e2e8c8d"
+var Revision = "9ae1c8fd7585b364b05ff951ac10c9a0ea61092b"
