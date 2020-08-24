@@ -33,7 +33,7 @@ type ReviewableRequestDetails struct {
 	CreatePayment       *CreatePaymentRequest       `json:"create_payment,omitempty"`
 	Redemption          *RedemptionRequest          `json:"redemption,omitempty"`
 	DataCreation        *DataCreationRequest        `json:"data_creation,omitempty"`
-	DataUpdate          *DataUpdateRequest          `json:"data_creation,omitempty"`
+	DataUpdate          *DataUpdateRequest          `json:"data_update,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
