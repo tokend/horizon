@@ -1,6 +1,6 @@
 [[constraint]]
-  branch = "default"
-  name = "bitbucket.org/ww/goautoneg"
+  branch = "master"
+  name = "github.com/munnerz/goautoneg"
 
 [[constraint]]
   name = "github.com/asaskevich/govalidator"

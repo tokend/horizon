@@ -73,9 +73,7 @@ func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler
 			xdr.ReviewableRequestTypePerformRedemption: &redemptionHandler{
 				effectsProvider: provider,
 			},
-			xdr.ReviewableRequestTypeCreateData: &createDataHandler{
-				effectsProvider: provider},
-			xdr.ReviewableRequestTypeUpdateData: &updateDataHandler{
+			xdr.ReviewableRequestTypeDataCreation: &createDataHandler{
 				effectsProvider: provider},
 		},
 	}

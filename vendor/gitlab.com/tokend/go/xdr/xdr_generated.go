@@ -1,4 +1,4 @@
-// revision: f9b1b2e58097d7387c20b995c78c873b55eddc05
+// revision: 2e039f26641d897d96716ad82dc2070c0e2e8c8d
 // branch:   feature/manage-data-reviewable-request
 // Package xdr is generated from:
 //
@@ -41,6 +41,7 @@
 //  xdr/operation-bind-external-system-id.x
 //  xdr/operation-cancel-atomic-swap-ask.x
 //  xdr/operation-cancel-change-role-request.x
+//  xdr/operation-cancel-data-creation-request.x
 //  xdr/operation-cancel-sale-creation-request.x
 //  xdr/operation-check-sale-state.x
 //  xdr/operation-close-swap.x
@@ -49,7 +50,8 @@
 //  xdr/operation-create-atomic-swap-ask-request.x
 //  xdr/operation-create-atomic-swap-bid-request.x
 //  xdr/operation-create-change-role-request.x
-//  xdr/operation-create-data-request.x
+//  xdr/operation-create-data-creation-request.x
+//  xdr/operation-create-data-update-request.x
 //  xdr/operation-create-data.x
 //  xdr/operation-create-issuance-request.x
 //  xdr/operation-create-kyc-recovery-request.x
@@ -87,12 +89,10 @@
 //  xdr/operation-payout.x
 //  xdr/operation-remove-asset-pair.x
 //  xdr/operation-remove-asset.x
-//  xdr/operation-remove-data-request.x
 //  xdr/operation-remove-data.x
 //  xdr/operation-review-request.x
 //  xdr/operation-set-fees.x
 //  xdr/operation-stamp.x
-//  xdr/operation-update-data-request.x
 //  xdr/operation-update-data.x
 //  xdr/overlay.x
 //  xdr/resource-account-rule.x
@@ -112,7 +112,6 @@
 //  xdr/reviewable-request-manage-offer.x
 //  xdr/reviewable-request-payment.x
 //  xdr/reviewable-request-redemption.x
-//  xdr/reviewable-request-remove-data.x
 //  xdr/reviewable-request-sale.x
 //  xdr/reviewable-request-update-data.x
 //  xdr/reviewable-request-update-sale-details.x
@@ -3476,9 +3475,8 @@ type ReferenceEntry struct {
 //    	MANAGE_OFFER = 19,
 //    	CREATE_PAYMENT = 20,
 //    	PERFORM_REDEMPTION = 21,
-//    	CREATE_DATA = 22,
-//        UPDATE_DATA = 23,
-//        REMOVE_DATA = 24
+//    	DATA_CREATION = 22,
+//    	DATA_UPDATE = 23
 //    };
 //
 type ReviewableRequestType int32
@@ -3505,9 +3503,8 @@ const (
 	ReviewableRequestTypeManageOffer         ReviewableRequestType = 19
 	ReviewableRequestTypeCreatePayment       ReviewableRequestType = 20
 	ReviewableRequestTypePerformRedemption   ReviewableRequestType = 21
-	ReviewableRequestTypeCreateData          ReviewableRequestType = 22
-	ReviewableRequestTypeUpdateData          ReviewableRequestType = 23
-	ReviewableRequestTypeRemoveData          ReviewableRequestType = 24
+	ReviewableRequestTypeDataCreation        ReviewableRequestType = 22
+	ReviewableRequestTypeDataUpdate          ReviewableRequestType = 23
 )
 
 var ReviewableRequestTypeAll = []ReviewableRequestType{
@@ -3532,9 +3529,8 @@ var ReviewableRequestTypeAll = []ReviewableRequestType{
 	ReviewableRequestTypeManageOffer,
 	ReviewableRequestTypeCreatePayment,
 	ReviewableRequestTypePerformRedemption,
-	ReviewableRequestTypeCreateData,
-	ReviewableRequestTypeUpdateData,
-	ReviewableRequestTypeRemoveData,
+	ReviewableRequestTypeDataCreation,
+	ReviewableRequestTypeDataUpdate,
 }
 
 var reviewableRequestTypeMap = map[int32]string{
@@ -3559,9 +3555,8 @@ var reviewableRequestTypeMap = map[int32]string{
 	19: "ReviewableRequestTypeManageOffer",
 	20: "ReviewableRequestTypeCreatePayment",
 	21: "ReviewableRequestTypePerformRedemption",
-	22: "ReviewableRequestTypeCreateData",
-	23: "ReviewableRequestTypeUpdateData",
-	24: "ReviewableRequestTypeRemoveData",
+	22: "ReviewableRequestTypeDataCreation",
+	23: "ReviewableRequestTypeDataUpdate",
 }
 
 var reviewableRequestTypeShortMap = map[int32]string{
@@ -3586,9 +3581,8 @@ var reviewableRequestTypeShortMap = map[int32]string{
 	19: "manage_offer",
 	20: "create_payment",
 	21: "perform_redemption",
-	22: "create_data",
-	23: "update_data",
-	24: "remove_data",
+	22: "data_creation",
+	23: "data_update",
 }
 
 var reviewableRequestTypeRevMap = map[string]int32{
@@ -3613,9 +3607,8 @@ var reviewableRequestTypeRevMap = map[string]int32{
 	"ReviewableRequestTypeManageOffer":         19,
 	"ReviewableRequestTypeCreatePayment":       20,
 	"ReviewableRequestTypePerformRedemption":   21,
-	"ReviewableRequestTypeCreateData":          22,
-	"ReviewableRequestTypeUpdateData":          23,
-	"ReviewableRequestTypeRemoveData":          24,
+	"ReviewableRequestTypeDataCreation":        22,
+	"ReviewableRequestTypeDataUpdate":          23,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -3785,12 +3778,10 @@ type TasksExt struct {
 //    			CreatePaymentRequest createPaymentRequest;
 //            case PERFORM_REDEMPTION:
 //                RedemptionRequest redemptionRequest;
-//            case CREATE_DATA:
-//                CreateDataRequest createDataRequest;
-//            case UPDATE_DATA:
-//                UpdateDataRequest updateDataRequest;
-//            case REMOVE_DATA:
-//                RemoveDataRequest removeDataRequest;
+//            case DATA_CREATION:
+//                DataCreationRequest dataCreationRequest;
+//            case DATA_UPDATE:
+//                DataUpdateRequest dataUpdateRequest;
 //    	}
 //
 type ReviewableRequestEntryBody struct {
@@ -3814,9 +3805,8 @@ type ReviewableRequestEntryBody struct {
 	ManageOfferRequest         *ManageOfferRequest         `json:"manageOfferRequest,omitempty"`
 	CreatePaymentRequest       *CreatePaymentRequest       `json:"createPaymentRequest,omitempty"`
 	RedemptionRequest          *RedemptionRequest          `json:"redemptionRequest,omitempty"`
-	CreateDataRequest          *CreateDataRequest          `json:"createDataRequest,omitempty"`
-	UpdateDataRequest          *UpdateDataRequest          `json:"updateDataRequest,omitempty"`
-	RemoveDataRequest          *RemoveDataRequest          `json:"removeDataRequest,omitempty"`
+	DataCreationRequest        *DataCreationRequest        `json:"dataCreationRequest,omitempty"`
+	DataUpdateRequest          *DataUpdateRequest          `json:"dataUpdateRequest,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -3867,12 +3857,10 @@ func (u ReviewableRequestEntryBody) ArmForSwitch(sw int32) (string, bool) {
 		return "CreatePaymentRequest", true
 	case ReviewableRequestTypePerformRedemption:
 		return "RedemptionRequest", true
-	case ReviewableRequestTypeCreateData:
-		return "CreateDataRequest", true
-	case ReviewableRequestTypeUpdateData:
-		return "UpdateDataRequest", true
-	case ReviewableRequestTypeRemoveData:
-		return "RemoveDataRequest", true
+	case ReviewableRequestTypeDataCreation:
+		return "DataCreationRequest", true
+	case ReviewableRequestTypeDataUpdate:
+		return "DataUpdateRequest", true
 	}
 	return "-", false
 }
@@ -4014,27 +4002,20 @@ func NewReviewableRequestEntryBody(aType ReviewableRequestType, value interface{
 			return
 		}
 		result.RedemptionRequest = &tv
-	case ReviewableRequestTypeCreateData:
-		tv, ok := value.(CreateDataRequest)
+	case ReviewableRequestTypeDataCreation:
+		tv, ok := value.(DataCreationRequest)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be CreateDataRequest")
+			err = fmt.Errorf("invalid value, must be DataCreationRequest")
 			return
 		}
-		result.CreateDataRequest = &tv
-	case ReviewableRequestTypeUpdateData:
-		tv, ok := value.(UpdateDataRequest)
+		result.DataCreationRequest = &tv
+	case ReviewableRequestTypeDataUpdate:
+		tv, ok := value.(DataUpdateRequest)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be UpdateDataRequest")
+			err = fmt.Errorf("invalid value, must be DataUpdateRequest")
 			return
 		}
-		result.UpdateDataRequest = &tv
-	case ReviewableRequestTypeRemoveData:
-		tv, ok := value.(RemoveDataRequest)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be RemoveDataRequest")
-			return
-		}
-		result.RemoveDataRequest = &tv
+		result.DataUpdateRequest = &tv
 	}
 	return
 }
@@ -4514,75 +4495,50 @@ func (u ReviewableRequestEntryBody) GetRedemptionRequest() (result RedemptionReq
 	return
 }
 
-// MustCreateDataRequest retrieves the CreateDataRequest value from the union,
+// MustDataCreationRequest retrieves the DataCreationRequest value from the union,
 // panicing if the value is not set.
-func (u ReviewableRequestEntryBody) MustCreateDataRequest() CreateDataRequest {
-	val, ok := u.GetCreateDataRequest()
+func (u ReviewableRequestEntryBody) MustDataCreationRequest() DataCreationRequest {
+	val, ok := u.GetDataCreationRequest()
 
 	if !ok {
-		panic("arm CreateDataRequest is not set")
+		panic("arm DataCreationRequest is not set")
 	}
 
 	return val
 }
 
-// GetCreateDataRequest retrieves the CreateDataRequest value from the union,
+// GetDataCreationRequest retrieves the DataCreationRequest value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewableRequestEntryBody) GetCreateDataRequest() (result CreateDataRequest, ok bool) {
+func (u ReviewableRequestEntryBody) GetDataCreationRequest() (result DataCreationRequest, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "CreateDataRequest" {
-		result = *u.CreateDataRequest
+	if armName == "DataCreationRequest" {
+		result = *u.DataCreationRequest
 		ok = true
 	}
 
 	return
 }
 
-// MustUpdateDataRequest retrieves the UpdateDataRequest value from the union,
+// MustDataUpdateRequest retrieves the DataUpdateRequest value from the union,
 // panicing if the value is not set.
-func (u ReviewableRequestEntryBody) MustUpdateDataRequest() UpdateDataRequest {
-	val, ok := u.GetUpdateDataRequest()
+func (u ReviewableRequestEntryBody) MustDataUpdateRequest() DataUpdateRequest {
+	val, ok := u.GetDataUpdateRequest()
 
 	if !ok {
-		panic("arm UpdateDataRequest is not set")
+		panic("arm DataUpdateRequest is not set")
 	}
 
 	return val
 }
 
-// GetUpdateDataRequest retrieves the UpdateDataRequest value from the union,
+// GetDataUpdateRequest retrieves the DataUpdateRequest value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u ReviewableRequestEntryBody) GetUpdateDataRequest() (result UpdateDataRequest, ok bool) {
+func (u ReviewableRequestEntryBody) GetDataUpdateRequest() (result DataUpdateRequest, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "UpdateDataRequest" {
-		result = *u.UpdateDataRequest
-		ok = true
-	}
-
-	return
-}
-
-// MustRemoveDataRequest retrieves the RemoveDataRequest value from the union,
-// panicing if the value is not set.
-func (u ReviewableRequestEntryBody) MustRemoveDataRequest() RemoveDataRequest {
-	val, ok := u.GetRemoveDataRequest()
-
-	if !ok {
-		panic("arm RemoveDataRequest is not set")
-	}
-
-	return val
-}
-
-// GetRemoveDataRequest retrieves the RemoveDataRequest value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u ReviewableRequestEntryBody) GetRemoveDataRequest() (result RemoveDataRequest, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Type))
-
-	if armName == "RemoveDataRequest" {
-		result = *u.RemoveDataRequest
+	if armName == "DataUpdateRequest" {
+		result = *u.DataUpdateRequest
 		ok = true
 	}
 
@@ -4677,12 +4633,10 @@ func NewReviewableRequestEntryExt(v LedgerVersion, value interface{}) (result Re
 //    			CreatePaymentRequest createPaymentRequest;
 //            case PERFORM_REDEMPTION:
 //                RedemptionRequest redemptionRequest;
-//            case CREATE_DATA:
-//                CreateDataRequest createDataRequest;
-//            case UPDATE_DATA:
-//                UpdateDataRequest updateDataRequest;
-//            case REMOVE_DATA:
-//                RemoveDataRequest removeDataRequest;
+//            case DATA_CREATION:
+//                DataCreationRequest dataCreationRequest;
+//            case DATA_UPDATE:
+//                DataUpdateRequest dataUpdateRequest;
 //    	} body;
 //
 //    	TasksExt tasks;
@@ -12658,6 +12612,309 @@ func (u CancelChangeRoleRequestResult) GetSuccess() (result CancelChangeRoleSucc
 	return
 }
 
+// CancelDataCreationRequestOpExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CancelDataCreationRequestOpExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CancelDataCreationRequestOpExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CancelDataCreationRequestOpExt
+func (u CancelDataCreationRequestOpExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCancelDataCreationRequestOpExt creates a new  CancelDataCreationRequestOpExt.
+func NewCancelDataCreationRequestOpExt(v LedgerVersion, value interface{}) (result CancelDataCreationRequestOpExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CancelDataCreationRequestOp is an XDR Struct defines as:
+//
+//   //: CancelDataCreationRequestOp is used to cancel reviwable request for data creation.
+//    //: If successful, request with the corresponding ID will be deleted
+//    struct CancelDataCreationRequestOp
+//    {
+//        //: ID of the DataCreationRequest request to be canceled
+//        uint64 requestID;
+//
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//
+//    };
+//
+type CancelDataCreationRequestOp struct {
+	RequestId Uint64                         `json:"requestID,omitempty"`
+	Ext       CancelDataCreationRequestOpExt `json:"ext,omitempty"`
+}
+
+// CancelDataCreationRequestResultCode is an XDR Enum defines as:
+//
+//   //: Result codes for CancelDataCreationRequest operation
+//    enum CancelDataCreationRequestResultCode
+//    {
+//        // codes considered as "success" for the operation
+//        //: Operation is successfully applied
+//        SUCCESS = 0,
+//
+//        // codes considered as "failure" for the operation
+//        //: ID of a request cannot be 0
+//        REQUEST_ID_INVALID = -1, // request id can not be equal zero
+//        //: request with provided ID is not found
+//        REQUEST_NOT_FOUND = -2 // trying to cancel not existing reviewable request
+//    };
+//
+type CancelDataCreationRequestResultCode int32
+
+const (
+	CancelDataCreationRequestResultCodeSuccess          CancelDataCreationRequestResultCode = 0
+	CancelDataCreationRequestResultCodeRequestIdInvalid CancelDataCreationRequestResultCode = -1
+	CancelDataCreationRequestResultCodeRequestNotFound  CancelDataCreationRequestResultCode = -2
+)
+
+var CancelDataCreationRequestResultCodeAll = []CancelDataCreationRequestResultCode{
+	CancelDataCreationRequestResultCodeSuccess,
+	CancelDataCreationRequestResultCodeRequestIdInvalid,
+	CancelDataCreationRequestResultCodeRequestNotFound,
+}
+
+var cancelDataCreationRequestResultCodeMap = map[int32]string{
+	0:  "CancelDataCreationRequestResultCodeSuccess",
+	-1: "CancelDataCreationRequestResultCodeRequestIdInvalid",
+	-2: "CancelDataCreationRequestResultCodeRequestNotFound",
+}
+
+var cancelDataCreationRequestResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "request_id_invalid",
+	-2: "request_not_found",
+}
+
+var cancelDataCreationRequestResultCodeRevMap = map[string]int32{
+	"CancelDataCreationRequestResultCodeSuccess":          0,
+	"CancelDataCreationRequestResultCodeRequestIdInvalid": -1,
+	"CancelDataCreationRequestResultCodeRequestNotFound":  -2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CancelDataCreationRequestResultCode
+func (e CancelDataCreationRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := cancelDataCreationRequestResultCodeMap[v]
+	return ok
+}
+func (e CancelDataCreationRequestResultCode) isFlag() bool {
+	for i := len(CancelDataCreationRequestResultCodeAll) - 1; i >= 0; i-- {
+		expected := CancelDataCreationRequestResultCode(2) << uint64(len(CancelDataCreationRequestResultCodeAll)-1) >> uint64(len(CancelDataCreationRequestResultCodeAll)-i)
+		if expected != CancelDataCreationRequestResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CancelDataCreationRequestResultCode) String() string {
+	name, _ := cancelDataCreationRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CancelDataCreationRequestResultCode) ShortString() string {
+	name, _ := cancelDataCreationRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CancelDataCreationRequestResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range CancelDataCreationRequestResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CancelDataCreationRequestResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CancelDataCreationRequestResultCode(t.Value)
+	return nil
+}
+
+// CancelDataCreationSuccessExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CancelDataCreationSuccessExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CancelDataCreationSuccessExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CancelDataCreationSuccessExt
+func (u CancelDataCreationSuccessExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCancelDataCreationSuccessExt creates a new  CancelDataCreationSuccessExt.
+func NewCancelDataCreationSuccessExt(v LedgerVersion, value interface{}) (result CancelDataCreationSuccessExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CancelDataCreationSuccess is an XDR Struct defines as:
+//
+//   //: Result of successful `CancelDataCreationRequestOp` application
+//    struct CancelDataCreationSuccess {
+//
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CancelDataCreationSuccess struct {
+	Ext CancelDataCreationSuccessExt `json:"ext,omitempty"`
+}
+
+// CancelDataCreationRequestResult is an XDR Union defines as:
+//
+//   //: Result of CancelDataCreationRequest operation application along with the result code
+//    union CancelDataCreationRequestResult switch (CancelDataCreationRequestResultCode code)
+//    {
+//        case SUCCESS:
+//            CancelDataCreationSuccess success;
+//        default:
+//            void;
+//    };
+//
+type CancelDataCreationRequestResult struct {
+	Code    CancelDataCreationRequestResultCode `json:"code,omitempty"`
+	Success *CancelDataCreationSuccess          `json:"success,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CancelDataCreationRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CancelDataCreationRequestResult
+func (u CancelDataCreationRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CancelDataCreationRequestResultCode(sw) {
+	case CancelDataCreationRequestResultCodeSuccess:
+		return "Success", true
+	default:
+		return "", true
+	}
+}
+
+// NewCancelDataCreationRequestResult creates a new  CancelDataCreationRequestResult.
+func NewCancelDataCreationRequestResult(code CancelDataCreationRequestResultCode, value interface{}) (result CancelDataCreationRequestResult, err error) {
+	result.Code = code
+	switch CancelDataCreationRequestResultCode(code) {
+	case CancelDataCreationRequestResultCodeSuccess:
+		tv, ok := value.(CancelDataCreationSuccess)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CancelDataCreationSuccess")
+			return
+		}
+		result.Success = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustSuccess retrieves the Success value from the union,
+// panicing if the value is not set.
+func (u CancelDataCreationRequestResult) MustSuccess() CancelDataCreationSuccess {
+	val, ok := u.GetSuccess()
+
+	if !ok {
+		panic("arm Success is not set")
+	}
+
+	return val
+}
+
+// GetSuccess retrieves the Success value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CancelDataCreationRequestResult) GetSuccess() (result CancelDataCreationSuccess, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "Success" {
+		result = *u.Success
+		ok = true
+	}
+
+	return
+}
+
 // CancelSaleCreationRequestOpExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -16010,11 +16267,14 @@ func (u CreateChangeRoleRequestResult) GetSuccess() (result CreateChangeRoleRequ
 	return
 }
 
-// CreateDataRequestOp is an XDR Struct defines as:
+// CreateDataCreationRequestOp is an XDR Struct defines as:
 //
-//   struct CreateDataRequestOp
+//   struct CreateDataCreationRequestOp
 //    {
-//        CreateDataRequest createDataRequest;
+//        //: ID of the DataCreationRequest. If set to 0, a new request is created
+//        uint64 requestID;
+//
+//        DataCreationRequest dataCreationRequest;
 //
 //        uint32* allTasks;
 //
@@ -16022,63 +16282,70 @@ func (u CreateChangeRoleRequestResult) GetSuccess() (result CreateChangeRoleRequ
 //        EmptyExt ext;
 //    };
 //
-type CreateDataRequestOp struct {
-	CreateDataRequest CreateDataRequest `json:"createDataRequest,omitempty"`
-	AllTasks          *Uint32           `json:"allTasks,omitempty"`
-	Ext               EmptyExt          `json:"ext,omitempty"`
+type CreateDataCreationRequestOp struct {
+	RequestId           Uint64              `json:"requestID,omitempty"`
+	DataCreationRequest DataCreationRequest `json:"dataCreationRequest,omitempty"`
+	AllTasks            *Uint32             `json:"allTasks,omitempty"`
+	Ext                 EmptyExt            `json:"ext,omitempty"`
 }
 
-// CreateDataRequestResultCode is an XDR Enum defines as:
+// CreateDataCreationRequestResultCode is an XDR Enum defines as:
 //
-//   enum CreateDataRequestResultCode
+//   enum CreateDataCreationRequestResultCode
 //    {
 //        SUCCESS = 0,
 //        INVALID_VALUE = -1,
-//        OWNER_NOT_EXIST = -2
+//        CREATE_DATA_TASKS_NOT_FOUND = -2,
+//        REQUEST_NOT_FOUND = -3
 //    };
 //
-type CreateDataRequestResultCode int32
+type CreateDataCreationRequestResultCode int32
 
 const (
-	CreateDataRequestResultCodeSuccess       CreateDataRequestResultCode = 0
-	CreateDataRequestResultCodeInvalidValue  CreateDataRequestResultCode = -1
-	CreateDataRequestResultCodeOwnerNotExist CreateDataRequestResultCode = -2
+	CreateDataCreationRequestResultCodeSuccess                 CreateDataCreationRequestResultCode = 0
+	CreateDataCreationRequestResultCodeInvalidValue            CreateDataCreationRequestResultCode = -1
+	CreateDataCreationRequestResultCodeCreateDataTasksNotFound CreateDataCreationRequestResultCode = -2
+	CreateDataCreationRequestResultCodeRequestNotFound         CreateDataCreationRequestResultCode = -3
 )
 
-var CreateDataRequestResultCodeAll = []CreateDataRequestResultCode{
-	CreateDataRequestResultCodeSuccess,
-	CreateDataRequestResultCodeInvalidValue,
-	CreateDataRequestResultCodeOwnerNotExist,
+var CreateDataCreationRequestResultCodeAll = []CreateDataCreationRequestResultCode{
+	CreateDataCreationRequestResultCodeSuccess,
+	CreateDataCreationRequestResultCodeInvalidValue,
+	CreateDataCreationRequestResultCodeCreateDataTasksNotFound,
+	CreateDataCreationRequestResultCodeRequestNotFound,
 }
 
-var createDataRequestResultCodeMap = map[int32]string{
-	0:  "CreateDataRequestResultCodeSuccess",
-	-1: "CreateDataRequestResultCodeInvalidValue",
-	-2: "CreateDataRequestResultCodeOwnerNotExist",
+var createDataCreationRequestResultCodeMap = map[int32]string{
+	0:  "CreateDataCreationRequestResultCodeSuccess",
+	-1: "CreateDataCreationRequestResultCodeInvalidValue",
+	-2: "CreateDataCreationRequestResultCodeCreateDataTasksNotFound",
+	-3: "CreateDataCreationRequestResultCodeRequestNotFound",
 }
 
-var createDataRequestResultCodeShortMap = map[int32]string{
+var createDataCreationRequestResultCodeShortMap = map[int32]string{
 	0:  "success",
 	-1: "invalid_value",
-	-2: "owner_not_exist",
+	-2: "create_data_tasks_not_found",
+	-3: "request_not_found",
 }
 
-var createDataRequestResultCodeRevMap = map[string]int32{
-	"CreateDataRequestResultCodeSuccess":       0,
-	"CreateDataRequestResultCodeInvalidValue":  -1,
-	"CreateDataRequestResultCodeOwnerNotExist": -2,
+var createDataCreationRequestResultCodeRevMap = map[string]int32{
+	"CreateDataCreationRequestResultCodeSuccess":                 0,
+	"CreateDataCreationRequestResultCodeInvalidValue":            -1,
+	"CreateDataCreationRequestResultCodeCreateDataTasksNotFound": -2,
+	"CreateDataCreationRequestResultCodeRequestNotFound":         -3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for CreateDataRequestResultCode
-func (e CreateDataRequestResultCode) ValidEnum(v int32) bool {
-	_, ok := createDataRequestResultCodeMap[v]
+// the Enum interface for CreateDataCreationRequestResultCode
+func (e CreateDataCreationRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := createDataCreationRequestResultCodeMap[v]
 	return ok
 }
-func (e CreateDataRequestResultCode) isFlag() bool {
-	for i := len(CreateDataRequestResultCodeAll) - 1; i >= 0; i-- {
-		expected := CreateDataRequestResultCode(2) << uint64(len(CreateDataRequestResultCodeAll)-1) >> uint64(len(CreateDataRequestResultCodeAll)-i)
-		if expected != CreateDataRequestResultCodeAll[i] {
+func (e CreateDataCreationRequestResultCode) isFlag() bool {
+	for i := len(CreateDataCreationRequestResultCodeAll) - 1; i >= 0; i-- {
+		expected := CreateDataCreationRequestResultCode(2) << uint64(len(CreateDataCreationRequestResultCodeAll)-1) >> uint64(len(CreateDataCreationRequestResultCodeAll)-i)
+		if expected != CreateDataCreationRequestResultCodeAll[i] {
 			return false
 		}
 	}
@@ -16086,24 +16353,24 @@ func (e CreateDataRequestResultCode) isFlag() bool {
 }
 
 // String returns the name of `e`
-func (e CreateDataRequestResultCode) String() string {
-	name, _ := createDataRequestResultCodeMap[int32(e)]
+func (e CreateDataCreationRequestResultCode) String() string {
+	name, _ := createDataCreationRequestResultCodeMap[int32(e)]
 	return name
 }
 
-func (e CreateDataRequestResultCode) ShortString() string {
-	name, _ := createDataRequestResultCodeShortMap[int32(e)]
+func (e CreateDataCreationRequestResultCode) ShortString() string {
+	name, _ := createDataCreationRequestResultCodeShortMap[int32(e)]
 	return name
 }
 
-func (e CreateDataRequestResultCode) MarshalJSON() ([]byte, error) {
+func (e CreateDataCreationRequestResultCode) MarshalJSON() ([]byte, error) {
 	if e.isFlag() {
 		// marshal as mask
 		result := flag{
 			Value: int32(e),
 			Flags: make([]flagValue, 0),
 		}
-		for _, value := range CreateDataRequestResultCodeAll {
+		for _, value := range CreateDataCreationRequestResultCodeAll {
 			if (value & e) == value {
 				result.Flags = append(result.Flags, flagValue{
 					Value: int32(value),
@@ -16122,16 +16389,16 @@ func (e CreateDataRequestResultCode) MarshalJSON() ([]byte, error) {
 	}
 }
 
-func (e *CreateDataRequestResultCode) UnmarshalJSON(data []byte) error {
+func (e *CreateDataCreationRequestResultCode) UnmarshalJSON(data []byte) error {
 	var t value
 	if err := json.Unmarshal(data, &t); err != nil {
 		return err
 	}
-	*e = CreateDataRequestResultCode(t.Value)
+	*e = CreateDataCreationRequestResultCode(t.Value)
 	return nil
 }
 
-// CreateDataRequestResponseExt is an XDR NestedUnion defines as:
+// CreateDataCreationRequestResponseExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
@@ -16139,19 +16406,19 @@ func (e *CreateDataRequestResultCode) UnmarshalJSON(data []byte) error {
 //            void;
 //        }
 //
-type CreateDataRequestResponseExt struct {
+type CreateDataCreationRequestResponseExt struct {
 	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u CreateDataRequestResponseExt) SwitchFieldName() string {
+func (u CreateDataCreationRequestResponseExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of CreateDataRequestResponseExt
-func (u CreateDataRequestResponseExt) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of CreateDataCreationRequestResponseExt
+func (u CreateDataCreationRequestResponseExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
@@ -16159,8 +16426,8 @@ func (u CreateDataRequestResponseExt) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewCreateDataRequestResponseExt creates a new  CreateDataRequestResponseExt.
-func NewCreateDataRequestResponseExt(v LedgerVersion, value interface{}) (result CreateDataRequestResponseExt, err error) {
+// NewCreateDataCreationRequestResponseExt creates a new  CreateDataCreationRequestResponseExt.
+func NewCreateDataCreationRequestResponseExt(v LedgerVersion, value interface{}) (result CreateDataCreationRequestResponseExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
@@ -16169,17 +16436,18 @@ func NewCreateDataRequestResponseExt(v LedgerVersion, value interface{}) (result
 	return
 }
 
-// CreateDataRequestResponse is an XDR Struct defines as:
+// CreateDataCreationRequestResponse is an XDR Struct defines as:
 //
-//   struct CreateDataRequestResponse {
+//   struct CreateDataCreationRequestResponse {
 //        uint64 requestID;
 //        bool fulfilled;
-//        //todo add owner
+//        AccountID owner;
+//        uint64 id;
 //        uint64 type;
 //        longstring value;
 //
 //        //: Reserved for future use
-//         union switch (LedgerVersion v)
+//        union switch (LedgerVersion v)
 //        {
 //        case EMPTY_VERSION:
 //            void;
@@ -16187,82 +16455,350 @@ func NewCreateDataRequestResponseExt(v LedgerVersion, value interface{}) (result
 //        ext;
 //    };
 //
-type CreateDataRequestResponse struct {
-	RequestId Uint64                       `json:"requestID,omitempty"`
-	Fulfilled bool                         `json:"fulfilled,omitempty"`
-	Type      Uint64                       `json:"type,omitempty"`
-	Value     Longstring                   `json:"value,omitempty"`
-	Ext       CreateDataRequestResponseExt `json:"ext,omitempty"`
+type CreateDataCreationRequestResponse struct {
+	RequestId Uint64                               `json:"requestID,omitempty"`
+	Fulfilled bool                                 `json:"fulfilled,omitempty"`
+	Owner     AccountId                            `json:"owner,omitempty"`
+	Id        Uint64                               `json:"id,omitempty"`
+	Type      Uint64                               `json:"type,omitempty"`
+	Value     Longstring                           `json:"value,omitempty"`
+	Ext       CreateDataCreationRequestResponseExt `json:"ext,omitempty"`
 }
 
-// CreateDataRequestResult is an XDR Union defines as:
+// CreateDataCreationRequestResult is an XDR Union defines as:
 //
-//   union CreateDataRequestResult switch (CreateDataRequestResultCode code)
+//   union CreateDataCreationRequestResult switch (CreateDataCreationRequestResultCode code)
 //    {
 //    case SUCCESS:
-//        CreateDataRequestResponse createDataRequestResponse;
+//        CreateDataCreationRequestResponse createDataCreationRequestResponse;
 //    default:
 //        void;
 //    };
 //
-type CreateDataRequestResult struct {
-	Code                      CreateDataRequestResultCode `json:"code,omitempty"`
-	CreateDataRequestResponse *CreateDataRequestResponse  `json:"createDataRequestResponse,omitempty"`
+type CreateDataCreationRequestResult struct {
+	Code                              CreateDataCreationRequestResultCode `json:"code,omitempty"`
+	CreateDataCreationRequestResponse *CreateDataCreationRequestResponse  `json:"createDataCreationRequestResponse,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u CreateDataRequestResult) SwitchFieldName() string {
+func (u CreateDataCreationRequestResult) SwitchFieldName() string {
 	return "Code"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of CreateDataRequestResult
-func (u CreateDataRequestResult) ArmForSwitch(sw int32) (string, bool) {
-	switch CreateDataRequestResultCode(sw) {
-	case CreateDataRequestResultCodeSuccess:
-		return "CreateDataRequestResponse", true
+// the value for an instance of CreateDataCreationRequestResult
+func (u CreateDataCreationRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CreateDataCreationRequestResultCode(sw) {
+	case CreateDataCreationRequestResultCodeSuccess:
+		return "CreateDataCreationRequestResponse", true
 	default:
 		return "", true
 	}
 }
 
-// NewCreateDataRequestResult creates a new  CreateDataRequestResult.
-func NewCreateDataRequestResult(code CreateDataRequestResultCode, value interface{}) (result CreateDataRequestResult, err error) {
+// NewCreateDataCreationRequestResult creates a new  CreateDataCreationRequestResult.
+func NewCreateDataCreationRequestResult(code CreateDataCreationRequestResultCode, value interface{}) (result CreateDataCreationRequestResult, err error) {
 	result.Code = code
-	switch CreateDataRequestResultCode(code) {
-	case CreateDataRequestResultCodeSuccess:
-		tv, ok := value.(CreateDataRequestResponse)
+	switch CreateDataCreationRequestResultCode(code) {
+	case CreateDataCreationRequestResultCodeSuccess:
+		tv, ok := value.(CreateDataCreationRequestResponse)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be CreateDataRequestResponse")
+			err = fmt.Errorf("invalid value, must be CreateDataCreationRequestResponse")
 			return
 		}
-		result.CreateDataRequestResponse = &tv
+		result.CreateDataCreationRequestResponse = &tv
 	default:
 		// void
 	}
 	return
 }
 
-// MustCreateDataRequestResponse retrieves the CreateDataRequestResponse value from the union,
+// MustCreateDataCreationRequestResponse retrieves the CreateDataCreationRequestResponse value from the union,
 // panicing if the value is not set.
-func (u CreateDataRequestResult) MustCreateDataRequestResponse() CreateDataRequestResponse {
-	val, ok := u.GetCreateDataRequestResponse()
+func (u CreateDataCreationRequestResult) MustCreateDataCreationRequestResponse() CreateDataCreationRequestResponse {
+	val, ok := u.GetCreateDataCreationRequestResponse()
 
 	if !ok {
-		panic("arm CreateDataRequestResponse is not set")
+		panic("arm CreateDataCreationRequestResponse is not set")
 	}
 
 	return val
 }
 
-// GetCreateDataRequestResponse retrieves the CreateDataRequestResponse value from the union,
+// GetCreateDataCreationRequestResponse retrieves the CreateDataCreationRequestResponse value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u CreateDataRequestResult) GetCreateDataRequestResponse() (result CreateDataRequestResponse, ok bool) {
+func (u CreateDataCreationRequestResult) GetCreateDataCreationRequestResponse() (result CreateDataCreationRequestResponse, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Code))
 
-	if armName == "CreateDataRequestResponse" {
-		result = *u.CreateDataRequestResponse
+	if armName == "CreateDataCreationRequestResponse" {
+		result = *u.CreateDataCreationRequestResponse
+		ok = true
+	}
+
+	return
+}
+
+// CreateDataUpdateRequestOp is an XDR Struct defines as:
+//
+//   struct CreateDataUpdateRequestOp
+//    {
+//        //: ID of the DataUpdateRequest. If set to 0, a new request is created
+//        uint64 requestID;
+//
+//        DataUpdateRequest dataUpdateRequest;
+//
+//        uint32* allTasks;
+//
+//        //: Reserved for future extension
+//        EmptyExt ext;
+//    };
+//
+type CreateDataUpdateRequestOp struct {
+	RequestId         Uint64            `json:"requestID,omitempty"`
+	DataUpdateRequest DataUpdateRequest `json:"dataUpdateRequest,omitempty"`
+	AllTasks          *Uint32           `json:"allTasks,omitempty"`
+	Ext               EmptyExt          `json:"ext,omitempty"`
+}
+
+// CreateDataUpdateRequestResultCode is an XDR Enum defines as:
+//
+//   enum CreateDataUpdateRequestResultCode
+//    {
+//        SUCCESS = 0,
+//        INVALID_VALUE = -1,
+//        UPDATE_DATA_TASKS_NOT_FOUND = -2
+//    };
+//
+type CreateDataUpdateRequestResultCode int32
+
+const (
+	CreateDataUpdateRequestResultCodeSuccess                 CreateDataUpdateRequestResultCode = 0
+	CreateDataUpdateRequestResultCodeInvalidValue            CreateDataUpdateRequestResultCode = -1
+	CreateDataUpdateRequestResultCodeUpdateDataTasksNotFound CreateDataUpdateRequestResultCode = -2
+)
+
+var CreateDataUpdateRequestResultCodeAll = []CreateDataUpdateRequestResultCode{
+	CreateDataUpdateRequestResultCodeSuccess,
+	CreateDataUpdateRequestResultCodeInvalidValue,
+	CreateDataUpdateRequestResultCodeUpdateDataTasksNotFound,
+}
+
+var createDataUpdateRequestResultCodeMap = map[int32]string{
+	0:  "CreateDataUpdateRequestResultCodeSuccess",
+	-1: "CreateDataUpdateRequestResultCodeInvalidValue",
+	-2: "CreateDataUpdateRequestResultCodeUpdateDataTasksNotFound",
+}
+
+var createDataUpdateRequestResultCodeShortMap = map[int32]string{
+	0:  "success",
+	-1: "invalid_value",
+	-2: "update_data_tasks_not_found",
+}
+
+var createDataUpdateRequestResultCodeRevMap = map[string]int32{
+	"CreateDataUpdateRequestResultCodeSuccess":                 0,
+	"CreateDataUpdateRequestResultCodeInvalidValue":            -1,
+	"CreateDataUpdateRequestResultCodeUpdateDataTasksNotFound": -2,
+}
+
+// ValidEnum validates a proposed value for this enum.  Implements
+// the Enum interface for CreateDataUpdateRequestResultCode
+func (e CreateDataUpdateRequestResultCode) ValidEnum(v int32) bool {
+	_, ok := createDataUpdateRequestResultCodeMap[v]
+	return ok
+}
+func (e CreateDataUpdateRequestResultCode) isFlag() bool {
+	for i := len(CreateDataUpdateRequestResultCodeAll) - 1; i >= 0; i-- {
+		expected := CreateDataUpdateRequestResultCode(2) << uint64(len(CreateDataUpdateRequestResultCodeAll)-1) >> uint64(len(CreateDataUpdateRequestResultCodeAll)-i)
+		if expected != CreateDataUpdateRequestResultCodeAll[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// String returns the name of `e`
+func (e CreateDataUpdateRequestResultCode) String() string {
+	name, _ := createDataUpdateRequestResultCodeMap[int32(e)]
+	return name
+}
+
+func (e CreateDataUpdateRequestResultCode) ShortString() string {
+	name, _ := createDataUpdateRequestResultCodeShortMap[int32(e)]
+	return name
+}
+
+func (e CreateDataUpdateRequestResultCode) MarshalJSON() ([]byte, error) {
+	if e.isFlag() {
+		// marshal as mask
+		result := flag{
+			Value: int32(e),
+			Flags: make([]flagValue, 0),
+		}
+		for _, value := range CreateDataUpdateRequestResultCodeAll {
+			if (value & e) == value {
+				result.Flags = append(result.Flags, flagValue{
+					Value: int32(value),
+					Name:  value.ShortString(),
+				})
+			}
+		}
+		return json.Marshal(&result)
+	} else {
+		// marshal as enum
+		result := enum{
+			Value:  int32(e),
+			String: e.ShortString(),
+		}
+		return json.Marshal(&result)
+	}
+}
+
+func (e *CreateDataUpdateRequestResultCode) UnmarshalJSON(data []byte) error {
+	var t value
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*e = CreateDataUpdateRequestResultCode(t.Value)
+	return nil
+}
+
+// CreateDataUpdateRequestResponseExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type CreateDataUpdateRequestResponseExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateDataUpdateRequestResponseExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateDataUpdateRequestResponseExt
+func (u CreateDataUpdateRequestResponseExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewCreateDataUpdateRequestResponseExt creates a new  CreateDataUpdateRequestResponseExt.
+func NewCreateDataUpdateRequestResponseExt(v LedgerVersion, value interface{}) (result CreateDataUpdateRequestResponseExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// CreateDataUpdateRequestResponse is an XDR Struct defines as:
+//
+//   struct CreateDataUpdateRequestResponse {
+//        uint64 requestID;
+//        bool fulfilled;
+//        AccountID owner;
+//        uint64 id;
+//        uint64 type;
+//        longstring value;
+//
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//        ext;
+//    };
+//
+type CreateDataUpdateRequestResponse struct {
+	RequestId Uint64                             `json:"requestID,omitempty"`
+	Fulfilled bool                               `json:"fulfilled,omitempty"`
+	Owner     AccountId                          `json:"owner,omitempty"`
+	Id        Uint64                             `json:"id,omitempty"`
+	Type      Uint64                             `json:"type,omitempty"`
+	Value     Longstring                         `json:"value,omitempty"`
+	Ext       CreateDataUpdateRequestResponseExt `json:"ext,omitempty"`
+}
+
+// CreateDataUpdateRequestResult is an XDR Union defines as:
+//
+//   union CreateDataUpdateRequestResult switch (CreateDataUpdateRequestResultCode code)
+//    {
+//    case SUCCESS:
+//        CreateDataUpdateRequestResponse createDataUpdateRequestResponse;
+//    default:
+//        void;
+//    };
+//
+type CreateDataUpdateRequestResult struct {
+	Code                            CreateDataUpdateRequestResultCode `json:"code,omitempty"`
+	CreateDataUpdateRequestResponse *CreateDataUpdateRequestResponse  `json:"createDataUpdateRequestResponse,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u CreateDataUpdateRequestResult) SwitchFieldName() string {
+	return "Code"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of CreateDataUpdateRequestResult
+func (u CreateDataUpdateRequestResult) ArmForSwitch(sw int32) (string, bool) {
+	switch CreateDataUpdateRequestResultCode(sw) {
+	case CreateDataUpdateRequestResultCodeSuccess:
+		return "CreateDataUpdateRequestResponse", true
+	default:
+		return "", true
+	}
+}
+
+// NewCreateDataUpdateRequestResult creates a new  CreateDataUpdateRequestResult.
+func NewCreateDataUpdateRequestResult(code CreateDataUpdateRequestResultCode, value interface{}) (result CreateDataUpdateRequestResult, err error) {
+	result.Code = code
+	switch CreateDataUpdateRequestResultCode(code) {
+	case CreateDataUpdateRequestResultCodeSuccess:
+		tv, ok := value.(CreateDataUpdateRequestResponse)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CreateDataUpdateRequestResponse")
+			return
+		}
+		result.CreateDataUpdateRequestResponse = &tv
+	default:
+		// void
+	}
+	return
+}
+
+// MustCreateDataUpdateRequestResponse retrieves the CreateDataUpdateRequestResponse value from the union,
+// panicing if the value is not set.
+func (u CreateDataUpdateRequestResult) MustCreateDataUpdateRequestResponse() CreateDataUpdateRequestResponse {
+	val, ok := u.GetCreateDataUpdateRequestResponse()
+
+	if !ok {
+		panic("arm CreateDataUpdateRequestResponse is not set")
+	}
+
+	return val
+}
+
+// GetCreateDataUpdateRequestResponse retrieves the CreateDataUpdateRequestResponse value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u CreateDataUpdateRequestResult) GetCreateDataUpdateRequestResponse() (result CreateDataUpdateRequestResponse, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Code))
+
+	if armName == "CreateDataUpdateRequestResponse" {
+		result = *u.CreateDataUpdateRequestResponse
 		ok = true
 	}
 
@@ -37368,248 +37904,6 @@ func (u RemoveAssetResult) GetSuccess() (result RemoveAssetSuccess, ok bool) {
 	return
 }
 
-// RemoveDataRequestOp is an XDR Struct defines as:
-//
-//   struct RemoveDataRequestOp
-//    {
-//        RemoveDataRequest removeDataRequest;
-//
-//        uint32* allTasks;
-//
-//        //: Reserved for future extension
-//        EmptyExt ext;
-//    };
-//
-type RemoveDataRequestOp struct {
-	RemoveDataRequest RemoveDataRequest `json:"removeDataRequest,omitempty"`
-	AllTasks          *Uint32           `json:"allTasks,omitempty"`
-	Ext               EmptyExt          `json:"ext,omitempty"`
-}
-
-// RemoveDataRequestResultCode is an XDR Enum defines as:
-//
-//   enum RemoveDataRequestResultCode
-//    {
-//        SUCCESS = 0
-//    };
-//
-type RemoveDataRequestResultCode int32
-
-const (
-	RemoveDataRequestResultCodeSuccess RemoveDataRequestResultCode = 0
-)
-
-var RemoveDataRequestResultCodeAll = []RemoveDataRequestResultCode{
-	RemoveDataRequestResultCodeSuccess,
-}
-
-var removeDataRequestResultCodeMap = map[int32]string{
-	0: "RemoveDataRequestResultCodeSuccess",
-}
-
-var removeDataRequestResultCodeShortMap = map[int32]string{
-	0: "success",
-}
-
-var removeDataRequestResultCodeRevMap = map[string]int32{
-	"RemoveDataRequestResultCodeSuccess": 0,
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for RemoveDataRequestResultCode
-func (e RemoveDataRequestResultCode) ValidEnum(v int32) bool {
-	_, ok := removeDataRequestResultCodeMap[v]
-	return ok
-}
-func (e RemoveDataRequestResultCode) isFlag() bool {
-	for i := len(RemoveDataRequestResultCodeAll) - 1; i >= 0; i-- {
-		expected := RemoveDataRequestResultCode(2) << uint64(len(RemoveDataRequestResultCodeAll)-1) >> uint64(len(RemoveDataRequestResultCodeAll)-i)
-		if expected != RemoveDataRequestResultCodeAll[i] {
-			return false
-		}
-	}
-	return true
-}
-
-// String returns the name of `e`
-func (e RemoveDataRequestResultCode) String() string {
-	name, _ := removeDataRequestResultCodeMap[int32(e)]
-	return name
-}
-
-func (e RemoveDataRequestResultCode) ShortString() string {
-	name, _ := removeDataRequestResultCodeShortMap[int32(e)]
-	return name
-}
-
-func (e RemoveDataRequestResultCode) MarshalJSON() ([]byte, error) {
-	if e.isFlag() {
-		// marshal as mask
-		result := flag{
-			Value: int32(e),
-			Flags: make([]flagValue, 0),
-		}
-		for _, value := range RemoveDataRequestResultCodeAll {
-			if (value & e) == value {
-				result.Flags = append(result.Flags, flagValue{
-					Value: int32(value),
-					Name:  value.ShortString(),
-				})
-			}
-		}
-		return json.Marshal(&result)
-	} else {
-		// marshal as enum
-		result := enum{
-			Value:  int32(e),
-			String: e.ShortString(),
-		}
-		return json.Marshal(&result)
-	}
-}
-
-func (e *RemoveDataRequestResultCode) UnmarshalJSON(data []byte) error {
-	var t value
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
-	}
-	*e = RemoveDataRequestResultCode(t.Value)
-	return nil
-}
-
-// RemoveDataRequestResponseExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type RemoveDataRequestResponseExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u RemoveDataRequestResponseExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of RemoveDataRequestResponseExt
-func (u RemoveDataRequestResponseExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewRemoveDataRequestResponseExt creates a new  RemoveDataRequestResponseExt.
-func NewRemoveDataRequestResponseExt(v LedgerVersion, value interface{}) (result RemoveDataRequestResponseExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// RemoveDataRequestResponse is an XDR Struct defines as:
-//
-//   struct RemoveDataRequestResponse {
-//        uint64 requestID;
-//        bool fulfilled;
-//
-//        //: Reserved for future use
-//         union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type RemoveDataRequestResponse struct {
-	RequestId Uint64                       `json:"requestID,omitempty"`
-	Fulfilled bool                         `json:"fulfilled,omitempty"`
-	Ext       RemoveDataRequestResponseExt `json:"ext,omitempty"`
-}
-
-// RemoveDataRequestResult is an XDR Union defines as:
-//
-//   union RemoveDataRequestResult switch (RemoveDataRequestResultCode code)
-//    {
-//    case SUCCESS:
-//        RemoveDataRequestResponse removeDataRequestResponse;
-//    default:
-//        void;
-//    };
-//
-type RemoveDataRequestResult struct {
-	Code                      RemoveDataRequestResultCode `json:"code,omitempty"`
-	RemoveDataRequestResponse *RemoveDataRequestResponse  `json:"removeDataRequestResponse,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u RemoveDataRequestResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of RemoveDataRequestResult
-func (u RemoveDataRequestResult) ArmForSwitch(sw int32) (string, bool) {
-	switch RemoveDataRequestResultCode(sw) {
-	case RemoveDataRequestResultCodeSuccess:
-		return "RemoveDataRequestResponse", true
-	default:
-		return "", true
-	}
-}
-
-// NewRemoveDataRequestResult creates a new  RemoveDataRequestResult.
-func NewRemoveDataRequestResult(code RemoveDataRequestResultCode, value interface{}) (result RemoveDataRequestResult, err error) {
-	result.Code = code
-	switch RemoveDataRequestResultCode(code) {
-	case RemoveDataRequestResultCodeSuccess:
-		tv, ok := value.(RemoveDataRequestResponse)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be RemoveDataRequestResponse")
-			return
-		}
-		result.RemoveDataRequestResponse = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustRemoveDataRequestResponse retrieves the RemoveDataRequestResponse value from the union,
-// panicing if the value is not set.
-func (u RemoveDataRequestResult) MustRemoveDataRequestResponse() RemoveDataRequestResponse {
-	val, ok := u.GetRemoveDataRequestResponse()
-
-	if !ok {
-		panic("arm RemoveDataRequestResponse is not set")
-	}
-
-	return val
-}
-
-// GetRemoveDataRequestResponse retrieves the RemoveDataRequestResponse value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u RemoveDataRequestResult) GetRemoveDataRequestResponse() (result RemoveDataRequestResponse, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "RemoveDataRequestResponse" {
-		result = *u.RemoveDataRequestResponse
-		ok = true
-	}
-
-	return
-}
-
 // RemoveDataOp is an XDR Struct defines as:
 //
 //   struct RemoveDataOp
@@ -38537,6 +38831,23 @@ type AtomicSwapBidExtended struct {
 	Ext                   AtomicSwapBidExtendedExt `json:"ext,omitempty"`
 }
 
+// DataCreationExtended is an XDR Struct defines as:
+//
+//   struct DataCreationExtended {
+//        //: Owner of the created data entry
+//        AccountID owner;
+//        //: ID of the created data entry
+//        uint64 id;
+//        //: Security type of the created data entry
+//        uint64 type;
+//    };
+//
+type DataCreationExtended struct {
+	Owner AccountId `json:"owner,omitempty"`
+	Id    Uint64    `json:"id,omitempty"`
+	Type  Uint64    `json:"type,omitempty"`
+}
+
 // ExtendedResultTypeExt is an XDR NestedUnion defines as:
 //
 //   union switch(ReviewableRequestType requestType) {
@@ -38556,6 +38867,8 @@ type AtomicSwapBidExtended struct {
 //            PaymentResult paymentResult;
 //        case PERFORM_REDEMPTION:
 //            CreateRedemptionRequestResult createRedemptionResult;
+//        case DATA_CREATION:
+//            DataCreationExtended dataCreationExtended;
 //        }
 //
 type ExtendedResultTypeExt struct {
@@ -38567,6 +38880,7 @@ type ExtendedResultTypeExt struct {
 	ManageOfferResult      *ManageOfferResult             `json:"manageOfferResult,omitempty"`
 	PaymentResult          *PaymentResult                 `json:"paymentResult,omitempty"`
 	CreateRedemptionResult *CreateRedemptionRequestResult `json:"createRedemptionResult,omitempty"`
+	DataCreationExtended   *DataCreationExtended          `json:"dataCreationExtended,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -38595,6 +38909,8 @@ func (u ExtendedResultTypeExt) ArmForSwitch(sw int32) (string, bool) {
 		return "PaymentResult", true
 	case ReviewableRequestTypePerformRedemption:
 		return "CreateRedemptionResult", true
+	case ReviewableRequestTypeDataCreation:
+		return "DataCreationExtended", true
 	}
 	return "-", false
 }
@@ -38654,6 +38970,13 @@ func NewExtendedResultTypeExt(requestType ReviewableRequestType, value interface
 			return
 		}
 		result.CreateRedemptionResult = &tv
+	case ReviewableRequestTypeDataCreation:
+		tv, ok := value.(DataCreationExtended)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be DataCreationExtended")
+			return
+		}
+		result.DataCreationExtended = &tv
 	}
 	return
 }
@@ -38833,6 +39156,31 @@ func (u ExtendedResultTypeExt) GetCreateRedemptionResult() (result CreateRedempt
 	return
 }
 
+// MustDataCreationExtended retrieves the DataCreationExtended value from the union,
+// panicing if the value is not set.
+func (u ExtendedResultTypeExt) MustDataCreationExtended() DataCreationExtended {
+	val, ok := u.GetDataCreationExtended()
+
+	if !ok {
+		panic("arm DataCreationExtended is not set")
+	}
+
+	return val
+}
+
+// GetDataCreationExtended retrieves the DataCreationExtended value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ExtendedResultTypeExt) GetDataCreationExtended() (result DataCreationExtended, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "DataCreationExtended" {
+		result = *u.DataCreationExtended
+		ok = true
+	}
+
+	return
+}
+
 // ExtendedResultExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -38895,6 +39243,8 @@ func NewExtendedResultExt(v LedgerVersion, value interface{}) (result ExtendedRe
 //            PaymentResult paymentResult;
 //        case PERFORM_REDEMPTION:
 //            CreateRedemptionRequestResult createRedemptionResult;
+//        case DATA_CREATION:
+//            DataCreationExtended dataCreationExtended;
 //        } typeExt;
 //
 //        //: Reserved for future use
@@ -39351,10 +39701,7 @@ type ReviewRequestOp struct {
 //        MANAGE_OFFER_FAILED = -1700,
 //
 //        // payment
-//        PAYMENT_FAILED = -1800,
-//
-//        // data
-//        DATA_NOT_FOUND = -1900
+//        PAYMENT_FAILED = -1800
 //    };
 //
 type ReviewRequestResultCode int32
@@ -39423,7 +39770,6 @@ const (
 	ReviewRequestResultCodeInvalidSignerData                        ReviewRequestResultCode = -1600
 	ReviewRequestResultCodeManageOfferFailed                        ReviewRequestResultCode = -1700
 	ReviewRequestResultCodePaymentFailed                            ReviewRequestResultCode = -1800
-	ReviewRequestResultCodeDataNotFound                             ReviewRequestResultCode = -1900
 )
 
 var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
@@ -39490,7 +39836,6 @@ var ReviewRequestResultCodeAll = []ReviewRequestResultCode{
 	ReviewRequestResultCodeInvalidSignerData,
 	ReviewRequestResultCodeManageOfferFailed,
 	ReviewRequestResultCodePaymentFailed,
-	ReviewRequestResultCodeDataNotFound,
 }
 
 var reviewRequestResultCodeMap = map[int32]string{
@@ -39557,7 +39902,6 @@ var reviewRequestResultCodeMap = map[int32]string{
 	-1600: "ReviewRequestResultCodeInvalidSignerData",
 	-1700: "ReviewRequestResultCodeManageOfferFailed",
 	-1800: "ReviewRequestResultCodePaymentFailed",
-	-1900: "ReviewRequestResultCodeDataNotFound",
 }
 
 var reviewRequestResultCodeShortMap = map[int32]string{
@@ -39624,7 +39968,6 @@ var reviewRequestResultCodeShortMap = map[int32]string{
 	-1600: "invalid_signer_data",
 	-1700: "manage_offer_failed",
 	-1800: "payment_failed",
-	-1900: "data_not_found",
 }
 
 var reviewRequestResultCodeRevMap = map[string]int32{
@@ -39691,7 +40034,6 @@ var reviewRequestResultCodeRevMap = map[string]int32{
 	"ReviewRequestResultCodeInvalidSignerData":                        -1600,
 	"ReviewRequestResultCodeManageOfferFailed":                        -1700,
 	"ReviewRequestResultCodePaymentFailed":                            -1800,
-	"ReviewRequestResultCodeDataNotFound":                             -1900,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -40621,275 +40963,6 @@ func (u StampResult) GetSuccess() (result StampSuccess, ok bool) {
 
 	if armName == "Success" {
 		result = *u.Success
-		ok = true
-	}
-
-	return
-}
-
-// UpdateDataRequestOp is an XDR Struct defines as:
-//
-//   struct UpdateDataRequestOp
-//    {
-//        UpdateDataRequest updateDataRequest;
-//
-//        uint32* allTasks;
-//
-//        //: Reserved for future extension
-//        EmptyExt ext;
-//    };
-//
-type UpdateDataRequestOp struct {
-	UpdateDataRequest UpdateDataRequest `json:"updateDataRequest,omitempty"`
-	AllTasks          *Uint32           `json:"allTasks,omitempty"`
-	Ext               EmptyExt          `json:"ext,omitempty"`
-}
-
-// UpdateDataRequestResultCode is an XDR Enum defines as:
-//
-//   enum UpdateDataRequestResultCode
-//    {
-//        SUCCESS = 0,
-//        INVALID_VALUE = -1,
-//        NOT_FOUND = -2,
-//        OWNER_NOT_EXIST = -3
-//    };
-//
-type UpdateDataRequestResultCode int32
-
-const (
-	UpdateDataRequestResultCodeSuccess       UpdateDataRequestResultCode = 0
-	UpdateDataRequestResultCodeInvalidValue  UpdateDataRequestResultCode = -1
-	UpdateDataRequestResultCodeNotFound      UpdateDataRequestResultCode = -2
-	UpdateDataRequestResultCodeOwnerNotExist UpdateDataRequestResultCode = -3
-)
-
-var UpdateDataRequestResultCodeAll = []UpdateDataRequestResultCode{
-	UpdateDataRequestResultCodeSuccess,
-	UpdateDataRequestResultCodeInvalidValue,
-	UpdateDataRequestResultCodeNotFound,
-	UpdateDataRequestResultCodeOwnerNotExist,
-}
-
-var updateDataRequestResultCodeMap = map[int32]string{
-	0:  "UpdateDataRequestResultCodeSuccess",
-	-1: "UpdateDataRequestResultCodeInvalidValue",
-	-2: "UpdateDataRequestResultCodeNotFound",
-	-3: "UpdateDataRequestResultCodeOwnerNotExist",
-}
-
-var updateDataRequestResultCodeShortMap = map[int32]string{
-	0:  "success",
-	-1: "invalid_value",
-	-2: "not_found",
-	-3: "owner_not_exist",
-}
-
-var updateDataRequestResultCodeRevMap = map[string]int32{
-	"UpdateDataRequestResultCodeSuccess":       0,
-	"UpdateDataRequestResultCodeInvalidValue":  -1,
-	"UpdateDataRequestResultCodeNotFound":      -2,
-	"UpdateDataRequestResultCodeOwnerNotExist": -3,
-}
-
-// ValidEnum validates a proposed value for this enum.  Implements
-// the Enum interface for UpdateDataRequestResultCode
-func (e UpdateDataRequestResultCode) ValidEnum(v int32) bool {
-	_, ok := updateDataRequestResultCodeMap[v]
-	return ok
-}
-func (e UpdateDataRequestResultCode) isFlag() bool {
-	for i := len(UpdateDataRequestResultCodeAll) - 1; i >= 0; i-- {
-		expected := UpdateDataRequestResultCode(2) << uint64(len(UpdateDataRequestResultCodeAll)-1) >> uint64(len(UpdateDataRequestResultCodeAll)-i)
-		if expected != UpdateDataRequestResultCodeAll[i] {
-			return false
-		}
-	}
-	return true
-}
-
-// String returns the name of `e`
-func (e UpdateDataRequestResultCode) String() string {
-	name, _ := updateDataRequestResultCodeMap[int32(e)]
-	return name
-}
-
-func (e UpdateDataRequestResultCode) ShortString() string {
-	name, _ := updateDataRequestResultCodeShortMap[int32(e)]
-	return name
-}
-
-func (e UpdateDataRequestResultCode) MarshalJSON() ([]byte, error) {
-	if e.isFlag() {
-		// marshal as mask
-		result := flag{
-			Value: int32(e),
-			Flags: make([]flagValue, 0),
-		}
-		for _, value := range UpdateDataRequestResultCodeAll {
-			if (value & e) == value {
-				result.Flags = append(result.Flags, flagValue{
-					Value: int32(value),
-					Name:  value.ShortString(),
-				})
-			}
-		}
-		return json.Marshal(&result)
-	} else {
-		// marshal as enum
-		result := enum{
-			Value:  int32(e),
-			String: e.ShortString(),
-		}
-		return json.Marshal(&result)
-	}
-}
-
-func (e *UpdateDataRequestResultCode) UnmarshalJSON(data []byte) error {
-	var t value
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
-	}
-	*e = UpdateDataRequestResultCode(t.Value)
-	return nil
-}
-
-// UpdateDataRequestResponseExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type UpdateDataRequestResponseExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u UpdateDataRequestResponseExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of UpdateDataRequestResponseExt
-func (u UpdateDataRequestResponseExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewUpdateDataRequestResponseExt creates a new  UpdateDataRequestResponseExt.
-func NewUpdateDataRequestResponseExt(v LedgerVersion, value interface{}) (result UpdateDataRequestResponseExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// UpdateDataRequestResponse is an XDR Struct defines as:
-//
-//   struct UpdateDataRequestResponse {
-//        uint64 requestID;
-//        bool fulfilled;
-//
-//        AccountID owner;
-//        uint64 dataID;
-//        uint64 type;
-//        longstring value;
-//
-//        //: Reserved for future use
-//         union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type UpdateDataRequestResponse struct {
-	RequestId Uint64                       `json:"requestID,omitempty"`
-	Fulfilled bool                         `json:"fulfilled,omitempty"`
-	Owner     AccountId                    `json:"owner,omitempty"`
-	DataId    Uint64                       `json:"dataID,omitempty"`
-	Type      Uint64                       `json:"type,omitempty"`
-	Value     Longstring                   `json:"value,omitempty"`
-	Ext       UpdateDataRequestResponseExt `json:"ext,omitempty"`
-}
-
-// UpdateDataRequestResult is an XDR Union defines as:
-//
-//   union UpdateDataRequestResult switch (UpdateDataRequestResultCode code)
-//    {
-//    case SUCCESS:
-//        UpdateDataRequestResponse updateDataRequestResponse;
-//    default:
-//        void;
-//    };
-//
-type UpdateDataRequestResult struct {
-	Code                      UpdateDataRequestResultCode `json:"code,omitempty"`
-	UpdateDataRequestResponse *UpdateDataRequestResponse  `json:"updateDataRequestResponse,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u UpdateDataRequestResult) SwitchFieldName() string {
-	return "Code"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of UpdateDataRequestResult
-func (u UpdateDataRequestResult) ArmForSwitch(sw int32) (string, bool) {
-	switch UpdateDataRequestResultCode(sw) {
-	case UpdateDataRequestResultCodeSuccess:
-		return "UpdateDataRequestResponse", true
-	default:
-		return "", true
-	}
-}
-
-// NewUpdateDataRequestResult creates a new  UpdateDataRequestResult.
-func NewUpdateDataRequestResult(code UpdateDataRequestResultCode, value interface{}) (result UpdateDataRequestResult, err error) {
-	result.Code = code
-	switch UpdateDataRequestResultCode(code) {
-	case UpdateDataRequestResultCodeSuccess:
-		tv, ok := value.(UpdateDataRequestResponse)
-		if !ok {
-			err = fmt.Errorf("invalid value, must be UpdateDataRequestResponse")
-			return
-		}
-		result.UpdateDataRequestResponse = &tv
-	default:
-		// void
-	}
-	return
-}
-
-// MustUpdateDataRequestResponse retrieves the UpdateDataRequestResponse value from the union,
-// panicing if the value is not set.
-func (u UpdateDataRequestResult) MustUpdateDataRequestResponse() UpdateDataRequestResponse {
-	val, ok := u.GetUpdateDataRequestResponse()
-
-	if !ok {
-		panic("arm UpdateDataRequestResponse is not set")
-	}
-
-	return val
-}
-
-// GetUpdateDataRequestResponse retrieves the UpdateDataRequestResponse value from the union,
-// returning ok if the union's switch indicated the value is valid.
-func (u UpdateDataRequestResult) GetUpdateDataRequestResponse() (result UpdateDataRequestResponse, ok bool) {
-	armName, _ := u.ArmForSwitch(int32(u.Code))
-
-	if armName == "UpdateDataRequestResponse" {
-		result = *u.UpdateDataRequestResponse
 		ok = true
 	}
 
@@ -42625,6 +42698,21 @@ type ReviewableRequestResourcePerformRedemption struct {
 	Ext       EmptyExt  `json:"ext,omitempty"`
 }
 
+// ReviewableRequestResourceDataCreation is an XDR NestedStruct defines as:
+//
+//   struct
+//        {
+//            //: Numeric type of the data
+//            uint64 type;
+//            //: Reserved for future extension
+//            EmptyExt ext;
+//        }
+//
+type ReviewableRequestResourceDataCreation struct {
+	Type Uint64   `json:"type,omitempty"`
+	Ext  EmptyExt `json:"ext,omitempty"`
+}
+
 // ReviewableRequestResource is an XDR Union defines as:
 //
 //   //: Describes properties of some reviewable request types that
@@ -42760,6 +42848,14 @@ type ReviewableRequestResourcePerformRedemption struct {
 //            //: reserved for future extension
 //            EmptyExt ext;
 //        } performRedemption;
+//    case DATA_CREATION:
+//        struct
+//        {
+//            //: Numeric type of the data
+//            uint64 type;
+//            //: Reserved for future extension
+//            EmptyExt ext;
+//        } dataCreation;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -42776,6 +42872,7 @@ type ReviewableRequestResource struct {
 	ManageOffer            *ReviewableRequestResourceManageOffer            `json:"manageOffer,omitempty"`
 	CreatePayment          *ReviewableRequestResourceCreatePayment          `json:"createPayment,omitempty"`
 	PerformRedemption      *ReviewableRequestResourcePerformRedemption      `json:"performRedemption,omitempty"`
+	DataCreation           *ReviewableRequestResourceDataCreation           `json:"dataCreation,omitempty"`
 	Ext                    *EmptyExt                                        `json:"ext,omitempty"`
 }
 
@@ -42807,6 +42904,8 @@ func (u ReviewableRequestResource) ArmForSwitch(sw int32) (string, bool) {
 		return "CreatePayment", true
 	case ReviewableRequestTypePerformRedemption:
 		return "PerformRedemption", true
+	case ReviewableRequestTypeDataCreation:
+		return "DataCreation", true
 	default:
 		return "Ext", true
 	}
@@ -42879,6 +42978,13 @@ func NewReviewableRequestResource(requestType ReviewableRequestType, value inter
 			return
 		}
 		result.PerformRedemption = &tv
+	case ReviewableRequestTypeDataCreation:
+		tv, ok := value.(ReviewableRequestResourceDataCreation)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be ReviewableRequestResourceDataCreation")
+			return
+		}
+		result.DataCreation = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -43109,6 +43215,31 @@ func (u ReviewableRequestResource) GetPerformRedemption() (result ReviewableRequ
 
 	if armName == "PerformRedemption" {
 		result = *u.PerformRedemption
+		ok = true
+	}
+
+	return
+}
+
+// MustDataCreation retrieves the DataCreation value from the union,
+// panicing if the value is not set.
+func (u ReviewableRequestResource) MustDataCreation() ReviewableRequestResourceDataCreation {
+	val, ok := u.GetDataCreation()
+
+	if !ok {
+		panic("arm DataCreation is not set")
+	}
+
+	return val
+}
+
+// GetDataCreation retrieves the DataCreation value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ReviewableRequestResource) GetDataCreation() (result ReviewableRequestResourceDataCreation, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.RequestType))
+
+	if armName == "DataCreation" {
+		result = *u.DataCreation
 		ok = true
 	}
 
@@ -46185,7 +46316,7 @@ type ContractRequest struct {
 	Ext            ContractRequestExt `json:"ext,omitempty"`
 }
 
-// CreateDataRequestExt is an XDR NestedUnion defines as:
+// DataCreationRequestExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
@@ -46193,19 +46324,19 @@ type ContractRequest struct {
 //            void;
 //        }
 //
-type CreateDataRequestExt struct {
+type DataCreationRequestExt struct {
 	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u CreateDataRequestExt) SwitchFieldName() string {
+func (u DataCreationRequestExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of CreateDataRequestExt
-func (u CreateDataRequestExt) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of DataCreationRequestExt
+func (u DataCreationRequestExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
@@ -46213,8 +46344,8 @@ func (u CreateDataRequestExt) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewCreateDataRequestExt creates a new  CreateDataRequestExt.
-func NewCreateDataRequestExt(v LedgerVersion, value interface{}) (result CreateDataRequestExt, err error) {
+// NewDataCreationRequestExt creates a new  DataCreationRequestExt.
+func NewDataCreationRequestExt(v LedgerVersion, value interface{}) (result DataCreationRequestExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
@@ -46223,17 +46354,20 @@ func NewCreateDataRequestExt(v LedgerVersion, value interface{}) (result CreateD
 	return
 }
 
-// CreateDataRequest is an XDR Struct defines as:
+// DataCreationRequest is an XDR Struct defines as:
 //
-//   struct CreateDataRequest {
+//   struct DataCreationRequest {
 //        //: Numeric type, used for access control
 //        uint64 type;
 //
+//        // Sequence number increases when request is rejected
+//    	uint32 sequenceNumber;
+//
+//        //: Owner of data to create
+//        AccountID owner;
+//
 //        //: Value stored
 //        longstring value;
-//
-//        //: Creator of the entry
-//        AccountID owner;
 //
 //        //: reserved for future use
 //        union switch (LedgerVersion v)
@@ -46244,11 +46378,12 @@ func NewCreateDataRequestExt(v LedgerVersion, value interface{}) (result CreateD
 //        ext;
 //    };
 //
-type CreateDataRequest struct {
-	Type  Uint64               `json:"type,omitempty"`
-	Value Longstring           `json:"value,omitempty"`
-	Owner AccountId            `json:"owner,omitempty"`
-	Ext   CreateDataRequestExt `json:"ext,omitempty"`
+type DataCreationRequest struct {
+	Type           Uint64                 `json:"type,omitempty"`
+	SequenceNumber Uint32                 `json:"sequenceNumber,omitempty"`
+	Owner          AccountId              `json:"owner,omitempty"`
+	Value          Longstring             `json:"value,omitempty"`
+	Ext            DataCreationRequestExt `json:"ext,omitempty"`
 }
 
 // CreatePollRequestExt is an XDR NestedUnion defines as:
@@ -46941,64 +47076,6 @@ type RedemptionRequest struct {
 	Ext             RedemptionRequestExt `json:"ext,omitempty"`
 }
 
-// RemoveDataRequestExt is an XDR NestedUnion defines as:
-//
-//   union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//
-type RemoveDataRequestExt struct {
-	V LedgerVersion `json:"v,omitempty"`
-}
-
-// SwitchFieldName returns the field name in which this union's
-// discriminant is stored
-func (u RemoveDataRequestExt) SwitchFieldName() string {
-	return "V"
-}
-
-// ArmForSwitch returns which field name should be used for storing
-// the value for an instance of RemoveDataRequestExt
-func (u RemoveDataRequestExt) ArmForSwitch(sw int32) (string, bool) {
-	switch LedgerVersion(sw) {
-	case LedgerVersionEmptyVersion:
-		return "", true
-	}
-	return "-", false
-}
-
-// NewRemoveDataRequestExt creates a new  RemoveDataRequestExt.
-func NewRemoveDataRequestExt(v LedgerVersion, value interface{}) (result RemoveDataRequestExt, err error) {
-	result.V = v
-	switch LedgerVersion(v) {
-	case LedgerVersionEmptyVersion:
-		// void
-	}
-	return
-}
-
-// RemoveDataRequest is an XDR Struct defines as:
-//
-//   struct RemoveDataRequest {
-//        //: ID of the data entry
-//        uint64 id;
-//
-//        //: reserved for future use
-//        union switch (LedgerVersion v)
-//        {
-//        case EMPTY_VERSION:
-//            void;
-//        }
-//        ext;
-//    };
-//
-type RemoveDataRequest struct {
-	Id  Uint64               `json:"id,omitempty"`
-	Ext RemoveDataRequestExt `json:"ext,omitempty"`
-}
-
 // SaleCreationRequestQuoteAssetExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
@@ -47256,7 +47333,7 @@ type SaleCreationRequest struct {
 	Ext                         SaleCreationRequestExt          `json:"ext,omitempty"`
 }
 
-// UpdateDataRequestExt is an XDR NestedUnion defines as:
+// DataUpdateRequestExt is an XDR NestedUnion defines as:
 //
 //   union switch (LedgerVersion v)
 //        {
@@ -47264,19 +47341,19 @@ type SaleCreationRequest struct {
 //            void;
 //        }
 //
-type UpdateDataRequestExt struct {
+type DataUpdateRequestExt struct {
 	V LedgerVersion `json:"v,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
 // discriminant is stored
-func (u UpdateDataRequestExt) SwitchFieldName() string {
+func (u DataUpdateRequestExt) SwitchFieldName() string {
 	return "V"
 }
 
 // ArmForSwitch returns which field name should be used for storing
-// the value for an instance of UpdateDataRequestExt
-func (u UpdateDataRequestExt) ArmForSwitch(sw int32) (string, bool) {
+// the value for an instance of DataUpdateRequestExt
+func (u DataUpdateRequestExt) ArmForSwitch(sw int32) (string, bool) {
 	switch LedgerVersion(sw) {
 	case LedgerVersionEmptyVersion:
 		return "", true
@@ -47284,8 +47361,8 @@ func (u UpdateDataRequestExt) ArmForSwitch(sw int32) (string, bool) {
 	return "-", false
 }
 
-// NewUpdateDataRequestExt creates a new  UpdateDataRequestExt.
-func NewUpdateDataRequestExt(v LedgerVersion, value interface{}) (result UpdateDataRequestExt, err error) {
+// NewDataUpdateRequestExt creates a new  DataUpdateRequestExt.
+func NewDataUpdateRequestExt(v LedgerVersion, value interface{}) (result DataUpdateRequestExt, err error) {
 	result.V = v
 	switch LedgerVersion(v) {
 	case LedgerVersionEmptyVersion:
@@ -47294,14 +47371,16 @@ func NewUpdateDataRequestExt(v LedgerVersion, value interface{}) (result UpdateD
 	return
 }
 
-// UpdateDataRequest is an XDR Struct defines as:
+// DataUpdateRequest is an XDR Struct defines as:
 //
-//   struct UpdateDataRequest {
-//        //: ID of the data entry
+//   struct DataUpdateRequest {
+//        //: Id of the data entry
 //        uint64 id;
 //
-//        AccountID owner;
-//        uint64 type;
+//        // Sequence number increases when request is rejected
+//    	uint32 sequenceNumber;
+//
+//        //: Value stored
 //        longstring value;
 //
 //        //: reserved for future use
@@ -47313,12 +47392,11 @@ func NewUpdateDataRequestExt(v LedgerVersion, value interface{}) (result UpdateD
 //        ext;
 //    };
 //
-type UpdateDataRequest struct {
-	Id    Uint64               `json:"id,omitempty"`
-	Owner AccountId            `json:"owner,omitempty"`
-	Type  Uint64               `json:"type,omitempty"`
-	Value Longstring           `json:"value,omitempty"`
-	Ext   UpdateDataRequestExt `json:"ext,omitempty"`
+type DataUpdateRequest struct {
+	Id             Uint64               `json:"id,omitempty"`
+	SequenceNumber Uint32               `json:"sequenceNumber,omitempty"`
+	Value          Longstring           `json:"value,omitempty"`
+	Ext            DataUpdateRequestExt `json:"ext,omitempty"`
 }
 
 // UpdateSaleDetailsRequestExt is an XDR NestedUnion defines as:
@@ -47566,12 +47644,12 @@ type WithdrawalRequest struct {
 //            UpdateDataOp updateDataOp;
 //        case REMOVE_DATA:
 //            RemoveDataOp removeDataOp;
-//        case CREATE_DATA_REQUEST:
-//            CreateDataRequestOp createDataRequestOp;
-//        case UPDATE_DATA_REQUEST:
-//            UpdateDataRequestOp updateDataRequestOp;
-//        case REMOVE_DATA_REQUEST:
-//            RemoveDataRequestOp removeDataRequestOp;
+//        case CREATE_DATA_CREATION_REQUEST:
+//            CreateDataCreationRequestOp createDataCreationRequestOp;
+//        case CANCEL_DATA_CREATION_REQUEST:
+//            CancelDataCreationRequestOp cancelDataCreationRequestOp;
+//        case CREATE_DATA_UPDATE_REQUEST:
+//            CreateDataUpdateRequestOp createDataUpdateRequestOp;
 //        }
 //
 type OperationBody struct {
@@ -47629,9 +47707,9 @@ type OperationBody struct {
 	CreateDataOp                             *CreateDataOp                             `json:"createDataOp,omitempty"`
 	UpdateDataOp                             *UpdateDataOp                             `json:"updateDataOp,omitempty"`
 	RemoveDataOp                             *RemoveDataOp                             `json:"removeDataOp,omitempty"`
-	CreateDataRequestOp                      *CreateDataRequestOp                      `json:"createDataRequestOp,omitempty"`
-	UpdateDataRequestOp                      *UpdateDataRequestOp                      `json:"updateDataRequestOp,omitempty"`
-	RemoveDataRequestOp                      *RemoveDataRequestOp                      `json:"removeDataRequestOp,omitempty"`
+	CreateDataCreationRequestOp              *CreateDataCreationRequestOp              `json:"createDataCreationRequestOp,omitempty"`
+	CancelDataCreationRequestOp              *CancelDataCreationRequestOp              `json:"cancelDataCreationRequestOp,omitempty"`
+	CreateDataUpdateRequestOp                *CreateDataUpdateRequestOp                `json:"createDataUpdateRequestOp,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -47750,12 +47828,12 @@ func (u OperationBody) ArmForSwitch(sw int32) (string, bool) {
 		return "UpdateDataOp", true
 	case OperationTypeRemoveData:
 		return "RemoveDataOp", true
-	case OperationTypeCreateDataRequest:
-		return "CreateDataRequestOp", true
-	case OperationTypeUpdateDataRequest:
-		return "UpdateDataRequestOp", true
-	case OperationTypeRemoveDataRequest:
-		return "RemoveDataRequestOp", true
+	case OperationTypeCreateDataCreationRequest:
+		return "CreateDataCreationRequestOp", true
+	case OperationTypeCancelDataCreationRequest:
+		return "CancelDataCreationRequestOp", true
+	case OperationTypeCreateDataUpdateRequest:
+		return "CreateDataUpdateRequestOp", true
 	}
 	return "-", false
 }
@@ -48135,27 +48213,27 @@ func NewOperationBody(aType OperationType, value interface{}) (result OperationB
 			return
 		}
 		result.RemoveDataOp = &tv
-	case OperationTypeCreateDataRequest:
-		tv, ok := value.(CreateDataRequestOp)
+	case OperationTypeCreateDataCreationRequest:
+		tv, ok := value.(CreateDataCreationRequestOp)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be CreateDataRequestOp")
+			err = fmt.Errorf("invalid value, must be CreateDataCreationRequestOp")
 			return
 		}
-		result.CreateDataRequestOp = &tv
-	case OperationTypeUpdateDataRequest:
-		tv, ok := value.(UpdateDataRequestOp)
+		result.CreateDataCreationRequestOp = &tv
+	case OperationTypeCancelDataCreationRequest:
+		tv, ok := value.(CancelDataCreationRequestOp)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be UpdateDataRequestOp")
+			err = fmt.Errorf("invalid value, must be CancelDataCreationRequestOp")
 			return
 		}
-		result.UpdateDataRequestOp = &tv
-	case OperationTypeRemoveDataRequest:
-		tv, ok := value.(RemoveDataRequestOp)
+		result.CancelDataCreationRequestOp = &tv
+	case OperationTypeCreateDataUpdateRequest:
+		tv, ok := value.(CreateDataUpdateRequestOp)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be RemoveDataRequestOp")
+			err = fmt.Errorf("invalid value, must be CreateDataUpdateRequestOp")
 			return
 		}
-		result.RemoveDataRequestOp = &tv
+		result.CreateDataUpdateRequestOp = &tv
 	}
 	return
 }
@@ -49485,75 +49563,75 @@ func (u OperationBody) GetRemoveDataOp() (result RemoveDataOp, ok bool) {
 	return
 }
 
-// MustCreateDataRequestOp retrieves the CreateDataRequestOp value from the union,
+// MustCreateDataCreationRequestOp retrieves the CreateDataCreationRequestOp value from the union,
 // panicing if the value is not set.
-func (u OperationBody) MustCreateDataRequestOp() CreateDataRequestOp {
-	val, ok := u.GetCreateDataRequestOp()
+func (u OperationBody) MustCreateDataCreationRequestOp() CreateDataCreationRequestOp {
+	val, ok := u.GetCreateDataCreationRequestOp()
 
 	if !ok {
-		panic("arm CreateDataRequestOp is not set")
+		panic("arm CreateDataCreationRequestOp is not set")
 	}
 
 	return val
 }
 
-// GetCreateDataRequestOp retrieves the CreateDataRequestOp value from the union,
+// GetCreateDataCreationRequestOp retrieves the CreateDataCreationRequestOp value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u OperationBody) GetCreateDataRequestOp() (result CreateDataRequestOp, ok bool) {
+func (u OperationBody) GetCreateDataCreationRequestOp() (result CreateDataCreationRequestOp, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "CreateDataRequestOp" {
-		result = *u.CreateDataRequestOp
+	if armName == "CreateDataCreationRequestOp" {
+		result = *u.CreateDataCreationRequestOp
 		ok = true
 	}
 
 	return
 }
 
-// MustUpdateDataRequestOp retrieves the UpdateDataRequestOp value from the union,
+// MustCancelDataCreationRequestOp retrieves the CancelDataCreationRequestOp value from the union,
 // panicing if the value is not set.
-func (u OperationBody) MustUpdateDataRequestOp() UpdateDataRequestOp {
-	val, ok := u.GetUpdateDataRequestOp()
+func (u OperationBody) MustCancelDataCreationRequestOp() CancelDataCreationRequestOp {
+	val, ok := u.GetCancelDataCreationRequestOp()
 
 	if !ok {
-		panic("arm UpdateDataRequestOp is not set")
+		panic("arm CancelDataCreationRequestOp is not set")
 	}
 
 	return val
 }
 
-// GetUpdateDataRequestOp retrieves the UpdateDataRequestOp value from the union,
+// GetCancelDataCreationRequestOp retrieves the CancelDataCreationRequestOp value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u OperationBody) GetUpdateDataRequestOp() (result UpdateDataRequestOp, ok bool) {
+func (u OperationBody) GetCancelDataCreationRequestOp() (result CancelDataCreationRequestOp, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "UpdateDataRequestOp" {
-		result = *u.UpdateDataRequestOp
+	if armName == "CancelDataCreationRequestOp" {
+		result = *u.CancelDataCreationRequestOp
 		ok = true
 	}
 
 	return
 }
 
-// MustRemoveDataRequestOp retrieves the RemoveDataRequestOp value from the union,
+// MustCreateDataUpdateRequestOp retrieves the CreateDataUpdateRequestOp value from the union,
 // panicing if the value is not set.
-func (u OperationBody) MustRemoveDataRequestOp() RemoveDataRequestOp {
-	val, ok := u.GetRemoveDataRequestOp()
+func (u OperationBody) MustCreateDataUpdateRequestOp() CreateDataUpdateRequestOp {
+	val, ok := u.GetCreateDataUpdateRequestOp()
 
 	if !ok {
-		panic("arm RemoveDataRequestOp is not set")
+		panic("arm CreateDataUpdateRequestOp is not set")
 	}
 
 	return val
 }
 
-// GetRemoveDataRequestOp retrieves the RemoveDataRequestOp value from the union,
+// GetCreateDataUpdateRequestOp retrieves the CreateDataUpdateRequestOp value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u OperationBody) GetRemoveDataRequestOp() (result RemoveDataRequestOp, ok bool) {
+func (u OperationBody) GetCreateDataUpdateRequestOp() (result CreateDataUpdateRequestOp, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "RemoveDataRequestOp" {
-		result = *u.RemoveDataRequestOp
+	if armName == "CreateDataUpdateRequestOp" {
+		result = *u.CreateDataUpdateRequestOp
 		ok = true
 	}
 
@@ -49678,13 +49756,14 @@ func (u OperationBody) GetRemoveDataRequestOp() (result RemoveDataRequestOp, ok 
 //            UpdateDataOp updateDataOp;
 //        case REMOVE_DATA:
 //            RemoveDataOp removeDataOp;
-//        case CREATE_DATA_REQUEST:
-//            CreateDataRequestOp createDataRequestOp;
-//        case UPDATE_DATA_REQUEST:
-//            UpdateDataRequestOp updateDataRequestOp;
-//        case REMOVE_DATA_REQUEST:
-//            RemoveDataRequestOp removeDataRequestOp;
+//        case CREATE_DATA_CREATION_REQUEST:
+//            CreateDataCreationRequestOp createDataCreationRequestOp;
+//        case CANCEL_DATA_CREATION_REQUEST:
+//            CancelDataCreationRequestOp cancelDataCreationRequestOp;
+//        case CREATE_DATA_UPDATE_REQUEST:
+//            CreateDataUpdateRequestOp createDataUpdateRequestOp;
 //        }
+//
 //        body;
 //    };
 //
@@ -50407,12 +50486,12 @@ type AccountRuleRequirement struct {
 //            UpdateDataResult updateDataResult;
 //        case REMOVE_DATA:
 //            RemoveDataResult removeDataResult;
-//        case CREATE_DATA_REQUEST:
-//            CreateDataRequestResult createDataRequestResult;
-//        case UPDATE_DATA_REQUEST:
-//            UpdateDataRequestResult updateDataRequestResult;
-//        case REMOVE_DATA_REQUEST:
-//            RemoveDataRequestResult removeDataRequestResult;
+//        case CREATE_DATA_CREATION_REQUEST:
+//            CreateDataCreationRequestResult createDataCreationRequestResult;
+//        case CANCEL_DATA_CREATION_REQUEST:
+//            CancelDataCreationRequestResult cancelDataCreationRequestResult;
+//        case CREATE_DATA_UPDATE_REQUEST:
+//            CreateDataUpdateRequestResult createDataUpdateRequestResult;
 //        }
 //
 type OperationResultTr struct {
@@ -50470,9 +50549,9 @@ type OperationResultTr struct {
 	CreateDataResult                             *CreateDataResult                             `json:"createDataResult,omitempty"`
 	UpdateDataResult                             *UpdateDataResult                             `json:"updateDataResult,omitempty"`
 	RemoveDataResult                             *RemoveDataResult                             `json:"removeDataResult,omitempty"`
-	CreateDataRequestResult                      *CreateDataRequestResult                      `json:"createDataRequestResult,omitempty"`
-	UpdateDataRequestResult                      *UpdateDataRequestResult                      `json:"updateDataRequestResult,omitempty"`
-	RemoveDataRequestResult                      *RemoveDataRequestResult                      `json:"removeDataRequestResult,omitempty"`
+	CreateDataCreationRequestResult              *CreateDataCreationRequestResult              `json:"createDataCreationRequestResult,omitempty"`
+	CancelDataCreationRequestResult              *CancelDataCreationRequestResult              `json:"cancelDataCreationRequestResult,omitempty"`
+	CreateDataUpdateRequestResult                *CreateDataUpdateRequestResult                `json:"createDataUpdateRequestResult,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -50591,12 +50670,12 @@ func (u OperationResultTr) ArmForSwitch(sw int32) (string, bool) {
 		return "UpdateDataResult", true
 	case OperationTypeRemoveData:
 		return "RemoveDataResult", true
-	case OperationTypeCreateDataRequest:
-		return "CreateDataRequestResult", true
-	case OperationTypeUpdateDataRequest:
-		return "UpdateDataRequestResult", true
-	case OperationTypeRemoveDataRequest:
-		return "RemoveDataRequestResult", true
+	case OperationTypeCreateDataCreationRequest:
+		return "CreateDataCreationRequestResult", true
+	case OperationTypeCancelDataCreationRequest:
+		return "CancelDataCreationRequestResult", true
+	case OperationTypeCreateDataUpdateRequest:
+		return "CreateDataUpdateRequestResult", true
 	}
 	return "-", false
 }
@@ -50976,27 +51055,27 @@ func NewOperationResultTr(aType OperationType, value interface{}) (result Operat
 			return
 		}
 		result.RemoveDataResult = &tv
-	case OperationTypeCreateDataRequest:
-		tv, ok := value.(CreateDataRequestResult)
+	case OperationTypeCreateDataCreationRequest:
+		tv, ok := value.(CreateDataCreationRequestResult)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be CreateDataRequestResult")
+			err = fmt.Errorf("invalid value, must be CreateDataCreationRequestResult")
 			return
 		}
-		result.CreateDataRequestResult = &tv
-	case OperationTypeUpdateDataRequest:
-		tv, ok := value.(UpdateDataRequestResult)
+		result.CreateDataCreationRequestResult = &tv
+	case OperationTypeCancelDataCreationRequest:
+		tv, ok := value.(CancelDataCreationRequestResult)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be UpdateDataRequestResult")
+			err = fmt.Errorf("invalid value, must be CancelDataCreationRequestResult")
 			return
 		}
-		result.UpdateDataRequestResult = &tv
-	case OperationTypeRemoveDataRequest:
-		tv, ok := value.(RemoveDataRequestResult)
+		result.CancelDataCreationRequestResult = &tv
+	case OperationTypeCreateDataUpdateRequest:
+		tv, ok := value.(CreateDataUpdateRequestResult)
 		if !ok {
-			err = fmt.Errorf("invalid value, must be RemoveDataRequestResult")
+			err = fmt.Errorf("invalid value, must be CreateDataUpdateRequestResult")
 			return
 		}
-		result.RemoveDataRequestResult = &tv
+		result.CreateDataUpdateRequestResult = &tv
 	}
 	return
 }
@@ -52326,75 +52405,75 @@ func (u OperationResultTr) GetRemoveDataResult() (result RemoveDataResult, ok bo
 	return
 }
 
-// MustCreateDataRequestResult retrieves the CreateDataRequestResult value from the union,
+// MustCreateDataCreationRequestResult retrieves the CreateDataCreationRequestResult value from the union,
 // panicing if the value is not set.
-func (u OperationResultTr) MustCreateDataRequestResult() CreateDataRequestResult {
-	val, ok := u.GetCreateDataRequestResult()
+func (u OperationResultTr) MustCreateDataCreationRequestResult() CreateDataCreationRequestResult {
+	val, ok := u.GetCreateDataCreationRequestResult()
 
 	if !ok {
-		panic("arm CreateDataRequestResult is not set")
+		panic("arm CreateDataCreationRequestResult is not set")
 	}
 
 	return val
 }
 
-// GetCreateDataRequestResult retrieves the CreateDataRequestResult value from the union,
+// GetCreateDataCreationRequestResult retrieves the CreateDataCreationRequestResult value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u OperationResultTr) GetCreateDataRequestResult() (result CreateDataRequestResult, ok bool) {
+func (u OperationResultTr) GetCreateDataCreationRequestResult() (result CreateDataCreationRequestResult, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "CreateDataRequestResult" {
-		result = *u.CreateDataRequestResult
+	if armName == "CreateDataCreationRequestResult" {
+		result = *u.CreateDataCreationRequestResult
 		ok = true
 	}
 
 	return
 }
 
-// MustUpdateDataRequestResult retrieves the UpdateDataRequestResult value from the union,
+// MustCancelDataCreationRequestResult retrieves the CancelDataCreationRequestResult value from the union,
 // panicing if the value is not set.
-func (u OperationResultTr) MustUpdateDataRequestResult() UpdateDataRequestResult {
-	val, ok := u.GetUpdateDataRequestResult()
+func (u OperationResultTr) MustCancelDataCreationRequestResult() CancelDataCreationRequestResult {
+	val, ok := u.GetCancelDataCreationRequestResult()
 
 	if !ok {
-		panic("arm UpdateDataRequestResult is not set")
+		panic("arm CancelDataCreationRequestResult is not set")
 	}
 
 	return val
 }
 
-// GetUpdateDataRequestResult retrieves the UpdateDataRequestResult value from the union,
+// GetCancelDataCreationRequestResult retrieves the CancelDataCreationRequestResult value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u OperationResultTr) GetUpdateDataRequestResult() (result UpdateDataRequestResult, ok bool) {
+func (u OperationResultTr) GetCancelDataCreationRequestResult() (result CancelDataCreationRequestResult, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "UpdateDataRequestResult" {
-		result = *u.UpdateDataRequestResult
+	if armName == "CancelDataCreationRequestResult" {
+		result = *u.CancelDataCreationRequestResult
 		ok = true
 	}
 
 	return
 }
 
-// MustRemoveDataRequestResult retrieves the RemoveDataRequestResult value from the union,
+// MustCreateDataUpdateRequestResult retrieves the CreateDataUpdateRequestResult value from the union,
 // panicing if the value is not set.
-func (u OperationResultTr) MustRemoveDataRequestResult() RemoveDataRequestResult {
-	val, ok := u.GetRemoveDataRequestResult()
+func (u OperationResultTr) MustCreateDataUpdateRequestResult() CreateDataUpdateRequestResult {
+	val, ok := u.GetCreateDataUpdateRequestResult()
 
 	if !ok {
-		panic("arm RemoveDataRequestResult is not set")
+		panic("arm CreateDataUpdateRequestResult is not set")
 	}
 
 	return val
 }
 
-// GetRemoveDataRequestResult retrieves the RemoveDataRequestResult value from the union,
+// GetCreateDataUpdateRequestResult retrieves the CreateDataUpdateRequestResult value from the union,
 // returning ok if the union's switch indicated the value is valid.
-func (u OperationResultTr) GetRemoveDataRequestResult() (result RemoveDataRequestResult, ok bool) {
+func (u OperationResultTr) GetCreateDataUpdateRequestResult() (result CreateDataUpdateRequestResult, ok bool) {
 	armName, _ := u.ArmForSwitch(int32(u.Type))
 
-	if armName == "RemoveDataRequestResult" {
-		result = *u.RemoveDataRequestResult
+	if armName == "CreateDataUpdateRequestResult" {
+		result = *u.CreateDataUpdateRequestResult
 		ok = true
 	}
 
@@ -52514,12 +52593,12 @@ func (u OperationResultTr) GetRemoveDataRequestResult() (result RemoveDataReques
 //            UpdateDataResult updateDataResult;
 //        case REMOVE_DATA:
 //            RemoveDataResult removeDataResult;
-//        case CREATE_DATA_REQUEST:
-//            CreateDataRequestResult createDataRequestResult;
-//        case UPDATE_DATA_REQUEST:
-//            UpdateDataRequestResult updateDataRequestResult;
-//        case REMOVE_DATA_REQUEST:
-//            RemoveDataRequestResult removeDataRequestResult;
+//        case CREATE_DATA_CREATION_REQUEST:
+//            CreateDataCreationRequestResult createDataCreationRequestResult;
+//        case CANCEL_DATA_CREATION_REQUEST:
+//            CancelDataCreationRequestResult cancelDataCreationRequestResult;
+//        case CREATE_DATA_UPDATE_REQUEST:
+//            CreateDataUpdateRequestResult createDataUpdateRequestResult;
 //        }
 //        tr;
 //    case opNO_ENTRY:
@@ -54357,9 +54436,9 @@ type Fee struct {
 //        CREATE_DATA = 57,
 //        UPDATE_DATA = 58,
 //        REMOVE_DATA = 59,
-//        CREATE_DATA_REQUEST = 60,
-//        UPDATE_DATA_REQUEST = 61,
-//        REMOVE_DATA_REQUEST = 62
+//        CREATE_DATA_CREATION_REQUEST = 60,
+//        CANCEL_DATA_CREATION_REQUEST = 61,
+//        CREATE_DATA_UPDATE_REQUEST = 62
 //    };
 //
 type OperationType int32
@@ -54418,9 +54497,9 @@ const (
 	OperationTypeCreateData                             OperationType = 57
 	OperationTypeUpdateData                             OperationType = 58
 	OperationTypeRemoveData                             OperationType = 59
-	OperationTypeCreateDataRequest                      OperationType = 60
-	OperationTypeUpdateDataRequest                      OperationType = 61
-	OperationTypeRemoveDataRequest                      OperationType = 62
+	OperationTypeCreateDataCreationRequest              OperationType = 60
+	OperationTypeCancelDataCreationRequest              OperationType = 61
+	OperationTypeCreateDataUpdateRequest                OperationType = 62
 )
 
 var OperationTypeAll = []OperationType{
@@ -54477,9 +54556,9 @@ var OperationTypeAll = []OperationType{
 	OperationTypeCreateData,
 	OperationTypeUpdateData,
 	OperationTypeRemoveData,
-	OperationTypeCreateDataRequest,
-	OperationTypeUpdateDataRequest,
-	OperationTypeRemoveDataRequest,
+	OperationTypeCreateDataCreationRequest,
+	OperationTypeCancelDataCreationRequest,
+	OperationTypeCreateDataUpdateRequest,
 }
 
 var operationTypeMap = map[int32]string{
@@ -54536,9 +54615,9 @@ var operationTypeMap = map[int32]string{
 	57: "OperationTypeCreateData",
 	58: "OperationTypeUpdateData",
 	59: "OperationTypeRemoveData",
-	60: "OperationTypeCreateDataRequest",
-	61: "OperationTypeUpdateDataRequest",
-	62: "OperationTypeRemoveDataRequest",
+	60: "OperationTypeCreateDataCreationRequest",
+	61: "OperationTypeCancelDataCreationRequest",
+	62: "OperationTypeCreateDataUpdateRequest",
 }
 
 var operationTypeShortMap = map[int32]string{
@@ -54595,9 +54674,9 @@ var operationTypeShortMap = map[int32]string{
 	57: "create_data",
 	58: "update_data",
 	59: "remove_data",
-	60: "create_data_request",
-	61: "update_data_request",
-	62: "remove_data_request",
+	60: "create_data_creation_request",
+	61: "cancel_data_creation_request",
+	62: "create_data_update_request",
 }
 
 var operationTypeRevMap = map[string]int32{
@@ -54654,9 +54733,9 @@ var operationTypeRevMap = map[string]int32{
 	"OperationTypeCreateData":                             57,
 	"OperationTypeUpdateData":                             58,
 	"OperationTypeRemoveData":                             59,
-	"OperationTypeCreateDataRequest":                      60,
-	"OperationTypeUpdateDataRequest":                      61,
-	"OperationTypeRemoveDataRequest":                      62,
+	"OperationTypeCreateDataCreationRequest":              60,
+	"OperationTypeCancelDataCreationRequest":              61,
+	"OperationTypeCreateDataUpdateRequest":                62,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -54735,4 +54814,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "f9b1b2e58097d7387c20b995c78c873b55eddc05"
+var Revision = "2e039f26641d897d96716ad82dc2070c0e2e8c8d"

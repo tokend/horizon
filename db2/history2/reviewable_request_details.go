@@ -32,6 +32,7 @@ type ReviewableRequestDetails struct {
 	ManageOffer         *ManageOfferRequest         `json:"manage_offer,omitempty"`
 	CreatePayment       *CreatePaymentRequest       `json:"create_payment,omitempty"`
 	Redemption          *RedemptionRequest          `json:"redemption,omitempty"`
+	DataCreation        *DataCreationRequest        `json:"data_creation,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -201,4 +202,11 @@ type RedemptionRequest struct {
 	DestinationAccountID string            `json:"destination_account_id"`
 	Amount               regources.Amount  `json:"amount"`
 	CreatorDetails       regources.Details `json:"creator_details"`
+}
+
+type DataCreationRequest struct {
+	SecurityType   uint64
+	SequenceNumber uint32
+	Owner          string
+	Value          regources.Details
 }

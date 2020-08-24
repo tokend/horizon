@@ -215,6 +215,13 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.handleRemoveOnCreationOp(lc, true)
 	case xdr.OperationTypeManageOffer:
 		return c.handleRemovedOnManageOffer(lc)
+	case xdr.OperationTypeCancelDataCreationRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCreateDataCreationRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDataCreationRequestResult().
+				MustCreateDataCreationRequestResponse().Fulfilled)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
@@ -670,6 +677,15 @@ func (c *reviewableRequestHandler) getRedemption(request *xdr.RedemptionRequest)
 	}
 }
 
+func (c *reviewableRequestHandler) getDataCreationRequest(request *xdr.DataCreationRequest) *history.DataCreationRequest {
+	return &history.DataCreationRequest{
+		SecurityType:   uint64(request.Type),
+		SequenceNumber: uint32(request.SequenceNumber),
+		Owner:          request.Owner.Address(),
+		Value:          internal.MarshalCustomDetails(request.Value),
+	}
+}
+
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -717,10 +733,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.CreatePayment = c.getCreatePaymentRequest(body.CreatePaymentRequest)
 	case xdr.ReviewableRequestTypePerformRedemption:
 		details.Redemption = c.getRedemption(body.RedemptionRequest)
-	case xdr.ReviewableRequestTypeCreateData:
-		//details todo
-	case xdr.ReviewableRequestTypeUpdateData:
-	case xdr.ReviewableRequestTypeRemoveData:
+	case xdr.ReviewableRequestTypeDataCreation:
+		details.DataCreation = c.getDataCreationRequest(body.DataCreationRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),
