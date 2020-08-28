@@ -3,13 +3,14 @@
 ## Unreleased
 
 ### Added
-
+ 
 * Traefik
 
 ### Fixed 
 
 * Overflow quote amount `/v3/order_books/{base}:{quote}:{order_book_id}`
 * Incorrect 404 on `/v3/create_issuance_requests` with filter by receiver
+* Match participant in manage offer
 
 ## 3.8.3
 

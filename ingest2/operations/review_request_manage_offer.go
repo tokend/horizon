@@ -21,7 +21,7 @@ func (h *manageOfferRequestHandler) Fulfilled(details requestDetails) ([]history
 	result := details.Result.TypeExt.MustManageOfferResult()
 
 	if manageOfferOp.Amount != 0 {
-		source := h.offerHandler.Participant(details.SourceAccountID)
+		source := h.offerHandler.Participant(details.Request.Requestor)
 		return h.offerHandler.getNewOfferEffect(manageOfferOp, result.MustSuccess(), source, details.Changes), nil
 	}
 
