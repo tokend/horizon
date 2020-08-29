@@ -13,13 +13,13 @@ type createDataUpdateRequestHandler struct {
 func (h *createDataUpdateRequestHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	oper := op.Body.MustCreateDataUpdateRequestOp()
-	response := opRes.MustCreateDataUpdateRequestResult().CreateDataUpdateRequestResponse
+	response := opRes.MustCreateDataUpdateRequestResult().Success
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateDataUpdateRequest,
 		CreateDataUpdateRequest: &history2.CreateDataUpdateRequest{
 			ID:             uint64(oper.DataUpdateRequest.Id),
-			Value:          internal.MarshalCustomDetails(response.Value),
+			Value:          internal.MarshalCustomDetails(oper.DataUpdateRequest.Value),
 			RequestID:      uint64(response.RequestId),
 			CreatorDetails: internal.MarshalCustomDetails(oper.DataUpdateRequest.CreatorDetails),
 		},

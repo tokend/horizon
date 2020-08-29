@@ -1,4 +1,4 @@
-CreateDataUpdateRequestOpKey:
+CreateDataRemoveRequestOpKey:
   type: object
   properties:
     id:
@@ -7,11 +7,11 @@ CreateDataUpdateRequestOpKey:
     type:
       type: string
       enum:
-        - "operations-create-data-update-request"
+        - "operations-create-data-remove-request"
 
-CreateDataUpdateRequestOp:
+CreateDataRemoveRequestOp:
   allOf:
-  - $ref: '#/components/schemas/CreateDataUpdateRequestOpKey'
+  - $ref: '#/components/schemas/CreateDataRemoveRequestOpKey'
   - type: object
     required: [ relationships, attributes ]
     properties:
@@ -27,10 +27,7 @@ CreateDataUpdateRequestOp:
       attributes:
         type: object
         required:
-          - value
           - creator_details
         properties:
           creator_details:
-            $ref: '#/components/schemas/Details'
-          value:
             $ref: '#/components/schemas/Details'

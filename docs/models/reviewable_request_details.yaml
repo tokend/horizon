@@ -1,5 +1,5 @@
 ReviewableRequestDetailsKey:
-  oneOf: 
+  oneOf:
     - $ref: '#/components/schemas/CreateAssetRequestKey'
     - $ref: '#/components/schemas/UpdateAssetRequestKey'
     - $ref: '#/components/schemas/CreatePreIssuanceRequestKey'
@@ -19,6 +19,7 @@ ReviewableRequestDetailsKey:
     - $ref: '#/components/schemas/RedemptionRequestKey'
     - $ref: '#/components/schemas/DataCreationRequestKey'
     - $ref: '#/components/schemas/DataUpdateRequestKey'
+    - $ref: '#/components/schemas/DataRemoveRequestKey'
 
 ReviewableRequestDetails:
   oneOf:
@@ -42,6 +43,7 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/RedemptionRequest'
     - $ref: '#/components/schemas/DataCreationRequest'
     - $ref: '#/components/schemas/DataUpdateRequest'
+    - $ref: '#/components/schemas/DataRemoveRequest'
 
 CreateAssetRequestKey:
   type: object
@@ -61,7 +63,7 @@ CreateAssetRequest:
   allOf:
     - $ref: '#/components/schemas/CreateAssetRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -139,7 +141,7 @@ UpdateAssetRequest:
   allOf:
     - $ref: '#/components/schemas/UpdateAssetRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -178,7 +180,7 @@ CreatePreIssuanceRequest:
   allOf:
     - $ref: '#/components/schemas/CreatePreIssuanceRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -233,7 +235,7 @@ CreateIssuanceRequest:
   allOf:
     - $ref: '#/components/schemas/CreateIssuanceRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -282,7 +284,7 @@ CreateWithdrawRequest:
   allOf:
     - $ref: '#/components/schemas/CreateWithdrawRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -335,7 +337,7 @@ CreateSaleRequest:
   allOf:
     - $ref: '#/components/schemas/CreateSaleRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -440,7 +442,7 @@ UpdateLimitsRequest:
   allOf:
     - $ref: '#/components/schemas/UpdateLimitsRequestKey'
     - type: object
-      required: [attributes]
+      required: [ attributes ]
       properties:
         attributes:
           type: object
@@ -468,7 +470,7 @@ CreateAmlAlertRequest:
   allOf:
     - $ref: '#/components/schemas/CreateAmlAlertRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -511,7 +513,7 @@ RedemptionRequest:
   allOf:
     - $ref: '#/components/schemas/RedemptionRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -563,7 +565,7 @@ ChangeRoleRequest:
   allOf:
     - $ref: '#/components/schemas/ChangeRoleRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -617,7 +619,7 @@ UpdateSaleDetailsRequest:
   allOf:
     - $ref: '#/components/schemas/UpdateSaleDetailsRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -655,7 +657,7 @@ CreateAtomicSwapAskRequest:
   allOf:
     - $ref: '#/components/schemas/CreateAtomicSwapAskRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -706,7 +708,7 @@ CreateAtomicSwapBidRequest:
   allOf:
     - $ref: '#/components/schemas/CreateAtomicSwapBidRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -755,7 +757,7 @@ CreatePollRequest:
   allOf:
     - $ref: '#/components/schemas/CreatePollRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -768,7 +770,7 @@ CreatePollRequest:
                   $ref: '#/components/schemas/AccountKey'
         attributes:
           type: object
-          required: [permission_type, number_of_choices, start_time, end_time, vote_confirmation_required, poll_data, creator_details]
+          required: [ permission_type, number_of_choices, start_time, end_time, vote_confirmation_required, poll_data, creator_details ]
           properties:
             permission_type:
               type: int
@@ -817,7 +819,7 @@ KYCRecoveryRequest:
   allOf:
     - $ref: '#/components/schemas/KYCRecoveryRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -830,7 +832,7 @@ KYCRecoveryRequest:
                   $ref: '#/components/schemas/AccountKey'
         attributes:
           type: object
-          required: [sequence_number, signers_data, creator_details]
+          required: [ sequence_number, signers_data, creator_details ]
           properties:
             sequence_number:
               type: int
@@ -862,7 +864,7 @@ CreatePaymentRequest:
   allOf:
     - $ref: '#/components/schemas/CreatePaymentRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -920,7 +922,7 @@ ManageOfferRequest:
   allOf:
     - $ref: '#/components/schemas/ManageOfferRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         attributes:
           type: object
@@ -974,26 +976,11 @@ DataCreationRequestKey:
       enum:
         - "request-details-data-creation"
 
-DataUpdateRequestKey:
-  type: object
-  required:
-    - id
-    - type
-  properties:
-    id:
-      type: string
-      example: "5"
-    type:
-      type: string
-      enum:
-        - "request-details-data-update"
-
-
 DataCreationRequest:
   allOf:
     - $ref: '#/components/schemas/DataCreationRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -1025,11 +1012,25 @@ DataCreationRequest:
             value:
               $ref: '#/components/schemas/Details'
 
+DataUpdateRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-data-update"
+
 DataUpdateRequest:
   allOf:
-    - $ref: '#/components/schemas/DataCreationRequestKey'
+    - $ref: '#/components/schemas/DataUpdateRequestKey'
     - type: object
-      required: [relationships, attributes]
+      required: [ relationships, attributes ]
       properties:
         relationships:
           type: object
@@ -1053,4 +1054,48 @@ DataUpdateRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
             value:
+              $ref: '#/components/schemas/Details'
+
+
+DataRemoveRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-data-remove"
+
+
+
+DataRemoveRequest:
+  allOf:
+    - $ref: '#/components/schemas/DataRemoveRequestKey'
+    - type: object
+      required: [ relationships, attributes ]
+      properties:
+        relationships:
+          type: object
+          properties:
+            data:
+              type: object
+              description: "data to remove"
+              $ref: '#/components/schemas/DataKey'
+        attributes:
+          type: object
+          required:
+            - sequence_number
+            - creator_details
+          properties:
+            sequence_number:
+              type: integer
+              format: uint32
+              description: "Sequence number"
+              example: 10
+            creator_details:
               $ref: '#/components/schemas/Details'

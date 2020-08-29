@@ -13,17 +13,17 @@ type createDataCreationRequestHandler struct {
 func (h *createDataCreationRequestHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	createDataRequest := op.Body.MustCreateDataCreationRequestOp()
-	response := opRes.MustCreateDataCreationRequestResult().CreateDataCreationRequestResponse
+	response := opRes.MustCreateDataCreationRequestResult().Success
 
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateDataCreationRequest,
 		CreateDataCreationRequest: &history2.CreateDataCreationRequest{
-			ID:        uint64(response.RequestId),
-			Type:      uint64(response.Type),
-			RequestID: uint64(response.RequestId),
-			Value:     internal.MarshalCustomDetails(response.Value),
+			ID:             uint64(response.RequestId),
+			Type:           uint64(response.Type),
+			RequestID:      uint64(response.RequestId),
+			Value:          internal.MarshalCustomDetails(response.Value),
 			CreatorDetails: internal.MarshalCustomDetails(createDataRequest.DataCreationRequest.CreatorDetails),
-			Owner:     createDataRequest.DataCreationRequest.Owner.Address(),
+			Owner:          createDataRequest.DataCreationRequest.Owner.Address(),
 		},
 	}, nil
 }

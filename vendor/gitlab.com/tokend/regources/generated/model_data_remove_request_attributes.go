@@ -4,7 +4,8 @@
 
 package regources
 
-type CreateDataUpdateRequestOpAttributes struct {
+type DataRemoveRequestAttributes struct {
 	CreatorDetails Details `json:"creator_details"`
-	Value          Details `json:"value"`
+	// Sequence number
+	SequenceNumber uint32 `json:"sequence_number"`
 }

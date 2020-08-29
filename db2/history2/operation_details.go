@@ -65,8 +65,11 @@ type OperationDetails struct {
 	UpdateData                 *UpdateDataDetails                 `json:"update_data,omitempty"`
 	RemoveData                 *RemoveDataDetails                 `json:"remove_data,omitempty"`
 	CreateDataCreationRequest  *CreateDataCreationRequest         `json:"create_data_creation_request,omitempty"`
-	CreateDataUpdateRequest    *CreateDataUpdateRequest           `json:"create_data_update_request,omitempty"`
 	CancelDataCreationRequest  *CancelDataCreationRequest         `json:"cancel_data_creation_request,omitempty"`
+	CreateDataUpdateRequest    *CreateDataUpdateRequest           `json:"create_data_update_request,omitempty"`
+	CancelDataUpdateRequest    *CancelDataUpdateRequest           `json:"cancel_data_update_request,omitempty"`
+	CreateDataRemoveRequest    *CreateDataRemoveRequest           `json:"create_data_remove_request,omitempty"`
+	CancelDataRemoveRequest    *CancelDataRemoveRequest           `json:"cancel_data_remove_request,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -632,6 +635,20 @@ type CreateDataUpdateRequest struct {
 	RequestID      uint64            `json:"request_id"`
 }
 
+type CreateDataRemoveRequest struct {
+	ID             uint64            `json:"id"`
+	CreatorDetails regources.Details `json:"creator_details"`
+	RequestID      uint64            `json:"request_id"`
+}
+
 type CancelDataCreationRequest struct {
+	RequestID uint64 `json:"request_id"`
+}
+
+type CancelDataUpdateRequest struct {
+	RequestID uint64 `json:"request_id"`
+}
+
+type CancelDataRemoveRequest struct {
 	RequestID uint64 `json:"request_id"`
 }

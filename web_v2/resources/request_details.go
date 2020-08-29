@@ -49,6 +49,8 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newDataCreationRequest(request.ID, *request.Details.DataCreation)
 	case xdr.ReviewableRequestTypeDataUpdate:
 		return newDataUpdateRequest(request.ID, *request.Details.DataUpdate)
+	case xdr.ReviewableRequestTypeDataRemove:
+		return newDataUpdateRequest(request.ID, *request.Details.DataUpdate)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -348,6 +350,19 @@ func newDataUpdateRequest(id int64, details history2.DataUpdateRequest) *regourc
 			SequenceNumber: details.SequenceNumber,
 		},
 		Relationships: regources.DataUpdateRequestRelationships{
+			Data: NewDataKey(int64(details.DataID)).AsRelation(),
+		},
+	}
+}
+
+func newDataRemoveRequest(id int64, details history2.DataRemoveRequest) *regources.DataRemoveRequest {
+	return &regources.DataRemoveRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_DATA_REMOVE),
+		Attributes: regources.DataRemoveRequestAttributes{
+			CreatorDetails: details.CreatorDetails,
+			SequenceNumber: details.SequenceNumber,
+		},
+		Relationships: regources.DataRemoveRequestRelationships{
 			Data: NewDataKey(int64(details.DataID)).AsRelation(),
 		},
 	}

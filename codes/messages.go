@@ -312,6 +312,7 @@ var messages = map[string]string{
 	"op_has_pair":                                       "Cannot delete asset, it is used in some asset pair",
 	"op_invalid_subject":                                "Too much signs in subject",
 	"op_pending_issuance_less_then_amount":              "Pending issuance is less than amount",
+	"op_data_not_found":                                 "Data entry with such id does not exist",
 }
 
 func getMessage(rawCode string) string {

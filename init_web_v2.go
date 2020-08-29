@@ -305,6 +305,12 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/data_creation_requests", handlers.GetDataCreationRequests)
 	m.Get("/v3/data_creation_requests/{id}", handlers.GetDataCreationRequests)
 
+	m.Get("/v3/data_update_requests", handlers.GetDataUpdateRequests)
+	m.Get("/v3/data_update_requests/{id}", handlers.GetDataUpdateRequests)
+
+	m.Get("/v3/data_remove_requests", handlers.GetDataRemoveRequests)
+	m.Get("/v3/data_remove_requests/{id}", handlers.GetDataRemoveRequests)
+
 	m.Get("/v3/key_values", handlers.GetKeyValueList)
 	m.Get("/v3/key_values/{key}", handlers.GetKeyValue)
 

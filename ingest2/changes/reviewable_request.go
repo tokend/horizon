@@ -215,13 +215,27 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.handleRemoveOnCreationOp(lc, true)
 	case xdr.OperationTypeManageOffer:
 		return c.handleRemovedOnManageOffer(lc)
-	case xdr.OperationTypeCancelDataCreationRequest:
-		return c.cancel(lc)
 	case xdr.OperationTypeCreateDataCreationRequest:
 		return c.handleRemoveOnCreationOp(lc,
 			lc.OperationResult.
 				MustCreateDataCreationRequestResult().
-				MustCreateDataCreationRequestResponse().Fulfilled)
+				MustSuccess().Fulfilled)
+	case xdr.OperationTypeCancelDataCreationRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCreateDataUpdateRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDataUpdateRequestResult().
+				MustSuccess().Fulfilled)
+	case xdr.OperationTypeCancelDataUpdateRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCreateDataRemoveRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDataUpdateRequestResult().
+				MustSuccess().Fulfilled)
+	case xdr.OperationTypeCancelDataRemoveRequest:
+		return c.cancel(lc)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
@@ -696,6 +710,14 @@ func (c *reviewableRequestHandler) getDataUpdateRequest(request *xdr.DataUpdateR
 	}
 }
 
+func (c *reviewableRequestHandler) getDataRemoveRequest(request *xdr.DataRemoveRequest) *history.DataRemoveRequest {
+	return &history.DataRemoveRequest{
+		SequenceNumber: uint32(request.SequenceNumber),
+		DataID:         uint64(request.Id),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
+
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -747,6 +769,8 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.DataCreation = c.getDataCreationRequest(body.DataCreationRequest)
 	case xdr.ReviewableRequestTypeDataUpdate:
 		details.DataUpdate = c.getDataUpdateRequest(body.DataUpdateRequest)
+	case xdr.ReviewableRequestTypeDataRemove:
+		details.DataRemove = c.getDataRemoveRequest(body.DataRemoveRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),
