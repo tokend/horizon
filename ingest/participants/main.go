@@ -214,7 +214,10 @@ func ForOperation(
 		// TODO add participant
 	case xdr.OperationTypeCreateDataCreationRequest:
 	case xdr.OperationTypeCreateDataUpdateRequest:
+	case xdr.OperationTypeCreateDataRemoveRequest:
 	case xdr.OperationTypeCancelDataCreationRequest:
+	case xdr.OperationTypeCancelDataUpdateRequest:
+	case xdr.OperationTypeCancelDataRemoveRequest:
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
