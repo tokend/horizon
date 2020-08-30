@@ -398,7 +398,10 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["reference"] = op.Reference
 	case xdr.OperationTypeCreateDataCreationRequest:
 	case xdr.OperationTypeCreateDataUpdateRequest:
+	case xdr.OperationTypeCreateDataRemoveRequest:
 	case xdr.OperationTypeCancelDataCreationRequest:
+	case xdr.OperationTypeCancelDataUpdateRequest:
+	case xdr.OperationTypeCancelDataRemoveRequest:
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
