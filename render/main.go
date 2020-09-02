@@ -3,7 +3,7 @@ package render
 import (
 	"net/http"
 
-	"bitbucket.org/ww/goautoneg"
+	"github.com/munnerz/goautoneg"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/jsonapi"
 	"gitlab.com/tokend/horizon/render/problem"

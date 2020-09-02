@@ -2,14 +2,6 @@
 
 
 [[projects]]
-  branch = "default"
-  digest = "1:24df057f15e7a09e75c1241cbe6f6590fd3eac9804f1110b02efade3214f042d"
-  name = "bitbucket.org/ww/goautoneg"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "75cd24fc2f2c2a2088577d12123ddee5f54e0675"
-
-[[projects]]
   digest = "1:e92a0c83f31f4a93377d3bc10ca9368e2b8ce1a6a6f94933f59f820fc9576417"
   name = "github.com/Masterminds/squirrel"
   packages = ["."]
@@ -258,6 +250,14 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "06020f85339e21b2478f756a78e295255ffa4d6a"
+
+[[projects]]
+  branch = "master"
+  digest = "1:033cb6b684cdfcff6434b31b3ef858d0789db6e42d09008bb82a17177b05e0a8"
+  name = "github.com/munnerz/goautoneg"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a7dc8b61c822528f973a5e4e7b272055c6fdb43e"
 
 [[projects]]
   branch = "master"
@@ -545,8 +545,8 @@
   revision = "ebd58a4201e13c7dbbdbb587271cdee3c2b72f51"
 
 [[projects]]
-  branch = "master"
-  digest = "1:29de98507d7d035f763ed45cd562fd95c305b35d2b6d69e61a31f07f4f93bd85"
+  branch = "feature/custom-rules"
+  digest = "1:16287c93e3944b2d7451dc6e3f9af379efb02f8fa88ee7873b763bbf292fa280"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -565,7 +565,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "8ac07c8af8c5032b9981e0f2e1071476fbca335e"
+  revision = "f2a4dc5dca2aa90e3fbe27e44f0f2c812f35eeaa"
 
 [[projects]]
   branch = "master"
@@ -686,7 +686,6 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "bitbucket.org/ww/goautoneg",
     "github.com/Masterminds/squirrel",
     "github.com/asaskevich/govalidator",
     "github.com/cheekybits/genny/generic",
@@ -704,6 +703,7 @@
     "github.com/lann/squirrel",
     "github.com/lib/pq",
     "github.com/magiconair/properties/assert",
+    "github.com/munnerz/goautoneg",
     "github.com/patrickmn/go-cache",
     "github.com/pkg/errors",
     "github.com/rcrowley/go-metrics",
