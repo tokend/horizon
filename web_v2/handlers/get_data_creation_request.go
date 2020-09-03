@@ -51,6 +51,10 @@ type getDataCreationRequestsHandler struct {
 func (h *getDataCreationRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetDataCreationRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeDataCreation))
 
+	if request.Filters.SecurityType != nil {
+		q = h.RequestsQ.FilterByDataCreationSecurityType(*request.Filters.SecurityType)
+	}
+
 	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 

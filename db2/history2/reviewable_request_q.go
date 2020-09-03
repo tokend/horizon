@@ -2,6 +2,7 @@ package history2
 
 import (
 	"database/sql"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -166,6 +167,11 @@ func (q ReviewableRequestsQ) FilterBySaleQuoteAsset(asset string) ReviewableRequ
 
 func (q ReviewableRequestsQ) FilterByCreatePollPermissionType(permissionType uint32) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_poll,permission_type}' = ?", permissionType)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByDataCreationSecurityType(securityType uint32) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{data_creation,security_type}' = ?", securityType)
 	return q
 }
 
