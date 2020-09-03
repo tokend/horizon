@@ -50,7 +50,7 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 	case xdr.ReviewableRequestTypeDataUpdate:
 		return newDataUpdateRequest(request.ID, *request.Details.DataUpdate)
 	case xdr.ReviewableRequestTypeDataRemove:
-		return newDataUpdateRequest(request.ID, *request.Details.DataUpdate)
+		return newDataRemoveRequest(request.ID, *request.Details.DataRemove)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
