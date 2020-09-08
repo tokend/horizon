@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+
+* Disable returning errors when using parameters not supported by endpoint
+
 ### Fixed
 
 * Match participant in manage offer

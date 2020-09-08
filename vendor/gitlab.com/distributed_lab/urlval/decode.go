@@ -43,6 +43,31 @@ func Decode(values url.Values, dest interface{}) error {
 	return errs.Filter()
 }
 
+
+// DecodeSilently decodes provided url values to destination struct.
+// Using DecodeSilently requires your request to follow JSON API spec -  If it's
+// values contains anything except from "include", "sort", "search",  "filter", "page",
+// or query has parameters that are not tagged in dest -  DecodeSilently populates
+// dest and does not return an error (where Decode returns). The only error type it returns is errBadRequest
+// that is compatible with ape (https://gitlab.com/distributed_lab/ape),
+// so can be rendered directly to client.
+func DecodeSilently(values url.Values, dest interface{}) error {
+	tokens := internal.Tokenize(values)
+	refdest := betterreflect.NewStruct(dest)
+	setDefaults(refdest)
+	errs := errBadRequest{}
+
+	for token := range tokens {
+		_, err := decodeToken(token, refdest)
+		if err != nil {
+			errs[token.Key] = err
+			continue
+		}
+	}
+
+	return errs.Filter()
+}
+
 func setDefaults(s *betterreflect.Struct) {
 	for i := 0; i < s.NumField(); i++ {
 		value := s.Value(i)

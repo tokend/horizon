@@ -64,7 +64,7 @@ func NewGetBalanceList(r *http.Request) (*GetBalanceList, error) {
 		base: b,
 	}
 
-	err = urlval.Decode(r.URL.Query(), &request)
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}

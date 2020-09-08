@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2.2.0
+
+### Added
+* DecodeSilently method for decoding without errors
+
 ## 2.0.0
 ### Added
 * Decoding and Encoding support for:

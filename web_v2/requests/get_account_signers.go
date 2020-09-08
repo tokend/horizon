@@ -47,7 +47,7 @@ func NewGetAccountSigners(r *http.Request) (*GetAccountSigners, error) {
 		base:    b,
 		Address: address,
 	}
-	err = urlval.Decode(r.URL.Query(), &request)
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
