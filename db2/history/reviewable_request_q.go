@@ -1,11 +1,12 @@
 package history
 
 import (
+	"database/sql"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/sqx"
 )
 
@@ -134,7 +135,7 @@ func (q *ReviewableRequestQ) Insert(request ReviewableRequest) error {
 		"external_details": request.ExternalDetails,
 	})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -158,7 +159,7 @@ func (q *ReviewableRequestQ) Update(request ReviewableRequest) error {
 		"external_details": request.ExternalDetails,
 	}).Where("id = ?", request.ID)
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -171,7 +172,7 @@ func (q *ReviewableRequestQ) UpdateStates(requestIDs []int64, state ReviewableRe
 		Set("request_state", state).
 		Where(sq.Eq{"id": requestIDs})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -185,7 +186,7 @@ func (q *ReviewableRequestQ) ByID(requestID uint64) (*ReviewableRequest, error) 
 
 	var result ReviewableRequest
 	err := q.parent.Get(&result, query)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 
@@ -214,7 +215,7 @@ func (q *ReviewableRequestQ) Cancel(requestID uint64) error {
 	query := sq.Update("reviewable_request").
 		Set("request_state", ReviewableRequestStateCanceled).Where("id = ?", requestID)
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -237,7 +238,7 @@ func (q *ReviewableRequestQ) setStateRejectReason(requestID uint64, requestState
 		Set("request_state", requestState).
 		Set("reject_reason", rejectReason).Where("id = ?", requestID)
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -471,7 +472,7 @@ func (q *ReviewableRequestQ) UpdateInvoicesStates(state ReviewableRequestState,
 		Where("details->'invoice'->>'contract_id' = ?", contractID).
 		Where(sq.Eq{"request_state": oldStates})
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 

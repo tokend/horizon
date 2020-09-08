@@ -46,7 +46,20 @@ var includeTypeAccountAll = map[string]struct{}{
 //GetAccount - represents params to be specified by user for Get Account handler
 type GetAccount struct {
 	*base
-	Address string
+	Address  string
+	Includes struct {
+		Balances          bool `include:"balances"`
+		BalancesState     bool `include:"balances.state"`
+		BalancesAsset     bool `include:"balances.asset"`
+		Referrer          bool `include:"referrer"`
+		Role              bool `include:"role"`
+		RoleRules         bool `include:"role.rules"`
+		Fees              bool `include:"fees"`
+		Limits            bool `include:"limits"`
+		ExternalSystemIds bool `include:"external_system_ids"`
+		LimitsWithStats   bool `include:"limits_with_stats"`
+		KycData           bool `include:"kyc_data"`
+	}
 }
 
 //NewGetAccount - returns new instance of GetAccount request
@@ -54,6 +67,7 @@ func NewGetAccount(r *http.Request) (*GetAccount, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeAccountAll,
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -66,4 +80,5 @@ func NewGetAccount(r *http.Request) (*GetAccount, error) {
 		base:    b,
 		Address: address,
 	}, nil
+
 }

@@ -2,10 +2,11 @@ package ape
 
 import (
 	"context"
-	"github.com/go-chi/chi/middleware"
-	"gitlab.com/distributed_lab/logan/v3"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/middleware"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 // LoggerSetter - sets specified entry into ctx
@@ -25,7 +26,7 @@ func LoganMiddleware(entry *logan.Entry, args ...interface{}) func(http.Handler)
 			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
 			start := time.Now()
 
-			entry = entry.WithField("path", r.URL.Path)
+			entry := entry.WithField("path", r.URL.Path)
 			requestID := tryGetRequestID(r.Context(), args)
 			if requestID != "" {
 				entry = entry.WithField("request_id", requestID)

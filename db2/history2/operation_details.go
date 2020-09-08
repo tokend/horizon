@@ -4,9 +4,10 @@ import (
 	"database/sql/driver"
 	"time"
 
+	"gitlab.com/distributed_lab/kit/pgdb"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -60,11 +61,14 @@ type OperationDetails struct {
 	OpenSwap                   *OpenSwapDetails                   `json:"open_swap,omitempty"`
 	CloseSwap                  *CloseSwapDetails                  `json:"close_swap,omitempty"`
 	Redemption                 *RedemptionDetails                 `json:"redemption,omitempty"`
+	CreateData                 *CreateDataDetails                 `json:"create_data,omitempty"`
+	UpdateData                 *UpdateDataDetails                 `json:"update_data,omitempty"`
+	RemoveData                 *RemoveDataDetails                 `json:"remove_data,omitempty"`
 }
 
 //Value - converts operation details into jsonb
 func (r OperationDetails) Value() (driver.Value, error) {
-	result, err := db2.DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal operation details")
 	}
@@ -74,7 +78,7 @@ func (r OperationDetails) Value() (driver.Value, error) {
 
 //Scan - converts jsonb into OperationDetails
 func (r *OperationDetails) Scan(src interface{}) error {
-	err := db2.DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan operation details")
 	}
@@ -591,4 +595,20 @@ type RedemptionDetails struct {
 	Asset          string            `json:"asset"`
 	Details        regources.Details `json:"details"`
 	RequestDetails RequestDetails    `json:"request_details"`
+}
+
+type CreateDataDetails struct {
+	ID    uint64            `json:"id"`
+	Type  uint64            `json:"type"`
+	Value regources.Details `json:"value"`
+	Owner string            `json:"owner"`
+}
+
+type UpdateDataDetails struct {
+	ID    uint64            `json:"id"`
+	Value regources.Details `json:"value"`
+}
+
+type RemoveDataDetails struct {
+	ID uint64 `json:"id"`
 }

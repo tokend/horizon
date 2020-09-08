@@ -1,20 +1,21 @@
 package core2
 
 import (
+	"database/sql"
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountsKycQ is a helper struct to aid in configuring queries that loads
 // account structs.
 type AccountsKycQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAccountsKYCQ - creates new instance of AccountsKycQ
-func NewAccountsKycQ(repo *db2.Repo) AccountsKycQ {
+func NewAccountsKycQ(repo *pgdb.DB) AccountsKycQ {
 	return AccountsKycQ{
 		repo: repo,
 		selector: sq.Select("kyc.accountid",
@@ -42,7 +43,7 @@ func (q AccountsKycQ) Get() (*AccountKYC, error) {
 	var result AccountKYC
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

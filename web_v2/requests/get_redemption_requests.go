@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -25,23 +27,35 @@ var includeTypeRedemptionRequests = map[string]struct{}{
 }
 
 type GetRedemptionRequestsFilter struct {
-	GetRequestListBaseFilters
-	SourceBalance      string `fig:"request_details.source_balance"`
-	DestinationAccount string `fig:"request_details.dest_account"`
+	SourceBalance      *string `filter:"request_details.source_balance"`
+	DestinationAccount *string `filter:"request_details.dest_account"`
 }
 
 type GetRedemptionRequests struct {
-	*GetRequestsBase
-	Filters GetRedemptionRequestsFilter
+	GetRequestsBase
+	Filters  GetRedemptionRequestsFilter
+	Includes struct {
+		RequestDetailsSourceBalance bool `include:"request_details.source_balance"`
+		RequestDetailsDestAccount   bool `include:"request_details.dest_account"`
+	}
 }
 
 func NewGetRedemptionRequests(r *http.Request) (request GetRedemptionRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		filterTypeRedemptionRequests,
 		includeTypeRedemptionRequests,
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

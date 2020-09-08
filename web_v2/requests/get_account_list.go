@@ -3,7 +3,8 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -22,10 +23,10 @@ var filterTypeAccountListAll = map[string]struct{}{
 type GetAccountList struct {
 	*base
 	Filters struct {
-		Account []string `fig:"account"`
-		Role    []uint64 `fig:"role"`
+		Account []string `filter:"account"`
+		Role    []uint64 `filter:"role"`
 	}
-	PageParams db2.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewGetAccountList - returns new instance of GetAccountList request
@@ -37,17 +38,16 @@ func NewGetAccountList(r *http.Request) (*GetAccountList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	var request = GetAccountList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetAccountList{
-		base:       b,
-		PageParams: *pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

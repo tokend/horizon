@@ -1,8 +1,10 @@
 package requests
 
 import (
-	"gitlab.com/tokend/horizon/db2"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -21,7 +23,11 @@ var includeTypeSignerAll = map[string]struct{}{
 type GetAccountSigners struct {
 	*base
 	Address    string
-	PageParams *db2.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		Role      bool `include:"role"`
+		RoleRules bool `include:"role.rules"`
+	}
 }
 
 //NewGetAccountSigners - returns new instance of GetAccountSigners request
@@ -37,14 +43,19 @@ func NewGetAccountSigners(r *http.Request) (*GetAccountSigners, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetAccountSigners{
+		base:    b,
+		Address: address,
+	}
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	return &GetAccountSigners{
-		base:       b,
-		Address:    address,
-		PageParams: pageParams,
-	}, nil
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
+	}
+
+	return &request, nil
 }

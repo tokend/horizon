@@ -1,10 +1,10 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"strconv"
 
-	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/db2"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/tokend/horizon/toid"
 )
 

@@ -57,4 +57,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeOpenSwap:                    func(ir xdr.OperationResultTr) shortStr { return ir.MustOpenSwapResult().Code },
 	xdr.OperationTypeCloseSwap:                   func(ir xdr.OperationResultTr) shortStr { return ir.MustCloseSwapResult().Code },
 	xdr.OperationTypeCreateRedemptionRequest:     func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateRedemptionRequestResult().Code },
+	xdr.OperationTypeCreateData:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateDataResult().Code },
+	xdr.OperationTypeUpdateData:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustUpdateDataResult().Code },
+	xdr.OperationTypeRemoveData:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustRemoveDataResult().Code },
 }

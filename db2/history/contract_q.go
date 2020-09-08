@@ -1,12 +1,12 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 var selectContracts = sq.Select(
@@ -193,7 +193,7 @@ func (q *ContractQ) Update(contract Contract) error {
 		"state":            contract.State,
 	}).Where("id = ?", contract.ID)
 
-	_, err := q.parent.Exec(query)
+	err := q.parent.Exec(query)
 	return err
 }
 
@@ -204,7 +204,7 @@ func (q *ContractQ) AddState(contractID int64, stateToAdd int32) error {
 
 	query := "UPDATE history_contracts SET state = (state | ?) WHERE id = ?"
 
-	_, err := q.parent.ExecRaw(query, stateToAdd, contractID)
+	err := q.parent.ExecRaw(query, stateToAdd, contractID)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute contract raw")
 	}

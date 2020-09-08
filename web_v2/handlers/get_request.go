@@ -42,7 +42,7 @@ func GetReviewableRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, historyRecord.Requestor, historyRecord.Reviewer) {
+	if !isAllowed(r, w, &historyRecord.Requestor, &historyRecord.Reviewer) {
 		return
 	}
 

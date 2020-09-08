@@ -18,5 +18,6 @@ const (
 	IngestVersionImmediateSaleParticipation
 	IngestVersionPreissuanceRequestDetails
 	IngestVersionMovementsReviewableRequestDetails
+	IngestVersionAddFeeInUnlockedEffect
 	IngestVersionFixManageOfferParticipantEffect
 )

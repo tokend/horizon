@@ -21,7 +21,13 @@ var includeTypeAskAll = map[string]struct{}{
 // GetAtomicSwapAsk - represents params to be specified by user for Get AtomicSwapBid handler
 type GetAtomicSwapAsk struct {
 	*base
-	ID uint64
+	ID       uint64
+	Includes struct {
+		BaseBalance bool `include:"base_balance"`
+		Owner       bool `include:"owner"`
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAsset  bool `include:"quote_asset"`
+	}
 }
 
 // NewGetAtomicSwapAsk returns new instance of GetAtomicSwapAsk request

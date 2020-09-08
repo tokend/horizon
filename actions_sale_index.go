@@ -2,9 +2,9 @@ package horizon
 
 import (
 	"fmt"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/horizon/render/hal"
 	"gitlab.com/tokend/horizon/render/problem"

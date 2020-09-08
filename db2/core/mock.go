@@ -1,10 +1,10 @@
 package core
 
 import (
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
-	sq "github.com/lann/squirrel"
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 type CoreQMock struct {
@@ -69,9 +69,9 @@ func (q *CoreQMock) Assets() AssetQI {
 	return args.Get(0).(AssetQI)
 }
 
-func (q *CoreQMock) GetRepo() *db2.Repo {
+func (q *CoreQMock) GetRepo() *pgdb.DB {
 	args := q.Called()
-	return args.Get(0).(*db2.Repo)
+	return args.Get(0).(*pgdb.DB)
 }
 
 func (q *CoreQMock) AccountByAddress(dest interface{}, addy string) error {
@@ -127,9 +127,7 @@ func (q *CoreQMock) Query(query sq.Sqlizer) (*sqlx.Rows, error) {
 	args := q.Called(query)
 	return args.Get(0).(*sqlx.Rows), args.Error(1)
 }
-func (q *CoreQMock) NoRows(err error) bool {
-	return false
-}
+
 func (q *CoreQMock) FeeByOperationType(dest interface{}, operationType int) error {
 	args := q.Called()
 	return args.Error(0)

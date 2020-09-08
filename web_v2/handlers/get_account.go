@@ -52,7 +52,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		requests.IncludeTypeAccountLimitsWithStats,
 		requests.IncludeTypeAccountKycData,
 	) {
-		if !isAllowed(r, w, request.Address) {
+		if !isAllowed(r, w, &request.Address) {
 			return
 		}
 	}

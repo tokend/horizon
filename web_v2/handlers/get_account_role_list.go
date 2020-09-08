@@ -49,14 +49,14 @@ type getAccountRoleListHandler struct {
 
 // GetAccountRoleList returns the list of accountRoles with related resources
 func (h *getAccountRoleListHandler) GetAccountRoleList(request *requests.GetAccountRoleList) (*regources.AccountRoleListResponse, error) {
-	accountRoles, err := h.AccountRolesQ.Page(*request.PageParams).Select()
+	accountRoles, err := h.AccountRolesQ.Page(request.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get account role list")
 	}
 
 	response := &regources.AccountRoleListResponse{
 		Data:  make([]regources.AccountRole, 0, len(accountRoles)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for _, accountRole := range accountRoles {

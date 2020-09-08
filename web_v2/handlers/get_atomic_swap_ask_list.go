@@ -13,7 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetAtomicSwapAskList - processes request to get the list of atomic swap bids
@@ -56,14 +56,14 @@ type getAtomicSwapAskListHandler struct {
 // GetAtomicSwapAskList returns the list of atomic swap bids with related resources
 func (h *getAtomicSwapAskListHandler) GetAtomicSwapAskList(request *requests.GetAtomicSwapAskList,
 ) (*regources.AtomicSwapAskListResponse, error) {
-	q := h.AtomicSwapAskQ.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeAskListOwner) {
-		q = q.FilterByOwner(request.Filters.Owner)
+	q := h.AtomicSwapAskQ.Page(request.PageParams)
+	if request.Filters.Owner != nil {
+		q = q.FilterByOwner(*request.Filters.Owner)
 	}
-	if request.ShouldFilter(requests.FilterTypeAskListBaseAsset) {
-		q = q.FilterByBaseAssets([]string{request.Filters.BaseAsset})
+	if request.Filters.BaseAsset != nil {
+		q = q.FilterByBaseAssets(request.Filters.BaseAsset)
 	}
-	if request.ShouldFilter(requests.FilterTypeAskListQuoteAssets) {
+	if request.Filters.QuoteAssets != nil {
 		q = q.FilterByQuoteAssets(request.Filters.QuoteAssets)
 	}
 	asks, err := q.Select()
@@ -73,7 +73,7 @@ func (h *getAtomicSwapAskListHandler) GetAtomicSwapAskList(request *requests.Get
 
 	response := &regources.AtomicSwapAskListResponse{
 		Data:  make([]regources.AtomicSwapAsk, 0, len(asks)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for _, ask := range asks {

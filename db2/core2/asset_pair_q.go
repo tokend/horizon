@@ -1,19 +1,21 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2"
 )
 
 // AssetPairsQ is a helper struct to aid in configuring queries that loads asset pairs
 type AssetPairsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAssetPairsQ - creates new instance of AssetPairsQ with no filters
-func NewAssetPairsQ(repo *db2.Repo) AssetPairsQ {
+func NewAssetPairsQ(repo *pgdb.DB) AssetPairsQ {
 	return AssetPairsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -70,7 +72,7 @@ func (q AssetPairsQ) GetByBaseAndQuote(base, quote string) (*AssetPair, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AssetPairsQ) Page(params db2.OffsetPageParams) AssetPairsQ {
+func (q AssetPairsQ) Page(params pgdb.OffsetPageParams) AssetPairsQ {
 	q.selector = params.ApplyTo(q.selector, "asset_pairs.base", "asset_pairs.quote")
 	return q
 }
@@ -100,7 +102,7 @@ func (q AssetPairsQ) Get() (*AssetPair, error) {
 	var result AssetPair
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -115,7 +117,7 @@ func (q AssetPairsQ) Select() ([]AssetPair, error) {
 	var result []AssetPair
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

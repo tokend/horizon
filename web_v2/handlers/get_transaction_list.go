@@ -70,13 +70,13 @@ func (h *getTransactionsHandler) getLatestLedger() (*history2.Ledger, error) {
 
 // GetTransactions returns the list of transactions with related resources
 func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactions) (*regources.TransactionListResponse, error) {
-	q := h.TransactionsQ.Page(*request.PageParams)
+	q := h.TransactionsQ.Page(request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeTransactionListLedgerChangeTypes) {
+	if request.Filters.ChangeTypes != nil {
 		q = q.FilterByEffectTypes(request.Filters.ChangeTypes...)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeTransactionListLedgerEntryTypes) {
+	if request.Filters.EntryTypes != nil {
 		q = q.FilterByLedgerEntryTypes(request.Filters.EntryTypes...)
 	}
 
@@ -100,9 +100,9 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 	}
 
 	if len(result.Data) > 0 {
-		result.Links = request.GetCursorLinks(*request.PageParams, result.Data[len(result.Data)-1].ID)
+		result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
 	} else {
-		result.Links = request.GetCursorLinks(*request.PageParams, "")
+		result.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 
 	latestLedger, err := h.getLatestLedger()

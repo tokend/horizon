@@ -72,8 +72,8 @@ info:
     backgroundColor: "transparent"
     altText: "TokenD"
 servers:
-- url: https://api.achilles.tokend.io
-  description: TokenD Developer Environment
+  - url: https://api.achilles.tokend.io
+    description: TokenD Developer Environment
 # NOTE
 #
 # Add tag to x-tagGroups or it won't be displayed
@@ -90,16 +90,16 @@ tags:
     description: Defines access points to get account role
   - name: Asset Pairs
     description: |
-                  * A base asset refers to the underlying assets giving value to a company, investment or loan.
-                  Base asset is not fixed. It will appreciate or depreciate according to market forces.
-                  * A quote asset refers to the last amount at which 1 base asset was traded,
-                  meaning the most recent price to which a buyer and seller have agreed as well as the price
-                  at which some 1 base asset was transacted
+      * A base asset refers to the underlying assets giving value to a company, investment or loan.
+      Base asset is not fixed. It will appreciate or depreciate according to market forces.
+      * A quote asset refers to the last amount at which 1 base asset was traded,
+      meaning the most recent price to which a buyer and seller have agreed as well as the price
+      at which some 1 base asset was transacted
   - name: Order Books
     description: |
-                  An order book is a list of buy and sell orders for a specified asset pair organized by price level.
-                  An order book lists the amount of asset being bid or offered at each price point.
-                  It does not identify market participants behind buy and sell orders.
+      An order book is a list of buy and sell orders for a specified asset pair organized by price level.
+      An order book lists the amount of asset being bid or offered at each price point.
+      It does not identify market participants behind buy and sell orders.
   - name: AMLAlert
     description: Defines access points to AMLAlert Reviewable Requests
   - name: Issuance
@@ -115,12 +115,12 @@ x-tagGroups:
       - Fees
   - name: Asset Movements
     tags:
-     - AMLAlert
-     - Issuance
-     - Withdrawal
-     - Atomic Swap
-     - Swaps
-     - Redemption
+      - AMLAlert
+      - Issuance
+      - Withdrawal
+      - Atomic Swap
+      - Swaps
+      - Redemption
   - name: Access Control
     tags:
       - Signers
@@ -146,6 +146,7 @@ x-tagGroups:
       - PreIssuance
       - KeyValue
       - License
+      - Data
   - name: Other
     tags:
       - Polls

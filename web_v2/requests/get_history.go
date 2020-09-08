@@ -3,7 +3,8 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -22,16 +23,24 @@ const (
 	FilterTypeHistoryBalance = "balance"
 	// FilterTypeHistoryAsset - defines if we need to filter the list by asset
 	FilterTypeHistoryAsset = "asset"
+	// FilterTypeHistoryIDs
+	FilterTypeHistoryIDs = "id"
 )
 
 //GetHistory - represents params to be specified for Get History handler
 type GetHistory struct {
 	*base
-	PageParams *db2.CursorPageParams
+	PageParams pgdb.CursorPageParams
 	Filters    struct {
-		Account string `fig:"account"`
-		Balance string `fig:"balance"`
-		Asset   string `fig:"asset"`
+		Account *string `filter:"account"`
+		Balance *string `filter:"balance"`
+		Asset   *string `filter:"asset"`
+	}
+	Includes struct {
+		Operation        bool `include:"operation"`
+		Effect           bool `include:"effect"`
+		OperationDetails bool `include:"operation.details"`
+		Asset            bool `include:"asset"`
 	}
 }
 
@@ -54,17 +63,16 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 		return nil, err
 	}
 
-	pagingParams, err := b.getCursorBasedPageParams()
+	request := GetHistory{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetHistory{
-		base:       b,
-		PageParams: pagingParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = SetDefaultCursorPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

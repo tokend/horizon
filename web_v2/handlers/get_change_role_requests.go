@@ -59,18 +59,18 @@ type getChangeRoleRequestsHandler struct {
 func (h *getChangeRoleRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetChangeRoleRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeChangeRole))
 
-	if request.ShouldFilter(requests.FilterTypeChangeRoleRequestsAccount) {
-		q = q.FilterByChangeRoleAccount(request.Filters.Account)
+	if request.Filters.Account != nil {
+		q = q.FilterByChangeRoleAccount(*request.Filters.Account)
 	}
-	if request.ShouldFilter(requests.FilterTypeChangeRoleRequestsAccountRoleToSet) {
-		q = q.FilterByChangeRoleToSet(request.Filters.AccountRole)
+	if request.Filters.AccountRole != nil {
+		q = q.FilterByChangeRoleToSet(*request.Filters.AccountRole)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getChangeRoleRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeChangeRoleRequestsAccount) {
 		account, err := h.AccountsQ.GetByAddress(record.Details.ChangeRole.DestinationAccount)

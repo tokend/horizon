@@ -33,16 +33,19 @@ func GetBalanceList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assetOwner, err := handler.getAssetOwner(request.Filters.Asset)
-	if err != nil {
-		ctx.Log(r).WithError(err).Error("failed to get asset owner", logan.F{
-			"request": request,
-		})
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
+	var assetOwner string
+	if request.Filters.Asset != nil {
+		assetOwner, err = handler.getAssetOwner(*request.Filters.Asset)
 
-	if !isAllowed(r, w, assetOwner) {
+		if err != nil {
+			ctx.Log(r).WithError(err).Error("failed to get asset owner", logan.F{
+				"request": request,
+			})
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+	}
+	if !isAllowed(r, w, &assetOwner) {
 		return
 	}
 
@@ -85,17 +88,17 @@ func (h *getBalanceListHandler) getAssetOwner(assetCode string) (string, error) 
 
 // GetBalanceList returns list of balances with related resources
 func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList) (*regources.BalanceListResponse, error) {
-	q := h.BalancesQ.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeBalanceListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset)
+	q := h.BalancesQ.Page(request.PageParams)
+	if request.Filters.Asset != nil {
+		q = q.FilterByAsset(*request.Filters.Asset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeBalanceListAssetOwner) {
-		q = q.FilterByAssetOwner(request.Filters.AssetOwner)
+	if request.Filters.AssetOwner != nil {
+		q = q.FilterByAssetOwner(*request.Filters.AssetOwner)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeBalanceListOwner) {
-		q = q.FilterByAccount(request.Filters.Owner)
+	if request.Filters.Owner != nil {
+		q = q.FilterByAccount(*request.Filters.Owner)
 	}
 
 	coreBalances, err := q.Select()
@@ -105,7 +108,7 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 
 	response := &regources.BalanceListResponse{
 		Data:  make([]regources.Balance, 0, len(coreBalances)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for _, coreBalance := range coreBalances {

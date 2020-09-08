@@ -41,6 +41,8 @@ func NewHandler(account accountStorage,
 	accountSpecificRule accountSpecificRuleStorage,
 	accountStatus accountStatusStorage,
 	swap swapStorage,
+	asset assetStorage,
+	data dataStorage,
 ) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request, balance, accountStatus)
@@ -51,6 +53,8 @@ func NewHandler(account accountStorage,
 	accountSpecificRuleHandlerInst := newAccountSpecificRuleHandler(accountSpecificRule)
 	signerHandlerInst := newSignerHandler(accountStatus)
 	swapHandlerInst := newSwapHandler(swap)
+	assetHandlerInst := newAssetHandler(asset)
+	dataHandlerInst := newDataHandler(data)
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{
 			xdr.LedgerEntryTypeAccount:             newAccountHandler(account),
@@ -63,12 +67,16 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 			xdr.LedgerEntryTypeSigner:              signerHandlerInst,
 			xdr.LedgerEntryTypeSwap:                swapHandlerInst,
+			xdr.LedgerEntryTypeAsset:               assetHandlerInst,
+			xdr.LedgerEntryTypeData:                dataHandlerInst,
 		},
 		Update: map[xdr.LedgerEntryType]updatable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
 			xdr.LedgerEntryTypeSale:              saleHandlerInst,
 			xdr.LedgerEntryTypeAssetPair:         assetPairHandler,
 			xdr.LedgerEntryTypePoll:              pollHandlerInst,
+			xdr.LedgerEntryTypeAsset:             assetHandlerInst,
+			xdr.LedgerEntryTypeData:              dataHandlerInst,
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
 			xdr.LedgerEntryTypeReviewableRequest:   reviewRequestHandlerInst,
@@ -78,9 +86,11 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeAssetPair:           assetPairHandler,
 			xdr.LedgerEntryTypeAccountSpecificRule: accountSpecificRuleHandlerInst,
 			xdr.LedgerEntryTypeSwap:                swapHandlerInst,
+			xdr.LedgerEntryTypeData:                dataHandlerInst,
 		},
 		State: map[xdr.LedgerEntryType]statable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
+			xdr.LedgerEntryTypeAsset:             assetHandlerInst,
 		},
 	}
 }

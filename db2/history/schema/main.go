@@ -3,9 +3,9 @@ package schema
 import (
 	"database/sql"
 	"errors"
+	"gitlab.com/tokend/horizon/db2"
 
 	migrate "github.com/rubenv/sql-migrate"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 //go:generate go-bindata -nometadata -ignore .+\.go$ -pkg schema -o bindata.go ./...

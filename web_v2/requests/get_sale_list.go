@@ -3,7 +3,7 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 const (
@@ -33,7 +33,7 @@ type GetSaleList struct {
 	SpecialFilters struct {
 		Participant string `json:"participant"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams *pgdb.OffsetPageParams
 }
 
 // NewGetSaleList returns new instance of GetSaleList request

@@ -1,20 +1,20 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // SaleParticipationQ is a helper struct to aid in configuring queries that load
 // sale participation structures from `participant_effects` table`.
 type SaleParticipationQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewSaleParticipationQ - creates new instance of SaleParticipationQ
-func NewSaleParticipationQ(repo *db2.Repo) SaleParticipationQ {
+func NewSaleParticipationQ(repo *pgdb.DB) SaleParticipationQ {
 	return SaleParticipationQ{
 		repo: repo,
 		selector: sq.Select(
@@ -55,7 +55,7 @@ func (q SaleParticipationQ) FilterBySaleParams(id uint64, baseAsset, owner strin
 }
 
 // Page - returns Q with specified cursor params
-func (q SaleParticipationQ) Page(params db2.CursorPageParams) SaleParticipationQ {
+func (q SaleParticipationQ) Page(params pgdb.CursorPageParams) SaleParticipationQ {
 	q.selector = params.ApplyTo(q.selector, "pe.id")
 	return q
 }

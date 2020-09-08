@@ -3,18 +3,36 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
+
+type GetRequestListBaseFilters struct {
+	ID                  *uint64 `filter:"id"`
+	Requestor           *string `filter:"requestor"`
+	Reviewer            *string `filter:"reviewer"`
+	State               *uint64 `filter:"state"`
+	Type                *uint64 `filter:"type"`
+	PendingTasks        *uint64 `filter:"pending_tasks"`
+	PendingTasksAnyOf   *uint64 `filter:"pending_tasks_any_of"`
+	PendingTasksNotSet  *uint64 `filter:"pending_tasks_not_set"`
+	MissingPendingTasks *uint64 `filter:"missing_pending_tasks"`
+}
 
 type GetRequestsBase struct {
 	*base
 	Filters    GetRequestListBaseFilters
-	PageParams *db2.CursorPageParams
+	PageParams pgdb.CursorPageParams
+	Includes   struct {
+		RequestDetails bool `include:"request_details"`
+	}
 }
 
 func NewGetRequestsBase(
-	r *http.Request, filterDst interface{}, filters map[string]struct{}, includes map[string]struct{},
-) (*GetRequestsBase, error) {
+	r *http.Request,
+	filters map[string]struct{},
+	includes map[string]struct{},
+) (GetRequestsBase, error) {
+
 	// merge filters
 	mergedFilters := map[string]struct{}{}
 	for k := range filters {
@@ -32,37 +50,30 @@ func NewGetRequestsBase(
 		mergedIncludes[k] = struct{}{}
 	}
 
-	b, err := newBase(r, baseOpts{
+	base, err := newBase(r, baseOpts{
 		supportedFilters:  mergedFilters,
 		supportedIncludes: mergedIncludes,
 	})
+	request := GetRequestsBase{base: base}
 	if err != nil {
-		return nil, err
+		return request, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
+	return request, nil
+}
+func PopulateRequest(requestsBase *GetRequestsBase) error {
+	var err error
+
+	err = SetDefaultCursorPageParams(&requestsBase.PageParams)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	err = b.populateFilters(filterDst)
+	ID, err := requestsBase.base.getUint64ID()
+	requestsBase.Filters.ID = &ID
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var baseFilters GetRequestListBaseFilters
-	err = b.populateFilters(&baseFilters)
-	if err != nil {
-		return nil, err
-	}
-	baseFilters.ID, err = b.getUint64ID()
-	if err != nil {
-		return nil, err
-	}
-
-	return &GetRequestsBase{
-		base:       b,
-		Filters:    baseFilters,
-		PageParams: pageParams,
-	}, nil
+	return nil
 }

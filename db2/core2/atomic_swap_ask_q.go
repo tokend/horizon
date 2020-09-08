@@ -1,19 +1,20 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AtomicSwapAskQ is a helper struct to aid in configuring queries that loads atomic swap bids
 type AtomicSwapAskQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAtomicSwapAskQ - creates new instance of AtomicSwapAskQ with no filters
-func NewAtomicSwapAskQ(repo *db2.Repo) AtomicSwapAskQ {
+func NewAtomicSwapAskQ(repo *pgdb.DB) AtomicSwapAskQ {
 	return AtomicSwapAskQ{
 		repo: repo,
 		selector: sq.Select(
@@ -71,7 +72,7 @@ func (q AtomicSwapAskQ) FilterByQuoteAssets(codes []string) AtomicSwapAskQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AtomicSwapAskQ) Page(params db2.OffsetPageParams) AtomicSwapAskQ {
+func (q AtomicSwapAskQ) Page(params pgdb.OffsetPageParams) AtomicSwapAskQ {
 	q.selector = params.ApplyTo(q.selector, "b.id")
 	return q
 }
@@ -83,7 +84,7 @@ func (q AtomicSwapAskQ) Get() (*AtomicSwapAsk, error) {
 	var result AtomicSwapAsk
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -97,7 +98,7 @@ func (q *AtomicSwapAskQ) Select() ([]AtomicSwapAsk, error) {
 	var result []AtomicSwapAsk
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -111,7 +112,7 @@ func (q AtomicSwapAskQ) SelectIDs() ([]uint64, error) {
 	var result []uint64
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

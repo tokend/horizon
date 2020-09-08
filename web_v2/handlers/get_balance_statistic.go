@@ -43,7 +43,7 @@ func GetBalanceStatistic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, request.AccountAddress) {
+	if !isAllowed(r, w, &request.AccountAddress) {
 		return
 	}
 
@@ -136,7 +136,9 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 			return nil, errors.Wrap(err, "failed to get converted balance state")
 		}
 		if converted == nil {
-			return nil, errors.New("no converted balance")
+			return nil, errors.From(errors.New("no converted balance"), logan.F{
+				"core_balance_asset_code": coreBalance.AssetCode,
+			})
 		}
 		var isOk bool
 		availableBalanceResult, isOk = amount.SafePositiveSum(availableBalanceResult, *converted)
@@ -154,7 +156,9 @@ func (h *getBalancesStatisticHandler) GetBalancesStatistic(request *requests.Get
 			return nil, errors.Wrap(err, "failed to get converted balance state")
 		}
 		if convertedLocked == nil {
-			return nil, errors.New("no converted locked")
+			return nil, errors.From(errors.New("no converted locked"), logan.F{
+				"core_balance_asset_code": coreBalance.AssetCode,
+			})
 		}
 
 		fullBalanceResult, isOk = amount.SafePositiveSum(fullBalanceResult, *convertedLocked)

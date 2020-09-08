@@ -53,8 +53,8 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 	}
 
 	// TODO: need to refactor
-	if request.ShouldFilter(requests.FilterTypeHistoryAccount) {
-		h.Account, err = h.AccountsQ.ByAddress(request.Filters.Account)
+	if request.Filters.Account != nil {
+		h.Account, err = h.AccountsQ.ByAddress(*request.Filters.Account)
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get account", logan.F{
 				"account_address": request.Filters.Account,
@@ -71,8 +71,8 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 		}
 	}
 
-	if request.ShouldFilter(requests.FilterTypeHistoryBalance) {
-		h.Balance, err = h.BalanceQ.GetByAddress(request.Filters.Balance)
+	if request.Filters.Balance != nil {
+		h.Balance, err = h.BalanceQ.GetByAddress(*request.Filters.Balance)
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get balance", logan.F{
 				"balance_address": request.Filters.Balance,
@@ -89,8 +89,8 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 		}
 	}
 
-	if request.ShouldFilter(requests.FilterTypeHistoryAsset) {
-		h.Asset, err = h.AssetsQ.GetByCode(request.Filters.Asset)
+	if request.Filters.Asset != nil {
+		h.Asset, err = h.AssetsQ.GetByCode(*request.Filters.Asset)
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get asset", logan.F{
 				"asset_code": request.Filters.Asset,
@@ -116,7 +116,7 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 
 func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 	q history2.ParticipantEffectsQ) history2.ParticipantEffectsQ {
-	q = q.WithAccount().WithBalance().Page(*request.PageParams)
+	q = q.WithAccount().WithBalance().Page(request.PageParams)
 	if request.ShouldInclude(requests.IncludeTypeHistoryOperation) {
 		q = q.WithOperation()
 	}
@@ -152,7 +152,7 @@ func (h *getHistory) SelectAndPopulate(
 	}
 
 	if len(effects) == 0 {
-		result.Links = request.GetCursorLinks(*request.PageParams, "")
+		result.Links = request.GetCursorLinks(request.PageParams, "")
 		return result, nil
 	}
 
@@ -194,7 +194,7 @@ func (h *getHistory) SelectAndPopulate(
 		result.Data = append(result.Data, effect)
 	}
 
-	result.Links = request.GetCursorLinks(*request.PageParams, result.Data[len(result.Data)-1].ID)
+	result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
 
 	return result, nil
 }
@@ -226,9 +226,9 @@ func getEffect(effect history2.ParticipantEffect) regources.ParticipantsEffect {
 // The logic behind this is that if multiple filters provided all resource owners have access to data, as we
 // returning smaller subset of effects/movements
 func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Request) bool {
-	constraints := make([]string, 0)
+	constraints := make([]*string, 0)
 	if h.Account != nil {
-		constraints = append(constraints, h.Account.Address)
+		constraints = append(constraints, &h.Account.Address)
 	}
 
 	if h.Balance != nil {
@@ -239,11 +239,11 @@ func (h *getHistory) ensureAllowed(w http.ResponseWriter, httpRequest *http.Requ
 			return false
 		}
 
-		constraints = append(constraints, account.Address)
+		constraints = append(constraints, &account.Address)
 	}
 
 	if h.Asset != nil {
-		constraints = append(constraints, h.Asset.Owner)
+		constraints = append(constraints, &h.Asset.Owner)
 	}
 	// Admin is added implicitly to constraints in `isAllowed`, so no need to add it explicitly
 	return isAllowed(httpRequest, w, constraints...)

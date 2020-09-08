@@ -6,9 +6,21 @@ import (
 
 	"github.com/google/jsonapi"
 	"github.com/pkg/errors"
-	"gitlab.com/tokend/go/doorman"
-	"gitlab.com/tokend/go/signcontrol"
 )
+
+func isBadRequest(err error) bool {
+	e, ok := err.(interface {
+		BadRequest() bool
+	})
+	return ok && e.BadRequest()
+}
+
+func isNotAllowed(err error) bool {
+	e, ok := err.(interface {
+		NotAllowed() bool
+	})
+	return ok && e.NotAllowed()
+}
 
 // NotAllowed will try to guess details of error and populate problem accordingly.
 func NotAllowed(errs ...error) *jsonapi.ErrorObject {
@@ -24,8 +36,9 @@ func NotAllowed(errs ...error) *jsonapi.ErrorObject {
 		panic(errors.New("unexpected number of errors passed"))
 	}
 
-	switch cause := errors.Cause(errs[0]); cause.(type) {
-	case *signcontrol.Error:
+	cause := errors.Cause(errs[0])
+	switch {
+	case isBadRequest(cause):
 		return &jsonapi.ErrorObject{
 			Title:  http.StatusText(http.StatusBadRequest),
 			Status: fmt.Sprintf("%d", http.StatusBadRequest),
@@ -34,7 +47,7 @@ func NotAllowed(errs ...error) *jsonapi.ErrorObject {
 				"reason": cause.Error(),
 			},
 		}
-	case *doorman.Error:
+	case isNotAllowed(cause):
 		return &jsonapi.ErrorObject{
 			Title:  http.StatusText(http.StatusUnauthorized),
 			Status: fmt.Sprintf("%d", http.StatusUnauthorized),

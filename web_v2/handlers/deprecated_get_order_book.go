@@ -69,7 +69,7 @@ func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests
 		}
 	}
 
-	q := h.OrderBooksQ.Page(*request.PageParams).FilterByOrderBookID(request.ID)
+	q := h.OrderBooksQ.Page(request.PageParams).FilterByOrderBookID(request.ID)
 
 	if request.ShouldInclude(requests.DeprecatedIncludeTypeOrderBookBaseAssets) {
 		q = q.WithBaseAsset()
@@ -79,16 +79,16 @@ func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests
 		q = q.WithQuoteAsset()
 	}
 
-	if request.ShouldFilter(requests.DeprecatedFilterTypeOrderBookBaseAsset) {
-		q = q.FilterByBaseAssetCode(request.Filters.BaseAsset)
+	if request.Filters.BaseAsset != nil {
+		q = q.FilterByBaseAssetCode(*request.Filters.BaseAsset)
 	}
 
-	if request.ShouldFilter(requests.DeprecatedFilterTypeOrderBookQuoteAsset) {
-		q = q.FilterByQuoteAssetCode(request.Filters.QuoteAsset)
+	if request.Filters.QuoteAsset != nil {
+		q = q.FilterByQuoteAssetCode(*request.Filters.QuoteAsset)
 	}
 
-	if request.ShouldFilter(requests.DeprecatedFilterTypeOrderBookIsBuy) {
-		q = q.FilterByIsBuy(request.Filters.IsBuy)
+	if request.Filters.IsBuy != nil {
+		q = q.FilterByIsBuy(*request.Filters.IsBuy)
 	}
 
 	coreOrderBookEntries, err := q.Select()
@@ -99,7 +99,7 @@ func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests
 
 	response := &regources.OrderBookEntryListResponse{
 		Data:  make([]regources.OrderBookEntry, 0, len(coreOrderBookEntries)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for _, coreOrderBookEntry := range coreOrderBookEntries {

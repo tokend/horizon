@@ -248,6 +248,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/fees", handlers.GetFeeList)
 	m.Get("/v3/limits", handlers.GetLimitsList)
 	m.Get("/v3/history", handlers.GetHistory)
+	m.Get("/v3/history/{id}", handlers.GetParticipantEffect)
 	m.Get("/v3/matches", handlers.GetMatchList)
 	m.Get("/v3/movements", handlers.GetMovements)
 	m.Get("/v3/asset_pairs/{id}", handlers.GetAssetPair)
@@ -332,10 +333,14 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/swaps/{id}", handlers.GetSwap)
 	m.Get("/v3/swaps", handlers.GetSwapList)
 
-	m.Get("/v3/operations", handlers.GetOperations)
+	m.Get("/v3/data/{id}", handlers.GetData)
+	m.Get("/v3/data", handlers.GetDataList)
 
-	janus := app.config.Janus()
-	if err := janus.RegisterChi(m); err != nil {
+	m.Get("/v3/operations", handlers.GetOperations)
+	m.Get("/v3/operations/{id}", handlers.GetOperation)
+
+	cop := app.config.Copus()
+	if err := cop.RegisterChi(m); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))
 	}
 }

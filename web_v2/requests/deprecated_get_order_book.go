@@ -1,9 +1,10 @@
 package requests
 
 import (
-	"net/http"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 
-	"gitlab.com/tokend/horizon/db2"
+	"net/http"
 )
 
 const (
@@ -36,12 +37,12 @@ type DeprecatedGetOrderBook struct {
 	*base
 	ID      uint64
 	Filters struct {
-		BaseAsset  string `fig:"base_asset"`
-		QuoteAsset string `fig:"quote_asset"`
-		IsBuy      bool   `fig:"is_buy"`
+		BaseAsset  *string `filter:"base_asset"`
+		QuoteAsset *string `filter:"quote_asset"`
+		IsBuy      *bool   `filter:"is_buy"`
 	}
 
-	PageParams *db2.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewDeprecatedGetOrderBook - returns new instance of DeprecatedGetOrderBook
@@ -54,23 +55,22 @@ func NewDeprecatedGetOrderBook(r *http.Request) (*DeprecatedGetOrderBook, error)
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
-	if err != nil {
-		return nil, err
-	}
-
 	id, err := b.getUint64("id")
 	if err != nil {
 		return nil, err
 	}
 
 	request := DeprecatedGetOrderBook{
-		base:       b,
-		PageParams: pageParams,
-		ID:         id,
+		base: b,
+		ID:   id,
 	}
 
-	err = b.populateFilters(&request.Filters)
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

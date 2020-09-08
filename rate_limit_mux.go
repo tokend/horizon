@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"gitlab.com/distributed_lab/kit/copus/types"
+
 	"github.com/pkg/errors"
 	"github.com/zenazn/goji/web"
-	"gitlab.com/distributed_lab/kit/janus"
 	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
@@ -19,7 +20,7 @@ type RateLimitedMux struct {
 	*web.Mux
 
 	limiter throttled.RateLimiter
-	janus   *janus.Janus
+	cop     types.Copus
 }
 
 func NewRateLimitedMux(app *App) (*RateLimitedMux, error) {
@@ -39,7 +40,7 @@ func NewRateLimitedMux(app *App) (*RateLimitedMux, error) {
 	return &RateLimitedMux{
 		Mux:     web.New(),
 		limiter: rateLimiter,
-		janus:   app.config.Janus(),
+		cop:     app.config.Copus(),
 	}, nil
 }
 
@@ -101,7 +102,7 @@ func (m *RateLimitedMux) Get(pattern web.PatternType, handler web.Handler, limit
 	m.Mux.Get(pattern, func(c web.C, w http.ResponseWriter, r *http.Request) {
 		m.rateLimit(c, w, r, limits, handler)
 	})
-	if err := m.janus.RegisterGojiEndpoint(pattern.(string), "GET"); err != nil {
+	if err := m.cop.RegisterGojiEndpoint(pattern.(string), "GET"); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))
 	}
 }
@@ -110,7 +111,7 @@ func (m *RateLimitedMux) Post(pattern web.PatternType, handler web.Handler, limi
 	m.Mux.Post(pattern, func(c web.C, w http.ResponseWriter, r *http.Request) {
 		m.rateLimit(c, w, r, limits, handler)
 	})
-	if err := m.janus.RegisterGojiEndpoint(pattern.(string), "POST"); err != nil {
+	if err := m.cop.RegisterGojiEndpoint(pattern.(string), "POST"); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))
 	}
 }

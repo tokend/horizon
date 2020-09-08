@@ -3,7 +3,8 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -38,11 +39,15 @@ var filterTypeBalanceListAll = map[string]struct{}{
 type GetBalanceList struct {
 	*base
 	Filters struct {
-		Asset      string `fig:"asset"`
-		AssetOwner string `json:"asset_owner"`
-		Owner      string `json:"owner"`
+		Asset      *string `filter:"asset"`
+		AssetOwner *string `filter:"asset_owner"`
+		Owner      *string `filter:"owner"`
 	}
-	PageParams *db2.OffsetPageParams
+	Includes struct {
+		State bool `include:"state"`
+		Owner bool `include:"owner"`
+	}
+	PageParams pgdb.OffsetPageParams
 }
 
 // NewGetBalanceList - returns new instance of GetBalanceList
@@ -55,17 +60,16 @@ func NewGetBalanceList(r *http.Request) (*GetBalanceList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetBalanceList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetBalanceList{
-		base:       b,
-		PageParams: pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

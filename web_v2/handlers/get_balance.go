@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -9,8 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/generated"
-	"net/http"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 func GetBalance(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +46,7 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 	if request.ShouldInclude(
 		requests.IncludeTypeBalanceState,
 	) {
-		if !isAllowed(r, w, result.Data.Relationships.Owner.Data.ID) {
+		if !isAllowed(r, w, &result.Data.Relationships.Owner.Data.ID) {
 			return
 		}
 	}

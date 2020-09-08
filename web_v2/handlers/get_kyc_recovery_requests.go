@@ -62,15 +62,15 @@ type getKYCRecoveryRequestsHandler struct {
 func (h *getKYCRecoveryRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetKYCRecoveryRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeKycRecovery))
 
-	if request.ShouldFilter(requests.FilterTypeKYCRecoveryRequestsAccount) {
-		q = q.FilterByKYCRecoveryTargetAccount(request.Filters.Account)
+	if request.Filters.Account != nil {
+		q = q.FilterByKYCRecoveryTargetAccount(*request.Filters.Account)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getKYCRecoveryRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeKYCRecoveryRequestsAccount) {
 		account, err := h.AccountsQ.GetByAddress(record.Details.KYCRecovery.TargetAccount)

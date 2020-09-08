@@ -1,20 +1,21 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountRoleQ is a helper struct to aid in configuring queries that loads
 // accountRole structs.
 type SignerRoleQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewSignerRoleQ - creates new instance of AccountRoleQ
-func NewSignerRoleQ(repo *db2.Repo) SignerRoleQ {
+func NewSignerRoleQ(repo *pgdb.DB) SignerRoleQ {
 	return SignerRoleQ{
 		repo: repo,
 		selector: sq.Select("sr.id",
@@ -37,7 +38,7 @@ func (q SignerRoleQ) FilterByID(id uint64) SignerRoleQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SignerRoleQ) Page(params db2.OffsetPageParams) SignerRoleQ {
+func (q SignerRoleQ) Page(params pgdb.OffsetPageParams) SignerRoleQ {
 	q.selector = params.ApplyTo(q.selector, "sr.id")
 	return q
 }
@@ -49,7 +50,7 @@ func (q SignerRoleQ) Get() (*SignerRole, error) {
 	var result SignerRole
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -64,7 +65,7 @@ func (q SignerRoleQ) Select() ([]SignerRole, error) {
 	var result []SignerRole
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

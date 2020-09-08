@@ -34,18 +34,18 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	constraints := []string{
+	constraints := []*string{
 		request.GetRequestsBase.Filters.Requestor,
 		request.GetRequestsBase.Filters.Reviewer,
 	}
 
 	// receiving balance owner should be able to see issuance requests
-	if request.Filters.Receiver != "" {
-		balance, err := history2.NewBalancesQ(historyRepo).GetByAddress(request.Filters.Receiver)
+	if request.Filters.Receiver != nil && *request.Filters.Receiver != "" {
+		balance, err := history2.NewBalancesQ(historyRepo).GetByAddress(*request.Filters.Receiver)
 		if err != nil {
 			ctx.Log(r).
 				WithError(err).
-				WithFields(logan.F{"receiver": request.Filters.Receiver}).
+				WithFields(logan.F{"receiver": *request.Filters.Receiver}).
 				Error("failed to get receiver balance")
 			ape.RenderErr(w, problems.InternalError())
 			return
@@ -58,13 +58,13 @@ func GetCreateIssuanceRequests(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			ctx.Log(r).
 				WithError(err).
-				WithFields(logan.F{"receiver": request.Filters.Receiver}).
+				WithFields(logan.F{"receiver": *request.Filters.Receiver}).
 				Error("failed to get receiver account")
 			ape.RenderErr(w, problems.InternalError())
 			return
 		}
 
-		constraints = append(constraints, account.Address)
+		constraints = append(constraints, &account.Address)
 
 	}
 
@@ -93,19 +93,19 @@ type getCreateIssuanceRequestsHandler struct {
 func (h *getCreateIssuanceRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateIssuanceRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateIssuance))
 
-	if request.ShouldFilter(requests.FilterTypeCreateIssuanceRequestsAsset) {
-		q = q.FilterByCreateIssuanceAsset(request.Filters.Asset)
+	if request.Filters.Asset != nil && *request.Filters.Asset != "" {
+		q = q.FilterByCreateIssuanceAsset(*request.Filters.Asset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeCreateIssuanceRequestsReceiver) {
-		q = q.FilterByCreateIssuanceReceiver(request.Filters.Receiver)
+	if request.Filters.Receiver != nil && *request.Filters.Receiver != "" {
+		q = q.FilterByCreateIssuanceReceiver(*request.Filters.Receiver)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getCreateIssuanceRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateIssuanceRequestsAsset) {
 		asset, err := h.AssetsQ.GetByCode(record.Details.CreateIssuance.Asset)

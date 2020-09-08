@@ -2,19 +2,19 @@ package history2
 
 import (
 	sq "github.com/lann/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // LedgerChangesQ is a helper struct to aid in configuring queries that loads
 // ledger change structures.
 type LedgerChangesQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewLedgerChangesQ - creates new instance of LedgerChangesQ
-func NewLedgerChangesQ(repo *db2.Repo) LedgerChangesQ {
+func NewLedgerChangesQ(repo *pgdb.DB) LedgerChangesQ {
 	return LedgerChangesQ{
 		repo: repo,
 		selector: sq.Select(

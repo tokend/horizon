@@ -3,7 +3,8 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -47,15 +48,19 @@ var filterTypeOfferListAll = map[string]struct{}{
 type GetOfferList struct {
 	*base
 	Filters struct {
-		BaseBalance  string `fig:"base_balance"`
-		QuoteBalance string `fig:"quote_balance"`
-		BaseAsset    string `fig:"base_asset"`
-		QuoteAsset   string `fig:"quote_asset"`
-		Owner        string `fig:"owner"`
-		OrderBook    int64  `fig:"order_book"`
-		IsBuy        bool   `fig:"is_buy"`
+		BaseBalance  *string `filter:"base_balance"`
+		QuoteBalance *string `filter:"quote_balance"`
+		BaseAsset    *string `filter:"base_asset"`
+		QuoteAsset   *string `filter:"quote_asset"`
+		Owner        *string `filter:"owner"`
+		OrderBook    *int64  `filter:"order_book"`
+		IsBuy        *bool   `filter:"is_buy"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAssets bool `include:"quote_assets"`
+	}
 }
 
 // NewGetOfferList - returns new instance of GetOfferList
@@ -68,17 +73,16 @@ func NewGetOfferList(r *http.Request) (*GetOfferList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetOfferList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetOfferList{
-		base:       b,
-		PageParams: pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

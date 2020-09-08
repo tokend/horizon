@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -9,8 +11,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/generated"
-	"net/http"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetMatchList - processes request to get the list of matches

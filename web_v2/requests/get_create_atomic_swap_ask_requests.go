@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -23,22 +25,34 @@ var filterTypeCreateAtomicSwapAskRequests = map[string]struct{}{
 }
 
 type GetCreateAtomicSwapAskRequestsFilter struct {
-	GetRequestListBaseFilters
-	BaseBalance string `fig:"request_details.base_balance"`
+	BaseBalance *string `filter:"request_details.base_balance"`
 }
 
 type GetCreateAtomicSwapAskRequests struct {
-	*GetRequestsBase
-	Filters GetCreateAtomicSwapAskRequestsFilter
+	GetRequestsBase
+	Filters  GetCreateAtomicSwapAskRequestsFilter
+	Includes struct {
+		RequestDetailsBaseBalance bool `include:"request_details.base_balance"`
+		RequestDetailsQuoteAssets bool `include:"request_details.quote_assets"`
+	}
 }
 
 func NewGetCreateAtomicSwapAskRequests(r *http.Request) (request GetCreateAtomicSwapAskRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		filterTypeCreateAtomicSwapAskRequests,
 		includeTypeCreateAtomicSwapAskRequests,
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

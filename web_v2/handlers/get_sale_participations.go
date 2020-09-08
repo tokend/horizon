@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -11,8 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/generated"
-	"net/http"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetSaleParticipations - processes request to get list of sale participations
@@ -45,7 +46,7 @@ func GetSaleParticipations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, sale.OwnerAddress) {
+	if !isAllowed(r, w, &sale.OwnerAddress) {
 		return
 	}
 
@@ -110,12 +111,12 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 		})
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSaleParticipationsParticipant) {
-		q = q.FilterByParticipant(request.Filters.Participant)
+	if request.Filters.Participant != nil {
+		q = q.FilterByParticipant(*request.Filters.Participant)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeSaleParticipationsQuoteAsset) {
-		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset)
+	if request.Filters.QuoteAsset != nil {
+		q = q.FilterByQuoteAsset(*request.Filters.QuoteAsset)
 	}
 
 	var err error
@@ -125,9 +126,9 @@ func (h *getSaleParticipationsHandler) GetSaleParticipations(sale *history2.Sale
 	}
 
 	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+		response.Links = request.GetCursorLinks(request.PageParams, response.Data[len(response.Data)-1].ID)
 	} else {
-		response.Links = request.GetCursorLinks(*request.PageParams, "")
+		response.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 
 	if len(response.Data) == 0 {

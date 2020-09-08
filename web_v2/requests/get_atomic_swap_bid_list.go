@@ -1,9 +1,10 @@
 package requests
 
 import (
-	"net/http"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 
-	"gitlab.com/tokend/horizon/db2"
+	"net/http"
 )
 
 const (
@@ -34,11 +35,17 @@ var filterTypeAskListAll = map[string]struct{}{
 type GetAtomicSwapAskList struct {
 	*base
 	Filters struct {
-		Owner       string   `fig:"owner"`
-		BaseAsset   string   `fig:"base_asset"`
-		QuoteAssets []string `fig:"quote_assets"`
+		Owner       *string  `filter:"owner"`
+		BaseAsset   []string `filter:"base_asset"`
+		QuoteAssets []string `filter:"quote_assets"`
 	}
-	PageParams *db2.OffsetPageParams
+	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		BaseBalance bool `include:"base_balance"`
+		Owner       bool `include:"owner"`
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAssets bool `include:"quote_assets"`
+	}
 }
 
 // NewGetAtomicSwapAskList returns new instance of GetAtomicSwapAskList request
@@ -56,17 +63,16 @@ func NewGetAtomicSwapAskList(r *http.Request) (*GetAtomicSwapAskList, error) {
 		b.include[IncludeTypeAskBaseBalance] = struct{}{}
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetAtomicSwapAskList{
+		base: b,
+	}
+
+	err = urlval.Decode(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetAtomicSwapAskList{
-		base:       b,
-		PageParams: pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

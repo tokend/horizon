@@ -5,7 +5,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 type pendingParticipationsQ struct {
@@ -16,7 +16,7 @@ func newPendingParticipationQ(request *requests.GetSaleParticipations, q core2.O
 	q = q.
 		FilterByIsBuy(true).
 		FilterByOrderBookID(int64(request.SaleID)).
-		CursorPage(*request.PageParams)
+		CursorPage(request.PageParams)
 
 	return pendingParticipationsQ{
 		offersQ: q,

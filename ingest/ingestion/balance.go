@@ -9,10 +9,10 @@ import (
 
 func (ingest *Ingestion) TryIngestBalance(
 	balanceID, asset, accountID string) (bool, error) {
-	result, err := ingest.DB.ExecRaw(`
+	result, err := ingest.DB.ExecWithResult(squirrel.Expr(`
 		insert into history_balances (balance_id, asset, account_id)
 		values ($1, $2, $3) on conflict do nothing`,
-		balanceID, asset, accountID)
+		balanceID, asset, accountID))
 	if err != nil {
 		return false, err
 	}
@@ -25,7 +25,7 @@ func (ingest *Ingestion) TryIngestBalance(
 
 func (ingest *Ingestion) TryIngestBalanceUpdate(
 	balanceID string, amount, closeTime int64) error {
-	_, err := ingest.DB.Exec(squirrel.
+	err := ingest.DB.Exec(squirrel.
 		Insert("history_balance_updates").
 		SetMap(map[string]interface{}{
 			"balance_id": balanceID,

@@ -17,7 +17,11 @@ var includeTypeOfferAll = map[string]struct{}{
 // GetOffer represents params to be specified by user for getOffer handler
 type GetOffer struct {
 	*base
-	ID uint64
+	ID       uint64
+	Includes struct {
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAssets bool `include:"quote_assets"`
+	}
 }
 
 // NewGetOffer returns new instance of the GetOffer request
