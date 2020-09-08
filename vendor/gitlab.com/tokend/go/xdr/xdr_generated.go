@@ -1,5 +1,5 @@
-// revision: d639694e4cdb49f22866a506b190bd92f3e62b84
-// branch:   master
+// revision: 737ad7c7111d1b34db7e08932981640249a6bc13
+// branch:   feature/custom-rules
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -21510,7 +21510,9 @@ type ManageAccountRuleOp struct {
 //        //: It is not allowed to remove the rule if it is used at least in one role
 //        RULE_IS_USED = -2,
 //        //: Passed details has invalid json structure
-//        INVALID_DETAILS = -3
+//        INVALID_DETAILS = -3,
+//        //: Custom rule action can not be used with entries other than CUSTOM
+//        INVALID_ACTION = -4
 //    };
 //
 type ManageAccountRuleResultCode int32
@@ -21520,6 +21522,7 @@ const (
 	ManageAccountRuleResultCodeNotFound       ManageAccountRuleResultCode = -1
 	ManageAccountRuleResultCodeRuleIsUsed     ManageAccountRuleResultCode = -2
 	ManageAccountRuleResultCodeInvalidDetails ManageAccountRuleResultCode = -3
+	ManageAccountRuleResultCodeInvalidAction  ManageAccountRuleResultCode = -4
 )
 
 var ManageAccountRuleResultCodeAll = []ManageAccountRuleResultCode{
@@ -21527,6 +21530,7 @@ var ManageAccountRuleResultCodeAll = []ManageAccountRuleResultCode{
 	ManageAccountRuleResultCodeNotFound,
 	ManageAccountRuleResultCodeRuleIsUsed,
 	ManageAccountRuleResultCodeInvalidDetails,
+	ManageAccountRuleResultCodeInvalidAction,
 }
 
 var manageAccountRuleResultCodeMap = map[int32]string{
@@ -21534,6 +21538,7 @@ var manageAccountRuleResultCodeMap = map[int32]string{
 	-1: "ManageAccountRuleResultCodeNotFound",
 	-2: "ManageAccountRuleResultCodeRuleIsUsed",
 	-3: "ManageAccountRuleResultCodeInvalidDetails",
+	-4: "ManageAccountRuleResultCodeInvalidAction",
 }
 
 var manageAccountRuleResultCodeShortMap = map[int32]string{
@@ -21541,6 +21546,7 @@ var manageAccountRuleResultCodeShortMap = map[int32]string{
 	-1: "not_found",
 	-2: "rule_is_used",
 	-3: "invalid_details",
+	-4: "invalid_action",
 }
 
 var manageAccountRuleResultCodeRevMap = map[string]int32{
@@ -21548,6 +21554,7 @@ var manageAccountRuleResultCodeRevMap = map[string]int32{
 	"ManageAccountRuleResultCodeNotFound":       -1,
 	"ManageAccountRuleResultCodeRuleIsUsed":     -2,
 	"ManageAccountRuleResultCodeInvalidDetails": -3,
+	"ManageAccountRuleResultCodeInvalidAction":  -4,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -33295,7 +33302,9 @@ type ManageSignerRuleOp struct {
 //        //: It is not allowed to remove the rule if it is attached to at least one role
 //        RULE_IS_USED = -2,
 //        //: Passed details have invalid json structure
-//        INVALID_DETAILS = -3
+//        INVALID_DETAILS = -3,
+//        //: Custom rule action can not be used with entries other than CUSTOM
+//        INVALID_ACTION = -4
 //    };
 //
 type ManageSignerRuleResultCode int32
@@ -33305,6 +33314,7 @@ const (
 	ManageSignerRuleResultCodeNotFound       ManageSignerRuleResultCode = -1
 	ManageSignerRuleResultCodeRuleIsUsed     ManageSignerRuleResultCode = -2
 	ManageSignerRuleResultCodeInvalidDetails ManageSignerRuleResultCode = -3
+	ManageSignerRuleResultCodeInvalidAction  ManageSignerRuleResultCode = -4
 )
 
 var ManageSignerRuleResultCodeAll = []ManageSignerRuleResultCode{
@@ -33312,6 +33322,7 @@ var ManageSignerRuleResultCodeAll = []ManageSignerRuleResultCode{
 	ManageSignerRuleResultCodeNotFound,
 	ManageSignerRuleResultCodeRuleIsUsed,
 	ManageSignerRuleResultCodeInvalidDetails,
+	ManageSignerRuleResultCodeInvalidAction,
 }
 
 var manageSignerRuleResultCodeMap = map[int32]string{
@@ -33319,6 +33330,7 @@ var manageSignerRuleResultCodeMap = map[int32]string{
 	-1: "ManageSignerRuleResultCodeNotFound",
 	-2: "ManageSignerRuleResultCodeRuleIsUsed",
 	-3: "ManageSignerRuleResultCodeInvalidDetails",
+	-4: "ManageSignerRuleResultCodeInvalidAction",
 }
 
 var manageSignerRuleResultCodeShortMap = map[int32]string{
@@ -33326,6 +33338,7 @@ var manageSignerRuleResultCodeShortMap = map[int32]string{
 	-1: "not_found",
 	-2: "rule_is_used",
 	-3: "invalid_details",
+	-4: "invalid_action",
 }
 
 var manageSignerRuleResultCodeRevMap = map[string]int32{
@@ -33333,6 +33346,7 @@ var manageSignerRuleResultCodeRevMap = map[string]int32{
 	"ManageSignerRuleResultCodeNotFound":       -1,
 	"ManageSignerRuleResultCodeRuleIsUsed":     -2,
 	"ManageSignerRuleResultCodeInvalidDetails": -3,
+	"ManageSignerRuleResultCodeInvalidAction":  -4,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -42221,6 +42235,24 @@ func (u ReviewableRequestResource) GetExt() (result EmptyExt, ok bool) {
 	return
 }
 
+// CustomRuleResource is an XDR Struct defines as:
+//
+//   //: Describes custom rule resource that can be used outside of the Core for flexible access control
+//    struct CustomRuleResource {
+//        //: Action attributes
+//        longstring *action;
+//        //: Resource attributes
+//        longstring resource;
+//
+//        EmptyExt ext;
+//    };
+//
+type CustomRuleResource struct {
+	Action   *Longstring `json:"action,omitempty"`
+	Resource Longstring  `json:"resource,omitempty"`
+	Ext      EmptyExt    `json:"ext,omitempty"`
+}
+
 // AccountRuleResourceAsset is an XDR NestedStruct defines as:
 //
 //   struct
@@ -42663,6 +42695,8 @@ type AccountRuleResourceData struct {
 //            //: Reserved for future extension
 //            EmptyExt ext;
 //        } data;
+//    case CUSTOM:
+//        CustomRuleResource custom;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -42682,6 +42716,7 @@ type AccountRuleResource struct {
 	AccountSpecificRuleExt *AccountRuleResourceAccountSpecificRuleExt `json:"accountSpecificRuleExt,omitempty"`
 	Swap                   *AccountRuleResourceSwap                   `json:"swap,omitempty"`
 	Data                   *AccountRuleResourceData                   `json:"data,omitempty"`
+	Custom                 *CustomRuleResource                        `json:"custom,omitempty"`
 	Ext                    *EmptyExt                                  `json:"ext,omitempty"`
 }
 
@@ -42721,6 +42756,8 @@ func (u AccountRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "Swap", true
 	case LedgerEntryTypeData:
 		return "Data", true
+	case LedgerEntryTypeCustom:
+		return "Custom", true
 	default:
 		return "Ext", true
 	}
@@ -42816,6 +42853,13 @@ func NewAccountRuleResource(aType LedgerEntryType, value interface{}) (result Ac
 			return
 		}
 		result.Data = &tv
+	case LedgerEntryTypeCustom:
+		tv, ok := value.(CustomRuleResource)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CustomRuleResource")
+			return
+		}
+		result.Custom = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -43127,6 +43171,31 @@ func (u AccountRuleResource) GetData() (result AccountRuleResourceData, ok bool)
 	return
 }
 
+// MustCustom retrieves the Custom value from the union,
+// panicing if the value is not set.
+func (u AccountRuleResource) MustCustom() CustomRuleResource {
+	val, ok := u.GetCustom()
+
+	if !ok {
+		panic("arm Custom is not set")
+	}
+
+	return val
+}
+
+// GetCustom retrieves the Custom value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u AccountRuleResource) GetCustom() (result CustomRuleResource, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Custom" {
+		result = *u.Custom
+		ok = true
+	}
+
+	return
+}
+
 // MustExt retrieves the Ext value from the union,
 // panicing if the value is not set.
 func (u AccountRuleResource) MustExt() EmptyExt {
@@ -43180,7 +43249,8 @@ func (u AccountRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        EXCHANGE = 21,
 //        RECEIVE_REDEMPTION = 22,
 //        UPDATE = 23,
-//        UPDATE_FOR_OTHER = 24
+//        UPDATE_FOR_OTHER = 24,
+//        CUSTOM = 25
 //    };
 //
 type AccountRuleAction int32
@@ -43210,6 +43280,7 @@ const (
 	AccountRuleActionReceiveRedemption       AccountRuleAction = 22
 	AccountRuleActionUpdate                  AccountRuleAction = 23
 	AccountRuleActionUpdateForOther          AccountRuleAction = 24
+	AccountRuleActionCustom                  AccountRuleAction = 25
 )
 
 var AccountRuleActionAll = []AccountRuleAction{
@@ -43237,6 +43308,7 @@ var AccountRuleActionAll = []AccountRuleAction{
 	AccountRuleActionReceiveRedemption,
 	AccountRuleActionUpdate,
 	AccountRuleActionUpdateForOther,
+	AccountRuleActionCustom,
 }
 
 var accountRuleActionMap = map[int32]string{
@@ -43264,6 +43336,7 @@ var accountRuleActionMap = map[int32]string{
 	22: "AccountRuleActionReceiveRedemption",
 	23: "AccountRuleActionUpdate",
 	24: "AccountRuleActionUpdateForOther",
+	25: "AccountRuleActionCustom",
 }
 
 var accountRuleActionShortMap = map[int32]string{
@@ -43291,6 +43364,7 @@ var accountRuleActionShortMap = map[int32]string{
 	22: "receive_redemption",
 	23: "update",
 	24: "update_for_other",
+	25: "custom",
 }
 
 var accountRuleActionRevMap = map[string]int32{
@@ -43318,6 +43392,7 @@ var accountRuleActionRevMap = map[string]int32{
 	"AccountRuleActionReceiveRedemption":       22,
 	"AccountRuleActionUpdate":                  23,
 	"AccountRuleActionUpdateForOther":          24,
+	"AccountRuleActionCustom":                  25,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -43905,6 +43980,8 @@ type SignerRuleResourceData struct {
 //            //: Reserved for future extension
 //            EmptyExt ext;
 //        } data;
+//    case CUSTOM:
+//        CustomRuleResource custom;
 //    default:
 //        //: reserved for future extension
 //        EmptyExt ext;
@@ -43927,6 +44004,7 @@ type SignerRuleResource struct {
 	AccountSpecificRuleExt *SignerRuleResourceAccountSpecificRuleExt `json:"accountSpecificRuleExt,omitempty"`
 	Swap                   *SignerRuleResourceSwap                   `json:"swap,omitempty"`
 	Data                   *SignerRuleResourceData                   `json:"data,omitempty"`
+	Custom                 *CustomRuleResource                       `json:"custom,omitempty"`
 	Ext                    *EmptyExt                                 `json:"ext,omitempty"`
 }
 
@@ -43972,6 +44050,8 @@ func (u SignerRuleResource) ArmForSwitch(sw int32) (string, bool) {
 		return "Swap", true
 	case LedgerEntryTypeData:
 		return "Data", true
+	case LedgerEntryTypeCustom:
+		return "Custom", true
 	default:
 		return "Ext", true
 	}
@@ -44088,6 +44168,13 @@ func NewSignerRuleResource(aType LedgerEntryType, value interface{}) (result Sig
 			return
 		}
 		result.Data = &tv
+	case LedgerEntryTypeCustom:
+		tv, ok := value.(CustomRuleResource)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be CustomRuleResource")
+			return
+		}
+		result.Custom = &tv
 	default:
 		tv, ok := value.(EmptyExt)
 		if !ok {
@@ -44474,6 +44561,31 @@ func (u SignerRuleResource) GetData() (result SignerRuleResourceData, ok bool) {
 	return
 }
 
+// MustCustom retrieves the Custom value from the union,
+// panicing if the value is not set.
+func (u SignerRuleResource) MustCustom() CustomRuleResource {
+	val, ok := u.GetCustom()
+
+	if !ok {
+		panic("arm Custom is not set")
+	}
+
+	return val
+}
+
+// GetCustom retrieves the Custom value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u SignerRuleResource) GetCustom() (result CustomRuleResource, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "Custom" {
+		result = *u.Custom
+		ok = true
+	}
+
+	return
+}
+
 // MustExt retrieves the Ext value from the union,
 // panicing if the value is not set.
 func (u SignerRuleResource) MustExt() EmptyExt {
@@ -44524,7 +44636,8 @@ func (u SignerRuleResource) GetExt() (result EmptyExt, ok bool) {
 //        CREATE_FOR_OTHER_WITH_TASKS = 18,
 //        REMOVE_FOR_OTHER = 19,
 //        EXCHANGE = 20,
-//        UPDATE_FOR_OTHER = 21
+//        UPDATE_FOR_OTHER = 21,
+//        CUSTOM = 22
 //    };
 //
 type SignerRuleAction int32
@@ -44551,6 +44664,7 @@ const (
 	SignerRuleActionRemoveForOther          SignerRuleAction = 19
 	SignerRuleActionExchange                SignerRuleAction = 20
 	SignerRuleActionUpdateForOther          SignerRuleAction = 21
+	SignerRuleActionCustom                  SignerRuleAction = 22
 )
 
 var SignerRuleActionAll = []SignerRuleAction{
@@ -44575,6 +44689,7 @@ var SignerRuleActionAll = []SignerRuleAction{
 	SignerRuleActionRemoveForOther,
 	SignerRuleActionExchange,
 	SignerRuleActionUpdateForOther,
+	SignerRuleActionCustom,
 }
 
 var signerRuleActionMap = map[int32]string{
@@ -44599,6 +44714,7 @@ var signerRuleActionMap = map[int32]string{
 	19: "SignerRuleActionRemoveForOther",
 	20: "SignerRuleActionExchange",
 	21: "SignerRuleActionUpdateForOther",
+	22: "SignerRuleActionCustom",
 }
 
 var signerRuleActionShortMap = map[int32]string{
@@ -44623,6 +44739,7 @@ var signerRuleActionShortMap = map[int32]string{
 	19: "remove_for_other",
 	20: "exchange",
 	21: "update_for_other",
+	22: "custom",
 }
 
 var signerRuleActionRevMap = map[string]int32{
@@ -44647,6 +44764,7 @@ var signerRuleActionRevMap = map[string]int32{
 	"SignerRuleActionRemoveForOther":          19,
 	"SignerRuleActionExchange":                20,
 	"SignerRuleActionUpdateForOther":          21,
+	"SignerRuleActionCustom":                  22,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -52394,7 +52512,8 @@ func (u PublicKey) GetEd25519() (result Uint256, ok bool) {
 //        ACCOUNT_SPECIFIC_RULE = 36,
 //        INITIATE_KYC_RECOVERY = 37,
 //        SWAP = 38,
-//        DATA = 39
+//        DATA = 39,
+//        CUSTOM = 40
 //    };
 //
 type LedgerEntryType int32
@@ -52437,6 +52556,7 @@ const (
 	LedgerEntryTypeInitiateKycRecovery              LedgerEntryType = 37
 	LedgerEntryTypeSwap                             LedgerEntryType = 38
 	LedgerEntryTypeData                             LedgerEntryType = 39
+	LedgerEntryTypeCustom                           LedgerEntryType = 40
 )
 
 var LedgerEntryTypeAll = []LedgerEntryType{
@@ -52477,6 +52597,7 @@ var LedgerEntryTypeAll = []LedgerEntryType{
 	LedgerEntryTypeInitiateKycRecovery,
 	LedgerEntryTypeSwap,
 	LedgerEntryTypeData,
+	LedgerEntryTypeCustom,
 }
 
 var ledgerEntryTypeMap = map[int32]string{
@@ -52517,6 +52638,7 @@ var ledgerEntryTypeMap = map[int32]string{
 	37: "LedgerEntryTypeInitiateKycRecovery",
 	38: "LedgerEntryTypeSwap",
 	39: "LedgerEntryTypeData",
+	40: "LedgerEntryTypeCustom",
 }
 
 var ledgerEntryTypeShortMap = map[int32]string{
@@ -52557,6 +52679,7 @@ var ledgerEntryTypeShortMap = map[int32]string{
 	37: "initiate_kyc_recovery",
 	38: "swap",
 	39: "data",
+	40: "custom",
 }
 
 var ledgerEntryTypeRevMap = map[string]int32{
@@ -52597,6 +52720,7 @@ var ledgerEntryTypeRevMap = map[string]int32{
 	"LedgerEntryTypeInitiateKycRecovery":              37,
 	"LedgerEntryTypeSwap":                             38,
 	"LedgerEntryTypeData":                             39,
+	"LedgerEntryTypeCustom":                           40,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -53375,4 +53499,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "d639694e4cdb49f22866a506b190bd92f3e62b84"
+var Revision = "737ad7c7111d1b34db7e08932981640249a6bc13"

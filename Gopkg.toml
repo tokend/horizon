@@ -1,6 +1,6 @@
 [[constraint]]
-  branch = "default"
-  name = "bitbucket.org/ww/goautoneg"
+  branch = "master"
+  name = "github.com/munnerz/goautoneg"
 
 [[constraint]]
   name = "github.com/asaskevich/govalidator"
@@ -95,7 +95,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "master"
+  branch = "feature/custom-rules"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
