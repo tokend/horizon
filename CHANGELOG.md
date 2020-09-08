@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+* Ability to set custom rules and actions in permissions
+
 ### Changed
 
 * Disable returning errors when using parameters not supported by endpoint
