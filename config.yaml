@@ -25,9 +25,9 @@ config:
   invest_ready: http://
   telegram_airdrop: http://
 
-janus:
+cop:
   disabled: true
-  endpoint: http://localhost:8081
-  upstream: http://localhost:8000
-  surname: horizon
-
+  endpoint: http://cop
+  upstream: http://horizon
+  service_name: "horizon-service"
+  service_port: "80"
