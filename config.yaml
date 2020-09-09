@@ -25,9 +25,9 @@ config:
   invest_ready: http://
   telegram_airdrop: http://
 
-traefik:
+cop:
   disabled: true
-  endpoint: http://traefik_api
-  upstream: http://dns
-  service_name: horizon
-  service_port: 80
+  endpoint: http://cop
+  upstream: http://horizon
+  service_name: "horizon-service"
+  service_port: "80"

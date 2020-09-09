@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added
+
+* Ability to set custom rules and actions in permissions
+
+### Changed
+
+* Disable returning errors when using parameters not supported by endpoint
+
+### Fixed
+
+* Match participant in manage offer
+
 ## 3.9.1
 
 ### Fixed
@@ -12,7 +24,7 @@
 ## 3.9.0
 
 ### Added
-
+ 
 * Traefik
 * Endpoint to get operation `/v3/operations/{id}`
 

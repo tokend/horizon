@@ -17,5 +17,5 @@ func (h *paymentRequestHandler) PermanentReject(details requestDetails) ([]histo
 func (h *paymentRequestHandler) Fulfilled(details requestDetails) ([]history2.ParticipantEffect, error) {
 	return h.paymentHandler.participantEffects(details.Request.Body.MustCreatePaymentRequest().PaymentOp,
 		details.Result.TypeExt.MustPaymentResult().MustPaymentResponse(),
-		details.SourceAccountID)
+		details.Request.Requestor)
 }
