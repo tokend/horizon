@@ -30,6 +30,9 @@ type ReviewableRequestDetails struct {
 	AtomicSwapAskCreation *AtomicSwapAskCreation    `json:"create_atomic_swap_ask,omitempty"`
 	AtomicSwap            *AtomicSwap               `json:"create_atomic_swap_bid,omitempty"`
 	CreatePoll            *CreatePoll               `json:"create_poll,omitempty"`
+	DataCreation        *DataCreationRequest        `json:"data_creation,omitempty"`
+	DataUpdate          *DataUpdateRequest          `json:"data_update,omitempty"`
+	DataRemove          *DataRemoveRequest          `json:"data_remove,omitempty"`
 }
 
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
@@ -167,3 +170,25 @@ type CreatePoll struct {
 	VoteConfirmationRequired bool         `json:"vote_confirmation_required"`
 	Details                  map[string]interface{}
 }
+
+type DataCreationRequest struct {
+	SecurityType   uint64            `json:"security_type"`
+	SequenceNumber uint32            `json:"sequence_number"`
+	Owner          string            `json:"owner"`
+	Value           map[string]interface{} `json:"value"`
+	CreatorDetails  map[string]interface{} `json:"creator_details"`
+}
+
+type DataUpdateRequest struct {
+	SequenceNumber uint32            `json:"sequence_number"`
+	Value           map[string]interface{} `json:"value"`
+	DataID         uint64            `json:"data_id"`
+	CreatorDetails  map[string]interface{} `json:"creator_details"`
+}
+
+type DataRemoveRequest struct {
+	SequenceNumber uint32            `json:"sequence_number"`
+	DataID         uint64            `json:"data_id"`
+	CreatorDetails  map[string]interface{} `json:"creator_details"`
+}
+

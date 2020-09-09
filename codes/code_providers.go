@@ -60,4 +60,10 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeCreateData:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateDataResult().Code },
 	xdr.OperationTypeUpdateData:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustUpdateDataResult().Code },
 	xdr.OperationTypeRemoveData:                  func(ir xdr.OperationResultTr) shortStr { return ir.MustRemoveDataResult().Code },
+	xdr.OperationTypeCreateDataCreationRequest:   func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateDataCreationRequestResult().Code },
+	xdr.OperationTypeCancelDataCreationRequest:   func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelDataCreationRequestResult().Code },
+	xdr.OperationTypeCreateDataUpdateRequest:     func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateDataUpdateRequestResult().Code },
+	xdr.OperationTypeCancelDataUpdateRequest:     func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelDataUpdateRequestResult().Code },
+	xdr.OperationTypeCreateDataRemoveRequest:     func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateDataRemoveRequestResult().Code },
+	xdr.OperationTypeCancelDataRemoveRequest:     func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelDataRemoveRequestResult().Code },
 }

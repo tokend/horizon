@@ -3,8 +3,9 @@ package changes
 import (
 	"encoding/hex"
 	"encoding/json"
-	"gitlab.com/tokend/horizon/db2"
 	"time"
+
+	"gitlab.com/tokend/horizon/db2"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -214,6 +215,27 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.handleRemoveOnCreationOp(lc, true)
 	case xdr.OperationTypeManageOffer:
 		return c.handleRemovedOnManageOffer(lc)
+	case xdr.OperationTypeCreateDataCreationRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDataCreationRequestResult().
+				MustSuccess().Fulfilled)
+	case xdr.OperationTypeCancelDataCreationRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCreateDataUpdateRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDataUpdateRequestResult().
+				MustSuccess().Fulfilled)
+	case xdr.OperationTypeCancelDataUpdateRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCreateDataRemoveRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDataUpdateRequestResult().
+				MustSuccess().Fulfilled)
+	case xdr.OperationTypeCancelDataRemoveRequest:
+		return c.cancel(lc)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
@@ -669,6 +691,33 @@ func (c *reviewableRequestHandler) getRedemption(request *xdr.RedemptionRequest)
 	}
 }
 
+func (c *reviewableRequestHandler) getDataCreationRequest(request *xdr.DataCreationRequest) *history.DataCreationRequest {
+	return &history.DataCreationRequest{
+		SecurityType:   uint64(request.Type),
+		SequenceNumber: uint32(request.SequenceNumber),
+		Owner:          request.Owner.Address(),
+		Value:          internal.MarshalCustomDetails(request.Value),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
+
+func (c *reviewableRequestHandler) getDataUpdateRequest(request *xdr.DataUpdateRequest) *history.DataUpdateRequest {
+	return &history.DataUpdateRequest{
+		SequenceNumber: uint32(request.SequenceNumber),
+		DataID:         uint64(request.Id),
+		Value:          internal.MarshalCustomDetails(request.Value),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
+
+func (c *reviewableRequestHandler) getDataRemoveRequest(request *xdr.DataRemoveRequest) *history.DataRemoveRequest {
+	return &history.DataRemoveRequest{
+		SequenceNumber: uint32(request.SequenceNumber),
+		DataID:         uint64(request.Id),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
+
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -716,6 +765,12 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.CreatePayment = c.getCreatePaymentRequest(body.CreatePaymentRequest)
 	case xdr.ReviewableRequestTypePerformRedemption:
 		details.Redemption = c.getRedemption(body.RedemptionRequest)
+	case xdr.ReviewableRequestTypeDataCreation:
+		details.DataCreation = c.getDataCreationRequest(body.DataCreationRequest)
+	case xdr.ReviewableRequestTypeDataUpdate:
+		details.DataUpdate = c.getDataUpdateRequest(body.DataUpdateRequest)
+	case xdr.ReviewableRequestTypeDataRemove:
+		details.DataRemove = c.getDataRemoveRequest(body.DataRemoveRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

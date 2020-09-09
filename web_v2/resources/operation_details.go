@@ -64,6 +64,12 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeCreateData:                             newCreateDataOp,
 	xdr.OperationTypeUpdateData:                             newUpdateDataOp,
 	xdr.OperationTypeRemoveData:                             newRemoveDataOp,
+	xdr.OperationTypeCreateDataCreationRequest:              newCreateDataCreationRequestOp,
+	xdr.OperationTypeCancelDataCreationRequest:              newCancelDataCreationRequestOp,
+	xdr.OperationTypeCreateDataUpdateRequest:                newCreateDataUpdateRequestOp,
+	xdr.OperationTypeCancelDataUpdateRequest:                newCancelDataUpdateRequestOp,
+	xdr.OperationTypeCreateDataRemoveRequest:                newCreateDataRemoveRequestOp,
+	xdr.OperationTypeCancelDataRemoveRequest:                newCancelDataRemoveRequestOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -877,6 +883,87 @@ func newRemoveDataOp(op history2.Operation) regources.Resource {
 		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_REMOVE_DATA),
 		Relationships: regources.RemoveDataOpRelationships{
 			Data: NewDataKey(int64(body.ID)).AsRelation(),
+		},
+	}
+}
+
+func newCreateDataCreationRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateDataCreationRequest
+
+	return &regources.CreateDataCreationRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_DATA_CREATION_REQUEST),
+		Attributes: regources.CreateDataCreationRequestOpAttributes{
+			Value:          body.Value,
+			CreatorDetails: body.CreatorDetails,
+			Type:           body.Type,
+		},
+		Relationships: regources.CreateDataCreationRequestOpRelationships{
+			Owner:   NewAccountKey(body.Owner).AsRelation(),
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCancelDataCreationRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CancelDataCreationRequest
+
+	return &regources.CancelDataCreationRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_DATA_CREATION_REQUEST),
+		Relationships: regources.CancelDataCreationRequestOpRelationships{
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCreateDataUpdateRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateDataUpdateRequest
+
+	return &regources.CreateDataUpdateRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_DATA_UPDATE_REQUEST),
+		Attributes: regources.CreateDataUpdateRequestOpAttributes{
+			Value:          body.Value,
+			CreatorDetails: body.CreatorDetails,
+		},
+		Relationships: regources.CreateDataUpdateRequestOpRelationships{
+			Data:    NewDataKey(int64(body.ID)).AsRelation(),
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCancelDataUpdateRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CancelDataUpdateRequest
+
+	return &regources.CancelDataUpdateRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_DATA_UPDATE_REQUEST),
+		Relationships: regources.CancelDataUpdateRequestOpRelationships{
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCreateDataRemoveRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateDataRemoveRequest
+
+	return &regources.CreateDataRemoveRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_DATA_REMOVE_REQUEST),
+		Attributes: regources.CreateDataRemoveRequestOpAttributes{
+			CreatorDetails: body.CreatorDetails,
+		},
+		Relationships: regources.CreateDataRemoveRequestOpRelationships{
+			Data:    NewDataKey(int64(body.ID)).AsRelation(),
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCancelDataRemoveRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CancelDataRemoveRequest
+
+	return &regources.CancelDataRemoveRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_DATA_REMOVE_REQUEST),
+		Relationships: regources.CancelDataRemoveRequestOpRelationships{
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
 		},
 	}
 }

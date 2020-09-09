@@ -45,6 +45,12 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newCreatePaymentRequest(request.ID, *request.Details.CreatePayment)
 	case xdr.ReviewableRequestTypePerformRedemption:
 		return newRedemptionRequest(request.ID, *request.Details.Redemption)
+	case xdr.ReviewableRequestTypeDataCreation:
+		return newDataCreationRequest(request.ID, *request.Details.DataCreation)
+	case xdr.ReviewableRequestTypeDataUpdate:
+		return newDataUpdateRequest(request.ID, *request.Details.DataUpdate)
+	case xdr.ReviewableRequestTypeDataRemove:
+		return newDataRemoveRequest(request.ID, *request.Details.DataRemove)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -316,6 +322,48 @@ func newRedemptionRequest(id int64, details history2.RedemptionRequest) *regourc
 		Relationships: regources.RedemptionRequestRelationships{
 			Destination:   *NewAccountKey(details.DestinationAccountID).AsRelation(),
 			SourceBalance: *NewBalanceKey(details.SourceBalanceID).AsRelation(),
+		},
+	}
+}
+
+func newDataCreationRequest(id int64, details history2.DataCreationRequest) *regources.DataCreationRequest {
+	return &regources.DataCreationRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_DATA_CREATION),
+		Attributes: regources.DataCreationRequestAttributes{
+			CreatorDetails: details.CreatorDetails,
+			Type:           details.SecurityType,
+			Value:          details.Value,
+			SequenceNumber: details.SequenceNumber,
+		},
+		Relationships: regources.DataCreationRequestRelationships{
+			Owner: NewAccountKey(details.Owner).AsRelation(),
+		},
+	}
+}
+
+func newDataUpdateRequest(id int64, details history2.DataUpdateRequest) *regources.DataUpdateRequest {
+	return &regources.DataUpdateRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_DATA_UPDATE),
+		Attributes: regources.DataUpdateRequestAttributes{
+			CreatorDetails: details.CreatorDetails,
+			Value:          details.Value,
+			SequenceNumber: details.SequenceNumber,
+		},
+		Relationships: regources.DataUpdateRequestRelationships{
+			Data: NewDataKey(int64(details.DataID)).AsRelation(),
+		},
+	}
+}
+
+func newDataRemoveRequest(id int64, details history2.DataRemoveRequest) *regources.DataRemoveRequest {
+	return &regources.DataRemoveRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_DATA_REMOVE),
+		Attributes: regources.DataRemoveRequestAttributes{
+			CreatorDetails: details.CreatorDetails,
+			SequenceNumber: details.SequenceNumber,
+		},
+		Relationships: regources.DataRemoveRequestRelationships{
+			Data: NewDataKey(int64(details.DataID)).AsRelation(),
 		},
 	}
 }

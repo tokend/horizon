@@ -50,6 +50,13 @@ OperationDetails:
     - $ref: '#/components/schemas/CreateDataOp'
     - $ref: '#/components/schemas/UpdateDataOp'
     - $ref: '#/components/schemas/RemoveDataOp'
+    - $ref: '#/components/schemas/CreateDataCreationRequestOp'
+    - $ref: '#/components/schemas/CancelDataCreationRequestOp'
+    - $ref: '#/components/schemas/CreateDataUpdateRequestOp'
+    - $ref: '#/components/schemas/CancelDataUpdateRequestOp'
+    - $ref: '#/components/schemas/CreateDataRemoveRequestOp'
+    - $ref: '#/components/schemas/CancelDataRemoveRequestOp'
+
 
 
 OperationDetailsKey:
@@ -104,4 +111,11 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/CreateDataOpKey'
     - $ref: '#/components/schemas/UpdateDataOpKey'
     - $ref: '#/components/schemas/RemoveDataOpKey'
+    - $ref: '#/components/schemas/CreateDataCreationRequestOpKey'
+    - $ref: '#/components/schemas/CancelDataCreationRequestOpKey'
+    - $ref: '#/components/schemas/CreateDataUpdateRequestOpKey'
+    - $ref: '#/components/schemas/CancelDataUpdateRequestOpKey'
+    - $ref: '#/components/schemas/CreateDataRemoveRequestOpKey'
+    - $ref: '#/components/schemas/CancelDataRemoveRequestOpKey'
+
 

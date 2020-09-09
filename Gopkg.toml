@@ -99,7 +99,7 @@
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "feature/manage-data"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]

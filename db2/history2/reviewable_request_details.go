@@ -1,8 +1,9 @@
 package history2
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
 
 	"database/sql/driver"
 
@@ -31,6 +32,9 @@ type ReviewableRequestDetails struct {
 	ManageOffer         *ManageOfferRequest         `json:"manage_offer,omitempty"`
 	CreatePayment       *CreatePaymentRequest       `json:"create_payment,omitempty"`
 	Redemption          *RedemptionRequest          `json:"redemption,omitempty"`
+	DataCreation        *DataCreationRequest        `json:"data_creation,omitempty"`
+	DataUpdate          *DataUpdateRequest          `json:"data_update,omitempty"`
+	DataRemove          *DataRemoveRequest          `json:"data_remove,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -200,4 +204,25 @@ type RedemptionRequest struct {
 	DestinationAccountID string            `json:"destination_account_id"`
 	Amount               regources.Amount  `json:"amount"`
 	CreatorDetails       regources.Details `json:"creator_details"`
+}
+
+type DataCreationRequest struct {
+	SecurityType   uint64            `json:"security_type"`
+	SequenceNumber uint32            `json:"sequence_number"`
+	Owner          string            `json:"owner"`
+	Value          regources.Details `json:"value"`
+	CreatorDetails regources.Details `json:"creator_details"`
+}
+
+type DataUpdateRequest struct {
+	SequenceNumber uint32            `json:"sequence_number"`
+	Value          regources.Details `json:"value"`
+	DataID         uint64            `json:"data_id"`
+	CreatorDetails regources.Details `json:"creator_details"`
+}
+
+type DataRemoveRequest struct {
+	SequenceNumber uint32            `json:"sequence_number"`
+	DataID         uint64            `json:"data_id"`
+	CreatorDetails regources.Details `json:"creator_details"`
 }

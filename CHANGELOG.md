@@ -4,6 +4,7 @@
 
 ### Added
 
+* Reviewable request for create, update and remove data 
 * Ability to set custom rules and actions in permissions
 
 ### Changed

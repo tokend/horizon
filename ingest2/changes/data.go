@@ -42,11 +42,9 @@ func (h *dataHandler) Updated(lc ledgerChange) error {
 }
 
 func (h *dataHandler) Removed(lc ledgerChange) error {
-	op := lc.Operation.Body
-	if op.Type == xdr.OperationTypeRemoveData {
-		if err := h.storage.Remove(int64(op.RemoveDataOp.DataId)); err != nil {
-			return errors.Wrap(err, "failed to remove data by id")
-		}
+	id := lc.LedgerChange.MustRemoved().MustData().Id
+	if err := h.storage.Remove(int64(id)); err != nil {
+		return errors.Wrap(err, "failed to remove data by id")
 	}
 
 	return nil

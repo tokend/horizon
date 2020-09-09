@@ -3,8 +3,9 @@ package ingest
 import (
 	"encoding/hex"
 	"encoding/json"
-	"gitlab.com/tokend/horizon/db2"
 	"time"
+
+	"gitlab.com/tokend/horizon/db2"
 
 	"gitlab.com/tokend/regources"
 
@@ -344,6 +345,48 @@ func getAtomicSwapRequest(request *xdr.CreateAtomicSwapBidRequest,
 	}
 }
 
+func getDataCreationRequest(request *xdr.DataCreationRequest) *history.DataCreationRequest {
+	var details map[string]interface{}
+	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
+
+	var value map[string]interface{}
+	_ = json.Unmarshal([]byte(request.Value), &value)
+
+	return &history.DataCreationRequest{
+		SecurityType:   uint64(request.Type),
+		SequenceNumber: uint32(request.SequenceNumber),
+		Owner:          request.Owner.Address(),
+		Value:          value,
+		CreatorDetails: details,
+	}
+}
+
+func getDataUpdateRequest(request *xdr.DataUpdateRequest) *history.DataUpdateRequest {
+	var details map[string]interface{}
+	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
+
+	var value map[string]interface{}
+	_ = json.Unmarshal([]byte(request.Value), &value)
+
+	return &history.DataUpdateRequest{
+		SequenceNumber: uint32(request.SequenceNumber),
+		DataID:         uint64(request.Id),
+		Value:          value,
+		CreatorDetails: details,
+	}
+}
+
+func getDataRemoveRequest(request *xdr.DataRemoveRequest) *history.DataRemoveRequest {
+	var details map[string]interface{}
+	_ = json.Unmarshal([]byte(request.CreatorDetails), &details)
+
+	return &history.DataRemoveRequest{
+		SequenceNumber: uint32(request.SequenceNumber),
+		DataID:         uint64(request.Id),
+		CreatorDetails: details,
+	}
+}
+
 func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.ReviewableRequestDetails, error) {
 	var details history.ReviewableRequestDetails
 	var err error
@@ -385,6 +428,12 @@ func getReviewableRequestDetails(body *xdr.ReviewableRequestEntryBody) (history.
 	case xdr.ReviewableRequestTypeManageOffer:
 	case xdr.ReviewableRequestTypeCreatePayment:
 	case xdr.ReviewableRequestTypePerformRedemption:
+	case xdr.ReviewableRequestTypeDataCreation:
+		details.DataCreation = getDataCreationRequest(body.DataCreationRequest)
+	case xdr.ReviewableRequestTypeDataUpdate:
+		details.DataUpdate = getDataUpdateRequest(body.DataUpdateRequest)
+	case xdr.ReviewableRequestTypeDataRemove:
+		details.DataRemove = getDataRemoveRequest(body.DataRemoveRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),
