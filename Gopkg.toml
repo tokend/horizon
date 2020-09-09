@@ -95,11 +95,11 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/manage-data-reviewable-request"
+  branch = "master"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]
-  branch = "feature/manage-data"
+  branch = "master"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
