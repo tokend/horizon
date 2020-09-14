@@ -21,6 +21,8 @@ CreateAmlAlertRequestOp:
         properties:
           balance:
             $ref: '#/components/schemas/BalanceKey'
+          request:
+            $ref: '#/components/schemas/RequestKey'
       attributes:
         type: object
         required:
@@ -34,7 +36,5 @@ CreateAmlAlertRequestOp:
             example: "123.123456"
           creator_details:
             $ref: '#/components/schemas/Details'
-          request_details:
-            $ref: '#/components/schemas/OperationDetails'
 
 
