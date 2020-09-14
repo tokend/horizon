@@ -21,6 +21,8 @@ CreateAmlAlertRequestOp:
         properties:
           balance:
             $ref: '#/components/schemas/BalanceKey'
+          request:
+            $ref: '#/components/schemas/RequestKey'
       attributes:
         type: object
         required:

@@ -393,6 +393,7 @@ type CreateAMLAlertRequestDetails struct {
 	Amount         regources.Amount  `json:"amount"`
 	BalanceAddress string            `json:"balance_address"`
 	CreatorDetails regources.Details `json:"creator_details"`
+	RequestDetails RequestDetails    `json:"request_details"`
 }
 
 // PaymentDetails - stores details of payment operation

@@ -95,11 +95,11 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/custom-rules"
+  branch = "master"
   name = "gitlab.com/tokend/go"
 
-[[constraint]]
-  branch = "master"
+[[override]]
+  branch = "feature/creat_aml_request_details"
   name = "gitlab.com/tokend/regources"
 
 [[constraint]]
