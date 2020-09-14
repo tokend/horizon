@@ -545,8 +545,8 @@
   revision = "6e4806f41e3b9d07f79490897d60e5c782910cb8"
 
 [[projects]]
-  branch = "master"
-  digest = "1:824dd490ec1b3276c0673895f436b8c6dda925214b47571af94347726e39d66e"
+  branch = "feature/deferred-payment"
+  digest = "1:563992c5b2f69d6e59b291de0d87d56162a3623ac6a49f787e40eee4548391d7"
   name = "gitlab.com/tokend/go"
   packages = [
     "address",
@@ -565,7 +565,7 @@
     "xdr",
   ]
   pruneopts = "UT"
-  revision = "c350f4beb9e86c9e8b7ad2dc284f1ddfae6a9568"
+  revision = "7f8cf8f15ec7d10cbbeae0734fd14904fb4e7155"
 
 [[projects]]
   branch = "master"

@@ -50,6 +50,7 @@ func initIngester2(app *App) {
 		swapStorage,
 		storage.NewAsset(hRepo),
 		storage.NewData(hRepo),
+		storage.NewDeferredPayment(hRepo),
 	)
 
 	idProvider := struct {
@@ -65,6 +66,7 @@ func initIngester2(app *App) {
 		&idProvider,
 		balanceStorage,
 		swapStorage,
+		storage.NewDeferredPayment(hRepo),
 	)
 	matchesHandler := ingest2.NewMatchesSaver(
 		storage.NewMatches(hRepo),

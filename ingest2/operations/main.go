@@ -27,6 +27,12 @@ type swapProvider interface {
 	MustSwap(id int64) history2.Swap
 }
 
+//go:generate mockery -case underscore -name swapProvider -inpkg -testonly
+type defPaymentProvider interface {
+	// MustBalance returns history balance struct for specific balance id
+	MustDeferredPayment(id int64) history2.DeferredPayment
+}
+
 // handler used to get info and changes from success operation
 type handler interface {
 	// Details returns db suitable operation details,

@@ -236,6 +236,22 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 				MustSuccess().Fulfilled)
 	case xdr.OperationTypeCancelDataRemoveRequest:
 		return c.cancel(lc)
+	case xdr.OperationTypeCancelDeferredPaymentCreationRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCancelCloseDeferredPaymentRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCreateDeferredPaymentCreationRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDeferredPaymentCreationRequestResult().
+				MustSuccess().
+				Fulfilled)
+	case xdr.OperationTypeCreateCloseDeferredPaymentRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateCloseDeferredPaymentRequestResult().
+				MustSuccess().
+				Fulfilled)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
@@ -718,6 +734,43 @@ func (c *reviewableRequestHandler) getDataRemoveRequest(request *xdr.DataRemoveR
 	}
 }
 
+func (c *reviewableRequestHandler) getCreateDeferredPayment(request *xdr.CreateDeferredPaymentRequest) *history.CreateDeferredPayment {
+	return &history.CreateDeferredPayment{
+		SourceBalance:           request.SourceBalance.AsString(),
+		DestinationAccount:      request.Destination.Address(),
+		Amount:                  regources.Amount(request.Amount),
+		SourcePayForDestination: request.FeeData.SourcePaysForDest,
+		SourceFee: regources.Fee{
+			CalculatedPercent: regources.Amount(request.FeeData.SourceFee.Percent),
+			Fixed:             regources.Amount(request.FeeData.SourceFee.Fixed),
+		},
+		DestinationFee: regources.Fee{
+			CalculatedPercent: regources.Amount(request.FeeData.DestinationFee.Percent),
+			Fixed:             regources.Amount(request.FeeData.DestinationFee.Fixed),
+		},
+		Details:        internal.MarshalCustomDetails(request.CreatorDetails),
+		SequenceNumber: uint32(request.SequenceNumber),
+	}
+}
+
+func (c *reviewableRequestHandler) getCloseDeferredPayment(request *xdr.CloseDeferredPaymentRequest) *history.CloseDeferredPayment {
+	return &history.CloseDeferredPayment{
+		SequenceNumber:          uint32(request.SequenceNumber),
+		DestinationBalance:      request.DestinationBalance.AsString(),
+		DeferredPaymentID:       uint64(request.DeferredPaymentId),
+		Amount:                  regources.Amount(request.Amount),
+		SourcePayForDestination: request.FeeData.SourcePaysForDest,
+		SourceFee: regources.Fee{
+			CalculatedPercent: regources.Amount(request.FeeData.SourceFee.Percent),
+			Fixed:             regources.Amount(request.FeeData.SourceFee.Fixed),
+		},
+		DestinationFee: regources.Fee{
+			CalculatedPercent: regources.Amount(request.FeeData.DestinationFee.Percent),
+			Fixed:             regources.Amount(request.FeeData.DestinationFee.Fixed),
+		},
+		Details: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -771,6 +824,10 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.DataUpdate = c.getDataUpdateRequest(body.DataUpdateRequest)
 	case xdr.ReviewableRequestTypeDataRemove:
 		details.DataRemove = c.getDataRemoveRequest(body.DataRemoveRequest)
+	case xdr.ReviewableRequestTypeCreateDeferredPayment:
+		details.CreateDeferredPayment = c.getCreateDeferredPayment(body.CreateDeferredPaymentRequest)
+	case xdr.ReviewableRequestTypeCloseDeferredPayment:
+		details.CloseDeferredPayment = c.getCloseDeferredPayment(body.CloseDeferredPaymentRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

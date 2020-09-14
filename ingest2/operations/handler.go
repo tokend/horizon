@@ -36,7 +36,7 @@ type Handler struct {
 // NewOperationsHandler returns new handler which can return
 // details and participants effects of certain operation
 func NewOperationsHandler(operationsStorage operationsStorage, participantEffectsStorage participantEffectsStorage,
-	pubKeyProvider IDProvider, balanceProvider balanceProvider, swapProvider swapProvider) *Handler {
+	pubKeyProvider IDProvider, balanceProvider balanceProvider, swapProvider swapProvider, defPayments defPaymentProvider) *Handler {
 
 	effectsBaseHandler := effectsProvider{
 		IDProvider:      pubKeyProvider,
@@ -103,7 +103,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCreateManageLimitsRequest: &createManageLimitsRequestOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
-			xdr.OperationTypeReviewRequest: newReviewRequestOpHandler(effectsBaseHandler),
+			xdr.OperationTypeReviewRequest: newReviewRequestOpHandler(effectsBaseHandler, defPayments),
 			xdr.OperationTypePayment: &paymentOpHandler{
 				effectsProvider: effectsBaseHandler,
 			},
@@ -214,6 +214,18 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				effectsBaseHandler,
 			},
 			xdr.OperationTypeCancelDataRemoveRequest: &cancelDataRemoveRequestOpHandler{
+				effectsBaseHandler,
+			},
+			xdr.OperationTypeCreateDeferredPaymentCreationRequest: &createDeferredPaymentCreationRequestOpHandler{
+				effectsBaseHandler,
+			},
+			xdr.OperationTypeCreateCloseDeferredPaymentRequest: &createCloseDeferredPaymentRequestOpHandler{
+				effectsBaseHandler,
+			},
+			xdr.OperationTypeCancelCloseDeferredPaymentRequest: &cancelCloseDeferredPaymentRequestOpHandler{
+				effectsBaseHandler,
+			},
+			xdr.OperationTypeCancelDeferredPaymentCreationRequest: &cancelDeferredPaymentCreationRequestOpHandler{
 				effectsBaseHandler,
 			},
 		},

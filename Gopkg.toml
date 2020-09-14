@@ -95,7 +95,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "feature/custom-rules"
+  branch = "feature/deferred-payment"
   name = "gitlab.com/tokend/go"
 
 [[constraint]]

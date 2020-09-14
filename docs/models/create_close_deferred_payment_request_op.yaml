@@ -1,0 +1,54 @@
+CreateCloseDeferredPaymentRequestOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-create-close-deferred-payment-request"
+
+
+CreateCloseDeferredPaymentRequestOp:
+  allOf:
+    - $ref: '#/components/schemas/CreateCloseDeferredPaymentRequestOpKey'
+    - type: object
+      required: [ relationships, attributes ]
+      properties:
+        relationships:
+          type: object
+          properties:
+            request:
+              type: object
+              $ref: '#/components/schemas/RequestKey'
+            destination_balance:
+              type: object
+              $ref: '#/components/schemas/BalanceKey'
+            deferred_payment:
+              type: object
+              $ref: '#/components/schemas/DeferredPaymentKey'
+        attributes:
+          type: object
+          required:
+            - amount
+            - source_fee
+            - destination_fee
+            - source_pay_for_destination
+            - details
+          properties:
+            source_fee:
+              $ref: '#/components/schemas/Fee'
+            destination_fee:
+              $ref: '#/components/schemas/Fee'
+            source_pay_for_destination:
+              type: boolean
+              example: false
+              description: "Whether source of the swap should pay destination fee"
+            amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            creator_details:
+              $ref: '#/components/schemas/Details'
+
