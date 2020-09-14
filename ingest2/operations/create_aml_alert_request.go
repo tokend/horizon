@@ -17,12 +17,18 @@ func (h *createAMLAlertReqeustOpHandler) Details(op rawOperation,
 ) (history2.OperationDetails, error) {
 	amlAlertRequest := op.Body.MustCreateAmlAlertRequestOp().AmlAlertRequest
 
+	createAmlRequestRes := opRes.MustCreateAmlAlertRequestResult().MustSuccess()
+
 	return history2.OperationDetails{
 		Type: xdr.OperationTypeCreateAmlAlert,
 		CreateAMLAlertRequest: &history2.CreateAMLAlertRequestDetails{
 			Amount:         regources.Amount(amlAlertRequest.Amount),
 			BalanceAddress: amlAlertRequest.BalanceId.AsString(),
 			CreatorDetails: internal.MarshalCustomDetails(amlAlertRequest.CreatorDetails),
+			RequestDetails: history2.RequestDetails{
+				RequestID:   int64(createAmlRequestRes.RequestId),
+				IsFulfilled: createAmlRequestRes.Fulfilled,
+			},
 		},
 	}, nil
 }

@@ -4,7 +4,7 @@
 package ingest2
 
 // Add new version and assign it to `CurrentIngestVersion` if you want force reingest (after backward not compatible changes)
-const CurrentIngestVersion = IngestVersionFixManageOfferParticipantEffect
+const CurrentIngestVersion = CreateAmlRequestDetails
 
 const (
 	IngestVersionInitial = iota
@@ -20,4 +20,5 @@ const (
 	IngestVersionMovementsReviewableRequestDetails
 	IngestVersionAddFeeInUnlockedEffect
 	IngestVersionFixManageOfferParticipantEffect
+	CreateAmlRequestDetails
 )
