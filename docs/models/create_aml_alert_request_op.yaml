@@ -28,7 +28,6 @@ CreateAmlAlertRequestOp:
         required:
           - amount
           - creator_details
-          - request_details
         properties:
           amount:
             type: string
