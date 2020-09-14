@@ -26,6 +26,7 @@ CreateAmlAlertRequestOp:
         required:
           - amount
           - creator_details
+          - request_details
         properties:
           amount:
             type: string
@@ -33,5 +34,7 @@ CreateAmlAlertRequestOp:
             example: "123.123456"
           creator_details:
             $ref: '#/components/schemas/Details'
+          request_details:
+            $ref: '#/components/schemas/OperationDetails'
 
 
