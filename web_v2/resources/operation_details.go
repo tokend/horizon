@@ -464,6 +464,7 @@ func newCreateAMLAlertRequestOp(op history2.Operation) regources.Resource {
 		},
 		Relationships: regources.CreateAmlAlertRequestOpRelationships{
 			Balance: NewBalanceKey(details.BalanceAddress).AsRelation(),
+			Request: NewRequestKey(details.RequestDetails.RequestID).AsRelation(),
 		},
 	}
 }
