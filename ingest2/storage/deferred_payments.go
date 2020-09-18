@@ -26,7 +26,7 @@ func NewDeferredPayment(repo *pgdb.DB) *DeferredPayment {
 // Insert - inserts new deferredPayment
 func (q *DeferredPayment) Insert(deferredPayment history2.DeferredPayment) error {
 
-	sql := sq.Insert("deferredPayment").
+	sql := sq.Insert("deferred_payments").
 		Columns(
 			"id",
 			"amount",
