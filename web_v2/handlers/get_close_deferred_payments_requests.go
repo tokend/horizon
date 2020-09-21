@@ -13,15 +13,15 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
-func GetCreateDeferredPaymentRequests(w http.ResponseWriter, r *http.Request) {
-	request, err := requests.NewGetDeferredPaymentCreateRequests(r)
+func GetCloseDeferredPaymentRequests(w http.ResponseWriter, r *http.Request) {
+	request, err := requests.NewGetCloseDeferredPaymentRequests(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
 	historyRepo := ctx.HistoryRepo(r)
-	handler := getCreateDeferredPaymentRequestsHandler{
+	handler := getCloseDeferredPaymentRequestsHandler{
 		R:         request,
 		RequestsQ: history2.NewReviewableRequestsQ(historyRepo),
 		Log:       ctx.Log(r),
@@ -41,24 +41,24 @@ func GetCreateDeferredPaymentRequests(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type getCreateDeferredPaymentRequestsHandler struct {
-	R         requests.GetDeferredPaymentCreateRequests
+type getCloseDeferredPaymentRequestsHandler struct {
+	R         requests.GetCloseDeferredPaymentRequests
 	Base      getRequestListBaseHandler
 	RequestsQ history2.ReviewableRequestsQ
 	Log       *logan.Entry
 }
 
-func (h *getCreateDeferredPaymentRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetDeferredPaymentCreateRequests) error {
-	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateDeferredPayment))
+func (h *getCloseDeferredPaymentRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCloseDeferredPaymentRequests) error {
+	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCloseDeferredPayment))
 
 	if request.Filters.Destination != nil {
-		q = h.RequestsQ.FilterByCreateDeferredPaymentDestination(*request.Filters.Destination)
+		q = h.RequestsQ.FilterByCloseDeferredPaymentDestination(*request.Filters.Destination)
 	}
 
 	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
-func (h *getCreateDeferredPaymentRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
+func (h *getCloseDeferredPaymentRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
 	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	return resource, nil
