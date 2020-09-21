@@ -25,8 +25,12 @@ func GetDeferredPaymentList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hRepo := ctx.HistoryRepo(r)
+	coreRepo := ctx.CoreRepo(r)
 	handler := getDeferredPaymentListHandler{
 		DeferredPaymentQ: history2.NewDeferredPaymentQ(hRepo),
+		BalanceQ:         core2.NewBalancesQ(coreRepo),
+		AccountQ:         core2.NewAccountsQ(coreRepo),
+		AssetQ:           core2.NewAssetsQ(coreRepo),
 		Log:              ctx.Log(r),
 	}
 
@@ -35,11 +39,31 @@ func GetDeferredPaymentList(w http.ResponseWriter, r *http.Request) {
 	if request.ShouldFilter(requests.FilterTypeDeferredPaymentListSourceBalance) {
 		source, err := handler.BalanceQ.GetByAddress(request.Filters.SourceBalance)
 		if err != nil {
-			ape.RenderErr(w, problems.NotFound())
+			ctx.Log(r).WithError(err).Error("failed to get source balance from db")
+			ape.RenderErr(w, problems.InternalError())
 			return
 		}
 
-		deferredPaymentOwners = append(deferredPaymentOwners, &source.AccountAddress)
+		if source != nil {
+			deferredPaymentOwners = append(deferredPaymentOwners, &source.AccountAddress)
+		}
+	}
+
+	if request.ShouldFilter(requests.FilterTypeDeferredPaymentListSource) {
+		deferredPaymentOwners = append(deferredPaymentOwners, &request.Filters.Source)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeDeferredPaymentListAsset) {
+		asset, err := handler.AssetQ.GetByCode(request.Filters.Asset)
+		if err != nil {
+			ctx.Log(r).WithError(err).Error("failed to get asset from db")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+
+		if asset != nil {
+			deferredPaymentOwners = append(deferredPaymentOwners, &asset.Owner)
+		}
 	}
 
 	if request.ShouldFilter(requests.FilterTypeDeferredPaymentListDestination) {
@@ -64,6 +88,7 @@ type getDeferredPaymentListHandler struct {
 	DeferredPaymentQ history2.DeferredPaymentQ
 	AccountQ         core2.AccountsQ
 	BalanceQ         core2.BalancesQ
+	AssetQ           core2.AssetsQ
 	Log              *logan.Entry
 }
 
@@ -76,6 +101,14 @@ func (h *getDeferredPaymentListHandler) GetDeferredPaymentList(request *requests
 
 	if request.ShouldFilter(requests.FilterTypeDeferredPaymentListDestination) {
 		q = q.FilterByDestinationAccount(request.Filters.Destination)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeDeferredPaymentListSource) {
+		q = q.FilterBySourceAccount(request.Filters.Source)
+	}
+
+	if request.ShouldFilter(requests.FilterTypeDeferredPaymentListAsset) {
+		q = q.FilterByAsset(request.Filters.Asset)
 	}
 
 	q = q.Page(request.PageParams)

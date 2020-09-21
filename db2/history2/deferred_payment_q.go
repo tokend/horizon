@@ -52,21 +52,28 @@ func (q DeferredPaymentQ) GetByID(id int64) (*DeferredPayment, error) {
 	return q.Get()
 }
 
-//FilterByDestinationAccount - gets deferredPayment by owner address, returns nil, nil if one does not exist
+//FilterByDestinationAccount - filters deferredPayments by destination account
 func (q DeferredPaymentQ) FilterByDestinationAccount(address string) DeferredPaymentQ {
 	q.selector = q.selector.Where(sq.Eq{"deferred_payments.destination_account": address})
 	return q
 }
 
-//FilterBySourceAccount - gets deferredPayment by owner address, returns nil, nil if one does not exist
+//FilterBySourceAccount - filters deferredPayments by source account
 func (q DeferredPaymentQ) FilterBySourceAccount(address string) DeferredPaymentQ {
 	q.selector = q.selector.Where(sq.Eq{"deferred_payments.source_account": address})
 	return q
 }
 
-//FilterBySourceAccount - gets deferredPayment by owner address, returns nil, nil if one does not exist
+//FilterBySourceBalance - filters deferredPayments by source balance
 func (q DeferredPaymentQ) FilterBySourceBalance(address string) DeferredPaymentQ {
 	q.selector = q.selector.Where(sq.Eq{"deferred_payments.source_balance": address})
+	return q
+}
+
+//FilterByAsset - filters deferredPayments by asset code
+func (q DeferredPaymentQ) FilterByAsset(asset string) DeferredPaymentQ {
+	q.selector = q.selector.Join("balances balances ON balances.id = deferred_payments.source_balance").
+		Where(sq.Eq{"balances.asset_code": asset})
 	return q
 }
 

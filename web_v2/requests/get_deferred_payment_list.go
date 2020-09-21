@@ -9,7 +9,8 @@ import (
 )
 
 const (
-
+	FilterTypeDeferredPaymentListAsset         = "asset"
+	FilterTypeDeferredPaymentListSource        = "source"
 	FilterTypeDeferredPaymentListSourceBalance = "source_balance"
 	FilterTypeDeferredPaymentListDestination   = "destination"
 )
@@ -17,6 +18,8 @@ const (
 var includeTypeDeferredPaymentAll = map[string]struct{}{}
 
 var filterTypeDeferredPaymentListAll = map[string]struct{}{
+	FilterTypeDeferredPaymentListAsset:         {},
+	FilterTypeDeferredPaymentListSource:        {},
 	FilterTypeDeferredPaymentListSourceBalance: {},
 	FilterTypeDeferredPaymentListDestination:   {},
 }
@@ -24,6 +27,8 @@ var filterTypeDeferredPaymentListAll = map[string]struct{}{
 type GetDeferredPaymentListFilters struct {
 	Destination   string `fig:"destination"`
 	SourceBalance string `fig:"source_balance"`
+	Source        string `fig:"source"`
+	Asset         string `fig:"asset"`
 }
 
 //GetDeferredPaymentList - represents params to be specified for Get Fees handler

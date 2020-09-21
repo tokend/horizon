@@ -29,6 +29,24 @@
         explode: false
         schema:
           type: string
+      - name: filter[source]
+        in: query
+        description: |
+          Filters deferredPayments by a specified source's account address.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[asset]
+        in: query
+        description: |
+          Filters deferredPayments by a specified asset code
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - $ref: '#/components/schemas/pageCursorParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
