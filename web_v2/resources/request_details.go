@@ -51,6 +51,8 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newDataUpdateRequest(request.ID, *request.Details.DataUpdate)
 	case xdr.ReviewableRequestTypeDataRemove:
 		return newDataRemoveRequest(request.ID, *request.Details.DataRemove)
+	case xdr.ReviewableRequestTypeCreateDeferredPayment:
+		return newCreateDeferredPaymentRequest(request.ID, *request.Details.CreateDeferredPayment)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -364,6 +366,27 @@ func newDataRemoveRequest(id int64, details history2.DataRemoveRequest) *regourc
 		},
 		Relationships: regources.DataRemoveRequestRelationships{
 			Data: NewDataKey(int64(details.DataID)).AsRelation(),
+		},
+	}
+}
+
+func newCreateDeferredPaymentRequest(id int64, details history2.CreateDeferredPayment) *regources.CreateDeferredPaymentRequest {
+	return &regources.CreateDeferredPaymentRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CREATE_DEFERRED_PAYMENT),
+		Attributes: regources.CreateDeferredPaymentRequestAttributes{
+			Amount:         details.Amount,
+			CreatorDetails: &details.Details,
+			// FIXME: Fee
+		},
+		Relationships: regources.CreateDeferredPaymentRequestRelationships{
+			DestinationAccount: regources.Key{
+				ID:   details.DestinationAccount,
+				Type: regources.ACCOUNTS,
+			}.AsRelation(),
+			SourceBalance: regources.Key{
+				ID:   details.SourceBalance,
+				Type: regources.BALANCES,
+			}.AsRelation(),
 		},
 	}
 }
