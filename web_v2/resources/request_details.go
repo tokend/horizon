@@ -376,9 +376,11 @@ func newCloseDeferredPaymentRequest(id int64, details history2.CloseDeferredPaym
 	return &regources.CloseDeferredPaymentRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CLOSE_DEFERRED_PAYMENT),
 		Attributes: regources.CloseDeferredPaymentRequestAttributes{
-			Amount:         details.Amount,
-			CreatorDetails: &details.Details,
-			// FIXME: Fee
+			Amount:                  details.Amount,
+			CreatorDetails:          &details.Details,
+			SourcePayForDestination: details.SourcePayForDestination,
+			SourceFee:               details.SourceFee,
+			DestinationFee:          details.DestinationFee,
 		},
 		Relationships: regources.CloseDeferredPaymentRequestRelationships{
 			DeferredPayment: regources.NewKeyInt64(int64(details.DeferredPaymentID), regources.DEFERRED_PAYMENTS).
@@ -395,9 +397,11 @@ func newCreateDeferredPaymentRequest(id int64, details history2.CreateDeferredPa
 	return &regources.CreateDeferredPaymentRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CREATE_DEFERRED_PAYMENT),
 		Attributes: regources.CreateDeferredPaymentRequestAttributes{
-			Amount:         details.Amount,
-			CreatorDetails: &details.Details,
-			// FIXME: Fee
+			Amount:                  details.Amount,
+			CreatorDetails:          &details.Details,
+			SourcePayForDestination: details.SourcePayForDestination,
+			SourceFee:               details.SourceFee,
+			DestinationFee:          details.DestinationFee,
 		},
 		Relationships: regources.CreateDeferredPaymentRequestRelationships{
 			DestinationAccount: regources.Key{
