@@ -35,8 +35,8 @@ type ReviewableRequestDetails struct {
 	DataCreation          *DataCreationRequest        `json:"data_creation,omitempty"`
 	DataUpdate            *DataUpdateRequest          `json:"data_update,omitempty"`
 	DataRemove            *DataRemoveRequest          `json:"data_remove,omitempty"`
-	CreateDeferredPayment *CreateDeferredPayment      `json:"create_deferred_payment"`
-	CloseDeferredPayment  *CloseDeferredPayment       `json:"close_deferred_payment"`
+	CreateDeferredPayment *CreateDeferredPayment      `json:"create_deferred_payment,omitempty"`
+	CloseDeferredPayment  *CloseDeferredPayment       `json:"close_deferred_payment,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
