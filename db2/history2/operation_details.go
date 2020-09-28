@@ -659,27 +659,22 @@ type CancelDataRemoveRequest struct {
 }
 
 type CreateDeferredPaymentCreationRequest struct {
-	RequestID               uint64            `json:"request_id"`
-	SourceBalance           string            `json:"source_balance"`
-	DestinationAccount      string            `json:"destination_account"`
-	Amount                  regources.Amount  `json:"amount"`
-	SourcePayForDestination bool              `json:"source_pay_for_destination"`
-	SourceFee               regources.Fee     `json:"source_fee"`
-	DestinationFee          regources.Fee     `json:"destination_fee"`
-	Details                 regources.Details `json:"details"`
-	AllTasks                *uint32           `json:"all_tasks"`
+	RequestID          uint64            `json:"request_id"`
+	SourceBalance      string            `json:"source_balance"`
+	DestinationAccount string            `json:"destination_account"`
+	Amount             regources.Amount  `json:"amount"`
+	Details            regources.Details `json:"details"`
+	AllTasks           *uint32           `json:"all_tasks"`
 }
 
 type CreateCloseDeferredPaymentRequest struct {
-	RequestID               uint64            `json:"request_id"`
-	DestinationBalance      string            `json:"destination_balance"`
-	DeferredPaymentID       uint64            `json:"deferred_payment_id"`
-	Amount                  regources.Amount  `json:"amount"`
-	SourcePayForDestination bool              `json:"source_pay_for_destination"`
-	SourceFee               regources.Fee     `json:"source_fee"`
-	DestinationFee          regources.Fee     `json:"destination_fee"`
-	Details                 regources.Details `json:"details"`
-	AllTasks                *uint32           `json:"all_tasks"`
+	RequestID          uint64            `json:"request_id"`
+	DestinationBalance string            `json:"destination_balance"`
+	DestinationAccount string            `json:"destination_account"`
+	DeferredPaymentID  uint64            `json:"deferred_payment_id"`
+	Amount             regources.Amount  `json:"amount"`
+	Details            regources.Details `json:"details"`
+	AllTasks           *uint32           `json:"all_tasks"`
 }
 
 type CancelDeferredPaymentCreationRequest struct {

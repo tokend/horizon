@@ -12,17 +12,6 @@ func NewDeferredPaymentKey(ID int64) regources.Key {
 func NewDeferredPayment(record history2.DeferredPayment) regources.DeferredPayment {
 	return regources.DeferredPayment{
 		Key: NewDeferredPaymentKey(record.ID),
-		Attributes: regources.DeferredPaymentAttributes{
-			Amount: regources.Amount(record.Amount),
-			DestinationFee: regources.Fee{
-				Fixed:             regources.Amount(record.DestinationFixedFee),
-				CalculatedPercent: regources.Amount(record.DestinationPercentFee),
-			},
-			SourceFee: regources.Fee{
-				Fixed:             regources.Amount(record.SourceFixedFee),
-				CalculatedPercent: regources.Amount(record.SourcePercentFee),
-			},
-		},
 		Relationships: regources.DeferredPaymentRelationships{
 			Destination:   NewAccountKey(record.DestinationAccount).AsRelation(),
 			Source:        NewAccountKey(record.SourceAccount).AsRelation(),

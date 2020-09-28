@@ -230,23 +230,23 @@ type DataRemoveRequest struct {
 }
 
 type CreateDeferredPayment struct {
-	SourceBalance           string            `json:"source_balance"`
-	DestinationAccount      string            `json:"destination_account"`
-	Amount                  regources.Amount  `json:"amount"`
-	SourcePayForDestination bool              `json:"source_pay_for_destination"`
-	SourceFee               regources.Fee     `json:"source_fee"`
-	DestinationFee          regources.Fee     `json:"destination_fee"`
-	Details                 regources.Details `json:"details"`
-	SequenceNumber          uint32            `json:"sequence_number"`
+	SourceBalance      string            `json:"source_balance"`
+	DestinationAccount string            `json:"destination_account"`
+	Amount             regources.Amount  `json:"amount"`
+	Details            regources.Details `json:"details"`
+	SequenceNumber     uint32            `json:"sequence_number"`
 }
 
 type CloseDeferredPayment struct {
-	SequenceNumber          uint32            `json:"sequence_number"`
-	DestinationBalance      string            `json:"destination_balance"`
-	DeferredPaymentID       uint64            `json:"deferred_payment_id"`
-	Amount                  regources.Amount  `json:"amount"`
-	SourcePayForDestination bool              `json:"source_pay_for_destination"`
-	SourceFee               regources.Fee     `json:"source_fee"`
-	DestinationFee          regources.Fee     `json:"destination_fee"`
-	Details                 regources.Details `json:"details"`
+	SequenceNumber    uint32                          `json:"sequence_number"`
+	Destination       CloseDeferredPaymentDestination `json:"destination"`
+	DeferredPaymentID uint64                          `json:"deferred_payment_id"`
+	Amount            regources.Amount                `json:"amount"`
+	Details           regources.Details               `json:"details"`
+}
+
+type CloseDeferredPaymentDestination struct {
+	Type    xdr.CloseDeferredPaymentDestinationType `json:"type"`
+	Balance *string                                 `json:"balance,omitempty"`
+	Account *string                                 `json:"account,omitempty"`
 }

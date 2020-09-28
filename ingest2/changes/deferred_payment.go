@@ -58,10 +58,5 @@ func (h *deferredPaymentHandler) convertDeferredPayment(raw xdr.DeferredPaymentE
 		SourceAccount:      raw.Source.Address(),
 		SourceBalance:      raw.SourceBalance.AsString(),
 		DestinationAccount: raw.Destination.Address(),
-		//SourcePaysForDest:     raw.FeeData.SourcePaysForDest,
-		//SourceFixedFee:        regources.Amount(raw.FeeData.SourceFee.Fixed),
-		//SourcePercentFee:      regources.Amount(raw.FeeData.SourceFee.Percent),
-		//DestinationFixedFee:   regources.Amount(raw.FeeData.DestinationFee.Fixed),
-		//DestinationPercentFee: regources.Amount(raw.FeeData.DestinationFee.Percent),
 	}
 }

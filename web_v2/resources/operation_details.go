@@ -998,11 +998,8 @@ func newCreateDeferredPaymentCreationRequestOp(op history2.Operation) regources.
 	return &regources.CreateDeferredPaymentCreationRequestOp{
 		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_DEFERRED_PAYMENT_CREATION_REQUEST),
 		Attributes: regources.CreateDeferredPaymentCreationRequestOpAttributes{
-			Amount:                  body.Amount,
-			CreatorDetails:          &body.Details,
-			DestinationFee:          body.DestinationFee,
-			SourceFee:               body.SourceFee,
-			SourcePayForDestination: body.SourcePayForDestination,
+			Amount:         body.Amount,
+			CreatorDetails: &body.Details,
 		},
 		Relationships: regources.CreateDeferredPaymentCreationRequestOpRelationships{
 			DestinationAccount: NewAccountKey(body.DestinationAccount).AsRelation(),
@@ -1017,11 +1014,8 @@ func newCreateCloseDeferredPaymentRequestOp(op history2.Operation) regources.Res
 	return &regources.CreateCloseDeferredPaymentRequestOp{
 		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_CLOSE_DEFERRED_PAYMENT_REQUEST),
 		Attributes: regources.CreateCloseDeferredPaymentRequestOpAttributes{
-			Amount:                  body.Amount,
-			CreatorDetails:          &body.Details,
-			DestinationFee:          body.DestinationFee,
-			SourceFee:               body.SourceFee,
-			SourcePayForDestination: body.SourcePayForDestination,
+			Amount:         body.Amount,
+			CreatorDetails: &body.Details,
 		},
 		Relationships: regources.CreateCloseDeferredPaymentRequestOpRelationships{
 			DestinationBalance: NewBalanceKey(body.DestinationBalance).AsRelation(),

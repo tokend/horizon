@@ -11,11 +11,6 @@ import (
 var deferredPaymentColumns = []string{
 	"id",
 	"amount",
-	"source_pays_for_dest",
-	"source_fixed_fee",
-	"source_percent_fee",
-	"destination_fixed_fee",
-	"destination_percent_fee",
 	"source_account",
 	"source_balance",
 	"destination_account",
@@ -34,11 +29,6 @@ func NewDeferredPaymentQ(repo *pgdb.DB) DeferredPaymentQ {
 		selector: sq.Select(
 			"deferred_payments.id",
 			"deferred_payments.amount",
-			"deferred_payments.source_pays_for_dest",
-			"deferred_payments.source_fixed_fee",
-			"deferred_payments.source_percent_fee",
-			"deferred_payments.destination_fixed_fee",
-			"deferred_payments.destination_percent_fee",
 			"deferred_payments.source_account",
 			"deferred_payments.source_balance",
 			"deferred_payments.destination_account",

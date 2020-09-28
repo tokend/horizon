@@ -30,19 +30,13 @@ func (q *DeferredPayment) Insert(deferredPayment history2.DeferredPayment) error
 		Columns(
 			"id",
 			"amount",
-			"source_pays_for_dest",
-			"source_fixed_fee",
-			"source_percent_fee",
-			"destination_fixed_fee",
-			"destination_percent_fee",
 			"source_account",
 			"source_balance",
 			"destination_account",
 		).
 		Values(
-			deferredPayment.ID, deferredPayment.Amount, deferredPayment.SourcePaysForDest, deferredPayment.SourceFixedFee,
-			deferredPayment.SourcePercentFee, deferredPayment.DestinationFixedFee, deferredPayment.DestinationPercentFee,
-			deferredPayment.SourceAccount, deferredPayment.SourceBalance, deferredPayment.DestinationAccount,
+			deferredPayment.ID, deferredPayment.Amount, deferredPayment.SourceAccount,
+			deferredPayment.SourceBalance, deferredPayment.DestinationAccount,
 		)
 
 	err := q.repo.Exec(sql)
@@ -56,15 +50,10 @@ func (q *DeferredPayment) Insert(deferredPayment history2.DeferredPayment) error
 // Update - updates existing deferredPayment
 func (q *DeferredPayment) Update(deferredPayment history2.DeferredPayment) error {
 	sql := sq.Update("deferred_payments").SetMap(map[string]interface{}{
-		"amount":                  deferredPayment.Amount,
-		"source_pays_for_dest":    deferredPayment.SourcePaysForDest,
-		"source_fixed_fee":        deferredPayment.SourceFixedFee,
-		"source_percent_fee":      deferredPayment.SourcePercentFee,
-		"destination_fixed_fee":   deferredPayment.DestinationFixedFee,
-		"destination_percent_fee": deferredPayment.DestinationPercentFee,
-		"source_account":          deferredPayment.SourceAccount,
-		"source_balance":          deferredPayment.SourceBalance,
-		"destination_account":     deferredPayment.DestinationAccount,
+		"amount":              deferredPayment.Amount,
+		"source_account":      deferredPayment.SourceAccount,
+		"source_balance":      deferredPayment.SourceBalance,
+		"destination_account": deferredPayment.DestinationAccount,
 	}).Where(sq.Eq{"id": deferredPayment.ID})
 
 	err := q.repo.Exec(sql)

@@ -13,13 +13,14 @@ type closeDeferredPaymentHandler struct {
 
 func (h *closeDeferredPaymentHandler) Fulfilled(details requestDetails) ([]history2.ParticipantEffect, error) {
 	closeDeferredPaymentRequest := details.Request.Body.MustCloseDeferredPaymentRequest()
-	//funded := h.effectsProvider.BalanceEffect(closeDeferredPaymentRequest.DestinationBalance,
-	//	&history2.Effect{
-	//		Type: history2.EffectTypeFunded,
-	//		Unlocked: &history2.BalanceChangeEffect{
-	//			Amount: regources.Amount(closeDeferredPaymentRequest.Amount),
-	//		},
-	//	})
+	res := details.Result.TypeExt.MustCloseDeferredPaymentResult()
+	funded := h.effectsProvider.BalanceEffect(res.DestinationBalance,
+		&history2.Effect{
+			Type: history2.EffectTypeFunded,
+			Unlocked: &history2.BalanceChangeEffect{
+				Amount: regources.Amount(closeDeferredPaymentRequest.Amount),
+			},
+		})
 
 	dp := h.MustDeferredPayment(int64(closeDeferredPaymentRequest.DeferredPaymentId))
 	var sb xdr.BalanceId
@@ -32,9 +33,7 @@ func (h *closeDeferredPaymentHandler) Fulfilled(details requestDetails) ([]histo
 				Amount: regources.Amount(closeDeferredPaymentRequest.Amount),
 			},
 		})
-	return []history2.ParticipantEffect{
-		//funded,
-		charged}, nil
+	return []history2.ParticipantEffect{funded, charged}, nil
 }
 
 func (h *closeDeferredPaymentHandler) PermanentReject(details requestDetails) ([]history2.ParticipantEffect, error) {

@@ -739,37 +739,32 @@ func (c *reviewableRequestHandler) getCreateDeferredPayment(request *xdr.CreateD
 		SourceBalance:      request.SourceBalance.AsString(),
 		DestinationAccount: request.Destination.Address(),
 		Amount:             regources.Amount(request.Amount),
-		//SourcePayForDestination: request.FeeData.SourcePaysForDest,
-		//SourceFee: regources.Fee{
-		//	CalculatedPercent: regources.Amount(request.FeeData.SourceFee.Percent),
-		//	Fixed:             regources.Amount(request.FeeData.SourceFee.Fixed),
-		//},
-		//DestinationFee: regources.Fee{
-		//	CalculatedPercent: regources.Amount(request.FeeData.DestinationFee.Percent),
-		//	Fixed:             regources.Amount(request.FeeData.DestinationFee.Fixed),
-		//},
-		Details:        internal.MarshalCustomDetails(request.CreatorDetails),
-		SequenceNumber: uint32(request.SequenceNumber),
+		Details:            internal.MarshalCustomDetails(request.CreatorDetails),
+		SequenceNumber:     uint32(request.SequenceNumber),
 	}
 }
 
 func (c *reviewableRequestHandler) getCloseDeferredPayment(request *xdr.CloseDeferredPaymentRequest) *history.CloseDeferredPayment {
-	return &history.CloseDeferredPayment{
-		SequenceNumber: uint32(request.SequenceNumber),
-		//DestinationBalance:      request.DestinationBalance.AsString(),
+	result := &history.CloseDeferredPayment{
+		SequenceNumber:    uint32(request.SequenceNumber),
 		DeferredPaymentID: uint64(request.DeferredPaymentId),
-		Amount:            regources.Amount(request.Amount),
-		//SourcePayForDestination: request.FeeData.SourcePaysForDest,
-		//SourceFee: regources.Fee{
-		//	CalculatedPercent: regources.Amount(request.FeeData.SourceFee.Percent),
-		//	Fixed:             regources.Amount(request.FeeData.SourceFee.Fixed),
-		//},
-		//DestinationFee: regources.Fee{
-		//	CalculatedPercent: regources.Amount(request.FeeData.DestinationFee.Percent),
-		//	Fixed:             regources.Amount(request.FeeData.DestinationFee.Fixed),
-		//},
+		Destination: history.CloseDeferredPaymentDestination{
+			Type: request.Destination.Type,
+		},
+		Amount:  regources.Amount(request.Amount),
 		Details: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
+
+	switch request.Destination.Type {
+	case xdr.CloseDeferredPaymentDestinationTypeAccount:
+		tmp := request.Destination.AccountId.Address()
+		result.Destination.Account = &tmp
+	case xdr.CloseDeferredPaymentDestinationTypeBalance:
+		tmp := request.Destination.BalanceId.AsString()
+		result.Destination.Balance = &tmp
+	}
+
+	return result
 }
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
