@@ -120,12 +120,12 @@
   version = "v1.3"
 
 [[projects]]
-  branch = "master"
-  digest = "1:6c3ad47a6702d137a4f0edce464fc07dca370b234ce7e52f12db1e0de44a01f7"
+  digest = "1:27201641adc236de01b2b1efaeeed8df3f11024f304ab21e5e3756abcf39c4cd"
   name = "gitlab.com/distributed_lab/kit"
   packages = ["kv"]
   pruneopts = "UT"
-  revision = "865b4569a164dab1b7ed180501fb6314c1a52c04"
+  revision = "68fa3af41ebb45da48be9db7739f68b9cc429930"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:5c74250e2fc48f2fc18808f58640b9b030a76e6eca083486a227441f0803be19"

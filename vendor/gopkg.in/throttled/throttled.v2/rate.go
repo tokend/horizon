@@ -84,17 +84,18 @@ type Rate struct {
 
 // RateQuota describes the number of requests allowed per time period.
 // MaxRate specified the maximum sustained rate of requests and must
-// be greater than zero.  MaxBurst defines the number of requests that
+// be greater than zero. MaxBurst defines the number of requests that
 // will be allowed to exceed the rate in a single burst and must be
 // greater than or equal to zero.
 //
 // Rate{PerSec(1), 0} would mean that after each request, no more
-// requests will be permitted for that client for one second. In
-// practice, you probably want to set MaxBurst >0 to provide some
-// flexibility to clients that only need to make a handful of
-// requests. In fact a MaxBurst of zero will *never* permit a request
-// with a quantity greater than one because it will immediately exceed
-// the limit.
+// requests will be permitted for that client for one second.
+// Rate{PerSec(2), 0} permits one request per 0.5 seconds rather than
+// two requests in one second. In practice, you probably want to set
+// MaxBurst >0 to provide some flexibility to clients that only need
+// to make a handful of requests. In fact a MaxBurst of zero will
+// *never* permit a request with a quantity greater than one because
+// it will immediately exceed the limit.
 type RateQuota struct {
 	MaxRate  Rate
 	MaxBurst int
@@ -112,16 +113,21 @@ func PerHour(n int) Rate { return Rate{time.Hour / time.Duration(n), n} }
 // PerDay represents a number of requests per day.
 func PerDay(n int) Rate { return Rate{24 * time.Hour / time.Duration(n), n} }
 
+// PerDuration represents a number of requests per provided duration.
+func PerDuration(n int, d time.Duration) Rate { return Rate{d / time.Duration(n), n} }
+
 // GCRARateLimiter is a RateLimiter that users the generic cell-rate
 // algorithm. The algorithm has been slightly modified from its usual
 // form to support limiting with an additional quantity parameter, such
 // as for limiting the number of bytes uploaded.
 type GCRARateLimiter struct {
 	limit int
+
 	// Think of the DVT as our flexibility:
 	// How far can you deviate from the nominal equally spaced schedule?
 	// If you like leaky buckets, think about it as the size of your bucket.
 	delayVariationTolerance time.Duration
+
 	// Think of the emission interval as the time between events
 	// in the nominal equally spaced schedule. If you like leaky buckets,
 	// think of it as how frequently the bucket leaks one unit.
@@ -138,10 +144,10 @@ type GCRARateLimiter struct {
 // only permits one request per second with no tolerance for bursts.
 func NewGCRARateLimiter(st GCRAStore, quota RateQuota) (*GCRARateLimiter, error) {
 	if quota.MaxBurst < 0 {
-		return nil, fmt.Errorf("Invalid RateQuota %#v. MaxBurst must be greater than zero.", quota)
+		return nil, fmt.Errorf("invalid RateQuota %#v; MaxBurst must be greater than zero", quota)
 	}
 	if quota.MaxRate.period <= 0 {
-		return nil, fmt.Errorf("Invalid RateQuota %#v. MaxRate must be greater than zero.", quota)
+		return nil, fmt.Errorf("invalid RateQuota %#v; MaxRate must be greater than zero", quota)
 	}
 
 	return &GCRARateLimiter{

@@ -1,8 +1,8 @@
 package storage
 
 import (
+	sq "github.com/Masterminds/squirrel"
 	"github.com/cheekybits/genny/generic"
-	sq "github.com/lann/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"

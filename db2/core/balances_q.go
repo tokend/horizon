@@ -2,7 +2,8 @@ package core
 
 import (
 	"database/sql"
-	sq "github.com/lann/squirrel"
+
+	sq "github.com/Masterminds/squirrel"
 )
 
 var selectBalance = sq.Select(

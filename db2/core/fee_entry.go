@@ -7,7 +7,7 @@ import (
 
 	"gitlab.com/tokend/go/hash"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 )
 
 var selectFees = sq.Select("f.fee_type", "f.asset", "f.subtype", "f.fixed", "f.percent", "f.lastmodified,"+

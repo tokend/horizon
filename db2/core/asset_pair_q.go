@@ -2,7 +2,8 @@ package core
 
 import (
 	sql2 "database/sql"
-	sq "github.com/lann/squirrel"
+
+	sq "github.com/Masterminds/squirrel"
 )
 
 // AssetPairsQ is a helper interface to aid in configuring queries that loads

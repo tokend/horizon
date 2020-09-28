@@ -53,15 +53,15 @@ func (h *deferredPaymentHandler) Removed(lc ledgerChange) error {
 
 func (h *deferredPaymentHandler) convertDeferredPayment(raw xdr.DeferredPaymentEntry) history.DeferredPayment {
 	return history.DeferredPayment{
-		ID:                    int64(raw.Id),
-		Amount:                regources.Amount(raw.Amount),
-		SourceAccount:         raw.Source.Address(),
-		SourceBalance:         raw.SourceBalance.AsString(),
-		DestinationAccount:    raw.Destination.Address(),
-		SourcePaysForDest:     raw.FeeData.SourcePaysForDest,
-		SourceFixedFee:        regources.Amount(raw.FeeData.SourceFee.Fixed),
-		SourcePercentFee:      regources.Amount(raw.FeeData.SourceFee.Percent),
-		DestinationFixedFee:   regources.Amount(raw.FeeData.DestinationFee.Fixed),
-		DestinationPercentFee: regources.Amount(raw.FeeData.DestinationFee.Percent),
+		ID:                 int64(raw.Id),
+		Amount:             regources.Amount(raw.Amount),
+		SourceAccount:      raw.Source.Address(),
+		SourceBalance:      raw.SourceBalance.AsString(),
+		DestinationAccount: raw.Destination.Address(),
+		//SourcePaysForDest:     raw.FeeData.SourcePaysForDest,
+		//SourceFixedFee:        regources.Amount(raw.FeeData.SourceFee.Fixed),
+		//SourcePercentFee:      regources.Amount(raw.FeeData.SourceFee.Percent),
+		//DestinationFixedFee:   regources.Amount(raw.FeeData.DestinationFee.Fixed),
+		//DestinationPercentFee: regources.Amount(raw.FeeData.DestinationFee.Percent),
 	}
 }

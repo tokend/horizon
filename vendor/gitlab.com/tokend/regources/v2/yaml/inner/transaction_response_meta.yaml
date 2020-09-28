@@ -1,8 +1,0 @@
-name: TransactionResponseMeta
-attributes:
-  -
-    name: latest_ledger_close_time
-    type: Date
-  -
-    name: latest_ledger_sequence
-    type: Int32

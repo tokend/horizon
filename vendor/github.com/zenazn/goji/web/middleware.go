@@ -110,8 +110,9 @@ func (m *mStack) release(cs *cStack) {
 	if cs.pool != m.pool {
 		return
 	}
-	cs.pool.release(cs)
+	p := cs.pool
 	cs.pool = nil
+	p.release(cs)
 }
 
 func (m *mStack) Use(middleware interface{}) {
@@ -147,7 +148,7 @@ func (m *mStack) Abandon(middleware interface{}) error {
 	}
 
 	copy(m.stack[i:], m.stack[i+1:])
-	m.stack = m.stack[:len(m.stack)-1 : len(m.stack)]
+	m.stack = m.stack[: len(m.stack)-1 : len(m.stack)]
 
 	m.invalidate()
 	return nil

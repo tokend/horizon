@@ -736,18 +736,18 @@ func (c *reviewableRequestHandler) getDataRemoveRequest(request *xdr.DataRemoveR
 
 func (c *reviewableRequestHandler) getCreateDeferredPayment(request *xdr.CreateDeferredPaymentRequest) *history.CreateDeferredPayment {
 	return &history.CreateDeferredPayment{
-		SourceBalance:           request.SourceBalance.AsString(),
-		DestinationAccount:      request.Destination.Address(),
-		Amount:                  regources.Amount(request.Amount),
-		SourcePayForDestination: request.FeeData.SourcePaysForDest,
-		SourceFee: regources.Fee{
-			CalculatedPercent: regources.Amount(request.FeeData.SourceFee.Percent),
-			Fixed:             regources.Amount(request.FeeData.SourceFee.Fixed),
-		},
-		DestinationFee: regources.Fee{
-			CalculatedPercent: regources.Amount(request.FeeData.DestinationFee.Percent),
-			Fixed:             regources.Amount(request.FeeData.DestinationFee.Fixed),
-		},
+		SourceBalance:      request.SourceBalance.AsString(),
+		DestinationAccount: request.Destination.Address(),
+		Amount:             regources.Amount(request.Amount),
+		//SourcePayForDestination: request.FeeData.SourcePaysForDest,
+		//SourceFee: regources.Fee{
+		//	CalculatedPercent: regources.Amount(request.FeeData.SourceFee.Percent),
+		//	Fixed:             regources.Amount(request.FeeData.SourceFee.Fixed),
+		//},
+		//DestinationFee: regources.Fee{
+		//	CalculatedPercent: regources.Amount(request.FeeData.DestinationFee.Percent),
+		//	Fixed:             regources.Amount(request.FeeData.DestinationFee.Fixed),
+		//},
 		Details:        internal.MarshalCustomDetails(request.CreatorDetails),
 		SequenceNumber: uint32(request.SequenceNumber),
 	}
@@ -755,19 +755,19 @@ func (c *reviewableRequestHandler) getCreateDeferredPayment(request *xdr.CreateD
 
 func (c *reviewableRequestHandler) getCloseDeferredPayment(request *xdr.CloseDeferredPaymentRequest) *history.CloseDeferredPayment {
 	return &history.CloseDeferredPayment{
-		SequenceNumber:          uint32(request.SequenceNumber),
-		DestinationBalance:      request.DestinationBalance.AsString(),
-		DeferredPaymentID:       uint64(request.DeferredPaymentId),
-		Amount:                  regources.Amount(request.Amount),
-		SourcePayForDestination: request.FeeData.SourcePaysForDest,
-		SourceFee: regources.Fee{
-			CalculatedPercent: regources.Amount(request.FeeData.SourceFee.Percent),
-			Fixed:             regources.Amount(request.FeeData.SourceFee.Fixed),
-		},
-		DestinationFee: regources.Fee{
-			CalculatedPercent: regources.Amount(request.FeeData.DestinationFee.Percent),
-			Fixed:             regources.Amount(request.FeeData.DestinationFee.Fixed),
-		},
+		SequenceNumber: uint32(request.SequenceNumber),
+		//DestinationBalance:      request.DestinationBalance.AsString(),
+		DeferredPaymentID: uint64(request.DeferredPaymentId),
+		Amount:            regources.Amount(request.Amount),
+		//SourcePayForDestination: request.FeeData.SourcePaysForDest,
+		//SourceFee: regources.Fee{
+		//	CalculatedPercent: regources.Amount(request.FeeData.SourceFee.Percent),
+		//	Fixed:             regources.Amount(request.FeeData.SourceFee.Fixed),
+		//},
+		//DestinationFee: regources.Fee{
+		//	CalculatedPercent: regources.Amount(request.FeeData.DestinationFee.Percent),
+		//	Fixed:             regources.Amount(request.FeeData.DestinationFee.Fixed),
+		//},
 		Details: internal.MarshalCustomDetails(request.CreatorDetails),
 	}
 }

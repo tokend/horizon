@@ -1,31 +1,22 @@
+.PHONY: all
+all: build test vet fmt lint
 
+.PHONY: build
+build:
+	go build ./...
 
-.PHONY: test test-cover bench lint get-deps .go-test .go-test-cover
+.PHONY: fmt
+fmt:
+	scripts/check_gofmt.sh
 
-test: .go-test bench lint
-
-test-cover: .go-test-cover bench lint
-
-bench:
-	go test -race -bench=. -cpu=1,2,4
-
+.PHONY: lint
 lint:
-	gofmt -l .
-ifneq ($(TRAVIS_GO_VERSION),1.3)  # go vet doesn't play nicely on 1.3
-	go vet ./...
-endif
-	which golint # Fail if golint doesn't exist
-	-golint . # Don't fail on golint warnings themselves
-	-golint store # Don't fail on golint warnings themselves
+	golint -set_exit_status ./...
 
-get-deps:
-	go get github.com/garyburd/redigo/redis
-	go get github.com/hashicorp/golang-lru
-	go get github.com/golang/lint/golint
-
-.go-test:
+.PHONY: test
+test:
 	go test ./...
 
-.go-test-cover:
-	go test -coverprofile=throttled.coverage.out .
-	go test -coverprofile=store.coverage.out ./store
+.PHONY: vet
+vet:
+	go vet ./...

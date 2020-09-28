@@ -1,8 +1,0 @@
-name: ExternalSystemData
-attributes:
-  -
-    name: type
-    type: String
-  -
-    name: data
-    type: ExternalSystemDataEntry

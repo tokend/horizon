@@ -3,8 +3,6 @@ package operations
 import (
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
-	"gitlab.com/tokend/horizon/ingest2/internal"
-	regources "gitlab.com/tokend/regources/generated"
 )
 
 type createCloseDeferredPaymentRequestOpHandler struct {
@@ -14,26 +12,26 @@ type createCloseDeferredPaymentRequestOpHandler struct {
 // Details returns details about manage balance operation
 func (h *createCloseDeferredPaymentRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
-	oper := op.Body.MustCreateCloseDeferredPaymentRequestOp()
-	destBalance := oper.Request.DestinationBalance.AsString()
+	//oper := op.Body.MustCreateCloseDeferredPaymentRequestOp()
+	//destBalance := oper.Request.DestinationBalance.AsString()
 	details := history2.OperationDetails{
 		Type: xdr.OperationTypeCreateCloseDeferredPaymentRequest,
-		CreateCloseDeferredPaymentRequest: &history2.CreateCloseDeferredPaymentRequest{
-			RequestID:               uint64(oper.RequestId),
-			DestinationBalance:      destBalance,
-			Amount:                  regources.Amount(oper.Request.Amount),
-			SourcePayForDestination: oper.Request.FeeData.SourcePaysForDest,
-			SourceFee: regources.Fee{
-				CalculatedPercent: regources.Amount(oper.Request.FeeData.SourceFee.Percent),
-				Fixed:             regources.Amount(oper.Request.FeeData.SourceFee.Fixed),
-			},
-			DestinationFee: regources.Fee{
-				CalculatedPercent: regources.Amount(oper.Request.FeeData.DestinationFee.Percent),
-				Fixed:             regources.Amount(oper.Request.FeeData.DestinationFee.Fixed),
-			},
-			Details:  internal.MarshalCustomDetails(oper.Request.CreatorDetails),
-			AllTasks: (*uint32)(oper.AllTasks),
-		},
+		//CreateCloseDeferredPaymentRequest: &history2.CreateCloseDeferredPaymentRequest{
+		//	RequestID:               uint64(oper.RequestId),
+		//	DestinationBalance:      destBalance,
+		//	Amount:                  regources.Amount(oper.Request.Amount),
+		//	SourcePayForDestination: oper.Request.FeeData.SourcePaysForDest,
+		//	SourceFee: regources.Fee{
+		//		CalculatedPercent: regources.Amount(oper.Request.FeeData.SourceFee.Percent),
+		//		Fixed:             regources.Amount(oper.Request.FeeData.SourceFee.Fixed),
+		//	},
+		//	DestinationFee: regources.Fee{
+		//		CalculatedPercent: regources.Amount(oper.Request.FeeData.DestinationFee.Percent),
+		//		Fixed:             regources.Amount(oper.Request.FeeData.DestinationFee.Fixed),
+		//	},
+		//	Details:  internal.MarshalCustomDetails(oper.Request.CreatorDetails),
+		//	AllTasks: (*uint32)(oper.AllTasks),
+		//},
 	}
 
 	return details, nil
