@@ -69,6 +69,15 @@
         explode: false
         schema:
           type: integer
+      - name: filter[request_details.destination]
+        in: query
+        description: |
+          Filters requests by deferred payment destination account
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - name: include
         in: query
         description: |

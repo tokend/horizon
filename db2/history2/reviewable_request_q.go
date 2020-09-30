@@ -180,11 +180,6 @@ func (q ReviewableRequestsQ) FilterByCreateDeferredPaymentDestination(destinatio
 	return q
 }
 
-func (q ReviewableRequestsQ) FilterByCloseDeferredPaymentDestination(destination string) ReviewableRequestsQ {
-	q.selector = q.selector.Where("details#>>'{close_deferred_payment,destination_account}' = ?", destination)
-	return q
-}
-
 func (q ReviewableRequestsQ) FilterByCreatePollVoteConfirmationRequired(voteConfirmationRequired bool) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_poll,vote_confirmation_required}' = ?", voteConfirmationRequired)
 	return q

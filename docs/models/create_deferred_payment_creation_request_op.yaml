@@ -32,19 +32,8 @@ CreateDeferredPaymentCreationRequestOp:
           type: object
           required:
             - amount
-            - source_fee
-            - destination_fee
-            - source_pay_for_destination
-            - details
+            - creator_details
           properties:
-            source_fee:
-              $ref: '#/components/schemas/Fee'
-            destination_fee:
-              $ref: '#/components/schemas/Fee'
-            source_pay_for_destination:
-              type: boolean
-              example: false
-              description: "Whether source of the swap should pay destination fee"
             amount:
               type: string
               format: Amount

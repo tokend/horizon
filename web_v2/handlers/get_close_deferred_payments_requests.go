@@ -51,10 +51,6 @@ type getCloseDeferredPaymentRequestsHandler struct {
 func (h *getCloseDeferredPaymentRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCloseDeferredPaymentRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCloseDeferredPayment))
 
-	if request.Filters.Destination != nil {
-		q = h.RequestsQ.FilterByCloseDeferredPaymentDestination(*request.Filters.Destination)
-	}
-
 	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 

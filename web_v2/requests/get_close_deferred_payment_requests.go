@@ -6,16 +6,9 @@ import (
 	"gitlab.com/distributed_lab/urlval"
 )
 
-const (
-	FilterTypeCloseDeferredPaymentRequestsDestination = "request_details.destination"
-)
-
-var filterTypeCloseDeferredPaymentRequests = map[string]struct{}{
-	FilterTypeCloseDeferredPaymentRequestsDestination: {},
-}
+var filterTypeCloseDeferredPaymentRequests = map[string]struct{}{}
 
 type GetCloseDeferredPaymentRequestsFilter struct {
-	Destination *string `filter:"request_details.destination"`
 }
 
 type GetCloseDeferredPaymentRequests struct {

@@ -417,6 +417,8 @@ gitlab.com/tokend/regources v4.9.1+incompatible h1:4iLZ/SKpzWAGgw1UCvclo66zBwnbJ
 gitlab.com/tokend/regources v4.9.1+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
 gitlab.com/tokend/regources v4.9.2-0.20200918161150-47835a98daca+incompatible h1:97zKKHqOLFm4C2REUysKh9nQ/SJNIn9ubUeuMBL1AzQ=
 gitlab.com/tokend/regources v4.9.2-0.20200918161150-47835a98daca+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
+gitlab.com/tokend/regources v4.9.2-0.20201001084015-29851e5122f3+incompatible h1:/7eqPi4suufSDevAZcWIk787gU5tyjJ4UJZXz08qfO0=
+gitlab.com/tokend/regources v4.9.2-0.20201001084015-29851e5122f3+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/etcd v0.0.0-20191023171146-3cf2f69b5738/go.mod h1:dnLIgRNXwCJa5e+c6mIZCrds/GIG4ncV9HhK5PX7jPg=

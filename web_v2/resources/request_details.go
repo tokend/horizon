@@ -373,35 +373,34 @@ func newDataRemoveRequest(id int64, details history2.DataRemoveRequest) *regourc
 }
 
 func newCloseDeferredPaymentRequest(id int64, details history2.CloseDeferredPayment) *regources.CloseDeferredPaymentRequest {
-	return &regources.CloseDeferredPaymentRequest{
+	result := &regources.CloseDeferredPaymentRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CLOSE_DEFERRED_PAYMENT),
 		Attributes: regources.CloseDeferredPaymentRequestAttributes{
-			Amount:                  details.Amount,
-			CreatorDetails:          &details.Details,
-			SourcePayForDestination: details.SourcePayForDestination,
-			SourceFee:               details.SourceFee,
-			DestinationFee:          details.DestinationFee,
+			Amount:         details.Amount,
+			CreatorDetails: details.Details,
 		},
 		Relationships: regources.CloseDeferredPaymentRequestRelationships{
 			DeferredPayment: regources.NewKeyInt64(int64(details.DeferredPaymentID), regources.DEFERRED_PAYMENTS).
 				AsRelation(),
-			DestinationBalance: regources.Key{
-				ID:   details.DestinationBalance,
-				Type: regources.BALANCES,
-			}.AsRelation(),
 		},
 	}
+
+	switch details.Destination.Type {
+	case xdr.CloseDeferredPaymentDestinationTypeBalance:
+		result.Relationships.DestinationBalance = NewBalanceKey(*details.Destination.Balance).AsRelation()
+	case xdr.CloseDeferredPaymentDestinationTypeAccount:
+		result.Relationships.DestinationAccount = NewAccountKey(*details.Destination.Account).AsRelation()
+	}
+
+	return result
 }
 
 func newCreateDeferredPaymentRequest(id int64, details history2.CreateDeferredPayment) *regources.CreateDeferredPaymentRequest {
 	return &regources.CreateDeferredPaymentRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CREATE_DEFERRED_PAYMENT),
 		Attributes: regources.CreateDeferredPaymentRequestAttributes{
-			Amount:                  details.Amount,
-			CreatorDetails:          &details.Details,
-			SourcePayForDestination: details.SourcePayForDestination,
-			SourceFee:               details.SourceFee,
-			DestinationFee:          details.DestinationFee,
+			Amount:         details.Amount,
+			CreatorDetails: details.Details,
 		},
 		Relationships: regources.CreateDeferredPaymentRequestRelationships{
 			DestinationAccount: regources.Key{

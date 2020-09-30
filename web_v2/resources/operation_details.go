@@ -999,7 +999,7 @@ func newCreateDeferredPaymentCreationRequestOp(op history2.Operation) regources.
 		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_DEFERRED_PAYMENT_CREATION_REQUEST),
 		Attributes: regources.CreateDeferredPaymentCreationRequestOpAttributes{
 			Amount:         body.Amount,
-			CreatorDetails: &body.Details,
+			CreatorDetails: body.Details,
 		},
 		Relationships: regources.CreateDeferredPaymentCreationRequestOpRelationships{
 			DestinationAccount: NewAccountKey(body.DestinationAccount).AsRelation(),
@@ -1015,7 +1015,7 @@ func newCreateCloseDeferredPaymentRequestOp(op history2.Operation) regources.Res
 		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_CLOSE_DEFERRED_PAYMENT_REQUEST),
 		Attributes: regources.CreateCloseDeferredPaymentRequestOpAttributes{
 			Amount:         body.Amount,
-			CreatorDetails: &body.Details,
+			CreatorDetails: body.Details,
 		},
 		Relationships: regources.CreateCloseDeferredPaymentRequestOpRelationships{
 			DestinationBalance: NewBalanceKey(body.DestinationBalance).AsRelation(),

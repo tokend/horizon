@@ -45,7 +45,7 @@ require (
 	gitlab.com/distributed_lab/urlval v2.2.0+incompatible
 	gitlab.com/tokend/go v3.13.1-0.20200928125835-32df2e4a6022+incompatible
 	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
-	gitlab.com/tokend/regources v4.9.2-0.20200918161150-47835a98daca+incompatible
+	gitlab.com/tokend/regources v4.9.2-0.20201001084015-29851e5122f3+incompatible
 	golang.org/x/net v0.0.0-20200927032502-5d4f70055728
 	gopkg.in/throttled/throttled.v2 v2.6.0
 	gopkg.in/tylerb/graceful.v1 v1.2.15

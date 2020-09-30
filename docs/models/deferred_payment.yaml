@@ -20,16 +20,12 @@ DeferredPayment:
       properties:
         attributes:
           type: object
-          required: [details, amount, source_fee, destination_fee]
+          required: [details, amount]
           properties:
             amount:
               type: string
               format: Amount
               example: "123.123456"
-            source_fee:
-              $ref: '#/components/schemas/Fee'
-            destination_fee:
-              $ref: '#/components/schemas/Fee'
             details:
               $ref: '#/components/schemas/Details'
               description: "free-form object to attach details to the deferredPayment"

@@ -5,8 +5,6 @@
 package regources
 
 type DeferredPaymentAttributes struct {
-	Amount         Amount  `json:"amount"`
-	DestinationFee Fee     `json:"destination_fee"`
-	Details        Details `json:"details"`
-	SourceFee      Fee     `json:"source_fee"`
+	Amount  Amount  `json:"amount"`
+	Details Details `json:"details"`
 }
