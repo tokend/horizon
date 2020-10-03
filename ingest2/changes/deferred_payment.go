@@ -55,6 +55,7 @@ func (h *deferredPaymentHandler) convertDeferredPayment(raw xdr.DeferredPaymentE
 	return history.DeferredPayment{
 		ID:                 int64(raw.Id),
 		Amount:             regources.Amount(raw.Amount),
+		Details:            []byte(raw.Details),
 		SourceAccount:      raw.Source.Address(),
 		SourceBalance:      raw.SourceBalance.AsString(),
 		DestinationAccount: raw.Destination.Address(),
