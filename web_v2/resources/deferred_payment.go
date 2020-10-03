@@ -12,6 +12,10 @@ func NewDeferredPaymentKey(ID int64) regources.Key {
 func NewDeferredPayment(record history2.DeferredPayment) regources.DeferredPayment {
 	return regources.DeferredPayment{
 		Key: NewDeferredPaymentKey(record.ID),
+		Attributes: regources.DeferredPaymentAttributes{
+			Amount:  record.Amount,
+			Details: regources.Details(record.Details),
+		},
 		Relationships: regources.DeferredPaymentRelationships{
 			Destination:   NewAccountKey(record.DestinationAccount).AsRelation(),
 			Source:        NewAccountKey(record.SourceAccount).AsRelation(),
