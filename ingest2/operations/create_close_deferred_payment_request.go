@@ -15,17 +15,21 @@ type createCloseDeferredPaymentRequestOpHandler struct {
 func (h *createCloseDeferredPaymentRequestOpHandler) Details(op rawOperation, opRes xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	oper := op.Body.MustCreateCloseDeferredPaymentRequestOp()
-	operRes := opRes.MustCreateCloseDeferredPaymentRequestResult().MustSuccess()
 	details := history2.OperationDetails{
 		Type: xdr.OperationTypeCreateCloseDeferredPaymentRequest,
 		CreateCloseDeferredPaymentRequest: &history2.CreateCloseDeferredPaymentRequest{
-			RequestID:          uint64(oper.RequestId),
-			DestinationBalance: operRes.ExtendedResult.DestinationBalance.AsString(),
-			DestinationAccount: operRes.ExtendedResult.Destination.Address(),
-			Amount:             regources.Amount(oper.Request.Amount),
-			Details:            internal.MarshalCustomDetails(oper.Request.CreatorDetails),
-			AllTasks:           (*uint32)(oper.AllTasks),
+			RequestID: uint64(oper.RequestId),
+			Amount:    regources.Amount(oper.Request.Amount),
+			Details:   internal.MarshalCustomDetails(oper.Request.CreatorDetails),
+			AllTasks:  (*uint32)(oper.AllTasks),
 		},
+	}
+
+	switch oper.Request.Destination.Type {
+	case xdr.CloseDeferredPaymentDestinationTypeAccount:
+		details.CreateCloseDeferredPaymentRequest.DestinationAccount = oper.Request.Destination.AccountId.Address()
+	case xdr.CloseDeferredPaymentDestinationTypeBalance:
+		details.CreateCloseDeferredPaymentRequest.DestinationBalance = oper.Request.Destination.BalanceId.AsString()
 	}
 
 	return details, nil
