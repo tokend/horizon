@@ -308,6 +308,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/create_deferred_payments_requests", handlers.GetCreateDeferredPaymentRequests)
 	m.Get("/v3/create_deferred_payments_requests/{id}", handlers.GetCreateDeferredPaymentRequests)
 
+	m.Get("/v3/create_close_deferred_payments_requests", handlers.GetCloseDeferredPaymentRequests)
+	m.Get("/v3/create_close_deferred_payments_requests/{id}", handlers.GetCloseDeferredPaymentRequests)
+
 	m.Get("/v3/data_update_requests", handlers.GetDataUpdateRequests)
 	m.Get("/v3/data_update_requests/{id}", handlers.GetDataUpdateRequests)
 
