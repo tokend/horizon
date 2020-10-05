@@ -19,6 +19,7 @@ type DeferredPayment struct {
 func NewDeferredPayment(repo *pgdb.DB) *DeferredPayment {
 	return &DeferredPayment{
 		repo:    repo,
+		q:       history2.NewDeferredPaymentQ(repo),
 		updater: sq.Update("deferred_payments"),
 	}
 }
