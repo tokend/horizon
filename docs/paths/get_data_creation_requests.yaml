@@ -4,7 +4,7 @@
       - Data
     summary: Data Creation Request List
     description: |
-      Allows getting a filtered list of `Redemption` with details\n
+      Allows getting a filtered list of data creation requests with details\n
       🔒 Requestor's or reviewer's signature is needed
     operationId: getRedemptionRequests
     parameters:
