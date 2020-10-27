@@ -1,12 +1,12 @@
-/v3/data_creation_requests:
+/v3/data_remove_requests:
   get:
     tags:
       - Data
-    summary: Data Creation Request List
+    summary: Data Remove Request List
     description: |
-      Allows getting a filtered list of data creation requests with details\n
+      Allows getting a filtered list of data remove requests with details\n
       🔒 Requestor's or reviewer's signature is needed
-    operationId: getDataCreateRequests
+    operationId: getDataRemoveRequests
     parameters:
       - name: filter[requestor]
         in: query
@@ -104,7 +104,7 @@
                   items:
                     type: object
                     anyOf:
-                      - $ref: '#/components/schemas/DataCreationRequest'
+                      - $ref: '#/components/schemas/DataRemoveRequest'
                 links:
                   type: object
                   description: "Provides links for pagination"
