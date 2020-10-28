@@ -2,7 +2,7 @@
   get:
     tags:
       - DeferredPayments
-    summary: CreateDeferredPayment Request List
+    summary: CreateDeferredPayment Request by ID
     description: |
       Allows getting a filtered list of `CreateDeferredPayment` with details\n
       🔒 Requestor's or reviewer's signature is needed

@@ -2,7 +2,7 @@
   get:
     tags:
       - DeferredPayments
-    summary: CloseDeferredPayment Request List
+    summary: CloseDeferredPayment Request by ID
     description: |
       Allows getting a filtered list of `CloseDeferredPayment` with details\n
       🔒 Requestor's or reviewer's signature is needed
