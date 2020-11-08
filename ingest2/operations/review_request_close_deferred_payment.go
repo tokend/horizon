@@ -17,7 +17,7 @@ func (h *closeDeferredPaymentHandler) Fulfilled(details requestDetails) ([]histo
 	funded := h.effectsProvider.BalanceEffect(res.DestinationBalance,
 		&history2.Effect{
 			Type: history2.EffectTypeFunded,
-			Unlocked: &history2.BalanceChangeEffect{
+			Funded: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(closeDeferredPaymentRequest.Amount),
 			},
 		})
@@ -29,7 +29,7 @@ func (h *closeDeferredPaymentHandler) Fulfilled(details requestDetails) ([]histo
 	charged := h.effectsProvider.BalanceEffect(sb,
 		&history2.Effect{
 			Type: history2.EffectTypeChargedFromLocked,
-			Unlocked: &history2.BalanceChangeEffect{
+			ChargedFromLocked: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(closeDeferredPaymentRequest.Amount),
 			},
 		})
