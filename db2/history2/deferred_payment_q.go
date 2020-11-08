@@ -14,6 +14,7 @@ var deferredPaymentColumns = []string{
 	"source_account",
 	"source_balance",
 	"destination_account",
+	"state",
 }
 
 // DeferredPaymentQ is a helper struct to aid in configuring queries that loads deferredPayments
@@ -32,6 +33,7 @@ func NewDeferredPaymentQ(repo *pgdb.DB) DeferredPaymentQ {
 			"deferred_payments.source_account",
 			"deferred_payments.source_balance",
 			"deferred_payments.destination_account",
+			"deferred_payments.state",
 		).From("deferred_payments deferred_payments"),
 	}
 }
