@@ -11,7 +11,7 @@ import (
 type deferredPaymentStorage interface {
 	Insert(deferredPayment history.DeferredPayment) error
 	Update(deferredPayment history.DeferredPayment) error
-	Remove(deferredPaymentID int64) error
+	UpdateState(id int64, state history.DeferredPaymentState) error
 }
 
 type deferredPaymentHandler struct {
@@ -44,7 +44,7 @@ func (h *deferredPaymentHandler) Updated(lc ledgerChange) error {
 
 func (h *deferredPaymentHandler) Removed(lc ledgerChange) error {
 	id := lc.LedgerChange.MustRemoved().MustDeferredPayment().Id
-	if err := h.storage.Remove(int64(id)); err != nil {
+	if err := h.storage.UpdateState(int64(id), history.DeferredPaymentStateClosed); err != nil {
 		return errors.Wrap(err, "failed to remove deferredPayment by id")
 	}
 
@@ -59,5 +59,6 @@ func (h *deferredPaymentHandler) convertDeferredPayment(raw xdr.DeferredPaymentE
 		SourceAccount:      raw.Source.Address(),
 		SourceBalance:      raw.SourceBalance.AsString(),
 		DestinationAccount: raw.Destination.Address(),
+		State:              history.DeferredPaymentStateOpen,
 	}
 }

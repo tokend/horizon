@@ -15,6 +15,8 @@ func NewDeferredPayment(record history2.DeferredPayment) regources.DeferredPayme
 		Attributes: regources.DeferredPaymentAttributes{
 			Amount:  record.Amount,
 			Details: regources.Details(record.Details),
+			StateI:  int32(record.State),
+			State:   record.State.String(),
 		},
 		Relationships: regources.DeferredPaymentRelationships{
 			Destination:   NewAccountKey(record.DestinationAccount).AsRelation(),

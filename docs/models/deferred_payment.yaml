@@ -20,8 +20,20 @@ DeferredPayment:
       properties:
         attributes:
           type: object
-          required: [details, amount]
+          required:
+            - details
+            - amount
+            - state
+            - state_i
           properties:
+            state:
+              type: string
+              description: "String representation of the payment state"
+              example: "pending"
+            state_i:
+              type: integer
+              description: "Integer representation of the payment state"
+              example: 0
             amount:
               type: string
               format: Amount

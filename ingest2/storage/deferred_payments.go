@@ -65,13 +65,14 @@ func (q *DeferredPayment) Update(deferredPayment history2.DeferredPayment) error
 	return nil
 }
 
-// Remove - removes existing deferredPayment
-func (q *DeferredPayment) Remove(deferredPaymentID int64) error {
-	sql := sq.Delete("deferred_payments").Where(sq.Eq{"id": deferredPaymentID})
+func (q *DeferredPayment) UpdateState(id int64, state history2.DeferredPaymentState) error {
+	sql := sq.Update("deferred_payments").
+		Set("state", state).
+		Where(sq.Eq{"id": id})
 
 	err := q.repo.Exec(sql)
 	if err != nil {
-		return errors.Wrap(err, "failed to remove deferredPayment", logan.F{"deferredPayment_id": deferredPaymentID})
+		return errors.Wrap(err, "failed to update deferredPayment", logan.F{"deferredPayment_id": id})
 	}
 
 	return nil

@@ -8,6 +8,7 @@ create table deferred_payments
     source_account VARCHAR(56) not null,
     source_balance VARCHAR(56) not null,
     destination_account VARCHAR(56) not null,
+    state int not null,
     primary key (id)
 );
 
