@@ -34,10 +34,15 @@ func (q *DeferredPayment) Insert(deferredPayment history2.DeferredPayment) error
 			"source_account",
 			"source_balance",
 			"destination_account",
+			"state",
 		).
 		Values(
-			deferredPayment.ID, deferredPayment.Amount, deferredPayment.SourceAccount,
-			deferredPayment.SourceBalance, deferredPayment.DestinationAccount,
+			deferredPayment.ID,
+			deferredPayment.Amount,
+			deferredPayment.SourceAccount,
+			deferredPayment.SourceBalance,
+			deferredPayment.DestinationAccount,
+			deferredPayment.State,
 		)
 
 	err := q.repo.Exec(sql)
