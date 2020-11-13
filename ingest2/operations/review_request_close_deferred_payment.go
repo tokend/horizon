@@ -14,6 +14,24 @@ type closeDeferredPaymentHandler struct {
 func (h *closeDeferredPaymentHandler) Fulfilled(details requestDetails) ([]history2.ParticipantEffect, error) {
 	closeDeferredPaymentRequest := details.Request.Body.MustCloseDeferredPaymentRequest()
 	res := details.Result.TypeExt.MustCloseDeferredPaymentResult()
+
+	dp := h.MustDeferredPayment(int64(closeDeferredPaymentRequest.DeferredPaymentId))
+	var sb xdr.BalanceId
+	sb.SetString(dp.SourceBalance)
+
+	// just unlock funds if deferred payment has been returned to the source balance
+	if res.DestinationBalance.Equals(sb) {
+		unlocked := h.effectsProvider.BalanceEffect(sb,
+			&history2.Effect{
+				Type: history2.EffectTypeUnlocked,
+				Unlocked: &history2.BalanceChangeEffect{
+					Amount: regources.Amount(closeDeferredPaymentRequest.Amount),
+				},
+			})
+
+		return []history2.ParticipantEffect{unlocked}, nil
+	}
+
 	funded := h.effectsProvider.BalanceEffect(res.DestinationBalance,
 		&history2.Effect{
 			Type: history2.EffectTypeFunded,
@@ -22,10 +40,6 @@ func (h *closeDeferredPaymentHandler) Fulfilled(details requestDetails) ([]histo
 			},
 		})
 
-	dp := h.MustDeferredPayment(int64(closeDeferredPaymentRequest.DeferredPaymentId))
-	var sb xdr.BalanceId
-	sb.SetString(dp.SourceBalance)
-
 	charged := h.effectsProvider.BalanceEffect(sb,
 		&history2.Effect{
 			Type: history2.EffectTypeChargedFromLocked,
@@ -33,6 +47,7 @@ func (h *closeDeferredPaymentHandler) Fulfilled(details requestDetails) ([]histo
 				Amount: regources.Amount(closeDeferredPaymentRequest.Amount),
 			},
 		})
+
 	return []history2.ParticipantEffect{funded, charged}, nil
 }
 
