@@ -8,7 +8,7 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
-// CreateDeferredPayment is helper struct to operate with `deferredPayments`
+// DeferredPayment is helper struct to operate with `deferredPayments`
 type DeferredPayment struct {
 	repo    *pgdb.DB
 	q       history2.DeferredPaymentQ
@@ -26,11 +26,11 @@ func NewDeferredPayment(repo *pgdb.DB) *DeferredPayment {
 
 // Insert - inserts new deferredPayment
 func (q *DeferredPayment) Insert(deferredPayment history2.DeferredPayment) error {
-
 	sql := sq.Insert("deferred_payments").
 		Columns(
 			"id",
 			"amount",
+			"details",
 			"source_account",
 			"source_balance",
 			"destination_account",
@@ -39,6 +39,7 @@ func (q *DeferredPayment) Insert(deferredPayment history2.DeferredPayment) error
 		Values(
 			deferredPayment.ID,
 			deferredPayment.Amount,
+			deferredPayment.Details,
 			deferredPayment.SourceAccount,
 			deferredPayment.SourceBalance,
 			deferredPayment.DestinationAccount,

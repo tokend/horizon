@@ -23,13 +23,13 @@ type balanceProvider interface {
 
 //go:generate mockery -case underscore -name swapProvider -inpkg -testonly
 type swapProvider interface {
-	// MustBalance returns history balance struct for specific balance id
+	// MustSwap returns history swap struct for specific swap id
 	MustSwap(id int64) history2.Swap
 }
 
 //go:generate mockery -case underscore -name swapProvider -inpkg -testonly
 type defPaymentProvider interface {
-	// MustBalance returns history balance struct for specific balance id
+	// MustDeferredPayment returns history deferredPayment struct for specific deferredPayment id
 	MustDeferredPayment(id int64) history2.DeferredPayment
 }
 

@@ -30,6 +30,7 @@ func NewDeferredPaymentQ(repo *pgdb.DB) DeferredPaymentQ {
 		selector: sq.Select(
 			"deferred_payments.id",
 			"deferred_payments.amount",
+			"deferred_payments.details",
 			"deferred_payments.source_account",
 			"deferred_payments.source_balance",
 			"deferred_payments.destination_account",
@@ -38,7 +39,7 @@ func NewDeferredPaymentQ(repo *pgdb.DB) DeferredPaymentQ {
 	}
 }
 
-// GetByCode - get deferredPayment by code
+// GetByID - get deferredPayment by ID
 func (q DeferredPaymentQ) GetByID(id int64) (*DeferredPayment, error) {
 	q.selector = q.selector.Where(sq.Eq{"deferred_payments.id": id})
 	return q.Get()
