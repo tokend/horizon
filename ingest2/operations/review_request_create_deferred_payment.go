@@ -15,12 +15,14 @@ func (h *createDeferredPaymentHandler) Fulfilled(details requestDetails) ([]hist
 
 func (h *createDeferredPaymentHandler) PermanentReject(details requestDetails) ([]history2.ParticipantEffect, error) {
 	createDeferredPaymentRequest := details.Request.Body.MustCreateDeferredPaymentRequest()
-	unlock := h.effectsProvider.BalanceEffect(createDeferredPaymentRequest.SourceBalance,
+
+	unlocked := h.effectsProvider.BalanceEffect(createDeferredPaymentRequest.SourceBalance,
 		&history2.Effect{
 			Type: history2.EffectTypeUnlocked,
 			Unlocked: &history2.BalanceChangeEffect{
 				Amount: regources.Amount(createDeferredPaymentRequest.Amount),
 			},
 		})
-	return []history2.ParticipantEffect{unlock}, nil
+
+	return []history2.ParticipantEffect{unlocked}, nil
 }

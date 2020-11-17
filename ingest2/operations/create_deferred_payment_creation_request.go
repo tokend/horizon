@@ -30,9 +30,19 @@ func (h *createDeferredPaymentCreationRequestOpHandler) Details(op rawOperation,
 	return details, nil
 }
 
-// ParticipantsEffects returns `funded` and `charged` effects
+// ParticipantsEffects returns `locked` effect
 func (h *createDeferredPaymentCreationRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{h.Participant(sourceAccountID)}, nil
+	oper := opBody.MustCreateDeferredPaymentCreationRequestOp().Request
+
+	locked := h.effectsProvider.BalanceEffect(oper.SourceBalance,
+		&history2.Effect{
+			Type: history2.EffectTypeLocked,
+			Locked: &history2.BalanceChangeEffect{
+				Amount: regources.Amount(oper.Amount),
+			},
+		})
+
+	return []history2.ParticipantEffect{locked}, nil
 }
