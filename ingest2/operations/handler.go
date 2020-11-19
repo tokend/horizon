@@ -221,6 +221,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			},
 			xdr.OperationTypeCreateCloseDeferredPaymentRequest: &createCloseDeferredPaymentRequestOpHandler{
 				effectsBaseHandler,
+				defPayments,
 			},
 			xdr.OperationTypeCancelCloseDeferredPaymentRequest: &cancelCloseDeferredPaymentRequestOpHandler{
 				effectsBaseHandler,

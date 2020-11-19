@@ -8,15 +8,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-var deferredPaymentColumns = []string{
-	"id",
-	"amount",
-	"source_account",
-	"source_balance",
-	"destination_account",
-	"state",
-}
-
 // DeferredPaymentQ is a helper struct to aid in configuring queries that loads deferredPayments
 type DeferredPaymentQ struct {
 	repo     *pgdb.DB

@@ -9,6 +9,7 @@ import (
 
 type createCloseDeferredPaymentRequestOpHandler struct {
 	effectsProvider
+	defPaymentProvider
 }
 
 // Details returns details about manage balance operation
@@ -39,5 +40,46 @@ func (h *createCloseDeferredPaymentRequestOpHandler) Details(op rawOperation, op
 func (h *createCloseDeferredPaymentRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{h.Participant(sourceAccountID)}, nil
+	requestResult := opRes.MustCreateCloseDeferredPaymentRequestResult().MustSuccess()
+
+	if !requestResult.Fulfilled {
+		return []history2.ParticipantEffect{h.Participant(sourceAccountID)}, nil
+	}
+
+	closeRequest := opBody.MustCreateCloseDeferredPaymentRequestOp().Request
+
+	dp := h.MustDeferredPayment(int64(requestResult.DeferredPaymentId))
+	var sb xdr.BalanceId
+	sb.SetString(dp.SourceBalance)
+
+	// just unlock funds if deferred payment has been returned to the source balance
+	if requestResult.ExtendedResult.DestinationBalance.Equals(sb) {
+		unlocked := h.effectsProvider.BalanceEffect(sb,
+			&history2.Effect{
+				Type: history2.EffectTypeUnlocked,
+				Unlocked: &history2.BalanceChangeEffect{
+					Amount: regources.Amount(closeRequest.Amount),
+				},
+			})
+
+		return []history2.ParticipantEffect{unlocked}, nil
+	}
+	
+	funded := h.effectsProvider.BalanceEffect(requestResult.ExtendedResult.DestinationBalance,
+		&history2.Effect{
+			Type: history2.EffectTypeFunded,
+			Funded: &history2.BalanceChangeEffect{
+				Amount: regources.Amount(closeRequest.Amount),
+			},
+		})
+
+	charged := h.effectsProvider.BalanceEffect(sb,
+		&history2.Effect{
+			Type: history2.EffectTypeChargedFromLocked,
+			ChargedFromLocked: &history2.BalanceChangeEffect{
+				Amount: regources.Amount(closeRequest.Amount),
+			},
+		})
+
+	return []history2.ParticipantEffect{funded, charged}, nil
 }

@@ -23,7 +23,7 @@ func (h *cancelDeferredPaymentCreationRequestOpHandler) Details(op rawOperation,
 	return details, nil
 }
 
-// ParticipantsEffects returns `funded` and `charged` effects
+// ParticipantsEffects returns `unlocked` effect
 func (h *cancelDeferredPaymentCreationRequestOpHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
