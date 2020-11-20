@@ -24,6 +24,12 @@ type participantEffectsStorage interface {
 	Insert(participants []history2.ParticipantEffect) error
 }
 
+//go:generate mockery -case underscore -name reviewableRequestsStorage -inpkg -testonly
+type reviewableRequestsStorage interface {
+	// GetByID returns nil, nil - if request does not exists
+	GetByID(id uint64) (*history2.ReviewableRequest, error)
+}
+
 //Handler - handles txs to create operation details and participant effects. Routes operation
 // to particular implementation of handler
 type Handler struct {
@@ -36,7 +42,8 @@ type Handler struct {
 // NewOperationsHandler returns new handler which can return
 // details and participants effects of certain operation
 func NewOperationsHandler(operationsStorage operationsStorage, participantEffectsStorage participantEffectsStorage,
-	pubKeyProvider IDProvider, balanceProvider balanceProvider, swapProvider swapProvider, defPayments defPaymentProvider) *Handler {
+	pubKeyProvider IDProvider, balanceProvider balanceProvider, swapProvider swapProvider,
+	defPayments defPaymentProvider, reviewableRequests reviewableRequestsStorage) *Handler {
 
 	effectsBaseHandler := effectsProvider{
 		IDProvider:      pubKeyProvider,
@@ -45,6 +52,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 	manageOfferOpHandlerInst := &manageOfferOpHandler{
 		effectsProvider: effectsBaseHandler,
 	}
+
 	return &Handler{
 		pubKeyProvider:            pubKeyProvider,
 		participantEffectsStorage: participantEffectsStorage,
@@ -228,6 +236,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			},
 			xdr.OperationTypeCancelDeferredPaymentCreationRequest: &cancelDeferredPaymentCreationRequestOpHandler{
 				effectsBaseHandler,
+				reviewableRequests,
 			},
 		},
 	}
