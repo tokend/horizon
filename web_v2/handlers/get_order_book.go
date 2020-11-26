@@ -129,6 +129,7 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 	}
 
 	for _, coreBuyEntry := range coreBuyEntries {
+		setPoints(&coreBuyEntry)
 		entry := resources.NewOrderBookEntry(coreBuyEntry)
 		response.Data.Relationships.BuyEntries.Data = append(response.Data.Relationships.BuyEntries.Data, entry.Key)
 
