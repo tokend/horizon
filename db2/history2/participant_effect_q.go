@@ -50,6 +50,12 @@ func (q ParticipantEffectsQ) ForBalance(id uint64) ParticipantEffectsQ {
 	return q
 }
 
+//ForEffect - adds filter by effectType
+func (q ParticipantEffectsQ) ForEffect(id EffectType) ParticipantEffectsQ {
+	q.selector = q.selector.Where("effects.effect_type = ?", id)
+	return q
+}
+
 //ForAsset - adds filter by asset
 func (q ParticipantEffectsQ) ForAsset(asset string) ParticipantEffectsQ {
 	q.selector = q.selector.Where("effects.asset_code = ?", asset)

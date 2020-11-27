@@ -23,6 +23,8 @@ const (
 	FilterTypeHistoryBalance = "balance"
 	// FilterTypeHistoryAsset - defines if we need to filter the list by asset
 	FilterTypeHistoryAsset = "asset"
+	// FilterTypeEffect - defines if we need to filter the list by effect type
+	FilterTypeHistoryEffectType = "effect"
 	// FilterTypeHistoryIDs
 	FilterTypeHistoryIDs = "id"
 )
@@ -32,9 +34,10 @@ type GetHistory struct {
 	*base
 	PageParams pgdb.CursorPageParams
 	Filters    struct {
-		Account *string `filter:"account"`
-		Balance *string `filter:"balance"`
-		Asset   *string `filter:"asset"`
+		Account    *string `filter:"account"`
+		Balance    *string `filter:"balance"`
+		Asset      *string `filter:"asset"`
+		EffectType *string `filter:"effect"`
 	}
 	Includes struct {
 		Operation        bool `include:"operation"`
@@ -54,9 +57,10 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 			IncludeTypeHistoryAsset:            {},
 		},
 		supportedFilters: map[string]struct{}{
-			FilterTypeHistoryAccount: {},
-			FilterTypeHistoryBalance: {},
-			FilterTypeHistoryAsset:   {},
+			FilterTypeHistoryAccount:    {},
+			FilterTypeHistoryBalance:    {},
+			FilterTypeHistoryAsset:      {},
+			FilterTypeHistoryEffectType: {},
 		},
 	})
 	if err != nil {
