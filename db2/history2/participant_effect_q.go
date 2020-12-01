@@ -51,8 +51,8 @@ func (q ParticipantEffectsQ) ForBalance(id uint64) ParticipantEffectsQ {
 }
 
 //ForEffect - adds filter by effectType
-func (q ParticipantEffectsQ) ForEffect(id EffectType) ParticipantEffectsQ {
-	q.selector = q.selector.Where("effects.effect_type = ?", id)
+func (q ParticipantEffectsQ) ForEffect(types []int64) ParticipantEffectsQ {
+	q.selector = q.selector.Where(sq.Eq{"(effect->>'type')::integer": types})
 	return q
 }
 

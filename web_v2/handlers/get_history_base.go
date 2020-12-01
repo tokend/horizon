@@ -1,13 +1,9 @@
 package handlers
 
 import (
-	"net/http"
-	"strconv"
-	"strings"
-
-	"gitlab.com/tokend/horizon/db2/core2"
-
 	validation "github.com/go-ozzo/ozzo-validation"
+	"gitlab.com/tokend/horizon/db2/core2"
+	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -31,7 +27,6 @@ type getHistory struct {
 	EffectsQ    history2.ParticipantEffectsQ
 	AccountsQ   history2.AccountsQ
 	BalanceQ    history2.BalancesQ
-	EffectTypeQ history2.EffectQ
 	Log         *logan.Entry
 }
 
@@ -57,37 +52,6 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 	}
 
 	// TODO: need to refactor
-	if request.Filters.EffectType != nil {
-		effectTypesStr := strings.Split(*request.Filters.EffectType, " ")
-		effectTypesInt := make([]int64, len(effectTypesStr))
-		for i, effect := range effectTypesStr {
-			effectTypesInt[i], err = strconv.ParseInt(effect, 10, 64)
-			if err != nil {
-				ctx.Log(r).WithError(err).Error("failed to parse int", logan.F{
-					"EffectType:": effect,
-				})
-				ape.RenderErr(w, problems.InternalError())
-				return nil, false
-			}
-		}
-
-		h.Effect, err = h.EffectTypeQ.FilterByTypes(effectTypesInt)
-		if err != nil {
-			ctx.Log(r).WithError(err).Error("failed to get effect", logan.F{
-				"account_EffectType": request.Filters.EffectType,
-			})
-			ape.RenderErr(w, problems.InternalError())
-			return nil, false
-		}
-
-		if h.Effect == nil {
-			ape.RenderErr(w, problems.BadRequest(validation.Errors{
-				"filter[effect]": errors.New("not found"),
-			})...)
-			return nil, false
-		}
-	}
-
 	if request.Filters.Account != nil {
 		h.Account, err = h.AccountsQ.ByAddress(*request.Filters.Account)
 		if err != nil {
@@ -168,8 +132,8 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 		q = q.ForAsset(h.Asset.Code)
 	}
 
-	if h.Effect != nil {
-		q = q.ForEffect(h.Effect.Type)
+	if request.Filters.EffectType != nil {
+		q = q.ForEffect(history2.StrToInt64(request.Filters.EffectType))
 	}
 
 	return q
