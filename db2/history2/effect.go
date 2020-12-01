@@ -29,17 +29,6 @@ const (
 	EffectTypeMatched
 )
 
-var Int64Type = map[string]int64 {
-	"1" : 1,
-	"2" : 2,
-	"3" : 3,
-	"4" : 4,
-	"5" : 5,
-	"6" : 6,
-	"7" : 7,
-	"8" : 8,
-}
-
 // Effect stores the details of the operation effect on balance in union switch form. Only one value should be selected
 // Effect should never store more than one change to the account or balance
 type Effect struct {
@@ -53,14 +42,6 @@ type Effect struct {
 	Unlocked          *BalanceChangeEffect `json:"unlocked,omitempty"`
 	ChargedFromLocked *BalanceChangeEffect `json:"charged_from_locked,omitempty"`
 	Matched           *MatchEffect         `json:"matched,omitempty"`
-}
-
-func StrToInt64(t []string) []int64 {
-	EffectTypeInt64 := make([]int64, len(t))
-	for i, _ := range t {
-		EffectTypeInt64[i] = Int64Type[t[i]]
-	}
-	return EffectTypeInt64
 }
 
 //Value - converts effect into jsonb

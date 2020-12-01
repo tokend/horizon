@@ -133,7 +133,7 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 	}
 
 	if request.Filters.EffectType != nil {
-		q = q.ForEffect(history2.StrToInt64(request.Filters.EffectType))
+		q = q.ForEffect(request.Filters.EffectType)
 	}
 
 	return q

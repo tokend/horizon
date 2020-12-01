@@ -37,7 +37,7 @@ type GetHistory struct {
 		Account    *string `filter:"account"`
 		Balance    *string `filter:"balance"`
 		Asset      *string `filter:"asset"`
-		EffectType []string `filter:"effect"`
+		EffectType []int64 `filter:"effect"`
 	}
 	Includes struct {
 		Operation        bool `include:"operation"`
