@@ -7,6 +7,15 @@
       Allows to get a filtered list of participants effects
     operationId: getHistory
     parameters:
+      - name: filter[effect]
+        in: query
+        description: |
+          Filter by effect type
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - name: filter[account]
         in: query
         description: |

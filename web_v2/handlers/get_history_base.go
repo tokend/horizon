@@ -3,9 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2/core2"
-
 	validation "github.com/go-ozzo/ozzo-validation"
+	"gitlab.com/tokend/horizon/db2/core2"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -131,6 +130,14 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 
 	if h.Asset != nil {
 		q = q.ForAsset(h.Asset.Code)
+	}
+
+	if len(request.Filters.EffectType) > 0 {
+		effects := make([]history2.EffectType, len(request.Filters.EffectType))
+		for i, effect := range request.Filters.EffectType {
+			effects[i] = resources.EffectTypeFromString(regources.ResourceType(effect))
+		}
+		q = q.ForEffect(effects...)
 	}
 
 	return q

@@ -2,6 +2,7 @@ package history2
 
 import (
 	"database/sql"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -47,6 +48,12 @@ func (q ParticipantEffectsQ) WithAccount() ParticipantEffectsQ {
 //ForBalance - adds filter by balance ID
 func (q ParticipantEffectsQ) ForBalance(id uint64) ParticipantEffectsQ {
 	q.selector = q.selector.Where("effects.balance_id = ?", id)
+	return q
+}
+
+//ForEffect - adds filter by effectType
+func (q ParticipantEffectsQ) ForEffect(types ...EffectType) ParticipantEffectsQ {
+	q.selector = q.selector.Where(sq.Eq{"(effect->>'type')::integer": types})
 	return q
 }
 
