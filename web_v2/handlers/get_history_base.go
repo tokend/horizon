@@ -1,9 +1,10 @@
 package handlers
 
 import (
+	"net/http"
+
 	validation "github.com/go-ozzo/ozzo-validation"
 	"gitlab.com/tokend/horizon/db2/core2"
-	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -18,16 +19,15 @@ import (
 
 type getHistory struct {
 	// cached filter entries
-	Account     *history2.Account
-	Balance     *history2.Balance
-	Asset       *core2.Asset
-	Effect  *history2.Effect
+	Account *history2.Account
+	Balance *history2.Balance
+	Asset   *core2.Asset
 
-	AssetsQ     core2.AssetsQ
-	EffectsQ    history2.ParticipantEffectsQ
-	AccountsQ   history2.AccountsQ
-	BalanceQ    history2.BalancesQ
-	Log         *logan.Entry
+	AssetsQ   core2.AssetsQ
+	EffectsQ  history2.ParticipantEffectsQ
+	AccountsQ history2.AccountsQ
+	BalanceQ  history2.BalancesQ
+	Log       *logan.Entry
 }
 
 func newHistoryHandler(r *http.Request) getHistory {
@@ -132,8 +132,12 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 		q = q.ForAsset(h.Asset.Code)
 	}
 
-	if request.Filters.EffectType != nil {
-		q = q.ForEffect(request.Filters.EffectType)
+	if len(request.Filters.EffectType) > 0 {
+		effects := make([]history2.EffectType, len(request.Filters.EffectType))
+		for i, effect := range request.Filters.EffectType {
+			effects[i] = resources.EffectTypeFromString(regources.ResourceType(effect))
+		}
+		q = q.ForEffect(effects...)
 	}
 
 	return q

@@ -34,10 +34,10 @@ type GetHistory struct {
 	*base
 	PageParams pgdb.CursorPageParams
 	Filters    struct {
-		Account    *string `filter:"account"`
-		Balance    *string `filter:"balance"`
-		Asset      *string `filter:"asset"`
-		EffectType []int64 `filter:"effect"`
+		Account    *string  `filter:"account"`
+		Balance    *string  `filter:"balance"`
+		Asset      *string  `filter:"asset"`
+		EffectType []string `filter:"effect"`
 	}
 	Includes struct {
 		Operation        bool `include:"operation"`
