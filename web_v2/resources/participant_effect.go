@@ -25,6 +25,7 @@ var participantEffectsType = map[regources.ResourceType]history2.EffectType{
 	regources.EFFECTS_LOCKED:              history2.EffectTypeLocked,
 	regources.EFFECTS_UNLOCKED:            history2.EffectTypeUnlocked,
 	regources.EFFECTS_CHARGED_FROM_LOCKED: history2.EffectTypeChargedFromLocked,
+	regources.EFFECTS_MATCHED:             history2.EffectTypeMatched,
 }
 
 func EffectTypeFromString(effectType regources.ResourceType) history2.EffectType {
