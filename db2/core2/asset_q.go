@@ -48,6 +48,12 @@ func (q AssetsQ) FilterByCodes(codes []string) AssetsQ {
 	return q
 }
 
+// FilterByCodes - returns q with filter by codes
+func (q AssetsQ) FilterByTypes(types []uint64) AssetsQ {
+	q.selector = q.selector.Where(sq.Eq{"assets.type": types})
+	return q
+}
+
 // FilterByOwner - returns q with filter by owner ID
 func (q AssetsQ) FilterByOwner(ownerID string) AssetsQ {
 	q.selector = q.selector.Where("assets.owner = ?", ownerID)

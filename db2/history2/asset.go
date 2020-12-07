@@ -14,10 +14,9 @@ type Asset struct {
 	AvailableForIssuance   uint64          `db:"available_for_issuance"`
 	Issued                 uint64          `db:"issued"`
 	PendingIssuance        uint64          `db:"pending_issuance"`
-	Policies               uint32           `db:"policies"`
+	Policies               uint32          `db:"policies"`
 	TrailingDigits         uint32          `db:"trailing_digits"`
 	Type                   uint64          `db:"type"`
 
 	State regources.AssetState `db:"state"`
 }
-
