@@ -62,6 +62,10 @@ func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*reg
 	if request.Codes != nil {
 		q = q.FilterByCodes(request.Codes)
 	}
+	if request.Types !=nil {
+		q = q.FilterByTypes(request.Types)
+	}
+
 	assets, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get asset list")
