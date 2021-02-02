@@ -14,6 +14,7 @@
 
 ### Fixed
 
+* `/v3/order_book/{id}` now uses renders numbers with trailing-digits-count-based dot
 * Match participant in manage offer
 
 ## 3.9.1
