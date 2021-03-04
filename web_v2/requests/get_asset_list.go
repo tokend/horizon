@@ -19,6 +19,8 @@ const (
 	FilterTypeAssetListState = "state"
 	//FilterTypeAssetListCodes - defines if we need to filter the list by asset codes
 	FilterTypeAssetListCodes = "codes"
+	// FilterTypeAssetListTypes - defines if we need to filter the list by types
+	FilterTypeAssetListTypes = "types"
 )
 
 var includeTypeAssetListAll = map[string]struct{}{
@@ -30,6 +32,7 @@ var filterTypeAssetListAll = map[string]struct{}{
 	FilterTypeAssetListPolicy: {},
 	FilterTypeAssetListState:  {},
 	FilterTypeAssetListCodes:  {},
+	FilterTypeAssetListTypes:  {},
 }
 
 //GetAssetList - represents params to be specified for Get Assets handler
@@ -39,6 +42,7 @@ type GetAssetList struct {
 	Policy *uint64  `filter:"policy"`
 	Owner  *string  `filter:"owner" default:""`
 	State  *uint32  `filter:"state"`
+	Types  []uint64 `filter:"types"`
 	Codes  []string `filter:"codes"`
 
 	PageParams pgdb.OffsetPageParams

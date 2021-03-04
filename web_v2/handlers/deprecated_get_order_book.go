@@ -103,6 +103,8 @@ func (h *deprecatedGetOrderBookHandler) DeprecatedGetOrderBook(request *requests
 	}
 
 	for _, coreOrderBookEntry := range coreOrderBookEntries {
+		setPoints(&coreOrderBookEntry)
+
 		response.Data = append(response.Data, resources.NewOrderBookEntry(coreOrderBookEntry))
 
 		if request.ShouldInclude(requests.DeprecatedIncludeTypeOrderBookBaseAssets) {

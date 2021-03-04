@@ -6,6 +6,7 @@
 
 * Reviewable request for create, update and remove data 
 * Ability to set custom rules and actions in permissions
+* Filter by effect in get history endpoint
 
 ### Changed
 
@@ -13,6 +14,7 @@
 
 ### Fixed
 
+* `/v3/order_book/{id}` now uses renders numbers with trailing-digits-count-based dot
 * Match participant in manage offer
 
 ## 3.9.1

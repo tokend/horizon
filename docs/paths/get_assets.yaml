@@ -16,6 +16,15 @@
       explode: false
       schema:
         type: integer
+    - name: filter[types]
+      in: query
+      description: |
+        Filters assets by a specified types. Returns the page of assets where at least one bit intersects
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: integer
     - name: filter[owner]
       in: query
       description: |

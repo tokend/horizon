@@ -151,7 +151,7 @@ gitlab.com/distributed_lab/txsub
 gitlab.com/distributed_lab/urlval
 gitlab.com/distributed_lab/urlval/internal
 gitlab.com/distributed_lab/urlval/internal/betterreflect
-# gitlab.com/tokend/go v3.13.1-0.20200928125835-32df2e4a6022+incompatible
+# gitlab.com/tokend/go v3.14.1-0.20210304135857-9339491aaa1a+incompatible
 gitlab.com/tokend/go/address
 gitlab.com/tokend/go/amount
 gitlab.com/tokend/go/build
@@ -171,7 +171,7 @@ gitlab.com/tokend/keypair
 gitlab.com/tokend/keypair/internal
 gitlab.com/tokend/keypair/internal/crc16
 gitlab.com/tokend/keypair/internal/strkey
-# gitlab.com/tokend/regources v4.9.2-0.20201001084015-29851e5122f3+incompatible
+# gitlab.com/tokend/regources v4.9.2-0.20210304164844-ff630c68a104+incompatible
 gitlab.com/tokend/regources
 gitlab.com/tokend/regources/generated
 # golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
