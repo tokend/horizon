@@ -1,9 +1,0 @@
-name: XdrEnumBitmask
-attributes:
-  -
-    name: value
-    type: Int32
-  -
-    name: flags
-    type: XdrEnumValue
-    is_collection: true

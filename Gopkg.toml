@@ -95,7 +95,7 @@
   name = "gitlab.com/distributed_lab/txsub"
 
 [[override]]
-  branch = "master"
+  version = "3.14.0"
   name = "gitlab.com/tokend/go"
 
 [[override]]

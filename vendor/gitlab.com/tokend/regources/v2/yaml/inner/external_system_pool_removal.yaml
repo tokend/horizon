@@ -1,5 +1,0 @@
-name: ExternalSystemPoolRemoval
-attributes:
-  -
-    name: pool_id
-    type: UInt64

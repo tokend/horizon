@@ -1,5 +1,5 @@
-// revision: e874e2dbfd3bed84017331fa2cd6ee10907ff53c
-// branch:   master
+// revision: 8ce1443fba75586f82358510f3aa9511426323e4
+// branch:   fix/change-role-requestor
 // Package xdr is generated from:
 //
 //  xdr/SCP.x
@@ -54706,7 +54706,8 @@ type TransactionResult struct {
 //        MOVEMENT_REQUESTS_DETAILS = 27,
 //        FIX_CRASH_CORE_WITH_PAYMENT = 28,
 //        FIX_INVEST_TO_IMMEDIATE_SALE = 29,
-//        FIX_PAYMENT_TASKS_WILDCARD_VALUE = 30
+//        FIX_PAYMENT_TASKS_WILDCARD_VALUE = 30,
+//        FIX_CHANGE_ROLE_REQUEST_REQUESTOR = 31
 //    };
 //
 type LedgerVersion int32
@@ -54743,6 +54744,7 @@ const (
 	LedgerVersionFixCrashCoreWithPayment           LedgerVersion = 28
 	LedgerVersionFixInvestToImmediateSale          LedgerVersion = 29
 	LedgerVersionFixPaymentTasksWildcardValue      LedgerVersion = 30
+	LedgerVersionFixChangeRoleRequestRequestor     LedgerVersion = 31
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -54777,6 +54779,7 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixCrashCoreWithPayment,
 	LedgerVersionFixInvestToImmediateSale,
 	LedgerVersionFixPaymentTasksWildcardValue,
+	LedgerVersionFixChangeRoleRequestRequestor,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -54811,6 +54814,7 @@ var ledgerVersionMap = map[int32]string{
 	28: "LedgerVersionFixCrashCoreWithPayment",
 	29: "LedgerVersionFixInvestToImmediateSale",
 	30: "LedgerVersionFixPaymentTasksWildcardValue",
+	31: "LedgerVersionFixChangeRoleRequestRequestor",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -54845,6 +54849,7 @@ var ledgerVersionShortMap = map[int32]string{
 	28: "fix_crash_core_with_payment",
 	29: "fix_invest_to_immediate_sale",
 	30: "fix_payment_tasks_wildcard_value",
+	31: "fix_change_role_request_requestor",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -54879,6 +54884,7 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixCrashCoreWithPayment":           28,
 	"LedgerVersionFixInvestToImmediateSale":          29,
 	"LedgerVersionFixPaymentTasksWildcardValue":      30,
+	"LedgerVersionFixChangeRoleRequestRequestor":     31,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -56331,4 +56337,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "e874e2dbfd3bed84017331fa2cd6ee10907ff53c"
+var Revision = "8ce1443fba75586f82358510f3aa9511426323e4"
