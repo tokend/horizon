@@ -3,18 +3,16 @@ package handlers
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/horizon/web_v2/resources"
-
-	"gitlab.com/tokend/go/xdr"
-
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
+	"gitlab.com/tokend/horizon/web_v2/resources"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
