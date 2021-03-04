@@ -1,8 +1,0 @@
-name: BalanceStateAmounts
-attributes:
-  -
-    name: available
-    type: Amount
-  -
-    name: locked
-    type: Amount
