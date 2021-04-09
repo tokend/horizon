@@ -17,8 +17,6 @@ github.com/davecgh/go-spew/spew
 github.com/evalphobia/logrus_sentry
 # github.com/fsnotify/fsnotify v1.4.9
 github.com/fsnotify/fsnotify
-# github.com/garyburd/redigo v1.6.2
-## explicit
 # github.com/getsentry/raven-go v0.2.0
 ## explicit
 github.com/getsentry/raven-go
@@ -46,7 +44,7 @@ github.com/gopherjs/gopherjs/js
 # github.com/guregu/null v3.2.0+incompatible
 ## explicit
 github.com/guregu/null
-# github.com/hashicorp/golang-lru v0.5.1
+# github.com/hashicorp/golang-lru v0.5.4
 github.com/hashicorp/golang-lru
 github.com/hashicorp/golang-lru/simplelru
 # github.com/hashicorp/hcl v1.0.0
@@ -152,6 +150,10 @@ github.com/stretchr/testify/mock
 github.com/stretchr/testify/require
 # github.com/subosito/gotenv v1.2.0
 github.com/subosito/gotenv
+# github.com/throttled/throttled/v2 v2.7.2
+## explicit
+github.com/throttled/throttled/v2
+github.com/throttled/throttled/v2/store/memstore
 # github.com/zenazn/goji v0.9.1-0.20160507202103-64eb34159fe5
 ## explicit
 github.com/zenazn/goji/web
@@ -216,7 +218,7 @@ gitlab.com/tokend/go/signcontrol
 gitlab.com/tokend/go/signcontrol/internal/httpsignatures
 gitlab.com/tokend/go/strkey
 gitlab.com/tokend/go/xdr
-# gitlab.com/tokend/keypair v0.0.0-20171129153222-c148f15306ed
+# gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312
 ## explicit
 gitlab.com/tokend/keypair
 gitlab.com/tokend/keypair/internal
@@ -240,7 +242,7 @@ golang.org/x/net/idna
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/text v0.3.3
+# golang.org/x/text v0.3.6
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
@@ -249,10 +251,6 @@ golang.org/x/text/unicode/norm
 gopkg.in/gorp.v1
 # gopkg.in/ini.v1 v1.51.0
 gopkg.in/ini.v1
-# gopkg.in/throttled/throttled.v2 v2.0.3
-## explicit
-gopkg.in/throttled/throttled.v2
-gopkg.in/throttled/throttled.v2/store/memstore
 # gopkg.in/tylerb/graceful.v1 v1.2.15
 ## explicit
 gopkg.in/tylerb/graceful.v1
