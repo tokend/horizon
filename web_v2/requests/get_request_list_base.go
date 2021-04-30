@@ -16,6 +16,8 @@ type GetRequestListBaseFilters struct {
 	PendingTasksAnyOf   *uint64 `filter:"pending_tasks_any_of"`
 	PendingTasksNotSet  *uint64 `filter:"pending_tasks_not_set"`
 	MissingPendingTasks *uint64 `filter:"missing_pending_tasks"`
+	CreatedBefore       *int64  `filter:"created_before"`
+	CreatedAfter        *int64  `filter:"created_after"`
 }
 
 type GetRequestsBase struct {
