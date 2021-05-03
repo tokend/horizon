@@ -1,5 +1,5 @@
 # horizonbuild
-FROM golang:1.10-stretch
+FROM golang:1.16.2-stretch
 
 ARG version="dirty"
 

@@ -2,6 +2,8 @@ package history2
 
 import (
 	"database/sql"
+	"time"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -60,6 +62,16 @@ func (q TransactionsQ) FilterByID(id uint64) TransactionsQ {
 //FilterByHash - filters transaction by hash
 func (q TransactionsQ) FilterByHash(hash string) TransactionsQ {
 	q.selector = q.selector.Where("transactions.hash = ?", hash)
+	return q
+}
+
+func (q TransactionsQ) FilterLedgerCloseTimeBefore(time time.Time) TransactionsQ {
+	q.selector = q.selector.Where(sq.Lt{"transactions.ledger_close_time": time})
+	return q
+}
+
+func (q TransactionsQ) FilterLedgerCloseTimeAfter(time time.Time) TransactionsQ {
+	q.selector = q.selector.Where(sq.Gt{"transactions.ledger_close_time": time})
 	return q
 }
 
