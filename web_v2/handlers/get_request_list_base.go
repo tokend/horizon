@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
@@ -117,6 +117,14 @@ func (h *getRequestListBaseHandler) ApplyFilters(
 
 	if request.Filters.PendingTasksAnyOf != nil {
 		q = q.FilterByPendingTasksAnyOf(*request.Filters.PendingTasksAnyOf)
+	}
+
+	if request.Filters.CreatedAfter != nil {
+		q = q.FilterByCreatedAtAfter(time.Unix(*request.Filters.CreatedAfter, 0))
+	}
+
+	if request.Filters.CreatedBefore != nil {
+		q = q.FilterByCreatedAtBefore(time.Unix(*request.Filters.CreatedBefore, 0))
 	}
 
 	if request.Filters.ID != nil && *request.Filters.ID != 0 {
