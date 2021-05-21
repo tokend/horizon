@@ -1,14 +1,9 @@
 # jsonapi
 
-[![Build Status](https://travis-ci.org/google/jsonapi.svg?branch=master)](https://travis-ci.org/google/jsonapi)
-[![Go Report Card](https://goreportcard.com/badge/github.com/google/jsonapi)](https://goreportcard.com/report/github.com/google/jsonapi)
-[![GoDoc](https://godoc.org/github.com/google/jsonapi?status.svg)](http://godoc.org/github.com/google/jsonapi)
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+[![Build Status](https://travis-ci.org/google/jsonapi.svg?branch=master)](https://travis-ci.org/google/jsonapi) [![GoDoc](https://godoc.org/github.com/google/jsonapi?status.svg)](http://godoc.org/github.com/google/jsonapi)
 
 A serializer/deserializer for JSON payloads that comply to the
 [JSON API - jsonapi.org](http://jsonapi.org) spec in go.
-
-
 
 ## Installation
 
@@ -79,7 +74,7 @@ all of your data easily.
 
 [examples/app.go](https://github.com/google/jsonapi/blob/master/examples/app.go)
 
-This program demonstrates the implementation of a create, a show,
+This runnable file demonstrates the implementation of a create, a show,
 and a list [http.Handler](http://golang.org/pkg/net/http#Handler).  It
 outputs some example requests and responses as well as serialized
 examples of the source/target structs to json.  That is to say, I show
@@ -88,13 +83,13 @@ turned it into your struct types.
 
 To run,
 
-* Make sure you have [Go installed](https://golang.org/doc/install)
+* Make sure you have go installed
 * Create the following directories or similar: `~/go`
 * Set `GOPATH` to `PWD` in your shell session, `export GOPATH=$PWD`
 * `go get github.com/google/jsonapi`.  (Append `-u` after `get` if you
   are updating.)
-* `cd $GOPATH/src/github.com/google/jsonapi/examples`
-* `go build && ./examples`
+* `go run $GOPATH/src/github.com/google/jsonapi/examples/app.go` or `cd
+  $GOPATH/src/github.com/google/jsonapi/examples && go run app.go`
 
 ## `jsonapi` Tag Reference
 
@@ -184,7 +179,7 @@ to-many from being serialized.
 **All `Marshal` and `Unmarshal` methods expect pointers to struct
 instance or slices of the same contained with the `interface{}`s**
 
-Now you have your structs prepared to be serialized or materialized, What
+Now you have your structs prepared to be seralized or materialized, What
 about the rest?
 
 ### Create Record Example
@@ -344,23 +339,6 @@ func (post Post) JSONAPIRelationshipMeta(relation string) *Meta {
 	}
 	return nil
 }
-```
-
-### Custom types
-
-Custom types are supported for primitive types, only, as attributes.  Examples,
-
-```go
-type CustomIntType int
-type CustomFloatType float64
-type CustomStringType string
-```
-
-Types like following are not supported, but may be in the future:
-
-```go
-type CustomMapType map[string]interface{}
-type CustomSliceMapType []map[string]interface{}
 ```
 
 ### Errors

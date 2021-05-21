@@ -35,6 +35,14 @@ Account:
       relationships:
         type: object
         properties:
+          signers:
+            description: "Signers of this account"
+            type: object
+            properties:
+              data: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/SignerKey'
           referrer:
             description: "Referrer is another account that introduced this account into the system."
             type: object

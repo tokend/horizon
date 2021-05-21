@@ -6,12 +6,17 @@ import (
 )
 
 //NewAccount - creates new instance of account
-func NewAccount(core core2.Account, accountStatus *regources.KYCRecoveryStatus) regources.Account {
+func NewAccount(core core2.Account, accountStatus *regources.KYCRecoveryStatus, accountSigners ...core2.Signer) regources.Account {
 
 	account := regources.Account{
 		Key: regources.Key{
 			ID:   core.Address,
 			Type: regources.ACCOUNTS,
+		},
+		Relationships: regources.AccountRelationships{
+			Signers: &regources.RelationCollection{
+				Data: make([]regources.Key, 0, len(accountSigners)),
+			},
 		},
 	}
 	if accountStatus != nil {
@@ -19,6 +24,11 @@ func NewAccount(core core2.Account, accountStatus *regources.KYCRecoveryStatus) 
 			KycRecoveryStatus: accountStatus,
 		}
 	}
+
+	for _, s := range accountSigners {
+		account.Relationships.Signers.Data = append(account.Relationships.Signers.Data, NewSignerKey(s.PublicKey))
+	}
+
 	return account
 }
 

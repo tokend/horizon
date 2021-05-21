@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	history "gitlab.com/tokend/horizon/db2/history2"
 
@@ -78,6 +80,18 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 
 	if request.Filters.EntryTypes != nil {
 		q = q.FilterByLedgerEntryTypes(request.Filters.EntryTypes...)
+	}
+
+	if request.Filters.AfterTimestamp != nil {
+		gottime := time.Unix(*request.Filters.AfterTimestamp, 0)
+		fmt.Println(gottime)
+		q = q.FilterLedgerCloseTimeAfter(time.Unix(*request.Filters.AfterTimestamp, 0).UTC())
+	}
+
+	if request.Filters.BeforeTimestamp != nil {
+		gottime := time.Unix(*request.Filters.BeforeTimestamp, 0)
+		fmt.Println(gottime)
+		q = q.FilterLedgerCloseTimeBefore(time.Unix(*request.Filters.BeforeTimestamp, 0).UTC())
 	}
 
 	historyTransactions, err := q.Select()

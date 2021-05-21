@@ -15,14 +15,20 @@ const (
 	FilterTypeTransactionListLedgerEntryTypes = "ledger_entry_changes.entry_types"
 	// FilterTypeLedgerEntryType - defines if we need to filter the list by ledger changes transactions produced
 	FilterTypeTransactionListLedgerChangeTypes = "ledger_entry_changes.change_types"
+	// FilterTypeTransactionListBeforeTimestamp - defines if we need to filter the list before specified ledger close time
+	FilterTypeTransactionListBeforeTimestamp = "before"
+	// FilterTypeTransactionListAfterTimestamp - defines if we need to filter the list after specified ledger close time
+	FilterTypeTransactionListAfterTimestamp = "after"
 )
 
 // GetTransactions - represents params to be specified for GetTransactions handler
 type GetTransactions struct {
 	*base
 	Filters struct {
-		EntryTypes  []int `filter:"ledger_entry_changes.entry_types"`
-		ChangeTypes []int `filter:"ledger_entry_changes.change_types"`
+		EntryTypes      []int  `filter:"ledger_entry_changes.entry_types"`
+		ChangeTypes     []int  `filter:"ledger_entry_changes.change_types"`
+		BeforeTimestamp *int64 `filter:"before"`
+		AfterTimestamp  *int64 `filter:"after"`
 	}
 	Includes struct {
 		LedgerEntryChanges bool `include:"ledger_entry_changes"`
@@ -39,6 +45,8 @@ func NewGetTransactions(r *http.Request) (*GetTransactions, error) {
 		supportedFilters: map[string]struct{}{
 			FilterTypeTransactionListLedgerEntryTypes:  {},
 			FilterTypeTransactionListLedgerChangeTypes: {},
+			FilterTypeTransactionListBeforeTimestamp:   {},
+			FilterTypeTransactionListAfterTimestamp:    {},
 		},
 	})
 	if err != nil {

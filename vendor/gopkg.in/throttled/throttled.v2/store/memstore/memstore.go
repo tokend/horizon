@@ -1,12 +1,12 @@
 // Package memstore offers an in-memory store implementation for throttled.
-package memstore // import "github.com/throttled/throttled/v2/store/memstore"
+package memstore // import "gopkg.in/throttled/throttled.v2/store/memstore"
 
 import (
 	"sync"
 	"sync/atomic"
 	"time"
 
-	lru "github.com/hashicorp/golang-lru"
+	"github.com/hashicorp/golang-lru"
 )
 
 // MemStore is an in-memory store implementation for throttled. It
@@ -15,9 +15,8 @@ import (
 // doesn't share state with other rate limiters.
 type MemStore struct {
 	sync.RWMutex
-	keys    *lru.Cache
-	m       map[string]*int64
-	timeNow func() time.Time //usually time.Now, but can be overridden for unit tests
+	keys *lru.Cache
+	m    map[string]*int64
 }
 
 // New initializes a Store. If maxKeys > 0, the number of different
@@ -35,29 +34,21 @@ func New(maxKeys int) (*MemStore, error) {
 		}
 
 		m = &MemStore{
-			keys:    keys,
-			timeNow: time.Now,
+			keys: keys,
 		}
 	} else {
 		m = &MemStore{
-			m:       make(map[string]*int64),
-			timeNow: time.Now,
+			m: make(map[string]*int64),
 		}
 	}
 	return m, nil
-}
-
-// SetTimeNow makes this store use the given function instead of time.Now().
-// This is useful for unit tests that use a simulated wallclock.
-func (ms *MemStore) SetTimeNow(timeNow func() time.Time) {
-	ms.timeNow = timeNow
 }
 
 // GetWithTime returns the value of the key if it is in the store or
 // -1 if it does not exist. It also returns the current local time on
 // the machine.
 func (ms *MemStore) GetWithTime(key string) (int64, time.Time, error) {
-	now := ms.timeNow()
+	now := time.Now()
 	valP, ok := ms.get(key, false)
 
 	if !ok {

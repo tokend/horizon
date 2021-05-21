@@ -23,6 +23,7 @@ func GetAccountList(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getAccountListHandler{
 		AccountsQ: core2.NewAccountsQ(coreRepo),
+		SignersQ:  core2.NewSignerQ(coreRepo),
 	}
 
 	request, err := requests.NewGetAccountList(r)
@@ -49,6 +50,7 @@ func GetAccountList(w http.ResponseWriter, r *http.Request) {
 
 type getAccountListHandler struct {
 	AccountsQ core2.AccountsQ
+	SignersQ  core2.SignerQ
 }
 
 func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*regources.AccountListResponse, error) {
@@ -72,10 +74,17 @@ func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*reg
 	}
 
 	for _, account := range accounts {
-		accountResource := resources.NewAccount(account, nil)
+		accountSigners, err := h.SignersQ.FilterByAccountAddress(account.Address).Select()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get account signers")
+		}
+
+		accountResource := resources.NewAccount(account, nil, accountSigners...)
+		// TODO add signers to includes here
 		accountResource.Relationships.Role = resources.NewAccountRoleKey(account.RoleID).AsRelation()
 		response.Data = append(response.Data, accountResource)
 	}
 
 	return &response, nil
 }
+

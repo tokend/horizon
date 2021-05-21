@@ -62,11 +62,7 @@ func WithBackOff(
 		err := RunSafely(ctx, runnerName, runner)
 
 		if err != nil {
-			level := uint32(logan.ErrorLevel)
-			if errors.Cause(err) == context.DeadlineExceeded || errors.Cause(err) == context.Canceled {
-				level = uint32(logan.InfoLevel)
-			}
-			log.Log(level, fields, err, true, fmt.Sprintf("Runner '%s' returned error.", runnerName))
+			log.Log(uint32(logan.ErrorLevel), fields, err, true, fmt.Sprintf("Runner '%s' returned error.", runnerName))
 
 			runAbnormalExecution(ctx, log, runnerName, runner, minAbnormalPeriod, maxAbnormalPeriod)
 			if IsCancelled(ctx) {

@@ -2,6 +2,7 @@ package history2
 
 import (
 	"database/sql"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -35,6 +36,16 @@ func NewReviewableRequestsQ(repo *pgdb.DB) ReviewableRequestsQ {
 			"reviewable_requests.external_details",
 		).From("reviewable_requests"),
 	}
+}
+
+func (q ReviewableRequestsQ) FilterByCreatedAtAfter(moment time.Time) ReviewableRequestsQ {
+	q.selector = q.selector.Where("reviewable_requests.created_at >= ?", moment)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreatedAtBefore(moment time.Time) ReviewableRequestsQ {
+	q.selector = q.selector.Where("reviewable_requests.created_at < ?", moment)
+	return q
 }
 
 // FilterByState - returns q with filter by request state
