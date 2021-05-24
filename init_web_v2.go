@@ -305,6 +305,12 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/data_creation_requests", handlers.GetDataCreationRequests)
 	m.Get("/v3/data_creation_requests/{id}", handlers.GetDataCreationRequests)
 
+	m.Get("/v3/create_deferred_payments_requests", handlers.GetCreateDeferredPaymentRequests)
+	m.Get("/v3/create_deferred_payments_requests/{id}", handlers.GetCreateDeferredPaymentRequests)
+
+	m.Get("/v3/create_close_deferred_payments_requests", handlers.GetCloseDeferredPaymentRequests)
+	m.Get("/v3/create_close_deferred_payments_requests/{id}", handlers.GetCloseDeferredPaymentRequests)
+
 	m.Get("/v3/data_update_requests", handlers.GetDataUpdateRequests)
 	m.Get("/v3/data_update_requests/{id}", handlers.GetDataUpdateRequests)
 
@@ -347,6 +353,9 @@ func initWebV2Actions(app *App) {
 
 	m.Get("/v3/operations", handlers.GetOperations)
 	m.Get("/v3/operations/{id}", handlers.GetOperation)
+
+	m.Get("/v3/deferred_payments", handlers.GetDeferredPaymentList)
+	m.Get("/v3/deferred_payments/{id}", handlers.GetDeferredPayment)
 
 	cop := app.config.Copus()
 	if err := cop.RegisterChi(m); err != nil {

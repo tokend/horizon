@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/guregu/null"
-	sq "github.com/lann/squirrel"
 	"gitlab.com/tokend/go/strkey"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/utf8"

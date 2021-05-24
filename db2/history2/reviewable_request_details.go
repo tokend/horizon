@@ -14,27 +14,29 @@ import (
 
 //ReviewableRequestDetails - stores in union switch details of the reviewable requests
 type ReviewableRequestDetails struct {
-	Type                xdr.ReviewableRequestType   `json:"type"`
-	CreateAsset         *CreateAssetRequest         `json:"create_asset,omitempty"`
-	UpdateAsset         *UpdateAssetRequest         `json:"update_asset,omitempty"`
-	CreatePreIssuance   *CreatePreIssuanceRequest   `json:"create_pre_issuance,omitempty"`
-	CreateIssuance      *CreateIssuanceRequest      `json:"create_issuance,omitempty"`
-	CreateWithdraw      *CreateWithdrawalRequest    `json:"create_withdraw,omitempty"`
-	CreateSale          *CreateSaleRequest          `json:"create_sale,omitempty"`
-	UpdateLimits        *UpdateLimitsRequest        `json:"update_limits,omitempty"`
-	CreateAmlAlert      *CreateAmlAlertRequest      `json:"create_aml_alert,omitempty"`
-	ChangeRole          *ChangeRoleRequest          `json:"change_role,omitempty"`
-	UpdateSaleDetails   *UpdateSaleDetailsRequest   `json:"update_sale_details,omitempty"`
-	CreateAtomicSwapAsk *CreateAtomicSwapAskRequest `json:"create_atomic_swap_ask,omitempty"`
-	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid,omitempty"`
-	CreatePoll          *CreatePollRequest          `json:"create_poll,omitempty"`
-	KYCRecovery         *KYCRecoveryRequest         `json:"kyc_recovery,omitempty"`
-	ManageOffer         *ManageOfferRequest         `json:"manage_offer,omitempty"`
-	CreatePayment       *CreatePaymentRequest       `json:"create_payment,omitempty"`
-	Redemption          *RedemptionRequest          `json:"redemption,omitempty"`
-	DataCreation        *DataCreationRequest        `json:"data_creation,omitempty"`
-	DataUpdate          *DataUpdateRequest          `json:"data_update,omitempty"`
-	DataRemove          *DataRemoveRequest          `json:"data_remove,omitempty"`
+	Type                  xdr.ReviewableRequestType   `json:"type"`
+	CreateAsset           *CreateAssetRequest         `json:"create_asset,omitempty"`
+	UpdateAsset           *UpdateAssetRequest         `json:"update_asset,omitempty"`
+	CreatePreIssuance     *CreatePreIssuanceRequest   `json:"create_pre_issuance,omitempty"`
+	CreateIssuance        *CreateIssuanceRequest      `json:"create_issuance,omitempty"`
+	CreateWithdraw        *CreateWithdrawalRequest    `json:"create_withdraw,omitempty"`
+	CreateSale            *CreateSaleRequest          `json:"create_sale,omitempty"`
+	UpdateLimits          *UpdateLimitsRequest        `json:"update_limits,omitempty"`
+	CreateAmlAlert        *CreateAmlAlertRequest      `json:"create_aml_alert,omitempty"`
+	ChangeRole            *ChangeRoleRequest          `json:"change_role,omitempty"`
+	UpdateSaleDetails     *UpdateSaleDetailsRequest   `json:"update_sale_details,omitempty"`
+	CreateAtomicSwapAsk   *CreateAtomicSwapAskRequest `json:"create_atomic_swap_ask,omitempty"`
+	CreateAtomicSwapBid   *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid,omitempty"`
+	CreatePoll            *CreatePollRequest          `json:"create_poll,omitempty"`
+	KYCRecovery           *KYCRecoveryRequest         `json:"kyc_recovery,omitempty"`
+	ManageOffer           *ManageOfferRequest         `json:"manage_offer,omitempty"`
+	CreatePayment         *CreatePaymentRequest       `json:"create_payment,omitempty"`
+	Redemption            *RedemptionRequest          `json:"redemption,omitempty"`
+	DataCreation          *DataCreationRequest        `json:"data_creation,omitempty"`
+	DataUpdate            *DataUpdateRequest          `json:"data_update,omitempty"`
+	DataRemove            *DataRemoveRequest          `json:"data_remove,omitempty"`
+	CreateDeferredPayment *CreateDeferredPayment      `json:"create_deferred_payment,omitempty"`
+	CloseDeferredPayment  *CloseDeferredPayment       `json:"close_deferred_payment,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
@@ -225,4 +227,26 @@ type DataRemoveRequest struct {
 	SequenceNumber uint32            `json:"sequence_number"`
 	DataID         uint64            `json:"data_id"`
 	CreatorDetails regources.Details `json:"creator_details"`
+}
+
+type CreateDeferredPayment struct {
+	SourceBalance      string            `json:"source_balance"`
+	DestinationAccount string            `json:"destination_account"`
+	Amount             regources.Amount  `json:"amount"`
+	Details            regources.Details `json:"details"`
+	SequenceNumber     uint32            `json:"sequence_number"`
+}
+
+type CloseDeferredPayment struct {
+	SequenceNumber    uint32                          `json:"sequence_number"`
+	Destination       CloseDeferredPaymentDestination `json:"destination"`
+	DeferredPaymentID uint64                          `json:"deferred_payment_id"`
+	Amount            regources.Amount                `json:"amount"`
+	Details           regources.Details               `json:"details"`
+}
+
+type CloseDeferredPaymentDestination struct {
+	Type    xdr.CloseDeferredPaymentDestinationType `json:"type"`
+	Balance *string                                 `json:"balance,omitempty"`
+	Account *string                                 `json:"account,omitempty"`
 }

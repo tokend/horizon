@@ -70,6 +70,10 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeCancelDataUpdateRequest:                newCancelDataUpdateRequestOp,
 	xdr.OperationTypeCreateDataRemoveRequest:                newCreateDataRemoveRequestOp,
 	xdr.OperationTypeCancelDataRemoveRequest:                newCancelDataRemoveRequestOp,
+	xdr.OperationTypeCreateDeferredPaymentCreationRequest:   newCreateDeferredPaymentCreationRequestOp,
+	xdr.OperationTypeCancelDeferredPaymentCreationRequest:   newCancelDeferredPaymentCreationRequestOp,
+	xdr.OperationTypeCreateCloseDeferredPaymentRequest:      newCreateCloseDeferredPaymentRequestOp,
+	xdr.OperationTypeCancelCloseDeferredPaymentRequest:      newCancelCloseDeferredPaymentRequestOp,
 }
 
 //NewOperationDetails - populates operation details into appropriate resource
@@ -965,6 +969,58 @@ func newCancelDataRemoveRequestOp(op history2.Operation) regources.Resource {
 		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_DATA_REMOVE_REQUEST),
 		Relationships: regources.CancelDataRemoveRequestOpRelationships{
 			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCancelDeferredPaymentCreationRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CancelDeferredPaymentCreationRequest
+	return &regources.CancelDeferredPaymentCreationRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_DEFERRED_PAYMENT_CREATION_REQUEST),
+		Relationships: regources.CancelDeferredPaymentCreationRequestOpRelationships{
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCancelCloseDeferredPaymentRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CancelCloseDeferredPaymentRequest
+	return &regources.CancelCloseDeferredPaymentRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_CLOSE_DEFERRED_PAYMENT_REQUEST),
+		Relationships: regources.CancelCloseDeferredPaymentRequestOpRelationships{
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCreateDeferredPaymentCreationRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateDeferredPaymentCreationRequest
+	return &regources.CreateDeferredPaymentCreationRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_DEFERRED_PAYMENT_CREATION_REQUEST),
+		Attributes: regources.CreateDeferredPaymentCreationRequestOpAttributes{
+			Amount:         body.Amount,
+			CreatorDetails: body.Details,
+		},
+		Relationships: regources.CreateDeferredPaymentCreationRequestOpRelationships{
+			DestinationAccount: NewAccountKey(body.DestinationAccount).AsRelation(),
+			Request:            NewRequestKey(int64(body.RequestID)).AsRelation(),
+			SourceBalance:      NewBalanceKey(body.SourceBalance).AsRelation(),
+		},
+	}
+}
+
+func newCreateCloseDeferredPaymentRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateCloseDeferredPaymentRequest
+	return &regources.CreateCloseDeferredPaymentRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_CLOSE_DEFERRED_PAYMENT_REQUEST),
+		Attributes: regources.CreateCloseDeferredPaymentRequestOpAttributes{
+			Amount:         body.Amount,
+			CreatorDetails: body.Details,
+		},
+		Relationships: regources.CreateCloseDeferredPaymentRequestOpRelationships{
+			DestinationBalance: NewBalanceKey(body.DestinationBalance).AsRelation(),
+			Request:            NewRequestKey(int64(body.RequestID)).AsRelation(),
+			DeferredPayment:    NewDeferredPaymentKey(int64(body.DeferredPaymentID)).AsRelation(),
 		},
 	}
 }

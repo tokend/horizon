@@ -121,6 +121,7 @@ x-tagGroups:
       - Atomic Swap
       - Swaps
       - Redemption
+      - DeferredPayments
   - name: Access Control
     tags:
       - Signers

@@ -2,7 +2,8 @@ package core
 
 import (
 	sql2 "database/sql"
-	sq "github.com/lann/squirrel"
+
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 

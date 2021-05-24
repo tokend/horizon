@@ -56,7 +56,10 @@ OperationDetails:
     - $ref: '#/components/schemas/CancelDataUpdateRequestOp'
     - $ref: '#/components/schemas/CreateDataRemoveRequestOp'
     - $ref: '#/components/schemas/CancelDataRemoveRequestOp'
-
+    - $ref: '#/components/schemas/CreateDeferredPaymentCreationRequestOp'
+    - $ref: '#/components/schemas/CancelDeferredPaymentCreationRequestOp'
+    - $ref: '#/components/schemas/CreateCloseDeferredPaymentRequestOp'
+    - $ref: '#/components/schemas/CancelCloseDeferredPaymentRequestOp'
 
 
 OperationDetailsKey:
@@ -117,5 +120,9 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/CancelDataUpdateRequestOpKey'
     - $ref: '#/components/schemas/CreateDataRemoveRequestOpKey'
     - $ref: '#/components/schemas/CancelDataRemoveRequestOpKey'
+    - $ref: '#/components/schemas/CreateDeferredPaymentCreationRequestOpKey'
+    - $ref: '#/components/schemas/CancelDeferredPaymentCreationRequestOpKey'
+    - $ref: '#/components/schemas/CreateCloseDeferredPaymentRequestOpKey'
+    - $ref: '#/components/schemas/CancelCloseDeferredPaymentRequestOpKey'
 
 

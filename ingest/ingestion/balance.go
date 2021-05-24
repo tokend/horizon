@@ -3,7 +3,7 @@ package ingestion
 import (
 	"time"
 
-	"github.com/lann/squirrel"
+	"github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 )
 

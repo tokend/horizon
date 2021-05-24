@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/tokend/go/xdr"
 )
 

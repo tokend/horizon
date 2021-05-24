@@ -8,10 +8,3 @@ type LedgerBundle struct {
 	Header       core.LedgerHeader
 	Transactions []core.Transaction
 }
-
-func newLedgerBundle(header core.LedgerHeader, txs []core.Transaction) LedgerBundle {
-	return LedgerBundle{
-		Header:       header,
-		Transactions: txs,
-	}
-}

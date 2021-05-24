@@ -72,9 +72,6 @@ github.com/jtolds/gls
 github.com/lann/builder
 # github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0
 github.com/lann/ps
-# github.com/lann/squirrel v0.0.0-20170825200431-a6b93000bd21
-## explicit
-github.com/lann/squirrel
 # github.com/lib/pq v1.10.0
 ## explicit
 github.com/lib/pq
@@ -203,7 +200,7 @@ gitlab.com/distributed_lab/txsub
 gitlab.com/distributed_lab/urlval
 gitlab.com/distributed_lab/urlval/internal
 gitlab.com/distributed_lab/urlval/internal/betterreflect
-# gitlab.com/tokend/go v3.14.0+incompatible
+# gitlab.com/tokend/go v3.14.1-0.20210304135857-9339491aaa1a+incompatible
 ## explicit
 gitlab.com/tokend/go/address
 gitlab.com/tokend/go/amount

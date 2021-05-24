@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 )
 
 type ReferenceQ struct {

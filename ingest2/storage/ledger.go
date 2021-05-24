@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"github.com/lann/squirrel"
+	"github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"

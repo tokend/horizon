@@ -4,12 +4,13 @@ import (
 	sql2 "database/sql"
 	"encoding/json"
 	"fmt"
-	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/tokend/horizon/db2"
 	"time"
 
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/tokend/horizon/db2"
+
+	sq "github.com/Masterminds/squirrel"
 	"github.com/guregu/null"
-	sq "github.com/lann/squirrel"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"

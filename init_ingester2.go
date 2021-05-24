@@ -50,6 +50,7 @@ func initIngester2(app *App) {
 		swapStorage,
 		storage.NewAsset(hRepo),
 		storage.NewData(hRepo),
+		storage.NewDeferredPayment(hRepo),
 	)
 
 	idProvider := struct {
@@ -59,13 +60,23 @@ func initIngester2(app *App) {
 		Account: accountStorage,
 		Balance: balanceStorage,
 	}
+
+	reviewableRequestsStorage := struct {
+		history2.ReviewableRequestsQ
+	}{
+		history2.NewReviewableRequestsQ(hRepo),
+	}
+
 	opHandler := operations.NewOperationsHandler(
 		storage.NewOperationDetails(hRepo),
 		storage.NewOpParticipants(hRepo),
 		&idProvider,
 		balanceStorage,
 		swapStorage,
+		storage.NewDeferredPayment(hRepo),
+		reviewableRequestsStorage,
 	)
+
 	matchesHandler := ingest2.NewMatchesSaver(
 		storage.NewMatches(hRepo),
 	)

@@ -186,6 +186,11 @@ func (q ReviewableRequestsQ) FilterByDataCreationSecurityType(securityType uint3
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterByCreateDeferredPaymentDestination(destination string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_deferred_payment,destination_account}' = ?", destination)
+	return q
+}
+
 func (q ReviewableRequestsQ) FilterByCreatePollVoteConfirmationRequired(voteConfirmationRequired bool) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_poll,vote_confirmation_required}' = ?", voteConfirmationRequired)
 	return q

@@ -20,6 +20,9 @@ ReviewableRequestDetailsKey:
     - $ref: '#/components/schemas/DataCreationRequestKey'
     - $ref: '#/components/schemas/DataUpdateRequestKey'
     - $ref: '#/components/schemas/DataRemoveRequestKey'
+    - $ref: '#/components/schemas/CreateDeferredPaymentRequestKey'
+    - $ref: '#/components/schemas/CloseDeferredPaymentRequestKey'
+
 
 ReviewableRequestDetails:
   oneOf:
@@ -44,6 +47,9 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/DataCreationRequest'
     - $ref: '#/components/schemas/DataUpdateRequest'
     - $ref: '#/components/schemas/DataRemoveRequest'
+    - $ref: '#/components/schemas/CreateDeferredPaymentRequest'
+    - $ref: '#/components/schemas/CloseDeferredPaymentRequest'
+
 
 CreateAssetRequestKey:
   type: object
@@ -1099,3 +1105,88 @@ DataRemoveRequest:
               example: 10
             creator_details:
               $ref: '#/components/schemas/Details'
+
+CloseDeferredPaymentRequestKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "request-details-close-deferred-payment"
+
+
+CloseDeferredPaymentRequest:
+  allOf:
+    - $ref: '#/components/schemas/CloseDeferredPaymentRequestKey'
+    - type: object
+      required: [ relationships, attributes ]
+      properties:
+        relationships:
+          type: object
+          properties:
+            destination_balance:
+              type: object
+              $ref: '#/components/schemas/BalanceKey'
+            destination_account:
+              type: object
+              $ref: '#/components/schemas/AccountKey'
+            deferred_payment:
+              type: object
+              $ref: '#/components/schemas/DeferredPaymentKey'
+        attributes:
+          type: object
+          required:
+            - amount
+            - creator_details
+          properties:
+            amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            creator_details:
+              $ref: '#/components/schemas/Details'
+
+CreateDeferredPaymentRequestKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "request-details-create-deferred-payment"
+
+
+CreateDeferredPaymentRequest:
+  allOf:
+    - $ref: '#/components/schemas/CreateDeferredPaymentRequestKey'
+    - type: object
+      required: [ relationships, attributes ]
+      properties:
+        relationships:
+          type: object
+          properties:
+            source_balance:
+              type: object
+              $ref: '#/components/schemas/BalanceKey'
+            destination_account:
+              type: object
+              $ref: '#/components/schemas/AccountKey'
+        attributes:
+          type: object
+          required:
+            - amount
+            - creator_details
+          properties:
+            amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            creator_details:
+              $ref: '#/components/schemas/Details'
+
+

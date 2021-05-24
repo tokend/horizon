@@ -51,6 +51,10 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newDataUpdateRequest(request.ID, *request.Details.DataUpdate)
 	case xdr.ReviewableRequestTypeDataRemove:
 		return newDataRemoveRequest(request.ID, *request.Details.DataRemove)
+	case xdr.ReviewableRequestTypeCreateDeferredPayment:
+		return newCreateDeferredPaymentRequest(request.ID, *request.Details.CreateDeferredPayment)
+	case xdr.ReviewableRequestTypeCloseDeferredPayment:
+		return newCloseDeferredPaymentRequest(request.ID, *request.Details.CloseDeferredPayment)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -364,6 +368,49 @@ func newDataRemoveRequest(id int64, details history2.DataRemoveRequest) *regourc
 		},
 		Relationships: regources.DataRemoveRequestRelationships{
 			Data: NewDataKey(int64(details.DataID)).AsRelation(),
+		},
+	}
+}
+
+func newCloseDeferredPaymentRequest(id int64, details history2.CloseDeferredPayment) *regources.CloseDeferredPaymentRequest {
+	result := &regources.CloseDeferredPaymentRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CLOSE_DEFERRED_PAYMENT),
+		Attributes: regources.CloseDeferredPaymentRequestAttributes{
+			Amount:         details.Amount,
+			CreatorDetails: details.Details,
+		},
+		Relationships: regources.CloseDeferredPaymentRequestRelationships{
+			DeferredPayment: regources.NewKeyInt64(int64(details.DeferredPaymentID), regources.DEFERRED_PAYMENTS).
+				AsRelation(),
+		},
+	}
+
+	switch details.Destination.Type {
+	case xdr.CloseDeferredPaymentDestinationTypeBalance:
+		result.Relationships.DestinationBalance = NewBalanceKey(*details.Destination.Balance).AsRelation()
+	case xdr.CloseDeferredPaymentDestinationTypeAccount:
+		result.Relationships.DestinationAccount = NewAccountKey(*details.Destination.Account).AsRelation()
+	}
+
+	return result
+}
+
+func newCreateDeferredPaymentRequest(id int64, details history2.CreateDeferredPayment) *regources.CreateDeferredPaymentRequest {
+	return &regources.CreateDeferredPaymentRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CREATE_DEFERRED_PAYMENT),
+		Attributes: regources.CreateDeferredPaymentRequestAttributes{
+			Amount:         details.Amount,
+			CreatorDetails: details.Details,
+		},
+		Relationships: regources.CreateDeferredPaymentRequestRelationships{
+			DestinationAccount: regources.Key{
+				ID:   details.DestinationAccount,
+				Type: regources.ACCOUNTS,
+			}.AsRelation(),
+			SourceBalance: regources.Key{
+				ID:   details.SourceBalance,
+				Type: regources.BALANCES,
+			}.AsRelation(),
 		},
 	}
 }

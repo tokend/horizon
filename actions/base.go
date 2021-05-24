@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"net/http"
 
 	"encoding/base64"
@@ -195,7 +196,8 @@ func (base *Base) GetByteArray(name string, length int) string {
 	}
 
 	if len(value) != length {
-		base.SetInvalidField(name, errors.New(" is not "+string(length)+"byte length"))
+		//nolint
+		base.SetInvalidField(name, errors.New(" is not "+fmt.Sprint(length)+"byte length"))
 		return ""
 	}
 	return base64.StdEncoding.EncodeToString(value)
