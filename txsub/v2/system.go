@@ -38,8 +38,9 @@ func (s *System) Submit(ctx context.Context, envelope EnvelopeInfo, waitIngest b
 		return result.unwrap()
 	case <-ctx.Done():
 		return fullResult{
-			Err: timeoutError,
+			Err: cancelError,
 		}.unwrap()
+		// nobody read from channel, could be the problem
 	}
 }
 
@@ -121,7 +122,9 @@ func (s *System) tryResubmit(ctx context.Context, hash string) error {
 }
 
 func (s *System) tickCore(ctx context.Context) {
-	for _, hash := range s.List.PendingCore() {
+	pendingCore := s.List.PendingCore()
+	s.Log.WithField("txs_quantity", len(pendingCore)).Debug("Processing pending core txs")
+	for _, hash := range pendingCore {
 		res, err := s.Results.FromCore(hash)
 		if IsInternalError(errors.Cause(err)) {
 			s.List.Finish(fullResult{Result: Result{Hash: hash}, Err: err})
@@ -163,7 +166,9 @@ func (s *System) tickCore(ctx context.Context) {
 }
 
 func (s *System) tickHistory(ctx context.Context) {
-	for _, hash := range s.List.PendingHistory() {
+	pendingHistory := s.List.PendingHistory()
+	s.Log.WithField("txs_quantity", len(pendingHistory)).Debug("Processing pending history txs")
+	for _, hash := range pendingHistory {
 		res, err := s.Results.FromHistory(hash)
 		if err != nil {
 			s.Log.
