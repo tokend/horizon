@@ -1,6 +1,7 @@
 package txsub
 
 import (
+	"gitlab.com/tokend/horizon/log"
 	"sync"
 	"time"
 
@@ -144,6 +145,10 @@ func (s *SubmissionList) ShouldRetry(hash string, t time.Time) bool {
 	s.RLock()
 	defer s.RUnlock()
 	submission := s.submissions[hash]
+	if submission == nil {
+		log.WithField("tx_hash", hash).Error("Submission is nil")
+		return false
+	}
 
 	return t.After(submission.SubmittedAt.Add(s.retryTimeout))
 }
