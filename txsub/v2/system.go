@@ -72,7 +72,7 @@ func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo, waitIngest bo
 }
 
 func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResult, waitIngest bool) <-chan fullResult {
-	_, err := s.Submitter.Submit(ctx, &info)
+	duration, err := s.Submitter.Submit(ctx, &info)
 	if err != nil {
 		return send(l,
 			fullResult{
@@ -80,6 +80,7 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 					info.GetLoganFields()),
 			})
 	}
+	s.Log.WithField("duration", duration).Debug("Successfully submit tx")
 
 	err = s.List.Add(&info, waitIngest, l)
 	if err != nil {
@@ -114,8 +115,8 @@ func (s *System) tryResubmit(ctx context.Context, hash string) error {
 	if env == nil {
 		return errors.New("trying to resubmit tx which is not in pending list")
 	}
-	_, err = s.Submitter.Submit(ctx, env)
-
+	duration, err := s.Submitter.Submit(ctx, env)
+	s.Log.WithField("duration", duration).Debug("Successfully resubmit tx")
 	return err
 }
 
@@ -239,7 +240,8 @@ func (s *System) cleaner(ctx context.Context) {
 	}()
 
 	running.WithBackOff(ctx, s.Log, "submitter_v2_cleaner", func(ctx context.Context) error {
-		s.List.Clean(s.SubmissionTimeout)
+		pendingSubmission := s.List.Clean(s.SubmissionTimeout)
+		s.Log.WithField("pending_submission", pendingSubmission).Debug("Successfully clean timeout txs")
 		return nil
 	}, s.SubmissionTimeout, time.Second, 2*s.SubmissionTimeout)
 }

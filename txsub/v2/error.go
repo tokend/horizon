@@ -46,6 +46,7 @@ type Error interface {
 var timeoutError = &txSubError{
 	error:     errors.New("timeout"),
 	errorType: Timeout,
+	// TODO result xdr or no txSubError
 }
 
 type txSubError struct {
