@@ -109,7 +109,7 @@ func (s *SubmissionList) Clean(maxAge time.Duration) int {
 			delete(s.history, os.Envelope.ContentHash)
 
 			for _, l := range os.Listeners {
-				l <- fullResult{Err: timeoutError}
+				l <- fullResult{Err: cancelError}
 				close(l)
 			}
 		}

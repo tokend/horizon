@@ -38,7 +38,7 @@ func (s *System) Submit(ctx context.Context, envelope EnvelopeInfo, waitIngest b
 		return result.unwrap()
 	case <-ctx.Done():
 		return fullResult{
-			Err: cancelError,
+			Err: timeoutError,
 		}.unwrap()
 		// nobody read from channel, could be the problem
 	}
