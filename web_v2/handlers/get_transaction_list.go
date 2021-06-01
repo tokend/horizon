@@ -148,7 +148,7 @@ type baseRequest interface {
 }
 
 func getPopulatedTx(tx history.Transaction, ledgerChangesQ history.LedgerChangesQ, request baseRequest, include *regources.Included) (regources.Transaction, error) {
-	historyChanges, err := ledgerChangesQ.FilterByTransactionID(tx.ID).Select()
+	historyChanges, err := ledgerChangesQ.FilterByTransactionID(tx.ID).OrderByNumber().Select()
 	if err != nil {
 		return regources.Transaction{}, errors.Wrap(err, "failed to load ledger changes")
 	}
