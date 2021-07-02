@@ -1,4 +1,4 @@
-// revision: 066600aac9f4c93f1d4c37e1bb7c559beafb2b6c
+// revision: ed8e27617ef83de9c31aa8c58fe039c90a519ca8
 // branch:   (HEAD
 // Package xdr is generated from:
 //
@@ -34755,7 +34755,8 @@ func (u ManagePollResult) GetExt() (result EmptyExt, ok bool) {
 //   enum ManageSaleAction
 //    {
 //        CREATE_UPDATE_DETAILS_REQUEST = 1,
-//        CANCEL = 2
+//        CANCEL = 2,
+//        UPDATE_TIME = 3
 //    };
 //
 type ManageSaleAction int32
@@ -34763,26 +34764,31 @@ type ManageSaleAction int32
 const (
 	ManageSaleActionCreateUpdateDetailsRequest ManageSaleAction = 1
 	ManageSaleActionCancel                     ManageSaleAction = 2
+	ManageSaleActionUpdateTime                 ManageSaleAction = 3
 )
 
 var ManageSaleActionAll = []ManageSaleAction{
 	ManageSaleActionCreateUpdateDetailsRequest,
 	ManageSaleActionCancel,
+	ManageSaleActionUpdateTime,
 }
 
 var manageSaleActionMap = map[int32]string{
 	1: "ManageSaleActionCreateUpdateDetailsRequest",
 	2: "ManageSaleActionCancel",
+	3: "ManageSaleActionUpdateTime",
 }
 
 var manageSaleActionShortMap = map[int32]string{
 	1: "create_update_details_request",
 	2: "cancel",
+	3: "update_time",
 }
 
 var manageSaleActionRevMap = map[string]int32{
 	"ManageSaleActionCreateUpdateDetailsRequest": 1,
 	"ManageSaleActionCancel":                     2,
+	"ManageSaleActionUpdateTime":                 3,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -34912,6 +34918,67 @@ type UpdateSaleDetailsData struct {
 	Ext            UpdateSaleDetailsDataExt `json:"ext,omitempty"`
 }
 
+// UpdateTimeDataExt is an XDR NestedUnion defines as:
+//
+//   union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        }
+//
+type UpdateTimeDataExt struct {
+	V LedgerVersion `json:"v,omitempty"`
+}
+
+// SwitchFieldName returns the field name in which this union's
+// discriminant is stored
+func (u UpdateTimeDataExt) SwitchFieldName() string {
+	return "V"
+}
+
+// ArmForSwitch returns which field name should be used for storing
+// the value for an instance of UpdateTimeDataExt
+func (u UpdateTimeDataExt) ArmForSwitch(sw int32) (string, bool) {
+	switch LedgerVersion(sw) {
+	case LedgerVersionEmptyVersion:
+		return "", true
+	}
+	return "-", false
+}
+
+// NewUpdateTimeDataExt creates a new  UpdateTimeDataExt.
+func NewUpdateTimeDataExt(v LedgerVersion, value interface{}) (result UpdateTimeDataExt, err error) {
+	result.V = v
+	switch LedgerVersion(v) {
+	case LedgerVersionEmptyVersion:
+		// void
+	}
+	return
+}
+
+// UpdateTimeData is an XDR Struct defines as:
+//
+//   //: Details are valid if one of the fileds is not zero
+//    struct UpdateTimeData {
+//        //: start time can be updated if sale is not started yet (zero means no changes)
+//        uint64 newStartTime;
+//        //: end time should be greater than start time (zero means no changes)
+//        uint64 newEndTime;
+//
+//        //: Reserved for future use
+//        union switch (LedgerVersion v)
+//        {
+//        case EMPTY_VERSION:
+//            void;
+//        } ext;
+//    };
+//
+type UpdateTimeData struct {
+	NewStartTime Uint64            `json:"newStartTime,omitempty"`
+	NewEndTime   Uint64            `json:"newEndTime,omitempty"`
+	Ext          UpdateTimeDataExt `json:"ext,omitempty"`
+}
+
 // ManageSaleOpData is an XDR NestedUnion defines as:
 //
 //   union switch (ManageSaleAction action) {
@@ -34919,11 +34986,14 @@ type UpdateSaleDetailsData struct {
 //            UpdateSaleDetailsData updateSaleDetailsData;
 //        case CANCEL:
 //            void;
+//        case UPDATE_TIME:
+//            UpdateTimeData updateTime;
 //        }
 //
 type ManageSaleOpData struct {
 	Action                ManageSaleAction       `json:"action,omitempty"`
 	UpdateSaleDetailsData *UpdateSaleDetailsData `json:"updateSaleDetailsData,omitempty"`
+	UpdateTime            *UpdateTimeData        `json:"updateTime,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -34940,6 +35010,8 @@ func (u ManageSaleOpData) ArmForSwitch(sw int32) (string, bool) {
 		return "UpdateSaleDetailsData", true
 	case ManageSaleActionCancel:
 		return "", true
+	case ManageSaleActionUpdateTime:
+		return "UpdateTime", true
 	}
 	return "-", false
 }
@@ -34957,6 +35029,13 @@ func NewManageSaleOpData(action ManageSaleAction, value interface{}) (result Man
 		result.UpdateSaleDetailsData = &tv
 	case ManageSaleActionCancel:
 		// void
+	case ManageSaleActionUpdateTime:
+		tv, ok := value.(UpdateTimeData)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be UpdateTimeData")
+			return
+		}
+		result.UpdateTime = &tv
 	}
 	return
 }
@@ -34980,6 +35059,31 @@ func (u ManageSaleOpData) GetUpdateSaleDetailsData() (result UpdateSaleDetailsDa
 
 	if armName == "UpdateSaleDetailsData" {
 		result = *u.UpdateSaleDetailsData
+		ok = true
+	}
+
+	return
+}
+
+// MustUpdateTime retrieves the UpdateTime value from the union,
+// panicing if the value is not set.
+func (u ManageSaleOpData) MustUpdateTime() UpdateTimeData {
+	val, ok := u.GetUpdateTime()
+
+	if !ok {
+		panic("arm UpdateTime is not set")
+	}
+
+	return val
+}
+
+// GetUpdateTime retrieves the UpdateTime value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u ManageSaleOpData) GetUpdateTime() (result UpdateTimeData, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Action))
+
+	if armName == "UpdateTime" {
+		result = *u.UpdateTime
 		ok = true
 	}
 
@@ -35037,6 +35141,8 @@ func NewManageSaleOpExt(v LedgerVersion, value interface{}) (result ManageSaleOp
 //            UpdateSaleDetailsData updateSaleDetailsData;
 //        case CANCEL:
 //            void;
+//        case UPDATE_TIME:
+//            UpdateTimeData updateTime;
 //        } data;
 //
 //        //: Reserved for future use
@@ -35073,7 +35179,13 @@ type ManageSaleOp struct {
 //        //: It is not allowed to set allTasks for a pending reviewable request
 //        NOT_ALLOWED_TO_SET_TASKS_ON_UPDATE = -5, // not allowed to set allTasks on request update
 //        //: Update sale details tasks are not set in the system, i.e. it's not allowed to perform the update of sale details
-//        SALE_UPDATE_DETAILS_TASKS_NOT_FOUND = -6
+//        SALE_UPDATE_DETAILS_TASKS_NOT_FOUND = -6,
+//        //: Both fields are zero
+//        INVALID_UPDATE_TIME_DATA = -7,
+//        //: Start time could not be updated (sale has already started)
+//        INVALID_START_TIME = -8,
+//        //: End time could not be less than start time
+//        INVALID_END_TIME = -9
 //    };
 //
 type ManageSaleResultCode int32
@@ -35086,6 +35198,9 @@ const (
 	ManageSaleResultCodeUpdateDetailsRequestNotFound      ManageSaleResultCode = -4
 	ManageSaleResultCodeNotAllowedToSetTasksOnUpdate      ManageSaleResultCode = -5
 	ManageSaleResultCodeSaleUpdateDetailsTasksNotFound    ManageSaleResultCode = -6
+	ManageSaleResultCodeInvalidUpdateTimeData             ManageSaleResultCode = -7
+	ManageSaleResultCodeInvalidStartTime                  ManageSaleResultCode = -8
+	ManageSaleResultCodeInvalidEndTime                    ManageSaleResultCode = -9
 )
 
 var ManageSaleResultCodeAll = []ManageSaleResultCode{
@@ -35096,6 +35211,9 @@ var ManageSaleResultCodeAll = []ManageSaleResultCode{
 	ManageSaleResultCodeUpdateDetailsRequestNotFound,
 	ManageSaleResultCodeNotAllowedToSetTasksOnUpdate,
 	ManageSaleResultCodeSaleUpdateDetailsTasksNotFound,
+	ManageSaleResultCodeInvalidUpdateTimeData,
+	ManageSaleResultCodeInvalidStartTime,
+	ManageSaleResultCodeInvalidEndTime,
 }
 
 var manageSaleResultCodeMap = map[int32]string{
@@ -35106,6 +35224,9 @@ var manageSaleResultCodeMap = map[int32]string{
 	-4: "ManageSaleResultCodeUpdateDetailsRequestNotFound",
 	-5: "ManageSaleResultCodeNotAllowedToSetTasksOnUpdate",
 	-6: "ManageSaleResultCodeSaleUpdateDetailsTasksNotFound",
+	-7: "ManageSaleResultCodeInvalidUpdateTimeData",
+	-8: "ManageSaleResultCodeInvalidStartTime",
+	-9: "ManageSaleResultCodeInvalidEndTime",
 }
 
 var manageSaleResultCodeShortMap = map[int32]string{
@@ -35116,6 +35237,9 @@ var manageSaleResultCodeShortMap = map[int32]string{
 	-4: "update_details_request_not_found",
 	-5: "not_allowed_to_set_tasks_on_update",
 	-6: "sale_update_details_tasks_not_found",
+	-7: "invalid_update_time_data",
+	-8: "invalid_start_time",
+	-9: "invalid_end_time",
 }
 
 var manageSaleResultCodeRevMap = map[string]int32{
@@ -35126,6 +35250,9 @@ var manageSaleResultCodeRevMap = map[string]int32{
 	"ManageSaleResultCodeUpdateDetailsRequestNotFound":      -4,
 	"ManageSaleResultCodeNotAllowedToSetTasksOnUpdate":      -5,
 	"ManageSaleResultCodeSaleUpdateDetailsTasksNotFound":    -6,
+	"ManageSaleResultCodeInvalidUpdateTimeData":             -7,
+	"ManageSaleResultCodeInvalidStartTime":                  -8,
+	"ManageSaleResultCodeInvalidEndTime":                    -9,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -35196,6 +35323,7 @@ func (e *ManageSaleResultCode) UnmarshalJSON(data []byte) error {
 //        case CREATE_UPDATE_DETAILS_REQUEST:
 //            uint64 requestID;
 //        case CANCEL:
+//        case UPDATE_TIME:
 //            void;
 //        }
 //
@@ -35218,6 +35346,8 @@ func (u ManageSaleResultSuccessResponse) ArmForSwitch(sw int32) (string, bool) {
 		return "RequestId", true
 	case ManageSaleActionCancel:
 		return "", true
+	case ManageSaleActionUpdateTime:
+		return "", true
 	}
 	return "-", false
 }
@@ -35234,6 +35364,8 @@ func NewManageSaleResultSuccessResponse(action ManageSaleAction, value interface
 		}
 		result.RequestId = &tv
 	case ManageSaleActionCancel:
+		// void
+	case ManageSaleActionUpdateTime:
 		// void
 	}
 	return
@@ -35315,6 +35447,7 @@ func NewManageSaleResultSuccessExt(v LedgerVersion, value interface{}) (result M
 //        case CREATE_UPDATE_DETAILS_REQUEST:
 //            uint64 requestID;
 //        case CANCEL:
+//        case UPDATE_TIME:
 //            void;
 //        } response;
 //
@@ -58810,4 +58943,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "066600aac9f4c93f1d4c37e1bb7c559beafb2b6c"
+var Revision = "ed8e27617ef83de9c31aa8c58fe039c90a519ca8"
