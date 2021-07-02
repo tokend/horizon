@@ -16,16 +16,20 @@ const (
 	Timeout ErrorType = iota
 	// RejectedTx occurs when Tx was reject by core
 	RejectedTx
+	// Canceled error cause of context done
+	Canceled
 )
 
 var (
 	txSubCodes = map[ErrorType]int{
 		Timeout:    http.StatusRequestTimeout,
 		RejectedTx: http.StatusBadRequest,
+		Canceled:   http.StatusGone,
 	}
 	txSubDetails = map[ErrorType]string{
 		Timeout:    "Tx submit is taking too long",
 		RejectedTx: "Tx is invalid and got rejected",
+		Canceled:   "User canceled request",
 	}
 )
 
@@ -46,6 +50,11 @@ type Error interface {
 var timeoutError = &txSubError{
 	error:     errors.New("timeout"),
 	errorType: Timeout,
+}
+
+var cancelError = &txSubError{
+	error:     errors.New("canceled"),
+	errorType: Canceled,
 }
 
 type txSubError struct {

@@ -47,7 +47,7 @@ func (q TransactionsQ) FilterByLedgerEntryTypes(types ...int) TransactionsQ {
 	return q
 }
 
-// FilterByLedgerEntryTypes - returns q with filter by effect(ledger entry change) types
+// FilterByEffectTypes - returns q with filter by effect(ledger entry change) types
 func (q TransactionsQ) FilterByEffectTypes(types ...int) TransactionsQ {
 	q.selector = q.selector.Where(sq.Eq{"ledger_changes.effect": types})
 	return q

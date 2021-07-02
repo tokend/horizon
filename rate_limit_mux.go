@@ -8,12 +8,12 @@ import (
 	"gitlab.com/distributed_lab/kit/copus/types"
 
 	"github.com/pkg/errors"
+	"github.com/throttled/throttled/v2"
+	"github.com/throttled/throttled/v2/store/memstore"
 	"github.com/zenazn/goji/web"
 	"gitlab.com/tokend/go/signcontrol"
 	"gitlab.com/tokend/horizon/log"
 	"gitlab.com/tokend/horizon/render/problem"
-	throttled "gopkg.in/throttled/throttled.v2"
-	"gopkg.in/throttled/throttled.v2/store/memstore"
 )
 
 type RateLimitedMux struct {

@@ -40,6 +40,7 @@ func (s *System) Submit(ctx context.Context, envelope EnvelopeInfo, waitIngest b
 		return fullResult{
 			Err: timeoutError,
 		}.unwrap()
+		// nobody read from channel, could be the problem
 	}
 }
 
@@ -72,7 +73,7 @@ func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo, waitIngest bo
 }
 
 func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResult, waitIngest bool) <-chan fullResult {
-	_, err := s.Submitter.Submit(ctx, &info)
+	duration, err := s.Submitter.Submit(ctx, &info)
 	if err != nil {
 		return send(l,
 			fullResult{
@@ -80,6 +81,7 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 					info.GetLoganFields()),
 			})
 	}
+	s.Log.WithField("duration", duration).Debug("Successfully submit tx")
 
 	err = s.List.Add(&info, waitIngest, l)
 	if err != nil {
@@ -114,13 +116,15 @@ func (s *System) tryResubmit(ctx context.Context, hash string) error {
 	if env == nil {
 		return errors.New("trying to resubmit tx which is not in pending list")
 	}
-	_, err = s.Submitter.Submit(ctx, env)
-
+	duration, err := s.Submitter.Submit(ctx, env)
+	s.Log.WithField("duration", duration).Debug("Successfully resubmit tx")
 	return err
 }
 
 func (s *System) tickCore(ctx context.Context) {
-	for _, hash := range s.List.PendingCore() {
+	pendingCore := s.List.PendingCore()
+	s.Log.WithField("txs_quantity", len(pendingCore)).Debug("Processing pending core txs")
+	for _, hash := range pendingCore {
 		res, err := s.Results.FromCore(hash)
 		if IsInternalError(errors.Cause(err)) {
 			s.List.Finish(fullResult{Result: Result{Hash: hash}, Err: err})
@@ -162,7 +166,9 @@ func (s *System) tickCore(ctx context.Context) {
 }
 
 func (s *System) tickHistory(ctx context.Context) {
-	for _, hash := range s.List.PendingHistory() {
+	pendingHistory := s.List.PendingHistory()
+	s.Log.WithField("txs_quantity", len(pendingHistory)).Debug("Processing pending history txs")
+	for _, hash := range pendingHistory {
 		res, err := s.Results.FromHistory(hash)
 		if err != nil {
 			s.Log.
@@ -239,7 +245,8 @@ func (s *System) cleaner(ctx context.Context) {
 	}()
 
 	running.WithBackOff(ctx, s.Log, "submitter_v2_cleaner", func(ctx context.Context) error {
-		s.List.Clean(s.SubmissionTimeout)
+		pendingSubmission := s.List.Clean(s.SubmissionTimeout)
+		s.Log.WithField("pending_submission", pendingSubmission).Debug("Successfully clean timeout txs")
 		return nil
 	}, s.SubmissionTimeout, time.Second, 2*s.SubmissionTimeout)
 }

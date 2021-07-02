@@ -50,7 +50,7 @@ func initSubmissionV2(app *App) {
 	}
 	app.submitterV2 = &txsub.System{
 		Log:               logger,
-		SubmissionTimeout: time.Minute,
+		SubmissionTimeout: time.Minute + 30*time.Second,
 		List:              txsub.NewDefaultSubmissionList(10 * time.Second),
 		Submitter:         txsub.NewDefaultSubmitter(*coreConnector),
 		CoreListener:      coreListener,

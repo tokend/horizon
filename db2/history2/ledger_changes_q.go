@@ -34,6 +34,12 @@ func (q LedgerChangesQ) FilterByTransactionID(id int64) LedgerChangesQ {
 	return q
 }
 
+// OrderByNumber - orders by order_number
+func (q LedgerChangesQ) OrderByNumber() LedgerChangesQ {
+	q.selector = q.selector.OrderBy("ledger_changes.order_number asc")
+	return q
+}
+
 // Select - selects slice from the db, if no ledger changes found - returns nil, nil
 func (q LedgerChangesQ) Select() ([]LedgerChanges, error) {
 	var result []LedgerChanges

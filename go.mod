@@ -8,7 +8,6 @@ require (
 	github.com/certifi/gocertifi v0.0.0-20180118203423-deb3ae2ef261 // indirect
 	github.com/cheekybits/genny v0.0.0-20170328200008-9127e812e1e9
 	github.com/evalphobia/logrus_sentry v0.8.2
-	github.com/garyburd/redigo v1.6.2 // indirect
 	github.com/getsentry/raven-go v0.2.0
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-errors/errors v1.0.0
@@ -35,6 +34,7 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.1 // indirect
 	github.com/stretchr/testify v1.6.1
+	github.com/throttled/throttled/v2 v2.7.2
 	github.com/zenazn/goji v0.9.1-0.20160507202103-64eb34159fe5
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	gitlab.com/distributed_lab/ape v1.5.0
@@ -47,9 +47,8 @@ require (
 	gitlab.com/distributed_lab/txsub v0.0.0-20171130120140-d7781cbc2319
 	gitlab.com/distributed_lab/urlval v2.2.0+incompatible
 	gitlab.com/tokend/go v3.14.1-0.20210304135857-9339491aaa1a+incompatible
-	gitlab.com/tokend/keypair v0.0.0-20171129153222-c148f15306ed // indirect
+	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
 	gitlab.com/tokend/regources v4.9.2-0.20210408150647-47ff1d870d56+incompatible
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
-	gopkg.in/throttled/throttled.v2 v2.0.3
 	gopkg.in/tylerb/graceful.v1 v1.2.15
 )

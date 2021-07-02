@@ -79,12 +79,22 @@ func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*reg
 			return nil, errors.Wrap(err, "failed to get account signers")
 		}
 
-		accountResource := resources.NewAccount(account, nil, accountSigners...)
-		// TODO add signers to includes here
+		accountResource := resources.NewAccount(account, nil)
+		accountResource.Relationships.Signers = &regources.RelationCollection{
+			Data: make([]regources.Key, 0, len(accountSigners)),
+		}
+
+		for _, s := range accountSigners {
+			signer := resources.NewSigner(s)
+			accountResource.Relationships.Signers.Data = append(accountResource.Relationships.Signers.Data, signer.GetKey())
+			if r.ShouldInclude(requests.IncludeTypeAccountSigners) {
+				response.Included.Add(&signer)
+			}
+		}
+
 		accountResource.Relationships.Role = resources.NewAccountRoleKey(account.RoleID).AsRelation()
 		response.Data = append(response.Data, accountResource)
 	}
 
 	return &response, nil
 }
-

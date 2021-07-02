@@ -61,10 +61,14 @@ func (h *getTransactionsHandler) getLatestLedger() (*history2.Ledger, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load latest ledger sequence")
 	}
+	h.Log.WithField("latest_sequence", sequence).Debug("Got latest ledger seq")
 
 	ledger, err := h.LedgerQ.GetBySequence(sequence)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load ledger by sequence")
+	}
+	if ledger == nil {
+		h.Log.WithField("latest_sequence", sequence).Error("Failed to get latest ledger")
 	}
 
 	return ledger, nil
@@ -125,6 +129,9 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load latest ledger")
 	}
+	if latestLedger == nil {
+		return nil, errors.New("Latest ledger is nil")
+	}
 
 	if result.Meta, err = json.Marshal(regources.TransactionResponseMeta{
 		LatestLedgerCloseTime: latestLedger.ClosedAt,
@@ -141,7 +148,7 @@ type baseRequest interface {
 }
 
 func getPopulatedTx(tx history.Transaction, ledgerChangesQ history.LedgerChangesQ, request baseRequest, include *regources.Included) (regources.Transaction, error) {
-	historyChanges, err := ledgerChangesQ.FilterByTransactionID(tx.ID).Select()
+	historyChanges, err := ledgerChangesQ.FilterByTransactionID(tx.ID).OrderByNumber().Select()
 	if err != nil {
 		return regources.Transaction{}, errors.Wrap(err, "failed to load ledger changes")
 	}
