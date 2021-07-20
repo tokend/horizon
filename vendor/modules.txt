@@ -182,7 +182,7 @@ gitlab.com/distributed_lab/kit/janus
 gitlab.com/distributed_lab/kit/janus/internal
 gitlab.com/distributed_lab/kit/kv
 gitlab.com/distributed_lab/kit/pgdb
-# gitlab.com/distributed_lab/logan v3.7.1+incompatible
+# gitlab.com/distributed_lab/logan v3.8.0+incompatible
 ## explicit
 gitlab.com/distributed_lab/logan
 gitlab.com/distributed_lab/logan/v3
@@ -224,7 +224,7 @@ gitlab.com/tokend/keypair
 gitlab.com/tokend/keypair/internal
 gitlab.com/tokend/keypair/internal/crc16
 gitlab.com/tokend/keypair/internal/strkey
-# gitlab.com/tokend/regources v4.9.2-0.20210408150647-47ff1d870d56+incompatible
+# gitlab.com/tokend/regources v4.9.2-0.20210716083132-ad936ecbe9fc+incompatible
 ## explicit
 gitlab.com/tokend/regources
 gitlab.com/tokend/regources/generated

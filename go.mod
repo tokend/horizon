@@ -41,14 +41,14 @@ require (
 	gitlab.com/distributed_lab/corer v0.0.0-20171130114150-cbfb46525895
 	gitlab.com/distributed_lab/figure v2.1.0+incompatible
 	gitlab.com/distributed_lab/kit v1.8.1
-	gitlab.com/distributed_lab/logan v3.7.1+incompatible
+	gitlab.com/distributed_lab/logan v3.8.0+incompatible
 	gitlab.com/distributed_lab/lorem v0.2.0 // indirect
 	gitlab.com/distributed_lab/running v0.0.0-20190830165007-aded59ee376f
 	gitlab.com/distributed_lab/txsub v0.0.0-20171130120140-d7781cbc2319
 	gitlab.com/distributed_lab/urlval v2.2.0+incompatible
 	gitlab.com/tokend/go v3.15.1-0.20210702081110-f832d789c90e+incompatible
 	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
-	gitlab.com/tokend/regources v4.9.2-0.20210408150647-47ff1d870d56+incompatible
+	gitlab.com/tokend/regources v4.9.2-0.20210716083132-ad936ecbe9fc+incompatible
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 	gopkg.in/tylerb/graceful.v1 v1.2.15
 )

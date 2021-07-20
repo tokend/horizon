@@ -18,6 +18,8 @@ type SaleAttributes struct {
 	Details     Details `json:"details"`
 	// time when the sale expires
 	EndTime time.Time `json:"end_time"`
+	// participations count in sale
+	ParticipationsCount *int32 `json:"participations_count,omitempty"`
 	// state of sale
 	SaleState SaleState `json:"sale_state"`
 	// type of sale
