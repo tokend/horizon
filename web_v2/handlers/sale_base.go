@@ -3,6 +3,8 @@ package handlers
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
@@ -14,6 +16,9 @@ type getSaleBase struct {
 	AssetsQ          history2.AssetQ
 	saleCapConverter *saleCapConverter
 	Log              *logan.Entry
+
+	ParticipationQ history2.SaleParticipationQ
+	OffersQ        core2.OffersQ
 }
 
 func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *requests.GetSale) (*regources.SaleResponse, error) {
@@ -59,6 +64,42 @@ func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *request
 		asset := resources.NewAssetV2(*historySale.Asset)
 		response.Included.Add(&asset)
 	}
+
+	var prtQ participationsQ
+	var participationsCount int32
+	var isCountZero bool
+
+	switch historySale.State {
+	case regources.SaleStateCanceled:
+		isCountZero = true
+	case regources.SaleStateOpen:
+		switch historySale.SaleType {
+		case xdr.SaleTypeImmediate:
+			prtQ = closedParticipationsQ{
+				participationQ: h.ParticipationQ.
+					FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
+			}
+		case xdr.SaleTypeBasicSale, xdr.SaleTypeCrowdFunding, xdr.SaleTypeFixedPrice:
+			prtQ = pendingParticipationsQ{
+				offersQ: h.OffersQ.
+					FilterByIsBuy(true).
+					FilterByOrderBookID(int64(historySale.ID)),
+			}
+		default:
+			isCountZero = true
+		}
+	case regources.SaleStateClosed:
+		prtQ = closedParticipationsQ{
+			participationQ: h.ParticipationQ.
+				FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
+		}
+	default:
+		isCountZero = true
+	}
+
+	participations, err := prtQ.Select()
+	participationsCount = processParticipationsCount(isCountZero, len(participations))
+	response.Data.Attributes.ParticipationsCount = &participationsCount
 
 	return response, nil
 }
@@ -173,4 +214,11 @@ func applySaleFilters(s requests.SalesBase, q history2.SalesQ) history2.SalesQ {
 	}
 
 	return q
+}
+
+func processParticipationsCount(isCountZero bool, participationsCount int) int32 {
+	if isCountZero {
+		return int32(0)
+	}
+	return int32(participationsCount)
 }
