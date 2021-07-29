@@ -62,7 +62,7 @@ Sale:
               $ref: '#/components/schemas/Details'
               description: "free-form object to attach details to the sale"
             participations_count:
-              type: int32
+              type: int64
               description: "participations count in sale"
         relationships:
           type: object
