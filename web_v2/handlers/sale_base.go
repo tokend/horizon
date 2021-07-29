@@ -66,12 +66,11 @@ func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *request
 	}
 
 	var prtQ participationsQ
-	var participationsCount int32
-	var isCountZero bool
+	var participationsCount int64
 
 	switch historySale.State {
 	case regources.SaleStateCanceled:
-		isCountZero = true
+		participationsCount = 0
 	case regources.SaleStateOpen:
 		switch historySale.SaleType {
 		case xdr.SaleTypeImmediate:
@@ -86,7 +85,7 @@ func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *request
 					FilterByOrderBookID(int64(historySale.ID)),
 			}
 		default:
-			isCountZero = true
+			participationsCount = 0
 		}
 	case regources.SaleStateClosed:
 		prtQ = closedParticipationsQ{
@@ -94,11 +93,13 @@ func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *request
 				FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
 		}
 	default:
-		isCountZero = true
+		participationsCount = 0
 	}
 
-	participations, err := prtQ.Select()
-	participationsCount = processParticipationsCount(isCountZero, len(participations))
+	participationsCount, err = prtQ.Count()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load participations")
+	}
 	response.Data.Attributes.ParticipationsCount = &participationsCount
 
 	return response, nil
@@ -214,11 +215,4 @@ func applySaleFilters(s requests.SalesBase, q history2.SalesQ) history2.SalesQ {
 	}
 
 	return q
-}
-
-func processParticipationsCount(isCountZero bool, participationsCount int) int32 {
-	if isCountZero {
-		return int32(0)
-	}
-	return int32(participationsCount)
 }

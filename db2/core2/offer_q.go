@@ -17,22 +17,8 @@ type OffersQ struct {
 // NewOffersQ - creates new instance of OffersQ with no filters
 func NewOffersQ(repo *pgdb.DB) OffersQ {
 	return OffersQ{
-		repo: repo,
-		selector: sq.Select(
-			"offers.offer_id",
-			"offers.owner_id",
-			"offers.order_book_id",
-			"offers.base_asset_code",
-			"offers.quote_asset_code",
-			"offers.base_balance_id",
-			"offers.quote_balance_id",
-			"offers.fee",
-			"offers.is_buy",
-			"offers.created_at",
-			"offers.base_amount",
-			"offers.quote_amount",
-			"offers.price",
-		).From("offer offers"),
+		repo:     repo,
+		selector: sq.Select().From("offer offers"),
 	}
 }
 
@@ -121,7 +107,7 @@ func (q OffersQ) WithBaseAsset() OffersQ {
 
 // WithQuoteAsset - joins quote asset
 func (q OffersQ) WithQuoteAsset() OffersQ {
-	q.selector = q.selector.
+	q.selector = q.addDefaultColumns().selector.
 		Columns(db2.GetColumnsForJoin(assetColumns, "quote_assets")...).
 		LeftJoin("asset quote_assets ON offers.quote_asset_code = quote_assets.code")
 
@@ -133,7 +119,7 @@ func (q OffersQ) WithQuoteAsset() OffersQ {
 // returns error if more than one asset pair found
 func (q OffersQ) Get() (*Offer, error) {
 	var result Offer
-	err := q.repo.Get(&result, q.selector)
+	err := q.repo.Get(&result, q.addDefaultColumns().selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -148,7 +134,8 @@ func (q OffersQ) Get() (*Offer, error) {
 // Select - selects slice from the db, if no pairs found - returns nil, nil
 func (q OffersQ) Select() ([]Offer, error) {
 	var result []Offer
-	err := q.repo.Select(&result, q.selector)
+	q.selector = q.addDefaultColumns().selector
+	err := q.repo.Select(&result, q.addDefaultColumns().selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -167,6 +154,7 @@ func (q OffersQ) OrderBookID() OffersQ {
 
 func (q OffersQ) SelectID() ([]int64, error) {
 	var result []int64
+	q.selector = q.addDefaultColumns().selector
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -177,4 +165,34 @@ func (q OffersQ) SelectID() ([]int64, error) {
 	}
 
 	return result, nil
+}
+
+// Count - returns result of COUNT(*) SQL function
+func (q OffersQ) Count() (int64, error) {
+	var result int64
+	q.selector = q.selector.Columns("COUNT(*)")
+	err := q.repo.Select(&result, q.selector)
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to load sale participations")
+	}
+
+	return result, nil
+}
+
+func (q OffersQ) addDefaultColumns() OffersQ {
+	q.selector = q.selector.Columns(
+		"offers.offer_id",
+		"offers.owner_id",
+		"offers.order_book_id",
+		"offers.base_asset_code",
+		"offers.quote_asset_code",
+		"offers.base_balance_id",
+		"offers.quote_balance_id",
+		"offers.fee",
+		"offers.is_buy",
+		"offers.created_at",
+		"offers.base_amount",
+		"offers.quote_amount",
+		"offers.price")
+	return q
 }

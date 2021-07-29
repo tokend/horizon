@@ -54,3 +54,8 @@ func (q closedParticipationsQ) Select() ([]regources.SaleParticipation, error) {
 
 	return result, nil
 }
+
+// Count - returns number of rows
+func (q closedParticipationsQ) Count() (int64, error) {
+	return q.participationQ.Count()
+}

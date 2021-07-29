@@ -77,6 +77,8 @@ type participationsQ interface {
 	FilterByQuoteAsset(code string) participationsQ
 	// Select - select records from db and wraps them to participations
 	Select() ([]regources.SaleParticipation, error)
+	// Count - get records count from db
+	Count() (int64, error)
 }
 
 // GetSaleParticipations returns sale with related resources

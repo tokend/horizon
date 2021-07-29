@@ -56,3 +56,8 @@ func (p pendingParticipationsQ) Select() ([]regources.SaleParticipation, error) 
 
 	return result, nil
 }
+
+// Count - returns number of rows
+func (p pendingParticipationsQ) Count() (int64, error) {
+	return p.offersQ.Count()
+}

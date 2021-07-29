@@ -17,15 +17,7 @@ type SaleParticipationQ struct {
 func NewSaleParticipationQ(repo *pgdb.DB) SaleParticipationQ {
 	return SaleParticipationQ{
 		repo: repo,
-		selector: sq.Select(
-			"(pe.effect#>>'{matched,offer_id}')::int id",
-			"a.address participant_id",
-			"(pe.effect#>>'{matched,order_book_id}')::int sale_id",
-			"pe.effect#>>'{matched,charged,asset_code}' quote_asset",
-			"pe.effect#>>'{matched,charged,amount}' quote_amount",
-			"pe.effect#>>'{matched,funded,asset_code}' base_asset",
-			"pe.effect#>>'{matched,funded,amount}' base_amount",
-		).
+		selector: sq.Select().
 			From("participant_effects pe").
 			Join("accounts a ON pe.account_id = a.id").
 			Where("(pe.effect#>>'{type}')::int = ?", EffectTypeMatched),
@@ -63,9 +55,28 @@ func (q SaleParticipationQ) Page(params pgdb.CursorPageParams) SaleParticipation
 // Select - selects slice from the db, if no sales found - returns nil, nil
 func (q SaleParticipationQ) Select() ([]SaleParticipation, error) {
 	var result []SaleParticipation
+	q.selector = q.selector.Columns("(pe.effect#>>'{matched,offer_id}')::int id",
+		"a.address participant_id",
+		"(pe.effect#>>'{matched,order_book_id}')::int sale_id",
+		"pe.effect#>>'{matched,charged,asset_code}' quote_asset",
+		"pe.effect#>>'{matched,charged,amount}' quote_amount",
+		"pe.effect#>>'{matched,funded,asset_code}' base_asset",
+		"pe.effect#>>'{matched,funded,amount}' base_amount")
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load sale participations")
+	}
+
+	return result, nil
+}
+
+// Count - returns result of COUNT(*) SQL function
+func (q SaleParticipationQ) Count() (int64, error) {
+	var result int64
+	q.selector = q.selector.Columns("COUNT(*)")
+	err := q.repo.Select(&result, q.selector)
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to load sale participations")
 	}
 
 	return result, nil
