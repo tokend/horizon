@@ -134,7 +134,6 @@ func (q OffersQ) Get() (*Offer, error) {
 // Select - selects slice from the db, if no pairs found - returns nil, nil
 func (q OffersQ) Select() ([]Offer, error) {
 	var result []Offer
-	q.selector = q.addDefaultColumns().selector
 	err := q.repo.Select(&result, q.addDefaultColumns().selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -171,7 +170,7 @@ func (q OffersQ) SelectID() ([]int64, error) {
 func (q OffersQ) Count() (int64, error) {
 	var result int64
 	q.selector = q.selector.Columns("COUNT(*)")
-	err := q.repo.Select(&result, q.selector)
+	err := q.repo.Get(&result, q.selector)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to load sale participations")
 	}

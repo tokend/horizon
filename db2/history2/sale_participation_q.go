@@ -74,7 +74,7 @@ func (q SaleParticipationQ) Select() ([]SaleParticipation, error) {
 func (q SaleParticipationQ) Count() (int64, error) {
 	var result int64
 	q.selector = q.selector.Columns("COUNT(*)")
-	err := q.repo.Select(&result, q.selector)
+	err := q.repo.Get(&result, q.selector)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to load sale participations")
 	}
