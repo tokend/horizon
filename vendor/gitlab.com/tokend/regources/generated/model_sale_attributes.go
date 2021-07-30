@@ -19,9 +19,9 @@ type SaleAttributes struct {
 	// time when the sale expires
 	EndTime time.Time `json:"end_time"`
 	// participations count in sale
-	ParticipationsCount *int64 `json:"participations_count,omitempty"`
+	ParticipationsCount *int64 `json:"participations_count"`
 	// state of sale
-	SaleState SaleState `json:"sale_state"`
+	SaleState SaleState `json:",omitemptysale_state"`
 	// type of sale
 	SaleType xdr.SaleType `json:"sale_type"`
 	// time when the sale starts
