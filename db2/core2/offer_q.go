@@ -119,21 +119,7 @@ func (q OffersQ) WithQuoteAsset() OffersQ {
 // returns error if more than one asset pair found
 func (q OffersQ) Get() (*Offer, error) {
 	var result Offer
-	q.selector = q.selector.Columns(
-		"offers.offer_id",
-		"offers.owner_id",
-		"offers.order_book_id",
-		"offers.base_asset_code",
-		"offers.quote_asset_code",
-		"offers.base_balance_id",
-		"offers.quote_balance_id",
-		"offers.fee",
-		"offers.is_buy",
-		"offers.created_at",
-		"offers.base_amount",
-		"offers.quote_amount",
-		"offers.price")
-	err := q.repo.Get(&result, q.selector)
+	err := q.repo.Get(&result, q.addDefaultColumns().selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -148,21 +134,7 @@ func (q OffersQ) Get() (*Offer, error) {
 // Select - selects slice from the db, if no pairs found - returns nil, nil
 func (q OffersQ) Select() ([]Offer, error) {
 	var result []Offer
-	q.selector = q.selector.Columns(
-		"offers.offer_id",
-		"offers.owner_id",
-		"offers.order_book_id",
-		"offers.base_asset_code",
-		"offers.quote_asset_code",
-		"offers.base_balance_id",
-		"offers.quote_balance_id",
-		"offers.fee",
-		"offers.is_buy",
-		"offers.created_at",
-		"offers.base_amount",
-		"offers.quote_amount",
-		"offers.price")
-	err := q.repo.Select(&result, q.selector)
+	err := q.repo.Select(&result, q.addDefaultColumns().selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -181,21 +153,7 @@ func (q OffersQ) OrderBookID() OffersQ {
 
 func (q OffersQ) SelectID() ([]int64, error) {
 	var result []int64
-	q.selector = q.selector.Columns(
-		"offers.offer_id",
-		"offers.owner_id",
-		"offers.order_book_id",
-		"offers.base_asset_code",
-		"offers.quote_asset_code",
-		"offers.base_balance_id",
-		"offers.quote_balance_id",
-		"offers.fee",
-		"offers.is_buy",
-		"offers.created_at",
-		"offers.base_amount",
-		"offers.quote_amount",
-		"offers.price")
-	err := q.repo.Select(&result, q.selector)
+	err := q.repo.Select(&result, q.addDefaultColumns().selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -217,4 +175,22 @@ func (q OffersQ) Count() (int64, error) {
 	}
 
 	return result, nil
+}
+
+func (q OffersQ) addDefaultColumns() OffersQ {
+	q.selector = q.selector.Columns(
+		"offers.offer_id",
+		"offers.owner_id",
+		"offers.order_book_id",
+		"offers.base_asset_code",
+		"offers.quote_asset_code",
+		"offers.base_balance_id",
+		"offers.quote_balance_id",
+		"offers.fee",
+		"offers.is_buy",
+		"offers.created_at",
+		"offers.base_amount",
+		"offers.quote_amount",
+		"offers.price")
+	return q
 }
