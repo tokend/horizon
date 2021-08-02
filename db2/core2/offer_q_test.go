@@ -50,3 +50,7 @@ func TestSelectForDefaultColumns(t *testing.T) {
 		t.Error("Columns inserted with sq.Select() don't match to columns selected with sq.Columns()")
 	}
 }
+
+func TestApplyFilters(t *testing.T) {
+
+}
