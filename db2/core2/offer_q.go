@@ -153,7 +153,21 @@ func (q OffersQ) OrderBookID() OffersQ {
 
 func (q OffersQ) SelectID() ([]int64, error) {
 	var result []int64
-	err := q.repo.Select(&result, q.addDefaultColumns().selector)
+	q.selector = q.selector.Columns(
+		"offers.offer_id",
+		"offers.owner_id",
+		"offers.order_book_id",
+		"offers.base_asset_code",
+		"offers.quote_asset_code",
+		"offers.base_balance_id",
+		"offers.quote_balance_id",
+		"offers.fee",
+		"offers.is_buy",
+		"offers.created_at",
+		"offers.base_amount",
+		"offers.quote_amount",
+		"offers.price")
+	err := q.repo.Select(&result, q.selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
