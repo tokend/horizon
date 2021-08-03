@@ -21,7 +21,7 @@ type SaleAttributes struct {
 	// participations count in sale
 	ParticipationsCount *int64 `json:"participations_count"`
 	// state of sale
-	SaleState SaleState `json:",omitemptysale_state"`
+	SaleState SaleState `json:"sale_state"`
 	// type of sale
 	SaleType xdr.SaleType `json:"sale_type"`
 	// time when the sale starts

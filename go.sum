@@ -349,12 +349,8 @@ gitlab.com/tokend/go v3.15.1-0.20210702081110-f832d789c90e+incompatible h1:FaJ74
 gitlab.com/tokend/go v3.15.1-0.20210702081110-f832d789c90e+incompatible/go.mod h1:qz38YBc7VL29H2gnXbpRzcEVw2d1NUZ5SVDzIehqDCA=
 gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 h1:u8pxrNw8QKIsrmClG71uuTPy22fkePAXBkHgxrXkMU8=
 gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312/go.mod h1:vdlhN5/oQR7uY8EsGSqPf8bwnmQxxpaq7qrQn5Y3U/w=
-gitlab.com/tokend/regources v4.9.2-0.20210716083132-ad936ecbe9fc+incompatible h1:Uja9SvTWBYItqMWPfSBKpF7HOfta5r9mQgjMksVWxRc=
-gitlab.com/tokend/regources v4.9.2-0.20210716083132-ad936ecbe9fc+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
-gitlab.com/tokend/regources v4.9.2-0.20210729123728-98daaa661ef9+incompatible h1:llh+ygjztJA3KoCLKRJN32zNawCreCokMqzuYRnmGP4=
-gitlab.com/tokend/regources v4.9.2-0.20210729123728-98daaa661ef9+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
-gitlab.com/tokend/regources v4.9.2-0.20210730173735-4b06c19f8f8e+incompatible h1:z9NueAMK0A++Dz7ZcGiiBIbZTmNHYe+BdUcpIikRVYA=
-gitlab.com/tokend/regources v4.9.2-0.20210730173735-4b06c19f8f8e+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
+gitlab.com/tokend/regources v4.9.2-0.20210803092741-e304e9fd0dd2+incompatible h1:olQKuL9PFyTpk3S8SkiDKVGxGZ97KxXFwnLWF1woEBA=
+gitlab.com/tokend/regources v4.9.2-0.20210803092741-e304e9fd0dd2+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
