@@ -198,10 +198,11 @@ func applySaleFilters(s requests.SalesBase, q history2.SalesQ) history2.SalesQ {
 func salesParticipationCount(historySale history2.Sale, saleParticipationsQ history2.SaleParticipationQ, offersQ core2.OffersQ) (int64, error) {
 	var prtQ participationsQ
 	var participationsCount int64
+	defaultSaleStatus := false
 
 	switch historySale.State {
 	case regources.SaleStateCanceled:
-		participationsCount = 0
+		defaultSaleStatus = true
 	case regources.SaleStateOpen:
 		switch historySale.SaleType {
 		case xdr.SaleTypeImmediate:
@@ -216,7 +217,7 @@ func salesParticipationCount(historySale history2.Sale, saleParticipationsQ hist
 					FilterByOrderBookID(int64(historySale.ID)),
 			}
 		default:
-			participationsCount = 0
+			defaultSaleStatus = true
 		}
 	case regources.SaleStateClosed:
 		prtQ = closedParticipationsQ{
@@ -224,9 +225,16 @@ func salesParticipationCount(historySale history2.Sale, saleParticipationsQ hist
 				FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
 		}
 	default:
-		participationsCount = 0
+		defaultSaleStatus = true
+	}
+
+	if defaultSaleStatus {
+		return 0, nil
 	}
 
 	participationsCount, err := prtQ.Count()
-	return participationsCount, err
+	if err != nil {
+		return 0, err
+	}
+	return participationsCount, nil
 }
