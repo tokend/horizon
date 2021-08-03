@@ -65,40 +65,9 @@ func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *request
 		response.Included.Add(&asset)
 	}
 
-	var prtQ participationsQ
-	var participationsCount int64
-
-	switch historySale.State {
-	case regources.SaleStateCanceled:
-		participationsCount = 0
-	case regources.SaleStateOpen:
-		switch historySale.SaleType {
-		case xdr.SaleTypeImmediate:
-			prtQ = closedParticipationsQ{
-				participationQ: h.ParticipationQ.
-					FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
-			}
-		case xdr.SaleTypeBasicSale, xdr.SaleTypeCrowdFunding, xdr.SaleTypeFixedPrice:
-			prtQ = pendingParticipationsQ{
-				offersQ: h.OffersQ.
-					FilterByIsBuy(true).
-					FilterByOrderBookID(int64(historySale.ID)),
-			}
-		default:
-			participationsCount = 0
-		}
-	case regources.SaleStateClosed:
-		prtQ = closedParticipationsQ{
-			participationQ: h.ParticipationQ.
-				FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
-		}
-	default:
-		participationsCount = 0
-	}
-
-	participationsCount, err = prtQ.Count()
+	participationsCount, err := salesParticipationCount(*historySale, h.ParticipationQ, h.OffersQ)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load participations")
+		return nil, errors.Wrap(err, "failed to load participations count")
 	}
 	response.Data.Attributes.ParticipationsCount = &participationsCount
 
@@ -110,6 +79,9 @@ type salesBaseHandler struct {
 	AssetsQ          history2.AssetQ
 	saleCapConverter *saleCapConverter
 	Log              *logan.Entry
+
+	ParticipationQ history2.SaleParticipationQ
+	OffersQ        core2.OffersQ
 }
 
 func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
@@ -119,7 +91,13 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	for _, historySale := range historySales {
 		sale := resources.NewSale(historySale)
 
-		err := h.saleCapConverter.PopulateSaleCap(&historySale)
+		participationsCount, err := salesParticipationCount(historySale, h.ParticipationQ, h.OffersQ)
+		if err != nil {
+			return errors.Wrap(err, "failed to populate participations count")
+		}
+		sale.Attributes.ParticipationsCount = &participationsCount
+
+		err = h.saleCapConverter.PopulateSaleCap(&historySale)
 		if err != nil {
 			return errors.Wrap(err, "failed to populate sale cap")
 		}
@@ -215,4 +193,40 @@ func applySaleFilters(s requests.SalesBase, q history2.SalesQ) history2.SalesQ {
 	}
 
 	return q
+}
+
+func salesParticipationCount(historySale history2.Sale, saleParticipationsQ history2.SaleParticipationQ, offersQ core2.OffersQ) (int64, error) {
+	var prtQ participationsQ
+	var participationsCount int64
+
+	switch historySale.State {
+	case regources.SaleStateCanceled:
+		participationsCount = 0
+	case regources.SaleStateOpen:
+		switch historySale.SaleType {
+		case xdr.SaleTypeImmediate:
+			prtQ = closedParticipationsQ{
+				participationQ: saleParticipationsQ.
+					FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
+			}
+		case xdr.SaleTypeBasicSale, xdr.SaleTypeCrowdFunding, xdr.SaleTypeFixedPrice:
+			prtQ = pendingParticipationsQ{
+				offersQ: offersQ.
+					FilterByIsBuy(true).
+					FilterByOrderBookID(int64(historySale.ID)),
+			}
+		default:
+			participationsCount = 0
+		}
+	case regources.SaleStateClosed:
+		prtQ = closedParticipationsQ{
+			participationQ: saleParticipationsQ.
+				FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
+		}
+	default:
+		participationsCount = 0
+	}
+
+	participationsCount, err := prtQ.Count()
+	return participationsCount, err
 }

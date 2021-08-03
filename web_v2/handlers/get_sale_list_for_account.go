@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gitlab.com/tokend/horizon/db2/core2"
 	"net/http"
 
 	"gitlab.com/tokend/horizon/db2/history2"
@@ -29,6 +30,9 @@ func GetSaleListForAccount(w http.ResponseWriter, r *http.Request) {
 			AssetsQ:          history2.NewAssetQ(historyRepo),
 			saleCapConverter: converter,
 			Log:              ctx.Log(r),
+
+			ParticipationQ: history2.NewSaleParticipationQ(historyRepo),
+			OffersQ:        core2.NewOffersQ(ctx.CoreRepo(r)),
 		},
 	}
 
