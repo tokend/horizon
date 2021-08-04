@@ -98,6 +98,33 @@
         explode: false
         schema:
           type: integer
+      - name: filter[all_tasks]
+        in: query
+        description: |
+          Filters requests by existing tasks in `all_tasks` bit mask. Returns requests if all bits are set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[all_tasks_not_set]
+        in: query
+        description: |
+          Filters requests by existing tasks in `all_tasks` bit mask. Returns requests if none of bits is set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+      - name: filter[all_tasks_any_of]
+        in: query
+        description: |
+          Filters requests by existing tasks in `all_tasks` bit mask. Returns requests if at least one bit is set.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
       - name: include
         in: query
         description: |
