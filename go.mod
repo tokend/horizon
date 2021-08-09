@@ -52,3 +52,5 @@ require (
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 	gopkg.in/tylerb/graceful.v1 v1.2.15
 )
+
+replace gitlab.com/tokend/regources => gitlab.com/tokend/regources v4.9.2-0.20210809204843-6ec3aa755883+incompatible

@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/jsonapi"
 
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/tokend/horizon/web_v2/resources"
 
@@ -80,7 +80,7 @@ type createTransactionHandler struct {
 }
 
 func (h *createTransactionHandler) createTx(context context.Context, request *requests.CreateTransaction) (*regources.TransactionResponse, error) {
-	res, err := h.Submitter.Submit(context, *request.Env, request.WaitForIngest)
+	res, err := h.Submitter.Submit(context, *request.Env, request.WaitForResult, request.WaitForIngest)
 	if txsub.IsInternalError(errors.Cause(err)) {
 		return nil, resources.NewTxFailure(*request.Env, errors.Cause(err).(txsub.Error))
 	}
@@ -89,6 +89,10 @@ func (h *createTransactionHandler) createTx(context context.Context, request *re
 	}
 	if res == nil {
 		return nil, errors.New("failed to submit transaction")
+	}
+
+	if !request.WaitForResult {
+		return h.prepareWithoutResultXDR(res)
 	}
 
 	if request.WaitForIngest {
@@ -112,6 +116,18 @@ func (h *createTransactionHandler) prepareFromHistory(ID uint64) (*regources.Tra
 	response := &regources.TransactionResponse{}
 	response.Data = resources.NewTransaction(*tx)
 	return response, nil
+}
+
+func (h *createTransactionHandler) prepareWithoutResultXDR(result *txsub.Result) (*regources.TransactionResponse, error) {
+	return &regources.TransactionResponse{
+		Data: regources.Transaction{
+			Key: resources.NewTxKey(result.TransactionID),
+			Attributes: regources.TransactionAttributes{
+				EnvelopeXdr: result.EnvelopeXDR,
+				Hash:        result.Hash,
+			},
+		},
+	}, nil
 }
 
 func (h *createTransactionHandler) prepareFromResult(result *txsub.Result) (*regources.TransactionResponse, error) {
