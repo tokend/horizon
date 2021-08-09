@@ -121,7 +121,7 @@ func (h *createTransactionHandler) prepareFromHistory(ID uint64) (*regources.Tra
 func (h *createTransactionHandler) prepareWithoutResultXDR(result *txsub.Result) (*regources.TransactionResponse, error) {
 	return &regources.TransactionResponse{
 		Data: regources.Transaction{
-			Key: resources.NewTxKey(result.TransactionID),
+			Key: resources.NewTxKeyFromHash(result.Hash),
 			Attributes: regources.TransactionAttributes{
 				EnvelopeXdr: result.EnvelopeXDR,
 				Hash:        result.Hash,

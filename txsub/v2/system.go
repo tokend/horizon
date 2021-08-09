@@ -83,8 +83,13 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 	}
 	s.Log.WithField("duration", duration).Debug("Successfully submit tx")
 
-	if waitResult {
-		return l
+	if !waitResult {
+		return send(l, fullResult{
+			Result: Result{
+				Hash:        info.ContentHash,
+				EnvelopeXDR: info.RawBlob,
+			},
+		})
 	}
 
 	err = s.List.Add(&info, waitIngest, l)
