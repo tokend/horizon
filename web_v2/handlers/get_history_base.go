@@ -23,6 +23,8 @@ type getHistory struct {
 	Balance *history2.Balance
 	Asset   *core2.Asset
 
+	BalancesAddresses []string
+
 	AssetsQ   core2.AssetsQ
 	EffectsQ  history2.ParticipantEffectsQ
 	AccountsQ history2.AccountsQ
@@ -41,7 +43,6 @@ func newHistoryHandler(r *http.Request) getHistory {
 	}
 
 	return handler
-
 }
 
 func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.GetHistory, bool) {
@@ -70,8 +71,66 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 		}
 	}
 
-	if request.Filters.Balance != nil {
-		h.Balance, err = h.BalanceQ.GetByAddress(*request.Filters.Balance)
+	if len(request.Filters.Balance) > 1 {
+		if h.Account == nil {
+			ctx.Log(r).Error("account is nil", logan.F{
+				"account_address": request.Filters.Account,
+			})
+			ape.RenderErr(w, problems.BadRequest(errors.New("account address required for balance filter"))...)
+			return nil, false
+		}
+
+		balances, err := h.BalanceQ.SelectByAddress(request.Filters.Balance...)
+		if err != nil {
+			ctx.Log(r).WithError(err).Error("failed to get balances", logan.F{
+				"balances": request.Filters.Balance,
+			})
+			ape.RenderErr(w, problems.InternalError())
+			return nil, false
+		}
+
+		loadedBalances := make(map[string]bool)
+		forbiddenBalances := make([]string, 0, len(balances))
+		for _, balance := range balances {
+			loadedBalances[balance.Address] = true
+			if balance.AccountID != h.Account.ID {
+				forbiddenBalances = append(forbiddenBalances, balance.Address)
+			}
+		}
+		if len(forbiddenBalances) != 0 {
+			ctx.Log(r).Error("failed to access the balance", logan.F{
+				"balance": forbiddenBalances,
+			})
+			ape.RenderErr(w, problems.Forbidden())
+			return nil, false
+		}
+
+		if len(balances) != len(request.Filters.Balance) {
+			notFoundBalances := make([]string, 0, len(balances))
+			for _, balance := range request.Filters.Balance {
+				if _, loaded := loadedBalances[balance]; !loaded {
+					notFoundBalances = append(notFoundBalances, balance)
+				}
+			}
+
+			ctx.Log(r).Error("balance not found", logan.F{
+				"balance": notFoundBalances,
+			})
+			ape.RenderErr(w, problems.NotFound())
+			return nil, false
+		}
+
+		h.BalancesAddresses = request.Filters.Balance
+
+		if !h.ensureAllowed(w, r) {
+			return nil, false
+		}
+
+		return request, true
+	}
+
+	if len(request.Filters.Balance) == 1 {
+		h.Balance, err = h.BalanceQ.GetByAddress(request.Filters.Balance[0])
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get balance", logan.F{
 				"balance_address": request.Filters.Balance,
@@ -86,6 +145,8 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 			})...)
 			return nil, false
 		}
+
+		h.BalancesAddresses = append(h.BalancesAddresses, h.Balance.Address)
 	}
 
 	if request.Filters.Asset != nil {
@@ -124,8 +185,8 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 		q = q.ForAccount(h.Account.ID)
 	}
 
-	if h.Balance != nil {
-		q = q.ForBalance(h.Balance.ID)
+	if len(h.BalancesAddresses) > 0 {
+		q = q.ForBalance(h.BalancesAddresses...)
 	}
 
 	if h.Asset != nil {

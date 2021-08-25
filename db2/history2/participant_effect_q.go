@@ -45,9 +45,11 @@ func (q ParticipantEffectsQ) WithAccount() ParticipantEffectsQ {
 	return q
 }
 
-//ForBalance - adds filter by balance ID
-func (q ParticipantEffectsQ) ForBalance(id uint64) ParticipantEffectsQ {
-	q.selector = q.selector.Where("effects.balance_id = ?", id)
+//ForBalance - adds filter by balance address
+func (q ParticipantEffectsQ) ForBalance(address ...string) ParticipantEffectsQ {
+	q.selector = q.selector.Where(sq.Eq{
+		"balances.address": address,
+	})
 	return q
 }
 
