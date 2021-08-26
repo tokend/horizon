@@ -18,6 +18,7 @@
 
 * `/v3/order_book/{id}` now uses renders numbers with trailing-digits-count-based dot
 * Match participant in manage offer
+* Error on '/v3/sales/{id}/relationships/participation'
 
 ## 3.9.1
 
