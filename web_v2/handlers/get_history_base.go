@@ -23,7 +23,7 @@ type getHistory struct {
 	Balance *history2.Balance
 	Asset   *core2.Asset
 
-	BalancesAddresses []string
+	BalancesIDs []uint64
 
 	AssetsQ   core2.AssetsQ
 	EffectsQ  history2.ParticipantEffectsQ
@@ -72,14 +72,6 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 	}
 
 	if len(request.Filters.Balance) > 1 {
-		if h.Account == nil {
-			ctx.Log(r).Error("account is nil", logan.F{
-				"account_address": request.Filters.Account,
-			})
-			ape.RenderErr(w, problems.BadRequest(errors.New("account address required for balance filter"))...)
-			return nil, false
-		}
-
 		balances, err := h.BalanceQ.SelectByAddress(request.Filters.Balance...)
 		if err != nil {
 			ctx.Log(r).WithError(err).Error("failed to get balances", logan.F{
@@ -90,18 +82,18 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 		}
 
 		loadedBalances := make(map[string]bool)
-		forbiddenBalances := make([]string, 0, len(balances))
+		differentBalances := make([]string, 0, len(balances))
 		for _, balance := range balances {
 			loadedBalances[balance.Address] = true
-			if balance.AccountID != h.Account.ID {
-				forbiddenBalances = append(forbiddenBalances, balance.Address)
+			if balance.AccountID != balances[0].AccountID {
+				differentBalances = append(differentBalances, balance.Address)
 			}
 		}
-		if len(forbiddenBalances) != 0 {
-			ctx.Log(r).Error("failed to access the balance", logan.F{
-				"balance": forbiddenBalances,
+		if len(differentBalances) != 0 {
+			ctx.Log(r).Error("balances must belong to the same account", logan.F{
+				"balance": differentBalances,
 			})
-			ape.RenderErr(w, problems.Forbidden())
+			ape.RenderErr(w, problems.Conflict())
 			return nil, false
 		}
 
@@ -120,7 +112,9 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 			return nil, false
 		}
 
-		h.BalancesAddresses = request.Filters.Balance
+		for idx := range balances {
+			h.BalancesIDs = append(h.BalancesIDs, balances[idx].ID)
+		}
 
 		if !h.ensureAllowed(w, r) {
 			return nil, false
@@ -146,7 +140,7 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 			return nil, false
 		}
 
-		h.BalancesAddresses = append(h.BalancesAddresses, h.Balance.Address)
+		h.BalancesIDs = append(h.BalancesIDs, h.Balance.ID)
 	}
 
 	if request.Filters.Asset != nil {
@@ -185,8 +179,8 @@ func (h *getHistory) ApplyFilters(request *requests.GetHistory,
 		q = q.ForAccount(h.Account.ID)
 	}
 
-	if len(h.BalancesAddresses) > 0 {
-		q = q.ForBalance(h.BalancesAddresses...)
+	if len(h.BalancesIDs) > 0 {
+		q = q.ForBalance(h.BalancesIDs...)
 	}
 
 	if h.Asset != nil {
