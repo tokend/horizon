@@ -83,8 +83,9 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 
 		loadedBalances := make(map[string]bool)
 		differentBalances := make([]string, 0, len(balances))
-		for _, balance := range balances {
+		for idx, balance := range balances {
 			loadedBalances[balance.Address] = true
+			h.BalancesIDs = append(h.BalancesIDs, balances[idx].ID)
 			if balance.AccountID != balances[0].AccountID {
 				differentBalances = append(differentBalances, balance.Address)
 			}
@@ -105,15 +106,17 @@ func (h *getHistory) prepare(w http.ResponseWriter, r *http.Request) (*requests.
 				}
 			}
 
-			ctx.Log(r).Error("balance not found", logan.F{
-				"balance": notFoundBalances,
-			})
-			ape.RenderErr(w, problems.NotFound())
-			return nil, false
-		}
+			if len(notFoundBalances) > 0 {
+				ctx.Log(r).Error("balance not found", logan.F{
+					"balance": notFoundBalances,
+				})
+				ape.RenderErr(w, problems.NotFound())
+			} else {
+				ctx.Log(r).Error("balance duplicate")
+				ape.RenderErr(w, problems.Conflict())
+			}
 
-		for idx := range balances {
-			h.BalancesIDs = append(h.BalancesIDs, balances[idx].ID)
+			return nil, false
 		}
 
 		if !h.ensureAllowed(w, r) {
