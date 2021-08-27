@@ -2,7 +2,6 @@ package history2
 
 import (
 	"database/sql"
-	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -38,13 +37,13 @@ func NewReviewableRequestsQ(repo *pgdb.DB) ReviewableRequestsQ {
 	}
 }
 
-func (q ReviewableRequestsQ) FilterByCreatedAtAfter(moment time.Time) ReviewableRequestsQ {
-	q.selector = q.selector.Where("reviewable_requests.created_at >= ?", moment)
+func (q ReviewableRequestsQ) FilterByCreatedAtAfter(tsUTC int64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("reviewable_requests.created_at >= to_timestamp(?::numeric)", tsUTC)
 	return q
 }
 
-func (q ReviewableRequestsQ) FilterByCreatedAtBefore(moment time.Time) ReviewableRequestsQ {
-	q.selector = q.selector.Where("reviewable_requests.created_at < ?", moment)
+func (q ReviewableRequestsQ) FilterByCreatedAtBefore(tsUTC int64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("reviewable_requests.created_at < to_timestamp(?::numeric)", tsUTC)
 	return q
 }
 
@@ -72,7 +71,7 @@ func (q ReviewableRequestsQ) FilterByPendingTasks(mask uint64) ReviewableRequest
 	return q
 }
 
-// FilterByPendingTasksAnyOf - returns q with filter by pending tasks
+// FilterByPendingTasksAnyOf - returns q with filter by any of passed pending tasks
 func (q ReviewableRequestsQ) FilterByPendingTasksAnyOf(mask uint64) ReviewableRequestsQ {
 	q.selector = q.selector.Where("pending_tasks & ? <> 0", mask)
 	return q
@@ -81,6 +80,24 @@ func (q ReviewableRequestsQ) FilterByPendingTasksAnyOf(mask uint64) ReviewableRe
 // FilterPendingTasksNotSet - returns q with filter by pending tasks that aren't set
 func (q ReviewableRequestsQ) FilterPendingTasksNotSet(mask uint64) ReviewableRequestsQ {
 	q.selector = q.selector.Where("~pending_tasks & ? = ?", mask, mask)
+	return q
+}
+
+// FilterByAllTasks - returns q with filter by all tasks
+func (q ReviewableRequestsQ) FilterByAllTasks(mask uint64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("all_tasks & ? = ?", mask, mask)
+	return q
+}
+
+// FilterByAllTasksAnyOf - returns q with filter by any of passed all tasks
+func (q ReviewableRequestsQ) FilterByAllTasksAnyOf(mask uint64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("all_tasks & ? <> 0", mask)
+	return q
+}
+
+// FilterByAllTasksNotSet - returns q with filter by all tasks that aren't set
+func (q ReviewableRequestsQ) FilterByAllTasksNotSet(mask uint64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("~all_tasks & ? = ?", mask, mask)
 	return q
 }
 

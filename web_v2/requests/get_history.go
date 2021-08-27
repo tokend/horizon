@@ -35,7 +35,7 @@ type GetHistory struct {
 	PageParams pgdb.CursorPageParams
 	Filters    struct {
 		Account    *string  `filter:"account"`
-		Balance    *string  `filter:"balance"`
+		Balance    []string `filter:"balance"`
 		Asset      *string  `filter:"asset"`
 		EffectType []string `filter:"effect"`
 	}

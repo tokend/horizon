@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"time"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -120,15 +119,27 @@ func (h *getRequestListBaseHandler) ApplyFilters(
 	}
 
 	if request.Filters.CreatedAfter != nil {
-		q = q.FilterByCreatedAtAfter(time.Unix(*request.Filters.CreatedAfter, 0))
+		q = q.FilterByCreatedAtAfter(*request.Filters.CreatedAfter)
 	}
 
 	if request.Filters.CreatedBefore != nil {
-		q = q.FilterByCreatedAtBefore(time.Unix(*request.Filters.CreatedBefore, 0))
+		q = q.FilterByCreatedAtBefore(*request.Filters.CreatedBefore)
 	}
 
 	if request.Filters.ID != nil && *request.Filters.ID != 0 {
 		q = q.FilterByID(*request.Filters.ID)
+	}
+
+	if request.Filters.AllTasks != nil {
+		q = q.FilterByAllTasks(*request.Filters.AllTasks)
+	}
+
+	if request.Filters.AllTasksNotSet != nil {
+		q = q.FilterByAllTasksNotSet(*request.Filters.AllTasksNotSet)
+	}
+
+	if request.Filters.AllTasksAnyOf != nil {
+		q = q.FilterByAllTasksAnyOf(*request.Filters.AllTasksAnyOf)
 	}
 
 	return q
