@@ -91,11 +91,13 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	request requests.SalesBase,
 	response *regources.SaleListResponse) error {
 
-	salesMapped := make(map[string]uint64)
+	participationsCount, err := salesParticipationCount(h.ParticipationQ, h.OffersQ, historySales...)
+	if err != nil {
+		return errors.Wrap(err, "failed to populate participations count")
+	}
+
 	for _, historySale := range historySales {
 		sale := resources.NewSale(historySale)
-
-		salesMapped[sale.ID] = historySale.ID
 
 		err := h.saleCapConverter.PopulateSaleCap(&historySale)
 		if err != nil {
@@ -126,18 +128,11 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 			response.Included.Add(&asset)
 		}
 
-		response.Data = append(response.Data, sale)
-	}
-
-	participationsCount, err := salesParticipationCount(h.ParticipationQ, h.OffersQ, historySales...)
-	if err != nil {
-		return errors.Wrap(err, "failed to populate participations count")
-	}
-
-	for idx, sale := range response.Data {
-		if count, ok := participationsCount[salesMapped[sale.ID]]; ok {
-			response.Data[idx].Attributes.ParticipationsCount = count
+		if count, ok := participationsCount[historySale.ID]; ok {
+			sale.Attributes.ParticipationsCount = count
 		}
+
+		response.Data = append(response.Data, sale)
 	}
 
 	return nil
@@ -215,31 +210,54 @@ const (
 	undefinedPrtQ
 )
 
+type SaleParticipationsInfo struct {
+	SalesIDs   []uint64
+	BaseAssets []string
+	Owners     []string
+}
+
 func salesParticipationCount(saleParticipationsQ history2.SaleParticipationQ, offersQ core2.OffersQ, historySales ...history2.Sale) (core2.SaleParticipantsMap, error) {
-	prtQTypeSalesMap := make(map[PrtQType][]uint64)
+	prtQTypeSalesMap := make(map[PrtQType]SaleParticipationsInfo)
 	for _, sale := range historySales {
 		currentSale := sale
 		prtQType := getParticipationsQType(currentSale)
 		if prtQType == undefinedPrtQ {
-			return nil, nil
+			continue
 		}
 
-		prtQTypeSalesMap[prtQType] = append(prtQTypeSalesMap[prtQType], currentSale.ID)
+		if prtQType == closedPrtQ {
+			prtQTypeSalesMap[prtQType] = SaleParticipationsInfo{
+				SalesIDs:   append(prtQTypeSalesMap[prtQType].SalesIDs, currentSale.ID),
+				BaseAssets: append(prtQTypeSalesMap[prtQType].BaseAssets, currentSale.BaseAsset),
+				Owners:     append(prtQTypeSalesMap[prtQType].Owners, currentSale.OwnerAddress),
+			}
+		} else {
+			prtQTypeSalesMap[prtQType] = SaleParticipationsInfo{
+				SalesIDs: append(prtQTypeSalesMap[prtQType].SalesIDs, currentSale.ID),
+			}
+		}
 	}
 
 	participationsCount := make([]core2.SaleIDParticipantsCount, 0, len(historySales))
 	prtQSalesMap := make(map[PrtQType]participationsQ)
-	for prtType, salesIDs := range prtQTypeSalesMap {
+	for prtType, salesInfo := range prtQTypeSalesMap {
 		if _, ok := prtQSalesMap[prtType]; !ok {
 			switch prtType {
 			case pendingPrtQ:
 				prtQSalesMap[prtType] = pendingParticipationsQ{
-					offersQ: offersQ.FilterByIsBuy(true).FilterByOrderBookIDs(salesIDs...),
+					offersQ: offersQ.
+						FilterByIsBuy(true).
+						FilterByOrderBookIDs(salesInfo.SalesIDs...),
 				}
 			case closedPrtQ:
 				prtQSalesMap[prtType] = closedParticipationsQ{
-					participationQ: saleParticipationsQ.FilterBySaleIDs(salesIDs...),
+					participationQ: saleParticipationsQ.
+						FilterBySaleIDs(salesInfo.SalesIDs...).
+						FilterBySaleBaseAssets(salesInfo.BaseAssets...).
+						FilterByNotSaleOwners(salesInfo.Owners...),
 				}
+			default:
+				return nil, errors.New("unexpected participationsQ type")
 			}
 		}
 

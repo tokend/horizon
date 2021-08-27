@@ -1,6 +1,8 @@
 package history2
 
 import (
+	"database/sql"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -47,10 +49,30 @@ func (q SaleParticipationQ) FilterBySaleParams(id uint64, baseAsset, owner strin
 	return q
 }
 
+// FilterBySaleBaseAssets - returns q with filter by sales default quote assets
+func (q SaleParticipationQ) FilterBySaleBaseAssets(baseAssets ...string) SaleParticipationQ {
+	q.selector = q.selector.Where(sq.Eq{
+		"pe.asset_code": baseAssets,
+	})
+
+	return q
+}
+
+// FilterByNotSaleOwners - returns q with filter by not sales owners
+func (q SaleParticipationQ) FilterByNotSaleOwners(owners ...string) SaleParticipationQ {
+	q.selector = q.selector.Where(sq.NotEq{
+		"a.address": owners,
+	})
+
+	return q
+}
+
 // FilterBySaleIDs - returns q with filter by sale IDs
 func (q SaleParticipationQ) FilterBySaleIDs(ids ...uint64) SaleParticipationQ {
 	q.selector = q.selector.
-		Where("(pe.effect#>>'{matched,order_book_id}')::int", ids)
+		Where(sq.Eq{
+			"(pe.effect#>>'{matched,order_book_id}')::int": ids,
+		})
 
 	return q
 }
@@ -86,8 +108,11 @@ func (q SaleParticipationQ) SelectParticipantsCount() ([]core2.SaleIDParticipant
 	q.selector = q.selector.Columns("(pe.effect#>>'{matched,order_book_id}')::int sale_id", "COUNT(*) p_count").
 		GroupBy("sale_id")
 
-	err := q.repo.Get(&result, q.selector)
+	err := q.repo.Select(&result, q.selector)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, errors.Wrap(err, "failed to load sale participations")
 	}
 
