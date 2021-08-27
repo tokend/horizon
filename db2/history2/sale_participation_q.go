@@ -4,6 +4,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/horizon/db2/core2"
 )
 
 // SaleParticipationQ is a helper struct to aid in configuring queries that load
@@ -46,6 +47,14 @@ func (q SaleParticipationQ) FilterBySaleParams(id uint64, baseAsset, owner strin
 	return q
 }
 
+// FilterBySaleIDs - returns q with filter by sale IDs
+func (q SaleParticipationQ) FilterBySaleIDs(ids ...uint64) SaleParticipationQ {
+	q.selector = q.selector.
+		Where("(pe.effect#>>'{matched,order_book_id}')::int", ids)
+
+	return q
+}
+
 // Page - returns Q with specified cursor params
 func (q SaleParticipationQ) Page(params pgdb.CursorPageParams) SaleParticipationQ {
 	q.selector = params.ApplyTo(q.selector, "pe.id")
@@ -70,13 +79,16 @@ func (q SaleParticipationQ) Select() ([]SaleParticipation, error) {
 	return result, nil
 }
 
-// Count - returns result of COUNT(*) SQL function
-func (q SaleParticipationQ) Count() (int64, error) {
-	var result int64
-	q.selector = q.selector.Columns("COUNT(*)")
+// SelectParticipantsCount - returns slice of participants count with corresponding sale ID
+func (q SaleParticipationQ) SelectParticipantsCount() ([]core2.SaleIDParticipantsCount, error) {
+	var result []core2.SaleIDParticipantsCount
+
+	q.selector = q.selector.Columns("(pe.effect#>>'{matched,order_book_id}')::int sale_id", "COUNT(*) p_count").
+		GroupBy("sale_id")
+
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to load sale participations")
+		return nil, errors.Wrap(err, "failed to load sale participations")
 	}
 
 	return result, nil

@@ -65,11 +65,14 @@ func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *request
 		response.Included.Add(&asset)
 	}
 
-	participationsCount, err := salesParticipationCount(*historySale, h.ParticipationQ, h.OffersQ)
+	saleParticipantsCountMap, err := salesParticipationCount(h.ParticipationQ, h.OffersQ, *historySale)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load participations count")
 	}
-	response.Data.Attributes.ParticipationsCount = &participationsCount
+
+	if count, ok := saleParticipantsCountMap[historySale.ID]; ok {
+		response.Data.Attributes.ParticipationsCount = count
+	}
 
 	return response, nil
 }
@@ -88,16 +91,13 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	request requests.SalesBase,
 	response *regources.SaleListResponse) error {
 
+	salesMapped := make(map[string]uint64)
 	for _, historySale := range historySales {
 		sale := resources.NewSale(historySale)
 
-		participationsCount, err := salesParticipationCount(historySale, h.ParticipationQ, h.OffersQ)
-		if err != nil {
-			return errors.Wrap(err, "failed to populate participations count")
-		}
-		sale.Attributes.ParticipationsCount = &participationsCount
+		salesMapped[sale.ID] = historySale.ID
 
-		err = h.saleCapConverter.PopulateSaleCap(&historySale)
+		err := h.saleCapConverter.PopulateSaleCap(&historySale)
 		if err != nil {
 			return errors.Wrap(err, "failed to populate sale cap")
 		}
@@ -128,6 +128,18 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 
 		response.Data = append(response.Data, sale)
 	}
+
+	participationsCount, err := salesParticipationCount(h.ParticipationQ, h.OffersQ, historySales...)
+	if err != nil {
+		return errors.Wrap(err, "failed to populate participations count")
+	}
+
+	for idx, sale := range response.Data {
+		if count, ok := participationsCount[salesMapped[sale.ID]]; ok {
+			response.Data[idx].Attributes.ParticipationsCount = count
+		}
+	}
+
 	return nil
 }
 
@@ -195,46 +207,68 @@ func applySaleFilters(s requests.SalesBase, q history2.SalesQ) history2.SalesQ {
 	return q
 }
 
-func salesParticipationCount(historySale history2.Sale, saleParticipationsQ history2.SaleParticipationQ, offersQ core2.OffersQ) (int64, error) {
-	var prtQ participationsQ
-	var participationsCount int64
-	defaultSaleStatus := false
+type PrtQType int
 
+const (
+	closedPrtQ PrtQType = iota
+	pendingPrtQ
+	undefinedPrtQ
+)
+
+func salesParticipationCount(saleParticipationsQ history2.SaleParticipationQ, offersQ core2.OffersQ, historySales ...history2.Sale) (core2.SaleParticipantsMap, error) {
+	prtQTypeSalesMap := make(map[PrtQType][]uint64)
+	for _, sale := range historySales {
+		currentSale := sale
+		prtQType := getParticipationsQType(currentSale)
+		if prtQType == undefinedPrtQ {
+			return nil, nil
+		}
+
+		prtQTypeSalesMap[prtQType] = append(prtQTypeSalesMap[prtQType], currentSale.ID)
+	}
+
+	participationsCount := make([]core2.SaleIDParticipantsCount, 0, len(historySales))
+	prtQSalesMap := make(map[PrtQType]participationsQ)
+	for prtType, salesIDs := range prtQTypeSalesMap {
+		if _, ok := prtQSalesMap[prtType]; !ok {
+			switch prtType {
+			case pendingPrtQ:
+				prtQSalesMap[prtType] = pendingParticipationsQ{
+					offersQ: offersQ.FilterByIsBuy(true).FilterByOrderBookIDs(salesIDs...),
+				}
+			case closedPrtQ:
+				prtQSalesMap[prtType] = closedParticipationsQ{
+					participationQ: saleParticipationsQ.FilterBySaleIDs(salesIDs...),
+				}
+			}
+		}
+
+		temp, err := prtQSalesMap[prtType].Count()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to select participants count")
+		}
+		participationsCount = append(participationsCount, temp...)
+	}
+
+	return core2.SaleParticipantsToMap(participationsCount), nil
+}
+
+func getParticipationsQType(historySale history2.Sale) PrtQType {
 	switch historySale.State {
 	case regources.SaleStateCanceled:
-		defaultSaleStatus = true
+		return undefinedPrtQ
 	case regources.SaleStateOpen:
 		switch historySale.SaleType {
 		case xdr.SaleTypeImmediate:
-			prtQ = closedParticipationsQ{
-				participationQ: saleParticipationsQ.
-					FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
-			}
+			return closedPrtQ
 		case xdr.SaleTypeBasicSale, xdr.SaleTypeCrowdFunding, xdr.SaleTypeFixedPrice:
-			prtQ = pendingParticipationsQ{
-				offersQ: offersQ.
-					FilterByIsBuy(true).
-					FilterByOrderBookID(int64(historySale.ID)),
-			}
+			return pendingPrtQ
 		default:
-			defaultSaleStatus = true
+			return undefinedPrtQ
 		}
 	case regources.SaleStateClosed:
-		prtQ = closedParticipationsQ{
-			participationQ: saleParticipationsQ.
-				FilterBySaleParams(historySale.ID, historySale.BaseAsset, historySale.OwnerAddress),
-		}
+		return closedPrtQ
 	default:
-		defaultSaleStatus = true
+		return undefinedPrtQ
 	}
-
-	if defaultSaleStatus {
-		return 0, nil
-	}
-
-	participationsCount, err := prtQ.Count()
-	if err != nil {
-		return 0, err
-	}
-	return participationsCount, nil
 }

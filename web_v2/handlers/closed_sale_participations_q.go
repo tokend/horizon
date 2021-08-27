@@ -3,6 +3,7 @@ package handlers
 import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/amount"
+	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
@@ -55,7 +56,7 @@ func (q closedParticipationsQ) Select() ([]regources.SaleParticipation, error) {
 	return result, nil
 }
 
-// Count - returns number of rows
-func (q closedParticipationsQ) Count() (int64, error) {
-	return q.participationQ.Count()
+// Count - returns slice of sales ids mapped to participants count
+func (q closedParticipationsQ) Count() ([]core2.SaleIDParticipantsCount, error) {
+	return q.participationQ.SelectParticipantsCount()
 }

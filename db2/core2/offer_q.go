@@ -2,6 +2,7 @@ package core2
 
 import (
 	"database/sql"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -63,6 +64,14 @@ func (q OffersQ) FilterByOrderBookID(id int64) OffersQ {
 	}
 
 	q.selector = q.selector.Where("offers.order_book_id = ?", id)
+	return q
+}
+
+// FilterByOrderBookIDs - returns q with filter by order book IDs
+func (q OffersQ) FilterByOrderBookIDs(ids ...uint64) OffersQ {
+	q.selector = q.selector.Where(sq.Eq{
+		"offers.order_book_id": ids,
+	})
 	return q
 }
 
@@ -165,13 +174,16 @@ func (q OffersQ) SelectID() ([]int64, error) {
 	return result, nil
 }
 
-// Count - returns result of COUNT(*) SQL function
-func (q OffersQ) Count() (int64, error) {
-	var result int64
-	q.selector = q.selector.Columns("COUNT(*)")
-	err := q.repo.Get(&result, q.selector)
+// SelectParticipantsCount - returns slice of participants count with corresponding sale ID
+func (q OffersQ) SelectParticipantsCount() ([]SaleIDParticipantsCount, error) {
+	var result []SaleIDParticipantsCount
+
+	q.selector = q.selector.Columns("offers.order_book_id sale_id", "COUNT(*) p_count").
+		GroupBy("sale_id")
+
+	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to load sale participations")
+		return nil, errors.Wrap(err, "failed to select sales participants count")
 	}
 
 	return result, nil
