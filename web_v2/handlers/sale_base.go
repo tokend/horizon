@@ -11,6 +11,10 @@ import (
 	regources "gitlab.com/tokend/regources/generated"
 )
 
+var (
+	unexpectedParticipationsQType = errors.New("unexpected participationsQ type")
+)
+
 type getSaleBase struct {
 	SalesQ           history2.SalesQ
 	AssetsQ          history2.AssetQ
@@ -219,22 +223,23 @@ type SaleParticipationsInfo struct {
 func salesParticipationCount(saleParticipationsQ history2.SaleParticipationQ, offersQ core2.OffersQ, historySales ...history2.Sale) (core2.SaleParticipantsMap, error) {
 	prtQTypeSalesMap := make(map[PrtQType]SaleParticipationsInfo)
 	for _, sale := range historySales {
-		currentSale := sale
-		prtQType := getParticipationsQType(currentSale)
-		if prtQType == undefinedPrtQ {
-			continue
-		}
+		prtQType := getParticipationsQType(sale)
 
-		if prtQType == closedPrtQ {
+		switch prtQType {
+		case closedPrtQ:
 			prtQTypeSalesMap[prtQType] = SaleParticipationsInfo{
-				SalesIDs:   append(prtQTypeSalesMap[prtQType].SalesIDs, currentSale.ID),
-				BaseAssets: append(prtQTypeSalesMap[prtQType].BaseAssets, currentSale.BaseAsset),
-				Owners:     append(prtQTypeSalesMap[prtQType].Owners, currentSale.OwnerAddress),
+				SalesIDs:   append(prtQTypeSalesMap[prtQType].SalesIDs, sale.ID),
+				BaseAssets: append(prtQTypeSalesMap[prtQType].BaseAssets, sale.BaseAsset),
+				Owners:     append(prtQTypeSalesMap[prtQType].Owners, sale.OwnerAddress),
 			}
-		} else {
+		case pendingPrtQ:
 			prtQTypeSalesMap[prtQType] = SaleParticipationsInfo{
-				SalesIDs: append(prtQTypeSalesMap[prtQType].SalesIDs, currentSale.ID),
+				SalesIDs: append(prtQTypeSalesMap[prtQType].SalesIDs, sale.ID),
 			}
+		case undefinedPrtQ:
+			continue
+		default:
+			return nil, unexpectedParticipationsQType
 		}
 	}
 
@@ -257,7 +262,7 @@ func salesParticipationCount(saleParticipationsQ history2.SaleParticipationQ, of
 						FilterByNotSaleOwners(salesInfo.Owners...),
 				}
 			default:
-				return nil, errors.New("unexpected participationsQ type")
+				return nil, unexpectedParticipationsQType
 			}
 		}
 
