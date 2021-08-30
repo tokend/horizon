@@ -144,7 +144,7 @@ func (q ReviewableRequestsQ) FilterByWithdrawBalance(balance string) ReviewableR
 }
 
 func (q ReviewableRequestsQ) FilterByWithdrawAssets(assets []string) ReviewableRequestsQ {
-	q.selector = q.selector.Where("details#>>'{create_withdraw,asset}' = ?", assets)
+	q.selector = q.selector.Where(sq.Eq{"details#>>'{create_withdraw,asset}'": assets})
 	return q
 }
 
