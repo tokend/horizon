@@ -65,7 +65,7 @@ func (h *getCreateWithdrawRequestsHandler) MakeAll(w http.ResponseWriter, reques
 		q = q.FilterByWithdrawBalance(*request.Filters.Balance)
 	}
 	if request.Filters.Asset != nil {
-		q = q.FilterByWithdrawAsset(*request.Filters.Asset)
+		q = q.FilterByWithdrawAssets(*request.Filters.Asset)
 	}
 
 	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
