@@ -39,7 +39,9 @@ func GetCreateWithdrawRequests(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx.Log(r).Info(request.Filters.Asset)
+	ctx.Log(r).Info("\n\n\n\n\n\n\n")
+	ctx.Log(r).Info("Assets: ", request.Filters.Asset)
+	ctx.Log(r).Info("\n\n\n\n\n\n\n")
 	err = handler.MakeAll(w, request)
 	if err != nil {
 		ctx.Log(r).WithError(err).Error("failed to get request list", logan.F{
