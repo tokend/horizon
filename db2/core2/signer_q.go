@@ -29,7 +29,6 @@ func NewSignerQ(repo *pgdb.DB) SignerQ {
 
 func (q SignerQ) Count(address string) (int64, error) {
 	q.selector = sq.Select("COUNT(*)").From("signers").Where("signers.account_id = ?", address)
-
 	var result int64
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
@@ -37,7 +36,6 @@ func (q SignerQ) Count(address string) (int64, error) {
 	}
 
 	return result, nil
-
 }
 
 //FilterByPublicKey - return new instance of SignerQ with filter by public key

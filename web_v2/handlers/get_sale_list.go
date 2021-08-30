@@ -31,6 +31,9 @@ func GetSaleList(w http.ResponseWriter, r *http.Request) {
 			AssetsQ:          history2.NewAssetQ(historyRepo),
 			saleCapConverter: converter,
 			Log:              ctx.Log(r),
+
+			ParticipationQ: history2.NewSaleParticipationQ(historyRepo),
+			OffersQ:        core2.NewOffersQ(coreRepo),
 		},
 		OffersQ: core2.NewOffersQ(coreRepo),
 	}

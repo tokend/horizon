@@ -20,7 +20,7 @@ Sale:
       properties:
         attributes:
           type: object
-          required: [start_time, end_time, sale_type, sale_state, access_definition_type, details, base_hard_cap]
+          required: [start_time, end_time, sale_type, sale_state, access_definition_type, details, base_hard_cap, participations_count]
           properties:
             base_hard_cap:
               type: string
@@ -61,6 +61,9 @@ Sale:
             details:
               $ref: '#/components/schemas/Details'
               description: "free-form object to attach details to the sale"
+            participations_count:
+              type: int64
+              description: "participations count in sale"
         relationships:
           type: object
           properties:
@@ -86,7 +89,7 @@ Sale:
                   items:
                     $ref: '#/components/schemas/SaleQuoteAssetKey'
             default_quote_asset:
-              description: "Quote asset specified as default for the sale" 
+              description: "Quote asset specified as default for the sale"
               type: object
               properties:
                 data:
