@@ -28,7 +28,7 @@ var filterTypeCreateWithdrawRequests = map[string]struct{}{
 
 type GetCreateWithdrawRequestsFilter struct {
 	Balance *string   `filter:"request_details.balance"`
-	Asset   *[]string `filter:"request_details.asset"`
+	Asset   []string `filter:"request_details.asset"`
 }
 
 type GetCreateWithdrawRequests struct {
