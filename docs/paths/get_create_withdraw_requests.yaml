@@ -81,12 +81,14 @@
       - name: filter[request_details.asset]
         in: query
         description: |
-          Filters create withdraw requests by asset.
+          Filters create withdraw requests by assets to be withdrawn.
         required: false
         style: form
         explode: false
         schema:
-          type: string
+          type: array
+          items:
+            type: string
       - name: include
         in: query
         description: |
