@@ -13,6 +13,7 @@
 ### Changed
 
 * Disable returning errors when using parameters not supported by endpoint
+* Filter parameter `filter[request_details.asset]` on endpoint `/v3/create_withdraw_requests` now accepts slice of asset codes
 
 ### Fixed
 
