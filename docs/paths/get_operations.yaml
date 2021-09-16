@@ -19,6 +19,16 @@
           type: integer
           minimum: 2
           maximum: 55
+      - name: filter[source]
+        in: query
+        description: |
+          Filters operations by source account id.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+
       - name: include
         in: query
         description: |

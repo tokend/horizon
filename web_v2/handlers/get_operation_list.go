@@ -55,6 +55,10 @@ func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*
 		q = q.FilterByOperationsTypes(request.Filters.Types)
 	}
 
+	if request.Filters.Source != nil {
+		q = q.FilterByOperationSource(*request.Filters.Source)
+	}
+
 	historyOperations, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load operations")
