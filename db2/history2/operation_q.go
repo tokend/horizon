@@ -39,6 +39,11 @@ func (q OperationQ) FilterByOperationsTypes(types []int) OperationQ {
 	return q
 }
 
+func (q OperationQ) FilterByOperationSource(source string) OperationQ {
+	q.selector = q.selector.Where(sq.Eq{"op.source": source})
+	return q
+}
+
 // Page - apply paging params to the query
 func (q OperationQ) Page(pageParams pgdb.CursorPageParams) OperationQ {
 	q.selector = pageParams.ApplyTo(q.selector, "op.id")
