@@ -9,11 +9,12 @@ import (
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	regources "gitlab.com/tokend/regources/generated"
+
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetBalanceList - processes request to get the list of balances
@@ -99,6 +100,10 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 
 	if request.Filters.Owner != nil {
 		q = q.FilterByAccount(*request.Filters.Owner)
+	}
+
+	if request.Filters.Amount != nil {
+		q = q.FilterByAmount(*request.Filters.Amount)
 	}
 
 	coreBalances, err := q.Select()

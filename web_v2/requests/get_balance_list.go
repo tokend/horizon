@@ -22,6 +22,9 @@ const (
 
 	// FilterTypeBalanceListAssetOwner - defines if we need to filter the list by asset owner
 	FilterTypeBalanceListAssetOwner = "asset_owner"
+
+	//FilterTypeBalanceListAmount - defines of we need to filter the list by amount (will be returned balances with amount greater then this one)
+	FilterTypeBalanceListAmount = "amount"
 )
 
 var includeTypeBalanceListAll = map[string]struct{}{
@@ -33,6 +36,7 @@ var filterTypeBalanceListAll = map[string]struct{}{
 	FilterTypeBalanceListAsset:      {},
 	FilterTypeBalanceListAssetOwner: {},
 	FilterTypeBalanceListOwner:      {},
+	FilterTypeBalanceListAmount:     {},
 }
 
 // GetBalanceList - represents params to be specified by user for getBalanceList handler
@@ -42,6 +46,7 @@ type GetBalanceList struct {
 		Asset      *string `filter:"asset"`
 		AssetOwner *string `filter:"asset_owner"`
 		Owner      *string `filter:"owner"`
+		Amount     *uint64 `filter:"amount"`
 	}
 	Includes struct {
 		State bool `include:"state"`
