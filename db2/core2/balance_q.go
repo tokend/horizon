@@ -5,6 +5,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+
 	"gitlab.com/tokend/horizon/db2"
 )
 
@@ -49,6 +50,18 @@ func (q BalancesQ) FilterByAccount(accountAddress string) BalancesQ {
 // FilterByAsset - returns new Q with added filter for asset
 func (q BalancesQ) FilterByAsset(asset string) BalancesQ {
 	q.selector = q.selector.Where("balances.asset = ?", asset)
+	return q
+}
+
+// FilterByAmountLwOrEq - returns new Q with added filter for amount lower or equal then provided
+func (q BalancesQ) FilterByAmountLwOrEq(amount uint64) BalancesQ {
+	q.selector = q.selector.Where("balances.amount <= ?", amount)
+	return q
+}
+
+// FilterByAmount - returns new Q with added filter for amount greater then provided
+func (q BalancesQ) FilterByAmountGt(amount uint64) BalancesQ {
+	q.selector = q.selector.Where("balances.amount > ?", amount)
 	return q
 }
 
