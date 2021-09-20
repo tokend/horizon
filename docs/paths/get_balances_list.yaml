@@ -31,7 +31,7 @@
         explode: false
         schema:
           type: string
-      - name: filter[amount_lw]
+      - name: filter[amount_lw_or_eq]
           in: query
           description: |
             Filters balances by amount. Returns page of balances with balance amount lower or equal then provided

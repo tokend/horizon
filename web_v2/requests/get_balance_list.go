@@ -23,8 +23,8 @@ const (
 	// FilterTypeBalanceListAssetOwner - defines if we need to filter the list by asset owner
 	FilterTypeBalanceListAssetOwner = "asset_owner"
 
-	//FilterTypeBalanceListAmountLw - defines if we need to filter the list by amount lower or equal then provided
-	FilterTypeBalanceListAmountLw = "amount_lw"
+	//FilterTypeBalanceListAmountLwOrEq - defines if we need to filter the list by amount lower or equal then provided
+	FilterTypeBalanceListAmountLwOrEq = "amount_lw_or_eq"
 
 	//FilterTypeBalanceListAmountGt - defines if we need to filter the list by amount greater then provided
 	FilterTypeBalanceListAmountGt = "amount_gt"
@@ -36,10 +36,10 @@ var includeTypeBalanceListAll = map[string]struct{}{
 }
 
 var filterTypeBalanceListAll = map[string]struct{}{
-	FilterTypeBalanceListAsset:      {},
-	FilterTypeBalanceListAssetOwner: {},
-	FilterTypeBalanceListOwner:      {},
-	FilterTypeBalanceListAmountLw:     {},
+	FilterTypeBalanceListAsset:        {},
+	FilterTypeBalanceListAssetOwner:   {},
+	FilterTypeBalanceListOwner:        {},
+	FilterTypeBalanceListAmountLwOrEq: {},
 	FilterTypeBalanceListAmountGt:     {},
 }
 
@@ -47,11 +47,11 @@ var filterTypeBalanceListAll = map[string]struct{}{
 type GetBalanceList struct {
 	*base
 	Filters struct {
-		Asset      *string `filter:"asset"`
-		AssetOwner *string `filter:"asset_owner"`
-		Owner      *string `filter:"owner"`
-		AmountLw   *uint64 `filter:"amount_lw"`
-		AmountGt   *uint64 `filter:"amount_gt"`
+		Asset        *string `filter:"asset"`
+		AssetOwner   *string `filter:"asset_owner"`
+		Owner        *string `filter:"owner"`
+		AmountLwOrEq *uint64 `filter:"amount_lw_or_eq"`
+		AmountGt     *uint64 `filter:"amount_gt"`
 	}
 	Includes struct {
 		State bool `include:"state"`

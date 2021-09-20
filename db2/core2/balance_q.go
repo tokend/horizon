@@ -53,8 +53,8 @@ func (q BalancesQ) FilterByAsset(asset string) BalancesQ {
 	return q
 }
 
-// FilterByAmountLw - returns new Q with added filter for amount lower or equal then provided
-func (q BalancesQ) FilterByAmountLw(amount uint64) BalancesQ {
+// FilterByAmountLwOrEq - returns new Q with added filter for amount lower or equal then provided
+func (q BalancesQ) FilterByAmountLwOrEq(amount uint64) BalancesQ {
 	q.selector = q.selector.Where("balances.amount <= ?", amount)
 	return q
 }
