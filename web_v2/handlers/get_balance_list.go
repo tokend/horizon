@@ -102,8 +102,12 @@ func (h *getBalanceListHandler) GetBalanceList(request *requests.GetBalanceList)
 		q = q.FilterByAccount(*request.Filters.Owner)
 	}
 
-	if request.Filters.Amount != nil {
-		q = q.FilterByAmount(*request.Filters.Amount)
+	if request.Filters.AmountGt != nil {
+		q = q.FilterByAmountGt(*request.Filters.AmountGt)
+	}
+
+	if request.Filters.AmountLw != nil {
+		q = q.FilterByAmountLw(*request.Filters.AmountLw)
 	}
 
 	coreBalances, err := q.Select()
