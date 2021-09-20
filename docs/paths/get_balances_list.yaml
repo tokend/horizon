@@ -31,6 +31,15 @@
         explode: false
         schema:
           type: string
+      - name: filter[amount]
+          in: query
+          description: |
+            Filters balances by amount. Returns page of balances with balance amount greater then provided
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: integer
       - name: include
         in: query
         description: |
