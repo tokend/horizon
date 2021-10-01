@@ -252,6 +252,12 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 				MustCreateCloseDeferredPaymentRequestResult().
 				MustSuccess().
 				Fulfilled)
+	case xdr.OperationTypeCreateRedemptionRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateRedemptionRequestResult().
+				MustRedemptionResponse().
+				Fulfilled)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
