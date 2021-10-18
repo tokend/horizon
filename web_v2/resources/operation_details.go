@@ -652,14 +652,21 @@ func newManageVoteOp(op history2.Operation) regources.Resource {
 
 	switch details.Action {
 	case xdr.ManageVoteActionCreate:
-		choice := uint64(details.VoteData.Single.Choice)
 		manageVoteOp.Attributes.Create = &regources.CreateVoteOp{
 			PollId: details.PollID,
 		}
 		if details.VoteData != nil {
 			manageVoteOp.Attributes.Create.VoteData = regources.VoteData{
-				PollType:     details.VoteData.PollType,
-				SingleChoice: &choice,
+				PollType: details.VoteData.PollType,
+			}
+
+			switch details.VoteData.PollType {
+			case xdr.PollTypeSingleChoice:
+				choice := uint64(details.VoteData.Single.Choice)
+				manageVoteOp.Attributes.Create.VoteData.SingleChoice = &choice
+			case xdr.PollTypeCustomChoice:
+				choice := string(*details.VoteData.Custom)
+				manageVoteOp.Attributes.Create.VoteData.CustomChoice = &choice
 			}
 		}
 	case xdr.ManageVoteActionRemove:

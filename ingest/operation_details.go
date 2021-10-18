@@ -414,12 +414,16 @@ func (is *Session) operationDetails() map[string]interface{} {
 
 func getVoteDetils(data xdr.VoteData) map[string]interface{} {
 	details := make(map[string]interface{})
-	choices := make([]uint64, 0)
+	choices := make([]interface{}, 0)
 	switch data.PollType {
 	case xdr.PollTypeSingleChoice:
 		choices = append(choices, uint64(data.Single.Choice))
+	case xdr.PollTypeCustomChoice:
+		choices = append(choices, data.Custom)
 	}
+
 	details["choices"] = choices
+
 	return details
 }
 

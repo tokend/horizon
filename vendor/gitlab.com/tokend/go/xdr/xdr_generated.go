@@ -1,4 +1,4 @@
-// revision: ed8e27617ef83de9c31aa8c58fe039c90a519ca8
+// revision: 286e242be84a34b7c846f76c4d070a91e94331c0
 // branch:   (HEAD
 // Package xdr is generated from:
 //
@@ -3238,29 +3238,35 @@ type PendingStatisticsEntry struct {
 //   //: Functional type of poll
 //    enum PollType
 //    {
-//        SINGLE_CHOICE = 0
+//        SINGLE_CHOICE = 0,
+//        CUSTOM_CHOICE = 1
 //    };
 //
 type PollType int32
 
 const (
 	PollTypeSingleChoice PollType = 0
+	PollTypeCustomChoice PollType = 1
 )
 
 var PollTypeAll = []PollType{
 	PollTypeSingleChoice,
+	PollTypeCustomChoice,
 }
 
 var pollTypeMap = map[int32]string{
 	0: "PollTypeSingleChoice",
+	1: "PollTypeCustomChoice",
 }
 
 var pollTypeShortMap = map[int32]string{
 	0: "single_choice",
+	1: "custom_choice",
 }
 
 var pollTypeRevMap = map[string]int32{
 	"PollTypeSingleChoice": 0,
+	"PollTypeCustomChoice": 1,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -3332,11 +3338,14 @@ func (e *PollType) UnmarshalJSON(data []byte) error {
 //    {
 //    case SINGLE_CHOICE:
 //        EmptyExt ext;
+//    case CUSTOM_CHOICE:
+//    	EmptyExt customChoiceExt;
 //    };
 //
 type PollData struct {
-	Type PollType  `json:"type,omitempty"`
-	Ext  *EmptyExt `json:"ext,omitempty"`
+	Type            PollType  `json:"type,omitempty"`
+	Ext             *EmptyExt `json:"ext,omitempty"`
+	CustomChoiceExt *EmptyExt `json:"customChoiceExt,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -3351,6 +3360,8 @@ func (u PollData) ArmForSwitch(sw int32) (string, bool) {
 	switch PollType(sw) {
 	case PollTypeSingleChoice:
 		return "Ext", true
+	case PollTypeCustomChoice:
+		return "CustomChoiceExt", true
 	}
 	return "-", false
 }
@@ -3366,6 +3377,13 @@ func NewPollData(aType PollType, value interface{}) (result PollData, err error)
 			return
 		}
 		result.Ext = &tv
+	case PollTypeCustomChoice:
+		tv, ok := value.(EmptyExt)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be EmptyExt")
+			return
+		}
+		result.CustomChoiceExt = &tv
 	}
 	return
 }
@@ -3389,6 +3407,31 @@ func (u PollData) GetExt() (result EmptyExt, ok bool) {
 
 	if armName == "Ext" {
 		result = *u.Ext
+		ok = true
+	}
+
+	return
+}
+
+// MustCustomChoiceExt retrieves the CustomChoiceExt value from the union,
+// panicing if the value is not set.
+func (u PollData) MustCustomChoiceExt() EmptyExt {
+	val, ok := u.GetCustomChoiceExt()
+
+	if !ok {
+		panic("arm CustomChoiceExt is not set")
+	}
+
+	return val
+}
+
+// GetCustomChoiceExt retrieves the CustomChoiceExt value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u PollData) GetCustomChoiceExt() (result EmptyExt, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.Type))
+
+	if armName == "CustomChoiceExt" {
+		result = *u.CustomChoiceExt
 		ok = true
 	}
 
@@ -5933,6 +5976,8 @@ type SingleChoiceVote struct {
 //    {
 //    case SINGLE_CHOICE:
 //        SingleChoiceVote single;
+//    case CUSTOM_CHOICE:
+//    	longstring custom;
 //    //case MULTIPLE_CHOICE:
 //    //    MultipleChoiceVote multiple;
 //    };
@@ -5940,6 +5985,7 @@ type SingleChoiceVote struct {
 type VoteData struct {
 	PollType PollType          `json:"pollType,omitempty"`
 	Single   *SingleChoiceVote `json:"single,omitempty"`
+	Custom   *Longstring       `json:"custom,omitempty"`
 }
 
 // SwitchFieldName returns the field name in which this union's
@@ -5954,6 +6000,8 @@ func (u VoteData) ArmForSwitch(sw int32) (string, bool) {
 	switch PollType(sw) {
 	case PollTypeSingleChoice:
 		return "Single", true
+	case PollTypeCustomChoice:
+		return "Custom", true
 	}
 	return "-", false
 }
@@ -5969,6 +6017,13 @@ func NewVoteData(pollType PollType, value interface{}) (result VoteData, err err
 			return
 		}
 		result.Single = &tv
+	case PollTypeCustomChoice:
+		tv, ok := value.(Longstring)
+		if !ok {
+			err = fmt.Errorf("invalid value, must be Longstring")
+			return
+		}
+		result.Custom = &tv
 	}
 	return
 }
@@ -5992,6 +6047,31 @@ func (u VoteData) GetSingle() (result SingleChoiceVote, ok bool) {
 
 	if armName == "Single" {
 		result = *u.Single
+		ok = true
+	}
+
+	return
+}
+
+// MustCustom retrieves the Custom value from the union,
+// panicing if the value is not set.
+func (u VoteData) MustCustom() Longstring {
+	val, ok := u.GetCustom()
+
+	if !ok {
+		panic("arm Custom is not set")
+	}
+
+	return val
+}
+
+// GetCustom retrieves the Custom value from the union,
+// returning ok if the union's switch indicated the value is valid.
+func (u VoteData) GetCustom() (result Longstring, ok bool) {
+	armName, _ := u.ArmForSwitch(int32(u.PollType))
+
+	if armName == "Custom" {
+		result = *u.Custom
 		ok = true
 	}
 
@@ -57283,7 +57363,10 @@ type TransactionResult struct {
 //        FIX_CRASH_CORE_WITH_PAYMENT = 28,
 //        FIX_INVEST_TO_IMMEDIATE_SALE = 29,
 //        FIX_PAYMENT_TASKS_WILDCARD_VALUE = 30,
-//        FIX_CHANGE_ROLE_REQUEST_REQUESTOR = 31
+//        FIX_CHANGE_ROLE_REQUEST_REQUESTOR = 31,
+//        FIX_UNORDERED_FEE_DESTINATION = 32,
+//        ADD_DEFAULT_FEE_RECEIVER_BALANCE_KV = 33,
+//        DELETE_REDEMPTION_ZERO_TASKS_CHECKING = 34
 //    };
 //
 type LedgerVersion int32
@@ -57321,6 +57404,9 @@ const (
 	LedgerVersionFixInvestToImmediateSale          LedgerVersion = 29
 	LedgerVersionFixPaymentTasksWildcardValue      LedgerVersion = 30
 	LedgerVersionFixChangeRoleRequestRequestor     LedgerVersion = 31
+	LedgerVersionFixUnorderedFeeDestination        LedgerVersion = 32
+	LedgerVersionAddDefaultFeeReceiverBalanceKv    LedgerVersion = 33
+	LedgerVersionDeleteRedemptionZeroTasksChecking LedgerVersion = 34
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -57356,6 +57442,9 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionFixInvestToImmediateSale,
 	LedgerVersionFixPaymentTasksWildcardValue,
 	LedgerVersionFixChangeRoleRequestRequestor,
+	LedgerVersionFixUnorderedFeeDestination,
+	LedgerVersionAddDefaultFeeReceiverBalanceKv,
+	LedgerVersionDeleteRedemptionZeroTasksChecking,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -57391,6 +57480,9 @@ var ledgerVersionMap = map[int32]string{
 	29: "LedgerVersionFixInvestToImmediateSale",
 	30: "LedgerVersionFixPaymentTasksWildcardValue",
 	31: "LedgerVersionFixChangeRoleRequestRequestor",
+	32: "LedgerVersionFixUnorderedFeeDestination",
+	33: "LedgerVersionAddDefaultFeeReceiverBalanceKv",
+	34: "LedgerVersionDeleteRedemptionZeroTasksChecking",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -57426,6 +57518,9 @@ var ledgerVersionShortMap = map[int32]string{
 	29: "fix_invest_to_immediate_sale",
 	30: "fix_payment_tasks_wildcard_value",
 	31: "fix_change_role_request_requestor",
+	32: "fix_unordered_fee_destination",
+	33: "add_default_fee_receiver_balance_kv",
+	34: "delete_redemption_zero_tasks_checking",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -57461,6 +57556,9 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionFixInvestToImmediateSale":          29,
 	"LedgerVersionFixPaymentTasksWildcardValue":      30,
 	"LedgerVersionFixChangeRoleRequestRequestor":     31,
+	"LedgerVersionFixUnorderedFeeDestination":        32,
+	"LedgerVersionAddDefaultFeeReceiverBalanceKv":    33,
+	"LedgerVersionDeleteRedemptionZeroTasksChecking": 34,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
@@ -58943,4 +59041,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "ed8e27617ef83de9c31aa8c58fe039c90a519ca8"
+var Revision = "286e242be84a34b7c846f76c4d070a91e94331c0"

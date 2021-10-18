@@ -33,7 +33,7 @@ require (
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.1 // indirect
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/throttled/throttled/v2 v2.7.2
 	github.com/zenazn/goji v0.9.1-0.20160507202103-64eb34159fe5
 	github.com/ziutek/mymysql v1.5.4 // indirect
@@ -46,9 +46,9 @@ require (
 	gitlab.com/distributed_lab/running v0.0.0-20190830165007-aded59ee376f
 	gitlab.com/distributed_lab/txsub v0.0.0-20171130120140-d7781cbc2319
 	gitlab.com/distributed_lab/urlval v2.2.0+incompatible
-	gitlab.com/tokend/go v3.15.1-0.20210702081110-f832d789c90e+incompatible
+	gitlab.com/tokend/go v3.15.1-0.20211012170121-ef00dadaabc8+incompatible
 	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
-	gitlab.com/tokend/regources v4.9.2-0.20210827103912-620e3a2cdb39+incompatible
+	gitlab.com/tokend/regources v0.0.0-20211013090645-399605b1a154
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 	gopkg.in/tylerb/graceful.v1 v1.2.15
 )
