@@ -36,7 +36,4 @@ CreateRedemptionRequestOp:
               format: Amount
               example: "13.123457"
             creator_details:
-              type: string
-              format: regources.Details
-              example: "{}"
-              description: "custom details set for operation"
+              $ref: '#/components/schemas/Details'

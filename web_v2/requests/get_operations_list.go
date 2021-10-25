@@ -11,13 +11,15 @@ const (
 	IncludeTypeOperationsListOperationDetails = "operation.details"
 
 	FilterTypeOperationsListTypes = "types"
+	FilterTypeOperationsSource    = "source"
 )
 
 type GetOperations struct {
 	*base
 	PageParams pgdb.CursorPageParams
 	Filters    struct {
-		Types []int `filter:"types"`
+		Types  []int   `filter:"types"`
+		Source *string `filter:"source"`
 	}
 	Includes struct {
 		OperationDetails bool `include:"operation.details"`
@@ -31,6 +33,7 @@ func NewGetOperations(r *http.Request) (*GetOperations, error) {
 		},
 		supportedFilters: map[string]struct{}{
 			FilterTypeOperationsListTypes: {},
+			FilterTypeOperationsSource:    {},
 		},
 	})
 	if err != nil {

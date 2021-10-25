@@ -7,16 +7,19 @@
 * Reviewable request for create, update and remove data 
 * Ability to set custom rules and actions in permissions
 * Filter by effect in get history endpoint
+* Fitler by `created_before`, `created_after` timestamps for reviewable requests
 * Filter by `all_tasks`, `all_tasks_any_of`, `all_tasks_not_set` for reviewable requests
 
 ### Changed
 
 * Disable returning errors when using parameters not supported by endpoint
+* Filter parameter `filter[request_details.asset]` on endpoint `/v3/create_withdraw_requests` now accepts slice of asset codes
 
 ### Fixed
 
 * `/v3/order_book/{id}` now uses renders numbers with trailing-digits-count-based dot
 * Match participant in manage offer
+* Error on '/v3/sales/{id}/relationships/participation'
 
 ## 3.9.1
 

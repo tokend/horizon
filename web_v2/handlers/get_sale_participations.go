@@ -77,6 +77,8 @@ type participationsQ interface {
 	FilterByQuoteAsset(code string) participationsQ
 	// Select - select records from db and wraps them to participations
 	Select() ([]regources.SaleParticipation, error)
+	// Count - get slice of sales ids mapped to participants count
+	Count() ([]core2.SaleIDParticipantsCount, error)
 }
 
 // GetSaleParticipations returns sale with related resources

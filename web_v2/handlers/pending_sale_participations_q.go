@@ -56,3 +56,8 @@ func (p pendingParticipationsQ) Select() ([]regources.SaleParticipation, error) 
 
 	return result, nil
 }
+
+// Count - returns slice of sales ids mapped to participants count
+func (p pendingParticipationsQ) Count() ([]core2.SaleIDParticipantsCount, error) {
+	return p.offersQ.SelectParticipantsCount()
+}

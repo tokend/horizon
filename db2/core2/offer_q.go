@@ -2,6 +2,7 @@ package core2
 
 import (
 	"database/sql"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -17,22 +18,8 @@ type OffersQ struct {
 // NewOffersQ - creates new instance of OffersQ with no filters
 func NewOffersQ(repo *pgdb.DB) OffersQ {
 	return OffersQ{
-		repo: repo,
-		selector: sq.Select(
-			"offers.offer_id",
-			"offers.owner_id",
-			"offers.order_book_id",
-			"offers.base_asset_code",
-			"offers.quote_asset_code",
-			"offers.base_balance_id",
-			"offers.quote_balance_id",
-			"offers.fee",
-			"offers.is_buy",
-			"offers.created_at",
-			"offers.base_amount",
-			"offers.quote_amount",
-			"offers.price",
-		).From("offer offers"),
+		repo:     repo,
+		selector: sq.Select().From("offer offers"),
 	}
 }
 
@@ -77,6 +64,14 @@ func (q OffersQ) FilterByOrderBookID(id int64) OffersQ {
 	}
 
 	q.selector = q.selector.Where("offers.order_book_id = ?", id)
+	return q
+}
+
+// FilterByOrderBookIDs - returns q with filter by order book IDs
+func (q OffersQ) FilterByOrderBookIDs(ids ...uint64) OffersQ {
+	q.selector = q.selector.Where(sq.Eq{
+		"offers.order_book_id": ids,
+	})
 	return q
 }
 
@@ -133,7 +128,7 @@ func (q OffersQ) WithQuoteAsset() OffersQ {
 // returns error if more than one asset pair found
 func (q OffersQ) Get() (*Offer, error) {
 	var result Offer
-	err := q.repo.Get(&result, q.selector)
+	err := q.repo.Get(&result, q.addDefaultColumns().selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -148,7 +143,7 @@ func (q OffersQ) Get() (*Offer, error) {
 // Select - selects slice from the db, if no pairs found - returns nil, nil
 func (q OffersQ) Select() ([]Offer, error) {
 	var result []Offer
-	err := q.repo.Select(&result, q.selector)
+	err := q.repo.Select(&result, q.addDefaultColumns().selector)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -177,4 +172,40 @@ func (q OffersQ) SelectID() ([]int64, error) {
 	}
 
 	return result, nil
+}
+
+// SelectParticipantsCount - returns slice of participants count with corresponding sale ID
+func (q OffersQ) SelectParticipantsCount() ([]SaleIDParticipantsCount, error) {
+	var result []SaleIDParticipantsCount
+
+	q.selector = q.selector.Columns("offers.order_book_id sale_id", "COUNT(*) p_count").
+		GroupBy("sale_id")
+
+	err := q.repo.Select(&result, q.selector)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, errors.Wrap(err, "failed to select sales participants count")
+	}
+
+	return result, nil
+}
+
+func (q OffersQ) addDefaultColumns() OffersQ {
+	q.selector = q.selector.Columns(
+		"offers.offer_id",
+		"offers.owner_id",
+		"offers.order_book_id",
+		"offers.base_asset_code",
+		"offers.quote_asset_code",
+		"offers.base_balance_id",
+		"offers.quote_balance_id",
+		"offers.fee",
+		"offers.is_buy",
+		"offers.created_at",
+		"offers.base_amount",
+		"offers.quote_amount",
+		"offers.price")
+	return q
 }

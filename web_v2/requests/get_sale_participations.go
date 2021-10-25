@@ -59,7 +59,7 @@ func NewGetSaleParticipations(r *http.Request) (*GetSaleParticipations, error) {
 		return nil, err
 	}
 
-	request := &GetSaleParticipations{
+	request := GetSaleParticipations{
 		base:   b,
 		SaleID: id,
 	}
@@ -74,5 +74,5 @@ func NewGetSaleParticipations(r *http.Request) (*GetSaleParticipations, error) {
 		return nil, err
 	}
 
-	return request, nil
+	return &request, nil
 }
