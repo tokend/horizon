@@ -11,7 +11,7 @@ require (
 	github.com/getsentry/raven-go v0.2.0
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-errors/errors v1.0.0
-	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
+	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/goji/context v0.0.0-20160122015720-68b83f7b0439
 	github.com/golang/groupcache v0.0.0-20191002201903-404acd9df4cc
 	github.com/google/jsonapi v0.0.0-20170708005851-46d3ced04344
