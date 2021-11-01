@@ -224,7 +224,7 @@ gitlab.com/tokend/keypair
 gitlab.com/tokend/keypair/internal
 gitlab.com/tokend/keypair/internal/crc16
 gitlab.com/tokend/keypair/internal/strkey
-# gitlab.com/tokend/regources v4.9.2-0.20210827103912-620e3a2cdb39+incompatible
+# gitlab.com/tokend/regources v4.9.2-0.20211101124223-04e3b08bddce+incompatible
 ## explicit
 gitlab.com/tokend/regources
 gitlab.com/tokend/regources/generated
@@ -258,4 +258,3 @@ gopkg.in/tylerb/graceful.v1
 gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 gopkg.in/yaml.v3
-# gitlab.com/tokend/regources => gitlab.com/tokend/regources v4.9.2-0.20210809204843-6ec3aa755883+incompatible
