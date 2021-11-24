@@ -20,10 +20,11 @@ func GetVoterVotesList(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 
 	handler := getVoteListHandler{
-		VotesQ:    history2.NewVotesQ(historyRepo),
-		PollsQ:    history2.NewPollsQ(historyRepo),
-		AccountsQ: core2.NewAccountsQ(coreRepo),
-		Log:       ctx.Log(r),
+		VotesQ:        history2.NewVotesQ(historyRepo),
+		PollsQ:        history2.NewPollsQ(historyRepo),
+		AccountsQ:     core2.NewAccountsQ(coreRepo),
+		LedgerHeaderQ: *core2.NewLedgerHeaderQ(coreRepo),
+		Log:           ctx.Log(r),
 	}
 
 	request, err := requests.NewGetVotersVotes(r)
@@ -59,8 +60,15 @@ func (h *getVoteListHandler) GetVoterVotesList(request *requests.GetVoterVoteLis
 	response := regources.VoteListResponse{
 		Data: make([]regources.Vote, 0, len(historyVotes)),
 	}
-
 	for _, vote := range historyVotes {
+		ledgerSequence := int32(vote.ID >> 32) // ledger sequence
+		header, err := h.LedgerHeaderQ.GetBySequence(ledgerSequence)
+		if err != nil {
+			return nil, errors.Wrap(err, "cannot get header of ledger sequence")
+		}
+		created := uint64(header.CloseTime)
+		vote.VoteData.CreationTime = &created
+
 		response.Data = append(response.Data, resources.NewVote(vote))
 		if request.ShouldInclude(requests.IncludeTypeVoterVoteListPolls) {
 			historyPoll, err := h.PollsQ.GetByID(vote.PollID)
