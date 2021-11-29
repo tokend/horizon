@@ -25,9 +25,10 @@ func GetPoll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler := getPollHandler{
-		VotesQ: history2.NewVotesQ(ctx.HistoryRepo(r)),
-		PollsQ: history2.NewPollsQ(ctx.HistoryRepo(r)),
-		Log:    ctx.Log(r),
+		LedgerHeaderQ: *core2.NewLedgerHeaderQ(ctx.CoreRepo(r)),
+		VotesQ:        history2.NewVotesQ(ctx.HistoryRepo(r)),
+		PollsQ:        history2.NewPollsQ(ctx.HistoryRepo(r)),
+		Log:           ctx.Log(r),
 	}
 
 	result, err := handler.getPoll(request)
