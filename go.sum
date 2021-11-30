@@ -72,6 +72,8 @@ github.com/go-logfmt/logfmt v0.4.0/go.mod h1:3RMwSq7FuexP4Kalkev3ejPJsZTpXXBr9+V
 github.com/go-logfmt/logfmt v0.5.0/go.mod h1:wCYkCAKZfumFQihp8CzCvQ3paCTfi41vtzG1KdI/P7A=
 github.com/go-ozzo/ozzo-validation v3.5.0+incompatible h1:sUy/in/P6askYr16XJgTKq/0SZhiWsdg4WZGaLsGQkM=
 github.com/go-ozzo/ozzo-validation v3.5.0+incompatible/go.mod h1:gsEKFIVnabGBt6mXmxK0MoFy+cZoTJY6mu5Ll3LVLBU=
+github.com/go-ozzo/ozzo-validation v3.6.0+incompatible h1:msy24VGS42fKO9K1vLz82/GeYW1cILu7Nuuj1N3BBkE=
+github.com/go-ozzo/ozzo-validation v3.6.0+incompatible/go.mod h1:gsEKFIVnabGBt6mXmxK0MoFy+cZoTJY6mu5Ll3LVLBU=
 github.com/go-redis/redis v6.15.8+incompatible/go.mod h1:NAIEuMOZ/fxfXJIrKDQDz8wamY7mA7PouImQ2Jvg6kA=
 github.com/go-sql-driver/mysql v1.4.0/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
@@ -351,8 +353,12 @@ gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 h1:u8pxrNw8QKIsrmCl
 gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312/go.mod h1:vdlhN5/oQR7uY8EsGSqPf8bwnmQxxpaq7qrQn5Y3U/w=
 gitlab.com/tokend/regources v4.9.2-0.20210803092741-e304e9fd0dd2+incompatible h1:olQKuL9PFyTpk3S8SkiDKVGxGZ97KxXFwnLWF1woEBA=
 gitlab.com/tokend/regources v4.9.2-0.20210803092741-e304e9fd0dd2+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
+gitlab.com/tokend/regources v4.9.2-0.20210809204843-6ec3aa755883+incompatible h1:9IVggHMeH+lYz9NZ9ja5YSn/IjBlYwhLuy8MwxWCYPg=
+gitlab.com/tokend/regources v4.9.2-0.20210809204843-6ec3aa755883+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
 gitlab.com/tokend/regources v4.9.2-0.20210827103912-620e3a2cdb39+incompatible h1:at85YvMoX8RtMPAA7o4kO/QWaS7tUzdcb6zyb4Enkg8=
 gitlab.com/tokend/regources v4.9.2-0.20210827103912-620e3a2cdb39+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
+gitlab.com/tokend/regources v4.9.2-0.20211101124223-04e3b08bddce+incompatible h1:hBhc/eoh5GiIhQQLBkPCDPyeXLws81kE15+eEXxLlLs=
+gitlab.com/tokend/regources v4.9.2-0.20211101124223-04e3b08bddce+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=

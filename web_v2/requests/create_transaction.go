@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
@@ -19,6 +19,7 @@ import (
 type CreateTransaction struct {
 	*base
 	Env           *txsub.EnvelopeInfo
+	WaitForResult bool
 	WaitForIngest bool
 }
 
@@ -58,9 +59,18 @@ func NewCreateTransactionRequest(r *http.Request) (*CreateTransaction, error) {
 		}
 	}
 
+	waitForResult := body.WaitForResult == nil || *body.WaitForResult
+
+	if !waitForResult && waitForIngest {
+		return nil, validation.Errors{
+			"wait_for_result": errors.New("it is not allowed to wait for ingest without waiting for result"),
+		}
+	}
+
 	return &CreateTransaction{
 		base:          b,
 		Env:           envelopeInfo,
 		WaitForIngest: waitForIngest,
+		WaitForResult: waitForResult,
 	}, nil
 }
