@@ -10,6 +10,7 @@
 * Fitler by `created_before`, `created_after` timestamps for reviewable requests
 * Filter by `all_tasks`, `all_tasks_any_of`, `all_tasks_not_set` for reviewable requests
 * Field `wait_for_result` (bool, default value: `true`) to `POST /v3/transactions` request which allows not waiting for transaction result from core (submission finishes faster but invalid tx handling is sender's responsibility). Not guaranteed that transactions submitted using this flag will be applied successfully.
+* Vote creation time
 
 ### Changed
 

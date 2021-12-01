@@ -359,6 +359,8 @@ gitlab.com/tokend/regources v4.9.2-0.20210827103912-620e3a2cdb39+incompatible h1
 gitlab.com/tokend/regources v4.9.2-0.20210827103912-620e3a2cdb39+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
 gitlab.com/tokend/regources v4.9.2-0.20211101124223-04e3b08bddce+incompatible h1:hBhc/eoh5GiIhQQLBkPCDPyeXLws81kE15+eEXxLlLs=
 gitlab.com/tokend/regources v4.9.2-0.20211101124223-04e3b08bddce+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
+gitlab.com/tokend/regources v4.9.2-0.20211201151909-87a041367227+incompatible h1:+HOQtN3MIiU7oGybKehCB9Z3y22SsXPH2NVOH8kLJkE=
+gitlab.com/tokend/regources v4.9.2-0.20211201151909-87a041367227+incompatible/go.mod h1:TL5+kcf9CCPy0cNA2SYPmmdJq8Qh4Z1Vfbyg04M9jMc=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
