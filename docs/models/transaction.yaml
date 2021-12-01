@@ -89,3 +89,7 @@ SubmitTransactionBody:
       type: boolean
       description: "defines whether to wait for ingest of transaction or not"
       default: false
+    wait_for_result:
+      type: boolean
+      description: "EXPERIMENTAL: defines whether we need to wait for result of transaction or not. NOTE: it is not allowed to set `wait_for_ingest = true` and `wait_for_result = false`."
+      default: true

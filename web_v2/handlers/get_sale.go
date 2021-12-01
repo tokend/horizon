@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"gitlab.com/tokend/horizon/db2/core2"
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 
 	"gitlab.com/distributed_lab/ape"
@@ -17,7 +17,6 @@ import (
 // GetSale - processes request to get sale and it's details by sale ID
 func GetSale(w http.ResponseWriter, r *http.Request) {
 	historyRepo := ctx.HistoryRepo(r)
-	coreRepo := ctx.CoreRepo(r)
 
 	converter := newSaleCapConverterForHandler(w, r)
 	if converter == nil {
@@ -27,9 +26,12 @@ func GetSale(w http.ResponseWriter, r *http.Request) {
 	handler := getSaleHandler{
 		getSaleBase{
 			SalesQ:           history2.NewSalesQ(historyRepo),
-			AssetsQ:          core2.NewAssetsQ(coreRepo),
+			AssetsQ:          history2.NewAssetQ(historyRepo),
 			saleCapConverter: converter,
 			Log:              ctx.Log(r),
+
+			ParticipationQ: history2.NewSaleParticipationQ(historyRepo),
+			OffersQ:        core2.NewOffersQ(ctx.CoreRepo(r)),
 		},
 	}
 
@@ -63,5 +65,10 @@ type getSaleHandler struct {
 // GetSale returns sale with related resources
 func (h *getSaleHandler) GetSale(request *requests.GetSale) (*regources.SaleResponse, error) {
 	q := h.SalesQ.FilterByID(request.ID)
+
+	if request.ShouldInclude(requests.IncludeTypeSaleListBaseAssets) {
+		q = q.WithAsset()
+	}
+
 	return h.getAndPopulateResponse(q, request)
 }

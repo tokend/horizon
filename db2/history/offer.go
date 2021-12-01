@@ -1,9 +1,8 @@
 package history
 
 import (
-	"time"
-
 	"gitlab.com/tokend/horizon/db2"
+	"time"
 )
 
 type Offer struct {

@@ -1,20 +1,23 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	"time"
+
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // TransactionsQ is a helper struct to aid in configuring queries that loads
 // transactions structures.
 type TransactionsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewTransactionsQ - creates new instance of TransactionsQ
-func NewTransactionsQ(repo *db2.Repo) TransactionsQ {
+func NewTransactionsQ(repo *pgdb.DB) TransactionsQ {
 	return TransactionsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -44,7 +47,7 @@ func (q TransactionsQ) FilterByLedgerEntryTypes(types ...int) TransactionsQ {
 	return q
 }
 
-// FilterByLedgerEntryTypes - returns q with filter by effect(ledger entry change) types
+// FilterByEffectTypes - returns q with filter by effect(ledger entry change) types
 func (q TransactionsQ) FilterByEffectTypes(types ...int) TransactionsQ {
 	q.selector = q.selector.Where(sq.Eq{"ledger_changes.effect": types})
 	return q
@@ -62,6 +65,16 @@ func (q TransactionsQ) FilterByHash(hash string) TransactionsQ {
 	return q
 }
 
+func (q TransactionsQ) FilterLedgerCloseTimeBefore(time time.Time) TransactionsQ {
+	q.selector = q.selector.Where(sq.Lt{"transactions.ledger_close_time": time})
+	return q
+}
+
+func (q TransactionsQ) FilterLedgerCloseTimeAfter(time time.Time) TransactionsQ {
+	q.selector = q.selector.Where(sq.Gt{"transactions.ledger_close_time": time})
+	return q
+}
+
 // GetByID loads a row from `transactions`, by ID
 // returns nil, nil - if transaction does not exists
 func (q TransactionsQ) GetByID(id uint64) (*Transaction, error) {
@@ -69,7 +82,7 @@ func (q TransactionsQ) GetByID(id uint64) (*Transaction, error) {
 }
 
 // Page - returns Q with specified limit and cursor params
-func (q TransactionsQ) Page(params db2.CursorPageParams) TransactionsQ {
+func (q TransactionsQ) Page(params pgdb.CursorPageParams) TransactionsQ {
 	q.selector = params.ApplyTo(q.selector, "transactions.id")
 	return q
 }
@@ -81,7 +94,7 @@ func (q TransactionsQ) Get() (*Transaction, error) {
 	var result Transaction
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

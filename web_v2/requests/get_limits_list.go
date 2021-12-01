@@ -3,9 +3,8 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/distributed_lab/logan/v3/errors"
-
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -31,13 +30,17 @@ var filterTypeLimitsListAll = map[string]struct{}{
 //GetLimitsList - represents params to be specified for Get Fees handler
 type GetLimitsList struct {
 	*base
-	Filters struct {
-		Asset       string `fig:"asset"`
-		StatsOpType int32  `fig:"stats_op_type"`
-		Account     string `fig:"account"`
-		AccountRole uint64 `fig:"account_role"`
+	Filters    GetLimitsListFilters
+	PageParams pgdb.OffsetPageParams
+	Includes   struct {
+		Asset bool `include:"asset"`
 	}
-	PageParams *db2.OffsetPageParams
+}
+type GetLimitsListFilters struct {
+	Asset       *string `filter:"asset"`
+	StatsOpType *int32  `filter:"stats_op_type"`
+	Account     *string `filter:"account"`
+	AccountRole *uint64 `filter:"account_role"`
 }
 
 // NewGetLimitsList returns the new instance of GetLimitsList request
@@ -50,20 +53,18 @@ func NewGetLimitsList(r *http.Request) (*GetLimitsList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get page params`")
-	}
-
 	request := GetLimitsList{
-		base:       b,
-		PageParams: pageParams,
+		base: b,
 	}
 
-	err = b.populateFilters(&request.Filters)
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to populate filters")
+		return nil, err
 	}
 
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
+	if err != nil {
+		return nil, err
+	}
 	return &request, nil
 }

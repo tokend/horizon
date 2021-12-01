@@ -63,3 +63,4 @@ pages:
     - public
   only:
   - master
+  - feature/deferred-payment

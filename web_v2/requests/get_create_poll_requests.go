@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -17,24 +19,32 @@ var filterTypeCreatePollRequests = map[string]struct{}{
 }
 
 type GetCreatePollRequestsFilter struct {
-	GetRequestListBaseFilters
-	PermissionType           uint32 `fig:"request_details.permission_type"`
-	VoteConfirmationRequired bool   `fig:"request_details.vote_confirmation_required"`
-	ResultProvider           string `fig:"request_details.result_provider"`
+	PermissionType           *uint32 `filter:"request_details.permission_type"`
+	VoteConfirmationRequired *bool   `filter:"request_details.vote_confirmation_required"`
+	ResultProvider           *string `filter:"request_details.result_provider"`
 }
 
 type GetCreatePollRequests struct {
-	*GetRequestsBase
+	GetRequestsBase
 	Filters GetCreatePollRequestsFilter
 }
 
 func NewGetCreatePollRequests(r *http.Request) (request GetCreatePollRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		filterTypeCreatePollRequests,
 		map[string]struct{}{},
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

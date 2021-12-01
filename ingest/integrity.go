@@ -1,7 +1,7 @@
 package ingest
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 	"gitlab.com/tokend/horizon/db2/core"
 	"gitlab.com/tokend/horizon/db2/history"
@@ -47,7 +47,7 @@ func (i *System) ensureAccountTypes() error {
 				Update("history_accounts").
 				Set("account_type", coreAccount.RoleID).
 				Where("id = ?", account.ID)
-			_, err = i.HorizonDB.Exec(stmt)
+			err = i.HorizonDB.Exec(stmt)
 			if err != nil {
 				return errors.Wrap(err, "failed to update history account")
 			}

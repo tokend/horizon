@@ -45,6 +45,16 @@ func NewRequestDetails(request history2.ReviewableRequest) regources.Resource {
 		return newCreatePaymentRequest(request.ID, *request.Details.CreatePayment)
 	case xdr.ReviewableRequestTypePerformRedemption:
 		return newRedemptionRequest(request.ID, *request.Details.Redemption)
+	case xdr.ReviewableRequestTypeDataCreation:
+		return newDataCreationRequest(request.ID, *request.Details.DataCreation)
+	case xdr.ReviewableRequestTypeDataUpdate:
+		return newDataUpdateRequest(request.ID, *request.Details.DataUpdate)
+	case xdr.ReviewableRequestTypeDataRemove:
+		return newDataRemoveRequest(request.ID, *request.Details.DataRemove)
+	case xdr.ReviewableRequestTypeCreateDeferredPayment:
+		return newCreateDeferredPaymentRequest(request.ID, *request.Details.CreateDeferredPayment)
+	case xdr.ReviewableRequestTypeCloseDeferredPayment:
+		return newCloseDeferredPaymentRequest(request.ID, *request.Details.CloseDeferredPayment)
 	default:
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
 			"type": request.RequestType,
@@ -153,9 +163,10 @@ func newPreIssuanceRequest(id int64, details history2.CreatePreIssuanceRequest) 
 	return &regources.CreatePreIssuanceRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_PRE_ISSUANCE),
 		Attributes: regources.CreatePreIssuanceRequestAttributes{
-			Amount:    details.Amount,
-			Signature: details.Signature,
-			Reference: details.Reference,
+			Amount:         details.Amount,
+			Signature:      details.Signature,
+			Reference:      details.Reference,
+			CreatorDetails: details.CreatorDetails,
 		},
 		Relationships: regources.CreatePreIssuanceRequestRelationships{
 			Asset: NewAssetKey(details.Asset).AsRelation(),
@@ -276,12 +287,13 @@ func newManageOfferRequest(id int64, details history2.ManageOfferRequest) *regou
 	return &regources.ManageOfferRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_MANAGE_OFFER),
 		Attributes: regources.ManageOfferRequestAttributes{
-			BaseAmount:  details.Amount,
-			Fee:         details.Fee,
-			IsBuy:       details.IsBuy,
-			OfferId:     details.OfferID,
-			OrderBookId: details.OrderBookID,
-			Price:       details.Price,
+			CreatorDetails: details.CreatorDetails,
+			BaseAmount:     details.Amount,
+			Fee:            details.Fee,
+			IsBuy:          details.IsBuy,
+			OfferId:        details.OfferID,
+			OrderBookId:    details.OrderBookID,
+			Price:          details.Price,
 		},
 	}
 }
@@ -290,6 +302,7 @@ func newCreatePaymentRequest(id int64, details history2.CreatePaymentRequest) *r
 	return &regources.CreatePaymentRequest{
 		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CREATE_PAYMENT),
 		Attributes: regources.CreatePaymentRequestAttributes{
+			CreatorDetails:          details.CreatorDetails,
 			Amount:                  details.Amount,
 			SourceFee:               details.SourceFee,
 			DestinationFee:          details.DestinationFee,
@@ -313,6 +326,91 @@ func newRedemptionRequest(id int64, details history2.RedemptionRequest) *regourc
 		Relationships: regources.RedemptionRequestRelationships{
 			Destination:   *NewAccountKey(details.DestinationAccountID).AsRelation(),
 			SourceBalance: *NewBalanceKey(details.SourceBalanceID).AsRelation(),
+		},
+	}
+}
+
+func newDataCreationRequest(id int64, details history2.DataCreationRequest) *regources.DataCreationRequest {
+	return &regources.DataCreationRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_DATA_CREATION),
+		Attributes: regources.DataCreationRequestAttributes{
+			CreatorDetails: details.CreatorDetails,
+			Type:           details.SecurityType,
+			Value:          details.Value,
+			SequenceNumber: details.SequenceNumber,
+		},
+		Relationships: regources.DataCreationRequestRelationships{
+			Owner: NewAccountKey(details.Owner).AsRelation(),
+		},
+	}
+}
+
+func newDataUpdateRequest(id int64, details history2.DataUpdateRequest) *regources.DataUpdateRequest {
+	return &regources.DataUpdateRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_DATA_UPDATE),
+		Attributes: regources.DataUpdateRequestAttributes{
+			CreatorDetails: details.CreatorDetails,
+			Value:          details.Value,
+			SequenceNumber: details.SequenceNumber,
+		},
+		Relationships: regources.DataUpdateRequestRelationships{
+			Data: NewDataKey(int64(details.DataID)).AsRelation(),
+		},
+	}
+}
+
+func newDataRemoveRequest(id int64, details history2.DataRemoveRequest) *regources.DataRemoveRequest {
+	return &regources.DataRemoveRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_DATA_REMOVE),
+		Attributes: regources.DataRemoveRequestAttributes{
+			CreatorDetails: details.CreatorDetails,
+			SequenceNumber: details.SequenceNumber,
+		},
+		Relationships: regources.DataRemoveRequestRelationships{
+			Data: NewDataKey(int64(details.DataID)).AsRelation(),
+		},
+	}
+}
+
+func newCloseDeferredPaymentRequest(id int64, details history2.CloseDeferredPayment) *regources.CloseDeferredPaymentRequest {
+	result := &regources.CloseDeferredPaymentRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CLOSE_DEFERRED_PAYMENT),
+		Attributes: regources.CloseDeferredPaymentRequestAttributes{
+			Amount:         details.Amount,
+			CreatorDetails: details.Details,
+		},
+		Relationships: regources.CloseDeferredPaymentRequestRelationships{
+			DeferredPayment: regources.NewKeyInt64(int64(details.DeferredPaymentID), regources.DEFERRED_PAYMENTS).
+				AsRelation(),
+		},
+	}
+
+	switch details.Destination.Type {
+	case xdr.CloseDeferredPaymentDestinationTypeBalance:
+		result.Relationships.DestinationBalance = NewBalanceKey(*details.Destination.Balance).AsRelation()
+	case xdr.CloseDeferredPaymentDestinationTypeAccount:
+		result.Relationships.DestinationAccount = NewAccountKey(*details.Destination.Account).AsRelation()
+	}
+
+	return result
+}
+
+func newCreateDeferredPaymentRequest(id int64, details history2.CreateDeferredPayment) *regources.CreateDeferredPaymentRequest {
+	return &regources.CreateDeferredPaymentRequest{
+		Key: regources.NewKeyInt64(id, regources.REQUEST_DETAILS_CREATE_DEFERRED_PAYMENT),
+		Attributes: regources.CreateDeferredPaymentRequestAttributes{
+			Amount:         details.Amount,
+			CreatorDetails: details.Details,
+		},
+		Relationships: regources.CreateDeferredPaymentRequestRelationships{
+			DestinationAccount: regources.Key{
+				ID:   details.DestinationAccount,
+				Type: regources.ACCOUNTS,
+			}.AsRelation(),
+			SourceBalance: regources.Key{
+				ID:   details.SourceBalance,
+				Type: regources.BALANCES,
+			}.AsRelation(),
 		},
 	}
 }

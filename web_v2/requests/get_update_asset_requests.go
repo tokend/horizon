@@ -2,6 +2,8 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -21,22 +23,33 @@ var includeTypeUpdateAssetRequests = map[string]struct{}{
 }
 
 type GetUpdateAssetRequestsFilter struct {
-	GetRequestListBaseFilters
-	Asset string `fig:"request_details.asset"`
+	Asset *string `filter:"request_details.asset"`
 }
 
 type GetUpdateAssetRequests struct {
-	*GetRequestsBase
-	Filters GetUpdateAssetRequestsFilter
+	GetRequestsBase
+	Filters  GetUpdateAssetRequestsFilter
+	Includes struct {
+		RequestDetailsAsset bool `include:"request_details.asset"`
+	}
 }
 
 func NewGetUpdateAssetRequests(r *http.Request) (request GetUpdateAssetRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		filterTypeUpdateAssetRequests,
 		includeTypeUpdateAssetRequests,
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

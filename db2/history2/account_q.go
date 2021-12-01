@@ -1,19 +1,21 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountsQ is a helper struct to aid in configuring queries that loads accounts
 type AccountsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAccountsQ - creates new instance of AccountsQ
-func NewAccountsQ(repo *db2.Repo) AccountsQ {
+func NewAccountsQ(repo *pgdb.DB) AccountsQ {
 	return AccountsQ{
 		repo:     repo,
 		selector: sq.Select(accountColumns...).From("accounts accounts"),
@@ -38,7 +40,7 @@ func (q AccountsQ) Get() (*Account, error) {
 	var result Account
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

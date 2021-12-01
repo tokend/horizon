@@ -1,18 +1,18 @@
 package storage
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // ParticipantEffect - helper struct to store `operation participants`
 type ParticipantEffect struct {
-	repo *db2.Repo
+	repo *pgdb.DB
 }
 
 // NewOpParticipants - creates new instance of `ParticipantEffect`
-func NewOpParticipants(repo *db2.Repo) *ParticipantEffect {
+func NewOpParticipants(repo *pgdb.DB) *ParticipantEffect {
 	return &ParticipantEffect{
 		repo: repo,
 	}

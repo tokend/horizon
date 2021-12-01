@@ -4,13 +4,62 @@
 
 ### Added
 
+* Reviewable request for create, update and remove data 
+* Ability to set custom rules and actions in permissions
+* Filter by effect in get history endpoint
+* Fitler by `created_before`, `created_after` timestamps for reviewable requests
+* Filter by `all_tasks`, `all_tasks_any_of`, `all_tasks_not_set` for reviewable requests
+* Field `wait_for_result` (bool, default value: `true`) to `POST /v3/transactions` request which allows not waiting for transaction result from core (submission finishes faster but invalid tx handling is sender's responsibility). Not guaranteed that transactions submitted using this flag will be applied successfully.
+
+### Changed
+
+* Disable returning errors when using parameters not supported by endpoint
+* Filter parameter `filter[request_details.asset]` on endpoint `/v3/create_withdraw_requests` now accepts slice of asset codes
+
+### Fixed
+
+* `/v3/order_book/{id}` now uses renders numbers with trailing-digits-count-based dot
+* Match participant in manage offer
+* Error on '/v3/sales/{id}/relationships/participation'
+
+## 3.9.1
+
+### Fixed
+
+* panic on `/v3/accounts/{id}/sales`
+
+
+## 3.9.0
+
+### Added
+ 
 * Traefik
+* Endpoint to get operation `/v3/operations/{id}`
+
+### Fixed 
+
+* Overflow quote amount `/v3/order_books/{base}:{quote}:{order_book_id}`
+* Incorrect 404 on `/v3/create_issuance_requests` with filter by receiver
+* Fee in unlocked effect 
+* Invalid conversion price `/v3/accounts/{id}/converted_balances/{asset_code}`
+
+## 3.8.3
+
+### Added
+
+* Ingest version bumped up
+* Creator details in `PaymentReviewableRequest`, `ManageOfferReviewableRequest`
+
+### Fixed 
+
+* Ingest of preissuance request details.
 
 ## 3.8.0
 
 ### Added
 
 * Endpoint for getting account list `v3/accounts`
+* Filter by participant for `/v3/sales`
 * Filter by asset codes (`v3/assets`)
 * Filter by sales ids (`v3/sales`)
 

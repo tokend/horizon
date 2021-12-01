@@ -2,24 +2,30 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
-type GetUpdateLimitsRequestsFilter struct {
-	GetRequestListBaseFilters
-}
-
 type GetUpdateLimitsRequests struct {
-	*GetRequestsBase
-	Filters GetUpdateLimitsRequestsFilter
+	GetRequestsBase
 }
 
 func NewGetUpdateLimitsRequests(r *http.Request) (request GetUpdateLimitsRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		map[string]struct{}{},
 		map[string]struct{}{},
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

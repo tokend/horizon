@@ -18,8 +18,10 @@ import (
 func GetLimitsList(w http.ResponseWriter, r *http.Request) {
 	coreRepo := ctx.CoreRepo(r)
 	handler := getLimitsListHandler{
-		LimitsQ: core2.NewLimitsQ(coreRepo),
-		Log:     ctx.Log(r),
+		AccountQ: core2.NewAccountsQ(coreRepo),
+		AssetsQ:  core2.NewAssetsQ(coreRepo),
+		LimitsQ:  core2.NewLimitsQ(coreRepo),
+		Log:      ctx.Log(r),
 	}
 
 	request, err := requests.NewGetLimitsList(r)
@@ -49,20 +51,20 @@ type getLimitsListHandler struct {
 
 // GetLimitsList returns the list of fees with related resources
 func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*regources.LimitsListResponse, error) {
-	q := h.LimitsQ.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeLimitsListAccount) {
-		q = q.FilterByAccount(request.Filters.Account)
+	q := h.LimitsQ.Page(request.PageParams)
+	if request.Filters.Account != nil {
+		q = q.FilterByAccount(*request.Filters.Account)
 	}
-	if request.ShouldFilter(requests.FilterTypeLimitsListAccountRole) {
-		q = q.FilterByAccountRole(request.Filters.AccountRole)
-	}
-
-	if request.ShouldFilter(requests.FilterTypeLimitsListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset)
+	if request.Filters.AccountRole != nil {
+		q = q.FilterByAccountRole(*request.Filters.AccountRole)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeLimitsListStatsOpType) {
-		q = q.FilterByStatsOpType(request.Filters.StatsOpType)
+	if request.Filters.Asset != nil {
+		q = q.FilterByAsset(*request.Filters.Asset)
+	}
+
+	if request.Filters.StatsOpType != nil {
+		q = q.FilterByStatsOpType(*request.Filters.StatsOpType)
 	}
 
 	limits, err := q.Select()
@@ -72,7 +74,7 @@ func (h *getLimitsListHandler) GetLimitsList(request *requests.GetLimitsList) (*
 
 	response := &regources.LimitsListResponse{
 		Data:  make([]regources.Limits, 0, len(limits)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	assets := make([]string, 0, len(limits))

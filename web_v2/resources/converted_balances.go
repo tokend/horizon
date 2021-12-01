@@ -2,7 +2,7 @@ package resources
 
 import (
 	"gitlab.com/tokend/horizon/db2/core2"
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // NewConvertedBalancesCollectionKey - creates the key of ConvertedBalancesCollection resource
@@ -36,6 +36,7 @@ func NewConvertedBalanceState(
 	balance core2.Balance,
 	convertedAvailable regources.Amount,
 	convertedLocked regources.Amount,
+	price regources.Amount,
 	isConverted bool,
 ) regources.ConvertedBalanceState {
 
@@ -51,6 +52,7 @@ func NewConvertedBalanceState(
 				Locked:    convertedLocked,
 			},
 			IsConverted: isConverted,
+			Price:       price,
 		},
 		Relationships: regources.ConvertedBalanceStateRelationships{
 			Balance: NewBalanceKey(balance.BalanceAddress).AsRelation(),

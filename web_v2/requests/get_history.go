@@ -3,7 +3,8 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -22,16 +23,27 @@ const (
 	FilterTypeHistoryBalance = "balance"
 	// FilterTypeHistoryAsset - defines if we need to filter the list by asset
 	FilterTypeHistoryAsset = "asset"
+	// FilterTypeEffect - defines if we need to filter the list by effect type
+	FilterTypeHistoryEffectType = "effect"
+	// FilterTypeHistoryIDs
+	FilterTypeHistoryIDs = "id"
 )
 
 //GetHistory - represents params to be specified for Get History handler
 type GetHistory struct {
 	*base
-	PageParams *db2.CursorPageParams
+	PageParams pgdb.CursorPageParams
 	Filters    struct {
-		Account string `fig:"account"`
-		Balance string `fig:"balance"`
-		Asset   string `fig:"asset"`
+		Account    *string  `filter:"account"`
+		Balance    []string `filter:"balance"`
+		Asset      *string  `filter:"asset"`
+		EffectType []string `filter:"effect"`
+	}
+	Includes struct {
+		Operation        bool `include:"operation"`
+		Effect           bool `include:"effect"`
+		OperationDetails bool `include:"operation.details"`
+		Asset            bool `include:"asset"`
 	}
 }
 
@@ -45,26 +57,26 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 			IncludeTypeHistoryAsset:            {},
 		},
 		supportedFilters: map[string]struct{}{
-			FilterTypeHistoryAccount: {},
-			FilterTypeHistoryBalance: {},
-			FilterTypeHistoryAsset:   {},
+			FilterTypeHistoryAccount:    {},
+			FilterTypeHistoryBalance:    {},
+			FilterTypeHistoryAsset:      {},
+			FilterTypeHistoryEffectType: {},
 		},
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	pagingParams, err := b.getCursorBasedPageParams()
+	request := GetHistory{
+		base: b,
+	}
+
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetHistory{
-		base:       b,
-		PageParams: pagingParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = SetDefaultCursorPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

@@ -1,9 +1,17 @@
 package db2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
+
+// PageQueryV2 represents a portion of a Query struct concerned with paging
+// through a large dataset. Is used for page-based(offset, limit) pagination
+type PageQueryV2 struct {
+	Limit  uint64
+	Offset uint64
+	Page   uint64
+}
 
 const (
 	// Default limit is the default amount of records will be returned

@@ -1,6 +1,6 @@
 package core
 
-import "github.com/lann/squirrel"
+import "github.com/Masterminds/squirrel"
 
 type ExternalSystemAccountIDPoolQ struct {
 	parent *Q

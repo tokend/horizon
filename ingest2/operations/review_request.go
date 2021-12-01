@@ -2,7 +2,6 @@ package operations
 
 import (
 	"encoding/hex"
-
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
@@ -32,7 +31,7 @@ type reviewRequestHandler interface {
 
 // newReviewRequestOpHandler creates new handler for review request operations
 // with specific handlers for different types
-func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler {
+func newReviewRequestOpHandler(provider effectsProvider, defPayments defPaymentProvider) *reviewRequestOpHandler {
 	// All reviewable requests must be explicitly handled here. If there is nothing to handle
 	// use reviewableRequestHandlerStub
 	stubProvider := reviewableRequestHandlerStub{
@@ -72,6 +71,22 @@ func newReviewRequestOpHandler(provider effectsProvider) *reviewRequestOpHandler
 			},
 			xdr.ReviewableRequestTypePerformRedemption: &redemptionHandler{
 				effectsProvider: provider,
+			},
+			xdr.ReviewableRequestTypeDataCreation: &createDataHandler{
+				effectsProvider: provider,
+			},
+			xdr.ReviewableRequestTypeDataUpdate: &updateDataHandler{
+				effectsProvider: provider,
+			},
+			xdr.ReviewableRequestTypeDataRemove: &removeDataHandler{
+				effectsProvider: provider,
+			},
+			xdr.ReviewableRequestTypeCreateDeferredPayment: &createDeferredPaymentHandler{
+				effectsProvider: provider,
+			},
+			xdr.ReviewableRequestTypeCloseDeferredPayment: &closeDeferredPaymentHandler{
+				effectsProvider:    provider,
+				defPaymentProvider: defPayments,
 			},
 		},
 	}

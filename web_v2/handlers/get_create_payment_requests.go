@@ -52,12 +52,12 @@ type getCreatePaymentRequestsHandler struct {
 func (h *getCreatePaymentRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreatePaymentRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreatePayment))
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getCreatePaymentRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest,
 ) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	return resource, nil
 }

@@ -2,12 +2,14 @@ package changes
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"time"
+
+	"gitlab.com/tokend/horizon/db2"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	history "gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/internal"
 	"gitlab.com/tokend/horizon/utf8"
@@ -213,6 +215,49 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 		return c.handleRemoveOnCreationOp(lc, true)
 	case xdr.OperationTypeManageOffer:
 		return c.handleRemovedOnManageOffer(lc)
+	case xdr.OperationTypeCreateDataCreationRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDataCreationRequestResult().
+				MustSuccess().Fulfilled)
+	case xdr.OperationTypeCancelDataCreationRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCreateDataUpdateRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDataUpdateRequestResult().
+				MustSuccess().Fulfilled)
+	case xdr.OperationTypeCancelDataUpdateRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCreateDataRemoveRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDataUpdateRequestResult().
+				MustSuccess().Fulfilled)
+	case xdr.OperationTypeCancelDataRemoveRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCancelDeferredPaymentCreationRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCancelCloseDeferredPaymentRequest:
+		return c.cancel(lc)
+	case xdr.OperationTypeCreateDeferredPaymentCreationRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateDeferredPaymentCreationRequestResult().
+				MustSuccess().
+				Fulfilled)
+	case xdr.OperationTypeCreateCloseDeferredPaymentRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateCloseDeferredPaymentRequestResult().
+				MustSuccess().
+				Fulfilled)
+	case xdr.OperationTypeCreateRedemptionRequest:
+		return c.handleRemoveOnCreationOp(lc,
+			lc.OperationResult.
+				MustCreateRedemptionRequestResult().
+				MustRedemptionResponse().
+				Fulfilled)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
@@ -386,10 +431,15 @@ func (c *reviewableRequestHandler) convertReviewableRequest(request *xdr.Reviewa
 		externalDetails = append(externalDetails, internal.MarshalCustomDetails(item))
 	}
 
-	// we use key "data" for compatibility with db2.Details
+	// we use key "data" for compatibility with db2.Details (Deprecated)
 	// the value for the key "data" is a slice of map[string]interface{}
-	result.ExternalDetails = map[string]interface{}{
+	var resultDetails = map[string]interface{}{
 		"data": externalDetails,
+	}
+	result.ExternalDetails, err = json.Marshal(resultDetails)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &result, nil
@@ -425,10 +475,11 @@ func (c *reviewableRequestHandler) getPreIssuanceRequest(request *xdr.PreIssuanc
 	}
 
 	return &history.CreatePreIssuanceRequest{
-		Asset:     string(request.Asset),
-		Amount:    regources.Amount(request.Amount),
-		Signature: signature,
-		Reference: string(request.Reference),
+		Asset:          string(request.Asset),
+		Amount:         regources.Amount(request.Amount),
+		Signature:      signature,
+		Reference:      string(request.Reference),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
 	}, nil
 }
 
@@ -601,12 +652,25 @@ func (c *reviewableRequestHandler) getKYCRecovery(request *xdr.KycRecoveryReques
 func (c *reviewableRequestHandler) getManageOfferRequest(request *xdr.ManageOfferRequest,
 ) *history.ManageOfferRequest {
 	manageOfferOp := request.Op
+
+	creatorDetails := regources.Details("{}")
+	switch request.Ext.V {
+	case xdr.LedgerVersionMovementRequestsDetails:
+		creatorDetails = internal.MarshalCustomDetails(request.Ext.MustCreatorDetails())
+	case xdr.LedgerVersionEmptyVersion:
+	default:
+		panic(errors.From(errors.New("unexpected version of manage offer request"), logan.F{
+			"ledger_version": request.Ext.V,
+		}))
+	}
+
 	return &history.ManageOfferRequest{
-		OfferID:     int64(manageOfferOp.OfferId),
-		OrderBookID: int64(manageOfferOp.OrderBookId),
-		Amount:      regources.Amount(manageOfferOp.Amount),
-		Price:       regources.Amount(manageOfferOp.Price),
-		IsBuy:       manageOfferOp.IsBuy,
+		CreatorDetails: creatorDetails,
+		OfferID:        int64(manageOfferOp.OfferId),
+		OrderBookID:    int64(manageOfferOp.OrderBookId),
+		Amount:         regources.Amount(manageOfferOp.Amount),
+		Price:          regources.Amount(manageOfferOp.Price),
+		IsBuy:          manageOfferOp.IsBuy,
 		Fee: regources.Fee{
 			CalculatedPercent: regources.Amount(manageOfferOp.Fee),
 		},
@@ -616,7 +680,20 @@ func (c *reviewableRequestHandler) getManageOfferRequest(request *xdr.ManageOffe
 func (c *reviewableRequestHandler) getCreatePaymentRequest(request *xdr.CreatePaymentRequest,
 ) *history.CreatePaymentRequest {
 	paymentOp := request.PaymentOp
+
+	creatorDetails := regources.Details("{}")
+	switch request.Ext.V {
+	case xdr.LedgerVersionMovementRequestsDetails:
+		creatorDetails = internal.MarshalCustomDetails(request.Ext.MustCreatorDetails())
+	case xdr.LedgerVersionEmptyVersion:
+	default:
+		panic(errors.From(errors.New("unexpected version of payment request"), logan.F{
+			"ledger_version": request.Ext.V,
+		}))
+	}
+
 	return &history.CreatePaymentRequest{
+		CreatorDetails:          creatorDetails,
 		BalanceFrom:             paymentOp.SourceBalanceId.AsString(),
 		Amount:                  regources.Amount(paymentOp.Amount),
 		SourceFee:               internal.FeeFromXdr(paymentOp.FeeData.SourceFee),
@@ -636,6 +713,65 @@ func (c *reviewableRequestHandler) getRedemption(request *xdr.RedemptionRequest)
 	}
 }
 
+func (c *reviewableRequestHandler) getDataCreationRequest(request *xdr.DataCreationRequest) *history.DataCreationRequest {
+	return &history.DataCreationRequest{
+		SecurityType:   uint64(request.Type),
+		SequenceNumber: uint32(request.SequenceNumber),
+		Owner:          request.Owner.Address(),
+		Value:          internal.MarshalCustomDetails(request.Value),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
+
+func (c *reviewableRequestHandler) getDataUpdateRequest(request *xdr.DataUpdateRequest) *history.DataUpdateRequest {
+	return &history.DataUpdateRequest{
+		SequenceNumber: uint32(request.SequenceNumber),
+		DataID:         uint64(request.Id),
+		Value:          internal.MarshalCustomDetails(request.Value),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
+
+func (c *reviewableRequestHandler) getDataRemoveRequest(request *xdr.DataRemoveRequest) *history.DataRemoveRequest {
+	return &history.DataRemoveRequest{
+		SequenceNumber: uint32(request.SequenceNumber),
+		DataID:         uint64(request.Id),
+		CreatorDetails: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+}
+
+func (c *reviewableRequestHandler) getCreateDeferredPayment(request *xdr.CreateDeferredPaymentRequest) *history.CreateDeferredPayment {
+	return &history.CreateDeferredPayment{
+		SourceBalance:      request.SourceBalance.AsString(),
+		DestinationAccount: request.Destination.Address(),
+		Amount:             regources.Amount(request.Amount),
+		Details:            internal.MarshalCustomDetails(request.CreatorDetails),
+		SequenceNumber:     uint32(request.SequenceNumber),
+	}
+}
+
+func (c *reviewableRequestHandler) getCloseDeferredPayment(request *xdr.CloseDeferredPaymentRequest) *history.CloseDeferredPayment {
+	result := &history.CloseDeferredPayment{
+		SequenceNumber:    uint32(request.SequenceNumber),
+		DeferredPaymentID: uint64(request.DeferredPaymentId),
+		Destination: history.CloseDeferredPaymentDestination{
+			Type: request.Destination.Type,
+		},
+		Amount:  regources.Amount(request.Amount),
+		Details: internal.MarshalCustomDetails(request.CreatorDetails),
+	}
+
+	switch request.Destination.Type {
+	case xdr.CloseDeferredPaymentDestinationTypeAccount:
+		tmp := request.Destination.AccountId.Address()
+		result.Destination.Account = &tmp
+	case xdr.CloseDeferredPaymentDestinationTypeBalance:
+		tmp := request.Destination.BalanceId.AsString()
+		result.Destination.Balance = &tmp
+	}
+
+	return result
+}
 func (c *reviewableRequestHandler) getReviewableRequestDetails(
 	body *xdr.ReviewableRequestEntryBody,
 ) (history.ReviewableRequestDetails, error) {
@@ -683,6 +819,16 @@ func (c *reviewableRequestHandler) getReviewableRequestDetails(
 		details.CreatePayment = c.getCreatePaymentRequest(body.CreatePaymentRequest)
 	case xdr.ReviewableRequestTypePerformRedemption:
 		details.Redemption = c.getRedemption(body.RedemptionRequest)
+	case xdr.ReviewableRequestTypeDataCreation:
+		details.DataCreation = c.getDataCreationRequest(body.DataCreationRequest)
+	case xdr.ReviewableRequestTypeDataUpdate:
+		details.DataUpdate = c.getDataUpdateRequest(body.DataUpdateRequest)
+	case xdr.ReviewableRequestTypeDataRemove:
+		details.DataRemove = c.getDataRemoveRequest(body.DataRemoveRequest)
+	case xdr.ReviewableRequestTypeCreateDeferredPayment:
+		details.CreateDeferredPayment = c.getCreateDeferredPayment(body.CreateDeferredPaymentRequest)
+	case xdr.ReviewableRequestTypeCloseDeferredPayment:
+		details.CloseDeferredPayment = c.getCloseDeferredPayment(body.CloseDeferredPaymentRequest)
 	default:
 		return details, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": body.Type.String(),

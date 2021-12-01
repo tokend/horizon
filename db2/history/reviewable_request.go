@@ -1,10 +1,11 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/db2"
+	regources "gitlab.com/tokend/regources/generated"
 	"time"
 
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // Represents Reviewable request
@@ -22,5 +23,5 @@ type ReviewableRequest struct {
 	Details         ReviewableRequestDetails  `db:"details"`
 	AllTasks        uint32                    `db:"all_tasks"`
 	PendingTasks    uint32                    `db:"pending_tasks"`
-	ExternalDetails db2.Details               `db:"external_details"`
+	ExternalDetails regources.Details         `db:"external_details"`
 }

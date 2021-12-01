@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	history "gitlab.com/tokend/horizon/db2/history2"
 
@@ -59,10 +61,14 @@ func (h *getTransactionsHandler) getLatestLedger() (*history2.Ledger, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load latest ledger sequence")
 	}
+	h.Log.WithField("latest_sequence", sequence).Debug("Got latest ledger seq")
 
 	ledger, err := h.LedgerQ.GetBySequence(sequence)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load ledger by sequence")
+	}
+	if ledger == nil {
+		h.Log.WithField("latest_sequence", sequence).Error("Failed to get latest ledger")
 	}
 
 	return ledger, nil
@@ -70,14 +76,26 @@ func (h *getTransactionsHandler) getLatestLedger() (*history2.Ledger, error) {
 
 // GetTransactions returns the list of transactions with related resources
 func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactions) (*regources.TransactionListResponse, error) {
-	q := h.TransactionsQ.Page(*request.PageParams)
+	q := h.TransactionsQ.Page(request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeTransactionListLedgerChangeTypes) {
+	if request.Filters.ChangeTypes != nil {
 		q = q.FilterByEffectTypes(request.Filters.ChangeTypes...)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeTransactionListLedgerEntryTypes) {
+	if request.Filters.EntryTypes != nil {
 		q = q.FilterByLedgerEntryTypes(request.Filters.EntryTypes...)
+	}
+
+	if request.Filters.AfterTimestamp != nil {
+		gottime := time.Unix(*request.Filters.AfterTimestamp, 0)
+		fmt.Println(gottime)
+		q = q.FilterLedgerCloseTimeAfter(time.Unix(*request.Filters.AfterTimestamp, 0).UTC())
+	}
+
+	if request.Filters.BeforeTimestamp != nil {
+		gottime := time.Unix(*request.Filters.BeforeTimestamp, 0)
+		fmt.Println(gottime)
+		q = q.FilterLedgerCloseTimeBefore(time.Unix(*request.Filters.BeforeTimestamp, 0).UTC())
 	}
 
 	historyTransactions, err := q.Select()
@@ -100,9 +118,9 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 	}
 
 	if len(result.Data) > 0 {
-		result.Links = request.GetCursorLinks(*request.PageParams, result.Data[len(result.Data)-1].ID)
+		result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
 	} else {
-		result.Links = request.GetCursorLinks(*request.PageParams, "")
+		result.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 
 	latestLedger, err := h.getLatestLedger()
@@ -110,6 +128,9 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 	// need to find a solution and fix somehow
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load latest ledger")
+	}
+	if latestLedger == nil {
+		return nil, errors.New("Latest ledger is nil")
 	}
 
 	if result.Meta, err = json.Marshal(regources.TransactionResponseMeta{
@@ -127,7 +148,7 @@ type baseRequest interface {
 }
 
 func getPopulatedTx(tx history.Transaction, ledgerChangesQ history.LedgerChangesQ, request baseRequest, include *regources.Included) (regources.Transaction, error) {
-	historyChanges, err := ledgerChangesQ.FilterByTransactionID(tx.ID).Select()
+	historyChanges, err := ledgerChangesQ.FilterByTransactionID(tx.ID).OrderByNumber().Select()
 	if err != nil {
 		return regources.Transaction{}, errors.Wrap(err, "failed to load ledger changes")
 	}

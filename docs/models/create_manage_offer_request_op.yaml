@@ -29,6 +29,7 @@ CreateManageOfferRequestOp:
             - price
             - is_buy
             - fee
+            - creator_details
           properties:
             offer_id:
               type: integer
@@ -51,5 +52,7 @@ CreateManageOfferRequestOp:
             is_buy:
               type: boolean
               description: "Offer direction"
+            creator_details:
+              $ref: '#/components/schemas/Details'
             fee:
               $ref: '#/components/schemas/Fee'

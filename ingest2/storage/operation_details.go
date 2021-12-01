@@ -1,18 +1,18 @@
 package storage
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // Operation - helper struct to store operation
 type Operation struct {
-	repo *db2.Repo
+	repo *pgdb.DB
 }
 
 // NewOperationDetails - creates new instance of `Operation`
-func NewOperationDetails(repo *db2.Repo) *Operation {
+func NewOperationDetails(repo *pgdb.DB) *Operation {
 	return &Operation{
 		repo: repo,
 	}

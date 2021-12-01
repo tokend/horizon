@@ -2,11 +2,11 @@ package history2
 
 import (
 	"database/sql/driver"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"time"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -29,6 +29,8 @@ type Sale struct {
 	State                regources.SaleState                `db:"state"`
 	AccessDefinitionType regources.SaleAccessDefinitionType `db:"access_definition_type"`
 	Version              int32                              `db:"version"`
+
+	*Asset `db:"asset"`
 }
 
 //SaleQuoteAssets - assets allowed to invest in sale
@@ -38,7 +40,7 @@ type SaleQuoteAssets struct {
 
 //Value - implements db driver method for auto marshal
 func (r SaleQuoteAssets) Value() (driver.Value, error) {
-	result, err := db2.DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal quote assets")
 	}
@@ -48,7 +50,7 @@ func (r SaleQuoteAssets) Value() (driver.Value, error) {
 
 //Scan - implements db driver method for auto unmarshal
 func (r *SaleQuoteAssets) Scan(src interface{}) error {
-	err := db2.DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan quote assets")
 	}

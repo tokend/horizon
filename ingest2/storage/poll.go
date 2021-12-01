@@ -2,22 +2,22 @@ package storage
 
 import (
 	"encoding/json"
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 // CreatePoll is helper struct to operate with `polls`
 type Poll struct {
-	repo    *db2.Repo
+	repo    *pgdb.DB
 	updater sq.UpdateBuilder
 }
 
 // NewPoll - creates new instance of the `CreatePoll`
-func NewPoll(repo *db2.Repo) *Poll {
+func NewPoll(repo *pgdb.DB) *Poll {
 	return &Poll{
 		repo:    repo,
 		updater: sq.Update("polls"),
@@ -39,7 +39,7 @@ func (q *Poll) Insert(poll history2.Poll) error {
 			poll.Details, poll.State,
 		)
 
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert poll", logan.F{"poll_id": poll.ID})
 	}
@@ -62,7 +62,7 @@ func (q *Poll) Update(poll history2.Poll) error {
 		"state":                      poll.State,
 	}).Where("id = ?", poll.ID)
 
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update poll", logan.F{"poll_id": poll.ID})
 	}
@@ -82,7 +82,7 @@ func (q *Poll) SetDetails(details json.RawMessage) *Poll {
 
 func (q *Poll) UpdateWhere(pollID uint64, shouldResetUpdater bool) error {
 	q.updater = q.updater.Where(sq.Eq{"id": pollID})
-	_, err := q.repo.Exec(q.updater)
+	err := q.repo.Exec(q.updater)
 	if err != nil {
 		return errors.Wrap(err, "failed to update poll", logan.F{"poll_id": pollID})
 	}

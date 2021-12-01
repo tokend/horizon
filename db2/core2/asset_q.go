@@ -1,9 +1,10 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details",
@@ -12,12 +13,12 @@ var assetColumns = []string{"code", "owner", "preissued_asset_signer", "details"
 
 //AssetsQ - helper struct to load assets from db
 type AssetsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAssetsQ - returns new instance of AssetsQ
-func NewAssetsQ(repo *db2.Repo) AssetsQ {
+func NewAssetsQ(repo *pgdb.DB) AssetsQ {
 	return AssetsQ{
 		repo:     repo,
 		selector: sq.Select(assetColumns...).From("asset assets"),
@@ -47,6 +48,12 @@ func (q AssetsQ) FilterByCodes(codes []string) AssetsQ {
 	return q
 }
 
+// FilterByCodes - returns q with filter by codes
+func (q AssetsQ) FilterByTypes(types []uint64) AssetsQ {
+	q.selector = q.selector.Where(sq.Eq{"assets.type": types})
+	return q
+}
+
 // FilterByOwner - returns q with filter by owner ID
 func (q AssetsQ) FilterByOwner(ownerID string) AssetsQ {
 	q.selector = q.selector.Where("assets.owner = ?", ownerID)
@@ -66,7 +73,7 @@ func (q AssetsQ) FilterByPolicy(mask uint64) AssetsQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AssetsQ) Page(params db2.OffsetPageParams) AssetsQ {
+func (q AssetsQ) Page(params pgdb.OffsetPageParams) AssetsQ {
 	q.selector = params.ApplyTo(q.selector, "assets.code")
 	return q
 }
@@ -76,7 +83,7 @@ func (q AssetsQ) Select() ([]Asset, error) {
 	var result []Asset
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -93,7 +100,7 @@ func (q AssetsQ) Get() (*Asset, error) {
 	var result Asset
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

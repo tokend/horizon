@@ -28,7 +28,7 @@ func GetPublicKeyEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, request.ID) {
+	if !isAllowed(r, w, &request.ID) {
 		return
 	}
 

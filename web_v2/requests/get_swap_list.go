@@ -3,7 +3,8 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -27,15 +28,14 @@ var filterTypeSwapListAll = map[string]struct{}{
 type GetSwapList struct {
 	*base
 	Filters struct {
-		Source             string `json:"source"`
-		SourceBalance      string `json:"source_balance"`
-		Destination        string `json:"destination"`
-		DestinationBalance string `json:"destination_balance"`
-		Asset              string `json:"asset"`
-
-		State int32 `json:"state"`
+		Source             *string `filter:"source" json:"source"`
+		SourceBalance      *string `filter:"source_balance" json:"source_balance"`
+		Destination        *string `filter:"destination" json:"destination"`
+		DestinationBalance *string `filter:"destination_balance" json:"destination_balance"`
+		Asset              *string `filter:"asset" json:"asset"`
+		State              *int32  `filter:"state" json:"state"`
 	}
-	PageParams *db2.CursorPageParams
+	PageParams pgdb.CursorPageParams
 }
 
 func NewGetSwapList(r *http.Request) (*GetSwapList, error) {
@@ -47,17 +47,16 @@ func NewGetSwapList(r *http.Request) (*GetSwapList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
+	request := GetSwapList{
+		base: b,
+	}
+
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetSwapList{
-		base:       b,
-		PageParams: pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = SetDefaultCursorPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

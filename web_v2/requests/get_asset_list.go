@@ -3,7 +3,8 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -18,6 +19,8 @@ const (
 	FilterTypeAssetListState = "state"
 	//FilterTypeAssetListCodes - defines if we need to filter the list by asset codes
 	FilterTypeAssetListCodes = "codes"
+	// FilterTypeAssetListTypes - defines if we need to filter the list by types
+	FilterTypeAssetListTypes = "types"
 )
 
 var includeTypeAssetListAll = map[string]struct{}{
@@ -29,18 +32,24 @@ var filterTypeAssetListAll = map[string]struct{}{
 	FilterTypeAssetListPolicy: {},
 	FilterTypeAssetListState:  {},
 	FilterTypeAssetListCodes:  {},
+	FilterTypeAssetListTypes:  {},
 }
 
 //GetAssetList - represents params to be specified for Get Assets handler
 type GetAssetList struct {
 	*base
-	Filters struct {
-		Policy uint64   `fig:"policy"`
-		Owner  string   `fig:"owner"`
-		State  uint32   `fig:"state"`
-		Codes  []string `fig:"codes"`
+
+	Policy *uint64  `filter:"policy"`
+	Owner  *string  `filter:"owner" default:""`
+	State  *uint32  `filter:"state"`
+	Types  []uint64 `filter:"types"`
+	Codes  []string `filter:"codes"`
+
+	PageParams pgdb.OffsetPageParams
+
+	Includes struct {
+		Owner bool `include:"owner"`
 	}
-	PageParams *db2.OffsetPageParams
 }
 
 // NewGetAssetList returns the new instance of GetAssetList request
@@ -53,17 +62,15 @@ func NewGetAssetList(r *http.Request) (*GetAssetList, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getOffsetBasedPageParams()
+	request := GetAssetList{
+		base: b,
+	}
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := GetAssetList{
-		base:       b,
-		PageParams: pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = b.SetDefaultOffsetPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}

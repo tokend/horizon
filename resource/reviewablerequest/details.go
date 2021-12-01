@@ -62,6 +62,16 @@ func PopulateDetails(request *history.ReviewableRequest, requestType xdr.Reviewa
 		return
 	case xdr.ReviewableRequestTypePerformRedemption:
 		return
+	case xdr.ReviewableRequestTypeDataCreation:
+		return
+	case xdr.ReviewableRequestTypeDataUpdate:
+		return
+	case xdr.ReviewableRequestTypeDataRemove:
+		return
+	case xdr.ReviewableRequestTypeCreateDeferredPayment:
+		return
+	case xdr.ReviewableRequestTypeCloseDeferredPayment:
+		return
 	default:
 		return nil, errors.From(errors.New("unexpected reviewable request type"), map[string]interface{}{
 			"request_type": requestType.String(),

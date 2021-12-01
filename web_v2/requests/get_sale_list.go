@@ -3,20 +3,44 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
+
+const (
+	// FilterTypeSaleListOwner - defines if we need to filter response by participant
+	FilterTypeSaleListParticipant = "participant"
+)
+
+var filterTypeSaleListAllWithParticipant = map[string]struct{}{
+	FilterTypeSaleListOwner:        {},
+	FilterTypeSaleListBaseAsset:    {},
+	FilterTypeSaleListMaxEndTime:   {},
+	FilterTypeSaleListMaxStartTime: {},
+	FilterTypeSaleListMinStartTime: {},
+	FilterTypeSaleListMinEndTime:   {},
+	FilterTypeSaleListState:        {},
+	FilterTypeSaleListSaleType:     {},
+	FilterTypeSaleListMinHardCap:   {},
+	FilterTypeSaleListMinSoftCap:   {},
+	FilterTypeSaleListMaxHardCap:   {},
+	FilterTypeSaleListMaxSoftCap:   {},
+	FilterTypeSaleListParticipant:  {},
+}
 
 // GetSaleList - represents params to be specified by user for getSaleList handler
 type GetSaleList struct {
 	SalesBase
-	PageParams *db2.OffsetPageParams
+	SpecialFilters struct {
+		Participant string `json:"participant"`
+	}
+	PageParams *pgdb.OffsetPageParams
 }
 
 // NewGetSaleList returns new instance of GetSaleList request
 func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeSaleListAll,
-		supportedFilters:  filterTypeSaleListAll,
+		supportedFilters:  filterTypeSaleListAllWithParticipant,
 	})
 	if err != nil {
 		return nil, err
@@ -39,5 +63,16 @@ func NewGetSaleList(r *http.Request) (*GetSaleList, error) {
 		return nil, err
 	}
 
+	err = b.populateFilters(&request.SpecialFilters)
+	if err != nil {
+		return nil, err
+	}
+
 	return &request, nil
+}
+
+func (g GetSaleList) GetLoganFields() map[string]interface{} {
+	return map[string]interface{}{
+		"participant": g.SpecialFilters.Participant,
+	}
 }

@@ -3,14 +3,14 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
 // GetSaleList - represents params to be specified by user for getSaleList handler
 type GetSaleListForAccount struct {
 	SalesBase
 	Address    string
-	PageParams *db2.CursorPageParams
+	PageParams *pgdb.CursorPageParams
 }
 
 // NewGetSaleListForAccount returns new instance of GetSaleListForAccount request

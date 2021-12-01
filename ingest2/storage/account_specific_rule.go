@@ -1,20 +1,20 @@
 package storage
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
 // ParticipantEffect - helper struct to store `operation participants`
 type AccountSpecificRules struct {
-	repo *db2.Repo
+	repo *pgdb.DB
 }
 
 // NewAccountSpecificRules - creates new instance of `AccountSpecificRules`
-func NewAccountSpecificRules(repo *db2.Repo) *AccountSpecificRules {
+func NewAccountSpecificRules(repo *pgdb.DB) *AccountSpecificRules {
 	return &AccountSpecificRules{
 		repo: repo,
 	}
@@ -27,7 +27,7 @@ func (q *AccountSpecificRules) Insert(rule history2.AccountSpecificRule) error {
 		Columns(columns...).
 		Values(rule.ID, rule.Address, rule.EntryType, rule.Forbids, rule.Key)
 
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert account specific rule", logan.F{"rule_id": rule.ID})
 	}
@@ -39,7 +39,7 @@ func (q *AccountSpecificRules) Insert(rule history2.AccountSpecificRule) error {
 func (q *AccountSpecificRules) Remove(ruleID uint64) error {
 	sql := sq.Delete("account_specific_rules").Where("id = ?", ruleID)
 
-	_, err := q.repo.Exec(sql)
+	err := q.repo.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to remove account specific rule", logan.F{"rule_id": ruleID})
 	}

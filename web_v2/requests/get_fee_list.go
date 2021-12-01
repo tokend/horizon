@@ -5,7 +5,7 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -38,16 +38,21 @@ var filterTypeFeeListAll = map[string]struct{}{
 //GetFeeList - represents params to be specified for Get Fees handler
 type GetFeeList struct {
 	*base
-	Filters struct {
-		Asset       string           `fig:"asset"`
-		Subtype     int64            `fig:"subtype"`
-		FeeType     int32            `fig:"fee_type"`
-		Account     string           `fig:"account"`
-		AccountRole uint64           `fig:"account_role"`
-		LowerBound  regources.Amount `fig:"lower_bound"`
-		UpperBound  regources.Amount `fig:"upper_bound"`
+	Filters    GetFeeListFilters
+	PageParams *pgdb.OffsetPageParams
+	Includes   struct {
+		Asset bool `include:"asset"`
 	}
-	PageParams *db2.OffsetPageParams
+}
+
+type GetFeeListFilters struct {
+	Asset       string           `fig:"asset"`
+	Subtype     int64            `fig:"subtype"`
+	FeeType     int32            `fig:"fee_type"`
+	Account     string           `fig:"account"`
+	AccountRole uint64           `fig:"account_role"`
+	LowerBound  regources.Amount `fig:"lower_bound"`
+	UpperBound  regources.Amount `fig:"upper_bound"`
 }
 
 // NewGetFeeList returns the new instance of GetFeeList request

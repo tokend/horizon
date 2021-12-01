@@ -7,7 +7,6 @@ import (
 
 //NewAccount - creates new instance of account
 func NewAccount(core core2.Account, accountStatus *regources.KYCRecoveryStatus) regources.Account {
-
 	account := regources.Account{
 		Key: regources.Key{
 			ID:   core.Address,
@@ -19,6 +18,7 @@ func NewAccount(core core2.Account, accountStatus *regources.KYCRecoveryStatus) 
 			KycRecoveryStatus: accountStatus,
 		}
 	}
+
 	return account
 }
 

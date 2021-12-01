@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -12,7 +13,7 @@ import (
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
-	"gitlab.com/tokend/regources/generated"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // GetOrderBook - processes request to get order book
@@ -128,6 +129,7 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 	}
 
 	for _, coreBuyEntry := range coreBuyEntries {
+		setPoints(&coreBuyEntry)
 		entry := resources.NewOrderBookEntry(coreBuyEntry)
 		response.Data.Relationships.BuyEntries.Data = append(response.Data.Relationships.BuyEntries.Data, entry.Key)
 
@@ -137,6 +139,7 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 	}
 
 	for _, coreSellEntry := range coreSellEntries {
+		setPoints(&coreSellEntry)
 		entry := resources.NewOrderBookEntry(coreSellEntry)
 		response.Data.Relationships.SellEntries.Data = append(response.Data.Relationships.SellEntries.Data, entry.Key)
 
@@ -146,4 +149,21 @@ func (h *getOrderBookHandler) GetOrderBook(request *requests.GetOrderBook) (*reg
 	}
 
 	return response, nil
+}
+
+//setPoints makes points in strings between start and last 6 digits
+//It exists because type of OrderBookEntry is string for
+//CumulativeQuoteAmount and QuoteAmount fields
+func setPoints(entry *core2.OrderBookEntry) {
+	set := func(value *string) {
+		size := len(*value)
+		if size < 7 {
+			*value = fmt.Sprintf("%07s", *value)
+			size = len(*value)
+		}
+		index := size - 6
+		*value = (*value)[:index] + "." + (*value)[index:]
+	}
+	set(&entry.QuoteAmount)
+	set(&entry.CumulativeQuoteAmount)
 }

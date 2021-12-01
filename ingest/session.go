@@ -14,51 +14,48 @@ import (
 // Run starts an attempt to ingest the range of ledgers specified in this
 // session.
 func (is *Session) Run() {
-	err := is.Ingestion.Start()
-	if err != nil {
-		is.log.WithError(err).Error("failed to start ingestion")
-		return
-	}
 
-	defer is.Ingestion.Rollback()
+	var err error = nil
 
 	for {
-		isNextLegerLoaded, err := is.Cursor.NextLedger()
+		isNextLegerLoaded := false // do we have to stop the loop
+
+		err = is.Ingestion.TransactWithFunction(func() (err error) {
+
+			err = is.Ingestion.Start()
+			if err != nil {
+				is.log.WithError(err).Error("failed to start ingestion")
+				return
+			}
+
+			isNextLegerLoaded, err = is.Cursor.NextLedger()
+			if err != nil {
+				is.log.WithError(err).Error("failed to load next ledger")
+				return
+			}
+
+			if !isNextLegerLoaded {
+				return
+			}
+
+			err = is.ingestLedger()
+			if err != nil {
+				is.log.WithError(err).Error("failed to ingest ledger")
+				return
+			}
+
+			return nil
+		})
+
 		if err != nil {
-			is.log.WithError(err).Error("failed to load next ledger")
-			return
+			is.log.WithError(err).Error("failed to flush")
+			break
 		}
 
 		if !isNextLegerLoaded {
 			break
 		}
-
-		err = is.ingestLedger()
-		if err != nil {
-			is.log.WithError(err).Error("failed to ingest ledger")
-			return
-		}
-
-		err = is.flush()
-		if err != nil {
-			is.log.WithError(err).Error("failed to flush")
-			return
-		}
 	}
-
-	err = is.Ingestion.Close()
-	if err != nil {
-		is.log.WithError(err).Error("failed to close ingestion")
-		return
-	}
-}
-
-func (is *Session) flush() (err error) {
-	err = is.Ingestion.Flush()
-	if err != nil {
-		return errors.Wrap(err, "failed to flush")
-	}
-	return nil
 }
 
 // ingestLedger ingests the current ledger

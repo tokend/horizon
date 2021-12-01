@@ -1,11 +1,16 @@
 config:
+<<<<<<< HEAD
   stellar_core_url: http://localhost:8080
   stellar_core_database_url: postgres://core:core@localhost:8081/core?sslmode=disable
+=======
+  stellar_core_url: http://localhost:8888
+  stellar_core_database_url: postgres://core:postgres@localhost:8887/core?sslmode=disable
+>>>>>>> master
   hostname: ""
-  database_url: postgres://postgres:postgres@localhost/horizon?sslmode=disable
+  database_url: postgres://postgres:horizon@localhost:5432/horizon?sslmode=disable
   log_level: "warn"
   slow_query_bound: 1s
-  port: 8000
+  port: 8001
   api_backend: http://
   ingest: true
   stale_threshold: 0
@@ -19,15 +24,15 @@ config:
   sentry_log_level: ""
   project: ""
   env: ""
-  migrate_up_on_start: false
+  migrate_up_on_start: true
   cache_period: 5s
   cache_size: 10000
   invest_ready: http://
   telegram_airdrop: http://
 
-traefik:
+cop:
   disabled: true
-  endpoint: http://traefik_api
-  upstream: http://dns
-  service_name: horizon
-  service_port: 80
+  endpoint: http://cop
+  upstream: http://horizon
+  service_name: "horizon-service"
+  service_port: "80"

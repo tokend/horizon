@@ -1,14 +1,13 @@
 package requests
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
-
-	"gitlab.com/tokend/horizon/db2"
 )
 
 type GetKeyValueList struct {
 	*base
-	PageParams *db2.OffsetPageParams
+	PageParams *pgdb.OffsetPageParams
 }
 
 func NewGetKeyValueList(r *http.Request) (*GetKeyValueList, error) {

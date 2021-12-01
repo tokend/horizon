@@ -2,24 +2,30 @@ package requests
 
 import (
 	"net/http"
+
+	"gitlab.com/distributed_lab/urlval"
 )
 
-type GetManageOfferRequestsFilter struct {
-	GetRequestListBaseFilters
-}
-
 type GetManageOfferRequests struct {
-	*GetRequestsBase
-	Filters GetManageOfferRequestsFilter
+	GetRequestsBase
 }
 
 func NewGetManageOfferRequests(r *http.Request) (request GetManageOfferRequests, err error) {
 	request.GetRequestsBase, err = NewGetRequestsBase(
 		r,
-		&request.Filters,
 		map[string]struct{}{},
 		map[string]struct{}{},
 	)
+	if err != nil {
+		return request, err
+	}
+
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
+	if err != nil {
+		return request, err
+	}
+
+	err = PopulateRequest(&request.GetRequestsBase)
 	if err != nil {
 		return request, err
 	}

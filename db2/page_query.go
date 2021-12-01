@@ -2,29 +2,12 @@ package db2
 
 import (
 	"fmt"
+	sq "github.com/Masterminds/squirrel"
+	"github.com/go-errors/errors"
 	"math"
 	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/go-errors/errors"
-	sq "github.com/lann/squirrel"
-)
-
-const (
-	// DefaultPageSize is the default page size for db queries
-	DefaultPageSize = 10
-	// MaxPageSize is the max page size for db queries
-	MaxPageSize = 200
-
-	// OrderAscending is used to indicate an ascending order in request params
-	OrderAscending = "asc"
-
-	// OrderDescending is used to indicate an descending order in request params
-	OrderDescending = "desc"
-
-	// DefaultPairSep is the default separator used to separate two numbers for CursorInt64Pair
-	DefaultPairSep = "-"
 )
 
 var (
@@ -40,6 +23,36 @@ var (
 	// ErrNotPageable is an error that occurs when the records provided to
 	// PageQuery.GetContinuations cannot be cast to Pageable
 	ErrNotPageable = errors.New("Records provided are not Pageable")
+)
+
+// Pageable records have a defined order, and the place withing that order
+// is determined by the paging token
+type Pageable interface {
+	PagingToken() string
+}
+
+// PageQuery represents a portion of a Query struct concerned with paging
+// through a large dataset. Is used for cursor-based pagination
+type PageQuery struct {
+	Cursor string
+	Order  string
+	Limit  uint64
+}
+
+const (
+	// DefaultPageSize is the default page size for db queries
+	DefaultPageSize = 10
+	// MaxPageSize is the max page size for db queries
+	MaxPageSize = 200
+
+	// OrderAscending is used to indicate an ascending order in request params
+	OrderAscending = "asc"
+
+	// OrderDescending is used to indicate an descending order in request params
+	OrderDescending = "desc"
+
+	// DefaultPairSep is the default separator used to separate two numbers for CursorInt64Pair
+	DefaultPairSep = "-"
 )
 
 // ApplyTo returns a new SelectBuilder after applying the paging effects of

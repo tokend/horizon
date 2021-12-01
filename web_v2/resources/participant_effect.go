@@ -17,6 +17,21 @@ func NewParticipantEffectKey(id int64) regources.Key {
 	}
 }
 
+var participantEffectsType = map[regources.ResourceType]history2.EffectType{
+	regources.EFFECTS_FUNDED:              history2.EffectTypeFunded,
+	regources.EFFECTS_ISSUED:              history2.EffectTypeIssued,
+	regources.EFFECTS_CHARGED:             history2.EffectTypeCharged,
+	regources.EFFECTS_WITHDRAWN:           history2.EffectTypeWithdrawn,
+	regources.EFFECTS_LOCKED:              history2.EffectTypeLocked,
+	regources.EFFECTS_UNLOCKED:            history2.EffectTypeUnlocked,
+	regources.EFFECTS_CHARGED_FROM_LOCKED: history2.EffectTypeChargedFromLocked,
+	regources.EFFECTS_MATCHED:             history2.EffectTypeMatched,
+}
+
+func EffectTypeFromString(effectType regources.ResourceType) history2.EffectType {
+	return participantEffectsType[effectType]
+}
+
 //NewEffect - returns new instance of effect
 func NewEffect(id int64, effect history2.Effect) regources.Resource {
 	switch effect.Type {

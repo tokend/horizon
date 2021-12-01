@@ -1,6 +1,10 @@
 package core
 
-import sq "github.com/lann/squirrel"
+import (
+	"database/sql"
+
+	sq "github.com/Masterminds/squirrel"
+)
 
 var selectBalance = sq.Select(
 	"ba.balance_id",
@@ -58,7 +62,7 @@ func (q *BalancesQ) ByID(balanceID string) (*Balance, error) {
 	result := new(Balance)
 	query := selectBalance.Limit(1).Where("ba.balance_id = ?", balanceID)
 	err := q.parent.Get(result, query)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 	return result, err

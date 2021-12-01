@@ -1,20 +1,22 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // LedgerHeaderQ - helper struct to get ledger headers from db
 type LedgerHeaderQ struct {
-	repo *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewLedgerHeaderQ - creates new instance of LedgerHeaderQ
-func NewLedgerHeaderQ(repo *db2.Repo) *LedgerHeaderQ {
+func NewLedgerHeaderQ(repo *pgdb.DB) *LedgerHeaderQ {
 	return &LedgerHeaderQ{
 		repo: repo,
 		selector: sq.Select(
@@ -25,7 +27,7 @@ func NewLedgerHeaderQ(repo *db2.Repo) *LedgerHeaderQ {
 			"l.ledgerseq",
 			"l.version",
 			"l.data",
-			).From("ledgerheaders l"),
+		).From("ledgerheaders l"),
 	}
 }
 
@@ -35,7 +37,7 @@ func (q *LedgerHeaderQ) GetBySequence(seq int32) (*LedgerHeader, error) {
 	var header LedgerHeader
 	err := q.repo.Get(&header, query)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -53,7 +55,7 @@ func (q *LedgerHeaderQ) GetBySequenceRange(fromSeq int32, toSeq int32) ([]Ledger
 	var headers []LedgerHeader
 	err := q.repo.Select(&headers, query)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

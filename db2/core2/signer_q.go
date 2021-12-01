@@ -1,19 +1,20 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 //SignerQ - helper struct to load signers from db
 type SignerQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 //NewSignerQ - returns new instance of SignerQ with empty filter
-func NewSignerQ(repo *db2.Repo) SignerQ {
+func NewSignerQ(repo *pgdb.DB) SignerQ {
 	return SignerQ{
 		repo: repo,
 		selector: sq.Select("signers.account_id",
@@ -28,7 +29,6 @@ func NewSignerQ(repo *db2.Repo) SignerQ {
 
 func (q SignerQ) Count(address string) (int64, error) {
 	q.selector = sq.Select("COUNT(*)").From("signers").Where("signers.account_id = ?", address)
-
 	var result int64
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
@@ -36,7 +36,6 @@ func (q SignerQ) Count(address string) (int64, error) {
 	}
 
 	return result, nil
-
 }
 
 //FilterByPublicKey - return new instance of SignerQ with filter by public key
@@ -56,7 +55,7 @@ func (q SignerQ) Select() ([]Signer, error) {
 	var result []Signer
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -67,7 +66,7 @@ func (q SignerQ) Select() ([]Signer, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SignerQ) Page(params db2.OffsetPageParams) SignerQ {
+func (q SignerQ) Page(params pgdb.OffsetPageParams) SignerQ {
 	q.selector = params.ApplyTo(q.selector)
 	return q
 }

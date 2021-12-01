@@ -29,7 +29,7 @@ func initIngester2(app *App) {
 	}
 
 	hRepo := app.HistoryRepoLogged(logger)
-	const batchSize = 1000
+	const batchSize = 500
 	ledgersChan := ingest2.NewProducer(txProvider, history2.NewLedgerQ(hRepo), logger, batchSize, ledger.CurrentState).
 		Start(ctx)
 
@@ -42,12 +42,15 @@ func initIngester2(app *App) {
 		balanceStorage,
 		storage.NewReviewableRequest(hRepo),
 		storage.NewSale(hRepo),
-		storage.NewAssertPair(hRepo),
+		storage.NewAssetPair(hRepo),
 		storage.NewPoll(hRepo),
 		storage.NewVote(hRepo),
 		storage.NewAccountSpecificRules(hRepo),
 		accountStorage,
 		swapStorage,
+		storage.NewAsset(hRepo),
+		storage.NewData(hRepo),
+		storage.NewDeferredPayment(hRepo),
 	)
 
 	idProvider := struct {
@@ -57,13 +60,23 @@ func initIngester2(app *App) {
 		Account: accountStorage,
 		Balance: balanceStorage,
 	}
+
+	reviewableRequestsStorage := struct {
+		history2.ReviewableRequestsQ
+	}{
+		history2.NewReviewableRequestsQ(hRepo),
+	}
+
 	opHandler := operations.NewOperationsHandler(
 		storage.NewOperationDetails(hRepo),
 		storage.NewOpParticipants(hRepo),
 		&idProvider,
 		balanceStorage,
 		swapStorage,
+		storage.NewDeferredPayment(hRepo),
+		reviewableRequestsStorage,
 	)
+
 	matchesHandler := ingest2.NewMatchesSaver(
 		storage.NewMatches(hRepo),
 	)

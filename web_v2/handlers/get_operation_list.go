@@ -49,10 +49,14 @@ func GetOperations(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*regources.OperationListResponse, error) {
-	q := h.OperationQ.Page(*request.PageParams)
+	q := h.OperationQ.Page(request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeOperationsListTypes) {
+	if request.Filters.Types != nil {
 		q = q.FilterByOperationsTypes(request.Filters.Types)
+	}
+
+	if request.Filters.Source != nil {
+		q = q.FilterByOperationSource(*request.Filters.Source)
 	}
 
 	historyOperations, err := q.Select()
@@ -75,9 +79,9 @@ func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*
 	}
 
 	if len(result.Data) > 0 {
-		result.Links = request.GetCursorLinks(*request.PageParams, result.Data[len(result.Data)-1].ID)
+		result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
 	} else {
-		result.Links = request.GetCursorLinks(*request.PageParams, "")
+		result.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 
 	return &result, nil

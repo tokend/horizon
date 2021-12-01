@@ -1,8 +1,8 @@
 package ingestion
 
 import (
-	sq "github.com/lann/squirrel"
-	"gitlab.com/tokend/horizon/db2"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/horizon/db2/history"
 )
 
@@ -10,8 +10,8 @@ import (
 type Ingestion struct {
 	// DB is the sql repo to be used for writing any rows into the horizon
 	// database.
-	DB     *db2.Repo
-	CoreDB *db2.Repo
+	DB     *pgdb.DB
+	CoreDB *pgdb.DB
 
 	ledgers                  sq.InsertBuilder
 	transactions             sq.InsertBuilder
@@ -27,5 +27,5 @@ type Ingestion struct {
 }
 
 func (i *Ingestion) HistoryQ() history.QInterface {
-	return &history.Q{Repo: i.DB}
+	return &history.Q{DB: i.DB}
 }

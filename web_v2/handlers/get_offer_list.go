@@ -55,34 +55,34 @@ type getOfferListHandler struct {
 
 // GetOfferList returns offer with related resources
 func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*regources.OfferListResponse, error) {
-	q := h.OffersQ.Page(*request.PageParams)
+	q := h.OffersQ.Page(request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeOfferListBaseBalance) {
-		q = q.FilterByBaseBalanceID(request.Filters.BaseBalance)
+	if request.Filters.BaseBalance != nil {
+		q = q.FilterByBaseBalanceID(*request.Filters.BaseBalance)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeOfferListQuoteBalance) {
-		q = q.FilterByQuoteBalanceID(request.Filters.QuoteBalance)
+	if request.Filters.QuoteBalance != nil {
+		q = q.FilterByQuoteBalanceID(*request.Filters.QuoteBalance)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeOfferListBaseAsset) {
-		q = q.FilterByBaseAssetCode(request.Filters.BaseAsset)
+	if request.Filters.BaseAsset != nil {
+		q = q.FilterByBaseAssetCode(*request.Filters.BaseAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeOfferListQuoteAsset) {
-		q = q.FilterByQuoteAssetCode(request.Filters.QuoteAsset)
+	if request.Filters.QuoteAsset != nil {
+		q = q.FilterByQuoteAssetCode(*request.Filters.QuoteAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeOfferListOwner) {
-		q = q.FilterByOwnerID(request.Filters.Owner)
+	if request.Filters.Owner != nil {
+		q = q.FilterByOwnerID(*request.Filters.Owner)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeOfferListOrderBook) {
-		q = q.FilterByOrderBookID(request.Filters.OrderBook)
+	if request.Filters.OrderBook != nil {
+		q = q.FilterByOrderBookID(*request.Filters.OrderBook)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeOfferListIsBuy) {
-		q = q.FilterByIsBuy(request.Filters.IsBuy)
+	if request.Filters.IsBuy != nil {
+		q = q.FilterByIsBuy(*request.Filters.IsBuy)
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeOfferListBaseAssets) {
@@ -100,7 +100,7 @@ func (h *getOfferListHandler) GetOfferList(request *requests.GetOfferList) (*reg
 
 	response := &regources.OfferListResponse{
 		Data:  make([]regources.Offer, 0, len(coreOffers)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for _, coreOffer := range coreOffers {

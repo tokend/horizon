@@ -50,7 +50,7 @@ func GetPoll(w http.ResponseWriter, r *http.Request) {
 		requests.IncludeTypePollParticipation,
 		requests.IncludeTypePollParticipationVotes,
 	) {
-		if !isAllowed(r, w, result.Data.Relationships.Owner.Data.ID, result.Data.Relationships.ResultProvider.Data.ID) {
+		if !isAllowed(r, w, &result.Data.Relationships.Owner.Data.ID, &result.Data.Relationships.ResultProvider.Data.ID) {
 			return
 		}
 	}

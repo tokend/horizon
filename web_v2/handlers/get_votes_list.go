@@ -47,7 +47,7 @@ func GetVoteList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, poll.OwnerID, poll.ResultProviderID) {
+	if !isAllowed(r, w, &poll.OwnerID, &poll.ResultProviderID) {
 		return
 	}
 

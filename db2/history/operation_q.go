@@ -1,14 +1,14 @@
 package history
 
 import (
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"fmt"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/tokend/go/amount"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/sqx"
 )
 

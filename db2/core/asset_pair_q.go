@@ -1,7 +1,9 @@
 package core
 
 import (
-	sq "github.com/lann/squirrel"
+	sql2 "database/sql"
+
+	sq "github.com/Masterminds/squirrel"
 )
 
 // AssetPairsQ is a helper interface to aid in configuring queries that loads
@@ -30,7 +32,7 @@ func (q *assetPairQ) Select() ([]AssetPair, error) {
 
 	var assetPairs []AssetPair
 	err := q.parent.Select(&assetPairs, q.sql)
-	if q.parent.NoRows(err) {
+	if err == sql2.ErrNoRows {
 		return nil, nil
 	}
 
@@ -42,7 +44,7 @@ func (q *assetPairQ) ByCode(base, quote string) (*AssetPair, error) {
 	sql := selectAssetPair.Where("base = ? AND quote = ?", base, quote)
 	var result AssetPair
 	err := q.parent.Get(&result, sql)
-	if q.parent.Repo.NoRows(err) {
+	if err == sql2.ErrNoRows {
 		return nil, nil
 	}
 

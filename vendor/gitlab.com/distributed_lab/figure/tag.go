@@ -15,7 +15,8 @@ var (
 
 type Tag struct {
 	Key        string
-	IsRequired bool
+	Required   bool
+	NonZero    bool
 }
 
 func parseFieldTag(field reflect.StructField, tagKey string) (*Tag, error) {
@@ -24,10 +25,8 @@ func parseFieldTag(field reflect.StructField, tagKey string) (*Tag, error) {
 	fieldTag := field.Tag.Get(tagKey)
 	splitedTag := strings.Split(fieldTag, `,`)
 
-	if len(splitedTag) == 1 {
-		if splitedTag[0] == ignore {
-			return nil, nil
-		}
+	if len(splitedTag) == 1 && splitedTag[0] == ignore {
+		return nil, nil
 	}
 
 	if len(splitedTag) == 0 {
@@ -41,17 +40,30 @@ func parseFieldTag(field reflect.StructField, tagKey string) (*Tag, error) {
 	}
 
 	if len(splitedTag) > 1 {
-		if tag.Key == ignore {
+		if contains(splitedTag, ignore) {
 			return nil, ErrConflictingAttributes
 		}
 
-		if splitedTag[1] == required {
-			tag.IsRequired = true
-			return tag, nil
+		for _, rule := range splitedTag[1:] {
+			switch rule {
+			case required:
+				tag.Required = true
+			case nonZero:
+				tag.NonZero = true
+			default:
+				return nil, ErrUnknownAttribute
+			}
 		}
-
-		return nil, ErrUnknownAttribute
 	}
 
 	return tag, nil
+}
+
+func contains(slice []string, value string) bool {
+	for _, item := range slice {
+		if item == value {
+			return true
+		}
+	}
+	return false
 }

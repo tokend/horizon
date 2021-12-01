@@ -5,8 +5,9 @@
 package regources
 
 type CreatePaymentRequestAttributes struct {
-	Amount         Amount `json:"amount"`
-	DestinationFee Fee    `json:"destination_fee"`
+	Amount         Amount  `json:"amount"`
+	CreatorDetails Details `json:"creator_details"`
+	DestinationFee Fee     `json:"destination_fee"`
 	// Reference for the payment
 	Reference string `json:"reference"`
 	SourceFee Fee    `json:"source_fee"`

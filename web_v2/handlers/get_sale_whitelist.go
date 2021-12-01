@@ -29,7 +29,7 @@ func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
 	handler := getSaleWhiteListHandler{
 		SalesQ:                history2.NewSalesQ(ctx.HistoryRepo(r)),
 		AccountSpecificRulesQ: history2.NewAccountSpecificRulesQ(ctx.HistoryRepo(r)),
-		Log: ctx.Log(r),
+		Log:                   ctx.Log(r),
 	}
 
 	sale, err := handler.SalesQ.GetByID(request.SaleID)
@@ -43,7 +43,7 @@ func GetSaleWhitelist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, sale.OwnerAddress) {
+	if !isAllowed(r, w, &sale.OwnerAddress) {
 		return
 	}
 
@@ -83,10 +83,10 @@ func (h *getSaleWhiteListHandler) getSaleWhiteList(request *requests.GetSaleWhit
 	q := h.AccountSpecificRulesQ.
 		FilterBySale(request.SaleID).
 		FilterByPermission(false).
-		Page(*request.PageParams)
+		Page(request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeSaleWhitelistAddress) {
-		q = q.FilterByAddress(request.Filters.Address)
+	if request.Filters.Address != nil {
+		q = q.FilterByAddress(*request.Filters.Address)
 	}
 
 	rules, err := q.Select()
@@ -111,8 +111,8 @@ func (h *getSaleWhiteListHandler) populateLinks(
 	response *regources.SaleWhitelistListResponse, request *requests.GetSaleWhitelist,
 ) {
 	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+		response.Links = request.GetCursorLinks(request.PageParams, response.Data[len(response.Data)-1].ID)
 	} else {
-		response.Links = request.GetCursorLinks(*request.PageParams, "")
+		response.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 }

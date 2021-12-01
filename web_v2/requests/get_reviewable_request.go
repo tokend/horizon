@@ -14,7 +14,10 @@ var includeTypeReviewableRequestAll = map[string]struct{}{
 // GetReviewableRequest - represents params to be specified by user for Get Request handler
 type GetReviewableRequest struct {
 	*base
-	ID uint64
+	ID       uint64
+	Includes struct {
+		RequestDetails bool `include:"request_details"`
+	}
 }
 
 //NewGetReviewableRequest - returns new instance of GetRequest request

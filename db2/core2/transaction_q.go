@@ -1,19 +1,21 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // TransactionQ - helper struct to get transactions from db
 type TransactionQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewTransactionQ - creates new instance of TransactionQ
-func NewTransactionQ(repo *db2.Repo) TransactionQ {
+func NewTransactionQ(repo *pgdb.DB) TransactionQ {
 	return TransactionQ{
 		repo: repo,
 		selector: sq.Select(
@@ -57,7 +59,7 @@ func (q TransactionQ) Get() (*Transaction, error) {
 	var result Transaction
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -71,7 +73,7 @@ func (q TransactionQ) Select() ([]Transaction, error) {
 	var result []Transaction
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

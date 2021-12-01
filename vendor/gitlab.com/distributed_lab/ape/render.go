@@ -1,10 +1,10 @@
 package ape
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
-	"encoding/json"
 	"github.com/google/jsonapi"
 	"github.com/pkg/errors"
 )

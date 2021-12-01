@@ -1,10 +1,10 @@
 package storage
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 )
@@ -16,11 +16,11 @@ type Account struct {
 
 	accountQ     history2.AccountsQ
 	coreAccounts core2.AccountsQ
-	repo         *db2.Repo
+	repo         *pgdb.DB
 }
 
 // NewAccount - creates new instance of Account
-func NewAccount(repo *db2.Repo, coreRepo *db2.Repo) *Account {
+func NewAccount(repo *pgdb.DB, coreRepo *pgdb.DB) *Account {
 	return &Account{
 		repo:         repo,
 		accountQ:     history2.NewAccountsQ(repo),
@@ -93,7 +93,7 @@ func (a *Account) InsertAccount(rawAccountID xdr.AccountId, account history2.Acc
 	// it's ok if the account already exists in the map.
 	// Such case could occur during roll back of transaction and retry to process same ledger
 	a.accounts[*rawAccountID.Ed25519] = &account
-	_, err := a.repo.ExecRaw("INSERT INTO accounts (id, address) VALUES($1, $2)", account.ID, account.Address)
+	err := a.repo.ExecRaw("INSERT INTO accounts (id, address) VALUES($1, $2)", account.ID, account.Address)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert new account", logan.F{
 			"address": account.Address,
@@ -105,7 +105,7 @@ func (a *Account) InsertAccount(rawAccountID xdr.AccountId, account history2.Acc
 }
 
 func (a *Account) SetKYCRecoveryStatus(address string, status int) error {
-	_, err := a.repo.ExecRaw("UPDATE accounts set kyc_recovery_status = ? where address = ?", status, address)
+	err := a.repo.ExecRaw("UPDATE accounts set kyc_recovery_status = ? where address = ?", status, address)
 	if err != nil {
 		return errors.Wrap(err, "failed to update account state", logan.F{
 			"address":             address,

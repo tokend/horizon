@@ -61,18 +61,19 @@ type getCreateWithdrawRequestsHandler struct {
 func (h *getCreateWithdrawRequestsHandler) MakeAll(w http.ResponseWriter, request requests.GetCreateWithdrawRequests) error {
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypeCreateWithdraw))
 
-	if request.ShouldFilter(requests.FilterTypeCreateWithdrawRequestsBalance) {
-		q = q.FilterByWithdrawBalance(request.Filters.Balance)
-	}
-	if request.ShouldFilter(requests.FilterTypeCreateWithdrawRequestsAsset) {
-		q = q.FilterByWithdrawAsset(request.Filters.Asset)
+	if request.Filters.Balance != nil {
+		q = q.FilterByWithdrawBalance(*request.Filters.Balance)
 	}
 
-	return h.Base.SelectAndRender(w, *request.GetRequestsBase, q, h.RenderRecord)
+	if len(request.Filters.Asset) != 0 {
+		q = q.FilterByWithdrawAssets(request.Filters.Asset...)
+	}
+
+	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)
 }
 
 func (h *getCreateWithdrawRequestsHandler) RenderRecord(included *regources.Included, record history2.ReviewableRequest) (regources.ReviewableRequest, error) {
-	resource := h.Base.PopulateResource(*h.R.GetRequestsBase, included, record)
+	resource := h.Base.PopulateResource(h.R.GetRequestsBase, included, record)
 
 	if h.R.ShouldInclude(requests.IncludeTypeCreateWithdrawRequestsBalance) {
 		balance, err := h.BalancesQ.GetByAddress(record.Details.CreateWithdraw.BalanceID)

@@ -6,7 +6,6 @@ import (
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
@@ -20,9 +19,9 @@ func (h *getRequestListBaseHandler) PopulateLinks(
 	response *regources.ReviewableRequestListResponse, request requests.GetRequestsBase,
 ) {
 	if len(response.Data) > 0 {
-		response.Links = request.GetCursorLinks(*request.PageParams, response.Data[len(response.Data)-1].ID)
+		response.Links = request.GetCursorLinks(request.PageParams, response.Data[len(response.Data)-1].ID)
 	} else {
-		response.Links = request.GetCursorLinks(*request.PageParams, "")
+		response.Links = request.GetCursorLinks(request.PageParams, "")
 	}
 }
 
@@ -40,7 +39,7 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		return errors.Wrap(err, "Failed to get reviewable request list")
 	}
 
-	if request.Filters.ID != 0 {
+	if request.Filters.ID != nil && *request.Filters.ID != 0 {
 		if len(records) == 0 {
 			ape.RenderErr(w, problems.NotFound())
 			return nil
@@ -90,37 +89,57 @@ func (h *getRequestListBaseHandler) PopulateResource(
 func (h *getRequestListBaseHandler) ApplyFilters(
 	request requests.GetRequestsBase, q history2.ReviewableRequestsQ,
 ) history2.ReviewableRequestsQ {
-	q = q.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeRequestListRequestor) {
-		q = q.FilterByRequestorAddress(request.Filters.Requestor)
+	q = q.Page(request.PageParams)
+	if request.Filters.Requestor != nil {
+		q = q.FilterByRequestorAddress(*request.Filters.Requestor)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListReviewer) {
-		q = q.FilterByReviewerAddress(request.Filters.Reviewer)
+	if request.Filters.Reviewer != nil {
+		q = q.FilterByReviewerAddress(*request.Filters.Reviewer)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListState) {
-		q = q.FilterByState(request.Filters.State)
+	if request.Filters.State != nil {
+		q = q.FilterByState(*request.Filters.State)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListType) {
-		q = q.FilterByRequestType(request.Filters.Type)
+	if request.Filters.Type != nil {
+		q = q.FilterByRequestType(*request.Filters.Type)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListPendingTasks) {
-		q = q.FilterByPendingTasks(request.Filters.PendingTasks)
+	if request.Filters.PendingTasks != nil {
+		q = q.FilterByPendingTasks(*request.Filters.PendingTasks)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListPendingTasksNotSet) {
-		q = q.FilterPendingTasksNotSet(request.Filters.PendingTasksNotSet)
+	if request.Filters.PendingTasksNotSet != nil {
+		q = q.FilterPendingTasksNotSet(*request.Filters.PendingTasksNotSet)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeRequestListPendingTasksAnyOf) {
-		q = q.FilterByPendingTasksAnyOf(request.Filters.PendingTasksAnyOf)
+	if request.Filters.PendingTasksAnyOf != nil {
+		q = q.FilterByPendingTasksAnyOf(*request.Filters.PendingTasksAnyOf)
 	}
 
-	if request.Filters.ID != 0 {
-		q = q.FilterByID(request.Filters.ID)
+	if request.Filters.CreatedAfter != nil {
+		q = q.FilterByCreatedAtAfter(*request.Filters.CreatedAfter)
+	}
+
+	if request.Filters.CreatedBefore != nil {
+		q = q.FilterByCreatedAtBefore(*request.Filters.CreatedBefore)
+	}
+
+	if request.Filters.ID != nil && *request.Filters.ID != 0 {
+		q = q.FilterByID(*request.Filters.ID)
+	}
+
+	if request.Filters.AllTasks != nil {
+		q = q.FilterByAllTasks(*request.Filters.AllTasks)
+	}
+
+	if request.Filters.AllTasksNotSet != nil {
+		q = q.FilterByAllTasksNotSet(*request.Filters.AllTasksNotSet)
+	}
+
+	if request.Filters.AllTasksAnyOf != nil {
+		q = q.FilterByAllTasksAnyOf(*request.Filters.AllTasksAnyOf)
 	}
 
 	return q

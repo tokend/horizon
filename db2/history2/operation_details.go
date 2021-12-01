@@ -4,9 +4,10 @@ import (
 	"database/sql/driver"
 	"time"
 
+	"gitlab.com/distributed_lab/kit/pgdb"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -14,57 +15,70 @@ import (
 // Only one value must be selected at a type
 type OperationDetails struct {
 	//NOTE: omitempty MUST be specified for each switch value
-	Type                       xdr.OperationType                  `json:"type"`
-	CreateAccount              *CreateAccountDetails              `json:"create_account,omitempty"`
-	ManageAccountRule          *ManageAccountRuleDetails          `json:"manage_account_rule,omitempty"`
-	ManageAccountRole          *ManageAccountRoleDetails          `json:"manage_account_role,omitempty"`
-	ManageAccountSpecificRule  *ManageAccountSpecificRuleDetails  `json:"manage_account_specific_rule,omitempty"`
-	ManageSigner               *ManageSignerDetails               `json:"manage_signer,omitempty"`
-	ManageSignerRule           *ManageSignerRuleDetails           `json:"manage_signer_rule,omitempty"`
-	ManageSignerRole           *ManageSignerRoleDetails           `json:"manage_signer_role,omitempty"`
-	ManageBalance              *ManageBalanceDetails              `json:"manage_balance,omitempty"`
-	ManageKeyValue             *ManageKeyValueDetails             `json:"manage_key_value,omitempty"`
-	ManageAsset                *ManageAssetDetails                `json:"manage_asset,omitempty"`
-	ManageAssetPair            *ManageAssetPairDetails            `json:"manage_asset_pair,omitempty"`
-	ManageLimits               *ManageLimitsDetails               `json:"manage_limits,omitempty"`
-	ManageOffer                *ManageOfferDetails                `json:"manage_offer,omitempty"`
-	ManageExternalSystemPool   *ManageExternalSystemPoolDetails   `json:"manage_external_system_pool,omitempty"`
-	BindExternalSystemAccount  *BindExternalSystemAccountDetails  `json:"bind_external_system_account,omitempty"`
-	Payment                    *PaymentDetails                    `json:"payment,omitempty"`
-	Payout                     *PayoutDetails                     `json:"payout,omitempty"`
-	SetFee                     *SetFeeDetails                     `json:"set_fee,omitempty"`
-	CancelAtomicSwapAsk        *CancelAtomicSwapAskDetails        `json:"cancel_atomic_swap_ask,omitempty"`
-	CheckSaleState             *CheckSaleStateDetails             `json:"check_sale_state,omitempty"`
-	CreateChangeRoleRequest    *CreateChangeRoleRequestDetails    `json:"create_change_role_request,omitempty"`
-	CreatePreIssuanceRequest   *CreatePreIssuanceRequestDetails   `json:"create_pre_issuance_request,omitempty"`
-	CreateIssuanceRequest      *CreateIssuanceRequestDetails      `json:"create_issuance_request,omitempty"`
-	CreateManageLimitsRequest  *CreateManageLimitsRequestDetails  `json:"create_manage_limits_request,omitempty"`
-	CreateWithdrawRequest      *CreateWithdrawRequestDetails      `json:"create_withdraw_request,omitempty"`
-	CreateAMLAlertRequest      *CreateAMLAlertRequestDetails      `json:"create_aml_alert_request,omitempty"`
-	CreateSaleRequest          *CreateSaleRequestDetails          `json:"create_sale_request,omitempty"`
-	CreateAtomicSwapAskRequest *CreateAtomicSwapAskRequestDetails `json:"create_atomic_swap_ask_request,omitempty"`
-	CreateAtomicSwapBidRequest *CreateAtomicSwapBidRequestDetails `json:"create_atomic_swap_bid_request,omitempty"`
-	ReviewRequest              *ReviewRequestDetails              `json:"review_request,omitempty"`
-	ManageSale                 *ManageSaleDetails                 `json:"manage_sale,omitempty"`
-	License                    *LicenseDetails                    `json:"license,omitempty"`
-	Stamp                      *StampDetails                      `json:"stamp,omitempty"`
-	ManageCreatePollRequest    *ManageCreatePollRequestDetails    `json:"manage_create_poll_request,omitempty"`
-	ManagePoll                 *ManagePollDetails                 `json:"manage_poll,omitempty"`
-	ManageVote                 *ManageVoteDetails                 `json:"manage_vote,omitempty"`
-	RemoveAssetPair            *RemoveAssetPairDetails            `json:"remove_asset_pair,omitempty"`
-	InitiateKYCRecovery        *InitiateKYCRecoveryDetails        `json:"initiate_kyc_recovery,omitempty"`
-	CreateKYCRecoveryRequest   *CreateKYCRecoveryRequestDetails   `json:"create_kyc_recovery_request,omitempty"`
-	CreateManageOfferRequest   *CreateManageOfferRequestDetails   `json:"create_manage_offer_request,omitempty"`
-	CreatePaymentRequest       *CreatePaymentRequestDetails       `json:"create_payment_request,omitempty"`
-	RemoveAsset                *RemoveAssetDetails                `json:"remove_asset,omitempty"`
-	OpenSwap                   *OpenSwapDetails                   `json:"open_swap,omitempty"`
-	CloseSwap                  *CloseSwapDetails                  `json:"close_swap,omitempty"`
-	Redemption                 *RedemptionDetails                 `json:"redemption,omitempty"`
+	Type                                 xdr.OperationType                     `json:"type"`
+	CreateAccount                        *CreateAccountDetails                 `json:"create_account,omitempty"`
+	ManageAccountRule                    *ManageAccountRuleDetails             `json:"manage_account_rule,omitempty"`
+	ManageAccountRole                    *ManageAccountRoleDetails             `json:"manage_account_role,omitempty"`
+	ManageAccountSpecificRule            *ManageAccountSpecificRuleDetails     `json:"manage_account_specific_rule,omitempty"`
+	ManageSigner                         *ManageSignerDetails                  `json:"manage_signer,omitempty"`
+	ManageSignerRule                     *ManageSignerRuleDetails              `json:"manage_signer_rule,omitempty"`
+	ManageSignerRole                     *ManageSignerRoleDetails              `json:"manage_signer_role,omitempty"`
+	ManageBalance                        *ManageBalanceDetails                 `json:"manage_balance,omitempty"`
+	ManageKeyValue                       *ManageKeyValueDetails                `json:"manage_key_value,omitempty"`
+	ManageAsset                          *ManageAssetDetails                   `json:"manage_asset,omitempty"`
+	ManageAssetPair                      *ManageAssetPairDetails               `json:"manage_asset_pair,omitempty"`
+	ManageLimits                         *ManageLimitsDetails                  `json:"manage_limits,omitempty"`
+	ManageOffer                          *ManageOfferDetails                   `json:"manage_offer,omitempty"`
+	ManageExternalSystemPool             *ManageExternalSystemPoolDetails      `json:"manage_external_system_pool,omitempty"`
+	BindExternalSystemAccount            *BindExternalSystemAccountDetails     `json:"bind_external_system_account,omitempty"`
+	Payment                              *PaymentDetails                       `json:"payment,omitempty"`
+	Payout                               *PayoutDetails                        `json:"payout,omitempty"`
+	SetFee                               *SetFeeDetails                        `json:"set_fee,omitempty"`
+	CancelAtomicSwapAsk                  *CancelAtomicSwapAskDetails           `json:"cancel_atomic_swap_ask,omitempty"`
+	CheckSaleState                       *CheckSaleStateDetails                `json:"check_sale_state,omitempty"`
+	CreateChangeRoleRequest              *CreateChangeRoleRequestDetails       `json:"create_change_role_request,omitempty"`
+	CreatePreIssuanceRequest             *CreatePreIssuanceRequestDetails      `json:"create_pre_issuance_request,omitempty"`
+	CreateIssuanceRequest                *CreateIssuanceRequestDetails         `json:"create_issuance_request,omitempty"`
+	CreateManageLimitsRequest            *CreateManageLimitsRequestDetails     `json:"create_manage_limits_request,omitempty"`
+	CreateWithdrawRequest                *CreateWithdrawRequestDetails         `json:"create_withdraw_request,omitempty"`
+	CreateAMLAlertRequest                *CreateAMLAlertRequestDetails         `json:"create_aml_alert_request,omitempty"`
+	CreateSaleRequest                    *CreateSaleRequestDetails             `json:"create_sale_request,omitempty"`
+	CreateAtomicSwapAskRequest           *CreateAtomicSwapAskRequestDetails    `json:"create_atomic_swap_ask_request,omitempty"`
+	CreateAtomicSwapBidRequest           *CreateAtomicSwapBidRequestDetails    `json:"create_atomic_swap_bid_request,omitempty"`
+	ReviewRequest                        *ReviewRequestDetails                 `json:"review_request,omitempty"`
+	ManageSale                           *ManageSaleDetails                    `json:"manage_sale,omitempty"`
+	License                              *LicenseDetails                       `json:"license,omitempty"`
+	Stamp                                *StampDetails                         `json:"stamp,omitempty"`
+	ManageCreatePollRequest              *ManageCreatePollRequestDetails       `json:"manage_create_poll_request,omitempty"`
+	ManagePoll                           *ManagePollDetails                    `json:"manage_poll,omitempty"`
+	ManageVote                           *ManageVoteDetails                    `json:"manage_vote,omitempty"`
+	RemoveAssetPair                      *RemoveAssetPairDetails               `json:"remove_asset_pair,omitempty"`
+	InitiateKYCRecovery                  *InitiateKYCRecoveryDetails           `json:"initiate_kyc_recovery,omitempty"`
+	CreateKYCRecoveryRequest             *CreateKYCRecoveryRequestDetails      `json:"create_kyc_recovery_request,omitempty"`
+	CreateManageOfferRequest             *CreateManageOfferRequestDetails      `json:"create_manage_offer_request,omitempty"`
+	CreatePaymentRequest                 *CreatePaymentRequestDetails          `json:"create_payment_request,omitempty"`
+	RemoveAsset                          *RemoveAssetDetails                   `json:"remove_asset,omitempty"`
+	OpenSwap                             *OpenSwapDetails                      `json:"open_swap,omitempty"`
+	CloseSwap                            *CloseSwapDetails                     `json:"close_swap,omitempty"`
+	Redemption                           *RedemptionDetails                    `json:"redemption,omitempty"`
+	CreateData                           *CreateDataDetails                    `json:"create_data,omitempty"`
+	UpdateData                           *UpdateDataDetails                    `json:"update_data,omitempty"`
+	RemoveData                           *RemoveDataDetails                    `json:"remove_data,omitempty"`
+	CreateDataCreationRequest            *CreateDataCreationRequest            `json:"create_data_creation_request,omitempty"`
+	CancelDataCreationRequest            *CancelDataCreationRequest            `json:"cancel_data_creation_request,omitempty"`
+	CreateDataUpdateRequest              *CreateDataUpdateRequest              `json:"create_data_update_request,omitempty"`
+	CancelDataUpdateRequest              *CancelDataUpdateRequest              `json:"cancel_data_update_request,omitempty"`
+	CreateDataRemoveRequest              *CreateDataRemoveRequest              `json:"create_data_remove_request,omitempty"`
+	CancelDataRemoveRequest              *CancelDataRemoveRequest              `json:"cancel_data_remove_request,omitempty"`
+	CreateDeferredPaymentCreationRequest *CreateDeferredPaymentCreationRequest `json:"create_deferred_payment_creation_request,omitempty"`
+	CancelDeferredPaymentCreationRequest *CancelDeferredPaymentCreationRequest `json:"cancel_deferred_payment_creation_request,omitempty"`
+	CreateCloseDeferredPaymentRequest    *CreateCloseDeferredPaymentRequest    `json:"create_close_deferred_payment_request,omitempty"`
+	CancelCloseDeferredPaymentRequest    *CancelCloseDeferredPaymentRequest    `json:"cancel_close_deferred_payment_request,omitempty"`
 }
 
 //Value - converts operation details into jsonb
 func (r OperationDetails) Value() (driver.Value, error) {
-	result, err := db2.DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal operation details")
 	}
@@ -74,7 +88,7 @@ func (r OperationDetails) Value() (driver.Value, error) {
 
 //Scan - converts jsonb into OperationDetails
 func (r *OperationDetails) Scan(src interface{}) error {
-	err := db2.DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan operation details")
 	}
@@ -383,6 +397,7 @@ type CreateAMLAlertRequestDetails struct {
 	Amount         regources.Amount  `json:"amount"`
 	BalanceAddress string            `json:"balance_address"`
 	CreatorDetails regources.Details `json:"creator_details"`
+	RequestDetails RequestDetails    `json:"request_details"`
 }
 
 // PaymentDetails - stores details of payment operation
@@ -543,14 +558,15 @@ type CreateManageOfferRequestDetails struct {
 }
 
 type PaymentRequestDetails struct {
-	AccountFrom             string           `json:"account_from"`
-	BalanceFrom             string           `json:"balance_from"`
-	Amount                  regources.Amount `json:"amount"`
-	SourceFee               regources.Fee    `json:"source_fee"`
-	DestinationFee          regources.Fee    `json:"destination_fee"`
-	SourcePayForDestination bool             `json:"source_pay_for_destination"`
-	Subject                 string           `json:"subject"`
-	Reference               string           `json:"reference"`
+	CreatorDetails          regources.Details `json:"creator_details"`
+	AccountFrom             string            `json:"account_from"`
+	BalanceFrom             string            `json:"balance_from"`
+	Amount                  regources.Amount  `json:"amount"`
+	SourceFee               regources.Fee     `json:"source_fee"`
+	DestinationFee          regources.Fee     `json:"destination_fee"`
+	SourcePayForDestination bool              `json:"source_pay_for_destination"`
+	Subject                 string            `json:"subject"`
+	Reference               string            `json:"reference"`
 }
 
 type CreatePaymentRequestDetails struct {
@@ -590,4 +606,81 @@ type RedemptionDetails struct {
 	Asset          string            `json:"asset"`
 	Details        regources.Details `json:"details"`
 	RequestDetails RequestDetails    `json:"request_details"`
+}
+
+type CreateDataDetails struct {
+	ID    uint64            `json:"id"`
+	Type  uint64            `json:"type"`
+	Value regources.Details `json:"value"`
+	Owner string            `json:"owner"`
+}
+
+type UpdateDataDetails struct {
+	ID    uint64            `json:"id"`
+	Value regources.Details `json:"value"`
+}
+
+type RemoveDataDetails struct {
+	ID uint64 `json:"id"`
+}
+
+type CreateDataCreationRequest struct {
+	ID             uint64            `json:"id"`
+	Type           uint64            `json:"type"`
+	Value          regources.Details `json:"value"`
+	Owner          string            `json:"owner"`
+	CreatorDetails regources.Details `json:"creator_details"`
+	RequestID      uint64            `json:"request_id"`
+}
+
+type CreateDataUpdateRequest struct {
+	ID             uint64            `json:"id"`
+	Value          regources.Details `json:"value"`
+	CreatorDetails regources.Details `json:"creator_details"`
+	RequestID      uint64            `json:"request_id"`
+}
+
+type CreateDataRemoveRequest struct {
+	ID             uint64            `json:"id"`
+	CreatorDetails regources.Details `json:"creator_details"`
+	RequestID      uint64            `json:"request_id"`
+}
+
+type CancelDataCreationRequest struct {
+	RequestID uint64 `json:"request_id"`
+}
+
+type CancelDataUpdateRequest struct {
+	RequestID uint64 `json:"request_id"`
+}
+
+type CancelDataRemoveRequest struct {
+	RequestID uint64 `json:"request_id"`
+}
+
+type CreateDeferredPaymentCreationRequest struct {
+	RequestID          uint64            `json:"request_id"`
+	SourceBalance      string            `json:"source_balance"`
+	DestinationAccount string            `json:"destination_account"`
+	Amount             regources.Amount  `json:"amount"`
+	Details            regources.Details `json:"details"`
+	AllTasks           *uint32           `json:"all_tasks"`
+}
+
+type CreateCloseDeferredPaymentRequest struct {
+	RequestID          uint64            `json:"request_id"`
+	DestinationBalance string            `json:"destination_balance"`
+	DestinationAccount string            `json:"destination_account"`
+	DeferredPaymentID  uint64            `json:"deferred_payment_id"`
+	Amount             regources.Amount  `json:"amount"`
+	Details            regources.Details `json:"details"`
+	AllTasks           *uint32           `json:"all_tasks"`
+}
+
+type CancelDeferredPaymentCreationRequest struct {
+	RequestID uint64 `json:"request_id"`
+}
+
+type CancelCloseDeferredPaymentRequest struct {
+	RequestID uint64 `json:"request_id"`
 }

@@ -3,39 +3,45 @@ package history2
 import (
 	"time"
 
+	"gitlab.com/distributed_lab/kit/pgdb"
+
 	"database/sql/driver"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 //ReviewableRequestDetails - stores in union switch details of the reviewable requests
 type ReviewableRequestDetails struct {
-	Type                xdr.ReviewableRequestType   `json:"type"`
-	CreateAsset         *CreateAssetRequest         `json:"create_asset,omitempty"`
-	UpdateAsset         *UpdateAssetRequest         `json:"update_asset,omitempty"`
-	CreatePreIssuance   *CreatePreIssuanceRequest   `json:"create_pre_issuance,omitempty"`
-	CreateIssuance      *CreateIssuanceRequest      `json:"create_issuance,omitempty"`
-	CreateWithdraw      *CreateWithdrawalRequest    `json:"create_withdraw,omitempty"`
-	CreateSale          *CreateSaleRequest          `json:"create_sale,omitempty"`
-	UpdateLimits        *UpdateLimitsRequest        `json:"update_limits,omitempty"`
-	CreateAmlAlert      *CreateAmlAlertRequest      `json:"create_aml_alert,omitempty"`
-	ChangeRole          *ChangeRoleRequest          `json:"change_role,omitempty"`
-	UpdateSaleDetails   *UpdateSaleDetailsRequest   `json:"update_sale_details,omitempty"`
-	CreateAtomicSwapAsk *CreateAtomicSwapAskRequest `json:"create_atomic_swap_ask,omitempty"`
-	CreateAtomicSwapBid *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid,omitempty"`
-	CreatePoll          *CreatePollRequest          `json:"create_poll,omitempty"`
-	KYCRecovery         *KYCRecoveryRequest         `json:"kyc_recovery,omitempty"`
-	ManageOffer         *ManageOfferRequest         `json:"manage_offer,omitempty"`
-	CreatePayment       *CreatePaymentRequest       `json:"create_payment,omitempty"`
-	Redemption          *RedemptionRequest          `json:"redemption,omitempty"`
+	Type                  xdr.ReviewableRequestType   `json:"type"`
+	CreateAsset           *CreateAssetRequest         `json:"create_asset,omitempty"`
+	UpdateAsset           *UpdateAssetRequest         `json:"update_asset,omitempty"`
+	CreatePreIssuance     *CreatePreIssuanceRequest   `json:"create_pre_issuance,omitempty"`
+	CreateIssuance        *CreateIssuanceRequest      `json:"create_issuance,omitempty"`
+	CreateWithdraw        *CreateWithdrawalRequest    `json:"create_withdraw,omitempty"`
+	CreateSale            *CreateSaleRequest          `json:"create_sale,omitempty"`
+	UpdateLimits          *UpdateLimitsRequest        `json:"update_limits,omitempty"`
+	CreateAmlAlert        *CreateAmlAlertRequest      `json:"create_aml_alert,omitempty"`
+	ChangeRole            *ChangeRoleRequest          `json:"change_role,omitempty"`
+	UpdateSaleDetails     *UpdateSaleDetailsRequest   `json:"update_sale_details,omitempty"`
+	CreateAtomicSwapAsk   *CreateAtomicSwapAskRequest `json:"create_atomic_swap_ask,omitempty"`
+	CreateAtomicSwapBid   *CreateAtomicSwapBidRequest `json:"create_atomic_swap_bid,omitempty"`
+	CreatePoll            *CreatePollRequest          `json:"create_poll,omitempty"`
+	KYCRecovery           *KYCRecoveryRequest         `json:"kyc_recovery,omitempty"`
+	ManageOffer           *ManageOfferRequest         `json:"manage_offer,omitempty"`
+	CreatePayment         *CreatePaymentRequest       `json:"create_payment,omitempty"`
+	Redemption            *RedemptionRequest          `json:"redemption,omitempty"`
+	DataCreation          *DataCreationRequest        `json:"data_creation,omitempty"`
+	DataUpdate            *DataUpdateRequest          `json:"data_update,omitempty"`
+	DataRemove            *DataRemoveRequest          `json:"data_remove,omitempty"`
+	CreateDeferredPayment *CreateDeferredPayment      `json:"create_deferred_payment,omitempty"`
+	CloseDeferredPayment  *CloseDeferredPayment       `json:"close_deferred_payment,omitempty"`
 }
 
 //Value - implements db driver method for auto marshal
 func (r ReviewableRequestDetails) Value() (driver.Value, error) {
-	result, err := db2.DriverValue(r)
+	result, err := pgdb.JSONValue(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal details")
 	}
@@ -45,7 +51,7 @@ func (r ReviewableRequestDetails) Value() (driver.Value, error) {
 
 //Scan - implements db driver method for auto unmarshal
 func (r *ReviewableRequestDetails) Scan(src interface{}) error {
-	err := db2.DriveScan(src, r)
+	err := pgdb.JSONScan(src, r)
 	if err != nil {
 		return errors.Wrap(err, "failed to scan details")
 	}
@@ -175,22 +181,24 @@ type KYCRecoveryRequest struct {
 }
 
 type ManageOfferRequest struct {
-	OfferID     int64            `json:"offer_id,omitempty"`
-	OrderBookID int64            `json:"order_book_id"`
-	Amount      regources.Amount `json:"base_amount"`
-	Price       regources.Amount `json:"price"`
-	IsBuy       bool             `json:"is_buy"`
-	Fee         regources.Fee    `json:"fee"`
+	CreatorDetails regources.Details `json:"creator_details"`
+	OfferID        int64             `json:"offer_id,omitempty"`
+	OrderBookID    int64             `json:"order_book_id"`
+	Amount         regources.Amount  `json:"base_amount"`
+	Price          regources.Amount  `json:"price"`
+	IsBuy          bool              `json:"is_buy"`
+	Fee            regources.Fee     `json:"fee"`
 }
 
 type CreatePaymentRequest struct {
-	BalanceFrom             string           `json:"balance_from"`
-	Amount                  regources.Amount `json:"amount"`
-	SourceFee               regources.Fee    `json:"source_fee"`
-	DestinationFee          regources.Fee    `json:"destination_fee"`
-	SourcePayForDestination bool             `json:"source_pay_for_destination"`
-	Subject                 string           `json:"subject"`
-	Reference               string           `json:"reference"`
+	CreatorDetails          regources.Details `json:"creator_details"`
+	BalanceFrom             string            `json:"balance_from"`
+	Amount                  regources.Amount  `json:"amount"`
+	SourceFee               regources.Fee     `json:"source_fee"`
+	DestinationFee          regources.Fee     `json:"destination_fee"`
+	SourcePayForDestination bool              `json:"source_pay_for_destination"`
+	Subject                 string            `json:"subject"`
+	Reference               string            `json:"reference"`
 }
 
 type RedemptionRequest struct {
@@ -198,4 +206,47 @@ type RedemptionRequest struct {
 	DestinationAccountID string            `json:"destination_account_id"`
 	Amount               regources.Amount  `json:"amount"`
 	CreatorDetails       regources.Details `json:"creator_details"`
+}
+
+type DataCreationRequest struct {
+	SecurityType   uint64            `json:"security_type"`
+	SequenceNumber uint32            `json:"sequence_number"`
+	Owner          string            `json:"owner"`
+	Value          regources.Details `json:"value"`
+	CreatorDetails regources.Details `json:"creator_details"`
+}
+
+type DataUpdateRequest struct {
+	SequenceNumber uint32            `json:"sequence_number"`
+	Value          regources.Details `json:"value"`
+	DataID         uint64            `json:"data_id"`
+	CreatorDetails regources.Details `json:"creator_details"`
+}
+
+type DataRemoveRequest struct {
+	SequenceNumber uint32            `json:"sequence_number"`
+	DataID         uint64            `json:"data_id"`
+	CreatorDetails regources.Details `json:"creator_details"`
+}
+
+type CreateDeferredPayment struct {
+	SourceBalance      string            `json:"source_balance"`
+	DestinationAccount string            `json:"destination_account"`
+	Amount             regources.Amount  `json:"amount"`
+	Details            regources.Details `json:"details"`
+	SequenceNumber     uint32            `json:"sequence_number"`
+}
+
+type CloseDeferredPayment struct {
+	SequenceNumber    uint32                          `json:"sequence_number"`
+	Destination       CloseDeferredPaymentDestination `json:"destination"`
+	DeferredPaymentID uint64                          `json:"deferred_payment_id"`
+	Amount            regources.Amount                `json:"amount"`
+	Details           regources.Details               `json:"details"`
+}
+
+type CloseDeferredPaymentDestination struct {
+	Type    xdr.CloseDeferredPaymentDestinationType `json:"type"`
+	Balance *string                                 `json:"balance,omitempty"`
+	Account *string                                 `json:"account,omitempty"`
 }

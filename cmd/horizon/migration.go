@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"gitlab.com/tokend/horizon/db2"
 	"log"
 	"os"
 	"strconv"
@@ -9,7 +10,6 @@ import (
 	"gitlab.com/tokend/horizon/ingest2"
 
 	"github.com/spf13/cobra"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/history/schema"
 )
 

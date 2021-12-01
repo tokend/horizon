@@ -1,6 +1,7 @@
 package reviewablerequest
 
 import (
+	"encoding/json"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/history"
 	"gitlab.com/tokend/regources"
@@ -20,7 +21,11 @@ func PopulateReviewableRequest(request *history.ReviewableRequest) (r *regources
 	r.Hash = request.Hash
 	r.AllTasks = request.AllTasks
 	r.PendingTasks = request.PendingTasks
-	r.ExternalDetails = request.ExternalDetails
+
+	err = json.Unmarshal(request.ExternalDetails, &r.ExternalDetails)
+	if err != nil {
+		return nil, err
+	}
 	r.CreatedAt = regources.Time(request.CreatedAt)
 	r.UpdatedAt = regources.Time(request.UpdatedAt)
 

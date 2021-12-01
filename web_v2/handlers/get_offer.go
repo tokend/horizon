@@ -43,7 +43,7 @@ func GetOffer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isAllowed(r, w, coreOffer.OwnerID) {
+	if !isAllowed(r, w, &coreOffer.OwnerID) {
 		return
 	}
 

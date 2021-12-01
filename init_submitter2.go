@@ -42,15 +42,15 @@ func initSubmissionV2(app *App) {
 		}))
 	}
 
-	err = histListener.Listen(storage.ChanNewHistoryLedgerSeq)
+	err = histListener.Listen(storage.ChanNewLedgerSeq)
 	if err != nil {
 		panic(errors.Wrap(err, "failed to init history listener", logan.F{
-			"channel": storage.ChanNewHistoryLedgerSeq,
+			"channel": storage.ChanNewLedgerSeq,
 		}))
 	}
 	app.submitterV2 = &txsub.System{
 		Log:               logger,
-		SubmissionTimeout: time.Minute,
+		SubmissionTimeout: time.Minute + 30*time.Second,
 		List:              txsub.NewDefaultSubmissionList(10 * time.Second),
 		Submitter:         txsub.NewDefaultSubmitter(*coreConnector),
 		CoreListener:      coreListener,

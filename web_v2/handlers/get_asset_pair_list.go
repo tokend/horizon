@@ -49,22 +49,22 @@ type getAssetPairListHandler struct {
 
 // GetAssetPairList returns asset pair list with related resources
 func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPairList) (*regources.AssetPairListResponse, error) {
-	q := h.AssetPairsQ.Page(*request.PageParams)
+	q := h.AssetPairsQ.Page(request.PageParams)
 
-	if request.ShouldFilter(requests.FilterTypeAssetPairListAsset) {
-		q = q.FilterByAsset(request.Filters.Asset)
+	if request.Filters.Asset != nil {
+		q = q.FilterByAsset(*request.Filters.Asset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeAssetPairListBaseAsset) {
-		q = q.FilterByBaseAsset(request.Filters.BaseAsset)
+	if request.Filters.BaseAsset != nil {
+		q = q.FilterByBaseAsset(*request.Filters.BaseAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeAssetPairListQuoteAsset) {
-		q = q.FilterByQuoteAsset(request.Filters.QuoteAsset)
+	if request.Filters.QuoteAsset != nil {
+		q = q.FilterByQuoteAsset(*request.Filters.QuoteAsset)
 	}
 
-	if request.ShouldFilter(requests.FilterTypeAssetPairListPolicy) {
-		q = q.FilterByPolicy(request.Filters.Policy)
+	if request.Filters.Policy != nil {
+		q = q.FilterByPolicy(*request.Filters.Policy)
 	}
 
 	if request.ShouldInclude(requests.IncludeTypeAssetPairListBaseAssets) {
@@ -82,7 +82,7 @@ func (h *getAssetPairListHandler) GetAssetPairList(request *requests.GetAssetPai
 
 	response := &regources.AssetPairListResponse{
 		Data:  make([]regources.AssetPair, 0, len(coreAssetPairs)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for i := range coreAssetPairs {

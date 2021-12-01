@@ -1,12 +1,16 @@
 package ingestion
 
 import (
+	sql2 "database/sql"
 	"encoding/json"
 	"fmt"
 	"time"
 
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/tokend/horizon/db2"
+
+	sq "github.com/Masterminds/squirrel"
 	"github.com/guregu/null"
-	sq "github.com/lann/squirrel"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -19,68 +23,44 @@ import (
 
 // Clear removes data from the ledger
 func (ingest *Ingestion) Clear(start int64, end int64) error {
-	clear := ingest.DB.DeleteRange
-	err := clear(start, end, "history_operation_participants", "history_operation_id")
+	clear := db2.DeleteRange
+	err := clear(ingest.DB, start, end, "history_operation_participants", "history_operation_id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_operations_participants table")
 	}
-	err = clear(start, end, "history_operations", "id")
+	err = clear(ingest.DB, start, end, "history_operations", "id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_operations table")
 	}
-	err = clear(start, end, "history_transaction_participants", "history_transaction_id")
+	err = clear(ingest.DB, start, end, "history_transaction_participants", "history_transaction_id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_transactions_participants table")
 	}
-	err = clear(start, end, "history_transactions", "id")
+	err = clear(ingest.DB, start, end, "history_transactions", "id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_transactions table")
 	}
-	err = clear(start, end, "history_ledgers", "id")
+	err = clear(ingest.DB, start, end, "history_ledgers", "id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_ledgers table")
 	}
-	err = clear(start, end, "history_ledger_changes", "tx_id")
+	err = clear(ingest.DB, start, end, "history_ledger_changes", "tx_id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_ledger_changes table")
 	}
-	err = clear(start, end, "history_contracts", "id")
+	err = clear(ingest.DB, start, end, "history_contracts", "id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_contract table")
 	}
-	err = clear(start, end, "history_contracts_details", "id")
+	err = clear(ingest.DB, start, end, "history_contracts_details", "id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_contracts_details table")
 	}
-	err = clear(start, end, "history_contracts_disputes", "id")
+	err = clear(ingest.DB, start, end, "history_contracts_disputes", "id")
 	if err != nil {
 		return errors.Wrap(err, "failed to clear history_contracts_disputes table")
 	}
 
-	return nil
-}
-
-// Close finishes the current transaction and finishes this ingestion.
-func (ingest *Ingestion) Close() error {
-	err := ingest.commit()
-	if err != nil {
-		return errors.Wrap(err, "failed to commit")
-	}
-	return nil
-}
-
-// Flush writes the currently buffered rows to the db, and if successful
-// starts a new transaction.
-func (ingest *Ingestion) Flush() error {
-	err := ingest.commit()
-	if err != nil {
-		return errors.Wrap(err, "failed to commit")
-	}
-
-	err = ingest.Start()
-	if err != nil {
-		return errors.Wrap(err, "failed to start")
-	}
 	return nil
 }
 
@@ -107,7 +87,7 @@ func (ingest *Ingestion) Ledger(
 		ops,
 	)
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute sql query")
 	}
@@ -128,7 +108,7 @@ func (ingest *Ingestion) LedgerChanges(
 
 	sql := ingest.ledger_changes.Values(txID, opID, orderNumber, effect, entryType, xdrPayload)
 
-	_, err = ingest.DB.Exec(sql)
+	err = ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute sql query")
 	}
@@ -154,7 +134,7 @@ func (ingest *Ingestion) Contracts(contract history.Contract) error {
 		contract.State,
 	)
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute sql query")
 	}
@@ -170,7 +150,7 @@ func (ingest *Ingestion) ContractDetails(contractDetails history.ContractDetails
 		contractDetails.CreatedAt,
 	)
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute sql query")
 	}
@@ -186,7 +166,7 @@ func (ingest *Ingestion) ContractDispute(contractDetails history.ContractDispute
 		contractDetails.CreatedAt,
 	)
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute sql query")
 	}
@@ -216,7 +196,7 @@ func (ingest *Ingestion) Operation(
 		txid, order, source.Address(),
 		typ, djson, time.Unix(ledgerCloseTime, 0).UTC(),
 		identifier, state)
-	_, err = ingest.DB.Exec(sql)
+	err = ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute sql query")
 	}
@@ -250,7 +230,7 @@ func (ingest *Ingestion) OperationParticipants(op int64, opParticipants []partic
 		sql = sql.Values(op, haid, opParticipant.BalanceID.AsString(), djson)
 	}
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute sql query")
 	}
@@ -258,22 +238,12 @@ func (ingest *Ingestion) OperationParticipants(op int64, opParticipants []partic
 	return nil
 }
 
-// Rollback aborts this ingestions transaction
-func (ingest *Ingestion) Rollback() (err error) {
-	err = ingest.DB.Rollback()
-	if err != nil {
-		return errors.Wrap(err, "failed to rollback")
-	}
-	return nil
+func (ingest *Ingestion) TransactWithFunction(fn pgdb.TransactionFunc) error {
+	return ingest.DB.Transaction(fn)
 }
 
-// Start makes the ingestion reeady, initializing the insert builders and tx
+// Start makes the ingestion ready, initializing the insert builders and tx
 func (ingest *Ingestion) Start() (err error) {
-	err = ingest.DB.Begin()
-	if err != nil {
-		return errors.Wrap(err, "failed to bind repo to a new transaction")
-	}
-
 	ingest.createInsertBuilders()
 
 	return nil
@@ -308,7 +278,7 @@ func (ingest *Ingestion) Transaction(
 		time.Unix(ledger.CloseTime, 0).UTC(),
 	)
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to add new row into history_transactions table")
 	}
@@ -330,7 +300,7 @@ func (ingest *Ingestion) TransactionParticipants(tx int64, aids []xdr.AccountId)
 		sql = sql.Values(tx, haid)
 	}
 
-	_, err := ingest.DB.Exec(sql)
+	err := ingest.DB.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failes to exeute query on history_transactions_participants")
 	}
@@ -446,31 +416,22 @@ func (ingest *Ingestion) createInsertBuilders() {
 	)
 }
 
-func (ingest *Ingestion) commit() error {
-	err := ingest.DB.Commit()
-	if err != nil {
-		return errors.Wrap(err, "failed to commit current transaction")
-	}
-
-	return nil
-}
-
 func (ingest *Ingestion) TryIngestAccount(aid string) (result int64, err error) {
-	q := history.Q{Repo: ingest.DB}
+	q := history.Q{DB: ingest.DB}
 	var existing history.Account
 	err = q.AccountByAddress(&existing, aid)
 
-	if err != nil && !q.NoRows(err) {
+	if err != nil && err != sql2.ErrNoRows {
 		return 0, errors.Wrap(err, "failed to get account from DB")
 	}
 
 	// already imported, return the found value
-	if !q.NoRows(err) {
+	if err != sql2.ErrNoRows {
 		result = existing.ID
 		return result, nil
 	}
 
-	coreQ := core.Q{Repo: ingest.CoreDB}
+	coreQ := core.Q{DB: ingest.CoreDB}
 	account, err := coreQ.Accounts().ByAddress(aid)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get core balance")

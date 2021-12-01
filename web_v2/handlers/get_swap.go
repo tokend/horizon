@@ -50,7 +50,7 @@ func GetSwap(w http.ResponseWriter, r *http.Request) {
 		requests.IncludeTypeSwapSourceBalance,
 		requests.IncludeTypeSwapDestinationBalance,
 	) {
-		if !isAllowed(r, w, result.Data.Relationships.Source.Data.ID, result.Data.Relationships.Destination.Data.ID) {
+		if !isAllowed(r, w, &result.Data.Relationships.Source.Data.ID, &result.Data.Relationships.Destination.Data.ID) {
 			return
 		}
 	}

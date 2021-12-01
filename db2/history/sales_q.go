@@ -1,14 +1,15 @@
 package history
 
 import (
+	"database/sql"
+	"gitlab.com/tokend/horizon/db2"
 	"time"
 
 	"fmt"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/sqx"
 )
 
@@ -143,7 +144,7 @@ func (q *saleQ) ByID(saleID uint64) (*Sale, error) {
 	q.sql = q.sql.Where("id = ?", saleID)
 	var result Sale
 	err := q.parent.Get(&result, q.sql)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 
@@ -168,7 +169,7 @@ func (q *saleQ) Insert(sale Sale) error {
 			sale.BaseCurrentCap, sale.BaseHardCap, sale.SaleType,
 		)
 
-	_, err := q.parent.Exec(sql)
+	err := q.parent.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert sale")
 	}
@@ -194,7 +195,7 @@ func (q *saleQ) Update(sale Sale) error {
 		"sale_type":           sale.SaleType,
 	}).Where("id = ?", sale.ID)
 
-	_, err := q.parent.Exec(sql)
+	err := q.parent.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to update sale", logan.F{"sale_id": sale.ID})
 	}
@@ -205,7 +206,7 @@ func (q *saleQ) Update(sale Sale) error {
 // SetState - sets state
 func (q *saleQ) SetState(saleID uint64, state SaleState) error {
 	sql := sq.Update("sale").Set("state", state).Where("id = ?", saleID)
-	_, err := q.parent.Exec(sql)
+	err := q.parent.Exec(sql)
 	if err != nil {
 		return errors.Wrap(err, "failed to set state", logan.F{"sale_id": saleID})
 	}
@@ -221,7 +222,7 @@ func (q *saleQ) Select() ([]Sale, error) {
 
 	var result []Sale
 	err := q.parent.Select(&result, q.sql)
-	if q.parent.NoRows(err) {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 

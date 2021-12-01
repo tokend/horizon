@@ -28,10 +28,8 @@ AtomicSwapAsk:
             - is_canceled
           properties:
             details:
-              type: string
-              format: "valid json"
-              description: "represents user-provided data"
-              example: "{ \"data\": \"some user data\"}"
+              $ref: '#/components/schemas/Details'
+              description: "Represents user-provided data"
             available_amount:
               type: string
               example: "5.000000"

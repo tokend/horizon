@@ -1,17 +1,17 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 type SaleConvertedBalancesQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
-func NewSaleConvertedBalancesQ(repo *db2.Repo) SaleConvertedBalancesQ {
+func NewSaleConvertedBalancesQ(repo *pgdb.DB) SaleConvertedBalancesQ {
 	return SaleConvertedBalancesQ{
 		repo: repo,
 		selector: sq.Select(

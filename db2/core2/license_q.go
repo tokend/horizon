@@ -1,20 +1,21 @@
 package core2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // LicenseQ is a helper struct to aid in configuring queries that loads
 // license structs.
 type LicenseQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewLicenseQ - creates new instance of LicenseQ
-func NewLicenseQ(repo *db2.Repo) LicenseQ {
+func NewLicenseQ(repo *pgdb.DB) LicenseQ {
 	return LicenseQ{
 		repo: repo,
 		selector: sq.Select("license.id",
@@ -39,7 +40,7 @@ func (q LicenseQ) Get() (*License, error) {
 	var result License
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -54,7 +55,7 @@ func (q LicenseQ) Select() ([]License, error) {
 	var result []License
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

@@ -21,7 +21,7 @@ func (ingest *Ingestion) StorePricePoints(priceHistory []LedgerPricePoint) error
 		q = q.Values(price.BaseAsset, price.QuoteAsset, price.Timestamp, price.Price)
 	}
 
-	_, err := ingest.DB.Exec(q)
+	err := ingest.DB.Exec(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to insert price points")
 	}

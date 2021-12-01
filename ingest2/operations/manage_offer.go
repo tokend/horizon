@@ -306,6 +306,7 @@ func setUnlocked(offer offer, balanceEffect history2.ParticularBalanceChangeEffe
 		Type: history2.EffectTypeUnlocked,
 		Unlocked: &history2.BalanceChangeEffect{
 			Amount: balanceEffect.Amount,
+			Fee:    balanceEffect.Fee,
 		},
 	}
 

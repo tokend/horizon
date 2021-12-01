@@ -49,19 +49,23 @@ type getAssetListHandler struct {
 
 // GetAssetList returns the list of assets with related resources
 func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*regources.AssetListResponse, error) {
-	q := h.AssetsQ.Page(*request.PageParams)
-	if request.ShouldFilter(requests.FilterTypeAssetListOwner) {
-		q = q.FilterByOwner(request.Filters.Owner)
+	q := h.AssetsQ.Page(request.PageParams)
+	if request.Owner != nil {
+		q = q.FilterByOwner(*request.Owner)
 	}
-	if request.ShouldFilter(requests.FilterTypeAssetListPolicy) {
-		q = q.FilterByPolicy(request.Filters.Policy)
+	if request.Policy != nil {
+		q = q.FilterByPolicy(*request.Policy)
 	}
-	if request.ShouldFilter(requests.FilterTypeAssetListState) {
-		q = q.FilterByState(request.Filters.State)
+	if request.State != nil {
+		q = q.FilterByState(*request.State)
 	}
-	if request.ShouldFilter(requests.FilterTypeAssetListCodes) {
-		q = q.FilterByCodes(request.Filters.Codes)
+	if request.Codes != nil {
+		q = q.FilterByCodes(request.Codes)
 	}
+	if request.Types !=nil {
+		q = q.FilterByTypes(request.Types)
+	}
+
 	assets, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get asset list")
@@ -69,7 +73,7 @@ func (h *getAssetListHandler) GetAssetList(request *requests.GetAssetList) (*reg
 
 	response := &regources.AssetListResponse{
 		Data:  make([]regources.Asset, 0, len(assets)),
-		Links: request.GetOffsetLinks(*request.PageParams),
+		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
 	for i := range assets {

@@ -3,7 +3,8 @@ package requests
 import (
 	"net/http"
 
-	"gitlab.com/tokend/horizon/db2"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/urlval"
 )
 
 const (
@@ -33,10 +34,14 @@ type GetSaleParticipations struct {
 	*base
 	SaleID  uint64
 	Filters struct {
-		QuoteAsset  string `json:"quote_asset"`
-		Participant string `json:"participant"`
+		QuoteAsset  *string `filter:"quote_asset" json:"quote_asset"`
+		Participant *string `filter:"participant" json:"participant"`
 	}
-	PageParams *db2.CursorPageParams
+	PageParams pgdb.CursorPageParams
+	Includes   struct {
+		BaseAsset   bool `include:"base_asset"`
+		QuoteAssets bool `include:"quote_assets"`
+	}
 }
 
 // NewGetSaleParticipations returns new instance of GetSaleParticipations
@@ -54,21 +59,20 @@ func NewGetSaleParticipations(r *http.Request) (*GetSaleParticipations, error) {
 		return nil, err
 	}
 
-	pageParams, err := b.getCursorBasedPageParams()
+	request := GetSaleParticipations{
+		base:   b,
+		SaleID: id,
+	}
+
+	err = urlval.DecodeSilently(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	request := &GetSaleParticipations{
-		base:       b,
-		SaleID:     id,
-		PageParams: pageParams,
-	}
-
-	err = b.populateFilters(&request.Filters)
+	err = SetDefaultCursorPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
 	}
 
-	return request, nil
+	return &request, nil
 }

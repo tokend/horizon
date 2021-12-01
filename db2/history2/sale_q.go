@@ -1,25 +1,28 @@
 package history2
 
 import (
+	"database/sql"
 	"fmt"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/tokend/horizon/db2"
+	regources "gitlab.com/tokend/regources/generated"
 	"time"
 
 	"gitlab.com/tokend/go/xdr"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // SalesQ is a helper struct to aid in configuring queries that loads
 // sales structures.
 type SalesQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewSalesQ - creates new instance of SalesQ
-func NewSalesQ(repo *db2.Repo) SalesQ {
+func NewSalesQ(repo *pgdb.DB) SalesQ {
 	return SalesQ{
 		repo: repo,
 		selector: sq.Select(
@@ -39,7 +42,7 @@ func NewSalesQ(repo *db2.Repo) SalesQ {
 			"sales.quote_assets",
 			"sales.version",
 			"sales.access_definition_type",
-		).From("sales"),
+		).From("sales sales"),
 	}
 }
 
@@ -98,6 +101,12 @@ func (q SalesQ) FilterByID(id uint64) SalesQ {
 // FilterByIDs - returns q with filter by ids
 func (q SalesQ) FilterByIDs(ids []uint64) SalesQ {
 	q.selector = q.selector.Where(sq.Eq{"sales.id": ids})
+	return q
+}
+
+func (q SalesQ) WithAsset() SalesQ {
+	q.selector = q.selector.Columns(db2.GetColumnsForJoin(assetColumns, "asset")...).
+		LeftJoin("asset asset ON asset.code = sales.base_asset")
 	return q
 }
 
@@ -173,6 +182,13 @@ func (q SalesQ) FilterByMaxHardCap(value uint64) SalesQ {
 	return q
 }
 
+func (q SalesQ) FilterByParticipant(participant string, saleIDs []int64) SalesQ {
+	q.selector = q.selector.LeftJoin("participant_effects pe on (sales.id = (pe.effect#>>'{matched,order_book_id}')::int and sales.state = ? and pe.asset_code = sales.base_asset)", regources.SaleStateClosed).
+		LeftJoin("accounts a ON pe.account_id = a.id").
+		Where(sq.Or{sq.Eq{"a.address": participant}, sq.Eq{"sales.id": saleIDs}}).Where("sales.owner_address != ?", participant)
+	return q
+}
+
 // FilterByMaxSoftCap - returns q with filter by max sof cap
 func (q SalesQ) FilterByMaxSoftCap(value uint64) SalesQ {
 	q.selector = q.selector.Where("sales.soft_cap <= ?", value)
@@ -180,13 +196,13 @@ func (q SalesQ) FilterByMaxSoftCap(value uint64) SalesQ {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q SalesQ) Page(params db2.OffsetPageParams) SalesQ {
+func (q SalesQ) Page(params pgdb.OffsetPageParams) SalesQ {
 	q.selector = params.ApplyTo(q.selector, "sales.id")
 	return q
 }
 
 // CursorPage - returns Q with specified limit and offset params
-func (q SalesQ) CursorPage(params db2.CursorPageParams) SalesQ {
+func (q SalesQ) CursorPage(params pgdb.CursorPageParams) SalesQ {
 	q.selector = params.ApplyTo(q.selector, "sales.id")
 	return q
 }
@@ -198,7 +214,7 @@ func (q SalesQ) Get() (*Sale, error) {
 	var result Sale
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

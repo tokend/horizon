@@ -5,9 +5,9 @@ package participants
 import (
 	"fmt"
 
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
-	"gitlab.com/tokend/horizon/db2"
 	"gitlab.com/tokend/horizon/db2/core"
 )
 
@@ -21,7 +21,7 @@ type Participant struct {
 }
 
 func ForOperation(
-	DB *db2.Repo,
+	DB *pgdb.DB,
 	tx *xdr.Transaction,
 	op *xdr.Operation,
 	opResult xdr.OperationResultTr,
@@ -207,8 +207,21 @@ func ForOperation(
 	case xdr.OperationTypeCreateManageOfferRequest:
 	case xdr.OperationTypeOpenSwap:
 	case xdr.OperationTypeCloseSwap:
+	case xdr.OperationTypeCreateData:
+	case xdr.OperationTypeRemoveData:
+	case xdr.OperationTypeUpdateData:
 	case xdr.OperationTypeCreateRedemptionRequest:
 		// TODO add participant
+	case xdr.OperationTypeCreateDataCreationRequest:
+	case xdr.OperationTypeCreateDataUpdateRequest:
+	case xdr.OperationTypeCreateDataRemoveRequest:
+	case xdr.OperationTypeCancelDataCreationRequest:
+	case xdr.OperationTypeCancelDataUpdateRequest:
+	case xdr.OperationTypeCancelDataRemoveRequest:
+	case xdr.OperationTypeCreateDeferredPaymentCreationRequest:
+	case xdr.OperationTypeCancelDeferredPaymentCreationRequest:
+	case xdr.OperationTypeCreateCloseDeferredPaymentRequest:
+	case xdr.OperationTypeCancelCloseDeferredPaymentRequest:
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}
@@ -269,7 +282,7 @@ func addMatchParticipants(participants []Participant, offerSourceID xdr.AccountI
 // ForTransaction returns all the participating accounts from the provided
 // transaction.
 func ForTransaction(
-	DB *db2.Repo,
+	DB *pgdb.DB,
 	tx *xdr.Transaction,
 	opResults []xdr.OperationResult,
 	meta *xdr.TransactionMeta,

@@ -14,9 +14,9 @@ const (
 	// IncludeTypeSaleListDefaultQuoteAsset - defines if the default quote asset should be included in the response
 	IncludeTypeSaleListDefaultQuoteAsset = "default_quote_asset"
 
-	// FilterTypeSaleListOwner - defines if we need to filter resopnse by owner
+	// FilterTypeSaleListOwner - defines if we need to filter response by owner
 	FilterTypeSaleListOwner = "owner"
-	// FilterTypeSaleListBaseAsset - defines if we need to filter resopnse by base_asset
+	// FilterTypeSaleListBaseAsset - defines if we need to filter response by base_asset
 	FilterTypeSaleListBaseAsset = "base_asset"
 	// FilterTypeSaleListMaxEndTime - defines if we need to filter response by max_end_time
 	FilterTypeSaleListMaxEndTime = "max_end_time"
@@ -80,5 +80,10 @@ type SalesBase struct {
 		MaxHardCap   regources.Amount `json:"max_hard_cap"`
 		MaxSoftCap   regources.Amount `json:"max_soft_cap"`
 		IDs          []uint64         `json:"ids" fig:"ids"`
+	}
+	Includes struct {
+		BaseAsset         bool `include:"base_asset"`
+		QuoteAssets       bool `include:"quote_assets"`
+		DefaultQuoteAsset bool `include:"default_quote_asset"`
 	}
 }

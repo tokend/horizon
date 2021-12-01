@@ -1,19 +1,20 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // AccountSpecificRulesQ is a helper struct to aid in configuring queries that loads accounts
 type AccountSpecificRulesQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewAccountSpecificRulesQ - creates new instance of AccountSpecificRulesQ
-func NewAccountSpecificRulesQ(repo *db2.Repo) AccountSpecificRulesQ {
+func NewAccountSpecificRulesQ(repo *pgdb.DB) AccountSpecificRulesQ {
 	return AccountSpecificRulesQ{
 		repo: repo,
 		selector: sq.Select(
@@ -49,7 +50,7 @@ func (q AccountSpecificRulesQ) Get() (*AccountSpecificRule, error) {
 	var result AccountSpecificRule
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -60,7 +61,7 @@ func (q AccountSpecificRulesQ) Get() (*AccountSpecificRule, error) {
 }
 
 // Page - returns Q with specified limit and offset params
-func (q AccountSpecificRulesQ) Page(params db2.CursorPageParams) AccountSpecificRulesQ {
+func (q AccountSpecificRulesQ) Page(params pgdb.CursorPageParams) AccountSpecificRulesQ {
 	q.selector = params.ApplyTo(q.selector, "sr.id")
 	return q
 }
@@ -70,7 +71,7 @@ func (q AccountSpecificRulesQ) Select() ([]AccountSpecificRule, error) {
 	var result []AccountSpecificRule
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

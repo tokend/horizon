@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	sq "github.com/lann/squirrel"
+	sq "github.com/Masterminds/squirrel"
 )
 
 type PricePoint struct {
@@ -26,7 +26,7 @@ func (q *Q) PriceHistory(base, quote string, since time.Time) ([]PricePoint, err
 		) as t
 		group by bucket order by bucket`
 
-	err := q.DB.Select(&result, stmt, since, base, quote)
+	err := q.DB.SelectRaw(&result, stmt, since, base, quote)
 	return result, err
 }
 

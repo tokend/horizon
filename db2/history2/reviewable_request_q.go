@@ -1,19 +1,21 @@
 package history2
 
 import (
-	sq "github.com/lann/squirrel"
+	"database/sql"
+
+	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // ReviewableRequestsQ - helper struct to get reviewable requests from db
 type ReviewableRequestsQ struct {
-	repo     *db2.Repo
+	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
 // NewReviewableRequestsQ - creates new instance of ReviewableRequestsQ
-func NewReviewableRequestsQ(repo *db2.Repo) ReviewableRequestsQ {
+func NewReviewableRequestsQ(repo *pgdb.DB) ReviewableRequestsQ {
 	return ReviewableRequestsQ{
 		repo: repo,
 		selector: sq.Select(
@@ -33,6 +35,16 @@ func NewReviewableRequestsQ(repo *db2.Repo) ReviewableRequestsQ {
 			"reviewable_requests.external_details",
 		).From("reviewable_requests"),
 	}
+}
+
+func (q ReviewableRequestsQ) FilterByCreatedAtAfter(tsUTC int64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("reviewable_requests.created_at at time zone 'UTC' >= to_timestamp(?::numeric)", tsUTC)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreatedAtBefore(tsUTC int64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("reviewable_requests.created_at at time zone 'UTC' < to_timestamp(?::numeric)", tsUTC)
+	return q
 }
 
 // FilterByState - returns q with filter by request state
@@ -59,7 +71,7 @@ func (q ReviewableRequestsQ) FilterByPendingTasks(mask uint64) ReviewableRequest
 	return q
 }
 
-// FilterByPendingTasksAnyOf - returns q with filter by pending tasks
+// FilterByPendingTasksAnyOf - returns q with filter by any of passed pending tasks
 func (q ReviewableRequestsQ) FilterByPendingTasksAnyOf(mask uint64) ReviewableRequestsQ {
 	q.selector = q.selector.Where("pending_tasks & ? <> 0", mask)
 	return q
@@ -68,6 +80,24 @@ func (q ReviewableRequestsQ) FilterByPendingTasksAnyOf(mask uint64) ReviewableRe
 // FilterPendingTasksNotSet - returns q with filter by pending tasks that aren't set
 func (q ReviewableRequestsQ) FilterPendingTasksNotSet(mask uint64) ReviewableRequestsQ {
 	q.selector = q.selector.Where("~pending_tasks & ? = ?", mask, mask)
+	return q
+}
+
+// FilterByAllTasks - returns q with filter by all tasks
+func (q ReviewableRequestsQ) FilterByAllTasks(mask uint64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("all_tasks & ? = ?", mask, mask)
+	return q
+}
+
+// FilterByAllTasksAnyOf - returns q with filter by any of passed all tasks
+func (q ReviewableRequestsQ) FilterByAllTasksAnyOf(mask uint64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("all_tasks & ? <> 0", mask)
+	return q
+}
+
+// FilterByAllTasksNotSet - returns q with filter by all tasks that aren't set
+func (q ReviewableRequestsQ) FilterByAllTasksNotSet(mask uint64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("~all_tasks & ? = ?", mask, mask)
 	return q
 }
 
@@ -113,8 +143,8 @@ func (q ReviewableRequestsQ) FilterByWithdrawBalance(balance string) ReviewableR
 	return q
 }
 
-func (q ReviewableRequestsQ) FilterByWithdrawAsset(asset string) ReviewableRequestsQ {
-	q.selector = q.selector.Where("details#>>'{create_withdraw,asset}' = ?", asset)
+func (q ReviewableRequestsQ) FilterByWithdrawAssets(assets ...string) ReviewableRequestsQ {
+	q.selector = q.selector.Where(sq.Eq{"details#>>'{create_withdraw,asset}'": assets})
 	return q
 }
 
@@ -168,6 +198,16 @@ func (q ReviewableRequestsQ) FilterByCreatePollPermissionType(permissionType uin
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterByDataCreationSecurityType(securityType uint32) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{data_creation,security_type}' = ?", securityType)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByCreateDeferredPaymentDestination(destination string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{create_deferred_payment,destination_account}' = ?", destination)
+	return q
+}
+
 func (q ReviewableRequestsQ) FilterByCreatePollVoteConfirmationRequired(voteConfirmationRequired bool) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_poll,vote_confirmation_required}' = ?", voteConfirmationRequired)
 	return q
@@ -190,7 +230,7 @@ func (q ReviewableRequestsQ) GetByID(id uint64) (*ReviewableRequest, error) {
 }
 
 // Page - apply paging params to the query
-func (q ReviewableRequestsQ) Page(pageParams db2.CursorPageParams) ReviewableRequestsQ {
+func (q ReviewableRequestsQ) Page(pageParams pgdb.CursorPageParams) ReviewableRequestsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "reviewable_requests.id")
 	return q
 }
@@ -202,7 +242,7 @@ func (q ReviewableRequestsQ) Get() (*ReviewableRequest, error) {
 	var result ReviewableRequest
 	err := q.repo.Get(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
@@ -217,7 +257,7 @@ func (q ReviewableRequestsQ) Select() ([]ReviewableRequest, error) {
 	var result []ReviewableRequest
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {
-		if q.repo.NoRows(err) {
+		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 

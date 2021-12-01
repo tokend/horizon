@@ -386,6 +386,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["code"] = op.Code
 	case xdr.OperationTypeOpenSwap:
 	case xdr.OperationTypeCloseSwap:
+	case xdr.OperationTypeCreateData:
+	case xdr.OperationTypeUpdateData:
+	case xdr.OperationTypeRemoveData:
 	case xdr.OperationTypeCreateRedemptionRequest:
 		op := c.Operation().Body.MustCreateRedemptionRequestOp()
 		details["amount"] = amount.StringU(uint64(op.RedemptionRequest.Amount))
@@ -393,6 +396,16 @@ func (is *Session) operationDetails() map[string]interface{} {
 		details["dest_account_id"] = op.RedemptionRequest.Destination.Address()
 		details["reason"] = op.RedemptionRequest.CreatorDetails
 		details["reference"] = op.Reference
+	case xdr.OperationTypeCreateDataCreationRequest:
+	case xdr.OperationTypeCreateDataUpdateRequest:
+	case xdr.OperationTypeCreateDataRemoveRequest:
+	case xdr.OperationTypeCancelDataCreationRequest:
+	case xdr.OperationTypeCancelDataUpdateRequest:
+	case xdr.OperationTypeCancelDataRemoveRequest:
+	case xdr.OperationTypeCreateDeferredPaymentCreationRequest:
+	case xdr.OperationTypeCancelDeferredPaymentCreationRequest:
+	case xdr.OperationTypeCreateCloseDeferredPaymentRequest:
+	case xdr.OperationTypeCancelCloseDeferredPaymentRequest:
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}
