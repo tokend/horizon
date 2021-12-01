@@ -7,6 +7,7 @@ import (
 
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/generator"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -100,7 +101,7 @@ func (h *getPollHandler) getPoll(request *requests.GetPoll) (*regources.PollResp
 
 	if request.ShouldInclude(requests.IncludeTypePollParticipationVotes) {
 		for _, v := range votes {
-			ledgerSequence := int32(v.ID >> 32)
+			ledgerSequence := generator.GetSeqFromInt64(v.ID)
 			header, err := h.LedgerHeaderQ.GetBySequence(ledgerSequence)
 			if err != nil {
 				return nil, errors.Wrap(err, "cannot get header of ledger sequence")

@@ -9,6 +9,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/generator"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
@@ -61,7 +62,7 @@ func (h *getVoteListHandler) GetVoterVotesList(request *requests.GetVoterVoteLis
 		Data: make([]regources.Vote, 0, len(historyVotes)),
 	}
 	for _, vote := range historyVotes {
-		ledgerSequence := int32(vote.ID >> 32) // ledger sequence
+		ledgerSequence := generator.GetSeqFromInt64(vote.ID) // ledger sequence
 		header, err := h.LedgerHeaderQ.GetBySequence(ledgerSequence)
 		if err != nil {
 			return nil, errors.Wrap(err, "cannot get header of ledger sequence")
