@@ -51,7 +51,7 @@ VoteData:
       type: integer
       format: uint64
     creation_time:
-      type: integer
-      format: uint64
+      type: string
+      format: date-time
 #    multiple_choice: TODO
 #

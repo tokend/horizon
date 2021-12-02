@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -61,13 +62,15 @@ func (h *getVoteListHandler) GetVoterVotesList(request *requests.GetVoterVoteLis
 	response := regources.VoteListResponse{
 		Data: make([]regources.Vote, 0, len(historyVotes)),
 	}
+
+	ledgerHeaders, err := h.GetLedgerHeaders(historyVotes)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot get ledger headers")
+	}
+
 	for _, vote := range historyVotes {
 		ledgerSequence := generator.GetSeqFromInt64(vote.ID) // ledger sequence
-		header, err := h.LedgerHeaderQ.GetBySequence(ledgerSequence)
-		if err != nil {
-			return nil, errors.Wrap(err, "cannot get header of ledger sequence")
-		}
-		created := uint64(header.CloseTime)
+		created := time.Unix(ledgerHeaders[ledgerSequence].CloseTime, 0)
 		vote.VoteData.CreationTime = &created
 
 		response.Data = append(response.Data, resources.NewVote(vote))
@@ -99,4 +102,23 @@ func (h *getVoteListHandler) GetVoterVotesList(request *requests.GetVoterVoteLis
 	}
 
 	return &response, nil
+}
+
+func (h *getVoteListHandler) GetLedgerHeaders(votes []history2.Vote) (map[int32]core2.LedgerHeader, error) {
+	ledgerSeq := make([]int32, len(votes))
+	for i, vote := range votes {
+		ledgerSeq[i] = generator.GetSeqFromInt64(vote.ID)
+	}
+
+	ledgerHeaders, err := h.LedgerHeaderQ.SelectBySequence(ledgerSeq)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot get header of ledger sequence")
+	}
+
+	result := make(map[int32]core2.LedgerHeader)
+	for _, ledger := range ledgerHeaders {
+		result[ledger.Sequence] = ledger
+	}
+
+	return result, nil
 }

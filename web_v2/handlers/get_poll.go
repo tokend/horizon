@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	regources "gitlab.com/tokend/regources/generated"
 
@@ -100,13 +101,14 @@ func (h *getPollHandler) getPoll(request *requests.GetPoll) (*regources.PollResp
 	}
 
 	if request.ShouldInclude(requests.IncludeTypePollParticipationVotes) {
+		ledgerHeaders, err := h.GetLedgerHeaders(votes)
+		if err != nil {
+			return nil, errors.Wrap(err, "cannot get ledger headers")
+		}
+
 		for _, v := range votes {
-			ledgerSequence := generator.GetSeqFromInt64(v.ID)
-			header, err := h.LedgerHeaderQ.GetBySequence(ledgerSequence)
-			if err != nil {
-				return nil, errors.Wrap(err, "cannot get header of ledger sequence")
-			}
-			created := uint64(header.CloseTime)
+			ledgerSequence := generator.GetSeqFromInt64(v.ID) // ledger sequence
+			created := time.Unix(ledgerHeaders[ledgerSequence].CloseTime, 0)
 			v.VoteData.CreationTime = &created
 			vote := resources.NewVote(v)
 
@@ -115,4 +117,23 @@ func (h *getPollHandler) getPoll(request *requests.GetPoll) (*regources.PollResp
 	}
 
 	return response, nil
+}
+
+func (h *getPollHandler) GetLedgerHeaders(votes []history2.Vote) (map[int32]core2.LedgerHeader, error) {
+	ledgerSeq := make([]int32, len(votes))
+	for i, vote := range votes {
+		ledgerSeq[i] = generator.GetSeqFromInt64(vote.ID)
+	}
+
+	ledgerHeaders, err := h.LedgerHeaderQ.SelectBySequence(ledgerSeq)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot get header of ledger sequence")
+	}
+
+	result := make(map[int32]core2.LedgerHeader)
+	for _, ledger := range ledgerHeaders {
+		result[ledger.Sequence] = ledger
+	}
+
+	return result, nil
 }
