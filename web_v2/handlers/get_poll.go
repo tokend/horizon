@@ -2,10 +2,13 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	regources "gitlab.com/tokend/regources/generated"
 
+	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2/generator"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -24,9 +27,10 @@ func GetPoll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler := getPollHandler{
-		VotesQ: history2.NewVotesQ(ctx.HistoryRepo(r)),
-		PollsQ: history2.NewPollsQ(ctx.HistoryRepo(r)),
-		Log:    ctx.Log(r),
+		LedgerHeaderQ: *core2.NewLedgerHeaderQ(ctx.CoreRepo(r)),
+		VotesQ:        history2.NewVotesQ(ctx.HistoryRepo(r)),
+		PollsQ:        history2.NewPollsQ(ctx.HistoryRepo(r)),
+		Log:           ctx.Log(r),
 	}
 
 	result, err := handler.getPoll(request)
@@ -56,9 +60,10 @@ func GetPoll(w http.ResponseWriter, r *http.Request) {
 }
 
 type getPollHandler struct {
-	PollsQ history2.PollsQ
-	VotesQ history2.VotesQ
-	Log    *logan.Entry
+	LedgerHeaderQ core2.LedgerHeaderQ
+	PollsQ        history2.PollsQ
+	VotesQ        history2.VotesQ
+	Log           *logan.Entry
 }
 
 // GetSale returns sale with related resources
@@ -96,11 +101,39 @@ func (h *getPollHandler) getPoll(request *requests.GetPoll) (*regources.PollResp
 	}
 
 	if request.ShouldInclude(requests.IncludeTypePollParticipationVotes) {
+		ledgerHeaders, err := h.GetLedgerHeaders(votes)
+		if err != nil {
+			return nil, errors.Wrap(err, "cannot get ledger headers")
+		}
+
 		for _, v := range votes {
+			ledgerSequence := generator.GetSeqFromInt64(v.ID) // ledger sequence
+			created := time.Unix(ledgerHeaders[ledgerSequence].CloseTime, 0)
+			v.VoteData.CreationTime = &created
 			vote := resources.NewVote(v)
+
 			response.Included.Add(&vote)
 		}
 	}
 
 	return response, nil
+}
+
+func (h *getPollHandler) GetLedgerHeaders(votes []history2.Vote) (map[int32]core2.LedgerHeader, error) {
+	ledgerSeq := make([]int32, len(votes))
+	for i, vote := range votes {
+		ledgerSeq[i] = generator.GetSeqFromInt64(vote.ID)
+	}
+
+	ledgerHeaders, err := h.LedgerHeaderQ.SelectBySequence(ledgerSeq)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot get header of ledger sequence")
+	}
+
+	result := make(map[int32]core2.LedgerHeader)
+	for _, ledger := range ledgerHeaders {
+		result[ledger.Sequence] = ledger
+	}
+
+	return result, nil
 }

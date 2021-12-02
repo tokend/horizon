@@ -64,10 +64,11 @@ func GetVoteList(w http.ResponseWriter, r *http.Request) {
 }
 
 type getVoteListHandler struct {
-	VotesQ    history2.VotesQ
-	PollsQ    history2.PollsQ
-	AccountsQ core2.AccountsQ
-	Log       *logan.Entry
+	LedgerHeaderQ core2.LedgerHeaderQ
+	VotesQ        history2.VotesQ
+	PollsQ        history2.PollsQ
+	AccountsQ     core2.AccountsQ
+	Log           *logan.Entry
 }
 
 // GetVoteList returns the list of assets with related resources

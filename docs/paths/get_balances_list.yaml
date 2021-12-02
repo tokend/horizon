@@ -32,23 +32,23 @@
         schema:
           type: string
       - name: filter[amount_lw_or_eq]
-          in: query
-          description: |
-            Filters balances by amount. Returns page of balances with balance amount lower or equal then provided
-          required: false
-          style: form
-          explode: false
-          schema:
-            type: integer
+        in: query
+        description: |
+          Filters balances by amount. Returns page of balances with balance amount lower or equal then provided
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
       - name: filter[amount_gt]
-          in: query
-          description: |
-            Filters balances by amount. Returns page of balances with balance amount greater then provided
-          required: false
-          style: form
-          explode: false
-          schema:
-            type: integer
+        in: query
+        description: |
+          Filters balances by amount. Returns page of balances with balance amount greater then provided
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
       - name: include
         in: query
         description: |
