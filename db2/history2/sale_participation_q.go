@@ -3,10 +3,11 @@ package history2
 import (
 	"database/sql"
 
+	"gitlab.com/tokend/horizon/db2/core2"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2/core2"
 )
 
 // SaleParticipationQ is a helper struct to aid in configuring queries that load
@@ -101,8 +102,8 @@ func (q SaleParticipationQ) Select() ([]SaleParticipation, error) {
 	return result, nil
 }
 
-// SelectParticipantsCount - returns slice of participants count with corresponding sale ID
-func (q SaleParticipationQ) SelectParticipantsCount() ([]core2.SaleIDParticipantsCount, error) {
+// SelectParticipationsCount - returns slice of participations count with corresponding sale ID
+func (q SaleParticipationQ) SelectParticipationsCount() ([]core2.SaleIDParticipantsCount, error) {
 	var result []core2.SaleIDParticipantsCount
 
 	q.selector = q.selector.Columns("(pe.effect#>>'{matched,order_book_id}')::int sale_id", "COUNT(*) p_count").
@@ -114,6 +115,24 @@ func (q SaleParticipationQ) SelectParticipantsCount() ([]core2.SaleIDParticipant
 			return nil, nil
 		}
 		return nil, errors.Wrap(err, "failed to load sale participations")
+	}
+
+	return result, nil
+}
+
+// SelectParticipantsCount - returns slice of participants count with corresponding sale ID
+func (q SaleParticipationQ) SelectParticipantsCount() ([]core2.SaleIDParticipantsCount, error) {
+	var result []core2.SaleIDParticipantsCount
+
+	q.selector = q.selector.Columns("(pe.effect#>>'{matched,order_book_id}')::int sale_id", "COUNT(DISTINCT pe.account_id) p_count").
+		GroupBy("sale_id")
+
+	err := q.repo.Select(&result, q.selector)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, errors.Wrap(err, "failed to load sale participants")
 	}
 
 	return result, nil

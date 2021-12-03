@@ -20,6 +20,8 @@ type SaleAttributes struct {
 	EndTime time.Time `json:"end_time"`
 	// participations count in sale
 	ParticipationsCount int64 `json:"participations_count"`
+	// participants count in sale
+	ParticipantsCount int64 `json:"participants_count"`
 	// state of sale
 	SaleState SaleState `json:"sale_state"`
 	// type of sale
