@@ -224,7 +224,7 @@ gitlab.com/tokend/keypair
 gitlab.com/tokend/keypair/internal
 gitlab.com/tokend/keypair/internal/crc16
 gitlab.com/tokend/keypair/internal/strkey
-# gitlab.com/tokend/regources v4.9.2-0.20211202011455-301a67edb3cc+incompatible
+# gitlab.com/tokend/regources v4.9.2-0.20211203173452-55ebed6df3be+incompatible
 ## explicit
 gitlab.com/tokend/regources
 gitlab.com/tokend/regources/generated
