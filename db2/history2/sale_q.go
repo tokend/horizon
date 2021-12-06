@@ -3,15 +3,15 @@ package history2
 import (
 	"database/sql"
 	"fmt"
-	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/tokend/horizon/db2"
-	regources "gitlab.com/tokend/regources/generated"
 	"time"
 
-	"gitlab.com/tokend/go/xdr"
+	"gitlab.com/tokend/horizon/db2"
 
 	sq "github.com/Masterminds/squirrel"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
+	regources "gitlab.com/tokend/regources/generated"
 )
 
 // SalesQ is a helper struct to aid in configuring queries that loads
@@ -183,7 +183,7 @@ func (q SalesQ) FilterByMaxHardCap(value uint64) SalesQ {
 }
 
 func (q SalesQ) FilterByParticipant(participant string, saleIDs []int64) SalesQ {
-	q.selector = q.selector.LeftJoin("participant_effects pe on (sales.id = (pe.effect#>>'{matched,order_book_id}')::int and sales.state = ? and pe.asset_code = sales.base_asset)", regources.SaleStateClosed).
+	q.selector = q.selector.LeftJoin("(SELECT DISTINCT (effect#>>'{matched,order_book_id}')::int sale_id, asset_code, account_id FROM participant_effects) pe on (sales.id = pe.sale_id and sales.state = ? and pe.asset_code = sales.base_asset)", regources.SaleStateClosed).
 		LeftJoin("accounts a ON pe.account_id = a.id").
 		Where(sq.Or{sq.Eq{"a.address": participant}, sq.Eq{"sales.id": saleIDs}}).Where("sales.owner_address != ?", participant)
 	return q
