@@ -14,6 +14,8 @@ import (
 
 var (
 	unexpectedParticipationsQType = errors.New("unexpected participationsQ type")
+	unexpectedSaleType            = errors.New("unexpected sale type")
+	unexpectedSaleState           = errors.New("unexpected sale state")
 )
 
 type getSaleBase struct {
@@ -221,6 +223,8 @@ const (
 	closedPrtQ PrtQType = iota
 	pendingPrtQ
 	undefinedPrtQ
+	undefinedPrtQSaleType
+	cancelledPrtQ
 )
 
 type SaleParticipationsInfo struct {
@@ -245,8 +249,12 @@ func salesParticipationsInfo(saleParticipationsQ history2.SaleParticipationQ, of
 			prtQTypeSalesMap[prtQType] = SaleParticipationsInfo{
 				SalesIDs: append(prtQTypeSalesMap[prtQType].SalesIDs, sale.ID),
 			}
-		case undefinedPrtQ:
+		case cancelledPrtQ:
 			continue
+		case undefinedPrtQSaleType:
+			return nil, nil, unexpectedSaleType
+		case undefinedPrtQ:
+			return nil, nil, unexpectedSaleState
 		default:
 			return nil, nil, unexpectedParticipationsQType
 		}
@@ -295,7 +303,7 @@ func salesParticipationsInfo(saleParticipationsQ history2.SaleParticipationQ, of
 func getParticipationsQType(historySale history2.Sale) PrtQType {
 	switch historySale.State {
 	case regources.SaleStateCanceled:
-		return undefinedPrtQ
+		return cancelledPrtQ
 	case regources.SaleStateOpen:
 		switch historySale.SaleType {
 		case xdr.SaleTypeImmediate:
@@ -303,7 +311,7 @@ func getParticipationsQType(historySale history2.Sale) PrtQType {
 		case xdr.SaleTypeBasicSale, xdr.SaleTypeCrowdFunding, xdr.SaleTypeFixedPrice:
 			return pendingPrtQ
 		default:
-			return undefinedPrtQ
+			return undefinedPrtQSaleType
 		}
 	case regources.SaleStateClosed:
 		return closedPrtQ
