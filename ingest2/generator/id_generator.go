@@ -60,3 +60,13 @@ func MakeIDUint16(significant int32, seq1, seq2 uint16) int64 {
 
 	return (int64(significant) << 32) | int64(seq1)<<16 | int64(seq2)
 }
+
+// Function gets sequence id from 64 bit integer
+// Passed format should be following:
+// 32 most significant bits are sequence id
+// 32 least significant bits are some other staff
+//
+// this scheme is used in poll/vote IDs
+func GetSeqFromInt64(id int64) int32 {
+	return int32(id >> 32)
+}

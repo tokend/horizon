@@ -4,10 +4,15 @@
 
 package regources
 
-import "gitlab.com/tokend/go/xdr"
+import (
+	"time"
+
+	"gitlab.com/tokend/go/xdr"
+)
 
 type VoteData struct {
-	CustomChoice *string `json:"custom_choice,omitempty"`
+	CustomChoice *Details   `json:"custom_choice,omitempty"`
+	CreationTime *time.Time `json:"creation_time,omitempty"`
 	// type of the poll
 	PollType     xdr.PollType `json:"poll_type"`
 	SingleChoice *uint64      `json:"single_choice,omitempty"`

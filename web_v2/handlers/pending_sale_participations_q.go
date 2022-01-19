@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -57,7 +58,12 @@ func (p pendingParticipationsQ) Select() ([]regources.SaleParticipation, error) 
 	return result, nil
 }
 
-// Count - returns slice of sales ids mapped to participants count
-func (p pendingParticipationsQ) Count() ([]core2.SaleIDParticipantsCount, error) {
+// ParticipationsCount - returns slice of sales ids mapped to participants count
+func (p pendingParticipationsQ) ParticipationsCount() ([]core2.SaleIDParticipantsCount, error) {
+	return p.offersQ.SelectParticipationsCount()
+}
+
+// ParticipantsCount - returns slice of sales ids mapped to participants count
+func (p pendingParticipationsQ) ParticipantsCount() ([]core2.SaleIDParticipantsCount, error) {
 	return p.offersQ.SelectParticipantsCount()
 }

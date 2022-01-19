@@ -31,8 +31,8 @@ type System struct {
 
 // Submit submits the provided base64 encoded transaction envelope to the
 // network using this submission system.
-func (s *System) Submit(ctx context.Context, envelope EnvelopeInfo, waitIngest bool) (*Result, error) {
-	submission := s.trySubmit(ctx, envelope, waitIngest)
+func (s *System) Submit(ctx context.Context, envelope EnvelopeInfo, waitResult, waitIngest bool) (*Result, error) {
+	submission := s.trySubmit(ctx, envelope, waitResult, waitIngest)
 	select {
 	case result := <-submission:
 		return result.unwrap()
@@ -53,7 +53,7 @@ func (s *System) checkForDuplicates(hash string) (*Result, error) {
 	return result, nil
 }
 
-func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo, waitIngest bool) <-chan fullResult {
+func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo, waitResult, waitIngest bool) <-chan fullResult {
 	listener := make(chan fullResult, 1)
 
 	result, err := s.checkForDuplicates(info.ContentHash)
@@ -64,7 +64,7 @@ func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo, waitIngest bo
 		})
 	}
 	if result == nil {
-		return s.submit(ctx, info, listener, waitIngest)
+		return s.submit(ctx, info, listener, waitResult, waitIngest)
 	}
 
 	return send(listener, fullResult{
@@ -72,7 +72,7 @@ func (s *System) trySubmit(ctx context.Context, info EnvelopeInfo, waitIngest bo
 	})
 }
 
-func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResult, waitIngest bool) <-chan fullResult {
+func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResult, waitResult, waitIngest bool) <-chan fullResult {
 	duration, err := s.Submitter.Submit(ctx, &info)
 	if err != nil {
 		return send(l,
@@ -82,6 +82,15 @@ func (s *System) submit(ctx context.Context, info EnvelopeInfo, l chan fullResul
 			})
 	}
 	s.Log.WithField("duration", duration).Debug("Successfully submit tx")
+
+	if !waitResult {
+		return send(l, fullResult{
+			Result: Result{
+				Hash:        info.ContentHash,
+				EnvelopeXDR: info.RawBlob,
+			},
+		})
+	}
 
 	err = s.List.Add(&info, waitIngest, l)
 	if err != nil {

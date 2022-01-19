@@ -3,16 +3,17 @@ package handlers
 import (
 	"net/http"
 
-	"gitlab.com/distributed_lab/ape"
-	"gitlab.com/distributed_lab/ape/problems"
-	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/ctx"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
+
+	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -77,8 +78,10 @@ type participationsQ interface {
 	FilterByQuoteAsset(code string) participationsQ
 	// Select - select records from db and wraps them to participations
 	Select() ([]regources.SaleParticipation, error)
-	// Count - get slice of sales ids mapped to participants count
-	Count() ([]core2.SaleIDParticipantsCount, error)
+	// ParticipationsCount - get slice of sales ids mapped to participations count
+	ParticipationsCount() ([]core2.SaleIDParticipantsCount, error)
+	// ParticipantsCount - get slice of sales ids mapped to participants count
+	ParticipantsCount() ([]core2.SaleIDParticipantsCount, error)
 }
 
 // GetSaleParticipations returns sale with related resources

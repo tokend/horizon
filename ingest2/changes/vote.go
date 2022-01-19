@@ -6,6 +6,7 @@ import (
 	"gitlab.com/tokend/go/xdr"
 	history "gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/ingest2/generator"
+	"gitlab.com/tokend/horizon/ingest2/internal"
 )
 
 type voteStorage interface {
@@ -112,15 +113,15 @@ func (c *voteHandler) convertVote(raw xdr.VoteEntry, ID int64) (*history.Vote, e
 		VoterID: raw.VoterId.Address(),
 		PollID:  int64(raw.PollId),
 		VoteData: history.VoteData{
-			PollType:     raw.Data.PollType,
+			PollType: raw.Data.PollType,
 		},
 	}
-	switch raw.Data.PollType{
+	switch raw.Data.PollType {
 	case xdr.PollTypeSingleChoice:
 		choice := uint64(raw.Data.MustSingle().Choice)
 		vote.VoteData.SingleChoice = &choice
 	case xdr.PollTypeCustomChoice:
-		choice := string(raw.Data.MustCustom())
+		choice := internal.MarshalCustomDetails(raw.Data.MustCustom())
 		vote.VoteData.CustomChoice = &choice
 	}
 	return vote, nil

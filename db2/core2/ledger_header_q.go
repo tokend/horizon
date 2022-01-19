@@ -31,6 +31,18 @@ func NewLedgerHeaderQ(repo *pgdb.DB) *LedgerHeaderQ {
 	}
 }
 
+// SelectBySequence returns []core.LedgerHeader by its sequence. Returns nil, nil if ledgerHeader does not exists
+func (q *LedgerHeaderQ) SelectBySequence(seq []int32) ([]LedgerHeader, error) {
+	query := q.selector.Where(sq.Eq{"ledgerseq": seq})
+	var header []LedgerHeader
+	err := q.repo.Select(&header, query)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load ledger by sequence", logan.F{"seq": seq})
+	}
+
+	return header, nil
+}
+
 // GetBySequence returns *core.LedgerHeader by its sequence. Returns nil, nil if ledgerHeader does not exists
 func (q *LedgerHeaderQ) GetBySequence(seq int32) (*LedgerHeader, error) {
 	query := q.selector.Where("ledgerseq = ?", seq)

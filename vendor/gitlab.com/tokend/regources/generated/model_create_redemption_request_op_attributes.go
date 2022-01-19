@@ -5,7 +5,6 @@
 package regources
 
 type CreateRedemptionRequestOpAttributes struct {
-	Amount Amount `json:"amount"`
-	// custom details set for operation
+	Amount         Amount  `json:"amount"`
 	CreatorDetails Details `json:"creator_details"`
 }

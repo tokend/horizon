@@ -5,6 +5,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/history2"
+	"gitlab.com/tokend/horizon/ingest2"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
@@ -665,7 +666,7 @@ func newManageVoteOp(op history2.Operation) regources.Resource {
 				choice := uint64(details.VoteData.Single.Choice)
 				manageVoteOp.Attributes.Create.VoteData.SingleChoice = &choice
 			case xdr.PollTypeCustomChoice:
-				choice := string(*details.VoteData.Custom)
+				choice := ingest2.MarshalCustomDetails(details.VoteData.MustCustom())
 				manageVoteOp.Attributes.Create.VoteData.CustomChoice = &choice
 			}
 		}

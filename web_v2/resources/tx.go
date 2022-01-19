@@ -24,6 +24,13 @@ func NewTxKey(txID int64) regources.Key {
 	}
 }
 
+func NewTxKeyFromHash(txHash string) regources.Key {
+	return regources.Key{
+		ID:   txHash,
+		Type: regources.TRANSACTIONS,
+	}
+}
+
 func NewTxFailure(env txsub.EnvelopeInfo, txSubErr txsub.Error) error {
 	if txSubErr.Type() != txsub.RejectedTx { // timeout
 		return &jsonapi.ErrorObject{

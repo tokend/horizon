@@ -9,6 +9,9 @@
 * Filter by effect in get history endpoint
 * Fitler by `created_before`, `created_after` timestamps for reviewable requests
 * Filter by `all_tasks`, `all_tasks_any_of`, `all_tasks_not_set` for reviewable requests
+* Field `wait_for_result` (bool, default value: `true`) to `POST /v3/transactions` request which allows not waiting for transaction result from core (submission finishes faster but invalid tx handling is sender's responsibility). Not guaranteed that transactions submitted using this flag will be applied successfully.
+* Vote creation time
+* Participants count in `/v3/sales/{id}`
 
 ### Changed
 
@@ -20,6 +23,7 @@
 * `/v3/order_book/{id}` now uses renders numbers with trailing-digits-count-based dot
 * Match participant in manage offer
 * Error on '/v3/sales/{id}/relationships/participation'
+* Duplicated sale entries on '/v3/sales?filter[participant]='
 
 ## 3.9.1
 

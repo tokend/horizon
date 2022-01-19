@@ -27,7 +27,7 @@ github.com/go-chi/chi/middleware
 # github.com/go-errors/errors v1.0.0
 ## explicit
 github.com/go-errors/errors
-# github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
+# github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 ## explicit
 github.com/go-ozzo/ozzo-validation
 # github.com/goji/context v0.0.0-20160122015720-68b83f7b0439
@@ -85,7 +85,6 @@ github.com/mitchellh/mapstructure
 ## explicit
 github.com/munnerz/goautoneg
 # github.com/nullstyle/go-xdr v0.0.0-20180726165426-f4c839f75077
-## explicit
 github.com/nullstyle/go-xdr/xdr3
 # github.com/oklog/ulid v1.3.1
 github.com/oklog/ulid
@@ -202,7 +201,7 @@ gitlab.com/distributed_lab/txsub
 gitlab.com/distributed_lab/urlval
 gitlab.com/distributed_lab/urlval/internal
 gitlab.com/distributed_lab/urlval/internal/betterreflect
-# gitlab.com/tokend/go v3.15.1-0.20211012170121-ef00dadaabc8+incompatible
+# gitlab.com/tokend/go v3.15.1+incompatible
 ## explicit
 gitlab.com/tokend/go/address
 gitlab.com/tokend/go/amount
@@ -224,7 +223,7 @@ gitlab.com/tokend/keypair
 gitlab.com/tokend/keypair/internal
 gitlab.com/tokend/keypair/internal/crc16
 gitlab.com/tokend/keypair/internal/strkey
-# gitlab.com/tokend/regources v0.0.0-20211013090645-399605b1a154
+# gitlab.com/tokend/regources v4.9.2+incompatible
 ## explicit
 gitlab.com/tokend/regources
 gitlab.com/tokend/regources/generated

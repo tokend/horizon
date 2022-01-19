@@ -1,6 +1,6 @@
 # docker-in-docker allows to build and publish docker images
 services:
-  - docker:dind
+  - docker:18-dind
 
 variables:
   IMAGE_NAME: registry.gitlab.com/tokend/horizon

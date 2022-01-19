@@ -1,18 +1,21 @@
 package handlers
 
 import (
-	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/horizon/db2/core2"
 	"gitlab.com/tokend/horizon/db2/history2"
 	"gitlab.com/tokend/horizon/web_v2/requests"
 	"gitlab.com/tokend/horizon/web_v2/resources"
+
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	"gitlab.com/tokend/go/xdr"
 	regources "gitlab.com/tokend/regources/generated"
 )
 
 var (
 	unexpectedParticipationsQType = errors.New("unexpected participationsQ type")
+	unexpectedSaleType            = errors.New("unexpected sale type")
+	unexpectedSaleState           = errors.New("unexpected sale state")
 )
 
 type getSaleBase struct {
@@ -69,13 +72,17 @@ func (h *getSaleBase) getAndPopulateResponse(q history2.SalesQ, request *request
 		response.Included.Add(&asset)
 	}
 
-	saleParticipantsCountMap, err := salesParticipationCount(h.ParticipationQ, h.OffersQ, *historySale)
+	saleParticipationsCountMap, saleParticipantsCountMap, err := salesParticipationsInfo(h.ParticipationQ, h.OffersQ, *historySale)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load participations count")
+		return nil, errors.Wrap(err, "failed to load participations info")
+	}
+
+	if count, ok := saleParticipationsCountMap[historySale.ID]; ok {
+		response.Data.Attributes.ParticipationsCount = count
 	}
 
 	if count, ok := saleParticipantsCountMap[historySale.ID]; ok {
-		response.Data.Attributes.ParticipationsCount = count
+		response.Data.Attributes.ParticipantsCount = count
 	}
 
 	return response, nil
@@ -95,7 +102,7 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 	request requests.SalesBase,
 	response *regources.SaleListResponse) error {
 
-	participationsCount, err := salesParticipationCount(h.ParticipationQ, h.OffersQ, historySales...)
+	participationsCount, participantsCount, err := salesParticipationsInfo(h.ParticipationQ, h.OffersQ, historySales...)
 	if err != nil {
 		return errors.Wrap(err, "failed to populate participations count")
 	}
@@ -134,6 +141,10 @@ func (h *salesBaseHandler) populateResponse(historySales []history2.Sale,
 
 		if count, ok := participationsCount[historySale.ID]; ok {
 			sale.Attributes.ParticipationsCount = count
+		}
+
+		if count, ok := participantsCount[historySale.ID]; ok {
+			sale.Attributes.ParticipantsCount = count
 		}
 
 		response.Data = append(response.Data, sale)
@@ -212,6 +223,8 @@ const (
 	closedPrtQ PrtQType = iota
 	pendingPrtQ
 	undefinedPrtQ
+	undefinedPrtQSaleType
+	cancelledPrtQ
 )
 
 type SaleParticipationsInfo struct {
@@ -220,7 +233,7 @@ type SaleParticipationsInfo struct {
 	Owners     []string
 }
 
-func salesParticipationCount(saleParticipationsQ history2.SaleParticipationQ, offersQ core2.OffersQ, historySales ...history2.Sale) (core2.SaleParticipantsMap, error) {
+func salesParticipationsInfo(saleParticipationsQ history2.SaleParticipationQ, offersQ core2.OffersQ, historySales ...history2.Sale) (core2.SaleParticipantsMap, core2.SaleParticipantsMap, error) {
 	prtQTypeSalesMap := make(map[PrtQType]SaleParticipationsInfo)
 	for _, sale := range historySales {
 		prtQType := getParticipationsQType(sale)
@@ -236,14 +249,19 @@ func salesParticipationCount(saleParticipationsQ history2.SaleParticipationQ, of
 			prtQTypeSalesMap[prtQType] = SaleParticipationsInfo{
 				SalesIDs: append(prtQTypeSalesMap[prtQType].SalesIDs, sale.ID),
 			}
-		case undefinedPrtQ:
+		case cancelledPrtQ:
 			continue
+		case undefinedPrtQSaleType:
+			return nil, nil, unexpectedSaleType
+		case undefinedPrtQ:
+			return nil, nil, unexpectedSaleState
 		default:
-			return nil, unexpectedParticipationsQType
+			return nil, nil, unexpectedParticipationsQType
 		}
 	}
 
 	participationsCount := make([]core2.SaleIDParticipantsCount, 0, len(historySales))
+	participantsCount := make([]core2.SaleIDParticipantsCount, 0, len(historySales))
 	prtQSalesMap := make(map[PrtQType]participationsQ)
 	for prtType, salesInfo := range prtQTypeSalesMap {
 		if _, ok := prtQSalesMap[prtType]; !ok {
@@ -262,24 +280,30 @@ func salesParticipationCount(saleParticipationsQ history2.SaleParticipationQ, of
 						FilterByNotSaleOwners(salesInfo.Owners...),
 				}
 			default:
-				return nil, unexpectedParticipationsQType
+				return nil, nil, unexpectedParticipationsQType
 			}
 		}
 
-		temp, err := prtQSalesMap[prtType].Count()
+		participationsCountTemp, err := prtQSalesMap[prtType].ParticipationsCount()
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to select participants count")
+			return nil, nil, errors.Wrap(err, "failed to select participations count")
 		}
-		participationsCount = append(participationsCount, temp...)
+		participantsCountTemp, err := prtQSalesMap[prtType].ParticipantsCount()
+		if err != nil {
+			return nil, nil, errors.Wrap(err, "failed to select participants count")
+		}
+
+		participationsCount = append(participationsCount, participationsCountTemp...)
+		participantsCount = append(participantsCount, participantsCountTemp...)
 	}
 
-	return core2.SaleParticipantsToMap(participationsCount), nil
+	return core2.SaleParticipantsToMap(participationsCount), core2.SaleParticipantsToMap(participantsCount), nil
 }
 
 func getParticipationsQType(historySale history2.Sale) PrtQType {
 	switch historySale.State {
 	case regources.SaleStateCanceled:
-		return undefinedPrtQ
+		return cancelledPrtQ
 	case regources.SaleStateOpen:
 		switch historySale.SaleType {
 		case xdr.SaleTypeImmediate:
@@ -287,7 +311,7 @@ func getParticipationsQType(historySale history2.Sale) PrtQType {
 		case xdr.SaleTypeBasicSale, xdr.SaleTypeCrowdFunding, xdr.SaleTypeFixedPrice:
 			return pendingPrtQ
 		default:
-			return undefinedPrtQ
+			return undefinedPrtQSaleType
 		}
 	case regources.SaleStateClosed:
 		return closedPrtQ

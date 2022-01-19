@@ -11,7 +11,7 @@ require (
 	github.com/getsentry/raven-go v0.2.0
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-errors/errors v1.0.0
-	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
+	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/goji/context v0.0.0-20160122015720-68b83f7b0439
 	github.com/golang/groupcache v0.0.0-20191002201903-404acd9df4cc
 	github.com/google/jsonapi v0.0.0-20170708005851-46d3ced04344
@@ -20,7 +20,6 @@ require (
 	github.com/lib/pq v1.10.0
 	github.com/magiconair/properties v1.8.1
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822
-	github.com/nullstyle/go-xdr v0.0.0-20180726165426-f4c839f75077 // indirect
 	github.com/onsi/ginkgo v1.16.1 // indirect
 	github.com/onsi/gomega v1.11.0 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -46,9 +45,9 @@ require (
 	gitlab.com/distributed_lab/running v0.0.0-20190830165007-aded59ee376f
 	gitlab.com/distributed_lab/txsub v0.0.0-20171130120140-d7781cbc2319
 	gitlab.com/distributed_lab/urlval v2.2.0+incompatible
-	gitlab.com/tokend/go v3.15.1-0.20211012170121-ef00dadaabc8+incompatible
+	gitlab.com/tokend/go v3.15.1+incompatible
 	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
-	gitlab.com/tokend/regources v0.0.0-20211013090645-399605b1a154
+	gitlab.com/tokend/regources v4.9.2+incompatible
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 	gopkg.in/tylerb/graceful.v1 v1.2.15
 )

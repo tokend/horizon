@@ -3,10 +3,11 @@ package core2
 import (
 	"database/sql"
 
+	"gitlab.com/tokend/horizon/db2"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/horizon/db2"
 )
 
 // OffersQ is a helper struct to aid in configuring queries that loads offers
@@ -174,12 +175,30 @@ func (q OffersQ) SelectID() ([]int64, error) {
 	return result, nil
 }
 
-// SelectParticipantsCount - returns slice of participants count with corresponding sale ID
-func (q OffersQ) SelectParticipantsCount() ([]SaleIDParticipantsCount, error) {
+// SelectParticipationsCount - returns slice of participants count with corresponding sale ID
+func (q OffersQ) SelectParticipationsCount() ([]SaleIDParticipantsCount, error) {
 	var result []SaleIDParticipantsCount
 
 	q.selector = q.selector.Columns("offers.order_book_id sale_id", "COUNT(*) p_count").
 		GroupBy("sale_id")
+
+	err := q.repo.Select(&result, q.selector)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, errors.Wrap(err, "failed to select sales participations count")
+	}
+
+	return result, nil
+}
+
+// SelectParticipantsCount - returns slice of participants count with corresponding sale ID
+func (q OffersQ) SelectParticipantsCount() ([]SaleIDParticipantsCount, error) {
+	var result []SaleIDParticipantsCount
+
+	q.selector = q.selector.Columns("offers.order_book_id sale_id", "COUNT(DISTINCT offers.owner_id) p_count").
+		GroupBy("offers.order_book_id")
 
 	err := q.repo.Select(&result, q.selector)
 	if err != nil {

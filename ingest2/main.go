@@ -3,6 +3,8 @@
 // `consumer` - handles the data and stores it into horizon db
 package ingest2
 
+import "gitlab.com/tokend/horizon/ingest2/internal"
+
 // Add new version and assign it to `CurrentIngestVersion` if you want force reingest (after backward not compatible changes)
 const CurrentIngestVersion = IngestVersionCreateAmlRequestDetails
 
@@ -22,3 +24,5 @@ const (
 	IngestVersionFixManageOfferParticipantEffect
 	IngestVersionCreateAmlRequestDetails
 )
+
+var MarshalCustomDetails = internal.MarshalCustomDetails
