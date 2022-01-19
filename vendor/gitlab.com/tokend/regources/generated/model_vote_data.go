@@ -11,6 +11,7 @@ import (
 )
 
 type VoteData struct {
+	CustomChoice *Details   `json:"custom_choice,omitempty"`
 	CreationTime *time.Time `json:"creation_time,omitempty"`
 	// type of the poll
 	PollType     xdr.PollType `json:"poll_type"`

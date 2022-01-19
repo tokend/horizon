@@ -85,7 +85,6 @@ github.com/mitchellh/mapstructure
 ## explicit
 github.com/munnerz/goautoneg
 # github.com/nullstyle/go-xdr v0.0.0-20180726165426-f4c839f75077
-## explicit
 github.com/nullstyle/go-xdr/xdr3
 # github.com/oklog/ulid v1.3.1
 github.com/oklog/ulid
@@ -143,7 +142,7 @@ github.com/spf13/pflag
 github.com/spf13/viper
 # github.com/stretchr/objx v0.1.1
 github.com/stretchr/objx
-# github.com/stretchr/testify v1.6.1
+# github.com/stretchr/testify v1.7.0
 ## explicit
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/mock
@@ -202,7 +201,7 @@ gitlab.com/distributed_lab/txsub
 gitlab.com/distributed_lab/urlval
 gitlab.com/distributed_lab/urlval/internal
 gitlab.com/distributed_lab/urlval/internal/betterreflect
-# gitlab.com/tokend/go v3.15.1-0.20210702081110-f832d789c90e+incompatible
+# gitlab.com/tokend/go v3.15.1+incompatible
 ## explicit
 gitlab.com/tokend/go/address
 gitlab.com/tokend/go/amount
@@ -224,7 +223,7 @@ gitlab.com/tokend/keypair
 gitlab.com/tokend/keypair/internal
 gitlab.com/tokend/keypair/internal/crc16
 gitlab.com/tokend/keypair/internal/strkey
-# gitlab.com/tokend/regources v4.9.2-0.20211203173452-55ebed6df3be+incompatible
+# gitlab.com/tokend/regources v4.9.2+incompatible
 ## explicit
 gitlab.com/tokend/regources
 gitlab.com/tokend/regources/generated

@@ -2,6 +2,7 @@ package problem
 
 import (
 	"errors"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
@@ -56,7 +57,7 @@ func TestProblemPackage(t *testing.T) {
 
 	Convey("problem.Render", t, func() {
 		Convey("renders the type correctly", func() {
-			w := testRender(ctx, P{Type: "foo"})
+			w := testRender(ctx, P{Type: "foo", Status: http.StatusBadRequest})
 			So(w.Body.String(), ShouldContainSubstring, "foo")
 		})
 
@@ -69,6 +70,7 @@ func TestProblemPackage(t *testing.T) {
 		Convey("renders the extras correctly", func() {
 			w := testRender(ctx, P{
 				Extras: map[string]interface{}{"hello": "stellar"},
+				Status: http.StatusBadRequest,
 			})
 			So(w.Body.String(), ShouldContainSubstring, "hello")
 			So(w.Body.String(), ShouldContainSubstring, "stellar")

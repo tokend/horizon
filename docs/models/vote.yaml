@@ -50,6 +50,8 @@ VoteData:
     single_choice:
       type: integer
       format: uint64
+    custom_choice:
+      type: string
     creation_time:
       type: string
       format: date-time
