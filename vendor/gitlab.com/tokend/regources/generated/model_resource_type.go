@@ -91,6 +91,7 @@ const (
 	OPERATIONS_LICENSE                                      ResourceType = "operations-license"
 	LIMITS                                                  ResourceType = "limits"
 	LIMITS_WITH_STATS                                       ResourceType = "limits-with-stats"
+	LIQUIDITY_POOLS                                         ResourceType = "liquidity-pools"
 	OPERATIONS_CREATE_ACCOUNT_ROLE                          ResourceType = "operations-create-account-role"
 	OPERATIONS_UPDATE_ACCOUNT_ROLE                          ResourceType = "operations-update-account-role"
 	OPERATIONS_REMOVE_ACCOUNT_ROLE                          ResourceType = "operations-remove-account-role"

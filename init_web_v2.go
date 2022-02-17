@@ -357,6 +357,8 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/deferred_payments", handlers.GetDeferredPaymentList)
 	m.Get("/v3/deferred_payments/{id}", handlers.GetDeferredPayment)
 
+	m.Get("/v3/liquidity-pools/{id}", handlers.GetLiquidityPool)
+
 	cop := app.config.Copus()
 	if err := cop.RegisterChi(m); err != nil {
 		panic(errors.Wrap(err, "failed to register service"))

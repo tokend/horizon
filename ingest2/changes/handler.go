@@ -44,6 +44,7 @@ func NewHandler(account accountStorage,
 	asset assetStorage,
 	data dataStorage,
 	def deferredPaymentStorage,
+	liquidityPool lpStorage,
 ) *Handler {
 
 	reviewRequestHandlerInst := newReviewableRequestHandler(request, balance, accountStatus)
@@ -57,6 +58,7 @@ func NewHandler(account accountStorage,
 	assetHandlerInst := newAssetHandler(asset)
 	dataHandlerInst := newDataHandler(data)
 	deferredPaymentHandlerInst := newDeferredPaymentHandler(def)
+	liquidityPoolHandlerInst := newLPHandler(liquidityPool)
 	return &Handler{
 		Create: map[xdr.LedgerEntryType]creatable{
 			xdr.LedgerEntryTypeAccount:             newAccountHandler(account),
@@ -72,6 +74,7 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeAsset:               assetHandlerInst,
 			xdr.LedgerEntryTypeData:                dataHandlerInst,
 			xdr.LedgerEntryTypeDeferredPayment:     deferredPaymentHandlerInst,
+			xdr.LedgerEntryTypeLiquidityPool:       liquidityPoolHandlerInst,
 		},
 		Update: map[xdr.LedgerEntryType]updatable{
 			xdr.LedgerEntryTypeReviewableRequest: reviewRequestHandlerInst,
@@ -81,6 +84,7 @@ func NewHandler(account accountStorage,
 			xdr.LedgerEntryTypeAsset:             assetHandlerInst,
 			xdr.LedgerEntryTypeData:              dataHandlerInst,
 			xdr.LedgerEntryTypeDeferredPayment:   deferredPaymentHandlerInst,
+			xdr.LedgerEntryTypeLiquidityPool:     liquidityPoolHandlerInst,
 		},
 		Remove: map[xdr.LedgerEntryType]removable{
 			xdr.LedgerEntryTypeReviewableRequest:   reviewRequestHandlerInst,

@@ -51,6 +51,7 @@ func initIngester2(app *App) {
 		storage.NewAsset(hRepo),
 		storage.NewData(hRepo),
 		storage.NewDeferredPayment(hRepo),
+		storage.NewLiquidityPool(hRepo),
 	)
 
 	idProvider := struct {

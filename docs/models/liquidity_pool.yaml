@@ -1,0 +1,70 @@
+LiquidityPoolKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "liquidity-pools"
+
+LiquidityPool:
+  allOf:
+    - $ref: "#/components/schemas/LiquidityPoolKey"
+    - type: object
+      required:
+        - relationships
+        - attributes
+      properties:
+        attributes:
+          type: object
+          required:
+            - account_id
+            - first_reserve
+            - second_reserve
+            - first_asset_code
+            - second_asset_code
+            - lp_tokens_amount
+            - first_balance
+            - second_balance
+          properties:
+            account_id:
+              type: string
+              description: "Liquidity pool's account ID"
+              example: "GAAHBWGMVTCZKDTVSJX4Z3F6HTEOZJZJIBZMH3G6UUFPPBTRP45OFOPK"
+            first_reserve:
+              type: string
+              format: Amount
+              description: "Amount of first asset's reserve in liquidity pool"
+              example: "10.000000"
+            second_reserve:
+              type: string
+              format: Amount
+              description: "Amount of second asset's reserve in liquidity pool"
+              example: "20.000000"
+            first_asset_code:
+              type: string
+              description: "Code of first asset in liquidity pool"
+              example: "BTC"
+            second_asset_code:
+              type: string
+              description: "Code of second asset in liquidity pool"
+              example: "USD"
+            lp_tokens_amount:
+              type: string
+              format: Amount
+              description: "Supply of a liquidity pool tokens"
+              example: "1.4143526"
+            first_balance:
+              type: string
+              description: "Balance ID of first asset in liquidity pool"
+              example: "BAHSXUMBQA6DXOERXIRLETQAUAT7YPDEGF7SV4MIIM75LBQ7CUHBDLWB"
+            second_balance:
+              type: string
+              description: "Balance ID of second asset in liquidity pool"
+              example: "BBRZIIZLA7W7OYZAS4OE4FR2ZZT74DXGBE3XXWG6GIPK4N37CO7NRRES"
+

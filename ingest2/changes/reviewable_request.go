@@ -258,11 +258,19 @@ func (c *reviewableRequestHandler) Removed(lc ledgerChange) error {
 				MustCreateRedemptionRequestResult().
 				MustRedemptionResponse().
 				Fulfilled)
+	case xdr.OperationTypeLpAddLiquidity:
+		return c.handleLPTokensIssuance(lc)
 	default: // safeguard for future updates
 		return errors.From(errUnknownRemoveReason, logan.F{
 			"op_type": op.Type.String(),
 		})
 	}
+}
+
+func (c *reviewableRequestHandler) handleLPTokensIssuance(lc ledgerChange) error {
+	id := uint64(lc.LedgerChange.MustRemoved().MustReviewableRequest().RequestId)
+
+	return c.storage.Approve(id)
 }
 
 func (c *reviewableRequestHandler) handleInitiateKycRecovery(lc ledgerChange) error {

@@ -406,6 +406,9 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeCancelDeferredPaymentCreationRequest:
 	case xdr.OperationTypeCreateCloseDeferredPaymentRequest:
 	case xdr.OperationTypeCancelCloseDeferredPaymentRequest:
+	case xdr.OperationTypeLpAddLiquidity:
+	case xdr.OperationTypeLpSwap:
+	case xdr.OperationTypeLpRemoveLiquidity:
 	default:
 		panic(fmt.Errorf("Unknown operation type: %s", c.OperationType()))
 	}

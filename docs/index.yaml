@@ -142,6 +142,7 @@ x-tagGroups:
       - Order Books
       - Crowd Investing
       - Matches
+      - Liquidity Pools
   - name: Advanced
     tags:
       - PreIssuance
