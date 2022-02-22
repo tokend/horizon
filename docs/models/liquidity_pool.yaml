@@ -29,6 +29,7 @@ LiquidityPool:
             - first_asset_code
             - second_asset_code
             - lp_tokens_amount
+            - lp_tokens_asset
             - first_balance
             - second_balance
           properties:
@@ -59,6 +60,10 @@ LiquidityPool:
               format: Amount
               description: "Supply of a liquidity pool tokens"
               example: "1.4143526"
+            lp_tokens_asset:
+              type: string
+              description: "Asset code of a liquidity pool tokens"
+              example: "BTC"
             first_balance:
               type: string
               description: "Balance ID of first asset in liquidity pool"

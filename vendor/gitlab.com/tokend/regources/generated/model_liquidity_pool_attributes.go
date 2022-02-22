@@ -15,6 +15,8 @@ type LiquidityPoolAttributes struct {
 	FirstReserve Amount `json:"first_reserve"`
 	// Supply of a liquidity pool tokens
 	LpTokensAmount Amount `json:"lp_tokens_amount"`
+	// Asset code of a liquidity pool tokens
+	LpTokensAsset string `json:"lp_tokens_asset"`
 	// Code of second asset in liquidity pool
 	SecondAssetCode string `json:"second_asset_code"`
 	// Balance ID of second asset in liquidity pool

@@ -20,6 +20,7 @@ func NewLiquidityPool(record history2.LiquidityPool) regources.LiquidityPool {
 			FirstAssetCode:  record.FirstAsset,
 			FirstReserve:    record.FirstReserve,
 			LpTokensAmount:  record.TokensAmount,
+			LpTokensAsset:   record.TokenAsset,
 			SecondAssetCode: record.SecondAsset,
 			SecondReserve:   record.SecondReserve,
 			FirstBalance:    record.FirstBalanceID,

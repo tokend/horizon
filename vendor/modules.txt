@@ -223,7 +223,7 @@ gitlab.com/tokend/keypair
 gitlab.com/tokend/keypair/internal
 gitlab.com/tokend/keypair/internal/crc16
 gitlab.com/tokend/keypair/internal/strkey
-# gitlab.com/tokend/regources v0.0.0-20220217163302-f4ac862aab0d
+# gitlab.com/tokend/regources v0.0.0-20220222152804-ffc6caaf4a86
 ## explicit
 gitlab.com/tokend/regources
 gitlab.com/tokend/regources/generated

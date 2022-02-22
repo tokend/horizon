@@ -356,6 +356,8 @@ gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 h1:u8pxrNw8QKIsrmCl
 gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312/go.mod h1:vdlhN5/oQR7uY8EsGSqPf8bwnmQxxpaq7qrQn5Y3U/w=
 gitlab.com/tokend/regources v0.0.0-20220217163302-f4ac862aab0d h1:O+X3JQOZ0y9rALyVCMxhroFnx9TfSCJb5Wggp/wL950=
 gitlab.com/tokend/regources v0.0.0-20220217163302-f4ac862aab0d/go.mod h1:q4pFPYOc8CW76HGg4hFXXIieGWxS8MN9St9nx603lqk=
+gitlab.com/tokend/regources v0.0.0-20220222152804-ffc6caaf4a86 h1:gX5PgNBhwPuECG4+aBEOcu8CNbeEfU7Gu0DAtl5yowY=
+gitlab.com/tokend/regources v0.0.0-20220222152804-ffc6caaf4a86/go.mod h1:q4pFPYOc8CW76HGg4hFXXIieGWxS8MN9St9nx603lqk=
 gitlab.com/tokend/regources v4.9.2+incompatible h1:HDPVWAqhCkPaJ2h9lYbInSA0b8nmeC9QG3zTtDpa16E=
 gitlab.com/tokend/regources v4.9.2+incompatible/go.mod h1:q4pFPYOc8CW76HGg4hFXXIieGWxS8MN9St9nx603lqk=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
