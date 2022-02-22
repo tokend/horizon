@@ -76,7 +76,7 @@ type OperationDetails struct {
 	CancelCloseDeferredPaymentRequest    *CancelCloseDeferredPaymentRequest    `json:"cancel_close_deferred_payment_request,omitempty"`
 	LiquidityPoolAddLiquidity            *LiquidityPoolManageLiquidity         `json:"liquidity_pool_add_liquidity,omitempty"`
 	LiquidityPoolSwap                    *LiquidityPoolSwap                    `json:"liquidity_pool_swap,omitempty"`
-	LiquidityPoolRemoveLiquidity         *LiquidityPoolManageLiquidity         `json:"liquidity_pool_remove_liquidity"`
+	LiquidityPoolRemoveLiquidity         *LiquidityPoolManageLiquidity         `json:"liquidity_pool_remove_liquidity,omitempty"`
 }
 
 //Value - converts operation details into jsonb
