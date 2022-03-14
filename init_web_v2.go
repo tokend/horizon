@@ -357,6 +357,7 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/deferred_payments", handlers.GetDeferredPaymentList)
 	m.Get("/v3/deferred_payments/{id}", handlers.GetDeferredPayment)
 
+	m.Get("/v3/liquidity-pools", handlers.GetLiquidityPoolList)
 	m.Get("/v3/liquidity-pools/{id}", handlers.GetLiquidityPool)
 
 	cop := app.config.Copus()

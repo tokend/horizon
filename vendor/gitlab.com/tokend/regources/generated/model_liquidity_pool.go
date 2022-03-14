@@ -8,7 +8,8 @@ import "encoding/json"
 
 type LiquidityPool struct {
 	Key
-	Attributes LiquidityPoolAttributes `json:"attributes"`
+	Attributes    LiquidityPoolAttributes    `json:"attributes"`
+	Relationships LiquidityPoolRelationships `json:"relationships"`
 }
 type LiquidityPoolResponse struct {
 	Data     LiquidityPool `json:"data"`

@@ -3,6 +3,8 @@ package history2
 import (
 	"database/sql"
 
+	"gitlab.com/tokend/horizon/db2"
+
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -21,14 +23,14 @@ func NewLiquidityPoolQ(repo *pgdb.DB) LiquidityPoolQ {
 		selector: sq.Select(
 			"lp.id",
 			"lp.account",
-			"lp.token_asset",
+			"lp.token_asset_code",
 			"lp.first_balance",
 			"lp.second_balance",
 			"lp.tokens_amount",
 			"lp.first_reserve",
 			"lp.second_reserve",
-			"lp.first_asset",
-			"lp.second_asset",
+			"lp.first_asset_code",
+			"lp.second_asset_code",
 		).From("liquidity_pools lp"),
 	}
 }
@@ -41,18 +43,18 @@ func (q LiquidityPoolQ) FilterByID(id uint64) LiquidityPoolQ {
 
 // FilterByLPAsset - returns q with filter by LP token asset
 func (q LiquidityPoolQ) FilterByLPAsset(lpAsset string) LiquidityPoolQ {
-	q.selector = q.selector.Where("lp.token_asset = ?", lpAsset)
+	q.selector = q.selector.Where("lp.token_asset_code = ?", lpAsset)
 	return q
 }
 
-// FilterByPairAssets - returns q with filter by LP pair asset codes
-func (q LiquidityPoolQ) FilterByPairAssets(pairAssets []string) LiquidityPoolQ {
+// FilterByPairAsset - returns q with filter by LP pair asset code
+func (q LiquidityPoolQ) FilterByPairAsset(pairAsset string) LiquidityPoolQ {
 	q.selector = q.selector.Where(sq.Or{
 		sq.Eq{
-			"lp.first_asset": pairAssets,
+			"lp.first_asset_code": pairAsset,
 		},
 		sq.Eq{
-			"lp.second_asset": pairAssets,
+			"lp.second_asset_code": pairAsset,
 		},
 	})
 	return q
@@ -70,10 +72,17 @@ func (q LiquidityPoolQ) GetByLPAsset(lpAsset string) (*LiquidityPool, error) {
 	return q.FilterByLPAsset(lpAsset).Get()
 }
 
-// SelectByPairAssets - loads a slice of liquidity pools
-// returns nil, nil if no liquidity pools found
-func (q LiquidityPoolQ) SelectByPairAssets(pairAssets []string) ([]LiquidityPool, error) {
-	return q.FilterByPairAssets(pairAssets).Select()
+// WithAssets - returns q with joined assets
+func (q LiquidityPoolQ) WithAssets() LiquidityPoolQ {
+	q.selector = q.selector.
+		Columns(db2.GetColumnsForJoin(assetColumns, "first_asset")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "second_asset")...).
+		Columns(db2.GetColumnsForJoin(assetColumns, "lp_tokens_asset")...).
+		LeftJoin("asset first_asset ON first_asset.code = lp.first_asset_code").
+		LeftJoin("asset second_asset ON second_asset.code = lp.second_asset_code").
+		LeftJoin("asset lp_tokens_asset ON lp_tokens_asset.code = lp.token_asset_code")
+
+	return q
 }
 
 // Page - returns q with specified limit and offset params

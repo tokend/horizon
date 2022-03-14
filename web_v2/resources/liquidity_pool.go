@@ -16,15 +16,17 @@ func NewLiquidityPool(record history2.LiquidityPool) regources.LiquidityPool {
 	return regources.LiquidityPool{
 		Key: NewLiquidityPoolKey(record.ID),
 		Attributes: regources.LiquidityPoolAttributes{
-			AccountId:       record.Account,
-			FirstAssetCode:  record.FirstAsset,
-			FirstReserve:    record.FirstReserve,
-			LpTokensAmount:  record.TokensAmount,
-			LpTokensAsset:   record.TokenAsset,
-			SecondAssetCode: record.SecondAsset,
-			SecondReserve:   record.SecondReserve,
-			FirstBalance:    record.FirstBalanceID,
-			SecondBalance:   record.SecondBalanceID,
+			AccountId:      record.Account,
+			FirstReserve:   record.FirstReserve,
+			LpTokensAmount: record.TokensAmount,
+			SecondReserve:  record.SecondReserve,
+		},
+		Relationships: regources.LiquidityPoolRelationships{
+			FirstAsset:    NewAssetKey(record.FirstAssetCode).AsRelation(),
+			SecondAsset:   NewBalanceKey(record.SecondAssetCode).AsRelation(),
+			LpTokensAsset: NewAssetKey(record.TokenAsset).AsRelation(),
+			FirstBalance:  NewAssetKey(record.FirstBalanceID).AsRelation(),
+			SecondBalance: NewBalanceKey(record.SecondBalanceID).AsRelation(),
 		},
 	}
 }

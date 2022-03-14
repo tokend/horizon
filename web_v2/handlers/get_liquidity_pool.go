@@ -54,5 +54,9 @@ func (h *getLiquidityPoolHandler) GetLiquidityPool(request *requests.GetLiquidit
 ) (*regources.LiquidityPoolResponse, error) {
 	q := h.LiquidityPoolQ.FilterByID(request.ID)
 
+	if request.ShouldInclude(requests.IncludeTypeLiquidityPoolAssets) {
+		q = q.WithAssets()
+	}
+
 	return h.getAndPopulateResponse(q, request)
 }

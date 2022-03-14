@@ -1,0 +1,74 @@
+/v3/liquidity-pools:
+  get:
+    tags:
+      - Liquidity Pools
+    summary: Liquidity pool List
+    description: |
+      Allows getting a filtered list of `LiquidityPool` with corresponding details
+    operation: getLiquidityPools
+    parameters:
+      - name: filter[lp_token]
+        in: query
+        description: |
+          Filters liquidity pools by a specified liquidity pool's token asset code.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[asset]
+        in: query
+        description: |
+          Filters liquidity pools by a specified asset from assets pair.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: |
+          Relationships that may be used for the included parameter.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+        enum:
+          - assets
+        example: assets
+      - $ref: '#/components/schemas/pageNumberParam'
+      - $ref: '#/components/schemas/pageLimitParam'
+      - $ref: '#/components/schemas/sortingParam'
+    responses:
+      200:
+        description: Liquidity pool exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/LiquidityPool'
+                links:
+                  type: object
+                  description: "Provides links for pagination"
+                  properties:
+                    next:
+                      type: string
+                      description: "link to the next page"
+                      example: "/v3/liquidity-pools?include=assets&page[number]=2&page[limit]=15"
+                    self:
+                      type: string
+                      description: "link to the current page"
+                      example: "/v3/liquidity-pools?include=assets&page[number]=1&page[limit]=15"
+      400:
+        description: Bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
