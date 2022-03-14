@@ -70,7 +70,7 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeCancelDeferredPaymentCreationRequest: func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelDeferredPaymentCreationRequestResult().Code },
 	xdr.OperationTypeCreateCloseDeferredPaymentRequest:    func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateCloseDeferredPaymentRequestResult().Code },
 	xdr.OperationTypeCancelCloseDeferredPaymentRequest:    func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelCloseDeferredPaymentRequestResult().Code },
-		xdr.OperationTypeLpSwap:                            func(ir xdr.OperationResultTr) shortStr { return ir.MustLpSwapResult().Code },
-	xdr.OperationTypeLpAddLiquidity:                    func(ir xdr.OperationResultTr) shortStr { return ir.MustLpAddLiquidityResult().Code },
-	xdr.OperationTypeLpRemoveLiquidity:                 func(ir xdr.OperationResultTr) shortStr { return ir.MustLpRemoveLiquidityResult().Code },
+	xdr.OperationTypeLpSwap:                               func(ir xdr.OperationResultTr) shortStr { return ir.MustLpSwapResult().Code },
+	xdr.OperationTypeLpAddLiquidity:                       func(ir xdr.OperationResultTr) shortStr { return ir.MustLpAddLiquidityResult().Code },
+	xdr.OperationTypeLpRemoveLiquidity:                    func(ir xdr.OperationResultTr) shortStr { return ir.MustLpRemoveLiquidityResult().Code },
 }
