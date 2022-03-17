@@ -23,9 +23,9 @@ func NewLiquidityPool(record history2.LiquidityPool) regources.LiquidityPool {
 		},
 		Relationships: regources.LiquidityPoolRelationships{
 			FirstAsset:    NewAssetKey(record.FirstAssetCode).AsRelation(),
-			SecondAsset:   NewBalanceKey(record.SecondAssetCode).AsRelation(),
+			SecondAsset:   NewAssetKey(record.SecondAssetCode).AsRelation(),
 			LpTokensAsset: NewAssetKey(record.TokenAsset).AsRelation(),
-			FirstBalance:  NewAssetKey(record.FirstBalanceID).AsRelation(),
+			FirstBalance:  NewBalanceKey(record.FirstBalanceID).AsRelation(),
 			SecondBalance: NewBalanceKey(record.SecondBalanceID).AsRelation(),
 		},
 	}

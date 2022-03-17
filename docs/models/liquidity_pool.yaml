@@ -84,4 +84,4 @@ LiquidityPool:
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/Balance'
+                  $ref: '#/components/schemas/BalanceKey'
