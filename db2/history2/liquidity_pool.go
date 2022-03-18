@@ -5,7 +5,7 @@ import regources "gitlab.com/tokend/regources/generated"
 type LiquidityPool struct {
 	ID              int64            `db:"id"`
 	Account         string           `db:"account"`
-	TokenAsset      string           `db:"token_asset_code"`
+	TokenAsset      string           `db:"token_asset"`
 	FirstBalanceID  string           `db:"first_balance"`
 	SecondBalanceID string           `db:"second_balance"`
 	TokensAmount    regources.Amount `db:"tokens_amount"`

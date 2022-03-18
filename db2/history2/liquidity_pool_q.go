@@ -23,7 +23,7 @@ func NewLiquidityPoolQ(repo *pgdb.DB) LiquidityPoolQ {
 		selector: sq.Select(
 			"lp.id",
 			"lp.account",
-			"lp.token_asset_code",
+			"lp.token_asset",
 			"lp.first_balance",
 			"lp.second_balance",
 			"lp.tokens_amount",
@@ -43,7 +43,7 @@ func (q LiquidityPoolQ) FilterByID(id uint64) LiquidityPoolQ {
 
 // FilterByLPAsset - returns q with filter by LP token asset
 func (q LiquidityPoolQ) FilterByLPAsset(lpAsset string) LiquidityPoolQ {
-	q.selector = q.selector.Where("lp.token_asset_code = ?", lpAsset)
+	q.selector = q.selector.Where("lp.token_asset = ?", lpAsset)
 	return q
 }
 
@@ -80,7 +80,7 @@ func (q LiquidityPoolQ) WithAssets() LiquidityPoolQ {
 		Columns(db2.GetColumnsForJoin(assetColumns, "lp_tokens_asset")...).
 		LeftJoin("asset first_asset ON first_asset.code = lp.first_asset_code").
 		LeftJoin("asset second_asset ON second_asset.code = lp.second_asset_code").
-		LeftJoin("asset lp_tokens_asset ON lp_tokens_asset.code = lp.token_asset_code")
+		LeftJoin("asset lp_tokens_asset ON lp_tokens_asset.code = lp.token_asset")
 
 	return q
 }

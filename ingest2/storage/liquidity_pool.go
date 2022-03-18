@@ -39,7 +39,7 @@ func (q *LiquidityPool) Insert(lp history2.LiquidityPool) error {
 
 	stmt := sq.Insert("liquidity_pools").
 		Columns("id", "account", "token_asset", "first_balance", "second_balance", "tokens_amount",
-			"first_reserve", "second_reserve", "first_asset", "second_asset").
+			"first_reserve", "second_reserve", "first_asset_code", "second_asset_code").
 		Values(lp.ID, lp.Account, lp.TokenAsset, lp.FirstBalanceID, lp.SecondBalanceID, lp.TokensAmount, lp.FirstReserve,
 			lp.SecondReserve, firstAssetCode, secondAssetCode)
 
