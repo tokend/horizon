@@ -142,5 +142,13 @@ func (h *getRequestListBaseHandler) ApplyFilters(
 		q = q.FilterByAllTasksAnyOf(*request.Filters.AllTasksAnyOf)
 	}
 
+	if request.Filters.UpdatedAfter != nil {
+		q = q.FilterByUpdatedAtAfter(*request.Filters.UpdatedAfter)
+	}
+
+	if request.Filters.UpdatedBefore != nil {
+		q = q.FilterByUpdatedAtBefore(*request.Filters.UpdatedBefore)
+	}
+
 	return q
 }
