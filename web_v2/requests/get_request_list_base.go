@@ -21,6 +21,8 @@ type GetRequestListBaseFilters struct {
 	AllTasks            *uint64 `filter:"all_tasks"`
 	AllTasksAnyOf       *uint64 `filter:"all_tasks_any_of"`
 	AllTasksNotSet      *uint64 `filter:"all_tasks_not_set"`
+	UpdatedBefore       *int64  `filter:"updated_before"`
+	UpdatedAfter        *int64  `filter:"updated_after"`
 }
 
 type GetRequestsBase struct {

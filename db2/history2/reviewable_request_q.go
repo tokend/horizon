@@ -37,6 +37,16 @@ func NewReviewableRequestsQ(repo *pgdb.DB) ReviewableRequestsQ {
 	}
 }
 
+func (q ReviewableRequestsQ) FilterByUpdatedAtAfter(tsUTC int64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("reviewable_requests.updated_at at time zone 'UTC' >= to_timestamp(?::numeric)", tsUTC)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByUpdatedAtBefore(tsUTC int64) ReviewableRequestsQ {
+	q.selector = q.selector.Where("reviewable_requests.updated_at at time zone 'UTC' < to_timestamp(?::numeric)", tsUTC)
+	return q
+}
+
 func (q ReviewableRequestsQ) FilterByCreatedAtAfter(tsUTC int64) ReviewableRequestsQ {
 	q.selector = q.selector.Where("reviewable_requests.created_at at time zone 'UTC' >= to_timestamp(?::numeric)", tsUTC)
 	return q

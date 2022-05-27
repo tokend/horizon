@@ -144,6 +144,25 @@
         schema:
           type: integer
           format: UTC Unix Timestamp
+      - name: filter[updated_before]
+        in: query
+        description: |
+          Filters requests by update timestamp earlier than passed value in filter (exclusively).
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+          format: UTC Unix Timestamp
+      - name: filter[updated_after]
+        description: |
+          Filters requests by update timestamp later or equal than passed value in filter (inclusively)
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: integer
+          format: UTC Unix Timestamp
       - name: include
         in: query
         description: |
