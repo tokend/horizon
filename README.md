@@ -6,10 +6,9 @@ All notable changes to this project will be documented in [this file](./changelo
 
 ## Startup
 
-- Entry point: cmd/horizon/main.go
-- Add environment variables (see example config in the config-example.txt)
-- Create Horizon database (make sure `DATABASE_URL` env var contains proper name of DB)
-- Apply migrations (run Horizon with `db history migrate up` command-line arguments)
+- Entry point package: `cmd/horizon`
+- Copy config file from config.yaml
+- Specify config file in command line by option `--config <path_to_config>`
 - Build and run Horizon
 
 ## Contribution notes
