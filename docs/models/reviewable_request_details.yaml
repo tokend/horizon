@@ -19,7 +19,6 @@ ReviewableRequestDetailsKey:
     - $ref: '#/components/schemas/RedemptionRequestKey'
     - $ref: '#/components/schemas/DataCreationRequestKey'
     - $ref: '#/components/schemas/DataUpdateRequestKey'
-    - $ref: '#/components/schemas/DataOwnerUpdateRequestKey'
     - $ref: '#/components/schemas/DataRemoveRequestKey'
     - $ref: '#/components/schemas/CreateDeferredPaymentRequestKey'
     - $ref: '#/components/schemas/CloseDeferredPaymentRequestKey'
@@ -48,7 +47,6 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/DataCreationRequest'
     - $ref: '#/components/schemas/DataUpdateRequest'
     - $ref: '#/components/schemas/DataRemoveRequest'
-    - $ref: '#/components/schemas/DataOwnerUpdateRequest'
     - $ref: '#/components/schemas/CreateDeferredPaymentRequest'
     - $ref: '#/components/schemas/CloseDeferredPaymentRequest'
 
@@ -1064,49 +1062,6 @@ DataUpdateRequest:
             value:
               $ref: '#/components/schemas/Details'
 
-DataOwnerUpdateRequestKey:
-  type: object
-  required:
-    - id
-    - type
-  properties:
-    id:
-      type: string
-      example: "5"
-    type:
-      type: string
-      enum:
-        - "request-details-data-owner-update"
-
-DataOwnerUpdateRequest:
-  allOf:
-    - $ref: '#/components/schemas/DataOwnerUpdateRequestKey'
-    - type: object
-      required: [ relationships, attributes ]
-      properties:
-        relationships:
-          type: object
-          properties:
-            data:
-              type: object
-              description: "data to update"
-              $ref: '#/components/schemas/DataKey'
-        attributes:
-          type: object
-          required:
-            - owner
-            - sequence_number
-            - creator_details
-          properties:
-            sequence_number:
-              type: integer
-              format: uint32
-              description: "Sequence number"
-              example: 10
-            creator_details:
-              $ref: '#/components/schemas/Details'
-            owner:
-              $ref: '#/components/schemas/AccountKey'
 
 DataRemoveRequestKey:
   type: object

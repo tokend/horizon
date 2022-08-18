@@ -61,8 +61,6 @@ OperationDetails:
     - $ref: '#/components/schemas/CreateCloseDeferredPaymentRequestOp'
     - $ref: '#/components/schemas/CancelCloseDeferredPaymentRequestOp'
     - $ref: '#/components/schemas/UpdateDataOwnerOp'
-    - $ref: '#/components/schemas/CreateDataOwnerUpdateRequestOp'
-    - $ref: '#/components/schemas/CancelDataOwnerUpdateRequestOp'
 
 
 OperationDetailsKey:
@@ -128,5 +126,3 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/CreateCloseDeferredPaymentRequestOpKey'
     - $ref: '#/components/schemas/CancelCloseDeferredPaymentRequestOpKey'
     - $ref: '#/components/schemas/UpdateDataOwnerOpKey'
-    - $ref: '#/components/schemas/CreateDataOwnerUpdateRequestOpKey'
-    - $ref: '#/components/schemas/CancelDataOwnerUpdateRequestOpKey'
