@@ -17,18 +17,18 @@ UpdateDataOwnerOp:
       properties:
         relationships:
           type: object
+          required:
+            - data
+            - owner
           properties:
             data:
               $ref: '#/components/schemas/DataKey'
+            owner: 
+              $ref: '#/components/schemas/AccountKey'
         attributes:
           type: object
           required:
-            - id
-            - owner
+            - new_owner
           properties:
-            id:
-              type: string
-              example: 312
-              description: An id of data for change a owner
-            owner:
+            new_owner:
               $ref: '#/components/schemas/AccountKey'
