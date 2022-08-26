@@ -203,6 +203,9 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeUpdateData: &manageUpdateDataOpHandler{
 				effectsBaseHandler,
 			},
+			xdr.OperationTypeUpdateDataOwner: &manageUpdateDataOwnerOpHandler{
+				effectsBaseHandler,
+			},
 			xdr.OperationTypeRemoveData: &manageRemoveDataOpHandler{
 				effectsBaseHandler,
 			},

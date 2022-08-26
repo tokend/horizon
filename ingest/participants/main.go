@@ -210,6 +210,7 @@ func ForOperation(
 	case xdr.OperationTypeCreateData:
 	case xdr.OperationTypeRemoveData:
 	case xdr.OperationTypeUpdateData:
+	case xdr.OperationTypeUpdateDataOwner:
 	case xdr.OperationTypeCreateRedemptionRequest:
 		// TODO add participant
 	case xdr.OperationTypeCreateDataCreationRequest:

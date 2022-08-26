@@ -74,6 +74,7 @@ type OperationDetails struct {
 	CancelDeferredPaymentCreationRequest *CancelDeferredPaymentCreationRequest `json:"cancel_deferred_payment_creation_request,omitempty"`
 	CreateCloseDeferredPaymentRequest    *CreateCloseDeferredPaymentRequest    `json:"create_close_deferred_payment_request,omitempty"`
 	CancelCloseDeferredPaymentRequest    *CancelCloseDeferredPaymentRequest    `json:"cancel_close_deferred_payment_request,omitempty"`
+	UpdateDataOwner                      *UpdateDataOwnerDetails               `json:"update_data_owner,omitempty"`
 }
 
 //Value - converts operation details into jsonb
@@ -618,6 +619,11 @@ type CreateDataDetails struct {
 type UpdateDataDetails struct {
 	ID    uint64            `json:"id"`
 	Value regources.Details `json:"value"`
+}
+
+type UpdateDataOwnerDetails struct {
+	ID       uint64        `json:"id"`
+	NewOwner xdr.AccountId `json:"newOwner"`
 }
 
 type RemoveDataDetails struct {
