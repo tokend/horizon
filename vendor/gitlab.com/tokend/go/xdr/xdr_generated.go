@@ -1,4 +1,4 @@
-// revision: a92a3d47d7e04c889fa881555e31f831c55a54ce
+// revision: ac72d133b30a8737c688591af9b76e533e349bcb
 // branch:   feature/update-data-owner
 // Package xdr is generated from:
 //
@@ -60277,4 +60277,4 @@ type DecoratedSignature struct {
 }
 
 var fmtTest = fmt.Sprint("this is a dummy usage of fmt")
-var Revision = "a92a3d47d7e04c889fa881555e31f831c55a54ce"
+var Revision = "ac72d133b30a8737c688591af9b76e533e349bcb"

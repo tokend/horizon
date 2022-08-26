@@ -388,6 +388,7 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeCloseSwap:
 	case xdr.OperationTypeCreateData:
 	case xdr.OperationTypeUpdateData:
+	case xdr.OperationTypeUpdateDataOwner:
 	case xdr.OperationTypeRemoveData:
 	case xdr.OperationTypeCreateRedemptionRequest:
 		op := c.Operation().Body.MustCreateRedemptionRequestOp()
