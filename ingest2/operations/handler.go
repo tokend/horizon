@@ -221,6 +221,12 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeCancelDataUpdateRequest: &cancelDataUpdateRequestOpHandler{
 				effectsBaseHandler,
 			},
+			xdr.OperationTypeCreateDataOwnerUpdateRequest: &createDataOwnerUpdateRequestHandler{
+				effectsBaseHandler,
+			},
+			xdr.OperationTypeCancelDataOwnerUpdateRequest: &cancelDataOwnerUpdateRequestOpHandler{
+				effectsBaseHandler,
+			},
 			xdr.OperationTypeCreateDataRemoveRequest: &createDataRemoveRequestHandler{
 				effectsBaseHandler,
 			},

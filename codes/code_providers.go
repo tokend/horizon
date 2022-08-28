@@ -75,4 +75,6 @@ var codeProviders = map[xdr.OperationType]codeProvider{
 	xdr.OperationTypeCreateCloseDeferredPaymentRequest: func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateCloseDeferredPaymentRequestResult().Code },
 	xdr.OperationTypeCancelCloseDeferredPaymentRequest: func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelCloseDeferredPaymentRequestResult().Code },
 	xdr.OperationTypeUpdateDataOwner:                   func(ir xdr.OperationResultTr) shortStr { return ir.MustUpdateDataOwnerResult().Code },
+	xdr.OperationTypeCreateDataOwnerUpdateRequest:      func(ir xdr.OperationResultTr) shortStr { return ir.MustCreateDataOwnerUpdateRequestResult().Code },
+	xdr.OperationTypeCancelDataOwnerUpdateRequest:      func(ir xdr.OperationResultTr) shortStr { return ir.MustCancelDataOwnerUpdateRequestResult().Code },
 }

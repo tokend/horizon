@@ -215,9 +215,11 @@ func ForOperation(
 		// TODO add participant
 	case xdr.OperationTypeCreateDataCreationRequest:
 	case xdr.OperationTypeCreateDataUpdateRequest:
+	case xdr.OperationTypeCreateDataOwnerUpdateRequest:
 	case xdr.OperationTypeCreateDataRemoveRequest:
 	case xdr.OperationTypeCancelDataCreationRequest:
 	case xdr.OperationTypeCancelDataUpdateRequest:
+	case xdr.OperationTypeCancelDataOwnerUpdateRequest:
 	case xdr.OperationTypeCancelDataRemoveRequest:
 	case xdr.OperationTypeCreateDeferredPaymentCreationRequest:
 	case xdr.OperationTypeCancelDeferredPaymentCreationRequest:
