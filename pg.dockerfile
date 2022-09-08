@@ -1,6 +1,6 @@
 FROM registry.gitlab.com/tokend/deployment/postgres-ubuntu:9.6
 
-COPY --from=qui0scit/horizonbuild /usr/local/bin/horizon /usr/local/bin/horizon
+COPY --from=horizonbuild /usr/local/bin/horizon /usr/local/bin/horizon
 
 COPY ./entrypoint.sh /usr/local/bin/horizon-entrypoint.sh
 COPY ./pg-entrypoint.sh /usr/local/bin/entrypoint.sh
