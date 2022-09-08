@@ -29,7 +29,10 @@ func (h *createDataOwnerUpdateRequestHandler) Details(op rawOperation, opRes xdr
 func (h *createDataOwnerUpdateRequestHandler) ParticipantsEffects(opBody xdr.OperationBody,
 	opRes xdr.OperationResultTr, sourceAccountID xdr.AccountId, _ []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	participants := []history2.ParticipantEffect{h.Participant(sourceAccountID)}
+	participants := []history2.ParticipantEffect{
+		h.Participant(sourceAccountID),
+		h.Participant(opBody.UpdateDataOwnerOp.NewOwner),
+	}
 
 	return participants, nil
 }

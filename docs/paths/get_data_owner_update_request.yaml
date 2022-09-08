@@ -1,12 +1,12 @@
-/v3/data_owner_update_requests:
+/v3/data_owner_update_requests/{id}:
   get:
     tags:
       - Data
-    summary: Data Owner Update Request List
+    summary: Data Owner Update Request
     description: |
-      Allows getting a filtered list of data owner update requests with details\n
+      Allows getting a data owner update requests with details\n
       🔒 Requestor's or reviewer's signature is needed
-    operationId: getDataOwnerUpdateRequests
+    operationId: getDataOwnerUpdateRequest
     parameters:
       - name: filter[requestor]
         in: query
@@ -95,28 +95,14 @@
                 - included
               properties:
                 data:
-                  type: array
-                  items:
-                    type: object
-                    $ref: '#/components/schemas/ReviewableRequest'
+                  type: object
+                  $ref: '#/components/schemas/ReviewableRequest'
                 included:
                   type: array
                   items:
                     type: object
                     anyOf:
                       - $ref: '#/components/schemas/DataOwnerUpdateRequest'
-                links:
-                  type: object
-                  description: "Provides links for pagination"
-                  properties:
-                    next:
-                      type: string
-                      description: "link to the next page"
-                      example: "/v3/data_owner_update_requests?include=details&page[number]=2&page[limit]=15"
-                    self:
-                      type: string
-                      description: "link to the current page"
-                      example: "/v3/data_owner_update_requests?include=details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

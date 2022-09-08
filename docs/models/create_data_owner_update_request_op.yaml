@@ -27,10 +27,7 @@ CreateDataOwnerUpdateRequestOp:
       attributes:
         type: object
         required:
-          - owner
           - creator_details
         properties:
           creator_details:
             $ref: '#/components/schemas/Details'
-          owner:
-            $ref: '#/components/schemas/AccountKey'

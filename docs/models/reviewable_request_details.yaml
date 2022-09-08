@@ -1216,21 +1216,14 @@ DataOwnerUpdateRequest:
           properties:
             data:
               type: object
-              description: "data to update"
+              description: "data to update owner"
               $ref: '#/components/schemas/DataKey'
+            new_owner:
+              $ref: '#/components/schemas/AccountKey'
         attributes:
           type: object
           required:
-            - new_owner
-            - sequence_number
             - creator_details
           properties:
-            sequence_number:
-              type: integer
-              format: uint32
-              description: "Sequence number"
-              example: 10
             creator_details:
               $ref: '#/components/schemas/Details'
-            new_owner:
-              $ref: '#/components/schemas/AccountKey'

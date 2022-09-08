@@ -5,17 +5,20 @@ import (
 	"gitlab.com/tokend/horizon/db2/history2"
 )
 
-type manageUpdateDataOwnerOpHandler struct {
+type updateDataOwnerOpHandler struct {
 	effectsProvider
 }
 
-func (h *manageUpdateDataOwnerOpHandler) ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr,
+func (h *updateDataOwnerOpHandler) ParticipantsEffects(opBody xdr.OperationBody, opRes xdr.OperationResultTr,
 	sourceID xdr.AccountId, ledgerChanges []xdr.LedgerEntryChange,
 ) ([]history2.ParticipantEffect, error) {
-	return []history2.ParticipantEffect{h.Participant(sourceID)}, nil
+	return []history2.ParticipantEffect{
+		h.Participant(sourceID),
+		h.Participant(opBody.UpdateDataOwnerOp.NewOwner),
+	}, nil
 }
 
-func (h *manageUpdateDataOwnerOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
+func (h *updateDataOwnerOpHandler) Details(op rawOperation, _ xdr.OperationResultTr,
 ) (history2.OperationDetails, error) {
 	updateDataOwnerOp := op.Body.MustUpdateDataOwnerOp()
 

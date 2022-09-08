@@ -23,12 +23,9 @@ UpdateDataOwnerOp:
           properties:
             data:
               $ref: '#/components/schemas/DataKey'
-            owner: 
+            new_owner:
               $ref: '#/components/schemas/AccountKey'
         attributes:
           type: object
           required:
-            - new_owner
-          properties:
-            new_owner:
-              $ref: '#/components/schemas/AccountKey'
+            - id
