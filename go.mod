@@ -45,9 +45,9 @@ require (
 	gitlab.com/distributed_lab/running v0.0.0-20190830165007-aded59ee376f
 	gitlab.com/distributed_lab/txsub v0.0.0-20171130120140-d7781cbc2319
 	gitlab.com/distributed_lab/urlval v2.2.0+incompatible
-	gitlab.com/tokend/go v3.15.1+incompatible
+	gitlab.com/tokend/go v3.16.0+incompatible
 	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
-	gitlab.com/tokend/regources v4.9.2+incompatible
+	gitlab.com/tokend/regources v0.0.0-20220912094739-0817e04d99c8
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 	gopkg.in/tylerb/graceful.v1 v1.2.15
 )

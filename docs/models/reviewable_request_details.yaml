@@ -22,6 +22,7 @@ ReviewableRequestDetailsKey:
     - $ref: '#/components/schemas/DataRemoveRequestKey'
     - $ref: '#/components/schemas/CreateDeferredPaymentRequestKey'
     - $ref: '#/components/schemas/CloseDeferredPaymentRequestKey'
+    - $ref: '#/components/schemas/DataOwnerUpdateRequestKey'
 
 
 ReviewableRequestDetails:
@@ -49,6 +50,7 @@ ReviewableRequestDetails:
     - $ref: '#/components/schemas/DataRemoveRequest'
     - $ref: '#/components/schemas/CreateDeferredPaymentRequest'
     - $ref: '#/components/schemas/CloseDeferredPaymentRequest'
+    - $ref: '#/components/schemas/DataOwnerUpdateRequest'
 
 
 CreateAssetRequestKey:
@@ -1189,4 +1191,39 @@ CreateDeferredPaymentRequest:
             creator_details:
               $ref: '#/components/schemas/Details'
 
+DataOwnerUpdateRequestKey:
+  type: object
+  required:
+    - id
+    - type
+  properties:
+    id:
+      type: string
+      example: "5"
+    type:
+      type: string
+      enum:
+        - "request-details-data-owner-update"
 
+DataOwnerUpdateRequest:
+  allOf:
+    - $ref: '#/components/schemas/DataOwnerUpdateRequestKey'
+    - type: object
+      required: [ relationships, attributes ]
+      properties:
+        relationships:
+          type: object
+          properties:
+            data:
+              type: object
+              description: "data to update owner"
+              $ref: '#/components/schemas/DataKey'
+            new_owner:
+              $ref: '#/components/schemas/AccountKey'
+        attributes:
+          type: object
+          required:
+            - creator_details
+          properties:
+            creator_details:
+              $ref: '#/components/schemas/Details'
