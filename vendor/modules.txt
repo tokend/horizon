@@ -201,7 +201,7 @@ gitlab.com/distributed_lab/txsub
 gitlab.com/distributed_lab/urlval
 gitlab.com/distributed_lab/urlval/internal
 gitlab.com/distributed_lab/urlval/internal/betterreflect
-# gitlab.com/tokend/go v3.15.1-dl+incompatible
+# gitlab.com/tokend/go v3.16.0+incompatible
 ## explicit
 gitlab.com/tokend/go/address
 gitlab.com/tokend/go/amount

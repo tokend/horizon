@@ -350,6 +350,8 @@ gitlab.com/distributed_lab/urlval v2.2.0+incompatible/go.mod h1:cKnUlnZCHUuke/l9
 gitlab.com/tokend/go v3.15.1-0.20211012170121-ef00dadaabc8+incompatible/go.mod h1:qz38YBc7VL29H2gnXbpRzcEVw2d1NUZ5SVDzIehqDCA=
 gitlab.com/tokend/go v3.15.1-dl+incompatible h1:sxKw07isyGhImCKrHhRfArlFHGamT4ahtvWq1SF/9/4=
 gitlab.com/tokend/go v3.15.1-dl+incompatible/go.mod h1:qz38YBc7VL29H2gnXbpRzcEVw2d1NUZ5SVDzIehqDCA=
+gitlab.com/tokend/go v3.16.0+incompatible h1:WKpbEsqOxf7L7fc0GGx9hoPy2dCph+AtPBd1JCbGWKk=
+gitlab.com/tokend/go v3.16.0+incompatible/go.mod h1:qz38YBc7VL29H2gnXbpRzcEVw2d1NUZ5SVDzIehqDCA=
 gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 h1:u8pxrNw8QKIsrmClG71uuTPy22fkePAXBkHgxrXkMU8=
 gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312/go.mod h1:vdlhN5/oQR7uY8EsGSqPf8bwnmQxxpaq7qrQn5Y3U/w=
 gitlab.com/tokend/regources v0.0.0-20220912092426-d67e75185f18 h1:72PsZBq0mtgjmIyiV17L7fkXcwieUSEbjARwC/RYfqo=
