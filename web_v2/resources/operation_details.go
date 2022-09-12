@@ -666,7 +666,7 @@ func newManageVoteOp(op history2.Operation) regources.Resource {
 				choice := uint64(details.VoteData.Single.Choice)
 				manageVoteOp.Attributes.Create.VoteData.SingleChoice = &choice
 			case xdr.PollTypeCustomChoice:
-				choice := ingest2.MarshalCustomDetails(details.VoteData.MustCustom())
+				choice := string(ingest2.MarshalCustomDetails(details.VoteData.MustCustom()))
 				manageVoteOp.Attributes.Create.VoteData.CustomChoice = &choice
 			}
 		}

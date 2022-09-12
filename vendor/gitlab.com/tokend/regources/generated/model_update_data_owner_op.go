@@ -8,7 +8,6 @@ import "encoding/json"
 
 type UpdateDataOwnerOp struct {
 	Key
-	Attributes    map[string]interface{}         `json:"attributes"`
 	Relationships UpdateDataOwnerOpRelationships `json:"relationships"`
 }
 type UpdateDataOwnerOpResponse struct {

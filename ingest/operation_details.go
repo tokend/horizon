@@ -390,15 +390,15 @@ func (is *Session) operationDetails() map[string]interface{} {
 	case xdr.OperationTypeUpdateData:
 	case xdr.OperationTypeUpdateDataOwner:
 		op := c.Operation().Body.MustUpdateDataOwnerOp()
-		details["newOwner"] = op.NewOwner
+		details["new_owner"] = op.NewOwner
 		details["source"] = c.Operation().SourceAccount
 	case xdr.OperationTypeCreateDataOwnerUpdateRequest:
 		op := c.Operation().Body.MustCreateDataOwnerUpdateRequestOp()
-		details["dataID"] = op.DataOwnerUpdateRequest.UpdateDataOwnerOp.DataId
-		details["newOwner"] = op.DataOwnerUpdateRequest.UpdateDataOwnerOp.NewOwner
+		details["data_id"] = op.DataOwnerUpdateRequest.UpdateDataOwnerOp.DataId
+		details["new_owner"] = op.DataOwnerUpdateRequest.UpdateDataOwnerOp.NewOwner
 	case xdr.OperationTypeCancelDataOwnerUpdateRequest:
 		op := c.Operation().Body.MustCancelDataOwnerUpdateRequestOp()
-		details["requestID"] = op.RequestId
+		details["request_id"] = op.RequestId
 
 	case xdr.OperationTypeRemoveData:
 	case xdr.OperationTypeCreateRedemptionRequest:
