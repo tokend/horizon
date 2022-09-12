@@ -121,7 +121,7 @@ func (c *voteHandler) convertVote(raw xdr.VoteEntry, ID int64) (*history.Vote, e
 		choice := uint64(raw.Data.MustSingle().Choice)
 		vote.VoteData.SingleChoice = &choice
 	case xdr.PollTypeCustomChoice:
-		choice := string(internal.MarshalCustomDetails(raw.Data.MustCustom()))
+		choice := internal.MarshalCustomDetails(raw.Data.MustCustom())
 		vote.VoteData.CustomChoice = &choice
 	}
 	return vote, nil

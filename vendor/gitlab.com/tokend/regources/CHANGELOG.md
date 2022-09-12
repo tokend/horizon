@@ -5,6 +5,7 @@
 ### Added
 
 * Redemption reviewable request
+* Change data owner Operation & Reviewable request
 
 ## 4.8.0
 
