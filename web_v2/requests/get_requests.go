@@ -24,9 +24,9 @@ const (
 	FilterTypeRequestListPendingTasksNotSet = "pending_tasks_not_set"
 	// FilterTypeRequestListPendingTasksAnyOf - defines if we need to filter the list by any of pending tasks
 	FilterTypeRequestListPendingTasksAnyOf = "pending_tasks_any_of"
-	// FilterTypeRequestListPendingTasksAnyOf - defines if we need to filter the list by creation time before specific timestamp
+	// FilterTypeRequestListCreatedBefore - defines if we need to filter the list by creation time before specific timestamp
 	FilterTypeRequestListCreatedBefore = "created_before"
-	// FilterTypeRequestListPendingTasksAnyOf - defines if we need to filter the list by creation time after specific timestamp
+	// FilterTypeRequestListCreatedAfter - defines if we need to filter the list by creation time after specific timestamp
 	FilterTypeRequestListCreatedAfter = "created_after"
 	// FilterTypeRequestListAllTasks - defines if we need to filter the list by all tasks
 	FilterTypeRequestListAllTasks = "all_tasks"
@@ -34,6 +34,10 @@ const (
 	FilterTypeRequestListAllTasksAnyOf = "all_tasks_any_of"
 	// FilterTypeRequestListAllTasksNotSet - defines if we need to filter the list by all tasks that aren't set
 	FilterTypeRequestListAllTasksNotSet = "all_tasks_not_set"
+	// FilterTypeRequestListUpdatedBefore - defines if we need to filter the list by update time before specific timestamp
+	FilterTypeRequestListUpdatedBefore = "updated_before"
+	// FilterTypeRequestListUpdatedAfter - defines if we need to filter the list by update time after specific timestamp
+	FilterTypeRequestListUpdatedAfter = "updated_after"
 )
 
 var includeTypeReviewableRequestListAll = map[string]struct{}{
@@ -53,6 +57,8 @@ var filterTypeRequestListAll = map[string]struct{}{
 	FilterTypeRequestListAllTasks:           {},
 	FilterTypeRequestListAllTasksNotSet:     {},
 	FilterTypeRequestListAllTasksAnyOf:      {},
+	FilterTypeRequestListUpdatedBefore:      {},
+	FilterTypeRequestListUpdatedAfter:       {},
 }
 
 type GetRequests struct {

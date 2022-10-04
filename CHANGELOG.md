@@ -12,6 +12,8 @@
 * Field `wait_for_result` (bool, default value: `true`) to `POST /v3/transactions` request which allows not waiting for transaction result from core (submission finishes faster but invalid tx handling is sender's responsibility). Not guaranteed that transactions submitted using this flag will be applied successfully.
 * Vote creation time
 * Participants count in `/v3/sales/{id}`
+* Operation to update owner of the data entry and reviewable request for update data. New endpoints: `/v3/data_owner_update_requests` to get a list of requests and `/v3/data_owner_update_requests/{id}` to get a request by id
+* Liquidity pool operations (add/remove liquidity, and perform swap). New endpoint: `/v3/liquidity_pools`
 
 ### Changed
 

@@ -60,6 +60,9 @@ OperationDetails:
     - $ref: '#/components/schemas/CancelDeferredPaymentCreationRequestOp'
     - $ref: '#/components/schemas/CreateCloseDeferredPaymentRequestOp'
     - $ref: '#/components/schemas/CancelCloseDeferredPaymentRequestOp'
+    - $ref: '#/components/schemas/UpdateDataOwnerOp'
+    - $ref: '#/components/schemas/CreateDataOwnerUpdateRequestOp'
+    - $ref: '#/components/schemas/CancelDataOwnerUpdateRequestOp'
     - $ref: '#/components/schemas/LpManageLiquidityOp'
     - $ref: '#/components/schemas/LpSwapOp'
 
@@ -126,5 +129,8 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/CancelDeferredPaymentCreationRequestOpKey'
     - $ref: '#/components/schemas/CreateCloseDeferredPaymentRequestOpKey'
     - $ref: '#/components/schemas/CancelCloseDeferredPaymentRequestOpKey'
+    - $ref: '#/components/schemas/UpdateDataOwnerOpKey'
+    - $ref: '#/components/schemas/CreateDataOwnerUpdateRequestOpKey'
+    - $ref: '#/components/schemas/CancelDataOwnerUpdateRequestOpKey'
     - $ref: '#/components/schemas/LpManageLiquidityOpKey'
     - $ref: '#/components/schemas/LpSwapOpKey'

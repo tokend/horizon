@@ -1,12 +1,12 @@
-/v3/requests:
+/v3/data_owner_update_requests:
   get:
     tags:
-      - Requests
-    summary: Reviewable Request List
+      - Data
+    summary: Data Owner Update Request List
     description: |
-      Allows getting a filtered list of `ReviewableRequest` with details\n
+      Allows getting a filtered list of data owner update requests with details\n
       🔒 Requestor's or reviewer's signature is needed
-    operationId: getRequests
+    operationId: getDataOwnerUpdateRequests
     parameters:
       - name: filter[requestor]
         in: query
@@ -42,35 +42,6 @@
           type: integer
           minimum: 1
           maximum: 5
-      - name: filter[type]
-        in: query
-        description: |
-          Filters requests by their type.
-          * 2 -   "create_pre_issuance"
-          * 3 -   "create_issuance"
-          * 4 -   "create_withdraw"
-          * 5 -   "create_sale"
-          * 6 -   "update_limits"
-          * 7 -   "create_aml_alert"
-          * 8 -   "change_role"
-          * 9 -   "update_sale_details"
-          * 10 -  "create_asset"
-          * 11 -  "create_invoice"
-          * 12 -  "manage_contract"
-          * 13 -  "update_asset"
-          * 16 -  "create_atomic_swap_bid"
-          * 17 -  "create_atomic_swap"
-          * 18 -  "kyc_recovery"
-          * 19 -  "manage_offer"
-          * 20 -  "create_payment"
-          * 21 -  "perform_redemption"
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-          minimum: 2
-          maximum: 17
       - name: filter[pending_tasks]
         in: query
         description: |
@@ -98,71 +69,6 @@
         explode: false
         schema:
           type: integer
-      - name: filter[all_tasks]
-        in: query
-        description: |
-          Filters requests by existing tasks in `all_tasks` bit mask. Returns requests if all bits are set.
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-      - name: filter[all_tasks_not_set]
-        in: query
-        description: |
-          Filters requests by existing tasks in `all_tasks` bit mask. Returns requests if none of bits is set.
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-      - name: filter[all_tasks_any_of]
-        in: query
-        description: |
-          Filters requests by existing tasks in `all_tasks` bit mask. Returns requests if at least one bit is set.
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-      - name: filter[created_before]
-        in: query
-        description: |
-          Filters requests by creation timestamp earlier than passed value in filter (exclusively).
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-          format: UTC Unix Timestamp
-      - name: filter[created_after]
-        description: |
-          Filters requests by creation timestamp later or equal than passed value in filter (inclusively)
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-          format: UTC Unix Timestamp
-      - name: filter[updated_before]
-        in: query
-        description: |
-          Filters requests by update timestamp earlier than passed value in filter (exclusively).
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-          format: UTC Unix Timestamp
-      - name: filter[updated_after]
-        description: |
-          Filters requests by update timestamp later or equal than passed value in filter (inclusively)
-        required: false
-        style: form
-        explode: false
-        schema:
-          type: integer
-          format: UTC Unix Timestamp
       - name: include
         in: query
         description: |
@@ -197,7 +103,8 @@
                   type: array
                   items:
                     type: object
-                    $ref: '#/components/schemas/ReviewableRequestDetails'
+                    anyOf:
+                      - $ref: '#/components/schemas/DataOwnerUpdateRequest'
                 links:
                   type: object
                   description: "Provides links for pagination"
@@ -205,11 +112,11 @@
                     next:
                       type: string
                       description: "link to the next page"
-                      example: "/v3/requests?include=details&page[number]=2&page[limit]=15"
+                      example: "/v3/data_owner_update_requests?include=details&page[number]=2&page[limit]=15"
                     self:
                       type: string
                       description: "link to the current page"
-                      example: "/v3/requests?include=details&page[number]=1&page[limit]=15"
+                      example: "/v3/data_owner_update_requests?include=details&page[number]=1&page[limit]=15"
       400:
         description: bad input parameter
         content:

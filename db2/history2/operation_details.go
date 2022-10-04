@@ -74,6 +74,9 @@ type OperationDetails struct {
 	CancelDeferredPaymentCreationRequest *CancelDeferredPaymentCreationRequest `json:"cancel_deferred_payment_creation_request,omitempty"`
 	CreateCloseDeferredPaymentRequest    *CreateCloseDeferredPaymentRequest    `json:"create_close_deferred_payment_request,omitempty"`
 	CancelCloseDeferredPaymentRequest    *CancelCloseDeferredPaymentRequest    `json:"cancel_close_deferred_payment_request,omitempty"`
+	UpdateDataOwner                      *UpdateDataOwnerDetails               `json:"update_data_owner,omitempty"`
+	CreateDataOwnerUpdateRequest         *CreateDataOwnerUpdateRequest         `json:"create_data_owner_update_request,omitempty"`
+	CancelDataOwnerUpdateRequest         *CancelDataOwnerUpdateRequest         `json:"cancel_data_owner_update_request,omitempty"`
 	LiquidityPoolAddLiquidity            *LiquidityPoolManageLiquidity         `json:"liquidity_pool_add_liquidity,omitempty"`
 	LiquidityPoolSwap                    *LiquidityPoolSwap                    `json:"liquidity_pool_swap,omitempty"`
 	LiquidityPoolRemoveLiquidity         *LiquidityPoolManageLiquidity         `json:"liquidity_pool_remove_liquidity,omitempty"`
@@ -623,6 +626,11 @@ type UpdateDataDetails struct {
 	Value regources.Details `json:"value"`
 }
 
+type UpdateDataOwnerDetails struct {
+	ID       uint64        `json:"id"`
+	NewOwner xdr.AccountId `json:"newOwner"`
+}
+
 type RemoveDataDetails struct {
 	ID uint64 `json:"id"`
 }
@@ -643,6 +651,13 @@ type CreateDataUpdateRequest struct {
 	RequestID      uint64            `json:"request_id"`
 }
 
+type CreateDataOwnerUpdateRequest struct {
+	ID             uint64            `json:"id"`
+	NewOwner       xdr.AccountId     `json:"new_owner"`
+	CreatorDetails regources.Details `json:"creator_details"`
+	RequestID      uint64            `json:"request_id"`
+}
+
 type CreateDataRemoveRequest struct {
 	ID             uint64            `json:"id"`
 	CreatorDetails regources.Details `json:"creator_details"`
@@ -654,6 +669,10 @@ type CancelDataCreationRequest struct {
 }
 
 type CancelDataUpdateRequest struct {
+	RequestID uint64 `json:"request_id"`
+}
+
+type CancelDataOwnerUpdateRequest struct {
 	RequestID uint64 `json:"request_id"`
 }
 

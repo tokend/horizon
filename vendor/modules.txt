@@ -201,7 +201,7 @@ gitlab.com/distributed_lab/txsub
 gitlab.com/distributed_lab/urlval
 gitlab.com/distributed_lab/urlval/internal
 gitlab.com/distributed_lab/urlval/internal/betterreflect
-# gitlab.com/tokend/go v3.15.2-0.20220216101133-69e9b7915284+incompatible
+# gitlab.com/tokend/go v3.16.0+incompatible
 ## explicit
 gitlab.com/tokend/go/address
 gitlab.com/tokend/go/amount
@@ -223,7 +223,7 @@ gitlab.com/tokend/keypair
 gitlab.com/tokend/keypair/internal
 gitlab.com/tokend/keypair/internal/crc16
 gitlab.com/tokend/keypair/internal/strkey
-# gitlab.com/tokend/regources v0.0.0-20220314144747-7cc43d859782
+# gitlab.com/tokend/regources v0.0.0-20220912094739-0817e04d99c8
 ## explicit
 gitlab.com/tokend/regources
 gitlab.com/tokend/regources/generated

@@ -357,6 +357,9 @@ func initWebV2Actions(app *App) {
 	m.Get("/v3/deferred_payments", handlers.GetDeferredPaymentList)
 	m.Get("/v3/deferred_payments/{id}", handlers.GetDeferredPayment)
 
+	m.Get("/v3/data_owner_update_requests", handlers.GetDataOwnerUpdateRequests)
+	m.Get("/v3/data_owner_update_requests/{id}", handlers.GetDataOwnerUpdateRequests)
+
 	m.Get("/v3/liquidity-pools", handlers.GetLiquidityPoolList)
 	m.Get("/v3/liquidity-pools/{id}", handlers.GetLiquidityPool)
 

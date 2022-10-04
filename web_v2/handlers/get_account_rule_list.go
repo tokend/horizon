@@ -46,6 +46,7 @@ type getAccountRuleListHandler struct {
 }
 
 // GetAccountRuleList returns the list of accountRules with related resources
+// TODO get rule by resource and action
 func (h *getAccountRuleListHandler) GetAccountRuleList(request *requests.GetAccountRuleList) (*regources.AccountRuleListResponse, error) {
 	accountRules, err := h.AccountRulesQ.Page(request.PageParams).Select()
 	if err != nil {

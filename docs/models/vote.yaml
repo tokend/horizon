@@ -51,7 +51,7 @@ VoteData:
       type: integer
       format: uint64
     custom_choice:
-      type: string
+      $ref: '#/components/schemas/Details'
     creation_time:
       type: string
       format: date-time
