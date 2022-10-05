@@ -52,7 +52,9 @@ function parseArgs {
 }
 
 function generate {
+    (cd docs && make)
     docker run -v ${OPENAPI_DIR}:/openapi -v ${GENERATED}:/generated ${GENERATOR_IMAGE} generate --generate-horizon-stuff --meta-for-lists
+    goimports -w ${GENERATED}
 }
 
 parseArgs $@
