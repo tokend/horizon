@@ -79,7 +79,7 @@ type OperationDetails struct {
 	CancelDataOwnerUpdateRequest         *CancelDataOwnerUpdateRequest         `json:"cancel_data_owner_update_request,omitempty"`
 }
 
-//Value - converts operation details into jsonb
+// Value - converts operation details into jsonb
 func (r OperationDetails) Value() (driver.Value, error) {
 	result, err := pgdb.JSONValue(r)
 	if err != nil {
@@ -89,7 +89,7 @@ func (r OperationDetails) Value() (driver.Value, error) {
 	return result, nil
 }
 
-//Scan - converts jsonb into OperationDetails
+// Scan - converts jsonb into OperationDetails
 func (r *OperationDetails) Scan(src interface{}) error {
 	err := pgdb.JSONScan(src, r)
 	if err != nil {
@@ -105,7 +105,7 @@ type CreateAccountDetails struct {
 	AccountRole    uint64 `json:"account_role"`
 }
 
-//ManageBalanceDetails - details of ManageBalanceOp
+// ManageBalanceDetails - details of ManageBalanceOp
 type ManageBalanceDetails struct {
 	DestinationAccount string                  `json:"destination_account"`
 	Action             xdr.ManageBalanceAction `json:"action"`
@@ -221,14 +221,14 @@ type UpdateSignerRoleDetails struct {
 	Details regources.Details `json:"details"`
 }
 
-//ManageKeyValueDetails - details of ManageKeyValueOp
+// ManageKeyValueDetails - details of ManageKeyValueOp
 type ManageKeyValueDetails struct {
 	Action xdr.ManageKvAction            `json:"action"`
 	Key    string                        `json:"key"`
 	Value  *regources.KeyValueEntryValue `json:"value,omitempty"`
 }
 
-//SetFeeDetails - details of SetFeeOp
+// SetFeeDetails - details of SetFeeOp
 type SetFeeDetails struct {
 	AccountAddress *string          `json:"account_address,omitempty"`
 	AccountRole    *xdr.Uint64      `json:"account_role,omitempty"`
@@ -243,7 +243,7 @@ type SetFeeDetails struct {
 	// FeeAsset deprecated
 }
 
-//CreateWithdrawRequestDetails - details of corresponding op
+// CreateWithdrawRequestDetails - details of corresponding op
 type CreateWithdrawRequestDetails struct {
 	BalanceAddress string            `json:"balance_address"`
 	Amount         regources.Amount  `json:"amount"`
@@ -251,20 +251,20 @@ type CreateWithdrawRequestDetails struct {
 	CreatorDetails regources.Details `json:"creator_details"`
 }
 
-//CreateManageLimitsRequestDetails - details of corresponding op
+// CreateManageLimitsRequestDetails - details of corresponding op
 type CreateManageLimitsRequestDetails struct {
 	CreatorDetails regources.Details `json:"creator_details"`
 	RequestID      int64             `json:"request_id"`
 }
 
-//ManageLimitsDetails - details of corresponding op
+// ManageLimitsDetails - details of corresponding op
 type ManageLimitsDetails struct {
 	Action   xdr.ManageLimitsAction       `json:"action"`
 	Creation *ManageLimitsCreationDetails `json:"creation_details,omitempty"`
 	Removal  *ManageLimitsRemovalDetails  `json:"removal_details,omitempty"`
 }
 
-//ManageLimitsCreationDetails - details of corresponding op
+// ManageLimitsCreationDetails - details of corresponding op
 type ManageLimitsCreationDetails struct {
 	AccountRole     *xdr.Uint64      `json:"account_role,omitempty"`
 	AccountAddress  string           `json:"account_address,omitempty"`
@@ -277,12 +277,12 @@ type ManageLimitsCreationDetails struct {
 	AnnualOut       regources.Amount `json:"annual_out"`
 }
 
-//ManageLimitsRemovalDetails - details of corresponding op
+// ManageLimitsRemovalDetails - details of corresponding op
 type ManageLimitsRemovalDetails struct {
 	LimitsID int64 `json:"limits_id"`
 }
 
-//ManageAssetPairDetails - details of corresponding op
+// ManageAssetPairDetails - details of corresponding op
 type ManageAssetPairDetails struct {
 	BaseAsset               string              `json:"base_asset"`
 	QuoteAsset              string              `json:"quote_asset"`
@@ -292,7 +292,7 @@ type ManageAssetPairDetails struct {
 	Policies                xdr.AssetPairPolicy `json:"policies"`
 }
 
-//ManageOfferDetails - details of corresponding op
+// ManageOfferDetails - details of corresponding op
 type ManageOfferDetails struct {
 	OfferID     int64            `json:"offer_id,omitempty"`
 	OrderBookID int64            `json:"order_book_id"`
@@ -305,7 +305,7 @@ type ManageOfferDetails struct {
 	IsDeleted   bool             `json:"is_deleted"`
 }
 
-//ReviewRequestDetails - details of corresponding op
+// ReviewRequestDetails - details of corresponding op
 type ReviewRequestDetails struct {
 	Action          xdr.ReviewRequestOpAction         `json:"action"`
 	Reason          string                            `json:"reason"`
@@ -319,7 +319,7 @@ type ReviewRequestDetails struct {
 	ExternalDetails regources.Details                 `json:"external_details"`
 }
 
-//ManageAssetDetails - details of corresponding op
+// ManageAssetDetails - details of corresponding op
 type ManageAssetDetails struct {
 	AssetCode         string                `json:"asset_code,omitempty"`
 	Type              uint64                `json:"type,omitempty"`
@@ -331,7 +331,7 @@ type ManageAssetDetails struct {
 	MaxIssuanceAmount regources.Amount      `json:"max_issuance_amount,omitempty"`
 }
 
-//CreatePreIssuanceRequestDetails - details of corresponding op
+// CreatePreIssuanceRequestDetails - details of corresponding op
 type CreatePreIssuanceRequestDetails struct {
 	AssetCode      string            `json:"asset_code"`
 	Amount         regources.Amount  `json:"amount"`
@@ -340,7 +340,7 @@ type CreatePreIssuanceRequestDetails struct {
 	IsFulfilled    bool              `json:"is_fulfilled"`
 }
 
-//CreateIssuanceRequestDetails - details of corresponding op
+// CreateIssuanceRequestDetails - details of corresponding op
 type CreateIssuanceRequestDetails struct {
 	Fee                    regources.Fee     `json:"fee"`
 	Reference              string            `json:"reference"`
@@ -353,7 +353,7 @@ type CreateIssuanceRequestDetails struct {
 	RequestDetails         RequestDetails    `json:"request_details"`
 }
 
-//CreateSaleRequestDetails -details of corresponding op
+// CreateSaleRequestDetails -details of corresponding op
 type CreateSaleRequestDetails struct {
 	RequestID         int64                  `json:"request_id"`
 	BaseAsset         string                 `json:"base_asset"`
@@ -366,13 +366,13 @@ type CreateSaleRequestDetails struct {
 	CreatorDetails    regources.Details      `json:"creator_details"`
 }
 
-//CheckSaleStateDetails - details of corresponding op
+// CheckSaleStateDetails - details of corresponding op
 type CheckSaleStateDetails struct {
 	SaleID int64 `json:"sale_id"`
 	Effect xdr.CheckSaleStateEffect
 }
 
-//CreateAtomicSwapAskRequestDetails - details of corresponding op
+// CreateAtomicSwapAskRequestDetails - details of corresponding op
 type CreateAtomicSwapAskRequestDetails struct {
 	Amount         regources.Amount       `json:"amount"`
 	BaseBalance    string                 `json:"base_balance"`
@@ -381,7 +381,7 @@ type CreateAtomicSwapAskRequestDetails struct {
 	RequestDetails RequestDetails         `json:"request_details"`
 }
 
-//CreateAtomicSwapBidRequestDetails - details of corresponding op
+// CreateAtomicSwapBidRequestDetails - details of corresponding op
 type CreateAtomicSwapBidRequestDetails struct {
 	AskID          int64             `json:"ask_id"`
 	BaseAmount     regources.Amount  `json:"base_amount"`
@@ -390,12 +390,12 @@ type CreateAtomicSwapBidRequestDetails struct {
 	Details        regources.Details `json:"creator_details"`
 }
 
-//CancelAtomicSwapAskDetails - details of corresponding op
+// CancelAtomicSwapAskDetails - details of corresponding op
 type CancelAtomicSwapAskDetails struct {
 	BidID int64 `json:"bid_id"`
 }
 
-//CreateAMLAlertRequestDetails - details of corresponding op
+// CreateAMLAlertRequestDetails - details of corresponding op
 type CreateAMLAlertRequestDetails struct {
 	Amount         regources.Amount  `json:"amount"`
 	BalanceAddress string            `json:"balance_address"`
@@ -418,7 +418,7 @@ type PaymentDetails struct {
 	Reference               string           `json:"reference"`
 }
 
-//PayoutDetails - details of corresponding op
+// PayoutDetails - details of corresponding op
 type PayoutDetails struct {
 	SourceAccountAddress string           `json:"source_account_address"`
 	SourceBalanceAddress string           `json:"source_balance_address"`
@@ -431,13 +431,13 @@ type PayoutDetails struct {
 	ActualPayoutAmount   regources.Amount `json:"actual_payout_amount"`
 }
 
-//RequestDetails - details of the request created or reviewed via op
+// RequestDetails - details of the request created or reviewed via op
 type RequestDetails struct {
 	RequestID   int64 `json:"request_id,omitempty"`
 	IsFulfilled bool  `json:"is_fulfilled"`
 }
 
-//CreateChangeRoleRequestDetails - details of corresponding op
+// CreateChangeRoleRequestDetails - details of corresponding op
 type CreateChangeRoleRequestDetails struct {
 	DestinationAccount string            `json:"destination_account"`
 	AccountRoleToSet   uint64            `json:"account_role_to_set"`
@@ -446,14 +446,14 @@ type CreateChangeRoleRequestDetails struct {
 	RequestDetails     RequestDetails    `json:"request_details"`
 }
 
-//ManageExternalSystemPoolDetails - details of corresponding op
+// ManageExternalSystemPoolDetails - details of corresponding op
 type ManageExternalSystemPoolDetails struct {
 	Action xdr.ManageExternalSystemAccountIdPoolEntryAction `json:"action"`
 	Create *CreateExternalSystemPoolDetails                 `json:"create"`
 	Remove *RemoveExternalSystemPoolDetails                 `json:"remove"`
 }
 
-//CreateExternalSystemPoolDetails - details of corresponding op
+// CreateExternalSystemPoolDetails - details of corresponding op
 type CreateExternalSystemPoolDetails struct {
 	Data               string `json:"data"`
 	ExternalSystemType int32  `json:"external_system_type"`
@@ -461,17 +461,17 @@ type CreateExternalSystemPoolDetails struct {
 	PoolId             uint64 `json:"pool_id"`
 }
 
-//RemoveExternalSystemPoolDetails - details of corresponding op
+// RemoveExternalSystemPoolDetails - details of corresponding op
 type RemoveExternalSystemPoolDetails struct {
 	PoolId uint64 `json:"pool_id"`
 }
 
-//BindExternalSystemAccountDetails - details of corresponding op
+// BindExternalSystemAccountDetails - details of corresponding op
 type BindExternalSystemAccountDetails struct {
 	ExternalSystemType int32 `json:"external_system_type"`
 }
 
-//ManageSaleDetails - details of corresponding op
+// ManageSaleDetails - details of corresponding op
 type ManageSaleDetails struct {
 	Action xdr.ManageSaleAction `json:"action"`
 	SaleId uint64               `json:"sale_id"`

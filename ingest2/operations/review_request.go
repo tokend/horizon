@@ -2,6 +2,7 @@ package operations
 
 import (
 	"encoding/hex"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
@@ -87,6 +88,9 @@ func newReviewRequestOpHandler(provider effectsProvider, defPayments defPaymentP
 			xdr.ReviewableRequestTypeCloseDeferredPayment: &closeDeferredPaymentHandler{
 				effectsProvider:    provider,
 				defPaymentProvider: defPayments,
+			},
+			xdr.ReviewableRequestTypeDataOwnerUpdate: &updateDataOwnerHandler{
+				effectsProvider: provider,
 			},
 		},
 	}
