@@ -64,11 +64,14 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeCreateRedemptionRequest:                newCreateRedemptionRequestOp,
 	xdr.OperationTypeCreateData:                             newCreateDataOp,
 	xdr.OperationTypeUpdateData:                             newUpdateDataOp,
+	xdr.OperationTypeUpdateDataOwner:                        newUpdateDataOwnerOp,
 	xdr.OperationTypeRemoveData:                             newRemoveDataOp,
 	xdr.OperationTypeCreateDataCreationRequest:              newCreateDataCreationRequestOp,
 	xdr.OperationTypeCancelDataCreationRequest:              newCancelDataCreationRequestOp,
 	xdr.OperationTypeCreateDataUpdateRequest:                newCreateDataUpdateRequestOp,
 	xdr.OperationTypeCancelDataUpdateRequest:                newCancelDataUpdateRequestOp,
+	xdr.OperationTypeCreateDataOwnerUpdateRequest:           newCreateDataOwnerUpdateRequestOp,
+	xdr.OperationTypeCancelDataOwnerUpdateRequest:           newCancelDataOwnerUpdateRequestOp,
 	xdr.OperationTypeCreateDataRemoveRequest:                newCreateDataRemoveRequestOp,
 	xdr.OperationTypeCancelDataRemoveRequest:                newCancelDataRemoveRequestOp,
 	xdr.OperationTypeCreateDeferredPaymentCreationRequest:   newCreateDeferredPaymentCreationRequestOp,
@@ -77,7 +80,7 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeCancelCloseDeferredPaymentRequest:      newCancelCloseDeferredPaymentRequestOp,
 }
 
-//NewOperationDetails - populates operation details into appropriate resource
+// NewOperationDetails - populates operation details into appropriate resource
 func NewOperationDetails(op history2.Operation) regources.Resource {
 	if _, ok := operationDetailsProviders[op.Type]; !ok {
 		panic(errors.From(errors.New("unexpected operation type"), logan.F{
@@ -889,6 +892,19 @@ func newUpdateDataOp(op history2.Operation) regources.Resource {
 		},
 	}
 }
+
+func newUpdateDataOwnerOp(op history2.Operation) regources.Resource {
+	body := op.Details.UpdateDataOwner
+
+	return &regources.UpdateDataOwnerOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_UPDATE_DATA_OWNER),
+		Relationships: regources.UpdateDataOwnerOpRelationships{
+			Data:     *NewDataKey(int64(body.ID)).AsRelation(),
+			NewOwner: NewAccountKey(body.NewOwner.Address()).AsRelation(),
+		},
+	}
+}
+
 func newRemoveDataOp(op history2.Operation) regources.Resource {
 	body := op.Details.RemoveData
 
@@ -950,6 +966,33 @@ func newCancelDataUpdateRequestOp(op history2.Operation) regources.Resource {
 	return &regources.CancelDataUpdateRequestOp{
 		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_DATA_UPDATE_REQUEST),
 		Relationships: regources.CancelDataUpdateRequestOpRelationships{
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCreateDataOwnerUpdateRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CreateDataOwnerUpdateRequest
+
+	return &regources.CreateDataOwnerUpdateRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CREATE_OWNER_DATA_UPDATE_REQUEST),
+		Attributes: regources.CreateDataOwnerUpdateRequestOpAttributes{
+			CreatorDetails: body.CreatorDetails,
+		},
+		Relationships: regources.CreateDataOwnerUpdateRequestOpRelationships{
+			Data:    NewDataKey(int64(body.ID)).AsRelation(),
+			Owner:   NewAccountKey(body.NewOwner.Address()).AsRelation(),
+			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
+		},
+	}
+}
+
+func newCancelDataOwnerUpdateRequestOp(op history2.Operation) regources.Resource {
+	body := op.Details.CancelDataOwnerUpdateRequest
+
+	return &regources.CancelDataOwnerUpdateRequestOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_CANCEL_DATA_OWNER_UPDATE_REQUEST),
+		Relationships: regources.CancelDataOwnerUpdateRequestOpRelationships{
 			Request: NewRequestKey(int64(body.RequestID)).AsRelation(),
 		},
 	}

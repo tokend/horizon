@@ -30,7 +30,7 @@ type reviewableRequestsStorage interface {
 	GetByID(id uint64) (*history2.ReviewableRequest, error)
 }
 
-//Handler - handles txs to create operation details and participant effects. Routes operation
+// Handler - handles txs to create operation details and participant effects. Routes operation
 // to particular implementation of handler
 type Handler struct {
 	participantEffectsStorage participantEffectsStorage
@@ -203,7 +203,7 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 			xdr.OperationTypeUpdateData: &manageUpdateDataOpHandler{
 				effectsBaseHandler,
 			},
-			xdr.OperationTypeUpdateDataOwner: &updateDataOwnerOpHandler{
+			xdr.OperationTypeUpdateDataOwner: &manageUpdateDataOwnerOpHandler{
 				effectsBaseHandler,
 			},
 			xdr.OperationTypeRemoveData: &manageRemoveDataOpHandler{
@@ -349,7 +349,7 @@ func (h *Handler) convertOperation(op operation, opIDGen *generator.ID,
 	}, participantsEffects, nil
 }
 
-//Name - returns name of the handler
+// Name - returns name of the handler
 func (h *Handler) Name() string {
 	return "operation_handler"
 }
