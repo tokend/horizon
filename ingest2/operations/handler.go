@@ -247,6 +247,15 @@ func NewOperationsHandler(operationsStorage operationsStorage, participantEffect
 				effectsBaseHandler,
 				reviewableRequests,
 			},
+			xdr.OperationTypeLpAddLiquidity: &lpAddLiquidityOpHandler{
+				effectsBaseHandler,
+			},
+			xdr.OperationTypeLpSwap: &lpSwapOpHandler{
+				effectsBaseHandler,
+			},
+			xdr.OperationTypeLpRemoveLiquidity: &lpRemoveLiquidityHandler{
+				effectsBaseHandler,
+			},
 		},
 	}
 }

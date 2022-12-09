@@ -1,0 +1,55 @@
+/v3/liquidity-pools/{id}:
+  get:
+    tags:
+      - Liquidity Pools
+    summary: Liquidity pool by ID
+    description: |
+      Allows getting `LiquidityPool` with corresponding details
+    operation: getLiquidityPoolByID
+    parameters:
+    - name: id
+      in: path
+      description: Unique identifier of a liquidity pool
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+        format: int64
+    - name: include
+      in: query
+      description: |
+        Relationships that may be used for the included parameter.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+      enum:
+        - assets
+      example: assets
+    responses:
+      200:
+        description: Liquidity pool exists
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/LiquidityPool'
+      400:
+        description: Bad input parameter
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'
+      404:
+        description: Such a liquidity pool does not exist
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Errors'

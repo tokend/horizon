@@ -1,0 +1,49 @@
+LpSwapOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-lp-swap"
+
+LpSwapOp:
+  allOf:
+    - $ref: '#/components/schemas/LpSwapOpKey'
+    - type: object
+      required:
+        - relationships
+        - attributes
+      properties:
+        relationships:
+          type: object
+          properties:
+            source_in_balance:
+              $ref: '#/components/schemas/BalanceKey'
+            source_out_balance:
+              $ref: '#/components/schemas/BalanceKey'
+        attributes:
+          type: object
+          required:
+            - liquidity_pool_id
+            - in_amount
+            - out_amount
+            - swap_type
+          properties:
+            liquidity_pool_id:
+              type: integer
+            in_amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            out_amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            swap_type:
+              type: string
+              enum:
+                - "LpSwapTypeExactInTokensForOutTokens"
+                - "LpSwapTypeExactOutTokensForInTokens"

@@ -77,6 +77,9 @@ type OperationDetails struct {
 	UpdateDataOwner                      *UpdateDataOwnerDetails               `json:"update_data_owner,omitempty"`
 	CreateDataOwnerUpdateRequest         *CreateDataOwnerUpdateRequest         `json:"create_data_owner_update_request,omitempty"`
 	CancelDataOwnerUpdateRequest         *CancelDataOwnerUpdateRequest         `json:"cancel_data_owner_update_request,omitempty"`
+	LiquidityPoolAddLiquidity            *LiquidityPoolManageLiquidity         `json:"liquidity_pool_add_liquidity,omitempty"`
+	LiquidityPoolSwap                    *LiquidityPoolSwap                    `json:"liquidity_pool_swap,omitempty"`
+	LiquidityPoolRemoveLiquidity         *LiquidityPoolManageLiquidity         `json:"liquidity_pool_remove_liquidity,omitempty"`
 }
 
 // Value - converts operation details into jsonb
@@ -702,4 +705,22 @@ type CancelDeferredPaymentCreationRequest struct {
 
 type CancelCloseDeferredPaymentRequest struct {
 	RequestID uint64 `json:"request_id"`
+}
+
+type LiquidityPoolManageLiquidity struct {
+	LiquidityPoolID   uint64           `json:"liquidity_pool_id"`
+	FirstBalance      string           `json:"first_balance"`
+	SecondBalance     string           `json:"second_balance"`
+	FirstAssetAmount  regources.Amount `json:"first_asset_amount"`
+	SecondAssetAmount regources.Amount `json:"second_asset_amount"`
+	LPTokensAmount    regources.Amount `json:"lp_tokens_amount"`
+}
+
+type LiquidityPoolSwap struct {
+	LiquidityPoolID  uint64           `json:"liquidity_pool_id"`
+	SourceInBalance  string           `json:"source_in_balance"`
+	SourceOutBalance string           `json:"source_out_balance"`
+	InAmount         regources.Amount `json:"in_amount"`
+	OutAmount        regources.Amount `json:"out_amount"`
+	SwapType         string           `json:"swap_type"`
 }

@@ -63,6 +63,8 @@ OperationDetails:
     - $ref: '#/components/schemas/UpdateDataOwnerOp'
     - $ref: '#/components/schemas/CreateDataOwnerUpdateRequestOp'
     - $ref: '#/components/schemas/CancelDataOwnerUpdateRequestOp'
+    - $ref: '#/components/schemas/LpManageLiquidityOp'
+    - $ref: '#/components/schemas/LpSwapOp'
 
 
 OperationDetailsKey:
@@ -130,3 +132,5 @@ OperationDetailsKey:
     - $ref: '#/components/schemas/UpdateDataOwnerOpKey'
     - $ref: '#/components/schemas/CreateDataOwnerUpdateRequestOpKey'
     - $ref: '#/components/schemas/CancelDataOwnerUpdateRequestOpKey'
+    - $ref: '#/components/schemas/LpManageLiquidityOpKey'
+    - $ref: '#/components/schemas/LpSwapOpKey'

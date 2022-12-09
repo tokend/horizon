@@ -13,6 +13,7 @@
 * Vote creation time
 * Participants count in `/v3/sales/{id}`
 * Operation to update owner of the data entry and reviewable request for update data. New endpoints: `/v3/data_owner_update_requests` to get a list of requests and `/v3/data_owner_update_requests/{id}` to get a request by id
+* Liquidity pool operations (add/remove liquidity, and perform swap). New endpoint: `/v3/liquidity_pools`
 
 ### Changed
 

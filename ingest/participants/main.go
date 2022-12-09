@@ -225,6 +225,9 @@ func ForOperation(
 	case xdr.OperationTypeCancelDeferredPaymentCreationRequest:
 	case xdr.OperationTypeCreateCloseDeferredPaymentRequest:
 	case xdr.OperationTypeCancelCloseDeferredPaymentRequest:
+	case xdr.OperationTypeLpAddLiquidity:
+	case xdr.OperationTypeLpSwap:
+	case xdr.OperationTypeLpRemoveLiquidity:
 	default:
 		err = fmt.Errorf("unknown operation type: %s", op.Body.Type)
 	}

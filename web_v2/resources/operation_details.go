@@ -78,6 +78,9 @@ var operationDetailsProviders = map[xdr.OperationType]operationDetailsProvider{
 	xdr.OperationTypeCancelDeferredPaymentCreationRequest:   newCancelDeferredPaymentCreationRequestOp,
 	xdr.OperationTypeCreateCloseDeferredPaymentRequest:      newCreateCloseDeferredPaymentRequestOp,
 	xdr.OperationTypeCancelCloseDeferredPaymentRequest:      newCancelCloseDeferredPaymentRequestOp,
+	xdr.OperationTypeLpAddLiquidity:                         newLiquidityPoolAddLiquidityOp,
+	xdr.OperationTypeLpRemoveLiquidity:                      newLiquidityPoolRemoveLiquidityOp,
+	xdr.OperationTypeLpSwap:                                 newLiquidityPoolSwapOp,
 }
 
 // NewOperationDetails - populates operation details into appropriate resource
@@ -1072,6 +1075,57 @@ func newCreateCloseDeferredPaymentRequestOp(op history2.Operation) regources.Res
 			DestinationBalance: NewBalanceKey(body.DestinationBalance).AsRelation(),
 			Request:            NewRequestKey(int64(body.RequestID)).AsRelation(),
 			DeferredPayment:    NewDeferredPaymentKey(int64(body.DeferredPaymentID)).AsRelation(),
+		},
+	}
+}
+
+func newLiquidityPoolAddLiquidityOp(op history2.Operation) regources.Resource {
+	body := op.Details.LiquidityPoolAddLiquidity
+	return &regources.LpManageLiquidityOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_LP_ADD_LIQUIDITY),
+		Attributes: regources.LpManageLiquidityOpAttributes{
+			FirstAssetAmount:  body.FirstAssetAmount,
+			LiquidityPoolId:   int32(body.LiquidityPoolID),
+			SecondAssetAmount: body.SecondAssetAmount,
+			LpTokensAmount:    body.LPTokensAmount,
+		},
+		Relationships: regources.LpManageLiquidityOpRelationships{
+			FirstBalance:  NewBalanceKey(body.FirstBalance).AsRelation(),
+			SecondBalance: NewBalanceKey(body.SecondBalance).AsRelation(),
+		},
+	}
+}
+
+func newLiquidityPoolRemoveLiquidityOp(op history2.Operation) regources.Resource {
+	body := op.Details.LiquidityPoolRemoveLiquidity
+	return &regources.LpManageLiquidityOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_LP_REMOVE_LIQUIDITY),
+		Attributes: regources.LpManageLiquidityOpAttributes{
+			FirstAssetAmount:  body.FirstAssetAmount,
+			LiquidityPoolId:   int32(body.LiquidityPoolID),
+			SecondAssetAmount: body.SecondAssetAmount,
+			LpTokensAmount:    body.LPTokensAmount,
+		},
+		Relationships: regources.LpManageLiquidityOpRelationships{
+			FirstBalance:  NewBalanceKey(body.FirstBalance).AsRelation(),
+			SecondBalance: NewBalanceKey(body.SecondBalance).AsRelation(),
+		},
+	}
+}
+
+func newLiquidityPoolSwapOp(op history2.Operation) regources.Resource {
+	body := op.Details.LiquidityPoolSwap
+	return &regources.LpSwapOp{
+		Key: regources.NewKeyInt64(op.ID, regources.OPERATIONS_LP_SWAP),
+		Attributes: regources.LpSwapOpAttributes{
+			InAmount:        body.InAmount,
+			LiquidityPoolId: int32(body.LiquidityPoolID),
+			OutAmount:       body.OutAmount,
+			SwapType:        body.SwapType,
+		},
+		Relationships: regources.LpSwapOpRelationships{
+			SourceInBalance:  NewBalanceKey(body.SourceInBalance).AsRelation(),
+			SourceOutBalance: NewBalanceKey(body.SourceOutBalance).AsRelation(),
 		},
 	}
 }

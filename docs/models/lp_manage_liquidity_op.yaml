@@ -1,0 +1,49 @@
+LpManageLiquidityOpKey:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "123"
+    type:
+      type: string
+      enum:
+        - "operations-lp-add-liquidity"
+        - "operations-lp-remove-liquidity"
+
+LpManageLiquidityOp:
+  allOf:
+    - $ref: '#/components/schemas/LpManageLiquidityOpKey'
+    - type: object
+      required:
+        - relationships
+        - attributes
+      properties:
+        relationships:
+          type: object
+          properties:
+            first_balance:
+              $ref: '#/components/schemas/BalanceKey'
+            second_balance:
+              $ref: '#/components/schemas/BalanceKey'
+        attributes:
+          type: object
+          required:
+            - liquidity_pool_id
+            - first_asset_amount
+            - second_asset_amount
+            - lp_tokens_amount
+          properties:
+            liquidity_pool_id:
+              type: integer
+            first_asset_amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            second_asset_amount:
+              type: string
+              format: Amount
+              example: "123.123456"
+            lp_tokens_amount:
+              type: string
+              format: Amount
+              example: "123.123456"
