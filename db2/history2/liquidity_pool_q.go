@@ -60,6 +60,22 @@ func (q LiquidityPoolQ) FilterByPairAsset(pairAsset string) LiquidityPoolQ {
 	return q
 }
 
+// FilterByExistentBalances - returns q, filtered by assets, that the user with `accountID` has
+func (q LiquidityPoolQ) FilterByExistentBalances(accountID string, excludedAssets ...string) LiquidityPoolQ {
+	q.selector = q.selector.
+		Join("balances ba ON ba.asset_code IN (lp.first_asset_code, lp.second_asset_code)").
+		Join("accounts a ON a.id = ba.account_id").
+		Where(sq.And{
+			sq.Eq{
+				"a.address": accountID,
+			},
+			sq.NotEq{
+				"ba.asset_code": excludedAssets,
+			},
+		})
+	return q
+}
+
 // GetByID - loads a row from `liquidity_pools` by ID
 // returns nil, nil if liquidity pool doesn't exist
 func (q LiquidityPoolQ) GetByID(id uint64) (*LiquidityPool, error) {

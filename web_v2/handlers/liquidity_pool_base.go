@@ -56,6 +56,11 @@ func applyLiquidityPoolFilters(r requests.LiquidityPoolsBase, q history2.Liquidi
 		q = q.FilterByLPAsset(r.Filters.LPToken)
 	}
 
+	if r.ShouldFilter(requests.FilterTypeLiquidityPoolListBalancesOwner) &&
+		r.ShouldFilter(requests.FilterTypeLiquidityPoolListExcludedAssets) {
+		q = q.FilterByExistentBalances(r.Filters.BalancesOwner, r.Filters.ExcludedAssets...)
+	}
+
 	return q
 }
 
