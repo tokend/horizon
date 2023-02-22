@@ -1,0 +1,54 @@
+configVersion: 1
+project: "horizon"
+---
+image: horizon-build # Название собираемого образа.
+from: golang:1.16.2-stretch # Базовый образ.
+docker:
+  WORKDIR: /go/src/gitlab.com/tokend/horizon
+git: # Секция с директивами для добавления исходных файлов из git-репозитория.
+  - add: / # Исходный путь в репозитории.
+    to: / # Путь назначения в образе.
+    stageDependencies: # Настройка перевыполнения сборочных инструкций при изменениях определённых файлов в репозитории.
+      setup: # Для стадии Setup.
+        - "**/*"
+shell: # Shell сборочные инструкции.
+  setup: # Для стадии Setup.
+    - export CGO_ENABLED=0
+    - export GOOS=linux
+    - export VERSION={{ env "CI_COMMIT_SHA" }}
+    - go build -ldflags "-X main.version=${VERSION}" -o /usr/local/bin/horizon gitlab.com/tokend/horizon/cmd/horizon
+
+---
+image: horizon-pg # Название собираемого образа.
+from: postgres:14 # Базовый образ.
+docker:
+  ENTRYPOINT: entrypoint.sh
+  EXPOSE: [8000, 5432]
+git: # Секция с директивами для добавления исходных файлов из git-репозитория.
+  - add: /entrypoint.sh # Исходный путь в репозитории.
+    to: /usr/local/bin/horizon-entrypoint.sh # Путь назначения в образе.
+    stageDependencies: # Настройка перевыполнения сборочных инструкций при изменениях определённых файлов в репозитории.
+      setup: # Для стадии Setup.
+        - "**/*"
+  - add: /pg-entrypoint.sh # Исходный путь в репозитории.
+    to: /usr/local/bin/pg-entrypoint.sh # Путь назначения в образе.
+    stageDependencies: # Настройка перевыполнения сборочных инструкций при изменениях определённых файлов в репозитории.
+      setup: # Для стадии Setup.
+        - "**/*"
+  - add: /pg-entrypoint.sh # Исходный путь в репозитории.
+    to: /usr/local/bin/entrypoint.sh # Путь назначения в образе.
+    stageDependencies: # Настройка перевыполнения сборочных инструкций при изменениях определённых файлов в репозитории.
+      setup: # Для стадии Setup.
+        - "**/*"
+shell: # Shell сборочные инструкции.
+  setup: # Для стадии Setup.
+    - apt-get update
+    - apt-get install -y --no-install-recommends dumb-init ca-certificates
+    - chmod +x /usr/local/bin/horizon-entrypoint.sh
+    - chmod +x /usr/local/bin/entrypoint.sh
+    - chmod +x /usr/local/bin/pg-entrypoint.sh
+import:
+  - image: horizon-build
+    add: /usr/local/bin/horizon
+    to: /usr/local/bin/horizon
+    after: setup
