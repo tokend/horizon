@@ -25,6 +25,26 @@
         explode: false
         schema:
           type: string
+      - name: filter[balances_owner]
+        in: query
+        description: |
+          Filters liquidity pools by a balances of the specified account's address.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[excluded_assets]
+        in: query
+        description: |
+          Excludes liquidity pools from the filter by asset codes.
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          item:
+            - type: string
       - name: include
         in: query
         description: |

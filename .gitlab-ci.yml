@@ -1,66 +1,144 @@
-# docker-in-docker allows to build and publish docker images
-services:
-  - docker:18-dind
-
 variables:
-  IMAGE_NAME: registry.gitlab.com/tokend/horizon
-  BUILD_IMAGE: horizonbuild
+  DOCKER_DRIVER: overlay2
+  GITHUB_REF: $CI_COMMIT_SHA
+  DH_IMAGE_NAME: $CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME
+  SERVICE: $CI_PROJECT_NAME
+  REGISTRY: registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
+  IMAGE_NAME: $REGISTRY:pg-$CI_COMMIT_SHA
+  IMAGE_NAME_TAG: $REGISTRY:$CI_COMMIT_TAG
+  WERF_LOG_COLOR_MODE: "on"
+  WERF_IMAGES_REPO: $CI_REGISTRY_IMAGE
+  BUILD_BASE_IMAGE: $IMAGE_NAME/buildbase:2
+  BUILD_IMAGE: corebuild
+  BUILDNC_IMAGE: corebuildnc
   BUILD_DOCKERFILE: build.dockerfile
+  BUILDNC_DOCKERFILE: buildnc.dockerfile
   LEGACY_IMAGE: $IMAGE_NAME:$CI_COMMIT_SHA
   LEGACY_DOCKERFILE: legacy.dockerfile
   PG_IMAGE: $IMAGE_NAME:pg-$CI_COMMIT_SHA
   PG_DOCKERFILE: pg.dockerfile
-  TEST_IMAGE: $IMAGE_NAME:$CI_COMMIT_SHA-test
-  TEST_DOCKERFILE: test.dockerfile
-  DH_IMAGE_NAME: tokend/horizon
+  PGNC_DOCKERFILE: pgnc.dockerfile
+  DH_IMAGE: tokend/horizon
+
+
+.before_script_template: &before_script_templ
+  before_script:
+    - werf version
+    - docker version
+    - echo $CI_REGISTRY
+    - echo $CI_REGISTRY_USER
+    - echo $CI_REGISTRY_PASSWORD
+    - echo $WERF_IMAGES_REPO
+    - echo $WERF_ADD_CUSTOM_TAG_1
+
 
 stages:
-  - build
-  - publish
+  - build-and-publish
+  #- deploy
+  - cleanup
 
-# build and publish docker image to the registry
-build:
-  image: docker:latest
-  stage: build
+
+Build and Publish:
+  stage: build-and-publish
   tags:
     - tokend
+  services:
+    - docker:18-dind
+  image:
+    name: "registry.gitlab.com/tokend/devops/werf-dind:8588e38f423bc5cc35c68e57e0c0dd57eb920e5d"
+    entrypoint: [""]
+  <<: *before_script_templ
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    # build intermediate binary
-    - version=$(test -z $CI_COMMIT_TAG && echo $CI_COMMIT_SHA || echo $CI_COMMIT_TAG)
-    - docker build --build-arg version="$version" --pull -t $BUILD_IMAGE -f $BUILD_DOCKERFILE .
-    # legacy
-    - docker build -t $LEGACY_IMAGE -f $LEGACY_DOCKERFILE .
-    - docker push $LEGACY_IMAGE
-    # pg
-    - docker pull registry.gitlab.com/tokend/deployment/postgres-ubuntu:9.6
-    - docker build -t $PG_IMAGE -f $PG_DOCKERFILE .
-    - docker push $PG_IMAGE
+    - VERSION=$(echo $CI_COMMIT_TAG)
+    # login to docker registry
+    - type werf && source $(werf ci-env gitlab --as-file)
+    - werf build --report-path=images-report.json
+    - docker pull $(cat images-report.json | jq -r .Images.horizonpg.DockerImageName)
+    - docker tag $(cat images-report.json | jq -r .Images.horizonpg.DockerImageName) $IMAGE_NAME
+    - docker push $IMAGE_NAME
+  except: [schedules]
+  interruptible: true
 
-publish dockerhub:
-  image: docker:latest
-  stage: publish
+Build and Publish DH:
+  stage: build-and-publish
   tags:
     - tokend
+  services:
+    - docker:18-dind
+  image:
+    name: "registry.gitlab.com/tokend/devops/werf-dind:8588e38f423bc5cc35c68e57e0c0dd57eb920e5d"
+    entrypoint: [""]
   only:
-    - /^\d+\.\d+\.\d+.*$/
+    - /^.+\..+\..+$/
   script:
+    - VERSION=$(test -z $CI_COMMIT_TAG && echo $CI_COMMIT_SHA || echo $CI_COMMIT_TAG)
+    # login to docker registry
     - RELEASE=$CI_COMMIT_REF_NAME
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PWD
-    - docker pull $PG_IMAGE
-    - docker tag $PG_IMAGE $DH_IMAGE_NAME:$RELEASE
-    - docker push $DH_IMAGE_NAME:$RELEASE
+    - type werf && source $(werf ci-env gitlab --as-file)
+    - werf build --report-path=images-report.json
+    - docker pull $(cat images-report.json | jq -r .Images.horizonpg.DockerImageName)
+    - docker tag $(cat images-report.json | jq -r .Images.horizonpg.DockerImageName) $DH_IMAGE:$RELEASE
+    - docker push $DH_IMAGE:$RELEASE
+
+# Deploy to Staging:
+#   services:
+#       - docker:18-dind
+#   image: dtzar/helm-kubectl:latest
+#   tags:
+#     - tokend
+#   stage: deploy
+#   script:
+#     - mkdir ~/.kube/
+#     - echo ${k8sconfig} | base64 -d > config
+#     - mv config ~/.kube/
+#     - helm upgrade -i "webclient" ".helm" --set global.IngressDomain=stage.${DOMAIN} --set "image.repository=${REGISTRY}" --set "image.tag=${CI_COMMIT_SHA}" --create-namespace --namespace $CI_PROJECT_NAME-stage
+#   interruptible: true
+
+
+# Deploy to Production:
+#   services:
+#       - docker:18-dind
+#   image: dtzar/helm-kubectl:latest
+#   tags:
+#     - tokend
+#   stage: deploy
+#   script:
+#     - mkdir ~/.kube/
+#     - echo ${k8sconfig} | base64 -d > config
+#     - mv config ~/.kube/
+#     - helm upgrade -i "webclient" ".helm" --set global.IngressDomain=${DOMAIN} --set "image.repository=${REGISTRY}" --set "image.tag=${CI_COMMIT_TAG}" --create-namespace --namespace $CI_PROJECT_NAME-prod
+#   when: manual
+#   interruptible: true
 
 pages:
-  stage: build
+  stage: build-and-publish
   tags:
-      - tokend
+    - tokend
   script:
-  - echo 'Nothing to do...'
+    - echo 'Nothing to do...'
   artifacts:
     paths:
-    - public
+      - public
   only:
-  - master
-  - feature/deferred-payment
+    - master
+    - feature/deferred-payment
+
+Cleanup:
+  stage: cleanup
+  tags:
+    - tokend
+  services:
+    - docker:18-dind
+  image:
+    name: "registry.gitlab.com/tokend/devops/werf-dind:8588e38f423bc5cc35c68e57e0c0dd57eb920e5d"
+    entrypoint: [""]
+  <<: *before_script_templ
+  script:
+    - type werf && source $(werf ci-env gitlab --as-file)
+    - docker login -u nobody -p ${WERF_IMAGES_CLEANUP_PASSWORD} ${WERF_IMAGES_REPO}
+    - werf cleanup
+  only: [schedules]
+  interruptible: true
+
