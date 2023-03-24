@@ -1,11 +1,16 @@
 # Changelog
 
-## Unreleased
+## 4.9.0
 
 ### Added
 
 * Redemption reviewable request
 * Change data owner Operation & Reviewable request
+* Liquidity pools
+
+### Fixed
+
+* CustomChoice in `VoteData` is of type *Details now
 
 ## 4.8.0
 
