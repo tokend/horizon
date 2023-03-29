@@ -572,6 +572,8 @@ gitlab.com/tokend/go v3.16.0+incompatible h1:WKpbEsqOxf7L7fc0GGx9hoPy2dCph+AtPBd
 gitlab.com/tokend/go v3.16.0+incompatible/go.mod h1:qz38YBc7VL29H2gnXbpRzcEVw2d1NUZ5SVDzIehqDCA=
 gitlab.com/tokend/go v4.0.0-rc.1+incompatible h1:kTosx8KMLcOiedqIr78SrpQzE6+jbvFkwVeZN4B5WaM=
 gitlab.com/tokend/go v4.0.0-rc.1+incompatible/go.mod h1:qz38YBc7VL29H2gnXbpRzcEVw2d1NUZ5SVDzIehqDCA=
+gitlab.com/tokend/go v4.0.0-rc.1.0.20230329115440-0109865b4208+incompatible h1:+bZSgNjxwYsKEfPnYV99PArEyun+Gd/RyRIg/e4ARkc=
+gitlab.com/tokend/go v4.0.0-rc.1.0.20230329115440-0109865b4208+incompatible/go.mod h1:qz38YBc7VL29H2gnXbpRzcEVw2d1NUZ5SVDzIehqDCA=
 gitlab.com/tokend/go/v4 v4.0.0-rc.0 h1:h7kgX+mNvkagRV74Q8GUFz1sewIhhTN8e4zkhZ2eugg=
 gitlab.com/tokend/go/v4 v4.0.0-rc.0/go.mod h1:aKGtb6jQ2w21PtNEz7X0L7rIaVyWfjEoKqjuPtHe8oE=
 gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 h1:u8pxrNw8QKIsrmClG71uuTPy22fkePAXBkHgxrXkMU8=

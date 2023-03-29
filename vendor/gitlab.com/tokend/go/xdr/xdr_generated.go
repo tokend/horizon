@@ -59511,7 +59511,8 @@ type TransactionResult struct {
 //	     FIX_UNORDERED_FEE_DESTINATION = 32,
 //	     ADD_DEFAULT_FEE_RECEIVER_BALANCE_KV = 33,
 //	     DELETE_REDEMPTION_ZERO_TASKS_CHECKING = 34,
-//	     FIX_DATA_OWNERSHIP_TRANSFER_OWNER_CHECK = 35
+//	     FIX_DATA_OWNERSHIP_TRANSFER_OWNER_CHECK = 35,
+//	     FIX_UPDATE_DATA_OWNER_RESULT = 36
 //	 };
 type LedgerVersion int32
 
@@ -59552,6 +59553,7 @@ const (
 	LedgerVersionAddDefaultFeeReceiverBalanceKv     LedgerVersion = 33
 	LedgerVersionDeleteRedemptionZeroTasksChecking  LedgerVersion = 34
 	LedgerVersionFixDataOwnershipTransferOwnerCheck LedgerVersion = 35
+	LedgerVersionFixUpdateDataOwnerResult           LedgerVersion = 36
 )
 
 var LedgerVersionAll = []LedgerVersion{
@@ -59591,6 +59593,7 @@ var LedgerVersionAll = []LedgerVersion{
 	LedgerVersionAddDefaultFeeReceiverBalanceKv,
 	LedgerVersionDeleteRedemptionZeroTasksChecking,
 	LedgerVersionFixDataOwnershipTransferOwnerCheck,
+	LedgerVersionFixUpdateDataOwnerResult,
 }
 
 var ledgerVersionMap = map[int32]string{
@@ -59630,6 +59633,7 @@ var ledgerVersionMap = map[int32]string{
 	33: "LedgerVersionAddDefaultFeeReceiverBalanceKv",
 	34: "LedgerVersionDeleteRedemptionZeroTasksChecking",
 	35: "LedgerVersionFixDataOwnershipTransferOwnerCheck",
+	36: "LedgerVersionFixUpdateDataOwnerResult",
 }
 
 var ledgerVersionShortMap = map[int32]string{
@@ -59669,6 +59673,7 @@ var ledgerVersionShortMap = map[int32]string{
 	33: "add_default_fee_receiver_balance_kv",
 	34: "delete_redemption_zero_tasks_checking",
 	35: "fix_data_ownership_transfer_owner_check",
+	36: "fix_update_data_owner_result",
 }
 
 var ledgerVersionRevMap = map[string]int32{
@@ -59708,6 +59713,7 @@ var ledgerVersionRevMap = map[string]int32{
 	"LedgerVersionAddDefaultFeeReceiverBalanceKv":     33,
 	"LedgerVersionDeleteRedemptionZeroTasksChecking":  34,
 	"LedgerVersionFixDataOwnershipTransferOwnerCheck": 35,
+	"LedgerVersionFixUpdateDataOwnerResult":           36,
 }
 
 // ValidEnum validates a proposed value for this enum.  Implements
