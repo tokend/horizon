@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"math"
 	"net/http"
 
 	"gitlab.com/tokend/horizon/web_v2/ctx"
@@ -54,7 +55,7 @@ type getAccountListHandler struct {
 }
 
 func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*regources.AccountListResponse, error) {
-	q := h.AccountsQ.Page(r.PageParams)
+	q := h.AccountsQ
 
 	if r.ShouldFilter(requests.FilterTypeAccountListAccount) {
 		q = q.FilterByAddresses(r.Filters.Account...)
@@ -63,7 +64,12 @@ func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*reg
 		q = q.FilterByRole(r.Filters.Role...)
 	}
 
-	accounts, err := q.Select()
+	accountsAll, err := q.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get accounts")
+	}
+
+	accounts, err := q.Page(r.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get accounts")
 	}
@@ -71,6 +77,14 @@ func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*reg
 	response := regources.AccountListResponse{
 		Data:  make([]regources.Account, 0, len(accounts)),
 		Links: r.GetOffsetLinks(r.PageParams),
+	}
+
+	err = response.PutMeta(requests.MetaPageParams{
+		CurrentPage: r.PageParams.PageNumber,
+		TotalPages:  uint64(math.Ceil(float64(len(accountsAll)) / float64(r.PageParams.Limit))),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to put meta to response")
 	}
 
 	for _, account := range accounts {

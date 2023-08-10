@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"math"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -33,6 +34,13 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 ) error {
 
 	q := h.ApplyFilters(request, requestsQ)
+
+	recordsAll, err := q.Select()
+	if err != nil {
+		return errors.Wrap(err, "failed to get reviewable request list")
+	}
+
+	q = q.Page(request.PageParams)
 
 	records, err := q.Select()
 	if err != nil {
@@ -68,6 +76,14 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 
 		h.PopulateLinks(response, request)
 
+		err = response.PutMeta(requests.MetaCursorParams{
+			CurrentCursor: request.PageParams.Cursor,
+			TotalPages:    uint64(math.Ceil(float64(len(recordsAll)) / float64(request.PageParams.Limit))),
+		})
+		if err != nil {
+			return errors.Wrap(err, "failed to put meta to response")
+		}
+
 		ape.Render(w, response)
 		return nil
 	}
@@ -89,7 +105,6 @@ func (h *getRequestListBaseHandler) PopulateResource(
 func (h *getRequestListBaseHandler) ApplyFilters(
 	request requests.GetRequestsBase, q history2.ReviewableRequestsQ,
 ) history2.ReviewableRequestsQ {
-	q = q.Page(request.PageParams)
 	if request.Filters.Requestor != nil {
 		q = q.FilterByRequestorAddress(*request.Filters.Requestor)
 	}
