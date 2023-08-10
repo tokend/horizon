@@ -30,7 +30,7 @@ type GetRequestsBase struct {
 	*base
 	Filters             GetRequestListBaseFilters
 	PageParams          pgdb.CursorPageParams
-	OffsetPageParams    pgdb.OffsetPageParams
+	PageNumber          uint64 `page:"number"`
 	UseOffsetPageParams bool
 	Includes            struct {
 		RequestDetails bool `include:"request_details"`
@@ -90,9 +90,22 @@ func PopulateRequest(requestsBase *GetRequestsBase) error {
 		return err
 	}
 
-	err = requestsBase.SetDefaultOffsetPageParams(&requestsBase.OffsetPageParams)
-	if err != nil {
-		return err
+	// use part of cursor params struct to prevent decode same token twice
+	if requestsBase.UseOffsetPageParams {
+		params := pgdb.OffsetPageParams{
+			Limit:      requestsBase.PageParams.Limit,
+			Order:      requestsBase.PageParams.Order,
+			PageNumber: requestsBase.PageNumber,
+		}
+
+		err = requestsBase.SetDefaultOffsetPageParams(&params)
+		if err != nil {
+			return err
+		}
+
+		requestsBase.PageParams.Limit = params.Limit
+		requestsBase.PageParams.Order = params.Order
+		requestsBase.PageNumber = params.PageNumber
 	}
 
 	ID, err := requestsBase.base.getUint64ID()

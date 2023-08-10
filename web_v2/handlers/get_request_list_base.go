@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"math"
 	"net/http"
 
@@ -41,7 +42,11 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 	}
 
 	if request.UseOffsetPageParams {
-		q = q.PageOffset(request.OffsetPageParams)
+		q = q.PageOffset(pgdb.OffsetPageParams{
+			Limit:      request.PageParams.Limit,
+			Order:      request.PageParams.Order,
+			PageNumber: request.PageNumber,
+		})
 	} else {
 		q = q.Page(request.PageParams)
 	}
@@ -79,11 +84,15 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		}
 
 		if request.UseOffsetPageParams {
-			response.Links = request.GetOffsetLinks(request.OffsetPageParams)
+			response.Links = request.GetOffsetLinks(pgdb.OffsetPageParams{
+				Limit:      request.PageParams.Limit,
+				Order:      request.PageParams.Order,
+				PageNumber: request.PageNumber,
+			})
 
 			err = response.PutMeta(requests.MetaPageParams{
-				CurrentPage: request.OffsetPageParams.PageNumber,
-				TotalPages:  uint64(math.Ceil(float64(len(recordsAll)) / float64(request.OffsetPageParams.Limit))),
+				CurrentPage: request.PageNumber,
+				TotalPages:  uint64(math.Ceil(float64(len(recordsAll)) / float64(request.PageParams.Limit))),
 			})
 		} else {
 			h.PopulateLinks(response, request)
