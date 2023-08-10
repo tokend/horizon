@@ -40,7 +40,11 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		return errors.Wrap(err, "failed to get reviewable request list")
 	}
 
-	q = q.Page(request.PageParams)
+	if request.UseOffsetPageParams {
+		q = q.PageOffset(request.OffsetPageParams)
+	} else {
+		q = q.Page(request.PageParams)
+	}
 
 	records, err := q.Select()
 	if err != nil {
@@ -74,12 +78,22 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 			response.Data = append(response.Data, resource)
 		}
 
-		h.PopulateLinks(response, request)
+		if request.UseOffsetPageParams {
+			response.Links = request.GetOffsetLinks(request.OffsetPageParams)
 
-		err = response.PutMeta(requests.MetaCursorParams{
-			CurrentCursor: request.PageParams.Cursor,
-			TotalPages:    uint64(math.Ceil(float64(len(recordsAll)) / float64(request.PageParams.Limit))),
-		})
+			err = response.PutMeta(requests.MetaPageParams{
+				CurrentPage: request.OffsetPageParams.PageNumber,
+				TotalPages:  uint64(math.Ceil(float64(len(recordsAll)) / float64(request.OffsetPageParams.Limit))),
+			})
+		} else {
+			h.PopulateLinks(response, request)
+
+			err = response.PutMeta(requests.MetaCursorParams{
+				CurrentCursor: request.PageParams.Cursor,
+				TotalPages:    uint64(math.Ceil(float64(len(recordsAll)) / float64(request.PageParams.Limit))),
+			})
+		}
+
 		if err != nil {
 			return errors.Wrap(err, "failed to put meta to response")
 		}

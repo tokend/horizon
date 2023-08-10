@@ -2,6 +2,7 @@ package requests
 
 import (
 	"net/http"
+	"strings"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
@@ -27,9 +28,11 @@ type GetRequestListBaseFilters struct {
 
 type GetRequestsBase struct {
 	*base
-	Filters    GetRequestListBaseFilters
-	PageParams pgdb.CursorPageParams
-	Includes   struct {
+	Filters             GetRequestListBaseFilters
+	PageParams          pgdb.CursorPageParams
+	OffsetPageParams    pgdb.OffsetPageParams
+	UseOffsetPageParams bool
+	Includes            struct {
 		RequestDetails bool `include:"request_details"`
 	}
 }
@@ -71,7 +74,23 @@ func NewGetRequestsBase(
 func PopulateRequest(requestsBase *GetRequestsBase) error {
 	var err error
 
+	for queryParam, _ := range *requestsBase.queryValues {
+		if strings.Contains(queryParam, "page") {
+			filterKey := strings.TrimPrefix(queryParam, "page[")
+			filterKey = strings.TrimSuffix(filterKey, "]")
+			if filterKey == "number" {
+				requestsBase.UseOffsetPageParams = true
+				break
+			}
+		}
+	}
+
 	err = SetDefaultCursorPageParams(&requestsBase.PageParams)
+	if err != nil {
+		return err
+	}
+
+	err = requestsBase.SetDefaultOffsetPageParams(&requestsBase.OffsetPageParams)
 	if err != nil {
 		return err
 	}

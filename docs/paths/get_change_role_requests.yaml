@@ -100,6 +100,7 @@
             - "request_details"
             - "request_details.account"
       - $ref: '#/components/schemas/pageCursorParam'
+      - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
     responses:

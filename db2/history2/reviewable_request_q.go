@@ -245,6 +245,12 @@ func (q ReviewableRequestsQ) Page(pageParams pgdb.CursorPageParams) ReviewableRe
 	return q
 }
 
+// PageOffset - apply paging params to the query
+func (q ReviewableRequestsQ) PageOffset(pageParams pgdb.OffsetPageParams) ReviewableRequestsQ {
+	q.selector = pageParams.ApplyTo(q.selector, "reviewable_requests.id")
+	return q
+}
+
 // Get - loads a row from `reviewable_requests`
 // returns nil, nil - if request does not exists
 // returns error if more than one ReviewableRequest found
