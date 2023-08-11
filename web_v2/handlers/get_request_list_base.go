@@ -41,11 +41,11 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 		return errors.Wrap(err, "failed to get reviewable request list")
 	}
 
-	if request.UseOffsetPageParams {
+	if request.PageNumber != nil {
 		q = q.PageOffset(pgdb.OffsetPageParams{
 			Limit:      request.PageParams.Limit,
 			Order:      request.PageParams.Order,
-			PageNumber: request.PageNumber,
+			PageNumber: *request.PageNumber,
 		})
 	} else {
 		q = q.Page(request.PageParams)
@@ -83,15 +83,15 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 			response.Data = append(response.Data, resource)
 		}
 
-		if request.UseOffsetPageParams {
+		if request.PageNumber != nil {
 			response.Links = request.GetOffsetLinks(pgdb.OffsetPageParams{
 				Limit:      request.PageParams.Limit,
 				Order:      request.PageParams.Order,
-				PageNumber: request.PageNumber,
+				PageNumber: *request.PageNumber,
 			})
 
 			err = response.PutMeta(requests.MetaPageParams{
-				CurrentPage: request.PageNumber,
+				CurrentPage: *request.PageNumber,
 				TotalPages:  uint64(math.Ceil(float64(len(recordsAll)) / float64(request.PageParams.Limit))),
 			})
 		} else {

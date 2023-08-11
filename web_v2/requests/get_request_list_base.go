@@ -2,9 +2,9 @@ package requests
 
 import (
 	"net/http"
-	"strings"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type GetRequestListBaseFilters struct {
@@ -28,11 +28,10 @@ type GetRequestListBaseFilters struct {
 
 type GetRequestsBase struct {
 	*base
-	Filters             GetRequestListBaseFilters
-	PageParams          pgdb.CursorPageParams
-	PageNumber          uint64 `page:"number"`
-	UseOffsetPageParams bool
-	Includes            struct {
+	Filters    GetRequestListBaseFilters
+	PageParams pgdb.CursorPageParams
+	PageNumber *uint64 `page:"number"`
+	Includes   struct {
 		RequestDetails bool `include:"request_details"`
 	}
 }
@@ -74,38 +73,27 @@ func NewGetRequestsBase(
 func PopulateRequest(requestsBase *GetRequestsBase) error {
 	var err error
 
-	for queryParam, _ := range *requestsBase.queryValues {
-		if strings.Contains(queryParam, "page") {
-			filterKey := strings.TrimPrefix(queryParam, "page[")
-			filterKey = strings.TrimSuffix(filterKey, "]")
-			if filterKey == "number" {
-				requestsBase.UseOffsetPageParams = true
-				break
-			}
-		}
-	}
-
 	err = SetDefaultCursorPageParams(&requestsBase.PageParams)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to set default cursor params")
 	}
 
 	// use part of cursor params struct to prevent decode same token twice
-	if requestsBase.UseOffsetPageParams {
+	if requestsBase.PageNumber != nil {
 		params := pgdb.OffsetPageParams{
 			Limit:      requestsBase.PageParams.Limit,
 			Order:      requestsBase.PageParams.Order,
-			PageNumber: requestsBase.PageNumber,
+			PageNumber: *requestsBase.PageNumber,
 		}
 
 		err = requestsBase.SetDefaultOffsetPageParams(&params)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to set default page params")
 		}
 
 		requestsBase.PageParams.Limit = params.Limit
 		requestsBase.PageParams.Order = params.Order
-		requestsBase.PageNumber = params.PageNumber
+		requestsBase.PageNumber = &params.PageNumber
 	}
 
 	ID, err := requestsBase.base.getUint64ID()
