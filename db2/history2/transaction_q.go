@@ -59,7 +59,7 @@ func (q TransactionsQ) FilterByID(id uint64) TransactionsQ {
 	return q
 }
 
-//FilterByHash - filters transaction by hash
+// FilterByHash - filters transaction by hash
 func (q TransactionsQ) FilterByHash(hash string) TransactionsQ {
 	q.selector = q.selector.Where("transactions.hash = ?", hash)
 	return q
@@ -87,6 +87,12 @@ func (q TransactionsQ) Page(params pgdb.CursorPageParams) TransactionsQ {
 	return q
 }
 
+// PageOffset - returns Q with specified limit and offset params
+func (q TransactionsQ) PageOffset(params pgdb.OffsetPageParams) TransactionsQ {
+	q.selector = params.ApplyTo(q.selector, "transactions.id")
+	return q
+}
+
 // Get - loads a row from `transactions`
 // returns nil, nil - if transaction does not exists
 // returns error if more than one Transaction found
@@ -104,7 +110,7 @@ func (q TransactionsQ) Get() (*Transaction, error) {
 	return &result, nil
 }
 
-//Select - selects slice from the db, if no transactions found - returns nil, nil
+// Select - selects slice from the db, if no transactions found - returns nil, nil
 func (q TransactionsQ) Select() ([]Transaction, error) {
 	var result []Transaction
 

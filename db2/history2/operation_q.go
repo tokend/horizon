@@ -44,8 +44,14 @@ func (q OperationQ) FilterByOperationSource(source string) OperationQ {
 	return q
 }
 
-// Page - apply paging params to the query
+// Page - apply paging cursor params to the query
 func (q OperationQ) Page(pageParams pgdb.CursorPageParams) OperationQ {
+	q.selector = pageParams.ApplyTo(q.selector, "op.id")
+	return q
+}
+
+// PageOffset - apply paging offset params to the query
+func (q OperationQ) PageOffset(pageParams pgdb.OffsetPageParams) OperationQ {
 	q.selector = pageParams.ApplyTo(q.selector, "op.id")
 	return q
 }

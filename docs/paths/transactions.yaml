@@ -120,6 +120,7 @@
           enum:
             - "ledger_entry_changes"
       - $ref: '#/components/schemas/pageCursorParam'
+      - $ref: '#/components/schemas/pageNumberParam'
       - $ref: '#/components/schemas/pageLimitParam'
       - $ref: '#/components/schemas/sortingParam'
     responses:

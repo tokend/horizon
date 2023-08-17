@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 
 	"gitlab.com/tokend/horizon/web_v2/resources"
@@ -49,7 +50,7 @@ func GetOperations(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*regources.OperationListResponse, error) {
-	q := h.OperationQ.Page(request.PageParams)
+	q := h.OperationQ
 
 	if request.Filters.Types != nil {
 		q = q.FilterByOperationsTypes(request.Filters.Types)
@@ -57,6 +58,21 @@ func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*
 
 	if request.Filters.Source != nil {
 		q = q.FilterByOperationSource(*request.Filters.Source)
+	}
+
+	opsAll, err := q.Select()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load all operations")
+	}
+
+	if request.PageNumber != nil {
+		q = q.PageOffset(pgdb.OffsetPageParams{
+			Limit:      request.PageParams.Limit,
+			Order:      request.PageParams.Order,
+			PageNumber: *request.PageNumber,
+		})
+	} else {
+		q = q.Page(request.PageParams)
 	}
 
 	historyOperations, err := q.Select()
@@ -78,10 +94,32 @@ func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*
 		result.Data = append(result.Data, operation)
 	}
 
-	if len(result.Data) > 0 {
-		result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
+	if request.PageNumber != nil {
+		result.Links = request.GetOffsetLinks(pgdb.OffsetPageParams{
+			Limit:      request.PageParams.Limit,
+			Order:      request.PageParams.Order,
+			PageNumber: *request.PageNumber,
+		})
+
+		err = result.PutMeta(requests.MetaPageParams{
+			CurrentPage: *request.PageNumber,
+			TotalPages:  (uint64(len(opsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+		})
 	} else {
-		result.Links = request.GetCursorLinks(request.PageParams, "")
+		if len(result.Data) > 0 {
+			result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
+		} else {
+			result.Links = request.GetCursorLinks(request.PageParams, "")
+		}
+
+		err = result.PutMeta(requests.MetaCursorParams{
+			CurrentCursor: request.PageParams.Cursor,
+			TotalPages:    (uint64(len(opsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+		})
+	}
+
+	if err != nil {
+		return &result, errors.Wrap(err, "failed to put meta to response")
 	}
 
 	return &result, nil
