@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"gitlab.com/distributed_lab/kit/pgdb"
-	"math"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -92,14 +91,14 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 
 			err = response.PutMeta(requests.MetaPageParams{
 				CurrentPage: *request.PageNumber,
-				TotalPages:  uint64(math.Ceil(float64(len(recordsAll)) / float64(request.PageParams.Limit))),
+				TotalPages:  (uint64(len(recordsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
 			})
 		} else {
 			h.PopulateLinks(response, request)
 
 			err = response.PutMeta(requests.MetaCursorParams{
 				CurrentCursor: request.PageParams.Cursor,
-				TotalPages:    uint64(math.Ceil(float64(len(recordsAll)) / float64(request.PageParams.Limit))),
+				TotalPages:    (uint64(len(recordsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
 			})
 		}
 
