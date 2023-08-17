@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"net/http"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -29,10 +30,11 @@ const (
 	FilterTypeHistoryIDs = "id"
 )
 
-//GetHistory - represents params to be specified for Get History handler
+// GetHistory - represents params to be specified for Get History handler
 type GetHistory struct {
 	*base
 	PageParams pgdb.CursorPageParams
+	PageNumber *uint64 `page:"number"`
 	Filters    struct {
 		Account    *string  `filter:"account"`
 		Balance    []string `filter:"balance"`
@@ -79,6 +81,24 @@ func NewGetHistory(r *http.Request) (*GetHistory, error) {
 	err = SetDefaultCursorPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
+	}
+
+	// use part of cursor params struct to prevent decode same token twice
+	if request.PageNumber != nil {
+		params := pgdb.OffsetPageParams{
+			Limit:      request.PageParams.Limit,
+			Order:      request.PageParams.Order,
+			PageNumber: *request.PageNumber,
+		}
+
+		err = request.SetDefaultOffsetPageParams(&params)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to set default page params")
+		}
+
+		request.PageParams.Limit = params.Limit
+		request.PageParams.Order = params.Order
+		request.PageNumber = &params.PageNumber
 	}
 
 	return &request, nil

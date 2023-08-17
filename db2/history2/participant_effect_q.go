@@ -9,13 +9,13 @@ import (
 	"gitlab.com/tokend/horizon/db2"
 )
 
-//ParticipantEffectsQ - helper struct to get participants from db
+// ParticipantEffectsQ - helper struct to get participants from db
 type ParticipantEffectsQ struct {
 	repo     *pgdb.DB
 	selector sq.SelectBuilder
 }
 
-//NewParticipantEffectsQ - creates new ParticipantEffectsQ
+// NewParticipantEffectsQ - creates new ParticipantEffectsQ
 func NewParticipantEffectsQ(repo *pgdb.DB) ParticipantEffectsQ {
 	return ParticipantEffectsQ{
 		repo: repo,
@@ -24,28 +24,28 @@ func NewParticipantEffectsQ(repo *pgdb.DB) ParticipantEffectsQ {
 	}
 }
 
-//WithOperation - left joins operations
+// WithOperation - left joins operations
 func (q ParticipantEffectsQ) WithOperation() ParticipantEffectsQ {
 	q.selector = q.selector.Columns(db2.GetColumnsForJoin(operationColumns, "operations")...).
 		LeftJoin("operations operations ON effects.operation_id = operations.id")
 	return q
 }
 
-//WithBalance - left joins balances
+// WithBalance - left joins balances
 func (q ParticipantEffectsQ) WithBalance() ParticipantEffectsQ {
 	q.selector = q.selector.Columns("balances.address balance_address").
 		LeftJoin("balances balances ON balances.id = effects.balance_id")
 	return q
 }
 
-//WithAccount - left joins accounts
+// WithAccount - left joins accounts
 func (q ParticipantEffectsQ) WithAccount() ParticipantEffectsQ {
 	q.selector = q.selector.Columns("accounts.address account_address").
 		LeftJoin("accounts accounts ON accounts.id = effects.account_id")
 	return q
 }
 
-//ForBalance - adds filter by balance ID
+// ForBalance - adds filter by balance ID
 func (q ParticipantEffectsQ) ForBalance(id ...uint64) ParticipantEffectsQ {
 	q.selector = q.selector.Where(sq.Eq{
 		"effects.balance_id": id,
@@ -53,25 +53,25 @@ func (q ParticipantEffectsQ) ForBalance(id ...uint64) ParticipantEffectsQ {
 	return q
 }
 
-//ForEffect - adds filter by effectType
+// ForEffect - adds filter by effectType
 func (q ParticipantEffectsQ) ForEffect(types ...EffectType) ParticipantEffectsQ {
 	q.selector = q.selector.Where(sq.Eq{"(effect->>'type')::integer": types})
 	return q
 }
 
-//ForAsset - adds filter by asset
+// ForAsset - adds filter by asset
 func (q ParticipantEffectsQ) ForAsset(asset string) ParticipantEffectsQ {
 	q.selector = q.selector.Where("effects.asset_code = ?", asset)
 	return q
 }
 
-//Movements - filters out non movement effects
+// Movements - filters out non movement effects
 func (q ParticipantEffectsQ) Movements() ParticipantEffectsQ {
 	q.selector = q.selector.Where("effects.balance_id is not null")
 	return q
 }
 
-//ForAccount - adds filter by accounts ID
+// ForAccount - adds filter by accounts ID
 func (q ParticipantEffectsQ) ForAccount(id uint64) ParticipantEffectsQ {
 	q.selector = q.selector.Where("effects.account_id = ?", id)
 	return q
@@ -82,8 +82,14 @@ func (q ParticipantEffectsQ) FilterByID(ids ...uint64) ParticipantEffectsQ {
 	return q
 }
 
-//Page - apply paging params to the query
+// Page - apply cursor paging params to the query
 func (q ParticipantEffectsQ) Page(pageParams pgdb.CursorPageParams) ParticipantEffectsQ {
+	q.selector = pageParams.ApplyTo(q.selector, "effects.id")
+	return q
+}
+
+// PageOffset - apply offset paging params to the query
+func (q ParticipantEffectsQ) PageOffset(pageParams pgdb.OffsetPageParams) ParticipantEffectsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "effects.id")
 	return q
 }
