@@ -98,9 +98,9 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 		q = q.FilterLedgerCloseTimeBefore(time.Unix(*request.Filters.BeforeTimestamp, 0).UTC())
 	}
 
-	txsAll, err := q.Select()
+	count, err := q.Count()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load all transactions")
+		return nil, errors.Wrap(err, "failed to load transactions count")
 	}
 
 	if request.PageNumber != nil {
@@ -141,7 +141,7 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 
 		err = result.PutMeta(requests.MetaPageParams{
 			CurrentPage: *request.PageNumber,
-			TotalPages:  (uint64(len(txsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+			TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 		})
 	} else {
 		if len(result.Data) > 0 {
@@ -152,7 +152,7 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 
 		err = result.PutMeta(requests.MetaCursorParams{
 			CurrentCursor: request.PageParams.Cursor,
-			TotalPages:    (uint64(len(txsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+			TotalPages:    (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 		})
 	}
 

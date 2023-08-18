@@ -2,6 +2,7 @@ package history2
 
 import (
 	"database/sql"
+	"github.com/lann/builder"
 
 	sq "github.com/Masterminds/squirrel"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -92,6 +93,26 @@ func (q ParticipantEffectsQ) Page(pageParams pgdb.CursorPageParams) ParticipantE
 func (q ParticipantEffectsQ) PageOffset(pageParams pgdb.OffsetPageParams) ParticipantEffectsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "effects.id")
 	return q
+}
+
+// Count - return total number of records with applied filters
+func (q ParticipantEffectsQ) Count() (uint64, error) {
+	var result uint64
+
+	// replace default select columns
+	selector := builder.Delete(q.selector, "Columns").(sq.SelectBuilder)
+	selector = selector.Columns("COUNT(*)")
+
+	err := q.repo.Get(&result, selector)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+
+		return 0, errors.Wrap(err, "failed to get count")
+	}
+
+	return result, nil
 }
 
 // Select - selects ParticipantEffect from db using specified filters. Returns nil, nil - if one does not exists

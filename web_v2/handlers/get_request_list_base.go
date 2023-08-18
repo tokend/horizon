@@ -35,9 +35,9 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 
 	q := h.ApplyFilters(request, requestsQ)
 
-	recordsAll, err := q.Select()
+	count, err := q.Count()
 	if err != nil {
-		return errors.Wrap(err, "failed to get reviewable request list")
+		return errors.Wrap(err, "failed to get reviewable requests count")
 	}
 
 	if request.PageNumber != nil {
@@ -91,14 +91,14 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 
 			err = response.PutMeta(requests.MetaPageParams{
 				CurrentPage: *request.PageNumber,
-				TotalPages:  (uint64(len(recordsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+				TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 			})
 		} else {
 			h.PopulateLinks(response, request)
 
 			err = response.PutMeta(requests.MetaCursorParams{
 				CurrentCursor: request.PageParams.Cursor,
-				TotalPages:    (uint64(len(recordsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+				TotalPages:    (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 			})
 		}
 

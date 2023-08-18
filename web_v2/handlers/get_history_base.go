@@ -211,9 +211,10 @@ func (h *getHistory) SelectAndPopulate(
 	result := regources.ParticipantsEffectListResponse{
 		Data: []regources.ParticipantsEffect{},
 	}
-	effectsAll, err := effectsQ.Select()
+
+	count, err := effectsQ.Count()
 	if err != nil {
-		return result, errors.Wrap(err, "failed to load participant effects")
+		return result, errors.Wrap(err, "failed to load participant effects count")
 	}
 
 	if request.PageNumber != nil {
@@ -241,14 +242,14 @@ func (h *getHistory) SelectAndPopulate(
 
 			err = result.PutMeta(requests.MetaPageParams{
 				CurrentPage: *request.PageNumber,
-				TotalPages:  (uint64(len(effectsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+				TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 			})
 		} else {
 			result.Links = request.GetCursorLinks(request.PageParams, "")
 
 			err = result.PutMeta(requests.MetaCursorParams{
 				CurrentCursor: request.PageParams.Cursor,
-				TotalPages:    (uint64(len(effectsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+				TotalPages:    (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 			})
 		}
 
@@ -306,14 +307,14 @@ func (h *getHistory) SelectAndPopulate(
 
 		err = result.PutMeta(requests.MetaPageParams{
 			CurrentPage: *request.PageNumber,
-			TotalPages:  (uint64(len(effectsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+			TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 		})
 	} else {
 		result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
 
 		err = result.PutMeta(requests.MetaCursorParams{
 			CurrentCursor: request.PageParams.Cursor,
-			TotalPages:    (uint64(len(effectsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+			TotalPages:    (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 		})
 	}
 

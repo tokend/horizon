@@ -3,6 +3,7 @@ package history2
 import (
 	"database/sql"
 	sq "github.com/Masterminds/squirrel"
+	"github.com/lann/builder"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -54,6 +55,26 @@ func (q OperationQ) Page(pageParams pgdb.CursorPageParams) OperationQ {
 func (q OperationQ) PageOffset(pageParams pgdb.OffsetPageParams) OperationQ {
 	q.selector = pageParams.ApplyTo(q.selector, "op.id")
 	return q
+}
+
+// Count - return total number of records with applied filters
+func (q OperationQ) Count() (uint64, error) {
+	var result uint64
+
+	// replace default select columns
+	selector := builder.Delete(q.selector, "Columns").(sq.SelectBuilder)
+	selector = selector.Columns("COUNT(*)")
+
+	err := q.repo.Get(&result, selector)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+
+		return 0, errors.Wrap(err, "failed to get count")
+	}
+
+	return result, nil
 }
 
 // Select - selects slice from the db, if no operations found - returns nil, nil

@@ -2,6 +2,7 @@ package history2
 
 import (
 	"database/sql"
+	"github.com/lann/builder"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -91,6 +92,26 @@ func (q TransactionsQ) Page(params pgdb.CursorPageParams) TransactionsQ {
 func (q TransactionsQ) PageOffset(params pgdb.OffsetPageParams) TransactionsQ {
 	q.selector = params.ApplyTo(q.selector, "transactions.id")
 	return q
+}
+
+// Count - return total number of records with applied filters
+func (q TransactionsQ) Count() (uint64, error) {
+	var result uint64
+
+	// replace default select columns
+	selector := builder.Delete(q.selector, "Columns").(sq.SelectBuilder)
+	selector = selector.Columns("COUNT(*)")
+
+	err := q.repo.Get(&result, selector)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+
+		return 0, errors.Wrap(err, "failed to get count")
+	}
+
+	return result, nil
 }
 
 // Get - loads a row from `transactions`

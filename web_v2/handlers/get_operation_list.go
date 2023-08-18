@@ -60,9 +60,9 @@ func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*
 		q = q.FilterByOperationSource(*request.Filters.Source)
 	}
 
-	opsAll, err := q.Select()
+	count, err := q.Count()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load all operations")
+		return nil, errors.Wrap(err, "failed to load operations count")
 	}
 
 	if request.PageNumber != nil {
@@ -103,7 +103,7 @@ func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*
 
 		err = result.PutMeta(requests.MetaPageParams{
 			CurrentPage: *request.PageNumber,
-			TotalPages:  (uint64(len(opsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+			TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 		})
 	} else {
 		if len(result.Data) > 0 {
@@ -114,7 +114,7 @@ func (h *getOperationsHandler) GetOperations(request *requests.GetOperations) (*
 
 		err = result.PutMeta(requests.MetaCursorParams{
 			CurrentCursor: request.PageParams.Cursor,
-			TotalPages:    (uint64(len(opsAll)) + request.PageParams.Limit - 1) / request.PageParams.Limit,
+			TotalPages:    (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 		})
 	}
 
