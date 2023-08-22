@@ -2,8 +2,8 @@ package history2
 
 import (
 	"database/sql"
-
 	sq "github.com/Masterminds/squirrel"
+	"github.com/lann/builder"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -243,6 +243,32 @@ func (q ReviewableRequestsQ) GetByID(id uint64) (*ReviewableRequest, error) {
 func (q ReviewableRequestsQ) Page(pageParams pgdb.CursorPageParams) ReviewableRequestsQ {
 	q.selector = pageParams.ApplyTo(q.selector, "reviewable_requests.id")
 	return q
+}
+
+// PageOffset - apply paging params to the query
+func (q ReviewableRequestsQ) PageOffset(pageParams pgdb.OffsetPageParams) ReviewableRequestsQ {
+	q.selector = pageParams.ApplyTo(q.selector, "reviewable_requests.id")
+	return q
+}
+
+// Count - return total number of records with applied filters
+func (q ReviewableRequestsQ) Count() (uint64, error) {
+	var result uint64
+
+	// replace default select columns
+	selector := builder.Delete(q.selector, "Columns").(sq.SelectBuilder)
+	selector = selector.Columns("COUNT(*)")
+
+	err := q.repo.Get(&result, selector)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+
+		return 0, errors.Wrap(err, "failed to get count")
+	}
+
+	return result, nil
 }
 
 // Get - loads a row from `reviewable_requests`

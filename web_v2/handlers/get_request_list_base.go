@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -34,6 +35,21 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 
 	q := h.ApplyFilters(request, requestsQ)
 
+	count, err := q.Count()
+	if err != nil {
+		return errors.Wrap(err, "failed to get reviewable requests count")
+	}
+
+	if request.PageNumber != nil {
+		q = q.PageOffset(pgdb.OffsetPageParams{
+			Limit:      request.PageParams.Limit,
+			Order:      request.PageParams.Order,
+			PageNumber: *request.PageNumber,
+		})
+	} else {
+		q = q.Page(request.PageParams)
+	}
+
 	records, err := q.Select()
 	if err != nil {
 		return errors.Wrap(err, "Failed to get reviewable request list")
@@ -66,7 +82,29 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 			response.Data = append(response.Data, resource)
 		}
 
-		h.PopulateLinks(response, request)
+		if request.PageNumber != nil {
+			response.Links = request.GetOffsetLinks(pgdb.OffsetPageParams{
+				Limit:      request.PageParams.Limit,
+				Order:      request.PageParams.Order,
+				PageNumber: *request.PageNumber,
+			})
+
+			err = response.PutMeta(requests.MetaPageParams{
+				CurrentPage: *request.PageNumber,
+				TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
+			})
+		} else {
+			h.PopulateLinks(response, request)
+
+			err = response.PutMeta(requests.MetaCursorParams{
+				CurrentCursor: request.PageParams.Cursor,
+				TotalPages:    (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
+			})
+		}
+
+		if err != nil {
+			return errors.Wrap(err, "failed to put meta to response")
+		}
 
 		ape.Render(w, response)
 		return nil
@@ -89,7 +127,6 @@ func (h *getRequestListBaseHandler) PopulateResource(
 func (h *getRequestListBaseHandler) ApplyFilters(
 	request requests.GetRequestsBase, q history2.ReviewableRequestsQ,
 ) history2.ReviewableRequestsQ {
-	q = q.Page(request.PageParams)
 	if request.Filters.Requestor != nil {
 		q = q.FilterByRequestorAddress(*request.Filters.Requestor)
 	}

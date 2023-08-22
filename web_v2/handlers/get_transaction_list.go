@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
 	"time"
 
@@ -76,7 +76,7 @@ func (h *getTransactionsHandler) getLatestLedger() (*history2.Ledger, error) {
 
 // GetTransactions returns the list of transactions with related resources
 func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactions) (*regources.TransactionListResponse, error) {
-	q := h.TransactionsQ.Page(request.PageParams)
+	q := h.TransactionsQ
 
 	if request.Filters.ChangeTypes != nil {
 		q = q.FilterByEffectTypes(request.Filters.ChangeTypes...)
@@ -98,6 +98,21 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 		q = q.FilterLedgerCloseTimeBefore(time.Unix(*request.Filters.BeforeTimestamp, 0).UTC())
 	}
 
+	count, err := q.Count()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load transactions count")
+	}
+
+	if request.PageNumber != nil {
+		q = q.PageOffset(pgdb.OffsetPageParams{
+			Limit:      request.PageParams.Limit,
+			Order:      request.PageParams.Order,
+			PageNumber: *request.PageNumber,
+		})
+	} else {
+		q = q.Page(request.PageParams)
+	}
+
 	historyTransactions, err := q.Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load transactions")
@@ -117,10 +132,32 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 		result.Data = append(result.Data, transaction)
 	}
 
-	if len(result.Data) > 0 {
-		result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
+	if request.PageNumber != nil {
+		result.Links = request.GetOffsetLinks(pgdb.OffsetPageParams{
+			Limit:      request.PageParams.Limit,
+			Order:      request.PageParams.Order,
+			PageNumber: *request.PageNumber,
+		})
+
+		err = result.PutMeta(requests.MetaPageParams{
+			CurrentPage: *request.PageNumber,
+			TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
+		})
 	} else {
-		result.Links = request.GetCursorLinks(request.PageParams, "")
+		if len(result.Data) > 0 {
+			result.Links = request.GetCursorLinks(request.PageParams, result.Data[len(result.Data)-1].ID)
+		} else {
+			result.Links = request.GetCursorLinks(request.PageParams, "")
+		}
+
+		err = result.PutMeta(requests.MetaCursorParams{
+			CurrentCursor: request.PageParams.Cursor,
+			TotalPages:    (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
+		})
+	}
+
+	if err != nil {
+		return &result, errors.Wrap(err, "failed to put meta to response")
 	}
 
 	latestLedger, err := h.getLatestLedger()
@@ -133,7 +170,7 @@ func (h *getTransactionsHandler) GetTransactions(request *requests.GetTransactio
 		return nil, errors.New("Latest ledger is nil")
 	}
 
-	if result.Meta, err = json.Marshal(regources.TransactionResponseMeta{
+	if err = result.PutMeta(regources.TransactionResponseMeta{
 		LatestLedgerCloseTime: latestLedger.ClosedAt,
 		LatestLedgerSequence:  latestLedger.Sequence,
 	}); err != nil {

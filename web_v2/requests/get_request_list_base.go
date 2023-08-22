@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type GetRequestListBaseFilters struct {
@@ -29,6 +30,7 @@ type GetRequestsBase struct {
 	*base
 	Filters    GetRequestListBaseFilters
 	PageParams pgdb.CursorPageParams
+	PageNumber *uint64 `page:"number"`
 	Includes   struct {
 		RequestDetails bool `include:"request_details"`
 	}
@@ -73,7 +75,25 @@ func PopulateRequest(requestsBase *GetRequestsBase) error {
 
 	err = SetDefaultCursorPageParams(&requestsBase.PageParams)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to set default cursor params")
+	}
+
+	// use part of cursor params struct to prevent decode same token twice
+	if requestsBase.PageNumber != nil {
+		params := pgdb.OffsetPageParams{
+			Limit:      requestsBase.PageParams.Limit,
+			Order:      requestsBase.PageParams.Order,
+			PageNumber: *requestsBase.PageNumber,
+		}
+
+		err = requestsBase.SetDefaultOffsetPageParams(&params)
+		if err != nil {
+			return errors.Wrap(err, "failed to set default page params")
+		}
+
+		requestsBase.PageParams.Limit = params.Limit
+		requestsBase.PageParams.Order = params.Order
+		requestsBase.PageNumber = &params.PageNumber
 	}
 
 	ID, err := requestsBase.base.getUint64ID()

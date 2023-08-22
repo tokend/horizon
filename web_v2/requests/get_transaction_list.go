@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"net/http"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -34,6 +35,7 @@ type GetTransactions struct {
 		LedgerEntryChanges bool `include:"ledger_entry_changes"`
 	}
 	PageParams pgdb.CursorPageParams
+	PageNumber *uint64 `page:"number"`
 }
 
 // NewGetTransactions returns the new instance of GetTransactions request
@@ -65,6 +67,24 @@ func NewGetTransactions(r *http.Request) (*GetTransactions, error) {
 	err = SetDefaultCursorPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
+	}
+
+	// use part of cursor params struct to prevent decode same token twice
+	if request.PageNumber != nil {
+		params := pgdb.OffsetPageParams{
+			Limit:      request.PageParams.Limit,
+			Order:      request.PageParams.Order,
+			PageNumber: *request.PageNumber,
+		}
+
+		err = request.SetDefaultOffsetPageParams(&params)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to set default page params")
+		}
+
+		request.PageParams.Limit = params.Limit
+		request.PageParams.Order = params.Order
+		request.PageNumber = &params.PageNumber
 	}
 
 	return &request, nil

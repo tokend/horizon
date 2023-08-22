@@ -36,7 +36,17 @@ const (
 const defaultLimit uint64 = 15
 const maxLimit uint64 = 100
 
-//base - base struct describing params provided by user for the request handler
+type MetaPageParams struct {
+	CurrentPage uint64 `json:"current_page"`
+	TotalPages  uint64 `json:"total_pages"`
+}
+
+type MetaCursorParams struct {
+	CurrentCursor uint64 `json:"current_cursor"`
+	TotalPages    uint64 `json:"total_pages"`
+}
+
+// base - base struct describing params provided by user for the request handler
 type base struct {
 	include           map[string]struct{}
 	supportedIncludes map[string]struct{}
@@ -184,7 +194,7 @@ func (r *base) ShouldFilter(name string) bool {
 	return ok
 }
 
-//ShouldInclude - returns true if user requested to include resource
+// ShouldInclude - returns true if user requested to include resource
 // panics if tries to check not supported include
 func (r *base) ShouldInclude(name string) bool {
 	if _, ok := r.supportedIncludes[name]; !ok {
@@ -197,7 +207,7 @@ func (r *base) ShouldInclude(name string) bool {
 	return ok
 }
 
-//ShouldIncludeAny - returns true if user requested to include one of the provided resources
+// ShouldIncludeAny - returns true if user requested to include one of the provided resources
 func (r *base) ShouldIncludeAny(names ...string) bool {
 	for _, name := range names {
 		if r.ShouldInclude(name) {
@@ -395,7 +405,7 @@ func Invert(o string) string {
 
 }
 
-//GetCursorLinks - returns links for cursor based page params
+// GetCursorLinks - returns links for cursor based page params
 func (r *base) GetCursorLinks(p pgdb.CursorPageParams, last string) *regources.Links {
 	result := regources.Links{
 		Self: r.getCursorLink(p.Cursor, p.Limit, p.Order),
@@ -415,7 +425,7 @@ func (r *base) GetCursorLinks(p pgdb.CursorPageParams, last string) *regources.L
 	return &result
 }
 
-//GetOffsetLinks - returns links for offset based page params
+// GetOffsetLinks - returns links for offset based page params
 func (r *base) GetOffsetLinks(p pgdb.OffsetPageParams) *regources.Links {
 	result := regources.Links{
 		Next: r.getOffsetLink(p.PageNumber+1, p.Limit, p.Order),

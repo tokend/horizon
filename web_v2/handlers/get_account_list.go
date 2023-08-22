@@ -54,7 +54,7 @@ type getAccountListHandler struct {
 }
 
 func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*regources.AccountListResponse, error) {
-	q := h.AccountsQ.Page(r.PageParams)
+	q := h.AccountsQ
 
 	if r.ShouldFilter(requests.FilterTypeAccountListAccount) {
 		q = q.FilterByAddresses(r.Filters.Account...)
@@ -63,7 +63,12 @@ func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*reg
 		q = q.FilterByRole(r.Filters.Role...)
 	}
 
-	accounts, err := q.Select()
+	count, err := q.Count()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get accounts count")
+	}
+
+	accounts, err := q.Page(r.PageParams).Select()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get accounts")
 	}
@@ -71,6 +76,14 @@ func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*reg
 	response := regources.AccountListResponse{
 		Data:  make([]regources.Account, 0, len(accounts)),
 		Links: r.GetOffsetLinks(r.PageParams),
+	}
+
+	err = response.PutMeta(requests.MetaPageParams{
+		CurrentPage: r.PageParams.PageNumber,
+		TotalPages:  (count + r.PageParams.Limit - 1) / r.PageParams.Limit,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to put meta to response")
 	}
 
 	for _, account := range accounts {

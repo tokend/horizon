@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"net/http"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -17,6 +18,7 @@ const (
 type GetOperations struct {
 	*base
 	PageParams pgdb.CursorPageParams
+	PageNumber *uint64 `page:"number"`
 	Filters    struct {
 		Types  []int   `filter:"types"`
 		Source *string `filter:"source"`
@@ -52,6 +54,24 @@ func NewGetOperations(r *http.Request) (*GetOperations, error) {
 	err = SetDefaultCursorPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
+	}
+
+	// use part of cursor params struct to prevent decode same token twice
+	if request.PageNumber != nil {
+		params := pgdb.OffsetPageParams{
+			Limit:      request.PageParams.Limit,
+			Order:      request.PageParams.Order,
+			PageNumber: *request.PageNumber,
+		}
+
+		err = request.SetDefaultOffsetPageParams(&params)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to set default page params")
+		}
+
+		request.PageParams.Limit = params.Limit
+		request.PageParams.Order = params.Order
+		request.PageNumber = &params.PageNumber
 	}
 
 	return &request, nil

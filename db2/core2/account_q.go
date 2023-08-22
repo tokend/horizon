@@ -3,6 +3,7 @@ package core2
 import (
 	"database/sql"
 	sq "github.com/Masterminds/squirrel"
+	"github.com/lann/builder"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
@@ -33,19 +34,19 @@ func (q AccountsQ) GetByAddress(address string) (*Account, error) {
 	return q.FilterByAddress(address).Get()
 }
 
-//FilterByAddress - returns q with filter by address
+// FilterByAddress - returns q with filter by address
 func (q AccountsQ) FilterByAddress(address string) AccountsQ {
 	q.selector = q.selector.Where("accounts.account_id = ?", address)
 	return q
 }
 
-//FilterByAddresses - returns q with filter by addresses
+// FilterByAddresses - returns q with filter by addresses
 func (q AccountsQ) FilterByAddresses(addresses ...string) AccountsQ {
 	q.selector = q.selector.Where(sq.Eq{"accounts.account_id": addresses})
 	return q
 }
 
-//FilterByReferrer - returns q with filter by referrer
+// FilterByReferrer - returns q with filter by referrer
 func (q AccountsQ) FilterByReferrer(address string) AccountsQ {
 	q.selector = q.selector.Where("accounts.referrer = ?", address)
 	return q
@@ -61,6 +62,26 @@ func (q AccountsQ) FilterByRole(ids ...uint64) AccountsQ {
 func (q AccountsQ) Page(params pgdb.OffsetPageParams) AccountsQ {
 	q.selector = params.ApplyTo(q.selector, "accounts.sequential_id")
 	return q
+}
+
+// Count - return total number of records with applied filters
+func (q AccountsQ) Count() (uint64, error) {
+	var result uint64
+
+	// replace default select columns
+	selector := builder.Delete(q.selector, "Columns").(sq.SelectBuilder)
+	selector = selector.Columns("COUNT(*)")
+
+	err := q.repo.Get(&result, selector)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+
+		return 0, errors.Wrap(err, "failed to get count")
+	}
+
+	return result, nil
 }
 
 // Get - loads a row from `accounts`
@@ -80,7 +101,7 @@ func (q AccountsQ) Get() (*Account, error) {
 	return &result, nil
 }
 
-//Select - selects slice from the db, if no accounts found - returns nil, nil
+// Select - selects slice from the db, if no accounts found - returns nil, nil
 func (q AccountsQ) Select() ([]Account, error) {
 	var result []Account
 	err := q.repo.Select(&result, q.selector)
