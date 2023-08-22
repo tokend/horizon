@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"math"
 	"net/http"
 
 	"gitlab.com/tokend/horizon/web_v2/ctx"
@@ -64,9 +63,9 @@ func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*reg
 		q = q.FilterByRole(r.Filters.Role...)
 	}
 
-	accountsAll, err := q.Select()
+	count, err := q.Count()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get accounts")
+		return nil, errors.Wrap(err, "failed to get accounts count")
 	}
 
 	accounts, err := q.Page(r.PageParams).Select()
@@ -81,7 +80,7 @@ func (h *getAccountListHandler) GetAccountList(r *requests.GetAccountList) (*reg
 
 	err = response.PutMeta(requests.MetaPageParams{
 		CurrentPage: r.PageParams.PageNumber,
-		TotalPages:  uint64(math.Ceil(float64(len(accountsAll)) / float64(r.PageParams.Limit))),
+		TotalPages:  (count + r.PageParams.Limit - 1) / r.PageParams.Limit,
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to put meta to response")
