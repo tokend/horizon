@@ -53,13 +53,13 @@ func NewGetAccountSigners(r *http.Request) (*GetAccountSigners, error) {
 		return nil, err
 	}
 
-	if request.PageParams.Limit == 0 {
-		return nil, errors.New("limit can not be 0")
-	}
-
 	err = b.SetDefaultOffsetPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
+	}
+
+	if request.PageParams.Limit == 0 {
+		return nil, errors.New("limit can not be 0")
 	}
 
 	return &request, nil
