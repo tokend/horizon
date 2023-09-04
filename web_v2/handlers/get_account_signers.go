@@ -57,9 +57,10 @@ type getAccountSignersHandler struct {
 	Log         *logan.Entry
 }
 
-//GetAccountSigners - returns signers for account
+// GetAccountSigners - returns signers for account
 func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccountSigners) (*regources.SignerListResponse, error) {
-	account, err := h.AccountQ.GetByAddress(request.Address)
+	q := h.AccountQ
+	account, err := q.GetByAddress(request.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load account", logan.F{
 			"account_address": request.Address,
@@ -80,6 +81,20 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 	response := regources.SignerListResponse{
 		Data:  make([]regources.Signer, 0, len(signers)),
 		Links: request.GetOffsetLinks(request.PageParams),
+	}
+
+	count, err := q.Count()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get accounts count")
+	}
+
+	err = response.PutMeta(requests.MetaPageParams{
+		CurrentPage: request.PageParams.PageNumber,
+		TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
+	})
+
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to put meta to response")
 	}
 
 	for _, signerRaw := range signers {

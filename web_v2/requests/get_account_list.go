@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/urlval"
 )
 
@@ -55,6 +56,10 @@ func NewGetAccountList(r *http.Request) (*GetAccountList, error) {
 	err = urlval.DecodeSilently(r.URL.Query(), &request)
 	if err != nil {
 		return nil, err
+	}
+
+	if request.PageParams.Limit == 0 {
+		return nil, errors.New("limit can not be 0")
 	}
 
 	err = b.SetDefaultOffsetPageParams(&request.PageParams)
