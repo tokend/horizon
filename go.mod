@@ -17,6 +17,7 @@ require (
 	github.com/google/jsonapi v0.0.0-20170708005851-46d3ced04344
 	github.com/guregu/null v3.2.0+incompatible
 	github.com/jmoiron/sqlx v1.2.0
+	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0
 	github.com/lib/pq v1.10.0
 	github.com/magiconair/properties v1.8.1
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822

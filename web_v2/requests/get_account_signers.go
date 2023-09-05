@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/urlval"
 )
 
@@ -19,7 +20,7 @@ var includeTypeSignerAll = map[string]struct{}{
 	IncludeTypeSignerRoleRules: {},
 }
 
-//GetAccountSigners - represents params to be specified by user for Get Account Signers handler
+// GetAccountSigners - represents params to be specified by user for Get Account Signers handler
 type GetAccountSigners struct {
 	*base
 	Address    string
@@ -30,7 +31,7 @@ type GetAccountSigners struct {
 	}
 }
 
-//NewGetAccountSigners - returns new instance of GetAccountSigners request
+// NewGetAccountSigners - returns new instance of GetAccountSigners request
 func NewGetAccountSigners(r *http.Request) (*GetAccountSigners, error) {
 	b, err := newBase(r, baseOpts{
 		supportedIncludes: includeTypeSignerAll,
@@ -55,6 +56,10 @@ func NewGetAccountSigners(r *http.Request) (*GetAccountSigners, error) {
 	err = b.SetDefaultOffsetPageParams(&request.PageParams)
 	if err != nil {
 		return nil, err
+	}
+
+	if request.PageParams.Limit == 0 {
+		return nil, errors.New("limit can not be 0")
 	}
 
 	return &request, nil
