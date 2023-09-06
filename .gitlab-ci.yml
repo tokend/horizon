@@ -63,7 +63,7 @@ Build and Publish DH:
     - . $(werf ci-env gitlab --as-file)
     - werf export horizonpg --tag $DH_IMAGE:$RELEASE
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PWD
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PWD index.docker.io
 
 # Deploy to Staging:
 #   services:
