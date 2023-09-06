@@ -2,12 +2,12 @@ configVersion: 1
 project: 'horizon'
 ---
 image: horizon-build              # Название собираемого образа.
-from: golang:1.16.13-alpine3.15               # Базовый образ.
+from: golang:1.16.15-alpine3.15               # Базовый образ.
 docker:
   WORKDIR: /go/src/gitlab.com/tokend/horizon
 git:                        # Секция с директивами для добавления исходных файлов из git-репозитория.
   - add: /                    # Исходный путь в репозитории.
-    to: /                  # Путь назначения в образе.
+    to: /go/src/gitlab.com/tokend/horizon                  # Путь назначения в образе.
     stageDependencies:        # Настройка перевыполнения сборочных инструкций при изменениях определённых файлов в репозитории.
       setup:                  # Для стадии Setup.
         - "**/*"
@@ -15,8 +15,9 @@ shell:                      # Shell сборочные инструкции.
   setup:                    # Для стадии Setup.
     - export CGO_ENABLED=0
     - export GOOS=linux
-    - export VERSION={{ env "CI_COMMIT_SHA" }}
-    - go build -ldflags "-X main.version=${VERSION}" -o /usr/local/bin/horizon gitlab.com/tokend/horizon/cmd/horizon
+    - export VERSION="{{ env "VERSION" }}"
+    - cd /go/src/gitlab.com/tokend/horizon
+    - go build -ldflags "-X main.version=${VERSION}" -o /usr/local/bin/horizon /go/src/gitlab.com/tokend/horizon/cmd/horizon
 
 ---
 image: horizonpg              # Название собираемого образа.
