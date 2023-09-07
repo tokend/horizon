@@ -24,7 +24,7 @@ variables:
   WERF_IMAGES_REPO: $CI_REGISTRY_IMAGE
   WERF_BUILDAH_MODE: auto
   WERF_ENABLE_PROCESS_EXTERMINATOR: 1
-  DH_IMAGE: index.docker.io/tokend/horizon
+  DH_IMAGE: tokend/horizon
 
 
 .before_script_template: &before_script_templ
@@ -61,8 +61,7 @@ Build and Publish DH:
     # login to docker registry
     - export RELEASE=$CI_COMMIT_REF_NAME
     - . $(werf ci-env gitlab --as-file)
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PWD index.docker.io
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PWD
     - werf export horizonpg --tag $DH_IMAGE:$RELEASE
 
 # Deploy to Staging:
