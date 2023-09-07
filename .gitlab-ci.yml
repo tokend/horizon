@@ -24,7 +24,7 @@ variables:
   WERF_IMAGES_REPO: $CI_REGISTRY_IMAGE
   WERF_BUILDAH_MODE: auto
   WERF_ENABLE_PROCESS_EXTERMINATOR: 1
-  DH_IMAGE: tokend/horizon
+  DH_IMAGE: index.docker.io/tokend/horizon
 
 
 .before_script_template: &before_script_templ
