@@ -134,6 +134,16 @@ func (q ReviewableRequestsQ) FilterByAssetUpdateAsset(asset string) ReviewableRe
 	return q
 }
 
+func (q ReviewableRequestsQ) FilterBySourceBalance(sourceBalance string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{redemption,source_balance}' = ?", sourceBalance)
+	return q
+}
+
+func (q ReviewableRequestsQ) FilterByDestinationAccount(destinationAccount string) ReviewableRequestsQ {
+	q.selector = q.selector.Where("details#>>'{redemption,destination_account}' = ?", destinationAccount)
+	return q
+}
+
 func (q ReviewableRequestsQ) FilterByCreatePreIssuanceAsset(asset string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_pre_issuance,asset}' = ?", asset)
 	return q
