@@ -155,9 +155,10 @@ func (q ReviewableRequestsQ) FilterByWithdrawBalance(balance string) ReviewableR
 }
 
 // FilterByParticipant - returns q with filter by participant in requests (create_issuance, create_withdraw, create_redemption)
-func (q ReviewableRequestsQ) FilterByParticipant(accountId string) ReviewableRequestsQ {
+func (q ReviewableRequestsQ) FilterByParticipant(accountAddress string) ReviewableRequestsQ {
 	q.selector = q.selector.
-		Join("balances b ON b.account_id = ?", accountId).
+		Join("accounts a ON a.address = ?", accountAddress).
+		Join("balances b ON b.account_id = a.id").
 		Where(sq.And{
 			sq.Or{
 				sq.Expr("b.address = details#>>'{create_issuance,receiver}'"),

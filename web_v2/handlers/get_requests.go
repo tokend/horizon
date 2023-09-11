@@ -26,7 +26,11 @@ func GetRequests(w http.ResponseWriter, r *http.Request) {
 		Log:       ctx.Log(r),
 	}
 
-	if !isAllowed(r, w, request.GetRequestsBase.Filters.Requestor, request.GetRequestsBase.Filters.Reviewer) {
+	if !isAllowed(r, w,
+		request.GetRequestsBase.Filters.Requestor,
+		request.GetRequestsBase.Filters.Reviewer,
+		request.GetRequestsBase.Filters.Participant,
+	) {
 		return
 	}
 
