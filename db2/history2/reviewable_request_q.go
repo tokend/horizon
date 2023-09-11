@@ -2,6 +2,7 @@ package history2
 
 import (
 	"database/sql"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/lann/builder"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -150,6 +151,21 @@ func (q ReviewableRequestsQ) FilterByCreateIssuanceReceiver(receiver string) Rev
 
 func (q ReviewableRequestsQ) FilterByWithdrawBalance(balance string) ReviewableRequestsQ {
 	q.selector = q.selector.Where("details#>>'{create_withdraw,balance_id}' = ?", balance)
+	return q
+}
+
+// FilterByParticipant - returns q with filter by participant in requests (create_issuance, create_withdraw, create_redemption)
+func (q ReviewableRequestsQ) FilterByParticipant(accountId string) ReviewableRequestsQ {
+	q.selector = q.selector.
+		Join("balances b ON b.account_id = ?", accountId).
+		Where(sq.And{
+			sq.Or{
+				sq.Expr("b.address = details#>>'{create_issuance,receiver}'"),
+				sq.Expr("b.address = details#>>'{create_withdraw,balance_id}'"),
+				sq.Expr("b.address = details#>>'{create_redemption,source_balance}'"),
+			},
+		})
+
 	return q
 }
 

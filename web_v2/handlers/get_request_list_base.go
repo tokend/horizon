@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -32,8 +33,10 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 	requestsQ history2.ReviewableRequestsQ,
 	renderer func(*regources.Included, history2.ReviewableRequest) (regources.ReviewableRequest, error),
 ) error {
-
-	q := h.ApplyFilters(request, requestsQ)
+	q, err := h.ApplyFilters(request, requestsQ)
+	if err != nil {
+		return err
+	}
 
 	count, err := q.Count()
 	if err != nil {
@@ -126,7 +129,7 @@ func (h *getRequestListBaseHandler) PopulateResource(
 
 func (h *getRequestListBaseHandler) ApplyFilters(
 	request requests.GetRequestsBase, q history2.ReviewableRequestsQ,
-) history2.ReviewableRequestsQ {
+) (history2.ReviewableRequestsQ, error) {
 	if request.Filters.Requestor != nil {
 		q = q.FilterByRequestorAddress(*request.Filters.Requestor)
 	}
@@ -187,5 +190,9 @@ func (h *getRequestListBaseHandler) ApplyFilters(
 		q = q.FilterByUpdatedAtBefore(*request.Filters.UpdatedBefore)
 	}
 
-	return q
+	if request.Filters.Participant != nil {
+		q = q.FilterByParticipant(*request.Filters.Participant)
+	}
+
+	return q, nil
 }
