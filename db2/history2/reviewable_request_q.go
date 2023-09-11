@@ -162,7 +162,7 @@ func (q ReviewableRequestsQ) FilterByParticipant(accountId string) ReviewableReq
 			sq.Or{
 				sq.Expr("b.address = details#>>'{create_issuance,receiver}'"),
 				sq.Expr("b.address = details#>>'{create_withdraw,balance_id}'"),
-				sq.Expr("b.address = details#>>'{create_redemption,source_balance}'"),
+				sq.Expr("b.address = details#>>'{redemption,source_balance}'"),
 			},
 		})
 
