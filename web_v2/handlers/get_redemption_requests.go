@@ -60,10 +60,10 @@ func (h *getRedemptionRequestsHandler) MakeAll(w http.ResponseWriter, request re
 	q := h.RequestsQ.FilterByRequestType(uint64(xdr.ReviewableRequestTypePerformRedemption))
 
 	if request.Filters.DestinationAccount != nil {
-		q = q.FilterByAssetUpdateAsset(*request.Filters.DestinationAccount)
+		q = q.FilterByDestinationAccount(*request.Filters.DestinationAccount)
 	}
 	if request.Filters.SourceBalance != nil {
-		q = q.FilterByAssetUpdateAsset(*request.Filters.SourceBalance)
+		q = q.FilterBySourceBalance(*request.Filters.SourceBalance)
 	}
 
 	return h.Base.SelectAndRender(w, request.GetRequestsBase, q, h.RenderRecord)

@@ -69,10 +69,19 @@
         explode: false
         schema:
           type: integer
-      - name: filter[request_details.base_asset]
+      - name: filter[request_details.source_balance]
         in: query
         description: |
-          Filters sale requests by base asset.
+          Filters requests by source balance
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+      - name: filter[request_details.destination_account]
+        in: query
+        description: |
+          Filters requests by destination account
         required: false
         style: form
         explode: false

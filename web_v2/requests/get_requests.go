@@ -10,6 +10,8 @@ const (
 	// IncludeTypeReviewableRequestListDetails - defines if we need to include request details to response
 	IncludeTypeReviewableRequestListDetails = "request_details"
 
+	// FilterTypeRequestListParticipant defines if we need to filter the list by participant (AccountID)
+	FilterTypeRequestListParticipant = "participant"
 	// FilterTypeRequestListRequestor - defines if we need to filter the list by requestor
 	FilterTypeRequestListRequestor = "requestor"
 	// FilterTypeRequestListReviewer - defines if we need to filter the list by reviewer
@@ -45,6 +47,7 @@ var includeTypeReviewableRequestListAll = map[string]struct{}{
 }
 
 var filterTypeRequestListAll = map[string]struct{}{
+	FilterTypeRequestListParticipant:        {},
 	FilterTypeRequestListRequestor:          {},
 	FilterTypeRequestListReviewer:           {},
 	FilterTypeRequestListState:              {},

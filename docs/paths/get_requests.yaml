@@ -8,6 +8,18 @@
       🔒 Requestor's or reviewer's signature is needed
     operationId: getRequests
     parameters:
+      - name: filter[participant]
+        in: query
+        description: |
+            Filters requests by participant (account_id) - requests in which the user participated:
+              * create_issuance, 
+              * create_withdraw, 
+              * create_redemption
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
       - name: filter[requestor]
         in: query
         description: |
@@ -20,7 +32,7 @@
       - name: filter[reviewer]
         in: query
         description: |
-          Filters requests by reviewer - account assigned to review requests.
+          Filters requests by reviewer - request 
         required: false
         style: form
         explode: false

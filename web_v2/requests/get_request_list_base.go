@@ -10,6 +10,7 @@ import (
 type GetRequestListBaseFilters struct {
 	ID                  *uint64 `filter:"id"`
 	Requestor           *string `filter:"requestor"`
+	Participant         *string `filter:"participant"`
 	Reviewer            *string `filter:"reviewer"`
 	State               *uint64 `filter:"state"`
 	Type                *uint64 `filter:"type"`
