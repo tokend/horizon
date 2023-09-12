@@ -33,10 +33,7 @@ func (h *getRequestListBaseHandler) SelectAndRender(
 	requestsQ history2.ReviewableRequestsQ,
 	renderer func(*regources.Included, history2.ReviewableRequest) (regources.ReviewableRequest, error),
 ) error {
-	q, err := h.ApplyFilters(request, requestsQ)
-	if err != nil {
-		return err
-	}
+	q := h.ApplyFilters(request, requestsQ)
 
 	count, err := q.Count()
 	if err != nil {
@@ -129,7 +126,7 @@ func (h *getRequestListBaseHandler) PopulateResource(
 
 func (h *getRequestListBaseHandler) ApplyFilters(
 	request requests.GetRequestsBase, q history2.ReviewableRequestsQ,
-) (history2.ReviewableRequestsQ, error) {
+) history2.ReviewableRequestsQ {
 	if request.Filters.Requestor != nil {
 		q = q.FilterByRequestorAddress(*request.Filters.Requestor)
 	}
@@ -194,5 +191,5 @@ func (h *getRequestListBaseHandler) ApplyFilters(
 		q = q.FilterByParticipant(*request.Filters.Participant)
 	}
 
-	return q, nil
+	return q
 }

@@ -169,12 +169,10 @@ func (q ReviewableRequestsQ) FilterByParticipant(accountAddress string) Reviewab
 	q.selector = q.selector.
 		Join("accounts a ON a.address = ?", accountAddress).
 		Join("balances b ON b.account_id = a.id").
-		Where(sq.And{
-			sq.Or{
-				sq.Expr("b.address = details#>>'{create_issuance,receiver}'"),
-				sq.Expr("b.address = details#>>'{create_withdraw,balance_id}'"),
-				sq.Expr("b.address = details#>>'{redemption,source_balance}'"),
-			},
+		Where(sq.Or{
+			sq.Expr("b.address = details#>>'{create_issuance,receiver}'"),
+			sq.Expr("b.address = details#>>'{create_withdraw,balance_id}'"),
+			sq.Expr("b.address = details#>>'{redemption,source_balance}'"),
 		})
 
 	return q
