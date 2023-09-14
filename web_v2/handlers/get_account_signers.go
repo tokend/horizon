@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"math"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -84,16 +83,14 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
-	count, err := q.Count()
+	count, err := q.FilterByAddress(request.Address).Count()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get accounts count")
 	}
 
-	totalPages := math.Ceil(float64(count) / float64(request.PageParams.Limit))
-
 	err = response.PutMeta(requests.MetaPageParams{
 		CurrentPage: request.PageParams.PageNumber,
-		TotalPages:  uint64(totalPages),
+		TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
 	})
 
 	if err != nil {
