@@ -83,14 +83,14 @@ func (h *getAccountSignersHandler) GetAccountSigners(request *requests.GetAccoun
 		Links: request.GetOffsetLinks(request.PageParams),
 	}
 
-	count, err := q.FilterByAddress(request.Address).Count()
+	count, err := h.SignersQ.Count(request.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get accounts count")
 	}
 
 	err = response.PutMeta(requests.MetaPageParams{
 		CurrentPage: request.PageParams.PageNumber,
-		TotalPages:  (count + request.PageParams.Limit - 1) / request.PageParams.Limit,
+		TotalPages:  (uint64(count) + request.PageParams.Limit - 1) / request.PageParams.Limit,
 	})
 
 	if err != nil {
