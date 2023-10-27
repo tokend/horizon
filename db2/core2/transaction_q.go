@@ -47,11 +47,18 @@ func (q TransactionQ) OrderByLedgerSeq() TransactionQ {
 	return q
 }
 
+// OrderByTxIndex - returns TransactionQ with ordered by tx index
+func (q TransactionQ) OrderByTxIndex() TransactionQ {
+	q.selector = q.selector.OrderBy("txindex ASC")
+	return q
+}
+
 // GetByLedgerRange returns ordered slice of transaction filtered by range of ledger sequences, including boundaries.
 // Returns nil, nil if transactions do not exist
 func (q TransactionQ) GetByLedgerRange(fromSeq int32, toSeq int32) ([]Transaction, error) {
 	return q.FilterByLedgerSeqRange(fromSeq, toSeq).
 		OrderByLedgerSeq().
+		OrderByTxIndex().
 		Select()
 }
 
