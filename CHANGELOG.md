@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.12.5
+
+### Fixed
+
+* Use correct (the same as core has) ordering of transactions in block for ingest v2
+
 ## 3.11.0
 
 ### Added
